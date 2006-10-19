@@ -1,0 +1,106 @@
+% -*- mode: latex -*-
+
+\mansection{File}
+\begin{mandesc}
+  \short{File}{File data type}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{constructor}
+\begin{verbatim}
+L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{mode}: The argument mode is a string beginning  with  one  of  the  following  sequences
+    \begin{itemize}
+      \item r Open text file for reading. The stream is positioned at the beginning of the
+        file.
+      \item w Truncate  file  to  zero  length  or create text file for writing.  The stream is
+        positioned at the beginning of the file.
+      \item a Open for appending (writing at end of file).  The file is created if it does not 
+	exist.  The stream is positioned at the end of the file.
+    \end{itemize}
+    The mode string can also include the letter b as a last character. 
+    Adding the b is used if you do I/O to a binary file 
+    (but note that The b is ignored on all POSIX conforming systems, including Linux).
+    \vname{swap} If true then byte swaping is forced when using the \verb+mget+ and 
+    \verb+mput+ functions. 
+    \vname{xdr} If true then reading and writing is used using \verb+xdr+.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{File} data type is used for file I/O operations.
+\end{mandescription}
+
+\paragraph{Operations on File objects}
+\itemdesc{methods}
+\begin{itemize}
+  \vname{F.close[]}: close the file stream.
+  \vname{F.putstr[str]}: outputs a string. 
+  \vname{F.put[M,type='string']} outputs the contents of real matrix \verb+M+ using 
+  the \verb!type! parameter as a conversion specifier. The \verb+type+ argument can be chosen 
+  among \verb+["l","i","s","ul","ui","us","d","f","c","uc"]+ for writing respectively a long, an int, a short, an unsigned long, an unsigned int, an unsigned short, a double, a float, a char and an unsigned char. The bytes which are read are automatically swapped if necessary (by checking little-endian status). This default swapping mode can be suppressed by adding a flag in the \verb!mopen! function. 
+  It is also possible to read in little-endian or big-endian mode  by adding a \verb+'l'+ or \verb+'b'+  character at the end of a type specification. For example \verb+'db'+ can be used to read a double in big-endian mode. 
+  \vname{F.get[n=val,type='string']}: reads \verb+n+ values of type given by \verb+type+ (see the above \verb+put+ method for \verb+type+ specification).
+  and returns the values in a vector of size \verb+n+. 
+  \vname{F.getstr[n=val]}: reads \verb+n+ bytes and returns the a string.
+  \vname{F.eof[]}: returns \verb+%t+ if an end-of-file was encountered. 
+  \vname{F.seek[value,str]}:  sets  the  file  position indicator. The new position, 
+  measured in bytes, is obtained by adding offset bytes to  the
+  position  specified by _verb+str+. If \verb+str+ is set to \verb+'set'+, \verb+cur+, 
+  \verb+'end'+ the offset is relative to the start of the file, 
+  the current position indicator, or  end of file,  respectively. 
+  Successful call clears the end of file indicator.
+  \vname{F.tell[]}: returns the current value of the file position indicator. 
+  \vname{F.clearerr[]}: clears any previously raised error.
+  \vname{F.error[]}: returns \verb+%t+ if an error was encountered during previous read/write 
+  operations 
+  \vname{[M,S]F.get_matrix[format='string']}: read a scalar matrix from file current position. 
+  First lines can be non-numeric and are then returned in S. The read stops when current 
+  line read is not compatible with previous ones. An optional format to be used for reading
+  each matrix entry can be given. 
+  \vname{F.get_lines}:
+  \vname{F.get_smatrix}: read the file contents from current position 
+  and return a column string vector. Each line read giving a row of the column vector.
+  \vname{F.put_matrix[M,format='string',sep='string',title=S}: 
+    output  matrix contents in a file using the given format for each element 
+    and the string given by \verb+sep+ as separator. If \verb+title+ is given 
+    its contents is outputed in the file before the matrix. Default value 
+    for format is the defualt format used in nsp interactive output and defaut 
+    separator is a white space.
+  \vname{F.put_smatrix[S]}: output the contents of a string matrix in file \verb+F+ 
+  the string matrix is explored columnwise (i.e equivalent to \verb+S(:)+).
+  \vname{F.print}: A revoir pour metre en accord avec les fonctions asspciées.
+  \vname{F.printf}:A revoir pour metre en accord avec les fonctions asspciées.
+\end{itemize}
+
+\itemdesc{functions}
+\begin{itemize}
+  \vname{fopen} open a file for I/O operations returning a \verb+File+ object.
+  \vname{is_little_endian} checks the little-endian machine specification.
+  \vname{getfile(fname)}: gets the contents of ascii file given by \verb+fname+ 
+  in a string column vector.
+  \vname{putfile(fname,S)}: put the contents of a string matrix in file named 
+  \verb+fname+. If the file already existed its contents is replaced if not it is 
+  created. 
+\end{itemize}
+
+\begin{examples}
+  \begin{program}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{unique}{unique}  
+  \manlink{setdiff}{setdiff}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+jpc 
+\end{authors}
+
