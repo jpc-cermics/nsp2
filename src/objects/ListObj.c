@@ -1200,6 +1200,7 @@ static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
  * create an empty list 
  */
 
+#if 0 
 static int int_lxcreate(Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L;
@@ -1210,6 +1211,7 @@ static int int_lxcreate(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
   return 1;
 }
+#endif 
 
 /*
  * returns the length of a list L
