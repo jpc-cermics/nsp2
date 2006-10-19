@@ -6,21 +6,22 @@
 \end{mandesc}
 
 % -- Calling sequence section
-\begin{constructor}
+%\begin{calling_sequence}
+\subsection*{Constructor}
 \begin{verbatim}
 L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
 \end{verbatim}
-\end{calling_sequence}
+%\end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{mode}: The argument mode is a string beginning  with  one  of  the  following  sequences
+    \vname{mode}: The argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
     \begin{itemize}
-      \item r Open text file for reading. The stream is positioned at the beginning of the
+      \item[r]: open text file for reading. The stream is positioned at the beginning of the
         file.
-      \item w Truncate  file  to  zero  length  or create text file for writing.  The stream is
+      \item[w] truncate  file  to  zero  length  or create text file for writing.  The stream is
         positioned at the beginning of the file.
-      \item a Open for appending (writing at end of file).  The file is created if it does not 
+      \item[a] open for appending (writing at end of file).  The file is created if it does not 
 	exist.  The stream is positioned at the end of the file.
     \end{itemize}
     The mode string can also include the letter b as a last character. 
