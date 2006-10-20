@@ -29,7 +29,7 @@
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open_file,choice_button_save,choice_button_open_file,choice_entry,
 	       choice_unknown,choice_matrix,choice_chooser_open_folder,choice_button_open_folder,
-	       choice_spin_button}
+	       choice_spin_button,choice_range_button}
   nsp_choice_value;
 
 typedef struct _nsp_choice_array 
@@ -50,6 +50,8 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
 static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size);
 static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
 static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array);
+static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size);
+static int nsp_scale_get_value(GtkWidget *scale,NspMatrix *M);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
@@ -297,6 +299,8 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
       break;
     case choice_spin_button:
       return nsp_setup_spin_button_wraper((double *)Ms,active);
+    case choice_range_button:
+      return nsp_setup_scale_wraper((double *)Ms,active);
     }
   return NULL;
 }
@@ -304,7 +308,7 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin",NULL};
+  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin","range",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 
@@ -328,8 +332,8 @@ static int nsp_get_choice_from_title(char *type)
       return choice_button_open_folder;
 #endif
       break;
-    case 7:
-      return choice_spin_button;
+    case 7: return choice_spin_button;
+    case 8: return choice_range_button;
     }
   return choice_unknown;
 }
@@ -634,6 +638,10 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
 	  return rep;
+	case choice_range_button:
+	  rep = nsp_scale_get_value(array[i].widget,(NspMatrix *) Ms);
+	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
+	  return rep;
 	}
       Loc= Loc->next;
       i++;
@@ -716,6 +724,13 @@ static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
 	  break;
 	case choice_spin_button:
 	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
+	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
+	  if (( Ob =nsp_create_object_from_double("le",active_field->R[0])) == NULLOBJ ) 
+	    return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL)return NULLLIST;
+	  break;
+	case choice_range_button:
+	  rep = nsp_scale_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
 	  if (( Ob =nsp_create_object_from_double("le",active_field->R[0])) == NULLOBJ ) 
 	    return NULLLIST;
@@ -879,9 +894,32 @@ static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size)
   return  gtk_spin_button_new (adj,*(val+6),*(val+7));
 }
 
-
 static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M)
 {
   M->R[0] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
+  return OK;
+}
+/*
+ * using range button: work in progress 
+ **/
+
+static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size)
+{
+  GtkWidget *scale;
+  /* value, lower, upper, step_increment, page_increment, page_size, climb_rate, digits*/
+  GtkAdjustment *adj;
+  adj = GTK_ADJUSTMENT (gtk_adjustment_new (*val,*(val+1),*(val+2),*(val+3),*(val+4),*(val+5)));
+  scale= gtk_hscale_new(adj);
+  gtk_scale_set_digits (GTK_SCALE(scale),*(val+7));
+  gtk_scale_set_draw_value (GTK_SCALE(scale),TRUE);
+  return scale;
+}
+
+
+static int nsp_scale_get_value(GtkWidget *scale,NspMatrix *M)
+{
+  GtkAdjustment *adj;
+  adj= gtk_range_get_adjustment(GTK_RANGE(scale));
+  M->R[0] = gtk_adjustment_get_value(adj);
   return OK;
 }

@@ -492,7 +492,8 @@ static int nsp_check_choice(Stack stack,NspList *L)
   
   if ( GetListArgs(L,1,Tc1,&MS1,&MS2,&i,&M3) == FAIL) return FAIL;
 
-  if ( MS1->mn >= 1 &&  strcmp(MS1->S[0],"spin") == 0) 
+  if ( MS1->mn >= 1 &&  
+       ( strcmp(MS1->S[0],"spin") == 0 || strcmp(MS1->S[0],"range") == 0) ) 
     {
       if (  nsp_smatrix_to_utf8(MS1) == FAIL 
 	    || nsp_smatrix_to_utf8(MS2) == FAIL )

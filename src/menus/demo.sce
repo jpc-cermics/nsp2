@@ -10,7 +10,8 @@ function demo_xchoices(flag)
   // spin=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
   v8=[5,0,100,0.5,10,20,3,3];    
   l8=list('spin','double with spin',0,v8);// l(3) is unused
-  L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8);
+  l9=list('range','double with range',0,v8);// l(3) is unused
+  L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8,l9);
   [rep,L1]=x_choices('Toggle Menu',L,flag);
   // XXX 
   // Il faudrait pouvoir controler que L1==L 
