@@ -50,9 +50,9 @@ function []=xsetm()
   if col==1 then 
     // On est en couleur 
     xch_l = list(lfid,lfiz,lmid,lmsiz,lth,lpix,lcol,lcols,lalu);
-    entval=[lfid(2),lfiz(2),lmid(2),lmsiz(2),lth(2),lpix(2),lcol(2),lcols(2),lalu(2)];
-    rep=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
-    if rep<>[] then
+    entval=[lfid(3),lfiz(3),lmid(3),lmsiz(3),lth(3),lpix(3),lcol(3),lcols(3),lalu(3)];
+    [rep,lres,lrep]=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
+    if ~isempty(lrep) then
       if or(rep<>entval) then 
 	rep=rep-ones(rep);
 	if rep(7)==0 then 
@@ -73,9 +73,9 @@ function []=xsetm()
   else 
     // On est en n&b 
     xch_l = list(lfid,lfiz,lmid,lmsiz,lth,lpix,lcol,ldash,lpat,lalu);
-    entval=[lfid(2),lfiz(2),lmid(2),lmsiz(2),lth(2),lpix(2),lcol(2),ldash(2),lpat(2),lalu(2)];
-    rep=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
-    if rep<>[] then
+    entval=[lfid(3),lfiz(3),lmid(3),lmsiz(3),lth(3),lpix(3),lcol(3),ldash(3),lpat(3),lalu(3)];
+    [rep,lres,lrep]=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
+    if ~isempty(lrep) then
       if or(rep<>entval) then 
 	rep=rep-ones(rep);
 	if rep(7)==1 then 

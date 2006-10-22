@@ -9,5 +9,11 @@ function rep=getsymbol(title)
   lmsiz=list('combo','marksize',mm(2)+1,fontsSiz);
   xch_l = list(lmid,lmsiz);
   entval=[lmid(2),lmsiz(2)];
-  rep=x_choices(title,xch_l)-[1;1];
+  // rep=x_choices(title,xch_l)-[1;1];
+  [rep,lres,lrep]=x_choices(title,xch_l);
+  if isempty(lrep) then 
+    rep=[];
+  else 
+    rep=[lrep(1);lrep(2)]-[1;1];
+  end
 endfunction
