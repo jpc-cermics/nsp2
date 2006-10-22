@@ -9,12 +9,10 @@ function [sd]=gr_menu(sd,flag,noframe)
 	'4        {8,3,2,3}';
 	'5        {11,3,2,3}'; 
 	'6        {11,3,5,3}}'];
-  
-  [lhs,rhs]=argn(0);
 
-  if rhs<=1,flag=0;end;
-  if rhs<=2,noframe=0;end;
-  if rhs <=0 then
+  if nargin<=1,flag=0;end;
+  if nargin<=2,noframe=0;end;
+  if nargin <=0 then
     cdef=[0 0 100 100];
     init=1
   else
@@ -107,8 +105,8 @@ function str=gr_Settings(ind,win)
 endfunction
 
 function [sd1]=symbs(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then 
+  sd1=[];
+  if nargin<=0 then 
     c=getsymbol("Choose a mark");
     if c==[] then
       c=xget('mark')
@@ -122,8 +120,8 @@ function [sd1]=symbs(sd,del)
 endfunction
 
 function [sd1]=dashs(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then 
+  sd1=[];
+  if nargin<=0 then 
     n1=x_choose(dash,"Choose a dash style");
     if n1==[] then 
       sd1=list()
@@ -137,8 +135,8 @@ function [sd1]=dashs(sd,del)
 endfunction
 
 function [sd1]=patts(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then 
+  sd1=[];
+  if nargin<=0 then 
     n1=getcolor('Choose a pattern ',0)
     if n1==[] then 
       sd1=list()
@@ -152,13 +150,13 @@ function [sd1]=patts(sd,del)
 endfunction
 
 function [sd1]=Thick(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then 
+  sd1=[];
+  if nargin<=0 then 
     T=string(1:15)
     ll=list()
     t=xget('thickness')
     ll(1)=list('Thickness',t,T);
-    n1=x_choices('Choose a Thickness',ll);
+    [n1,lres,lrep]=x_choices('Choose a Thickness',ll);
     if n1==[] then 
       sd1=list()
     else
@@ -297,7 +295,7 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
    case 'params' then 
     colors=m2s(1:xget("lastpattern")+2,"%1.0f");
     lcols_bg=list('colors','Color',sd('color'),colors);
-    rep=x_choices('color settings',list(lcols_bg));
+    [rep,lres,lrep]=x_choices('color settings',list(lcols_bg));
     if rep<>[] then
       sd('color')=rep;
     end
@@ -342,6 +340,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
 	xrects(rects,colors);
       end
     end
+    
    case 'translate' then 
     // translate sd with translation vector pt 
     gr_objects(sd)('x')=gr_objects(sd)('x')+pt(1);
@@ -572,13 +571,13 @@ endfunction
 //-----------------------------------
 
 function sd1=frect(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     [x1,y1,x2,y2,but]=xgetm(d_xrect) 
     if but==2 then sd1=list();return,end
     sd1=list("frect",x1,x2,y1,y2);
     d_xfrect(x1,y1,x2,y2);
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      x1=sd(2);x2=sd(3),y1=sd(4),y2=sd(5)
      d_xfrect(x1,y1,x2,y2);
   elseif del=='del' then //erase    
@@ -598,14 +597,14 @@ endfunction
 // circle 
 
 function sd1=cerc(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     [c1,c2,x1,x2,but]=xgetm(d_circle);
     if but==2 then sd1=list();return,end
     x=[x1;x2],c=[c1;c2];r=norm(x-c,2);
     sd1=list("cercle",c,r);
     d_circle(c,r);
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      c=sd(2);r=sd(3);
      d_circle(c,r);
   elseif del=='del' then //erase      
@@ -622,14 +621,14 @@ endfunction
 // filled circle 
 
 function sd1=fcerc(sd,del)
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     [c1,c2,x1,x2,but]=xgetm(d_circle);
     if but==2 then sd1=list();return,end
     x=[x1;x2],c=[c1;c2];r=norm(x-c,2);
     sd1=list("fcercle",c,r);
     d_fcircle(c,r);
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      c=sd(2);r=sd(3)
      d_fcircle(c,r);
   elseif del=='del' then //erase   
@@ -646,8 +645,8 @@ endfunction
 // arrow 
 
 function [sd1]=fleche(sd,del)
-  [lhs,rhs]=argn(0);sd1=[]
-  if rhs<=0 then // get
+  sd1=[]
+  if nargin<=0 then // get
     [oi1,oi2,of1,of2,but]=xgetm(d_arrow);
     if but==2 then sd1=list();return,end
     o1=[oi1;of1],o2=[oi2;of2];
@@ -655,7 +654,7 @@ function [sd1]=fleche(sd,del)
     sz=1/(40*min(abs(r2(3)-r2(1)),abs(r2(4)-r2(2))))
     sd1=list("fleche",o1,o2,sz);
     d_arrow(o1,o2,sz);
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      o1=sd(2),o2=sd(3),
      sz=-1
      if size(sd)>=4 then sz=sd(4),end
@@ -680,15 +679,15 @@ endfunction
 //-----
 
 function [sd1]=comment(sd,del)
-  [lhs,rhs]=argn(0),sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     [i,z1,z2]=xclick(0);z=[z1;z2];
     com=x_dialog("Enter string"," ");
     if com<>[] then  
       sd1=list("comm",z,com),
       xstring(z(1),z(2),com,0,0);
     end
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      z=sd(2);com=sd(3);
      xstring(z(1),z(2),com,0,0);
   elseif del=='del' then //erase 
@@ -705,13 +704,13 @@ endfunction
 
 function [sd1]=ligne(sd,del)
 // polyline 
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     z=xgetpoly(d_seg);
     if z==[], return;end;
     sd1=list("ligne",z);
     xpoly(z(1,:)',z(2,:)',type="lines")
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      z=sd(2);
      xpoly(z(1,:)',z(2,:)',type="lines")
   elseif del=='del' then //erase
@@ -727,13 +726,13 @@ endfunction
 
 function [sd1]=fligne(sd,del)
 // filled polyline 
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then // get
+  sd1=[];
+  if nargin<=0 then // get
     z=xgetpoly(d_seg);
     if z==[], return;end;
     sd1=list("fligne",z);
     xfpoly(z(1,:),z(2,:),1);
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      z=sd(2);
      xfpoly(z(1,:),z(2,:),1);
   elseif del=='del' then //erase
@@ -749,8 +748,8 @@ endfunction
 
 function [sd1]=curve(sd,del)
 // smoothed curve 
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then ,//get
+  sd1=[];
+  if nargin<=0 then ,//get
     z=xgetpoly(d_seg);
     if z==[], return;end
     mm=clearmode();xpoly(z(1,:)',z(2,:)',type="lines");modeback(mm)
@@ -765,13 +764,13 @@ endfunction
 
 function [sd1]=points(sd,del)
 // polymark 
-  [lhs,rhs]=argn(0);sd1=[];
-  if rhs<=0 then //get
+  sd1=[];
+  if nargin<=0 then //get
     z=xgetpoly(d_point);
     if z==[], return;end;
     sd1=list("point",z);
     xpoly(z(1,:)',z(2,:)',type="marks");
-  elseif rhs==1 then //draw
+  elseif nargin==1 then //draw
      z=sd(2);
      xpoly(z(1,:)',z(2,:)',type="marks");
   elseif del=='del' then //erase  
@@ -786,16 +785,16 @@ function [sd1]=points(sd,del)
 endfunction
 
 function [sd1]=grclipoff(sd,del)
-  [lhs,rhs]=argn(0),sd1=[];
-  if rhs<=0 then ,
+  sd1=[];
+  if nargin<=0 then ,
     sd1=list("clipoff")
   end;
   xclip();
 endfunction
 
 function [sd1]=grclipon(sd,del)
-  [lhs,rhs]=argn(0),sd1=[];
-  if rhs<=0 then ,
+  sd1=[];
+  if nargin<=0 then ,
     sd1=list("clipon")
   end;
   xclip('clipgrf');
@@ -1078,6 +1077,37 @@ function [pt,kmin,pmin,dmin]=gr_dist2polyline(xp,yp,pt)
   dmin=sqrt(d2min);
   pmin= p(kmin);
   pt = [ xp(kmin)+ pmin*(xp(kmin+1)-xp(kmin));yp(kmin)+ pmin*(yp(kmin+1)-yp(kmin))];
+endfunction
+
+
+function [gr_options,edited]=gr_do_options(gr_options)
+// Copyright ENPC/jpc  options for gr_menus 
+// 
+  colors=m2s(1:xget("lastpattern")+2,"%1.0f");
+  fontsSiz=['08','10','12','14','18','24'];
+  fontsIds=[ 'Courrier','Symbol','Times','Times Italic','Times Bold',
+	     'Times B. It.'];
+  marksIds=['.','+','x','*','diamond fill.','diamond','triangle up',
+	    'triangle down','trefle','circle'];
+  DashesIds=['Solid','-2-  -2-','-5-  -5-','-5-  -2-','-8-  -2-',
+	     '-11- -2-','-11- -5-'];
+  edited=%f
+  //  gr_options=hcreate(color=4,background=xget('white'),foreground=6,font=2,font_size=1);
+  l_col=list('colors','color',gr_options.color,colors);
+  l_bg=list('colors','Background',gr_options.background,colors);
+  l_fg=list('colors','Foreground',gr_options.foreground,colors);
+  l_fid=list('combo','fontId',gr_options.font+1,fontsIds);
+  l_fiz=list('combo','fontsize',gr_options.font_size,fontsSiz);
+  Lc = list(l_col,l_bg,l_fg,l_fid,l_fiz);
+  [rep,lres,lrep]=x_choices('GrMenu options',Lc,%t);
+  if rep<>[] then
+    gr_options=hcreate(color=rep(1),...
+		       background=rep(2),...
+		       foreground=rep(3),...
+		       font=rep(4),...
+		       font_size=rep(5));
+    edited=%t;
+  end
 endfunction
 
 
