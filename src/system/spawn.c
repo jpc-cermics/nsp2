@@ -453,19 +453,29 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
   int stdout_pipe=0, stderr_pipe=0,stdin_pipe=0;
   GError *error = NULL;
   guint stdout_tag, stderr_tag;
-
-  /* G_SPAWN_CHILD_INHERITS_STDIN,  */
-  if ( !g_spawn_async_with_pipes( NULL,
-				  cmd,
-				  NULL,
-				  G_SPAWN_SEARCH_PATH |
-				  G_SPAWN_DO_NOT_REAP_CHILD,
-				  NULL, NULL,
-				  &pid,
-				  &stdin_pipe,
-				  &stdout_pipe,
-				  &stderr_pipe,
-				  &error ) ) 
+  gboolean rep;
+  if ( H->obj->prompt_check == NULL) 
+    {
+      rep =  g_spawn_async_with_pipes( NULL,cmd,NULL,
+					G_SPAWN_SEARCH_PATH |
+					G_SPAWN_DO_NOT_REAP_CHILD |
+					G_SPAWN_CHILD_INHERITS_STDIN,
+					NULL, NULL,
+					&pid,
+					NULL,&stdout_pipe,&stderr_pipe,
+					&error );
+    }
+  else 
+    {
+      rep =  g_spawn_async_with_pipes( NULL,cmd,NULL,
+					G_SPAWN_SEARCH_PATH |
+					G_SPAWN_DO_NOT_REAP_CHILD,
+					NULL, NULL,
+					&pid,
+					&stdin_pipe,&stdout_pipe,&stderr_pipe,
+					&error );
+    }
+  if ( !rep ) 
     {
       Scierror("Error: spawn command failed\n");
       Scierror("\t%s\n",error->message );
@@ -555,6 +565,8 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
 	  if ( S->obj->prompt_check == NULL) 
 	    {
 	      Sciprintf("%s",buf);
+	      /* XXXXX  here we need to be able for flush nsp stdout */
+	       fflush(stdout);
 	    }
 	  else 
 	    {
