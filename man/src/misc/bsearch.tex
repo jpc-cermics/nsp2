@@ -70,35 +70,43 @@ for each X(i) if it is equal to one v(k) then:
   
   example with numbers and interval matching:
   \begin{program}
-    x=grand(1000,1,"def");
-    v=linspace(0,1,11)';  // 10 intervals 
-    [ind,occ]=bsearch(x,v);
-    xclear()
+    \HCode{
+    x=grand(1000,1,"def");\Hnewline
+    v=linspace(0,1,11)';  // 10 intervals \Hnewline
+    [ind,occ]=bsearch(x,v);\Hnewline
+    xclear()\Hnewline
     plot2d2(v,[occ;occ(10)],style=2)
+    }
   \end{program}
   
   playing with interval type:
   \begin{program}
-    x = [1, 2, 3, 4]
-    [ind, occ] = bsearch(x,x,interval="[--)")
+    \HCode{
+    x = [1, 2, 3, 4]\Hnewline
+    [ind, occ] = bsearch(x,x,interval="[--)")\Hnewline
     [ind, occ] = bsearch(x,x,interval="(--]")
+    }
   \end{program}
   
   an example with strings and exact matching:
   \begin{program}
-    x = ["toto","est","un","foo"];
-    v = ["ab","baba","bar","foo","toto","un"];
+    \HCode{
+    x = ["toto","est","un","foo"];\Hnewline
+    v = ["ab","baba","bar","foo","toto","un"];\Hnewline
     [ind, occ,info] = bsearch(x,v,match="v")
+    }
   \end{program}
   
   an example with strings and interval matching:
   \begin{program}
-    m = 5000;
-    x = smat_create(m,1);
-    for i=1:m, x(i) = ascii(grand(1,4,"uin",97,122)); end
-    v = split("a b c d e f g h i j k l m n o p q r s t u v w x y z");
-    [ind, occ,info] = bsearch(x,v,match="i");
+    \HCode{
+    m = 5000;\Hnewline
+    x = smat_create(m,1);\Hnewline
+    for i=1:m, x(i) = ascii(grand(1,4,"uin",97,122)); end\Hnewline
+    v = split("a b c d e f g h i j k l m n o p q r s t u v w x y z");\Hnewline
+    [ind, occ,info] = bsearch(x,v,match="i");\Hnewline
     occ 
+    }
   \end{program}
   
 \end{examples}

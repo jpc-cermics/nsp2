@@ -42,16 +42,18 @@
   %--example 
 \begin{examples}
   \begin{program}
-    l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
-    l2=list('entry','entry title',1,['initial']); // 1 is unused 
-    l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size
-    l4=list('colors','colors choice 4',29,['']);
-    l5=list('save','file save',1,['foo.sav']); // initial value 
-    l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter 
-    l7=list('folder','choose a folder',1,['']); // answer, filter unused 
-    L= list(l1,l2,l3,l4,l5,l6,l7);
-    [rep,L]=x_choices('Toggle Menu',L,%t);
-    [rep,L]=x_choices('Toggle Menu',L,%f);
+    \HCode{
+    l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);\Hnewline
+    l2=list('entry','entry title',1,['initial']); // 1 is unused \Hnewline
+    l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size\Hnewline
+    l4=list('colors','colors choice 4',29,['']);\Hnewline
+    l5=list('save','file save',1,['foo.sav']); // initial value \Hnewline
+    l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter \Hnewline
+    l7=list('folder','choose a folder',1,['']); // answer, filter unused \Hnewline
+    L= list(l1,l2,l3,l4,l5,l6,l7);\Hnewline
+    [rep,L]=x_choices('Toggle Menu',L,\%t);\Hnewline
+    [rep,L]=x_choices('Toggle Menu',L,\%f);
+    }
   \end{program}
 \end{examples}
 

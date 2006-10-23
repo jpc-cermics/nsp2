@@ -49,8 +49,9 @@ substitutions.
 
 \begin{examples}
   \begin{program}
-    [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')
-    regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')
+    \HCode{
+      [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')\Hnewline}
+    \verb!regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')! 
   \end{program}
 \end{examples}
 

@@ -43,7 +43,7 @@
 
 %% verbatim with a background color 
 
-\def\program{\noindent%
+\def\programold{\noindent%
   \def\verbatim@processline{%
     {\setbox0=\hbox{\the\verbatim@line}%
     \hsize=\linewidth \the\verbatim@line\par}}%
@@ -52,7 +52,7 @@
   \setbox0=\vbox\bgroup \verbatim%
 }
 
-\def\endprogram{%
+\def\endprogramold{%
   \endverbatim%
   \unskip\setbox0=\lastbox %%%DPC%%%
   \egroup%
@@ -60,12 +60,18 @@
   \newline\noindent
 }
 
+%% altt in latex and <pre> code for html 
+\newenvironment{program}{\alltt}{\endalltt}
+\def\HCode#1{#1}
+\def\Hnewline#1{#1}
+
 %% alltt with a background color 
 
 \newsavebox{\myprogrambox}
-\newenvironment{ttprogram}{%
+\newenvironment{allttprogram}{%
  \begin{lrbox}{\myprogrambox}\begin{minipage}{\linewidth}\alltt}%
  {\endalltt\end{minipage}\end{lrbox}\colorbox[rgb]{0.9,0.9,0.95}{\noindent\usebox{\myprogrambox}}}
+
 
 
 

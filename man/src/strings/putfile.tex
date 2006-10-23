@@ -24,8 +24,10 @@ writes in file \verb+fname+ the contents of \verb+A+ in column order (i.e like \
 
 \begin{examples}
   \begin{program}
-    A = string([1,2;3,4]);
-    putfile('A.txt',A);
+    \HCode{
+    A = string([1,2;3,4]);\Hnewline
+    putfile('A.txt',A);\Hnewline
+    }
   \end{program}
 \end{examples}
 

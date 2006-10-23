@@ -27,9 +27,11 @@ separator are accepted as one valid separator.
 
 \begin{examples}
   \begin{program}
-    split('la terre est bleue');
-    split('la terre est   bleue',msep=%t);
-    split('la terre,est; bleue',msep=%t,sep=',; ');
+    \HCode{
+    split('la terre est bleue');\Hnewline
+    split('la terre est   bleue',msep=\%t);\Hnewline
+    split('la terre,est; bleue',msep=\%t,sep=',; ');\Hnewline
+    }
   \end{program}
 \end{examples}
 

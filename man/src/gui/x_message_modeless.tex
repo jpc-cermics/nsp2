@@ -25,11 +25,12 @@
 %--example 
 \begin{examples}
   \begin{program}
-    x_message_modeless(['This is a modeless message'
-      'Scilab may continue computation'
-      ' '
-      'Click on ""Ok"" to close the message'])
-    x_message_modeless('Now two message windows are opened')
+    \HCode{
+      x_message_modeless(['This is a modeless message'\Hnewline
+        'Scilab may continue computation'\Hnewline
+        ' '\Hnewline
+	'Click on ""Ok"" to close the message'])\Hnewline
+x_message_modeless('Now two message windows are opened')}
   \end{program}
 \end{examples}
 %-- see also

@@ -25,9 +25,11 @@
 %--example 
 \begin{examples}
   \begin{program}
-    gain=evstr(x_dialog('value of gain ?','0.235'))
-    x_dialog(['Method';'enter sampling period'],'1')
+    \HCode{
+    gain=evstr(x_dialog('value of gain ?','0.235'))\Hnewline
+    x_dialog(['Method';'enter sampling period'],'1')\Hnewline
     m=evstr(x_dialog('enter a  3x3 matrix ',['[0 0 0';'0 0 0';'0 0 0]']))
+    }
   \end{program}
 \end{examples}
 %-- see also

@@ -1,7 +1,10 @@
 
 all:: manual
 
-MANPAGE=../src/model/model.tex
+# give the man page as a relative path from 
+# ../src 
+
+MANPAGE=model/model.tex
 
 manual::
 	cd generated ; make manual MANPAGE=$(MANPAGE)

@@ -29,10 +29,12 @@
 %--example 
 \begin{examples}
   \begin{program}
-    xgetfile()
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],save=%t)
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],open=%t)
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],action=%t);
+    \HCode{
+    xgetfile()\Hnewline
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],save=\%t)\Hnewline
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],open=\%t)\Hnewline
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],action=\%t);
+    }
   \end{program}
 \end{examples}
 %-- see also

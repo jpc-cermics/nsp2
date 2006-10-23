@@ -1,9 +1,9 @@
 
 all::	
-	export TEXINPUTS=::`pwd`/..// ; \
+	export TEXINPUTS=::`pwd`/../src// ; \
 	latex -interaction=batchmode manual 
 	makeindex -s index.isty manual.idx
-	export TEXINPUTS=::`pwd`/..// ; \
+	export TEXINPUTS=::`pwd`/../src// ; \
 	latex -interaction=batchmode manual
 	dvips -Ppdf manual
 	ps2pdf manual.ps

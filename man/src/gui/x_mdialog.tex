@@ -31,17 +31,19 @@
 %--example 
 \begin{examples}
   \begin{program}
-    rep=x_mdialog(['System Simulation';'with PI regulator'],...
-    ['P gain';'I gain '],[' ';' '])
-    
-    n=5;m=4;mat=rand(n,m);
-    row='row';labelv=row(ones(1,n))+string(1:n)
-    col='col';labelh=col(ones(1,m))+string(1:m)
-    smat=m2s(mat,"%5.2f");
-    x_mdialog('Matrix to edit',labelv,labelh,smat);
-    x_mdialog('Matrix to edit',string([]),string([]),smat);
-    x_mdialog('Matrix to edit',labelv,labelh,smat,entry=%t);
-    x_mdialog('Matrix to edit',string([]),string([]),smat,entry=%t);
+    \HCode{
+    rep=x_mdialog(['System Simulation';'with PI regulator'],...\Hnewline
+    ['P gain';'I gain '],[' ';' '])\Hnewline
+    \Hnewline
+    n=5;m=4;mat=rand(n,m);\Hnewline
+    row='row';labelv=row(ones(1,n))+string(1:n)\Hnewline
+    col='col';labelh=col(ones(1,m))+string(1:m)\Hnewline
+    smat=m2s(mat,"\%5.2f");\Hnewline
+    x_mdialog('Matrix to edit',labelv,labelh,smat);\Hnewline
+    x_mdialog('Matrix to edit',string([]),string([]),smat);\Hnewline
+    x_mdialog('Matrix to edit',labelv,labelh,smat,entry=\%t);\Hnewline
+    x_mdialog('Matrix to edit',string([]),string([]),smat,entry=\%t);
+    }
   \end{program}
 \end{examples}
 %-- see also

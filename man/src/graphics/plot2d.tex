@@ -54,16 +54,18 @@ plot2d(x,y,[leg=str1, leg_pos=str2, style=val1, rect=val2, axesflag=val3])
 
 \begin{examples}
   \begin{program}
-    x=(-%pi:0.01:%pi);
-    //simple plot
-    plot2d(x, sin(x));
-
-    //multiple plot
-    plot2d(x, [sin(x)', cos(x)'], leg='sin@cos', style=[3,4], leg_pos='ul');
-
-    x=(-3:0.01:3)
-    xtitle('density of the normal distribution')
-    plot2d(x, exp(-x.*x/2)/sqrt(2*%pi), rect=[-3,0,3,1]);
+    \HCode{
+    x=(-\%pi:0.01:\%pi);\Hnewline
+    //simple plot\Hnewline
+    plot2d(x, sin(x));\Hnewline
+\Hnewline
+    //multiple plot\Hnewline
+    plot2d(x, [sin(x)', cos(x)'], leg='sin@cos', style=[3,4], leg_pos='ul');\Hnewline
+\Hnewline
+    x=(-3:0.01:3)\Hnewline
+    xtitle('density of the normal distribution')\Hnewline
+    plot2d(x, exp(-x.*x/2)/sqrt(2*\%pi), rect=[-3,0,3,1]);
+    }
   \end{program}
 \end{examples}
 

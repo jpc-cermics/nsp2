@@ -51,27 +51,29 @@ a first example with $\int_0^\infty f(u)du$.
 \int_0^\infty f(u)du
 \]
 
-  \begin{program}
-u=prbs_a(50,10);
-plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
-  \end{program}
+\begin{program}
+  \verb+// backslash in program \\+
+  \HCode{\Hnewline
+    u=prbs_a(50,10);\Hnewline
+    plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
+    \%z ;// a percent un verbatim 
+  }
+  
+\end{program}
 
 \noindent a second example 
 
-  \begin{program}
-u=prbs_a(50,10);
-plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
-  \end{program}
+\begin{program}
+\HCode{
+  u=prbs_a(50,10);\Hnewline 
+  plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);}
+\end{program}
 
-\begin{verbatim}
-  u=rand(50,1);
-  plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
-\end{verbatim}
-
-\HCode{<pre>}
-\HCode{u=rand(50,1);}
-\HCode{plot2d((1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);}
-\HCode{</pre>}
+\begin{program}
+  \HCode{
+    [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')\Hnewline}
+  \verb!regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')! 
+\end{program}
 
 \end{examples}
 

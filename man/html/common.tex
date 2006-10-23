@@ -37,11 +37,19 @@
 
 \def\manlink#1#2{{#1} (\ref{#2})\quad}
 
-\newenvironment{program}%
+\newenvironment{programold}%
  {\HCode{<div class="programlisting">}\verbatim}%
  {\endverbatim\HCode{</div>}}
 
 \def\itemdesc#1{\HCode{<div class="itemdesc">}#1{\HCode{</div>}}}
+
+\newenvironment{program}%
+ {\HCode{<div class="programlisting"><pre>}}%
+ {\HCode{</pre></div>}}
+
+
+
+
 
 \def\mansep{ -- \hfill}
 

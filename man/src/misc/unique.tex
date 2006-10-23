@@ -41,50 +41,60 @@ y = unique(x)
 \noindent A first example with a vector of numbers:
   
   \begin{program}
-    x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
+    \HCode{
+    x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
     [y, ind, occ] = unique(x)
+    }
   \end{program}
 
 \noindent   a second example with a vector of strings:
   
   \begin{program}
-    x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+    \HCode{
+    x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
     [y, ind, occ] = unique(x)
+    }
   \end{program}
 
 \noindent   a third one with a vector of cells:
   
   \begin{program}
-    x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
+    \HCode{
+    x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}\Hnewline
     [y, ind, occ] = unique(x)
+    }
   \end{program}
 
 \noindent   a fourth one with a list:
   
   \begin{program}
-    x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
+    \HCode{
+    x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")\Hnewline
     [y, ind, occ] = unique(x)
+    }
   \end{program}
 
 \noindent another example:
   
   \begin{program}
-    // generate a big sample of the binomial distribution B(6,0.4)
-    m = 1e5;
-    x = grand(m,1,"bin",6,0.4); 
-    // computes the empirical probabilities associated to each values
-    [y, ind, occ] = unique(x);
-    p_emp = occ/m;
-    // computes exact probabilities (using the cumulative distribution func)
-    v = ones(7,1);
-    p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);
-    p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];
-    // compare both empirical and exact ones
-    xbasc()
-    e = 0.05;
-    plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...
-            rect=[-1,0,7,1.1*max(p_exact)],...
-            leg="exact probabilies@empirical probabilities")
+    \HCode{
+    // generate a big sample of the binomial distribution B(6,0.4)\Hnewline
+    m = 1e5;\Hnewline
+    x = grand(m,1,"bin",6,0.4); \Hnewline
+    // computes the empirical probabilities associated to each values\Hnewline
+    [y, ind, occ] = unique(x);\Hnewline
+    p_emp = occ/m;\Hnewline
+    // computes exact probabilities (using the cumulative distribution func)\Hnewline
+    v = ones(7,1);\Hnewline
+    p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);\Hnewline
+    p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];\Hnewline
+    // compare both empirical and exact ones\Hnewline
+    xbasc()\Hnewline
+    e = 0.05;\Hnewline
+    plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...\Hnewline
+            rect=[-1,0,7,1.1*max(p_exact)],...\Hnewline
+            leg="exact probabilies@empirical probabilities")\Hnewline
+    }
   \end{program}
 \end{examples}
 
