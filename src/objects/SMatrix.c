@@ -391,13 +391,18 @@ void nsp_smatrix_latex_print(NspSMatrix *SMat)
   Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(SMat)->name );
   for (i=0; i <  SMat->n;i++) Sciprintf("c");
   Sciprintf("}\n");
-  for (j=0;j < SMat->m;j++)
+
+  for (i=0; i < SMat->m; i++)
     {
-      for (i=0;i < SMat->n - 1;i++)
+      for (j=0; j < SMat->n - 1; j++)
 	{ 
 	  Sciprintf("{\\texttt \"%s\"}\t& ",SMat->S[i+j*SMat->m]);
 	}
-      Sciprintf("{\\texttt \"%s\"}\t\\\\\n",SMat->S[SMat->m-1+j*SMat->m]);
+      Sciprintf("{\\texttt \"%s\"}\t",SMat->S[i+(SMat->n-1)*SMat->m]);
+      if ( i != SMat->m -1 ) 
+	Sciprintf("\\\\\n");
+      else 
+	Sciprintf("\n");
     }
   Sciprintf("\\end{array}\\right)}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -420,14 +425,14 @@ void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
   Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(SMat)->name);
   for (i=1; i < SMat->n ;i++) Sciprintf("$C_{%d}$\t&",i);
   Sciprintf("$C_{%d}$\\\\ \\hline\n",SMat->n);
-  for (j=0;j < SMat->m ;j++)
+  for (i=0; i < SMat->m; i++)
     {
-      Sciprintf("$L_{%d}$\t&",j+1);
-      for (i=0;i < SMat->n-1 ;i++)
-	{
+      Sciprintf("$L_{%d}$\t&",i+1);
+      for (j=0; j < SMat->n - 1; j++)
+	{ 
 	  Sciprintf("{\\texttt \"%s\"}\t& ",SMat->S[i+j*SMat->m]);
 	}
-      Sciprintf("{\\texttt \"%s\"}\t\\\\ \\hline\n",SMat->S[SMat->m-1+j*SMat->m]);
+      Sciprintf("{\\texttt \"%s\"}\t\\\\ \\hline\n",SMat->S[i+(SMat->n-1)*SMat->m]);
     }
   Sciprintf("\\end{tabular}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");

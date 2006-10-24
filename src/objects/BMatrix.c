@@ -269,14 +269,19 @@ void nsp_bmatrix_latex_print(NspBMatrix *BMat)
   Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(BMat)->name );
   for (i=0; i <  BMat->n;i++) Sciprintf("c");
   Sciprintf("}\n");
-  for (j=0;j < BMat->m;j++)
+  for (i=0; i < BMat->m; i++)
     {
-      for (i=0;i < BMat->n - 1;i++)
+      for (j=0; j < BMat->n - 1; j++)
 	{ 
 	  Sciprintf("%d\t& ",BMat->B[i+j*BMat->m]);
 	}
-      Sciprintf("%d\t\\\\\n",BMat->B[BMat->m-1+j*BMat->m]);
+      Sciprintf("%d\t",BMat->B[i+(BMat->n-1)*BMat->m]);
+      if ( i != BMat->m -1 ) 
+	Sciprintf("\\\\\n");
+      else 
+	Sciprintf("\n");
     }
+
   Sciprintf("\\end{array}\\right)}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
@@ -299,14 +304,14 @@ void nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
   Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(BMat)->name);
   for (i=1; i < BMat->n ;i++) Sciprintf("$C_{%d}$\t&",i);
   Sciprintf("$C_{%d}$\\\\ \\hline\n",BMat->n);
-  for (j=0;j < BMat->m ;j++)
+  for (i=0; i < BMat->m; i++)
     {
-      Sciprintf("$L_{%d}$\t&",j+1);
-      for (i=0;i < BMat->n-1 ;i++)
-	{
-	  Sciprintf("%d\t& ",BMat->B[i+j*BMat->m]);
+      Sciprintf("$L_{%d}$\t&",i+1);
+      for (j=0; j < BMat->n - 1; j++)
+	{ 
+	  Sciprintf("$%d$\t& ",BMat->B[i+j*BMat->m]);
 	}
-      Sciprintf("%d\t\\\\ \\hline\n",BMat->B[BMat->m-1+j*BMat->m]);
+      Sciprintf("$%d$\t\\\\ \\hline\n",BMat->B[i+(BMat->n-1)*BMat->m]);
     }
   Sciprintf("\\end{tabular}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
