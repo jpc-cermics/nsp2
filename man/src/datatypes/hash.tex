@@ -78,9 +78,7 @@ objects.
 \end{itemize}
 
 \begin{examples}
-  \begin{program}
-    \HCode{
-    A = rand(4,4);\Hnewline
+  \begin{program}\HCode{A = rand(4,4);\Hnewline
     H = hash_create(5,A,B=34,C="foo")  \Hnewline
     // or shortly H = hash(5,A,B=34,C="foo")\Hnewline
     H.delete['A',['B','C']];\Hnewline
@@ -93,8 +91,7 @@ objects.
     H(str) = 45;\Hnewline
     function y=f(a=1,b=2,c=3);y=[a,b,c];endfunction \Hnewline
     H = hash_create(a=67,b=45);\Hnewline
-    f(H(:));
-    }
+    f(H(:));}
   \end{program}
  \end{examples}
 
