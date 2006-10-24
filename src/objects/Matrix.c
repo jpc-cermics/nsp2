@@ -703,18 +703,21 @@ void nsp_matrix_latex_print(const NspMatrix *Mat)
 	Sciprintf("{\\left(\\begin{array}{");
       for (i=0; i <  Mat->n;i++) Sciprintf("c");
       Sciprintf("}\n");
-      for (j=0;j < Mat->m;j++)
+      for (i=0; i < Mat->m; i++)
 	{
-	  for (i=0;i < Mat->m - 1;i++)
+	  for (j=0; j < Mat->n - 1; j++)
 	    { 
 	      Sciprintf("%g\t& ",Mat->R[i+j*Mat->m]);
 	    }
-	  Sciprintf("%g\t\\\\\n",Mat->R[Mat->m-1+j*Mat->m]);
+	  Sciprintf("%g\t",Mat->R[i+(Mat->n-1)*Mat->m]);
+	  if ( i != Mat->m -1 ) 
+	    Sciprintf("\\\\\n");
+	  else 
+	    Sciprintf("\n");
 	}
       Sciprintf("\\end{array}\\right)}\n");
       if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
     }
-
   else 
     {
       Sciprintf("Fixme : to be done\n");
@@ -740,14 +743,15 @@ void nsp_matrix_latex_tab_print(const NspMatrix *Mat)
       Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(Mat)->name);
       for (i=0; i < Mat->n -1 ;i++) Sciprintf("$C_{%d}$\t&",i+1);
       Sciprintf("$C_{%d}$\\\\ \\hline\n",Mat->n);
-      for (j=0;j < Mat->m ;j++)
+
+      for (i=0; i < Mat->m; i++)
 	{
-	  Sciprintf("$L_{%d}$\t&",j+1);
-	  for (i=0;i < Mat->n-1 ;i++)
-	    {
+	  Sciprintf("$L_{%d}$\t&",i+1);
+	  for (j=0; j < Mat->n - 1; j++)
+	    { 
 	      Sciprintf("$%g$\t& ",Mat->R[i+j*Mat->m]);
 	    }
-	  Sciprintf("$%g$\t\\\\ \\hline\n",Mat->R[Mat->m-1+j*Mat->m]);
+	  Sciprintf("$%g$\t\\\\ \\hline\n",Mat->R[i+(Mat->n-1)*Mat->m]);
 	}
       Sciprintf("\\end{tabular}\n");
       if ( nsp_from_texmacs() == TRUE ) Sciprintf("\005");
