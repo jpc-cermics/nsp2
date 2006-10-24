@@ -44,9 +44,16 @@ The \emph{File} data type is used for file I/O operations.
   \vname{F.putstr[str]}: outputs a string. 
   \vname{F.put[M,type='string']} outputs the contents of real matrix \verb+M+ using 
   the \verb!type! parameter as a conversion specifier. The \verb+type+ argument can be chosen 
-  among \verb+["l","i","s","ul","ui","us","d","f","c","uc"]+ for writing respectively a long, an int, a short, an unsigned long, an unsigned int, an unsigned short, a double, a float, a char and an unsigned char. The bytes which are read are automatically swapped if necessary (by checking little-endian status). This default swapping mode can be suppressed by adding a flag in the \verb!mopen! function. 
-  It is also possible to read in little-endian or big-endian mode  by adding a \verb+'l'+ or \verb+'b'+  character at the end of a type specification. For example \verb+'db'+ can be used to read a double in big-endian mode. 
-  \vname{F.get[n=val,type='string']}: reads \verb+n+ values of type given by \verb+type+ (see the above \verb+put+ method for \verb+type+ specification).
+  among \verb+"l", \verb+"i"+, \verb+"s"+, \verb+"ul"+, \verb+"ui"+, \verb+"us"+, \verb+"d"+, \verb+"f"+, 
+  \verb+"c"+,\verb+"uc"+ for writing respectively a long, an int, a short, an unsigned long, 
+  an unsigned int, an unsigned short, a double, a float, a char and an unsigned char. 
+  The bytes which are read are automatically swapped if necessary (by checking little-endian status). 
+  This default swapping mode can be suppressed by adding a flag in the \verb!mopen! function. 
+  It is also possible to read in little-endian or big-endian mode  by adding a \verb+'l'+ or \verb+'b'+  
+  character at the end of a type specification. For example \verb+'db'+ can be used to read a double 
+  in big-endian mode. 
+  \vname{F.get[n=val,type='string']}: reads \verb+n+ values of type given by \verb+type+ 
+  (see the above \verb+put+ method for \verb+type+ specification).
   and returns the values in a vector of size \verb+n+. 
   \vname{F.getstr[n=val]}: reads \verb+n+ bytes and returns the a string.
   \vname{F.eof[]}: returns \verb+%t+ if an end-of-file was encountered. 
@@ -64,10 +71,12 @@ The \emph{File} data type is used for file I/O operations.
   First lines can be non-numeric and are then returned in S. The read stops when current 
   line read is not compatible with previous ones. An optional format to be used for reading
   each matrix entry can be given. 
-  \vname{F.get_lines}:
-  \vname{F.get_smatrix}: read the file contents from current position 
+  \vname{S=F.get_lines[n]}: acquires \verb+n+ lines from the file stream \verb+F+ and returns 
+  the result in a string matrix. If \verb+n+ is omitted or negative it is assumed to be equal to 
+  one. 
+  \vname{S=F.get_smatrix[]}: read the whole file contents from current position
   and return a column string vector. Each line read giving a row of the column vector.
-  \vname{F.put_matrix[M,format='string',sep='string',title=S}: 
+  \vname{F.put_matrix[M,format='string',sep='string',title=S]}: 
     output  matrix contents in a file using the given format for each element 
     and the string given by \verb+sep+ as separator. If \verb+title+ is given 
     its contents is outputed in the file before the matrix. Default value 
@@ -75,8 +84,9 @@ The \emph{File} data type is used for file I/O operations.
     separator is a white space.
   \vname{F.put_smatrix[S]}: output the contents of a string matrix in file \verb+F+ 
   the string matrix is explored columnwise (i.e equivalent to \verb+S(:)+).
-  \vname{F.print[Obj,as_read=boolean,depth=integer, indent=integer,latex=boolean,name=string,table=boolean]}: see the print function for a description of optional arguments.
-  \vname{F.printf}: Similar to the C \verb+fprintf+ function. 
+  \vname{F.print[Obj,as_read=boolean,depth=integer, indent=integer,latex=boolean,name=string,table=boolean]}: 
+  see the print function for a description of optional arguments.
+  \vname{F.printf[format,arg1,...,argn]}: Similar to the C \verb+fprintf+ function. 
 \end{itemize}
 
 \itemdesc{functions}
