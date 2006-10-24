@@ -1218,7 +1218,7 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
  * @F: 
  * @S: 
  * 
- * Creates and fills a #NspSMatrix object with fle contents.
+ * Creates and fills a #NspSMatrix object with file contents.
  * 
  * Return value: 
  **/

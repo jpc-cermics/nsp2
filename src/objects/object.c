@@ -966,210 +966,150 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
   user_pref.pr_depth= dp;
   user_pref.list_as_tree= at;
   return 0;
+}
 
 
+/* generic function for printing objects and 
+ * redirection of output to string, file or stdout
+ */
+
+typedef enum { string_out, stdout_out, file_out } print_mode; 
+
+static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mode mode)
+{
+  NspFile *F;
+  FILE *f;
+  IOVFun def ;
+  MoreFun mf; 
+  
+  NspObject *res, *object;
+  print_func *pr;
+  int dp=user_pref.pr_depth;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
+  char *name = NULL;
+  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+		      { "depth", s_int,NULLOBJ,-1},
+		      { "indent",s_int,NULLOBJ,-1},
+		      { "latex",s_bool,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { "table",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( mode == file_out ) 
+    {
+      CheckStdRhs(2,2);
+      if ((F= GetSciFile(stack,1))== NULL) return RET_BUG; 
+      if ((object =nsp_get_object(stack,2))== NULLOBJ) return RET_BUG; 
+
+    }
+  else 
+    {
+      CheckStdRhs(1,1);
+      if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
+    }
+  CheckLhs(0,1);
+  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
+			 &indent,&latex,&name,&table) == FAIL) 
+    return RET_BUG;
+
+  /* initialize according to mode */
+  switch ( mode ) 
+    {
+    case string_out: 
+      def = SetScilabIO(Sciprint2string);
+      mf =nsp_set_nsp_more(scimore_void);
+      break;
+    case stdout_out:
+      break;
+    case file_out : 
+      /* changes io in order to write to file F */
+      if ( !IS_OPENED(F->flag))
+	{
+	  Scierror("Warning:\tfile %s is already closed\n",F->fname);
+	  return RET_BUG;
+	}
+      f=Sciprint_file(F->file); 
+      def = SetScilabIO(Sciprint2file);
+      mf =nsp_set_nsp_more(scimore_void);
+      break;
+    }
+  /* print object */
+  user_pref.pr_depth= depth;
+  pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
+  if ( as_read == TRUE ) 
+    {
+      int kp=user_pref.pr_as_read_syntax;
+      user_pref.pr_as_read_syntax= 1;
+      if ( latex == TRUE ) 
+	{
+	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
+	}
+      pr(object,indent,name,0);
+      user_pref.pr_as_read_syntax= kp;
+      user_pref.pr_depth= dp;
+    }
+  else 
+    {
+      pr(object,indent,name,0);
+    }
+  user_pref.pr_depth= dp;
+  
+  /* restore to default values */
+  switch ( mode ) 
+    {
+    case string_out: 
+      res = Sciprint2string_reset(); 
+      SetScilabIO(def);
+      nsp_set_nsp_more(mf);
+      if ( res == NULL) return RET_BUG; 
+      MoveObj(stack,1, res);
+      return 1;
+    case stdout_out: 
+      return 0;
+    case file_out:
+      SetScilabIO(def);
+      nsp_set_nsp_more(mf);
+      Sciprint_file(f); 
+      return 0;
+    }
+  return 0;
 }
 
 /*
- * FIXME: 
- *   must be changed to accept 
- *   more than one object 
- *   and optional arguments 
- *   indent = N, mode = 'as_read' | 'latex' , latex_mode = 'mat'|'tab', header = %t | %f 
- * 
  *   display object using it's standard print function 
- * 
  */
 
-int int_object_print(Stack stack, int rhs, int opt, int lhs)
+static int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *object;
-  print_func *pr;
-  int dp=user_pref.pr_depth;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
-  char *name = NULL;
-  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
-		      { "depth", s_int,NULLOBJ,-1},
-		      { "indent",s_int,NULLOBJ,-1},
-		      { "latex",s_bool,NULLOBJ,-1},
-		      { "name",string,NULLOBJ,-1},
-		      { "table",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  CheckStdRhs(1,1);
-  CheckLhs(0,1);
-  if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
-			 &indent,&latex,&name,&table) == FAIL) 
-    return RET_BUG;
-  user_pref.pr_depth= depth;
-  pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
-  if ( as_read == TRUE ) 
-    {
-      int kp=user_pref.pr_as_read_syntax;
-      user_pref.pr_as_read_syntax= 1;
-      if ( latex == TRUE ) 
-	{
-	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
-	}
-      pr(object,indent,name,0);
-      user_pref.pr_as_read_syntax= kp;
-      user_pref.pr_depth= dp;
-    }
-  else 
-    {
-      pr(object,indent,name,0);
-    }
-  user_pref.pr_depth= dp;
-  return 0;
+  return int_object_print_gen(stack,rhs,opt,lhs,stdout_out);
 }
 
-/* XXXXXX  FIXME 
- * reste a regler le pb de more 
- * - qui doit pouvoir etre inhibe 
- * - le probleme de l'entete que l'on doit pouvoir supprimer 
- * - le mode TeX si on veut 
- * etc....
+/*
+ *   display object using it's standard print function 
+ *   and redirect output to a string matrix 
+ */
+
+static int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_object_print_gen(stack,rhs,opt,lhs,string_out);
+}
+
+/*
+ *   display object using it's standard print function 
+ *   and redirect output to a string matrix 
+ */
+
+static int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_object_print_gen(stack,rhs,opt,lhs,file_out);
+}
+
+/*
+ *
  */
 
 
-int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
-{
-  IOVFun def ;
-  MoreFun mf; 
-
-  NspObject *res, *object ; 
-  print_func *pr;
-  int dp=user_pref.pr_depth;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
-  char *name = NULL;
-  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
-		      { "depth", s_int,NULLOBJ,-1},
-		      { "indent",s_int,NULLOBJ,-1},
-		      { "latex",s_bool,NULLOBJ,-1},
-		      { "name",string,NULLOBJ,-1},
-		      { "table",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  CheckStdRhs(1,1);
-  CheckLhs(0,1);
-  if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
-			 &indent,&latex,&name,&table) == FAIL) 
-    return RET_BUG;
-  
-  def = SetScilabIO(Sciprint2string);
-  mf =nsp_set_nsp_more(scimore_void);
-
-  user_pref.pr_depth= depth;
-  pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
-  if ( as_read == TRUE ) 
-    {
-      int kp=user_pref.pr_as_read_syntax;
-      user_pref.pr_as_read_syntax= 1;
-      if ( latex == TRUE ) 
-	{
-	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
-	}
-      pr(object,indent,name,0);
-      user_pref.pr_as_read_syntax= kp;
-      user_pref.pr_depth= dp;
-    }
-  else 
-    {
-      pr(object,indent,name,0);
-    }
-  user_pref.pr_depth= dp;
-  res = Sciprint2string_reset(); 
-  SetScilabIO(def);
-  nsp_set_nsp_more(mf);
-  if ( res == NULL) return RET_BUG; 
-  MoveObj(stack,1, res);
-  return 1;
-
-}
-
-
-int int_object_sprint_old(Stack stack, int rhs, int opt, int lhs)
-{
-  int rep=-1;
-  NspObject *res, *object ; 
-  char *Table[] = {"as_read", NULL};
-  IOVFun def ;
-  MoreFun mf; 
-  CheckRhs(1,2);
-  CheckLhs(0,1);
-  if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ( rhs == 2 ) 
-    {
-      if ((rep= GetStringInArray(stack,2,Table,1)) == -1) return RET_BUG;
-    }
-  /* changes io in order to write in a string matrix */
-  def = SetScilabIO(Sciprint2string);
-  mf =nsp_set_nsp_more(scimore_void);
-  if ( rep == 0 ) 
-    {
-      int kp=user_pref.pr_as_read_syntax;
-      user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,NULL,0);
-      user_pref.pr_as_read_syntax= kp;
-    }
-  else 
-    {
-      object->type->pr(object,0,NULL,0);
-    }
-  res = Sciprint2string_reset(); 
-  SetScilabIO(def);
-  nsp_set_nsp_more(mf);
-  if ( res == NULL) return RET_BUG; 
-  MoveObj(stack,1, res);
-  return 1;
-}
-
-int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
-{
-  FILE *f;
-  int rep=-1;
-  char *Table[] = {"as_read", NULL};
-  NspObject *object ; 
-  NspFile *F;
-  IOVFun def ;
-  MoreFun mf; 
-  CheckRhs(2,3);
-  CheckLhs(0,1);
-  if ((F= GetSciFile(stack,1))== NULL) return RET_BUG; 
-  if ((object =nsp_get_object(stack,2))== NULLOBJ) return RET_BUG; 
-  if ( rhs == 3 ) 
-    {
-      if ((rep= GetStringInArray(stack,3,Table,1)) == -1) return RET_BUG;
-    }
-
-  /* changes io in order to write to file F */
-  if ( !IS_OPENED(F->flag))
-    {
-      Scierror("Warning:\tfile %s is already closed\n",F->fname);
-      return RET_BUG;
-    }
-  f=Sciprint_file(F->file); 
-  def = SetScilabIO(Sciprint2file);
-  mf =nsp_set_nsp_more(scimore_void);
-  if ( rep == 0 ) 
-    {
-      int kp=user_pref.pr_as_read_syntax;
-      user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,NULL,0);
-      user_pref.pr_as_read_syntax= kp;
-    }
-  else 
-    {
-      object->type->pr(object,0,NULL,0);
-    }
-  SetScilabIO(def);
- nsp_set_nsp_more(mf);
-  Sciprint_file(f); 
-  return 0;
-}
-
-int int_object_diary(Stack stack, int rhs, int opt, int lhs)
+static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 {
   static NspFile *F= NULL;
   static IOVFun def = NULL;
