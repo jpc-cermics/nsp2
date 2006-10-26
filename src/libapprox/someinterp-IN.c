@@ -352,7 +352,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
 	    MoveObj(stack,4,(NspObject *) d3st);
 	}
     }
-  return 1;
+  return lhs;
 }
 
 
