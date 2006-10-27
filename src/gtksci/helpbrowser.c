@@ -789,6 +789,7 @@ static int nsp_help_fill_help_table()
     return  FAIL;
   for ( i = 0 ; i < S->mn ; i++)
     {
+      char *str,*str1;
       NspObject *Obj;
       int nmatch;
       char patterns[]={ "^[^{]*{([^{]*)\\|LNK{([^{]*)}{[^$]*}"};
@@ -799,11 +800,21 @@ static int nsp_help_fill_help_table()
 
       nsp_tcldstring_init(&filename);
       if ((nsp_tcl_regsub(S->S[i],regExpr,"\\2",&filename,&nmatch,all))==FAIL)  goto bug;
+      str = str1= nsp_tcldstring_value(&name);
+      /* remove \ from names */
+      while ( *str1 != '\0') 
+	{
+	  if (*str1 == '\\' ) str1++;
+	  else *str++=*str1++;
+	}
+      *str='\0';
+      /* fprintf(stderr,"val=[%s]\n",nsp_tcldstring_value(&name));*/
       if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),nsp_tcldstring_value(&filename),-1))
 	  == NULLOBJ)
 	goto bug;
       nsp_tcldstring_free(&name);	 
       nsp_tcldstring_free(&filename);	
+      
       if (nsp_hash_enter(nsp_help_table,Obj) == FAIL) goto bug;
     }
   return OK;
