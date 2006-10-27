@@ -19,6 +19,11 @@
   \index{#1}\label{#1}%
   \addcontentsline{toc}{section}{\texttt{#1}\mansep #2} \texttt{#1} \mansep #2}%
 
+\def\shortunder#1#2#3{%
+  \index{#1}\label{#2}%
+  \addcontentsline{toc}{section}{\texttt{#1}\mansep #3} \texttt{#1} \mansep #3}%
+
+
 \newenvironment{calling_sequence}{\paragraph{Calling sequence}}{}
 \newenvironment{parameters}{\paragraph{Parameters}}{}
 \newenvironment{mandescription}{\paragraph{Description}\\\noindent}{} 

@@ -1,12 +1,19 @@
+SHELL=/bin/sh
 
-all:: manual 
+all:: manual-1
 
 MANPAGE=model/model.tex
 
 manual::
 	export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,3,section+,next,notoc*' '' '' '\def\manname{$(MANPAGE)}'
+	htlatex ../manual 'xhtml,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
 	$(RM) -f  manual.css
+	cp ../../html/manual.css manual.css
+
+manual-1:
+	@echo "running htlatex"
+	@export TEXINPUTS=`pwd`/../../src//:: ; \
+	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
 	cp ../../html/manual.css manual.css
 
 index: 
@@ -35,3 +42,5 @@ distclean::
 	@$(RM) manual.xref
 	@$(RM) *.aux
 	@$(RM) manual*.png
+
+clean	::
