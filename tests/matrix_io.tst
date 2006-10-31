@@ -103,7 +103,7 @@ if max(a1-a) > 1.e-1 then pause,end
 a=rand(n,n,'u');
 fd=fopen('TMPDIR/Mat',mode='w');
 text="// my title ";
-fd.print[a,'as_read'];
+fd.print[a,as_read=%t];
 fd.close[];
 
 // reread with exec ! 
