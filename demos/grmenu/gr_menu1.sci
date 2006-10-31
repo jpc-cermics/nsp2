@@ -156,7 +156,7 @@ function [sd1]=Thick(sd,del)
     ll=list()
     t=xget('thickness')
     ll(1)=list('Thickness',t,T);
-    [n1,lres,lrep]=x_choices('Choose a Thickness',ll);
+    [lrep,lres,n1]=x_choices('Choose a Thickness',ll);
     if n1==[] then 
       sd1=list()
     else
@@ -295,7 +295,7 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
    case 'params' then 
     colors=m2s(1:xget("lastpattern")+2,"%1.0f");
     lcols_bg=list('colors','Color',sd('color'),colors);
-    [rep,lres,lrep]=x_choices('color settings',list(lcols_bg));
+    [lrep,lres,rep]=x_choices('color settings',list(lcols_bg));
     if rep<>[] then
       sd('color')=rep;
     end
@@ -1099,7 +1099,7 @@ function [gr_options,edited]=gr_do_options(gr_options)
   l_fid=list('combo','fontId',gr_options.font+1,fontsIds);
   l_fiz=list('combo','fontsize',gr_options.font_size,fontsSiz);
   Lc = list(l_col,l_bg,l_fg,l_fid,l_fiz);
-  [rep,lres,lrep]=x_choices('GrMenu options',Lc,%t);
+  [lrep,lres,rep]=x_choices('GrMenu options',Lc,%t);
   if rep<>[] then
     gr_options=hcreate(color=rep(1),...
 		       background=rep(2),...
