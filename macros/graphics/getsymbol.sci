@@ -10,7 +10,7 @@ function rep=getsymbol(title)
   xch_l = list(lmid,lmsiz);
   entval=[lmid(2),lmsiz(2)];
   // rep=x_choices(title,xch_l)-[1;1];
-  [rep,lres,lrep]=x_choices(title,xch_l);
+  [lrep,lres,rep]=x_choices(title,xch_l);
   if isempty(lrep) then 
     rep=[];
   else 
