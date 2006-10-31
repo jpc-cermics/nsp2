@@ -463,15 +463,16 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     }
-  MoveObj(stack,1,NSP_OBJECT(M));
+  /* first returns the list */
+  MoveObj(stack,1,NSP_OBJECT(Res));
   if ( lhs >= 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
   if ( lhs == 3 )
     {
-      MoveObj(stack,3,NSP_OBJECT(Res));
+      MoveObj(stack,3,NSP_OBJECT(M));
     }
   else 
     {
-      nsp_list_destroy(Res);
+      nsp_matrix_destroy(M);
     }
   return Max(lhs,1); 
 }

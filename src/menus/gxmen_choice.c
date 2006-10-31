@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -411,6 +411,9 @@ static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm
       cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
       if (  Mm*Mn > 2 ) 
 	{
+	  /* install filters if present 
+	   *
+	   */
 	  int i;
 	  GtkFileFilter* filter ;
 	  for ( i=1; i < Mm*Mn ; i++) 
@@ -424,6 +427,14 @@ static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm
 	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
 	  gtk_file_filter_add_pattern(filter,"*");
 	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
+	}
+      if ( Mm*Mn > 1 && Ms[0] != '\0' ) 
+	{
+	  /* set default choice if given  
+	   * Ms[0] must be a name in current folder 
+	   * or a fullpathnanme 
+	   */
+	  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(cbox),Ms[0]); 
 	}
     }
   return cbox;

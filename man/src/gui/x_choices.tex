@@ -6,7 +6,7 @@
 %-- Calling sequence section
 \begin{calling_sequence}
   \begin{verbatim}
-    [rep,L]=x_choices(title,items [,flag])   
+    [Lres,L,rep]=x_choices(title,items [,flag])   
   \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -21,18 +21,22 @@
     where 
     \begin{itemize}
       \item[type] is a string among \verb+'combo'+, \verb+'entry'+,\verb+'matrix'+, 
-      \verb+'colors'+, \verb+'save'+, \verb+'open'+, \verb+'folder'+. 
-    \item[title] is a strign describing the entry. 
-    \item[def] is an integer which describes the default choice. \verb+def+ is ignored by \verb+'save'+ 
-      \verb+'load'+ and \verb+'folder'+. For \verb+'matrix'+, \verb+'def'+ gives the size of entry used for 
-      matrix edition.
-    \item[choices] is a string matrix giving the possible choices or one initial value. For an 
-      \verb+'open'+ entry it is a default answer followed be a list of file filters (See example below).
+      \verb+'colors'+, \verb+'save'+, \verb+'open'+, \verb+'folder'+,  \verb+'spin'+,  \verb+'range'+, .  . 
+    \item[title] is a string describing the entry. 
+    \item[def] is an integer which semantics depends on the type field. It is used to describe a default choice or set 
+      a default parameter. \verb+def+ is ignored by \verb+'save'+ 
+      \verb+'load'+, \verb+'folder'+ \verb+'spin'+ and \verb+'range'+. 
+      For \verb+'matrix'+, \verb+'def'+ gives the size of entry used for matrix edition.
+    \item[choices] is a string matrix or a vector of scalars giving the possible choices or one initial value. For an 
+      \verb+'open'+ entry it is a default answer followed be a list of file filters (See example below). For 
+      \verb+'spin'+ or \verb+'range'+ it is a vector used to specify the parameters of the spin or range widget.
     \end{itemize}
     \vname{flag} optional boolean which changes the way titles are displayed. 
     \vname{L} is a copy of verb+items+ but in which the default values are replaced by the user's choices. 
-    \vname{rep} is a column vector containing the user's choices when the choice is among a finite list and 
-    the value \verb+0+ in other cases.
+    \vname{Lres} is a list filed with the user answers or a null list in case of cancel.
+    \vname{rep} is a vector giving the user choices when this choice can be expressed as a scalar 
+    i.e in the \verb+'combo'+, \verb+'colors'+, \verb+'spin'+ and \verb+'range'+ cases. For other widgets 
+    the rep entry is not relevant.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
@@ -40,18 +44,28 @@
 \end{mandescription}
   %--example 
 \begin{examples}
-  \begin{program}
-    \HCode{
-    l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);\Hnewline
-    l2=list('entry','entry title',1,['initial']); // 1 is unused \Hnewline
-    l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size\Hnewline
-    l4=list('colors','colors choice 4',29,['']);\Hnewline
-    l5=list('save','file save',1,['foo.sav']); // initial value \Hnewline
-    l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter \Hnewline
-    l7=list('folder','choose a folder',1,['']); // answer, filter unused \Hnewline
-    L= list(l1,l2,l3,l4,l5,l6,l7);\Hnewline
-    [rep,L]=x_choices('Toggle Menu',L,\%t);\Hnewline
-    [rep,L]=x_choices('Toggle Menu',L,\%f);
+  \begin{program}\HCode{l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);\Hnewline
+      l2=list('entry','entry title',1,['initial']); // 1 is unused \Hnewline
+      l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size\Hnewline
+      l4=list('colors','colors choice 4',29,['']);\Hnewline
+      // here choices is used to give a default file name 
+      l5=list('save','file save',1,['foo.sav']); // initial value \Hnewline
+      // the default file name if given l6(4)(1) must be a valid full pathname.
+      l6=list('open','file open',1,['','*.eps','*.pdf']); // answer, filter \Hnewline
+      // 
+      l7=list('folder','choose a folder',1,['']); // answer, filter unused \Hnewline
+      L= list(l1,l2,l3,l4,l5,l6,l7);\Hnewline
+      [Lres,L]=x_choices('Toggle Menu',L,\%t);\Hnewline
+    }
+  \end{program}
+  \begin{program}\HCode{l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);\Hnewline
+      // v8=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] \Hnewline
+      v8=[5,0,100,0.5,10,20,3,3];    \Hnewline
+      l2=list('spin','double with spin',0,v8);// l(3) is unused\Hnewline
+      l3=list('range','double with range',0,v8);// l(3) is unused\Hnewline
+      L= list(l1,l2,l3);\Hnewline
+      [Lres,L]=x_choices('Toggle Menu',L,\%t);\Hnewline
+      [Lres,L]=x_choices('Toggle Menu',L,\%f);\Hnewline
     }
   \end{program}
 \end{examples}

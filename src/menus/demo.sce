@@ -4,7 +4,9 @@ function demo_xchoices(flag)
   l3=list('matrix','enter matrix',10,string(rand(6,2))); // l(3) is for entry size
   l3b=list('matrix','enter matrix',10,['A','B';'C','D']); // l(3) is for entry size
   l4=list('colors','colors choice 4',29,['']);
-  l5=list('save','file save',0,['foo.sav']); // initial value 
+  l5=list('save','file save',1,['foo.sav']); // initial value active must
+                                             // be set to 1 to use
+                                             // default value.
   l6=list('open','file open',0,['foo.rep','*.eps','*.pdf']); // answer, filter 
   l7=list('folder','choose a folder',1,['']);// answer, filter unused 
   // spin=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
@@ -12,12 +14,13 @@ function demo_xchoices(flag)
   l8=list('spin','double with spin',0,v8);// l(3) is unused
   l9=list('range','double with range',0,v8);// l(3) is unused
   L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8,l9);
-  [rep,L1]=x_choices('Toggle Menu',L,flag);
-  // XXX 
-  // Il faudrait pouvoir controler que L1==L 
-  // pour voir ce qui a changé 
-  // dans le save file foo.sav ne semble pas utilisé 
-  // dans matrix le 10 en entrée doit etre aussi renvoyé en sortie 
+  [Lres,L1,rep]=x_choices('Toggle Menu',L,flag);
+  // here L1==L can be used to detect which menu changed 
+  // L1 can be used in a subsequent call since it already contains 
+  // the changes. 
+  // Lres contains the results stored in list 
+  // rep contain the relevant results for the subset of gtk items 
+  // which are given by numbers i.e combo,colors,spin and ranges. 
 endfunction
 
 function demo_xchoose()
