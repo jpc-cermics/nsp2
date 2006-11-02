@@ -130,8 +130,8 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
       gtk_table_set_row_spacings (GTK_TABLE (table), 3);
       for ( i = 0 ; i < n ; i++) 
 	{
-	  if ( nsp_setup_combo_from_list(&combo_entry_array[i],mainbox,(NspList *) Loc->O,-1) == 
-	       choice_unknown )
+	  if ( 	  nsp_setup_combo_from_list(&combo_entry_array[i],table,(NspList *) Loc->O,i)==
+		  choice_unknown )
 	    {
 	      FREE(combo_entry_array);
 	      return menu_bad_argument;
