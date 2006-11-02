@@ -13,7 +13,10 @@ function demo_xchoices(flag)
   v8=[5,0,100,0.5,10,20,3,3];    
   l8=list('spin','double with spin',0,v8);// l(3) is unused
   l9=list('range','double with range',0,v8);// l(3) is unused
-  L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8,l9);
+  l10=list('button','Test recursion',0,list(l1,l3));// l(3) is unused
+  L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8,l9,l10);
+  L=list(l1,l10);
+  flag=%t;
   [Lres,L1,rep]=x_choices('Toggle Menu',L,flag);
   // here L1==L can be used to detect which menu changed 
   // L1 can be used in a subsequent call since it already contains 
@@ -21,7 +24,13 @@ function demo_xchoices(flag)
   // Lres contains the results stored in list 
   // rep contain the relevant results for the subset of gtk items 
   // which are given by numbers i.e combo,colors,spin and ranges. 
+  
+  // Attention si l'un de mots clefs est pas trouvé il faut un BUG REPORT
+  // !!!
+  
 endfunction
+
+
 
 function demo_xchoose()
   n=x_choose(['item1';'item2';'item3'],['that is a title';'for xchoose'])

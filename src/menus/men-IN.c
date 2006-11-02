@@ -116,6 +116,9 @@ int int_x_message(Stack stack, int rhs, int opt, int lhs)
   rep= nsp_message(Message,Buttons,&nrep);
   switch (rep) 
     {
+    case menu_bad_argument:
+      Scierror("Error: bad argument given to %s \n",NspFname(stack));
+      return RET_BUG;
     case menu_fail :
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
@@ -171,6 +174,9 @@ int int_x_choose(Stack stack, int rhs, int opt, int lhs)
   rep = nsp_choose(Items,Title,button,&nrep);
   switch (rep) 
     {
+    case menu_bad_argument:
+      Scierror("Error: bad argument given to %s \n",NspFname(stack));
+      return RET_BUG;
     case menu_fail :
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
@@ -201,6 +207,9 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
   rep= nsp_dialog(Title,Init,&Obj);
   switch (rep) 
     {
+    case menu_bad_argument:
+      Scierror("Error: bad argument given to %s \n",NspFname(stack));
+      return RET_BUG;
     case menu_fail :
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
@@ -255,6 +264,9 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 	  if ((O1=(NspObject *) nsp_smatrix_create(NVOID,0,0,"v",0))== NULLOBJ) return RET_BUG; 
 	  MoveObj(stack,1,O1);
 	  break;
+	case menu_bad_argument:
+	  Scierror("Error: bad argument given to %s \n",NspFname(stack));
+	  return RET_BUG;
 	case menu_fail: 
 	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
@@ -293,6 +305,9 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 	  if ((O1=(NspObject *) nsp_smatrix_create(NVOID,0,0,"v",0))== NULLOBJ) return RET_BUG; 
 	  MoveObj(stack,1,O1);
 	  break;
+	case menu_bad_argument:
+	  Scierror("Error: bad argument given to %s \n",NspFname(stack));
+	  return RET_BUG;
 	case menu_fail: 
 	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
@@ -387,6 +402,9 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 	{
 	case menu_cancel : res = def_res;break;
 	case menu_ok : 	free_f=2;break;
+	case menu_bad_argument:
+	  Scierror("Error: bad argument given to %s \n",NspFname(stack));
+	  return RET_BUG;
 	case menu_fail : 
 	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
@@ -462,6 +480,9 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
     case menu_fail: 
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
+    case menu_bad_argument:
+      Scierror("Error: bad argument given to %s \n",NspFname(stack));
+      return RET_BUG;
     }
   /* first returns the list */
   MoveObj(stack,1,NSP_OBJECT(Res));
@@ -505,6 +526,21 @@ static int nsp_check_choice(Stack stack,NspList *L)
       if ( !( IsMat(M3) && ((NspMatrix *)M3)->mn==8) ) 
 	{
 	  Scierror("Error: Argument should be a Matrix of size 8\n");
+	  Scierror("       while parsing a list argument (element 4)\n");
+	  return FAIL;
+	}
+    }
+  else if ( MS1->mn >= 1 && ( strcmp(MS1->S[0],"button") == 0 ))
+    {
+      if ( ! IsList(M3)) 
+	{
+	  Scierror("Error: Argument should be a List\n");
+	  Scierror("       while parsing a list argument (element 4)\n");
+	  return FAIL;
+	}
+      if ( nsp_check_choice_list(stack,(NspList *)M3) != OK ) 
+	{
+	  Scierror("Error: Argument list is incorrect\n");
 	  Scierror("       while parsing a list argument (element 4)\n");
 	  return FAIL;
 	}
