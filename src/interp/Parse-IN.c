@@ -18,7 +18,7 @@
  *
  * 
  * a set of system functions which can be called from nsp interpreter 
- *********************************************************************/
+ *------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -42,6 +42,7 @@ static function  int_error;
  * exec(...)
  * Interface to use parse eval functions at Scilab level
  * interfaced as exec function 
+ * [ok,H]=exec(...)
  */
 
 void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
@@ -54,32 +55,71 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 #endif
   char buf[FSIZE+1];
   NspObject *Ob;
+  NspHash *H,*E=NULL;
   char *fname= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
 		      { "echo",s_bool,NULLOBJ,-1},
+		      { "env", obj_check,NULLOBJ,-1},
 		      { "errcatch",s_bool,NULLOBJ,-1},
 		      { "pausecatch",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( rhs >=1 && IsNspPListObj(stack,1) ) 
     return int_execf(stack,rhs,opt,lhs);
-  if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&errcatch,&pausecatch) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
+    return RET_BUG;
   nsp_path_expand(fname,buf,FSIZE);
 #ifdef UPDATE_EXEC_DIR
   Sciprintf("Initial (%s,%s) ",dir,buf);
   strncpy(old,dir,FSIZE);
   update_exec_dir(fname,dir,buf,FSIZE);
   Sciprintf("Updated to %s and file = %s\n",dir,buf);
-#endif 
-  rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+#endif
+ 
+  if ( lhs == 2 ||  E != NULL )
+    {
+      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      if ( E != NULL) 
+	{
+	  if ( nsp_frame_insert_hash_contents(E) == FAIL) 
+	    {
+	      Scierror("Error: inserting values in environement failed\n");
+	      nsp_frame_delete();
+	      return RET_BUG; 
+	    }
+	}
+      rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+      if ( rep < 0 ) 
+	{
+	  nsp_frame_delete();
+	  if ( errcatch == FALSE ) return RET_BUG; 
+	}
+      if ( lhs == 2 )
+	{
+	  if ((H=nsp_current_frame_to_hash())==NULLHASH) 
+	    {
+	      nsp_frame_delete();
+	      return RET_BUG;
+	    }
+	}
+    }
+  else 
+    {
+      rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+    }
+
 #ifdef UPDATE_EXEC_DIR
   strncpy(dir,old,FSIZE);
 #endif
   if ( rep < 0 && errcatch == FALSE ) return RET_BUG;
   if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Ob);
-  return 1;
+  if ( lhs == 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(H));
+    }
+  return Max(1,lhs);
 }
 
 /*
@@ -94,21 +134,62 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 
 static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 {
+  NspHash *H,*E=NULL;
   NspObject *Ob;
   NspSMatrix *S= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
   int_types T[] = {smat,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
 		      { "echo",s_bool,NULLOBJ,-1},
+		      { "env", obj_check,NULLOBJ,-1},
 		      { "errcatch",s_bool,NULLOBJ,-1},
 		      { "pausecatch",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&S,&opts,&display,&echo,&errcatch,&pausecatch) == FAIL) return RET_BUG;
-  rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+  if ( GetArgs(stack,rhs,opt,T,&S,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
+    return RET_BUG;
+
+  if ( lhs == 2 ||  E != NULL )
+    {
+      /* evaluate the string in a new frame and returns the 
+       * frame as an hash table 
+       */
+      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      if ( E != NULL) 
+	{
+	  if ( nsp_frame_insert_hash_contents(E) == FAIL) 
+	    {
+	      Scierror("Error: inserting values in environement failed\n");
+	      nsp_frame_delete();
+	      return RET_BUG; 
+	    }
+	}
+      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+      if ( rep < 0 ) 
+	{
+	  nsp_frame_delete();
+	  if ( errcatch == FALSE ) return RET_BUG; 
+	}
+      if ( lhs == 2 )
+	{
+	  if ((H=nsp_current_frame_to_hash())==NULLHASH) 
+	    {
+	      nsp_frame_delete();
+	      return RET_BUG;
+	    }
+	}
+    }
+  else 
+    {
+      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+    }
   if ( rep < 0 && errcatch == FALSE ) return RET_BUG;
   if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Ob);
-  return 1;
+  if ( lhs == 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(H));
+    }
+  return Max(1,lhs);
 }
 
 /*
