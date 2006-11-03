@@ -23,6 +23,7 @@
 #include <string.h>
 #include "nsp/interf.h"
 #include "nsp/datas.h"
+#include "frame.h"
 
 extern NspObject *Reserved;
 
@@ -189,11 +190,8 @@ static int int_who(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(-1,0);
   CheckLhs(1,1);
   /* get current frame and return it as a hash table */
-  if ( Datas == NULLLIST ) 
-    {
-      return RET_BUG;
-    }
-  if ((H = nsp_hcreate_from_list(NVOID,-1,(NspList *) Datas->first->O))== NULLHASH) return RET_BUG;
+  if ( Datas == NULLLIST ) return RET_BUG;
+  if ((H= nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULLHASH) return RET_BUG;
   MoveObj(stack,1,(NspObject *) H);
   return 1;
 }
@@ -229,6 +227,19 @@ static int int_frames_flag(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
+static int int_frame_to_hash(Stack stack, int rhs, int opt, int lhs)
+{
+  NspHash *H;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((H=nsp_current_frame_to_hash()) == NULLHASH) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+}
+
+
+
 /*
  * The Interface for basic datas operations 
  */
@@ -242,6 +253,7 @@ static OpTab Datas_func[]={
   {"insert_env",int_insert_env},
   {"who",int_who},
   {"frames_inhibit_search",int_frames_flag},
+  {"frame_to_hash",int_frame_to_hash},
   {(char *) 0, NULL}
 };
 

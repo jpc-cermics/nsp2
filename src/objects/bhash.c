@@ -473,7 +473,7 @@ NspBHash  *GetBHash(Stack stack, int i)
  * constructor 
  *-----------------------------------------------------*/
 
-NspBHash *nsp_bhash_create(char *name, unsigned int size)
+NspBHash *nsp_bhash_create(const char *name, unsigned int size)
 {
   return(nsp_bhcreate(name,size));
 } 
@@ -482,7 +482,7 @@ NspBHash *nsp_bhash_create(char *name, unsigned int size)
  * copy 
  */
 
-NspBHash *nsp_bhash_copy(NspBHash *H)
+NspBHash *nsp_bhash_copy(const NspBHash *H)
 {
   unsigned int i;
   NspBHash *Loc;
@@ -1466,7 +1466,7 @@ static int isprime(unsigned int number)
  * Return value: a #NspBHash object or %NULLBHASH
  **/
 
-NspBHash *nsp_bhcreate(char *name, unsigned int nel)
+NspBHash *nsp_bhcreate(const char *name, unsigned int nel)
 {
   NspBHash *H = new_bhash();
   BHash_Entry *htable;
