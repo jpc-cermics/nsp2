@@ -380,7 +380,7 @@ main(int argc, char **argv)
     debug = FALSE, geometry = TRUE, dbuffer = TRUE,
     console = FALSE, scroll = FALSE, keep = FALSE,
     icon_title = FALSE;
-  long lines = 100;
+  long lines = 5000;
   const char *message = "Launching interactive shell...\r\n";
   const char *font = NULL;
   const char *terminal = NULL;
@@ -477,7 +477,7 @@ main(int argc, char **argv)
     case 'n':
       lines = atol(optarg);
       if (lines == 0) {
-	lines = 100;
+	lines = 5000;
       }
       break;
     case 's':
