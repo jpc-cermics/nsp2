@@ -410,7 +410,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) goto ret_bug;
+  if (( Rep =nsp_create_object_from_str(NVOID,res))==NULLOBJ ) goto ret_bug;
   MoveObj(stack,1,Rep);
   if (title_utf8 != NULL&& title_utf8 != title ) g_free (title_utf8);
   return 1;

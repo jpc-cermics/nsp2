@@ -404,7 +404,7 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
 	{
 	  nsp_string str;
 	  if ((str=nsp_smatrix_elts_concat(A,row,1,col,1)) == NULL) return RET_BUG;
-	  rep =nsp_create_object_from_str(str);
+	  rep =nsp_create_object_from_str(NVOID,str);
 	  nsp_string_destroy(&str);
 	}
       else 
@@ -418,14 +418,14 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
     {
       nsp_string str;
       if ((str=nsp_smatrix_elts_concat(A,sep,1,sep,1)) == NULL) return RET_BUG;
-      rep =nsp_create_object_from_str(str);
+      rep =nsp_create_object_from_str(NVOID,str);
       nsp_string_destroy(&str);
     }
   else 
     { 
       nsp_string str;
       if ((str=nsp_smatrix_elts_concat(A,sep,0,sep,0)) == NULL) return RET_BUG;
-      rep =nsp_create_object_from_str(str);
+      rep =nsp_create_object_from_str(NVOID,str);
       nsp_string_destroy(&str);
     }
     

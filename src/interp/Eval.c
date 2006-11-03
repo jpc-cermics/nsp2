@@ -885,7 +885,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
       break;
     case STRING:
       if (debug) Sciprintf("==>\"%s\"\n",(char *) L->O);
-      if ( (OM=nsp_create_object_from_str((char *) L->O)) == NULLOBJ) return RET_BUG;
+      if ( (OM=nsp_create_object_from_str(NVOID,(char *) L->O)) == NULLOBJ) return RET_BUG;
       stack.val->S[first] = OM;
       return 1;
       break;

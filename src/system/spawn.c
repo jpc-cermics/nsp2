@@ -370,7 +370,7 @@ static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
     }
   if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
   if ((str_res = send_maxima_string(self,str))== NULL) return RET_BUG;
-  if ((Res = nsp_create_object_from_str(str_res)) == NULL) 
+  if ((Res = nsp_create_object_from_str(NVOID,str_res)) == NULL) 
     {
       nsp_string_destroy(&str_res);
       return RET_BUG;

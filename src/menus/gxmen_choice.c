@@ -736,7 +736,7 @@ static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
 	  fname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(array[i].widget));
 	  if ( fname == NULL) fname = fname_def;
 	  if ( nsp_smatrix_set_first(Ms,fname) == FAIL) goto err;
-	  if (( Ob = nsp_create_object_from_str(fname)) == NULLOBJ ) goto err;
+	  if (( Ob = nsp_create_object_from_str("X",fname)) == NULLOBJ ) goto err;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
 	  if ( fname != fname_def ) g_free(fname);
 	  break;
@@ -750,7 +750,7 @@ static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
 	  fname1 = g_object_get_data (G_OBJECT(array[i].widget),"filename");
 	  if (fname1 == NULL) fname1 = fname_def;
 	  if  ( nsp_smatrix_set_first(Ms,fname1) == FAIL) return NULLLIST;
-	  if (( Ob = nsp_create_object_from_str(fname1)) == NULLOBJ ) return NULLLIST;
+	  if (( Ob = nsp_create_object_from_str("X",fname1)) == NULLOBJ ) return NULLLIST;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
 	  break;
 	case choice_entry :
@@ -766,7 +766,7 @@ static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
 	      {
 		if  ( nsp_smatrix_set_first(Ms,text) == FAIL) return NULLLIST;
 	      }
-	    if (( Ob = nsp_create_object_from_str(Ms->S[0])) == NULLOBJ ) return NULLLIST;
+	    if (( Ob = nsp_create_object_from_str("X",Ms->S[0])) == NULLOBJ ) return NULLLIST;
 	    if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
 	  }
 	  break;
@@ -833,7 +833,7 @@ static NspList *nsp_combo_extract_choices(NspList *L)
 	case choice_chooser_open_file:
 	case choice_chooser_open_folder:
 	  fname = Ms->S[0];
-	  if (( Ob = nsp_create_object_from_str(fname)) == NULLOBJ ) goto err;
+	  if (( Ob = nsp_create_object_from_str("X",fname)) == NULLOBJ ) goto err;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
 	  break;
 	err: 
@@ -843,11 +843,11 @@ static NspList *nsp_combo_extract_choices(NspList *L)
 	case choice_button_open_file:
 	case choice_button_open_folder:
 	  fname1 = Ms->S[0];
-	  if (( Ob = nsp_create_object_from_str(fname1)) == NULLOBJ ) return NULLLIST;
+	  if (( Ob = nsp_create_object_from_str("X",fname1)) == NULLOBJ ) return NULLLIST;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
 	  break;
 	case choice_entry :
-	  if (( Ob = nsp_create_object_from_str(Ms->S[0])) == NULLOBJ ) return NULLLIST;
+	  if (( Ob = nsp_create_object_from_str("X",Ms->S[0])) == NULLOBJ ) return NULLLIST;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
 	  break;
 	case choice_spin_button:

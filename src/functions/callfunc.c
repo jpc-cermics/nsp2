@@ -101,6 +101,7 @@ extern  sci_interface  Scicos_Interf ;extern  interface_info  Scicos_Interf_Info
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
 extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
 extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
+extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
 
 
 #ifdef WITH_UMFPACK 
@@ -180,6 +181,8 @@ InterfTab Interfaces[]={
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},
 #endif
+  {premiamodel_Interf , premiamodel_Interf_Info},
+
   {NULL,NULL}
 }; 
 

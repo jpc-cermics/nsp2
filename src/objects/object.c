@@ -907,8 +907,8 @@ int int_object_type(Stack stack, int rhs, int opt, int lhs)
       if ((mode= GetStringInArray(stack,2,mode_Table,1)) == -1) return RET_BUG; 
       switch (mode )
 	{
-	case 0: if ((ret =nsp_create_object_from_str((Ob)->type->sh_type(Ob)))== NULLOBJ) return RET_BUG;break;
-	case 1: if ((ret =nsp_create_object_from_str((Ob)->type->s_type()))== NULLOBJ) return RET_BUG;break;
+	case 0: if ((ret =nsp_create_object_from_str(NVOID,(Ob)->type->sh_type(Ob)))== NULLOBJ) return RET_BUG;break;
+	case 1: if ((ret =nsp_create_object_from_str(NVOID,(Ob)->type->s_type()))== NULLOBJ) return RET_BUG;break;
 	}
     }
   else 

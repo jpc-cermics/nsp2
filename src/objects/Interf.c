@@ -604,7 +604,7 @@ static NspList *BuildListFromArgs_1(int_types **T,va_list *ap)
 	  break;
 	case string :  
 	case stringcopy:
-	  if ((O =nsp_create_object_from_str(va_arg(*ap, char *))) == NULLOBJ ) return NULLLIST;
+	  if ((O =nsp_create_object_from_str(NVOID,va_arg(*ap, char *))) == NULLOBJ ) return NULLLIST;
 	  if ( Ocheckname(O,NVOID) )
 	    {
 	      if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;

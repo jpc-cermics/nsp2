@@ -1686,11 +1686,11 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 	{
 	case SF_C:
 	  char_buf[i-1][nc[i-1]]='\0';
-	  NthObj(i)=nsp_create_object_from_str(char_buf[i-1]);
+	  NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
 	  /* Sciprintf("read [%s]\n",char_buf[i-1]); **/
 	  break;
 	case SF_S:
-	  NthObj(i)=nsp_create_object_from_str(char_buf[i-1]);
+	  NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
 	  break;
 	case SF_LUI:
 	  dval = *((unsigned long int*) ptrtab[i-1]);

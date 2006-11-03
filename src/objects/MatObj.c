@@ -1632,9 +1632,7 @@ int_mxrand (Stack stack, int rhs, int opt, int lhs)
 	    {
 	    case 0:		/* rand('info'); * */
 	      type = nsp_get_urandtype ();
-	      if ((O =
-		   nsp_create_object_from_str (type ==
-					       0 ? "uniform" : "normal")) ==
+	      if ((O = nsp_create_object_from_str(NVOID, type == 0 ? "uniform" : "normal")) ==
 		  NULLOBJ)
 		return RET_BUG;
 	      MoveObj (stack, 1, O);

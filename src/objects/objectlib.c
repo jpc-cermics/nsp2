@@ -486,6 +486,7 @@ NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d)
 
 /**
  *nsp_create_object_from_str:
+ * @name: name of object
  * @str:  string to use to fill the object 
  * 
  * Creates a 1x1 string matrix filled with string @str.
@@ -493,9 +494,9 @@ NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d)
  * Return value:  a new #NspObject ( in fact a #NspSMatrix)
  **/
 
-NspObject *nsp_create_object_from_str(const char *str)
+NspObject *nsp_create_object_from_str(const char *name,const char *str)
 {
-  return (NspObject *) nsp_smatrix_create(NVOID,1,1,str,1);
+  return (NspObject *) nsp_smatrix_create(name,1,1,str,1);
 }
 
 /**
