@@ -181,8 +181,9 @@ InterfTab Interfaces[]={
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},
 #endif
+#ifdef WITH_PREMIA
   {premiamodel_Interf , premiamodel_Interf_Info},
-
+#endif
   {NULL,NULL}
 }; 
 
