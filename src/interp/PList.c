@@ -941,6 +941,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case FUNCTION:
+	  /* Sciprintf("function arity %d\n",L->arity); */
 	  PRINTTAG("function");
 	  _nsp_plist_pretty_print_arg(List,1,pos,newpos+1);
 	  Sciprintf("\n");
@@ -1111,6 +1112,8 @@ static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int 
 
 /* One Arg Pretty print **/
 
+/* #define WITH_SYMB_TABLE 1  */
+
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
 {
   if ( L == NULLPLIST ) 
@@ -1134,6 +1137,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       return pos+Sciprintf1(i,"'%s'",(char *) L->O);
       break;
     case OBJECT :
+      /* ignore */
       break;
     case STRING:
       return pos+Sciprintf1(i,"\"%s\"",(char *) L->O);

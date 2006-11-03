@@ -20,7 +20,7 @@
 #define FALSE 0
 #endif
 
-typedef enum { menu_ok , menu_cancel, menu_fail } menu_answer; 
+typedef enum { menu_ok , menu_cancel, menu_fail, menu_bad_argument} menu_answer; 
 
 /* choose */
 

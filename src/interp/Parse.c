@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -35,6 +35,7 @@
 #include "../system/files.h" /* FSIZE */
 #include "Functions.h" 
 #include "Eval.h"
+#include "../objects/frame.h" /* to be moved in include */
 
 #include <signal.h>
 #include <setjmp.h>
@@ -463,7 +464,8 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
       return rep;
     }
   rep = RET_OK;
-  L= (NspList *) Datas->first->O;
+  /* explore current frame and store objects in files */
+  L= (NspList *) ((NspFrame *) Datas->first->O)->vars;
   C= L->first;
   while ( C != NULLCELL)
     {

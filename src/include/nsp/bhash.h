@@ -70,8 +70,8 @@ NspBHash *new_bhash();
 
 #define NULLBHASH (NspBHash*) 0
 
-extern NspBHash *nsp_bhash_create(char *name, unsigned int size);
-extern NspBHash *nsp_bhash_copy(NspBHash *H);
+extern NspBHash *nsp_bhash_create(const char *name, unsigned int size);
+extern NspBHash *nsp_bhash_copy(const NspBHash *H);
 extern void nsp_bhash_destroy(NspBHash *H);
 extern void nsp_bhash_info(NspBHash *H, int indent,char *name, int rec_level);
 extern void nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level);
@@ -118,7 +118,7 @@ typedef enum {
 
 extern int nsp_bhsearch (NspBHash *H, char *key,int *val,BHashOperation action);
 extern NspBHash *nsp_bhcreate_from_list(char *name,unsigned int nel, NspList *L);
-NspBHash *nsp_bhcreate(char *name, unsigned int nel);
+NspBHash *nsp_bhcreate(const char *name, unsigned int nel);
 extern void nsp_bhdestroy (NspBHash *H);
 
 #endif

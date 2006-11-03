@@ -29,7 +29,7 @@
 #include "nsp/plisttoken.h" /*for name_maxl **/
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
-
+#include "../objects/frame.h"
 #include "Functions.h" 
 #include "LibsTab.h" 
 #include "Eval.h" 
@@ -951,7 +951,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
     case WHO:
       Sciprintf("command without arguments\n");
       if ( Datas == NULLLIST ) return RET_BUG;
-      if ((OM = (NspObject *) nsp_hcreate_from_list(NVOID,-1,(NspList *) Datas->first->O))== NULL) 
+      if ((OM= (NspObject *) nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULL) 
 	return RET_BUG;
       stack.val->S[first] = OM;
       return 1;
@@ -2781,6 +2781,22 @@ void nsp_void_seq_object_destroy(Stack stack,int from, int to)
 }
 
 
+
+/**
+ * nsp_eval_maybe_accelerated_op:
+ * @opname: 
+ * @msuffix: 
+ * @tab: 
+ * @stack: 
+ * @first: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab,
 				  Stack stack, int first, int rhs, int opt, int lhs)

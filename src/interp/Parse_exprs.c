@@ -84,7 +84,7 @@ static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist);
 
 static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList plist);
 
-/* #define WITH_SYMB_TABLE 1*/
+/* #define WITH_SYMB_TABLE 1  */
 
 #ifdef  WITH_SYMB_TABLE 
 static int nsp_parse_symbols_table_set_id(NspHash *symb_table) ;
