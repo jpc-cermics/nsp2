@@ -411,8 +411,10 @@ static AttrTab spawn_attrs[] = {
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+/* the call is in fact in System-IN.c XXXXX */
+
 static OpTab spawn_func[]={
-  { "spawn_create", int_spawn_create},
+  { "spawn", int_spawn_create},
   { NULL, NULL}
 };
 
@@ -549,7 +551,7 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointer data )
 {
   NspSpawn *S=data;
-  gsize bytes_read;
+  gsize bytes_read=0;
   char  buf[1024];
   GIOStatus status;
   if (condition & (G_IO_IN | G_IO_PRI))
@@ -562,6 +564,7 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
 	  if ( S->obj->out == NULL) 
 	    S->obj->out = nsp_smatrix_create(NVOID,0,0,NULL,0);
 	  buf[bytes_read]='\0';
+	  /* Sciprintf("{%s}",buf); */
 	  if ( S->obj->prompt_check == NULL) 
 	    {
 	      Sciprintf("%s",buf);
@@ -622,7 +625,17 @@ nsp_string send_maxima_string(NspSpawn *H,const char *str)
   if ( status != G_IO_STATUS_NORMAL) 
     {
       fprintf(stderr,"something wrong when sending characters to child\n");
+      return NULL;
     }
+  /* 
+     status = g_io_channel_flush( H->obj->channel_in,NULL);
+     if ( status != G_IO_STATUS_NORMAL) 
+     {
+     fprintf(stderr,"something wrong when sending characters to child\n");
+     return NULL;
+     }
+  */
+
   gtk_main();
   if ( H->obj->out_smat == FALSE) return NULL;
   res = nsp_smatrix_elts_concat(H->obj->out,NULL,0,NULL,0);

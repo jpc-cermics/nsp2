@@ -367,11 +367,12 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
   return Max(lhs,1);
 }
 
+/* XXX */
+int int_spawn_create(Stack stack,int rhs,int opt,int lhs);
+
 /*
  * The Interface for system functions 
  */ 
-
-static int int_spawn_create(Stack stack,int rhs,int opt,int lhs) ;
 
 static OpTab System_func[]={
   {"chdir", int_syscd},
@@ -387,7 +388,7 @@ static OpTab System_func[]={
   {"system",int_system},
   {"realtime",int_realtime},
   {"realtimeinit",int_realtime_init},
-  {"spawn",int_spawn_create},
+  { "spawn", int_spawn_create},
   {(char *) 0, NULL}
 };
 
