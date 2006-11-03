@@ -171,53 +171,6 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
   return(Loc);
 }
 
-/* NspMatrix *nsp_matrix_create_impl(double first, double step, double last) */
-/* { */
-/*   int i; */
-/*   NspMatrix *Loc; */
-/*   double vals = first; */
-/*   int count=0; */
-/*   double TEN_EPS = 1.e-15; */
-
-/*   if ( (first < last && step < 0 ) || (first > last && step > 0 ) || step == 0.0) */
-/*     { */
-/*       Loc = nsp_matrix_create(NVOID,'r',(int) 0,(int) 0); */
-/*       return Loc; */
-/*     } */
-
-/*   /\* tentative d'optimisation... *\/ */
-/*   if ( floor(first) == first  &&  floor(step) == step  &&  floor(last) == last ) */
-/*     { */
-/*       int ifirst = (int) first, istep = (int) step, ilast = (int) last; */
-/*       count = 1 + (ilast-ifirst)/istep; */
-/*       if ( (Loc =nsp_matrix_create(NVOID,'r', 1, count)) == NULLMAT ) */
-/* 	return NULLMAT; */
-/*       Loc->convert = 'i'; */
-/*       Loc->I[0] = ifirst; */
-/*       for ( i=1 ; i < count ; i++ ) */
-/* 	Loc->I[i] = Loc->I[i-1] + istep; */
-/*     } */
-/*   else */
-/*     { */
-/*       count = 1 + (int) ((last-first)/step); */
-/*       vals = first + count*step; */
-/*       if ( step > 0 ) */
-/* 	{ */
-/* /\* 	  if ( vals -last <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++; *\/ */
-/* 	  if ( vals -last <  (last-first)*TEN_EPS ) count++; */
-/* 	} */
-/*       else */
-/* 	{ */
-/* /\* 	  if ( last - vals <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++; *\/ */
-/* 	  if ( last - vals <  (first-last)*TEN_EPS) count++; */
-/* 	} */
-/*       if ( (Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) count)) == NULLMAT ) */
-/* 	return NULLMAT; */
-/*       for ( i=0 ; i < count; i++) */
-/* 	Loc->R[i] = first + ((double) i)*step; */
-/*     } */
-/*   return Loc; */
-/* } */
 
 /**
  * nsp_matrix_create_linspace:
