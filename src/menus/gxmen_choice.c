@@ -863,7 +863,8 @@ static NspList *nsp_combo_extract_choices(NspList *L)
 	case choice_button:
 	  if (( Ob = (NspObject *) nsp_combo_extract_choices((NspList *)Ms)) == NULLOBJ )
 	    return NULLLIST;
-	  if ( nsp_list_end_insert(Res,Ob) == FAIL)return NULLLIST;
+	  if (nsp_object_set_name(Ob,"le") == FAIL) return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
 	  break;
 	}
       Loc= Loc->next;
