@@ -7,7 +7,7 @@ function demo_xchoices(flag)
   l5=list('save','file save',1,['foo.sav']); // initial value active must
                                              // be set to 1 to use
                                              // default value.
-  l6=list('open','file open',0,['foo.rep','*.eps','*.pdf']); // answer, filter 
+  l6=list('open','file open',0,['','*.eps','*.pdf']); // answer, filter 
   l7=list('folder','choose a folder',1,['']);// answer, filter unused 
   // spin=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
   v8=[5,0,100,0.5,10,20,3,3];    
@@ -15,7 +15,7 @@ function demo_xchoices(flag)
   l9=list('range','double with range',0,v8);// l(3) is unused
   l10=list('button','Test recursion',0,list(l1,l3));// l(3) is unused
   L= list(l1,l2,l3,l3b,l4,l5,l6,l7,l8,l9,l10);
-  L=list(l1,l10);
+//  L=list(l1,l10);
   [Lres,L1,rep]=x_choices('Toggle Menu',L,flag);
   // here L1==L can be used to detect which menu changed 
   // L1 can be used in a subsequent call since it already contains 

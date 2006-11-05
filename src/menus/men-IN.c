@@ -437,22 +437,22 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   Cell *Loc;
   int count=0,m,use_table = FALSE;
   NspMatrix *M=NULL;
-  NspSMatrix *Title;
-  NspList *ListItems,*Res ; 
-  nsp_string title; 
+  NspSMatrix *Title=NULL;
+  NspList *ListItems=NULL,*Res=NULL ; 
+  nsp_string title=NULL; 
   CheckRhs(2,3);
   CheckLhs(0,3);
-  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
+  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) goto err;
+  if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) goto err;
   if ( rhs == 3 ) 
     {
-     if ( GetScalarBool (stack,3,&use_table) == FAIL) return RET_BUG;
+     if ( GetScalarBool (stack,3,&use_table) == FAIL) goto err;
     }
-  if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) return RET_BUG;
+  if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) goto err;
 
   /* walk throught list, check if its OK and convert to Utf8 */
 
-  if (  nsp_check_choice_list(stack,ListItems) == FAIL) return RET_BUG;
+  if (  nsp_check_choice_list(stack,ListItems) == FAIL) goto err;
 
   /* run the widget */
 
@@ -462,7 +462,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
     case menu_ok :
       /* walk throught list and collect results */
       m =nsp_list_length(ListItems);
-      if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) return RET_BUG; 
+      if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) goto err; 
       /* walk though the list */ 
       Loc = ListItems->first;
       count = 0;
@@ -475,18 +475,26 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 	}
       break;
     case menu_cancel :
-      if ((M= nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) return RET_BUG; 
+      if ((M= nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) goto err; 
       break;
     case menu_fail: 
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
-      return RET_BUG;
+      goto err;
     case menu_bad_argument:
       Scierror("Error: bad argument given to %s \n",NspFname(stack));
-      return RET_BUG;
+      goto err;
     }
   /* first returns the list */
+  nsp_string_destroy(&title);
   MoveObj(stack,1,NSP_OBJECT(Res));
-  if ( lhs >= 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
+  if ( lhs >= 2 ) 
+    {
+      NSP_OBJECT(ListItems)->ret_pos = 2;
+    }
+  else 
+    {
+      nsp_list_destroy(ListItems);
+    }
   if ( lhs == 3 )
     {
       MoveObj(stack,3,NSP_OBJECT(M));
@@ -496,6 +504,12 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       nsp_matrix_destroy(M);
     }
   return Max(lhs,1); 
+ err:
+  if (title != NULL) nsp_string_destroy(&title);
+  nsp_matrix_destroy(M);
+  nsp_list_destroy(Res);
+  return RET_BUG;
+  
 }
 
 /*

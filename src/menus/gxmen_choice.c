@@ -91,7 +91,7 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
   int result ;
   menu_answer answer;
   Cell *Loc= L->first;
-  nsp_choice_array *combo_entry_array;
+  nsp_choice_array *combo_entry_array=NULL;
 
   start_sci_gtk(); /* be sure that gtk is started */
 
@@ -186,7 +186,6 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 	    /* 	    if ((*Res = nsp_combo_gather_choices(L,combo_entry_array))==NULLLIST) answer=menu_fail; */
 	    if ((*Res = nsp_combo_extract_choices(L))==NULLLIST) answer=menu_fail;
 	  }
-	FREE(combo_entry_array);
 	break;
       default:
 	answer = menu_cancel;
@@ -196,6 +195,7 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 	  }
 	break;
     }
+  FREE(combo_entry_array);
   gtk_widget_destroy(window);
   return answer;
 }
@@ -1063,14 +1063,11 @@ static int nsp_scale_get_value(GtkWidget *scale,NspMatrix *M)
 static void button_clicked(GtkWidget *widget, void *Obj)
 {
   menu_answer ans;
-  NspList *Res;
-  ans=nsp_choices_with_combobox("Test",Obj,&Res,FALSE);
+  ans=nsp_choices_with_combobox("Test",Obj,NULL,FALSE);
   switch (ans) 
     {
     case menu_ok:
     case menu_cancel:
-      g_object_set_data(G_OBJECT(widget),"res",Res);
-      break;
     case menu_fail: 
     default:
       break;
