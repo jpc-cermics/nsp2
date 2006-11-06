@@ -2199,31 +2199,46 @@ int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B)
 	{
 	  if ( B->rc_type == 'r') 
 	    {
-	      for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i],B->R[i]);
+	      Boolean rflag = TRUE;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{
+		  if ( rflag )
+		    if ( A->R[i] >= 0.0 )
+		      A->R[i] = pow(A->R[i],B->R[i]);
+		    else if ( floor(B->R[i]) == B->R[i] ) /* exposant is integer => result is still real */
+		      A->R[i] = nsp_pow_di(A->R[i],(int) B->R[i]);
+		    else
+		      {
+			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
+			nsp_pow_cd(&A->C[i],B->R[i],&A->C[i]);
+			rflag = FALSE;
+		      }
+		  else
+		    nsp_pow_cd_or_ci(&A->C[i],B->R[i],&A->C[i]);
+		}
 	    }
 	  else 
 	    {
-	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
-	      for ( i = 0 ; i < A->mn ; i++ )nsp_pow_dc(A->C[i].r,&B->C[i],&A->C[i]);
+	      if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		nsp_pow_dc(A->C[i].r,&B->C[i],&A->C[i]);
 	    }
 	}
       else
 	{
 	  if ( B->rc_type == 'r') 
-	    {
-	      for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd(&A->C[i],B->R[i],&A->C[i]);
-	    }
+	    for ( i = 0 ; i < A->mn ; i++ )
+	      nsp_pow_cd_or_ci(&A->C[i],B->R[i],&A->C[i]);
 	  else 
-	    {
-	      for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cc(&A->C[i],&B->C[i],&A->C[i]);
-	    }
+	    for ( i = 0 ; i < A->mn ; i++ )
+	      nsp_pow_cc(&A->C[i],&B->C[i],&A->C[i]);
 	}
-      return(OK);
+      return OK;
     }
   else 
     {
       Scierror("Error:\tArguments must have the same size\n");
-      return(FAIL);
+      return FAIL;
     }
 }
 
@@ -2236,26 +2251,53 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
     {
       if ( B->rc_type == 'r') 
 	{
-	  for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i],B->R[0]);
+	  if ( B->R[0] == 2.0 )
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= A->R[i];
+	  else if ( B->R[0] == 3.0 )
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = A->R[i]*A->R[i]*A->R[i];
+	  else if ( floor(B->R[0]) == B->R[0] )
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int)B->R[0]);
+	  else   /* A.^p  with p real */
+	    {
+	      Boolean rflag = TRUE;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{
+		  if ( rflag )
+		    if ( A->R[i] >= 0.0 )
+		      A->R[i] = pow(A->R[i],B->R[0]);
+		    else
+		      {
+			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
+			nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
+			rflag = FALSE;
+		      }
+		  else
+		    nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
+		}
+	    }
 	}
       else 
 	{
-	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
-	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_dc(A->C[i].r,&B->C[0],&A->C[i]);
+	  if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) nsp_pow_dc(A->C[i].r,&B->C[0],&A->C[i]);
 	}
     }
   else
     {
       if ( B->rc_type == 'r') 
 	{
-	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
+	  if ( B->R[0] == 2.0 )
+	    for ( i = 0 ; i < A->mn ; i++ ) nsp_prod_c(&A->C[i],&A->C[i]);
+	  else if ( floor(B->R[0]) == B->R[0] )
+	    for ( i = 0 ; i < A->mn ; i++ ) nsp_pow_ci(&A->C[i],(int) B->R[0],&A->C[i]);
+	  else
+	    for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
 	}
       else 
-	{
-	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cc(&A->C[i],&B->C[0],&A->C[i]);
-	}
+	for ( i = 0 ; i < A->mn ; i++ )
+	  nsp_pow_cc(&A->C[i],&B->C[0],&A->C[i]);
     }
-  return(OK);
+  return OK;
 }
 
 /* scalar case  a(i,j)=b**a(i,j) */ 
@@ -2267,12 +2309,33 @@ int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
     {
       if ( B->rc_type == 'r') 
 	{
-	  for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(B->R[0],A->R[i]);
+	  if ( B->R[0] >= 0.0 )
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(B->R[0],A->R[i]);
+	  else
+	    {
+	      Boolean rflag = TRUE;
+	      doubleC B_complexified = {1.0, 0.0};
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{
+		  if ( rflag )
+		    if ( floor(A->R[i]) == A->R[i] ) /* exposant is integer => result is still real */
+			A->R[i] = nsp_pow_di(B->R[0],(int) A->R[i]);
+		    else
+		      {
+			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
+			B_complexified.r = B->R[0];
+			nsp_pow_cd(&B_complexified,A->C[i].r,&A->C[i]);
+			rflag = FALSE;
+		      }
+		  else
+		    nsp_pow_cd_or_ci(&B_complexified,A->C[i].r,&A->C[i]);
+		}
+	    }
 	}
       else 
 	{
 	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
-	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd(&B->C[0],A->C[i].r,&A->C[i]);
+	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd_or_ci(&B->C[0],A->C[i].r,&A->C[i]);
 	}
     }
   else
@@ -2286,7 +2349,7 @@ int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
 	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cc(&B->C[i],&A->C[i],&A->C[0]);
 	}
     }
-  return(OK);
+  return OK;
 }
 
 

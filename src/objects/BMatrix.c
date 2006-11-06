@@ -973,23 +973,27 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
 int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
   int j,i,count=0;
-  /* first pass for counting **/
-  for ( i=0 ; i < A->mn ; i++) 
-    {
-      if ( A->B[i] ) count++;
-    }
+  double ii = 0.0;
+
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res1 = nsp_matrix_create(NVOID,'r', 1, A->mn);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  if ( A->B[i] ) (*Res1)->R[count++] = i+1;
+	  ii++;
+	  if ( A->B[i] ) (*Res1)->R[count++] = ii;
 	}
+      return nsp_matrix_resize(*Res1, 1, count);
     }
   else 
     {
+      /* first pass for counting **/
+      for ( i=0 ; i < A->mn ; i++) 
+	{
+	  if ( A->B[i] ) count++;
+	}
       *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
       *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);

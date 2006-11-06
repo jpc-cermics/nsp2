@@ -35,7 +35,7 @@
 #include "nsp/gsort-p.h"
 #include "nsp/nsp_lapack.h"
 #include "nsp/gsort-p.h"
-
+#include <nsp/blas.h>
 
 /* 
  * NspMatrix inherits from NspObject 
@@ -901,8 +901,194 @@ static int int_meth_matrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+/* 
+ *  blas 1 operation : 
+ *
+ *    y <- y + alpha x
+ *
+ *    A.blas_axpy[alpha, x [i1,i2 [,j1,j2]]]
+ */
+
+static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *alpha, *y = (NspMatrix *) self, *x;
+  int one = 1, i1, i2, j1, j2, mn, m, n, j;
+  CheckLhs(1,1);
+
+  if ( rhs != 2  &&  rhs != 4  && rhs != 6 )
+    { 
+      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,stack.fname);
+      return RET_BUG;
+    }
+
+  if ((alpha = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckScalar(stack.fname,1,alpha);
+
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+
+  if ( alpha->rc_type != y->rc_type || x->rc_type != y->rc_type )
+    { 
+      Scierror("Error: sorry the arguments must be of same type than self arg %s\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( rhs == 2 )
+    {
+      if ( x->m != y->m || x->n != y->n ) 
+	{ 
+	  Scierror("%s: argument %d should have size %d x %d \n",stack.fname, 2, y->m, y->n );
+	  return RET_BUG;
+	} 
+      
+      if ( y->rc_type == 'r' )
+	C2F(daxpy)(&y->mn, alpha->R, x->R, &one, y->R, &one);
+      else
+	C2F(zaxpy)(&y->mn, alpha->C, x->C, &one, y->C, &one);
+      return 0;
+    }
+
+  if ( GetScalarInt (stack, 3, &i1) == FAIL ) return RET_BUG;
+  if ( GetScalarInt (stack, 4, &i2) == FAIL ) return RET_BUG;
+
+  if ( i1 <= 0  || i2 <= 0 )
+    { 
+      Scierror("%s: argument 3 and 4 must be positive integer \n",stack.fname);
+      return RET_BUG;
+    } 
+
+  if ( rhs == 4 )
+    {
+      mn = i2-i1+1;
+      if ( x->mn != mn )
+	{ 
+	  Scierror("%s: argument %d should have length %d \n",stack.fname, 2, i2-i1+1);
+	  return RET_BUG;
+	} 
+
+      if ( i2 > y->mn )
+	{ 
+	  Scierror("%s: last index (%d) outside (self) array length (%d) \n",stack.fname, i2, y->mn);
+	  return RET_BUG;
+	} 
+
+      if ( y->rc_type == 'r' )
+	C2F(daxpy)(&mn, alpha->R, x->R, &one, &y->R[i1-1], &one);
+      else
+	C2F(zaxpy)(&mn, alpha->C, x->C, &one, &y->C[i1-1], &one);
+      return 0;
+    }
+
+
+  if ( GetScalarInt (stack, 5, &j1) == FAIL ) return RET_BUG;
+  if ( GetScalarInt (stack, 6, &j2) == FAIL ) return RET_BUG;
+
+  if ( j1 <= 0  || j2 <= 0 )
+    { 
+      Scierror("%s: argument 5 and 6 must be positive integer \n",stack.fname);
+      return RET_BUG;
+    } 
+
+  m = i2-i1+1; n = j2-j1+1;
+  if ( x->m != m || x->n != n )
+    { 
+      Scierror("%s: argument %d should have size %d x %d \n",stack.fname, 2, m, n);
+      return RET_BUG;
+    } 
+
+  if ( i2 > y->mn )
+    { 
+      Scierror("%s: last indices (%d,%d) outside (self) array sizes (%d) \n",stack.fname, i2, j2, y->m, y->n);
+      return RET_BUG;
+    }
+ 
+  if ( y->rc_type == 'r' )
+    for ( j = 0 ; j < n ; j++ )
+      C2F(daxpy)(&m, alpha->R, &x->R[m*j], &one, &y->R[i1-1+(j+j1-1)*y->m], &one);
+  else
+    for ( j = 0 ; j < n ; j++ )
+      C2F(zaxpy)(&m, alpha->C, &x->C[m*j], &one, &y->C[i1-1+(j+j1-1)*y->m], &one);
+  return 0;
+}
+
+
+/* 
+ *  blas 2 operation : 
+ *
+ *    A <- A + alpha x*y'  on a "contiguous" subpart [i1,i2]x[j1,j2] of A 
+ *
+ *    A.blas_ger[alpha, x, y [i1,i2,j1,j2]]
+ */
+static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A = (NspMatrix *) self;
+  NspMatrix *alpha, *x, *y;
+  int i1, i2, j1, j2, mm, nn, one=1, k;
+  char *flag=NULL, cflag;
+  nsp_option opts[] ={{"flag",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( rhs-opt != 3 && rhs-opt != 7 ) 
+    { 
+      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,stack.fname);
+      return RET_BUG;
+    }
+  CheckLhs(1,1);
+
+  if ((alpha = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckScalar(stack.fname,1,alpha);
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+  CheckVector(stack.fname,2,x);
+  if ((y = GetMat (stack, 3)) == NULLMAT) return RET_BUG;
+  CheckVector(stack.fname,3,y);
+
+  if ( alpha->rc_type != A->rc_type || x->rc_type != A->rc_type || y->rc_type != A->rc_type )
+    { 
+      Scierror("Error: sorry the 3 first arguments must be of same type than self arg %s\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( get_optional_args(stack, rhs, opt, opts, &flag) == FAIL )
+    return RET_BUG;
+  cflag = ( opts[0].obj == NULLOBJ) ? '*' : flag[0]; 
+
+
+  if ( rhs-opt == 7 )
+    {
+      if ( GetScalarInt (stack, 4, &i1) == FAIL ) return RET_BUG;
+      if ( GetScalarInt (stack, 5, &i2) == FAIL ) return RET_BUG;
+      if ( GetScalarInt (stack, 6, &j1) == FAIL ) return RET_BUG;
+      if ( GetScalarInt (stack, 7, &j2) == FAIL ) return RET_BUG;
+      k = (j1-1)*A->m + i1 -1;
+    }
+  else
+    {
+      i1 = 1; i2 = A->m; j1 = 1; j2 = A->n;
+      k = 0;
+    }
+
+  mm =  i2-i1+1; nn = j2-j1+1;
+  if ( mm != x->mn  ||  nn != y->mn  ||  i1 < 1  ||  j1 < 1  ||  i2 > A->m  ||  j2 > A->n )
+    { 
+      Scierror("Error: incompatible dimensions %s\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( A->rc_type == 'r' )
+    C2F(dger)(&mm, &nn, alpha->R, x->R, &one, y->R, &one, &A->R[k], &A->m);
+  else
+    {
+      if ( cflag == 't' || cflag == 'T' )
+	C2F(zgeru)(&mm, &nn, alpha->C, x->C, &one, y->C, &one, &A->C[k], &A->m);
+      else
+	C2F(zgerc)(&mm, &nn, alpha->C, x->C, &one, y->C, &one, &A->C[k], &A->m);
+    }
+  return 0;
+}
+
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
+  { "blas_axpy", int_meth_matrix_axpy},  /* possible other name:  add_scal_time_mat  */
+  { "blas_ger", int_meth_matrix_ger},    /* possible other name:  updt_rk1  */
   { (char *) 0, NULL}
 };
 
@@ -3199,45 +3385,6 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
  */
 #ifdef MTLB_MODE
 
-/* static int */
-/* int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3) */
-/* { */
-/*   NspMatrix *HMat1, *HMat2; */
-/*   CheckRhs (2, 2); */
-/*   CheckLhs (1, 1); */
-
-/*   if ( (HMat1 =GetMat(stack, 1)) == NULLMAT ) */
-/*     return RET_BUG; */
-
-/*   if ( HMat1->mn == 1 )     /\* HMat1 is a scalar => HMat2 will store the result *\/ */
-/*     { */
-/*       if ( (HMat2 =GetMatCopy(stack, 2)) == NULLMAT ) */
-/* 	return RET_BUG; */
-/*       if ( (*F3)(HMat2, HMat1) == FAIL ) */
-/* 	return RET_BUG; */
-/*       NSP_OBJECT (HMat2)->ret_pos = 1; */
-/*     } */
-/*   else    /\* HMat1 is not a scalar and will store the result *\/ */
-/*     { */
-/*       if ( (HMat1 =GetMatCopy(stack, 1)) == NULLMAT ) */
-/* 	return RET_BUG; */
-      
-/*       if ( (HMat2 =GetMat(stack, 2)) == NULLMAT ) */
-/* 	return RET_BUG; */
-/*       if ( HMat2->mn == 1 ) /\* HMat2 is a scalar *\/ */
-/* 	{ */
-/* 	  if ( (*F1)(HMat1, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	} */
-/*       else   /\* HMat1 and HMat2 must have both the same dimensions : this is tested by F2 *\/ */
-/* 	{ */
-/* 	  if  ( (*F2)(HMat1, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	} */
-/*       NSP_OBJECT (HMat1)->ret_pos = 1; */
-/*     } */
-/*   return 1; */
-/* } */
 static int
 int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
 {
@@ -4318,12 +4465,13 @@ static OpTab Matrix_func[] = {
   {"addrows_m_m", int_mxaddrows},
   {"clean", int_mxclean},
   {"complexify_m", int_mxcomplexify},
-  {"concatd_m_m", int_mxconcatd},
+  /*  {"concatd_m_m", int_mxconcatd},*/
+  {"concatd_m_m", nsp_matint_concatd_xx},
   {"concatr_m_m", nsp_matint_concatr_xx},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
+  {"concatd_m_b",  nsp_matint_concat_emptymat_and_mat_xx}, 
   {"mat_create_m", int_mxcreate},
-  {"dadd_m_m", int_mxdadd},
   {"dadd_m_m", int_mxdadd},
   {"concatdiag", int_mxconcatdiag},
   {"diag_m", int_mxdiag},
@@ -4345,6 +4493,7 @@ static OpTab Matrix_func[] = {
   {"deleterows_m", nsp_matint_deleterows_xx},
   {"deletecols_m", nsp_matint_deletecols_xx},
   {"tozero_m", nsp_matint_tozero_xx},
+  {"repmat_m", nsp_matint_repmat_xx},
   {"eye_m_m", int_mxeye},
   {"ones_m_m", int_mxones},
   {"zeros_m_m", int_mxzeros},

@@ -1193,6 +1193,7 @@ static OpTab Cells_func[]={
   {"deleterows_ce", nsp_matint_deleterows_xx},
   {"deletecols_ce", nsp_matint_deletecols_xx},
   {"tozero_ce", nsp_matint_tozero_xx},
+  {"repmat_ce", nsp_matint_repmat_xx},
   /* {"loopextract_m_ce",int_cells_extractcolforloop}, */
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},

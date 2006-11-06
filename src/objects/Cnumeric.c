@@ -192,6 +192,22 @@ void nsp_pow_cd(const  doubleC *x, double y, doubleC *res)
 }
 
 /**
+ * nsp_pow_cd_or_ci:
+ * @x: a  double complex  
+ * @y: 
+ * @res: a pointer to a double complex  
+ * 
+ * 
+ **/
+void nsp_pow_cd_or_ci(const  doubleC *x, double y, doubleC *res)
+{
+  if ( floor(y) == y ) 
+    nsp_pow_ci(x, (int) y, res);
+  else
+    nsp_pow_cd(x, y, res);
+}
+
+/**
  * nsp_pow_dc:
  * @x: a  double complex  
  * @y: 
@@ -207,6 +223,106 @@ void nsp_pow_dc(double x, const doubleC *y, doubleC *res)
   res->i=loc*y->i;
   nsp_exp_c(res,res);
 }
+
+/**
+ * nsp_pow_di:
+ * @x: a  double
+ * @p: an int 
+ * return x^p
+ * 
+ **/
+double nsp_pow_di(double x, int p)
+{
+  if ( p < 0 )
+    return 1.0/nsp_pow_di(x, -p);
+  else if ( p == 0 )
+    return 1.0;
+  else
+    {
+      double z = 1.0;
+      while ( p > 1 )
+	{
+	  if ( p % 2 == 1 )
+	    z *= x;
+	  x *= x;
+	  p = p/2;
+	}
+      return z*x;
+    }
+} 
+
+/**
+ * nsp_pow_ci:
+ * @x: 
+ * @p: 
+ * @y:
+ * computes y = x^p (can be used with x=x^p)
+ *  
+ **/
+
+void nsp_pow_ci(const doubleC *x, int p, doubleC *y)
+{
+  if ( p < 0 )
+    {
+      nsp_pow_ci(x, -p, y);
+      nsp_div_dc(1.0, y, y);
+    }
+  else
+    {
+      doubleC z = {1.0,0.0};
+      if ( p == 0 )
+	*y = z;
+      else
+	{
+	  *y = *x;
+	  while ( p > 1 )
+	    {
+	      if ( p & 1 )  /*  p % 2 == 1 */
+		nsp_prod_c(&z, y);
+	      nsp_prod_c(y, y);
+	      p >>= 1;      /*  p /= 2;    */
+	    }
+	  nsp_prod_c(y, &z);
+	}
+    }
+}
+
+/* void nsp_pow_ci(const doubleC *xe, int y, doubleC *res) */
+/* { */
+/*   doubleC x; */
+/*   res->r=1.0;res->i=0.00; */
+/*   x.r=xe->r;x.i=xe->i; */
+/*   if (y == 0) */
+/*     { */
+/*       return; */
+/*     } */
+/*   if (y < 0) */
+/*     { */
+/*       static doubleC un={1.0,0.0}; */
+/*       y = -y; */
+/*       nsp_div_cc(&un,&x,&x);  */
+/*     } */
+/*   for (;;) */
+/*     { */
+/*       if (y & 1) */
+/* 	{ */
+/* 	  double loc; */
+/* 	  loc=res->r; */
+/* 	  res->r = res->r*x.r - res->i*x.i; */
+/* 	  res->i = loc*x.i + res->i*x.r; */
+/* 	} */
+/*       if (y >>= 1) */
+/* 	{ */
+/* 	  double loc; */
+/* 	  loc=x.r; */
+/* 	  x.r = x.r*x.r - x.i*x.i; */
+/* 	  x.i = loc*x.i + x.i*x.r; */
+/* 	} */
+/*       else */
+/* 	return; */
+/*     } */
+/* } */
+
 
 /**
  * nsp_sin_c:
@@ -293,49 +409,6 @@ void nsp_div_dc(double x, const doubleC *y, doubleC *res)
 }
 
 
-/**
- * nsp_pow_ci:
- * @xe: 
- * @y: 
- * @res: a pointer to a double complex  
- * 
- * 
- **/
-void nsp_pow_ci(const doubleC *xe, int y, doubleC *res)
-{
-  doubleC x;
-  res->r=1.0;res->i=0.00;
-  x.r=xe->r;x.i=xe->i;
-  if (y == 0)
-    {
-      return;
-    }
-  if (y < 0)
-    {
-      static doubleC un={1.0,0.0};
-      y = -y;
-      nsp_div_cc(&un,&x,&x); 
-    }
-  for (;;)
-    {
-      if (y & 1)
-	{
-	  double loc;
-	  loc=res->r;
-	  res->r = res->r*x.r - res->i*x.i;
-	  res->i = loc*x.i + res->i*x.r;
-	}
-      if (y >>= 1)
-	{
-	  double loc;
-	  loc=x.r;
-	  x.r = x.r*x.r - x.i*x.i;
-	  x.i = loc*x.i + x.i*x.r;
-	}
-      else
-	return;
-    }
-}
 
 /**
  * nsp_sqrt_c:

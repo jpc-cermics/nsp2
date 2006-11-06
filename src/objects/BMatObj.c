@@ -1083,6 +1083,7 @@ static OpTab BMatrix_func[]={
   {"deleterows_b", nsp_matint_deleterows_xx},
   {"deletecols_b", nsp_matint_deletecols_xx},
   {"tozero_b", nsp_matint_tozero_xx},
+  {"repmat_b", nsp_matint_repmat_xx},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},

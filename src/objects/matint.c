@@ -2097,6 +2097,88 @@ int nsp_matint_redim(NspObject *Obj, int m, int n)
     }
 }
 
+/**
+ * nsp_matint_repmat:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @m: integer 
+ * @n: integer
+ * 
+ * Return value: returns ObjA replicated m x n  or %NULLOBJ 
+ **/
+
+NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
+{
+  NspObject *ObjB=NULLOBJ;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B;
+  int i, j;
+  NspTypeBase *type; 
+  unsigned int elt_size_A; /* size in number of bytes */
+
+  type = check_implements(ObjA, nsp_type_matint_id);
+
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);
+
+  if ( (ObjB = MAT_INT(type)->clone(NVOID, ObjA, m*A->m, n*A->n)) == NULLOBJ )
+    return ObjB;
+
+  B = (NspSMatrix *) ObjB;
+  if ( B->mn == 0 )
+    return ObjB;
+
+  if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrices of numbers or booleans */
+    {
+      char *to = (char *) B->S;
+      if ( m == 1 )
+	for ( j = 0 ; j < n ; j++ )
+	  {
+	    memcpy(to, A->S, elt_size_A*A->mn);
+	    to += elt_size_A*A->mn;
+	  }
+      else
+	{
+	  int blk_size = elt_size_A*A->m;
+	  char *from = (char *) A->S;
+	  for ( j = 0 ; j < A->n ; j++ )
+	    for ( i = 0 ; i < m ; i++ )
+	      {
+		memcpy(to, from + j*blk_size, blk_size);
+		to += blk_size;
+	      }
+	  blk_size *= m*A->n;
+	  for ( j = 1 ; j < n ; j++ )
+	    {
+	      memcpy(to, B->S, blk_size);
+	      to += blk_size;
+	    }
+	}
+    }
+  else                                                      /* Matrices of pointers (String, cells, poly,...) */
+    {
+      char **from = (char **) A->S, **to = (char **) B->S, *elt;
+      int ii, jj, k = 0, kk = 0;
+ 
+      for ( j = 0 ; j < A->n ; j++ ) 
+	for ( i = 0 ; i < A->m ; i++ )
+	  {
+	    if ( from[k] != NULL )   /* just for cells which may have undefined elements */
+	      for ( jj = 0 ; jj < n ; jj++ )	      
+		{
+		  kk = i + (j + jj*A->n)*B->m;
+		  for ( ii = 0 ; ii < m ; ii++, kk+= A->m )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(from[k])) == NULL ) goto err;
+		      to[kk] = elt;
+		    }
+		}
+	    k++;
+	  }
+    }
+  return ObjB;
+
+ err:
+  nsp_object_destroy(&ObjB); 
+  return NULLOBJ;
+}
 
 /* interface functions which are called by other interfaces 
  * or called in Eval.c 
@@ -2362,6 +2444,40 @@ int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/**
+ * nsp_matint_concat_emptymat_and_mat_xx:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * generix interface for [A,B] and [A;B] with A the real empty 0x0 matrix
+ *
+ * B is supposed to be of different type than A...
+ * 
+ * Return value: 1 or %RET_BUG.
+ **/
+
+int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *ObjA, *ObjB;
+  int m,n;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  ObjA = NthObj(1);  ObjB = NthObj(2);
+
+  m = nsp_object_get_size(ObjA,1);
+  n = nsp_object_get_size(ObjA,2);
+
+  if ( m  != 0 || n != 0 )
+    {      
+      Scierror("Error:\t forbidden concatenation\n");
+      return RET_BUG;
+    }
+  
+  ObjB->ret_pos = 1;
+  return 1;
+}
 
 /**
  * nsp_matint_concat_down_xx:
@@ -2472,14 +2588,14 @@ int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
       if ( rmax > C->mn ) 
 	{
 	  /* we must enlarge C */
-	  if ( C->n == 1 )
-	    {
-	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
-	    }
-	  else if ( C->m == 1 )
+	  if ( C->m == 1 )
 	    {
 	      if ( nsp_cells_enlarge(C, 1, rmax) == FAIL ) goto err;
 	    }
+	  else if ( C->n == 1 )
+	    {
+	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
+	    } 
 	  else  /* C is a matrix or a empty matrix */
 	    {
 	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
@@ -2615,3 +2731,34 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * repmat interface for objects which implements matint interface 
+ **/
+
+int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs) 
+{
+  NspTypeBase *type;
+  int m,n;
+  CheckRhs (3,3);
+  CheckLhs (1,1);
+  NspObject *ObjA, *ObjB;
+
+  if ((ObjA = nsp_get_object(stack,1))== NULL) return RET_BUG;
+
+  if (GetScalarInt (stack, 2, &m) == FAIL) return RET_BUG;
+  CheckNonNegative(NspFname(stack),m,2);
+
+  if (GetScalarInt (stack, 3, &n) == FAIL) return RET_BUG;
+  CheckNonNegative(NspFname(stack),n,3);
+
+  if (( type = check_implements(ObjA,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Error: first argument does not implements matint interface\n");
+      return RET_BUG;
+    }
+
+  if ( (ObjB = nsp_matint_repmat(ObjA, m, n)) == NULLOBJ ) return  RET_BUG;
+  MoveObj(stack,1,ObjB);
+  return 1;
+}

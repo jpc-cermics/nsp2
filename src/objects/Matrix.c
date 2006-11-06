@@ -1528,18 +1528,33 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
 
   if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,A->n,A->m)) == NULLMAT ) 
     return NULLMAT;
+
+  if ( A->n == 1  ||  A->m == 1 )   /* vector case */
+    {
+      if ( Loc->rc_type == 'r' )
+	memcpy(Loc->R, A->R, A->mn*sizeof(double));
+      else
+	for ( i = 0 ; i < A->mn ; i++ )
+	  {
+	    Loc->C[i].r = A->C[i].r;
+	    Loc->C[i].i =-A->C[i].i;
+	  }
+    }
   
-  if (Loc->rc_type == 'r') 
-    for ( i = 0  ; i < A->m ; i++) 
-      for ( j = 0 ; j < A->n ; j++) 
-	Loc->R[j+Loc->m*i ] = A->R[i+A->m*j];
-  else
-    for ( i = 0  ; i < A->m ; i++) 
-      for ( j = 0 ; j < A->n ; j++)
-	{ 
-	  Loc->C[j+Loc->m*i].r = A->C[i+A->m*j].r;
-	  Loc->C[j+Loc->m*i].i =-A->C[i+A->m*j].i;
-	}
+  else                             /* matrix case */
+    {
+      if (Loc->rc_type == 'r') 
+	for ( i = 0  ; i < A->m ; i++) 
+	  for ( j = 0 ; j < A->n ; j++) 
+	    Loc->R[j+Loc->m*i ] = A->R[i+A->m*j];
+      else
+	for ( i = 0  ; i < A->m ; i++) 
+	  for ( j = 0 ; j < A->n ; j++)
+	    { 
+	      Loc->C[j+Loc->m*i].r = A->C[i+A->m*j].r;
+	      Loc->C[j+Loc->m*i].i =-A->C[i+A->m*j].i;
+	    }
+    }
 
   return Loc;
 }
