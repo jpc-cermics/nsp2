@@ -853,30 +853,6 @@ int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
  * [A]=split(str,sep='splitchars',msep=bool)
  */
 
-/* int int_smxsplit(Stack stack, int rhs, int opt, int lhs) */
-/* { */
-/*   char *defsplit = " \n\t\r"; */
-/*   char *str=NULL,*sep=NULL; */
-/*   Boolean msep=FALSE; */
-/*   NspSMatrix *A; */
-/*   int_types T[] = {string, opts, t_end}; */
-/*   char *Names[]={"msep","sep",NULL}; */
-/*   int_types Topt[]={ s_bool,string, t_end}; */
-/*   NspObject *Tab[2];  */
-/*   int posi[2]; */
-/*   named_opts N = { 2, Names, Topt,Tab, posi}; */
-
-/*   if ( GetArgs(stack,rhs,opt,T,&str,&N,&msep,&sep) == FAIL)  */
-/*     return RET_BUG; */
-/*   if ( sep  == NULL ) */
-/*     sep = defsplit; */
-
-/*   if ( (A=nsp_smatrix_split(str,sep,msep)) == NULLSMAT )  */
-/*     return RET_BUG; */
-/*   MoveObj(stack,1,(NspObject *)A); */
-/*   return 1; */
-/* } */
-
 int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 {
   char *defsplit = " \n\t\r";
