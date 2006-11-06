@@ -69,6 +69,7 @@ extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int
 extern int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
 extern int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB);
+extern NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n);
 
 typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
 extern NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
@@ -89,6 +90,8 @@ extern int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
+extern int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs);
+extern int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs);
 
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
