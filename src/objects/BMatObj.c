@@ -674,7 +674,7 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
  * return 0 on failure ( incompatible size or No more space )
  */
 
-static int int_bmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
+int int_bmatrix_concatr_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *HMat1,*HMat2;
   CheckRhs(2,2);
@@ -1031,7 +1031,7 @@ static OpTab BMatrix_func[]={
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
   {"concatd_b_b",int_bmatrix_concatd},
-  {"concatr_b_b",int_bmatrix_concatr},
+  {"concatr_b_b", nsp_matint_concatr_xx}, /* int_bmatrix_concatr},*/
   {"concatdiag_b_b" , int_matint_concat_diag_yy},/* int_bmatrix_concatdiag },*/
   {"copy_b",int_bmatrix_copy},
   {"bmat_create_m",int_bmatrix_create},

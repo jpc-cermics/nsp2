@@ -633,7 +633,7 @@ int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
  * return 0 on failure ( incompatible size or No more space )
  */
 
-int int_cells_concatr(Stack stack, int rhs, int opt, int lhs)
+int int_cells_concatr_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *HMat1,*HMat2;
   CheckRhs(2,2);
@@ -1187,7 +1187,7 @@ static OpTab Cells_func[]={
   {"diag_cells_create", int_row_cells_create},
   {"redim_ce",int_matint_redim},
   {"matrix_ce", int_matint_redim},
-  {"concatr_ce_ce",int_cells_concatr},
+  {"concatr_ce_ce", nsp_matint_concatr_xx}, /* int_cells_concatr}, */
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},
   {"concatd_ce_ce",int_cells_concatd},

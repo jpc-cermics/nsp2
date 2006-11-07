@@ -781,7 +781,7 @@ static OpTab PMatrix_func[]={
   {"pmat_create",int_pmatrix_create},
   {"redim_p",int_matint_redim},
   {"matrix_p",int_matint_redim},
-  {"concatr_p_p",int_pmatrix_concatr},
+  {"concatr_p_p", nsp_matint_concatr_xx}, /* int_pmatrix_concatr}, */
   {"concatr_m_p",int_pmatrix_concatr_m_s},
   {"addcols_p_m",int_pmatrix_addcols},
   {"concatd_p_p",int_pmatrix_concatd},

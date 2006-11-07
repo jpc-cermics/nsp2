@@ -174,7 +174,6 @@ static int int_matint_meth_redim(NspObject *self, Stack stack, int rhs, int opt,
   return MAT_INT(type)->redim(self,mm,nn)  == OK ? 0 : RET_BUG;
 }
 
-
 static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   NspObject *B;
@@ -194,8 +193,6 @@ static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int op
     return RET_BUG;
   return 0;
 }
-
-
 
 static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
@@ -2502,12 +2499,20 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* an other interface for concatd 
+/**
+ * int_matint_concat_down_yy:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * @F: 
+ * 
+ * an other interface for concatd 
  * This one is used when concatd_x_x is first searched 
  * when x is supposed to implement the matint interface 
- * XXX : must be improved to use also the case
- *  nsp_matint_concat_down_bis.
- */ 
+ *
+ * Return value: 
+ **/
 
 int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
 {
@@ -2548,12 +2553,17 @@ int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d 
   return 1;
 }
 
-/*
- * set cells elements 
- * C{exps}=(....)
- * or C{exp,exp,..}=(...)
- */
-
+/**
+ * nsp_matint_cells_setrowscols_xx:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface for set cells elements C{exps}=(....) or C{exp,exp,..}=(...)
+ * 
+ * Return value: 
+ **/
 int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
 {
   int i, j, ind, nind;
@@ -2670,13 +2680,19 @@ int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-
-/*
+/**
+ * int_matint_redim:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * redim interface for objects which implements matint 
  * interface 
+ * 
+ * 
+ * Return value: 
  **/
-
 int int_matint_redim(Stack stack, int rhs, int opt, int lhs) 
 {
   NspTypeBase *type;
@@ -2730,9 +2746,17 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
-/*
+/**
+ * nsp_matint_repmat_xx:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * repmat interface for objects which implements matint interface 
+ * 
+ * 
+ * Return value: 
  **/
 
 int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs) 
@@ -2762,19 +2786,14 @@ int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- *
- */
-
-
 /**
- * nsp_matint_concat_down:
+ * nsp_matint_concat_diag:
  * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
  * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
  * 
- * returns [@ObjA;@ObjB]
+ * returns [@ObjA # @ObjB]
  * 
- * Return value: a new #NspObject or %NULLOBJ.
+ * Return value: a new #NspObject or %NULLOBJ. 
  **/
 
 NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
@@ -2905,15 +2924,20 @@ NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
 }
 
 
-
-/* 
+/**
+ * int_matint_concat_diag_yy:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * interface for concat_diag which is to be used 
  * when calling concatdiag_x_x and x is supposed 
  * to implement the matint interface 
  * similar to concat_diag
- *
- *
- */ 
+ * 
+ * Return value: 
+ **/
 
 int int_matint_concat_diag_yy(Stack stack, int rhs, int opt, int lhs) 
 {
