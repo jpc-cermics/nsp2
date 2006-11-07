@@ -81,7 +81,7 @@ static int int_toc(Stack stack,int rhs,int opt,int lhs)
 
   if ( nsp_tictoc(&etime) == FAIL )
     {
-      Scierror("Error: tic() must be call before toc()\n");
+      Scierror("Error: tic() must be called before toc()\n");
       return RET_BUG;
     }
 

@@ -66,13 +66,13 @@ int nsp_stimer(void)
  *
  * Return value: %OK or %FAIL
  **/
-#define TIC 0
-#define TOC 1
+
+typedef enum {TIC=0, TOC=1} tictoc;
+
 int nsp_tictoc(double *etime)
 {
   static double start_time=0; 
-  static int last_call = TOC;
-  
+  static tictoc last_call = TOC;
   GTimeVal time;
 
   g_get_current_time(&time);
