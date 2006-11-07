@@ -2762,3 +2762,148 @@ int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,ObjB);
   return 1;
 }
+
+/*
+ *
+ */
+
+
+/**
+ * nsp_matint_concat_down:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
+ * 
+ * returns [@ObjA;@ObjB]
+ * 
+ * Return value: a new #NspObject or %NULLOBJ.
+ **/
+
+/* Il faut un moyen d'initializer a zero dans clone */
+
+NspObject *nsp_matint_concat_diag(NspObject *ObjA, NspObject *ObjB)
+{
+  NspObject *ObjC=NULLOBJ;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
+  int i, j;
+  NspTypeBase *type; 
+  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+
+  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
+                                                         (so we don't check) */
+
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
+  elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
+
+  if ( A->m == 0  &&  A->n == 0 )
+    {
+      ObjC = nsp_object_copy(ObjB); 
+      return ObjC;
+    }     
+  else if ( B->m == 0  &&  B->n == 0 )
+    {
+      ObjC = nsp_object_copy(ObjA);
+      return ObjC;
+    }
+  /* Matrices of numbers or booleans */
+  if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
+	{
+	  if ( elt_size_A == elt_size_B )
+	    {
+ 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n)) != NULLOBJ )
+		{
+		  int step=elt_size_A;
+		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		  for ( j = 0 ; j < A->n ; j++ ) 
+		    memcpy(to+j*(C->m)*step,fromA+j*A->m*step,A->m*step);
+		  for ( j = 0 ; j < B->n ; j++ ) 
+		    memcpy(to+(j+A->n)*(C->m)*step+A->m*step,fromB+j*B->m*step,B->m*step);
+		}
+	    }
+	  else    /* one matrix is real and the other is complex */
+	    {
+	      if ( elt_size_A > elt_size_B )  
+		{
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      /* A is complex, B real */
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		      for ( j = 0 ; j < A->n ; j++ ) 
+			{ 
+			  memcpy(to+j*(C->m)*stepA,fromA+j*A->m*stepA,A->m*stepA);
+			}
+		      for ( j = 0 ; j < B->n ; j++ ) 
+			{
+			  doubleC *elt =(doubleC *) (to +(j+A->n)*(C->m)*stepA + A->m*stepA);
+			  for ( i = 0 ; i < B->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
+			      elt[i].i = 0.0;
+			    }
+			}
+		    }
+		}
+	      else 
+		{ 
+		  /* A is real, B complex */
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n+B->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		      for ( j = 0 ; j < A->n ; j++ ) 
+			{ 
+			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
+			  /* copy column j of A which is real */
+			  for ( i = 0 ; i < A->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
+			      elt[i].i = 0.0;
+			    }
+			}
+		      for ( j = 0 ; j < B->n ; j++ ) 
+			{
+			  /* copy column j of B which is complex as C */
+			  memcpy(to+(j+A->n)*(C->m)*stepB+A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
+			}
+		    }
+		}
+	    }
+	}
+      else                                                      
+	{
+	  /* Matrices of pointers (String, cells, poly,...) */
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+	    {
+	      C = (NspSMatrix *) ObjC;
+	      char *elt;
+	      for ( j = 0 ; j < A->n ; j++ ) 
+		{
+		  char **fromA= A->S+j*A->m;
+		  char **fromB= B->S+j*B->m;
+		  char **toA = C->S+j*(C->m),**toB = C->S+(j+A->n)*(C->m)+A->m;
+		  for ( i = 0 ; i < A->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
+		      toA[i]=elt;
+		    }
+		  for ( i = 0 ; i < B->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
+		      toB[i]=elt;
+		    }
+		}
+	    }
+	}
+  return ObjC;
+ err:
+  nsp_object_destroy(&ObjC); 
+  return NULLOBJ;
+}
+

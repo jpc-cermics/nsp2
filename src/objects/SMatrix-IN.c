@@ -212,13 +212,13 @@ int int_smxconcatd_m_s(Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged
  */
 
+NspSMatrix *nsp_matint_concat_diag(NspSMatrix *ObjA, NspSMatrix *ObjB);
+
 int int_smxconcatdiag(Stack stack, int rhs, int opt, int lhs)
 {
-  Sciprintf("smxconcatdiag: A FAIRE XXXX");
-  /*
-    return int_smx_concat(stack,rhs,opt,lhs,nsp_smatrix_concat_diag); */
-  return 0;
+  return int_smx_concat(stack,rhs,opt,lhs,nsp_matint_concat_diag);
 }
+
 
 /*
  *nsp_smatrix_add_columns: add n cols of zero to NspSMatrix A 
@@ -1165,6 +1165,7 @@ static OpTab SMatrix_func[]={
   {"addcols_s_m",int_smxaddcols},
   {"concatd_s_s",int_smxconcatd},
   {"concatd_m_s",int_smxconcatd_m_s},
+  {"concatdiag_s_s", int_smxconcatdiag},
   {"addrows_s",int_smxaddrows},
   {"resize_s",int_smxresize},
   {"concat_s_s", int_smxconcattt },

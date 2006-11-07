@@ -2401,10 +2401,12 @@ int int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged 
  */
 
+NspMatrix *nsp_matint_concat_diag(NspMatrix *ObjA, NspMatrix *ObjB);
+
 int
 int_mxconcatdiag (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_concat (stack, rhs, opt, lhs, nsp_matrix_concat_diag);
+  return int_mx_concat (stack, rhs, opt, lhs, nsp_matint_concat_diag);
 }
 
 
@@ -4473,7 +4475,7 @@ static OpTab Matrix_func[] = {
   {"concatd_m_b",  nsp_matint_concat_emptymat_and_mat_xx}, 
   {"mat_create_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
-  {"concatdiag", int_mxconcatdiag},
+  {"concatdiag_m_m", int_mxconcatdiag},
   {"diag_m", int_mxdiag},
   {"diag_m_m", int_mxdiag},
   {"diagcre_m", int_mxdiagcre},

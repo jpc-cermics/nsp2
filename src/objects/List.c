@@ -92,12 +92,11 @@ Cell *nsp_cell_create(NspObject *O)
       Scierror("Error:\tNo more space\n");
       return NULLCELL;
     }
-  /* 
+  /* XXXXX : this is important to check !!!! */
   if (O != NULLOBJ &&  strcmp(nsp_object_get_name(O),NVOID) == 0) 
     {
-      Sciprintf("Error:\ta cell unnamed, something wrong in List.c\n");
+      Sciprintf("Error:\ta cell is unnamed, something wrong in List.c\n");
     }
-  */
   Loc->O = O;
   Loc->prev = Loc->next = NULLCELL;
   return Loc;
