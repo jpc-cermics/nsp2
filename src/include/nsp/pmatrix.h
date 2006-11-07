@@ -82,7 +82,7 @@ extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M);
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
 extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag); 
-extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n);
+extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init);
 extern NspPMatrix *nsp_pmatrix_extract_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
 extern NspPMatrix *nsp_pmatrix_extract_columns_obsolete(NspPMatrix *A, NspMatrix *Cols, int *err); 
 extern NspPMatrix *nsp_pmatrix_extract_elements_obsolete(NspPMatrix *A, NspMatrix *Elts, int *err); 

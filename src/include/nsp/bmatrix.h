@@ -89,7 +89,7 @@ extern int GetScalarBool (Stack stack, int i, int *val);
 /* from NspBMatrix.c */
 
 extern NspBMatrix *nsp_bmatrix_create(const char *name, int m, int n); 
-extern NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n);
+extern NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n, int init);
 extern NspBMatrix *nsp_bmatrix_copy(NspBMatrix *A); 
 extern unsigned int  nsp_bmatrix_elt_size(NspMatrix *M);
 extern int nsp_bmatrix_resize(NspBMatrix *A, int m, int n); 

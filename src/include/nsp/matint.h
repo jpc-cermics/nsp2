@@ -14,7 +14,7 @@ typedef int matint_redim(NspObject *M,int m,int n);
 typedef int matint_resize(void *M,int m,int n); 
 typedef int matint_free_elt(void **elt);
 typedef unsigned int matint_elt_size(const void *M);
-typedef NspObject *matint_clone(const char *name,const void *M, int m,int n); 
+typedef NspObject *matint_clone(const char *name,const void *M, int m,int n, int init); 
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 
@@ -92,10 +92,15 @@ extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 extern int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs);
+extern int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
+extern NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB);
+extern int int_matint_concat_diag_yy(Stack stack, int rhs, int opt, int lhs);
 
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
+
+
 
 #endif 
 

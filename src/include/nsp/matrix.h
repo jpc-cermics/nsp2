@@ -132,7 +132,7 @@ extern NspMatrix *Mat2mtlb_cplx (NspMatrix * A);
 typedef int (*F_Enlarge) (void *A,int m,int n);
 
 extern NspMatrix *nsp_matrix_create (const char *name, char type, int m, int n); 
-extern NspMatrix *nsp_matrix_clone (const char *name, NspMatrix *A, int m, int n); 
+extern NspMatrix *nsp_matrix_clone (const char *name, NspMatrix *A, int m, int n, int init); 
 extern NspMatrix *nsp_matrix_create_impl (double first, double step, double last); 
 extern NspMatrix *nsp_matrix_create_linspace(const double first[],const double last[],int r,int n);
 extern NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],int r,int n);

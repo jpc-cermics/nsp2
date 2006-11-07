@@ -67,7 +67,7 @@ extern int is_string_in_array (const char *key, char **Table, int flag);
 extern void string_not_in_array(Stack stack,const char *key, char **Table,char *message);
 extern int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag);
 extern NspSMatrix *nsp_smatrix_create(nsp_const_string name,int m,int n,nsp_const_string str,int flag);
-extern NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n);
+extern NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int init);
 extern NspSMatrix *nsp_smatrix_create_with_length(nsp_const_string , int m, int n, int strl); 
 extern NspSMatrix *nsp_smatrix_create_from_table(char **T); 
 extern NspSMatrix *nsp_smatrix_create_from_array(nsp_const_string name,int n,const char **T); 

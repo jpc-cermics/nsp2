@@ -115,7 +115,7 @@ extern NspMaxpMatrix *MpMat2float (NspMaxpMatrix *A);
 
 extern NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M);
 extern NspMaxpMatrix *nsp_mpmatrix_create (const char *name, char type, int m, int n); 
-extern NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n);
+extern NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n, int init);
 extern NspMaxpMatrix *nsp_mpmatrix_create_impl (double first, double step, double last); 
 extern NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,int m,int n,...);
 extern int nsp_mpmatrix_fill_with (NspMaxpMatrix *A, const NspMaxpMatrix *B); 

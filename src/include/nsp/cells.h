@@ -66,7 +66,7 @@ extern int IsCells (const NspObject *O);
 extern NspCells *GetCellsCopy (Stack stack, int i); 
 extern NspCells *GetCells (Stack stack, int i); 
 extern NspCells *nsp_cells_create(const char *name, int m, int n);
-extern NspCells *nsp_cells_clone(const char *name, NspCells *A, int m, int n);
+extern NspCells *nsp_cells_clone(const char *name, NspCells *A, int m, int n, int init);
 extern NspCells *nsp_cells_create_from_table(const char *name,NspObject **T); 
 extern NspCells *nsp_cells_create_from_array(const char *name,int n, NspObject **T); 
 extern NspCells *nsp_cells_copy(const NspCells *A); 
