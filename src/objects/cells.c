@@ -81,7 +81,7 @@ NspCells *nsp_cells_create(const char *name, int m, int n)
 }
 
 
-NspCells *nsp_cells_clone(const char *name, NspCells *A, int m, int n)
+NspCells *nsp_cells_clone(const char *name, NspCells *A, int m, int n, int init)
 {
   return nsp_cells_create(name, m, n);
 }

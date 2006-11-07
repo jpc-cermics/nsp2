@@ -2395,22 +2395,6 @@ int int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Diag Concatenation 
- * Res = [A,0;0,B] 
- * return NULLMAT on failure ( No more space )
- * A and B are left unchanged 
- */
-
-NspMatrix *nsp_matint_concat_diag(NspMatrix *ObjA, NspMatrix *ObjB);
-
-int
-int_mxconcatdiag (Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_concat (stack, rhs, opt, lhs, nsp_matint_concat_diag);
-}
-
-
-/*
  * MatAddCols : add n cols of zero to Matrix A 
  * A= [A,ones(m,n)] 
  * A is changed 
@@ -4475,7 +4459,7 @@ static OpTab Matrix_func[] = {
   {"concatd_m_b",  nsp_matint_concat_emptymat_and_mat_xx}, 
   {"mat_create_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
-  {"concatdiag_m_m", int_mxconcatdiag},
+  {"concatdiag_m_m",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
   {"diag_m", int_mxdiag},
   {"diag_m_m", int_mxdiag},
   {"diagcre_m", int_mxdiagcre},

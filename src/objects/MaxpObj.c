@@ -2456,7 +2456,7 @@ static OpWrapTab Matrix_func[]={
   {"concatd_mp_mp" ,  int_mpconcatd ,NULL},
   {"concatdiag_m_mp" ,  int_mpconcatdiag_m ,NULL},
   {"concatdiag_mp_m" ,  int_mpconcatdiag_m ,NULL},
-  {"concatdiag_mp_mp" ,  int_mpconcatdiag ,NULL},
+  {"concatdiag_mp_mp" , int_matint_concat_diag_yy ,NULL},
   {"concatr_m_mp" ,  int_mpconcatr_m,NULL},
   {"concatr_mp" ,  int_mpconcatr ,NULL},
   {"conj_mp",int_mpconj,NULL},

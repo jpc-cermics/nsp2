@@ -85,9 +85,12 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
   return(Loc);
 }
 
-NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n)
+NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int init)
 {
-  return nsp_smatrix_create_with_length(name, m, n, -1);
+  if ( init == TRUE ) 
+    return nsp_smatrix_create(name, m, n, NULL,0);
+  else
+    return nsp_smatrix_create_with_length(name, m, n, -1);
 }
 
 /*

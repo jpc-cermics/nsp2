@@ -710,58 +710,6 @@ static int int_bmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Down Concatenation 
- * Res = [A;B] 
- * return NULLMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
-
-typedef NspBMatrix * (*FBconcat) (NspBMatrix *, NspBMatrix *);
-
-static int int_bmatrix__concat(Stack stack, int rhs, int opt, int lhs, FBconcat F)
-{
-  NspBMatrix *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetBMat (stack, 1)) == NULLBMAT)
-    return RET_BUG;
-  if ((HMat2 = GetBMat (stack, 2)) == NULLBMAT)
-    return RET_BUG;
-  if (HMat1->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT(HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT(HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-
-  if (HMat2->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  else
-    {
-      NspBMatrix *HMat3;
-      if (( HMat3 = (*F)(HMat1,HMat2)) == NULLBMAT)  return RET_BUG;
-      MoveObj(stack,1,(NspObject *) HMat3);
-    }
-  return 1;
-}
 
 static int int_bmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
 {
@@ -769,17 +717,6 @@ static int int_bmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
   /* return int_bmatrix__concat(stack,rhs,opt,lhs,nsp_bmatrix_concat_down); */
 }
 
-/*
- * Diag Concatenation 
- * Res = [A,0;0,B] 
- * return NULLMAT on failure ( No more space )
- * A and B are left unchanged 
- */
-
-static int int_bmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix__concat(stack,rhs,opt,lhs,nsp_bmatrix_concat_diag);
-}
 
 
 /*
@@ -1095,7 +1032,7 @@ static OpTab BMatrix_func[]={
   {"b2m",int_bmatrix_b2m},
   {"concatd_b_b",int_bmatrix_concatd},
   {"concatr_b_b",int_bmatrix_concatr},
-  {"concatdiag_b_b" ,  int_bmatrix_concatdiag },
+  {"concatdiag_b_b" , int_matint_concat_diag_yy},/* int_bmatrix_concatdiag },*/
   {"copy_b",int_bmatrix_copy},
   {"bmat_create_m",int_bmatrix_create},
   {"diagcre_b",int_bmatrix_diagcre},

@@ -190,10 +190,10 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   return(Loc);
 }
 
-NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n)
+NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init)
 {
- /* -1 for just allocating a matrix of pointers */
-  return nsp_pmatrix_create(name, m, n, NULL, -1); 
+  /* -1 for just allocating a matrix of pointers */
+  return nsp_pmatrix_create(name, m, n, NULL,(init == TRUE) ? 0 :  -1); 
 }
 
 /*

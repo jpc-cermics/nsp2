@@ -205,19 +205,6 @@ int int_smxconcatd_m_s(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Diag Concatenation
- * Res = [A,0;0,B]
- * return NULLMAT on failure ( No more space )
- * A and B are left unchanged
- */
-
-NspSMatrix *nsp_matint_concat_diag(NspSMatrix *ObjA, NspSMatrix *ObjB);
-
-int int_smxconcatdiag(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_smx_concat(stack,rhs,opt,lhs,nsp_matint_concat_diag);
-}
 
 
 /*
@@ -1165,7 +1152,7 @@ static OpTab SMatrix_func[]={
   {"addcols_s_m",int_smxaddcols},
   {"concatd_s_s",int_smxconcatd},
   {"concatd_m_s",int_smxconcatd_m_s},
-  {"concatdiag_s_s", int_smxconcatdiag},
+  {"concatdiag_s_s",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
   {"addrows_s",int_smxaddrows},
   {"resize_s",int_smxresize},
   {"concat_s_s", int_smxconcattt },

@@ -764,20 +764,6 @@ int int_cells_concatd_m_ce(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Diag Concatenation
- * Res = [A,0;0,B]
- * return NULLMAT on failure ( No more space )
- * A and B are left unchanged
- */
-
-int int_cells_concatdiag(Stack stack, int rhs, int opt, int lhs)
-{
-  Sciprintf("smxconcatdiag: A FAIRE XXXX");
-  /*
-    return int_cells__concat(stack,rhs,opt,lhs,nsp_cells_concat_diag); */
-  return 0;
-}
 
 /*
  *nsp_cells_add_columns: add n cols of zero to NspCells A 
@@ -1206,6 +1192,7 @@ static OpTab Cells_func[]={
   {"addcols_ce_m",int_cells_addcols},
   {"concatd_ce_ce",int_cells_concatd},
   {"concatd_m_ce",int_cells_concatd_m_ce},
+  {"concatdiag_ce_ce",int_matint_concat_diag_yy},
   {"addrows_ce",int_cells_addrows},
   {"resize_ce",int_cells_resize},
   {"enlarge_ce", int_cells_enlarge },

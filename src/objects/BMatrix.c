@@ -66,8 +66,6 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
   for ( i = 0 ; i < Loc->mn ; i++ )   Loc->B[ i] = TRUE ;
   return(Loc);
 }
-
-
 /**
  * nsp_bmatrix_clone:
  * @name: matrix name 
@@ -78,7 +76,8 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
  * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
  * Returns a #NspMatrix or %NULLMAT.
  */
-NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n)
+
+NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n, int init)
 {
   return nsp_bmatrix_create(name, m, n);
 }

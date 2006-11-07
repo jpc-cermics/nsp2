@@ -196,7 +196,6 @@ static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int op
 }
 
 
-int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
 
 static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
@@ -809,7 +808,7 @@ NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_el
   type = check_implements(Obj, nsp_type_matint_id);
 
   if ( nb_elts == 0 )
-     return MAT_INT(type)->clone(NVOID, Obj, 0, 0);  /* ici a adapter pour mtlb mode */
+    return MAT_INT(type)->clone(NVOID, Obj, 0, 0, FALSE);  /* ici a adapter pour mtlb mode */
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
@@ -826,12 +825,12 @@ NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_el
 
   if ( A->m == 1 && A->n > 1 )
     {
-      if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, 1, nb_elts)) == NULLOBJ ) 
+      if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, 1, nb_elts, FALSE)) == NULLOBJ ) 
 	return NULLOBJ;
     }
   else
     {
-      if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nb_elts, 1)) == NULLOBJ ) 
+      if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nb_elts, 1,FALSE)) == NULLOBJ ) 
 	return NULLOBJ;
     }
 
@@ -917,7 +916,7 @@ NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elt
   type = check_implements(Obj, nsp_type_matint_id);
 
   if ( nb_elts == 0 )
-     return MAT_INT(type)->clone(NVOID, Obj, A->m, 0);
+    return MAT_INT(type)->clone(NVOID, Obj, A->m, 0, FALSE);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
   if ( A->m == 0 || A->n == 0) 
@@ -930,7 +929,7 @@ NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elt
       return NULLOBJ;
     }
 
-  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, A->m, nb_elts)) == NULLOBJ ) 
+  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, A->m, nb_elts, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
@@ -997,7 +996,7 @@ NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, 
   type = check_implements(Obj, nsp_type_matint_id);
 
   if ( nb_elts == 0 )
-     return MAT_INT(type)->clone(NVOID, Obj, 0, A->n);
+    return MAT_INT(type)->clone(NVOID, Obj, 0, A->n, FALSE);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
@@ -1012,7 +1011,7 @@ NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, 
       return NULLOBJ;
     }
 
-  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nb_elts, A->n)) == NULLOBJ ) 
+  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nb_elts, A->n, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
@@ -1108,7 +1107,7 @@ NspObject *nsp_matint_extract(NspObject *Obj,
   type = check_implements(Obj, nsp_type_matint_id);
 
   if ( nr == 0 || nc == 0 )
-     return MAT_INT(type)->clone(NVOID, Obj, nr, nc);
+     return MAT_INT(type)->clone(NVOID, Obj, nr, nc, FALSE);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
@@ -1118,7 +1117,7 @@ NspObject *nsp_matint_extract(NspObject *Obj,
       return NULLOBJ;
     }
 
-  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nr, nc)) == NULLOBJ ) 
+  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nr, nc, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
@@ -1640,7 +1639,7 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 	{
 	  if ( elt_size_A == elt_size_B )
 	    {
-	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n)) != NULLOBJ )
+	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n, FALSE)) != NULLOBJ )
 		{
 		  char *to;
 		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
@@ -1654,7 +1653,7 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 	      NspMatrix *AA = (NspMatrix *) ObjA, *BB = (NspMatrix *) ObjB, *CC;
 	      if ( elt_size_A > elt_size_B )  /* A is complex, B real */
 		{
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n);
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
 		      CC = (NspMatrix *) ObjC;
@@ -1667,7 +1666,7 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 		}
 	      else 
 		{                             /* A is real, B complex */
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjB, A->m, A->n + B->n);
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB, A->m, A->n + B->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
 		      CC = (NspMatrix *) ObjC;
@@ -1682,7 +1681,7 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 	}
       else                                                      /* Matrices of pointers (String, cells, poly,...) */
 	{
-	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n)) != NULLOBJ )
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA, A->m, A->n + B->n, FALSE)) != NULLOBJ )
 	    {
 	      C = (NspSMatrix *) ObjC;
 	      char **from = (char **) A->S, **to = (char **) C->S, *elt;
@@ -1833,7 +1832,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 	{
 	  if ( elt_size_A == elt_size_B )
 	    {
- 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+ 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n, FALSE)) != NULLOBJ )
 		{
 		  int step=elt_size_A;
 		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
@@ -1849,7 +1848,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 	    {
 	      if ( elt_size_A > elt_size_B )  
 		{
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n);
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
 		      /* A is complex, B real */
@@ -1872,7 +1871,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 	      else 
 		{ 
 		  /* A is real, B complex */
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
 		      int stepA=elt_size_A;
@@ -1898,7 +1897,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
       else                                                      
 	{
 	  /* Matrices of pointers (String, cells, poly,...) */
-	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n, FALSE)) != NULLOBJ )
 	    {
 	      C = (NspSMatrix *) ObjC;
 	      char *elt;
@@ -2000,7 +1999,7 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 		{ 
 		  /* XXXX we need here a resize which can change the elt_size too */
 		  /* A is real, B complex */
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
 		      int stepA=elt_size_A;
@@ -2118,7 +2117,7 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);
 
-  if ( (ObjB = MAT_INT(type)->clone(NVOID, ObjA, m*A->m, n*A->n)) == NULLOBJ )
+  if ( (ObjB = MAT_INT(type)->clone(NVOID, ObjA, m*A->m, n*A->n, FALSE)) == NULLOBJ )
     return ObjB;
 
   B = (NspSMatrix *) ObjB;
@@ -2506,8 +2505,8 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
 /* an other interface for concatd 
  * This one is used when concatd_x_x is first searched 
  * when x is supposed to implement the matint interface 
- * 
- *
+ * XXX : must be improved to use also the case
+ *  nsp_matint_concat_down_bis.
  */ 
 
 int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
@@ -2778,9 +2777,7 @@ int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs)
  * Return value: a new #NspObject or %NULLOBJ.
  **/
 
-/* Il faut un moyen d'initializer a zero dans clone */
-
-NspObject *nsp_matint_concat_diag(NspObject *ObjA, NspObject *ObjB)
+NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
 {
   NspObject *ObjC=NULLOBJ;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
@@ -2806,104 +2803,155 @@ NspObject *nsp_matint_concat_diag(NspObject *ObjA, NspObject *ObjB)
     }
   /* Matrices of numbers or booleans */
   if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
+    {
+      if ( elt_size_A == elt_size_B )
 	{
-	  if ( elt_size_A == elt_size_B )
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n, TRUE)) != NULLOBJ )
 	    {
- 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n)) != NULLOBJ )
+	      int step=elt_size_A;
+	      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+	      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+	      for ( j = 0 ; j < A->n ; j++ ) 
+		memcpy(to+j*(C->m)*step,fromA+j*A->m*step,A->m*step);
+	      for ( j = 0 ; j < B->n ; j++ ) 
+		memcpy(to+(j+A->n)*(C->m)*step+A->m*step,fromB+j*B->m*step,B->m*step);
+	    }
+	}
+      else    /* one matrix is real and the other is complex */
+	{
+	  if ( elt_size_A > elt_size_B )  
+	    {
+	      ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n, TRUE);
+	      if ( ObjC != NULLOBJ )
 		{
-		  int step=elt_size_A;
+		  /* A is complex, B real */
+		  int stepA=elt_size_A;
+		  int stepB=elt_size_B;
 		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
 		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
 		  for ( j = 0 ; j < A->n ; j++ ) 
-		    memcpy(to+j*(C->m)*step,fromA+j*A->m*step,A->m*step);
+		    { 
+		      memcpy(to+j*(C->m)*stepA,fromA+j*A->m*stepA,A->m*stepA);
+		    }
 		  for ( j = 0 ; j < B->n ; j++ ) 
-		    memcpy(to+(j+A->n)*(C->m)*step+A->m*step,fromB+j*B->m*step,B->m*step);
-		}
-	    }
-	  else    /* one matrix is real and the other is complex */
-	    {
-	      if ( elt_size_A > elt_size_B )  
-		{
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n);
-		  if ( ObjC != NULLOBJ )
 		    {
-		      /* A is complex, B real */
-		      int stepA=elt_size_A;
-		      int stepB=elt_size_B;
-		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
-		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
-		      for ( j = 0 ; j < A->n ; j++ ) 
-			{ 
-			  memcpy(to+j*(C->m)*stepA,fromA+j*A->m*stepA,A->m*stepA);
-			}
-		      for ( j = 0 ; j < B->n ; j++ ) 
+		      doubleC *elt =(doubleC *) (to +(j+A->n)*(C->m)*stepA + A->m*stepA);
+		      for ( i = 0 ; i < B->m ; i++)
 			{
-			  doubleC *elt =(doubleC *) (to +(j+A->n)*(C->m)*stepA + A->m*stepA);
-			  for ( i = 0 ; i < B->m ; i++)
-			    {
-			      elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
-			      elt[i].i = 0.0;
-			    }
+			  elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
+			  elt[i].i = 0.0;
 			}
 		    }
 		}
-	      else 
-		{ 
-		  /* A is real, B complex */
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n+B->n);
-		  if ( ObjC != NULLOBJ )
-		    {
-		      int stepA=elt_size_A;
-		      int stepB=elt_size_B;
-		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
-		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
-		      for ( j = 0 ; j < A->n ; j++ ) 
-			{ 
-			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
-			  /* copy column j of A which is real */
-			  for ( i = 0 ; i < A->m ; i++)
-			    {
-			      elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
-			      elt[i].i = 0.0;
-			    }
-			}
-		      for ( j = 0 ; j < B->n ; j++ ) 
+	    }
+	  else 
+	    { 
+	      /* A is real, B complex */
+	      ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n+B->n, TRUE);
+	      if ( ObjC != NULLOBJ )
+		{
+		  int stepA=elt_size_A;
+		  int stepB=elt_size_B;
+		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		  for ( j = 0 ; j < A->n ; j++ ) 
+		    { 
+		      doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
+		      /* copy column j of A which is real */
+		      for ( i = 0 ; i < A->m ; i++)
 			{
-			  /* copy column j of B which is complex as C */
-			  memcpy(to+(j+A->n)*(C->m)*stepB+A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
+			  elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
+			  elt[i].i = 0.0;
 			}
+		    }
+		  for ( j = 0 ; j < B->n ; j++ ) 
+		    {
+		      /* copy column j of B which is complex as C */
+		      memcpy(to+(j+A->n)*(C->m)*stepB+A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
 		    }
 		}
 	    }
 	}
-      else                                                      
+    }
+  else                                                      
+    {
+      /* Matrices of pointers (String, cells, poly,...) */
+      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n+B->n, TRUE)) != NULLOBJ )
 	{
-	  /* Matrices of pointers (String, cells, poly,...) */
-	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+	  C = (NspSMatrix *) ObjC;
+	  char *elt;
+	  for ( j = 0 ; j < A->n ; j++ ) 
 	    {
-	      C = (NspSMatrix *) ObjC;
-	      char *elt;
-	      for ( j = 0 ; j < A->n ; j++ ) 
+	      char **fromA= A->S+j*A->m;
+	      char **fromB= B->S+j*B->m;
+	      char **toA = C->S+j*(C->m),**toB = C->S+(j+A->n)*(C->m)+A->m;
+	      for ( i = 0 ; i < A->m ; i++ )
 		{
-		  char **fromA= A->S+j*A->m;
-		  char **fromB= B->S+j*B->m;
-		  char **toA = C->S+j*(C->m),**toB = C->S+(j+A->n)*(C->m)+A->m;
-		  for ( i = 0 ; i < A->m ; i++ )
-		    {
-		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
-		      toA[i]=elt;
-		    }
-		  for ( i = 0 ; i < B->m ; i++ )
-		    {
-		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
-		      toB[i]=elt;
-		    }
+		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
+		  toA[i]=elt;
+		}
+	      for ( i = 0 ; i < B->m ; i++ )
+		{
+		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
+		  toB[i]=elt;
 		}
 	    }
 	}
+    }
   return ObjC;
  err:
   nsp_object_destroy(&ObjC); 
   return NULLOBJ;
 }
+
+
+
+/* 
+ * interface for concat_diag which is to be used 
+ * when calling concatdiag_x_x and x is supposed 
+ * to implement the matint interface 
+ * similar to concat_diag
+ *
+ *
+ */ 
+
+int int_matint_concat_diag_yy(Stack stack, int rhs, int opt, int lhs) 
+{
+  /* objects with matint interface can be casted to NspSMatrix */
+  NspSMatrix *A,*B;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((A = (NspSMatrix *)nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+  if ((B = (NspSMatrix *)nsp_get_object(stack, 2)) == NULL)   return RET_BUG;
+  if (A->mn == 0)
+    {
+      /* this is a bit tricky since A and B may point to the same object */
+      if ( A == B ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT(A)->ret_pos = 1;
+	}
+      else 
+	{
+	  NSP_OBJECT(B)->ret_pos = 1;
+	}
+      return 1;
+    }
+
+  if (B->mn == 0)
+    {
+      /* this is a bit tricky since A and B may point to the same object */
+      if ( A == B )  NthObj(2) = NULLOBJ;
+      NSP_OBJECT(A)->ret_pos = 1;
+    }
+  else
+    {
+      NspObject *HMat3;
+      if ((HMat3 = nsp_matint_concat_diag((const NspObject *) A,(const NspObject *) B)) == NULLOBJ)
+	return RET_BUG;
+      MoveObj (stack, 1, HMat3);
+    }
+  return 1;
+}
+
 

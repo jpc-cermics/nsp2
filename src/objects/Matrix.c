@@ -112,10 +112,20 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
  * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
  * Returns a #NspMatrix or %NULLMAT.
  */
-NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n)
+NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n,int init)
 {
   NspMatrix *loc =  nsp_matrix_create(name, A->rc_type, m, n);
   if ( loc != NULL) loc->convert = A->convert ;
+  if ( init == TRUE ) 
+    {
+      double d=0.0;
+      int inc=1;
+      switch ( loc->rc_type )
+	{
+	case 'r' : nsp_dset(&loc->mn,&d,loc->R,&inc);break;
+	case 'c' : nsp_csetd(&loc->mn,&d,loc->C,&inc);break;
+	}
+    }
   return loc;
 }
 

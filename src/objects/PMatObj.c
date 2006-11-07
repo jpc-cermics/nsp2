@@ -505,20 +505,6 @@ int int_pmatrix_concatd_m_s(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Diag Concatenation
- * Res = [A,0;0,B]
- * return NULLMAT on failure ( No more space )
- * A and B are left unchanged
- */
-
-int int_pmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
-{
-  Sciprintf("smxconcatdiag: A FAIRE XXXX");
-  /*
-    return int_pmatrix__concat(stack,rhs,opt,lhs,nsp_pmatrix_concat_diag); */
-  return 0;
-}
 
 /*
  *nsp_pmatrix_add_columns: add n cols of zero to NspPMatrix A 
@@ -800,6 +786,7 @@ static OpTab PMatrix_func[]={
   {"addcols_p_m",int_pmatrix_addcols},
   {"concatd_p_p",int_pmatrix_concatd},
   {"concatd_m_p",int_pmatrix_concatd_m_s},
+  {"concatdiag_p_p",int_matint_concat_diag_yy},
   {"addrows_p",int_pmatrix_addrows},
   {"resize_p",int_pmatrix_resize},
   {"enlarge_p", int_pmatrix_enlarge },
