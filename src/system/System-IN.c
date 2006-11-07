@@ -61,6 +61,37 @@ static int int_timer(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
+ * Interface for tic toc 
+ */
+
+static int int_tic(Stack stack,int rhs,int opt,int lhs) 
+{
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  nsp_tictoc(NULL);
+  return 0;
+}
+
+static int int_toc(Stack stack,int rhs,int opt,int lhs) 
+{
+  NspObject *OM;
+  double etime;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+
+  if ( nsp_tictoc(&etime) == FAIL )
+    {
+      Scierror("Error: tic() must be call before toc()\n");
+      return RET_BUG;
+    }
+
+  if ( (OM=nsp_create_object_from_double(NVOID,etime)) == NULLOBJ ) 
+    return RET_BUG;
+  MoveObj(stack,1,OM);
+  return 1;
+}
+
+/*
  * Interface for system(str)
  */
 
@@ -385,6 +416,8 @@ static OpTab System_func[]={
   {"setenv",int_setenv},
   {"unsetenv",int_unsetenv},
   {"timer", int_timer},
+  {"tic", int_tic},
+  {"toc", int_toc},
   {"system",int_system},
   {"realtime",int_realtime},
   {"realtimeinit",int_realtime_init},

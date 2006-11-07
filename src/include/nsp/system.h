@@ -5,6 +5,7 @@ extern double nsp_timer(void);
 extern int nsp_realtime(double *t);
 extern int nsp_realtime_init( double *t,  double *scale);
 extern int nsp_stimer(void);
+extern int nsp_tictoc(double *etime);
 
 #endif 
 
