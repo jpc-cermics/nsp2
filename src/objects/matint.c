@@ -1282,7 +1282,7 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
 
   if ( typeA != typeB )
     {
-      Scierror("Error: A(...)= B, A and B must be of the same type\n");
+      Scierror("Error: in A(i,j)=B, A and B must be of same type\n");
       return FAIL;
     }
 
@@ -1290,14 +1290,14 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
     {
       if ( nr != B->m ||  nc != B->n )
 	{
-	  Scierror("Error:\tIncompatible dimensions\n");
+	  Scierror("Error: in A(i,j)=B, incompatible dimensions (indices range versus B size)\n");
 	  return FAIL;
 	}
     }
 
   if ( rmin < 1 || cmin < 1 ) 
     {
-      Scierror("Error:\tNon Positive indices are not allowed\n");
+      Scierror("Error: in A(i,j)=B, non positive indices are not allowed\n");
       return FAIL;
     }
 
@@ -1703,8 +1703,8 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
   else if ( B->m == 0  &&  B->n == 0 )
     ObjC = nsp_object_copy(ObjA);
   else
-    Scierror("Error:\tIncompatible dimensions\n");
-
+    Scierror("Error: in [A,B] A and B must have the same number of rows\n");
+      
   return ObjC;
 
  err:
@@ -1735,7 +1735,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
 
-  if ( A->m == B->m || A->m == 0)
+  if ( A->m == B->m || (A->m == 0 && A->n == 0) )
     {
       int Am= B->m ; /* to cover the case A->m==0 */
       if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrices of numbers or booleans */
@@ -1782,14 +1782,9 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 	    }
 	}
     }
-  else if ( A->m == 0 && A->n == 0 )
-    {
-      nsp_object_destroy(&ObjA);
-      if ( (ObjA =nsp_object_copy(ObjB)) == NULLOBJ ) return FAIL;
-    }
   else if ( !(B->m == 0 && B->n == 0) )
     {
-      Scierror("Error:\tIncompatible dimensions\n");
+      Scierror("Error: in [A,B] or A.concatr[B], A and B must have the same number of rows\n");
       return FAIL; 
     }
 
@@ -1922,8 +1917,10 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
   else if ( B->m == 0  &&  B->n == 0 )
     ObjC = nsp_object_copy(ObjA);
   else
-    Scierror("Error:\tIncompatible dimensions\n");
+    Scierror("Error: in [A;B], A and B must have the same number of columns\n");
+
   return ObjC;
+
  err:
   nsp_object_destroy(&ObjC); 
   return NULLOBJ;
@@ -1944,10 +1941,10 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
 
-  if ( A->n == B->n ) 
+  if ( A->n == B->n  || (A->n == 0 && A->m == 0) ) 
     {
-      /* Matrices of numbers or booleans */
-      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
+      A->n = B->n;  /* to cover the case when A = [] */
+      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )     /* Matrices of numbers or booleans */
 	{
 	  if ( elt_size_A == elt_size_B )
 	    {
@@ -2053,8 +2050,12 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 	    }
 	}
     }
-  else
-    Scierror("Error:\tIncompatible dimensions\n");
+  else if ( !(B->m == 0 && B->n == 0) )
+    {
+      Scierror("Error: in [A;B] or A.concatd[B], A and B must have the same number of columns\n");
+      return FAIL;
+    }
+
   return OK;
  err:
   return FAIL;
@@ -2410,26 +2411,9 @@ int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
 
   if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
     {
-      int m=nsp_object_get_size(ObjA,1);
-      int n=nsp_object_get_size(ObjA,2);
-      /* XXX quick and dirty hack to correct 
-       * nsp_matint_concat_right_bis which is wrong when 
-       * ObjA == []
-       * ObjA should be transmited by adress to 
-       *  nsp_matint_concat_right_bis.
-       */
-      if ( m  == 0 && n == 0 )
-	{
-	  if ( (ObjA =nsp_object_copy(ObjB)) == NULLOBJ ) return FAIL;
-	  /* this will clean the previously stored ObjA */
-	  MoveObj (stack, 1, ObjA);
-	}
-      else 
-	{
-	  if ( nsp_matint_concat_right_bis(ObjA, ObjB) == FAIL )
-	    return RET_BUG;
-	  ObjA->ret_pos = 1;
-	}
+      if ( nsp_matint_concat_right_bis(ObjA, ObjB) == FAIL )
+	return RET_BUG;
+      ObjA->ret_pos = 1;
     }
   else
     {
