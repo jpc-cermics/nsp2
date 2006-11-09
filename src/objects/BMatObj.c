@@ -959,17 +959,17 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab BMatrix_func[]={
-  {"extract_b", nsp_matint_extract_xx}, 
-  {"extractelts_b", nsp_matint_extractelts_xx}, 
-  {"extractcols_b", nsp_matint_extractcols_xx}, 
-  {"extractrows_b", nsp_matint_extractrows_xx}, 
-  {"resize2vect_b", nsp_matint_resize2vect_xx},
-  {"setrowscols_b", nsp_matint_setrowscols_xx},
-  {"deleteelts_b", nsp_matint_deleteelts_xx},
-  {"deleterows_b", nsp_matint_deleterows_xx},
-  {"deletecols_b", nsp_matint_deletecols_xx},
-  {"tozero_b", nsp_matint_tozero_xx},
-  {"repmat_b", nsp_matint_repmat_xx},
+  {"extract_b", int_matint_extract}, 
+  {"extractelts_b", int_matint_extractelts}, 
+  {"extractcols_b", int_matint_extractcols}, 
+  {"extractrows_b", int_matint_extractrows}, 
+  {"resize2vect_b", int_matint_resize2vect},
+  {"setrowscols_b", int_matint_setrowscols},
+  {"deleteelts_b", int_matint_deleteelts},
+  {"deleterows_b", int_matint_deleterows},
+  {"deletecols_b", int_matint_deletecols},
+  {"tozero_b", int_matint_tozero},
+  {"repmat_b", int_matint_repmat},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
@@ -979,9 +979,9 @@ static OpTab BMatrix_func[]={
   {"seq_and_b",int_bmatrix_and1},
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
-  {"concatd_b_b", nsp_matint_concatd_xx}, /* int_bmatrix_concatd}, */
-  {"concatr_b_b", nsp_matint_concatr_xx}, /* int_bmatrix_concatr},*/
-  {"concatdiag_b_b" , int_matint_concat_diag_yy},/* int_bmatrix_concatdiag },*/
+  {"concatd_b_b", int_matint_concatd}, /* int_bmatrix_concatd}, */
+  {"concatr_b_b", int_matint_concatr}, /* int_bmatrix_concatr},*/
+  {"concatdiag_b_b" , int_matint_concat_diag},/* int_bmatrix_concatdiag },*/
   {"copy_b",int_bmatrix_copy},
   {"bmat_create_m",int_bmatrix_create},
   {"diagcre_b",int_bmatrix_diagcre},

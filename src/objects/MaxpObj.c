@@ -1433,7 +1433,7 @@ static int int_mp_concat(Stack stack, int rhs, int opt, int lhs, Fconcat F)
 
 int int_mpconcatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
   /* return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down); */
 }
 
@@ -2401,16 +2401,16 @@ static int int_mp_wrap1(Stack stack, int rhs, int opt, int lhs,function *f)
  */
 
 static OpWrapTab Matrix_func[]={
-  {"extract_mp", nsp_matint_extract_xx}, 
-  {"extractelts_mp", nsp_matint_extractelts_xx}, 
-  {"extractcols_mp", nsp_matint_extractcols_xx}, 
-  {"extractrows_mp", nsp_matint_extractrows_xx}, 
-  {"resize2vect_mp", nsp_matint_resize2vect_xx},
-  {"setrowscols_mp", nsp_matint_setrowscols_xx},
-  {"deleteelts_mp", nsp_matint_deleteelts_xx},
-  {"deleterows_mp", nsp_matint_deleterows_xx},
-  {"deletecols_mp", nsp_matint_deletecols_xx},
-  {"tozero_mp", nsp_matint_tozero_xx},
+  {"extract_mp", int_matint_extract}, 
+  {"extractelts_mp", int_matint_extractelts}, 
+  {"extractcols_mp", int_matint_extractcols}, 
+  {"extractrows_mp", int_matint_extractrows}, 
+  {"resize2vect_mp", int_matint_resize2vect},
+  {"setrowscols_mp", int_matint_setrowscols},
+  {"deleteelts_mp", int_matint_deleteelts},
+  {"deleterows_mp", int_matint_deleterows},
+  {"deletecols_mp", int_matint_deletecols},
+  {"tozero_mp", int_matint_tozero},
   {"abs_mp",int_mxabs,int_mp_wrap1},
   {"acos_mp",int_mxacos,int_mp_wrap1},
   {"acosh_mp",int_mxacosh,int_mp_wrap1},
@@ -2430,13 +2430,13 @@ static OpWrapTab Matrix_func[]={
   {"complexify_mp" ,  int_mpcomplexify ,NULL},
   {"concatd_m_mp" ,  int_mpconcatd_m ,NULL},
   {"concatd_mp_m" ,  int_mpconcatd_m ,NULL},
-  {"concatd_mp_mp" , nsp_matint_concatd_xx ,NULL},
+  {"concatd_mp_mp" , int_matint_concatd ,NULL},
   {"concatdiag_m_mp" ,  int_mpconcatdiag_m ,NULL},
   {"concatdiag_mp_m" ,  int_mpconcatdiag_m ,NULL},
-  {"concatdiag_mp_mp" , int_matint_concat_diag_yy ,NULL},
+  {"concatdiag_mp_mp" , int_matint_concat_diag ,NULL},
   {"concatr_m_mp" ,  int_mpconcatr_m,NULL},
   {"concatr_mp" ,  int_mpconcatr ,NULL},
-  {"concatr_mp_mp" , nsp_matint_concatr_xx   ,NULL},
+  {"concatr_mp_mp" , int_matint_concatr   ,NULL},
   {"conj_mp",int_mpconj,NULL},
   {"cos_mp",int_mxcos,int_mp_wrap1},
   {"cosh_mp",int_mxcosh,int_mp_wrap1},

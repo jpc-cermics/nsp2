@@ -2391,7 +2391,7 @@ int_mxconcatd_old (Stack stack, int rhs, int opt, int lhs)
 
 int int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
 }
 
 /*
@@ -4452,14 +4452,14 @@ static OpTab Matrix_func[] = {
   {"clean", int_mxclean},
   {"complexify_m", int_mxcomplexify},
   /*  {"concatd_m_m", int_mxconcatd},*/
-  {"concatd_m_m", nsp_matint_concatd_xx},
-  {"concatr_m_m", nsp_matint_concatr_xx},
+  {"concatd_m_m", int_matint_concatd},
+  {"concatr_m_m", int_matint_concatr},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
   {"concatd_m_b", int_mxconcatd},/*  nsp_matint_concat_emptymat_and_mat_xx},  */
   {"mat_create_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
-  {"concatdiag_m_m",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
+  {"concatdiag_m_m",int_matint_concat_diag}, /* int_mxconcatdiag}, */
   {"diag_m", int_mxdiag},
   {"diag_m_m", int_mxdiag},
   {"diagcre_m", int_mxdiagcre},
@@ -4469,17 +4469,17 @@ static OpTab Matrix_func[] = {
   {"diagset_m", int_mxdiagset},
   {"diff_m", int_mxdiff},
   {"eq_m_m", int_mxeq},
-  {"extract_m", nsp_matint_extract_xx}, 
-  {"extractelts_m", nsp_matint_extractelts_xx}, 
-  {"extractcols_m", nsp_matint_extractcols_xx}, 
-  {"extractrows_m", nsp_matint_extractrows_xx}, 
-  {"resize2vect_m", nsp_matint_resize2vect_xx},
-  {"setrowscols_m", nsp_matint_setrowscols_xx},
-  {"deleteelts_m", nsp_matint_deleteelts_xx},
-  {"deleterows_m", nsp_matint_deleterows_xx},
-  {"deletecols_m", nsp_matint_deletecols_xx},
-  {"tozero_m", nsp_matint_tozero_xx},
-  {"repmat_m", nsp_matint_repmat_xx},
+  {"extract_m", int_matint_extract}, 
+  {"extractelts_m", int_matint_extractelts}, 
+  {"extractcols_m", int_matint_extractcols}, 
+  {"extractrows_m", int_matint_extractrows}, 
+  {"resize2vect_m", int_matint_resize2vect},
+  {"setrowscols_m", int_matint_setrowscols},
+  {"deleteelts_m", int_matint_deleteelts},
+  {"deleterows_m", int_matint_deleterows},
+  {"deletecols_m", int_matint_deletecols},
+  {"tozero_m", int_matint_tozero},
+  {"repmat_m", int_matint_repmat},
   {"eye_m_m", int_mxeye},
   {"ones_m_m", int_mxones},
   {"zeros_m_m", int_mxzeros},

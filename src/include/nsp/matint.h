@@ -64,42 +64,40 @@ extern int nsp_matint_set_submatrix(NspObject *ObjA,
 				    const int *row, int nr, int rmin, int rmax,
 				    const int *col, int nc, int cmin, int cmax,
 				    NspObject *ObjB);
-
 extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB);
 extern int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
 extern int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB);
 extern NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n);
-
 typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
 extern NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
-extern int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F);
-extern int nsp_matint_resize2vect_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_extractelts_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_extractcols_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_extractrows_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_extract_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_deleteelts_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_deleteelts2_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_deletecols_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_deleterows_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
-extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
-extern int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs);
-extern int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB);
-extern int int_matint_concat_diag_yy(Stack stack, int rhs, int opt, int lhs);
-
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
 
+
+extern int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_concat_down(Stack stack, int rhs, int opt, int lhs, Fconcat_d F);
+extern int int_matint_concat_emptymat_and_mat(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_concatd(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_concatr(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_deletecols(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_deleteelts2(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_deleterows(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extract(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractcols(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractelts(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractrows(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_repmat(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_tozero(Stack stack, int rhs, int opt, int lhs);
 
 
 #endif 

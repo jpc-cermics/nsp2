@@ -2185,7 +2185,7 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 
 /* various deletions functions */
 
-int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_tozero(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
 
@@ -2197,7 +2197,7 @@ int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs)
 
 typedef int (*delfunc) (NspObject *Obj, int *ind, int nb_elts, int imin, int imax);
 
-static int nsp_matint_delete_gen_xx(Stack stack, int rhs, int opt, int lhs, delfunc F)
+static int int_matint_delete_gen(Stack stack, int rhs, int opt, int lhs, delfunc F)
 {
   NspObject *Obj;
   int nb_elts, *ind=NULL, imin, imax;
@@ -2219,26 +2219,26 @@ static int nsp_matint_delete_gen_xx(Stack stack, int rhs, int opt, int lhs, delf
   return RET_BUG;
 }
 
-int nsp_matint_deleteelts_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs)
 {
   if ( rhs == 3 )
-    return nsp_matint_deleteelts2_xx(stack, rhs, opt, lhs);
+    return int_matint_deleteelts2(stack, rhs, opt, lhs);
   else
-    return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
+    return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
 }
 
-int nsp_matint_deletecols_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns);
+  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns);
 }
 
-int nsp_matint_deleterows_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows);
+  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows);
 }
 
 
-int nsp_matint_deleteelts2_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_deleteelts2(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
   int nr, nc, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
@@ -2268,7 +2268,7 @@ int nsp_matint_deleteelts2_xx(Stack stack, int rhs, int opt, int lhs)
 
 /* various extractions interfaces */
 
-int nsp_matint_resize2vect_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj, *Res;
   NspSMatrix *B;
@@ -2289,7 +2289,7 @@ int nsp_matint_resize2vect_xx(Stack stack, int rhs, int opt, int lhs)
 
 typedef NspObject * (*extractfunc) (NspObject *Obj, int *ind, int nb_elts, int imin, int imax);
 
-static int nsp_matint_extract_gen_xx(Stack stack, int rhs, int opt, int lhs, extractfunc F)
+static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extractfunc F)
 {
   NspObject *Obj, *Res;
   int nb_elts, *ind=NULL, imin, imax;
@@ -2312,23 +2312,23 @@ static int nsp_matint_extract_gen_xx(Stack stack, int rhs, int opt, int lhs, ext
   return RET_BUG;
 }
 
-int nsp_matint_extractelts_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_extractelts(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_extract_gen_xx(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_elements);
+  return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_elements);
 }
 
-int nsp_matint_extractcols_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_extractcols(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_extract_gen_xx(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_columns);
+  return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_columns);
 }
 
-int nsp_matint_extractrows_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_extractrows(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_extract_gen_xx(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_rows);
+  return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_rows);
 }
 
 
-int nsp_matint_extract_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj, *Res;
   int nr, nc, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
@@ -2358,7 +2358,7 @@ int nsp_matint_extract_xx(Stack stack, int rhs, int opt, int lhs)
 
 /* insertion interface */
 
-int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB;
   int nr=0, nc=0, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
@@ -2404,7 +2404,7 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
 }
 
 /**
- * nsp_matint_concatr_xx:
+ * int_matint_concatr:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2418,7 +2418,7 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
  * Return value: 1 or %RET_BUG.
  **/
 
-int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_concatr(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB, *Res;
 
@@ -2457,7 +2457,7 @@ int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
 }
 
 /**
- * nsp_matint_concat_emptymat_and_mat_xx:
+ * int_matint_concat_emptymat_and_mat:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2470,7 +2470,7 @@ int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
  * Return value: 1 or %RET_BUG.
  **/
 
-int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_concat_emptymat_and_mat(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB;
   int m,n;
@@ -2492,7 +2492,7 @@ int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs
 }
 
 /**
- * nsp_matint_concat_down_xx:
+ * int_matint_concatd:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2508,7 +2508,7 @@ int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs
  **/
 
 
-int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
+int int_matint_concatd(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB, *Res;
   CheckRhs (2, 2);
@@ -2546,7 +2546,7 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
 }
 
 /**
- * int_matint_concat_down_yy:
+ * int_matint_concat_down:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2561,7 +2561,7 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
  * Return value: 1 or %RET_BUG.
  **/
 
-int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
+int int_matint_concat_down(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
 {
   /* objects with matint interface can be casted to NspSMatrix */
   NspSMatrix *A,*B;
@@ -2601,7 +2601,7 @@ int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d 
 }
 
 /**
- * nsp_matint_cells_setrowscols_xx:
+ * int_matint_cells_setrowscols:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2611,7 +2611,8 @@ int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d 
  * 
  * Return value: 
  **/
-int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
+
+int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
   int i, j, ind, nind;
   int nr=0, nc=0, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
@@ -2794,7 +2795,7 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
 }
 
 /**
- * nsp_matint_repmat_xx:
+ * int_matint_repmat:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2806,7 +2807,7 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
  * Return value: 
  **/
 
-int nsp_matint_repmat_xx(Stack stack, int rhs, int opt, int lhs) 
+int int_matint_repmat(Stack stack, int rhs, int opt, int lhs) 
 {
   NspTypeBase *type;
   int m,n;
@@ -2972,7 +2973,7 @@ NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
 
 
 /**
- * int_matint_concat_diag_yy:
+ * int_matint_concat_diag:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -2986,7 +2987,7 @@ NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
  * Return value: 
  **/
 
-int int_matint_concat_diag_yy(Stack stack, int rhs, int opt, int lhs) 
+int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs) 
 {
   /* objects with matint interface can be casted to NspSMatrix */
   NspSMatrix *A,*B;

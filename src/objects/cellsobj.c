@@ -697,7 +697,7 @@ int int_cells__concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
 
 int int_cells_concatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
   /* return int_cells__concat(stack,rhs,opt,lhs,nsp_cells_concat_down); */
 }
 
@@ -1105,7 +1105,7 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
 
 static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_cells_setrowscols_xx(stack, rhs, opt, lhs);
+  return int_matint_cells_setrowscols(stack, rhs, opt, lhs);
 }
 
 /* unique for cells
@@ -1136,17 +1136,17 @@ static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Cells_func[]={
-  {"extract_ce", nsp_matint_extract_xx}, 
-  {"extractelts_ce", nsp_matint_extractelts_xx}, 
-  {"extractcols_ce", nsp_matint_extractcols_xx}, 
-  {"extractrows_ce", nsp_matint_extractrows_xx}, 
-  {"resize2vect_ce", nsp_matint_resize2vect_xx},
-  {"setrowscols_ce", nsp_matint_setrowscols_xx},
-  {"deleteelts_ce", nsp_matint_deleteelts_xx},
-  {"deleterows_ce", nsp_matint_deleterows_xx},
-  {"deletecols_ce", nsp_matint_deletecols_xx},
-  {"tozero_ce", nsp_matint_tozero_xx},
-  {"repmat_ce", nsp_matint_repmat_xx},
+  {"extract_ce", int_matint_extract}, 
+  {"extractelts_ce", int_matint_extractelts}, 
+  {"extractcols_ce", int_matint_extractcols}, 
+  {"extractrows_ce", int_matint_extractrows}, 
+  {"resize2vect_ce", int_matint_resize2vect},
+  {"setrowscols_ce", int_matint_setrowscols},
+  {"deleteelts_ce", int_matint_deleteelts},
+  {"deleterows_ce", int_matint_deleterows},
+  {"deletecols_ce", int_matint_deletecols},
+  {"tozero_ce", int_matint_tozero},
+  {"repmat_ce", int_matint_repmat},
   /* {"loopextract_m_ce",int_cells_extractcolforloop}, */
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},
@@ -1154,12 +1154,12 @@ static OpTab Cells_func[]={
   {"diag_cells_create", int_row_cells_create},
   {"redim_ce",int_matint_redim},
   {"matrix_ce", int_matint_redim},
-  {"concatr_ce_ce", nsp_matint_concatr_xx}, /* int_cells_concatr}, */
+  {"concatr_ce_ce", int_matint_concatr}, /* int_cells_concatr}, */
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},
-  {"concatd_ce_ce", nsp_matint_concatr_xx}, /* int_cells_concatd}, */
+  {"concatd_ce_ce", int_matint_concatr}, /* int_cells_concatd}, */
   {"concatd_m_ce",int_cells_concatd_m_ce},
-  {"concatdiag_ce_ce",int_matint_concat_diag_yy},
+  {"concatdiag_ce_ce",int_matint_concat_diag},
   {"addrows_ce",int_cells_addrows},
   {"resize_ce",int_cells_resize},
   {"enlarge_ce", int_cells_enlarge },
@@ -1179,7 +1179,7 @@ static OpTab Cells_func[]={
   {"ce2m",int_ce2m},
   {"object2seq_ce",int_cells_to_seq}, /* C{...} : extract +object2seq */
   {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
-  {"setrowscols_ce", nsp_matint_setrowscols_xx}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
+  {"setrowscols_ce", int_matint_setrowscols}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {"unique_ce" ,  int_cells_unique },
   {(char *) 0, NULL}
 };

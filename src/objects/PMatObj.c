@@ -471,7 +471,7 @@ int int_pmatrix__concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
 
 int int_pmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
   /* return int_pmatrix__concat(stack,rhs,opt,lhs,nsp_pmatrix_concat_down); */
 }
 
@@ -768,25 +768,25 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab PMatrix_func[]={
-  {"extract_p", nsp_matint_extract_xx}, 
-  {"extractelts_p", nsp_matint_extractelts_xx}, 
-  {"extractcols_p", nsp_matint_extractcols_xx}, 
-  {"extractrows_p", nsp_matint_extractrows_xx}, 
-  {"resize2vect_p", nsp_matint_resize2vect_xx},
-  {"setrowscols_p", nsp_matint_setrowscols_xx},
-  {"deleteelts_p", nsp_matint_deleteelts_xx},
-  {"deleterows_p", nsp_matint_deleterows_xx},
-  {"deletecols_p", nsp_matint_deletecols_xx},
-  {"tozero_p", nsp_matint_tozero_xx},
+  {"extract_p", int_matint_extract}, 
+  {"extractelts_p", int_matint_extractelts}, 
+  {"extractcols_p", int_matint_extractcols}, 
+  {"extractrows_p", int_matint_extractrows}, 
+  {"resize2vect_p", int_matint_resize2vect},
+  {"setrowscols_p", int_matint_setrowscols},
+  {"deleteelts_p", int_matint_deleteelts},
+  {"deleterows_p", int_matint_deleterows},
+  {"deletecols_p", int_matint_deletecols},
+  {"tozero_p", int_matint_tozero},
   {"pmat_create",int_pmatrix_create},
   {"redim_p",int_matint_redim},
   {"matrix_p",int_matint_redim},
-  {"concatr_p_p", nsp_matint_concatr_xx}, /* int_pmatrix_concatr}, */
+  {"concatr_p_p", int_matint_concatr}, /* int_pmatrix_concatr}, */
   {"concatr_m_p",int_pmatrix_concatr_m_s},
   {"addcols_p_m",int_pmatrix_addcols},
-  {"concatd_p_p",nsp_matint_concatr_xx}, /*  int_pmatrix_concatd}, */
+  {"concatd_p_p",int_matint_concatr}, /*  int_pmatrix_concatd}, */
   {"concatd_m_p",int_pmatrix_concatd_m_s},
-  {"concatdiag_p_p",int_matint_concat_diag_yy},
+  {"concatdiag_p_p",int_matint_concat_diag},
   {"addrows_p",int_pmatrix_addrows},
   {"resize_p",int_pmatrix_resize},
   {"enlarge_p", int_pmatrix_enlarge },

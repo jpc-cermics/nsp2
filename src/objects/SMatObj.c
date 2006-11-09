@@ -1751,31 +1751,31 @@ int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab SMatrix_func[]={
-  {"extract_s", nsp_matint_extract_xx}, 
-  {"extractelts_s", nsp_matint_extractelts_xx}, 
-  {"extractcols_s", nsp_matint_extractcols_xx}, 
-  {"extractrows_s", nsp_matint_extractrows_xx}, 
-  {"resize2vect_s", nsp_matint_resize2vect_xx},
-  {"setrowscols_s", nsp_matint_setrowscols_xx},
-  {"deleteelts_s", nsp_matint_deleteelts_xx},
-  {"deleterows_s", nsp_matint_deleterows_xx},
-  {"deletecols_s", nsp_matint_deletecols_xx},
-  {"tozero_s", nsp_matint_tozero_xx},
-  {"repmat_s", nsp_matint_repmat_xx},
+  {"extract_s", int_matint_extract}, 
+  {"extractelts_s", int_matint_extractelts}, 
+  {"extractcols_s", int_matint_extractcols}, 
+  {"extractrows_s", int_matint_extractrows}, 
+  {"resize2vect_s", int_matint_resize2vect},
+  {"setrowscols_s", int_matint_setrowscols},
+  {"deleteelts_s", int_matint_deleteelts},
+  {"deleterows_s", int_matint_deleterows},
+  {"deletecols_s", int_matint_deletecols},
+  {"tozero_s", int_matint_tozero},
+  {"repmat_s", int_matint_repmat},
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
   /* {"loopextract_m_s",int_smxextractcolforloop}, */
   {"smat_create_m",int_smxcreate},
   {"redim_s",int_matint_redim},
   {"matrix_s", int_matint_redim},
-  {"concatr_s_s",nsp_matint_concatr_xx},
+  {"concatr_s_s",int_matint_concatr},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"concatr_s_m",int_smxconcatr_s_m},
   {"addcols_s_m",int_smxaddcols},
-  {"concatd_s_s", nsp_matint_concatd_xx}, /*  int_smxconcatd}, */
+  {"concatd_s_s", int_matint_concatd}, /*  int_smxconcatd}, */
   {"concatd_s_m",  int_smxconcatd_s_m}, /*  int_smxconcatd}, */
   {"concatd_m_s", int_smxconcatd_m_s},
-  {"concatdiag_s_s",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
+  {"concatdiag_s_s",int_matint_concat_diag}, /* int_mxconcatdiag}, */
   {"addrows_s",int_smxaddrows},
   {"resize_s",int_smxresize},
   {"concat_s_s", int_smxconcattt },
