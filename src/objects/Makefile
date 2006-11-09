@@ -9,7 +9,7 @@ LIBRARY = nsp.a
 
 OBJSC = Matrix.o MatOps.o MatObj.o  \
 	BMatrix.o BMatObj.o \
-	SMatrix.o SMatrix-IN.o SMatObj.o \
+	SMatrix.o SMatObj.o \
 	PMatrix.o PMatObj.o \
 	SpMatrix.o SpMatObj.o \
 	List.o ListObj.o \
