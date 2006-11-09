@@ -155,7 +155,7 @@ int int_smxconcatd_m_s(Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat2->mn != 0)
     {
-      if ((Res=nsp_smatrix_concat_down(Res,HMat2))== NULLSMAT ) return RET_BUG;
+      if (nsp_smatrix_concat_down1(Res,HMat2,FALSE) != OK) return RET_BUG;
     }
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
