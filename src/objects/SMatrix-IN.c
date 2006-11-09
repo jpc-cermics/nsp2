@@ -55,44 +55,18 @@ int int_smxcreate(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
 /*
  * Right Concatenation 
  * A= [A,B] 
  * return 0 on failure ( incompatible size or No more space )
+ * provided through matint 
  */
 
-int int_smxconcatr(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
-    {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ((HMat2 = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  if ( HMat2->mn == 0)
-    {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  else
-    {
-      if ((HMat1 = GetSMatCopy(stack,1))  == NULLSMAT) return RET_BUG;
-      if (nsp_smatrix_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  return 1;
-}
 
 /*
  * Right Concatenation 
  * Res = [A,B]  when A is a scalar matrix 
- * usefull when A=[]
+ * A is converted to SMatrix.
  */
 
 int int_smxconcatr_m_s(Stack stack, int rhs, int opt, int lhs)
@@ -123,51 +97,9 @@ int int_smxconcatr_m_s(Stack stack, int rhs, int opt, int lhs)
  * Res = [A;B] 
  * return NULLSMat on failure ( incompatible size or No more space )
  * A and B are left unchanged 
+ * provided by matint
  */
 
-typedef NspSMatrix * (*FSconcat) (const NspSMatrix *,const NspSMatrix *);
-
-int int_smx_concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
-{
-  NspSMatrix *A,*B,*C;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
-  if ( A->mn == 0)
-    {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ((B = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  if ( B->mn == 0)
-    {
-      NSP_OBJECT(A)->ret_pos = 1;
-      return 1;
-    }
-  if (strcmp(nsp_object_get_name(NSP_OBJECT(A)),NVOID) == 0)
-    {
-      /* we can use A directly */
-      int flag=FALSE;
-      if ( A == B ) 
-	{
-	  if ((B = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
-	}
-      if (strcmp(nsp_object_get_name(NSP_OBJECT(B)),NVOID) == 0) 
-	{
-	  /* B can be used in nsp_smatrix_concat_down1 and be destroyed */
-	  flag = TRUE;
-	  NthObj(2)= NULLOBJ;
-	}
-      if ( nsp_smatrix_concat_down1(A,B,flag)== FAIL) return RET_BUG;
-      NSP_OBJECT(A)->ret_pos =1;
-    }
-  else
-    {
-      if (( C = (*F)(A,B)) == NULLSMAT)  return RET_BUG;
-      MoveObj(stack,1,NSP_OBJECT(C));
-    }
-  return 1;
-}
 
 int int_smxconcatd(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1150,7 +1082,7 @@ static OpTab SMatrix_func[]={
   {"concatr_s_s",nsp_matint_concatr_xx},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"addcols_s_m",int_smxaddcols},
-  {"concatd_s_s",int_smxconcatd},
+  {"concatd_s_s", nsp_matint_concatd_xx}, /*  int_smxconcatd}, */
   {"concatd_m_s",int_smxconcatd_m_s},
   {"concatdiag_s_s",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
   {"addrows_s",int_smxaddrows},

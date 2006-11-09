@@ -1991,8 +1991,10 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 		}
 	      else 
 		{ 
-		  /* XXXX we need here a resize which can change the elt_size too */
+		  /* we need here a resize which can change the elt_size too */
+		  /* the solution adopted in concatr is to use complexify which is not generic */
 		  /* A is real, B complex */
+		  /* see the trick below */
 		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
@@ -2040,7 +2042,7 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 	      for ( j = 0 ; j < A->n ; j++ ) 
 		{
 		  char **fromB= B->S+j*B->m;
-		  char **toB =A->S+j*(C->m)+ Am;
+		  char **toB =A->S+j*(A->m)+ Am;
 		  for ( i = 0 ; i < B->m ; i++ )
 		    {
 		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
