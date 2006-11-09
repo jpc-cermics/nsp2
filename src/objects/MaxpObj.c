@@ -1323,29 +1323,6 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Matredim : changes Matrix dimensions
- * but keeps m*n constant
- * WARNING : Object on stack is changed 
- * =======
- */
-
-int int_mpredim_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspMaxpMatrix  *HMat;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ( (HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
-
-
-/* xxxx ecrire le Enlarge ***/
 
 /*
  * Right Concatenation  A= [A,B] 
@@ -2453,12 +2430,13 @@ static OpWrapTab Matrix_func[]={
   {"complexify_mp" ,  int_mpcomplexify ,NULL},
   {"concatd_m_mp" ,  int_mpconcatd_m ,NULL},
   {"concatd_mp_m" ,  int_mpconcatd_m ,NULL},
-  {"concatd_mp_mp" ,  int_mpconcatd ,NULL},
+  {"concatd_mp_mp" , nsp_matint_concatd_xx ,NULL},
   {"concatdiag_m_mp" ,  int_mpconcatdiag_m ,NULL},
   {"concatdiag_mp_m" ,  int_mpconcatdiag_m ,NULL},
   {"concatdiag_mp_mp" , int_matint_concat_diag_yy ,NULL},
   {"concatr_m_mp" ,  int_mpconcatr_m,NULL},
   {"concatr_mp" ,  int_mpconcatr ,NULL},
+  {"concatr_mp_mp" , nsp_matint_concatr_xx   ,NULL},
   {"conj_mp",int_mpconj,NULL},
   {"cos_mp",int_mxcos,int_mp_wrap1},
   {"cosh_mp",int_mxcosh,int_mp_wrap1},

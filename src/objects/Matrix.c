@@ -1051,29 +1051,10 @@ int nsp_matrix_set_submatrix_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
-/** 
- * nsp_matrix_set_rows:
- * @A: a #NspMatrix
- * @Rows: a #NspMatrix
- * @B: a #NspMatrix
- * 
- * Performs  A(Inds) = B. A is changed and enlarged if necessary 
- * Inds is unchanged 
- * Size Compatibility is checked 
- * Rules : A Matrix or A ==[]  
- *	A(Inds)=B 
- *	B must be row or column 
- *	if A==[] the size of the result depends on b 
- * 
- *      A row vector B must be row 
- *      A column vector B must be column 
- *      Inds must be in the range of A indices unless A is row or column or []
- *      Inds and B must have the same size or B must be scalar 
- * 
- * returns %OK or %FAIL.
- */
 
-/*generic function which check sizes and enlarge A if necessary */
+/*generic function which check sizes and enlarge A if necessary 
+ * should be moved in Sparse where it is still used. 
+ */
 
 int GenericMatSeRo(void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal)
 {
@@ -1152,82 +1133,28 @@ int GenericMatSeRo(void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, i
   return OK;
 }
 
-int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,
-		      void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal)
-{
-  if ( rmin < 1 ) 
-    {
-      Scierror("Error:\tNegative indices are not allowed\n");
-      return FAIL;
-    }
-  if ( Bm != 1 && Bn != 1) 
-    {
-      Scierror("Error:\tA(ind)=B, B must be a vector");
-      return FAIL;
-    }
-  if ( Am == 1  && Bm != 1) 
-    {
-      Scierror("Error:\tA(ind)=B, B must be row when A is a row\n");
-      return FAIL;
-    } 
-  if ( An == 1 && Bn != 1 )
-    {
-      Scierror("Error:\tA(ind)=B, B must be column when A is a column\n");
-      return FAIL;
-    }
-  /* Enlarging A **/
-  if ( rmax > Amn ) 
-    {
-      if ( Amn == 0) 
-	{
-	  if ( Bn != 1) 
-	    { if ( (*F)(A,1,rmax) == FAIL) return FAIL;}
-	  else
-	    { if ( (*F)(A,rmax,1) == FAIL) return FAIL;}
-	}
-      else if ( Am == 1) 
-	{
-	  if ( An == 1) 
-	    {
-	      if ( Bn != 1) 
-		{if ( (*F)(A,1,rmax) == FAIL) return FAIL;}
-	      else
-		{if ( (*F)(A,rmax,1) == FAIL) return FAIL;}
-	    } 
-	  else
-	    {
-	      if ( (*F)(A,Am,rmax) == FAIL) return FAIL;
-	    }
-	}
-      else
-	{
-	  if ( An == 1)
-	    {
-	      if ( (*F)(A,rmax,An) == FAIL) return FAIL;
-	    }
-	  else
-	    {
-	      Scierror("Error:\tA(ind)=B, ind must be inside A range when A is not a vector\n");
-	      return FAIL;
-	    }  
-	}
-    }
-  if ( Bmn == 1) 
-    {
-      *Bscal=1;
-    }
-  else
-    {
-      if ( Bmn != nb_ind ) 
-	{
-	  Scierror("Error:\tA(ind)=B, ind and B have incompatible sizes\n");
-	  return FAIL;
-	}
-      *Bscal=0;
-    }
-  return OK;
-}
 
+/** 
+ * nsp_matrix_set_rows:
+ * @A: a #NspMatrix
+ * @Rows: a #NspMatrix
+ * @B: a #NspMatrix
+ * 
+ * Performs  A(Inds) = B. A is changed and enlarged if necessary 
+ * Inds is unchanged 
+ * Size Compatibility is checked 
+ * Rules : A Matrix or A ==[]  
+ *	A(Inds)=B 
+ *	B must be row or column 
+ *	if A==[] the size of the result depends on b 
+ * 
+ *      A row vector B must be row 
+ *      A column vector B must be column 
+ *      Inds must be in the range of A indices unless A is row or column or []
+ *      Inds and B must have the same size or B must be scalar 
+ * 
+ * returns %OK or %FAIL.
+ */
 
 int nsp_matrix_set_rows_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
 {

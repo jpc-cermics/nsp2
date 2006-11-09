@@ -629,39 +629,6 @@ int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Right Concatenation 
- * A= [A,B] 
- * return 0 on failure ( incompatible size or No more space )
- */
-
-int int_cells_concatr_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetCells(stack,1))  == NULLCELLS) return RET_BUG;
-  if ( HMat1->mn == 0)
-    {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ((HMat2 = GetCells(stack,2)) == NULLCELLS) return RET_BUG;
-  if ( HMat2->mn == 0)
-    {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  else
-    {
-      if ((HMat1 = GetCellsCopy(stack,1))  == NULLCELLS) return RET_BUG;
-      if (nsp_cells_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  return 1;
-}
-
-/*
- * Right Concatenation 
  * Res = [A,B]  when A is a scalar matrix 
  * usefull when A=[]
  */
@@ -1190,7 +1157,7 @@ static OpTab Cells_func[]={
   {"concatr_ce_ce", nsp_matint_concatr_xx}, /* int_cells_concatr}, */
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},
-  {"concatd_ce_ce",int_cells_concatd},
+  {"concatd_ce_ce", nsp_matint_concatr_xx}, /* int_cells_concatd}, */
   {"concatd_m_ce",int_cells_concatd_m_ce},
   {"concatdiag_ce_ce",int_matint_concat_diag_yy},
   {"addrows_ce",int_cells_addrows},

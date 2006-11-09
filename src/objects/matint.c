@@ -2401,6 +2401,21 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/**
+ * nsp_matint_concatr_xx:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * This interface is used for concatr_x_x operations with 
+ * x implementing the matint interface. This interface is 
+ * called through the accelerated tab machanism and thus 
+ * objects can be selected via NthObj. 
+ * 
+ * Return value: 1 or %RET_BUG.
+ **/
+
 int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB, *Res;
@@ -2411,6 +2426,21 @@ int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
 
   if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
     {
+      if (((NspSMatrix *) ObjA)->mn == 0)
+	{
+	  /* return ObjB */
+	  /* this is a bit tricky since A and B may point to the same object */
+	  if ( ObjA == ObjB ) 
+	    {
+	      NthObj(2) = NULLOBJ;
+	      NSP_OBJECT(ObjA)->ret_pos = 1;
+	    }
+	  else 
+	    {
+	      NSP_OBJECT(ObjB)->ret_pos = 1;
+	    }
+	  return 1;
+	}
       if ( nsp_matint_concat_right_bis(ObjA, ObjB) == FAIL )
 	return RET_BUG;
       ObjA->ret_pos = 1;
@@ -2467,19 +2497,49 @@ int nsp_matint_concat_emptymat_and_mat_xx(Stack stack, int rhs, int opt, int lhs
  * @lhs: 
  * 
  * generix interface for [A;B]
+ * This interface is used for concatr_x_x operations with 
+ * x implementing the matint interface. This interface is 
+ * called through the accelerated tab machanism and thus 
+ * objects can be selected via NthObj. 
  * 
  * Return value: 1 or %RET_BUG.
  **/
 
+
 int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
 {
-  /* note that pointers have already been changed thus we can use NthObj */
-  NspObject *ObjA= NthObj(1), *ObjB= NthObj(2), *Res;
+  NspObject *ObjA, *ObjB, *Res;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
-  if ( (Res =nsp_matint_concat_down(ObjA, ObjB)) == NULLOBJ )
-    return RET_BUG;
-  MoveObj (stack, 1, Res);
+  ObjA = NthObj(1);  ObjB = NthObj(2);
+
+  if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
+    {
+      if (((NspSMatrix *) ObjA)->mn == 0)
+	{
+	  /* return B */
+	  /* this is a bit tricky since A and B may point to the same object */
+	  if ( ObjA == ObjB ) 
+	    {
+	      NthObj(2) = NULLOBJ;
+	      NSP_OBJECT(ObjA)->ret_pos = 1;
+	    }
+	  else 
+	    {
+	      NSP_OBJECT(ObjB)->ret_pos = 1;
+	    }
+	  return 1;
+	}
+      if ( nsp_matint_concat_down_bis(ObjA, ObjB) == FAIL )
+	return RET_BUG;
+      ObjA->ret_pos = 1;
+    }
+  else
+    {
+      if ( (Res =nsp_matint_concat_down(ObjA, ObjB)) == NULLOBJ )
+	return RET_BUG;
+      MoveObj (stack, 1, Res);
+    }
   return 1;
 }
 
@@ -2491,11 +2551,12 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
  * @lhs: 
  * @F: 
  * 
- * an other interface for concatd 
- * This one is used when concatd_x_x is first searched 
- * when x is supposed to implement the matint interface 
+ * an other interface for concatd, this one 
+ * can be used when we do not go through the 
+ * accelerated table mechanism (i.e objects can still be 
+ * pointers).
  *
- * Return value: 
+ * Return value: 1 or %RET_BUG.
  **/
 
 int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)

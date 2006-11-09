@@ -498,15 +498,21 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
   return(OK);
 }
 
-
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- *  Rows and Cols are unchanged 
- *  Size Compatibility is checked 
+/**
+ * nsp_matrix_set_submatrix:
+ * @A: a #NspMatrix
+ * @Rows: a #NspMatrix
+ * @Cols: a #NspMatrix
+ * @B: a #NspMatrix
+ * 
+ * Performe  A(Rows,Cols) = B. A is changed and enlarged if necessary and 
+ * size compatibility is checked i.e B must be scalar or  
+ * we must have size(B)==[size(Rows),size(Cols)]. 
+ * 
+ * returns %OK or %FAIL.
  */
 
-int nsp_pmatrix_set_submatrix_obsolete(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
+extern int nsp_pmatrix_set_submatrix_obsolete(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
@@ -522,44 +528,7 @@ int nsp_pmatrix_set_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
 
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- * Rows and Cols are changed (i.e) converted to int (see Matd2i) 
- *  Size Compatibility is checked 
- */
 
-int nsp_pmatrix_setrc_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
-{
-  int rmin,rmax,cmin,cmax,i,j,*Icol,*Irow;
-  if ( Rows->mn != B->m ||  Cols->mn != B->n )
-    {
-      Scierror("Set incompatible indices ");
-      return(FAIL);
-    }
-  Irow = Matd2i(Rows,&rmin,&rmax);
-  /* Matd2i changes Rows, thus we must check if Rows == Cols 
-     before changing Cols again : **/
-  if ( Cols == Rows ) 
-    { cmin=rmin;cmax=rmax ; Icol = Irow ;}
-  else 
-    {Icol = Matd2i(Cols,&cmin,&cmax);}
-  if ( rmin < 1 || cmin < 1 ) 
-    {
-      Scierror("negative indices");
-      return(FAIL);
-    }
-  if ( rmax > A->m ||  cmax > A->n )
-    if ( nsp_pmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      {
-	nsp_polynom_destroy(&(A->S[Irow[i]-1+ (Icol[j]-1)*A->m]));
-	if (( A->S[Irow[i]-1+ (Icol[j]-1)*A->m] =nsp_polynom_copy(B->S[i+B->m*j]))
-	    == (nsp_polynom ) 0)  return(FAIL);
-      }
-  return(OK);
-}
 
 /*
  * Res=nsp_pmatrix_extract(A,Rows,Cols)

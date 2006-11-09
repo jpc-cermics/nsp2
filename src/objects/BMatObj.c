@@ -669,57 +669,6 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Right Concatenation 
- * A= [A,B] 
- * return 0 on failure ( incompatible size or No more space )
- */
-
-int int_bmatrix_concatr_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  NspBMatrix *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetBMat(stack,1))  == NULLBMAT) return RET_BUG;
-  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-  if (HMat1->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT(HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT(HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-  if (HMat2->mn == 0)
-    {
-      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
-    }
-  else 
-    {
-      if ((HMat1 = GetBMatCopy(stack,1))  == NULLBMAT) return RET_BUG;
-      if (nsp_bmatrix_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
-    }
-  NSP_OBJECT(HMat1)->ret_pos = 1;
-  return 1;
-}
-
-
-static int int_bmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
-  /* return int_bmatrix__concat(stack,rhs,opt,lhs,nsp_bmatrix_concat_down); */
-}
-
-
-
-/*
  * BMatAddCols: add n cols of zero to NspBMatrix A 
  * A= [A,ones(m,n)] 
  * return 0 on failure ( no more space )
@@ -1030,7 +979,7 @@ static OpTab BMatrix_func[]={
   {"seq_and_b",int_bmatrix_and1},
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
-  {"concatd_b_b",int_bmatrix_concatd},
+  {"concatd_b_b", nsp_matint_concatd_xx}, /* int_bmatrix_concatd}, */
   {"concatr_b_b", nsp_matint_concatr_xx}, /* int_bmatrix_concatr},*/
   {"concatdiag_b_b" , int_matint_concat_diag_yy},/* int_bmatrix_concatdiag },*/
   {"copy_b",int_bmatrix_copy},

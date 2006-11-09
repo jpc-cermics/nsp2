@@ -4456,7 +4456,7 @@ static OpTab Matrix_func[] = {
   {"concatr_m_m", nsp_matint_concatr_xx},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
-  {"concatd_m_b",  nsp_matint_concat_emptymat_and_mat_xx}, 
+  {"concatd_m_b", int_mxconcatd},/*  nsp_matint_concat_emptymat_and_mat_xx},  */
   {"mat_create_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
   {"concatdiag_m_m",int_matint_concat_diag_yy}, /* int_mxconcatdiag}, */
