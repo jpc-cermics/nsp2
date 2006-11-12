@@ -1328,17 +1328,18 @@ static int int_lxmap(Stack stack, int rhs, int opt, int lhs)
 static int int_lxfoldr(Stack stack, int rhs, int opt, int lhs)
 {
   NspPList *PL;
-  NspObject *O;
+  NspObject *O,*x;
   NspList *L,*args = NULLLIST ; 
-  CheckRhs(2,3);
+  CheckRhs(3,4);
   CheckLhs(-1,1);
   if ((L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
-  if ((PL = GetNspPList(stack,2)) == NULLP_PLIST ) return RET_BUG;
-  if ( rhs == 3 ) 
+  if ((x = nsp_get_object(stack,2))== NULL) return RET_BUG;
+  if ((PL = GetNspPList(stack,3)) == NULLP_PLIST ) return RET_BUG;
+  if ( rhs == 4 ) 
     {
-      if ((args = GetList(stack,3)) == NULLLIST ) return RET_BUG;
+      if ((args = GetList(stack,4)) == NULLLIST ) return RET_BUG;
     }
-  if ( ( O =nsp_list_fold_right(L,PL,args)) == NULLOBJ ) return RET_BUG;
+  if ( ( O =nsp_list_fold_right(L,x,PL,args)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,O);
   return 1;      
 }

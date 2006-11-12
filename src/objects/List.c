@@ -1234,7 +1234,7 @@ NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)
 
 
 
-static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *first) ;
+static NspObject *cell_fold_right(Cell *C,NspObject *x, NspPList *PL, NspList *args,int *first) ;
 
 
 /**
@@ -1251,34 +1251,34 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
  *
  **/
 
-NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args)
+NspObject *nsp_list_fold_right(NspList *L,NspObject *x, NspPList *PL, NspList *args)
 {
   int first = -1;
-  return cell_fold_right(L->first, PL,args,&first);
+  return cell_fold_right(L->first,x, PL,args,&first);
 }
 
-static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *first)  
+static NspObject *cell_fold_right(Cell *C,NspObject *x, NspPList *PL, NspList *args,int *first)  
 {
   NspObject *O[]={NULL,NULL,NULL};
   /* limit case */
-  if ( C == NULLCELL || C->next == NULLCELL ) 
+  if ( C == NULLCELL ) 
     {
       Scierror("foldr: NspList is too short\n");
       return NULLOBJ ; 
     }
-  if ( (O[0]= C->O) == NULLOBJ  ||  (O[1]= C->next->O)  == NULLOBJ )
+  if ( (O[0]= C->O) == NULLOBJ  ) 
     {
       Scierror("foldr: NspList with unknown elements are not allowed \n");
       return NULLOBJ ; 
     }
-  if ( C->next->next == NULLCELL) 
+  if ( C->next == NULLCELL) 
     {
-      O[2]= NULLOBJ;
+      if (( O[1] = nsp_object_copy(x))== NULLOBJ) return NULLOBJ;
       return nsp_eval_macro_code(PL,O,args,first);
     }
   else 
     {
-      O[1]= cell_fold_right(C->next, PL,args,first);
+      O[1]= cell_fold_right(C->next,x, PL,args,first);
       if ( O[1] == NULLOBJ ) return NULLOBJ; 
       return nsp_eval_macro_code(PL,O,args,first);
     }

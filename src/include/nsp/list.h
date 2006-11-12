@@ -94,7 +94,7 @@ extern NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str);
 extern NspObject *nsp_sorted_list_search_and_remove(NspList *L,nsp_const_string str); 
 extern int nsp_sorted_list_insert(NspList *L, NspObject *O); 
 extern NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args); 
-extern NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args); 
+extern NspObject *nsp_list_fold_right(NspList *L,NspObject *x, NspPList *PL, NspList *args); 
 extern NspObject *nsp_list_fold_left(NspList *L, NspObject *x,NspPList *PL, NspList *largs);
 extern NspBMatrix *nsp_list_equal(NspList *L1, NspList *L2); 
 extern NspBMatrix *nsp_list_not_equal(NspList *L1, NspList *L2); 
