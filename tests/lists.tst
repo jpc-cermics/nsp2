@@ -1,5 +1,4 @@
 // -*- Mode: scilab -*- 
-// Quelques tests qui doivent marcher 
 
 L=list(1,2,3)
 L(1) = 10
@@ -150,13 +149,13 @@ if or(L1<>list(2,4,6)) then pause;end
 
 function z=f(x,y);z=x+y;endfunction ;
 L=list(1,2,3,4);
-L1=foldr(L,f);
+L1=foldr(L,0,f);
 if L1<>10 then pause;end 
 
 function z=f(x,y);z=list(x,y);endfunction ;
 L=list(1,2,3,4);
-L1=foldr(L,f);
-if L1<>list(1,list(2,list(3,4))) then pause;end 
+L1=foldr(L,0,f);
+if L1<>list(1,list(2,list(3,list(4,0)))) then pause;end 
 
 // static int int_lxfoldl
 
