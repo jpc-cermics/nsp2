@@ -1,10 +1,10 @@
 % -*- mode: latex -*-
 
-\mansection{list}
+\mansection{List}
 \begin{mandesc}
-  \short{list}{list data type and list creation}
+  \short{List}{list data type} \\
+  \short{list}{list creation}
 \end{mandesc}
-
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
@@ -23,7 +23,7 @@ L = list(O1, O2, O3, ...)
 \end{parameters}
 
 \begin{mandescription}
-The \emph{list} data type is useful to collect objects of different
+The \emph{List} data type is useful to collect objects of different
 types. Internally nsp lists are implemented as doubled linked lists
 and operations (extraction, insertion, deletion) on head and queue
 are efficient. The \emph{list} function can be used to create lists.  
@@ -108,11 +108,14 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
      \verb+function(L(i),args)+ to build the \verb+i+-th argument. 
      The optional argument must be a list itself. Note that at the present time,
      the \verb+function+ argument must be a PList object (i.e a nsp writen function).
-   \item \verb+foldr(L,function [,args])+. Where the header of \verb+function+ is 
+   \item \verb+foldr(L,x,function [,args])+. Where the header of \verb+function+ is 
      \verb+z=function(x,y,args)+. Suppose here as an example that \verb+L+ is of 
-     length 4 then a \verb+foldr+  call will evaluates as:
-     \begin{program}\HCode{function(L(1),function(L(2),function(L(3),L(4),args),args),args)}
-     \end{program}
+     length 3 then a \verb+foldr+  call will evaluates as:
+     \verb+function(L(1),function(L(2),function(L(3),x,args),args),args)+.
+   \item \verb+foldl(L,function,x [,args])+. Where the header of \verb+function+ is 
+     \verb+z=function(x,y,args)+. Suppose here as an example that \verb+L+ is of 
+     length 2 then a \verb+foldl+  call will evaluates as:
+     \verb+function(function(function(x,L(1),args),L(2),args),L(3),args)+.
    \item \verb+unique+ (\manlink{unique}{unique}) 
 \end{itemize}
 
