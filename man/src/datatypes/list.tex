@@ -8,8 +8,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-L = list()
-L = list(O1, O2, O3, ...)
+L = list()   // or L = list_create()
+L = list(O1, O2, O3, ...)  // or L = list_create(O1, O2, O3, ...)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -26,7 +26,8 @@ L = list(O1, O2, O3, ...)
 The \emph{List} data type is useful to collect objects of different
 types. Internally nsp lists are implemented as doubled linked lists
 and operations (extraction, insertion, deletion) on head and queue
-are efficient. The \emph{list} function can be used to create lists.  
+are efficient.  The \emph{list} (or \emph{list\_create}) function can 
+be used to create lists.  
 \end{mandescription}
 
 \paragraph{Operations on lists}
@@ -36,7 +37,7 @@ are efficient. The \emph{list} function can be used to create lists.
      (elements previously at positions i,i+1,\ldots are shifted by one on the right). 
    \item \verb+L.add_first[e]+ appends the object \verb+e+ in head of \verb+L+.
    \item \verb+L.add_last[e]+ appends the object \verb+e+ in queue of \verb+L+.
-   \item \verb+L.compact[[dir]]+ compacts the list\verb+L+ by trying to concatenate (if possible) 
+   \item \verb+L.compact[[dir]]+ compacts the list \verb+L+ by trying to concatenate (if possible) 
      successive elements of compatible size and same type. The optional argument \verb+dir+  
      is a string: \verb+"row"+ (or \verb+"r"+) to concatenate by row and \verb+"col"+ 
      (or \verb+"c"+) to concatenate by column (which is the default). 
@@ -66,7 +67,7 @@ are efficient. The \emph{list} function can be used to create lists.
      can be assigned to several variables with the standard syntax \verb+[a,b,c,...]=L(ind)+. 
      Another usage is for calling sequence of functions : if \verb+L=list([1,2],%f,"c")+
      then  \verb+f(L([1,3])+ is equivalent to  \verb+f([1,2],"c")+
-   \item \verb+L(:)+ puts all the elements of \verb+L+ on the caling stack
+   \item \verb+L(:)+ puts all the elements of \verb+L+ on the calling stack
      (with the previous list  \verb+f(L(:))+ is be equivalent to \verb+f([1,2],%f,"c")+)
    \item \verb+L(i)=e+ replaces the i-th element of \verb+L+ by
      the object \verb+e+. If $i > n$ where $n=length(L)$ then $i-n-1$ undefined
@@ -123,6 +124,7 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
   \begin{itemize}
     \item Creation and methods:
     \begin{program}\HCode{L = list(1,2,"c",\%f, \%t, rand(2,1))\Hnewline
+    // or  L = list_create(1,2,"c",\%f, \%t, rand(2,1)) \Hnewline
     n = length(L)\Hnewline
     // adds 0 as first element of L increasing its size\Hnewline
     L.add_first[0]; L\Hnewline

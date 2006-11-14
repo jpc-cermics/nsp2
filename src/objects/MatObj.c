@@ -4434,6 +4434,7 @@ int int_alignement(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -4451,12 +4452,10 @@ static OpTab Matrix_func[] = {
   {"addrows_m_m", int_mxaddrows},
   {"clean", int_mxclean},
   {"complexify_m", int_mxcomplexify},
-  /*  {"concatd_m_m", int_mxconcatd},*/
   {"concatd_m_m", int_matint_concatd},
   {"concatr_m_m", int_matint_concatr},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
-  {"concatd_m_b", int_mxconcatd},/*  nsp_matint_concat_emptymat_and_mat_xx},  */
   {"mat_create_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
   {"concatdiag_m_m",int_matint_concat_diag}, /* int_mxconcatdiag}, */
@@ -4479,7 +4478,7 @@ static OpTab Matrix_func[] = {
   {"deleterows_m", int_matint_deleterows},
   {"deletecols_m", int_matint_deletecols},
   {"tozero_m", int_matint_tozero},
-  {"repmat_m", int_matint_repmat},
+  {"repmat_m_m", int_matint_repmat},
   {"eye_m_m", int_mxeye},
   {"ones_m_m", int_mxones},
   {"zeros_m_m", int_mxzeros},
