@@ -1761,7 +1761,7 @@ static OpTab SMatrix_func[]={
   {"deleterows_s", int_matint_deleterows},
   {"deletecols_s", int_matint_deletecols},
   {"tozero_s", int_matint_tozero},
-  {"repmat_s", int_matint_repmat},
+  {"repmat_s_m", int_matint_repmat},
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
   /* {"loopextract_m_s",int_smxextractcolforloop}, */
