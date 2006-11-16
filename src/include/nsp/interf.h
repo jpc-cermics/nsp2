@@ -141,6 +141,8 @@ extern NspMe *GetMeCopy (Stack stack,int i);
 extern NspLmo *GetLmoCopy (Stack S,int  i);
 extern NspLmo *GetLmo (Stack S,int i);
 
+extern int GetDimArg(Stack stack, int pos, int *dim);
+
 #define CheckSameDims(fname,pos1,pos2,o1,o2) if ( o1->m != o2->m && o1->n != o2->n ) \
    { Scierror("%s: arguments %d and %d should have the same size\n",fname,pos1,pos2); \
      return RET_BUG;} 

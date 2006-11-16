@@ -1402,24 +1402,6 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 } 
 
-static int getdimfromstring(char *str)
-{
-  switch(str[0])
-    {
-    default :
-      Sciprintf("\nInvalid flag '%c' assuming flag='*'\n",str[0]);
-    case 'f': case 'F': case '*':
-      return 0;
-      break;
-    case 'r': case 'R':
-      return 1;
-      break ;
-    case 'c': case 'C':
-      return 2;
-      break;
-    }
-}
-
 /*
  *nsp_mat_sum: sum=Sum(a[,b]) 
  * a is unchanged 
@@ -1430,7 +1412,6 @@ typedef NspMatrix *(*SuPro) (NspMatrix * A, int dim);
 static int
 int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
-  char *str;
   int dim=0;
   NspMatrix *Res, *HMat;
   CheckRhs (1, 2);
@@ -1440,23 +1421,12 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
     return RET_BUG;
 
   if (rhs == 2)
-    {
-      if ( IsSMatObj(stack, 2) )
-	{
-	  if ((str = GetString (stack, 2)) == (char *) 0)
-	    return RET_BUG;
-	  dim = getdimfromstring(str);
-	}
-      else
-	{
-	  if ( GetScalarInt(stack, 2, &dim) == FAIL )
-	    return RET_BUG;
-	}
-      CheckNonNegative(NspFname(stack),dim,2);
-    }
-      
+    if ( GetDimArg(stack, 2, &dim) == FAIL )
+      return RET_BUG;
+
   if ((Res = (*F) (HMat, dim)) == NULLMAT)
     return RET_BUG;
+
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
 }
@@ -1503,7 +1473,6 @@ int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
 static int
 int_mxdiff (Stack stack, int rhs, int opt, int lhs)
 {
-  char *str;
   int dim=0;
   int order=1;
   NspMatrix *Res, *HMat;
@@ -1520,22 +1489,10 @@ int_mxdiff (Stack stack, int rhs, int opt, int lhs)
       CheckNonNegative(NspFname(stack),order,2);
 
       if ( rhs == 3 )
-	{
-	  if ( IsSMatObj(stack, 3) )
-	    {
-	      if ((str = GetString (stack, 3)) == (char *) 0)
-		return RET_BUG;
-	      dim = getdimfromstring(str);
-	    }
-	  else
-	    {
-	      if ( GetScalarInt(stack, 3, &dim) == FAIL )
-		return RET_BUG;
-	    }
-	  CheckNonNegative(NspFname(stack),dim,3);
-	}
+	if ( GetDimArg(stack, 3, &dim) == FAIL )
+	  return RET_BUG;
     }
-      
+  
   if ((Res = nsp_mat_diff(HMat, order, dim)) == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);

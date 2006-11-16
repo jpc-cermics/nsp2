@@ -174,6 +174,7 @@ static int int_matint_meth_redim(NspObject *self, Stack stack, int rhs, int opt,
   return MAT_INT(type)->redim(self,mm,nn)  == OK ? 0 : RET_BUG;
 }
 
+
 static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   NspObject *B;
@@ -214,11 +215,38 @@ static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int op
   return 0;
 }
 
+/* 
+ * method redim 
+ * A.redim[m,n] at nsp level 
+ *   i.e an interface for redim
+ *   this interface is in the methods table of the interface matint.
+ *   we call the associated redim function which is supposed to be
+ *   implemented in the matint interface. 
+ */
+
+static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  int p, q, dim=0;
+  CheckRhs (2,3);
+  CheckLhs (0,0); 
+
+  if ( GetScalarInt(stack, 1, &p) == FAIL ) return RET_BUG;
+  if ( GetScalarInt(stack, 2, &q) == FAIL ) return RET_BUG;
+  if (rhs == 3)
+    if ( GetDimArg(stack, 3, &dim) == FAIL )
+      return RET_BUG;
+
+  if ( nsp_matint_perm_elem(self, p, q, dim) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
 
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
   {"concatr",(nsp_method *) int_matint_meth_concatr},
   {"concatd",(nsp_method *) int_matint_meth_concatd},
+  {"perm_elem",(nsp_method *) int_matint_perm_elem},
   { NULL, NULL}
 };
 
@@ -2127,6 +2155,7 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
   if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrices of numbers or booleans */
     {
       char *to = (char *) B->S;
+
       if ( m == 1 )
 	for ( j = 0 ; j < n ; j++ )
 	  {
@@ -2178,6 +2207,117 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
   nsp_object_destroy(&ObjB); 
   return NULLOBJ;
 }
+
+
+#define APPLY_PERM() \
+      if ( dim_flag == 0 ) \
+        { \
+	  temp = Amat[p-1]; Amat[p-1] = Amat[q-1]; Amat[q-1] = temp; \
+        } \
+      else if ( dim_flag == 1 ) \
+	{ \
+	  int j, pj = p-1, qj = q-1; \
+	  for ( j = 0 ; j < A->n ; j++ ) \
+	    { \
+	      temp = Amat[pj]; Amat[pj] = Amat[qj]; Amat[qj] = temp; \
+	      pj += A->m; qj += A->m; \
+	    } \
+	} \
+      else if ( dim_flag == 2 ) \
+	{ \
+	  int i, pi = (p-1)*A->m, qi = (q-1)*A->m; \
+	  for ( i = 0 ; i < A->m ; i++ ) \
+	    { \
+	      temp = Amat[pi]; Amat[pi] = Amat[qi]; Amat[qi] = temp; \
+	      pi++; qi++; \
+	    } \
+	}
+
+
+int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
+{
+  NspSMatrix *A = (NspSMatrix *) ObjA;
+  NspTypeBase *type; 
+  unsigned int elt_size_A; /* size in number of bytes */
+  
+  type = check_implements(ObjA, nsp_type_matint_id);
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);
+
+  if ( p < 1 || q < 1 )
+    goto err;
+
+  if ( dim_flag == 0 )
+    {
+      if ( p > A->mn || q > A->mn ) goto err;
+    }
+  else if ( dim_flag == 1 )
+    {
+      if ( p > A->m || q > A->m ) goto err;
+    }
+  else if ( dim_flag == 2 )
+    {
+      if ( p > A->n || q > A->n ) goto err;
+    }
+  else
+    {
+      Scierror("Error: Invalid dim flag '%d' (must be 0, 1 or 2)\n", dim_flag);
+      return FAIL;
+    }
+
+  if ( p == q )
+    return OK;
+
+  if ( elt_size_A == sizeof(double) )
+    {
+      double *Amat = (double *) A->S, temp;
+      APPLY_PERM();
+    }
+  else if ( elt_size_A == sizeof(doubleC) )
+    {
+      doubleC *Amat = (doubleC *) A->S, temp;
+      APPLY_PERM();
+    }
+  else if ( elt_size_A == sizeof(int) )
+    {
+      int *Amat = (int *) A->S, temp;
+      APPLY_PERM();
+    }
+  else
+    {
+      char *temp, *pp, *qq;
+      unsigned int temp_size = dim_flag == 2 ? A->m*elt_size_A : elt_size_A;
+      int j;
+      if ( (temp = malloc(temp_size*sizeof(char))) == NULL )
+	return FAIL;
+      if ( dim_flag == 1 )
+	{ 
+	  pp =  ((char *) A->S) + (p-1)*elt_size_A;
+	  qq =  ((char *) A->S) + (q-1)*elt_size_A;
+	  for ( j = 0 ; j < A->n ; j++ )
+	    { 
+	      memcpy(temp, pp, elt_size_A);
+	      memcpy(pp, qq, elt_size_A);
+	      memcpy(qq, temp, elt_size_A);	  
+	      pp += elt_size_A*A->m; qq += elt_size_A*A->m; 
+	    } 
+	}
+      else /* dim_flag == 0 or 2  */
+	{ 
+	  pp =  ((char *) A->S) + (p-1)*temp_size;
+	  qq =  ((char *) A->S) + (q-1)*temp_size;
+	  memcpy(temp, pp, temp_size);
+	  memcpy(pp, qq, temp_size);
+	  memcpy(qq, temp, temp_size);	  
+	}
+      free(temp);
+    }
+  return OK;
+
+ err:
+  Scierror("Error: invalid permutation indices (outside matrix or vector range)\n");
+  return FAIL;
+}
+
 
 /* interface functions which are called by other interfaces 
  * or called in Eval.c 

@@ -1730,6 +1730,56 @@ NspObject *nsp_new_boolean_obj(int ival)
 }
 
 
+/**
+ * get_dim_from_string:
+ * @str: a string (only the first char is important)
+ *
+ * convert a string into an int : 
+ * "r" or "R" -> 1
+ * "c" or "C" -> 2
+ * "*" or "f" or "F" -> 0
+ * 
+ * Return value: 0, 1 or 2
+ **/
+static int get_dim_from_string(char *str)
+{
+  switch(str[0])
+    {
+    default :
+      Sciprintf("\nInvalid flag '%c' assuming flag='*'\n",str[0]);
+    case 'f': case 'F': case '*':
+      return 0;
+      break;
+    case 'r': case 'R':
+      return 1;
+      break ;
+    case 'c': case 'C':
+      return 2;
+      break;
+    }
+}
+
+int GetDimArg(Stack stack, int pos, int *dim)
+{
+  char *str;
+  if ( IsSMatObj(stack, pos) )
+    {
+      if ((str = GetString (stack, pos)) == (char *) 0)
+	return FAIL;
+      *dim = get_dim_from_string(str);
+    }
+  else
+    {
+      if ( GetScalarInt(stack, pos, dim) == FAIL )
+	return FAIL;
+      if ( *dim < 0 )    
+	{ 
+	  Scierror("%s: argument %d must be non negative\n",NspFname(stack),pos); 
+	  return FAIL;
+	} 
+    }
+  return OK;
+}
 
 
 

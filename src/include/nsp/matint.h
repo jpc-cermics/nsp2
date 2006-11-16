@@ -77,7 +77,7 @@ extern NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
-
+extern int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag);
 
 extern int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs);
