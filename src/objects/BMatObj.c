@@ -537,29 +537,24 @@ static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 {
-  int rep=2,i,j;
+  int dim=0,i,j;
   NspBMatrix *HMat1,*HMat;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if (rhs == 2)
+    if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+  
+  switch (dim) 
     {
-      char *and_opts[] = { "c", "r", "*", NULL };
-      if ((rep = GetStringInArray (stack, 2,and_opts, 1)) == -1)
-	return RET_BUG;
-    }
-  switch (rep) 
-    {
-    case 0:  /* column */
-      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
-      for ( i= 0 ; i < HMat1->m ; i++)
-	{
-	  HMat->B[i] = TRUE; 
-	  for ( j = 0 ; j < HMat1->n ; j++) 
-	    if ( HMat1->B[i+HMat1->m*j] == FALSE) {HMat->B[i] = FALSE;break;}
-	}
-      MoveObj(stack,1, (NspObject *)HMat);  
+    default : 
+      Sciprintf("\nInvalid dim flag '%d' assuming 0\n", dim);
+      
+    case 0 : 
+      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
+      HMat->B[0] = NSP_OBJECT(HMat1)->type->is_true(HMat1);
       break;
+
     case 1:   /* row */
       if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG;
       for ( j= 0 ; j < HMat1->n ; j++)
@@ -568,14 +563,20 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 	  for ( i = 0 ; i < HMat1->m ; i++) 
 	    if (  HMat1->B[i+HMat1->m*j]== FALSE ) { HMat->B[j] = FALSE; break;}
 	}
-      MoveObj(stack,1, (NspObject *)HMat);  
       break;
-    case 2 : 
-      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
-      HMat->B[0] = NSP_OBJECT(HMat1)->type->is_true(HMat1);
-      MoveObj(stack,1, (NspObject *)HMat);  
+      
+    case 2:  /* column */
+      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
+      for ( i= 0 ; i < HMat1->m ; i++)
+	{
+	  HMat->B[i] = TRUE; 
+	  for ( j = 0 ; j < HMat1->n ; j++) 
+	    if ( HMat1->B[i+HMat1->m*j] == FALSE) {HMat->B[i] = FALSE;break;}
+	}
       break;
     }
+
+  MoveObj(stack,1, (NspObject *)HMat);  
   return 1;
 }
 
@@ -585,28 +586,28 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 {
-  int rep=2,i,j;
+  int dim=0,i,j;
   NspBMatrix *HMat1,*HMat=NULLBMAT;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if (rhs == 2)
+    if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+
+  switch (dim) 
     {
-      char *and_opts[] = { "c", "r", "*", NULL };
-      if ((rep = GetStringInArray (stack, 2,and_opts, 1)) == -1)
-	return RET_BUG;
-    }
-  switch (rep) 
-    {
-    case 0:  /* column */
-      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
-      for ( i= 0 ; i < HMat1->m ; i++)
+    default : 
+      Sciprintf("\nInvalid dim flag '%d' assuming 0\n", dim);
+
+    case 0 : 
+      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
+      HMat->B[0] = FALSE;
+      for ( i=0; i < HMat1->mn ; i++ ) 
 	{
-	  HMat->B[i] = FALSE; 
-	  for ( j = 0 ; j < HMat1->n ; j++) 
-	    if ( HMat1->B[i+HMat1->m*j] != FALSE ){ HMat->B[i] = TRUE; break;}
+	  if ( HMat1->B[i] != FALSE ) {  HMat->B[0] = TRUE;   break;  }
 	}
       break;
+      
     case 1:   /* row */
       if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG;
       for ( j= 0 ; j < HMat1->n ; j++)
@@ -616,12 +617,14 @@ static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 	    if ( HMat1->B[i+HMat1->m*j]!= FALSE ) {HMat->B[j] = TRUE; break;}
 	}
       break;
-    case 2 : 
-      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
-      HMat->B[0] = FALSE;
-      for ( i=0; i < HMat1->mn ; i++ ) 
+
+    case 2:  /* column */
+      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
+      for ( i= 0 ; i < HMat1->m ; i++)
 	{
-	  if ( HMat1->B[i] != FALSE ) {  HMat->B[0] = TRUE;   break;  }
+	  HMat->B[i] = FALSE; 
+	  for ( j = 0 ; j < HMat1->n ; j++) 
+	    if ( HMat1->B[i+HMat1->m*j] != FALSE ){ HMat->B[i] = TRUE; break;}
 	}
       break;
     }
@@ -969,7 +972,7 @@ static OpTab BMatrix_func[]={
   {"deleterows_b", int_matint_deleterows},
   {"deletecols_b", int_matint_deletecols},
   {"tozero_b", int_matint_tozero},
-  {"repmat_b", int_matint_repmat},
+  {"repmat_b_m", int_matint_repmat},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
