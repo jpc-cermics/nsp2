@@ -92,7 +92,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   if ( x->rc_type == 'r' )
-    if (nsp_mat_complexify(x,0.00) == FAIL ) 
+    if ( nsp_mat_complexify(x,0.0) == FAIL ) 
       return RET_BUG;
 
   if ( dim_flag == 0 )
@@ -121,30 +121,33 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 	  invn = 1.0 / x->mn;
 	}
     }
-  else if ( dim_flag == 1 )      /* fft of the columns */
+  else    /* fft of the rows or the columns */
     {
-      if ( s == 1) invn = 1.0 / x->m;
-      multi_plan = fftw_plan_many_dft(1, &(x->m), x->n,  
-				      (fftw_complex *)x->C, &(x->mn), 1, x->m,
-				      (fftw_complex *)x->C, &(x->mn), 1, x->m,
-				      s, FFTW_ESTIMATE | FFTW_UNALIGNED );
-    }
-  else if ( dim_flag == 2 )      /* fft of the rows */
-    {
-      if ( s == 1) invn = 1.0 / x->n;
-      multi_plan = fftw_plan_many_dft(1, &(x->n), x->m,  
-				      (fftw_complex *)x->C, &(x->mn), x->m, 1,
-				      (fftw_complex *)x->C, &(x->mn), x->m, 1,
-				      s, FFTW_ESTIMATE | FFTW_UNALIGNED );
-    }
-  else
-    {
-      Scierror("%s: Invalid dim flag '%d' (must be 0, 1 or 2)\n", NspFname(stack), dim_flag);
-      return RET_BUG;
-    }
+      if ( dim_flag == 1 )      /* fft of the columns */
+	{
+	  if ( s == 1) invn = 1.0 / x->m;
+	  multi_plan = fftw_plan_many_dft(1, &(x->m), x->n,  
+					  (fftw_complex *)x->C, &(x->mn), 1, x->m,
+					  (fftw_complex *)x->C, &(x->mn), 1, x->m,
+					  s, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	}
+      else if ( dim_flag == 2 )      /* fft of the rows */
+	{
+	  if ( s == 1) invn = 1.0 / x->n;
+	  multi_plan = fftw_plan_many_dft(1, &(x->n), x->m,  
+					  (fftw_complex *)x->C, &(x->mn), x->m, 1,
+					  (fftw_complex *)x->C, &(x->mn), x->m, 1,
+					  s, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	}
+      else
+	{
+	  Scierror("%s: Invalid dim flag '%d' (must be 0, 1 or 2)\n", NspFname(stack), dim_flag);
+	  return RET_BUG;
+	}
 
-  fftw_execute(multi_plan);
-  fftw_destroy_plan(multi_plan);
+      fftw_execute(multi_plan);
+      fftw_destroy_plan(multi_plan);
+    }
 
   if ( s == 1 ) /* backward fft => apply normalisation */
     for (k = 0 ; k < x->mn ; k++) { x->C[k].r *= invn; x->C[k].i *= invn; }
