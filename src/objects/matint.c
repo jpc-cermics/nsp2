@@ -216,12 +216,7 @@ static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int op
 }
 
 /* 
- * method redim 
- * A.redim[m,n] at nsp level 
- *   i.e an interface for redim
- *   this interface is in the methods table of the interface matint.
- *   we call the associated redim function which is supposed to be
- *   implemented in the matint interface. 
+ * method perm 
  */
 
 static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
