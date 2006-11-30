@@ -4522,9 +4522,9 @@ static OpTab Matrix_func[] = {
   {"ishift", int_mxishift},
   {"conj_m", int_mxconj},
   {"hat_m_m", int_mxpow},
-  {"dh", int_mxpowel},
-  {"dsl", int_mxdivel},
-  {"dbs", int_mxbackdivel},
+  {"dh_m_m", int_mxpowel},
+  {"dsl_m_m", int_mxdivel},
+  {"dbs_m_m", int_mxbackdivel},
   {"dst_m_m", int_mxmultel},
   {"plus_m_m", int_mxdadd},
   {"plussafe_m_m", int_mxdadd1}, /* XXX experimental */
