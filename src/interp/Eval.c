@@ -96,7 +96,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   stack.first = first;
   
   /* XXXX : **/
-  /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
+/*   nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
   L = L1; /* operator */
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
@@ -210,18 +210,18 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
-	  else if ( L->type == DOTPLUS ) 
+	  else if ( L->type == DOTPLUS )
 	    {
 	      /* testing a new mode for operators */
 	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
 	      nargs = n;
-	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
+	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L1);
 		}
 	      nargs +=n;
-	      if ((n=nsp_eval_dotplus(stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_dotplus(stack,first,nargs,0,lhs))<0)
 		SHOWBUG(stack,n,L1);
 	      return n;
 
@@ -229,7 +229,6 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  else 
 	    {
 	      /* standard 2 ary operators */
-	      O1=nsp_frames_search_op_object(opcode);
 	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) 
 		SHOWBUG(stack,n,L1);
 	      nargs = n;
@@ -256,10 +255,10 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  return RET_BUG;
 		}
 	      nargs +=n;
-	      /* Pas forcement astucieux pour un operateur ? **/
-	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_maybe_accelerated_binop(opcode, L->type, stack, first, nargs, 0, lhs))<0)
 		SHOWBUG(stack,n,L);
 	      return n;
+
 	    }
 	  break;
 	default :
@@ -531,7 +530,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /* XXX nsp_void_object_destroy(&stack.val->S[first]);
 	     stack.val->S[first]=NULLOBJ;
 	  */
-	  /* nsp_check_stack(stack,0,0,lhs,"Something wrong end of If ",NULL);*/
+/* 	  nsp_check_stack(stack,0,0,lhs,"Something wrong end of If ",NULL); */
 	  return 0;
 	  break;
 	case TRYCATCH :
@@ -809,7 +808,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return RET_BUG;
 	}
     }
-  /* nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL);*/
+/*   nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL); */
   return nargs ;
 }
 
@@ -873,10 +872,10 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	   */
 	  stack.val->S[first] = OM;
 	  /* Extra warning  */
-	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
-	  /* 	   { */
-	  /* 	    Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
-	  /* 	  } */
+/* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
+/* 	    { */
+/* 	      Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
+/* 	    } */
 	  return 1;
 	}
       else if ( FindFunction((char *) L->O,&Int,&Num) == OK) 
@@ -2880,5 +2879,53 @@ int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab
       O1 = nsp_frames_search_op_object(opname);
       return nsp_eval_func(O1, opname, msuffix, stack, first, rhs, opt, lhs);
     }
+}
+
+
+/**
+ * nsp_eval_maybe_accelerated_binop:
+ * @opname: 
+ * @opcode: 
+ * @stack: 
+ * @first: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
+				     Stack stack, int first, int rhs, int opt, int lhs)
+{
+  int id1, id2;
+  NspObject *O1=NULLOBJ;
+  AcceleratedTab *OpTab;
+  function *the_func = NULL;
+
+  if (  NOTCODE_OP < opcode && opcode < LASTCODE_OP  
+	&&  (OpTab = AllOperatorTab[opcode - NOTCODE_OP -1]) != NULL ) 
+    {
+      /* acceleration supported for this operator (at least on one type) */
+      HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
+      id1 = nsp_get_id_from_object(stack.val->S[stack.first]);
+
+      HOBJ_GET_OBJECT(stack.val->S[stack.first+1], RET_BUG);
+      id2 = nsp_get_id_from_object(stack.val->S[stack.first+1]);
+      if ( id1 == id2 )
+	{
+	  the_func = nsp_get_fast_function(OpTab, id1);
+	  if ( the_func )      /* acceleration is supported */
+	    {
+	      NspFname(stack) = opname;
+	      return call_interf(the_func, stack, rhs, opt, lhs);
+	    }
+	}
+    }
+
+  /* acceleration not supported */
+  O1 = nsp_frames_search_op_object(opname);
+  return nsp_eval_func(O1, opname, 2, stack, first, rhs, opt, lhs);
 }
 

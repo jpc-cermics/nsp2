@@ -21,21 +21,31 @@
 #include "nsp/accelerated_tab.h"
 #include "nsp/plisttoken.h" /*for name_maxl **/
 #include "callfunc.h"
+#include "nsp/plistc.h"
 
-static int matint_types[5];
+#define NB_MATINT_TYPES 5
+static int matint_types[NB_MATINT_TYPES];
+#define NB_NUM_AND_STR_TYPES 2
+static int num_and_str_types[NB_NUM_AND_STR_TYPES]; 
+#define NB_NUM_TYPES 1
+static int num_types[NB_NUM_TYPES];            
+#define NB_BOOL_TYPES 1
+static int bool_types[NB_BOOL_TYPES];           
 
-AcceleratedTab concatr_tab =     { "concatr",     2, 5, matint_types, 0, NULL};
-AcceleratedTab concatd_tab =     { "concatd",     2, 5, matint_types, 0, NULL};
-AcceleratedTab extract_tab =     { "extract",     1, 5, matint_types, 0, NULL};
-AcceleratedTab extractelts_tab = { "extractelts", 1, 5, matint_types, 0, NULL};
-AcceleratedTab extractcols_tab = { "extractcols", 1, 5, matint_types, 0, NULL};
-AcceleratedTab extractrows_tab = { "extractrows", 1, 5, matint_types, 0, NULL};
-AcceleratedTab resize2vect_tab = { "resize2vect", 1, 5, matint_types, 0, NULL};
-AcceleratedTab deleteelts_tab =  { "deleteelts",  1, 5, matint_types, 0, NULL};
-AcceleratedTab deletecols_tab =  { "deletecols",  1, 5, matint_types, 0, NULL};
-AcceleratedTab deleterows_tab =  { "deleterows",  1, 5, matint_types, 0, NULL};
-AcceleratedTab tozero_tab =      { "tozero",      1, 5, matint_types, 0, NULL};
-AcceleratedTab setrowscols_tab = { "setrowscols", 1, 5, matint_types, 0, NULL};
+AcceleratedTab concatr_tab =     { "concatr",     2, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab concatd_tab =     { "concatd",     2, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab extract_tab =     { "extract",     1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab extractelts_tab = { "extractelts", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab extractcols_tab = { "extractcols", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab extractrows_tab = { "extractrows", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab resize2vect_tab = { "resize2vect", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab deleteelts_tab =  { "deleteelts",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab deletecols_tab =  { "deletecols",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab deleterows_tab =  { "deleterows",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab tozero_tab =      { "tozero",      1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab setrowscols_tab = { "setrowscols", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+
+AcceleratedTab *AllOperatorTab[LASTCODE_OP - NOTCODE_OP -1];
 
 static int init_func_tab(AcceleratedTab *tab)
 {
@@ -85,14 +95,58 @@ static int init_func_tab(AcceleratedTab *tab)
   return OK;
 }
 
+
+static int init_accel_tab_for_binop(int opcode, int nb_supported_types, int *supported_types)
+{
+  AcceleratedTab *tab;
+  if ( opcode <= NOTCODE_OP || LASTCODE_OP <= opcode )
+    return FAIL;
+  if ( (tab = malloc(sizeof(AcceleratedTab))) == NULL )
+    return FAIL;
+  tab->opname = nsp_astcode_to_nickname(opcode);
+  tab->arity = 2;
+  tab->nb_accelerated_types = nb_supported_types;
+  tab->accelerated_types = supported_types;
+  tab->length = 0;
+  tab->func = NULL;
+  if ( init_func_tab(tab) == FAIL )
+    {
+      free(tab); 
+      return FAIL;
+    }
+  AllOperatorTab[opcode - NOTCODE_OP - 1] = tab;
+  return OK;
+}
+
+
 int nsp_init_accelerated_tabs(void)
 {
+  int i;
+
+#define NB_NUM_AND_STR_OP 5
+  int num_and_str_op[NB_NUM_AND_STR_OP] = {PLUS_OP, LEQ, GEQ, LT_OP, GT_OP};
+#define NB_NUM_OP 9
+  int num_op[NB_NUM_OP] = {MINUS_OP, STAR_OP, HAT_OP, COLON_OP, SLASH_OP, 
+			   BACKSLASH_OP, DOTSTAR, DOTSLASH, DOTHAT};
+#define NB_MATINT_OP 2
+  int matint_op[NB_MATINT_OP] = {EQ, NEQ};
+
+#define NB_BOOL_OP 2
+  int bool_op[NB_BOOL_OP] = {OR_OP, AND_OP};
+
+  for ( i = 0 ; i < LASTCODE_OP - NOTCODE_OP -1 ; i++ )
+    AllOperatorTab[i] = NULL;
+
   matint_types[0] = nsp_type_matrix_id;
   matint_types[1] = nsp_type_smatrix_id;
   matint_types[2] = nsp_type_bmatrix_id;
   matint_types[3] = nsp_type_pmatrix_id;
   matint_types[4] = nsp_type_cells_id;
-
+  num_and_str_types[0] = nsp_type_matrix_id;
+  num_and_str_types[1] = nsp_type_smatrix_id;
+  num_types[0] = nsp_type_matrix_id;
+  bool_types[0] = nsp_type_bmatrix_id;
+ 
   if ( init_func_tab(&concatr_tab) == FAIL ) return FAIL;
   if ( init_func_tab(&concatd_tab) == FAIL ) return FAIL;
   if ( init_func_tab(&extract_tab) == FAIL ) return FAIL;
@@ -105,7 +159,23 @@ int nsp_init_accelerated_tabs(void)
   if ( init_func_tab(&deleterows_tab) == FAIL ) return FAIL;
   if ( init_func_tab(&tozero_tab) == FAIL ) return FAIL;
   if ( init_func_tab(&setrowscols_tab) == FAIL ) return FAIL;
-     
+
+  for ( i = 0 ; i < NB_NUM_AND_STR_OP ; i++ ) 
+    if ( init_accel_tab_for_binop(num_and_str_op[i], NB_NUM_AND_STR_TYPES, num_and_str_types) == FAIL ) 
+      return FAIL;
+
+  for ( i = 0 ; i < NB_NUM_OP ; i++ ) 
+    if ( init_accel_tab_for_binop(num_op[i], NB_NUM_TYPES, num_types) == FAIL ) 
+      return FAIL;
+
+  for ( i = 0 ; i < NB_MATINT_OP ; i++ ) 
+    if ( init_accel_tab_for_binop(matint_op[i], NB_MATINT_TYPES, matint_types) == FAIL ) 
+      return FAIL;
+
+  for ( i = 0 ; i < NB_BOOL_OP ; i++ ) 
+    if ( init_accel_tab_for_binop(bool_op[i], NB_BOOL_TYPES, bool_types) == FAIL ) 
+      return FAIL;
+
   return OK;
 }
 
