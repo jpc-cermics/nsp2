@@ -304,11 +304,16 @@ int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
     {
       if (M->objs[i]   == NULLOBJ)
 	{
-	  Scierror("Warning:\t trying to save a null object in a cell\n");
-	  return FAIL;
+	  if ( nsp_xdr_save_c(xdrs,'N') == FAIL) return FAIL;
+	  /* Scierror("Warning:\t trying to save a null object in a cell\n"); */
+	  /* return FAIL; */
 	}
-      rep = M->objs[i]->type->save(xdrs,M->objs[i]);
-      if ( rep == FAIL) return FAIL;
+      else 
+	{
+	  if ( nsp_xdr_save_c(xdrs,'Y') == FAIL) return FAIL;
+	  rep = M->objs[i]->type->save(xdrs,M->objs[i]);
+	  if ( rep == FAIL) return FAIL;
+	}
     }
   return OK;
 }
@@ -330,9 +335,23 @@ NspCells *nsp_cells_xdr_load(XDR *xdrs)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < m*n ; i++ )
     {
-      NspObject *Ob= nsp_object_xdr_load(xdrs);
-      if ( Ob == NULLOBJ ) return NULLCELLS;
-      M->objs[i] = Ob;
+      char c=EOF;
+      NspObject *Ob;
+      nsp_xdr_load_c(xdrs,&c);
+      switch (c)
+	{
+	case 'Y':
+	  Ob= nsp_object_xdr_load(xdrs);
+	  if ( Ob == NULLOBJ ) return NULLCELLS;
+	  M->objs[i] = Ob;
+	  break;
+	case 'N':
+	  M->objs[i] = NULL;
+	  break;
+	default: 
+	  Scierror("Error: cannot relad a cell object\n");
+	  return NULLCELLS;
+	}
     }
   return M;
 }
