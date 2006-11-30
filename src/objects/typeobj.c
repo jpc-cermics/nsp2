@@ -526,6 +526,7 @@ void primitive_types_register() {
 #endif 
   new_type_serial(T_BASE);
   new_type_spcolmatrix(T_BASE);
+  new_type_bhash(T_BASE);
 }
 
 /*
