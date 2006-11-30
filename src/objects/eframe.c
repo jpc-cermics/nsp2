@@ -458,13 +458,13 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
     {
       /* first search in local variables */
       int val; 
-      Sciprintf("Trying a search and remove for %s \n",str);
+      /* Sciprintf("Trying a search and remove for %s \n",str); */
       if ( nsp_bhash_find(F->local_vars,str,&val) == OK) 
 	{
 	  NspObject *O1;
 	  O1 = F->table->objs[val];
 	  F->table->objs[val]= NULL;
-	  Sciprintf("\tsearch and remove ok %s \n",str);
+	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
 	  return O1;
 	}
     }
@@ -494,7 +494,7 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 {
 #ifdef FRAME_AS_LIST
   NspObject *O;
-  Sciprintf("Trying a remove for %s \n",str);
+  /* Sciprintf("Trying a remove for %s \n",str); */
   O=nsp_sorted_list_search_and_remove(F->vars,str);
   nsp_object_destroy(&O);
 #else 
