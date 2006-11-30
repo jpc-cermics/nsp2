@@ -201,7 +201,7 @@ int nsp_eval_dotplus(Stack stack, int first, int rhs, int opt, int lhs)
        && o1->basetype == o2->basetype) 
     {
       stack.first = first;
-#define TEST1
+#define TEST2
 #ifdef TEST1
       return nsp_interfaces(0,130,stack,rhs,opt,lhs);
 #endif 
