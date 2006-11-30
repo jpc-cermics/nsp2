@@ -2288,16 +2288,9 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table)
       int rep = nsp_bhash_get_next_object(symb_table,&i,&str,&val);
       if ( str != NULL )
 	{ 
-	  /* not so good since str is copied we would like 
-	   * to be able to change val directly after the get 
-	   */
 	  nsp_bhash_enter_pos_i(symb_table,i-1,count++);
 	}
       if (rep == FAIL) break;
-      /* for hash  
-      if (nsp_bhash_get_next_object(symb_table,&i,&Obj) == FAIL ) break;
-      if ( Obj != NULLOBJ) { ((NspMatrix *) Obj)->R[0] = count++;}
-      */
     }
   return count;
 }
