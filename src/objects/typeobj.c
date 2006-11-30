@@ -575,7 +575,7 @@ void *nsp_get_type_from_id(NspTypeId id)
   return NULL;
 }
 
-void *nsp_get_type_from_name(char *name)
+void *nsp_get_type_from_name(const char *name)
 {
   NspObject *O;
   if ( nsp_types_hash_table == NULLHASH)  return NULL;
