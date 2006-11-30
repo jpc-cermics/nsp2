@@ -216,9 +216,8 @@ static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int op
 }
 
 /* 
- * method perm 
+ * method perm_elem
  */
-
 static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   int p, q, dim=0;
@@ -2229,6 +2228,17 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 	}
 
 
+/**
+ * nsp_matint_perm_elem:
+ * @ObjA: 
+ * @p: 
+ * @q: 
+ * @dim_flag: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA;
