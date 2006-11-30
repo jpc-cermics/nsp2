@@ -7,7 +7,7 @@ typedef struct _AcceleratedTab AcceleratedTab;
 
 struct _AcceleratedTab
 {
-  char *opname;
+  const char *opname;
   int arity;
   int nb_accelerated_types;
   int *accelerated_types;
