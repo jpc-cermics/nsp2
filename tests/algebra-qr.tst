@@ -15,9 +15,9 @@ if Q<>[]|R<>[] then pause,end
 if Q<>[]|R<>[] then pause,end
 
 [Q,R,x]=qr(e);
-if Q<>[]|R<>[]|x<>[] then pause,end
+if Q<>[]|R<>[]|~isempty(x) then pause,end
 [Q,R,x]=qr(e,mode="e");
-if Q<>[]|R<>[]|x<>[] then pause,end
+if Q<>[]|R<>[]|~isempty(x) then pause,end
 
 //Small dimension
 //---------------

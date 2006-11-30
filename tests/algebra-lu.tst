@@ -8,9 +8,9 @@ rand('normal')
 //Empty matrix
 A=[];
 [L,U]=lu(A);
-if L<>[]|U<>[] then pause,end
+if L*U<>A then pause,end
 [L,U,E]=lu(A);
-if L<>[]|U<>[]|E<>[] then pause,end
+if L*U <> A(E,:) then pause,end
 //Non full rank
 A=rand(5,2);A=A*A';Ac=rand(5,2)+%i*rand(5,2);Ac=Ac*Ac';
 [L,U,E]=lu(A);

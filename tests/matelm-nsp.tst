@@ -552,27 +552,27 @@ if or(sum(a+0,n)<>[3;1;-1]+0*%i) then pause,end
 a=[]
 if sum(a)<>0 then pause,end
 if sum([])<>0 then pause,end
-if sum(a,'r')<>[] then pause,end
-if sum([],'r')<>[] then pause,end
+if ~isempty(sum(a,'r')) then pause,end
+if ~isempty(sum([],'r')) then pause,end
 n='r';
-if sum(a,n)<>[] then pause,end
-if sum([],n)<>[] then pause,end
-if sum(a,'r')<>[] then pause,end
-if sum([],'r')<>[] then pause,end
+if ~isempty(sum(a,n)) then pause,end
+if ~isempty(sum([],n)) then pause,end
+if ~isempty(sum(a,'r')) then pause,end
+if ~isempty(sum([],'r')) then pause,end
 n='r';
-if sum(a,n)<>[] then pause,end
-if sum([],n)<>[] then pause,end
+if ~isempty(sum(a,n)) then pause,end
+if ~isempty(sum([],n)) then pause,end
 
-if sum(a,'c')<>[] then pause,end
-if sum([],'c')<>[] then pause,end
+if ~isempty(sum(a,'c')) then pause,end
+if ~isempty(sum([],'c')) then pause,end
 n='c';
-if sum(a,n)<>[] then pause,end
-if sum([],n)<>[] then pause,end
-if sum(a,'c')<>[] then pause,end
-if sum([],'c')<>[] then pause,end
+if ~isempty(sum(a,n)) then pause,end
+if ~isempty(sum([],n)) then pause,end
+if ~isempty(sum(a,'c')) then pause,end
+if ~isempty(sum([],'c')) then pause,end
 n='c';
-if sum(a,n)<>[] then pause,end
-if sum([],n)<>[] then pause,end
+if ~isempty(sum(a,n)) then pause,end
+if ~isempty(sum([],n)) then pause,end
 
 // // sum -sparse 
 // a=sparse([1 2;-3 4;5,-6]);
@@ -709,27 +709,28 @@ if or(prod(a+0,n)<>[2;-12;-30]+0*%i) then pause,end
 a=[]
 if prod(a)<>1 then pause,end
 if prod([])<>1 then pause,end
-if prod(a,'r')<>[] then pause,end
-if prod([],'r')<>[] then pause,end
-n='r';
-if prod(a,n)<>[] then pause,end
-if prod([],n)<>[] then pause,end
-if prod(a,'r')<>[] then pause,end
-if prod([],'r')<>[] then pause,end
-n='r';
-if prod(a,n)<>[] then pause,end
-if prod([],n)<>[] then pause,end
-
-if prod(a,'c')<>[] then pause,end
-if prod([],'c')<>[] then pause,end
-n='c';
-if prod(a,n)<>[] then pause,end
-if prod([],n)<>[] then pause,end
-if prod(a,'c')<>[] then pause,end
-if prod([],'c')<>[] then pause,end
-n='c';
-if prod(a,n)<>[] then pause,end
-if prod([],n)<>[] then pause,end
+// the following tests depend upon mtlb_mode ...
+// $$$ if prod(a,'r')<>[] then pause,end
+// $$$ if prod([],'r')<>[] then pause,end
+// $$$ n='r';
+// $$$ if prod(a,n)<>[] then pause,end
+// $$$ if prod([],n)<>[] then pause,end
+// $$$ if prod(a,'r')<>[] then pause,end
+// $$$ if prod([],'r')<>[] then pause,end
+// $$$ n='r';
+// $$$ if prod(a,n)<>[] then pause,end
+// $$$ if prod([],n)<>[] then pause,end
+// $$$ 
+// $$$ if prod(a,'c')<>[] then pause,end
+// $$$ if prod([],'c')<>[] then pause,end
+// $$$ n='c';
+// $$$ if prod(a,n)<>[] then pause,end
+// $$$ if prod([],n)<>[] then pause,end
+// $$$ if prod(a,'c')<>[] then pause,end
+// $$$ if prod([],'c')<>[] then pause,end
+// $$$ n='c';
+// $$$ if prod(a,n)<>[] then pause,end
+// $$$ if prod([],n)<>[] then pause,end
 
 // Prod sur les sparses ? 
 // TOBEDONE 

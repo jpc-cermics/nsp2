@@ -10,7 +10,6 @@ function x=ldiv(A,B),x=A\B,endfunction
   
 //-----Square matrix-----
 n=5;  A=rand(n,n);b=rand(2,n+1);
-if ldiv(A,[]) <>[] then pause,end
 if execstr('ldiv(A,B)',errcatch=%t)==%t then pause,end
 //Small dimensions real
 n=5;
@@ -52,7 +51,7 @@ if Err(A*x-b)>50000*%eps then pause,end
 
 //-----Rectangular matrix-----
 n=5;m=3; A=rand(m,n);b=rand(n+1,2);
-if ldiv(A,[]) <>[] then pause,end
+//if ldiv(A,[]) <>[] then pause,end
 if execstr('ldiv(A,b)',errcatch=%t)==%t then pause,end
 
 //Small dimensions real
