@@ -217,7 +217,9 @@ int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **R
     if ( (*R =nsp_matrix_create(NVOID,A->rc_type,0,A->n)) == NULLMAT ) return FAIL;
     if ( E != NULL)
       {
-	if ( (*E =nsp_matrix_create(NVOID,'r',A->n,1)) == NULLMAT ) return FAIL; /* a voir */
+	if ( (*E =nsp_matrix_create(NVOID,'r',A->n,1)) == NULLMAT ) return FAIL;
+	int i;
+	for ( i = 0 ; i < A->n ; i++ ) (*E)->R[i] = i+1;
       }
     if (Rank != NULL ) 
     {
