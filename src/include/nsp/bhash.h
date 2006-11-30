@@ -94,7 +94,7 @@ extern int nsp_bhash_enter_copy(NspBHash *H, NspObject *O);
 extern int nsp_bhash_enter(NspBHash *H,const char *str,int val);
 extern void nsp_bhash_remove(NspBHash *H, char *str); 
 extern int nsp_bhash_find_and_copy(NspBHash *H, char *str, NspObject **O); 
-extern int nsp_bhash_find(NspBHash *H,char *str,int *val);
+extern int nsp_bhash_find(NspBHash *H,const char *str,int *val);
 extern NspBMatrix  *nsp_bhash_equal(NspBHash *L1, NspBHash *L2);
 extern NspBMatrix  *nsp_bhash_not_equal(NspBHash *L1, NspBHash *L2);
 extern int nsp_bhash_full_equal(NspBHash *L1, NspBHash *L2);
@@ -117,7 +117,7 @@ typedef enum {
   BH_REMOVE 
 } BHashOperation;
 
-extern int nsp_bhsearch (NspBHash *H, char *key,int *val,BHashOperation action);
+/* extern int nsp_bhsearch (NspBHash *H, char *key,int *val,BHashOperation action); */
 extern NspBHash *nsp_bhcreate_from_list(char *name,unsigned int nel, NspList *L);
 NspBHash *nsp_bhcreate(const char *name, unsigned int nel);
 extern void nsp_bhdestroy (NspBHash *H);
