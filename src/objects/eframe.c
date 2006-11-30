@@ -23,6 +23,7 @@
 #define  Frame_Private 
 #include "frame.h"
 #include "nsp/interf.h"
+#include "nsp/datas.h"
 
 /* 
  * NspFrame inherits from NspObject
@@ -242,7 +243,17 @@ static NspFrame  *nsp_frame_xdr_load(XDR *xdrs)
 
 void nsp_frame_destroy(NspFrame *H)
 {
+  int i;
   nsp_object_destroy_name(NSP_OBJECT(H));
+  /* the object in the cell are shared with H->vars */
+  if ( H->table->mn != 0 ) 
+    {
+      for ( i = 1 ; i < H->table->mn ; i++ ) 
+	{
+	  H->table->objs[i]= NULL;
+	}
+    }
+  /* now free the cell object  */
   nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
   nsp_list_destroy(H->vars);
@@ -325,9 +336,13 @@ NspFrame  *GetFrame(Stack stack, int i)
  * opportunity of checking an incorrect frame.
  *-----------------------------------------------------*/
 
+/* #define LOCALS_IN_FRAME 1 */
 
 static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBase *type)
 {
+#ifdef LOCALS_IN_FRAME 
+  int i=0;
+#endif 
   NspFrame *H  = (type == NULL) ? new_frame() : type->new();
   if ( H ==  NULLFRAME)
     {
@@ -346,6 +361,24 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
       /* just a faster access */
       H->local_vars = (NspBHash *) H->table->objs[0];
+#ifdef LOCALS_IN_FRAME 
+      /* store the elements of H->local_vars in the frame without copying objects */
+      while (1) 
+	{
+	  char *str=NULL;
+	  int val, rep = nsp_bhash_get_next_object(H->local_vars,&i,&str,&val);
+	  if ( str != NULL )
+	    { 
+	      /* store without copy */
+#ifdef FRAME_AS_LIST
+	      nsp_sorted_list_insert(H->vars,H->table->objs[val]);
+#else 
+	      nsp_hash_enter(H->vars,H->table->objs[val]);
+#endif
+	    }
+	  if (rep == FAIL) break;
+	}
+#endif
     }
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
