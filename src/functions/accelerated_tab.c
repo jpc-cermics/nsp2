@@ -51,7 +51,8 @@ static int init_func_tab(AcceleratedTab *tab)
 {
   int i, type_id_max = 0, Int, Num;
   char op_typed[NAME_MAXL];
-  char *str, *op, *name, *suffix, *nothing;
+  const char *str;
+  char *op, *name, *suffix, *nothing;
 
   /* find the max id of all the supported types */
   for ( i = 0 ; i < tab->nb_accelerated_types ; i++ )
