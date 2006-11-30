@@ -245,6 +245,7 @@ void nsp_frame_destroy(NspFrame *H)
 {
   int i;
   nsp_object_destroy_name(NSP_OBJECT(H));
+#ifdef LOCALS_IN_FRAME 
   /* the object in the cell are shared with H->vars */
   if ( H->table->mn != 0 ) 
     {
@@ -253,6 +254,7 @@ void nsp_frame_destroy(NspFrame *H)
 	  H->table->objs[i]= NULL;
 	}
     }
+#endif 
   /* now free the cell object  */
   nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
