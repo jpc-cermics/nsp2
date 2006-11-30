@@ -531,7 +531,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 	{
 	  /** clean previous parsed expression **/
 	  nsp_plist_destroy(&plist);
-	  if ((err=nsp_parse(T,NULLHASH,&plist)) < 0 ) 
+	  if ((err=nsp_parse(T,NULLBHASH,&plist)) < 0 ) 
 	    {
 	      /* parse error */
 	      count--;
@@ -585,7 +585,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
  * err is set to 1 2 3 if an error is detected 
  ***************************************************/
 
-int nsp_parse(Tokenizer *T,NspHash *symb_table,PList *plist)
+int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   T->token.id = RETURN_OP;
   T->token.FlagEqu = 0;

@@ -64,7 +64,7 @@ NspFrame *new_frame();
 
 #define NULLFRAME (NspFrame*) 0
 
-NspFrame *nsp_frame_create(const char *name,const NspBHash *L,const NspCells *C);
+NspFrame *nsp_frame_create(const char *name,const NspCells *C);
 NspFrame *nsp_frame_copy(const NspFrame *H);
 void nsp_frame_destroy(NspFrame *H);
 void nsp_frame_info(NspFrame *H, int indent,const char *name, int rec_level);
@@ -95,7 +95,7 @@ extern NspHash *nsp_eframe_to_hash(NspFrame *F);
 /* private part */
 
 #ifdef Frame_Private 
-static NspFrame *_nsp_frame_create(const char *name,const NspBHash *L,const NspCells *C,NspTypeBase *type);
+static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBase *type);
 static int init_frame(NspFrame *o,NspTypeFrame *type);
 static int nsp_frame_size(NspFrame *Mat, int flag);
 static char *nsp_frame_type_as_string(void);

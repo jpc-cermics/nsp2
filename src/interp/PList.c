@@ -177,7 +177,7 @@ int nsp_parse_add_opname(PList *plist, char *str)
  * @plist: 
  * @obj: 
  * 
- * adds a new "PList at end of @plist containing a nsp object.
+ * adds a new "PList at end of @plist containing a nsp object (without copy).
  * This is mainly used for functions to store a symbol table.
  * 
  * 
@@ -487,7 +487,7 @@ PList nsp_plist_copy(PList L)
 	  if (nsp_parse_add_opname(&Res,(char*) L->O)==FAIL) return(NULLPLIST);
 	  break;
 	case OBJECT :
-	  if ((obj=nsp_object_copy(L->O)) == NULLOBJ) return(NULLPLIST); 
+	  if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return(NULLPLIST); 
 	  if (nsp_parse_add_object(&Res,obj)==FAIL) return(NULLPLIST);
 	  break;
 	case STRING :
@@ -877,6 +877,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  return _nsp_plist_pretty_print_arg(L,indent,pos,posret);
 	  break;
 	case OBJECT: 
+	  return Sciprintf1(indent,"{object}")+ pos;
 	  /* ignore */
 	  break;
 	case EMPTYMAT:
@@ -941,12 +942,16 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case FUNCTION:
-	  /* Sciprintf("function arity %d\n",L->arity); */
+	  Sciprintf("function arity %d\n",L->arity);
 	  PRINTTAG("function");
 	  _nsp_plist_pretty_print_arg(List,1,pos,newpos+1);
 	  Sciprintf("\n");
 	  newpos =_nsp_plist_pretty_print_arg(List->next,posret+2,pos,posret+2);
 	  if ( newpos != 0)  Sciprintf("\n");
+	  if ( L->arity == 3 ) 
+	    {
+	      newpos =_nsp_plist_pretty_print_arg(List->next->next,posret+2,pos,posret+2);
+	    }
 	  return Sciprintf1(posret,"endfunction");
 	  break;
 	case FOR:
@@ -1112,10 +1117,10 @@ static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int 
 
 /* One Arg Pretty print **/
 
-/* #define WITH_SYMB_TABLE 1  */
 
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
 {
+  int n;
   if ( L == NULLPLIST ) 
     {
       Scierror("Something Strange: nullplist ....\n");
@@ -1137,6 +1142,10 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       return pos+Sciprintf1(i,"'%s'",(char *) L->O);
       break;
     case OBJECT :
+      n = pos+Sciprintf1(i,"{object:Ox%x}\n",(unsigned int) L->O);
+      nsp_object_print(L->O,0,0,0);
+      return n;
+      
       /* ignore */
       break;
     case STRING:
@@ -1726,11 +1735,11 @@ static void plist_arg_get_nargs(PList L,int *lhs , int *rhsp1)
  * add informations on local objects.
  */
 
-static void Arg_name_to_local_name(PList L,NspHash *H);
+static void Arg_name_to_local_name(PList L,NspBHash *H);
 
-void plist_name_to_local_id(PList List,NspHash *H)
+void plist_name_to_local_id(PList List,NspBHash *H)
 {
-  PList L=List;
+  PList L=List,L1;
   const char *s;
   int j;
   List = List->next;
@@ -1846,7 +1855,14 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	  Arg_name_to_local_name(List->next,H);
 	  break;
 	case FUNCTION:
+	  /* the function prototype (= (ret-args) (feval (args))) 
+	   * here we want to gather (ret-args) but also args 
+	   */
+	  /* this will gather ret-args */
 	  Arg_name_to_local_name(List,H);
+	  /* function call prototype */
+	  L1 = ((PList) List->O)->next->next;
+	  /* the function body i.e statements */
 	  Arg_name_to_local_name(List->next,H);
 	  break;
 	case FOR:
@@ -1902,9 +1918,10 @@ void plist_name_to_local_id(PList List,NspHash *H)
 }
 
 
-static void Arg_name_to_local_name(PList L,NspHash *H)
+static void Arg_name_to_local_name(PList L,NspBHash *H)
 {
-  NspObject *obj;
+  /*   NspObject *obj; */
+  int val;
   if ( L == NULLPLIST ) 
     {
       Scierror("Something Strange: nullplist ....\n");
@@ -1913,9 +1930,9 @@ static void Arg_name_to_local_name(PList L,NspHash *H)
   switch (L->type) 
     {
     case NAME :
-      if ( nsp_hash_find(H,(char *) L->O,&obj) == OK) 
+      if ( nsp_bhash_find(H,(char *) L->O,&val) == OK) 
 	{
-	  L->arity = (int) ((NspMatrix *) obj)->R[0];
+	  L->arity = val ; /*  (int) ((NspMatrix *) obj)->R[0]; */
 	}
       break;
     case PLIST :

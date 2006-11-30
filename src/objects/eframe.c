@@ -243,7 +243,6 @@ static NspFrame  *nsp_frame_xdr_load(XDR *xdrs)
 void nsp_frame_destroy(NspFrame *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-  nsp_bhash_destroy(H->local_vars);
   nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
   nsp_list_destroy(H->vars);
@@ -327,7 +326,7 @@ NspFrame  *GetFrame(Stack stack, int i)
  *-----------------------------------------------------*/
 
 
-static NspFrame *_nsp_frame_create(const char *name,const NspBHash *L,const NspCells *C,NspTypeBase *type)
+static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBase *type)
 {
   NspFrame *H  = (type == NULL) ? new_frame() : type->new();
   if ( H ==  NULLFRAME)
@@ -342,22 +341,19 @@ static NspFrame *_nsp_frame_create(const char *name,const NspBHash *L,const NspC
 #else 
   if(( H->vars = nsp_hash_create(NVOID,11)) == NULLHASH) return NULLFRAME;
 #endif
-  if ( L != NULL) 
-    {
-      if ((H->local_vars = nsp_bhash_copy(L))==NULLBHASH) return NULLFRAME;
-    }
   if ( C != NULL )
     {
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
+      /* just a faster access */
+      H->local_vars = (NspBHash *) H->table->objs[0];
     }
-
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }
 
-NspFrame *nsp_frame_create(const char *name,const NspBHash *L,const NspCells *C)
+NspFrame *nsp_frame_create(const char *name,const NspCells *C)
 {
-  return _nsp_frame_create(name,L,C,NULL);
+  return _nsp_frame_create(name,C,NULL);
 }
 
 /*
@@ -366,7 +362,7 @@ NspFrame *nsp_frame_create(const char *name,const NspBHash *L,const NspCells *C)
 
 NspFrame *nsp_frame_copy(const NspFrame *H)
 {
-  return _nsp_frame_create(NVOID,H->local_vars,H->table,NULL);
+  return _nsp_frame_create(NVOID,H->table,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -403,19 +399,48 @@ static NspMethods *frame_get_methods(void) { return frame_methods;};
 
 NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
 {
+  NspObject *Obj=NULLOBJ ;
 #ifdef FRAME_AS_LIST
-  return nsp_sorted_list_search(F->vars,name);
+  if (( Obj = nsp_sorted_list_search(F->vars,name)) != NULLOBJ )
+    return Obj;
 #else 
-  NspObject *O=NULLOBJ ;
-  if ( nsp_hash_find(F->vars,name,&O)== OK) 
-    return O;
+  if ( nsp_hash_find(F->vars,name,&Obj)== OK) 
+    return Obj;
 #endif
+  /* then search in local variables hash-table 
+   * Note that most of the time local variables are not searched 
+   * that way but by direct access.
+   */
+  if ( F->local_vars != NULL ) 
+    {
+      int val; 
+      /* Sciprintf("searching a local object %s with nsp_eframe_search_object\n",name); */
+      if ( nsp_bhash_find(F->local_vars,name,&val) == OK) 
+	{
+	  /* Sciprintf("\tobject %s found\n",name);*/
+	  return F->table->objs[val];
+	}
+    }
   return NULLOBJ;
 }
 
 int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
 {
   if (  A == NULLOBJ ) return(OK);
+  if ( F->local_vars != NULL ) 
+    {
+      /* first search in local variables */
+      int val; 
+      /* Sciprintf("Replace a local object %s with nsp_eframe_replace_object\n",nsp_object_get_name(A));*/
+      if ( nsp_bhash_find(F->local_vars,nsp_object_get_name(A),&val) == OK) 
+	{
+	  /* object is a local variable */
+	  nsp_object_destroy(&F->table->objs[val]);
+	  F->table->objs[val]= A;
+	  /* Sciprintf("\t replacement done for %s \n",nsp_object_get_name(A)); */
+	  return OK;
+	}
+    }
 #ifdef FRAME_AS_LIST
   return nsp_sorted_list_insert(F->vars, A);
 #else 
@@ -429,6 +454,20 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 #ifndef FRAME_AS_LIST
   NspObject *Ob;
 #endif
+  if ( F->local_vars != NULL ) 
+    {
+      /* first search in local variables */
+      int val; 
+      Sciprintf("Trying a search and remove for %s \n",str);
+      if ( nsp_bhash_find(F->local_vars,str,&val) == OK) 
+	{
+	  NspObject *O1;
+	  O1 = F->table->objs[val];
+	  F->table->objs[val]= NULL;
+	  Sciprintf("\tsearch and remove ok %s \n",str);
+	  return O1;
+	}
+    }
 #ifdef FRAME_AS_LIST
   return nsp_sorted_list_search_and_remove(F->vars,str) ;
 #else 
@@ -455,6 +494,7 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 {
 #ifdef FRAME_AS_LIST
   NspObject *O;
+  Sciprintf("Trying a remove for %s \n",str);
   O=nsp_sorted_list_search_and_remove(F->vars,str);
   nsp_object_destroy(&O);
 #else 

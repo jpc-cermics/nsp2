@@ -119,6 +119,11 @@ extern int nsp_parse_add_list(PList *plist, PList *l);
 extern int nsp_parse_append(PList *plist, PList *l);
 extern int nsp_parse_add_list1(PList *plist, PList *l);
 extern int nsp_parse_add_doublei(PList *plist, char *str);
+extern int nsp_parse_add_opname(PList *plist, char *str);
+extern int nsp_parse_add_object(PList *plist, NspObject *obj );
+
+
+
 extern int ParseAddDouble (PList *plist);
 extern PList nsp_eplist_create(void);
 extern void nsp_plist_destroy(PList *List);

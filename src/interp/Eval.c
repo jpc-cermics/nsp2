@@ -29,7 +29,7 @@
 #include "nsp/plisttoken.h" /*for name_maxl **/
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
-#include "../objects/frame.h"
+#include "../objects/frame.h" /* XXX */
 #include "Functions.h" 
 #include "LibsTab.h" 
 #include "Eval.h" 
@@ -233,10 +233,27 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) 
 		SHOWBUG(stack,n,L1);
 	      nargs = n;
+	      if ( nargs != 1 ) 
+		{
+		  /* too many arguments returned */
+		  nsp_void_seq_object_destroy(stack,first,first+nargs);
+		  /* ex: A=1:5;A{1:3} op 9 */
+		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,nsp_astcode_to_name(L->type));
+		  SHOWBUG(stack,RET_BUG,L1);
+		  return RET_BUG;
+		}
 	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L1->next);
+		}
+	      if ( n != 1 ) 
+		{
+		  /* to many argument returned ex:  A=1:5; 9 && A{1:3} */
+		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
+		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,nsp_astcode_to_name(L->type));
+		  SHOWBUG(stack,RET_BUG,L1);
+		  return RET_BUG;
 		}
 	      nargs +=n;
 	      /* Pas forcement astucieux pour un operateur ? **/
@@ -833,7 +850,13 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
       if ( debug ) Sciprintf("==>%s\n",(char *) L->O);
       if ( L->arity != -1 ) 
 	{
-	  NspCells *C =(NspCells *) stack.val->symbols;
+	  if (  Datas == NULLLIST ) 
+	    {
+	      Scierror("Error: Can't find local variable in empty Data frame\n");
+	      return RET_BUG;
+	    }
+	  /* get current frame local variable table */
+	  NspCells *C =((NspFrame *) Datas->first->O)->table;
 	  if ((OM= C->objs[L->arity]) == NULL) 
 	    {
 	      Scierror("Warning: local variable %s id=%d not found \n",(char *) L->O ,L->arity);
@@ -1054,9 +1077,19 @@ static int EvalFor(PList L1, Stack stack, int first)
       break;
     case RET_ENDFOR : 
       if (debug) Sciprintf("end for \n"); 
-      /*** XXX we must destroy the loop object ***/
-      O=nsp_frame_search_and_remove_object((char *) L1->O);
-      nsp_object_destroy(&O);
+      /* we must destroy the loop object */
+      if ( L1->arity != -1 ) 
+	{
+	  /* object is a local variable */
+	  O = ((NspFrame *) Datas->first->O)->table->objs[L1->arity];
+	  ((NspFrame *) Datas->first->O)->table->objs[L1->arity] = NULL;
+	  nsp_object_destroy(&O);
+	}
+      else
+	{
+	  O=nsp_frame_search_and_remove_object((char *) L1->O);
+	  nsp_object_destroy(&O);
+	}
       return 0; 
       break;
     default:
@@ -2337,9 +2370,22 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
    * O1 can be NULL 
    */
   if ( ! ( name[0] == '_' && name[1] == '_' ) ) 
-    stack.val->S[first]=nsp_frames_search_object(name);
+    {
+      if ( Lf->arity == -1 ) 
+	{
+	  /* search object in frames */
+	  stack.val->S[first]=nsp_frames_search_object(name);
+	}
+      else
+	{
+	  /* direct acces to object through table of local variables */
+	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[Lf->arity];
+	}
+    }
   else 
-    stack.val->S[first]= NULLOBJ;
+    {
+      stack.val->S[first]= NULLOBJ;
+    }
   /*
    * A is a pointer replace it by the object it points to 
    */
@@ -2644,8 +2690,14 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
   if ( debug ) Sciprintf("=Storing=>%s\n",str);
   if ( stack.val->S[first] != NULLOBJ ) 
     {
-      NspObject *Ob = stack.val->S[first];
-      NspObject *O1= ((NspCells *) stack.val->symbols)->objs[position];
+      NspObject *Ob = stack.val->S[first], *O1;
+      if (  Datas == NULLLIST ) 
+	{
+	  Scierror("Error: Can't insert obj in empty Data frame\n");
+	  return RET_BUG; 
+	}
+      /* get current frame local variable table */
+      O1 = ((NspFrame *) Datas->first->O)->table->objs[position];
       if ( Ocheckname(Ob,str) ) 
 	{
 	  /* Ob->name == str 
@@ -2667,7 +2719,7 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 	{
 	  nsp_object_set_name(Ob,str);
 	  if ( O1 != NULL )  nsp_object_destroy(&O1);
-	  ((NspCells *) stack.val->symbols)->objs[position]= Ob;
+	  ((NspFrame *) Datas->first->O)->table->objs[position]= Ob;
 	  stack.val->S[first]=Ob;
 	  return 1;
 	}

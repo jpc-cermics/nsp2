@@ -6,6 +6,7 @@ extern NspList *Datas ;
 
 extern int nsp_init_frames(int argc, char **argv);
 extern int nsp_new_frame(void);
+extern int nsp_new_frame_with_local_vars(NspCells *table);
 extern void nsp_frame_delete(void);
 extern void nsp_frames_info(void);
 extern void nsp_frame_info_obsolete(void);

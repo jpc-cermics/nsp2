@@ -89,6 +89,7 @@ extern NspBHash *GetBHash (Stack stack, int i);
 extern int nsp_bhash_resize(NspBHash *H, unsigned int new_size); 
 extern int nsp_bhash_merge(NspBHash *H1, NspBHash *H2); 
 extern int nsp_bhash_get_next_object(NspBHash *H,int *i,char **str,int *val);
+extern void nsp_bhash_enter_pos_i(NspBHash *H, int i,int val);
 extern int nsp_bhash_enter_copy(NspBHash *H, NspObject *O); 
 extern int nsp_bhash_enter(NspBHash *H,const char *str,int val);
 extern void nsp_bhash_remove(NspBHash *H, char *str); 

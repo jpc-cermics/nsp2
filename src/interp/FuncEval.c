@@ -31,6 +31,7 @@
 #include "nsp/parse.h" 
 #include "nsp/matint.h" 
 #include "nsp/accelerated_tab.h"
+#include "../objects/frame.h" /* XXX */
 #include "Functions.h" 
 #include "Eval.h" 
 #include "../functions/FunTab.h"
@@ -560,8 +561,12 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
 {
   int rep;
   /* new data frame for function evaluation */
-  stack.first = first;
+#ifdef WITH_SYMB_TABLE
+  nsp_new_frame_with_local_vars(((NspPList *) OF)->D->next->next->next->O);
+#else 
   nsp_new_frame(); 
+#endif 
+  stack.first = first;
   if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs) ) == RET_BUG) 
     {
       /*clean the stack */
@@ -582,13 +587,11 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   Lhs  = (PList) ((PList) P->next->O)->next->O;
   Feval= (PList) ((PList) P->next->O)->next->next->O;
   Body = (PList) P->next->next->O;
-  /* symbol table associated to the macro XXX */
-  NspCells *symb_table= P->next->next->O;
   /*Test on Lhs **/
   stack.first = first;
   NspFname(stack) = ((NspObject *) OF)->name;
   NspFileName(stack) = ((NspPList *) OF)->file_name;
-  stack.val->symbols =(NspObject *) symb_table;
+  /* stack.val->symbols =(NspObject *) symb_table; */
   Loc = Lhs;
   nret = Loc->arity ; 
 
@@ -949,7 +952,17 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
        * par la fonction mais qui existe ds un frame + haut 
        * ca me parait bof 
        */
-      if ( (O=nsp_frame_search_and_remove_object(Loc->O)) == NULLOBJ) 
+      if ( Loc->arity != -1 ) 
+	{
+	  /* search return value in local variables */
+	  O = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
+	  ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=  NULL;
+	}
+      else 
+	{
+	  O=nsp_frame_search_and_remove_object(Loc->O);
+	}
+      if ( O ==  NULLOBJ) 
 	{
 	  /* If a return value was not computed we consider that it's a  bug */
 	  Scierror("Error:\tNo %s value computed inside function %s \n",

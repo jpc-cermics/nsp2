@@ -390,7 +390,7 @@ void nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level)
       const int name_len=128;
       char epname[name_len];
       sprintf(epname,"H__%d",rec_level);
-      Sciprintf1(indent,"%s=hcreate(%d);\n",epname,H->hsize);
+      Sciprintf1(indent,"%s=bhcreate(%d);\n",epname,H->hsize);
       /* last entry is at M->hsize ! */
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
@@ -493,7 +493,11 @@ NspBHash *nsp_bhash_copy(const NspBHash *H)
       BHash_Entry *loc = ((BHash_Entry *)H->htable) + i;
       if ( loc->used && loc->key != NULL )
 	{
-	  if ( nsp_bhsearch(Loc,loc->key,&loc->val,BH_ENTER) == FAIL) 
+	  char *str;
+	  /* take care that BH_ENTER do not copy the key */
+	  if ((str =nsp_string_copy(loc->key)) == (nsp_string) 0)
+	    return NULLBHASH;
+	  if ( nsp_bhsearch(Loc,str,&loc->val,BH_ENTER) == FAIL) 
 	    return NULLBHASH;
 	}
     }
@@ -1117,6 +1121,24 @@ int nsp_bhash_get_next_object(NspBHash *H, int *i,char **str,int *val)
   (*i)++;
   return ( (*i) >= (int) H->hsize +1   ) ? FAIL: OK ;
 }
+
+
+
+/**
+ * nsp_bhash_enter_pos_i:
+ * @H: 
+ * @i: 
+ * @val: 
+ * 
+ * enter a value in the hash table entry given by its indice.
+ **/
+
+void nsp_bhash_enter_pos_i(NspBHash *H, int i,int val)
+{
+  BHash_Entry *loc = ((BHash_Entry *) H->htable) + i;  
+  loc->val = val;
+}
+
 
 
 #define FAIL_FULL -2

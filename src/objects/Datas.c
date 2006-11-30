@@ -63,7 +63,7 @@ int nsp_init_frames(int argc, char **argv)
   NspObject *O;
   NspFrame *frame; 
   if ((Datas =nsp_list_create("datas")) ==NULLLIST ) return(FAIL);
-  if (( frame=nsp_frame_create("global",NULL,NULL))== NULLFRAME) return FAIL;
+  if (( frame=nsp_frame_create("global",NULL))== NULLFRAME) return FAIL;
   /* store the new frame in Datas */
   if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
   /* this first frame is the global one */
@@ -142,7 +142,20 @@ int nsp_new_frame(void)
 {
   NspFrame *frame;
   if ( Datas == NULLLIST ) return FAIL;
-  if (( frame=nsp_frame_create("datas",NULL,NULL))== NULLFRAME) return FAIL;
+  if (( frame=nsp_frame_create("datas",NULL))== NULLFRAME) return FAIL;
+  if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
+  return OK;
+}
+
+/* 
+ *
+ */
+
+int nsp_new_frame_with_local_vars(NspCells *table)
+{
+  NspFrame *frame;
+  if ( Datas == NULLLIST ) return FAIL;
+  if ((frame=nsp_frame_create("datas",table))== NULLFRAME) return FAIL;
   if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
   return OK;
 }

@@ -52,7 +52,7 @@ extern int SciReadLine (char *prompt,char *buffer, int *buf_size, int *eof);
 #ifdef NSP_INC_PList 
 
 #include "nsp/tokenizer.h"
-extern int nsp_parse(Tokenizer *T,NspHash *symb_table,PList *plist);
+extern int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist);
 extern int IsEmptyMat (PList *plist);
 extern int is_mlhs(PList plist,PList *plist1, int *kount);
 extern int PListLength (PList *L);
@@ -77,8 +77,8 @@ extern int nsp_delete_macros(const char *Dir);
 
 /* Parse.c */
 
-extern int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist);
-extern void plist_name_to_local_id(PList List,NspHash *H);
+extern int parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist);
+extern void plist_name_to_local_id(PList List,NspBHash *H);
 
 
 #endif

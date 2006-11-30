@@ -182,4 +182,7 @@ typedef int integer;
 #   define  LARGEST_LONG_INTEGER    LONG_MAX
 
 
+/* #define WITH_SYMB_TABLE  */
+
+
 #endif /* MACHINE_H  */

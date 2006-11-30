@@ -28,66 +28,66 @@
 #include "Functions.h" 
 
 typedef int (*ExprsStop) (Tokenizer *T,int token);
-static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcflag, ExprsStop F);
+static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F);
 static int parse_endstop(Tokenizer *T,int token);
-static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int parse_funcstop (Tokenizer *T,int token);
-static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_functionright(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_while(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_functionright(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist);
 static int parse_nblines(Tokenizer *T);
 static int parse_stopif (Tokenizer *T,int token);
-static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int parse_stopselect (Tokenizer *T,int token);
-static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag);
-static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);;
-static int parse_lexpr(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag);
+static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);;
+static int parse_lexpr(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IsAndOp(Tokenizer *T,int *op);
-static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IsLprimOp(Tokenizer *T,int *op);
-static int parse_lprim(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_lprim(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IsLprim1Op(Tokenizer *T,int *op);
-static int parse_lprim1(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_lprim1(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IstermsOp(Tokenizer *T,int *op);
-static int parse_terms(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_terme1(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_terms(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_terme1(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IstermOp(Tokenizer *T,int *op1);
-static int parse_terme(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_nary(Tokenizer *T,NspHash *symb_table,PList *plist, 
-		      int (*parsef)(Tokenizer *T,NspHash *symb_table,PList *plist),
+static int parse_terme(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist, 
+		      int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist),
 		      int (*opfn)(Tokenizer *T,int *op), char *info);
 static int IsFact(Tokenizer *T,int *op1);
-static int parse_fact(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_fact2(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_fact(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IsComa(Tokenizer *T,int *op);
-static int parse_exprset(Tokenizer *T,NspHash *symb_table,PList *plist);
-static int parse_extsymb(Tokenizer *T,NspHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char);
+static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char);
 static int IsColMatOp(Tokenizer *T,int *op,char opt);
 static int IsRowMatOp(Tokenizer *T,int *op,char opt);
 static int IsDiagMatOp(Tokenizer *T,int *op,char opt);
-static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop);
-static int parse_colmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop);
-static int parse_matrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop);
-static int parse_cells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop);
-static int func_or_matrix_with_arg(Tokenizer *T,NspHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char);
-static int Check_Func_Def(Tokenizer *T,PList plist);
+static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
+static int parse_colmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
+static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
+static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
+static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char);
+static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist);
 static int Check_Func_Call(Tokenizer *T,PList plist, int tag);
-static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
 
-static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList plist);
+static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList plist);
 
 /* #define WITH_SYMB_TABLE 1  */
 
 #ifdef  WITH_SYMB_TABLE 
-static int nsp_parse_symbols_table_set_id(NspHash *symb_table) ;
+static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
 #endif 
 
 /*
@@ -99,7 +99,7 @@ static int nsp_parse_symbols_table_set_id(NspHash *symb_table) ;
  */
 
 
-int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
+int parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int count=0;
   PList plist1 = NULLPLIST ;
@@ -180,7 +180,7 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
  * This symbol is controlled by the function given as argument 
  ******************************************/
 
-static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcflag, ExprsStop F)
+static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F)
 {
   int count = 0,op=0;
   PList plist1 = NULLPLIST ;
@@ -300,7 +300,7 @@ static int parse_endstop(Tokenizer *T,int token)
  *  <keywordarg> (See T->ParseCommandArg(T))
  *********************************************************/
 
-static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int id,line;
   PList plist1 = NULLPLIST ;
@@ -404,10 +404,10 @@ static int parse_funcstop (Tokenizer *T,int token)
   return ( token == ENDFUNCTION );
 }
 
-static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   NspObject *cell = NULLOBJ;
-  NspHash *symbols = NULLHASH;
+  NspBHash *symbols = NULLBHASH;
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
   if (debug) scidebug(debugI++,"[function>");
@@ -415,7 +415,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
    * create a table for local symbols 
    */
 #ifdef  WITH_SYMB_TABLE 
-  if ((symbols = nsp_hcreate(NVOID,10)) == NULLHASH ) return FAIL;
+  if ((symbols = nsp_bhcreate("st",10)) == NULLBHASH ) return FAIL;
 #endif
   if ( T->NextToken(T) == FAIL) goto fail;
   if ( T->token.id == '[' ) 
@@ -486,7 +486,12 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
 #ifdef  WITH_SYMB_TABLE 
       nsymb=nsp_parse_symbols_table_set_id(symbols);
       /* nsp_hash_print(symbols,0); */
-      if ((cell= (NspObject *)nsp_cells_create(NVOID,nsymb,1)) == NULLOBJ) goto fail;
+      if ((cell= (NspObject *)nsp_cells_create("symbols",nsymb,1)) == NULLOBJ) goto fail;
+      /* we keep the hash table in the cell 
+       * Note that this could be dropped if refs in calling stacks are removed in nsp.
+       */
+      ((NspCells *) cell)->objs[0]= (NspObject *) symbols ; 
+      /* ((NspCells *) cell)->objs[0]=nsp_new_double_obj(1.67); */
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
@@ -497,7 +502,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       if (nsp_parse_add_list(plist,&plist1) == FAIL) goto fail;
       if (debug) scidebug(--debugI,"<endfunc]"); 
       /* now we can forget symbols */
-      if (symbols != NULLHASH)  nsp_hash_destroy(symbols);
+      /* if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols); */
       return (OK) ;
     }
   else
@@ -508,7 +513,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       goto fail;
     }
  fail: 
-  if (symbols != NULLHASH)  nsp_hash_destroy(symbols);
+  if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
   if (cell != NULLOBJ ) nsp_object_destroy(&cell);
 
   return FAIL;
@@ -528,7 +533,7 @@ char *nsp_function_name(PList plist)
  * Parses the right  side of [...]=f(...) i.e f(..) or f 
  *********************************************************/
 
-static int parse_functionright(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_functionright(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1= NULLPLIST;
   char id[NAME_MAXL];
@@ -542,8 +547,8 @@ static int parse_functionright(Tokenizer *T,NspHash *symb_table,PList *plist)
       if (nsp_parse_add_name(&plist1,id) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( func_or_matrix_with_arg(T,symb_table,plist,id,&excnt,0,')')== FAIL) return(FAIL);
-      if (nsp_parse_add(plist,FEVAL,excnt,T->token.Line) == FAIL) return(FAIL);
-      if ( Check_Func_Def(T,*plist) == FAIL) return(FAIL);
+      if ( nsp_parse_add(plist,FEVAL,excnt,T->token.Line) == FAIL) return(FAIL);
+      if ( Check_Func_Def(T,symb_table,*plist) == FAIL) return(FAIL);
     }
   else 
     {
@@ -558,7 +563,7 @@ static int parse_functionright(Tokenizer *T,NspHash *symb_table,PList *plist)
  * Parses the left side of [...]=f()
  *********************************************************/
 
-static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   int excnt=1;
@@ -604,7 +609,7 @@ static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist)
  ************************************************/
 
 
-static int parse_while(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
@@ -735,7 +740,7 @@ static int parse_stopif (Tokenizer *T,int token)
 }
 
 
-static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int count = 0,flag=1;
   PList plist1 = NULLPLIST ;
@@ -816,7 +821,7 @@ static int parse_stopselect (Tokenizer *T,int token)
   return ( token == END || token == CASE || token == ELSE );
 }
 
-static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int kount = 1 ; /* counts the number of cases **/
   PList plist1 = NULLPLIST ;
@@ -904,7 +909,7 @@ static int parse_stop_try (Tokenizer *T,int token)
   return ( token == CATCH);
 }
 
-static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
@@ -964,7 +969,7 @@ static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist)
  * 
  ************************************************/
 
-static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
@@ -1050,7 +1055,7 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
  * 
  ******************************************/
 
-static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
+static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
 {
   int kount =0,op = EQUAL_OP;
   PList plist1 = NULLPLIST, plist2=NULLPLIST,plist3=NULLPLIST;
@@ -1140,7 +1145,7 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
  *     unary + or - 
  ******************************************/
 
-static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
@@ -1201,7 +1206,7 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
  * when no more '|' or '||' are found we return
  ***************************************************************/
 
-static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);
+static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
 int nsp_is_or_op(Tokenizer *T,int *op)
 {
@@ -1215,7 +1220,7 @@ int nsp_is_or_op(Tokenizer *T,int *op)
     }
 }
 
-static int parse_lexpr(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_lexpr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lterm,nsp_is_or_op,"lexpr"));
 }
@@ -1238,7 +1243,7 @@ static int IsAndOp(Tokenizer *T,int *op)
     }
 }
 
-static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lprim,IsAndOp,"lterm"));
 }
@@ -1265,7 +1270,7 @@ static int IsLprimOp(Tokenizer *T,int *op)
     }
 }
 
-static int parse_lprim(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_lprim(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lprim1,IsLprimOp,"lprim"));
 } 
@@ -1290,7 +1295,7 @@ static int IsLprim1Op(Tokenizer *T,int *op)
     }
 }
 
-static int parse_lprim1(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_lprim1(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_terms,IsLprim1Op,"lprim1"));
 } 
@@ -1317,7 +1322,7 @@ static int IstermsOp(Tokenizer *T,int *op)
     }
 }
 
-static int parse_terms(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_terms(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_terme1,IstermsOp,"terms"));
 } 
@@ -1328,7 +1333,7 @@ static int parse_terms(Tokenizer *T,NspHash *symb_table,PList *plist)
  *     unary + or - or ~ with left associativity 
  ***************************************************************/
 
-static int parse_terme1(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_terme1(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   int op= 0;
@@ -1384,7 +1389,7 @@ static int IstermOp(Tokenizer *T,int *op1)
 }
 
 
-static int parse_terme(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_terme(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_fact,IstermOp,"terme"));
 } 
@@ -1407,8 +1412,8 @@ static int parse_terme(Tokenizer *T,NspHash *symb_table,PList *plist)
  * (((arg1 arg2 op) arg3 op) arg4 op)
  **************************************************/
 
-static int parse_nary(Tokenizer *T,NspHash *symb_table,PList *plist, 
-		      int (*parsef)(Tokenizer *T,NspHash *symb_table,PList *plist),
+static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist, 
+		      int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist),
 		      int (*opfn)(Tokenizer *T,int *op), char *info)
 {
   int op;
@@ -1437,8 +1442,8 @@ static int parse_nary(Tokenizer *T,NspHash *symb_table,PList *plist,
  * transmited has an extra argument 
  */
 
-static int parse_nary_opt(Tokenizer *T,NspHash *symb_table,PList *plist, 
-			  int (*parsef)(Tokenizer *T,NspHash *symb_table,PList *plist,char c),
+static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
+			  int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
 			  int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt)
 {
   int op;
@@ -1471,8 +1476,8 @@ static int parse_nary_opt(Tokenizer *T,NspHash *symb_table,PList *plist,
  *        must always return the correct expected op
  */
 
-static int parse_nary_flat_opt(Tokenizer *T,NspHash *symb_table,PList *plist, 
-			       int (*parsef)(Tokenizer *T,NspHash *symb_table,PList *plist,char c),
+static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
+			       int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
 			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt)
 {
   int count = 1;
@@ -1533,12 +1538,12 @@ static int IsFact(Tokenizer *T,int *op1)
   return(FAIL);
 }
 
-static int parse_fact(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_fact(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_fact2,IsFact,"fact"));
 }
 
-static int parse_fact2(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int op;
   PList plist1 = NULLPLIST ;
@@ -1557,7 +1562,7 @@ static int parse_fact2(Tokenizer *T,NspHash *symb_table,PList *plist)
 }
 
 
-static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1= NULLPLIST;
   int count = 1,flag;
@@ -1773,7 +1778,7 @@ static int IsComa(Tokenizer *T,int *op)
 /* similar to parse_nary exept  if only one expression is parsed  
    <expr> **/
 
-static int parse_exprset(Tokenizer *T,NspHash *symb_table,PList *plist)
+static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int count=0;
   int op;
@@ -1812,7 +1817,7 @@ static int parse_exprset(Tokenizer *T,NspHash *symb_table,PList *plist)
  * returns in plist = ( a b c ( arg1 ... argn ARGS) )
  *********************************************************/
 
-static int parse_extsymb(Tokenizer *T,NspHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char)
+static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char)
 {
   int excnt=0;
   int build = (T->token.id == '(' ) ? ARGS : (T->token.id == '{' ) ? CELLARGS: METARGS ;
@@ -1897,12 +1902,12 @@ static int IsDiagMatOp(Tokenizer *T,int *op,char opt)
  * as a column separator 
  ****************************************************************/
 
-static int parse_expr_opt(Tokenizer *T,NspHash *symb_table,PList *plist,char opt)
+static int parse_expr_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,char opt)
 {
   return parse_expr(T,symb_table,plist);
 }
 
-static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
@@ -1937,13 +1942,13 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
   return(OK);
 }
 
-static int parse_colmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_colmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   return (parse_nary_opt(T,symb_table,plist,parse_rowmatrix,IsColMatOp,"matrix",stop));
 }
   
 
-static int parse_matrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int type  = (stop == ']') ? P_MATRIX : P_CELL ;
@@ -1988,7 +1993,7 @@ static int parse_matrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
  *  latter.
  ****************************************************************/
 
-static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
@@ -2023,13 +2028,13 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
   return(OK);
 }
 
-static int parse_colcells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_colcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   return (parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop));
 }
   
 
-static int parse_cells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
+static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int type  = (stop == ']') ? P_MATRIX : P_CELL ;
@@ -2072,7 +2077,7 @@ static int parse_cells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
  * end_char is the character which finish the parse ')' or ']'
  **********************************************************/
 
-static int func_or_matrix_with_arg(Tokenizer *T,NspHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char)
+static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char)
 {
   PList plist1 = NULLPLIST ;
   /* arg1,...,argn  parsing the calling list **/
@@ -2110,21 +2115,33 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspHash *symb_table,PList *plist
  * Check the result of func_or_matrix_with_arg
  * for function definition 
  * i.e check if plist is f(x1,...,xn,y1=..,y2=,..)
+ * and insert symbols in symb_table
  *******************************************/
 
-static int Check_Func_Def(Tokenizer *T,PList plist)
+static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist)
 {
   char *name;
   int type,count=0;
+#ifdef  WITH_SYMB_TABLE
+  int val=0;
+#endif
   if ( plist == NULLPLIST ) return FAIL;
   if ( plist->type != FEVAL ) return FAIL;
   plist=plist->next; /* pass FEVAL*/
   type = plist->type ;   /* type NAME */
   name = (char *) plist->O; /* function name */
+  /* jump function name */
+  plist = plist->next ; count++;
   /* walk on names */
   while ( plist != NULLPLIST) 
     {
       if ( plist->type != type ) break;
+#ifdef  WITH_SYMB_TABLE
+      if ( nsp_bhash_find(symb_table,(char *) plist->O,&val) == FAIL) 
+	{
+	  if (nsp_bhash_enter(symb_table,(char *) plist->O,0) == FAIL) return FAIL;
+	}
+#endif 
       plist = plist->next ;
       count++;
     }
@@ -2140,11 +2157,23 @@ static int Check_Func_Def(Tokenizer *T,PList plist)
 	}
       Loc1= (PList) plist->O;
       Loc = (Loc1->arity > 0) ? Loc1->next : Loc1;
-      if ( !(Loc->type == NAME ||  Loc->type == OPNAME) || Loc1->type != OPT ) 
+      switch ( Loc->type ) 
 	{
+	case NAME : 
+	case OPNAME : 
+	case OPT: 
+#ifdef  WITH_SYMB_TABLE
+	  if ( nsp_bhash_find(symb_table,(char *) Loc->O,&val) == FAIL) 
+	    {
+	      if (nsp_bhash_enter(symb_table,(char *) Loc->O,0) == FAIL) return FAIL;
+	    }
+#endif
+	  break;
+	default : 
 	  T->ParseError(T,"Parse Error: Incorrect %d argument in %s(...)\n"
 			,count,name);
 	  return FAIL;
+	  break;
 	}
       plist = plist->next ;
       count++;
@@ -2216,20 +2245,20 @@ static int Check_Func_Call(Tokenizer *T,PList plist, int tag)
  * Return value: %OK or %FAIL
  **/
 
-static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList L)
+static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList L)
 {
-  NspObject *obj;
-  if ( symb_table == NULLHASH ) return OK;
+  int val ;
+  /* NspObject *obj; */
+  if ( symb_table == NULLBHASH ) return OK;
   while ( L != NULLPLIST ) 
     {
       switch ( L->type ) 
 	{
 	case NAME :
 	  /* Sciprintf("%s",(char *) L->O); */
-	  if ( nsp_hash_find(symb_table,(char *) L->O,&obj) == FAIL) 
+	  if ( nsp_bhash_find(symb_table,(char *) L->O,&val) == FAIL) 
 	    {
-	      if ((obj = nsp_create_object_from_double((char *) L->O,0)) == NULLOBJ) return FAIL;
-	      if (nsp_hash_enter(symb_table,obj) == FAIL) return FAIL;
+	      if (nsp_bhash_enter(symb_table,(char *) L->O,0) == FAIL) return FAIL;
 	    }
 	  break;
 	}
@@ -2243,19 +2272,32 @@ static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList L)
  * @symb_table: 
  * 
  * associated an id (integer) to each symbol of the symbol table.  
- * Return value: the number of ids 
+ * Return value: the number of ids (Note that 0 is not used it is a reserved id).
  **/
 
 #ifdef  WITH_SYMB_TABLE 
-static int nsp_parse_symbols_table_set_id(NspHash *symb_table) 
+static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) 
 {
-  NspObject *Obj;
-  int i = 0,count=0;
-  if ( symb_table == NULLHASH) return 0;
+  /* NspObject *Obj; */
+  int i = 0,count=1;
+  if ( symb_table == NULLBHASH) return 0;
   while (1) 
     {
-      if (nsp_hash_get_next_object(symb_table,&i,&Obj) == FAIL ) break;
+      char *str=NULL;
+      int val;
+      int rep = nsp_bhash_get_next_object(symb_table,&i,&str,&val);
+      if ( str != NULL )
+	{ 
+	  /* not so good since str is copied we would like 
+	   * to be able to change val directly after the get 
+	   */
+	  nsp_bhash_enter_pos_i(symb_table,i-1,count++);
+	}
+      if (rep == FAIL) break;
+      /* for hash  
+      if (nsp_bhash_get_next_object(symb_table,&i,&Obj) == FAIL ) break;
       if ( Obj != NULLOBJ) { ((NspMatrix *) Obj)->R[0] = count++;}
+      */
     }
   return count;
 }
