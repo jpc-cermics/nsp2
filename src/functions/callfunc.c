@@ -103,7 +103,7 @@ extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
 extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
 
-#define WITH_PREMIA 
+/* #define WITH_PREMIA  */
 
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
