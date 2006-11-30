@@ -36,6 +36,9 @@
 
 #include "nsp/bhash.h"
 
+static int nsp_bhsearch(NspBHash *H, char *key,int *val, BHashOperation action);
+static int nsp_bhfind(NspBHash *H,const char *key,int *val);
+
 /* 
  * NspBHash inherits from NspObject 
  */
@@ -1203,9 +1206,10 @@ void nsp_bhash_remove(NspBHash *H, char *str)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_bhash_find(NspBHash *H,char *str, int *val)
+int nsp_bhash_find(NspBHash *H,const char *str, int *val)
 {
-  return( nsp_bhsearch(H,str,val,BH_FIND));
+  return( nsp_bhfind(H,str,val));
+  /* return( nsp_bhsearch(H,str,val,BH_FIND)); */
 }
 
 
@@ -1600,7 +1604,7 @@ void nsp_bhdestroy(NspBHash *H)
 
 
 
-int nsp_bhsearch(NspBHash *H, char *key,int *val, BHashOperation action)
+static int nsp_bhsearch(NspBHash *H, char *key,int *val, BHashOperation action)
 {
   register unsigned hval;
   register unsigned hval2;
@@ -1692,6 +1696,88 @@ int nsp_bhsearch(NspBHash *H, char *key,int *val, BHashOperation action)
     }
   else 
     return FAIL;
+}
+
+/**
+ * nsp_bhfind:
+ * @H: #NspBHash object 
+ * @key: key to search in the bhash table 
+ * @data: a #NspObject pointer to be set with the searched object
+ * @action: action to perform.
+ * 
+ * This is the function used for the BH_FIND action. It is almost 
+ * a copy of the previous function but here we want the key to be const.
+ * Return value: %OK, %FAIL. 
+ **/
+
+#define FIND_ACTION2	*val= htable[idx].val;
+
+static int nsp_bhfind(NspBHash *H,const char *key,int *val)
+{
+  register unsigned hval;
+  register unsigned hval2;
+  register unsigned idx;
+  register const char *str;
+  BHash_Entry *htable = H->htable;
+
+  /*
+   * If table is full and another entry should be entered return with 
+   * error. We keep one free position to let the H_FIND, H_REMOVE work.
+   */
+
+  /* Compute a value for the given string. Perhaps use a better method. */
+  /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
+  hval  = 33;
+  str = key;
+  while (*str != '\0') { hval += *str ; str++; }
+  hval %= H->hsize;
+
+  /* First bhash function: simply take the modulo but prevent zero. */
+  if (hval == 0) hval++;
+
+  /* The first index tried. */
+  idx = hval;
+
+  if (htable[idx].used) 
+    {
+      /* Further action might be required according to the action value. */
+      /* Sciprintf("First  bhash Testing idx=%d\n",idx); */
+      if (htable[idx].used == hval )
+	{
+	  if (htable[idx].key != NULL &&  strcmp(htable[idx].key,key)==0 )
+	    {
+	      FIND_ACTION2;
+	    }
+	}
+      
+      /* Second bhash function, as suggested in [Knuth] */
+
+      hval2 = 1 + hval % (H->hsize-2);
+	
+      do {
+	/* 
+	 * Because hsize is prime this guarantees to step through all
+	 * available indeces.
+	 */
+	if (idx <= hval2)
+	  idx = H->hsize+idx-hval2;
+	else
+	  idx -= hval2;
+
+	/* Sciprintf("2nd bhash Testing idx=%d\n",idx); */
+	/* If entry is found use it. */
+	if (htable[idx].used == hval ) 
+	  {
+	    if (htable[idx].key != NULL &&  strcmp(htable[idx].key,key)==0 )
+	      {
+		FIND_ACTION2;
+	      }
+	  }
+      } while (htable[idx].used);
+	
+    }
+  /* Sciprintf("End of bhash search idx=%d must be free \n",idx); **/
+  return FAIL;
 }
 
 

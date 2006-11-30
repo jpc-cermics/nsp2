@@ -243,12 +243,12 @@ static NspFrame  *nsp_frame_xdr_load(XDR *xdrs)
 
 void nsp_frame_destroy(NspFrame *H)
 {
-  int i;
   nsp_object_destroy_name(NSP_OBJECT(H));
 #ifdef LOCALS_IN_FRAME 
   /* the object in the cell are shared with H->vars */
   if ( H->table->mn != 0 ) 
     {
+      int i;
       for ( i = 1 ; i < H->table->mn ; i++ ) 
 	{
 	  H->table->objs[i]= NULL;
