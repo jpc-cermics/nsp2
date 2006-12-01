@@ -387,7 +387,7 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
       char epname[name_len];
       char epname1[name_len];
       sprintf(epname,"H__%d",rec_level);
-      Sciprintf1(indent,"%s=hcreate(%d);\n",epname,H->hsize);
+      Sciprintf1(indent,"%s=hash_create(%d);\n",epname,H->hsize);
       /* last entry is at M->hsize ! */
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
