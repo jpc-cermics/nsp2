@@ -23,61 +23,121 @@
 #include "callfunc.h"
 #include "nsp/plistc.h"
 
-#define NB_MATINT_TYPES 5
-static int matint_types[NB_MATINT_TYPES];
-#define NB_NUM_AND_STR_TYPES 2
-static int num_and_str_types[NB_NUM_AND_STR_TYPES]; 
-#define NB_NUM_TYPES 1
-static int num_types[NB_NUM_TYPES];            
-#define NB_BOOL_TYPES 1
-static int bool_types[NB_BOOL_TYPES];           
+static const char *xmatint_types[]={ "Mat","SMat","BMat","PMat","Cells",NULL};
+static const char *xnum_and_str_types[]={ "Mat","SMat",NULL};
+static const char *xnum_types[]={ "Mat",NULL};
+static const char *xbool_types[]={ "BMat",NULL};
 
-AcceleratedTab concatr_tab =     { "concatr",     2, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab concatd_tab =     { "concatd",     2, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab extract_tab =     { "extract",     1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab extractelts_tab = { "extractelts", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab extractcols_tab = { "extractcols", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab extractrows_tab = { "extractrows", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab resize2vect_tab = { "resize2vect", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab deleteelts_tab =  { "deleteelts",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab deletecols_tab =  { "deletecols",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab deleterows_tab =  { "deleterows",  1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab tozero_tab =      { "tozero",      1, NB_MATINT_TYPES, matint_types, 0, NULL};
-AcceleratedTab setrowscols_tab = { "setrowscols", 1, NB_MATINT_TYPES, matint_types, 0, NULL};
+AcceleratedTab accelerated_tabs[] =
+  {
+    /* accelerated functions */
+    { concatr_tab,     "concatr",     2,  xmatint_types, 0, NULL},
+    { concatd_tab,     "concatd",     2,  xmatint_types, 0, NULL},
+    { extract_tab,     "extract",     1,  xmatint_types, 0, NULL},
+    { extractelts_tab, "extractelts", 1,  xmatint_types, 0, NULL},
+    { extractcols_tab, "extractcols", 1,  xmatint_types, 0, NULL},
+    { extractrows_tab, "extractrows", 1,  xmatint_types, 0, NULL},
+    { resize2vect_tab, "resize2vect", 1,  xmatint_types, 0, NULL},
+    { deleteelts_tab,  "deleteelts",  1,  xmatint_types, 0, NULL},
+    { deletecols_tab,  "deletecols",  1,  xmatint_types, 0, NULL},
+    { deleterows_tab,  "deleterows",  1,  xmatint_types, 0, NULL},
+    { tozero_tab,      "tozero",      1,  xmatint_types, 0, NULL},
+    { setrowscols_tab, "setrowscols", 1,  xmatint_types, 0, NULL},
+    /* accelerated operators */
+    { QUOTE_OP,          NULL,         1,  NULL, 0, NULL},
+    { STAR_OP ,          NULL,         2,  xnum_types, 0, NULL},
+    { PLUS_OP ,          NULL,         2,  xnum_and_str_types, 0, NULL},
+    { HAT_OP,            NULL,         2,  xnum_types, 0, NULL},
+    { COLON_OP,          NULL,         2,  xnum_types, 0, NULL},			      
+    { OR_OP,             NULL,         2,  xbool_types, 0, NULL},			      
+    { AND_OP,            NULL,         2,  xbool_types, 0, NULL},			      
+    { TILDE_OP,          NULL,         1,  NULL, 0, NULL},			      
+    { RETURN_OP,         NULL,         1,  NULL, 0, NULL},			      
+    { COMMA_OP,          NULL,         1,  NULL, 0, NULL},			      
+    { SEMICOLON_OP,      NULL,         1,  NULL, 0, NULL},		      
+    { MINUS_OP,          NULL,         2,  xnum_types, 0, NULL},			      
+    { SLASH_OP,          NULL,         2,  xnum_types, 0, NULL},			      
+    { BACKSLASH_OP,      NULL,         2,  xnum_types, 0, NULL},		      
+    { DOTSTAR ,          NULL,         2,  xnum_types, 0, NULL},			      
+    { DOTSLASH,          NULL,         2,  xnum_types, 0, NULL},			      
+    { DOTBSLASH,         NULL,         1,  NULL, 0, NULL},			      
+    { DOTPLUS ,          NULL,         1,  NULL, 0, NULL},			      
+    { STARDOT ,          NULL,         1,  NULL, 0, NULL},			      
+    { SLASHDOT ,         NULL,         1,  NULL, 0, NULL},			      
+    { BSLASHDOT ,        NULL,         1,  NULL, 0, NULL},			      
+    { DOTSTARDOT,        NULL,         1,  NULL, 0, NULL},			      
+    { DOTSLASHDOT,       NULL,         1,  NULL, 0, NULL},		      
+    { DOTBSLASHDOT,      NULL,         1,  NULL, 0, NULL},		      
+    { DOTHAT,            NULL,         2,  xnum_types, 0, NULL},			      
+    { EQ  ,              NULL,         2,  xmatint_types, 0, NULL},			      
+    { LEQ  ,             NULL,         2,  xnum_and_str_types, 0, NULL},			      
+    { GEQ  ,             NULL,         2,  xnum_and_str_types, 0, NULL},			      
+    { NEQ  ,             NULL,         2,  xmatint_types, 0, NULL},			      
+    { DOTEQ ,            NULL,         1,  NULL, 0, NULL},			      
+    { DOTLEQ ,           NULL,         1,  NULL, 0, NULL},			      
+    { DOTLT  ,           NULL,         1,  NULL, 0, NULL},			      
+    { DOTGEQ ,           NULL,         1,  NULL, 0, NULL},			      
+    { DOTGT ,            NULL,         1,  NULL, 0, NULL},			      
+    { DOTNEQ ,           NULL,         1,  NULL, 0, NULL},			      
+    { DOTPRIM ,          NULL,         1,  NULL, 0, NULL},			      
+    { MOINS  ,           NULL,         1,  NULL, 0, NULL},   
+    { SEQAND ,           NULL,         1,  NULL, 0, NULL},   
+    { SEQOR,             NULL,         1,  NULL, 0, NULL},   
+    { LT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
+    { GT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
+    { undef_tab},
+  };
 
-AcceleratedTab *AllOperatorTab[LASTCODE_OP - NOTCODE_OP -1];
 
-static int init_func_tab(AcceleratedTab *tab)
+static int get_type_max_id(const char *table[])
 {
-  int i, type_id_max = 0, Int, Num;
-  char op_typed[NAME_MAXL];
+  int type_id=nsp_no_type_id ;
+  const char **str = table ;
+  while ( *str != NULL) 
+    {
+      NspTypeBase *type = nsp_get_type_from_name(*str);
+      if ( type_id < type->id) type_id = type->id;
+      str++;
+    }
+  return type_id;
+}
+
+
+static int init_func_tab1(AcceleratedTab *tab)
+{
+  int i, Int, Num;
+  char op_typed[NAME_MAXL], *op, *name, *suffix, *nothing;
   const char *str;
-  char *op, *name, *suffix, *nothing;
+  
+  if ( tab->accelerated_types == NULL) 
+    {
+      tab->length = 0;
+      return OK;
+    }
 
   /* find the max id of all the supported types */
-  for ( i = 0 ; i < tab->nb_accelerated_types ; i++ )
-    if ( tab->accelerated_types[i] > type_id_max )
-      type_id_max = tab->accelerated_types[i];
-
-  /* allocate func array */
-  tab->length = type_id_max;
-  if ( (tab->func=malloc(tab->length*sizeof(function *))) == NULL )
+  tab->length  = get_type_max_id(tab->accelerated_types);
+  /* allocate func array and set to zero */
+  if ( (tab->func=calloc(tab->length, sizeof(function *))) == NULL )
     {
       Sciprintf("Warning: enable to allocate the %s accelerated func tab\n",tab->opname);
       return FAIL;
     }
-  for ( i = 0 ; i < tab->length ; i++ )
-    tab->func[i] = (function *) 0;
+
+  if ( tab->opname == NULL) 
+    tab->opname = nsp_astcode_to_nickname(tab->ops_id);
 
   str = tab->opname;
   op = op_typed;
   while ( *str != '\0' ) *op++ = *str++ ;
   *op++ = '_';
 
-  for ( i = 0 ; i < tab->nb_accelerated_types ; i++ )
+  i=0;
+  while (tab->accelerated_types[i] != NULL) 
     {
+      NspTypeBase *type = nsp_get_type_from_name(tab->accelerated_types[i]);
       name = op;
-      suffix = nsp_get_short_string_from_id(tab->accelerated_types[i]);
+      suffix = nsp_get_short_string_from_id(type->id);
       str = suffix;
       /* arity is supposed to be >= 1 and <= 2 */
       while ( *str != '\0' ) *name++ = *str++;
@@ -88,97 +148,47 @@ static int init_func_tab(AcceleratedTab *tab)
 	  while ( *str != '\0' ) *name++ = *str++;
 	}
       *name = '\0';
-      if ( FindFunction(op_typed, &Int, &Num) == OK ) 
-	(*(Interfaces[Int].info))(Num, &nothing, &(tab->func[tab->accelerated_types[i]-1]));
+      if ( FindFunction(op_typed, &Int, &Num) == OK )
+	(*(Interfaces[Int].info))(Num, &nothing, &(tab->func[type->id-1]));
       else
 	Sciprintf("Warning: %s not found (building the accelerated table)\n", op_typed);
+      /* Sciprintf("Found accelerated operation for %s\n",op_typed); */
+      i++;
     }
   return OK;
 }
 
 
-static int init_accel_tab_for_binop(int opcode, int nb_supported_types, int *supported_types)
-{
-  AcceleratedTab *tab;
-  if ( opcode <= NOTCODE_OP || LASTCODE_OP <= opcode )
-    return FAIL;
-  if ( (tab = malloc(sizeof(AcceleratedTab))) == NULL )
-    return FAIL;
-  tab->opname = nsp_astcode_to_nickname(opcode);
-  tab->arity = 2;
-  tab->nb_accelerated_types = nb_supported_types;
-  tab->accelerated_types = supported_types;
-  tab->length = 0;
-  tab->func = NULL;
-  if ( init_func_tab(tab) == FAIL )
-    {
-      free(tab); 
-      return FAIL;
-    }
-  AllOperatorTab[opcode - NOTCODE_OP - 1] = tab;
-  return OK;
-}
-
+/**
+ * nsp_init_accelerated_tabs:
+ * @void: 
+ * 
+ * Initialize static tables which contains functions 
+ * pointers associated to specific data types. 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_init_accelerated_tabs(void)
 {
-  int i;
+  int i=0; 
+  AcceleratedTab *tab; 
 
-#define NB_NUM_AND_STR_OP 5
-  int num_and_str_op[NB_NUM_AND_STR_OP] = {PLUS_OP, LEQ, GEQ, LT_OP, GT_OP};
-#define NB_NUM_OP 9
-  int num_op[NB_NUM_OP] = {MINUS_OP, STAR_OP, HAT_OP, COLON_OP, SLASH_OP, 
-			   BACKSLASH_OP, DOTSTAR, DOTSLASH, DOTHAT};
-#define NB_MATINT_OP 2
-  int matint_op[NB_MATINT_OP] = {EQ, NEQ};
-
-#define NB_BOOL_OP 2
-  int bool_op[NB_BOOL_OP] = {OR_OP, AND_OP};
-
-  for ( i = 0 ; i < LASTCODE_OP - NOTCODE_OP -1 ; i++ )
-    AllOperatorTab[i] = NULL;
-
-  matint_types[0] = nsp_type_matrix_id;
-  matint_types[1] = nsp_type_smatrix_id;
-  matint_types[2] = nsp_type_bmatrix_id;
-  matint_types[3] = nsp_type_pmatrix_id;
-  matint_types[4] = nsp_type_cells_id;
-  num_and_str_types[0] = nsp_type_matrix_id;
-  num_and_str_types[1] = nsp_type_smatrix_id;
-  num_types[0] = nsp_type_matrix_id;
-  bool_types[0] = nsp_type_bmatrix_id;
- 
-  if ( init_func_tab(&concatr_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&concatd_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&extract_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&extractelts_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&extractcols_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&extractrows_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&resize2vect_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&deleteelts_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&deletecols_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&deleterows_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&tozero_tab) == FAIL ) return FAIL;
-  if ( init_func_tab(&setrowscols_tab) == FAIL ) return FAIL;
-
-  for ( i = 0 ; i < NB_NUM_AND_STR_OP ; i++ ) 
-    if ( init_accel_tab_for_binop(num_and_str_op[i], NB_NUM_AND_STR_TYPES, num_and_str_types) == FAIL ) 
-      return FAIL;
-
-  for ( i = 0 ; i < NB_NUM_OP ; i++ ) 
-    if ( init_accel_tab_for_binop(num_op[i], NB_NUM_TYPES, num_types) == FAIL ) 
-      return FAIL;
-
-  for ( i = 0 ; i < NB_MATINT_OP ; i++ ) 
-    if ( init_accel_tab_for_binop(matint_op[i], NB_MATINT_TYPES, matint_types) == FAIL ) 
-      return FAIL;
-
-  for ( i = 0 ; i < NB_BOOL_OP ; i++ ) 
-    if ( init_accel_tab_for_binop(bool_op[i], NB_BOOL_TYPES, bool_types) == FAIL ) 
-      return FAIL;
-
+  tab= accelerated_tabs;
+  while ( tab->ops_id != undef_tab ) 
+    {
+      if ( i != tab->ops_id && i != tab->ops_id - NOTCODE_OP + setrowscols_tab) 
+	{
+	  Scierror("Warning: accelerated table is badly filled at position %d\n",i);
+	  exit(1);
+	}
+      if ( init_func_tab1(tab) == FAIL ) return FAIL;
+      tab++;
+      i++;
+    }
   return OK;
 }
+
 
 function *nsp_get_fast_function(AcceleratedTab *tab, int type_id)
 {
