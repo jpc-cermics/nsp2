@@ -95,18 +95,17 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   int j,rep;
   stack.first = first;
   
-  /* XXXX : **/
-/*   nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
+  /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
   L = L1; /* operator */
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
     {
       const char *opcode ;
-      /*Evaluation of operators **/
+      /* Evaluation of operators */
       switch ( L->arity ) 
 	{
 	case 0:
-	  /*supposed to be only : **/
+	  /* supposed to be only : */
 	  if ( L->type != COLON_OP ) 
 	    {
 	      Scierror("Error: unknown 0-ary operator\n");
@@ -117,7 +116,6 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
 	case 1:
-	  opcode =nsp_astcode_to_nickname(L->type);
 	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
 	      if (( nargs =nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) return nargs;
@@ -135,6 +133,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      if ( display == 1 && L->type != SEMICOLON_OP)
 		{
+		  opcode =nsp_astcode_to_nickname(L->type);
 		  O1=nsp_frames_search_op_object(opcode);
 		  if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) return n;
 		}
@@ -157,6 +156,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
+	      opcode =nsp_astcode_to_nickname(L->type);
 	      O1=nsp_frames_search_op_object(opcode);
 	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
