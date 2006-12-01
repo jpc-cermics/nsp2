@@ -404,7 +404,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,&concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
+	  if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
 	    SHOWBUG(stack,n,L);
 	  return n;
 	  break;
@@ -418,7 +418,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,&concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
+	  if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
 	    SHOWBUG(stack,n,L);
 	  return n;
 	  break;
@@ -1443,13 +1443,13 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	    {
 	      /* delete first+1,first+2 */
 	      nsp_void_seq_object_destroy(stack,first+1,first+3);
-	      return nsp_eval_maybe_accelerated_op("tozero", 1, &tozero_tab, stack,first,1,0,1); 
+	      return nsp_eval_maybe_accelerated_op("tozero", 1, tozero_tab, stack,first,1,0,1); 
 	    }
 	  else	                                                  /* x(elts)=[] ==> removing elements */
 	    {
 	      nsp_void_object_destroy(&stack.val->S[first+2]);
 	      stack.val->S[first+2]=NULLOBJ;
-	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, &deleteelts_tab, stack,first,2,0,1); 
+	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, deleteelts_tab, stack,first,2,0,1); 
 	    }
 	  break;
 	case 2: 
@@ -1459,7 +1459,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		{
 		  /* delete first+1,first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+1,first+4);
-		  return nsp_eval_maybe_accelerated_op("tozero",1, &tozero_tab, stack,first,1,0,1); 
+		  return nsp_eval_maybe_accelerated_op("tozero",1, tozero_tab, stack,first,1,0,1); 
 		}
 	      else                                                /* x(:,<expr>)=[] */
 		{
@@ -1469,7 +1469,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
 		  /* now we have [x,expr] on the stack */
-		  return nsp_eval_maybe_accelerated_op("deletecols",2, &deletecols_tab, stack,first,2,0,1);
+		  return nsp_eval_maybe_accelerated_op("deletecols",2, deletecols_tab, stack,first,2,0,1);
 		}
 	    }
 	  else 
@@ -1478,13 +1478,13 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		{
 		  /* we have [x,expr] on the stack : delete first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+2,first+4);
-		  return nsp_eval_maybe_accelerated_op("deleterows",2, &deleterows_tab,stack,first,2,0,1);
+		  return nsp_eval_maybe_accelerated_op("deleterows",2, deleterows_tab,stack,first,2,0,1);
 		}
 	      else                                                /* x(<expr>,<expr>)=[] */
 		{
 		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
-		  return nsp_eval_maybe_accelerated_op("deleteelts",2, &deleteelts_tab, stack,first,3,0,1);
+		  return nsp_eval_maybe_accelerated_op("deleteelts",2, deleteelts_tab, stack,first,3,0,1);
 		}
 	    }
 	  break;
@@ -1514,7 +1514,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	  stack.val->S[first+fargs+2]=NULLOBJ;
 	}
     }
-  return nsp_eval_maybe_accelerated_op("setrowscols",1, &setrowscols_tab, stack, first,fargs+2,0,1);
+  return nsp_eval_maybe_accelerated_op("setrowscols",1, setrowscols_tab, stack, first,fargs+2,0,1);
 }
 
 /**
@@ -2849,16 +2849,16 @@ void nsp_void_seq_object_destroy(Stack stack,int from, int to)
  * Return value: 
  **/
 
-int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab,
+int nsp_eval_maybe_accelerated_op(char *opname, int msuffix,accelerated_ops tab_id,
 				  Stack stack, int first, int rhs, int opt, int lhs)
 {
+  AcceleratedTab *tab = &accelerated_tabs[tab_id];
   int id1, id2;
-  NspObject *O1=NULLOBJ;
   function *the_func = NULL;
 
   HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
   id1 = nsp_get_id_from_object(stack.val->S[stack.first]);
-
+  
   if ( tab->arity == 1 )
     the_func = nsp_get_fast_function(tab, id1);
   else
@@ -2876,7 +2876,7 @@ int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab
     }
   else                 /* acceleration not supported */
     {
-      O1 = nsp_frames_search_op_object(opname);
+      NspObject *O1= nsp_frames_search_op_object(opname);
       return nsp_eval_func(O1, opname, msuffix, stack, first, rhs, opt, lhs);
     }
 }
@@ -2896,6 +2896,7 @@ int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab
  * 
  * Return value: 
  **/
+
 int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
 				     Stack stack, int first, int rhs, int opt, int lhs)
 {
@@ -2905,7 +2906,8 @@ int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
   function *the_func = NULL;
 
   if (  NOTCODE_OP < opcode && opcode < LASTCODE_OP  
-	&&  (OpTab = AllOperatorTab[opcode - NOTCODE_OP -1]) != NULL ) 
+	&&  (OpTab = &accelerated_tabs[opcode - NOTCODE_OP + setrowscols_tab]) != NULL 
+	&&  OpTab->length != 0 )
     {
       /* acceleration supported for this operator (at least on one type) */
       HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);

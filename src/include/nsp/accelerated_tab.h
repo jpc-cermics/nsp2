@@ -3,33 +3,38 @@
 
 #include "interf.h"   /* ici pour le type function */
 
+/* enum codes for accelerated ops */
+
+typedef enum { 
+  undef_tab=-1,
+  concatr_tab=0, 
+  concatd_tab=1,
+  extract_tab=2,
+  extractelts_tab=3,
+  extractcols_tab=4,
+  extractrows_tab=5,
+  resize2vect_tab=6,
+  deleteelts_tab=7,
+  deletecols_tab=8,
+  deleterows_tab=9,
+  tozero_tab=10,
+  setrowscols_tab=11} accelerated_ops;
+
 typedef struct _AcceleratedTab AcceleratedTab;
 
 struct _AcceleratedTab
 {
+  int ops_id; /* this should be equal to the indice in table */
   const char *opname;
   int arity;
-  int nb_accelerated_types;
-  int *accelerated_types;
+  const char **accelerated_types;
   int length;
   function **func;
 } ;
 
-extern AcceleratedTab concatr_tab; 
-extern AcceleratedTab concatd_tab; 
-extern AcceleratedTab extract_tab; 
-extern AcceleratedTab extractelts_tab;
-extern AcceleratedTab extractcols_tab;
-extern AcceleratedTab extractrows_tab;
-extern AcceleratedTab resize2vect_tab;
-extern AcceleratedTab deleteelts_tab;
-extern AcceleratedTab deletecols_tab;
-extern AcceleratedTab deleterows_tab;
-extern AcceleratedTab tozero_tab;
-extern AcceleratedTab setrowscols_tab;
-extern AcceleratedTab *AllOperatorTab[LASTCODE_OP - NOTCODE_OP -1];
+extern AcceleratedTab accelerated_tabs[];
 
-function *nsp_get_fast_function(AcceleratedTab *tab, int type_id);
-int nsp_init_accelerated_tabs(void);
+extern function *nsp_get_fast_function(AcceleratedTab *tab, int type_id);
+extern int nsp_init_accelerated_tabs(void);
 
 #endif 

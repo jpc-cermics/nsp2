@@ -312,12 +312,12 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
       if ( IsIVect(stack.val->S[stack.first+1] ))       /* x(:) */
 	{
 	  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-	  n = nsp_eval_maybe_accelerated_op("resize2vect", 1, &resize2vect_tab, 
+	  n = nsp_eval_maybe_accelerated_op("resize2vect", 1, resize2vect_tab, 
 					    stack,stack.first, 1, 0, 1);
 	}
       else                                              /* x(i) */           
 	{
-	  n = nsp_eval_maybe_accelerated_op("extractelts", 1, &extractelts_tab,
+	  n = nsp_eval_maybe_accelerated_op("extractelts", 1, extractelts_tab,
 					    stack,stack.first, 2, 0, 1);
 	}
     }
@@ -335,7 +335,7 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
 	      stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
 	      stack.val->S[stack.first+2] = NULLOBJ;
-	      n = nsp_eval_maybe_accelerated_op("extractcols", 1, &extractcols_tab,
+	      n = nsp_eval_maybe_accelerated_op("extractcols", 1, extractcols_tab,
 						stack,stack.first, 2, 0, 1);
 	    }
 	}
@@ -344,12 +344,12 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	  if (IsIVect(stack.val->S[stack.first+2]) )    /* x(i,:) */
 	    {
 	      nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
-	      n = nsp_eval_maybe_accelerated_op("extractrows", 1, &extractrows_tab,
+	      n = nsp_eval_maybe_accelerated_op("extractrows", 1, extractrows_tab,
 						stack,stack.first, 2, 0, 1);
 	    }
 	  else                                          /* x(i,j) */
 	    {
-	      n = nsp_eval_maybe_accelerated_op("extract", 1, &extract_tab,
+	      n = nsp_eval_maybe_accelerated_op("extract", 1, extract_tab,
 						stack,stack.first, 3, 0, 1);
 	    }
 	}
