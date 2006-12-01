@@ -118,12 +118,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return 1;
 	case 1:
 	  opcode =nsp_astcode_to_nickname(L->type);
-	  O1=nsp_frames_search_op_object(opcode);
 	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
 	      if (( nargs =nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) return nargs;
 	      if ( nargs == 0 ) return 0;
-	      /* XXXX : attention ici il peut y avoir plusieurs arguments de retour */
+	      /* XXXX : Warning, here we can have more that one returned value */
 	      /* ex (10,20), */
 	      if ( Ocheckname(stack.val->S[first],NVOID))
 		{
@@ -134,8 +133,9 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		    }
 		  
 		}
-	      if ( display == 1 )
+	      if ( display == 1 && L->type != SEMICOLON_OP)
 		{
+		  O1=nsp_frames_search_op_object(opcode);
 		  if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) return n;
 		}
 	      /* clean the stack : XXXX maybe useless now */
@@ -157,6 +157,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
+	      O1=nsp_frames_search_op_object(opcode);
 	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
@@ -530,7 +531,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /* XXX nsp_void_object_destroy(&stack.val->S[first]);
 	     stack.val->S[first]=NULLOBJ;
 	  */
-/* 	  nsp_check_stack(stack,0,0,lhs,"Something wrong end of If ",NULL); */
+	  /* 	  nsp_check_stack(stack,0,0,lhs,"Something wrong end of If ",NULL); */
 	  return 0;
 	  break;
 	case TRYCATCH :
