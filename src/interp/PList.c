@@ -942,7 +942,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case FUNCTION:
-	  Sciprintf("function arity %d\n",L->arity);
+	  /* Sciprintf("function arity %d\n",L->arity); */
 	  PRINTTAG("function");
 	  _nsp_plist_pretty_print_arg(List,1,pos,newpos+1);
 	  Sciprintf("\n");
