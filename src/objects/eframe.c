@@ -432,6 +432,16 @@ static NspMethods *frame_get_methods(void) { return frame_methods;};
  * function 
  *-------------------------------------------*/
 
+/**
+ * nsp_eframe_search_object:
+ * @F: 
+ * @name: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
 {
   NspObject *Obj=NULLOBJ ;
@@ -459,6 +469,16 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
   return NULLOBJ;
 }
 
+/**
+ * nsp_eframe_replace_object:
+ * @F: 
+ * @A: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
 {
   if (  A == NULLOBJ ) return(OK);
@@ -483,6 +503,16 @@ int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
 #endif
 } 
 
+
+/**
+ * nsp_eframe_search_and_remove_object:
+ * @F: 
+ * @str: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 {
@@ -516,6 +546,15 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 #endif
 } 
 
+/**
+ * nsp_eframe_to_hash:
+ * @F: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 NspHash *nsp_eframe_to_hash(NspFrame *F)
 {
 #ifdef FRAME_AS_LIST
@@ -524,6 +563,14 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
   return (nsp_hash_copy(F->vars);
 #endif
 }
+
+/**
+ * nsp_eframe_remove_object:
+ * @F: 
+ * @str: 
+ * 
+ * 
+ **/
 
 void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 {
