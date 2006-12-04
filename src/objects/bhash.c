@@ -1710,7 +1710,7 @@ static int nsp_bhsearch(NspBHash *H, char *key,int *val, BHashOperation action)
  * Return value: %OK, %FAIL. 
  **/
 
-#define FIND_ACTION2	*val= htable[idx].val;
+#define FIND_ACTION2	*val= htable[idx].val;return OK;
 
 static int nsp_bhfind(NspBHash *H,const char *key,int *val)
 {
