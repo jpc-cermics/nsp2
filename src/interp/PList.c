@@ -1930,8 +1930,10 @@ static void Arg_name_to_local_name(PList L,NspBHash *H)
   switch (L->type) 
     {
     case NAME :
+      /* Sciprintf("Je cherche %s\n",(char *) L->O); */
       if ( nsp_bhash_find(H,(char *) L->O,&val) == OK) 
 	{
+	  /* Sciprintf("OK pour %s\n",(char *) L->O); */
 	  L->arity = val ; /*  (int) ((NspMatrix *) obj)->R[0]; */
 	}
       break;

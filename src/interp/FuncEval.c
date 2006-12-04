@@ -662,7 +662,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	  /* FIXME: this seams too complex : why a special case for nsp_type_plist ? 
 	   * the next if case seams enough : here we just have to check for Hobj or Hopt 
 	   */
-
+	  
 	  if( IsHobj(stack.val->S[first+j]) )
 	    {
 	      if ( IsHopt(stack.val->S[first+j]))
@@ -681,47 +681,91 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 		  NspObject *H1= ((NspObject *) H);
 		  HOBJ_GET_OBJECT(H1,RET_BUG);
 		  if ((H = HobjCreate(Loc->O,H1)) == NULLHOBJ) return RET_BUG;
-		  if ( nsp_frame_replace_object((NspObject *)H )==FAIL)
+		  if ( Loc->arity == -1 ) 
+		    {
+		      /* not a local variable */
+		      if ( nsp_frame_replace_object((NspObject *)H )==FAIL)
+			{
+			  nsp_hobj_destroy(H);
+			  return RET_BUG;
+			}
+		    }
+		  else
+		    {
+		      /* insert as a local variable */
+		      /* get current frame local variable table */
+		      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
+		      if ( O1 != NULL )  nsp_object_destroy(&O1);
+		      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
+		    }		    
+		}
+	    }
+	  else 
+	    {
+	      /* argument is a function : create a hobj which points to the function */
+	      NspHobj *H; 
+	      if ((H = HobjCreate(Loc->O, stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
+	      if ( Loc->arity == -1 ) 
+		{
+		  if ( nsp_frame_replace_object((NspObject *)H )== FAIL) 
 		    {
 		      nsp_hobj_destroy(H);
 		      return RET_BUG;
 		    }
 		}
+	      else 
+		{
+		  /* insert as a local variable */
+		  /* get current frame local variable table */
+		  NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
+		  if ( O1 != NULL )  nsp_object_destroy(&O1);
+		  ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
+		}
 	    }
-	  else 
+	}
+      else if ( ! Ocheckname(stack.val->S[first+j],NVOID)) 
+	{
+	  /*  Object given on the calling sequence is given by its name
+	   *  we create a pointer to this object 
+	   */
+	  NspHobj *H;
+	  if ((H = HobjCreate(Loc->O,stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
+	  if ( Loc->arity == -1 ) 
 	    {
-	      /* argument is a function : create a hobj which points to the funciton */
-	      NspHobj *H; 
-	      if ((H = HobjCreate(Loc->O, stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
 	      if ( nsp_frame_replace_object((NspObject *)H )== FAIL) 
 		{
 		  nsp_hobj_destroy(H);
 		  return RET_BUG;
 		}
 	    }
-	}
-      else if ( ! Ocheckname(stack.val->S[first+j],NVOID)) 
-	{
-	  /*Object given on the calling sequence is given by its name
-	   *  we create a pointer to this object 
-	   **/
-	  NspHobj *H;
-	  if ((H = HobjCreate(Loc->O,stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
-	  if ( nsp_frame_replace_object((NspObject *)H )== FAIL) 
+	  else 
 	    {
-	      nsp_hobj_destroy(H);
-	      return RET_BUG;
+	      /* insert as a local variable */
+	      /* get current frame local variable table */
+	      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
+	      if ( O1 != NULL )  nsp_object_destroy(&O1);
+	      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
 	    }
 	}
       else 
 	{
-	  /*we can use the transmited value directly */
+	  /* we can use the transmited value directly */
 	  if (nsp_object_set_name(stack.val->S[first+j],(char *) Loc->O)== FAIL) return RET_BUG;
-	  if ( nsp_frame_replace_object(stack.val->S[first+j])== FAIL) 
+	  if ( Loc->arity == -1 ) 
 	    {
-	      return RET_BUG;
+	      if ( nsp_frame_replace_object(stack.val->S[first+j])== FAIL) 
+		{
+		  return RET_BUG;
+		}
 	    }
-
+	  else 
+	    {
+	      /* insert as a local variable */
+	      /* get current frame local variable table */
+	      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
+	      if ( O1 != NULL )  nsp_object_destroy(&O1);
+	      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=stack.val->S[first+j] ;
+	    }
 	}
     }
 
