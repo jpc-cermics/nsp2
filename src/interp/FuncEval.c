@@ -122,7 +122,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
        */ 
       int nb_suffix = Min(msuffix, rhs-opt);
 
-      nsp_build_funcname(str,stack,first,nb_suffix,name);
+      nsp_build_funcname(str,&stack,first,nb_suffix,name);
       if (debug) Sciprintf("[test function Evaluation]--> search  [%s] \n",name);
       if ( FindFunction(name,&Int,&Num) == OK) 
 	{
@@ -138,7 +138,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
       if ( nb_suffix >= 2 ) 
 	{
 	  /* just try with one argument */
-	  nsp_build_funcname(str,stack,first,1,name1);
+	  nsp_build_funcname(str,&stack,first,1,name1);
 	  if ( FindFunction(name1,&Int,&Num) == OK ) 
 	    {
 	      /* Call a primitive with name depending on first argument type */
@@ -423,9 +423,9 @@ int nsp_eval_extract_cells(Stack stack, int first, int rhs, int opt, int lhs)
  * 
  **/
 
-void nsp_build_funcname(const char *str, Stack stack, int first, int rhs, char *name)
+void nsp_build_funcname(const char *str, Stack *stack, int first, int rhs, char *name)
 {
-  char *s1,*s2;
+  char *s1;
   rhs = Min(rhs,2);
   switch (rhs) 
     {
@@ -434,18 +434,18 @@ void nsp_build_funcname(const char *str, Stack stack, int first, int rhs, char *
       /*Faster than a sprintf **/
       while ( *str != '\0' ) *name++ = *str++ ;
       *name++ = '_';
-      s1=nsp_object_type_short(stack.val->S[first]);
+      s1=nsp_object_type_short(stack->val->S[first]);
       while ( *s1 != '\0')  *name++ = *s1++ ;
       *name++ = '_';
-      s2=nsp_object_type_short(stack.val->S[first+1]);
-      while ( *s2 != 0) *name++ = *s2++;
+      s1=nsp_object_type_short(stack->val->S[first+1]);
+      while ( *s1 != 0) *name++ = *s1++;
       *name = '\0';
       break;
     case 1:
       /*Build a name which depends on argument type **/
       while ( *str != '\0' ) *name++ = *str++ ;
       *name++ = '_';
-      s1=nsp_object_type_short(stack.val->S[first]);
+      s1=nsp_object_type_short(stack->val->S[first]);
       while ( *s1 != '\0')  *name++ = *s1++ ;
       *name = '\0';
       break;
@@ -470,17 +470,17 @@ void nsp_build_funcname(const char *str, Stack stack, int first, int rhs, char *
  * 
  **/
 
-void nsp_build_funcnameij(const char *str, Stack stack, int first, int i, int j, char *name)
+void nsp_build_funcnameij(const char *str, Stack *stack, int first, int i, int j, char *name)
 {
   char *s1,*s2;
   /*Build a name which depends on argument type **/
   /*Faster than a sprintf **/
   while ( *str != '\0' ) *name++ = *str++ ;
   *name++ = '_';
-  s1=nsp_object_type_short(stack.val->S[first+i]);
+  s1=nsp_object_type_short(stack->val->S[first+i]);
   while ( *s1 != '\0')  *name++ = *s1++ ;
   *name++ = '_';
-  s2=nsp_object_type_short(stack.val->S[first+j]);
+  s2=nsp_object_type_short(stack->val->S[first+j]);
   while ( *s2 != 0) *name++ = *s2++;
   *name = '\0';
 }
@@ -498,15 +498,13 @@ void nsp_build_funcnameij(const char *str, Stack stack, int first, int i, int j,
  * 
  **/
 
-void nsp_build_funcname_i(char *str, Stack stack, int first, int i, char *name)
+void nsp_build_funcname_i(const char *str, Stack *stack, int first, int i, char *name)
 {
-  char *s1;
-  /*Build a name which depends on argument type **/
-  /*Faster than a sprintf **/
+  /*Build a name which depends on argument type */
   while ( *str != '\0' ) *name++ = *str++ ;
   *name++ = '_';
-  s1=nsp_object_type_short(stack.val->S[first+i]);
-  while ( *s1 != '\0')  *name++ = *s1++ ;
+  str=nsp_object_type_short(stack->val->S[first+i]);
+  while ( *str != '\0')  *name++ = *str++ ;
   *name = '\0';
 }
 

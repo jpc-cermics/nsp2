@@ -22,8 +22,8 @@ extern int nsp_check_stack(Stack, int rhs, int opt, int lhs,char *message,char *
 extern int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs);
 /* int SearchInOPt (char *str,Stack, int first, int nargs,int *wrong_pos); */
 extern void nsp_set_dollar(NspObject *O, int j);
-extern void nsp_build_funcname(const char *str,Stack,int first,int rhs,char *name);
-extern void nsp_build_funcnameij(const char *str,Stack,int first,int i,int j,char *name);
+extern void nsp_build_funcname(const char *str,Stack *stack,int first,int rhs,char *name);
+extern void nsp_build_funcnameij(const char *str,Stack *stack,int first,int i,int j,char *name);
 extern int nsp_eval_extract(Stack,int first,int rhs,int opt,int lhs);
 extern int nsp_eval_extract_cells(Stack stack, int first, int rhs, int opt, int lhs);
 extern void nsp_void_seq_object_destroy(Stack stack,int from, int to);
