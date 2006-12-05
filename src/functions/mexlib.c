@@ -1257,7 +1257,7 @@ int mexPutArray( mxArray *array_ptr,const char *workspace)
     }
   else if ( strcmp(workspace,"caller")==0) 
     {
-      return  nsp_frame_replace_object(array_ptr);
+      return  nsp_frame_replace_object(array_ptr,-1);
     }
   else 
     {

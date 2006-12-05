@@ -271,7 +271,7 @@ NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname)
       nsp_void_object_destroy(&Ob);
       return NULLOBJ;
     }
-  nsp_frame_replace_object(Ob);
+  nsp_frame_replace_object(Ob,-1);
   return Ob;
 }
 

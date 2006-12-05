@@ -246,7 +246,8 @@ void nsp_frame_print_obsolete(void)
  * If an object with the same name as @A exists it is replaced by @A in 
  * the current frame and old object is destroyed. If @local_id is not equal 
  * to -1 then @A is assumed to be a local variable and it is thus inserted 
- * in the symbol table of the current frame. 
+ * in the symbol table of the current frame directly the id of the object being 
+ * given by @local_id.
  * 
  * Return value: %OK or %FAIL.
  **/
@@ -588,4 +589,4 @@ NspHash *nsp_current_frame_to_hash(void)
 {
   if ( Datas == NULLLIST ) return NULLHASH;
   return nsp_eframe_to_hash((NspFrame *) Datas->first->O);
- }
+}
