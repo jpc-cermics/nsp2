@@ -2281,12 +2281,20 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table)
   /* NspObject *Obj; */
   int i = 0,count=1;
   if ( symb_table == NULLBHASH) return 0;
+  /* add default entries 
+   * do not change the ordering which is used in 
+   * frame_insert_var(int rhs,int opt,int lhs)
+   */
+  nsp_bhash_enter(symb_table,"ans",count++); /* 1 */
+  nsp_bhash_enter(symb_table,"nargin",count++); /* 2 */
+  nsp_bhash_enter(symb_table,"nargout",count++); /* 3 */
+  nsp_bhash_enter(symb_table,"nargopt",count++); /* 4 */
   while (1) 
     {
       char *str=NULL;
       int val;
       int rep = nsp_bhash_get_next_object(symb_table,&i,&str,&val);
-      if ( str != NULL )
+      if ( str != NULL && val == 0)
 	{ 
 	  nsp_bhash_enter_pos_i(symb_table,i-1,count++);
 	}
