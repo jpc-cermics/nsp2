@@ -681,23 +681,11 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 		  NspObject *H1= ((NspObject *) H);
 		  HOBJ_GET_OBJECT(H1,RET_BUG);
 		  if ((H = HobjCreate(Loc->O,H1)) == NULLHOBJ) return RET_BUG;
-		  if ( Loc->arity == -1 ) 
+		  if ( nsp_frame_replace_object((NspObject *)H,Loc->arity )==FAIL)
 		    {
-		      /* not a local variable */
-		      if ( nsp_frame_replace_object((NspObject *)H )==FAIL)
-			{
-			  nsp_hobj_destroy(H);
-			  return RET_BUG;
-			}
+		      nsp_hobj_destroy(H);
+		      return RET_BUG;
 		    }
-		  else
-		    {
-		      /* insert as a local variable */
-		      /* get current frame local variable table */
-		      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
-		      if ( O1 != NULL )  nsp_object_destroy(&O1);
-		      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
-		    }		    
 		}
 	    }
 	  else 
@@ -705,21 +693,10 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	      /* argument is a function : create a hobj which points to the function */
 	      NspHobj *H; 
 	      if ((H = HobjCreate(Loc->O, stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
-	      if ( Loc->arity == -1 ) 
+	      if ( nsp_frame_replace_object((NspObject *)H,Loc->arity )== FAIL) 
 		{
-		  if ( nsp_frame_replace_object((NspObject *)H )== FAIL) 
-		    {
-		      nsp_hobj_destroy(H);
-		      return RET_BUG;
-		    }
-		}
-	      else 
-		{
-		  /* insert as a local variable */
-		  /* get current frame local variable table */
-		  NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
-		  if ( O1 != NULL )  nsp_object_destroy(&O1);
-		  ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
+		  nsp_hobj_destroy(H);
+		  return RET_BUG;
 		}
 	    }
 	}
@@ -730,41 +707,19 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	   */
 	  NspHobj *H;
 	  if ((H = HobjCreate(Loc->O,stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
-	  if ( Loc->arity == -1 ) 
+	  if ( nsp_frame_replace_object((NspObject *)H,Loc->arity)== FAIL) 
 	    {
-	      if ( nsp_frame_replace_object((NspObject *)H )== FAIL) 
-		{
-		  nsp_hobj_destroy(H);
-		  return RET_BUG;
-		}
-	    }
-	  else 
-	    {
-	      /* insert as a local variable */
-	      /* get current frame local variable table */
-	      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
-	      if ( O1 != NULL )  nsp_object_destroy(&O1);
-	      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=NSP_OBJECT(H);
+	      nsp_hobj_destroy(H);
+	      return RET_BUG;
 	    }
 	}
       else 
 	{
 	  /* we can use the transmited value directly */
 	  if (nsp_object_set_name(stack.val->S[first+j],(char *) Loc->O)== FAIL) return RET_BUG;
-	  if ( Loc->arity == -1 ) 
+	  if ( nsp_frame_replace_object(stack.val->S[first+j],Loc->arity)== FAIL) 
 	    {
-	      if ( nsp_frame_replace_object(stack.val->S[first+j])== FAIL) 
-		{
-		  return RET_BUG;
-		}
-	    }
-	  else 
-	    {
-	      /* insert as a local variable */
-	      /* get current frame local variable table */
-	      NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
-	      if ( O1 != NULL )  nsp_object_destroy(&O1);
-	      ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=stack.val->S[first+j] ;
+	      return RET_BUG;
 	    }
 	}
     }
@@ -816,7 +771,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	  if (nsp_list_end_insert(L,stack.val->S[first+i]) == FAIL ) return RET_BUG;
 	}
       if (nsp_object_set_name((NspObject *)L,(char *) Loc->O)== FAIL) return RET_BUG;
-      if (nsp_frame_replace_object((NspObject *) L)==FAIL) 
+      if (nsp_frame_replace_object((NspObject *) L,-1)==FAIL) 
 	{
 	  nsp_list_destroy(L);
 	  return RET_BUG;
@@ -869,7 +824,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 		{
 		  /*we can use the transmited value directly */
 		  if (nsp_object_set_name(H->O,(char *) Loc1->O)== FAIL) return RET_BUG;
-		  if ( nsp_frame_replace_object(H->O) == FAIL) 
+		  if ( nsp_frame_replace_object(H->O,-1) == FAIL) 
 		    {
 		      return RET_BUG;
 		    }
@@ -877,7 +832,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	      else 
 		{
 		  if ((H = HobjCreate((char *) Loc1->O,H->O)) == NULLHOBJ) return RET_BUG;
-		  if ( nsp_frame_replace_object((NspObject *)H) == FAIL) 
+		  if ( nsp_frame_replace_object((NspObject *)H,-1) == FAIL) 
 		    {
 		      nsp_hobj_destroy(H);
 		      return RET_BUG;
@@ -936,7 +891,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	  if (nsp_object_set_name(O,nsp_object_get_name(NthObj(i))) == FAIL) return RET_BUG;
 	  if (nsp_hash_enter(H,O) == FAIL) return RET_BUG;
 	}
-      if ( nsp_frame_replace_object((NspObject *)H) == FAIL) return RET_BUG;
+      if ( nsp_frame_replace_object((NspObject *)H,-1) == FAIL) return RET_BUG;
     }
   
   /* we can now clean the stack since arguments are now on the local frame 
@@ -1165,10 +1120,10 @@ static int frame_insert_var(int rhs,int opt,int lhs)
 {
   NspObject *O;
   if (( O =nsp_create_object_from_int("nargin",rhs))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
   if (( O =nsp_create_object_from_int("nargout",lhs))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
   if (( O =nsp_create_object_from_int("nargopt",opt))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
   return OK;
 }

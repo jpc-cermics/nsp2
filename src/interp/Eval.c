@@ -125,7 +125,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      if ( Ocheckname(stack.val->S[first],NVOID))
 		{
 		  nsp_object_set_name(stack.val->S[first],"ans");
-		  if ( nsp_frame_replace_object(stack.val->S[first])==FAIL) 
+		  if ( nsp_frame_replace_object(stack.val->S[first],-1)==FAIL) 
 		    {
 		      nsp_object_destroy(&stack.val->S[first]);
 		    }
@@ -461,15 +461,15 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return 0;
 	  break;
 	case FUNCTION:
-	  /*we store the parsed function on the stack **/
-	  /*L1 is copied since it is destroyed after evaluation */
+	  /* We store the parsed function on the stack 
+	   * L1 is copied since it is destroyed after evaluation 
+	   */
 	  if ((FC=nsp_plist_copy(L)) == NULLPLIST ) return RET_BUG;
-	  /*Remplacer void par le nom de la fonction **/
 	  if (( F = NspPListCreate(nsp_function_name(FC),FC,NspFileName(stack))) == NULLP_PLIST) 
 	    return RET_BUG;
 	  O = (NspObject *) F;
 	  stack.val->S[first] = O;
-	  if ( nsp_frame_replace_object(O)==FAIL) 
+	  if ( nsp_frame_replace_object(O,-1)==FAIL) 
 	    {
 	      nsp_object_destroy(&stack.val->S[first]);
 	      SHOWBUG(stack,RET_BUG,L1);
@@ -873,10 +873,10 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	   */
 	  stack.val->S[first] = OM;
 	  /* Extra warning  */
-/* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
-/* 	    { */
-/* 	      Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
-/* 	    } */
+	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
+	  /* 	    { */
+	  /* 	      Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
+	  /* 	    } */
 	  return 1;
 	}
       else if ( FindFunction((char *) L->O,&Int,&Num) == OK) 
@@ -1050,7 +1050,7 @@ static int EvalFor(PList L1, Stack stack, int first)
 	   * has changed 
 	   */
 	  O_kp = O;
-	  if (nsp_frame_replace_object(O)==FAIL) 
+	  if (nsp_frame_replace_object(O,-1)==FAIL) 
 	    {
 	      rep = RET_BUG;
 	      break;
@@ -1664,7 +1664,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 		}
 	      /* the copy is stored on the local frame */
 	      stack.val->S[*ipos] = O;
-	      if ( nsp_frame_replace_object(stack.val->S[*ipos])== FAIL) 
+	      if ( nsp_frame_replace_object(stack.val->S[*ipos],-1)== FAIL) 
 		{
 		  nsp_object_destroy(&stack.val->S[*ipos]);
 		  SHOWBUG(stack,RET_BUG,L);
@@ -1689,7 +1689,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  SHOWBUG(stack,RET_BUG,L);
 	}
       stack.val->S[*ipos] = O;
-      if (nsp_frame_replace_object(stack.val->S[*ipos])==FAIL) 
+      if (nsp_frame_replace_object(stack.val->S[*ipos],-1)==FAIL) 
 	{
 	  nsp_object_destroy(&stack.val->S[*ipos]);
 	  SHOWBUG(stack,RET_BUG,L);
@@ -1755,7 +1755,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	      nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	      SHOWBUG(stack,RET_BUG,L);
 	    }
-	  if (nsp_frame_replace_object(stack.val->S[*ipos+1])==FAIL) 
+	  if (nsp_frame_replace_object(stack.val->S[*ipos+1],-1)==FAIL) 
 	    {
 	      nsp_object_destroy(&stack.val->S[*ipos+1]);
 	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
@@ -1828,7 +1828,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
 	  SHOWBUG(stack,RET_BUG,L);
 	}
-      if (nsp_frame_replace_object(stack.val->S[*ipos])==FAIL) 
+      if (nsp_frame_replace_object(stack.val->S[*ipos],-1)==FAIL) 
 	{
 	  nsp_object_destroy(&stack.val->S[*ipos]);
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
@@ -2117,7 +2117,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 			}
 		      /* the copy is stored on the local frame and replaces the pointer */
 		      stack.val->S[first] = O;
-		      if ( nsp_frame_replace_object(stack.val->S[first])== FAIL) 
+		      if ( nsp_frame_replace_object(stack.val->S[first],-1)== FAIL) 
 			{
 			  nsp_void_seq_object_destroy(stack,first,first+nargs);
 			  return RET_BUG;
@@ -2626,7 +2626,7 @@ int nsp_store_result(char *str, Stack stack, int first)
 	    }
 	  else 
 	    {
-	      if (nsp_frame_replace_object(Ob)==FAIL) 
+	      if (nsp_frame_replace_object(Ob,-1)==FAIL) 
 		{
 		  if ( Ob == stack.val->S[first] ) 
 		    {
@@ -2682,7 +2682,7 @@ int nsp_store_result(char *str, Stack stack, int first)
  *
  * If a new object is created it is stored at position first 
  * 
- * Return value: 
+ * Return value: 1 or %RET_BUG;
  **/
 
 static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, int first)

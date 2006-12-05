@@ -1664,7 +1664,7 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
     {
       if ((O=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) 
 	break;
-      nsp_frame_replace_object(O);
+      nsp_frame_replace_object(O,-1);
     }
   if (nsp_file_close_xdr_r(F) == FAIL)
     {

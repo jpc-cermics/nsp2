@@ -71,59 +71,59 @@ int nsp_init_frames(int argc, char **argv)
   /* Create first Object in the initial frame **/
   if ((O= (NspObject *) nsp_smatrix_create_from_array("%argv",argc,(const char **) argv))
       == NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   d=0;d=1/d;
   if ((O=nsp_create_object_from_double("%inf",d))==NULLOBJ)return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   d=0;d=d/d;
   if ((O=nsp_create_object_from_double("%nan",d))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   if ((O=nsp_create_object_from_double("%pi",M_PI))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   if ((O=nsp_create_object_from_double("%e",M_E))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   if ((O =nsp_create_object_from_double("$", -1.0 ))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   Dollar = (NspMatrix *) O;
   if ((O =nsp_create_true_object("%t"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   if ((O =nsp_create_false_object("%f"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   if ((O =nsp_create_object_from_double("%eps",nsp_dlamch("e")))== NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   /* used for list element deletion **/
   if ((O =nsp_create_empty_matrix_object("%null"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   Null = O;
   /* %i **/
   if ((O =nsp_complexi_object_("%i"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   /* shared lib suffix */
   if ((O =(NspObject *) nsp_smatrix_create("%shext",1,1,SHREXT_NAME,1) ) == NULLOBJ )
     return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   /* reserved */
   if ((Reserved =nsp_create_empty_matrix_object("@keep@"))==NULLOBJ) return FAIL;
   /* flag to know that we are using nsp !! */
   if ((O =nsp_create_true_object("%nsp"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   /* flag to detect if we have umfpack */
 #ifdef WITH_UMFPACK
   if ((O =nsp_create_true_object("%umfpack"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%umfpack"))==NULLOBJ) return FAIL;
 #endif 
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   /* types */ 
-  nsp_frame_replace_object((NspObject *)nsp_types_hash_table); 
+  nsp_frame_replace_object((NspObject *)nsp_types_hash_table,-1); 
   /* gtk */
-  nsp_frame_replace_object((NspObject *)nsp_gtk_hash_table); 
-  nsp_frame_replace_object((NspObject *)nsp_gdk_hash_table); 
-  nsp_frame_replace_object((NspObject *)nsp_atk_hash_table); 
-  nsp_frame_replace_object((NspObject *)nsp_pango_hash_table); 
+  nsp_frame_replace_object((NspObject *)nsp_gtk_hash_table,-1); 
+  nsp_frame_replace_object((NspObject *)nsp_gdk_hash_table,-1); 
+  nsp_frame_replace_object((NspObject *)nsp_atk_hash_table,-1); 
+  nsp_frame_replace_object((NspObject *)nsp_pango_hash_table,-1); 
   /* ast */
   if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O);
+  nsp_frame_replace_object(O,-1);
   return(OK);
 }
 
@@ -237,19 +237,21 @@ void nsp_frame_print_obsolete(void)
     nsp_list_print((NspList *)Datas->first->O,0,NULL,0);
 }
 
-
 /**
  *nsp_frame_replace_object:
  * @A: object to be inserted
+ * @local_id: an integer 
  * 
- * Inserts #NspObject @A in the first frame.  
- * If an object with the same name as @A exists 
- * It is replaced by @A. 
+ * Inserts #NspObject @A in the current evaluation frame.  
+ * If an object with the same name as @A exists it is replaced by @A in 
+ * the current frame and old object is destroyed. If @local_id is not equal 
+ * to -1 then @A is assumed to be a local variable and it is thus inserted 
+ * in the symbol table of the current frame. 
  * 
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_frame_replace_object( NspObject *A)
+int nsp_frame_replace_object( NspObject *A,int local_id)
 {
   if (  A == NULLOBJ ) return(OK);
   if (  Datas == NULLLIST ) 
@@ -268,11 +270,22 @@ int nsp_frame_replace_object( NspObject *A)
        *		    nsp_object_get_name(A));
        * }
        */
-      return nsp_eframe_replace_object((NspFrame *) Datas->first->O,A);
+      if ( local_id == -1 ) 
+	{
+	  /* insert in current frame */
+	  return nsp_eframe_replace_object((NspFrame *) Datas->first->O,A);
+	}
+      else 
+	{
+	  /* insert as a local variable */
+	  NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[local_id];
+	  if ( O1 != NULL )  nsp_object_destroy(&O1);
+	  ((NspFrame *) Datas->first->O)->table->objs[local_id]=A;
+	  return OK;
+	}
     }
   return(OK);
 } 
-
 
 
 /**
@@ -530,7 +543,7 @@ int nsp_declare_global(char *name)
     }
   /* we create a pointer to O in the local frame */
   if ((O1= GobjCreate(name,O)) == NULLHOBJ) return FAIL;
-  return nsp_frame_replace_object((NspObject *) O1);
+  return nsp_frame_replace_object((NspObject *) O1,-1);
 }
 
 
@@ -554,12 +567,12 @@ int nsp_frame_insert_hash_contents(NspHash *H)
 	{
 	  NspObject *Ob;
 	  if ((Ob = nsp_object_copy_with_name(loc->data))== NULLOBJ) return FAIL;
-	  if ( nsp_frame_replace_object(Ob)== FAIL) return FAIL;
+	  if ( nsp_frame_replace_object(Ob,-1)== FAIL) return FAIL;
 	}
     }
   return OK;
 }
-
+ 
 
 
 /**
@@ -575,4 +588,4 @@ NspHash *nsp_current_frame_to_hash(void)
 {
   if ( Datas == NULLLIST ) return NULLHASH;
   return nsp_eframe_to_hash((NspFrame *) Datas->first->O);
-}
+ }
