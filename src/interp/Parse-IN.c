@@ -323,6 +323,60 @@ static int int_find_macro(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* FIXME: juste here for testing 
+ * 
+ */
+
+extern double nsp_timer(void);
+
+static int int_find_macro_symbol(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O;
+  int i;
+  char *Name=0;
+  CheckRhs(1,1);
+  CheckLhs(1,2);
+  if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_timer();
+  for (i=0; i < 1000000; i++)
+    nsp_find_macro(Name);
+  if (( O =nsp_create_object_from_double(NVOID,nsp_timer())) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,O);
+  return 1;
+}
+
+static int int_find_frames_symbol(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O;
+  int i;
+  char *Name=0;
+  CheckRhs(1,1);
+  CheckLhs(1,2);
+  if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_timer();
+  for (i=0; i < 1000000; i++)
+    nsp_frames_search_object(Name);
+  if (( O =nsp_create_object_from_double(NVOID,nsp_timer())) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,O);
+  return 1;
+}
+
+static int int_find_frame_symbol(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O;
+  int i;
+  char *Name=0;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_timer();
+  for (i=0; i < 1000000; i++)
+    nsp_frame_search_object(Name);
+  if (( O =nsp_create_object_from_double(NVOID,nsp_timer())) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,O);
+  return 1;
+}
+
 
 /* argn()
  * Interface for argn 
@@ -379,6 +433,8 @@ static int int_error(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_astnode_create;
 
+
+
 /*
  * The Interface for basic parse operations 
  */
@@ -389,6 +445,9 @@ static OpTab Parse_func[]={
   {"remove_lib",int_remove_lib},
   {"add_lib",int_add_lib},
   {"find_macro",int_find_macro},
+  {"find_frame_symbol",int_find_frame_symbol},
+  {"find_frames_symbol",int_find_frames_symbol},
+  {"find_macro_symbol",int_find_macro_symbol},
   {"execstr",int_execstr},
   {"execf",int_execf},
   {"argn",int_argn},
