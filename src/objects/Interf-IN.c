@@ -157,7 +157,7 @@ int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
   nsp_smatrix_print(L_32,0,NULL,0);
   nsp_object_print(O1,0,NULL,0);
   /* test the list builder **/
-  if (( O = (NspObject *) BuildListFromArgs(Ret,10,20.67,A,"foo",10,20 ))== NULLOBJ ) 
+  if (( O = (NspObject *) BuildListFromArgs(NVOID,Ret,10,20.67,A,"foo",10,20 ))== NULLOBJ ) 
     return RET_BUG;
   MoveObj(stack,1,O);
   return 1;
@@ -180,7 +180,7 @@ int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
   NspObject *Obj;
   int_types Ret[]={ s_int,s_double,string,list_begin,s_int,s_int,list_end, t_end};
   /* test the list builder **/
-  if (( Obj = (NspObject *)BuildListFromArgs(Ret, 10,20.67,"foo",10,20 ))== NULLOBJ ) return RET_BUG;
+  if (( Obj = (NspObject *)BuildListFromArgs(NVOID,Ret, 10,20.67,"foo",10,20 ))== NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Obj);
   return 1;
 }  

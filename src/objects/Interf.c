@@ -547,6 +547,7 @@ static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
 
 /**
  * BuildListFromArgs:
+ * @name:
  * @T: 
  * @Varargs: 
  * 
@@ -563,21 +564,21 @@ static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
  * Return value: a newly created #NspList or %NULL.
  **/
 
-static NspList *BuildListFromArgs_1(int_types **T,va_list *ap);
+static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap);
 
-NspList*BuildListFromArgs(int_types *T,...) 
+NspList*BuildListFromArgs(const char *name,int_types *T,...) 
 {
   va_list ap;
   va_start(ap,T);
-  return BuildListFromArgs_1(&T,&ap);
+  return BuildListFromArgs_1(name,&T,&ap);
 }
 
-static NspList *BuildListFromArgs_1(int_types **T,va_list *ap)
+static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap)
 {
   int bval;
   NspList *L,*L1;
   NspObject *O;
-  if (( L=nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  if (( L=nsp_list_create(name)) == NULLLIST ) return NULLLIST;
   while ( 1 )
     {
       switch ( **T  ) 
@@ -677,11 +678,7 @@ static NspList *BuildListFromArgs_1(int_types **T,va_list *ap)
 	  break;
 	case list_begin : 
 	  (*T)++;
-	  if ((L1=BuildListFromArgs_1(T,ap))== NULLLIST) return NULLLIST;
-	  if ( Ocheckname((NspObject *)L1,NVOID) )
-	    {
-	      if (nsp_object_set_name((NspObject *)L1,"lel") == FAIL) return NULLLIST;
-	    }
+	  if ((L1=BuildListFromArgs_1("lel",T,ap))== NULLLIST) return NULLLIST;
 	  if (nsp_list_end_insert( L,(NspObject *)L1) == FAIL ) return NULLLIST;
 	  break;
 	case obj : 
@@ -821,7 +818,7 @@ static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap)
 	  break;
 	case list_begin : 
 	  T++;
-	  if ((L1=BuildListFromArgs_1(&T,ap))== NULLLIST) return RET_BUG;
+	  if ((L1=BuildListFromArgs_1(NVOID,&T,ap))== NULLLIST) return RET_BUG;
 	  while ( *T != list_end )  T++; /* walk till end of list */
 	  MoveObj(stack,count++,(NspObject *) L1);
 	  break;

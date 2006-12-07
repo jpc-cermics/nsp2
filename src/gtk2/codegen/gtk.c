@@ -15484,9 +15484,9 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
   GtkTooltips *tips = GTK_TOOLTIPS(self->obj);
   GtkTooltipsData *data = tips->active_tips_data;
   if (data == NULL) return NULL;
-  return (NspObject *)BuildListFromArgs(T, nspgobject_new((GObject *)data->tooltips),
-			   nspgobject_new((GObject *)data->widget),
-			   data->tip_text, data->tip_private);
+  return (NspObject *)BuildListFromArgs(NVOID,T, nspgobject_new((GObject *)data->tooltips),
+					nspgobject_new((GObject *)data->widget),
+					data->tip_text, data->tip_private);
 }
 #line 15492 "gtk.c"
 #line 6298 "gtk.override"

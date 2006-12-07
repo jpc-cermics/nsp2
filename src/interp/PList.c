@@ -539,7 +539,7 @@ static int _nsp_list_add(NspList **list, int op, int arity,void *data)
     return FAIL;
   if ( *list == NULL )
     {
-      if (( Obj = (NspObject *) BuildListFromArgs(T,astn)) == NULLOBJ ) 
+      if (( Obj = (NspObject *) BuildListFromArgs("lel",T,astn)) == NULLOBJ ) 
 	return FAIL;
       *list = (NspList *) Obj;
       return OK;

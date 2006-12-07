@@ -39,14 +39,14 @@ int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format
   if ( L == NULL) 
     {
       if (( S = nsp_smatrix_create_from_table(formats)) == NULL) return FAIL;
-      if (( L1 = BuildListFromArgs(Ret,"combo","Format",1,S)) == NULL ) return FAIL;
+      if (( L1 = BuildListFromArgs("lel",Ret,"combo","Format",1,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(types)) == NULL) return FAIL;
-      if (( L2 = BuildListFromArgs(Ret,"combo","Type",0,S)) == NULL ) return FAIL;
+      if (( L2 = BuildListFromArgs("lel",Ret,"combo","Type",0,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(orientations)) == NULL) return FAIL;
-      if (( L3 = BuildListFromArgs(Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
+      if (( L3 = BuildListFromArgs("lel",Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(printer)) == NULL) return FAIL;
-      if (( L4 = BuildListFromArgs(Ret,"entry","print command",0,S)) == NULL ) return FAIL;
-      if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
+      if (( L4 = BuildListFromArgs("lel",Ret,"entry","print command",0,S)) == NULL ) return FAIL;
+      if (( L = BuildListFromArgs("lel",Ret1,L4,L3,L2,L1))== NULL) return FAIL;
     }
   if ( nsp_choices_with_combobox(title,L,&Res,TRUE) == FAIL) return FAIL;
   {
@@ -92,14 +92,14 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
   if ( L == NULL) 
     {
       if (( S = nsp_smatrix_create_from_table(formats)) == NULL) return FAIL;
-      if (( L1 = BuildListFromArgs(Ret,"combo","Format",1,S)) == NULL ) return FAIL;
+      if (( L1 = BuildListFromArgs("lel",Ret,"combo","Format",1,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(types)) == NULL) return FAIL;
-      if (( L2 = BuildListFromArgs(Ret,"combo","Type",0,S)) == NULL ) return FAIL;
+      if (( L2 = BuildListFromArgs("lel",Ret,"combo","Type",0,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(orientations)) == NULL) return FAIL;
-      if (( L3 = BuildListFromArgs(Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
+      if (( L3 = BuildListFromArgs("lel",Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
       if (( S = nsp_smatrix_create_from_table(save)) == NULL) return FAIL;
-      if (( L4 = BuildListFromArgs(Ret,"save","file name",0,S)) == NULL ) return FAIL;
-      if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
+      if (( L4 = BuildListFromArgs("lel",Ret,"save","file name",0,S)) == NULL ) return FAIL;
+      if (( L = BuildListFromArgs("lel",Ret1,L4,L3,L2,L1))== NULL) return FAIL;
     }
   if ( nsp_choices_with_combobox(title,L,&Res,TRUE) == FAIL) return FAIL;
   {
