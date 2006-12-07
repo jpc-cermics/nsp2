@@ -255,8 +255,10 @@ void nsp_frame_destroy(NspFrame *H)
 	}
     }
 #endif 
+#ifdef WITH_SYMB_TABLE 
   /* this one is shared */
   H->table->objs[0]=NULL; 
+#endif 
   /* now free the cell object  */
   nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
