@@ -493,17 +493,25 @@ NspBHash *nsp_bhash_copy(const NspBHash *H)
   if ( Loc == NULLBHASH ) return NULLBHASH;
   for ( i =0 ; i <= H->hsize ; i++) 
     {
-      BHash_Entry *loc = ((BHash_Entry *)H->htable) + i;
+      BHash_Entry *loc = ((BHash_Entry *)H->htable) + i,*loc1;
       if ( loc->used && loc->key != NULL )
 	{
 	  char *str;
 	  /* take care that BH_ENTER do not copy the key */
 	  if ((str =nsp_string_copy(loc->key)) == (nsp_string) 0)
 	    return NULLBHASH;
-	  if ( nsp_bhsearch(Loc,str,&loc->val,BH_ENTER) == FAIL) 
-	    return NULLBHASH;
+	  /* 
+	     if ( nsp_bhsearch(Loc,str,&loc->val,BH_ENTER) == FAIL) 
+	     return NULLBHASH;
+	  */
+	  /* direct insertion to avoid computing the hash key */
+	  loc1 = ((BHash_Entry *)Loc->htable) + i;
+	  loc1->key = str;
+	  loc1->val = loc->val;
+	  loc1->used = loc->used;
 	}
     }
+  Loc->filled = H->filled;
   return(Loc);
 }
 
