@@ -951,6 +951,7 @@ static void nsp_menu_fileops(void)
     {
     case menu_fail : 
     case menu_cancel : 
+    case menu_bad_argument:
       return ;
     case menu_ok: 
       enqueue_nsp_command(file);
