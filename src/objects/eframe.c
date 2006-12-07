@@ -255,6 +255,8 @@ void nsp_frame_destroy(NspFrame *H)
 	}
     }
 #endif 
+  /* this one is shared */
+  H->table->objs[0]=NULL; 
   /* now free the cell object  */
   nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
@@ -360,7 +362,11 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
 #endif
   if ( C != NULL )
     {
+      NspObject *Obj=C->objs[0];
+      C->objs[0]=NULL;
+      /* do not copy the first cell element */
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
+      H->table->objs[0]= Obj;
       /* just a faster access */
       H->local_vars = (NspBHash *) H->table->objs[0];
 #ifdef LOCALS_IN_FRAME 
