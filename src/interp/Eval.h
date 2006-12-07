@@ -7,7 +7,7 @@
 
 extern int nsp_eval(PList L1,Stack, int first, int rhs,int lhs,int display);
 extern int nsp_store_result(char *str,Stack stack, int first);
-extern int nsp_eval_arg(PList L,Stack, int i,int rhs,int lhs,int display);
+extern int nsp_eval_arg(PList L,Stack *stack, int i,int rhs,int lhs,int display);
 extern int nsp_eval_func(NspObject *O,const char *str,int msuffix, Stack, int first, int rhs, int opt, int lhs);
 extern int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, accelerated_ops tab_id,
 					 Stack stack, int first, int rhs, int opt, int lhs);

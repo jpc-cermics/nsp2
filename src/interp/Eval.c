@@ -118,7 +118,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case 1:
 	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
-	      if (( nargs =nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) return nargs;
+	      if (( nargs =nsp_eval_arg(L1,&stack,first,1,-1,display)) < 0) return nargs;
 	      if ( nargs == 0 ) return 0;
 	      /* XXXX : Warning, here we can have more that one returned value */
 	      /* ex (10,20), */
@@ -143,7 +143,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  else
 	    {
-	      if (( nargs  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0) 
+	      if (( nargs  =nsp_eval_arg(L1,&stack,first,1,1,display)) < 0) 
 		SHOWBUG(stack,nargs,L1);
 	      if ( nargs != 1) 
 		{
@@ -169,7 +169,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if ( L->type == SEQAND || L->type == SEQOR ) 
 	    {
 	      O1=nsp_frames_search_op_object(opcode);
-	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
+	      if (( n  =nsp_eval_arg(L1,&stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
 	      nargs = n;
 	      if ( nargs != 1 ) 
 		{
@@ -192,7 +192,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		    }
 		}
 	      /* continue with next argument */
-	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
+	      if (( n  =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L1);
@@ -214,9 +214,9 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  else if ( L->type == DOTPLUS )
 	    {
 	      /* testing a new mode for operators */
-	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
+	      if (( n  =nsp_eval_arg(L1,&stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
 	      nargs = n;
-	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
+	      if (( n  =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0)
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L1);
@@ -230,7 +230,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  else 
 	    {
 	      /* standard 2 ary operators */
-	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) 
+	      if (( n  =nsp_eval_arg(L1,&stack,first,1,1,display)) < 0 ) 
 		SHOWBUG(stack,n,L1);
 	      nargs = n;
 	      if ( nargs != 1 ) 
@@ -242,7 +242,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
-	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
+	      if (( n  =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L1->next);
@@ -269,7 +269,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nargs=0;
 	  for ( j = L->arity ; j > 0  ; j--)
 	    {
-	      if ((n =nsp_eval_arg(loc,stack,first+nargs,1,1,display)) < 0 )
+	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) < 0 )
 		{
 		  /* cleaning */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -316,7 +316,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /*used to follow a path for list extraction or insertion **/
 	  for ( j = 1 ; j <= L->arity ;  j++ )
 	    {
-	      if ((n =nsp_eval_arg(loc,stack,first+nargs,1,1,display)) < 0)  
+	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) < 0)  
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,loc);
@@ -345,7 +345,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      if ((nargs=nsp_eval_arg(L,stack,first,1,1,display)) < 0) 
+	      if ((nargs=nsp_eval_arg(L,&stack,first,1,1,display)) < 0) 
 		SHOWBUG(stack,nargs,L1);
 	      return nargs;
 	    }
@@ -360,11 +360,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case STRING:
 	case EMPTYMAT:
 	case EMPTYCELL:
-	  nargs=nsp_eval_arg(L,stack,first,1,1,display);
+	  nargs=nsp_eval_arg(L,&stack,first,1,1,display);
 	  break;
 	case P_MATRIX :
 	case P_CELL :
-	  return (nargs=nsp_eval_arg(L1,stack,first,1,1,display));
+	  return (nargs=nsp_eval_arg(L1,&stack,first,1,1,display));
 	  break;
 	case CELLDIAGCONCAT:
 	case CELLROWCONCAT:
@@ -383,7 +383,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
 	      /* evaluate arguments */
-	      if ((n =nsp_eval_arg(loc,stack,first+nargs,1,1,display)) <0 ) 
+	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) <0 ) 
 		{
 		  /* clean and return */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -397,8 +397,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return n;
 	  break;
 	case ROWCONCAT:
-	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
-	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
+	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
+	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -411,8 +411,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 
 	case COLCONCAT:
-	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )  SHOWBUG(stack,nargs,L1);
-	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)  
+	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 )  SHOWBUG(stack,nargs,L1);
+	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0)  
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -426,8 +426,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 
 	case DIAGCONCAT:
 	  O1=nsp_frames_search_op_object("concatdiag");
-	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
-	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
+	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
+	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -441,12 +441,12 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  while (1) 
 	    {
 	      int rep;
-	      if ((nargs=nsp_eval_arg(L1,stack,first,1,1,display)) < 0) SHOWBUG(stack,nargs,L1);
+	      if ((nargs=nsp_eval_arg(L1,&stack,first,1,1,display)) < 0) SHOWBUG(stack,nargs,L1);
 	      rep =nsp_object_is_true(stack.val->S[first]);
 	      nsp_void_object_destroy(&stack.val->S[first]);
 	      stack.val->S[first]= NULLOBJ;
 	      if ( rep == FALSE ) break;
-	      nargs=nsp_eval_arg(L1->next,stack,first,1,1,display);
+	      nargs=nsp_eval_arg(L1->next,&stack,first,1,1,display);
 	      if ( nargs < 0 ) 
 		{
 		  if ( nargs == RET_BREAK ) break;
@@ -485,7 +485,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      if ( j == L->arity-1 ) 
 		{
 		  /*we have reached the last else **/
-		  if ((nargs=nsp_eval_arg(L1,stack,first,1,1,display))  < 0) SHOWBUG(stack,nargs,L1);
+		  if ((nargs=nsp_eval_arg(L1,&stack,first,1,1,display))  < 0) SHOWBUG(stack,nargs,L1);
 		  if ( nargs > 0)  
 		    {
 		      fprintf(stderr,"XXXStrange: last if evaluation returns  %d \n",nargs);
@@ -495,7 +495,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      else 
 		{ 
 		  int iftest;
-		  nargs=nsp_eval_arg(L1,stack,first,0,1,display);
+		  nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
 		  if ( nargs != 1 ) 
 		    {
 		      if ( nargs > 1 ) 
@@ -517,7 +517,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  stack.val->S[first]= NULLOBJ;
 		  if ( iftest == TRUE )
 		    {
-		      if ((nargs=nsp_eval_arg(L1->next,stack,first,1,1,display))  < 0) SHOWBUG(stack,nargs,L1);
+		      if ((nargs=nsp_eval_arg(L1->next,&stack,first,1,1,display))  < 0) SHOWBUG(stack,nargs,L1);
 		      if ( nargs > 0)  
 			{
 			  fprintf(stderr,"XXXStrange: if branch returns %d \n",nargs);
@@ -539,7 +539,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    int return_ = 0;
 	    /* try/catch/finally */
 	    /* evaluates the try */
-	    nargs=nsp_eval_arg(L1,stack,first,0,1,display);
+	    nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
 	    L1 = L1->next ;
 	    if ( nargs > 0)  
 	      {
@@ -556,7 +556,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		    /* push the error message */
 		    nsp_error_message_to_lasterror();
 		    /* evaluates the catch */
-		    nargs=nsp_eval_arg(L1,stack,first,0,1,display);
+		    nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
 		    if ( nargs == RET_RETURN || nargs == RET_ERROR_RAISED)
 		      {
 			return_ = nargs ;
@@ -574,7 +574,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		 * if try/catch stopped on return
 		 */
 		L1 = L1->next ;
-		nargs=nsp_eval_arg(L1,stack,first,0,1,display);
+		nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
 		if ( nargs < 0 ) 
 		  {
 		    if ( nargs != RET_RETURN && nargs != RET_ERROR_RAISED) 
@@ -591,7 +591,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	   *  the cases
 	   **/
 	  /* we first evaluate the test SHOWBUG ? */ 
-	  nargs =nsp_eval_arg(L1,stack,first,0,1,display);
+	  nargs =nsp_eval_arg(L1,&stack,first,0,1,display);
 	  if ( nargs != 1 ) 
 	    {
 	      if ( nargs > 1 ) 
@@ -635,7 +635,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      /* evaluate a case, the case test is returned 
 	       * in stack.val->S[first+1]
 	       */
-	      nargs=nsp_eval_arg(L1,stack,first+1,1,1,display); 
+	      nargs=nsp_eval_arg(L1,&stack,first+1,1,1,display); 
 	      if ( nargs <= 0 ) 
 		{
 		  /* error occured */
@@ -672,7 +672,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nargs = 0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      if ( (nargs=nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) 
+	      if ( (nargs=nsp_eval_arg(L1,&stack,first,1,-1,display)) < 0) 
 		{
 		  return nargs;
 		}
@@ -685,7 +685,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nargs=0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      if ( (n=nsp_eval_arg(L1,stack,first+nargs,1,-1,display)) < 0) 
+	      if ( (n=nsp_eval_arg(L1,&stack,first+nargs,1,-1,display)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  return n;
@@ -700,7 +700,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /* the select expression */ 
 	  stack.val->S[first]= stack.val->S[first-1]; 
 	  /* first evaluate the case expression */ 
-	  nargs=nsp_eval_arg(L1,stack,first+1,1,1,display);
+	  nargs=nsp_eval_arg(L1,&stack,first+1,1,1,display);
 	  if ( nargs != 1 ) 
 	    {
 	      stack.val->S[first]=NULLOBJ;
@@ -746,12 +746,12 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  rep =nsp_object_is_true(stack.val->S[first]); 
 	  if ( rep == FALSE) return 1; 
 	  /* */
-	  nargs=nsp_eval_arg(L1->next,stack,first+1,1,1,display);
+	  nargs=nsp_eval_arg(L1->next,&stack,first+1,1,1,display);
 	  if ( nargs >= 0 ) nargs +=1;
 	  return nargs;
 	  break;
 	case LASTCASE :
-	  nargs=nsp_eval_arg(L1,stack,first,1,1,display);
+	  nargs=nsp_eval_arg(L1,&stack,first,1,1,display);
 	  if ( nargs > 0)  
 	    {
 	      fprintf(stderr,"XXXStrange: the last select branch returns %d \n",nargs);
@@ -828,13 +828,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
  * 
  * Return value: 
  **/
+
  
-int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
+int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display)
 {
   int Int,Num,rep;
-  double d;
-  NspObject *OM;
-  stack.first = first;
   if ( L == NULLPLIST ) 
     {
       Scierror("Error: Something Strange: () found\n");
@@ -847,7 +845,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
       break;
     case NAME :
     case OPNAME :
-      if ( debug ) Sciprintf("==>%s\n",(char *) L->O);
+      /* if ( debug ) Sciprintf("==>%s\n",(char *) L->O); */
       if ( L->arity != -1 ) 
 	{
 	  if (  Datas == NULLLIST ) 
@@ -857,21 +855,19 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  /* get current frame local variable table */
 	  NspCells *C =((NspFrame *) Datas->first->O)->table;
-	  if ((OM= C->objs[L->arity]) == NULL) 
+	  if ((stack->val->S[first] = C->objs[L->arity]) == NULL) 
 	    {
 	      Scierror("Warning: local variable %s id=%d not found \n",(char *) L->O ,L->arity);
 	      return RET_BUG;
 	    }
-	  stack.val->S[first]= OM;
 	  return 1;
 	}
 
-      if ( (OM=nsp_frames_search_object((char *) L->O )) != NULLOBJ) 
+      if ((stack->val->S[first] =nsp_frames_search_object((char *) L->O )) != NULLOBJ) 
 	{
 	  /* FIXME: should be limited just to current frame 
 	   * a symbol in frames 
 	   */
-	  stack.val->S[first] = OM;
 	  /* Extra warning  */
 	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
 	  /* 	    { */
@@ -882,15 +878,13 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
       else if ( FindFunction((char *) L->O,&Int,&Num) == OK) 
 	{
 	  /* check if name is a function **/
-	  if (( OM= (NspObject *) function_create(NVOID,(char *) L->O,Int,Num,-1,NULL))==  NULLOBJ) 
+	  if ((stack->val->S[first]= (NspObject *) function_create(NVOID,(char *) L->O,Int,Num,-1,NULL))==  NULLOBJ) 
 	    return RET_BUG;
-	  stack.val->S[first] = OM;
 	  return 1;
 	}
-      else if ( (OM=nsp_find_macro((char *) L->O)) != NULLOBJ) 
+      else if ( (stack->val->S[first]=nsp_find_macro((char *) L->O)) != NULLOBJ) 
 	{
 	  /* check for a macro */
-	  stack.val->S[first] = OM;
 	  return 1;
 	}
       else
@@ -899,39 +893,34 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	  return RET_BUG;
 	}
     case NUMBER:
-      if (debug) Sciprintf("==>%s\n",((parse_double *) L->O)->str);
-      /* d = atof(((parse_double *) L->O)->str);*/ 
-      d = ((parse_double *) L->O)->val; 
-      if ( (OM = nsp_create_object_from_double(NVOID,d)) == NULLOBJ) return RET_BUG;
-      stack.val->S[first] = OM;
+      /* if (debug) Sciprintf("==>%s\n",((parse_double *) L->O)->str); */
+      if ((stack->val->S[first] = nsp_create_object_from_double(NVOID,((parse_double *) L->O)->val)) == NULLOBJ) 
+	return RET_BUG;
       return 1;
       break;
     case STRING:
-      if (debug) Sciprintf("==>\"%s\"\n",(char *) L->O);
-      if ( (OM=nsp_create_object_from_str(NVOID,(char *) L->O)) == NULLOBJ) return RET_BUG;
-      stack.val->S[first] = OM;
+      /*       if (debug) Sciprintf("==>\"%s\"\n",(char *) L->O); */
+      if ((stack->val->S[first]=nsp_create_object_from_str(NVOID,(char *) L->O)) == NULLOBJ) return RET_BUG;
       return 1;
       break;
     case EMPTYMAT:
-      if (debug) Sciprintf("==> {}");
-      if ( (OM=nsp_create_empty_matrix_object(NVOID)) == NULLOBJ) return RET_BUG;
-      stack.val->S[first] = OM;
+      /* if (debug) Sciprintf("==> {}");*/
+      if ( (stack->val->S[first]=nsp_create_empty_matrix_object(NVOID)) == NULLOBJ) return RET_BUG;
       return 1;
     case EMPTYCELL:
-      if (debug) Sciprintf("==> []");
-      if ( (OM=((NspObject *) nsp_cells_create(NVOID,0,0)))  == NULLOBJ) return RET_BUG;
-      stack.val->S[first] = OM;
+      /* if (debug) Sciprintf("==> []"); */
+      if ( (stack->val->S[first]=((NspObject *) nsp_cells_create(NVOID,0,0)))  == NULLOBJ) return RET_BUG;
       return 1;
       break;
     case BREAK:
-      if (debug) Sciprintf("==>send a  break\n"); 
+      /* if (debug) Sciprintf("==>send a  break\n");  */
       return RET_BREAK;
       break;
     case PLIST :
-      return (nsp_eval((PList) L->O,stack,first,rhs,lhs,display));
+      return (nsp_eval((PList) L->O,*stack,first,rhs,lhs,display));
       break;
     case PRETURN: 
-      if (debug) Sciprintf("==>send a return \n");
+      /* if (debug) Sciprintf("==>send a return \n"); */
       return RET_RETURN;
       break;
     case QUIT: 
@@ -942,7 +931,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
       /* We enter a new scilab evaluation loop 
        * Need to deal with abort FIXME 
        */
-      if ( stack.val->pause == TRUE ) 
+      if ( stack->val->pause == TRUE ) 
 	{
 	  inc_pause_prompt();
 	  rep =nsp_parse_eval_from_std(1);
@@ -974,9 +963,8 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
     case WHO:
       Sciprintf("command without arguments\n");
       if ( Datas == NULLLIST ) return RET_BUG;
-      if ((OM= (NspObject *) nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULL) 
+      if ((stack->val->S[first] = (NspObject *) nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULL) 
 	return RET_BUG;
-      stack.val->S[first] = OM;
       return 1;
     case NSP_EXIT:
       Sciprintf("command without arguments\n");
@@ -1008,10 +996,10 @@ static int EvalFor(PList L1, Stack stack, int first)
   int iloop=0,nargs,rep;
   NspObject *O = NULLOBJ,*O_kp = NULLOBJ;
   stack.first = first;
-  if (debug) Sciprintf("Evaluation of for \n") ;
+  /* if (debug) Sciprintf("Evaluation of for \n") ; */
   /*first element of L1 is a name : for loop argument name  **/
   /*Evaluation of the loop argument stored at first **/
-  nargs=nsp_eval_arg(L1->next,stack,first,1,1,0);
+  nargs=nsp_eval_arg(L1->next,&stack,first,1,1,0);
   if ( nargs != 1 ) 
     {
       if ( nargs > 1 ) 
@@ -1057,7 +1045,7 @@ static int EvalFor(PList L1, Stack stack, int first)
 	    }
 	}
       /*Evaluation of the loop **/
-      if (( nargs=nsp_eval_arg(L1->next->next,stack,first+1,0,0,0))< 0) 
+      if (( nargs=nsp_eval_arg(L1->next->next,&stack,first+1,0,0,0))< 0) 
 	{
 	  if ( nargs != RET_CONTINUE ) 
 	    {
@@ -1072,11 +1060,11 @@ static int EvalFor(PList L1, Stack stack, int first)
     {
       /*XXXX : reste a faire ici : netoyer + break 	  le gerer **/
     case RET_BREAK : 
-      if (debug ) Sciprintf("catched a break \n"); 
+      /* if (debug ) Sciprintf("catched a break \n");  */
       return 0;
       break;
     case RET_ENDFOR : 
-      if (debug) Sciprintf("end for \n"); 
+      /* if (debug) Sciprintf("end for \n");  */
       /* we must destroy the loop object */
       if ( L1->arity != -1 ) 
 	{
@@ -1212,7 +1200,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
    * Rhs arguments will be stored starting at position ipos.
    */
 
-  if (( nargs =nsp_eval_arg(L1->next,stack,ipos,1,r_args_1,0)) < 0) 
+  if (( nargs =nsp_eval_arg(L1->next,&stack,ipos,1,r_args_1,0)) < 0) 
     {
       nsp_void_seq_object_destroy(stack,first,ipos);
       return nargs ;
@@ -1724,7 +1712,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
       int n;
       L=L->next;
       nsp_set_dollar(stack.val->S[*ipos+1],0);
-      if ((n =nsp_eval_arg(L,stack,*ipos+2,1,1,0)) < 0) 
+      if ((n =nsp_eval_arg(L,&stack,*ipos+2,1,1,0)) < 0) 
 	{
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
 	  SHOWBUG(stack,n,L);
@@ -1851,7 +1839,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
     {
       int n;
       nsp_set_dollar(stack.val->S[*ipos+1],arity1 == 1 ? 0 : j );
-      if ((n =nsp_eval_arg(L,stack,*ipos+2+fargs,1,1,0)) < 0) 
+      if ((n =nsp_eval_arg(L,&stack,*ipos+2+fargs,1,1,0)) < 0) 
 	{
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
 	  nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+fargs);
@@ -2082,7 +2070,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 	      /*
 	       * evaluation of method arguments 
 	       */
-	      if ((n =nsp_eval_arg(L,stack,first+nargs,1,1,0)) < 0)  
+	      if ((n =nsp_eval_arg(L,&stack,first+nargs,1,1,0)) < 0)  
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L);
@@ -2162,7 +2150,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 		  SHOWBUG(stack,RET_BUG,L);
 		}
 	      /* evaluation of ARGS */
-	      if ((n =nsp_eval_arg(L,stack,first+nargs,1,1,0)) < 0) 
+	      if ((n =nsp_eval_arg(L,&stack,first+nargs,1,1,0)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,n,L);
@@ -2237,7 +2225,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 		{
 		  /* set '$' before evaluation of arguments */
 		  nsp_set_dollar(stack.val->S[first],Larg->arity == 1 ? 0 : k );
-		  if ((n =nsp_eval_arg(L2,stack,first+count,1,1,0)) < 0)  
+		  if ((n =nsp_eval_arg(L2,&stack,first+count,1,1,0)) < 0)  
 		    {
 		      nsp_void_seq_object_destroy(stack,first,first+count);
 		      SHOWBUG(stack,n,L2);
@@ -2320,7 +2308,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 	      /* evaluation of ARGS **/
 	      O1= stack.val->S[first];
 	      stack.val->S[first]=NULLOBJ;
-	      if ((n =nsp_eval_arg(L,stack,first+count,1,1,0)) < 0)  
+	      if ((n =nsp_eval_arg(L,&stack,first+count,1,1,0)) < 0)  
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+count);
 		  SHOWBUG(stack,n,L);
@@ -2408,7 +2396,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	{
 	  /* set '$' before evaluation of arguments */
 	  nsp_set_dollar(stack.val->S[first],nargs == 1 ? 0 : k );
-	  if ((n =nsp_eval_arg(Largs,stack,first+count,1,1,0)) < 0)  
+	  if ((n =nsp_eval_arg(Largs,&stack,first+count,1,1,0)) < 0)  
 	    {
 	      nsp_void_seq_object_destroy(stack,first,first+count);
 	      SHOWBUG(stack,n,Largs);
@@ -2459,7 +2447,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       Largs = Largs->next;/* point to first element of ARGS */
       for ( k= 1; k <= nargs ; k++) 
 	{
-	  if ((n =nsp_eval_arg(Largs,stack,first+count,1,1,0)) < 0)  
+	  if ((n =nsp_eval_arg(Largs,&stack,first+count,1,1,0)) < 0)  
 	    {
 	      nsp_void_seq_object_destroy(stack,first,first+count);
 	      SHOWBUG(stack,n,Largs);
@@ -2536,7 +2524,7 @@ static int EvalOpt(PList L1, Stack stack, int first)
     }
   /*expecting 1 returned values **/
   /*Evaluation of the Rhs **/
-  if (( nargs =nsp_eval_arg(L1->next,stack,first,1,1,0)) < 0) return nargs ;
+  if (( nargs =nsp_eval_arg(L1->next,&stack,first,1,1,0)) < 0) return nargs ;
   if ( nargs < 1 ) 
     {
       Sciprintf("Warning: %d returned value \n",nargs);
@@ -2582,7 +2570,7 @@ static int EvalOpt(PList L1, Stack stack, int first)
 
 int nsp_store_result(char *str, Stack stack, int first)
 {
-  if ( debug ) Sciprintf("=Storing=>%s\n",str);
+  /* if ( debug ) Sciprintf("=Storing=>%s\n",str); */
   if ( stack.val->S[first] != NULLOBJ ) 
     {
       NspObject *Ob = stack.val->S[first], *O1=nsp_frame_search_object(str);
@@ -2687,7 +2675,7 @@ int nsp_store_result(char *str, Stack stack, int first)
 
 static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, int first)
 {
-  if ( debug ) Sciprintf("=Storing=>%s\n",str);
+  /* if ( debug ) Sciprintf("=Storing=>%s\n",str); */
   if ( stack.val->S[first] != NULLOBJ ) 
     {
       NspObject *Ob = stack.val->S[first], *O1;

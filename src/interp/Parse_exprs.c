@@ -2271,7 +2271,7 @@ static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList L)
  * nsp_parse_symbols_table_set_id:
  * @symb_table: 
  * 
- * associated an id (integer) to each symbol of the symbol table.  
+ * associate an id (integer) to each symbol of the symbol table.  
  * Return value: the number of ids (Note that 0 is not used it is a reserved id).
  **/
 

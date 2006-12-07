@@ -840,7 +840,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	    {
 	      /*Not found in the optional list : we use default value **/
 	      /*XXX: why rhs is not set to zero in this call ? **/
-	      n =nsp_eval_arg(Loc1->next,stack,first+rhs,1,1,0);
+	      n =nsp_eval_arg(Loc1->next,&stack,first+rhs,1,1,0);
 	      if ( n > 1 ) 
 		{
 		  int i ; 
