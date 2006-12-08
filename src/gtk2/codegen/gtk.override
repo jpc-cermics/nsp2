@@ -6747,6 +6747,28 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 %%
+override gtk_combo_box_get_active_iter 
+
+static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  GtkTreeIter iter;
+  NspObject *nsp_iter;
+  CheckStdRhs(0,0);
+  ret = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(self->obj),&iter);
+  if ( ret == FALSE ) 
+    {
+      Scierror( "Error: active iter is not set\n");
+      return RET_BUG;
+    }
+  if ((nsp_iter = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE,NULL)) == NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,nsp_iter);
+  return 1;
+}
+
+
+%%
 ignore gtk_cell_view_new_with_text
 %%
 ignore gtk_cell_view_new_with_markup
