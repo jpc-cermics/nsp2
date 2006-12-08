@@ -500,18 +500,22 @@ NspBHash *nsp_bhash_copy(const NspBHash *H)
 	  /* take care that BH_ENTER do not copy the key */
 	  if ((str =nsp_string_copy(loc->key)) == (nsp_string) 0)
 	    return NULLBHASH;
-	  /* 
-	     if ( nsp_bhsearch(Loc,str,&loc->val,BH_ENTER) == FAIL) 
-	     return NULLBHASH;
-	  */
+#ifdef NEW 
 	  /* direct insertion to avoid computing the hash key */
 	  loc1 = ((BHash_Entry *)Loc->htable) + i;
 	  loc1->key = str;
 	  loc1->val = loc->val;
 	  loc1->used = loc->used;
+#else 
+	  if ( nsp_bhsearch(Loc,str,&loc->val,BH_ENTER) == FAIL) 
+	    return NULLBHASH;
+	  /* insert with BH_ENTER */
+#endif 
 	}
     }
+#ifdef NEW 
   Loc->filled = H->filled;
+#endif 
   return(Loc);
 }
 
