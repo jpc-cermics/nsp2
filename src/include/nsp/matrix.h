@@ -253,6 +253,7 @@ extern int nsp_mat_atanh(NspMatrix *A);
 extern void nsp_mat_ceil(NspMatrix *A); 
 extern void nsp_mat_modulo(NspMatrix *A, int n); 
 extern void nsp_mat_idiv(NspMatrix *A, int n); 
+extern void nsp_mat_mod(NspMatrix *x, NspMatrix *y);
 extern void nsp_mat_int(NspMatrix *A); 
 extern void nsp_mat_floor(NspMatrix *A); 
 extern void nsp_mat_round(NspMatrix *A); 

@@ -3179,6 +3179,50 @@ int_mxconj (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * nsp_mat_mod: z = mod(x,y) x or y is changed 
+ */
+int
+int_mxmod(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *y;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((x = GetMat(stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ((y = GetMat(stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  if ( x->rc_type != 'r' ||  y->rc_type != 'r' )
+    {
+      Scierror ("Error: %s both arguments must be real \n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( x->mn == 1  &&  y->mn > 1 )
+    {
+      if ((y = GetMatCopy(stack, 2)) == NULLMAT)
+	return RET_BUG;
+      NSP_OBJECT(y)->ret_pos = 1;
+    }
+  else if ( y->mn != 1 && y->mn != x->mn )
+    {
+      Scierror ("Error: %s arguments have incompatible sizes \n", NspFname(stack));
+      return RET_BUG;
+    }
+  else
+    {
+      if ((x = GetMatCopy(stack, 1)) == NULLMAT)
+	return RET_BUG;
+      NSP_OBJECT(x)->ret_pos = 1;
+    }
+
+  nsp_mat_mod(x, y);
+  return 1;
+}
+
+/*
  *nsp_mat_modulo: A=Modulo(A) remainder in int division 
  * A is changed  
  */
@@ -4508,6 +4552,7 @@ static OpTab Matrix_func[] = {
   {"atanh_m", int_mxatanh},
   {"ceil_m", int_mxceil},
   {"modulo_m_m", int_mxmodulo},
+  {"mod_m_m", int_mxmod},
   {"idiv_m_m", int_mxidiv},
   {"bdiv_m_m", int_mxbdiv},
   {"int_m", int_mxint},

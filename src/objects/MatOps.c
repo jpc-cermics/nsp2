@@ -2897,6 +2897,37 @@ void nsp_mat_idiv(NspMatrix *A, int n)
     }
 }
 
+/*
+ * nsp_mat_mod:  nsp_mat_mod(x,y)
+ * computes  x (or y) <- x - y .* floor (x ./ y)
+ *     
+ *    x and y must be both real and of equal length or
+ *    one can be a scalar
+ *    generally x is modified in place but when x is scalar
+ *    with y->mn > 1, y must hold the result
+ *
+ *    When y[i] = 0 the result is x[i]
+ */
+
+void nsp_mat_mod(NspMatrix *x, NspMatrix *y)
+{
+  int i;
+
+  if ( x->mn == 1 && y->mn > 1 )
+    for ( i = 0 ; i < y->mn ; i++ )
+      y->R[i] = (y->R[i] != 0.0) ? x->R[0] - y->R[i]*(floor(x->R[0]/y->R[i])) : x->R[0];
+  else if ( y->mn == 1 )
+    {
+      if ( y->R[0] != 0 )
+	for ( i = 0 ; i < x->mn ; i++ )
+	  x->R[i] -= y->R[0]*(floor(x->R[i]/y->R[0]));
+    }
+  else
+    for ( i = 0 ; i < x->mn ; i++ )
+      if ( y->R[i] != 0.0 )
+	x->R[i] -= y->R[i]*(floor(x->R[i]/y->R[i]));
+}
+
 
 /*
  *nsp_mat_int: A=Int(A)
