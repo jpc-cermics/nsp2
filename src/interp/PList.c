@@ -431,6 +431,7 @@ PList nsp_eplist_create(void)
 void nsp_plist_destroy(PList *List)
 {
   PList loc = *List,loc1 ;
+  NspObject *Obj = NULL;
   while ( loc != NULLPLIST ) 
     {
       switch (loc->type) 
@@ -442,7 +443,8 @@ void nsp_plist_destroy(PList *List)
 	  FREE(loc->O);
 	  break;
 	case OBJECT : 
-	  nsp_object_destroy((NspObject **) &loc->O);
+	  Obj = loc->O;
+	  nsp_object_destroy(&Obj);
 	  break;
 	case NUMBER :
 	  FREE(((parse_double *)loc->O)->str);
