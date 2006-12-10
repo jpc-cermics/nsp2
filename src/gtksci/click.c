@@ -107,14 +107,10 @@ void reset_scig_click_handler(void)
   scig_click_handler = scig_click_handler_none;
 }
 
-/*---------------------------------------------------------
+/*
  * a queue for click/motion events.
- *---------------------------------------------------------*/
-
-/* 
- * Replacement for previous code 
- * but we need a queue by graphic window 
- * this is to be moved in the XGC of each window 
+ * each graphic window has its own queue. 
+ * see graphics/perigtk/events.c 
  */
 
 int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
