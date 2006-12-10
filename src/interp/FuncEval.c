@@ -40,7 +40,7 @@
 extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
 extern NspObject *nsp_find_macro(const char *str);
 
-static void FuncEvalErrorMess(const char *str, int rhs,int opt, char *name,char *name1);
+static void FuncEvalErrorMess(const char *str, int rhs,int opt,int msuffix, char *name,char *name1);
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
 static int frame_insert_var(int rhs,int opt,int lhs);
 static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs);
@@ -167,7 +167,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
       /* take care that name1 is to be used only 
        * for ( rhs -opt >= 2 ) 
        */
-      FuncEvalErrorMess(str,rhs,opt,name,name1);
+      FuncEvalErrorMess(str,rhs,opt,msuffix,name,name1);
       /*clean the stack */
       reorder_stack(stack,0);
       return RET_BUG;
@@ -519,9 +519,9 @@ void nsp_build_funcname_i(const char *str, Stack *stack, int first, int i, char 
  * 
  **/
 
-static void FuncEvalErrorMess(const char *str, int rhs,int opt, char *name,char *name1)
+static void FuncEvalErrorMess(const char *str, int rhs,int opt,int msuffix, char *name,char *name1)
 {
-  switch (rhs - opt ) 
+  switch (msuffix)
     {
     case 0: 
       Scierror("Error:\tUnknown function %s \n",str);
