@@ -226,8 +226,9 @@ static void nsp_append_history(char *text,view_history *data)
     } 
   else if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
     {
+      GList *loc;
       /* do not insert repetitions */
-      g_list_append (data->history_tail, g_strdup (text));
+      loc =g_list_append (data->history_tail, g_strdup (text));
       data->history_tail =data->history_cur= data->history_tail->next;
       data->dir = 0;
     }
