@@ -122,7 +122,7 @@ extern void MoveObj  (Stack stack ,int j,NspObject *O);
 extern void StackStore(Stack stack,NspObject * o,int pos);
 
 extern int nsp_move_string(Stack stack,int n,const char *bytes,int length);
-extern NspObject *nsp_new_string_obj(char *name,const char *bytes,int length);
+extern NspObject *nsp_new_string_obj(const char *name,const char *bytes,int length);
 extern int nsp_move_double(Stack stack,int n,double d);
 extern int nsp_move_doubles(Stack stack,int pos, int m,int n,...);
 extern NspObject *nsp_new_double_obj(double d);

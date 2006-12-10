@@ -1603,7 +1603,7 @@ int nsp_move_string(Stack stack,int n,const char *bytes,int length)
  * Return value: a new #NspObject or %NULLOBJ.
  **/
 
-NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
+NspObject *nsp_new_string_obj(const char *name,const char *bytes,int length)
 {
   NspSMatrix *S;
   if ( length < 0  ) 
