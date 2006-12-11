@@ -167,7 +167,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
       /* take care that name1 is to be used only 
        * for ( rhs -opt >= 2 ) 
        */
-      FuncEvalErrorMess(str,rhs,opt,msuffix,name,name1);
+      FuncEvalErrorMess(str,rhs,opt,nb_suffix,name,name1);
       /*clean the stack */
       reorder_stack(stack,0);
       return RET_BUG;
