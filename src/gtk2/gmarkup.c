@@ -587,6 +587,24 @@ static void xml_text (GMarkupParseContext *context, const gchar *text,
 {
   NspObject *Obj;
   GMarkupDomContext *dom_context = user_data;
+  if ( text_len == 0) return;
+  if ( text_len != strlen(text) )
+    {
+      Sciprintf("Warning text_len != strlen(text)_n");
+    }
+  if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
+  if ( dom_context->current_root != NULL)
+    {
+      if (  nsp_list_end_insert(dom_context->current_root->children,Obj) == FAIL) 
+	return;
+    }
+}
+
+static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
+                      gsize text_len, gpointer user_data, GError **error)
+{
+  NspObject *Obj;
+  GMarkupDomContext *dom_context = user_data;
   if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
   if ( dom_context->current_root != NULL)
     {
@@ -621,10 +639,10 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, 
     markup_parser.start_element = xml_start_element;
     markup_parser.end_element = xml_end_element;
     markup_parser.text = xml_text;
-    markup_parser.passthrough = NULL;
+    markup_parser.passthrough = xml_passthrough ;
     markup_parser.error = NULL;
-    markup_parse_context = g_markup_parse_context_new (&markup_parser, 0,
-                                                       &context, NULL);
+    /* G_MARKUP_TREAT_CDATA_AS_TEXT, */
+    markup_parse_context = g_markup_parse_context_new (&markup_parser,0,&context, NULL);
   }
   
   if ( node_name != NULL)
