@@ -102,6 +102,7 @@ extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_In
 extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
 extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
+extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node_Interf_Info ;
 
 /* #define WITH_PREMIA  */
 
@@ -185,6 +186,7 @@ InterfTab Interfaces[]={
 #ifdef WITH_PREMIA
   {premiamodel_Interf , premiamodel_Interf_Info},
 #endif
+  {gmarkup_node_Interf , gmarkup_node_Interf_Info},
   {NULL,NULL}
 }; 
 
