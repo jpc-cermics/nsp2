@@ -308,7 +308,7 @@ NspGMarkupNode  *GetGMarkupNode(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-static NspGMarkupNode *gmarkup_node_create_void(char *name,NspTypeBase *type)
+static NspGMarkupNode *gmarkup_node_create_void(const char *name,NspTypeBase *type)
 {
   NspGMarkupNode *H  = (type == NULL) ? new_gmarkup_node() : type->new();
   if ( H ==  NULLMARKUPNODE)
@@ -325,7 +325,7 @@ static NspGMarkupNode *gmarkup_node_create_void(char *name,NspTypeBase *type)
   return H;
 }
 
-NspGMarkupNode *gmarkup_node_create(char *name,NspTypeBase *type)
+NspGMarkupNode *gmarkup_node_create(const char *name,NspTypeBase *type)
 {
   NspGMarkupNode *H  = gmarkup_node_create_void(name,type);
   if ( H ==  NULLMARKUPNODE) return NULLMARKUPNODE;
@@ -426,7 +426,7 @@ static int int_gmarkup_node_meth_get_opname(NspGMarkupNode *self, Stack stack, i
 */
 
 static NspMethods gmarkup_node_methods[] = {
-  {"get_name",(nsp_method *) int_gmarkup_node_meth_get_name},
+  {"get_node_name",(nsp_method *) int_gmarkup_node_meth_get_name},
   { NULL, NULL}
 };
 
@@ -527,6 +527,7 @@ typedef struct _GMarkupDomContext GMarkupDomContext;
 
 struct _GMarkupDomContext
 {
+  const gchar *node_name;
   NspGMarkupNode *root;
   NspGMarkupNode *current_root;
   NspGMarkupNode *current;
@@ -541,8 +542,9 @@ static void xml_start_element (GMarkupParseContext *context, const gchar *elemen
   const gchar **atr;
   GMarkupDomContext *dom_context = user_data;
   NspGMarkupNode *node = NULL;
+  const char *name= ( dom_context->root == NULL) ? NVOID: "node";
 
-  if ((node = gmarkup_node_create("node",NULL)) == NULL) return ; 
+  if ((node = gmarkup_node_create(name,NULL)) == NULL) return ; 
   if ((node->name =nsp_string_copy(element_name)) == (nsp_string) 0) return ;
   node->gm_father = dom_context->current_root;
   node->children= nsp_list_create("ch");
@@ -596,18 +598,21 @@ static void xml_text (GMarkupParseContext *context, const gchar *text,
 /**
  * g_markup_dom_new:
  * @file_name: name of a file to parse contents from.
+ * @node_name: name of node to be searched, or %NULL.
  * @error: return location for a #GError, or %NULL.
  *
- * Create a dom tree of @filename content.
+ * Create a dom tree of @filename content. If @node_name is 
+ * givent then a node is returned with all ocurrences of 
+ * @node_name sub-trees as children. 
  *
  * Return value: a new #NspGMarkupNode
  **/
 
-NspGMarkupNode *g_markup_dom_new (const gchar *filename, GError **error)
+NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, GError **error)
 {
   GMarkupParseContext *markup_parse_context = NULL;
-  GMarkupDomContext context = {NULL, NULL, NULL};
-
+  GMarkupDomContext context = {node_name,NULL, NULL, NULL};
+  
   g_return_val_if_fail (filename != NULL, context.root);
 
   {
@@ -621,6 +626,16 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename, GError **error)
     markup_parse_context = g_markup_parse_context_new (&markup_parser, 0,
                                                        &context, NULL);
   }
+  
+  if ( node_name != NULL)
+    {
+      NspGMarkupNode *node = NULL;
+      if ((node = gmarkup_node_create(NVOID,NULL)) == NULL) return NULL; 
+      if ((node->name =nsp_string_copy("request")) == (nsp_string) 0) return NULL ;
+      node->children= nsp_list_create("ch");
+      context.root = node;
+    }
+  
   {
     gchar *text = NULL;
     gsize length = -1;
@@ -637,17 +652,31 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename, GError **error)
 }
 
 int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
-
 {
-  char *str;
+  char *str,*node_name=NULL;
   NspGMarkupNode *node;
-  CheckStdRhs(1,1);
+  CheckStdRhs(1,2);
   if ((str=GetString(stack,1))== NULL) return RET_BUG;
-  if ((node = g_markup_dom_new (str, NULL))== NULL) return RET_BUG;
+  if ( rhs == 2 )
+    if ((node_name=GetString(stack,2))== NULL) return RET_BUG;
+  if ((node = g_markup_dom_new (str,node_name, NULL))== NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(node));
   return 1;
 } 
 
+int int_gmarkup_escape_text(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  gchar *res;
+  CheckStdRhs(1,1);
+  if ((str=GetString(stack,1))== NULL) return RET_BUG;
+  if ((res=g_markup_escape_text(str,strlen(str))) == NULL) return RET_BUG;
+  if ( nsp_move_string(stack,1,res,-1) == FAIL) return RET_BUG;
+  return 1;
+} 
+
+gchar*      g_markup_escape_text            (const gchar *text,
+                                             gssize length);
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -655,6 +684,7 @@ int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab gmarkup_node_func[]={
   { "gmarkup", int_gmarkup},
+  { "gmarkup_escape_text", int_gmarkup_escape_text},
   { NULL, NULL}
 };
 

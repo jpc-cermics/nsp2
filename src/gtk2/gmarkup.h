@@ -63,7 +63,7 @@ NspGMarkupNode *new_gmarkup_node();
 
 #define NULLMARKUPNODE (NspGMarkupNode*) 0
 
-extern NspGMarkupNode *gmarkup_node_create(char *name,NspTypeBase *type);
+extern NspGMarkupNode *gmarkup_node_create(const char *name,NspTypeBase *type);
 
 /* from GMarkupNodeObj.c */
 
@@ -91,6 +91,6 @@ static int nsp_gmarkup_node_xdr_save(XDR  *xdrs, NspGMarkupNode *M);
 static NspGMarkupNode *nsp_gmarkup_node_xdr_load(XDR *xdrs);
 static AttrTab gmarkup_node_attrs[];
 static NspMethods *gmarkup_node_get_methods(void);
-static NspGMarkupNode *gmarkup_node_create_void(char *name,NspTypeBase *type);
+static NspGMarkupNode *gmarkup_node_create_void(const char *name,NspTypeBase *type);
 #endif /* GMarkupNode_Private */
 
