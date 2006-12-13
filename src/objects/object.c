@@ -251,16 +251,27 @@ static char *object_type_short_string(void)
  **/
 
 static const char named_void[]="";
+#ifdef USE_CHUNKS 
+static GStringChunk *obj_names=NULL;
+#endif 
 
 static const char *set_name(NspObject *ob,const char *name)
 {
   const char *name1 = named_void;
+#ifdef USE_CHUNKS 
+  if ( name[0] !='\0' ) 
+    {
+      if (( name1 =g_string_chunk_insert_const(obj_names,name)) == NULLSTRING)
+	return NULLSTRING;
+    }
+#else 
   if ( name[0] !='\0' ) 
     {
       if (( name1 =new_nsp_string(name)) == NULLSTRING)
 	return NULLSTRING;
     }
   if (ob->name != NULL && ob->name != named_void) FREE(ob->name) ;
+#endif 
   return ob->name = name1;
 }
 
@@ -282,7 +293,6 @@ const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
   const char *name1 = named_void;
 #ifdef USE_CHUNKS 
   static int init=0;
-  static GStringChunk *obj_names;
   if ( init == 0 )
     {
       obj_names = g_string_chunk_new(1024);
