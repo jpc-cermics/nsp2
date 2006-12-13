@@ -1945,3 +1945,210 @@ static void Arg_name_to_local_name(PList L,NspBHash *H)
     }
 }
 
+
+/* Search a symbol in a plist 
+ *
+ */
+
+static void _plist_name(PList List,const char *name,int *res) ;
+
+
+void plist_name_search(PList List,const char *name,int *res) 
+{
+  PList L=List,L1;
+  const char *s;
+  int j;
+  List = List->next;
+  if ( L->type > 0 )
+    {
+      /* operators **/
+      switch ( L->arity ) 
+	{
+	case 0:
+	  break;
+	case 1:
+	  switch ( L->type ) 
+	    {
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
+	      _plist_name(List,name,res);
+	      break;
+	    case QUOTE_OP : 
+	      _plist_name(List,name,res);
+	      break;
+	    case TILDE_OP : 
+	      _plist_name(List,name,res);
+	      break;
+	    case RETURN_OP : 
+	      _plist_name(List,name,res);
+	      break;
+	    default:
+	      _plist_name(List,name,res);
+	    }
+	  break;
+	case 2:
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  break;
+	default :
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      _plist_name(List,name,res);
+	      List = List->next;
+	    }
+	  break;
+	}
+    }
+  else 
+    {
+      switch ( L->type ) 
+	{
+	case EQUAL_OP:
+	case OPT:
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  break;
+	case MLHS  :
+	case ARGS :
+	case CELLARGS :
+	case METARGS :
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      _plist_name(List,name,res);
+	      List = List->next;
+	    }
+	  break;
+	case DOTARGS :
+	  _plist_name(List,name,res);
+	  break;
+	case CALLEVAL:
+	case LISTEVAL :
+	case FEVAL :
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      _plist_name(List,name,res);
+	      List = List->next;
+	    }
+	  break;
+	case PLIST :
+	  if (L->next == NULLPLIST )
+	    _plist_name(L,name,res);/* XXXXXXX */
+	  break;
+	case COMMENT :
+	case NAME :
+	case OPNAME :
+	case NUMBER:
+	case STRING:
+	  _plist_name(L,name,res);
+	  break;
+	case OBJECT :
+	  break;
+	case EMPTYMAT:
+	  break;
+	case EMPTYCELL:
+	  break;
+	case P_MATRIX :
+	case P_CELL :
+	  _plist_name(List,name,res);
+	  break;
+	case ROWCONCAT:
+	case COLCONCAT:
+	case DIAGCONCAT:
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  break;
+	case CELLROWCONCAT:
+	case CELLCOLCONCAT:
+	case CELLDIAGCONCAT:
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _plist_name(List,name,res);
+	      List = List->next;
+	    }
+	  break;
+	case WHILE:
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  break;
+	case FUNCTION:
+	  /* the function prototype (= (ret-args) (feval (args))) 
+	   * here we want to gather (ret-args) but also args 
+	   */
+	  /* this will gather ret-args */
+	  _plist_name(List,name,res);
+	  /* function call prototype */
+	  L1 = ((PList) List->O)->next->next;
+	  /* the function body i.e statements */
+	  _plist_name(List->next,name,res);
+	  break;
+	case FOR:
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  _plist_name(List->next->next,name,res);
+	  break;
+	case IF :
+	  for ( j = 0 ; j < L->arity  ; j += 2 )
+	    {
+	      if ( j == L->arity-1 ) 
+		{
+		  _plist_name(List,name,res);
+		}
+	      else 
+		{ 
+		  _plist_name(List,name,res);
+		  List = List->next ;
+		  _plist_name(List,name,res);
+		  List = List->next ;
+		}
+	    }
+	  break;
+	case TRYCATCH :
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  if ( L->arity == 3 ) 
+	    {
+	      _plist_name(List->next->next,name,res);
+	    }
+	  break;
+	case SELECT :
+	case STATEMENTS :
+	case STATEMENTS1 :
+	case PARENTH :
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _plist_name(List,name,res);
+	      List = List->next;
+	    }
+	  break;
+	case CASE :
+	  _plist_name(List,name,res);
+	  _plist_name(List->next,name,res);
+	  break;
+	case LASTCASE :
+	  _plist_name(List,name,res);
+	  break;
+	default:
+	  s=nsp_astcode_to_name(L->type);
+	}
+    }
+}
+
+
+static void _plist_name(PList List,const char *name,int *res) 
+{
+  if ( List == NULLPLIST ) 
+    {
+      Scierror("Something Strange: nullplist ....\n");
+      return ; /* exit(1); */
+    }
+  switch (List->type) 
+    {
+    case NAME :
+      if ( strcmp(name,(char *) List->O) == 0 ) *res = TRUE;
+      break;
+    case PLIST :
+      plist_name_search((PList) List->O,name,res);
+      break;
+    }
+}
+
