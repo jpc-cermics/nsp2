@@ -211,6 +211,7 @@ void nsp_sndfile_destroy(NspSndFile  *F)
     {
       F->snd->refcount--;
     }
+  nsp_object_destroy_name(NSP_OBJECT(F));
   FREE(F) ;
 }
 

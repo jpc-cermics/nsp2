@@ -206,7 +206,7 @@ static int nsp_premiamodel_neq(NspPremiaModel *A, NspObject *B)
 
 void nsp_premiamodel_destroy(NspPremiaModel *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {

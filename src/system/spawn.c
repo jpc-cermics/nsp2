@@ -181,7 +181,7 @@ static int nsp_spawn_neq(NspSpawn *A, NspObject *B)
 
 void nsp_spawn_destroy(NspSpawn *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {

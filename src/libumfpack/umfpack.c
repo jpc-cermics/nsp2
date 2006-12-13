@@ -220,7 +220,7 @@ static NspUmfpack  *nsp_umfpack_xdr_load(XDR *xdrs)
 
 void nsp_umfpack_destroy(NspUmfpack *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
