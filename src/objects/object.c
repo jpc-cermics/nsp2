@@ -286,6 +286,7 @@ const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
   if ( init == 0 )
     {
       obj_names = g_string_chunk_new(1024);
+      init =1;
     }
   if ( name[0] !='\0' ) 
     {
