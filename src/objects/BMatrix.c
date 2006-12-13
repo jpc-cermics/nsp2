@@ -27,6 +27,7 @@
 #include "nsp/interf.h" /* for ret_endfor */
 #include <nsp/matutil.h> /* icopy iset */
 
+
 static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent);
 
 /**
@@ -35,8 +36,9 @@ static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new boolean matrix filled with %TRUE values, returns %NULLMAT on failure. 
- * Returns a #NspMatrix or %NULLMAT.
+ * Creates a new boolean matrix filled with %TRUE values.
+ * 
+ * Return value: a #NspMatrix or %NULLMAT in case of allocation failure.
  */
   
 NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
@@ -66,6 +68,7 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
   for ( i = 0 ; i < Loc->mn ; i++ )   Loc->B[ i] = TRUE ;
   return(Loc);
 }
+
 /**
  * nsp_bmatrix_clone:
  * @name: matrix name 
@@ -73,8 +76,10 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
- * Returns a #NspMatrix or %NULLMAT.
+ * Creates a new boolean matrix with with unspecified values. @A is not 
+ * used for #NspBMatrix.
+ * 
+ * Return value: a #NspBMatrix or %NULLMAT in case of allocation failure.
  */
 
 NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n, int init)
@@ -88,7 +93,8 @@ NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n, int
  * @A: a #NspBMatrix 
  *
  * copies #NspBMatrix @A and returns the copy or %NULLBMAT.
- * Returns a #NspMatrix or %NULLBMAT.
+ * 
+ * Return value: a #NspMatrix or %NULLBMAT.
  */
 
 NspBMatrix  *nsp_bmatrix_copy(NspBMatrix *A)
@@ -108,7 +114,7 @@ NspBMatrix  *nsp_bmatrix_copy(NspBMatrix *A)
  * 
  * size of matrix elements.
  * 
- * Return value: size of @M elements.
+ * Return value: size of elements of matrix @M. 
  **/
 
 unsigned int  nsp_bmatrix_elt_size(NspMatrix *M)
@@ -130,7 +136,7 @@ unsigned int  nsp_bmatrix_elt_size(NspMatrix *M)
  * and empty matrix when calling this routine ( malloc() is used in that 
  * case ). 
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * Return value: %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 
@@ -167,7 +173,7 @@ int nsp_bmatrix_resize(NspBMatrix *A, int m, int n)
  * nsp_bmatrix_destroy:
  * @BMat: a #NspBMatrix 
  * 
- * free the #NspMatrix @BMat. 
+ * frees the #NspMatrix @BMat. 
  */
 
 void nsp_bmatrix_destroy(NspBMatrix *BMat)
@@ -179,6 +185,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
       FREE(BMat) ;
     };
 }
+
 /**
  * nsp_bmatrix_info:
  * @BMat: a #NspBMatrix
@@ -186,8 +193,11 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  * @name: %NULL or name to be used. 
  * @rec_level: deph level of the print.
  *
- * Display info on the #NspBMatrix @A using the default Sciprintf() function. 
- * @indent is the given indentation for printing.
+ * Displays info on the #NspBMatrix @A using the default Sciprintf() function. 
+ * @indent is the given indentation for printing. If the #NspBMatrix has a name 
+ * then this name is displayed but it can be replaced by the value of the argument 
+ * @name is such an argument is non null. 
+ * 
  */
 
 void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_level)
@@ -212,11 +222,14 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_lev
  * nsp_bmatrix_print:
  * @BMat: a #NspBMatrix
  * @indent: an int 
- * @name: 
+ * @name: %NULL or name to be used.
  * @rec_level:
  *
  * Print the #NspMBatrix @A using the default nsp output function. 
- * @indent is the given indentation for printing.
+ * @indent is the given indentation for printing. If the #NspBMatrix has a name 
+ * then this name is displayed but it can be replaced by the value of the argument 
+ * @name is such an argument is non null. 
+ * 
  */
 
 void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_level)
@@ -754,7 +767,7 @@ NspBMatrix  *nsp_bmatrix_transpose(NspBMatrix *A)
  * 
  * #NspMatrix to #NspBMatrix conversion 
  * 
- * Returns a #NspBMatrix or %NULLBMAT.
+ * Return value: a #NspBMatrix or %NULLBMAT.
  */
 
 NspBMatrix  *nsp_matrix_to_bmatrix(NspMatrix *M)
@@ -778,7 +791,7 @@ NspBMatrix  *nsp_matrix_to_bmatrix(NspMatrix *M)
  * @M: a #NspBMatrix
  * 
  * #NspBMatrix to #NspMatrix conversion 
- * Returns a #NspMatrix or %NULLMAT.
+ * Return value: a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix *nsp_bmatrix_to_matrix(NspBMatrix *M)
@@ -798,7 +811,7 @@ NspMatrix *nsp_bmatrix_to_matrix(NspBMatrix *M)
  * @B: a #NspBMatrix
  *  
  * term to term logical and  A = A & B. If %OK is returned @A is changed. 
- * Returns %OK or %FAIL. 
+ * Return value: %OK or %FAIL. 
  */
 
 int nsp_bmatrix_and(NspBMatrix *A,const  NspBMatrix *B)
@@ -823,7 +836,7 @@ int nsp_bmatrix_and(NspBMatrix *A,const  NspBMatrix *B)
  *  
  * Logical and operator between a boolean matrix @A and a boolean scalar @B. The result 
  * is stored in @A.
- * Returns %OK.
+ * Return value: %OK.
  */
 
 int nsp_bmatrix_scalar_and(NspBMatrix *A,const  NspBMatrix *B)
@@ -843,7 +856,7 @@ int nsp_bmatrix_scalar_and(NspBMatrix *A,const  NspBMatrix *B)
  * @B: a #NspBMatrix
  *  
  * term to term logical or A = A | B. If %OK is returned @A is changed. 
- * Returns %OK or %FAIL. 
+ * Return value: %OK or %FAIL. 
  */
 
 int nsp_bmatrix_or(NspBMatrix *A,const  NspBMatrix *B)
@@ -870,7 +883,7 @@ int nsp_bmatrix_or(NspBMatrix *A,const  NspBMatrix *B)
  *  
  * Logical or operator between a boolean matrix @A and a boolean scalar @B. The result 
  * is stored in @A.
- * Returns %OK.
+ * Return value: %OK.
  */
 
 int nsp_bmatrix_scalar_or(NspBMatrix *A,const  NspBMatrix *B)
@@ -889,7 +902,7 @@ int nsp_bmatrix_scalar_or(NspBMatrix *A,const  NspBMatrix *B)
  * @A: a #NspBMatrix. 
  *  
  * Logical not operator applied on  a boolean matrix @A. 
- * Returns %OK.
+ * Return value: %OK.
  */
 
 
@@ -966,7 +979,7 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
  * If @lhs is equal to two then @Res1 will contian the rows indices and @Res2 
  * will contain the columns indices.
  *
- * Returns %OK or %FAIL. %FAIL is returned in case of malloc() failure.
+ * Return value: %OK or %FAIL. %FAIL is returned in case of malloc() failure.
  */
 
 int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
@@ -1151,7 +1164,7 @@ NspBMatrix  *nsp_bmatrix_compare(const NspBMatrix *A,const  NspBMatrix *B, char 
  * Note that, if @A or @B is a 1x1 matrix its size is promoted to the size of the 
  * other argument when applying @op operator. In all the other cases %FALSE is returned. 
  * 
- * Returns %TRUE or %FALSE.
+ * Return value: %TRUE or %FALSE.
  */ 
 
 int nsp_bmatrix_full_compare(const NspBMatrix *A,const NspBMatrix *B, char *op,int *err)
