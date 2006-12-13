@@ -2470,7 +2470,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	  if ( Lf->arity == -1 ) 
 	    {
 	      if ( FindFunction(name+2,&Int,&Num) == OK) 
-		Lf->arity = (Int << 8 )  + Num;
+		Lf->arity = (Int << 12 )  + Num;
 	      else 
 		{
 		  reorder_stack(stack,0);
@@ -2479,8 +2479,8 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	    }
 	  else 
 	    {
-	      Num = Lf->arity & 0xff;
-	      Int = (Lf->arity & 0xff00 ) >> 8;
+	      Num = Lf->arity & 0xfff;
+	      Int = (Lf->arity & 0xfff000 ) >> 12 ;
 	    }
 	  if (( nret = nsp_interfaces(Int,Num,stack,count,opt,lhs)) < 0)
 	    {
