@@ -358,7 +358,7 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
       C->objs[0]=NULL;
       /* do not copy the first cell element */
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
-      C->obj[0] =  H->table->objs[0]= Obj;
+      C->objs[0] =  H->table->objs[0]= Obj;
 #else 
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
 #endif
