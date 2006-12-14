@@ -74,6 +74,8 @@ extern int nsp_check_simple_mlhs(PList L);
 extern void nsp_init_macro_table(void);
 extern int nsp_enter_macros(const char *dirname,int recursive,int compile);
 extern int nsp_delete_macros(const char *Dir);
+extern const char *nsp_get_libdir(int num);
+
 
 /* Parse.c */
 

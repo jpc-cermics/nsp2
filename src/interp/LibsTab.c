@@ -61,7 +61,25 @@ static int   Eqid (const char *x,const char *y);
 void nsp_init_macro_table(void);
 
 static NspSMatrix *LibDirs = NULLSMAT;
+
+/**
+ * nsp_get_libdir:
+ * @num: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 static NspHash* macros_cache = NULLHASH;
+
+const char *nsp_get_libdir(int num)
+{
+  if ( LibDirs != NULLSMAT && num >=0 && num < LibDirs->mn -1 )
+    return LibDirs->S[num];
+  else 
+    return NULL;
+}
 
 
 /**
@@ -235,6 +253,7 @@ NspObject *nsp_find_macro(char *str)
 	  if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
 	    {
 	      found = TRUE;
+	      ((NspPList *) Ob1)->dir = data.Int;
 	      Ob = Ob1;
 	    }
 	}
