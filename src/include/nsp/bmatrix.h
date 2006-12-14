@@ -16,14 +16,14 @@ typedef int Boolean;
  * NspBMatrix inherits from NspObject 
  */
 
-typedef struct _NspBmatrix NspBMatrix;
+typedef struct _NspBMatrix NspBMatrix;
 
 typedef struct _NspTypeBMatrix { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
 } NspTypeBMatrix;
 
-struct _NspBmatrix {
+struct _NspBMatrix {
   /*< private >*/
   NspObject father; 
   NspTypeBMatrix *type; 
