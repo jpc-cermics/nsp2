@@ -48,9 +48,12 @@ NspPList *NspPListCreate(char *name, PList L,char *filename)
       if ((P_L->file_name =new_nsp_string(filename))== NULLSTRING) return NULLP_PLIST;
     }
   else 
-    P_L->file_name = NULL;
+    {
+      P_L->file_name = NULL;
+    }
   NSP_OBJECT(P_L)->ret_pos = -1 ;
   P_L->D = L;
+  P_L->dir = -1;
   return(P_L);
 }
 
@@ -79,7 +82,7 @@ void NspPListDestroy(NspPList *P_L)
     {
       nsp_object_destroy_name(NSP_OBJECT(P_L));
       FREE(P_L->file_name) ;
- nsp_plist_destroy(&P_L->D);
+      nsp_plist_destroy(&P_L->D);
       FREE(P_L) ;
     };
 }
@@ -103,11 +106,16 @@ void NspPListPrInt(NspPList *P_L)
  * NspPListInfo : display Info on NspPList P_L 
  */
 
+/* XXXX */
+extern const char *nsp_get_libdir(int num);
+
 void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
-  if ( P_L->file_name != NULL) 
-    Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,P_L->file_name);
+  const char *dir= nsp_get_libdir(P_L->dir),*dir1;
+  dir1 = (dir != NULL) ? dir : P_L->file_name;
+  if ( dir1 != NULL) 
+    Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,dir1);
   else 
     Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
 }
@@ -119,19 +127,21 @@ void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
 void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  const char *dir= nsp_get_libdir(P_L->dir),*dir1;
+  dir1 = (dir != NULL) ? dir : P_L->file_name;
   if (user_pref.pr_as_read_syntax)
     {
- nsp_plist_pretty_print(P_L->D,indent+2);
+      nsp_plist_pretty_print(P_L->D,indent+2);
     }
   else
     {
-      if ( P_L->file_name != NULL) 
-	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,P_L->file_name);
+      if ( dir1 != NULL )
+	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,dir1);
       else 
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;
     }
- nsp_plist_pretty_print(P_L->D,indent+2);
+  nsp_plist_pretty_print(P_L->D,indent+2);
   Sciprintf("\n");
 }
 
