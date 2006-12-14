@@ -1,7 +1,7 @@
 M=premiapb_create()
 M.set_model[0]
 M.set_option[0,0]
-M.set_method[45];
+M.set_method[0];
 
 [a,b]=M.get_option_vars[];
 [a,b]=M.get_model_vars[];

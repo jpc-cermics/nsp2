@@ -498,7 +498,7 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   Model *poo;
   Option **loc;
   NspSMatrix *S;
-  int nf=0,fsize=0,i,m,n=-1,nmodels=0,npm=0;
+  int nf=0,fsize=0,i,m,n=-1,nmodels=0,npm=0,npm_ok=0;
   CheckStdRhs(3,3);
   /* the family */
   if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
@@ -520,13 +520,24 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   InitVar();
   loc[opt]->Init(loc[opt]);
   if ( SelectPricing(0,poo,loc[opt],pricings,&res) == WRONG) goto empty;
+  /* walk on the selected pricing and check correct methods */
   while ( res->Methods[npm] != NULL) npm++;
-  if ((S=nsp_smatrix_create_with_length(NVOID,npm,1,-1))== NULLSMAT) 
-    return RET_BUG;
+  npm_ok=0;
   for ( i=0 ; i < npm ; i++) 
     {
-      if ((S->S[ i] =nsp_string_copy(res->Methods[i]->Name)) == (nsp_string) 0) 
-	return RET_BUG;
+      if ( res->Methods[i]->CheckOpt(loc[opt],poo)== OK) npm_ok++;
+    }
+  if ((S=nsp_smatrix_create_with_length(NVOID,npm_ok,1,-1))== NULLSMAT) 
+    return RET_BUG;
+  npm_ok=0;
+  for ( i=0 ; i < npm ; i++) 
+    {
+      if ( res->Methods[i]->CheckOpt(loc[opt],poo)== OK) 
+	{
+	  if ((S->S[npm_ok] =nsp_string_copy(res->Methods[i]->Name)) == (nsp_string) 0) 
+	    return RET_BUG;
+	  npm_ok++;
+	}
     }
   MoveObj(stack,1,(NspObject  *) S);
   return 1;
