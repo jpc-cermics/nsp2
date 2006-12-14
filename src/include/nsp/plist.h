@@ -59,6 +59,7 @@ struct _NspPlist {
   /*< public >*/
   char *file_name;  /* NULL or points to the function source file-name */
   PList D;          /* points to the parsed expression */
+  int dir;          /* indice in directory array or -1 */
 };
 
 extern int nsp_type_plist_id;
