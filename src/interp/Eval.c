@@ -869,13 +869,13 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	   * a symbol in frames 
 	   */
 	  /* Extra warning  */
-	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
+	  /* 	  if ( nsp_find_function((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
 	  /* 	    { */
 	  /* 	      Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
 	  /* 	    } */
 	  return 1;
 	}
-      else if ( FindFunction((char *) L->O,&Int,&Num) == OK) 
+      else if ( nsp_find_function((char *) L->O,&Int,&Num) == OK) 
 	{
 	  /* check if name is a function **/
 	  if ((stack->val->S[first]= (NspObject *) function_create(NVOID,(char *) L->O,Int,Num,-1,NULL))==  NULLOBJ) 
@@ -2469,7 +2469,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	  NspFname(stack) = name ;
 	  if ( Lf->arity == -1 ) 
 	    {
-	      if ( FindFunction(name+2,&Int,&Num) == OK) 
+	      if ( nsp_find_function(name+2,&Int,&Num) == OK) 
 		Lf->arity = (Int << 12 )  + Num;
 	      else 
 		{
