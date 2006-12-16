@@ -15,9 +15,7 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- */
-
-/************************************************************
+ * 
  * addinter related functions : used to dynamically link functions 
  * from an interface in Scilab function table. 
  * An interface is characterized by two functions:
@@ -27,7 +25,7 @@
  *   void AddInter(files,iname,enames,err)
  *   void RemoveInterf(Nshared)
  *   void ShowInterf()
- ************************************************************/
+ */
 
 #include <string.h> 
 #include <stdio.h>
@@ -144,7 +142,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
       function *f;
       info(k,&fname,&f);
       if ( fname == NULL) break;
-      if ( EnterFunction(fname,ninterf,k) == FAIL)
+      if ( nsp_enter_function(fname,ninterf,k) == FAIL)
 	{
 	  printf("Error: Table for nsp functions is too small \n");
 	}	  
@@ -204,7 +202,7 @@ void RemoveInterf(int Nshared)
 	{
 	  DynInterf[i].ok = 0;
 	  DynInterf[i].func = BlankInterface;
-	  DeleteFunctionS(i +  DYN_INTERF_START );
+	  nsp_delete_interface_functions(i +  DYN_INTERF_START );
 	  break;
 	}
     }

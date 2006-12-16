@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -264,7 +264,7 @@ int nsp_frame_replace_object( NspObject *A,int local_id)
     {
       /* 
        * int Int,Num;
-       * if ( FindFunction(nsp_object_get_name(A),&Int,&Num) == OK 
+       * if ( nsp_find_function(nsp_object_get_name(A),&Int,&Num) == OK 
        *	   || nsp_find_macro(nsp_object_get_name(A)) != NULLOBJ)
        *	{
        *	  Sciprintf("Warning: variable %s will hide a primitive name\n",
@@ -306,7 +306,7 @@ int nsp_global_frame_replace_object(NspObject *A)
   int Int,Num;
   if (  A == NULLOBJ ) return(OK);
   if (  GlobalFrame == NULL ) return(FAIL);
-  if ( FindFunction(nsp_object_get_name(A),&Int,&Num) == OK 
+  if ( nsp_find_function(nsp_object_get_name(A),&Int,&Num) == OK 
        || nsp_find_macro(nsp_object_get_name(A)) != NULLOBJ)
     {
       Sciprintf("Warning: variable %s will hide a function name\n",

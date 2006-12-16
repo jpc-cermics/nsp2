@@ -148,7 +148,7 @@ static int init_func_tab1(AcceleratedTab *tab)
 	  while ( *str != '\0' ) *name++ = *str++;
 	}
       *name = '\0';
-      if ( FindFunction(op_typed, &Int, &Num) == OK )
+      if ( nsp_find_function(op_typed, &Int, &Num) == OK )
 	(*(Interfaces[Int].info))(Num, &nothing, &(tab->func[type->id-1]));
       else
 	Sciprintf("Warning: %s not found (building the accelerated table)\n", op_typed);

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * See also the Copyright below for hash table routines 
  *
@@ -18,9 +18,7 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- */
-
-/************************************************************
+ * 
  * Hash Table for storing scilab function informations 
  * The data associated to a function is the couple (Int,Num) 
  *     where Int is an interface number and Num the id of 
@@ -37,23 +35,23 @@
  *                          by traversal of the whole table.
  * 
  * MAXTAB must be set to 2*(the number of primitives)
- ************************************************************/
+ */
 
 #include <string.h>
 #include <stdio.h>
 
 #include "nsp/machine.h"
 #include "nsp/math.h" 
-#include "nsp/plisttoken.h" /** for name_maxl **/
+#include "nsp/plisttoken.h" /* for name_maxl */
 #include "FunTab.h"
 #include "callfunc.h" 
 
-/********************************************
+/*
  * MAXTAB : maximum number of entries in the htable 
  * in fact  myhcreate use a prime > MAXTAB
  * WARNING : MAXTAB must be chosen > 2* the number of 
  * expected entries for good efficiency of the hash code 
- ********************************************/
+ */
 
 #define MAXTAB 4096
 
@@ -66,132 +64,80 @@ typedef struct fdata {
   int Num;
 } Fdata;
 
-static int   scifunc_hcreate (unsigned int);
-/* static void	 scifunc_hdestroy(); */
-static int   scifunc_hsearch (const char *str,Fdata *d,ACTION);
-static int   Eqid (const char *x,const char *y);
-void  InitFunctionTable  (void);
+static int   nsp_hash_func_hcreate (unsigned int);
+static int   nsp_hash_func_hsearch (const char *str,Fdata *d,ACTION);
 
-#ifdef TEST /********************* test part ***/
+/**
+ * nsp_enter_function:
+ * @str: name to be searched 
+ * @Int: interface number 
+ * @Num: function number in interface 
+ * 
+ * Enter function in Hash Table or change data if function 
+ * was already in the table
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
-void test1()
-{
-  int j=0,Int,Num;
-  printf("Testing \n");
-  printf("===================== \n");
-  while ( SciFuncs[j].name != (char *) 0 && j < 10 )
-    {
-      if ( FindFunction(SciFuncs[j].name,&Int,&Num) == FAIL )
-	printf(" %s not found \n",SciFuncs[j].name);
-      else
-	printf(" %s found [%d,%d] \n",SciFuncs[j].name,Int,Num);
-      j++;
-    }
-}
-
-int test_hash()
-{
-  int j=0,k;
-  InitFunctionTable();
-  test1();
-  for ( k = 1; k < 2 ; k++) 
-    {
-      printf("performing delete for the first five\n");
-      printf("===================== \n");
-      j=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 5 )
-	{
-	  DeleteFunction(SciFuncs[j].name);
-	  j++;
-	}
-      test1();
-      printf("Restore functions\n");
-      printf("===================== \n");
-      j=0;k=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
-	{
-	  EnterFunction(SciFuncs[j].name,SciFuncs[j].Int,k);k++;
-	  j++;
-	}
-      test1();
-      printf("entering functions with new data\n");
-      printf("===================== \n");
-      j=0;k=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
-	{
-	  EnterFunction(SciFuncs[j].name,-23,k);k++;
-	  j++;
-	}
-      test1();
-      printf("Remove interface\n");
-      printf("===================== \n");
-      DeleteFunctionS(-23);
-      test1();
-    }
-  return(0);
-}
-
-void ShowTable();
-
-int main()
-{
-  test_hash();
-  ShowTable();
-  return 0;
-}
-
-
-#endif  /********************* end of test part ***/
-
-/***************************************
- * Enter function in Hash Table   
- * or change data if function was already in the table
- ***************************************/
-
-int EnterFunction(char *str, int Int, int Num)
+int nsp_enter_function(const char *str, int Int, int Num)
 {
   Fdata data;
   data.Int = Int ;
   data.Num = Num ;
-  return( scifunc_hsearch(str,&data,ENTER));
+  return( nsp_hash_func_hsearch(str,&data,ENTER));
 }
 
-/***************************************
- * Remove function from Hash Table 
- ***************************************/
+/**
+ * nsp_delete_function:
+ * @str: 
+ * 
+ * remove function name @str from function table.
+ **/
 
-void DeleteFunction(char *str)
+void nsp_delete_function(const char *str)
 {
   Fdata data;
-  scifunc_hsearch(str,&data,REMOVE);
+  nsp_hash_func_hsearch(str,&data,REMOVE);
 }
 
-/***************************************
- * Search function in Hast table given key str
- ***************************************/
 
-int FindFunction(const char *str, int *Int, int *Num)
+/**
+ * nsp_find_function:
+ * @str: 
+ * @Int: 
+ * @Num: 
+ * 
+ * searches function  named @str in function table. 
+ * In case of success %OK is returned and the function id is returned 
+ * in the pair @Int, @Num.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_find_function(const char *str, int *Int, int *Num)
 {
   int r;
   Fdata data;
-  r= scifunc_hsearch(str,&data,FIND);
+  r= nsp_hash_func_hsearch(str,&data,FIND);
   *Int = data.Int;
   *Num = data.Num;
   return r;
 }
 
-/***************************************
- * Initialize Hash Table on first call 
- * or reset htable to its initial state on 
- ***************************************/
+/**
+ * nsp_init_function_table:
+ * @void: 
+ * 
+ * Initialize the function table.
+ **/
 
-void  InitFunctionTable(void)
+void nsp_init_function_table(void)
 {
   static int firstentry = 0;
   int i=0,k=0;
   if ( firstentry == 1 ) return ;
   /** first call **/
-  if ( scifunc_hcreate(MAXTAB) == 0 ) 
+  if ( nsp_hash_func_hcreate(MAXTAB) == 0 ) 
     {
       printf("Fatal Error: Can't create table for scilab functions (not enough memory)\n");
       exit(1);
@@ -209,7 +155,7 @@ void  InitFunctionTable(void)
 	  function *f;
 	  (*info)(k,&fname,&f);
 	  if ( fname == NULL) break;
-	  if ( EnterFunction(fname,i,k) == FAIL)
+	  if ( nsp_enter_function(fname,i,k) == FAIL)
 	    {
 	      printf("Fatal Error : Table for scilab functions is too small \n");
 	      exit(1);
@@ -221,11 +167,11 @@ void  InitFunctionTable(void)
   firstentry = 1;
 }
 
-/************************************************
+/*
  * Hashtable code : 
  * slightly modified to add DELETE 
  * Jean-Philippe Chancelier Cermics/enpc
- ************************************************/
+ */
 
 /*-
  * Copyright (c) 1990, 1993
@@ -274,30 +220,29 @@ typedef struct entry {
 } ENTRY;
 
 /* Copyright (C) 1993 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@ira.uka.de>
-
-The GNU C Library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version.
-
-The GNU C Library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU Library General Public
-License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-Cambridge, MA 02139, USA.  */
-
+ *   This file is part of the GNU C Library.
+ *   Contributed by Ulrich Drepper <drepper@ira.uka.de>
+ *
+ * The GNU C Library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * The GNU C Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with the GNU C Library; see the file COPYING.LIB.  If
+ * not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+ * Cambridge, MA 02139, USA.  
+ */
 
 /*
  * [Aho,Sethi,Ullman] Compilers: Principles, Techniques and Tools, 1986
  * [Knuth]            The Art of Computer Programming, part 3 (6.4)
  */
-
 
 /*
  * We need a local static variable which contains the pointer to the
@@ -344,7 +289,7 @@ isprime(unsigned int number)
  * becomes zero.
  */
 
-static int scifunc_hcreate(unsigned int nel)
+static int nsp_hash_func_hcreate(unsigned int nel)
 {
     /* There is still another table active. Return with error. */
     if (htable != NULL)
@@ -378,7 +323,7 @@ static int scifunc_hcreate(unsigned int nel)
 /* Unused : cleaned at scilab exit 
 
 static void
-scifunc_hdestroy()
+nsp_hash_func_hdestroy()
 {
     / * free used memory * /
     free(htable);
@@ -404,9 +349,15 @@ int FindFunctionB(char *key, int Int, int Num)
   return(0);
 }
 
-/** print the whole table : used for testing **/
+/**
+ * ShowTable:
+ * @void: 
+ * 
+ * print the function table.
+ * 
+ **/
 
-void ShowTable(void)
+void nsp_print_function_table(void)
 {
   unsigned int i;
   printf("Whole Table\n");
@@ -416,12 +367,16 @@ void ShowTable(void)
 	     htable[i].entry.data.Int,htable[i].entry.data.Num);
 }
 
-/*
- * Delete entries associated to interface number Int : by walking through 
- *  the whole hash table 
- */
+/**
+ * nsp_delete_interface_functions:
+ * @Int: interface number.
+ * 
+ * deletes entries associated to interface number @Int by walking through 
+ * the whole hash table. 
+ * 
+ **/
 
-void DeleteFunctionS(int Int)
+void nsp_delete_interface_functions(int Int)
 {
   unsigned int i;
   for ( i = 0 ; i <= hsize ; i++ ) 
@@ -451,8 +406,9 @@ void DeleteFunctionS(int Int)
  * unnecessary expensive calls of strcmp.
  ******************************************************************************/
 
+#define  Eqid(x,y) strncmp(x,y,NAME_MAXL) 
 
-static int scifunc_hsearch(const char *key, Fdata *data, ACTION action)
+static int nsp_hash_func_hsearch(const char *key, Fdata *data, ACTION action)
 {
   register unsigned hval;
   register unsigned hval2;
@@ -570,8 +526,74 @@ static int scifunc_hsearch(const char *key, Fdata *data, ACTION action)
 }
 
 
-static int Eqid(const char *x,const char *y)
+#ifdef TEST 
+/* tests */
+
+void test1()
 {
-  return strncmp(x,y,NAME_MAXL);
+  int j=0,Int,Num;
+  printf("Testing \n");
+  printf("===================== \n");
+  while ( SciFuncs[j].name != (char *) 0 && j < 10 )
+    {
+      if ( FindFunction(SciFuncs[j].name,&Int,&Num) == FAIL )
+	printf(" %s not found \n",SciFuncs[j].name);
+      else
+	printf(" %s found [%d,%d] \n",SciFuncs[j].name,Int,Num);
+      j++;
+    }
 }
 
+int test_hash()
+{
+  int j=0,k;
+  InitFunctionTable();
+  test1();
+  for ( k = 1; k < 2 ; k++) 
+    {
+      printf("performing delete for the first five\n");
+      printf("===================== \n");
+      j=0;
+      while ( SciFuncs[j].name != (char *) 0 && j < 5 )
+	{
+	  DeleteFunction(SciFuncs[j].name);
+	  j++;
+	}
+      test1();
+      printf("Restore functions\n");
+      printf("===================== \n");
+      j=0;k=0;
+      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
+	{
+	  nsp_enter_function(SciFuncs[j].name,SciFuncs[j].Int,k);k++;
+	  j++;
+	}
+      test1();
+      printf("entering functions with new data\n");
+      printf("===================== \n");
+      j=0;k=0;
+      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
+	{
+	  nsp_enter_function(SciFuncs[j].name,-23,k);k++;
+	  j++;
+	}
+      test1();
+      printf("Remove interface\n");
+      printf("===================== \n");
+      DeleteFunctionS(-23);
+      test1();
+    }
+  return(0);
+}
+
+void ShowTable();
+
+int main()
+{
+  test_hash();
+  ShowTable();
+  return 0;
+}
+
+/* end of test part */
+#endif 
