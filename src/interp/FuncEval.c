@@ -40,11 +40,12 @@
 extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
 extern NspObject *nsp_find_macro(const char *str);
 
-static void FuncEvalErrorMess(const char *str, int rhs,int opt,int msuffix, char *name,char *name1);
+static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
 static int frame_insert_var(int rhs,int opt,int lhs);
 static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs);
 static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs);
+static void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int rhs, char *name,char **tag);
 
 /*
  * FIXME: 
@@ -96,11 +97,12 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
  * 
  * Return value: #RET_BUG or the number of returned arguments
  **/
+
 int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int first, int rhs, int opt, int lhs)
 {
   NspObject *M;
+  char *tag[]={NULL,NULL,NULL};
   char name[NAME_MAXL];
-  char name1[NAME_MAXL];
   int Int,Num;
   stack.first = first;
   if ( O != NULLOBJ && IsNspPList(O)) 
@@ -111,7 +113,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
        */
       NspPList *Pl= NspPListObj(O);
       /* Calling a function given by Pl */
-      if (debug) Sciprintf("==>%s exists\n",str);
+      /* if (debug) Sciprintf("==>%s exists\n",str); */
       /* nsp coded function evaluation */
       return nsp_eval_macro(NSP_OBJECT(Pl),stack,first,rhs,opt,lhs);
     }
@@ -119,55 +121,28 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
     {
       /* Build a new name according to arguments type not using optional arguments 
        * we first build the most specialized name (i.e based on Min(rhs-op,2)) 
+       * then loop up to less specialized 
        */ 
-      int nb_suffix = Min(msuffix, rhs-opt);
-
-      nsp_build_funcname(str,&stack,first,nb_suffix,name);
-      if (debug) Sciprintf("[test function Evaluation]--> search  [%s] \n",name);
-      if ( FindFunction(name,&Int,&Num) == OK) 
+      int nb_suffix = Min(msuffix, rhs-opt),sm=0;
+      nsp_build_funcname_tag(str,&stack,first,nb_suffix,name,tag);
+      while (1) 
 	{
-	  /* Call a primitive with name depending on argument types */
-	  NspFname(stack) = name ;
-	  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
-	}
-      if ( (M=nsp_find_macro(name)) != NULLOBJ) 
-	{
-	  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
-	}
-      
-      if ( nb_suffix >= 2 ) 
-	{
-	  /* just try with one argument */
-	  nsp_build_funcname(str,&stack,first,1,name1);
-	  if ( FindFunction(name1,&Int,&Num) == OK ) 
+	  if ( nsp_find_function(name,&Int,&Num) == OK) 
 	    {
-	      /* Call a primitive with name depending on first argument type */
-	      NspFname(stack) = name1 ;
+	      /* Call a primitive with name depending on argument types */
+	      NspFname(stack) = name ;
 	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 	    }
-	  if ( (M=nsp_find_macro(name1)) != NULLOBJ) 
+	  if ((M=nsp_find_macro(name)) != NULLOBJ) 
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
+	  if ( tag[sm] == NULL) break;
+	  /* truncate name to previous suffix */
+	  tag[sm++][0]='\0';
 	}
-      
-      if ( nb_suffix >= 1 )
-	{
-	  /* try with just str  **/
-	  if ( FindFunction(str,&Int,&Num) == OK ) 
-	    {
-	      NspFname(stack) = str ;
-	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
-	    }
-	  if ( (M=nsp_find_macro(str)) != NULLOBJ) 
-	    {
-	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
-	    }
-	}
-      /* take care that name1 is to be used only 
-       * for ( rhs -opt >= 2 ) 
-       */
-      FuncEvalErrorMess(str,rhs,opt,nb_suffix,name,name1);
+      /* A revoir XXXXX */
+      FuncEvalErrorMess(str,&stack,first,nb_suffix);
       /*clean the stack */
       reorder_stack(stack,0);
       return RET_BUG;
@@ -456,6 +431,42 @@ void nsp_build_funcname(const char *str, Stack *stack, int first, int rhs, char 
     }
 }
 
+void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int rhs, char *name,char **tag)
+{
+  char *s1;
+  rhs = Min(rhs,2);
+  switch (rhs) 
+    {
+    case 2: 
+      /*Build a name which depends on argument type **/
+      /*Faster than a sprintf **/
+      while ( *str != '\0' ) *name++ = *str++ ;
+      tag[1]=name;
+      *name++ = '_';
+      s1=nsp_object_type_short(stack->val->S[first]);
+      while ( *s1 != '\0')  *name++ = *s1++ ;
+      tag[0]=name;
+      *name++ = '_';
+      s1=nsp_object_type_short(stack->val->S[first+1]);
+      while ( *s1 != 0) *name++ = *s1++;
+      *name = '\0';
+      break;
+    case 1:
+      /*Build a name which depends on argument type **/
+      while ( *str != '\0' ) *name++ = *str++ ;
+      tag[0]=name;
+      *name++ = '_';
+      s1=nsp_object_type_short(stack->val->S[first]);
+      while ( *s1 != '\0')  *name++ = *s1++ ;
+      *name = '\0';
+      break;
+    default: 
+      while ( *str != '\0' ) *name++ = *str++ ;
+      *name = '\0';
+      break;
+    }
+}
+
 /**
  * nsp_build_funcnameij:
  * @str: 
@@ -519,7 +530,7 @@ void nsp_build_funcname_i(const char *str, Stack *stack, int first, int i, char 
  * 
  **/
 
-static void FuncEvalErrorMess(const char *str, int rhs,int opt,int msuffix, char *name,char *name1)
+static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix)
 {
   switch (msuffix)
     {
@@ -527,12 +538,16 @@ static void FuncEvalErrorMess(const char *str, int rhs,int opt,int msuffix, char
       Scierror("Error:\tUnknown function %s \n",str);
       break;
     case 1:
-      Scierror("Error:\tUnknown function %s or %s\n",
-	       name,str);
+      Scierror("Error:\tUnknown function %s_%s or %s\n",
+	       str,nsp_object_type_short(stack->val->S[first]),
+	       str);
       break;
     default: 
-      Scierror("Error:\tUnknown functions %s, %s or %s\n",
-	       name,name1,str);
+      Scierror("Error:\tUnknown functions %s_%s_%s, %s_%s or %s\n",
+	       str,nsp_object_type_short(stack->val->S[first]),
+	       nsp_object_type_short(stack->val->S[first+1]),
+	       str,nsp_object_type_short(stack->val->S[first]),
+	       str);
       break;
     }
 }

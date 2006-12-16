@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -57,21 +57,26 @@ typedef struct fdata {
 static int   myhcreate (unsigned int);
 /* static void	 myhdestroy(); */
 static int   myhsearch (char *str,Mdata *d,ACTION);
-static int   Eqid (const char *x,const char *y);
-void nsp_init_macro_table(void);
+
+/* table of directory that contains searched 
+ * macros
+ */
 
 static NspSMatrix *LibDirs = NULLSMAT;
+
+/* hash table of preloaded macros.
+ */
+
+static NspHash* macros_cache = NULLHASH;
 
 /**
  * nsp_get_libdir:
  * @num: 
  * 
+ * get the directory name corresponding to id @num.
  * 
- * 
- * Return value: 
+ * Return value: %NULL or a pointer to the directory name.
  **/
-
-static NspHash* macros_cache = NULLHASH;
 
 const char *nsp_get_libdir(int num)
 {
@@ -176,12 +181,14 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
   return OK;
 }
 
-
-
-/************************************************
- * Remove all the names from Dir/names from 
- * the macro hash table 
- *************************************************/ 
+/**
+ * nsp_delete_macros:
+ * @Dir: directory name (absolute path).
+ * 
+ * Remove all the macros associated to directory @dir from the macro hash table.
+ *
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_delete_macros(const char *Dir)
 {
@@ -222,11 +229,16 @@ int nsp_delete_macros(const char *Dir)
   return OK;
 }
 
-/*
- * Try to find a macros named str in Macro libraries. 
- * (i.e a set of directory) 
- * If found the macros is stored in a cache and returned.
- */
+/**
+ * nsp_find_macro:
+ * @str: 
+ * 
+ * tries to find a macros named @str in the macros table. 
+ * If found the macro code is preloaded in a cache and the 
+ * macros is returned.
+ * 
+ * Return value: %NULLOBJ or an %NspObject filled with the macro code.
+ **/
 
 NspObject *nsp_find_macro(char *str)
 {
@@ -282,10 +294,12 @@ NspObject *nsp_find_macro(char *str)
   return NULLOBJ;
 }
 
-
-/*
- * Initialization 
- */
+/**
+ * nsp_init_macro_table:
+ * @void: 
+ * 
+ * initialize macro table.
+ **/
 
 void nsp_init_macro_table(void)
 {
@@ -476,6 +490,7 @@ static int myhcreate(unsigned int nel)
  */
 
 #define HSEARCH_DEBUG(x) 
+#define Eqid(x,y) strncmp(x,y,NAME_MAXL) 
 
 static int myhsearch(char *key, Mdata *data, ACTION action)
 {
@@ -634,8 +649,4 @@ static int myhsearch(char *key, Mdata *data, ACTION action)
 }
 
 
-static int Eqid(const char *x,const char *y)
-{
-  return strncmp(x,y,NAME_MAXL);
-}
 

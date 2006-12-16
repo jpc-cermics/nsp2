@@ -43,7 +43,7 @@
 extern void sci_clear_and_exit(int);
 extern void primitive_types_register(void);
 extern int  nsp_new_frame(void);
-extern void InitFunctionTable(void);
+extern void nsp_init_function_table(void);
 extern void controlC_handler (int sig);
 extern void nsp_init_gtk_stack(void);
 extern int nsp_init_accelerated_tabs();
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   /* initialize data types */
   primitive_types_register();
   /* initialize primitive table */
-  InitFunctionTable();
+  nsp_init_function_table();
   /* Initialize acceleration op tables */
   nsp_init_accelerated_tabs();
   /* Initialize macro hash table **/
