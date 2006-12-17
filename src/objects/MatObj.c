@@ -123,6 +123,7 @@ new_type_matrix (type_mode mode)
   mati->clone = (matint_clone *) nsp_matrix_clone ;
   mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
   mati->enlarge = (matint_enlarge *) nsp_matrix_enlarge;
+  /* mati->copy = (matint_copy *) nsp_matrix_copy_area; */
 
   type->interface = (NspTypeBase *) mati;
 
@@ -1397,6 +1398,8 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
   if ( iflag == TRUE && Index == NULL) return RET_BUG;
   NSP_OBJECT(M)->ret_pos = 1;
   if ( lhs == 2 ) {
+    /* back convert */
+    Index = Mat2double(Index);
     MoveObj(stack,2, NSP_OBJECT(Index));
   }
   return Max(lhs,1);

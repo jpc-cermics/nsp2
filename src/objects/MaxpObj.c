@@ -793,6 +793,8 @@ static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
   if ( iflag == TRUE && Index == NULL) return RET_BUG;
   NSP_OBJECT(M)->ret_pos = 1;
   if ( lhs == 2 ) {
+    /* be sure that it is back converted */
+    Index = Mat2double(Index);
     MoveObj(stack,2, NSP_OBJECT(Index));
   }
   return Max(lhs,1);
