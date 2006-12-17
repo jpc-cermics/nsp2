@@ -722,7 +722,7 @@ static int writeproc(char *iohandle,char* c_buf,int len)
 static int writeproc_increase_buf(writeproc_buf *buf)
 {
   NspSMatrix *next;
-  if ((next= nsp_smatrix_create_with_length(NVOID,1,1,_writeproc_buf_size+1))== NULL) 
+  if ((next= nsp_smatrix_create_with_length("w",1,1,_writeproc_buf_size+1))== NULL) 
     {
       buf->status = FAIL;
       return FAIL;
