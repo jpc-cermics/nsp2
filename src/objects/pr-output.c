@@ -33,7 +33,7 @@
 #include "nsp/sciio.h"
 
 user_preferences user_pref= {
-  8 ,/* output_max_field_width;	*/
+  10 ,/* output_max_field_width; */
   3 ,/* output_precision;	*/
   1 ,/* split_long_rows;		*/
   0 ,/* print empty dimensions   */
@@ -202,13 +202,13 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
  * curr_real_fw and curr_imag_fw are used to store their length.
  */
 
-void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_inf_or_nan, pr_mima min_max, 
-		     it_gen_f all_iin, nsp_it_init Init)
+void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_inf_or_nan,
+                     pr_mima min_max, it_gen_f all_iin, nsp_it_init Init)
 {
   double d_epsr=DBL_EPSILON;
   int work[2];
   int sign,inf_or_nan, r_x_max,r_x_min,i_x_max,i_x_min;
-  int x_max,x_min,prec,ld, rd;
+  int x_max,x_min,prec,ld, rd,output_max_width;
   double r_max_abs, r_min_abs, i_max_abs,i_min_abs;
   char type ;
   if (fmt->free_format) return;
@@ -240,6 +240,7 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
     }
 
   prec = user_pref.output_precision;
+  output_max_width = user_pref.output_max_field_width;
 
   if (fmt->bank_format)
     {
@@ -267,7 +268,7 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
       if (x_max > 0)
 	{
 	  ld_max = x_max;
-	  rd_max = prec - x_max;
+          rd_max = Min(prec, output_max_width - x_max);
 	  x_max++;
 	}
       else
@@ -280,7 +281,7 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
       if (x_min > 0)
 	{
 	  ld_min = x_min;
-	  rd_min = prec - x_min;
+          rd_min = Min(prec, output_max_width - x_min);
 	  x_min++;
 	}
       else
