@@ -82,6 +82,11 @@ double rand_ranf(void)
   return ( (double) gen[current_gen]() * factor[current_gen] );
 }
 
+unsigned long int rand_lgi(void)
+{
+  return gen[current_gen]();
+}
+
 double ignlgi(void)
 {
   /* random deviate from Ui[0,RngMaxInt] (direct output of the current gen) */
@@ -943,6 +948,26 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(&A);
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+
+  else if ( strcmp(law,"expo")==0)
+    {
+      double A;
+      if ( rhs != suite ) 
+	{ 
+	  Scierror("Error: Missing Av for exponential law\n");
+	  return RET_BUG;
+	}
+      if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
+      if ( A < 0.0 ) 
+	{
+	  Scierror("Error: option 'exp' Av  < 0.0 !\n");
+	  return RET_BUG;
+	}
+      if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_exp(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
