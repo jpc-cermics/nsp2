@@ -219,7 +219,7 @@ function demo_3d_13()
     u= u / sqrt(sum(u.*u))
     // find an orthogonal basis (u,v,w)
     I=find(u==0.0);
-    if I<>[] then 
+    if ~isempty(I) then 
       v=0*u;v(I(1))=1;
     else 
       v=[u(2);-u(1);0];
@@ -256,7 +256,7 @@ function demo_3d_14()
     u= u / sqrt(sum(u.*u))
     // trouver un vecteur ds le plan orthogonal
     I=find(u==0.0);
-    if I<>[] then 
+    if ~isempty(I) then 
       v=0*u;v(I(1))=1;
     else 
       v=[u(2);-u(1);0];

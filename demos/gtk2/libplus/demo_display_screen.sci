@@ -20,7 +20,7 @@ function screen_display_check (widget,args)
       dialog.connect["response",hide]// destroy 
       else
 	I=find(display_name == data(4))
-	if I<>[] then data(5)=[data(4);display_name];end 
+	if ~isempty(I) then data(5)=[data(4);display_name];end 
 	new_screen = display.get_default_screen[];
     end 
   else

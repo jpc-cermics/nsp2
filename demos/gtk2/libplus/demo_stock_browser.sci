@@ -23,7 +23,7 @@ function ids1=icon_collect(window)
       if ~is(icon_set,%types.None) 
 	sz=icon_set.get_sizes[]
 	I=find(sz== GTK.ICON_SIZE_MENU)
-	if I<>[] then 
+	if ~isempty(I) then 
 	  sz=I(1) 
 	else
 	  sz=sz(1);

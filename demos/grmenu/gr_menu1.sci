@@ -296,7 +296,7 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
     colors=m2s(1:xget("lastpattern")+2,"%1.0f");
     lcols_bg=list('colors','Color',sd('color'),colors);
     [lrep,lres,rep]=x_choices('color settings',list(lcols_bg));
-    if rep<>[] then
+    if ~isempty(rep) then
       sd('color')=rep;
     end
     sd1=sd;
@@ -397,7 +397,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
       pts=[ptmin;ptmax;ptmin(1),ptmax(2);ptmax(1),ptmin(2)]
       dd= abs(pts-ones(4,1)*ptnew);
       k=find(max(dd,'c') < 5);
-      if k<>[] then 
+      if ~isempty(k) then 
 	xinfo('found '+string(pts(k(1),1))+' '+string(pts(k(1),2)));
 	ptnew= pts(k(1),:)
       end
@@ -683,7 +683,7 @@ function [sd1]=comment(sd,del)
   if nargin<=0 then // get
     [i,z1,z2]=xclick(0);z=[z1;z2];
     com=x_dialog("Enter string"," ");
-    if com<>[] then  
+    if ~isempty(com) then  
       sd1=list("comm",z,com),
       xstring(z(1),z(2),com,0,0);
     end
@@ -1100,7 +1100,7 @@ function [gr_options,edited]=gr_do_options(gr_options)
   l_fiz=list('combo','fontsize',gr_options.font_size,fontsSiz);
   Lc = list(l_col,l_bg,l_fg,l_fid,l_fiz);
   [lrep,lres,rep]=x_choices('GrMenu options',Lc,%t);
-  if rep<>[] then
+  if ~isempty(rep) then
     gr_options=hcreate(color=rep(1),...
 		       background=rep(2),...
 		       foreground=rep(3),...
