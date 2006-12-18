@@ -17,7 +17,7 @@ function nsp_help(topic)
   endfunction
   
   global %help_table;
-  if %help_table ==[] then 
+  if isempty(%help_table) then 
     %help_table = man_hash_table()
   end
   if %help_table.iskey[topic] then 

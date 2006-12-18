@@ -30,7 +30,7 @@ function [B] = pinv(A,tol=[])
     error("first arg must be a matrix of numbers"), 
   end
   
-  if tol == [] then, tol = max(size(A))*%eps, end
+  if isempty(tol) then, tol = max(size(A))*%eps, end
   
   [m,n] = size(A)
   

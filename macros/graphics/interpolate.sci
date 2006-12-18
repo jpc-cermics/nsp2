@@ -8,10 +8,10 @@ function val=interpolate(x,xref,yref)
     error('interpolate: xref and yref must be of same size and must have at least 2 components');
     return;
   end
-  if x == [] then, val = [], return, end
+  if isempty(x) then, val = [], return, end
 
   I=bsearch(x,xref);
-  if find(I==0)<>[] then 
+  if ~isempty(find(I==0)) then 
     error('lin_interpolation: first argument is outside the range of xref');
     return;
   end

@@ -131,7 +131,7 @@ L=0
 DIc=0.2
 while %t
   ksup=find(Ic-L>DIc)
-  if ksup==[] then break,end
+  if isempty(ksup) then break,end
   kk1=mini(ksup)
   L=Ic(kk1)
   Ic(1:kk1)=[]

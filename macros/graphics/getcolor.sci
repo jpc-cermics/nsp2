@@ -3,7 +3,7 @@ function icol=getcolor(win=-1,cinit=-1)
 // pick a color in the colormap of window win 
 // or in the current window if it exists.
 // 
-  if winsid()==[] then 
+  if isempty(winsid()) then 
     printf('error: you must open a graphic window\n');
     icol=[];
     return;

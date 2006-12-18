@@ -10,10 +10,10 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   if nargin <= 0 then x=1:10;end 
   if nargin <= 1 then y=1:10;end 
   if nargin <= 2 then z=rand(size(x,'*'),size(y,'*'));end 
-  if nv==[] then zmin=min(z);zmax=max(z);nv = zmin + (1:10)*(zmax-zmin)./(11);end 
+  if isempty(nv) then zmin=min(z);zmax=max(z);nv = zmin + (1:10)*(zmax-zmin)./(11);end 
   
-  if x==[] then x=1:size(z,'r');end 
-  if y==[] then y=1:size(z,'c');end 
+  if isempty(x) then x=1:size(z,'r');end 
+  if isempty(y) then y=1:size(z,'c');end 
   nvs=size(nv,'*') ;
   if nvs==1 then nvs=nv;zmin=min(z);zmax=max(z);nv = zmin + (1:nvs)*(zmax-zmin)./(nvs+1);end;
   if nargin <= 4 then style = -1*ones(1,nvs);end

@@ -85,7 +85,7 @@ function [xi,xa,np]=graduate( xmi, xma,n1,n2)
     pa2 = 10 .^ipa
     //
     ik=find(pas<=kadm*pa2)
-    if ik==[] then
+    if isempty(ik) then
       pa2 = 10.0d+00 * pa2
       ipa = kadm(1)
       pa1=ipa*pa2

@@ -29,7 +29,7 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
   [ind , y] = bsearch(data, x);
   if normalize then y=y ./ (p*(x(2:$)-x(1:$-1))),end 
   y(n)=y($);   // add a last point 
-  if rect==[] then rect=[min(x),0,max(x),max(y)];end 
+  if isempty(rect) then rect=[min(x),0,max(x),max(y)];end 
   if fill==%f then 
     plot2d2(x,y,style=style,strf=strf,rect=rect,axesflag=axesflag,frameflag=frameflag);
     plot2d3(x,y,style=style,strf='000');

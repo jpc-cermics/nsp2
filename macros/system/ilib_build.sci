@@ -8,7 +8,7 @@ function ilib_build(ilib_name,table,files,libs,...
   ilib_gen_loader(ilib_name,table,libs);
   // generate a Makefile
   if verbose then printf('   generate a Makefile: %s\n',makename);end
-  if table == [] then with_gateway=%f ; else with_gateway=%t ;end 
+  if isempty(table) then with_gateway=%f ; else with_gateway=%t ;end 
   ilib_gen_Make(ilib_name,table,files,libs,makename,with_gateway,ldflags,cflags,fflags);
   // we call make
   if verbose then printf('   running the makefile\n');end
@@ -30,7 +30,7 @@ function ilib_gen_gateway(name,tables)
   path=file('dirname',arg_name);
   
   if type(tables,'short')<>'l' then 
-    if tables==[] then return;end 
+    if isempty(tables) then return;end 
     tables= list(tables)
   end
   
@@ -192,7 +192,7 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
 //------------------------------------
 // generate a Makefile for gateway
   if nargin < 6 then with_gateway=%t,ldflags='',cflags='',fflags='';end
-  if files<>[] then 
+  if ~isempty(files) then 
     files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
   end
   // change table if necessary 
@@ -465,7 +465,7 @@ function libn=ilib_compile(lib_name,makename,files)
   end
   oldpath=getcwd();
   files=files(:)';
-  if files<>[] then 
+  if ~isempty(files) then 
     files1=strsubst(strsubst(files,'.obj','') ,'.o','');
   else 
     files1=m2s([]);
@@ -492,7 +492,7 @@ endfunction
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
 // return is res the correct name for 
 // makefile, libname, files 
-  if files<>[] then 
+  if ~isempty(files) then 
     files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
   end
   arg_makename=makename;
@@ -505,7 +505,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       lib_name_make=lib_name;
       makename = makename + '.lcc' ; 
       make_command = 'make -f '
-      if files<>[] then 
+      if ~isempty(files) then 
 	files = files + '.obj' ;
       end
     else
@@ -515,32 +515,32 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
        case 'VC++' then 
 	makename = makename + '.mak' ; 
 	make_command = 'nmake /nologo /f '
-	if files<>[] then 
+	if ~isempty(files) then 
 	  files = files + '.obj' ;
 	end
        case 'ABSOFT' then 
 	makename = makename + '.amk ';
 	make_command = 'amake /f '
-	if files<>[] then 
+	if ~isempty(files) then 
 	  files = files + '.obj' ;
 	end
        case 'gcc' then 
 	makename = makename;
 	make_command = 'make -f '
-	if files<>[] then 
+	if ~isempty(files) then 
 	  files = files + '.o' ;
 	end
       else // like gnuwin32 
 	makename = makename;
 	make_command = 'make -f '
-	if files<>[] then 
+	if ~isempty(files) then 
 	  files = files + '.o' ;
 	end
       end
     end
   else
     // Unixes 
-    if files <> [] then 
+    if ~isempty(files)  then 
       files = files + '.o';
     end
     lib_name_make=lib_name+%shext ;

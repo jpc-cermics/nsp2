@@ -34,7 +34,7 @@ function sci_load(fname,varargin)
   // does not work when the codes are negatives.
   while %t then 
     str=sci_load_get_name(F1);
-    if str==[] then break;end 
+    if isempty(str) then break;end 
     obj_type=F1.get[n=1,type='il'];
     select obj_type 
      case 1 then xval=sci_load_mat(F1);
@@ -52,7 +52,7 @@ function sci_load(fname,varargin)
       break;
       return;
     end
-    if Str==[] || find(Str==str)<>[] then 
+    if isempty(Str) || ~isempty(find(Str==str)) then 
       execstr('resume('+str+'=xval);');
       //printf('loading ->%s\n',str);
     end
@@ -65,7 +65,7 @@ function str=sci_load_get_name(F1)
 // utility function for sci_load
 // Copyright (C) 2006 Jean-Philippe Chancelier
   id1=F1.get[n=6,type='il'];
-  if id1==[] then str=[];return;end
+  if isempty(id1) then str=[];return;end
   id = ones(4,6);
   for j=1:6 
     idl=id1(j);

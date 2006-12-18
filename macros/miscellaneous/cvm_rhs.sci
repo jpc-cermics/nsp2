@@ -11,7 +11,7 @@ function [ret, flag, new_data] = cvm_rhs(type, varargin)
     fct  = varargin(3);
     data = varargin(4);
   
-    if data==[] then 
+    if isempty(data) then 
       execstr('[ret, flag] ='+fct+'(t,y)');
       new_data = [];
     else
@@ -27,7 +27,7 @@ function [ret, flag, new_data] = cvm_rhs(type, varargin)
     fct  = varargin(4);
     data = varargin(5);
 
-    if data==[] then 
+    if isempty(data) then 
       execstr('[ret, flag] ='+fct+'(t,y,yB)');
       new_data = [];
     else
