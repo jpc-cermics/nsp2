@@ -250,6 +250,9 @@ int PListXdrSave_I(XDR *xdrs, PList L)
 	case NAME :
 	  nsp_xdr_save_c(xdrs,'N');
 	  nsp_xdr_save_string(xdrs,(char *) L->O);
+#ifdef WITH_SYMB_TABLE 
+	  nsp_xdr_save_i(xdrs,L->arity);
+#endif 
 	  break;
 	case OPNAME: 
 	  nsp_xdr_save_c(xdrs,'P');
@@ -291,7 +294,7 @@ static int PListXdrSave(XDR *xdrs, PList L)
 static int PListXdrLoad(XDR *xdrs, PList *plist)
 {
   NspObject *Obj;
-  int opar,op,oline;
+  int opar,op,oline,arity;
   PList loc=NULLPLIST;
   PList loc1=NULLPLIST;
   char buf[TBUF];
@@ -316,7 +319,10 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	  break;
 	case 'N':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_name(plist,buf) == FAIL) return (FAIL);
+#ifdef WITH_SYMB_TABLE 
+	  nsp_xdr_load_i(xdrs,&arity);
+#endif 
+	  if (nsp_parse_add_name1(plist,buf,arity) == FAIL) return (FAIL);
 	  break;
 	case 'P':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
