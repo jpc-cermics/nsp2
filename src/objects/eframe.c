@@ -242,17 +242,12 @@ static NspFrame  *nsp_frame_xdr_load(XDR *xdrs)
  * delete 
  */
 
-#define F_NEW 1
-
 void nsp_frame_destroy(NspFrame *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
 #ifdef WITH_SYMB_TABLE 
-#ifdef F_NEW 
   /* this one is shared */
-  if ( H->table != NULL) 
-    H->table->objs[0]=NULL; 
-#endif
+  if ( H->table != NULL) H->table->objs[0]=NULL; 
 #endif 
   /* now free the cell object  */
   nsp_cells_destroy(H->table);
@@ -354,15 +349,12 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
 #endif
   if ( C != NULL )
     {
-#ifdef F_NEW 
+      /* C->objs[0] is the local variable table and it is shared */
       NspObject *Obj=C->objs[0];
       C->objs[0]=NULL;
       /* do not copy the first cell element */
       if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
       C->objs[0] =  H->table->objs[0]= Obj;
-#else 
-      if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
-#endif
       /* just a faster access */
       H->local_vars = (NspBHash *) H->table->objs[0];
     }
