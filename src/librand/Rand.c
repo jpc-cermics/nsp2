@@ -603,6 +603,22 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
+
+  else if ( strcmp(law,"gauss")==0) 
+    {
+      double A,B;
+      if ( rhs != suite + 1) 
+	{ Scierror("Error: Missing Av and Sd for Normal law\n");return RET_BUG;}
+      if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
+      if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
+      if ( B < 0 ) 
+	{  Scierror("Error: SD < 0.0 \n");return RET_BUG;}
+      if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
+      for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_nor(A,B); }
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+
   else if ( strcmp(law,"unf")==0) 
     {
       double low, high;

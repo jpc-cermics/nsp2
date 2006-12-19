@@ -1,7 +1,40 @@
-#include "grand.h"
+/* Nsp
+ * Copyright (C) 2006 Bruno Pincon Esial/Iecn
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
-const int rej_exp_n = 128;
-const double rej_exp_A=1.02057338106284671;
+/*    rejection ziggurat method for the exponential distribution
+ *    as explained in "Marsaglia G and WW Tsang,The Ziggurat 
+ *    Method for Generating Random Variables
+ *    Journal of Statistical Software, vol. 5 (2000), no. 8"
+ *    (this paper together with a C implementation is available 
+ *    at http://www.jstatsoft.org/v05/i08/)
+ *
+ *    Our implementation uses 128 rectangles and the current "base"
+ *    generator of Nsp (which can be mt, kiss, clcg4, clcg2, fsultra
+ *    and urand). The constants (x_k and y_k values) have been 
+ *    calculated with the pari-gp software.
+ */
+
+#include "grand.h"
+#include <math.h>
+
+/* const double rej_exp_A=1.02057338106284671;  */
+
 const double rej_exp_coef=0.873390718750090708;
 const double rej_exp_x[128]={
     0.0                 ,0.0913395181029036071,0.150952685936872430,0.198733655529202445,
@@ -79,7 +112,7 @@ static double rand_exp_core()
   while (1)
     {
       k = 0x7f & rand_lgi();
-      if ( k < rej_exp_n - 1 )
+      if ( k < 127 )
 	{
 	  u = rej_exp_x[k+1]*rand_ranf();
 	  if ( u <= rej_exp_x[k] )
@@ -91,16 +124,15 @@ static double rand_exp_core()
 		return u;
 	    }
 	}
-      else  /* k = rej_exp_n - 1 */
+      else  /* k = 127 ie the bottom area (one rectangle plus an exponential tail) */
 	{
 	  u = rand_ranf();
-	  if ( u <= rej_exp_coef )
-	    return rej_exp_x[k]*rand_ranf(); 
-	  else
-	    {
-	      u = rand_ranf();
-	      return rej_exp_x[k] - log(1.0-u);
-	    }
+	  if ( u <= rej_exp_coef )  /* generate in the rectangle */
+	    return rej_exp_x[127]*rand_ranf(); 
+	  else                      /* generate in the tail */
+	    return rej_exp_x[127] - log(1.0-rand_ranf());  /* using 1-rand_ranf() because rand_ranf() 
+                                                              could output 0 but never 1 */
+
 	}
     }
 }
