@@ -25,6 +25,7 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 
+static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val);
 /* 
  * NspFrame inherits from NspObject
  */
@@ -425,6 +426,12 @@ static NspMethods *frame_get_methods(void) { return frame_methods;};
  * Return value: 
  **/
 
+#ifdef VARS_HASH
+#define VARS_LOCAL(name) (nsp_bhash_find(F->local_vars,name,&val) == OK)
+#else 
+#define VARS_LOCAL(name) (nsp_bsearch_string((NspSMatrix *) F->local_vars,name,&val) == OK)
+#endif 
+
 NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
 {
   NspObject *Obj=NULLOBJ ;
@@ -443,7 +450,7 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
     {
       int val; 
       /* Sciprintf("searching a local object %s with nsp_eframe_search_object\n",name); */
-      if ( nsp_bhash_find(F->local_vars,name,&val) == OK) 
+      if ( VARS_LOCAL(name) )
 	{
 	  /* Sciprintf("\tobject %s found\n",name);*/
 	  return F->table->objs[val];
@@ -470,7 +477,7 @@ int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
       /* first search in local variables */
       int val; 
       /* Sciprintf("Replace a local object %s with nsp_eframe_replace_object\n",nsp_object_get_name(A));*/
-      if ( nsp_bhash_find(F->local_vars,nsp_object_get_name(A),&val) == OK) 
+      if ( VARS_LOCAL(nsp_object_get_name(A))) 
 	{
 	  /* object is a local variable */
 	  nsp_object_destroy(&F->table->objs[val]);
@@ -507,7 +514,7 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
       /* first search in local variables */
       int val; 
       /* Sciprintf("Trying a search and remove for %s \n",str); */
-      if ( nsp_bhash_find(F->local_vars,str,&val) == OK) 
+      if ( VARS_LOCAL(str)) 
 	{
 	  NspObject *O1;
 	  O1 = F->table->objs[val];
@@ -543,7 +550,7 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
 #ifdef FRAME_AS_LIST
   return nsp_hcreate_from_list(NVOID,nsp_list_length(F->vars),F->vars);
 #else 
-  return (nsp_hash_copy(F->vars);
+  return nsp_hash_copy(F->vars);
 #endif
 }
 
@@ -554,7 +561,7 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
  * 
  * 
  **/
-
+    
 void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 {
 #ifdef FRAME_AS_LIST
@@ -567,6 +574,42 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 #endif
 }
 
+/* utility */
+
+static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val)
+{
+  int j, j1, j2,n= S->mn;
+  if ( strcmp(S->S[0],x) <= 0  &&  strcmp(x,S->S[n-1]) <= 0 ) 
+    {
+      /* find j such that x = S->S(j) by a dicho search */
+      j1 = 0;
+      j2 = n-1;
+      while(j2 - j1 > 1) 
+	{
+	  j = (j1 + j2) / 2;
+	  if ( strcmp(x,S->S[j]) < 0 ) j2 = j; else j1 = j;
+	}
+      /*  here we know that S->S(j1) <= x <= S->S(j2)  with j2 = j1 + 1
+       *  (in fact we have exactly  S->S(j1) <= x < S->S(j2) if j2 < n-1) 
+       */
+      if ( strcmp(x,S->S[j1]) == 0 ) 
+	{
+	  *val=  j1+1;
+	  return OK;
+	} 
+      else if ( j2 == n-1  &&  strcmp(x,S->S[j2]) == 0 )  /* this case may happen only for j2=n-1 */
+	{
+	  *val=  j2+1;
+	  return OK;
+	} 
+      else 
+	{
+	  /* x[i] is not in {S->S(1), S->S(2),..., S->S(n)} */ 
+	  return FAIL;
+	}
+    }
+  return FAIL;
+} 
 
 
 /*----------------------------------------------------
@@ -594,4 +637,8 @@ void Frame_Interf_Info(int i, char **fname, function (**f))
   *fname = Frame_func[i].name;
   *f = Frame_func[i].fonc;
 }
+
+
+
+
 
