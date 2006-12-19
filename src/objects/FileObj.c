@@ -742,6 +742,7 @@ static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
 /*
  */
 
@@ -781,6 +782,33 @@ static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* compatibility with Scilab 
+ * format is not used. 
+ */
+
+static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  NspSMatrix *S = NULL;
+  char *format=NULL;
+  int xdr= FALSE,swap = TRUE;
+  int_types T[] = {string, new_opts, t_end} ;
+  NspFile *F;
+  char *Fname, *mode = "rb";
+  nsp_option opts[] ={{ "format",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&format) == FAIL) return RET_BUG;
+  if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
+  if ( nsp_fscanf_matrix(F,format,&M,(lhs==2),&S) == FAIL) 
+    {
+      nsp_file_close(F);
+      return RET_BUG; 
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  if ( lhs == 2 ) MoveObj(stack,2,(NspObject *) S);
+  return Max(lhs,1);
+}
+
 /*
  * 
  */
@@ -798,6 +826,7 @@ static OpTab File_func[]={
   {"is_little_endian",int_file_is_little_endian},
   {"getfile",int_file_getfile},
   {"putfile",int_file_putfile},
+  {"fscanfMat",int_file_fscanfMat},
   {(char *) 0, NULL}
 };
 
