@@ -588,7 +588,38 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
   goto done;
 }
 
+/* scilab compatibility 
+ *
+ */ 
 
+
+int int_basename(Stack stack,int rhs,int opt,int lhs) 
+{
+  char *fileName;
+  nsp_string tail;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  /* FILE_TAIL */
+  if ((fileName = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((tail = nsp_tail(fileName))==NULL) return RET_BUG; 
+  if (  nsp_move_string(stack,1,tail, -1)==FAIL) return RET_BUG; 
+  nsp_string_destroy(&tail);
+  return 1;
+}
+
+int int_dirname(Stack stack,int rhs,int opt,int lhs) 
+{
+  char *fileName;
+  nsp_string dirname;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  /* FILE_DIRNAME: */
+  if ((fileName = GetString(stack,1)) == (char*)0)  return RET_BUG;
+  if ((dirname = nsp_dirname (fileName))== NULL)return RET_BUG;
+  if (nsp_move_string(stack,1, dirname, -1)== FAIL) return RET_BUG;
+  nsp_string_destroy(&dirname);
+  return 1;
+}
 
 /*
  *

@@ -42,6 +42,8 @@ extern void nsp_tclplatform_init();
 
 extern function int_syscd;
 extern function int_sysfile;
+extern function int_dirname;
+extern function int_basename;
 extern function int_pwd;
 extern function int_glob;
 
@@ -409,6 +411,8 @@ static OpTab System_func[]={
   {"chdir", int_syscd},
   {"getcwd", int_pwd},
   {"file", int_sysfile},
+  {"basename", int_basename}, /* scilab compat */
+  {"dirname", int_dirname},   /* scilab compat */
   {"regexp", int_regexp},
   {"regsub", int_regsub},
   {"glob",int_glob},
