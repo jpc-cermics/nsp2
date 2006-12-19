@@ -321,6 +321,8 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
 #ifdef WITH_SYMB_TABLE 
 	  nsp_xdr_load_i(xdrs,&arity);
+#else 
+	  arity=-1;
 #endif 
 	  if (nsp_parse_add_name1(plist,buf,arity) == FAIL) return (FAIL);
 	  break;
