@@ -399,8 +399,10 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
  ************************************************/
 
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
-static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) ;
 
+#ifdef  WITH_SYMB_TABLE 
+static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) ;
+#endif 
 
 static int parse_funcstop (Tokenizer *T,int token)
 {
