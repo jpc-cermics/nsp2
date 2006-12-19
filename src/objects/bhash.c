@@ -576,7 +576,7 @@ int int_bhtcreate(Stack stack, int rhs, int opt, int lhs)
 
 /* return all the keys H.keys entered in the bhash table as a string matrice  */
 
-static NspObject * int_bhash_get_keys(void *Hv, char *attr)
+NspObject * int_bhash_get_keys(void *Hv, char *attr)
 {
   NspSMatrix *Loc;
   NspBHash *H = Hv;
