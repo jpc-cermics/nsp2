@@ -398,6 +398,9 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
  *
  ************************************************/
 
+extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
+static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) ;
+
 
 static int parse_funcstop (Tokenizer *T,int token)
 {
@@ -479,23 +482,28 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if ( T->token.id == 0 || T->token.id == ENDFUNCTION )
     {
 #ifdef  WITH_SYMB_TABLE 
+      NspSMatrix *symb_names;
       int nsymb;
 #endif
       if ( T->token.id == ENDFUNCTION && T->NextToken(T) == FAIL) goto fail;
       /* gives id as int to each local variables */
 #ifdef  WITH_SYMB_TABLE 
       nsymb=nsp_parse_symbols_table_set_id(symbols);
+      /* get local variables names */
+      symb_names= (NspSMatrix *) int_bhash_get_keys(symbols,NULL);
+      nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
+      nsp_parse_symbols_table_reset_id(symbols,symb_names);
       /* nsp_hash_print(symbols,0); */
       if ((cell= (NspObject *)nsp_cells_create("symbols",nsymb,1)) == NULLOBJ) goto fail;
       /* we keep the hash table in the cell 
        * Note that this could be dropped if refs in calling stacks are removed in nsp.
        */
-      ((NspCells *) cell)->objs[0]= (NspObject *) symbols ; 
-      /* ((NspCells *) cell)->objs[0]=nsp_new_double_obj(1.67); */
+      ((NspCells *) cell)->objs[0]= (NspObject *) symb_names;
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
       plist_name_to_local_id(plist1,symbols); 
+      if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
 #else 
       if (nsp_parse_add(&plist1,FUNCTION,2,T->token.Line) == FAIL) goto fail;
 #endif 
@@ -2272,6 +2280,7 @@ static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList L)
  * @symb_table: 
  * 
  * associate an id (integer) to each symbol of the symbol table.  
+ * This function also adds nargin, nargout, nargopt and ans in the symbol table.
  * Return value: the number of ids (Note that 0 is not used it is a reserved id).
  **/
 
@@ -2302,6 +2311,19 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table)
     }
   return count;
 }
+
+
+static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) 
+{
+  int i;
+  if ( symb_table == NULLBHASH) return;
+  for ( i = 0 ; i < S->mn ; i++)
+    {
+      nsp_bhash_enter(symb_table,S->S[i],i+1) ;
+    }
+}
+
+
 #endif 
 
 

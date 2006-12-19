@@ -60,6 +60,7 @@ extern int nsp_parse_add(PList *plist, int op, int arity,int line);
 extern int ParseAddDouble (PList *plist);
 extern int nsp_parse_add_list(PList *plist, PList *l);
 extern int nsp_parse_add_name(PList *plist, char *str);
+extern int nsp_parse_add_name1(PList *plist, char *str);
 extern int nsp_parse_add_string(PList *plist, char *str);
 extern int nsp_parse_add_object(PList *plist, NspObject *obj );
 extern int ParseCheckFCall (PList *plist);

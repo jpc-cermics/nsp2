@@ -114,6 +114,7 @@ extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent);
 extern int nsp_parse_add(PList *plist, int op, int arity, int line);
 extern int nsp_parse_add_last(PList *plist, int op, int arity, int line);
 extern int nsp_parse_add_name(PList *plist, char *str);
+extern int nsp_parse_add_name1(PList *plist, char *str, int arity);
 extern int nsp_parse_add_string(PList *plist, char *str);
 extern int nsp_parse_add_comment(PList *plist, char *str);
 extern int nsp_parse_add_list(PList *plist, PList *l);

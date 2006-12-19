@@ -153,6 +153,13 @@ int nsp_parse_add_name(PList *plist, char *str)
   return  ParseAdd_name(plist,str,NAME,-1);
 }
 
+int nsp_parse_add_name1(PList *plist, char *str,int arity)
+{
+  return  ParseAdd_name(plist,str,NAME,arity);
+}
+
+
+
 /**
  * nsp_parse_add_opname:
  * @plist: 
