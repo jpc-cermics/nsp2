@@ -418,10 +418,10 @@ static NspMethods *frame_get_methods(void) { return frame_methods;};
  * Return value: 
  **/
 
-#ifdef VARS_HASH
-#define VARS_LOCAL(name) (nsp_bhash_find(F->local_vars,name,&val) == OK)
-#else 
+#ifdef SMAT_SYMB_TABLE
 #define VARS_LOCAL(name) (nsp_bsearch_string((NspSMatrix *) F->local_vars,name,&val) == OK)
+#else 
+#define VARS_LOCAL(name) (nsp_bhash_find(F->local_vars,name,&val) == OK)
 #endif 
 
 NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)

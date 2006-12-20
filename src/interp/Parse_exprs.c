@@ -80,11 +80,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
 static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist);
 static int Check_Func_Call(Tokenizer *T,PList plist, int tag);
 static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist);
-
-
 static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList plist);
-
-/* #define WITH_SYMB_TABLE 1  */
 
 #ifdef  WITH_SYMB_TABLE 
 static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
@@ -484,7 +480,9 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if ( T->token.id == 0 || T->token.id == ENDFUNCTION )
     {
 #ifdef  WITH_SYMB_TABLE 
+#ifdef  SMAT_SYMB_TABLE
       NspSMatrix *symb_names;
+#endif
       int nsymb;
 #endif
       if ( T->token.id == ENDFUNCTION && T->NextToken(T) == FAIL) goto fail;
@@ -492,9 +490,11 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 #ifdef  WITH_SYMB_TABLE 
       nsymb=nsp_parse_symbols_table_set_id(symbols);
       /* get local variables names */
+#ifdef  SMAT_SYMB_TABLE
       symb_names= (NspSMatrix *) int_bhash_get_keys(symbols,NULL);
       nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
       nsp_parse_symbols_table_reset_id(symbols,symb_names);
+#endif 
       /* nsp_hash_print(symbols,0); */
       if ((cell= (NspObject *)nsp_cells_create("symbols",nsymb,1)) == NULLOBJ) goto fail;
       /* we keep the hash table in the cell 
@@ -2314,7 +2314,7 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table)
   return count;
 }
 
-
+#ifdef  SMAT_SYMB_TABLE
 static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) 
 {
   int i;
@@ -2324,7 +2324,7 @@ static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S)
       nsp_bhash_enter(symb_table,S->S[i],i+1) ;
     }
 }
-
+#endif
 
 #endif 
 
