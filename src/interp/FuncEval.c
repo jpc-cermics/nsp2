@@ -1131,17 +1131,20 @@ static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_p
 static int frame_insert_var(int rhs,int opt,int lhs)
 {
   NspObject *O;
-  int nargin,nargout,nargopt;
 #ifdef WITH_SYMB_TABLE
-  nargin=2,nargout=3,nargopt=4;
+#ifndef SMAT_SYMB_TABLE 
+  int nargin=2,nargout=3,nargopt=4;
 #else 
-  nargin=nargout=nargopt=-1;
+  int nargin=-1, nargout=-1, nargopt=-1;
+#endif
+#else 
+  int nargin=-1, nargout=-1, nargopt=-1;
 #endif 
   if (( O =nsp_create_object_from_int("nargin",rhs))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,nargin) == FAIL) return FAIL;
   if (( O =nsp_create_object_from_int("nargout",lhs))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,nargout) == FAIL) return FAIL;
   if (( O =nsp_create_object_from_int("nargopt",opt))== NULLOBJ) return FAIL;
-  if ( nsp_frame_replace_object(O,-1) == FAIL) return FAIL;
+  if ( nsp_frame_replace_object(O,nargopt) == FAIL) return FAIL;
   return OK;
 }
