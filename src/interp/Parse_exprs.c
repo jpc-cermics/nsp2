@@ -397,7 +397,9 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
 
 #ifdef  WITH_SYMB_TABLE 
+#ifdef  SMAT_SYMB_TABLE
 static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S) ;
+#endif
 #endif 
 
 static int parse_funcstop (Tokenizer *T,int token)
@@ -500,12 +502,18 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       /* we keep the hash table in the cell 
        * Note that this could be dropped if refs in calling stacks are removed in nsp.
        */
+#ifdef  SMAT_SYMB_TABLE
       ((NspCells *) cell)->objs[0]= (NspObject *) symb_names;
+#else 
+      ((NspCells *) cell)->objs[0]= (NspObject *) symbols;
+#endif 
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
       plist_name_to_local_id(plist1,symbols); 
+#ifdef  SMAT_SYMB_TABLE
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
+#endif
 #else 
       if (nsp_parse_add(&plist1,FUNCTION,2,T->token.Line) == FAIL) goto fail;
 #endif 
