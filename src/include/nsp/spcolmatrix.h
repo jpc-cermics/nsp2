@@ -34,17 +34,6 @@ typedef struct _NspTypeSpColMatrix {
 
 /* used to store a matlab compatible representation */
 
-
-/* typedef struct _nsp_sparse_triplet nsp_sparse_triplet;  */
-
-/* struct _nsp_sparse_triplet { /\* used in mexlib *\/ */
-/*   int *Ap; /\* m+ 1 *\/ */
-/*   int *Ai; /\* Aisize *\/ */
-/*   double *Ax; /\* Aisize *\/ */
-/*   int m,n,Aisize;  */
-/* }; */
-
-
 typedef struct _spcol {
   int size,iw ; /* size of a row, iw : used for working storage*/
   int *J   ; /* pointer to an int array giving the columns or row i 
