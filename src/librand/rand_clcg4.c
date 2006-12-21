@@ -60,21 +60,20 @@
 #define H   32768               /* = 2^15 : use in MultModM.           */
 
 static long aw[4], avw[4],      /*   a[j]^{2^w} et a[j]^{2^{v+w}}.     */
-            a[4] = { 45991, 207707, 138556, 49689 },
-            m[4] = { 2147483647, 2147483543, 2147483423, 2147483323 };
+  a[4] = { 45991, 207707, 138556, 49689 },
+  m[4] = { 2147483647, 2147483543, 2147483423, 2147483323 };
 
 static long Ig[4][Maxgen+1], Lg[4][Maxgen+1], Cg[4][Maxgen+1];
-                     /* Initial seed, previous seed, and current seed. */
-
+/* Initial seed, previous seed, and current seed. */
 
 static int  is_init = 0;
 static long v_default = 31;
 static long w_default = 41;
 
 static long MultModM (long s, long t, long M)
-   /* Returns (s*t) MOD M.  Assumes that -M < s < M and -M < t < M.    */
-   /* See L'Ecuyer and Cote (1991).                                    */
-  {
+/* Returns (s*t) MOD M.  Assumes that -M < s < M and -M < t < M.    */
+/* See L'Ecuyer and Cote (1991).                                    */
+{
   long R, S0, S1, q, qh, rh, k;
 
   if (s < 0)  s += M;
@@ -170,7 +169,7 @@ int set_seed_clcg4(int g, double s0, double s1, double s2, double s3)
 {
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
 
-  if ( verif_seeds_clcg4(s0, s1, s2, s3) )
+  if ( verif_seeds_clcg4(s0, s1, s2, s3) == OK )
     {
       Ig [0][g] = (long) s0; Ig [1][g] = (long) s1;
       Ig [2][g] = (long) s2; Ig [3][g] = (long) s3;
@@ -236,7 +235,7 @@ int set_initial_seed_clcg4(double s0, double s1, double s2, double s3)
 
   if (! is_init )  comp_aw_and_avw(v_default,w_default);
 
-  if ( ! verif_seeds_clcg4(s0, s1, s2, s3) )
+  if ( verif_seeds_clcg4(s0, s1, s2, s3) == FAIL)
     {
       display_info_clcg4();
       return FAIL;
