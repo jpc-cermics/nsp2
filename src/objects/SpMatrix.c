@@ -326,9 +326,11 @@ void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_le
  * a new sparse.
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
- * XXXX: Attention c'est faux a cause du codage on obtient un redim de la 
- *       transposée
  **/
+
+/* XXXX: Attention c'est faux a cause du codage on obtient un redim de la 
+ *       transposée
+ */
 
 NspSpRowMatrix *nsp_sprowmatrix_redim(NspSpRowMatrix *A, int m, int n)
 {

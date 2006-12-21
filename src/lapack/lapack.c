@@ -154,7 +154,7 @@ int nsp_mat_have_nan_or_inf(NspMatrix *A)
 }
 
 /**
- * C2F(xerbla)
+ * xerbla:
  * @srname: name of the (lapack) routine which has detected an error
  * @info: 
  * 
@@ -162,6 +162,7 @@ int nsp_mat_have_nan_or_inf(NspMatrix *A)
  * 
  * Return value: 0
  **/
+
 int C2F(xerbla)(char *srname,int * info,int srname_len)
 {
   int i;

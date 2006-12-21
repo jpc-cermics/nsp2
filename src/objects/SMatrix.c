@@ -1419,10 +1419,10 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
 
 
 /**
- * nsp_smatrix_split:
+ * nsp_smatrix_split_string:
  * @string: the string to be splitted in words
  * @splitChars: a string with the split characters
- * @msep: an int 
+ * @msep: an integer
  * 
  * Return value: a #NspSMatrix of size 1 x nb_words with the words resulting from the splitting
  **/
@@ -1530,6 +1530,20 @@ NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string spl
 }
 
 
+/**
+ * nsp_smatrix_split:
+ * @Src: a String matrix to be splited 
+ * @splitChars: a string with the split characters
+ * @msep: an integer
+ * 
+ * uses nsp_smatrix_split_string() to split each string of string matrix @Src. 
+ * If each string of the matrix is splited in the same number of tokens then 
+ * the result is returned in a string matrix where each line contains a splited 
+ * string of an element of @Src (@Src in column order mode).
+ *
+ * Return value: A new #NspSMatrix or %NULLSMAT
+ **/
+
 NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int msep)
 {
   NspSMatrix *M=NULLSMAT,*loc;
@@ -1554,9 +1568,15 @@ NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int m
   return NULLSMAT;
 }
 
-/*
- * Add string str at the end of column string vector A 
- */
+/**
+ * nsp_row_smatrix_append_string:
+ * @A: a string matrix.
+ * @str: string to be added
+ * 
+ * enlarges a row string matrix by adding a new string at the end.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_row_smatrix_append_string(NspSMatrix *A,nsp_const_string str)
 {

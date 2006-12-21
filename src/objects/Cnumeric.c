@@ -287,42 +287,6 @@ void nsp_pow_ci(const doubleC *x, int p, doubleC *y)
     }
 }
 
-/* void nsp_pow_ci(const doubleC *xe, int y, doubleC *res) */
-/* { */
-/*   doubleC x; */
-/*   res->r=1.0;res->i=0.00; */
-/*   x.r=xe->r;x.i=xe->i; */
-/*   if (y == 0) */
-/*     { */
-/*       return; */
-/*     } */
-/*   if (y < 0) */
-/*     { */
-/*       static doubleC un={1.0,0.0}; */
-/*       y = -y; */
-/*       nsp_div_cc(&un,&x,&x);  */
-/*     } */
-/*   for (;;) */
-/*     { */
-/*       if (y & 1) */
-/* 	{ */
-/* 	  double loc; */
-/* 	  loc=res->r; */
-/* 	  res->r = res->r*x.r - res->i*x.i; */
-/* 	  res->i = loc*x.i + res->i*x.r; */
-/* 	} */
-/*       if (y >>= 1) */
-/* 	{ */
-/* 	  double loc; */
-/* 	  loc=x.r; */
-/* 	  x.r = x.r*x.r - x.i*x.i; */
-/* 	  x.i = loc*x.i + x.i*x.r; */
-/* 	} */
-/*       else */
-/* 	return; */
-/*     } */
-/* } */
-
 
 /**
  * nsp_sin_c:
@@ -331,6 +295,7 @@ void nsp_pow_ci(const doubleC *x, int p, doubleC *y)
  * 
  * 
  **/
+
 void nsp_sin_c(const doubleC *x, doubleC *res)
 {
   double loc=x->r;

@@ -3586,10 +3586,10 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
 
 /**
  * nsp_bi_dichotomic_search:
- * @: 
+ * @x: 
  * @xpmin: 
  * @xpmax: 
- * @: 
+ * @val: 
  * @imin: 
  * @imax: 
  * @Work: 
@@ -3600,7 +3600,7 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
  * 
  * Return value: 
  **/
-static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
+static int nsp_bi_dichotomic_search(const double *x,int xpmin,int xpmax,const int *val,int imin,int imax,
 				    NspMatrix *Work,NspMatrix *Index,int count)
 {
   int xmin = nsp_dichotomic_search(x[xpmin]-1,val,imin,imax);
@@ -3620,12 +3620,12 @@ static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const i
 
 /**
  * nsp_bi_dichotomic_search_int:
- * @: 
+ * @x: 
  * @xpmin: 
  * @xpmax: 
  * @xmin: 
  * @xmax: 
- * @: 
+ * @val: 
  * @imin: 
  * @imax: 
  * @Work: 
@@ -3644,8 +3644,8 @@ static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const i
  * 
  * Return value: 
  **/
-static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int xmin,int xmax,
-					const int val[],int imin,int imax,
+static int nsp_bi_dichotomic_search_int(const double *x,int xpmin,int xpmax,int xmin,int xmax,
+					const int *val,int imin,int imax,
 					NspMatrix *Work,NspMatrix *Index,int count)
 {
   int j,jval;

@@ -1404,7 +1404,7 @@ void ObjConvert(NspObject *O)
 
 /**
  * MaybeObjCopy:
- * @O: a #NspObject 
+ * @Obj: a #NspObject 
  * 
  * 
  * Makes a copy of @O if @O has a non empty name. 
@@ -1417,13 +1417,13 @@ void ObjConvert(NspObject *O)
  * 
  **/
 
-void *MaybeObjCopy(NspObject **O)
+void *MaybeObjCopy(NspObject **Obj)
 {
-  if ( Ocheckname(*O,NVOID) ) return *O;
-  HOBJ_GET_OBJECT((*O),NULL);
+  if ( Ocheckname(*Obj,NVOID) ) return *Obj;
+  HOBJ_GET_OBJECT((*Obj),NULL);
   /* if ( check_cast(*O,nsp_type_hobj_id) == TRUE)  *O= ((NspHobj *) *O)->O ;*/
-  *O =nsp_object_copy(*O);
-  return *O;
+  *Obj =nsp_object_copy(*Obj);
+  return *Obj;
 }
 
 static char first[]="First argument";
