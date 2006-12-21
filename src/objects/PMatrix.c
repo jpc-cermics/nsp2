@@ -512,7 +512,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-extern int nsp_pmatrix_set_submatrix_obsolete(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
+extern int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
@@ -523,7 +523,7 @@ extern int nsp_pmatrix_set_submatrix_obsolete(NspPMatrix *A,const NspMatrix *Row
  *  Size Compatibility is checked
  */
 
-int nsp_pmatrix_set_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
+int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
@@ -536,7 +536,7 @@ int nsp_pmatrix_set_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
  * 
  */	
 
-NspPMatrix *nsp_pmatrix_extract_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   return (NspPMatrix*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
@@ -546,7 +546,7 @@ NspPMatrix *nsp_pmatrix_extract_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatr
  * A unchanged, Elts
  */	
 
-NspPMatrix*nsp_pmatrix_extract_elements_obsolete(NspPMatrix *A, NspMatrix *Elts, int *err)
+NspPMatrix*nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err)
 {
   *err=0;
   return (NspPMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
@@ -557,7 +557,7 @@ NspPMatrix*nsp_pmatrix_extract_elements_obsolete(NspPMatrix *A, NspMatrix *Elts,
  * A unchanged
  */
 
-NspPMatrix*nsp_pmatrix_extract_columns_obsolete(NspPMatrix *A, NspMatrix *Cols, int *err)
+NspPMatrix*nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err)
 {
   *err=0;
   return (NspPMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
@@ -568,7 +568,7 @@ NspPMatrix*nsp_pmatrix_extract_columns_obsolete(NspPMatrix *A, NspMatrix *Cols, 
  * A unchanged
  */
 
-NspPMatrix*nsp_pmatrix_extract_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, int *err)
+NspPMatrix*nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err)
 {
   *err=0;
   return (NspPMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));

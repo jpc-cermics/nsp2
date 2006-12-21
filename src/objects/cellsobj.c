@@ -798,7 +798,7 @@ int int_cells_addrows(Stack stack, int rhs, int opt, int lhs)
  * Cols A --> (Cols,A,Cols(A))
  */
 
-int int_cells_extractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
+int int_cells_extractcolforloop(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *A,*Res;
   NspMatrix *Cols;
@@ -807,7 +807,7 @@ int int_cells_extractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(3,3);
   if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  Res =nsp_cells_extract_columns_obsolete( A,Cols,&err);
+  Res =nsp_cells_extract_columns( A,Cols,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLCELLS) return RET_BUG;
   NthObj(3) = (NspObject *) Res;

@@ -876,7 +876,7 @@ int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
  * FIXME ne sert plus ?
  */
 
-int int_smxextractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
+int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*Res;
   NspMatrix *Cols;
@@ -885,7 +885,7 @@ int int_smxextractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(3,3);
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  Res =nsp_smatrix_extract_columns_obsolete( A,Cols,&err);
+  Res =nsp_smatrix_extract_columns( A,Cols,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSMAT) return RET_BUG;
   NthObj(3) = (NspObject *) Res;

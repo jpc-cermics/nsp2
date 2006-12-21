@@ -493,7 +493,10 @@ NspBHash *nsp_bhash_copy(const NspBHash *H)
   if ( Loc == NULLBHASH ) return NULLBHASH;
   for ( i =0 ; i <= H->hsize ; i++) 
     {
-      BHash_Entry *loc = ((BHash_Entry *)H->htable) + i,*loc1;
+      BHash_Entry *loc = ((BHash_Entry *)H->htable) + i;
+#ifdef NEW 
+      BHash_Entry *loc1;
+#endif
       if ( loc->used && loc->key != NULL )
 	{
 	  char *str;

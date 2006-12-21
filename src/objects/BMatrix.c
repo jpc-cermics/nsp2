@@ -526,7 +526,7 @@ int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
+int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
@@ -554,7 +554,7 @@ int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix
  * returns %OK or %FAIL.
  */
 
-int nsp_bmatrix_set_rows_obsolete(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
+int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
@@ -570,7 +570,7 @@ int nsp_bmatrix_set_rows_obsolete(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   return (NspBMatrix*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
@@ -585,7 +585,7 @@ NspBMatrix  *nsp_bmatrix_extract_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMat
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elts)
+NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
 {
   return (NspBMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
@@ -600,7 +600,7 @@ NspBMatrix  *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elt
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols)
+NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
 {
   return (NspBMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
@@ -615,7 +615,7 @@ NspBMatrix  *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_rows_obsolete(NspBMatrix *A, NspMatrix *Rows)
+NspBMatrix  *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows)
 {
   return (NspBMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }

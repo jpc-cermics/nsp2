@@ -1046,7 +1046,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-int nsp_matrix_set_submatrix_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
+int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
@@ -1156,7 +1156,7 @@ int GenericMatSeRo(void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, i
  * returns %OK or %FAIL.
  */
 
-int nsp_matrix_set_rows_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
+int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
@@ -1199,7 +1199,7 @@ int mat_is_increasing(const NspMatrix *A)
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_obsolete(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
+NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
 {
   return (NspMatrix*) nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
@@ -1214,7 +1214,7 @@ NspMatrix *nsp_matrix_extract_obsolete(const NspMatrix *A, const NspMatrix *Rows
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_elements_obsolete(const NspMatrix *A,const NspMatrix *Elts)
+NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
 {
   return (NspMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
@@ -1229,7 +1229,7 @@ NspMatrix *nsp_matrix_extract_elements_obsolete(const NspMatrix *A,const NspMatr
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_columns_obsolete(const NspMatrix *A,const NspMatrix *Cols)
+NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
 {
   return (NspMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
@@ -1244,7 +1244,7 @@ NspMatrix *nsp_matrix_extract_columns_obsolete(const NspMatrix *A,const NspMatri
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_rows_obsolete(const NspMatrix *A,const NspMatrix *Rows)
+NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
 {
   return (NspMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }

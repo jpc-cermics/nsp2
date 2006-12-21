@@ -698,7 +698,7 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
  *  Size Compatibility is checked 
  */
 
-int nsp_smatrix_set_submatrix_obsolete(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
+int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
@@ -710,7 +710,7 @@ int nsp_smatrix_set_submatrix_obsolete(NspSMatrix *A,const NspMatrix *Rows,const
  *  Size Compatibility is checked
  */
 
-int nsp_smatrix_set_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
+int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
@@ -720,7 +720,7 @@ int nsp_smatrix_set_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
  * A, Rows and Cols are unchanged 
  */	
 
-NspSMatrix*nsp_smatrix_extract_obsolete(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   return (NspSMatrix*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
@@ -732,7 +732,7 @@ NspSMatrix*nsp_smatrix_extract_obsolete(NspSMatrix *A, NspMatrix *Rows, NspMatri
  * A unchanged, Elts
  */	
 
-NspSMatrix*nsp_smatrix_extract_elements_obsolete(NspSMatrix *A, NspMatrix *Elts, int *err)
+NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err)
 {
   *err=0;
   return (NspSMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
@@ -743,7 +743,7 @@ NspSMatrix*nsp_smatrix_extract_elements_obsolete(NspSMatrix *A, NspMatrix *Elts,
  * A unchanged
  */
 
-NspSMatrix*nsp_smatrix_extract_columns_obsolete(NspSMatrix *A, NspMatrix *Cols, int *err)
+NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
 {
   *err=0;
   return (NspSMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
@@ -779,7 +779,7 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
  * A unchanged
  */
 
-NspSMatrix*nsp_smatrix_extract_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, int *err)
+NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
 {
   *err=0;
   return (NspSMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));

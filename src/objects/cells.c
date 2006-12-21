@@ -595,7 +595,7 @@ int nsp_cells_add_rows(NspCells *A, int m)
  * Return value: %Ok or %FAIL.
  **/
 
-int nsp_cells_set_submatrix_obsolete(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,
+int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,
 				     const NspCells *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
@@ -640,7 +640,7 @@ int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_cells_set_rows_obsolete(NspCells *A, NspMatrix *Rows, NspCells *B)
+int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
@@ -656,7 +656,7 @@ int nsp_cells_set_rows_obsolete(NspCells *A, NspMatrix *Rows, NspCells *B)
  * Return value: a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_obsolete(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
+NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   return (NspCells*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
@@ -673,7 +673,7 @@ NspCells*nsp_cells_extract_obsolete(NspCells *A, NspMatrix *Rows, NspMatrix *Col
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_elements_obsolete(NspCells *A, NspMatrix *Elts, int *err)
+NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
 {
   *err=0;
   return (NspCells *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
@@ -690,7 +690,7 @@ NspCells*nsp_cells_extract_elements_obsolete(NspCells *A, NspMatrix *Elts, int *
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_columns_obsolete(NspCells *A, NspMatrix *Cols, int *err)
+NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
 {
   *err=0;
   return (NspCells *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
@@ -740,7 +740,7 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_rows_obsolete(NspCells *A, NspMatrix *Rows, int *err)
+NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 {
   *err=0;
   return (NspCells *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
