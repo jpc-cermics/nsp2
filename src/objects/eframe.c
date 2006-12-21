@@ -25,7 +25,10 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 
+#ifdef SMAT_SYMB_TABLE
 static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val);
+#endif 
+
 /* 
  * NspFrame inherits from NspObject
  */
@@ -568,6 +571,7 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 
 /* utility */
 
+#ifdef SMAT_SYMB_TABLE
 static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val)
 {
   int j, j1, j2,n= S->mn;
@@ -602,6 +606,7 @@ static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val)
     }
   return FAIL;
 } 
+#endif 
 
 
 /*----------------------------------------------------

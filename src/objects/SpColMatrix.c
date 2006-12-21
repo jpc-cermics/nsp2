@@ -2427,7 +2427,7 @@ NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
 int nsp_spcolmatrix_mult_scalar(double *val, char val_type, NspSpColMatrix *A)
 {
   int i, k;
-  double scal;
+  double scal=0.0;
   doubleC scalc; 
   Boolean zero_flag, was_complexified = FALSE;
 

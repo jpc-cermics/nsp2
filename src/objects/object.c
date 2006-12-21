@@ -1006,10 +1006,10 @@ typedef enum { string_out, stdout_out, file_out } print_mode;
 
 static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mode mode)
 {
-  NspFile *F;
-  FILE *f;
-  IOVFun def ;
-  MoreFun mf; 
+  NspFile *F=NULL;
+  FILE *f=NULL;
+  IOVFun def=NULL ;
+  MoreFun mf=NULL; 
   
   NspObject *res, *object;
   print_func *pr;

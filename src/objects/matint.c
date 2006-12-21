@@ -1952,7 +1952,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 {
   NspObject *ObjC=NULLOBJ;
-  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C=NULL;
   int i, j;
   NspTypeBase *type; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */

@@ -735,7 +735,7 @@ static int int_umfpack_meth_det(NspUmfpack *self, Stack stack, int rhs, int opt,
 {
   double *Info = NULL,dx,dz=0.0,*p=NULL,dexp;
   void *Numeric;
-  NspObject *Ret1,*Ret2;
+  NspObject *Ret1,*Ret2=NULL;
   int status;
   CheckRhs(0,0); 
   CheckLhs(1,2);

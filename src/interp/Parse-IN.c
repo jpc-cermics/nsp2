@@ -55,7 +55,7 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 #endif
   char buf[FSIZE+1];
   NspObject *Ob;
-  NspHash *H,*E=NULL;
+  NspHash *H=NULL,*E=NULL;
   char *fname= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;
   int_types T[] = {string,new_opts, t_end} ;
@@ -134,7 +134,7 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 
 static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 {
-  NspHash *H,*E=NULL;
+  NspHash *H=NULL,*E=NULL;
   NspObject *Ob;
   NspSMatrix *S= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
