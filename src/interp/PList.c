@@ -34,6 +34,7 @@
 #include "astnode.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
+#include "Functions.h" 
 
 /**
  * nsp_parse_add:
@@ -1740,13 +1741,25 @@ static void plist_arg_get_nargs(PList L,int *lhs , int *rhsp1)
 }
 
 
+static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
+
 /*
  * add informations on local objects.
  */
 
-static void Arg_name_to_local_name(PList L,NspBHash *H);
+/**
+ * plist_name_to_local_id:
+ * @List: 
+ * @H: 
+ * @rec: 
+ * 
+ * walk through a #PList and tags symbols with their ids found in 
+ * the hash table @H. This function is used to tag local variables
+ * of a function. Note that when should not walk inside the 
+ * functions defined in the function. 
+ **/
 
-void plist_name_to_local_id(PList List,NspBHash *H)
+void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 {
   PList L=List,L1;
   const char *s;
@@ -1754,7 +1767,7 @@ void plist_name_to_local_id(PList List,NspBHash *H)
   List = List->next;
   if ( L->type > 0 )
     {
-      /* operators **/
+      /* operators */
       switch ( L->arity ) 
 	{
 	case 0:
@@ -1764,29 +1777,29 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    case QUOTE_OP : 
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    case TILDE_OP : 
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    case RETURN_OP : 
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    default:
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	    }
 	  break;
 	case 2:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
 	default :
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
 	  break;
@@ -1798,8 +1811,8 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 	{
 	case EQUAL_OP:
 	case OPT:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
 	case MLHS  :
 	case ARGS :
@@ -1807,32 +1820,32 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 	case METARGS :
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
 	  break;
 	case DOTARGS :
-	  Arg_name_to_local_name(List,H);
+	  Arg_name_to_local_name(rec,List,H);
 	  break;
 	case CALLEVAL:
 	case LISTEVAL :
 	case FEVAL :
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
 	  break;
 	case PLIST :
 	  if (L->next == NULLPLIST )
-	    Arg_name_to_local_name(L,H);/* XXXXXXX */
+	    Arg_name_to_local_name(rec,L,H);/* XXXXXXX */
 	  break;
 	case COMMENT :
 	case NAME :
 	case OPNAME :
 	case NUMBER:
 	case STRING:
-	  Arg_name_to_local_name(L,H);
+	  Arg_name_to_local_name(rec,L,H);
 	  break;
 	case OBJECT :
 	  break;
@@ -1842,65 +1855,68 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 	  break;
 	case P_MATRIX :
 	case P_CELL :
-	  Arg_name_to_local_name(List,H);
+	  Arg_name_to_local_name(rec,List,H);
 	  break;
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:
 	case CELLDIAGCONCAT:
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
 	  break;
 	case WHILE:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
 	case FUNCTION:
 	  /* the function prototype (= (ret-args) (feval (args))) 
 	   * here we want to gather (ret-args) but also args 
 	   */
 	  /* this will gather ret-args */
-	  Arg_name_to_local_name(List,H);
-	  /* function call prototype */
-	  L1 = ((PList) List->O)->next->next;
-	  /* the function body i.e statements */
-	  Arg_name_to_local_name(List->next,H);
+	  if ( rec == 0 ) 
+	    {
+	      Arg_name_to_local_name(rec+1,List,H);
+	      /* function call prototype */
+	      L1 = ((PList) List->O)->next->next;
+	      /* the function body i.e statements */
+	      Arg_name_to_local_name(rec+1,List->next,H);
+	    }
 	  break;
 	case FOR:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
-	  Arg_name_to_local_name(List->next->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
+	  Arg_name_to_local_name(rec,List->next->next,H);
 	  break;
 	case IF :
 	  for ( j = 0 ; j < L->arity  ; j += 2 )
 	    {
 	      if ( j == L->arity-1 ) 
 		{
-		  Arg_name_to_local_name(List,H);
+		  Arg_name_to_local_name(rec,List,H);
 		}
 	      else 
 		{ 
-		  Arg_name_to_local_name(List,H);
+		  Arg_name_to_local_name(rec,List,H);
 		  List = List->next ;
-		  Arg_name_to_local_name(List,H);
+		  Arg_name_to_local_name(rec,List,H);
 		  List = List->next ;
 		}
 	    }
 	  break;
 	case TRYCATCH :
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  if ( L->arity == 3 ) 
 	    {
-	      Arg_name_to_local_name(List->next->next,H);
+	      Arg_name_to_local_name(rec,List->next->next,H);
 	    }
 	  break;
 	case SELECT :
@@ -1909,16 +1925,16 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 	case PARENTH :
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      Arg_name_to_local_name(List,H);
+	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
 	  break;
 	case CASE :
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  Arg_name_to_local_name(rec,List,H);
+	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
 	case LASTCASE :
-	  Arg_name_to_local_name(List,H);
+	  Arg_name_to_local_name(rec,List,H);
 	  break;
 	default:
 	  s=nsp_astcode_to_name(L->type);
@@ -1927,7 +1943,7 @@ void plist_name_to_local_id(PList List,NspBHash *H)
 }
 
 
-static void Arg_name_to_local_name(PList L,NspBHash *H)
+static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
 {
   /*   NspObject *obj; */
   int val;
@@ -1947,7 +1963,7 @@ static void Arg_name_to_local_name(PList L,NspBHash *H)
 	}
       break;
     case PLIST :
-      plist_name_to_local_id((PList) L->O,H);
+      plist_name_to_local_id((PList) L->O,H,rec);
       break;
     }
 }

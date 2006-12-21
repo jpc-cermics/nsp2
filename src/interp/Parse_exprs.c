@@ -510,7 +510,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
-      plist_name_to_local_id(plist1,symbols); 
+      plist_name_to_local_id(plist1,symbols,0); 
 #ifdef  SMAT_SYMB_TABLE
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
 #endif
