@@ -135,7 +135,7 @@ static double rand_nor_core()
 	      u = r*rand_ranf();
 	      break;
 	    }
-	  else                      /* generate in the tail (see Knuth the Art of CS tome 2      *
+	  else                      /* generate in the tail (see Knuth the Art of CP tome 2      *
                                      * 2 edition, p 123 steps M7 and M8 of alg M and exercise 11) */
 	    {
 	      do
