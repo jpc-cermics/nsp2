@@ -81,7 +81,7 @@ extern const char *nsp_get_libdir(int num);
 /* Parse.c */
 
 extern int parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist);
-extern void plist_name_to_local_id(PList List,NspBHash *H);
+extern void plist_name_to_local_id(PList List,NspBHash *H,int rec);
 
 
 #endif
