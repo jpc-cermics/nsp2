@@ -285,6 +285,11 @@ NspSpColMatrix *A, NspMatrix *X
 NspMatrix *X,NspSpColMatrix *A
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_spcolmatrix_mult_scalar</NAME>
+<RETURNS>int  </RETURNS>
+double *val, char val_type, NspSpColMatrix *A
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_spcolmatrix_mult_scal</NAME>
 <RETURNS>int  </RETURNS>
 NspSpColMatrix *A, NspSpColMatrix *B
@@ -1480,7 +1485,7 @@ const char *name, char type, int m, int n
 <FUNCTION>
 <NAME>nsp_matrix_clone</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
-const char *name, NspMatrix *A, int m, int n
+const char *name, NspMatrix *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_create_impl</NAME>
@@ -1568,7 +1573,7 @@ const NspMatrix *A,const NspMatrix *B
 NspMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_set_submatrix_obsolete</NAME>
+<NAME>nsp_matrix_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B
 </FUNCTION>
@@ -1583,7 +1588,7 @@ void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int 
 void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_set_rows_obsolete</NAME>
+<NAME>nsp_matrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *Rows, NspMatrix *B
 </FUNCTION>
@@ -1593,22 +1598,22 @@ NspMatrix *A, NspMatrix *Rows, NspMatrix *B
 const NspMatrix *A
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_obsolete</NAME>
+<NAME>nsp_matrix_extract</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Rows,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_elements_obsolete</NAME>
+<NAME>nsp_matrix_extract_elements</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_columns_obsolete</NAME>
+<NAME>nsp_matrix_extract_columns</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_rows_obsolete</NAME>
+<NAME>nsp_matrix_extract_rows</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Rows
 </FUNCTION>
@@ -1636,6 +1641,11 @@ const NspMatrix *Diag, int k
 <NAME>nsp_matrix_transpose</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_diff</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+NspMatrix *A, int order, int dim
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_mult_scalar_bis</NAME>
@@ -1835,22 +1845,22 @@ NspMatrix *A, int flag, char *str1, char *str2
 <FUNCTION>
 <NAME>nsp_mat_sum</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
-NspMatrix *A, char *flag
+NspMatrix *A, int dim
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_prod</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
-NspMatrix *A, char *flag
+NspMatrix *A, int dim
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_cum_prod</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
-NspMatrix *A, char *flag
+NspMatrix *A,  int dim
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_cum_sum</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
-NspMatrix *A, char *flag
+NspMatrix *A,  int dim
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_maxi</NAME>
@@ -2046,6 +2056,11 @@ NspMatrix *A, int n
 <NAME>nsp_mat_idiv</NAME>
 <RETURNS>void  </RETURNS>
 NspMatrix *A, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_mod</NAME>
+<RETURNS>void  </RETURNS>
+NspMatrix *x, NspMatrix *y
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_int</NAME>
@@ -2265,6 +2280,11 @@ int argc, char **argv
 void
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_new_frame_with_local_vars</NAME>
+<RETURNS>int  </RETURNS>
+NspCells *table
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_frame_delete</NAME>
 <RETURNS>void  </RETURNS>
 void
@@ -2275,24 +2295,14 @@ void
 void
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_frame_info</NAME>
-<RETURNS>void  </RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_frames_print</NAME>
-<RETURNS>void  </RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_frame_print</NAME>
 <RETURNS>void  </RETURNS>
 void
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_frame_replace_object</NAME>
 <RETURNS>int  </RETURNS>
- NspObject *A
+ NspObject *A,int local_id
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_global_frame_replace_object</NAME>
@@ -2461,6 +2471,7 @@ struct NspPlist {
   /*< public >*/
   char *file_name;  /* NULL or points to the function source file-name */
   PList D;          /* points to the parsed expression */
+  int dir;          /* indice in directory array or -1 */
 };
 </STRUCT>
 <VARIABLE>
@@ -2610,6 +2621,11 @@ PList *plist, int op, int arity, int line
 PList *plist, char *str
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_parse_add_name1</NAME>
+<RETURNS>int  </RETURNS>
+PList *plist, char *str, int arity
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_parse_add_string</NAME>
 <RETURNS>int  </RETURNS>
 PList *plist, char *str
@@ -2638,6 +2654,16 @@ PList *plist, PList *l
 <NAME>nsp_parse_add_doublei</NAME>
 <RETURNS>int  </RETURNS>
 PList *plist, char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_add_opname</NAME>
+<RETURNS>int  </RETURNS>
+PList *plist, char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_add_object</NAME>
+<RETURNS>int  </RETURNS>
+PList *plist, NspObject *obj
 </FUNCTION>
 <FUNCTION>
 <NAME>ParseAddDouble</NAME>
@@ -2998,9 +3024,10 @@ char *cmach
 <STRUCT>
 <NAME>nsp_sparse_triplet</NAME>
 struct nsp_sparse_triplet { /* used in mexlib */
-  int *Ap; /* m+ 1 */
-  int *Ai; /* Aisize */
-  double *Ax; /* Aisize */
+  int *Jc; /* Ap;*/ /* m+ 1 */
+  int *Ir; /* Ai;*/ /* Aisize */
+  double *Pr; /* Ax;*/ /* Aisize */
+  double *Pi; /* Ax;*/ /* Aisize */
   int m,n,Aisize;
 };
 </STRUCT>
@@ -3149,7 +3176,7 @@ nsp_const_string name,int m,int n,nsp_const_string str,int flag
 <FUNCTION>
 <NAME>nsp_smatrix_clone</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
-const char *name, NspSMatrix *A, int m, int n
+const char *name, NspSMatrix *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_create_with_length</NAME>
@@ -3247,27 +3274,27 @@ NspSMatrix *A,NspSMatrix *B,int flag
 NspSMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_set_submatrix_obsolete</NAME>
+<NAME>nsp_smatrix_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_set_rows_obsolete</NAME>
+<NAME>nsp_smatrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_obsolete</NAME>
+<NAME>nsp_smatrix_extract</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_elements_obsolete</NAME>
+<NAME>nsp_smatrix_extract_elements</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_columns_obsolete</NAME>
+<NAME>nsp_smatrix_extract_columns</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Cols, int *err
 </FUNCTION>
@@ -3277,7 +3304,7 @@ NspSMatrix *A, NspMatrix *Cols, int *err
 char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int *rep
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_rows_obsolete</NAME>
+<NAME>nsp_smatrix_extract_rows</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -3643,25 +3670,25 @@ char *name, int m, int n, doubleC *cval, int flag
 <FUNCTION>
 <NAME>nsp_pmatrix_clone</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
-char *name, NspPMatrix *A, int m, int n
+char *name, NspPMatrix *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_obsolete</NAME>
+<NAME>nsp_pmatrix_extract</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_columns_obsolete</NAME>
+<NAME>nsp_pmatrix_extract_columns</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Cols, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_elements_obsolete</NAME>
+<NAME>nsp_pmatrix_extract_elements</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_rows_obsolete</NAME>
+<NAME>nsp_pmatrix_extract_rows</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -3706,17 +3733,17 @@ NspPMatrix *A, int m, int n
 NspPMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_set_rows_obsolete</NAME>
+<NAME>nsp_pmatrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_set_submatrix_obsolete</NAME>
+<NAME>nsp_pmatrix_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_setrc_obsolete</NAME>
+<NAME>nsp_pmatrix_setrc</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B
 </FUNCTION>
@@ -3834,6 +3861,10 @@ AttrTab *T
 #define NspFnameH(x) (x)->fname 
 </MACRO>
 <MACRO>
+<NAME>NspFileName</NAME>
+#define NspFileName(x) (x).file_name
+</MACRO>
+<MACRO>
 <NAME>CheckRhs</NAME>
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
   { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
@@ -3913,7 +3944,7 @@ NspList *L,int pos,int_types *T,...
 <FUNCTION>
 <NAME>BuildListFromArgs</NAME>
 <RETURNS>NspList  *</RETURNS>
-int_types *T,...
+const char *name,int_types *T,...
 </FUNCTION>
 <FUNCTION>
 <NAME>GetFromTable</NAME>
@@ -3978,7 +4009,7 @@ Stack stack,int n,const char *bytes,int length
 <FUNCTION>
 <NAME>nsp_new_string_obj</NAME>
 <RETURNS>NspObject  *</RETURNS>
-char *name,const char *bytes,int length
+const char *name,const char *bytes,int length
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_move_double</NAME>
@@ -4045,6 +4076,11 @@ Stack S,int  i
 <RETURNS>NspLmo  *</RETURNS>
 Stack S,int i
 </FUNCTION>
+<FUNCTION>
+<NAME>GetDimArg</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int pos, int *dim
+</FUNCTION>
 <MACRO>
 <NAME>CheckSameDims</NAME>
 #define CheckSameDims(fname,pos1,pos2,o1,o2) if ( o1->m != o2->m && o1->n != o2->n ) \
@@ -4109,6 +4145,12 @@ Stack S,int i
 <NAME>CheckComplex</NAME>
 #define CheckComplex(fname,pos,o1) if ( o1->rc_type != 'r' ) \
    { Scierror("%s: arguments %d should be a complex  matrix\n",fname,pos1); \
+     return RET_BUG;} 
+</MACRO>
+<MACRO>
+<NAME>CheckNonNegative</NAME>
+#define CheckNonNegative(fname, k, pos1) if ( k < 0 ) \
+   { Scierror("%s: argument %d must be non negative\n",fname,pos1); \
      return RET_BUG;} 
 </MACRO>
 <FUNCTION>
@@ -4421,8 +4463,11 @@ double **x , double val[], int dim[], int n,double **xp, double yp[], int np, in
 typedef int Boolean;
 </TYPEDEF>
 <STRUCT>
-<NAME>NspBmatrix</NAME>
-struct NspBmatrix {
+<NAME>NspBMatrix</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspBMatrix</NAME>
+struct NspBMatrix {
   /*< private >*/
   NspObject father; 
   NspTypeBMatrix *type; 
@@ -4511,7 +4556,7 @@ const char *name, int m, int n
 <FUNCTION>
 <NAME>nsp_bmatrix_clone</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
-const char *name, NspBMatrix *A, int m, int n
+const char *name, NspBMatrix *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_copy</NAME>
@@ -4589,32 +4634,32 @@ NspBMatrix *A, NspBMatrix *B
 NspBMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_set_submatrix_obsolete</NAME>
+<NAME>nsp_bmatrix_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_set_rows_obsolete</NAME>
+<NAME>nsp_bmatrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_obsolete</NAME>
+<NAME>nsp_bmatrix_extract</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_elements_obsolete</NAME>
+<NAME>nsp_bmatrix_extract_elements</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_columns_obsolete</NAME>
+<NAME>nsp_bmatrix_extract_columns</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_rows_obsolete</NAME>
+<NAME>nsp_bmatrix_extract_rows</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Rows
 </FUNCTION>
@@ -4924,10 +4969,9 @@ void * F, NspObject * M
 <STRUCT>
 <NAME>Stack_ref</NAME>
 struct Stack_ref {
-  char *file_name ; /* current evaluated file **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
-  NspObject **L;     /* Last position **/
-  NspObject **S;     /* points to the whole stack **/
+  NspObject **L;     /* Last position */
+  NspObject **S;     /* points to the whole stack */
   NspObject *error_msg; 
   stack_error *error;
   int errcatch; 
@@ -4938,9 +4982,10 @@ struct Stack_ref {
 <STRUCT>
 <NAME>Stack</NAME>
 struct Stack {
-  int first;   /* position of first argument to be used **/
-  const char *fname; /* function currently evaluated **/
+  int first;   /* position of first argument to be used */
+  const char *fname; /* function currently evaluated */
   Stack_ref *val;
+  char *file_name ; /* current evaluated file */
 } ;
 </STRUCT>
 <MACRO>
@@ -5053,7 +5098,7 @@ NspObject *ob,NspTypeBase *type, char *attr
 <FUNCTION>
 <NAME>object_path_extract</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspObject *a, NspObject *ob
+NspObject *a,int n, NspObject **ob
 </FUNCTION>
 <STRUCT>
 <NAME>NspMethods</NAME>
@@ -5209,12 +5254,12 @@ Stack stack, int i
 <FUNCTION>
 <NAME>nsp_create_object_from_double</NAME>
 <RETURNS>NspObject  *</RETURNS>
-char *str, double dval
+const char *str, double dval
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_create_object_from_complex</NAME>
 <RETURNS>NspObject  *</RETURNS>
-char *str,const doubleC *d
+const char *str,const doubleC *d
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_create_object_from_int</NAME>
@@ -5229,7 +5274,7 @@ char *str
 <FUNCTION>
 <NAME>nsp_create_object_from_str</NAME>
 <RETURNS>NspObject  *</RETURNS>
-char *str
+const char *name,const char *str
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_create_object_from_str_and_size</NAME>
@@ -5515,6 +5560,23 @@ NspRect *R,const double pt[2]
 <RETURNS>void  </RETURNS>
 NspRect *R,const double size[2]
 </FUNCTION>
+<ENUM>
+<NAME>accelerated_ops</NAME>
+typedef enum { 
+  undef_tab=-1,
+  concatr_tab=0, 
+  concatd_tab=1,
+  extract_tab=2,
+  extractelts_tab=3,
+  extractcols_tab=4,
+  extractrows_tab=5,
+  resize2vect_tab=6,
+  deleteelts_tab=7,
+  deletecols_tab=8,
+  deleterows_tab=9,
+  tozero_tab=10,
+  setrowscols_tab=11} accelerated_ops;
+</ENUM>
 <STRUCT>
 <NAME>AcceleratedTab</NAME>
 </STRUCT>
@@ -5522,62 +5584,14 @@ NspRect *R,const double size[2]
 <NAME>AcceleratedTab</NAME>
 struct AcceleratedTab
 {
-  char *opname;
+  int ops_id; /* this should be equal to the indice in table */
+  const char *opname;
   int arity;
-  int nb_accelerated_types;
-  int *accelerated_types;
+  const char **accelerated_types;
   int length;
   function **func;
 } ;
 </STRUCT>
-<VARIABLE>
-<NAME>concatr_tab</NAME>
-extern AcceleratedTab concatr_tab; 
-</VARIABLE>
-<VARIABLE>
-<NAME>concatd_tab</NAME>
-extern AcceleratedTab concatd_tab; 
-</VARIABLE>
-<VARIABLE>
-<NAME>extract_tab</NAME>
-extern AcceleratedTab extract_tab; 
-</VARIABLE>
-<VARIABLE>
-<NAME>extractelts_tab</NAME>
-extern AcceleratedTab extractelts_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>extractcols_tab</NAME>
-extern AcceleratedTab extractcols_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>extractrows_tab</NAME>
-extern AcceleratedTab extractrows_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>resize2vect_tab</NAME>
-extern AcceleratedTab resize2vect_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>deleteelts_tab</NAME>
-extern AcceleratedTab deleteelts_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>deletecols_tab</NAME>
-extern AcceleratedTab deletecols_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>deleterows_tab</NAME>
-extern AcceleratedTab deleterows_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>tozero_tab</NAME>
-extern AcceleratedTab tozero_tab;
-</VARIABLE>
-<VARIABLE>
-<NAME>setrowscols_tab</NAME>
-extern AcceleratedTab setrowscols_tab;
-</VARIABLE>
 <FUNCTION>
 <NAME>nsp_get_fast_function</NAME>
 <RETURNS>function  *</RETURNS>
@@ -5717,6 +5731,11 @@ int keyc
 <NAME>nsp_print_opname</NAME>
 <RETURNS>int  </RETURNS>
 int code
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_ast_hash_create</NAME>
+<RETURNS>NspHash  *</RETURNS>
+void
 </FUNCTION>
 <STRUCT>
 <NAME>NspMpmatrix</NAME>
@@ -5922,7 +5941,7 @@ const char *name, char type, int m, int n
 <FUNCTION>
 <NAME>nsp_mpmatrix_clone</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
-const char *name, NspMatrix *A, int m, int n
+const char *name, NspMatrix *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_create_impl</NAME>
@@ -5995,32 +6014,32 @@ const NspMaxpMatrix *A,const NspMaxpMatrix *B
 NspMaxpMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_set_submatrix_obsolete</NAME>
+<NAME>nsp_mpmatrix_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_set_rows_obsolete</NAME>
+<NAME>nsp_mpmatrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_obsolete</NAME>
+<NAME>nsp_mpmatrix_extract</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Rows,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_elements_obsolete</NAME>
+<NAME>nsp_mpmatrix_extract_elements</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_columns_obsolete</NAME>
+<NAME>nsp_mpmatrix_extract_columns</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_rows_obsolete</NAME>
+<NAME>nsp_mpmatrix_extract_rows</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Rows
 </FUNCTION>
@@ -6495,554 +6514,6 @@ NspMaxpMatrix *M
 NspMatrix *M
 </FUNCTION>
 <STRUCT>
-<NAME>nsp_sparse_triplet</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>nsp_sparse_triplet</NAME>
-struct nsp_sparse_triplet { /* used in mexlib */
-  int *Ap; /* m+ 1 */
-  int *Ai; /* Aisize */
-  double *Ax; /* Aisize */
-  int m,n,Aisize; 
-};
-</STRUCT>
-<STRUCT>
-<NAME>NspSpmatrix</NAME>
-struct NspSpmatrix {
-  /*< private >*/
-  NspObject father; 
-  NspTypeSpMatrix *type; 
-  /*< public >*/
-  char rc_type;        /* 'r' or 'i' : real or complex matrix */
-  int m,n,mn;   /* mn should be removed since m*n can be bigger than int */
-  SpRow **D; /* array of size m giving the Rows datas */
-  char convert; /* 't' : the matrix is stored in triplet , 'n': triplet not used   */
-  nsp_sparse_triplet triplet; 
-} ;
-</STRUCT>
-<VARIABLE>
-<NAME>nsp_type_spmatrix_id</NAME>
-extern int nsp_type_spmatrix_id;
-</VARIABLE>
-<VARIABLE>
-<NAME>nsp_type_spmatrix</NAME>
-extern NspTypeSpMatrix *nsp_type_spmatrix;
-</VARIABLE>
-<FUNCTION>
-<NAME>nsp_type_spmatrix_init</NAME>
-<RETURNS>int  </RETURNS>
-
-</FUNCTION>
-<FUNCTION>
-<NAME>new_type_spmatrix</NAME>
-<RETURNS>NspTypeSpMatrix  *</RETURNS>
-type_mode mode
-</FUNCTION>
-<FUNCTION>
-<NAME>new_spmatrix</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_type_as_string</NAME>
-<RETURNS>char  *</RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_type_short_string</NAME>
-<RETURNS>char  *</RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>SpLoopExtract</NAME>
-<RETURNS>NspObject  *</RETURNS>
-char *str, NspObject *O, NspObject *O1, int i, int *rep
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_eq</NAME>
-<RETURNS>int  </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_neq</NAME>
-<RETURNS>int  </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<MACRO>
-<NAME>NULLSP</NAME>
-#define NULLSP (  NspSpMatrix *) 0
-</MACRO>
-<FUNCTION>
-<NAME>SpObj</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspObject *O
-</FUNCTION>
-<FUNCTION>
-<NAME>IsSpMatObj</NAME>
-<RETURNS>int  </RETURNS>
-Stack stack, int i
-</FUNCTION>
-<FUNCTION>
-<NAME>IsSpMat</NAME>
-<RETURNS>int  </RETURNS>
-const NspObject *O
-</FUNCTION>
-<FUNCTION>
-<NAME>GetSpCopy</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-Stack stack, int i
-</FUNCTION>
-<FUNCTION>
-<NAME>GetSp</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-Stack stack, int i
-</FUNCTION>
-<FUNCTION>
-<NAME>GetRealSp</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-Stack stack, int i
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_destroy</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *Mat
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_nnz</NAME>
-<RETURNS>int  </RETURNS>
-const NspSpMatrix *HMat
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_info</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *Sp, int indent,char *name, int rec_level
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_print</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *Sp, int indent,char *name, int rec_level
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_copy</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_object</NAME>
-<RETURNS>NspSpMatrix    *</RETURNS>
-NspObject *O
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_create</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-char *name, char type, int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sparse</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-char *name,NspMatrix *RC, NspMatrix *Values, int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_get</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_resize_row</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *Sp, int i, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_row_destroy</NAME>
-<RETURNS>void  </RETURNS>
-SpRow *Row
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_redim</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_enlarge_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *Sp, int m
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_enlarge</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_concatr</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_concatd</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_concatdiag</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_store</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A, int r, int c, int col, NspSpMatrix *B, int r1, int c1
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_insert_elt</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int i, int j, NspSpMatrix *B, int rb, int cb
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_delete_elt</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int row, int col, int amin, int amax
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_get_elt</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *B, int i, int j
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_set_rowcol</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_set_row</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspMatrix *Inds, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_delete_cols</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_compress_row</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int i
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_extract</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_extract_elts</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_extract_cols</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspMatrix *Cols, int *err
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_extract_rows</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspMatrix *Rows, int *err
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_diag_extract</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, int k
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_diag_set</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *Diag, int k
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_diag_create</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *Diag, int k
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_mult</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_mult_matrix</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A, NspMatrix *X
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_mult_scal</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_complexify</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_setr</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, double d
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_seti</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, double d
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_from_mat</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_to_mat</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *Sp
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_transpose</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-const NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_add</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sub</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_multtt</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_mult_scal</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, NspSpMatrix *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_op_scal</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B, int *flag, char op
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_clean</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int rhs, double epsa, double epsr
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_maximinitt_g</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxflag, int *err
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_maxitt</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B, int flag, int *err
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_minitt</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A, NspSpMatrix *B, int flag, int *err
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_realpart</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_imagpart</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sum</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, char *flag
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_maxi</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_eye</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_ones</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_zeros</NAME>
-<RETURNS>NspSpMatrix  *</RETURNS>
-int m, int n
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_acos</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_acosh</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_asin</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_asinh</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_atan</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_atanh</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_ceil</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_int</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_floor</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_round</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sign</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_tan</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_tanh</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_abs</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_erf</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_arg</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_conj</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_cos</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_cosh</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_expel</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_logel</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sin</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sinh</NAME>
-<RETURNS>void  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_sqrtel</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_minus</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_spmatrix_find</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_sparse_update_from_triplet</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *M
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_sparse_set_triplet_from_m</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *M,int flag
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_sparse_alloc_col_triplet</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *M,int nzmax
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_sparse_realloc_col_triplet</NAME>
-<RETURNS>int  </RETURNS>
-NspSpMatrix *M,int nzmax
-</FUNCTION>
-<STRUCT>
 <NAME>NspMe</NAME>
 </STRUCT>
 <STRUCT>
@@ -7336,7 +6807,7 @@ const char *name, int m, int n
 <FUNCTION>
 <NAME>nsp_cells_clone</NAME>
 <RETURNS>NspCells  *</RETURNS>
-const char *name, NspCells *A, int m, int n
+const char *name, NspCells *A, int m, int n, int init
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_cells_create_from_table</NAME>
@@ -7409,27 +6880,27 @@ const NspCells *A,const NspCells *B
 NspCells *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_set_submatrix_obsolete</NAME>
+<NAME>nsp_cells_set_submatrix</NAME>
 <RETURNS>int  </RETURNS>
 NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_set_rows_obsolete</NAME>
+<NAME>nsp_cells_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspCells *A, NspMatrix *Rows, NspCells *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_obsolete</NAME>
+<NAME>nsp_cells_extract</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_elements_obsolete</NAME>
+<NAME>nsp_cells_extract_elements</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_columns_obsolete</NAME>
+<NAME>nsp_cells_extract_columns</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Cols, int *err
 </FUNCTION>
@@ -7439,7 +6910,7 @@ NspCells *A, NspMatrix *Cols, int *err
 char *str, NspCells *Col, NspCells *A, int icol, int *rep
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_rows_obsolete</NAME>
+<NAME>nsp_cells_extract_rows</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -7452,6 +6923,11 @@ NspCells *A,int index, NspObject *B
 <NAME>nsp_cells_unique</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *C, NspMatrix **Ind, NspMatrix **Occ
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cells_has</NAME>
+<RETURNS>Boolean  </RETURNS>
+NspCells *C, NspObject *Obj, int *ind
 </FUNCTION>
 <MACRO>
 <NAME>NULLCELLS</NAME>
@@ -7761,150 +7237,6 @@ NspMatrix *A, NspMatrix *B, int *info
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *B, NspMatrix **X
 </FUNCTION>
-<ENUM>
-<NAME>nsp_basic_types</NAME>
-enum nsp_basic_types { 
-  NUMBER =-1,
-  NAME =   -2,
-  PLIST =   -3,
-  STRING =   -4,
-  EMPTYMAT = -5,
-  COMMENT =  -6 ,
-  EMPTYCELL =  -38,
-  OPNAME = -30,
-  OBJECT = -39 
-};
-</ENUM>
-<MACRO>
-<NAME>NAME_MAXL</NAME>
-#define NAME_MAXL 52
-</MACRO>
-<ENUM>
-<NAME>nsp_keywords</NAME>
-enum nsp_keywords { 
-  WHILE =   -7, /* WHILE must be the first */
-  END =     -8,
-  SELECT =  -9,
-  CASE =    -10,
-  QUIT =    -11,
-  NSP_EXIT =-12,
-  PRETURN = -13,
-  HELP =    -14,
-  WHAT =    -15,
-  WHO =     -16,
-  PAUSE =   -17,
-  CLEAR =   -18,
-  IF =      -19,
-  THEN =    -20,
-  DO =      -21,
-  APROPOS = -22,
-  ABORT =   -23,
-  BREAK =   -24,
-  ELSEIF =  -25,
-  ELSE =    -26,
-  FOR =     -27,
-  FUNCTION = -28,
-  ENDFUNCTION = -29,
-  /* -30 is used */
-  EXEC = -31,
-  GLOBAL = -32,
-  CLEARGLOBAL =   -33,
-  TRYCATCH =    -34,
-  CATCH =  -35 ,
-  FINALLY =  -36 ,
-  CONTINUE =  -37,
-  /* -38 is used */
-  /* -39 is used */
-  NOTKEY =  -40 /* should be the last */
-};
-</ENUM>
-<ENUM>
-<NAME>nsp_ops</NAME>
-enum nsp_ops { 
-  QUOTE_OP =    ((int) '\''),
-  STAR_OP =    ((int) '*'),
-  PLUS_OP =    ((int) '+'),
-  HAT_OP =    ((int) '^'),
-  COLON_OP =    ((int) ':'),
-  OR_OP =    ((int) '|'),
-  AND_OP =    ((int) '&'),
-  TILDE_OP =    ((int) '~'),
-  RETURN_OP =  ((int) '\n'), 
-  COMMA_OP =     ((int) ','),
-  SEMICOLON_OP =    ((int) ';'),
-  MINUS_OP =    ((int) '-'),
-  SLASH_OP =    ((int) '/'),
-  BACKSLASH_OP =    ((int) '\\'),
-
-  DOTSTAR   =((((int) '*') << 7) + (int) '.' ),
-  DOTSLASH  =((((int) '/') << 7) + (int) '.' ),
-  DOTBSLASH =((((int) '\\') << 7) + (int) '.' ),
-
-  DOTPLUS   =((((int) '+') << 7) + (int) '.' ),
-
-  STARDOT   =((((int) '.') << 7) + (int) '*' ),
-  SLASHDOT  =((((int) '.') << 7) + (int) '/' ),
-  BSLASHDOT =((((int) '.') << 7) + (int) '\\' ),
-
-  DOTSTARDOT  =(((int) '.') <<14 ) + (((int) '*') << 7) + (int) '.' ,
-  DOTSLASHDOT  =(((int) '.') <<14 )+(((int) '/') << 7) + (int) '.' ,
-  DOTBSLASHDOT =(((int) '.') <<14 )+ (((int) '\\') << 7) + (int) '.',
-
-  DOTHAT =((((int) '^') << 7) + (int) '.' ),
-
-  EQ     =((((int) '=') << 7) + (int) '=' ),
-  LEQ    =((((int) '<') << 7) + (int) '=' ),
-  GEQ    =((((int) '>') << 7) + (int) '=' ),
-  NEQ    =((((int) '<') << 7) + (int) '>' ),
-
-  DOTEQ     =((((int) '=') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTLEQ    =((((int) '<') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTLT    =((((int) '<') << 7) +  (int) '.' ),
-  DOTGEQ    =((((int) '>') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTGT    =((((int) '>') << 7) +  (int) '.' ),
-  DOTNEQ    =((((int) '<') << 14) + (((int) '>') << 7)  + (int) '.' ),
-
-  DOTPRIM =((((int) '.') << 7) + (int) '\'' ),
-
-  /* Unary minus */
-
-  MOINS   =((((int) '-') << 7) + (int) '-' ), 
-  NOTCODE =0,
-
-  /* and or sequential version */
-
-  SEQAND   =((((int) '&') << 7) + (int) '&' ),  
-  SEQOR    =((((int) '|') << 7) + (int) '|' ) 
-};
-</ENUM>
-<ENUM>
-<NAME>nsp_codes</NAME>
-enum nsp_codes {
-  FEVAL = -100, /* must be the first */
-  ROWCONCAT = -101,
-  COLCONCAT = -102,
-  LASTCASE =  -103,
-  MLHS =      -104,
-  P_MATRIX=  -105,
-  STATEMENTS = -106,
-  STATEMENTS1 = -107,
-  OPT =        -108,
-  DIAGCONCAT = -109,
-  LISTEVAL =   -110,
-  ARGS =       -111,
-  PARENTH =    -112,
-  DOTARGS =    -113,
-  METARGS =    -114, 
-  CELLROWCONCAT = -115,
-  CELLCOLCONCAT = -116, 
-  CELLDIAGCONCAT = -117, 
-  P_CELL=  -118, 
-  CELLARGS =    -119, 
-  CALLEVAL =  -120, 
-  EQUAL_OP = -121,
-  LASTCODE_NEG_OP = -122
-};
-</ENUM>
 <STRUCT>
 <NAME>BHash_Entry</NAME>
 </STRUCT>
@@ -7971,12 +7303,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_bhash_create</NAME>
 <RETURNS>NspBHash  *</RETURNS>
-char *name, unsigned int size
+const char *name, unsigned int size
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhash_copy</NAME>
 <RETURNS>NspBHash  *</RETURNS>
-NspBHash *H
+const NspBHash *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhash_destroy</NAME>
@@ -8034,6 +7366,11 @@ NspBHash *H1, NspBHash *H2
 NspBHash *H,int *i,char **str,int *val
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_bhash_enter_pos_i</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H, int i,int val
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_bhash_enter_copy</NAME>
 <RETURNS>int  </RETURNS>
 NspBHash *H, NspObject *O
@@ -8056,7 +7393,7 @@ NspBHash *H, char *str, NspObject **O
 <FUNCTION>
 <NAME>nsp_bhash_find</NAME>
 <RETURNS>int  </RETURNS>
-NspBHash *H,char *str,int *val
+NspBHash *H,const char *str,int *val
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhash_equal</NAME>
@@ -8087,11 +7424,6 @@ typedef enum {
 } BHashOperation;
 </ENUM>
 <FUNCTION>
-<NAME>nsp_bhsearch</NAME>
-<RETURNS>int  </RETURNS>
-NspBHash *H, char *key,int *val,BHashOperation action
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_bhcreate_from_list</NAME>
 <RETURNS>NspBHash  *</RETURNS>
 char *name,unsigned int nel, NspList *L
@@ -8099,7 +7431,7 @@ char *name,unsigned int nel, NspList *L
 <FUNCTION>
 <NAME>nsp_bhcreate</NAME>
 <RETURNS>NspBHash  *</RETURNS>
-char *name, unsigned int nel
+const char *name, unsigned int nel
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhdestroy</NAME>
@@ -8307,6 +7639,11 @@ char *name, unsigned int nel
 <NAME>nsp_hdestroy</NAME>
 <RETURNS>void  </RETURNS>
 NspHash *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_current_frame_to_hash</NAME>
+<RETURNS>NspHash  *</RETURNS>
+void
 </FUNCTION>
 <ENUM>
 <NAME>nsp_basic_types</NAME>
@@ -8542,6 +7879,11 @@ double *t
 <RETURNS>int  </RETURNS>
 void
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_tictoc</NAME>
+<RETURNS>int  </RETURNS>
+double *etime
+</FUNCTION>
 <STRUCT>
 <NAME>NspList</NAME>
 </STRUCT>
@@ -8592,7 +7934,7 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_list_path_extract</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspList *L, NspObject *O
+NspList *L,int n, NspObject **Objs
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_list_object</NAME>
@@ -8762,7 +8104,12 @@ NspList *L, NspPList *PL, NspList *args
 <FUNCTION>
 <NAME>nsp_list_fold_right</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspList *L, NspPList *PL, NspList *args
+NspList *L,NspObject *x, NspPList *PL, NspList *args
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_list_fold_left</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspList *L, NspObject *x,NspPList *PL, NspList *largs
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_list_equal</NAME>
@@ -8798,6 +8145,11 @@ NspList *L, int n
 <NAME>nsp_list_unique</NAME>
 <RETURNS>NspList  *</RETURNS>
 NspList *L, NspMatrix **Ind, NspMatrix **Occ
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_list_has</NAME>
+<RETURNS>Boolean  </RETURNS>
+NspList *L, NspObject *Obj, int *ind
 </FUNCTION>
 <VARIABLE>
 <NAME>int_column</NAME>
@@ -9353,6 +8705,11 @@ const  doubleC *x,doubleC *res
 const  doubleC *x,doubleC *res
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_pow_di</NAME>
+<RETURNS>double  </RETURNS>
+double x, int p
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_pow_cc</NAME>
 <RETURNS>void  </RETURNS>
 const  doubleC *x,const doubleC *y,doubleC *res
@@ -9363,9 +8720,19 @@ const  doubleC *x,const doubleC *y,doubleC *res
  const doubleC *x, double y,doubleC *res
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_pow_cd_or_ci</NAME>
+<RETURNS>void  </RETURNS>
+const  doubleC *x, double y, doubleC *res
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_pow_dc</NAME>
 <RETURNS>void  </RETURNS>
  double x, const doubleC *y,doubleC *res
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pow_ci</NAME>
+<RETURNS>void  </RETURNS>
+const  doubleC *xe, int y,doubleC *res
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sin_c</NAME>
@@ -9386,11 +8753,6 @@ const  doubleC *x,doubleC *res
 <NAME>nsp_div_dc</NAME>
 <RETURNS>void  </RETURNS>
  double x,const doubleC *y,doubleC *res
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_pow_ci</NAME>
-<RETURNS>void  </RETURNS>
-const  doubleC *xe, int y,doubleC *res
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sqrt_c</NAME>
@@ -9493,7 +8855,7 @@ const  doubleC *x,doubleC *res
 </MACRO>
 <ENUM>
 <NAME>menu_answer</NAME>
-typedef enum { menu_ok , menu_cancel, menu_fail } menu_answer; 
+typedef enum { menu_ok , menu_cancel, menu_fail, menu_bad_argument} menu_answer; 
 </ENUM>
 <FUNCTION>
 <NAME>nsp_choose</NAME>
@@ -9528,7 +8890,7 @@ char *message
 <FUNCTION>
 <NAME>nsp_choices_with_combobox</NAME>
 <RETURNS>menu_answer  </RETURNS>
-char *title,NspList *L,int use_table
+char *title,NspList *L,NspList **Res,int use_table
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_print_dialog</NAME>
@@ -9968,7 +9330,7 @@ extern NspHash *nsp_pango_hash_table;
 <FUNCTION>
 <NAME>nsp_get_type_from_name</NAME>
 <RETURNS>void  *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>type_get_name</NAME>
@@ -10048,7 +9410,7 @@ NspObject *O
 <FUNCTION>
 <NAME>gframe_path_extract</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspGFrame *H, NspObject *O
+NspGFrame *H,int n, NspObject **Objs
 </FUNCTION>
 <FUNCTION>
 <NAME>gframe_create</NAME>
@@ -10468,9 +9830,19 @@ NspObject *Obj,int *indrow, int nr, int rmin, int rmax,int *indcol, int nc, int 
 NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_matint_extract_elements1</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj,NspObject *Elts
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_matint_extract_columns</NAME>
 <RETURNS>NspObject  *</RETURNS>
 NspObject *Obj, const int *ind, int nb_elts, int cmin, int cmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract_columns1</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj,NspObject *Cols
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matint_extract_rows</NAME>
@@ -10478,9 +9850,19 @@ NspObject *Obj, const int *ind, int nb_elts, int cmin, int cmax
 NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_matint_extract_rows1</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj,NspObject *Rows
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_matint_extract</NAME>
 <RETURNS>NspObject  *</RETURNS>
 NspObject *Obj,const int *row, int nr, int rmin, int rmax,const int *col, int nc, int cmin, int cmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract1</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj,NspObject *Rows, NspObject *Cols
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matint_set_submatrix</NAME>
@@ -10493,6 +9875,11 @@ NspObject *ObjA,const int *row, int nr, int rmin, int rmax,const int *col, int n
 NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_matint_set_elts1</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA, NspObject *Elts, NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_matint_concat_right</NAME>
 <RETURNS>NspObject  *</RETURNS>
 const NspObject *ObjA,const NspObject *ObjB
@@ -10501,6 +9888,11 @@ const NspObject *ObjA,const NspObject *ObjB
 <NAME>nsp_matint_concat_right_bis</NAME>
 <RETURNS>int  </RETURNS>
 NspObject *ObjA,const NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_repmat</NAME>
+<RETURNS>NspObject  *</RETURNS>
+const NspObject *ObjA, int m, int n
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>Fconcat_d</NAME>
@@ -10513,77 +9905,106 @@ const NspObject *, const NspObject *
 NspObject *ObjA, NspObject *ObjB
 </FUNCTION>
 <FUNCTION>
-<NAME>int_matint_concat_down_yy</NAME>
+<NAME>nsp_matint_redim</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *Obj, int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concat_down_bis</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA, NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concat_diag</NAME>
+<RETURNS>NspObject  *</RETURNS>
+const NspObject *ObjA,const NspObject *ObjB
+</FUNCTION>
+<ENUM>
+<NAME>matint_workid</NAME>
+typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
+</ENUM>
+<FUNCTION>
+<NAME>get_index_vector_from_object</NAME>
+<RETURNS>int  *</RETURNS>
+NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_set_submatrix1</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_perm_elem</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA, int p, int q, int dim_flag
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_cells_setrowscols</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_concat_diag</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_concat_down</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs, Fconcat_d F
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_resize2vect_xx</NAME>
+<NAME>int_matint_concat_emptymat_and_mat</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_extractelts_xx</NAME>
+<NAME>int_matint_concatd</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_extractcols_xx</NAME>
+<NAME>int_matint_concatr</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_extractrows_xx</NAME>
+<NAME>int_matint_deletecols</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_extract_xx</NAME>
+<NAME>int_matint_deleteelts</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_setrowscols_xx</NAME>
+<NAME>int_matint_deleteelts2</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_deleteelts_xx</NAME>
+<NAME>int_matint_deleterows</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_deleteelts2_xx</NAME>
+<NAME>int_matint_extract</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_deletecols_xx</NAME>
+<NAME>int_matint_extractcols</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_deleterows_xx</NAME>
+<NAME>int_matint_extractelts</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_tozero_xx</NAME>
-<RETURNS>int  </RETURNS>
-Stack stack, int rhs, int opt, int lhs
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matint_concatr_xx</NAME>
-<RETURNS>int  </RETURNS>
-Stack stack, int rhs, int opt, int lhs
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matint_concatd_xx</NAME>
-<RETURNS>int  </RETURNS>
-Stack stack, int rhs, int opt, int lhs
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matint_cells_setrowscols_xx</NAME>
+<NAME>int_matint_extractrows</NAME>
 <RETURNS>int  </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
@@ -10593,9 +10014,24 @@ Stack stack, int rhs, int opt, int lhs
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matint_redim</NAME>
+<NAME>int_matint_repmat</NAME>
 <RETURNS>int  </RETURNS>
-NspObject *Obj, int m, int n
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_resize2vect</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_setrowscols</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_tozero</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
 <STRUCT>
 <NAME>NspFile</NAME>
@@ -11994,4 +11430,602 @@ Stack stack, int i
 <NAME>GetClassB</NAME>
 <RETURNS>NspClassB  *</RETURNS>
 Stack stack, int i
+</FUNCTION>
+<MACRO>
+<NAME>INTERSIZ</NAME>
+#define INTERSIZ 256
+</MACRO>
+<TYPEDEF>
+<NAME>mxLogical</NAME>
+typedef int mxLogical; /* should be int on Nsp */
+</TYPEDEF>
+<TYPEDEF>
+<NAME>mxChar</NAME>
+typedef char mxChar;
+</TYPEDEF>
+<ENUM>
+<NAME>mxComplexity</NAME>
+typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
+</ENUM>
+<TYPEDEF>
+<NAME>bool</NAME>
+typedef int bool;
+</TYPEDEF>
+<MACRO>
+<NAME>true</NAME>
+#define true TRUE 
+</MACRO>
+<MACRO>
+<NAME>false</NAME>
+#define false FALSE
+</MACRO>
+<MACRO>
+<NAME>mxAssert</NAME>
+#define mxAssert(cond,mess) if ( !(cond) ) _mxAssert(mess,__LINE__,__FILE__) ;
+</MACRO>
+<FUNCTION>
+<NAME>nsp_mex_wrapper</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetPr</NAME>
+<RETURNS>double  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetPi</NAME>
+<RETURNS>double  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetM</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetN</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsString</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsNumeric</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsFull</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsSparse</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsComplex</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetScalar</NAME>
+<RETURNS>double  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mexErrMsgTxt</NAME>
+<RETURNS>void  </RETURNS>
+char *error_msg
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateFull</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n, int it
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateDoubleMatrix</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n,  mxComplexity it
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCalloc</NAME>
+<RETURNS>void  *</RETURNS>
+unsigned int n, unsigned int size
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetString</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr, char *str, int strl
+</FUNCTION>
+<FUNCTION>
+<NAME>mxFreeMatrix</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxFree</NAME>
+<RETURNS>void  </RETURNS>
+void *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mexAtExit</NAME>
+<RETURNS>int  </RETURNS>
+void (*ExitFcn)(void)
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateSparse</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n, int nzmax,mxComplexity ComplexFlag
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateString</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const char *string
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetJc</NAME>
+<RETURNS>int  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetIr</NAME>
+<RETURNS>int  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsChar</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetNumberOfDimensions</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetNumberOfFields</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetNumberOfElements</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsStruct</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateStructMatrix</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n, int nfields, const char **field_names
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetInf</NAME>
+<RETURNS>double  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetNaN</NAME>
+<RETURNS>double  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetEps</NAME>
+<RETURNS>double  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsInf</NAME>
+<RETURNS>bool  </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsFinite</NAME>
+<RETURNS>bool  </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsNaN</NAME>
+<RETURNS>bool  </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetScalar</NAME>
+<RETURNS>double  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetField</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const mxArray *pa, int i,const char *fieldname
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetField</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *pa, int i, const char *fieldname, mxArray *value
+</FUNCTION>
+<FUNCTION>
+<NAME>mexWarnMsgTxt</NAME>
+<RETURNS>void  </RETURNS>
+const char *error_msg
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsCell</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetCell</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const mxArray *ptr, int index
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetCell</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *ptr, int index, mxArray *value
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateCellMatrix</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>mxArrayToString</NAME>
+<RETURNS>char  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<MACRO>
+<NAME>mexPrintf</NAME>
+#define mexPrintf Sciprintf
+</MACRO>
+<TYPEDEF>
+<NAME>mxClassID</NAME>
+typedef int  mxClassID;
+</TYPEDEF>
+<FUNCTION>
+<NAME>mxGetClassID</NAME>
+<RETURNS>mxClassID  </RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<MACRO>
+<NAME>mxUNKNOWN_CLASS</NAME>
+#define  mxUNKNOWN_CLASS 0
+</MACRO>
+<MACRO>
+<NAME>mxCELL_CLASS</NAME>
+#define  mxCELL_CLASS  nsp_type_cells_id
+</MACRO>
+<MACRO>
+<NAME>mxSTRUCT_CLASS</NAME>
+#define  mxSTRUCT_CLASS  nsp_type_hash_id 
+</MACRO>
+<MACRO>
+<NAME>mxCHAR_CLASS</NAME>
+#define  mxCHAR_CLASS  nsp_type_smatrix_id
+</MACRO>
+<MACRO>
+<NAME>mxLOGICAL_CLASS</NAME>
+#define  mxLOGICAL_CLASS  nsp_type_bmatrix_id
+</MACRO>
+<MACRO>
+<NAME>mxDOUBLE_CLASS</NAME>
+#define  mxDOUBLE_CLASS  nsp_type_matrix_id
+</MACRO>
+<MACRO>
+<NAME>mxOBJECT_CLASS</NAME>
+#define  mxOBJECT_CLASS  nsp_type_object_id
+</MACRO>
+<MACRO>
+<NAME>mxSPARSE_CLASS</NAME>
+#define  mxSPARSE_CLASS  nsp_type_spcolmatrix_id
+</MACRO>
+<MACRO>
+<NAME>mxSINGLE_CLASS</NAME>
+#define  mxSINGLE_CLASS  -1 
+</MACRO>
+<MACRO>
+<NAME>mxINT8_CLASS</NAME>
+#define  mxINT8_CLASS  -2
+</MACRO>
+<MACRO>
+<NAME>mxUINT8_CLASS</NAME>
+#define  mxUINT8_CLASS  -3
+</MACRO>
+<MACRO>
+<NAME>mxINT16_CLASS</NAME>
+#define  mxINT16_CLASS  -4
+</MACRO>
+<MACRO>
+<NAME>mxUINT16_CLASS</NAME>
+#define  mxUINT16_CLASS  -5
+</MACRO>
+<MACRO>
+<NAME>mxINT32_CLASS</NAME>
+#define  mxINT32_CLASS  -6
+</MACRO>
+<MACRO>
+<NAME>mxUINT32_CLASS</NAME>
+#define  mxUINT32_CLASS  -7
+</MACRO>
+<MACRO>
+<NAME>mxINT64_CLASS</NAME>
+#define  mxINT64_CLASS  -8
+</MACRO>
+<MACRO>
+<NAME>mxUINT64_CLASS</NAME>
+#define  mxUINT64_CLASS  -9
+</MACRO>
+<MACRO>
+<NAME>mxOPAQUE_CLASS</NAME>
+#define  mxOPAQUE_CLASS  -10
+</MACRO>
+<MACRO>
+<NAME>mxFUNCTION_CLASS</NAME>
+#define  mxFUNCTION_CLASS  nsp_type_plist_id 
+</MACRO>
+<FUNCTION>
+<NAME>mxMalloc</NAME>
+<RETURNS>void  *</RETURNS>
+size_t n
+</FUNCTION>
+<FUNCTION>
+<NAME>mxDestroyArray</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateCellArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int ndim, const int *dims
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCalcSingleSubscript</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *ptr, int nsubs,const int *subs
+</FUNCTION>
+<FUNCTION>
+<NAME>mexPutVariable</NAME>
+<RETURNS>int  </RETURNS>
+const char *workspace, const char *var_name,mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateCharMatrixFromStrings</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, const char **str
+</FUNCTION>
+<FUNCTION>
+<NAME>mexCallMATLAB</NAME>
+<RETURNS>int  </RETURNS>
+int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[],char *command_name
+</FUNCTION>
+<MACRO>
+<NAME>mexCallNsp</NAME>
+#define mexCallNsp mexCallMATLAB
+</MACRO>
+<MACRO>
+<NAME>mexCallScilab</NAME>
+#define mexCallScilab mexCallMATLAB
+</MACRO>
+<FUNCTION>
+<NAME>mxDuplicateArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const mxArray *in
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetName</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr,const char *var_name
+</FUNCTION>
+<FUNCTION>
+<NAME>mexPutArray</NAME>
+<RETURNS>int  </RETURNS>
+ mxArray *array_ptr,const char *workspace
+</FUNCTION>
+<FUNCTION>
+<NAME>mexEvalString</NAME>
+<RETURNS>int  </RETURNS>
+ char *command
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetDimensions</NAME>
+<RETURNS>int  *</RETURNS>
+const mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetNzmax</NAME>
+<RETURNS>int  </RETURNS>
+ mxArray *array_ptr,int n
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetNzmax</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateScalarDouble</NAME>
+<RETURNS>mxArray  *</RETURNS>
+double value
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsEmpty</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mexMakeArrayPersistent</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateLogicalScalar</NAME>
+<RETURNS>mxArray  *</RETURNS>
+mxLogical value
+</FUNCTION>
+<FUNCTION>
+<NAME>mexMakeMemoryPersistent</NAME>
+<RETURNS>void  </RETURNS>
+void *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsLogicalScalarTrue</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mexLock</NAME>
+<RETURNS>void  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mexUnlock</NAME>
+<RETURNS>void  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mexIsLocked</NAME>
+<RETURNS>bool  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsLogicalScalar</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsLogical</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetFieldNameByNumber</NAME>
+<RETURNS>const char  *</RETURNS>
+const mxArray *array_ptr,int field_number
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetData</NAME>
+<RETURNS>void  *</RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateCharArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int ndim, const int *dims
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetFieldByNumber</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const mxArray *array_ptr, int index,int field_number
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetElementSize</NAME>
+<RETURNS>int  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetChars</NAME>
+<RETURNS>mxChar  *</RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetLogicals</NAME>
+<RETURNS>mxLogical  *</RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxGetClassName</NAME>
+<RETURNS>const char  *</RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsSharedArray</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxUnshareArray</NAME>
+<RETURNS>void  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateLogicalArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int ndim, const int *dims
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateLogicalMatrix</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>mxIsDouble</NAME>
+<RETURNS>bool  </RETURNS>
+const mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxCreateStructArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+int ndim, const int *dims, int nfields,const char **field_names
+</FUNCTION>
+<FUNCTION>
+<NAME>mexGetVariable</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const char *workspace, const char *var_name
+</FUNCTION>
+<FUNCTION>
+<NAME>mexGetArray</NAME>
+<RETURNS>mxArray  *</RETURNS>
+const char *name, const char *workspace
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetLogical</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetPr</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr, double *pr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetJc</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr, int *jc
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetIr</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr,int *ir
+</FUNCTION>
+<FUNCTION>
+<NAME>mxRealloc</NAME>
+<RETURNS>void  *</RETURNS>
+void *ptr, size_t size
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetPi</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *array_ptr, double *pi
+</FUNCTION>
+<TYPEDEF>
+<NAME>mwSize</NAME>
+typedef int mwSize; 
+</TYPEDEF>
+<FUNCTION>
+<NAME>mxSetN</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *ptr, mwSize n
+</FUNCTION>
+<FUNCTION>
+<NAME>mxSetM</NAME>
+<RETURNS>void  </RETURNS>
+mxArray *ptr, mwSize m
 </FUNCTION>

@@ -39,6 +39,7 @@
     <xi:include href="xml/function.xml"/>
     <xi:include href="xml/classa.xml"/>
     <xi:include href="xml/classb.xml"/>
+    <xi:include href="xml/sprow.xml"/>
   </chapter>
 
   <chapter id="nsp-blocks">
