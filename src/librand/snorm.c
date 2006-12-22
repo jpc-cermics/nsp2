@@ -50,7 +50,7 @@ double rand_snorm (void)
   double s, u, w, y, ustar, aa, tt;
 
   /* L10: */
-  u = rand_ranf ();
+  u = 1.0 - rand_ranf ();  /* 1 - rand() to avoid 0 (which can be output by rand_ranf() while 1 cannot) */
   s = 0.;
   if (u > .5)
     {
