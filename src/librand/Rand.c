@@ -665,6 +665,20 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
+
+  else if ( strcmp(law,"slgi")==0) 
+    {
+      if ( rhs != suite -1 ) 
+	{ 
+	  Scierror("Error: only %d arguments required for 'slgi' option\n",suite-1);
+	  return RET_BUG;
+	}
+      if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= (double) (rand_lgi() & 0xff);
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+
   else if ( strcmp(law,"prm")==0)
     {
       NspMatrix *prm;
