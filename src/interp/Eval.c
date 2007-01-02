@@ -854,8 +854,13 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	      return RET_BUG;
 	    }
 	  /* get current frame local variable table */
-	  NspCells *C =((NspFrame *) Datas->first->O)->table;
-	  if ((stack->val->S[first] = C->objs[L->arity]) == NULL) 
+	  stack->val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[L->arity];
+	  if (stack->val->S[first]== NULL) 
+	    {
+	      /* maybe the local variable has a value in calling stacks */
+	      stack->val->S[first]=nsp_frames_search_local_in_calling((char *) L->O );
+	    }
+	  if (stack->val->S[first]== NULL) 
 	    {
 	      Scierror("Warning: local variable %s id=%d not found \n",(char *) L->O ,L->arity);
 	      return RET_BUG;
@@ -2359,6 +2364,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
    */
   if ( ! ( name[0] == '_' && name[1] == '_' ) ) 
     {
+      /* should turn what follows in a function */
       if ( Lf->arity == -1 ) 
 	{
 	  /* search object in frames */
@@ -2368,6 +2374,9 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	{
 	  /* direct acces to object through table of local variables */
 	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[Lf->arity];
+	  /* maybe the local variable has a value in calling stacks */
+	  if ( stack.val->S[first] == NULLOBJ ) 
+	    stack.val->S[first]=nsp_frames_search_local_in_calling(name);
 	}
     }
   else 

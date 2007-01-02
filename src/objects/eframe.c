@@ -407,9 +407,13 @@ static NspMethods frame_methods[] = {
 static NspMethods *frame_get_methods(void) { return frame_methods;};
 
 
+
 /*-------------------------------------------
  * function 
  *-------------------------------------------*/
+
+/* inhibit the search fro symbols in calling frames */
+extern int frames_search_inhibit;
 
 /**
  * nsp_eframe_search_object:
@@ -426,6 +430,7 @@ static NspMethods *frame_get_methods(void) { return frame_methods;};
 #else 
 #define VARS_LOCAL(name) (nsp_bhash_find(F->local_vars,name,&val) == OK)
 #endif 
+
 
 NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
 {
@@ -447,8 +452,17 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
       /* Sciprintf("searching a local object %s with nsp_eframe_search_object\n",name); */
       if ( VARS_LOCAL(name) )
 	{
-	  /* Sciprintf("\tobject %s found\n",name);*/
-	  return F->table->objs[val];
+	  if ( F->table->objs[val] == NULLOBJ ) 
+	    {
+	      Sciprintf("local object %s found but has no value\n",name);
+	      /* search un calling frames */
+	      return nsp_frames_search_local_in_calling(name);
+	    }
+	  else 
+	    {
+	      /* Sciprintf("\tobject %s found\n",name);*/
+	      return F->table->objs[val];
+	    }
 	}
     }
   return NULLOBJ;
