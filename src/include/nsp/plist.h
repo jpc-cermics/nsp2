@@ -98,10 +98,13 @@ extern int IsNspPList (NspObject *O);
 extern NspPList *GetNspPListCopy (Stack stack, int i); 
 extern NspPList *GetNspPList (Stack stack, int i); 
 
+
 /* P_PList.c */
 
 extern NspPList *NspPListCreate (char *name, PList L, char *filename); 
 extern NspPList *NspPListCopy (NspPList *A); 
+extern NspPList *NspPListCopy_no_local_vars(NspPList *A);
+
 extern void NspPListDestroy (NspPList *P_L); 
 extern void NspPListPrInt (NspPList *P_L); 
 extern void NspPListInfo (NspPList *P_L, int indent,const char *name, int rec_level); 
@@ -130,6 +133,7 @@ extern int ParseAddDouble (PList *plist);
 extern PList nsp_eplist_create(void);
 extern void nsp_plist_destroy(PList *List);
 extern PList nsp_plist_copy(PList L);
+extern PList nsp_plist_copy_no_local_vars(PList L);
 extern PList nsp_last(PList plist);
 extern void nsp_plist_print_internal(PList L);
 extern PList nsp_firstel(PList L);

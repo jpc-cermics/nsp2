@@ -72,6 +72,17 @@ NspPList *NspPListCopy(NspPList *A)
   return(P_L);
 }
 
+/* the same but without local variables */
+
+NspPList *NspPListCopy_no_local_vars(NspPList *A)
+{
+  NspPList *P_L;
+  P_L = NspPListCreate(NVOID,NULLPLIST,A->file_name);
+  if (( P_L->D =nsp_plist_copy_no_local_vars(A->D)) == NULLPLIST ) 
+    return (NULLP_PLIST);
+  return(P_L);
+}
+
 /*
  * Delete the NspPList NspPList 
  */
