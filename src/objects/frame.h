@@ -84,7 +84,7 @@ extern NspObject * nsp_object_frameize(const NspObject *O);
 extern NspMatrix *nsp_frame_to_matrix(const NspFrame *S);
 extern NspFrame *nsp_matrix_to_frame(const NspMatrix *A);
 
-extern NspObject *nsp_eframe_search_object(NspFrame *F,const char *name);
+extern NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag);
 extern int nsp_eframe_replace_object(NspFrame *F, NspObject *A);
 extern NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str);
 extern void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str);

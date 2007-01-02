@@ -432,7 +432,7 @@ extern int frames_search_inhibit;
 #endif 
 
 
-NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
+NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag )
 {
   NspObject *Obj=NULLOBJ ;
 #ifdef FRAME_AS_LIST
@@ -454,9 +454,12 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name)
 	{
 	  if ( F->table->objs[val] == NULLOBJ ) 
 	    {
-	      Sciprintf("local object %s found but has no value\n",name);
+	      /* Sciprintf("local object %s found but has no value\n",name); */
 	      /* search un calling frames */
-	      return nsp_frames_search_local_in_calling(name);
+	      if ( tag == TRUE )
+		return nsp_frames_search_local_in_calling(name);
+	      else 
+		return NULLOBJ;
 	    }
 	  else 
 	    {

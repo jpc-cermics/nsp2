@@ -336,7 +336,7 @@ NspObject *nsp_frames_search_object(const char *str)
       C= Datas->first;
       while ( C != NULLCELL) 
 	{
-	  if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str)) != NULLOBJ ) 
+	  if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str,TRUE)) != NULLOBJ ) 
 	    return Obj;
 	  if ( frames_search_inhibit == TRUE )
 	    {
@@ -377,7 +377,10 @@ NspObject *nsp_frames_search_local_in_calling(const char *str)
    */
   while ( C != NULLCELL) 
     {
-      if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str)) != NULLOBJ ) 
+      /* subsequent call of nsp_eframe_search_object must not re-enter 
+       * in nsp_frames_search_local_in_calling thus tag is set to FALSE
+       */
+      if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str,FALSE)) != NULLOBJ ) 
 	return Obj;
       C = C->next ;
     }
@@ -396,7 +399,7 @@ NspObject *nsp_frames_search_local_in_calling(const char *str)
 NspObject *nsp_frame_search_object(nsp_const_string str)
 {
   if ( Datas == NULLLIST )   return NULLOBJ;
-  return nsp_eframe_search_object((NspFrame *) Datas->first->O,str) ;
+  return nsp_eframe_search_object((NspFrame *) Datas->first->O,str,TRUE) ;
 } 
 
 
@@ -412,7 +415,7 @@ NspObject *nsp_frame_search_object(nsp_const_string str)
 NspObject *nsp_global_frame_search_object(nsp_const_string str)
 {
   if ( GlobalFrame == NULL )  return NULLOBJ;
-  return nsp_eframe_search_object((NspFrame *)GlobalFrame ,str) ;
+  return nsp_eframe_search_object((NspFrame *)GlobalFrame ,str,TRUE) ;
 } 
 
 /**
