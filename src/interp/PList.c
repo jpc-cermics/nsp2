@@ -470,19 +470,11 @@ void nsp_plist_destroy(PList *List)
   *List = NULLPLIST;
 } 
 
-/**
- * nsp_plist_copy:
- * @L: 
- * 
- * returns a copy of @L. 
- * 
- * Return value: a new #PList or %NULLPLIST
- **/
+/* copy of a plist
+ *
+ */
 
-/* XXXXXX Attention en cas de FAIL une  partie de L peut ne pas etre nettoyee  */
-
-
-PList nsp_plist_copy(PList L)
+static PList _nsp_plist_copy(PList L,int tag)
 {
   NspObject *obj;
   PList Res = NULLPLIST,loc=NULLPLIST,loc1=NULLPLIST;
@@ -491,7 +483,7 @@ PList nsp_plist_copy(PList L)
       switch ( L->type) 
 	{
 	case NAME :
-	  if ( ParseAdd_name(&Res,(char*) L->O,NAME,L->arity)==FAIL) return(NULLPLIST);
+	  if ( ParseAdd_name(&Res,(char*) L->O,NAME,(tag==TRUE) ? L->arity: -1)==FAIL) return(NULLPLIST);
 	  break;
 	case OPNAME :
 	  if (nsp_parse_add_opname(&Res,(char*) L->O)==FAIL) return(NULLPLIST);
@@ -510,7 +502,7 @@ PList nsp_plist_copy(PList L)
 	  if (nsp_parse_add_doublei(&Res,((parse_double *) L->O)->str)==FAIL) return(NULLPLIST);
 	  break;
 	case PLIST: 
-	  if ((loc=nsp_plist_copy((PList) L->O)) == NULLPLIST) return(NULLPLIST);
+	  if ((loc=_nsp_plist_copy((PList) L->O,tag)) == NULLPLIST) return(NULLPLIST);
 	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) return (NULLPLIST);
 	  if (nsp_parse_add_list(&Res,&loc1)== FAIL) return(NULLPLIST);
 	  break;
@@ -521,8 +513,35 @@ PList nsp_plist_copy(PList L)
       L= L->next;
     }
   return(Res);
-} 
+}
 
+/**
+ * nsp_plist_copy:
+ * @L: 
+ * 
+ * returns a copy of @L. 
+ * 
+ * Return value: a new #PList or %NULLPLIST
+ **/
+
+PList nsp_plist_copy(PList L)
+{
+  return _nsp_plist_copy(L,TRUE);
+}
+ 
+/**
+ * nsp_plist_copy_no_local_vars:
+ * @L: 
+ * 
+ * returns a copy of @L in xhich local variables are not tagged.
+ * 
+ * Return value: a new #PList or %NULLPLIST
+ **/
+
+PList nsp_plist_copy_no_local_vars(PList L)
+{
+  return _nsp_plist_copy(L,FALSE);
+}
 
 /* converts a PList L to a list of astnode that 
  * can be used at nsp level.

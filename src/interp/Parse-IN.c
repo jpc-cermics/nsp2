@@ -229,6 +229,9 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
 {
   int ans = OK;
   NspPList *PL;
+#ifdef  WITH_SYMB_TABLE
+  NspPList *PL1;
+#endif 
   NspObject *Ob;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep;
   int_types T[] = {obj ,new_opts, t_end} ;
@@ -241,7 +244,17 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   NthObj(rhs+1)=NthObj(1);
   NspFname(stack) = ((NspObject *) PL)->name;
   NspFileName(stack) = ((NspPList *) PL)->file_name;
+#ifdef  WITH_SYMB_TABLE
+  /* we cannot execute macro code in a context were its 
+   * symbol table is not present 
+   * thus we must copy the code and untag local variables
+   */
+  if ((PL1= NspPListCopy_no_local_vars(PL))== NULL) return RET_BUG;
+  rep=nsp_eval_macro_body((NspObject *) PL1,stack,stack.first+rhs+1,0,0,0);
+  NspPListDestroy(PL1);
+#else
   rep=nsp_eval_macro_body((NspObject *) PL,stack,stack.first+rhs+1,0,0,0);
+#endif 
   if ( rep == RET_CTRLC ) 
     {
       Scierror("Error:\tExecution of function %s interupted\n",NSP_OBJECT(PL)->name);
