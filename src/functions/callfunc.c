@@ -104,7 +104,8 @@ extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
 extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node_Interf_Info ;
 
-/* #define WITH_PREMIA  */
+/* #define WITH_PREMIA   */
+
 
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
@@ -418,7 +419,17 @@ int  reorder_stack(Stack stack, int ret)
 	}
       O1++; count++;
     }
-    
+  /* extra pass to detected non back-converted matrix 
+   * this feature should not be used any-more because of 
+   * matint ...
+   */
+
+  /*   for ( k = 1 ; k <= count ; k++ ) */
+  /*     { */
+  /*       if (obj[k]->ret_pos != -1 && IsMat(obj[k]) && ((NspMatrix *) obj[k])->convert != 'd' ) */
+  /* 	Sciprintf("Warning: backconvert forgotten in %s\n", NspFname(stack)); */
+  /*     } */
+  
   /* second pass to destroy non returned objects  */
   kn = 0;
   for ( k = 1 ; k <= count ; k++ )

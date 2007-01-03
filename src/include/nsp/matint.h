@@ -17,7 +17,7 @@ typedef unsigned int matint_elt_size(const void *M);
 typedef NspObject *matint_clone(const char *name,const void *M, int m,int n, int init); 
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
-
+typedef NspObject * matint_canonic(NspObject *obj);
 
 typedef struct _NspTypeMatint {
   NSP_TYPE_OBJECT__
@@ -29,6 +29,7 @@ typedef struct _NspTypeMatint {
   matint_clone *clone;
   matint_copy_elt *copy_elt;
   matint_enlarge *enlarge;
+  matint_canonic *canonic;
 } NspTypeMatint ; 
 
 #define MAT_INT(t) ((NspTypeMatint *) t)
@@ -66,14 +67,14 @@ extern int nsp_matint_set_submatrix(NspObject *ObjA,
 				    NspObject *ObjB);
 extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB);
 extern int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB);
-extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
-extern int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB);
+extern NspObject *nsp_matint_concat_right( NspObject *ObjA, NspObject *ObjB);
+extern int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB);
 extern NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n);
 typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
 extern NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 extern int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
-extern NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB);
+extern NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB);
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
@@ -98,7 +99,7 @@ extern int int_matint_repmat(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_tozero(Stack stack, int rhs, int opt, int lhs);
-
+extern NspObject * nsp_matint_canonic(NspObject *obj);
 
 #endif 
 
