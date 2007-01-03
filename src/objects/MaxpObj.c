@@ -117,6 +117,7 @@ NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
   mati->clone = (matint_clone *) nsp_mpmatrix_clone ;
   mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
   mati->enlarge = (matint_enlarge *) nsp_mpmatrix_enlarge;
+  mati->canonic =  nsp_matint_canonic;
 
   type->interface = (NspTypeBase *) mati;
 

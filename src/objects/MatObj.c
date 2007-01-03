@@ -123,7 +123,9 @@ new_type_matrix (type_mode mode)
   mati->clone = (matint_clone *) nsp_matrix_clone ;
   mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
   mati->enlarge = (matint_enlarge *) nsp_matrix_enlarge;
+  mati->canonic = (matint_canonic *) Mat2double;
   /* mati->copy = (matint_copy *) nsp_matrix_copy_area; */
+
 
   type->interface = (NspTypeBase *) mati;
 

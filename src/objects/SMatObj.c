@@ -111,6 +111,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   mati->clone = (matint_clone *) nsp_smatrix_clone;
   mati->copy_elt = (matint_copy_elt *) nsp_string_copy; 
   mati->enlarge = (matint_enlarge *) nsp_smatrix_enlarge;
+  mati->canonic =  nsp_matint_canonic;
 
   type->interface = (NspTypeBase *) mati;
 

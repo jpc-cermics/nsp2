@@ -106,6 +106,7 @@ NspTypeCells *new_type_cells(type_mode mode)
   mati->clone = (matint_clone *) nsp_cells_clone;
   mati->copy_elt = (matint_copy_elt *) nsp_object_copy; 
   mati->enlarge = (matint_enlarge *) nsp_cells_enlarge;
+  mati->canonic =  nsp_matint_canonic;
 
   type->interface = (NspTypeBase *) mati;
 

@@ -1323,6 +1323,9 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
       return FAIL;
     }
 
+  MAT_INT(typeA)->canonic(ObjA);
+  MAT_INT(typeB)->canonic(ObjB);
+
   elt_size_A = MAT_INT(typeA)->elt_size(ObjA); 
   elt_size_B = MAT_INT(typeB)->elt_size(ObjB); 
 
@@ -1462,6 +1465,7 @@ int nsp_matint_set_elts(NspObject *ObjA,
   NspTypeBase *typeA, *typeB; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
 
+
   typeA = check_implements(ObjA, nsp_type_matint_id);
   typeB = check_implements(ObjB, nsp_type_matint_id);
 
@@ -1503,6 +1507,9 @@ int nsp_matint_set_elts(NspObject *ObjA,
 	  return FAIL;
 	}
     }
+
+  MAT_INT(typeA)->canonic(ObjA);
+  MAT_INT(typeB)->canonic(ObjB);
 
   elt_size_A = MAT_INT(typeA)->elt_size(ObjA); 
   elt_size_B = MAT_INT(typeB)->elt_size(ObjB); 
@@ -1638,7 +1645,7 @@ int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
  * Return value: returns [@ObjA,@ObjB] or %NULLOBJ 
  **/
 
-NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
+NspObject *nsp_matint_concat_right( NspObject *ObjA, NspObject *ObjB)
 {
   NspObject *ObjC=NULLOBJ;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
@@ -1648,6 +1655,9 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
                                                          (so we don't check) */
+
+  MAT_INT(type)->canonic(ObjA);
+  MAT_INT(type)->canonic(ObjB);
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
@@ -1744,7 +1754,7 @@ NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
+int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
   int i, nA = A->n, nB = B->n, mnA = A->mn;
@@ -1753,6 +1763,9 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here
                                                          (so we don't check) */
+
+  MAT_INT(type)->canonic(ObjA);
+  MAT_INT(type)->canonic(ObjB);
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
@@ -1835,6 +1848,9 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
                                                          (so we don't check) */
+
+  MAT_INT(type)->canonic(ObjA);
+  MAT_INT(type)->canonic(ObjB);
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
@@ -1960,6 +1976,8 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
                                                          (so we don't check) */
 
+  MAT_INT(type)->canonic(ObjA);
+  MAT_INT(type)->canonic(ObjB);
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
 
@@ -2990,7 +3008,7 @@ int int_matint_repmat(Stack stack, int rhs, int opt, int lhs)
  * Return value: a new #NspObject or %NULLOBJ. 
  **/
 
-NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
+NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB)
 {
   NspObject *ObjC=NULLOBJ;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
@@ -3000,6 +3018,9 @@ NspObject *nsp_matint_concat_diag(const NspObject *ObjA,const NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
                                                          (so we don't check) */
+
+  /* be sure that we are back converted */
+  MAT_INT(type)->canonic(ObjA);  MAT_INT(type)->canonic(ObjB);
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
@@ -3165,7 +3186,7 @@ int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs)
   else
     {
       NspObject *HMat3;
-      if ((HMat3 = nsp_matint_concat_diag((const NspObject *) A,(const NspObject *) B)) == NULLOBJ)
+      if ((HMat3 = nsp_matint_concat_diag(NSP_OBJECT(A), NSP_OBJECT(B))) == NULLOBJ)
 	return RET_BUG;
       MoveObj (stack, 1, HMat3);
     }
@@ -3173,3 +3194,19 @@ int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/**
+ * nsp_matint_canonic:
+ * @obj: 
+ * 
+ * sets a matint object to its canonic type. This is 
+ * mainly used to back-convert matrices to double since 
+ * matint functions won't work on non canonic matrices. 
+ * The function given here is to be used as defaut value.
+ * 
+ * Return value: a back converted object. 
+ **/
+
+NspObject * nsp_matint_canonic(NspObject *obj)
+{
+  return obj;
+}

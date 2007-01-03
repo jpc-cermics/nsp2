@@ -99,6 +99,7 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
   mati->clone = (matint_clone *) nsp_pmatrix_clone;
   mati->copy_elt = (matint_copy_elt *) nsp_polynom_copy; 
   mati->enlarge = (matint_enlarge *) nsp_pmatrix_enlarge;
+  mati->canonic =  nsp_matint_canonic;
 
   type->interface = (NspTypeBase *) mati;
   
