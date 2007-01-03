@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -224,35 +224,44 @@ void nsp_premiamodel_destroy(NspPremiaModel *H)
  * info 
  */
 
-void nsp_premiamodel_info(NspPremiaModel *M, int indent)
+void nsp_premiamodel_info(NspPremiaModel *M, int indent,const char *name, int rec_level)
 {
-  int i;
-  if ( M == NULLPREMIAMODEL) 
-    {
-      Sciprintf("Null Pointer PremiaModel \n");
-      return;
-    }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("PremiaModel %s {\n", NSP_OBJECT(M)->name);
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\n");
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  Sciprintf1(indent,"%s\t= ...\t\tpremia\n",pname);
 }
+
 
 /*
  * print 
  */
 
-void nsp_premiamodel_print(NspPremiaModel *M, int indent)
+void nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int rec_level)
 {
-  int i;
-  if ( M == NULLPREMIAMODEL) 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if (user_pref.pr_as_read_syntax)
     {
-      Sciprintf("Null Pointer PremiaModel \n");
-      return;
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=premiamodel_create();",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"premiamodel_create();");
+	}
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("PremiaModel %s {\n", NSP_OBJECT(M)->name);
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\n");
+  else 
+    {
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_premiamodel_info(M,indent,pname,rec_level);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t= ...\t\t premia pb\n",pname);
+    }
 }
+
+
+
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -296,7 +305,7 @@ NspPremiaModel  *GetPremiaModel(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
  * create a NspClassB instance 
  *-----------------------------------------------------*/
@@ -357,7 +366,7 @@ extern Family *families[];
  *
  */
  
-int int_premiapb_create(Stack stack, int rhs, int opt, int lhs)
+int int_premiamodel_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspPremiaModel *H;
   CheckStdRhs(0,0);
@@ -371,7 +380,7 @@ int int_premiapb_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-int int_premiamodel_create(Stack stack, int rhs, int opt, int lhs)
+int int_premiamodel_create_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   VAR *var;
   Model *poo;
@@ -396,9 +405,6 @@ int int_premiamodel_create(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   H->obj->mod.init=1;
   H->obj->mod.TypeModel=var;
-  /* H->obj->mod.TypeModel = malloc(poo->nvar*sizeof(VAR));  */
-  /* poo->Init(&H->obj->mod); */
-  /* check Ok */
   InitErrorMsg();
   InitVar();
   MoveObj(stack,1,(NspObject  *) H);
@@ -549,7 +555,7 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_premiaopt_create(Stack stack, int rhs, int opt, int lhs)
+int int_premiaopt_create_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   VAR *var;
   Option *poo;
@@ -597,7 +603,7 @@ int int_premiaopt_create(Stack stack, int rhs, int opt, int lhs)
 
 
 
-int int_premiamethod_create(Stack stack, int rhs, int opt, int lhs)
+int int_premiamethod_create_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   VAR *var;
   PricingMethod *poo=NULL;
@@ -633,16 +639,19 @@ int int_premiamethod_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
+/* Get a list of (var-name,value,tag) 
+ * where tag is true for variables which can be interactively changed.
+ */
+
 extern int         *true_typeV;
 typedef enum { p_model, p_option, p_method_in, p_method_out } p_objs;
 
-static int _wrap_premiamodel_get_vars(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premia_pb_get_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
+  NspList *L;
   int nvar;
-  NspSMatrix *Res;
   VAR *vars;
-  int i;
-  CheckLhs(0,2);
+  CheckLhs(0,1);
   CheckRhs(0,0);
   switch (type ) 
     {
@@ -652,62 +661,46 @@ static int _wrap_premiamodel_get_vars(NspPremiaModel *self,Stack stack,int rhs,i
       break;
     case p_option :
       vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
+      nvar = self->obj->opt.nvar;
       break;
     case p_method_in: 
       vars=self->obj->meth.Par;
+      /* nvar is detected with END tag */
       nvar = nsp_premia_get_nvar(vars);
       break;
     case p_method_out: 
       vars=self->obj->meth.Res;
+      /* nvar is detected with END tag */
       nvar = nsp_premia_get_nvar(vars);
       break;
     default:
       Scierror("Warning: to be done\n");
       return RET_BUG;
     }
-  if ( ( Res =nsp_smatrix_create_with_length(NVOID,nvar,1,-1) ) == NULLSMAT)
+  if ((L= nsp_premia_get_var_names(vars,nvar)) == NULL)
     return RET_BUG;
-  /* allocate elements and store copies of A elements **/
-  for ( i = 0 ; i < Res->mn ; i++ )
-    {
-      if ((Res->S[i] =nsp_string_copy(vars[i].Vname)) == (nsp_string) 0) 
-	return RET_BUG;
-    }
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  if ( lhs == 2 ) 
-    {
-      NspList *L=nsp_premia_get_var_names(vars,Res->mn);
-      if ( L == NULL) return RET_BUG;
-      /* XXXX just a test */
-      if ( nsp_premia_set_var_names(vars,nvar,L) == FAIL) 
-	{
-	  Scierror("nsp_premia_set_var_names failed \n");
-	  return RET_BUG;
-	}
-      MoveObj(stack,2,NSP_OBJECT(L));
-    }
+  MoveObj(stack,1,NSP_OBJECT(L));
   return Max(1,lhs);
 }
 
-static int _wrap_premiamodel_get_model_vars(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premiamodel_get_model_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
-  return _wrap_premiamodel_get_vars(self,stack,rhs,opt,lhs,p_model);
+  return _wrap_premia_pb_get_values(self,stack,rhs,opt,lhs,p_model);
 }
 
-static int _wrap_premiamodel_get_option_vars(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premiamodel_get_option_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
-  return _wrap_premiamodel_get_vars(self,stack,rhs,opt,lhs,p_option);
+  return _wrap_premia_pb_get_values(self,stack,rhs,opt,lhs,p_option);
 }
 
-static int _wrap_premiamodel_get_method_vars(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premiamodel_get_method_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
-  return _wrap_premiamodel_get_vars(self,stack,rhs,opt,lhs,p_method_in);
+  return _wrap_premia_pb_get_values(self,stack,rhs,opt,lhs,p_method_in);
 }
 
-static int _wrap_premiamodel_get_method_res_vars(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premiamodel_get_method_results(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
-  return _wrap_premiamodel_get_vars(self,stack,rhs,opt,lhs,p_method_out);
+  return _wrap_premia_pb_get_values(self,stack,rhs,opt,lhs,p_method_out);
 }
 
 
@@ -754,108 +747,7 @@ static int set_value(VAR *x,double val)
 
 
 
-static int _wrap_premiamodel_get_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
-{
-  NspMatrix *Res;
-  VAR *vars;
-  int i,nvar;
-  CheckLhs(0,1);
-  CheckRhs(0,0);
-  switch (type ) 
-    {
-    case p_model : 
-      vars = self->obj->mod.TypeModel;
-      nvar = self->obj->mod.nvar;
-      break;
-    case p_option :
-      vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
-      break;
-    case p_method_in: 
-      vars=self->obj->meth.Par;
-      nvar = nsp_premia_get_nvar(vars);
-      break;
-    case p_method_out: 
-      vars=self->obj->meth.Res;
-      nvar = nsp_premia_get_nvar(vars);
-      break;
-    default:
-      Scierror("Warning: to be done\n");
-      return RET_BUG;
-    }
-  if ( ( Res =nsp_matrix_create(NVOID,'r',nvar,1) ) == NULLMAT)
-    return RET_BUG;
-  /* allocate elements and store copies of A elements **/
-  for ( i = 0 ; i < Res->mn ; i++ )
-    {
-      if ( get_value(&vars[i],&Res->R[i]) == FAIL) return RET_BUG;
-    }
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  return 1;
-}
-
-static int _wrap_premiamodel_get_option_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
-{
-  return _wrap_premiamodel_get_values(self,stack,rhs,opt,lhs,p_option);
-}
-
-static int _wrap_premiamodel_get_model_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
-{
-  return _wrap_premiamodel_get_values(self,stack,rhs,opt,lhs,p_model);
-}
-
-static int _wrap_premiamodel_get_method_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
-{
-  return _wrap_premiamodel_get_values(self,stack,rhs,opt,lhs,p_method_in);
-}
-
-static int _wrap_premiamodel_get_method_res_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
-{
-  return _wrap_premiamodel_get_values(self,stack,rhs,opt,lhs,p_method_out);
-}
-
-
-static int _wrap_premiamodel_set_values_old(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
-{
-  NspMatrix *A;
-  VAR *vars;
-  int i,nvar;
-  CheckLhs(0,0);
-  CheckRhs(1,1);
-  if (( A=GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  switch (type ) 
-    {
-    case p_model : 
-      vars = self->obj->mod.TypeModel;
-      nvar = self->obj->mod.nvar;
-      break;
-    case p_option :
-      vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
-      break;
-    case p_method_in: 
-      vars=self->obj->meth.Par;
-      nvar = nsp_premia_get_nvar(vars);
-      break;
-    case p_method_out: 
-      vars=self->obj->meth.Res;
-      nvar = nsp_premia_get_nvar(vars);
-      break;
-    default:
-      Scierror("Warning: to be done\n");
-      return RET_BUG;
-    }
-  CheckLength(NspFname(stack),1,A,nvar);
-  /* allocate elements and store copies of A elements **/
-  for ( i = 0 ; i < A->mn ; i++ )
-    {
-      if ( set_value(&vars[i],A->R[i]) == FAIL) return RET_BUG;
-    }
-  return 0;
-}
-
-
-static int _wrap_premiamodel_set_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+static int _wrap_premia_pb_set_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
 {
   NspList *A;
   VAR *vars;
@@ -871,7 +763,7 @@ static int _wrap_premiamodel_set_values(NspPremiaModel *self,Stack stack,int rhs
       break;
     case p_option :
       vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
+      nvar = self->obj->opt.nvar;
       break;
     case p_method_in: 
       vars=self->obj->meth.Par;
@@ -885,96 +777,139 @@ static int _wrap_premiamodel_set_values(NspPremiaModel *self,Stack stack,int rhs
       Scierror("Warning: to be done\n");
       return RET_BUG;
     }
-  if(  nsp_premia_set_var_names(vars,nvar,A) == FAIL) return RET_BUG;
+  if(  nsp_premia_set_var_names(vars,nvar,A) == FAIL) 
+    {
+      Scierror("Error: while trying to set values in a premia problem\n");
+      return RET_BUG;
+    }
+
   return 0;
 }
 
 static int _wrap_premiamodel_set_option_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
 {
-  return _wrap_premiamodel_set_values(self,stack,rhs,opt,lhs,p_option);
+  return _wrap_premia_pb_set_values(self,stack,rhs,opt,lhs,p_option);
 }
 
 static int _wrap_premiamodel_set_model_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
 {
-  return _wrap_premiamodel_set_values(self,stack,rhs,opt,lhs,p_model);
+  return _wrap_premia_pb_set_values(self,stack,rhs,opt,lhs,p_model);
 }
 
 static int _wrap_premiamodel_set_method_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs) 
 {
-  return _wrap_premiamodel_set_values(self,stack,rhs,opt,lhs,p_method_in);
+  return _wrap_premia_pb_set_values(self,stack,rhs,opt,lhs,p_method_in);
 }
 
 
+/* Check that parameters are correctly set 
+ * When a parameter is not a first level parameter and is wrong, the sub variables 
+ * are explored to discover which parameter is wrong.
+ */
 
 
-
-static int _wrap_premiamodel_check_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs)
+static int _wrap_premia_pb_check_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,
+					  p_objs type)
 {
-  int i,nvar;
-  VAR *vars;
-  NspBMatrix *Res;
-  CheckLhs(0,1);
-  CheckRhs(0,0);
-  if ( self->obj->mod.TypeModel != NULL) 
-    {
-      vars = self->obj->mod.TypeModel;
-      nvar = self->obj->mod.nvar;
-    }
-  else 
-    {
-      vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
-    }
-  if ( ( Res =nsp_bmatrix_create(NVOID,nvar,1) ) == NULLBMAT)
-    return RET_BUG;
-  /* allocate elements and store copies of A elements **/
-  /* self->obj->mod.Check(NO_PAR,NULL,&self->obj->mod); */
-  for ( i = 0 ; i < Res->mn ; i++ )
-    {
-      Res->B[i]= (ChkVar(NULL,&vars[i]) == 0);
-    }
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  return 1;
-}
-
-
-
-
-static int _wrap_premiamodel_check_values1(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs)
-{
+  NspSMatrix *S;
   char *error,*format;
-  int i,type,nvar;
+  int i,i_type,nvar;
   VAR *vars;
-  NspBMatrix *Res;
   CheckLhs(0,1);
   CheckRhs(0,0);
-  if ( self->obj->mod.TypeModel != NULL) 
+
+  switch (type ) 
     {
+    case p_model : 
       vars = self->obj->mod.TypeModel;
       nvar = self->obj->mod.nvar;
-    }
-  else 
-    {
+      break;
+    case p_option :
       vars = self->obj->opt.TypeOpt;
-      nvar = self->obj->opt.nvar_setable;
+      nvar = self->obj->opt.nvar;
+      break;
+    case p_method_in: 
+      vars=self->obj->meth.Par;
+      nvar = nsp_premia_get_nvar(vars);
+      break;
+    case p_method_out: 
+      vars=self->obj->meth.Res;
+      nvar = nsp_premia_get_nvar(vars);
+      break;
+    default:
+      Scierror("Warning: to be done\n");
+      return RET_BUG;
     }
-  if ( ( Res =nsp_bmatrix_create(NVOID,1,1) ) == NULLBMAT)
-    return RET_BUG;
-  Res->B[0] = TRUE;
   for ( i = 0 ; i < nvar ; i++ )
     {
-      int status =  (ChkVar(NULL,&vars[i]) == 0);
-      Res->B[0] = Res->B[0] && status;
+      VAR *vars1=NULL;
+      int status =  (ChkVar1(NULL,&vars[i],WRONG) == 0);
       if ( status == FALSE ) 
 	{
-	  premia_Vtype_info(&vars[i],&format,&error,&type);
-	  Scierror("Error: %s is wrong, %s\n",vars[i].Vname,error);
+	  /* If a variable is not a first level one, we try to 
+	   * get more precise informations 
+	   */
+	  switch( vars[i].Vtype)
+	    {
+	    case NUMFUNC_1:
+	      vars1 = (vars[i].Val.V_NUMFUNC_1)->Par;
+	      break;
+	    case NUMFUNC_2:
+	      vars1 = (vars[i].Val.V_NUMFUNC_2)->Par;
+	      break;
+	    case PTVAR:
+	      vars1 = (vars[i].Val.V_PTVAR)->Par;
+	      break;
+	    case DOUBLEARRAY: 
+	    default:
+	      break;
+	    }
+	  if ( vars1 != NULL) 
+	    {
+	      while (vars1->Vtype!=END)
+		{ 
+		  int status1 =  (ChkVar1(NULL,vars1,WRONG) == 0);
+		  if ( status1 == FALSE ) break;
+		  vars1++;
+		} 
+	    }
+	  else 
+	    {
+	      vars1 = &vars[i];
+	    }
+	  premia_Vtype_info(vars1,&format,&error,&i_type);
+	  /* Scierror("Error: %s is wrong, %s\n",vars1->Vname,error); */
+	  if ((S=nsp_smatrix_create_with_length(NVOID,1,2,-1))== NULLSMAT) 
+	    return RET_BUG;
+	  if ((S->S[0] =nsp_string_copy(vars1->Vname)) == (nsp_string) 0) 
+	    return RET_BUG;
+	  if ((S->S[1] =nsp_string_copy(error)) == (nsp_string) 0) 
+	    return RET_BUG;
+	  MoveObj(stack,1,NSP_OBJECT(S));
+	  return 1;
 	}
     }
-  if ( Res->B[0]== FALSE) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(Res));
+  if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
+
+static int _wrap_premiamodel_check_model_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+{
+  return _wrap_premia_pb_check_values(self,stack,rhs,opt,lhs,p_model);
+}
+
+static int _wrap_premiamodel_check_option_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+{
+  return _wrap_premia_pb_check_values(self,stack,rhs,opt,lhs,p_option);
+}
+
+static int _wrap_premiamodel_check_method_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,p_objs type)
+{
+  return _wrap_premia_pb_check_values(self,stack,rhs,opt,lhs,p_method_in);
+}
+
 
 
 static int _wrap_premiamodel_set_model(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -984,16 +919,17 @@ static int _wrap_premiamodel_set_model(NspPremiaModel *self,Stack stack,int rhs,
   int model,n_models=0;
   CheckStdRhs(1,1);
   if (GetScalarInt(stack,1,&model) == FAIL) return RET_BUG;
+  model--;
   /* number of models */
   while (models[n_models] != NULL) n_models++;
   if ( model < 0 || model > n_models -1 )
     {
-      Scierror("Error: model %d does not exists\n",model);
+      Scierror("Error: model %d does not exists\n",model+1);
       return RET_BUG;
     }
   if ( self->obj->mod.TypeModel != NULL ) 
     {
-      Scierror("Error: model is already set\n",model);
+      Scierror("Error: model is already set\n",model+1);
       return RET_BUG;
     }
   /* use first model */
@@ -1036,6 +972,8 @@ static int _wrap_premiamodel_set_option(NspPremiaModel *self,Stack stack,int rhs
   CheckStdRhs(2,2);
   if (GetScalarInt(stack,1,&family) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&option) == FAIL) return RET_BUG;
+  family--;
+  option--;
   if ( self->obj->mod.TypeModel == NULL) 
     {
       Scierror("Error: you must first set a model\n");
@@ -1050,14 +988,14 @@ static int _wrap_premiamodel_set_option(NspPremiaModel *self,Stack stack,int rhs
   while ( families[n_family] != NULL) n_family++;
   if ( family  < 0 || family > n_family -1 ) 
     {
-      Scierror("Error: family %d does not exists\n",family);
+      Scierror("Error: family %d does not exists\n",family+1);
       return RET_BUG;
     }
   loc = (*families[family]);
   while ( loc[n_option] != NULL) n_option++;
   if ( option < 0 || option > n_option -1 ) 
     {
-      Scierror("Error: option %d does not exists in family %d\n",option,family);
+      Scierror("Error: option %d does not exists in family %d\n",option+1,family+1);
       return RET_BUG;
     }
   premia_option=(*families[family])[option];
@@ -1066,7 +1004,7 @@ static int _wrap_premiamodel_set_option(NspPremiaModel *self,Stack stack,int rhs
   /* check that option is compatible */
   if ( MatchingPricing(0,&self->obj->mod,premia_option,pricings) != 0) 
     {
-      Scierror("Error: option %d is not compatible with model\n",option);
+      Scierror("Error: option %d is not compatible with model\n",option+1);
       return RET_BUG;
     }
   self->obj->opt = *premia_option;
@@ -1104,6 +1042,7 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
   int method,n_method=0, npar,nres;
   CheckStdRhs(1,1);
   if (GetScalarInt(stack,1,&method) == FAIL) return RET_BUG;
+  method--;
   if ( self->obj->mod.TypeModel == NULL) 
     {
       Scierror("Error: you must first set a model\n");
@@ -1124,7 +1063,7 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
   while ( res->Methods[n_method] != NULL) n_method++;
   if ( method < 0 || method > n_method -1 )
     {
-      Scierror("Error: method %d does not exists in possible pricing methods [%d,%d]\n",method,0,n_method);
+      Scierror("Error: method %d does not exists in possible pricing methods [%d,%d]\n",method+1,1,n_method+1);
       return RET_BUG;
     }
   
@@ -1218,23 +1157,20 @@ static NspMethods premiamodel_methods[] = {
   {"set_method",(nsp_method *) _wrap_premiamodel_set_method},
   {"get_method",(nsp_method *) _wrap_premiamodel_get_method},
 
-  {"get_model_vars",(nsp_method *) _wrap_premiamodel_get_model_vars},
   {"get_model_values",(nsp_method *) _wrap_premiamodel_get_model_values},
   {"set_model_values",(nsp_method *) _wrap_premiamodel_set_model_values},
+  {"model_check",(nsp_method *) _wrap_premiamodel_check_model_values},
 
-  {"get_option_vars",(nsp_method *) _wrap_premiamodel_get_option_vars},
   {"get_option_values",(nsp_method *) _wrap_premiamodel_get_option_values},
   {"set_option_values",(nsp_method *) _wrap_premiamodel_set_option_values},
+  {"option_check",(nsp_method *) _wrap_premiamodel_check_option_values},
 
-  {"get_method_vars",(nsp_method *) _wrap_premiamodel_get_method_vars},
   {"get_method_values",(nsp_method *) _wrap_premiamodel_get_method_values},
   {"set_method_values",(nsp_method *) _wrap_premiamodel_set_method_values},
+  {"method_check",(nsp_method *) _wrap_premiamodel_check_method_values},
 
-  {"get_method_res_vars",(nsp_method *) _wrap_premiamodel_get_method_res_vars},
-  {"get_method_res_values",(nsp_method *) _wrap_premiamodel_get_method_res_values},
+  {"get_method_results",(nsp_method *) _wrap_premiamodel_get_method_results},
 
-  {"check",(nsp_method *) _wrap_premiamodel_check_values},
-  {"check1",(nsp_method *) _wrap_premiamodel_check_values1},
   {"compute",(nsp_method *) _wrap_premiamodel_compute},
   { NULL, NULL}
 };
@@ -1257,10 +1193,7 @@ static AttrTab premiamodel_attrs[] = {
  *----------------------------------------------------*/
 
 static OpTab premiamodel_func[]={
-  { "premiapb_create", int_premiapb_create},
-  { "premiamodel_create", int_premiamodel_create},
-  { "premiaoption_create", int_premiaopt_create},
-  { "premiamethod_create", int_premiamethod_create},
+  { "premia_create", int_premiamodel_create},
   { "premia_get_models",int_premia_get_models},
   { "premia_get_family",int_premia_get_family},
   { "premia_get_methods",int_premia_get_methods},
@@ -1418,8 +1351,8 @@ static NspList* nsp_premia_get_var_names(const VAR *vars,int n)
   for (i=0 ; i < n ; i++)
     {
       double val;
-      int_types Ret_default[]={string,s_double, t_end};
-      int_types Ret_array[]={string,realmat, t_end};
+      int_types Ret_default[]={string,s_double,s_bool, t_end};
+      int_types Ret_array[]={string,realmat,s_bool, t_end};
       int count =0;
       switch( vars[i].Vtype)
 	{
@@ -1447,13 +1380,13 @@ static NspList* nsp_premia_get_var_names(const VAR *vars,int n)
 	  if (( M = nsp_matrix_create_from_array("M",1,vars[i].Val.V_DOUBLEARRAY->size,
 						 vars[i].Val.V_DOUBLEARRAY->array,NULL)) 
 	      == NULLMAT) goto err;
-	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_array,vars[i].Vname,M))== NULLOBJ )
+	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_array,vars[i].Vname,M,vars[i].Vsetable==SETABLE))== NULLOBJ )
 	    goto err;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
 	  break;
 	default: 
 	  if ( get_value(&vars[i],&val) == FAIL)  goto err;
-	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_default,vars[i].Vname,val))== NULLOBJ )
+	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_default,vars[i].Vname,val,vars[i].Vsetable==SETABLE))== NULLOBJ )
 	    goto err;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
 	  break;
@@ -1515,48 +1448,55 @@ static int nsp_premia_set_var_names(VAR *vars,int n,NspList *L)
       int count =0;
       Obj = nsp_list_get_element(L,i+1);
       if ( ! IsList(Obj) ) return FAIL;
-      if ( nsp_list_length((NspList *)Obj) != 2 ) return FAIL;
+      if ( nsp_list_length((NspList *)Obj) < 2 ) return FAIL;
       Name = nsp_list_get_element((NspList *)Obj,1);
       if ( ! IsString(Name) ) return FAIL;
       Obj1 = nsp_list_get_element((NspList *)Obj,2);
+      /* we ignore argument 3 which should be a boolean */
       if (strcmp(((NspSMatrix *) Name)->S[0],vars[i].Vname) != 0) return FAIL;
-      switch( vars[i].Vtype)
+      /* we ignore variables which are supposed to be non setable */
+      if ( vars[i].Vsetable == SETABLE ) 
 	{
-	case NUMFUNC_1:
-	  vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ( ! IsList(Obj1) ) return FAIL;
-	  if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	  if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	  break;
-	case NUMFUNC_2:
-	  vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ( ! IsList(Obj1) ) return FAIL;
-	  if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	  if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	  break;
-	case PTVAR:
-	  /* list(name,sublist_of-args) */
-	  vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ( ! IsList(Obj1) ) return FAIL;
-	  if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	  if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	  break;
-	case DOUBLEARRAY:
-	  if ( ! IsMat(Obj1) ) return FAIL;
-	  if ( ((NspMatrix *) Obj1)->mn != vars[i].Val.V_DOUBLEARRAY->size) return FAIL;
-	  memcpy(vars[i].Val.V_DOUBLEARRAY->array,((NspMatrix *) Obj1)->R, 
-		 vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
-	  break;
-	default: 
-	  if ( ! IsMat(Obj1) ) return FAIL;
-	  if ( ((NspMatrix *) Obj1)->mn != 1  ) return FAIL;
-	  val = ((NspMatrix *) Obj1)->R[0];
-	  set_value(&vars[i],val);
-	  break;
+	  switch( vars[i].Vtype)
+	    {
+	    case NUMFUNC_1:
+	      vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
+	      while (vars2->Vtype!=END) { count++; vars2++;} 
+	      if ( ! IsList(Obj1) ) return FAIL;
+	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+	      break;
+	    case NUMFUNC_2:
+	      vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
+	      while (vars2->Vtype!=END) { count++; vars2++;} 
+	      if ( ! IsList(Obj1) ) return FAIL;
+	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+	      break;
+	    case PTVAR:
+	      /* list(name,sublist_of-args) */
+	      vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
+	      while (vars2->Vtype!=END) { count++; vars2++;} 
+	      if ( ! IsList(Obj1) ) return FAIL;
+	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+	      break;
+	    case DOUBLEARRAY:
+	      if ( ! IsMat(Obj1) ) return FAIL;
+	      if ( ((NspMatrix *) Obj1)->mn != vars[i].Val.V_DOUBLEARRAY->size) return FAIL;
+	      memcpy(vars[i].Val.V_DOUBLEARRAY->array,((NspMatrix *) Obj1)->R, 
+		     vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
+	      break;
+	    default: 
+	      if ( ! IsMat(Obj1) ) return FAIL;
+	      if ( ((NspMatrix *) Obj1)->mn != 1  ) return FAIL;
+	      val = ((NspMatrix *) Obj1)->R[0];
+	      set_value(&vars[i],val);
+	      break;
+	    }
 	}
     }
   return OK;
 }
+
+

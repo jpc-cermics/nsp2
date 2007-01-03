@@ -66,8 +66,8 @@ extern NspPremiaModel *premiamodel_create(char *name,NspTypeBase *type);
 
 extern NspPremiaModel *nsp_premiamodel_copy(NspPremiaModel *H);
 extern void nsp_premiamodel_destroy(NspPremiaModel *H);
-extern void nsp_premiamodel_info(NspPremiaModel *H, int indent);
-extern void nsp_premiamodel_print(NspPremiaModel *H, int indent);
+void nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int rec_level);
+void nsp_premiamodel_info(NspPremiaModel *M, int indent,const char *name, int rec_level);
 extern NspPremiaModel *nsp_premiamodel_object (NspObject *O); 
 extern int IsPremiaModelObj (Stack stack, int i); 
 extern int IsPremiaModel(NspObject *O);
