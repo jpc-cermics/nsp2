@@ -2203,29 +2203,29 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 }
 
 
-#define APPLY_PERM() \
-      if ( dim_flag == 0 ) \
-        { \
-	  temp = Amat[p-1]; Amat[p-1] = Amat[q-1]; Amat[q-1] = temp; \
-        } \
-      else if ( dim_flag == 1 ) \
-	{ \
-	  int j, pj = p-1, qj = q-1; \
-	  for ( j = 0 ; j < A->n ; j++ ) \
-	    { \
-	      temp = Amat[pj]; Amat[pj] = Amat[qj]; Amat[qj] = temp; \
-	      pj += A->m; qj += A->m; \
-	    } \
-	} \
-      else if ( dim_flag == 2 ) \
-	{ \
-	  int i, pi = (p-1)*A->m, qi = (q-1)*A->m; \
-	  for ( i = 0 ; i < A->m ; i++ ) \
-	    { \
-	      temp = Amat[pi]; Amat[pi] = Amat[qi]; Amat[qi] = temp; \
-	      pi++; qi++; \
-	    } \
-	}
+#define APPLY_PERM()						     \
+  if ( dim_flag == 0 )						     \
+    {								     \
+      temp = Amat[p-1]; Amat[p-1] = Amat[q-1]; Amat[q-1] = temp;     \
+    }								     \
+  else if ( dim_flag == 1 )					     \
+    {								     \
+      int j, pj = p-1, qj = q-1;				     \
+      for ( j = 0 ; j < A->n ; j++ )				     \
+	{							     \
+	  temp = Amat[pj]; Amat[pj] = Amat[qj]; Amat[qj] = temp;     \
+	  pj += A->m; qj += A->m;				     \
+	}							     \
+    }								     \
+  else if ( dim_flag == 2 )					     \
+    {								     \
+      int i, pi = (p-1)*A->m, qi = (q-1)*A->m;			     \
+      for ( i = 0 ; i < A->m ; i++ )				     \
+	{							     \
+	  temp = Amat[pi]; Amat[pi] = Amat[qi]; Amat[qi] = temp;     \
+	  pi++; qi++;						     \
+	}							     \
+    }
 
 
 /**
@@ -2239,6 +2239,7 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
  * 
  * Return value: 
  **/
+
 int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA;
