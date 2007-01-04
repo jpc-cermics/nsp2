@@ -29,7 +29,7 @@
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open_file,choice_button_save,choice_button_open_file,choice_entry,
 	       choice_unknown,choice_matrix,choice_chooser_open_folder,choice_button_open_folder,
-	       choice_spin_button,choice_range_button,choice_button}
+	       choice_spin_button,choice_range_button,choice_button,choice_ignore }
   nsp_choice_value;
 
 typedef struct _nsp_choice_array 
@@ -320,6 +320,8 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,void *Obj,c
       break;
     case choice_spin_button:
       return nsp_setup_spin_button_wraper((double *)Ms,active);
+    case choice_ignore : 
+      return NULL;
     case choice_range_button:
       return nsp_setup_scale_wraper((double *)Ms,active);
     case choice_button :
@@ -328,10 +330,15 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,void *Obj,c
   return NULL;
 }
 
+/* take care that the order of strings in this function 
+ * must match the enum type 
+ *
+ */
+
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin","range","button",NULL};
+  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin","range","button","ignore",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 
@@ -358,6 +365,7 @@ static int nsp_get_choice_from_title(char *type)
     case 7: return choice_spin_button;
     case 8: return choice_range_button;
     case 9: return choice_button;
+    case 10: return choice_ignore;
     }
   return choice_unknown;
 }
@@ -578,22 +586,26 @@ static int nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList
   entries = ((NspSMatrix *) Loc->O);
  
   ca->type = nsp_get_choice_from_title(type);
-  if ( ca->type == choice_unknown)
+  switch ( ca->type )
     {
+    case choice_unknown: 
       Scierror("Error: unrecognized key-work \"%s\" \n",type);
       return ca->type;
+    case choice_ignore: 
+      return ca->type;
+    default:
+      if ( use_row == -1 )
+	{
+	  /* here box is a box */
+	  nsp_setup_framed_combo(ca,box,title,entries,entries->S,entries->m,entries->n,active);
+	}
+      else 
+	{
+	  /* here box is a table */
+	  nsp_setup_table_combo(ca,box,use_row,title,entries,entries->S,entries->m,entries->n,active);
+	}
     }
-  
-  if ( use_row == -1 )
-    {
-      /* here box is a box */
-      nsp_setup_framed_combo(ca,box,title,entries,entries->S,entries->m,entries->n,active);
-    }
-  else 
-    {
-      /* here box is a table */
-      nsp_setup_table_combo(ca,box,use_row,title,entries,entries->S,entries->m,entries->n,active);
-    }
+
   return ca->type;
 }
 
@@ -679,13 +691,15 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	case choice_spin_button:
 	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
-	  return rep;
+	  break;
 	case choice_range_button:
 	  rep = nsp_scale_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
-	  return rep;
+	  break;
 	case choice_button:
-	  return OK;
+	  break;
+	case choice_ignore: 
+	  break;
 	}
       Loc= Loc->next;
       i++;
@@ -764,6 +778,11 @@ static NspList *nsp_combo_extract_choices(NspList *L)
 	    return NULLLIST;
 	  if (nsp_object_set_name(Ob,"le") == FAIL) return NULLLIST;
 	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
+	  break;
+	case choice_ignore:
+	  if (( Ob =nsp_create_object_from_double("le",active_field->R[0])) == NULLOBJ )
+	    return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL)return NULLLIST;
 	  break;
 	}
       Loc= Loc->next;
