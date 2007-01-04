@@ -18,10 +18,10 @@ function set_toolbar_both(_b,args)
   args(1).set_style[GTK.TOOLBAR_BOTH]
 endfunction
 function set_toolbar_small_space(_b,args)
-  args(1).set_space_size[5]
+  args(1).insert_space[5]
 endfunction
 function set_toolbar_big_space(_b,args)
-  args(1).set_space_size[10]
+  args(1).insert_space[10]
 endfunction
 function set_toolbar_enable(_b,args)
   args(1).set_tooltips[%t]
@@ -65,7 +65,7 @@ function [toolbar]=make_toolbar(win)
 		      icon=pixmap,callback=set_toolbar_small_space,params=list(toolbar)]
   pixmap = gtkimage_new("pixmap",pix,mask);
   toolbar.append_item[text="Big",tooltip_text= "Use big spaces",tooltip_private_text="Big spaces",...
-		      icon=pixmap,callback=set_toolbar_big_space]
+		      icon=pixmap,callback=set_toolbar_big_space,params=list(toolbar)]
   pixmap = gtkimage_new("pixmap",pix,mask);
   toolbar.append_item[text="Enable",tooltip_text= "Enable tooltips",tooltip_private_text="Enable tooltips",...
 		      icon=pixmap,callback=set_toolbar_enable,params=list(toolbar)]
