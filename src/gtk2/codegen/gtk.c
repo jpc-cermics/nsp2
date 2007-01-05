@@ -4987,7 +4987,7 @@ nspgtk_cell_layout_data_func_marshal (GtkCellLayout *tree_column,
 {
   NspObject *args[5], *nsp_ret;
   NspGtkCustomNotify *cunote = data;
-  int nret = 1,nargs = 4;
+  int nret = 0,nargs = 4;
   gboolean ret = FALSE;
 
   g_assert (cunote->func);
@@ -5647,7 +5647,7 @@ nspgtk_tree_foreach_marshal(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter 
   NspObject *args[4];
   NspGtkCustomNotify *cunote = data;
   NspObject *nsp_ret;
-  int nret = 1,nargs = 3;
+  int nret = 0,nargs = 3;
   gboolean ret = FALSE;
 
   nspg_block_threads();
@@ -6608,7 +6608,7 @@ nspgtk_tree_sortable_sort_cb(GtkTreeModel *model, GtkTreeIter *iter1,
   NspObject *args[4];
   NspGtkCustomNotify *cunote = user_data;
   NspObject *nsp_ret;
-  int nret = 1,nargs = 3;
+  int nret = 0,nargs = 3;
   gint ret = 0;
 
   nspg_block_threads();
@@ -8006,7 +8006,7 @@ nspgtk_item_factory_cb(NspGtkCustomNotify *cunote,
 {
   NspObject *args[3];
   NspObject *nsp_ret;
-  int nret = 1,nargs = 2, pos=0;
+  int nret = 0,nargs = 2, pos=0;
   nspg_block_threads();
   args[0] = (NspObject *) gobject_gettype_and_create("widget",(GObject *)widget);
 
@@ -16620,7 +16620,7 @@ nspgtk_tree_selection_marshal(GtkTreeSelection *selection,
   NspObject *args[2];
   NspGtkCustomNotify *cunote = data;
   NspObject *nsp_ret;
-  int nret = 1,nargs = 1;
+  int nret = 0,nargs = 1;
   gboolean ret = FALSE;
 
   nspg_block_threads();
@@ -16738,7 +16738,7 @@ nspgtk_tree_selection_foreach_marshal(GtkTreeModel *model, GtkTreePath *path, Gt
   NspObject *args[4];
   NspGtkCustomNotify *cunote = data;
   NspObject *nsp_ret;
-  int nret = 1,nargs = 3;
+  int nret = 0,nargs = 3;
   /* gboolean ret = FALSE;*/
 
   nspg_block_threads();
@@ -17922,7 +17922,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 {
   NspObject *args[5], *nsp_ret;
   NspGtkCustomNotify *cunote = data;
-  int nret = 1,nargs = 4;
+  int nret = 0,nargs = 4;
   gboolean ret = FALSE;
 
   g_assert (cunote->func);
@@ -28376,7 +28376,7 @@ nspgtk_container_foreach_marshal(GtkWidget *widget, gpointer data)
   NspObject *args[2];
   NspGtkCustomNotify *cunote = data;
   NspObject *nsp_ret;
-  int nret = 1,nargs = 1;
+  int nret = 0,nargs = 1;
   nspg_block_threads();
 
   args[0] = (NspObject *)gobject_gettype_and_create("widget",(GObject *)widget);
@@ -34452,7 +34452,7 @@ nspgtk_menu_detach (GtkWidget *attach_widget, GtkMenu *menu)
 {
   NspObject *func;
   NspObject *args[2];
-  int nret = 1,nargs = 2;
+  int nret = 0,nargs = 2;
   /* gboolean ret = FALSE;*/
   NspObject *nsp_ret;
 
