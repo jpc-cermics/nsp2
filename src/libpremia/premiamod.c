@@ -444,14 +444,16 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,2);
   /* the family */
   if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+  m--; /* C mode */
   /* a model */
   if ( rhs == 2 )
     {
       if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+      n--; /* C-mode */
       while (models[nmodels] != NULL) nmodels++;
       if ( n < 0 || n > nmodels -1 )
 	{
-	  Scierror("Error: model %d does not exists\n",n);
+	  Scierror("Error: model %d does not exists\n",n+1);
 	  return RET_BUG;
 	}
       poo=models[n];
@@ -478,7 +480,7 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( count == fsize ) 
 	{
-	  Sciprintf("All the option matches with model %d\n",n);
+	  /* Sciprintf("All the option of family %d matches with model %d\n",m+1,n+1);*/
 	}
       fsize = count;
     }
@@ -508,10 +510,13 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(3,3);
   /* the family */
   if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+  m--;
   /* the option */
   if (GetScalarInt(stack,1,&opt) == FAIL) return RET_BUG;
+  opt--;
   /* the model */
   if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+  n--;
   while (models[nmodels] != NULL) nmodels++;
   if ( n < 0 || n > nmodels -1 ) goto empty;
   poo=models[n];
