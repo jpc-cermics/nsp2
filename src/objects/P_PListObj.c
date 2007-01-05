@@ -219,7 +219,7 @@ NspPList *NspPListXdrLoad(XDR *xdrs)
   if ( L->type != PLIST ) return NULLP_PLIST;
   L1= L->O;
   L->O = NULLPLIST;
- nsp_plist_destroy(&L);
+  nsp_plist_destroy(&L);
   return(  NspPListCreate(name,L1,file_name[0]== '\0' ? NULL : file_name));
 }
 
