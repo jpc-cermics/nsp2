@@ -68,7 +68,7 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
   
   /* initialize */
   
-  maxl = strlen(Items[0]);
+  maxl = (nItems != 0) ? strlen(Items[0]) : 10;
   for (i = 0; i < nItems ; i++) maxl = Max(maxl,strlen(Items[i]));
   
   if ( maxl > 50 || nItems > 30) 
