@@ -1,0 +1,85 @@
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_ScalExp
+#define NSP_INC_ScalExp
+
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
+
+/* ScalExp */
+
+#include "nsp/object.h"
+
+/*
+ * NspScalExp inherits from NspObject
+ */
+
+typedef struct _NspScalExp NspScalExp ;
+typedef struct _NspTypeScalExp NspTypeScalExp ;
+
+struct _NspTypeScalExp {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+};
+
+struct _NspScalExp {
+  /*< private >*/
+  NspObject father;
+  NspTypeScalExp*type;
+  /*< public >*/
+  NspPList *code;
+  NspMatrix *bcode;
+  NspMatrix *values;
+};
+
+extern int nsp_type_scalexp_id;
+extern NspTypeScalExp *nsp_type_scalexp;
+
+/* type instances for object */
+
+NspTypeScalExp *new_type_scalexp(type_mode mode);
+
+/* instance for ScalExp */
+
+NspScalExp *new_scalexp();
+
+/*
+ * Object methods redefined for scalexp 
+ */
+
+
+#define NULLSCALEXP (NspScalExp*) 0
+
+extern NspScalExp *scalexp_create(char *name,NspPList *code,NspTypeBase *type);
+
+/* from ScalExpObj.c */
+
+extern NspScalExp *nsp_scalexp_copy(NspScalExp *H);
+extern void nsp_scalexp_destroy(NspScalExp *H);
+extern void nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level);
+extern void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level);
+extern NspScalExp *nsp_scalexp_object (NspObject *O); 
+extern int IsScalExpObj (Stack stack, int i); 
+extern int IsScalExp(NspObject *O);
+extern NspScalExp *GetScalExpCopy (Stack stack, int i); 
+extern NspScalExp *GetScalExp (Stack stack, int i); 
+extern int int_scalexp_create(Stack stack, int rhs, int opt, int lhs);
+
+#endif /* NSP_INC_ScalExp */ 
+
+#ifdef ScalExp_Private 
+static int init_scalexp(NspScalExp *o,NspTypeScalExp *type);
+static int nsp_scalexp_size(NspScalExp *Mat, int flag);
+static char *nsp_scalexp_type_as_string(void);
+static char *nsp_scalexp_type_short_string(void);
+static int nsp_scalexp_eq(NspScalExp *A, NspObject *B);
+static int nsp_scalexp_neq(NspScalExp *A, NspObject *B);
+static int nsp_scalexp_xdr_save(XDR  *xdrs, NspScalExp *M);
+static NspScalExp *nsp_scalexp_xdr_load(XDR *xdrs);
+static AttrTab scalexp_attrs[];
+static NspMethods *scalexp_get_methods(void);
+static NspScalExp *scalexp_create_void(char *name,NspTypeBase *type);
+#endif /* ScalExp_Private */
+
