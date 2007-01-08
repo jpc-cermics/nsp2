@@ -1044,7 +1044,7 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
 {
   Pricing *res;
   VAR *var;
-  int method,n_method=0, npar,nres;
+  int method,n_method=0, npar,nres,count=0,method_id=-1,i;
   CheckStdRhs(1,1);
   if (GetScalarInt(stack,1,&method) == FAIL) return RET_BUG;
   method--;
@@ -1066,13 +1066,34 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
     }
   /* now we have a pricing */
   while ( res->Methods[n_method] != NULL) n_method++;
+
   if ( method < 0 || method > n_method -1 )
     {
       Scierror("Error: method %d does not exists in possible pricing methods [%d,%d]\n",method+1,1,n_method+1);
       return RET_BUG;
     }
-  
-  self->obj->meth = *(res->Methods[method]);
+  /* take care that method does not refer here to the 
+   * method number method but to the indice of selected method 
+   * in the filtered list of methods !
+   */
+  for ( i=0 ; i < n_method ; i++) 
+    {
+      if ( res->Methods[i]->CheckOpt(&self->obj->opt,&self->obj->mod)== OK) 
+	{
+	  if ( count == method ) 
+	    {
+	      method_id=i;break;
+	    }
+	  count++;
+	}
+    }
+  if ( method_id == -1 ) 
+    {
+      Scierror("Error: method %d does not exists in possible pricing methods [%d,%d]\n",
+	       method_id+1,1,n_method+1);
+      return RET_BUG;
+    }
+  self->obj->meth = *(res->Methods[method_id]);
   self->obj->meth.init=0;
   /* clone vars recursively */
   var=self->obj->meth.Par;

@@ -23,6 +23,8 @@ meth=x_choose(meths,['Choose a method']);
 
 // if meth<>0 then 
 
+
+
 M.set_method[meth]
 
 M.get_method[]
