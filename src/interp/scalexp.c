@@ -266,7 +266,10 @@ void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level
     }
   else 
     {
+      /* gerer le rec_level */
       Sciprintf1(indent,"%s=\t\tscalexp\n",pname);
+      nsp_plist_pretty_print(M->code->D, indent+2);
+      Sciprintf("\n");
     }
 }
 
@@ -377,7 +380,7 @@ int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int nsp_eval_expr(PList L1,NspFrame *Fr,double *val);
+extern int nsp_eval_expr(PList L1,NspFrame *Fr,double *val);
 extern int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
 extern int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,double *res);
 
@@ -422,6 +425,19 @@ static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, in
   return 1;
 }
 
+static int nsp_eval_expr_context(PList L1,NspHash *context);
+
+static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  PList P = self->code->D,Body;
+  Body = (PList) P->next->next->O;
+  NspHash *H;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
+  nsp_eval_expr_context(Body,H);
+  return 0;
+}
 
 
 
@@ -429,6 +445,7 @@ static NspMethods scalexp_methods[] = {
   {"eval",(nsp_method *) int_scalexp_meth_eval},
   {"bcomp",(nsp_method *) int_scalexp_meth_bcomp},
   {"byte_eval",(nsp_method *) int_scalexp_meth_byte_eval},
+  {"apply_context",(nsp_method *) int_scalexp_meth_apply_context},
   { NULL, NULL}
 };
 
@@ -923,3 +940,121 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
   return OK;
 }
 
+/* constants are replaced by their values in context 
+ *
+ */ 
+
+static int nsp_eval_expr_context_arg(PList L,NspHash *context);
+
+static int nsp_eval_expr_context(PList L1,NspHash *context)
+{
+  int nargs=-1;
+  PList L,loc;
+  int j;
+  L = L1; /* operator */
+  L1= L->next ; /* first arg */
+  if ( L->type > 0  ) 
+    {
+      /* Evaluation of operators */
+      loc = L1;
+      for ( j = 0 ; j < L->arity  ; j++ )
+	{
+	  nsp_eval_expr_context_arg(loc,context);
+	  loc = loc->next ;
+	}
+      return 1;
+    }
+  else 
+    {
+      switch ( L->type ) 
+	{
+	case CALLEVAL : 
+	  /* Sciprintf("Need to perform a CALLEVAL \n"); */
+	  {
+	    int k,nargs;
+	    char *name;
+	    PList Largs,Lf;
+	    /* we know here that arity is 2 when entering Eval RhsCall 
+	     * L == (CALLEVAL fname (ARGS ....)) 
+	     */
+	    Lf = L->next;
+	    name = Lf->O;
+	    Largs = Lf->next->O;
+	    nargs = Largs->arity;
+	    Largs = Largs->next;/* point to first element of ARGS */
+	    if ( nargs > 2 ) return RET_BUG;
+	    for ( k= 1; k <= nargs ; k++) 
+	      {
+		nsp_eval_expr_context_arg(Largs,context);
+		Largs = Largs->next;
+	      }
+	  }
+	  return 1;
+	  break;
+	case PLIST :
+	  if (L->next == NULLPLIST )
+	    {
+	      nsp_eval_expr_context_arg(L,context);
+	      return 1;
+	    }
+	  return 0;
+	  break;
+	case STATEMENTS :
+	case STATEMENTS1 :
+	  /*ici lhs n'est pas utilise XXX **/
+	  nargs = 0;
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      nsp_eval_expr_context_arg(L1,context);
+	      L1 = L1->next;
+	    }
+	  return 0;
+	default:
+	  return RET_BUG;
+	}
+    }
+  return nargs ;
+}
+
+
+static int nsp_eval_expr_context_arg(PList L,NspHash *context)
+{
+  NspObject *Obj;
+  switch (L->type) 
+    {
+    case NAME :
+    case OPNAME :
+      Sciprintf("search %s\n",(char *) L->O);
+      if (nsp_hash_find(context,(char *) L->O,&Obj) == OK )
+	{
+	  PList L1=NULLPLIST;
+	  if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
+	    {
+	      char str[56];
+	      Sciprintf("use value %f\n",((NspMatrix *) Obj)->R[0]);
+	      snprintf(str,55,"%f",((NspMatrix *) Obj)->R[0]);
+	      if ( nsp_parse_add_doublei(&L1,str) == OK)
+		{
+		  /* we want the real value in the double */
+		  ((parse_double *) L->O)->val = ((NspMatrix *) Obj)->R[0];
+		  L1->prev=L->prev;
+		  L1->next=L->next;
+		  if ( L->prev != NULLPLIST) L->prev->next=L1;
+		  if ( L->next != NULLPLIST) L->next->prev=L1;
+		  L->prev = L->next = NULLPLIST;
+		  nsp_plist_destroy(&L);
+		}
+	    }
+	}
+      return 1;
+    case NUMBER:
+      return 1;
+      break;
+    case PLIST :
+      return nsp_eval_expr_context((PList) L->O,context);
+      break;
+    default: 
+      return RET_BUG;
+    }
+  return RET_BUG;
+}
