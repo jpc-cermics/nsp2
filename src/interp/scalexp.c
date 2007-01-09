@@ -32,6 +32,7 @@
 #include "nsp/parse.h" 
 #include "../objects/frame.h" /* XXX */
 #include "Functions.h" 
+#include "nsp/gsort-p.h" 
 
 /* 
  * NspScalExp inherits from NspObject 
@@ -439,6 +440,21 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
   return 0;
 }
 
+static NspSMatrix *nsp_expr_get_vars(PList L1);
+
+static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *S;
+  PList P = self->code->D,Body;
+  Body = (PList) P->next->next->O;
+  CheckRhs(0,0);
+  CheckLhs(-1,0);
+  if ((S=nsp_expr_get_vars(Body))==NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+
 
 
 static NspMethods scalexp_methods[] = {
@@ -446,6 +462,7 @@ static NspMethods scalexp_methods[] = {
   {"bcomp",(nsp_method *) int_scalexp_meth_bcomp},
   {"byte_eval",(nsp_method *) int_scalexp_meth_byte_eval},
   {"apply_context",(nsp_method *) int_scalexp_meth_apply_context},
+  {"get_vars",(nsp_method *) int_scalexp_meth_get_vars},
   { NULL, NULL}
 };
 
@@ -940,13 +957,16 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
   return OK;
 }
 
-/* constants are replaced by their values in context 
- *
- */ 
 
-static int nsp_eval_expr_context_arg(PList L,NspHash *context);
 
-static int nsp_eval_expr_context(PList L1,NspHash *context)
+/* walk on expression and execute action
+ */
+
+typedef enum { get_data, store_name, update_id } expr_action; 
+
+static int nsp_expr_action_arg(PList L,void *context,int action);
+
+static int nsp_expr_action(PList L1,void *context,int action )
 {
   int nargs=-1;
   PList L,loc;
@@ -959,7 +979,7 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
       loc = L1;
       for ( j = 0 ; j < L->arity  ; j++ )
 	{
-	  nsp_eval_expr_context_arg(loc,context);
+	  nsp_expr_action_arg(loc,context,action);
 	  loc = loc->next ;
 	}
       return 1;
@@ -985,7 +1005,7 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
 	    if ( nargs > 2 ) return RET_BUG;
 	    for ( k= 1; k <= nargs ; k++) 
 	      {
-		nsp_eval_expr_context_arg(Largs,context);
+		nsp_expr_action_arg(Largs,context,action);
 		Largs = Largs->next;
 	      }
 	  }
@@ -994,7 +1014,7 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      nsp_eval_expr_context_arg(L,context);
+	      nsp_expr_action_arg(L,context,action);
 	      return 1;
 	    }
 	  return 0;
@@ -1005,7 +1025,7 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
 	  nargs = 0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      nsp_eval_expr_context_arg(L1,context);
+	      nsp_expr_action_arg(L1,context,action);
 	      L1 = L1->next;
 	    }
 	  return 0;
@@ -1017,44 +1037,98 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
 }
 
 
-static int nsp_eval_expr_context_arg(PList L,NspHash *context)
+static int nsp_expr_action_arg(PList L,void *context,int action)
 {
+  int val;
   NspObject *Obj;
   switch (L->type) 
     {
     case NAME :
     case OPNAME :
-      Sciprintf("search %s\n",(char *) L->O);
-      if (nsp_hash_find(context,(char *) L->O,&Obj) == OK )
+      switch (action ) 
 	{
-	  PList L1=NULLPLIST;
-	  if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
+	case get_data : 
+	  /* here context is a Hash Table : we replace names 
+	   * by constants 
+	   */ 
+	  Sciprintf("search %s\n",(char *) L->O);
+	  if (nsp_hash_find(context,(char *) L->O,&Obj) == OK )
 	    {
-	      char str[56];
-	      Sciprintf("use value %f\n",((NspMatrix *) Obj)->R[0]);
-	      snprintf(str,55,"%f",((NspMatrix *) Obj)->R[0]);
-	      if ( nsp_parse_add_doublei(&L1,str) == OK)
+	      PList L1=NULLPLIST;
+	      if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
 		{
-		  /* we want the real value in the double */
-		  ((parse_double *) L->O)->val = ((NspMatrix *) Obj)->R[0];
-		  L1->prev=L->prev;
-		  L1->next=L->next;
-		  if ( L->prev != NULLPLIST) L->prev->next=L1;
-		  if ( L->next != NULLPLIST) L->next->prev=L1;
-		  L->prev = L->next = NULLPLIST;
-		  nsp_plist_destroy(&L);
+		  char str[56];
+		  Sciprintf("use value %f\n",((NspMatrix *) Obj)->R[0]);
+		  snprintf(str,55,"%f",((NspMatrix *) Obj)->R[0]);
+		  if ( nsp_parse_add_doublei(&L1,str) == OK)
+		    {
+		      /* we want the real value in the double */
+		      ((parse_double *) L->O)->val = ((NspMatrix *) Obj)->R[0];
+		      L1->prev=L->prev;
+		      L1->next=L->next;
+		      if ( L->prev != NULLPLIST) L->prev->next=L1;
+		      if ( L->next != NULLPLIST) L->next->prev=L1;
+		      L->prev = L->next = NULLPLIST;
+		      nsp_plist_destroy(&L);
+		    }
 		}
 	    }
+	  return 1;
+	case store_name : 
+	  /* push names in the Bhash table */
+	  if ( nsp_bhash_find(context,(char *) L->O,&val) == FAIL) 
+	    {
+	      if (nsp_bhash_enter(context,(char *) L->O,0) == FAIL) return FAIL;
+	    }
+	  return 1; 
+	case update_id :
+	  if ( nsp_bhash_find(context,(char *) L->O,&val) == OK) 
+	    {
+	      L->arity = val ;
+	    }
+	  return 1;
 	}
       return 1;
     case NUMBER:
       return 1;
       break;
     case PLIST :
-      return nsp_eval_expr_context((PList) L->O,context);
+      return nsp_expr_action((PList) L->O,context,action);
       break;
     default: 
       return RET_BUG;
     }
   return RET_BUG;
 }
+
+
+/* constants are replaced by their values in context 
+ *
+ */ 
+
+
+static int nsp_eval_expr_context(PList L1,NspHash *context)
+{
+  return nsp_expr_action(L1,context, get_data);
+}
+
+extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
+
+static NspSMatrix *nsp_expr_get_vars(PList L1)
+{
+  int i;
+  NspSMatrix *symb_names;
+  NspBHash *symbols = NULLBHASH;
+  if ((symbols = nsp_bhcreate(NVOID,10)) == NULLBHASH ) return NULL;
+  nsp_expr_action(L1,symbols, store_name);
+  symb_names= (NspSMatrix *) int_bhash_get_keys(symbols,NULL);
+  nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
+  for ( i = 0 ; i < symb_names->mn ; i++)
+    {
+      nsp_bhash_enter(symbols,symb_names->S[i],i+1) ;
+    }
+  nsp_expr_action(L1,symbols, update_id);
+  nsp_bhash_destroy(symbols);
+  return symb_names;
+}
+
