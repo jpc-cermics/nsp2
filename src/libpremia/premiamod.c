@@ -380,36 +380,6 @@ int int_premiamodel_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-int int_premiamodel_create_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  VAR *var;
-  Model *poo;
-  NspPremiaModel *H;
-  int m,nmodels=0;
-  CheckStdRhs(1,1);
-  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
-  /* number of models */
-  while (models[nmodels] != NULL) nmodels++;
-  /* use first model */
-  poo=models[Min(Max(m,0),nmodels-1)];
-  /* be sure that model is initialized to have correct nvar */
-  poo->Init(poo);
-  /* want to be sure that type premiamodel is initialized */
-  nsp_type_premiamodel = new_type_premiamodel(T_BASE);
-  if(( H = premiamodel_create(NVOID,(NspTypeBase *) nsp_type_premiamodel)) == NULLPREMIAMODEL) 
-    return RET_BUG;
-  H->obj->mod = *poo;
-  H->obj->mod.init=0;
-  /* clone vars recursively, even if it's not usefull for models */
-  if ( nsp_premia_clone_vars(&var,TRUE,(VAR *) poo->TypeModel,poo->nvar)==FAIL) 
-    return RET_BUG;
-  H->obj->mod.init=1;
-  H->obj->mod.TypeModel=var;
-  InitErrorMsg();
-  InitVar();
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
 
 int int_premia_get_models(Stack stack, int rhs, int opt, int lhs)
 {
@@ -558,90 +528,6 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject  *) S);
   return 1;
 }
-
-
-int int_premiaopt_create_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  VAR *var;
-  Option *poo;
-  Option **loc;
-  NspPremiaModel *H;
-  int m,n;
-  int nf=0,fsize=0;
-  CheckStdRhs(2,2);
-  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
-  if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
-  while ( families[nf] != NULL) nf++;
-  if ( m < 0 || m > nf -1 ) 
-    {
-      Scierror("Error: family %d does not exists\n",m);
-      return RET_BUG;
-    }
-  loc = (*families[m]);
-  while ( loc[fsize] != NULL) fsize++;
-  if ( n < 0 || n > fsize -1 ) 
-    {
-      Scierror("Error: option %d does not exists in family %d\n",n,m);
-      return RET_BUG;
-    }
-  poo=(*families[m])[n];
-  /* be sure that model is initialized to have correct nvar */
-  poo->Init(poo);
-  /* want to be sure that type premiamodel is initialized */
-  nsp_type_premiamodel = new_type_premiamodel(T_BASE);
-  if(( H = premiamodel_create(NVOID,(NspTypeBase *) nsp_type_premiamodel)) == NULLPREMIAMODEL) 
-    return RET_BUG;
-  H->obj->opt = *poo;
-  H->obj->opt.init=0;
-  /* clone vars recursively, even if it's not usefull for models */
-  if ( nsp_premia_clone_vars(&var,TRUE,(VAR *) poo->TypeOpt,poo->nvar)==FAIL) 
-    return RET_BUG;
-  H->obj->mod.init=1;
-  H->obj->opt.TypeOpt=var;
-  /* poo->Init(&H->obj->opt); */
-  /* check Ok */
-  InitErrorMsg();
-  InitVar();
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-
-
-
-int int_premiamethod_create_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  VAR *var;
-  PricingMethod *poo=NULL;
-  NspPremiaModel *H;
-  int m,npar,nres;
-  CheckStdRhs(1,1);
-  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
-  poo=pricings[3]->Methods[m];
-  /* be sure that model is initialized to have correct nvar */
-  poo->Init(poo);
-  /* want to be sure that type premiamodel is initialized */
-  nsp_type_premiamodel = new_type_premiamodel(T_BASE);
-  if(( H = premiamodel_create(NVOID,(NspTypeBase *) nsp_type_premiamodel)) == NULLPREMIAMODEL) 
-    return RET_BUG;
-  H->obj->meth = *poo;
-  H->obj->meth.init=0;
-  /* clone vars recursively, even if it's not usefull for models */
-  var=H->obj->meth.Par;
-  npar = nsp_premia_get_nvar(var);
-  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) poo->Par,npar)==FAIL) 
-    return RET_BUG;
-  var = H->obj->meth.Res;
-  nres = nsp_premia_get_nvar(var);
-  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) poo->Res,nres)==FAIL) 
-    return RET_BUG;
-  /* poo->Init(&H->obj->opt); */
-  /* check Ok */
-  H->obj->mod.init=1;
-  InitErrorMsg();
-  InitVar();
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
 
 
 /* Get a list of (var-name,value,tag) 
@@ -1093,17 +979,19 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
 	       method_id+1,1,n_method+1);
       return RET_BUG;
     }
+  res->Methods[method_id]->Init(res->Methods[method_id]);
   self->obj->meth = *(res->Methods[method_id]);
-  self->obj->meth.init=0;
   /* clone vars recursively */
   var=self->obj->meth.Par;
   npar = nsp_premia_get_nvar(var);
-  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) res->Methods[method]->Par,npar)==FAIL) 
+  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) res->Methods[method_id]->Par,npar)==FAIL) 
     return RET_BUG;
   var = self->obj->meth.Res;
   nres = nsp_premia_get_nvar(var);
-  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) res->Methods[method]->Res,nres)==FAIL) 
+  if ( nsp_premia_clone_vars(&var,FALSE,(VAR *) res->Methods[method_id]->Res,nres)==FAIL) 
     return RET_BUG;
+  self->obj->meth.init=0;
+  self->obj->meth.Init(&self->obj->meth);
   self->obj->mod.init=1;
   return 0;
 } 
