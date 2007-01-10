@@ -580,6 +580,36 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
   return RET_CTRLC;
 }
 
+
+/**
+ * nsp_parse_expr:
+ * @M: a string matrix
+ * 
+ * parses an expression contained in string @str
+ *
+ * Return value: a new #PList or %NULLPLIST
+ **/
+
+PList nsp_parse_expr(NspSMatrix *M)
+{
+  PList plist = NULLPLIST ;
+  Tokenizer T;
+  int rep, cur_echo= nsp_set_echo_input_line(FALSE);
+  nsp_init_tokenizer(&T);
+  nsp_tokeniser_strings(&T,M->S);
+  /* call the parser */
+  if ((rep=nsp_parse(&T,NULLBHASH,&plist)) < 0 ) 
+    {
+      /* parse error */
+      nsp_error_message_show();
+      nsp_plist_destroy(&plist);
+      plist = NULLPLIST;
+    }
+  /* restore current input function */
+  nsp_set_echo_input_line(cur_echo);
+  return plist;
+}
+
 /***************************************************
  * Parses one expression returned in PList 
  * err is set to 1 2 3 if an error is detected 

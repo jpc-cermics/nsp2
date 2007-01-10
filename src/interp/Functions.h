@@ -53,6 +53,8 @@ extern int SciReadLine (char *prompt,char *buffer, int *buf_size, int *eof);
 
 #include "nsp/tokenizer.h"
 extern int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist);
+extern PList nsp_parse_expr(NspSMatrix *M);
+
 extern int IsEmptyMat (PList *plist);
 extern int is_mlhs(PList plist,PList *plist1, int *kount);
 extern int PListLength (PList *L);

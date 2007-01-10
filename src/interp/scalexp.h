@@ -29,7 +29,9 @@ struct _NspScalExp {
   NspObject father;
   NspTypeScalExp*type;
   /*< public >*/
-  NspPList *code;
+  PList code;
+  NspSMatrix *expr;
+  NspSMatrix *vars;
   NspMatrix *bcode;
   NspMatrix *values;
 };
@@ -52,7 +54,7 @@ NspScalExp *new_scalexp();
 
 #define NULLSCALEXP (NspScalExp*) 0
 
-extern NspScalExp *scalexp_create(char *name,NspPList *code,NspTypeBase *type);
+extern NspScalExp *scalexp_create(char *name,NspSMatrix *expr,NspTypeBase *type);
 
 /* from ScalExpObj.c */
 

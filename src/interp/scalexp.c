@@ -34,6 +34,10 @@
 #include "Functions.h" 
 #include "nsp/gsort-p.h" 
 
+
+static NspSMatrix *nsp_expr_get_vars(PList L1);
+static int nsp_expr_check(PList L1);
+
 /* 
  * NspScalExp inherits from NspObject 
  */
@@ -229,7 +233,8 @@ static NspScalExp  *nsp_scalexp_xdr_load(XDR *xdrs)
 void nsp_scalexp_destroy(NspScalExp *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-  NspPListDestroy(H->code);
+  nsp_smatrix_destroy(H->expr);
+  nsp_plist_destroy(&H->code);
   FREE(H);
 }
 
@@ -269,7 +274,8 @@ void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level
     {
       /* gerer le rec_level */
       Sciprintf1(indent,"%s=\t\tscalexp\n",pname);
-      nsp_plist_pretty_print(M->code->D, indent+2);
+      nsp_object_print((NspObject *)M->expr,indent+2,NULL,rec_level+1);      
+      /* nsp_plist_pretty_print(M->code->D, indent+2); */
       Sciprintf("\n");
     }
 }
@@ -340,11 +346,14 @@ static NspScalExp *scalexp_create_void(char *name,NspTypeBase *type)
   return H;
 }
 
-NspScalExp *scalexp_create(char *name,NspPList *code,NspTypeBase *type)
+NspScalExp *scalexp_create(char *name,NspSMatrix *expr,NspTypeBase *type)
 {
   NspScalExp *H  = scalexp_create_void(name,type);
   if ( H ==  NULLSCALEXP) return NULLSCALEXP;
-  if ((H->code =(NspPList *) nsp_object_copy((NspObject *)code)) == NULL) return NULL;
+  if ((H->expr = (NspSMatrix *) nsp_object_copy((NspObject *) expr)) == NULL) return NULL;
+  if ((H->code = nsp_parse_expr(expr))== NULL) return NULL;
+  if ( nsp_expr_check(H->code) == FAIL) return NULL;
+  if ((H->vars =nsp_expr_get_vars(H->code))==NULL) return NULL;
   return H;
 }
 
@@ -354,7 +363,7 @@ NspScalExp *scalexp_create(char *name,NspPList *code,NspTypeBase *type)
 
 NspScalExp *nsp_scalexp_copy(NspScalExp *self)
 {
-  NspScalExp *H  =scalexp_create(NVOID,self->code,NULL);
+  NspScalExp *H  =scalexp_create(NVOID,self->expr,NULL);
   return H;
 }
 
@@ -365,14 +374,14 @@ NspScalExp *nsp_scalexp_copy(NspScalExp *self)
 
 int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
 {
-  NspPList *code;
+  NspSMatrix *expr;
   NspScalExp *H;
   CheckStdRhs(1,1);
   /* want to be sure that type scalexp is initialized */
-  if ((code = GetNspPList(stack,1))== NULL) 
+  if ((expr = GetSMat(stack,1))== NULL) 
     return RET_BUG;
   nsp_type_scalexp = new_type_scalexp(T_BASE);
-  if(( H = scalexp_create(NVOID,code,(NspTypeBase *) nsp_type_scalexp)) == NULLSCALEXP) return RET_BUG;
+  if(( H = scalexp_create(NVOID,expr,(NspTypeBase *) nsp_type_scalexp)) == NULLSCALEXP) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -381,16 +390,32 @@ int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-extern int nsp_eval_expr(PList L1,NspFrame *Fr,double *val);
+extern int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table);
 extern int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
-extern int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,double *res);
+static int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
 
 static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
+  int nmax=1;
+  NspMatrix *M;
   double val;
-  PList P = self->code->D,Body;
-  Body = (PList) P->next->next->O;
-  nsp_eval_expr(Body,NULL,&val);
+  CheckRhs(1,2);
+  if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ( M->mn != self->vars->mn ) 
+    {
+      Scierror("Error: argument should be of length %d\n",self->vars->mn);
+      return RET_BUG;
+    }
+
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&nmax) == FAIL) return RET_BUG;
+    }
+  {
+    int i;
+    for (i=0; i < nmax ; i++) 
+      nsp_eval_expr(self->code,NULL,&val,M->R);
+  }
   nsp_move_double(stack,1,val);
   return 1;
 }
@@ -400,9 +425,7 @@ static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int op
   NspMatrix *Code,*Const;
   int code[500],pos=0,posv=0;
   double dval[100];
-  PList P = self->code->D,Body;
-  Body = (PList) P->next->next->O;
-  nsp_bytecomp_expr(Body,NULL,code,&pos,dval,&posv);
+  nsp_bytecomp_expr(self->code,NULL,code,&pos,dval,&posv);
   Sciprintf("taille du code %d et taille des var %d\n",pos,posv);
   if ((Const=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
     return RET_BUG;
@@ -412,16 +435,31 @@ static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int op
   Code->convert = 'i';
   self->bcode = Code;
   self->values= Const;
-  /* nsp_scalarexp_byte_eval(code,pos,dval,&val1);
-     Sciprintf("resultat %f\n",val1);
-  */
   return 0;
 }
 
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *M;
   double val;
-  nsp_scalarexp_byte_eval(self->bcode->I,self->bcode->mn,self->values->R,&val);
+  int nmax=1;
+  CheckRhs(1,2);
+  if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ( M->mn != self->vars->mn ) 
+    {
+      Scierror("Error: argument should be of length %d\n",self->vars->mn);
+      return RET_BUG;
+    }
+
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&nmax) == FAIL) return RET_BUG;
+    }
+  {
+    int i;
+    for (i=0; i < nmax ; i++) 
+      nsp_scalarexp_byte_eval(self->bcode->I,self->bcode->mn,self->values->R,M->R,&val);
+  }
   nsp_move_double(stack,1,val);
   return 1;
 }
@@ -430,28 +468,35 @@ static int nsp_eval_expr_context(PList L1,NspHash *context);
 
 static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
-  PList P = self->code->D,Body;
-  Body = (PList) P->next->next->O;
   NspHash *H;
+  NspSMatrix *S;
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
-  nsp_eval_expr_context(Body,H);
+  nsp_eval_expr_context(self->code,H);
+  /* update vars if changed this should be returned by previous function */
+  if ((S = nsp_expr_get_vars(self->code))==NULL) return RET_BUG;
+  nsp_smatrix_destroy(self->vars);
+  self->vars = S;
   return 0;
 }
 
-static NspSMatrix *nsp_expr_get_vars(PList L1);
 
 static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
-  NspSMatrix *S;
-  PList P = self->code->D,Body;
-  Body = (PList) P->next->next->O;
   CheckRhs(0,0);
   CheckLhs(-1,0);
-  if ((S=nsp_expr_get_vars(Body))==NULL) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(S));
+  MoveObj(stack,1,NSP_OBJECT(self->vars));
   return 1;
+}
+
+
+static int int_scalexp_meth_print_code(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(-1,0);
+  nsp_plist_print_internal(self->code);
+  return 0;
 }
 
 
@@ -463,6 +508,7 @@ static NspMethods scalexp_methods[] = {
   {"byte_eval",(nsp_method *) int_scalexp_meth_byte_eval},
   {"apply_context",(nsp_method *) int_scalexp_meth_apply_context},
   {"get_vars",(nsp_method *) int_scalexp_meth_get_vars},
+  {"print_code",(nsp_method *) int_scalexp_meth_print_code},
   { NULL, NULL}
 };
 
@@ -556,13 +602,13 @@ void scalexp_Interf_Info(int i, char **fname, function (**f))
  * evaluation of scalar expression (for scicos)
  *--------------------------------------------------------------------------*/
 
-static int nsp_eval_expr_arg(PList L1,NspFrame *Fr,double *val);
+static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_table);
 
 typedef enum { 
   f_sin, f_cos, f_tan, f_exp, f_log, f_sinh, f_cosh, f_tanh,
   f_int, f_round, f_ceil, f_floor, f_sign, f_abs, f_max, f_min,
   f_asin, f_acos, f_atan, f_asinh, f_acosh, f_atanh,
-  f_atan2, f_log10
+  f_atan2, f_log10, f_gamma
 } f_enum;
 
 typedef struct _expr_func expr_func;
@@ -580,7 +626,13 @@ static double sign(double x) { return (x>0) ? 1: ((x==0) ? 0:-1);}
 static double dmax(double x,double y) { return Max(x,y);}
 static double dmin(double x,double y) { return Min(x,y);}
 static double dabs(double x) { return Abs(x);}
-
+static double dgamma(double x) {
+#ifdef HAVE_TGAMMA
+  return tgamma(x);
+#else 
+  return cdf_gamma(&x);
+#endif 
+}
 
 static expr_func expr_functions[] = 
   {
@@ -608,11 +660,12 @@ static expr_func expr_functions[] =
     {"atanh",f_atanh,atanh,NULL},
     {"atan2",f_atan2,NULL,atan2},
     {"log10",f_log10,log10,NULL},
+    {"gamma",f_gamma,dgamma,NULL},
     {NULL,0}
   };
 
 
-int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
+int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 {
   int nargs=-1;
   PList L,loc;
@@ -627,13 +680,18 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
       loc = L1;
       for ( j = 0 ; j < L->arity  ; j++ )
 	{
-	  if ( nsp_eval_expr_arg(loc,Fr,args+j) < 0 ) return RET_BUG;
+	  if ( nsp_eval_expr_arg(loc,Fr,args+j,var_table) < 0 ) return RET_BUG;
 	  loc = loc->next ;
 	}
       switch ( L->type ) 
 	{
+	case TILDE_OP: *val = (args[0]==0) ? 1 : 0;break;
+	case DOTPRIM :
 	case QUOTE_OP :	*val= args[0] ;break;
+	case DOTSTARDOT:
+	case DOTSTAR :
 	case STAR_OP : 	*val= args[0]*args[1];break;			      
+	case DOTPLUS: 
 	case PLUS_OP : 	*val= args[0]+args[1];break;			      
 	case HAT_OP : 	*val= pow(args[0],args[1]);break;			      
 	case SEQOR : 	
@@ -642,17 +700,27 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
 	case AND_OP : 	*val= ((int) args[0]) && ((int) args[1]) ;break;
 	case COMMA_OP : *val= args[0];break;
 	case SEMICOLON_OP :*val= args[0];break;
+	case RETURN_OP :*val= args[0];break;
 	case MINUS_OP : *val= (L->arity == 1) ? -args[0] : args[0]-args[1];break;
+	case DOTSLASH:
+	case DOTSLASHDOT:
 	case SLASH_OP : *val= args[0]/args[1];break;
-	case DOTSTAR   : *val= args[0]*args[1];break;	
-	case DOTSLASH  : *val= args[0]/args[1];break;
+	case DOTBSLASH :
+	case DOTBSLASHDOT: 
+	case BACKSLASH_OP: *val= args[1]/args[0];break;
 	case DOTHAT : 	*val= pow(args[0],args[1]);break;
+	case DOTEQ :
 	case EQ     : *val= args[0]== args[1];break;
+	case DOTLEQ:
 	case LEQ    : *val= args[0] <= args[1];break;
+	case DOTGEQ :
 	case GEQ    :  *val= args[0] >= args[1];break;
+	case DOTNEQ :
 	case NEQ    :  *val= args[0] != args[1];break;
 	case MOINS   : 	*val=-args[0] ;break;   /* unary minus */	      
-	case LT_OP: *val= args[0] < args[1];break;	
+	case DOTLT :
+	case LT_OP: *val= args[0] < args[1];break;
+	case DOTGT:
 	case GT_OP: *val= args[0] > args[1];break;	
 	default: 
 	  opcode =nsp_astcode_to_nickname(L->type);
@@ -685,13 +753,13 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
 	    if ( nargs > 2 ) return RET_BUG;
 	    for ( k= 1; k <= nargs ; k++) 
 	      {
-		if ( nsp_eval_expr_arg(Largs,Fr,args+(k-1)) < 0) return RET_BUG;
+		if ( nsp_eval_expr_arg(Largs,Fr,args+(k-1),var_table) < 0) return RET_BUG;
 		Largs = Largs->next;
 	      }
 	    if ( Lf->arity == -1 ) 
 	      {
 		/* Sciprintf("Try to detect %s on first call\n",name); */
-		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),0)) >=0)
+		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) >=0)
 		  {
 		    Lf->arity = n;
 		  }
@@ -720,7 +788,7 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      if ((nargs=nsp_eval_expr_arg(L,Fr,val)) < 0) 
+	      if ((nargs=nsp_eval_expr_arg(L,Fr,val,var_table)) < 0) 
 		/* SHOWBUG(stack,nargs,L1); */
 	      return nargs;
 	    }
@@ -732,7 +800,7 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
 	  nargs = 0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      if ( (nargs=nsp_eval_expr_arg(L1,Fr,val)) < 0) 
+	      if ( (nargs=nsp_eval_expr_arg(L1,Fr,val,var_table)) < 0) 
 		{
 		  return nargs;
 		}
@@ -746,14 +814,16 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val)
   return nargs ;
 }
 
-static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val)
+static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_table)
 {
   switch (L->type) 
     {
     case NAME :
     case OPNAME :
-      /* Sciprintf("Need to evaluate a name or opname %s (id=%d)\n",(char *) L->O,L->arity); */
-      *val = 8;
+      /* Sciprintf("Need to evaluate a name or opname %s (id=%d) %f\n",
+       *           (char *) L->O,L->arity, var_table[L->arity-1]);
+       */
+       *val =var_table[L->arity-1] ;
       return 1;
     case NUMBER:
       /* Sciprintf("Need to evaluate a number %s %f\n",((parse_double *) L->O)->str,((parse_double *) L->O)->val); */
@@ -761,7 +831,7 @@ static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val)
       return 1;
       break;
     case PLIST :
-      return nsp_eval_expr((PList) L->O,Fr,val);
+      return nsp_eval_expr((PList) L->O,Fr,val,var_table);
       break;
     default: 
       return RET_BUG;
@@ -825,7 +895,7 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 	    if ( Lf->arity == -1 ) 
 	      {
 		/* Sciprintf("Try to detect %s on first call\n",name); */
-		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),0)) >=0)
+		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) >=0)
 		  {
 		    Lf->arity = n;
 		  }
@@ -871,7 +941,7 @@ static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double 
     case NAME :
     case OPNAME :
       /* Sciprintf("Need  a name or opname %s (id=%d)\n",(char *) L->O,L->arity); */
-      code[*pos] =( 3 << 16 )  ; *pos += 1;
+      code[*pos] =( 3 << 16 ) | (L->arity-1); *pos += 1;
       return 1;
     case NUMBER:
       /* Sciprintf("Need  a number %s %f\n",((parse_double *) L->O)->str,((parse_double *) L->O)->val); */
@@ -889,7 +959,7 @@ static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double 
   return RET_BUG;
 }
 
-int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,double *res)
+int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res)
 {
   unsigned int type;
   int i,s_pos=0,n;
@@ -906,8 +976,13 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
 	  /* Sciprintf("Need  an operator %d\n",n);*/
 	  switch (n) 
 	    {
+	    case TILDE_OP: stack[s_pos-1] = (stack[s_pos-1] ==0 ) ? 1 : 0;break;
+	    case DOTPRIM :
 	    case QUOTE_OP : break;
+	    case DOTSTARDOT:
+	    case DOTSTAR :
 	    case STAR_OP :  stack[s_pos-2] *= stack[s_pos-1];s_pos--; break;			      
+	    case DOTPLUS: 
 	    case PLUS_OP :  stack[s_pos-2] += stack[s_pos-1];s_pos--; break;			      
 	    case HAT_OP :   stack[s_pos-2]= pow(stack[s_pos-2],stack[s_pos-1]);s_pos--; break;			      
 	    case SEQOR : 	
@@ -916,17 +991,27 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
 	    case AND_OP : 	stack[s_pos-2]= ((int) stack[s_pos-2]) && ((int) stack[s_pos-1]) ;s_pos--;break;
 	    case COMMA_OP : break;
 	    case SEMICOLON_OP :break;
+	    case RETURN_OP : break;
 	    case MINUS_OP :  stack[s_pos-2] -= stack[s_pos-1];s_pos--;break; /* binary */
+	    case DOTSLASH:
+	    case DOTSLASHDOT:
 	    case SLASH_OP : stack[s_pos-2] /= stack[s_pos-1];s_pos--;break;
-	    case DOTSTAR   : stack[s_pos-2]*= stack[s_pos-1];s_pos--;break;	
-	    case DOTSLASH  : stack[s_pos-2] /= stack[s_pos-1];s_pos--;break;
+	    case DOTBSLASH :
+	    case DOTBSLASHDOT: 
+	    case BACKSLASH_OP: stack[s_pos-2] = stack[s_pos-1]/stack[s_pos-2];s_pos--;break;
 	    case DOTHAT : 	stack[s_pos-2]= pow(stack[s_pos-2],stack[s_pos-1]);s_pos--;break;
+	    case DOTEQ :
 	    case EQ     : stack[s_pos-2]= stack[s_pos-2]== stack[s_pos-1];s_pos--;break;
+	    case DOTLEQ:
 	    case LEQ    : stack[s_pos-2]= stack[s_pos-2] <= stack[s_pos-1];s_pos--;break;
+	    case DOTGEQ :
 	    case GEQ    :  stack[s_pos-2]= stack[s_pos-2] >= stack[s_pos-1];s_pos--;break;
+	    case DOTNEQ :
 	    case NEQ    :  stack[s_pos-2]= stack[s_pos-2] != stack[s_pos-1];s_pos--;break;
 	    case MOINS   : 	stack[s_pos-1] =-stack[s_pos-1] ;break;   /* unary minus */	      
+	    case DOTLT :
 	    case LT_OP: stack[s_pos-2]= stack[s_pos-2] < stack[s_pos-1];s_pos--;break;	
+	    case DOTGT:
 	    case GT_OP: stack[s_pos-2]= stack[s_pos-2] > stack[s_pos-1];s_pos--;break;	
 	  }
 	  break;
@@ -945,6 +1030,8 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
 	  break;
 	case 3:
 	  /* Sciprintf("Need  a name %d\n", bcode & 0xffff); */
+	  stack[s_pos]=vars[  bcode & 0xffff];
+	  s_pos++;
 	  break;
 	case 4:
 	  /* Sciprintf("A number %f\n",constv[ bcode & 0xffff]); */
@@ -962,15 +1049,14 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,doubl
 /* walk on expression and execute action
  */
 
-typedef enum { get_data, store_name, update_id } expr_action; 
+typedef enum { get_data, store_name, update_id, check_expr } expr_action; 
 
-static int nsp_expr_action_arg(PList L,void *context,int action);
+static int nsp_expr_action_arg(PList *L,void *context,int action);
 
 static int nsp_expr_action(PList L1,void *context,int action )
 {
-  int nargs=-1;
   PList L,loc;
-  int j;
+  int j,ans;
   L = L1; /* operator */
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
@@ -979,10 +1065,22 @@ static int nsp_expr_action(PList L1,void *context,int action )
       loc = L1;
       for ( j = 0 ; j < L->arity  ; j++ )
 	{
-	  nsp_expr_action_arg(loc,context,action);
+	  ans=nsp_expr_action_arg(&loc,context,action);
+	  if ( action == check_expr && ans == FAIL) return FAIL;
 	  loc = loc->next ;
 	}
-      return 1;
+      if ( action == check_expr ) 
+	{
+	  int code = L->type;
+	  if ( ! ( code > NOTCODE_OP && code < LASTCODE_OP ) 
+	       ||  code == COLON_OP || code == STARDOT || code == SLASHDOT || code== BSLASHDOT )
+	    {
+	      const char *opcode =nsp_astcode_to_nickname(L->type);
+	      Sciprintf("Error: Unknown operator %s\n",opcode);
+	      return FAIL;
+	    }
+	}
+      return OK;
     }
   else 
     {
@@ -1002,46 +1100,90 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	    Largs = Lf->next->O;
 	    nargs = Largs->arity;
 	    Largs = Largs->next;/* point to first element of ARGS */
-	    if ( nargs > 2 ) return RET_BUG;
+	    if ( nargs > 2 ) 
+	      {
+		if ( action == check_expr)
+		  {
+		    Scierror("Error: too many arguments for %s\n",name);
+		  }
+		return FAIL;
+	      }
 	    for ( k= 1; k <= nargs ; k++) 
 	      {
-		nsp_expr_action_arg(Largs,context,action);
+		ans=nsp_expr_action_arg(&Largs,context,action);
+		if ( action == check_expr && ans == FAIL) 
+		  {
+		    return FAIL;
+		  }
 		Largs = Largs->next;
 	      }
+	    if ( action == check_expr) 
+	      {
+		if ((ans = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) < 0) 
+		  {
+		    Scierror("Error: unknown function %s\n",name);
+		    return FAIL;
+		  }
+		else 
+		  {
+		    if ( expr_functions[ans].f1 != NULL )
+		      {
+			if ( nargs != 1 ) 
+			  {
+			    Scierror("Error: expecting one argument for function %s\n",name);
+			    return FAIL;
+			  }
+		      }
+		    else  
+		      {
+			if ( nargs != 2 ) 
+			  {
+			    Scierror("Error: expecting two arguments for function %s\n",name);
+			    return FAIL;
+			  }
+		      }
+		  }
+	      }
 	  }
-	  return 1;
+	  return OK;
 	  break;
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      nsp_expr_action_arg(L,context,action);
-	      return 1;
+	      ans=nsp_expr_action_arg(&L,context,action);
+	      if ( action == check_expr && ans == FAIL) return FAIL;
+	      return OK;
 	    }
-	  return 0;
+	  return OK;
 	  break;
 	case STATEMENTS :
 	case STATEMENTS1 :
 	  /*ici lhs n'est pas utilise XXX **/
-	  nargs = 0;
+	  if ( action == check_expr && L->arity > 1 )
+	    {
+	      Scierror("Error: too many expressions found (%d)\n",L->arity);
+	      return FAIL;
+	    }
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      nsp_expr_action_arg(L1,context,action);
+	      ans=nsp_expr_action_arg(&L1,context,action);
+	      if ( action == check_expr && ans == FAIL) return FAIL;
 	      L1 = L1->next;
 	    }
-	  return 0;
+	  return OK;
 	default:
 	  return RET_BUG;
 	}
     }
-  return nargs ;
+  return FAIL;
 }
 
 
-static int nsp_expr_action_arg(PList L,void *context,int action)
+static int nsp_expr_action_arg(PList *L,void *context,int action)
 {
   int val;
   NspObject *Obj;
-  switch (L->type) 
+  switch ((*L)->type) 
     {
     case NAME :
     case OPNAME :
@@ -1051,8 +1193,8 @@ static int nsp_expr_action_arg(PList L,void *context,int action)
 	  /* here context is a Hash Table : we replace names 
 	   * by constants 
 	   */ 
-	  Sciprintf("search %s\n",(char *) L->O);
-	  if (nsp_hash_find(context,(char *) L->O,&Obj) == OK )
+	  Sciprintf("search %s\n",(char *) (*L)->O);
+	  if (nsp_hash_find(context,(char *) (*L)->O,&Obj) == OK )
 	    {
 	      PList L1=NULLPLIST;
 	      if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
@@ -1063,42 +1205,45 @@ static int nsp_expr_action_arg(PList L,void *context,int action)
 		  if ( nsp_parse_add_doublei(&L1,str) == OK)
 		    {
 		      /* we want the real value in the double */
-		      ((parse_double *) L->O)->val = ((NspMatrix *) Obj)->R[0];
-		      L1->prev=L->prev;
-		      L1->next=L->next;
-		      if ( L->prev != NULLPLIST) L->prev->next=L1;
-		      if ( L->next != NULLPLIST) L->next->prev=L1;
-		      L->prev = L->next = NULLPLIST;
-		      nsp_plist_destroy(&L);
+		      ((parse_double *) L1->O)->val = ((NspMatrix *) Obj)->R[0];
+		      L1->prev=(*L)->prev;
+		      L1->next=(*L)->next;
+		      if ( (*L)->prev != NULLPLIST) (*L)->prev->next=L1;
+		      if ( (*L)->next != NULLPLIST) (*L)->next->prev=L1;
+		      (*L)->prev = (*L)->next = NULLPLIST;
+		      nsp_plist_destroy(L);
+		      *L=L1;
 		    }
 		}
 	    }
-	  return 1;
+	  return OK;
 	case store_name : 
 	  /* push names in the Bhash table */
-	  if ( nsp_bhash_find(context,(char *) L->O,&val) == FAIL) 
+	  if ( nsp_bhash_find(context,(char *) (*L)->O,&val) == FAIL) 
 	    {
-	      if (nsp_bhash_enter(context,(char *) L->O,0) == FAIL) return FAIL;
+	      if (nsp_bhash_enter(context,(char *) (*L)->O,0) == FAIL) return FAIL;
 	    }
-	  return 1; 
+	  return OK; 
 	case update_id :
-	  if ( nsp_bhash_find(context,(char *) L->O,&val) == OK) 
+	  if ( nsp_bhash_find(context,(char *) (*L)->O,&val) == OK) 
 	    {
-	      L->arity = val ;
+	      (*L)->arity = val ;
 	    }
-	  return 1;
+	  return OK;
+	case check_expr: 
+	  return OK;
 	}
-      return 1;
+      return OK;
     case NUMBER:
-      return 1;
+      return OK;
       break;
     case PLIST :
-      return nsp_expr_action((PList) L->O,context,action);
+      return nsp_expr_action((PList) (*L)->O,context,action);
       break;
     default: 
-      return RET_BUG;
+      return FAIL;
     }
-  return RET_BUG;
+  return FAIL;
 }
 
 
@@ -1110,6 +1255,11 @@ static int nsp_expr_action_arg(PList L,void *context,int action)
 static int nsp_eval_expr_context(PList L1,NspHash *context)
 {
   return nsp_expr_action(L1,context, get_data);
+}
+
+static int nsp_expr_check(PList L1)
+{
+  return nsp_expr_action(L1,NULL, check_expr);
 }
 
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
