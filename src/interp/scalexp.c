@@ -441,7 +441,7 @@ static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int op
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M;
-  double val;
+  double val=0.0;
   int nmax=1;
   CheckRhs(1,2);
   if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
