@@ -428,10 +428,10 @@ static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt
 static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Code,*Const;
-  int code[500],pos=0,posv=0;
-  double dval[100];
+  int code[512],pos=0,posv=0;
+  double dval[512];
   nsp_bytecomp_expr(self->code,NULL,code,&pos,dval,&posv);
-  Sciprintf("taille du code %d et taille des var %d\n",pos,posv);
+  /* Sciprintf("taille du code %d et taille des var %d\n",pos,posv); */
   if ((Const=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
     return RET_BUG;
   if ((Code=nsp_matrix_create("code",'r',1,pos)) == NULL)
@@ -442,6 +442,24 @@ static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int op
   self->values= Const;
   return 0;
 }
+
+static int int_scalexp_meth_get_bcode(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckLhs(0,2);
+  CheckRhs(0,0);
+  if ( self->bcode == NULLMAT ) 
+    {
+      Scierror("Error: please call bcomp method first\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(self->bcode));
+  if ( lhs == 2)
+    MoveObj(stack,2,NSP_OBJECT(self->values));
+  return Max(lhs,1);
+}
+
+
+
 
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -499,7 +517,7 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
 static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
-  CheckLhs(-1,0);
+  CheckLhs(-1,1);
   MoveObj(stack,1,NSP_OBJECT(self->vars));
   return 1;
 }
@@ -534,6 +552,7 @@ static NspMethods scalexp_methods[] = {
   {"get_vars",(nsp_method *) int_scalexp_meth_get_vars},
   {"print_code",(nsp_method *) int_scalexp_meth_print_code},
   {"logicals",(nsp_method *)  int_scalexp_meth_nlogicals},
+  {"get_bcode",(nsp_method *) int_scalexp_meth_get_bcode},
   { NULL, NULL}
 };
 
@@ -1000,7 +1019,7 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const
 {
   unsigned int type;
   int i,s_pos=0,n;
-  double stack[256];
+  double stack[512];
   for ( i = 0 ; i < lcode ; i++)
     {
       unsigned int bcode = *code;
