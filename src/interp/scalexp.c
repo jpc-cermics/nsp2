@@ -396,27 +396,31 @@ static int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *const
 
 static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
-  int nmax=1;
-  NspMatrix *M;
-  double val;
-  CheckRhs(1,2);
+  int ok=FALSE,i,nres;
+  NspMatrix *M,*Res;
+  CheckRhs(1,1);
   if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ( M->mn != self->vars->mn ) 
+  if ( M->m == self->vars->mn ) 
     {
-      Scierror("Error: argument should be of length %d\n",self->vars->mn);
+      ok = TRUE; 
+      nres = M->n; 
+    }
+  else if ( M->m == 1 && M->n == self->vars->mn )
+    {
+      ok = TRUE;
+      nres =1;
+    }
+  if ( ok == FALSE ) 
+    {
+      Scierror("Error: argument should be of length 1x%d or %dxn\n",self->vars->mn,self->vars->mn);
       return RET_BUG;
     }
-
-  if ( rhs == 2 ) 
-    {
-      if ( GetScalarInt(stack,2,&nmax) == FAIL) return RET_BUG;
-    }
-  {
-    int i;
-    for (i=0; i < nmax ; i++) 
-      nsp_eval_expr(self->code,NULL,&val,M->R);
-  }
-  nsp_move_double(stack,1,val);
+  /* note that nres can be null */
+  if ((Res = nsp_matrix_create(NVOID,'r',1,nres))==NULLMAT) 
+    return RET_BUG;
+  for ( i = 0 ; i < nres ; i++) 
+    nsp_eval_expr(self->code,NULL,&Res->R[i],M->R + M->m*i);
+  MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
 
@@ -440,27 +444,36 @@ static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int op
 
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *M;
-  double val=0.0;
-  int nmax=1;
-  CheckRhs(1,2);
-  if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ( M->mn != self->vars->mn ) 
+  int ok=FALSE,i,nres;
+  NspMatrix *M,*Res;
+  CheckRhs(1,1);
+  if ( self->bcode == NULLMAT ) 
     {
-      Scierror("Error: argument should be of length %d\n",self->vars->mn);
+      Scierror("Error: please call bcomp method first\n");
       return RET_BUG;
     }
-
-  if ( rhs == 2 ) 
+  if (( M= GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ( M->m == self->vars->mn ) 
     {
-      if ( GetScalarInt(stack,2,&nmax) == FAIL) return RET_BUG;
+      ok = TRUE; 
+      nres = M->n; 
     }
-  {
-    int i;
-    for (i=0; i < nmax ; i++) 
-      nsp_scalarexp_byte_eval(self->bcode->I,self->bcode->mn,self->values->R,M->R,&val);
-  }
-  nsp_move_double(stack,1,val);
+  else if ( M->m == 1 && M->n == self->vars->mn )
+    {
+      ok = TRUE;
+      nres =1;
+    }
+  if ( ok == FALSE ) 
+    {
+      Scierror("Error: argument should be of length 1x%d or %dxn\n",self->vars->mn,self->vars->mn);
+      return RET_BUG;
+    }
+  /* note that nres can be null */
+  if ((Res = nsp_matrix_create(NVOID,'r',1,nres))==NULLMAT) 
+    return RET_BUG;
+  for (i=0; i < nres ; i++) 
+    nsp_scalarexp_byte_eval(self->bcode->I,self->bcode->mn,self->values->R,M->R + M->m*i,&Res->R[i]);
+  MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
 
