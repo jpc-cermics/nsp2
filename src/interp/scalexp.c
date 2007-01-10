@@ -37,6 +37,7 @@
 
 static NspSMatrix *nsp_expr_get_vars(PList L1);
 static int nsp_expr_check(PList L1);
+static int nsp_expr_count_logical(PList L1);
 
 /* 
  * NspScalExp inherits from NspObject 
@@ -512,6 +513,16 @@ static int int_scalexp_meth_print_code(NspScalExp *self,Stack stack, int rhs, in
   return 0;
 }
 
+static int int_scalexp_meth_nlogicals(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int nlogical;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  nlogical = nsp_expr_count_logical(self->code);
+  nsp_move_double(stack,1,nlogical);
+  return 1;
+}
+
 
 
 
@@ -522,6 +533,7 @@ static NspMethods scalexp_methods[] = {
   {"apply_context",(nsp_method *) int_scalexp_meth_apply_context},
   {"get_vars",(nsp_method *) int_scalexp_meth_get_vars},
   {"print_code",(nsp_method *) int_scalexp_meth_print_code},
+  {"logicals",(nsp_method *)  int_scalexp_meth_nlogicals},
   { NULL, NULL}
 };
 
@@ -820,6 +832,17 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 	      L1 = L1->next;
 	    }
 	  return 0;
+	case PARENTH: 
+	  nargs = 0;
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      if ( (nargs=nsp_eval_expr_arg(L1,Fr,val,var_table)) < 0) 
+		{
+		  return nargs;
+		}
+	      L1 = L1->next;
+	    }
+	  return 0;
 	default:
 	  return RET_BUG;
 	}
@@ -934,6 +957,7 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 	  break;
 	case STATEMENTS :
 	case STATEMENTS1 :
+	case PARENTH: 
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
 	      if ( nsp_bytecomp_expr_arg(L1,Fr,code,pos,constv,posv) < 0) return RET_BUG;
@@ -1062,7 +1086,7 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const
 /* walk on expression and execute action
  */
 
-typedef enum { get_data, store_name, update_id, check_expr } expr_action; 
+typedef enum { get_data, store_name, update_id, check_expr, count_logical } expr_action; 
 
 static int nsp_expr_action_arg(PList *L,void *context,int action);
 
@@ -1082,16 +1106,43 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	  if ( action == check_expr && ans == FAIL) return FAIL;
 	  loc = loc->next ;
 	}
-      if ( action == check_expr ) 
+      switch (action) 
 	{
-	  int code = L->type;
-	  if ( ! ( code > NOTCODE_OP && code < LASTCODE_OP ) 
-	       ||  code == COLON_OP || code == STARDOT || code == SLASHDOT || code== BSLASHDOT )
+	case check_expr:
+	  {
+	    int code = L->type;
+	    if ( ! ( code > NOTCODE_OP && code < LASTCODE_OP ) 
+		 ||  code == COLON_OP || code == STARDOT || code == SLASHDOT || code== BSLASHDOT )
+	      {
+		const char *opcode =nsp_astcode_to_nickname(L->type);
+		Sciprintf("Error: Unknown operator %s\n",opcode);
+		return FAIL;
+	      }
+	  }
+	  break;
+	case count_logical: 
+	  /* count logical operators */
+	  switch (L->type) 
 	    {
-	      const char *opcode =nsp_astcode_to_nickname(L->type);
-	      Sciprintf("Error: Unknown operator %s\n",opcode);
-	      return FAIL;
+	    case DOTEQ :
+	    case EQ     :
+	    case DOTLEQ:
+	    case LEQ    :
+	    case DOTGEQ :
+	    case GEQ    :
+	    case DOTNEQ :
+	    case NEQ    :
+	    case DOTLT :
+	    case LT_OP: 
+	    case DOTGT:
+	    case GT_OP: 
+		{
+		  int *count = context;
+		  (*count)++;
+		}
+		break;
 	    }
+	  break;
 	}
       return OK;
     }
@@ -1184,8 +1235,17 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	      L1 = L1->next;
 	    }
 	  return OK;
+	case PARENTH: 
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      ans=nsp_expr_action_arg(&L1,context,action);
+	      if ( action == check_expr && ans == FAIL) return FAIL;
+	      L1 = L1->next;
+	    }
+	  return OK;
 	default:
-	  return RET_BUG;
+	  Scierror("Error: unknown operator \n");
+	  return FAIL;
 	}
     }
   return FAIL;
@@ -1273,6 +1333,13 @@ static int nsp_eval_expr_context(PList L1,NspHash *context)
 static int nsp_expr_check(PList L1)
 {
   return nsp_expr_action(L1,NULL, check_expr);
+}
+
+static int nsp_expr_count_logical(PList L1)
+{
+  int nlogical=0;
+  nsp_expr_action(L1,&nlogical, count_logical );
+  return nlogical;
 }
 
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
