@@ -76,10 +76,15 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
   update_exec_dir(fname,dir,buf,FSIZE);
   Sciprintf("Updated to %s and file = %s\n",dir,buf);
 #endif
- 
+
   if ( lhs == 2 ||  E != NULL )
     {
+      /* evaluate the string in a new frame and returns the 
+       * frame as a hash table : take care that frame must be deleted 
+       * at the end. 
+       */
       if ( nsp_new_frame() == FAIL) return RET_BUG;
+      /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
 	  if ( nsp_frame_insert_hash_contents(E) == FAIL) 
@@ -90,35 +95,29 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 	    }
 	}
       rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
-      if ( rep < 0 ) 
-	{
-	  nsp_frame_delete();
-	  if ( errcatch == FALSE ) return RET_BUG; 
-	}
-      if ( lhs == 2 )
-	{
-	  if ((H=nsp_current_frame_to_hash())==NULLHASH) 
-	    {
-	      nsp_frame_delete();
-	      return RET_BUG;
-	    }
-	}
+      if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
+      nsp_frame_delete();
     }
   else 
     {
       rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
     }
-
+  if ( rep < 0 )
+    {
+      if ( errcatch == FALSE ) return RET_BUG;
+      if ( lhs == 2 ) H = nsp_hcreate(NVOID,1);
+    }
+  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,Ob);
+  if ( lhs == 2) 
+    {
+      if ( H == NULLHASH ) return RET_BUG;
+      MoveObj(stack,2,NSP_OBJECT(H));
+    }
+  /* XXXXX in case of bug this must be done */
 #ifdef UPDATE_EXEC_DIR
   strncpy(dir,old,FSIZE);
 #endif
-  if ( rep < 0 && errcatch == FALSE ) return RET_BUG;
-  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
-  MoveObj(stack,1,Ob);
-  if ( lhs == 2 )
-    {
-      MoveObj(stack,2,NSP_OBJECT(H));
-    }
   return Max(1,lhs);
 }
 
@@ -151,9 +150,11 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
   if ( lhs == 2 ||  E != NULL )
     {
       /* evaluate the string in a new frame and returns the 
-       * frame as an hash table 
+       * frame as a hash table : take care that frame must be deleted 
+       * at the end. 
        */
       if ( nsp_new_frame() == FAIL) return RET_BUG;
+      /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
 	  if ( nsp_frame_insert_hash_contents(E) == FAIL) 
@@ -164,29 +165,23 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 	    }
 	}
       rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
-      if ( rep < 0 ) 
-	{
-	  nsp_frame_delete();
-	  if ( errcatch == FALSE ) return RET_BUG; 
-	}
-      if ( lhs == 2 )
-	{
-	  if ((H=nsp_current_frame_to_hash())==NULLHASH) 
-	    {
-	      nsp_frame_delete();
-	      return RET_BUG;
-	    }
-	}
+      if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
+      nsp_frame_delete();
     }
   else 
     {
       rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
     }
-  if ( rep < 0 && errcatch == FALSE ) return RET_BUG;
+  if ( rep < 0 )
+    {
+      if ( errcatch == FALSE ) return RET_BUG;
+      if ( lhs == 2 ) H = nsp_hcreate(NVOID,1);
+    }
   if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Ob);
-  if ( lhs == 2 )
+  if ( lhs == 2) 
     {
+      if ( H == NULLHASH ) return RET_BUG;
       MoveObj(stack,2,NSP_OBJECT(H));
     }
   return Max(1,lhs);
