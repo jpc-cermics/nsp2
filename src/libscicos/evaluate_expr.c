@@ -1,45 +1,16 @@
 #include <math.h>
 #include "scicos/scicos.h"
 
+extern int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
+
+
 #if WIN32
-/*
- * arcsinh z = log (z+sqrt(1+z2))
- */
-double asinh(double x)
-{
-  return log(x+sqrt(x*x+1));
-}
-
-double acosh(double x)
-{
-  return log(x+sqrt(x*x-1));
-}
-
-/* atanh(x)
- *      For x>=0.5
- *                  1              2x                          x
- *	atanh(x) = --- * log(1 + -------) = 0.5 * log1p(2 * --------)
- *                  2             1 - x                      1 - x
- *	
- * 	For x<0.5
- *	atanh(x) = 0.5*log1p(2x+2x*x/(1-x))
- *
- */
-
-double atanh(double x)
-{
-  if (x >=0.5) 
-    {
-      return 0.5*log((1+x)/(1-x));
-    }
-  else
-    {
-      return 0.5*log((2*x)+(2*x)*x/(1-x));
-    }
-  
+double asinh(double x) { return log(x+sqrt(x*x+1));}
+double acosh(double x) { return log(x+sqrt(x*x-1));}
+double atanh(double x) { 
+  return  (x >=0.5) ? 0.5*log((1+x)/(1-x)) : 0.5*log((2*x)+(2*x)*x/(1-x));
 }
 #endif
-
 
 #if WIN32
 #define CHECK_VALUE(x) !_finite(x) || _isnan(x)
@@ -47,7 +18,8 @@ double atanh(double x)
 #define CHECK_VALUE(x) isinf(x) || isnan(x)
 #endif
 
-void scicos_evaluate_expr_block(scicos_block *block,int flag)
+
+void scicos_evaluate_expr_block_old(scicos_block *block,int flag)
 {
   static double stack [1000];
   static int count,bottom,nzcr,i,phase; 
@@ -579,4 +551,21 @@ int scicos_evaluate_expr(const int *ipar,int nipar,const double *rpar,double *re
   *res = stack[bottom];
   return OK;
 }
+
+
+
+void scicos_evaluate_expr_block(scicos_block *block,int flag)
+{
+  int i;
+  double *constv = block->rpar, vars[8],res;
+  if ( block->nin>1 ) 
+    for ( i = 0 ; i < block->nin ; i++) vars[i]=block->inptr[i][0];
+  else 
+    for ( i = 0 ; i < block->insz[0] ; i++) vars[i]=block->inptr[0][i];
+  nsp_scalarexp_byte_eval(block->ipar,block->nipar,constv,vars,&res);
+  block->outptr[0][0]=res;
+}
+
+
+
 

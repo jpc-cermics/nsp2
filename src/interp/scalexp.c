@@ -393,7 +393,7 @@ int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
 
 extern int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table);
 extern int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
-static int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
+extern int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
 
 static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -664,8 +664,16 @@ struct _expr_func {
   double (*f2)(double,double);
 };
 
-extern double round(double);
 
+#if WIN32
+double asinh(double x) { return log(x+sqrt(x*x+1));}
+double acosh(double x) { return log(x+sqrt(x*x-1));}
+double atanh(double x) { 
+  return  (x >=0.5) ? 0.5*log((1+x)/(1-x)) : 0.5*log((2*x)+(2*x)*x/(1-x));
+}
+#endif
+
+extern double round(double);
 static double sign(double x) { return (x>0) ? 1: ((x==0) ? 0:-1);}
 static double dmax(double x,double y) { return Max(x,y);}
 static double dmin(double x,double y) { return Min(x,y);}
