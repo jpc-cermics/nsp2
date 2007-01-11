@@ -482,10 +482,10 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
   m--;
   /* the option */
-  if (GetScalarInt(stack,1,&opt) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,2,&opt) == FAIL) return RET_BUG;
   opt--;
   /* the model */
-  if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,3,&n) == FAIL) return RET_BUG;
   n--;
   while (models[nmodels] != NULL) nmodels++;
   if ( n < 0 || n > nmodels -1 ) goto empty;
