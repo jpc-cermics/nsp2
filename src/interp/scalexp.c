@@ -561,52 +561,9 @@ static NspMethods *scalexp_get_methods(void) { return scalexp_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_scalexp_get_op(void *self,char *attr)
-{
-  int ret=0;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_scalexp_set_op(void *self, char *attr, NspObject *O)
-{
-  int op=0;
-  if ( IntScalar(O,&op) == FAIL) return FAIL;
-  return OK;
-}
-
-static NspObject *_wrap_scalexp_get_arity(void *self,char *attr)
-{
-  int ret=0;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_scalexp_set_arity(void *self, char *attr, NspObject *O)
-{
-  int arity;
-  if ( IntScalar(O,&arity) == FAIL) return FAIL;
-  return OK;
-}
-
-static NspObject *_wrap_scalexp_get_line(void *self,char *attr)
-{
-  int ret=0;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_scalexp_set_line(void *self, char *attr, NspObject *O)
-{
-  int line;
-  if ( IntScalar(O,&line) == FAIL) return FAIL;
-  return OK;
-}
-
 static AttrTab scalexp_attrs[] = {
-  { "op", (attr_get_function *)_wrap_scalexp_get_op, (attr_set_function *)_wrap_scalexp_set_op,(attr_get_object_function *)int_get_object_failed },
-  { "arity", (attr_get_function *)_wrap_scalexp_get_arity, (attr_set_function *)_wrap_scalexp_set_arity,(attr_get_object_function *)int_get_object_failed },
-  { "line", (attr_get_function *)_wrap_scalexp_get_line, (attr_set_function *)_wrap_scalexp_set_line,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
 };
-
 
 /*-------------------------------------------
  * functions 

@@ -31,6 +31,8 @@
  * NspGObject inherits from NspObject 
  */
 
+static AttrTab gobjects_attrs[];
+
 int nsp_type_gobject_id=0;
 NspTypeGObject *nsp_type_gobject=NULL;
 
@@ -48,7 +50,7 @@ NspTypeGObject *new_type_gobject(type_mode mode)
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = NULL; 
+  type->attrs = gobjects_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = gobject_get_methods; 
@@ -450,6 +452,44 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 /*------------------------------------------------------
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
+
+static NspObject * int_gobject_get_user_data(void *self,char *attr)
+{
+  GQuark quark;
+  NspObject *data;
+  quark = g_quark_from_string(attr);
+  data = g_object_get_qdata(((NspGObject *) self)->obj, quark);
+  if (!data) {
+    Scierror("Error: data %s does not exists\n",attr);
+    return NULL;
+  }
+  return data;
+}
+
+static int int_gobject_set_user_data(void *self,const char *attr, NspObject *O)
+{
+  GQuark quark;
+  NspObject *data;
+  quark = g_quark_from_string(attr);
+  if ((data = nsp_object_copy_and_name(attr,O)) == NULLOBJ) 
+    return RET_BUG;
+  g_object_set_qdata_full(((NspGObject *) self)->obj, quark, data , nspg_destroy_notify);
+  return OK ;
+}
+
+/* self.user_data = , self.user_data and sef.user_data(....) = 
+ * direct acces to user_data to mofify it without a need to get then set 
+ *
+ */
+
+
+static AttrTab gobjects_attrs[] = {
+  { "user_data", int_gobject_get_user_data, int_gobject_set_user_data, 	int_gobject_get_user_data },
+  { (char *) 0, NULL}
+};
+
+
+
 
 /*------------------------------------------------------
  * methods 
