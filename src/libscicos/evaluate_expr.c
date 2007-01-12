@@ -49,8 +49,8 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
   s_pos--;
 
 
-/* XXXX : rajouter un test de depassement dans stack, 
- */
+
+#define BEVAL_STACK_SIZE 512
 
 static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double *constv,const double *vars,
 					  int phase,int flag, int block_ng, double *block_g, int *block_mode,
@@ -58,7 +58,7 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 {
   unsigned int type;
   int i,s_pos=0,n, nzcr=-1,ok;
-  double stack[512];
+  double stack[STACK_SIZE];
   for ( i = 0 ; i < lcode ; i++)
     {
       unsigned int bcode = *code;
@@ -308,11 +308,21 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 	  /* Sciprintf("Need  a name %d\n", bcode & 0xffff); */
 	  stack[s_pos]=vars[  bcode & 0xffff];
 	  s_pos++;
+	  if ( s_pos == BEVAL_STACK_SIZE ) 
+	    {
+	      set_block_error(-16);
+	      return FAIL;
+	    }
 	  break;
 	case 4:
 	  /* Sciprintf("A number %f\n",constv[ bcode & 0xffff]); */
 	  stack[s_pos]=constv[ bcode & 0xffff]; 
 	  s_pos++;
+	  if ( s_pos == BEVAL_STACK_SIZE ) 
+	    {
+	      set_block_error(-16);
+	      return FAIL;
+	    }
 	  break;
 	}
     }
