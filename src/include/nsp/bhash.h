@@ -99,6 +99,8 @@ extern NspBMatrix  *nsp_bhash_equal(NspBHash *L1, NspBHash *L2);
 extern NspBMatrix  *nsp_bhash_not_equal(NspBHash *L1, NspBHash *L2);
 extern int nsp_bhash_full_equal(NspBHash *L1, NspBHash *L2);
 extern int nsp_bhash_full_not_equal(NspBHash *L1, NspBHash *L2);
+extern NspSMatrix * nsp_bhash_get_keys(const char *name,NspBHash *Hv);
+
 
 /**
  * BHashOperation:

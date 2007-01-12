@@ -201,6 +201,7 @@ extern void scicos_evaluate_expr_block(scicos_block *block,int *flag);
 extern void scicos_cstblk4_block(scicos_block *block,int *flag);
 extern void scicos_transmit_or_zero_block(scicos_block *block,int *flag);
 extern void scicos_mvswitch_block(scicos_block *block,int *flag);
+extern void scicos_csslti4_block(scicos_block *block,int *flag);
 
 #endif 
 
@@ -231,6 +232,7 @@ scicos_block_table  tabsim[] ={
   {"cosh_blk",(ScicosF) scicos_cosh_block},
   {"cscope",(ScicosF) scicos_cscope_block},
   {"csslti",(ScicosF) scicos_csslti_block},
+  {"csslti4",(ScicosF) scicos_csslti4_block},
   {"cstblk",(ScicosF) scicos_cst_block},
   {"cstblk4",(ScicosF) scicos_cstblk4_block},
   {"dband",(ScicosF) scicos_dband_block},

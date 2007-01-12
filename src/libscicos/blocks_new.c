@@ -2012,3 +2012,47 @@ void scicos_mvswitch_block(scicos_block *block,int *flag)
     }
 }
 
+/*  Copyright INRIA
+ *    Scicos block simulator
+ *   continuous state space linear system simulator
+ *   rpar(1:nx*nx)=A
+ *   rpar(nx*nx+1:nx*nx+nx*nu)=B
+ *   rpar(nx*nx+nx*nu+1:nx*nx+nx*nu+nx*ny)=C
+ *   rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D 
+ */
+
+void scicos_csslti4_block(scicos_block *block,int *flag)
+{
+  int un=1,lb,lc,ld;
+  int nx=block->nx;
+  double* x=block->x;
+  double* xd=block->xd;
+  double* rpar=block->rpar;
+  double* y=block->outptr[0];
+  double* u=block->inptr[0];
+  int* outsz=block->outsz;
+  int* insz=block->insz;
+  
+  lb=nx*nx;
+  lc=lb+nx*insz[0];
+  
+  if (*flag ==1 || *flag ==6){
+    /* y=c*x+d*u     */
+    ld=lc+nx*outsz[0];
+    if (nx==0) {
+      dmmul_scicos(&rpar[ld],outsz,u,insz,y,outsz,outsz,insz,&un);
+    }else{
+      dmmul_scicos(&rpar[lc],outsz,x,&nx,y,outsz,outsz,&nx,&un);
+      dmmul1_scicos(&rpar[ld],outsz,u,insz,y,outsz,outsz,insz,&un);
+    }
+  }
+
+  else if (flag ==0){
+    /* xd=a*x+b*u */
+    dmmul_scicos(&rpar[0],&nx,x,&nx,xd,&nx,&nx,&nx,&un);
+    dmmul1_scicos(&rpar[lb],&nx,u,insz,xd,&nx,&nx,insz,&un);
+  }
+}
+
+
+

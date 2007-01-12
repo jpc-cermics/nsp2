@@ -1356,8 +1356,6 @@ static int nsp_expr_count_logical(PList L1)
   return nlogical;
 }
 
-extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
-
 static NspSMatrix *nsp_expr_get_vars(PList L1)
 {
   int i;
@@ -1365,7 +1363,7 @@ static NspSMatrix *nsp_expr_get_vars(PList L1)
   NspBHash *symbols = NULLBHASH;
   if ((symbols = nsp_bhcreate(NVOID,10)) == NULLBHASH ) return NULL;
   nsp_expr_action(L1,symbols, store_name);
-  symb_names= (NspSMatrix *) int_bhash_get_keys(symbols,NULL);
+  symb_names= nsp_bhash_get_keys("vars",symbols);
   nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
   for ( i = 0 ; i < symb_names->mn ; i++)
     {
