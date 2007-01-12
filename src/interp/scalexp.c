@@ -541,16 +541,14 @@ static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs,
 {
   int code[512],pos=0,posv=0;
   double dval[512];
-  
   PList pcode;
-  NspSMatrix *expr;
   NspSMatrix *vars;
   NspMatrix *bcode;
   NspMatrix *values;
   CheckRhs(0,0);
   CheckLhs(-1,0);
   /* ----------- */
-  if ((pcode = nsp_parse_expr(expr))== NULL) return RET_BUG;
+  if ((pcode = nsp_parse_expr(self->expr))== NULL) return RET_BUG;
   if ( nsp_expr_check(pcode) == FAIL) return RET_BUG;
   nsp_plist_destroy(&self->code);
   self->code = pcode ;
