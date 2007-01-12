@@ -35,77 +35,7 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
     }
 }
 
-
-typedef enum { 
-  f_sin, f_cos, f_tan, f_exp, f_log, f_sinh, f_cosh, f_tanh,
-  f_int, f_round, f_ceil, f_floor, f_sign, f_abs, f_max, f_min,
-  f_asin, f_acos, f_atan, f_asinh, f_acosh, f_atanh,
-  f_atan2, f_log10, f_gamma
-} f_enum;
-
-
-typedef struct _expr_func expr_func;
-
-struct _expr_func {
-  const char *name;
-  f_enum id;
-  double (*f1)(double);
-  double (*f2)(double,double);
-};
-
-
-
-#if WIN32
-double asinh(double x) { return log(x+sqrt(x*x+1));}
-double acosh(double x) { return log(x+sqrt(x*x-1));}
-double atanh(double x) { 
-  return  (x >=0.5) ? 0.5*log((1+x)/(1-x)) : 0.5*log((2*x)+(2*x)*x/(1-x));
-}
-#endif
-
-extern double round(double);
-static double sign(double x) { return (x>0) ? 1: ((x==0) ? 0:-1);}
-static double dmax(double x,double y) { return Max(x,y);}
-static double dmin(double x,double y) { return Min(x,y);}
-static double dabs(double x) { return Abs(x);}
-static double dgamma(double x) {
-#ifdef HAVE_TGAMMA
-  return tgamma(x);
-#else 
-  return cdf_gamma(&x);
-#endif 
-}
-
-static expr_func expr_functions[] = 
-  {
-    {"sin",f_sin,sin,NULL},
-    {"cos",f_cos,cos,NULL},
-    {"tan",f_tan,tan,NULL},
-    {"exp",f_exp,exp,NULL},
-    {"log",f_log,log,NULL},
-    {"sinh",f_sinh,sinh,NULL},
-    {"cosh",f_cosh,cosh,NULL},
-    {"tanh",f_tanh,tanh,NULL},
-    {"int",f_int,rint,NULL},
-    {"round",f_round,round,NULL},
-    {"ceil",f_ceil,ceil,NULL},
-    {"floor",f_floor,floor,NULL},
-    {"sign",f_sign,sign,NULL},
-    {"abs",f_abs,dabs,NULL},
-    {"max",f_max,NULL,dmax},
-    {"min",f_min,NULL,dmin},
-    {"asin",f_asin,asin,NULL},
-    {"acos",f_acos,acos,NULL},
-    {"atan",f_atan,atan,NULL},
-    {"asinh",f_asinh,asinh,NULL},
-    {"acosh",f_acosh,acosh,NULL},
-    {"atanh",f_atanh,atanh,NULL},
-    {"atan2",f_atan2,NULL,atan2},
-    {"log10",f_log10,log10,NULL},
-    {"gamma",f_gamma,dgamma,NULL},
-    {NULL,0}
-  };
-
+#include "../interp/scalexp.h" 
 
 #define SCICOS_OP_EVAL_BINARY(exp)					\
   if(block_ng>0) nzcr=nzcr+1;						\

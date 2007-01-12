@@ -605,23 +605,6 @@ void scalexp_Interf_Info(int i, char **fname, function (**f))
 
 static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_table);
 
-typedef enum { 
-  f_sin, f_cos, f_tan, f_exp, f_log, f_sinh, f_cosh, f_tanh,
-  f_int, f_round, f_ceil, f_floor, f_sign, f_abs, f_max, f_min,
-  f_asin, f_acos, f_atan, f_asinh, f_acosh, f_atanh,
-  f_atan2, f_log10, f_gamma
-} f_enum;
-
-typedef struct _expr_func expr_func;
-
-struct _expr_func {
-  const char *name;
-  f_enum id;
-  double (*f1)(double);
-  double (*f2)(double,double);
-};
-
-
 #if WIN32
 double asinh(double x) { return log(x+sqrt(x*x+1));}
 double acosh(double x) { return log(x+sqrt(x*x-1));}
@@ -643,33 +626,33 @@ static double dgamma(double x) {
 #endif 
 }
 
-static expr_func expr_functions[] = 
+expr_func expr_functions[] = 
   {
-    {"sin",f_sin,sin,NULL},
-    {"cos",f_cos,cos,NULL},
-    {"tan",f_tan,tan,NULL},
-    {"exp",f_exp,exp,NULL},
-    {"log",f_log,log,NULL},
-    {"sinh",f_sinh,sinh,NULL},
-    {"cosh",f_cosh,cosh,NULL},
-    {"tanh",f_tanh,tanh,NULL},
-    {"int",f_int,rint,NULL},
-    {"round",f_round,round,NULL},
-    {"ceil",f_ceil,ceil,NULL},
-    {"floor",f_floor,floor,NULL},
-    {"sign",f_sign,sign,NULL},
-    {"abs",f_abs,dabs,NULL},
-    {"max",f_max,NULL,dmax},
-    {"min",f_min,NULL,dmin},
-    {"asin",f_asin,asin,NULL},
-    {"acos",f_acos,acos,NULL},
-    {"atan",f_atan,atan,NULL},
-    {"asinh",f_asinh,asinh,NULL},
-    {"acosh",f_acosh,acosh,NULL},
-    {"atanh",f_atanh,atanh,NULL},
-    {"atan2",f_atan2,NULL,atan2},
-    {"log10",f_log10,log10,NULL},
-    {"gamma",f_gamma,dgamma,NULL},
+    {"sin",f_sin,sin,NULL,FALSE},
+    {"cos",f_cos,cos,NULL,FALSE},
+    {"tan",f_tan,tan,NULL,FALSE},
+    {"exp",f_exp,exp,NULL,FALSE},
+    {"log",f_log,log,NULL,FALSE},
+    {"sinh",f_sinh,sinh,NULL,FALSE},
+    {"cosh",f_cosh,cosh,NULL,FALSE},
+    {"tanh",f_tanh,tanh,NULL,FALSE},
+    {"int",f_int,rint,NULL,TRUE},
+    {"round",f_round,round,NULL,TRUE},
+    {"ceil",f_ceil,ceil,NULL,TRUE},
+    {"floor",f_floor,floor,NULL,TRUE},
+    {"sign",f_sign,sign,NULL,TRUE},
+    {"abs",f_abs,dabs,NULL,TRUE},
+    {"max",f_max,NULL,dmax,TRUE},
+    {"min",f_min,NULL,dmin,TRUE},
+    {"asin",f_asin,asin,NULL,FALSE},
+    {"acos",f_acos,acos,NULL,FALSE},
+    {"atan",f_atan,atan,NULL,FALSE},
+    {"asinh",f_asinh,asinh,NULL,FALSE},
+    {"acosh",f_acosh,acosh,NULL,FALSE},
+    {"atanh",f_atanh,atanh,NULL,FALSE},
+    {"atan2",f_atan2,NULL,atan2,FALSE},
+    {"log10",f_log10,log10,NULL,FALSE},
+    {"gamma",f_gamma,dgamma,NULL,FALSE},
     {NULL,0}
   };
 
@@ -1108,6 +1091,11 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	  /* count logical operators */
 	  switch (L->type) 
 	    {
+	    case TILDE_OP: 
+	    case SEQOR : 	
+	    case OR_OP : 
+	    case SEQAND   : 
+	    case AND_OP :
 	    case DOTEQ :
 	    case EQ     :
 	    case DOTLEQ:
@@ -1117,9 +1105,9 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	    case DOTNEQ :
 	    case NEQ    :
 	    case DOTLT :
-	    case LT_OP: 
+	    case LT_OP:  
 	    case DOTGT:
-	    case GT_OP: 
+	    case GT_OP:  
 		{
 		  int *count = context;
 		  (*count)++;
@@ -1165,8 +1153,9 @@ static int nsp_expr_action(PList L1,void *context,int action )
 		  }
 		Largs = Largs->next;
 	      }
-	    if ( action == check_expr) 
+	    switch (action) 
 	      {
+	      case check_expr: 
 		if ((ans = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) < 0) 
 		  {
 		    Scierror("Error: unknown function %s\n",name);
@@ -1191,6 +1180,15 @@ static int nsp_expr_action(PList L1,void *context,int action )
 			  }
 		      }
 		  }
+		break;
+	      case count_logical :
+		ans = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1);
+		if ( ans >= 0 && expr_functions[ans].logical == TRUE ) 
+		  {
+		    int *count = context;
+		    (*count)++;
+		  }
+		break;
 	      }
 	  }
 	  return OK;

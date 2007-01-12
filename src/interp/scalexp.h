@@ -69,6 +69,26 @@ extern NspScalExp *GetScalExpCopy (Stack stack, int i);
 extern NspScalExp *GetScalExp (Stack stack, int i); 
 extern int int_scalexp_create(Stack stack, int rhs, int opt, int lhs);
 
+typedef enum { 
+  f_sin, f_cos, f_tan, f_exp, f_log, f_sinh, f_cosh, f_tanh,
+  f_int, f_round, f_ceil, f_floor, f_sign, f_abs, f_max, f_min,
+  f_asin, f_acos, f_atan, f_asinh, f_acosh, f_atanh,
+  f_atan2, f_log10, f_gamma
+} f_enum;
+
+typedef struct _expr_func expr_func;
+
+struct _expr_func {
+  const char *name;
+  f_enum id;
+  double (*f1)(double);
+  double (*f2)(double,double);
+  int logical;
+};
+
+extern expr_func expr_functions[];
+
+
 #endif /* NSP_INC_ScalExp */ 
 
 #ifdef ScalExp_Private 
