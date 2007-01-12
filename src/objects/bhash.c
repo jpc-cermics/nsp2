@@ -581,38 +581,7 @@ int int_bhtcreate(Stack stack, int rhs, int opt, int lhs)
 
 NspObject * int_bhash_get_keys(void *Hv, char *attr)
 {
-  NspSMatrix *Loc;
-  NspBHash *H = Hv;
-  int i=0,count =0;
-  if ( H->filled == 0) 
-    {
-      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,0,0,-1) ) == NULLSMAT) return NULLOBJ;
-    }
-  else 
-    {
-      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,H->filled,1,-1) ) == NULLSMAT) return NULLOBJ;
-      /* allocate elements and store keys **/
-      while (1) 
-	{
-	  char *str=NULL;
-	  int val;
-	  int rep = nsp_bhash_get_next_object(H,&i,&str,&val);
-	  if ( str != NULL )
-	    { 
-	      if (( Loc->S[count++] =nsp_string_copy(str)) == (nsp_string) 0)
-		return NULLOBJ;
-	    }
-	  if (rep == FAIL) break;
-	}
-      if ( count != H->filled )
-	{
-	  int i;
-	  Sciprintf("Warning: less objects (%d) in bhash table than expected (%d) !\n",count,H->filled);
-	  for ( i = count ; i < H->filled ; i++) Loc->S[i]=NULL;
-	  if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLOBJ;
-	}
-    }
-  return (NspObject *) Loc;
+  return (NspObject *) nsp_bhash_get_keys(NVOID,Hv);
 }
 
 static int int_bhash_set_keys(void *Hv,const char *attr, NspObject *O)
@@ -1398,6 +1367,51 @@ int nsp_bhash_full_not_equal(NspBHash *L1, NspBHash *L2)
 } 
 
 
+/**
+ * nsp_bhash_get_keys:
+ * @name: name to give to object 
+ * @Hv: a #NspBHash 
+ * 
+ * creates a #NspSMatrix filled with the keys of the hash table 
+ * 
+ * Return value: a new #NspSMatrix or NULLSMAT
+ **/
+
+NspSMatrix * nsp_bhash_get_keys(const char *name,NspBHash *Hv)
+{
+  NspSMatrix *Loc;
+  NspBHash *H = Hv;
+  int i=0,count =0;
+  if ( H->filled == 0) 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(name,0,0,-1) ) == NULLSMAT) return NULLSMAT;
+    }
+  else 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(name,H->filled,1,-1) ) == NULLSMAT) return NULLSMAT;
+      /* allocate elements and store keys **/
+      while (1) 
+	{
+	  char *str=NULL;
+	  int val;
+	  int rep = nsp_bhash_get_next_object(H,&i,&str,&val);
+	  if ( str != NULL )
+	    { 
+	      if (( Loc->S[count++] =nsp_string_copy(str)) == (nsp_string) 0)
+		return NULLSMAT;
+	    }
+	  if (rep == FAIL) break;
+	}
+      if ( count != H->filled )
+	{
+	  int i;
+	  Sciprintf("Warning: less objects (%d) in bhash table than expected (%d) !\n",count,H->filled);
+	  for ( i = count ; i < H->filled ; i++) Loc->S[i]=NULL;
+	  if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLSMAT;
+	}
+    }
+  return  Loc;
+}
 
 /*
  * BHashtable code : 
