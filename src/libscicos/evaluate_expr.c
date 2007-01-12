@@ -1,5 +1,6 @@
 #include <math.h>
 #include "scicos/scicos.h"
+#include "scicos/blocks.h"
 
 static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double *constv,const double *vars,
 					  int phase,int flag, int block_ng, double *block_g, int *block_mode,
@@ -12,26 +13,29 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
  * is done in the byte compiler in scalexp.c 
  */
 
-void scicos_evaluate_expr_block(scicos_block *block,int flag)
+void scicos_evaluate_expr_block(scicos_block *block,int *flag)
 {
   int i,phase;
   double *constv = block->rpar, vars[8],res;
-  phase=get_phase_simulation();  
-  if ( block->nin>1 ) 
-    for ( i = 0 ; i < block->nin ; i++) vars[i]=block->inptr[i][0];
-  else 
-    for ( i = 0 ; i < block->insz[0] ; i++) vars[i]=block->inptr[0][i];
-  nsp_scalarexp_byte_eval_scicos(block->ipar,block->nipar,constv,vars,phase,flag,block->ng,
-				 block->g,block->mode,&res);
-
-  if ( isinf(res) || ISNAN(res) ) 
+  if ( *flag==1 || *flag==9) 
     {
-      set_block_error(-2);
-      return;
-    } 
-  else
-    {
-      block->outptr[0][0]=res; 
+      phase=get_phase_simulation();  
+      if ( block->nin>1 ) 
+	for ( i = 0 ; i < block->nin ; i++) vars[i]=block->inptr[i][0];
+      else 
+	for ( i = 0 ; i < block->insz[0] ; i++) vars[i]=block->inptr[0][i];
+      nsp_scalarexp_byte_eval_scicos(block->ipar,block->nipar,constv,vars,phase,*flag,block->ng,
+				     block->g,block->mode,&res);
+      
+      if ( isinf(res) || ISNAN(res) ) 
+	{
+	  set_block_error(-2);
+	  return;
+	} 
+      else
+	{
+	  block->outptr[0][0]=res; 
+	}
     }
 }
 
@@ -106,18 +110,18 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 	    case BACKSLASH_OP: stack[s_pos-2] = stack[s_pos-1]/stack[s_pos-2];s_pos--;break;
 	    case DOTHAT : 	stack[s_pos-2]= pow(stack[s_pos-2],stack[s_pos-1]);s_pos--;break;
 	    case DOTEQ :
-	    case EQ     :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] == (int)stack[s_pos-1])); break;
+	    case EQ     :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] == stack[s_pos-1])); break;
 	    case DOTLEQ:
-	    case LEQ    : SCICOS_OP_EVAL_BINARY((stack[s_pos-2] <= (int)stack[s_pos-1])); break;
+	    case LEQ    : SCICOS_OP_EVAL_BINARY((stack[s_pos-2] <= stack[s_pos-1])); break;
 	    case DOTGEQ :
-	    case GEQ    :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] >= (int)stack[s_pos-1])); break;
+	    case GEQ    :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] >= stack[s_pos-1])); break;
 	    case DOTNEQ :
-	    case NEQ    :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] != (int)stack[s_pos-1])); break;
+	    case NEQ    :  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] != stack[s_pos-1])); break;
 	    case MOINS   : 	stack[s_pos-1] =-stack[s_pos-1] ;break;   /* unary minus */	      
 	    case DOTLT :
-	    case LT_OP:   SCICOS_OP_EVAL_BINARY((stack[s_pos-2] < (int)stack[s_pos-1])); break;
+	    case LT_OP:   SCICOS_OP_EVAL_BINARY((stack[s_pos-2] < stack[s_pos-1])); break;
 	    case DOTGT:
-	    case GT_OP:  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] > (int)stack[s_pos-1])); break;
+	    case GT_OP:  SCICOS_OP_EVAL_BINARY((stack[s_pos-2] > stack[s_pos-1])); break;
 	    }
 	  break;
 	case 2:  /*  we must evaluate a function */
