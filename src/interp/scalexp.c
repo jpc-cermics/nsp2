@@ -276,7 +276,7 @@ void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level
       /* gerer le rec_level */
       Sciprintf1(indent,"%s=\t\tscalexp\n",pname);
       nsp_object_print((NspObject *)M->expr,indent+2,NULL,rec_level+1);      
-      /* nsp_plist_pretty_print(M->code->D, indent+2); */
+      nsp_plist_pretty_print(M->code, indent+2);
       Sciprintf("\n");
     }
 }
@@ -1316,6 +1316,10 @@ static int nsp_expr_action_arg(PList *L,void *context,int action)
 	    {
 	      (*L)->arity = val ;
 	    }
+	  else 
+	    {
+	      (*L)->arity = -1;
+	    }
 	  return OK;
 	case check_expr: 
 	  return OK;
@@ -1355,6 +1359,19 @@ static int nsp_expr_count_logical(PList L1)
   nsp_expr_action(L1,&nlogical, count_logical );
   return nlogical;
 }
+
+/**
+ * nsp_expr_get_vars:
+ * @L1: 
+ * 
+ * return a string matrix filled with the variables 
+ * names of expression @L1 (which are sorted) and the 
+ * expression is updated in such a way that all the 
+ * variables in the expression are associated to their 
+ * indice in the string matrix. 
+ * 
+ * Return value: 
+ **/
 
 static NspSMatrix *nsp_expr_get_vars(PList L1)
 {
