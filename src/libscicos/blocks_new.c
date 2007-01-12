@@ -2047,7 +2047,7 @@ void scicos_csslti4_block(scicos_block *block,int *flag)
     }
   }
 
-  else if (flag ==0){
+  else if (*flag ==0){
     /* xd=a*x+b*u */
     dmmul_scicos(&rpar[0],&nx,x,&nx,xd,&nx,&nx,&nx,&un);
     dmmul1_scicos(&rpar[lb],&nx,u,insz,xd,&nx,&nx,insz,&un);

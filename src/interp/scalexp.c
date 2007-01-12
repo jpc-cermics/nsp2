@@ -1280,14 +1280,14 @@ static int nsp_expr_action_arg(PList *L,void *context,int action)
 	  /* here context is a Hash Table : we replace names 
 	   * by constants 
 	   */ 
-	  Sciprintf("search %s\n",(char *) (*L)->O);
+	  /* Sciprintf("search %s\n",(char *) (*L)->O);*/
 	  if (nsp_hash_find(context,(char *) (*L)->O,&Obj) == OK )
 	    {
 	      PList L1=NULLPLIST;
 	      if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
 		{
 		  char str[56];
-		  Sciprintf("use value %f\n",((NspMatrix *) Obj)->R[0]);
+		  /* Sciprintf("use value %f\n",((NspMatrix *) Obj)->R[0]); */
 		  snprintf(str,55,"%f",((NspMatrix *) Obj)->R[0]);
 		  if ( nsp_parse_add_doublei(&L1,str) == OK)
 		    {
