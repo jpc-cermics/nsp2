@@ -458,9 +458,6 @@ static int int_scalexp_meth_get_bcode(NspScalExp *self, Stack stack, int rhs, in
   return Max(lhs,1);
 }
 
-
-
-
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
   int ok=FALSE,i,nres;
@@ -513,7 +510,6 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
   return 0;
 }
 
-
 static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
@@ -541,6 +537,43 @@ static int int_scalexp_meth_nlogicals(NspScalExp *self,Stack stack, int rhs, int
   return 1;
 }
 
+static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int code[512],pos=0,posv=0;
+  double dval[512];
+  
+  PList pcode;
+  NspSMatrix *expr;
+  NspSMatrix *vars;
+  NspMatrix *bcode;
+  NspMatrix *values;
+  CheckRhs(0,0);
+  CheckLhs(-1,0);
+  /* ----------- */
+  if ((pcode = nsp_parse_expr(expr))== NULL) return RET_BUG;
+  if ( nsp_expr_check(pcode) == FAIL) return RET_BUG;
+  nsp_plist_destroy(&self->code);
+  self->code = pcode ;
+  if ((vars =nsp_expr_get_vars(self->code))==NULL) return RET_BUG;
+  nsp_smatrix_destroy(self->vars);
+  self->vars = vars;
+  if ( self->bcode != NULL) 
+    {
+      nsp_bytecomp_expr(self->code,NULL,code,&pos,dval,&posv);
+      /* Sciprintf("taille du code %d et taille des var %d\n",pos,posv); */
+      if ((values=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
+	return RET_BUG;
+      if ((bcode=nsp_matrix_create("code",'r',1,pos)) == NULL)
+	return RET_BUG;
+      memcpy(bcode->I,code,pos*sizeof(int));
+      bcode->convert = 'i';
+      nsp_matrix_destroy(self->bcode);
+      self->bcode = bcode;
+      nsp_matrix_destroy(self->values);
+      self->values= values;
+    }
+  return 0;
+}
 
 
 
@@ -549,6 +582,7 @@ static NspMethods scalexp_methods[] = {
   {"bcomp",(nsp_method *) int_scalexp_meth_bcomp},
   {"byte_eval",(nsp_method *) int_scalexp_meth_byte_eval},
   {"apply_context",(nsp_method *) int_scalexp_meth_apply_context},
+  {"reset_context",(nsp_method *) int_scalexp_meth_reset_context},
   {"get_vars",(nsp_method *) int_scalexp_meth_get_vars},
   {"print_code",(nsp_method *) int_scalexp_meth_print_code},
   {"logicals",(nsp_method *)  int_scalexp_meth_nlogicals},
