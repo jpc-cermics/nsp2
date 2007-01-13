@@ -371,7 +371,7 @@ int scicos_exp_block(scicos_args_F0)
   int i;
   if (*flag__ == 1 ||  *flag__ >= 4) 
     {
-      for (i = 0 ; i <= *nu ; ++i)  y[i] = exp (log (rpar[0]) * u[i]);
+      for (i = 0 ; i < *nu ; ++i)  y[i] = exp (log (rpar[0]) * u[i]);
     }
   return 0;
 }			
