@@ -38,6 +38,11 @@ static int nsp_scalexp_byte_comp(NspScalExp *Se,int check);
 static NspSMatrix *nsp_expr_get_vars(PList L1,NspSMatrix *extra_names);
 static int nsp_expr_check(PList L1);
 static int nsp_expr_count_logical(PList L1);
+static int nsp_expr_action_arg(PList *L,void *context,int action);
+static int nsp_eval_expr_context(PList L1,NspHash *context);
+static int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table);
+static int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
+static int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
 
 /* 
  * NspScalExp inherits from NspObject 
@@ -211,6 +216,14 @@ static int nsp_scalexp_xdr_save(XDR *xdrs, NspScalExp *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* 
+  PList code;
+  NspSMatrix *expr;
+  NspSMatrix *vars;
+  NspSMatrix *extra_vars;
+  NspMatrix *bcode;
+  NspMatrix *values;
+  */
   return FAIL;
 }
 
@@ -276,8 +289,8 @@ void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level
       /* gerer le rec_level */
       Sciprintf1(indent,"%s=\t\tscalexp\n",pname);
       nsp_object_print((NspObject *)M->expr,indent+2,NULL,rec_level+1);      
-      nsp_plist_pretty_print(M->code, indent+2);
-      Sciprintf("\n");
+      /* nsp_plist_pretty_print(M->code, indent+2); 
+	 Sciprintf("\n"); */
     }
 }
 
@@ -393,9 +406,18 @@ int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-extern int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table);
-extern int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
-extern int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res);
+/**
+ * nsp_scalarexp_byte_eval:
+ * @code: 
+ * @lcode: 
+ * @constv: 
+ * @vars: 
+ * @res: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -427,11 +449,37 @@ static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt
   return 1;
 }
 
+/**
+ * int_scalexp_meth_bcomp:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
   if ( nsp_scalexp_byte_comp(self,FALSE) == FAIL ) return RET_BUG;
   return 0;
 }
+
+/**
+ * int_scalexp_meth_get_bcode:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 static int int_scalexp_meth_get_bcode(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -447,6 +495,19 @@ static int int_scalexp_meth_get_bcode(NspScalExp *self, Stack stack, int rhs, in
     MoveObj(stack,2,NSP_OBJECT(self->values));
   return Max(lhs,1);
 }
+
+/**
+ * int_scalexp_meth_byte_eval:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: evaluates expression @self.
+ * 
+ * Return value: 
+ **/
 
 static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -483,7 +544,18 @@ static int int_scalexp_meth_byte_eval(NspScalExp *self, Stack stack, int rhs, in
   return 1;
 }
 
-static int nsp_eval_expr_context(PList L1,NspHash *context);
+/**
+ * int_scalexp_meth_apply_context:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: apply nsp_eval_expr_context()
+ * 
+ * Return value: 
+ **/
 
 static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -494,7 +566,7 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
   if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
   nsp_eval_expr_context(self->code,H);
   /* update vars if changed this should be returned by previous function */
-  if ((S = nsp_expr_get_vars(self->code,NULL))==NULL) return RET_BUG;
+  if ((S = nsp_expr_get_vars(self->code,self->extra_vars))==NULL) return RET_BUG;
   nsp_smatrix_destroy(self->vars);
   self->vars = S;
   /* need to byte_compile again */
@@ -509,6 +581,19 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
   return 0;
 }
 
+/**
+ * int_scalexp_meth_get_vars:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: returns the number of free variables contained in expression @self
+ * 
+ * Return value: 1
+ **/
+
 static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
@@ -518,6 +603,18 @@ static int int_scalexp_meth_get_vars(NspScalExp *self,Stack stack, int rhs, int 
 }
 
 
+/**
+ * int_scalexp_meth_print_code:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method:prints internal code (debug use).
+ * 
+ * Return value: 
+ **/
 static int int_scalexp_meth_print_code(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
@@ -525,6 +622,20 @@ static int int_scalexp_meth_print_code(NspScalExp *self,Stack stack, int rhs, in
   nsp_plist_print_internal(self->code);
   return 0;
 }
+
+/**
+ * int_scalexp_meth_nlogicals:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: used by scicos to know how many zero crossing are contained in the 
+ * expression @self
+ * 
+ * Return value: 1 
+ **/
 
 static int int_scalexp_meth_nlogicals(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -535,6 +646,20 @@ static int int_scalexp_meth_nlogicals(NspScalExp *self,Stack stack, int rhs, int
   nsp_move_double(stack,1,nlogical);
   return 1;
 }
+
+/**
+ * int_scalexp_meth_reset_context:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: variables which were binded to fixed values are reset. The set of variables is updated 
+ * and the expression @self is re-compiled
+ * 
+ * Return value: 0 or %RET_BUG
+ **/
 
 static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -547,7 +672,7 @@ static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs,
   if ( nsp_expr_check(pcode) == FAIL) return RET_BUG;
   nsp_plist_destroy(&self->code);
   self->code = pcode ;
-  if ((vars =nsp_expr_get_vars(self->code,NULL))==NULL) return RET_BUG;
+  if ((vars =nsp_expr_get_vars(self->code,self->extra_vars))==NULL) return RET_BUG;
   nsp_smatrix_destroy(self->vars);
   self->vars = vars;
   if ( self->bcode != NULL) 
@@ -560,6 +685,21 @@ static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs,
     }
   return 0;
 }
+
+/**
+ * int_scalexp_meth_set_extra_names:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * method: gives a set of variable names which are to be added to the set of 
+ * variables of scalar expression @self. The set of variables is updated 
+ * and the expression @self is re-compiled. 
+ * 
+ * Return value: 0 or %RET_BUG
+ **/
 
 static int int_scalexp_meth_set_extra_names(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -584,9 +724,6 @@ static int int_scalexp_meth_set_extra_names(NspScalExp *self,Stack stack, int rh
     }
   return 0;
 }
-
-
-
 
 
 static NspMethods scalexp_methods[] = {
@@ -741,6 +878,18 @@ expr_func expr_functions[] =
     {NULL,0}
   };
 
+
+/**
+ * nsp_eval_expr:
+ * @L1: 
+ * @Fr: 
+ * @val: 
+ * @var_table: 
+ * 
+ * evaluates a scalarexp
+ * 
+ * Return value: 
+ **/
 
 int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 {
@@ -927,9 +1076,20 @@ static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_
   return RET_BUG;
 }
 
-/* byte code 
- * XXX attention renvoyer un message d'erreur en cas de Pb 
- */
+
+/**
+ * nsp_bytecomp_expr_arg:
+ * @L: 
+ * @Fr: 
+ * @code: 
+ * @pos: 
+ * @constv: 
+ * @posv: 
+ * 
+ * bye compile a scalar expression.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
 
@@ -1051,6 +1211,19 @@ static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double 
   return FAIL;
 }
 
+/**
+ * nsp_scalarexp_byte_eval:
+ * @code: 
+ * @lcode: 
+ * @constv: 
+ * @vars: 
+ * @res: 
+ * 
+ * evalues byte code. 
+ * 
+ * Return value: 
+ **/
+
 int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res)
 {
   unsigned int type;
@@ -1137,13 +1310,18 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const
 }
 
 
-
-/* walk on expression and execute action
- */
-
 typedef enum { get_data, store_name, update_id, check_expr, count_logical } expr_action; 
 
-static int nsp_expr_action_arg(PList *L,void *context,int action);
+/**
+ * nsp_expr_action:
+ * @L1: 
+ * @context: 
+ * @action: 
+ * 
+ * utility function for performing actions on scalar expressions 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 static int nsp_expr_action(PList L1,void *context,int action )
 {
@@ -1394,15 +1572,30 @@ static int nsp_expr_action_arg(PList *L,void *context,int action)
 }
 
 
-/* constants are replaced by their values in context 
- *
- */ 
-
+/**
+ * nsp_eval_expr_context:
+ * @L1: a #PList 
+ * @context: a hash table 
+ * 
+ * names in @L1 which are present in hash table @context 
+ * are replaced by their values.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 static int nsp_eval_expr_context(PList L1,NspHash *context)
 {
   return nsp_expr_action(L1,context, get_data);
 }
+
+/**
+ * nsp_expr_check:
+ * @L1:  a #PList 
+ * 
+ * check that @L1 is valid 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 static int nsp_expr_check(PList L1)
 {
