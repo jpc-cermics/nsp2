@@ -34,8 +34,8 @@
 #include "Functions.h" 
 #include "nsp/gsort-p.h" 
 
-
-static NspSMatrix *nsp_expr_get_vars(PList L1);
+static int nsp_scalexp_byte_comp(NspScalExp *Se,int check);
+static NspSMatrix *nsp_expr_get_vars(PList L1,NspSMatrix *extra_names);
 static int nsp_expr_check(PList L1);
 static int nsp_expr_count_logical(PList L1);
 
@@ -344,6 +344,8 @@ static NspScalExp *scalexp_create_void(char *name,NspTypeBase *type)
   H->code = NULL;
   H->bcode = NULL;
   H->values = NULL;
+  H->vars=NULL;
+  H->extra_vars=NULL;
   return H;
 }
 
@@ -351,10 +353,10 @@ NspScalExp *scalexp_create(char *name,NspSMatrix *expr,NspTypeBase *type)
 {
   NspScalExp *H  = scalexp_create_void(name,type);
   if ( H ==  NULLSCALEXP) return NULLSCALEXP;
-  if ((H->expr = (NspSMatrix *) nsp_object_copy((NspObject *) expr)) == NULL) return NULL;
+  if ((H->expr = (NspSMatrix *) nsp_object_copy_and_name("expr",(NspObject *) expr)) == NULL) return NULL;
   if ((H->code = nsp_parse_expr(expr))== NULL) return NULL;
   if ( nsp_expr_check(H->code) == FAIL) return NULL;
-  if ((H->vars =nsp_expr_get_vars(H->code))==NULL) return NULL;
+  if ((H->vars =nsp_expr_get_vars(H->code,NULL))==NULL) return NULL;
   return H;
 }
 
@@ -427,19 +429,7 @@ static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt
 
 static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *Code,*Const;
-  int code[512],pos=0,posv=0;
-  double dval[512];
-  nsp_bytecomp_expr(self->code,NULL,code,&pos,dval,&posv);
-  /* Sciprintf("taille du code %d et taille des var %d\n",pos,posv); */
-  if ((Const=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
-    return RET_BUG;
-  if ((Code=nsp_matrix_create("code",'r',1,pos)) == NULL)
-      return RET_BUG;
-  memcpy(Code->I,code,pos*sizeof(int));
-  Code->convert = 'i';
-  self->bcode = Code;
-  self->values= Const;
+  if ( nsp_scalexp_byte_comp(self,FALSE) == FAIL ) return RET_BUG;
   return 0;
 }
 
@@ -504,9 +494,18 @@ static int int_scalexp_meth_apply_context(NspScalExp *self,Stack stack, int rhs,
   if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
   nsp_eval_expr_context(self->code,H);
   /* update vars if changed this should be returned by previous function */
-  if ((S = nsp_expr_get_vars(self->code))==NULL) return RET_BUG;
+  if ((S = nsp_expr_get_vars(self->code,NULL))==NULL) return RET_BUG;
   nsp_smatrix_destroy(self->vars);
   self->vars = S;
+  /* need to byte_compile again */
+  if ( self->bcode != NULL) 
+    {
+      if ( nsp_scalexp_byte_comp(self,FALSE)== FAIL)
+	{
+	  Scierror("Failed to byte compile expression\n");
+	  return RET_BUG;
+	}
+    }
   return 0;
 }
 
@@ -539,12 +538,8 @@ static int int_scalexp_meth_nlogicals(NspScalExp *self,Stack stack, int rhs, int
 
 static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
 {
-  int code[512],pos=0,posv=0;
-  double dval[512];
   PList pcode;
   NspSMatrix *vars;
-  NspMatrix *bcode;
-  NspMatrix *values;
   CheckRhs(0,0);
   CheckLhs(-1,0);
   /* ----------- */
@@ -552,26 +547,45 @@ static int int_scalexp_meth_reset_context(NspScalExp *self,Stack stack, int rhs,
   if ( nsp_expr_check(pcode) == FAIL) return RET_BUG;
   nsp_plist_destroy(&self->code);
   self->code = pcode ;
-  if ((vars =nsp_expr_get_vars(self->code))==NULL) return RET_BUG;
+  if ((vars =nsp_expr_get_vars(self->code,NULL))==NULL) return RET_BUG;
   nsp_smatrix_destroy(self->vars);
   self->vars = vars;
   if ( self->bcode != NULL) 
     {
-      nsp_bytecomp_expr(self->code,NULL,code,&pos,dval,&posv);
-      /* Sciprintf("taille du code %d et taille des var %d\n",pos,posv); */
-      if ((values=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
-	return RET_BUG;
-      if ((bcode=nsp_matrix_create("code",'r',1,pos)) == NULL)
-	return RET_BUG;
-      memcpy(bcode->I,code,pos*sizeof(int));
-      bcode->convert = 'i';
-      nsp_matrix_destroy(self->bcode);
-      self->bcode = bcode;
-      nsp_matrix_destroy(self->values);
-      self->values= values;
+      if ( nsp_scalexp_byte_comp(self,FALSE)== FAIL)
+	{
+	  Scierror("Failed to byte compile expression\n");
+	  return RET_BUG;
+	}
     }
   return 0;
 }
+
+static int int_scalexp_meth_set_extra_names(NspScalExp *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *vars;
+  NspSMatrix *extra_vars;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  /* ----------- */
+  if ((extra_vars = GetSMat(stack,1))== NULL)    return RET_BUG;
+  if ((self->extra_vars = (NspSMatrix *) nsp_object_copy_and_name("extra_vars",(NspObject *) extra_vars))
+      == NULL) return RET_BUG;
+  if ((vars =nsp_expr_get_vars(self->code,self->extra_vars))==NULL) return RET_BUG;
+  nsp_smatrix_destroy(self->vars);
+  self->vars = vars;
+  if ( self->bcode != NULL) 
+    {
+      if ( nsp_scalexp_byte_comp(self,FALSE)== FAIL)
+	{
+	  Scierror("Failed to byte compile expression\n");
+	  return RET_BUG;
+	}
+    }
+  return 0;
+}
+
+
 
 
 
@@ -585,6 +599,7 @@ static NspMethods scalexp_methods[] = {
   {"print_code",(nsp_method *) int_scalexp_meth_print_code},
   {"logicals",(nsp_method *)  int_scalexp_meth_nlogicals},
   {"get_bcode",(nsp_method *) int_scalexp_meth_get_bcode},
+  {"set_extra_names",(nsp_method *) int_scalexp_meth_set_extra_names},
   { NULL, NULL}
 };
 
@@ -632,8 +647,46 @@ void scalexp_Interf_Info(int i, char **fname, function (**f))
 
 
 /*-------------------------------------------------------------------------
- * evaluation of scalar expression (for scicos)
+ *  set of functions 
  *--------------------------------------------------------------------------*/
+
+/**
+ * nsp_scalexp_byte_comp:
+ * @Se: a #NspScalExp object 
+ * @check: %TRUE or %FALSE 
+ * 
+ * byte compile the expression associated to @Se. If @check is %TRUE 
+ * the correctness of expression is first checked. 
+ * 
+ * Return value: %OK or %FAIL 
+ **/
+
+static int nsp_scalexp_byte_comp(NspScalExp *Se,int check)
+{
+  int code[512],pos=0,posv=0;
+  double dval[512];
+  NspMatrix *bcode;
+  NspMatrix *values;
+  /* should we make a check first ? */
+  if ( check == TRUE && nsp_expr_check(Se->code) == FAIL) return FAIL;
+  nsp_bytecomp_expr(Se->code,NULL,code,&pos,dval,&posv);
+  /* Sciprintf("taille du code %d et taille des var %d\n",pos,posv); */
+  if ((values=nsp_matrix_create_from_array("Const",1,posv,dval,NULL)) == NULL) 
+    return FAIL;
+  if ((bcode=nsp_matrix_create("code",'r',1,pos)) == NULL)
+    return FAIL;
+  memcpy(bcode->I,code,pos*sizeof(int));
+  bcode->convert = 'i';
+  /* store the byte code */
+  if ( Se->bcode != NULL) nsp_matrix_destroy(Se->bcode);
+  Se->bcode = bcode;
+  /* store the constant values used in the byte code */
+  if ( Se->values != NULL)  nsp_matrix_destroy(Se->values);
+  Se->values= values;
+  return OK;
+}
+
+
 
 static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_table);
 
@@ -875,14 +928,13 @@ static int nsp_eval_expr_arg(PList L,NspFrame *Fr,double *val,const double *var_
 }
 
 /* byte code 
- *
+ * XXX attention renvoyer un message d'erreur en cas de Pb 
  */
 
 static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double *constv,int *posv);
 
 int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,int *posv)
 {
-  int nargs=-1;
   PList L,loc;
   int j;
   L = L1; /* operator */
@@ -894,14 +946,14 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
       loc = L1;
       for ( j = 0 ; j < L->arity  ; j++ )
 	{
-	  if ( nsp_bytecomp_expr_arg(loc,Fr,code,pos,constv,posv) < 0 ) return RET_BUG;
+	  if ( nsp_bytecomp_expr_arg(loc,Fr,code,pos,constv,posv) == FAIL ) return FAIL;
 	  loc = loc->next ;
 	}
       if ( L->type == MINUS_OP && L->arity == 1) L->type = MOINS; /* to be inserted in parser */
       code[*pos] = ( 1 << 16 ) | L->type ; *pos += 1;
       opcode =nsp_astcode_to_nickname(L->type);
       /* Sciprintf("Need to emit %s (id %d) with arity %d and code %d \n",opcode,L->type,code[*pos-1],code[*pos-2]); */
-      return 1;
+      return OK;
     }
   else 
     {
@@ -921,10 +973,10 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 	    Largs = Lf->next->O;
 	    nargs = Largs->arity;
 	    Largs = Largs->next;/* point to first element of ARGS */
-	    if ( nargs > 2 ) return RET_BUG;
+	    if ( nargs > 2 ) return FAIL;
 	    for ( k= 1; k <= nargs ; k++) 
 	      {
-		if ( nsp_bytecomp_expr_arg(Largs,Fr,code,pos,constv,posv) < 0) return RET_BUG;
+		if ( nsp_bytecomp_expr_arg(Largs,Fr,code,pos,constv,posv) == FAIL) return FAIL;
 		Largs = Largs->next;
 	      }
 	    if ( Lf->arity == -1 ) 
@@ -936,38 +988,37 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 		  }
 		else 
 		  {
-		    Sciprintf("Must emit a call to %s which is not correct\n",name);
-		    return RET_BUG;
+		    Scierror("Must emit a call to %s which is not correct\n",name);
+		    return FAIL;
 		  }
 	      }
 	    n= Lf->arity;
 	    code[*pos] = ( 2 << 16 ) + n;*pos += 1;
 	    /* Sciprintf("Must emit a call to %s (id %d) which is coded %d\n",name,n,code[*pos-2]); */
 	  }
-	  return 1;
+	  return OK;
 	  break;
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      if ((nargs=nsp_bytecomp_expr_arg(L,Fr,code,pos,constv,posv)) < 0) 
-	      return nargs;
+	      if (nsp_bytecomp_expr_arg(L,Fr,code,pos,constv,posv) == FAIL ) return FAIL;
 	    }
-	  return 0;
+	  return OK;
 	  break;
 	case STATEMENTS :
 	case STATEMENTS1 :
 	case PARENTH: 
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      if ( nsp_bytecomp_expr_arg(L1,Fr,code,pos,constv,posv) < 0) return RET_BUG;
+	      if ( nsp_bytecomp_expr_arg(L1,Fr,code,pos,constv,posv) == FAIL) return FAIL;
 	      L1 = L1->next;
 	    }
-	  return 0;
+	  return OK;
 	default:
-	  return RET_BUG;
+	  return FAIL;
 	}
     }
-  return nargs ;
+  return FAIL;
 }
 
 static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double *constv,int *posv)
@@ -978,21 +1029,26 @@ static int nsp_bytecomp_expr_arg(PList L,NspFrame *Fr,int *code,int *pos,double 
     case OPNAME :
       /* Sciprintf("Need  a name or opname %s (id=%d)\n",(char *) L->O,L->arity); */
       code[*pos] =( 3 << 16 ) | (L->arity-1); *pos += 1;
-      return 1;
+      if ( L->arity < 1 ) 
+	{
+	  Scierror("Error: variable %s not correctly bounded\n",(char *) L->O);
+	  return FAIL;
+	}
+      return OK ;
     case NUMBER:
       /* Sciprintf("Need  a number %s %f\n",((parse_double *) L->O)->str,((parse_double *) L->O)->val); */
       /* *code++ = ((parse_double *) L->O)->val;  */
       code[*pos] = ( 4 << 16 ) | *posv ; *pos += 1;
       constv[*posv]= ((parse_double *) L->O)->val; *posv +=1;
-      return 1;
+      return OK ;
       break;
     case PLIST :
       return nsp_bytecomp_expr((PList) L->O,Fr,code,pos,constv,posv);
       break;
     default: 
-      return RET_BUG;
+      return FAIL;
     }
-  return RET_BUG;
+  return FAIL;
 }
 
 int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const double *vars, double *res)
@@ -1362,24 +1418,41 @@ static int nsp_expr_count_logical(PList L1)
 
 /**
  * nsp_expr_get_vars:
- * @L1: 
- * 
- * return a string matrix filled with the variables 
- * names of expression @L1 (which are sorted) and the 
- * expression is updated in such a way that all the 
+ * @L1: a #PList 
+ * @extra_names: a #NspSMatrix. 
+ *
+ * returns a string matrix filled with the variables 
+ * names of expression @L1 (which are sorted). 
+ * As a side effect the expression @L1 is updated in such a way that all the 
  * variables in the expression are associated to their 
- * indice in the string matrix. 
+ * indice in the string matrix.
  * 
- * Return value: 
+ * If @extra_names is given then the strings from @extra_names are 
+ * added to the variable list. This is usefull for scicos simulator, 
+ * when for example you have an expression depending only on u1 and u3 and 
+ * the block entry is [u1,u2,u3]. In that case you want to add u2 to the 
+ * list of variables. 
+ * 
+ * Return value: a new #NspSMatrix or NULL.
+ * 
  **/
 
-static NspSMatrix *nsp_expr_get_vars(PList L1)
+static NspSMatrix *nsp_expr_get_vars(PList L1,NspSMatrix *extra_names)
 {
-  int i;
+  int i,val;
   NspSMatrix *symb_names;
   NspBHash *symbols = NULLBHASH;
   if ((symbols = nsp_bhcreate(NVOID,10)) == NULLBHASH ) return NULL;
   nsp_expr_action(L1,symbols, store_name);
+  if ( extra_names != NULL )  
+    {
+      int i;
+      for ( i=0; i < extra_names->mn ; i++) 
+	if ( nsp_bhash_find(symbols,extra_names->S[i],&val) == FAIL) 
+	  {
+	    if (nsp_bhash_enter(symbols,extra_names->S[i],0) == FAIL) return NULL;
+	  }
+    }
   symb_names= nsp_bhash_get_keys("vars",symbols);
   nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
   for ( i = 0 ; i < symb_names->mn ; i++)

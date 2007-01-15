@@ -32,6 +32,7 @@ struct _NspScalExp {
   PList code;
   NspSMatrix *expr;
   NspSMatrix *vars;
+  NspSMatrix *extra_vars;
   NspMatrix *bcode;
   NspMatrix *values;
 };
