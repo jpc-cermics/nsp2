@@ -16,7 +16,7 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 void scicos_evaluate_expr_block(scicos_block *block,int *flag)
 {
   int i,phase;
-  double *constv = block->rpar, vars[8],res;
+  double *constv = block->rpar, vars[8]={0},res;
   if ( *flag==1 || *flag==9) 
     {
       phase=get_phase_simulation();  
