@@ -42,10 +42,10 @@ BCG *scicos_set_win(int wid,int *oldwid)
 
 
 
-void scicos_absolute_value_block(scicos_block *block,int *flag)
+void scicos_absolute_value_block(scicos_block *block,int flag)
 {
   int i,j;
-  switch (*flag) 
+  switch (flag) 
     {
     case 1 : 
       if( block->ng>0){
@@ -91,60 +91,60 @@ void scicos_absolute_value_block(scicos_block *block,int *flag)
 
 
 
-void scicos_acos_block(scicos_block *block,int *flag)
+void scicos_acos_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=acos(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_acosh_block(scicos_block *block,int *flag)
+void scicos_acosh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=acosh(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_asin_block(scicos_block *block,int *flag)
+void scicos_asin_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=asin(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_asinh_block(scicos_block *block,int *flag)
+void scicos_asinh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=asinh(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_atan_block(scicos_block *block,int *flag)
+void scicos_atan_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=atan(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_atanh_block(scicos_block *block,int *flag)
+void scicos_atanh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=atanh(block->inptr[0][j]);
     }
@@ -152,10 +152,10 @@ void scicos_atanh_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_tanh_block(scicos_block *block,int *flag)
+void scicos_tanh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=tanh(block->inptr[0][j]);
     }
@@ -163,10 +163,10 @@ void scicos_tanh_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_tan_block(scicos_block *block,int *flag)
+void scicos_tan_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=tan(block->inptr[0][j]);
     }
@@ -174,20 +174,20 @@ void scicos_tan_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_sin_block(scicos_block *block,int *flag)
+void scicos_sin_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=sin(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_sinh_block(scicos_block *block,int *flag)
+void scicos_sinh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=sinh(block->inptr[0][j]);
     }
@@ -196,10 +196,10 @@ void scicos_sinh_block(scicos_block *block,int *flag)
 
 
 
-void scicos_backlash_block(scicos_block *block,int *flag)
+void scicos_backlash_block(scicos_block *block,int flag)
 { 
   double* rw,t;
-  if (*flag == 4){/* the workspace is used to store previous values */
+  if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=	 scicos_malloc(sizeof(double)* 4))== NULL ) {
       set_block_error(-16);
       return;
@@ -210,9 +210,9 @@ void scicos_backlash_block(scicos_block *block,int *flag)
     rw[1]=t;
     rw[2]=block->rpar[0];
     rw[3]=block->rpar[0];
-  }else  if (*flag == 5){
+  }else  if (flag == 5){
     scicos_free(*block->work);
-  }else  if (*flag == 1) {
+  }else  if (flag == 1) {
     rw=*block->work;
     t=get_scicos_time();
     if(t>rw[1]) {
@@ -228,7 +228,7 @@ void scicos_backlash_block(scicos_block *block,int *flag)
       rw[3]=rw[2];
     }
     block->outptr[0][0]=rw[3];
-  }  else if (*flag == 9) {
+  }  else if (flag == 9) {
     rw=*block->work;
     t=get_scicos_time();
     if(t>rw[1]){
@@ -241,29 +241,29 @@ void scicos_backlash_block(scicos_block *block,int *flag)
   } 
 }
 
-void scicos_cos_block(scicos_block *block,int *flag)
+void scicos_cos_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=cos(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_cosh_block(scicos_block *block,int *flag)
+void scicos_cosh_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1){
+  if(flag==1){
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=cosh(block->inptr[0][j]);
     }
   }
 }
 
-void scicos_deadband_block(scicos_block *block,int *flag)
+void scicos_deadband_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
-  if (*flag==1){
+  if (flag==1){
     if (get_phase_simulation()==1||block->ng==0) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=*block->inptr[0]-block->rpar[0];
@@ -281,7 +281,7 @@ void scicos_deadband_block(scicos_block *block,int *flag)
 	block->outptr[0][0]=0.0;
       } 
     }
-  } else if (*flag==9){
+  } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
     if (get_phase_simulation()==1) {
@@ -297,12 +297,12 @@ void scicos_deadband_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_deriv_block(scicos_block *block,int *flag)
+void scicos_deriv_block(scicos_block *block,int flag)
 { 
   double* rw;
   double t,dt;
   int i;
-  if (*flag == 4){/* the workspace is used to store previous values */
+  if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(double)*2*(1+block->insz[0])))== NULL ) {
       set_block_error(-16);
@@ -316,9 +316,9 @@ void scicos_deriv_block(scicos_block *block,int *flag)
       rw[2+2*i]=0;
       rw[3+2*i]=0;
     }
-  }else  if (*flag == 5){
+  }else  if (flag == 5){
     scicos_free(*block->work);
-  }else  if (*flag == 1) {
+  }else  if (flag == 1) {
     rw=*block->work;
     t=get_scicos_time();
     if(t>rw[1]) {
@@ -339,10 +339,10 @@ void scicos_deriv_block(scicos_block *block,int *flag)
 }
   
 
-void scicos_extractor_block(scicos_block *block,int *flag)
+void scicos_extractor_block(scicos_block *block,int flag)
 {
   int i,j;
-  if(*flag==1){
+  if(flag==1){
     for(i=0;i<block->nipar;++i){
       j=block->ipar[i]-1;
       if(j<0) j=0;
@@ -353,7 +353,7 @@ void scicos_extractor_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_gainblk_block(scicos_block *block,int *flag)
+void scicos_gainblk_block(scicos_block *block,int flag)
 {
   int i,un=1;
   if (block->nrpar==1){
@@ -370,12 +370,12 @@ void scicos_gainblk_block(scicos_block *block,int *flag)
 
 
 
-void scicos_time_delay_block(scicos_block *block,int *flag)
+void scicos_time_delay_block(scicos_block *block,int flag)
 {/*  rpar[0]=delay, rpar[1]=init value, ipar[0]=buffer length */
   double* pw,del,t,td;
   int* iw;
   int i,j,k;
-  if (*flag == 4){/* the workspace is used to store previous values */
+  if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(int)+sizeof(double)* 
 		       block->ipar[0]*(1+block->insz[0])))== NULL ) {
@@ -392,10 +392,10 @@ void scicos_time_delay_block(scicos_block *block,int *flag)
     }
     iw=(int *)(pw+block->ipar[0]*(1+block->insz[0]));
     *iw=0;
-  }else  if (*flag == 5){
+  }else  if (flag == 5){
     scicos_free(*block->work);
-  } else if (*flag==0||*flag==2) {
-    if (*flag==2) do_cold_restart();
+  } else if (flag==0||flag==2) {
+    if (flag==2) do_cold_restart();
     pw=*block->work; 
     iw=(int *)(pw+block->ipar[0]*(1+block->insz[0]));
     t=get_scicos_time();
@@ -422,7 +422,7 @@ void scicos_time_delay_block(scicos_block *block,int *flag)
 
     }
 
-  } else if (*flag==1) {
+  } else if (flag==1) {
     pw=*block->work; 
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
     t=get_scicos_time();
@@ -461,12 +461,12 @@ void scicos_time_delay_block(scicos_block *block,int *flag)
 
 
 
-void scicos_variable_delay_block(scicos_block *block,int *flag)
+void scicos_variable_delay_block(scicos_block *block,int flag)
 {/*  rpar[0]=max delay, rpar[1]=init value, ipar[0]=buffer length */
   double* pw,del,t,td;
   int* iw;
   int i,j,k;
-  if (*flag == 4){/* the workspace is used to store previous values */
+  if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(int)+sizeof(double)* 
 		       block->ipar[0]*(1+block->insz[0])))== NULL ) {
@@ -483,9 +483,9 @@ void scicos_variable_delay_block(scicos_block *block,int *flag)
     }
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
     *iw=0;
-  }else  if (*flag == 5){
+  }else  if (flag == 5){
     scicos_free(*block->work);
-  } else if (*flag==1) {
+  } else if (flag==1) {
     if (get_phase_simulation()==1) do_cold_restart();
     pw=*block->work; 
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
@@ -540,14 +540,14 @@ void scicos_variable_delay_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_step_func_block(scicos_block *block,int *flag)
+void scicos_step_func_block(scicos_block *block,int flag)
 {
   int i;
-  if (*flag==1&&block->nevprt==1) {
+  if (flag==1&&block->nevprt==1) {
     for (i=0;i<block->outsz[0];++i) {
       block->outptr[0][i]=block->rpar[block->outsz[0]+i];
     } 
-  }else if (*flag==4) {
+  }else if (flag==4) {
     for(i=0;i<block->outsz[0];++i) {
       block->outptr[0][i]=block->rpar[i];
     }
@@ -556,10 +556,10 @@ void scicos_step_func_block(scicos_block *block,int *flag)
 
 
 
-void scicos_signum_block(scicos_block *block,int *flag)
+void scicos_signum_block(scicos_block *block,int flag)
 {
   int i,j;
-  if (*flag==1){
+  if (flag==1){
     for(i=0;i<block->insz[0];++i){
       if (get_phase_simulation()==1||block->ng==0) {
 	if (block->inptr[0][i]<0){
@@ -580,7 +580,7 @@ void scicos_signum_block(scicos_block *block,int *flag)
 	block->outptr[0][i]=0.0;
       }
     }
-  }else if (*flag==9){
+  }else if (flag==9){
     for(i=0;i<block->insz[0];++i){
       block->g[i]=block->inptr[0][i];
       if (get_phase_simulation()==1) {
@@ -595,10 +595,10 @@ void scicos_signum_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_summation_block(scicos_block *block,int *flag)
+void scicos_summation_block(scicos_block *block,int flag)
 {
   int j,k;
-  if(*flag==1){
+  if(flag==1){
     if (block->nin==1){
       block->outptr[0][0]=0.0;
       for (j=0;j<block->insz[0];j++) {
@@ -621,10 +621,10 @@ void scicos_summation_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_switch2_block(scicos_block *block,int *flag)
+void scicos_switch2_block(scicos_block *block,int flag)
 {
   int i=0,j,phase;
-  if (*flag == 1) {
+  if (flag == 1) {
     phase=get_phase_simulation();
     if (phase==1){
       i=2;
@@ -645,7 +645,7 @@ void scicos_switch2_block(scicos_block *block,int *flag)
     for (j=0;j<block->insz[0];j++) {
       block->outptr[0][j]=block->inptr[i][j];
     }
-  }else if(*flag == 9){
+  }else if(flag == 9){
     phase=get_phase_simulation();
     block->g[0]=*block->inptr[1]-(*block->rpar);
     if (phase==1){
@@ -668,9 +668,9 @@ void scicos_switch2_block(scicos_block *block,int *flag)
 
 
 
-void scicos_satur_block(scicos_block *block,int *flag)
+void scicos_satur_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
-  if (*flag==1){
+  if (flag==1){
     if (get_phase_simulation()==1||block->ng==0) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=block->rpar[0];
@@ -688,7 +688,7 @@ void scicos_satur_block(scicos_block *block,int *flag)
 	block->outptr[0][0]=block->inptr[0][0];
       } 
     }
-  } else if (*flag==9){
+  } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
     if (get_phase_simulation()==1) {
@@ -704,7 +704,7 @@ void scicos_satur_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_logicalop_block(scicos_block *block,int *flag)
+void scicos_logicalop_block(scicos_block *block,int flag)
 {
   int i,j,k,l;
   i=block->ipar[0];
@@ -845,7 +845,7 @@ void scicos_logicalop_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_multiplex_block(scicos_block *block,int *flag)
+void scicos_multiplex_block(scicos_block *block,int flag)
 {
   int i,j,k;
   if (block->nin==1){
@@ -868,9 +868,9 @@ void scicos_multiplex_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_hystheresis_block(scicos_block *block,int *flag)
+void scicos_hystheresis_block(scicos_block *block,int flag)
 {
-  if (*flag==1){
+  if (flag==1){
     if (get_phase_simulation()==1) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=block->rpar[2];
@@ -884,7 +884,7 @@ void scicos_hystheresis_block(scicos_block *block,int *flag)
 	block->outptr[0][0]=block->rpar[2];
       }
     } 
-  } else if (*flag==9){
+  } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
     if (get_phase_simulation()==1) {
@@ -899,10 +899,10 @@ void scicos_hystheresis_block(scicos_block *block,int *flag)
 
 
 
-void scicos_ramp_block(scicos_block *block,int *flag)
+void scicos_ramp_block(scicos_block *block,int flag)
 {
   double dt;
-  if (*flag==1){
+  if (flag==1){
     dt=get_scicos_time()-block->rpar[1];
     if (get_phase_simulation()==1) {
       if(dt>0) {
@@ -917,7 +917,7 @@ void scicos_ramp_block(scicos_block *block,int *flag)
 	block->outptr[0][0]=block->rpar[2];
       }
     }
-  } else if (*flag==9){
+  } else if (flag==9){
     block->g[0]=get_scicos_time()-(block->rpar[1]);
     if (get_phase_simulation()==1) {
       if (block->g[0]>=0){
@@ -930,13 +930,13 @@ void scicos_ramp_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_minmax_block(scicos_block *block,int *flag)
+void scicos_minmax_block(scicos_block *block,int flag)
 {
   /*ipar[0]=1 -> min,  ipar[0]=2 -> max */
   int i,phase;
   double maxmin;
   phase=get_phase_simulation();
-  if (*flag == 1) {
+  if (flag == 1) {
     if(block->nin==1){
       if((block->ng==0)|(phase==1)){
 	maxmin=block->inptr[0][0];
@@ -965,7 +965,7 @@ void scicos_minmax_block(scicos_block *block,int *flag)
 	}
       }
     }
-  } else if(*flag == 9){
+  } else if(flag == 9){
     if(block->nin==1){
       if(block->nin==1){
 	if (phase==2){
@@ -1018,18 +1018,18 @@ void scicos_minmax_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_modulo_count_block(scicos_block *block,int *flag)
+void scicos_modulo_count_block(scicos_block *block,int flag)
 {
-  if(*flag == 1) {
+  if(flag == 1) {
     *block->outptr[0]=block->z[0];
-  }else if (*flag == 2){
+  }else if (flag == 2){
     block->z[0]=(1+(int)block->z[0])%(block->ipar[0]);
   }
 }
 
 
 
-void scicos_mswitch_block(scicos_block *block,int *flag)
+void scicos_mswitch_block(scicos_block *block,int flag)
 {
   int i,j=0;
   i=block->ipar[1];
@@ -1059,10 +1059,10 @@ void scicos_mswitch_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_product_block(scicos_block *block,int *flag)
+void scicos_product_block(scicos_block *block,int flag)
 {
   int j,k;
-  if(*flag==1){
+  if(flag==1){
     if (block->nin==1){
       block->outptr[0][0]=1.0;
       for (j=0;j<block->insz[0];j++) {
@@ -1093,10 +1093,10 @@ void scicos_product_block(scicos_block *block,int *flag)
  * rpar[0]=rising rate limit, rpar[1]=falling rate limit 
  */
 
-void scicos_ratelimiter_block(scicos_block *block,int *flag)
+void scicos_ratelimiter_block(scicos_block *block,int flag)
 {
   double *pw,rate=0.0,t;
-  if (*flag == 4){/* the workspace is used to store previous values */
+  if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(double)*4))== NULL ) {
       set_block_error(-16);
@@ -1107,9 +1107,9 @@ void scicos_ratelimiter_block(scicos_block *block,int *flag)
     pw[1]=0.0;
     pw[2]=0.0;
     pw[3]=0.0;
-  }else  if (*flag == 5){
+  }else  if (flag == 5){
     scicos_free(*block->work);
-  } else if (*flag==1) {
+  } else if (flag==1) {
     if (get_phase_simulation()==1) do_cold_restart();
     pw=*block->work; 
     t=get_scicos_time();
@@ -1137,10 +1137,10 @@ void scicos_ratelimiter_block(scicos_block *block,int *flag)
   }
 }
 
-void scicos_integral_func_block(scicos_block *block,int *flag)
+void scicos_integral_func_block(scicos_block *block,int flag)
 {
   int i;
-  if (*flag==0){
+  if (flag==0){
     if(block->ng>0){
       for(i=0;i<block->nx;++i) {
 	if(block->mode[i]==3){
@@ -1154,15 +1154,15 @@ void scicos_integral_func_block(scicos_block *block,int *flag)
 	block->xd[i]=block->inptr[0][i];
       }
     }
-  }else if (*flag==1){
+  }else if (flag==1){
     for(i=0;i<block->nx;++i) {
       block->outptr[0][i]=block->x[i];
     }
-  }else if (*flag==2&&block->nevprt==1){
+  }else if (flag==2&&block->nevprt==1){
     for(i=0;i<block->nx;++i) {
       block->x[i]=block->inptr[1][i];
     }
-  } else if (*flag==9){
+  } else if (flag==9){
     for(i=0;i<block->nx;++i) {
       if (block->mode[i]==3){
 	block->g[i]=(block->x[i]-(block->rpar[0]))*(block->x[i]-(block->rpar[1]));
@@ -1182,19 +1182,19 @@ void scicos_integral_func_block(scicos_block *block,int *flag)
   }
 }
 
-void scicos_evtvardly_block(scicos_block *block,int *flag)
+void scicos_evtvardly_block(scicos_block *block,int flag)
 { 
-  if (*flag==3){
+  if (flag==3){
     block->evout[0]=block->inptr[0][0];
   }
 }
 
 
-void scicos_relationalop_block(scicos_block *block,int *flag)
+void scicos_relationalop_block(scicos_block *block,int flag)
 {
   int i;
   i=block->ipar[0];
-  if(*flag==1){
+  if(flag==1){
     if ((block->ng!=0)&(get_phase_simulation()==2))
       {
 	block->outptr[0][0]=block->mode[0]-1.0;
@@ -1248,7 +1248,7 @@ void scicos_relationalop_block(scicos_block *block,int *flag)
 	}
     }
 
-  }else if(*flag==9){
+  }else if(flag==9){
     block->g[0]=block->inptr[0][0]-block->inptr[1][0];
     if (get_phase_simulation()==1) {
       switch (i)
@@ -1302,7 +1302,7 @@ void scicos_relationalop_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_bounce_ball_block(scicos_block *block,int *flag)
+void scicos_bounce_ball_block(scicos_block *block,int flag)
 {
   int nevprt,nx,*ipar;
   int *outsz;
@@ -1352,7 +1352,7 @@ void scicos_bounce_ball_block(scicos_block *block,int *flag)
   --jroot;
   
   n = outsz[0];
-  if (*flag == 0) {
+  if (flag == 0) {
     c = rpar[(n << 1) + 6];
     i1 = n;
     for (i = 1; i <= i1; ++i) {
@@ -1362,13 +1362,13 @@ void scicos_bounce_ball_block(scicos_block *block,int *flag)
       xd[((i - 1) << 2) + 4] = -rpar[(n << 1) + 5] ;
     }
     
-  } else if (*flag == 1) {
+  } else if (flag == 1) {
     i1 = n;
     for (i = 1; i <= i1; ++i) {
       y1[i] = x[((i - 1) << 2) + 1];
       y2[i] = x[((i - 1) << 2) + 3];
     }
-  } else if (*flag == 9) {
+  } else if (flag == 9) {
     i1 = ng - (n << 2);
     for (k = 1; k <= i1; ++k) {
       i = ipar[((k - 1) << 1) + 1];
@@ -1391,7 +1391,7 @@ void scicos_bounce_ball_block(scicos_block *block,int *flag)
       ++k;
     }
     
-  } else if (*flag == 2 && nevprt < 0) {
+  } else if (flag == 2 && nevprt < 0) {
     i1 = ng - (n << 2);
     for (k = 1; k <= i1; ++k) {
       if (jroot[k] < 0) {
@@ -1436,7 +1436,7 @@ void scicos_bounce_ball_block(scicos_block *block,int *flag)
 } 
 
 
-void scicos_bouncexy_block(scicos_block *block,int *flag)
+void scicos_bouncexy_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc=NULL;
@@ -1498,7 +1498,7 @@ void scicos_bouncexy_block(scicos_block *block,int *flag)
   
   /* Function Body */
   
-  if (*flag == 2) {
+  if (flag == 2) {
     wid = ipar[1];
     n = nu;
     Xgc = scicos_set_win(wid,&cur);
@@ -1532,7 +1532,7 @@ void scicos_bouncexy_block(scicos_block *block,int *flag)
     zz[9] = ymax;
     Xgc->graphic_engine->scale->drawpolylines(Xgc, zz, &zz[5], &c__1, c__1, c__5);
     Xgc->graphic_engine->xset_show(Xgc);
-  } else if (*flag == 4) {
+  } else if (flag == 4) {
     wid = ipar[1];
     n = nu;
     xmin = rpar[1];
@@ -1593,7 +1593,7 @@ typedef struct _cscope_rpar cscope_rpar ;
 struct _cscope_rpar {
   double dt,ymin,ymax,per;};
 
-void scicos_cscope_block(scicos_block *block,int *flag)
+void scicos_cscope_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc;
@@ -1613,7 +1613,7 @@ void scicos_cscope_block(scicos_block *block,int *flag)
 
   wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
   
-  if (*flag == 2) 
+  if (flag == 2) 
     {
       z__=*block->work; 
       --z__;
@@ -1678,7 +1678,7 @@ void scicos_cscope_block(scicos_block *block,int *flag)
       }
       t = tsave;
     } 
-  else if (*flag == 4) 
+  else if (flag == 4) 
     {
       /* the workspace is used as scope store buffer */
       if ((*block->work =  scicos_malloc(sizeof(double)*(1+csi->n*(1+nu))))== NULL ) 
@@ -1721,7 +1721,7 @@ void scicos_cscope_block(scicos_block *block,int *flag)
       i__1 = nu * csi->n;
       nsp_dset(&i__1, &c_b84, &z__[3], &c__1);
     } 
-  else if (*flag == 5) 
+  else if (flag == 5) 
     {
       z__=*block->work; 
       --z__;
@@ -1759,7 +1759,7 @@ typedef struct _cmscope_rpar cmscope_rpar ;
 struct _cmscope_rpar {
   double dt,per,ymin,ymax;};
 
-void scicos_cmscope_block(scicos_block *block,int *flag)
+void scicos_cmscope_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc;
@@ -1784,7 +1784,7 @@ void scicos_cmscope_block(scicos_block *block,int *flag)
 
   wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
 
-  if (*flag == 2) {
+  if (flag == 2) {
     z__=*block->work; 
     --z__;
     k = (int) z__[1];
@@ -1878,7 +1878,7 @@ void scicos_cmscope_block(scicos_block *block,int *flag)
     }
     t = tsave;
   } 
-  else if (*flag == 4) 
+  else if (flag == 4) 
     {
       sum=0;
       for ( i=0 ; i < block->nin ; ++i) sum=sum+block->insz[i];
@@ -1924,7 +1924,7 @@ void scicos_cmscope_block(scicos_block *block,int *flag)
       i__1 = sum * csi->n;
       nsp_dset(&i__1, &c_b103, &z__[3], &c__1);
     }
-  else if (*flag == 5) 
+  else if (flag == 5) 
     {
       z__=*block->work; 
       --z__;
@@ -1963,17 +1963,17 @@ void scicos_cmscope_block(scicos_block *block,int *flag)
 }
   
 
-void scicos_scalar2vector_block(scicos_block *block,int *flag)
+void scicos_scalar2vector_block(scicos_block *block,int flag)
 {
   int i;
-  if(*flag==1){
+  if(flag==1){
     for(i=0;i<block->outsz[0];++i){
       block->outptr[0][i]=block->inptr[0][0];
     }
   }
 }
 
-void scicos_cstblk4_block(scicos_block *block,int *flag)
+void scicos_cstblk4_block(scicos_block *block,int flag)
 { 
   /*
    * Scicos block simulator
@@ -1984,10 +1984,10 @@ void scicos_cstblk4_block(scicos_block *block,int *flag)
 }
 
 
-void scicos_transmit_or_zero_block(scicos_block *block,int *flag)
+void scicos_transmit_or_zero_block(scicos_block *block,int flag)
 {
   int j;
-  if(*flag==1)
+  if(flag==1)
     {
       if( block->ipar[0] == 1 )
 	for (j=0;j<block->insz[0];j++) 
@@ -2002,7 +2002,7 @@ void scicos_transmit_or_zero_block(scicos_block *block,int *flag)
  *
  */
 
-void scicos_mvswitch_block(scicos_block *block,int *flag)
+void scicos_mvswitch_block(scicos_block *block,int flag)
 {
   int i,j=0;
   j=Min(Max(block->ipar[0],0),block->nin-1);
@@ -2021,7 +2021,7 @@ void scicos_mvswitch_block(scicos_block *block,int *flag)
  *   rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D 
  */
 
-void scicos_csslti4_block(scicos_block *block,int *flag)
+void scicos_csslti4_block(scicos_block *block,int flag)
 {
   int un=1,lb,lc,ld;
   int nx=block->nx;
@@ -2036,7 +2036,7 @@ void scicos_csslti4_block(scicos_block *block,int *flag)
   lb=nx*nx;
   lc=lb+nx*insz[0];
   
-  if (*flag ==1 || *flag ==6){
+  if (flag ==1 || flag ==6){
     /* y=c*x+d*u     */
     ld=lc+nx*outsz[0];
     if (nx==0) {
@@ -2047,7 +2047,7 @@ void scicos_csslti4_block(scicos_block *block,int *flag)
     }
   }
 
-  else if (*flag ==0){
+  else if (flag ==0){
     /* xd=a*x+b*u */
     dmmul_scicos(&rpar[0],&nx,x,&nx,xd,&nx,&nx,&nx,&un);
     dmmul1_scicos(&rpar[lb],&nx,u,insz,xd,&nx,&nx,insz,&un);

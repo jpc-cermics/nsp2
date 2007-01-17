@@ -13,18 +13,18 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
  * is done in the byte compiler in scalexp.c 
  */
 
-void scicos_evaluate_expr_block(scicos_block *block,int *flag)
+void scicos_evaluate_expr_block(scicos_block *block,int flag)
 {
   int i,phase;
   double *constv = block->rpar, vars[8]={0},res;
-  if ( *flag==1 || *flag==9) 
+  if ( flag==1 || flag==9) 
     {
       phase=get_phase_simulation();  
       if ( block->nin>1 ) 
 	for ( i = 0 ; i < block->nin ; i++) vars[i]=block->inptr[i][0];
       else 
 	for ( i = 0 ; i < block->insz[0] ; i++) vars[i]=block->inptr[0][i];
-      nsp_scalarexp_byte_eval_scicos(block->ipar,block->nipar,constv,vars,phase,*flag,block->ng,
+      nsp_scalarexp_byte_eval_scicos(block->ipar,block->nipar,constv,vars,phase,flag,block->ng,
 				     block->g,block->mode,&res);
       
       if ( isinf(res) || ISNAN(res) ) 

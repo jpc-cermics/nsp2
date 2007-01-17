@@ -351,7 +351,7 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
  *
  */
 
-void scicos_sciblk4(scicos_block *Blocks, int *flag)
+void scicos_sciblk4(scicos_block *Blocks, int flag)
 {
   int mlhs=1,mrhs=2;
   NspObject *Ob;
@@ -397,11 +397,11 @@ void scicos_sciblk4(scicos_block *Blocks, int *flag)
       if (nsp_hash_enter(Hi,Hel[i]) == FAIL) goto err; 
     }
   Args[0]=NSP_OBJECT(Hi);
-  if ((Args[1]= scicos_itosci(NVOID,flag,1,1)) == NULL) goto err;
+  if ((Args[1]= scicos_itosci(NVOID,&flag,1,1)) == NULL) goto err;
   
   if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
   H = (NspHash *) Ret[0];
-  switch (*flag) {
+  switch (flag) {
   case 1 :
     /* z,x et outptr */
     if ( Blocks->nx != 0) 
@@ -513,7 +513,7 @@ void scicos_sciblk4(scicos_block *Blocks, int *flag)
   return;
  err: 
   if ( H != NULL) nsp_hash_destroy(H);
-  *flag=-1;
+  set_block_error(-1);
 }
 
 
