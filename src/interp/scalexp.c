@@ -16,7 +16,9 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * 
+ * XXXXX finir le save/load equal etc.. 
+ * bien vérifier les dépendances sur le byte_comp et le check 
+ * est-ce que check peut vérifier que les variables sont bien bindées.
  *--------------------------------------------------------------------------*/
 
 #include <nsp/object.h>
