@@ -280,21 +280,16 @@ static int int_scicos_ftree4(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+extern int  scicos_debug_level;
 
 static int int_scicos_debug(Stack stack, int rhs, int opt, int lhs) 
 {
-  /*
-    FIXME 
-      subroutine  scicosdebug(fname)
-      common /cosdebug/ cosd
-      logical getrhsvar
-      int cosd
-      character*(*) fname
-      if(.not.getrhsvar(1,'i',n,m,i)) return
-      cosd=istk(i)
-      lhsvar(1)=0
-      end
-  */
+  int debug;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  /* first variable : the state */
+  if (GetScalarInt(stack,1,&debug) == FAIL) return RET_BUG;
+  scicos_debug_level = debug;
   return 0;
 }
 
@@ -548,7 +543,7 @@ static OpTab Scicos_func[]={
   {"sci_sctree",int_sctree},
   {"sci_tree2",int_tree2},
   {"sci_tree3",int_tree3},
-  {"sci_scicos_debug",int_scicos_debug},
+  {"scicos_debug",int_scicos_debug},
   {"scicosim",int_scicos_sim},
   {"curblock", int_curblock},
   {"setblockerror",int_setblockerror},

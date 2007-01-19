@@ -310,6 +310,7 @@ static void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
 	{
 	  Blocks[kf].scsptr= NULL;
 	  Blocks[kf].funpt= scsim->funptr[kf];
+	  Blocks[kf].scsptr_flag = scsim->funflag[kf];
 	}
       else 
 	{

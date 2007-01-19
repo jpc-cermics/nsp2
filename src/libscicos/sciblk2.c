@@ -274,7 +274,8 @@ static NspObject *scicos_vars_to_list(const char *name,double **inptr,int nin,in
 /* XXX: note that the array z transmited here is suposed 
  * to be a nsp object serialized in a matrix. 
  * Thus we have to serialize/unserialize here.
- *
+ * Voir livre page 205-> Note however that it should be the case 
+ * for type 5 blocks (sciblk4) but maybe not for sciblk2 ? 
  *
  */
 
@@ -347,8 +348,19 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
   *flag=-1;
 }
 
-/* time added in block 
- *
+/* 
+ * time added in block 
+ * Note that we can entre scicos_sciblk4 even if Blocks is not 
+ * nsp block, just because we are in debug mode and the evaluated block
+ * is the debug block. 
+ * Thus here we have to test the Block type since for real nsp-coded blocks 
+ * "z" and "rpar" are to be serialized. 
+ * 
+ * XXX: note that the array z transmited here is suposed 
+ * to be a nsp object serialized in a matrix. 
+ * Thus we have to serialize/unserialize here.
+ * Voir livre page 205-> Note however that it should be the case 
+ * for type 5 blocks (sciblk4) but maybe not for sciblk2 ? 
  */
 
 void scicos_sciblk4(scicos_block *Blocks, int flag)
@@ -365,7 +377,14 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   if ((Hel[p++]=   scicos_itosci("type",&Blocks->type,1,1))== NULL) goto err;
   /* if ((Hel[p++]=   scicos_itosci(&Blocks->scsptr,0,1))== NULL) goto err; */
   /* if ((Hel[p++]=   scicos_itosci("nz",&Blocks->nz,1,1))== NULL) goto err; */
-  if ((Hel[p++]=  scicos_mserial_to_obj("z",Blocks->z,Blocks->nz))== NULL) goto err;
+  if (  Blocks->scsptr_flag ==  fun_pointer) 
+    {
+      if ((Hel[p++]=   scicos_dtosci("z",Blocks->z,Blocks->nz,1))== NULL) goto err;
+    }
+  else
+    {
+      if ((Hel[p++]=  scicos_mserial_to_obj("z",Blocks->z,Blocks->nz))== NULL) goto err;
+    }
   /* if ((Hel[p++]=   scicos_itosci("nx",&Blocks->nx,1,1))== NULL) goto err; */
   if ((Hel[p++]=   scicos_dtosci("x",Blocks->x,Blocks->nx,1))== NULL) goto err;
   if ((Hel[p++]=   scicos_dtosci("xd",Blocks->xd,Blocks->nx,1))== NULL) goto err;
@@ -379,7 +398,14 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   if ((Hel[p++]=   scicos_itosci("nevout",&Blocks->nevout,1,1))== NULL) goto err;
   if ((Hel[p++]=   scicos_dtosci("evout",Blocks->evout,Blocks->nevout,1))== NULL) goto err;
   /* if ((Hel[p++]=   scicos_itosci("nrpar",&Blocks->nrpar,1,1))== NULL) goto err; */
-  if ((Hel[p++]=  scicos_mserial_to_obj("rpar",Blocks->rpar,Blocks->nrpar)) == NULL) goto err; 
+  if (  Blocks->scsptr_flag ==  fun_pointer) 
+    {
+      if ((Hel[p++]=   scicos_dtosci("rpar",Blocks->rpar,Blocks->nrpar,1))== NULL) goto err;
+    }
+  else
+    {
+      if ((Hel[p++]=  scicos_mserial_to_obj("rpar",Blocks->rpar,Blocks->nrpar)) == NULL) goto err; 
+    }
   /* if ((Hel[p++]=   scicos_itosci("nipar",&Blocks->nipar,1,1))== NULL) goto err; */
   if ((Hel[p++]=   scicos_itosci("ipar",Blocks->ipar,Blocks->nipar,1))== NULL) goto err;
   /* if ((Hel[p++]=   scicos_itosci("ng",&Blocks->ng,1,1))== NULL) goto err; */

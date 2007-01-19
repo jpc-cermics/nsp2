@@ -78,6 +78,7 @@ static double SQuround;
 /* main object */
 
 scicos_run *Scicos = NULL;
+int scicos_debug_level=-1;
 
 int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, int *flag__, int *ierr_out)
 {
@@ -85,7 +86,7 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
   double *W;
 
   Scicos =sr;
-  Scicos->params.debug = 0;
+  Scicos->params.debug = scicos_debug_level;
   t0=t0_in;
   tf=tf_in;
   ierr=ierr_out;
