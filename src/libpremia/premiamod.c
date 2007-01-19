@@ -86,8 +86,8 @@ NspTypePremiaModel *new_type_premiamodel(type_mode mode)
   top->eq  = (eq_func *) nsp_premiamodel_eq;
   top->neq  = (eq_func *) nsp_premiamodel_neq;
   /* not implemented  
-  top->save  = (save_func *) nsp_premiamodel_xdr_save;
-  top->load  = (load_func *) nsp_premiamodel_xdr_load;
+     top->save  = (save_func *) nsp_premiamodel_xdr_save;
+     top->load  = (load_func *) nsp_premiamodel_xdr_load;
   */
   top->create = (create_func*) int_premiamodel_create;
   
@@ -95,12 +95,12 @@ NspTypePremiaModel *new_type_premiamodel(type_mode mode)
       
   type->init = (init_func *) init_premiamodel;
 
-/* 
- * PremiaModel interfaces can be added here 
- * type->interface = (NspTypeBase *) new_type_b();
- * type->interface->interface = (NspTypeBase *) new_type_C()
- * ....
- */
+  /* 
+   * PremiaModel interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_premiamodel_id == 0 ) 
     {
       /* 
@@ -114,8 +114,8 @@ NspTypePremiaModel *new_type_premiamodel(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_premiamodel_id;
-       return type;
+      type->id = nsp_type_premiamodel_id;
+      return type;
     }
 }
 
@@ -209,14 +209,14 @@ void nsp_premiamodel_destroy(NspPremiaModel *H)
   nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
-   {
-     /* FREE(H->obj->mod.TypeModel); */
-     if (H->obj->mod.TypeModel != NULL) 
-       nsp_premia_free_vars(H->obj->mod.TypeModel,TRUE,H->obj->mod.nvar);
-     if (H->obj->opt.TypeOpt != NULL) 
-       nsp_premia_free_vars(H->obj->opt.TypeOpt,TRUE,H->obj->opt.nvar);
-     FREE(H->obj);
-   }
+    {
+      /* FREE(H->obj->mod.TypeModel); */
+      if (H->obj->mod.TypeModel != NULL) 
+        nsp_premia_free_vars(H->obj->mod.TypeModel,TRUE,H->obj->mod.nvar);
+      if (H->obj->opt.TypeOpt != NULL) 
+        nsp_premia_free_vars(H->obj->opt.TypeOpt,TRUE,H->obj->opt.nvar);
+      FREE(H->obj);
+    }
   FREE(H);
 }
 
@@ -241,21 +241,21 @@ void nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int re
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(pname,NVOID) != 0) 
-	{
-	  Sciprintf1(indent,"%s=premiamodel_create();",pname);
-	}
+        {
+          Sciprintf1(indent,"%s=premiamodel_create();",pname);
+        }
       else 
-	{
-	  Sciprintf1(indent,"premiamodel_create();");
-	}
+        {
+          Sciprintf1(indent,"premiamodel_create();");
+        }
     }
   else 
     {
       if ( user_pref.pr_depth  <= rec_level -1 ) 
-	{
-	  nsp_premiamodel_info(M,indent,pname,rec_level);
-	  return;
-	}
+        {
+          nsp_premiamodel_info(M,indent,pname,rec_level);
+          return;
+        }
       Sciprintf1(indent,"%s\t= ...\t\t premia pb\n",pname);
     }
 }
@@ -276,7 +276,7 @@ NspPremiaModel   *nsp_premiamodel_object(NspObject *O)
   /* Check type */
   if ( check_cast (O,nsp_type_premiamodel_id) == TRUE ) return ((NspPremiaModel *) O);
   else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_premiamodel));
+    Scierror("Error:    Argument should be a %s\n",type_get_name(nsp_type_premiamodel));
   return NULL;
 }
 
@@ -300,7 +300,7 @@ NspPremiaModel  *GetPremiaModel(Stack stack, int i)
 {
   NspPremiaModel *M;
   if (( M = nsp_premiamodel_object(NthObj(i))) == NULLPREMIAMODEL)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
@@ -312,16 +312,16 @@ NspPremiaModel  *GetPremiaModel(Stack stack, int i)
 
 static NspPremiaModel *premiamodel_create_void(char *name,NspTypeBase *type)
 {
- NspPremiaModel *H  = (type == NULL) ? new_premiamodel() : type->new();
- if ( H ==  NULLPREMIAMODEL)
-  {
-   Sciprintf("No more memory\n");
-   return NULLPREMIAMODEL;
-  }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLPREMIAMODEL;
- NSP_OBJECT(H)->ret_pos = -1 ;
- H->obj = NULL;
- return H;
+  NspPremiaModel *H  = (type == NULL) ? new_premiamodel() : type->new();
+  if ( H ==  NULLPREMIAMODEL)
+    {
+      Sciprintf("No more memory\n");
+      return NULLPREMIAMODEL;
+    }
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLPREMIAMODEL;
+  NSP_OBJECT(H)->ret_pos = -1 ;
+  H->obj = NULL;
+  return H;
 }
 
 NspPremiaModel *premiamodel_create(char *name,NspTypeBase *type)
@@ -350,7 +350,7 @@ NspPremiaModel *nsp_premiamodel_copy(NspPremiaModel *self)
   if ( H ==  NULLPREMIAMODEL) return NULLPREMIAMODEL;
   H->obj = self->obj;
   self->obj->ref_count++;
- return H;
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -422,45 +422,61 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
       n--; /* C-mode */
       while (models[nmodels] != NULL) nmodels++;
       if ( n < 0 || n > nmodels -1 )
-	{
-	  Scierror("Error: model %d does not exists\n",n+1);
-	  return RET_BUG;
-	}
+        {
+          Scierror("Error: model %d does not exists\n",n+1);
+          return RET_BUG;
+        }
       poo=models[n];
     }
   while ( families[nf] != NULL) nf++;
   if ( m < 0 || m > nf -1 ) 
     {
       if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
-	return RET_BUG;
+        return RET_BUG;
       MoveObj(stack,1,(NspObject  *) S);
       return 1;
     }
   loc = (*families[m]);
   while ( loc[fsize] != NULL) fsize++;
+  if ((S=nsp_smatrix_create_with_length(NVOID,fsize,1,-1))== NULLSMAT) 
+    return RET_BUG;
   if ( n != -1 ) 
     {
       int count=0;
       /* if n is given we check if the family is compatible with 
        * the model. This is done by checking the first 
        */
-      for ( i = 0; i < fsize ; i++) 
-	{
-	  if ( MatchingPricing(0,poo,loc[i],pricings) == 0) count++;
-	}
-      if ( count == fsize ) 
-	{
-	  /* Sciprintf("All the option of family %d matches with model %d\n",m+1,n+1);*/
-	}
-      fsize = count;
+      /* for ( i = 0; i < fsize ; i++) 
+       *   {
+       *     if ( MatchingPricing(0,poo,loc[i],pricings) == 0) count++;
+       *   }
+       * if ( count == fsize ) 
+       *   {
+       *     /\* Sciprintf("All the option of family %d matches with model %d\n",m+1,n+1);*\/
+       *   }
+       * fsize = count; */
+      for ( i=0 ; i < fsize ; i++) 
+        {
+          if (Premia_match_model_option(poo, loc[i], pricings)==0)
+            {
+              count++;
+              if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
+                return RET_BUG;
+            }
+        }
+      if (count<fsize)
+        {
+          nsp_smatrix_resize(S, count, 1);
+        }
+      
     }
-  if ((S=nsp_smatrix_create_with_length(NVOID,fsize,1,-1))== NULLSMAT) 
-    return RET_BUG;
-  for ( i=0 ; i < fsize ; i++) 
-    {
-      if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
-	return RET_BUG;
-    }
+  else
+    for ( i=0 ; i < fsize ; i++) 
+      {
+        if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
+          return RET_BUG;
+      }
+  
   MoveObj(stack,1,(NspObject  *) S);
   return 1;
 }
@@ -514,11 +530,11 @@ int int_premia_get_methods(Stack stack, int rhs, int opt, int lhs)
   for ( i=0 ; i < npm ; i++) 
     {
       if ( res->Methods[i]->CheckOpt(loc[opt],poo)== OK) 
-	{
-	  if ((S->S[npm_ok] =nsp_string_copy(res->Methods[i]->Name)) == (nsp_string) 0) 
-	    return RET_BUG;
-	  npm_ok++;
-	}
+        {
+          if ((S->S[npm_ok] =nsp_string_copy(res->Methods[i]->Name)) == (nsp_string) 0) 
+            return RET_BUG;
+          npm_ok++;
+        }
     }
   MoveObj(stack,1,(NspObject  *) S);
   return 1;
@@ -700,7 +716,7 @@ static int _wrap_premiamodel_set_method_values(NspPremiaModel *self,Stack stack,
 
 
 static int _wrap_premia_pb_check_values(NspPremiaModel *self,Stack stack,int rhs,int opt,int lhs,
-					  p_objs type)
+                                        p_objs type)
 {
   NspSMatrix *S;
   char *error,*format;
@@ -736,49 +752,49 @@ static int _wrap_premia_pb_check_values(NspPremiaModel *self,Stack stack,int rhs
       VAR *vars1=NULL;
       int status =  (ChkVar1(NULL,&vars[i],WRONG) == 0);
       if ( status == FALSE ) 
-	{
-	  /* If a variable is not a first level one, we try to 
-	   * get more precise informations 
-	   */
-	  switch( vars[i].Vtype)
-	    {
-	    case NUMFUNC_1:
-	      vars1 = (vars[i].Val.V_NUMFUNC_1)->Par;
-	      break;
-	    case NUMFUNC_2:
-	      vars1 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	      break;
-	    case PTVAR:
-	      vars1 = (vars[i].Val.V_PTVAR)->Par;
-	      break;
-	    case DOUBLEARRAY: 
-	    default:
-	      break;
-	    }
-	  if ( vars1 != NULL) 
-	    {
-	      while (vars1->Vtype!=END)
-		{ 
-		  int status1 =  (ChkVar1(NULL,vars1,WRONG) == 0);
-		  if ( status1 == FALSE ) break;
-		  vars1++;
-		} 
-	    }
-	  else 
-	    {
-	      vars1 = &vars[i];
-	    }
-	  premia_Vtype_info(vars1,&format,&error,&i_type);
-	  /* Scierror("Error: %s is wrong, %s\n",vars1->Vname,error); */
-	  if ((S=nsp_smatrix_create_with_length(NVOID,1,2,-1))== NULLSMAT) 
-	    return RET_BUG;
-	  if ((S->S[0] =nsp_string_copy(vars1->Vname)) == (nsp_string) 0) 
-	    return RET_BUG;
-	  if ((S->S[1] =nsp_string_copy(error)) == (nsp_string) 0) 
-	    return RET_BUG;
-	  MoveObj(stack,1,NSP_OBJECT(S));
-	  return 1;
-	}
+        {
+          /* If a variable is not a first level one, we try to 
+           * get more precise informations 
+           */
+          switch( vars[i].Vtype)
+            {
+            case NUMFUNC_1:
+              vars1 = (vars[i].Val.V_NUMFUNC_1)->Par;
+              break;
+            case NUMFUNC_2:
+              vars1 = (vars[i].Val.V_NUMFUNC_2)->Par;
+              break;
+            case PTVAR:
+              vars1 = (vars[i].Val.V_PTVAR)->Par;
+              break;
+            case DOUBLEARRAY: 
+            default:
+              break;
+            }
+          if ( vars1 != NULL) 
+            {
+              while (vars1->Vtype!=END)
+                { 
+                  int status1 =  (ChkVar1(NULL,vars1,WRONG) == 0);
+                  if ( status1 == FALSE ) break;
+                  vars1++;
+                } 
+            }
+          else 
+            {
+              vars1 = &vars[i];
+            }
+          premia_Vtype_info(vars1,&format,&error,&i_type);
+          /* Scierror("Error: %s is wrong, %s\n",vars1->Vname,error); */
+          if ((S=nsp_smatrix_create_with_length(NVOID,1,2,-1))== NULLSMAT) 
+            return RET_BUG;
+          if ((S->S[0] =nsp_string_copy(vars1->Vname)) == (nsp_string) 0) 
+            return RET_BUG;
+          if ((S->S[1] =nsp_string_copy(error)) == (nsp_string) 0) 
+            return RET_BUG;
+          MoveObj(stack,1,NSP_OBJECT(S));
+          return 1;
+        }
     }
   if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
     return RET_BUG;
@@ -845,7 +861,7 @@ static int _wrap_premiamodel_get_model(NspPremiaModel *self,Stack stack,int rhs,
   if ( self->obj->mod.TypeModel == NULL ) 
     {
       if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
-	return RET_BUG;
+        return RET_BUG;
       MoveObj(stack,1,(NspObject  *) S);
       return 1;
     }
@@ -916,7 +932,7 @@ static int _wrap_premiamodel_get_option(NspPremiaModel *self,Stack stack,int rhs
   if ( self->obj->opt.TypeOpt == NULL ) 
     {
       if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
-	return RET_BUG;
+        return RET_BUG;
       MoveObj(stack,1,(NspObject  *) S);
       return 1;
     }
@@ -965,18 +981,18 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
   for ( i=0 ; i < n_method ; i++) 
     {
       if ( res->Methods[i]->CheckOpt(&self->obj->opt,&self->obj->mod)== OK) 
-	{
-	  if ( count == method ) 
-	    {
-	      method_id=i;break;
-	    }
-	  count++;
-	}
+        {
+          if ( count == method ) 
+            {
+              method_id=i;break;
+            }
+          count++;
+        }
     }
   if ( method_id == -1 ) 
     {
       Scierror("Error: method %d does not exists in possible pricing methods [%d,%d]\n",
-	       method_id+1,1,n_method+1);
+               method_id+1,1,n_method+1);
       return RET_BUG;
     }
   res->Methods[method_id]->Init(res->Methods[method_id]);
@@ -1004,7 +1020,7 @@ static int _wrap_premiamodel_get_method(NspPremiaModel *self,Stack stack,int rhs
   if ( self->obj->meth.Name[0] == '\0' ) 
     {
       if ((S=nsp_smatrix_create_with_length(NVOID,0,0,-1))== NULLSMAT) 
-	return RET_BUG;
+        return RET_BUG;
       MoveObj(stack,1,(NspObject  *) S);
       return 1;
       Scierror("Error: model is already set\n");
@@ -1046,18 +1062,18 @@ static int _wrap_premiamodel_compute(NspPremiaModel *self,Stack stack,int rhs,in
       return RET_BUG;
     }
   /* Il faut ici un pricing 
-  if ((self->obj->meth.CheckMixing)(&self->obj->opt,&self->obj->mod) != OK) 
-    {
-      Scierror("Error: option and model do not mix\n");
-      return RET_BUG;
-    }
+     if ((self->obj->meth.CheckMixing)(&self->obj->opt,&self->obj->mod) != OK) 
+     {
+     Scierror("Error: option and model do not mix\n");
+     return RET_BUG;
+     }
   */
   if ((self->obj->meth.Check)(user,&pt_plan,&self->obj->meth)!=OK)
     {
       Scierror("Error: method is not correct\n");
       return RET_BUG;
     }
-  error=(self->obj->meth.Compute)(self->obj->opt.TypeOpt,self->obj->mod.TypeModel,&self->obj->meth);  		
+  error=(self->obj->meth.Compute)(self->obj->opt.TypeOpt,self->obj->mod.TypeModel,&self->obj->meth);        
   return 0;
 }
 
@@ -1122,7 +1138,7 @@ int premiamodel_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) */
+   (for adding or removing functions) */
 
 void premiamodel_Interf_Info(int i, char **fname, function (**f))
 {
@@ -1147,7 +1163,7 @@ static int nsp_premia_clone_vars(VAR **res,int flag,const VAR *vars,int n)
   if ( flag == TRUE ) 
     {
       if ((loc = malloc(n*sizeof(VAR))) == NULL) 
-	return FAIL;
+        return FAIL;
       *res = loc;
     }
   else 
@@ -1160,47 +1176,47 @@ static int nsp_premia_clone_vars(VAR **res,int flag,const VAR *vars,int n)
       int count =0;
       loc[i]=vars[i];
       switch( vars[i].Vtype)
-	{
-	case NUMFUNC_1:
-	  loc2 = (vars[i].Val.V_NUMFUNC_1)->Par; 
-	  /* count how many vars are present in vars[i] */
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  /* allocate */
-	  if ((loc[i].Val.V_NUMFUNC_1 = malloc(sizeof(NumFunc_1)))==NULL) return FAIL;
-	  *(loc[i].Val.V_NUMFUNC_1) = *(vars[i].Val.V_NUMFUNC_1);
-	  /* recursive allocation */
-	  loc2 =loc[i].Val.V_NUMFUNC_1->Par;
-	  nsp_premia_clone_vars(&loc2,FALSE,vars[i].Val.V_NUMFUNC_1->Par,count);
-	  break;
-	case NUMFUNC_2:
-	  loc2 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  /* allocate */
-	  if ((loc[i].Val.V_NUMFUNC_2 = malloc(sizeof(NumFunc_2)))==NULL) return FAIL;
-	  *(loc[i].Val.V_NUMFUNC_2) = *(vars[i].Val.V_NUMFUNC_2);
-	  /* recursive allocation */
-	  loc2 =loc[i].Val.V_NUMFUNC_2->Par;
-	  nsp_premia_clone_vars(&loc2,FALSE, vars[i].Val.V_NUMFUNC_2->Par,count);
-	  break;
-	case PTVAR:
-	  loc2 = (vars[i].Val.V_PTVAR)->Par;
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  if ((loc[i].Val.V_PTVAR = malloc(sizeof(PTVAR)))==NULL) return FAIL;
-	  *(loc[i].Val.V_PTVAR) = *(vars[i].Val.V_PTVAR);
-	  loc2 =loc[i].Val.V_PTVAR->Par;
-	  nsp_premia_clone_vars(&loc2,FALSE,vars[i].Val.V_PTVAR->Par,count);
-	  break;
-	case DOUBLEARRAY:
-	  if ((loc[i].Val.V_DOUBLEARRAY= malloc(sizeof(DOUBLEARRAY))) ==NULL) return FAIL;
-	  loc[i].Val.V_DOUBLEARRAY->array = malloc(sizeof(double)*vars[i].Val.V_DOUBLEARRAY->size);
-	  if ( loc[i].Val.V_DOUBLEARRAY->array == NULL) return FAIL;
-	  loc[i].Val.V_DOUBLEARRAY->size = vars[i].Val.V_DOUBLEARRAY->size;
-	  memcpy(loc[i].Val.V_DOUBLEARRAY->array,vars[i].Val.V_DOUBLEARRAY->array,
-		 vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
-	  break;
-	default: 
-	  break;
-	}
+        {
+        case NUMFUNC_1:
+          loc2 = (vars[i].Val.V_NUMFUNC_1)->Par; 
+          /* count how many vars are present in vars[i] */
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          /* allocate */
+          if ((loc[i].Val.V_NUMFUNC_1 = malloc(sizeof(NumFunc_1)))==NULL) return FAIL;
+          *(loc[i].Val.V_NUMFUNC_1) = *(vars[i].Val.V_NUMFUNC_1);
+          /* recursive allocation */
+          loc2 =loc[i].Val.V_NUMFUNC_1->Par;
+          nsp_premia_clone_vars(&loc2,FALSE,vars[i].Val.V_NUMFUNC_1->Par,count);
+          break;
+        case NUMFUNC_2:
+          loc2 = (vars[i].Val.V_NUMFUNC_2)->Par;
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          /* allocate */
+          if ((loc[i].Val.V_NUMFUNC_2 = malloc(sizeof(NumFunc_2)))==NULL) return FAIL;
+          *(loc[i].Val.V_NUMFUNC_2) = *(vars[i].Val.V_NUMFUNC_2);
+          /* recursive allocation */
+          loc2 =loc[i].Val.V_NUMFUNC_2->Par;
+          nsp_premia_clone_vars(&loc2,FALSE, vars[i].Val.V_NUMFUNC_2->Par,count);
+          break;
+        case PTVAR:
+          loc2 = (vars[i].Val.V_PTVAR)->Par;
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          if ((loc[i].Val.V_PTVAR = malloc(sizeof(PTVAR)))==NULL) return FAIL;
+          *(loc[i].Val.V_PTVAR) = *(vars[i].Val.V_PTVAR);
+          loc2 =loc[i].Val.V_PTVAR->Par;
+          nsp_premia_clone_vars(&loc2,FALSE,vars[i].Val.V_PTVAR->Par,count);
+          break;
+        case DOUBLEARRAY:
+          if ((loc[i].Val.V_DOUBLEARRAY= malloc(sizeof(DOUBLEARRAY))) ==NULL) return FAIL;
+          loc[i].Val.V_DOUBLEARRAY->array = malloc(sizeof(double)*vars[i].Val.V_DOUBLEARRAY->size);
+          if ( loc[i].Val.V_DOUBLEARRAY->array == NULL) return FAIL;
+          loc[i].Val.V_DOUBLEARRAY->size = vars[i].Val.V_DOUBLEARRAY->size;
+          memcpy(loc[i].Val.V_DOUBLEARRAY->array,vars[i].Val.V_DOUBLEARRAY->array,
+                 vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
+          break;
+        default: 
+          break;
+        }
     }
   return OK;
 }
@@ -1217,30 +1233,30 @@ static void nsp_premia_free_vars(VAR *vars,int flag,int n)
     {
       int count =0;
       switch( vars[i].Vtype)
-	{
-	case NUMFUNC_1:
-	  loc2 = (vars[i].Val.V_NUMFUNC_1)->Par; 
-	  /* count how many vars are present in vars[i] */
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  nsp_premia_free_vars(loc2,FALSE,count);
-	  break;
-	case NUMFUNC_2:
-	  loc2 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  nsp_premia_free_vars(loc2,FALSE,count);
-	  break;
-	case PTVAR:
-	  loc2 = (vars[i].Val.V_PTVAR)->Par;
-	  while (loc2->Vtype!=END) { count++; loc2++;} 
-	  nsp_premia_free_vars(loc2,FALSE,count);
-	  break;
-	case DOUBLEARRAY:
-	  FREE( vars[i].Val.V_DOUBLEARRAY->array);
-	  FREE( vars[i].Val.V_DOUBLEARRAY);
-	  break;
-	default: 
-	  break;
-	}
+        {
+        case NUMFUNC_1:
+          loc2 = (vars[i].Val.V_NUMFUNC_1)->Par; 
+          /* count how many vars are present in vars[i] */
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          nsp_premia_free_vars(loc2,FALSE,count);
+          break;
+        case NUMFUNC_2:
+          loc2 = (vars[i].Val.V_NUMFUNC_2)->Par;
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          nsp_premia_free_vars(loc2,FALSE,count);
+          break;
+        case PTVAR:
+          loc2 = (vars[i].Val.V_PTVAR)->Par;
+          while (loc2->Vtype!=END) { count++; loc2++;} 
+          nsp_premia_free_vars(loc2,FALSE,count);
+          break;
+        case DOUBLEARRAY:
+          FREE( vars[i].Val.V_DOUBLEARRAY->array);
+          FREE( vars[i].Val.V_DOUBLEARRAY);
+          break;
+        default: 
+          break;
+        }
     }
   if ( flag == TRUE ) 
     FREE(vars);
@@ -1269,42 +1285,42 @@ static NspList* nsp_premia_get_var_names(const VAR *vars,int n)
       int_types Ret_array[]={string,realmat,s_bool, t_end};
       int count =0;
       switch( vars[i].Vtype)
-	{
-	case NUMFUNC_1:
-	  vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
-	  if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
-	  break;
-	case NUMFUNC_2:
-	  vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
-	  if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
-	  break;
-	case PTVAR:
-	  /* list(name,sublist_of-args) */
-	  vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
-	  while (vars2->Vtype!=END) { count++; vars2++;} 
-	  if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
-	  if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
-	  break;
-	case DOUBLEARRAY:
-	  if (( Ob = nsp_create_object_from_str("X",vars[i].Vname)) == NULLOBJ ) goto err;
-	  if (( M = nsp_matrix_create_from_array("M",1,vars[i].Val.V_DOUBLEARRAY->size,
-						 vars[i].Val.V_DOUBLEARRAY->array,NULL)) 
-	      == NULLMAT) goto err;
-	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_array,vars[i].Vname,M,vars[i].Vsetable==SETABLE))== NULLOBJ )
-	    goto err;
-	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
-	  break;
-	default: 
-	  if ( get_value(&vars[i],&val) == FAIL)  goto err;
-	  if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_default,vars[i].Vname,val,vars[i].Vsetable==SETABLE))== NULLOBJ )
-	    goto err;
-	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
-	  break;
-	}
+        {
+        case NUMFUNC_1:
+          vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
+          while (vars2->Vtype!=END) { count++; vars2++;} 
+          if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
+          if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
+          break;
+        case NUMFUNC_2:
+          vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
+          while (vars2->Vtype!=END) { count++; vars2++;} 
+          if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
+          if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
+          break;
+        case PTVAR:
+          /* list(name,sublist_of-args) */
+          vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
+          while (vars2->Vtype!=END) { count++; vars2++;} 
+          if ((loc1=nsp_premia_get_var_names_util(&vars[i],vars1,count))== NULL) goto err;
+          if ( nsp_list_end_insert(Res,NSP_OBJECT(loc1)) == FAIL) goto err;
+          break;
+        case DOUBLEARRAY:
+          if (( Ob = nsp_create_object_from_str("X",vars[i].Vname)) == NULLOBJ ) goto err;
+          if (( M = nsp_matrix_create_from_array("M",1,vars[i].Val.V_DOUBLEARRAY->size,
+                                                 vars[i].Val.V_DOUBLEARRAY->array,NULL)) 
+              == NULLMAT) goto err;
+          if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_array,vars[i].Vname,M,vars[i].Vsetable==SETABLE))== NULLOBJ )
+            goto err;
+          if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
+          break;
+        default: 
+          if ( get_value(&vars[i],&val) == FAIL)  goto err;
+          if (( Ob = (NspObject *)BuildListFromArgs("lel",Ret_default,vars[i].Vname,val,vars[i].Vsetable==SETABLE))== NULLOBJ )
+            goto err;
+          if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
+          break;
+        }
     }
   return Res;
  err:
@@ -1370,45 +1386,45 @@ static int nsp_premia_set_var_names(VAR *vars,int n,NspList *L)
       if (strcmp(((NspSMatrix *) Name)->S[0],vars[i].Vname) != 0) return FAIL;
       /* we ignore variables which are supposed to be non setable */
       if ( vars[i].Vsetable == SETABLE ) 
-	{
-	  switch( vars[i].Vtype)
-	    {
-	    case NUMFUNC_1:
-	      vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
-	      while (vars2->Vtype!=END) { count++; vars2++;} 
-	      if ( ! IsList(Obj1) ) return FAIL;
-	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	      break;
-	    case NUMFUNC_2:
-	      vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
-	      while (vars2->Vtype!=END) { count++; vars2++;} 
-	      if ( ! IsList(Obj1) ) return FAIL;
-	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	      break;
-	    case PTVAR:
-	      /* list(name,sublist_of-args) */
-	      vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
-	      while (vars2->Vtype!=END) { count++; vars2++;} 
-	      if ( ! IsList(Obj1) ) return FAIL;
-	      if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
-	      if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
-	      break;
-	    case DOUBLEARRAY:
-	      if ( ! IsMat(Obj1) ) return FAIL;
-	      if ( ((NspMatrix *) Obj1)->mn != vars[i].Val.V_DOUBLEARRAY->size) return FAIL;
-	      memcpy(vars[i].Val.V_DOUBLEARRAY->array,((NspMatrix *) Obj1)->R, 
-		     vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
-	      break;
-	    default: 
-	      if ( ! IsMat(Obj1) ) return FAIL;
-	      if ( ((NspMatrix *) Obj1)->mn != 1  ) return FAIL;
-	      val = ((NspMatrix *) Obj1)->R[0];
-	      set_value(&vars[i],val);
-	      break;
-	    }
-	}
+        {
+          switch( vars[i].Vtype)
+            {
+            case NUMFUNC_1:
+              vars1=vars2 = (vars[i].Val.V_NUMFUNC_1)->Par;
+              while (vars2->Vtype!=END) { count++; vars2++;} 
+              if ( ! IsList(Obj1) ) return FAIL;
+              if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+              if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+              break;
+            case NUMFUNC_2:
+              vars1=vars2 = (vars[i].Val.V_NUMFUNC_2)->Par;
+              while (vars2->Vtype!=END) { count++; vars2++;} 
+              if ( ! IsList(Obj1) ) return FAIL;
+              if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+              if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+              break;
+            case PTVAR:
+              /* list(name,sublist_of-args) */
+              vars1=vars2 = (vars[i].Val.V_PTVAR)->Par;
+              while (vars2->Vtype!=END) { count++; vars2++;} 
+              if ( ! IsList(Obj1) ) return FAIL;
+              if ( count != nsp_list_length((NspList *)Obj1)) return FAIL;
+              if (nsp_premia_set_var_names(vars1,count,(NspList *) Obj1) == FAIL) return FAIL;
+              break;
+            case DOUBLEARRAY:
+              if ( ! IsMat(Obj1) ) return FAIL;
+              if ( ((NspMatrix *) Obj1)->mn != vars[i].Val.V_DOUBLEARRAY->size) return FAIL;
+              memcpy(vars[i].Val.V_DOUBLEARRAY->array,((NspMatrix *) Obj1)->R, 
+                     vars[i].Val.V_DOUBLEARRAY->size*sizeof(double));
+              break;
+            default: 
+              if ( ! IsMat(Obj1) ) return FAIL;
+              if ( ((NspMatrix *) Obj1)->mn != 1  ) return FAIL;
+              val = ((NspMatrix *) Obj1)->R[0];
+              set_value(&vars[i],val);
+              break;
+            }
+        }
     }
   return OK;
 }

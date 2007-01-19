@@ -34,8 +34,8 @@ if or(B<>b) then pause;end
 
 
 
-M.set_option[0,0]
-M.set_method[0];
+M.set_option[1,1]
+M.set_method[1];
 
 [a,b]=M.get_option_values[];
 [a,b]=M.get_model_values[];
