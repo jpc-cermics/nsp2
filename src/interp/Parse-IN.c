@@ -47,13 +47,14 @@ static function  int_error;
 
 void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
 
+
 static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef UPDATE_EXEC_DIR
-  static char dir[FSIZE+1]={0};
+  static char dir[FSIZE+1]={0}; /* to be pushed in stack */
   char old[FSIZE+1];
 #endif
-  char buf[FSIZE+1];
+  char buf1[FSIZE+1],buf[FSIZE+1];
   NspObject *Ob;
   NspHash *H=NULL,*E=NULL;
   char *fname= NULL;
@@ -69,12 +70,11 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
     return int_execf(stack,rhs,opt,lhs);
   if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_path_expand(fname,buf1,FSIZE);
 #ifdef UPDATE_EXEC_DIR
-  Sciprintf("Initial (%s,%s) ",dir,buf);
   strncpy(old,dir,FSIZE);
-  update_exec_dir(fname,dir,buf,FSIZE);
-  Sciprintf("Updated to %s and file = %s\n",dir,buf);
+  update_exec_dir(buf1,dir,buf,FSIZE);
+  Sciprintf("exec(%s)->[%s] dir=%s\n",fname,buf,dir);
 #endif
 
   if ( lhs == 2 ||  E != NULL )

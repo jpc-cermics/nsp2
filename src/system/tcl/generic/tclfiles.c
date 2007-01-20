@@ -620,14 +620,16 @@ static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
 /**
  * update_exec_dir:
- * @filename: a file name 
- * @exec_dir: the current value of exec directory 
- * @filename_exec: 
+ * @filename: a file name given on entry 
+ * @exec_dir: the current value of exec directory in a string buffer of size @length.
+ * @filename_exec: a string buffer of size @length.
  * @length:  length of @exec_dir and @filename_exec
  * 
  * 
  * This function is used to update the @exec_dir value during the 
- * execution of script file @filename. 
+ * execution of script file @filename. Thus, if @filename is a relative filename
+ * @exec_dir is updated to @execdir/dirname(filename) and @filename_exec is 
+ * updated to @execdir/dirname(filename)/tail(filename). 
  * 
  **/
 
@@ -635,12 +637,15 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
 {
   nsp_string dirname = nsp_dirname (filename);
   if ( dirname == NULL) return ;
-  if ( exec_dir == NULL || exec_dir[0] == '\0' || nsp_get_path_type(filename)== TCL_PATH_ABSOLUTE)
+  if ( exec_dir == NULL ) return ;
+  if ( exec_dir[0] == '\0' || nsp_get_path_type(filename)== TCL_PATH_ABSOLUTE)
     {
+      /* if exec_dir is not set or the path in filename is absolute */
       if ( strcmp(dirname,".") != 0) 
 	{
 	  strncpy(exec_dir,dirname,length);
 	}
+      strncpy(filename_exec,filename,length);
       nsp_string_destroy(&dirname);
       return;
     }
@@ -658,11 +663,11 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
 	  strncpy(exec_dir,nsp_tcldstring_value (&buffer),Min(buffer.length,length));
 	  nsp_tcldstring_set_length (&buffer, 0);
 	}
-      /* also update filename exec_dir/dirname/tail */
+      /* also update filename_exec to  exec_dir/dirname/tail */
       tail = nsp_tail(filename);
       pargv[1]= tail;
       nsp_join_path (pargc, pargv, &buffer);
-      strncpy(filename_exec,nsp_tcldstring_value (&buffer),Min(buffer.length,length));
+      strncpy(filename_exec,nsp_tcldstring_value (&buffer),Min(buffer.length+1,length));
       nsp_tcldstring_free (&buffer);
       nsp_string_destroy(&dirname);
       nsp_string_destroy(&tail);
@@ -1105,7 +1110,7 @@ static char *SplitUnixPath(const char *path, nsp_tcldstring *bufPtr)
  * Return value: the value of @bufPtr
  **/
 
-static char *SplitWinPath( char *path, nsp_tcldstring *bufPtr)
+static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
 {
   int length;
   char *p, *elementStart;
