@@ -18,8 +18,8 @@ NM = /usr/bin/nm -B
 OBJDUMP = objdump
 STATIC = 
 
-CPPFLAGS = -I/usr/include/ufsparse -I/usr/include/ufsparse 
-LDFLAGS =  -L/usr/lib -L/usr/lib
+CPPFLAGS = 
+LDFLAGS = 
 LIBS = -lm 
 FLIBS =  -L/usr/lib/gcc/i386-redhat-linux/4.1.1 -L/usr/lib/gcc/i386-redhat-linux/4.1.1/../../.. -lgfortranbegin -lgfortran -lm -lgcc_s
 

@@ -18,7 +18,7 @@ OBJDUMP = objdump
 STATIC = 
 LN_S = ln -s
 NM = /usr/bin/nm -B
-LDFLAGS =  -L/usr/lib -L/usr/lib $(EXTRA_LDFLAGS) 
+LDFLAGS =  $(EXTRA_LDFLAGS) 
 LIBS = -lm 
 FLIBS =  -L/usr/lib/gcc/i386-redhat-linux/4.1.1 -L/usr/lib/gcc/i386-redhat-linux/4.1.1/../../.. -lgfortranbegin -lgfortran -lm -lgcc_s
 #******************************************************************* 

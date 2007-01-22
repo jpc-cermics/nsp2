@@ -23,7 +23,7 @@ EOF
 eval $ac_link
 if test -s conftest$ac_exeext && (./conftest$ac_exeext; exit) 2>/dev/null; then
   SIZEOF_INTP=`cat sizeofintp`
-  rm -f cat sizeofintp
+  rm -f sizeofintp
 else
   SIZEOF_INTP="cannot_happen"
 fi
