@@ -30,6 +30,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 
+static NspMethods *nsp_macro_get_methods(void);
 /*
  * NspPList inherits from NspObject 
  */
@@ -53,7 +54,7 @@ NspTypePList *new_type_plist(type_mode mode)
   type->attrs = NULL; /* plist_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL; /* plist_get_methods; */
+  type->methods = nsp_macro_get_methods;
   type->new = (new_func *) new_plist;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -445,6 +446,68 @@ NspPList *GetNspPListCopy(Stack stack, int i)
  * methods 
  *------------------------------------------------------*/
 
+static int int_nsp_macro_get_name(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  /* direct access to the function name is the AST */
+  char *name = ((PList) ((PList) self->D->next->O)->next->next->O)->next->O;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ( name == NULL) return RET_BUG;
+  if ( nsp_move_string(stack,1,name,-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int pl_lhs,pl_rhsp1;
+  CheckRhs(0,0);
+  CheckLhs(0,2);
+  plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1);
+  if ( nsp_move_double(stack,1,(double) pl_lhs )== FAIL) return RET_BUG;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_double(stack,2,(double)pl_rhsp1-1 )== FAIL) return RET_BUG;
+    }
+  return Max(lhs,1);
+}
+
+/* XXXXX: to be moved in .h */
+
+extern NspList *nsp_plist_to_list(PList L);
+
+
+static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((L= nsp_plist_to_list(self->D))== NULLLIST ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(L));
+  return 1;
+}
+
+static int int_nsp_macro_to_string(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *S;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((S= NspPList2SMatrix(self,0))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+
+
+static NspMethods nsp_macro_methods[] = {
+  {"get_name",(nsp_method *) int_nsp_macro_get_name },
+  {"get_args",(nsp_method *) int_nsp_macro_get_args },
+  {"to_list",(nsp_method *) int_nsp_macro_to_list },
+  {"to_string",(nsp_method *) int_nsp_macro_to_string },
+  { NULL, NULL}
+};
+
+static NspMethods *nsp_macro_get_methods(void) { return nsp_macro_methods;}
+
 /*----------------------------------------------------------
  * Now the interfaced function for macros (pl)
  *--------------------------------------------------------*/
@@ -497,8 +560,6 @@ static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-extern NspList *nsp_plist_to_list(PList L);
-
 static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L;
@@ -509,9 +570,6 @@ static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(L));
   return 1;
 }
-
-
-
 
 
 
