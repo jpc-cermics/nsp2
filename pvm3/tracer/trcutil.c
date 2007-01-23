@@ -3022,15 +3022,12 @@ char *
 trc_copy_str( str )
 char *str;
 {
-	char *tmp;
-
-	tmp = (char *) malloc( (unsigned) (strlen(str) + 1)
-		* sizeof(char) );
-	trc_memcheck(tmp,"Copy String");
-
-	strcpy( tmp, str );
-
-	return( tmp );
+  char *tmp;
+  unsigned int len = (str == NULL) ? 0 : strlen(str);
+  tmp = (char *) malloc( (unsigned) (len + 1) * sizeof(char) );
+  trc_memcheck(tmp,"Copy String");
+  if ( str != NULL) strcpy( tmp, str );
+  return( tmp );
 }
 
 

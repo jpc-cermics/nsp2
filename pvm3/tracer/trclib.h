@@ -177,7 +177,8 @@
 
 #ifndef USE_PVM_33
 
-extern  struct Pvmtevdid    pvmtevdidlist[];
+extern  struct Pvmtevdid    pvmtevdidlist__[];
+extern     struct Pvmtevdid *pvmtevdidlist; /* jpc : gcc4 */
 
 #endif
 

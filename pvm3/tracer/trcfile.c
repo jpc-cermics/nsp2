@@ -49,6 +49,7 @@ trc_init_did_trie()
 
 	for ( i=TEV_DID_FIRST ; i <= TEV_DID_MAX ; i++ )
 	{
+	  int poo = TEV_DID_MAX;
 		dptr = trc_create_did();
 
 		dptr->id = i;

@@ -2848,19 +2848,21 @@ int trc_old_pvm_nerr =
 
 
 /* Reverse Compatibility Declarations for PVM 3.3 */
+/* jpc : gcc4 */
 
+struct Pvmtevinfo pvmtevinfo__[] =
 
-struct Pvmtevinfo pvmtevinfo[] =
 {
 	"dummy", 0, { 0, 0 }, { 0, 0 }, 0
 };
 
+extern     struct Pvmtevdid *pvmtevdidlist; /* jpc : gcc4 */
 
-struct Pvmtevdid pvmtevdidlist[] =
+struct Pvmtevdid pvmtevdidlist__[] =
 {
 	"XXX", "Dummy"
 };
-
+extern     struct Pvmtevinfo *pvmtevinfo;/* jpc : gcc4 */
 
 #endif
 
