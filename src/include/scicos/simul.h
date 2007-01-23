@@ -161,6 +161,7 @@ struct _scicos_params {
   int halt; /* halt event activated */
   int solver; /* solver used */
   int debug; /* debug level */
+  int debug_counter; /* counting entries in debug block */
   scicos_funflag scsptr_flag ;  /* to decide if next field is a name or a macro */
   void *scsptr; /* external function to be used */
   int nclock;

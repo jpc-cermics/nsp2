@@ -505,7 +505,7 @@ static int int_xproperty(Stack stack, int rhs, int opt, int lhs)
 
 /* renvoi la phase de simulation phase=get_phase_simulation() */
  
-static int int_phasesim(Stack stack, int rhs, int opt, int lhs) 
+static int int_get_phase_simulation(Stack stack, int rhs, int opt, int lhs) 
 { 
   CheckRhs(-1,0);
   CheckLhs(1,1);
@@ -513,10 +513,21 @@ static int int_phasesim(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* count entries in debug block */
+ 
+static int int_scicos_debug_count(Stack stack, int rhs, int opt, int lhs) 
+{ 
+  CheckRhs(-1,0);
+  CheckLhs(1,1); 
+  int count = ( Scicos == NULL) ? 0:  Scicos->params.debug_counter;
+    if ( nsp_move_double(stack,1,(double) count )== FAIL) return RET_BUG;
+  return 1;
+}
+
 /* renvoi le type d'equation get_pointer_xproperty() 
  *	(-1: algebriques, +1 differentielles) 
  */
- 
+
 static int int_setxproperty(Stack stack, int rhs, int opt, int lhs) 
 {
   int m1;
@@ -550,8 +561,9 @@ static OpTab Scicos_func[]={
   {"time_scicos",int_time_scicos},
   {"duplicate",int_duplicate},
   {"xproperty",int_xproperty},
-  {"phasesim",int_phasesim},
+  {"phase_simulation",int_get_phase_simulation},
   {"setxproperty",int_setxproperty},
+  {"scicos_debug_count", int_scicos_debug_count},
   {(char *) 0, NULL}
 };
 

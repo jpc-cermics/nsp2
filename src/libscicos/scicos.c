@@ -98,6 +98,7 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
   Scicos->params.scale = simpar[4];
   Scicos->params.solver = (int) simpar[5];
   Scicos->params.hmax=simpar[6];
+  Scicos->params.debug_counter = 0;
   *ierr = 0;
 
   xd=&Scicos->state.x[Scicos->sim.xptr[Scicos->sim.nblk]-1];
@@ -2207,7 +2208,7 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
   voidf loc ; 
   int solver=Scicos->params.solver,k;
   ScicosF4 loc4;
-
+  Scicos->params.debug_counter++;
   Scicos->params.scsptr=Scicos->Blocks[deb_blk].scsptr;
   Scicos->params.scsptr_flag=Scicos->Blocks[deb_blk].scsptr_flag;
   loc=Scicos->Blocks[deb_blk].funpt;
