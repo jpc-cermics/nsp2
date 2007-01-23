@@ -621,20 +621,32 @@ int int_pvm_kill( Stack stack, int rhs, int opt, int lhs)
 int int_pvm_recv( Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
-  int tid, tag,info;
+  int tid, tag,info,msginfo,msgtag,msgtid;
   CheckRhs(2,2);
   CheckLhs(1,4);
   if ((GetScalarInt(stack,1,&tid)) == FAIL) return RET_BUG;
   if ((GetScalarInt(stack,2,&tag)) == FAIL) return RET_BUG;
   /* NSP_PVM_ERROR(rep) */
-  info = nsp_pvm_recv(tid,tag,&obj);
+  info = nsp_pvm_recv(tid,tag,&obj,&msginfo,&msgtid,&msgtag);
   if ( info < 0 || obj == NULL) 
     {
       NSP_PVM_ERROR(info);
       return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(obj));
-  return 1;
+  if ( lhs >= 2 ) 
+    {
+      if ( nsp_move_double(stack,2,msginfo)== FAIL) return RET_BUG;
+    }
+  if ( lhs >= 3) 
+    {
+      if ( nsp_move_double(stack,3,msgtid)== FAIL) return RET_BUG;
+    }
+  if ( lhs >= 4) 
+    {
+      if ( nsp_move_double(stack,4,msgtag)== FAIL) return RET_BUG;
+    }
+  return Max(1,lhs);
 }
 
 /*

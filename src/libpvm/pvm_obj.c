@@ -133,9 +133,9 @@ int nsp_pvm_send(int *tids,int ntids,NspObject *M,int msgtag)
   return (ntids == 1) ? pvm_send(tids[0], msgtag):  pvm_mcast(tids,ntids, msgtag);
 } 
 
-int nsp_pvm_recv(int tid,int tag,NspObject **M)
+int nsp_pvm_recv(int tid,int tag,NspObject **M,int *msginfo,int *msgtid,int *msgtag)
 {
-  int bufid,msgbyte,msgtag,msgtid;
+  int bufid,msgbyte;
   int info,type;
 
   bufid = pvm_recv(tid,tag);
@@ -143,7 +143,7 @@ int nsp_pvm_recv(int tid,int tag,NspObject **M)
     Scierror( "Error pvm_recv: %d\n", bufid);
     return bufid ;
   }
-  info = pvm_bufinfo(bufid, &msgbyte, &msgtag, &msgtid);
+  info = pvm_bufinfo(bufid, &msgbyte, msgtag, msgtid);
   if (info < 0) {
     Scierror( "Error pvm_recv: -bufinfo- %d\n", info);
     pvm_freebuf(bufid);
