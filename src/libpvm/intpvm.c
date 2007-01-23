@@ -224,7 +224,7 @@ int int_pvm_config( Stack stack, int rhs, int opt, int lhs)
       NSP_PVM_ERROR(info);
       return 0;
     }
-  if (( obj = (NspObject *) BuildListFromArgs(Ret,nhost,narch,pdtid,name,arch,speed,info)) == NULLOBJ)
+  if (( obj = (NspObject *) BuildListFromArgs(NVOID,Ret,nhost,narch,pdtid,name,arch,speed,info)) == NULLOBJ)
     return RET_BUG;
   MoveObj(stack,1,obj);
   return 1;
@@ -444,7 +444,7 @@ int int_pvm_tasks( Stack stack, int rhs, int opt, int lhs)
       NSP_PVM_ERROR(info);
       return 0;
     }
-  if (( obj = (NspObject *) BuildListFromArgs(Ret,tid,ptid,dtid,flag,name,ntask,info)) == NULLOBJ)
+  if (( obj = (NspObject *) BuildListFromArgs(NVOID,Ret,tid,ptid,dtid,flag,name,ntask,info)) == NULLOBJ)
     return RET_BUG;
   MoveObj(stack,1,obj);
   return 1;
