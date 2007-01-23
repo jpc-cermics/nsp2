@@ -106,7 +106,7 @@ extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node
 extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_Info ;
 
 #define WITH_SCALEXP
-/* #define WITH_PREMIA */
+/* #define WITH_PREMIA  */
 
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
@@ -170,12 +170,12 @@ InterfTab Interfaces[]={
   {Scicos_Interf,Scicos_Interf_Info},
   /* 
   {Sound_Interf , Sound_Interf_Info},
-  {Pvm_Interf , Pvm_Interf_Info},
-  */
-  /*
   {kiko_Interf , kiko_Interf_Info},
   {mpz_Interf , mpz_Interf_Info},
   */
+#ifdef WITH_PVM
+  {Pvm_Interf , Pvm_Interf_Info},
+#endif 
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
 #endif

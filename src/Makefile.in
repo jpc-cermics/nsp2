@@ -5,7 +5,7 @@ include ../Makefile.incl
 SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf @MPLUSLIBDIR@ libfft libinteg libapprox lapack \
-	libscicos @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@
+	libscicos @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@
 
 ALLSCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
