@@ -102,9 +102,6 @@
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1
 
-/* matlab mode */
-/* #define MTLB_MODE 0 */
-
 /* storing and retrieving an int in a pointer */
 
 #if defined(POINTER_INT)
@@ -182,6 +179,9 @@ typedef int integer;
 #   define  LARGEST_LONG_INTEGER    LONG_MAX
 
 
-/* #define WITH_SYMB_TABLE */
+#define WITH_SYMB_TABLE 1
+/* matlab mode */
+#define MTLB_MODE 1
+
 
 #endif /* MACHINE_H  */
