@@ -75,6 +75,8 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
   strncpy(old,dir,FSIZE);
   update_exec_dir(buf1,dir,buf,FSIZE);
   Sciprintf("exec(%s)->[%s] dir=%s\n",fname,buf,dir);
+#else 
+  strcpy(buf,buf1);
 #endif
 
   if ( lhs == 2 ||  E != NULL )
