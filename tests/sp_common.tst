@@ -362,7 +362,7 @@ if or(A1<>A*4) then pause;end
 
 Sp1=Sp*m2sp([]);
 A1=sp2m(Sp1);
-if or(A1<>A.*[]) then pause;end
+if or(A1<>zeros(0,0)) then pause;end
 
 // op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
 // NspMatrix *nsp_spcolmatrix_op_scal
