@@ -1151,6 +1151,29 @@ static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+
+/*
+ * map function 
+ */
+
+static int int_cells_map(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPList *PL;
+  NspList *args = NULLLIST ; 
+  NspCells *L;
+  CheckRhs(2,3);
+  CheckLhs(-1,1);
+  if ((L = GetCells(stack,1)) == NULLCELLS ) return RET_BUG;
+  if ((PL = GetNspPList(stack,2)) == NULLP_PLIST ) return RET_BUG;
+  if ( rhs == 3 ) 
+    {
+      if ((args = GetList(stack,3)) == NULLLIST ) return RET_BUG;
+    }
+  if ( ( L=nsp_cells_map(L,PL,args)) == NULLCELLS ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) L);
+  return 1;      
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -1201,6 +1224,7 @@ static OpTab Cells_func[]={
   {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
   {"setrowscols_ce", int_matint_setrowscols}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {"unique_ce" ,  int_cells_unique },
+  {"map_ce", int_cells_map},
   {(char *) 0, NULL}
 };
 

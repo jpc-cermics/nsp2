@@ -91,6 +91,8 @@ extern NspCells *nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err);
 extern int nsp_cells_set_element(NspCells *A,int index, NspObject *B);
 extern NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ);
 extern Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind);
+extern NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)  ;
+
 
 #define NULLCELLS (NspCells *) NULL
 

@@ -1120,3 +1120,48 @@ Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind)
   return found;
 }
 
+
+/**
+ *nsp_cells_map:
+ * @C: a #NspCells
+ * @PL: a #NspPList
+ * @args: a #NspList 
+ * 
+ * maps function @PL to each element of cell @L passing extra 
+ * arguments to the function through @args.
+ * 
+ * Return value: the new #NspCells obtained after mapping or %NULLCELLS
+ **/
+
+NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)  
+{
+  NspCells *Res = nsp_cells_create(NVOID, C->m,C->n);
+  NspObject *O[2];
+  int first = -1,i;
+  O[1]=NULLOBJ;
+  for ( i = 0 ; i < C->mn ; i++ )
+    {
+      O[0] = C->objs[i];
+      if ( O[0] != NULLOBJ ) 
+	{
+	  /* the object is copied without name,it will be freed by 
+	   * nsp_eval_macro_code
+	   */
+	  if ((O[0] =nsp_object_copy(O[0]))== NULLOBJ) return NULLCELLS;
+	}
+      else 
+	{
+	  if ((O[0]=(NspObject *) nsp_matrix_create(NVOID,'r',0,0))== NULLOBJ) return NULLCELLS;
+	}
+      /* stack position to use is computed on the first call and set 
+       * for next calls in first 
+       */
+      if ((O[0] =nsp_eval_macro_code(PL,O,args,&first))== NULLOBJ) return NULLCELLS;
+      if ( nsp_object_set_name(O[0],"ce") == FAIL ) return NULLCELLS;
+      Res->objs[i]= O[0];
+    }
+  return Res;
+} 
+
+
+
