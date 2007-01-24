@@ -34,7 +34,7 @@ static void test2DD(BCG *Xgc)
 	style[i]= -NCURVES2D+i;
       n1=NCURVES2D;n2=XN2D;
       aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-      Xgc->graphic_engine->xpause(sec);
+      Xgc->graphic_engine->xpause(sec,FALSE);
       Wrect[0]=Wrect[1]=Wrect[2]=Wrect[3]=0.5;
       for ( i=0 ; i < 4 ; i++)
 	{

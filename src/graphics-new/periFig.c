@@ -157,7 +157,7 @@ static void clearwindow(BCG *Xgc) {}
 
 /* To generate a pause : Empty here **/
 
-static void xpause(int sec_time) {}
+static void xpause(int sec_time,int events) {}
 
 static void force_redraw(BCG *Xgc) {};
 

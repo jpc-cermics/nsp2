@@ -2948,17 +2948,18 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*-----------------------------------------------------------
- *  xpause(microsecs)
+ *  xpause(microsecs,events=TRUE or FALSE)
  *-----------------------------------------------------------*/
 
 int int_xpause(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int sec=0;
-  CheckRhs(-1,1);
-  if (rhs == 1){ if (GetScalarInt(stack,1,&sec) == FAIL) return RET_BUG;}
+  int sec=0,flag=FALSE;
+  CheckRhs(-1,2);
+  if (rhs >= 1){ if (GetScalarInt(stack,1,&sec) == FAIL) return RET_BUG;}
+  if (rhs >= 2){ if (GetScalarBool(stack,2,&flag) == FAIL) return RET_BUG;}
   Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->xpause(sec);
+  Xgc->graphic_engine->xpause(sec,flag);
   return 0;
 } 
 

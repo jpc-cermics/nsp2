@@ -25,6 +25,8 @@
  * Changes the graphic window popupname 
  */
 
+static void nsp_event_pause(int number) ;
+
 /* FIXME */
 extern char * nsp_string_to_utf8( char *str);
 
@@ -368,25 +370,35 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
 }
 
 
-/* generates a pause, in seconds */
+/* generates a pause, in micro-seconds */
 
 #if defined(__STDC__) || defined(_IBMR2)
 #include <unistd.h>  /* for usleep */
 #endif 
 
-static void xpause(int sec_time)
-{ 
-  unsigned useconds = (unsigned) sec_time;
-  if (useconds != 0)  
+
 #ifdef HAVE_USLEEP
-    { usleep(useconds); }
+#define USLEEP(x) usleep(x)
 #else
 #ifdef HAVE_SLEEP
-  {  sleep(useconds/1000000); }
+#define USLEEP(x) sleep(x/1000000)
 #else
-  return;
+#define USLEEP(x) x
 #endif
 #endif
+
+static void xpause(int sec_time,int events)
+{ 
+  unsigned useconds = (unsigned) sec_time;
+  if ( events == TRUE ) 
+    {
+      /* nsp_event_pause need milliseconds */
+      nsp_event_pause(useconds/1000) ;
+    }
+  else 
+    {
+      USLEEP(useconds);
+    }
 }
 
 /* set a flag for enabling or diabling 
@@ -554,3 +566,37 @@ static void scig_deconnect_handlers(BCG *winxgc)
 					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
 }
 
+
+
+
+
+/**
+ * nsp_event_pause:
+ * @number: 
+ * 
+ * make a pause of @number milliseconds and if flag is true 
+ * gtk_events are activated during the pause. 
+ *
+ **/
+
+static gint timeout_pause (int *stop)
+{
+  *stop = TRUE;
+  gtk_main_quit();
+  return TRUE;
+}
+
+static void nsp_event_pause(int number) 
+{
+  int stop = FALSE;
+  guint tid= gtk_timeout_add(number,(GtkFunction) timeout_pause, &stop);
+  while (1) 
+    {
+      gtk_main();
+      if ( stop == TRUE)
+	{
+	  g_source_remove (tid);
+	  break;
+	}
+    }
+}
