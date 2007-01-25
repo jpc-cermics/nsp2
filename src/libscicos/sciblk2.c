@@ -8,7 +8,7 @@
 
 #include "nsp/machine.h"
 #include "nsp/object.h"
-
+#include "nsp/interf.h"
 #include "scicos/scicos.h"
 
 /* XXXXX */
@@ -539,6 +539,10 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   return;
  err: 
   if ( H != NULL) nsp_hash_destroy(H);
+  if ( mlhs == RET_ABORT ) 
+    {
+      /* XXXX add a code for abort */
+    }
   set_block_error(-1);
 }
 

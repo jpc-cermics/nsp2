@@ -67,7 +67,7 @@ static double *t0,*tf,scicos_time;
 static int phase;
 int *pointer_xproperty;
 int n_pointer_xproperty;
-static int *block_error;
+static int *block_error=NULL;
 
 /* Jacobian*/
 static int Jacobian_Flag;
@@ -2244,7 +2244,10 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
       (*loc4)(&Scicos->Blocks[kf-1],*flag);
     }
   }
-  if (*flag<0) sciprint("Error in the Debug block \n");
+  if (*flag<0) 
+    {
+      sciprint("Error in the Debug block \n");
+    }
 }
   
 
@@ -2475,7 +2478,7 @@ int get_block_number(void)
 void set_block_error(int err)
 
 {
-  *block_error=err;
+  if ( block_error != NULL)  *block_error=err;
   return;
 }
 
