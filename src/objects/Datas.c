@@ -133,7 +133,7 @@ int nsp_init_frames(int argc, char **argv)
  * 
  * Allocate a new frame for function invocation. The frames are 
  * stored in a linked list. If this linked list is not initialized then 
- * the call to nsp_new_frame() will perform initialization. 
+ * the call to nsp_new_frame() will fail.
  * 
  * Return value: %OK or %FAIL.
  **/
@@ -147,9 +147,19 @@ int nsp_new_frame(void)
   return OK;
 }
 
-/* 
- *
- */
+/**
+ * nsp_new_frame_with_local_vars:
+ * @table: 
+ * 
+ * Allocate a new frame for function invocation. The frames are 
+ * stored in a linked list. If this linked list is not initialized then 
+ * the call to nsp_new_frame() will fail. The frame can contain an 
+ * a table used for local variables and a table for dynamically 
+ * added variables (a sorted list or a hash table, default value is a sorted list).
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_new_frame_with_local_vars(NspCells *table)
 {
@@ -191,7 +201,7 @@ void nsp_frames_info(void)
 }
 
 /**
- *nsp_frame_info:
+ *nsp_frame_info_obsolete:
  * @void: 
  * 
  * Display information on the first frame 
@@ -222,7 +232,7 @@ void nsp_frames_print(void)
 }
 
 /**
- *nsp_frame_print:
+ *nsp_frame_print_obsolete:
  * @void: 
  * 
  * Display first frame content.
@@ -590,7 +600,7 @@ int nsp_declare_global(char *name)
  * insert copies of object contained in the hashtable @H 
  * in the current frame 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_frame_insert_hash_contents(NspHash *H)

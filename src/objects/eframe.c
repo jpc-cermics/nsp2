@@ -559,12 +559,32 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 
 NspHash *nsp_eframe_to_hash(NspFrame *F)
 {
+  int i;
+  NspHash  *Obj;
+  NspObject *Elt;
 #ifdef FRAME_AS_LIST
-  return nsp_hcreate_from_list(NVOID,nsp_list_length(F->vars),F->vars);
+  Obj= nsp_hcreate_from_list(NVOID,nsp_list_length(F->vars),F->vars);
 #else 
-  return nsp_hash_copy(F->vars);
+  Obj= nsp_hash_copy(F->vars);
 #endif
-}
+  if ( Obj == NULLHASH) return Obj;
+  if ( F->table == NULL) return Obj;
+  for ( i = 1 ; i < F->table->mn ; i++) 
+    {
+      Elt= F->table->objs[i];
+      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	{
+	  /* A copy of object is added in the hash table *
+	   * take care of Hobj pointers 
+	   */
+	  HOBJ_GET_OBJECT(Elt,NULLHASH);
+	  if (( Elt =nsp_object_copy_with_name(Elt)) == NULLOBJ )
+	    return NULLHASH;
+	  if (nsp_hash_enter( Obj,Elt) == FAIL) return NULLHASH;
+	}
+    }
+  return Obj;
+} 
 
 /**
  * nsp_eframe_remove_object:
