@@ -1454,6 +1454,8 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
     {
       stack_count--;
       nspg_unblock_threads();
+      /* if FAIL returns the error code in *nret */
+      if ( rep == FAIL) *nret = n;
       return rep;
     }
 }
