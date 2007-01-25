@@ -1500,8 +1500,8 @@ int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObj
  * Returns: the stripped constant name.
  */
 
-static char *
-nsp_constant_strip_prefix(gchar *name, const gchar *strip_prefix)
+static const char *
+nsp_constant_strip_prefix(const gchar *name, const gchar *strip_prefix)
 {
   gint prefix_len;
   guint j;
@@ -1545,7 +1545,7 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
   eclass = G_ENUM_CLASS(g_type_class_ref(enum_type));
   
   for (i = 0; i < eclass->n_values; i++) {
-    gchar *name = eclass->values[i].value_name;
+    const gchar *name = eclass->values[i].value_name;
     gint value = eclass->values[i].value;
     if (strip_prefix != NULL) name= nsp_constant_strip_prefix(name, strip_prefix);
     if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,(double)value))== NULL) return FAIL;
@@ -1585,7 +1585,7 @@ nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_pref
   fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
   
   for (i = 0; i < fclass->n_values; i++) {
-    gchar *name = fclass->values[i].value_name;
+    const gchar *name = fclass->values[i].value_name;
     guint value = fclass->values[i].value;
     if (strip_prefix != NULL) name= nsp_constant_strip_prefix(name, strip_prefix);
     if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,(double)value))== NULL) return FAIL;
