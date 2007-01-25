@@ -2715,8 +2715,34 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
       if ( MaybeObjCopy(&Ob) != NULL ) 
 	{
 	  nsp_object_set_name(Ob,str);
-	  if ( O1 != NULL )  nsp_object_destroy(&O1);
-	  ((NspFrame *) Datas->first->O)->table->objs[position]= Ob;
+
+	  if ( O1 != NULL && IsGlobal(O1) )
+	    {
+	      if ( nsp_global_frame_replace_object(Ob) == FAIL) 
+		{
+		  if ( Ob == stack.val->S[first] ) 
+		    {
+		      /* the object was unnamed and we have set its name here */
+		      nsp_object_destroy(&stack.val->S[first]);
+		      stack.val->S[first]=NULLOBJ;
+		    }
+		  else 
+		    {
+		      /* if a copy was made we need to clean */
+		      nsp_object_destroy(&Ob);
+		    }
+		  return RET_BUG;
+		}
+	    }
+	  else 
+	    {
+	      if ( O1 != NULL )  nsp_object_destroy(&O1);
+	      ((NspFrame *) Datas->first->O)->table->objs[position]= Ob;
+	    }
+	  /* note that the object which as at position first 
+	   * need not be destroyed since it is a named object 
+	   * or it was a void object which was renamed in Ob 
+	   **/
 	  stack.val->S[first]=Ob;
 	  return 1;
 	}
