@@ -1386,15 +1386,17 @@ nspg_closure_marshal(GClosure *closure,
 
 /**
  * nsp_gtk_eval_function:
- * @func: 
- * @args: 
- * @n_args: 
- * @ret: 
- * @nret: 
+ * @func: code of function to be evaluated 
+ * @args: array containing the input arguments 
+ * @n_args: number of input arguments 
+ * @ret:  array to be filled with returned arguments 
+ * @nret: on entry, the number of expected returned arguments, 
+ *   on return the number of returned values (always less or equal to @nret)
+ *   or a negative number (error code) in case of error 
  * 
  * evaluates the macro @func using the gtk stack.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
