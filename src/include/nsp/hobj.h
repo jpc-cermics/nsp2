@@ -56,17 +56,17 @@ int IsHopt        (NspObject *O);
 NspHobj  *nsp_hobj_object(NspObject *O);
 int IsGlobal      (NspObject *O);
 
-#define HOBJ_GET_OBJECT(Obj,rep)						\
+#define HOBJ_GET_OBJECT(Obj,rep)					\
   if (check_cast (Obj, nsp_type_hobj_id) == TRUE)			\
     {									\
-      if (((NspHobj *)Obj)->htype != 'g') Obj = ((NspHobj *) Obj)->O;     \
+      if (((NspHobj *)Obj)->htype != 'g') Obj = ((NspHobj *) Obj)->O;	\
       else {								\
 	if ((Obj= nsp_global_frame_search_object(NSP_OBJECT(Obj)->name)) == NULLOBJ) \
 	  {								\
-	    Scierror("Pointer to a global non existant variable\n"); \
-	    return rep;					     \
-	  } \
-      } \
+	    Scierror("Pointer to a global non existant variable\n");	\
+	    return rep;							\
+	  }								\
+      }									\
     } 
 
 #endif /* NSP_INC_HOBJ */
