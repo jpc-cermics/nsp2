@@ -414,10 +414,10 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,2);
   /* the family */
   if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
-  m--; /* C mode */
-  /* a model */
+  m--; /* C mode indice */
   if ( rhs == 2 )
     {
+      /* a model id is given too  */
       if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
       n--; /* C-mode */
       while (models[nmodels] != NULL) nmodels++;
@@ -428,6 +428,7 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
         }
       poo=models[n];
     }
+  /* count available families */
   while ( families[nf] != NULL) nf++;
   if ( m < 0 || m > nf -1 ) 
     {
@@ -444,39 +445,31 @@ int int_premia_get_family(Stack stack, int rhs, int opt, int lhs)
     {
       int count=0;
       /* if n is given we check if the family is compatible with 
-       * the model. This is done by checking the first 
+       * the model. 
        */
-      /* for ( i = 0; i < fsize ; i++) 
-       *   {
-       *     if ( MatchingPricing(0,poo,loc[i],pricings) == 0) count++;
-       *   }
-       * if ( count == fsize ) 
-       *   {
-       *     /\* Sciprintf("All the option of family %d matches with model %d\n",m+1,n+1);*\/
-       *   }
-       * fsize = count; */
       for ( i=0 ; i < fsize ; i++) 
         {
           if (Premia_match_model_option(poo, loc[i], pricings)==0)
             {
-              count++;
-              if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
+              if ((S->S[count] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
                 return RET_BUG;
+              count++;
             }
         }
-      if (count<fsize)
+      if (count < fsize)
         {
           nsp_smatrix_resize(S, count, 1);
         }
-      
     }
   else
-    for ( i=0 ; i < fsize ; i++) 
-      {
-        if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
-          return RET_BUG;
-      }
-  
+    {
+      /* fill the returned value with all the family options */
+      for ( i=0 ; i < fsize ; i++) 
+	{
+	  if ((S->S[ i] =nsp_string_copy(loc[i]->Name)) == (nsp_string) 0) 
+	    return RET_BUG;
+	}
+    }
   MoveObj(stack,1,(NspObject  *) S);
   return 1;
 }
