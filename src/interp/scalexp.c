@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,9 +16,8 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * XXXXX finir le save/load equal etc.. 
- * bien vérifier les dépendances sur le byte_comp et le check 
- * est-ce que check peut vérifier que les variables sont bien bindées.
+ * XXX: bien vérifier les dépendances sur le byte_comp et le check 
+ *      est-ce que check peut vérifier que les variables sont bien bindées.
  *--------------------------------------------------------------------------*/
 
 #include <nsp/object.h>
@@ -218,15 +217,14 @@ static int nsp_scalexp_xdr_save(XDR *xdrs, NspScalExp *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  /* 
-  PList code;
-  NspSMatrix *expr;
-  NspSMatrix *vars;
-  NspSMatrix *extra_vars;
-  NspMatrix *bcode;
-  NspMatrix *values;
-  */
-  return FAIL;
+  /* just save expr and extra_vars */
+  if ( NSP_OBJECT(M->expr)->type->save(xdrs,M->expr)== FAIL) return FAIL;
+  if ( nsp_xdr_save_c(xdrs,(M->extra_vars != NULL) ? 'Y': 'N') == FAIL) return FAIL;
+  if ( M->extra_vars != NULL ) 
+    {
+      if (NSP_OBJECT(M->extra_vars)->type->save(xdrs,M->extra_vars)== FAIL) return FAIL;
+    }
+  return OK;
 }
 
 /*
@@ -235,11 +233,26 @@ static int nsp_scalexp_xdr_save(XDR *xdrs, NspScalExp *M)
 
 static NspScalExp  *nsp_scalexp_xdr_load(XDR *xdrs)
 {
-  NspScalExp *M = NULL;
+  NspScalExp *H = NULL;
+  NspSMatrix *extra_vars=NULL;
+  NspSMatrix *expr=NULL; 
+  char c;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSCALEXP;
-  if ((M  = scalexp_create_void(name,(NspTypeBase *) nsp_type_scalexp))== NULLSCALEXP) return M;
-  return NULLSCALEXP;
+  if ((expr=(NspSMatrix *) nsp_object_xdr_load(xdrs))== NULLSMAT) return NULLSCALEXP;
+  nsp_xdr_load_c(xdrs,&c);
+  if ( c == 'Y' )
+    {
+      if ((extra_vars=(NspSMatrix *) nsp_object_xdr_load(xdrs))== NULLSMAT) return NULLSCALEXP;
+    }
+  if ((H  = scalexp_create_void(name,(NspTypeBase *) nsp_type_scalexp))== NULLSCALEXP) 
+    return H;
+  H->expr = expr;
+  H->extra_vars = extra_vars;
+  if ((H->code = nsp_parse_expr(expr))== NULL) return NULLSCALEXP;
+  if ( nsp_expr_check(H->code) == FAIL) return NULLSCALEXP;
+  if ((H->vars =nsp_expr_get_vars(H->code,H->extra_vars))==NULL) return NULLSCALEXP;
+  return H;
 }
 
 /*
@@ -250,7 +263,12 @@ void nsp_scalexp_destroy(NspScalExp *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
   nsp_smatrix_destroy(H->expr);
+  nsp_smatrix_destroy(H->vars);
   nsp_plist_destroy(&H->code);
+  /* the following fields can be null */
+  nsp_matrix_destroy(H->bcode);
+  nsp_matrix_destroy(H->values);
+  nsp_smatrix_destroy(H->extra_vars);
   FREE(H);
 }
 
