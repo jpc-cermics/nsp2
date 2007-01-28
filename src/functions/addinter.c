@@ -44,16 +44,21 @@ int LastInterf=0;
 
 static void SciInterInit (void);
 
-/*
- * if shared_lib is non null 
- * tries to link shared_lib and try to get 
+/**
+ * nsp_dynamic_interface:
+ * @shared_lib: 
+ * @interface: 
+ * @ilib: 
+ * 
+ * if @shared_lib is non null 
+ * tries to link @shared_lib and try to get 
  * interface symbols related to interface in the 
  * shared library. 
- * if shared_lib is NULL then ilib gives an already 
+ * if @shared_lib is NULL then ilib gives an already 
  * linked shared library in which to search symbols 
- *
- */
-
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int ilib)
 {
@@ -188,10 +193,14 @@ static void SciInterInit(void)
     }
 }
 
-/*
+/**
+ * RemoveInterf:
+ * @Nshared: 
+ * 
  * remove entries associated to shared lib Nshared 
  * when It is an interface 
- */ 
+ * 
+ **/
 
 void RemoveInterf(int Nshared)
 {

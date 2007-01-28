@@ -26,6 +26,8 @@
 #include <ctype.h> /* isxxxx */
 
 #include "nsp/interf.h"
+#include "nsp/stack.h"
+#include "../system/files.h"
 #include "callfunc.h"
 #include "linking.h"
 #include "addinter.h"
@@ -34,12 +36,21 @@ static void link_bug (int i);
 
 static int foo (int *ix,float *fx,double *dx,char *S);
 
-/*
+/**
+ * int_link:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * interface for link function 
- */
+ * 
+ * Return value: 
+ **/
 
-int int_link(Stack stack, int rhs, int opt, int lhs)
+static int int_link(Stack stack, int rhs, int opt, int lhs)
 {
+  char shared_lib_expanded[FSIZE+1];
   char *Str,**enames=NULL,*shared_lib=NULL;
   NspSMatrix *Enames;  
   NspObject*OHMat;
@@ -79,6 +90,8 @@ int int_link(Stack stack, int rhs, int opt, int lhs)
     { 
       Str = "c";
     }
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
   SciDynLoad(shared_lib,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
     {
@@ -108,7 +121,7 @@ static void  link_bug(int i)
  * interface for ulink function 
  */
 
-int int_ulink(Stack stack, int rhs, int opt, int lhs)
+static int int_ulink(Stack stack, int rhs, int opt, int lhs)
 {
   int ilib;
   CheckRhs(1,1);
@@ -123,7 +136,7 @@ int int_ulink(Stack stack, int rhs, int opt, int lhs)
  *    [%t|%false,number]=c_link(name [,ilib]) 
  */
 
-int int_c_link(Stack stack, int rhs, int opt, int lhs)
+static int int_c_link(Stack stack, int rhs, int opt, int lhs)
 {
   char *name;
   NspObject *O1,*O2=NULL;
@@ -151,9 +164,9 @@ int int_c_link(Stack stack, int rhs, int opt, int lhs)
  * addinter function 
  */
 
-
-int int_addinter(Stack stack, int rhs, int opt, int lhs)
+static int int_addinter(Stack stack, int rhs, int opt, int lhs)
 {
+  char file_expanded[FSIZE+1];
   int ilib=0;
   char *Str,*file=NULL;
   CheckRhs(2,2);
@@ -161,14 +174,18 @@ int int_addinter(Stack stack, int rhs, int opt, int lhs)
   if ( IsMatObj(stack,1)) 
     {
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
+      if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
+      ilib = nsp_dynamic_interface(NULL,Str,ilib);
     }
   else
     {
       if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
+      /* expand keys in path name result in buf */
+      nsp_expand_file_with_exec_dir(&stack,file,file_expanded);
+      if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
+      ilib = nsp_dynamic_interface(file_expanded,Str,ilib);
     }
-  if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
 
-  ilib = nsp_dynamic_interface(file,Str,ilib);
   if ( ilib < 0 ) 
     {
       link_bug(ilib);
@@ -187,7 +204,7 @@ int int_addinter(Stack stack, int rhs, int opt, int lhs)
 
 #define MAXPAR 31 
 
-int int_call(Stack stack, int rhs, int opt, int lhs)
+static int int_call(Stack stack, int rhs, int opt, int lhs)
 {
   function *f;
   /* posi[i]=j if i-th argument of function fname 
@@ -215,8 +232,8 @@ int int_call(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  /* checking input arguments arg,position,type **/
-  /************************************************/
+  /* checking input arguments arg,position,type 
+   */
   i=2;
   while ( i <= rhs )
     {
@@ -276,8 +293,9 @@ int int_call(Stack stack, int rhs, int opt, int lhs)
       posi[inpos] = i;
       i += 3;
     }
-  /*  Checking output arguments                 **/  
-  /************************************************/
+  /*  Checking output arguments                 
+   */
+
   outarg = 0; /* counts output arguments **/
   while ( i <= rhs )
     {

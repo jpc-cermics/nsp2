@@ -279,7 +279,7 @@ void  ShowDynLinks(void)
  * names : shared library number
  */
 
-NspHash *nsp_get_dlsymbols()
+NspHash *nsp_get_dlsymbols(void)
 {
   int i;
   NspHash *H;
