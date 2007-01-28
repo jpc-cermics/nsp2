@@ -19,6 +19,31 @@ static int CopyRenameOneFile( char *source, char *dest, int copyFlag,int force);
 static char *FileBasename( char *path, nsp_tcldstring *bufferPtr);
 static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 
+
+NspSMatrix *nsp_absolute_file_name(char *fname)
+{
+  NspSMatrix *S;
+  nsp_tcldstring buffer;
+  int pargc=2;
+  char *pargv[] ={NULL, fname};
+  if (( pargv[0] = nsp_get_cwd() ) == NULL) return NULL;
+  if ( nsp_get_path_type(fname)== TCL_PATH_ABSOLUTE )
+    {
+      /* fname is already an absolute path_name */
+      S=nsp_smatrix_create(NVOID,1,1,fname,1);
+    }
+  else 
+    {
+      nsp_tcldstring_init (&buffer);
+      nsp_join_path (pargc, pargv, &buffer);
+      S = nsp_smatrix_create(NVOID,1,1,nsp_tcldstring_value(&buffer),1);
+      nsp_tcldstring_set_length (&buffer, 0);
+      nsp_tcldstring_free (&buffer);
+    }
+  return S;
+}
+
+
 /**
  * nsp_file_rename_cmd:
  * @argc: Number of arguments;
@@ -671,6 +696,47 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
       nsp_tcldstring_free (&buffer);
       nsp_string_destroy(&dirname);
       nsp_string_destroy(&tail);
+    }
+}
+
+/**
+ * update_exec_dir_from_dir:
+ * @dirname: a directory name given on entry 
+ * @exec_dir: the current value of exec directory in a string buffer of size @length.
+ * @length:  length of @exec_dir and @filename_exec
+ * 
+ * This function is used to update the @exec_dir value using the value of @dirname.
+ * If @dirname is a relative filename @exec_dir is updated to @execdir/dirname 
+ * 
+ **/
+
+void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length)
+{
+  if ( dirname == NULL) return ;
+  if ( exec_dir == NULL ) return ;
+  if ( exec_dir[0] == '\0' || nsp_get_path_type(dirname)== TCL_PATH_ABSOLUTE)
+    {
+      /* if exec_dir is not set or the path in filename is absolute */
+      if ( strcmp(dirname,".") != 0) 
+	{
+	  strncpy(exec_dir,dirname,length);
+	}
+      return;
+    }
+  else
+    {
+      /* set exec_dir = exec_dir/dirname */
+      nsp_tcldstring buffer;
+      int pargc=2;
+      char *pargv[] ={ exec_dir, dirname};
+      nsp_tcldstring_init (&buffer);
+      if ( strcmp(dirname,".") != 0)
+	{
+	  nsp_join_path (pargc, pargv, &buffer);
+	  strncpy(exec_dir,nsp_tcldstring_value (&buffer),Min(buffer.length,length));
+	  nsp_tcldstring_set_length (&buffer, 0);
+	}
+      nsp_tcldstring_free (&buffer);
     }
 }
 

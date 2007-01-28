@@ -25,7 +25,8 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
-
+#include "nsp/stack.h" 
+#include "../../files.h"
 /*
  * Prototypes for local procedures defined in this file:
  */
@@ -51,21 +52,44 @@ char *tclExecutableName = NULL;
 
 int int_syscd(Stack stack,int rhs,int opt,int lhs) 
 {
+  char old[FSIZE+1];
+  char str_expanded[FSIZE+1];
   int result ;
   nsp_tcldstring buffer;
   char *dirName,*str;
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+  /* change current exec dir using str 
+   */
+  nsp_expand_dir_and_update_exec_dir(&stack,old,str,str_expanded);
+  /* since expansion has been performed what follows 
+   * is certainly not that important 
+   */
   nsp_tcldstring_init(&buffer);
-  dirName = nsp_translate_file_name( str, &buffer);
-  if (dirName == NULL)  return RET_BUG ;
+  dirName = nsp_translate_file_name( str_expanded, &buffer);
+  if (dirName == NULL)  
+    {
+      nsp_reset_exec_dir(&stack,old);
+      return RET_BUG;
+    }
   result = nsp_chdir(dirName);
   nsp_tcldstring_free(&buffer);
   if (result ==  TCL_ERROR) 
-    return RET_BUG;
+    {
+      nsp_reset_exec_dir(&stack,old);
+      return RET_BUG;
+    }
   else 
-    return 0;
+    {
+      /* we must be sure that current exec dir is absolute */
+      if (nsp_get_path_type(str_expanded) != TCL_PATH_ABSOLUTE) 
+	{
+	  strncpy(stack.val->current_exec_dir,nsp_get_cwd(),FSIZE);
+	}
+      /* we set current exec dir to an absolute value */
+      return 0;
+    }
 }
 
 /*
@@ -830,13 +854,38 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
 {
   NspSMatrix *S;
   char *dirName;
-  CheckRhs(0,0)
-    CheckLhs(1,1);
+  CheckRhs(0,0);
+  CheckLhs(1,1);
   if ((dirName = nsp_get_cwd() ) == NULL) return RET_BUG;
   if (( S =nsp_smatrix_create(NVOID,1,1,dirName,1) ) == NULLSMAT ) 
     return RET_BUG;
   NthObj(1)= (NspObject*) S;
   NSP_OBJECT(S)->ret_pos = 1;
+  return 1;
+}
+
+
+/*
+ *
+ */
+
+int int_get_current_exec_dir(Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S;
+  int absolute=FALSE;
+  nsp_option opts[] ={
+    { "absolute",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  }; 
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  if ( get_optional_args(stack,rhs,opt,opts,&absolute) == FAIL) return RET_BUG;
+  if ( absolute == FALSE) 
+    S=nsp_smatrix_create(NVOID,1,1,stack.val->current_exec_dir,1);
+  else
+    S= nsp_absolute_file_name(stack.val->current_exec_dir);
+  if ( S == NULLSMAT ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
 

@@ -30,6 +30,8 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "nsp/stack.h"
+#include "../system/files.h" /* FSIZE */
 
 /* FIXME */
 extern int nsp_fscanf_matrix(NspFile *F,char *fmt,NspMatrix **M,int flag,NspSMatrix **S); 
@@ -727,6 +729,7 @@ static NspMethods *nsp_file_get_methods(void) { return nsp_file_methods;};
 
 static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   int xdr= FALSE,swap = TRUE;
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "mode",string,NULLOBJ,-1},
@@ -737,7 +740,9 @@ static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
   char *Fname, *mode = NULL, *def_mode = "rb";
   if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&mode,&xdr,&swap) == FAIL) return RET_BUG;
   if ( mode == NULL) mode = def_mode; 
-  if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   MoveObj(stack,1,(NspObject *) F);
   return 1;
 }
@@ -748,13 +753,15 @@ static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
 
 static int int_file_putfile(Stack stack, int rhs, int opt, int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   NspSMatrix *S;
   int xdr= FALSE,swap = TRUE,rep;
   int_types T[] = {string,smat, t_end} ;
   NspFile *F;
   char *Fname, *mode = "wb";
   if ( GetArgs(stack,rhs,opt,T,&Fname,&S) == FAIL) return RET_BUG;
-  if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   rep= nsp_fprintf_smatrix(F,S); 
   if (nsp_file_close(F) == FAIL || rep == FAIL ) return RET_BUG;
   return 0;
@@ -765,13 +772,15 @@ static int int_file_putfile(Stack stack, int rhs, int opt, int lhs)
 
 static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   NspSMatrix *S = NULL;
   int xdr= FALSE,swap = TRUE;
   int_types T[] = {string, t_end} ;
   NspFile *F;
   char *Fname, *mode = "rb";
   if ( GetArgs(stack,rhs,opt,T,&Fname) == FAIL) return RET_BUG;
-  if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   if ( nsp_fscanf_smatrix(F,&S) == FAIL) 
     {
       nsp_file_close(F);
@@ -788,6 +797,7 @@ static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
 
 static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   NspMatrix *M;
   NspSMatrix *S = NULL;
   char *format=NULL;
@@ -798,7 +808,8 @@ static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "format",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&format) == FAIL) return RET_BUG;
-  if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   if ( nsp_fscanf_matrix(F,format,&M,(lhs==2),&S) == FAIL) 
     {
       nsp_file_close(F);

@@ -28,6 +28,7 @@
 #include "../system/files.h"
 #include "nsp/datas.h"
 #include "nsp/parse.h"
+#include "nsp/stack.h"
 #include "Eval.h"
 
 static function  int_parseevalfile;
@@ -38,6 +39,109 @@ static function  int_execf;
 static function  int_lasterror;
 static function  int_error;
 
+
+void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
+void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
+
+/**
+ * nsp_expand_file_and_update_exec_dir:
+ * @stack: 
+ * @old:  a pointer to a string of size %FSIZE+1 used to store current exec directory 
+ * @filename: filename to be used to change the default exec directory 
+ * @filename_exec: expanded version of filename using current exec directory 
+ * 
+ * expand @filename in @filename_exec using macros and current exec directory. 
+ * The current exec directory is also updated using the dirname of the expanded 
+ * filename.
+ * 
+ **/
+
+void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,char *filename_exec)
+{
+#ifdef UPDATE_EXEC_DIR
+  char buf1[FSIZE+1];
+  /* expand filename in buf1 */
+  nsp_path_expand(filename,buf1,FSIZE);
+  /* protect current_exec_dir in old */
+  strncpy(old,stack->val->current_exec_dir,FSIZE);
+  /* update current_exec_dir */
+  update_exec_dir(buf1,stack->val->current_exec_dir,filename_exec,FSIZE);
+  /* Sciprintf("exec(%s)->[%s] dir=%s\n",filename,filename_exec,stack->val->current_exec_dir); */
+#else 
+  nsp_path_expand(filename,filename_exec,FSIZE);
+#endif
+}
+ 
+/**
+ * nsp_expand_dir_and_update_exec_dir:
+ * @stack: 
+ * @old:  a pointer to a string of size %FSIZE+1 used to store current exec directory 
+ * @filename: filename to be used to change the default exec directory 
+ * @filename_exec: expanded version of filename using current exec directory 
+ * 
+ * expand @filename in @filename_exec using macros and current exec directory. 
+ * The current exec directory is also updated using the dirname of the expanded 
+ * filename.
+ * 
+ **/
+
+void nsp_expand_dir_and_update_exec_dir(Stack *stack,char *old,char *dirname,char *dirname_exec)
+{
+#ifdef UPDATE_EXEC_DIR
+  char buf1[FSIZE+1];
+  /* expand dirname in buf1 */
+  nsp_path_expand(dirname,buf1,FSIZE);
+  /* protect current_exec_dir in old */
+  strncpy(old,stack->val->current_exec_dir,FSIZE);
+  /* update current_exec_dir */
+  update_exec_dir_from_dir(buf1,stack->val->current_exec_dir,FSIZE);
+  strncpy(dirname_exec,stack->val->current_exec_dir,FSIZE);
+#else 
+  nsp_path_expand(dirname,dirname_exec,FSIZE);
+#endif
+}
+ 
+
+/**
+ * nsp_expand_file_with_exec_dir:
+ * @stack: 
+ * @filename: filename to be used to change the default exec directory 
+ * @filename_exec: expanded version of filename using current exec directory 
+ * 
+ * expand @filename in @filename_exec using macros and current exec directory.
+ *
+ **/
+
+void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *filename_exec)
+{
+#ifdef UPDATE_EXEC_DIR
+  char buf1[FSIZE+1], old[FSIZE+1];
+  /* expand filename in buf1 */
+  nsp_path_expand(filename,buf1,FSIZE);
+  strncpy(old,stack->val->current_exec_dir,FSIZE);
+  /* update current_exec_dir */
+  update_exec_dir(buf1,old,filename_exec,FSIZE);
+  /* Sciprintf("exec(%s)->[%s] dir=%s\n",filename,filename_exec,stack->val->current_exec_dir); */
+#else 
+  nsp_path_expand(filename,filename_exec,FSIZE);
+#endif
+}
+
+/**
+ * nsp_reset_exec_dir:
+ * @stack: 
+ * @old: a pointer to a string of size %FSIZE+1 containing a directory name.
+ * 
+ * reset the default exec directory using @old a pointer to a string of size %FSIZE+1.
+ **/
+
+void nsp_reset_exec_dir(Stack *stack,char *old)
+{
+#ifdef UPDATE_EXEC_DIR
+  strncpy(stack->val->current_exec_dir,old,FSIZE);
+#endif
+}
+
 /*
  * exec(...)
  * Interface to use parse eval functions at Scilab level
@@ -45,20 +149,16 @@ static function  int_error;
  * [ok,H]=exec(...)
  */
 
-void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
-
-
 static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef UPDATE_EXEC_DIR
-  static char dir[FSIZE+1]={0}; /* to be pushed in stack */
   char old[FSIZE+1];
 #endif
-  char buf1[FSIZE+1],buf[FSIZE+1];
+  char fname_expanded[FSIZE+1];
   NspObject *Ob;
   NspHash *H=NULL,*E=NULL;
   char *fname= NULL;
-  int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;
+  int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE,ret=RET_BUG;
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
 		      { "echo",s_bool,NULLOBJ,-1},
@@ -70,22 +170,17 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
     return int_execf(stack,rhs,opt,lhs);
   if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
-  nsp_path_expand(fname,buf1,FSIZE);
-#ifdef UPDATE_EXEC_DIR
-  strncpy(old,dir,FSIZE);
-  update_exec_dir(buf1,dir,buf,FSIZE);
-  Sciprintf("exec(%s)->[%s] dir=%s\n",fname,buf,dir);
-#else 
-  strcpy(buf,buf1);
-#endif
-
+  /* update the current exec dir in stack, old value is returned in old 
+   * fname_expanded contains the file name after expansion using current_exec_dir
+   */
+  nsp_expand_file_and_update_exec_dir(&stack,old,fname,fname_expanded);
   if ( lhs == 2 ||  E != NULL )
     {
       /* evaluate the string in a new frame and returns the 
        * frame as a hash table : take care that frame must be deleted 
        * at the end. 
        */
-      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      if ( nsp_new_frame() == FAIL) goto err;
       /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
@@ -93,34 +188,33 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 	    {
 	      Scierror("Error: inserting values in environement failed\n");
 	      nsp_frame_delete();
-	      return RET_BUG; 
+	      goto err;
 	    }
 	}
-      rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
     }
   if ( rep < 0 )
     {
-      if ( errcatch == FALSE ) return RET_BUG;
+      if ( errcatch == FALSE ) goto err;
       if ( lhs == 2 ) H = nsp_hcreate(NVOID,1);
     }
-  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
+  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) goto err;
   MoveObj(stack,1,Ob);
   if ( lhs == 2) 
     {
-      if ( H == NULLHASH ) return RET_BUG;
+      if ( H == NULLHASH ) goto err;
       MoveObj(stack,2,NSP_OBJECT(H));
     }
-  /* XXXXX in case of bug this must be done */
-#ifdef UPDATE_EXEC_DIR
-  strncpy(dir,old,FSIZE);
-#endif
-  return Max(1,lhs);
+  ret = Max(1,lhs);
+ err: 
+  nsp_reset_exec_dir(&stack,old);
+  return ret;
 }
 
 /*

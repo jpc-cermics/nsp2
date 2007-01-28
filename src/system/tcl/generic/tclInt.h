@@ -104,7 +104,9 @@ extern int		nsp_do_glob (char *separators, nsp_tcldstring *headPtr,
 extern int		nsp_file_copy_cmd (int argc, char **argv,int force ) ;
 extern int 		nsp_file_delete_cmd (int argc, char **argv,int force );
 extern int		nsp_file_make_dirs_cmd ( int argc, char **argv) ;
-extern int		nsp_file_rename_cmd ( int argc, char **argv,int force) ;
+extern int		nsp_file_rename_cmd ( int argc, char **argv,int force);
+extern NspSMatrix *     nsp_absolute_file_name( char *fname);
+
 extern void		nsp_finalize_environment (void);
 
 extern char *		nsp_get_cwd (void);
@@ -132,6 +134,9 @@ extern int              nsp_match_files(char *separators,  nsp_tcldstring *dirPt
 extern nsp_string nsp_tail(char *fileName);
 extern nsp_string nsp_dirname (char *fileName);
 extern void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
+extern void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
+
+
 
 /*
  * The macro below is used to modify a "char" value (e.g. by casting

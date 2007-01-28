@@ -27,6 +27,7 @@
 #include <glib.h>
 
 #include "nsp/object.h"
+#include "nsp/stack.h"
 #include "nsp/interf.h"
 #include "../system/files.h" /* FSIZE */
 #include "nsp/plistc.h" /* scigetline */
@@ -1641,7 +1642,7 @@ int int_object_size(Stack stack, int rhs, int opt, int lhs)
  *  each object is saved using its own function 
  */
 
-int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
+static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
 {
   char *fname;
   char buf[FSIZE+1];
@@ -1652,7 +1653,8 @@ int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
   /* expand keys in path name result in buf */
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_expand_file_with_exec_dir(&stack,fname,buf);
+  /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_w(buf)) == NULLSCIFILE) return RET_BUG;
   for ( i = 2 ; i <= rhs ; i++ )
     {
@@ -1677,7 +1679,7 @@ int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
  */
 
 
-int int_object_xdrload(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs) 
 {
   char buf[FSIZE+1];
   char *fname;
@@ -1687,7 +1689,8 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
   /* expand keys in path name result in buf */
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_expand_file_with_exec_dir(&stack,fname,buf);
+  /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
   while (1) 
     {
@@ -1902,8 +1905,8 @@ static OpTab Obj_func[]={
   {"eye", int_object_eye},
   {"ones", int_object_ones},
   {"zeros", int_object_zeros},
-  {"save", int_object_xdrsave},
-  {"load", int_object_xdrload},
+  {"save", int_object_xdr_save},
+  {"load", int_object_xdr_load},
   {"printf",int_object_printf},
   {"sprintf",int_object_sprintf},
   {"fprintf",int_object_fprintf},

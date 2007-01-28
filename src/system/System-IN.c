@@ -46,6 +46,7 @@ extern function int_dirname;
 extern function int_basename;
 extern function int_pwd;
 extern function int_glob;
+extern function int_get_current_exec_dir;
 
 /*
  * Interface for timer 
@@ -400,6 +401,13 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
   return Max(lhs,1);
 }
 
+
+
+
+
+
+
+
 /* XXX */
 int int_spawn_create(Stack stack,int rhs,int opt,int lhs);
 
@@ -425,6 +433,7 @@ static OpTab System_func[]={
   {"system",int_system},
   {"realtime",int_realtime},
   {"realtimeinit",int_realtime_init},
+  {"get_current_exec_dir", int_get_current_exec_dir},
   { "spawn", int_spawn_create},
   {(char *) 0, NULL}
 };

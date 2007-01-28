@@ -22,6 +22,7 @@
 #include "files.h" 
 #include "Sun.h"
 #include "nsp/sciio.h"
+#include "nsp/object.h"
 
 static char tmp_dir[FSIZE+1],buf[FSIZE+1],cur_dir[FSIZE+1];
 
@@ -201,11 +202,11 @@ static int get_env(char *var,char *buf,int buflen,int iflag);
 
 /**
  * nsp_path_expand:
- * @in_name: 
- * @out_name: 
- * @out_size: 
+ * @in_name: file name to be expanded 
+ * @out_name: buffer to store the result 
+ * @out_size: maximum number of characters that can be writen in @out_name.
  * 
- * expand @in_name in @out_name.
+ * expand @in_name in @out_name. 
  **/
 
 void nsp_path_expand(const char *in_name, char *out_name, int out_size)

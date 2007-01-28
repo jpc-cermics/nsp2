@@ -20,6 +20,7 @@
 #include <math.h>
 #include "nsp/stack.h"
 #include "nsp/interf.h"
+#include "../system/files.h" /* FSIZE */
 
 static void error(Stack *stack,char *fmt,...);
 
@@ -54,6 +55,9 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->val->errcatch = FALSE;
   stack->val->pause = TRUE;
   stack->val->symbols = NULL;
+#ifdef UPDATE_EXEC_DIR  
+  stack->val->current_exec_dir = calloc(FSIZE+1,sizeof(char));
+#endif 
 }
 
 Stack SciStack={0,NULL};

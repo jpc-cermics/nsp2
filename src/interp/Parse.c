@@ -572,6 +572,11 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
    * it is dangerous here to try to dealloc non null 
    * object. Thus we just set them to NULL
    */
+#ifdef UPDATE_EXEC_DIR  
+  SciStack.val->current_exec_dir[0]='\0';
+#endif
+  SciStack.fname = NULL;
+  SciStack.file_name = NULL;
   Ob = SciStack.val->S + first; 
   while ( *Ob != NULL ) 
     {

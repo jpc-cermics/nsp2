@@ -119,9 +119,7 @@ FreeExecutableName(clientData)
  *----------------------------------------------------------------------
  */
 
-int
-nsp_chdir(dirName)
-     char *dirName;     		/* Path to new working directory. */
+int nsp_chdir(char *dirName) /* Path to new working directory. */
 {
   if (currentDir != NULL) {
     ckfree(currentDir);
@@ -157,7 +155,7 @@ nsp_chdir(dirName)
  *----------------------------------------------------------------------
  */
 
-char *nsp_get_cwd()
+char *nsp_get_cwd(void)
 {
     char buffer[MAXPATHLEN+1];
     if (currentDir == NULL) {

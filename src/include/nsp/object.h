@@ -197,13 +197,14 @@ struct _Stack_ref {
   int errcatch; 
   int pause; 
   NspObject *symbols; /* table of symbols of functions */
+  char *current_exec_dir ; /* current exec directory */
 } ;
 
 struct _Stack {
   int first;   /* position of first argument to be used */
   const char *fname; /* function currently evaluated */
-  Stack_ref *val;
-  char *file_name ; /* current evaluated file */
+  Stack_ref *val;    /* this part is transmited by ref */
+  char *file_name ; /*  function currently evaluated is in file_name */
 } ;
 
 #define STACK_SIZE 50000
