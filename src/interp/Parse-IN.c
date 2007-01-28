@@ -151,10 +151,7 @@ void nsp_reset_exec_dir(Stack *stack,char *old)
 
 static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 {
-#ifdef UPDATE_EXEC_DIR
-  char old[FSIZE+1];
-#endif
-  char fname_expanded[FSIZE+1];
+  char old[FSIZE+1], fname_expanded[FSIZE+1];
   NspObject *Ob;
   NspHash *H=NULL,*E=NULL;
   char *fname= NULL;
