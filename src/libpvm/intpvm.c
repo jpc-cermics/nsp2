@@ -29,6 +29,7 @@
 #include "../../pvm3/include/pvm3.h"
 #include "nsp/machine.h"
 #include "nsp/interf.h"
+#include "nsp/stack.h"
 #include "../system/files.h" /* FSIZE+1 */
 #include "sci_pvm.h"
 
@@ -56,9 +57,8 @@ static int pvm_error = 0;
  * spawn  new nsp task running a given script 
  */ 
 
-static int nsp_pvm_spawn(char *task,int nowin, char *where,int ntask, int *tids)
+static int nsp_pvm_spawn(char *task_file,int nowin, char *where,int ntask, int *tids)
 {
-  char task_file[FSIZE+1];
   int flag = (where == NULL ) ? PvmTaskDefault :PvmTaskHost ;
   char cmd[256];
   char *arg[4];
@@ -71,14 +71,6 @@ static int nsp_pvm_spawn(char *task,int nowin, char *where,int ntask, int *tids)
   /* I really need scilab here for gtk -version */
   strcpy(cmd, "scilab");
 #endif 
-  if ( task != NULL) 
-    {
-      nsp_path_expand(task,task_file,FSIZE);
-    }
-  else 
-    {
-      task_file[0]='\0';
-    }
   /* always starts with -f since nsp is not run in bg mode in 
    * that case 
    */
@@ -96,6 +88,7 @@ static int nsp_pvm_spawn(char *task,int nowin, char *where,int ntask, int *tids)
 
 int int_pvm_spawn( Stack stack, int rhs, int opt, int lhs)
 {
+  char task_file[FSIZE+1];
   NspMatrix *M;
   char *task=NULL, *where=NULL;
   int ntask=1,res,nowindow=FALSE;
@@ -117,7 +110,11 @@ int int_pvm_spawn( Stack stack, int rhs, int opt, int lhs)
     }
   if ((M=nsp_matrix_create(NVOID,'r',1,ntask))==NULLMAT) return RET_BUG;
   M->convert = 'i';
-  res= nsp_pvm_spawn(task,nowindow,where,M->mn,M->I);
+  if ( task != NULL) 
+    nsp_expand_file_with_exec_dir(&stack,task,task_file);
+  else 
+    task_file[0]='\0';
+  res= nsp_pvm_spawn(task_file,nowindow,where,M->mn,M->I);
   if ( res < 0 ) 
     {
       NSP_PVM_ERROR(res);

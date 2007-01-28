@@ -30,6 +30,7 @@
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
 #include "../objects/frame.h" /* XXX */
+#include "../system/files.h" /* XXX */
 #include "Functions.h" 
 #include "LibsTab.h" 
 #include "Eval.h" 
@@ -793,9 +794,16 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if (nsp_declare_global((char *) L1->O)== FAIL) return RET_BUG;
 	  return 0;
 	  break;
-	case EXEC:
-	  /* 1-ary exec  */
-	  return nsp_parse_eval_file((char *) L1->O,FALSE,FALSE,FALSE,stack.val->pause);
+	case EXEC: 
+	  {
+	    int rep;
+	    char old[FSIZE+1], fname_expanded[FSIZE+1];
+	    nsp_expand_file_and_update_exec_dir(&stack,old,(char *) L1->O,fname_expanded);
+	    /* 1-ary exec  */
+	    rep =nsp_parse_eval_file(fname_expanded,FALSE,FALSE,FALSE,stack.val->pause);
+	    nsp_reset_exec_dir(&stack,old);
+	    return rep;
+	  }
 	  break;
 	case APROPOS:
 	  /* 1-ary apropos */
