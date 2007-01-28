@@ -21,7 +21,8 @@ static int int_savewave(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,realmat,new_opts, t_end} ;
 
   if ( GetArgs(stack,rhs,opt,T,&fname,&A,&opts,&rate) == FAIL) return RET_BUG;
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_expand_with_exec_dir(&stack,fname,buf);
+  /* nsp_path_expand(fname,buf,FSIZE); */
   C2F(savewave)(buf,A->R,&rate,&A->mn,&err);
   if (err >  0) {
     Scierror("%s: internal error \n",NspFname(stack));
@@ -40,7 +41,8 @@ static int int_loadwave(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,3);
   if ((fname = GetString(stack,1)) == NULLSTRING ) return RET_BUG;
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_expand_with_exec_dir(&stack,fname,buf);
+  /* nsp_path_expand(fname,buf,FSIZE); */
   C2F(loadwave)(buf,(double *) 0,&n2,0,&Wi,&err);
   if (err >  0) {
     Scierror("%s: internal error \n",NspFname(stack));
@@ -112,7 +114,8 @@ static int int_playsound(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((fname = GetString(stack,1)) == NULLSTRING ) return RET_BUG;
-  nsp_path_expand(fname,buf,FSIZE);
+  nsp_expand_with_exec_dir(&stack,fname,buf);
+  /* nsp_path_expand(fname,buf,FSIZE); */
   rep = playsound(buf);
   if ( lhs == 1 ) 
     {

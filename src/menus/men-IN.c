@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "nsp/interf.h"
+#include "nsp/stack.h" 
 #include "nsp/menus.h" 
 #include "../system/files.h"
 #include "nsp/graphics/Graphics.h"
@@ -356,12 +357,18 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
   if ( dirname != NULL ) 
     {
       char *dirname_utf8;
-      if ((dirname_utf8= nsp_string_to_utf8(dirname)) == NULL) {
+      /* expand keys in path name result in buf */
+      nsp_expand_file_with_exec_dir(&stack,dirname,dir_expanded);
+
+      if ((dirname_utf8= nsp_string_to_utf8(dir_expanded)) == NULL) {
 	Scierror("Error: cannot convert dir to utf8\n");
 	return RET_BUG;
       }
-      nsp_path_expand(dirname_utf8,dir_expanded,FSIZE);
-      if ( dirname_utf8 != dirname ) g_free (dirname_utf8);
+      if ( dirname_utf8 != dir_expanded ) 
+	{
+	  strncpy(dir_expanded,dirname_utf8,FSIZE);	  
+	  g_free (dirname_utf8);
+	}
       dirname = dir_expanded;
     }
 
