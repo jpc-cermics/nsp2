@@ -79,7 +79,7 @@ function premia_model_values(M)
 endfunction
 
 
-function [family,option]=select_premia_option(pmodel,family=1,option=1)
+function [family,option]=select_premia_option(pmodel,family=0,option=0)
 
   flags = ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),
   window = gtkdialog_new(title= "Option dialog" ,flags = flags,...
@@ -101,7 +101,7 @@ function [family,option]=select_premia_option(pmodel,family=1,option=1)
   boom.set_border_width[5];
   tmp.add[boom];
 
-  [ts_model,opts] = create_premia_option_tree(pmodel)
+  [ts_model,opts,family_index] = create_premia_option_tree(pmodel)
   combobox = gtkcombobox_new(model=ts_model);
   combobox.set_add_tearoffs[%t];
   //combobox.connect["changed", current_option ];
@@ -118,6 +118,7 @@ function [family,option]=select_premia_option(pmodel,family=1,option=1)
   // a treepath is build in get_iter from an nsp vector.
   iter=ts_model.get_iter[[family,option]]
   combobox.set_active_iter[iter];
+  
   // the sensitive property will be set in the function 
   // we dont want the family to be selectable 
 
@@ -148,15 +149,20 @@ function [family,option]=select_premia_option(pmodel,family=1,option=1)
     if response == ok_rep; // GTK.RESPONSE_OK 
       [family,option_name]=current_option(combobox);
       family=family+1;
+      // take care to get back correct family index;
       option=find(opts(family)== option_name) ;
-      if ~isempty(option) then  break;end 
+      if ~isempty(option) then 
+	// need the family index in the whole families table
+	family=family_index(family);
+	break;
+      end 
     end
   end
   window.destroy[];
 endfunction
 
 
-function [ts_model,options]= create_premia_option_tree(pmodel)
+function [ts_model,options,family_index]= create_premia_option_tree(pmodel)
 // select options which are compatible with given
 // pmodel. Options are grouped by families. 
   n=1;
@@ -172,6 +178,7 @@ function [ts_model,options]= create_premia_option_tree(pmodel)
       Top = [Top;i];
     end 
   end
+  family_index=Top;
   Top = 'Family '+ string(Top);
   ts_model = gtktreestore_new(Top); 
   // fill the ts_model at next level 
