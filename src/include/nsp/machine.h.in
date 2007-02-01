@@ -181,6 +181,8 @@ typedef int integer;
 #define WITH_SYMB_TABLE 1 
 /* matlab mode */
 #define MTLB_MODE 1
+/* use relative exec directories */
 
+#define UPDATE_EXEC_DIR 1
 
 #endif /* MACHINE_H  */
