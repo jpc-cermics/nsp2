@@ -471,6 +471,7 @@ static int int_gobject_set_user_data(void *self,const char *attr, NspObject *O)
   GQuark quark;
   NspObject *data;
   quark = g_quark_from_string(attr);
+  HOBJ_GET_OBJECT(O,FAIL);
   if ((data = nsp_object_copy_and_name(attr,O)) == NULLOBJ) 
     return RET_BUG;
   g_object_set_qdata_full(((NspGObject *) self)->obj, quark, data , nspg_destroy_notify);

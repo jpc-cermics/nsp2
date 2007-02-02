@@ -12097,6 +12097,14 @@
   (return-type "gint*")
 )
 
+;; jpc: get indices in a list 
+
+(define-method get_list_indices
+  (of-object "GtkTreePath")
+  (c-name "gtk_tree_path_get_list_indices")
+  (return-type "gint*")
+)
+
 
 (define-method free
   (of-object "GtkTreePath")

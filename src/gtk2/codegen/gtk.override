@@ -263,6 +263,33 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   return 1;
 }
 %%
+override gtk_tree_path_get_list_indices
+
+/* added for nsp with indices starting at 1 */
+static int 
+_wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GtkTreePath *path = NSP_GBOXED_GET(self, GtkTreePath);
+  NspList *L;
+  gint len, i, *indices;
+  len = gtk_tree_path_get_depth(path);
+  indices = gtk_tree_path_get_indices(path);
+  if ((L =nsp_list_create(NVOID)) == NULLLIST ) return RET_BUG;
+  for (i = 0; i < len; i++) 
+    {
+      NspMatrix *Elt; 
+      double val = indices[i]+1; /* to conform to nsp indices starting at 1 */
+      if ((Elt =nsp_matrix_create_from_array("el",1,1,&val,NULL))== NULLMAT) 
+	goto err;
+      if ( nsp_list_end_insert((NspList *) L,NSP_OBJECT(Elt))== FAIL) goto err;
+    }
+  MoveObj(stack,1,NSP_OBJECT(L));
+  return 1;
+ err:
+  nsp_list_destroy(L);
+  return RET_BUG;
+}
+%%
 override-attr GtkStyle.fg
 static NspObject *
 _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
