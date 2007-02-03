@@ -883,7 +883,13 @@ int int_get_current_exec_dir(Stack stack,int rhs,int opt,int lhs)
   if ( absolute == FALSE) 
     S=nsp_smatrix_create(NVOID,1,1,stack.val->current_exec_dir,1);
   else
-    S= nsp_absolute_file_name(stack.val->current_exec_dir);
+    {
+      nsp_string str = nsp_absolute_file_name(stack.val->current_exec_dir);
+      if ( str == NULL) return RET_BUG;
+      if ((S =nsp_smatrix_create_with_length(NVOID,1,1,-1)) == NULLSMAT)
+	return RET_BUG;
+      S->S[0]= str;
+    }
   if ( S == NULLSMAT ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;

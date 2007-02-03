@@ -105,7 +105,7 @@ extern int		nsp_file_copy_cmd (int argc, char **argv,int force ) ;
 extern int 		nsp_file_delete_cmd (int argc, char **argv,int force );
 extern int		nsp_file_make_dirs_cmd ( int argc, char **argv) ;
 extern int		nsp_file_rename_cmd ( int argc, char **argv,int force);
-extern NspSMatrix *     nsp_absolute_file_name( char *fname);
+extern nsp_string       nsp_absolute_file_name( char *fname);
 
 extern void		nsp_finalize_environment (void);
 

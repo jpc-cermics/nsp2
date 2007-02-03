@@ -20,9 +20,9 @@ static char *FileBasename( char *path, nsp_tcldstring *bufferPtr);
 static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 
 
-NspSMatrix *nsp_absolute_file_name(char *fname)
+nsp_string nsp_absolute_file_name(char *fname)
 {
-  NspSMatrix *S;
+  nsp_string S;
   nsp_tcldstring buffer;
   int pargc=2;
   char *pargv[] ={NULL, fname};
@@ -30,13 +30,13 @@ NspSMatrix *nsp_absolute_file_name(char *fname)
   if ( nsp_get_path_type(fname)== TCL_PATH_ABSOLUTE )
     {
       /* fname is already an absolute path_name */
-      S=nsp_smatrix_create(NVOID,1,1,fname,1);
+      return nsp_new_string(fname,-1);
     }
   else 
     {
       nsp_tcldstring_init (&buffer);
       nsp_join_path (pargc, pargv, &buffer);
-      S = nsp_smatrix_create(NVOID,1,1,nsp_tcldstring_value(&buffer),1);
+      S= nsp_new_string(nsp_tcldstring_value(&buffer),-1);
       nsp_tcldstring_set_length (&buffer, 0);
       nsp_tcldstring_free (&buffer);
     }
