@@ -91,7 +91,8 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
       Str = "c";
     }
   /* expand keys in path name result in buf */
-  nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
+  if ( shared_lib != NULL) 
+    nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
   SciDynLoad(shared_lib,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
     {
