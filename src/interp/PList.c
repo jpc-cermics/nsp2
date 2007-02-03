@@ -34,6 +34,7 @@
 #include "astnode.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
+#include "nsp/pr-output.h"
 #include "Functions.h" 
 
 /**
@@ -1158,7 +1159,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
   switch (L->type) 
     {
     case NAME :
-#ifdef WITH_SYMB_TABLE 
+#ifdef WITH_SYMB_TABLEXX 
       return pos+Sciprintf1(i,"%s<%d>",(char *) L->O,L->arity);
 #else 
       return pos+Sciprintf1(i,"%s",(char *) L->O);
@@ -1171,14 +1172,19 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       return pos+Sciprintf1(i,"'%s'",(char *) L->O);
       break;
     case OBJECT :
+#ifdef WITH_SYMB_TABLE_DEBUG      
       n = pos+Sciprintf1(i,"{object:Ox%x}\n",(unsigned int) L->O);
       nsp_object_print(L->O,0,0,0);
       return n;
-      
-      /* ignore */
+#else 
+      return pos;
+#endif
       break;
     case STRING:
-      return pos+Sciprintf1(i,"\"%s\"",(char *) L->O);
+      /* return pos+Sciprintf1(i,"\"%s\"",(char *) L->O);*/
+      n=Sciprintf1(i,"");
+      n+= strlen(((char *) L->O));
+      nsp_print_string_as_read((char *) L->O);
       break;
     case COMMENT:
       return pos+Sciprintf1(i,"//%s",(char *) L->O);
