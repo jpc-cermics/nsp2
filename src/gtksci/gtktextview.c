@@ -1249,13 +1249,13 @@ cursor_set_callback (GtkTextBuffer     *buffer,
 
       tab_window = gtk_text_view_get_window (text_view,
                                              GTK_TEXT_WINDOW_TOP);
-
-      gdk_window_invalidate_rect (tab_window, NULL, FALSE);
+      if ( tab_window != NULL) 
+	gdk_window_invalidate_rect (tab_window, NULL, FALSE);
       
       tab_window = gtk_text_view_get_window (text_view,
                                              GTK_TEXT_WINDOW_BOTTOM);
-
-      gdk_window_invalidate_rect (tab_window, NULL, FALSE);
+      if ( tab_window != NULL) 
+	gdk_window_invalidate_rect (tab_window, NULL, FALSE);
     }
 }
 

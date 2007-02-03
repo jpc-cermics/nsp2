@@ -6,7 +6,8 @@ include ../../Version.incl
 
 LIBRARY = nsp.a
 
-OBJSHELP=helpbrowser.o uri.o 
+OBJSHELP=helpbrowser.o uri.o
+
 
 # gtkmenu.c, gtkmarshalers.h and gtkintl.h
 # are only usefull for gtk version < 2.3.5
