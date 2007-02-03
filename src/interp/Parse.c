@@ -319,15 +319,15 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       rep1 = fscanf(f,"%s",name);
       if ( rep1 == 0 || rep1 == EOF ) 
 	{
-	  /** we have reached end-of-file we stop **/ 
+	  /* we have reached end-of-file we stop **/ 
 	  rep =RET_OK;
 	  break;
 	}
-      /** Parse each macro file **/
+      /* Parse each macro file **/
       sprintf(F1,"%s/%s",dirname,name);
       if ((SciInput = fopen(F1,"r")) == NULL) 
 	{
-	  /** Only when strerror exists XXXXXXX **/
+	  /* Only when strerror exists XXXXXXX **/
 	  Scierror("Error:\tCan't open file %s for reading\n %s\n"
 		   ,F1,strerror(errno));
 	  return RET_BUG;
@@ -349,7 +349,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       nsp_tokeniser_file(&T,SciInput);
       /* Calling the evaluator  
        * the macro is sabed with its non expanded name
-       **/
+       */
       rep= DirParseAndXdrSave(&T,dirname);
       fclose(SciInput);
       /* restore current input function **/
@@ -412,7 +412,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      /* Parse macro file */
 	      if ((SciInput = fopen(F1,"r")) == NULL) 
 		{
-		  /** Only when strerror exists XXXXXXX **/
+		  /* Only when strerror exists XXXXXXX */
 		  Scierror("Error:\tCan't open file %s for reading\n %s\n"
 			   ,F1,strerror(errno));
 		  return RET_BUG;
@@ -427,9 +427,9 @@ int nsp_parse_eval_dir_full(const char *Dir)
 		    continue ;
 		}
 	      Sciprintf("Processing file: %s\n",F1);
-	      /* set current file name  **/
+	      /* set current file name  */
 	      NspFileName(SciStack) = F1;
-	      /* reset the line counter **/
+	      /* reset the line counter */
 	      nsp_init_tokenizer(&T);
 	      nsp_tokeniser_file(&T,SciInput);
 	      /* Calling the evaluator  

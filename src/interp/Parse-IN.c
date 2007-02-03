@@ -372,9 +372,15 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
  * add_lib('directory-name')
  */
 
+/* XXX */
+extern nsp_string       nsp_absolute_file_name( char *fname);
+
 static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
 {
-  const char *dirname = NULL;
+  int rep = 0;
+  nsp_string dir;
+  char dirname_expanded[FSIZE+1];
+  char *dirname = NULL;
   int recursive=TRUE,compile=FALSE;
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "compile",s_bool,NULLOBJ,-1},
@@ -382,10 +388,12 @@ static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&dirname,&opts,&compile,&recursive) == FAIL) return RET_BUG;
   CheckLhs(0,1);
-  if ((dirname = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,dirname,dirname_expanded);
+  dir = nsp_absolute_file_name(dirname_expanded);
   /* macros expansions is performed in EnterMacros */
-  if (nsp_enter_macros(dirname,recursive,compile) == FAIL ) return RET_BUG;
-  return 0;
+  if (nsp_enter_macros(dir,recursive,compile) == FAIL ) rep=RET_BUG;
+  nsp_string_destroy(&dir);
+  return rep;
 }
 
 /* FIXME: juste here for testing 
@@ -395,12 +403,18 @@ static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
 
 static int int_remove_lib(Stack stack, int rhs, int opt, int lhs)
 {
-  char *Dir=0;
+  int rep= 0;
+  nsp_string dir;
+  char dirname_expanded[FSIZE+1];
+  char *dirname=0;
   CheckRhs(1,1);
   CheckLhs(0,1);
-  if ((Dir = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if (nsp_delete_macros(Dir) == FAIL ) return RET_BUG;
-  return 0;
+  if ((dirname= GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,dirname,dirname_expanded);
+  dir = nsp_absolute_file_name(dirname_expanded);
+  if (nsp_delete_macros(dirname_expanded) == FAIL ) rep=RET_BUG;
+  nsp_string_destroy(&dir);
+  return rep;
 }
 
 /* FIXME: juste here for testing 

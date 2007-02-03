@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 #endif 
 
   /* Load initial macros */
-  if ( use_stdlib == TRUE )nsp_enter_macros("SCI/macros",TRUE,FALSE);
+  if ( use_stdlib == TRUE ) nsp_enter_macros("SCI/macros",TRUE,FALSE);
 
   /* locale for LC_NUMERIC must be english type */
   setlocale(LC_NUMERIC,"C");

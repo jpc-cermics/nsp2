@@ -23,8 +23,8 @@
 #include <string.h>
 
 #include "nsp/machine.h"
-
 #include "nsp/object.h"
+#include "../system/files.h"
 
 /*
  * Creation of a NspPList 
@@ -135,19 +135,37 @@ void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
  * NspPListPrint : writes P_L Objet 
  */
 
+/* XXX */
+extern nsp_string nsp_tail(char *fileName);
+
 void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
 {
+  nsp_string tail;
+  char fname[FSIZE+1], *file_name=NULL;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
-  const char *dir= nsp_get_libdir(P_L->dir),*dir1;
-  dir1 = (dir != NULL) ? dir : P_L->file_name;
+  const char *dir= nsp_get_libdir(P_L->dir);
+  /* get the name of the source file */
+  if ( dir != NULL) 
+    {
+      /* if dir is non-null then the macros is from library */
+      if ((tail = nsp_tail(P_L->file_name))==NULL) return;
+      snprintf(fname,FSIZE,"%s/%s",dir,tail);
+      nsp_string_destroy(&tail);
+      file_name = fname;
+    }
+  else 
+    {
+      /* interactive macro or loaded by exec */
+      file_name = P_L->file_name;
+    }
   if (user_pref.pr_as_read_syntax)
     {
       nsp_plist_pretty_print(P_L->D,indent+2);
     }
   else
     {
-      if ( dir1 != NULL )
-	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,dir1);
+      if ( file_name != NULL )
+	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,file_name);
       else 
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;
