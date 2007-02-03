@@ -1899,26 +1899,48 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A)
  *
  */
 
-static void SMij_string_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
+void nsp_print_string_as_read(const char *str)
 {
-  const NspSMatrix *M=m;
-  char *c= M->S[i+(M->m)*j];
   Sciprintf("\"");
-  while ( *c != '\0') 
+  while ( *str != '\0') 
     {
-      switch (*c) 
+      switch (*str) 
 	{
 	case '\'' :
 	case '\"' : 
 	  Sciprintf("%s","''");break;
+	case '\\' :
+	  Sciprintf("%s","\\\\");break;
+	case '\a' :
+	  Sciprintf("%s","\\a"); break;
+	case '\b' :
+	  Sciprintf("%s","\\b"); break;
+	case '\f' :
+	  Sciprintf("%s","\\f"); break;
 	case '\n' :
 	  Sciprintf("%s","\\n");break;
+	case '\r' :
+	  Sciprintf("%s","\\r"); break;
+	case '\t' :
+	  Sciprintf("%s","\\t"); break;
+	case '\v' :
+	  Sciprintf("%s","\\v"); break;
 	default: 
-	  Sciprintf("%c",*c);
+	  if (isprint(*str)) 
+	    Sciprintf("%c",*str);
+	  else 
+	    Sciprintf("\\%o",*str);
 	}
-      c++;
+      str++;
     }
   Sciprintf("\"");
+}
+
+
+static void SMij_string_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspSMatrix *M=m;
+  nsp_print_string_as_read(M->S[i+(M->m)*j]);
 }
 
 static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)
@@ -1959,7 +1981,7 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
       inc = (max_width -offset) / column_width;
       if (inc == 0) inc++;
     }
-
+  
   if ( user_pref.pr_as_read_syntax )
     {
       nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,SMij_string_as_read);
