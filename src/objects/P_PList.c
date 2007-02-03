@@ -69,6 +69,7 @@ NspPList *NspPListCopy(NspPList *A)
   P_L = NspPListCreate(NVOID,NULLPLIST,A->file_name);
   if (( P_L->D =nsp_plist_copy(A->D)) == NULLPLIST ) 
     return (NULLP_PLIST);
+  P_L->dir = A->dir;
   return(P_L);
 }
 
