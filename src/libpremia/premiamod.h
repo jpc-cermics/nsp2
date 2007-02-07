@@ -11,6 +11,8 @@
 
 #include "nsp/object.h"
 #include "/usr/local/Premia/Src/common/optype.h" 
+#include "/usr/local/Premia/Src/common/var.h" 
+#include "/usr/local/Premia/Src/common/tools.h" 
 
 /*
  * NspPremiaModel inherits from NspObject

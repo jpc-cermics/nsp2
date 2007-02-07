@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Interface with the sndfile library. 
+ * Interface for premia 9.
  *
  */
 
@@ -215,6 +215,13 @@ void nsp_premiamodel_destroy(NspPremiaModel *H)
         nsp_premia_free_vars(H->obj->mod.TypeModel,TRUE,H->obj->mod.nvar);
       if (H->obj->opt.TypeOpt != NULL) 
         nsp_premia_free_vars(H->obj->opt.TypeOpt,TRUE,H->obj->opt.nvar);
+      if ( H->obj->meth.Name[0] != '\0') 
+	{
+	  nsp_premia_free_vars(H->obj->meth.Res,FALSE,
+			       nsp_premia_get_nvar(H->obj->meth.Res));
+	  nsp_premia_free_vars(H->obj->meth.Par,FALSE,
+			       nsp_premia_get_nvar(H->obj->meth.Par));
+	}
       FREE(H->obj);
     }
   FREE(H);
@@ -829,8 +836,27 @@ static int _wrap_premiamodel_set_model(NspPremiaModel *self,Stack stack,int rhs,
     }
   if ( self->obj->mod.TypeModel != NULL ) 
     {
-      Scierror("Error: model is already set\n",model+1);
-      return RET_BUG;
+      /* free previous model */
+      nsp_premia_free_vars(self->obj->mod.TypeModel,TRUE,self->obj->mod.nvar);
+      self->obj->mod.TypeModel = NULL;
+      /* free previous option */
+      if (self->obj->opt.TypeOpt != NULL)
+	{
+	  nsp_premia_free_vars(self->obj->opt.TypeOpt,TRUE,self->obj->opt.nvar);
+	  self->obj->opt.TypeOpt= NULL;
+	}
+      /* free previous method */
+      if ( self->obj->meth.Name[0] != '\0') 
+	{
+	  self->obj->meth.Name[0] = '\0';
+	  nsp_premia_free_vars(self->obj->meth.Res,FALSE,
+			       nsp_premia_get_nvar(self->obj->meth.Res));
+	  nsp_premia_free_vars(self->obj->meth.Par,FALSE,
+			       nsp_premia_get_nvar(self->obj->meth.Par));
+	}
+      /* Scierror("Error: model is already set\n",model+1); 
+       * return RET_BUG;
+       */
     }
   /* use first model */
   premia_model= models[model];
@@ -881,8 +907,20 @@ static int _wrap_premiamodel_set_option(NspPremiaModel *self,Stack stack,int rhs
     }
   if ( self->obj->opt.TypeOpt != NULL) 
     {
-      Scierror("Error: option is already set\n");
-      return RET_BUG;
+      nsp_premia_free_vars(self->obj->opt.TypeOpt,TRUE,self->obj->opt.nvar);
+      self->obj->opt.TypeOpt= NULL;
+      /* free previous method */
+      if ( self->obj->meth.Name[0] != '\0') 
+	{
+	  self->obj->meth.Name[0] = '\0';
+	  nsp_premia_free_vars(self->obj->meth.Res,FALSE,
+			       nsp_premia_get_nvar(self->obj->meth.Res));
+	  nsp_premia_free_vars(self->obj->meth.Par,FALSE,
+			       nsp_premia_get_nvar(self->obj->meth.Par));
+	}
+      /* Scierror("Error: option is already set\n");
+       * return RET_BUG;
+       */
     }
 
   while ( families[n_family] != NULL) n_family++;
@@ -953,6 +991,18 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
       Scierror("Error: you must first set an option\n");
       return RET_BUG;
     }
+
+  /* free previous method */
+  if ( self->obj->meth.Name[0] != '\0') 
+    {
+      self->obj->meth.Name[0] = '\0';
+      nsp_premia_free_vars(self->obj->meth.Res,FALSE,
+			   nsp_premia_get_nvar(self->obj->meth.Res));
+      nsp_premia_free_vars(self->obj->meth.Par,FALSE,
+			   nsp_premia_get_nvar(self->obj->meth.Par));
+    }
+
+
   /* we know that MatcingPricing is ok */
   if ( SelectPricing(0,&self->obj->mod,&self->obj->opt,pricings,&res) == WRONG)
     {
@@ -1001,7 +1051,6 @@ static int _wrap_premiamodel_set_method(NspPremiaModel *self,Stack stack,int rhs
     return RET_BUG;
   self->obj->meth.init=0;
   self->obj->meth.Init(&self->obj->meth);
-  self->obj->mod.init=1;
   return 0;
 } 
 
@@ -1215,7 +1264,7 @@ static int nsp_premia_clone_vars(VAR **res,int flag,const VAR *vars,int n)
 }
 
 /* deallocate.
- *
+ * if flag == TRUE then vars is also deallocated
  */
 
 static void nsp_premia_free_vars(VAR *vars,int flag,int n)
