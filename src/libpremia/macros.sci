@@ -149,11 +149,13 @@ function [family,option]=select_premia_option(pmodel,family=0,option=0)
     if response == ok_rep; // GTK.RESPONSE_OK 
       [family,option_name]=current_option(combobox);
       family=family+1;
+      // need the family index in the whole families table
+      family=family_index(family);
+      // real options associated to family 
+      options_real=premia_get_family(pmodel)
       // take care to get back correct family index;
-      option=find(opts(family)== option_name) ;
+      option=find(options_real== option_name) ;
       if ~isempty(option) then 
-	// need the family index in the whole families table
-	family=family_index(family);
 	break;
       end 
     end
