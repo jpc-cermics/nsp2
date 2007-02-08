@@ -972,7 +972,7 @@ int int_object_is(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_object_info(Stack stack, int rhs, int opt, int lhs)
+int int_object_info_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
@@ -1005,7 +1005,7 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
 
 typedef enum { string_out, stdout_out, file_out } print_mode; 
 
-static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mode mode)
+static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mode mode, int info_only)
 {
   NspFile *F=NULL;
   FILE *f=NULL;
@@ -1015,15 +1015,22 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   NspObject *res, *object;
   print_func *pr;
   int dp=user_pref.pr_depth;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
+  int at=user_pref.list_as_tree;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0,tree=FALSE;
   char *name = NULL;
-  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
-		      { "depth", s_int,NULLOBJ,-1},
-		      { "indent",s_int,NULLOBJ,-1},
-		      { "latex",s_bool,NULLOBJ,-1},
-		      { "name",string,NULLOBJ,-1},
-		      { "table",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
+  nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+			    { "depth", s_int,NULLOBJ,-1},
+			    { "indent",s_int,NULLOBJ,-1},
+			    { "latex",s_bool,NULLOBJ,-1},
+			    { "name",string,NULLOBJ,-1},
+			    { "table",s_bool,NULLOBJ,-1},
+			    { NULL,t_end,NULLOBJ,-1}};
+
+  nsp_option info_opts[] ={{ "depth", s_int,NULLOBJ,-1},
+			   { "indent",s_int,NULLOBJ,-1},
+			   { "name",string,NULLOBJ,-1},
+			   { "tree",s_bool,NULLOBJ,-1},
+			   { NULL,t_end,NULLOBJ,-1}};
 
   if ( mode == file_out ) 
     {
@@ -1038,9 +1045,19 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
       if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
     }
   CheckLhs(0,1);
-  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
-			 &indent,&latex,&name,&table) == FAIL) 
-    return RET_BUG;
+
+  if (info_only == TRUE ) 
+    {
+      if ( get_optional_args(stack, rhs, opt, info_opts,&depth,
+			     &indent,&name,&tree) == FAIL) 
+	return RET_BUG;
+    }
+  else 
+    {
+      if ( get_optional_args(stack, rhs, opt, print_opts,&as_read,&depth,
+			     &indent,&latex,&name,&table) == FAIL) 
+	return RET_BUG;
+    }
 
   /* initialize according to mode */
   switch ( mode ) 
@@ -1065,7 +1082,10 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
     }
   /* print object */
   user_pref.pr_depth= depth;
+  user_pref.list_as_tree=tree;
   pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
+  if (info_only == TRUE ) pr = object->type->info;
+
   if ( as_read == TRUE ) 
     {
       int kp=user_pref.pr_as_read_syntax;
@@ -1077,13 +1097,14 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
       pr(object,indent,name,0);
       user_pref.pr_as_read_syntax= kp;
       user_pref.pr_depth= dp;
+      user_pref.list_as_tree=at;
     }
   else 
     {
       pr(object,indent,name,0);
     }
   user_pref.pr_depth= dp;
-  
+  user_pref.list_as_tree=at;
   /* restore to default values */
   switch ( mode ) 
     {
@@ -1111,7 +1132,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
 
 static int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_object_print_gen(stack,rhs,opt,lhs,stdout_out);
+  return int_object_print_gen(stack,rhs,opt,lhs,stdout_out,FALSE);
 }
 
 /*
@@ -1121,7 +1142,25 @@ static int int_object_print(Stack stack, int rhs, int opt, int lhs)
 
 static int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_object_print_gen(stack,rhs,opt,lhs,string_out);
+  return int_object_print_gen(stack,rhs,opt,lhs,string_out,FALSE);
+}
+
+/*
+ *   display object using it's standard print function 
+ *   and redirect output to a file
+ */
+
+static int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_object_print_gen(stack,rhs,opt,lhs,file_out,FALSE);
+}
+/*
+ *   display object using it's standard print function 
+ */
+
+static int int_object_info(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_object_print_gen(stack,rhs,opt,lhs,stdout_out,TRUE);
 }
 
 /*
@@ -1129,15 +1168,24 @@ static int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
  *   and redirect output to a string matrix 
  */
 
-static int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
+static int int_object_sinfo(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_object_print_gen(stack,rhs,opt,lhs,file_out);
+  return int_object_print_gen(stack,rhs,opt,lhs,string_out,TRUE);
+}
+
+/*
+ *   display object using it's standard print function 
+ *   and redirect output to a file
+ */
+
+static int int_object_finfo(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_object_print_gen(stack,rhs,opt,lhs,file_out,TRUE);
 }
 
 /*
  *
  */
-
 
 static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1174,7 +1222,6 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
-
 
 
 /*
@@ -1920,6 +1967,8 @@ static OpTab Obj_func[]={
   {"type",int_object_type},
   {"is",int_object_is},
   {"info",int_object_info},
+  {"sinfo",int_object_sinfo},
+  {"finfo",int_object_finfo},
   {"print",int_object_print},
   {"sprint",int_object_sprint},
   {"fprint",int_object_fprint},
