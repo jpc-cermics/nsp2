@@ -1,0 +1,84 @@
+% -*- mode: latex -*-
+
+\mansection{MaxpMat}
+\begin{mandesc}
+  \short{Mat}{Max plus matrix data type} \\
+  \short{m2mp}{Max plus matrix data type}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Ap=maxplus(A)
+Ap=m2mp(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: matrix numerical object.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+The \emph{MaxpMat} data type is the Max plus matrix numerical object. 
+Internally numerical matrices \emph{MaxpMat} type are stored by default as 
+arrays of \emph{double}.  
+\end{mandescription}
+
+\paragraph{Operations on matrices}
+\itemdesc{Methods from the matint interface}
+\begin{itemize}
+\item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
+\item \verb+A.concatr[B]+ \verb+A = [A,B]+
+\item \verb+A.concatd[B]+ \verb+A = [A;B]+
+\item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
+\end{itemize}
+
+\itemdesc{Extraction, insertion, deletion}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are respectively row and column indices \verb+A(I,J)+ is the submatrix of \verb+A+ with entries in \verb+I+ and \verb+j+.
+   \item \verb+A(I,:)+ is the submatrix of \verb+A+ with row indices in \verb+I+.
+   \item \verb+A(:,J)+ is the submatrix of \verb+A+ with comumn indices in \verb+I+.
+   \item \verb+A(:,:)+ is \verb+A+
+   \item \verb+A(:)+  is the column matrix obtained by stacking the columns of \verb+A+.
+\end{itemize}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are row and column indices \verb+A(I,J)=B+ inserts
+matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
+   \item \verb+A(I,:)=[]+ removes the rows of \verb+A+ with indices in \verb+J+.
+   \item \verb+A(:,J)=[]+ removes the columns of \verb+A+ with indices in \verb+J+.
+\end{itemize}
+
+\itemdesc{Empty matrices}
+Empty matrices are matrices with zero rows or zero columns. Operations with empty matrices
+are compatible with linear algebra operations. The \verb+m x n+ zero matrix can be 
+factorized as the empty \verb+m x 0+ matrix \verb+*+ the \verb+0 x n+ matrix. 
+
+\itemdesc{For loop control}
+With a matrix \verb+A+:
+\begin{verbatim}
+     for col=A
+       ....
+     end
+\end{verbatim} 
+is a loop with $size(A,2)$ iterations, the loop 
+variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th iteration.
+
+\itemdesc{Some functions}
+\begin{itemize}
+   \item \verb+length(A)+ returns the number of entries in \verb+A+.
+   \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
+of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
+(resp. columns) of \verb+A+.
+\end{itemize}
+
+
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc, bp
+\end{authors}
