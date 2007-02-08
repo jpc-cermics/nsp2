@@ -150,15 +150,15 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
     L=list(4,1:10,'foo');\Hnewline
     map(L,len)}
   \end{program}
-\item \verb+foldr+
+\item \verb+foldr+ and \verb+foldl+
   \begin{program}\HCode{// reverse a list using foldr \Hnewline
     function z=rev(x,y);z=list_concat(y,x);endfunction ;\Hnewline
     L=list(1,2,3,4);\Hnewline
-    S=foldr(L,rev)
+    S=foldr(L,list(),rev)
     // sum the elements of a list using foldr \Hnewline
     function z=lplus(x,y);z=x+y;endfunction ;\Hnewline
     L=list(1,2,3,4);\Hnewline
-    S=foldr(L,lplus)}
+    S=foldr(L,0,lplus)}
   \end{program}
   \end{itemize}
  \end{examples}
