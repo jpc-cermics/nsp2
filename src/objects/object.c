@@ -520,10 +520,39 @@ static int int_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/*
+ * ob.get[smat1,smat2,...], get attributes 
+ */
+
+int int_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+
+  NspObject *Ob=ob,*Ret;
+  NspSMatrix *S;
+  int i,j,count=0;
+  CheckRhs(1,1000);
+  CheckLhs(1,1000);
+  lhs=Max(lhs,1);
+  for ( j = 1 ; j <= rhs ; j++ )
+    {
+      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
+      for ( i = 0 ; i < S->mn ; i++ ) 
+	{
+	  Ret = nsp_get_attribute_util(Ob,Ob->basetype,S->S[i]);
+	  if ( Ret == NULL) return RET_BUG;
+	  NthObj(rhs+ ++count) = Ret ;
+	  NSP_OBJECT(Ret)->ret_pos = count;
+	  if (count == lhs) break;
+	}
+      if (count == lhs) break;
+    }
+  return count;
+}
 
 
 static NspMethods object_methods[] = {
   { "set",  int_set_attributes1}, /* set attribute of object the get is given by . */
+  { "get",  int_get_attributes},  /* get attribute is also given by . */
   { "get_name", int_object_get_name},
   { "equal",  int_object_equal},
   { "not_equal",  int_object_not_equal},
@@ -684,7 +713,7 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,Nsp
 }
 
 
-/*
+/* used to get attributes of an objet through the dot operator 
  * get attributes or R.exp
  */
 

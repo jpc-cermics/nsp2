@@ -1,0 +1,38 @@
+% -*- mode: latex -*-
+
+\mansection{Object}
+\begin{mandesc}
+  \short{Object}{Nsp object data type}
+\end{mandesc}
+
+\begin{mandescription}
+The \emph{Object} data type is the base class of Nsp objects. 
+\end{mandescription}
+
+\paragraph{Operations on Objects}
+\itemdesc{object methods}
+\begin{itemize}
+\item \verb+O.set[attr1=val1,attr2=val2,...]+  set attributes values for object \verb+O+ 
+\item \verb+O.get[smat1,...]+ get attribute values. Note that attributes can also be obtained with the dot
+  operator. 
+\item \verb+O.get_name[]+ get name of object. 
+\item \verb+O1.equal[O2]+ test equality. 
+\item \verb+O1.not_equal[O2]+ test if \verb!O1! and \verb!O2! are different.
+\end{itemize}
+
+\itemdesc{Some functions}
+\begin{itemize}
+\item \verb+length(A)+ returns the number of entries in \verb+A+.
+\item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
+  of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
+  (resp. columns) of \verb+A+.
+\end{itemize}
+
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc, bp
+\end{authors}

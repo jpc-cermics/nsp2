@@ -1019,7 +1019,7 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
  *
  *    A <- A + alpha x*y'  on a "contiguous" subpart [i1,i2]x[j1,j2] of A 
  *
- *    A.blas_ger[alpha, x, y [i1,i2,j1,j2]]
+ *    A.blas_ger[alpha, x, y [,i1,i2,j1,j2]]
  */
 static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 {
