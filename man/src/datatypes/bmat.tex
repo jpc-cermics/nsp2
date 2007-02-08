@@ -1,0 +1,69 @@
+% -*- mode: latex -*-
+
+\mansection{Mat}
+\begin{mandesc}
+  \short{BMat}{matrix data type} \\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A=[a11, a12, ..., a1n;
+   a21, a22, ..., a2n;
+   ...
+   am1, am2, ...; amn]
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a11 ...}: boolean numbers
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{Bmat} data type is a matrix made of boolean numbers. 
+A boolean number is either \verb+T+ (true) or \verb+F+ (false). 
+\verb+T+ is the nsp variable \verb+\%t+ (same as \verb+1==1+)
+and \verb+F+ is the nsp variable \verb+\%t+ (same as \verb+1~=1+).
+In conditional expressions \verb+T+ is equivalent to any nonzero
+number and \verb+F+ is equivalent to zero.
+\end{mandescription}
+
+\paragraph{Operations on boolean matrices}
+\itemdesc{Methods from the matint interface}
+\begin{itemize}
+\item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
+\item \verb+A.concatr[B]+ \verb+A = [A,B]+
+\item \verb+A.concatd[B]+ \verb+A = [A;B]+
+\item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
+\end{itemize}
+
+\itemdesc{Extraction, insertion, deletion}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are respectively row and column indices \verb+A(I,J)+ is the submatrix of \verb+A+ with entries in \verb+I+ and \verb+j+.
+   \item \verb+A(I,:)+ is the submatrix of \verb+A+ with row indices in \verb+I+.
+   \item \verb+A(:,J)+ is the submatrix of \verb+A+ with comumn indices in \verb+I+.
+   \item \verb+A(:,:)+ is \verb+A+
+   \item \verb+A(:)+  is the column matrix obtained by stacking the columns of \verb+A+.
+\end{itemize}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are row and column indices \verb+A(I,J)=B+ inserts
+matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
+   \item \verb+A(I,:)=[]+ removes the rows of \verb+A+ with indices in \verb+J+.
+   \item \verb+A(:,J)=[]+ removes the columns of \verb+A+ with indices in \verb+J+.
+\end{itemize}
+
+\itemdesc{Compatibility with numerical matrices}
+Boolean matrices are converted into numerical matices with \verb+T+ converted to 1 and \verb+F+ converted to 0.
+\itemdesc{Example of boolean function}
+\begin{itemize}
+\item \verb+bmat_create+ : make a boolean matrix.
+\end{itemize}
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc, bp
+\end{authors}

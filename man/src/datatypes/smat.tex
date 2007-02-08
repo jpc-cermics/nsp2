@@ -1,0 +1,102 @@
+% -*- mode: latex -*-
+
+\mansection{Smat}
+\begin{mandesc}
+  \short{Smat}{matrix data type} \\
+  \short{smat_create}{string matrix creation}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+S=[str11, str12, ..., str1n;
+   str21, str22, ..., str2n;
+   ...
+   strm1, strm2, ...; strmn] 
+// 
+S=smat_create(2,2,"nsp")
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{s11 ...}: strings
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{Smat} data type is the string matrix  object, i;e. a
+two dimensional array in which each entry is a string.
+
+Column vectors of strings are considered as \verb!m x 1! matrices and row vectors
+as \verb!1 x n! matrices.
+
+
+\end{mandescription}
+
+\paragraph{Operations on string matrices}
+\itemdesc{Methods from the matint interface}
+\begin{itemize}
+\item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
+\item \verb+A.concatr[B]+ \verb+A = [A,B]+
+\item \verb+A.concatd[B]+ \verb+A = [A;B]+
+\item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
+\end{itemize}
+
+\itemdesc{Extraction, insertion, deletion}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are respectively row and column indices \verb+A(I,J)+ is the submatrix of \verb+A+ with entries in \verb+I+ and \verb+j+.
+   \item \verb+A(I,:)+ is the submatrix of \verb+A+ with row indices in \verb+I+.
+   \item \verb+A(:,J)+ is the submatrix of \verb+A+ with comumn indices in \verb+I+.
+   \item \verb+A(:,:)+ is \verb+A+
+   \item \verb+A(:)+  is the column matrix obtained by stacking the columns of \verb+A+.
+\end{itemize}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are row and column indices \verb+A(I,J)=B+ inserts
+matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
+   \item \verb+A(I,:)=[]+ removes the rows of \verb+A+ with indices in \verb+J+.
+   \item \verb+A(:,J)=[]+ removes the columns of \verb+A+ with indices in \verb+J+.
+\end{itemize}
+
+\itemdesc{Some string functions}
+\begin{itemize}
+\item \verb+smat_create+ string matrix creation.
+\item \verb+ascii+ ascii conversion 
+\item \verb+catenate+ string concatenation 
+\item \verb+concat+ string matrices concatenation 
+\item \verb+getfile+ return the contents of a file in a colmun string vector 
+\item \verb+isalnum+ checks for an alphanumeric character 
+\item \verb+isalpha+ checks for an alphabetic character
+\item \verb+isascii+ checks for 7-bit unsigned char value that fits into the ASCII character set 
+\item \verb+isdigit+ checks for a digit (0 through 9) 
+\item \verb+isgraph +checks for any printable character except space 
+\item \verb+islower+ checks for a lower-case character 
+\item \verb+isprint+  checks for any printable character including space 
+\item \verb+ispunct+ checks for any printable character which is not a space or an alphanumeric character 
+\item \verb+isspace+  checks for white-space characters 
+\item \verb+isupper+  checks for an uppercase letter 
+\item \verb+isxdigit+  checks for a hexadecimal digits 
+\item \verb+length+  return a numeric matrix filled with lenght of each string od the string matrix
+\item \verb+m2s+  convert to string matrix 
+\item \verb+string+  convert object to string matrix 
+\item \verb+part+ substring extraction from indices 
+\item \verb+putfile+  write a string matrix in a file in column order mode 
+\item \verb+regexp+  search regular expressions 
+\item \verb+regsub+ substitutions based on regular expression pattern matching 
+\item \verb+split+ string splitting 
+\item \verb+strindex + search occurences of a string in a string 
+\item \verb+stripblanks+ removes leading and trailing white-space characters 
+\item \verb+strstr+  locate a substring in a string matrix 
+\item \verb+strsubst+ sub-string substitution in a string matrix 
+\item \verb+toupper+ convert letter to upper case 
+\item \verb+tolower+  convert letter to lower case 
+\item \verb+capitalize+ capitalize strings 
+\end{itemize}
+
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc, bp
+\end{authors}
