@@ -748,12 +748,24 @@ void nsp_plist_pretty_print(PList L, int indent)
   _nsp_plist_pretty_print(L,indent,0,indent);
 }
 
+typedef enum { p_black =30, 
+               p_red =31,
+               p_green=32,
+               p_yellow=33,
+               p_blue=34,
+               p_purple=35,
+               p_cyan=36,
+               p_white=37} nsp_term_colors;
+
+#define NSP_PRINTF_COLOR(col,str) Sciprintf("\033[%dm%s\033[0m",col,str);
+#define NSP_PRINTF1_COLOR(posret,col,str) Sciprintf1(posret,"\033[%dm%s\033[0m",col,str);
+
 #define CMAX 50
 
 #define PRINTTAG(tag)							\
   if (pos != posret ) {							\
-    Sciprintf("\n");newpos = Sciprintf1(posret,tag) ;}			\
-  else { newpos = pos+ Sciprintf(tag) ; }
+    Sciprintf("\n");newpos = NSP_PRINTF1_COLOR(posret,p_blue,tag) ;}	\
+  else { newpos = pos+ NSP_PRINTF_COLOR(p_blue,tag) ; }
 
 static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 {
@@ -966,9 +978,9 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case WHILE:
 	  PRINTTAG("while");
 	  newpos =_nsp_plist_pretty_print_arg(List,1,newpos,posret);
-	  newpos += Sciprintf1(1,"do\n");
+	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"do\n");
 	  newpos =_nsp_plist_pretty_print_arg(List->next,posret+2,0,posret+2);
-	  newpos += Sciprintf1(posret,"end");
+	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	  return newpos;
 	  break;
 	case FUNCTION:
@@ -982,7 +994,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	    {
 	      newpos =_nsp_plist_pretty_print_arg(List->next->next,posret+2,pos,posret+2);
 	    }
-	  return Sciprintf1(posret,"endfunction");
+	  return NSP_PRINTF1_COLOR(posret,p_blue,"endfunction");
 	  break;
 	case FOR:
 	  PRINTTAG("for");
@@ -992,7 +1004,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  newpos += Sciprintf(" do\n");
 	  newpos =_nsp_plist_pretty_print_arg(List->next->next,posret+2,0,posret+2);
 	  if ( newpos != 0)  Sciprintf("\n");
-	  return Sciprintf1(posret,"end");
+	  return NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	  break;
 	case IF :
 	  /* a sequence of if elseif etc.... */
@@ -1004,7 +1016,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 		{
 		  /* we have reached the last else **/
 		  if ( newpos != 0) Sciprintf("\n");
-		  Sciprintf1(posret,"else\n");
+		  NSP_PRINTF1_COLOR(posret,p_blue,"else\n");
 		  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
 		}
 	      else 
@@ -1012,17 +1024,17 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 		  if ( j != 0) 
 		    {
 		      if ( newpos != 0) Sciprintf("\n");
-		      newpos = Sciprintf1(posret,"elseif");
+		      newpos = NSP_PRINTF1_COLOR(posret,p_blue,"elseif");
 		    }
 		  newpos =_nsp_plist_pretty_print_arg(List,1,newpos+1,newpos+1);
-		  Sciprintf1(1,"then\n");
+		  NSP_PRINTF1_COLOR(1,p_blue,"then\n");
 		  List = List->next ;
 		  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
 		  List = List->next ;
 		}
 	    }
 	  if ( newpos != 0) Sciprintf("\n");
-	  newpos = Sciprintf1(posret,"end");
+	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	  return newpos;
 	  break;
 	case TRYCATCH :
@@ -1031,20 +1043,20 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  PRINTTAG("try");
 	  newpos += Sciprintf1(1,"\n");
 	  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
-	  newpos += Sciprintf1(posret,"catch");
+	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"catch");
 	  List = List->next;
 	  newpos += Sciprintf1(1,"\n");
 	  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
 	  if ( L->arity == 2 ) 
 	    {
-	      newpos += Sciprintf1(posret,"end");
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	    }
 	  else 
 	    {
 	      List = List->next;
-	      newpos += Sciprintf1(posret,"finally");
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"finally");
 	      newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
-	      newpos += Sciprintf1(posret,"end");
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	    }
 	  return newpos;
 	  break;
@@ -1068,7 +1080,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	      List = List->next;
 	    }
 	  if ( newpos != 0) Sciprintf("\n");
-	  newpos = Sciprintf1(posret,"end");
+	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"end");
 	  return newpos;
 	  break;
 	case STATEMENTS :
@@ -1095,15 +1107,15 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case CASE :
 	  if (0) Sciprintf1(indent,"case{%d,%d,%d\n",indent,pos,posret) ;
 	  if ( pos != 0) Sciprintf("\n");
-	  newpos = Sciprintf1(posret,"case") ;
+	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"case") ;
 	  newpos =_nsp_plist_pretty_print_arg(List,1,newpos,newpos+1);
-	  newpos += Sciprintf1(1,"then\n") ;
+	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
 	  newpos =_nsp_plist_pretty_print_arg(List->next,posret+2,0,posret+2);
 	  return newpos;
 	  break;
 	case LASTCASE :
 	  if ( pos != 0) Sciprintf("\n");
-	  Sciprintf1(posret,"else\n") ;
+	  NSP_PRINTF1_COLOR(posret,p_blue,"else\n") ;
 	  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
 	  return newpos;
 	  break;
@@ -1194,39 +1206,39 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
     case EMPTYCELL:
       return pos+Sciprintf1(i,"{}");break;
     case BREAK:
-      return pos+Sciprintf1(i,"break");break;
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"break");break;
     case PLIST :
       return _nsp_plist_pretty_print((PList) L->O,i,pos,posret);
       break;
     case PRETURN: 
-      return pos+Sciprintf1(i,"return");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"return");
       break;
     case QUIT :
-      return pos+Sciprintf1(i,"quit");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"quit");
       break;
     case NSP_EXIT :
-      return pos+Sciprintf1(i,"exit");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"exit");
       break;
     case PAUSE :
-      return pos+Sciprintf1(i,"pause");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"pause");
       break;
     case ABORT :
-      return pos+Sciprintf1(i,"abort");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"abort");
       break;
     case CONTINUE :
-      return pos+Sciprintf1(i,"continue");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"continue");
       break;
     case WHO :
-      return pos+Sciprintf1(i,"who");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"who");
       break;
     case WHAT :
-      return pos+Sciprintf1(i,"what");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"what");
       break;
     case CLEAR :
-      return pos+Sciprintf1(i,"clear");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"clear");
       break;
     case CLEARGLOBAL:
-      return pos+Sciprintf1(i,"clearglobal");
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"clearglobal");
       break;
     default:
       Scierror("Something Strange L->type ....\n");
