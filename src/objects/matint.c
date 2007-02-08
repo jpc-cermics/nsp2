@@ -1756,6 +1756,7 @@ NspObject *nsp_matint_concat_right( NspObject *ObjA, NspObject *ObjB)
 
 int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 {
+  int copy = FALSE;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
   int i, nA = A->n, nB = B->n, mnA = A->mn;
   NspTypeBase *type;
@@ -1763,6 +1764,14 @@ int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here
                                                          (so we don't check) */
+
+  if ( ObjA == ObjB ) 
+    {
+      copy = TRUE;
+      if ((ObjB = nsp_object_copy(ObjB)) == NULLOBJ ) 
+	return FAIL;
+      B = (NspSMatrix *) ObjB;
+    }
 
   MAT_INT(type)->canonic(ObjA);
   MAT_INT(type)->canonic(ObjB);
@@ -1822,6 +1831,9 @@ int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
       Scierror("Error: in [A,B] or A.concatr[B], A and B must have the same number of rows\n");
       return FAIL; 
     }
+
+  if ( copy == TRUE ) nsp_object_destroy(&ObjB);
+
 
   return OK;
 }
@@ -1967,6 +1979,7 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 
 int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 {
+  int copy=FALSE;
   NspObject *ObjC=NULLOBJ;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C=NULL;
   int i, j;
@@ -1975,6 +1988,14 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 
   type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
                                                          (so we don't check) */
+
+  if ( ObjA == ObjB ) 
+    {
+      copy = TRUE;
+      if ((ObjB = nsp_object_copy(ObjB)) == NULLOBJ ) 
+	return FAIL;
+      B = (NspSMatrix *) ObjB;
+    }
 
   MAT_INT(type)->canonic(ObjA);
   MAT_INT(type)->canonic(ObjB);
@@ -2098,8 +2119,10 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
       return FAIL;
     }
 
+  if ( copy == TRUE ) nsp_object_destroy(&ObjB);
   return OK;
  err:
+  if ( copy == TRUE ) nsp_object_destroy(&ObjB);
   return FAIL;
 }
 
@@ -2576,7 +2599,7 @@ int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
  * 
  * This interface is used for concatr_x_x operations with 
  * x implementing the matint interface. This interface is 
- * called through the accelerated tab machanism and thus 
+ * called through the accelerated tab mechanism and thus 
  * objects can be selected via NthObj. 
  * 
  * Return value: 1 or %RET_BUG.
@@ -2590,8 +2613,9 @@ int int_matint_concatr(Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   ObjA = NthObj(1);  ObjB = NthObj(2);
 
-  if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
+  if ( Ocheckname(ObjA, NVOID) )   
     {
+      /* ObjA has no name */ 
       if (((NspSMatrix *) ObjA)->mn == 0)
 	{
 	  /* return ObjB */
