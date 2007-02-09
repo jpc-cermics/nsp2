@@ -42,13 +42,20 @@ arrays of \emph{double}.
 \item \verb+A.blas_axpy[alpha, x [i1,i2 [,j1,j2]]]+ constant times a vector plus a vector i.e \verb!A = A + alpha*X!
 \item \verb+A.blas_ger[alpha, x, y [,i1,i2,j1,j2]]+  rank one update \verb!A = A + alpha*x*y'!
   on a submatrix of \verb+A+.
+\item \verb+A.scale_rows[x]+ multiplies each row i of A with a scalar:
+  \verb+A(i,:) = x(i) A(i,:)+. %\verb+x+ must be a (row or column) vector
+  % with m components (m number of rows of A).
+\item \verb+A.scale_cols[x]+ multiplies each column j of A with a scalar:
+  \verb+A(:,j) = x(j) A(:,j)+. %\verb+x+ must be a (row or column) vector
+  %with n components (n number of columns of A).
 \end{itemize}
 \itemdesc{Methods from the matint interface}
 \begin{itemize}
 \item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
 \item \verb+A.concatr[B]+ \verb+A = [A,B]+
 \item \verb+A.concatd[B]+ \verb+A = [A;B]+
-\item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
+\item \verb+A.perm_elem[p,q[,dim]]+ permute p and q: elements
+  (default or dim=0), rows (dim=1) or columns (dim=2).
 \end{itemize}
 
 \itemdesc{Extraction, insertion, deletion}

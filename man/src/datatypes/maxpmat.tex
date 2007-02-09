@@ -32,7 +32,8 @@ arrays of \emph{double}.
 \item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
 \item \verb+A.concatr[B]+ \verb+A = [A,B]+
 \item \verb+A.concatd[B]+ \verb+A = [A;B]+
-\item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
+\item \verb+A.perm_elem[p,q[,dim]]+ permute p and q: elements
+  (default or dim=0), rows (dim=1) or columns (dim=2).
 \end{itemize}
 
 \itemdesc{Extraction, insertion, deletion}
