@@ -70,7 +70,9 @@ double rand_igngeom(double p)
   return ( floor( 1.0 + logp1(u)/ln_1_m_p) );
 }      
    
-/* log(1+x) */
+/* 
+ * log(1+x) 
+ */
 
 static double logp1(double x)
 {
@@ -92,37 +94,37 @@ static double logp1(double x)
     }
 } 
 
-/*     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) */
-/*        for small s, this is for |s| < SLIM = 0.20 */
-/*     ALGORITHM : */
-/*     1/ if |s| is "very small" we use a truncated */
-/*        taylor dvp (by keeping 3 terms) from : */
-/*                               2        4          6 */
-/*        t = 2 * s * ( 1 + 1/3 s  + 1/5 s  + [ 1/7 s  + ....] ) */
-/*                               2        4 */
-/*        t = 2 * s * ( 1 + 1/3 s  + 1/5 s  + er) */
-/*        The limit E until we use this formula may be simply */
-/*        gotten so that the negliged part er is such that : */
-/*                                    2        4 */
-/*        (#) er <= epsm * ( 1 + 1/3 s  + 1/5 s )   for all |s|<= E */
-/*        As  er  = 1/7 s^6 + 1/9 s^8 + ... */
-/*            er <= 1/7 * s^6 ( 1 + s^2 + s^4 + ...) = 1/7  s^6/(1-s^2) */
+/*     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) 
+ *        for small s, this is for |s| < SLIM = 0.20 
+ *     ALGORITHM : 
+ *     1/ if |s| is "very small" we use a truncated 
+ *        taylor dvp (by keeping 3 terms) from : 
+ *                               2        4          6 
+ *        t = 2 * s * ( 1 + 1/3 s  + 1/5 s  + [ 1/7 s  + ....] ) 
+ *                               2        4 
+ *        t = 2 * s * ( 1 + 1/3 s  + 1/5 s  + er) 
+ *        The limit E until we use this formula may be simply 
+ *        gotten so that the negliged part er is such that : 
+ *                                    2        4 
+ *        (#) er <= epsm * ( 1 + 1/3 s  + 1/5 s )   for all |s|<= E 
+ *        As  er  = 1/7 s^6 + 1/9 s^8 + ... 
+ *            er <= 1/7 * s^6 ( 1 + s^2 + s^4 + ...) = 1/7  s^6/(1-s^2) 
+ *        the inequality (#) is forced if : 
+ *        1/7  s^6 / (1-s^2)  <= epsm * ( 1 + 1/3 s^2  + 1/5 s^4 ) 
+ *        s^6 <= 7 epsm * (1 - 2/3 s^2 - 3/15 s^4 - 1/5 s^6) 
+ *        So that E is very near (7 epsm)^(1/6) (approximately 3.032d-3): 
+ *     2/ For larger |s| we used a minimax polynome : 
+ *        yi = s * (2  + d3 s^3 + d5 s^5 .... + d13 s^13 + d15 s^15) 
+ *        This polynome was computed (by some remes algorithm) following 
+ *        (*) the sin(x) example (p 39) of the book : 
+ *         "ELEMENTARY FUNCTIONS" 
+ *         "Algorithms and implementation" 
+ *         J.M. Muller (Birkhauser) 
+ *        (*) without the additionnal raffinement to get the first coefs 
+ *         very near floating point numbers) 
+ */
 
-/*        the inequality (#) is forced if : */
-/*        1/7  s^6 / (1-s^2)  <= epsm * ( 1 + 1/3 s^2  + 1/5 s^4 ) */
-/*        s^6 <= 7 epsm * (1 - 2/3 s^2 - 3/15 s^4 - 1/5 s^6) */
-/*        So that E is very near (7 epsm)^(1/6) (approximately 3.032d-3): */
-/*     2/ For larger |s| we used a minimax polynome : */
-/*        yi = s * (2  + d3 s^3 + d5 s^5 .... + d13 s^13 + d15 s^15) */
-/*        This polynome was computed (by some remes algorithm) following */
-/*        (*) the sin(x) example (p 39) of the book : */
-/*         "ELEMENTARY FUNCTIONS" */
-/*         "Algorithms and implementation" */
-/*         J.M. Muller (Birkhauser) */
-/*        (*) without the additionnal raffinement to get the first coefs */
-/*         very near floating point numbers) */
-
-double lnp1m1(double s)
+static double lnp1m1(double s)
 {
   double  s2;
   const double E = 3.032E-3, C3  = 2E0 / 3E0, C5  = 2E0 / 5E0;

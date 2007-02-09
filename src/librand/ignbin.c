@@ -6,7 +6,7 @@
 #include "grand.h"
 
 int
-rand_ignbin (int *n, double *pp)
+rand_ignbin (int n, double pp)
 {
   /* Initialized data */
 
@@ -199,11 +199,11 @@ rand_ignbin (int *n, double *pp)
 /*     JJV no one will call this the first time with them as args */
 /*     .. */
 /*     .. Executable Statements .. */
-  if (*pp != psave)
+  if (pp != psave)
     {
       goto L10;
     }
-  if (*n != nsave)
+  if (n != nsave)
     {
       goto L20;
     }
@@ -223,14 +223,14 @@ rand_ignbin (int *n, double *pp)
 /*     JJV Only remaining problem - if called initially with the */
 /*     JJV initial values of psave and nsave, it will hang */
 L10:
-  psave = *pp;
+  psave = pp;
 /* Computing MIN */
   d__1 = psave, d__2 = 1. - psave;
   p = Min (d__1, d__2);
   q = 1. - p;
 L20:
-  xnp = *n * p;
-  nsave = *n;
+  xnp = n * p;
+  nsave = n;
   if (xnp < 30.)
     {
       goto L140;
@@ -304,7 +304,7 @@ L50:
 
 L60:
   ix = (int) (xr - log (v) / xlr);
-  if (ix > *n)
+  if (ix > n)
     {
       goto L30;
     }
@@ -323,7 +323,7 @@ L70:
 
   f = 1.;
   r__ = p / q;
-  g = (*n + 1) * r__;
+  g = (n + 1) * r__;
   if ((i__1 = m - ix) < 0)
     {
       goto L80;
@@ -383,14 +383,14 @@ L130:
 
   x1 = (double) (ix + 1);
   f1 = fm + 1.;
-  z__ = *n + 1 - fm;
-  w = *n - ix + 1.;
+  z__ = n + 1 - fm;
+  w = n - ix + 1.;
   z2 = z__ * z__;
   x2 = x1 * x1;
   f2 = f1 * f1;
   w2 = w * w;
   if (alv -
-      (xm * log (f1 / x1) + (*n - m + .5) * log (z__ / w) +
+      (xm * log (f1 / x1) + (n - m + .5) * log (z__ / w) +
        (ix - m) * log (w * p / (x1 * q)) + (13860. -
 					    (462. -
 					     (132. -
@@ -416,9 +416,9 @@ L130:
 /*     INVERSE CDF LOGIC FOR MEAN LESS THAN 30 */
 
 L140:
-  qn = pow(q, *n); /* pow_di */
+  qn = pow(q, n); /* pow_di */
   r__ = p / q;
-  g = r__ * (*n + 1);
+  g = r__ * (n + 1);
 L150:
   ix = 0;
   f = qn;
@@ -439,7 +439,7 @@ L160:
 L170:
   if (psave > .5)
     {
-      ix = *n - ix;
+      ix = n - ix;
     }
   ret_val = ix;
   return ret_val;

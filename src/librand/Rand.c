@@ -599,7 +599,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if ( B < 0 ) 
 	{  Scierror("Error: SD < 0.0 \n");return RET_BUG;}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(&A,&B); }
+      for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(A,B); }
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -721,7 +721,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)   M->R[i]= (double) rand_ignnbn(&iA,&B);
+      for ( i=0 ; i < M->mn ; i++)   M->R[i]= (double) rand_ignnbn(iA,B);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -743,7 +743,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: N < 0 \n");  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignbin(&iA,&B);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignbin(iA,B);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -943,7 +943,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: Av < 0 \n"); return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(&A);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }

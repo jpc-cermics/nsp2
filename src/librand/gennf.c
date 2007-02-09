@@ -3,7 +3,7 @@
 
 #include "grand.h" 
 
-/* ********************************************************************** */
+
 /*     DOUBLE PRECISION FUNCTION GENNF( DFN, DFD, XNONC ) */
 /*           GENerate random deviate from the Noncentral F distribution */
 /*                              Function */
@@ -24,7 +24,6 @@
 /*                              Method */
 /*     Directly generates ratio of noncentral numerator chisquare variate */
 /*     to central denominator chisquare variate. */
-
 
 double rand_gennf(double *dfn, double *dfd, double *xnonc)
 {
