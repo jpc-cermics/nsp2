@@ -1,0 +1,62 @@
+% -*- mode: latex -*-
+
+\mansection{Serial}
+\begin{mandesc}
+  \short{Serial}{Container for nsp serialized object} \\
+  \short{serialize}{serialize an nsp object}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+S = serialize(Obj);
+A = serialize(Obj,'m')
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Obj}:  any nsp objects. 
+    \vname{S}: a \emph{Serial} object 
+    \vname{A}: a numeric matrix.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{Serial} data type is useful to serialize any nsp object in order 
+for example to transmit it through communication networks as an array of 
+characters. For example, it can be used with \verb+pvm+ or \verb+mpi+ to transmit any 
+nsp object. The function \verb+serialize+ is used to produce a serialized object. 
+For some applications it can be useful to hide the serialized object in a 
+numerical matrix, this can be done with the extra argument \verb+'m'+. Note 
+that an object serialized in a numeric matrix can be corrupted if 
+the matrix is changed. Thus this version, which is mainly used in scicos 
+which transmit block parameters through int or double array, should be used with care. 
+\end{mandescription}
+
+\paragraph{Operations on serialized objects}
+\itemdesc{methods}
+\begin{itemize}
+   \item \verb+O=S.unserialize[]+ unserialize \verb+S+. \verb+unserialize+ can 
+     also be used as a function for \emph{Serial} arguments or for numeric 
+     argument.
+\end{itemize}
+
+\begin{examples}
+  \begin{program}\HCode{function y=f(x);y=sin(x);endfunction;\Hnewline
+      L = list(1,2,"c",\%f, \%t, rand(2,1), f);\Hnewline
+      S = serialize(L);\Hnewline
+      L1=unserialize(S);\Hnewline
+      A = serialize(L,'m');\Hnewline
+      L1=unserialize(A);\Hnewline
+      ok = exec('unserialize(rand(1,10))',errcatch=\%t);}
+  \end{program}
+ \end{examples}
+
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc
+\end{authors}

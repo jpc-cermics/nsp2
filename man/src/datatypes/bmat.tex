@@ -55,10 +55,13 @@ matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
 \end{itemize}
 
 \itemdesc{Compatibility with numerical matrices}
-Boolean matrices are converted into numerical matices with \verb+T+ converted to 1 and \verb+F+ converted to 0.
+Boolean matrices are converted into numerical matices with \verb+T+ converted to 1 
+and \verb+F+ converted to 0. 
 \itemdesc{Example of boolean function}
 \begin{itemize}
 \item \verb+bmat_create+ : make a boolean matrix.
+\item \verb+b2m+ : explicit conversion from boolean matrix to numeric matrix.
+\item \verb+m2b+ : explicit conversion from numeric matrix to boolean matrix.
 \end{itemize}
 \begin{manseealso}
 
