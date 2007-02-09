@@ -4638,3 +4638,84 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
+int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
+{
+  int i,j, k;
+  
+  if(A->rc_type == 'r' ) 
+    {
+      if ( x->rc_type == 'r') 
+	{
+	  for ( j = 0, k=0 ; j < A->n ; j++)
+	    for ( i = 0 ; i < A->m ; i++, k++ ) 
+	      A->R[k] *= x->R[i];
+	}
+      else 
+	{
+	  if ( nsp_mat_complexify(A,0.0) == FAIL ) 
+	    return FAIL;
+	  for ( j = 0, k=0 ; j < A->n ; j++)
+	    for ( i = 0 ; i < A->m ; i++, k++ ) 
+	      {
+		A->C[k].i = A->C[k].r * x->C[i].i;
+		A->C[k].r *= x->C[i].r;
+	      }
+	}
+    }
+  else
+    {
+      if ( x->rc_type == 'r') 
+	for ( j = 0, k=0 ; j < A->n ; j++)
+	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+	    {
+	      A->C[k].r *= x->R[i];
+	      A->C[k].i *= x->R[i];
+	    }
+      else 
+	for ( j = 0, k=0 ; j < A->n ; j++)
+	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+	    nsp_prod_c(&A->C[k],&x->C[i]);
+    }
+  return OK;
+}
+
+int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
+{
+  int i,j, k;
+  
+  if(A->rc_type == 'r' ) 
+    {
+      if ( x->rc_type == 'r') 
+	{
+	  for ( j = 0, k=0 ; j < A->n ; j++)
+	    for ( i = 0 ; i < A->m ; i++, k++ ) 
+	      A->R[k] *= x->R[j];
+	}
+      else 
+	{
+	  if ( nsp_mat_complexify(A,0.0) == FAIL ) 
+	    return FAIL;
+	  for ( j = 0, k=0 ; j < A->n ; j++)
+	    for ( i = 0 ; i < A->m ; i++, k++ ) 
+	      {
+		A->C[k].i = A->C[k].r * x->C[j].i;
+		A->C[k].r *= x->C[j].r;
+	      }
+	}
+    }
+  else
+    {
+      if ( x->rc_type == 'r') 
+	for ( j = 0, k=0 ; j < A->n ; j++)
+	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+	    {
+	      A->C[k].r *= x->R[j];
+	      A->C[k].i *= x->R[j];
+	    }
+      else 
+	for ( j = 0, k=0 ; j < A->n ; j++)
+	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+	    nsp_prod_c(&A->C[k],&x->C[j]);
+    }
+  return OK;
+}

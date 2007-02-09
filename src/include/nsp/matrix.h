@@ -168,6 +168,8 @@ extern NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k);
 extern NspMatrix *nsp_matrix_transpose(const NspMatrix *A); 
 
 /* from MatOps.c */
+extern int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x);
+extern int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x);
 extern NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim);
 extern int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B);
 extern int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B);

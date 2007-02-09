@@ -1088,10 +1088,68 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+/* 
+ *  scale_rows[x]
+ *
+ *    A <- diag(x)*A
+ *
+ *    A.scale_rows[x]
+ */
+
+static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A = (NspMatrix *) self, *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(stack.fname,1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: the argument should have %d components \n",stack.fname,A->m);
+      return RET_BUG;
+    }
+
+  if ( nsp_mat_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ *  scale_cols[x]
+ *
+ *    A <- A*diag(x)
+ *
+ *    A.scale_cols[x]
+ */
+
+static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A = (NspMatrix *) self, *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(stack.fname,1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: the argument should have %d components \n",stack.fname,A->n);
+      return RET_BUG;
+    }
+
+  if ( nsp_mat_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
   { "blas_axpy", int_meth_matrix_axpy},  /* possible other name:  add_scal_time_mat  */
   { "blas_ger", int_meth_matrix_ger},    /* possible other name:  updt_rk1  */
+  { "scale_rows",int_meth_matrix_scale_rows}, 
+  { "scale_cols",int_meth_matrix_scale_cols}, 
   { (char *) 0, NULL}
 };
 
@@ -4223,6 +4281,8 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 
 /* FIXME */
 extern function int_nsp_grand;
+extern function int_nsp_rand_discrete_guide;
+extern function int_nsp_rand_discrete_alias;
 extern double nsp_dlamch (char *cmach);
 
 /*
@@ -4520,6 +4580,8 @@ static OpTab Matrix_func[] = {
   {"ne_m_m", int_mxneq},
   {"rand", int_mxrand},
   {"grand", int_nsp_grand},	/* grand XXXX */
+  {"rand_discrete_guide", int_nsp_rand_discrete_guide},	/*  XXXX */
+  {"rand_discrete_alias", int_nsp_rand_discrete_alias},	/*  XXXX */
   {"real_m", int_mxrealpart},
   {"redim_m", int_matint_redim},
   {"resize_m_m", int_mxresize},
