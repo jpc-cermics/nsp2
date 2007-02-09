@@ -511,7 +511,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genf(&A,&B);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genf(A,B);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -579,10 +579,10 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++) 
 	{
-	  /** WARNING : order is changed in parameters for 
+	  /* WARNING : order is changed in parameters for 
 	   *    compatibility between Rand(...'gam',..) and cdfgam 
-	   **/
-	  M->R[i]= rand_gengam(&B,&A);
+	   */
+	  M->R[i]= rand_gengam(B,A);
 	}
       MoveObj(stack,1,(NspObject *) M);
       return 1;
@@ -977,7 +977,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(&A);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }

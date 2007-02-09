@@ -39,7 +39,7 @@ double rand_gennf(double *dfn, double *dfd, double *xnonc)
       d1 = (*dfn - 1.f) / 2.f;
       /* Computing 2nd power */
       d2 = rand_snorm() + sqrt(*xnonc);
-      xnum = (rand_sgamma(&d1) * 2.f + d2 * d2 ) / *dfn;
+      xnum = (rand_sgamma(d1) * 2.f + d2 * d2 ) / *dfn;
     }
   else 
     {
@@ -49,7 +49,7 @@ double rand_gennf(double *dfn, double *dfd, double *xnonc)
       xnum = d1 * d1;
     }
     d1 = *dfd / 2.f;
-    xden = rand_sgamma(&d1 ) * 2.f / *dfd;
+    xden = rand_sgamma(d1 ) * 2.f / *dfd;
     /*     JJV changed constant so that it will not underflow at compile time */
     /*     JJV while not slowing generator by using double precision or logs. */
     /*      IF (.NOT. (xden.LE. (1.0E-38*xnum))) GO TO 40 */
