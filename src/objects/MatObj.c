@@ -4281,8 +4281,8 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 
 /* FIXME */
 extern function int_nsp_grand;
-extern function int_nsp_rand_discrete_guide;
-extern function int_nsp_rand_discrete_alias;
+/* extern function int_nsp_rand_discrete_guide; */
+/* extern function int_nsp_rand_discrete_alias; */
 extern double nsp_dlamch (char *cmach);
 
 /*
@@ -4580,8 +4580,8 @@ static OpTab Matrix_func[] = {
   {"ne_m_m", int_mxneq},
   {"rand", int_mxrand},
   {"grand", int_nsp_grand},	/* grand XXXX */
-  /* {"rand_discrete_guide", int_nsp_rand_discrete_guide},*/	/*  XXXX */
-  /* {"rand_discrete_alias", int_nsp_rand_discrete_alias},*//*  XXXX */
+/*   {"rand_discrete_guide", int_nsp_rand_discrete_guide},	/\*  XXXX *\/ */
+/*   {"rand_discrete_alias", int_nsp_rand_discrete_alias},	/\*  XXXX *\/ */
   {"real_m", int_mxrealpart},
   {"redim_m", int_matint_redim},
   {"resize_m_m", int_mxresize},
