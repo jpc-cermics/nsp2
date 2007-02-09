@@ -113,11 +113,11 @@ double ignlgi(void)
  *  we take (b-a+1) <= Min RngMaxInt =  2147483561 (clcg2)
  */                 
 
-double rand_ignuin(double *a, double *b)
+double rand_ignuin(double a, double b)
 {
-  unsigned long k, d = (unsigned long)((*b-*a)+1), qd;
+  unsigned long k, d = (unsigned long)((b-a)+1), qd;
   
-  if ( d == 1 || (*b < *a) ) return (*a);
+  if ( d == 1 || (b < a) ) return (a);
 
   qd = RngMaxInt[current_gen] - RngMaxInt[current_gen] % d;
   do 
@@ -125,7 +125,7 @@ double rand_ignuin(double *a, double *b)
       k = (unsigned long)ignlgi();
     } 
   while ( k >= qd );
-  return ( *a + (double)(k % d) );
+  return ( a + (double)(k % d) );
 }
 
 /*
@@ -648,7 +648,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_ignuin(&a,&b);
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_ignuin(a,b);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
 
@@ -697,7 +697,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       for ( i=0 ; i < M->n ; i++) 
 	{
 	  for (j=0; j < M->m ; j++ ) M->R[(M->m)*i+j]= prm->R[j];
-	  rand_genprm( M->R + M->m*i,&M->m);
+	  rand_genprm( M->R + M->m*i,M->m);
 	}
       MoveObj(stack,1,(NspObject *) M);
       return 1;
