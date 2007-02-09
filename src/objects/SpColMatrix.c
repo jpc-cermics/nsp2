@@ -5739,7 +5739,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
       mres =(int) ( (u >=0.5) ? ceil(mcol) : floor(mcol));
       /* XXX should use integers here */
       /* permute the icol vector */
-      rand_genprm(icol->R,&icol->m);
+      rand_genprm(icol->R,icol->m);
       /* sort the mres first elements */
       nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
       /* resize column i */
