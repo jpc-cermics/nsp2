@@ -5750,7 +5750,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
 	}
       if ( crand == 'n' ) 
 	for (k = 0 ; k < A->D[i]->size ; k++)
-	  A->D[i]->R[k]= rand_gennor(&moy,&std);
+	  A->D[i]->R[k]= rand_gennor(moy,std);
       else 
 	for (k = 0 ; k < A->D[i]->size ; k++)
 	  A->D[i]->R[k]= rand_ranf();
@@ -5844,7 +5844,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
 	A->D[j]->J[k] = icol[k];
       if ( crand == 'n' )
 	for ( k = 0 ; k < nnzj ; k++ )
-	  A->D[j]->R[k] = rand_gennor(&moy,&std);
+	  A->D[j]->R[k] = rand_gennor(moy,std);
       else
 	for ( k = 0 ; k < nnzj ; k++ )
 	  A->D[j]->R[k] = rand_ranf();
