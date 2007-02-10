@@ -642,8 +642,8 @@ static NspMethods object_methods[] = {
   { "set",  int_meth_object_set_attributes}, /* set attribute of object the get is given by . */
   { "get",  int_meth_object_get_attributes},  /* get attribute is also given by . */
   { "get_name", int_meth_object_get_name},
-  { "get_methods", int_meth_object_get_methods},
-  { "get_attributes", int_meth_object_get_attribute_names},
+  { "get_method_names", int_meth_object_get_methods},
+  { "get_attribute_names", int_meth_object_get_attribute_names},
   { "equal",  int_meth_object_equal},
   { "not_equal",  int_meth_object_not_equal},
   { (char *) 0, NULL}
