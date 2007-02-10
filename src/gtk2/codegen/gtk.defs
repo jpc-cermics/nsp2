@@ -13736,6 +13736,23 @@
   (return-type "gboolean")
 )
 
+;; jpc 
+(define-method set_expand   
+  (of-object "GtkTreeViewColumn")
+  (c-name "gtk_tree_view_column_set_expand")
+  (return-type "none")
+  (parameters
+    '("gboolean" "active")
+  )
+)
+
+(define-method get_expand
+  (of-object "GtkTreeViewColumn")
+  (c-name "gtk_tree_view_column_get_expand")
+  (return-type "gboolean")
+)
+
+
 (define-method set_widget
   (of-object "GtkTreeViewColumn")
   (c-name "gtk_tree_view_column_set_widget")

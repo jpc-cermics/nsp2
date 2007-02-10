@@ -17,7 +17,7 @@ OBJSF =
 include ../../Makefile.incl
 SCIDIR=../..
 
-CFLAGS = $(CC_OPTIONS) 
+CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/
 
 include ../Make.lib
 
