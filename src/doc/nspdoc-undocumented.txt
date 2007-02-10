@@ -1,7 +1,7 @@
-27% symbol docs coverage.
-566 symbols documented.
-250 symbols incomplete.
-1545 not documented.
+29% symbol docs coverage.
+608 symbols documented.
+242 symbols incomplete.
+1503 not documented.
 
 
 Abs
@@ -356,8 +356,6 @@ Rect_Type
 SHRT_MAX
 SMALLEST_REAL
 SMDOUBLE
-SMatCompOp
-SMatFullComp
 SMatLoopCol
 SMatrix_Type
 STACK_SIZE
@@ -781,8 +779,6 @@ new_module
 new_modulelt
 new_mpmatrix
 new_none
-new_nsp_string
-new_nsp_string_n
 new_pmatrix
 new_rect
 new_smatrix
@@ -1122,7 +1118,6 @@ nsp_matrix_dialog
 nsp_matrix_redim
 nsp_matrix_to_pmatrix
 nsp_matrix_to_polynom
-nsp_matrix_to_smatrix
 nsp_menus_add
 nsp_menus_delete_button
 nsp_menus_set
@@ -1238,18 +1233,8 @@ nsp_none_object
 nsp_none_print
 nsp_norm_c
 nsp_numtokens
-nsp_object_copy (O)
-nsp_object_copy_and_name (name, O)
-nsp_object_copy_with_name (O)
-nsp_object_destroy (O)
-nsp_object_get_size (O, j)
-nsp_object_implements (O, id)
-nsp_object_is_true (O)
 nsp_object_load_def
-nsp_object_loop_extract (str, O, O1, i, rep, Returns)
 nsp_object_save_def
-nsp_object_type_as_string (O)
-nsp_object_type_short (O)
 nsp_option
 nsp_pango_hash_table
 nsp_parse_eval_dir
@@ -1311,55 +1296,23 @@ nsp_set_urandtype
 nsp_signum_c
 nsp_sin_c
 nsp_sinh_c
-nsp_smatrix_add_columns
-nsp_smatrix_add_rows
-nsp_smatrix_capitalize
-nsp_smatrix_clone
-nsp_smatrix_column_concat
-nsp_smatrix_column_concat_padded
-nsp_smatrix_concat_down
-nsp_smatrix_concat_down1
-nsp_smatrix_concat_right
-nsp_smatrix_concat_string_left
-nsp_smatrix_concat_string_right
-nsp_smatrix_concat_strings
+nsp_smatrix_column_concat_padded (str, flag)
 nsp_smatrix_convert
-nsp_smatrix_copy
-nsp_smatrix_create
-nsp_smatrix_create_from_array
-nsp_smatrix_create_from_struct
-nsp_smatrix_create_from_table
-nsp_smatrix_create_with_length
-nsp_smatrix_destroy
-nsp_smatrix_elts_length
-nsp_smatrix_enlarge
+nsp_smatrix_create_with_length (Param1)
 nsp_smatrix_eq
 nsp_smatrix_extract
 nsp_smatrix_extract_columns
 nsp_smatrix_extract_elements
-nsp_smatrix_extract_rows
-nsp_smatrix_info
 nsp_smatrix_is_true
 nsp_smatrix_loop_extract
 nsp_smatrix_neq
 nsp_smatrix_object
-nsp_smatrix_part
-nsp_smatrix_print
 nsp_smatrix_redim
-nsp_smatrix_resize
-nsp_smatrix_row_concat
-nsp_smatrix_set_rows
-nsp_smatrix_set_submatrix
 nsp_smatrix_sort_old
 nsp_smatrix_split_string
-nsp_smatrix_strcmp
-nsp_smatrix_strip_blanks
-nsp_smatrix_strstr
-nsp_smatrix_strtod
+nsp_smatrix_strip_blanks (Returns)
 nsp_smatrix_subst
 nsp_smatrix_to_utf8
-nsp_smatrix_tolower
-nsp_smatrix_toupper
 nsp_smatrix_transpose
 nsp_smatrix_type_as_string
 nsp_smatrix_type_short_string
@@ -1555,8 +1508,6 @@ nsp_sprowmatrix_type_as_string
 nsp_sprowmatrix_type_short_string
 nsp_sprowmatrix_zeros (m, n)
 nsp_sqrt_c
-nsp_string_copy
-nsp_string_destroy
 nsp_string_object
 nsp_string_resize
 nsp_tan_c
@@ -1634,7 +1585,6 @@ nsp_type_type_id
 nsp_types
 nsp_types_hash_table
 nsp_urand
-nsp_void_object_destroy (O)
 nsp_write_history
 nsp_xdr_load_array_d
 nsp_xdr_load_array_i
