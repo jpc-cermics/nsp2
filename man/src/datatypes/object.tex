@@ -57,10 +57,10 @@ This is used for object display (\verb+print+, \verb+sprint+, \verb+fprint+,
       a.cla_val(3,3) = 1;\Hnewline
       a.set[cla_val=1:5,cla_color=56]\Hnewline
       a('cla_color') = 78 \Hnewline
-      a.get_methods[];\Hnewline
+      a.get_method_names[];\Hnewline
       // ClassB is a predefined toy class which inherits from ClassA\Hnewline
       b=\%types.ClassB.new[cla_color=89,cla_thickness=56];\Hnewline
-      b.get_attributes[];\Hnewline
+      b.get_attribute_names[];\Hnewline
       is(b,\%types.ClassA) \Hnewline
       is(b,\%types.ClassB) \Hnewline
       test(b); }
