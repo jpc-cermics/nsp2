@@ -423,7 +423,7 @@ NspObject *nsp_create_object_from_double(const char *str, double dval)
 
 /**
  *nsp_create_object_from_int:
- * @str:  the object name or %NVOID
+ * @name:  the object name or %NVOID
  * @ival: value to store in the 1x1 matrix 
  * 
  * 
@@ -433,10 +433,10 @@ NspObject *nsp_create_object_from_double(const char *str, double dval)
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_int(char *str, int ival)
+NspObject *nsp_create_object_from_int(const char *name, int ival)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(name,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->R[0] = (double) ival ;
   return (NspObject *) A;
 }
@@ -501,6 +501,7 @@ NspObject *nsp_create_object_from_str(const char *name,const char *str)
 
 /**
  *nsp_create_object_from_str_and_size:
+ * @name: name of object or %NVOID
  * @str:  the string to use to fille the object 
  * @lstr: the size of the created string
  * 
@@ -511,11 +512,11 @@ NspObject *nsp_create_object_from_str(const char *name,const char *str)
  * Return value:  a new #NspObject ( in fact a #NspSMatrix)
  **/
 
-NspObject *nsp_create_object_from_str_and_size(char *str, int lstr)
+NspObject *nsp_create_object_from_str_and_size(const char *name,const char *str, int lstr)
 {
   NspSMatrix *A;
   lstr = Max(0,lstr);
-  if ((A=nsp_smatrix_create_with_length(NVOID,1,1,lstr)) ==NULLSMAT) return(NULLOBJ);
+  if ((A=nsp_smatrix_create_with_length(name,1,1,lstr)) ==NULLSMAT) return(NULLOBJ);
   if ( lstr > 0 ) 
     {
       strncpy(A->S[0],str,lstr);
@@ -527,30 +528,25 @@ NspObject *nsp_create_object_from_str_and_size(char *str, int lstr)
   return (NspObject *) A;
 }
 
-/*
- */
 
 /**
- *nsp_create_object_from_doubles:
- * @m: 
- * @n: 
- * @it: 
- * @rtab: 
- * @itab: 
- * @name: 
+ * nsp_create_object_from_doubles:
+ * @name: name of object or %NVOID
+ * @m:  number of rows 
+ * @n: number of columns
+ * @rtab: real part 
+ * @itab: complex part. The matrix is real if @itab is a null pointer.
  * 
- * Create a mxn matrix from data stored 
- * in arrays 
+ * Create an mxn numeric matrix (#NspMatrix) from data stored in arrays 
  * 
  * Return value:  a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, double *itab, char *name)
+NspObject *nsp_create_object_from_doubles(const char *name,int m, int n,double *rtab, double *itab)
 {
-  char type; 
   NspMatrix *A;
+  char type =  (itab != NULL ) ? 'c' : 'r' ;
   int i;
-  type = ( it == 1) ? 'c' : 'r' ;
   if ( (A= nsp_matrix_create(name,type,m,n)) ==NULLMAT) return NULLOBJ;
   if ( type == 'r' ) 
     {
@@ -572,7 +568,7 @@ NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, do
 
 /**
  *nsp_create_empty_matrix_object:
- * @str: 
+ * @name: name of object or %NVOID
  * 
  * Creates an empty matrix with name @str
  * 
@@ -580,50 +576,48 @@ NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, do
  * Return value:  a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_empty_matrix_object(char *str)
+NspObject *nsp_create_empty_matrix_object(const char *name)
 {
-  return (NspObject *) nsp_matrix_create(str,'r',0,0);
+  return (NspObject *) nsp_matrix_create(name,'r',0,0);
 }
 
 /**
  *nsp_create_true_object:
- * @str: 
+ * @name: name of object or %NVOID
  * 
  * Creates a 1x1 boolean matrix filled with %TRUE
- * 
  * 
  * Return value:  a new #NspObject ( in fact a #NspBMatrix)
  **/
 
-NspObject *nsp_create_true_object(char *str)
+NspObject *nsp_create_true_object(const char *name)
 {
   NspBMatrix *A;
-  if ((A=nsp_bmatrix_create(str,1,1))==NULLBMAT) return(NULLOBJ);
+  if ((A=nsp_bmatrix_create(name,1,1))==NULLBMAT) return(NULLOBJ);
   A->B[0]=TRUE;
   return (NspObject *) A;
 }
 
 /**
  *nsp_create_false_object:
- * @str: 
- * 
+ * @name: name of object or %NVOID
  * 
  * Creates a 1x1 boolean matrix filled with %FALSE
  * 
  * Return value:  a new #NspObject ( in fact a #NspBMatrix)
  **/
 
-NspObject *nsp_create_false_object(char *str)
+NspObject *nsp_create_false_object(const char *name)
 {
   NspBMatrix *A;
-  if ((A=nsp_bmatrix_create(str,1,1))==NULLBMAT) return(NULLOBJ);
+  if ((A=nsp_bmatrix_create(name,1,1))==NULLBMAT) return(NULLOBJ);
   A->B[0]=FALSE;
   return (NspObject *) A;
 }
 
 /**
  *nsp_create_boolean_object:
- * @str: Object name or #NVOID
+ * @name: name of object or %NVOID
  * @val: boolean value #TRUE or #FALSE
  * 
  * Creates a 1x1 boolean matrix.
@@ -631,22 +625,22 @@ NspObject *nsp_create_false_object(char *str)
  * Return value:  a new #NspObject ( in fact a #NspBMatrix)
  **/
 
-NspObject *nsp_create_boolean_object(char *str,int val)
+NspObject *nsp_create_boolean_object(const char *name,int val)
 {
   NspBMatrix *A;
-  if ((A=nsp_bmatrix_create(str,1,1))==NULLBMAT) return(NULLOBJ);
+  if ((A=nsp_bmatrix_create(name,1,1))==NULLBMAT) return(NULLOBJ);
   A->B[0]=val;
   return (NspObject *) A;
 }
 
 /**
  *nsp_object_get_name:
- * @O: 
+ * @O: a #NspObject.
  * 
- * Returns the name of an object 
+ * Returns the name of an nsp object. Note that unnamed object 
+ * have name %NVOID. 
  * 
- * 
- * Return value: 
+ * Return value: a constant char pointer
  **/
 
 const char *nsp_object_get_name(const NspObject *O)
@@ -656,13 +650,13 @@ const char *nsp_object_get_name(const NspObject *O)
 
 /**
  *nsp_object_set_name:
- * @O: 
- * @str: 
+ * @O:  a #NspObject.
+ * @str: new name to give to object?
  * 
  * sets an object name with char @str
  * 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_object_set_name(NspObject *O,const char *str)
@@ -772,6 +766,16 @@ static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
 
 
 
+/**
+ * nsp_object_serialize:
+ * Obj: a #NspObject.
+ * 
+ * Create a #NspSerial object filled with the serialized version of 
+ * Object @O. 
+ * 
+ * Return value: a new #NspObject (in fact a #NspSerial) or %NULLOBJ
+ **/
+
 NspObject *nsp_object_serialize(const NspObject *O)
 {
   NspObject *Obj=NULLOBJ;
@@ -815,6 +819,15 @@ NspObject *nsp_object_serialize(const NspObject *O)
 }
 
 
+/**
+ * nsp_object_unserialize:
+ * @S: a #NspSerial object. 
+ * 
+ * unserialize object @S.
+ * 
+ * Return value: a new #NspObject  or %NULLOBJ
+ **/
+
 NspObject *nsp_object_unserialize(const NspSerial *S)
 {
   NspObject *Obj;
@@ -831,7 +844,17 @@ NspObject *nsp_object_unserialize(const NspSerial *S)
   return Obj;
 }
 
-char *nsp_get_short_string_from_id(int id)
+/**
+ * nsp_get_short_string_from_id:
+ * @id: 
+ * 
+ * get the short string which describes an objet type 
+ * from its id.
+ * 
+ * Return value: a pointer to the requested string or NULL.
+ **/
+
+const char *nsp_get_short_string_from_id(int id)
 {
   NspTypeObject *type = nsp_get_type_from_id(id);
   while (type->surtype != NULL) 

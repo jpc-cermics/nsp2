@@ -350,10 +350,8 @@ void nsp_void_object_destroy(NspObject **O);
 
 #define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
 
-NspObject *nsp_create_empty_matrix_object(char *str);
-NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,double *itab,char *name);
-int nsp_object_xdr_save(XDR *F, NspObject *O);
-NspObject *nsp_object_xdr_load(XDR *F); 
+extern int nsp_object_xdr_save(XDR *F, NspObject *O);
+extern NspObject *nsp_object_xdr_load(XDR *F); 
 extern void nsp_object_destroy(NspObject **O); 
 extern void nsp_void_object_destroy(NspObject **O); 
 extern NspObject *nsp_object_copy(const NspObject *O); 
@@ -374,21 +372,22 @@ extern NspObject *nsp_get_object(Stack stack, int i);
 extern NspObject *nsp_get_object_copy(Stack stack, int i);
 extern NspObject *nsp_create_object_from_double(const char *str, double dval); 
 extern NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d);
-extern NspObject *nsp_create_object_from_int(char *str, int ival); 
+extern NspObject *nsp_create_object_from_int(const char *str, int ival); 
 extern NspObject *nsp_complexi_object_(char *str); 
 extern NspObject *nsp_create_object_from_str(const char *name,const char *str); 
-extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr); 
-extern NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, double *itab, char *name); 
-extern NspObject *nsp_create_empty_matrix_object(char *str); 
-extern NspObject *nsp_create_true_object(char *str); 
-extern NspObject *nsp_create_boolean_object(char *str,int val);
-extern NspObject *nsp_create_false_object(char *str); 
+extern NspObject *nsp_create_object_from_str_and_size(const char *name,const char *str, int lstr);
+extern NspObject *nsp_create_object_from_doubles(const char *name,int m, int n,double *rtab, double *itab);
+
+extern NspObject *nsp_create_empty_matrix_object(const char *str); 
+extern NspObject *nsp_create_true_object(const char *str); 
+extern NspObject *nsp_create_boolean_object(const char *str,int val);
+extern NspObject *nsp_create_false_object(const char *str); 
 extern const char *nsp_object_get_name(const NspObject *O); 
 extern int nsp_object_set_name(NspObject *O,const char *str); 
 extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 extern const char *nsp_object_set_initial_name(NspObject *ob,const char *name);
 extern void nsp_object_destroy_name(NspObject *ob);
-extern char *nsp_get_short_string_from_id(int id);
+extern const char *nsp_get_short_string_from_id(int id);
 
 
 #endif /*  NSP_TYPE_OBJECT  */
