@@ -15,6 +15,13 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Use to allocated, store and convert sparse data with Matab 
+ * storage convention in a nsp coded sparse matrix. 
+ *
+ * Note that sparse data structure in the Matlab style is called triplet 
+ * which stands for matlab internal storage convention (Jc,Ir,Pr) and NOT for the 
+ * triplet convention (I,J,Val).
  */
   
 #include "nsp/object.h"
@@ -25,7 +32,17 @@ static int nsp_sprow_set_triplet_from_m_internal( NspSpRowMatrix *M,int flag);
 static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M);
 static int nsp_sprow_alloc_triplet( NspSpRowMatrix *M,int nzmax);
 
-/* tricky version to get a column triplet */
+/**
+ * nsp_sprow_set_triplet_from_m:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * @flag: %TRUE or %FALSE
+ * 
+ * This function is used to allocate triplet data. If @flag 
+ * is %TRUE the triplet data is also initialized using sparse matrix data. 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
 
 int nsp_sprow_set_triplet_from_m( NspSpRowMatrix *M,int flag)
 {
@@ -41,7 +58,14 @@ int nsp_sprow_set_triplet_from_m( NspSpRowMatrix *M,int flag)
   return OK;
 }
 
-/* tricky version to update from  a column triplet */
+/**
+ * nsp_sprow_update_from_triplet:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * 
+ * Update the nsp sparse data with the triplet data. 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
 {
@@ -75,7 +99,16 @@ int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
   return OK;
 }
 
-/* needed in mexlib until representation is switched */
+/**
+ * nsp_sprow_alloc_col_triplet:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * @nzmax: initial max number of non nul elements.
+ * 
+ * Allocate internal triplet data. This is needed in mexlib 
+ * until default representation is switched. from row to column.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprow_alloc_col_triplet(NspSpRowMatrix *M,int nzmax)
 {
@@ -96,6 +129,16 @@ int nsp_sprow_alloc_col_triplet(NspSpRowMatrix *M,int nzmax)
   M->convert = 't';
   return OK;
 }
+
+/**
+ * nsp_sprow_realloc_col_triplet:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * @nzmax: max number of non nul elements.
+ * 
+ * reallocates internal triplet data.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprow_realloc_col_triplet( NspSpRowMatrix *M,int nzmax)
 {
@@ -122,6 +165,17 @@ int nsp_sprow_realloc_col_triplet( NspSpRowMatrix *M,int nzmax)
 }
 
 
+/**
+ * nsp_sprow_set_triplet_from_m_internal:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * @flag: %TRUE or %FALSE
+ * 
+ * This function is used to allocate triplet data. If @flag 
+ * is %TRUE the triplet data is also initialized using sparse matrix data. 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
 static int nsp_sprow_set_triplet_from_m_internal( NspSpRowMatrix *M,int flag)
 {
   int nnz = nsp_sprowmatrix_nnz(M);
@@ -138,6 +192,15 @@ static int nsp_sprow_set_triplet_from_m_internal( NspSpRowMatrix *M,int flag)
   return OK;
 }
 
+
+/**
+ * nsp_sprow_update_from_triplet_internal:
+ * @M: a sparse row coded matrix (#NspSpRowMatrix)
+ * 
+ * Update the nsp sparse data with the triplet data. 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
 {
@@ -197,11 +260,17 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
 }
 
 
-/* from internal coding to the Jc,Ir,Pr coding using int and double.
- * Note that the matrix M is row coded and thus the triplet is also 
- * row coded 
- * here the triplet has been allocated !
- */
+
+/**
+ * nsp_sprow_fill_zi_triplet:
+ * @M:  a sparse row coded matrix (#NspSpRowMatrix)
+ * 
+ * from internal coding to the (Jc,Ir,Pr) coding using int and double.
+ * Note that the matrix @M is row coded and thus the triplet is also row coded.
+ * Here, we assume that the triplet (Jc,Ir,Az) has already been allocated !
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M)
 {
@@ -257,6 +326,16 @@ static void nsp_sprow_free_triplet(NspSpRowMatrix *M)
   FREE(M->triplet.Pi);
 }
 
+/**
+ * nsp_sprow_alloc_triplet:
+ * @M:  a sparse row coded matrix (#NspSpRowMatrix)
+ * @nzmax: max number of non nul elements.
+ * 
+ * This function is used to allocate triplet data.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
 static int nsp_sprow_alloc_triplet(NspSpRowMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
@@ -286,7 +365,17 @@ static void nsp_spcol_free_triplet( NspSpColMatrix *M);
 static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag);
 static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M);
 
-/* associate a column triplet to internal representation of M */
+/**
+ * nsp_spcol_set_triplet_from_m:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * @flag: %TRUE or %FALSE
+ * 
+ * This function is used to allocate triplet data 
+ * to internal representation of M. If @flag 
+ * is %TRUE the triplet data is also initialized using sparse matrix data. 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_spcol_set_triplet_from_m( NspSpColMatrix *M,int flag)
 {
@@ -296,7 +385,14 @@ int nsp_spcol_set_triplet_from_m( NspSpColMatrix *M,int flag)
   return OK;
 }
 
-/* update M data from its triplet internal representation  */
+/**
+ * nsp_spcol_update_from_triplet:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * 
+ * updates @M data from its triplet internal representation.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
 {
@@ -313,7 +409,15 @@ int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
   return OK;
 }
 
-/* needed in mexlib until representation is switched */
+/**
+ * nsp_spcol_alloc_col_triplet:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * @nzmax: initial max number of non nul elements. 
+ * 
+ * Allocate internal triplet data.
+ *
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax)
 {
@@ -334,6 +438,16 @@ int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax)
   M->convert = 't';
   return OK;
 }
+
+/**
+ * nsp_spcol_realloc_col_triplet:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * @nzmax: initial max number of non nul elements. 
+ * 
+ * reallocates internal triplet data.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcol_realloc_col_triplet( NspSpColMatrix *M,int nzmax)
 {
@@ -361,6 +475,17 @@ int nsp_spcol_realloc_col_triplet( NspSpColMatrix *M,int nzmax)
 }
 
 
+/**
+ * nsp_spcol_set_triplet_from_m_internal:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * @flag: 
+ * 
+ * This function is used to allocate triplet data. If @flag 
+ * is %TRUE the triplet data is also initialized using sparse matrix data. 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
 static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag)
 {
   int nnz = nsp_spcolmatrix_nnz(M);
@@ -377,6 +502,15 @@ static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag)
   return OK;
 }
 
+
+/**
+ * nsp_spcol_update_from_triplet_internal:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * 
+ * updates @M data from its triplet internal representation.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
 {
@@ -435,9 +569,15 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
   return OK;
 }
 
-/* from internal coding to the Jc,Ir,Az coding using int and double.
- * here the triplet has been allocated !
- */
+/**
+ * nsp_spcol_fill_zi_triplet:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * 
+ * from internal coding to the Jc,Ir,Az coding using int and double.
+ * Here, we assume that the triplet (Jc,Ir,Az) has already been allocated !
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
 {
@@ -479,6 +619,14 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
     }
   return OK;
 }
+
+/**
+ * nsp_spcol_free_triplet:
+ * @M: a sparse column coded matrix (#NspSpColMatrix)
+ * 
+ * free the triplet storage. 
+ *
+ **/
 
 static void nsp_spcol_free_triplet(NspSpColMatrix *M)
 {

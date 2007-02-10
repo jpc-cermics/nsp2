@@ -487,11 +487,17 @@ void Type_Interf_Info(int i, char **fname, function (**f))
  * set of function for dealing with types 
  *--------------------------------------------------*/
 
-/*
- * register basic types 
- */
+/**
+ * primitive_types_register:
+ * @void: 
+ * 
+ * register basic types in the type system by assigning an id to each 
+ * predefined classes.
+ *
+ **/
 
-void primitive_types_register() {
+void primitive_types_register(void) 
+{
   new_type_matrix(T_BASE);
   new_type_bmatrix(T_BASE);
   new_type_function(T_BASE);
@@ -534,14 +540,38 @@ void primitive_types_register() {
  */
 
 NspHash *nsp_types_hash_table = NULL; 
-int nsp_no_type_id = 0;  /* an id never used by a type */ 
+const int nsp_no_type_id = 0;  /* an id never used by a type */ 
+
+/**
+ * nsp_new_type_id:
+ * @void: 
+ * 
+ * increments and return a new type number which can be assigned
+ * to a new class.
+ * 
+ * Return value: a new #NspTypeId.
+ **/
 
 NspTypeId  nsp_new_type_id(void) { static int i=1; return i++; }
+
+
+/**
+ * nsp_register_type:
+ * @type: id of a type. 
+ * 
+ * This function is called to register new types (objects of type #NspTye) in the global 
+ * variable nsp_types_hash_table. 
+ * 
+ * Return value: %TRUE or %FALSE.
+ **/
 
 int nsp_register_type(void *type) 
 {
   NspTypeObject *top = type; 
   NspObject *nsp_type; 
+  /* since nsp_types_hash_table is a hash table there's. Registering 
+   * hash tables is a bit special
+   */
   if ( type == nsp_type_hash && nsp_types_hash_table == NULLHASH ) return TRUE;
   if ( nsp_types_hash_table == NULLHASH ) 
     {
@@ -557,6 +587,13 @@ int nsp_register_type(void *type)
   if (nsp_hash_enter(nsp_types_hash_table,nsp_type) == FAIL) return FALSE; 
   return TRUE;
 }
+
+/**
+ * nsp_get_type_from_id:
+ * @id: a #NspTypeId which gives the id (integer) of a type
+ * 
+ * Return value: a pointer to a #NspType or NULL
+ **/
 
 void *nsp_get_type_from_id(NspTypeId id)
 {
@@ -574,6 +611,15 @@ void *nsp_get_type_from_id(NspTypeId id)
     }
   return NULL;
 }
+
+/**
+ * nsp_get_type_from_name:
+ * @name: the name of a class 
+ *
+ * returns a type given its name. 
+ *
+ * Return value: a pointer to a #NspType or NULL
+ **/
 
 void *nsp_get_type_from_name(const char *name)
 {
