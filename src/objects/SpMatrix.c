@@ -207,7 +207,7 @@ void nsp_sprowmatrix_row_destroy(SpRow *Row)
 
 /**
  * nsp_sprowmatrix_destroy:
- * @Row: 
+ * @Mat: 
  * 
  * internal: destroys a #SpCol structure.
  * 
@@ -1001,9 +1001,9 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
 /**
  * nsp_sprowmatrix_mult_sp_m:
  * @A: 
- * @B: 
+ * @X: 
  * 
- * @Ax@B when @B is a full matrix and returns the result as a full matrix.
+ * @Ax@X when @X is a full matrix and returns the result as a full matrix.
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
@@ -2894,14 +2894,15 @@ int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 
 /**
  * nsp_sprowmatrix_rand:
- * @A: 
- * @sparsity: 
- * @crand: 
+ * @m: number of rows
+ * @n: number of columns
+ * @sparsity: percent of non null elements
+ * @crand: a character ('n' for normal or 'u' for uniform) 
  * 
- * returns a new #NspSpColMatrix filled with random values ('n' or 'u') 
+ * returns a new #NspSpRowMatrix filled with random values ('n' or 'u') 
  * the percent of non null elements is given by @sparsity.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspRowMatrix or %NULLSPCOL
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_rand(int m,int n,double sparsity,char crand)

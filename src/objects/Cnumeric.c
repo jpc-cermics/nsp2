@@ -253,9 +253,10 @@ double nsp_pow_di(double x, int p)
 
 /**
  * nsp_pow_ci:
- * @x: 
- * @p: 
- * @y:
+ * @x: a #doubleC
+ * @p: an integer 
+ * @y: a #doubleC
+ *
  * computes y = x^p (can be used with x=x^p)
  *  
  **/

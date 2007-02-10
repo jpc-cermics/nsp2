@@ -544,7 +544,6 @@ const int nsp_no_type_id = 0;  /* an id never used by a type */
 
 /**
  * nsp_new_type_id:
- * @void: 
  * 
  * increments and return a new type number which can be assigned
  * to a new class.

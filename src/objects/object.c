@@ -449,11 +449,8 @@ static int int_object_create(Stack stack, int rhs, int opt, int lhs)
 
 /* set method common to all objects object.set[attr=val,attr=val,....] */
 
-/*
- */
-
 /**
- * int_object_equal:
+ * int_meth_object_equal:
  * @self: an instance of a nsp object.
  * @stack: a #Stack
  * @rhs: an int the number of right hand side arguments 
@@ -467,7 +464,7 @@ static int int_object_create(Stack stack, int rhs, int opt, int lhs)
  * Return value: 1 
  **/
 
-static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
+static int int_meth_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
 {
   int rep;
   NspObject *O;
@@ -480,7 +477,7 @@ static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-static int int_object_not_equal(void *self,Stack stack,int rhs,int opt,int lhs)
+static int int_meth_object_not_equal(void *self,Stack stack,int rhs,int opt,int lhs)
 {
   int rep;
   NspObject *O;
@@ -506,7 +503,8 @@ static int int_object_not_equal(void *self,Stack stack,int rhs,int opt,int lhs)
  * 
  * Return value: 1 or %RET_BUG.
  **/
-static int int_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
+
+static int int_meth_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(-1,0);
   CheckLhs(1,1);
@@ -520,11 +518,35 @@ static int int_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-/*
+
+/* method for setting attributes 
+ * ob.set[ attr1=val1, attr2 = val2 ,....]
+ */
+
+static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ob=ob;
+  int i;
+  if ( rhs - opt > 0 ) 
+    {
+      Scierror("%s only accept optional arguments \n",NspFname(stack));
+      return RET_BUG;
+    }
+  CheckLhs(1,1); 
+  for ( i = 1 ; i <= rhs ; i++) 
+    {
+      NspObject *val = ((NspHobj *) NthObj(i))->O;
+      if ( nsp_set_attribute_util(Ob,Ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
+    }
+  return 0;
+}
+
+
+/* get attributes through method .get 
  * ob.get[smat1,smat2,...], get attributes 
  */
 
-int int_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
+int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
 
   NspObject *Ob=ob,*Ret;
@@ -549,13 +571,82 @@ int int_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
   return count;
 }
 
+/* get attribute names.
+ *
+ */
+
+static int int_meth_object_get_attribute_names(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ob=ob,*Res;
+  CheckRhs(0,0);
+  if ((Res= nsp_get_attribute_util(Ob,Ob->basetype,"__attrs"))== NULL)
+    return RET_BUG;  
+  MoveObj(stack,1,Res);
+  return 1;
+}
+
+/* get available methods. 
+ */
+
+static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
+{
+  NspMethods *methods;
+  NspSMatrix *sm=NULLSMAT,*sm1;
+  /* build a string matrix with all methods */
+  while ( type != NULL) 
+    {
+      methods = (type->methods != NULL) ? type->methods(): NULL;
+      /* return attributes as a String Matrix */
+      if ( methods != NULL)
+	{
+	  if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,methods,sizeof(NspMethods))) == NULLSMAT) return NULL;
+	  sm1->n=sm1->m;sm1->m=1;/* transpose vector */
+	  if ( sm != NULL) 
+	    {
+	      if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
+	      nsp_smatrix_destroy(sm1);
+	    }
+	  else 
+	    {
+	      sm=sm1;
+	    }
+	}
+      type = type->surtype;
+    }
+  if ( sm == NULL) 
+    {
+      if (( sm =nsp_smatrix_create(NVOID,0,0,NULL,0))  == NULLSMAT) return NULLSMAT;
+    }
+  else
+    {
+      sm->m=sm->n,sm->n=1;
+    }
+  return sm;
+}
+
+/* get methods with method !
+ */
+
+static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ob=ob;
+  NspSMatrix *S;
+  CheckRhs(0,0);
+  if ((S = nsp_get_methods(Ob,Ob->basetype)) == NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
 
 static NspMethods object_methods[] = {
-  { "set",  int_set_attributes1}, /* set attribute of object the get is given by . */
-  { "get",  int_get_attributes},  /* get attribute is also given by . */
-  { "get_name", int_object_get_name},
-  { "equal",  int_object_equal},
-  { "not_equal",  int_object_not_equal},
+  { "set",  int_meth_object_set_attributes}, /* set attribute of object the get is given by . */
+  { "get",  int_meth_object_get_attributes},  /* get attribute is also given by . */
+  { "get_name", int_meth_object_get_name},
+  { "get_methods", int_meth_object_get_methods},
+  { "get_attributes", int_meth_object_get_attribute_names},
+  { "equal",  int_meth_object_equal},
+  { "not_equal",  int_meth_object_not_equal},
   { (char *) 0, NULL}
 };
 
@@ -635,29 +726,6 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-
-/*
- * ob.set[ attr1=val1, attr2 = val2 ,....]
- */
-
-int int_set_attributes1(void *ob,Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject *Ob=ob;
-  int i;
-  if ( rhs - opt > 0 ) 
-    {
-      Scierror("%s only accept optional arguments \n",NspFname(stack));
-      return RET_BUG;
-    }
-  CheckLhs(1,1); 
-  for ( i = 1 ; i <= rhs ; i++) 
-    {
-      NspObject *val = ((NspHobj *) NthObj(i))->O;
-      if ( nsp_set_attribute_util(Ob,Ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
-    }
-  return 0;
-}
-
 
 /*
  * can be used in the constructor 
@@ -867,41 +935,6 @@ int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack sta
   return RET_BUG;
 }
 
-NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
-{
-  NspMethods *methods;
-  NspSMatrix *sm=NULLSMAT,*sm1;
-  /* build a string matrix with all methods */
-  while ( type != NULL) 
-    {
-      methods = (type->methods != NULL) ? type->methods(): NULL;
-      /* return attributes as a String Matrix */
-      if ( methods != NULL)
-	{
-	  if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,methods,sizeof(NspMethods))) == NULLSMAT) return NULL;
-	  sm1->n=sm1->m;sm1->m=1;/* transpose vector */
-	  if ( sm != NULL) 
-	    {
-	      if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
-	      nsp_smatrix_destroy(sm1);
-	    }
-	  else 
-	    {
-	      sm=sm1;
-	    }
-	}
-      type = type->surtype;
-    }
-  if ( sm == NULL) 
-    {
-      if (( sm =nsp_smatrix_create(NVOID,0,0,NULL,0))  == NULLSMAT) return NULLSMAT;
-    }
-  else
-    {
-      sm->m=sm->n,sm->n=1;
-    }
-  return sm;
-}
 
 /*---------------------------------------------------
  * set of interfaced functions 
@@ -1254,7 +1287,7 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Scilab printf(format,....) function 
+ * Nsp printf(format,....) function 
  */
 
 int print_count_rows(Stack stack,int first_arg,int last_arg)
@@ -1300,7 +1333,7 @@ int int_object_printf(Stack stack, int rhs, int opt, int lhs)
 }  
 
 /*
- * Scilab fprintf function 
+ * Nsp fprintf function 
  */
 
 int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
@@ -1336,7 +1369,7 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
 }  
 
 /*
- * Scilab eye(x) where x is an object 
+ * Nsp eye(x) where x is an object 
  * return a Matrix 
  * idem for ones(x)
  */
@@ -1372,7 +1405,7 @@ int int_object_zeros(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Scilab sprintf function 
+ * Nsp sprintf function 
  */
 
 int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
@@ -1405,7 +1438,7 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
 }  
 
 /*
- * Scilab scanf function
+ * Nsp scanf function
  */
 
 
@@ -1426,8 +1459,8 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
     }
   if ((Format = GetString(stack,iof+1)) == (char*)0) return RET_BUG;
   /*
-   * If we are in a window based Scilab we cannot use stdin 
-   * for scanning : we use Scilab function SciGetLine to 
+   * If we are in a window based Nsp we cannot use stdin 
+   * for scanning : we use Nsp function SciGetLine to 
    * get a line of input and use this buffer for performing 
    * a sscanf 
    */
@@ -1483,7 +1516,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*
- * Scilab sscanf function
+ * Nsp sscanf function
  */
 
 int int_object_sscanf(Stack stack, int rhs, int opt, int lhs)
@@ -1548,7 +1581,7 @@ int int_object_sscanf(Stack stack, int rhs, int opt, int lhs)
 }  
 
 /*
- * Scilab fscanf function
+ * Nsp fscanf function
  */
 
 static int count_lines(FILE *f);
@@ -1641,8 +1674,8 @@ static int count_lines(FILE *f)
   return n;
 }
 
-/*
- * Scilab size function 
+/* size(Obj,..)
+ * Nsp size function 
  */
 
 int int_object_size(Stack stack, int rhs, int opt, int lhs)
@@ -1713,9 +1746,8 @@ int int_object_size(Stack stack, int rhs, int opt, int lhs)
 
 
 
-/*
- * Save Objects in a file ( xdr format )
- *  each object is saved using its own function 
+/* save(...) save objects in a file ( xdr format )
+ * each object is saved using its own function 
  */
 
 static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
@@ -1750,10 +1782,9 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
   return rep;
 }
 
-/*
+/* load(Obj)
  * read saved object from a file 
  */
-
 
 static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -1783,6 +1814,9 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* generic interface for logical operations on objets.
+ *
+ */
 
 static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes) 
 {
@@ -1892,10 +1926,8 @@ static int int_object_isempty(Stack stack, int rhs, int opt, int lhs)
   return 1; 
 } 
 
-/* object serialization test 
- * 
+/* serialize(A).
  */
-
 
 static int int_object_serialize(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -1922,7 +1954,7 @@ static int int_object_serialize(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* unserialize a serialized object 
+/* unserialize(S) or unserialize(M)
  */
 
 static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)

@@ -5707,10 +5707,11 @@ int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 
 
 /**
- * nsp_spcolmatrix_rand:
- * @A: 
- * @sparsity: 
- * @crand: 
+ * nsp_spcolmatrix_rand_one:
+ * @m: number of rows
+ * @n: number of columns
+ * @sparsity: percent of non null elements
+ * @crand: a character ('n' for normal or 'u' for uniform) 
  * 
  * returns a new #NspSpColMatrix filled with random values ('n' or 'u') 
  * the percent of non null elements is given by @sparsity.
@@ -5786,14 +5787,15 @@ static int *nsp_sprand_column_deviates(int ntot,int ncol,int colsize)
 
 /**
  * nsp_spcolmatrix_rand:
- * @m: 
- * @n: 
- * @sparsity: 
- * @crand: 
+ * @m: number of rows
+ * @n: number of columns
+ * @sparsity: percent of non null elements
+ * @crand: a character ('n' for normal or 'u' for uniform) 
  * 
+ * returns a new #NspSpColMatrix filled with random values ('n' or 'u') 
+ * the percent of non null elements is given by @sparsity.
  * 
- * 
- * Return value: 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
 NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)

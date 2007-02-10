@@ -403,20 +403,20 @@ NspObject *nsp_get_object_copy(Stack stack, int i)
 
 /**
  *nsp_create_object_from_double:
- * @str: the object name or %NVOID
+ * @name: the object name or %NVOID
  * @dval:  value to store in the 1x1 matrix 
  * 
  * Creates an Object containing a 1x1 real matrix 
- * with value @dval and name @str
+ * with value @dval and name @name
  * 
  * 
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_double(const char *str, double dval)
+NspObject *nsp_create_object_from_double(const char *name, double dval)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(name,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->R[0] = dval ;
   return (NspObject *) A;
 }
@@ -428,7 +428,7 @@ NspObject *nsp_create_object_from_double(const char *str, double dval)
  * 
  * 
  * Creates an Object containing a 1x1 real matrix 
- * with value @ival and name @str
+ * with value @ival and name @name
  * 
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
@@ -443,7 +443,7 @@ NspObject *nsp_create_object_from_int(const char *name, int ival)
 
 /**
  *nsp_complexi_object_:
- * @str:  the object name or %NVOID
+ * @name:  the object name or %NVOID
  * 
  * Creates an Object containing a 1x1 complex matrix 
  * with value %i and name @str
@@ -451,10 +451,10 @@ NspObject *nsp_create_object_from_int(const char *name, int ival)
  * Return value:  a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_complexi_object_(char *str)
+NspObject *nsp_complexi_object_(const char *name)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(name,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->C[0].r = 0;
   A->C[0].i = 1;
   return (NspObject *) A;
@@ -462,20 +462,20 @@ NspObject *nsp_complexi_object_(char *str)
 
 /**
  *nsp_create_object_from_complex:
- * @str: the object name or %NVOID
+ * @name: the object name or %NVOID
  * @cval:  value to store in the 1x1 matrix 
  * 
  * Creates an Object containing a 1x1 complex matrix 
- * with value @dval and name @str
+ * with value @dval and name @name
  * 
  * 
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d)
+NspObject *nsp_create_object_from_complex(const char *name,const doubleC *d)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(name,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->C[0].r = d->r;
   A->C[0].i = d->i;
   return (NspObject *) A;
@@ -570,7 +570,7 @@ NspObject *nsp_create_object_from_doubles(const char *name,int m, int n,double *
  *nsp_create_empty_matrix_object:
  * @name: name of object or %NVOID
  * 
- * Creates an empty matrix with name @str
+ * Creates an empty matrix with name @name
  * 
  * 
  * Return value:  a new #NspObject ( in fact a #NspMatrix)
@@ -768,7 +768,7 @@ static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
 
 /**
  * nsp_object_serialize:
- * Obj: a #NspObject.
+ * @O: a #NspObject.
  * 
  * Create a #NspSerial object filled with the serialized version of 
  * Object @O. 
