@@ -10,29 +10,65 @@ The \emph{Object} data type is the base class of Nsp objects.
 \end{mandescription}
 
 \paragraph{Operations on Objects}
+\itemdesc{attributes}
+Attributes values are obtained through the dot operator which can be used to get or set 
+values. Note that, when implementing a class, attributes may be restricted to be non writable.
+When attributes are internally stored as nsp objects its is possible to implement attribute 
+access compatible with set and get chaining rules as in \verb+Obj.attr(2,:)=56+. It is also 
+possible to overload the \verb+(.)+ operator in order to access to attributes. 
+It is possible to obtain the attribute names of a given object with \verb+__attrs+ or using 
+a method as described in next paragraph.
 \itemdesc{object methods}
 \begin{itemize}
 \item \verb+O.set[attr1=val1,attr2=val2,...]+  set attributes values for object \verb+O+ 
-\item \verb+O.get[smat1,...]+ get attribute values. Note that attributes can also be obtained with the dot
-  operator. 
+\item \verb+O.get[smat1,...]+ get attribute values. Note that attributes can also be obtained with the dot 
+  operator.
+\item \verb+O.get_methods[]+ get the method names as a string matrix.
+\item \verb+O.get_attributes[]+ get the attribute names as a string matrix.
 \item \verb+O.get_name[]+ get name of object. 
 \item \verb+O1.equal[O2]+ test equality. 
 \item \verb+O1.not_equal[O2]+ test if \verb!O1! and \verb!O2! are different.
 \end{itemize}
 
 \itemdesc{Some functions}
+All the nsp objects must implements a set of methods requested for all objects. 
+Thus a set of interfaced function at nsp level can accept any object as argument. 
+The interface just redirect the computation to the object method. 
+This is used for object display (\verb+print+, \verb+sprint+, \verb+fprint+, 
+\verb+info+, \verb+sinfo+, \verb+finfo+), for read/write operations (\verb+printf+,\ldots, 
+\verb+scanf+), for logical operations, for saving and loading objects (\verb+save+, \verb+load+, 
+\verb+serialize+), for obtaining size information on objects, \ldots.
+
 \begin{itemize}
 \item \verb+length(A)+ returns the number of entries in \verb+A+.
 \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
-  of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
+  of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) returns the number of rows 
   (resp. columns) of \verb+A+.
 \end{itemize}
+
+\begin{examples}
+  \begin{program}\HCode{a=\%types.ClassA.new[cla_color=89,cla_thickness=56];\Hnewline
+      // ClassA is a predefined toy class.\Hnewline
+      is(a,\%types.Mat) \Hnewline
+      is(a,\%types.ClassA) \Hnewline
+      a.__attrs\Hnewline
+      a.cla_color = 32 \Hnewline
+      a.cla_val = rand(2,2)\Hnewline
+      a.cla_val(3,3) = 1;\Hnewline
+      a.set[cla_val=1:5,cla_color=56]\Hnewline
+      a('cla_color') = 78 \Hnewline
+      a.get_methods[];\Hnewline
+      // ClassB is a predefined toy class which inherits from ClassA\Hnewline
+      b=\%types.ClassB.new[cla_color=89,cla_thickness=56];\Hnewline
+      b.get_attributes[];\Hnewline
+      is(b,\%types.ClassA) \Hnewline
+      is(b,\%types.ClassB) \Hnewline
+      test(b); }
+  \end{program}
+\end{examples}
 
 \begin{manseealso}
 
 \end{manseealso}
 
-% -- Authors
-\begin{authors}
-   jpc, bp
-\end{authors}
+
