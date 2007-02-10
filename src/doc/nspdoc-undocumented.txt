@@ -1,6 +1,7 @@
-23% symbol docs coverage.
-423 symbols documented.
-1399 not documented.
+27% symbol docs coverage.
+566 symbols documented.
+250 symbols incomplete.
+1545 not documented.
 
 
 Abs
@@ -12,8 +13,10 @@ BMatrix_Type
 Block_Type
 Boolean
 Bounds
+BuildListFromArgs (name, T, Varargs)
 C2F
 CNAME
+CellsLoopCol (str, Col, A, icol, rep, Returns)
 CheckClickQueue
 CheckCols
 CheckComplex
@@ -44,6 +47,7 @@ F_Enlarge
 Func_Type
 GFrame_Type
 GenericMatSeRo
+GetArgs (stack, rhs, opt, T, Varargs)
 GetBlock
 GetBlockCopy
 GetCells
@@ -141,6 +145,7 @@ IS_XDR
 IVect_Type
 InitStack
 IntScalar
+IsBHash
 IsBlock
 IsBlockObj
 IsCells
@@ -209,6 +214,7 @@ Mat2float
 Mat2int
 MatIsTrue
 MatLec
+MatLoopCol (str, Col, A, icol, rep, Returns)
 Matd2i
 Matrix_Type
 Max
@@ -254,14 +260,15 @@ Mod_Type
 MpMat2double
 MpMat2float
 MpMat2int
+MpMatLoopCol (str, Col, A, icol, rep, Returns)
 MpMatd2i
-NAME_MAXL
 NSP_INT_TO_POINTER
 NSP_OBJECT
 NSP_POINTER_TO_INT
 NSP_TYPE_BASE
 NSP_TYPE_OBJECT
 NSP_TYPE_OBJECT__
+NULLBHASH
 NULLBLOCK
 NULLBMAT
 NULLCELL
@@ -294,10 +301,12 @@ NULLSTRING
 NULLTYPE
 NULLXME
 NVOID
+NspBHash
 NspBMatrix
 NspBlock
 NspCells
 NspClassA
+NspClassB
 NspConnector
 NspFile
 NspFunction
@@ -321,6 +330,7 @@ NspPmatrix
 NspRect
 NspSmatrix
 NspType
+NspTypeBHash
 NspTypeBase
 NspTypeHash
 NspTypeObject
@@ -337,6 +347,7 @@ POINTER_INT
 P_PList_Type
 ParseError
 PushClickQueue
+PutLhsObj (stack, nv, ind)
 REALLOC
 RectDraw
 RectResize
@@ -383,6 +394,7 @@ Sset
 Stack
 StackInfo
 StackStore
+SwapObjs (stack, i, j)
 TokenLineSet
 USE_SHARP_SIGN
 USE_SWAP
@@ -403,6 +415,7 @@ aint
 anint
 asinh
 atanh
+attrs_to_stack (attrs, stack, pos)
 block_create
 block_object
 checkqueue_nsp_command
@@ -653,6 +666,8 @@ mat_is_increasing
 matint_get_methods
 matrix_loop_extract
 matrix_object
+method_search (key, Table, Returns)
+mexAtExit (ExitFcn)
 mexCallNsp
 mexCallScilab
 mexEvalString
@@ -678,9 +693,11 @@ modulelt_print
 mpmatrix_copy
 mpmatrix_loop_extract
 mpmatrix_object
+mxArrayToString (ptr)
 mxCELL_CLASS
 mxCHAR_CLASS
 mxCalcSingleSubscript
+mxCalloc (n, size)
 mxClassID
 mxComplexity
 mxCreateCellArray
@@ -693,12 +710,18 @@ mxDOUBLE_CLASS
 mxDestroyArray
 mxDuplicateArray
 mxFUNCTION_CLASS
+mxFree (ptr)
+mxFreeMatrix (ptr)
 mxGetCell
 mxGetClassID
 mxGetDimensions
 mxGetEps
+mxGetField (pa, i, fieldname, Returns)
 mxGetInf
+mxGetIr (ptr)
+mxGetJc (ptr)
 mxGetM
+mxGetN (ptr)
 mxGetNaN
 mxGetNumberOfDimensions
 mxGetNumberOfElements
@@ -727,6 +750,7 @@ mxMalloc
 mxSINGLE_CLASS
 mxSTRUCT_CLASS
 mxSetCell
+mxSetField (pa, i, fieldname, value)
 mxSetName
 mxSetNzmax
 mxUINT16_CLASS
@@ -735,6 +759,7 @@ mxUINT64_CLASS
 mxUINT8_CLASS
 mxUNKNOWN_CLASS
 myzabs
+new_bhash
 new_block
 new_bmatrix
 new_cells
@@ -762,6 +787,7 @@ new_pmatrix
 new_rect
 new_smatrix
 new_type
+new_type_bhash
 new_type_block
 new_type_bmatrix
 new_type_cells
@@ -790,15 +816,43 @@ new_type_rect
 new_type_smatrix
 new_type_type
 nlinear_interp
+nsp_acos_c (x, res)
+nsp_acosh_c (x, res)
 nsp_activate_gtk_events_check
 nsp_aint_c
 nsp_arg_c
+nsp_asin_c (x, res)
 nsp_atk_hash_table
 nsp_balanc
 nsp_basic_to_string
+nsp_bhash_copy
+nsp_bhash_create
+nsp_bhash_destroy
+nsp_bhash_enter (H)
+nsp_bhash_enter_copy
+nsp_bhash_enter_pos_i (H, i, val)
+nsp_bhash_equal
+nsp_bhash_find (H, str, val)
+nsp_bhash_find_and_copy
+nsp_bhash_full_equal (L1, L2, Returns)
+nsp_bhash_full_not_equal
+nsp_bhash_get_next_object (H, i, str, val)
+nsp_bhash_info
+nsp_bhash_merge (H1, H2)
+nsp_bhash_not_equal
+nsp_bhash_object
+nsp_bhash_print
+nsp_bhash_remove (H, str)
+nsp_bhash_resize (H, new_size)
+nsp_bhcreate_from_list
+nsp_bmatrix_clone (init)
+nsp_bmatrix_elt_size
 nsp_bmatrix_find
+nsp_bmatrix_full_compare (err)
+nsp_bmatrix_print (rec_level)
 nsp_bmatrix_redim
 nsp_ceil_c
+nsp_cells_clone
 nsp_cells_concat_down
 nsp_cells_eq
 nsp_cells_is_true
@@ -809,6 +863,7 @@ nsp_cells_redim
 nsp_cells_strcmp
 nsp_cells_type_as_string
 nsp_cells_type_short_string
+nsp_cells_unique (Ind, Occ)
 nsp_cells_xdr_load
 nsp_cells_xdr_save
 nsp_check_events_activated
@@ -836,6 +891,7 @@ nsp_cosh_c
 nsp_csetd
 nsp_dadd
 nsp_dadd_maxplus
+nsp_det (mode, Returns)
 nsp_dialog
 nsp_dialog1
 nsp_dialogs_insert_title
@@ -858,30 +914,35 @@ nsp_error_message_to_lasterror
 nsp_error_vprintf
 nsp_exec_method_util
 nsp_exp_c
+nsp_feof (f)
+nsp_ferror (f)
 nsp_file_close_xdr_w
 nsp_file_copy
 nsp_file_create
 nsp_file_destroy
 nsp_file_info
 nsp_file_object
+nsp_file_open (mode, xdr_on, swap_on)
 nsp_file_open_xdr_w
 nsp_file_print
 nsp_finite_c
 nsp_float2double
 nsp_float2int
 nsp_floor_c
+nsp_frame_insert_hash_contents (H)
 nsp_franck_inverse_matrix
 nsp_franck_matrix
 nsp_from_texmacs
+nsp_fseek (F, offset, flag, Returns)
+nsp_ftell (F, offset, Returns)
 nsp_gbalanc
 nsp_gdk_hash_table
 nsp_get_attribute_object
 nsp_get_attribute_util
 nsp_get_echo_input_line
 nsp_get_file_window
-nsp_get_methods
+nsp_get_object_copy (Returns)
 nsp_get_type_from_id
-nsp_get_type_from_name
 nsp_get_urandseed
 nsp_get_urandtype
 nsp_global_frame_remove_object
@@ -891,12 +952,21 @@ nsp_gtkcombobox_colormap_new
 nsp_hash_copy
 nsp_hash_create
 nsp_hash_destroy
+nsp_hash_enter (H, O)
+nsp_hash_enter_copy (H, O)
 nsp_hash_equal
+nsp_hash_find (H, str, O)
+nsp_hash_find_and_copy (H, str, O)
+nsp_hash_full_equal (L1, L2, Returns)
 nsp_hash_full_not_equal
+nsp_hash_get_next_object (H, i, O)
 nsp_hash_info
+nsp_hash_merge (H1, H2)
 nsp_hash_not_equal
 nsp_hash_object
 nsp_hash_print
+nsp_hash_remove (H, str)
+nsp_hash_resize (H, new_size)
 nsp_hess
 nsp_hilbert_inverse_matrix
 nsp_hilbert_matrix
@@ -917,7 +987,16 @@ nsp_is_gtk_window
 nsp_iset
 nsp_isinf_c
 nsp_isnan_c
+nsp_ivect_2_mat (IV)
+nsp_ivect_copy (A)
+nsp_ivect_create (name, first, step, last, flag)
+nsp_ivect_destroy (IV)
+nsp_ivect_info (IV)
 nsp_ivect_object
+nsp_ivect_print (IV)
+nsp_list_copy (L)
+nsp_list_create (name, Returns)
+nsp_list_fold_right (x)
 nsp_list_not_equal
 nsp_list_object
 nsp_list_path_extract
@@ -970,10 +1049,12 @@ nsp_mat_get_imag
 nsp_mat_get_real
 nsp_mat_hilbert
 nsp_mat_iand
+nsp_mat_iandu (A, res)
 nsp_mat_idiv
 nsp_mat_int
 nsp_mat_inv_el
 nsp_mat_ior
+nsp_mat_ioru (A, res, Returns)
 nsp_mat_ishift
 nsp_mat_isinf
 nsp_mat_isnan
@@ -1025,6 +1106,17 @@ nsp_mat_tgamma
 nsp_mat_tril
 nsp_mat_triu
 nsp_mat_zeros
+nsp_matint_canonic (obj)
+nsp_matint_concat_down_bis
+nsp_matint_concat_right
+nsp_matint_extract1
+nsp_matint_extract_columns1
+nsp_matint_extract_elements1
+nsp_matint_extract_rows1
+nsp_matint_perm_elem
+nsp_matint_repmat
+nsp_matint_set_elts1
+nsp_matint_set_submatrix1
 nsp_matrix_boundster
 nsp_matrix_dialog
 nsp_matrix_redim
@@ -1039,6 +1131,9 @@ nsp_message
 nsp_message_
 nsp_message_modeless
 nsp_message_modeless_
+nsp_mex_wrapper (stack, rhs, opt, lhs, mexFunction, Returns)
+nsp_mget (F, x, n, type, items_read)
+nsp_mgetstr (F, start, n, Returns)
 nsp_mgetstr1
 nsp_module_import
 nsp_module_search_name
@@ -1129,10 +1224,11 @@ nsp_mpmat_tril
 nsp_mpmat_triu
 nsp_mpmat_zeros
 nsp_mpmatrix_redim
+nsp_mput (F, x, n, type)
 nsp_multi_dialog
 nsp_multi_dialog_
+nsp_new_boolean_obj (ival)
 nsp_new_file
-nsp_new_type_id
 nsp_no_type_id
 nsp_none_copy
 nsp_none_create
@@ -1142,6 +1238,18 @@ nsp_none_object
 nsp_none_print
 nsp_norm_c
 nsp_numtokens
+nsp_object_copy (O)
+nsp_object_copy_and_name (name, O)
+nsp_object_copy_with_name (O)
+nsp_object_destroy (O)
+nsp_object_get_size (O, j)
+nsp_object_implements (O, id)
+nsp_object_is_true (O)
+nsp_object_load_def
+nsp_object_loop_extract (str, O, O1, i, rep, Returns)
+nsp_object_save_def
+nsp_object_type_as_string (O)
+nsp_object_type_short (O)
 nsp_option
 nsp_pango_hash_table
 nsp_parse_eval_dir
@@ -1183,7 +1291,6 @@ nsp_polynom_copy
 nsp_polynom_destroy
 nsp_pow_cc
 nsp_pow_cd
-nsp_pow_ci
 nsp_pow_dc
 nsp_pr_any_float
 nsp_pr_complex
@@ -1192,9 +1299,10 @@ nsp_pr_imag_float
 nsp_pr_white
 nsp_print_dialog
 nsp_prod_c
+nsp_putstr (F, str, Returns)
 nsp_read_history
+nsp_read_lines (F, S, nlines, Returns)
 nsp_readline_clear_line
-nsp_register_type
 nsp_round_c
 nsp_set_attribute_util
 nsp_set_echo_input_line
@@ -1206,9 +1314,11 @@ nsp_sinh_c
 nsp_smatrix_add_columns
 nsp_smatrix_add_rows
 nsp_smatrix_capitalize
+nsp_smatrix_clone
 nsp_smatrix_column_concat
 nsp_smatrix_column_concat_padded
 nsp_smatrix_concat_down
+nsp_smatrix_concat_down1
 nsp_smatrix_concat_right
 nsp_smatrix_concat_string_left
 nsp_smatrix_concat_string_right
@@ -1241,9 +1351,11 @@ nsp_smatrix_row_concat
 nsp_smatrix_set_rows
 nsp_smatrix_set_submatrix
 nsp_smatrix_sort_old
+nsp_smatrix_split_string
 nsp_smatrix_strcmp
 nsp_smatrix_strip_blanks
 nsp_smatrix_strstr
+nsp_smatrix_strtod
 nsp_smatrix_subst
 nsp_smatrix_to_utf8
 nsp_smatrix_tolower
@@ -1255,24 +1367,193 @@ nsp_smatrix_utf8_from_unichar
 nsp_smatrix_utf8_validate
 nsp_smatrix_xdr_load
 nsp_smatrix_xdr_save
-nsp_sprow_alloc_col_triplet
-nsp_sprow_realloc_col_triplet
-nsp_sprow_set_triplet_from_m
-nsp_sprow_update_from_triplet
+nsp_sorted_list_insert (L, O)
+nsp_sorted_list_search (L, str)
+nsp_sorted_list_search_and_remove (L, str)
+nsp_spcolmatrix_abs (A)
+nsp_spcolmatrix_acos (A)
+nsp_spcolmatrix_acosh (A)
+nsp_spcolmatrix_add (A, B)
+nsp_spcolmatrix_arg (A)
+nsp_spcolmatrix_asin
+nsp_spcolmatrix_asinh (A)
+nsp_spcolmatrix_atan (A)
+nsp_spcolmatrix_atanh (A)
+nsp_spcolmatrix_ceil (A)
+nsp_spcolmatrix_clean (A, rhs, epsa, epsr)
+nsp_spcolmatrix_col_destroy (Col)
+nsp_spcolmatrix_complexify (A)
+nsp_spcolmatrix_compress_col (A, i)
+nsp_spcolmatrix_compress_col_simple (A, i)
+nsp_spcolmatrix_concatd (A, B)
+nsp_spcolmatrix_concatdiag (A, B)
+nsp_spcolmatrix_concatr (A, B)
+nsp_spcolmatrix_conj (A)
+nsp_spcolmatrix_copy (A)
+nsp_spcolmatrix_cos (A)
+nsp_spcolmatrix_cosh (A)
+nsp_spcolmatrix_create (name, type, m, n)
+nsp_spcolmatrix_delete_cols (A, Cols)
+nsp_spcolmatrix_delete_elt (A, row, col, amin, amax)
+nsp_spcolmatrix_delete_rows (A, Rows)
+nsp_spcolmatrix_destroy (Mat)
+nsp_spcolmatrix_diag_create (Diag, k)
+nsp_spcolmatrix_diag_extract (A, k)
+nsp_spcolmatrix_diag_set (A, Diag, k, Returns)
+nsp_spcolmatrix_enlarge (A, m, n)
+nsp_spcolmatrix_enlarge_cols (Sp, n)
+nsp_spcolmatrix_eq
+nsp_spcolmatrix_erf (A)
+nsp_spcolmatrix_expel (A)
+nsp_spcolmatrix_extract (A, Rows, Cols)
+nsp_spcolmatrix_extract_cols (A, Cols, err)
+nsp_spcolmatrix_extract_elts (A, Elts)
+nsp_spcolmatrix_extract_rows (A, Rows, err)
+nsp_spcolmatrix_eye (m, n)
+nsp_spcolmatrix_find (A, lhs, Res1, Res2)
+nsp_spcolmatrix_floor (A)
+nsp_spcolmatrix_from_mat (A)
+nsp_spcolmatrix_from_mat_transpose (A)
+nsp_spcolmatrix_get (A, RC, Values)
+nsp_spcolmatrix_get_elt (B, i, j)
+nsp_spcolmatrix_imagpart (A)
+nsp_spcolmatrix_info (Sp, indent, name, rec_level)
+nsp_spcolmatrix_insert_elt
+nsp_spcolmatrix_int (A)
+nsp_spcolmatrix_logel (A)
+nsp_spcolmatrix_maxi (A, flag, Imax, lhs)
+nsp_spcolmatrix_maximinitt_g (A, B, flag, minmaxflag, err)
+nsp_spcolmatrix_maxitt (A, B, flag, err)
+nsp_spcolmatrix_minitt (A, B, flag, err)
+nsp_spcolmatrix_minus (A)
+nsp_spcolmatrix_mult (A, B)
+nsp_spcolmatrix_mult_m_sp (X, A)
+nsp_spcolmatrix_mult_scal (A, B)
+nsp_spcolmatrix_mult_sp_m (A, B)
+nsp_spcolmatrix_multtt (A, B)
+nsp_spcolmatrix_neq
+nsp_spcolmatrix_nnz (HMat)
+nsp_spcolmatrix_object
+nsp_spcolmatrix_ones (m, n)
+nsp_spcolmatrix_op_scal (A, B, flag, op)
+nsp_spcolmatrix_print (Sp, indent, name, rec_level)
+nsp_spcolmatrix_realpart (A)
+nsp_spcolmatrix_redim (A, m, n)
+nsp_spcolmatrix_resize_col (Sp)
+nsp_spcolmatrix_round (A)
+nsp_spcolmatrix_set_row (A, Inds, B)
+nsp_spcolmatrix_set_rowcol (A, Rows, Cols, B)
+nsp_spcolmatrix_seti (A, d)
+nsp_spcolmatrix_setr (A, d)
+nsp_spcolmatrix_sign (A)
+nsp_spcolmatrix_sin (A)
+nsp_spcolmatrix_sinh (A)
+nsp_spcolmatrix_sparse (name, RC, Values, m, n)
+nsp_spcolmatrix_sqrtel (A)
+nsp_spcolmatrix_store (A, r, c, col, B, r1, c1)
+nsp_spcolmatrix_sub (A, B)
+nsp_spcolmatrix_sum (A, flag)
+nsp_spcolmatrix_tan (A)
+nsp_spcolmatrix_tanh (A)
+nsp_spcolmatrix_to_mat (Sp)
+nsp_spcolmatrix_to_mat_transpose (Sp)
+nsp_spcolmatrix_transpose (A)
+nsp_spcolmatrix_tril (A, k)
+nsp_spcolmatrix_triu (A, k)
+nsp_spcolmatrix_type_as_string
+nsp_spcolmatrix_type_short_string
+nsp_spcolmatrix_zeros (m, n)
+nsp_sprowmatrix_abs (A)
+nsp_sprowmatrix_acos (A)
+nsp_sprowmatrix_acosh (A)
+nsp_sprowmatrix_add (A, B)
+nsp_sprowmatrix_arg (A)
 nsp_sprowmatrix_asin
+nsp_sprowmatrix_asinh (A)
+nsp_sprowmatrix_atan (A)
+nsp_sprowmatrix_atanh (A)
+nsp_sprowmatrix_ceil (A)
+nsp_sprowmatrix_clean (A, rhs, epsa, epsr)
+nsp_sprowmatrix_complexify (A)
+nsp_sprowmatrix_compress_row (A, i)
 nsp_sprowmatrix_compress_row_simple
+nsp_sprowmatrix_concatd (A, B)
+nsp_sprowmatrix_concatdiag (A, B)
+nsp_sprowmatrix_concatr (A, B)
+nsp_sprowmatrix_conj (A)
+nsp_sprowmatrix_copy (A)
+nsp_sprowmatrix_cos (A)
+nsp_sprowmatrix_cosh (A)
+nsp_sprowmatrix_create (name, type, m, n)
+nsp_sprowmatrix_delete_cols (A, Cols)
 nsp_sprowmatrix_delete_elt
+nsp_sprowmatrix_delete_rows (A, Rows)
+nsp_sprowmatrix_destroy (Mat)
+nsp_sprowmatrix_diag_create (Diag, k)
+nsp_sprowmatrix_diag_extract (A, k)
+nsp_sprowmatrix_diag_set (A, Diag, k, Returns)
+nsp_sprowmatrix_enlarge (A, m, n)
 nsp_sprowmatrix_enlarge_rows
 nsp_sprowmatrix_eq
+nsp_sprowmatrix_erf (A)
+nsp_sprowmatrix_expel (A)
+nsp_sprowmatrix_extract (A, Rows, Cols)
+nsp_sprowmatrix_extract_cols (A, Cols, err)
+nsp_sprowmatrix_extract_elts (A, Elts)
+nsp_sprowmatrix_extract_rows (A, Rows, err)
+nsp_sprowmatrix_eye (m, n)
+nsp_sprowmatrix_find (A, lhs, Res1, Res2)
+nsp_sprowmatrix_floor (A)
+nsp_sprowmatrix_from_mat (A)
+nsp_sprowmatrix_get (A, RC, Values)
 nsp_sprowmatrix_get_elt
+nsp_sprowmatrix_imagpart (A)
+nsp_sprowmatrix_info (Sp, indent, name, rec_level)
 nsp_sprowmatrix_insert_elt
+nsp_sprowmatrix_int (A)
+nsp_sprowmatrix_logel (A)
+nsp_sprowmatrix_maxi (A, flag, Imax, lhs)
+nsp_sprowmatrix_maximinitt_g (A, B, flag, minmaxflag, err)
+nsp_sprowmatrix_maxitt (A, B, flag, err)
+nsp_sprowmatrix_minitt (A, B, flag, err)
+nsp_sprowmatrix_minus (A)
+nsp_sprowmatrix_mult (A, B)
+nsp_sprowmatrix_mult_m_sp (X, A)
+nsp_sprowmatrix_mult_scal (A, B)
+nsp_sprowmatrix_mult_sp_m (A, X)
+nsp_sprowmatrix_multtt (A, B)
 nsp_sprowmatrix_neq
+nsp_sprowmatrix_nnz (HMat)
 nsp_sprowmatrix_object
+nsp_sprowmatrix_ones (m, n)
+nsp_sprowmatrix_op_scal (A, B, flag, op)
 nsp_sprowmatrix_print
+nsp_sprowmatrix_realpart (A)
+nsp_sprowmatrix_redim (A, m, n)
 nsp_sprowmatrix_resize_row
+nsp_sprowmatrix_round (A)
+nsp_sprowmatrix_row_destroy (Row)
+nsp_sprowmatrix_set_row (A, Inds, B)
+nsp_sprowmatrix_set_rowcol (A, Rows, Cols, B)
+nsp_sprowmatrix_seti (A, d)
+nsp_sprowmatrix_setr (A, d)
+nsp_sprowmatrix_sign (A)
+nsp_sprowmatrix_sin (A)
+nsp_sprowmatrix_sinh (A)
+nsp_sprowmatrix_sparse (name, RC, Values, m, n)
+nsp_sprowmatrix_sqrtel (A)
 nsp_sprowmatrix_store
+nsp_sprowmatrix_sub (A, B)
+nsp_sprowmatrix_sum (A, flag)
+nsp_sprowmatrix_tan (A)
+nsp_sprowmatrix_tanh (A)
+nsp_sprowmatrix_to_mat (Sp)
+nsp_sprowmatrix_transpose (A)
+nsp_sprowmatrix_tril (A, k)
+nsp_sprowmatrix_triu (A, k)
 nsp_sprowmatrix_type_as_string
 nsp_sprowmatrix_type_short_string
+nsp_sprowmatrix_zeros (m, n)
 nsp_sqrt_c
 nsp_string_copy
 nsp_string_destroy
@@ -1281,6 +1562,9 @@ nsp_string_resize
 nsp_tan_c
 nsp_tanh_c
 nsp_testnumtokens
+nsp_type_bhash
+nsp_type_bhash_id
+nsp_type_bhash_init
 nsp_type_block
 nsp_type_block_id
 nsp_type_bmatrix
@@ -1350,6 +1634,7 @@ nsp_type_type_id
 nsp_types
 nsp_types_hash_table
 nsp_urand
+nsp_void_object_destroy (O)
 nsp_write_history
 nsp_xdr_load_array_d
 nsp_xdr_load_array_i
@@ -1357,6 +1642,9 @@ nsp_xdr_load_c
 nsp_xdr_load_i
 nsp_xdr_load_string
 nsp_xdr_save_array_d
+nsp_xdr_save_array_i (nx, l)
+nsp_xdr_save_c (c)
+nsp_xdr_save_i (ix)
 nsp_xdr_save_string
 nsp_zadd
 nsp_zadd_maxplus
@@ -1403,3 +1691,113 @@ uns16max
 using_readline
 write_scilab
 
+
+approx:Long_Description
+approx:Short_Description
+bhash:Short_Description
+block:Long_Description
+block:Short_Description
+bmatrix-in:Long_Description
+bmatrix-in:Short_Description
+cells:Long_Description
+cells:Short_Description
+classa:Long_Description
+classa:Short_Description
+classb:Long_Description
+classb:Short_Description
+cnumeric:Long_Description
+cnumeric:Short_Description
+command:Long_Description
+command:Short_Description
+connector:Long_Description
+connector:Short_Description
+datas:Long_Description
+datas:Short_Description
+file:Long_Description
+file:Short_Description
+function:Long_Description
+function:Short_Description
+gframe:Long_Description
+gframe:Short_Description
+gtksci:Long_Description
+gtksci:Short_Description
+hash:Long_Description
+hash:Short_Description
+hobj:Long_Description
+hobj:Short_Description
+interf:Long_Description
+interf:Short_Description
+ivect:Long_Description
+ivect:Short_Description
+link:Long_Description
+link:Short_Description
+list:Long_Description
+list:Short_Description
+lmo:Long_Description
+lmo:Short_Description
+machine:Long_Description
+machine:Short_Description
+math:Long_Description
+math:Short_Description
+matint:Long_Description
+matint:Short_Description
+matrix-in:Long_Description
+matrix-in:Short_Description
+matrix:Long_Description
+matrix:Short_Description
+matutil:Long_Description
+matutil:Short_Description
+me:Long_Description
+me:Short_Description
+menus:Long_Description
+menus:Short_Description
+mex:Long_Description
+mex:Short_Description
+mod:Long_Description
+mod:Short_Description
+module:Long_Description
+module:Short_Description
+modulelt:Long_Description
+modulelt:Short_Description
+mpmatrix:Long_Description
+mpmatrix:Short_Description
+none:Long_Description
+none:Short_Description
+nsp_lapack:Long_Description
+nsp_lapack:Short_Description
+numeric:Long_Description
+numeric:Short_Description
+object:Long_Description
+object:Short_Description
+parse:Long_Description
+parse:Short_Description
+pmatrix:Long_Description
+pmatrix:Short_Description
+pr-output:Long_Description
+pr-output:Short_Description
+rect:Long_Description
+rect:Short_Description
+sciio:Long_Description
+sciio:Short_Description
+smatrix-in:Long_Description
+smatrix-in:Short_Description
+smatrix:Long_Description
+smatrix:Short_Description
+spcol:Long_Description
+spcol:Short_Description
+spmatops-in:Long_Description
+spmatops-in:Short_Description
+sprow:Long_Description
+sprow:Short_Description
+stack:Long_Description
+stack:Short_Description
+string:Long_Description
+string:Short_Description
+type:Long_Description
+type:Short_Description
+types:Long_Description
+types:Short_Description
+user-prefs:Long_Description
+user-prefs:Short_Description
+version:Long_Description
+version:Short_Description
