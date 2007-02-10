@@ -317,7 +317,6 @@ const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
 /**
  * nsp_object_destroy_name:
  * @ob: a #NspObject 
- * @name: a string 
  * 
  * free the memory used by object name.
  **/

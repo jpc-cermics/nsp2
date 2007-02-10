@@ -402,20 +402,20 @@ int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n)
 
 /**
  * nsp_spcolmatrix_col_destroy:
- * @Row: 
+ * @Col: 
  * 
  * internal: destroys a #SpCol structure.
  * 
  **/
 
-void nsp_spcolmatrix_col_destroy(SpCol *Row)
+void nsp_spcolmatrix_col_destroy(SpCol *Col)
 {
-  if ( Row->size != 0 ) 
+  if ( Col->size != 0 ) 
     {
-      FREE( Row->J);
-      FREE( Row->R);
+      FREE( Col->J);
+      FREE( Col->R);
     }
-  FREE(Row);
+  FREE(Col);
 }
 
 /**
@@ -2416,7 +2416,7 @@ NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
 /**
  * nsp_spcolmatrix_mult_scalar:
  * @val: pointer to a double or a double C
- * @type_val: 'r' if val point to a double and 'c' if val point to a complex
+ * @val_type: 'r' if val point to a double and 'c' if val point to a complex
  * @A: a NspSpColMatrix
  * 
  * Do the operation A <- scalar * A  (that is A is modified in place)

@@ -2129,13 +2129,13 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 
 /**
  * nsp_matint_redim:
- * @A: a #NspMatrix
+ * @Obj: a #NspMatrix
  * @m: number of rows 
  * @n: number of columns
  * 
- * Checks that the #NspObject @A (which is supposed to implement matint)
+ * Checks that the #NspObject @Obj (which is supposed to implement matint)
  * of size m' x n' satisfy m'*n' = @m * @n and reshapes 
- * @A to size @m x @n.
+ * @Obj to size @m x @n.
  * 
  * Return value: returns %OK or %FAIL. In case of %FAIL an error is raised.
  **/

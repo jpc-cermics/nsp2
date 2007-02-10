@@ -91,7 +91,7 @@
 #define WITH_FFTW3 1
 
 /* Define if use sndfile lib  */
-#define WITH_SNDFILE 1
+/* #undef WITH_SNDFILE */
 
 /* Define if use asound lib  */
 #define WITH_ASOUND 1
@@ -182,6 +182,8 @@ typedef int integer;
 #define WITH_SYMB_TABLE 1
 /* matlab mode */
 #define MTLB_MODE 1
+/* use relative exec directories */
 
+#define UPDATE_EXEC_DIR 1
 
 #endif /* MACHINE_H  */

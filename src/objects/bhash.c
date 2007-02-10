@@ -1078,7 +1078,8 @@ int nsp_bhash_merge(NspBHash *H1,NspBHash *H2)
  *nsp_bhash_get_next_object:
  * @H: 
  * @i: 
- * @O: 
+ * @str:
+ * @val: 
  * 
  * Used to walk through all the elements of the bhash table 
  * return %FAIL when the end of the bhash table is reached
@@ -1183,9 +1184,9 @@ void nsp_bhash_remove(NspBHash *H, char *str)
  *nsp_bhash_find:
  * @H: 
  * @str: 
- * @O: 
+ * @val: 
  * 
- * Search bhash table entry with key str and returns it in #NspObject O
+ * Search bhash table @H for entry with key @str and returns it in @val.
  * 
  * Return value: %OK or %FAIL
  **/

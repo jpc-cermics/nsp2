@@ -177,11 +177,11 @@ NspCells*nsp_cells_copy(const NspCells *A)
 
 /**
  * nsp_cells_elt_size:
- * @M: a #NspCells object 
+ * @A: a #NspCells object 
  * 
  * size of cells elements.
  * 
- * Return value: size of @M elements.
+ * Return value: size of @A elements.
  **/
 
 unsigned int  nsp_cells_elt_size(NspCells *A)
