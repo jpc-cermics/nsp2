@@ -923,13 +923,9 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
  * next is the extracted list element 
  * next is the last extraction indices 
  */ 
-
 /* XXXX : améliorer le netoyage en cas d'erreur 
- * following path for a recursive object with list or hash tables 
- * as sucessive nodes 
-
-  A VOIR
-
+ * following path for a recursive object with list,
+ * hash tables or cells as sucessive nodes 
  */ 
 
 int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
@@ -946,6 +942,10 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
   else if ( IsHashObj(stack,1 ) )
     {
       if ((L =(NspObject *) GetHash(stack,1 )) == NULLOBJ ) return RET_BUG;
+    }
+  else if ( IsCellsObj(stack,1)) 
+    {
+      if ((L =(NspObject *) GetCells(stack,1 )) == NULLOBJ ) return RET_BUG;
     }
   L_name=Ocheckname(L,NVOID);
   if ((Lind = GetList(stack,2 )) == NULLLIST) return RET_BUG;
@@ -964,12 +964,29 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 	  if ( IsMat(C->O)) 
 	    {
 	      if ( IntScalar(C->O,&n)== FAIL)  return RET_BUG;
-	      if ( ! IsList(O) )
+	      if ( IsList(O)) 
+		{
+		  if ( ( O =nsp_list_get_element((NspList *) O,n)) == NULLOBJ) return RET_BUG;
+		}
+	      else if (IsCells(O))
+		{
+		  if ( n <= 0 || n > ((NspCells *) O)->mn ) 
+		    {
+		      Scierror("Error: indice %d out of bounds\n",n);
+		      return RET_BUG;
+		    }
+		  O = ((NspCells *) O)->objs[n-1];
+		  if ( O== NULLOBJ)
+		    {
+		      Scierror("Error: object at indice %d does not exist\n",n);
+		      return RET_BUG;
+		    }
+		}
+	      else 
 		{
 		  Scierror("Errro:\t, error in list extraction which does not give a list\n");
 		  return RET_BUG;
 		}
-	      if ( ( O =nsp_list_get_element((NspList *) O,n)) == NULLOBJ) return RET_BUG;
 	    }
 	  else if ((str=nsp_string_object(C->O)) != NULL) 
 	    {

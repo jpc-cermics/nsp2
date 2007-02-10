@@ -377,7 +377,7 @@ static int *get_index_vector(Stack stack, int ipos, int *Nb_elts, int *Rmin, int
 	if ( BElts->B[i] ) ind[j++] = i;
       rmin = ind[0]+1; rmax = ind[nb_elts-1]+1;
     }
-  else
+  else if ( IsMatObj(stack, ipos) )
     {
       NspMatrix *Elts;
       /* Elts must be a real matrix  * */
@@ -2485,8 +2485,20 @@ static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extrac
   Obj = NthObj(1);
 
   if ( (ind =get_index_vector(stack, 2, &nb_elts, &imin, &imax, matint_iwork1)) == NULL )
-    return RET_BUG;
-    
+    {
+      if ( rhs != 2 || IsListObj(stack,2) == FALSE ) return RET_BUG;
+      /* check if we are using a list access */
+      int rep,n ;
+      if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
+      /* last extraction : here O can be anything */ 
+      if ((n=nsp_eval_func(NULLOBJ,"extractelts",1,stack,stack.first+1,2,0,1)) < 0)
+	{
+	  return RET_BUG;
+	}
+      nsp_void_object_destroy(&NthObj(1));
+      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      return 1;
+    }
   if ( (Res = (*F)(Obj, ind, nb_elts, imin, imax)) == NULLOBJ )
     goto err;
 
