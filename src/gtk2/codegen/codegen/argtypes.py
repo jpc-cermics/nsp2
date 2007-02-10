@@ -256,6 +256,23 @@ class IntPointerArg(ArgType):
         info.varlist.add('int', '*ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
 
+class DoublePointerArg(ArgType):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+	if pdflt:
+	    info.varlist.add('double', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('double', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('s_double', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('int', '*ret')
+        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
+    def attr_write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('double', '*ret')
+        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
+
 
         
 class BoolArg(IntArg):
@@ -1071,6 +1088,9 @@ matcher.register('const double[]', arg)
 arg = IntPointerArg()
 matcher.register('int*', arg)
 matcher.register('gint*', arg)
+
+arg = DoublePointerArg()
+matcher.register('gdouble*', arg)
 
 arg = BoolArg()
 matcher.register('gboolean', arg)
