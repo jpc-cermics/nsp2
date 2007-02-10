@@ -32,10 +32,10 @@
 
 /**
  *nsp_object_destroy:
- * @O: 
+ * @O: a pointer to a #NspObject pointer
  * 
  * Deletes an object by calling the specialized routine of the 
- * given object 
+ * given object. 
  * 
  **/
 
@@ -50,7 +50,7 @@ void nsp_object_destroy(NspObject **O)
 
 /**
  *nsp_void_object_destroy:
- * @O: 
+ * @O: a pointer to a #NspObject pointer
  * 
  * if object name is NVOID and the ret_pos field is < 0 
  * deletes the object by calling the specialized routine of the 
@@ -66,7 +66,7 @@ void nsp_void_object_destroy(NspObject **O)
 
 /**
  *nsp_object_copy:
- * @O: 
+ * @O: a pointer to a #NspObject 
  * 
  * Returns a new #NspObject which contains a copy of Object @O
  * with name set to NVOID 
@@ -82,11 +82,10 @@ NspObject *nsp_object_copy(const NspObject *O)
 
 /**
  *nsp_object_get_size:
- * @O: 
- * @j: 
+ * @O: a #NspObject pointer 
+ * @j: an integer used to specify requested size 
  * 
- * Returns the size of an object 
- * The semantic depends on objects
+ * Returns the size of an object. The semantic depends on objects
  * 
  * Return value: an integer 
  **/
@@ -98,7 +97,7 @@ int nsp_object_get_size(const NspObject *O, int j)
 
 /**
  *nsp_object_copy_with_name:
- * @O: 
+ * @O: a #NspObject pointer 
  * 
  * returns a copy of object @O with the same name. 
  * 
@@ -122,8 +121,8 @@ NspObject *nsp_object_copy_with_name(NspObject *O)
 
 /**
  *nsp_object_copy_and_name:
- * @name: 
- * @O: 
+ * @name: string for the name to give to the copy 
+ * @O: object to be copied a #NspObject pointer 
  *
  * returns a copy of object @O with name given by @name.
  * 
@@ -145,7 +144,7 @@ NspObject *nsp_object_copy_and_name(const char *name, NspObject *O)
 
 /**
  *nsp_object_type_as_string:
- * @O: 
+ * @O: a #NspObject pointer 
  * 
  * returns the type of Object @O as a string. 
  * 
@@ -161,7 +160,7 @@ char *nsp_object_type_as_string(const NspObject *O)
 
 /**
  *nsp_object_type_short:
- * @O: 
+ * @O: a #NspObject pointer 
  * 
  * Returns a short string describing the object type. 
  * Note that for objects of pointer type #Hobj the type of the 
@@ -179,7 +178,7 @@ char *nsp_object_type_short( NspObject *O)
 
 /**
  *nsp_object_type:
- * @O: an object 
+ * @O: a #NspObject pointer 
  * @id: a type id 
  * 
  * Checks that @O is an object or a pointer to an object 
@@ -201,8 +200,8 @@ int nsp_object_type(const NspObject *O,NspTypeId id)
 
 /**
  *nsp_object_implements:
- * @O: 
- * @id: 
+ * @O: a #NspObject pointer 
+ * @id: a type id (#NspTypeId)
  * 
  * Checks if object @O implements the interface which type is 
  * given by @id
@@ -221,7 +220,7 @@ int nsp_object_implements(NspObject *O,NspTypeId id)
 
 /**
  *nsp_object_info:
- * @O: an object 
+ * @O: a #NspObject pointer 
  * @indent: an int
  * @name: %NULL or name to be used. 
  * @rec_level: deph level of the print.
@@ -273,7 +272,7 @@ void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level)
 
 /**
  *nsp_object_is_true:
- * @O: 
+ * @O: a #NspObject pointer 
  * 
  * Check if object @O can be considered as a boolean a TRUE Object 
  * in a logical statement.
@@ -335,19 +334,19 @@ NspObject *nsp_object_xdr_load(XDR *xdrs)
 
 /**
  *nsp_object_loop_extract:
- * @str: 
- * @O: 
- * @O1: 
- * @i: 
- * @rep: 
+ * @str: name to give to created object 
+ * @O: a #NspObject pointer to use to store extracted column or a NULL pointer 
+ * @O1: a #NspObject from which we must extract columns
+ * @i: undice of the column to be extracted 
+ * @rep: returned error value.
  * 
  * O=nsp_object_loop_extract(str,O,O1,i,rep)
- * extract in O the ith column of O1 
- * if O is != NULL O is used to store the new column 
- * if O is null returned NspObject is created with name str
- * 
- * 
- * Return value: 
+ * extract in @O the @i-th column of @O1 
+ * if @O is non null on entry it is used to store the new column 
+ * if @O is null on entry, a #NspObject is created with name @str and 
+ * returned 
+ *
+ * Return value: a #NspObject or %NULLOBJ
  **/
 
 NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep)
@@ -846,7 +845,7 @@ NspObject *nsp_object_unserialize(const NspSerial *S)
 
 /**
  * nsp_get_short_string_from_id:
- * @id: 
+ * @id: and integer 
  * 
  * get the short string which describes an objet type 
  * from its id.

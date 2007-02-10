@@ -220,7 +220,6 @@ static char object_short_type_name[]="obj";
 
 /**
  * object_type_as_string:
- * @void: 
  * 
  * a unique identifier for #NspObject objects 
  * as a short string or long string. 
@@ -330,7 +329,7 @@ void nsp_object_destroy_name(NspObject *ob)
 
 /**
  * get_name:
- * @ob: 
+ * @ob:  a #NspObject 
  * 
  * gets the name of object @ob.
  * 
@@ -364,11 +363,11 @@ static int object_is_true_def(NspObject *self)
 
 /**
  * object_loop_def:
- * @str: 
- * @O: 
- * @O1: 
- * @i: 
- * @rep: 
+ * @str: a string 
+ * @O: a #NspObject 
+ * @O1: a #NspObject 
+ * @i: an integer 
+ * @rep: int pointer 
  * 
  * can be redefined for each concrete class 
  * which inherits from #NspObject. 

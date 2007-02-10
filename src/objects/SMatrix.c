@@ -32,15 +32,23 @@
 
 static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent);
 
-/*
- * Creation of a NspSMatrix all the elements
- *	 are created with "." value or with str value according 
- *       to flag 
- * HINT : 
- * The array for storing the Strings is of size (m*n)+1 
- * and the last element is set to (char *) 0 
- * This can be used to detect the last element in XXX->S
- */
+
+/**
+ * nsp_smatrix_create:
+ * @name: name to give to #NspSMatrix
+ * @m: number of rows 
+ * @n: number of columns 
+ * @str: default value for entries 
+ * @flag: 1 or 0.
+ * 
+ * creates a #NspSMatrix, all the entries are set to empty string or 
+ * to @str if @flag is not zero. 
+ * Note that the array for storing the strings is of size (m*n)+1 
+ * and the last element is set to a null char pointers. This can be 
+ * used to detect the last element in the string array.
+ * 
+ * Return value: a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_string str, int flag)
 {
@@ -85,6 +93,20 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
   return(Loc);
 }
 
+/**
+ * nsp_smatrix_clone:
+ * @name: name to give to #NspSMatrix
+ * @A: a #NspSMatrix
+ * @m: number of rows 
+ * @n: number of columns
+ * @init: %TRUE or %FALSE
+ * 
+ * creates a #NspSMatrix of size @m x @n. If @init is %TRUE the 
+ * entries are set to empty string else the entries are unallocated.
+ * 
+ * Return value: a new #NspSMatrix or %NULLSMAT 
+ **/
+
 NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int init)
 {
   if ( init == TRUE ) 
@@ -93,11 +115,19 @@ NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int
     return nsp_smatrix_create_with_length(name, m, n, -1);
 }
 
-/*
- * Creation of a NspSMatrix all the elements ( if m*n != 0) 
- * are initialized as string of size strl (unfilled) 
- * Note that if strl is < 0 elements are not initialized 
- */
+/**
+ * nsp_smatrix_create_with_length:
+ * @name: object name 
+ * @m: number of rows 
+ * @n: number of columns 
+ * @strl: an integer 
+ * 
+ * creates a  new #NspSMatrix of size @m time @n. 
+ * If @strl is strictly negative the string are not allocated. 
+ * If @strl is positive strings are allocated nut not initialized.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, int strl)
 {
@@ -143,10 +173,14 @@ NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, i
   return(Loc);
 }
 
-/*
- * Res =nsp_smatrix_create_from_table(T) 
- * T string table ended with (char *)0.
- */
+/**
+ * nsp_smatrix_create_from_table:
+ * @T:  a %NULL terminated array of strings.
+ * 
+ * creates a  new #NspSMatrix using string copied from a given array @T.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_create_from_table(char **T)
 {
@@ -163,9 +197,17 @@ NspSMatrix*nsp_smatrix_create_from_table(char **T)
   return(Loc);
 }
 
-/*
- * Res =nsp_smatrix_create_from_array(n,T) 
- */
+
+/**
+ * nsp_smatrix_create_from_array:
+ * @name: object name 
+ * @n: length of @T
+ * @T: an array of strings.
+ * 
+ * creates a  new #NspSMatrix using string copied from a given array @T.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix* nsp_smatrix_create_from_array(nsp_const_string name,int n,const char **T)
 {
@@ -181,11 +223,19 @@ NspSMatrix* nsp_smatrix_create_from_array(nsp_const_string name,int n,const char
   return(Loc);
 }
 
-/*
- * Res =nsp_smatrix_create_from_struct(T,size) 
- * T array of objects of size size  ended with NULL .
- * each object is supposed to start with a char* field.
- */
+
+/**
+ * nsp_smatrix_create_from_struct:
+ * @name: object name 
+ * @T: array of objects (struct) 
+ * @size: size of each struct.
+ *  
+ * creates a  new #NspSMatrix using string copied from a given array. 
+ * @T array of objects of size @size with last element set to %NULL.
+ * Each struct stored in @T is supposed to start with a char pointer field.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,unsigned int size)
 {
@@ -203,10 +253,14 @@ NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,un
   return(Loc);
 }
 
-/*
- * Res =nsp_smatrix_copy(A) 
- * Creates a Copy of NspSMatrix A : A is not checked 
- */
+/**
+ * nsp_smatrix_copy:
+ * @A: a #NspSMatrix 
+ * 
+ * returns a copy of @A with name set to %NVOID.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_copy(const NspSMatrix *A)
 {
@@ -237,16 +291,18 @@ unsigned int  nsp_smatrix_elt_size(NspMatrix *M)
   return sizeof(nsp_string);
 }
 
-/*
- *nsp_smatrix_resize: Changes NspSMatrix dimensions
- * Warning : when m*n > A->mn this routine only enlarges the array 
- * of the NspSMatrix storage so as to contain mxn 
- * elements : the previous datas are not moved and 
- * occupy the first array cells 
- * The NspSMatrix is changed 
- * return FAIL on failure 
- * should also work with A==[] XXXXX 
- */
+/**
+ * nsp_smatrix_resize:
+ * @A: a #NspSMatrix 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * resizes @A to @m x @n. When @m * @n > @A->mn, the function only 
+ * enlarges the array used for string storage to a @m x @n length.
+ * The previously stored strings are not moved and occupy the first cells 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
 {
@@ -299,9 +355,12 @@ int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
 }
 
 
-/*
- * Delete the NspSMatrix A
- */
+/**
+ * nsp_smatrix_destroy:
+ * @A: a #NspSMatrix 
+ * 
+ * free object @A.
+ **/
 
 void nsp_smatrix_destroy(NspSMatrix *A)
 {
@@ -320,10 +379,15 @@ void nsp_smatrix_destroy(NspSMatrix *A)
 }
 
 
-
-/*
- *nsp_smatrix_info: display Info on Matrix Mat 
- */
+/**
+ * nsp_smatrix_info:
+ * @Mat:  #NspSMatrix
+ * @indent: indentation value 
+ * @name:  NULL or new name to use for printing 
+ * @rec_level: depth counter 
+ * 
+ * display Info on Matrix @Mat 
+ **/
 
 void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
@@ -343,9 +407,16 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int re
     }
 }
 
-/*
- *nsp_smatrix_print: writes Mat Objet 
- */
+
+/**
+ * nsp_smatrix_print:
+ * @Mat:   #NspSMatrix
+ * @indent: indentation value 
+ * @name: NULL or new name to use for printing 
+ * @rec_level: depth counter 
+ * 
+ * prints the contents of @Mat.
+ **/
 
 void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
@@ -443,13 +514,19 @@ void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
 
 
 
-
-/*
- *nsp_smatrix_enlarge(A,m,n) 
- *  changes A to B= [ A , 0; 0,0 ]  where 0 stands for "." strings
- *  in such a way that B (max(A->m,m)xmax(A->n,n));
+/**
+ * nsp_smatrix_enlarge:
+ * @A: a #NspSMatrix 
+ * @m: minimal number of rows expected 
+ * @n:  minimal number of columns expected
+ * 
+ * 
+ * changes @A to [@A , 0; 0,0 ]  where 0 stands for "." strings
+ * in such a way that the size of the result is (max(A->m,m) x max(A->n,n));
  * The result is stored in A 
- */
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n)
 {
@@ -463,11 +540,16 @@ int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n)
 
 #define SameDim(SMAT1,SMAT2) ( SMAT1->m == SMAT2->m && SMAT1->n == SMAT2->n  )
 
-/*
- * Right Concatenation 
- * A= [A,B] 
- * return 0 on failure ( incompatible size or No more space )
- */
+
+/**
+ * nsp_smatrix_concat_right:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * 
+ * set @A to  [@A,@B] 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_smatrix_concat_right(NspSMatrix *A,const NspSMatrix *B)
 {
@@ -494,12 +576,15 @@ int Scopy(int n, nsp_string *s1, nsp_string *s2)
   return(OK);
 }
 
-/*
- *nsp_smatrix_add_columns: add n cols of zero to NspSMatrix A 
- * A= [A,ones(m,n)] 
- * return 0 on failure ( No more space )
- * A is changed 
- */
+/**
+ * nsp_smatrix_add_columns:
+ * @A: a #NspSMatrix 
+ * @n: number of columns to be added
+ * 
+ * add @n  columns to @A.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_smatrix_add_columns(NspSMatrix *A, int n)
 {
@@ -529,12 +614,16 @@ int Sset(int n, nsp_string s1, nsp_string *s2)
   return(OK);
 }
 
-/*
- * Down Concatenation 
- * Res = [A;B] 
- * return NULLSMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+
+/**
+ * nsp_smatrix_concat_down:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * 
+ * returns [A;B] 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
 {
@@ -567,10 +656,18 @@ NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
 static int Smove(int n, nsp_string *s1, nsp_string *s2);
 static int Scopy1(int n, nsp_string *s1, nsp_string *s2);
 
-/* take care that A != B 
+/**
+ * nsp_smatrix_concat_down1:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * @flag: %TRUE or %FALSE
+ * 
+ * take care that A != B 
  * if flag is true, then strings from matrix B can be used 
  * without copy and B matrix is destroyed.
- */
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_concat_down1(NspSMatrix *A,NspSMatrix *B,int flag)
 {
@@ -659,12 +756,15 @@ static int Scopy1(int n, nsp_string *s1, nsp_string *s2)
  * XXXXXX : A Faire ????
  */
 
-/*
- * Add Rows : Add m rows of zero to a NspSMatrix A 
- * A = [A;ones(m,n)]
- * return NULLSMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+/**
+ * nsp_smatrix_add_rows:
+ * @A: a #NspSMatrix 
+ * @m: number of rows to be added
+ * 
+ * Add m rows to matrix @A.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_smatrix_add_rows(NspSMatrix *A, int m)
 {
@@ -691,34 +791,55 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
   return(OK);
 }
 
-/*
+/**
+ * nsp_smatrix_set_submatrix:
+ * @A: a #NspSMatrix 
+ * @Rows: a #NspMatrix
+ * @Cols: a #NspMatrix
+ * @B: a #NspSMatrix 
+ * 
  *  A(Rows,Cols) = B 
  *  A is changed and enlarged if necessary 
  *  Rows and Cols are unchanged 
  *  Size Compatibility is checked 
- */
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
-
-/*
+/**
+ * nsp_smatrix_set_rows:
+ * @A: a #NspSMatrix 
+ * @Rows: a #NspMatrix
+ * @B: a #NspSMatrix 
+ * 
  *  A(Rows) = B
  *  A is changed and enlarged if necessary
  *  Size Compatibility is checked
- */
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 {
   return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
 
-/*
- * Res=nsp_smatrix_extract(A,Rows,Cols)
- * A, Rows and Cols are unchanged 
- */	
+
+/**
+ * nsp_smatrix_extract:
+ * @A: a #NspSMatrix 
+ * @Rows: 
+ * @Cols: 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
@@ -727,10 +848,16 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 
 
 
-/*
- * Res=nsp_smatrix_extract_elements(A,Elts)
- * A unchanged, Elts
- */	
+/**
+ * nsp_smatrix_extract_elements:
+ * @A: a #NspSMatrix 
+ * @Elts: 
+ * @err: 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err)
 {
@@ -738,10 +865,17 @@ NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err
   return (NspSMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
 
-/*
- * Res=nsp_smatrix_extract_columns(A,Cols,err)
- * A unchanged
- */
+
+/**
+ * nsp_smatrix_extract_columns:
+ * @A: a #NspSMatrix 
+ * @Cols: 
+ * @err: 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
 {
@@ -749,10 +883,19 @@ NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
   return (NspSMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
-/*
- * A1=SMatLoopCol(A1,M,i,rep)
- * Used in for loops
- */
+
+/**
+ * SMatLoopCol:
+ * @str: 
+ * @Col: 
+ * @A: a #NspSMatrix 
+ * @icol: 
+ * @rep: 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int *rep)
 {
@@ -774,10 +917,17 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
   return(Loc);
 }
 
-/*
- * Res=nsp_smatrix_extract_rows(A,Rows,err)
- * A unchanged
- */
+
+/**
+ * nsp_smatrix_extract_rows:
+ * @A: a #NspSMatrix 
+ * @Rows: a #NspMatrix 
+ * @err: a int pointer for error.
+ * 
+ * returns a sub matrix of matrix @A by selecting rows from @Row
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
 {
@@ -812,10 +962,14 @@ nsp_string nsp_new_string(nsp_const_string bytes,int length)
     }
 }
 
-/*
- * Res=new_nsp_string(str) 
- * Creates a copy of str in Res or (char*)0 if no more memory 
- */
+/**
+ * new_nsp_string:
+ * @str: a #nsp_const_string
+ * 
+ * returns a copy of @str.
+ * 
+ * Return value: a new #nsp_string or %NULL
+ **/
 
 nsp_string new_nsp_string(nsp_const_string str)
 {
@@ -825,6 +979,14 @@ nsp_string new_nsp_string(nsp_const_string str)
   return((char*) loc);
 }
 
+/**
+ * nsp_basic_to_string:
+ * @str: a #nsp_const_string
+ * 
+ * 
+ * Return value: a new #nsp_string or %NULL
+ **/
+
 nsp_string nsp_basic_to_string(nsp_const_string str)
 {
   nsp_string loc;
@@ -832,6 +994,15 @@ nsp_string nsp_basic_to_string(nsp_const_string str)
   strcpy((char*) loc,(char*) str);
   return(loc);
 }
+
+/**
+ * nsp_string_copy:
+ * @str: a #nsp_const_string
+ * 
+ * returns a copy of given string 
+ * 
+ * Return value: a new #nsp_string or %NULL
+ **/
 
 nsp_string nsp_string_copy(nsp_const_string str)
 {
@@ -843,17 +1014,28 @@ nsp_string nsp_string_copy(nsp_const_string str)
   return(loc);
 }
 
+/**
+ * nsp_string_destroy:
+ * @str: a string 
+ * 
+ * free storage associated to @str.
+ * 
+ **/
+
 void nsp_string_destroy(nsp_string *str)
 {
   FREE(*str);
   *str = NULLSTRING;
 }
 
-/*
- * Res=new_nsp_string_n(n) 
- * Creates a string of size (n+1) : i.e to put n chars + '\0'
- * returns the string or (char*) 0
- */
+/**
+ * new_nsp_string_n:
+ * @n: length of string 
+ * 
+ * allocated a new #nsp_string of size @n (can contain @n+1 characters).
+ * 
+ * Return value: a new #nsp_string or %NULL
+ **/
 
 nsp_string new_nsp_string_n(int n)
 {
@@ -874,6 +1056,16 @@ nsp_string new_nsp_string_n(int n)
  * Hstr is not Checked (MUST BE != NULLSTRING )
  */
 
+/**
+ * nsp_string_resize:
+ * @Hstr: 
+ * @n: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 int nsp_string_resize(nsp_string *Hstr, unsigned int n)
 {
   nsp_string loc;
@@ -887,16 +1079,19 @@ int nsp_string_resize(nsp_string *Hstr, unsigned int n)
 }
 
 
-
-/*
- * int = SMatConcatTT
- * Term to term concatenation 
- * A(i;j) = "A(i;j)strB(i;j)" : A is changed  B unchanged 
- * str unchanged : is used if flag == 1
- * Need to be improved to accept: 
- *    A(i,j)+B(1,1) and A(1,1)+B(i,j)
- * XXXXXXX
- */
+/**
+ * nsp_smatrix_concat_strings:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * @str: a string 
+ * @flag: 0 or 1 
+ * 
+ * term to term concatenation each @A(i;j) entry is set to @A(i;j)@str@B(i;j)
+ * @str is used if @flag is equal to one.
+ * Note that @A and @B must have the same dimensions.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
@@ -916,7 +1111,17 @@ int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B,nsp_const_string str
   return(OK);
 }
 
-/* here B->mn = 1 and  A = A + B */
+/**
+ * nsp_smatrix_concat_string_right:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix of size 1x1
+ * @str: a string 
+ * @flag: 0 or 1 
+ * 
+ * updates @A entries to @A + @str + @B if @flag==1  or to @A+ @B if @flag==0.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_concat_string_right(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
@@ -932,6 +1137,18 @@ int nsp_smatrix_concat_string_right(NspSMatrix *A, NspSMatrix *B,nsp_const_strin
     }
   return OK ;
 }
+
+/**
+ * nsp_smatrix_concat_string_left:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix of size 1x1
+ * @str:  a string 
+ * @flag: 0 or 1 
+ * 
+ * updates @A entries to @B + @str + @A if @flag==1  or to @B + @A if @flag==0.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
@@ -953,10 +1170,16 @@ int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B,nsp_const_string
 }
 
 
-/*
- * Res =nsp_smatrix_strcmp(A,B) 
- *  Res[i;j] = strcmp(A[i;j],B[i;j]) 
- */
+/**
+ * nsp_smatrix_strcmp:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * 
+ * returns a matrix filled with strcmp(@A(i,j),@B(i,j))
+ * Note that @A and @B must have the same dimensions.
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT 
+ **/
 
 NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
 {
@@ -964,7 +1187,7 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
   NspMatrix *Loc;
   if ( A->mn != B->mn ) 
     {
-      Scierror("Concattt for strin incompatible dimensions ");
+      Scierror("Error: incompatible dimensions for strcmp");
       return(NULLMAT);
     }
   if ( ( Loc = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return(NULLMAT);
@@ -975,12 +1198,19 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
   return(Loc);
 }
 
-/*
- * Res=nsp_smatrix_column_concat(A) 
+
+/**
+ * nsp_smatrix_column_concat_padded:
+ * @A: a #NspSMatrix 
+ * @str: 
+ * @flag: 
+ * 
  * returns a mx1 matrix such that Res(i) = "A(i,1)str A(i,2)str  ...A(i,n)"
- * white spaces are inserted 
- * str is used if flag =1 
- */
+ * white spaces are inserted and @str separator is used if @flag =1 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, int flag)
 {
@@ -1019,10 +1249,18 @@ NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, 
   return(Loc);
 }
 
-/*
- * Catenate the columns of A whitout white space padding 
- * and using str char as separtor ( if flag == 1) 
- */
+
+/**
+ * nsp_smatrix_column_concat:
+ * @A: a #NspSMatrix 
+ * @str: a string 
+ * @flag: 0 or 1 
+ * 
+ * catenates the columns of @A whitout white space padding 
+ * and using @str string as separtor ( if flag == 1) 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A,nsp_const_string str, int flag)
 {
@@ -1056,12 +1294,18 @@ NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A,nsp_const_string str, int fla
   return(Loc);
 }
 
-/*
+/**
+ * nsp_smatrix_row_concat:
+ * @A: a #NspSMatrix 
+ * @str: a string 
+ * @flag: 0 or 1 
  * 
- * Catenate the rows of A whitout white space padding 
- * and using str char as separtor ( if flag == 1) 
- * 
- */
+ * catenates the rows of @A whitout white space padding
+ * and using @str string as separtor ( if @flag == 1) 
+ *
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
+
 NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,*Iloc;
@@ -1151,12 +1395,17 @@ nsp_string nsp_smatrix_elts_concat(const NspSMatrix *A,nsp_const_string rstr, in
 }
 
 
-/*
- * Res= Part(A,Ind) 
- * part function of Scilab A is  unchanged 
- * Ind unchanged 
- */
-
+/**
+ * nsp_smatrix_part:
+ * @A: a #NspSMatrix 
+ * @Ind: a #NspMatrix 
+ * 
+ * returns a new #NspSMatrix obtained by extracting from @A entries 
+ * the characters given by indices given in @Ind. When an indice is out 
+ * of range a blank character is inserted.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind)
 {
@@ -1180,15 +1429,15 @@ NspSMatrix*nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind)
   return(Loc);
 }
 
-
-
-
-/*
- * Res= length(A) 
- * return a matrix which contains the length of the strings 
- * contained in A  A unchanged 
- * for Poly length menas degre of each polynom 
- */
+/**
+ * nsp_smatrix_elts_length:
+ * @A: a #NspSMatrix 
+ * 
+ * return a numeric matrix #NspMatrix which contains the length of the strings 
+ * contained in string matrix @A.
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT 
+ **/
 
 NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
 {
@@ -1204,18 +1453,19 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
 }
 
 
-/*
- *  Res=nsp_matrix_to_smatrix(A) 
- *      A s not changed 
- *  str is a format which is used if flag == 1 
- *  should be replaced by a null test on str. 
- *  FIXME: the default format should be the format 
- *    used for printing which is computed from A 
- */
-
-/* XXXXX */
 extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M) ;
 
+/**
+ * nsp_matrix_to_smatrix:
+ * @A: a #NspSMatrix 
+ * @str: format to be used for printing
+ * @flag: 0 or 1 
+ * 
+ * converts a #NspMatrix @A to a string matrix using nsp default format 
+ * if @flag is equal to 0 and the given format if flag is equal to one.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
@@ -1254,9 +1504,12 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
   return(Loc);
 }
 
-/*
- * A=tolower(A) 
- */
+/**
+ * nsp_smatrix_tolower:
+ * @A: a #NspSMatrix 
+ * 
+ * applies tolower() to each entry of string matrix @A.
+ **/
 
 void nsp_smatrix_tolower(NspSMatrix *A)
 {
@@ -1267,10 +1520,12 @@ void nsp_smatrix_tolower(NspSMatrix *A)
       for ( j = 0 ; j < strlen(A->S[i]) ; j++ ) A->S[i][j]= tolower(A->S[i][j]);
 }
 
-
-/*
- * A=toupper(A) 
- */
+/**
+ * nsp_smatrix_toupper:
+ * @A: a #NspSMatrix 
+ * 
+ * applies toupper() to each entry of string matrix @A.
+ **/
 
 void nsp_smatrix_toupper(NspSMatrix *A)
 {
@@ -1282,10 +1537,12 @@ void nsp_smatrix_toupper(NspSMatrix *A)
 }
 
 
-
-/*
- * capitalize(A)
- */
+/**
+ * nsp_smatrix_capitalize:
+ * @A: a #NspSMatrix 
+ * 
+ * capitalize entries of string matrix @A
+ **/
 
 void nsp_smatrix_capitalize(NspSMatrix *A)
 {
@@ -1299,12 +1556,17 @@ void nsp_smatrix_capitalize(NspSMatrix *A)
       }
 }
 
-/*
- * Res=nsp_smatrix_strstr(A,Str)
- * Returns in Res[i]  the index of Str in A[i] 
- * or 0 if Str is not in A[i]
- */
 
+/**
+ * nsp_smatrix_strstr:
+ * @A: a #NspSMatrix 
+ * @Str: string to be searched 
+ * 
+ * Returns in a #NspMatrix of same dimension as @A, the index of @Str in each 
+ * @A entry or 0 if @Str is not a substring of the entry.
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT 
+ **/
 
 NspMatrix *nsp_smatrix_strstr(NspSMatrix *A,nsp_const_string Str)
 {
@@ -1570,7 +1832,7 @@ NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int m
 
 /**
  * nsp_row_smatrix_append_string:
- * @A: a string matrix.
+ * @A: a #NspSMatrix 
  * @str: string to be added
  * 
  * enlarges a row string matrix by adding a new string at the end.
@@ -1648,14 +1910,18 @@ static int SMatSearchComp(char *op, SMat_CompOp (**comp_op))
 }
 
 
-/*
- * Operation on String Matrices leading to Boolean Matrices results 
- * Res = A(i,j) op B(i;j) 
- * with the special case : 
- *      A(i;j)op B(0,0) or A(0,0) op B(i,j) if A or B are of size 1x1
- *      
- * A and B are unchanged : Res is created 
- */
+/**
+ * SMatCompOp:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * @op:  a string which gives the logical operation which is to be performed.
+ * 
+ * returns a boolean matrix filled with @A(i,j) @op @B(i,j). 
+ * Note that @A and @B must have the same dimensions with the 
+ * convention that 1x1 matrices can match any dimensions. 
+ * 
+ * Return value:  a new #NspBMatrix or %NULLBMAT 
+ **/
 
 NspBMatrix  *SMatCompOp(NspSMatrix *A, NspSMatrix *B, char *op)
 {
@@ -1722,11 +1988,19 @@ NspBMatrix  *SMatCompOp(NspSMatrix *A, NspSMatrix *B, char *op)
   return(Loc);
 }
 
-/* 
- * Deuxieme chose a faire :  la meme chose mais Globale
- *  Le resultat est un booleen qui vaut True si 
- *  A(i;i) <= B(i,j) pour tout les (i,j) 
- */ 
+/**
+ * SMatFullComp:
+ * @A: a #NspSMatrix 
+ * @B: a #NspSMatrix 
+ * @op: a string which gives the logical operation which is to be performed.
+ * @err: set to 1 is dimensions are incompatible else to 0.
+ * 
+ * returns %TRUE if @A(i,j) @op @B(i,j) is %TRUE for all entries. 
+ * Note that @A and @B must have the same dimensions with the 
+ * convention that 1x1 matrices can match any dimensions. 
+ * 
+ * Return value: %TRUE or %FALSE.
+ **/
 
 int SMatFullComp(NspSMatrix *A, NspSMatrix *B, char *op,int *err)
 {
@@ -1785,6 +2059,14 @@ int SMatFullComp(NspSMatrix *A, NspSMatrix *B, char *op,int *err)
  * Transpose A 
  */
 
+/**
+ * nsp_smatrix_transpose:
+ * @A: a #NspSMatrix 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 NspSMatrix*nsp_smatrix_transpose(const NspSMatrix *A)
 {
   int i,j;
@@ -1804,6 +2086,16 @@ NspSMatrix*nsp_smatrix_transpose(const NspSMatrix *A)
  * Res =nsp_smatrix_subst(A,search,replace) 
  */
 
+/**
+ * nsp_smatrix_subst:
+ * @A: a #NspSMatrix 
+ * @needle: 
+ * @replace: 
+ * 
+ * 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
 NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char *replace)
 {
   /* modified by Bruno (30 april 05) for a gain in speed */
@@ -1856,9 +2148,14 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
 }
 
 
-/*
- * Res =nsp_smatrix_strip_blanks(A,search,replace) 
- */
+/**
+ * nsp_smatrix_strip_blanks:
+ * @A: a #NspSMatrix 
+ * 
+ * strips blanck characters at the begining and end of each entry of @A.
+ * 
+ * Return value: 
+ **/
 
 int nsp_smatrix_strip_blanks(NspSMatrix *A)
 {
@@ -1898,6 +2195,14 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A)
 /* set of function used to print string matrices 
  *
  */
+
+/**
+ * nsp_print_string_as_read:
+ * @str: string to be printed 
+ * 
+ * prints a string using Sciprintf() in such a way that the 
+ * string can be re-parsed by nsp.
+ **/
 
 void nsp_print_string_as_read(const char *str)
 {
@@ -2046,9 +2351,16 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
   return(OK);
 }
 
-/* SMatrix to Matrix 
- * with strtod
- */
+
+
+/**
+ * nsp_smatrix_strtod:
+ * @S: a #NspSMatrix
+ * 
+ * converts a #NspSMatrix to a #NspMatrix using strtod().
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT 
+ **/
 
 NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S)
 {
