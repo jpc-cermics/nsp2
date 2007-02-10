@@ -108,7 +108,7 @@ struct _registered_types {
 
 extern registered_types *nsp_types;
 extern int nsp_register_type(void *type);
-extern int nsp_no_type_id; /* this can no be a type id : used in save/load */
+extern const int nsp_no_type_id; /* this can no be a type id : used in save/load */
 extern void *nsp_get_type_from_id(NspTypeId id); 
 
 /* used in type constructors */ 
