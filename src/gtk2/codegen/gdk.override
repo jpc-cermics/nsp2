@@ -825,7 +825,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       static char *tab[] = { "type", "window", "send_event",
 			     "time", "state", "keyval", "string", NULL};
       if (!strcmp(attr, "__attrs"))
-	(NspObject *)nsp_smatrix_create_from_table(tab);
+	return (NspObject *)nsp_smatrix_create_from_table(tab);
       if (!strcmp(attr, "time"))
 	return nsp_new_double_obj((double) (event->key.time));
       if (!strcmp(attr, "state"))

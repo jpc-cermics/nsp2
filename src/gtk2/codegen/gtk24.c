@@ -42000,6 +42000,28 @@ static int _wrap_gtk_color_selection_is_adjusting(NspGtkColorSelection *self,Sta
   return 1;
 }
 
+static int _wrap_gtk_color_selection_set_color(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_double,t_end};
+  double color;
+
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  Scierror("%s: deprecated use GtkColorSelection.set_current_color",NspFname(stack)); return RET_BUG;
+  gtk_color_selection_set_color(GTK_COLOR_SELECTION(self->obj), &color);
+  return 0;
+}
+
+static int _wrap_gtk_color_selection_get_color(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_double,t_end};
+  double color;
+
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  Scierror("%s: deprecated use GtkColorSelection.get_current_color",NspFname(stack)); return RET_BUG;
+  gtk_color_selection_get_color(GTK_COLOR_SELECTION(self->obj), &color);
+  return 0;
+}
+
 static int _wrap_gtk_color_selection_set_update_policy(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -42028,6 +42050,8 @@ static NspMethods gtkcolorselection_methods[] = {
   {"get_previous_color",(nsp_method *) _wrap_gtk_color_selection_get_previous_color},
   {"get_previous_alpha",(nsp_method *) _wrap_gtk_color_selection_get_previous_alpha},
   {"is_adjusting",(nsp_method *) _wrap_gtk_color_selection_is_adjusting},
+  {"set_color",(nsp_method *) _wrap_gtk_color_selection_set_color},
+  {"get_color",(nsp_method *) _wrap_gtk_color_selection_get_color},
   {"set_update_policy",(nsp_method *) _wrap_gtk_color_selection_set_update_policy},
   { NULL, NULL}
 };
@@ -43374,7 +43398,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 43378 "gtk24.c"
+#line 43402 "gtk24.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -43649,7 +43673,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 43653 "gtk24.c"
+#line 43677 "gtk24.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -44091,7 +44115,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 44095 "gtk24.c"
+#line 44119 "gtk24.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -44385,7 +44409,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 44389 "gtk24.c"
+#line 44413 "gtk24.c"
 
 
 #line 4214 "gtk24.override"
@@ -44399,7 +44423,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 44403 "gtk24.c"
+#line 44427 "gtk24.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -45118,7 +45142,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 45122 "gtk24.c"
+#line 45146 "gtk24.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -45159,7 +45183,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 45163 "gtk24.c"
+#line 45187 "gtk24.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -45755,7 +45779,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 45759 "gtk24.c"
+#line 45783 "gtk24.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46067,7 +46091,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 46071 "gtk24.c"
+#line 46095 "gtk24.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46092,7 +46116,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 46096 "gtk24.c"
+#line 46120 "gtk24.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46116,7 +46140,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 46120 "gtk24.c"
+#line 46144 "gtk24.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -47023,7 +47047,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 47027 "gtk24.c"
+#line 47051 "gtk24.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -47114,7 +47138,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47118 "gtk24.c"
+#line 47142 "gtk24.c"
 
 
 static NspMethods gtkdialog_methods[] = {
@@ -47400,7 +47424,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 47404 "gtk24.c"
+#line 47428 "gtk24.c"
 
 
 static NspMethods *gtkmessagedialog_get_methods(void) { return NULL;};
@@ -48264,7 +48288,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 48268 "gtk24.c"
+#line 48292 "gtk24.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -49037,7 +49061,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 49041 "gtk24.c"
+#line 49065 "gtk24.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
@@ -49317,7 +49341,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 49321 "gtk24.c"
+#line 49345 "gtk24.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
@@ -49431,7 +49455,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 49435 "gtk24.c"
+#line 49459 "gtk24.c"
 
 
 int _wrap_gtk_icon_size_register(Stack stack, int rhs, int opt, int lhs)
@@ -49637,7 +49661,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 49641 "gtk24.c"
+#line 49665 "gtk24.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
@@ -49668,7 +49692,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 49672 "gtk24.c"
+#line 49696 "gtk24.c"
 
 
 #line 3635 "gtk24.override"
@@ -49684,7 +49708,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 49688 "gtk24.c"
+#line 49712 "gtk24.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
@@ -49838,7 +49862,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 49842 "gtk24.c"
+#line 49866 "gtk24.c"
 
 
 #line 5970 "gtk24.override"
@@ -49851,7 +49875,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 49855 "gtk24.c"
+#line 49879 "gtk24.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
@@ -50025,7 +50049,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 50029 "gtk24.c"
+#line 50053 "gtk24.c"
 
 
 #line 6146 "gtk24.override"
@@ -50045,7 +50069,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 50049 "gtk24.c"
+#line 50073 "gtk24.c"
 
 
 #line 6132 "gtk24.override"
@@ -50061,7 +50085,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 50065 "gtk24.c"
+#line 50089 "gtk24.c"
 
 
 int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs)
@@ -50304,7 +50328,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 50308 "gtk24.c"
+#line 50332 "gtk24.c"
 
 
 /*----------------------------------------------------
@@ -50653,7 +50677,7 @@ gtk_register_classes(NspObject *d)
 
 #line 160 "gtk24.override"
 
-#line 50657 "gtk24.c"
+#line 50681 "gtk24.c"
   nspg_register_boxed(d, "TreePath", GTK_TYPE_TREE_PATH, &PyGtkTreePath_Type);
   nspg_register_boxed(d, "Requisition", GTK_TYPE_REQUISITION, &PyGtkRequisition_Type);
   nspg_register_boxed(d, "IconSet", GTK_TYPE_ICON_SET, &PyGtkIconSet_Type);
