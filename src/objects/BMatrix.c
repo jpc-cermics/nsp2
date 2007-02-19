@@ -75,6 +75,7 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
  * @A: a #NspBMatrix
  * @m: number of rows 
  * @n: number of columns 
+ * @init: unsused init flag.
  * 
  * Creates a new boolean matrix with with unspecified values. @A is not 
  * used for #NspBMatrix.

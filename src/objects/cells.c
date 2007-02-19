@@ -994,14 +994,19 @@ NspCells*nsp_cells_transpose(const NspCells *A)
 /**
  *nsp_cells_unique:
  * @C: a NspCells
+ * @Ind:
+ * @Occ:
  * 
- *  build a new NspCells CC with unique elements of C
- *  if Ind != NULL , Ind->R[k] give an index i such that CC(k) = C(i)
- *  if Ind != NUL then Occ may be != NULL (else Occ = NULL) and
- *  if Occ != NULL Occ->R[k] is the number of occurences in C of CC(k).
+ *  build a new #NspCells (CC) gathering unique elements from @C.
+ *  If @Ind is non %NULL then a Matrix is allocated and returned in @Ind. 
+ *  @Ind->R[k] gives an index i such that @C(i) is returned in the result at position k (CC(k)).
+ *  if @Ind is non %NULL then @Occ may be non %NULL too (else @Occ should be %NULL) and 
+ *  then a Matrix is allocated and returned in @Occ. @Occ->R[k] is filled with the number 
+ *  of occurences in cell @C of the value stored in the result at position @k (CC(k)).
  *
- * Return value: a NspCells
+ * Return value: a new #NspCells or %NULLCELLS.
  **/
+
 NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
 {
   NspCells *CC;
