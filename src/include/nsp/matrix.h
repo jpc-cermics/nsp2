@@ -97,7 +97,7 @@ extern void nsp_matrix_print (NspMatrix *Mat, int indent,const char *name, int r
 extern unsigned int  nsp_matrix_elt_size(NspMatrix *M);
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMatrix  *matrix_object(NspObject *O);
-extern int nsp_mat_fullcomp();
+extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err);
 extern NspMatrix *matrix_object(NspObject *O); 
 extern int IsMatObj (Stack stack, int i); 
 extern int IsMat (const NspObject *O); 
@@ -200,12 +200,11 @@ extern NspMatrix **nsp_mat_slec(char *file, int *Count);
 extern FILE *fopen (const char *, const char *);
 extern NspMatrix *MatLec (FILE *fd); 
 extern NspMatrix *fooBOU (void); 
-extern int nsp_mat_readline(FILE *fd); 
-extern void nsp_testnumtokens(void); 
-extern int nsp_numtokens(char *string); 
-
+/* extern int nsp_mat_readline(FILE *fd);  */
+/* extern void nsp_testnumtokens(void);  */
+/* extern int nsp_numtokens(char *string);  */
 extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
-extern void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc);
+/* extern void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc);*/
 extern int nsp_mat_complexify(NspMatrix *Mat, double d); 
 extern int nsp_mat_get_real(NspMatrix *A); 
 extern int nsp_mat_get_imag(NspMatrix *A); 

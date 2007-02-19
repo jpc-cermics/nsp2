@@ -38,12 +38,20 @@ static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
 typedef int (*AdSu) (const int,const double *,const int,double *,const int);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
+static int nsp_mat_readline(FILE *fd, char *Info);
+static int nsp_numtokens(char *string);
+static void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc);
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-/*
- * Real A(i,j)=dval, A is changed 
- */
+
+/**
+ * nsp_mat_set_rval:
+ * @A: a #NspMatrix 
+ * @dval: a double
+ * 
+ * sets the real part of all the entries of Matrix @A to value @d.
+ **/
 
 void nsp_mat_set_rval(NspMatrix *A, double dval)
 {
@@ -61,11 +69,16 @@ void nsp_mat_set_rval(NspMatrix *A, double dval)
 
 }
 
-/*
- * Imag A(i,j)=dval, A is changed and transformed 
- * to complex type if necessary.
- * return 0 on failure 
- */
+/**
+ * nsp_mat_set_ival:
+ * @A: a #NspMatrix 
+ * @dval: 
+ * 
+ * sets the imaginary part of all the entries of Matrix @A to value @d. 
+ * If the matrix was real it is first turned to complex with nsp_mat_complexify().
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_set_ival(NspMatrix *A, double dval)
 {
@@ -253,12 +266,32 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
  * A = A+B (covers the scalar and [] cases ) 
  */
 
+/**
+ * nsp_mat_add:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * computes in @A the sum @A + @B (i.e @A= @A+@B) taking care 
+ * of the limit cases, when on of the matrix is sero sized or scalar.
+ * 
+ * Return value:   %OK or %FAIL.
+ **/
+
 int nsp_mat_add(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_add_scalar,MatNoOp,nsp_mat_dadd,0);
 }
 
-/* deals with the case dim A == dim B **/
+/**
+ * nsp_mat_dadd:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix 
+ * 
+ * computes in @Mat1 the sum @Mat1 + @Mat2 (i.e @Mat1= @Mat1+@Mat2) when 
+ * @Mat1 and @Mat2 have the same sizes.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 {
@@ -308,21 +341,51 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 }
 
 
-
-
-/* the case Mat2 scalar **/
+/**
+ * nsp_mat_add_scalar:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix of size 1x1 
+ * 
+ * computes in @A the sum @A + @B (i.e @A= @A+@B) when @B 
+ * is a scalar matrix. 
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
 
 int nsp_mat_add_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dadd,nsp_zadd);
 }
 
-/* extension of Mat + scalar for (-%inf+ %inf -> -%inf) */
+/**
+ * nsp_mat_add_scalar_maxplus:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix of size 1x1 
+ * 
+ * computes in @A the sum @A + @B (i.e @A= @A+@B) when @B 
+ * is a scalar matrix. The + operator is here in the Maxplus algebra.
+ * (-%inf+ %inf -> -%inf). 
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
+
 
 int nsp_mat_add_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dadd_maxplus,nsp_zadd_maxplus);
 }
+
+/**
+ * nsp_mat_dadd_maxplus:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix
+ * 
+ * computes in @Mat1 the sum @Mat1 + @Mat2 (i.e @Mat1= @Mat1+@Mat2) when 
+ * @Mat1 and @Mat2 have the same sizes. The + operator is here in the Maxplus algebra.
+ * 
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
 
 int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 {
@@ -372,17 +435,32 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 }
 
 
-/*
- * term to term addition : the general case 
- * A = A-B (covers the scalar and [] cases ) 
- */
+
+/**
+ * nsp_mat_sub:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A-@B, covering the case of scalar or empty matrices.
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
 
 int nsp_mat_sub(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_sub_scalar,nsp_mat_minus,nsp_mat_dsub,0);
 }
 
-/* the case dim A == dim B **/
+/**
+ * nsp_mat_dsub:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix 
+ * 
+ * 
+ * @Mat1= @Mat1-@Mat2 when the two matrices have the same size.
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
 
 int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 {
@@ -433,22 +511,49 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
     }
 }
 
-/* the case Mat2  is scalar  (No check is made) */
+/**
+ * nsp_mat_sub_scalar:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix 
+ * 
+ * 
+ * @Mat1= @Mat1-@Mat2 when @Mat2 is a 1x1 matrix 
+ * 
+ * Return value:   %OK or %FAIL.
+ **/
 
 int nsp_mat_sub_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dsub,nsp_zsub);
 }
 
-/* the case Mat2  is scalar  (No check is made) */
+
+/**
+ * nsp_mat_sub_scalar_maxplus:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix 
+ * 
+ * 
+ * @Mat1= @Mat1-@Mat2 when @Mat2 is a 1x1 matrix and using 
+ * the Maxplus algebra. 
+ * 
+ * Return value:   %OK or %FAIL.
+ **/
 
 int nsp_mat_sub_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dsub_maxplus,nsp_zsub_maxplus);
 }
 
-/* the case  Mat1 = - Mat1 + Mat2 
- * Mat2 is assumed to be a scalar ( No check is made) */ 
+/**
+ * nsp_mat_subs_calarm:
+ * @Mat1: a #NspMatrix 
+ * @Mat2: a #NspMatrix 
+ * 
+ * @Mat1 = - @Mat1 + @Mat2 and @Mat2 is a 1x1 matrix.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2)
 {
@@ -458,12 +563,19 @@ int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2)
   return OK;
 }
 
-/*
- * A = Matclean(a) clean A according to epsa and epsr 
- * epsa is used if rhs >= 1 
- * epsr is used if rhs >= 2
- * A is changed, 
- */
+/**
+ * nsp_mat_clean:
+ * @A: a #NspMatrix 
+ * @rhs: 
+ * @epsa: a double for absolute precision 
+ * @epsr: a double for relative precision.
+ * 
+ * 
+ * cleans the entries of matrix @A by setting to zero entries 
+ * smaller than @eps. where @eps = Max(@epsa,@epsr*norm(A)). 
+ * @epsa is used if @rhs is >= 2 and @epsr is used is @rhs is >= 3 
+ * otherwize @epsa and @epsr are set to %DBL_EPSILON.
+ **/
 
 void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
 {
@@ -501,15 +613,26 @@ void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
 
 
 /*
- *  Utility function for computing the max of a list of matrices 
- *
- *  A(k,l) = Maxi(A(k,l),B(k,l)) 
- *  Ind(k,l) is set to j if B(k,l) realize the max and flag ==1 
- *  if flag == 0 Ind is unused and can be null
- *  B unchanged A changed, A is enlarged if necessary Ind also 
- *  A and B must have same size or be scalars. 
- *  On entry A and Ind if Ind is used must have the same size 
  */
+
+/**
+ * nsp_mat_maxitt1:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * @Ind: a #NspMatrix or %NULL
+ * @j: integer 
+ * @flag: integer if flag==0 then Ind is unused.
+ * 
+ *  Utility function used when computing the max of a set of matrices. 
+ *  Computes A(k,l) = Maxi(A(k,l),B(k,l)). 
+ *  Ind(k,l) is set to j if B(k,l) realize the max and flag ==1 
+ *  if flag == 0 Ind is unused and can be null. 
+ *  @A and @B must have same size or be scalars. @A is enlarged 
+ *  if necessary. If @Ind is used it must have 
+ *  On entry A and Ind if Ind is used must have the same sizes.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
 {
@@ -562,13 +685,24 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
 }
 
 
-/*
- *  A(k,l) = Mini(A(k,l),B(k,l)) 
- *  Ind(k,l) is set to j if B(k,l) realize the max and flag ==1 
- *  if flag == 0 Ind is unused and can be null
- *  B unchanged A changed, A is enlarged if necessary 
- *  A and B must have same size or be scalars.
- */
+/**
+ * nsp_mat_minitt1:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * @Ind: a #NspMatrix or %NULL
+ * @j: integer 
+ * @flag: integer if flag==0 then Ind is unused.
+ * 
+ *  Utility function used when computing the min of a set of matrices. 
+ *  Computes A(k,l) = Min(A(k,l),B(k,l)). 
+ *  Ind(k,l) is set to j if B(k,l) realize the min and flag ==1 
+ *  if flag == 0 Ind is unused and can be null. 
+ *  @A and @B must have same size or be scalars. @A is enlarged 
+ *  if necessary. If @Ind is used it must have 
+ *  On entry A and Ind if Ind is used must have the same sizes.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag)
 {
@@ -614,9 +748,13 @@ int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag)
 }
 
 
-/*
- *  Read a Set of Matrix(p,q) in the file file 
- * The file is written as follows 
+/**
+ * nsp_mat_slec:
+ * @file: 
+ * @Count: 
+ * 
+ * reads a set of matrices from the file given by filename @file.
+ * The contents of the file should be as follows:
  *
  * BeginMat Name type 
  * m(1,1) m(1,2) .... m(1,q)
@@ -625,13 +763,15 @@ int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag)
  * m(p,1) .....  .... m(P,q)
  * EndMat 
  * 
- * Maximu number of matrices : 100 
- */
+ * Maximum number of matrices : 100 
+ * 
+ * Return value: an array of #NspMatrix or %NULL 
+ **/
 
-static char Info[256];
 
 NspMatrix **nsp_mat_slec(char *file, int *Count)
 { 
+  char Info[256];
   int cols[100],lines[100];
   int MatCount,MatCount1,i,j;
   NspMatrix **Loc;
@@ -650,7 +790,7 @@ NspMatrix **nsp_mat_slec(char *file, int *Count)
       int ligne=0,n=1,num=0;
       strcpy(Info,"--------");
       while ( strncmp("BeginMat",Info,8) !=0 && n != EOF )
-	n=nsp_mat_readline(fd);
+	n=nsp_mat_readline(fd,Info);
       if ( n == EOF ) break;
       num=sscanf(Info,"%*s%10s%1s",matname,typ);
       if ( num != 2 ) 
@@ -659,11 +799,11 @@ NspMatrix **nsp_mat_slec(char *file, int *Count)
 	  typ[0]='r';
 	  strcpy(matname,"Noname");
 	}
-      n=nsp_mat_readline(fd);
+      n=nsp_mat_readline(fd,Info);
       cols[MatCount1++]=nsp_numtokens(Info);
       while (n != EOF &&  n != 0 && strncmp(Info,"EndMat",6) != 0)
 	{ 
-	  n=nsp_mat_readline(fd);
+	  n=nsp_mat_readline(fd,Info);
 	  ligne++;
 	}
       if ( n != EOF && n != 0) 
@@ -694,7 +834,7 @@ NspMatrix **nsp_mat_slec(char *file, int *Count)
       char matname[11],typ[2];
       strcpy(Info,"--------");
       while ( strncmp("BeginMat",Info,8) !=0 && n != EOF )
-	n=nsp_mat_readline(fd); 
+	n=nsp_mat_readline(fd,Info); 
       if ( n == EOF ) break;
       if ( ++MatCount > MatCount1 ) break;
       num=sscanf(Info,"%*s%10s%1s",matname,typ);
@@ -718,31 +858,38 @@ NspMatrix **nsp_mat_slec(char *file, int *Count)
 }
 
 
-/*
- * Read one matrix in a file 
+
+/**
+ * MatLec:
+ * @fd: a file.
+ * 
+ * reads one matrix in file @fd.
  * The file is written as follows 
- */
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *MatLec(FILE *fd)
 { 
+  char Info[256];
   NspMatrix *Loc;
   int i,j,rows=0,cols=0,vl=0,n=0;
   while(1)
     {
       strcpy(Info,"--------");
-      while ( sscanf(Info,"%*f") <= 0 ) { n=nsp_mat_readline(fd); vl++;}
+      while ( sscanf(Info,"%*f") <= 0 ) { n=nsp_mat_readline(fd,Info); vl++;}
       if ( n == EOF ) break;
       cols =nsp_numtokens(Info);
       while (n != EOF &&  n != 0 ) 
 	{ 
-	  n=nsp_mat_readline(fd);
+	  n=nsp_mat_readline(fd,Info);
 	  rows++;
 	}
     }
   if ((Loc = nsp_matrix_create(NVOID,'r',rows,cols)) == NULLMAT ) return Loc;
   /* second pass to read **/
   rewind(fd);
-  for ( i = 0 ; i < vl ; i++)nsp_mat_readline(fd);
+  for ( i = 0 ; i < vl ; i++)nsp_mat_readline(fd,Info);
   for (i=0; i < rows ;i++)
     for (j=0;j < cols;j++)
       { 
@@ -754,22 +901,10 @@ NspMatrix *MatLec(FILE *fd)
 }
 
 /*
-
-NspMatrix* fooBOU(void)
-{
-FILE *fd ;
-fd = fopen("poo","r");
-return MatLec(fd);
-fclose(fd);
-}
-*/
-
-
-/*
  *nsp_mat_readline: reads one line in file fd and puts the result in Info
  */
 
-int nsp_mat_readline(FILE *fd)
+static int nsp_mat_readline(FILE *fd, char *Info)
 {
   int n;
   n= fscanf(fd,"%[^\n]%*c",Info);
@@ -780,8 +915,8 @@ int nsp_mat_readline(FILE *fd)
 /*
  * Test de TestNumTokens 
  */
-
-void nsp_testnumtokens(void)
+#if 0 
+static void nsp_testnumtokens(void)
 {
   char buf[30], format[20];
   strcpy(format,"%d Tokens in <%s>\n");
@@ -794,8 +929,18 @@ void nsp_testnumtokens(void)
   strcpy(buf," \t\nun");  fprintf(stderr,format,nsp_numtokens(buf),buf);
   strcpy(buf,"1.0  1.0");fprintf(stderr,format,nsp_numtokens(buf),buf);
 }
+#endif 
 
-int nsp_numtokens(char *string)
+/**
+ * nsp_numtokens:
+ * @string: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static int nsp_numtokens(char *string)
 {
   char buf[128];
   int n=0,lnchar=0,ntok=-1;
@@ -817,13 +962,18 @@ int nsp_numtokens(char *string)
 }
 
 
-/*
- * Change a matrix of Real type to Imaginary type 
- * return 0 on allocation failure 
- * The imag part is initialized with the value d
- */
 
-void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc)
+/**
+ * nsp_ciset:
+ * @n: 
+ * @z: 
+ * @tab: 
+ * @inc: 
+ * 
+ *
+ **/
+
+static void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc)
 {
   int i;
   if ( *inc > 0 ) 
@@ -831,6 +981,17 @@ void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc)
   else 
     for (i=*n-1; i >= 0 ; i += *inc) tab[i].i = *z;
 }
+
+/**
+ * nsp_csetd:
+ * @n: size of array @tab.
+ * @z: value to be used for set.
+ * @tab: array to be changed 
+ * @inc: increment (positive or negative)
+ * 
+ * sets the real part of array @tab to @z. If increment is 
+ * given then iteration is performed on @tab withincrement @inc.
+ **/
 
 void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) 
 {
@@ -848,10 +1009,16 @@ void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc)
     
 }
 
-/*
- * Turns Mat into a Complex Matrix with imag part set to 
- * 0. Mat is changed 
- */
+/**
+ * nsp_mat_complexify:
+ * @Mat: a #NspMatrix.
+ * @d: a double 
+ * 
+ * @Mat matrix is converted to a complex matrix and its imaginary entries 
+ * are initialized with @d.  * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_complexify(NspMatrix *Mat, double d)
 {
@@ -908,11 +1075,17 @@ NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A)
 }
 
 /*
- * Return the Real part of Matrix A 
- * In a Real Matrix A
- * A is changed if a is not real 
- * A = real(A) 
  */
+
+/**
+ * nsp_mat_get_real:
+ * @A: a #NspMatrix 
+ * 
+ * converts @A to a real matrix by removing the imaginary part.
+ * The data part of the @A matrix is reallocated.
+ *
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_get_real(NspMatrix *A)
 {
@@ -933,11 +1106,16 @@ int nsp_mat_get_real(NspMatrix *A)
   return(OK);
 }
 
-/*
- * Return the Imaginary part of Matrix A 
- * In a Real Matrix A. A= Imag(A) 
- * A is changed  
- */
+
+/**
+ * nsp_mat_get_imag:
+ * @A: a #NspMatrix 
+ * 
+ * performs A=Imag(A). i.e the @A matrix data array is 
+ * filled with its imaginary part.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_get_imag(NspMatrix *A)
 {
@@ -964,9 +1142,15 @@ int nsp_mat_get_imag(NspMatrix *A)
   return OK;
 }
 
-/*
- * nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
- */
+/**
+ * nsp_mat_inv_el:
+ * @A: a #NspMatrix 
+ * 
+ * changes the entries of @A replacing them by their inverses.
+ * A(i,j)=1/A(i,j)
+ *
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_inv_el(NspMatrix *A)
 {
@@ -990,17 +1174,23 @@ int nsp_mat_inv_el(NspMatrix *A)
   return(OK);
 }
 
-/*
- *nsp_mat_kron: produit de Kroeneker
- * A et B sont inchanges 
- */
-
+/**
+ * nsp_mat_kron:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * returns in a new #NspMatrix the Kroeneker product of 
+ * @A and @B.
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B)
 {
   char type ;
   NspMatrix *Loc;
   type = ( A->rc_type == 'c' || B->rc_type == 'c') ? 'c' : 'r' ;
-  if ((Loc = nsp_matrix_create(NVOID,type,B->m*A->m,B->n*A->n)) == NULLMAT) return(NULLMAT);
+  if ((Loc = nsp_matrix_create(NVOID,type,B->m*A->m,B->n*A->n)) == NULLMAT) 
+    return(NULLMAT);
   if ( Loc->mn == 0 ) return(Loc);
   Kronecker(A,B,Loc);
   return(Loc);
@@ -1014,6 +1204,18 @@ NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B)
  * ======
  * to be updated XXX
  */
+
+/**
+ * nsp_mat_sort:
+ * @A: a #NspMatrix 
+ * @flag: 
+ * @str1: 
+ * @str2: 
+ * 
+ * 
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
 {
@@ -1052,13 +1254,16 @@ NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
 /**
  * nsp_mat_sum:  computes various sums of @A
  * @A: a #NspMatrix
- * @dim: for dim=0 the sum of all elements of @A is computed, a scalar is returned
- *       for dim=1 the sum over the row indices is computed, a row vector is returned. 
- *       for dim=2 the sum over the column indices is computed, a column vector is returned. 
- *       else dim=0 is forced.
+ * @dim: an integer 
+ * 
+ * for dim=0 the sum of all elements of @A is computed, a scalar is returned
+ * for dim=1 the sum over the row indices is computed, a row vector is returned. 
+ * for dim=2 the sum over the column indices is computed, a column vector is returned. 
+ * else dim=0 is forced.
  * 
  * Return value: a  #NspMatrix (a scalar, row or comumn vector)
  **/
+
 NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
 {
   NspMatrix *Sum;
@@ -1123,10 +1328,12 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
 /**
  * nsp_mat_prod:  computes various products of elements of @A
  * @A: a #NspMatrix
- * @dim: for dim=0 the product of all elements is computed, a scalar is returned.
- *       for dim=1 the product over the row indices is computed, a row vector is returned. 
- *       for dim=2 the product over the column indices is computed, a column vector is returned. 
- *       else dim=0 is forced.
+ * @dim: an integer 
+ * 
+ *  for dim=0 the product of all elements is computed, a scalar is returned.
+ *  for dim=1 the product over the row indices is computed, a row vector is returned. 
+ *  for dim=2 the product over the column indices is computed, a column vector is returned. 
+ *  else dim=0 is forced.
  * 
  * Return value: a  #NspMatrix (a scalar, row or comumn vector)
  **/
@@ -1215,10 +1422,12 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
 /**
  * nsp_mat_cum_prod:  cumulative products of elements of @A
  * @A: a #NspMatrix
- * @dim: for dim=0 the cumulative product over all elements is computed (in column major order).
- *       for dim=1 the cumulative product over the row indices is computed.
- *       for dim=2 the cumulative product over the column indices is computed.
- *       else dim=0 is forced.
+ * @dim: and integer 
+ * 
+ * for dim=0 the cumulative product over all elements is computed (in column major order).
+ * for dim=1 the cumulative product over the row indices is computed.
+ * for dim=2 the cumulative product over the column indices is computed.
+ * else dim=0 is forced.
  * 
  * Return value: a #NspMatrix of same dim than @A
  **/
@@ -1301,10 +1510,12 @@ NspMatrix *nsp_mat_cum_prod(NspMatrix *A, int dim)
 /**
  * nsp_mat_cum_sum:  cumulative sums of elements of @A
  * @A: a #NspMatrix
- * @dim: for dim=0 the cumulative sum over all elements is computed (in column major order).
- *       for dim=1 the cumulative sum over the row indices is computed.
- *       for dim=2 the cumulative sum over the column indices is computed.
- *       else dim=0 is forced.
+ * @dim: an integer 
+ *
+ * for dim=0 the cumulative sum over all elements is computed (in column major order).
+ * for dim=1 the cumulative sum over the row indices is computed.
+ * for dim=2 the cumulative sum over the column indices is computed.
+ * else dim=0 is forced.
  * 
  * Return value: a #NspMatrix of same dim than @A
  **/
@@ -1391,10 +1602,12 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
  * nsp_mat_diff:  diff of elements of @A
  * @A: a #NspMatrix
  * @order: diff level
- * @dim: for dim=0 the diff over all elements is computed (in column major order).
- *       for dim=1 the diff over the row indices is computed.
- *       for dim=2 the diff sum over the column indices is computed.
- *       else dim=0 is forced.
+ * @dim: an integer 
+ * 
+ *  for dim=0 the diff over all elements is computed (in column major order).
+ *  for dim=1 the diff over the row indices is computed.
+ *  for dim=2 the diff sum over the column indices is computed.
+ *  else dim=0 is forced.
  * 
  * Return value: a #NspMatrix
  **/
@@ -1487,6 +1700,7 @@ NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
 }
 
 
+typedef int (*MaMi) (int,double *,int,double *);
 
 /*
  * Max =nsp_mat_maxi(A,B,Imax,lhs)
@@ -1498,8 +1712,6 @@ NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
  * if B= 'f' the maximum 
  * Imax is created if lhs == 2 
  */
-
-typedef int (*MaMi) (int,double *,int,double *);
 
 static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs, MaMi F)
 {
@@ -1596,11 +1808,22 @@ static int VMaxi(int n, double *A, int incr, double *amax)
 }
 
 
+/**
+ * nsp_mat_maxi:
+ * @A: 
+ * @flag: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
   return MatMaxiMini(A,flag,Imax,lhs,VMaxi);
 }
-
 
 
 /*
@@ -1641,6 +1864,17 @@ static int VMini(int n, double *A, int incr, double *amin)
 
 
 
+/**
+ * nsp_mat_mini:
+ * @A: 
+ * @flag: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
   return MatMaxiMini(A,flag,Imax,lhs,VMini);
@@ -1685,11 +1919,21 @@ static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
 }
 
 
-/*
- * int nsp_mat_minmax: 
- * A is unchanged 
- * Amin, Amx, Imin, Imax are set to the result
- */
+/**
+ * nsp_mat_minmax:
+ * @A: a #NspMatrix 
+ * @str: 
+ * @Amin: 
+ * @Imin: 
+ * @Amax: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
 		   NspMatrix **Amax, NspMatrix **Imax, int lhs)
 {
@@ -1754,10 +1998,22 @@ int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
 
 
 /*
- * Creates a Matrix and initialize it with the 
- * function func 
- * R=func(i,j) or R=func(i,j,&Imag) 
  */
+
+/**
+ * nsp_mat_createinit:
+ * @name: 
+ * @type: 
+ * @m: 
+ * @n: 
+ * @func: 
+ * 
+ * 
+ * creates a new #NspMatrix using @func to initialize the entries.
+ * R=func(i,j) or R=func(i,j,Imag) 
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func) (/* ??? */))
 {
@@ -1788,11 +2044,13 @@ NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func
 }
 
 
-
-/*
- *nsp_mat_triu: A=Triu(A)
- * A is changed  
- */
+/**
+ * nsp_mat_triu:
+ * @A: a #NspMatrix 
+ * @k: an integer 
+ * 
+ * A = triu(A,k). 
+ **/
 
 void nsp_mat_triu(NspMatrix *A, int k)
 {
@@ -1815,10 +2073,14 @@ void nsp_mat_triu(NspMatrix *A, int k)
 }
 
 
-/*
- *nsp_mat_tril: A=Tril(A)
- * A is changed  
- */
+
+/**
+ * nsp_mat_tril:
+ * @A: a #NspMatrix 
+ * @k:  an integer
+ * 
+ * A=Tril(A)
+ **/
 
 void nsp_mat_tril(NspMatrix *A, int k)
 {
@@ -1841,9 +2103,16 @@ void nsp_mat_tril(NspMatrix *A, int k)
 }
 
 
-/*
- *nsp_mat_eye: A=Eye(m,n)
- */
+
+/**
+ * nsp_mat_eye:
+ * @m: number of rows
+ * @n: number of columns
+ * 
+ * returns the identity matrix of size @m x @n (eyes(m,n))
+ * 
+ * Return value: a new #NspMatrix or %NULL.
+ **/
 
 NspMatrix *nsp_mat_eye(int m, int n)
 {
@@ -1855,10 +2124,16 @@ NspMatrix *nsp_mat_eye(int m, int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_ones: A=ones(m,n)
- * A is changed  
- */
+
+/**
+ * nsp_mat_ones:
+ * @m: number of rows
+ * @n: number of columns
+ * 
+ * returns a  @m x @n matrix filled with 1.0
+ * 
+ * Return value: a new #NspMatrix or %NULL.
+ **/
 
 NspMatrix *nsp_mat_ones(int m, int n)
 {
@@ -1868,10 +2143,16 @@ NspMatrix *nsp_mat_ones(int m, int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_ones: A=zeros(m,n)
- * A is changed  
- */
+
+/**
+ * nsp_mat_zeros:
+ * @m: number of rows
+ * @n: number of columns
+ * 
+ * returns a  @m x @n matrix filled with 0.0
+ * 
+ * Return value: a new #NspMatrix or %NULL.
+ **/
 
 NspMatrix *nsp_mat_zeros(int m, int n)
 {
@@ -1885,6 +2166,17 @@ NspMatrix *nsp_mat_zeros(int m, int n)
  *nsp_mat_rand: A=rand(m,n)
  * A is changed  
  */
+
+/**
+ * nsp_mat_rand:
+ * @m: number of rows
+ * @n: number of columns
+ * 
+ * returns a  @m x @n matrix filled with random samples of normal or 
+ * uniform law.
+ * 
+ * Return value: a new #NspMatrix or %NULL.
+ **/
 
 static int rand_data[] = {1,0};
 
@@ -1913,20 +2205,50 @@ NspMatrix *nsp_mat_rand(int m, int n)
   return(Loc);
 }
 
+/**
+ * nsp_set_urandseed:
+ * @m: integer 
+ * 
+ * sets the seed of the default random generator.
+ **/
+
 void nsp_set_urandseed(int m)
 {
   rand_data[0] = Max(m,0);
 }
+
+/**
+ * nsp_get_urandseed:
+ * 
+ * gets the seed of the default random generator.
+ * 
+ * Return value: the seed value as an integer.
+ **/
 
 int nsp_get_urandseed(void)
 {
   return rand_data[0];
 }
 
+/**
+ * nsp_set_urandtype:
+ * @m: integer
+ * 
+ * sets the default random generator to normal (@m=1) or uniform (@m=0).
+ **/
+
 void nsp_set_urandtype(int m)
 {
   rand_data[1]=m;
 }
+
+/**
+ * nsp_get_urandtype:
+ * 
+ * gets the default genetor law (1 for normal law and 0 for uniform law)
+ * 
+ * Return value: 1 or 0.
+ **/
 
 int nsp_get_urandtype(void)
 {
@@ -2084,17 +2406,18 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
  * @A: a #NspMatrix which is not a scalar
  * @B: a #NspMatrix which is not a scalar
  * 
- * The operation A^B is done with the generic interface int_mx_mopscal
+ * The operation @A^@B is done with the generic interface int_mx_mopscal
  * which branches to one of the 3 routines:
- *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
- *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
- *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
+ *        1/ nsp_mat_pow_matscalar(@A,@B) if @B is a scalar 
+ *        2/ nsp_mat_pow_matmat(@A,@B), if neither @A and @B are scalar
+ *        3/ nsp_mat_pow_scalarmat(@B,@A), if @A is a scalar
  *
  * Here this routine is made for the case 2 but as it is not a defined
  * operation it displays only an error message.  
  *
- * Return value: FAIL
+ * Return value: %FAIL
  **/
+
 int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B) 
 {
   Scierror("Error:\t for ^ operator at least one operand must be a scalar\n");
@@ -2106,17 +2429,18 @@ int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B)
  * @B: a #NspMatrix which must be square 
  * @A: a #NspMatrix which must be a scalar 
  *  
- * The operation A^B is done with the generic interface int_mx_mopscal
+ * The operation @A^@B is done with the generic interface int_mx_mopscal
  * which branches to one of the 3 routines:
- *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
- *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
- *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
- * caution B is overwritten with the resulting matrix.
+ *        1/ nsp_mat_pow_matscalar(@A,@B) if @B is a scalar 
+ *        2/ nsp_mat_pow_matmat(@A,@B), if neither A and B are scalar
+ *        3/ nsp_mat_pow_scalarmat(@B,@A), if @A is a scalar
+ * Note that the result is returned in @B which is overwritten.
  *
- * algorithm : A^B = e^(ln(A)*B), so we use expm( ln(A)*B )
+ * algorithm: @A^@B = e^(ln(@A)*@B), so we use expm( ln(@A)*@B )
  * 
- * Return value: OK or FAIL 
+ * Return value: %OK or %FAIL 
  **/
+
 int nsp_mat_pow_scalarmat(NspMatrix *B, NspMatrix *A) 
 {
   double a=0.0;
@@ -2173,22 +2497,37 @@ int nsp_mat_pow_scalarmat(NspMatrix *B, NspMatrix *A)
   return FAIL;
 }
 
-
 /*
  *  A Set of term to term function on Matrices (complex or real)
  */
 
 
-/*
- * term to term power : the general case 
- * A = A .^ B (covers the scalar and [] cases ) 
- */
+
+/**
+ * nsp_mat_pow_tt:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * @A = @A .^ @B (covers the scalar and [] cases )
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_pow_tt(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_pow_scalar,MatNoOp,nsp_mat_pow_el,1);
 }
 
+
+/**
+ * nsp_mat_pow_el:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * @A = @A .^ @B when @A and @B have same dimensions.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B)
 {
@@ -2242,7 +2581,15 @@ int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B)
     }
 }
 
-/* scalar case A = A .^ b */ 
+/**
+ * nsp_mat_pow_scalar:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * @A = @A .^ @B when @B is a 1x1 matrix.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
 {
@@ -2300,7 +2647,15 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
-/* scalar case  a(i,j)=b**a(i,j) */ 
+/**
+ * nsp_mat_pow_scalarm:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * @A = @B .^ @A when @B is a 1x1 matrix.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
 {
@@ -2352,17 +2707,31 @@ int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
-
-/*
- * term to term division : the general case 
- * A = A ./ B (covers the scalar and [] cases ) 
- */
+/**
+ * nsp_mat_div_tt:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A ./ @B (covers the scalar and [] cases ) 
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_div_tt(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_div_scalar,MatNoOp,nsp_mat_div_el,1);
 }
 
+/**
+ * nsp_mat_div_el:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A ./ @B, when matrices have the same sizes.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 /* deals with the case dim A == dim B **/
 
 int nsp_mat_div_el(NspMatrix *A, NspMatrix *B)
@@ -2406,7 +2775,16 @@ int nsp_mat_div_el(NspMatrix *A, NspMatrix *B)
     }
 }
 
-/* A = A ./ b where b is scalar **/ 
+/**
+ * nsp_mat_div_scalar:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A ./ @B when @B is a 1x1 matrix.
+ * 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_mat_div_scalar(NspMatrix *A, NspMatrix *B)
 {
@@ -2441,17 +2819,32 @@ int nsp_mat_div_scalar(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
-/*
- * term to term bdivision : the general case 
- * A = A .\ B (covers the scalar and [] cases ) 
- */
+/**
+ * nsp_mat_bdiv_tt:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A .\ @B (covers the scalar and [] cases ) 
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_bdiv_tt(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_bdiv_scalar,MatNoOp,nsp_mat_bdiv_el,1);
 }
 
-/* deals with the case dim A == dim B **/
+/**
+ * nsp_mat_bdiv_el:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ *
+ * @A = @A .\ @B, when the matrices have the same dimensions.
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_bdiv_el(NspMatrix *A, NspMatrix *B)
 {
@@ -2494,7 +2887,16 @@ int nsp_mat_bdiv_el(NspMatrix *A, NspMatrix *B)
     }
 }
 
-/* A = A .\ b where b is scalar **/ 
+/**
+ * nsp_mat_bdiv_scalar:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * @A = @A .\ @B, when @B is a 1x1 matrix.
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_bdiv_scalar(NspMatrix *A, NspMatrix *B)
 {
@@ -2529,24 +2931,39 @@ int nsp_mat_bdiv_scalar(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
-/*
- * term to term multiplication : the general case 
- * A = A .* B (covers the scalar and [] cases ) 
- */
+
+/**
+ * nsp_mat_mult_tt:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ *
+ * @A = @A .* @B (covers the scalar and [] cases ) 
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_mult_tt(NspMatrix *A, NspMatrix *B) 
 {
   return MatOp(A,B,nsp_mat_mult_scalar,MatNoOp,nsp_mat_mult_el,1);
 }
 
-/* 
- *  deals with the case dim A == dim B plus the special following cases
- *  which add the possibility to compute efficiently with a diag matrix
- *  represented by a vector (Bruno, sept 8 2005) by adding 2 new rules
- *  for the .* operator :
+
+/**
+ * nsp_mat_mult_el:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ *  @A = @A .* @B, when the matrices have the same dimensions.
+ *  plus the special following cases which add the possibility 
+ *  to compute efficiently with a diagonal matrix stored as a vector 
+ *  (Bruno, sept 8 2005) by adding 2 new rules for the .* operator :
  *      1/ In place of diag(A)*B we do A.*B (if B is m x n, A must be m x 1)
  *      2/ In place of A*diag(B) we do A.*B (if A is m x n, B must be 1 x n)
- */
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
 int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 {
   if (SameDim(A,B))
@@ -2669,19 +3086,29 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
     }
 }
 
-/* the scalar case Mat2 is assumed scalar */
+/**
+ * nsp_mat_mult_scalar:
+ * @Mat1: a #NspMatrix
+ * @Mat2: a #NspMatrix
+ * 
+ * @Mat1 = @Mat1 .* @Mat2, when @Mat2 is a 1x1 matrix.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
  
 int nsp_mat_mult_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dvmul,nsp_zvmul);
 }
 
-
-
-/*
- * A=Acos(A), 
- * A is changed 
- */
+/**
+ * nsp_mat_acos:
+ * @A: a #NspMatrix 
+ * 
+ * A=acos(A)
+ * 
+ * Return value: %OK.
+ **/
 
 int nsp_mat_acos(NspMatrix *A)
 {
@@ -2697,10 +3124,15 @@ int nsp_mat_acos(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=Acosh(A), 
- * A is changed 
- */
+
+/**
+ * nsp_mat_acosh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Acosh(A),
+ * 
+ * Return value: %OK.
+ **/
 
 int nsp_mat_acosh(NspMatrix *A)
 {
@@ -2717,10 +3149,14 @@ int nsp_mat_acosh(NspMatrix *A)
 }
 
 
-/*
- * A=Asin(A), 
- * A is changed 
- */
+/**
+ * nsp_mat_asin:
+ * @A: a #NspMatrix 
+ * 
+ * A=Asin(A),
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_asin(NspMatrix *A)
 {
@@ -2750,11 +3186,15 @@ int nsp_mat_asin(NspMatrix *A)
 }
 
 
-/*
- * A=Asinh(A),
- * A is changed 
- */
 
+/**
+ * nsp_mat_asinh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Asinh(A)
+ * 
+ * Return value: %OK.
+ **/
 int nsp_mat_asinh(NspMatrix *A)
 {
   int i ;
@@ -2770,9 +3210,15 @@ int nsp_mat_asinh(NspMatrix *A)
 }
 
 
-/*
- * A=Atan(A),  * A is changed 
- */
+
+/**
+ * nsp_mat_atan:
+ * @A: a #NspMatrix 
+ * 
+ * A=Atan(A)
+ * 
+ * Return value: %OK
+ **/
 
 int nsp_mat_atan(NspMatrix *A)
 {
@@ -2789,9 +3235,18 @@ int nsp_mat_atan(NspMatrix *A)
 }
 
 
-/*
- * A=Atan2(A,B),  * A is changed 
- */
+
+/**
+ * nsp_mat_atan2:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * A=Atan2(A,B). Calculates  the arc tangent of @A(i,j) and @B(i,j).  It is similar to calculating the arc
+ * tangent of @A(i,j) / @B(i,j), except that the signs of both arguments are used to determine 
+ * the quadrant of the result.
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
 {
@@ -2805,10 +3260,15 @@ int nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
 }
 
 
-/*
- * A=Atanh(A),
- * A is changed 
- */
+
+/**
+ * nsp_mat_atanh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Atanh(A)
+ * 
+ * Return value: %OK.
+ **/
 
 int nsp_mat_atanh(NspMatrix *A)
 {
@@ -2825,10 +3285,13 @@ int nsp_mat_atanh(NspMatrix *A)
 }
 
 
-/*
- *nsp_mat_ceil: A=Ceil(A)
- * A is changed  
- */
+
+/**
+ * nsp_mat_ceil:
+ * @A: a #NspMatrix 
+ * 
+ * A=Ceil(A)
+ **/
 
 void nsp_mat_ceil(NspMatrix *A)
 {
@@ -2845,10 +3308,14 @@ void nsp_mat_ceil(NspMatrix *A)
 
 }
 
-/*
- *nsp_mat_modulo: A=nsp_mat_modulo(A,n)
- * A is changed to A / n : remainder of int division. 
- */
+
+/**
+ * nsp_mat_modulo:
+ * @A: a #NspMatrix 
+ * @n: integer 
+ * 
+ * A= A mod(n) 
+ **/
 
 void nsp_mat_modulo(NspMatrix *A, int n)
 {
@@ -2871,10 +3338,15 @@ void nsp_mat_modulo(NspMatrix *A, int n)
     }
 }
 
-/*
- *nsp_mat_idiv: A=nsp_mat_idiv(A,n)
+
+/**
+ * nsp_mat_idiv:
+ * @A: a #NspMatrix 
+ * @n: an integer 
+ * 
+ * 
  * A is changed to A / n :  quotient in int division
- */
+ **/
 
 void nsp_mat_idiv(NspMatrix *A, int n)
 {
@@ -2897,17 +3369,19 @@ void nsp_mat_idiv(NspMatrix *A, int n)
     }
 }
 
-/*
- * nsp_mat_mod:  nsp_mat_mod(x,y)
- * computes  x (or y) <- x - y .* floor (x ./ y)
- *     
- *    x and y must be both real and of equal length or
+/**
+ * nsp_mat_mod:
+ * @x: a #NspMatrix 
+ * @y: a #NspMatrix 
+ * 
+ * computes  @x (or @y) <- @x - @y .* floor (@x ./ @y)
+ *    @x and @y must be both real and of equal length or
  *    one can be a scalar
- *    generally x is modified in place but when x is scalar
- *    with y->mn > 1, y must hold the result
- *
- *    When y[i] = 0 the result is x[i]
- */
+ *    generally @x is modified in place but when @x is scalar
+ *    with @y->mn > 1,  @y must hold the result. 
+ *    When @y[i] = 0 the result is @x[i]
+ * 
+ **/
 
 void nsp_mat_mod(NspMatrix *x, NspMatrix *y)
 {
@@ -2929,10 +3403,13 @@ void nsp_mat_mod(NspMatrix *x, NspMatrix *y)
 }
 
 
-/*
- *nsp_mat_int: A=Int(A)
- * A is changed  
- */
+
+/**
+ * nsp_mat_int:
+ * @A: a #NspMatrix 
+ * 
+ * A=Int(A)
+ **/
 
 void nsp_mat_int(NspMatrix *A)
 {
@@ -2949,10 +3426,13 @@ void nsp_mat_int(NspMatrix *A)
 }
 
 
-/*
- *nsp_mat_floor: A=Floor(A)
- * A is changed  
- */
+
+/**
+ * nsp_mat_floor:
+ * @A: a #NspMatrix 
+ * 
+ * A=Floor(A)
+ **/
 
 void nsp_mat_floor(NspMatrix *A)
 {
@@ -2969,11 +3449,13 @@ void nsp_mat_floor(NspMatrix *A)
 
 }
 
-/*
- *nsp_mat_round: A=Round(A)
- * A is changed  
- */
 
+/**
+ * nsp_mat_round:
+ * @A: a #NspMatrix 
+ * 
+ * A=Round(A)
+ **/
 void nsp_mat_round(NspMatrix *A)
 {
   int i ;
@@ -2988,11 +3470,15 @@ void nsp_mat_round(NspMatrix *A)
     }
 }
 
-/*
- *nsp_mat_sign: A=Sign(A)
- * A is changed  
- * return 0 if error 
- */
+
+/**
+ * nsp_mat_sign:
+ * @A: a #NspMatrix 
+ * 
+ * A=Sign(A)
+ *
+ * Return value: %OK.
+ **/
 
 int nsp_mat_sign(NspMatrix *A)
 {
@@ -3016,10 +3502,16 @@ int nsp_mat_sign(NspMatrix *A)
 }
 
 
-/*
- * A=Tan(A), absolue value or module of each element 
- * A is changed 
- */
+
+/**
+ * nsp_mat_tan:
+ * @A: a #NspMatrix 
+ * 
+ * 
+ * A=Tan(A), the tangent of @A, where @A is given in radians.
+ * 
+ * Return value: %OK
+ **/
 
 int nsp_mat_tan(NspMatrix *A)
 {
@@ -3035,10 +3527,15 @@ int nsp_mat_tan(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=Tanh(A), absolue value or module of each element 
- * A is changed 
- */
+
+/**
+ * nsp_mat_tanh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Tanh(A)
+ * 
+ * Return value: %OK
+ **/
 
 int nsp_mat_tanh(NspMatrix *A)
 {
@@ -3055,10 +3552,15 @@ int nsp_mat_tanh(NspMatrix *A)
 }
 
 
-/*
+
+/**
+ * nsp_mat_abs:
+ * @A: a #NspMatrix 
+ * 
  * A=Abs(A), absolue value or module of each element 
- * A is changed 
- */
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_abs(NspMatrix *A)
 {
@@ -3075,10 +3577,15 @@ int nsp_mat_abs(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=Erf(A), Erf function 
- */
 
+/**
+ * nsp_mat_erf:
+ * @A: a #NspMatrix 
+ * 
+ *  A=Erf(A)
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 int nsp_mat_erf(NspMatrix *A)
 {
   int i ;
@@ -3094,10 +3601,15 @@ int nsp_mat_erf(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=Erfc(A), Erf function 
- */
 
+/**
+ * nsp_mat_erfc:
+ * @A: a #NspMatrix 
+ * 
+ * A=Erfc(A)
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 int nsp_mat_erfc(NspMatrix *A)
 {
   int i ;
@@ -3113,9 +3625,15 @@ int nsp_mat_erfc(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=gamma(A),
- */
+/**
+ * nsp_mat_tgamma:
+ * @A: a #NspMatrix 
+ * 
+ * A=gamma(A). The Gamma function is defined by
+ * integral from 0 to infinity of t^(x-1) e^-t dt
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_tgamma(NspMatrix *A)
 {
@@ -3137,9 +3655,15 @@ int nsp_mat_tgamma(NspMatrix *A)
   return(OK);
 }
 
-/*
- * A=log(gamma(A)), 
- */
+
+/**
+ * nsp_mat_lgamma:
+ * @A: a #NspMatrix 
+ * 
+ * A=log(gamma(A))
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_lgamma(NspMatrix *A)
 {
@@ -3163,10 +3687,15 @@ int nsp_mat_lgamma(NspMatrix *A)
 
 
 
-/*
- * A=Arg(A),
- * Argument or Phase 
- */
+
+/**
+ * nsp_mat_arg:
+ * @A: a #NspMatrix 
+ * 
+ *  A=Arg(A). Argument or Phase 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_arg(NspMatrix *A)
 {
@@ -3184,11 +3713,17 @@ int nsp_mat_arg(NspMatrix *A)
 }
 
 
-/*
- * A=Polar(A,B),
- * A=A(cos(B)+%i*sin(B);
- */
 
+
+/**
+ * nsp_mat_polar:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * A=Polar(A,B)
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_polar(NspMatrix *A, NspMatrix *B)
 {
@@ -3207,6 +3742,16 @@ int nsp_mat_polar(NspMatrix *A, NspMatrix *B)
  * A= A & B logical int &  
  */
 
+/**
+ * nsp_mat_iand:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * A= A & B. Logical and of matrices entries (casted with aint()).
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
 int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
 {
   int i ;
@@ -3222,8 +3767,8 @@ int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
 
 /**
  * nsp_mat_iandu:
- * @A: 
- * @res: 
+ * @A: a #NspMatrix 
+ * @res: an integer pointer to store the result.
  * 
  * logical and of all the entries of A 
  * casted to int 
@@ -3245,9 +3790,16 @@ int nsp_mat_iandu(NspMatrix *A, unsigned int *res)
   return(OK);
 }
 
-/*
- * A= A | B logical int or 
- */
+
+/**
+ * nsp_mat_ior:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * 
+ * A= A | B. Logical  or of matrices entries (casted with aint()).
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_ior(NspMatrix *A, NspMatrix *B)
 {
@@ -3262,10 +3814,17 @@ int nsp_mat_ior(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
-/*
- * A= A << i  
- *      >> i 
- */
+
+/**
+ * nsp_mat_ishift:
+ * @A: a #NspMatrix 
+ * @shift: number of bits to shift.
+ * @dir: 'r' for shift right, else it is a shift left 
+ * 
+ * A= (A << i) or A= (A >> i).
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_ishift(NspMatrix *A,int shift,char dir)
 {
@@ -3286,7 +3845,7 @@ int nsp_mat_ishift(NspMatrix *A,int shift,char dir)
 
 /**
  * nsp_mat_ioru:
- * @A: 
+ * @A: a #NspMatrix 
  * @res: 
  * 
  * logical or of the entries of @A 
@@ -3309,10 +3868,13 @@ int nsp_mat_ioru(NspMatrix *A, unsigned int *res)
   return(OK);
 }
 
-/*
+/**
+ * nsp_mat_conj:
+ * @A: a #NspMatrix 
+ * 
  * nsp_mat_conj: A=real(A)-i*Imag(A)
- * A is changed  only if imaginary 
- */
+ * 
+ **/
 
 void nsp_mat_conj(NspMatrix *A)
 {
@@ -3325,11 +3887,12 @@ void nsp_mat_conj(NspMatrix *A)
     }
 }
 
-/*
- *nsp_mat_cos: A=Cos(A)
- * A is changed  
- * return 0 if error 
- */
+/**
+ * nsp_mat_cos:
+ * @A: a #NspMatrix 
+ * 
+ * A=Cos(A)
+ **/
 
 void nsp_mat_cos(NspMatrix *A)
 {
@@ -3344,11 +3907,13 @@ void nsp_mat_cos(NspMatrix *A)
     }
 }
 
-/*
- *nsp_mat_cos: A=Cosh(A)
- * A is changed  
- * return 0 if error 
- */
+
+/**
+ * nsp_mat_cosh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Cosh(A)
+ **/
 
 void nsp_mat_cosh(NspMatrix *A)
 {
@@ -3363,10 +3928,12 @@ void nsp_mat_cosh(NspMatrix *A)
     }
 }
 
-/*
- * MatExpl : Exponentiation term to term 
- * A is changed 
- */
+/**
+ * nsp_mat_expel:
+ * @A: a #NspMatrix 
+ * 
+ * A(i,j) = e^A(i,j)
+ **/
 
 void nsp_mat_expel(NspMatrix *A)
 {
@@ -3382,12 +3949,15 @@ void nsp_mat_expel(NspMatrix *A)
 }
 
 
-
-/*
- * MatLog : A=LogEl(A)  log term to term 
- * A is changed  
+/**
+ * nsp_mat_logel:
+ * @A: a #NspMatrix 
+ * 
+ * A(i,j) = log(A(i,j))
  * The real case is special since the result can be complex
- */
+ *
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_logel(NspMatrix *A)
 {
@@ -3426,12 +3996,12 @@ int nsp_mat_logel(NspMatrix *A)
 
 
 
-
-/*
- *nsp_mat_sin: A=Sin(A)
- * A is changed  
- * return 0 if error 
- */
+/**
+ * nsp_mat_sin:
+ * @A: a #NspMatrix 
+ * 
+ * A=Sin(A)
+ **/
 
 void nsp_mat_sin(NspMatrix *A)
 {
@@ -3448,11 +4018,12 @@ void nsp_mat_sin(NspMatrix *A)
 
 
 
-/*
- *nsp_mat_sinh: A=Sinh(A)
- * A is changed  
- * return 0 if error 
- */
+/**
+ * nsp_mat_sinh:
+ * @A: a #NspMatrix 
+ * 
+ * A=Sinh(A)
+ **/
 
 void nsp_mat_sinh(NspMatrix *A)
 {
@@ -3467,12 +4038,15 @@ void nsp_mat_sinh(NspMatrix *A)
     }
 }
 
-
-/*
- *nsp_mat_sqrtel: A=SqrtEl(A)  term to term square root
- * A is changed  
- * return 0 if error 
- */
+/**
+ * nsp_mat_sqrtel:
+ * @A: a #NspMatrix 
+ * 
+ * computes the term to term square root of the elements of matrix @A. 
+ * Note that the result can be imaginary when starting from a real matrix. 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_mat_sqrtel(NspMatrix *A)
 {
@@ -3512,10 +4086,15 @@ int nsp_mat_sqrtel(NspMatrix *A)
 
 
 
-/*
- *nsp_mat_minus(A),  A= -A 
- * A is changed 
- */
+
+/**
+ * nsp_mat_minus:
+ * @A: a #NspMatrix 
+ * 
+ * A= -A 
+ * 
+ * Return value: %OK.
+ **/
 
 int nsp_mat_minus(NspMatrix *A)
 {
@@ -3535,11 +4114,15 @@ int nsp_mat_minus(NspMatrix *A)
   return(OK);
 }
 
-/*
- * nsp_mat_minus_maxplus(A),  A= -A 
- * except for - %inf which is not changed 
- * A is changed 
- */
+
+/**
+ * nsp_mat_minus_maxplus:
+ * @A: a #NspMatrix 
+ * 
+ * A= -A  except for - %inf which is not changed 
+ * 
+ * Return value: %OK.
+ **/
 
 int nsp_mat_minus_maxplus(NspMatrix *A)
 {
@@ -3561,16 +4144,20 @@ int nsp_mat_minus_maxplus(NspMatrix *A)
 }
 
 
-
-
-/*
+/**
+ * Kronecker:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * @PK: a #NspMatrix 
+ * 
  * Kronecker product of two Matrices 
  * PK is the result it must be created 
  * before calling this function size (AmxBm,AnxBn)
  * The rule to compute PK is the following 
  * PK[ i + j*B->m + k*(B->m*A->m) + p*(B->m*A->m*B->n)] = a(j,p)*b(i,k)
  * The i-loop leads to dcopy calls 
- */
+ * 
+ **/
 
 static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 {
@@ -3624,12 +4211,14 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 }
 
 
-
-
-/*
- *nsp_mat_magic: A=Magic(n)
- */
-
+/**
+ * nsp_mat_magic:
+ * @n: integer 
+ * 
+ * returns a @n by @n matrix which is a magic square.
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *nsp_mat_magic(int n)
 {
@@ -3646,9 +4235,16 @@ NspMatrix *nsp_mat_magic(int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_franck: A=Franck(n)
- */
+
+/**
+ * nsp_mat_franck:
+ * @n: an integer (size of the matrix)
+ * @job: 0 or 1 
+ * 
+ * returns the Franck matrix (@job==0) or its inverse (@job != 0).
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *nsp_mat_franck(int n, int job)
 {
@@ -3664,9 +4260,16 @@ NspMatrix *nsp_mat_franck(int n, int job)
   return(Loc);
 }
 
-/*
- *nsp_mat_hilbert: A=Hilbert(n)
- */
+
+/**
+ * nsp_mat_hilbert:
+ * @n: an integer (size of the matrix)
+ * @job:  0 or 1 
+ * 
+ * returns the Hilbert matrix (@job==0) or its inverse (@job != 0).
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
+ **/
 
 NspMatrix *nsp_mat_hilbert(int n,int job)
 {
@@ -3756,6 +4359,15 @@ static int SearchComp(char *op, CompOp (**realop), C_CompOp (**C_realop))
  * Isinf 
  */
 
+/**
+ * nsp_mat_isinf:
+ * @A: a #NspMatrix 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
 {
   int i;
@@ -3777,6 +4389,14 @@ NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
  * Isnan
  */
 
+/**
+ * nsp_mat_isnan:
+ * @A: a #NspMatrix 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
 {
   int i;
@@ -3798,6 +4418,14 @@ NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
  * Isinf 
  */
 
+/**
+ * nsp_mat_finite:
+ * @A: a #NspMatrix 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspBMatrix  *nsp_mat_finite(NspMatrix *A)
 {
   int i;
@@ -3825,6 +4453,16 @@ NspBMatrix  *nsp_mat_finite(NspMatrix *A)
  * A and B are unchanged : Res is created 
  */
 
+/**
+ * nsp_mat_comp:
+ * @A: a #NspMatrix 
+ * @B: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 {
   CompOp *realop;
@@ -4002,6 +4640,18 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B ) \
    Loc->B[i] = A->R[iA] op B->R[iB] 
 
+
+
+/**
+ * nsp_mat_comp_real:
+ * @A: a #NspMatrix 
+ * @B: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
 {
   /* comparizon for both A and B of type real */
@@ -4070,6 +4720,17 @@ NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
  */ 
 
 
+/**
+ * nsp_mat_fullcomp:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * @op: 
+ * @err: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 {
   CompOp *realop;
@@ -4251,6 +4912,17 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
  * according to lhs one or two arguments are returned 
  */
 
+/**
+ * nsp_mat_find:
+ * @A: a #NspMatrix 
+ * @lhs: 
+ * @Res1: 
+ * @Res2: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
   int j,i,count=0;
@@ -4308,6 +4980,15 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 
 #define PLUS(x,y) (( isinf( x ) == -1  || isinf( y ) == -1 ) ? (Min(x,y)) : x+y )
 
+/**
+ * nsp_mat_maxplus_mult:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
 {  
   NspMatrix *Loc;
@@ -4372,6 +5053,15 @@ NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
  * 
  */
 
+/**
+ * nsp_mat_minplus_mult:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
 {  
   NspMatrix *Loc;
@@ -4435,6 +5125,15 @@ NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
  *   A = A+B (covers the scalar and [] cases ) 
  */
 
+/**
+ * nsp_mat_maxplus_add:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) 
 {
   return  nsp_mat_mult_tt(A,B);
@@ -4442,6 +5141,15 @@ int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B)
 
 
 
+/**
+ * nsp_mat_add_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* a set of functions adapted for the MTLB_MODE */
 int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
@@ -4473,6 +5181,15 @@ int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
+/**
+ * nsp_mat_add_mat:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
 {
   int i;
@@ -4508,6 +5225,15 @@ int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
     }
 }
 
+/**
+ * nsp_mat_sub_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* A is a matrix, B is a scalar A - B */
 int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
@@ -4539,6 +5265,15 @@ int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
+/**
+ * nsp_scalar_sub_mat_bis:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* A is a matrix, B is a scalar A <- B - A */
 int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B) 
 {
@@ -4570,6 +5305,15 @@ int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
+/**
+ * nsp_mat_sub_mat:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* deals with the case dim A == dim B **/
 
 int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
@@ -4607,6 +5351,15 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
     }
 }
 
+/**
+ * nsp_mat_mult_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -4638,6 +5391,15 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
   return OK;
 }
 
+/**
+ * nsp_mat_scale_rows:
+ * @A: a #NspMatrix 
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
 {
   int i,j, k;
@@ -4679,6 +5441,15 @@ int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
   return OK;
 }
 
+/**
+ * nsp_mat_scale_cols:
+ * @A: a #NspMatrix 
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
 {
   int i,j, k;
