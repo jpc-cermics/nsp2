@@ -34,8 +34,6 @@
 
 static void link_bug (int i);
 
-static int foo (int *ix,float *fx,double *dx,char *S);
-
 /**
  * int_link:
  * @stack: 
@@ -93,7 +91,7 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
   /* expand keys in path name result in buf */
   if ( shared_lib != NULL) 
     nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
-  SciDynLoad(shared_lib,enames,Str[0],&ilib,iflag,&rhs);
+  SciDynLoad(shared_lib_expanded,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
     {
       link_bug(ilib); 
@@ -174,12 +172,18 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if ( IsMatObj(stack,1)) 
     {
+      /* trying to find an interface in a preloaded 
+       * shared library given by its name 
+       */
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
       ilib = nsp_dynamic_interface(NULL,Str,ilib);
     }
   else
     {
+      /* trying to load a shared library using a 
+       * path-name
+       */
       if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
       /* expand keys in path name result in buf */
       nsp_expand_file_with_exec_dir(&stack,file,file_expanded);
@@ -196,14 +200,19 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/***********************************************************
- * call function 
- *   used to call from Scilab a dynamically linked function 
- * XXXX : we only implement here the long form 
- *        and we use an other name for the short form 
- *********************************************************/
+/*
+ * call function, can be used to call a dynamically linked function 
+ * we only emulate here the long scilab form.
+ */
 
 #define MAXPAR 31 
+
+typedef int (f1) (void *);
+typedef int (f2) (void *,void *);
+typedef int (f3) (void *,void *,void *);
+typedef int (f4) (void *,void *,void *,void *);
+typedef int (f5) (void *,void *,void *,void *,void *);
+
 
 static int int_call(Stack stack, int rhs, int opt, int lhs)
 {
@@ -218,7 +227,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
   int checkout[MAXPAR]={0};
   /* ref[i] stores pointer for relevant data for i-th fname argument **/
   void *ref[MAXPAR];
-  int inpos,i,newout=1,outarg,ismat;
+  int inpos,i,newout=1,outarg,ismat,count_ref;
   char *Fname,*Type;
   char *Str;
   NspMatrix *M=NULLMAT;
@@ -227,7 +236,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1000);
   /* first argument is the function name **/
   if ((Fname = GetString(stack,1)) == NULL) return RET_BUG;
-  if (  SearchInDynLinks(Fname,&f) == -1 )
+  if ( SearchInDynLinks(Fname,&f) == -1 )
     {
       Scierror("Error: entry point %s not found\n",Fname);
       return RET_BUG;
@@ -402,8 +411,20 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
       outarg++;      
     }
   /* Calling the interfaced routine **/
-  /* A finir XXXXXXX **/ 
-  foo(ref[1],ref[2],ref[3],ref[4]);
+  count_ref = 0;
+  for ( i= 1 ; i <= rhs ; i++) if (posi[i] != 0) count_ref++;
+  switch (count_ref) 
+    {
+    case 1: ((f1 *) f)(ref[1]); break;
+    case 2: ((f2 *) f)(ref[1],ref[2]);break;
+    case 3: ((f3 *) f)(ref[1],ref[2],ref[3]);break;
+    case 4: ((f4 *) f)(ref[1],ref[2],ref[3],ref[4]);break;
+    case 5: ((f5 *) f)(ref[1],ref[2],ref[3],ref[4],ref[5]);break;
+    default: 
+      Scierror("Error: no more that 5 transmited arguments in call\n");
+      
+      return RET_BUG;
+    }
   /* put output arguments on the stack : all the outpos[i] are differents 
     and outpos is changed after the call to PutLhsObj **/
   PutLhsObj(stack,Min(lhs,outarg),outpos);
@@ -412,17 +433,6 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
     ObjConvert(NthObj(i));
   /* Check if we need to change output dimensions **/
   return Min(lhs,outarg);
-}
-
-static int foo(int *ix,float *fx,double *dx,char *S)
-{
-  int i;
-  for ( i=0; i < 10 ; i++)
-    {
-      ix[i] *= 2; fx[i] *= 2.0 ; dx[i] *= 2.0;
-    }
-  S[0]='X';
-  return 0;
 }
 
 
