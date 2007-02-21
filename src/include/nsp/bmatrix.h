@@ -27,11 +27,12 @@ typedef int Boolean;
  */
 
 typedef struct _NspBMatrix NspBMatrix;
+typedef struct _NspTypeBMatrix  NspTypeBMatrix;
 
-typedef struct _NspTypeBMatrix { 
+struct _NspTypeBMatrix { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeBMatrix;
+};
 
 struct _NspBMatrix {
   /*< private >*/
@@ -44,28 +45,6 @@ struct _NspBMatrix {
 
 #include "nsp/matrix.h" 
 #include "nsp/smatrix.h" 
-
-/*
- * This Software is GPL (Copyright ENPC 1998-2005) 
- * Jean-Philippe Chancelier Enpc/Cermics         
- */
-  
-/* Boolean Matrix */
-typedef int Boolean;
-
-#include <stdio.h>   /* for file declaration **/
-#include "nsp/sciio.h" 
-
-/*
- * NspBMatrix inherits from NspObject 
- */
-
-typedef struct _NspBMatrix NspBMatrix;
-
-typedef struct _NspTypeBMatrix { 
-  NSP_TYPE_OBJECT__ 
-  /*< public >*/
-} NspTypeBMatrix;
 
 /**
  * nsp_type_bmatrix_id:
