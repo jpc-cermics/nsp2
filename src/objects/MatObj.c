@@ -37,6 +37,21 @@
 #include "nsp/gsort-p.h"
 #include <nsp/blas.h>
 
+/**
+ * SECTION:matrix
+ * @title: Initializing Versions Section Title
+ * @short_description: a one-line description of the section.
+ * @see_also: some pointers to other relevant information. This can be a
+ *            paragraph.
+ *
+ * This is the main description of the initialization versions section.
+ *
+ * Multiple paragraphs can be used here, separated by blank lines.
+ * <para>
+ * This is an inserted paragraph.
+ * </para>
+ **/
+
 /* 
  * NspMatrix inherits from NspObject 
  */
