@@ -1293,11 +1293,11 @@ static NspObject *cell_fold_right(Cell *C,NspObject *x, NspPList *PL, NspList *a
  * @L: a #NspList 
  * @x: a #NspObject
  * @PL: a #NspPList
- * @args: a #NspList 
+ * @largs: a #NspList 
  * 
  * folds function @PL to list @L passing extra 
- * arguments to the function through @args.
- * for example on a list of length 3 it returns f(f(f(x,L(1),args),L(2),args),L(3),args);
+ * arguments to the function through @largs.
+ * for example on a list of length 3 it returns f(f(f(x,L(1),largs),L(2),largs),L(3),largs);
  * 
  * Return value: a new #NspList or %NULLLIST
  **/

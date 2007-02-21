@@ -516,17 +516,17 @@ mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
 
 /**
  * mxCreateScalarDouble:
- * @d: a double
+ * @value: a double
  * 
  * creates a new #NspMatrix of size (1x1) initialized with @d.
  * 
  * Return value: a new #mxArray or error jump
  **/
 
-mxArray *mxCreateScalarDouble(double d)
+mxArray *mxCreateScalarDouble(double value)
 {
   NspMatrix *A;
-  if ((A = nsp_matrix_create_from_array(NVOID,1,1,&d,NULL))  == NULLMAT) 
+  if ((A = nsp_matrix_create_from_array(NVOID,1,1,&value,NULL))  == NULLMAT) 
     nsp_mex_errjump();
   return NSP_OBJECT(A);
 }
