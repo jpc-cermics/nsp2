@@ -4647,6 +4647,20 @@ struct _NspBMatrix {
   Boolean *B;	
 };
 </STRUCT>
+<TYPEDEF>
+<NAME>Boolean</NAME>
+typedef int Boolean;
+</TYPEDEF>
+<STRUCT>
+<NAME>NspBMatrix</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeBMatrix</NAME>
+typedef struct _NspTypeBMatrix { 
+  NSP_TYPE_OBJECT__ 
+  /*< public >*/
+} NspTypeBMatrix;
+</STRUCT>
 <VARIABLE>
 <NAME>nsp_type_bmatrix_id</NAME>
 extern int nsp_type_bmatrix_id;
