@@ -1,7 +1,7 @@
-32% symbol docs coverage.
-726 symbols documented.
-263 symbols incomplete.
-1519 not documented.
+33% symbol docs coverage.
+741 symbols documented.
+252 symbols incomplete.
+1504 not documented.
 
 
 Abs
@@ -703,20 +703,7 @@ matrix_loop_extract
 matrix_object
 method_search (key, Table, Returns)
 mexAtExit (ExitFcn)
-mexCallNsp
-mexCallScilab
-mexEvalString
-mexGetArray (name, workspace, Returns)
-mexGetVariable (var_name, Returns)
-mexIsLocked
-mexLock
-mexMakeArrayPersistent
-mexMakeMemoryPersistent
 mexPrintf
-mexPutArray
-mexPutVariable
-mexUnlock
-mexWarnMsgTxt
 module_copy
 module_copy_ref
 module_create
@@ -767,24 +754,17 @@ mxGetClassID
 mxGetClassName
 mxGetData
 mxGetDimensions
-mxGetElementSize (array_ptr)
 mxGetEps
 mxGetField (pa, i, fieldname, Returns)
 mxGetFieldByNumber
 mxGetFieldNameByNumber
 mxGetInf
-mxGetIr (ptr)
-mxGetJc (ptr)
 mxGetLogicals
-mxGetM
-mxGetN (ptr)
 mxGetNaN
 mxGetNumberOfDimensions
 mxGetNumberOfElements
 mxGetNumberOfFields
 mxGetNzmax
-mxGetPi
-mxGetPr
 mxGetScalar
 mxINT16_CLASS
 mxINT32_CLASS
@@ -793,19 +773,14 @@ mxINT8_CLASS
 mxIsCell
 mxIsChar
 mxIsComplex
-mxIsDouble (array_ptr)
 mxIsEmpty
 mxIsFinite
 mxIsFull
 mxIsInf
-mxIsLogical (array_ptr)
-mxIsLogicalScalar (array_ptr)
-mxIsLogicalScalarTrue (array_ptr)
 mxIsNaN
 mxIsNumeric
 mxIsSharedArray
 mxIsSparse
-mxIsString
 mxIsStruct
 mxLOGICAL_CLASS
 mxLogical
@@ -820,7 +795,6 @@ mxSetCell
 mxSetField (pa, i, fieldname, value)
 mxSetIr
 mxSetJc
-mxSetLogical (array_ptr)
 mxSetM
 mxSetN
 mxSetName
