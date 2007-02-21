@@ -20,14 +20,18 @@
 
 typedef struct _NspLink NspLink;
 
-typedef struct _NspTypeLink { 
+typedef struct _NspTypeLink NspTypeLink;
+
+struct _NspTypeLink { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeLink;
+};
 
-typedef struct _grl_lock {
+typedef struct _grl_lock grl_lock ; 
+
+struct _grl_lock {
   gr_port port;  /* Only one port */
-} grl_lock ; 
+};
 
 typedef struct _nsp_link nsp_link;
 

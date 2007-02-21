@@ -34,7 +34,10 @@ typedef struct _NspTypeSpColMatrix {
 
 /* used to store a matlab compatible representation */
 
-typedef struct _spcol {
+typedef struct _spcol SpCol ;
+
+
+struct _spcol {
   int size,iw ; /* size of a row, iw : used for working storage*/
   int *J   ; /* pointer to an int array giving the columns or row i 
 		in increasing order */
@@ -43,7 +46,7 @@ typedef struct _spcol {
     doubleC *C;    /* Pointer on complex values */
     int *I;        /* Pointer on integer values */
   };
-} SpCol ;
+} ;
   
 
 struct _NspSpColmatrix {

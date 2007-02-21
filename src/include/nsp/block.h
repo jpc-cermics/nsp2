@@ -22,18 +22,21 @@
 
 typedef struct _NspBlock NspBlock;
 
+typedef struct _NspTypeBlock NspTypeBlock;
 
-typedef struct _NspTypeBlock { 
+struct _NspTypeBlock { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeBlock;
+};
 
-typedef struct b_lock {
+typedef struct b_lock grb_lock ; 
+
+struct b_lock {
   gr_port port;  /* Only one port */
   double pt[2]; /* lock position in the frame*/
   double ptr[2]; /* lock position (relative position in the block)*/
   int type ; /* type of the lock point */
-} grb_lock ; 
+};
 
 typedef struct _nsp_block nsp_block;
 

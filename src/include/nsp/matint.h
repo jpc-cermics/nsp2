@@ -19,7 +19,9 @@ typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 typedef NspObject * matint_canonic(NspObject *obj);
 
-typedef struct _NspTypeMatint {
+typedef struct _NspTypeMatint NspTypeMatint ; 
+
+struct _NspTypeMatint {
   NSP_TYPE_OBJECT__
   /* added */
   matint_redim *redim; 
@@ -30,7 +32,7 @@ typedef struct _NspTypeMatint {
   matint_copy_elt *copy_elt;
   matint_enlarge *enlarge;
   matint_canonic *canonic;
-} NspTypeMatint ; 
+};
 
 #define MAT_INT(t) ((NspTypeMatint *) t)
 

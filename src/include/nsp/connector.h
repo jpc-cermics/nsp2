@@ -20,22 +20,23 @@
  */
 
 typedef struct _NspConnector NspConnector;
+typedef struct _NspTypeConnector NspTypeConnector;
 
-
-typedef struct _NspTypeConnector { 
+struct _NspTypeConnector { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeConnector;
+}; 
 
+typedef struct _gr_lock gr_lock ; 
 
-typedef struct _gr_lock {
+struct _gr_lock {
   int n_ports ;
   int fixed ;   /* flag: if fixed == TRUE the number of ports cannot be changed 
 		 * after creation
 		 */
   gr_port *ports; 
   double pt[2]; /* lock position */
-} gr_lock ; 
+};
 
 typedef struct _nsp_connector nsp_connector;
 

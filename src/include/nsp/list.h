@@ -23,11 +23,13 @@ typedef struct _NspTypeList {
   /*< public >*/
 } NspTypeList;
 
-typedef struct cell {
+typedef struct cell Cell ;
+
+struct cell {
   struct cell *prev;  /* points to the previous cell or 0 */
   struct cell *next;  /* points to the next cell or 0 */
   NspObject *O;             /* points to the stored object */
-} Cell ;
+} ;
 
 struct _NspList {
   /*< private >*/

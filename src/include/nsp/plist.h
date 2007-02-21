@@ -16,10 +16,12 @@
  */
 typedef struct _NspPlist  NspPList;
 
-typedef struct _NspTypePList { 
+typedef struct _NspTypePList NspTypePList;
+
+struct _NspTypePList { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypePList;
+};
 
 
 /*
@@ -30,23 +32,28 @@ typedef struct _NspTypePList {
  *  PList 
  */
 
-typedef struct parse_cell {
+typedef struct parse_cell PCell;
+typedef struct parse_cell *PList;
+
+struct parse_cell {
   struct parse_cell *prev;  /* points to the previous cell or 0 */
   struct parse_cell *next;  /* points to the next cell or 0 */
   void *O;                  /* points to the stored object or can be used to store line number
 			       for operators */
   int   type;               /* type of object */
   short int arity ;         /* used to store arity of operators */
-} PCell,*PList ; /* definition for a Parse Cell and a ParseList **/
+};
 
 /*
  * used for storing numbers a string and a double 
  */
 
-typedef struct _parse_double {
+typedef struct _parse_double parse_double ;
+
+struct _parse_double {
   double val ; /* the value of the parsed double */
   nsp_string str;
-} parse_double ;
+};
 
 /*
  *  Store PList in the data structure of Scilab 

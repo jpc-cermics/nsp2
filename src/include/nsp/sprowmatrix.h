@@ -17,10 +17,12 @@
 
 typedef struct _NspSpRowmatrix NspSpRowMatrix;
 
-typedef struct _NspTypeSpRowMatrix { 
+typedef struct _NspTypeSpRowMatrix  NspTypeSpRowMatrix;
+
+struct _NspTypeSpRowMatrix { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeSpRowMatrix;
+};
 
 /* Sparse matrices 
  * 
@@ -34,7 +36,9 @@ typedef struct _NspTypeSpRowMatrix {
 
 /* used to store a matlab compatible representation */
 
-typedef struct _sprow {
+typedef struct _sprow  SpRow ;
+
+struct _sprow {
   int size,iw ; /* size of a row, iw : used for working storage*/
   int *J   ; /* pointer to an int array giving the columns or row i 
 		in increasing order */
@@ -43,7 +47,7 @@ typedef struct _sprow {
     doubleC *C;    /* Pointer on complex values */
     int *I;        /* Pointer on integer values */
   };
-} SpRow ;
+};
   
 
 struct _NspSpRowmatrix {
