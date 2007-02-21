@@ -1358,8 +1358,46 @@ int mxSetNzmax(mxArray *array_ptr,int n)
  * @prhs: Pointer to an array of input arguments.
  * @command_name: string containing the name of the function to be executed.
  *  
+ * performs a function call, the function is given by its name.
+ * In case of failure a longjump returns control to Nsp.
  *
- * Call mexCallMATLAB evaluate a function call the function name given by its name.
+ * Note: In Matlab, command_name can contain an operator name this is to be done here (XXX).
+ * Note: the returned arguments in plhs can be safely destroyed if necessary, Note that 
+ *       they are not automatically destroyed by Nsp if they are not stored in the mex 
+ *       plhs array.
+ *
+ * Return value: 0 if successful, and a nonzero value if unsuccessful.
+ **/
+
+/**
+ * mexCallNsp:
+ * @nlhs: Number of desired output arguments.
+ * @plhs: Pointer to an array of mxArray (NspObject).
+ * @nrhs: Number of input arguments.
+ * @prhs: Pointer to an array of input arguments.
+ * @command_name: string containing the name of the function to be executed.
+ *  
+ * performs a function call,  the function is given by its name.
+ * In case of failure a longjump returns control to Nsp.
+ *
+ * Note: In Matlab, command_name can contain an operator name this is to be done here (XXX).
+ * Note: the returned arguments in plhs can be safely destroyed if necessary, Note that 
+ *       they are not automatically destroyed by Nsp if they are not stored in the mex 
+ *       plhs array.
+ *
+ * Return value: 0 if successful, and a nonzero value if unsuccessful.
+ **/
+
+/**
+ * mexCallScilab:
+ * @nlhs: Number of desired output arguments.
+ * @plhs: Pointer to an array of mxArray (NspObject).
+ * @nrhs: Number of input arguments.
+ * @prhs: Pointer to an array of input arguments.
+ * @command_name: string containing the name of the function to be executed.
+ *  
+ *
+ * performs a function call, the function is given by its name.
  * In case of failure a longjump returns control to Nsp.
  *
  * Note: In Matlab, command_name can contain an operator name this is to be done here (XXX).
@@ -1390,6 +1428,7 @@ int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,
     }
   return 0;
 }
+
 
 
 
