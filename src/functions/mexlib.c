@@ -1230,6 +1230,7 @@ mxArray *mxDuplicateArray(const mxArray *in)
  * 
  * 
  **/
+
 void mxSetName(mxArray *array_ptr,const char *var_name)
 {
   nsp_object_set_name(array_ptr,var_name);
@@ -1244,6 +1245,7 @@ void mxSetName(mxArray *array_ptr,const char *var_name)
  * 
  * Return value: 
  **/
+
 int mexPutArray( mxArray *array_ptr,const char *workspace)
 {
   if ( Ocheckname(array_ptr,NVOID) ) return FAIL;
@@ -1270,12 +1272,14 @@ int mexPutArray( mxArray *array_ptr,const char *workspace)
 
 /**
  * mexEvalString:
- * @command: 
+ * @command: a string 
  * 
+ * evaluates the nsp expression given by @command and returns 0 in case of success
+ * and -1 in case of failure.
  * 
- * 
- * Return value: 
+ * Return value: -1 or 0 
  **/
+
 int mexEvalString(char *command)
 {
   int display=FALSE,echo =FALSE,errcatch=TRUE,pausecatch=TRUE;
@@ -1401,37 +1405,25 @@ bool mxIsEmpty(const mxArray *array_ptr)
 
 
 
-/* mexMakeArrayPersistent:
- * 
- * Make mxArray persist after MEX-file completes
- *
- * array_ptr
- *  Pointer to an mxArray created by an mxCreate* routine.
- * 
- * By default, mxArrays allocated by mxCreate* routines are not persistent 
- * in MATLAB. The MATLAB memory management facility automatically frees 
- * nonpersistent mxArrays when the MEX-function finishes. 
- * If you want the mxArray to persist through multiple invocations of the 
- * MEX-function, you must call mexMakeArrayPersistent.
- * 
- * Note If you create a persistent mxArray, you are responsible for 
- * destroying it when the MEX-file is cleared. If you do not destroy a 
- * persistent mxArray, MATLAB will leak memory. See mexAtExit to see how 
- * to register a function that gets called when the MEX-file is cleared. 
- * See mexLock to see how to lock your MEX-file so that it is never cleared. 
- * 
- * In Nsp the array created by mxCreate* are not automatically 
- * freed when quiting a mex invocation. Nsp take in charge frees 
- * and copies just for variables stored in plhr and prhs.
- *
- */
 
 /**
  * mexMakeArrayPersistent:
- * @array_ptr: 
+ * @array_ptr: an #mxArray 
  * 
  * 
- **/
+ * Make mxArray persist after MEX-file completes where 
+ * @array_ptr is and #mxArray created by a mxCreate* routine.
+ * 
+ * Note that by default with Nsp array create by mxCreate* routines 
+ * are persistent and if you create a persistent mxArray which is not 
+ * used as an input or output value, you are responsible for 
+ * destroying when it is no more used. 
+ * 
+ * In Nsp the array created by mxCreate* are not automatically 
+ * freed when quiting a mex invocation. Nsp takes in charge frees 
+ * and copies just for variables stored in plhr and prhs.
+ *
+ */
 
 void mexMakeArrayPersistent(mxArray *array_ptr)
 {
@@ -1547,21 +1539,18 @@ bool mxIsLogical(const mxArray *array_ptr)
 }
 
 
-/* mexMakeMemoryPersistent:
+/**
+ * mexMakeMemoryPersistent:
+ * @ptr: a void pointer
  * 
- * Make allocated memory MATLAB persist after MEX-function completes
- * void mexMakeMemoryPersistent(void *ptr);
- * ptr
- *  Pointer to the beginning of memory allocated by one of the MATLAB memory allocation routines.
- * Description
+ * Make allocated memory persistant after MEX-function completes
+ * Note that by default with Nsp memory allocated by mxMalloc() or mxCalloc() 
+ * is persistent. you are responsible for freeing memory when it is no more used. 
  * 
- * By default, memory allocated by MATLAB is nonpersistent, so it is freed automatically when 
- * the MEX-file finishes. If you want the memory to persist, you must call mexMakeMemoryPersistent.
- * Note    If you create persistent memory, you are responsible for freeing it when the MEX-function 
- * is cleared. If you do not free the memory, MATLAB will leak memory. To free memory, use mxFree. 
- * See mexAtExit to see how to register a function that gets called when the MEX-function is cleared. 
- * See mexLock to see how to lock your MEX-function so that it is never cleared. 
  * 
+ * By default, memory allocated by Nsp is not freed automatically when 
+ * the MEX-file finishes. 
+ *
  */
 
 void mexMakeMemoryPersistent(void *ptr)
@@ -1569,44 +1558,35 @@ void mexMakeMemoryPersistent(void *ptr)
 }
 
 
-/* mexLock:
- * Prevent MEX-file from being cleared from memory
- * By default, MEX-files are unlocked, meaning that a user can clear them at any time. 
- * Call mexLock to prohibit a MEX-file from being cleared.
+/**
+ * mexLock:
  *
+ * set the lock status of MEX-file to TRUE. 
  * To unlock a MEX-file, call mexUnlock.
- *
- * mexLock increments a lock count. If you call mexLock n times, you must call mexUnlock n times to unlock your MEX-file.
+ * This feature is not used in Nsp.
  */
 
 void mexLock(void)
 {
 }
 
-/*mexUnlock:
+/**
+ * mexUnlock:
  *
- * Allow MEX-file to be cleared from memory
- * Description
- * By default, MEX-files are unlocked, meaning that a user can clear them at any time. 
- * Calling mexLock locks a MEX-file so that it cannot be cleared. Calling mexUnlock removes 
- * the lock so that the MEX-file can be cleared.
- * 
- * mexLock increments a lock count. If you called mexLock n times, you must call mexUnlock n times to unlock your MEX-file.
+ * Unsets the lock flag of a MEX-file. No effects in Nsp.
  */
 
 void mexUnlock(void)
 {
 }
 
-/* mexIsLocked:
- * Determine if MEX-file is locked
- * bool mexIsLocked(void);
- * Returns Logical 1 (true) if the MEX-file is locked; logical 0 (false) if 
- * the file is unlocked.
- * 
- * Call mexIsLocked to determine if the MEX-file is locked. By default, 
- * MEX-files are unlocked, meaning that users can clear the MEX-file at any time.
- * 
+/**
+ * mexIsLocked:
+ *
+ * returns the MEX-file lock status, 1 (true) if the MEX-file is locked, logical 0 (false) if 
+ * the file is unlocked. Since in nsp lock mechanism is not implemented this function always 
+ * returns FALSE. 
+ *
  */
 
 bool mexIsLocked(void)
