@@ -29,6 +29,19 @@
 #include "nsp/matutil.h"
 #include "../interp/Eval.h"
 
+/**
+ * SECTION:hash
+ * @title: Hash tables
+ * @short_description: Hash tables with open addressing and double hashing
+ * @see_also: 
+ *
+ * <para>
+ * A #NspHash object is a hash table which uses open adressing and double 
+ * hashing to access data. The hash keys are strings and the size of the 
+ * hash table increases dynamically.
+ * </para>
+ **/
+
 /* 
  * NspHash inherits from NspObject 
  */

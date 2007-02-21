@@ -28,6 +28,18 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 
+/**
+ * SECTION:ivect
+ * @title: Implicit vectors 
+ * @short_description: An object used to store implicit vectors 
+ * @see_also: 
+ *
+ * <para>
+ * #NspIVect objects are used to store implicit vectors of double 
+ * in a non expanded way.
+ * </para>
+ **/
+
 /*
  * NspIVect inherits from NspObject 
  */

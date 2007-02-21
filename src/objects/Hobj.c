@@ -32,6 +32,19 @@
 #define Hobj_Private 
 #include "nsp/hobj.h" 
 
+/**
+ * SECTION:hobj
+ * @title: # NspHobj are used to store a reference to another nsp object.
+ * @short_description: stores a reference to another nsp object.
+ * @see_also: 
+ *
+ * <para>
+ * A #NspHobj object is used to store a reference to another nsp object.
+ * They are used to implement the by value argument passing semantic in a 
+ * lazy way and used to access global variables. 
+ * </para>
+ **/
+
 /*
  * NspHobj inherits from NspObject 
  */

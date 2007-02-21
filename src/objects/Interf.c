@@ -17,6 +17,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/**
+ * SECTION:interf
+ * @title: API for adding new primitive to nsp 
+ * @short_description: a set of functions and macros which are used to 
+ *  add new functions in nsp.
+ * @see_also: 
+ *
+ * <para>
+ * </para>
+ **/
+
 /*--------------------------------------------------------------------
  * This file contains utility functions for writting interfaces 
  * some macros are also provided in Interf.h 

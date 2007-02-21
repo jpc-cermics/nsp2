@@ -39,6 +39,19 @@ extern int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S) ;
 extern int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix *S);
 extern int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S);
 
+/**
+ * SECTION:file 
+ * @title: File streams.
+ * @short_description: An object used to open and read/write in a file stream.
+ * @see_also: 
+ *
+ * <para>
+ * A #NspFile is used to store information on file streams opened for read/write 
+ * access. This is a by reference object at nsp level. 
+ * </para>
+ **/
+
+
 /*
  * NspFile inherits from NspObject 
  */

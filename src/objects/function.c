@@ -23,6 +23,18 @@
 #include "nsp/interf.h"
 #include "../interp/Eval.h" /* FIXME: FuncEval */
 
+
+/**
+ * SECTION:function
+ * @title: Store information for an internal nsp function.
+ * @short_description: An object used to manipulate internal functions.
+ * @see_also: 
+ *
+ * <para>
+ * A #NspFunction object is used to manipulate at nsp level internal functions.
+ * </para>
+ **/
+
 /* 
  * NspFunction inherits from NspObject
  */

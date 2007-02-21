@@ -31,6 +31,17 @@
 #include "nsp/plisttoken.h" /* for name_maxl **/
 #include "../interp/Eval.h"
 
+/**
+ * SECTION:list
+ * @title:  Linked lists
+ * @short_description: An object used to manipulate  Linked lists. 
+ * @see_also: 
+ *
+ * <para>
+ * </para>
+ **/
+
+
 /*
  * NspList inherits from NspObject 
  */

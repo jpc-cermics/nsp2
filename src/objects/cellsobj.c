@@ -30,6 +30,21 @@
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
 
+/**
+ * SECTION:cells
+ * @title: arrays of #NspObject
+ * @short_description: An object used to implement Matlab cells i.e arrays of objects
+ * @see_also: 
+ *
+ * <para>
+ * A #NspCells is used to represent arrays of nsp objects. 
+ * It implement the matint interface which is used for generic matrices 
+ * operations. When using the matint interface a #NspCells
+ * can always be casted to a #NspSMatrix.
+ * </para>
+ **/
+
+
 static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs);
 
 /*

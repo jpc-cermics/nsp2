@@ -17,6 +17,18 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/**
+ * SECTION:object
+ * @title: #NspObject is the base class ob nsp objects 
+ * @short_description: The class shared by all nsp objects.
+ * @see_also: 
+ *
+ * <para>
+ * All nsp objects inherit from  #NspObject.
+ * </para>
+ **/
+
+
 /* 
  * NspObject 
  * all objects can be casted to a NspObject 
