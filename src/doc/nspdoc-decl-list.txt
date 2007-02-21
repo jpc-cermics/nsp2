@@ -2163,11 +2163,7 @@ nsp_mat_slec
 fopen
 MatLec
 fooBOU
-nsp_mat_readline
-nsp_testnumtokens
-nsp_numtokens
 nsp_csetd
-nsp_ciset
 nsp_mat_complexify
 nsp_mat_get_real
 nsp_mat_get_imag

@@ -38,6 +38,9 @@
     <xi:include href="xml/classa.xml"/>
     <xi:include href="xml/classb.xml"/>
     <xi:include href="xml/sprow.xml"/>
+    <xi:include href="xml/spcol.xml"/>
+    <xi:include href="xml/serial.xml"/>
+    <xi:include href="xml/plist.xml"/>
   </chapter>
 
   <chapter id="nsp-blocks">

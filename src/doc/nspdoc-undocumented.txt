@@ -1,7 +1,7 @@
-29% symbol docs coverage.
-608 symbols documented.
-242 symbols incomplete.
-1503 not documented.
+32% symbol docs coverage.
+726 symbols documented.
+263 symbols incomplete.
+1519 not documented.
 
 
 Abs
@@ -213,7 +213,6 @@ Mat2double
 Mat2float
 Mat2int
 MatIsTrue
-MatLec
 MatLoopCol (str, Col, A, icol, rep, Returns)
 Matd2i
 Matrix_Type
@@ -326,6 +325,25 @@ NspModulelt
 NspMpmatrix
 NspNone
 NspObject
+NspPList2SMatrix
+NspPListCopy
+NspPListCopy_no_local_vars
+NspPListCreate
+NspPListDestroy
+NspPListInfo
+NspPListLoopExtract
+NspPListObj
+NspPListObjEq
+NspPListObjNeq
+NspPListPrInt
+NspPListPrint
+NspPListSave
+NspPListShType
+NspPListSize
+NspPListType
+NspPListXdrLoad
+NspPListXdrSave
+NspPlist
 NspPmatrix
 NspRect
 NspSmatrix
@@ -466,6 +484,25 @@ int_create_with_attributes
 int_get_attribute
 int_get_failed
 int_get_object_failed
+int_matint_cells_setrowscols (stack, rhs, opt, lhs, Returns)
+int_matint_concat_diag (stack, rhs, opt, lhs, Returns)
+int_matint_concat_down (stack, rhs, opt, lhs, F)
+int_matint_concat_emptymat_and_mat (stack, rhs, opt, lhs)
+int_matint_concatd (stack, rhs, opt, lhs)
+int_matint_concatr (stack, rhs, opt, lhs)
+int_matint_deletecols
+int_matint_deleteelts
+int_matint_deleteelts2
+int_matint_deleterows
+int_matint_extract
+int_matint_extractcols
+int_matint_extractelts
+int_matint_extractrows
+int_matint_redim (stack, rhs, opt, lhs, Returns)
+int_matint_repmat (stack, rhs, opt, lhs, Returns)
+int_matint_resize2vect
+int_matint_setrowscols
+int_matint_tozero
 int_mx2latexmat
 int_mx2latextab
 int_mx_finite
@@ -669,9 +706,16 @@ mexAtExit (ExitFcn)
 mexCallNsp
 mexCallScilab
 mexEvalString
+mexGetArray (name, workspace, Returns)
+mexGetVariable (var_name, Returns)
+mexIsLocked
+mexLock
+mexMakeArrayPersistent
+mexMakeMemoryPersistent
 mexPrintf
 mexPutArray
 mexPutVariable
+mexUnlock
 mexWarnMsgTxt
 module_copy
 module_copy_ref
@@ -691,18 +735,25 @@ modulelt_print
 mpmatrix_copy
 mpmatrix_loop_extract
 mpmatrix_object
+mwSize
 mxArrayToString (ptr)
+mxAssert
 mxCELL_CLASS
 mxCHAR_CLASS
 mxCalcSingleSubscript
 mxCalloc (n, size)
+mxChar
 mxClassID
 mxComplexity
 mxCreateCellArray
 mxCreateCellMatrix
 mxCreateCharMatrixFromStrings
+mxCreateLogicalArray
+mxCreateLogicalMatrix
+mxCreateLogicalScalar (value)
 mxCreateSparse
 mxCreateString
+mxCreateStructArray
 mxCreateStructMatrix
 mxDOUBLE_CLASS
 mxDestroyArray
@@ -711,13 +762,20 @@ mxFUNCTION_CLASS
 mxFree (ptr)
 mxFreeMatrix (ptr)
 mxGetCell
+mxGetChars
 mxGetClassID
+mxGetClassName
+mxGetData
 mxGetDimensions
+mxGetElementSize (array_ptr)
 mxGetEps
 mxGetField (pa, i, fieldname, Returns)
+mxGetFieldByNumber
+mxGetFieldNameByNumber
 mxGetInf
 mxGetIr (ptr)
 mxGetJc (ptr)
+mxGetLogicals
 mxGetM
 mxGetN (ptr)
 mxGetNaN
@@ -735,27 +793,46 @@ mxINT8_CLASS
 mxIsCell
 mxIsChar
 mxIsComplex
+mxIsDouble (array_ptr)
+mxIsEmpty
 mxIsFinite
 mxIsFull
 mxIsInf
+mxIsLogical (array_ptr)
+mxIsLogicalScalar (array_ptr)
+mxIsLogicalScalarTrue (array_ptr)
 mxIsNaN
 mxIsNumeric
+mxIsSharedArray
 mxIsSparse
 mxIsString
 mxIsStruct
 mxLOGICAL_CLASS
+mxLogical
 mxMalloc
+mxOBJECT_CLASS
+mxOPAQUE_CLASS
+mxRealloc
 mxSINGLE_CLASS
+mxSPARSE_CLASS
 mxSTRUCT_CLASS
 mxSetCell
 mxSetField (pa, i, fieldname, value)
+mxSetIr
+mxSetJc
+mxSetLogical (array_ptr)
+mxSetM
+mxSetN
 mxSetName
 mxSetNzmax
+mxSetPi
+mxSetPr
 mxUINT16_CLASS
 mxUINT32_CLASS
 mxUINT64_CLASS
 mxUINT8_CLASS
 mxUNKNOWN_CLASS
+mxUnshareArray
 myzabs
 new_bhash
 new_block
@@ -779,9 +856,13 @@ new_module
 new_modulelt
 new_mpmatrix
 new_none
+new_plist
 new_pmatrix
 new_rect
+new_serial
 new_smatrix
+new_spcolmatrix
+new_sprowmatrix
 new_type
 new_type_bhash
 new_type_block
@@ -807,9 +888,13 @@ new_type_module
 new_type_modulelt
 new_type_mpmatrix
 new_type_none
+new_type_plist
 new_type_pmatrix
 new_type_rect
+new_type_serial
 new_type_smatrix
+new_type_spcolmatrix
+new_type_sprowmatrix
 new_type_type
 nlinear_interp
 nsp_acos_c (x, res)
@@ -841,7 +926,6 @@ nsp_bhash_print
 nsp_bhash_remove (H, str)
 nsp_bhash_resize (H, new_size)
 nsp_bhcreate_from_list
-nsp_bmatrix_clone (init)
 nsp_bmatrix_elt_size
 nsp_bmatrix_find
 nsp_bmatrix_full_compare (err)
@@ -867,7 +951,6 @@ nsp_check_gtk_events
 nsp_choices_with_combobox
 nsp_choose
 nsp_choose_
-nsp_ciset
 nsp_classa_copy
 nsp_classa_create
 nsp_classa_destroy
@@ -884,7 +967,6 @@ nsp_clearerr
 nsp_convert_double_to_type
 nsp_convert_type_to_double
 nsp_cosh_c
-nsp_csetd
 nsp_dadd
 nsp_dadd_maxplus
 nsp_det (mode, Returns)
@@ -939,8 +1021,6 @@ nsp_get_echo_input_line
 nsp_get_file_window
 nsp_get_object_copy (Returns)
 nsp_get_type_from_id
-nsp_get_urandseed
-nsp_get_urandtype
 nsp_global_frame_remove_object
 nsp_gtk_hash_table
 nsp_gtk_init
@@ -996,112 +1076,40 @@ nsp_list_fold_right (x)
 nsp_list_not_equal
 nsp_list_object
 nsp_list_path_extract
+nsp_list_unique (Ind, Occ)
 nsp_log10_c
 nsp_log_c
 nsp_magic_matrix_fill
-nsp_mat_abs
-nsp_mat_acos
-nsp_mat_acosh
-nsp_mat_add
-nsp_mat_add_scalar
-nsp_mat_add_scalar_maxplus
-nsp_mat_arg
-nsp_mat_asin
-nsp_mat_asinh
-nsp_mat_atan
-nsp_mat_atan2
-nsp_mat_atanh
-nsp_mat_bdiv_el
+nsp_mat_add_mat
+nsp_mat_add_scalar_bis
 nsp_mat_bdiv_lsq
-nsp_mat_bdiv_scalar
 nsp_mat_bdiv_square
-nsp_mat_bdiv_tt
-nsp_mat_ceil
-nsp_mat_clean
+nsp_mat_clean (rhs)
 nsp_mat_comp
-nsp_mat_complexify
-nsp_mat_conj
-nsp_mat_cos
-nsp_mat_cosh
-nsp_mat_createinit
-nsp_mat_cum_prod
-nsp_mat_cum_sum
-nsp_mat_dadd
-nsp_mat_dadd_maxplus
-nsp_mat_div_el
-nsp_mat_div_scalar
-nsp_mat_div_tt
-nsp_mat_dsub
-nsp_mat_erf
-nsp_mat_erfc
-nsp_mat_expel
-nsp_mat_eye
+nsp_mat_comp_real
+nsp_mat_createinit (name, type, m, n, func)
 nsp_mat_find
 nsp_mat_finite
-nsp_mat_floor
-nsp_mat_franck
 nsp_mat_fullcomp
-nsp_mat_get_imag
-nsp_mat_get_real
-nsp_mat_hilbert
-nsp_mat_iand
-nsp_mat_iandu (A, res)
-nsp_mat_idiv
-nsp_mat_int
-nsp_mat_inv_el
-nsp_mat_ior
-nsp_mat_ioru (A, res, Returns)
-nsp_mat_ishift
+nsp_mat_ioru (res, Returns)
 nsp_mat_isinf
 nsp_mat_isnan
-nsp_mat_kron
-nsp_mat_lgamma
-nsp_mat_logel
-nsp_mat_magic
 nsp_mat_maxi
-nsp_mat_maxitt1
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
 nsp_mat_mini
-nsp_mat_minitt1
 nsp_mat_minmax
 nsp_mat_minplus_mult
-nsp_mat_minus
-nsp_mat_minus_maxplus
-nsp_mat_modulo
 nsp_mat_mult
-nsp_mat_mult_el
-nsp_mat_mult_scalar
-nsp_mat_mult_tt
-nsp_mat_ones
-nsp_mat_polar
-nsp_mat_pow_el
-nsp_mat_pow_scalar
-nsp_mat_pow_scalarm
-nsp_mat_pow_tt
-nsp_mat_prod
-nsp_mat_rand
-nsp_mat_readline
-nsp_mat_round
-nsp_mat_set_ival
-nsp_mat_set_rval
-nsp_mat_sign
-nsp_mat_sin
-nsp_mat_sinh
-nsp_mat_slec
+nsp_mat_mult_el (B)
+nsp_mat_mult_scalar_bis
+nsp_mat_scale_cols
+nsp_mat_scale_rows
+nsp_mat_set_ival (dval)
+nsp_mat_slec (file, Count)
 nsp_mat_sort
-nsp_mat_sqrtel
-nsp_mat_sub
-nsp_mat_sub_scalar
-nsp_mat_sub_scalar_maxplus
-nsp_mat_subs_calarm
-nsp_mat_sum
-nsp_mat_tan
-nsp_mat_tanh
-nsp_mat_tgamma
-nsp_mat_tril
-nsp_mat_triu
-nsp_mat_zeros
+nsp_mat_sub_mat
+nsp_mat_sub_scalar_bis
 nsp_matint_canonic (obj)
 nsp_matint_concat_down_bis
 nsp_matint_concat_right
@@ -1114,10 +1122,13 @@ nsp_matint_repmat
 nsp_matint_set_elts1
 nsp_matint_set_submatrix1
 nsp_matrix_boundster
+nsp_matrix_clone (init)
 nsp_matrix_dialog
 nsp_matrix_redim
+nsp_matrix_set_format
 nsp_matrix_to_pmatrix
 nsp_matrix_to_polynom
+nsp_matrix_to_serial
 nsp_menus_add
 nsp_menus_delete_button
 nsp_menus_set
@@ -1232,7 +1243,6 @@ nsp_none_info
 nsp_none_object
 nsp_none_print
 nsp_norm_c
-nsp_numtokens
 nsp_object_load_def
 nsp_object_save_def
 nsp_option
@@ -1243,6 +1253,16 @@ nsp_parse_eval_file
 nsp_parse_eval_from_smat
 nsp_parse_eval_from_std
 nsp_parse_eval_from_string
+nsp_plist2smatrix
+nsp_plist_copy
+nsp_plist_copy_no_local_vars
+nsp_plist_destroy
+nsp_plist_info
+nsp_plist_load
+nsp_plist_pretty_print
+nsp_plist_print
+nsp_plist_print_internal
+nsp_plist_save
 nsp_pmatrix_add_columns
 nsp_pmatrix_add_rows
 nsp_pmatrix_concat_down
@@ -1289,16 +1309,20 @@ nsp_read_history
 nsp_read_lines (F, S, nlines, Returns)
 nsp_readline_clear_line
 nsp_round_c
+nsp_serial_copy
+nsp_serial_create
+nsp_serial_destroy
+nsp_serial_info
+nsp_serial_object
+nsp_serial_print
+nsp_serial_to_matrix
 nsp_set_attribute_util
 nsp_set_echo_input_line
-nsp_set_urandseed
-nsp_set_urandtype
 nsp_signum_c
 nsp_sin_c
 nsp_sinh_c
 nsp_smatrix_column_concat_padded (str, flag)
 nsp_smatrix_convert
-nsp_smatrix_create_with_length (Param1)
 nsp_smatrix_eq
 nsp_smatrix_extract
 nsp_smatrix_extract_columns
@@ -1512,7 +1536,6 @@ nsp_string_object
 nsp_string_resize
 nsp_tan_c
 nsp_tanh_c
-nsp_testnumtokens
 nsp_type_bhash
 nsp_type_bhash_id
 nsp_type_bhash_init
@@ -1573,13 +1596,23 @@ nsp_type_object
 nsp_type_object_id
 nsp_type_object_init
 nsp_type_object_set
+nsp_type_plist
+nsp_type_plist_id
 nsp_type_pmatrix
 nsp_type_pmatrix_id
 nsp_type_pmatrix_init
 nsp_type_rect
 nsp_type_rect_id
+nsp_type_serial
+nsp_type_serial_id
 nsp_type_smatrix
 nsp_type_smatrix_id
+nsp_type_spcolmatrix
+nsp_type_spcolmatrix_id
+nsp_type_spcolmatrix_init
+nsp_type_sprowmatrix
+nsp_type_sprowmatrix_id
+nsp_type_sprowmatrix_init
 nsp_type_type
 nsp_type_type_id
 nsp_types
@@ -1721,6 +1754,8 @@ object:Long_Description
 object:Short_Description
 parse:Long_Description
 parse:Short_Description
+plist:Long_Description
+plist:Short_Description
 pmatrix:Long_Description
 pmatrix:Short_Description
 pr-output:Long_Description
@@ -1729,6 +1764,8 @@ rect:Long_Description
 rect:Short_Description
 sciio:Long_Description
 sciio:Short_Description
+serial:Long_Description
+serial:Short_Description
 smatrix-in:Long_Description
 smatrix-in:Short_Description
 smatrix:Long_Description

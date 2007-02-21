@@ -1651,7 +1651,7 @@ const char *name, NspSMatrix *A, int m, int n, int init
 <FUNCTION>
 <NAME>nsp_smatrix_create_with_length</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
-nsp_const_string , int m, int n, int strl
+nsp_const_string name, int m, int n, int strl
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_create_from_table</NAME>
@@ -9565,7 +9565,7 @@ NspObject *O
 <FUNCTION>
 <NAME>nsp_mat_fullcomp</NAME>
 <RETURNS>int  </RETURNS>
-
+NspMatrix *A, NspMatrix *B, char *op,int *err
 </FUNCTION>
 <FUNCTION>
 <NAME>matrix_object</NAME>
@@ -10033,29 +10033,9 @@ FILE *fd
 void
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mat_readline</NAME>
-<RETURNS>int  </RETURNS>
-FILE *fd
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_testnumtokens</NAME>
-<RETURNS>void  </RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_numtokens</NAME>
-<RETURNS>int  </RETURNS>
-char *string
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_csetd</NAME>
 <RETURNS>void  </RETURNS>
 const int *n,const double *z,doubleC *tab,const int *inc
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_ciset</NAME>
-<RETURNS>void  </RETURNS>
-const int *n,const double *z, doubleC *tab, const int *inc
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_complexify</NAME>
