@@ -208,13 +208,13 @@ static void nsp_mex_errjump(void)
 
 /**
  * mxGetPr:
- * @ptr: a #mxArray 
+ * @ptr: an #mxArray 
  * 
+ * Gets a pointer to the real part of an #mxArray. works
+ * for #NspMatrix and #NspSpColMatrix. 
  * 
- * 
- * Return value: 
+ * Return value: a pointer to an array of double or %NULL.
  **/
-/*  Get real part of matrix **/
 
 double *mxGetPr(const mxArray *ptr)
 {
@@ -246,13 +246,14 @@ double *mxGetPr(const mxArray *ptr)
 
 /**
  * mxGetPi:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
+ * Gets a pointer to the imaginary part of an #mxArray. works
+ * for #NspMatrix and #NspSpColMatrix. 
  * 
- * 
- * Return value: 
+ * Return value: a pointer to an array of double or %NULL.
  **/
-/* Get imaginary part of matrix */
+
 
 double *mxGetPi(const mxArray *ptr)
 {  
@@ -286,13 +287,13 @@ double *mxGetPi(const mxArray *ptr)
 
 /**
  * mxGetM:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
+ * returns the number of rows of a matrix or more generally 
+ * the first dimension of an object. 
  * 
- * 
- * Return value: 
+ * Return value: an integer
  **/
-/* Get m dimension of matrix **/
 
 int mxGetM(const mxArray *ptr)
 {
@@ -306,7 +307,7 @@ int mxGetM(const mxArray *ptr)
 
 /**
  * mxGetJc:
- * @ptr: 
+ * @ptr:  an #mxArray 
  * 
  * Jc=mxGetJc returns a n+1 integer array such that 
  * Jc(j) is the indice in Ir and Pr arrays of the firt non null element of column j 
@@ -329,7 +330,7 @@ int *mxGetJc(const mxArray *ptr)
 
 /**
  * mxGetIr:
- * @ptr: 
+ * @ptr:  an #mxArray 
  * 
  * Ir=mxGetIr returns an integer array with the row indices of the non-nul elements of 
  * sparse matrix @ptr (See also mxGetJc()).
@@ -350,9 +351,11 @@ int *mxGetIr(const mxArray *ptr)
 
 /**
  * mxGetN:
- * @ptr: 
+ * @ptr:  an #mxArray 
  * 
- * returns the number of rows of mxArray @ptr.
+ * returns the number of rows of mxArray @ptr or more generally 
+ * the dimension 2 of an object. For string matrices it returns 
+ * the max of the length of strings storedin the matrix.
  * 
  * Return value: an integer.
  **/
@@ -377,8 +380,9 @@ int mxGetN(const mxArray *ptr)
 
 /**
  * mxIsString:
- * @ptr: 
+ * @ptr:  an #mxArray 
  * 
+ * returns 1 if @ptr is a string matrix of size 1x1.
  * 
  * Return value: 1 if @ptr is a string else 0
  **/
@@ -390,7 +394,7 @@ int mxIsString(const mxArray *ptr)
 
 /**
  * mxIsNumeric:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
  * Return value: 1 if @ptr is a #NspMatrix or #NspSpMatrix else 0.
  **/
@@ -402,7 +406,7 @@ int mxIsNumeric(const mxArray *ptr)
 
 /**
  * mxIsFull:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
  * Return value: 1 if @ptr is a #NspMatrix else 0.
  **/
@@ -414,7 +418,7 @@ int mxIsFull(const mxArray *ptr)
 
 /**
  * mxIsSparse:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
  * Return value: 1 if @ptr is a #NspSpMatrix else 0.
  **/
@@ -426,7 +430,7 @@ int mxIsSparse(const mxArray *ptr)
 
 /**
  * mxIsComplex:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
  * Return value: 1 if @ptr is a complex #NspMatrix or complex #NspSpMatrix else 0.
  **/
@@ -447,7 +451,7 @@ int mxIsComplex(const mxArray *ptr)
 
 /**
  * mxGetScalar:
- * @ptr: 
+ * @ptr: an #mxArray 
  * 
  * 
  * 
@@ -1180,7 +1184,7 @@ const char * mxGetName(const mxArray *ptr)
  * mexPutVariable:
  * @workspace: 
  * @var_name: 
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * 
  * 
@@ -1225,7 +1229,7 @@ mxArray *mxDuplicateArray(const mxArray *in)
 
 /**
  * mxSetName:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @var_name: 
  * 
  * 
@@ -1238,7 +1242,7 @@ void mxSetName(mxArray *array_ptr,const char *var_name)
 
 /**
  * mexPutArray:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @workspace: 
  * 
  * 
@@ -1291,7 +1295,7 @@ int mexEvalString(char *command)
 
 /**
  * mxGetNzmax:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * 
  * 
@@ -1316,7 +1320,7 @@ int mxGetNzmax(const mxArray *array_ptr)
 
 /**
  * mxSetNzmax:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @n: 
  * 
  * 
@@ -1387,7 +1391,7 @@ int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,
 
 /**
  * mxIsEmpty:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * Return value: Logical 1 (true) if the mxArray is empty, 
  * and logical 0 (false) otherwise.
@@ -1402,8 +1406,6 @@ bool mxIsEmpty(const mxArray *array_ptr)
   else 
     return FALSE;
 }
-
-
 
 
 /**
@@ -1439,7 +1441,6 @@ void mexMakeArrayPersistent(mxArray *array_ptr)
 }
 
 
-
 /**
  * mxCreateLogicalScalar:
  * @value: 
@@ -1464,7 +1465,7 @@ mxArray *mxCreateLogicalScalar(mxLogical value)
 
 /**
  * mxIsLogicalScalarTrue:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  *
  * Determine whether scalar mxArray of class mxLogical is true
  * 
@@ -1491,7 +1492,7 @@ bool mxIsLogicalScalarTrue(const mxArray *array_ptr)
 
 /**
  * mxIsLogicalScalar:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * Determine whether scalar mxArray is of class mxLogical
  * 
@@ -1516,14 +1517,14 @@ bool mxIsLogicalScalar(const mxArray *array_ptr)
 
 /* mxIsLogical: 
  * bool mxIsLogical(const mxArray *array_ptr);
- * array_ptr: Pointer to an mxArray.
+ * array_ptr: Pointer to an #mxArray.
  * Description
 
  */
 
 /**
  * mxIsLogical:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * Use mxIsLogical to determine whether data is  treated as Boolean (logical).
  * In Nsp it is true if array_ptr is a BMat 
@@ -1672,7 +1673,7 @@ mxChar *mxGetChars(const mxArray *array_ptr)
 
 /**
  * mxGetElementSize:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * computes the number of bytes required to store one element of 
  * the specified mxArray, if successful. Returns 0 on failure. 
@@ -1851,7 +1852,7 @@ mxArray *mxCreateLogicalArray(int ndim, const int *dims)
 
 /**
  * mxIsDouble:
- * @array_ptr: 
+ * @array_ptr:Pointer to an #mxArray. 
  * 
  * Logical 1 (true) if the mxArray stores its data as double-precision, 
  * floating-point numbers, and logical 0 (false) otherwise.
@@ -1923,7 +1924,7 @@ mxArray *mexGetArray(const char *name, const char *workspace)
 
 /**
  * mxSetLogical:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * 
  * cast a #NspMatrix to a #NspBMatrix and converts data.
  * 
@@ -1973,7 +1974,7 @@ void _mxAssert(char *mess, int line, const char *file)
 
 /**
  * mxSetPr:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @pr: 
  * 
  * 
@@ -2010,7 +2011,7 @@ void mxSetPr(mxArray *array_ptr, double *pr)
 
 /**
  * mxSetPi:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @pi: 
  * 
  * 
@@ -2034,7 +2035,7 @@ void mxSetPi(mxArray *array_ptr, double *pi)
 
 /**
  * mxSetJc:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @jc: 
  * 
  * 
@@ -2060,7 +2061,7 @@ void mxSetJc(mxArray *array_ptr, int *jc)
 
 /**
  * mxSetIr:
- * @array_ptr: 
+ * @array_ptr: Pointer to an #mxArray.
  * @ir: 
  * 
  * 
