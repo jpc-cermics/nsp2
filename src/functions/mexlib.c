@@ -1914,12 +1914,12 @@ bool mxIsDouble(const mxArray *array_ptr)
 /**
  * mexGetVariable:
  * @workspace: "base","caller" or "global"
- * @var_name: 
+ * @var_name:  name of variable to be searched
  * 
  * get a variable in a workspace. A copy of the variable 
  * is returned on success. 
  * 
- * Return value: 
+ * Return value: a new #mxArray or %NULL
  **/
 
 mxArray *mexGetVariable(const char *workspace, const char *var_name)
@@ -1950,12 +1950,12 @@ mxArray *mexGetVariable(const char *workspace, const char *var_name)
 
 /**
  * mexGetArray:
- * @name: 
- * @workspace: 
+ * @name: name of variable to be searched
+ * @workspace: "base","caller" or "global"
  * 
  * deprecated, use mexGetVariable instead. 
  * 
- * Return value: 
+ * Return value: a #mxArray or %NULL
  **/
 
 mxArray *mexGetArray(const char *name, const char *workspace)
