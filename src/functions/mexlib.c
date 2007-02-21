@@ -854,8 +854,9 @@ bool mxIsChar(const mxArray *ptr)
 
 /**
  * mexWarnMsgTxt:
- * @error_msg: 
+ * @error_msg: a string 
  * 
+ * printf the wraning message in the current output stream
  * 
  **/
 
@@ -1182,14 +1183,16 @@ const char * mxGetName(const mxArray *ptr)
 
 /**
  * mexPutVariable:
- * @workspace: 
- * @var_name: 
+ * @workspace: "global", "base" or "caller"
+ * @var_name: name to give to the #mxArray.
  * @array_ptr: Pointer to an #mxArray.
  * 
+ * Puts the given array in the given workspace with the 
+ * given name.
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
+
 int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_ptr)
 {
   if (nsp_object_set_name(array_ptr,var_name) == FAIL) return FAIL;
@@ -1243,11 +1246,12 @@ void mxSetName(mxArray *array_ptr,const char *var_name)
 /**
  * mexPutArray:
  * @array_ptr: Pointer to an #mxArray.
- * @workspace: 
+ * @workspace: "global", "base" or "caller"
  * 
+ * Puts the given array in the given workspace. 
+ * Note that the array must have a name.
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int mexPutArray( mxArray *array_ptr,const char *workspace)
@@ -1494,9 +1498,9 @@ bool mxIsLogicalScalarTrue(const mxArray *array_ptr)
  * mxIsLogicalScalar:
  * @array_ptr: Pointer to an #mxArray.
  * 
- * Determine whether scalar mxArray is of class mxLogical
+ * Determine whether scalar #mxArray is of class mxLogical
  * 
- * Return value:  Logical 1 (true) if the mxArray is of class mxLogical 
+ * Return value:  Logical 1 (true) if the #mxArray is of class mxLogical 
  * and has 1-by-1 dimensions, 
  * and logical 0 (false) otherwise.
  **/
@@ -1516,7 +1520,7 @@ bool mxIsLogicalScalar(const mxArray *array_ptr)
 }
 
 /* mxIsLogical: 
- * bool mxIsLogical(const mxArray *array_ptr);
+ * bool mxIsLogical(const #mxArray *array_ptr);
  * array_ptr: Pointer to an #mxArray.
  * Description
 
