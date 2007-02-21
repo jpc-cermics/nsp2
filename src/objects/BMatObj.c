@@ -30,6 +30,22 @@
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
 
+/**
+ * SECTION:bmatrix
+ * @title: Boolean matrices
+ * @short_description: An object used to implement boolean matrices.
+ * @see_also: 
+ *
+ * <para>
+ * A #NspBMatrix is used to represent a boolean matrix. 
+ * It can be filled with %TRUE and %FALSE values and is 
+ * implemented as an array of integer. It implement the 
+ * matint interface which is used for generic matrices 
+ * operations. When using the matint interface a #NspBMatrix 
+ * can always be casted to a #NspSMatrix.
+ * </para>
+ **/
+
 /*
  * NspBMatrix inherits from NspObject 
  */

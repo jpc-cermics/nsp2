@@ -38,17 +38,18 @@
 #include <nsp/blas.h>
 
 /**
- * SECTION:matrix
- * @title: Initializing Versions Section Title
- * @short_description: a one-line description of the section.
- * @see_also: some pointers to other relevant information. This can be a
- *            paragraph.
+ * SECTION:bmatrix
+ * @title: numerical matrices
+ * @short_description: An object used to implement real and complex matrices.
+ * @see_also: 
  *
- * This is the main description of the initialization versions section.
- *
- * Multiple paragraphs can be used here, separated by blank lines.
  * <para>
- * This is an inserted paragraph.
+ * A #NspMatrix is used to represent a real or complex matrix. 
+ * It can be filled with double values and data are stored 
+ * in a one dimensionnal array (column order). It implements the 
+ * matint interface which is used for generic matrice operations. 
+ * When using the matint interface a #NspMatrix can always be casted 
+ * to a #NspSMatrix.
  * </para>
  **/
 
