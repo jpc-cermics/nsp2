@@ -53,7 +53,7 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 
 #define SHOWBUG(stack,n,L) return show_eval_bug(stack,n,L)
 
-/**
+/*
  * This flag is used to prevent search of operators 
  * in calling frames operators overloading are to 
  * be only defined in libraries 
