@@ -78,10 +78,10 @@
 #ifdef qs_med3
 #undef qs_med3
 #endif 
-#define qs_med3(res,tabres,a, b, c, xa,xb,xc) qs_cmp(a, b) < 0 ? \
-         (qs_cmp(b, c) < 0 ? (res=b,tabres=xb) :  \
-	  (qs_cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) )) \
-	 :(qs_cmp(b, c) > 0 ? (res=b,tabres=xb) : (qs_cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
+#define qs_med3(res,tabres,a, b, c, xa,xb,xc) qs_cmp(a, b) < 0 ?	\
+  (qs_cmp(b, c) < 0 ? (res=b,tabres=xb) :				\
+   (qs_cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) ))		\
+    :(qs_cmp(b, c) > 0 ? (res=b,tabres=xb) : (qs_cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
 
 static void XCNAME(qs_swapcode_,ELT_TYPE)(ELT_TYPE *pi,ELT_TYPE *pj,int n) 
 { 		

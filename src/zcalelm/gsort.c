@@ -254,7 +254,7 @@ int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_cons
     case 'i' : nsp_qsort_int(xI,ind,*iflag,*m*(*n),iord[0]);break;
     case 'g' : 
     default :  
-       nsp_qsort_double(xD,ind,*iflag,*m*(*n),iord[0]);break;
+      nsp_qsort_double(xD,ind,*iflag,*m*(*n),iord[0]);break;
     }
   return(0);
 }

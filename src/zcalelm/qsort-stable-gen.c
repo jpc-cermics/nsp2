@@ -75,11 +75,11 @@ static void XCNAME(nsp_internal_qsort_stable_,DIR,ELT_TYPE)(ELT_TYPE *array,int 
  * @return the index (a, b, or c) which has the middle value of the three
  */
 
-#define med3(a,b,c,d) (compare(d[a], d[b]) < 0 \
-	  ? (compare(d[b], d[c]) < 0 ? (b) \
-	     : compare(d[a], d[c]) < 0 ? (c) : (a)) \
-	  : (compare(d[b], d[c]) > 0 ? (b) \
-	     : compare(d[a], d[c]) > 0 ? (c) : (a)));
+#define med3(a,b,c,d) (compare(d[a], d[b]) < 0				\
+		       ? (compare(d[b], d[c]) < 0 ? (b)			\
+			  : compare(d[a], d[c]) < 0 ? (c) : (a))	\
+		       : (compare(d[b], d[c]) > 0 ? (b)			\
+			  : compare(d[a], d[c]) > 0 ? (c) : (a)));
 
 /**
  * Swaps the elements at two locations of an array
@@ -90,7 +90,7 @@ static void XCNAME(nsp_internal_qsort_stable_,DIR,ELT_TYPE)(ELT_TYPE *array,int 
  */
 
 #define swap(i,j,a,index,flag) temp = (a)[i];(a)[i] = (a)[j]; (a)[j] = temp; if ( flag == TRUE ) \
- { int c1= (index)[i]; (index)[i] = (index)[j];  (index)[j] = c1; }
+									       { int c1= (index)[i]; (index)[i] = (index)[j];  (index)[j] = c1; }
 
 /**
  * Swaps two ranges of an array.

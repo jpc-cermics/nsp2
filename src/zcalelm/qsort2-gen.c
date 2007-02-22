@@ -28,8 +28,8 @@
 
 #define XCNAME(x,y) CNAME(x,y)
 
-#define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp; \
-                   if ( flag == TRUE) {itemp = p[i]; p[i] = p[j]; p[j] = itemp;}
+#define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp;	\
+  if ( flag == TRUE) {itemp = p[i]; p[i] = p[j]; p[j] = itemp;}
 
 #define SWITCH_VALUE 20
 

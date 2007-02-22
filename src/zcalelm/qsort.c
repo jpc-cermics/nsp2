@@ -108,10 +108,10 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
 #define vecswap(a, b, n) if ((n) > 0) swapcode(a, b, n/es)
 #define vecswapind(a, b, n) if ((n) > 0 && flag == 1) swapcodeind(a,b,n/es1) 
 
-#define med3(res,tabres,a, b, c, xa,xb,xc,cmp) cmp(a, b) < 0 ? \
-         (cmp(b, c) < 0 ? (res=b,tabres=xb) :  \
-	  (cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) )) \
-	 :(cmp(b, c) > 0 ? (res=b,tabres=xb) : (cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
+#define med3(res,tabres,a, b, c, xa,xb,xc,cmp) cmp(a, b) < 0 ?		\
+  (cmp(b, c) < 0 ? (res=b,tabres=xb) :					\
+   (cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) ))		\
+    :(cmp(b, c) > 0 ? (res=b,tabres=xb) : (cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
 
 /*
  * L'index de permutation est gard'e dans tab avec size ds es1

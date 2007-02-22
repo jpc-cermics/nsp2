@@ -219,9 +219,9 @@ int nsp_float2double(int *n, float *rdx, int *incx, double *dy, int *incy)
 } 
 
 
-#define TO_TYPE_CONVERT(x,n,Type) { Type *val = (Type *) x ; \
-   for ( i=0; i < n; i++) { *val++ = (Type) (*x++) ;} \
-}
+#define TO_TYPE_CONVERT(x,n,Type) { Type *val = (Type *) x ;	\
+    for ( i=0; i < n; i++) { *val++ = (Type) (*x++) ;}		\
+  }
 
 /**
  * nsp_convert_double_to_type:
@@ -271,10 +271,10 @@ int nsp_convert_double_to_type(double *x,int n,const char *type)
 
 
 		
-#define DOUBLE_CONVERT(x,n,Type) {double *xf = &x[n-1]; \
- Type *tf = &(((Type *) x )[n-1]); \
- for ( i=0; i < n; i++) { *xf-- = (double ) (*tf--);} \
-}
+#define DOUBLE_CONVERT(x,n,Type) {double *xf = &x[n-1];		\
+    Type *tf = &(((Type *) x )[n-1]);				\
+    for ( i=0; i < n; i++) { *xf-- = (double ) (*tf--);}	\
+  }
 
 /**
  * nsp_convert_type_to_double:
@@ -351,7 +351,7 @@ int nsp_dset(const int *n,const double * dx,double * dy,const int * incy)
     {
       dy[iy] = *dx;
       iy += *incy;
-  }
+    }
   return 0;
 } 
 
@@ -451,7 +451,7 @@ int nsp_dadd_maxplus(const int n, const double *dx, const  int incx, double *dy,
 	    }
 	  x += incx;
 	  y += incy;
-      }
+	}
     }
   return 0;
 }
@@ -519,7 +519,7 @@ int nsp_dsub_maxplus(const int n,const double *dx,const int incx, double *dy,con
     {
       for (i = 0 ; i < n ; ++i) 
 	{
-	 if ( isinf( dx[i] ) != -1)  dy[i] -= dx[i] ;
+	  if ( isinf( dx[i] ) != -1)  dy[i] -= dx[i] ;
 	}
       return 0;
     }
@@ -636,7 +636,7 @@ int nsp_dvmul(const int n,const  double *dx,const  int incx, double *dy,const  i
  **/
 
 int nsp_icopy(const int *n,const int *idx,const int *incx, int *idy,
-		const int *incy)
+	      const int *incy)
 {
   int i, ix, iy;
   if (*n <= 0) { return 0;  }
@@ -820,7 +820,7 @@ int nsp_dzset(int *n, double *dx, doubleC *zy, int *incy)
     {
       zy[iy].r = *dx , zy[iy].i = 0.0;
       iy += *incy;
-  }
+    }
   return 0;
 } 
 
@@ -939,7 +939,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	    }
 	  x += *incx;
 	  y += *incy;
-      }
+	}
     }
   return 0;
 }
@@ -963,9 +963,9 @@ double myzabs(double real,double imag)
   if(real < 0) real = -real;
   if(imag < 0) imag = -imag;
   if(imag > real){
-	temp = real;
-	real = imag;
-	imag = temp;
+    temp = real;
+    real = imag;
+    imag = temp;
   }
   if((real+imag) == real)
     return(real);
@@ -1394,7 +1394,7 @@ static void swap_double(double *m,int n,int i1, int j1, int i2, int j2)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns in @a the order @n Franck matrix. 
+ * fills @a with the order @n Franck matrix. 
  * 
  * a(i,j)=n-j+1   si i <= j , 
  * a(j,j-1)=n-j , a(i,j)=0 if  i > j+1 
@@ -1417,7 +1417,7 @@ void nsp_franck_matrix(double *a,int n)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns in @a the matrix inverse of order @n Franck matrix. 
+ * fills @a with the matrix inverse of order @n Franck matrix. 
  * 
  **/
 
@@ -1450,7 +1450,7 @@ void nsp_franck_inverse_matrix(double *a,int n)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns the  order @n Hilbert matrix. 
+ * fills @a with the order @n Hilbert matrix. 
  * @a(i,j)= 1/(i+j-1) (i=1,..,n and j=1,..,n)
  * 
  **/
@@ -1472,7 +1472,7 @@ void nsp_hilbert_matrix(double *a,int n)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns the inverse of order @n Hilbert matrix in @a.
+ * fills @a with the inverse of order @n Hilbert matrix.
  * 
  **/
 
@@ -1498,10 +1498,8 @@ void nsp_hilbert_inverse_matrix(double *a,int n)
  * next functions are copyrighted 
  *    Copyright (c) 1997-2002 by Inria Lorraine.  All Rights Reserved 
  *    fleury - Jun 29, 1999: Created. 
- *    modified by jpc
+ * modified by jpc for Nsp.
  *------------------------------------------------------------------------*/
-
-static void swap (double*, double*, int);
 
 /* utility */ 
 
@@ -1521,14 +1519,16 @@ static void swap(double* ptr1, double* ptr2, int size)
  * nsp_double2complex:
  * @tab: array of double to be converted 
  * @size: size of array 
+ *
  *    Converts complex representation in @tab 
  *     [r_0, r_1,..., r_n, i_0, i_1,..., i_n]
  *    into [r_0, i_0, r_1, i_1, ..., r_n, i_n]
  *     Complexity O(nlogn) for this version. One can easly have
  *     O(nloglogn) by pruning the recursion. Next version wil take care 
  *     of the cache size.
- *     fleury - May 7, 1999: Created.
  **/
+
+/*     fleury - May 7, 1999: Created. */
 
 void nsp_double2complex( double *tab, int size)
 {
@@ -1554,16 +1554,20 @@ void nsp_double2complex( double *tab, int size)
   }
 }
 
-
-/*--------------------------------------------------------
- * f772sci 
- *    Converts f77 complex representation 
- *    into scilab  representation 
+/**
+ * nsp_complex2double:
+ * @tab: array of double to be converted 
+ * @size: size of array 
+ *
+ *    Converts complex representation in @tab 
+ *    [r_0, i_0, r_1, i_1, ..., r_n, i_n]
+ *    into [r_0, i_0, r_1, i_1, ..., r_n, i_n]
  *     Complexity O(nlogn) for this version. One can easly have
  *     O(nloglogn) by pruning the recursion. Next version wil take care 
  *     of the cache size.
- *     fleury - May 7, 1999: Created.
- *--------------------------------------------------------*/
+ **/
+
+/*     fleury - May 7, 1999: Created. */
 
 void nsp_complex2double(double *tab, int size)
 {
