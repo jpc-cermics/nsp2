@@ -38,7 +38,7 @@
 #include <nsp/blas.h>
 
 /**
- * SECTION:bmatrix
+ * SECTION:matrix
  * @title: numerical matrices
  * @short_description: An object used to implement real and complex matrices.
  * @see_also: 

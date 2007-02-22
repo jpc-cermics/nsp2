@@ -288,7 +288,7 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 
 /**
  * nsp_spcolmatrix_get:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @RC: 
  * @Values: 
  * 
@@ -327,7 +327,7 @@ int nsp_spcolmatrix_get(NspSpColMatrix *A, NspMatrix **RC, NspMatrix **Values)
 
 /**
  * nsp_spcolmatrix_copy:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * returns a copy of sparse matrix @A.
  * 
@@ -543,7 +543,7 @@ void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_le
 
 /**
  * nsp_spcolmatrix_redim:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @m: 
  * @n: 
  * 
@@ -671,7 +671,7 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 
 /**
  * nsp_spcolmatrix_enlarge:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @m: 
  * @n: 
  * 
@@ -693,8 +693,8 @@ int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n)
 
 /**
  * nsp_spcolmatrix_concatr:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * A = [A, B] 
  * Right concatenation on A, A is changed 
@@ -743,8 +743,8 @@ int nsp_spcolmatrix_concatr(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_concatd:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  *  A=[A; B ]  Down concatenation on A 
  * 
@@ -800,8 +800,8 @@ int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_concatdiag:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * Diag Concatenation A = [A,0;0,B] 
  * 
@@ -837,11 +837,11 @@ int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_store:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @r: 
  * @c: 
  * @col: 
- * @B: 
+ * @B: a #NspSpColMatrix
  * @r1: 
  * @c1: 
  * 
@@ -928,7 +928,7 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
 
 /**
  * nsp_spcolmatrix_delete_elt:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @row: 
  * @col: 
  * @amin: 
@@ -978,7 +978,7 @@ int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, in
 
 /**
  * nsp_spcolmatrix_get_elt:
- * @B: 
+ * @B: a #NspSpColMatrix
  * @i: 
  * @j: 
  * 
@@ -1006,10 +1006,10 @@ int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 
 /**
  * nsp_spcolmatrix_set_rowcol:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Rows: 
  * @Cols: 
- * @B: 
+ * @B: a #NspSpColMatrix
  * 
  *  A(Rows,Cols) = B 
  *  A is changed and enlarged if necessary 
@@ -1141,9 +1141,9 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
 
 /**
  * nsp_spcolmatrix_set_row:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Inds: 
- * @B: 
+ * @B: a #NspSpColMatrix
  * 
  *  A(Inds) = B 
  *  A is changed and enlarged if necessary 
@@ -1243,7 +1243,7 @@ int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *
 
 /**
  * nsp_spcolmatrix_delete_rows:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Rows: 
  * 
  *  A(Rows,:) = [],  A is changed. 
@@ -1330,7 +1330,7 @@ int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows)
 
 /**
  * nsp_spcolmatrix_compress_col:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @i: 
  * 
  * compress the #SpCol structure of the @i-th column of sparse Matrix @A 
@@ -1383,7 +1383,7 @@ int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i)
 
 /**
  * nsp_spcolmatrix_compress_col_simple:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @i: 
  * 
  * 
@@ -1431,7 +1431,7 @@ int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i)
 
 /**
  * nsp_spcolmatrix_delete_cols:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Cols: 
  * 
  *  A(:,Cols) = []
@@ -1505,7 +1505,7 @@ int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
 
 /**
  * SpExtract_G:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Rows: 
  * @Cols: 
  * @flag: 
@@ -1598,7 +1598,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
 
 /**
  * nsp_spcolmatrix_extract:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Rows: 
  * @Cols: 
  * 
@@ -1619,7 +1619,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspM
 
 /**
  * nsp_spcolmatrix_extract_elts:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Elts: 
  * 
  * return A(Elts)
@@ -1686,7 +1686,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts)
 
 /**
  * nsp_spcolmatrix_extract_rows:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Rows: 
  * @err: 
  * 
@@ -1708,7 +1708,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspMatrix *Rows,
 
 /**
  * nsp_spcolmatrix_extract_cols:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Cols: 
  * @err: 
  * 
@@ -1758,7 +1758,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols,
 
 /**
  * nsp_spcolmatrix_diag_extract:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @k: 
  * 
  * 
@@ -1820,7 +1820,7 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
 
 /**
  * nsp_spcolmatrix_diag_set:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @Diag: 
  * @k: 
  * 
@@ -2059,8 +2059,8 @@ NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k)
 
 /**
  * nsp_spcolmatrix_mult:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * returns @Ax@B  by the method of gustafson,acm t.o.m.s. 
  * vol 4 (1978) p250. 
@@ -2226,8 +2226,8 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_mult_sp_m:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspMatrix
  * 
  * @Ax@B when @B is a full matrix and returns the result as a full matrix.
  * 
@@ -2309,7 +2309,7 @@ NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B)
 /**
  * nsp_spcolmatrix_mult_m_sp:
  * @X: 
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * @Xx@A when @X is full 
  * 
@@ -2498,8 +2498,8 @@ int nsp_spcolmatrix_mult_scalar(double *val, char val_type, NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_mult_scal_old:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * nsp_spcolmatrix_mult_scal(A,B) when B is a scalar sparse 
  * A is changed 
@@ -2535,7 +2535,7 @@ int nsp_spcolmatrix_mult_scal_old(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_complexify:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * Changes A to complex type and 
  * provide storage allocation 
@@ -2567,7 +2567,7 @@ int nsp_spcolmatrix_complexify(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_setr:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @d: 
  * 
  * Set real part of all non nul elements of A to d 
@@ -2608,7 +2608,7 @@ int nsp_spcolmatrix_setr(NspSpColMatrix *A, double d)
 
 /**
  * nsp_spcolmatrix_seti:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @d: 
  * 
  * Set imag part of all non nul elements of A to d 
@@ -2640,7 +2640,7 @@ int nsp_spcolmatrix_seti(NspSpColMatrix *A, double d)
 
 /**
  * RowCountNonNull:
- * @A: 
+ * @A: a #NspMatrix
  * @i: 
  * 
  * 
@@ -2664,7 +2664,7 @@ static int  RowCountNonNull(NspMatrix *A, int i)
 
 /**
  * ColCountNonNull:
- * @A: 
+ * @A: a #NspMatrix
  * @j: 
  * 
  * 
@@ -2690,7 +2690,7 @@ static int  ColCountNonNull(NspMatrix *A, int j)
 #if 1 
 /**
  * countnonnull:
- * @A: 
+ * @A:  a #NspMatrix
  * 
  * 
  * 
@@ -2708,7 +2708,7 @@ int countnonnull(NspMatrix *A)
 
 /**
  * nsp_spcolmatrix_from_mat:
- * @A: 
+ * @A:  a #NspMatrix
  * 
  * from full to sparse.
  * 
@@ -2766,7 +2766,7 @@ NspSpColMatrix *nsp_spcolmatrix_from_mat(NspMatrix *A)
 
 /**
  * nsp_spcolmatrix_from_mat_transpose:
- * @A: 
+ * @A:  a #NspMatrix
  * 
  * creates a sparse matrix filled with the transpose of @A
  * 
@@ -2924,7 +2924,7 @@ NspMatrix *nsp_spcolmatrix_to_mat_transpose(NspSpColMatrix *Sp)
 
 /**
  * nsp_spcolmatrix_transpose:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * Transpose a sparse Matrix, A is unchanged and a new matrix is created and 
  * returned. 
@@ -3201,8 +3201,8 @@ static void MultttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype
 
 /**
  * nsp_spcolmatrix_add:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * A+B
  * 
@@ -3216,8 +3216,8 @@ NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_sub:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * A-B
  * 
@@ -3230,8 +3230,8 @@ NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_multtt:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * A.*B
  * 
@@ -3246,8 +3246,8 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * BinaryOp:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * @BinLeft: 
  * @BinBoth: 
  * @BinRight: 
@@ -3348,8 +3348,8 @@ static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft Bi
 
 /**
  * nsp_spcolmatrix_mult_scal:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * 
  * A = A.*B where B is a scalar sparse ( [] or scalar )
  * 
@@ -3415,8 +3415,8 @@ int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
 
 /**
  * nsp_spcolmatrix_op_scal:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * @flag: 
  * @op: 
  * 
@@ -3900,7 +3900,7 @@ static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *
 
 /**
  * nsp_spcolmatrix_clean:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @rhs: 
  * @epsa: 
  * @epsr: 
@@ -3970,8 +3970,8 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 
 /**
  * nsp_spcolmatrix_maximinitt_g:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * @flag: 
  * @minmaxflag: 
  * @err: 
@@ -4180,8 +4180,8 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 
 /**
  * nsp_spcolmatrix_maxitt:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * @flag: 
  * @err: 
  * 
@@ -4205,8 +4205,8 @@ NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int
 
 /**
  * nsp_spcolmatrix_minitt:
- * @A: 
- * @B: 
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
  * @flag: 
  * @err: 
  * 
@@ -4273,7 +4273,7 @@ static int nsp_spcol_resize(SpCol **col, int n, char rc_type)
 
 /**
  * nsp_spcolmatrix_realpart:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * Return the Real part of Matrix A in A.
  * 
@@ -4317,7 +4317,7 @@ int nsp_spcolmatrix_realpart(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_imagpart:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * Return the Imaginary part of Matrix A in A.
  * 
@@ -4390,7 +4390,7 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_sum:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @flag: 
  * 
  * Sum =nsp_mat_sum(A ,B])
@@ -4649,8 +4649,8 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
 
 /**
  * SpColMaxi1:
- * @A: 
- * @M: 
+ * @A: a #NspSpColMatrix
+ * @M: a #NspSpColMatrix
  * 
  * M(1) = Maxi(A) max of all the elements 
  * 
@@ -4692,9 +4692,9 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 
 /**
  * SpColMaxi3:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @j: 
- * @M: 
+ * @M: a #NspSpColMatrix
  * @count: 
  * 
  * utility : M(j)=Max A(j,:) : max of row j  
@@ -4746,9 +4746,9 @@ static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 
 /**
  * SpColMaxi2:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @j: 
- * @M: 
+ * @M: a #NspSpColMatrix
  *
  * utility: M(j)=Max A(:,j) find the max of column j 
  * 
@@ -4783,7 +4783,7 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 
 /**
  * nsp_spcolmatrix_maxi:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @flag: 
  * @Imax: 
  * @lhs: 
@@ -4823,7 +4823,7 @@ NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **
 
 /**
  * nsp_spcolmatrix_triu:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @k: 
  * 
  * A=Triu(A)
@@ -4857,7 +4857,7 @@ int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k)
 
 /**
  * nsp_spcolmatrix_tril:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @k: 
  * 
  * A=Tril(A)
@@ -5049,7 +5049,7 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
 
 /**
  * nsp_spcolmatrix_acos:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * returns cos(A) as a full matrix.
  * 
@@ -5064,7 +5064,7 @@ NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_acosh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * returns cosh(A) as a full matrix.
  * 
@@ -5130,7 +5130,8 @@ static void  SpColUnary(NspSpColMatrix *A, Func1 F1, Func2 F2)
 
 /**
  * nsp_spcolmatrix_asin:
- * @A: 
+ * @A: a #NspSpColMatrix
+ *
  * A=asin(A)
  * 
  **/
@@ -5144,7 +5145,7 @@ void nsp_spcolmatrix_asin(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_asinh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Asinh(A),
  **/
@@ -5157,7 +5158,7 @@ void nsp_spcolmatrix_asinh(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_atan:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Atan(A),
  **/
@@ -5169,7 +5170,7 @@ void nsp_spcolmatrix_atan(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_atanh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Atanh(A)
  **/
@@ -5180,7 +5181,7 @@ void nsp_spcolmatrix_atanh(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_ceil:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Ceil(A)
  **/
@@ -5194,7 +5195,7 @@ static double R_aint(double x) { return aint(x);}
 
 /** 
  * nsp_spcolmatrix_int:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A=Int(A)
@@ -5208,7 +5209,7 @@ void nsp_spcolmatrix_int(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_floor:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Floor(A) 
  **/
@@ -5222,7 +5223,7 @@ static double R_anint(double x) { return anint(x);}
 
 /**
  *nsp_spcolmatrix_round: 
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Round(A)
  **/
@@ -5235,7 +5236,7 @@ void nsp_spcolmatrix_round(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_sign:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A=Sign(A)
@@ -5268,7 +5269,7 @@ int nsp_spcolmatrix_sign(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_tan:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Tan(A) 
  **/
@@ -5280,7 +5281,7 @@ void nsp_spcolmatrix_tan(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_tanh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Tanh(A)
  **/
@@ -5293,7 +5294,7 @@ void nsp_spcolmatrix_tanh(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_abs:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A=Abs(A), absolue value or module of each element 
@@ -5322,7 +5323,7 @@ int nsp_spcolmatrix_abs(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_erf:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A=Erf(A), Erf function 
@@ -5371,7 +5372,7 @@ int nsp_spcolmatrix_erf(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_arg:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A=Arg(A),
@@ -5412,7 +5413,7 @@ int nsp_spcolmatrix_arg(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_conj:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=real(A)-i*Imag(A) A is changed  only if imaginary 
  **/
@@ -5435,7 +5436,7 @@ void nsp_spcolmatrix_conj(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_cos:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * Cos(A)
@@ -5449,7 +5450,7 @@ NspMatrix *nsp_spcolmatrix_cos(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_cosh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * Cosh(A)
@@ -5463,7 +5464,7 @@ NspMatrix *nsp_spcolmatrix_cosh(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_expel:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * exp(A)
  * Return value: a new  #NspMatrix or %NULLSPCOL
@@ -5476,7 +5477,7 @@ NspMatrix *nsp_spcolmatrix_expel(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_logel:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * log(A)
@@ -5518,7 +5519,7 @@ int nsp_spcolmatrix_logel(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_sin:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=sin(A)
  **/
@@ -5532,7 +5533,7 @@ void nsp_spcolmatrix_sin(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_sinh:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * A=Sinh(A)
  **/
@@ -5545,7 +5546,7 @@ void nsp_spcolmatrix_sinh(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_sqrtel:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  *  A=SqrtEl(A)  term to term square root
@@ -5587,7 +5588,7 @@ int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_minus:
- * @A: 
+ * @A: a #NspSpColMatrix
  * 
  * 
  * A= -A 
@@ -5654,7 +5655,7 @@ int nsp_spcolmatrix_minus(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_find:
- * @A: 
+ * @A: a #NspSpColMatrix
  * @lhs: 
  * @Res1: 
  * @Res2: 

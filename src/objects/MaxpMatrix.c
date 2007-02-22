@@ -96,8 +96,7 @@ NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n, 
  * @name: matrix name 
  * @M: a NspMatrix *
  * 
- * DEPRECATED:
- *
+ * the following function is deprecated and should not be used.
  * Creates a new max plus matrix using data from a given 
  * argument matrix @M. Data is not copied but moved from 
  * given argument to the new matrix. the @M matrix size 

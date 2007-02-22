@@ -34,6 +34,20 @@
 #include "nsp/datas.h"
 #include "nsp/gsort-p.h"
 
+/**
+ * SECTION:smatrix
+ * @title: NspSMatrix 
+ * @short_description: An object used to implement string matrices.
+ * @see_also: 
+ *
+ * <para>
+ * A #NspSMatrix is used to represent a string matrix. 
+ * It can be filled with strings and string pointers are stored 
+ * in a one dimensionnal array (column order). It implements the 
+ * matint interface which is used for generic matrice operations. 
+ * </para>
+ **/
+
 /*
  * NspSMatrix inherits from NspObject 
  */
@@ -836,7 +850,7 @@ static int int_smxconcatd_s_m(Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
+static int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
 {
   int n1;
   NspSMatrix *HMat;
@@ -857,7 +871,7 @@ int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged 
  */
 
-int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
+static int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
 {
   int m1;
   NspSMatrix *HMat;
@@ -877,7 +891,8 @@ int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
  * FIXME ne sert plus ?
  */
 
-int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
+#if 0
+static int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*Res;
   NspMatrix *Cols;
@@ -892,6 +907,7 @@ int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
   NthObj(3) = (NspObject *) Res;
   return 3;
 }
+#endif 
 
 /*
  *nsp_smatrix_resize: Changes NspSMatrix dimensions
@@ -903,7 +919,7 @@ int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
  * return 0 on failure 
  */
 
-int int_smxresize(Stack stack, int rhs, int opt, int lhs)
+static int int_smxresize(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspSMatrix  *HMat;
@@ -927,7 +943,7 @@ int int_smxresize(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
+static int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
 {
   char *str=NULL;
   int flag = 0;
@@ -977,7 +993,7 @@ int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
  * XXXX strcmp 
  */
 
-int int_smxcomp(Stack stack, int rhs, int opt, int lhs)
+static int int_smxcomp(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Res;
   NspSMatrix *A,*B;
@@ -994,7 +1010,7 @@ int int_smxcomp(Stack stack, int rhs, int opt, int lhs)
  * concat(A,[row='sep',col='sep',sep='sep'])
  */
 
-int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
+static int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *rep ;
   NspSMatrix *A;
@@ -1049,7 +1065,7 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
  * Ind unchanged 
  */
 
-int int_smxpart(Stack stack, int rhs, int opt, int lhs)
+static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 {
   int alloc = FALSE;
   NspMatrix *Ind;
@@ -1089,7 +1105,7 @@ int int_smxpart(Stack stack, int rhs, int opt, int lhs)
  * A unchanged 
  */
 
-int int_smxlength(Stack stack, int rhs, int opt, int lhs)
+static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Res;
   NspSMatrix *A;
@@ -1107,7 +1123,7 @@ int int_smxlength(Stack stack, int rhs, int opt, int lhs)
  * pour l'instant on utilise %f xxxxx
  */
 
-int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
+static int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
 {
   char *Format=NULL;
   NspMatrix *A;
@@ -1131,7 +1147,7 @@ int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
  * Res= Mattoupper(A) 
  */
 
-int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
+static int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A;
   CheckRhs(1,1);
@@ -1147,7 +1163,7 @@ int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
  * Res= Mattolower(A) 
  */
 
-int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
+static int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A;
   CheckRhs(1,1);
@@ -1162,7 +1178,7 @@ int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
  * Res= capitalize(A) 
  */
 
-int int_smxcapitalize(Stack stack, int rhs, int opt, int lhs)
+static int int_smxcapitalize(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A;
   CheckRhs(1,1);
@@ -1179,7 +1195,7 @@ int int_smxcapitalize(Stack stack, int rhs, int opt, int lhs)
 
 typedef int (*IsF) (int c);
 
-int int_smx_isxxx(Stack stack, int rhs, int opt, int lhs, IsF F)
+static int int_smx_isxxx(Stack stack, int rhs, int opt, int lhs, IsF F)
 {
   int i;
   char *Str;
@@ -1195,57 +1211,57 @@ int int_smx_isxxx(Stack stack, int rhs, int opt, int lhs, IsF F)
 }
 
 
-int int_smxisalnum(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisalnum(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isalnum) ;
 }
 
-int int_smxisalpha(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisalpha(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isalpha) ;
 }
 
-int int_smxisascii(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisascii(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isascii) ;
 }
 
-int int_smxisdigit(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisdigit(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isdigit) ;
 }
 
-int int_smxisgraph(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisgraph(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isgraph) ;
 }
 
-int int_smxislower(Stack stack, int rhs, int opt, int lhs)
+static int int_smxislower(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,islower) ;
 }
 
-int int_smxisprint(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisprint(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isprint) ;
 }
 
-int int_smxispunct(Stack stack, int rhs, int opt, int lhs)
+static int int_smxispunct(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,ispunct) ;
 }
 
-int int_smxisspace(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisspace(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isspace) ;
 }
 
-int int_smxisupper(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisupper(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isupper) ;
 }
 
-int int_smxisxdigit(Stack stack, int rhs, int opt, int lhs)
+static int int_smxisxdigit(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smx_isxxx(stack,rhs,opt,lhs,isxdigit) ;
 }
@@ -1255,7 +1271,7 @@ int int_smxisxdigit(Stack stack, int rhs, int opt, int lhs)
  * strstr(A,str)
  */
 
-int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
+static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
 {
   char *Str;
   NspSMatrix *A;
@@ -1278,7 +1294,7 @@ int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
+static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   char *Str1;
@@ -1340,7 +1356,7 @@ int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
  * WARNING : no copy 
  */
 
-int int_smxenlarge(Stack stack, int rhs, int opt, int lhs)
+static int int_smxenlarge(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A;
   int m1,n1;
@@ -1391,7 +1407,7 @@ static int int_smxsmat2ascii(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_smxascii(Stack stack, int rhs, int opt, int lhs)
+static int int_smxascii(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(1,1);
@@ -1406,7 +1422,7 @@ int int_smxascii(Stack stack, int rhs, int opt, int lhs)
  * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
  */
 
-int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *M=NULL;
   NspMatrix *Index=NULL;
@@ -1464,7 +1480,7 @@ int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
  * [A]=split(str,sep='splitchars',msep=bool)
  */
 
-int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
+static int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 {
   char *defsplit = " \n\t\r";
   char *sep=NULL;
@@ -1506,7 +1522,7 @@ int int_smxlt(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_smxle(Stack stack, int rhs, int opt, int lhs)
+static int int_smxle(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1519,7 +1535,7 @@ int int_smxle(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_smxneq(Stack stack, int rhs, int opt, int lhs)
+static int int_smxneq(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1532,7 +1548,7 @@ int int_smxneq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_smxeq(Stack stack, int rhs, int opt, int lhs)
+static int int_smxeq(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1545,7 +1561,7 @@ int int_smxeq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_smxgt(Stack stack, int rhs, int opt, int lhs)
+static int int_smxgt(Stack stack, int rhs, int opt, int lhs)
 {
 
   NspSMatrix *A,*B; NspBMatrix *Res;
@@ -1560,7 +1576,7 @@ int int_smxgt(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_smxge(Stack stack, int rhs, int opt, int lhs)
+static int int_smxge(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1603,33 +1619,33 @@ static int int_smxf_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   return 1;
 }
 
-int int_smxflt(Stack stack, int rhs, int opt, int lhs)
+static int int_smxflt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,"<");
 }
 
-int int_smxfle(Stack stack, int rhs, int opt, int lhs)
+static int int_smxfle(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,"<=");
 }
 
 
-int int_smxfneq(Stack stack, int rhs, int opt, int lhs)
+static int int_smxfneq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,"<>");
 }
 
-int int_smxfeq(Stack stack, int rhs, int opt, int lhs)
+static int int_smxfeq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,"==");
 }
 
-int int_smxfgt(Stack stack, int rhs, int opt, int lhs)
+static int int_smxfgt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,">");
 }
 
-int int_smxfge(Stack stack, int rhs, int opt, int lhs)
+static int int_smxfge(Stack stack, int rhs, int opt, int lhs)
 {
   return int_smxf_gen(stack,rhs,opt,lhs,">=");
 }
@@ -1641,7 +1657,7 @@ int int_smxfge(Stack stack, int rhs, int opt, int lhs)
  * Creates a Copy of NspSMatrix A : A is not checked 
  */
 
-int int_smxtranspose(Stack stack, int rhs, int opt, int lhs)
+static int int_smxtranspose(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat1,*HMat2;
   CheckRhs(1,1);
@@ -1685,7 +1701,7 @@ static int int_smatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
  * Res =  subst(A,str,rep) 
  */
 
-int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
+static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat1,*HMat2;
   char *str1,*str2;
@@ -1703,7 +1719,7 @@ int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
  * Res =  stripblanks(A)
  */
 
-int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
+static int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat1;
   CheckRhs(1,1);
@@ -1718,7 +1734,7 @@ int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *loc;
   NspMatrix *A;
@@ -1735,7 +1751,7 @@ int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *loc;
   NspMatrix *A;
