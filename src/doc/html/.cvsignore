@@ -2,6 +2,7 @@
 *.png 
 index.sgml
 nspdoc.devhelp
+nspdoc.devhelp2
 .ghost
-.cvsignore
 style.css
+.nsp_history

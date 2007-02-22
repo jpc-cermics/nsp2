@@ -76,6 +76,8 @@
     <xi:include href="xml/nsp_lapack.xml"/>
     <xi:include href="xml/matutil.xml"/>
     <xi:include href="xml/cnumeric.xml"/>
+    <xi:include href="xml/approx.xml"/>
+    <xi:include href="xml/sort.xml"/>
   </chapter>
 
   <chapter id="nsp-system">

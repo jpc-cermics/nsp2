@@ -1152,6 +1152,20 @@ NspList *L,char *dir,char **Mname
 <RETURNS>int </RETURNS>
 NspList *L,char *dir,char **Mname
 </FUNCTION>
+<MACRO>
+<NAME>XCNAME</NAME>
+#define XCNAME(x,y) CNAME(x,y)
+</MACRO>
+<FUNCTION>
+<NAME>sizeof</NAME>
+<RETURNS>n*</RETURNS>
+ELT_TYPE),n*sizeof(int),(dir == 'i' ) ? XCNAME(compareC,ELT_TYPE):XCNAME(compareD,ELT_TYPE),XCNAME(swapcode,ELT_TYPE),swapcodeind
+</FUNCTION>
+<FUNCTION>
+<NAME>sizeof</NAME>
+<RETURNS>n*</RETURNS>
+ELT_TYPE),sizeof(int),(dir == 'i' ) ? XCNAME(LexiColcompareC,ELT_TYPE):XCNAME(LexiColcompareD,ELT_TYPE),XCNAME(LexiColswapcode,ELT_TYPE),swapcodeind
+</FUNCTION>
 <STRUCT>
 <NAME>NspBlock</NAME>
 </STRUCT>
@@ -2314,11 +2328,6 @@ Stack stack, int i
 <RETURNS>NspMatrix *</RETURNS>
 Stack stack, int i
 </FUNCTION>
-<FUNCTION>
-<NAME>MaybeObjCopy</NAME>
-<RETURNS>return </RETURNS>
-&stack.val->S[stack.first+i-1]
-</FUNCTION>
 <MACRO>
 <NAME>VERSION</NAME>
 #define VERSION "scilab-2.7-CVS-2002-11-04"
@@ -2327,6 +2336,85 @@ Stack stack, int i
 <NAME>DEFAULT_MES</NAME>
 #define DEFAULT_MES "scilab-2.7-CVS-2002-11-04 Scilab Group (Inria, Enpc)"
 </MACRO>
+<MACRO>
+<NAME>LOCK_DIR_FLAG</NAME>
+#define LOCK_DIR_FLAG 0x0f 
+</MACRO>
+<MACRO>
+<NAME>LOCK_TYPE_FLAG</NAME>
+#define LOCK_TYPE_FLAG 0xf0
+</MACRO>
+<ENUM>
+<NAME>lock_dir</NAME>
+typedef  enum { LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 } lock_dir;
+</ENUM>
+<ENUM>
+<NAME>lock_type</NAME>
+typedef  enum { L_IN=0 <<4 ,L_OUT=1 <<4 ,L_EVIN=2 << 4,L_EVOUT=3 <<4 , L_SQP=4 <<4, L_SQM=5 <<4  } lock_type;
+</ENUM>
+<STRUCT>
+<NAME>gr_port</NAME>
+typedef struct _port {
+  NspObject *object_id ; /* object connected to the associated port or NULL */  
+  void *object_sid;      /* used to keep track of connections while 
+			  * copying or saving */
+  int lock;              /* object is connected through his lock point lock */
+  int port;              /* and port number port */
+} gr_port; 
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeGRint</NAME>
+typedef struct _NspTypeGRint { 
+  NSP_TYPE_OBJECT__ 
+
+  /*< public >*/
+
+  gr_get_hilited *get_hilited ;		     
+  gr_set_hilited *set_hilited ;		     
+  gr_get_show *get_show ;		     
+  gr_set_show *set_show ;		     
+  gr_draw *draw ;			     
+  gr_translate *translate ;		     
+  gr_set_pos *set_pos ;		     
+  gr_resize *resize ;			     
+  gr_update_locks *update_locks ;	     
+  gr_contains_pt *contains_pt ;		     
+  gr_control_near_pt *control_near_pt ;	     
+  gr_lock_near_pt *lock_near_pt ;	     
+  gr_move_control_init *move_control_init ;  
+  gr_move_control *move_control ;	     
+
+  gr_get_number_of_locks * get_number_of_locks;
+  gr_get_number_of_ports * get_number_of_ports;
+  gr_get_lock_connection * get_lock_connection;
+  gr_get_lock_pos * get_lock_pos;
+  gr_get_lock_dir * get_lock_dir;
+  gr_set_lock_connection * set_lock_connection;
+  gr_unset_lock_connection * unset_lock_connection;
+  gr_is_lock_connectable * is_lock_connectable;
+  gr_is_lock_connected * is_lock_connected;
+  gr_set_lock_pos * set_lock_pos;
+  gr_full_copy * full_copy;
+
+} NspTypeGRint;
+</STRUCT>
+<MACRO>
+<NAME>GR_INT</NAME>
+#define GR_INT(t) ((NspTypeGRint *) t)
+</MACRO>
+<VARIABLE>
+<NAME>nsp_type_grint_id</NAME>
+extern int nsp_type_grint_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_grint</NAME>
+extern NspTypeGRint *nsp_type_grint;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_grint</NAME>
+<RETURNS>NspTypeGRint *</RETURNS>
+type_mode mode
+</FUNCTION>
 <VARIABLE>
 <NAME>Datas</NAME>
 extern NspList *Datas ;
@@ -4631,10 +4719,13 @@ typedef int Boolean;
 </STRUCT>
 <STRUCT>
 <NAME>NspTypeBMatrix</NAME>
-typedef struct _NspTypeBMatrix { 
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeBMatrix</NAME>
+struct _NspTypeBMatrix { 
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeBMatrix;
+};
 </STRUCT>
 <STRUCT>
 <NAME>NspBMatrix</NAME>
@@ -4646,20 +4737,6 @@ struct _NspBMatrix {
   int m,n,mn;
   Boolean *B;	
 };
-</STRUCT>
-<TYPEDEF>
-<NAME>Boolean</NAME>
-typedef int Boolean;
-</TYPEDEF>
-<STRUCT>
-<NAME>NspBMatrix</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>NspTypeBMatrix</NAME>
-typedef struct _NspTypeBMatrix { 
-  NSP_TYPE_OBJECT__ 
-  /*< public >*/
-} NspTypeBMatrix;
 </STRUCT>
 <VARIABLE>
 <NAME>nsp_type_bmatrix_id</NAME>
@@ -5672,6 +5749,14 @@ NspMod *H,int *i,  NspObject **O
 <RETURNS>int </RETURNS>
 NspMod *Mo
 </FUNCTION>
+<MACRO>
+<NAME>STRING_ONLY</NAME>
+#define STRING_ONLY 
+</MACRO>
+<MACRO>
+<NAME>ELT_TYPE</NAME>
+#define ELT_TYPE nsp_string
+</MACRO>
 <STRUCT>
 <NAME>NspRect</NAME>
 </STRUCT>
@@ -9746,6 +9831,10 @@ NspGFrame *R, const double *pt
 <RETURNS>int </RETURNS>
 NspGFrame *R,const double pt[2]
 </FUNCTION>
+<MACRO>
+<NAME>ELT_TYPE</NAME>
+#define ELT_TYPE int 
+</MACRO>
 <TYPEDEF>
 <NAME>NspModuleElt</NAME>
 typedef struct _NspModulelt NspModuleElt;
@@ -9840,254 +9929,15 @@ Stack stack, int i
 <RETURNS>NspModuleElt *</RETURNS>
 Stack stack, int i
 </FUNCTION>
-<VARIABLE>
-<NAME>int_smxcreate</NAME>
-extern function int_smxcreate;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxredim</NAME>
-extern function int_smxredim;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcatr</NAME>
-extern function int_smxconcatr;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcatr_m_s</NAME>
-extern function int_smxconcatr_m_s;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcatd</NAME>
-extern function int_smxconcatd;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcatd_m_s</NAME>
-extern function int_smxconcatd_m_s;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcatdiag</NAME>
-extern function int_smxconcatdiag;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxaddcols</NAME>
-extern function int_smxaddcols;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxaddrows</NAME>
-extern function int_smxaddrows;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxsetrc</NAME>
-extern function int_smxsetrc;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxdeletecols</NAME>
-extern function int_smxdeletecols;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxdeleterows</NAME>
-extern function int_smxdeleterows;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxdeleteelts</NAME>
-extern function int_smxdeleteelts;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxextract</NAME>
-extern function int_smxextract;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxextractelts</NAME>
-extern function int_smxextractelts;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxextractcols</NAME>
-extern function int_smxextractcols;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxextractrows</NAME>
-extern function int_smxextractrows;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxextractcolforloop</NAME>
-extern function int_smxextractcolforloop;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxresize</NAME>
-extern function int_smxresize;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxinfo</NAME>
-extern function int_smxinfo;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxprint</NAME>
-extern function int_smxprint;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcattt</NAME>
-extern function int_smxconcattt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxcomp</NAME>
-extern function int_smxcomp;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxconcat</NAME>
-extern function int_smxconcat;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxpart</NAME>
-extern function int_smxpart;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxlength</NAME>
-extern function int_smxlength;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxm2sm</NAME>
-extern function int_smxm2sm;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxtoupper</NAME>
-extern function int_smxtoupper;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxtolower</NAME>
-extern function int_smxtolower;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxcapitalize</NAME>
-extern function int_smxcapitalize;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisalnum</NAME>
-extern function int_smxisalnum;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisalpha</NAME>
-extern function int_smxisalpha;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisascii</NAME>
-extern function int_smxisascii;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisdigit</NAME>
-extern function int_smxisdigit;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisgraph</NAME>
-extern function int_smxisgraph;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxislower</NAME>
-extern function int_smxislower;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisprint</NAME>
-extern function int_smxisprint;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxispunct</NAME>
-extern function int_smxispunct;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisspace</NAME>
-extern function int_smxisspace;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisupper</NAME>
-extern function int_smxisupper;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxisxdigit</NAME>
-extern function int_smxisxdigit;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxstrstr</NAME>
-extern function int_smxstrstr;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxstrindex</NAME>
-extern function int_smxstrindex;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxenlarge</NAME>
-extern function int_smxenlarge;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxascii</NAME>
-extern function int_smxascii;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxsort</NAME>
-extern function int_smxsort;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxsplit</NAME>
-extern function int_smxsplit;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxlt</NAME>
-extern function int_smxlt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxle</NAME>
-extern function int_smxle;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxneq</NAME>
-extern function int_smxneq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxeq</NAME>
-extern function int_smxeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxgt</NAME>
-extern function int_smxgt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxge</NAME>
-extern function int_smxge;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxflt</NAME>
-extern function int_smxflt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxfle</NAME>
-extern function int_smxfle;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxfneq</NAME>
-extern function int_smxfneq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxfeq</NAME>
-extern function int_smxfeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxfgt</NAME>
-extern function int_smxfgt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxfge</NAME>
-extern function int_smxfge;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxtranspose</NAME>
-extern function int_smxtranspose;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxsubst</NAME>
-extern function int_smxsubst;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_smxstripblanks</NAME>
-extern function int_smxstripblanks;
-</VARIABLE>
+<FUNCTION>
+<NAME>nsp_qsort</NAME>
+<RETURNS>void </RETURNS>
+char *a, char *tab,int flag, int n, int es, int es1,int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ()
+</FUNCTION>
+<MACRO>
+<NAME>swapcodeind</NAME>
+#define swapcodeind CNAME(swapcode,int)
+</MACRO>
 <STRUCT>
 <NAME>NspTypeMatint</NAME>
 </STRUCT>
@@ -10367,6 +10217,10 @@ Stack stack, int rhs, int opt, int lhs
 <RETURNS>NspObject *</RETURNS>
 NspObject *obj
 </FUNCTION>
+<MACRO>
+<NAME>ELT_TYPE</NAME>
+#define ELT_TYPE double
+</MACRO>
 <STRUCT>
 <NAME>NspFile</NAME>
 </STRUCT>
@@ -10798,6 +10652,205 @@ char *command
 <NAME>dequeue_nsp_command</NAME>
 <RETURNS>int </RETURNS>
 char *buf,int buf_len
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_gsort</NAME>
+<RETURNS>int </RETURNS>
+int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord
+</FUNCTION>
+<ENUM>
+<NAME>nsp_sort</NAME>
+typedef enum {sort_g,sort_gs,sort_gm,sort_c,sort_r,sort_lr ,sort_lc ,sort_ldc,sort_ldr, sort_gb,sort_gd} nsp_sort;
+</ENUM>
+<FUNCTION>
+<NAME>nsp_matrix_sort</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_sort type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_column_sort</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_row_sort</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_lexical_column_sort</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_lexical_row_sort</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_sort</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_column_sort</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_row_sort</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_lexical_column_sort</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_lexical_row_sort</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_col_sort_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_col_sort_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_col_sort_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexicol_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexicol_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexicol_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexirow_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexirow_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_lexirow_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_row_sort_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_row_sort_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_gen_row_sort_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *ind,int flag,int n,int p,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *tab, int flag, int n,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *tab, int flag, int n,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *tab, int flag, int n,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_bp_int</NAME>
+<RETURNS>void </RETURNS>
+int x[], int n, int p[],int flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_bp_double</NAME>
+<RETURNS>void </RETURNS>
+double x[], int n, int p[],int flag,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mergesort_int</NAME>
+<RETURNS>int </RETURNS>
+int *a,int *p,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mergesort_double</NAME>
+<RETURNS>int </RETURNS>
+double *a,int *p,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_incr_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *index,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_decr_int</NAME>
+<RETURNS>void </RETURNS>
+int *a,int *index,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_incr_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *index,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_decr_double</NAME>
+<RETURNS>void </RETURNS>
+double *a,int *index,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_incr_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *index,int flag, int fromIndex, int toIndex,char dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_qsort_stable_decr_nsp_string</NAME>
+<RETURNS>void </RETURNS>
+nsp_string *a,int *index,int flag, int fromIndex, int toIndex,char dir
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>IOVFun</NAME>
