@@ -300,8 +300,8 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
  * needed in object definitions 
  */
 
-extern void ArgMessage (Stack stack, int i );
-extern void *MaybeObjCopy (NspObject **Obj);
+extern void ArgMessage(Stack stack, int i );
+extern void *MaybeObjCopy(NspObject **Obj);
 #include "nsp/string.h"
 extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 

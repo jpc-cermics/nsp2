@@ -159,9 +159,9 @@ int nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char
 
 /**
  * nsp_smatrix_sort:
- * @A: 
- * @Ind: 
- * @ind_flag: 
+ * @A: a #NspSMatrix
+ * @Index: a #NspMatrix pointer or %NULL
+ * @ind_flag: %TRUE or %FALSE. If %TRUE @Index is created and returned.
  * @dir: direction 'i' for increasing 'd' for decreasing 
  * 
  * global sort of the elements of a smatrix. If flag is %TRUE 

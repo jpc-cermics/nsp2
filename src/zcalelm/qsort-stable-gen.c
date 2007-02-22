@@ -110,7 +110,7 @@ static  void XCNAME(vecswap,DIR,ELT_TYPE)(int i, int j, int n, ELT_TYPE *a,int *
     }
 }
 
-/**
+/*
  * Performs a stable sort on the elements, arranging them according to their
  * natural order.
  *
@@ -126,7 +126,7 @@ void XCNAME(nsp_qsort_stable_,DIR,ELT_TYPE)(ELT_TYPE *a,int *index,int flag, int
   XCNAME(nsp_internal_qsort_stable_,DIR,ELT_TYPE)(a,index,flag, fromIndex, n);
 }
 
-/**
+/*
  * Performs a recursive modified quicksort.
  *
  * @param array the array to sort

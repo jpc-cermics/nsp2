@@ -3,6 +3,7 @@
 
 #include "nsp/interf.h"
 
+/* 
 extern function int_smxcreate;
 extern function int_smxredim;
 extern function int_smxconcatr;
@@ -65,5 +66,6 @@ extern function int_smxfge;
 extern function int_smxtranspose;
 extern function int_smxsubst;
 extern function int_smxstripblanks;
+*/
 
 #endif

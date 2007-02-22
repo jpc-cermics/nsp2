@@ -1,6 +1,6 @@
 /* 
  * some interpolation routines for Nsp 
- * Copyright (C) 2005  Bruno Pincon
+ * Copyright (C) 2006  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,16 +25,31 @@
 #include <nsp/math.h>
 #include "nsp/approx.h"
 
+/**
+ * SECTION:approx
+ * @Title: LibApprox 
+ * @Short_Description:  some interpolation routines
+ * @Stability_Level: 
+ * @See_Also: 
+ *
+ * 
+ */
+
+/**
+ * isearch:
+ * @t: a double 
+ * @x: an array of double of size @n
+ * @n: size of array @x
+ * 
+ * x[0..n-1] being an array (with strict increasing order and n >=2)
+ * representing intervals, 
+ * 
+ * Returns: i such that x[i] <= t <= x[i+1] and -1 
+ *   if t is not in [x[0], x[n-1]] 
+ **/
+
 static int isearch(double t,const double x[], int n) 
 {
-  /*     PURPOSE
-   *        x[0..n-1] being an array (with strict increasing order and n >=2)
-   *        representing intervals, this routine return i such that :
-   *           
-   *           x[i] <= t <= x[i+1]
-   *          
-   *        and -1 if t is not in [x[0], x[n-1]] 
-   */
   int i1, i2, i;
   if ( x[0] <= t  &&  t <= x[n-1] )
     {
@@ -53,6 +68,16 @@ static int isearch(double t,const double x[], int n)
     return (-1);
 }
 
+/**
+ * fast_int_search:
+ * @xx: 
+ * @x: 
+ * @nx: 
+ * @i: 
+ * 
+ * 
+ **/
+
 static void fast_int_search(double xx,const double x[], int nx, int *i)
 {
   if ( *i == -1 )
@@ -62,13 +87,19 @@ static void fast_int_search(double xx,const double x[], int nx, int *i)
 }
 
 
+/**
+ * coord_by_periodicity:
+ * @t: 
+ * @x: 
+ * @n: 
+ * @i: 
+ * 
+ *        recompute t such that t in [x[0], x[n-1]] by periodicity :
+ *        and then the interval i of this new t
+ * 
+ **/
 static void coord_by_periodicity(double *t,const double x[], int n, int *i)
 {
-  /*
-   *     PURPOSE
-   *        recompute t such that t in [x[0], x[n-1]] by periodicity :
-   *        and then the interval i of this new t
-   */
   double r, L;
   L = x[n-1] - x[0];
   r = (*t - x[0]) / L;
@@ -109,9 +140,10 @@ static void coord_by_periodicity(double *t,const double x[], int n, int *i)
  * @ad: work array of size 2^@n
  * @k: work array of size @n
  *
- * @n-dimensionnal linear interpolation routine.
+ * computes @n-dimensionnal linear interpolation.
  * 
  */
+
 void nlinear_interp(double **x , double val[], int dim[], int n,
 		    double **xp, double yp[], int np, int outmode, 
 		    double u[], double v[], int ad[], int k[])
@@ -230,26 +262,23 @@ void nlinear_interp(double **x , double val[], int dim[], int n,
 }
 
 
+/**
+ * tri_diag_solve:
+ * @d: d[0..n-1] is on input the diagonal of A 
+ *        (overwritten with the diagonal of the (diagonal) matrix D)
+ * @l: l[0..n-2] is on input the sub-diagonal of A (overwritten
+ *        with the sub-diagonal of L)
+ * @b: b[0..n-1] is on input the rhs on output the solution x 
+ * @n: the dimension 
+ * 
+ * solves a linear system Ax = b where A is symetric tridiagonal 
+ *        (and supposed positive definite) using a LDL^t factorization
+ * Caution: no zero pivot detection (A is supposed positive definite)
+ * 
+ **/
+
 static void tri_diag_solve(double *d, double *l, double *b, int n)
 {
-  /*
-   *     PURPOSE           
-   *        solve a linear system Ax = b where A is symetric tridiagonal 
-   *        (and supposed positive definite) using a LDL^t factorization
-   *        
-   *     PARAMETERS
-   *        d[0..n-1] : on input the diagonal of A (overwritten with
-   *                    the diagonal of the (diagonal) matrix D)
-   *        l[0..n-2] : on input the sub-diagonal of A (overwritten
-   *                    with the sub-diagonal of L)
-   *        b[0..n-1] : on input the rhs
-   *                    on output the solution x   
-   *        n         : the dimension 
-   *
-   *     CAUTION 
-   *        no zero pivot detection (A is supposed positive definite)
-   */
-  
   int i;
   double temp;
 
@@ -267,34 +296,33 @@ static void tri_diag_solve(double *d, double *l, double *b, int n)
     b[i] = b[i]/d[i] - l[i]*b[i+1];
 }
 
+/**
+ * nearly_tri_diag_solve:
+ * @d: d[0..n-1] is on input the diagonal of A (overwritten with
+ *                      the diagonal of the (diagonal) matrix D)
+ * @lsd: lsd[0..n-3] ison input the sub-diagonal of A (without  A(n-1,n-2)) 
+ *                      (overwritten with the sub-diagonal of L (without  L(n-1,n-2))
+ * @lll: lll[0..n-2] is on input the last line of A (without A(n-1,n-1))
+ *                      (overwritten with the last line of L (without L(n-1,n-1)))
+ * @b: b[0..n-1] is on input the rhs b, on output the solution x
+ * @n: is the dimension 
+ * 
+ *        solve a linear system Ax= b with an LDL^t factorization. A is a symetric matrix 
+ *        A "nearly" tridiagonal (supposed to be positive definite) with the form :
+ *           
+ *          |x x         x|                        |1            |
+ *          |x x x       x|                        |x 1          |
+ *          |  x x x     x|                        |  x 1        |
+ *          |    x x x   x|  and so the L is like  |    x 1      |
+ *          |      x x x x|                        |      x 1    |
+ *          |        x x x|                        |        x 1  |
+ *          |x x x x x x x|                        |x x x x x x 1|
+ * 
+ *        Caution: A is supposed to be positive definite so no zero pivot detection is done.
+ **/
+
 static void nearly_tri_diag_solve(double *d, double *lsd, double *lll, double *b, int n)
 {
-  /*
-   *     PURPOSE
-   *        solve a linear system Ax= b with an LDL^t factorization. A is a symetric matrix 
-   *        A "nearly" tridiagonal (supposed to be positive definite) with the form :
-   *           
-   *          |x x         x|                        |1            |
-   *          |x x x       x|                        |x 1          |
-   *          |  x x x     x|                        |  x 1        |
-   *          |    x x x   x|  and so the L is like  |    x 1      |
-   *          |      x x x x|                        |      x 1    |
-   *          |        x x x|                        |        x 1  |
-   *          |x x x x x x x|                        |x x x x x x 1|
-   *
-   *     PARAMETERS
-   *        d[0..n-1]   : on input the diagonal of A (overwritten with
-   *                      the diagonal of the (diagonal) matrix D)
-   *        lsd[0..n-3] : on input the sub-diagonal of A (without  A(n-1,n-2)) 
-   *                      (overwritten with the sub-diagonal of L (without  L(n-1,n-2))
-   *        lll[0..n-2] : on input the last line of A (without A(n-1,n-1))
-   *                      (overwritten with the last line of L (without L(n-1,n-1)))
-   *        b[0..n-1]   : on input the rhs b, on output the solution x
-   *        n           : the dimension 
-   *
-   *     CAUTION 
-   *        A is supposed to be positive definite so no zero pivot detection is done.
-   */
       
   int i, j;
   double temp1, temp2; 
@@ -330,43 +358,45 @@ static void nearly_tri_diag_solve(double *d, double *lsd, double *lll, double *b
 }
 
 
+/**
+ * derivd:
+ * @x: the n points, @x part must be in strict increasing order
+ * @u: the n points, @u part.
+ * @du: gives in output the derivatives in each x[i] i = 0..n-1
+ * @n:  number of point (n >= 2)
+ * @inc:  integer to deal easily with 2d applications, u[i] is in fact
+ *        u[inc*i] 
+ * @type: integer : FAST (the function is non periodic) or FAST_PERIODIC
+ *        (the function is periodic), in this last case u[n-1] must be equal to u[0])
+ * 
+ *        given functions values u[i] at points x[i],  i = 0, ..., n-1
+ *        this subroutine computes approximations du[i] of the derivative
+ *        at the points x[i]. 
+ * 
+ *      METHOD
+ *        For i in [1,n-2], the "centered" formula of order 2 is used :
+ *            d(i) = derivative at x(i) of the interpolation polynomial
+ *                   of the points {(x(j),u(j)), j in [i-1,i+1]}
+ *
+ *         For i=0 and n-1, if type = FAST_PERIODIC  (in which case u[n-1]=u[0]) then
+ *         the previus "centered" formula is also used; else (type = FAST), d[0]
+ *         is the derivative at x[0] of the interpolation polynomial of
+ *         {(x(j),u(j)), j in [0,2]} and the same method is used for d[n-1]
+ *
+ * 
+ *    NOTES
+ *         this routine requires (i)   n >= 2
+ *                               (ii)  strict increasing abscissae x[i]
+ *                               (iii) u[0]=u[n-1] if type = FAST_PERIODIC
+ *         ALL THESE CONDITIONS MUST BE TESTED IN THE CALLER.
+ *
+ * 
+ **/
+
 void derivd(double *x, double *u, double *du, int n, int inc, int type)
 {
   /*
-   *     PURPOSE
-   *        given functions values u[i] at points x[i],  i = 0, ..., n-1
-   *        this subroutine computes approximations du[i] of the derivative
-   *        at the points x[i]. 
-   *
-   *     METHOD
-   *        For i in [1,n-2], the "centered" formula of order 2 is used :
-   *            d(i) = derivative at x(i) of the interpolation polynomial
-   *                   of the points {(x(j),u(j)), j in [i-1,i+1]}
-   *
-   *         For i=0 and n-1, if type = FAST_PERIODIC  (in which case u[n-1]=u[0]) then
-   *         the previus "centered" formula is also used; else (type = FAST), d[0]
-   *         is the derivative at x[0] of the interpolation polynomial of
-   *         {(x(j),u(j)), j in [0,2]} and the same method is used for d[n-1]
-   *
-   *     ARGUMENTS
-   *      inputs :
-   *         n       integer : number of point (n >= 2)
-   *         x, u    the n points, x must be in strict increasing order
-   *         type    integer : FAST (the function is non periodic) or FAST_PERIODIC
-   *                 (the function is periodic), in this last case u[n-1] must be equal to u[0])
-   *         inc     integer : to deal easily with 2d applications, u[i] is in fact
-   *                 u[inc*i] 
-   *      outputs :
-   *         du      the derivatives in each x[i] i = 0..n-1
-   *
-   *    NOTES
-   *         this routine requires (i)   n >= 2
-   *                               (ii)  strict increasing abscissae x[i]
-   *                               (iii) u[0]=u[n-1] if type = FAST_PERIODIC
-   *         ALL THESE CONDITIONS MUST BE TESTED IN THE CALLING CODE
-   *
-   *     AUTHOR
-   *        Bruno Pincon
+   *     AUTHOR: Bruno Pincon
    */
 
   double dx_l, du_l, dx_r, du_r, w_l, w_r;
@@ -421,44 +451,41 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
 }
 
 
+/**
+ * cubic_spline:
+ * @x: the n interpolation points, x must be in strict increasing order
+ * @y: the n interpolation points, x must be in strict increasing order
+ * @d: on output, the derivatives in each x[i] i = 0..n-1
+ * @n: number of interpolation points (n >= 3)
+ * @type: type of the spline:  
+ *                  NOT_A_KNOT spline with:
+ *                                 s'''(x(2)-) = s'''(x(2)+) 
+ *                             and s'''(x(n-1)-) = s'''(x(n-1)+)
+ *                  NATURAL spline with:
+ *                                 s''(x1) = 0
+ *                             and s''(xn) = 0
+ *                  CLAMPED spline with end point derivative provided 
+ *                            (d[0] and d[n-1] given)
+ *                  PERIODIC
+ * @A_d:  work array, A_d(0..n-1)
+ * @A_sd: work array, A_sd(0..n-2)
+ * @qdy: work array,qdy(0..n-2)
+ * @lll:work array, lll[0..n-2]  used only in the periodic case
+ * 
+ * computes a cubic spline interpolation function
+ * in Hermite form (ie computes the derivatives d(i) of the
+ * spline in each interpolation point (x(i), y(i)))
+ * 
+ *  NOTE that this routine requires (i)   n >= 3 (for natural) n >=4 (for not_a_knot) 
+ *      (ii)  strict increasing abscissae x(i)
+ *       (iii) y[0] = y[n-1] in the periodic case
+ *  THESE CONDITIONS MUST BE TESTED BEFORE CALLING cubic_spline().
+ *
+ **/
+
 void cubic_spline(double *x, double *y, double *d, int n, int type, 
 		  double *A_d, double *A_sd, double *qdy, double *lll)
 {
-  /*
-   *     PURPOSE
-   *        computes a cubic spline interpolation function
-   *        in Hermite form (ie computes the derivatives d(i) of the
-   *        spline in each interpolation point (x(i), y(i)))
-   *
-   *     ARGUMENTS
-   *      inputs :
-   *         n       number of interpolation points (n >= 3)
-   *         x, y    the n interpolation points, x must be in strict increasing order
-   *         type    type of the spline:  
-   *                 * NOT_A_KNOT spline with:
-   *                                 s'''(x(2)-) = s'''(x(2)+) 
-   *                             and s'''(x(n-1)-) = s'''(x(n-1)+)
-   *                 * NATURAL spline with:
-   *                                 s''(x1) = 0
-   *                             and s''(xn) = 0
-   *                 * CLAMPED spline with end point derivative provided 
-   *                            (d[0] and d[n-1] given)
-   *
-   *                 * PERIODIC
-   *      outputs :
-   *         d    the derivatives in each x[i] i = 0..n-1
-   *
-   *      work arrays :
-   *         A_d(0..n-1), A_sd(0..n-2), qdy(0..n-2)
-   *         lll[0..n-2]  used only in the periodic case
-   *
-   *    NOTES
-   *         this routine requires (i)   n >= 3 (for natural) n >=4 (for not_a_knot) 
-   *                               (ii)  strict increasing abscissae x(i)
-   *                               (iii) y[0] = y[n-1] in the periodic case
-   *         THESE CONDITIONS MUST BE TESTED IN THE CALLING CODE
-   */
-
   int i;
   double r;
 
@@ -535,15 +562,23 @@ void cubic_spline(double *x, double *y, double *d, int n, int type,
     }
 }
 
+/**
+ * dpchst:
+ * @arg1: a double 
+ * @arg2: a double 
+ * 
+ * dpchip sign-testing routine.
+ * 
+ * Returns: -1. if arg1 and arg2 are of opposite sign.
+ *  0. if either argument is zero.
+ *  +1. if arg1 and arg2 are of the same sign.
+ **/
+
 static int dpchst(double arg1, double arg2)
 {
   /* from Slatec */
   /* dpchst:  dpchip sign-testing routine.
-      returns:
-        -1. if arg1 and arg2 are of opposite sign.
-         0. if either argument is zero.
-        +1. if arg1 and arg2 are of the same sign.
-  */
+   */
   if ( arg1 == 0.0  ||  arg2 == 0.0 )
     return 0;
   else if ( (arg1 > 0.0 && arg2 > 0.0)  ||  (arg1 < 0.0 && arg2 < 0.0) )
@@ -552,12 +587,20 @@ static int dpchst(double arg1, double arg2)
     return -1;
 }
 
+/**
+ * dpchim:
+ * @x: 
+ * @u: 
+ * @d: 
+ * @n: 
+ * @inc: 
+ * 
+ * An adaptation in C of the Slatec dpchim routine.
+ * DPCHIM:  Piecewise Cubic Hermite Interpolation to Monotone data 
+ **/
+
 void dpchim(double *x, double *u, double *d, int n, int inc)
 {
-
-  /*  an adaptation in C of the Slatec dpchim routine */
-  /*  DPCHIM:  Piecewise Cubic Hermite Interpolation to Monotone data */
-
   int i;
   double del1, del2, dmax, dmin, drat1, drat2, dsave,
     h1, h2, hsum, hsumt3, w1, w2;
@@ -645,6 +688,19 @@ void dpchim(double *x, double *u, double *d, int n, int inc)
     }
 }
 
+/**
+ * newton_form_for_hermite:
+ * @xa: 
+ * @xb: 
+ * @ya: 
+ * @yb: 
+ * @da: 
+ * @db: 
+ * @c2: 
+ * @c3: 
+ * 
+ * 
+ **/
 static void newton_form_for_hermite(double xa, double xb, double ya, double yb, 
 				    double da, double db, double *c2, double *c3)
 {
@@ -656,6 +712,24 @@ static void newton_form_for_hermite(double xa, double xb, double ya, double yb,
   *c2 = (p - da)/dx;
   *c3 = ((db - p)+(da - p))/(dx*dx);
 }
+/**
+ * eval_hermite:
+ * @t: 
+ * @xa: 
+ * @xb: 
+ * @ya: 
+ * @da: 
+ * @c2: 
+ * @c3: 
+ * @h: 
+ * @dh: 
+ * @ddh: 
+ * @dddh: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
  
 static void eval_hermite(double t, double xa, double xb, double ya, double da, double c2, 
 			 double c3, double *h, double *dh, double *ddh, double *dddh)
@@ -673,19 +747,32 @@ static void eval_hermite(double t, double xa, double xb, double ya, double da, d
   *h = ya + (*h)*tmxa;
 }
 
+/**
+ * eval_piecewise_hermite:
+ * @t: 
+ * @st: 
+ * @dst: 
+ * @d2st: 
+ * @d3st: 
+ * @m: 
+ * @x: 
+ * @y: 
+ * @d: 
+ * @n: 
+ * @outmode: 
+ * 
+ *        evaluation at the abscissae t[0..m-1] of the piecewise hermite function
+ *        defined by x[0..n-1], y[0..n-1], d[0..n-1] (d being the derivatives at the
+ *        x[i]) together with its derivative, second derivative and third derivative
+ *        
+ *        outmode defines what return in case t[j] not in [x[0], x[n-1]]
+ * 
+ **/
+
 void eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st, 
 			    double *d3st, int m, double *x, double *y, double *d, 
 			    int n, int outmode)
 {
-  /*
-   *     PURPOSE
-   *        evaluation at the abscissae t[0..m-1] of the piecewise hermite function
-   *        defined by x[0..n-1], y[0..n-1], d[0..n-1] (d being the derivatives at the
-   *        x[i]) together with its derivative, second derivative and third derivative
-   *        
-   *        outmode defines what return in case t[j] not in [x[0], x[n-1]]
-   */
-
   int i, j, i_old=-1;;
   double tt, c2=0, c3=0;
   double Nan = (2*DBL_MAX)*0.0;
