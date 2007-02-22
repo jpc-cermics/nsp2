@@ -114,6 +114,21 @@ nsp_parse_eval_from_std
 nsp_parse_eval_from_smat
 nsp_parse_eval_file
 nsp_parse_eval_from_string
+
+<SUBSECTION used to build ast list>
+nsp_parse_append
+nsp_parse_add
+nsp_parse_add_comment
+nsp_parse_add_doublei
+nsp_parse_add_last
+nsp_parse_add_list
+nsp_parse_add_list1
+nsp_parse_add_name
+nsp_parse_add_name1
+nsp_parse_add_object
+nsp_parse_add_opname
+nsp_parse_add_string
+
 </SECTION>
 
 <SECTION>
@@ -1387,6 +1402,7 @@ CheckLhs
 CheckOptRhs
 CheckRhs
 CheckStdRhs
+CheckNonNegative
 SwapObjs
 PutLhsObj
 OptCheck

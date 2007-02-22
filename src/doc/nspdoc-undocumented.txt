@@ -1,7 +1,7 @@
-36% symbol docs coverage.
-810 symbols documented.
-234 symbols incomplete.
-1445 not documented.
+38% symbol docs coverage.
+857 symbols documented.
+257 symbols incomplete.
+1411 not documented.
 
 
 Abs
@@ -18,21 +18,6 @@ C2F
 CNAME
 CellsLoopCol (str, Col, A, icol, rep, Returns)
 CheckClickQueue
-CheckCols
-CheckComplex
-CheckDimProp
-CheckDims
-CheckLength
-CheckLhs
-CheckOptRhs
-CheckReal
-CheckRhs
-CheckRows
-CheckSameDims
-CheckScalar
-CheckSquare
-CheckStdRhs
-CheckVector
 ClearClickQueue
 DBL_EPSILON
 DBL_MAX
@@ -436,7 +421,7 @@ Sciprint_diary_on
 Sciprint_diary_only
 Sciprint_file
 Sciprint_set_diary
-Sciprintf
+Sciprintf (Returns)
 Sciprintf1
 Scisncr
 Scivprintf
@@ -662,7 +647,7 @@ int_mxzeros
 int_set_attributes
 int_set_attributes1
 int_set_failed
-int_types
+int_types (t_end)
 integer
 is_string_in_array
 is_string_in_struct
@@ -924,9 +909,6 @@ nsp_dvmul (Returns)
 nsp_dzcopy (Returns)
 nsp_dzscal (Returns)
 nsp_dzset (Returns)
-nsp_error_message_clear
-nsp_error_message_show
-nsp_error_message_to_lasterror
 nsp_error_vprintf
 nsp_exec_method_util
 nsp_exp_c
@@ -1177,23 +1159,30 @@ nsp_none_print
 nsp_norm_c
 nsp_object_load_def
 nsp_object_save_def
-nsp_option
 nsp_pango_hash_table
-nsp_parse_eval_dir
-nsp_parse_eval_dir_full
-nsp_parse_eval_file
-nsp_parse_eval_from_smat
-nsp_parse_eval_from_std
-nsp_parse_eval_from_string
-nsp_plist2smatrix
-nsp_plist_copy
-nsp_plist_copy_no_local_vars
-nsp_plist_destroy
-nsp_plist_info
+nsp_parse_add (plist, op, arity, line)
+nsp_parse_add_comment (plist, str)
+nsp_parse_add_doublei (plist, str)
+nsp_parse_add_last (plist, op, arity, line)
+nsp_parse_add_list (plist, l)
+nsp_parse_add_list1 (plist, l)
+nsp_parse_add_name (plist, str, Returns)
+nsp_parse_add_name1
+nsp_parse_add_object (plist, obj)
+nsp_parse_add_opname (plist, str)
+nsp_parse_add_string (plist, str)
+nsp_parse_append (plist, l)
+nsp_parse_eval_dir (Dir, Fname)
+nsp_parse_eval_dir_full (Dir)
+nsp_plist2smatrix (L, indent)
+nsp_plist_copy (L)
+nsp_plist_copy_no_local_vars (L)
+nsp_plist_destroy (List)
+nsp_plist_info (L, indent)
 nsp_plist_load
-nsp_plist_pretty_print
-nsp_plist_print
-nsp_plist_print_internal
+nsp_plist_pretty_print (L)
+nsp_plist_print (L, indent)
+nsp_plist_print_internal (L)
 nsp_plist_save
 nsp_pmatrix_add_columns
 nsp_pmatrix_add_rows

@@ -3,7 +3,6 @@ AllInterf
 BHashOperation
 BHash_Entry
 Cell
-CheckNonNegative
 ELT_TYPE
 Fconcat_d
 GR_INT
@@ -192,18 +191,6 @@ nsp_new_frame_with_local_vars
 nsp_new_string
 nsp_num_formats
 nsp_ops
-nsp_parse_add
-nsp_parse_add_comment
-nsp_parse_add_doublei
-nsp_parse_add_last
-nsp_parse_add_list
-nsp_parse_add_list1
-nsp_parse_add_name
-nsp_parse_add_name1
-nsp_parse_add_object
-nsp_parse_add_opname
-nsp_parse_add_string
-nsp_parse_append
 nsp_pcopy_polynom
 nsp_pmatrix_clone
 nsp_pow_cd_or_ci

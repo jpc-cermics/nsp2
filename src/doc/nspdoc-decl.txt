@@ -3269,6 +3269,26 @@ struct _nsp_sparse_triplet { /* used in mexlib */
 int l
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_parse_eval_file</NAME>
+<RETURNS>int </RETURNS>
+char *Str, int display,int echo, int errcatch, int pause
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_eval_from_string</NAME>
+<RETURNS>int </RETURNS>
+char *Str,int display,int echo, int errcatch,int pause
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_eval_from_smat</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *M,int display,int echo, int errcatch,int pause
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_eval_from_std</NAME>
+<RETURNS>int </RETURNS>
+int display
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_parse_eval_dir</NAME>
 <RETURNS>int </RETURNS>
 const char *Dir, char *Fname
@@ -3277,26 +3297,6 @@ const char *Dir, char *Fname
 <NAME>nsp_parse_eval_dir_full</NAME>
 <RETURNS>int </RETURNS>
 const char *Dir
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_parse_eval_from_std</NAME>
-<RETURNS>int </RETURNS>
-int display
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_parse_eval_from_smat</NAME>
-<RETURNS>int </RETURNS>
-NspSMatrix *M,int display,int echo, int error,int pause
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_parse_eval_file</NAME>
-<RETURNS>int </RETURNS>
-char *Str, int display,int echo, int error,int pause
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_parse_eval_from_string</NAME>
-<RETURNS>int </RETURNS>
-char *Str, int display,int echo, int error,int pause
 </FUNCTION>
 <TYPEDEF>
 <NAME>NspSMatrix</NAME>
@@ -4108,27 +4108,27 @@ AttrTab *T
 </MACRO>
 <MACRO>
 <NAME>CheckRhs</NAME>
-#define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
+#define CheckRhs(x,y) if ( rhs < x || rhs > y )				\
+    { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckLhs</NAME>
-#define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y )) \
-  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
+#define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y ))		\
+    { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
 </MACRO>
 <MACRO>
 <NAME>CheckStdRhs</NAME>
-#define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y ) \
+#define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y )		\
   { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckOptRhs</NAME>
-#define CheckOptRhs(x,y) if ( opt < x || opt > y ) \
+#define CheckOptRhs(x,y) if ( opt < x || opt > y )			\
   { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.fname);return RET_BUG;} 
 </MACRO>
 <ENUM>
 <NAME>int_types</NAME>
-typedef enum { 
+typedef enum _int_types{ 
   s_int,        /* scalar int */
   s_double,     /* scalar double */
   s_bool,       /* scalar bool   */
@@ -4159,13 +4159,16 @@ typedef enum {
 </ENUM>
 <STRUCT>
 <NAME>nsp_option</NAME>
-typedef struct { 
+</STRUCT>
+<STRUCT>
+<NAME>nsp_option</NAME>
+struct _nsp_option { 
   char *name;  /* options names */
   int_types type; /* types associated to each optional name */
   NspObject *obj;    /* array to store pointers to selected optional arguments 
 		  * (set to NULL) if optional argument is not found */
   int  position;     /* stack position of arguments */
-} nsp_option;
+};
 </STRUCT>
 <FUNCTION>
 <NAME>RetArgs</NAME>
@@ -4336,9 +4339,9 @@ Stack stack, int pos, int *dim
 </MACRO>
 <MACRO>
 <NAME>CheckDimProp</NAME>
-#define CheckDimProp(fname,pos1,pos2,log_exp) if ( log_exp ) \
-   { Scierror("%s: arguments %d and %d have incompatible size\n",fname,pos1,pos2); \
-     return RET_BUG;} 
+#define CheckDimProp(fname,pos1,pos2,log_exp) if ( log_exp )		\
+    { Scierror("%s: arguments %d and %d have incompatible size\n",fname,pos1,pos2); \
+      return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckSquare</NAME>

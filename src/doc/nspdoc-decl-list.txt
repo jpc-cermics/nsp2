@@ -687,12 +687,12 @@ nsp_sparse_triplet
 <SECTION>
 <FILE>parse</FILE>
 TokenLineSet
-nsp_parse_eval_dir
-nsp_parse_eval_dir_full
-nsp_parse_eval_from_std
-nsp_parse_eval_from_smat
 nsp_parse_eval_file
 nsp_parse_eval_from_string
+nsp_parse_eval_from_smat
+nsp_parse_eval_from_std
+nsp_parse_eval_dir
+nsp_parse_eval_dir_full
 </SECTION>
 
 <SECTION>
