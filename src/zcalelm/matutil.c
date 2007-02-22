@@ -1,16 +1,37 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 1998-2004 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- *--------------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 #include <string.h>
 #include "nsp/math.h"
 #include "nsp/object.h"
 #include "nsp/matutil.h"
 
-/*
- * A set of utilities used in matrix operations
- */
+/**
+ * SECTION:matutil
+ * @title: Matrix utilities
+ * @short_description: A set of utilities used in matrix operations
+ *
+ * <para>
+ * The following functions are used to convert given arrays on place 
+ * from one type to an other type.
+ * </para>
+ **/
 
 /**
  * nsp_double2int:
@@ -1373,7 +1394,7 @@ static void swap_double(double *m,int n,int i1, int j1, int i2, int j2)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns the order @n Franck matrix. 
+ * returns in @a the order @n Franck matrix. 
  * 
  * a(i,j)=n-j+1   si i <= j , 
  * a(j,j-1)=n-j , a(i,j)=0 if  i > j+1 
@@ -1396,7 +1417,7 @@ void nsp_franck_matrix(double *a,int n)
  * @a: a pointer to a double array which is to be filled
  * @n: the matrix dimension (@nx@n)
  * 
- * returns the matrix inverse of order @n Franck matrix. 
+ * returns in @a the matrix inverse of order @n Franck matrix. 
  * 
  **/
 
@@ -1430,7 +1451,7 @@ void nsp_franck_inverse_matrix(double *a,int n)
  * @n: the matrix dimension (@nx@n)
  * 
  * returns the  order @n Hilbert matrix. 
- * a(i,j)= 1/(i+j-1) (i=1,..,n and j=1,..,n)
+ * @a(i,j)= 1/(i+j-1) (i=1,..,n and j=1,..,n)
  * 
  **/
 
@@ -1448,10 +1469,10 @@ void nsp_hilbert_matrix(double *a,int n)
 
 /**
  * nsp_hilbert_inverse_matrix:
- * @a: 
- * @n: 
+ * @a: a pointer to a double array which is to be filled
+ * @n: the matrix dimension (@nx@n)
  * 
- * returns the inverse of order @n Hilbert matrix. 
+ * returns the inverse of order @n Hilbert matrix in @a.
  * 
  **/
 
