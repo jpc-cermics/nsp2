@@ -73,6 +73,7 @@ extern  sci_interface  pango_Interf ;extern  interface_info  pango_Interf_Info ;
 extern  sci_interface  Type_Interf ;extern  interface_info  Type_Interf_Info ;
 extern  sci_interface  Dcd_Interf ;extern  interface_info  Dcd_Interf_Info ;
 extern  sci_interface  Approx_Interf ;extern  interface_info  Approx_Interf_Info ;
+extern  sci_interface  Random_Interf ;extern  interface_info  Random_Interf_Info ;
 extern  sci_interface  Lapack_Interf ;extern  interface_info  Lapack_Interf_Info ;
 extern  sci_interface  Fft_Interf ;extern  interface_info  Fft_Interf_Info ;
 extern  sci_interface  Module_Interf ;extern  interface_info  Module_Interf_Info ;
@@ -153,6 +154,7 @@ InterfTab Interfaces[]={
   {Type_Interf,Type_Interf_Info},
   {Dcd_Interf , Dcd_Interf_Info },
   {Approx_Interf , Approx_Interf_Info },
+  {Random_Interf , Random_Interf_Info },
   {Lapack_Interf , Lapack_Interf_Info },
   {Fft_Interf , Fft_Interf_Info },
   {Module_Interf , Module_Interf_Info },
@@ -271,7 +273,7 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
   /* debug */ 
   static int first = 0;
   static char buf[128];
-  nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+/*   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf); */
   first=1; 
   strcpy(buf,NspFname(stack));
   
@@ -324,7 +326,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   /* debug */ 
   static int first = 0;
   static char buf[128];
-  nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+/*   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf); */
   first=1; 
   strcpy(buf,NspFname(stack));
   
