@@ -23,10 +23,10 @@
 #include "grand.h"
 
 double
-rand_gennor (double *av, double *sd)
+rand_gennor (double av, double sd)
 {
   double ret_val;
-  ret_val = *sd * rand_snorm () + *av;
+  ret_val = sd * rand_snorm () + av;
   return ret_val;
 }		
 

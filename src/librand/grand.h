@@ -22,7 +22,7 @@ extern double rand_genf (double *dfn, double *dfd);
 extern double rand_gengam (double *a, double *r__);
 extern double rand_gennch (double *df, double *xnonc);
 extern double rand_gennf (double *dfn, double *dfd, double *xnonc);
-extern double rand_gennor (double *av, double *sd);
+extern double rand_gennor (double av, double sd);
 extern double rand_genunf (double *low, double *high);
 extern int rand_ignuin (int a, int b);
 extern double rand_ranf (void);

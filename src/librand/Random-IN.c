@@ -455,7 +455,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if ( B < 0 ) 
 	{  Scierror("Error: SD < 0.0 \n");return RET_BUG;}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(&A,&B); }
+      for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(A,B); }
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
