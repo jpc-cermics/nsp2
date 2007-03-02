@@ -1,26 +1,32 @@
+/* ********************************************************************** */
+/*     DOUBLE PRECISION FUNCTION GENNOR( AV, SD ) */
+/*         GENerate random deviate from a NORmal distribution */
+/*                              Function */
+/*     Generates a single random deviate from a normal distribution */
+/*     with mean, AV, and standard deviation, SD. */
+/*                              Arguments */
+/*     AV --> Mean of the normal distribution. */
+/*                              DOUBLE PRECISION AV */
+/*     SD --> Standard deviation of the normal distribution. */
+/*                              DOUBLE PRECISION SD */
+/*     JJV                      (SD >= 0) */
+/*     GENNOR <-- Generated normal deviate. */
+/*                              DOUBLE PRECISION GENNOR */
+/*                              Method */
+/*     Renames SNORM from TOMS as slightly modified by BWB to use RANF */
+/*     instead of SUNIF. */
+/*     For details see: */
+/*               Ahrens, J.H. and Dieter, U. */
+/*               Extensions of Forsythe's Method for Random */
+/*               Sampling from the Normal Distribution. */
+/*               Math. Comput., 27,124 (Oct. 1973), 927 - 937. */
 #include "grand.h"
 
-
-/**
- * rand_gennor:
- * @av: Mean of the normal distribution
- * @sd: Standard deviation of the normal distribution.
- * 
- *     generates a single random deviate from a normal distribution 
- *     with mean, @av, and standard deviation, @sd. 
- *     renames snorm from toms as slightly modified by bwb to use ranf 
- *     instead of sunif. 
- *     for details see: 
- *               ahrens, j.h. and dieter, u. 
- *               extensions of forsythe's method for random 
- *               sampling from the normal distribution. 
- *               math. comput., 27,124 (oct. 1973), 927 - 937. 
- * 
- * Return value: 
- **/
-
-double rand_gennor (double av, double sd)
+double
+rand_gennor (double *av, double *sd)
 {
-  return  sd * rand_snorm () + av;
+  double ret_val;
+  ret_val = *sd * rand_snorm () + *av;
+  return ret_val;
 }		
 

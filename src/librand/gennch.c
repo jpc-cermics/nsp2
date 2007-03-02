@@ -73,7 +73,7 @@ L20:
   d__1 = (*df - 1.) / 2.;
 /* Computing 2nd power */
   d__2 = rand_snorm () + sqrt (*xnonc);
-  ret_val = rand_sgamma (d__1) * 2. + d__2 * d__2;
+  ret_val = rand_sgamma (&d__1) * 2. + d__2 * d__2;
 L30:
   return ret_val;
 }				/* gennch_ */

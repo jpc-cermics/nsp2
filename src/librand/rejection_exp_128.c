@@ -105,7 +105,7 @@ const double rej_exp_y[128]={
     0.00487233313651831522,0.00346489667612250272,0.00216530760995327540,0.00100948486124341257
 };
 
-static double rand_exp_core()
+double rand_exp_core()
 {
   int k;
   double u, y;

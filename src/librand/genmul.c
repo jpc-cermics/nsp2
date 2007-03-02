@@ -88,7 +88,7 @@ rand_genmul (int *n, double *p, int *ncat, int *ix)
   for (icat = 1; icat <= i__1; ++icat)
     {
       prob = p[icat] / sum;
-      ix[icat] = rand_ignbin (ntot, prob);
+      ix[icat] = rand_ignbin (&ntot, &prob);
       ntot -= ix[icat];
       if (ntot <= 0)
 	{

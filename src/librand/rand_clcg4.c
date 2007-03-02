@@ -9,7 +9,7 @@
  *
  *  NOTES
  *     The original code was slightly modified by Bruno Pincon for inclusion
- *     in Scilab. 
+ *     in Scilab then nsp. 
  *
  *     list of main modifs :
  *
@@ -43,15 +43,29 @@
  *         to have some "uniformity" with all the others generators (which
  *         gives integers). Also it is better for the uin(a,b) generation
  *         to start from integers.
+ *
+ *       - now the current virtual generator (g) is a static private variable of
+ *         this module.
+ *
  */
+/* ***************************************************************************** */
+/* Important note : P. L'Ecuyer authorizes the use of this code under GNU-GPL    */
+/* (personnal communication between P. L'Ecuyer and me (B.P.)                    */
+/*********************************************************************************/
 
 
 /*---------------------------------------------------------------------*/
 /* clcg4.c   Implementation module                                     */
 /*---------------------------------------------------------------------*/
-#include <math.h>             /* for floor */
 #include "grand.h"
-#include "rand_clcg4.h"
+#include "basic_generators.h"
+
+NspRandomGen Clcg4 = { CLCG4 , clcg4, "clcg4", 4, 
+		       2147483646ul,
+		       4.6566128752457969e-10,
+		       get_state_clcg4, 
+		       set_state_clcg4, 
+		       set_state_clcg4_simple };
 
 /***********************************************************************/
 /* Private part.                                                       */
@@ -69,6 +83,9 @@ static long Ig[4][Maxgen+1], Lg[4][Maxgen+1], Cg[4][Maxgen+1];
 static int  is_init = 0;
 static long v_default = 31;
 static long w_default = 41;
+static int g = 0;  /* the current virtual generator */
+
+static double max_int_gen[4] = {2147483646, 2147483542, 2147483422, 2147483322};
 
 static long MultModM (long s, long t, long M)
 /* Returns (s*t) MOD M.  Assumes that -M < s < M and -M < t < M.    */
@@ -125,7 +142,7 @@ static void comp_aw_and_avw(long v, long w)
 
 static void init_clcg4(long v, long w)
 {
-  /* currently the scilab interface don't let the user chooses
+  /* currently the nsp interface don't let the user chooses
    * v and w (always v_default and w_default) so this routine
    * is in the "private" part (also because initialisation is
    * always perform inside this module, depending of the var
@@ -133,21 +150,17 @@ static void init_clcg4(long v, long w)
    */
   double sd[4] = {11111111., 22222222., 33333333., 44444444.};
   comp_aw_and_avw(v, w);
-  set_initial_seed_clcg4(sd[0], sd[1], sd[2], sd[3]);
+  set_initial_seed_clcg4(sd);
 }
 
-static int verif_seeds_clcg4(double s0, double s1, double s2, double s3)
+static int verif_seeds_clcg4(double *s)
 {
   /* verify that the seeds are "integers" and are in the good range */
-  if ( s0 == floor(s0) && s1 == floor(s1) &&
-       s2 == floor(s2) && s3 == floor(s3) &&
-       1 <= s0  &&  s0 <= 2147483646      &&
-       1 <= s1  &&  s1 <= 2147483542      &&
-       1 <= s2  &&  s2 <= 2147483422      &&
-       1 <= s3  &&  s3 <= 2147483322 )
-    return OK;
-  else
-    return FAIL;
+  int i;
+  for ( i = 0 ; i < 4 ; i++ )
+    if ( s[i] != floor(s[i]) || s[i] < 1 || s[i] > max_int_gen[i] )
+      return FAIL;
+  return OK;
 }
 
 static void display_info_clcg4()
@@ -160,23 +173,44 @@ static void display_info_clcg4()
 }
 
 
+static int four_seed_from_one(double seed, long s[])
+{
+  int k;
+  unsigned long s_test;
+
+  if ( seed != floor(seed) || seed < 0 || seed >  4294967295.0 )
+    {
+      Scierror("bad simple seed for clcg4, must be an integer in  [0,2^32-1]\n");
+      return FAIL;
+    }
+  s_test = (unsigned long) seed;
+  for ( k = 0 ; k < 4 ; k++ )
+    {
+      do
+	s_test = randbcpl(s_test);
+      while ( s_test < 1 || (double) s_test > max_int_gen[k] );
+      s[k] = (long) s_test;
+    }
+  return OK;
+}
+
 /*---------------------------------------------------------------------*/
 /* Public part.                                                        */
 /*---------------------------------------------------------------------*/
 
 
-int set_seed_clcg4(int g, double s0, double s1, double s2, double s3)
+int set_state_clcg4(double *s)
 {
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
 
-  if ( verif_seeds_clcg4(s0, s1, s2, s3) == OK )
+  if ( verif_seeds_clcg4(s) == OK )
     {
-      Ig [0][g] = (long) s0; Ig [1][g] = (long) s1;
-      Ig [2][g] = (long) s2; Ig [3][g] = (long) s3;
-      init_generator_clcg4(g, InitialSeed);
-      Scierror(" => be aware that you have may lost synchronization\n");
-      Scierror("    between the virtual gen %d and the others !\n", g);
-      Scierror("    use grand(\"setall\", s1, s2, s3, s4) or grand(\"setall\",[s1,s2,s3,s4]) if you want recover it.\n");
+      Ig [0][g] = (long) s[0]; Ig [1][g] = (long) s[1];
+      Ig [2][g] = (long) s[2]; Ig [3][g] = (long) s[3];
+      init_generator_clcg4(InitialSeed);
+/*       Sciprintf(" => be aware that you have may lost synchronization\n"); */
+/*       Sciprintf("    between the virtual gen %d and the others !\n", g); */
+/*       Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
       return OK;
     }
   else
@@ -186,14 +220,48 @@ int set_seed_clcg4(int g, double s0, double s1, double s2, double s3)
     }
 }
 
-void get_state_clcg4(int g, double s[4])
+int set_state_clcg4_simple(double s0)
+{
+  long s[4];
+
+  if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
+
+  if ( four_seed_from_one(s0, s) == FAIL )
+    return FAIL;
+
+  Ig [0][g] = s[0]; Ig [1][g] = s[1];
+  Ig [2][g] = s[2]; Ig [3][g] = s[3];
+  init_generator_clcg4(InitialSeed);
+/*   Sciprintf(" => be aware that you have may lost synchronization\n"); */
+/*   Sciprintf("    between the virtual gen %d and the others !\n", g); */
+/*   Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
+  return OK;
+}
+
+int get_current_clcg4(void)
+{
+  return g;
+}
+
+int set_current_clcg4(int new_clcg4_gen)
+{
+  if ( new_clcg4_gen < 0 || new_clcg4_gen > Maxgen )
+    {
+      Scierror("Error: bad virtual number generator %d (must be in [0,%d])\n", new_clcg4_gen, Maxgen);
+      return FAIL;
+    }
+  g = new_clcg4_gen;
+  return OK;
+}
+
+void get_state_clcg4(double *s)
 {
   int j;
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
   for (j = 0; j < 4; j++)  s [j] = (double) Cg [j][g];
 }
 
-void init_generator_clcg4(int g, SeedType Where)
+void init_generator_clcg4(SeedType Where)
 {
   int j;
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
@@ -212,7 +280,7 @@ void init_generator_clcg4(int g, SeedType Where)
     }
 }
 
-void advance_state_clcg4(int g, int k)
+void advance_state_clcg4(int k)
 {
   long int b[4];
   int i, j;
@@ -226,37 +294,42 @@ void advance_state_clcg4(int g, int k)
 	b[j] = MultModM( b[j], b[j], m[j]);
       Ig[j][g] = MultModM ( b[j], Cg[j][g], m[j] );
     }
-  init_generator_clcg4(g, InitialSeed);
+  init_generator_clcg4(InitialSeed);
 }
   
-int set_initial_seed_clcg4(double s0, double s1, double s2, double s3)
+int set_initial_seed_clcg4(double *s)
 {
-  int g, j;
+  int g_save, j;
 
   if (! is_init )  comp_aw_and_avw(v_default,w_default);
 
-  if ( verif_seeds_clcg4(s0, s1, s2, s3) == FAIL)
+  if ( verif_seeds_clcg4(s) == FAIL )
     {
       display_info_clcg4();
       return FAIL;
     };
 
   is_init = 1;
-  Ig [0][0] = (long) s0;
-  Ig [1][0] = (long) s1;
-  Ig [2][0] = (long) s2;
-  Ig [3][0] = (long) s3;
-  init_generator_clcg4(0, InitialSeed);
+
+  g_save = g;
+  g = 0;
+  Ig [0][g] = (long) s[0];
+  Ig [1][g] = (long) s[1];
+  Ig [2][g] = (long) s[2];
+  Ig [3][g] = (long) s[3];
+  init_generator_clcg4(InitialSeed);
   for (g = 1; g <= Maxgen; g++)
     {
       for (j = 0; j < 4; j++)
 	Ig [j][g] = MultModM (avw [j], Ig [j][g-1], m [j]);
-      init_generator_clcg4(g, InitialSeed);
+      init_generator_clcg4(InitialSeed);
     }
+
+  g = g_save;
   return OK;
 }
 
-unsigned long clcg4(int g)
+unsigned long clcg4()
 {
   /* Modif Bruno : the generator have now the form (1) in place of (2) */
 
@@ -285,25 +358,16 @@ unsigned long clcg4(int g)
   /*  final step */
   u = (double)(Cg[0][g] - Cg[1][g]) + (double)(Cg[2][g] - Cg[3][g]);
   /*  we must do  u mod 2147483647 with u in [- 4294966863 ; 4294967066 ] : */
-  if (u < 0) u += 2147483647;
-  if (u < 0) u += 2147483647;
-  if (u >= 2147483647) u -= 2147483647;
-  if (u >= 2147483647) u -= 2147483647;
-
+  if (u < 0.0) 
+    {
+      u += 2147483647.0;
+      if (u < 0.0) u += 2147483647.0;
+    }
+  else if (u >= 2147483647.0) 
+    {
+      u -= 2147483647.0;
+      if (u >= 2147483647.0) u -= 2147483647.0;
+    }
   return ((unsigned long) u );
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

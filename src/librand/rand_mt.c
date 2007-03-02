@@ -51,12 +51,15 @@
  *   fix a bug (like the 1568 of scilab) Bruno Pinçon Sept 2005
  */
 
-#include <math.h>
-#include <nsp/math.h>
 #include "grand.h"
+#include "basic_generators.h"
 
-int set_state_mt_simple(double s);
-
+NspRandomGen MersenneTwister = { MT , randmt, "mt", 625, 
+				 4294967295ul,
+				 2.3283064365386963e-10,
+				 get_state_mt, 
+				 set_state_mt, 
+				 set_state_mt_simple };
 
 /* Period parameters */  
 #define N 624
@@ -156,7 +159,7 @@ int set_state_mt_simple(double s)
  *   can take any values except all zeros.                            
  */
 
-int set_state_mt(double seed_array[])
+int set_state_mt(double *seed_array)
 
 {
   int i, mti_try;
@@ -176,7 +179,7 @@ int set_state_mt(double seed_array[])
 
 
 /*  To return the state at the scilab level  */
-void get_state_mt(double state[])
+void get_state_mt(double *state)
 {
   int i;
 

@@ -104,7 +104,7 @@ double rej_nor_y[128]={
     0.00472326861457955805,0.00344067147898109344,0.00221372880732917423,0.00106502791455805240
 };
 
-static double rand_nor_core()
+double rand_nor_core()
 {
   int k, positif;
   double u, v, y;

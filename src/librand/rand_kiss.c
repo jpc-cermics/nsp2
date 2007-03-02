@@ -22,9 +22,15 @@
  *         modulo 2^32) 
  *
  */
+#include "grand.h"
+#include "basic_generators.h"
 
-#include <math.h>             /* to use floor    */
-#include "grand.h" 
+NspRandomGen Kiss = { KISS , kiss, "kiss", 4, 
+		      4294967295ul,
+		      2.3283064365386963e-10,
+		      get_state_kiss, 
+		      set_state_kiss, 
+		      set_state_kiss_simple };
 
 /* The Marsaglia 's macros : */
 #define znew  (z=36969*(z&65535)+(z>>16))
@@ -32,39 +38,49 @@
 #define MWC   ((znew<<16)+wnew )
 #define CONG  (jcong=69069*jcong+1234567)
 #define SHR3  (jsr^=(jsr<<17), jsr^=(jsr>>13), jsr^=(jsr<<5))
-#define KISS  ((MWC^CONG)+SHR3)
+#define KISSGEN  ((MWC^CONG)+SHR3)
 
 /*  the kiss 's state  (any int in [0,2^32-1] are OK ?) */
 static unsigned long z=362436069, w=521288629, jsr=123456789, jcong=380116160;
 
 unsigned long kiss()
 {
-  return ( KISS );
+  return KISSGEN;
 }
 
-int set_state_kiss(double g1, double g2, double g3, double g4)
+int set_state_kiss(double *g)
 {
-  if (g1 == floor(g1) && g2 == floor(g2) && 
-      g3 == floor(g3) && g4 == floor(g4) &&  
-      0.0 <= g1 && g1 <= 4294967295.0 &&
-      0.0 <= g2 && g2 <= 4294967295.0 &&
-      0.0 <= g3 && g3 <= 4294967295.0 &&
-      0.0 <= g4 && g4 <= 4294967295.0 )
+  int k;
+  for ( k = 0 ; k < 4 ; k++ )
+    if ( g[k] != floor(g[k]) || g[k] < 0.0 || g[k] > 4294967295.0 )
+      {
+	Scierror("bad seeds for kiss, must be integers in [0,2^32-1]\n");
+	return FAIL;
+      }
+
+  z = (unsigned long) g[0];
+  w = (unsigned long) g[1];
+  jsr = (unsigned long) g[2];
+  jcong = (unsigned long) g[3];
+  return OK;
+}
+
+int set_state_kiss_simple(double g)
+{
+  if ( g != floor(g) || g < 0.0 || g > 4294967295.0 )
     {
-          z = (unsigned long) g1;
-          w = (unsigned long) g2;
-        jsr = (unsigned long) g3;
-      jcong = (unsigned long) g4;
-      return OK;
-    }
-  else
-    {
-      Scierror("bad seeds for kiss, must be integers in [0,2^32-1]\n");
+      Scierror("bad simple seed for kiss, must be an integer in [0,2^32-1]\n");
       return FAIL;
     }
+
+  z = randbcpl( (unsigned long) g );
+  w = randbcpl(z);
+  jsr = randbcpl(w);
+  jcong = randbcpl(jsr);
+  return OK;
 }
 
-void get_state_kiss(double g[])
+void get_state_kiss(double *g)
 {
   g[0] = (double) z;
   g[1] = (double) w;

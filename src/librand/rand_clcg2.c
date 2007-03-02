@@ -26,9 +26,15 @@
  *     (see NOTE some lines after)
  *
  */
-
-#include <math.h>
 #include "grand.h"
+#include "basic_generators.h"
+
+NspRandomGen Clcg2 = { CLCG2 , clcg2, "clcg2", 2, 
+		       2147483561ul,
+		       4.6566130595601735e-10,
+		       get_state_clcg2, 
+		       set_state_clcg2, 
+		       set_state_clcg2_simple };
 
 /* initial default state (seeds) : */
 static long s1 = 1234567890 ;
@@ -64,23 +70,46 @@ unsigned long clcg2()
   return( (unsigned long) z );
 }
 
-int set_state_clcg2(double g1, double g2)
+int set_state_clcg2(double g[])
 {
   
-  if ( g1 == floor(g1) && g2 == floor(g2)  && 
-       1 <= g1 && g1 <= 2147483562    &&
-       1 <= g2 && g2 <= 2147483398 )
+  if ( g[0] == floor(g[0]) && g[1] == floor(g[1])  && 
+       1 <= g[0] && g[0] <= 2147483562    &&
+       1 <= g[1] && g[1] <= 2147483398 )
     {
-      s1 = (long) g1;
-      s2 = (long) g2;
+      s1 = (long) g[0];
+      s2 = (long) g[1];
       return OK;
     }
   else
     {
       Scierror("bad seeds for clcg2, must be integers with  s1 in [1, 2147483562]\n");
-      Scierror("                                      and  s2 in [1, 2147483398]\n");
+      Scierror("                                       and  s2 in [1, 2147483398]\n");
       return FAIL;
     }
+}
+int set_state_clcg2_simple(double seed)
+{
+  unsigned long s_test;
+  
+  if ( seed != floor(seed) || seed < 0  || seed > 4294967295.0 )
+    {
+      Scierror("bad simple seed for clcg2, must be an integer in  [0,2^32-1]\n");
+      return FAIL;
+    }
+
+  s_test = (unsigned long) seed;
+  do
+    s_test = randbcpl( s_test );
+  while ( s_test < 1 || s_test > 2147483562 );
+  s1 = (long) s_test;
+
+  do
+    s_test = randbcpl( s_test );
+  while ( s_test < 1 || s_test > 2147483398 );
+  s2 = (long) s_test;
+
+  return OK;
 }
 
 void get_state_clcg2(double g[])
