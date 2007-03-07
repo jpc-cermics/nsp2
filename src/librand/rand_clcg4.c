@@ -98,33 +98,33 @@ static long MultModM (long s, long t, long M)
   if (s < H)  { S0 = s;  R = 0; }
   else
     {
-    S1 = s/H;  S0 = s - H*S1;
-    qh = M/H;  rh = M - H*qh;
-    if (S1 >= H)
-      {
-      S1 -= H;   k = t/qh;   R = H * (t - k*qh) - k*rh;
-      while (R < 0)  R += M;
-      }
-    else R = 0;
-    if (S1 != 0)
-      {
-      q = M/S1;   k = t/q;   R -= k * (M - S1*q);
-      if (R > 0)  R -= M;
-      R += S1*(t - k*q);
-      while (R < 0)  R += M;
-      }
-    k = R/qh;   R = H * (R - k*qh) - k*rh;
-    while (R < 0) R += M;
+      S1 = s/H;  S0 = s - H*S1;
+      qh = M/H;  rh = M - H*qh;
+      if (S1 >= H)
+	{
+	  S1 -= H;   k = t/qh;   R = H * (t - k*qh) - k*rh;
+	  while (R < 0)  R += M;
+	}
+      else R = 0;
+      if (S1 != 0)
+	{
+	  q = M/S1;   k = t/q;   R -= k * (M - S1*q);
+	  if (R > 0)  R -= M;
+	  R += S1*(t - k*q);
+	  while (R < 0)  R += M;
+	}
+      k = R/qh;   R = H * (R - k*qh) - k*rh;
+      while (R < 0) R += M;
     }
   if (S0 != 0)
     {
-    q = M/S0;   k = t/q;   R -= k* (M - S0*q);
-    if (R > 0)  R -= M;
-    R += S0 * (t - k*q);
-    while (R < 0)  R += M;
+      q = M/S0;   k = t/q;   R -= k* (M - S0*q);
+      if (R > 0)  R -= M;
+      R += S0 * (t - k*q);
+      while (R < 0)  R += M;
     }
   return R;
-  }
+}
 
 static void comp_aw_and_avw(long v, long w)
 {
@@ -208,9 +208,9 @@ int set_state_clcg4(double *s)
       Ig [0][g] = (long) s[0]; Ig [1][g] = (long) s[1];
       Ig [2][g] = (long) s[2]; Ig [3][g] = (long) s[3];
       init_generator_clcg4(InitialSeed);
-/*       Sciprintf(" => be aware that you have may lost synchronization\n"); */
-/*       Sciprintf("    between the virtual gen %d and the others !\n", g); */
-/*       Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
+      /*       Sciprintf(" => be aware that you have may lost synchronization\n"); */
+      /*       Sciprintf("    between the virtual gen %d and the others !\n", g); */
+      /*       Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
       return OK;
     }
   else
@@ -232,9 +232,9 @@ int set_state_clcg4_simple(double s0)
   Ig [0][g] = s[0]; Ig [1][g] = s[1];
   Ig [2][g] = s[2]; Ig [3][g] = s[3];
   init_generator_clcg4(InitialSeed);
-/*   Sciprintf(" => be aware that you have may lost synchronization\n"); */
-/*   Sciprintf("    between the virtual gen %d and the others !\n", g); */
-/*   Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
+  /*   Sciprintf(" => be aware that you have may lost synchronization\n"); */
+  /*   Sciprintf("    between the virtual gen %d and the others !\n", g); */
+  /*   Sciprintf("    use grand(\"setall\", s) if you want recover it.\n"); */
   return OK;
 }
 

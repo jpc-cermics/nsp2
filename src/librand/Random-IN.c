@@ -328,8 +328,8 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i]= rand_sgamma(&A);
-      for ( i=0 ; i < M->mn ; i++)  M->R[i] /= (M->R[i] +  rand_sgamma(&B));
+      for ( i=0 ; i < M->mn ; i++)  M->R[i]= rand_sgamma(A);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] /= (M->R[i] +  rand_sgamma(B));
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -348,7 +348,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genf(&A,&B);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genf(A,B);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -421,7 +421,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  /** WARNING : order is changed in parameters for 
 	   *    compatibility between Rand(...'gam',..) and cdfgam 
 	   **/
-	  M->R[i]= rand_gengam(&B,&A);
+	  M->R[i]= rand_gengam(B,A);
 	}
       MoveObj(stack,1,(NspObject *) M);
       return 1;
@@ -582,7 +582,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)   M->R[i]= (double) rand_ignnbn(&iA,&B);
+      for ( i=0 ; i < M->mn ; i++)   M->R[i]= (double) rand_ignnbn(iA,B);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -895,7 +895,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       double A;
       if ( rhs != suite ) 
 	{ Scierror("Error: Missing Df for chi-square law\n");
-	return RET_BUG;
+	  return RET_BUG;
 	}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if  ( A <= 0.0)
@@ -903,7 +903,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: Rand: DF <= 0 \n");return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_genchi(&A);
+      for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_genchi(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -921,7 +921,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: Av < 0 \n"); return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(&A);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -974,7 +974,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(&A);
+      for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(A);
       MoveObj(stack,1,(NspObject *) M);
       return 1;
     }
@@ -1057,34 +1057,34 @@ int int_nsp_rand_discrete_guide(Stack stack, int rhs, int opt, int lhs)
       if ( (str = GetString(stack,1)) == NULL ) 
 	return RET_BUG;
       if ( strcmp(str,"setup")==0) 
-       {
-	 if ( rhs != 2) 
-	   {
-	     Scierror("%s: two arguments expected\n",NspFname(stack));
-	     return RET_BUG;
-	   }
+	{
+	  if ( rhs != 2) 
+	    {
+	      Scierror("%s: two arguments expected\n",NspFname(stack));
+	      return RET_BUG;
+	    }
 	 
-	 if ( (p = GetRealMat(stack,2)) == NULLMAT )  
-	   return RET_BUG;
-	 CheckVector(NspFname(stack), 2, p);
+	  if ( (p = GetRealMat(stack,2)) == NULLMAT )  
+	    return RET_BUG;
+	  CheckVector(NspFname(stack), 2, p);
 
-	 if ( (q  = nsp_matrix_create(NVOID,'r',p->mn+1,1)) == NULLMAT )
-	   return RET_BUG;
+	  if ( (q  = nsp_matrix_create(NVOID,'r',p->mn+1,1)) == NULLMAT )
+	    return RET_BUG;
 
-	 if ( (key  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
-	   return RET_BUG;
+	  if ( (key  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
+	    return RET_BUG;
 
-	 if ( nsp_guide_table_method(p->R, q->R, (int *) key->B, p->mn) == FAIL )
-	   {
-	     nsp_matrix_destroy(q); nsp_bmatrix_destroy(key); 
-	     Scierror("%s: uncorrect probability vector \n",NspFname(stack));
-	     return RET_BUG;
-	   }
+	  if ( nsp_guide_table_method(p->R, q->R, (int *) key->B, p->mn) == FAIL )
+	    {
+	      nsp_matrix_destroy(q); nsp_bmatrix_destroy(key); 
+	      Scierror("%s: uncorrect probability vector \n",NspFname(stack));
+	      return RET_BUG;
+	    }
 
-	 MoveObj(stack,1,(NspObject *) q);
-	 MoveObj(stack,2,(NspObject *) key);
-	 return 2;
-       }
+	  MoveObj(stack,1,(NspObject *) q);
+	  MoveObj(stack,2,(NspObject *) key);
+	  return 2;
+	}
       else
 	{
 	  Scierror("%s: uncorrect first argument\n",NspFname(stack));
@@ -1101,20 +1101,20 @@ int int_nsp_rand_discrete_guide(Stack stack, int rhs, int opt, int lhs)
 	  if ( GetScalarInt(stack, 2, &n) == FAIL ) return RET_BUG;
 	  CheckNonNegative(NspFname(stack), n, 2);
 
-	 if ( (q = GetRealMat(stack,3)) == NULLMAT )  
-	   return RET_BUG;
+	  if ( (q = GetRealMat(stack,3)) == NULLMAT )  
+	    return RET_BUG;
 
-	 if ( (key = GetBMat(stack,4)) == NULLBMAT )  
-	   return RET_BUG;
+	  if ( (key = GetBMat(stack,4)) == NULLBMAT )  
+	    return RET_BUG;
 	  
-	 if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
-	   return RET_BUG;
+	  if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
+	    return RET_BUG;
 
-	 for ( i = 0 ; i < M->mn ; i++ )
-	   M->R[i] = (double) nsp_rand_discrete_guide(q->R, (int *)key->B, key->mn);
+	  for ( i = 0 ; i < M->mn ; i++ )
+	    M->R[i] = (double) nsp_rand_discrete_guide(q->R, (int *)key->B, key->mn);
 
-	 MoveObj(stack,1,(NspObject *) M);
-	 return 1;
+	  MoveObj(stack,1,(NspObject *) M);
+	  return 1;
 	}
       else
 	{
@@ -1139,34 +1139,34 @@ int int_nsp_rand_discrete_alias(Stack stack, int rhs, int opt, int lhs)
       if ( (str = GetString(stack,1)) == NULL ) 
 	return RET_BUG;
       if ( strcmp(str,"setup")==0) 
-       {
-	 if ( rhs != 2) 
-	   {
-	     Scierror("%s: two arguments expected\n",NspFname(stack));
-	     return RET_BUG;
-	   }
+	{
+	  if ( rhs != 2) 
+	    {
+	      Scierror("%s: two arguments expected\n",NspFname(stack));
+	      return RET_BUG;
+	    }
 	 
-	 if ( (p = GetRealMat(stack,2)) == NULLMAT )  
-	   return RET_BUG;
-	 CheckVector(NspFname(stack), 2, p);
+	  if ( (p = GetRealMat(stack,2)) == NULLMAT )  
+	    return RET_BUG;
+	  CheckVector(NspFname(stack), 2, p);
 
-	 if ( (q  = nsp_matrix_create(NVOID,'r',p->mn,1)) == NULLMAT )
-	   return RET_BUG;
+	  if ( (q  = nsp_matrix_create(NVOID,'r',p->mn,1)) == NULLMAT )
+	    return RET_BUG;
 
-	 if ( (j  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
-	   return RET_BUG;
+	  if ( (j  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
+	    return RET_BUG;
 
-	 if ( nsp_alias_method(p->R, q->R, (int *) j->B, p->mn) == FAIL )
-	   {
-	     nsp_matrix_destroy(q); nsp_bmatrix_destroy(j); 
-	     Scierror("%s: uncorrect probability vector \n",NspFname(stack));
-	     return RET_BUG;
-	   }
+	  if ( nsp_alias_method(p->R, q->R, (int *) j->B, p->mn) == FAIL )
+	    {
+	      nsp_matrix_destroy(q); nsp_bmatrix_destroy(j); 
+	      Scierror("%s: uncorrect probability vector \n",NspFname(stack));
+	      return RET_BUG;
+	    }
 
-	 MoveObj(stack,1,(NspObject *) q);
-	 MoveObj(stack,2,(NspObject *) j);
-	 return 2;
-       }
+	  MoveObj(stack,1,(NspObject *) q);
+	  MoveObj(stack,2,(NspObject *) j);
+	  return 2;
+	}
       else
 	{
 	  Scierror("%s: uncorrect first argument\n",NspFname(stack));
@@ -1183,20 +1183,20 @@ int int_nsp_rand_discrete_alias(Stack stack, int rhs, int opt, int lhs)
 	  if ( GetScalarInt(stack, 2, &n) == FAIL ) return RET_BUG;
 	  CheckNonNegative(NspFname(stack), n, 2);
 
-	 if ( (q = GetRealMat(stack,3)) == NULLMAT )  
-	   return RET_BUG;
+	  if ( (q = GetRealMat(stack,3)) == NULLMAT )  
+	    return RET_BUG;
 
-	 if ( (j = GetBMat(stack,4)) == NULLBMAT )  
-	   return RET_BUG;
+	  if ( (j = GetBMat(stack,4)) == NULLBMAT )  
+	    return RET_BUG;
 	  
-	 if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
-	   return RET_BUG;
+	  if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
+	    return RET_BUG;
 
-	 for ( i = 0 ; i < M->mn ; i++ )
-	   M->R[i] = (double) nsp_rand_discrete_alias(q->R, (int *)j->B, j->mn);
+	  for ( i = 0 ; i < M->mn ; i++ )
+	    M->R[i] = (double) nsp_rand_discrete_alias(q->R, (int *)j->B, j->mn);
 
-	 MoveObj(stack,1,(NspObject *) M);
-	 return 1;
+	  MoveObj(stack,1,(NspObject *) M);
+	  return 1;
 	}
       else
 	{
@@ -1207,12 +1207,12 @@ int int_nsp_rand_discrete_alias(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Random_func[]={
-    {"grand", int_nsp_grand},
-/*     {"rand", int_nsp_rand}, */
-    {"randn", int_nsp_randn},
-    {"rand_discrete_alias", int_nsp_rand_discrete_alias},
-    {"rand_discrete_guide", int_nsp_rand_discrete_guide},
-    {(char *) 0, NULL}
+  {"grand", int_nsp_grand},
+  /*     {"rand", int_nsp_rand}, */
+  {"randn", int_nsp_randn},
+  {"rand_discrete_alias", int_nsp_rand_discrete_alias},
+  {"rand_discrete_guide", int_nsp_rand_discrete_guide},
+  {(char *) 0, NULL}
 };
 
 int Random_Interf(int i, Stack stack, int rhs, int opt, int lhs)

@@ -21,14 +21,14 @@
  *     Directly generates ratio of chisquare variates 
  */
 
-double rand_genf(double *dfn, double *dfd)
+double rand_genf(double dfn, double dfd)
 {
   double d1, xden, xnum;
   /*     JJV changed this code to call sgamma directly */
-  d1 = *dfn / 2.0E0;
-  xnum = rand_sgamma(&d1) * 2.0E0 / *dfn;
-  d1 = *dfd / 2.0E0;
-  xden = rand_sgamma(&d1) * 2.0E0 / *dfd;
+  d1 = dfn / 2.0E0;
+  xnum = rand_sgamma(d1) * 2.0E0 / dfn;
+  d1 = dfd / 2.0E0;
+  xden = rand_sgamma(d1) * 2.0E0 / dfd;
   /*     JJV changed constant so that it will not underflow at compile time */
   /*     JJV while not slowing generator by using double precision or logs. */
   /*      IF (.NOT. (xden.LE. (1.0E-38*xnum))) GO TO 20 */

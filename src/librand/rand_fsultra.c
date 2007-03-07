@@ -1,57 +1,57 @@
 /* 
-FSU - ULTRA	The greatest random number generator that ever was
-		or ever will be.  Way beyond Super-Duper.
-		(Just kidding, but we think its a good one.)
+   FSU - ULTRA	The greatest random number generator that ever was
+   or ever will be.  Way beyond Super-Duper.
+   (Just kidding, but we think its a good one.)
 
-Authors:	Arif Zaman (arif@stat.fsu.edu) and
-		George Marsaglia (geo@stat.fsu.edu).
+   Authors:	Arif Zaman (arif@stat.fsu.edu) and
+   George Marsaglia (geo@stat.fsu.edu).
 
-Date:		27 May 1992
+   Date:		27 May 1992
 
-Version:	1.05
+   Version:	1.05
 
-Copyright:	To obtain permission to incorporate this program into
-		any commercial product, please contact the authors at
-		the e-mail address given above or at
+   Copyright:	To obtain permission to incorporate this program into
+   any commercial product, please contact the authors at
+   the e-mail address given above or at
 
-		Department of Statistics and
-		Supercomputer Computations Research Institute
-		Florida State University
-		Tallahassee, FL 32306.
+   Department of Statistics and
+   Supercomputer Computations Research Institute
+   Florida State University
+   Tallahassee, FL 32306.
 
-See Also:	README		for a brief description
-		ULTRA.DOC	for a detailed description
+   See Also:	README		for a brief description
+   ULTRA.DOC	for a detailed description
 
------------------------------------------------------------------------
+   -----------------------------------------------------------------------
 */ 
 /*
-   File: ULTRA.C
+  File: ULTRA.C
 
-   This is the ULTRA random number generator written entirely in C.
+  This is the ULTRA random number generator written entirely in C.
 
-   This may serve as a model for an assembler version of this routine.
-   The programmer should avoid simply duplicating and instead use the
-   usual assembler features to increase the speed of this routine.
+  This may serve as a model for an assembler version of this routine.
+  The programmer should avoid simply duplicating and instead use the
+  usual assembler features to increase the speed of this routine.
 
-   Especially the subroutine SWB should be replaced by the one
-   machine instruction (usually called subtract-with-borrow) that
-   is available in almost every hardware.
+  Especially the subroutine SWB should be replaced by the one
+  machine instruction (usually called subtract-with-borrow) that
+  is available in almost every hardware.
 
-   For people not familiar with 8086 assembler, it may help to
-   consult this when reading the assembler code. This program should
-   be a dropin replacement for the assembler versions, but is about
-   half as fast.
+  For people not familiar with 8086 assembler, it may help to
+  consult this when reading the assembler code. This program should
+  be a dropin replacement for the assembler versions, but is about
+  half as fast.
 */
 
 /* Slight modifications by Bruno Pincon (4 december 2004) for inclusion 
    in scilab and nsp:
 
    1/ in scilab we use only i32bit output ( renamed here fsultra )
-      and  I have deleted the others;
+   and  I have deleted the others;
 
    2/ only one array is now used (swbseed which is renamed
-      swb_state) and the xor with the linear congruential generator
-      is done only just before the output.
+   swb_state) and the xor with the linear congruential generator
+   is done only just before the output.
 
    3/ add a var is_init (to say if the generator is initialised)
 
@@ -78,8 +78,8 @@ static int swb_flag;		   /* the carry flag for the SWB generator */
 static unsigned long cong_state;   /* state of the congruential generator */
 
 /* for this generator the state seems completly defined by:
-      swb_state, swb_index, swb_flag (which define the state of the swb generator)
-      cong_state (which defines the state of the congruential generator)
+   swb_state, swb_index, swb_flag (which define the state of the swb generator)
+   cong_state (which defines the state of the congruential generator)
 */
 
 /* those are the default for the simple initialisation routine */
@@ -95,10 +95,10 @@ static unsigned long DEFAULT_SEED2=7654321;
    Using these three bits, one can determine if a borrow bit is needed
    or not according to the following table:
 
-	msbz=0  msby=0  msby=1          msbz=1  msby=0  msby=1
+   msbz=0  msby=0  msby=1          msbz=1  msby=0  msby=1
 
-	msbx=0  0       1               msbx=0  1       1
-	msbx=1  0       0               msbx=1  0       1
+   msbx=0  0       1               msbx=0  1       1
+   msbx=1  0       0               msbx=1  0       1
 
    PS: note that the definition is very carefully written because the
    calls to SWB have y and z as the same memory location, so y must
@@ -146,8 +146,8 @@ unsigned long fsultra()
    be fine to leave this subroutine coded just as it is.
 
    PS:	there are quick and easy ways to fill this, but since random number
-	generators are really "randomness amplifiers", it is important to
-	start off on the right foot. This is why we take such care here.
+   generators are really "randomness amplifiers", it is important to
+   start off on the right foot. This is why we take such care here.
 
    Modif by Bruno : now the simple init uses only one integer (in place of 2 before). 
    There is a test on s1 so as to get the same sequence than before (if s1 == DEFAULT_SEED1 then

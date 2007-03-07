@@ -1,204 +1,166 @@
-/* ignbin.f -- translated by f2c (version 19961017).
-   
-	
-*/
-
 #include "grand.h"
 
-int
-rand_ignbin (int *n, double *pp)
-{
-  /* Initialized data */
+/*
+ *     INT FUNCTION IGNBIN( N, PP ) 
+ *                    GENerate BINomial random deviate 
+ *                              Function 
+ *     Generates a single random deviate from a binomial 
+ *     distribution whose number of trials is N and whose 
+ *     probability of an event in each trial is P. 
+ *                              Arguments 
+ *     N  --> The number of trials in the binomial distribution 
+ *            from which a random deviate is to be generated. 
+ *                              INT N 
+ *     JJV                      (N >= 0) 
+ *     PP --> The probability of an event in each trial of the 
+ *            binomial distribution from which a random deviate 
+ *            is to be generated. 
+ *                              DOUBLE PRECISION PP 
+ *     JJV                      (0.0 <= pp <= 1.0) 
+ *     IGNBIN <-- A random deviate yielding the number of events 
+ *                from N independent trials, each of which has 
+ *                a probability of event P. 
+ *                              INT IGNBIN 
+ *                              Note 
+ *     Uses RANF so the value of the seeds, ISEED1 and ISEED2 must be set 
+ *     by a call similar to the following 
+ *          DUM = RANSET( ISEED1, ISEED2 ) 
+ *                              Method 
+ *     This is algorithm BTPE from: 
+ *         Kachitvichyanukul, V. and Schmeiser, B. W. 
+ *         Binomial Random Variate Generation. 
+ *         Communications of the ACM, 31, 2 
+ *         (February, 1988) 216. 
+ */
 
+int rand_ignbin (int *n, double *pp)
+{
   static double psave = -1e37;
   static int nsave = -214748365;
-  /* System generated locals */
-  int ret_val, i__1;
-  double d__1, d__2;
-  /* Local variables */
   static double xnpq, c__;
-  double f;
   static double g;
-  int i__, k;
   static int m;
   static double p, q, r__;
-  double u, v, w, x, z__, amaxp, f1, f2;
   static double p1, p2, p3, p4;
-  double ynorm, w2, x1, x2, z2, al;
   static double fm;
-  int mp;
   static double qn;
-  int ix;
   static double xl, xm, xr;
-  int ix1;
-  double ffm, alv;
   static double xll, xlr, xnp;
 
-/* ********************************************************************** */
+  double d__1, d__2, f, u, v, w, x, z__, amaxp, f1, f2;
+  double ynorm, w2, x1, x2, z2, al, ffm, alv;
+  int mp,  ix, ix1,  i__, k, ret_val, i__1;
 
-/*     INT FUNCTION IGNBIN( N, PP ) */
+  /* ********************************************************************** */
+  /*     SUBROUTINE BTPEC(N,PP,ISEED,JX) */
+  /*     BINOMIAL RANDOM VARIATE GENERATOR */
+  /*     MEAN .LT. 30 -- INVERSE CDF */
+  /*       MEAN .GE. 30 -- ALGORITHM BTPE:  ACCEPTANCE-REJECTION VIA */
+  /*       FOUR REGION COMPOSITION.  THE FOUR REGIONS ARE A TRIANGLE */
+  /*       (SYMMETRIC IN THE CENTER), A PAIR OF PARALLELOGRAMS (ABOVE */
+  /*       THE TRIANGLE), AND EXPONENTIAL LEFT AND RIGHT TAILS. */
 
-/*                    GENerate BINomial random deviate */
+  /*     BTPE REFERS TO BINOMIAL-TRIANGLE-PARALLELOGRAM-EXPONENTIAL. */
+  /*     BTPEC REFERS TO BTPE AND "COMBINED."  THUS BTPE IS THE */
+  /*       RESEARCH AND BTPEC IS THE IMPLEMENTATION OF A COMPLETE */
+  /*       USABLE ALGORITHM. */
+  /*     REFERENCE:  VORATAS KACHITVICHYANUKUL AND BRUCE SCHMEISER, */
+  /*       "BINOMIAL RANDOM VARIATE GENERATION," */
+  /*       COMMUNICATIONS OF THE ACM, FORTHCOMING */
+  /*     WRITTEN:  SEPTEMBER 1980. */
+  /*       LAST REVISED:  MAY 1985, JULY 1987 */
+  /*     REQUIRED SUBPROGRAM:  RAND() -- A UNIFORM (0,1) RANDOM NUMBER */
+  /*                           GENERATOR */
+  /*     ARGUMENTS */
 
+  /*       N : NUMBER OF BERNOULLI TRIALS            (INPUT) */
+  /*       PP : PROBABILITY OF SUCCESS IN EACH TRIAL (INPUT) */
+  /*       ISEED:  RANDOM NUMBER SEED                (INPUT AND OUTPUT) */
+  /*       JX:  RANDOMLY GENERATED OBSERVATION       (OUTPUT) */
 
-/*                              Function */
+  /*     VARIABLES */
+  /*       PSAVE: VALUE OF PP FROM THE LAST CALL TO BTPEC */
+  /*       NSAVE: VALUE OF N FROM THE LAST CALL TO BTPEC */
+  /*       XNP:  VALUE OF THE MEAN FROM THE LAST CALL TO BTPEC */
 
+  /*       P: PROBABILITY USED IN THE GENERATION PHASE OF BTPEC */
+  /*       FFM: TEMPORARY VARIABLE EQUAL TO XNP + P */
+  /*       M:  INT VALUE OF THE CURRENT MODE */
+  /*       FM:  FLOATING POINT VALUE OF THE CURRENT MODE */
+  /*       XNPQ: TEMPORARY VARIABLE USED IN SETUP AND SQUEEZING STEPS */
+  /*       P1:  AREA OF THE TRIANGLE */
+  /*       C:  HEIGHT OF THE PARALLELOGRAMS */
+  /*       XM:  CENTER OF THE TRIANGLE */
+  /*       XL:  LEFT END OF THE TRIANGLE */
+  /*       XR:  RIGHT END OF THE TRIANGLE */
+  /*       AL:  TEMPORARY VARIABLE */
+  /*       XLL:  RATE FOR THE LEFT EXPONENTIAL TAIL */
+  /*       XLR:  RATE FOR THE RIGHT EXPONENTIAL TAIL */
+  /*       P2:  AREA OF THE PARALLELOGRAMS */
+  /*       P3:  AREA OF THE LEFT EXPONENTIAL TAIL */
+  /*       P4:  AREA OF THE RIGHT EXPONENTIAL TAIL */
+  /*       U:  A U(0,P4) RANDOM VARIATE USED FIRST TO SELECT ONE OF THE */
+  /*           FOUR REGIONS AND THEN CONDITIONALLY TO GENERATE A VALUE */
+  /*           FROM THE REGION */
+  /*       V:  A U(0,1) RANDOM NUMBER USED TO GENERATE THE RANDOM VALUE */
+  /*           (REGION 1) OR TRANSFORMED INTO THE VARIATE TO ACCEPT OR */
+  /*           REJECT THE CANDIDATE VALUE */
+  /*       IX:  INT CANDIDATE VALUE */
+  /*       X:  PRELIMINARY CONTINUOUS CANDIDATE VALUE IN REGION 2 LOGIC */
+  /*           AND A FLOATING POINT IX IN THE ACCEPT/REJECT LOGIC */
+  /*       K:  ABSOLUTE VALUE OF (IX-M) */
+  /*       F:  THE HEIGHT OF THE SCALED DENSITY FUNCTION USED IN THE */
+  /*           ACCEPT/REJECT DECISION WHEN BOTH M AND IX ARE SMALL */
+  /*           ALSO USED IN THE INVERSE TRANSFORMATION */
+  /*       R: THE RATIO P/Q */
+  /*       G: CONSTANT USED IN CALCULATION OF PROBABILITY */
+  /*       MP:  MODE PLUS ONE, THE LOWER INDEX FOR EXPLICIT CALCULATION */
+  /*            OF F WHEN IX IS GREATER THAN M */
+  /*       IX1:  CANDIDATE VALUE PLUS ONE, THE LOWER INDEX FOR EXPLICIT */
+  /*             CALCULATION OF F WHEN IX IS LESS THAN M */
+  /*       I:  INDEX FOR EXPLICIT CALCULATION OF F FOR BTPE */
+  /*       AMAXP: MAXIMUM ERROR OF THE LOGARITHM OF NORMAL BOUND */
+  /*       YNORM: LOGARITHM OF NORMAL BOUND */
+  /*       ALV:  NATURAL LOGARITHM OF THE ACCEPT/REJECT VARIATE V */
 
-/*     Generates a single random deviate from a binomial */
-/*     distribution whose number of trials is N and whose */
-/*     probability of an event in each trial is P. */
+  /*       X1,F1,Z,W,Z2,X2,F2, AND W2 ARE TEMPORARY VARIABLES TO BE */
+  /*       USED IN THE FINAL ACCEPT/REJECT TEST */
 
+  /*       QN: PROBABILITY OF NO SUCCESS IN N TRIALS */
 
-/*                              Arguments */
+  /*     REMARK */
+  /*       IX AND JX COULD INTLY BE THE SAME VARIABLE, WHICH WOULD */
+  /*       SAVE A MEMORY POSITION AND A LINE OF CODE.  HOWEVER, SOME */
+  /*       COMPILERS (E.G.,CDC MNF) OPTIMIZE BETTER WHEN THE ARGUMENTS */
+  /*       ARE NOT INVOLVED. */
 
+  /*     ISEED NEEDS TO BE DOUBLE PRECISION IF THE IMSL ROUTINE */
+  /*     GGUBFS IS USED TO GENERATE UNIFORM RANDOM NUMBER, OTHERWISE */
+  /*     TYPE OF ISEED SHOULD BE DICTATED BY THE UNIFORM GENERATOR */
 
-/*     N  --> The number of trials in the binomial distribution */
-/*            from which a random deviate is to be generated. */
-/*                              INT N */
-/*     JJV                      (N >= 0) */
-
-/*     PP --> The probability of an event in each trial of the */
-/*            binomial distribution from which a random deviate */
-/*            is to be generated. */
-/*                              DOUBLE PRECISION PP */
-/*     JJV                      (0.0 <= pp <= 1.0) */
-
-/*     IGNBIN <-- A random deviate yielding the number of events */
-/*                from N independent trials, each of which has */
-/*                a probability of event P. */
-/*                              INT IGNBIN */
-
-
-/*                              Note */
-
-
-/*     Uses RANF so the value of the seeds, ISEED1 and ISEED2 must be set */
-/*     by a call similar to the following */
-/*          DUM = RANSET( ISEED1, ISEED2 ) */
-
-
-/*                              Method */
-
-
-/*     This is algorithm BTPE from: */
-
-/*         Kachitvichyanukul, V. and Schmeiser, B. W. */
-
-/*         Binomial Random Variate Generation. */
-/*         Communications of the ACM, 31, 2 */
-/*         (February, 1988) 216. */
-
-/* ********************************************************************** */
-/*     SUBROUTINE BTPEC(N,PP,ISEED,JX) */
-
-/*     BINOMIAL RANDOM VARIATE GENERATOR */
-/*     MEAN .LT. 30 -- INVERSE CDF */
-/*       MEAN .GE. 30 -- ALGORITHM BTPE:  ACCEPTANCE-REJECTION VIA */
-/*       FOUR REGION COMPOSITION.  THE FOUR REGIONS ARE A TRIANGLE */
-/*       (SYMMETRIC IN THE CENTER), A PAIR OF PARALLELOGRAMS (ABOVE */
-/*       THE TRIANGLE), AND EXPONENTIAL LEFT AND RIGHT TAILS. */
-
-/*     BTPE REFERS TO BINOMIAL-TRIANGLE-PARALLELOGRAM-EXPONENTIAL. */
-/*     BTPEC REFERS TO BTPE AND "COMBINED."  THUS BTPE IS THE */
-/*       RESEARCH AND BTPEC IS THE IMPLEMENTATION OF A COMPLETE */
-/*       USABLE ALGORITHM. */
-/*     REFERENCE:  VORATAS KACHITVICHYANUKUL AND BRUCE SCHMEISER, */
-/*       "BINOMIAL RANDOM VARIATE GENERATION," */
-/*       COMMUNICATIONS OF THE ACM, FORTHCOMING */
-/*     WRITTEN:  SEPTEMBER 1980. */
-/*       LAST REVISED:  MAY 1985, JULY 1987 */
-/*     REQUIRED SUBPROGRAM:  RAND() -- A UNIFORM (0,1) RANDOM NUMBER */
-/*                           GENERATOR */
-/*     ARGUMENTS */
-
-/*       N : NUMBER OF BERNOULLI TRIALS            (INPUT) */
-/*       PP : PROBABILITY OF SUCCESS IN EACH TRIAL (INPUT) */
-/*       ISEED:  RANDOM NUMBER SEED                (INPUT AND OUTPUT) */
-/*       JX:  RANDOMLY GENERATED OBSERVATION       (OUTPUT) */
-
-/*     VARIABLES */
-/*       PSAVE: VALUE OF PP FROM THE LAST CALL TO BTPEC */
-/*       NSAVE: VALUE OF N FROM THE LAST CALL TO BTPEC */
-/*       XNP:  VALUE OF THE MEAN FROM THE LAST CALL TO BTPEC */
-
-/*       P: PROBABILITY USED IN THE GENERATION PHASE OF BTPEC */
-/*       FFM: TEMPORARY VARIABLE EQUAL TO XNP + P */
-/*       M:  INT VALUE OF THE CURRENT MODE */
-/*       FM:  FLOATING POINT VALUE OF THE CURRENT MODE */
-/*       XNPQ: TEMPORARY VARIABLE USED IN SETUP AND SQUEEZING STEPS */
-/*       P1:  AREA OF THE TRIANGLE */
-/*       C:  HEIGHT OF THE PARALLELOGRAMS */
-/*       XM:  CENTER OF THE TRIANGLE */
-/*       XL:  LEFT END OF THE TRIANGLE */
-/*       XR:  RIGHT END OF THE TRIANGLE */
-/*       AL:  TEMPORARY VARIABLE */
-/*       XLL:  RATE FOR THE LEFT EXPONENTIAL TAIL */
-/*       XLR:  RATE FOR THE RIGHT EXPONENTIAL TAIL */
-/*       P2:  AREA OF THE PARALLELOGRAMS */
-/*       P3:  AREA OF THE LEFT EXPONENTIAL TAIL */
-/*       P4:  AREA OF THE RIGHT EXPONENTIAL TAIL */
-/*       U:  A U(0,P4) RANDOM VARIATE USED FIRST TO SELECT ONE OF THE */
-/*           FOUR REGIONS AND THEN CONDITIONALLY TO GENERATE A VALUE */
-/*           FROM THE REGION */
-/*       V:  A U(0,1) RANDOM NUMBER USED TO GENERATE THE RANDOM VALUE */
-/*           (REGION 1) OR TRANSFORMED INTO THE VARIATE TO ACCEPT OR */
-/*           REJECT THE CANDIDATE VALUE */
-/*       IX:  INT CANDIDATE VALUE */
-/*       X:  PRELIMINARY CONTINUOUS CANDIDATE VALUE IN REGION 2 LOGIC */
-/*           AND A FLOATING POINT IX IN THE ACCEPT/REJECT LOGIC */
-/*       K:  ABSOLUTE VALUE OF (IX-M) */
-/*       F:  THE HEIGHT OF THE SCALED DENSITY FUNCTION USED IN THE */
-/*           ACCEPT/REJECT DECISION WHEN BOTH M AND IX ARE SMALL */
-/*           ALSO USED IN THE INVERSE TRANSFORMATION */
-/*       R: THE RATIO P/Q */
-/*       G: CONSTANT USED IN CALCULATION OF PROBABILITY */
-/*       MP:  MODE PLUS ONE, THE LOWER INDEX FOR EXPLICIT CALCULATION */
-/*            OF F WHEN IX IS GREATER THAN M */
-/*       IX1:  CANDIDATE VALUE PLUS ONE, THE LOWER INDEX FOR EXPLICIT */
-/*             CALCULATION OF F WHEN IX IS LESS THAN M */
-/*       I:  INDEX FOR EXPLICIT CALCULATION OF F FOR BTPE */
-/*       AMAXP: MAXIMUM ERROR OF THE LOGARITHM OF NORMAL BOUND */
-/*       YNORM: LOGARITHM OF NORMAL BOUND */
-/*       ALV:  NATURAL LOGARITHM OF THE ACCEPT/REJECT VARIATE V */
-
-/*       X1,F1,Z,W,Z2,X2,F2, AND W2 ARE TEMPORARY VARIABLES TO BE */
-/*       USED IN THE FINAL ACCEPT/REJECT TEST */
-
-/*       QN: PROBABILITY OF NO SUCCESS IN N TRIALS */
-
-/*     REMARK */
-/*       IX AND JX COULD INTLY BE THE SAME VARIABLE, WHICH WOULD */
-/*       SAVE A MEMORY POSITION AND A LINE OF CODE.  HOWEVER, SOME */
-/*       COMPILERS (E.G.,CDC MNF) OPTIMIZE BETTER WHEN THE ARGUMENTS */
-/*       ARE NOT INVOLVED. */
-
-/*     ISEED NEEDS TO BE DOUBLE PRECISION IF THE IMSL ROUTINE */
-/*     GGUBFS IS USED TO GENERATE UNIFORM RANDOM NUMBER, OTHERWISE */
-/*     TYPE OF ISEED SHOULD BE DICTATED BY THE UNIFORM GENERATOR */
-
-/* ********************************************************************** */
+  /* ********************************************************************** */
 
 
 
-/* *****DETERMINE APPROPRIATE ALGORITHM AND WHETHER SETUP IS NECESSARY */
+  /* *****DETERMINE APPROPRIATE ALGORITHM AND WHETHER SETUP IS NECESSARY */
 
-/*     .. */
-/*     .. Scalar Arguments .. */
-/*     .. */
-/*     .. Local Scalars .. */
-/*     .. */
-/*     .. External Functions .. */
-/*     .. */
-/*     .. Intrinsic Functions .. */
-/*     JJV .. */
-/*     JJV .. Save statement .. */
-/*     JJV I am including the variables in data statements */
-/*     .. */
-/*     .. Data statements .. */
-/*     JJV made these ridiculous starting values - the hope is that */
-/*     JJV no one will call this the first time with them as args */
-/*     .. */
-/*     .. Executable Statements .. */
+  /*     .. */
+  /*     .. Scalar Arguments .. */
+  /*     .. */
+  /*     .. Local Scalars .. */
+  /*     .. */
+  /*     .. External Functions .. */
+  /*     .. */
+  /*     .. Intrinsic Functions .. */
+  /*     JJV .. */
+  /*     JJV .. Save statement .. */
+  /*     JJV I am including the variables in data statements */
+  /*     .. */
+  /*     .. Data statements .. */
+  /*     JJV made these ridiculous starting values - the hope is that */
+  /*     JJV no one will call this the first time with them as args */
+  /*     .. */
+  /*     .. Executable Statements .. */
   if (*pp != psave)
     {
       goto L10;
@@ -216,19 +178,19 @@ rand_ignbin (int *n, double *pp)
       goto L150;
     }
 
-/* *****SETUP, PERFORM ONLY WHEN PARAMETERS CHANGE */
+  /* *****SETUP, PERFORM ONLY WHEN PARAMETERS CHANGE */
 
-/*     JJV added the argument checker - involved only renaming 10 */
-/*     JJV and 20 to the checkers and adding checkers */
-/*     JJV Only remaining problem - if called initially with the */
-/*     JJV initial values of psave and nsave, it will hang */
-L10:
+  /*     JJV added the argument checker - involved only renaming 10 */
+  /*     JJV and 20 to the checkers and adding checkers */
+  /*     JJV Only remaining problem - if called initially with the */
+  /*     JJV initial values of psave and nsave, it will hang */
+ L10:
   psave = *pp;
-/* Computing MIN */
+  /* Computing MIN */
   d__1 = psave, d__2 = 1. - psave;
   p = Min (d__1, d__2);
   q = 1. - p;
-L20:
+ L20:
   xnp = *n * p;
   nsave = *n;
   if (xnp < 30.)
@@ -251,16 +213,16 @@ L20:
   p2 = p1 * (c__ + 1. + c__);
   p3 = p2 + c__ / xll;
   p4 = p3 + c__ / xlr;
-/*      WRITE(6,100) N,P,P1,P2,P3,P4,XL,XR,XM,FM */
-/*  100 FORMAT(I15,4F18.7/5F18.7) */
+  /*      WRITE(6,100) N,P,P1,P2,P3,P4,XL,XR,XM,FM */
+  /*  100 FORMAT(I15,4F18.7/5F18.7) */
 
-/* *****GENERATE VARIATE */
+  /* *****GENERATE VARIATE */
 
-L30:
+ L30:
   u = rand_ranf () * p4;
   v = rand_ranf ();
 
-/*     TRIANGULAR REGION */
+  /*     TRIANGULAR REGION */
 
   if (u > p1)
     {
@@ -269,9 +231,9 @@ L30:
   ix = (int) (xm - p1 * v + u);
   goto L170;
 
-/*     PARALLELOGRAM REGION */
+  /*     PARALLELOGRAM REGION */
 
-L40:
+ L40:
   if (u > p2)
     {
       goto L50;
@@ -285,9 +247,9 @@ L40:
   ix = (int) x;
   goto L70;
 
-/*     LEFT TAIL */
+  /*     LEFT TAIL */
 
-L50:
+ L50:
   if (u > p3)
     {
       goto L60;
@@ -300,9 +262,9 @@ L50:
   v = v * (u - p2) * xll;
   goto L70;
 
-/*     RIGHT TAIL */
+  /*     RIGHT TAIL */
 
-L60:
+ L60:
   ix = (int) (xr - log (v) / xlr);
   if (ix > *n)
     {
@@ -310,16 +272,16 @@ L60:
     }
   v = v * (u - p3) * xlr;
 
-/* *****DETERMINE APPROPRIATE WAY TO PERFORM ACCEPT/REJECT TEST */
+  /* *****DETERMINE APPROPRIATE WAY TO PERFORM ACCEPT/REJECT TEST */
 
-L70:
+ L70:
   k = (i__1 = ix - m, Abs (i__1));
   if (k > 20 && (double) k < xnpq / 2 - 1)
     {
       goto L130;
     }
 
-/*     EXPLICIT EVALUATION */
+  /*     EXPLICIT EVALUATION */
 
   f = 1.;
   r__ = p / q;
@@ -336,24 +298,24 @@ L70:
     {
       goto L100;
     }
-L80:
+ L80:
   mp = m + 1;
   i__1 = ix;
   for (i__ = mp; i__ <= i__1; ++i__)
     {
       f *= g / i__ - r__;
-/* L90: */
+      /* L90: */
     }
   goto L120;
-L100:
+ L100:
   ix1 = ix + 1;
   i__1 = m;
   for (i__ = ix1; i__ <= i__1; ++i__)
     {
       f /= g / i__ - r__;
-/* L110: */
+      /* L110: */
     }
-L120:
+ L120:
   if (v - f <= 0.)
     {
       goto L170;
@@ -363,9 +325,9 @@ L120:
       goto L30;
     }
 
-/*     SQUEEZING USING UPPER AND LOWER BOUNDS ON LOG(F(X)) */
+  /*     SQUEEZING USING UPPER AND LOWER BOUNDS ON LOG(F(X)) */
 
-L130:
+ L130:
   amaxp = k / xnpq * ((k * (k / 3. + .625) + .1666666666666) / xnpq + .5);
   ynorm = -k * k / (xnpq * 2.);
   alv = log (v);
@@ -378,8 +340,8 @@ L130:
       goto L30;
     }
 
-/*     STIRLING'S FORMULA TO MACHINE ACCURACY FOR */
-/*     THE FINAL ACCEPTANCE/REJECTION TEST */
+  /*     STIRLING'S FORMULA TO MACHINE ACCURACY FOR */
+  /*     THE FINAL ACCEPTANCE/REJECTION TEST */
 
   x1 = (double) (ix + 1);
   f1 = fm + 1.;
@@ -413,17 +375,17 @@ L130:
       goto L30;
     }
 
-/*     INVERSE CDF LOGIC FOR MEAN LESS THAN 30 */
+  /*     INVERSE CDF LOGIC FOR MEAN LESS THAN 30 */
 
-L140:
+ L140:
   qn = pow(q, *n); /* pow_di */
   r__ = p / q;
   g = r__ * (*n + 1);
-L150:
+ L150:
   ix = 0;
   f = qn;
   u = rand_ranf ();
-L160:
+ L160:
   if (u < f)
     {
       goto L170;
@@ -436,11 +398,12 @@ L160:
   ++ix;
   f *= g / ix - r__;
   goto L160;
-L170:
+ L170:
   if (psave > .5)
     {
       ix = *n - ix;
     }
   ret_val = ix;
   return ret_val;
-}				/* ignbin_ */
+}
+

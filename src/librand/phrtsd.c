@@ -1,25 +1,20 @@
-
 #include <strings.h>
 #include "grand.h"
 
 
-/* ********************************************************************** */
-/*     SUBROUTINE PHRTSD( PHRASE, SEED1, SEED2 ) */
-/*               PHRase To SeeDs */
-/*                              Function */
-/*     Uses a phrase (character string) to generate two seeds for the RGN */
-/*     random number generator. */
-/*                              Arguments */
-/*     PHRASE --> Phrase to be used for random number generation */
-/*                         CHARACTER*(*) PHRASE */
-/*     SEED1 <-- First seed for RGN generator */
-/*                         INTEGER SEED1 */
-/*     SEED2 <-- Second seed for RGN generator */
-/*                         INTEGER SEED2 */
-/*                              Note */
-/*     Generated seed values will fall in the range 1..2^30 */
-/*     (1..1,073,741,824) */
-/* ********************************************************************** */
+/*     SUBROUTINE PHRTSD( PHRASE, SEED1, SEED2 ) 
+ *               PHRase To SeeDs 
+ *                              Function 
+ *     Uses a phrase (character string) to generate two seeds for the RGN 
+ *     random number generator. 
+ *                              Arguments 
+ *     PHRASE --> CHARACTER*(*) Phrase to be used for random number generation 
+ *     SEED1 <-- INTEGER: First seed for RGN generator 
+ *     SEED2 <-- INTEGER: Second seed for RGN generator 
+ *                              Note 
+ *     Generated seed values will fall in the range 1..2^30 
+ *     (1..1,073,741,824) 
+ */
 
 int rand_phrtsd(char *phrase,int *seed1, int *seed2) 
 {

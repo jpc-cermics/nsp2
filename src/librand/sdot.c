@@ -48,11 +48,11 @@ rand_sdot (int *n, double *sx, int *incx, double *sy, int *incy)
       stemp += sx[ix] * sy[iy];
       ix += *incx;
       iy += *incy;
-/* L10: */
+      /* L10: */
     }
   ret_val = stemp;
   return ret_val;
-L20:
+ L20:
   m = *n % 5;
   if (m == 0)
     {
@@ -62,13 +62,13 @@ L20:
   for (i__ = 1; i__ <= i__1; ++i__)
     {
       stemp += sx[i__] * sy[i__];
-/* L30: */
+      /* L30: */
     }
   if (*n < 5)
     {
       goto L60;
     }
-L40:
+ L40:
   mp1 = m + 1;
   i__1 = *n;
   for (i__ = mp1; i__ <= i__1; i__ += 5)
@@ -77,9 +77,9 @@ L40:
 	stemp + sx[i__] * sy[i__] + sx[i__ + 1] * sy[i__ + 1] + sx[i__ +
 								   2] *
 	sy[i__ + 2] + sx[i__ + 3] * sy[i__ + 3] + sx[i__ + 4] * sy[i__ + 4];
-/* L50: */
+      /* L50: */
     }
-L60:
+ L60:
   ret_val = stemp;
   return ret_val;
 }				/* sdot_ */

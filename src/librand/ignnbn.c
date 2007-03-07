@@ -19,22 +19,18 @@
 /*     Non-Uniform Random Variate Generation.  Springer-Verlag, */
 /*     New York, 1986. */
 
-int rand_ignnbn (int *n, double *p)
+int rand_ignnbn (int n, double p)
 {
-  int ret_val;
-  double a, r__, y;
+  double a, y;
   /*     JJV changed to call SGAMMA directly */
   /*     JJV changed argumnet checker to abort if N <= 0 */
   /*     See Rand,c */
   /*     Generate Y, a random gamma (n,(1-p)/p) variable */
   /*     JJV Note: the above parametrization is consistent with Devroye, */
   /*     JJV       but gamma (p/(1-p),n) is the equivalent in our code */
-  r__ = (double) (*n);
-  a = *p / (1. - *p);
-  /*      y = gengam(a,r) */
-  y = rand_sgamma (&r__) / a;
+  a = p / (1. - p);
+  y = rand_sgamma (n) / a;
   /*     Generate a random Poisson(y) variable */
-  ret_val = rand_ignpoi (&y);
-  return ret_val;
+  return rand_ignpoi (y);
 }	
 

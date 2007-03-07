@@ -1,6 +1,3 @@
-/* sexpo.f -- translated by f2c (version 19961017).
- */
-
 #include "grand.h"
 
 /*

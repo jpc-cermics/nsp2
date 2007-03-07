@@ -1,57 +1,57 @@
 /* 
-FSU - ULTRA	The greatest random number generator that ever was
-		or ever will be.  Way beyond Super-Duper.
-		(Just kidding, but we think its a good one.)
+   FSU - ULTRA	The greatest random number generator that ever was
+   or ever will be.  Way beyond Super-Duper.
+   (Just kidding, but we think its a good one.)
 
-Authors:	Arif Zaman (arif@stat.fsu.edu) and
-		George Marsaglia (geo@stat.fsu.edu).
+   Authors:	Arif Zaman (arif@stat.fsu.edu) and
+   George Marsaglia (geo@stat.fsu.edu).
 
-Date:		27 May 1992
+   Date:		27 May 1992
 
-Version:	1.05
+   Version:	1.05
 
-Copyright:	To obtain permission to incorporate this program into
-		any commercial product, please contact the authors at
-		the e-mail address given above or at
+   Copyright:	To obtain permission to incorporate this program into
+   any commercial product, please contact the authors at
+   the e-mail address given above or at
 
-		Department of Statistics and
-		Supercomputer Computations Research Institute
-		Florida State University
-		Tallahassee, FL 32306.
+   Department of Statistics and
+   Supercomputer Computations Research Institute
+   Florida State University
+   Tallahassee, FL 32306.
 
-See Also:	README		for a brief description
-		ULTRA.DOC	for a detailed description
+   See Also:	README		for a brief description
+   ULTRA.DOC	for a detailed description
 
------------------------------------------------------------------------
+   -----------------------------------------------------------------------
 */ 
 /*
-   File: ULTRA.C
+  File: ULTRA.C
 
-   This is the ULTRA random number generator written entirely in C.
+  This is the ULTRA random number generator written entirely in C.
 
-   This may serve as a model for an assembler version of this routine.
-   The programmer should avoid simply duplicating and instead use the
-   usual assembler features to increase the speed of this routine.
+  This may serve as a model for an assembler version of this routine.
+  The programmer should avoid simply duplicating and instead use the
+  usual assembler features to increase the speed of this routine.
 
-   Especially the subroutine SWB should be replaced by the one
-   machine instruction (usually called subtract-with-borrow) that
-   is available in almost every hardware.
+  Especially the subroutine SWB should be replaced by the one
+  machine instruction (usually called subtract-with-borrow) that
+  is available in almost every hardware.
 
-   For people not familiar with 8086 assembler, it may help to
-   consult this when reading the assembler code. This program should
-   be a dropin replacement for the assembler versions, but is about
-   half as fast.
+  For people not familiar with 8086 assembler, it may help to
+  consult this when reading the assembler code. This program should
+  be a dropin replacement for the assembler versions, but is about
+  half as fast.
 */
 
 /* Slight modifications by Bruno Pincon (4 december 2004) for inclusion 
    in scilab and nsp:
 
    1/ in scilab we use only i32bit output ( renamed here fsultra )
-      and  I have deleted the others;
+   and  I have deleted the others;
 
    2/ only one array is now used (swbseed which is renamed
-      swb_state) and the xor with the linear congruential generator
-      is done only just before the output.
+   swb_state) and the xor with the linear congruential generator
+   is done only just before the output.
 
    3/ add a var is_init (to say if the generator is initialised)
 
@@ -73,8 +73,8 @@ static int swb_flag;		   /* the carry flag for the SWB generator */
 static unsigned long cong_state;   /* state of the congruential generator */
 
 /* for this generator the state seems completly defined by:
-      swb_state, swb_index, swb_flag (which define the state of the swb generator)
-      cong_state (which defines the state of the congruential generator)
+   swb_state, swb_index, swb_flag (which define the state of the swb generator)
+   cong_state (which defines the state of the congruential generator)
 */
 
 /* those are the default for the simple initialisation routine */
@@ -83,18 +83,18 @@ static  double DEFAULT_SEED1= 1234567.0, DEFAULT_SEED2=7654321.0;
 
 /* set_state_fsultra_simple initializes the state from 2 integers  
    
-   it defines the constants and fills the swb_state array one bit at
-   a time by taking the leading bit of the xor of a shift register
-   and a congruential sequence. The same congruential generator continues
-   to be used as a mixing generator for the Subtract-with-borrow generator
-   to produce the `ultra' random numbers
+it defines the constants and fills the swb_state array one bit at
+a time by taking the leading bit of the xor of a shift register
+and a congruential sequence. The same congruential generator continues
+to be used as a mixing generator for the Subtract-with-borrow generator
+to produce the `ultra' random numbers
 
-   Since this is called just once, speed doesn't matter much and it might
-   be fine to leave this subroutine coded just as it is.
+Since this is called just once, speed doesn't matter much and it might
+be fine to leave this subroutine coded just as it is.
 
-   PS:	there are quick and easy ways to fill this, but since random number
-	generators are really "randomness amplifiers", it is important to
-	start off on the right foot. This is why we take such care here.
+PS:	there are quick and easy ways to fill this, but since random number
+generators are really "randomness amplifiers", it is important to
+start off on the right foot. This is why we take such care here.
 */
 
 int set_state_fsultra_simple(double s1, double s2)
@@ -103,7 +103,7 @@ int set_state_fsultra_simple(double s1, double s2)
   int i, j;
 
   if (    (s1 == floor(s1) && 0.0 <= s1 && s1 <= 4294967295.0)
-       && (s2 == floor(s2) && 0.0 <= s2 && s2 <= 4294967295.0) )
+	  && (s2 == floor(s2) && 0.0 <= s2 && s2 <= 4294967295.0) )
     {
       cong_state = ((unsigned long) s1)*2 + 1;
       shrgx = (unsigned long) s2;
@@ -193,10 +193,10 @@ void get_state_fsultra(double s[])
    Using these three bits, one can determine if a borrow bit is needed
    or not according to the following table:
 
-	msbz=0  msby=0  msby=1          msbz=1  msby=0  msby=1
+   msbz=0  msby=0  msby=1          msbz=1  msby=0  msby=1
 
-	msbx=0  0       1               msbx=0  1       1
-	msbx=1  0       0               msbx=1  0       1
+   msbx=0  0       1               msbx=0  1       1
+   msbx=1  0       0               msbx=1  0       1
 
    PS: note that the definition is very carefully written because the
    calls to SWB have y and z as the same memory location, so y must
