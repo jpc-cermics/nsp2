@@ -149,21 +149,21 @@ int bin_trd(int n, double p)
       while ( 1 )
 	{
 
-/* 	  u = rand_ranf() - 0.5; */
-/* 	  v = rand_ranf(); */
-/* 	  us = 0.5 - fabs(u); */
-/* 	  if ( us >= 0.07 && v <= vr ) */
-/* 	    { */
-/* 	      k = (2*a/us + b)*u + c; */
-/* 	      break; */
-/* 	    } */
+	  /* 	  u = rand_ranf() - 0.5; */
+	  /* 	  v = rand_ranf(); */
+	  /* 	  us = 0.5 - fabs(u); */
+	  /* 	  if ( us >= 0.07 && v <= vr ) */
+	  /* 	    { */
+	  /* 	      k = (2*a/us + b)*u + c; */
+	  /* 	      break; */
+	  /* 	    } */
 
 	  v = rand_ranf();
 	  if ( v <= urvr )
 	    {
-/* 	      u = v / vr - 0.43; */
+	      /* 	      u = v / vr - 0.43; */
 	      u = v * invvr - 0.43;
-/* 	      k = ((2*a/(0.5 - fabs(u)) + b)*u + c); */
+	      /* 	      k = ((2*a/(0.5 - fabs(u)) + b)*u + c); */
 	      k = ((aa/(0.5 - fabs(u)) + b)*u + c);
 	      break;
 	    }
@@ -172,14 +172,14 @@ int bin_trd(int n, double p)
 	    u = rand_ranf() - 0.5;
 	  else
 	    {
-/* 	      u = v / vr - 0.93; */
+	      /* 	      u = v / vr - 0.93; */
 	      u = v * invvr - 0.93;
 	      u = u >= 0 ? 0.5 - u : -0.5 - u;
 	      v = vr*rand_ranf();
 	    }
 	  us = 0.5 - fabs(u);
 
-/* 	  if ( (k_real = (2*a/us + b)*u + c) >= 0 && (k = (int) k_real) <= n )  */
+	  /* 	  if ( (k_real = (2*a/us + b)*u + c) >= 0 && (k = (int) k_real) <= n )  */
 	  if ( (k_real = (aa/us + b)*u + c) >= 0 && (k = (int) k_real) <= n ) 
 	    {
 	      v = v*alpha/(a/(us*us) + b);
