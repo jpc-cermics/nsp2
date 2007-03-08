@@ -991,6 +991,11 @@ static void button_clicked(GtkWidget *widget, void *Obj)
     }
 }
 
+#ifndef GTK_STOCK_EDIT 
+#define GTK_STOCK_EDIT GTK_STOCK_OK
+#endif 
+
+
 
 static GtkWidget *nsp_setup_choice_button(void *Obj,int entry_size)
 {

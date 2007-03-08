@@ -946,9 +946,7 @@ if test "$with_gtkglext" != no; then
        AC_MSG_CHECKING([if gtkglext is version $gtkglext_version or later])
        if pkg-config --atleast-version=$gtkglext_version gtkglext-1.0 ; then
           AC_MSG_RESULT([yes])
-	  AC_DEFINE(WITH_GTKGLEXT)
           GTKGLEXT_VER=`$PKG_CONFIG --modversion gtkglext-1.0`
-          PERIGLEXT="periGL.o"
           # we have cheched above that gtk-config is in the 
           # path, then we don't want to generate a full path 
           # for gtk-config or to directly generate the 
@@ -967,6 +965,8 @@ if test "$with_gtkglext" != no; then
 			GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
 			GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
 			WITH_GL="yes"
+			PERIGLEXT="periGL.o"
+			AC_DEFINE(WITH_GTKGLEXT)
 		 else
 			AC_MSG_WARN([pangoft2 is missing.]) 
 			AC_MSG_WARN([WARNING OpenGL driver will not be build.])
