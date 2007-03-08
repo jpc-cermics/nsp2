@@ -146,13 +146,14 @@ static int int_c_link(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 2 ) {
     if (GetScalarInt(stack,2,&ilib) == FAIL) return RET_BUG;
   }
-  rep= nsp_is_linked(name,ilib);
+  rep= nsp_is_linked(name,&ilib);
   irep = ( rep == -1) ? FALSE : TRUE;
   if ((O1 = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1,O1);
   if ( lhs == 2 ) 
     {
-      if (( O2 =nsp_create_object_from_int(NVOID,rep)) == NULLOBJ) return RET_BUG;
+      if ( irep == FALSE ) ilib = -1;
+      if (( O2 =nsp_create_object_from_int(NVOID,ilib)) == NULLOBJ) return RET_BUG;
       MoveObj(stack,2,O2);
     }
   return Max(lhs,1);

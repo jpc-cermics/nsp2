@@ -181,17 +181,24 @@ void SciLinkInit(void)
  * the whole table else the search is restricted to 
  * shared library number @ilib.
  * the returned value is -1 or the indice of 
- * @name in the entry point table.
+ * @name in the entry point table. if 
  *
+ * @ilib == -1 then on output when the symbol is found 
+ * the library number where the symbol was found is returned. 
  */
 
-int nsp_is_linked(nsp_const_string name,int ilib)
+int nsp_is_linked(nsp_const_string name,int *ilib)
 {
   int (*loc)();
-  if ( ilib  != -1 ) 
-    return SearchFandS(name,ilib);
+  if ( *ilib  != -1 ) 
+    return SearchFandS(name,*ilib);
   else
-    return SearchInDynLinks(name,&loc);
+    {
+      int rep= SearchInDynLinks(name,&loc);
+      if (rep != -1 ) 
+	*ilib = EP[rep].Nshared;
+      return rep;
+    }
 }
 
 
