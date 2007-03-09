@@ -107,7 +107,7 @@ extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node
 extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_Info ;
 
 #define WITH_SCALEXP
-#define WITH_PREMIA 
+/* #define WITH_PREMIA  */
 
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
