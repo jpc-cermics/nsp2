@@ -27,15 +27,15 @@
 #include <string.h>
 #include "nsp/interf.h"
 
-extern void f99(NspMatrix *M);
+static void plus(NspMatrix *M);
 
 int int_first(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A = GetMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
-  f99(A);
+  if ((A = GetRealMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
+  plus(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -52,12 +52,6 @@ int int_second(Stack stack, int rhs, int opt, int lhs)
   not(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1; 
-}
-
-static void not(NspBMatrix *B) 
-{
-  int i;
-  for ( i=0 ; i < B->mn ; i++)  B->B[i] = !  B->B[i];
 }
 
 static OpTab tutorial_func[]={
@@ -79,6 +73,21 @@ void tutorial_Interf_Info(int i, char **fname, function (**f))
 {
   *fname = tutorial_func[i].name;
   *f = tutorial_func[i].fonc;
+}
+
+
+
+static void not(NspBMatrix *B) 
+{
+  int i;
+  for ( i=0 ; i < B->mn ; i++)  B->B[i] = !  B->B[i];
+}
+
+
+static void plus(NspMatrix *A) 
+{
+  int i;
+  for ( i=0 ; i < A->mn ; i++)  A->R[i] += 2.0;
 }
 
 
