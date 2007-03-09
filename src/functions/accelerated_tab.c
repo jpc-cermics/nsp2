@@ -106,7 +106,8 @@ static int get_type_max_id(const char *table[])
 static int init_func_tab1(AcceleratedTab *tab)
 {
   int i, Int, Num;
-  char op_typed[NAME_MAXL], *op, *name, *suffix, *nothing;
+  char op_typed[NAME_MAXL], *op, *name,  *nothing;
+  const char *suffix;
   const char *str;
   
   if ( tab->accelerated_types == NULL) 
@@ -189,6 +190,18 @@ int nsp_init_accelerated_tabs(void)
   return OK;
 }
 
+
+
+/**
+ * nsp_get_fast_function:
+ * @tab: an #AcceleratedTab pointer 
+ * @type_id: an integer 
+ * 
+ * Searches if @tab contains a function to be used for arguments of 
+ * type @type_id.
+ * 
+ * Returns: %NULL or a #function.
+ **/
 
 function *nsp_get_fast_function(AcceleratedTab *tab, int type_id)
 {
