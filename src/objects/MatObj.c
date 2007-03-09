@@ -4237,6 +4237,71 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *  multiple find (findm)
+ *
+ *  [ind1,...,indk,indk+1] = findm( x, op1, sc1, ...., opk, sck ) 
+ *
+ *    opj is a string defining a comparizon operator "<", "<=", ">", ">=", "==", "~=" or "<>"
+ *
+ *    x is a real matrix, scj a real scalar
+ */
+
+int
+int_mxfindm (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, **ind = NULL;
+  int i, j, m;
+  double *scalars = NULL;
+  char **ops = NULL;
+  CheckRhs (3, 13);   /* limited to 6 tests */
+
+  if ( (rhs - 1) % 2 != 0 )
+    {
+      Scierror ("%s: bad number of input arguments\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  m = (rhs-1)/2;
+  
+  if ( (scalars = malloc(m*sizeof(double))) == NULL )
+    goto err;
+  if ( (ops = malloc(m*sizeof(char *))) == NULL )
+    goto err;
+
+  if ( (x = GetRealMat(stack, 1)) == NULLMAT )
+    goto err;
+
+  for ( i = 2, j = 0 ; i <= rhs ; i+=2, j++ )
+    {
+      if ( (ops[j] = GetString(stack, i)) == NULL )
+	goto err;
+      if ( GetScalarDouble(stack, i+1, &scalars[j]) == FAIL )
+	goto err;
+    } 
+
+  if ( (ind = malloc((m+1)*sizeof(NspMatrix *))) == NULL )
+    goto err;
+  for ( i = 0 ; i <= m ; i++ ) ind[i] = NULLMAT;
+
+  if ( nsp_mat_findm(x, m, ops, scalars, ind) == FAIL )
+    goto err;
+
+  for ( j = 0 ; j <= m ; j++ )
+    MoveObj (stack, j+1, (NspObject *) ind[j]);
+
+  free(scalars);
+  free(ops);
+  free(ind);
+  return m+1;
+
+ err:
+  free(scalars);
+  free(ops);
+  free(ind);
+  return RET_BUG;
+}
+
 
 /*
  * isinf 
@@ -4655,6 +4720,7 @@ static OpTab Matrix_func[] = {
   {"mult_m_m", int_mxmult},
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
+  {"findm_m", int_mxfindm},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
