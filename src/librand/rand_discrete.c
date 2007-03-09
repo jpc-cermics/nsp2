@@ -30,8 +30,6 @@
 #define PUSH_BIG_STACK(k) stack[--ib]=k
 #define POP_BIG_STACK() stack[ib++]
 
-double rand_ranf(void);
-
 int nsp_alias_method(double *p, double *q, int *j, int n)
 {
   int k, l, is, ib, *stack;
@@ -40,14 +38,14 @@ int nsp_alias_method(double *p, double *q, int *j, int n)
   /* verify probabilities p[i], computes q */
   for ( k = 0 ; k < n ; k++ )
     {
-      if ( p[k] < 0 )
+      if ( ! (p[k] >= 0) )
 	return FAIL;
       sum_p += p[k];
       q[k] = n * p[k];
     }
 
   /* probabilities must sum up to 1 */
-  if ( sum_p < 1.0 - tol  ||  1.0 + tol < sum_p )
+  if ( ! (1.0-tol <= sum_p  &&   sum_p <= 1.0+tol) )
     return FAIL;
 
   /* init stacks */
@@ -121,13 +119,13 @@ int nsp_guide_table_method(double *p, double *q, int *key, int n)
   q[0] = 0.0;
   for ( k = 0 ; k < n ; k++ )
     {
-      if ( p[k] < 0 )
+      if ( ! (p[k] >= 0) )
 	return FAIL;
       q[k+1] = q[k] + p[k];
     }
 
   /* probabilities must sum up to 1 */
-  if ( q[n] < 1.0 - tol  ||  1.0 + tol < q[n] )
+  if ( ! (1.0-tol <= q[n]  &&  q[n] <= 1.0+tol) )
     return FAIL;
 
   q[n] = 1.0;
