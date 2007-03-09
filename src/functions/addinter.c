@@ -42,7 +42,7 @@
 Iel DynInterf[MAXINTERF];
 int LastInterf=0;
 
-static void SciInterInit (void);
+static void nsp_interfaces_initialize(void);
 
 /**
  * nsp_dynamic_interface:
@@ -79,9 +79,9 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   sprintf(names[1],"%s%s",interface,interf_info);
   names[2]= NULL;
 
-  SciLinkInit();
-  SciInterInit();
-  
+  nsp_link_initialize(); 
+  nsp_interfaces_initialize();
+
   /* Try to find a free position in the interface table : inum **/
   inum=-1;
   for ( i = 0 ; i < LastInterf ; i++) 
@@ -164,21 +164,21 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
 }
 
 
-/*****************************************
+/*
  * A blank interface used as default value 
- *****************************************/
+ */
 
-int BlankInterface(int i, char *fname, int first, int rhs, int opt, int lhs)
+static int nsp_default_interface(int i, char *fname, int first, int rhs, int opt, int lhs)
 {
   Sciprintf("Error: Interface for function %s is not linked\n",fname);
   return RET_BUG;
 }
 
-/*********************************
- * used in C2F(isciulink)(i) 
- *********************************/
+/* Initialize the DynInterf array. 
+ * 
+ */
 
-static void SciInterInit(void)
+static void nsp_interfaces_initialize(void) 
 {
   static int first_entry=0;
   if ( first_entry == 0) 
@@ -187,7 +187,7 @@ static void SciInterInit(void)
       for ( i= 0 ; i < MAXINTERF ; i++) 
 	{ 
 	  DynInterf[i].ok=0;
-	  DynInterf[i].func = BlankInterface;
+	  DynInterf[i].func = nsp_default_interface;
 	}
       first_entry++;
     }
@@ -202,7 +202,7 @@ static void SciInterInit(void)
  * 
  **/
 
-void RemoveInterf(int Nshared)
+void nsp_remove_interface(int Nshared)
 {
   int i;
   for ( i = 0 ; i < LastInterf ; i++ ) 
@@ -210,30 +210,12 @@ void RemoveInterf(int Nshared)
       if (DynInterf[i].ok == 1 &&  DynInterf[i].Nshared == Nshared ) 
 	{
 	  DynInterf[i].ok = 0;
-	  DynInterf[i].func = BlankInterface;
+	  DynInterf[i].func = nsp_default_interface;
 	  nsp_delete_interface_functions(i +  DYN_INTERF_START );
 	  break;
 	}
     }
 }
-
-/*********************************
- * show the interface table 
- *********************************/
-
-/* static void ShowInterf(void) */
-/* { */
-/*   int i; */
-/*   for ( i = 0 ; i < LastInterf ; i++ )  */
-/*     { */
-/*       if ( DynInterf[i].ok == 1 )  */
-/* 	Sciprintf("Interface %d %s\n",i,DynInterf[i].name); */
-/*     } */
-/* } */
-
-
-
-
 
 
 

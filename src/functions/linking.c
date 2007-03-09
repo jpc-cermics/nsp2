@@ -36,7 +36,7 @@
 static void Underscores(int isfor,nsp_const_string ename, char *ename1);
 static int SearchFandS(nsp_const_string op, int ilib);
 static int nsp_find_shared(nsp_const_string shared_path);
-static int LinkStatus (void) ;
+static int nsp_link_status (void) ;
 
 /* sructure used to store entry points 
  * i.e a function pointer, a name and a shared lib id 
@@ -84,7 +84,7 @@ static int NEpoints = 0   ;   /* Number of Linked names */
 void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
 {
   int lib;
-  SciLinkInit(); 
+  nsp_link_initialize(); 
   if ( iflag== 0 && (lib = nsp_find_shared(shared_path)) != -1 ) 
     {
       /* Sciprintf("shared library already loaded\n"); */
@@ -94,7 +94,7 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
   if ( iflag== 0 && strncmp(shared_path,"show",4)==0) 
     {
       ShowDynLinks();
-      *ilib = LinkStatus();  /* return value for Scilab */
+      *ilib = nsp_link_status();  /* return value for Scilab */
       return;
     }
 
@@ -159,7 +159,7 @@ static void Underscores(int isfor,nsp_const_string ename, char *ename1)
  * Initialize tables 
  */
 
-void SciLinkInit(void)
+void nsp_link_initialize(void)
 {
   static int first_entry = 0;
   int i;
@@ -208,7 +208,7 @@ int nsp_is_linked(nsp_const_string name,int *ilib)
  * In case of failure the returned value is NULL.
  */
 
-void GetDynFunc(int ii, int (**realop)())
+void GetDynFunc_obsolete(int ii, int (**realop)())
 {
   if ( EP[ii].Nshared != -1 ) 
     *realop = EP[ii].epoint;
@@ -332,9 +332,9 @@ static int nsp_find_shared(nsp_const_string shared_path)
 void nsp_unlink_shared(int ilib)
 {
   /* be sure that dynamic link tables are initialized */
-  SciLinkInit(); 
+  nsp_link_initialize(); 
   /* delete entry points in shared lib *i */
-  Sci_Delsym(ilib);
+  nsp_delete_symbols(ilib);
   /* delete entry points used in addinter in shared lib *i */
-  RemoveInterf(ilib);
+  nsp_delete_interface_functions(ilib);
 }

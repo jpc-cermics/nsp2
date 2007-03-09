@@ -31,9 +31,9 @@
 
 extern char *strchr();
 
-static void Sci_Delsym (int );
-static int Sci_dlopen(nsp_const_string shared_path,int global);
-static int Sci_dlsym(nsp_const_string ename, int ishared, char strf);
+static void nsp_delete_symbols (int );
+static int nsp_dlopen(nsp_const_string shared_path,int global);
+static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
 
 /*************************************
  * New version : link entry names 
@@ -48,7 +48,7 @@ void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **
   int i;
   if ( iflag == 0 )
     {
-      *ilib  = Sci_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE);
+      *ilib  = nsp_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE);
     }
   if (*ilib  == -1 ) return;
 
@@ -57,32 +57,46 @@ void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **
       i=0 ;
       while ( en_names[i] != (char *) 0)
 	{
-	  if ( Sci_dlsym(en_names[i],*ilib,strf) == FAIL) 
+	  if ( nsp_dlsym(en_names[i],*ilib,strf) == FAIL) 
 	    *ilib=-5;
 	  i++;
 	}
     }
 }
 
-/**************************************
- * return 1 if link accepts multiple file iin one call
- * or 0 elsewhere 
- *************************************/
 
-int LinkStatus(void)
+/**
+ * nsp_link_status:
+ * @void: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+int nsp_link_status(void)
 {
   return(1);
 }
 
+/**
+ * nsp_dlopen:
+ * @shared_path: a null-terminated string giving a pathname 
+ * @global: %TRUE or %FALSE 
+ * 
+ * loads  the dynamic library file named by @shared_path.
+ * If @global is %TRUE then (RTLD_NOW| RTLD_GLOBAL) is passed to 
+ * dlopen else RTLD_NOW is used. 
+ * Note that @shared_path can be set to "nsp". In that case symbols 
+ * from nsp executable can de searched. 
+ * 
+ * 
+ * Returns: -1 in case of failure or the id as an integer of the 
+ * loaded  dynamic library 
+ **/
 
-/*************************************
- * This routine 
- *   load a shared archive and call dlopen (here LoadLibrary)
- *   the shared lib handler is stored in a Table 
- *   The return value is == -1 if the dlopen failed 
- *************************************/
 
-static int Sci_dlopen(nsp_const_string shared_path,int global)
+static int nsp_dlopen(nsp_const_string shared_path,int global)
 {
   static HINSTANCE  hd1 = NULL;
   int   i;
@@ -120,13 +134,20 @@ static int Sci_dlopen(nsp_const_string shared_path,int global)
   return (Nshared-1);
 }
 
+/**
+ * nsp_dlsym:
+ * @ename: a string giving a symbol name 
+ * @ishared: the id of a previously loaded shared library 
+ * @strf: 'c' or 'f' 
+ * 
+ * Using the id @ishared of a dynamic library returned  by  nsp_dlopen and a symbol 
+ * name, this function gets the address where that symbol is loaded into memory 
+ * and store the symbol in the link table.
+ * 
+ * Returns: %OK or %FAIL 
+ **/
 
-/*************************************
- * This routine load the entryname ename 
- *     from shared lib ishared 
- *************************************/
-
-static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
+static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
 {
   HINSTANCE  hd1 = NULL;
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
@@ -172,11 +193,17 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 }
 
 
-/*
- * Delete entry points associated with shared lib ishared
- */
 
-void Sci_Delsym(int ishared)
+/**
+ * nsp_delete_symbols:
+ * @ishared: integer 
+ * 
+ * remove from link table the entries which were 
+ * linked from shared library @ishared.
+ *
+ **/
+
+static void nsp_delete_symbols(int ishared)
 {
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
   int i=0;

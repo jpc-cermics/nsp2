@@ -580,7 +580,7 @@ int test_hash()
       test1();
       printf("Remove interface\n");
       printf("===================== \n");
-      DeleteFunctionS(-23);
+      DelseteFunctionS(-23);
       test1();
     }
   return(0);

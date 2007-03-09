@@ -18,7 +18,7 @@ extern void SciDynLoad (char **files,char **en_names,char *strf,
 
 extern void C2F(iislink) (   char *buf,   integer *irep);
 extern void C2F(isciulink) ( integer *i);
-extern int LinkStatus  (void);
+extern int nsp_link_status  (void);
 
 void AddInter (char **files, char *iname, char **enames, int *err);
 int BlankInterface (int i, char *fname, int first, int rhs, int opt, int lhs);

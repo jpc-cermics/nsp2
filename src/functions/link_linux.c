@@ -89,17 +89,21 @@ void SciLink(iflag,rhs,ilib,files,en_names,strf)
  * or 0 elsewhere 
  *************************************/
 
-int LinkStatus()
+int nsp_link_status()
 {
   return(0);
 }
 
-/**************************************
- * Unlink a shared lib 
- *************************************/
+/**
+ * nsp_delete_symbols:
+ * @ishared: integer 
+ * 
+ * remove from link table the entries which were 
+ * linked from shared library @ishared.
+ *
+ **/
 
-void C2F(isciulink)(i) 
-     integer *i;
+void nsp_delete_symbols(int i) 
 {
   Sciprintf("aout link : No unlink up to now \r\n");
 }
