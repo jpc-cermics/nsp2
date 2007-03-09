@@ -568,10 +568,10 @@ static int int_nsp_ifftshift(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Fft_func[]={
-    {"fft", int_nsp_fft},
-    {"fft2", int_nsp_fft2},
-    {"fftshift", int_nsp_fftshift},
-    {"ifftshift", int_nsp_ifftshift},
+    {"fft_m_m", int_nsp_fft},
+    {"fft2_m_m", int_nsp_fft2},
+    {"fftshift_m", int_nsp_fftshift},
+    {"ifftshift_m", int_nsp_ifftshift},
     {(char *) 0, NULL}
 };
 
