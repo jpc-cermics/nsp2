@@ -513,6 +513,54 @@ static NspMatrix *nsp_mat_shift(NspMatrix *x, int dim_flag, char orient)
 }
 
 
+static NspMatrix *nsp_mat_fliplr(NspMatrix *x)
+{
+  NspMatrix *y;
+  int j, colsize;
+  char *to, *from;
+
+  if ( (y = nsp_matrix_create(NVOID, x->rc_type, x->m, x->n)) == NULLMAT )
+    return NULLMAT;
+
+  if ( x->rc_type == 'r' )
+    {
+      from = (char *) &(x->R[(x->n-1)*x->m]); to =  (char *) y->R; colsize = x->m*sizeof(double);
+    }
+  else
+    {
+      from = (char *) &(x->C[(x->n-1)*x->m]); to =  (char *) y->C; colsize = x->m*sizeof(doubleC);
+    }
+
+  for ( j = 0; j < x->n ; j++ , to += colsize, from -= colsize )
+    memcpy(to, from, colsize);
+
+  return y;
+}
+
+static NspMatrix *nsp_mat_flipud(NspMatrix *x)
+{
+  NspMatrix *y;
+  int i, j, k=0, stride;
+
+  if ( (y = nsp_matrix_create(NVOID, x->rc_type, x->m, x->n)) == NULLMAT )
+    return NULLMAT;
+
+  if ( x->rc_type == 'r' )
+    {
+      for ( j = 0, stride = x->m-1 ; j < x->n ; j++, stride += x->m )
+	for ( i = 0 ; i < x->m ; i++, k++ )
+	  y->R[stride - i] = x->R[k];
+    }
+  else
+    {
+      for ( j = 0, stride = x->m-1 ; j < x->n ; j++, stride += x->m )
+	for ( i = 0 ; i < x->m ; i++, k++ )
+	  y->C[stride - i] = x->C[k];
+    }
+
+  return y;
+}
+
 static int int_nsp_fftshift(Stack stack, int rhs, int opt, int lhs)
 {
   int dim_flag=0;
@@ -567,11 +615,45 @@ static int int_nsp_ifftshift(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nsp_fliplr(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *y;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetMat (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( (y = nsp_mat_fliplr(x)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+}
+
+static int int_nsp_flipud(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *y;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetMat (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( (y = nsp_mat_flipud(x)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+}
+
 static OpTab Fft_func[]={
     {"fft_m_m", int_nsp_fft},
     {"fft2_m_m", int_nsp_fft2},
     {"fftshift_m", int_nsp_fftshift},
     {"ifftshift_m", int_nsp_ifftshift},
+    {"fliplr_m", int_nsp_fliplr},
+    {"flipud_m", int_nsp_flipud},
     {(char *) 0, NULL}
 };
 
