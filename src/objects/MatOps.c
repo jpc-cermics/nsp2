@@ -4299,15 +4299,15 @@ static int NEq(double a, double b) {  return(a!=b);}
 static int Gt(double a, double b) {  return(a>b);}
 static int Ge(double a, double b) {  return(a>=b);}
 
-static int C_Lt(doubleC *a, doubleC *b) {  return(nsp_abs_c(a)< nsp_abs_c(b));}
-static int C_Le(doubleC *a, doubleC *b) {  return(nsp_abs_c(a)<=nsp_abs_c(b));}
-static int C_Eq(doubleC *a, doubleC *b) {  return(a->r ==b->r && a->i == b->i );}
-static int C_NEq(doubleC *a, doubleC *b) {  return(a->r != b->r || a->i != b->i );}
-static int C_Gt(doubleC *a, doubleC *b) {  return(nsp_abs_c(a)> nsp_abs_c(b));}
-static int C_Ge(doubleC *a, doubleC *b) {  return(nsp_abs_c(a)>=nsp_abs_c(b));}
+static int C_Lt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)< nsp_abs_c(b));}
+static int C_Le(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)<=nsp_abs_c(b));}
+static int C_Eq(const doubleC *a,const  doubleC *b) {  return(a->r ==b->r && a->i == b->i );}
+static int C_NEq(const doubleC *a,const  doubleC *b) {  return(a->r != b->r || a->i != b->i );}
+static int C_Gt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)> nsp_abs_c(b));}
+static int C_Ge(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)>=nsp_abs_c(b));}
 
 typedef int (CompOp) (double,double);
-typedef int (C_CompOp) (doubleC *,doubleC *);
+typedef int (C_CompOp) (const doubleC *,const  doubleC *);
 
 typedef struct cpt {
   char *name;
@@ -4327,7 +4327,7 @@ static CompTab comptab[] = {
   {(char *) NULL, 0,0,0,0}
 };
 
-static int SearchComp(char *op, CompOp (**realop), C_CompOp (**C_realop))
+static int SearchComp(const char *op, CompOp (**realop), C_CompOp (**C_realop))
 {
   int i=0;
   while ( comptab[i].name != (char *) NULL)
@@ -4355,17 +4355,15 @@ static int SearchComp(char *op, CompOp (**realop), C_CompOp (**C_realop))
 }
 
 
-/*
- * Isinf 
- */
-
 /**
  * nsp_mat_isinf:
  * @A: a #NspMatrix 
  * 
+ * returns a new boolean matrix returning for each entry of @A the 
+ * result of isinf(). If @A is complex then the returned entry is %TRUE 
+ * if the imaginary or real part of the complex entry is infinity.
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or %NULLBMAT
  **/
 
 NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
@@ -4385,18 +4383,18 @@ NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
   return(Loc);
 }
 
-/*
- * Isnan
- */
 
 /**
  * nsp_mat_isnan:
  * @A: a #NspMatrix 
  * 
+ * returns a new boolean matrix returning for each entry of @A the 
+ * result of isnan(). If @A is complex then the returned entry is %TRUE 
+ * if the imaginary or real part of the complex entry return %TRUE to isnan().
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or %NULLBMAT
  **/
+
 NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
 {
   int i;
@@ -4414,18 +4412,19 @@ NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
   return(Loc);
 }
 
-/*
- * Isinf 
- */
 
 /**
  * nsp_mat_finite:
  * @A: a #NspMatrix 
  * 
+ * returns a new boolean matrix returning for each entry of @A the 
+ * result of finite(). If @A is complex then the returned entry is %TRUE 
+ * if both the imaginary and real part of the complex entry return %TRUE to 
+ * finite().
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or %NULLBMAT
  **/
+
 NspBMatrix  *nsp_mat_finite(NspMatrix *A)
 {
   int i;
@@ -4972,7 +4971,7 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 }
 
 
-static CompOp *SearchCompBis(char *op)
+static CompOp *SearchCompBis(const char *op)
 {
   int i = 0;
   while ( comptab[i].name != (char *) NULL )
@@ -5007,7 +5006,8 @@ static CompOp *SearchCompBis(char *op)
  * indm+1 is the vector of indices which don't satisfy any of the m tests 
  *
  **/
-int nsp_mat_findm(NspMatrix *x, int m, char **ops, double *scalars, NspMatrix **Ind)
+
+int nsp_mat_findm(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind)
 {
   CompOp **func = NULL;
   int *length = NULL;
