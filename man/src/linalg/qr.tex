@@ -1,0 +1,115 @@
+% -*- mode: latex -*-
+
+\mansection{qr}
+\begin{mandesc}
+  \short{qr}{QR factorization}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[Q, R] = qr(A)
+[Q, R [,p [,rk [,sval]]]] = qr(A, mode=str, tol=rscal)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} :  numerical matrix (says $m \times n$)
+    \vname{mode=str} : optional named argument, \verb+mode="x"+(default) or \verb+mode="e"+
+    \vname{tol=rscal} : optional named argument, \verb+rscal+ must be a real scalar in (0,1) (default \verb+max(m,n)*%eps+)
+    \vname{Q} : unitary or orthogonal matrix
+    \vname{R} : upper triangular matrix
+    \vname{p} : permutation vector
+    \vname{rk} : rank estimation
+    \vname{sval} : a few approximate singular values
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes a $A = Q R$ or $A P = QR$ factorization of 
+the matrix $A$, with:
+\begin{itemize}
+\item $Q$ an orthogonal matrix (unitary in the complex case) 
+\item $R$ an upper triangular matrix (with decreasing diagonal 
+      elements in the case $A P = QR$) 
+\item $P$ a permutation matrix. The $A P = QR$ factorization is 
+      computed when at least a third output argument is needed
+      (note that the output argument \verb+p+ is not a permutation matrix
+       but a permutation vector (see hereafter)). 
+\end{itemize}
+
+When the function is used with a fourth output argument 
+a rank detection is done by incremental estimation of max and min
+singular values and vectors of the triangular matrice $R$ (same method
+than the one used in the lapack routine dgelsy.f). In that case these
+estimations can be returned in the output argument \verb+sval+ with:
+\begin{itemize}
+\item $sval_1$ an estimation of the max singular value,
+\item $sval_2$ an estimation of the min singular value,
+\item and $sval_3 < sval_2$ when $sval_3$ is under the tolerance 
+      level compared to $sval_1$ ($sval_3 < tol sval_1$). The matrix
+      is then considered not as a full rank matrix
+      ($rank(A)<min(n,m)$) for the choosen tolerance level. 
+      Otherwise $sval_3 = sval_2$ and $rank(A)=min(n,m)$.
+\end{itemize}
+
+\itemdesc{mode parameter}
+\begin{itemize}
+   \item When \verb+mode="x"+ $Q$ is an $m \times m$ (orthogonal) matrix and
+         $R$ an  $m \times n$ (upper triangular) matrix. The first
+         $rk$ columns of $Q$ form an orthogonal basis of the column
+         space of $A$.
+   \item  \verb+mode="e"+ noting $p=min(n,m)$, then $Q$ is an $m \times p$ matrix and $R$ is
+         an $p \times n$ matrix, so we get (in case $n<m$) an economic
+         sized factorization.
+\end{itemize}
+  
+\itemdesc{tol parameter} 
+By default $tol = min(m,n) \epsilon_m$ is used with $\epsilon_m$ the epsilon
+machine (aka the relative unit roundoff error $u$) ($\epsilon_m =$ \verb+2^(-53+)).
+
+\itemdesc{details on the permutation vector} 
+Strictly speaking \verb+p+ is the inverse permutation associated
+to the permutation matrix $P$. More simply \verb+p+
+is such that $AP$ is equal to \verb+A(:,p)+.
+
+\end{mandescription}
+
+\begin{examples}
+\paragraph{example 1} solving least a square problem:
+  \begin{program}\HCode{A=rand(10,5);\Hnewline
+    b=rand(10,1);\Hnewline
+    // solving min ||Ax - b|| with a simple economic sized A = QR factorization\Hnewline
+    [Q,R]=qr(A,mode="e");\Hnewline
+    x = R}\verb+\+\HCode{(Q'*b);\Hnewline
+    // solving min ||Ax - b|| with a AP = QR factorization\Hnewline
+    [Q,R,p]=qr(A,mode="e");\Hnewline
+    x = R}\verb+\+\HCode{(Q'*b);\Hnewline
+    x(p) = x; // apply the permutation}
+  \end{program}
+
+\paragraph{example 2} rank detection
+  \begin{program}\HCode{// build a random matrix and make one column a linear combinaison of some others\Hnewline
+    A=rand(5,4);\Hnewline
+    A(:,2) = 0.1*A(:,1) - 3*A(:,4); // A must be now of rank 3\Hnewline
+    [Q,R,p,rk,sval]=qr(A)\Hnewline
+    // compare sval with the "real" singular values\Hnewline
+    sv = svd(A);\Hnewline
+    // sval(1) and sval(2) are rough estimations of sv(1) and sv(3)\Hnewline
+    esvmax = abs((sval(1)-sv(1))/sv(1))  // relative error for the max sv estimation\Hnewline
+    esvmin = abs((sval(2)-sv(3))/sv(3))  // relative error for the min sv estimation}
+  \end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{qr}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   interface : bp and jpc. Internally lapack routines dgeqrpf (or
+   dgeqp3), dorgqr are used in real case and zgeqrpf (or zgeqp3) and
+   zungqr are used in the complex case.
+\end{authors}
