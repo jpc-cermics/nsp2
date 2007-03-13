@@ -36,8 +36,6 @@ function [ImA] = orth(A,tol=[],meth="svd")
   
   if isempty(tol) then, tol = max(size(A))*%eps, end
   
-  [m,n] = size(A)
-
   if meth == "qr" then
      [Q,R,p,rk] = qr(A,tol=tol)
      ImA = Q(:,1:rk)
