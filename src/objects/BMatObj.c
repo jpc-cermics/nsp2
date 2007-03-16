@@ -32,7 +32,7 @@
 
 /**
  * SECTION:bmatrix
- * @title: Boolean matrices
+ * @title: NspBMatrix
  * @short_description: An object used to implement boolean matrices.
  * @see_also: 
  *

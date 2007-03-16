@@ -18,9 +18,9 @@ typedef int Boolean;
 
 /**
  * NspBMatrix: 
- * @m:
- * @n:
- * @mn: 
+ * @m: number of rows 
+ * @n: number of columns
+ * @mn: @m x @n
  * @B: array containing the values 
  *
  * inherits from #NspObject 

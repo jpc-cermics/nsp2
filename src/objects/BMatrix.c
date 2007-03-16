@@ -566,9 +566,9 @@ int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
  * @Rows: a #NspMatrix
  * @Cols: a #NspMatrix
  *
- * Compute A(Rows,Cols) and returns the new #MspBMatrix 
+ * Compute A(Rows,Cols) and returns the new #NspBMatrix 
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
@@ -581,9 +581,9 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
  * @A: a #NspBMatrix
  * @Elts: a #NspMatrix
  *
- * Compute A(Elts) and returns the new #MspBMatrix 
+ * Compute A(Elts) and returns the new #NspBMatrix 
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
@@ -596,9 +596,9 @@ NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
  * @A: a #NspBMatrix
  * @Cols: a #NspMatrix
  *
- * Compute A(:,Cols) and returns the new #MspBMatrix 
+ * Compute A(:,Cols) and returns the new #NspBMatrix 
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
@@ -611,9 +611,9 @@ NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
  * @A: a #NspBMatrix
  * @Rows: a #NspMatrix
  *
- * Compute A(Rows,:) and returns the new #MspBMatrix 
+ * Compute A(Rows,:) and returns the new #NspBMatrix 
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows)
@@ -658,7 +658,7 @@ NspBMatrix  *BMatLoopCol(char *str, NspBMatrix *Col, NspBMatrix *A, int icol, in
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_diag(NspBMatrix *A, int k)
@@ -723,7 +723,7 @@ int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 
@@ -748,7 +748,7 @@ NspBMatrix  *nsp_bmatrix_create_diag(NspBMatrix *Diag, int k)
  *
  * return the transpose of A
  * 
- * returns a #MspBMatrix or %NULLMAT 
+ * returns a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_transpose(NspBMatrix *A)
