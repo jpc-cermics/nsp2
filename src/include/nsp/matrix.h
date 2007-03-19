@@ -13,7 +13,27 @@
  * NspMatrix inherits from NspObject 
  */
 
+/**
+ * doubleC: 
+ * @r: real part 
+ * @i: imaginary part
+ * 
+ * structure used to store complex values i.e two doubles.
+ */
+
 typedef struct { double r, i; } doubleC;
+
+/**
+ * NspMatrix: 
+ * @m: number of rows 
+ * @n: number of columns
+ * @mn: @m x @n
+ * @rc_type: 'r' for real or  'c' for complex 
+ * @convert: 'd','i','f','c' : double, int, float, old_complex. 
+ *          used to remember array converted in place
+
+ * inherits from #NspObject 
+ */
 
 typedef struct _NspMatrix NspMatrix;
 

@@ -18,7 +18,13 @@
  * an ENTRY and a flag for usage.
  */
 
-/* Element stored in the hashtable */
+/**
+ * Hash_Entry: 
+ * @used: integer used to detect used locations
+ * @data: #NspObject 
+ * 
+ * Element stored in #NspHash  */
+ */
 
 typedef struct _Hash_Entry  Hash_Entry; 
 
@@ -38,6 +44,15 @@ struct _NspTypeHash {
   NSP_TYPE_OBJECT__ 
   /*< public >*/
 };
+
+/**
+ * NspHash: 
+ * @hsize: size of hash table
+ * @filled:  number of present entries
+ * @htable: an array of size hsize+1.
+ * 
+ * inherits from #NspObject, used to store hash tables.
+ */
 
 typedef struct _NspHash NspHash;
 

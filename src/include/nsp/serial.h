@@ -15,6 +15,15 @@
  * NspSerial inherits from NspObject
  */
 
+/**
+ * NspSerial: 
+ * @val: character array used to store the serialized object
+ * @nbytes: size of the serialized object.
+ * 
+ * inherits from #NspObject, used to store serialized objects.
+ */
+
+
 typedef struct _NspSerial NspSerial;
 typedef struct _NspTypeSerial NspTypeSerial;
 
