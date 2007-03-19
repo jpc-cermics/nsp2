@@ -2269,9 +2269,10 @@ int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
       Scierror("Error: first and second arguments of balanc must have equal size\n");
       return FAIL;
     }
-
-  if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
-  if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+  /* 
+     if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
+     if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+  */
 
   if ( A->mn == 0 )   /* A = [] return empty matrices */ 
     {
@@ -2329,6 +2330,11 @@ int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   return OK;
 }
 
+/*  A revoir : A et B peuvent etre rectangulaires dimension (LDA,N)
+ *  dimension dimension (LDB,N) mais LDB et LDA doivent etre >= N. 
+ *
+ */ 
+
 
 static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
@@ -2340,7 +2346,7 @@ static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   if ( (lscale=nsp_alloc_work_doubles(n)) == NULL ) return FAIL;
   if ( (rscale=nsp_alloc_work_doubles(n)) == NULL ) goto err;
   lworkMin = Max(1,6*n);
-  if ( (rscale=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
+  if ( (dwork=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
 
   C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi, lscale, rscale, dwork, &info, 1L);
   if (info != 0) 
@@ -2392,7 +2398,7 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   if ( (lscale=nsp_alloc_work_doubles(n)) == NULL ) return FAIL;
   if ( (rscale=nsp_alloc_work_doubles(n)) == NULL ) goto err;
   lworkMin = Max(1,6*n);
-  if ( (rscale=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
+  if ( (dwork=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
 
   C2F(zggbal)("B",&n, A->C, &n, B->C, &n, &ilo, &ihi, lscale, rscale, dwork, &info, 1L);
   if (info != 0) 
