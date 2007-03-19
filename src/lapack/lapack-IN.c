@@ -364,13 +364,18 @@ static int int_cholesky( Stack stack, int rhs, int opt, int lhs)
 static int int_lu( Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *A;
-  NspMatrix *L=NULL, *E=NULL;
-  NspMatrix **hE=NULL;
+  NspMatrix *L=NULL, *E=NULL, *Rcond;
+  NspMatrix **hE=NULL, **hRcond=NULL;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
-  CheckLhs(1,3);
-  if ( lhs >= 3) { hE= &E;}
-  if ( nsp_lu(A,&L,hE)== FAIL) return RET_BUG;
+  CheckLhs(1,4);
+  if ( lhs >= 3) 
+    { 
+      hE= &E;  
+      if ( lhs == 4) hRcond= &Rcond;
+    }
+
+  if ( nsp_lu(A,&L,hE,hRcond)== FAIL) return RET_BUG;
 
   NthObj(rhs+1) = NSP_OBJECT(L);
   NSP_OBJECT(L)->ret_pos = 1;  
@@ -378,7 +383,12 @@ static int int_lu( Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 3 ) 
     {
       NthObj(rhs+2) = NSP_OBJECT(E);
-      NSP_OBJECT(E)->ret_pos = 3;        
+      NSP_OBJECT(E)->ret_pos = 3;
+      if ( lhs == 4 )
+	{
+	  NthObj(rhs+3) = NSP_OBJECT(Rcond);
+	  NSP_OBJECT(Rcond)->ret_pos = 4;
+	}
     }
   return Max(lhs,1);
 }

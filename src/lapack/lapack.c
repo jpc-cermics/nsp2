@@ -203,9 +203,8 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  *
  *      @A = @Q @R   if @E is NULL
  * 
- *      if P is the permutation matrix associated to the permutation sigma
- *      then @E is the permutation vector associated to the inverse permutation
- *      ( E(sigma(i)) = i) 
+ *      if P is the permutation matrix associated to the permutation vector @E
+ *      (AP)(:,j) = A(:,E(j))
  *
  * Return value:  %OK or %FAIL
  **/
@@ -463,8 +462,8 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 }
 
 
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
+int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E,NspMatrix **Rcond);
+int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E,NspMatrix **Rcond);
 
 /**
  * nsp_lu:
@@ -474,6 +473,8 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
  *              on entry then @L stores inv(P) L and is no more lower triangular.
  * @E: (output if @E is not NULL on entry) a permutation vector (m x 1 ) 
  *             stored as a real vector
+ * @Rcond: (output if @Rcond is not NULL on entry) a scalar (estimation of the reciprocal
+ *             condition number in 1-norm.
  * 
  * Compute a LU factorization of the matrix @A :
  *
@@ -487,42 +488,78 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
  * 
  * Return value:  %OK or %FAIL
  **/
-int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
+int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E, NspMatrix **Rcond)
 {
-  /* A == [] return empty matrices*/
+
+  if ( A->m != A->n  &&  Rcond != NULL )
+    {
+      Scierror("Error: rcond could computed only for a square matrix\n"); 
+      return FAIL;
+    }
+
+  /* special return when A is an empty matrice */
   int i;
-  if ( A->mn == 0 )  
+  if ( A->mn == 0 )
     {
       if ( (*L=nsp_matrix_create(NVOID,A->rc_type,A->m,0)) == NULLMAT ) return FAIL;
       if ( E != NULL )
-	if ( (*E=nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT ) return FAIL;
-      for ( i = 0; i < A->m ; i++ ) (*E)->R[i] = i+1;
+	{
+	  if ( (*E=nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT ) return FAIL;
+	  for ( i = 0; i < A->m ; i++ ) (*E)->R[i] = i+1;
+	}
+      if ( Rcond != NULL )
+	{
+	  if ( (*Rcond=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) return FAIL;
+	  (*Rcond)->R[0] = 1.0/0.0;
+	}
+
       A->m = 0;  /* because A store U... */
-      return OK ; 
+      return OK ;
     }
 
   if (A->rc_type == 'r' ) 
-    return  intdgetrf(A,L,E);
+    return  intdgetrf(A,L,E,Rcond);
   else 
-    return  intzgetrf(A,L,E);
+    return  intzgetrf(A,L,E,Rcond);
 }
 
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
+int intdgetrf(NspMatrix *A, NspMatrix **pL, NspMatrix **pE, NspMatrix **pRcond)
 {
   int info, m=A->m, n=A->n , Minmn, i, j, k, ind, nbsd;
-  int *ipiv=NULL, *invp=NULL;
-  double zeroD=0.0, oneD=1.0;
+  int *ipiv=NULL, *invp=NULL, *iwork=NULL;
+  double zeroD=0.0, oneD=1.0, rcond, anorm, *dwork=NULL;
+  NspMatrix *L=NULLMAT, *E=NULLMAT, *Rcond=NULLMAT;
 
-   Minmn = Min(m,n);
+  Minmn = Min(m,n);
 
-  if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
+  if ( (L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
  
-  if ( E != NULL )
-    if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
-  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) return FAIL;
-  if ( (invp = nsp_alloc_work_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
+  if ( pE != NULL )
+    if ( (E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) goto err;
+  
+  if ( pRcond != NULL )
+    {
+      if ( (Rcond=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto err;
+      if ( (dwork =nsp_alloc_work_doubles(4*n)) == NULL ) goto err;
+    }
+
+  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) goto err;
+  if ( (invp = nsp_alloc_work_int(m)) == NULL ) goto err;
+  
+  if ( pRcond != NULL )
+    anorm = C2F(dlange)("1", &n, &n, A->R, &n, NULL, 1L);
 
   C2F(dgetrf)(&m, &n, A->R, &m, ipiv, &info);
+
+  if ( pRcond != NULL )   /* may be not NULL only if m == n */
+    {
+      if (info == 0) 
+	C2F(dgecon)("1", &n, A->R, &n, &anorm, &rcond, dwork, iwork, &info, 1L);
+      else if (info > 0)   /* there is a zero pivot */
+	rcond = 0.0;
+      Rcond->R[0] = rcond;
+    }
   
   /* compute the inverse permutation invpiv */ 
   for ( i=1 ; i <= m ; i++) invp[i-1]=i;
@@ -533,15 +570,15 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
     }
 
   /* fill L with the lower triangular part of A */
-  if ( E != NULL )
+  if ( pE != NULL )
     {
-      for ( i = 0 ; i < m ; i++ ) (*E)->R[i] = (double) invp[i];
-      C2F(dlaset)("A", &m, &Minmn, &zeroD, &oneD, (*L)->R, &m, 1L);
+      for ( i = 0 ; i < m ; i++ ) E->R[i] = (double) invp[i];
+      C2F(dlaset)("A", &m, &Minmn, &zeroD, &oneD, L->R, &m, 1L);
       for ( j = 0 ; j < Minmn ; j++ )
 	{
 	  ind = (m+1)*j+1; nbsd = m-j-1;
 	  if ( nbsd > 0 )
-	    memcpy(&((*L)->R[ind]), &(A->R[ind]), nbsd*sizeof(double));
+	    memcpy(&(L->R[ind]), &(A->R[ind]), nbsd*sizeof(double));
 	  for ( k = 0 ; k < nbsd ; k++ ) A->R[ind+k] = 0.0; 	   
 	} 
     }
@@ -551,16 +588,16 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 	{
 	  k = invp[i] - 1;  /* caution invp is 1-based */ 
 	  for ( j = 0 ; j < i ; j++ )
-	    { (*L)->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
-	  (*L)->R[k+i*m] = 1.0;
+	    { L->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
+	  L->R[k+i*m] = 1.0;
 	  for ( j = i+1 ; j < Minmn ; j++ )
-	    (*L)->R[k+j*m] = 0.0;
+	    L->R[k+j*m] = 0.0;
 	}
       for ( i = Minmn ; i < m ; i++ )
 	{
 	  k = invp[i] - 1;  /* caution invp is 1-based */ 
 	  for ( j = 0 ; j < Minmn ; j++ )
-	    { (*L)->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
+	    { L->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
 	}
     }
 
@@ -573,26 +610,55 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
     }
 
   FREE(ipiv); FREE(invp);
+  if ( pRcond != NULL ) { FREE(iwork); FREE(dwork);*pRcond = Rcond; }
+  if ( pE != NULL ) *pE = E;
+  *pL = L;
   return OK;
+
+ err:
+  FREE(ipiv); FREE(invp); FREE(iwork); FREE(dwork);
+  nsp_matrix_destroy(L); nsp_matrix_destroy(E); nsp_matrix_destroy(Rcond);   
+  return FAIL;
 }
 
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
+int intzgetrf(NspMatrix *A,NspMatrix **pL,NspMatrix **pE, NspMatrix **pRcond)
 {
   int info, m=A->m, n=A->n , Minmn, i, j, k, ind, nbsd;
   int *ipiv=NULL, *invp=NULL;
-  doubleC zeroC={0.0,0.0}, oneC={1.0,0.0};
+  NspMatrix *L=NULLMAT, *E=NULLMAT, *Rcond=NULLMAT;
+  doubleC zeroC={0.0,0.0}, oneC={1.0,0.0}, *cwork=NULL;
+  double anorm, rcond, *rwork=NULL;
 
   Minmn = Min(m,n);
 
-  if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
+  if ( (L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
  
-  if ( E != NULL )
-    if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
-  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) return FAIL;
-  if ( (invp = nsp_alloc_work_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
+  if ( pE != NULL )
+    if ( (E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) goto err;
+  if ( pRcond != NULL )
+    {
+      if ( (Rcond=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
+      if ( (cwork=nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
+    }
+
+  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) goto err;
+  if ( (invp = nsp_alloc_work_int(m)) == NULL ) goto err;
+
+  if ( pRcond != NULL )
+    anorm = C2F(zlange)("1", &n, &n, A->C, &n, NULL, 1L);
 
   C2F(zgetrf)(&m, &n, A->C, &m, ipiv, &info);
-  
+
+  if ( pRcond != NULL )
+    {
+      if (info == 0) 
+	C2F(zgecon)("1", &n, A->C, &n, &anorm, &rcond, cwork, rwork, &info, 1L);
+      else if (info > 0)   /* there is a zero pivot */
+	rcond = 0.0;
+      Rcond->R[0] = rcond;
+    }
+
   /* compute the inverse permutation invpiv */ 
   for ( i=1 ; i <= m ; i++) invp[i-1]=i;
   for ( i=1 ; i <= Minmn ; i++) 
@@ -602,15 +668,15 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
     }
 
   /* fill L with the inf triangular part of A */
-  if ( E != NULL )
+  if ( pE != NULL )
     {
-      for ( i = 0 ; i < m ; i++ ) (*E)->R[i] = (double) invp[i];
-      C2F(zlaset)("A", &m, &Minmn, &zeroC, &oneC, (*L)->C, &m, 1L);
+      for ( i = 0 ; i < m ; i++ ) E->R[i] = (double) invp[i];
+      C2F(zlaset)("A", &m, &Minmn, &zeroC, &oneC, L->C, &m, 1L);
       for ( j = 0 ; j < Minmn ; j++ )
 	{
 	  ind = (m+1)*j+1; nbsd = m-j-1;
 	  if ( nbsd > 0 )
-	    memcpy(&((*L)->C[ind]), &(A->C[ind]), nbsd*sizeof(doubleC));
+	    memcpy(&(L->C[ind]), &(A->C[ind]), nbsd*sizeof(doubleC));
 	  for ( k = 0 ; k < nbsd ; k++ ) A->C[ind+k] = zeroC; 	   
 	} 
     }
@@ -620,16 +686,16 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 	{
 	  k = invp[i] - 1;  /* invp is 1-based */ 
 	  for ( j = 0 ; j < i ; j++ )
-	    { (*L)->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
-	  (*L)->C[k+i*m] = oneC;
+	    { L->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
+	  L->C[k+i*m] = oneC;
 	  for ( j = i+1 ; j < Minmn ; j++ )
-	    (*L)->C[k+j*m] = zeroC;
+	    L->C[k+j*m] = zeroC;
 	}
       for ( i = Minmn ; i < m ; i++ )
 	{
 	  k = invp[i] - 1;  /* invp is 1-based */ 
 	  for ( j = 0 ; j < Minmn ; j++ )
-	    { (*L)->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
+	    { L->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
 	}
      }
 
@@ -642,7 +708,15 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
     }
 
   FREE(ipiv); FREE(invp);
+  if ( pRcond != NULL ) { FREE(rwork); FREE(cwork);*pRcond = Rcond; }
+  if ( pE != NULL ) *pE = E;
+  *pL = L;
   return OK;
+
+ err:
+  FREE(ipiv); FREE(invp); FREE(rwork); FREE(cwork);
+  nsp_matrix_destroy(L); nsp_matrix_destroy(E); nsp_matrix_destroy(Rcond);   
+  return FAIL;
 }
 
 
@@ -1820,10 +1894,11 @@ static int intdgecon(NspMatrix *A,double *rcond)
   C2F(dgetrf)(&n, &n, A->R, &n, iwork , &info);
   if (info == 0) 
     C2F(dgecon)("1", &n, A->R, &n, &anorm, rcond, dwork, iwork, &info, 1L);
-  else 
+  else if (info > 0)   /* there is a zero pivot */
+    *rcond = 0.0;
+  else    /* must not arrive */
     {
       Scierror("Error: something wrong in dgetrf\n"); 
-      /* FIXME : the only pb is a 0 pivot (so we could improve the message) */
       goto err;
     }
   
@@ -1851,10 +1926,11 @@ static int intzgecon(NspMatrix *A,double *rcond)
   C2F(zgetrf)(&n, &n, A->C, &n, iwork , &info);
   if (info == 0) 
     C2F(zgecon)("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1L);
-  else 
+  else if (info > 0)   /* there is a zero pivot */
+    *rcond = 0.0;
+  else                 /* must not arrive */
     {
       Scierror("Error: something wrong in zgetrf\n"); 
-      /* FIXME : the only pb is a null pivot (so we could improve the message) */
       return FAIL;
     }
   
