@@ -5,9 +5,6 @@ rand('normal')
 //==========================================================================
 //==============================   balanc     ============================== 
 //==========================================================================
-// XXXXXXXXX
-
-if %f then 
 
 function A=testmat3(a,n)
 //eigen values are given by a dilation of nth roots of 1
@@ -47,31 +44,36 @@ if Err(Ab-inv(X)*A*X)>1000*%eps then pause,end
 // PENCILS
 //Small dimension
 //---------------
+A=[1/2^10,1/2^10;2^10,2^10];
+B=A; 
+[Ab,Bb,X,Y]=balanc(A,B);
+if Err(Bb-X'*B*Y)>200*%eps then pause,end 
+if Err(Ab-X'*A*Y)>200*%eps then pause,end 
+
 //Real Case
 A=testmat3(10000,5);B=testmat3(1000,5);
 [Ab,Bb,X,Y]=balanc(A,B);
-if Err(Bb-inv(X)*B*Y)>200*%eps then pause,end 
-if Err(Ab-inv(X)*A*Y)>200*%eps then pause,end 
+if Err(Bb-X'*B*Y)>200*%eps then pause,end 
+if Err(Ab-X'*A*Y)>200*%eps then pause,end 
 
 //complex case
 A=testmat3(10000+0.001*%i,5);B=testmat3(1000+100*%i,5);
 [Ab,Bb,X,Y]=balanc(A,B);
-if Err(Bb-inv(X)*B*Y)>200*%eps then pause,end 
-if Err(Ab-inv(X)*A*Y)>200*%eps then pause,end 
-
+if Err(Bb-X'*B*Y)>200*%eps then pause,end 
+if Err(Ab-X'*A*Y)>200*%eps then pause,end 
 
 //Large dimension
 //---------------
 //Real Case
 A=testmat3(10000,20);B=testmat3(1000,20);
 [Ab,Bb,X,Y]=balanc(A,B);
-if Err(Bb-inv(X)*B*Y)>1000*%eps then pause,end 
-if Err(Ab-inv(X)*A*Y)>1000*%eps then pause,end 
+if Err(Bb-X'*B*Y)>1000*%eps then pause,end 
+if Err(Ab-X'*A*Y)>1000*%eps then pause,end 
 
 //complex case
 A=testmat3(10000+0.001*%i,20);B=testmat3(1000+100*%i,20);
 [Ab,Bb,X,Y]=balanc(A,B);
-if Err(Bb-inv(X)*B*Y)>1000*%eps then pause,end 
-if Err(Ab-inv(X)*A*Y)>1000*%eps then pause,end 
+if Err(Bb-X'*B*Y)>1000*%eps then pause,end 
+if Err(Ab-X'*A*Y)>1000*%eps then pause,end 
 
-end
+
