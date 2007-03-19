@@ -1,0 +1,101 @@
+% -*- mode: latex -*-
+
+\mansection{lu}
+\begin{mandesc}
+  \short{lu}{LU factorization}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[L, U[, p [, rc]]] = lu(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} :  numerical matrix
+    \vname{L} : lower triangular matrix 
+    \vname{U} : upper triangular matrix
+    \vname{p} : permutation vector
+    \vname{rc} : real scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes a $P A = L U$ factorization of the matrix $A$, 
+(says $m \times n$) with (noting $p = min(m,n)$) :
+\begin{itemize}
+\item $L$ a lower  ($m \times p$) triangular matrix
+\item $U$ an upper  ($p \times n$) triangular matrix
+\item $P$ a permutation  ($m \times m$) matrix.
+      (note that the output argument \verb+p+ is not a permutation matrix
+       but a permutation vector (see hereafter)). 
+\end{itemize}
+Such a factorization is essentially useful to solve a square linear
+system $A x = b$ and in particular, to solve several square linear
+systems with the same matrix $A$ : $Ax_1=b_1$, $Ax_2 = b_2$, ... with
+differents rights hand sides $b_1$, $b_2$,... not known at the same
+time (for instance with $b_2$ depending on $x_1$). 
+
+{\bf Caution :} when only 2 output arguments are required, then the first argument is
+equal to :
+$$
+P^{-1}L
+$$
+
+
+
+\itemdesc{reciprocal condition number} 
+In the case of a square matrix, an estimation of the reciprocal
+condition number (in 1-norm) could be provided as the fourth output argument.
+$$
+rc \simeq \frac{1}{\kappa_1(A)} = \frac{1}{||A||_1 ||A^{-1}||_1}
+$$
+If $x'$ is an approximate solution and $x$ the exact solution,
+denoting $r = b - Ax'$ the residual we have the inequality :
+$$
+\frac{||x' - x||_1}{||x||_1} \le \kappa_1(A) \frac{||r||_1}{||b||_1}
+$$
+%The reciprocal condition number is a useful information for the
+%numerical inversibility of a matrix : with a value less than the 
+%epsilon machine (aka as unit relative rounding error) 
+ 
+Finally note that the result must be the same than the one got 
+with the function \verb+rcond+ applied on the matrix $A$.
+ 
+\itemdesc{details on the permutation vector} 
+Strictly speaking \verb+p+ is the inverse permutation associated
+to the permutation matrix $P$ (\verb+p+ is such that $PA$ is equal 
+to \verb+A(p,:)+).
+
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{A=rand(5,5);\Hnewline
+    [L,U,p,rc]=lu(A);\Hnewline
+    // solving A x1 = b1:\Hnewline
+    b1=rand(5,1);\Hnewline
+    x1 = U}\verb+\+\HCode{(L}\verb+\+\HCode{b1(p));\Hnewline
+    norm(A*x1-b1)\Hnewline
+    // solving A x2 = b2:\Hnewline
+    b2=rand(5,1);\Hnewline
+    x2 = U}\verb+\+\HCode{(L}\verb+\+\HCode{b2(p));\Hnewline
+    norm(A*x2-b2)\Hnewline
+    // handling multiple right hand side:\Hnewline
+    b3=rand(5,4);\Hnewline
+    x3 = U}\verb+\+\HCode{(L}\verb+\+\HCode{b3(p,:));\Hnewline
+    A*x3 - b3}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{qr}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   interface : bp and jpc. Internally lapack routines dgetrf in the
+   real case and zgetrf in the complex case are used (and dgecon or zgecon if
+   rcond is required).
+\end{authors}

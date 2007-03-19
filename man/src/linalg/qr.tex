@@ -66,13 +66,12 @@ estimations can be returned in the output argument \verb+sval+ with:
 \end{itemize}
   
 \itemdesc{tol parameter} 
-By default $tol = min(m,n) \epsilon_m$ is used with $\epsilon_m$ the epsilon
+By default $tol = max(m,n) \epsilon_m$ is used with $\epsilon_m$ the epsilon
 machine (aka the relative unit roundoff error $u$) ($\epsilon_m =$ \verb+2^(-53+)).
 
 \itemdesc{details on the permutation vector} 
-Strictly speaking \verb+p+ is the inverse permutation associated
-to the permutation matrix $P$. More simply \verb+p+
-is such that $AP$ is equal to \verb+A(:,p)+.
+The output argument \verb+p+ is the permutation associated
+to the permutation matrix $P$ (\verb+p+ is such that $AP$ is equal to \verb+A(:,p)+).
 
 \end{mandescription}
 
