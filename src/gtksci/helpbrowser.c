@@ -59,11 +59,6 @@
 #define chdir _chdir2
 #endif
 
-#define GIMP_HELP_EXT_NAME      "extension_gimp_help_browser"
-#define GIMP_HELP_TEMP_EXT_NAME "extension_gimp_help_browser_temp"
-
-#define GIMP_HELP_PREFIX        "help"
-
 enum
 {
   BUTTON_HOME,
@@ -72,7 +67,6 @@ enum
   BUTTON_FORWARD
 };
 
-
 typedef struct
 {
   const gchar *title;
@@ -80,15 +74,12 @@ typedef struct
   gint         count;
 } HistoryItem;
 
-
 static const gchar *eek_png_tag = "<h1>Eeek!</h1>";
 
 static gchar       *gimp_help_root = NULL;
-
 static GList       *history = NULL;
 static Queue       *queue;
 static gchar       *current_ref;
-
 static GtkWidget   *html;
 static GtkWidget   *back_button;
 static GtkWidget   *forward_button;
@@ -101,8 +92,6 @@ static GtkTargetEntry help_dnd_target_table[] =
   { "_NETSCAPE_URL", 0, 0 },
 };
 
-
-
 /*  forward declaration  */
 
 static void     load_page   (const gchar  *ref,
@@ -114,7 +103,6 @@ static void     request_url (HtmlDocument *doc,
 static gboolean io_handler  (GIOChannel   *io, 
                              GIOCondition  condition, 
                              gpointer      data);
-
 
 /*
  * 
@@ -763,8 +751,12 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 
 static NspHash *nsp_help_table = NULLHASH;
 
-static int nsp_help_fill_help_table()
+/* XXX*/
+extern nsp_string nsp_dirname(char *fileName);
+
+static int nsp_help_fill_help_table(const char *index_file)
 {
+  nsp_string dirname;
   nsp_tcldstring name,filename;
   int all=TRUE;
   char buf[FSIZE+1];
@@ -772,7 +764,13 @@ static int nsp_help_fill_help_table()
   int xdr= FALSE,swap = TRUE,i;
   NspFile *F;
   char *mode = "r";
-  nsp_path_expand("NSP/man/html/generated/manual.4dx",buf,FSIZE);
+  if ( index_file != NULL) 
+    nsp_path_expand(index_file,buf,FSIZE);
+  else 
+    nsp_path_expand("NSP/man/html/generated/manual.4dx",buf,FSIZE);
+
+  if ((dirname = nsp_dirname (buf))== NULL)return FAIL;
+
   if ((F=nsp_file_open(buf,mode,xdr,swap)) == NULLSCIFILE)
     {
       Scierror("Error %f not found\n",buf);
@@ -785,8 +783,11 @@ static int nsp_help_fill_help_table()
     }
   if (nsp_file_close(F) == FAIL  ) return FAIL;
   /* initialize hash table for help */
-  if ( ( nsp_help_table = nsp_hash_create("%help",S->mn) ) == NULLHASH) 
-    return  FAIL;
+  if (  nsp_help_table == NULLHASH) 
+    {
+      if ( ( nsp_help_table = nsp_hash_create("%help",S->mn) ) == NULLHASH) 
+	return  FAIL;
+    }
   for ( i = 0 ; i < S->mn ; i++)
     {
       char *str,*str1;
@@ -809,7 +810,11 @@ static int nsp_help_fill_help_table()
 	}
       *str='\0';
       /* fprintf(stderr,"val=[%s]\n",nsp_tcldstring_value(&name));*/
-      if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),nsp_tcldstring_value(&filename),-1))
+      /* need a join here */
+      strcpy(buf,dirname);
+      strcat(buf,"/");
+      strcat(buf,nsp_tcldstring_value(&filename));
+      if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),buf,-1))
 	  == NULLOBJ)
 	goto bug;
       nsp_tcldstring_free(&name);	 
@@ -830,13 +835,25 @@ int nsp_help_topic(const char *topic, char *buf)
   NspObject *Obj;
   if ( nsp_help_table == NULLHASH)
     {
-      if ( nsp_help_fill_help_table() == FAIL 
+      /* initialize */
+      if ( nsp_help_fill_help_table(NULL) == FAIL 
 	   || nsp_help_table == NULLHASH)
 	{
 	  Scierror("Error: cannot build help table \n");
 	  return FAIL;
 	}
     }
+  if ( strcmp(topic + strlen(topic) -3,"4dx")==0)
+    {
+      /* add contents of index file to help table */
+      if ( nsp_help_fill_help_table(topic) == FAIL ) 
+	{
+	  Scierror("Error: cannot add index file to help table \n");
+	  return FAIL;
+	}
+      return OK;
+    }
+
   if ( nsp_hash_find(nsp_help_table,topic,&Obj)== FAIL) 
     {
       Sciprintf("No man for %s\n",topic);
@@ -846,8 +863,12 @@ int nsp_help_topic(const char *topic, char *buf)
   else
     {
       /* Sciprintf("%s --> %s\n",topic,((NspSMatrix *) Obj)->S[0]); */
+#if 0 
       nsp_path_expand("NSP/man/html/generated/",buf,FSIZE);
       strcat(buf,((NspSMatrix *) Obj)->S[0]);
+#else 
+      strcpy(buf,((NspSMatrix *) Obj)->S[0]);
+#endif 
     }
   return OK;
 }
