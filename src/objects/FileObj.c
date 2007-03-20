@@ -41,7 +41,7 @@ extern int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S);
 
 /**
  * SECTION:file 
- * @title: File streams.
+ * @title: NspFile
  * @short_description: An object used to open and read/write in a file stream.
  * @see_also: 
  *
