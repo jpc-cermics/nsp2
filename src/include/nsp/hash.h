@@ -23,7 +23,7 @@
  * @used: integer used to detect used locations
  * @data: #NspObject 
  * 
- * Element stored in #NspHash  */
+ * Element stored in #NspHash  
  */
 
 typedef struct _Hash_Entry  Hash_Entry; 
