@@ -1,3 +1,6 @@
+// must be run in a gtk nsp 
+
+opengl=%f;
 
 exec('graphic_list.sce');
 
