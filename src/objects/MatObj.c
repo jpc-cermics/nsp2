@@ -4253,7 +4253,7 @@ int_mxfindm (Stack stack, int rhs, int opt, int lhs)
   NspMatrix *x, **ind = NULL;
   int i, j, m;
   double *scalars = NULL;
-  char **ops = NULL;
+  const char **ops = NULL;
   CheckRhs (3, 13);   /* limited to 6 tests */
 
   if ( (rhs - 1) % 2 != 0 )
