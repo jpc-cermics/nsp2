@@ -746,7 +746,6 @@ int int_pmatrix_fge(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  * Res =nsp_pmatrix_copy(A) 
  * Creates a Copy of NspPMatrix A : A is not checked 
@@ -760,6 +759,48 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
   if (( HMat1 = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if (( HMat2 =nsp_pmatrix_transpose(HMat1))  == NULLPMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat2);
+  return 1;
+}
+
+/* companion 
+ *
+ */
+
+int int_pmatrix_companion_p(Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_polynom P;
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((P=GetPolynom(stack,1))== NULL) return RET_BUG;
+  if ((A= nsp_matrix_companion((NspMatrix *) P))== NULLMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) A);
+  return 1;
+}
+
+int int_pmatrix_companion_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A,*P;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((P=GetMat(stack,1))== NULL) return RET_BUG;
+  if ((A= nsp_matrix_companion( P))== NULLMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) A);
+  return 1;
+}
+
+int int_pmatrix_roots(Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_polynom P;
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((P=GetPolynom(stack,1))== NULL) return RET_BUG;
+  if ((A= nsp_polynom_roots(P))== NULLMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) A);
   return 1;
 }
 
@@ -805,6 +846,9 @@ static OpTab PMatrix_func[]={
   {"ne_p_p" ,  int_pmatrix_neq },
   {"m2p", int_matrix_to_pmatrix},
   {"quote_p", int_pmatrix_transpose},
+  {"companion_m",int_pmatrix_companion_m},
+  {"companion_p",int_pmatrix_companion_p},
+  {"roots_p",int_pmatrix_roots},
   {(char *) 0, NULL}
 };
 

@@ -24,6 +24,8 @@
 
 #include "nsp/object.h"
 #include "nsp/pr-output.h"
+#include "nsp/cnumeric.h"
+#include "nsp/nsp_lapack.h"
 
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
 
@@ -602,6 +604,52 @@ NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A)
 	if ((Loc->S[i+(Loc->m)*j] =nsp_polynom_copy(A->S[j+(A->m)*i])) == NULLPOLY ) return(NULLPMAT);
       }
   return(Loc);
+}
+
+/* compute the roots using the companion matrix 
+ * eigenvalues.
+ */
+
+NspMatrix *nsp_matrix_companion(NspMatrix *A)
+{
+  int i,j;
+  NspMatrix *B=NULL;
+  if ((B = nsp_matrix_create(NVOID,A->rc_type,A->mn-1, A->mn-1))== NULLMAT) return 
+    NULLMAT;
+  nsp_mat_set_rval (B,0.0);
+  if ( A->rc_type == 'c') 
+    {
+      doubleC ld = A->C[A->mn-1],res;
+      nsp_mat_set_ival (B,0.0);
+      for ( i= 1 ; i < B->m; i++)
+	B->C[i+B->m*(i-1)].r=1.0;
+      for ( j= 0 ; j < B->n ; j++)
+	{
+	  nsp_div_cc(&A->C[B->m-j],&ld,&res);
+	  B->C[B->m*j].r = - res.r ;
+	  B->C[B->m*j].i = - res.i;
+	}
+    }
+  else 
+    {
+      double ld = A->R[A->mn-1];
+      for ( i= 1 ; i < B->m;  i++)
+	B->R[i+B->m*(i-1)]=1.0;
+      for ( j= 0 ; j < B->n ; j++)
+	B->R[B->m*j]= -A->R[B->m-j-1]/ld;
+    }
+  return B;
+}
+
+NspMatrix *nsp_polynom_roots(nsp_polynom poly)
+{
+  NspMatrix *companion,*roots=NULL;
+  if ((companion = nsp_matrix_companion((NspMatrix *) poly))== NULLMAT)
+    return NULLMAT;
+  /* if spec fails we will return NULL */
+  nsp_spec(companion,&roots,NULL);
+  nsp_matrix_destroy(companion);
+  return roots; 
 }
 
 

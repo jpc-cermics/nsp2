@@ -53,18 +53,6 @@ NspPMatrix *new_pmatrix();
  * Object methods redefined for pmatrix 
  */
 
-#ifdef PMatrix_Private 
-static int init_pmatrix(NspPMatrix *ob,NspTypePMatrix *type);
-int nsp_pmatrix_size(NspPMatrix *Mat, int flag);
-char *nsp_pmatrix_type_as_string(void);
-char *nsp_pmatrix_type_short_string(void);
-NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_pmatrix_eq(NspObject *A,NspObject *B);
-int nsp_pmatrix_neq(NspObject *A,NspObject *B);
-static int nsp_pmatrix_xdr_save(XDR  *F, NspMatrix *M);
-static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
-#endif 
-
 #define NULLPMAT (NspPMatrix *) 0
 #define NULLPOLY (nsp_polynom) 0
 
@@ -115,7 +103,19 @@ extern nsp_polynom GetPolynom (Stack stack, int i);
 
 extern NspBMatrix *PMatCompOp (NspPMatrix *A, NspPMatrix *B, char *op); 
 extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err); 
+extern NspMatrix *nsp_matrix_companion(NspMatrix *A);
+extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 
+#endif 
 
-
+#ifdef PMatrix_Private 
+static int init_pmatrix(NspPMatrix *ob,NspTypePMatrix *type);
+int nsp_pmatrix_size(NspPMatrix *Mat, int flag);
+char *nsp_pmatrix_type_as_string(void);
+char *nsp_pmatrix_type_short_string(void);
+NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+int nsp_pmatrix_eq(NspObject *A,NspObject *B);
+int nsp_pmatrix_neq(NspObject *A,NspObject *B);
+static int nsp_pmatrix_xdr_save(XDR  *F, NspMatrix *M);
+static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
 #endif 
