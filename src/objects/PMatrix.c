@@ -866,7 +866,7 @@ static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
 	  else Sciprintf(" ");
 	  nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
 	}
-      if ( i > 0 ) Sciprintf("X");
+      if ( i > 0 ) Sciprintf("x");
       if ( i < 10 ) nsp_pr_white(1);
       else if ( 10 <= i && i  < 99) nsp_pr_white(2); else nsp_pr_white(3);
 
