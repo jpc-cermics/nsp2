@@ -32,9 +32,11 @@
 #define Hobj_Private 
 #include "nsp/hobj.h" 
 
+static NspMethods *hobj_get_methods(void);
+
 /**
  * SECTION:hobj
- * @title: # NspHobj are used to store a reference to another nsp object.
+ * @title: #NspHobj are used to store a reference to another nsp object.
  * @short_description: stores a reference to another nsp object.
  * @see_also: 
  *
@@ -68,7 +70,7 @@ NspTypeHobj *new_type_hobj(type_mode mode)
   type->attrs = NULL; /* hobj_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL ;/* hobj_get_methods; */
+  type->methods =  hobj_get_methods; 
   type->new = (new_func *) new_hobj;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -304,6 +306,14 @@ int IsGlobal(NspObject *O)
  * methods 
  *------------------------------------------------------*/
 
+
+static NspMethods hash_methods[] = {
+  { (char *) 0, NULL}
+};
+
+static NspMethods *hobj_get_methods(void) { return hash_methods;};
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -465,12 +475,43 @@ static int int_hobjcreate(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
+/* get the name of the object the hobj points to 
+ *
+ */
+
+static int int_hobj_target_name(Stack stack, int rhs, int opt, int lhs)
+{
+  NspHobj *H;
+  NspObject *Obj;
+  CheckStdRhs(1,1);
+  CheckLhs(1,1);
+
+  if ( IsHobj(NthObj(1))==FALSE ) return RET_BUG;
+
+  H=(NspHobj *) NthObj(1);
+  if ( H->htype == 'g' ) 
+    {
+      if ((Obj= nsp_global_frame_search_object(NSP_OBJECT(H)->name)) == NULLOBJ) 
+	{
+	  Scierror("Error: Pointer to a global non existant variable\n");
+	  return RET_BUG;
+	}
+    }
+  else 
+    {
+      Obj = H->O;
+    }
+  if ( nsp_move_string(stack,1,nsp_object_get_name(Obj),-1) == FAIL) return RET_BUG;
+  return 1;
+}
+
 /*
  *  Interface 
  */
 
 static OpTab Hobj_func[]={
   {"handler",int_hobjcreate},
+  {"hobj_name",int_hobj_target_name},
   {(char *) 0, NULL}
 };
 
