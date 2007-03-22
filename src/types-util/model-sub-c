@@ -120,7 +120,7 @@ static char *@TYPEDOWNCASE@_type_as_string(void)
   return(@TYPEDOWNCASE@_type_name);
 }
 
-static char *@TYPEDOWNCASE@_type_short_string(void)
+static char *@TYPEDOWNCASE@_type_short_string(NspObject *v)
 {
   return(@TYPEDOWNCASE@_short_type_name);
 }

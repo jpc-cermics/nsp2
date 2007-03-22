@@ -73,7 +73,7 @@ extern Nsp@TYPENAME@ *Get@TYPENAME@ (Stack stack, int i);
 static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type);
 static int nsp_@TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag);
 static char *nsp_@TYPEDOWNCASE@_type_as_string(void);
-static char *nsp_@TYPEDOWNCASE@_type_short_string(void);
+static char *nsp_@TYPEDOWNCASE@_type_short_string(NspObject *v);
 static int nsp_@TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B);
 static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B);
 static int nsp_@TYPEDOWNCASE@_xdr_save(XDR *xdrs, Nsp@TYPENAME@ *M);
