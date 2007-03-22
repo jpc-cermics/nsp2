@@ -49,7 +49,7 @@ extern NspGtkTreeModelSort *GetGtkTreeModelSort (Stack stack, int i);
 #ifdef GtkTreeModelSort_Private 
 static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type);
 static char *gtktreemodelsort_type_as_string(void);
-static char *gtktreemodelsort_type_short_string(void);
+static char *gtktreemodelsort_type_short_string(NspObject *v);
 static AttrTab gtktreemodelsort_attrs[];
 /* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreemodelsort_get_methods(void); 

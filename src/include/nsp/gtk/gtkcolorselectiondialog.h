@@ -49,7 +49,7 @@ extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialog (Stack stack, int 
 #ifdef GtkColorSelectionDialog_Private 
 static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *o,NspTypeGtkColorSelectionDialog *type);
 static char *gtkcolorselectiondialog_type_as_string(void);
-static char *gtkcolorselectiondialog_type_short_string(void);
+static char *gtkcolorselectiondialog_type_short_string(NspObject *v);
 static AttrTab gtkcolorselectiondialog_attrs[];
 /* static int int_gtkcolorselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcolorselectiondialog_get_methods(void); 

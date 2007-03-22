@@ -201,7 +201,7 @@ static char *bmatrix_type_as_string(void)
   return(bmat_type_name);
 }
 
-static char *bmatrix_type_short_string(void)
+static char *bmatrix_type_short_string(NspObject *v)
 {
   return(bmat_short_type_name);
 }

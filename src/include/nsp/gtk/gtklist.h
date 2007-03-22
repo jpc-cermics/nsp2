@@ -35,7 +35,7 @@ NspGtkList *new_gtklist();
 #ifdef GtkList_Private 
 static int init_gtklist(NspGtkList *o,NspTypeGtkList *type);
 static char *gtklist_type_as_string(void);
-static char *gtklist_type_short_string(void);
+static char *gtklist_type_short_string(NspObject *v);
 static AttrTab gtklist_attrs[];
 /* static int int_gtklist_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtklist_get_methods(void); 

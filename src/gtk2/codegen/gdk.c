@@ -170,7 +170,7 @@ static char *gdkevent_type_as_string(void)
   return(gdkevent_type_name);
 }
 
-static char *gdkevent_type_short_string(void)
+static char *gdkevent_type_short_string(NspObject *v)
 {
   return(gdkevent_short_type_name);
 }
@@ -799,7 +799,7 @@ static char *gdkfont_type_as_string(void)
   return(gdkfont_type_name);
 }
 
-static char *gdkfont_type_short_string(void)
+static char *gdkfont_type_short_string(NspObject *v)
 {
   return(gdkfont_short_type_name);
 }
@@ -1240,7 +1240,7 @@ static char *gdkcolor_type_as_string(void)
   return(gdkcolor_type_name);
 }
 
-static char *gdkcolor_type_short_string(void)
+static char *gdkcolor_type_short_string(NspObject *v)
 {
   return(gdkcolor_short_type_name);
 }
@@ -1536,7 +1536,7 @@ static char *gdkcursor_type_as_string(void)
   return(gdkcursor_type_name);
 }
 
-static char *gdkcursor_type_short_string(void)
+static char *gdkcursor_type_short_string(NspObject *v)
 {
   return(gdkcursor_short_type_name);
 }
@@ -1813,7 +1813,7 @@ static char *gdkrectangle_type_as_string(void)
   return(gdkrectangle_type_name);
 }
 
-static char *gdkrectangle_type_short_string(void)
+static char *gdkrectangle_type_short_string(NspObject *v)
 {
   return(gdkrectangle_short_type_name);
 }
@@ -2135,7 +2135,7 @@ static char *gdkcolormap_type_as_string(void)
   return(gdkcolormap_type_name);
 }
 
-static char *gdkcolormap_type_short_string(void)
+static char *gdkcolormap_type_short_string(NspObject *v)
 {
   return(gdkcolormap_short_type_name);
 }
@@ -2510,7 +2510,7 @@ static char *gdkdevice_type_as_string(void)
   return(gdkdevice_type_name);
 }
 
-static char *gdkdevice_type_short_string(void)
+static char *gdkdevice_type_short_string(NspObject *v)
 {
   return(gdkdevice_short_type_name);
 }
@@ -2974,7 +2974,7 @@ static char *gdkdragcontext_type_as_string(void)
   return(gdkdragcontext_type_name);
 }
 
-static char *gdkdragcontext_type_short_string(void)
+static char *gdkdragcontext_type_short_string(NspObject *v)
 {
   return(gdkdragcontext_short_type_name);
 }
@@ -3504,7 +3504,7 @@ static char *gdkdrawable_type_as_string(void)
   return(gdkdrawable_type_name);
 }
 
-static char *gdkdrawable_type_short_string(void)
+static char *gdkdrawable_type_short_string(NspObject *v)
 {
   return(gdkdrawable_short_type_name);
 }
@@ -4206,7 +4206,7 @@ static char *gdkwindow_type_as_string(void)
   return(gdkwindow_type_name);
 }
 
-static char *gdkwindow_type_short_string(void)
+static char *gdkwindow_type_short_string(NspObject *v)
 {
   return(gdkwindow_short_type_name);
 }
@@ -5389,7 +5389,7 @@ static char *gdkpixmap_type_as_string(void)
   return(gdkpixmap_type_name);
 }
 
-static char *gdkpixmap_type_short_string(void)
+static char *gdkpixmap_type_short_string(NspObject *v)
 {
   return(gdkpixmap_short_type_name);
 }
@@ -5618,7 +5618,7 @@ static char *gdkbitmap_type_as_string(void)
   return(gdkbitmap_type_name);
 }
 
-static char *gdkbitmap_type_short_string(void)
+static char *gdkbitmap_type_short_string(NspObject *v)
 {
   return(gdkbitmap_short_type_name);
 }
@@ -5821,7 +5821,7 @@ static char *gdkgc_type_as_string(void)
   return(gdkgc_type_name);
 }
 
-static char *gdkgc_type_short_string(void)
+static char *gdkgc_type_short_string(NspObject *v)
 {
   return(gdkgc_short_type_name);
 }
@@ -6638,7 +6638,7 @@ static char *gdkimage_type_as_string(void)
   return(gdkimage_type_name);
 }
 
-static char *gdkimage_type_short_string(void)
+static char *gdkimage_type_short_string(NspObject *v)
 {
   return(gdkimage_short_type_name);
 }
@@ -6914,7 +6914,7 @@ static char *gdkkeymap_type_as_string(void)
   return(gdkkeymap_type_name);
 }
 
-static char *gdkkeymap_type_short_string(void)
+static char *gdkkeymap_type_short_string(NspObject *v)
 {
   return(gdkkeymap_short_type_name);
 }
@@ -7129,7 +7129,7 @@ static char *gdkpixbuf_type_as_string(void)
   return(gdkpixbuf_type_name);
 }
 
-static char *gdkpixbuf_type_short_string(void)
+static char *gdkpixbuf_type_short_string(NspObject *v)
 {
   return(gdkpixbuf_short_type_name);
 }
@@ -7840,7 +7840,7 @@ static char *gdkpixbufanimation_type_as_string(void)
   return(gdkpixbufanimation_type_name);
 }
 
-static char *gdkpixbufanimation_type_short_string(void)
+static char *gdkpixbufanimation_type_short_string(NspObject *v)
 {
   return(gdkpixbufanimation_short_type_name);
 }
@@ -8110,7 +8110,7 @@ static char *gdkpixbufanimationiter_type_as_string(void)
   return(gdkpixbufanimationiter_type_name);
 }
 
-static char *gdkpixbufanimationiter_type_short_string(void)
+static char *gdkpixbufanimationiter_type_short_string(NspObject *v)
 {
   return(gdkpixbufanimationiter_short_type_name);
 }
@@ -8348,7 +8348,7 @@ static char *gdkpixbufloader_type_as_string(void)
   return(gdkpixbufloader_type_name);
 }
 
-static char *gdkpixbufloader_type_short_string(void)
+static char *gdkpixbufloader_type_short_string(NspObject *v)
 {
   return(gdkpixbufloader_short_type_name);
 }
@@ -8634,7 +8634,7 @@ static char *gdkvisual_type_as_string(void)
   return(gdkvisual_type_name);
 }
 
-static char *gdkvisual_type_short_string(void)
+static char *gdkvisual_type_short_string(NspObject *v)
 {
   return(gdkvisual_short_type_name);
 }
@@ -9052,7 +9052,7 @@ static char *gdkscreen_type_as_string(void)
   return(gdkscreen_type_name);
 }
 
-static char *gdkscreen_type_short_string(void)
+static char *gdkscreen_type_short_string(NspObject *v)
 {
   return(gdkscreen_short_type_name);
 }
@@ -9488,7 +9488,7 @@ static char *gdkdisplay_type_as_string(void)
   return(gdkdisplay_type_name);
 }
 
-static char *gdkdisplay_type_short_string(void)
+static char *gdkdisplay_type_short_string(NspObject *v)
 {
   return(gdkdisplay_short_type_name);
 }

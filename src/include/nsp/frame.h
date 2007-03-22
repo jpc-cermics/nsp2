@@ -99,7 +99,7 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
 static int init_frame(NspFrame *o,NspTypeFrame *type);
 static int nsp_frame_size(NspFrame *Mat, int flag);
 static char *nsp_frame_type_as_string(void);
-static char *nsp_frame_type_short_string(void);
+static char *nsp_frame_type_short_string(NspObject *v);
 static int nsp_frame_eq(NspFrame *A, NspObject *B);
 static int nsp_frame_neq(NspFrame *A, NspObject *B);
 /* 

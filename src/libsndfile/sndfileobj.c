@@ -160,7 +160,7 @@ static char *nsp_sndfile_type_as_string(void)
   return(nsp_sndfile_type_name);
 }
 
-static char *nsp_sndfile_type_short_string(void)
+static char *nsp_sndfile_type_short_string(NspObject *v)
 {
   return(nsp_sndfile_short_type_name);
 }

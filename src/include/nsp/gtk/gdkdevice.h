@@ -49,7 +49,7 @@ extern NspGdkDevice *GetGdkDevice (Stack stack, int i);
 #ifdef GdkDevice_Private 
 static int init_gdkdevice(NspGdkDevice *o,NspTypeGdkDevice *type);
 static char *gdkdevice_type_as_string(void);
-static char *gdkdevice_type_short_string(void);
+static char *gdkdevice_type_short_string(NspObject *v);
 static AttrTab gdkdevice_attrs[];
 /* static int int_gdkdevice_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkdevice_get_methods(void); 

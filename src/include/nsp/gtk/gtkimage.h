@@ -49,7 +49,7 @@ extern NspGtkImage *GetGtkImage (Stack stack, int i);
 #ifdef GtkImage_Private 
 static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type);
 static char *gtkimage_type_as_string(void);
-static char *gtkimage_type_short_string(void);
+static char *gtkimage_type_short_string(NspObject *v);
 static AttrTab gtkimage_attrs[];
 /* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimage_get_methods(void); 

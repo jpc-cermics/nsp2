@@ -84,7 +84,7 @@ static int init_matrix(NspMatrix *ob,NspTypeMatrix *type);
 static int init_matrix(NspMatrix *o,NspTypeMatrix *type);
 static int matrix_size(NspMatrix *Mat, int flag);
 static char *matrix_type_as_string(void);
-static char *matrix_type_short_string(void);
+static char *matrix_type_short_string(NspObject *v);
 static int matrix_neq(NspObject *A,NspObject *B);
 static int matrix_eq(NspObject *A,NspObject *B);
 static int matrix_xdr_save(XDR *xdrs, NspMatrix *M);

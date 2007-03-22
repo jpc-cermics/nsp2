@@ -49,7 +49,7 @@ extern NspGtkDrawingArea *GetGtkDrawingArea (Stack stack, int i);
 #ifdef GtkDrawingArea_Private 
 static int init_gtkdrawingarea(NspGtkDrawingArea *o,NspTypeGtkDrawingArea *type);
 static char *gtkdrawingarea_type_as_string(void);
-static char *gtkdrawingarea_type_short_string(void);
+static char *gtkdrawingarea_type_short_string(NspObject *v);
 static AttrTab gtkdrawingarea_attrs[];
 /* static int int_gtkdrawingarea_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkdrawingarea_get_methods(void); 

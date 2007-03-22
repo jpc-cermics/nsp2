@@ -49,7 +49,7 @@ extern NspGtkTextTagTable *GetGtkTextTagTable (Stack stack, int i);
 #ifdef GtkTextTagTable_Private 
 static int init_gtktexttagtable(NspGtkTextTagTable *o,NspTypeGtkTextTagTable *type);
 static char *gtktexttagtable_type_as_string(void);
-static char *gtktexttagtable_type_short_string(void);
+static char *gtktexttagtable_type_short_string(NspObject *v);
 static AttrTab gtktexttagtable_attrs[];
 /* static int int_gtktexttagtable_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktexttagtable_get_methods(void); 

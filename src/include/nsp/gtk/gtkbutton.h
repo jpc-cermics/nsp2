@@ -49,7 +49,7 @@ extern NspGtkButton *GetGtkButton (Stack stack, int i);
 #ifdef GtkButton_Private 
 static int init_gtkbutton(NspGtkButton *o,NspTypeGtkButton *type);
 static char *gtkbutton_type_as_string(void);
-static char *gtkbutton_type_short_string(void);
+static char *gtkbutton_type_short_string(NspObject *v);
 static AttrTab gtkbutton_attrs[];
 /* static int int_gtkbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkbutton_get_methods(void); 

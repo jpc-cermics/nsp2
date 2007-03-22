@@ -54,7 +54,7 @@ NspRect *new_rect();
 static int init_rect(NspRect *ob,NspTypeRect *type);
 static int rect_size(NspRect *Mat, int flag);
 static char *rect_type_as_string(void);
-static char *rect_type_short_string(void);
+static char *rect_type_short_string(NspObject *v);
 static int rect_eq(NspRect *A, NspObject *B);
 static int rect_neq(NspRect *A, NspObject *B);
 static int rect_xdr_save(XDR  *F, NspRect *M);

@@ -49,7 +49,7 @@ extern NspGtkFileSelection *GetGtkFileSelection (Stack stack, int i);
 #ifdef GtkFileSelection_Private 
 static int init_gtkfileselection(NspGtkFileSelection *o,NspTypeGtkFileSelection *type);
 static char *gtkfileselection_type_as_string(void);
-static char *gtkfileselection_type_short_string(void);
+static char *gtkfileselection_type_short_string(NspObject *v);
 static AttrTab gtkfileselection_attrs[];
 /* static int int_gtkfileselection_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfileselection_get_methods(void); 

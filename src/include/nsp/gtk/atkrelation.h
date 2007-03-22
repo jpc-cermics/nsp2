@@ -49,7 +49,7 @@ extern NspAtkRelation *GetAtkRelation (Stack stack, int i);
 #ifdef AtkRelation_Private 
 static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type);
 static char *atkrelation_type_as_string(void);
-static char *atkrelation_type_short_string(void);
+static char *atkrelation_type_short_string(NspObject *v);
 static AttrTab atkrelation_attrs[];
 /* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkrelation_get_methods(void); 

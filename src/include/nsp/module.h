@@ -78,7 +78,7 @@ extern int nsp_module_import(NspList *L,char *dir,char **Mname);
 static int init_module(NspModule *o,NspTypeModule *type);
 static int module_size(NspModule *Mat, int flag);
 static char *module_type_as_string(void);
-static char *module_type_short_string(void);
+static char *module_type_short_string(NspObject *v);
 static int module_eq(NspModule *A, NspObject *B);
 static int module_neq(NspModule *A, NspObject *B);
 static int module_xdr_save(XDR  *F, NspModule *M);

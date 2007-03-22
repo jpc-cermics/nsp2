@@ -167,7 +167,7 @@ static char *type_type_as_string(void)
   return(type_type_name);
 }
 
-static char *type_type_short_string(void)
+static char *type_type_short_string(NspObject *v)
 {
   return(type_short_type_name);
 }

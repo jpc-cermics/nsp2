@@ -53,7 +53,7 @@ NspGBoxed *new_gboxed();
 #ifdef GBoxed_Private 
 static int init_gboxed(NspGBoxed *o,NspTypeGBoxed *type);
 static char *gboxed_type_as_string(void);
-static char *gboxed_type_short_string(void);
+static char *gboxed_type_short_string(NspObject *v);
 static int gboxed_eq(NspGBoxed *A, NspObject *B);
 static int gboxed_neq(NspGBoxed *A, NspObject *B);
 static NspMethods *gboxed_get_methods(void); 

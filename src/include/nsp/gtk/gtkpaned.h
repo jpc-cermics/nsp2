@@ -49,7 +49,7 @@ extern NspGtkPaned *GetGtkPaned (Stack stack, int i);
 #ifdef GtkPaned_Private 
 static int init_gtkpaned(NspGtkPaned *o,NspTypeGtkPaned *type);
 static char *gtkpaned_type_as_string(void);
-static char *gtkpaned_type_short_string(void);
+static char *gtkpaned_type_short_string(NspObject *v);
 static AttrTab gtkpaned_attrs[];
 /* static int int_gtkpaned_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkpaned_get_methods(void); 

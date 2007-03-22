@@ -49,7 +49,7 @@ extern NspGtkIMMulticontext *GetGtkIMMulticontext (Stack stack, int i);
 #ifdef GtkIMMulticontext_Private 
 static int init_gtkimmulticontext(NspGtkIMMulticontext *o,NspTypeGtkIMMulticontext *type);
 static char *gtkimmulticontext_type_as_string(void);
-static char *gtkimmulticontext_type_short_string(void);
+static char *gtkimmulticontext_type_short_string(NspObject *v);
 static AttrTab gtkimmulticontext_attrs[];
 /* static int int_gtkimmulticontext_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimmulticontext_get_methods(void); 

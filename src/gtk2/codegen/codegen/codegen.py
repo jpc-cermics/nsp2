@@ -174,7 +174,7 @@ class Wrapper:
               '  return(%(typename_dc)s_type_name);\n'  \
               '}\n'  \
               '\n'  \
-              'static char *%(typename_dc)s_type_short_string(void)\n'  \
+              'static char *%(typename_dc)s_type_short_string(NspObject *v)\n'  \
               '{\n'  \
               '  return(%(typename_dc)s_short_type_name);\n'  \
               '}\n'  \
@@ -290,7 +290,7 @@ class Wrapper:
                 '#ifdef %(typename)s_Private \n' \
                 'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
                 'static char *%(typename_dc)s_type_as_string(void);\n' \
-                'static char *%(typename_dc)s_type_short_string(void);\n' \
+                'static char *%(typename_dc)s_type_short_string(NspObject *v);\n' \
                 'static AttrTab %(typename_dc)s_attrs[];\n' \
                 '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
                 'static NspMethods *%(typename_dc)s_get_methods(void); \n' \

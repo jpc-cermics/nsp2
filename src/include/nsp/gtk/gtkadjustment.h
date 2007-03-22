@@ -49,7 +49,7 @@ extern NspGtkAdjustment *GetGtkAdjustment (Stack stack, int i);
 #ifdef GtkAdjustment_Private 
 static int init_gtkadjustment(NspGtkAdjustment *o,NspTypeGtkAdjustment *type);
 static char *gtkadjustment_type_as_string(void);
-static char *gtkadjustment_type_short_string(void);
+static char *gtkadjustment_type_short_string(NspObject *v);
 static AttrTab gtkadjustment_attrs[];
 /* static int int_gtkadjustment_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkadjustment_get_methods(void); 

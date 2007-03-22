@@ -71,7 +71,7 @@ NspConnector *new_connector();
 static int init_connector(NspConnector *ob,NspTypeConnector *type);
 static int connector_size(NspConnector *Mat, int flag);
 static char *connector_type_as_string(void);
-static char *connector_type_short_string(void);
+static char *connector_type_short_string(NspObject *v);
 static int connector_eq(NspConnector *A, NspObject *B);
 static int connector_neq(NspConnector *A, NspObject *B);
 static int connector_xdr_save(XDR *xdrs, NspConnector *M);

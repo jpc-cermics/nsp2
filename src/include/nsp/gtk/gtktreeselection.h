@@ -49,7 +49,7 @@ extern NspGtkTreeSelection *GetGtkTreeSelection (Stack stack, int i);
 #ifdef GtkTreeSelection_Private 
 static int init_gtktreeselection(NspGtkTreeSelection *o,NspTypeGtkTreeSelection *type);
 static char *gtktreeselection_type_as_string(void);
-static char *gtktreeselection_type_short_string(void);
+static char *gtktreeselection_type_short_string(NspObject *v);
 static AttrTab gtktreeselection_attrs[];
 /* static int int_gtktreeselection_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreeselection_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkRequisition *GetGtkRequisition (Stack stack, int i);
 #ifdef GtkRequisition_Private 
 static int init_gtkrequisition(NspGtkRequisition *o,NspTypeGtkRequisition *type);
 static char *gtkrequisition_type_as_string(void);
-static char *gtkrequisition_type_short_string(void);
+static char *gtkrequisition_type_short_string(NspObject *v);
 static AttrTab gtkrequisition_attrs[];
 /* static int int_gtkrequisition_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkrequisition_get_methods(void); 

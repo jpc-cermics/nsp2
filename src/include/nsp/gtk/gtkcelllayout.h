@@ -49,7 +49,7 @@ extern NspGtkCellLayout *GetGtkCellLayout (Stack stack, int i);
 #ifdef GtkCellLayout_Private 
 static int init_gtkcelllayout(NspGtkCellLayout *o,NspTypeGtkCellLayout *type);
 static char *gtkcelllayout_type_as_string(void);
-static char *gtkcelllayout_type_short_string(void);
+static char *gtkcelllayout_type_short_string(NspObject *v);
 static AttrTab gtkcelllayout_attrs[];
 /* static int int_gtkcelllayout_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcelllayout_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkArrow *GetGtkArrow (Stack stack, int i);
 #ifdef GtkArrow_Private 
 static int init_gtkarrow(NspGtkArrow *o,NspTypeGtkArrow *type);
 static char *gtkarrow_type_as_string(void);
-static char *gtkarrow_type_short_string(void);
+static char *gtkarrow_type_short_string(NspObject *v);
 static AttrTab gtkarrow_attrs[];
 /* static int int_gtkarrow_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkarrow_get_methods(void); 

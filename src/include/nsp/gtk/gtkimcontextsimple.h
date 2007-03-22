@@ -49,7 +49,7 @@ extern NspGtkIMContextSimple *GetGtkIMContextSimple (Stack stack, int i);
 #ifdef GtkIMContextSimple_Private 
 static int init_gtkimcontextsimple(NspGtkIMContextSimple *o,NspTypeGtkIMContextSimple *type);
 static char *gtkimcontextsimple_type_as_string(void);
-static char *gtkimcontextsimple_type_short_string(void);
+static char *gtkimcontextsimple_type_short_string(NspObject *v);
 static AttrTab gtkimcontextsimple_attrs[];
 /* static int int_gtkimcontextsimple_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimcontextsimple_get_methods(void); 

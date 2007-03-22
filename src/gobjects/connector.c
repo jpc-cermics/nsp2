@@ -185,7 +185,7 @@ static char *connector_type_as_string(void)
   return(connector_type_name);
 }
 
-static char *connector_type_short_string(void)
+static char *connector_type_short_string(NspObject *v)
 {
   return(connector_short_type_name);
 }
@@ -300,7 +300,7 @@ static void connector_info(NspConnector *H, int indent,char *name,int rec_level)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
-	    connector_type_short_string(), H->obj,H->obj->ref_count );
+	    connector_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
 }
 
 static void connector_print(NspConnector *H, int indent,char *name, int rec_level)

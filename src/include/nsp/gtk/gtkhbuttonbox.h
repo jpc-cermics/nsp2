@@ -49,7 +49,7 @@ extern NspGtkHButtonBox *GetGtkHButtonBox (Stack stack, int i);
 #ifdef GtkHButtonBox_Private 
 static int init_gtkhbuttonbox(NspGtkHButtonBox *o,NspTypeGtkHButtonBox *type);
 static char *gtkhbuttonbox_type_as_string(void);
-static char *gtkhbuttonbox_type_short_string(void);
+static char *gtkhbuttonbox_type_short_string(NspObject *v);
 static AttrTab gtkhbuttonbox_attrs[];
 /* static int int_gtkhbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhbuttonbox_get_methods(void); 

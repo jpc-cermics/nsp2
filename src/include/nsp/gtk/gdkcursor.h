@@ -49,7 +49,7 @@ extern NspGdkCursor *GetGdkCursor (Stack stack, int i);
 #ifdef GdkCursor_Private 
 static int init_gdkcursor(NspGdkCursor *o,NspTypeGdkCursor *type);
 static char *gdkcursor_type_as_string(void);
-static char *gdkcursor_type_short_string(void);
+static char *gdkcursor_type_short_string(NspObject *v);
 static AttrTab gdkcursor_attrs[];
 /* static int int_gdkcursor_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkcursor_get_methods(void); 

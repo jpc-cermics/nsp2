@@ -49,7 +49,7 @@ extern NspGtkWidget *GetGtkWidget (Stack stack, int i);
 #ifdef GtkWidget_Private 
 static int init_gtkwidget(NspGtkWidget *o,NspTypeGtkWidget *type);
 static char *gtkwidget_type_as_string(void);
-static char *gtkwidget_type_short_string(void);
+static char *gtkwidget_type_short_string(NspObject *v);
 static AttrTab gtkwidget_attrs[];
 /* static int int_gtkwidget_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkwidget_get_methods(void); 

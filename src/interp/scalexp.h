@@ -96,7 +96,7 @@ extern expr_func expr_functions[];
 static int init_scalexp(NspScalExp *o,NspTypeScalExp *type);
 static int nsp_scalexp_size(NspScalExp *Mat, int flag);
 static char *nsp_scalexp_type_as_string(void);
-static char *nsp_scalexp_type_short_string(void);
+static char *nsp_scalexp_type_short_string(NspObject *v);
 static int nsp_scalexp_eq(NspScalExp *A, NspObject *B);
 static int nsp_scalexp_neq(NspScalExp *A, NspObject *B);
 static int nsp_scalexp_xdr_save(XDR  *xdrs, NspScalExp *M);

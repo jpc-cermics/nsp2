@@ -49,7 +49,7 @@ extern NspGdkPixmap *GetGdkPixmap (Stack stack, int i);
 #ifdef GdkPixmap_Private 
 static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type);
 static char *gdkpixmap_type_as_string(void);
-static char *gdkpixmap_type_short_string(void);
+static char *gdkpixmap_type_short_string(NspObject *v);
 static AttrTab gdkpixmap_attrs[];
 /* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixmap_get_methods(void); 

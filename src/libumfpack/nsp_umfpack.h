@@ -93,7 +93,7 @@ extern NspUmfpack *GetUmfpack (Stack stack, int i);
 static int init_umfpack(NspUmfpack *o,NspTypeUmfpack *type);
 static int nsp_umfpack_size(NspUmfpack *Mat, int flag);
 static char *nsp_umfpack_type_as_string(void);
-static char *nsp_umfpack_type_short_string(void);
+static char *nsp_umfpack_type_short_string(NspObject *v);
 static int nsp_umfpack_eq(NspUmfpack *A, NspObject *B);
 static int nsp_umfpack_neq(NspUmfpack *A, NspObject *B);
 static int nsp_umfpack_xdr_save(XDR  *xdrs, NspUmfpack *M);

@@ -49,7 +49,7 @@ extern NspGdkGC *GetGdkGC (Stack stack, int i);
 #ifdef GdkGC_Private 
 static int init_gdkgc(NspGdkGC *o,NspTypeGdkGC *type);
 static char *gdkgc_type_as_string(void);
-static char *gdkgc_type_short_string(void);
+static char *gdkgc_type_short_string(NspObject *v);
 static AttrTab gdkgc_attrs[];
 /* static int int_gdkgc_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkgc_get_methods(void); 

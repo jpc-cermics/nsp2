@@ -71,7 +71,7 @@ extern NspFunction *GetFunction (Stack stack, int i);
 static int init_function(NspFunction *o,NspTypeFunction *type);
 static int function_size(NspFunction *Mat, int flag);
 static char *function_type_as_string(void);
-static char *function_type_short_string(void);
+static char *function_type_short_string(NspObject *v);
 static int function_eq(NspFunction *A, NspObject *B);
 static int function_neq(NspFunction *A, NspObject *B);
 static int function_xdr_save(XDR  *F, NspFunction *M);

@@ -202,7 +202,7 @@ char *nsp_cells_type_as_string(void)
   return(smat_type_name);
 }
 
-char *nsp_cells_type_short_string(void)
+char *nsp_cells_type_short_string(NspObject *v)
 {
   return(smat_short_type_name);
 }

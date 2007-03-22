@@ -49,7 +49,7 @@ extern NspGtkHPaned *GetGtkHPaned (Stack stack, int i);
 #ifdef GtkHPaned_Private 
 static int init_gtkhpaned(NspGtkHPaned *o,NspTypeGtkHPaned *type);
 static char *gtkhpaned_type_as_string(void);
-static char *gtkhpaned_type_short_string(void);
+static char *gtkhpaned_type_short_string(NspObject *v);
 static AttrTab gtkhpaned_attrs[];
 /* static int int_gtkhpaned_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhpaned_get_methods(void); 

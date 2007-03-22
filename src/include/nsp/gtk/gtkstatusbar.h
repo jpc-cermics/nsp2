@@ -49,7 +49,7 @@ extern NspGtkStatusbar *GetGtkStatusbar (Stack stack, int i);
 #ifdef GtkStatusbar_Private 
 static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type);
 static char *gtkstatusbar_type_as_string(void);
-static char *gtkstatusbar_type_short_string(void);
+static char *gtkstatusbar_type_short_string(NspObject *v);
 static AttrTab gtkstatusbar_attrs[];
 /* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkstatusbar_get_methods(void); 

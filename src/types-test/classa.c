@@ -152,7 +152,7 @@ static char *nsp_classa_type_as_string(void)
   return(classa_type_name);
 }
 
-static char *nsp_classa_type_short_string(void)
+static char *nsp_classa_type_short_string(NspObject *v)
 {
   return(classa_short_type_name);
 }

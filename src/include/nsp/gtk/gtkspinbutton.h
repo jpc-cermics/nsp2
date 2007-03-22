@@ -49,7 +49,7 @@ extern NspGtkSpinButton *GetGtkSpinButton (Stack stack, int i);
 #ifdef GtkSpinButton_Private 
 static int init_gtkspinbutton(NspGtkSpinButton *o,NspTypeGtkSpinButton *type);
 static char *gtkspinbutton_type_as_string(void);
-static char *gtkspinbutton_type_short_string(void);
+static char *gtkspinbutton_type_short_string(NspObject *v);
 static AttrTab gtkspinbutton_attrs[];
 /* static int int_gtkspinbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkspinbutton_get_methods(void); 

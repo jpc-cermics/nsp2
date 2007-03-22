@@ -49,7 +49,7 @@ extern NspGtkItemFactory *GetGtkItemFactory (Stack stack, int i);
 #ifdef GtkItemFactory_Private 
 static int init_gtkitemfactory(NspGtkItemFactory *o,NspTypeGtkItemFactory *type);
 static char *gtkitemfactory_type_as_string(void);
-static char *gtkitemfactory_type_short_string(void);
+static char *gtkitemfactory_type_short_string(NspObject *v);
 static AttrTab gtkitemfactory_attrs[];
 /* static int int_gtkitemfactory_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkitemfactory_get_methods(void); 

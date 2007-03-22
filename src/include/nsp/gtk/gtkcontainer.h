@@ -49,7 +49,7 @@ extern NspGtkContainer *GetGtkContainer (Stack stack, int i);
 #ifdef GtkContainer_Private 
 static int init_gtkcontainer(NspGtkContainer *o,NspTypeGtkContainer *type);
 static char *gtkcontainer_type_as_string(void);
-static char *gtkcontainer_type_short_string(void);
+static char *gtkcontainer_type_short_string(NspObject *v);
 static AttrTab gtkcontainer_attrs[];
 /* static int int_gtkcontainer_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcontainer_get_methods(void); 

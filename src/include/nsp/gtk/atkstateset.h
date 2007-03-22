@@ -49,7 +49,7 @@ extern NspAtkStateSet *GetAtkStateSet (Stack stack, int i);
 #ifdef AtkStateSet_Private 
 static int init_atkstateset(NspAtkStateSet *o,NspTypeAtkStateSet *type);
 static char *atkstateset_type_as_string(void);
-static char *atkstateset_type_short_string(void);
+static char *atkstateset_type_short_string(NspObject *v);
 static AttrTab atkstateset_attrs[];
 /* static int int_atkstateset_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkstateset_get_methods(void); 

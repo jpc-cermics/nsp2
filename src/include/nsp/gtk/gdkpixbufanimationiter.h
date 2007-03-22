@@ -49,7 +49,7 @@ extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIter (Stack stack, int i)
 #ifdef GdkPixbufAnimationIter_Private 
 static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *o,NspTypeGdkPixbufAnimationIter *type);
 static char *gdkpixbufanimationiter_type_as_string(void);
-static char *gdkpixbufanimationiter_type_short_string(void);
+static char *gdkpixbufanimationiter_type_short_string(NspObject *v);
 static AttrTab gdkpixbufanimationiter_attrs[];
 /* static int int_gdkpixbufanimationiter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixbufanimationiter_get_methods(void); 

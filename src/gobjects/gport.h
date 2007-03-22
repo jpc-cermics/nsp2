@@ -83,7 +83,7 @@ extern NspPort *GetPort (Stack stack, int i);
 static int init_port(NspPort *o,NspTypePort *type);
 static int nsp_port_size(NspPort *Mat, int flag);
 static char *nsp_port_type_as_string(void);
-static char *nsp_port_type_short_string(void);
+static char *nsp_port_type_short_string(NspObject *v);
 static int nsp_port_eq(NspPort *A, NspObject *B);
 static int nsp_port_neq(NspPort *A, NspObject *B);
 static int nsp_port_xdr_save(XDR  *xdrs, NspPort *M);

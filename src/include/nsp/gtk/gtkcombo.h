@@ -49,7 +49,7 @@ extern NspGtkCombo *GetGtkCombo (Stack stack, int i);
 #ifdef GtkCombo_Private 
 static int init_gtkcombo(NspGtkCombo *o,NspTypeGtkCombo *type);
 static char *gtkcombo_type_as_string(void);
-static char *gtkcombo_type_short_string(void);
+static char *gtkcombo_type_short_string(NspObject *v);
 static AttrTab gtkcombo_attrs[];
 /* static int int_gtkcombo_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcombo_get_methods(void); 

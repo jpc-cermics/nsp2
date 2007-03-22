@@ -165,7 +165,7 @@ static char *nsp_gmarkup_node_type_as_string(void)
   return(gmarkup_node_type_name);
 }
 
-static char *nsp_gmarkup_node_type_short_string(void)
+static char *nsp_gmarkup_node_type_short_string(NspObject *v)
 {
   return(gmarkup_node_short_type_name);
 }
@@ -228,7 +228,7 @@ void nsp_gmarkup_node_info(NspGMarkupNode *M, int indent,const char *name, int r
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(),M->name);
+  Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)),M->name);
 }
 
 /*
@@ -253,7 +253,7 @@ void nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int 
     {
       int i;
       for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-      Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(),M->name);
+      Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)),M->name);
       nsp_object_print((NspObject *)M->children,indent+1,"",rec_level+1);
     }
 }

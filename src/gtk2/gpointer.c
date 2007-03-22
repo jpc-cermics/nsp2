@@ -160,7 +160,7 @@ static char *gpointer_type_as_string(void)
   return(gpointer_type_name);
 }
 
-static char *gpointer_type_short_string(void)
+static char *gpointer_type_short_string(NspObject *v)
 {
   return(gpointer_short_type_name);
 }

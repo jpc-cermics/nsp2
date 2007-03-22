@@ -79,7 +79,7 @@ NspBMatrix *new_bmatrix();
 static int init_bmatrix(NspBMatrix *ob,NspTypeBMatrix *type);
 static int bmatrix_size(NspBMatrix *Mat, int flag);
 static char *bmatrix_type_as_string(void);
-static char *bmatrix_type_short_string(void);
+static char *bmatrix_type_short_string(NspObject *v);
 static NspObject *bmatrix_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int bmatrix_eq(NspBMatrix *A, NspObject *B);
 static int bmatrix_neq(NspBMatrix *A, NspObject *B);

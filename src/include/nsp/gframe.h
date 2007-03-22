@@ -62,7 +62,7 @@ NspGFrame *new_gframe();
 static int init_gframe(NspGFrame *ob,NspTypeGFrame *type);
 static int gframe_size(NspGFrame *Mat, int flag);
 static char *gframe_type_as_string(void);
-static char *gframe_type_short_string(void);
+static char *gframe_type_short_string(NspObject *v);
 static int gframe_eq(NspGFrame *A, NspObject *B);
 static int gframe_neq(NspGFrame *A, NspObject *B);
 static int gframe_xdr_save(XDR  *F, NspGFrame *M);

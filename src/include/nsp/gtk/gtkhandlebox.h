@@ -49,7 +49,7 @@ extern NspGtkHandleBox *GetGtkHandleBox (Stack stack, int i);
 #ifdef GtkHandleBox_Private 
 static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type);
 static char *gtkhandlebox_type_as_string(void);
-static char *gtkhandlebox_type_short_string(void);
+static char *gtkhandlebox_type_short_string(NspObject *v);
 static AttrTab gtkhandlebox_attrs[];
 /* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhandlebox_get_methods(void); 

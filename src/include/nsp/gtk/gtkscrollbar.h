@@ -49,7 +49,7 @@ extern NspGtkScrollbar *GetGtkScrollbar (Stack stack, int i);
 #ifdef GtkScrollbar_Private 
 static int init_gtkscrollbar(NspGtkScrollbar *o,NspTypeGtkScrollbar *type);
 static char *gtkscrollbar_type_as_string(void);
-static char *gtkscrollbar_type_short_string(void);
+static char *gtkscrollbar_type_short_string(NspObject *v);
 static AttrTab gtkscrollbar_attrs[];
 /* static int int_gtkscrollbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkscrollbar_get_methods(void); 

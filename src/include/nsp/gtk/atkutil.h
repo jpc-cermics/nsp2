@@ -49,7 +49,7 @@ extern NspAtkUtil *GetAtkUtil (Stack stack, int i);
 #ifdef AtkUtil_Private 
 static int init_atkutil(NspAtkUtil *o,NspTypeAtkUtil *type);
 static char *atkutil_type_as_string(void);
-static char *atkutil_type_short_string(void);
+static char *atkutil_type_short_string(NspObject *v);
 static AttrTab atkutil_attrs[];
 /* static int int_atkutil_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkutil_get_methods(void); 

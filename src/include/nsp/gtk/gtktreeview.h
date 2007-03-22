@@ -49,7 +49,7 @@ extern NspGtkTreeView *GetGtkTreeView (Stack stack, int i);
 #ifdef GtkTreeView_Private 
 static int init_gtktreeview(NspGtkTreeView *o,NspTypeGtkTreeView *type);
 static char *gtktreeview_type_as_string(void);
-static char *gtktreeview_type_short_string(void);
+static char *gtktreeview_type_short_string(NspObject *v);
 static AttrTab gtktreeview_attrs[];
 /* static int int_gtktreeview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreeview_get_methods(void); 

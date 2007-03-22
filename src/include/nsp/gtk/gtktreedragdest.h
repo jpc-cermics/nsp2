@@ -49,7 +49,7 @@ extern NspGtkTreeDragDest *GetGtkTreeDragDest (Stack stack, int i);
 #ifdef GtkTreeDragDest_Private 
 static int init_gtktreedragdest(NspGtkTreeDragDest *o,NspTypeGtkTreeDragDest *type);
 static char *gtktreedragdest_type_as_string(void);
-static char *gtktreedragdest_type_short_string(void);
+static char *gtktreedragdest_type_short_string(NspObject *v);
 static AttrTab gtktreedragdest_attrs[];
 /* static int int_gtktreedragdest_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreedragdest_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkRadioButton *GetGtkRadioButton (Stack stack, int i);
 #ifdef GtkRadioButton_Private 
 static int init_gtkradiobutton(NspGtkRadioButton *o,NspTypeGtkRadioButton *type);
 static char *gtkradiobutton_type_as_string(void);
-static char *gtkradiobutton_type_short_string(void);
+static char *gtkradiobutton_type_short_string(NspObject *v);
 static AttrTab gtkradiobutton_attrs[];
 /* static int int_gtkradiobutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkradiobutton_get_methods(void); 

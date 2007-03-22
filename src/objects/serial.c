@@ -165,7 +165,7 @@ static char *nsp_serial_type_as_string(void)
   return(serial_type_name);
 }
 
-static char *nsp_serial_type_short_string(void)
+static char *nsp_serial_type_short_string(NspObject *v)
 {
   return(serial_short_type_name);
 }

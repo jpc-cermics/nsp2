@@ -49,7 +49,7 @@ extern NspGtkLabel *GetGtkLabel (Stack stack, int i);
 #ifdef GtkLabel_Private 
 static int init_gtklabel(NspGtkLabel *o,NspTypeGtkLabel *type);
 static char *gtklabel_type_as_string(void);
-static char *gtklabel_type_short_string(void);
+static char *gtklabel_type_short_string(NspObject *v);
 static AttrTab gtklabel_attrs[];
 /* static int int_gtklabel_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtklabel_get_methods(void); 

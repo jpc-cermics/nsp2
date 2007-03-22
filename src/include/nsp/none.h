@@ -48,7 +48,7 @@ NspNone *new_none();
 static int nsp_init_none(NspNone *o,NspTypeNone *type);
 static int nsp_none_size(NspNone *Mat, int flag);
 static char *nsp_none_type_as_string(void);
-static char *nsp_none_type_short_string(void);
+static char *nsp_none_type_short_string(NspObject *v);
 static int nsp_none_eq(NspNone *A, NspObject *B);
 static int nsp_none_neq(NspNone *A, NspObject *B);
 static int nsp_none_xdr_save(XDR  *F, NspNone *M);

@@ -154,7 +154,7 @@ static char *pangoattrlist_type_as_string(void)
   return(pangoattrlist_type_name);
 }
 
-static char *pangoattrlist_type_short_string(void)
+static char *pangoattrlist_type_short_string(NspObject *v)
 {
   return(pangoattrlist_short_type_name);
 }
@@ -459,7 +459,7 @@ static char *pangocolor_type_as_string(void)
   return(pangocolor_type_name);
 }
 
-static char *pangocolor_type_short_string(void)
+static char *pangocolor_type_short_string(NspObject *v)
 {
   return(pangocolor_short_type_name);
 }
@@ -707,7 +707,7 @@ static char *pangofontdescription_type_as_string(void)
   return(pangofontdescription_type_name);
 }
 
-static char *pangofontdescription_type_short_string(void)
+static char *pangofontdescription_type_short_string(NspObject *v)
 {
   return(pangofontdescription_short_type_name);
 }
@@ -1236,7 +1236,7 @@ static char *pangofontmetrics_type_as_string(void)
   return(pangofontmetrics_type_name);
 }
 
-static char *pangofontmetrics_type_short_string(void)
+static char *pangofontmetrics_type_short_string(NspObject *v)
 {
   return(pangofontmetrics_short_type_name);
 }
@@ -1481,7 +1481,7 @@ static char *pangoglyphstring_type_as_string(void)
   return(pangoglyphstring_type_name);
 }
 
-static char *pangoglyphstring_type_short_string(void)
+static char *pangoglyphstring_type_short_string(NspObject *v)
 {
   return(pangoglyphstring_short_type_name);
 }
@@ -1824,7 +1824,7 @@ static char *pangolanguage_type_as_string(void)
   return(pangolanguage_type_name);
 }
 
-static char *pangolanguage_type_short_string(void)
+static char *pangolanguage_type_short_string(NspObject *v)
 {
   return(pangolanguage_short_type_name);
 }
@@ -2042,7 +2042,7 @@ static char *pangotabarray_type_as_string(void)
   return(pangotabarray_type_name);
 }
 
-static char *pangotabarray_type_short_string(void)
+static char *pangotabarray_type_short_string(NspObject *v)
 {
   return(pangotabarray_short_type_name);
 }
@@ -2367,7 +2367,7 @@ static char *pangocontext_type_as_string(void)
   return(pangocontext_type_name);
 }
 
-static char *pangocontext_type_short_string(void)
+static char *pangocontext_type_short_string(NspObject *v)
 {
   return(pangocontext_short_type_name);
 }
@@ -2764,7 +2764,7 @@ static char *pangofont_type_as_string(void)
   return(pangofont_type_name);
 }
 
-static char *pangofont_type_short_string(void)
+static char *pangofont_type_short_string(NspObject *v)
 {
   return(pangofont_short_type_name);
 }
@@ -3029,7 +3029,7 @@ static char *pangofontface_type_as_string(void)
   return(pangofontface_type_name);
 }
 
-static char *pangofontface_type_short_string(void)
+static char *pangofontface_type_short_string(NspObject *v)
 {
   return(pangofontface_short_type_name);
 }
@@ -3258,7 +3258,7 @@ static char *pangofontfamily_type_as_string(void)
   return(pangofontfamily_type_name);
 }
 
-static char *pangofontfamily_type_short_string(void)
+static char *pangofontfamily_type_short_string(NspObject *v)
 {
   return(pangofontfamily_short_type_name);
 }
@@ -3496,7 +3496,7 @@ static char *pangofontmap_type_as_string(void)
   return(pangofontmap_type_name);
 }
 
-static char *pangofontmap_type_short_string(void)
+static char *pangofontmap_type_short_string(NspObject *v)
 {
   return(pangofontmap_short_type_name);
 }
@@ -3776,7 +3776,7 @@ static char *pangofontset_type_as_string(void)
   return(pangofontset_type_name);
 }
 
-static char *pangofontset_type_short_string(void)
+static char *pangofontset_type_short_string(NspObject *v)
 {
   return(pangofontset_short_type_name);
 }
@@ -4011,7 +4011,7 @@ static char *pangolayout_type_as_string(void)
   return(pangolayout_type_name);
 }
 
-static char *pangolayout_type_short_string(void)
+static char *pangolayout_type_short_string(NspObject *v)
 {
   return(pangolayout_short_type_name);
 }

@@ -159,7 +159,7 @@ static char *gdkatom_type_as_string(void)
   return(gdkatom_type_name);
 }
 
-static char *gdkatom_type_short_string(void)
+static char *gdkatom_type_short_string(NspObject *v)
 {
   return(gdkatom_short_type_name);
 }

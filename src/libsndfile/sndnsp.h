@@ -59,7 +59,7 @@ NspSndFile *nsp_new_sndfile();
 static int nsp_init_sndfile(NspSndFile *ob,NspTypeSndFile *type);
 static int nsp_sndfile_size(NspSndFile *Mat, int flag);
 static char *nsp_sndfile_type_as_string(void);
-static char *nsp_sndfile_type_short_string(void);
+static char *nsp_sndfile_type_short_string(NspObject *v);
 static int nsp_sndfile_eq(NspObject *A, NspObject *B);
 static int nsp_sndfile_neq(NspObject *A, NspObject *B);
 static NspMethods *nsp_sndfile_get_methods(void);

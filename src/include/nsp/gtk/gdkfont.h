@@ -49,7 +49,7 @@ extern NspGdkFont *GetGdkFont (Stack stack, int i);
 #ifdef GdkFont_Private 
 static int init_gdkfont(NspGdkFont *o,NspTypeGdkFont *type);
 static char *gdkfont_type_as_string(void);
-static char *gdkfont_type_short_string(void);
+static char *gdkfont_type_short_string(NspObject *v);
 static AttrTab gdkfont_attrs[];
 /* static int int_gdkfont_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkfont_get_methods(void); 

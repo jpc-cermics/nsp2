@@ -49,7 +49,7 @@ extern NspGtkHBox *GetGtkHBox (Stack stack, int i);
 #ifdef GtkHBox_Private 
 static int init_gtkhbox(NspGtkHBox *o,NspTypeGtkHBox *type);
 static char *gtkhbox_type_as_string(void);
-static char *gtkhbox_type_short_string(void);
+static char *gtkhbox_type_short_string(NspObject *v);
 static AttrTab gtkhbox_attrs[];
 /* static int int_gtkhbox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhbox_get_methods(void); 

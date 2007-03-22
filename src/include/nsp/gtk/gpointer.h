@@ -52,7 +52,7 @@ NspGPointer *new_gpointer();
 #ifdef GPointer_Private 
 static int init_gpointer(NspGPointer *o,NspTypeGPointer *type);
 static char *gpointer_type_as_string(void);
-static char *gpointer_type_short_string(void);
+static char *gpointer_type_short_string(NspObject *v);
 static int gpointer_eq(NspGPointer *A, NspObject *B);
 static int gpointer_neq(NspGPointer *A, NspObject *B);
 /* static AttrTab *gpointer_get_attrs_table(void); */

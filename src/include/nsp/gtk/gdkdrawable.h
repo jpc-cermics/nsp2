@@ -49,7 +49,7 @@ extern NspGdkDrawable *GetGdkDrawable (Stack stack, int i);
 #ifdef GdkDrawable_Private 
 static int init_gdkdrawable(NspGdkDrawable *o,NspTypeGdkDrawable *type);
 static char *gdkdrawable_type_as_string(void);
-static char *gdkdrawable_type_short_string(void);
+static char *gdkdrawable_type_short_string(NspObject *v);
 static AttrTab gdkdrawable_attrs[];
 /* static int int_gdkdrawable_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkdrawable_get_methods(void); 

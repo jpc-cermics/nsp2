@@ -84,13 +84,13 @@ NspSpRowMatrix *new_sprowmatrix();
 #ifdef SpRowMatrix_Private 
 static int init_sprowmatrix(NspSpRowMatrix *ob,NspTypeSpRowMatrix *type);
 static int nsp_sprowmatrix_size(NspSpRowMatrix *Mat, int flag);
-char *nsp_sprowmatrix_type_as_string(void);
-char *nsp_sprowmatrix_type_short_string(void);
-NspObject *SpRowLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_sprowmatrix_eq(NspObject *A,NspObject *B);
-int nsp_sprowmatrix_neq(NspObject *A,NspObject *B);
 static NspSpRowMatrix *nsp_sprowmatrix_xdr_load(XDR  *F);
 static int nsp_sprowmatrix_xdr_save(XDR  *F, NspSpRowMatrix *M);
+extern char *nsp_sprowmatrix_type_as_string(void);
+extern char *nsp_sprowmatrix_type_short_string(NspObject *v);
+extern NspObject *SpRowLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+extern int nsp_sprowmatrix_eq(NspObject *A,NspObject *B);
+extern int nsp_sprowmatrix_neq(NspObject *A,NspObject *B);
 #endif 
 
 #define NULLSPROW (  NspSpRowMatrix *) 0

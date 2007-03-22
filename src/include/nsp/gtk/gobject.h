@@ -53,7 +53,7 @@ NspGObject *new_gobject();
 static int init_gobject(NspGObject *o,NspTypeGObject *type);
 static int gobject_size(NspGObject *Mat, int flag);
 static char *gobject_type_as_string(void);
-static char *gobject_type_short_string(void);
+static char *gobject_type_short_string(NspObject *v);
 static int gobject_eq(NspGObject *A, NspObject *B);
 static int gobject_neq(NspGObject *A, NspObject *B);
 static int gobject_xdr_save(XDR  *F, NspGObject *M);

@@ -49,7 +49,7 @@ extern NspGtkHSeparator *GetGtkHSeparator (Stack stack, int i);
 #ifdef GtkHSeparator_Private 
 static int init_gtkhseparator(NspGtkHSeparator *o,NspTypeGtkHSeparator *type);
 static char *gtkhseparator_type_as_string(void);
-static char *gtkhseparator_type_short_string(void);
+static char *gtkhseparator_type_short_string(NspObject *v);
 static AttrTab gtkhseparator_attrs[];
 /* static int int_gtkhseparator_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhseparator_get_methods(void); 

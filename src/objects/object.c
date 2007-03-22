@@ -54,7 +54,7 @@ static int object_is_true_def(NspObject *ob);
 static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int init_object(NspObject *ob,NspTypeObject *type);
 static char *object_type_as_string(void);
-static char *object_type_short_string(void);
+static char *object_type_short_string(NspObject *obj);
 static NspMethods *object_get_methods(void);
 static int int_object_create(Stack stack, int rhs, int opt, int lhs);
 static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level);
@@ -246,7 +246,7 @@ static char *object_type_as_string(void)
   return(object_type_name);
 }
 
-static char *object_type_short_string(void)
+static char *object_type_short_string(NspObject *obj)
 {
   return(object_short_type_name);
 }

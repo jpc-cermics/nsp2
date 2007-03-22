@@ -49,7 +49,7 @@ extern NspGtkRange *GetGtkRange (Stack stack, int i);
 #ifdef GtkRange_Private 
 static int init_gtkrange(NspGtkRange *o,NspTypeGtkRange *type);
 static char *gtkrange_type_as_string(void);
-static char *gtkrange_type_short_string(void);
+static char *gtkrange_type_short_string(NspObject *v);
 static AttrTab gtkrange_attrs[];
 /* static int int_gtkrange_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkrange_get_methods(void); 

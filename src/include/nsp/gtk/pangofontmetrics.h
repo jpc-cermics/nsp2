@@ -49,7 +49,7 @@ extern NspPangoFontMetrics *GetPangoFontMetrics (Stack stack, int i);
 #ifdef PangoFontMetrics_Private 
 static int init_pangofontmetrics(NspPangoFontMetrics *o,NspTypePangoFontMetrics *type);
 static char *pangofontmetrics_type_as_string(void);
-static char *pangofontmetrics_type_short_string(void);
+static char *pangofontmetrics_type_short_string(NspObject *v);
 static AttrTab pangofontmetrics_attrs[];
 /* static int int_pangofontmetrics_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangofontmetrics_get_methods(void); 

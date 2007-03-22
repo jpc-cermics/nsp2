@@ -84,7 +84,7 @@ extern int int_gmarkup_node_create(Stack stack, int rhs, int opt, int lhs);
 static int init_gmarkup_node(NspGMarkupNode *o,NspTypeGMarkupNode *type);
 static int nsp_gmarkup_node_size(NspGMarkupNode *Mat, int flag);
 static char *nsp_gmarkup_node_type_as_string(void);
-static char *nsp_gmarkup_node_type_short_string(void);
+static char *nsp_gmarkup_node_type_short_string(NspObject *v);
 static int nsp_gmarkup_node_eq(NspGMarkupNode *A, NspObject *B);
 static int nsp_gmarkup_node_neq(NspGMarkupNode *A, NspObject *B);
 static int nsp_gmarkup_node_xdr_save(XDR  *xdrs, NspGMarkupNode *M);

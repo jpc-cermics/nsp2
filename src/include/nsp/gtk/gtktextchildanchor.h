@@ -49,7 +49,7 @@ extern NspGtkTextChildAnchor *GetGtkTextChildAnchor (Stack stack, int i);
 #ifdef GtkTextChildAnchor_Private 
 static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type);
 static char *gtktextchildanchor_type_as_string(void);
-static char *gtktextchildanchor_type_short_string(void);
+static char *gtktextchildanchor_type_short_string(NspObject *v);
 static AttrTab gtktextchildanchor_attrs[];
 /* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextchildanchor_get_methods(void); 

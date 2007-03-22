@@ -49,7 +49,7 @@ extern NspGtkCellView *GetGtkCellView (Stack stack, int i);
 #ifdef GtkCellView_Private 
 static int init_gtkcellview(NspGtkCellView *o,NspTypeGtkCellView *type);
 static char *gtkcellview_type_as_string(void);
-static char *gtkcellview_type_short_string(void);
+static char *gtkcellview_type_short_string(NspObject *v);
 static AttrTab gtkcellview_attrs[];
 /* static int int_gtkcellview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellview_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkEditable *GetGtkEditable (Stack stack, int i);
 #ifdef GtkEditable_Private 
 static int init_gtkeditable(NspGtkEditable *o,NspTypeGtkEditable *type);
 static char *gtkeditable_type_as_string(void);
-static char *gtkeditable_type_short_string(void);
+static char *gtkeditable_type_short_string(NspObject *v);
 static AttrTab gtkeditable_attrs[];
 /* static int int_gtkeditable_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkeditable_get_methods(void); 

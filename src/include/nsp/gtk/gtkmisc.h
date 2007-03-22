@@ -49,7 +49,7 @@ extern NspGtkMisc *GetGtkMisc (Stack stack, int i);
 #ifdef GtkMisc_Private 
 static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type);
 static char *gtkmisc_type_as_string(void);
-static char *gtkmisc_type_short_string(void);
+static char *gtkmisc_type_short_string(NspObject *v);
 static AttrTab gtkmisc_attrs[];
 /* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmisc_get_methods(void); 

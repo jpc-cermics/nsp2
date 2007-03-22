@@ -49,7 +49,7 @@ extern NspGtkGammaCurve *GetGtkGammaCurve (Stack stack, int i);
 #ifdef GtkGammaCurve_Private 
 static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type);
 static char *gtkgammacurve_type_as_string(void);
-static char *gtkgammacurve_type_short_string(void);
+static char *gtkgammacurve_type_short_string(NspObject *v);
 static AttrTab gtkgammacurve_attrs[];
 /* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkgammacurve_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGladeXML *GetGladeXML (Stack stack, int i);
 #ifdef GladeXML_Private 
 static int init_gladexml(NspGladeXML *o,NspTypeGladeXML *type);
 static char *gladexml_type_as_string(void);
-static char *gladexml_type_short_string(void);
+static char *gladexml_type_short_string(NspObject *v);
 static AttrTab gladexml_attrs[];
 /* static int int_gladexml_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gladexml_get_methods(void); 

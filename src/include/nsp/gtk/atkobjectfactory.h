@@ -49,7 +49,7 @@ extern NspAtkObjectFactory *GetAtkObjectFactory (Stack stack, int i);
 #ifdef AtkObjectFactory_Private 
 static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type);
 static char *atkobjectfactory_type_as_string(void);
-static char *atkobjectfactory_type_short_string(void);
+static char *atkobjectfactory_type_short_string(NspObject *v);
 static AttrTab atkobjectfactory_attrs[];
 /* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkobjectfactory_get_methods(void); 

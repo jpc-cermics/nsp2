@@ -49,7 +49,7 @@ extern NspGtkNotebook *GetGtkNotebook (Stack stack, int i);
 #ifdef GtkNotebook_Private 
 static int init_gtknotebook(NspGtkNotebook *o,NspTypeGtkNotebook *type);
 static char *gtknotebook_type_as_string(void);
-static char *gtknotebook_type_short_string(void);
+static char *gtknotebook_type_short_string(NspObject *v);
 static AttrTab gtknotebook_attrs[];
 /* static int int_gtknotebook_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtknotebook_get_methods(void); 

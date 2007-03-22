@@ -192,7 +192,7 @@ static char *link_type_as_string(void)
   return(link_type_name);
 }
 
-static char *link_type_short_string(void)
+static char *link_type_short_string(NspObject *v)
 {
   return(link_short_type_name);
 }
@@ -305,7 +305,7 @@ static void link_info(NspLink *H, int indent,char *name,int rec_level)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
-	    link_type_short_string(), H->obj,H->obj->ref_count );
+	    link_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
 }
 
 static void link_print(NspLink *H, int indent,char *name, int rec_level)

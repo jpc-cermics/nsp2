@@ -49,7 +49,7 @@ extern NspGdkPixbuf *GetGdkPixbuf (Stack stack, int i);
 #ifdef GdkPixbuf_Private 
 static int init_gdkpixbuf(NspGdkPixbuf *o,NspTypeGdkPixbuf *type);
 static char *gdkpixbuf_type_as_string(void);
-static char *gdkpixbuf_type_short_string(void);
+static char *gdkpixbuf_type_short_string(NspObject *v);
 static AttrTab gdkpixbuf_attrs[];
 /* static int int_gdkpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixbuf_get_methods(void); 

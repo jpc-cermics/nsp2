@@ -49,7 +49,7 @@ extern NspGtkTextView *GetGtkTextView (Stack stack, int i);
 #ifdef GtkTextView_Private 
 static int init_gtktextview(NspGtkTextView *o,NspTypeGtkTextView *type);
 static char *gtktextview_type_as_string(void);
-static char *gtktextview_type_short_string(void);
+static char *gtktextview_type_short_string(NspObject *v);
 static AttrTab gtktextview_attrs[];
 /* static int int_gtktextview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextview_get_methods(void); 

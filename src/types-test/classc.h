@@ -50,6 +50,6 @@ extern NspClassC *GetClassC (Stack stack, int i);
 #ifdef ClassC_Private 
 static int init_classc(NspClassC *o,NspTypeClassC *type);
 static char *classc_type_as_string(void);
-static char *classc_type_short_string(void);
+static char *classc_type_short_string(NspObject *v);
 static NspMethods *classc_get_methods(void); 
 #endif /* ClassC_Private */

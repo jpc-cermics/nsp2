@@ -49,7 +49,7 @@ extern NspGdkRectangle *GetGdkRectangle (Stack stack, int i);
 #ifdef GdkRectangle_Private 
 static int init_gdkrectangle(NspGdkRectangle *o,NspTypeGdkRectangle *type);
 static char *gdkrectangle_type_as_string(void);
-static char *gdkrectangle_type_short_string(void);
+static char *gdkrectangle_type_short_string(NspObject *v);
 static AttrTab gdkrectangle_attrs[];
 /* static int int_gdkrectangle_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkrectangle_get_methods(void); 

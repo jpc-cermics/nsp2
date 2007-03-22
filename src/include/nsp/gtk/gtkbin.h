@@ -49,7 +49,7 @@ extern NspGtkBin *GetGtkBin (Stack stack, int i);
 #ifdef GtkBin_Private 
 static int init_gtkbin(NspGtkBin *o,NspTypeGtkBin *type);
 static char *gtkbin_type_as_string(void);
-static char *gtkbin_type_short_string(void);
+static char *gtkbin_type_short_string(NspObject *v);
 static AttrTab gtkbin_attrs[];
 /* static int int_gtkbin_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkbin_get_methods(void); 

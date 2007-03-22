@@ -49,7 +49,7 @@ extern NspGtkAlignment *GetGtkAlignment (Stack stack, int i);
 #ifdef GtkAlignment_Private 
 static int init_gtkalignment(NspGtkAlignment *o,NspTypeGtkAlignment *type);
 static char *gtkalignment_type_as_string(void);
-static char *gtkalignment_type_short_string(void);
+static char *gtkalignment_type_short_string(NspObject *v);
 static AttrTab gtkalignment_attrs[];
 /* static int int_gtkalignment_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkalignment_get_methods(void); 

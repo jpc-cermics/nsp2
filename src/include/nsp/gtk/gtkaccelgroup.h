@@ -49,7 +49,7 @@ extern NspGtkAccelGroup *GetGtkAccelGroup (Stack stack, int i);
 #ifdef GtkAccelGroup_Private 
 static int init_gtkaccelgroup(NspGtkAccelGroup *o,NspTypeGtkAccelGroup *type);
 static char *gtkaccelgroup_type_as_string(void);
-static char *gtkaccelgroup_type_short_string(void);
+static char *gtkaccelgroup_type_short_string(NspObject *v);
 static AttrTab gtkaccelgroup_attrs[];
 /* static int int_gtkaccelgroup_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaccelgroup_get_methods(void); 

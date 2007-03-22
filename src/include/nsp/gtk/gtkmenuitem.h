@@ -49,7 +49,7 @@ extern NspGtkMenuItem *GetGtkMenuItem (Stack stack, int i);
 #ifdef GtkMenuItem_Private 
 static int init_gtkmenuitem(NspGtkMenuItem *o,NspTypeGtkMenuItem *type);
 static char *gtkmenuitem_type_as_string(void);
-static char *gtkmenuitem_type_short_string(void);
+static char *gtkmenuitem_type_short_string(NspObject *v);
 static AttrTab gtkmenuitem_attrs[];
 /* static int int_gtkmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmenuitem_get_methods(void); 

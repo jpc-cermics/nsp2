@@ -72,7 +72,7 @@ NspBlock *new_block();
 static int init_block(NspBlock *ob,NspTypeBlock *type);
 static int block_size(NspBlock *Mat, int flag);
 static char *block_type_as_string(void);
-static char *block_type_short_string(void);
+static char *block_type_short_string(NspObject *v);
 static int block_eq(NspBlock *A, NspObject *B);
 static int block_neq(NspBlock *A, NspObject *B);
 static int block_xdr_save(XDR  *xdrs, NspBlock *M);

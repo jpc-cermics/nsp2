@@ -49,7 +49,7 @@ extern NspGtkEntry *GetGtkEntry (Stack stack, int i);
 #ifdef GtkEntry_Private 
 static int init_gtkentry(NspGtkEntry *o,NspTypeGtkEntry *type);
 static char *gtkentry_type_as_string(void);
-static char *gtkentry_type_short_string(void);
+static char *gtkentry_type_short_string(NspObject *v);
 static AttrTab gtkentry_attrs[];
 /* static int int_gtkentry_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkentry_get_methods(void); 

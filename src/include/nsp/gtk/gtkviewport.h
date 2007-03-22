@@ -49,7 +49,7 @@ extern NspGtkViewport *GetGtkViewport (Stack stack, int i);
 #ifdef GtkViewport_Private 
 static int init_gtkviewport(NspGtkViewport *o,NspTypeGtkViewport *type);
 static char *gtkviewport_type_as_string(void);
-static char *gtkviewport_type_short_string(void);
+static char *gtkviewport_type_short_string(NspObject *v);
 static AttrTab gtkviewport_attrs[];
 /* static int int_gtkviewport_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkviewport_get_methods(void); 

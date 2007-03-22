@@ -49,7 +49,7 @@ extern NspGtkAccelLabel *GetGtkAccelLabel (Stack stack, int i);
 #ifdef GtkAccelLabel_Private 
 static int init_gtkaccellabel(NspGtkAccelLabel *o,NspTypeGtkAccelLabel *type);
 static char *gtkaccellabel_type_as_string(void);
-static char *gtkaccellabel_type_short_string(void);
+static char *gtkaccellabel_type_short_string(NspObject *v);
 static AttrTab gtkaccellabel_attrs[];
 /* static int int_gtkaccellabel_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaccellabel_get_methods(void); 

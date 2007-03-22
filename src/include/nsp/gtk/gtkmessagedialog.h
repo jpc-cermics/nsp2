@@ -49,7 +49,7 @@ extern NspGtkMessageDialog *GetGtkMessageDialog (Stack stack, int i);
 #ifdef GtkMessageDialog_Private 
 static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type);
 static char *gtkmessagedialog_type_as_string(void);
-static char *gtkmessagedialog_type_short_string(void);
+static char *gtkmessagedialog_type_short_string(NspObject *v);
 static AttrTab gtkmessagedialog_attrs[];
 /* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmessagedialog_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkTooltips *GetGtkTooltips (Stack stack, int i);
 #ifdef GtkTooltips_Private 
 static int init_gtktooltips(NspGtkTooltips *o,NspTypeGtkTooltips *type);
 static char *gtktooltips_type_as_string(void);
-static char *gtktooltips_type_short_string(void);
+static char *gtktooltips_type_short_string(NspObject *v);
 static AttrTab gtktooltips_attrs[];
 /* static int int_gtktooltips_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktooltips_get_methods(void); 

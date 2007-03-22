@@ -49,7 +49,7 @@ extern NspGtkTreeIter *GetGtkTreeIter (Stack stack, int i);
 #ifdef GtkTreeIter_Private 
 static int init_gtktreeiter(NspGtkTreeIter *o,NspTypeGtkTreeIter *type);
 static char *gtktreeiter_type_as_string(void);
-static char *gtktreeiter_type_short_string(void);
+static char *gtktreeiter_type_short_string(NspObject *v);
 static AttrTab gtktreeiter_attrs[];
 /* static int int_gtktreeiter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreeiter_get_methods(void); 

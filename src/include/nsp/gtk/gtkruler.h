@@ -49,7 +49,7 @@ extern NspGtkRuler *GetGtkRuler (Stack stack, int i);
 #ifdef GtkRuler_Private 
 static int init_gtkruler(NspGtkRuler *o,NspTypeGtkRuler *type);
 static char *gtkruler_type_as_string(void);
-static char *gtkruler_type_short_string(void);
+static char *gtkruler_type_short_string(NspObject *v);
 static AttrTab gtkruler_attrs[];
 /* static int int_gtkruler_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkruler_get_methods(void); 

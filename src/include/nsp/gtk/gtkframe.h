@@ -49,7 +49,7 @@ extern NspGtkFrame *GetGtkFrame (Stack stack, int i);
 #ifdef GtkFrame_Private 
 static int init_gtkframe(NspGtkFrame *o,NspTypeGtkFrame *type);
 static char *gtkframe_type_as_string(void);
-static char *gtkframe_type_short_string(void);
+static char *gtkframe_type_short_string(NspObject *v);
 static AttrTab gtkframe_attrs[];
 /* static int int_gtkframe_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkframe_get_methods(void); 

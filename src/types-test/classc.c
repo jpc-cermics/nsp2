@@ -120,7 +120,7 @@ static char *classc_type_as_string(void)
   return(classc_type_name);
 }
 
-static char *classc_type_short_string(void)
+static char *classc_type_short_string(NspObject *v)
 {
   return(classc_short_type_name);
 }

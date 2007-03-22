@@ -49,7 +49,7 @@ extern NspGtkVRuler *GetGtkVRuler (Stack stack, int i);
 #ifdef GtkVRuler_Private 
 static int init_gtkvruler(NspGtkVRuler *o,NspTypeGtkVRuler *type);
 static char *gtkvruler_type_as_string(void);
-static char *gtkvruler_type_short_string(void);
+static char *gtkvruler_type_short_string(NspObject *v);
 static AttrTab gtkvruler_attrs[];
 /* static int int_gtkvruler_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkvruler_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspPangoTabArray *GetPangoTabArray (Stack stack, int i);
 #ifdef PangoTabArray_Private 
 static int init_pangotabarray(NspPangoTabArray *o,NspTypePangoTabArray *type);
 static char *pangotabarray_type_as_string(void);
-static char *pangotabarray_type_short_string(void);
+static char *pangotabarray_type_short_string(NspObject *v);
 static AttrTab pangotabarray_attrs[];
 /* static int int_pangotabarray_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangotabarray_get_methods(void); 

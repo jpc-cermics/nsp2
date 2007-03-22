@@ -49,7 +49,7 @@ extern NspGtkCurve *GetGtkCurve (Stack stack, int i);
 #ifdef GtkCurve_Private 
 static int init_gtkcurve(NspGtkCurve *o,NspTypeGtkCurve *type);
 static char *gtkcurve_type_as_string(void);
-static char *gtkcurve_type_short_string(void);
+static char *gtkcurve_type_short_string(NspObject *v);
 static AttrTab gtkcurve_attrs[];
 /* static int int_gtkcurve_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcurve_get_methods(void); 

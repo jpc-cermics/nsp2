@@ -183,7 +183,7 @@ static char *nsp_scalexp_type_as_string(void)
   return(scalexp_type_name);
 }
 
-static char *nsp_scalexp_type_short_string(void)
+static char *nsp_scalexp_type_short_string(NspObject *v)
 {
   return(scalexp_short_type_name);
 }
@@ -283,7 +283,7 @@ void nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t= \t\t%s ()\n",
 	    pname,
-	    nsp_scalexp_type_short_string());
+	    nsp_scalexp_type_short_string(NSP_OBJECT(M)));
 }
 
 /*

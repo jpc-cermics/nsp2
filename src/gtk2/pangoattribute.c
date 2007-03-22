@@ -147,7 +147,7 @@ static char *pangoattribute_type_as_string(void)
   return(pangoattribute_type_name);
 }
 
-static char *pangoattribute_type_short_string(void)
+static char *pangoattribute_type_short_string(NspObject *v)
 {
   return(pangoattribute_short_type_name);
 }

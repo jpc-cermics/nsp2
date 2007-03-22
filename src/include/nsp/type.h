@@ -48,7 +48,7 @@ NspType *new_type();
 static int init_type(NspType *o,NspTypeType *type);
 static int type_size(NspType *Mat, int flag);
 static char *type_type_as_string(void);
-static char *type_type_short_string(void);
+static char *type_type_short_string(NspObject *v);
 static int type_eq(NspType *A, NspObject *B);
 static int type_neq(NspType *A, NspObject *B);
 static int type_xdr_save(XDR  *F, NspType *M);

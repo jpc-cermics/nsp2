@@ -49,7 +49,7 @@ extern NspGtkGLArea *GetGtkGLArea (Stack stack, int i);
 #ifdef GtkGLArea_Private 
 static int init_gtkglarea(NspGtkGLArea *o,NspTypeGtkGLArea *type);
 static char *gtkglarea_type_as_string(void);
-static char *gtkglarea_type_short_string(void);
+static char *gtkglarea_type_short_string(NspObject *v);
 static AttrTab gtkglarea_attrs[];
 /* static int int_gtkglarea_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkglarea_get_methods(void); 

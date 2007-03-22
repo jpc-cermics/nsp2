@@ -49,7 +49,7 @@ extern NspGtkCellRendererToggle *GetGtkCellRendererToggle (Stack stack, int i);
 #ifdef GtkCellRendererToggle_Private 
 static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type);
 static char *gtkcellrenderertoggle_type_as_string(void);
-static char *gtkcellrenderertoggle_type_short_string(void);
+static char *gtkcellrenderertoggle_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderertoggle_attrs[];
 /* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrenderertoggle_get_methods(void); 

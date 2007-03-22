@@ -123,7 +123,7 @@ extern int do_scanf (char *command,FILE *fp,
 static int nsp_init_file(NspFile *ob,NspTypeSciFile *type);
 static int nsp_file_size(NspFile *Mat, int flag);
 static char *nsp_file_type_as_string(void);
-static char *nsp_file_type_short_string(void);
+static char *nsp_file_type_short_string(NspObject *v);
 static int nsp_file_eq(NspObject *A, NspObject *B);
 static int nsp_file_neq(NspObject *A, NspObject *B);
 static NspMethods *nsp_file_get_methods(void);

@@ -223,14 +223,12 @@ matrix_size (NspMatrix * Mat, int flag)
 static char mat_type_name[] = "Mat";
 static char mat_short_type_name[] = "m";
 
-char *
-matrix_type_as_string (void)
+char *matrix_type_as_string (void)
 {
   return (mat_type_name);
 }
 
-char *
-matrix_type_short_string (void)
+char * matrix_type_short_string (NspObject *v)
 {
   return (mat_short_type_name);
 }

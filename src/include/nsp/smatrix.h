@@ -150,7 +150,7 @@ extern NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S);
 static int init_smatrix(NspSMatrix *ob,NspTypeSMatrix *type);
 static int nsp_smatrix_size(NspSMatrix *Mat, int flag);
 char *nsp_smatrix_type_as_string(void);
-char *nsp_smatrix_type_short_string(void);
+char *nsp_smatrix_type_short_string(NspObject *v);
 NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_smatrix_eq(NspObject *A,NspObject *B);
 int nsp_smatrix_neq(NspObject *A,NspObject *B);

@@ -49,7 +49,7 @@ extern NspGtkToggleButton *GetGtkToggleButton (Stack stack, int i);
 #ifdef GtkToggleButton_Private 
 static int init_gtktogglebutton(NspGtkToggleButton *o,NspTypeGtkToggleButton *type);
 static char *gtktogglebutton_type_as_string(void);
-static char *gtktogglebutton_type_short_string(void);
+static char *gtktogglebutton_type_short_string(NspObject *v);
 static AttrTab gtktogglebutton_attrs[];
 /* static int int_gtktogglebutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktogglebutton_get_methods(void); 

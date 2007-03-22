@@ -49,7 +49,7 @@ extern NspGtkObject *GetGtkObject (Stack stack, int i);
 #ifdef GtkObject_Private 
 static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type);
 static char *gtkobject_type_as_string(void);
-static char *gtkobject_type_short_string(void);
+static char *gtkobject_type_short_string(NspObject *v);
 static AttrTab gtkobject_attrs[];
 /* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkobject_get_methods(void); 

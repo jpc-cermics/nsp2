@@ -35,7 +35,7 @@ NspGtkTipsQuery *new_gtktipsquery();
 #ifdef GtkTipsQuery_Private 
 static int init_gtktipsquery(NspGtkTipsQuery *o,NspTypeGtkTipsQuery *type);
 static char *gtktipsquery_type_as_string(void);
-static char *gtktipsquery_type_short_string(void);
+static char *gtktipsquery_type_short_string(NspObject *v);
 static AttrTab gtktipsquery_attrs[];
 /* static int int_gtktipsquery_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktipsquery_get_methods(void); 

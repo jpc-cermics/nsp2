@@ -93,7 +93,7 @@ static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes
 static int init_serial(NspSerial *o,NspTypeSerial *type);
 static int nsp_serial_size(NspSerial *Mat, int flag);
 static char *nsp_serial_type_as_string(void);
-static char *nsp_serial_type_short_string(void);
+static char *nsp_serial_type_short_string(NspObject *v);
 static int nsp_serial_eq(NspSerial *A, NspObject *B);
 static int nsp_serial_neq(NspSerial *A, NspObject *B);
 static int nsp_serial_xdr_save(XDR *xdrs, NspSerial *M);

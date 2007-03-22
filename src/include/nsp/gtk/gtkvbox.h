@@ -49,7 +49,7 @@ extern NspGtkVBox *GetGtkVBox (Stack stack, int i);
 #ifdef GtkVBox_Private 
 static int init_gtkvbox(NspGtkVBox *o,NspTypeGtkVBox *type);
 static char *gtkvbox_type_as_string(void);
-static char *gtkvbox_type_short_string(void);
+static char *gtkvbox_type_short_string(NspObject *v);
 static AttrTab gtkvbox_attrs[];
 /* static int int_gtkvbox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkvbox_get_methods(void); 

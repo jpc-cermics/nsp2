@@ -147,7 +147,7 @@ extern NspHash *nsp_current_frame_to_hash(void);
 static int init_hash(NspHash *ob,NspTypeHash *type);
 static int hash_size(NspHash *Mat, int flag);
 static char *hash_type_as_string(void);
-static char *hash_type_short_string(void);
+static char *hash_type_short_string(NspObject *v);
 static int hash_eq(NspHash *A, NspObject *B);
 static int hash_neq(NspHash *A, NspObject *B);
 static int hash_xdr_save(XDR  *F, NspHash *M);

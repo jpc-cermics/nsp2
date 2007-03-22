@@ -438,7 +438,7 @@ static char *gtktreepath_type_as_string(void)
   return(gtktreepath_type_name);
 }
 
-static char *gtktreepath_type_short_string(void)
+static char *gtktreepath_type_short_string(NspObject *v)
 {
   return(gtktreepath_short_type_name);
 }
@@ -852,7 +852,7 @@ static char *gtkrequisition_type_as_string(void)
   return(gtkrequisition_type_name);
 }
 
-static char *gtkrequisition_type_short_string(void)
+static char *gtkrequisition_type_short_string(NspObject *v)
 {
   return(gtkrequisition_short_type_name);
 }
@@ -1119,7 +1119,7 @@ static char *gtkiconset_type_as_string(void)
   return(gtkiconset_type_name);
 }
 
-static char *gtkiconset_type_short_string(void)
+static char *gtkiconset_type_short_string(NspObject *v)
 {
   return(gtkiconset_short_type_name);
 }
@@ -1443,7 +1443,7 @@ static char *gtkiconsource_type_as_string(void)
   return(gtkiconsource_type_name);
 }
 
-static char *gtkiconsource_type_short_string(void)
+static char *gtkiconsource_type_short_string(NspObject *v)
 {
   return(gtkiconsource_short_type_name);
 }
@@ -1863,7 +1863,7 @@ static char *gtkselectiondata_type_as_string(void)
   return(gtkselectiondata_type_name);
 }
 
-static char *gtkselectiondata_type_short_string(void)
+static char *gtkselectiondata_type_short_string(NspObject *v)
 {
   return(gtkselectiondata_short_type_name);
 }
@@ -2255,7 +2255,7 @@ static char *gtktextattributes_type_as_string(void)
   return(gtktextattributes_type_name);
 }
 
-static char *gtktextattributes_type_short_string(void)
+static char *gtktextattributes_type_short_string(NspObject *v)
 {
   return(gtktextattributes_short_type_name);
 }
@@ -2784,7 +2784,7 @@ static char *gtktextiter_type_as_string(void)
   return(gtktextiter_type_name);
 }
 
-static char *gtktextiter_type_short_string(void)
+static char *gtktextiter_type_short_string(NspObject *v)
 {
   return(gtktextiter_short_type_name);
 }
@@ -4056,7 +4056,7 @@ static char *gtktreeiter_type_as_string(void)
   return(gtktreeiter_type_name);
 }
 
-static char *gtktreeiter_type_short_string(void)
+static char *gtktreeiter_type_short_string(NspObject *v)
 {
   return(gtktreeiter_short_type_name);
 }
@@ -4282,7 +4282,7 @@ static char *gtkeditable_type_as_string(void)
   return(gtkeditable_type_name);
 }
 
-static char *gtkeditable_type_short_string(void)
+static char *gtkeditable_type_short_string(NspObject *v)
 {
   return(gtkeditable_short_type_name);
 }
@@ -4625,7 +4625,7 @@ static char *gtkcelleditable_type_as_string(void)
   return(gtkcelleditable_type_name);
 }
 
-static char *gtkcelleditable_type_short_string(void)
+static char *gtkcelleditable_type_short_string(NspObject *v)
 {
   return(gtkcelleditable_short_type_name);
 }
@@ -4858,7 +4858,7 @@ static char *gtkcelllayout_type_as_string(void)
   return(gtkcelllayout_type_name);
 }
 
-static char *gtkcelllayout_type_short_string(void)
+static char *gtkcelllayout_type_short_string(NspObject *v)
 {
   return(gtkcelllayout_short_type_name);
 }
@@ -5204,7 +5204,7 @@ static char *gtktreemodel_type_as_string(void)
   return(gtktreemodel_type_name);
 }
 
-static char *gtktreemodel_type_short_string(void)
+static char *gtktreemodel_type_short_string(NspObject *v)
 {
   return(gtktreemodel_short_type_name);
 }
@@ -5967,7 +5967,7 @@ static char *gtktreedragsource_type_as_string(void)
   return(gtktreedragsource_type_name);
 }
 
-static char *gtktreedragsource_type_short_string(void)
+static char *gtktreedragsource_type_short_string(NspObject *v)
 {
   return(gtktreedragsource_short_type_name);
 }
@@ -6235,7 +6235,7 @@ static char *gtktreedragdest_type_as_string(void)
   return(gtktreedragdest_type_name);
 }
 
-static char *gtktreedragdest_type_short_string(void)
+static char *gtktreedragdest_type_short_string(NspObject *v)
 {
   return(gtktreedragdest_short_type_name);
 }
@@ -6490,7 +6490,7 @@ static char *gtktreesortable_type_as_string(void)
   return(gtktreesortable_type_name);
 }
 
-static char *gtktreesortable_type_short_string(void)
+static char *gtktreesortable_type_short_string(NspObject *v)
 {
   return(gtktreesortable_short_type_name);
 }
@@ -6833,7 +6833,7 @@ static char *gtkaccelgroup_type_as_string(void)
   return(gtkaccelgroup_type_name);
 }
 
-static char *gtkaccelgroup_type_short_string(void)
+static char *gtkaccelgroup_type_short_string(NspObject *v)
 {
   return(gtkaccelgroup_short_type_name);
 }
@@ -7082,7 +7082,7 @@ static char *gtkaccessible_type_as_string(void)
   return(gtkaccessible_type_name);
 }
 
-static char *gtkaccessible_type_short_string(void)
+static char *gtkaccessible_type_short_string(NspObject *v)
 {
   return(gtkaccessible_short_type_name);
 }
@@ -7294,7 +7294,7 @@ static char *gtkiconfactory_type_as_string(void)
   return(gtkiconfactory_type_name);
 }
 
-static char *gtkiconfactory_type_short_string(void)
+static char *gtkiconfactory_type_short_string(NspObject *v)
 {
   return(gtkiconfactory_short_type_name);
 }
@@ -7563,7 +7563,7 @@ static char *gtkobject_type_as_string(void)
   return(gtkobject_type_name);
 }
 
-static char *gtkobject_type_short_string(void)
+static char *gtkobject_type_short_string(NspObject *v)
 {
   return(gtkobject_short_type_name);
 }
@@ -7807,7 +7807,7 @@ static char *gtkitemfactory_type_as_string(void)
   return(gtkitemfactory_type_name);
 }
 
-static char *gtkitemfactory_type_short_string(void)
+static char *gtkitemfactory_type_short_string(NspObject *v)
 {
   return(gtkitemfactory_short_type_name);
 }
@@ -8295,7 +8295,7 @@ static char *gtkimcontext_type_as_string(void)
   return(gtkimcontext_type_name);
 }
 
-static char *gtkimcontext_type_short_string(void)
+static char *gtkimcontext_type_short_string(NspObject *v)
 {
   return(gtkimcontext_short_type_name);
 }
@@ -8653,7 +8653,7 @@ static char *gtkimcontextsimple_type_as_string(void)
   return(gtkimcontextsimple_type_name);
 }
 
-static char *gtkimcontextsimple_type_short_string(void)
+static char *gtkimcontextsimple_type_short_string(NspObject *v)
 {
   return(gtkimcontextsimple_short_type_name);
 }
@@ -8868,7 +8868,7 @@ static char *gtkimmulticontext_type_as_string(void)
   return(gtkimmulticontext_type_name);
 }
 
-static char *gtkimmulticontext_type_short_string(void)
+static char *gtkimmulticontext_type_short_string(NspObject *v)
 {
   return(gtkimmulticontext_short_type_name);
 }
@@ -9098,7 +9098,7 @@ static char *gtkcellrenderer_type_as_string(void)
   return(gtkcellrenderer_type_name);
 }
 
-static char *gtkcellrenderer_type_short_string(void)
+static char *gtkcellrenderer_type_short_string(NspObject *v)
 {
   return(gtkcellrenderer_short_type_name);
 }
@@ -9452,7 +9452,7 @@ static char *gtkcellrenderertoggle_type_as_string(void)
   return(gtkcellrenderertoggle_type_name);
 }
 
-static char *gtkcellrenderertoggle_type_short_string(void)
+static char *gtkcellrenderertoggle_type_short_string(NspObject *v)
 {
   return(gtkcellrenderertoggle_short_type_name);
 }
@@ -9713,7 +9713,7 @@ static char *gtkcellrenderertext_type_as_string(void)
   return(gtkcellrenderertext_type_name);
 }
 
-static char *gtkcellrenderertext_type_short_string(void)
+static char *gtkcellrenderertext_type_short_string(NspObject *v)
 {
   return(gtkcellrenderertext_short_type_name);
 }
@@ -9943,7 +9943,7 @@ static char *gtkcellrendererpixbuf_type_as_string(void)
   return(gtkcellrendererpixbuf_type_name);
 }
 
-static char *gtkcellrendererpixbuf_type_short_string(void)
+static char *gtkcellrendererpixbuf_type_short_string(NspObject *v)
 {
   return(gtkcellrendererpixbuf_short_type_name);
 }
@@ -10158,7 +10158,7 @@ static char *gtkadjustment_type_as_string(void)
   return(gtkadjustment_type_name);
 }
 
-static char *gtkadjustment_type_short_string(void)
+static char *gtkadjustment_type_short_string(NspObject *v)
 {
   return(gtkadjustment_short_type_name);
 }
@@ -10586,7 +10586,7 @@ static char *gtkrcstyle_type_as_string(void)
   return(gtkrcstyle_type_name);
 }
 
-static char *gtkrcstyle_type_short_string(void)
+static char *gtkrcstyle_type_short_string(NspObject *v)
 {
   return(gtkrcstyle_short_type_name);
 }
@@ -10841,7 +10841,7 @@ static char *gtksettings_type_as_string(void)
   return(gtksettings_type_name);
 }
 
-static char *gtksettings_type_short_string(void)
+static char *gtksettings_type_short_string(NspObject *v)
 {
   return(gtksettings_short_type_name);
 }
@@ -11081,7 +11081,7 @@ static char *gtksizegroup_type_as_string(void)
   return(gtksizegroup_type_name);
 }
 
-static char *gtksizegroup_type_short_string(void)
+static char *gtksizegroup_type_short_string(NspObject *v)
 {
   return(gtksizegroup_short_type_name);
 }
@@ -11352,7 +11352,7 @@ static char *gtkstyle_type_as_string(void)
   return(gtkstyle_type_name);
 }
 
-static char *gtkstyle_type_short_string(void)
+static char *gtkstyle_type_short_string(NspObject *v)
 {
   return(gtkstyle_short_type_name);
 }
@@ -13024,7 +13024,7 @@ static char *gtktextbuffer_type_as_string(void)
   return(gtktextbuffer_type_name);
 }
 
-static char *gtktextbuffer_type_short_string(void)
+static char *gtktextbuffer_type_short_string(NspObject *v)
 {
   return(gtktextbuffer_short_type_name);
 }
@@ -14262,7 +14262,7 @@ static char *gtktextchildanchor_type_as_string(void)
   return(gtktextchildanchor_type_name);
 }
 
-static char *gtktextchildanchor_type_short_string(void)
+static char *gtktextchildanchor_type_short_string(NspObject *v)
 {
   return(gtktextchildanchor_short_type_name);
 }
@@ -14504,7 +14504,7 @@ static char *gtktextmark_type_as_string(void)
   return(gtktextmark_type_name);
 }
 
-static char *gtktextmark_type_short_string(void)
+static char *gtktextmark_type_short_string(NspObject *v)
 {
   return(gtktextmark_short_type_name);
 }
@@ -14773,7 +14773,7 @@ static char *gtktexttag_type_as_string(void)
   return(gtktexttag_type_name);
 }
 
-static char *gtktexttag_type_short_string(void)
+static char *gtktexttag_type_short_string(NspObject *v)
 {
   return(gtktexttag_short_type_name);
 }
@@ -15047,7 +15047,7 @@ static char *gtktexttagtable_type_as_string(void)
   return(gtktexttagtable_type_name);
 }
 
-static char *gtktexttagtable_type_short_string(void)
+static char *gtktexttagtable_type_short_string(NspObject *v)
 {
   return(gtktexttagtable_short_type_name);
 }
@@ -15314,7 +15314,7 @@ static char *gtktooltips_type_as_string(void)
   return(gtktooltips_type_name);
 }
 
-static char *gtktooltips_type_short_string(void)
+static char *gtktooltips_type_short_string(NspObject *v)
 {
   return(gtktooltips_short_type_name);
 }
@@ -15689,7 +15689,7 @@ static char *gtkliststore_type_as_string(void)
   return(gtkliststore_type_name);
 }
 
-static char *gtkliststore_type_short_string(void)
+static char *gtkliststore_type_short_string(NspObject *v)
 {
   return(gtkliststore_short_type_name);
 }
@@ -16172,7 +16172,7 @@ static char *gtktreemodelsort_type_as_string(void)
   return(gtktreemodelsort_type_name);
 }
 
-static char *gtktreemodelsort_type_short_string(void)
+static char *gtktreemodelsort_type_short_string(NspObject *v)
 {
   return(gtktreemodelsort_short_type_name);
 }
@@ -16513,7 +16513,7 @@ static char *gtktreeselection_type_as_string(void)
   return(gtktreeselection_type_name);
 }
 
-static char *gtktreeselection_type_short_string(void)
+static char *gtktreeselection_type_short_string(NspObject *v)
 {
   return(gtktreeselection_short_type_name);
 }
@@ -17088,7 +17088,7 @@ static char *gtktreestore_type_as_string(void)
   return(gtktreestore_type_name);
 }
 
-static char *gtktreestore_type_short_string(void)
+static char *gtktreestore_type_short_string(NspObject *v)
 {
   return(gtktreestore_short_type_name);
 }
@@ -17692,7 +17692,7 @@ static char *gtktreeviewcolumn_type_as_string(void)
   return(gtktreeviewcolumn_type_name);
 }
 
-static char *gtktreeviewcolumn_type_short_string(void)
+static char *gtktreeviewcolumn_type_short_string(NspObject *v)
 {
   return(gtktreeviewcolumn_short_type_name);
 }
@@ -18526,7 +18526,7 @@ static char *gtkwidget_type_as_string(void)
   return(gtkwidget_type_name);
 }
 
-static char *gtkwidget_type_short_string(void)
+static char *gtkwidget_type_short_string(NspObject *v)
 {
   return(gtkwidget_short_type_name);
 }
@@ -20562,7 +20562,7 @@ static char *gtkseparator_type_as_string(void)
   return(gtkseparator_type_name);
 }
 
-static char *gtkseparator_type_short_string(void)
+static char *gtkseparator_type_short_string(NspObject *v)
 {
   return(gtkseparator_short_type_name);
 }
@@ -20763,7 +20763,7 @@ static char *gtkvseparator_type_as_string(void)
   return(gtkvseparator_type_name);
 }
 
-static char *gtkvseparator_type_short_string(void)
+static char *gtkvseparator_type_short_string(NspObject *v)
 {
   return(gtkvseparator_short_type_name);
 }
@@ -20978,7 +20978,7 @@ static char *gtkhseparator_type_as_string(void)
   return(gtkhseparator_type_name);
 }
 
-static char *gtkhseparator_type_short_string(void)
+static char *gtkhseparator_type_short_string(NspObject *v)
 {
   return(gtkhseparator_short_type_name);
 }
@@ -21193,7 +21193,7 @@ static char *gtkruler_type_as_string(void)
   return(gtkruler_type_name);
 }
 
-static char *gtkruler_type_short_string(void)
+static char *gtkruler_type_short_string(NspObject *v)
 {
   return(gtkruler_short_type_name);
 }
@@ -21462,7 +21462,7 @@ static char *gtkvruler_type_as_string(void)
   return(gtkvruler_type_name);
 }
 
-static char *gtkvruler_type_short_string(void)
+static char *gtkvruler_type_short_string(NspObject *v)
 {
   return(gtkvruler_short_type_name);
 }
@@ -21677,7 +21677,7 @@ static char *gtkhruler_type_as_string(void)
   return(gtkhruler_type_name);
 }
 
-static char *gtkhruler_type_short_string(void)
+static char *gtkhruler_type_short_string(NspObject *v)
 {
   return(gtkhruler_short_type_name);
 }
@@ -21892,7 +21892,7 @@ static char *gtkrange_type_as_string(void)
   return(gtkrange_type_name);
 }
 
-static char *gtkrange_type_short_string(void)
+static char *gtkrange_type_short_string(NspObject *v)
 {
   return(gtkrange_short_type_name);
 }
@@ -22209,7 +22209,7 @@ static char *gtkscrollbar_type_as_string(void)
   return(gtkscrollbar_type_name);
 }
 
-static char *gtkscrollbar_type_short_string(void)
+static char *gtkscrollbar_type_short_string(NspObject *v)
 {
   return(gtkscrollbar_short_type_name);
 }
@@ -22410,7 +22410,7 @@ static char *gtkvscrollbar_type_as_string(void)
   return(gtkvscrollbar_type_name);
 }
 
-static char *gtkvscrollbar_type_short_string(void)
+static char *gtkvscrollbar_type_short_string(NspObject *v)
 {
   return(gtkvscrollbar_short_type_name);
 }
@@ -22640,7 +22640,7 @@ static char *gtkhscrollbar_type_as_string(void)
   return(gtkhscrollbar_type_name);
 }
 
-static char *gtkhscrollbar_type_short_string(void)
+static char *gtkhscrollbar_type_short_string(NspObject *v)
 {
   return(gtkhscrollbar_short_type_name);
 }
@@ -22870,7 +22870,7 @@ static char *gtkscale_type_as_string(void)
   return(gtkscale_type_name);
 }
 
-static char *gtkscale_type_short_string(void)
+static char *gtkscale_type_short_string(NspObject *v)
 {
   return(gtkscale_short_type_name);
 }
@@ -23141,7 +23141,7 @@ static char *gtkvscale_type_as_string(void)
   return(gtkvscale_type_name);
 }
 
-static char *gtkvscale_type_short_string(void)
+static char *gtkvscale_type_short_string(NspObject *v)
 {
   return(gtkvscale_short_type_name);
 }
@@ -23371,7 +23371,7 @@ static char *gtkhscale_type_as_string(void)
   return(gtkhscale_type_name);
 }
 
-static char *gtkhscale_type_short_string(void)
+static char *gtkhscale_type_short_string(NspObject *v)
 {
   return(gtkhscale_short_type_name);
 }
@@ -23601,7 +23601,7 @@ static char *gtkprogress_type_as_string(void)
   return(gtkprogress_type_name);
 }
 
-static char *gtkprogress_type_short_string(void)
+static char *gtkprogress_type_short_string(NspObject *v)
 {
   return(gtkprogress_short_type_name);
 }
@@ -23802,7 +23802,7 @@ static char *gtkprogressbar_type_as_string(void)
   return(gtkprogressbar_type_name);
 }
 
-static char *gtkprogressbar_type_short_string(void)
+static char *gtkprogressbar_type_short_string(NspObject *v)
 {
   return(gtkprogressbar_short_type_name);
 }
@@ -24115,7 +24115,7 @@ static char *gtkpreview_type_as_string(void)
   return(gtkpreview_type_name);
 }
 
-static char *gtkpreview_type_short_string(void)
+static char *gtkpreview_type_short_string(NspObject *v)
 {
   return(gtkpreview_short_type_name);
 }
@@ -24403,7 +24403,7 @@ static char *gtkoldeditable_type_as_string(void)
   return(gtkoldeditable_type_name);
 }
 
-static char *gtkoldeditable_type_short_string(void)
+static char *gtkoldeditable_type_short_string(NspObject *v)
 {
   return(gtkoldeditable_short_type_name);
 }
@@ -24630,7 +24630,7 @@ static char *gtkmisc_type_as_string(void)
   return(gtkmisc_type_name);
 }
 
-static char *gtkmisc_type_short_string(void)
+static char *gtkmisc_type_short_string(NspObject *v)
 {
   return(gtkmisc_short_type_name);
 }
@@ -24885,7 +24885,7 @@ static char *gtkarrow_type_as_string(void)
   return(gtkarrow_type_name);
 }
 
-static char *gtkarrow_type_short_string(void)
+static char *gtkarrow_type_short_string(NspObject *v)
 {
   return(gtkarrow_short_type_name);
 }
@@ -25130,7 +25130,7 @@ static char *gtkimage_type_as_string(void)
   return(gtkimage_type_name);
 }
 
-static char *gtkimage_type_short_string(void)
+static char *gtkimage_type_short_string(NspObject *v)
 {
   return(gtkimage_short_type_name);
 }
@@ -25671,7 +25671,7 @@ static char *gtklabel_type_as_string(void)
   return(gtklabel_type_name);
 }
 
-static char *gtklabel_type_short_string(void)
+static char *gtklabel_type_short_string(NspObject *v)
 {
   return(gtklabel_short_type_name);
 }
@@ -26273,7 +26273,7 @@ static char *gtkaccellabel_type_as_string(void)
   return(gtkaccellabel_type_name);
 }
 
-static char *gtkaccellabel_type_short_string(void)
+static char *gtkaccellabel_type_short_string(NspObject *v)
 {
   return(gtkaccellabel_short_type_name);
 }
@@ -26550,7 +26550,7 @@ static char *gtkinvisible_type_as_string(void)
   return(gtkinvisible_type_name);
 }
 
-static char *gtkinvisible_type_short_string(void)
+static char *gtkinvisible_type_short_string(NspObject *v)
 {
   return(gtkinvisible_short_type_name);
 }
@@ -26768,7 +26768,7 @@ static char *gtkentry_type_as_string(void)
   return(gtkentry_type_name);
 }
 
-static char *gtkentry_type_short_string(void)
+static char *gtkentry_type_short_string(NspObject *v)
 {
   return(gtkentry_short_type_name);
 }
@@ -27194,7 +27194,7 @@ static char *gtkspinbutton_type_as_string(void)
   return(gtkspinbutton_type_name);
 }
 
-static char *gtkspinbutton_type_short_string(void)
+static char *gtkspinbutton_type_short_string(NspObject *v)
 {
   return(gtkspinbutton_short_type_name);
 }
@@ -27692,7 +27692,7 @@ static char *gtkdrawingarea_type_as_string(void)
   return(gtkdrawingarea_type_name);
 }
 
-static char *gtkdrawingarea_type_short_string(void)
+static char *gtkdrawingarea_type_short_string(NspObject *v)
 {
   return(gtkdrawingarea_short_type_name);
 }
@@ -27923,7 +27923,7 @@ static char *gtkcurve_type_as_string(void)
   return(gtkcurve_type_name);
 }
 
-static char *gtkcurve_type_short_string(void)
+static char *gtkcurve_type_short_string(NspObject *v)
 {
   return(gtkcurve_short_type_name);
 }
@@ -28229,7 +28229,7 @@ static char *gtkcontainer_type_as_string(void)
   return(gtkcontainer_type_name);
 }
 
-static char *gtkcontainer_type_short_string(void)
+static char *gtkcontainer_type_short_string(NspObject *v)
 {
   return(gtkcontainer_short_type_name);
 }
@@ -29100,7 +29100,7 @@ static char *gtktreeview_type_as_string(void)
   return(gtktreeview_type_name);
 }
 
-static char *gtktreeview_type_short_string(void)
+static char *gtktreeview_type_short_string(NspObject *v)
 {
   return(gtktreeview_short_type_name);
 }
@@ -30200,7 +30200,7 @@ static char *gtktoolbar_type_as_string(void)
   return(gtktoolbar_type_name);
 }
 
-static char *gtktoolbar_type_short_string(void)
+static char *gtktoolbar_type_short_string(NspObject *v)
 {
   return(gtktoolbar_short_type_name);
 }
@@ -30880,7 +30880,7 @@ static char *gtktextview_type_as_string(void)
   return(gtktextview_type_name);
 }
 
-static char *gtktextview_type_short_string(void)
+static char *gtktextview_type_short_string(NspObject *v)
 {
   return(gtktextview_short_type_name);
 }
@@ -31846,7 +31846,7 @@ static char *gtktable_type_as_string(void)
   return(gtktable_type_name);
 }
 
-static char *gtktable_type_short_string(void)
+static char *gtktable_type_short_string(NspObject *v)
 {
   return(gtktable_short_type_name);
 }
@@ -32229,7 +32229,7 @@ static char *gtksocket_type_as_string(void)
   return(gtksocket_type_name);
 }
 
-static char *gtksocket_type_short_string(void)
+static char *gtksocket_type_short_string(NspObject *v)
 {
   return(gtksocket_short_type_name);
 }
@@ -32481,7 +32481,7 @@ static char *gtkpaned_type_as_string(void)
   return(gtkpaned_type_name);
 }
 
-static char *gtkpaned_type_short_string(void)
+static char *gtkpaned_type_short_string(NspObject *v)
 {
   return(gtkpaned_short_type_name);
 }
@@ -32819,7 +32819,7 @@ static char *gtkvpaned_type_as_string(void)
   return(gtkvpaned_type_name);
 }
 
-static char *gtkvpaned_type_short_string(void)
+static char *gtkvpaned_type_short_string(NspObject *v)
 {
   return(gtkvpaned_short_type_name);
 }
@@ -33034,7 +33034,7 @@ static char *gtkhpaned_type_as_string(void)
   return(gtkhpaned_type_name);
 }
 
-static char *gtkhpaned_type_short_string(void)
+static char *gtkhpaned_type_short_string(NspObject *v)
 {
   return(gtkhpaned_short_type_name);
 }
@@ -33249,7 +33249,7 @@ static char *gtknotebook_type_as_string(void)
   return(gtknotebook_type_name);
 }
 
-static char *gtknotebook_type_short_string(void)
+static char *gtknotebook_type_short_string(NspObject *v)
 {
   return(gtknotebook_short_type_name);
 }
@@ -33948,7 +33948,7 @@ static char *gtkmenushell_type_as_string(void)
   return(gtkmenushell_type_name);
 }
 
-static char *gtkmenushell_type_short_string(void)
+static char *gtkmenushell_type_short_string(NspObject *v)
 {
   return(gtkmenushell_short_type_name);
 }
@@ -34224,7 +34224,7 @@ static char *gtkmenu_type_as_string(void)
   return(gtkmenu_type_name);
 }
 
-static char *gtkmenu_type_short_string(void)
+static char *gtkmenu_type_short_string(NspObject *v)
 {
   return(gtkmenu_short_type_name);
 }
@@ -34728,7 +34728,7 @@ static char *gtkmenubar_type_as_string(void)
   return(gtkmenubar_type_name);
 }
 
-static char *gtkmenubar_type_short_string(void)
+static char *gtkmenubar_type_short_string(NspObject *v)
 {
   return(gtkmenubar_short_type_name);
 }
@@ -34943,7 +34943,7 @@ static char *gtklayout_type_as_string(void)
   return(gtklayout_type_name);
 }
 
-static char *gtklayout_type_short_string(void)
+static char *gtklayout_type_short_string(NspObject *v)
 {
   return(gtklayout_short_type_name);
 }
@@ -35328,7 +35328,7 @@ static char *gtkfixed_type_as_string(void)
   return(gtkfixed_type_name);
 }
 
-static char *gtkfixed_type_short_string(void)
+static char *gtkfixed_type_short_string(NspObject *v)
 {
   return(gtkfixed_short_type_name);
 }
@@ -35592,7 +35592,7 @@ static char *gtkbin_type_as_string(void)
   return(gtkbin_type_name);
 }
 
-static char *gtkbin_type_short_string(void)
+static char *gtkbin_type_short_string(NspObject *v)
 {
   return(gtkbin_short_type_name);
 }
@@ -35823,7 +35823,7 @@ static char *gtkviewport_type_as_string(void)
   return(gtkviewport_type_name);
 }
 
-static char *gtkviewport_type_short_string(void)
+static char *gtkviewport_type_short_string(NspObject *v)
 {
   return(gtkviewport_short_type_name);
 }
@@ -36152,7 +36152,7 @@ static char *gtkscrolledwindow_type_as_string(void)
   return(gtkscrolledwindow_type_name);
 }
 
-static char *gtkscrolledwindow_type_short_string(void)
+static char *gtkscrolledwindow_type_short_string(NspObject *v)
 {
   return(gtkscrolledwindow_short_type_name);
 }
@@ -36518,7 +36518,7 @@ static char *gtkitem_type_as_string(void)
   return(gtkitem_type_name);
 }
 
-static char *gtkitem_type_short_string(void)
+static char *gtkitem_type_short_string(NspObject *v)
 {
   return(gtkitem_short_type_name);
 }
@@ -36744,7 +36744,7 @@ static char *gtkmenuitem_type_as_string(void)
   return(gtkmenuitem_type_name);
 }
 
-static char *gtkmenuitem_type_short_string(void)
+static char *gtkmenuitem_type_short_string(NspObject *v)
 {
   return(gtkmenuitem_short_type_name);
 }
@@ -37092,7 +37092,7 @@ static char *gtktearoffmenuitem_type_as_string(void)
   return(gtktearoffmenuitem_type_name);
 }
 
-static char *gtktearoffmenuitem_type_short_string(void)
+static char *gtktearoffmenuitem_type_short_string(NspObject *v)
 {
   return(gtktearoffmenuitem_short_type_name);
 }
@@ -37307,7 +37307,7 @@ static char *gtkseparatormenuitem_type_as_string(void)
   return(gtkseparatormenuitem_type_name);
 }
 
-static char *gtkseparatormenuitem_type_short_string(void)
+static char *gtkseparatormenuitem_type_short_string(NspObject *v)
 {
   return(gtkseparatormenuitem_short_type_name);
 }
@@ -37522,7 +37522,7 @@ static char *gtkcheckmenuitem_type_as_string(void)
   return(gtkcheckmenuitem_type_name);
 }
 
-static char *gtkcheckmenuitem_type_short_string(void)
+static char *gtkcheckmenuitem_type_short_string(NspObject *v)
 {
   return(gtkcheckmenuitem_short_type_name);
 }
@@ -37842,7 +37842,7 @@ static char *gtkradiomenuitem_type_as_string(void)
   return(gtkradiomenuitem_type_name);
 }
 
-static char *gtkradiomenuitem_type_short_string(void)
+static char *gtkradiomenuitem_type_short_string(NspObject *v)
 {
   return(gtkradiomenuitem_short_type_name);
 }
@@ -38092,7 +38092,7 @@ static char *gtkimagemenuitem_type_as_string(void)
   return(gtkimagemenuitem_type_name);
 }
 
-static char *gtkimagemenuitem_type_short_string(void)
+static char *gtkimagemenuitem_type_short_string(NspObject *v)
 {
   return(gtkimagemenuitem_short_type_name);
 }
@@ -38365,7 +38365,7 @@ static char *gtkhandlebox_type_as_string(void)
   return(gtkhandlebox_type_name);
 }
 
-static char *gtkhandlebox_type_short_string(void)
+static char *gtkhandlebox_type_short_string(NspObject *v)
 {
   return(gtkhandlebox_short_type_name);
 }
@@ -38656,7 +38656,7 @@ static char *gtkframe_type_as_string(void)
   return(gtkframe_type_name);
 }
 
-static char *gtkframe_type_short_string(void)
+static char *gtkframe_type_short_string(NspObject *v)
 {
   return(gtkframe_short_type_name);
 }
@@ -38976,7 +38976,7 @@ static char *gtkaspectframe_type_as_string(void)
   return(gtkaspectframe_type_name);
 }
 
-static char *gtkaspectframe_type_short_string(void)
+static char *gtkaspectframe_type_short_string(NspObject *v)
 {
   return(gtkaspectframe_short_type_name);
 }
@@ -39225,7 +39225,7 @@ static char *gtkeventbox_type_as_string(void)
   return(gtkeventbox_type_name);
 }
 
-static char *gtkeventbox_type_short_string(void)
+static char *gtkeventbox_type_short_string(NspObject *v)
 {
   return(gtkeventbox_short_type_name);
 }
@@ -39440,7 +39440,7 @@ static char *gtkalignment_type_as_string(void)
   return(gtkalignment_type_name);
 }
 
-static char *gtkalignment_type_short_string(void)
+static char *gtkalignment_type_short_string(NspObject *v)
 {
   return(gtkalignment_short_type_name);
 }
@@ -39679,7 +39679,7 @@ static char *gtkbutton_type_as_string(void)
   return(gtkbutton_type_name);
 }
 
-static char *gtkbutton_type_short_string(void)
+static char *gtkbutton_type_short_string(NspObject *v)
 {
   return(gtkbutton_short_type_name);
 }
@@ -40043,7 +40043,7 @@ static char *gtktogglebutton_type_as_string(void)
   return(gtktogglebutton_type_name);
 }
 
-static char *gtktogglebutton_type_short_string(void)
+static char *gtktogglebutton_type_short_string(NspObject *v)
 {
   return(gtktogglebutton_short_type_name);
 }
@@ -40378,7 +40378,7 @@ static char *gtkcheckbutton_type_as_string(void)
   return(gtkcheckbutton_type_name);
 }
 
-static char *gtkcheckbutton_type_short_string(void)
+static char *gtkcheckbutton_type_short_string(NspObject *v)
 {
   return(gtkcheckbutton_short_type_name);
 }
@@ -40612,7 +40612,7 @@ static char *gtkradiobutton_type_as_string(void)
   return(gtkradiobutton_type_name);
 }
 
-static char *gtkradiobutton_type_short_string(void)
+static char *gtkradiobutton_type_short_string(NspObject *v)
 {
   return(gtkradiobutton_short_type_name);
 }
@@ -40879,7 +40879,7 @@ static char *gtkoptionmenu_type_as_string(void)
   return(gtkoptionmenu_type_name);
 }
 
-static char *gtkoptionmenu_type_short_string(void)
+static char *gtkoptionmenu_type_short_string(NspObject *v)
 {
   return(gtkoptionmenu_short_type_name);
 }
@@ -41150,7 +41150,7 @@ static char *gtkbox_type_as_string(void)
   return(gtkbox_type_name);
 }
 
-static char *gtkbox_type_short_string(void)
+static char *gtkbox_type_short_string(NspObject *v)
 {
   return(gtkbox_short_type_name);
 }
@@ -41514,7 +41514,7 @@ static char *gtkvbox_type_as_string(void)
   return(gtkvbox_type_name);
 }
 
-static char *gtkvbox_type_short_string(void)
+static char *gtkvbox_type_short_string(NspObject *v)
 {
   return(gtkvbox_short_type_name);
 }
@@ -41736,7 +41736,7 @@ static char *gtkcolorselection_type_as_string(void)
   return(gtkcolorselection_type_name);
 }
 
-static char *gtkcolorselection_type_short_string(void)
+static char *gtkcolorselection_type_short_string(NspObject *v)
 {
   return(gtkcolorselection_short_type_name);
 }
@@ -42184,7 +42184,7 @@ static char *gtkfontselection_type_as_string(void)
   return(gtkfontselection_type_name);
 }
 
-static char *gtkfontselection_type_short_string(void)
+static char *gtkfontselection_type_short_string(NspObject *v)
 {
   return(gtkfontselection_short_type_name);
 }
@@ -42463,7 +42463,7 @@ static char *gtkgammacurve_type_as_string(void)
   return(gtkgammacurve_type_name);
 }
 
-static char *gtkgammacurve_type_short_string(void)
+static char *gtkgammacurve_type_short_string(NspObject *v)
 {
   return(gtkgammacurve_short_type_name);
 }
@@ -42732,7 +42732,7 @@ static char *gtkhbox_type_as_string(void)
   return(gtkhbox_type_name);
 }
 
-static char *gtkhbox_type_short_string(void)
+static char *gtkhbox_type_short_string(NspObject *v)
 {
   return(gtkhbox_short_type_name);
 }
@@ -42954,7 +42954,7 @@ static char *gtkstatusbar_type_as_string(void)
   return(gtkstatusbar_type_name);
 }
 
-static char *gtkstatusbar_type_short_string(void)
+static char *gtkstatusbar_type_short_string(NspObject *v)
 {
   return(gtkstatusbar_short_type_name);
 }
@@ -43242,7 +43242,7 @@ static char *gtkcombo_type_as_string(void)
   return(gtkcombo_type_name);
 }
 
-static char *gtkcombo_type_short_string(void)
+static char *gtkcombo_type_short_string(NspObject *v)
 {
   return(gtkcombo_short_type_name);
 }
@@ -43560,7 +43560,7 @@ static char *gtkcombobox_type_as_string(void)
   return(gtkcombobox_type_name);
 }
 
-static char *gtkcombobox_type_short_string(void)
+static char *gtkcombobox_type_short_string(NspObject *v)
 {
   return(gtkcombobox_short_type_name);
 }
@@ -43996,7 +43996,7 @@ static char *gtkcomboboxentry_type_as_string(void)
   return(gtkcomboboxentry_type_name);
 }
 
-static char *gtkcomboboxentry_type_short_string(void)
+static char *gtkcomboboxentry_type_short_string(NspObject *v)
 {
   return(gtkcomboboxentry_short_type_name);
 }
@@ -44271,7 +44271,7 @@ static char *gtkbuttonbox_type_as_string(void)
   return(gtkbuttonbox_type_name);
 }
 
-static char *gtkbuttonbox_type_short_string(void)
+static char *gtkbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkbuttonbox_short_type_name);
 }
@@ -44565,7 +44565,7 @@ static char *gtkvbuttonbox_type_as_string(void)
   return(gtkvbuttonbox_type_name);
 }
 
-static char *gtkvbuttonbox_type_short_string(void)
+static char *gtkvbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkvbuttonbox_short_type_name);
 }
@@ -44780,7 +44780,7 @@ static char *gtkhbuttonbox_type_as_string(void)
   return(gtkhbuttonbox_type_name);
 }
 
-static char *gtkhbuttonbox_type_short_string(void)
+static char *gtkhbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkhbuttonbox_short_type_name);
 }
@@ -44995,7 +44995,7 @@ static char *gtkcalendar_type_as_string(void)
   return(gtkcalendar_type_name);
 }
 
-static char *gtkcalendar_type_short_string(void)
+static char *gtkcalendar_type_short_string(NspObject *v)
 {
   return(gtkcalendar_short_type_name);
 }
@@ -45341,7 +45341,7 @@ static char *gtkwindow_type_as_string(void)
   return(gtkwindow_type_name);
 }
 
-static char *gtkwindow_type_short_string(void)
+static char *gtkwindow_type_short_string(NspObject *v)
 {
   return(gtkwindow_short_type_name);
 }
@@ -46681,7 +46681,7 @@ static char *gtkplug_type_as_string(void)
   return(gtkplug_type_name);
 }
 
-static char *gtkplug_type_short_string(void)
+static char *gtkplug_type_short_string(NspObject *v)
 {
   return(gtkplug_short_type_name);
 }
@@ -46925,7 +46925,7 @@ static char *gtkdialog_type_as_string(void)
   return(gtkdialog_type_name);
 }
 
-static char *gtkdialog_type_short_string(void)
+static char *gtkdialog_type_short_string(NspObject *v)
 {
   return(gtkdialog_short_type_name);
 }
@@ -47304,7 +47304,7 @@ static char *gtkmessagedialog_type_as_string(void)
   return(gtkmessagedialog_type_name);
 }
 
-static char *gtkmessagedialog_type_short_string(void)
+static char *gtkmessagedialog_type_short_string(NspObject *v)
 {
   return(gtkmessagedialog_short_type_name);
 }
@@ -47578,7 +47578,7 @@ static char *gtkinputdialog_type_as_string(void)
   return(gtkinputdialog_type_name);
 }
 
-static char *gtkinputdialog_type_short_string(void)
+static char *gtkinputdialog_type_short_string(NspObject *v)
 {
   return(gtkinputdialog_short_type_name);
 }
@@ -47794,7 +47794,7 @@ static char *gtkfontselectiondialog_type_as_string(void)
   return(gtkfontselectiondialog_type_name);
 }
 
-static char *gtkfontselectiondialog_type_short_string(void)
+static char *gtkfontselectiondialog_type_short_string(NspObject *v)
 {
   return(gtkfontselectiondialog_short_type_name);
 }
@@ -48140,7 +48140,7 @@ static char *gtkfileselection_type_as_string(void)
   return(gtkfileselection_type_name);
 }
 
-static char *gtkfileselection_type_short_string(void)
+static char *gtkfileselection_type_short_string(NspObject *v)
 {
   return(gtkfileselection_short_type_name);
 }
@@ -48634,7 +48634,7 @@ static char *gtkcolorselectiondialog_type_as_string(void)
   return(gtkcolorselectiondialog_type_name);
 }
 
-static char *gtkcolorselectiondialog_type_short_string(void)
+static char *gtkcolorselectiondialog_type_short_string(NspObject *v)
 {
   return(gtkcolorselectiondialog_short_type_name);
 }
@@ -48896,7 +48896,7 @@ static char *gtkwindowgroup_type_as_string(void)
   return(gtkwindowgroup_type_name);
 }
 
-static char *gtkwindowgroup_type_short_string(void)
+static char *gtkwindowgroup_type_short_string(NspObject *v)
 {
   return(gtkwindowgroup_short_type_name);
 }

@@ -82,7 +82,7 @@ extern int int_astnode_create(Stack stack, int rhs, int opt, int lhs);
 static int init_astnode(NspAstNode *o,NspTypeAstNode *type);
 static int nsp_astnode_size(NspAstNode *Mat, int flag);
 static char *nsp_astnode_type_as_string(void);
-static char *nsp_astnode_type_short_string(void);
+static char *nsp_astnode_type_short_string(NspObject *v);
 static int nsp_astnode_eq(NspAstNode *A, NspObject *B);
 static int nsp_astnode_neq(NspAstNode *A, NspObject *B);
 static int nsp_astnode_xdr_save(XDR  *xdrs, NspAstNode *M);

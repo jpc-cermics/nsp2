@@ -169,7 +169,7 @@ static char *nsp_astnode_type_as_string(void)
   return(astnode_type_name);
 }
 
-static char *nsp_astnode_type_short_string(void)
+static char *nsp_astnode_type_short_string(NspObject *v)
 {
   return(astnode_short_type_name);
 }
@@ -260,7 +260,7 @@ void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
 	    nsp_astcode_to_name(M->obj->op),
 	    M->obj->op, M->obj->arity,
 	    NSP_POINTER_TO_INT(M->obj->obj),
-	    nsp_astnode_type_short_string());
+	    nsp_astnode_type_short_string(NSP_OBJECT(M)));
 }
 
 /*
@@ -314,7 +314,7 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
 	  else 
 	    Sciprintf("UNKNOWN->%d", M->obj->op);
 	}
-      Sciprintf("}\t\t%s\n",nsp_astnode_type_short_string());
+      Sciprintf("}\t\t%s\n",nsp_astnode_type_short_string(NSP_OBJECT(M)));
     }
 }
 

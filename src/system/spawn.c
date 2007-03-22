@@ -148,7 +148,7 @@ static char *nsp_spawn_type_as_string(void)
   return(spawn_type_name);
 }
 
-static char *nsp_spawn_type_short_string(void)
+static char *nsp_spawn_type_short_string(NspObject *v)
 {
   return(spawn_short_type_name);
 }

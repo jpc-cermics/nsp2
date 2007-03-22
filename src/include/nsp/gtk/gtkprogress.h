@@ -49,7 +49,7 @@ extern NspGtkProgress *GetGtkProgress (Stack stack, int i);
 #ifdef GtkProgress_Private 
 static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type);
 static char *gtkprogress_type_as_string(void);
-static char *gtkprogress_type_short_string(void);
+static char *gtkprogress_type_short_string(NspObject *v);
 static AttrTab gtkprogress_attrs[];
 /* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkprogress_get_methods(void); 

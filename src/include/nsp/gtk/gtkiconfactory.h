@@ -49,7 +49,7 @@ extern NspGtkIconFactory *GetGtkIconFactory (Stack stack, int i);
 #ifdef GtkIconFactory_Private 
 static int init_gtkiconfactory(NspGtkIconFactory *o,NspTypeGtkIconFactory *type);
 static char *gtkiconfactory_type_as_string(void);
-static char *gtkiconfactory_type_short_string(void);
+static char *gtkiconfactory_type_short_string(NspObject *v);
 static AttrTab gtkiconfactory_attrs[];
 /* static int int_gtkiconfactory_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkiconfactory_get_methods(void); 

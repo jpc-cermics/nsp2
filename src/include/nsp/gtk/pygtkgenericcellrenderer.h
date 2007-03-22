@@ -35,7 +35,7 @@ NspPyGtkGenericCellRenderer *new_pygtkgenericcellrenderer();
 #ifdef PyGtkGenericCellRenderer_Private 
 static int init_pygtkgenericcellrenderer(NspPyGtkGenericCellRenderer *o,NspTypePyGtkGenericCellRenderer *type);
 static char *pygtkgenericcellrenderer_type_as_string(void);
-static char *pygtkgenericcellrenderer_type_short_string(void);
+static char *pygtkgenericcellrenderer_type_short_string(NspObject *v);
 static AttrTab pygtkgenericcellrenderer_attrs[];
 /* static int int_pygtkgenericcellrenderer_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pygtkgenericcellrenderer_get_methods(void); 

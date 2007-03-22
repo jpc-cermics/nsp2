@@ -75,7 +75,7 @@ extern NspClassB *GetClassB (Stack stack, int i);
 static int init_classb(NspClassB *o,NspTypeClassB *type);
 static int nsp_classb_size(NspClassB *Mat, int flag);
 static char *nsp_classb_type_as_string(void);
-static char *nsp_classb_type_short_string(void);
+static char *nsp_classb_type_short_string(NspObject *v);
 static int nsp_classb_eq(NspClassB *A, NspObject *B);
 static int nsp_classb_neq(NspClassB *A, NspObject *B);
 static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M);

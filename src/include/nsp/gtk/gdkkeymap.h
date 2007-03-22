@@ -49,7 +49,7 @@ extern NspGdkKeymap *GetGdkKeymap (Stack stack, int i);
 #ifdef GdkKeymap_Private 
 static int init_gdkkeymap(NspGdkKeymap *o,NspTypeGdkKeymap *type);
 static char *gdkkeymap_type_as_string(void);
-static char *gdkkeymap_type_short_string(void);
+static char *gdkkeymap_type_short_string(NspObject *v);
 static AttrTab gdkkeymap_attrs[];
 /* static int int_gdkkeymap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkkeymap_get_methods(void); 

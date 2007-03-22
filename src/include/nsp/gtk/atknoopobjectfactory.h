@@ -49,7 +49,7 @@ extern NspAtkNoOpObjectFactory *GetAtkNoOpObjectFactory (Stack stack, int i);
 #ifdef AtkNoOpObjectFactory_Private 
 static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *o,NspTypeAtkNoOpObjectFactory *type);
 static char *atknoopobjectfactory_type_as_string(void);
-static char *atknoopobjectfactory_type_short_string(void);
+static char *atknoopobjectfactory_type_short_string(NspObject *v);
 static AttrTab atknoopobjectfactory_attrs[];
 /* static int int_atknoopobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atknoopobjectfactory_get_methods(void); 

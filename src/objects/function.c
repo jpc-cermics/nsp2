@@ -179,7 +179,7 @@ static char *function_type_as_string(void)
   return(function_type_name);
 }
 
-static char *function_type_short_string(void)
+static char *function_type_short_string(NspObject *v)
 {
   return(function_short_type_name);
 }
@@ -268,7 +268,7 @@ void function_info(NspFunction *H, int indent,const char *name,int rec_level)
   Sciprintf1(indent,"%s\t= %s\t\t%s\n",
 	     (pname==NULL) ? "" : pname,
 	     (H->fname==NULL) ? "" : H->fname,
-	     function_type_short_string());
+	     function_type_short_string(NSP_OBJECT(H)));
 }
 
 /*

@@ -49,7 +49,7 @@ extern NspGtkTreeSortable *GetGtkTreeSortable (Stack stack, int i);
 #ifdef GtkTreeSortable_Private 
 static int init_gtktreesortable(NspGtkTreeSortable *o,NspTypeGtkTreeSortable *type);
 static char *gtktreesortable_type_as_string(void);
-static char *gtktreesortable_type_short_string(void);
+static char *gtktreesortable_type_short_string(NspObject *v);
 static AttrTab gtktreesortable_attrs[];
 /* static int int_gtktreesortable_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreesortable_get_methods(void); 

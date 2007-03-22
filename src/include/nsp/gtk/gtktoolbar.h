@@ -49,7 +49,7 @@ extern NspGtkToolbar *GetGtkToolbar (Stack stack, int i);
 #ifdef GtkToolbar_Private 
 static int init_gtktoolbar(NspGtkToolbar *o,NspTypeGtkToolbar *type);
 static char *gtktoolbar_type_as_string(void);
-static char *gtktoolbar_type_short_string(void);
+static char *gtktoolbar_type_short_string(NspObject *v);
 static AttrTab gtktoolbar_attrs[];
 /* static int int_gtktoolbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktoolbar_get_methods(void); 

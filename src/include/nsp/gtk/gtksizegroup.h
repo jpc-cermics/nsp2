@@ -49,7 +49,7 @@ extern NspGtkSizeGroup *GetGtkSizeGroup (Stack stack, int i);
 #ifdef GtkSizeGroup_Private 
 static int init_gtksizegroup(NspGtkSizeGroup *o,NspTypeGtkSizeGroup *type);
 static char *gtksizegroup_type_as_string(void);
-static char *gtksizegroup_type_short_string(void);
+static char *gtksizegroup_type_short_string(NspObject *v);
 static AttrTab gtksizegroup_attrs[];
 /* static int int_gtksizegroup_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtksizegroup_get_methods(void); 

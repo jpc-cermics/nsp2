@@ -49,7 +49,7 @@ extern NspGtkColorSelection *GetGtkColorSelection (Stack stack, int i);
 #ifdef GtkColorSelection_Private 
 static int init_gtkcolorselection(NspGtkColorSelection *o,NspTypeGtkColorSelection *type);
 static char *gtkcolorselection_type_as_string(void);
-static char *gtkcolorselection_type_short_string(void);
+static char *gtkcolorselection_type_short_string(NspObject *v);
 static AttrTab gtkcolorselection_attrs[];
 /* static int int_gtkcolorselection_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcolorselection_get_methods(void); 

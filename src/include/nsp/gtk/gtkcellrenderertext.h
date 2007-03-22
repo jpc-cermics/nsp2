@@ -49,7 +49,7 @@ extern NspGtkCellRendererText *GetGtkCellRendererText (Stack stack, int i);
 #ifdef GtkCellRendererText_Private 
 static int init_gtkcellrenderertext(NspGtkCellRendererText *o,NspTypeGtkCellRendererText *type);
 static char *gtkcellrenderertext_type_as_string(void);
-static char *gtkcellrenderertext_type_short_string(void);
+static char *gtkcellrenderertext_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderertext_attrs[];
 /* static int int_gtkcellrenderertext_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrenderertext_get_methods(void); 

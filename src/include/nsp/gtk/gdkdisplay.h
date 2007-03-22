@@ -49,7 +49,7 @@ extern NspGdkDisplay *GetGdkDisplay (Stack stack, int i);
 #ifdef GdkDisplay_Private 
 static int init_gdkdisplay(NspGdkDisplay *o,NspTypeGdkDisplay *type);
 static char *gdkdisplay_type_as_string(void);
-static char *gdkdisplay_type_short_string(void);
+static char *gdkdisplay_type_short_string(NspObject *v);
 static AttrTab gdkdisplay_attrs[];
 /* static int int_gdkdisplay_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkdisplay_get_methods(void); 

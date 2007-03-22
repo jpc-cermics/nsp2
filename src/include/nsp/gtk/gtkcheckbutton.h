@@ -49,7 +49,7 @@ extern NspGtkCheckButton *GetGtkCheckButton (Stack stack, int i);
 #ifdef GtkCheckButton_Private 
 static int init_gtkcheckbutton(NspGtkCheckButton *o,NspTypeGtkCheckButton *type);
 static char *gtkcheckbutton_type_as_string(void);
-static char *gtkcheckbutton_type_short_string(void);
+static char *gtkcheckbutton_type_short_string(NspObject *v);
 static AttrTab gtkcheckbutton_attrs[];
 /* static int int_gtkcheckbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcheckbutton_get_methods(void); 

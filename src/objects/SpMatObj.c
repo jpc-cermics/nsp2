@@ -165,7 +165,7 @@ char *nsp_sprowmatrix_type_as_string(void)
   return(sp_type_name);
 }
 
-char *nsp_sprowmatrix_type_short_string(void)
+char *nsp_sprowmatrix_type_short_string(NspObject *v)
 {
   return(sp_short_type_name);
 }

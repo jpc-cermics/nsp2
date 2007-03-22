@@ -35,7 +35,7 @@ NspGtkPixmap *new_gtkpixmap();
 #ifdef GtkPixmap_Private 
 static int init_gtkpixmap(NspGtkPixmap *o,NspTypeGtkPixmap *type);
 static char *gtkpixmap_type_as_string(void);
-static char *gtkpixmap_type_short_string(void);
+static char *gtkpixmap_type_short_string(NspObject *v);
 static AttrTab gtkpixmap_attrs[];
 /* static int int_gtkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkpixmap_get_methods(void); 

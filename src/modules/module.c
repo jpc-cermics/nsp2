@@ -156,7 +156,7 @@ static char *module_type_as_string(void)
   return(module_type_name);
 }
 
-static char *module_type_short_string(void)
+static char *module_type_short_string(NspObject *v)
 {
   return(module_short_type_name);
 }

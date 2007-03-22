@@ -158,7 +158,7 @@ static char *nsp_none_type_as_string(void)
   return(none_type_name);
 }
 
-static char *nsp_none_type_short_string(void)
+static char *nsp_none_type_short_string(NspObject *v)
 {
   return(none_short_type_name);
 }
@@ -259,7 +259,7 @@ void nsp_none_info(NspNone *H, int indent,char *name,int rec_level)
   pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   Sciprintf1(indent,"%s\t= \t\t%s\n",
 	     (pname==NULL) ? "" : pname,
-	     nsp_none_type_short_string());
+	     nsp_none_type_short_string(NSP_OBJECT(H)));
 }
 
 

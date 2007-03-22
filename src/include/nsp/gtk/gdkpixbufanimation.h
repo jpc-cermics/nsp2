@@ -49,7 +49,7 @@ extern NspGdkPixbufAnimation *GetGdkPixbufAnimation (Stack stack, int i);
 #ifdef GdkPixbufAnimation_Private 
 static int init_gdkpixbufanimation(NspGdkPixbufAnimation *o,NspTypeGdkPixbufAnimation *type);
 static char *gdkpixbufanimation_type_as_string(void);
-static char *gdkpixbufanimation_type_short_string(void);
+static char *gdkpixbufanimation_type_short_string(NspObject *v);
 static AttrTab gdkpixbufanimation_attrs[];
 /* static int int_gdkpixbufanimation_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixbufanimation_get_methods(void); 

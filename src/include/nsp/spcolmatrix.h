@@ -80,7 +80,7 @@ NspSpColMatrix *new_spcolmatrix();
 static int init_spcolmatrix(NspSpColMatrix *ob,NspTypeSpColMatrix *type);
 static int nsp_spcolmatrix_size(NspSpColMatrix *Mat, int flag);
 char *nsp_spcolmatrix_type_as_string(void);
-char *nsp_spcolmatrix_type_short_string(void);
+char *nsp_spcolmatrix_type_short_string(NspObject *v);
 NspObject *SpColLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_spcolmatrix_eq(NspObject *A,NspObject *B);
 int nsp_spcolmatrix_neq(NspObject *A,NspObject *B);

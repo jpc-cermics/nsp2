@@ -49,7 +49,7 @@ extern NspPangoLanguage *GetPangoLanguage (Stack stack, int i);
 #ifdef PangoLanguage_Private 
 static int init_pangolanguage(NspPangoLanguage *o,NspTypePangoLanguage *type);
 static char *pangolanguage_type_as_string(void);
-static char *pangolanguage_type_short_string(void);
+static char *pangolanguage_type_short_string(NspObject *v);
 static AttrTab pangolanguage_attrs[];
 /* static int int_pangolanguage_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangolanguage_get_methods(void); 

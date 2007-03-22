@@ -49,7 +49,7 @@ extern NspGtkRcStyle *GetGtkRcStyle (Stack stack, int i);
 #ifdef GtkRcStyle_Private 
 static int init_gtkrcstyle(NspGtkRcStyle *o,NspTypeGtkRcStyle *type);
 static char *gtkrcstyle_type_as_string(void);
-static char *gtkrcstyle_type_short_string(void);
+static char *gtkrcstyle_type_short_string(NspObject *v);
 static AttrTab gtkrcstyle_attrs[];
 /* static int int_gtkrcstyle_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkrcstyle_get_methods(void); 

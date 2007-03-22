@@ -49,7 +49,7 @@ extern NspGtkSelectionData *GetGtkSelectionData (Stack stack, int i);
 #ifdef GtkSelectionData_Private 
 static int init_gtkselectiondata(NspGtkSelectionData *o,NspTypeGtkSelectionData *type);
 static char *gtkselectiondata_type_as_string(void);
-static char *gtkselectiondata_type_short_string(void);
+static char *gtkselectiondata_type_short_string(NspObject *v);
 static AttrTab gtkselectiondata_attrs[];
 /* static int int_gtkselectiondata_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkselectiondata_get_methods(void); 

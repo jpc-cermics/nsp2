@@ -133,7 +133,7 @@ extern void nsp_bhdestroy (NspBHash *H);
 static int init_bhash(NspBHash *ob,NspTypeBHash *type);
 static int bhash_size(NspBHash *Mat, int flag);
 static char *bhash_type_as_string(void);
-static char *bhash_type_short_string(void);
+static char *bhash_type_short_string(NspObject *v);
 static int bhash_eq(NspBHash *A, NspObject *B);
 static int bhash_neq(NspBHash *A, NspObject *B);
 static int bhash_xdr_save(XDR  *F, NspBHash *M);

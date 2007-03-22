@@ -49,7 +49,7 @@ extern NspPangoFontFamily *GetPangoFontFamily (Stack stack, int i);
 #ifdef PangoFontFamily_Private 
 static int init_pangofontfamily(NspPangoFontFamily *o,NspTypePangoFontFamily *type);
 static char *pangofontfamily_type_as_string(void);
-static char *pangofontfamily_type_short_string(void);
+static char *pangofontfamily_type_short_string(NspObject *v);
 static AttrTab pangofontfamily_attrs[];
 /* static int int_pangofontfamily_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangofontfamily_get_methods(void); 

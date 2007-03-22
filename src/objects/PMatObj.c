@@ -179,7 +179,7 @@ char *nsp_pmatrix_type_as_string(void)
   return(pmat_type_name);
 }
 
-char *nsp_pmatrix_type_short_string(void)
+char *nsp_pmatrix_type_short_string(NspObject *v)
 {
   return(pmat_short_type_name);
 }

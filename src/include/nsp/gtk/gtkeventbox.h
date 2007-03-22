@@ -49,7 +49,7 @@ extern NspGtkEventBox *GetGtkEventBox (Stack stack, int i);
 #ifdef GtkEventBox_Private 
 static int init_gtkeventbox(NspGtkEventBox *o,NspTypeGtkEventBox *type);
 static char *gtkeventbox_type_as_string(void);
-static char *gtkeventbox_type_short_string(void);
+static char *gtkeventbox_type_short_string(NspObject *v);
 static AttrTab gtkeventbox_attrs[];
 /* static int int_gtkeventbox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkeventbox_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkWindowGroup *GetGtkWindowGroup (Stack stack, int i);
 #ifdef GtkWindowGroup_Private 
 static int init_gtkwindowgroup(NspGtkWindowGroup *o,NspTypeGtkWindowGroup *type);
 static char *gtkwindowgroup_type_as_string(void);
-static char *gtkwindowgroup_type_short_string(void);
+static char *gtkwindowgroup_type_short_string(NspObject *v);
 static AttrTab gtkwindowgroup_attrs[];
 /* static int int_gtkwindowgroup_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkwindowgroup_get_methods(void); 

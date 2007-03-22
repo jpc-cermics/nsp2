@@ -50,7 +50,7 @@ NspGdkAtom *new_gdkatom();
 static int init_gdkatom(NspGdkAtom *o,NspTypeGdkAtom *type);
 static int gdkatom_size(NspGdkAtom *Mat, int flag);
 static char *gdkatom_type_as_string(void);
-static char *gdkatom_type_short_string(void);
+static char *gdkatom_type_short_string(NspObject *v);
 static int gdkatom_eq(NspGdkAtom *A, NspObject *B);
 static int gdkatom_neq(NspGdkAtom *A, NspObject *B);
 static int gdkatom_xdr_save(XDR *xdrs, NspGdkAtom *M);

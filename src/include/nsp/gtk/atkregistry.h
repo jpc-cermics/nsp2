@@ -49,7 +49,7 @@ extern NspAtkRegistry *GetAtkRegistry (Stack stack, int i);
 #ifdef AtkRegistry_Private 
 static int init_atkregistry(NspAtkRegistry *o,NspTypeAtkRegistry *type);
 static char *atkregistry_type_as_string(void);
-static char *atkregistry_type_short_string(void);
+static char *atkregistry_type_short_string(NspObject *v);
 static AttrTab atkregistry_attrs[];
 /* static int int_atkregistry_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkregistry_get_methods(void); 

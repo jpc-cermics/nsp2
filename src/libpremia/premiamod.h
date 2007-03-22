@@ -83,7 +83,7 @@ int int_premiamodel_create(Stack stack, int rhs, int opt, int lhs);
 static int init_premiamodel(NspPremiaModel *o,NspTypePremiaModel *type);
 static int nsp_premiamodel_size(NspPremiaModel *Mat, int flag);
 static char *nsp_premiamodel_type_as_string(void);
-static char *nsp_premiamodel_type_short_string(void);
+static char *nsp_premiamodel_type_short_string(NspObject *v);
 static int nsp_premiamodel_eq(NspPremiaModel *A, NspObject *B);
 static int nsp_premiamodel_neq(NspPremiaModel *A, NspObject *B);
 static AttrTab premiamodel_attrs[];

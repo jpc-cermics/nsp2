@@ -179,7 +179,7 @@ static char *hash_type_as_string(void)
   return(hash_type_name);
 }
 
-static char *hash_type_short_string(void)
+static char *hash_type_short_string(NspObject *v)
 {
   return(hash_short_type_name);
 }

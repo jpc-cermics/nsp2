@@ -49,7 +49,7 @@ extern NspGtkTreePath *GetGtkTreePath (Stack stack, int i);
 #ifdef GtkTreePath_Private 
 static int init_gtktreepath(NspGtkTreePath *o,NspTypeGtkTreePath *type);
 static char *gtktreepath_type_as_string(void);
-static char *gtktreepath_type_short_string(void);
+static char *gtktreepath_type_short_string(NspObject *v);
 static AttrTab gtktreepath_attrs[];
 /* static int int_gtktreepath_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreepath_get_methods(void); 

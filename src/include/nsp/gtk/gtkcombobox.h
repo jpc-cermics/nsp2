@@ -49,7 +49,7 @@ extern NspGtkComboBox *GetGtkComboBox (Stack stack, int i);
 #ifdef GtkComboBox_Private 
 static int init_gtkcombobox(NspGtkComboBox *o,NspTypeGtkComboBox *type);
 static char *gtkcombobox_type_as_string(void);
-static char *gtkcombobox_type_short_string(void);
+static char *gtkcombobox_type_short_string(NspObject *v);
 static AttrTab gtkcombobox_attrs[];
 /* static int int_gtkcombobox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcombobox_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspGtkListStore *GetGtkListStore (Stack stack, int i);
 #ifdef GtkListStore_Private 
 static int init_gtkliststore(NspGtkListStore *o,NspTypeGtkListStore *type);
 static char *gtkliststore_type_as_string(void);
-static char *gtkliststore_type_short_string(void);
+static char *gtkliststore_type_short_string(NspObject *v);
 static AttrTab gtkliststore_attrs[];
 /* static int int_gtkliststore_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkliststore_get_methods(void); 

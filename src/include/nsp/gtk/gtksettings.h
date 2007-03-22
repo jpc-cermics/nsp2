@@ -49,7 +49,7 @@ extern NspGtkSettings *GetGtkSettings (Stack stack, int i);
 #ifdef GtkSettings_Private 
 static int init_gtksettings(NspGtkSettings *o,NspTypeGtkSettings *type);
 static char *gtksettings_type_as_string(void);
-static char *gtksettings_type_short_string(void);
+static char *gtksettings_type_short_string(NspObject *v);
 static AttrTab gtksettings_attrs[];
 /* static int int_gtksettings_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtksettings_get_methods(void); 

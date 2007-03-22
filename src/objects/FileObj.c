@@ -179,7 +179,7 @@ static char *nsp_file_type_as_string(void)
   return(nsp_file_type_name);
 }
 
-static char *nsp_file_type_short_string(void)
+static char *nsp_file_type_short_string(NspObject *v)
 {
   return(nsp_file_short_type_name);
 }

@@ -64,7 +64,7 @@ NspMaxpMatrix *new_mpmatrix();
 static int init_mpmatrix(NspMaxpMatrix *ob,NspTypeMaxpMatrix *type);
 static int mpmatrix_size(NspMaxpMatrix *Mat, int flag);
 static char *mpmatrix_type_as_string(void);
-static char *mpmatrix_type_short_string(void);
+static char *mpmatrix_type_short_string(NspObject *v);
 static int mpmatrix_neq(NspObject *A,NspObject *B);
 static int mpmatrix_eq(NspObject *A,NspObject *B);
 static int mpmatrix_xdr_save(XDR  *F, NspMaxpMatrix *M);

@@ -49,7 +49,7 @@ extern NspAtkHyperlink *GetAtkHyperlink (Stack stack, int i);
 #ifdef AtkHyperlink_Private 
 static int init_atkhyperlink(NspAtkHyperlink *o,NspTypeAtkHyperlink *type);
 static char *atkhyperlink_type_as_string(void);
-static char *atkhyperlink_type_short_string(void);
+static char *atkhyperlink_type_short_string(NspObject *v);
 static AttrTab atkhyperlink_attrs[];
 /* static int int_atkhyperlink_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkhyperlink_get_methods(void); 

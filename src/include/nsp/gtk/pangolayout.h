@@ -49,7 +49,7 @@ extern NspPangoLayout *GetPangoLayout (Stack stack, int i);
 #ifdef PangoLayout_Private 
 static int init_pangolayout(NspPangoLayout *o,NspTypePangoLayout *type);
 static char *pangolayout_type_as_string(void);
-static char *pangolayout_type_short_string(void);
+static char *pangolayout_type_short_string(NspObject *v);
 static AttrTab pangolayout_attrs[];
 /* static int int_pangolayout_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangolayout_get_methods(void); 

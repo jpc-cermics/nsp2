@@ -49,7 +49,7 @@ extern NspGtkAspectFrame *GetGtkAspectFrame (Stack stack, int i);
 #ifdef GtkAspectFrame_Private 
 static int init_gtkaspectframe(NspGtkAspectFrame *o,NspTypeGtkAspectFrame *type);
 static char *gtkaspectframe_type_as_string(void);
-static char *gtkaspectframe_type_short_string(void);
+static char *gtkaspectframe_type_short_string(NspObject *v);
 static AttrTab gtkaspectframe_attrs[];
 /* static int int_gtkaspectframe_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaspectframe_get_methods(void); 

@@ -157,7 +157,7 @@ static char *rect_type_as_string(void)
   return(rect_type_name);
 }
 
-static char *rect_type_short_string(void)
+static char *rect_type_short_string(NspObject *v)
 {
   return(rect_short_type_name);
 }

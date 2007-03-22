@@ -143,7 +143,7 @@ static char *nsp_port_type_as_string(void)
   return(port_type_name);
 }
 
-static char *nsp_port_type_short_string(void)
+static char *nsp_port_type_short_string(NspObject *v)
 {
   return(port_short_type_name);
 }

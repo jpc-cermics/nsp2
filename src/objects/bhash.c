@@ -176,7 +176,7 @@ static char *bhash_type_as_string(void)
   return(bhash_type_name);
 }
 
-static char *bhash_type_short_string(void)
+static char *bhash_type_short_string(NspObject *H)
 {
   return(bhash_short_type_name);
 }

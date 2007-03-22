@@ -71,7 +71,7 @@ NspLink *new_link();
 static int init_link(NspLink *ob,NspTypeLink *type);
 static int link_size(NspLink *Mat, int flag);
 static char *link_type_as_string(void);
-static char *link_type_short_string(void);
+static char *link_type_short_string(NspObject *v);
 static int link_eq(NspLink *A, NspObject *B);
 static int link_neq(NspLink *A, NspObject *B);
 static int link_xdr_save(XDR  *F, NspLink *M);

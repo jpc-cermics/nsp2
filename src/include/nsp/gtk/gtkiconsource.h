@@ -49,7 +49,7 @@ extern NspGtkIconSource *GetGtkIconSource (Stack stack, int i);
 #ifdef GtkIconSource_Private 
 static int init_gtkiconsource(NspGtkIconSource *o,NspTypeGtkIconSource *type);
 static char *gtkiconsource_type_as_string(void);
-static char *gtkiconsource_type_short_string(void);
+static char *gtkiconsource_type_short_string(NspObject *v);
 static AttrTab gtkiconsource_attrs[];
 /* static int int_gtkiconsource_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkiconsource_get_methods(void); 

@@ -82,7 +82,7 @@ int int_spawn_create(Stack stack, int rhs, int opt, int lhs);
 static int init_spawn(NspSpawn *o,NspTypeSpawn *type);
 static int nsp_spawn_size(NspSpawn *Mat, int flag);
 static char *nsp_spawn_type_as_string(void);
-static char *nsp_spawn_type_short_string(void);
+static char *nsp_spawn_type_short_string(NspObject *v);
 static int nsp_spawn_eq(NspSpawn *A, NspObject *B);
 static int nsp_spawn_neq(NspSpawn *A, NspObject *B);
 static AttrTab spawn_attrs[];

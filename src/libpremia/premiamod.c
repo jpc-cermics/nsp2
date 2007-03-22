@@ -173,7 +173,7 @@ static char *nsp_premiamodel_type_as_string(void)
   return(premiamodel_type_name);
 }
 
-static char *nsp_premiamodel_type_short_string(void)
+static char *nsp_premiamodel_type_short_string(NspObject *v)
 {
   return(premiamodel_short_type_name);
 }

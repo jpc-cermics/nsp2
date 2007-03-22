@@ -147,7 +147,7 @@ static char *atkhyperlink_type_as_string(void)
   return(atkhyperlink_type_name);
 }
 
-static char *atkhyperlink_type_short_string(void)
+static char *atkhyperlink_type_short_string(NspObject *v)
 {
   return(atkhyperlink_short_type_name);
 }
@@ -422,7 +422,7 @@ static char *atkobject_type_as_string(void)
   return(atkobject_type_name);
 }
 
-static char *atkobject_type_short_string(void)
+static char *atkobject_type_short_string(NspObject *v)
 {
   return(atkobject_short_type_name);
 }
@@ -810,7 +810,7 @@ static char *atknoopobject_type_as_string(void)
   return(atknoopobject_type_name);
 }
 
-static char *atknoopobject_type_short_string(void)
+static char *atknoopobject_type_short_string(NspObject *v)
 {
   return(atknoopobject_short_type_name);
 }
@@ -1028,7 +1028,7 @@ static char *atkobjectfactory_type_as_string(void)
   return(atkobjectfactory_type_name);
 }
 
-static char *atkobjectfactory_type_short_string(void)
+static char *atkobjectfactory_type_short_string(NspObject *v)
 {
   return(atkobjectfactory_short_type_name);
 }
@@ -1256,7 +1256,7 @@ static char *atknoopobjectfactory_type_as_string(void)
   return(atknoopobjectfactory_type_name);
 }
 
-static char *atknoopobjectfactory_type_short_string(void)
+static char *atknoopobjectfactory_type_short_string(NspObject *v)
 {
   return(atknoopobjectfactory_short_type_name);
 }
@@ -1471,7 +1471,7 @@ static char *atkregistry_type_as_string(void)
   return(atkregistry_type_name);
 }
 
-static char *atkregistry_type_short_string(void)
+static char *atkregistry_type_short_string(NspObject *v)
 {
   return(atkregistry_short_type_name);
 }
@@ -1724,7 +1724,7 @@ static char *atkrelation_type_as_string(void)
   return(atkrelation_type_name);
 }
 
-static char *atkrelation_type_short_string(void)
+static char *atkrelation_type_short_string(NspObject *v)
 {
   return(atkrelation_short_type_name);
 }
@@ -1983,7 +1983,7 @@ static char *atkrelationset_type_as_string(void)
   return(atkrelationset_type_name);
 }
 
-static char *atkrelationset_type_short_string(void)
+static char *atkrelationset_type_short_string(NspObject *v)
 {
   return(atkrelationset_short_type_name);
 }
@@ -2284,7 +2284,7 @@ static char *atkstateset_type_as_string(void)
   return(atkstateset_type_name);
 }
 
-static char *atkstateset_type_short_string(void)
+static char *atkstateset_type_short_string(NspObject *v)
 {
   return(atkstateset_short_type_name);
 }
@@ -2602,7 +2602,7 @@ static char *atkutil_type_as_string(void)
   return(atkutil_type_name);
 }
 
-static char *atkutil_type_short_string(void)
+static char *atkutil_type_short_string(NspObject *v)
 {
   return(atkutil_short_type_name);
 }

@@ -49,7 +49,7 @@ extern NspGtkVScale *GetGtkVScale (Stack stack, int i);
 #ifdef GtkVScale_Private 
 static int init_gtkvscale(NspGtkVScale *o,NspTypeGtkVScale *type);
 static char *gtkvscale_type_as_string(void);
-static char *gtkvscale_type_short_string(void);
+static char *gtkvscale_type_short_string(NspObject *v);
 static AttrTab gtkvscale_attrs[];
 /* static int int_gtkvscale_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkvscale_get_methods(void); 

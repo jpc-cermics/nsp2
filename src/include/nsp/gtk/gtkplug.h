@@ -49,7 +49,7 @@ extern NspGtkPlug *GetGtkPlug (Stack stack, int i);
 #ifdef GtkPlug_Private 
 static int init_gtkplug(NspGtkPlug *o,NspTypeGtkPlug *type);
 static char *gtkplug_type_as_string(void);
-static char *gtkplug_type_short_string(void);
+static char *gtkplug_type_short_string(NspObject *v);
 static AttrTab gtkplug_attrs[];
 /* static int int_gtkplug_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkplug_get_methods(void); 

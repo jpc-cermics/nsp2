@@ -49,7 +49,7 @@ extern NspGtkRadioMenuItem *GetGtkRadioMenuItem (Stack stack, int i);
 #ifdef GtkRadioMenuItem_Private 
 static int init_gtkradiomenuitem(NspGtkRadioMenuItem *o,NspTypeGtkRadioMenuItem *type);
 static char *gtkradiomenuitem_type_as_string(void);
-static char *gtkradiomenuitem_type_short_string(void);
+static char *gtkradiomenuitem_type_short_string(NspObject *v);
 static AttrTab gtkradiomenuitem_attrs[];
 /* static int int_gtkradiomenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkradiomenuitem_get_methods(void); 

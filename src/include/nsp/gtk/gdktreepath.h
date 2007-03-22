@@ -35,7 +35,7 @@ NspGdkTreePath *new_gdktreepath();
 #ifdef GdkTreePath_Private 
 static int init_gdktreepath(NspGdkTreePath *o,NspTypeGdkTreePath *type);
 static char *gdktreepath_type_as_string(void);
-static char *gdktreepath_type_short_string(void);
+static char *gdktreepath_type_short_string(NspObject *v);
 static AttrTab gdktreepath_attrs[];
 /* static int int_gdktreepath_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdktreepath_get_methods(void); 

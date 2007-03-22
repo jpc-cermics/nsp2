@@ -167,7 +167,7 @@ static char *nsp_umfpack_type_as_string(void)
   return(umfpack_type_name);
 }
 
-static char *nsp_umfpack_type_short_string(void)
+static char *nsp_umfpack_type_short_string(NspObject *v)
 {
   return(umfpack_short_type_name);
 }
@@ -249,7 +249,7 @@ void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
       Sciprintf("Null Pointer Umfpack \n");
       return;
     }
-  Sciprintf("%s\t= [...]\t%s %c (%dx%d)\n",pname,nsp_umfpack_type_short_string(),
+  Sciprintf("%s\t= [...]\t%s %c (%dx%d)\n",pname,nsp_umfpack_type_short_string(NSP_OBJECT(M)),
 	    M->obj->rc_type,M->obj->mtlb_T.m,M->obj->mtlb_T.n);
 }
 

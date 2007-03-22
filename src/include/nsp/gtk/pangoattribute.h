@@ -49,7 +49,7 @@ NspPangoAttribute *new_pangoattribute();
 static int init_pangoattribute(NspPangoAttribute *o,NspTypePangoAttribute *type);
 static int pangoattribute_size(NspPangoAttribute *Mat, int flag);
 static char *pangoattribute_type_as_string(void);
-static char *pangoattribute_type_short_string(void);
+static char *pangoattribute_type_short_string(NspObject *v);
 static int pangoattribute_eq(NspPangoAttribute *A, NspObject *B);
 static int pangoattribute_neq(NspPangoAttribute *A, NspObject *B);
 static int pangoattribute_xdr_save(XDR *xdrs, NspPangoAttribute *M);

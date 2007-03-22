@@ -35,7 +35,7 @@ NspGtkCTree *new_gtkctree();
 #ifdef GtkCTree_Private 
 static int init_gtkctree(NspGtkCTree *o,NspTypeGtkCTree *type);
 static char *gtkctree_type_as_string(void);
-static char *gtkctree_type_short_string(void);
+static char *gtkctree_type_short_string(NspObject *v);
 static AttrTab gtkctree_attrs[];
 /* static int int_gtkctree_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkctree_get_methods(void); 

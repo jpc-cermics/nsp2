@@ -49,7 +49,7 @@ extern NspGdkWindow *GetGdkWindow (Stack stack, int i);
 #ifdef GdkWindow_Private 
 static int init_gdkwindow(NspGdkWindow *o,NspTypeGdkWindow *type);
 static char *gdkwindow_type_as_string(void);
-static char *gdkwindow_type_short_string(void);
+static char *gdkwindow_type_short_string(NspObject *v);
 static AttrTab gdkwindow_attrs[];
 /* static int int_gdkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkwindow_get_methods(void); 

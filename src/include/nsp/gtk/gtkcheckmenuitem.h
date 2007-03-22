@@ -49,7 +49,7 @@ extern NspGtkCheckMenuItem *GetGtkCheckMenuItem (Stack stack, int i);
 #ifdef GtkCheckMenuItem_Private 
 static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *o,NspTypeGtkCheckMenuItem *type);
 static char *gtkcheckmenuitem_type_as_string(void);
-static char *gtkcheckmenuitem_type_short_string(void);
+static char *gtkcheckmenuitem_type_short_string(NspObject *v);
 static AttrTab gtkcheckmenuitem_attrs[];
 /* static int int_gtkcheckmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcheckmenuitem_get_methods(void); 

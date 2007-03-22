@@ -49,7 +49,7 @@ extern NspGtkWindow *GetGtkWindow (Stack stack, int i);
 #ifdef GtkWindow_Private 
 static int init_gtkwindow(NspGtkWindow *o,NspTypeGtkWindow *type);
 static char *gtkwindow_type_as_string(void);
-static char *gtkwindow_type_short_string(void);
+static char *gtkwindow_type_short_string(NspObject *v);
 static AttrTab gtkwindow_attrs[];
 /* static int int_gtkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkwindow_get_methods(void); 

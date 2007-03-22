@@ -150,7 +150,7 @@ static char *modulelt_type_as_string(void)
   return(modulelt_type_name);
 }
 
-static char *modulelt_type_short_string(void)
+static char *modulelt_type_short_string(NspObject *v)
 {
   return(modulelt_short_type_name);
 }

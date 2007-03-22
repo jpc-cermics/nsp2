@@ -49,7 +49,7 @@ extern NspGtkProgressBar *GetGtkProgressBar (Stack stack, int i);
 #ifdef GtkProgressBar_Private 
 static int init_gtkprogressbar(NspGtkProgressBar *o,NspTypeGtkProgressBar *type);
 static char *gtkprogressbar_type_as_string(void);
-static char *gtkprogressbar_type_short_string(void);
+static char *gtkprogressbar_type_short_string(NspObject *v);
 static AttrTab gtkprogressbar_attrs[];
 /* static int int_gtkprogressbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkprogressbar_get_methods(void); 

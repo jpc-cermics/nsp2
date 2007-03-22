@@ -49,7 +49,7 @@ extern NspGtkTextMark *GetGtkTextMark (Stack stack, int i);
 #ifdef GtkTextMark_Private 
 static int init_gtktextmark(NspGtkTextMark *o,NspTypeGtkTextMark *type);
 static char *gtktextmark_type_as_string(void);
-static char *gtktextmark_type_short_string(void);
+static char *gtktextmark_type_short_string(NspObject *v);
 static AttrTab gtktextmark_attrs[];
 /* static int int_gtktextmark_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextmark_get_methods(void); 

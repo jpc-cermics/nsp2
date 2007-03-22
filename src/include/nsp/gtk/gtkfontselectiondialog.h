@@ -49,7 +49,7 @@ extern NspGtkFontSelectionDialog *GetGtkFontSelectionDialog (Stack stack, int i)
 #ifdef GtkFontSelectionDialog_Private 
 static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *o,NspTypeGtkFontSelectionDialog *type);
 static char *gtkfontselectiondialog_type_as_string(void);
-static char *gtkfontselectiondialog_type_short_string(void);
+static char *gtkfontselectiondialog_type_short_string(NspObject *v);
 static AttrTab gtkfontselectiondialog_attrs[];
 /* static int int_gtkfontselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfontselectiondialog_get_methods(void); 

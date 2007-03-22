@@ -112,7 +112,7 @@ extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 static int init_pmatrix(NspPMatrix *ob,NspTypePMatrix *type);
 int nsp_pmatrix_size(NspPMatrix *Mat, int flag);
 char *nsp_pmatrix_type_as_string(void);
-char *nsp_pmatrix_type_short_string(void);
+char *nsp_pmatrix_type_short_string(NspObject *v);
 NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_pmatrix_eq(NspObject *A,NspObject *B);
 int nsp_pmatrix_neq(NspObject *A,NspObject *B);

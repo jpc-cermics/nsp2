@@ -49,7 +49,7 @@ extern NspGtkTreeStore *GetGtkTreeStore (Stack stack, int i);
 #ifdef GtkTreeStore_Private 
 static int init_gtktreestore(NspGtkTreeStore *o,NspTypeGtkTreeStore *type);
 static char *gtktreestore_type_as_string(void);
-static char *gtktreestore_type_short_string(void);
+static char *gtktreestore_type_short_string(NspObject *v);
 static AttrTab gtktreestore_attrs[];
 /* static int int_gtktreestore_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreestore_get_methods(void); 

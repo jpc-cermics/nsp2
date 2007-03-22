@@ -49,7 +49,7 @@ extern NspGtkTextBuffer *GetGtkTextBuffer (Stack stack, int i);
 #ifdef GtkTextBuffer_Private 
 static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type);
 static char *gtktextbuffer_type_as_string(void);
-static char *gtktextbuffer_type_short_string(void);
+static char *gtktextbuffer_type_short_string(NspObject *v);
 static AttrTab gtktextbuffer_attrs[];
 /* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextbuffer_get_methods(void); 

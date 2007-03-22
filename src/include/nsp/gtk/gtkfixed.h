@@ -49,7 +49,7 @@ extern NspGtkFixed *GetGtkFixed (Stack stack, int i);
 #ifdef GtkFixed_Private 
 static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type);
 static char *gtkfixed_type_as_string(void);
-static char *gtkfixed_type_short_string(void);
+static char *gtkfixed_type_short_string(NspObject *v);
 static AttrTab gtkfixed_attrs[];
 /* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfixed_get_methods(void); 

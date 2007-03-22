@@ -49,7 +49,7 @@ extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItem (Stack stack, int i);
 #ifdef GtkSeparatorMenuItem_Private 
 static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *o,NspTypeGtkSeparatorMenuItem *type);
 static char *gtkseparatormenuitem_type_as_string(void);
-static char *gtkseparatormenuitem_type_short_string(void);
+static char *gtkseparatormenuitem_type_short_string(NspObject *v);
 static AttrTab gtkseparatormenuitem_attrs[];
 /* static int int_gtkseparatormenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkseparatormenuitem_get_methods(void); 

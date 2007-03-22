@@ -49,7 +49,7 @@ extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItem (Stack stack, int i);
 #ifdef GtkTearoffMenuItem_Private 
 static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *o,NspTypeGtkTearoffMenuItem *type);
 static char *gtktearoffmenuitem_type_as_string(void);
-static char *gtktearoffmenuitem_type_short_string(void);
+static char *gtktearoffmenuitem_type_short_string(NspObject *v);
 static AttrTab gtktearoffmenuitem_attrs[];
 /* static int int_gtktearoffmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktearoffmenuitem_get_methods(void); 

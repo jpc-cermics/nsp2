@@ -49,7 +49,7 @@ extern NspGdkEvent *GetGdkEvent (Stack stack, int i);
 #ifdef GdkEvent_Private 
 static int init_gdkevent(NspGdkEvent *o,NspTypeGdkEvent *type);
 static char *gdkevent_type_as_string(void);
-static char *gdkevent_type_short_string(void);
+static char *gdkevent_type_short_string(NspObject *v);
 static AttrTab gdkevent_attrs[];
 /* static int int_gdkevent_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkevent_get_methods(void); 

@@ -49,7 +49,7 @@ extern NspPangoFontMap *GetPangoFontMap (Stack stack, int i);
 #ifdef PangoFontMap_Private 
 static int init_pangofontmap(NspPangoFontMap *o,NspTypePangoFontMap *type);
 static char *pangofontmap_type_as_string(void);
-static char *pangofontmap_type_short_string(void);
+static char *pangofontmap_type_short_string(NspObject *v);
 static AttrTab pangofontmap_attrs[];
 /* static int int_pangofontmap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangofontmap_get_methods(void); 

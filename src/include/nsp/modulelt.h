@@ -69,7 +69,7 @@ extern NspModuleElt *GetModuleElt (Stack stack, int i);
 static int init_modulelt(NspModuleElt *o,NspTypeModuleElt *type);
 static int modulelt_size(NspModuleElt *Mat, int flag);
 static char *modulelt_type_as_string(void);
-static char *modulelt_type_short_string(void);
+static char *modulelt_type_short_string(NspObject *v);
 static int modulelt_eq(NspModuleElt *A, NspObject *B);
 static int modulelt_neq(NspModuleElt *A, NspObject *B);
 static int modulelt_xdr_save(XDR  *F, NspModuleElt *M);

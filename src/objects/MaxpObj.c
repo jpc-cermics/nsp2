@@ -195,7 +195,7 @@ char *mpmatrix_type_as_string(void)
   return(mat_type_name);
 }
 
-char *mpmatrix_type_short_string(void)
+char *mpmatrix_type_short_string(NspObject *v)
 {
   return(mat_short_type_name);
 }

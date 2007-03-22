@@ -49,7 +49,7 @@ extern NspGtkScrolledWindow *GetGtkScrolledWindow (Stack stack, int i);
 #ifdef GtkScrolledWindow_Private 
 static int init_gtkscrolledwindow(NspGtkScrolledWindow *o,NspTypeGtkScrolledWindow *type);
 static char *gtkscrolledwindow_type_as_string(void);
-static char *gtkscrolledwindow_type_short_string(void);
+static char *gtkscrolledwindow_type_short_string(NspObject *v);
 static AttrTab gtkscrolledwindow_attrs[];
 /* static int int_gtkscrolledwindow_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkscrolledwindow_get_methods(void); 

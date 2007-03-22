@@ -35,7 +35,7 @@ NspPyGtkGenericTreeModel *new_pygtkgenerictreemodel();
 #ifdef PyGtkGenericTreeModel_Private 
 static int init_pygtkgenerictreemodel(NspPyGtkGenericTreeModel *o,NspTypePyGtkGenericTreeModel *type);
 static char *pygtkgenerictreemodel_type_as_string(void);
-static char *pygtkgenerictreemodel_type_short_string(void);
+static char *pygtkgenerictreemodel_type_short_string(NspObject *v);
 static AttrTab pygtkgenerictreemodel_attrs[];
 /* static int int_pygtkgenerictreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pygtkgenerictreemodel_get_methods(void); 

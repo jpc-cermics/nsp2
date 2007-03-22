@@ -49,7 +49,7 @@ extern NspPangoGlyphString *GetPangoGlyphString (Stack stack, int i);
 #ifdef PangoGlyphString_Private 
 static int init_pangoglyphstring(NspPangoGlyphString *o,NspTypePangoGlyphString *type);
 static char *pangoglyphstring_type_as_string(void);
-static char *pangoglyphstring_type_short_string(void);
+static char *pangoglyphstring_type_short_string(NspObject *v);
 static AttrTab pangoglyphstring_attrs[];
 /* static int int_pangoglyphstring_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangoglyphstring_get_methods(void); 

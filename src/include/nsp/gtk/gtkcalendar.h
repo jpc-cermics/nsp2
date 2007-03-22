@@ -49,7 +49,7 @@ extern NspGtkCalendar *GetGtkCalendar (Stack stack, int i);
 #ifdef GtkCalendar_Private 
 static int init_gtkcalendar(NspGtkCalendar *o,NspTypeGtkCalendar *type);
 static char *gtkcalendar_type_as_string(void);
-static char *gtkcalendar_type_short_string(void);
+static char *gtkcalendar_type_short_string(NspObject *v);
 static AttrTab gtkcalendar_attrs[];
 /* static int int_gtkcalendar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcalendar_get_methods(void); 

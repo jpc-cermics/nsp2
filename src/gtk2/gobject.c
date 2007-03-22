@@ -163,7 +163,7 @@ static char *gobject_type_as_string(void)
   return(gobject_type_name);
 }
 
-static char *gobject_type_short_string(void)
+static char *gobject_type_short_string(NspObject *v)
 {
   return(gobject_short_type_name);
 }

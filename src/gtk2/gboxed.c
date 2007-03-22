@@ -160,7 +160,7 @@ static char *gboxed_type_as_string(void)
   return(gboxed_type_name);
 }
 
-static char *gboxed_type_short_string(void)
+static char *gboxed_type_short_string(NspObject *v)
 {
   return(gboxed_short_type_name);
 }
