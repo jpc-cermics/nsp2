@@ -45,6 +45,7 @@
 #include "nsp/plisttoken.h" /* for name_maxl */
 #include "FunTab.h"
 #include "callfunc.h" 
+#include "addinter.h" 
 
 /*
  * MAXTAB : maximum number of entries in the htable 
@@ -381,8 +382,7 @@ void nsp_delete_interface_functions(int Int)
   unsigned int i;
   for ( i = 0 ; i <= hsize ; i++ ) 
     if ( htable[i].used 
-	 &&  htable[i].entry.data.Int == Int
-	 )
+	 &&  htable[i].entry.data.Int == Int+ DYN_INTERF_START )
       {
 	htable[i].used = 0;
 	filled--;
