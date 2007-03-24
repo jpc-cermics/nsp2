@@ -536,6 +536,24 @@ mxArray *mxCreateScalarDouble(double value)
 }
 
 /**
+ * mxCreateDoubleScalar:
+ * @value: a double
+ * 
+ * creates a new #NspMatrix of size (1x1) initialized with @d.
+ * 
+ * Return value: a new #mxArray or error jump
+ **/
+
+mxArray *mxCreateDoubleScalar(double value)
+{
+  NspMatrix *A;
+  if ((A = nsp_matrix_create_from_array(NVOID,1,1,&value,NULL))  == NULLMAT) 
+    nsp_mex_errjump();
+  return NSP_OBJECT(A);
+}
+
+
+/**
  * mxCreateFull:
  * @m: number of rows 
  * @n: number of columns 
@@ -1334,19 +1352,28 @@ int mxGetNzmax(const mxArray *array_ptr)
 
 int mxSetNzmax(mxArray *array_ptr,int n)
 {
-  NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
-  if ( array_ptr == NULL)
+  if (IsSpColMat(array_ptr))
     {
-      Scierror("Error: mxGetNzmax on a non allocated ptr\n");
-      nsp_mex_errjump(); 
+      NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
+      if ( array_ptr == NULL)
+	{
+	  Scierror("Error: mxGetNzmax on a non allocated ptr\n");
+	  nsp_mex_errjump(); 
+	}
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Aisize = n ;
+      /* nsp_spcol_realloc_col_triplet(A,n);*/
+      return OK;
     }
-  if (A->convert != 't' ) 
+  else
     {
-      if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+      Scierror("Error in %s: mxGetPr failed\n","mex");
+      nsp_mex_errjump();
     }
-  A->triplet.Aisize = n ;
-  /* nsp_spcol_realloc_col_triplet(A,n);*/
-  return OK;
+  return FAIL;
 }
 
 
@@ -1904,7 +1931,11 @@ mxArray *mxCreateLogicalArray(int ndim, const int *dims)
  **/
 bool mxIsDouble(const mxArray *array_ptr)
 {
-  return  IsMat(array_ptr) ? true: false;
+  if ( IsMat(array_ptr) )
+    return true; 
+  if ( IsSpColMat(array_ptr) )
+    return true;
+  return false;
 }
 
 
@@ -2053,6 +2084,43 @@ void mxSetPr(mxArray *array_ptr, double *pr)
 }
 
 /**
+ * mxSetData:
+ * @array_ptr: Pointer to an #mxArray.
+ * @pr: 
+ * 
+ * 
+ **/
+
+void mxSetData(mxArray *array_ptr, void *pr)
+{
+  if ( IsMat(array_ptr)) 
+    {
+      NspMatrix *A = (NspMatrix *)  array_ptr;
+      /* be sure that matrix is matlab converted */
+      A->R = pr ;
+    }
+  else if ( IsSpColMat(array_ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Pr = pr;
+    }
+  else if ( IsBMat(array_ptr) )
+    {
+      Sciprintf("Warning: mxGetPr should be replaced by mxGetData for booleans\n");
+      ((NspBMatrix *) array_ptr)->B =  pr;
+    }
+  else 
+    {
+      Scierror("Error in %s: mxSetPr failed\n","mex");
+      nsp_mex_errjump();
+    }
+}
+
+/**
  * mxSetPi:
  * @array_ptr: Pointer to an #mxArray.
  * @pi: 
@@ -2150,6 +2218,15 @@ void mxSetN(mxArray *ptr, mwSize n)
       A->n = n;
       A->mn = A->m*A->n;
     }
+  if ( IsSpColMat(ptr) )
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *) ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.n = n;
+    }
   else 
     {
       Scierror("Error in %s: mxSetN failed\n","mex");
@@ -2165,6 +2242,15 @@ void mxSetM(mxArray *ptr, mwSize m)
       /* be sure that matrix is matlab converted */
       A->m = m;
       A->mn = A->m*A->n;
+    }
+  if ( IsSpColMat(ptr) )
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *) ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.m = m;
     }
   else 
     {
