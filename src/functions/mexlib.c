@@ -2218,7 +2218,7 @@ void mxSetN(mxArray *ptr, mwSize n)
       A->n = n;
       A->mn = A->m*A->n;
     }
-  if ( IsSpColMat(ptr) )
+  else if ( IsSpColMat(ptr) )
     {
       NspSpColMatrix *A = (NspSpColMatrix *) ptr;
       if (A->convert != 't' ) 
@@ -2243,7 +2243,7 @@ void mxSetM(mxArray *ptr, mwSize m)
       A->m = m;
       A->mn = A->m*A->n;
     }
-  if ( IsSpColMat(ptr) )
+  else if ( IsSpColMat(ptr) )
     {
       NspSpColMatrix *A = (NspSpColMatrix *) ptr;
       if (A->convert != 't' ) 
