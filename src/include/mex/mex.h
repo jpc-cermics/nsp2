@@ -138,6 +138,7 @@ extern int mxGetNzmax(const mxArray *array_ptr);
 
 
 extern mxArray *mxCreateScalarDouble(double value);
+extern mxArray *mxCreateDoubleScalar(double value);
 extern bool mxIsEmpty(const mxArray *array_ptr);
 extern void mexMakeArrayPersistent(mxArray *array_ptr);
 extern mxArray *mxCreateLogicalScalar(mxLogical value);
@@ -182,7 +183,7 @@ extern mxArray *mexGetVariable(const char *workspace, const char *var_name);
 extern mxArray *mexGetArray(const char *name, const char *workspace);
 extern void mxSetLogical(mxArray *array_ptr);
 
-
+extern void mxSetData(mxArray *array_ptr, void *pr);
 extern void mxSetPr(mxArray *array_ptr, double *pr);
 extern void mxSetJc(mxArray *array_ptr, int *jc);
 extern void mxSetIr(mxArray *array_ptr,int *ir);
