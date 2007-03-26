@@ -460,15 +460,18 @@ int mxIsComplex(const mxArray *ptr)
 
 double mxGetScalar(const mxArray *ptr)
 { 
-  if ( IsMat(ptr) && ((NspMatrix *) ptr)->mn == 1
+  if ( IsMat(ptr) && ((NspMatrix *) ptr)->mn >= 1
        && ((NspMatrix *) ptr)->rc_type == 'r')
     {
       return ((NspMatrix *) ptr)->R[0];
     }
-  else
+  else if ( IsBMat(ptr)  && ((NspBMatrix *) ptr)->mn >= 1)
     {
-      Scierror("Expecting a scalar\n");
+      return (double) ((NspBMatrix *) ptr)->B[0];
     }
+  else {
+    Scierror("Expecting a scalar\n");
+  }
   nsp_mex_errjump();
   return 0.0;
 }
