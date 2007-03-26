@@ -641,7 +641,7 @@ static int int_sprowmatrix_extract(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((Cols = GetRealMatCopy(stack,3)) == NULLMAT) return RET_BUG;
   Res =nsp_sprowmatrix_extract( A, Rows,Cols);
   if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
@@ -680,7 +680,7 @@ static int int_sprowmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Cols = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
   Res =nsp_sprowmatrix_extract_cols( A,Cols,&err);
   /* XXXXX Attention ici il faut un message d''erreur **/
   if ( err == 1) return RET_ENDFOR; 

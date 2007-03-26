@@ -662,7 +662,8 @@ static int int_spcolmatrix_extract(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(3,3);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /* Rows id changed by nsp_spcolmatrix_extract */
+  if ((Rows = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
   if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
   Res =nsp_spcolmatrix_extract( A, Rows,Cols);
   if ( Res == NULLSPCOL) return RET_BUG;
@@ -724,7 +725,8 @@ static int int_spcolmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /* Rows is changed by nsp_spcolmatrix_extract_rows */
+  if ((Rows = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
   Res =nsp_spcolmatrix_extract_rows( A,Rows,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSPCOL) return RET_BUG;
