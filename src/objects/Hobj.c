@@ -505,6 +505,18 @@ static int int_hobj_target_name(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* is argument an hobj 
+ *
+ */
+
+static int int_hobj_ishobj(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs(1,1);
+  CheckLhs(1,1);
+  if ( nsp_move_boolean(stack,1,IsHobj(NthObj(1))) == FAIL) return RET_BUG;
+  return 1;
+}
+
 /*
  *  Interface 
  */
@@ -512,6 +524,7 @@ static int int_hobj_target_name(Stack stack, int rhs, int opt, int lhs)
 static OpTab Hobj_func[]={
   {"handler",int_hobjcreate},
   {"hobj_name",int_hobj_target_name},
+  {"ishobj",int_hobj_ishobj},
   {(char *) 0, NULL}
 };
 
