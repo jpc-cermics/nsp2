@@ -197,6 +197,29 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * interface for rank (i.e like the rank scilab macro) 
+ * using the svd. 
+ */
+
+static int int_rank( Stack stack, int rhs, int opt, int lhs)
+{
+  char cmode ='\0' ;
+  double tol = 0, *Tol=NULL;
+  NspMatrix *A;
+  NspMatrix *S=NULL, *rank=NULL;
+  int_types T[] = {matcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "tol",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&A,&opts,&tol) == FAIL) return RET_BUG;
+  Tol = ( opts[0].obj == NULLOBJ) ? NULL : &tol; 
+  CheckLhs(0,1);
+  if ( nsp_svd(A,&S,NULL,NULL,cmode,&rank,Tol)== FAIL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(rank));
+  nsp_matrix_destroy(S);
+  return 1;
+}
+
+/*
  * interface for nsp_det: 
  */
 
@@ -612,6 +635,7 @@ static OpTab Lapack_func[] = {
   {"hess",int_hess},
   {"expm",int_expm},
   {"solve_banded",int_solve_banded},
+  {"rank_m",int_rank},
   {(char *) 0, NULL}
 };
 
