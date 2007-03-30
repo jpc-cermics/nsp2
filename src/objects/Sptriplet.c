@@ -222,6 +222,7 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
     }
   M->m = M->triplet.m;
   M->n = M->triplet.n;
+  M->mn = M->m*M->n;
   /* resize each row */
   for ( i = 0 ; i < M->m ; i++) 
     {
@@ -532,6 +533,7 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
     }
   M->m = M->triplet.m;
   M->n = M->triplet.n;
+  M->mn = M->m*M->n;
   /* resize each column */
   for ( i = 0 ; i < M->n ; i++) 
     {
