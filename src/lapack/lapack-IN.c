@@ -371,13 +371,47 @@ static int int_rcond( Stack stack, int rhs, int opt, int lhs)
 
 static int int_cholesky( Stack stack, int rhs, int opt, int lhs)
 {
+  int minor=0;
   NspMatrix *A;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
-  CheckLhs(0,1);
-  if ( nsp_cholesky(A)== FAIL) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos=1;
-  return Max(lhs,1);
+  CheckLhs(0,2);
+  if ( lhs == 2 ) minor =-1;
+  if( nsp_cholesky(A,&minor)== OK) 
+    {
+      if ( minor == -1 ) 
+	{
+	  NSP_OBJECT(A)->ret_pos=1;
+	  if ( lhs == 2 ) 
+	    {
+	      if ( nsp_move_double(stack,2,A->m)== FAIL) return RET_BUG;
+	    }
+	  return Max(lhs,1);
+	}
+      else 
+	{
+	  NspMatrix *Res;
+	  int j, size= (A->rc_type== 'r') ? 1:2  ;
+	  if (( Res = nsp_matrix_create(NVOID,A->rc_type,minor-1,minor-1))== NULLMAT)
+	    return RET_BUG;
+	  for ( j= 0 ; j < Res->n ; j++) 
+	    {
+	      memcpy(Res->R + j*Res->m*size,A->R + j*A->m*size, 
+		     Res->m*size*sizeof(double));
+	    }
+	  MoveObj(stack,1,NSP_OBJECT(Res));
+	  if ( lhs == 2 ) 
+	    {
+	      
+	      if ( nsp_move_double(stack,2,minor)== FAIL) return RET_BUG;
+	    }
+	  return Max(lhs,1);
+	}
+    }
+  else 
+    {
+      return RET_BUG;
+    }
 }
 
 /*

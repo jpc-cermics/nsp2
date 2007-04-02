@@ -1977,17 +1977,19 @@ static int inttrcon(NspMatrix *A, char tri_type, double *rcond1)
  * nsp_cholesky:
  * @A: (input/output) a symetric real or complex hermitian matrix (the upper
  *     triangle of @A is used) which must be positive definite.
+ * @minor: an integer 
  * 
  * Computes the Cholesky factorization of the matrix @A (@A must be positive
- * definite) :
- *
- *     A = C' C  (C an upper triangular matrix with positive diagonal elements)
- *
- * The matrix C is returned in @A.
+ * definite) i.e A = R'*R (R an upper triangular matrix with positive diagonal elements).
+ * The matrix R is returned in @A. If the matrix is not positive definite the function 
+ * returns %FAIL, except if minor is equal to one on entry. In that case the order 
+ * of the leading minor which is not positive definite is returned in @minor.
+ * In that case R1=R(1:q,1:q) is such that R1'*R1=A(1:q,1:q) where q=p-1;
  * 
  * Return value: %OK or %FAIL
  **/
-int nsp_cholesky(NspMatrix *A) 
+
+int nsp_cholesky(NspMatrix *A, int *minor) 
 {
   int info, m = A->m, n = A->n ;
 
@@ -2006,8 +2008,23 @@ int nsp_cholesky(NspMatrix *A)
   if (info != 0) 
     {
       if (info > 0)
-	Scierror("Error: matrix is not positive definite\n"); 
-      return FAIL;
+	{
+	  if ( *minor == -1 ) 
+	    {
+	      *minor = info ;
+	    }
+	  else 
+	    {
+	      *minor = info ;
+	      Scierror("Error: matrix is not positive definite (minor %d)\n",info); 
+	      return FAIL;
+	    }
+	}
+      else 
+	{
+	  Scierror("Eroor: the %d-th argument of [dz]potrf had an illegal value\n",-info);
+	  return FAIL;
+	}
     }
   nsp_mat_triu(A,0);  
   return OK;
