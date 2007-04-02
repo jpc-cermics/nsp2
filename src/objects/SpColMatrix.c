@@ -1584,6 +1584,16 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
 	    case 'c' : Li->C[j]= Ai->C[k];break;
 	    }
 	}
+      /* we sort the column in increasing row order, i.e J must be increasing */
+      if ( Li->size > 1) 
+	{
+	  int *xb = Work->I;
+	  nsp_qsort_int(Li->J,xb,TRUE,Li->size,'i');
+	  if ( A->rc_type == 'r' ) 
+	    C2F(dperm)(Li->R,&Li->size,xb);
+	  else 
+	    C2F(zperm)(Li->C,&Li->size,xb);
+	}
     }
   nsp_matrix_destroy(Work);
   nsp_matrix_destroy(Index);
