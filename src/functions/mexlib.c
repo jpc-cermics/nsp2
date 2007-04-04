@@ -1707,14 +1707,14 @@ bool mxIsSharedArray(const mxArray *array_ptr)
   return false;
 }
 
-extern void mxUnshareArray(const mxArray *array_ptr)
+void mxUnshareArray(const mxArray *array_ptr)
 {
   
 }
 
 mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
 {
-  mexWarnMsgTxt("Warning: mxCreateSparseLogicalMatrix only creates a sparse_n");
+  mexWarnMsgTxt("Warning: mxCreateSparseLogicalMatrix creates a standard sparse\n");
   return mxCreateSparse(m,n,nzmax,mxREAL);
 }
 

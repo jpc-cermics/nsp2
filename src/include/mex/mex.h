@@ -195,6 +195,8 @@ typedef int mwSize;
 extern void mxSetN(mxArray *ptr, mwSize n);
 extern void mxSetM(mxArray *ptr, mwSize m);
 
+extern mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax);
+
 
 
 #endif /* NSP_MEX */
