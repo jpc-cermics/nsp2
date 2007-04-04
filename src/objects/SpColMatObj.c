@@ -1370,7 +1370,6 @@ static int int_spcolmatrix_tril(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_spcolmatrix_tril(A,k)==FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
-
 }
 
 /* interface for eye,ones,zeros
@@ -1383,10 +1382,18 @@ static int int_spcolmatrix_eoz(Stack stack, int rhs, int opt, int lhs,Feoz *F)
 {
   int m,n;
   NspSpColMatrix *A;
-  CheckRhs(2,2);
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
-  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
-  if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+  if ( rhs == 1 ) 
+    {
+      m=nsp_object_get_size(NthObj(1),1);
+      n=nsp_object_get_size(NthObj(1),2);
+    }
+  else 
+    {
+      if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+      if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+    }
   if ((A= (*F)(m,n))== NULLSPCOL) return RET_BUG;
   MoveObj(stack,1, NSP_OBJECT(A));
   return 1;
@@ -1921,9 +1928,12 @@ static OpTab SpColMatrix_func[]={
   {"nnz_sp",int_spcolmatrix_nnz},
   {"triu_sp", int_spcolmatrix_triu},
   {"tril_sp", int_spcolmatrix_tril},
-  {"sp_eye", int_spcolmatrix_eye},
-  {"sp_ones", int_spcolmatrix_ones},
-  {"sp_zeros", int_spcolmatrix_zeros},
+  {"sp_eye", int_spcolmatrix_eye}, /* to be removed ? */
+  {"sp_ones", int_spcolmatrix_ones},/* to be removed ? */
+  {"sp_zeros", int_spcolmatrix_zeros},/* to be removed ? */
+  {"speye", int_spcolmatrix_eye},
+  {"spones", int_spcolmatrix_ones},
+  {"spzeros", int_spcolmatrix_zeros},
   /* now operations */
   {"abs_sp",int_spcolmatrix_abs},
   {"arg_sp",int_spcolmatrix_arg},

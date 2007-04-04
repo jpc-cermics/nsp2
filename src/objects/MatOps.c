@@ -243,13 +243,16 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 
   if ( (Loc =nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) == NULLMAT ) goto err;
 
-
-  if ( Loc->rc_type == 'c' ) 
-    C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
-	       &zbeta,Loc->C,&A->m,1,1);
-  else 
-    C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
-	       &beta,Loc->R,&A->m,1,1); 
+  if ( Loc->m != 0 && Loc->n != 0) 
+    {
+      /* we have checked empty case to avoid a Scierror raised by zgemm or dgemm */
+      if ( Loc->rc_type == 'c' ) 
+	C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
+		   &zbeta,Loc->C,&A->m,1,1);
+      else 
+	C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
+		   &beta,Loc->R,&A->m,1,1); 
+    }
 
   if ( A_is_copied ) nsp_matrix_destroy(A);
   if ( B_is_copied ) nsp_matrix_destroy(B);
