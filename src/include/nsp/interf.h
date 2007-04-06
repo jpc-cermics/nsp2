@@ -240,7 +240,7 @@ extern int GetDimArg(Stack stack, int pos, int *dim);
  * Returns: returns from interface with %RET_BUG if the condition is not satisfied.
  **/
 
-#define CheckSameDims(fname,pos1,pos2,o1,o2) if ( o1->m != o2->m && o1->n != o2->n ) \
+#define CheckSameDims(fname,pos1,pos2,o1,o2) if ( o1->m != o2->m || o1->n != o2->n ) \
    { Scierror("%s: arguments %d and %d should have the same size\n",fname,pos1,pos2); \
      return RET_BUG;} 
 
