@@ -540,7 +540,7 @@ L30:
 /*         PROCEDURE FOR A0 .LT. 1 AND 1 .LT. B0 .LT. 8 */
 
 L40:
-  u = cdf_gamln1 (&a0);
+  u = cdf_gamln1 (a0);
   m = (int) (b0 - 1.);
   if (m < 1)
     {
@@ -576,7 +576,7 @@ L80:
 /*            PROCEDURE FOR A0 .LT. 1 AND B0 .GE. 8 */
 
 L90:
-  u = cdf_gamln1 (&a0) + cdf_algdiv (&a0, &b0);
+  u = cdf_gamln1 (a0) + cdf_algdiv (a0, b0);
   z__ = *a * log (*x) - u;
   ret_val = a0 / *a * exp (z__);
 L100:
@@ -830,7 +830,7 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
       goto L10;
     }
   d__1 = -(*y);
-  lnx = cdf_alnrel (&d__1);
+  lnx = cdf_alnrel (d__1);
   goto L20;
 L10:
   lnx = log (*x);
@@ -846,7 +846,7 @@ L20:
 
   r__ = *b * (cdf_gam1 (b) + 1.) * exp (*b * log (z__));
   r__ = r__ * exp (*a * lnx) * exp (bm1 * .5 * lnx);
-  u = cdf_algdiv (b, a) + *b * log (nu);
+  u = cdf_algdiv (*b, *a) + *b * log (nu);
   u = r__ * exp (-u);
   if (u == 0.)
     {
@@ -971,7 +971,7 @@ L10:
 L20:
   d__1 = -(*lambda) / *a;
   d__2 = *lambda / *b;
-  f = *a * cdf_rlog1 (&d__1) + *b * cdf_rlog1 (&d__2);
+  f = *a * cdf_rlog1 (d__1) + *b * cdf_rlog1 (d__2);
   t = exp (-f);
   if (t == 0.)
     {

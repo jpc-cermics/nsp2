@@ -9,7 +9,7 @@
  * Returns: a double 
  **/
 
-double cdf_rlog1 (double *x)
+double cdf_rlog1 (double x)
 {
   /*test:  A=[-0.2:0.01:1]; norm(A-log(1+A) -cdf_rlog1(A))  */
   const double a = .0566749439387324;
@@ -21,25 +21,25 @@ double cdf_rlog1 (double *x)
   const double q2 = .354508718369557;
   double h, r, t, w, w1;
 
-  if (*x < -.39 || *x > .57)
+  if (x < -.39 || x > .57)
     {
-      return  *x - log (*x + .5 + .5);
+      return  x - log (x + .5 + .5);
     }
-  if (*x < -.18)
+  if (x < -.18)
     {
-      h = *x + .3;
+      h = x + .3;
       h /= .7;
       w1 = a - h * .3;
     }
-  else if (*x > .18)
+  else if (x > .18)
     {
-      h = *x * .75 - .25;
+      h = x * .75 - .25;
       w1 = b + h / 3.;      
     }
   else 
     {
       /* argument reduction */
-      h = *x;
+      h = x;
       w1 = 0.;
     }
   /* series expansion */

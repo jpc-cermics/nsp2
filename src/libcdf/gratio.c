@@ -178,7 +178,7 @@ L30:
       goto L370;
     }
   s = .5 - l + .5;
-  z__ = cdf_rlog (&l);
+  z__ = cdf_rlog (l);
   if (z__ >= 700. / *a)
     {
       goto L410;

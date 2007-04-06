@@ -37,10 +37,10 @@ double cdf_betaln (double *a0, double *b0)
       goto L10;
     }
   d1 = a + b;
-  ret_val = cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gamln (&d1));
+  ret_val = cdf_gamln (a) + (cdf_gamln (b) - cdf_gamln (d1));
   return ret_val;
  L10:
-  ret_val = cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
   /* ----------------------------------------------------------------------- */
   /*                PROCEDURE WHEN 1 .LE. A .LT. 8 */
@@ -54,7 +54,7 @@ double cdf_betaln (double *a0, double *b0)
     {
       goto L30;
     }
-  ret_val = cdf_gamln (&a) + cdf_gamln (&b) - cdf_gsumln (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_gamln (b) - cdf_gsumln (&a, &b);
   return ret_val;
  L30:
   w = 0.;
@@ -62,7 +62,7 @@ double cdf_betaln (double *a0, double *b0)
     {
       goto L60;
     }
-  ret_val = cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 
   /*                REDUCTION OF A WHEN B .LE. 1000 */
@@ -87,7 +87,7 @@ double cdf_betaln (double *a0, double *b0)
     {
       goto L60;
     }
-  ret_val = w + cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = w + cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 
   /*                 REDUCTION OF B WHEN B .LT. 8 */
@@ -103,7 +103,7 @@ double cdf_betaln (double *a0, double *b0)
       /* L70: */
     }
   ret_val =
-    w + log (z) + (cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gsumln (&a, &b)));
+    w + log (z) + (cdf_gamln (a) + (cdf_gamln (b) - cdf_gsumln (&a, &b)));
   return ret_val;
 
   /*                REDUCTION OF A WHEN B .GT. 1000 */
@@ -118,7 +118,7 @@ double cdf_betaln (double *a0, double *b0)
       w *= a / (a / b + 1.);
       /* L90: */
     }
-  ret_val = log (w) - n * log (b) + (cdf_gamln (&a) + cdf_algdiv (&a, &b));
+  ret_val = log (w) - n * log (b) + (cdf_gamln (a) + cdf_algdiv (a, b));
   return ret_val;
   /* ----------------------------------------------------------------------- */
   /*                   PROCEDURE WHEN A .GE. 8 */
@@ -128,7 +128,7 @@ double cdf_betaln (double *a0, double *b0)
   h = a / b;
   c = h / (h + 1.);
   u = -(a - .5) * log (c);
-  v = b * cdf_alnrel (&h);
+  v = b * cdf_alnrel (h);
   if (u <= v)
     {
       goto L110;

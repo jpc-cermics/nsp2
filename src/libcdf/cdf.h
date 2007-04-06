@@ -9,9 +9,9 @@ extern   double pow_di (double *, int *);
 #define D_SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : -(a >= 0 ? a : -a))
 #define D_INT(x) ( (x>0) ? floor(x) : -floor(- x) )
 
-extern double cdf_algdiv (double *a, double *b);
+extern double cdf_algdiv (double a, double b);
 extern double cdf_alngam (double *x);
-extern double cdf_alnrel (double *a);
+extern double cdf_alnrel (double a);
 extern double cdf_bcorr (double *a0, double *b0);
 extern double cdf_betaln (double *a0, double *b0);
 extern double cdf_brcmp1 (int *mu, double *a, double *b, double *x, double *y);
@@ -31,15 +31,15 @@ extern double cdf_erfc (int ind, double *x);
 /* extern double cdf_esum (int *mu, double *x); */
 extern double cdf_exparg (const int l);
 extern double cdf_gam1 (double *a);
-extern double cdf_gamln (double *a);
-extern double cdf_gamln1 (double *a);
+extern double cdf_gamln (double a);
+extern double cdf_gamln1 (double a);
 extern double cdf_gamma (double *a);
 extern double cdf_gsumln (double *a, double *b);
 extern double cdf_psi1 (double *xx);
 extern double cdf_rcomp (double *a, double *x);
 extern double cdf_rexp (double *x);
-extern double cdf_rlog (double *x);
-extern double cdf_rlog1 (double *x);
+extern double cdf_rlog (double x);
+extern double cdf_rlog1 (double x);
 extern double cdf_spmpar (int );
 extern double cdf_stvaln (double *p);
 extern int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w1, int *ierr);

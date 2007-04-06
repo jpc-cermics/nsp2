@@ -56,7 +56,7 @@ double cdf_dlngam (double *a)
     {
       goto L10;
     }
-  ret_val = cdf_gamln1 (a) - log (*a);
+  ret_val = cdf_gamln1 (*a) - log (*a);
   return ret_val;
 L10:
   if (*a > 2.25)
@@ -64,7 +64,7 @@ L10:
       goto L20;
     }
   t = *a - .5 - .5;
-  ret_val = cdf_gamln1 (&t);
+  ret_val = cdf_gamln1 (t);
   return ret_val;
 
 L20:
@@ -83,7 +83,7 @@ L20:
 /* L30: */
     }
   d__1 = t - 1.;
-  ret_val = cdf_gamln1 (&d__1) + log (w);
+  ret_val = cdf_gamln1 (d__1) + log (w);
   return ret_val;
 
 L40:

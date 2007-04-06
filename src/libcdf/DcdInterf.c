@@ -719,8 +719,8 @@ static void cdfchnErr(    int status,double bound, const int pos[])
 
 /* test */
 
-typedef double (*VM11)(double *x);
-typedef double (*VM12)(double *x,double *y);
+typedef double (*VM11)(double x);
+typedef double (*VM12)(double x,double y);
 
 static int int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F, VM12 G)
 {
@@ -742,7 +742,7 @@ static int int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F, VM12 G
       CheckSameDims(NspFname(stack),1,2,HMat,B);
       for ( i = 0 ; i < HMat->mn ; i++) 
 	{
-	  HMat->R[i]= G(&HMat->R[i],&B->R[i]);
+	  HMat->R[i]= G(HMat->R[i],B->R[i]);
 	}
     }
   else 
@@ -754,7 +754,7 @@ static int int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F, VM12 G
 	}
       for ( i = 0 ; i < HMat->mn ; i++) 
 	{
-	  HMat->R[i]= F(&HMat->R[i]);
+	  HMat->R[i]= F(HMat->R[i]);
 	}
     }
   NSP_OBJECT (HMat)->ret_pos = 1;
@@ -770,6 +770,20 @@ static int int_cdf_rlog1(Stack stack, int rhs, int opt, int lhs)
 static int int_cdf_rlog(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_rlog,NULL);
+}
+
+static int int_cdf_gamln(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln,NULL);
+}
+static int int_cdf_gamln1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln1,NULL);
+}
+
+static int int_cdf_alnrel(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_alnrel,NULL);
 }
 
 static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
@@ -796,6 +810,9 @@ static OpTab Dcd_func[]={
   {"cdf_rlog1",int_cdf_rlog1},
   {"cdf_rlog",int_cdf_rlog},
   {"cdf_algdiv",int_cdf_algdiv},
+  {"cdf_gamln",int_cdf_gamln},
+  {"cdf_gamln1",int_cdf_gamln1},
+  {"cdf_alnrel",int_cdf_alnrel}, 
   {(char *) 0, NULL}
 };
 

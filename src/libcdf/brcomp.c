@@ -34,7 +34,7 @@ double cdf_brcomp (double *a, double *b, double *x, double *y)
     }
   lnx = log (*x);
   d__1 = -(*x);
-  lny = cdf_alnrel (&d__1);
+  lny = cdf_alnrel (d__1);
   goto L30;
 L10:
   if (*y > .375)
@@ -42,7 +42,7 @@ L10:
       goto L20;
     }
   d__1 = -(*y);
-  lnx = cdf_alnrel (&d__1);
+  lnx = cdf_alnrel (d__1);
   lny = log (*y);
   goto L30;
 L20:
@@ -99,7 +99,7 @@ L60:
 /*                ALGORITHM FOR 1 .LT. B0 .LT. 8 */
 
 L70:
-  u = cdf_gamln1 (&a0);
+  u = cdf_gamln1 (a0);
   n = (int) (b0 - 1.);
   if (n < 1)
     {
@@ -135,7 +135,7 @@ L110:
 /*                   ALGORITHM FOR B0 .GE. 8 */
 
 L120:
-  u = cdf_gamln1 (&a0) + cdf_algdiv (&a0, &b0);
+  u = cdf_gamln1 (a0) + cdf_algdiv (a0, b0);
   ret_val = a0 * exp (z__ - u);
   return ret_val;
 /* ----------------------------------------------------------------------- */
@@ -163,7 +163,7 @@ L150:
     {
       goto L160;
     }
-  u = cdf_rlog1 (&e);
+  u = cdf_rlog1 (e);
   goto L170;
 L160:
   u = e - log (*x / x0);
@@ -174,7 +174,7 @@ L170:
     {
       goto L180;
     }
-  v = cdf_rlog1 (&e);
+  v = cdf_rlog1 (e);
   goto L190;
 L180:
   v = e - log (*y / y0);

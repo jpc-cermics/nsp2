@@ -1,7 +1,19 @@
 #include "cdf.h"
 
-double cdf_gamln1 (double *a)
+
+
+/**
+ * cdf_gamln1:
+ * @a: 
+ * 
+ * computes LN(GAMMA(1 + A)) for -0.2 <= A <= 1.25 
+ * 
+ * Returns: a double 
+ **/
+
+double cdf_gamln1 (double a)
 {
+  /* a= -0.2:0.01:1.25; norm(log(gamma(1+a))- cdf_gamln1(a)) */
   const double p0 = .577215664901533;
   const double q3 = 1.56875193295039;
   const double q4 = .361951990101499;
@@ -26,41 +38,19 @@ double cdf_gamln1 (double *a)
   const double p6 = -.00271935708322958;
   const double q1 = 2.88743195473681;
   const double q2 = 3.12755088914843;
-
-  /* System generated locals */
-  double ret_val;
-
-  /* Local variables */
   double w, x;
-
-/* ----------------------------------------------------------------------- */
-/*     EVALUATION OF LN(GAMMA(1 + A)) FOR -0.2 .LE. A .LE. 1.25 */
-/* ----------------------------------------------------------------------- */
-/*     .. Scalar Arguments .. */
-/*     .. */
-/*     .. Local Scalars .. */
-/*     .. */
-/*     .. Data statements .. */
-/* ---------------------- */
-/*     .. */
-/*     .. Executable Statements .. */
-/* ---------------------- */
-  if (*a >= .6)
+  if (a >= .6)
     {
-      goto L10;
+      x = (a) - .5 - .5;
+      w =  (((((r5*x + r4)*x + r3)*x + r2)*x + r1)*x + r0) 
+	/ (((((s5*x + s4)*x + s3)*x + s2)*x + s1)*x + 1.);
+      return  x*w;
     }
-  w =
-    ((((((p6 * *a + p5) * *a + p4) * *a + p3) * *a + p2) * *a + p1) * *a +
-     p0) / ((((((q6 * *a + q5) * *a + q4) * *a + q3) * *a + q2) * *a +
-	     q1) * *a + 1.);
-  ret_val = -(*a) * w;
-  return ret_val;
+  else 
+    {
+      w = ((((((p6*(a) + p5)*(a) + p4)*(a) + p3)*(a) + p2)*(a) + p1)*(a) + p0) 
+	/ ((((((q6*(a) + q5)*(a) + q4)*(a) + q3)*(a) + q2)*(a) +  q1)*(a) + 1.);
+      return  -((a)) * w;
+    }
+}
 
-L10:
-  x = *a - .5 - .5;
-  w =
-    (((((r5 * x + r4) * x + r3) * x + r2) * x + r1) * x +
-     r0) / (((((s5 * x + s4) * x + s3) * x + s2) * x + s1) * x + 1.);
-  ret_val = x * w;
-  return ret_val;
-}				/* gamln1_ */

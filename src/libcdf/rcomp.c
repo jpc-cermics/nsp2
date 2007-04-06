@@ -39,7 +39,7 @@ L20:
   d__1 = 1. / *a;
   t = d__1 * d__1;
   t1 = (((t * .75 - 1.) * t + 3.5) * t - 105.) / (*a * 1260.);
-  t1 -= *a * cdf_rlog (&u);
+  t1 -= *a * cdf_rlog (u);
   ret_val = rt2pin * sqrt (*a) * exp (t1);
   return ret_val;
 }				/* rcomp_ */

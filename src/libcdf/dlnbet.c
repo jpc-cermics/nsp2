@@ -65,10 +65,10 @@ double cdf_dlnbet (double *a0, double *b0)
       goto L10;
     }
   d__1 = a + b;
-  ret_val = cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gamln (&d__1));
+  ret_val = cdf_gamln (a) + (cdf_gamln (b) - cdf_gamln (d__1));
   return ret_val;
 L10:
-  ret_val = cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 /* ----------------------------------------------------------------------- */
 /*                PROCEDURE WHEN 1 .LE. A .LT. 8 */
@@ -82,7 +82,7 @@ L20:
     {
       goto L30;
     }
-  ret_val = cdf_gamln (&a) + cdf_gamln (&b) - cdf_gsumln (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_gamln (b) - cdf_gsumln (&a, &b);
   return ret_val;
 L30:
   w = 0.;
@@ -90,7 +90,7 @@ L30:
     {
       goto L60;
     }
-  ret_val = cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 
 /*                REDUCTION OF A WHEN B .LE. 1000 */
@@ -115,7 +115,7 @@ L40:
     {
       goto L60;
     }
-  ret_val = w + cdf_gamln (&a) + cdf_algdiv (&a, &b);
+  ret_val = w + cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 
 /*                 REDUCTION OF B WHEN B .LT. 8 */
@@ -131,7 +131,7 @@ L60:
 /* L70: */
     }
   ret_val =
-    w + log (z__) + (cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gsumln (&a, &b)));
+    w + log (z__) + (cdf_gamln (a) + (cdf_gamln (b) - cdf_gsumln (&a, &b)));
   return ret_val;
 
 /*                REDUCTION OF A WHEN B .GT. 1000 */
@@ -146,7 +146,7 @@ L80:
       w *= a / (a / b + 1.);
 /* L90: */
     }
-  ret_val = log (w) - n * log (b) + (cdf_gamln (&a) + cdf_algdiv (&a, &b));
+  ret_val = log (w) - n * log (b) + (cdf_gamln (a) + cdf_algdiv (a, b));
   return ret_val;
 /* ----------------------------------------------------------------------- */
 /*                   PROCEDURE WHEN A .GE. 8 */
@@ -156,7 +156,7 @@ L100:
   h__ = a / b;
   c__ = h__ / (h__ + 1.);
   u = -(a - .5) * log (c__);
-  v = b * cdf_alnrel (&h__);
+  v = b * cdf_alnrel (h__);
   if (u <= v)
     {
       goto L110;
