@@ -776,9 +776,15 @@ static int int_cdf_gamln(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln,NULL);
 }
+
 static int int_cdf_gamln1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln1,NULL);
+}
+
+static int int_cdf_expm1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_expm1,NULL);
 }
 
 static int int_cdf_alnrel(Stack stack, int rhs, int opt, int lhs)
@@ -813,6 +819,7 @@ static OpTab Dcd_func[]={
   {"cdf_gamln",int_cdf_gamln},
   {"cdf_gamln1",int_cdf_gamln1},
   {"cdf_alnrel",int_cdf_alnrel}, 
+  {"cdf_expm1",int_cdf_expm1},
   {(char *) 0, NULL}
 };
 
