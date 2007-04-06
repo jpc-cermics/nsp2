@@ -1,20 +1,23 @@
 #include "cdf.h"
 
-/* ----------------------------------------------------------------------- */
-/*     EVALUATION OF THE LOGARITHM OF THE BETA FUNCTION */
-/* ----------------------------------------------------------------------- */
+/**
+ * cdf_betaln:
+ * @a0: 
+ * @b0: 
+ * 
+ *    evaluation of the logarithm of the beta function 
+ * 
+ * Returns: a double 
+ **/
 
 double cdf_betaln (double *a0, double *b0)
 {
-  /*     E = 0.5*LN(2*PI) */
+  /* e = 0.5*LN(2*PI) */
   const double e = .918938533204673;
-
-  /* System generated locals */
-  int i__1;
-  double ret_val, d__1;
-  double a, b, c__, h__;
-  int i__, n;
-  double u, v, w, z__;
+  int i1, i, n;
+  double ret_val, d1;
+  double a, b, c, h;
+  double u, v, w, z;
 
   a = Min (*a0, *b0);
   b = Max (*a0, *b0);
@@ -33,16 +36,16 @@ double cdf_betaln (double *a0, double *b0)
     {
       goto L10;
     }
-  d__1 = a + b;
-  ret_val = cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gamln (&d__1));
+  d1 = a + b;
+  ret_val = cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gamln (&d1));
   return ret_val;
-L10:
+ L10:
   ret_val = cdf_gamln (&a) + cdf_algdiv (&a, &b);
   return ret_val;
   /* ----------------------------------------------------------------------- */
   /*                PROCEDURE WHEN 1 .LE. A .LT. 8 */
   /* ----------------------------------------------------------------------- */
-L20:
+ L20:
   if (a > 2.)
     {
       goto L40;
@@ -53,7 +56,7 @@ L20:
     }
   ret_val = cdf_gamln (&a) + cdf_gamln (&b) - cdf_gsumln (&a, &b);
   return ret_val;
-L30:
+ L30:
   w = 0.;
   if (b < 8.)
     {
@@ -64,20 +67,20 @@ L30:
 
   /*                REDUCTION OF A WHEN B .LE. 1000 */
 
-L40:
+ L40:
   if (b > 1e3)
     {
       goto L80;
     }
   n = (int) (a - 1.);
   w = 1.;
-  i__1 = n;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  i1 = n;
+  for (i = 1; i <= i1; ++i)
     {
       a += -1.;
-      h__ = a / b;
-      w *= h__ / (h__ + 1.);
-/* L50: */
+      h = a / b;
+      w *= h / (h + 1.);
+      /* L50: */
     }
   w = log (w);
   if (b < 8.)
@@ -89,50 +92,50 @@ L40:
 
   /*                 REDUCTION OF B WHEN B .LT. 8 */
 
-L60:
+ L60:
   n = (int) (b - 1.);
-  z__ = 1.;
-  i__1 = n;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  z = 1.;
+  i1 = n;
+  for (i = 1; i <= i1; ++i)
     {
       b += -1.;
-      z__ *= b / (a + b);
-/* L70: */
+      z *= b / (a + b);
+      /* L70: */
     }
   ret_val =
-    w + log (z__) + (cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gsumln (&a, &b)));
+    w + log (z) + (cdf_gamln (&a) + (cdf_gamln (&b) - cdf_gsumln (&a, &b)));
   return ret_val;
 
   /*                REDUCTION OF A WHEN B .GT. 1000 */
 
-L80:
+ L80:
   n = (int) (a - 1.);
   w = 1.;
-  i__1 = n;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  i1 = n;
+  for (i = 1; i <= i1; ++i)
     {
       a += -1.;
       w *= a / (a / b + 1.);
-/* L90: */
+      /* L90: */
     }
   ret_val = log (w) - n * log (b) + (cdf_gamln (&a) + cdf_algdiv (&a, &b));
   return ret_val;
   /* ----------------------------------------------------------------------- */
   /*                   PROCEDURE WHEN A .GE. 8 */
   /* ----------------------------------------------------------------------- */
-L100:
+ L100:
   w = cdf_bcorr (&a, &b);
-  h__ = a / b;
-  c__ = h__ / (h__ + 1.);
-  u = -(a - .5) * log (c__);
-  v = b * cdf_alnrel (&h__);
+  h = a / b;
+  c = h / (h + 1.);
+  u = -(a - .5) * log (c);
+  v = b * cdf_alnrel (&h);
   if (u <= v)
     {
       goto L110;
     }
   ret_val = log (b) * -.5 + e + w - v - u;
   return ret_val;
-L110:
+ L110:
   ret_val = log (b) * -.5 + e + w - u - v;
   return ret_val;
 }

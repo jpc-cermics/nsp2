@@ -1,11 +1,18 @@
 #include "cdf.h"
 
-/*
- *  X - 1 - LN(X)
- */
+/**
+ * cdf_rlog:
+ * @x: a pointer to a double 
+ * 
+ * evaluation of the function  x - 1 - LN(x)
+ * 
+ * Returns: a double 
+ **/
+
 
 double cdf_rlog (double *x)
 {
+  /*test:  A=[0.1:0.01:2]; norm(A-1 - log(A) - cdf_rlog(A))  */
   const double a = .0566749439387324;
   const double b = .0456512608815524;
   const double p0 = .333333333333333;
@@ -34,11 +41,11 @@ double cdf_rlog (double *x)
     }
   else 
     {
-      /*              ARGUMENT REDUCTION */
+      /*   argument reduction */
       u = *x - .5 - .5;
       w1 = 0.;
     }
-  /*               SERIES EXPANSION */
+  /*       series expansion */
   r = u / (u + 2.);
   t = r * r;
   w = ((p2 * t + p1) * t + p0) / ((q2 * t + q1) * t + 1.);

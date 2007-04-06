@@ -717,6 +717,66 @@ static void cdfchnErr(    int status,double bound, const int pos[])
     }
 }
 
+/* test */
+
+typedef double (*VM11)(double *x);
+typedef double (*VM12)(double *x,double *y);
+
+static int int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F, VM12 G)
+{
+  NspMatrix *HMat,*B;
+  int i;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((HMat = GetRealMatCopy (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( G == NULL) 
+	{
+	  Scierror("Error: expecting just one argument\n");
+	  return RET_BUG;
+	}
+      if ((B = GetRealMat(stack,2)) == NULLMAT) 
+	return RET_BUG;
+      CheckSameDims(NspFname(stack),1,2,HMat,B);
+      for ( i = 0 ; i < HMat->mn ; i++) 
+	{
+	  HMat->R[i]= G(&HMat->R[i],&B->R[i]);
+	}
+    }
+  else 
+    {
+      if ( F == NULL) 
+	{
+	  Scierror("Error: expecting two argument\n");
+	  return RET_BUG;
+	}
+      for ( i = 0 ; i < HMat->mn ; i++) 
+	{
+	  HMat->R[i]= F(&HMat->R[i]);
+	}
+    }
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+
+static int int_cdf_rlog1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_rlog1,NULL);
+}
+
+static int int_cdf_rlog(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_rlog,NULL);
+}
+
+static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv);
+}
+
 /*************************************************************
  * The Interface for basic matrices operation 
  *************************************************************/
@@ -733,6 +793,9 @@ static OpTab Dcd_func[]={
   {"cdfnor",int_cdfnor}, 
   {"cdfpoi",int_cdfpoi}, 
   {"cdft",int_cdft}, 
+  {"cdf_rlog1",int_cdf_rlog1},
+  {"cdf_rlog",int_cdf_rlog},
+  {"cdf_algdiv",int_cdf_algdiv},
   {(char *) 0, NULL}
 };
 
