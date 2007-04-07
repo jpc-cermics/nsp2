@@ -4577,6 +4577,29 @@ int int_alignement(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+extern void  C2F(dperm)(double *A,int *nv, int *ind);
+
+int int_test_dperm(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M, *P;
+
+  CheckRhs(2,2);
+  if ( (M = GetRealMatCopy(stack, 1)) == NULLMAT ) return RET_BUG;
+  if ( (P = GetRealMatCopyInt(stack, 2)) == NULLMAT ) return RET_BUG;
+  if (SameDim (M,P))
+    {
+      C2F(dperm)(M->R,&M->mn,P->I);
+    }
+  else
+    {
+      Scierror ("Error: arguments of %s should have same size \n",
+		NspFname(stack));
+      return RET_BUG;
+    }
+  NSP_OBJECT(M)->ret_pos  = 1;
+  return 1;
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -4726,6 +4749,7 @@ static OpTab Matrix_func[] = {
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
   {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
+  {"test_dperm",int_test_dperm},
   {(char *) 0, NULL}
 };
 
