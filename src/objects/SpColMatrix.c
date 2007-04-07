@@ -1572,7 +1572,10 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
       count = nsp_bi_dichotomic_search(Rows->R,0,Rows->mn-1,Ai->J,imin,imax,Work,Index,0);
       /* now we know the column size */
       if (nsp_spcolmatrix_resize_col(Loc,i,count)==FAIL) goto err;
-      /* Fills the rows of i-th column */
+      /* Fills the rows of i-th column 
+       * the first line of Rows gives the lines indice to fill in Li 
+       * the second line gives the associated lines to use in Ai
+       */
       Li->iw=0;
       for ( j = 0 ; j < Li->size ; j++ )
 	{	

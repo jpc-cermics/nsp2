@@ -45,6 +45,10 @@ void  C2F(dperm)(double *A,int *nv, int *ind)
 	{ 
 	  ind[i]=-ind[i]-1;
 	  A[i]=x;
+	  /* we have finished a cycle, find next one 
+	   * already processed points have a strictly negative 
+	   * value for ind 
+	   */
 	  i1=-1;
 	  while (1) 
 	    {
@@ -52,6 +56,7 @@ void  C2F(dperm)(double *A,int *nv, int *ind)
 	      if (i1 >= *nv) goto end;
 	      if (ind[i1] < 0) continue;
 	      i0=i1; i=i0; x=A[i0];
+	      break;
 	    }
 	}
       else
@@ -101,6 +106,7 @@ void  C2F(iperm)(int *A,int *nv, int *ind)
 	      if (i1 >= *nv) goto end;
 	      if (ind[i1] < 0) continue;
 	      i0=i1; i=i0; x=A[i0];
+	      break;
 	    }
 	}
       else
@@ -148,6 +154,7 @@ void  C2F(zperm)(doubleC *A,int *nv, int *ind)
 	      if (i1 >= *nv) goto end;
 	      if (ind[i1] < 0) continue;
 	      i0=i1; i=i0; x=A[i0];
+	      break;
 	    }
 	}
       else
