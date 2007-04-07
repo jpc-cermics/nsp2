@@ -17,7 +17,7 @@
  *     ABS(X) must be >= 5 else there is an error stop.
  */
 
-double cdf_dlanor(double * x)
+double cdf_dlanor(double x)
 {
   const double coef[12] = 
     {
@@ -28,7 +28,7 @@ double cdf_dlanor(double * x)
   const int ncoeff=12;
   const double dlsqpi =0.91893853320467274177E0;
   double approx,correc,xx,xx2,invxx2;
-  xx = Abs(*x);
+  xx = Abs(x);
   if (xx < 5.0E0) 
     {
       Scierror("Argument too small in dlanor\n");
