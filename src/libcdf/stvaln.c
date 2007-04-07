@@ -1,30 +1,24 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-/*     DOUBLE PRECISION FUNCTION STVALN(P) */
-/*                    STarting VALue for Neton-Raphon */
-/*                calculation of Normal distribution Inverse */
-/*                              Function */
-/*     Returns X  such that CUMNOR(X)  =   P,  i.e., the  integral from - */
-/*     infinity to X of (1/SQRT(2*PI)) EXP(-U*U/2) dU is P */
-/*                              Arguments */
-/*     P --> The probability whose normal deviate is sought. */
-/*                    P is DOUBLE PRECISION */
-/*                              Method */
-/*     The  rational   function   on  page 95    of Kennedy  and  Gentle, */
-/*     Statistical Computing, Marcel Dekker, NY , 1980. */
-/* ********************************************************************** */
+/*
+ * 
+ *  gives a starting value for newton-raphson 
+ *  calculation of normal distribution inverse. 
+ *  Returns x  such that cumnor(x)=p, i.e., the  integral from 
+ *  - infinity to x of (1/sqrt(2*pi)) exp(-u*u/2) du is p 
+ *  p  the probability whose normal deviate is sought. 
+ *    
+ *  The  rational   function   on  page 95    of kennedy  and  gentle, 
+ *     statistical computing, marcel dekker, ny , 1980. 
+ */
 
 double cdf_stvaln (double *p)
 {
   const int c__5 = 5;
-  const double xnum[5] =
-    { -.322232431088, -1., -.342242088547, -.0204231210245, -4.53642210148e-5 };
-  const double xden[5] =
-    { .099348462606, .588581570495, .531103462366, .10353775285, .0038560700634 };
+  const double xnum[5] = { -.322232431088, -1., -.342242088547, -.0204231210245, -4.53642210148e-5 };
+  const double xden[5] = { .099348462606, .588581570495, .531103462366, .10353775285, .0038560700634 };
   double ret_val;
   double sign, y, z;
-
   if (!(*p <= .5))
     {
       sign = 1.;

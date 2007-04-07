@@ -1,16 +1,16 @@
 #include "cdf.h"
 
-/* ----------------------------------------------------------------------- */
-/*     SPMPAR PROVIDES THE SINGLE PRECISION MACHINE CONSTANTS FOR */
-/*     THE COMPUTER BEING USED. IT IS ASSUMED THAT THE ARGUMENT */
-/*     I IS AN INT HAVING ONE OF THE VALUES 1, 2, OR 3. IF THE */
-/*     SINGLE PRECISION ARITHMETIC BEING USED HAS M BASE B DIGITS AND */
-/*     ITS SMALLEST AND LARGEST EXPONENTS ARE EMIN AND EMAX, THEN */
-/*        SPMPAR(1) = B**(1 - M), THE MACHINE PRECISION, */
-/*        SPMPAR(2) = B**(EMIN - 1), THE SMALLEST MAGNITUDE, */
-/*        SPMPAR(3) = B**EMAX*(1 - B**(-M)), THE LARGEST MAGNITUDE. */
-/*     rewriten  BY JPC to use lapack dlamch */
-/* ----------------------------------------------------------------------- */
+/*
+ *     spmpar provides the single precision machine constants for 
+ *     the computer being used. it is assumed that the argument 
+ *     i is an int having one of the values 1, 2, or 3. if the 
+ *     single precision arithmetic being used has m base b digits and 
+ *     its smallest and largest exponents are emin and emax, then 
+ *        spmpar(1) = b**(1 - m), the machine precision, 
+ *        spmpar(2) = b**(emin - 1), the smallest magnitude, 
+ *        spmpar(3) = b**emax*(1 - b**(-m)), the largest magnitude. 
+ *     rewriten  by jpc to use lapack dlamch 
+ */
 
 double cdf_spmpar (const int i)
 {
