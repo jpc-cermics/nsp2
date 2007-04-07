@@ -379,20 +379,23 @@ static int int_cholesky( Stack stack, int rhs, int opt, int lhs)
   if ( lhs == 2 ) minor =-1;
   if( nsp_cholesky(A,&minor)== OK) 
     {
-      if ( minor == -1 ) 
+      if ( minor == -1 || minor == 0 ) 
 	{
+	  /* matrix is OK */
 	  NSP_OBJECT(A)->ret_pos=1;
 	  if ( lhs == 2 ) 
 	    {
-	      if ( nsp_move_double(stack,2,A->m)== FAIL) return RET_BUG;
+	      if ( nsp_move_double(stack,2,0)== FAIL) return RET_BUG;
 	    }
 	  return Max(lhs,1);
 	}
       else 
 	{
+	  /* a minor is wrong */
+	  int q= Max(minor-1,0);
 	  NspMatrix *Res;
 	  int j, size= (A->rc_type== 'r') ? 1:2  ;
-	  if (( Res = nsp_matrix_create(NVOID,A->rc_type,minor-1,minor-1))== NULLMAT)
+	  if (( Res = nsp_matrix_create(NVOID,A->rc_type,q,q))== NULLMAT)
 	    return RET_BUG;
 	  for ( j= 0 ; j < Res->n ; j++) 
 	    {
