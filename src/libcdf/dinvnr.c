@@ -1,86 +1,47 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-/*     DOUBLE PRECISION FUNCTION DINVNR(P,Q) */
-/*     Double precision NoRmal distribution INVerse */
-/*                              Function */
-/*     Returns X  such that CUMNOR(X)  =   P,  i.e., the  integral from - */
-/*     infinity to X of (1/SQRT(2*PI)) EXP(-U*U/2) dU is P */
-/*                              Arguments */
-/*     P --> The probability whose normal deviate is sought. */
-/*                    P is DOUBLE PRECISION */
-/*     Q --> 1-P */
-/*                    P is DOUBLE PRECISION */
-/*                              Method */
-/*     The  rational   function   on  page 95    of Kennedy  and  Gentle, */
-/*     Statistical Computing, Marcel Dekker, NY , 1980 is used as a start */
-/*     value for the Newton method of finding roots. */
-/*                              Note */
-/*     If P or Q .lt. machine EPS returns +/- DINVNR(EPS) */
-
+/**
+ * cdf_dinvnr:
+ * @p: The probability whose normal deviate is sought. 
+ * @q: 1-P
+ * 
+ * returns x  such that cumnor(x)  =   p,  i.e., the  integral from 
+ * - infinity to x of (1/sqrt(2*pi)) exp(-u*u/2) du is p 
+ * note that if p or q .lt. machine eps returns +/- dinvnr(eps) 
+ * 
+ *     The  rational   function   on  page 95    of Kennedy  and  Gentle, 
+ *     Statistical Computing, Marcel Dekker, NY , 1980 is used as a start 
+ *     value for the Newton method of finding roots. 
+ * 
+ * Returns: a double 
+ **/
 
 double cdf_dinvnr (double *p, double *q)
 {
   const int maxit=100;
   const double eps=1.0E-13, r2pi=0.3989422804014326E0, nhalf=-0.5E0;
-  int i__1;
-  double ret_val, d__1;
-  double ccum, xcur;
-  int i__;
-  int qporq;
-  double strtx, dx, pp;
-  double cum;
-
-
-/*     FIND MINIMUM OF P AND Q */
-
+  double ccum, xcur, cum, d1, strtx, dx, pp;
+  int i1, i,  qporq;
+  /*     FIND MINIMUM OF P AND Q */
   qporq = *p <= *q;
-  if (!qporq)
-    {
-      goto L10;
-    }
-  pp = *p;
-  goto L20;
-L10:
-  pp = *q;
-
-/*     INITIALIZATION STEP */
-
-L20:
+  pp = (!qporq) ? *q : *p;
+  /*     initialization step */
   strtx = cdf_stvaln (&pp);
   xcur = strtx;
-
-/*     NEWTON INTERATIONS */
-
-  i__1 = maxit;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  /*     newton interations */
+  i1 = maxit;
+  for (i = 1; i <= i1; ++i)
     {
       cdf_cumnor (&xcur, &cum, &ccum);
       dx = (cum - pp) / (r2pi * exp (nhalf * xcur * xcur));
       xcur -= dx;
-      if ((d__1 = dx / xcur, Abs (d__1)) < eps)
+      if ((d1 = dx / xcur, abs (d1)) < eps)
 	{
-	  goto L40;
+	  /*     if we get here, newton has succeded */
+	  return (!qporq) ? - xcur : xcur ;
 	}
-/* L30: */
     }
-  ret_val = strtx;
+  /*     if we get here, newton has failed */
+  return (!qporq) ?  -strtx : strtx;
+}	
 
-/*     IF WE GET HERE, NEWTON HAS FAILED */
-
-  if (!qporq)
-    {
-      ret_val = -ret_val;
-    }
-  return ret_val;
-
-/*     IF WE GET HERE, NEWTON HAS SUCCEDED */
-
-L40:
-  ret_val = xcur;
-  if (!qporq)
-    {
-      ret_val = -ret_val;
-    }
-  return ret_val;
-}				/* dinvnr_ */

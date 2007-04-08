@@ -1,42 +1,18 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-
-/*     SUBROUTINE FUNCTION CUMCHI(X,DF,CUM,CCUM) */
-/*             CUMulative of the CHi-square distribution */
-
-
-/*                              Function */
-
-
-/*     Calculates the cumulative chi-square distribution. */
-
-
-/*                              Arguments */
-
-
-/*     X       --> Upper limit of integration of the */
-/*                 chi-square distribution. */
-/*                                                 X is DOUBLE PRECISION */
-
-/*     DF      --> Degrees of freedom of the */
-/*                 chi-square distribution. */
-/*                                                 DF is DOUBLE PRECISION */
-
-/*     CUM <-- Cumulative chi-square distribution. */
-/*                                                 CUM is DOUBLE PRECISIO */
-
-/*     CCUM <-- Compliment of Cumulative chi-square distribution. */
-/*                                                 CCUM is DOUBLE PRECISI */
-
-
-/*                              Method */
-
-
-/*     Calls incomplete gamma function (CUMGAM) */
-
-/* ********************************************************************** */
-
+/**
+ * cdf_cumchi:
+ * @x: upper limit of integration of the chi-square distribution.
+ * @df: degrees of freedom of the chi-square distribution.
+ * @cum: cumulative chi-square distribution
+ * @ccum: compliment of cumulative chi-square distribution.
+ * 
+ * calculates the cumulative chi-square distribution returned in 
+ * @cum and its complement in @ccum. 
+ * calls incomplete gamma function (cumgam)
+ * 
+ * Returns: 0 
+ **/
 
 int cdf_cumchi (double *x, double *df, double *cum, double *ccum)
 {

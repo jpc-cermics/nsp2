@@ -51,7 +51,7 @@ double cdf_dt1 (double *p, double *q, double *df)
   denpow = 1.;
   for (i__ = 1; i__ <= 4; ++i__)
     {
-      term = cdf_devlpl (&coef[i__ * 5 - 5], &ideg[i__ - 1], &xx) * x;
+      term = cdf_devlpl (&coef[i__ * 5 - 5], ideg[i__ - 1], xx) * x;
       denpow *= *df;
       sum += term / (denpow * denom[i__ - 1]);
 /* L10: */

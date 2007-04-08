@@ -62,7 +62,7 @@ double cdf_dstrem (double *z__)
   /* Computing 2nd power */
   d__2 = *z__;
   d__1 = 1. / (d__2 * d__2);
-  ret_val = cdf_devlpl (coef, &c__10, &d__1) * *z__;
+  ret_val = cdf_devlpl (coef, c__10, d__1) * *z__;
   goto L20;
 L10:
   sterl = hln2pi + (*z__ - .5) * log (*z__) - *z__;

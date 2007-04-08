@@ -30,7 +30,7 @@ double cdf_stvaln (double *p)
       z = *p;
     }
   y = sqrt (log (z) * -2.);
-  ret_val = y + cdf_devlpl (xnum, &c__5, &y) / cdf_devlpl (xden, &c__5, &y);
+  ret_val = y + cdf_devlpl (xnum, c__5, y) / cdf_devlpl (xden, c__5, y);
   ret_val = sign * ret_val;
   return ret_val;
 }

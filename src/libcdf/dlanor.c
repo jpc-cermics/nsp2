@@ -41,8 +41,8 @@ double cdf_dlanor(double x)
   xx2 = xx*xx;
   approx = -dlsqpi - 0.5E0*xx2 - log(xx);
   invxx2= 1.0E0/xx2;
-  correc = cdf_devlpl(coef,&ncoeff,&invxx2)/xx2;
-  correc = cdf_dln1px(&correc);
+  correc = cdf_devlpl(coef,ncoeff,invxx2)/xx2;
+  correc = cdf_dln1px(correc);
   return  approx + correc;
 }
 

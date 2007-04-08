@@ -802,10 +802,17 @@ static int int_cdf_dlanor1(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor1,NULL);
 }
 
+static int int_cdf_alngam(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_alngam,NULL);
+}
+
 static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv);
 }
+
+
 
 /*************************************************************
  * The Interface for basic matrices operation 
@@ -832,6 +839,8 @@ static OpTab Dcd_func[]={
   {"cdf_expm1",int_cdf_expm1},
   {"cdf_dlanor",int_cdf_dlanor},
   {"cdf_dlanor1",int_cdf_dlanor1},
+  {"cdf_alngam",int_cdf_alngam},
+
   {(char *) 0, NULL}
 };
 

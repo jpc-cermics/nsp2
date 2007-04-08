@@ -1,83 +1,72 @@
-/* ********************************************************************** */
-/*               F -NON- -C-ENTRAL F DISTRIBUTION */
-/*                              Function */
-/*     COMPUTES NONCENTRAL F DISTRIBUTION WITH DFN AND DFD */
-/*     DEGREES OF FREEDOM AND NONCENTRALITY PARAMETER PNONC */
-/*                              Arguments */
-/*     X --> UPPER LIMIT OF INTEGRATION OF NONCENTRAL F IN EQUATION */
-/*     DFN --> DEGREES OF FREEDOM OF NUMERATOR */
-/*     DFD -->  DEGREES OF FREEDOM OF DENOMINATOR */
-/*     PNONC --> NONCENTRALITY PARAMETER. */
-/*     CUM <-- CUMULATIVE NONCENTRAL F DISTRIBUTION */
-/*     CCUM <-- COMPLIMENT OF CUMMULATIVE */
-/*                              Method */
-/*     USES FORMULA 26.6.20 OF REFERENCE FOR INFINITE SERIES. */
-/*     SERIES IS CALCULATED BACKWARD AND FORWARD FROM J = LAMBDA/2 */
-/*     (THIS IS THE TERM WITH THE LARGEST POISSON WEIGHT) UNTIL */
-/*     THE CONVERGENCE CRITERION IS MET. */
-/*     FOR SPEED, THE INCOMPLETE BETA FUNCTIONS ARE EVALUATED */
-/*     BY FORMULA 26.5.16. */
-/*               REFERENCE */
-/*     HANDBOOD OF MATHEMATICAL FUNCTIONS */
-/*     EDITED BY MILTON ABRAMOWITZ AND IRENE A. STEGUN */
-/*     NATIONAL BUREAU OF STANDARDS APPLIED MATEMATICS SERIES - 55 */
-/*     MARCH 1965 */
-/*     P 947, EQUATIONS 26.6.17, 26.6.18 */
-/*                              Note */
-/*     THE SUM CONTINUES UNTIL A SUCCEEDING TERM IS LESS THAN EPS */
-/*     TIMES THE SUM (OR THE SUM IS LESS THAN 1.0E-20).  EPS IS */
-/*     SET TO 1.0E-4 IN A DATA STATEMENT WHICH CAN BE CHANGED. */
-/* ********************************************************************** */
-
 #include "cdf.h"
 
-int
-cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum,
-	    double *ccum)
+/**
+ * cdf_cumfnc:
+ * @f: upper limit of integration of noncentral f in equation 
+ * @dfn: degrees of freedom of numerator 
+ * @dfd: degrees of freedom of denominator 
+ * @pnonc: noncentrality parameter
+ * @cum: cumulative noncentral f distribution 
+ * @ccum: compliment of cummulative 
+ * 
+ * computes noncentral f distribution with dfn and dfd 
+ * degrees of freedom and noncentrality parameter pnonc 
+ * 
+ *     uses formula 26.6.20 of reference for infinite series. 
+ *     series is calculated backward and forward from j = lambda/2 
+ *     (this is the term with the largest poisson weight) until 
+ *     the convergence criterion is met. 
+ *     for speed, the incomplete beta functions are evaluated 
+ *     by formula 26.5.16. 
+ *               reference 
+ *     handbood of mathematical functions 
+ *     edited by milton abramowitz and irene a. stegun 
+ *     national bureau of standards applied matematics series - 55 
+ *     march 1965 
+ *     p 947, equations 26.6.17, 26.6.18 
+ *                              note 
+ *     the sum continues until a succeeding term is less than eps 
+ *     times the sum (or the sum is less than 1.0e-20).  eps is 
+ *     set to 1.0e-4 in a data statement which can be changed. 
+ * 
+ * Returns: 0
+ **/
+
+int cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum, double *ccum)
 {
-  const double half=0.5E0, done=1.0E0;
-  static double eps = 1e-4;
-  double d__1, d__2;
-  int ierr;
-  double prod, dsum, b;
-  int i__;
-  double betdn;
-  int icent;
-  double betup, xnonc, dummy, xmult;
-  double xx;
-  double yy, dnterm, centwt, upterm, adn, aup, sum;
+  const double half=0.5E0, done=1.0E0, eps = 1e-4;
+  double d__1, d__2, prod, dsum, b, betdn, betup, xnonc, dummy, xmult;
+  double xx, yy, dnterm, centwt, upterm, adn, aup, sum;
+  int ierr,  i__ ,  icent;
 
-  if (!(*f <= 0.))
+  if (*f <= 0.)
     {
-      goto L10;
-    }
-  *cum = 0.;
-  *ccum = 1.;
-  return 0;
-L10:
-  if (!(*pnonc < 1e-10))
-    {
-      goto L20;
+      *cum = 0.;
+      *ccum = 1.;
+      return 0;
     }
 
-/*     Handle case in which the non-centrality parameter is */
-/*     (essentially) zero. */
-  cdf_cumf (f, dfn, dfd, cum, ccum);
-  return 0;
-L20:
+  if (*pnonc < 1e-10) 
+    {
+      /*     Handle case in which the non-centrality parameter is */
+      /*     (essentially) zero. */
+      cdf_cumf (f, dfn, dfd, cum, ccum);
+      return 0;
+    }
+
   xnonc = *pnonc / 2.;
-/*     Calculate the central term of the poisson weighting factor. */
+  /*     Calculate the central term of the poisson weighting factor. */
   icent = (int) xnonc;
   if (icent == 0)
     {
       icent = 1;
     }
-/*     Compute central weight term */
+  /*     Compute central weight term */
   d__1 = (double) (icent + 1);
-  centwt = exp (-xnonc + icent * log (xnonc) - cdf_alngam (&d__1));
-/*     Compute central incomplete beta term */
-/*     Assure that minimum of arg to beta and 1 - arg is computed */
-/*          accurately. */
+  centwt = exp (-xnonc + icent * log (xnonc) - cdf_alngam (d__1));
+  /*     Compute central incomplete beta term */
+  /*     Assure that minimum of arg to beta and 1 - arg is computed */
+  /*          accurately. */
   prod = *dfn * *f;
   dsum = *dfd + prod;
   yy = *dfd / dsum;
@@ -98,13 +87,13 @@ L20:
   b = *dfd / 2.;
   betup = betdn;
   sum = centwt * betdn;
-/*     Now sum terms backward from icent until convergence or all done */
+  /*     Now sum terms backward from icent until convergence or all done */
   xmult = centwt;
   i__ = icent;
   d__1 = adn + b;
   d__2 = adn + 1.;
   dnterm =
-    exp (cdf_alngam (&d__1) - cdf_alngam (&d__2) - cdf_alngam (&b) +
+    exp (cdf_alngam (d__1) - cdf_alngam (d__2) - cdf_alngam (b) +
 	 adn * log (xx) + b * log (yy));
 L30:
   d__1 = xmult * betdn;
@@ -121,19 +110,19 @@ L30:
   goto L30;
 L40:
   i__ = icent + 1;
-/*     Now sum forwards until convergence */
+  /*     Now sum forwards until convergence */
   xmult = centwt;
   if (aup - 1 + b == 0.)
     {
       upterm =
-	exp (-cdf_alngam (&aup) - cdf_alngam (&b) + (aup - 1) * log (xx) +
+	exp (-cdf_alngam (aup) - cdf_alngam (b) + (aup - 1) * log (xx) +
 	     b * log (yy));
     }
   else
     {
       d__1 = aup - 1 + b;
       upterm =
-	exp (cdf_alngam (&d__1) - cdf_alngam (&aup) - cdf_alngam (&b) +
+	exp (cdf_alngam (d__1) - cdf_alngam (aup) - cdf_alngam (b) +
 	     (aup - 1) * log (xx) + b * log (yy));
     }
   goto L60;
@@ -155,4 +144,4 @@ L70:
   *cum = sum;
   *ccum = .5 - *cum + .5;
   return 0;
-}				/* cumfnc_ */
+}		
