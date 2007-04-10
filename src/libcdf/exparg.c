@@ -1,14 +1,19 @@
 #include "cdf.h"
 
-/* -------------------------------------------------------------------- */
-/*     IF L = 0 THEN  EXPARG(L) = THE LARGEST POSITIVE W FOR WHICH */
-/*     EXP(W) CAN BE COMPUTED. */
-/*     IF L IS NONZERO THEN  EXPARG(L) = THE LARGEST NEGATIVE W FOR */
-/*     WHICH THE COMPUTED VALUE OF EXP(W) IS NONZERO. */
-/*     NOTE... ONLY AN APPROXIMATE VALUE FOR EXPARG(L) IS NEEDED. */
-/*  jpc: translated from fortran */
-/* -------------------------------------------------------------------- */
 
+
+/**
+ * cdf_exparg:
+ * @l: an integer 
+ * 
+ * 
+ * if l = 0 then  exparg(l) is the largest positive w for which exp(w) can be computed. 
+ * if l is nonzero then  exparg(l) is the largest negative w for 
+ *     which the computed value of exp(w) is nonzero. 
+ * note... only an approximate value for exparg(l) is needed. 
+ * 
+ * Returns: 
+ **/
 
 double cdf_exparg (const int l)
 {

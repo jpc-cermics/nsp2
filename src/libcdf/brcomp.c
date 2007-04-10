@@ -1,186 +1,164 @@
 #include "cdf.h"
 
-/* ----------------------------------------------------------------------- */
-/*               EVALUATION OF X**A*Y**B/BETA(A,B) */
-/* ----------------------------------------------------------------------- */
+/**
+ * cdf_brcomp:
+ * @a: 
+ * @b: 
+ * @x: 
+ * @y: 
+ * 
+ * evaluation of x^a*y^b/beta(a,b)
+ * 
+ * Returns: a double 
+ **/
 
-double cdf_brcomp (double *a, double *b, double *x, double *y)
+double cdf_brcomp (double a, double b, double x, double y)
 {
   /*     CONST = 1/SQRT(2*PI) */
-  const  double const__ = .398942280401433;
-  int i__1;
-  double ret_val, d__1;
-  double c__, e, h__;
-  int i__, n;
-  double t, u, v, z__;
-  double a0, b0, x0, y0;
-  double lambda;
-  double apb, lnx, lny;
+  const  double invsqrt2pi = .398942280401433;
+  double a0, b0, x0, y0,  apb, lnx, lny;
+  double c, e, h, lambda,  ret_val, d1,  t, u, v, z;
+  int i, n,  i1;
 
   ret_val = 0.;
-  if (*x == 0. || *y == 0.)
+  if (x == 0. || y == 0.)
     {
       return ret_val;
     }
-  a0 = Min (*a, *b);
+  a0 = Min (a, b);
   if (a0 >= 8.)
     {
-      goto L130;
+      /*              PROCEDURE FOR A .GE. 8 AND B .GE. 8 */
+      if (a > b)
+	{
+	  h = b / a;
+	  x0 = 1. / (h + 1.);
+	  y0 = h / (h + 1.);
+	  lambda = (a + b) * y - b;
+	}
+      else
+	{
+	  h = a / b;
+	  x0 = h / (h + 1.);
+	  y0 = 1. / (h + 1.);
+	  lambda = a - (a + b) * x;
+	}
+      e = -lambda / a;
+      if (Abs (e) > .6)
+	{
+	  u = e - log (x / x0);
+	}
+      else
+	{
+	  u = cdf_rlog1 (e);
+	}
+
+      e = lambda / b;
+      if (Abs (e) > .6)
+	{
+	  v = e - log (y / y0);
+	}
+      else 
+	{
+	  v = cdf_rlog1 (e);
+	}
+      z = exp (-(a * u + b * v));
+      ret_val = invsqrt2pi * sqrt (b * x0) * z * exp (-cdf_bcorr (&a, &b));
+      return ret_val;
+    }
+  
+  if (x > .375)
+    {
+      if (y > .375)
+	{
+	  lnx = log (x);
+	  lny = log (y);
+	}
+      else
+	{
+	  d1 = -(y);
+	  lnx = cdf_alnrel (d1);
+	  lny = log (y);
+	}
+    }
+  else 
+    {
+      lnx = log (x);
+      d1 = -(x);
+      lny = cdf_alnrel (d1);
+    }
+  z = a * lnx + b * lny;
+  if (a0 >= 1.)
+    {
+      z -= cdf_betaln (a, b);
+      ret_val = exp (z);
+      return ret_val;
     }
 
-  if (*x > .375)
-    {
-      goto L10;
-    }
-  lnx = log (*x);
-  d__1 = -(*x);
-  lny = cdf_alnrel (d__1);
-  goto L30;
-L10:
-  if (*y > .375)
-    {
-      goto L20;
-    }
-  d__1 = -(*y);
-  lnx = cdf_alnrel (d__1);
-  lny = log (*y);
-  goto L30;
-L20:
-  lnx = log (*x);
-  lny = log (*y);
-
-L30:
-  z__ = *a * lnx + *b * lny;
-  if (a0 < 1.)
-    {
-      goto L40;
-    }
-  z__ -= cdf_betaln (a, b);
-  ret_val = exp (z__);
-  return ret_val;
-/* ----------------------------------------------------------------------- */
-/*              PROCEDURE FOR A .LT. 1 OR B .LT. 1 */
-/* ----------------------------------------------------------------------- */
-L40:
-  b0 = Max (*a, *b);
+  /* PROCEDURE FOR A .LT. 1 OR B .LT. 1 */
+  b0 = Max (a, b);
   if (b0 >= 8.)
     {
-      goto L120;
+      /*  ALGORITHM FOR B0 .GE. 8 */
+      u = cdf_gamln1 (a0) + cdf_algdiv (a0, b0);
+      ret_val = a0 * exp (z - u);
+      return ret_val;
     }
   if (b0 > 1.)
     {
-      goto L70;
+      /*                ALGORITHM FOR 1 .LT. B0 .LT. 8 */
+      u = cdf_gamln1 (a0);
+      n = (int) (b0 - 1.);
+      if (n < 1)
+	{
+	}
+      else 
+	{
+	  c = 1.;
+	  i1 = n;
+	  for (i = 1; i <= i1; ++i)
+	    {
+	      b0 += -1.;
+	      c *= b0 / (a0 + b0);
+	    }
+	  u = log (c) + u;
+	}
+      z -= u;
+      b0 += -1.;
+      apb = a0 + b0;
+      if (apb > 1.)
+	{
+	  u = a0 + b0 - 1.;
+	  t = (cdf_gam1 (u) + 1.) / apb;
+	}
+      else 
+	{
+	  t = cdf_gam1 (apb) + 1.;
+	}
+      ret_val = a0 * exp (z) * (cdf_gam1 (b0) + 1.) / t;
+      return ret_val;
     }
 
-/*                   ALGORITHM FOR B0 .LE. 1 */
-
-  ret_val = exp (z__);
+  /*  ALGORITHM FOR B0 .LE. 1 */
+  ret_val = exp (z);
   if (ret_val == 0.)
     {
       return ret_val;
     }
 
-  apb = *a + *b;
+  apb = a + b;
   if (apb > 1.)
     {
-      goto L50;
+      u = a + b - 1.;
+      z = (cdf_gam1 (u) + 1.) / apb;
     }
-  z__ = cdf_gam1 (&apb) + 1.;
-  goto L60;
-L50:
-  u = *a + *b - 1.;
-  z__ = (cdf_gam1 (&u) + 1.) / apb;
-
-L60:
-  c__ = (cdf_gam1 (a) + 1.) * (cdf_gam1 (b) + 1.) / z__;
-  ret_val = ret_val * (a0 * c__) / (a0 / b0 + 1.);
+  else 
+    {
+      z = cdf_gam1 (apb) + 1.;
+    }
+  c = (cdf_gam1 (a) + 1.) * (cdf_gam1 (b) + 1.) / z;
+  ret_val = ret_val * (a0 * c) / (a0 / b0 + 1.);
   return ret_val;
 
-/*                ALGORITHM FOR 1 .LT. B0 .LT. 8 */
+}	
 
-L70:
-  u = cdf_gamln1 (a0);
-  n = (int) (b0 - 1.);
-  if (n < 1)
-    {
-      goto L90;
-    }
-  c__ = 1.;
-  i__1 = n;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      b0 += -1.;
-      c__ *= b0 / (a0 + b0);
-/* L80: */
-    }
-  u = log (c__) + u;
-
-L90:
-  z__ -= u;
-  b0 += -1.;
-  apb = a0 + b0;
-  if (apb > 1.)
-    {
-      goto L100;
-    }
-  t = cdf_gam1 (&apb) + 1.;
-  goto L110;
-L100:
-  u = a0 + b0 - 1.;
-  t = (cdf_gam1 (&u) + 1.) / apb;
-L110:
-  ret_val = a0 * exp (z__) * (cdf_gam1 (&b0) + 1.) / t;
-  return ret_val;
-
-/*                   ALGORITHM FOR B0 .GE. 8 */
-
-L120:
-  u = cdf_gamln1 (a0) + cdf_algdiv (a0, b0);
-  ret_val = a0 * exp (z__ - u);
-  return ret_val;
-/* ----------------------------------------------------------------------- */
-/*              PROCEDURE FOR A .GE. 8 AND B .GE. 8 */
-/* ----------------------------------------------------------------------- */
-L130:
-  if (*a > *b)
-    {
-      goto L140;
-    }
-  h__ = *a / *b;
-  x0 = h__ / (h__ + 1.);
-  y0 = 1. / (h__ + 1.);
-  lambda = *a - (*a + *b) * *x;
-  goto L150;
-L140:
-  h__ = *b / *a;
-  x0 = 1. / (h__ + 1.);
-  y0 = h__ / (h__ + 1.);
-  lambda = (*a + *b) * *y - *b;
-
-L150:
-  e = -lambda / *a;
-  if (Abs (e) > .6)
-    {
-      goto L160;
-    }
-  u = cdf_rlog1 (e);
-  goto L170;
-L160:
-  u = e - log (*x / x0);
-
-L170:
-  e = lambda / *b;
-  if (Abs (e) > .6)
-    {
-      goto L180;
-    }
-  v = cdf_rlog1 (e);
-  goto L190;
-L180:
-  v = e - log (*y / y0);
-
-L190:
-  z__ = exp (-(*a * u + *b * v));
-  ret_val = const__ * sqrt (*b * x0) * z__ * exp (-cdf_bcorr (a, b));
-  return ret_val;
-}				/* brcomp_ */

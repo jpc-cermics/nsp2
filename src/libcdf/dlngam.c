@@ -1,96 +1,72 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-
-/*     DOUBLE PRECISION FUNCTION DLNGAM(X) */
-/*                 Double precision LN of the GAMma function */
 
 
-/*                              Function */
+/**
+ * cdf_dlngam:
+ * @a: value at which scaled log gamma is to be returned 
+ * 
+ * returns the natural logarithm of gamma(@a)  for positive @a.
+ * renames gamln from: 
+ *     Didinato, A. R. and Morris, A.H.  algorithm 708: significant 
+ *     digit computation of the incomplete  beta  function ratios.  acm 
+ *     trans. math.  softw. 18 (1993), 360-373. 
+ * 
+ * written by A.H. Morris, naval surface warfare center, 
+ * Dahlgren, virginia 
+ * 
+ * Returns: a double 
+ **/
 
 
-/*     Returns the natural logarithm of GAMMA(X). */
-
-
-/*                              Arguments */
-
-
-/*     X --> value at which scaled log gamma is to be returned */
-/*                    X is DOUBLE PRECISION */
-
-
-/*                              Method */
-
-
-/*     Renames GAMLN from: */
-/*     DiDinato, A. R. and Morris,  A.   H.  Algorithm 708: Significant */
-/*     Digit Computation of the Incomplete  Beta  Function Ratios.  ACM */
-/*     Trans. Math.  Softw. 18 (1993), 360-373. */
-
-/* ********************************************************************** */
-/* ----------------------------------------------------------------------- */
-/*            EVALUATION OF LN(GAMMA(A)) FOR POSITIVE A */
-/* ----------------------------------------------------------------------- */
-/*     WRITTEN BY ALFRED H. MORRIS */
-/*          NAVAL SURFACE WARFARE CENTER */
-/*          DAHLGREN, VIRGINIA */
-
-
-double cdf_dlngam (double *a)
+double cdf_dlngam (double a)
 {
-  /* Initialized data */
-  /*     D = 0.5*(LN(2*PI) - 1) */
-  const double d__ = .418938533204673;
+  /*     d = 0.5*(ln(2*pi) - 1) */
+  const double d = .418938533204673;
   const double c0 = .0833333333333333;
   const double c1 = -.00277777777760991;
   const double c2 = 7.9365066682539e-4;
   const double c3 = -5.9520293135187e-4;
   const double c4 = 8.37308034031215e-4;
   const double c5 = -.00165322962780713;
-  int i__1;
-  double ret_val, d__1;
-  int i__, n;
-  double t, w;
 
-  if (*a > .8)
-    {
-      goto L10;
-    }
-  ret_val = cdf_gamln1 (*a) - log (*a);
-  return ret_val;
-L10:
-  if (*a > 2.25)
-    {
-      goto L20;
-    }
-  t = *a - .5 - .5;
-  ret_val = cdf_gamln1 (t);
-  return ret_val;
+  double d1,  t, w;
+  int i, n, i1;
 
-L20:
-  if (*a >= 10.)
+  if (a > .8)
     {
-      goto L40;
+      if (a > 2.25)
+	{
+	  if (a >= 10.)
+	    {
+	      d1 = 1. / a;
+	      t = d1*d1;
+	      w = (((((c5*t + c4)*t + c3)*t + c2)*t + c1)*t + c0) / a;
+	      return  d + w + (a - .5)*(log (a) - 1.);
+	    }
+	  else 
+	    {
+	      n = (int) (a - 1.25);
+	      t = a;
+	      w = 1.;
+	      i1 = n;
+	      for (i = 1; i <= i1; ++i)
+		{
+		  t += -1.;
+		  w = t * w;
+		}
+	      return cdf_gamln1 (t-1) + log (w);
+	    }
+	}
+      else
+	{
+	  return cdf_gamln1 ( a - .5 - .5);
+	}
     }
-  n = (int) (*a - 1.25);
-  t = *a;
-  w = 1.;
-  i__1 = n;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  else 
     {
-      t += -1.;
-      w = t * w;
-/* L30: */
+      return cdf_gamln1 (a) - log (a);
     }
-  d__1 = t - 1.;
-  ret_val = cdf_gamln1 (d__1) + log (w);
-  return ret_val;
 
-L40:
-/* Computing 2nd power */
-  d__1 = 1. / *a;
-  t = d__1 * d__1;
-  w = (((((c5 * t + c4) * t + c3) * t + c2) * t + c1) * t + c0) / *a;
-  ret_val = d__ + w + (*a - .5) * (log (*a) - 1.);
-  return ret_val;
-}				/* dlngam_ */
+}
+

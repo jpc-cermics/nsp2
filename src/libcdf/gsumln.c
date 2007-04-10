@@ -1,32 +1,34 @@
 #include "cdf.h"
 
-/* ----------------------------------------------------------------------- */
-/*          EVALUATION OF THE FUNCTION LN(GAMMA(A + B)) */
-/*          FOR 1 .LE. A .LE. 2  AND  1 .LE. B .LE. 2 */
-/* ----------------------------------------------------------------------- */
+/**
+ * cdf_gsumln:
+ * @a: a double 
+ * @b: a double
+ * 
+ *  evaluation of the function ln(gamma(a + b))
+ *  for 1 .le. a .le. 2  and  1 .le. b .le. 2
+ * 
+ * Returns: 
+ **/
 
-double cdf_gsumln (double *a, double *b)
+double cdf_gsumln (double a, double b)
 {
-  double ret_val, d__1;
-  double x;
-
-  x = *a + *b - 2.;
+  double x = a + b - 2.;
   if (x > .25)
     {
-      goto L10;
+      if (x > 1.25)
+	{
+	  return cdf_gamln1(x-1) + log (x * (x + 1.));
+	}
+      else 
+	{
+	  return  cdf_gamln1 (x) + cdf_alnrel (x);
+	}
     }
-  d__1 = x + 1.;
-  ret_val = cdf_gamln1 (d__1);
-  return ret_val;
-L10:
-  if (x > 1.25)
+  else 
     {
-      goto L20;
+      return cdf_gamln1 ( x + 1.);
     }
-  ret_val = cdf_gamln1 (x) + cdf_alnrel (x);
-  return ret_val;
-L20:
-  d__1 = x - 1.;
-  ret_val = cdf_gamln1 (d__1) + log (x * (x + 1.));
-  return ret_val;
-}				/* gsumln_ */
+}
+
+

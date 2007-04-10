@@ -70,29 +70,17 @@
 /*               t^(A-1) * (1-t)^(B-1) */
 
 
-/* Subroutine */ int
-cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a,
-	    double *b, int *status, double *bound)
+int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a,
+		double *b, int *status, double *bound)
 {
-  const int c__1 = 1;
-  double c_b35 = 0.;
-  double c_b36 = 1.;
   const double c_b46 = .5;
   const double c_b48 = 5.;
   const double tol=1.0E-8, atol=1.0E-50,zero=1.0E-300,inf=1.0E300,one=1.0E0;
-  /* System generated locals */
-  double d__1;
-
-  /* Local variables */
-  double ccum;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  double xy;
-  int qhi;
-  double cum, xhi, xlo;
-  /*     Check arguments */
-
+  const int c__1 = 1;
+  double c_b35 = 0. , c_b36 = 1.;
+  double ccum,  cum, xhi, xlo,  d__1, fx, pq,  xy;
+  int qhi, qleft, qporq;
+  
   if (!(*which < 1 || *which > 4))
     {
       goto L30;
@@ -113,9 +101,7 @@ L30:
     {
       goto L70;
     }
-
-/*     P */
-
+  /*     P */
   if (!(*p < 0. || *p > 1.))
     {
       goto L60;
@@ -137,9 +123,7 @@ L70:
     {
       goto L110;
     }
-
-/*     Q */
-
+  /*     Q */
   if (!(*q < 0. || *q > 1.))
     {
       goto L100;
@@ -161,9 +145,7 @@ L110:
     {
       goto L150;
     }
-
-/*     X */
-
+  /*     X */
   if (!(*x < 0. || *x > 1.))
     {
       goto L140;
@@ -185,9 +167,7 @@ L150:
     {
       goto L190;
     }
-
-/*     Y */
-
+  /*     Y */
   if (!(*y < 0. || *y > 1.))
     {
       goto L180;
@@ -209,9 +189,7 @@ L190:
     {
       goto L210;
     }
-
-/*     A */
-
+  /*     A */
   if (!(*a <= 0.))
     {
       goto L200;
@@ -225,9 +203,7 @@ L210:
     {
       goto L230;
     }
-
-/*     B */
-
+  /*     B */
   if (!(*b <= 0.))
     {
       goto L220;
@@ -241,9 +217,7 @@ L230:
     {
       goto L270;
     }
-
-/*     P + Q */
-
+  /*     P + Q */
   pq = *p + *q;
   if (!((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
     {
@@ -266,9 +240,7 @@ L270:
     {
       goto L310;
     }
-
-/*     X + Y */
-
+  /*     X + Y */
   xy = *x + *y;
   if (!((d__1 = xy - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
     {
@@ -291,25 +263,17 @@ L310:
     {
       qporq = *p <= *q;
     }
-
-/*     Select the minimum of P or Q */
-
-
-/*     Calculate ANSWERS */
-
+  /*     Select the minimum of P or Q */
+  /*     Calculate ANSWERS */
   if (1 == *which)
     {
-
-/*     Calculating P and Q */
-
+      /*     Calculating P and Q */
       cdf_cumbet (x, y, a, b, p, q);
       *status = 0;
     }
   else if (2 == *which)
     {
-
       /*     Calculating X and Y */
-
       cdf_dstzr (&c_b35, &c_b36, &atol, &tol);
       if (!qporq)
 	{
@@ -327,7 +291,7 @@ L310:
       fx = cum - *p;
       cdf_dzror (status, x, &fx, &xlo, &xhi, &qleft, &qhi);
       *y = one - *x;
-/*          write(6,'(''x'',e10.3,''y='',e10.3,''sta='',i3)') x,y,status */
+      /*          write(6,'(''x'',e10.3,''y='',e10.3,''sta='',i3)') x,y,status */
       goto L320;
     L330:
       goto L370;
@@ -367,9 +331,7 @@ L310:
     }
   else if (3 == *which)
     {
-
-/*     Computing A */
-
+      /*     Computing A */
       *a = 5.;
       cdf_dstinv (&zero, &inf, &c_b46, &c_b46, &c_b48, &atol, &tol);
       *status = 0;
@@ -412,9 +374,7 @@ L310:
     }
   else if (4 == *which)
     {
-
-/*     Computing B */
-
+      /*     Computing B */
       *b = 5.;
       cdf_dstinv (&zero, &inf, &c_b46, &c_b46, &c_b48, &atol, &tol);
       *status = 0;
@@ -456,5 +416,4 @@ L310:
       ;
     }
   return 0;
-
-}				/* cdfbet_ */
+}	

@@ -19,66 +19,51 @@ double cdf_psi1 (double *xx)
 {
   const int c__3 = 3;
   const int c__1 = 1;
+  /*     pivo4 = PI/4 */
   const double piov4 = .785398163397448;
+  /* DX0 = ZERO OF PSI1 TO EXTENDED PRECISION */
   const double dx0 = 1.461632144968362341262659542325721325;
-  const double p1[7] =
-    { .0089538502298197, 4.77762828042627, 142.441585084029, 1186.45200713425,
-      3633.51846806499, 4138.10161269013, 1305.60269827897 };
-  const double q1[6] =
-    { 44.8452573429826, 520.752771467162, 2210.0079924783, 3641.27349079381,
-      1908.310765963, 6.91091682714533e-6 };
-  const double p2[4] =
-    { -2.12940445131011, -7.01677227766759, -4.48616543918019,
-      -.648157123766197 };
-  const double q2[4] =
-    { 32.2703493791143, 89.2920700481861, 54.6117738103215,
-      7.77788548522962 };
+  /*     coefficients for rational approximation of 
+   *     psi1(x) / (x - x0),  0.5 .le. x .le. 3.0 
+   *     psi1(x) - ln(x) + 1 / (2*x),  x .gt. 3.0 
+   */
+  const double p1[7] = { .0089538502298197, 4.77762828042627, 142.441585084029, 
+			 1186.45200713425,
+			 3633.51846806499, 4138.10161269013, 1305.60269827897 };
+  const double q1[6] = { 44.8452573429826, 520.752771467162, 2210.0079924783, 
+			 3641.27349079381, 1908.310765963, 6.91091682714533e-6 };
+  const double p2[4] =  { -2.12940445131011, -7.01677227766759, -4.48616543918019,
+			  -.648157123766197 };
+  const double q2[4] =  { 32.2703493791143, 89.2920700481861, 54.6117738103215,
+			  7.77788548522962 };
 
-  /* System generated locals */
-  double ret_val, d__1, d__2;
-  /* Local variables */
-  double xmax1;
-  int i__, m, n;
-  double w, x, z__, upper;
-  int nq;
-  double xsmall;
-  double den, aug, sgn, xmx0;
-  /* --------------------------------------------------------------------- */
-  /*     PIOV4 = PI/4 */
-  /*     DX0 = ZERO OF PSI1 TO EXTENDED PRECISION */
-  /* --------------------------------------------------------------------- */
-  /* --------------------------------------------------------------------- */
-  /*     COEFFICIENTS FOR RATIONAL APPROXIMATION OF */
-  /*     PSI1(X) / (X - X0),  0.5 .LE. X .LE. 3.0 */
-  /* --------------------------------------------------------------------- */
-  /* --------------------------------------------------------------------- */
-  /*     COEFFICIENTS FOR RATIONAL APPROXIMATION OF */
-  /*     PSI1(X) - LN(X) + 1 / (2*X),  X .GT. 3.0 */
-  /*     MACHINE DEPENDENT CONSTANTS ... */
-  /*        XMAX1  = THE SMALLEST POSITIVE FLOATING POINT CONSTANT */
-  /*                 WITH ENTIRELY INT REPRESENTATION.  ALSO USED */
-  /*                 AS NEGATIVE OF LOWER BOUND ON ACCEPTABLE NEGATIVE */
-  /*                 ARGUMENTS AND AS THE POSITIVE ARGUMENT BEYOND WHICH */
-  /*                 PSI1 MAY BE REPRESENTED AS ALOG(X). */
-  /*        XSMALL = ABSOLUTE ARGUMENT BELOW WHICH PI*COTAN(PI*X) */
-  /*                 MAY BE REPRESENTED BY 1/X. */
-  /* --------------------------------------------------------------------- */
+  double den, aug, sgn, xmx0, ret_val, d__1, d__2;
+  double w, x, z__, upper,  xmax1,  xsmall;
+  int i__, m, n ,  nq;
+  /*     machine dependent constants ... 
+   *        xmax1  = the smallest positive floating point constant 
+   *                 with entirely int representation.  also used 
+   *                 as negative of lower bound on acceptable negative 
+   *                 arguments and as the positive argument beyond which 
+   *                 psi1 may be represented as alog(x). 
+   *        xsmall = absolute argument below which pi*cotan(pi*x) 
+   *                 may be represented by 1/x. 
+   */
   xmax1 = (double) cdf_ipmpar (&c__3);
   /* Computing MIN */
   d__1 = xmax1, d__2 = 1. / cdf_spmpar (c__1);
   xmax1 = Min (d__1, d__2);
   xsmall = 1e-9;
-  /* --------------------------------------------------------------------- */
+
   x = *xx;
   aug = 0.;
   if (x >= .5)
     {
       goto L50;
     }
-  /* --------------------------------------------------------------------- */
-  /*     X .LT. 0.5,  USE REFLECTION FORMULA */
-  /*     PSI1(1-X) = PSI1(X) + PI * COTAN(PI*X) */
-  /* --------------------------------------------------------------------- */
+  /*     X .LT. 0.5,  USE REFLECTION FORMULA 
+   *     PSI1(1-X) = PSI1(X) + PI * COTAN(PI*X) 
+   */
   if (Abs (x) > xsmall)
     {
       goto L10;
@@ -87,15 +72,15 @@ double cdf_psi1 (double *xx)
     {
       goto L100;
     }
-  /* --------------------------------------------------------------------- */
-  /*     0 .LT. ABS(X) .LE. XSMALL.  USE 1/X AS A SUBSTITUTE */
-  /*     FOR  PI*COTAN(PI*X) */
-  /* --------------------------------------------------------------------- */
+  /*
+   *     0 .LT. ABS(X) .LE. XSMALL.  USE 1/X AS A SUBSTITUTE 
+   *     FOR  PI*COTAN(PI*X) 
+   */
   aug = -1. / x;
   goto L40;
-  /* --------------------------------------------------------------------- */
-  /*     REDUCTION OF ARGUMENT FOR COTAN */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     REDUCTION OF ARGUMENT FOR COTAN 
+   */
  L10:
   w = -x;
   sgn = piov4;
@@ -105,9 +90,9 @@ double cdf_psi1 (double *xx)
     }
   w = -w;
   sgn = -sgn;
-  /* --------------------------------------------------------------------- */
-  /*     MAKE AN ERROR EXIT IF X .LE. -XMAX1 */
-  /* --------------------------------------------------------------------- */
+  /*
+   *     MAKE AN ERROR EXIT IF X .LE. -XMAX1 
+   */
  L20:
   if (w >= xmax1)
     {
@@ -117,11 +102,11 @@ double cdf_psi1 (double *xx)
   w -= (double) nq;
   nq = (int) (w * 4.);
   w = (w - (double) nq * .25) * 4.;
-  /* --------------------------------------------------------------------- */
-  /*     W IS NOW RELATED TO THE FRACTIONAL PART OF  4.0 * X. */
-  /*     ADJUST ARGUMENT TO CORRESPOND TO VALUES IN FIRST */
-  /*     QUADRANT AND DETERMINE SIGN */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     W IS NOW RELATED TO THE FRACTIONAL PART OF  4.0 * X. 
+   *     ADJUST ARGUMENT TO CORRESPOND TO VALUES IN FIRST 
+   *     QUADRANT AND DETERMINE SIGN 
+   */
   n = nq / 2;
   if (n + n != nq)
     {
@@ -133,9 +118,9 @@ double cdf_psi1 (double *xx)
     {
       sgn = -sgn;
     }
-  /* --------------------------------------------------------------------- */
-  /*     DETERMINE FINAL VALUE FOR  -PI*COTAN(PI*X) */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     DETERMINE FINAL VALUE FOR  -PI*COTAN(PI*X) 
+   */
   n = (nq + 1) / 2;
   m = n / 2;
   m += m;
@@ -143,17 +128,17 @@ double cdf_psi1 (double *xx)
     {
       goto L30;
     }
-  /* --------------------------------------------------------------------- */
-  /*     CHECK FOR SINGULARITY */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     CHECK FOR SINGULARITY 
+   */
   if (z__ == 0.)
     {
       goto L100;
     }
-  /* --------------------------------------------------------------------- */
-  /*     USE COS/SIN AS A SUBSTITUTE FOR COTAN, AND */
-  /*     SIN/COS AS A SUBSTITUTE FOR TAN */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     USE COS/SIN AS A SUBSTITUTE FOR COTAN, AND 
+   *     SIN/COS AS A SUBSTITUTE FOR TAN 
+   */
   aug = sgn * (cos (z__) / sin (z__) * 4.);
   goto L40;
  L30:
@@ -165,9 +150,9 @@ double cdf_psi1 (double *xx)
     {
       goto L70;
     }
-  /* --------------------------------------------------------------------- */
-  /*     0.5 .LE. X .LE. 3.0 */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     0.5 .LE. X .LE. 3.0 
+   */
   den = x;
   upper = p1[0] * x;
 
@@ -182,17 +167,17 @@ double cdf_psi1 (double *xx)
   xmx0 = x - dx0;
   ret_val = den * xmx0 + aug;
   return ret_val;
-  /* --------------------------------------------------------------------- */
-  /*     IF X .GE. XMAX1, PSI1 = LN(X) */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     IF X .GE. XMAX1, PSI1 = LN(X) 
+   */
  L70:
   if (x >= xmax1)
     {
       goto L90;
     }
-  /* --------------------------------------------------------------------- */
-  /*     3.0 .LT. X .LT. XMAX1 */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     3.0 .LT. X .LT. XMAX1 
+   */
   w = 1. / (x * x);
   den = w;
   upper = p2[0] * w;
@@ -208,9 +193,9 @@ double cdf_psi1 (double *xx)
  L90:
   ret_val = aug + log (x);
   return ret_val;
-  /* --------------------------------------------------------------------- */
-  /*     ERROR RETURN */
-  /* --------------------------------------------------------------------- */
+  /* 
+   *     ERROR RETURN 
+   */
  L100:
   ret_val = 0.;
   return ret_val;

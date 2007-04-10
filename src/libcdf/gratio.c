@@ -142,7 +142,7 @@ cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind)
     {
       goto L380;
     }
-  r__ = u * (cdf_gam1 (a) + 1.);
+  r__ = u * (cdf_gam1 (*a) + 1.);
   goto L250;
 
 L10:
@@ -168,7 +168,7 @@ L10:
   goto L220;
 L20:
   t1 = *a * log (*x) - *x;
-  r__ = exp (t1) / cdf_gamma (a);
+  r__ = exp (t1) / cdf_gamma (*a);
   goto L40;
 
 L30:
@@ -322,7 +322,7 @@ L170:
   j = *a * *x * ((sum / 6. - .5 / (*a + 2.)) * *x + 1. / (*a + 1.));
 
   z__ = *a * log (*x);
-  h__ = cdf_gam1 (a);
+  h__ = cdf_gam1 (*a);
   g = h__ + 1.;
   if (*x < .25)
     {
@@ -346,7 +346,7 @@ L190:
   return 0;
 
 L200:
-  l = cdf_rexp (&z__);
+  l = cdf_rexp (z__);
   w = l + .5 + .5;
   *qans = (w * j - l) * g - h__;
   if (*qans < 0.)
@@ -368,7 +368,7 @@ L210:
 
 L220:
   rtx = sqrt (*x);
-  sum = cdf_erfc (c__0, &rtx);
+  sum = cdf_erfc (c__0, rtx);
   t = exp (-(*x)) / (rtpi * rtx);
   n = 0;
   c__ = -.5;
@@ -426,7 +426,7 @@ L270:
     }
   c__ = exp (-y);
   d__1 = sqrt (y);
-  w = cdf_erfc (c__1, &d__1) * .5;
+  w = cdf_erfc (c__1, d__1) * .5;
   u = 1. / *a;
   z__ = sqrt (z__ + z__);
   if (l < 1.)
@@ -577,12 +577,12 @@ L390:
       goto L400;
     }
   d__1 = sqrt (*x);
-  *ans = cdf_erf (&d__1);
+  *ans = cdf_erf (d__1);
   *qans = .5 - *ans + .5;
   return 0;
 L400:
   d__1 = sqrt (*x);
-  *qans = cdf_erfc (c__0, &d__1);
+  *qans = cdf_erfc (c__0, d__1);
   *ans = .5 - *qans + .5;
   return 0;
 
@@ -603,4 +603,5 @@ L420:
 L430:
   *ans = 2.;
   return 0;
-}				/* gratio_ */
+}
+

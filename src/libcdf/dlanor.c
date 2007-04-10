@@ -82,7 +82,7 @@ double cdf_dlanor1(double x)
     {
       x2= x/sqrt(2);
       /* Scierror("Argument too small in dlanor\n"); */
-      return log(cdf_erfc(0,&x2)/2);
+      return log(cdf_erfc(0,x2)/2);
     }
   x2 = x*x; 
   mratio = x*(279 + x2*( 185 + x2*(27 + x2)))

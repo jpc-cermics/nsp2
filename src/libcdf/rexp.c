@@ -1,10 +1,15 @@
 #include "cdf.h"
 
-/* ----------------------------------------------------------------------- */
-/*            EVALUATION OF THE FUNCTION EXP(X) - 1 */
-/* ----------------------------------------------------------------------- */
+/**
+ * cdf_rexp:
+ * @x: a double 
+ * 
+ * exp(x)-1
+ * 
+ * Returns: a double 
+ **/
 
-double cdf_rexp (double *x)
+double cdf_rexp (double x)
 {
   const double p1 = 9.14041914819518e-10;
   const double p2 = .0238082361044469;
@@ -12,26 +17,24 @@ double cdf_rexp (double *x)
   const double q2 = .107141568980644;
   const double q3 = -.0119041179760821;
   const double q4 = 5.95130811860248e-4;
-  double ret_val;
-  double w;
-  if (Abs (*x) > .15)
-    {
-      goto L10;
-    }
-  ret_val =
-    *x * (((p2 * *x + p1) * *x + 1.) /
-	  ((((q4 * *x + q3) * *x + q2) * *x + q1) * *x + 1.));
-  return ret_val;
 
-L10:
-  w = exp (*x);
-  if (*x > 0.)
+  double w;
+  if (Abs (x) > .15)
     {
-      goto L20;
+      w = exp (x);
+      if (x > 0.)
+	{
+	  return w * (.5 - 1. / w + .5);
+	}
+      else 
+	{
+	  return  w - .5 - .5;
+	}
     }
-  ret_val = w - .5 - .5;
-  return ret_val;
-L20:
-  ret_val = w * (.5 - 1. / w + .5);
-  return ret_val;
-}				/* rexp_ */
+  else 
+    {
+      return   x *(((p2*x + p1)*x + 1.) /
+		   ((((q4*x + q3)*x + q2)*x + q1)*x + 1.));
+    }
+}
+

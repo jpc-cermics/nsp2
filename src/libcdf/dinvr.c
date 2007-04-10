@@ -6,7 +6,6 @@ dinvr_cdf_0 (int n__, int *status, double *x, double *fx, int *qleft,
 	     const double *zrelst,const double *zstpmu,const double *zabsto,const double *zrelto);
 
 
-
 /* ********************************************************************** */
 /*      SUBROUTINE DSTINV( SMALL, BIG, ABSSTP, RELSTP, STPMUL, */
 /*     +                   ABSTOL, RELTOL ) */

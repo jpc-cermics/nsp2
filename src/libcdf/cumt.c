@@ -1,33 +1,24 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-/*     SUBROUTINE CUMT(T,DF,CUM,CCUM) */
-/*                    CUMulative T-distribution */
-/*                              Function */
-/*     Computes the integral from -infinity to T of the t-density. */
-/*                              Arguments */
-/*     T --> Upper limit of integration of the t-density. */
-/*                                                  T is DOUBLE PRECISION */
-/*     DF --> Degrees of freedom of the t-distribution. */
-/*                                                  DF is DOUBLE PRECISIO */
-/*     CUM <-- Cumulative t-distribution. */
-/*                                                  CCUM is DOUBLE PRECIS */
-/*     CCUM <-- Compliment of Cumulative t-distribution. */
-/*                                                  CCUM is DOUBLE PRECIS */
-/*                              Method */
-/*     Formula 26.5.27   of     Abramowitz  and   Stegun,    Handbook  of */
-/*     Mathematical Functions  is   used   to  reduce the  t-distribution */
-/*     to an incomplete beta. */
-/* ********************************************************************** */
-
-
+/**
+ * cdf_cumt:
+ * @t: upper limit of integration of the t-density.
+ * @df: degrees of freedom of the t-distribution.
+ * @cum: cumulative t-distribution.
+ * @ccum:  compliment of cumulative t-distribution.
+ * 
+ * computes the integral from -infinity to t of the t-density.
+ * 
+ * formula 26.5.27   of     abramowitz  and   stegun,    handbook  of 
+ * mathematical functions  is   used   to  reduce the  t-distribution 
+ * to an incomplete beta. 
+ * 
+ * Returns: 
+ **/
 
 int cdf_cumt (double *t, double *df, double *cum, double *ccum)
 {
-  double c_b2 = .5;
-  double d__1;
-  double a, dfptt, tt;
-  double xx, yy, oma;
+  double a, dfptt, tt,  c_b2 = .5,  d__1, xx, yy, oma;
   tt = *t * *t;
   dfptt = *df + tt;
   xx = *df / dfptt;
@@ -36,14 +27,14 @@ int cdf_cumt (double *t, double *df, double *cum, double *ccum)
   cdf_cumbet (&xx, &yy, &d__1, &c_b2, &a, &oma);
   if (!(*t <= 0.))
     {
-      goto L10;
+      *ccum = a * .5;
+      *cum = oma + *ccum;
     }
-  *cum = a * .5;
-  *ccum = oma + *cum;
-  goto L20;
-L10:
-  *ccum = a * .5;
-  *cum = oma + *ccum;
-L20:
+  else 
+    {
+      *cum = a * .5;
+      *ccum = oma + *cum;
+    }
   return 0;
-}				/* cumt_ */
+}
+

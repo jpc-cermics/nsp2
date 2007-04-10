@@ -1,45 +1,34 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-
-/*     DOUBLE PRECISION FUNCTION DBETRM( A, B ) */
-/*          Double Precision Sterling Remainder for Complete */
-/*                    Beta Function */
 
 
-/*                              Function */
-
-
-/*     Log(Beta(A,B)) = Lgamma(A) + Lgamma(B) - Lgamma(A+B) */
-/*     where Lgamma is the log of the (complete) gamma function */
-
-/*     Let ZZ be approximation obtained if each log gamma is approximated */
-/*     by Sterling's formula, i.e., */
-/*     Sterling(Z) = LOG( SQRT( 2*PI ) ) + ( Z-0.5 ) * LOG( Z ) - Z */
-
-/*     Returns Log(Beta(A,B)) - ZZ */
-
-
-/*                              Arguments */
-
-
-/*     A --> One argument of the Beta */
-/*                    DOUBLE PRECISION A */
-
-/*     B --> The other argument of the Beta */
-/*                    DOUBLE PRECISION B */
-
-/* ********************************************************************** */
+/**
+ * cdf_dbetrm:
+ * @a: One argument of the Beta
+ * @b: The other argument of the Beta
+ * 
+ * double precision sterling remainder for complete beta function 
+ * log(beta(a,b)) = lgamma(a) + lgamma(b) - lgamma(a+b) 
+ * where lgamma is the log of the (complete) gamma function 
+ * let zz be the approximation obtained if each log gamma is approximated 
+ * by sterling's formula, i.e., 
+ * sterling(z) = log( sqrt( 2*pi ) ) + ( z-0.5 ) * log( z ) - z 
+ * returns log(beta(a,b)) - zz 
+ * 
+ * 
+ * Returns: a double 
+ **/
 
 double cdf_dbetrm (double *a, double *b)
 {
   double ret_val, d__1;
   /*     Try to sum from smallest to largest */
   d__1 = *a + *b;
-  ret_val = -cdf_dstrem (&d__1);
+  ret_val = -cdf_dstrem (d__1);
   d__1 = Max (*a, *b);
-  ret_val += cdf_dstrem (&d__1);
+  ret_val += cdf_dstrem (d__1);
   d__1 = Min (*a, *b);
-  ret_val += cdf_dstrem (&d__1);
+  ret_val += cdf_dstrem (d__1);
   return ret_val;
-}				/* dbetrm_ */
+}
+

@@ -1,35 +1,19 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-
-/*     DOUBLE PRECISION FUNCTION DT1(P,Q,DF) */
-/*     Double precision Initalize Approximation to */
-/*           INVerse of the cumulative T distribution */
-
-
-/*                              Function */
-
-
-/*     Returns  the  inverse   of  the T   distribution   function, i.e., */
-/*     the integral from 0 to INVT of the T density is P. This is an */
-/*     initial approximation */
-
-
-/*                              Arguments */
-
-
-/*     P --> The p-value whose inverse from the T distribution is */
-/*          desired. */
-/*                    P is DOUBLE PRECISION */
-
-/*     Q --> 1-P. */
-/*                    Q is DOUBLE PRECISION */
-
-/*     DF --> Degrees of freedom of the T distribution. */
-/*                    DF is DOUBLE PRECISION */
-
-/* ********************************************************************** */
-
+/**
+ * cdf_dt1:
+ * @p: the p-value whose inverse from the t distribution is desired.
+ * @q: 1-p.
+ * @df: degrees of freedom of the t distribution.
+ * 
+ * Used to initalize approximation to inverse of the cumulative t distribution 
+ * function. 
+ * Returns  the  inverse   of  the t   distribution   function, i.e., 
+ * the integral from 0 to invt of the t density is p. this is an 
+ * initial approximation. 
+ * 
+ * Returns: a double 
+ **/
 
 double cdf_dt1 (double *p, double *q, double *df)
 {
@@ -38,33 +22,27 @@ double cdf_dt1 (double *p, double *q, double *df)
       -1920., 1482., 776., 79. };
   const  int ideg[4] = { 2, 3, 4, 5 };
   const double denom[4] = { 4., 96., 384., 92160. };
-  double ret_val, d__1;
-  double term;
-  int i__;
-  double x, xp, xx;
-  double denpow;
-  double sum;
+  double denpow, d1,  sum, term,  x, xp, xx;
+  int i;
 
-  x = (d__1 = cdf_dinvnr (p, q), Abs (d__1));
+  x = (d1 = cdf_dinvnr (p, q), Abs (d1));
   xx = x * x;
   sum = x;
   denpow = 1.;
-  for (i__ = 1; i__ <= 4; ++i__)
+  for (i = 1; i <= 4; ++i)
     {
-      term = cdf_devlpl (&coef[i__ * 5 - 5], ideg[i__ - 1], xx) * x;
+      term = cdf_devlpl (&coef[i * 5 - 5], ideg[i - 1], xx) * x;
       denpow *= *df;
-      sum += term / (denpow * denom[i__ - 1]);
-/* L10: */
+      sum += term / (denpow * denom[i - 1]);
     }
   if (!(*p >= .5))
     {
-      goto L20;
+      xp = -sum;
     }
-  xp = sum;
-  goto L30;
-L20:
-  xp = -sum;
-L30:
-  ret_val = xp;
-  return ret_val;
-}				/* dt1_ */
+  else
+    {
+      xp = sum;
+    }
+  return  xp;
+}
+

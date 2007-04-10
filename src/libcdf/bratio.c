@@ -499,7 +499,7 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
     {
       goto L10;
     }
-  z__ = *a * log (*x) - cdf_betaln (a, b);
+  z__ = *a * log (*x) - cdf_betaln (*a, *b);
   ret_val = exp (z__) / *a;
   goto L100;
 L10:
@@ -526,14 +526,14 @@ L10:
     {
       goto L20;
     }
-  z__ = cdf_gam1 (&apb) + 1.;
+  z__ = cdf_gam1 (apb) + 1.;
   goto L30;
 L20:
   u = *a + *b - 1.;
-  z__ = (cdf_gam1 (&u) + 1.) / apb;
+  z__ = (cdf_gam1 (u) + 1.) / apb;
 
 L30:
-  c__ = (cdf_gam1 (a) + 1.) * (cdf_gam1 (b) + 1.) / z__;
+  c__ = (cdf_gam1 (*a) + 1.) * (cdf_gam1 (*b) + 1.) / z__;
   ret_val = ret_val * c__ * (*b / apb);
   goto L100;
 
@@ -564,13 +564,13 @@ L60:
     {
       goto L70;
     }
-  t = cdf_gam1 (&apb) + 1.;
+  t = cdf_gam1 (apb) + 1.;
   goto L80;
 L70:
   u = a0 + b0 - 1.;
-  t = (cdf_gam1 (&u) + 1.) / apb;
+  t = (cdf_gam1 (u) + 1.) / apb;
 L80:
-  ret_val = exp (z__) * (a0 / *a) * (cdf_gam1 (&b0) + 1.) / t;
+  ret_val = exp (z__) * (a0 / *a) * (cdf_gam1 (b0) + 1.) / t;
   goto L100;
 
 /*            PROCEDURE FOR A0 .LT. 1 AND B0 .GE. 8 */
@@ -616,7 +616,7 @@ static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lam
   double beta, c__, e, n, p, r__, s, t, alpha, w, c0, c1, r0, an, bn;
   double yp1, anp1, bnp1;
 
-  ret_val = cdf_brcomp (a, b, x, y);
+  ret_val = cdf_brcomp (*a, *b, *x, *y);
   if (ret_val == 0.)
     {
       return ret_val;
@@ -636,7 +636,7 @@ static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lam
   bnp1 = c__ / c1;
   r__ = c1 / c__;
 
-/*        CONTINUED FRACTION CALCULATION */
+  /*        CONTINUED FRACTION CALCULATION */
 
 L10:
   n += 1.;
@@ -649,7 +649,7 @@ L10:
   p = t + 1.;
   s += 2.;
 
-/*        UPDATE AN, BN, ANP1, AND BNP1 */
+  /*        UPDATE AN, BN, ANP1, AND BNP1 */
 
   t = alpha * an + beta * anp1;
   an = anp1;
@@ -665,7 +665,7 @@ L10:
       goto L20;
     }
 
-/*        RESCALE AN, BN, ANP1, AND BNP1 */
+  /*        RESCALE AN, BN, ANP1, AND BNP1 */
 
   an /= bnp1;
   bn /= bnp1;
@@ -673,7 +673,7 @@ L10:
   bnp1 = 1.;
   goto L10;
 
-/*                 TERMINATION */
+  /*                 TERMINATION */
 
 L20:
   ret_val *= r__;
@@ -844,7 +844,7 @@ L20:
 /*                 COMPUTATION OF THE EXPANSION */
 /*                 SET R = EXP(-Z)*Z**B/GAMMA(B) */
 
-  r__ = *b * (cdf_gam1 (b) + 1.) * exp (*b * log (z__));
+  r__ = *b * (cdf_gam1 (*b) + 1.) * exp (*b * log (z__));
   r__ = r__ * exp (*a * lnx) * exp (bm1 * .5 * lnx);
   u = cdf_algdiv (*b, *a) + *b * log (nu);
   u = r__ * exp (-u);
@@ -984,7 +984,7 @@ L20:
   a0[0] = r1 * .66666666666666663;
   c__[0] = a0[0] * -.5;
   d__[0] = -c__[0];
-  j0 = .5 / e0 * cdf_erfc (c__1, &z0);
+  j0 = .5 / e0 * cdf_erfc (c__1, z0);
   j1 = e1;
   sum = j0 + d__[0] * w0 * j1;
 

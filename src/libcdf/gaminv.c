@@ -142,7 +142,7 @@ cdf_gaminv (double *a, double *x, double *x0, double *p, double *q, int *ierr)
       goto L80;
     }
   d__1 = *a + 1.;
-  g = cdf_gamma (&d__1);
+  g = cdf_gamma (d__1);
   qg = *q * g;
   if (qg == 0.)
     {
@@ -393,7 +393,7 @@ L190:
     {
       goto L350;
     }
-  r__ = cdf_rcomp (a, &xn);
+  r__ = cdf_rcomp (*a, xn);
   if (r__ == 0.)
     {
       goto L350;
@@ -470,7 +470,7 @@ L240:
     {
       goto L350;
     }
-  r__ = cdf_rcomp (a, &xn);
+  r__ = cdf_rcomp (*a, xn);
   if (r__ == 0.)
     {
       goto L350;

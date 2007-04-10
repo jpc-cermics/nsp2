@@ -80,19 +80,17 @@ cdf_cdft (int *which, double *p, double *q, double *t, double *df,
     }
   *bound = 1.;
   goto L20;
-L10:
+ L10:
   *bound = 3.;
-L20:
+ L20:
   *status = -1;
   return 0;
-L30:
+ L30:
   if (*which == 1)
     {
       goto L70;
     }
-
-/*     P */
-
+  /*     P */
   if (!(*p <= 0. || *p > 1.))
     {
       goto L60;
@@ -103,20 +101,18 @@ L30:
     }
   *bound = 0.;
   goto L50;
-L40:
+ L40:
   *bound = 1.;
-L50:
+ L50:
   *status = -2;
   return 0;
-L60:
-L70:
+ L60:
+ L70:
   if (*which == 1)
     {
       goto L110;
     }
-
-/*     Q */
-
+  /*     Q */
   if (!(*q <= 0. || *q > 1.))
     {
       goto L100;
@@ -127,20 +123,18 @@ L70:
     }
   *bound = 0.;
   goto L90;
-L80:
+ L80:
   *bound = 1.;
-L90:
+ L90:
   *status = -3;
   return 0;
-L100:
-L110:
+ L100:
+ L110:
   if (*which == 3)
     {
       goto L130;
     }
-
-/*     DF */
-
+  /*     DF */
   if (!(*df <= 0.))
     {
       goto L120;
@@ -148,15 +142,13 @@ L110:
   *bound = 0.;
   *status = -5;
   return 0;
-L120:
-L130:
+ L120:
+ L130:
   if (*which == 1)
     {
       goto L170;
     }
-
-/*     P + Q */
-
+  /*     P + Q */
   pq = *p + *q;
   if (!((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
     {
@@ -168,38 +160,29 @@ L130:
     }
   *bound = 0.;
   goto L150;
-L140:
+ L140:
   *bound = 1.;
-L150:
+ L150:
   *status = 3;
   return 0;
-L160:
-L170:
+ L160:
+ L170:
   if (!(*which == 1))
     {
       qporq = *p <= *q;
     }
-
-/*     Select the minimum of P or Q */
-
-
-/*     Calculate ANSWERS */
-
+  /*     Select the minimum of P or Q */
+  /*     Calculate ANSWERS */
   if (1 == *which)
     {
-
-/*     Computing P and Q */
-
+      /*     Computing P and Q */
       cdf_cumt (t, df, p, q);
       *status = 0;
     }
   else if (2 == *which)
     {
-
-/*     Computing T */
-
-/*     .. Get initial approximation for T */
-
+      /*     Computing T */
+      /*     .. Get initial approximation for T */
       *t = cdf_dt1 (p, q, df);
       d__1 = -rtinf;
       cdf_dstinv (&d__1, &rtinf, &c_b20, &c_b20, &c_b22, &atol, &tol);
@@ -243,9 +226,7 @@ L170:
     }
   else if (3 == *which)
     {
-
-/*     Computing DF */
-
+      /*     Computing DF */
       *df = 5.;
       cdf_dstinv (&zero, &maxdf, &c_b20, &c_b20, &c_b22, &atol, &tol);
       *status = 0;
@@ -287,4 +268,5 @@ L170:
       ;
     }
   return 0;
-}				/* cdft_ */
+}		
+
