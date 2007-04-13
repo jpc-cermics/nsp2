@@ -77,4 +77,9 @@ extern int cdf_cumpoi (double *s, double *xlam, double *cum, double *ccum);
 extern int cdf_cumt (double *t, double *df, double *cum, double *ccum);
 extern int cdf_dinvr (int *status, double *x, double *fx, int *qleft, int *qhi);
 
+extern double cdf_stirling_series_diff(double z, double y) ;
+
+
+
+
 #endif /* RANDLIB_H */
