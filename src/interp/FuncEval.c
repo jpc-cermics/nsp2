@@ -98,12 +98,15 @@ static void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int
  * Return value: #RET_BUG or the number of returned arguments
  **/
 
+/* #define LIBSTAB_NEW */
+
+extern NspObject *nsp_find_macro_or_func(char *str,int *type); /* XXX */
+
 int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int first, int rhs, int opt, int lhs)
 {
   NspObject *M;
   char *tag[]={NULL,NULL,NULL};
   char name[NAME_MAXL];
-  int Int,Num;
   stack.first = first;
   if ( O != NULLOBJ && IsNspPList(O)) 
     {
@@ -127,6 +130,24 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
       nsp_build_funcname_tag(str,&stack,first,nb_suffix,name,tag);
       while (1) 
 	{
+#ifdef LIBSTAB_NEW 
+	  int type ;
+	  if ((M = nsp_find_macro_or_func(name,&type)) != NULLOBJ)
+	    {
+	      if ( type == 1) 
+		{
+		  /* Call a primitive with name depending on argument types */
+		  NspFname(stack) = name ;
+		  return nsp_interfaces(((NspFunction *) M)->iface,
+					((NspFunction *) M)->pos,stack,rhs,opt,lhs);
+		}
+	      else 
+		{
+		  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
+		}
+	    }
+#else 
+	  int Int,Num;
 	  if ( nsp_find_function(name,&Int,&Num) == OK) 
 	    {
 	      /* Call a primitive with name depending on argument types */
@@ -137,6 +158,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
+#endif 
 	  if ( tag[sm] == NULL) break;
 	  /* truncate name to previous suffix */
 	  tag[sm++][0]='\0';
@@ -431,6 +453,7 @@ void nsp_build_funcname(const char *str, Stack *stack, int first, int rhs, char 
     }
 }
 
+
 void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int rhs, char *name,char **tag)
 {
   char *s1;
@@ -466,6 +489,7 @@ void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int rhs, c
       break;
     }
 }
+
 
 /**
  * nsp_build_funcnameij:
@@ -518,6 +542,7 @@ void nsp_build_funcname_i(const char *str, Stack *stack, int first, int i, char 
   *name = '\0';
 }
 
+
 /**
  * FuncEvalErrorMess:
  * @str: 
@@ -551,7 +576,6 @@ static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix
       break;
     }
 }
-
 
 /**
  * nsp_eval_macro:
