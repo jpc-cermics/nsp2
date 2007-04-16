@@ -797,6 +797,11 @@ static int int_cdf_dlanor(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor,NULL);
 }
 
+static int int_cdf_dln1px(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px,NULL);
+}
+
 static int int_cdf_rexp(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp,NULL);
@@ -852,6 +857,7 @@ static OpTab Dcd_func[]={
   {"cdf_dlanor",int_cdf_dlanor},
   {"cdf_dlanor1",int_cdf_dlanor1},
   {"cdf_alngam",int_cdf_alngam},
+  {"cdf_dln1px",int_cdf_dln1px},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
 };

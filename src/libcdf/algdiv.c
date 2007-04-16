@@ -93,7 +93,16 @@ double cdf_algdiv_new (double a, double b)
  * Maple code for log gamma: 
  * f:=proc(z) apply(`+`,seq(bernoulli(2*n)*(1/z)^(2*n-1)/(2*n*(2*n-1)),n=1..6));end proc;
  * g:=proc(z) (z-1/2)*log(z) -z + (1/2)*log(2*Pi) + f(z);end proc;
- * gg:=proc(n); evalf(g(n)-log((n-1)!),40); end proc;
+ * gg:=proc(x) local u1,u2; u1:=evalf(log(GAMMA(x)),70);u2:=evalf(g(x),16);evalf((u1-u2)/u1,70) end proc;
+ *  
+ * the relative error is around -.127e-14 for x=8 
+ *                              -0.3e-16 for x=10
+ * a revoir ...
+ * 
+ * g1:= proc(x) - log(x) -log(x+1) +g(x+2);end proc;
+ * gg1:=proc(x) local u1,u2; u1:=evalf(log(GAMMA(x)),70);u2:=evalf(g1(x),16);evalf((u1-u2)/u1,70) end proc;
+ * Now we have 0.35 e-16 for x>= 8 
+ * 
  */
 
 double cdf_stirling_series_diff(double z, double y) 
@@ -131,3 +140,26 @@ double cdf_stirling_series_diff(double z, double y)
   return  res;
 }
 
+/* log(Gamma(x)) : voir plus haut pour la formule a 10^(-16).
+ * 
+ *
+ */
+
+/*
+with(numapprox);
+with(orthopoly);
+f:= proc(x) log(GAMMA(x));end proc;
+Digits:=70;
+gg:=chebpade(f(x),x=7..8,[10,10]);
+Digits:=17;
+gg:= convert(gg,float);
+n:= numer(gg);
+xx:=coeffs(n,x)[1];
+n:=n/xx;
+d:= denom(gg)/xx;
+f_cheb:= unapply(n/d,x);
+infnorm(f(x)-f_cheb(x),x=6..8);
+codegen[C](hornerform(n/d),optimized);
+codegen[C](hornerform(n/d));
+codegen[C](confracform(n/d));
+*/
