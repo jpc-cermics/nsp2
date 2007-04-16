@@ -39,8 +39,9 @@ double cdf_rexp_old (double x)
     }
 }
 
+/* Copyright GPL Chancelier Jean-Philippe  */
 
-/**
+/** 
  * cdf_rexp:
  * @x: a double 
  * 
@@ -53,6 +54,8 @@ static double cdf_rexp_(double x);
 
 double cdf_rexp(double x)
 {
+  /* basic test : x=linspace(-2,2,1000000);max(cdf_rexp(x)-(exp(x)-1))
+   */
   double w;
   if ( x > 0.15 ) 
     {
@@ -70,7 +73,6 @@ double cdf_rexp(double x)
       return w*(w+2);
     }
 }
-
 
 static double cdf_rexp_(double x)
     {
