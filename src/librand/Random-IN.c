@@ -50,7 +50,7 @@ static void display_gen_names()
  *  hand written interface for the librand 
  */
 
-int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 { 
   char *law;
   NspMatrix *M=NULL;
@@ -944,6 +944,78 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
+  else if ( strcmp(law,"poisv")==0)
+    {
+      NspMatrix *Av;
+      double A;
+      int inc;
+      if ( rhs != suite ) 
+	{ 
+	  Scierror("Error: Missing Av for Poisson law\n"); return RET_BUG; 
+	}
+      if ( (Av=GetRealMat(stack,suite)) == NULLMAT ) return RET_BUG;      
+      if ( Av->mn == 1 ) 
+	inc = 0;
+      else
+        { inc = 1 ; CheckDims(NspFname(stack),suite,Av,ResL,ResC); }
+
+      if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
+
+      for ( i=0 ; i < M->mn ; i++)  
+	{
+	  if ( i == 0 || inc == 1)
+	    {
+	      A = Av->R[i];
+	      if ( A < 0.0 )
+		{
+		  nsp_matrix_destroy(M);
+		  Scierror("Error: Av < 0 \n"); 
+		  return RET_BUG;
+		}
+	    }
+	  M->R[i]= (double) poi_trd(A);
+	}
+
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+
+  else if ( strcmp(law,"poiv")==0)
+    {
+      NspMatrix *Av;
+      double A;
+      int inc;
+      if ( rhs != suite ) 
+	{ 
+	  Scierror("Error: Missing Av for Poisson law\n"); return RET_BUG; 
+	}
+      if ( (Av=GetRealMat(stack,suite)) == NULLMAT ) return RET_BUG;      
+      if ( Av->mn == 1 ) 
+	inc = 0;
+      else
+        { inc = 1 ; CheckDims(NspFname(stack),suite,Av,ResL,ResC); }
+
+      if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
+
+      for ( i=0 ; i < M->mn ; i++)  
+	{
+	  if ( i == 0 || inc == 1)
+	    {
+	      A = Av->R[i];
+	      if ( A < 0.0 )
+		{
+		  nsp_matrix_destroy(M);
+		  Scierror("Error: Av < 0 \n"); 
+		  return RET_BUG;
+		}
+	    }
+	  M->R[i]= (double) rand_ignpoi(A);
+	}
+
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+
   else if ( strcmp(law,"geom")==0)
     {
       double p;
@@ -1005,7 +1077,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     }      
 }
 
-int int_nsp_randn(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_randn(Stack stack, int rhs, int opt, int lhs)
 {
   int m, n, k;
   NspMatrix *A;
@@ -1044,46 +1116,86 @@ int int_nsp_randn(Stack stack, int rhs, int opt, int lhs)
 }
   
 
-int int_nsp_rand_discrete_guide(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_rand_discrete(Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *M=NULLMAT, *p=NULLMAT, *q=NULLMAT;
-  NspBMatrix *key=NULLBMAT;
-  CheckRhs (1, 4);
-  CheckLhs (1, 2);
+  NspBMatrix *k=NULLBMAT;
+  NspSMatrix *S=NULLSMAT;
+  NspList *L;
+  Cell *C;
+  char *meth=NULL, *default_meth="guide";
+  nsp_option opts[] ={{"meth",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckRhs (2, 3);
+  CheckLhs (1, 1);
 
-  if ( IsSMatObj(stack,1) ) 
+  if ( IsSMatObj(stack,1) )  /* rand_discrete("setup", p, meth=) */
     {
       char *str;
       if ( (str = GetString(stack,1)) == NULL ) 
 	return RET_BUG;
       if ( strcmp(str,"setup")==0) 
 	{
-	  if ( rhs != 2) 
+	  if ( rhs-opt != 2) 
 	    {
-	      Scierror("%s: two arguments expected\n",NspFname(stack));
+	      Scierror("%s: two non optional arguments expected\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	 
 	  if ( (p = GetRealMat(stack,2)) == NULLMAT )  
 	    return RET_BUG;
 	  CheckVector(NspFname(stack), 2, p);
-
-	  if ( (q  = nsp_matrix_create(NVOID,'r',p->mn+1,1)) == NULLMAT )
+	  
+	  if ( get_optional_args(stack, rhs, opt, opts, &meth) == FAIL )
 	    return RET_BUG;
 
-	  if ( (key  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
+	  if ( meth == NULL )
+	    meth = default_meth;
+	  else
+	    if ( strcmp(meth,default_meth)!=0 && strcmp(meth,"alias")!=0 )
+	      {
+		Scierror("%s: bad optional argument meth (must be alias or guide)\n",NspFname(stack));
+		return RET_BUG;
+	      }
+
+	  if ( (q  = nsp_matrix_create("lel",'r',p->mn+1,1)) == NULLMAT )
 	    return RET_BUG;
 
-	  if ( nsp_guide_table_method(p->R, q->R, (int *) key->B, p->mn) == FAIL )
+	  if ( (k  = nsp_bmatrix_create("lel",p->mn,1)) == NULLBMAT )
 	    {
-	      nsp_matrix_destroy(q); nsp_bmatrix_destroy(key); 
-	      Scierror("%s: uncorrect probability vector \n",NspFname(stack));
+	      nsp_matrix_destroy(q);
 	      return RET_BUG;
 	    }
 
-	  MoveObj(stack,1,(NspObject *) q);
-	  MoveObj(stack,2,(NspObject *) key);
-	  return 2;
+	  if ( strcmp(meth,default_meth) == 0 )
+	    {
+	      if ( nsp_guide_table_method(p->R, q->R, (int *) k->B, p->mn) == FAIL )
+		goto err1;
+	      if ( (S=nsp_smatrix_create("lel", 1, 1,"rd_guide", 1)) == NULLSMAT )
+		goto err2;
+	    }
+	  else
+	    {
+	      if ( nsp_alias_method(p->R, q->R, (int *) k->B, p->mn) == FAIL )
+		goto err1;
+	      if ( (S=nsp_smatrix_create("lel", 1, 1,"rd_alias", 1)) == NULLSMAT )
+		goto err2;
+	    }
+
+	  /* Put the objects into a list. The first element (a string) lets *
+           * to decide between the guide code or the alias code.            */
+	  if ((L =nsp_list_create(NVOID))==NULLLIST) 
+	    goto err2;
+	  
+	  if ( nsp_list_end_insert(L, (NspObject *) S) == FAIL )
+	    goto err3;
+	  if ( nsp_list_end_insert(L, (NspObject *) q) == FAIL )
+	    goto err3;
+	  if ( nsp_list_end_insert(L, (NspObject *) k) == FAIL )
+	    goto err3;
+
+	  MoveObj(stack,1,(NspObject *) L);
+	  return 1;
 	}
       else
 	{
@@ -1093,125 +1205,72 @@ int int_nsp_rand_discrete_guide(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      int i, m, n;
-      if ( rhs == 4 ) /* rand_discrete(m,n,q,key) */
+      int suite, i, m, n;
+      if ( rhs == 2 ) /* rand_discrete(Mat, L) */
+	{      
+	  if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+	  m=M->m; n=M->n;
+	  suite = 2;
+	}
+      else            /* rand_discrete(m, n, L) */
 	{
 	  if ( GetScalarInt(stack, 1, &m) == FAIL ) return RET_BUG;      
 	  CheckNonNegative(NspFname(stack), m, 1);
 	  if ( GetScalarInt(stack, 2, &n) == FAIL ) return RET_BUG;
 	  CheckNonNegative(NspFname(stack), n, 2);
-
-	  if ( (q = GetRealMat(stack,3)) == NULLMAT )  
-	    return RET_BUG;
-
-	  if ( (key = GetBMat(stack,4)) == NULLBMAT )  
-	    return RET_BUG;
-	  
-	  if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
-	    return RET_BUG;
-
-	  for ( i = 0 ; i < M->mn ; i++ )
-	    M->R[i] = (double) nsp_rand_discrete_guide(q->R, (int *)key->B, key->mn);
-
-	  MoveObj(stack,1,(NspObject *) M);
-	  return 1;
+	  suite = 3;
 	}
-      else
+      
+      if ( (L = GetList(stack, suite)) == NULLLIST ) return RET_BUG;
+
+      if ( nsp_list_length(L) != 3 )
 	{
-	  Scierror("%s: four arguments expected\n",NspFname(stack));
+	  Scierror("%s: the list must have 3 elements\n",NspFname(stack));
 	  return RET_BUG;
 	}
-    }
-}
 
- 
-
-int int_nsp_rand_discrete_alias(Stack stack, int rhs, int opt, int lhs)
-{ 
-  NspMatrix *M=NULLMAT, *p=NULLMAT, *q=NULLMAT;
-  NspBMatrix *j=NULLBMAT;
-  CheckRhs (1, 4);
-  CheckLhs (1, 2);
-
-  if ( IsSMatObj(stack,1) ) 
-    {
-      char *str;
-      if ( (str = GetString(stack,1)) == NULL ) 
+      C = L->first;
+      S = (NspSMatrix *) C->O;
+      C = C->next;
+      q = (NspMatrix *) C->O;
+      C = C->next;
+      k = (NspBMatrix *) C->O;
+	  
+      if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
 	return RET_BUG;
-      if ( strcmp(str,"setup")==0) 
-	{
-	  if ( rhs != 2) 
-	    {
-	      Scierror("%s: two arguments expected\n",NspFname(stack));
-	      return RET_BUG;
-	    }
-	 
-	  if ( (p = GetRealMat(stack,2)) == NULLMAT )  
-	    return RET_BUG;
-	  CheckVector(NspFname(stack), 2, p);
 
-	  if ( (q  = nsp_matrix_create(NVOID,'r',p->mn,1)) == NULLMAT )
-	    return RET_BUG;
-
-	  if ( (j  = nsp_bmatrix_create(NVOID,p->mn,1)) == NULLBMAT )
-	    return RET_BUG;
-
-	  if ( nsp_alias_method(p->R, q->R, (int *) j->B, p->mn) == FAIL )
-	    {
-	      nsp_matrix_destroy(q); nsp_bmatrix_destroy(j); 
-	      Scierror("%s: uncorrect probability vector \n",NspFname(stack));
-	      return RET_BUG;
-	    }
-
-	  MoveObj(stack,1,(NspObject *) q);
-	  MoveObj(stack,2,(NspObject *) j);
-	  return 2;
-	}
+      if ( strcmp(S->S[0],"rd_guide") == 0 )
+	for ( i = 0 ; i < M->mn ; i++ )
+	  M->R[i] = 1.0 + (double) nsp_rand_discrete_guide(q->R, (int *)k->B, k->mn);
+      else if ( strcmp(S->S[0],"rd_alias") == 0 )
+	for ( i = 0 ; i < M->mn ; i++ )
+	  M->R[i] = 1.0 + (double) nsp_rand_discrete_alias(q->R, (int *)k->B, k->mn);
       else
 	{
-	  Scierror("%s: uncorrect first argument\n",NspFname(stack));
+	  Scierror("%s: the list has not the good type\n",NspFname(stack));
 	  return RET_BUG;
 	}
+
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
     }
-  else
-    {
-      int i, m, n;
-      if ( rhs == 4 ) /* rand_discrete_alias(m,n,q,j) */
-	{
-	  if ( GetScalarInt(stack, 1, &m) == FAIL ) return RET_BUG;      
-	  CheckNonNegative(NspFname(stack), m, 1);
-	  if ( GetScalarInt(stack, 2, &n) == FAIL ) return RET_BUG;
-	  CheckNonNegative(NspFname(stack), n, 2);
 
-	  if ( (q = GetRealMat(stack,3)) == NULLMAT )  
-	    return RET_BUG;
-
-	  if ( (j = GetBMat(stack,4)) == NULLBMAT )  
-	    return RET_BUG;
-	  
-	  if ( (M  = nsp_matrix_create(NVOID,'r', m, n)) == NULLMAT )
-	    return RET_BUG;
-
-	  for ( i = 0 ; i < M->mn ; i++ )
-	    M->R[i] = (double) nsp_rand_discrete_alias(q->R, (int *)j->B, j->mn);
-
-	  MoveObj(stack,1,(NspObject *) M);
-	  return 1;
-	}
-      else
-	{
-	  Scierror("%s: four arguments expected\n",NspFname(stack));
-	  return RET_BUG;
-	}
-    }
+ err1:
+  Scierror("%s: uncorrect probability vector \n",NspFname(stack));
+ err2:
+  nsp_matrix_destroy(q); nsp_bmatrix_destroy(k); nsp_smatrix_destroy(S);
+  return RET_BUG;
+ err3:
+  nsp_matrix_destroy(q); nsp_bmatrix_destroy(k); nsp_smatrix_destroy(S);
+  nsp_list_destroy_bis(L);
+  return RET_BUG;
 }
 
 static OpTab Random_func[]={
   {"grand", int_nsp_grand},
   /*     {"rand", int_nsp_rand}, */
   {"randn", int_nsp_randn},
-  {"rand_discrete_alias", int_nsp_rand_discrete_alias},
-  {"rand_discrete_guide", int_nsp_rand_discrete_guide},
+  {"rand_discrete", int_nsp_rand_discrete},
   {(char *) 0, NULL}
 };
 

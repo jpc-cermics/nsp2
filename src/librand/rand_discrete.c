@@ -77,15 +77,16 @@ int nsp_alias_method(double *p, double *q, int *j, int n)
 	}
       else                       /* problem certainly due to roundoff errors : */
 	{                        /* as the probability vector seems good we could complete by 1 in every case */
-	  if ( q[l] >= 1 - 100*tol ) 
-	    q[l] = 1.0;
-	  else
-	    {
-	      free(stack); 
-	      Sciprintf("big stack empty while small q is %18.16f\n",q[l]); 
-	      Sciprintf("stack : is = %d, ib = %d\n",is, ib); 
-	      return FAIL;
-	    }
+	  q[l] = 1.0;
+/* 	  if ( q[l] >= 1 - 100*tol )  */
+/* 	    q[l] = 1.0; */
+/* 	  else */
+/* 	    { */
+/* 	      free(stack);  */
+/* 	      Sciprintf("big stack empty while small q is %18.16f\n",q[l]);  */
+/* 	      Sciprintf("stack : is = %d, ib = %d\n",is, ib);  */
+/* 	      return FAIL; */
+/* 	    } */
 	}
     }
 
