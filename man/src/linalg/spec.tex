@@ -1,0 +1,99 @@
+% -*- mode: latex -*-
+
+\mansection{spec}
+\begin{mandesc}
+  \short{spec}{matrix spectrum, eigenvalues and eigenvectors}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[lambda] = spec(A)
+[lambda, V] = spec(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} :  numerical square matrix
+    \vname{lambda} : column vector (eigenvalues)
+    \vname{V} : matrix (eigenvectors)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes the eigenvalues of a matrix $A$, and if
+needed the associated eigenvectors. The jth column of $V$ 
+(\verb+V(:,j)+) is the eigenvector associated to the 
+$\lambda_j$ eigenvalue (\verb+lambda(j)+) : $A v^j = \lambda_j v^j$.
+
+\itemdesc{remarks}
+\begin{itemize}
+\item In case of a defective eigenvalue (an eigenvalue of
+      algebraic multiplicity says $k (>1)$ and geometric multiplicity
+      $k'$ ($1 \le k' < k$) the associated eigenvectors are not
+      linearly independant (the dimension of the associated 
+      eigenvectors space must be $k'$ at least numerically for
+      a not too small tolerance).
+\item When the matrix $A$ is symetric (real case) or hermitian
+      (complex case) the eigenvalues are real and the eigenvectors 
+      form a orthonormal basis. The symetry of the matrix $A$ is 
+      detected numerically ($a_{ij}$ must be nearly equal to $a_{ji}$
+      the exact test being $a_{ij} \oplus | a_{ij} - a_{ji}| \le a_{ij}$).
+      If your matrix $A$ must be symetric but lose this property because
+      of floating point errors you can re-symetrise it with \verb-A = 0.5*(A+A')-   
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+\paragraph{example 1} a simple example (we form a matrix with
+      eigenvalues 1,2,3,4,5):
+  \begin{program}\HCode{X=rand(5,5);\Hnewline
+    vp = [1;2;3;4;5];\Hnewline
+    A = X*diag(vp)*inv(X);\Hnewline
+    // remark: span(X(:,j)) is the eigenspace associated to the eigenvalue j\Hnewline
+    [lambda,V]=spec(A)\Hnewline
+    A*V - V*diag(lambda)\Hnewline
+    // reorder V such that V(:,j) is the eigenvector associated to the eigenvalue j\Hnewline
+    V(:,round(lambda))=V;\Hnewline
+    V./X  // each colomn must have the same coefficients\Hnewline}
+  \end{program}
+
+\paragraph{example 2} hyper-plane symetry:
+  \begin{program}\HCode{u = rand(4,1); u = u/norm(u);\Hnewline
+    // A is the matrix of the symetry around the hyper-plane orthogonal to u\Hnewline
+    // (aka as an hyper-plane reflection or an Houselholder transformation)\Hnewline
+    A = eye(4,4) - 2*u*u';\Hnewline
+    // -1 must be an eigenvalue of multiplity 1\Hnewline
+    //  1 must be an eigenvalue of multiplity 3\Hnewline
+    [lambda,V]=spec(A)\Hnewline
+    // the eigenspace associated to -1 must be span(u):\Hnewline
+    V(:,1)./u}  
+  \end{program}
+
+\paragraph{example 3} a rotation matrix in the plane (here eigenvalues
+    are necessary complex):
+  \begin{program}\HCode{theta =}\verb+%pi+\HCode{/3; ct=cos(theta); st=sin(theta);\Hnewline
+    A=[ct,-st;st,ct];\Hnewline
+    [lambda,V]=spec(A)}
+  \end{program}
+
+\paragraph{example 4} a defective case (1 is an eigenvalue of
+    multiplicity 3 and the associated eigenspace must be span([1;0;0]):
+  \begin{program}\HCode{A=[1,1,0;0,1,1;0,0,1];\Hnewline
+    [lambda,V]=spec(A)\Hnewline
+    orth(V)}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{qr}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   interface : bp and jpc. Internally lapack routines dsyevr and
+   zheevr are used in the real symetric/complex hermitian cases, 
+   and dgeev and zgeev otherwise.
+\end{authors}
