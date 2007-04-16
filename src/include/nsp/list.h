@@ -74,6 +74,7 @@ extern NspList *nsp_list_create(const char *name);
 extern Cell *nsp_cell_create(NspObject *O); 
 extern void nsp_cell_destroy(Cell **c); 
 extern void nsp_list_destroy(NspList *l); 
+extern void nsp_list_destroy_bis(NspList *l);
 extern NspList *nsp_list_copy(NspList *L); 
 extern NspList *nsp_list_extract(NspList *L, NspMatrix *Elts); 
 extern int nsp_list_insert(NspList *L, NspObject *O, int n); 

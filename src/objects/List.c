@@ -146,6 +146,30 @@ void nsp_list_destroy(NspList *l)
     }
 } 
 
+/**
+ *nsp_list_destroy_bis:
+ * @l: a spList 
+ * 
+ * deletes the #NspList but not the elements.
+ * 
+ **/
+
+void nsp_list_destroy_bis(NspList *l)
+{
+  if (l != NULLLIST)
+    {
+      Cell *loc,*loc1;
+      nsp_object_destroy_name(NSP_OBJECT(l));
+      loc = l->first;
+      while ( loc != NULLCELL) 
+	{
+	  loc1= loc->next ;
+	  FREE(loc);
+	  loc = loc1;
+	}
+      FREE(l);
+    }
+} 
 
 /**
  *nsp_list_copy:
