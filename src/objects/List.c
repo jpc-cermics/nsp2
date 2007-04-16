@@ -123,7 +123,7 @@ void nsp_cell_destroy(Cell **c)
 
 /**
  *nsp_list_destroy:
- * @l: a spList 
+ * @l: a #NspList 
  * 
  * deletes the #NspList and all its elements.
  * 
@@ -148,7 +148,7 @@ void nsp_list_destroy(NspList *l)
 
 /**
  *nsp_list_destroy_bis:
- * @l: a spList 
+ * @l: a #NspList 
  * 
  * deletes the #NspList but not the elements.
  * 
@@ -173,7 +173,7 @@ void nsp_list_destroy_bis(NspList *l)
 
 /**
  *nsp_list_copy:
- * @L: 
+ * @L: a #NspList 
  * 
  * returns a full copy of the #NspList @L.
  * Elements inside the list are copied too
