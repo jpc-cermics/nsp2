@@ -194,6 +194,9 @@ double cdf_alngam (double x)
 	  prod /= xx;
 	  xx += 1.;
 	}
+      /* here we have gamma(x)= prod*gamma(xx) 
+       * and xx is in the range [2,3] 
+       */
       /* rational approximation of GAMMA(X) in [0,1] */
       d1 = xx - 2.;
       d2 = xx - 2.;
@@ -205,3 +208,51 @@ double cdf_alngam (double x)
 }
 
 
+/*
+ * Using Maple code for approximation of GAMMA(x) in [2,3] 
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) GAMMA(x);end proc;
+  g:= proc(x) f(x);end proc;
+  Digits:=50;
+  am:=20;ap:=30;ad:=10;
+  ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[9,4]);
+  Digits:=17;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  infnorm(log(f(x))-log(f_approx(x)),x=(am/ad)..(ap/ad));
+  codegen[C](f_approx,optimized);
+  codegen[C](g_cheb,optimized);
+  codegen[C](confracform(n/d));
+  
+  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
+    evalf((u1-u2)/u1,70);
+  end proc;
+  
+  m_err:=proc(am,ap,b,nn)
+    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
+    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
+    serr:= map(f_err,s);
+    convert(max(op(serr)),float);
+  end proc;
+  
+  m_err(am,ap,ad,1);
+
+  # original code 
+
+  scoefn :=[ 62.003838007127258804, 36.036772530024836321, 20.782472531792126786,
+  6.338067999387272343, 2.15994312846059073, .3980671310203570498, 
+  .1093115956710439502, .0092381945590275995, .0029737866448101651 ];
+  scoefd :=[ 62.003838007126989331, 9.822521104713994894, -8.906016659497461257,1.];
+  d:= (((scoefd[4]*x+ scoefd[3])*x+ scoefd[2])*x+ scoefd[1]);
+  n:= ((((((((scoefn[9]*x+ scoefn[8])*x + scoefn[7])*x+ scoefn[6])*x+ scoefn[5])*x+ scoefn[4])*x+ scoefn[3])*x+ scoefn[2])*x+ scoefn[1]);
+  f1:= unapply(n/d,x);
+  f_approx:= proc(x) f1(x-2); end proc;
+
+  infnorm(f(x)-f_approx(x),x=(am/ad)..(ap/ad));
+  infnorm(log(f(x))-log(f_approx(x)),x=(am/ad)..(ap/ad));
+  
+
+*/

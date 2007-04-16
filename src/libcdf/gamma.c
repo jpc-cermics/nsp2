@@ -16,10 +16,10 @@
 double cdf_gamma (double a)
 {
   /*     D = 0.5*(LN(2*PI) - 1) */
-  const int c__3 = 3;
-  const int c__0 = 0;
+  const int c3 = 3;
+  const int c0 = 0;
   const double pi = 3.1415926535898;
-  const double d__ = .41893853320467274178;
+  const double d = .41893853320467274178;
   const double p[7] =  { 5.39637273585445e-4, .0026193926004269, .020449366759492,
 			 .0730981088720487, .279648642639792, .553413866010467, 1. };
   const double q[7] =  { -8.32979206704073e-4, .00470059485860584, .022521113103534,
@@ -33,9 +33,9 @@ double cdf_gamma (double a)
   double bot, lnx, top;
   double g;
   double ret_val;
-  double sx=0,t, w, x, z__;
-  int i__, j, m, n;
-  int i__1;
+  double sx=0,t, w, x, z;
+  int i, j, m, n;
+  int i1;
 
   ret_val = 0.;
   x = a;
@@ -43,8 +43,9 @@ double cdf_gamma (double a)
     {
       goto L110;
     }
+
   /*
-   *            EVALUATION OF GAMMA(A) FOR ABS(A) .LT. 15 
+   *  evaluation of gamma(a) for abs(a) .lt. 15 
    */
 
   t = 1.;
@@ -63,8 +64,8 @@ double cdf_gamma (double a)
       goto L10;
     }
 L10:
-  i__1 = m;
-  for (j = 1; j <= i__1; ++j)
+  i1 = m;
+  for (j = 1; j <= i1; ++j)
     {
       x += -1.;
       t = x * t;
@@ -84,8 +85,8 @@ L30:
     {
       goto L60;
     }
-  i__1 = m;
-  for (j = 1; j <= i__1; ++j)
+  i1 = m;
+  for (j = 1; j <= i1; ++j)
     {
       x += 1.;
       t = x * t;
@@ -106,7 +107,7 @@ L60:
     {
       goto L80;
     }
-  if (Abs (t) * cdf_spmpar (c__3) <= 1.0001)
+  if (Abs (t) * cdf_spmpar (c3) <= 1.0001)
     {
       return ret_val;
     }
@@ -116,10 +117,10 @@ L60:
  L80:
   top = p[0];
   bot = q[0];
-  for (i__ = 2; i__ <= 7; ++i__)
+  for (i = 2; i <= 7; ++i)
     {
-      top = p[i__ - 1] + x * top;
-      bot = q[i__ - 1] + x * bot;
+      top = p[i - 1] + x * top;
+      bot = q[i - 1] + x * bot;
       /* L90: */
     }
   ret_val = top / bot;
@@ -161,20 +162,19 @@ L100:
     {
       return ret_val;
     }
-  /*     COMPUTE THE MODIFIED ASYMPTOTIC SUM */
  L120:
+  /*    compute the modified asymptotic sum */
   t = 1. / (x * x);
   g = ((((r1 * t + r2) * t + r3) * t + r4) * t + r5) / x;
   /*    ONE MAY REPLACE THE NEXT STATEMENT WITH  LNX = ALOG(X)
    *     BUT LESS ACCURACY WILL NORMALLY BE OBTAINED. 
    */
   lnx = log (x);
-  /*     FINAL ASSEMBLY */
-  z__ = x;
-  g = d__ + g + (z__ - .5) * (lnx - 1.);
+  z = x;
+  g = d + g + (z - .5) * (lnx - 1.);
   w = g;
   t = g - w;
-  if (w > cdf_exparg (c__0) * .99999)
+  if (w > cdf_exparg (c0) * .99999)
     {
       return ret_val;
     }
