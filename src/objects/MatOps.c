@@ -5237,13 +5237,14 @@ int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_mat_add_scalar_bis:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
  * 
- * 
- * 
- * Return value: 
+ * Do the operation A <- A + B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
  **/
-/* a set of functions adapted for the MTLB_MODE */
 int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5277,11 +5278,12 @@ int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_mat_add_mat:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix  
  * 
+ * Do the operation A <- A + B when nsp is compiled 
+ * in MTLB_MODE (matlab 's behavior for empty matrix)
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
 {
@@ -5321,13 +5323,14 @@ int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_mat_sub_scalar_bis:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
  * 
- * 
- * 
- * Return value: 
+ * Do the operation A <- A - B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
  **/
-/* A is a matrix, B is a scalar A - B */
 int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5361,13 +5364,14 @@ int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_scalar_sub_mat_bis:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
  * 
- * 
- * 
- * Return value: 
+ * Do the operation A <- B - A  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
  **/
-/* A is a matrix, B is a scalar A <- B - A */
 int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5401,14 +5405,13 @@ int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_mat_sub_mat:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix  
  * 
+ * Do the operation A <- A - B when nsp is compiled 
+ * in MTLB_MODE (matlab 's behavior for empty matrix)
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
-/* deals with the case dim A == dim B **/
-
 int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
 {
   int i;
@@ -5447,11 +5450,13 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
 /**
  * nsp_mat_mult_scalar_bis:
  * @A: a #NspMatrix 
- * @B: 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
  * 
- * 
- * 
- * Return value: 
+ * Do the operation A <- A*B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
  **/
 int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
@@ -5486,12 +5491,13 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
 
 /**
  * nsp_mat_scale_rows:
- * @A: a #NspMatrix 
- * @x: 
+ * @A: a #NspMatrix of size m x n
+ * @x: a #NspMatrix must be a vector of size m (1 x m or m x 1)
  * 
+ *  for (i from 0 to m-1)  
+ *      multiplie row i of A by x[i]
  * 
- * 
- * Return value: 
+ * Return value: %FAIL or %OK
  **/
 int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
 {
@@ -5536,12 +5542,13 @@ int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
 
 /**
  * nsp_mat_scale_cols:
- * @A: a #NspMatrix 
- * @x: 
+ * @A: a #NspMatrix of size m x n
+ * @x: a #NspMatrix must be a vector of size n (1 x n or n x 1)
  * 
+ *  for (j from 0 to n-1)  
+ *      multiplie column j of A by x[j]
  * 
- * 
- * Return value: 
+ * Return value: %FAIL or %OK
  **/
 int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
 {
