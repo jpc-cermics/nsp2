@@ -110,7 +110,7 @@ int poi_trd(double mu)
 	      if ( k >= 10 )
 		{
 		  if ( log(v*smu) <= (k+0.5)*log(mu/k) - mu - LOG_SQRT_2PI
-		       + k - (1./12. - 1./(360*k*k))/k )
+		       + k - (1./12. - 1./(360.*k*k))/k )
 		    return k;
 		}
 	      else
