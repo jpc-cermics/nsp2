@@ -209,31 +209,45 @@ double cdf_alngam (double x)
 
 
 /*
- * Using Maple code for approximation of GAMMA(x) in [2,3] 
+ * Using Maple code for approximation of log(GAMMA(x+2)) in [0,1] 
+ *
  
   with(numapprox);
   with(orthopoly);
-  f:= proc(x) GAMMA(x);end proc;
-  g:= proc(x) f(x);end proc;
+  f:= proc(x) log(GAMMA(2+x));end proc;
+  g:= proc(x) f(x)/x;end proc;
   Digits:=50;
-  am:=20;ap:=30;ad:=10;
+  am:=0;ap:=10;ad:=10;
   ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[9,4]);
   Digits:=17;
   gg:= convert(ggp,float);
   gg:= convert(gg,horner);
-  f_approx:= unapply(gg,x);
-  infnorm(log(f(x))-log(f_approx(x)),x=(am/ad)..(ap/ad));
+  f_approx:= unapply(x*gg,x);
+  infnorm( f(x)- f_approx(x),x=(am/ad)..(ap/ad));
   codegen[C](f_approx,optimized);
   codegen[C](g_cheb,optimized);
   codegen[C](confracform(n/d));
-  
+
+  double f_approx(x)
+  double x;
+{
+  {
+    return(x*(0.221031420017151+(0.4555848067829791+(0.3164552516488399+(
+0.9190165621078898E-1+(0.1018927139501505E-1+(0.1830006377153302E-3+(
+-0.6168325943954862E-5+(0.2963113120297188E-6+(-0.1373138686445392E-7+
+0.4123840082903748E-9*x)*x)*x)*x)*x)*x)*x)*x)*x)/(0.5227994551067566+(
+0.6788312470283883+(0.3140284265354363+(0.6054872437876866E-1+
+0.4033042504760442E-2*x)*x)*x)*x));
+  }
+}
+
   f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
     evalf((u1-u2)/u1,70);
   end proc;
   
   m_err:=proc(am,ap,b,nn)
     mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
-    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
+    s:=[seq(i/mvd,i=mvm..mvp)];
     serr:= map(f_err,s);
     convert(max(op(serr)),float);
   end proc;
