@@ -110,6 +110,64 @@ double cdf_rlog (double x)
 
 */
 
+/* Maxima 
+ *
 
+  f_approx1(x,res):= (u : x/(2.0+x),u2:u*u,
+    res1 :u*((-0.1006397968649471E1
+	    +(0.6784309300435146
+	      -0.187491012609664E-1*u2)*u2)
+	   /(0.1006397968649471E1
+	     +(-0.128226971123169E1
+	       +0.3567975116629138*u2)*u2)),
+    res + 2*u2*( 1/(1-u) + res1/3));
+
+  rlog1(x):=  if ( x >= - 0.39 and x <= - 0.18) then 
+  f_approx1((x + .3)/0.7,-.42857142857142857*x -.07189648463269617) 
+  else ( if ( x > -0.18 and x < 0.18 ) then  f_approx1(x,0.0)
+  else (if ( x >= 0.18 and x <= 0.57 ) then  f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093)
+  else x-log(1+x)));
+
+  f(x):= x-1-log(x);
+  f_approx(x) := rlog1(x-1);
+  
+  h(x):= if x=1 then false else true;
+  relerr(x,y):= (x-y)/y;
+  nn:10;
+  L: makelist(x/(100*nn),x,60*nn,150*nn)$
+  L: sublist(L,h)$
+  fpprec:100;
+  float2bf: true;
+
+  * relative precision with naive evaluation 
+
+  bfT: bfloat(map(f,L))$
+  ft: ev(map(f,L),numer)$
+  Lrerr:map(relerr,bfT,ft)$
+  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+  
+  * relative precision with f_approx 
+
+  bfT: bfloat(map(f,L))$
+  ft: ev(map(f_approx,L),numer)$
+  Lrerr:map(relerr,bfT,ft)$
+  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+
+  * using rlog1 
+  h(x):= if x=0 then false else true;
+  relerr(x,y):= (x-y)/y;
+  nn:10;
+  L: makelist(x/(100*nn),x,-40*nn,50*nn)$
+  L: sublist(L,h)$
+  fpprec:100;
+  float2bf: true;
+
+  f1(x):= x-log(1+x);
+  bfT: bfloat(map(f1,L))$
+  ft: ev(map(rlog1,L),numer)$
+  Lrerr:map(relerr,bfT,ft)$
+  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+
+*/
 
 

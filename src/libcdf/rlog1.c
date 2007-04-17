@@ -81,11 +81,11 @@ double cdf_rlog1_old (double x)
   codegen[C](g_cheb,optimized);
   codegen[C](confracform(u*subs(x=u,gg)));
   
-  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
+  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),16);
     evalf((u1-u2)/u1,70);
   end proc;
   
-  m_err:=proc(am,ap,b,nn)
+  m_err:=proc(am,ap,b,nn) local mvm,mvp,mvd,s,serr;
     mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
     s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
     serr:= map(f_err,s);
@@ -95,7 +95,7 @@ double cdf_rlog1_old (double x)
   am:=-18;ap:=18;ad:=100;
   m_err(am,ap,ad,100);
 
-  # full approximation in [-0.39,0.57]
+  # in [-0.18,0.18]
 
   f_approx1:= proc(x,res) local u,u2,res1;  u := x/(2.0+x);u2:=u*u;
     res1 :=u*((-0.1006397968649471E1
@@ -107,9 +107,19 @@ double cdf_rlog1_old (double x)
     res + 2*u2*( 1/(1-u) + res1/3);
   end proc;
 
+  # in [-0.4,-0.18] 
+  # better than 
+  # y:= f_approx1((x + .3)/0.7,-.42857142857142857*x -.07189648463269617);
+
+  f_approx2:=  proc(x) (0.285211335E-10+(0.107106064E-8+(0.1152628215700186E1+(
+  0.224530290626052E1+(0.1355646781758151E1+0.245173096410477*x)*x)*x)*x)*x)/(
+  0.2305256395750588E1+(0.6027443064646071E1+(0.557695860354239E1+(
+  0.2116690842297106E1+(0.265182661285532-0.1316156876141345E-2*x)*x)*x)*x)*x); end proc;
+
+  # full approximation in [-0.39,0.57]
+  
   f_approx := proc(x) local y;
-    if ( x >= - 0.39 and x <= - 0.18) then 
-      y:= f_approx1((x + .3)/0.7,-.42857142857142857*x -.07189648463269617);
+    if ( x >= - 0.39 and x <= - 0.18) then y:=f_approx2(x);
     elif ( x > -0.18 and x < 0.18 ) then  y:= f_approx1(x,0.0);
     elif ( x >= 0.18 and x <= 0.57 ) then  y:= f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093);
     else y:= x -log(1+x);
@@ -163,10 +173,7 @@ double cdf_rlog1(double x)
 }
 
 
-/* Some maxima code that can be used for testing  */
-
-/* Some maxima code that can be used for testing 
- * and ploting 
+/* Some maxima code that can be used for testing and ploting 
 
    f(x):= x- log(1+x);
    g(x):= (f(x)-f(-x))/(2*x^3/3);
@@ -181,23 +188,47 @@ double cdf_rlog1(double x)
 
    * relative precision with naive evaluation 
 
-   bfT: bfloat(map(g,L))$
-   ft: ev(map(g,L),numer)$
+   bfT: bfloat(map(f,L))$
+   ft: ev(map(f,L),numer)$
    Lrerr:map(relerr,bfT,ft)$
    plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
 
    * rational approximation computed with Maple 
 
-   f1(u,u2):= u*((-0.1006397968649471E1 +(0.6784309300435146 -0.187491012609664E-1*u2)*u2)
-   /(0.1006397968649471E1 +(-0.128226971123169E1 +0.3567975116629138*u2)*u2));
+   f_approx1(x,res):= (u : x/(2.0+x),u2:u*u,
+    res1 :u*((-0.1006397968649471E1
+	    +(0.6784309300435146
+	      -0.187491012609664E-1*u2)*u2)
+	   /(0.1006397968649471E1
+	     +(-0.128226971123169E1
+	       +0.3567975116629138*u2)*u2)),
+    res + 2*u2*( 1/(1-u) + res1/3));
 
-   f_approx(x) := ( u : x/(2.0+x), u2 : u*u, 2*u2*( 1/(1-u) + f1(u,u2)/3));
-   bfT: bfloat(map(f,L))$
-   ratf: ev(map(f_approx,L),numer)$
-   Lrerr:map(relerr,bfT,ratf)$
-   plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
-   lmax(Lrerr);
-   
+   f_approx2(x):= (0.285211335E-10+(0.107106064E-8+(0.1152628215700186E1+(
+  0.224530290626052E1+(0.1355646781758151E1+0.245173096410477*x)*x)*x)*x)*x)/(
+  0.2305256395750588E1+(0.6027443064646071E1+(0.557695860354239E1+(
+  0.2116690842297106E1+(0.265182661285532-0.1316156876141345E-2*x)*x)*x)*x)*x);
+
+   rlog1(x):=  if ( x >= - 0.39 and x <= - 0.18) then f_approx2(x)
+   else ( if ( x > -0.18 and x < 0.18 ) then  f_approx1(x,0.0)
+   else (if ( x >= 0.18 and x <= 0.57 ) then  f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093)
+   else x-log(1+x)));
+
+  h(x):= if x=0 then false else true;
+  relerr(x,y):= (x-y)/y;
+  nn:10;
+  L: makelist(x/(100*nn),x,-40*nn,50*nn)$
+  L: sublist(L,h)$
+  fpprec:100;
+  float2bf: true;
+
+  bfT: bfloat(map(f,L))$
+  ft: ev(map(rlog1,L),numer)$
+  Lrerr:map(relerr,bfT,ft)$
+  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+
+
+
 */
 
 
