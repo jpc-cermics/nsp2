@@ -80,22 +80,45 @@ double cdf_rlog1_old (double x)
   codegen[C](f_approx,optimized);
   codegen[C](g_cheb,optimized);
   codegen[C](confracform(u*subs(x=u,gg)));
-
-  f:= proc(x) f1(x-1);end proc;
-  f_approx:= proc(x) f_approx1(x-1);end proc;
   
   f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
     evalf((u1-u2)/u1,70);
   end proc;
   
-  m_err:=proc(a,b,c,nn)
-    s:=[seq(i/(c*nn),i=(a*nn)..(b*nn))];
+  m_err:=proc(am,ap,b,nn)
+    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
+    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
     serr:= map(f_err,s);
     convert(max(op(serr)),float);
   end proc;
-  
-  m_err(100-18,100+18,100,1);
-  
+
+  am:=-18;ap:=18;ad:=100;
+  m_err(am,ap,ad,100);
+
+  # full approximation in [-0.39,0.57]
+
+  f_approx1:= proc(x,res) local u,u2,res1;  u := x/(2.0+x);u2:=u*u;
+    res1 :=u*((-0.1006397968649471E1
+	    +(0.6784309300435146
+	      -0.187491012609664E-1*u2)*u2)
+	   /(0.1006397968649471E1
+	     +(-0.128226971123169E1
+	       +0.3567975116629138*u2)*u2));
+    res + 2*u2*( 1/(1-u) + res1/3);
+  end proc;
+
+  f_approx := proc(x) local y;
+    if ( x >= - 0.39 and x <= - 0.18) then 
+      y:= f_approx1((x + .3)/0.7,-.42857142857142857*x -.07189648463269617);
+    elif ( x > -0.18 and x < 0.18 ) then  y:= f_approx1(x,0.0);
+    elif ( x >= 0.18 and x <= 0.57 ) then  y:= f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093);
+    else y:= x -log(1+x);
+    end if ;
+    y ;
+  end proc;
+
+  m_err(-40,58,100,10);
+
 */
 
 
