@@ -57,3 +57,51 @@ double cdf_gam1 (double a)
       return  a*w;
     }
 }
+
+
+
+/* 
+ * Using Maple 
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) 1/GAMMA(1+x) -1;end proc;
+  Digits:=70;
+  ggp:=chebpade(f(x)/x,x=0..0.5,[6,4]);
+  Digits:=17;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(x*gg,x);
+  infnorm(f(x) -f_approx(x),x=-0.5..0);
+  codegen[C](f_approx,optimized);
+  codegen[C](g_cheb,optimized);
+  codegen[C](confracform(u*subs(x=u,gg)));
+
+  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
+    evalf((u1-u2)/u1,70);
+  end proc;
+  
+  m_err:=proc(a,b,c,nn)
+    s:=[seq(i/(c*nn),i=(a*nn)..(b*nn))];
+    serr:= map(f_err,s);
+    convert(max(op(serr)),float);
+  end proc;
+  
+  m_err(01,500,1000,1);
+
+  # test current code 
+  #--------------------
+
+  p := [ .577215664901533, -.409078193005776, -.230975380857675,
+         .0597275330452234, .0076696818164949, -.00514889771323592, 5.89597428611429e-4 ];
+  q := [ 1., .427569613095214, .158451672430138, .0261132021441447, 0.00423244297896961 ];
+  top :=(((((p[7]*x + p[6])*x + p[5])*x + p[4])*x + p[3])*x + p[2])*x + p[1];
+  bot :=(((q[5]*x + q[4])*x + q[3])*x + q[2])*x + q[1];
+  f_approx:= unapply(x* top/bot,x);
+
+  infnorm(f(x) - f_approx(x),x=0..0.5);
+
+  m_err(01,500,1000,1);
+
+*/
+

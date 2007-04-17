@@ -792,6 +792,11 @@ static int int_cdf_alnrel(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_alnrel,NULL);
 }
 
+static int int_cdf_gam1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gam1,NULL);
+}
+
 static int int_cdf_dlanor(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor,NULL);
@@ -847,6 +852,7 @@ static OpTab Dcd_func[]={
   {"cdfpoi",int_cdfpoi}, 
   {"cdft",int_cdft}, 
   {"cdf_rlog1",int_cdf_rlog1},
+  {"cdf_gam1",int_cdf_gam1},
   {"cdf_rexp",int_cdf_rexp},
   {"cdf_rlog",int_cdf_rlog},
   {"cdf_algdiv",int_cdf_algdiv},
