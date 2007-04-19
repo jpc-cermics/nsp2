@@ -53,7 +53,6 @@ double cdf_rlog (double x)
   return ret_val;
 }	
 
-
 /*
  * Maple code 
 
@@ -110,10 +109,10 @@ double cdf_rlog (double x)
 
 */
 
-/* Maxima 
- *
+/* Maxima code 
+ * we use rlog1 
 
-  f_approx1(x,res):= (u : x/(2.0+x),u2:u*u,
+   f_approx1(x,res):= (u : x/(2.0+x),u2:u*u,
     res1 :u*((-0.1006397968649471E1
 	    +(0.6784309300435146
 	      -0.187491012609664E-1*u2)*u2)
@@ -122,51 +121,60 @@ double cdf_rlog (double x)
 	       +0.3567975116629138*u2)*u2)),
     res + 2*u2*( 1/(1-u) + res1/3));
 
-  rlog1(x):=  if ( x >= - 0.39 and x <= - 0.18) then 
-  f_approx1((x + .3)/0.7,-.42857142857142857*x -.07189648463269617) 
-  else ( if ( x > -0.18 and x < 0.18 ) then  f_approx1(x,0.0)
-  else (if ( x >= 0.18 and x <= 0.57 ) then  f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093)
-  else x-log(1+x)));
+   f_approx2(x):= (0.285211335E-10+(0.107106064E-8+(0.1152628215700186E1+(
+  0.224530290626052E1+(0.1355646781758151E1+0.245173096410477*x)*x)*x)*x)*x)/(
+  0.2305256395750588E1+(0.6027443064646071E1+(0.557695860354239E1+(
+  0.2116690842297106E1+(0.265182661285532-0.1316156876141345E-2*x)*x)*x)*x)*x);
+
+  rlog1(x):=  if ( x >= - 0.39 and x <= - 0.18) then f_approx2(x)
+   else ( if ( x > -0.18 and x < 0.18 ) then  f_approx1(x,0.0)
+   else (if ( x >= 0.18 and x <= 0.57 ) then  f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093)
+   else x-log(1+x)));
+
+  # compute rlog 
 
   f(x):= x-1-log(x);
-  f_approx(x) := rlog1(x-1);
-  
-  h(x):= if x=1 then false else true;
-  relerr(x,y):= (x-y)/y;
-  nn:10;
-  L: makelist(x/(100*nn),x,60*nn,150*nn)$
-  L: sublist(L,h)$
+  f_approx(x) := if ( x <= -0.39 ) then x-1-log(x) else rlog1(x-1);
+
   fpprec:100;
   float2bf: true;
 
-  * relative precision with naive evaluation 
-
-  bfT: bfloat(map(f,L))$
-  ft: ev(map(f,L),numer)$
-  Lrerr:map(relerr,bfT,ft)$
-  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+  points(xmin,xmax,xdiv,nn,xe):= ( L: makelist(x/(xdiv*nn),x,xmin*nn,xmax*nn), 
+                                   L: sublist(L,lambda([x],if x=xe then false else true)))$
   
-  * relative precision with f_approx 
+  testprec(L,f,fa):= (fpprec:100,bfT: bfloat(map(f,L)), ft: ev(map(fa,L),numer),
+                       Lrerr:map(lambda([x,y],(x-y)/x),bfT,ft),
+		       plot2d([discrete,ev(L,numer),ev(Lrerr,numer)]),
+		       ev(lmax(Lrerr),numer))$
 
-  bfT: bfloat(map(f,L))$
-  ft: ev(map(f_approx,L),numer)$
-  Lrerr:map(relerr,bfT,ft)$
-  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+  L: points(-40+100,50+100,100,10,1)$
+  print("without rational approximation")$
+  testprec(L,f,f); 
+  print("with rational approximation")$
+  testprec(L,f,f_approx);
 
-  * using rlog1 
-  h(x):= if x=0 then false else true;
-  relerr(x,y):= (x-y)/y;
-  nn:10;
-  L: makelist(x/(100*nn),x,-40*nn,50*nn)$
-  L: sublist(L,h)$
-  fpprec:100;
-  float2bf: true;
+  # original code 
 
-  f1(x):= x-log(1+x);
-  bfT: bfloat(map(f1,L))$
-  ft: ev(map(rlog1,L),numer)$
-  Lrerr:map(relerr,bfT,ft)$
-  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+  a : .0566749439387324;
+  b : .0456512608815524;
+  p0 : .333333333333333;
+  p1 : -.224696413112536;
+  p2 : .00620886815375787;
+  q1 : -1.27408923933623;
+  q2 : .354508718369557;
+  
+  f_approx(u,w1):= (  r : u / (u + 2.),  t : r * r, 
+  w : ((p2 * t + p1) * t + p0) / ((q2 * t + q1) * t + 1.), 
+  t * 2. * (1. / (1. - r) - r * w) + w1)$
+
+  rlog(x):=  if (x < .61 or  x > 1.57) then x-1-log(x) 
+  else if (x < .82) then (u: (x -0.7)/0.7, f_approx(u,a - u * .3))
+  else if (x > 1.18) then (u:  x * .75 - 1., f_approx(u, b + u / 3.))
+  else (u: x - .5 - .5, f_approx(u,0))$
+
+  
+  print("with rational approximation")$
+  testprec(L,f,rlog);
 
 */
 

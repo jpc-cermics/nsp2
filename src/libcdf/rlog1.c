@@ -178,20 +178,9 @@ double cdf_rlog1(double x)
    f(x):= x- log(1+x);
    g(x):= (f(x)-f(-x))/(2*x^3/3);
    h(x):= if x=0 then false else true;
-   relerr(x,y):= (x-y)/y;
-   nn:10;
-   mv:18*nn;
-   L: makelist(x/(100*nn),x,-mv,mv)$
-   L: sublist(L,h)$
+
    fpprec:100;
    float2bf: true;
-
-   * relative precision with naive evaluation 
-
-   bfT: bfloat(map(f,L))$
-   ft: ev(map(f,L),numer)$
-   Lrerr:map(relerr,bfT,ft)$
-   plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
 
    * rational approximation computed with Maple 
 
@@ -214,20 +203,19 @@ double cdf_rlog1(double x)
    else (if ( x >= 0.18 and x <= 0.57 ) then  f_approx1(0.75*x -0.25, 0.25*x -.03768207245178093)
    else x-log(1+x)));
 
-  h(x):= if x=0 then false else true;
-  relerr(x,y):= (x-y)/y;
-  nn:10;
-  L: makelist(x/(100*nn),x,-40*nn,50*nn)$
-  L: sublist(L,h)$
-  fpprec:100;
-  float2bf: true;
+  points(xmin,xmax,xdiv,nn,xe):= ( L: makelist(x/(xdiv*nn),x,xmin*nn,xmax*nn), 
+                                   L: sublist(L,lambda([x],if x=xe then false else true)))$
 
-  bfT: bfloat(map(f,L))$
-  ft: ev(map(rlog1,L),numer)$
-  Lrerr:map(relerr,bfT,ft)$
-  plot2d([discrete,ev(L,numer),ev(Lrerr,numer)])$
+  testprec(L,f,fa):= (fpprec:100,bfT: bfloat(map(f,L)), ft: ev(map(fa,L),numer),
+                       Lrerr:map(lambda([x,y],(x-y)/x),bfT,ft),
+		       plot2d([discrete,ev(L,numer),ev(Lrerr,numer)]),
+		       ev(lmax(Lrerr),numer))$
 
-
+  L: points(-40,50,100,10,0)$
+  print("without rational approximation")$
+  testprec(L,f,f); 
+  print("with rational approximation")$
+  testprec(L,f,rlog1);
 
 */
 
