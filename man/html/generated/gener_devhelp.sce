@@ -1,9 +1,9 @@
 
 Res=fopen("nsp.devhelp",mode="w");
-Res.putstr["<?xml version=""1.0"" encoding=""utf-8"" standalone=""no""?>"];
-Res.putstr["<!DOCTYPE book PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" """">"];
-Res.putstr["<book xmlns=""http://www.devhelp.net/book"" title=""Nsp manual"" link=""index.html"" author="""" name=""nspdoc"">"];
-Res.putstr["  <chapters>"];
+Res.putstr["<?xml version=""1.0"" encoding=""utf-8"" standalone=""no""?>\n"];
+Res.putstr["<!DOCTYPE book PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" """">\n"];
+Res.putstr["<book xmlns=""http://www.devhelp.net/book"" title=""Nsp manual"" link=""index.html"" author="""" name=""nspdoc"">\n"];
+Res.putstr["  <chapters>\n"];
 chaps=glob("manualch*");
 for i=1:size(chaps,'*') 
   F=fopen(chaps(i));
@@ -17,7 +17,7 @@ for i=1:size(chaps,'*')
     Res.printf["    <sub name=""%s"" link=""%s""/>\n",chap_str,chaps(i)];
   end
 end
-Res.putstr["  </chapters>"];
+Res.putstr["  </chapters>\n"];
 Res.putstr["  <functions>\n"];
 F=fopen("manual.4dx");
 while %t 
@@ -29,7 +29,7 @@ while %t
   str1=sprintf("    <function name=""%s"" link=""%s""/>\n",name,fname);
   Res.putstr[str1];
 end
-Res.putstr["  <functions>\n"];
-Res.putstr["</book>"];
+Res.putstr["  </functions>\n"];
+Res.putstr["</book>\n"];
 F.close[]
 Res.close[];
