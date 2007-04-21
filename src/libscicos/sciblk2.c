@@ -17,7 +17,8 @@
  * Boston, MA 02111-1307, USA.
  *
  * This code is a nsp version of the code necessary to call a block 
- * defined by nsp code. 
+ * defined by nsp code
+ * 
  *--------------------------------------------------------------------------*/
 
 #include "nsp/machine.h"

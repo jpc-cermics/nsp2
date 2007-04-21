@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  *
  * utilities copyrighted GPL in this version by Ramine Nikoukhah
- * Some blocks have specific authors which are named in the code. 
+ * translated to C and simplified by Jean-Philippe Chancelier 
  * 
  *--------------------------------------------------------------------------*/
 
@@ -25,57 +25,52 @@
 #include "nsp/object.h"
 #include "nsp/blas.h"
 
-/*     PURPOSE 
- *        computes the matrix product C = A * B 
- *            C   =   A   *   B 
- *          (l,n)   (l,m) * (m,n) 
- *
- *     PARAMETERS 
- *        input 
- *        ----- 
- *        A : (double) array (l, m) with leading dim na 
- *
- *        B : (double) array (m, n) with leading dim nb 
- *
- *        na, nb, nc, l, m, n : ints 
- *
- *        output 
- *        ------ 
- *        C : (double) array (l, n) with leading dim nc 
- *
- *     NOTE 
- *        (original version substituted by a call to the blas dgemm) 
- */
+/**
+ * dmmul_scicos:
+ * @a: array of double 
+ * @na: int pointer
+ * @b:  array of double 
+ * @nb: int pointer
+ * @c:  array of double 
+ * @nc: int pointer
+ * @l: int pointer 
+ * @m: int pointer
+ * @n: int pointer
+ * 
+ * computes the matrix product @c = @a*@b, where @c is (@l,@n), @a is 
+ * (@l,@m) and @b is (@m,@n) by calling dgemm().
+ * 
+ * Returns: 0 
+ **/
 
 int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
 {
   double c_b4 = 1.0, c_b5 = 0.0;
-  int a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset;
-  a_dim1 = *na;
-  a_offset = a_dim1 + 1;
-  a -= a_offset;
-  c_dim1 = *nc;
-  c_offset = c_dim1 + 1;
-  c -= c_offset;
-  b_dim1 = *nb;
-  b_offset = b_dim1 + 1;
-  b -= b_offset;
-  /* Function Body */
-  C2F(dgemm)("n", "n", l, n, m, &c_b4, &a[a_offset], na, &b[b_offset], nb, &c_b5, &c[c_offset], nc, 1L, 1L);
+  C2F(dgemm)("n", "n", l, n, m, &c_b4, a, na,b, nb,&c_b5,c, nc, 1L, 1L);
   return 0;
 } 
 
-/* c=c+a*b . 
- *     a            tableau de taille na*m contenant la matrice a 
- *     na           nombre de lignes du tableau a dans le programme appel 
- *     b,nb,c,nc    definitions similaires a celles de a,na 
- *     l            nombre de ligne des matrices a et c 
- *     m            nombre de colonnes de a et de lignes de b 
- *     n            nombre de colonnes de b et c 
- */
+/**
+ * dmmul1_scicos:
+ * @a: array of double 
+ * @na: int pointer
+ * @b:  array of double 
+ * @nb: int pointer
+ * @c:  array of double 
+ * @nc: int pointer
+ * @l: int pointer 
+ * @m: int pointer
+ * @n: int pointer
+ * 
+ * computes the matrix product @c =@c +  @a*@b, where @c is (@l,@n), @a is 
+ * (@l,@m) and @b is (@m,@n) by calling dgemm().
+ * 
+ * Returns: 0 
+ **/
 
 int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
 {
+  /* 
   int i1=*n , i2=*l , i, j, ib=0, ic=0 , c1 = 1;
   for (j = 0 ; j < i1; ++j) 
     {
@@ -85,6 +80,9 @@ int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, in
       ic += *nc;
       ib += *nb;
     }
+  */
+  double c_b4 = 1.0, c_b5 = 1.0;
+  C2F(dgemm)("n", "n", l, n, m, &c_b4, a, na,b, nb,&c_b5,c, nc, 1L, 1L);
   return 0;
 } 
 
