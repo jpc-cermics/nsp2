@@ -1,10 +1,24 @@
-/*
- * nsp version
- *  Jean-Philippe Chancelier 
- *  Copyright Enpc 
+/* Nsp
+ * Copyright (C) 2006-2007 Jean-Philippe Chancelier (Enpc)
  *
- * for blocks coded in nsp 
- */
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * This code is a nsp version of the code necessary to call a block 
+ * defined by nsp code. 
+ *--------------------------------------------------------------------------*/
 
 #include "nsp/machine.h"
 #include "nsp/object.h"
@@ -548,18 +562,19 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
 
 
 
-/*     routine used to evaluate a block defined by a scilab function */
-/*     scilab function syntax must be */
-/*     [y,x,z,tvec,xd]=func(flag,nevprt,t,x,z,rpar,ipar,u) */
-/*     with */
-/*        t      scalar current time */
-/*        x      column vector continuous state */
-/*        z      column vector discrete state */
-/*        u      column vector block input */
-/*        nevprt int */
-/*        flag   int */
-/*        y      column vector block output */
-/*        xd     column vector block state derivative */
+/*     routine used to evaluate a block defined by a scilab function 
+ *     scilab function syntax must be 
+ *     [y,x,z,tvec,xd]=func(flag,nevprt,t,x,z,rpar,ipar,u) 
+ *     with 
+ *        t      scalar current time 
+ *        x      column vector continuous state 
+ *        z      column vector discrete state 
+ *        u      column vector block input 
+ *        nevprt int 
+ *        flag   int 
+ *        y      column vector block output 
+ *        xd     column vector block state derivative 
+ */
 
 void scicos_sciblk(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx,
 		   double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar,

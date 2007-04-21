@@ -1,3 +1,26 @@
+/* Nsp
+ * Copyright (C) 2007 Ramine Nikoukhah (Inria) 
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Scicos blocks copyrighted GPL in this version by Ramine Nikoukhah
+ * Some blocks have specific authors which are named in the code. 
+ * 
+ *--------------------------------------------------------------------------*/
+
 #include <math.h>
 #include "nsp/machine.h"
 #include "nsp/graphics/Graphics.h" 
@@ -1466,8 +1489,6 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
   static char buf[40];
   static int wid, nax[4];
   
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     ipar(1) = win_num */
   /*     ipar(2) = mode : animated =0 fixed=1 */
   /*     ipar(3:3+nu-1) = colors of balls */

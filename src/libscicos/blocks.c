@@ -1,3 +1,27 @@
+/* Nsp
+ * Copyright (C) 2007 Ramine Nikoukhah (Inria) 
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Scicos blocks copyrighted GPL in this version by Ramine Nikoukhah
+ * this code was obtained by f2c + manual modification (Jean-Philippe Chancelier).
+ * Some blocks have specific authors which are named in the code. 
+ * 
+ *--------------------------------------------------------------------------*/
+
 #include <stdio.h>
 #include <math.h>
 #include "nsp/machine.h"
@@ -14,9 +38,6 @@
 
 
 static void scicos_intp(double x,const double *xd,const double *yd,int n,int nc,double *y);
-
-/* Copyright Inria Scicos.
- */ 
 
 /* 
  * most of the blocks defined here have the following calling sequence
@@ -209,7 +230,6 @@ int scicos_dsslti_block(scicos_args_F0)
   double w[100];
   int la, lb, lc, ld;
 
-  /*     Copyright INRIA */
   /*     Scicos block simulator */
   /*     discrete state space linear system simulator */
   /*     rpar(1:nx*nx)=A */
@@ -380,8 +400,6 @@ int scicos_exp_block(scicos_args_F0)
 
 int scicos_for_block(scicos_args_F0)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   --y;
   --u;
   --ipar;
@@ -490,8 +508,6 @@ int scicos_gensin_block(scicos_args_F0)
 
 int scicos_gensqr_block(scicos_args_F0)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   if (*flag__ == 2)
     {
       z__[0] = -z__[0];
@@ -581,7 +597,7 @@ int scicos_intpol_block(scicos_args_F0)
  *  
  *  F is set to F(xd(1)) for x < xd(1) and to F(xd(nc)) for x>= xd(nc).
  *
- * Originally writen in Fortran by Pejman GOHARI 1996 (Copyright INRIA).
+ * Originally writen in Fortran by Pejman GOHARI 1996. 
  * C-version Jean-Philippe Chancelier 
  */
 
@@ -640,8 +656,6 @@ int scicos_intrp2_block(int *flag__, int *nevprt, double *t, double *xd, double 
   int i__1;
   int i__, j;
   double vx1, vx2, vy1, vy2, vz1, vz2, vz3, vz4;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     ipar(1) : the number of input */
   --ipar;
   --rpar;
@@ -771,8 +785,6 @@ int scicos_log_block(scicos_args_F0)
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     y=log(u)/log(rpar(1)) */
   --y;
   --u;
@@ -821,8 +833,6 @@ int scicos_lookup_block(scicos_args_F0)
   int i__, n;
   double du;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     rpar(1:n)  =  u coordinate discretisation must be strictly increasing */
   /*     rpar(n+1:2*n)  =  y coordinate discretisation */
   --y;
@@ -870,10 +880,7 @@ int scicos_lsplit_block(scicos_args_F0)
   int i__1, i__2;
   int i__, j, k;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     splitting signals */
-  /* c */
 
   --y;
   --u;
@@ -913,8 +920,6 @@ int scicos_lusat_block(int *flag__, int *nevprt, double *t, double *xd, double *
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     Lower-Upper saturation */
   /*     Continous block, MIMO */
   --g;
@@ -967,8 +972,6 @@ int scicos_max_block(scicos_args_F0)
   int i__;
   double ww;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     outputs the maximum of all inputs */
 
   --y;
@@ -1076,8 +1079,7 @@ int scicos_mscope_block(scicos_args_F0)
   int herited;
   int record;
   char *str;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     ipar(1) = win_num */
   /*     ipar(2) = number of subwindows (input ports) */
   /*     ipar(3) = buffer size */
@@ -1344,8 +1346,7 @@ int scicos_pload_block( scicos_args_F0)
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     Preload function */
   /*     if u(i).lt.0 then y(i)=-u(i)-rpar(i) */
   /*     else y(i)=u(i)+rpar(i) */
@@ -1383,8 +1384,7 @@ int scicos_pow_block(scicos_args_F0)
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     rpar(1) is power */
   --y;
   --u;
@@ -1534,8 +1534,6 @@ int scicos_qztrn_block(scicos_args_F0)
 }			
 
 
-/*     Copyright INRIA */
-/*     Scicos block simulator */
 /*     ipar(1) */
 /*            0 : uniform */
 /*            1 : normal */
@@ -1672,8 +1670,6 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
   int iwp;
   int herited;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     ipar(1) = win_num */
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
@@ -1885,8 +1881,7 @@ int scicos_scopxy_block(scicos_args_F0)
   int n;
   int wid, iwd, nax[4], iwp;
   char *str;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     ipar(1) = win_num */
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
@@ -2050,8 +2045,6 @@ int scicos_scoxy_block(scicos_args_F0)
   int n;
   int wid, iwd, nax[4], iwp;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     ipar(1) = win_num */
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
@@ -2187,8 +2180,7 @@ int scicos_scoxy_block(scicos_args_F0)
 int scicos_sel_block(scicos_args_F0)
 {
   int ic, nev;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   --y;
   --u;
   --ipar;
@@ -2265,8 +2257,6 @@ int scicos_sum2_block(int *flag__, int *nevprt, double *t, double *xd, double *x
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
 
   --y;
   --u2;
@@ -2300,8 +2290,7 @@ int scicos_sum3_block(int *flag__, int *nevprt, double *t, double *xd, double *x
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     adds the inputs weighed by rpar */
   --y;
   --u3;
@@ -2412,8 +2401,7 @@ int scicos_tcsltj_block(scicos_args_F0)
 {
   static int c__1 = 1;
   int la, lb, lc;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     continuous state space linear system simulator */
   /*     rpar(1:nx*nx)=A */
   /*     rpar(nx*nx+1:nx*nx+nx*nu)=B */
@@ -2453,8 +2441,6 @@ int scicos_tcsltj_block(scicos_args_F0)
 
 int scicos_timblk_block(scicos_args_F0)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   y[0] = *t;
   return 0;
 }
@@ -2462,8 +2448,6 @@ int scicos_timblk_block(scicos_args_F0)
 
 int scicos_trash_block(scicos_args_F0)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   return 0;
 }			
 
@@ -2474,10 +2458,7 @@ int scicos_zcross_block(scicos_args_F0)
   double d__1;
   int i__, j, l, kev;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
   /*     zero crossing block */
-
 
   --y;
   --u;
@@ -2774,8 +2755,7 @@ int scicos_bound (scicos_args_F0)
 
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     Bound y(i)=rpar(nu+i) if u(i)>rpar(i) else y(i)=0 */
   --y;
   --u;
@@ -3472,8 +3452,7 @@ scicos_constraint_block (int *flag__, int *nevprt, double *t, double *res, doubl
 {
   int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   --y;
   --u;
   --ipar;
@@ -4054,13 +4033,7 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
   return;
 }
 
-
-
-
-
-
-/*     Copyright INRIA 
- *     Scicos block simulator 
+/* 
  *     read from a file with format 
  *     ipar(1) = lfil : file name length 
  *     ipar(2) = lfmt : format length (0) if binary file 
@@ -4276,7 +4249,6 @@ scicos_delayv_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
   int i__, j, k, ii, in;
   double u2r;
 
-  /*     Copyright INRIA */
   /*     rpar(1)=dt */
   /*     delayv=u(nin) */
 
@@ -4423,8 +4395,7 @@ scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
   double per;
   int nax[4], iwp;
   int record;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
+
   /*     ipar(1) = win_num */
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
