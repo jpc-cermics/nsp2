@@ -4411,8 +4411,7 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
       Ob=nsp_new_double_obj(tiniest); break;
     }
   if ( Ob == NULLOBJ) return RET_BUG;
-  NthObj(1) = Ob;
-  NthObj(1)->ret_pos  = 1;
+  MoveObj(stack,1,Ob);
   return 1;
 }
 
