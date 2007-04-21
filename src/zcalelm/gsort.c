@@ -38,7 +38,7 @@
 /**
  * nsp_matrix_sort:
  * @A: 
- * @Ind: 
+ * @Index: 
  * @ind_flag: 
  * @dir: direction 'i' for increasing 'd' for decreasing 
  * 
