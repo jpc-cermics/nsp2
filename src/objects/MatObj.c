@@ -3967,9 +3967,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
  * NspMatrix back division  Res= A\B  
  */
 
-#ifdef MTLB_MODE
-int
-int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
+int int_mxbdiv_old(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2, *x, *A;
   char tri_type;
@@ -4061,124 +4059,24 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 
   return 1;
 }
-#else
-int
-int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
+
+
+int int_mxbdiv(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *HMat1, *HMat2, *A;
-  char tri_type;
-  int info, stat;
-  double rcond, tol_rcond;
+  NspMatrix *A,*B,*C;
+  double  tol_rcond;
 
   CheckRhs (2, 2);
   CheckLhs (1, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)    return RET_BUG;
+  if ((B = GetMat (stack, 2)) == NULLMAT)    return RET_BUG;
+  tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+  if ((C = nsp_matrix_bdiv(A,B, tol_rcond)) == NULLMAT)    return RET_BUG;
 
-  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-
-  if (HMat1->mn == 0)
-    {
-      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-      return 1;
-    }
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  if (HMat2->mn == 0)
-    {
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  /* flag == 1 ==> A op [] returns [] * */
-	  NSP_OBJECT (HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-
-  if ( HMat1->m != HMat2->m )  /* FIXME : the scalar case must be treated one day */
-    {
-      Scierror("Error:\tIncompatible dimensions (in %s)\n", NspFname(stack));
-      return RET_BUG;
-    }
-
-  if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT) return RET_BUG;
-
-  tol_rcond = Max(HMat1->m,HMat1->n)*nsp_dlamch("eps");
-
-  if ( HMat1->m == HMat1->n )  /* HMat1 is square */
-    {
-      /* test if HMat1 is triangular or diagonal */
-      if ( nsp_mat_is_upper_triangular(HMat1) ) 
-	{
-	  if ( nsp_mat_is_lower_triangular(HMat1) )
-	    tri_type = 'd';
-	  else
-	    tri_type = 'u';
-	}
-      else if ( nsp_mat_is_lower_triangular(HMat1) ) tri_type = 'l';
-      else tri_type = 'n';
-
-      if ( tri_type != 'n' )
-	{
-	  if ( tri_type == 'd' )  /* diagonal matrix */
-	    {
-	      if ( nsp_mat_bdiv_diagonal(HMat1, HMat2, &info) == FAIL ) 
-		return RET_BUG;
-	    }
-	  else                    /* triangular matrix */
-	    {
-	      if ( nsp_mat_bdiv_triangular(HMat1, HMat2, tri_type, &info) == FAIL ) 
-		return RET_BUG;
-	    }
-	  if ( info != 0 )   
-	    /* important note: in this case the rhs HMat2 have not been modified */
-	    Sciprintf("\n Warning: matrix is singular => computes a lsq solution");
-	  else
-	    {
-	      NSP_OBJECT (HMat2)->ret_pos = 1; 
-	      return 1;
-	    }
-	}
-      else
-	{
-	  /* use a LU factorization */
-	  /* here we must be sure to use a real copy of HMat1 (because if the matrix */
-	  /* is badly conditionned we must switch to the lsq solution) */
-	  if ( (A = nsp_matrix_copy(HMat1)) == NULLMAT ) return RET_BUG;
-	  stat = nsp_mat_bdiv_square(A, HMat2, &rcond, tol_rcond);
-	  nsp_matrix_destroy(A);
-	  if ( stat == FAIL )
-	    return RET_BUG;
-	  else if ( rcond <= tol_rcond )
-	    {
-	      Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g)",rcond);
-	      Sciprintf("\n          => computes a lsq solution\n",rcond);
-	    }
-	  else
-	    {
-	      NSP_OBJECT (HMat2)->ret_pos = 1; 
-	      return 1;
-	    }
-	}
-    }
-  
-  if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
-    return RET_BUG;
-
-  if ( nsp_mat_bdiv_lsq(HMat1, HMat2, tol_rcond) == FAIL )
-    return RET_BUG;
-
-  NSP_OBJECT (HMat2)->ret_pos = 1; 
-
+  MoveObj(stack,1,NSP_OBJECT(C));
   return 1;
 }
-#endif
+
 
 /*
  * A / B 
@@ -4186,8 +4084,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
  * result stored in A 
  */
 
-int
-int_mxdiv (Stack stack, int rhs, int opt, int lhs)
+int int_mxdiv (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2;
   CheckRhs (2, 2);
