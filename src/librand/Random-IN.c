@@ -680,8 +680,8 @@ static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
   else if ( strcmp(law,"bin_trdv")==0) 
     {
       NspMatrix *NN, *pp;
-      int incN, incp, N;
-      double p;
+      int incN, incp, N=0;
+      double p=1;
       if ( rhs != suite + 1) 
 	{ Scierror("Error: Missing N and p for Binomial distribution\n");return RET_BUG;}
       if ( (NN=GetRealMat(stack,suite)) == NULLMAT ) return RET_BUG;      
