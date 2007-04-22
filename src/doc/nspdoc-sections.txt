@@ -58,6 +58,12 @@ nsp_rcond
 nsp_spec
 nsp_spec_sym
 nsp_svd
+nsp_solve_banded
+nsp_mat_bdiv_lsq
+nsp_mat_bdiv_square
+nsp_mat_bdiv_triangular
+nsp_mat_bdiv_diagonal
+nsp_matrix_bdiv
 </SECTION>
 
 <SECTION>
@@ -434,6 +440,7 @@ integer
 Datas
 nsp_init_frames
 nsp_new_frame
+nsp_new_frame_with_local_vars
 nsp_frame_delete
 nsp_frames_info
 nsp_frames_print
@@ -524,39 +531,41 @@ nsp_string_resize
 <SECTION>
 <FILE>cnumeric</FILE>
 nsp_abs_c
-nsp_arg_c
-nsp_polar_c
-nsp_conj_c
-nsp_norm_c
-nsp_cos_c
-nsp_cosh_c
-nsp_exp_c
-nsp_log_c
-nsp_pow_cc
-nsp_pow_cd
-nsp_pow_dc
-nsp_sin_c
-nsp_sinh_c
-nsp_div_cc
-nsp_div_dc
-nsp_pow_ci
-nsp_sqrt_c
-nsp_prod_c
-nsp_isnan_c
-nsp_isinf_c
-nsp_finite_c
 nsp_acos_c
 nsp_acosh_c
+nsp_aint_c
+nsp_arg_c
 nsp_asin_c
 nsp_asinh_c
 nsp_atan_c
 nsp_atanh_c
 nsp_ceil_c
-nsp_aint_c
+nsp_conj_c
+nsp_cos_c
+nsp_cosh_c
+nsp_div_cc
+nsp_div_dc
+nsp_exp_c
+nsp_finite_c
 nsp_floor_c
+nsp_isinf_c
+nsp_isnan_c
 nsp_log10_c
+nsp_log_c
+nsp_norm_c
+nsp_polar_c
+nsp_pow_cc
+nsp_pow_cd
+nsp_pow_cd_or_ci
+nsp_pow_ci
+nsp_pow_dc
+nsp_pow_di
+nsp_prod_c
 nsp_round_c
 nsp_signum_c
+nsp_sin_c
+nsp_sinh_c
+nsp_sqrt_c
 nsp_tan_c
 nsp_tanh_c
 </SECTION>
@@ -690,7 +699,7 @@ nsp_smatrix_row_sort
 nsp_smatrix_sort
 nsp_string
 nsp_string_to_utf8
-
+nsp_new_string
 </SECTION>
 
 <SECTION>
@@ -814,6 +823,8 @@ nsp_xdr_save_array_d
 nsp_xdr_load_array_d
 nsp_xdr_save_string
 nsp_xdr_load_string
+nsp_xdr_load_array_c
+nsp_xdr_save_array_c
 is_little_endian
 nsp_feof
 nsp_ferror
@@ -827,6 +838,8 @@ nsp_mgetstr1
 nsp_putstr
 do_printf
 do_scanf
+nsp_fscanf_matrix
+nsp_fscanf_smatrix
 </SECTION>
 
 <SECTION>
@@ -881,12 +894,14 @@ mxCreateCellMatrix
 mxCreateCharArray
 mxCreateCharMatrixFromStrings
 mxCreateDoubleMatrix
+mxCreateDoubleScalar
 mxCreateFull
 mxCreateLogicalArray
 mxCreateLogicalMatrix
 mxCreateLogicalScalar
 mxCreateScalarDouble
 mxCreateSparse
+mxCreateSparseLogicalMatrix
 mxCreateString
 mxCreateStructArray
 mxCreateStructMatrix
@@ -944,6 +959,7 @@ mxOPAQUE_CLASS
 mxRealloc
 mxSPARSE_CLASS
 mxSetCell
+mxSetData
 mxSetField
 mxSetIr
 mxSetJc
@@ -956,7 +972,6 @@ mxSetPi
 mxSetPr
 mxUnshareArray
 nsp_mex_wrapper
-
 </SECTION>
 
 <SECTION>
@@ -1110,6 +1125,7 @@ new_mpmatrix
 NULLMAXPMAT
 nsp_mpmatrix_destroy
 nsp_mpmatrix_info
+nsp_mpmatrix_clone
 nsp_mpmatrix_copy
 nsp_mpmatrix_print
 mpmatrix_loop_extract
@@ -1424,6 +1440,9 @@ GetScalarInt
 GetScalarDouble
 GetRealMatCopy_G
 GetRealMat_G
+GetDimArg
+GetRealMpMatCopy_G
+GetRealMpMat_G
 
 IsSMatObj
 GetSMat
@@ -1569,6 +1588,7 @@ nsp_pmatrix_create
 nsp_pmatrix_destroy
 nsp_pmatrix_copy
 nsp_pmatrix_redim
+nsp_pmatrix_clone
 nsp_pmatrix_resize
 nsp_pmatrix_enlarge
 nsp_pmatrix_concat_right
@@ -1595,6 +1615,8 @@ nsp_pmatrix_type_short_string
 nsp_polynom
 nsp_polynom_copy
 nsp_polynom_destroy
+nsp_polynom_roots
+
 </SECTION>
 
 <SECTION>
@@ -1764,6 +1786,8 @@ new_gframe
 NULLGFRAME
 gframe_object
 IsGFrame
+nsp_gframe
+gframe_select_and_hilite
 gframe_path_extract
 gframe_create
 gframe_draw
@@ -1847,6 +1871,9 @@ new_matrix
 NULLMAT
 nsp_alloc_doubles
 nsp_realloc_doubles
+nsp_alloc_work_doubleC
+nsp_alloc_work_doubles
+nsp_alloc_work_int
 nsp_alloc_int
 nsp_realloc_int
 nsp_alloc_doubleC
@@ -1917,7 +1944,6 @@ nsp_mat_minitt1
 nsp_mat_slec
 nsp_mat_add_mat
 nsp_mat_add_scalar_bis
-nsp_mat_bdiv_diagonal
 nsp_mat_comp_real
 nsp_mat_copy_and_complexify
 nsp_mat_diff
@@ -1930,7 +1956,12 @@ nsp_mat_sub_scalar_bis
 nsp_matrix_clone
 nsp_matrix_set_format
 nsp_matrix_to_serial
-
+nsp_matrix_column_sort
+nsp_matrix_companion
+nsp_matrix_lexical_column_sort
+nsp_matrix_lexical_row_sort
+nsp_matrix_row_sort
+nsp_matrix_sort
 fopen
 MatLec
 fooBOU
@@ -2013,12 +2044,10 @@ nsp_mat_magic
 nsp_mat_franck
 nsp_mat_hilbert
 nsp_mat_find
+nsp_mat_findm
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
 nsp_mat_minplus_mult
-nsp_mat_bdiv_lsq
-nsp_mat_bdiv_square
-nsp_mat_bdiv_triangular
 nsp_mat_have_nan_or_inf
 nsp_mat_is_lower_triangular
 nsp_mat_is_symmetric
@@ -2438,3 +2467,16 @@ nsp_bhdestroy
 <SUBSECTION Internal>
 </SECTION>
 
+<SECTION>
+<FILE>system</FILE>
+nsp_sort
+nsp_tictoc
+nsp_timer
+nsp_realtime
+nsp_realtime_init
+nsp_reset_exec_dir
+update_exec_dir
+update_exec_dir_from_dir
+user_pref
+user_preferences
+</SECTION>

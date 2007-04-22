@@ -96,6 +96,7 @@
     <xi:include href="xml/sciio.xml"/>
     <xi:include href="xml/datas.xml"/>
     <xi:include href="xml/machine.xml"/>
+    <xi:include href="xml/system.xml"/>
   </chapter>
 
   <chapter id="nsp-interfacing">

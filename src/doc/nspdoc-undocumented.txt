@@ -1,7 +1,7 @@
-38% symbol docs coverage.
-857 symbols documented.
-257 symbols incomplete.
-1411 not documented.
+39% symbol docs coverage.
+897 symbols documented.
+240 symbols incomplete.
+1414 not documented.
 
 
 Abs
@@ -45,6 +45,7 @@ GetClassB
 GetClassBCopy
 GetConnector
 GetConnectorCopy
+GetDimArg
 GetFunction
 GetFunctionCopy
 GetGFrame
@@ -98,8 +99,10 @@ GetRealMpMat
 GetRealMpMatCopy
 GetRealMpMatCopyFloat
 GetRealMpMatCopyInt
+GetRealMpMatCopy_G
 GetRealMpMatFloat
 GetRealMpMatInt
+GetRealMpMat_G
 GetRealSpCol
 GetRealSpRow
 GetRect
@@ -322,23 +325,14 @@ NULLSTRING
 NULLTYPE
 NULLXME
 NVOID
-NspBHash
-NspBMatrix (m, n, mn)
-NspBlock
-NspCells
-NspClassA
 NspClassB
-NspConnector
-NspFile
-NspFunction
 NspGframe
-NspHash
 NspHobj
 NspIvect
 NspLink
 NspList
 NspLmo
-NspMatrix
+NspMatrix (R, C, I, F)
 NspMe
 NspMethods
 NspMod
@@ -464,7 +458,6 @@ def_loop
 dequeue_nsp_command
 do_printf
 do_scanf
-doubleC
 dpchim (x, u, d, n, inc)
 enqueue_nsp_command
 eval_piecewise_hermite (t, st, dst, d2st, d3st, m, x, y, d, n, outmode)
@@ -697,6 +690,7 @@ mxCreateLogicalArray
 mxCreateLogicalMatrix
 mxCreateLogicalScalar (value)
 mxCreateSparse
+mxCreateSparseLogicalMatrix
 mxCreateString
 mxCreateStructArray
 mxCreateStructMatrix
@@ -750,6 +744,7 @@ mxSINGLE_CLASS
 mxSPARSE_CLASS
 mxSTRUCT_CLASS
 mxSetCell
+mxSetData
 mxSetField (pa, i, fieldname, value)
 mxSetIr
 mxSetJc
@@ -835,7 +830,6 @@ nsp_aint_c
 nsp_arg_c
 nsp_asin_c (x, res)
 nsp_atk_hash_table
-nsp_balanc
 nsp_basic_to_string
 nsp_bhash_copy
 nsp_bhash_create
@@ -928,9 +922,10 @@ nsp_float2double (Returns)
 nsp_floor_c
 nsp_frame_insert_hash_contents (H)
 nsp_from_texmacs
+nsp_fscanf_matrix (F, format, M, flag, S, Returns)
+nsp_fscanf_smatrix (F, S, Returns)
 nsp_fseek (F, offset, flag, Returns)
 nsp_ftell (F, offset, Returns)
-nsp_gbalanc
 nsp_gdk_hash_table
 nsp_get_attribute_object
 nsp_get_attribute_util
@@ -985,7 +980,6 @@ nsp_ivect_destroy (IV)
 nsp_ivect_info (IV)
 nsp_ivect_object
 nsp_ivect_print (IV)
-nsp_list_copy (L)
 nsp_list_create (name, Returns)
 nsp_list_fold_right (x)
 nsp_list_not_equal
@@ -994,20 +988,14 @@ nsp_list_path_extract
 nsp_list_unique (Ind, Occ)
 nsp_log10_c
 nsp_log_c
-nsp_mat_add_mat
-nsp_mat_add_scalar_bis
-nsp_mat_bdiv_lsq
-nsp_mat_bdiv_square
 nsp_mat_clean (rhs)
 nsp_mat_comp
 nsp_mat_comp_real
 nsp_mat_createinit (name, type, m, n, func)
 nsp_mat_find
-nsp_mat_finite
+nsp_mat_findm
 nsp_mat_fullcomp
 nsp_mat_ioru (res, Returns)
-nsp_mat_isinf
-nsp_mat_isnan
 nsp_mat_maxi
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
@@ -1016,14 +1004,9 @@ nsp_mat_minmax
 nsp_mat_minplus_mult
 nsp_mat_mult
 nsp_mat_mult_el (B)
-nsp_mat_mult_scalar_bis
-nsp_mat_scale_cols
-nsp_mat_scale_rows
 nsp_mat_set_ival (dval)
 nsp_mat_slec (file, Count)
 nsp_mat_sort
-nsp_mat_sub_mat
-nsp_mat_sub_scalar_bis
 nsp_matint_canonic (obj)
 nsp_matint_concat_down_bis
 nsp_matint_concat_right
@@ -1037,9 +1020,15 @@ nsp_matint_set_elts1
 nsp_matint_set_submatrix1
 nsp_matrix_boundster
 nsp_matrix_clone (init)
+nsp_matrix_column_sort
+nsp_matrix_companion
 nsp_matrix_dialog
+nsp_matrix_lexical_column_sort
+nsp_matrix_lexical_row_sort
 nsp_matrix_redim
+nsp_matrix_row_sort
 nsp_matrix_set_format
+nsp_matrix_sort (A, Index, ind_flag, type, Returns)
 nsp_matrix_to_pmatrix
 nsp_matrix_to_polynom
 nsp_matrix_to_serial
@@ -1143,12 +1132,14 @@ nsp_mpmat_tanh
 nsp_mpmat_tril
 nsp_mpmat_triu
 nsp_mpmat_zeros
+nsp_mpmatrix_clone (init)
 nsp_mpmatrix_redim
 nsp_mput (F, x, n, type)
 nsp_multi_dialog
 nsp_multi_dialog_
 nsp_new_boolean_obj (ival)
 nsp_new_file
+nsp_new_frame_with_local_vars (table)
 nsp_no_type_id
 nsp_none_copy
 nsp_none_create
@@ -1186,6 +1177,7 @@ nsp_plist_print_internal (L)
 nsp_plist_save
 nsp_pmatrix_add_columns
 nsp_pmatrix_add_rows
+nsp_pmatrix_clone
 nsp_pmatrix_concat_down
 nsp_pmatrix_concat_right
 nsp_pmatrix_copy
@@ -1215,9 +1207,12 @@ nsp_pmatrix_type_short_string
 nsp_polynom
 nsp_polynom_copy
 nsp_polynom_destroy
+nsp_polynom_roots
 nsp_pow_cc
 nsp_pow_cd
+nsp_pow_cd_or_ci
 nsp_pow_dc
+nsp_pow_di
 nsp_pr_any_float
 nsp_pr_complex
 nsp_pr_float
@@ -1256,6 +1251,9 @@ nsp_qsort_stable_incr_nsp_string
 nsp_read_history
 nsp_read_lines (F, S, nlines, Returns)
 nsp_readline_clear_line
+nsp_realtime
+nsp_realtime_init
+nsp_reset_exec_dir (stack)
 nsp_round_c
 nsp_serial_copy
 nsp_serial_create
@@ -1297,56 +1295,34 @@ nsp_smatrix_utf8_from_unichar
 nsp_smatrix_utf8_validate
 nsp_smatrix_xdr_load
 nsp_smatrix_xdr_save
+nsp_sort
 nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
-nsp_spcolmatrix_clean (rhs, epsa, epsr)
-nsp_spcolmatrix_col_destroy (Col)
-nsp_spcolmatrix_compress_col (i)
-nsp_spcolmatrix_compress_col_simple (i)
-nsp_spcolmatrix_create (name, type, m, n)
-nsp_spcolmatrix_delete_cols (Cols)
-nsp_spcolmatrix_delete_elt (row, col, amin, amax)
-nsp_spcolmatrix_delete_rows (Rows)
 nsp_spcolmatrix_destroy (Mat)
-nsp_spcolmatrix_diag_create (Diag, k)
-nsp_spcolmatrix_diag_extract (k)
-nsp_spcolmatrix_diag_set (Diag, k, Returns)
+nsp_spcolmatrix_diag_set (Returns)
 nsp_spcolmatrix_enlarge (m, n)
 nsp_spcolmatrix_enlarge_cols (Sp, n)
 nsp_spcolmatrix_eq
-nsp_spcolmatrix_extract (Rows, Cols)
-nsp_spcolmatrix_extract_cols (Cols, err)
-nsp_spcolmatrix_extract_elts (Elts)
-nsp_spcolmatrix_extract_rows (Rows, err)
 nsp_spcolmatrix_eye (m, n)
 nsp_spcolmatrix_find (lhs, Res1, Res2)
 nsp_spcolmatrix_get (RC, Values)
-nsp_spcolmatrix_get_elt (i, j)
 nsp_spcolmatrix_info (Sp, indent, name, rec_level)
 nsp_spcolmatrix_insert_elt
 nsp_spcolmatrix_maxi (flag, Imax, lhs)
 nsp_spcolmatrix_maximinitt_g (flag, minmaxflag, err)
 nsp_spcolmatrix_maxitt (flag, err)
 nsp_spcolmatrix_minitt (flag, err)
-nsp_spcolmatrix_mult_m_sp (X)
 nsp_spcolmatrix_neq
 nsp_spcolmatrix_nnz (HMat)
 nsp_spcolmatrix_object
 nsp_spcolmatrix_ones (m, n)
-nsp_spcolmatrix_op_scal (flag, op)
 nsp_spcolmatrix_print (Sp, indent, name, rec_level)
 nsp_spcolmatrix_redim (m, n)
 nsp_spcolmatrix_resize_col (Sp)
-nsp_spcolmatrix_set_row (Inds)
-nsp_spcolmatrix_set_rowcol (Rows, Cols)
-nsp_spcolmatrix_seti (d)
-nsp_spcolmatrix_setr (d)
 nsp_spcolmatrix_sparse (name, RC, Values, m, n)
 nsp_spcolmatrix_store (r, c, col, r1, c1)
 nsp_spcolmatrix_sum (flag)
-nsp_spcolmatrix_to_mat (Sp)
-nsp_spcolmatrix_to_mat_transpose (Sp)
 nsp_spcolmatrix_tril (k)
 nsp_spcolmatrix_triu (k)
 nsp_spcolmatrix_type_as_string
@@ -1450,6 +1426,8 @@ nsp_string_resize
 nsp_string_to_utf8
 nsp_tan_c
 nsp_tanh_c
+nsp_tictoc
+nsp_timer
 nsp_type_bhash
 nsp_type_bhash_id
 nsp_type_bhash_init
@@ -1531,11 +1509,13 @@ nsp_type_type_id
 nsp_types
 nsp_types_hash_table
 nsp_write_history
+nsp_xdr_load_array_c
 nsp_xdr_load_array_d
 nsp_xdr_load_array_i
 nsp_xdr_load_c
 nsp_xdr_load_i
 nsp_xdr_load_string
+nsp_xdr_save_array_c (nx, l)
 nsp_xdr_save_array_d
 nsp_xdr_save_array_i (nx, l)
 nsp_xdr_save_c (c)
@@ -1582,11 +1562,16 @@ type_object
 type_print
 unlockqueue_nsp_command
 uns16max
+update_exec_dir
+update_exec_dir_from_dir
+user_pref
+user_preferences
 using_readline
 write_scilab
 
 
 approx:Long_Description
+bhash:Long_Description
 bhash:Short_Description
 block:Long_Description
 block:Short_Description
@@ -1666,6 +1651,7 @@ stack:Long_Description
 stack:Short_Description
 string:Long_Description
 string:Short_Description
+system:Short_Description
 type:Long_Description
 type:Short_Description
 types:Long_Description
