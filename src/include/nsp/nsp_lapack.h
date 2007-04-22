@@ -23,6 +23,7 @@ extern int nsp_mat_is_upper_triangular(NspMatrix *A);
 extern int nsp_mat_is_lower_triangular(NspMatrix *A);
 extern int nsp_mat_have_nan_or_inf(NspMatrix *A);
 extern int nsp_expm(NspMatrix *A);
+extern NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond);
 extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond);
 extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
 extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info);
