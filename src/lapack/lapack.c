@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2006 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2007 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -944,6 +944,7 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
 
 static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v); 
 static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v);
+
 /**
  * nsp_spec:
  * @A: (input) a square real or complex matrix : caution @A is modified.
@@ -958,6 +959,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v);
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v) 
 {
   /*  A = [] return empty matrices */ 
@@ -1154,6 +1156,7 @@ static int intzheevr(NspMatrix *A,NspMatrix **d, char flag);
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 {
   int m=A->m, n=A->m;
@@ -1535,8 +1538,8 @@ static int intdggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
 
   if ( info > 0 ) /* special case of partial convergence */
     {
-      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
-      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      Sciprintf("Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated\n");
+      Sciprintf("\treturn only alpha(i) and beta(i) which should be correct\n");
       /* reduce size of the alpha and beta vectors */
       memmove(&(beta->R[0]), &(beta->R[info]), (n-info)*sizeof(double));
       nsp_matrix_resize(beta, n-info, 1);
@@ -1676,8 +1679,8 @@ static int intzggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
 
   if ( info > 0 ) /* special case of partial convergence */
     {
-      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
-      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      Sciprintf("Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated\n");
+      Sciprintf("\treturn only alpha(i) and beta(i) which should be correct\n");
       /* reduce size of the alpha and beta vectors */
       memmove(&(beta->C[0]), &(beta->C[info]), (n-info)*sizeof(doubleC));
       nsp_matrix_resize(beta, n-info, 1);
@@ -1727,6 +1730,7 @@ static int intzgetri(NspMatrix *A);
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_inv(NspMatrix *A) 
 {
   char tflag;  /* N : non triangular, U : upper triangular, L : lower triangular */
@@ -1834,6 +1838,7 @@ static int intzgetri(NspMatrix *A)
 static int intdgecon(NspMatrix *A,double *rcond);
 static int intzgecon(NspMatrix *A,double *rcond);
 static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
+
 /**
  * nsp_rcond:
  * @A: (input) a real or complex square matrix (A is modified)
@@ -1849,6 +1854,7 @@ static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
  *
  * Return value: %OK or %FAIL
  **/
+
 int nsp_rcond(NspMatrix *A,double *rcond)
 {
   NspMatrix *Ac;
@@ -2033,6 +2039,7 @@ int nsp_cholesky(NspMatrix *A, int *minor)
 
 static NspMatrix * intzdet(NspMatrix *A,char mode);
 static NspMatrix * intddet(NspMatrix *A,char mode);
+
 /**
  * nsp_det:
  * @A: (input) a square real or complex matrix. @A is modified.
@@ -2043,6 +2050,7 @@ static NspMatrix * intddet(NspMatrix *A,char mode);
  * 
  * Return value: 
  **/
+
 NspMatrix * nsp_det(NspMatrix *A,char mode)
 {
   /*  A = [] return empty matrices */ 
@@ -2159,15 +2167,21 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
 } 
 
 
-/*
- * nsp_balanc 
- * [V,D]=balanc(A) 
- * V is stored in A on exit 
- *  FIXME: cleaned but to be verified
- */
-
 static int intdgebal(NspMatrix *A,NspMatrix **D);
 static int intzgebal(NspMatrix *A,NspMatrix **D);
+
+/**
+ * nsp_balanc:
+ * @A: The matrix to balance 
+ * @D: The similarity transformation X such that inv(X)*A*X
+ * 
+ * Balances a general real matrix @A using Lapack dgebal or zgebal. 
+ * Balancing may reduce the 1-norm of the matrix, and improve the accuracy
+ * of the computed eigenvalues and/or eigenvectors. The balanced matrix 
+ * is returned in @A and the similarity transformation is returned in @D. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_balanc(NspMatrix *A,NspMatrix **D)
 {
@@ -2262,14 +2276,24 @@ static int intzgebal(NspMatrix *A,NspMatrix **D)
 }
 
 
-/*
- * nsp_gbalanc
- *     [Ab,Bb,X,Y]=balanc(A,B)
- *  FIXME: cleaned but to be verified
- */
-
 static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
 static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
+
+/**
+ * nsp_gbalanc:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix 
+ * @X: a pointer to a #NspMatrix 
+ * @Y: a pointer to  #NspMatrix 
+ * 
+ * balances  a  pair  of matrices (@A,@B).
+ * Balancing may reduce the 1-norm of  the  matrices,  and  improve  the
+ * accuracy  of the computed eigenvalues and/or eigenvectors in the gen-
+ * eralized eigenvalue problem A*x = lambda*B*x.
+ * The returned matrices @X and @Y are such that Ab=X'*A*Y, Bb=X'*B*Y
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
@@ -2287,9 +2311,9 @@ int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
       return FAIL;
     }
   /* 
-     if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
-     if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
-  */
+   *  if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
+   * if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+   */
 
   if ( A->mn == 0 )   /* A = [] return empty matrices */ 
     {
@@ -2349,9 +2373,7 @@ int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 
 /*  A revoir : A et B peuvent etre rectangulaires dimension (LDA,N)
  *  dimension dimension (LDB,N) mais LDB et LDA doivent etre >= N. 
- *
  */ 
-
 
 static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
@@ -2483,6 +2505,7 @@ static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
 {
   double rcond;
@@ -2512,6 +2535,7 @@ int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
   else
     return intzgelsy(A, B, rcond, Rank);
 }
+
 
 static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
 {
@@ -2625,243 +2649,8 @@ static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
 }
 
 
-/* FIXME: unchecked 
- * interface pour backslash 
- *   A est changée et 
- *   B aussi 
- *   même chose que lsq si ce n'est que si A est carrée inversible on 
- *   utilise une autre méthode. 
- */
-
-static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag);
-static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag);
-
-int nsp_backslash(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
-{
-  if ( A->rc_type == 'r' ) 
-    return  intdgesv3(A,B,rank,rcond,flag); 
-  else 
-    return  intzgesv3(A,B,rank,rcond,flag); 
-}
-
-
-static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
-{
-  double Rcond=0.0,eps;
-  NspMatrix *jpvt,*dwork;
-  int *Ijpvt,irank,info,lworkMin,i, *iwork; 
-  /*  [X,rank]=lsq(A,B,rcond) */
-  int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
-
-  if (m != mb) {
-    Scierror("Error: first and second arguments of lsq  must have equal rows\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( rank != NULL)
-      {
-	if (( *rank =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* if rcond is not provided */
-  eps = nsp_dlamch("eps");
-  Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
-
-  /* if n > m then we add empty rows to B */ 
-  
-  if ( n > m )
-    {
-      /* now B->m is Max(m,n) */
-      if (nsp_matrix_add_rows(B,n-m) == FAIL) return(FAIL);
-    }
-
-  /* jpvt: int matrix */ 
-  if (( jpvt =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Ijpvt = (int *) jpvt->R; 
-
-  /* the min workspace */ 
-  lworkMin = Max(Min(m,n) + n*3 + 1,2*Min(m,n) + nrhs);
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
-
-  if ( m == n ) 
-    {
-      /* Check if the square invertible case is enough  */ 
-      double anorm ; 
-      NspMatrix *Ac ;
-      if (( Ac =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-      anorm =  C2F(dlange)("1", &m, &n,Ac->R, &m, dwork->R, 1L);
-      C2F(dgetrf)(&n, &n, Ac->R , &n, Ijpvt, &info);
-      if (info == 0) {
-	C2F(dgecon)("1", &n, Ac->R, &n,&anorm, &Rcond, dwork->R,Ijpvt, &info, 1L);
-	if ( Rcond > sqrt(eps)) {
-	  /* we solve the linear systems */
-	  C2F(dgetrs)("N", &n, &nrhs, Ac->R, &n, Ijpvt,B->R, &n, &info, 1L);
-	  /* XXXXXX clean workspace here */ 
-	  return OK;
-	}
-      }
-      Sciprintf("Error: Warning, matrix is close to singular or badly scaled. rcond = %e\n, using lsq\n",
-	       rcond);
-    }
-  
-  /* we switch to lsq */ 
-
-  for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
-
-  if ( flag == 'n' ) 
-    C2F(dgelsy)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
-		dwork->R,&lworkMin, &info);
-  else 
-    {
-      /* XXX 
-	 C2F(dgelsy1)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
-	 dwork->R,&lworkMin, &info);
-      */
-    }
-  if (info != 0) {
-    Scierror("Error: computation failed in dgelsy\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(jpvt); 
-  nsp_matrix_destroy(dwork); 
-
-  if ( n < m) 
-    {
-      /* we must delete the last rows of B */ 
-      if ( (iwork= nsp_alloc_work_int(m-n)) == NULL ) return FAIL;
-      for ( i = n+1; i <= m ; i++) iwork[i-(n+1)] = i-1;  /* -1 because iwork must must be 0-based */
-      if ( nsp_matint_delete_rows( (NspObject *)B, iwork, m-n, n+1, m) == FAIL ) return FAIL; 
-      FREE(iwork); 
-    }
-
-  if ( rank != NULL)
-    {
-      if (( *rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-      (*rank)->R[0]=irank;
-    }
-
-  return OK ;
-} 
-
-
-static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
-{
-  double Rcond=0.0,eps;
-  NspMatrix *jpvt,*dwork,*rwork;
-  int *Ijpvt,ix1,ix2,irank,info,lworkMin,i, *iwork; 
-  /*  [X,rank]=lsq(A,B,rcond) */
-  int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
-
-  if (m != mb) {
-    Scierror("Error: first and second arguments of lsq must have equal rows\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( rank != NULL)
-      {
-	if (( *rank =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* if rcond is not provided */
-  eps = nsp_dlamch("eps");
-  Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
-
-  /* if n > m then we add empty rows to B */ 
-  
-  if ( n > m )
-    {
-      /* now B->m is Max(m,n) */
-      if (nsp_matrix_add_rows(B,n-m) == FAIL) return(FAIL);
-    }
-
-
-  /* jpvt: int matrix */ 
-  if (( jpvt =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Ijpvt = (int *) jpvt->R; 
-
-  /* workspace */ 
-  
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,2*n)) == NULLMAT) return FAIL;
-
-  /* the min workspace */ 
-
-  ix1 = Max(2*Min(m,n),n+1); ix2 = Min(m,n) + nrhs;
-  lworkMin = Min(m,n) + Max(ix1,ix2);
-  lworkMin = Max(lworkMin, 2*n); /* for the m==n case */ 
-
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
-
-
-  if ( m == n ) 
-    {
-      /* Check if the square invertible case is enough  */ 
-      double anorm ; 
-      NspMatrix *Ac ;
-      if (( Ac =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-      anorm =  C2F(zlange)("1", &m, &n,Ac->C, &m, NULL , 1L);
-      C2F(zgetrf)(&n, &n, Ac->C , &n, Ijpvt, &info);
-      if (info == 0) {
-	C2F(zgecon)("1", &n, Ac->C, &n,&anorm, &Rcond, dwork->C, rwork->R,&info, 1L);
-	if ( Rcond > sqrt(eps)) {
-	  /* we solve the linear systems */
-	  C2F(zgetrs)("N", &n, &nrhs, Ac->C, &n, Ijpvt,B->C, &n, &info, 1L);
-	  /* XXXXXX clean workspace here */ 
-	  return OK;
-	}
-      }
-      Sciprintf("solving linear system with square matrix close to singular or badly scaled. rcond = %e\n, using lsq\n",
-	       rcond);
-    }
-  
-  for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
-  
-  if ( flag == 'n' ) 
-    C2F(zgelsy)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
-		dwork->C, &lworkMin, rwork->R, &info);
-  else 
-    {
-      /* XXX
-	 C2F(zgelsy1)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
-	 dwork->C, &lworkMin, rwork->R, &info);
-      */
-      nsp_matrix_destroy(jpvt); 
-      nsp_matrix_destroy(dwork); 
-      nsp_matrix_destroy(rwork); 
-      if ( n < m) 
-	{
-	  /* we must delete the last rows of B */
-	  if ( (iwork =nsp_alloc_work_int(m-n)) == NULL) return FAIL;
-	  for ( i = n+1; i <= m ; i++) iwork[i-(n+1)]=i-1;  /* -1 because iwork must be 0-based */
-	  if (nsp_matint_delete_rows((NspObject *) B, iwork, m-n, n+1, m) == FAIL) return FAIL; 
-	}
-
-      if ( rank != NULL)
-	{
-	  if (( *rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-	  (*rank)->R[0]=irank;
-	}
-
-      return OK ;
-    }
-  return OK;
-}
-
-/* FIXME : unchecked 
- * interface pour slash 
- *   On se ramène a backslash après transposition 
- *   A et B sont inchangées 
- */
+#if 0 
+/* unused */
 
 static int intdgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,double *rcond,char flag);
 static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,double *rcond,char flag);
@@ -2899,7 +2688,7 @@ static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,
   nsp_matrix_destroy(Bt);
   return OK;
 }
-
+#endif 
 
 /* FIXME: unchecked 
  * [U,T]=schur(A)  U*T*U' = A
@@ -2987,7 +2776,6 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
  * XXX  couvre lecas int C2F(intzschur)(fname, fname_len)
  * XXX  Attention rwork est pas créée a finir 
  */
-
 
 int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) 
 {
@@ -3425,6 +3213,7 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
 
 static double intzvnorm(NspMatrix *A, double p);
 static double intdvnorm(NspMatrix *A, double p);
+
 /**
  * nsp_vector_norm:
  * @A: a real or complex vector
@@ -3440,6 +3229,7 @@ static double intdvnorm(NspMatrix *A, double p);
  * Return value: the p-norm of the vector @A or -1.0 in case of alloc
  *               problem (which may happen only for intzvnorm)
  **/
+
 double nsp_vector_norm(NspMatrix *A, double p) 
 {
   if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
@@ -3539,13 +3329,9 @@ static double intdnorm(NspMatrix *A,char flag);
  * @flag: character defining the kind of matrix norm to compute:
  *
  *        @flag='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
- *
  *        @flag='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
- *
  *        @flag='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
- *
  *        @flag='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
- *
  *        @flag='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
  *
  * @A is not modified.
@@ -3553,6 +3339,7 @@ static double intdnorm(NspMatrix *A,char flag);
  * Return value: the matrix norm or -1 in case of failure (alloc problem or problem in
  *               svd (2-norm))
  **/
+
 double nsp_matrix_norm(NspMatrix *A,char flag) 
 {
   if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
@@ -3619,6 +3406,7 @@ static double intznorm(NspMatrix *A,char flag)
  * 
  * Return value: %FAIl or %OK
  **/
+
 int nsp_expm(NspMatrix *A)
 {
   int m, sym_flag, ideg=6, *ipiv=NULL, lwork, iexph, ns, iflag;
@@ -3688,12 +3476,118 @@ int nsp_expm(NspMatrix *A)
   return FAIL;
 }
 
+/**
+ * nsp_matrix_bdiv:
+ * @A: a #NspMatrix (not modified)
+ * @B: a #NspMatrix (not modified)
+ * @tol_rcond: a double 
+ * 
+ * returns @A\@B. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
+{
+  char tri_type;
+  int info, stat;
+  double rcond;
+  NspMatrix *C,*Ac;
+  if ( A->m != B->m ) 
+    {
+      /* FIXME: must we treat the scalar case ? 
+       *        A\scalar => x = inv(A)*scalar or pinv(A)*scalar 
+       */
+      Scierror("Error:\tIncompatible dimensions (in bdiv)\n");
+      return NULLMAT;
+    }
+  
+  if ( A->mn == 0 || B->mn == 0 )  
+    {
+      /* the special case */ 
+      if ((C =nsp_matrix_create(NVOID, 'r', A->n, B->n)) == NULLMAT )
+	return NULLMAT;
+      nsp_mat_set_rval(C,0.0);
+      return C;
+    }
+  
+  if ((C = nsp_matrix_copy(B)) == NULLMAT) return NULLMAT;
+  
+  tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+  
+  if ( A->m == A->n ) 
+    {
+      /* A is square */
+      /* test if A is triangular */
+      if ( nsp_mat_is_upper_triangular(A) ) 
+	tri_type = 'u';
+      else if ( nsp_mat_is_lower_triangular(A) ) 
+	tri_type = 'l';
+      else 
+	tri_type = 'n';
+
+      if ( tri_type != 'n' )
+	{
+	  if ( nsp_mat_bdiv_triangular(A, C, tri_type, &info) == FAIL ) 
+	    return NULLMAT;
+
+	  if ( info != 0 )   
+	    {
+	      /* important note: in this case the rhs C have not been modified */
+	      Sciprintf("Warning: matrix is singular => computing a least square solution\n");
+	    }
+	  else
+	    {
+	      return C;
+	    }
+	}
+      else
+	{
+	  NspMatrix *Ac ;
+	  /* use a LU factorization 
+	   * here we must be sure to use a real copy of A (because if the matrix 
+	   * is badly conditionned we must switch to the lsq solution) 
+	   */
+	  if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) return NULLMAT;
+	  stat = nsp_mat_bdiv_square(Ac,C, &rcond, tol_rcond);
+	  nsp_matrix_destroy(Ac);
+	  if ( stat == FAIL )
+	    return NULLMAT;
+	  else if ( rcond <= tol_rcond )
+	    {
+	      Sciprintf("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	      Sciprintf("\t=> computing a least square solution\n",rcond);
+	      /* note that here C hash not been modified, we cans switch to bdiv_lsq */
+	    }
+	  else
+	    {
+	      return C;
+	    }
+	}
+    }
+  
+  if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) return NULLMAT;
+  stat=  nsp_mat_bdiv_lsq(Ac,C, tol_rcond);
+  nsp_matrix_destroy(Ac);
+  if ( stat == FAIL ) return NULLMAT;
+  return C;
+}
 
 
-/*
- *   nsp_mat_bdiv_lsq implements A\B when A is not square (or
- *   when A is square but badly conditionned or singular)
- */
+/**
+ * nsp_mat_bdiv_lsq:
+ * @A: a #NspMatrix (modified)
+ * @B: a #NspMatrix (modified)
+ * @tol_rcond: a double 
+ * 
+ * implements @A\@B when @A is not square (or
+ * when @A is square but badly conditionned or singular)
+ * using a least square method (dgelsy or zgelsy)
+ * The result is returned in @B. 
+ * 
+ * 
+ * Returns: %OK or %FAIL 
+ **/
 
 int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond)
 {  
@@ -3722,14 +3616,23 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond)
 
   if ( stat == OK )
     if ( rank < Min(mA,nA) )
-      Sciprintf("\n Warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
+      Sciprintf("Warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
 
   return stat;
 }
 
-/*
- *   nsp_mat_bdiv_square implements A\B when A is square
- */
+/**
+ * nsp_mat_bdiv_square:
+ * @A: a #NspMatrix (modified)
+ * @B: a #NspMatrix (modified)
+ * @rcond: a double pointer 
+ * @tol_rcond: a double 
+ * 
+ * implements A\B when A is square. B is overwritten by the solution X. 
+ * 
+ * Returns: %OK or %FAIL 
+ **/
+
 int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
 {  
   int n=A->m, nrhs=B->n;  /* mA must be equal to nA */
@@ -3810,6 +3713,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rc
  *
  * Return value: OK or FAIL (due to  malloc failure)
  **/
+
 int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info)
 {  
   int m = A->m, mn, i;
@@ -3851,6 +3755,7 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
  *
  * Return value: OK or FAIL (due to  malloc failure)
  **/
+
 int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
 {  
   int m = A->m, i, j, kA, kB;
@@ -3894,47 +3799,6 @@ int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
   return OK;
 }
 
-static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag)
-{
-  NspMatrix *AA;
-  int bl = A->m/2, i, j, kA, kAA;
-  if ( A->rc_type == 'r' )
-    {
-      if ( flag == 'r' )
-	{
-	  AA = nsp_matrix_create(NVOID, 'r', A->m+bl, A->n);
-	  if ( AA )
-	    for ( j = 0; j < A->n; j++ )
-	      memcpy(&(AA->R[j*AA->m+bl]),&(A->R[j*A->m]),A->m*sizeof(double));
-	}
-      else /* flag = 'c' */
-	{
-	  AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
-	  if ( AA )
-	    {
-	      kA = 0; kAA = 0;
-	      for ( j = 0; j < A->n; j++ )
-		{
-		  kAA += bl;
-		  for ( i = 0; i < A->m; i++ )
-		    {
-		      AA->C[kAA].r = A->R[kA++];
-		      AA->C[kAA++].i = 0.0;
-		    }
-		}
-	    }
-	}
-    }
-  else
-    {
-      AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
-      if ( AA )
-	for ( j = 0; j < A->n; j++ )
-	  memcpy(&(AA->C[j*AA->m+bl]),&(A->C[j*A->m]),A->m*sizeof(doubleC));
-    }
-  return AA;
-}
-
 /**
  * nsp_solve_banded:
  * @A: (input) a real or complex banded matrix (the lapack storage is used). @A is not modified.  
@@ -3945,6 +3809,9 @@ static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag)
  * 
  * Return value: %OK or %FAIL;
  **/
+
+static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag);
+
 int nsp_solve_banded(NspMatrix *A, NspMatrix *B, NspMatrix **X)
 {
   NspMatrix *AA=NULLMAT;
@@ -4001,4 +3868,45 @@ int nsp_solve_banded(NspMatrix *A, NspMatrix *B, NspMatrix **X)
   nsp_matrix_destroy(AA);
   nsp_matrix_destroy(XX);
   return FAIL;
+}
+
+static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag)
+{
+  NspMatrix *AA;
+  int bl = A->m/2, i, j, kA, kAA;
+  if ( A->rc_type == 'r' )
+    {
+      if ( flag == 'r' )
+	{
+	  AA = nsp_matrix_create(NVOID, 'r', A->m+bl, A->n);
+	  if ( AA )
+	    for ( j = 0; j < A->n; j++ )
+	      memcpy(&(AA->R[j*AA->m+bl]),&(A->R[j*A->m]),A->m*sizeof(double));
+	}
+      else /* flag = 'c' */
+	{
+	  AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
+	  if ( AA )
+	    {
+	      kA = 0; kAA = 0;
+	      for ( j = 0; j < A->n; j++ )
+		{
+		  kAA += bl;
+		  for ( i = 0; i < A->m; i++ )
+		    {
+		      AA->C[kAA].r = A->R[kA++];
+		      AA->C[kAA++].i = 0.0;
+		    }
+		}
+	    }
+	}
+    }
+  else
+    {
+      AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
+      if ( AA )
+	for ( j = 0; j < A->n; j++ )
+	  memcpy(&(AA->C[j*AA->m+bl]),&(A->C[j*A->m]),A->m*sizeof(doubleC));
+    }
+  return AA;
 }
