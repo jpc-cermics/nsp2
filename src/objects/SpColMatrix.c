@@ -63,10 +63,10 @@ static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const i
 
 /**
  * nsp_spcolmatrix_create:
- * @name: 
- * @type: 
- * @m: 
- * @n: 
+ * @name: name of object 
+ * @type: a character to code complex or real matrix 
+ * @m: number of rows 
+ * @n: number of columns 
  * 
  * Creates a #NspSColMatrix of size @mx@n with no stored data
  * 
@@ -402,7 +402,7 @@ int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n)
 
 /**
  * nsp_spcolmatrix_col_destroy:
- * @Col: 
+ * @Col: a #SpCol object 
  * 
  * internal: destroys a #SpCol structure.
  * 
@@ -929,19 +929,15 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
 /**
  * nsp_spcolmatrix_delete_elt:
  * @A: a #NspSpColMatrix
- * @row: 
- * @col: 
- * @amin: 
- * @amax: 
+ * @row: an integer 
+ * @col: an integer 
+ * @amin: an integer 
+ * @amax: an integer 
  * 
- *  Remove element A(i,j) but the associated row is not resized 
- *  returns -1 if A(i,j) was zero before the call (i.e no change )
- *  return  k  if A(i,j) is removed and was the k-th non null element 
- *  of i-th row of A 
- *  A(i,j) is searched in the i-th row of A but only in the range 
- *  amin,amax 
- *  row = i, col=j 
- * 
+ *  Remove element A(i,j) where i=@row and j=@col but the associated row of the matrix 
+ *  is not resized. The function returns -1 if @A(i,j) was zero before the call (i.e no change )
+ *  return  k  if @A(i,j) is removed and was the k-th non null element of i-th row of @A 
+ *  @A(i,j) is searched in the i-th row of A but only in the range [@amin,@amax].
  * 
  * Return value: the row indice of the deleted element or -1 if the element was already a 
  * null value.
@@ -979,8 +975,8 @@ int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, in
 /**
  * nsp_spcolmatrix_get_elt:
  * @B: a #NspSpColMatrix
- * @i: 
- * @j: 
+ * @i: an integer 
+ * @j: an integer 
  * 
  * return k such that B->D[i]->J[k] = j or -1 if such k does not exists 
  * 
@@ -1007,8 +1003,8 @@ int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 /**
  * nsp_spcolmatrix_set_rowcol:
  * @A: a #NspSpColMatrix
- * @Rows: 
- * @Cols: 
+ * @Rows: a #NspMatrix 
+ * @Cols: a #NspMatrix
  * @B: a #NspSpColMatrix
  * 
  *  A(Rows,Cols) = B 
@@ -1142,23 +1138,18 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
 /**
  * nsp_spcolmatrix_set_row:
  * @A: a #NspSpColMatrix
- * @Inds: 
+ * @Inds: a #NspMatrix 
  * @B: a #NspSpColMatrix
  * 
- *  A(Inds) = B 
- *  A is changed and enlarged if necessary 
- *  Inds is unchanged 
- *  Size Compatibility is checked 
- * 
- *  Rules : A Matrix or A ==[]  
- *	A(Inds)=B 
- *	B must be row or column 
- *	if A==[] the size of the result depends on b 
- *      A row vector B must be row 
- *      A column vector B must be column 
- *      Inds must be in the range of A indices unless A is row or column or []
- *      Inds and B must have the same size or B must be scalar 
- * 
+ * performs A(Inds) = B. @A is changed and enlarged if necessary 
+ * @Inds is unchanged.  Size Compatibility is checked with the following
+ * rules: 
+ * if A is a Matrix or A ==[] then @B must be row or column 
+ *    if A==[] the size of the result depends on @B.
+ * If A is a row vector then B must be row 
+ * If A is a column vector then B must be column 
+ * @Inds must be in the range of @A indices unless @A is row or column or []
+ * @Inds and @B must have the same size or @B must be scalar 
  * 
  * Return value:  %OK or %FAIL
  **/
@@ -1244,7 +1235,7 @@ int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *
 /**
  * nsp_spcolmatrix_delete_rows:
  * @A: a #NspSpColMatrix
- * @Rows: 
+ * @Rows: a #NspMatrix 
  * 
  *  A(Rows,:) = [],  A is changed. 
  * 
@@ -1331,7 +1322,7 @@ int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows)
 /**
  * nsp_spcolmatrix_compress_col:
  * @A: a #NspSpColMatrix
- * @i: 
+ * @i: an integer 
  * 
  * compress the #SpCol structure of the @i-th column of sparse Matrix @A 
  * by moving elements (eliminating the -1 values). the row indices 
@@ -1384,7 +1375,7 @@ int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i)
 /**
  * nsp_spcolmatrix_compress_col_simple:
  * @A: a #NspSpColMatrix
- * @i: 
+ * @i: an integer
  * 
  * 
  * compress the #SpCol structure of the @i-th column of sparse Matrix @A 
@@ -1432,7 +1423,7 @@ int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i)
 /**
  * nsp_spcolmatrix_delete_cols:
  * @A: a #NspSpColMatrix
- * @Cols: 
+ * @Cols: a #NspMatrix
  * 
  *  A(:,Cols) = []
  * 
@@ -1506,10 +1497,10 @@ int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
 /**
  * SpExtract_G:
  * @A: a #NspSpColMatrix
- * @Rows: 
- * @Cols: 
- * @flag: 
- * @err: 
+ * @Rows: a #NspMatrix 
+ * @Cols: a #NspMatrix 
+ * @flag: an integer 
+ * @err: an in pointer 
  * 
  * Extract elements A(Row,Cols). 
  * Warning: Rows is changed (sorted).
@@ -1612,8 +1603,8 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
 /**
  * nsp_spcolmatrix_extract:
  * @A: a #NspSpColMatrix
- * @Rows: 
- * @Cols: 
+ * @Rows: a #NspMatrix 
+ * @Cols: a #NspMatrix 
  * 
  * returns A(Row,Cols) but @Rows is changed in the process.
  * 
@@ -1633,7 +1624,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspM
 /**
  * nsp_spcolmatrix_extract_elts:
  * @A: a #NspSpColMatrix
- * @Elts: 
+ * @Elts: a #NspMatrix 
  * 
  * return A(Elts)
  * 
@@ -1700,8 +1691,8 @@ NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts)
 /**
  * nsp_spcolmatrix_extract_rows:
  * @A: a #NspSpColMatrix
- * @Rows: 
- * @err: 
+ * @Rows: a #NspMatrix 
+ * @err: an int pointer
  * 
  * returns A(Rows,:) but @Rows is changed 
  * err is used inside for-loops 
@@ -1722,8 +1713,8 @@ NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspMatrix *Rows,
 /**
  * nsp_spcolmatrix_extract_cols:
  * @A: a #NspSpColMatrix
- * @Cols: 
- * @err: 
+ * @Cols: a #NspMatrix 
+ * @err: an int pointer
  * 
  * A(:,Cols)
  * 
@@ -1772,7 +1763,7 @@ NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols,
 /**
  * nsp_spcolmatrix_diag_extract:
  * @A: a #NspSpColMatrix
- * @k: 
+ * @k: an integer
  * 
  * 
  * Returns the kthe diag of a Sparse NspMatrix as a Sparse  Column.
@@ -1834,8 +1825,8 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
 /**
  * nsp_spcolmatrix_diag_set:
  * @A: a #NspSpColMatrix
- * @Diag: 
- * @k: 
+ * @Diag: a #NspSpColMatrix
+ * @k: an integer 
  * 
  * sets the kth diagonal of A to Diag 
  * A is enlarged and complexified if necessary 
@@ -1970,10 +1961,10 @@ int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 
 /**
  * GetDiagVal:
- * @Diag: 
- * @i: 
- * @val: 
- * @cval: 
+ * @Diag: a #NspSpColMatrix
+ * @i: an integer 
+ * @val: a double pointer 
+ * @cval: a #doubleC pointer 
  * 
  * return the ith element of Diag in val or cval + an OK value 
  * if this element is non nul. 
@@ -2005,8 +1996,8 @@ static int  GetDiagVal(NspSpColMatrix *Diag, int i, double *val, doubleC *cval)
 
 /**
  * nsp_spcolmatrix_diag_create:
- * @Diag: 
- * @k: 
+ * @Diag: a #NspSColMatrix 
+ * @k: an integer 
  * 
  *  Creates a Matrix with kth diag set to Diag 
  * 
@@ -2321,7 +2312,7 @@ NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B)
 
 /**
  * nsp_spcolmatrix_mult_m_sp:
- * @X: 
+ * @X: a #NspMatrix
  * @A: a #NspSpColMatrix
  * 
  * @Xx@A when @X is full 
@@ -2581,7 +2572,7 @@ int nsp_spcolmatrix_complexify(NspSpColMatrix *A)
 /**
  * nsp_spcolmatrix_setr:
  * @A: a #NspSpColMatrix
- * @d: 
+ * @d: a double 
  * 
  * Set real part of all non nul elements of A to d 
  * 
@@ -2622,7 +2613,7 @@ int nsp_spcolmatrix_setr(NspSpColMatrix *A, double d)
 /**
  * nsp_spcolmatrix_seti:
  * @A: a #NspSpColMatrix
- * @d: 
+ * @d: a double 
  * 
  * Set imag part of all non nul elements of A to d 
  * if A is real A is changed to complex 
@@ -2654,7 +2645,7 @@ int nsp_spcolmatrix_seti(NspSpColMatrix *A, double d)
 /**
  * RowCountNonNull:
  * @A: a #NspMatrix
- * @i: 
+ * @i: an integer 
  * 
  * 
  * Return value: the number of non null elements of @i-th row of matrix @A.
@@ -2678,7 +2669,7 @@ static int  RowCountNonNull(NspMatrix *A, int i)
 /**
  * ColCountNonNull:
  * @A: a #NspMatrix
- * @j: 
+ * @j: an integer 
  * 
  * 
  * 
@@ -2837,7 +2828,7 @@ NspSpColMatrix *nsp_spcolmatrix_from_mat_transpose(NspMatrix *A)
 
 /**
  * nsp_spcolmatrix_to_mat:
- * @Sp: 
+ * @Sp: a #NspSpColMatrix
  * 
  * from sparse to full.
  * 
@@ -2887,7 +2878,7 @@ NspMatrix *nsp_spcolmatrix_to_mat(NspSpColMatrix *Sp)
 
 /**
  * nsp_spcolmatrix_to_mat_transpose:
- * @Sp: 
+ * @Sp: a #NspSpColMatrix
  * 
  * from sparse to full. returns a full matrix 
  * filled from the transpose of @Sp.
@@ -3261,9 +3252,9 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
  * BinaryOp:
  * @A: a #NspSpColMatrix
  * @B: a #NspSpColMatrix
- * @BinLeft: 
- * @BinBoth: 
- * @BinRight: 
+ * @BinLeft: a function 
+ * @BinBoth: a function 
+ * @BinRight: a function 
  * 
  * A generic function for performing Res(i,j) = A(i,j) op B(i,j)
  * assuming that 0 op 0 --> 0  (WARNING)
@@ -3430,8 +3421,8 @@ int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
  * nsp_spcolmatrix_op_scal:
  * @A: a #NspSpColMatrix
  * @B: a #NspSpColMatrix
- * @flag: 
- * @op: 
+ * @flag: int pointer 
+ * @op: a char
  * 
  * A = A op B where B is a scalar sparse ( [] or scalar )
  * op can be + or - 
@@ -3543,10 +3534,10 @@ NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *fl
 
 /**
  * nsp_dichotomic_search:
- * @x: 
- * @val: 
- * @imin: 
- * @imax: 
+ * @x: an integer 
+ * @val: an array of int (unchanged)
+ * @imin: an integer 
+ * @imax: an integer 
  * 
  * performs a dichotomic search of x in array @val for indices in [@imin,@imax].
  * @val is supposed to be strictly increasing. 
@@ -3914,9 +3905,9 @@ static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *
 /**
  * nsp_spcolmatrix_clean:
  * @A: a #NspSpColMatrix
- * @rhs: 
- * @epsa: 
- * @epsr: 
+ * @rhs: an integer 
+ * @epsa: absolute precision 
+ * @epsr: relative precision 
  * 
  * A = Matclean(a) clean A according to epsa and epsr 
  * epsa is used if rhs >= 1 
