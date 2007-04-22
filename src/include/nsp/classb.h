@@ -6,13 +6,17 @@
  * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
-  
-/* ClassB */
 
 #include "nsp/classa.h"
 
-/*
- * NspClassB inherits from NspClassA
+/**
+ * NspClassA:
+ * @classb_color: an integer 
+ * @classb_thickness: an integer 
+ * @classb_val: a #NspMatrix 
+ *
+ * inherits from NspClassA used as a basic demo 
+ * of a class implementation 
  */
 
 typedef struct _NspClassB NspClassB;

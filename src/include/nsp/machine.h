@@ -91,7 +91,7 @@
 #define WITH_FFTW3 1
 
 /* Define if use sndfile lib  */
-/* #undef WITH_SNDFILE */
+#define WITH_SNDFILE 1
 
 /* Define if use asound lib  */
 #define WITH_ASOUND 1

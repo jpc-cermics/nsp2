@@ -11,8 +11,17 @@
 #include "nsp/object.h"
 #include "nsp/xdr.h"
 
-/*
- * NspFile inherits from NspObject 
+/**
+ * NspFile:
+ * @file : file structure FILE
+ * @xdrs:   xdr struture 
+ * @flag:      flag for special open (xdr) 
+ * @openf:  flags used in fopen 
+ * @fname:   file name 
+ *
+ * inherits from #NspObject used to store informations 
+ * for files. XXX this is to be changed since a NspFile 
+ * must be a by reference object.
  */
 
 typedef struct _NspFile NspFile;
@@ -130,8 +139,9 @@ static NspMethods *nsp_file_get_methods(void);
 #endif 
 
 #ifdef SciFile_xdr_save_string
-/* just pretend its not a const in SciFile_Private to avoid 
- * a warning with xdr_opaque */
+/* just pretend it is not a const in SciFile_Private to avoid 
+ * a warning with xdr_opaque 
+ */
 extern int nsp_xdr_save_string(XDR *xdrs,char *str);
 #else 
 extern int nsp_xdr_save_string(XDR *xdrs,const char *str);

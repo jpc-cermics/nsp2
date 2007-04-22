@@ -6,7 +6,16 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
   
-/* Function */
+/**
+ * NspFunction:
+ * @fname: function name 
+ * @pos: position inside interface,
+ * @iface: interface number in which the function is stored,
+ * @status: status of the function 
+ *
+ * inherits from #NspObject used for storing information about 
+ * a primitive. 
+ */
 
 #include "nsp/object.h"
 

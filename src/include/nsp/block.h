@@ -15,9 +15,12 @@
 #include "nsp/grint.h" /* interface definition */
 #include "nsp/graphics/Graphics.h"
 
-/*
- * NspBlock inherits from NspObject 
- * and implements GRint 
+/**
+ * NspBlock:
+ * @obj: a #nsp_block pointer 
+ *
+ * inherits from #NspObject and implements Grint. 
+ * Used for graphic blocks for a C implementation of scicos.
  */
 
 typedef struct _NspBlock NspBlock;
@@ -29,6 +32,17 @@ struct _NspTypeBlock {
   /*< public >*/
 };
 
+/**
+ * grb_lock: 
+ *  @port: a #gr_port. 
+ *  @pt: position of the lock point in the frame
+ *  @ptr: relative position of the lock point in the block
+ *  @type: type of the lock point.
+ *
+ * used for storing information about lock points of a block. 
+ * 
+ */
+
 typedef struct b_lock grb_lock ; 
 
 struct b_lock {
@@ -37,6 +51,23 @@ struct b_lock {
   double ptr[2]; /* lock position (relative position in the block)*/
   int type ; /* type of the lock point */
 };
+
+/**
+ * nsp_block: 
+ * @frame: a block must be in a frame to be drawn 
+ * @object_sid: 
+ * @r: the block enclosing rectangle 
+ * @@color: color of the block
+ * @thickness: thickness of the enclosing rectangle 
+ * @background: color of the background
+ * @n_locks:  number of lock points 
+ * @locks: array of lock points 
+ * @hilited: is block hilited 
+ * @show: is block to be visible 
+ * @ref_count: a reference counter.
+ *
+ * used for storing information for a graphic block.
+ */
 
 typedef struct _nsp_block nsp_block;
 
@@ -119,9 +150,9 @@ static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
 
-#endif /* Block_Private */
-
 #define NULLBLOCK (NspBlock*) 0
+
+#endif /* Block_Private */
 
 extern NspBlock *block_object(NspObject *O); 
 extern int IsBlockObj (Stack stack, int i); 

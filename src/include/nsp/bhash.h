@@ -40,6 +40,16 @@ struct _NspTypeBHash {
   /*< public >*/
 };
 
+/**
+ * NspBHash: 
+ * @hsize: size of hashtable 
+ * @filled: number of elements present in the hash table 
+ * @htable: array in which (key,value) pairs are stored.
+ *
+ * inherits from #NspObject, a basic hash table for which keys are 
+ * strings and values are integers.
+ */
+
 typedef struct _NspBHash NspBHash;
 
 struct _NspBHash {

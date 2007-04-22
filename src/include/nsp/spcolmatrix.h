@@ -153,15 +153,15 @@ extern NspMatrix *nsp_spcolmatrix_to_mat_transpose(NspSpColMatrix *Sp);
 
 
 extern NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A); 
- extern NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B); 
- extern NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B); 
- extern NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B); 
- extern int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B); 
- extern NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *flag, char op); 
+extern NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B); 
+extern NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B); 
+extern NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B); 
+extern int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B); 
+extern NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *flag, char op); 
 
 /* SpColMatOps.c */
 
- extern int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr); 
+extern int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr); 
 extern NspSpColMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err);
 extern NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
 extern NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
@@ -172,33 +172,33 @@ extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n);
 extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n);
 extern NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n);
 
- extern int nsp_spcolmatrix_realpart(NspSpColMatrix *A); 
- extern int nsp_spcolmatrix_imagpart(NspSpColMatrix *A); 
- extern NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag); 
- extern NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
- extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n); 
- extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n); 
- extern NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n); 
- extern NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A); 
- extern NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_asin(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_asinh(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_atan(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_atanh(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_ceil(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_int(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_floor(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_round(NspSpColMatrix *A); 
- extern int nsp_spcolmatrix_sign(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_tan(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_tanh(NspSpColMatrix *A); 
- extern int nsp_spcolmatrix_abs(NspSpColMatrix *A); 
- extern int nsp_spcolmatrix_erf(NspSpColMatrix *A); 
- extern int nsp_spcolmatrix_arg(NspSpColMatrix *A); 
- extern void nsp_spcolmatrix_conj(NspSpColMatrix *A); 
- extern NspMatrix *nsp_spcolmatrix_cos(NspSpColMatrix *A); 
- extern NspMatrix *nsp_spcolmatrix_cosh(NspSpColMatrix *A); 
- extern NspMatrix *nsp_spcolmatrix_expel(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_realpart(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_imagpart(NspSpColMatrix *A); 
+extern NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag); 
+extern NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
+extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n); 
+extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n); 
+extern NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n); 
+extern NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A); 
+extern NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_asin(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_asinh(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_atan(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_atanh(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_ceil(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_int(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_floor(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_round(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_sign(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_tan(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_tanh(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_abs(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_erf(NspSpColMatrix *A); 
+extern int nsp_spcolmatrix_arg(NspSpColMatrix *A); 
+extern void nsp_spcolmatrix_conj(NspSpColMatrix *A); 
+extern NspMatrix *nsp_spcolmatrix_cos(NspSpColMatrix *A); 
+extern NspMatrix *nsp_spcolmatrix_cosh(NspSpColMatrix *A); 
+extern NspMatrix *nsp_spcolmatrix_expel(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_logel(NspSpColMatrix *A); 
 extern void nsp_spcolmatrix_sin(NspSpColMatrix *A); 
 extern void nsp_spcolmatrix_sinh(NspSpColMatrix *A); 
@@ -206,11 +206,9 @@ extern int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A);
 extern int nsp_spcolmatrix_minus(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 extern NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand);
-
 extern int nsp_spcol_update_from_triplet(NspSpColMatrix *M);
 extern int nsp_spcol_set_triplet_from_m(NspSpColMatrix *M,int flag);
 extern int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax);
 extern int nsp_spcol_realloc_col_triplet(NspSpColMatrix *M,int nzmax);
-
 
 #endif 

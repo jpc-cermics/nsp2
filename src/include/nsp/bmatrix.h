@@ -75,22 +75,6 @@ NspBMatrix *new_bmatrix();
  * Object methods redefined for bmatrix 
  */
 
-#ifdef BMatrix_Private 
-static int init_bmatrix(NspBMatrix *ob,NspTypeBMatrix *type);
-static int bmatrix_size(NspBMatrix *Mat, int flag);
-static char *bmatrix_type_as_string(void);
-static char *bmatrix_type_short_string(NspObject *v);
-static NspObject *bmatrix_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-static int bmatrix_eq(NspBMatrix *A, NspObject *B);
-static int bmatrix_neq(NspBMatrix *A, NspObject *B);
-static int bmatrix_xdr_save(XDR  *xdrs, NspBMatrix *M);
-static NspBMatrix  *bmatrix_xdr_load(XDR  *F);
-static AttrTab bmatrix_attrs[];
-static NspMethods *bmatrix_get_methods(void); 
-/*static NspObject *bmatrix_path_extract(NspBMatrix *A, NspObject *O); */
-static int bmatrix_is_true(NspBMatrix *M);
-#endif /* BMatrix_Private */
-
 #define NULLBMAT (NspBMatrix*) 0
 
 /* from BMatObj.c */
@@ -160,3 +144,18 @@ extern NspBMatrix  *nsp_mat_finite(NspMatrix *A);
 
 #endif 
 
+#ifdef BMatrix_Private 
+static int init_bmatrix(NspBMatrix *ob,NspTypeBMatrix *type);
+static int bmatrix_size(NspBMatrix *Mat, int flag);
+static char *bmatrix_type_as_string(void);
+static char *bmatrix_type_short_string(NspObject *v);
+static NspObject *bmatrix_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+static int bmatrix_eq(NspBMatrix *A, NspObject *B);
+static int bmatrix_neq(NspBMatrix *A, NspObject *B);
+static int bmatrix_xdr_save(XDR  *xdrs, NspBMatrix *M);
+static NspBMatrix  *bmatrix_xdr_load(XDR  *F);
+static AttrTab bmatrix_attrs[];
+static NspMethods *bmatrix_get_methods(void); 
+/*static NspObject *bmatrix_path_extract(NspBMatrix *A, NspObject *O); */
+static int bmatrix_is_true(NspBMatrix *M);
+#endif /* BMatrix_Private */

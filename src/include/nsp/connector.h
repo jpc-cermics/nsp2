@@ -5,8 +5,6 @@
  * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
-  
-/* connector */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -14,9 +12,13 @@
 #include "nsp/gframe.h"
 #include "nsp/grint.h"
 
-/*
+/**
+ * NspConnector:
+ * @obj: pointer to a #nsp_connector
+ *
  * NspConnector inherits from NspObject 
- * and implements GRint 
+ * and implements GRint. It is used to make connection 
+ * between links in a scicos block diagram.
  */
 
 typedef struct _NspConnector NspConnector;
@@ -26,6 +28,8 @@ struct _NspTypeConnector {
   NSP_TYPE_OBJECT__ 
   /*< public >*/
 }; 
+
+
 
 typedef struct _gr_lock gr_lock ; 
 

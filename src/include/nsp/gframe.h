@@ -15,8 +15,12 @@
 #include "nsp/smatrix.h"
 #include "nsp/graphics/Graphics.h"
 
-/*
- * NspGFrame inherits from NspObject 
+/**
+ * NspGFrame:
+ * @obj: a pointer to a #nsp_gframe
+ *
+ * inherits from #NspObject and is used 
+ * for scicos diagrams. 
  */
 
 typedef struct _NspGframe NspGFrame;
@@ -25,6 +29,18 @@ typedef struct _NspTypeGFrame {
   NSP_TYPE_OBJECT__ 
   /*< public >*/
 } NspTypeGFrame;
+
+/**
+ * nsp_gframe: 
+ * @objs: a #NspList of objects contained in the frame
+ * @Xgc: graphic context to be used for drawing,
+ * @scale: scales of the frame
+ * @r: frame position in its father as an array of size four.
+ * @ref_count: a reference counter
+ *
+ * inherits from #NspObject and is used 
+ * for scicos diagrams. 
+ */
 
 typedef struct _nsp_gframe nsp_gframe;
 
@@ -57,28 +73,6 @@ NspGFrame *new_gframe();
 /*
  * Object methods redefined for gframe 
  */
-
-#ifdef GFrame_Private 
-static int init_gframe(NspGFrame *ob,NspTypeGFrame *type);
-static int gframe_size(NspGFrame *Mat, int flag);
-static char *gframe_type_as_string(void);
-static char *gframe_type_short_string(NspObject *v);
-static int gframe_eq(NspGFrame *A, NspObject *B);
-static int gframe_neq(NspGFrame *A, NspObject *B);
-static int gframe_xdr_save(XDR  *F, NspGFrame *M);
-static NspGFrame  *gframe_xdr_load(XDR  *F);
-static NspObject *gframe_path_extract(NspGFrame *H,int n, NspObject **Objs);
-static AttrTab gframe_attrs[];
-static NspGFrame *gframe_object (NspObject *O); 
-static NspGFrame *gframe_copy (NspGFrame *H); 
-static void gframe_destroy (NspGFrame *H); 
-static void gframe_info (NspGFrame *H, int indent,char *name, int rec_level); 
-static void gframe_print (NspGFrame *H, int indent,char *name, int rec_level); 
-static NspMethods *gframe_get_methods(void);
-static int int_gframe_create(Stack stack, int rhs, int opt, int lhs);
-static NspGFrame *frame_full_copy( NspGFrame *F);
-
-#endif /* GFrame_Private */
 
 #define NULLGFRAME (NspGFrame*) 0
 
@@ -118,4 +112,27 @@ extern void gframe_set_frame_field(NspGFrame *F);
 
 
 #endif
+
+
+#ifdef GFrame_Private 
+static int init_gframe(NspGFrame *ob,NspTypeGFrame *type);
+static int gframe_size(NspGFrame *Mat, int flag);
+static char *gframe_type_as_string(void);
+static char *gframe_type_short_string(NspObject *v);
+static int gframe_eq(NspGFrame *A, NspObject *B);
+static int gframe_neq(NspGFrame *A, NspObject *B);
+static int gframe_xdr_save(XDR  *F, NspGFrame *M);
+static NspGFrame  *gframe_xdr_load(XDR  *F);
+static NspObject *gframe_path_extract(NspGFrame *H,int n, NspObject **Objs);
+static AttrTab gframe_attrs[];
+static NspGFrame *gframe_object (NspObject *O); 
+static NspGFrame *gframe_copy (NspGFrame *H); 
+static void gframe_destroy (NspGFrame *H); 
+static void gframe_info (NspGFrame *H, int indent,char *name, int rec_level); 
+static void gframe_print (NspGFrame *H, int indent,char *name, int rec_level); 
+static NspMethods *gframe_get_methods(void);
+static int int_gframe_create(Stack stack, int rhs, int opt, int lhs);
+static NspGFrame *frame_full_copy( NspGFrame *F);
+
+#endif /* GFrame_Private */
 

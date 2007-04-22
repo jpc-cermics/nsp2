@@ -2,16 +2,24 @@
 #define NSP_INC_CELLS
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2007) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
-/*
- * NspMatrix inherits from NspObject 
+/**
+ * NspCells: 
+ * @m: number of rows 
+ * @n: number of columns
+ * @mn: @m x @n
+ * @objs: array containing the stored #NspObject 
+ *
+ * inherits from #NspObject and used for cells array i.e 
+ * arrays of nsp objects. 
  */
+
 typedef struct _NspCells NspCells ;
 
 typedef struct _NspTypeCells { 
@@ -33,30 +41,15 @@ extern NspTypeCells *nsp_type_cells;
 
 /* only useful when building a new class derived from matrix */
 
-NspTypeCells *new_type_cells(type_mode mode) ;
+extern NspTypeCells *new_type_cells(type_mode mode) ;
 
 /* only useful when building a new class derived from matrix */
 
-NspCells *new_cells();
+extern NspCells *new_cells();
 
 /*
  * Object methods redefined for smatrix 
  */
-
-#ifdef Cells_Private 
-static int init_cells(NspCells *ob,NspTypeCells *type);
-static int nsp_cells_size(NspCells *Mat, int flag);
-static NspMethods *cells_get_methods(void);
-char *nsp_cells_type_as_string(void);
-char *nsp_cells_type_short_string(NspObject *v);
-NspObject *nsp_cells_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_cells_eq(NspObject *A,NspObject *B);
-int nsp_cells_neq(NspObject *A,NspObject *B);
-int nsp_cells_is_true(NspCells *M);
-NspCells *nsp_cells_xdr_load(XDR  *F);
-int nsp_cells_xdr_save(XDR *xdrs, NspCells *M);
-#endif 
-
 
 /* prototypes */
 
@@ -101,7 +94,20 @@ extern NspBMatrix *CellsCompOp (NspCells *A, NspCells *B, char *op);
 extern int CellsFullComp (NspCells *A, NspCells *B, char *op, int *err); 
 extern NspCells *nsp_cells_transpose(const NspCells *A); 
 
-
-
 #endif 
 
+/* private declarations */
+
+#ifdef Cells_Private 
+static int init_cells(NspCells *ob,NspTypeCells *type);
+static int nsp_cells_size(NspCells *Mat, int flag);
+static NspMethods *cells_get_methods(void);
+char *nsp_cells_type_as_string(void);
+char *nsp_cells_type_short_string(NspObject *v);
+NspObject *nsp_cells_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+int nsp_cells_eq(NspObject *A,NspObject *B);
+int nsp_cells_neq(NspObject *A,NspObject *B);
+int nsp_cells_is_true(NspCells *M);
+NspCells *nsp_cells_xdr_load(XDR  *F);
+int nsp_cells_xdr_save(XDR *xdrs, NspCells *M);
+#endif 

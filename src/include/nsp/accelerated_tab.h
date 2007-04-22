@@ -20,6 +20,18 @@ typedef enum {
   tozero_tab=10,
   setrowscols_tab=11} accelerated_ops;
 
+/**
+ * AcceleratedTab: 
+ * @ops_id:  this should be equal to the indice in table
+ * @opname: operator name 
+ * @arity: operator arity 
+ * @accelerated_types: table of types for which an accelerated function exists
+ * @length: table lenght
+ * @func: table of functions
+ * 
+ * structure used to store functions which code an operator for specific data types
+ */
+
 typedef struct _AcceleratedTab AcceleratedTab;
 
 struct _AcceleratedTab

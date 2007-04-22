@@ -41,13 +41,15 @@ typedef void gr_move_control_init (void *B,  int cp,double ptc[2]);
 typedef void gr_move_control (NspGFrame *F,void *B, const double *pt, int cp,double ptc[2]); 
 
 
-typedef struct _port {
+typedef struct _gr_port gr_port;
+
+struct _gr_port {
   NspObject *object_id ; /* object connected to the associated port or NULL */  
   void *object_sid;      /* used to keep track of connections while 
 			  * copying or saving */
   int lock;              /* object is connected through his lock point lock */
   int port;              /* and port number port */
-} gr_port; 
+};
 
 
 typedef int gr_get_number_of_locks(const void *B) ;
@@ -62,11 +64,11 @@ typedef int gr_is_lock_connected(void *B,int i);
 typedef void * gr_full_copy(void *B);
 typedef void gr_set_lock_pos(void *B, int i,const double pt[],int keep_flag,lock_dir dir);
 
-typedef struct _NspTypeGRint { 
+typedef struct _NspTypeGRint NspTypeGRint ;
+
+struct _NspTypeGRint { 
   NSP_TYPE_OBJECT__ 
-
   /*< public >*/
-
   gr_get_hilited *get_hilited ;		     
   gr_set_hilited *set_hilited ;		     
   gr_get_show *get_show ;		     
@@ -93,8 +95,7 @@ typedef struct _NspTypeGRint {
   gr_is_lock_connected * is_lock_connected;
   gr_set_lock_pos * set_lock_pos;
   gr_full_copy * full_copy;
-
-} NspTypeGRint;
+};
 
 
 #define GR_INT(t) ((NspTypeGRint *) t)
