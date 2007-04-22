@@ -31,7 +31,7 @@ typedef struct { double r, i; } doubleC;
  * @rc_type: 'r' for real or  'c' for complex 
  * @convert: 'd','i','f','c' : double, int, float, old_complex. 
  *          used to remember array converted in place
-
+ *
  * inherits from #NspObject 
  */
 
@@ -65,15 +65,15 @@ struct _NspMatrix {
 extern int nsp_type_matrix_id;
 extern NspTypeMatrix *nsp_type_matrix;
 
-int nsp_type_matrix_init();
+extern int nsp_type_matrix_init();
 
 /* only useful when building a new class derived from matrix */
 
-NspTypeMatrix *new_type_matrix(type_mode mode) ;
+extern NspTypeMatrix *new_type_matrix(type_mode mode) ;
 
 /* only useful when building a new class derived from matrix */
 
-NspMatrix *new_matrix();
+extern NspMatrix *new_matrix();
 
 /*
  * Object methods redefined for matrix 
