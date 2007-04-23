@@ -713,7 +713,7 @@ int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
  * Returns a kroeneker product A.*.B 
  */
 
-int int_mpkron(Stack stack, int rhs, int opt, int lhs)
+static int int_mpkron(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat1,*HMat2,*M;
   NspMatrix *HMat3;
@@ -723,13 +723,10 @@ int int_mpkron(Stack stack, int rhs, int opt, int lhs)
   if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
   if ((HMat3 =nsp_mat_kron((NspMatrix *) HMat1,(NspMatrix *) HMat2)) == NULLMAT) return RET_BUG;
   /* from matrix to maxplus matrix by moving data */
-  if ((M = nsp_mp_matrix_from_m(NVOID,HMat3))  == NULLMAXPMAT) return RET_BUG;
-  nsp_matrix_destroy(HMat3);
-  MoveObj(stack,1,(NspObject *) M);
+  M = nsp_matrix_cast_to_mpmatrix(HMat3);
+  MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
-
-
 
 /*
  * MatSort 
@@ -855,9 +852,8 @@ int_mp_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
     }
       
   if ((M= (*F)((NspMatrix *) HMat,dim)) == NULLMAT ) return RET_BUG;
-  if ((Res = nsp_mp_matrix_from_m(NVOID,M))  == NULLMAXPMAT) return RET_BUG;
-  nsp_matrix_destroy(M);
-  MoveObj(stack,1,(NspObject *)Res);
+  Res= nsp_matrix_cast_to_mpmatrix(M);
+  MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
 
@@ -931,9 +927,8 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
 	{
 	  MoveObj(stack,2,(NspObject *)Imax);
 	}
-      if ((M = nsp_mp_matrix_from_m(NVOID,M1))  == NULLMAXPMAT) return RET_BUG;
-      nsp_matrix_destroy(M1);
-      MoveObj(stack,1,(NspObject *)M);
+      M= nsp_matrix_cast_to_mpmatrix(M1);
+      MoveObj(stack,1,NSP_OBJECT(M));
     }
   else
     {
@@ -1034,7 +1029,7 @@ typedef NspMatrix * (*Mfunc) (int m,int n);
 static int int_mp_gen(Stack stack, int rhs, int opt, int lhs, Mfunc F)
 {
   int m1,n1;
-  NspMaxpMatrix *HMat;
+  NspMaxpMatrix *HMat,*Res;
   NspMatrix *M;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -1050,9 +1045,8 @@ static int int_mp_gen(Stack stack, int rhs, int opt, int lhs, Mfunc F)
       n1= HMat->n;
     }
   if ((M = (*F)(m1,n1) ) == NULLMAT) return RET_BUG;
-  if ((HMat = nsp_mp_matrix_from_m(NVOID,M))  == NULLMAXPMAT) return RET_BUG;
-  nsp_matrix_destroy(M);
-  MoveObj(stack,1,(NspObject *)HMat);
+  Res = nsp_matrix_cast_to_mpmatrix(M);
+  MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
 
@@ -2201,9 +2195,8 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
     {
       NspMatrix *M;
       if ((M=nsp_mat_maxplus_mult((NspMatrix *)A,(NspMatrix *)B)) == NULLMAT) return RET_BUG;
-      if ((Res = nsp_mp_matrix_from_m(NVOID,M))  == NULLMAXPMAT) return RET_BUG;
-      nsp_matrix_destroy(M);
-      MoveObj(stack,1,(NspObject *) Res);
+      Res= nsp_matrix_cast_to_mpmatrix(M);
+      MoveObj(stack,1,NSP_OBJECT(Res));
     }
   return 1;
 }
@@ -2242,10 +2235,9 @@ static int int_mpdiv(Stack stack, int rhs, int opt, int lhs)
       nsp_mat_conj((NspMatrix *) B);
       nsp_mat_minus((NspMatrix *) B);
       if ((C=nsp_mat_minplus_mult((NspMatrix *)HMat1,(NspMatrix *)B)) == NULLMAT) return RET_BUG;
-      if ((Res = nsp_mp_matrix_from_m(NVOID,C))  == NULLMAXPMAT) return RET_BUG;
-      nsp_matrix_destroy(C);
       nsp_mpmatrix_destroy(B);
-      MoveObj(stack,1,(NspObject *) Res);
+      Res= nsp_matrix_cast_to_mpmatrix(C);
+      MoveObj(stack,1,NSP_OBJECT(Res));
     }
   return 1;
 }
@@ -2283,10 +2275,9 @@ static int int_mpbdiv(Stack stack, int rhs, int opt, int lhs)
       nsp_mat_conj((NspMatrix *) A);
       nsp_mat_minus((NspMatrix *) A);
       if ((C=nsp_mat_minplus_mult((NspMatrix *)A,(NspMatrix *)HMat2)) == NULLMAT) return RET_BUG;
-      if ((Res = nsp_mp_matrix_from_m(NVOID,C))  == NULLMAXPMAT) return RET_BUG;
-      nsp_matrix_destroy(C);
       nsp_mpmatrix_destroy(A);
-      MoveObj(stack,1,(NspObject *) Res);
+      Res= nsp_matrix_cast_to_mpmatrix(C);
+      MoveObj(stack,1,NSP_OBJECT(Res));
     }
   return 1;
 }
