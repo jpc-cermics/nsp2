@@ -191,13 +191,11 @@ char *nsp_spcolmatrix_type_short_string(NspObject *v)
   return(sp_short_type_name);
 }
 
-
 int nsp_spcolmatrix_fullcomp(NspSpColMatrix * A,NspSpColMatrix * B,char *op,int *err)
 {
   Scierror("SpMatFullComp: to be implemented \n");
   return FALSE;
 }
-
 
 int nsp_spcolmatrix_eq(NspObject *A, NspObject *B)
 {

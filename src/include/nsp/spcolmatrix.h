@@ -76,17 +76,6 @@ NspSpColMatrix *new_spcolmatrix();
  * Object methods redefined for spcolmatrix 
  */
 
-#ifdef SpColMatrix_Private 
-static int init_spcolmatrix(NspSpColMatrix *ob,NspTypeSpColMatrix *type);
-static int nsp_spcolmatrix_size(NspSpColMatrix *Mat, int flag);
-char *nsp_spcolmatrix_type_as_string(void);
-char *nsp_spcolmatrix_type_short_string(NspObject *v);
-NspObject *SpColLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_spcolmatrix_eq(NspObject *A,NspObject *B);
-int nsp_spcolmatrix_neq(NspObject *A,NspObject *B);
-static NspSpColMatrix *nsp_spcolmatrix_xdr_load(XDR  *F);
-static int nsp_spcolmatrix_xdr_save(XDR  *F, NspSpColMatrix *M);
-#endif 
 
 #define NULLSPCOL (  NspSpColMatrix *) 0
 
@@ -211,4 +200,16 @@ extern int nsp_spcol_set_triplet_from_m(NspSpColMatrix *M,int flag);
 extern int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax);
 extern int nsp_spcol_realloc_col_triplet(NspSpColMatrix *M,int nzmax);
 
+#endif 
+
+#ifdef SpColMatrix_Private 
+static int init_spcolmatrix(NspSpColMatrix *ob,NspTypeSpColMatrix *type);
+static int nsp_spcolmatrix_size(NspSpColMatrix *Mat, int flag);
+static char *nsp_spcolmatrix_type_as_string(void);
+static char *nsp_spcolmatrix_type_short_string(NspObject *v);
+/* static NspObject *SpColLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep); */
+static int nsp_spcolmatrix_eq(NspObject *A,NspObject *B);
+static int nsp_spcolmatrix_neq(NspObject *A,NspObject *B);
+static NspSpColMatrix *nsp_spcolmatrix_xdr_load(XDR  *F);
+static int nsp_spcolmatrix_xdr_save(XDR  *F, NspSpColMatrix *M);
 #endif 

@@ -124,11 +124,11 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
 
 /**
  * nsp_spcolmatrix_sparse:
- * @name: 
- * @RC: 
- * @Values: 
- * @m: 
- * @n: 
+ * @name: a string 
+ * @RC: a  #NspMatrix 
+ * @Values: a #NspMatrix 
+ * @m: an integer 
+ * @n: an integer
  * 
  * Creates a #NspSColMatrix of size @mx@n filed with values specified 
  * in @RC ((i,j) values stored in a two column matrix) and @Values 
@@ -356,7 +356,7 @@ NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A)
 
 /**
  * nsp_spcolmatrix_resize_col:
- * @Sp: 
+ * @Sp: a #NspSpColMatrix
  * @i: column to be resized 
  * @n: number of non null elements of the column.
  * 
@@ -420,7 +420,7 @@ void nsp_spcolmatrix_col_destroy(SpCol *Col)
 
 /**
  * nsp_spcolmatrix_destroy:
- * @Mat: 
+ * @Mat: a #NspSpColMatrix
  * 
  * destroys a #NspSpColMatrix.
  * 
@@ -444,7 +444,7 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
 
 /**
  * nsp_spcolmatrix_nnz:
- * @HMat: 
+ * @HMat: a #NspSpColMatrix
  * 
  * computes the number of non nul elements stored in 
  * a sparse Matrix. 
@@ -464,12 +464,14 @@ int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
 
 /**
  * nsp_spcolmatrix_info:
- * @Sp: 
- * @indent: 
- * @name: 
- * @rec_level: 
+ * @Sp: a #NspSpColMatrix
+ * @indent: an integer 
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
- * displays info on Sparse Matrix @Sp.
+ * Display info on the sparse matrix @Sp using the default 
+ * Sciprintf() function. 
+ * @indent is the given indentation for printing.
  **/
 
 void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,char *name,int rec_level)
@@ -544,8 +546,8 @@ void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_le
 /**
  * nsp_spcolmatrix_redim:
  * @A: a #NspSpColMatrix
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer
  * 
  * If the product @mx@n is equal to @A->mw@A->n, 
  * returns a new sparse matrix of size @mx@n. The new 
@@ -636,10 +638,10 @@ NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 
 /**
  * nsp_spcolmatrix_enlarge_cols:
- * @Sp: 
- * @n: 
+ * @Sp: a #NspSpColMatrix
+ * @n: an integer 
  * 
- * changes the number of columns of Sp to Min(Sp->n,n);
+ * changes the number of columns of @Sp to Min(@Sp->n,@n);
  *
  * Return value:  %OK or %FAIL
  **/
@@ -672,8 +674,8 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 /**
  * nsp_spcolmatrix_enlarge:
  * @A: a #NspSpColMatrix
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer
  * 
  * changes @A to [@A,0;0,0]  
  * in such a way that the new size of @A is (max(A->m,m) x max(A->n,n));
@@ -872,18 +874,20 @@ void  nsp_spcolmatrix_store(NspSpColMatrix *A, int r, int c, int col, NspSpColMa
     }
 }
 
+
 /**
- * A:
- * @i: 
- * @j: 
+ * nsp_spcolmatrix_insert_elt:
+ * @A: a #NspSpColMatrix
+ * @i: an integer 
+ * @j: an integer 
+ * @B: a #NspSpColMatrix
+ * @rb: an intege
+ * @cb: an intege
  * 
  * Insert or change A(i,j) to B(rb,cb)
  * 
- * 
- * Return value:  %OK or %FAIL
+ * Returns: 
  **/
-
-
 
 int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *B, int rb, int cb)
 {
@@ -1828,10 +1832,10 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
  * @Diag: a #NspSpColMatrix
  * @k: an integer 
  * 
- * sets the kth diagonal of A to Diag 
- * A is enlarged and complexified if necessary 
+ * sets the @k-th diagonal of @A to @Diag 
+ * @A is enlarged and complexified if necessary 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
@@ -3976,9 +3980,9 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
  * nsp_spcolmatrix_maximinitt_g:
  * @A: a #NspSpColMatrix
  * @B: a #NspSpColMatrix
- * @flag: 
- * @minmaxflag: 
- * @err: 
+ * @flag: an integer 
+ * @minmaxflag: an integer 
+ * @err: an int pointer 
  * 
  * max or min (A,B)
  * 
@@ -4186,8 +4190,8 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
  * nsp_spcolmatrix_maxitt:
  * @A: a #NspSpColMatrix
  * @B: a #NspSpColMatrix
- * @flag: 
- * @err: 
+ * @flag: an integer 
+ * @err: an int pointer 
  * 
  *  term to term max A(i;j) = Max(A(i,j),B(i,j) 
  *  Res(i,j) = 1 or 2 or 0 
@@ -4788,9 +4792,9 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 /**
  * nsp_spcolmatrix_maxi:
  * @A: a #NspSpColMatrix
- * @flag: 
- * @Imax: 
- * @lhs: 
+ * @flag: a string among  "c", "r" and "g"
+ * @Imax: a #NspMatrix 
+ * @lhs: an integer 
  * 
  * [max,imax]=max(A,'c'|'r'|'g')
  * Max =nsp_mat_maxi(A,B,Imax,lhs)
@@ -4801,7 +4805,7 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
  *       and a Row vector is returned.
  * if B= 'f' the maximum 
  * Imax is created if lhs == 2 
- * Note that Imax is a full matrix XXX not a good idea ? 
+ * Note that Imax is a full matrix. 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
@@ -4823,12 +4827,10 @@ NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **
  * R=func(i,j) or R=func(i,j,&Imag) 
  */
 
-
-
 /**
  * nsp_spcolmatrix_triu:
  * @A: a #NspSpColMatrix
- * @k: 
+ * @k: an integer 
  * 
  * A=Triu(A)
  * 
@@ -4899,10 +4901,10 @@ int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k)
 
 /**
  * nsp_spcolmatrix_eye:
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer 
  * 
- * A=Eye(m,n)
+ * return eye(m,n) coded as #NspSColMatrix.
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
@@ -4924,8 +4926,8 @@ NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
 
 /**
  * nsp_spcolmatrix_ones:
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer 
  * 
  * A=ones(m,n)
  * 
@@ -5660,9 +5662,9 @@ int nsp_spcolmatrix_minus(NspSpColMatrix *A)
 /**
  * nsp_spcolmatrix_find:
  * @A: a #NspSpColMatrix
- * @lhs: 
- * @Res1: 
- * @Res2: 
+ * @lhs: an integer 
+ * @Res1: a #NspMatrix pointer 
+ * @Res2: a #NspMatrix pointer 
  * 
  * returns in a Matrix the indices for which the 
  * Matrix A has non zero entries 
