@@ -10,7 +10,7 @@
 #include "nsp/classa.h"
 
 /**
- * NspClassA:
+ * NspClassB:
  * @classb_color: an integer 
  * @classb_thickness: an integer 
  * @classb_val: a #NspMatrix 
