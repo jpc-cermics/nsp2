@@ -45,7 +45,7 @@
  * 
  */
 
-int int_mxtest1(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest1(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *x1=NULLMAT,*x4=NULLMAT;
   char *x2= NULL;
@@ -77,7 +77,7 @@ int int_mxtest1(Stack stack, int rhs, int opt, int lhs)
 }  
 
 
-int int_mxtest2(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest2(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *x1=NULLMAT,*x4=NULLMAT;
   int x2    =10 ;
@@ -117,7 +117,7 @@ int int_mxtest2(Stack stack, int rhs, int opt, int lhs)
  * GetArg and GetListArgs 
  */
 
-int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A,*B,*Al,*D;
   NspSMatrix *S;
@@ -139,7 +139,7 @@ int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
 {
   int L_1;
   double L_31;
@@ -163,19 +163,7 @@ int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-
-/* test6(%t,list(10,%f),'fin'); */
-
-int int_mxtest6_simp(Stack stack, int rhs, int opt, int lhs)
-{
-  int b,a,b1;
-  char *str;
-  int_types T[]={s_bool,list_begin,s_int,s_bool,list_end,string,t_end};
-  if ( GetArgs(stack,rhs,opt, T,&b,&a,&b1,&str) == FAIL) return RET_BUG;
-  return 0;
-}  
-
-int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
   int_types Ret[]={ s_int,s_double,string,list_begin,s_int,s_int,list_end, t_end};
@@ -189,7 +177,7 @@ int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_mxtest5_2(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest5_2(Stack stack, int rhs, int opt, int lhs)
 {
   int *ia;
   NspMatrix *A,*B;
@@ -201,7 +189,7 @@ int int_mxtest5_2(Stack stack, int rhs, int opt, int lhs)
 }  
 
 
-int int_mxtest7(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest7(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[]={t_end} ;
   if ( GetArgs(stack,rhs,opt,T) == FAIL) return RET_BUG;
@@ -209,7 +197,7 @@ int int_mxtest7(Stack stack, int rhs, int opt, int lhs)
 }  
 
 
-int int_mxtest9(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest9(Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L1,*L2;
   int_types T[]={obj_check,obj_check, t_end} ;
@@ -223,7 +211,7 @@ int int_mxtest9(Stack stack, int rhs, int opt, int lhs)
  * we test how to transmit a primitive 
  */
 
-int int_mxtest(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest(Stack stack, int rhs, int opt, int lhs)
 {
   NspPList *P;
   int n;
@@ -247,7 +235,7 @@ int int_mxtest(Stack stack, int rhs, int opt, int lhs)
  * XXXXX test temporarire choix ds des strings avec abrev autorisees 
  */
 
-int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
 {
   /* test un str parmis une table **/
   static char *Strings[] = {"trois","truc","un","deux", (char *) NULL};
@@ -268,7 +256,7 @@ int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
 
 /* On utilise le niveau bas **/
 
-int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *B,*C;
   CheckRhs(1,1);
@@ -293,7 +281,7 @@ int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
 **/
 
 
-int int_mxtest4(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest4(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *O;
   CheckRhs(1,1);
@@ -323,7 +311,7 @@ int int_mxtest4(Stack stack, int rhs, int opt, int lhs)
  * Attention les valeurs doivent impérativement etre des doubles !!!
  */
 
-int int_mxtest10(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest10(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   CheckLhs(1,2);
@@ -338,7 +326,7 @@ int int_mxtest10(Stack stack, int rhs, int opt, int lhs)
 /* RetArgs 
  */
 
-int int_mxtest11(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest11(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[]={string,s_int, s_double, s_bool, list_begin,s_int,string,list_end,mat,smat,t_end} ;
   char *St[] ={ "one","two",NULL};
@@ -361,7 +349,7 @@ typedef struct _test12 {
   NspMatrix *N;
 } test12_data ;
 
-int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
+static int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
 {
   test12_data data;
   NspHash *H;
@@ -382,23 +370,25 @@ int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * The Interface for basic matrices operation 
+ * The Interface for basic interface tests 
  */
 
 static OpTab Interf_func[]={
-  {"test", int_mxtest},
-  {"test1", int_mxtest1},
-  {"test2", int_mxtest2},
-  {"test3", int_mxtest3},
-  {"test4", int_mxtest4},
-  {"test5", int_mxtest5},
-  {"test6", int_mxtest6},
-  {"test7", int_mxtest7},
-  {"test8", int_mxtest8},
-  {"test9", int_mxtest9},
-  {"test10", int_mxtest10},
-  {"test11", int_mxtest11},
-  {"test12", int_mxtest12},
+  {"interf_test", int_mxtest},
+  {"interf_test1", int_mxtest1},
+  {"interf_test2", int_mxtest2},
+  {"interf_test3", int_mxtest3},
+  {"interf_test4", int_mxtest4},
+  {"interf_test5", int_mxtest5},
+  {"interf_test5_2", int_mxtest5_2},
+  {"interf_test6", int_mxtest6},
+  {"interf_test7", int_mxtest7},
+  {"interf_test8", int_mxtest8},
+  {"interf_test9", int_mxtest9},
+  {"interf_test10", int_mxtest10},
+  {"interf_test11", int_mxtest11},
+  {"interf_test12", int_mxtest12},
+  {"interf_test20", int_mxtest20},
   {(char *) 0, NULL}
 };
 
