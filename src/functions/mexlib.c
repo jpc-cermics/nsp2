@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------
  * mexlib  library
- * Copyright (C) 2004-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2007 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -165,15 +165,15 @@ static void nsp_clearmex(void)
 
 /**
  * nsp_mex_wrapper:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
- * @mexFunction: 
+ * @stack: calling stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * @mexFunction: a #mexfun to be called 
  * 
  * performs a mexFunction call. 
  * 
- * Return value: 
+ * Return value: an integer
  **/
 
 /* XXX maybe we have here to block Ctrl-C 
@@ -630,7 +630,7 @@ int mxGetString(const mxArray *ptr, char *str, int strl)
 
 /**
  * mxArrayToString:
- * @ptr: 
+ * @ptr: an #mxArray
  * 
  * Get all the strings of @ptr (which is checked to be an #NspSMatrix)
  * in one buffer, the string is allocated and should be freed by the user.
@@ -1108,14 +1108,17 @@ mxArray *mxCreateCellArray(int ndim, const int *dims)
 
 /**
  * mxCalcSingleSubscript:
- * @ptr: 
- * @nsubs: 
- * @subs: 
+ * @ptr: an #mxArray
+ * @nsubs: an integer 
+ * @subs: an int array of size @nsubs
  * 
- * 
+ * Computes a unique indice from a set of @nsubs indices given in 
+ * array @subs. The unique indice can be used instead of the @subs array to 
+ * access the same element of array @ptr.
  * 
  * Return value: 
  **/
+
 int mxCalcSingleSubscript(const mxArray *ptr, int nsubs, const int *subs)
 {
   int k, retval=0, coeff=1;
@@ -1135,11 +1138,13 @@ int mxCalcSingleSubscript(const mxArray *ptr, int nsubs, const int *subs)
 
 /**
  * mxGetDimensions:
- * @ptr: 
+ * @ptr: an #mxArray
  * 
+ * returns a pointer to an allocated array of int filled 
+ * with the dimensions of array @ptr. The returned array 
+ * should be freed by the caller. 
  * 
- * 
- * Return value: 
+ * Return value: an int pointer 
  **/
 int *mxGetDimensions(const mxArray *ptr)
 {
@@ -1153,12 +1158,13 @@ int *mxGetDimensions(const mxArray *ptr)
 
 /**
  * mxGetClassID:
- * @ptr: 
+ * @ptr: an #mxArray
  * 
+ * returns the id of the array @ptr 
  * 
- * 
- * Return value: 
+ * Return value: an #mxClassID 
  **/
+
 mxClassID mxGetClassID(const mxArray *ptr) 
 {
   if ( ptr == NULL )  nsp_mex_errjump();
@@ -1179,9 +1185,9 @@ void *mxMalloc(size_t n)
 
 /**
  * mxDestroyArray:
- * @ptr: 
+ * @ptr: an #mxArray
  * 
- * 
+ * destroy the object @ptr.
  **/
 void mxDestroyArray(mxArray *ptr)
 {
@@ -1190,11 +1196,11 @@ void mxDestroyArray(mxArray *ptr)
 
 /**
  * mxGetName:
- * @ptr: 
+ * @ptr: an #mxArray
  * 
+ * returns the name of the array @ptr
  * 
- * 
- * Return value: 
+ * Return value: a pointer to constant string
  **/
 
 const char * mxGetName(const mxArray *ptr) 
@@ -1223,10 +1229,11 @@ int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_p
 
 /**
  * mxCreateCharMatrixFromStrings:
- * @m: 
- * @str: 
+ * @m: an integer 
+ * @str: an array of strings 
  * 
- * 
+ * returns an array of strings of size @mx1 filled with 
+ * strings (copy) from the array @str.
  * 
  * Return value: 
  **/
@@ -1240,11 +1247,11 @@ mxArray *mxCreateCharMatrixFromStrings(int m, const char **str)
 
 /**
  * mxDuplicateArray:
- * @in: 
+ * @in: an #mxArray 
  * 
+ * returns a copy of @in 
  * 
- * 
- * Return value: 
+ * Return value: a new #mxArray or %NULL 
  **/
 mxArray *mxDuplicateArray(const mxArray *in)
 {
@@ -1254,9 +1261,9 @@ mxArray *mxDuplicateArray(const mxArray *in)
 /**
  * mxSetName:
  * @array_ptr: Pointer to an #mxArray.
- * @var_name: 
+ * @var_name: a string 
  * 
- * 
+ * changes the name of object @array_ptr which is set to @var_name
  **/
 
 void mxSetName(mxArray *array_ptr,const char *var_name)
@@ -1326,6 +1333,7 @@ int mexEvalString(char *command)
  * 
  * Return value: 
  **/
+
 int mxGetNzmax(const mxArray *array_ptr)
 {
   NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
@@ -1346,7 +1354,7 @@ int mxGetNzmax(const mxArray *array_ptr)
 /**
  * mxSetNzmax:
  * @array_ptr: Pointer to an #mxArray.
- * @n: 
+ * @n: an integer 
  * 
  * 
  * 
@@ -1669,6 +1677,16 @@ bool mexIsLocked(void)
 }
 
 
+/**
+ * mxGetData:
+ * @array_ptr: an #mxArray 
+ * 
+ * returns a pointer to the array which contains values of an #mxArray 
+ * object as 
+ *
+ * Return value: a void pointer 
+ **/
+
 void *mxGetData(const mxArray *array_ptr)
 {
   if ( IsMat(array_ptr)) 
@@ -1702,15 +1720,40 @@ void *mxGetData(const mxArray *array_ptr)
   return NULL;
 }
 
+/**
+ * mxIsSharedArray:
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 bool mxIsSharedArray(const mxArray *array_ptr)
 {
   return false;
 }
 
+/**
+ * mxUnshareArray:
+ * @array_ptr: 
+ * 
+ * 
+ **/
 void mxUnshareArray(const mxArray *array_ptr)
 {
   
 }
+
+/**
+ * mxCreateSparseLogicalMatrix:
+ * @m: 
+ * @n: 
+ * @nzmax: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
 {
@@ -1720,6 +1763,16 @@ mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
 
 
 
+/**
+ * mxGetFieldByNumber:
+ * @array_ptr: 
+ * @index: 
+ * @field_number: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index, 
 			    int field_number)
 {
@@ -1728,6 +1781,14 @@ mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index,
   return NULL;
 }
 
+/**
+ * mxGetChars:
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 mxChar *mxGetChars(const mxArray *array_ptr)
 {
   if ( ! IsSMat(array_ptr) ) nsp_mex_errjump();
@@ -1776,6 +1837,17 @@ int mxGetElementSize(const mxArray *array_ptr)
 }
 
 
+/**
+ * mxCreateNumericArray:
+ * @ndim: 
+ * @dims: 
+ * @class: 
+ * @ComplexFlag: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 mxArray *mxCreateNumericArray(int ndim, const int *dims, 
 			      mxClassID class, mxComplexity ComplexFlag)
 {
@@ -1787,6 +1859,14 @@ mxArray *mxCreateNumericArray(int ndim, const int *dims,
   return mxCreateDoubleMatrix(dims[0],dims[1],ComplexFlag);
 }
 
+/**
+ * mxGetLogicals:
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 mxLogical *mxGetLogicals(const mxArray *array_ptr)
 {
   if ( IsBMat(array_ptr) && ((NspBMatrix *) array_ptr)->mn != 0 )
@@ -1868,11 +1948,28 @@ mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
   return NULL;
 }
 
+/**
+ * mxGetClassName:
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 const char *mxGetClassName(const mxArray *array_ptr)
 {
   return array_ptr->type->s_type();
 }
 
+/**
+ * mxSetFieldByNumber:
+ * @array_ptr: 
+ * @index: 
+ * @field_number: 
+ * @value: 
+ * 
+ * 
+ **/
 void mxSetFieldByNumber(mxArray *array_ptr, int index,  
 			int field_number, mxArray *value)
 {
@@ -1882,6 +1979,15 @@ void mxSetFieldByNumber(mxArray *array_ptr, int index,
 
 
 
+/**
+ * mxGetFieldNameByNumber:
+ * @array_ptr: 
+ * @field_number: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 const char *mxGetFieldNameByNumber(const mxArray *array_ptr, 
 				   int field_number)
 {
@@ -1896,6 +2002,15 @@ const char *mxGetFieldNameByNumber(const mxArray *array_ptr,
  * can create two-dimensional arrays only.
  */
 
+/**
+ * mxCreateLogicalMatrix:
+ * @m: 
+ * @n: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 mxArray *mxCreateLogicalMatrix(int m, int n)
 {
   int i;
@@ -1940,9 +2055,6 @@ bool mxIsDouble(const mxArray *array_ptr)
     return true;
   return false;
 }
-
-
-
 
 
 /**
@@ -2212,6 +2324,13 @@ void *mxRealloc(void *ptr, size_t size)
   return realloc(ptr,sizeof(char)*size);
 }
 
+/**
+ * mxSetN:
+ * @ptr: 
+ * @n: 
+ * 
+ * 
+ **/
 void mxSetN(mxArray *ptr, mwSize n)
 {
   if ( IsMat(ptr)) 
@@ -2237,6 +2356,13 @@ void mxSetN(mxArray *ptr, mwSize n)
     }
 }
 
+/**
+ * mxSetM:
+ * @ptr: 
+ * @m: 
+ * 
+ * 
+ **/
 void mxSetM(mxArray *ptr, mwSize m)
 {
   if ( IsMat(ptr)) 
