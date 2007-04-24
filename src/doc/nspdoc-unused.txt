@@ -84,11 +84,9 @@ SMatCreateFromAttrsTable
 STRING_ONLY
 ShowLine
 SpCol
-SpColLoopExtract
 SpColObj
 SpColRowDestroy
 SpRow
-SpRowLoopExtract
 SpRowObj
 SpRowRowDestroy
 Stack_ref

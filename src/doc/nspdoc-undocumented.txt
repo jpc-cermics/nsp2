@@ -1,7 +1,7 @@
-39% symbol docs coverage.
-897 symbols documented.
-240 symbols incomplete.
-1414 not documented.
+40% symbol docs coverage.
+907 symbols documented.
+224 symbols incomplete.
+1379 not documented.
 
 
 Abs
@@ -13,7 +13,6 @@ BMatrix_Type
 Block_Type
 Boolean
 Bounds
-BuildListFromArgs (name, T, Varargs)
 C2F
 CNAME
 CellsLoopCol (str, Col, A, icol, rep, Returns)
@@ -325,7 +324,6 @@ NULLSTRING
 NULLTYPE
 NULLXME
 NVOID
-NspClassB
 NspGframe
 NspHobj
 NspIvect
@@ -449,7 +447,6 @@ asinh
 atanh
 attrs_to_stack (attrs, stack, pos)
 block_create
-block_object
 checkqueue_nsp_command
 connector_create
 connector_object
@@ -482,8 +479,6 @@ get_one_char
 getcolordef
 getwd
 gframe_create
-gframe_object
-gframe_path_extract
 graphic_initial_menu
 gtkcombobox_select_color
 gtkcombobox_select_color_in_table
@@ -619,20 +614,6 @@ int_mxsqrtel
 int_mxsum
 int_mxtan
 int_mxtanh
-int_mxtest
-int_mxtest1
-int_mxtest10
-int_mxtest11
-int_mxtest2
-int_mxtest20
-int_mxtest3
-int_mxtest4
-int_mxtest5
-int_mxtest5_2
-int_mxtest6
-int_mxtest7
-int_mxtest8
-int_mxtest9
 int_mxtestmatrix
 int_mxtril
 int_mxtriu
@@ -674,18 +655,17 @@ mpmatrix_copy
 mpmatrix_loop_extract
 mpmatrix_object
 mwSize
-mxArrayToString (ptr)
 mxAssert
 mxCELL_CLASS
 mxCHAR_CLASS
-mxCalcSingleSubscript
+mxCalcSingleSubscript (Returns)
 mxCalloc (n, size)
 mxChar
 mxClassID
 mxComplexity
 mxCreateCellArray
 mxCreateCellMatrix
-mxCreateCharMatrixFromStrings
+mxCreateCharMatrixFromStrings (Returns)
 mxCreateLogicalArray
 mxCreateLogicalMatrix
 mxCreateLogicalScalar (value)
@@ -695,17 +675,12 @@ mxCreateString
 mxCreateStructArray
 mxCreateStructMatrix
 mxDOUBLE_CLASS
-mxDestroyArray
-mxDuplicateArray
 mxFUNCTION_CLASS
 mxFree (ptr)
 mxFreeMatrix (ptr)
 mxGetCell
 mxGetChars
-mxGetClassID
 mxGetClassName
-mxGetData
-mxGetDimensions
 mxGetEps
 mxGetField (pa, i, fieldname, Returns)
 mxGetFieldByNumber
@@ -750,7 +725,6 @@ mxSetIr
 mxSetJc
 mxSetM
 mxSetN
-mxSetName
 mxSetNzmax
 mxSetPi
 mxSetPr
@@ -1040,7 +1014,6 @@ nsp_message
 nsp_message_
 nsp_message_modeless
 nsp_message_modeless_
-nsp_mex_wrapper (stack, rhs, opt, lhs, mexFunction, Returns)
 nsp_mget (F, x, n, type, items_read)
 nsp_mgetstr (F, start, n, Returns)
 nsp_mgetstr1
@@ -1299,34 +1272,14 @@ nsp_sort
 nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
-nsp_spcolmatrix_destroy (Mat)
-nsp_spcolmatrix_diag_set (Returns)
-nsp_spcolmatrix_enlarge (m, n)
-nsp_spcolmatrix_enlarge_cols (Sp, n)
-nsp_spcolmatrix_eq
-nsp_spcolmatrix_eye (m, n)
-nsp_spcolmatrix_find (lhs, Res1, Res2)
 nsp_spcolmatrix_get (RC, Values)
-nsp_spcolmatrix_info (Sp, indent, name, rec_level)
-nsp_spcolmatrix_insert_elt
-nsp_spcolmatrix_maxi (flag, Imax, lhs)
-nsp_spcolmatrix_maximinitt_g (flag, minmaxflag, err)
-nsp_spcolmatrix_maxitt (flag, err)
+nsp_spcolmatrix_insert_elt (Returns)
 nsp_spcolmatrix_minitt (flag, err)
-nsp_spcolmatrix_neq
-nsp_spcolmatrix_nnz (HMat)
 nsp_spcolmatrix_object
-nsp_spcolmatrix_ones (m, n)
 nsp_spcolmatrix_print (Sp, indent, name, rec_level)
-nsp_spcolmatrix_redim (m, n)
-nsp_spcolmatrix_resize_col (Sp)
-nsp_spcolmatrix_sparse (name, RC, Values, m, n)
 nsp_spcolmatrix_store (r, c, col, r1, c1)
 nsp_spcolmatrix_sum (flag)
 nsp_spcolmatrix_tril (k)
-nsp_spcolmatrix_triu (k)
-nsp_spcolmatrix_type_as_string
-nsp_spcolmatrix_type_short_string
 nsp_spcolmatrix_zeros (m, n)
 nsp_sprowmatrix_abs (A)
 nsp_sprowmatrix_acos (A)
@@ -1359,7 +1312,6 @@ nsp_sprowmatrix_diag_extract (A, k)
 nsp_sprowmatrix_diag_set (A, Diag, k, Returns)
 nsp_sprowmatrix_enlarge (A, m, n)
 nsp_sprowmatrix_enlarge_rows
-nsp_sprowmatrix_eq
 nsp_sprowmatrix_erf (A)
 nsp_sprowmatrix_expel (A)
 nsp_sprowmatrix_extract (A, Rows, Cols)
@@ -1387,7 +1339,6 @@ nsp_sprowmatrix_mult_m_sp (X, A)
 nsp_sprowmatrix_mult_scal (A, B)
 nsp_sprowmatrix_mult_sp_m (A, X)
 nsp_sprowmatrix_multtt (A, B)
-nsp_sprowmatrix_neq
 nsp_sprowmatrix_nnz (HMat)
 nsp_sprowmatrix_object
 nsp_sprowmatrix_ones (m, n)
@@ -1416,8 +1367,6 @@ nsp_sprowmatrix_to_mat (Sp)
 nsp_sprowmatrix_transpose (A)
 nsp_sprowmatrix_tril (A, k)
 nsp_sprowmatrix_triu (A, k)
-nsp_sprowmatrix_type_as_string
-nsp_sprowmatrix_type_short_string
 nsp_sprowmatrix_zeros (m, n)
 nsp_sqrt_c
 nsp_string

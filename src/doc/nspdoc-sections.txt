@@ -282,20 +282,6 @@ int_mxsqrtel
 int_mxsum
 int_mxtan
 int_mxtanh
-int_mxtest10
-int_mxtest11
-int_mxtest1
-int_mxtest20
-int_mxtest2
-int_mxtest3
-int_mxtest4
-int_mxtest5
-int_mxtest5_2
-int_mxtest6
-int_mxtest7
-int_mxtest8
-int_mxtest9
-int_mxtest
 int_mxtestmatrix
 int_mxtril
 int_mxtriu
@@ -821,10 +807,10 @@ nsp_xdr_save_array_i
 nsp_xdr_load_array_i
 nsp_xdr_save_array_d
 nsp_xdr_load_array_d
+nsp_xdr_save_array_c
+nsp_xdr_load_array_c
 nsp_xdr_save_string
 nsp_xdr_load_string
-nsp_xdr_load_array_c
-nsp_xdr_save_array_c
 is_little_endian
 nsp_feof
 nsp_ferror
@@ -1756,7 +1742,6 @@ nsp_type_block
 new_type_block
 new_block
 NULLBLOCK
-block_object
 IsBlock
 block_create
 </SECTION>
@@ -1784,11 +1769,9 @@ nsp_type_gframe
 new_type_gframe
 new_gframe
 NULLGFRAME
-gframe_object
 IsGFrame
 nsp_gframe
 gframe_select_and_hilite
-gframe_path_extract
 gframe_create
 gframe_draw
 gframe_select_obj
@@ -2255,7 +2238,6 @@ nsp_sprowmatrix_diag_extract
 nsp_sprowmatrix_diag_set
 nsp_sprowmatrix_enlarge
 nsp_sprowmatrix_enlarge_rows
-nsp_sprowmatrix_eq
 nsp_sprowmatrix_erf
 nsp_sprowmatrix_expel
 nsp_sprowmatrix_extract
@@ -2283,7 +2265,6 @@ nsp_sprowmatrix_mult_m_sp
 nsp_sprowmatrix_mult_scal
 nsp_sprowmatrix_mult_sp_m
 nsp_sprowmatrix_multtt
-nsp_sprowmatrix_neq
 nsp_sprowmatrix_nnz
 nsp_sprowmatrix_object
 nsp_sprowmatrix_ones
@@ -2313,8 +2294,6 @@ nsp_sprowmatrix_to_mat
 nsp_sprowmatrix_transpose
 nsp_sprowmatrix_tril
 nsp_sprowmatrix_triu
-nsp_sprowmatrix_type_as_string
-nsp_sprowmatrix_type_short_string
 nsp_sprowmatrix_zeros
 </SECTION>
 
@@ -2362,7 +2341,6 @@ nsp_spcolmatrix_diag_extract
 nsp_spcolmatrix_diag_set
 nsp_spcolmatrix_enlarge
 nsp_spcolmatrix_enlarge_cols
-nsp_spcolmatrix_eq
 nsp_spcolmatrix_erf
 nsp_spcolmatrix_expel
 nsp_spcolmatrix_extract
@@ -2392,7 +2370,6 @@ nsp_spcolmatrix_mult_scal
 nsp_spcolmatrix_mult_scalar
 nsp_spcolmatrix_mult_sp_m
 nsp_spcolmatrix_multtt
-nsp_spcolmatrix_neq
 nsp_spcolmatrix_nnz
 nsp_spcolmatrix_object
 nsp_spcolmatrix_ones
@@ -2422,8 +2399,6 @@ nsp_spcolmatrix_to_mat_transpose
 nsp_spcolmatrix_transpose
 nsp_spcolmatrix_tril
 nsp_spcolmatrix_triu
-nsp_spcolmatrix_type_as_string
-nsp_spcolmatrix_type_short_string
 nsp_spcolmatrix_zeros
 </SECTION>
 
