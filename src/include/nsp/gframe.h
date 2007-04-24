@@ -78,13 +78,13 @@ NspGFrame *new_gframe();
 
 /* from GFrameObj.c */
 
-extern NspGFrame *gframe_object(NspObject *O); 
+/* extern NspGFrame *gframe_object(NspObject *O);  */
 extern int IsGFrameObj (Stack stack, int i); 
 extern NspGFrame *GetGFrameCopy (Stack stack, int i); 
 extern NspGFrame *GetGFrame (Stack stack, int i); 
 extern int IsGFrame (NspObject *O); 
 
-extern NspObject *gframe_path_extract (NspGFrame *H,int n, NspObject **Objs); 
+/* extern NspObject *gframe_path_extract (NspGFrame *H,int n, NspObject **Objs);  */
 extern NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double scale[],double r[],NspTypeBase *type);
 extern void gframe_draw (NspGFrame *R); 
 extern int gframe_select_obj (NspGFrame *R, const double *pt, NspObject **Objs,NspObject *exclude); 

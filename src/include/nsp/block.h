@@ -99,7 +99,19 @@ extern NspTypeBlock *nsp_type_block;
 NspTypeBlock *new_type_block(type_mode mode);
 NspBlock *new_block();
 
-#ifdef Block_Private 
+
+/* extern NspBlock *block_object(NspObject *O);  */
+extern int IsBlockObj (Stack stack, int i); 
+extern NspBlock *GetBlockCopy (Stack stack, int i); 
+extern NspBlock *GetBlock (Stack stack, int i); 
+extern int IsBlock (NspObject *O); 
+extern NspBlock *block_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
+
+#define NULLBLOCK (NspBlock*) 0
+
+#endif 
+
+#ifdef Block_Private /* Block_Private */
 static int init_block(NspBlock *ob,NspTypeBlock *type);
 static int block_size(NspBlock *Mat, int flag);
 static char *block_type_as_string(void);
@@ -150,16 +162,7 @@ static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
 
-#define NULLBLOCK (NspBlock*) 0
+#endif 
 
-#endif /* Block_Private */
 
-extern NspBlock *block_object(NspObject *O); 
-extern int IsBlockObj (Stack stack, int i); 
-extern NspBlock *GetBlockCopy (Stack stack, int i); 
-extern NspBlock *GetBlock (Stack stack, int i); 
-extern int IsBlock (NspObject *O); 
-extern NspBlock *block_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
-
-#endif
 
