@@ -861,11 +861,11 @@ int mxGetNumberOfFields (const mxArray *ptr)
 
 /**
  * mxIsChar:
- * @ptr: 
+ * @ptr: a #mxArray 
  * 
+ * Checks if @ptr is a matrix of strings 
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsChar(const mxArray *ptr)
@@ -922,11 +922,11 @@ double mxGetEps(void)
 
 /**
  * mxIsInf:
- * @x: 
+ * @x: a double 
  * 
+ * checks if @x is plus or minus infinity 
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsInf(double x)
@@ -936,11 +936,11 @@ bool mxIsInf(double x)
 
 /**
  * mxIsFinite:
- * @x: 
+ * @x: a double 
  * 
+ * checks if @x is finite. 
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsFinite(double x)
@@ -950,11 +950,11 @@ bool mxIsFinite(double x)
 
 /**
  * mxIsNaN:
- * @x: 
+ * @x: a double 
  * 
+ * checks if @x is finite by calling finite()
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsNaN(double x)
@@ -964,11 +964,13 @@ bool mxIsNaN(double x)
 
 /**
  * mxGetNumberOfElements:
- * @ptr: 
+ * @ptr: a #mxArrsy 
  * 
+ * returns the number of elements contained in a matrix. 
+ * Except for string matrices for which the total number of 
+ * characters contained in the strings is returned.
  * 
- * 
- * Return value: 
+ * Return value: an integer 
  **/
 
 int mxGetNumberOfElements(const mxArray *ptr)
@@ -992,11 +994,11 @@ int mxGetNumberOfElements(const mxArray *ptr)
 
 /**
  * mxIsStruct:
- * @ptr: 
+ * @ptr: a #mxArray 
  * 
+ * Checks if @ptr is a #Nsphash !
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsStruct(const mxArray *ptr)
@@ -1006,11 +1008,11 @@ bool mxIsStruct(const mxArray *ptr)
 
 /**
  * mxIsCell:
- * @ptr: 
+ * @ptr: a #mxArray 
  * 
+ * checks if àptr is a #NspCells
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE 
  **/
 
 bool mxIsCell(const mxArray *ptr)
@@ -1021,10 +1023,13 @@ bool mxIsCell(const mxArray *ptr)
 
 /**
  * mxGetCell:
- * @ptr: 
- * @index: 
- * 
- * Return value: 
+ * @ptr: a #mxArray 
+ * @index: an integer 
+ *
+ * checks that @ptr is a #NspCells and returns a 
+ * pointer to the @index-element stored in @ptr. 
+ *
+ * Return value: a #mxArray 
  **/
 
 mxArray *mxGetCell(const mxArray *ptr, int index)
@@ -1037,10 +1042,12 @@ mxArray *mxGetCell(const mxArray *ptr, int index)
 
 /**
  * mxSetCell:
- * @ptr: 
- * @index: 
- * @value: 
+ * @ptr: a #mxArray 
+ * @index: an integer 
+ * @value: a #mxAarray
  * 
+ * checks that @ptr is a #NspCells and stores object @value 
+ * at indice @index.
  * 
  **/
 
@@ -1057,12 +1064,12 @@ void mxSetCell(mxArray *ptr, int index, mxArray *value)
 
 /**
  * mxCreateCellMatrix:
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer 
  * 
+ * Creates and returns a new #NspCells of size mxn.
  * 
- * 
- * Return value: 
+ * Return value: a new #mxArray 
  **/
 
 mxArray *mxCreateCellMatrix(int m, int n)
@@ -1074,12 +1081,14 @@ mxArray *mxCreateCellMatrix(int m, int n)
 
 /**
  * mxCreateCellArray:
- * @ndim: 
- * @dims: 
+ * @ndim: an integer 
+ * @dims: an array of size @ndim 
  * 
  * 
+ * Creates and returns a new #NspCells of size given by @dims. 
+ * Note that it only works for two dimensionnal cells.
  * 
- * Return value: 
+ * Return value:  a new #mxArray 
  **/
 
 mxArray *mxCreateCellArray(int ndim, const int *dims)
@@ -1722,12 +1731,13 @@ void *mxGetData(const mxArray *array_ptr)
 
 /**
  * mxIsSharedArray:
- * @array_ptr: 
+ * @array_ptr: a #mxArray 
  * 
+ * ?
  * 
- * 
- * Returns: 
+ * Returns: %FALSE 
  **/
+
 bool mxIsSharedArray(const mxArray *array_ptr)
 {
   return false;
@@ -1735,10 +1745,12 @@ bool mxIsSharedArray(const mxArray *array_ptr)
 
 /**
  * mxUnshareArray:
- * @array_ptr: 
+ * @array_ptr: a #mxArray 
  * 
+ * ?
  * 
  **/
+
 void mxUnshareArray(const mxArray *array_ptr)
 {
   
@@ -1746,13 +1758,16 @@ void mxUnshareArray(const mxArray *array_ptr)
 
 /**
  * mxCreateSparseLogicalMatrix:
- * @m: 
- * @n: 
- * @nzmax: 
+ * @m: an integer 
+ * @n: an integer 
+ * @nzmax: an integer 
+ * 
+ * Since sparse boolean matrices are not implemented in 
+ * Nsp. This function just returns a new real sparse matrix 
+ * of size @mx@n.
  * 
  * 
- * 
- * Returns: 
+ * Returns: a new #mxArray
  **/
 
 mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
@@ -1765,14 +1780,15 @@ mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
 
 /**
  * mxGetFieldByNumber:
- * @array_ptr: 
- * @index: 
- * @field_number: 
+ * @array_ptr: a new #mxArray 
+ * @index: an integer 
+ * @field_number: an integer 
  * 
+ * Not yet implemented 
  * 
- * 
- * Returns: 
+ * Returns: a new #mxArray 
  **/
+
 mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index, 
 			    int field_number)
 {
@@ -1783,12 +1799,14 @@ mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index,
 
 /**
  * mxGetChars:
- * @array_ptr: 
+ * @array_ptr: a #mxArray 
  * 
+ * check that @array_ptr is a string matrix of size 1x1 
+ * and returns a pointer to the string 
  * 
- * 
- * Returns: 
+ * Returns: a pointer to a char array 
  **/
+
 mxChar *mxGetChars(const mxArray *array_ptr)
 {
   if ( ! IsSMat(array_ptr) ) nsp_mex_errjump();
@@ -1844,10 +1862,11 @@ int mxGetElementSize(const mxArray *array_ptr)
  * @class: 
  * @ComplexFlag: 
  * 
- * 
+ * Only works for  mxDOUBLE_CLASS
  * 
  * Returns: 
  **/
+
 mxArray *mxCreateNumericArray(int ndim, const int *dims, 
 			      mxClassID class, mxComplexity ComplexFlag)
 {
@@ -1861,12 +1880,15 @@ mxArray *mxCreateNumericArray(int ndim, const int *dims,
 
 /**
  * mxGetLogicals:
- * @array_ptr: 
+ * @array_ptr: a new #mxArray 
  * 
+ * checks that @array_ptr is a boolean matrix 
+ * and returns a pointer to the array of int in 
+ * which the boolean values are stored.
  * 
- * 
- * Returns: 
+ * Returns: a pointer to an int array 
  **/
+
 mxLogical *mxGetLogicals(const mxArray *array_ptr)
 {
   if ( IsBMat(array_ptr) && ((NspBMatrix *) array_ptr)->mn != 0 )
@@ -1922,14 +1944,15 @@ mxArray *mxCreateCharArray(int ndim, const int *dims)
 
 /**
  * mxCreateStructArray:
- * @ndim: 
- * @dims: 
- * @nfields: 
- * @field_names: 
+ * @ndim: an integer 
+ * @dims: an array of int 
+ * @nfields: number of fields 
+ * @field_names: an array of strings 
+ * 
+ * just implemented for 1x1 struct. 
  * 
  * 
- * 
- * Return value: 
+ * Return value: a new #mxArray 
  **/
 
 mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
@@ -1950,9 +1973,9 @@ mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
 
 /**
  * mxGetClassName:
- * @array_ptr: 
+ * @array_ptr: a new #mxArray 
  * 
- * 
+ * returns the type of the array @array_ptr as a string pointer
  * 
  * Returns: 
  **/
@@ -1963,13 +1986,15 @@ const char *mxGetClassName(const mxArray *array_ptr)
 
 /**
  * mxSetFieldByNumber:
- * @array_ptr: 
- * @index: 
- * @field_number: 
- * @value: 
+ * @array_ptr: a new #mxArray 
+ * @index: an integer 
+ * @field_number: an integer 
+ * @value: a #mxArray 
  * 
+ * Not implemented. 
  * 
  **/
+
 void mxSetFieldByNumber(mxArray *array_ptr, int index,  
 			int field_number, mxArray *value)
 {
@@ -1977,17 +2002,16 @@ void mxSetFieldByNumber(mxArray *array_ptr, int index,
   nsp_mex_errjump();      
 }
 
-
-
 /**
  * mxGetFieldNameByNumber:
- * @array_ptr: 
- * @field_number: 
+ * @array_ptr: a new #mxArray 
+ * @field_number: an integer 
  * 
  * 
  * 
- * Returns: 
+ * Returns: a pointer to a string
  **/
+
 const char *mxGetFieldNameByNumber(const mxArray *array_ptr, 
 				   int field_number)
 {
@@ -2004,13 +2028,15 @@ const char *mxGetFieldNameByNumber(const mxArray *array_ptr,
 
 /**
  * mxCreateLogicalMatrix:
- * @m: 
- * @n: 
+ * @m: an integer 
+ * @n: an integer 
+ * 
+ * returns a new boolean matrix (#NspBMat).
  * 
  * 
- * 
- * Returns: 
+ * Returns: a new #mxArray 
  **/
+
 mxArray *mxCreateLogicalMatrix(int m, int n)
 {
   int i;
@@ -2019,6 +2045,18 @@ mxArray *mxCreateLogicalMatrix(int m, int n)
   for (i=0; i < A->mn ; i++) A->B[i]= 0;
   return NSP_OBJECT(A);
 }
+
+
+/**
+ * mxCreateLogicalArray:
+ * @ndim:  an integer
+ * @dims:  an array of int
+ * 
+ * returns a new boolean matrix (#NspBMat) of size given by 
+ * @dims 
+ * 
+ * Returns: a new #mxArray 
+ **/
 
 mxArray *mxCreateLogicalArray(int ndim, const int *dims)
 {
@@ -2164,7 +2202,11 @@ void _mxAssert(char *mess, int line, const char *file)
 /**
  * mxSetPr:
  * @array_ptr: Pointer to an #mxArray.
- * @pr: 
+ * @pr: pointer to an array of double 
+ * 
+ * Sets the array value of array @array_ptr to the 
+ * pointer given by @pr. @pr must points to an 
+ * allocated array and must be compatible with the array size.
  * 
  * 
  **/
@@ -2201,7 +2243,11 @@ void mxSetPr(mxArray *array_ptr, double *pr)
 /**
  * mxSetData:
  * @array_ptr: Pointer to an #mxArray.
- * @pr: 
+ * @pr: a void pointer
+ * 
+ * Sets the array value of array @array_ptr to the 
+ * pointer given by @pr. @pr must points to an 
+ * allocated array and must be compatible with the array size and type.
  * 
  * 
  **/
@@ -2238,8 +2284,12 @@ void mxSetData(mxArray *array_ptr, void *pr)
 /**
  * mxSetPi:
  * @array_ptr: Pointer to an #mxArray.
- * @pi: 
+ * @pi: pointer to an array of double 
  * 
+ * Sets the complex array value of array @array_ptr to the 
+ * pointer given by @pi. @pi must points to an 
+ * allocated array and must be compatible with the array size.
+ * It only works for sparse matrices. 
  * 
  **/
 
@@ -2262,10 +2312,15 @@ void mxSetPi(mxArray *array_ptr, double *pi)
 /**
  * mxSetJc:
  * @array_ptr: Pointer to an #mxArray.
- * @jc: 
+ * @jc: an array of integers 
  * 
+ * Sets the Jc array of a sparse matrix @array_ptr to the 
+ * pointer given by @jc. @jc must points to an 
+ * allocated array and must be compatible with the array size.
+ * It only works for sparse matrices. 
  * 
  **/
+
 void mxSetJc(mxArray *array_ptr, int *jc)
 {
   if ( IsSpColMat(array_ptr))
@@ -2288,10 +2343,15 @@ void mxSetJc(mxArray *array_ptr, int *jc)
 /**
  * mxSetIr:
  * @array_ptr: Pointer to an #mxArray.
- * @ir: 
+ * @ir: an array of integers 
  * 
+ * Sets the Ir array of a sparse matrix @array_ptr to the 
+ * pointer given by @ir. @ir must points to an 
+ * allocated array and must be compatible with the array size.
+ * It only works for sparse matrices. 
  * 
  **/
+
 void mxSetIr(mxArray *array_ptr,int *ir)
 {
   if ( IsSpColMat(array_ptr))
@@ -2310,12 +2370,12 @@ void mxSetIr(mxArray *array_ptr,int *ir)
     }
 }
 
-
 /**
  * mxRealloc:
- * @ptr: 
- * @size: 
+ * @ptr: a void pointer 
+ * @size: a size 
  * 
+ * reallocates the pointer given by @ptr.
  * 
  **/
 
@@ -2326,11 +2386,14 @@ void *mxRealloc(void *ptr, size_t size)
 
 /**
  * mxSetN:
- * @ptr: 
- * @n: 
+ * @ptr: a #mxArray 
+ * @n: an integer 
  * 
- * 
+ * sets the number of rows of a matrix to @n whitout changing 
+ * or allocating values. Coherence must be kept by the user. 
+ *
  **/
+
 void mxSetN(mxArray *ptr, mwSize n)
 {
   if ( IsMat(ptr)) 
@@ -2358,9 +2421,11 @@ void mxSetN(mxArray *ptr, mwSize n)
 
 /**
  * mxSetM:
- * @ptr: 
- * @m: 
+ * @ptr: a #mxArray 
+ * @m: an integer 
  * 
+ * sets the number of columns of a matrix to @n whitout changing 
+ * or allocating values. Coherence must be kept by the user. 
  * 
  **/
 void mxSetM(mxArray *ptr, mwSize m)
