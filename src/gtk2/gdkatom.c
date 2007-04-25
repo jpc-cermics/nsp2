@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -242,19 +242,32 @@ void gdkatom_destroy(NspGdkAtom *H)
 
 void gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   char *a_name;
-  int i;
   if ( self == NULLGDKATOM) 
     {
       Sciprintf("Null Pointer GdkAtom \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  a_name = gdk_atom_name(self->atom);
-  Sciprintf("%s\t= GdkAtom name=%s 0x%lx \n", NSP_OBJECT(self)->name,
-	    a_name ? a_name : "",
-	    (unsigned long)self->atom);
-  g_free(a_name);
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=unavalaible",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"unavailable");
+	}
+    }
+  else 
+    {
+      a_name = gdk_atom_name(self->atom);
+      Sciprintf1(indent,"%s\t= GdkAtom name=%s 0x%lx \n", pname, 
+		 a_name ? a_name : "",
+		 (unsigned long)self->atom);
+      g_free(a_name);
+    }
 }
 
 /*
@@ -263,7 +276,7 @@ void gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
 
 void gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level)
 {
-  gdkatom_info(H,indent,NULL,0);
+  gdkatom_info(H,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------

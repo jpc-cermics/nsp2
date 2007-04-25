@@ -54,7 +54,7 @@
 static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -683,7 +683,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1124,7 +1124,7 @@ static AttrTab gdkfont_attrs[] = {
 static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1420,7 +1420,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1697,7 +1697,7 @@ static AttrTab gdkcursor_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2019,7 +2019,7 @@ static AttrTab gdkrectangle_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2394,7 +2394,7 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2858,7 +2858,7 @@ static AttrTab gdkdevice_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3388,7 +3388,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4090,7 +4090,7 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5273,7 +5273,7 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5502,7 +5502,7 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5705,7 +5705,7 @@ static int _wrap_gdk_gc_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6522,7 +6522,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6798,7 +6798,7 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7013,7 +7013,7 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7724,7 +7724,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7994,7 +7994,7 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8232,7 +8232,7 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8518,7 +8518,7 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8936,7 +8936,7 @@ static AttrTab gdkvisual_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9372,7 +9372,7 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 

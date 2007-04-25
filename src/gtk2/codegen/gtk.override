@@ -9,6 +9,26 @@ headers
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 
+/* XXX even in case of success free_name(list); should be performed */
+
+/**
+ * NSP_LIST_FROM_GLIST: 
+ * @sel_code: 
+ * @free_name: 
+ *
+ * This macro is used to buil a #NspList from a GList in the context of 
+ * an interface i.e the #NspList is stored on the stack and returned by 
+ * this macro. All the items contained in the GList are suposed to be of the same type. 
+ * The user must provide in @sel_code the code which is to be used to create 
+ * a #NspObject from an item contained in the GList 
+ * and @free_name is the function name to be used for freeing 
+ * the memory associated to the GList. 
+ * The GList is assumed to be named list and the current GList item list is 
+ * named tmp.
+ * Note that @free_name is only called in case of error.
+ * 
+ */
+
 #define NSP_LIST_FROM_GLIST( sel_code, free_name) \
   if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
     { \
@@ -29,6 +49,15 @@ headers
       nsp_list_destroy(nsp_list); \
       return RET_BUG; \
     } 
+
+/**
+ * NSP_OBJ_LIST_FROM_GLIST: 
+ * @sel_code: 
+ * @free_name: 
+ *
+ * This macro is similar to NSP_LIST_FROM_GLIST() except that this macro 
+ * returns the builded #NspList.
+ */
 
 #define NSP_OBJ_LIST_FROM_GLIST( sel_code, free_name) \
   if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
@@ -6846,6 +6875,54 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
+
+%%
+override gtk_action_group_list_actions noargs
+
+/* we redefine a method */
+static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GList *list, *tmp;
+  NspList *nsp_list;
+  list = gtk_action_group_list_actions(GTK_ACTION_GROUP(self->obj));
+  /* be sure that gtk action is initialized */
+  nsp_type_gtkaction = new_type_gtkaction(T_BASE);
+  /* create a list of gtkaction objects */
+  NSP_LIST_FROM_GLIST(gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
+}
+
+%%
+override gtk_window_get_icon_list noargs
+/* redefine a method for gtk_window icon list is a list of GdkPixbuf */
+static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GList *list,*tmp;
+  NspList *nsp_list;
+  list = gtk_window_get_icon_list(GTK_WINDOW(self->obj));
+  nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
+  NSP_LIST_FROM_GLIST(gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
+
+%%
+override gtk_window_set_icon_list args
+/* redefine a method for gtk_window icon list is a list of GdkPixbuf */
+static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GList *icon_list = NULL;
+  NspList *L;
+  CheckRhs(1,1); 
+  CheckLhs(0,0);
+  if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  /* here we have to convert nsp_list to glist 
+   * checking that all elements are gdkpixbuf 
+   */
+  icon_list = glist_from_nsp_list(stack,L,(NspTypeBase *) new_type_gdkpixbuf(T_BASE));
+  if ( icon_list == NULL) return RET_BUG;
+  gtk_window_set_icon_list(GTK_WINDOW(self->obj), icon_list);
+  g_list_free(icon_list);
+  return 0;
+}
+
 
 %%
 ignore-win32

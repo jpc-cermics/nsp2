@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -265,19 +265,31 @@ void gobject_destroy(NspGObject *self)
 
 void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 {
-  int i;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGOBJECT) 
     {
       Sciprintf("Null Pointer NspGObject \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  /* A changer XXXX pour que GObject soit remplacé par le type GTk */
-  Sciprintf("%s\t= %s at 0x%lx ref_count=%d\n", 
-	    NSP_OBJECT(self)->name,
-	    self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
-	    (long) self->obj, 
-	    ((GObject *) self->obj)->ref_count);
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=unavalaible",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"unavailable");
+	}
+    }
+  else 
+    {
+      /* A changer XXXX pour que GObject soit remplacé par le type GTk */
+      Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d\n", pname,
+		self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
+		(long) self->obj, 
+		((GObject *) self->obj)->ref_count);
+    }
 }
 
 /*
@@ -286,7 +298,7 @@ void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 
 void gobject_print(NspGObject *H, int indent,char *name, int rec_level)
 {
-  gobject_info(H,indent,NULL,0);
+  gobject_info(H,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------

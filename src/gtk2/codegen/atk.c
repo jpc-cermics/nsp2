@@ -31,7 +31,7 @@
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -306,7 +306,7 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -694,7 +694,7 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -912,7 +912,7 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1140,7 +1140,7 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1355,7 +1355,7 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1608,7 +1608,7 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1867,7 +1867,7 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2168,7 +2168,7 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2486,7 +2486,7 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 

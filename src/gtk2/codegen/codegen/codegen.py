@@ -56,7 +56,7 @@ class Wrapper:
     type_tmpl_1 = \
               '/* -*- Mode: C -*- */\n' \
               '/*-------------------------------------------------------------------\n'  \
-              ' * This Software is ( Copyright ENPC 1998-2003 )                          \n'  \
+              ' * This Software is ( Copyright ENPC 1998-2007 )                          \n'  \
               ' * Jean-Philippe Chancelier Enpc/Cermics \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
               '\n'  \
@@ -244,7 +244,7 @@ class Wrapper:
                 '#define INC_NSP_%(typename)s\n' \
                 '\n' \
                 '/*-----------------------------------------------------------------\n' \
-                '* This Software is ( Copyright ENPC 1998-2003 )\n' \
+                '* This Software is ( Copyright ENPC 1998-2007 )\n' \
                 '* Jean-Philippe Chancelier Enpc/Cermics\n' \
                 '*-----------------------------------------------------------------*/\n' \
                 '\n' \

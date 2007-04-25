@@ -38,7 +38,7 @@
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -343,7 +343,7 @@ static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -591,7 +591,7 @@ static AttrTab pangocolor_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1120,7 +1120,7 @@ static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1365,7 +1365,7 @@ static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1708,7 +1708,7 @@ static AttrTab pangoglyphstring_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1926,7 +1926,7 @@ static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2251,7 +2251,7 @@ static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2648,7 +2648,7 @@ static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2913,7 +2913,7 @@ static AttrTab pangofont_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3142,7 +3142,7 @@ static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3380,7 +3380,7 @@ static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3660,7 +3660,7 @@ static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3895,7 +3895,7 @@ static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 

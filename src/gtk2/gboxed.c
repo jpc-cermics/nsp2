@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -224,16 +224,29 @@ void gboxed_destroy(NspGBoxed *self)
 
 void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 {
-  int i;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGBOXED) 
     {
       Sciprintf("Null Pointer GBoxed \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t= %s GBoxed at 0x%lx\n", NSP_OBJECT(self)->name,
-	    g_type_name(self->gtype),
-	    (long)self->boxed);
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=unavalaible",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"unavailable");
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t= %s GBoxed at 0x%lx\n",pname,
+		 g_type_name(self->gtype),
+		 (long)self->boxed);
+    }
 }
 
 /*
@@ -242,7 +255,7 @@ void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 
 void gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
 {
-  gboxed_info(self,indent,NULL,0);
+  gboxed_info(self,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------

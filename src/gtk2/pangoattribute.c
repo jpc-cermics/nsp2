@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2007 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -238,16 +238,29 @@ void pangoattribute_destroy(NspPangoAttribute *self)
  * info 
  */
 
-void pangoattribute_info(NspPangoAttribute *H, int indent,char *name,int rec_level)
+void pangoattribute_info(NspPangoAttribute *self, int indent,char *name,int rec_level)
 {
-  int i;
-  if ( H == NULLPATTR) 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
+  if ( self == NULLPATTR) 
     {
       Sciprintf("Null Pointer PangoAttribute \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[PangoAttribute %s]\n", NSP_OBJECT(H)->name);
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=unavalaible",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"unavailable");
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t= PangoAttribute \n", pname);
+    }
 }
 
 /*
@@ -256,7 +269,7 @@ void pangoattribute_info(NspPangoAttribute *H, int indent,char *name,int rec_lev
 
 void pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level)
 {
-  pangoattribute_info(H,indent,NULL,0);
+  pangoattribute_info(H,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------

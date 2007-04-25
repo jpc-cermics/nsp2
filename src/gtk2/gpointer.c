@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -213,16 +213,29 @@ void gpointer_destroy(NspGPointer *self)
 
 void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 {
-  int i;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGPOINTER) 
     {
       Sciprintf("Null Pointer GPointer \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[GPointer %s \t %s at 0x%lx ]\n", NSP_OBJECT(self)->name,
-	    g_type_name(self->gtype),
-	    (long)self->pointer);
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=unavalaible",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"unavailable");
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t= %s GPointer at 0x%lx ]\n",pname,
+		g_type_name(self->gtype),
+		(long)self->pointer);
+    }
 }
 
 /*
@@ -231,7 +244,7 @@ void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 
 void gpointer_print(NspGPointer *self, int indent,char *name, int rec_level)
 {
-  gpointer_info(self,indent,NULL,0);
+  gpointer_info(self,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------
