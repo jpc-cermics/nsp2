@@ -5,34 +5,35 @@
 static int largestint();
 extern double cdf_dlamch(char *,long int);
 
-/* ----------------------------------------------------------------------- */
-/*  INTEGERS. */
-/*     ASSUME INTEGERS ARE REPRESENTED IN THE N-DIGIT, BASE-A FORM */
-/*               SIGN ( X(N-1)*A**(N-1) + ... + X(1)*A + X(0) ) */
-/*               WHERE 0 .LE. X(I) .LT. A FOR I=0,...,N-1. */
-/*     IPMPAR(1) = A, THE BASE. */
-/*     IPMPAR(2) = N, THE NUMBER OF BASE-A DIGITS. */
-/*     IPMPAR(3) = A**N - 1, THE LARGEST MAGNITUDE. */
-/*  FLOATING-POINT NUMBERS. */
-/*     IT IS ASSUMED THAT THE SINGLE AND DOUBLE PRECISION FLOATING */
-/*     POINT ARITHMETICS HAVE THE SAME BASE, SAY B, AND THAT THE */
-/*     NONZERO NUMBERS ARE REPRESENTED IN THE FORM */
-/*               SIGN (B**E) * (X(1)/B + ... + X(M)/B**M) */
-/*               WHERE X(I) = 0,1,...,B-1 FOR I=1,...,M, */
-/*               X(1) .GE. 1, AND EMIN .LE. E .LE. EMAX. */
-/*     IPMPAR(4) = B, THE BASE. */
-/*  SINGLE-PRECISION */
-/*     IPMPAR(5) = M, THE NUMBER OF BASE-B DIGITS. */
-/*     IPMPAR(6) = EMIN, THE SMALLEST EXPONENT E. */
-/*     IPMPAR(7) = EMAX, THE LARGEST EXPONENT E. */
-/*  DOUBLE-PRECISION */
-/*     IPMPAR(8) = M, THE NUMBER OF BASE-B DIGITS. */
-/*     IPMPAR(9) = EMIN, THE SMALLEST EXPONENT E. */
-/*     IPMPAR(10) = EMAX, THE LARGEST EXPONENT E. */
-/* ----------------------------------------------------------------------- */
-/*     RWRITTEN BY JPC to use lapack dlamch + a small c program */
-/*     for ipmpar(3) */
-/* ----------------------------------------------------------------------- */
+/* partial implementation of ipmpar for cdf library 
+ * 
+ * integers. 
+ *     assume integers are represented in the n-digit, base-a form 
+ *               sign ( x(n-1)*a**(n-1) + ... + x(1)*a + x(0) ) 
+ *               where 0 .le. x(i) .lt. a for i=0,...,n-1. 
+ *     ipmpar(1) = a, the base. 
+ *     ipmpar(2) = n, the number of base-a digits. 
+ *     ipmpar(3) = a**n - 1, the largest magnitude. 
+ *  floating-point numbers. 
+ *     it is assumed that the single and double precision floating 
+ *     point arithmetics have the same base, say b, and that the 
+ *     nonzero numbers are represented in the form 
+ *               sign (b**e) * (x(1)/b + ... + x(m)/b**m) 
+ *               where x(i) = 0,1,...,b-1 for i=1,...,m, 
+ *               x(1) .ge. 1, and emin .le. e .le. emax. 
+ *     ipmpar(4) = b, the base. 
+ *  single-precision 
+ *     ipmpar(5) = m, the number of base-b digits. 
+ *     ipmpar(6) = emin, the smallest exponent e. 
+ *     ipmpar(7) = emax, the largest exponent e. 
+ *  double-precision 
+ *     ipmpar(8) = m, the number of base-b digits. 
+ *     ipmpar(9) = emin, the smallest exponent e. 
+ *     ipmpar(10) = emax, the largest exponent e. 
+ * 
+ *     RWRITTEN BY JPC to use lapack dlamch + a small c program 
+ *     for ipmpar(3) 
+ */
 
 int cdf_ipmpar(const int *i)
 {
