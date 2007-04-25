@@ -1010,7 +1010,7 @@ bool mxIsStruct(const mxArray *ptr)
  * mxIsCell:
  * @ptr: a #mxArray 
  * 
- * checks if àptr is a #NspCells
+ * checks if @ptr is a #NspCells
  * 
  * Return value: %TRUE or %FALSE 
  **/
