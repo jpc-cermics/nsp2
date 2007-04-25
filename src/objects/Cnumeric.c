@@ -231,10 +231,14 @@ void nsp_pow_dc(double x, const doubleC *y, doubleC *res)
  * return x^p
  * 
  **/
+
 double nsp_pow_di(double x, int p)
 {
   if ( p < 0 )
-    return 1.0/nsp_pow_di(x, -p);
+    {
+      /* take care of infinite loop when overfloow */
+      return (p == -p) ? 0 : 1.0/nsp_pow_di(x, -p);
+    }
   else if ( p == 0 )
     return 1.0;
   else
