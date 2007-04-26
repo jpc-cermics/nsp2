@@ -236,11 +236,18 @@ double nsp_pow_di(double x, int p)
 {
   if ( p < 0 )
     {
-      /* take care of infinite loop when overfloow */
-      return (p == -p) ? 0 : 1.0/nsp_pow_di(x, -p);
+      if ( p > MININT ) /* p > -2^31 with 32 bits arithmetic */
+	return 1.0/nsp_pow_di(x, -p);
+      else 
+	{   /*  1.0/nsp_pow_di(x, -p) don't work because -(-2^31)   */
+            /*  = 2^31 mathematically but as MAXINT = 2^31-1 we get */
+            /*  in fact -2^31 with the usual int arithmetic         */
+	  int pp = p + 1;
+	  return 1.0/(nsp_pow_di(x,-pp)*x);
+	}
     }
   else if ( p == 0 )
-    return 1.0;
+    return isnan(x) ? x : 1.0;
   else
     {
       double z = 1.0;
