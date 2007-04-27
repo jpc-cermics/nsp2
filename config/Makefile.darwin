@@ -1,19 +1,15 @@
-# Copyright Enpc 
+# Copyright ENPC 
 
 FFLAGS = $(FC_OPTIONS)
 
-# to load all the static libraries 
-# -Wl,all_load 
-
-LIBS=  $(NSPLIBS) 
+LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
+LIBS=$(NSPLIBS) libs/nsp.a 
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(CC)  $(FFLAGS) -o $@ src/interp/lsci.o \
-		$(NSPLIBS) $(EXTERNLIBS) $(FC_LDFLAGS) -lg2c ;
-
-
+	$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) 
 
 
 
