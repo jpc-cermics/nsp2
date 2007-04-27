@@ -99,7 +99,10 @@ extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
 extern  sci_interface  Sound_Interf ;extern  interface_info  Sound_Interf_Info ;
 extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
 extern  sci_interface  Scicos_Interf ;extern  interface_info  Scicos_Interf_Info ;
+#ifdef WITH_SNDFILE
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
+#endif 
+
 extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
 extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
