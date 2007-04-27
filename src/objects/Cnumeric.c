@@ -201,7 +201,7 @@ void nsp_pow_cd(const  doubleC *x, double y, doubleC *res)
  **/
 void nsp_pow_cd_or_ci(const  doubleC *x, double y, doubleC *res)
 {
-  if ( floor(y) == y ) 
+  if ( floor(y) == y && fabs(y) <= 65536.0 ) 
     nsp_pow_ci(x, (int) y, res);
   else
     nsp_pow_cd(x, y, res);
@@ -236,7 +236,7 @@ double nsp_pow_di(double x, int p)
 {
   if ( p < 0 )
     {
-      if ( p > MININT ) /* p > -2^31 with 32 bits arithmetic */
+      if ( p > INT_MIN ) /* p > -2^31 with 32 bits arithmetic */
 	return 1.0/nsp_pow_di(x, -p);
       else 
 	{   /*  1.0/nsp_pow_di(x, -p) don't work because -(-2^31)   */

@@ -2548,7 +2548,8 @@ int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B)
 		    if ( A->R[i] >= 0.0 )
 		      A->R[i] = pow(A->R[i],B->R[i]);
 		    else if ( floor(B->R[i]) == B->R[i] ) /* exposant is integer => result is still real */
-		      A->R[i] = nsp_pow_di(A->R[i],(int) B->R[i]);
+		      A->R[i] = pow(A->R[i],B->R[i]);
+/* 		      A->R[i] = nsp_pow_di(A->R[i],(int) B->R[i]); */
 		    else
 		      {
 			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
@@ -2605,9 +2606,16 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
 	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= A->R[i];
 	  else if ( B->R[0] == 3.0 )
 	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = A->R[i]*A->R[i]*A->R[i];
-	  else if ( floor(B->R[0]) == B->R[0] )
-	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int)B->R[0]);
-	  else   /* A.^p  with p real */
+	  else if ( B->R[0] == floor(B->R[0]) )  /* integer exponent */
+	    {
+	      if ( fabs(B->R[0]) <= 65536.0 ) 
+		/* use power algorithm (2^16 = 65536 so less than 16 multiplications, */
+		/* we hope it is stable enough */
+		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int) B->R[0]);
+	      else
+		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i], B->R[0]);
+	    }
+	  else   /* A.^p  with p real or p a too big integer */
 	    {
 	      Boolean rflag = TRUE;
 	      for ( i = 0 ; i < A->mn ; i++ ) 
@@ -2638,14 +2646,15 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
 	{
 	  if ( B->R[0] == 2.0 )
 	    for ( i = 0 ; i < A->mn ; i++ ) nsp_prod_c(&A->C[i],&A->C[i]);
-	  else if ( floor(B->R[0]) == B->R[0] )
-	    for ( i = 0 ; i < A->mn ; i++ ) nsp_pow_ci(&A->C[i],(int) B->R[0],&A->C[i]);
+	  else if ( floor(B->R[0]) == B->R[0]  &&  fabs(B->R[0]) <=  65536.0 ) 
+	    /* integer exponent not too big => use power algorithm */
+	    for ( i = 0 ; i < A->mn ; i++ ) nsp_pow_ci(&A->C[i],(int) B->R[0], &A->C[i]);
 	  else
-	    for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
+	    for ( i = 0 ; i < A->mn ; i++ ) nsp_pow_cd(&A->C[i], B->R[0], &A->C[i]);
 	}
       else 
 	for ( i = 0 ; i < A->mn ; i++ )
-	  nsp_pow_cc(&A->C[i],&B->C[0],&A->C[i]);
+	  nsp_pow_cc(&A->C[i], &B->C[0], &A->C[i]);
     }
   return OK;
 }
@@ -2677,7 +2686,7 @@ int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
 		{
 		  if ( rflag )
 		    if ( floor(A->R[i]) == A->R[i] ) /* exposant is integer => result is still real */
-			A->R[i] = nsp_pow_di(B->R[0],(int) A->R[i]);
+			A->R[i] = pow(B->R[0],A->R[i]);
 		    else
 		      {
 			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
@@ -2692,7 +2701,7 @@ int nsp_mat_pow_scalarm(NspMatrix *A, NspMatrix *B)
 	}
       else 
 	{
-	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
 	  for ( i = 0 ; i < A->mn ; i++ )nsp_pow_cd_or_ci(&B->C[0],A->C[i].r,&A->C[i]);
 	}
     }
