@@ -222,8 +222,8 @@ builtin(include,config/libtool.m4)
 AC_PROG_LIBTOOL()
 echo "end of configuration of libtool"
 
-# get the shared lib extension 
-SHREXT_NAME="$shrext_cmds"
+# get the shared lib extension (need to force evaluation)
+eval SHREXT_NAME=$shrext_cmds
 
 #############################################
 ## Compilers and options according to machine
