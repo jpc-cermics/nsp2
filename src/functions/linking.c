@@ -133,6 +133,7 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
 #if (!defined(DLDLINK) && !defined(WIN32) && !defined(__APPLE_CC__))
 #define WLU1 /* dld will add the leading _ itself, win32 too*/
 #endif 
+#endif
 
 /*
  * utility function : 
