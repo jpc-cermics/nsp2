@@ -93,7 +93,7 @@ extern NspSpColMatrix *GetRealSpCol(Stack stack, int i);
 extern void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat); 
 extern void nsp_spcolmatrix_col_destroy(SpCol *Col); 
 extern int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat);
-extern void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,char *name, int rec_level); 
+extern void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,const char *name, int rec_level);
 extern void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_level); 
 extern NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A); 
 extern NspSpColMatrix   *nsp_spcolmatrix_object(NspObject *O);

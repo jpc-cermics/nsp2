@@ -98,7 +98,7 @@ extern NspSpRowMatrix *GetRealSpRow(Stack stack, int i);
 extern void nsp_sprowmatrix_destroy(NspSpRowMatrix *Mat); 
 extern void nsp_sprowmatrix_row_destroy(SpRow *Row); 
 extern int nsp_sprowmatrix_nnz(const NspSpRowMatrix *HMat);
-extern void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,char *name, int rec_level); 
+extern void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,const char *name, int rec_level);
 extern void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_level); 
 extern NspSpRowMatrix *nsp_sprowmatrix_copy(NspSpRowMatrix *A); 
 extern NspSpRowMatrix   *nsp_sprowmatrix_object(NspObject *O);

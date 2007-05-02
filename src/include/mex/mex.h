@@ -197,6 +197,12 @@ extern void mxSetM(mxArray *ptr, mwSize m);
 
 extern mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax);
 
+extern mxArray *mxCreateNumericArray(int ndim, const int *dims, 
+				     mxClassID class, mxComplexity ComplexFlag);
+extern void mxSetFieldByNumber(mxArray *array_ptr, int index,  
+			       int field_number, mxArray *value);
+
+
 
 
 #endif /* NSP_MEX */
