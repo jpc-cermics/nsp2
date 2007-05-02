@@ -166,7 +166,9 @@ static int nsp_dlopen(nsp_const_string shared_path,int global)
 {
   int i=0;
   dlhandle hd1;
-  if ( strncmp(shared_path,"nsp",3) ==0 )
+  if ( strncmp(shared_path,"nsp",3) ==0 
+       || strncmp(shared_path,"scilab",6) ==0  /* backward comp */
+       )
     {
       /* try to open symbols from nsp executable 
        * does not work on all architectures 
