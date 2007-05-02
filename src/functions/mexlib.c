@@ -22,9 +22,6 @@
  * Boston, MA 02111-1307, USA.
  *
  * 
- * The next comments are just here for information since 
- * mtlb_sparse cells and struct are not yet operational in nsp 
- * 
  *--------------------------------------------------------------------------*/
 
 static void nsp_mex_errjump(void);
