@@ -405,7 +405,7 @@ int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
       M->D[i]=NULL;
     }
   FREE(M->D);
-  M->m= M->n = 0;
+  M->m= M->n = M->mn = 0;
   if ( nsp_spcol_update_from_triplet_internal(M) == FAIL) return FAIL;
   return OK;
 }
