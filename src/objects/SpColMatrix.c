@@ -97,7 +97,7 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
   Sp->triplet.Ir=NULL;
   Sp->triplet.Pr=NULL;
   Sp->triplet.Pi=NULL;
-  if ( Sp->mn == 0 ) 
+  if ( Sp->n == 0 ) 
     {
       Sp->D = NULL;
       return(Sp);
@@ -431,12 +431,12 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
   int i;
   if ( Mat != NULLSPCOL )
     {
-      
       nsp_object_destroy_name(NSP_OBJECT(Mat));
-      for ( i = 0  ; i < Mat->n ; i++) 
-	{
-	  nsp_spcolmatrix_col_destroy(Mat->D[i]);
-	}
+      if ( Mat->D != NULL) 
+	for ( i = 0  ; i < Mat->n ; i++) 
+	  {
+	    nsp_spcolmatrix_col_destroy(Mat->D[i]);
+	  }
       FREE(Mat->D);
       FREE(Mat) ;
     }
@@ -474,19 +474,15 @@ int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
  * @indent is the given indentation for printing.
  **/
 
-void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,char *name,int rec_level)
-{ 
-  int i;
+void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
   if ( Sp == NULLSPCOL) 
     {
       Sciprintf("Null SpMatrix pointer\n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(Sp)->name,NVOID) == 0)
-    Sciprintf("SpMatrix %c (%dx%d)\n",Sp->rc_type, Sp->m,Sp->n);
-  else
-    Sciprintf("Spmatrix %s %c (%dx%d)\n",NSP_OBJECT(Sp)->name,Sp->rc_type, Sp->m,Sp->n);
+  Sciprintf1(indent,"%s\t= [...]\t\tspcol %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 }
 
 
@@ -667,6 +663,7 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
       Sp->D[i]->size = 0 ;
     }
   Sp->n = n;
+  Sp->mn = Sp->n*Sp->m;
   return(OK);
 }
 
@@ -686,7 +683,7 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n)
 {
   /* special case **/
-  if ( m > A->m  ) A->m = m ; /* easy for sparse matrix **/
+  if ( m > A->m  ) {A->m = m ;A->mn=m*A->n;} /* easy for sparse matrix **/
   if ( n > A->n  ) 
     return nsp_spcolmatrix_enlarge_cols(A,n);
   return OK;
@@ -796,6 +793,7 @@ int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B)
 	}
     }
   A->m += B->m;
+  A->mn = A->m*A->n;
   return(OK);
 }
 
@@ -815,11 +813,16 @@ int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
   int i,j;
   int Am = A->m;
   int An = A->n;
+  int Bm = B->m;
   /* first [A,B] */
   int n1 = Max(A->m,B->m);
   A->m = n1;
   B->m = n1;
-  if (nsp_spcolmatrix_concatr( A,B) == FAIL) return FAIL;
+  if (nsp_spcolmatrix_concatr( A,B) == FAIL) 
+    {
+      B->m = Bm;
+      return FAIL;
+    }
   /* push last cols **/
   for ( i = An ; i < A->n ; i++) 
     { 
@@ -829,7 +832,10 @@ int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
     }
   /* restore proper row dimensions **/
   A->m = Am + B->m ;
+  A->mn = A->m*A->n;
+  B->m = Bm;
   return(OK);
+  
 }
 
 /* 

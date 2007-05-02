@@ -839,8 +839,14 @@ static int int_sprowmatrix_sp2m(Stack stack, int rhs, int opt, int lhs)
 
 static int int_sprowmatrix_m2m(Stack stack, int rhs, int opt, int lhs)
 {
-  /* full(x) when x is already full **/
-  NthObj(1)->ret_pos = 1;
+  NspObject *Obj;
+  /* full(x) when x is already full 
+   * we need a nsp_get_object to take care of Hobj 
+   */ 
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if (( Obj =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
+  Obj->ret_pos = 1;
   return 1;
 }
 

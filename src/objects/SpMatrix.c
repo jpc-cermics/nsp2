@@ -244,19 +244,15 @@ int nsp_sprowmatrix_nnz(const NspSpRowMatrix *HMat)
  * displays info on Sparse Matrix @Sp.
  **/
 
-void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,char *name,int rec_level)
-{ 
-  int i;
+void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
   if ( Sp == NULLSPROW) 
     {
-      Sciprintf("Null SpRowMatrix pointer\n");
+      Sciprintf("Null SpMatrix pointer\n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(Sp)->name,NVOID) == 0)
-    Sciprintf("SpRowMatrix %c (%dx%d)\n",Sp->rc_type, Sp->m,Sp->n);
-  else
-    Sciprintf("Spmatrix %s %c (%dx%d)\n",NSP_OBJECT(Sp)->name,Sp->rc_type, Sp->m,Sp->n);
+  Sciprintf1(indent,"%s\t= [...]\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 }
 
 /**
@@ -369,7 +365,7 @@ int nsp_sprowmatrix_enlarge_rows(NspSpRowMatrix *Sp, int m)
 int nsp_sprowmatrix_enlarge(NspSpRowMatrix *A, int m, int n)
 {
   /* special case **/
-  if ( n > A->n  ) A->n = n ; /* easy for sparse matrix **/
+  if ( n > A->n  ) {A->n = n ;A->mn = n*A->m;} /* easy for sparse matrix **/
   if ( m > A->m  ) 
     return nsp_sprowmatrix_enlarge_rows(A,m);
   return OK;
