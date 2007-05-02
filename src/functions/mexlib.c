@@ -809,14 +809,13 @@ mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_name
  * @fieldname: 
  * @value: 
  *
- * A copy of object @value is inserted in @pa.
- * 
+ * @value is inserted in @pa without copy. 
+ * (changed April 2007)
  * 
  **/
 
 void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
 {
-  NspObject *Obj;
   NspHash *H = (NspHash *) pa;
   if ( i != 0 )
     {
@@ -824,9 +823,14 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
       nsp_mex_errjump();
     }
   if ( ! IsHash(pa) ) nsp_mex_errjump();
+  /* 
   if ((Obj =nsp_object_copy_and_name(fieldname,value))== NULLOBJ)
     nsp_mex_errjump();
-  if (nsp_hash_enter(H,Obj)==FAIL)
+  */
+  if ( nsp_object_set_name((NspObject *) value,fieldname)== FAIL)
+    nsp_mex_errjump();
+
+  if (nsp_hash_enter(H,NSP_OBJECT(value))==FAIL)
     nsp_mex_errjump();
 }
 
@@ -1197,10 +1201,14 @@ void *mxMalloc(size_t n)
  * @ptr: an #mxArray
  * 
  * destroy the object @ptr.
+ * Note that objects are destroyed isthey have no names. 
+ * Thus we preserve array which are stored in a struct 
+ * via mxSetField(). 
  **/
+
 void mxDestroyArray(mxArray *ptr)
 {
-  nsp_object_destroy(&ptr);
+  nsp_void_object_destroy(&ptr);
 }
 
 /**
