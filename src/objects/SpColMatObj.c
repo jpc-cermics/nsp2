@@ -623,7 +623,7 @@ static int int_spcolmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   /* A and Cols can't point to the same object **/
   if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if (nsp_spcolmatrix_delete_cols( A, Cols) < 0) return RET_BUG;
+  if (nsp_spcolmatrix_delete_cols( A, Cols) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -643,7 +643,7 @@ static int int_spcolmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   /* A and Cols can't point to the same object **/
   if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if (nsp_spcolmatrix_delete_rows( A, Rows) < 0) return RET_BUG;
+  if (nsp_spcolmatrix_delete_rows( A, Rows) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
