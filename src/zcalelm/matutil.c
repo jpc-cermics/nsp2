@@ -1533,7 +1533,7 @@ static void swap(double* ptr1, double* ptr2, int size)
 void nsp_double2complex( double *tab, int size)
 {
   int nb;
-  if (size == 1) {
+  if (size <= 1) {
     return;
   }
   nb = size / 2;
@@ -1573,7 +1573,7 @@ void nsp_complex2double(double *tab, int size)
 {
   int nb;
   
-  if (size == 1) {
+  if (size <= 1 ) {
     return;
   }
   nb = size / 2;
