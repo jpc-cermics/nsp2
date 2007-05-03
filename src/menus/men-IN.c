@@ -498,10 +498,6 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
     {
       NSP_OBJECT(ListItems)->ret_pos = 2;
     }
-  else 
-    {
-      nsp_list_destroy(ListItems);
-    }
   if ( lhs == 3 )
     {
       MoveObj(stack,3,NSP_OBJECT(M));
