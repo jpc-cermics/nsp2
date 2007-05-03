@@ -1488,11 +1488,19 @@ int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
     }
   /* resize and  free unused memory */
   A->n -= count_deleted;
-  A->D = REALLOC(A->D, A->n*sizeof( SpCol *));
-  if ( A->D == NULL) 
+  if ( A->n == 0 ) 
     {
-      Scierror("No More Space\n");
-      return FAIL;
+      FREE(A->D);
+      A->D=NULL;
+    }
+  else
+    {
+      A->D = REALLOC(A->D, A->n*sizeof( SpCol *));
+      if ( A->D == NULL) 
+	{
+	  Scierror("Error: no more space available\n");
+	  return FAIL;
+	}
     }
   return OK;
 }
