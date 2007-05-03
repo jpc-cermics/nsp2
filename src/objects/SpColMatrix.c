@@ -1524,7 +1524,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
   NspMatrix *Work= NULL, *Index = NULL;
   NspSpColMatrix *Loc=NULL;
   int rmin=1,rmax=1,cmin,cmax,i,j,Cn;
-  if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0);
+  /* if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0); */
   if (flag == 1) 
     {
       Bounds(Cols,&cmin,&cmax);
@@ -1542,7 +1542,8 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
     }
   else 
     {
-      return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0);
+      int cols = (Cols == NULL) ? A->n : Cols->mn;
+      return nsp_spcolmatrix_create(NVOID,A->rc_type,0,cols);
     }
   *err=0;
   if (  rmin < 1 ||  rmax > A->m ) 
@@ -1735,17 +1736,17 @@ NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols,
 {
   NspSpColMatrix *Loc;
   int rmin,rmax,i,j;
-  if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0);
+  /* if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0); */
   Bounds(Cols,&rmin,&rmax);
   *err=0;
+  if ( Cols->mn == 0) 
+    {
+      return nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,0);
+    }
   if ( rmin < 1 ||  rmax > A->n  ) 
     {
       Scierror("Error:\tIndices out of bound\n");
       return(NULLSPCOL);
-    }
-  if ( Cols->mn == 0) 
-    {
-      return nsp_spcolmatrix_create(NVOID,A->rc_type,0,Cols->mn);
     }
   if ( (Loc =nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,Cols->mn))== NULLSPCOL) 
     return(NULLSPCOL);

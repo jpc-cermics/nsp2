@@ -72,6 +72,7 @@ int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
   int i,nn;
   NspSpRowMatrix *Mt;
   /* partial free */
+  if ( M->convert != 't' ) return OK;
   for ( i = 0  ; i < M->m ; i++) 
     {
       nsp_sprowmatrix_row_destroy(M->D[i]);
@@ -398,6 +399,8 @@ int nsp_spcol_set_triplet_from_m( NspSpColMatrix *M,int flag)
 int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
 {
   int i;
+  /* use triplet to back change M */
+  if ( M->convert != 't' ) return OK;
   /* partial free */
   for ( i = 0  ; i < M->n ; i++) 
     {
