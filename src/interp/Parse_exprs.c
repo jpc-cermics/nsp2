@@ -409,6 +409,7 @@ static int parse_funcstop (Tokenizer *T,int token)
 
 static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
+  int val;
   NspObject *cell = NULLOBJ;
   NspBHash *symbols = NULLBHASH;
   PList plist1 = NULLPLIST ;
@@ -446,6 +447,12 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	  goto fail;
 	}
       if ( T->NextToken(T) == FAIL) goto fail;
+#ifdef  WITH_SYMB_TABLE
+      if ( nsp_bhash_find(symbols,id,&val) == FAIL) 
+	{
+	  if (nsp_bhash_enter(symbols,id,0) == FAIL) return FAIL;
+	}
+#endif 
       if (nsp_parse_add_name(&plist1,id) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,MLHS,1,T->token.Line) == FAIL) goto fail;
     }
@@ -2265,6 +2272,7 @@ static int Check_Func_Call(Tokenizer *T,PList plist, int tag)
 
 static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList L)
 {
+  PList L1;
   int val ;
   /* NspObject *obj; */
   if ( symb_table == NULLBHASH ) return OK;
@@ -2277,6 +2285,17 @@ static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList L)
 	  if ( nsp_bhash_find(symb_table,(char *) L->O,&val) == FAIL) 
 	    {
 	      if (nsp_bhash_enter(symb_table,(char *) L->O,0) == FAIL) return FAIL;
+	    }
+	  break;
+	case PLIST: 
+	  L1 = (PList) L->O;
+	  if ( L1->type == CALLEVAL ||  L1->type == LISTEVAL) 
+	    {
+	      /* Sciprintf("[%s]",(char *) (L1->next->O)); */
+	      if ( nsp_bhash_find(symb_table,(char *)(L1->next->O),&val) == FAIL) 
+		{
+		  if (nsp_bhash_enter(symb_table,(char *)(L1->next->O) ,0) == FAIL) return FAIL;
+		}
 	    }
 	  break;
 	}
