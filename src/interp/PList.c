@@ -1159,7 +1159,6 @@ static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int 
 
 /* One Arg Pretty print **/
 
-
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
 {
   int n;
@@ -1171,7 +1170,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
   switch (L->type) 
     {
     case NAME :
-#ifdef WITH_SYMB_TABLEXX 
+#ifdef WITH_SYMB_TABLE_DEBUG
       return pos+Sciprintf1(i,"%s<%d>",(char *) L->O,L->arity);
 #else 
       return pos+Sciprintf1(i,"%s",(char *) L->O);
