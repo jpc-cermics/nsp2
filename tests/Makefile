@@ -39,7 +39,8 @@ TESTS= \
 	trycatch.dia \
 	umfpack.dia \
 	unique.dia \
-	createbyset.dia 
+	createbyset.dia \
+	sparse-mixed.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
