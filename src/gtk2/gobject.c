@@ -2883,8 +2883,9 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
   if ( GetScalarInt(stack,1,&priority) == FAIL) return RET_BUG;
   if ( priority > G_PRIORITY_DEFAULT_IDLE || priority < G_PRIORITY_HIGH_IDLE ) 
     {
-      Scierror("%s: priority mst be in the range [%d,%d] ([high,default])\n",
+      Scierror("Errpr: priority must be in the range [%d,%d] ([high,default])\n",
 	       G_PRIORITY_HIGH_IDLE, G_PRIORITY_DEFAULT_IDLE);
+      return RET_BUG;
     }
   /* Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
