@@ -1158,12 +1158,25 @@ static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,in
   return 0;
 }
 
+/* 
+ * get_nnz 
+ */
+
+static int int_meth_matrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+  if ( nsp_move_double(stack,1,nsp_mat_nnz((NspMatrix *) self)) == FAIL) return RET_BUG;
+  return 1;
+}
+
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
   { "blas_axpy", int_meth_matrix_axpy},  /* possible other name:  add_scal_time_mat  */
   { "blas_ger", int_meth_matrix_ger},    /* possible other name:  updt_rk1  */
   { "scale_rows",int_meth_matrix_scale_rows}, 
   { "scale_cols",int_meth_matrix_scale_cols}, 
+  { "get_nnz", int_meth_matrix_get_nnz},
   { (char *) 0, NULL}
 };
 
@@ -3786,9 +3799,8 @@ int_mxmultel (Stack stack, int rhs, int opt, int lhs)
  * NspMatrix multiplication  Res= A*B  
  * very similar to mopscal but MatMult returns a new matrix 
  */
-#ifdef MTLB_MODE
-int
-int_mxmult (Stack stack, int rhs, int opt, int lhs)
+
+int int_mxmult (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2, *HMat3;
   CheckRhs (2, 2);
@@ -3823,145 +3835,6 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
-/* int */
-/* int_mxmult (Stack stack, int rhs, int opt, int lhs) */
-/* { */
-/*   NspMatrix *HMat1, *HMat2, *HMat3; */
-/*   CheckRhs (2, 2); */
-/*   CheckLhs (1, 1); */
-
-/*   if ( (HMat1 =GetMat(stack, 1)) == NULLMAT ) */
-/*     return RET_BUG; */
-/*   if ( (HMat2 = GetMat(stack, 2)) == NULLMAT ) */
-/*     return RET_BUG; */
-
-/*   if ( HMat1->mn == 1 ) */
-/*     { */
-/*       if ( HMat2->mn == 1 ) */
-/* 	{ */
-/* 	  if ( Ocheckname(HMat1,NVOID) ) */
-/* 	    { */
-/* 	      if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT(HMat1)->ret_pos = 1; */
-/* 	    } */
-/* 	  else if ( Ocheckname(HMat2,NVOID) ) */
-/* 	    { */
-/* 	      if ( nsp_mat_mult_scalar_bis(HMat2, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT(HMat2)->ret_pos = 1; */
-/* 	    } */
-/* 	  else */
-/* 	    { */
-/* 	      if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
-/* 		return RET_BUG; */
-/* 	      if ( nsp_mat_mult_scalar_bis(HMat3, HMat2) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	    } */
-/* 	} */
-/*       else */
-/* 	{ */
-/* 	  if ( Ocheckname(HMat2,NVOID) ) */
-/* 	    { */
-/* 	      if ( nsp_mat_mult_scalar_bis(HMat2, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT(HMat2)->ret_pos = 1; */
-/* 	    } */
-/* 	  else */
-/* 	    { */
-/* 	      if ( (HMat3 =nsp_matrix_copy(HMat2)) == NULLMAT ) */
-/* 		return RET_BUG; */
-/* 	      if ( nsp_mat_mult_scalar_bis(HMat3, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	    } */
-/* 	} */
-/*     } */
-/*   else if ( HMat2->mn == 1 ) */
-/*     { */
-/*       if ( Ocheckname(HMat1,NVOID) ) */
-/* 	{ */
-/* 	  if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	  NSP_OBJECT(HMat1)->ret_pos = 1; */
-/* 	} */
-/*       else */
-/* 	{ */
-/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
-/* 	    return RET_BUG; */
-/* 	  if ( nsp_mat_mult_scalar_bis(HMat3, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	} */
-/*     } */
-/*   else */
-/*     { */
-/*       if ( (HMat3 = nsp_mat_mult(HMat1, HMat2)) == NULLMAT ) */
-/* 	return RET_BUG; */
-/*       MoveObj(stack, 1, (NspObject *) HMat3); */
-/*     } */
-/*   return 1; */
-/* } */
-#else
-int
-int_mxmult (Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *HMat1, *HMat2, *HMat3;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-
-  if (HMat1->mn == 0)
-    {
-      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-      return 1;
-    }
-  if (HMat2->mn == 0)
-    {
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  /* flag == 1 ==> A op [] returns [] * */
-	  NSP_OBJECT (HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-  if (HMat2->mn == 1)
-    {
-      if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)
-	return RET_BUG;
-      if (nsp_mat_mult_scalar (HMat1, HMat2) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-    }
-  else if (HMat1->mn == 1)
-    {
-      /* since Mat1 is scalar we store the result in Mat2 so we 
-         must copy it * */
-      if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT)
-	return RET_BUG;
-      if (nsp_mat_mult_scalar (HMat2, HMat1) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat2)->ret_pos = 1;
-    }
-  else
-    {
-      if ((HMat3 = nsp_mat_mult (HMat1, HMat2)) == NULLMAT)
-	return RET_BUG;
-      MoveObj (stack, 1, (NspObject *) HMat3);
-    }
-  return 1;
-}
-#endif
 
 /*
  * NspMatrix back division  Res= A\B  
@@ -4072,7 +3945,6 @@ int int_mxbdiv(Stack stack, int rhs, int opt, int lhs)
   if ((B = GetMat (stack, 2)) == NULLMAT)    return RET_BUG;
   tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
   if ((C = nsp_matrix_bdiv(A,B, tol_rcond)) == NULLMAT)    return RET_BUG;
-
   MoveObj(stack,1,NSP_OBJECT(C));
   return 1;
 }
@@ -4254,6 +4126,23 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
   MoveObj (stack, 1, (NspObject *) B);
   return 1;
 }
+
+/*
+ */
+
+int int_matrix_nnz (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ( nsp_move_double(stack,1,nsp_mat_nnz(A)) == FAIL) return RET_BUG;
+  return 1;
+}
+
+
+
 
 /* FIXME */
 extern double nsp_dlamch (char *cmach);
@@ -4646,6 +4535,7 @@ static OpTab Matrix_func[] = {
   {"number_properties",int_number_properties},
   {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
   {"test_dperm",int_test_dperm},
+  {"nnz_m",  int_matrix_nnz},
   {(char *) 0, NULL}
 };
 

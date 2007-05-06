@@ -5599,3 +5599,29 @@ int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
     }
   return OK;
 }
+
+/**
+ * nsp_mat_nnz:
+ * @A: a #NspMatrix of size m x n
+ * 
+ * counts non null elements. 
+ * 
+ * Return value: an integer 
+ **/
+
+int nsp_mat_nnz(NspMatrix *A)
+{
+  int i, count =0;
+  if(A->rc_type == 'r' ) 
+    {
+      for ( i = 0 ; i < A->mn ; i++ ) 
+	if ( A->R[i] != 0.0) count++;
+    }
+  else 
+    {
+      for ( i = 0 ; i < A->mn ; i++ )
+	if ( A->C[i].i != 0.0 ||  A->C[i].r != 0.0) count++;
+    }
+  return count;
+}
+
