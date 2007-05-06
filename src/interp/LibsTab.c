@@ -112,6 +112,7 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
   Mdata data;
   char filename[FSIZE+1];
   int  flen, flag=-1,i;
+  nsp_macro_table_reset_cache();
   /* recursively add search directories */
   /* expand macros in dir_name -> dirname */
   nsp_path_expand(dir_name,dirname,FSIZE);
@@ -326,6 +327,28 @@ void nsp_init_macro_table(void)
     }
   firstentry = 1;
 }
+
+/**
+ * nsp_macro_table_reset_cache:
+ * @void
+ *
+ * reset the macros cache 
+ */
+
+void nsp_macro_table_reset_cache(void)
+{
+  NspHash *new_cache;
+  if (macros_cache == NULLHASH) return;
+  if ((new_cache = nsp_hcreate("cache",100)) == NULLHASH ) 
+    {
+      Sciprintf("Error: cannot reset the macros cache, no more space available\n");
+      return;
+    }
+  nsp_hash_destroy(macros_cache);
+  macros_cache = new_cache;
+}
+
+
 
 /*
  * Hashtable code : 
