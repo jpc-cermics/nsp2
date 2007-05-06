@@ -1561,7 +1561,7 @@ void nsp_double2complex( double *tab, int size)
  *
  *    Converts complex representation in @tab 
  *    [r_0, i_0, r_1, i_1, ..., r_n, i_n]
- *    into [r_0, i_0, r_1, i_1, ..., r_n, i_n]
+ *    into [r_0, r_1,..., r_n, i_0, i_1,..., i_n]
  *     Complexity O(nlogn) for this version. One can easly have
  *     O(nloglogn) by pruning the recursion. Next version wil take care 
  *     of the cache size.
