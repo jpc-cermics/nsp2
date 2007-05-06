@@ -1590,7 +1590,9 @@ static void _nsp_plist_print_arg(PList L, int i)
     {
     case NAME :
       Sciprintf("%s",(char *) L->O);
+#ifdef WITH_SYMB_TABLE_DEBUG
       if ( L->arity != -1) Sciprintf("<%d>",L->arity);
+#endif 
       break;
     case NUMBER:
       Sciprintf("%s", ((parse_double *) L->O)->str);break;
