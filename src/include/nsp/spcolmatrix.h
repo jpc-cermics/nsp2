@@ -158,6 +158,7 @@ extern NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix 
 extern int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k);
 extern int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k);
 extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n);
+extern NspSpColMatrix *nsp_spcolmatrix_spones(NspSpColMatrix *A);
 extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n);
 extern NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n);
 
