@@ -2116,6 +2116,8 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
     }
 
   if ( (C =nsp_spcolmatrix_create(NVOID,type, A->m,B->n)) == NULLSPCOL ) return NULLSPCOL; 
+  
+  if ( A->m == 0 || B->n ==0 ) return C;
 
   /* XXXX A unique alloc here should be better 
    * x of size 2*C->m xb = (int *) (x+C->m) ; pxb = xb+C->m
@@ -3757,6 +3759,10 @@ static int SpNext(const void *M, double *r, doubleC *c,int *work)
 	case 'c' : c->r = c->i = 0.00;break;
 	}
       work[0]++;
+      /* maybe we could decide not to use the value 0 since this 
+       * function is just to decide a format and zeros are not displayed
+       * 
+       */
       return 1;
     }
   /* Now return the non nul elements **/

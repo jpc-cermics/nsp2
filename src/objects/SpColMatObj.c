@@ -883,18 +883,7 @@ static int int_spcolmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ( HMat1->mn == 0)  
-    {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
   if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( HMat2->mn == 0 )
-    {
-      /* flag == 1 ==> A op [] returns [] **/
-      NSP_OBJECT(HMat2)->ret_pos = 1;
-      return 1;
-    }
   if ( HMat2->mn == 1) 
     {
       if ( HMat2->D[0]->size == 0) 
@@ -955,19 +944,18 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 
   if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
-
+  /* 
   if ( HMat1->mn == 0)  
     {
-      /* Not so good we need to return a full XXXX */
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
+    NSP_OBJECT(HMat1)->ret_pos = 1;
+    return 1;
     }
-  else if ( HMat2->mn == 0 )
+    else if ( HMat2->mn == 0 )
     {
-      NSP_OBJECT(HMat2)->ret_pos = 1;
-      return 1;
+    NSP_OBJECT(HMat2)->ret_pos = 1;
+    return 1;
     }
-
+  */
   if ( HMat2->m == 1 && HMat2->n == 1 )
     {
       if ((HMat1 = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
@@ -1003,18 +991,6 @@ static int int_spcolmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
 
   if ((HMat1 = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-
-  if ( HMat1->mn == 0)  
-    {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  else if ( HMat2->mn == 0 )
-    {
-      /* Not so good we need to return a full XXXX */
-      NSP_OBJECT(HMat2)->ret_pos = 1;
-      return 1;
-    }
 
   if ( HMat1->m == 1 && HMat1->n == 1 )
     {

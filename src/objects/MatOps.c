@@ -5467,6 +5467,7 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
  *
  * Return value: %FAIL or %OK
  **/
+
 int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5508,6 +5509,7 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
  * 
  * Return value: %FAIL or %OK
  **/
+
 int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
 {
   int i,j, k;
@@ -5559,6 +5561,7 @@ int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
  * 
  * Return value: %FAIL or %OK
  **/
+
 int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
 {
   int i,j, k;
@@ -5624,4 +5627,5 @@ int nsp_mat_nnz(NspMatrix *A)
     }
   return count;
 }
+
 
