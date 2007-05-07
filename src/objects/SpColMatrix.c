@@ -4954,14 +4954,40 @@ NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
 
 
 /**
+ * nsp_spcolmatrix_spones:
+ * @A: a #NspSpColMatrix
+ * 
+ * generates a matrix with the same sparsity structure as A, 
+ * but with ones in the nonzero positions
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_spones(NspSpColMatrix *A)
+{
+  int i,j;
+  NspSpColMatrix *Loc;
+  if ((Loc= nsp_spcolmatrix_copy(A)) == NULLSPCOL) return(NULLSPCOL);
+  for ( i = 0 ; i < Loc->n ; i++ ) 
+    {
+      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	{
+	  Loc->D[i]->R[j]= 1.0;
+	}
+    }
+  return(Loc);
+}
+
+/**
  * nsp_spcolmatrix_ones:
  * @m: an integer 
  * @n: an integer 
  * 
- * A=ones(m,n)
+ * ones(m,n) as a sparse Matrix.
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
+
 
 NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
 {

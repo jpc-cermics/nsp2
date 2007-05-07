@@ -1435,8 +1435,19 @@ static int int_spcolmatrix_tril(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* interface for eye,ones,zeros
- *
  */
+
+static int int_spcolmatrix_spones(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A, *Res;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
+  if ((Res= nsp_spcolmatrix_spones(A))== NULLSPCOL) return RET_BUG; 
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
 
 typedef NspSpColMatrix *(Feoz)(int m,int n);
 
@@ -1459,11 +1470,6 @@ static int int_spcolmatrix_eoz(Stack stack, int rhs, int opt, int lhs,Feoz *F)
   if ((A= (*F)(m,n))== NULLSPCOL) return RET_BUG;
   MoveObj(stack,1, NSP_OBJECT(A));
   return 1;
-}
-
-static int int_spcolmatrix_ones(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_ones);
 }
 
 static int int_spcolmatrix_eye(Stack stack, int rhs, int opt, int lhs)
@@ -1993,10 +1999,10 @@ static OpTab SpColMatrix_func[]={
   {"triu_sp", int_spcolmatrix_triu},
   {"tril_sp", int_spcolmatrix_tril},
   {"sp_eye", int_spcolmatrix_eye}, /* to be removed ? */
-  {"sp_ones", int_spcolmatrix_ones},/* to be removed ? */
+  {"sp_ones", int_spcolmatrix_spones},/* to be removed ? */
   {"sp_zeros", int_spcolmatrix_zeros},/* to be removed ? */
   {"speye", int_spcolmatrix_eye},
-  {"spones", int_spcolmatrix_ones},
+  {"spones", int_spcolmatrix_spones},
   {"spzeros", int_spcolmatrix_zeros},
   /* now operations */
   {"abs_sp",int_spcolmatrix_abs},
