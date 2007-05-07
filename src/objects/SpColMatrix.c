@@ -930,7 +930,6 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
     }
   else
     {
-      /* we must change element **/
       nsp_spcolmatrix_store(A,i,ok,j,B,rb,cb);
     }
   return OK;
@@ -998,8 +997,15 @@ int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, in
 
 int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 {
-  SpCol *Bi = B->D[i];
   int ok = -1,k;
+  SpCol *Bi;
+  if ( i >= B->n && j == 0) 
+    {
+      /* B is a vector we want the (i,j) elt in a vector */
+      j=i;
+      i=0;
+    }
+  Bi = B->D[i];
   for ( k =0 ; k < Bi->size ; k++ )
     {
       if ( j == Bi->J[k] ) { ok = k; break ;}
@@ -1155,7 +1161,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
  * @Inds is unchanged.  Size Compatibility is checked with the following
  * rules: 
  * if A is a Matrix or A ==[] then @B must be row or column 
- *    if A==[] the size of the result depends on @B.
+ * if A==[] the size of the result depends on @B.
  * If A is a row vector then B must be row 
  * If A is a column vector then B must be column 
  * @Inds must be in the range of @A indices unless @A is row or column or []
@@ -1199,7 +1205,9 @@ int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *
 	    }
 	  else
 	    {
-	      /* must change or insert element in A **/
+	      /* must change or insert element in A */
+	      /* take care of B column */
+	      if ( cb >= B->n ) cb=0;
 	      if (nsp_spcolmatrix_insert_elt(A,ca,ra,B,cb,kb)== FAIL) return FAIL;
 	    }
 	}
