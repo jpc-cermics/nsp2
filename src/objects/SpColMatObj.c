@@ -1081,7 +1081,7 @@ static int int_spcolmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  if ( B->m == 1 && A->n == 1 ) 
+  if ( B->m == 1 && B->n == 1 ) 
     {
       NspMatrix *C=nsp_spcolmatrix_op_scal(A,B,&flag,'+');
       if ( flag == 1) 
