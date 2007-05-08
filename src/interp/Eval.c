@@ -1642,9 +1642,12 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 
   /* Object L which is changed
    */
-  if ( (O=nsp_frame_search_object(name)) != NULLOBJ) 
+  if (Datas != NULLLIST 
+      && ( ( L->arity != -1 && (O=((NspFrame *) Datas->first->O)->table->objs[L->arity]) != NULLOBJ)
+	   || (O= nsp_eframe_search_object((NspFrame *) Datas->first->O,name,FALSE)) != NULLOBJ))
     {
-      /* first case object is found in the local frame 
+      /* Object is in the current frame or as a variable in the local table which has a value 
+       * or as a frame variable. 
        */
       stack.val->S[*ipos] = O;
       if ( stack.val->S[*ipos]->basetype == NSP_TYPE_BASE(nsp_type_hobj) ) 
@@ -1680,10 +1683,12 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	    }
 	}
     }
-  else if ( ( O =nsp_frames_search_object(name)) != NULLOBJ)
+  else if ( 0 &&  ( O =nsp_frames_search_object(name)) != NULLOBJ)
     {
-      /* Object was found in an other frame, we perform a copy */
-      /* the copy is inserted in the local frame */
+      /* XXXX : unused since it is not similar to scilab semi-global philosophy.
+       * Object was found in an other frame, we perform a copy 
+       * the copy is inserted in the local frame 
+       */
       if ((O =nsp_object_copy_with_name(O)) == NULLOBJ ) 
 	{
 	  stack.val->S[*ipos] = NULLOBJ;
