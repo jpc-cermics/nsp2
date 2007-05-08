@@ -332,7 +332,7 @@ void nsp_sinh_c(const doubleC *x, doubleC *res)
 /**
  * nsp_div_cc:
  * @x: a  double complex  
- * @y: 
+ * @y: a  double complex  
  * @res: a pointer to a double complex  
  * 
  * 

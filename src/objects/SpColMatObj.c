@@ -1264,6 +1264,111 @@ static int int_spcolmatrix_multt(Stack stack, int rhs, int opt, int lhs)
   return int_spcolmatrix_mult_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_multtt);
 }
 
+
+static int int_spcolmatrix_multt_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *B,*As=NULL;
+  NspMatrix *A;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetMat(stack,1)) == NULLMAT) goto err;
+  if ((B = GetSpCol(stack,2)) == NULLSPCOL) goto err;
+  if ((As=nsp_spcolmatrix_from_mat(A)) == NULLSPCOL) goto err;
+  if ( A->mn == 1) 
+    {
+      /* A * <non-nul-scalar> **/
+      if ((B = GetSpColCopy(stack,2)) == NULLSPCOL) goto err;
+      if (nsp_spcolmatrix_mult_scal(B,As) != OK) goto err;
+      NSP_OBJECT(B)->ret_pos = 1;
+      nsp_spcolmatrix_destroy(As);
+      return 1;
+    }
+  if ( B->mn == 1) 
+    {
+      if (nsp_spcolmatrix_mult_scal(As,B) != OK) goto err;
+      MoveObj(stack,1,NSP_OBJECT(As));
+      return 1;
+    }
+  
+  if ( SameDim(A,B) ) 
+    {
+      NspSpColMatrix *Res;
+      if ((Res=nsp_spcolmatrix_multtt(As,B)) == NULLSPCOL) goto err;
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      nsp_spcolmatrix_destroy(As);
+      return 1;
+    }
+  Scierror("Error: incompatible dimensions\n");
+ err: 
+  nsp_spcolmatrix_destroy(As);
+  return RET_BUG;
+}
+
+static int int_spcolmatrix_multt_sp_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A, *Bs=NULL;
+  NspMatrix *B;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto err;
+  if ((B = GetMat(stack,2)) == NULLMAT) goto err;
+  if ((Bs=nsp_spcolmatrix_from_mat(B)) == NULLSPCOL) goto err;
+
+  if ( B->mn == 1) 
+    {
+      /* A * <non-nul-scalar> **/
+      if ((A = GetSpColCopy(stack,1)) == NULLSPCOL) goto err;
+      if (nsp_spcolmatrix_mult_scal(A,Bs) != OK) goto err;
+      NSP_OBJECT(A)->ret_pos = 1;
+      nsp_spcolmatrix_destroy(Bs);
+      return 1;
+    }
+
+  if ( A->mn == 1) 
+    {
+      if (nsp_spcolmatrix_mult_scal(Bs,A) != OK) goto err;
+      MoveObj(stack,1,NSP_OBJECT(Bs));
+      return 1;
+    }
+
+  if ( SameDim(A,B) ) 
+    {
+      NspSpColMatrix *Res;
+      if ((Res=nsp_spcolmatrix_multtt(A,Bs)) == NULLSPCOL) goto err;
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      nsp_spcolmatrix_destroy(Bs);
+      return 1;
+    }
+  Scierror("Error: incompatible dimensions\n");
+ err:
+  nsp_spcolmatrix_destroy(Bs);
+  return RET_BUG;
+}
+
+/*
+ * OHMat3 = OHMat1 ./ OHMat2 
+ * The scalar cases are to be done XXX 
+ */
+
+static int int_spcolmatrix_div_el(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A,*B,*Res;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ((B = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
+  if ( SameDim(A,B) ) 
+    {
+      if ((Res = nsp_spcolmatrix_divel(A,B)) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) Res);
+      return 1;
+    }
+  Scierror("Error: Unfinished \n");
+  return RET_BUG;
+}
+
+
+
 /*
  *nsp_mat_sum: sum=Sum(a[,b]) 
  * a is unchanged 
@@ -1955,6 +2060,9 @@ static OpTab SpColMatrix_func[]={
   {"m2sp",int_spcolmatrix_m2sp},
   {"sp2m",int_spcolmatrix_sp2m},
   {"dst_sp_sp",int_spcolmatrix_multt},
+  {"dst_m_sp",int_spcolmatrix_multt_m_sp},
+  {"dst_sp_m",int_spcolmatrix_multt_sp_m},
+  /* {"dsl_sp_sp",int_spcolmatrix_div_el}, */
   {"mult_sp_sp",int_spcolmatrix_mult},
   {"mult_sp_m",int_spcolmatrix_mult_sp_m},
   {"mult_m_sp",int_spcolmatrix_mult_m_sp},

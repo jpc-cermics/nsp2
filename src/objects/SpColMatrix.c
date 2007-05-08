@@ -55,6 +55,11 @@ static void MultttLeft (SpCol *,char,int *,SpCol *,char,int);
 static void MultttBoth (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
 static void MultttRight (SpCol *,char,int *,SpCol *,char,int);
 
+static void DivttLeft (SpCol *,char,int *,SpCol *,char,int);
+static void DivttBoth (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
+static void DivttRight (SpCol *,char,int *,SpCol *,char,int);
+
+
 static int nsp_dichotomic_search(int x,const int val[],int imin,int imax);
 
 static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
@@ -3231,6 +3236,80 @@ static void MultttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype
 {
 }
 
+/*
+ * Divtt ( term to term multiplication ) 
+ */
+
+static void DivttLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+{
+  /*  A(i,j) != 0  and B(i,j) == 0 */
+  if ( Ltype == 'r') 
+    Li->R[*count] = Ai->R[k1]/0.0;
+  else 
+    { 
+      if ( Atype == 'r' )
+	{
+	  Li->C[*count].r =  Ai->R[k1]/0.0;
+	  Li->C[*count].i = 0.00/0.0;
+	}
+      else 
+	{
+	  Li->C[*count].r =  Ai->C[k1].r/0.0;
+	  Li->C[*count].i =  Ai->C[k1].i/0.0;
+	}
+    }
+  (*count)++;
+
+}
+
+static void DivttBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+{
+  if ( Ltype == 'r') 
+    {
+      Li->R[*count] =  Ai->R[k1]/Bi->R[k2];
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
+  else 
+    {
+      if ( Btype == 'r' )
+	{
+	  Li->C[*count].r =  Ai->C[k1].r/Bi->R[k2];
+	  Li->C[*count].i =  Ai->C[k1].i/Bi->R[k2];
+	}
+      else 
+	{
+	  if ( Atype == 'r' ) 
+	    {
+	      nsp_div_dc(Ai->R[k1],&Bi->C[k2],&Li->C[*count]);
+	    }
+	  else 
+	    {
+	      nsp_div_cc(&Ai->C[k1],&Bi->C[k2],&Li->C[*count]);
+	    }
+	}
+      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
+    }
+}
+
+static void DivttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+{
+  /* DivttRight  is used when A(i,j) == 0  and B(i,j) != 0 */
+  if ( Ltype == 'r') 
+    Li->R[*count] = 0.0/ Bi->R[k1];
+  else 
+    {
+      if ( Btype == 'r' )
+	{
+	  Li->C[*count].r = Li->C[*count].i = 0/ Bi->R[k1];
+	}
+      else 
+	{
+	  nsp_div_dc(0.0,&Bi->C[k1],&Li->C[*count]);
+	}
+    }
+  (*count)++;
+}
+
 
 /**
  * nsp_spcolmatrix_add:
@@ -3270,10 +3349,33 @@ NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
+
 NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 {
   return(BinaryOp(A,B,MultttLeft,MultttBoth,MultttRight));
 }
+
+/**
+ * nsp_spcolmatrix_div_el:
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
+ * 
+ * A ./ B 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+/* XXXXX : BinaryOp is not valid here because common zero will give 
+ * 0 and should give Nan 
+ */
+
+NspSpColMatrix *nsp_spcolmatrix_divel(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  return(BinaryOp(A,B,DivttLeft,DivttBoth,DivttRight));
+}
+
+
+
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
@@ -5066,10 +5168,6 @@ NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
  * A is changed 
  */
 
-/*
- *nsp_mat_div_el(A,B) a(i,i)/b(i,i) 
- * A is changed 
- */
 
 /*
  *nsp_mat_div_scalar(A,B) a(i,i)/b

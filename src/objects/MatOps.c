@@ -5315,7 +5315,7 @@ int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
 	{
 	  if ( B->rc_type == 'r') 
 	    for ( i = 0 ; i < A->mn ; i++ ) 
-	      A->C[i].r += B->C[i].r;
+	      A->C[i].r += B->R[i];
 	  else 
 	    for ( i = 0 ; i < A->mn ; i++ ) 
 	      { A->C[i].r += B->C[i].r;  A->C[i].i += B->C[i].i; }
