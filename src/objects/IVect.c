@@ -148,7 +148,7 @@ NspMatrix *nsp_ivect_2_mat(NspIVect *IV)
        || ( IV->first >  IV->last && IV->step > 0 ) 
        || IV->step == 0.00)
     {
-      Loc = nsp_matrix_create(NVOID,'r',(int) 0,(int) 0);
+      Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 0);
       return(Loc);
     }
   /* counting **/

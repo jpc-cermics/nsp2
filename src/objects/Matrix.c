@@ -150,7 +150,7 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
        || (first >  last && step > 0 )
        || step == 0.00)
     {
-      Loc = nsp_matrix_create(NVOID,'r',(int) 0,(int) 0);
+      Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 0);
       return(Loc);
     }
   /* counting **/

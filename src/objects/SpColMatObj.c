@@ -1066,13 +1066,7 @@ static int int_spcolmatrix_plus(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   if ((B = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( SameDim(A,B) ) 
-    {
-      NspSpColMatrix *Res =nsp_spcolmatrix_add(A,B);
-      MoveObj(stack,1,(NspObject *) Res);
-      return 1;
-    }
-  if ( A->mn <= 1) 
+  if ( A->m == 1 && A->n == 1) 
     {
       NspMatrix *C=nsp_spcolmatrix_op_scal(B,A,&flag,'+');
       if ( flag == 1) 
@@ -1087,7 +1081,7 @@ static int int_spcolmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  if ( B->mn <= 1) 
+  if ( B->m == 1 && A->n == 1 ) 
     {
       NspMatrix *C=nsp_spcolmatrix_op_scal(A,B,&flag,'+');
       if ( flag == 1) 
@@ -1101,6 +1095,12 @@ static int int_spcolmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,1,(NspObject *)C);
 	  return 1;
 	}
+    }
+  if ( SameDim(A,B) ) 
+    {
+      NspSpColMatrix *Res =nsp_spcolmatrix_add(A,B);
+      MoveObj(stack,1,(NspObject *) Res);
+      return 1;
     }
   Scierror("Error: incompatible dimensions\n");
   return RET_BUG;
@@ -1216,7 +1216,7 @@ static int int_spcolmatrix_sub(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) Res);
       return 1;
     }
-  if ( A->mn <= 1) 
+  if ( A->m == 1 && A->n == 1) 
     {
       NspMatrix *C=nsp_spcolmatrix_op_scal(B,A,&flag,'#'); /* -B + scalar **/
       if ( flag == 1) 
@@ -1235,7 +1235,7 @@ static int int_spcolmatrix_sub(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  if ( B->mn <= 1) 
+  if ( B->m == 1 && B->n == 1 ) 
     {
       NspMatrix *C=nsp_spcolmatrix_op_scal(A,B,&flag,'-');
       if ( flag == 1) 
