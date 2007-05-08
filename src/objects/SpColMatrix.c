@@ -4967,15 +4967,38 @@ NspSpColMatrix *nsp_spcolmatrix_spones(NspSpColMatrix *A)
 {
   int i,j;
   NspSpColMatrix *Loc;
-  if ((Loc= nsp_spcolmatrix_copy(A)) == NULLSPCOL) return(NULLSPCOL);
-  for ( i = 0 ; i < Loc->n ; i++ ) 
+  if ( A->rc_type == 'r') 
     {
-      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+      if ((Loc= nsp_spcolmatrix_copy(A)) == NULLSPCOL) return(NULLSPCOL);
+      for ( i = 0 ; i < Loc->n ; i++ ) 
 	{
-	  Loc->D[i]->R[j]= 1.0;
+	  for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	    {
+	      Loc->D[i]->R[j]= 1.0;
+	    }
 	}
+      return(Loc);
     }
-  return(Loc);
+  else 
+    {
+      if ((Loc= nsp_spcolmatrix_copy(A)) == NULLSPCOL) return(NULLSPCOL);
+      Loc->rc_type = 'r';
+      for ( i = 0 ; i < Loc->n ; i++ ) 
+	{
+	  int size = Loc->D[i]->size ;
+	  if ( size != 0) 
+	    {
+	      /* switch from complex to real */
+	      if ((Loc->D[i]->R =nsp_realloc_doubles(Loc->D[i]->R,size))
+		  == NULL) return NULL;
+	    }
+	  for ( j = 0 ; j < size ; j++ ) 
+	    {
+	      Loc->D[i]->R[j]= 1.0;
+	    }
+	}
+      return(Loc);
+    }
 }
 
 /**
