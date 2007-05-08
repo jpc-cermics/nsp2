@@ -315,7 +315,10 @@ if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_mult_m_sp 
 
-// XXX interfacer et ATESTER 
+Sp1= A*Sp';
+A1=Sp1;
+A2=A*A';
+if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_mult_scal 
 
@@ -351,18 +354,80 @@ Sp1=Sp.';
 A1=sp2m(Sp1);
 if or(A1<>A.') then pause;end
 
-// NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
+// Sp + Sp 
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1=Sp + Sp2 
+A1=sp2m(Sp1);
+if or(A1<>A +  A2 ) then pause;end
+
+// Sp + full -> full
+
+A2=rand(A);
+A1=Sp + A2 
+if or(A1<>A +  A2 ) then pause;end
+
+// full + Sp -> full
+
+A2=rand(A);
+A1= A2 + Sp;
+if or(A1<>A +  A2 ) then pause;end
+
 // NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
-// NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
-// nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
+
+// SP .* SP 
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1=Sp .* Sp2 
+A1=sp2m(Sp1);
+if or(A1<>A .* A2 ) then pause;end
+
+// SP .* full
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1=Sp .* A2
+A1=sp2m(Sp1);
+if or(A1<>A .* A2 ) then pause;end
+
+// full .* SP
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1= A2 .* Sp 
+A1=sp2m(Sp1);
+if or(A1<>A .* A2 ) then pause;end
+
+// SP .* scalar 
+
+Sp1=Sp .* 4 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+Sp1=Sp .* sparse(4) 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+Sp1= 4 .* Sp 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+Sp1= sparse(4) .* Sp 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+// Sp * scalar 
 
 Sp1=Sp*m2sp(4);
 A1=sp2m(Sp1);
 if or(A1<>A*4) then pause;end
 
-Sp1=Sp*m2sp([]);
+Sp1=Sp*m2sp(zeros(12,0));
 A1=sp2m(Sp1);
-if or(A1<>zeros(0,0)) then pause;end
+if or(A1<>zeros(12,0)) then pause;end
+
 
 // op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
 // NspMatrix *nsp_spcolmatrix_op_scal
@@ -376,13 +441,13 @@ if or(Sp1<>A-4) then pause;end
 Sp1= - Sp + m2sp(4);
 if or(Sp1<>-A+4) then pause;end
 
+
 // nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 
 Sp1 = sparse(Sp +m2sp(0.01));
 Sp2 = clean(Sp1,0.1);
 A1=sp2m(Sp2);
 if or(A1<>clean(A+0.01,0.1)) then pause;end
-
 
 // nsp_spcolmatrix_realpart: 
 
@@ -413,7 +478,6 @@ if or(A1<>full(Sp1)) then pause;end
 //  * WARNING : A must be real but the test is not done here 
 //  * ======
 //  */
-
 
 // nsp_spcolmatrix_sum
 
@@ -535,11 +599,13 @@ A1=sp2m(Sp1);
 A2=eye(4,7);
 if or(A1<>A2) then pause;end
 
-// NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
+// 
+// spones is not similar to ones ! 
+// spones(X) is a 1 0 matrix with same shape as X 
 
-Sp1=sp_ones(4,7);
+Sp1=sp_ones(Sp);
 A1=sp2m(Sp1);
-A2=ones(4,7);
+A2= b2m(m2b(full(Sp)));
 if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)

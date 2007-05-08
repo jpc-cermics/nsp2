@@ -40,7 +40,8 @@ TESTS= \
 	umfpack.dia \
 	unique.dia \
 	createbyset.dia \
-	sparse-mixed.dia
+	sparse-mixed.dia \
+	extract_empty.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
