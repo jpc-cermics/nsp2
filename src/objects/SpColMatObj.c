@@ -1350,7 +1350,7 @@ static int int_spcolmatrix_multt_sp_m(Stack stack, int rhs, int opt, int lhs)
  * The scalar cases are to be done XXX 
  */
 
-static int int_spcolmatrix_div_el(Stack stack, int rhs, int opt, int lhs)
+int int_spcolmatrix_div_el(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*B,*Res;
   CheckRhs(2,2);
