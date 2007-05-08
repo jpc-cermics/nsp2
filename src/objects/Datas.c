@@ -401,7 +401,10 @@ NspObject *nsp_frames_search_local_in_calling(const char *str)
  *nsp_frame_search_object:
  * @str: an object name. 
  * 
- * Search for an object with name @str in the first frame
+ * Search for an object with name @str in the first frame. 
+ * If the object is a local variable with no value the 
+ * object is also searched in the calling frames. 
+ * In that case the returned object should not be modified.
  * 
  * Return value: the #NspObject or #NULLOBJ.
  **/

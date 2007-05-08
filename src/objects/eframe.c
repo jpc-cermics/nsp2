@@ -417,10 +417,16 @@ extern int frames_search_inhibit;
 
 /**
  * nsp_eframe_search_object:
- * @F: 
- * @name: 
+ * @F: a #Nspframe 
+ * @name: a string 
  * 
- * 
+ * search object @name in the frame given by @F. Note that 
+ * If an object has no value but is a local variable then 
+ * the object is searched in calling stacks and if found 
+ * the object is returned.
+ * Note that in that case the local variable table is not modified
+ * and that the returned object should not be changed since it is 
+ * not a @F variable
  * 
  * Return value: 
  **/
