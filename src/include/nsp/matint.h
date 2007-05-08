@@ -49,12 +49,12 @@ extern int nsp_matint_delete_elements(NspObject *Obj, int *ind, int nb_elts, int
 extern int nsp_matint_delete_elements2(NspObject *Obj, 
 				       int *indrow, int nr, int rmin, int rmax,
 				       int *indcol, int nc, int cmin, int cmax);
-extern NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax);
+/* extern NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax); */
 extern NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts);
 
-extern NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elts, int cmin, int cmax);
+/* extern NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elts, int cmin, int cmax); */
 extern NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols);
-extern NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax);
+/* extern NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax);*/
 extern NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows);
 
 extern NspObject *nsp_matint_extract(NspObject *Obj, 
