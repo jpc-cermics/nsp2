@@ -497,7 +497,7 @@ void mexErrMsgTxt(char *error_msg)
  * @it: #mxReal or #mxComplex.
  * 
  * creates a new #NspMatrix of size (mxn). The array 
- * elements are not initialized.
+ * elements are initialized to zero.
  * 
  * Return value: a new #mxArray or error jump
  **/
@@ -508,11 +508,13 @@ mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
   if ( it == mxREAL ) 
     {
       if ((A = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT) nsp_mex_errjump();
+      memset(A->R,0,A->mn*sizeof(double));
     }
   else
     {
       if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
       A->convert = 'c'; /* matab complex style */
+      memset(A->R,0,2*A->mn*sizeof(double));
     }
   return NSP_OBJECT(A);
 }
