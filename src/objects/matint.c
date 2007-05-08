@@ -837,11 +837,11 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
       if ( m== 1 || n==1) 
 	{
 	  /* here the returned size is Ox1 or 1x0 depending on 
-	   * original object 
+	   * original object if it is a vector !!
 	   */
 	  if ( A->m == 1 ) 
 	    return MAT_INT(type)->clone(NVOID, Obj, 1, 0, FALSE);
-	  else 
+	  else if ( A->n == 1)
 	    return MAT_INT(type)->clone(NVOID, Obj, 0, 1, FALSE);
 	}
       return MAT_INT(type)->clone(NVOID, Obj, m, n, FALSE);
