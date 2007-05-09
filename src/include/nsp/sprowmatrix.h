@@ -211,7 +211,6 @@ static NspSpRowMatrix *nsp_sprowmatrix_xdr_load(XDR  *F);
 static int nsp_sprowmatrix_xdr_save(XDR  *F, NspSpRowMatrix *M);
 static char *nsp_sprowmatrix_type_as_string(void);
 static char *nsp_sprowmatrix_type_short_string(NspObject *v);
-static NspObject *SpRowLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int nsp_sprowmatrix_eq(NspObject *A,NspObject *B);
 static int nsp_sprowmatrix_neq(NspObject *A,NspObject *B);
 #endif 
