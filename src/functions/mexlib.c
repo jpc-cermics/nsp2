@@ -723,11 +723,12 @@ mxArray *mxCreateSparse(int m, int n, int nzmax,
 
 /**
  * mxCreateString:
- * @string: 
+ * @string: a string 
  * 
+ * returns a new #NspSMatrix containing a copy of @string and 
+ * returned as a #mxArray
  * 
- * 
- * Return value: 
+ * Return value: a new #mxArray 
  **/
 
 mxArray *mxCreateString(const char *string)
@@ -740,9 +741,9 @@ mxArray *mxCreateString(const char *string)
 
 /**
  * mxGetField:
- * @pa: 
- * @i: 
- * @fieldname: 
+ * @pa: a #mxArray 
+ * @i:  an integer 
+ * @fieldname: a string 
  * 
  * here pas is supposed to be a Hash Table 
  * the index is not used i.e we only accept 
@@ -2457,5 +2458,31 @@ void mxSetM(mxArray *ptr, mwSize m)
     {
       Scierror("Error in %s: mxSetM failed\n","mex");
       nsp_mex_errjump();
+    }
+}
+
+/**
+ * mxFreeSparseMtlbTriplet:
+ * @ptr: 
+ * 
+ * utility to free memory used in a Matlab triplet 
+ * since this memory is not freed when the sparse matrix 
+ * is not directly in rhs or lhs but for example in 
+ * a field of a struct or in a cell
+ **/
+
+void mxFreeSparseMtlbTriplet(mxArray *ptr) 
+{
+  if ( IsSpColMat(ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  ptr;
+      if (A->convert == 't' ) 
+	{
+	  A->convert = 'v';
+	  FREE(A->triplet.Jc);
+	  FREE(A->triplet.Ir);
+	  FREE(A->triplet.Pr);
+	  FREE(A->triplet.Pi);
+	}
     }
 }

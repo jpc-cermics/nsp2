@@ -202,7 +202,7 @@ extern mxArray *mxCreateNumericArray(int ndim, const int *dims,
 extern void mxSetFieldByNumber(mxArray *array_ptr, int index,  
 			       int field_number, mxArray *value);
 
-
+extern void mxFreeSparseMtlbTriplet(mxArray *ptr);
 
 
 #endif /* NSP_MEX */
