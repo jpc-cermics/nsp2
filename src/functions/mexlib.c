@@ -2471,7 +2471,7 @@ void mxSetM(mxArray *ptr, mwSize m)
  * a field of a struct or in a cell
  **/
 
-void mxFreeSparseMtlbTriplet(mxArray *ptr) 
+void mxFreeSparseMtlbTriplet(const mxArray *ptr) 
 {
   if ( IsSpColMat(ptr))
     {
