@@ -93,6 +93,10 @@ static int nsp_endmex_backconvert(NspObject *Obj)
   return OK;
 }
 
+static void nsp_endmex_backfree(NspObject *Obj)
+{
+  mxFreeSparseMtlbTriplet((mxArray *) Obj);
+}
 
 static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,mxArray *prhs[])
 {
@@ -117,6 +121,7 @@ static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,mxArray *prhs
       NspObject *obj = prhs[i-1];
       if ( obj != NULLOBJ ) 
 	{
+	  nsp_endmex_backfree(obj) ;
 	  if  (IsHobj(obj) ) 
 	    {
 	      /* Hopt was created when entering the interface 
