@@ -1564,6 +1564,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
   else 
     {
       int cols = (Cols == NULL) ? A->n : Cols->mn;
+      nsp_matrix_destroy(Index);
       return nsp_spcolmatrix_create(NVOID,A->rc_type,0,cols);
     }
   *err=0;
@@ -1630,6 +1631,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
   if ( Loc != NULL) nsp_spcolmatrix_destroy(Loc);
   return NULL;
 }
+
 
 
 /**
