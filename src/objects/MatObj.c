@@ -1170,6 +1170,22 @@ static int int_meth_matrix_get_nnz(void *self, Stack stack,int rhs,int opt,int l
   return 1;
 }
 
+static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NspMatrix *Diag;
+  int k=0;
+  CheckRhs (1,2);
+  CheckLhs (0,0); 
+  if ((Diag = GetMat (stack, 1)) == NULLMAT)   return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
+    }
+  if (nsp_matrix_set_diag ((NspMatrix *) self, Diag, k) != OK)
+    return RET_BUG;
+  return 0;
+}
+
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
   { "blas_axpy", int_meth_matrix_axpy},  /* possible other name:  add_scal_time_mat  */
@@ -1177,6 +1193,7 @@ static NspMethods matrix_methods[] = {
   { "scale_rows",int_meth_matrix_scale_rows}, 
   { "scale_cols",int_meth_matrix_scale_cols}, 
   { "get_nnz", int_meth_matrix_get_nnz},
+  { "set_diag",(nsp_method *) int_meth_matrix_set_diag}, /* this one could be generic in matint */
   { (char *) 0, NULL}
 };
 
