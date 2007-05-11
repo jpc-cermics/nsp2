@@ -115,6 +115,7 @@ int nsp_sprow_alloc_col_triplet(NspSpRowMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
   if ((M->triplet.Jc = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
+  M->triplet.Jc[M->n]=0;
   if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
   if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax))) == NULL)
       return FAIL;
@@ -342,6 +343,7 @@ static int nsp_sprow_alloc_triplet(NspSpRowMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
   if ((M->triplet.Jc = malloc(sizeof(int)*(M->m+1)))== NULL) return FAIL;
+  M->triplet.Jc[M->m]=0;
   if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
   if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
       return FAIL;
