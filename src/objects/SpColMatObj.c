@@ -558,8 +558,8 @@ static int int_spcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpColMatrix *A,*B;
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
+  NspSpColMatrix *A,*B,*B1=NULLSPCOL;
+  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT, *Bm;
   CheckRhs(3,4);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto ret_bug;
@@ -588,7 +588,16 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
     }
-  if ((B = GetSpCol(stack,rhs)) == NULLSPCOL) goto ret_bug;
+  if ( IsMatObj(stack,rhs) )
+    {
+      if ((Bm = GetMat(stack,rhs)) == NULLMAT ) goto ret_bug;
+      if ((B1= B=nsp_spcolmatrix_from_mat(Bm)) == NULLSPCOL) goto ret_bug;
+    }
+  else if ( IsSpColMatObj(stack,rhs)) 
+    {
+      if ((B = GetSpCol(stack,rhs)) == NULLSPCOL) goto ret_bug;
+    }
+
   if ( B == A ) 
     { if ((B = GetSpColCopy(stack,rhs)) == NULLSPCOL) goto ret_bug;}
   if ( rhs == 3 ) 
@@ -596,11 +605,13 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
   else 
     { if (nsp_spcolmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
   NSP_OBJECT(A)->ret_pos = 1;
+  nsp_spcolmatrix_destroy(B1);
   nsp_matrix_destroy(Rows1);
   nsp_matrix_destroy(Cols1);
   return 1;
  ret_bug: 
   /* delete if non null; */
+  nsp_spcolmatrix_destroy(B1);
   nsp_matrix_destroy(Rows1);
   nsp_matrix_destroy(Cols1);
   return RET_BUG;
