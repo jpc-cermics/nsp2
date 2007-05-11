@@ -203,6 +203,8 @@ extern void mxSetFieldByNumber(mxArray *array_ptr, int index,
 			       int field_number, mxArray *value);
 
 extern void mxFreeSparseMtlbTriplet(const mxArray *ptr);
+extern void mxSparseMtlbTripletTonsp(const mxArray *ptr) ;
+
 
 
 #endif /* NSP_MEX */

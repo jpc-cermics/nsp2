@@ -832,6 +832,7 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
   if ((Obj =nsp_object_copy_and_name(fieldname,value))== NULLOBJ)
     nsp_mex_errjump();
   */
+
   if ( nsp_object_set_name((NspObject *) value,fieldname)== FAIL)
     nsp_mex_errjump();
 
@@ -2468,7 +2469,7 @@ void mxSetM(mxArray *ptr, mwSize m)
 
 /**
  * mxFreeSparseMtlbTriplet:
- * @ptr: 
+ * @ptr: a #mxArray 
  * 
  * utility to free memory used in a Matlab triplet 
  * since this memory is not freed when the sparse matrix 
@@ -2491,3 +2492,26 @@ void mxFreeSparseMtlbTriplet(const mxArray *ptr)
 	}
     }
 }
+
+
+/**
+ * mxSparseMtlbTripletTonsp:
+ * @ptr: a #mxArray 
+ *
+ * utility to explicitely back convert a sparse from 
+ * its matlab triplet representation to nsp internal.
+ * This is usefull when the sparse matrix is in a cell
+ * or a struct for which back convertion is not automatic 
+ * when quitting mexfile.
+ * 
+ **/
+
+void mxSparseMtlbTripletTonsp(const mxArray *ptr) 
+{
+  if ( nsp_spcol_update_from_triplet((NspSpColMatrix *) ptr)==FAIL) 
+    {
+      nsp_mex_errjump();
+    }
+}
+
+
