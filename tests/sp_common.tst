@@ -78,8 +78,19 @@ if or(A1<>[A # A]) then pause;end
 // nsp_spcolmatrix_get_elt(B,i,j)
 // nsp_spcolmatrix_store(A,r,c,col,B,r1,c1)
 
+// insert a sparse 
+
 Sp1=Sp;
 Sp1(1:2,3)=m2sp([7;8]);
+A1=sp2m(Sp1);
+A2=A;
+A2(1:2,3)=[7;8];
+if or(A1<>A2) then pause;end
+
+// insert a full 
+
+Sp1=Sp;
+Sp1(1:2,3)=[7;8];
 A1=sp2m(Sp1);
 A2=A;
 A2(1:2,3)=[7;8];
@@ -94,6 +105,13 @@ A2=A;
 A2(3,5:7)=[7,8,9];
 if or(A1<>A2) then pause;end
 
+Sp1=Sp;
+Sp1(3,5:7)=[7,8,9];
+A1=sp2m(Sp1);
+A2=A;
+A2(3,5:7)=[7,8,9];
+if or(A1<>A2) then pause;end
+
 // 
 
 Sp1=Sp;
@@ -103,10 +121,24 @@ A2=A;
 A2(3,5)=[7];
 if or(A1<>A2) then pause;end
 
+Sp1=Sp;
+Sp1(3,5)=[7];
+A1=sp2m(Sp1);
+A2=A;
+A2(3,5)=[7];
+if or(A1<>A2) then pause;end
+
 //
 
 Sp1=Sp;
 Sp1([1,10],[5,11])=m2sp([1,2;3,4]);
+A1=sp2m(Sp1);
+A2=A;
+A2([1,10],[5,11])=[1,2;3,4];
+if or(A1<>A2) then pause;end
+
+Sp1=Sp;
+Sp1([1,10],[5,11])=[1,2;3,4];
 A1=sp2m(Sp1);
 A2=A;
 A2([1,10],[5,11])=[1,2;3,4];
@@ -122,7 +154,21 @@ A2([1,4,7])=0;
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
+Sp1([1,4,7])=0;
+A1=sp2m(Sp1);
+A2=A;
+A2([1,4,7])=0;
+if or(A1<>A2) then pause;end
+
+Sp1=Sp;
 Sp1([1,4,7])=m2sp([8,9,10]);
+A1=sp2m(Sp1);
+A2=A;
+A2([1,4,7])=[8,9,10];
+if or(A1<>A2) then pause;end
+
+Sp1=Sp;
+Sp1([1,4,7])=[8,9,10];
 A1=sp2m(Sp1);
 A2=A;
 A2([1,4,7])=[8,9,10];
@@ -236,7 +282,6 @@ Sp1=Sp([2,4,5,5,3],:);
 A1=sp2m(Sp1);
 A2=A([2,4,5,5,3],:);
 if or(A1<>A2) then pause;end
-
 
 // nsp_spcolmatrix_diag_extract 
 
