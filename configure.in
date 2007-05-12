@@ -674,6 +674,10 @@ AC_CHECK_FUNCS(usleep)
 AC_CHECK_FUNCS(mkstemp)
 AC_CHECK_FUNCS(tgamma)
 AC_CHECK_FUNCS(lgamma)
+AC_CHECK_FUNCS(getrusage)
+AC_CHECK_FUNCS(clock)
+AC_CHECK_FUNCS(times)
+
 
 AC_CHECK_FUNCS(finite isnan isinf)
 
@@ -685,6 +689,7 @@ AC_CHECK_HEADERS(values.h)
 AC_CHECK_HEADERS(limits.h) 
 AC_CHECK_HEADERS(float.h) 
 AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(sys/resource.h)
 
 ##################
 ## termcap library
