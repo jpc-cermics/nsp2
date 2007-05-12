@@ -1,5 +1,6 @@
 /* Nsp
- * Copyright (C) 2003-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
