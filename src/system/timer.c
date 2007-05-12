@@ -1,8 +1,23 @@
-/* 
- * modified Scilab file 
- * This Software is ( Copyright INRIA/ENPC )
+/* Nsp
+ * Copyright (C) 2003-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
  * 
- */
+ *------------------------------------------------------------------*/
 
 #include <glib.h>
 #include <stdio.h>
@@ -10,10 +25,16 @@
 #include "nsp/machine.h"
 #include "nsp/math.h"
 #include "nsp/system.h"
+#include "nsp/sciio.h"
+
+#ifdef HAVE_SYS_RESOURCE_H 
+#include <sys/resource.h>
+#endif 
 
 #ifdef HAVE_SYS_TIME_H 
 #include <sys/time.h>
 #endif 
+
 #ifndef CLOCKS_PER_SEC
 #if defined(sun)
 #define CLOCKS_PER_SEC 1000000
@@ -24,11 +45,35 @@
  * nsp_timer:
  * 
  * returns the elapsed processor time between successive calls.
+ * If getrusage() is fount it is used else clock() is used. 
+ * Note that acording to clock man page:  the  time  can  wrap  around.  
+ * On a 32bit system  where CLOCKS_PER_SEC  equals 1000000 this function 
+ * will return the same value approximately every 72 minutes.
  * 
  * Return value: a double.
  **/
 
-double nsp_timer()
+#ifdef HAVE_GETRUSAGE
+/* exists in  psapi.dll for full getrusage function emulation on windows 
+ */
+double nsp_timer(void)
+{
+  static struct rusage usage1={{0,0},{0,0}};
+  struct rusage usage2;
+  double etime;
+  if ( getrusage(RUSAGE_SELF,&usage2) !=0) return 0;
+  etime= (double)(usage2.ru_utime.tv_sec - usage1.ru_utime.tv_sec);
+  etime += (double)(usage2.ru_stime.tv_sec - usage1.ru_stime.tv_sec);
+  etime +=  1.0e-6 *(usage2.ru_utime.tv_usec - usage1.ru_utime.tv_usec);
+  etime +=  1.0e-6 *(usage2.ru_stime.tv_usec - usage1.ru_stime.tv_usec);
+  usage1=usage2;
+  return etime;
+}
+
+#else 
+
+#ifdef HAVE_CLOCK
+double nsp_timer(void)
 {
   double etime;
   static clock_t t1 = (clock_t) -1 ;
@@ -38,6 +83,18 @@ double nsp_timer()
   t1 = t2;
   return etime;
 }
+
+#else 
+
+double nsp_timer_void(void)
+{
+  Sciprintf("Warning: timer is not available\n");
+  return 0;
+}
+
+#endif  /* HAVE_CLOCK */
+#endif  /* HAVE_GETRUSAGE */
+
 
 /**
  * nsp_stimer:
@@ -71,11 +128,14 @@ typedef enum {TIC=0, TOC=1} tictoc;
 
 int nsp_tictoc(double *etime)
 {
+  char *str;
   static double start_time=0; 
   static tictoc last_call = TOC;
   GTimeVal time;
 
   g_get_current_time(&time);
+  str= g_time_val_to_iso8601(&time);
+  fprintf(stderr,"time= %s\n",str);
 
   if ( etime != NULL )  /* toc */
     {
