@@ -1271,7 +1271,7 @@ static int int_sprowmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
 
 static int int_sprowmatrix_mini(Stack stack, int rhs, int opt, int lhs)
 {
-  /* return ( int_sprowmatrix__maxi(stack,rhs,opt,lhs,nsp_sprowmatrix_mini,-1)); */
+  return ( int_sprowmatrix__maxi(stack,rhs,opt,lhs,nsp_sprowmatrix_mini,-1));
   return RET_BUG;
 }
 
@@ -1874,6 +1874,8 @@ static OpTab SpRowMatrix_func[]={
   {"setrowscols_sprow",int_sprowmatrix_setrc},
   {"max_sprow" ,  int_sprowmatrix_maxi },
   {"max_sprow_s" ,  int_sprowmatrix_maxi },
+  {"min_sprow" ,  int_sprowmatrix_mini },
+  {"min_sprow_s" ,  int_sprowmatrix_mini },
   {"extractelts_sprow",int_sprowmatrix_extractelts},
   {"nnz_sprow",int_sprowmatrix_nnz},
   {"triu_sprow", int_sprowmatrix_triu},

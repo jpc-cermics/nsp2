@@ -4803,13 +4803,7 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
 static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 {
   int imax = 0,i,k;
-  double amax=0.0; imax=1;
-  /* find a first value */
-  for ( i = 0 ; i < A->n ; i++ ) 
-    {
-      if ( A->D[i]->size !=0 ) 
-	{ amax = A->D[i]->R[0];imax = A->D[i]->J[0]+1; break;}
-    }
+  double amax= -DBL_MAX; imax=-1;
   /* find the max  */
   for ( i = 0 ; i < A->n ; i++ ) 
     {
@@ -4822,11 +4816,41 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 	    }
 	}
     }
-  if ( amax != 0.0 )
+  if ( amax > 0.0 )
     {
       if (nsp_spcolmatrix_resize_col(M,0,1) == FAIL) return 0;
       M->D[0]->J[0]=0;
       M->D[0]->R[0]= amax;
+    }
+  else 
+    {
+      int kmax;
+      /* find a zero */
+      for ( i = 0 ; i < A->n ; i++ ) 
+	{
+	  kmax=0;
+	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	    {
+	      if ( kmax < A->D[i]->J[k] ) 
+		{
+		  break;
+		}
+	      kmax++;
+	    }
+	  if ( kmax < A->m ) break;
+	}
+      if ( kmax == A->m) 
+	{
+	  /* The max was really negative */
+	  if (nsp_spcolmatrix_resize_col(M,0,1) == FAIL) return 0;
+	  M->D[0]->J[0]=0;
+	  M->D[0]->R[0]= amax;
+	}
+      else
+	{
+	  /* the max is zero */
+	  imax = (kmax+1)+A->m*i;
+	}
     }
   return imax;
 }
@@ -4846,7 +4870,7 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 {
   int imax = 1,i,k;
-  double amax=0.0; 
+  double amax= -DBL_MAX;
   /* find a first value */
   for ( i = 0 ; i < A->n ; i++ ) 
     {
@@ -4871,7 +4895,16 @@ static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 	{
 	  if ( A->D[i]->R[ok] > amax ) 
 	    {
-	      amax = A->D[i]->R[k];
+	      amax = A->D[i]->R[ok];
+	      imax = i+1;
+	    }
+	}
+      else 
+	{
+	  /* max is realized by a zero */
+	  if ( 0 > amax )
+	    {
+	      amax = 0;
 	      imax = i+1;
 	    }
 	}
@@ -4900,9 +4933,7 @@ static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 {
   int imax = 0,k;
-  double amax=0.0; imax=1;
-  /* find a first value */
-  if ( A->D[j]->size != 0 ) { amax = A->D[j]->R[0] ; imax = A->D[j]->J[0]+1;}
+  double amax= -DBL_MAX; imax=-1;
   /* find the max */
   for ( k = 0 ; k < A->D[j]->size ; k++) 
     {
@@ -4912,15 +4943,38 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 	  imax = A->D[j]->J[k]+1;
 	}
     }
-  if ( amax != 0.0 )
+  if ( amax > 0.0 )
     {
       if (nsp_spcolmatrix_resize_col(M,j,1) == FAIL) return 0;
       M->D[j]->J[0]= 0;
       M->D[j]->R[0]= amax;
     }
+  else 
+    {
+      int kmax=0;
+      for ( k = 0 ; k < A->D[j]->size ; k++) 
+	{
+	  if ( kmax < A->D[j]->J[k] ) 
+	    {
+	      break;
+	    }
+	  kmax++;
+	}
+      if ( kmax == A->m) 
+	{
+	  /* The max was really negative */
+	  if (nsp_spcolmatrix_resize_col(M,j,1) == FAIL) return 0;
+	  M->D[j]->J[0]=0;
+	  M->D[j]->R[0]= amax;
+	}
+      else
+	{
+	  /* the max is zero */
+	  imax = (kmax+1);
+	}
+    }
   return imax;
 }
-
 
 /**
  * nsp_spcolmatrix_maxi:
@@ -4948,11 +5002,223 @@ NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **
   return SpColMaxiMini(A,flag,Imax,lhs,SpColMaxi1,SpColMaxi2,SpColMaxi3);
 }
 
-/*
- *nsp_mat_mini: Mini(A)
- * A is unchanged 
- * rs and ri are set to the result 
- */
+
+
+/**
+ * SpColMini1:
+ * @A: a #NspSpColMatrix
+ * @M: a #NspSpColMatrix
+ * 
+ * M(1) = Mini(A) min of all the elements 
+ * 
+ * Return value: the indice of the element of Matrix @A which realize the minimum
+ * (the indice is given as a global indice of a mxn Matrix).
+ **/
+
+static int SpColMini1(NspSpColMatrix *A, NspSpColMatrix *M)
+{
+  int imin = 0,i,k;
+  double amin= DBL_MAX; imin=-1;
+  /* find the min  */
+  for ( i = 0 ; i < A->n ; i++ ) 
+    {
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->R[k] < amin ) 
+	    {
+	      amin = A->D[i]->R[k];
+	      imin = (A->D[i]->J[k]+1)+A->m*i;
+	    }
+	}
+    }
+  if ( amin < 0.0 )
+    {
+      if (nsp_spcolmatrix_resize_col(M,0,1) == FAIL) return 0;
+      M->D[0]->J[0]=0;
+      M->D[0]->R[0]= amin;
+    }
+  else 
+    {
+      int kmin;
+      /* find a sparse zero  */
+      for ( i = 0 ; i < A->n ; i++ ) 
+	{
+	  kmin=0;
+	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	    {
+	      if ( kmin < A->D[i]->J[k] ) 
+		{
+		  break;
+		}
+	      kmin++;
+	    }
+	  if ( kmin < A->m ) break;
+	}
+      if ( kmin == A->m) 
+	{
+	  /* The min was really positive */
+	  if (nsp_spcolmatrix_resize_col(M,0,1) == FAIL) return 0;
+	  M->D[0]->J[0]=0;
+	  M->D[0]->R[0]= amin;
+	}
+      else
+	{
+	  /* the min is zero */
+	  imin = (kmin+1)+A->m*i;
+	}
+    }
+  return imin;
+}
+
+
+/**
+ * SpColMini3:
+ * @A: a #NspSpColMatrix
+ * @j: 
+ * @M: a #NspSpColMatrix
+ * @count: 
+ * 
+ * utility : M(j)=Min A(j,:) : min of row j  
+ *
+ * Return value: the column indice which realize the max of row @j.
+ **/
+
+static int SpColMini3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
+{
+  int imin = 1,i,k;
+  double amin= DBL_MAX;
+  /* find a first value */
+  for ( i = 0 ; i < A->n ; i++ ) 
+    {
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->J[k] == j ) 
+	    { amin = A->D[i]->R[k] ; imin = i+1; break;}
+	  if ( j < A->D[i]->J[k] ) break;
+	}
+      if ( amin != 0.0 ) break;
+    }
+  /* find the min */
+  for ( i = 0 ; i < A->n ; i++ ) 
+    {
+      int ok=-1;
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->J[k] == j ) { ok=k;break;}
+	  if ( j < A->D[i]->J[k] ) break;
+	}
+      if ( ok != -1 )
+	{
+	  if ( A->D[i]->R[ok] < amin ) 
+	    {
+	      amin = A->D[i]->R[ok];
+	      imin = i+1;
+	    }
+	}
+      else 
+	{
+	  /* min is realized by a zero */
+	  if ( 0 < amin )
+	    {
+	      amin = 0;
+	      imin = i+1;
+	    }
+	}
+    }
+  if ( amin != 0.0 )
+    {
+      M->D[0]->J[*count]= j;
+      M->D[0]->R[*count]= amin; (*count)++;
+    }
+  return imin;
+}
+
+
+/**
+ * SpColMini2:
+ * @A: a #NspSpColMatrix
+ * @j: 
+ * @M: a #NspSpColMatrix
+ *
+ * utility: M(j)=Min A(:,j) find the min of column j 
+ * 
+ * 
+ * Return value: the row indice which realize the min of column @j.
+ **/
+
+static int SpColMini2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
+{
+  int imin = 0,k;
+  double amin= DBL_MAX; imin=-1;
+  /* find the min */
+  for ( k = 0 ; k < A->D[j]->size ; k++) 
+    {
+      if ( A->D[j]->R[k] < amin ) 
+	{
+	  amin = A->D[j]->R[k];
+	  imin = A->D[j]->J[k]+1;
+	}
+    }
+  if ( amin < 0.0 )
+    {
+      if (nsp_spcolmatrix_resize_col(M,j,1) == FAIL) return 0;
+      M->D[j]->J[0]= 0;
+      M->D[j]->R[0]= amin;
+    }
+  else 
+    {
+      int kmin=0;
+      for ( k = 0 ; k < A->D[j]->size ; k++) 
+	{
+	  if ( kmin < A->D[j]->J[k] ) 
+	    {
+	      break;
+	    }
+	  kmin++;
+	}
+      if ( kmin == A->m) 
+	{
+	  /* The min was really negative */
+	  if (nsp_spcolmatrix_resize_col(M,j,1) == FAIL) return 0;
+	  M->D[j]->J[0]=0;
+	  M->D[j]->R[0]= amin;
+	}
+      else
+	{
+	  /* the min is zero */
+	  imin = (kmin+1);
+	}
+    }
+  return imin;
+}
+
+/**
+ * nsp_spcolmatrix_mini:
+ * @A: a #NspSpColMatrix
+ * @flag: a string among  "c", "r" and "g"
+ * @Imax: a #NspMatrix 
+ * @lhs: an integer 
+ * 
+ * [max,imax]=max(A,'c'|'r'|'g')
+ * Min =nsp_mat_mini(A,B,Imax,lhs)
+ *     A is unchanged 
+ * if B= 'c' the max for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the max for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the minimum 
+ * Imax is created if lhs == 2 
+ * Note that Imax is a full matrix. 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_mini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+{
+  return SpColMaxiMini(A,flag,Imax,lhs,SpColMini1,SpColMini2,SpColMini3);
+}
+
+
 
 /*
  * Creates a Matrix and initialize it with the 

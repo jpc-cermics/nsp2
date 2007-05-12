@@ -2101,12 +2101,62 @@ NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
+/**
+ * nsp_sprowmatrix_mini:
+ * @A: 
+ * @flag: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * [max,imax]=max(A,'c'|'r'|'g')
+ * Max =nsp_mat_mini(A,B,Imax,lhs)
+ *     A is unchanged 
+ * if B= 'c' the max for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the max for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the minimum 
+ * Imax is created if lhs == 2 
+ * Note that Imax is a full matrix XXX not a good idea ? 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
-/*
- *nsp_mat_mini: Mini(A)
- * A is unchanged 
- * rs and ri are set to the result 
- */
+NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+{
+  NspSpColMatrix *loc=NULL;
+  switch (flag[0]) 
+    {
+    case 'f':
+    case 'F':
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,flag,Imax,lhs);
+      /* Imax is for the transpose */
+      if ( lhs == 2)
+	{
+	  int ival = (*Imax)->R[0]-1;
+	  int rb= ival % A->n;
+	  int cb= (ival - rb )/A->n;
+	  (*Imax)->R[0]= rb +1 + cb*A->m;
+	}
+      break;
+    case 'r':
+    case 'R':
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,"c",Imax,lhs);break;
+    case 'c':
+    case 'C': 
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,"r",Imax,lhs);break;
+    }
+  if ( lhs == 2 )
+    {
+      int ival = (*Imax)->m;
+      (*Imax)->m = (*Imax)->n;
+      (*Imax)->n = ival;
+    }
+  return nsp_spcolmatrix_cast_to_sprow(loc);
+}
+
+
+
 
 /*
  * Creates a Matrix and initialize it with the 

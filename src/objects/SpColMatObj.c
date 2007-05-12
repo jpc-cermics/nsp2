@@ -558,7 +558,7 @@ static int int_spcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpColMatrix *A,*B,*B1=NULLSPCOL;
+  NspSpColMatrix *A,*B=NULLSPCOL,*B1=NULLSPCOL;
   NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT, *Bm;
   CheckRhs(3,4);
   CheckLhs(1,1);
@@ -1493,7 +1493,7 @@ static int int_spcolmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_mini(Stack stack, int rhs, int opt, int lhs)
 {
-  /* return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_mini,-1)); */
+  return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_mini,-1));
   return RET_BUG;
 }
 
@@ -2113,6 +2113,8 @@ static OpTab SpColMatrix_func[]={
   {"setrowscols_sp",int_spcolmatrix_setrc},
   {"max_sp" ,  int_spcolmatrix_maxi },
   {"max_sp_s" ,  int_spcolmatrix_maxi },
+  {"min_sp" ,  int_spcolmatrix_mini },
+  {"min_sp_s" ,  int_spcolmatrix_mini },
   {"extractelts_sp",int_spcolmatrix_extractelts},
   {"nnz_sp",int_spcolmatrix_nnz},
   {"triu_sp", int_spcolmatrix_triu},
