@@ -165,6 +165,7 @@ extern NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n);
  extern int nsp_sprowmatrix_imagpart(NspSpRowMatrix *A); 
  extern NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag); 
  extern NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
+extern NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs);
  extern NspSpRowMatrix *nsp_sprowmatrix_eye(int m, int n); 
  extern NspSpRowMatrix *nsp_sprowmatrix_ones(int m, int n); 
  extern NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n); 
