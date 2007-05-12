@@ -16,6 +16,7 @@
 #undef HAVE_FLOAT_H
 #undef HAVE_LIMITS_H
 #undef HAVE_SYS_TIME_H
+#undef HAVE_SYS_RESOURCE_H
 
 /* Define for using dld for sunos */
 #undef SUNOSDLD
@@ -58,6 +59,15 @@
 
 /* Define if have usleep: used in graphics/periX11.c */
 #undef HAVE_USLEEP
+
+/* Define if have getrusage */
+#undef HAVE_GETRUSAGE
+
+/* Define if have clock */
+#undef HAVE_CLOCK
+
+/* Define if have times */
+#undef HAVE_TIMES
 
 /* Define if have isinf */
 #undef HAVE_ISINF
