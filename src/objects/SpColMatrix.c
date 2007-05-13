@@ -4824,7 +4824,7 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
     }
   else 
     {
-      int kmax;
+      int kmax=0;
       /* find a zero */
       for ( i = 0 ; i < A->n ; i++ ) 
 	{
@@ -5039,7 +5039,7 @@ static int SpColMini1(NspSpColMatrix *A, NspSpColMatrix *M)
     }
   else 
     {
-      int kmin;
+      int kmin=0;
       /* find a sparse zero  */
       for ( i = 0 ; i < A->n ; i++ ) 
 	{

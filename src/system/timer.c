@@ -129,15 +129,15 @@ typedef enum {TIC=0, TOC=1} tictoc;
 
 int nsp_tictoc(double *etime)
 {
-  char *str;
   static double start_time=0; 
   static tictoc last_call = TOC;
   GTimeVal time;
-
-  g_get_current_time(&time);
+  /* 
+  char *str;
   str= g_time_val_to_iso8601(&time);
   fprintf(stderr,"time= %s\n",str);
-
+  */
+  g_get_current_time(&time);
   if ( etime != NULL )  /* toc */
     {
       if ( last_call != TIC )
