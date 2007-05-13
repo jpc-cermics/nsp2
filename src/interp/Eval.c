@@ -150,8 +150,12 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		{
 		  /* too many arguments returned */
 		  /* ex:A=1:5; -(A{1:3})*/
-		  Scierror("Error: too many values (%d) returned as a first argument of unary operator %s\n",
-			   nargs,nsp_astcode_to_name(L->type));
+		  if ( nargs < 1 ) 
+		    Scierror("Error: not enough value (%d) returned as a first argument of unary operator %s\n",
+			     nargs,nsp_astcode_to_name(L->type));
+		  else 
+		    Scierror("Error: too many values (%d) returned as a first argument of unary operator %s\n",
+			     nargs,nsp_astcode_to_name(L->type));
 		  /* clean the stack */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,RET_BUG,L1);
@@ -177,7 +181,12 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  /* too many arguments returned */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  /* ex: A=1:5;A{1:3} && 9 */
-		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,nsp_astcode_to_name(L->type));
+		  if ( nargs < 1 ) 
+		    Scierror("Error: not enough value (%d) returned as a first argument of binary operator %s\n",
+			     nargs,nsp_astcode_to_name(L->type));
+		  else 
+		    Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",
+			     nargs,nsp_astcode_to_name(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -201,8 +210,14 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      if ( n != 1 ) 
 		{
 		  /* to many argument returned ex:  A=1:5; 9 && A{1:3} */
+
 		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
-		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,nsp_astcode_to_name(L->type));
+		  if ( n < 1 ) 
+		    Scierror("Error: not enough value (%d) returned as second argument of binary operator %s\n",
+			     n,nsp_astcode_to_name(L->type));
+		  else 
+		    Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",
+			     n,nsp_astcode_to_name(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -399,27 +414,66 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 	case ROWCONCAT:
 	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
+	  if ( nargs > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a first argument of row concatenation %s\n",
+		       nargs,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
 	      SHOWBUG(stack,n,L1);
 	    }
+	  if ( n > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a second argument of row concatenation %s\n",
+		       n,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs+n);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  nargs += n;
+	  /* Note here that nargs can be equal to one if one of the argument was a comment */
+	  if ( nargs < 2 ) return nargs;
 	  if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
 	    SHOWBUG(stack,n,L);
 	  return n;
 	  break;
-
 	case COLCONCAT:
 	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 )  SHOWBUG(stack,nargs,L1);
+	  if ( nargs > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a first argument of column concatenation %s\n",
+		       nargs,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0)  
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
 	      SHOWBUG(stack,n,L1);
 	    }
+	  if ( n > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a second argument of column concatenation %s\n",
+		       n,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs+n);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  nargs += n;
+	  /* Note here that nargs can be equal to one if one of the argument was a comment */
+	  if ( nargs < 2 ) return nargs;
 	  if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
 	    SHOWBUG(stack,n,L);
 	  return n;
@@ -428,13 +482,33 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case DIAGCONCAT:
 	  O1=nsp_frames_search_op_object("concatdiag");
 	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
+	  if ( nargs > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a first argument of diag concatenation %s\n",
+		       nargs,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  if ((n =nsp_eval_arg(L1->next,&stack,first+nargs,1,1,display)) < 0) 
 	    {
 	      /* clean first part */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
 	      SHOWBUG(stack,n,L1);
 	    }
+	  if ( n > 1 ) 
+	    {
+	      Scierror("Error: too many values (%d) returned as a second argument of diag concatenation %s\n",
+		       n,nsp_astcode_to_name(L->type));
+	      /* clean the stack */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs+n);
+	      SHOWBUG(stack,RET_BUG,L1);
+	      return RET_BUG;
+	    }
 	  nargs += n;
+	  /* Note here that nargs can be equal to one if one of the argument was a comment */
+	  if ( nargs < 2 ) return nargs;
 	  if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
