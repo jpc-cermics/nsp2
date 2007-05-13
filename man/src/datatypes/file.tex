@@ -15,6 +15,10 @@ L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
+    \vname{file-name}: a string which gives the pathname of file to be opened. 
+    Note that \verb+file-name+ can also be one of the following keywords \verb+"stdin"+, or 
+    \verb+"stdout"+, or \verb+"stderr"+ in order to use the standard input, output or output error 
+    stream.
     \vname{mode}: The argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
     \begin{itemize}
       \item[r]: open text file for reading. The stream is positioned at the beginning of the
@@ -24,9 +28,9 @@ L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
       \item[a] open for appending (writing at end of file).  The file is created if it does not 
 	exist.  The stream is positioned at the end of the file.
     \end{itemize}
-    The mode string can also include the letter b as a last character. 
-    Adding the b is used if you do I/O to a binary file 
-    (but note that The b is ignored on all POSIX conforming systems, including Linux).
+    The mode string can also include the letter \verb+b+ as a last character. 
+    Adding \verb+b+ b is used if you do I/O to a binary file 
+    (but note that \verb+b+ is ignored on all POSIX conforming systems, including Linux).
     \vname{swap} If true then byte swaping is forced when using the \verb+mget+ and 
     \verb+mput+ functions. 
     \vname{xdr} If true then reading and writing is used using \verb+xdr+.
@@ -96,15 +100,16 @@ The \emph{File} data type is used for file I/O operations.
   \vname{getfile(fname)}: gets the contents of ascii file given by \verb+fname+ 
   in a string column vector.
   \vname{putfile(fname,S)}: put the contents of a string matrix in file named 
-  \verb+fname+. If the file already existed its contents is replaced if not it is 
+  \verb+fname+. If the file already existed its contents is replaced, if not it is 
   created. 
 \end{itemize}
 
 \begin{examples}
-  \begin{program}
-    \HCode{
-      Examples 
-      }
+  \begin{program}\HCode{F=fopen("stdout")\Hnewline
+      F.printf["using stdout"] \Hnewline
+      F.put_matrix[rand(4,4)]  \Hnewline 
+      F.close[]  \Hnewline 
+    }
   \end{program}
 \end{examples}
 
