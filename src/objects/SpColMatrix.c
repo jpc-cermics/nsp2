@@ -1085,14 +1085,14 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
       if ( B->mn == 1)
 	{
 	  ib = 0;
-	  nel = Cols->mn;
+	  nel = Rows->mn;
 	}
       else
 	{
 	  ib =i;
 	  nel = B->D[i]->size ;
 	}
-      /* The new col will have at most nel + A->D[col]->size non nul elements **/
+      /* The new col will have at most nel + Ais non nul elements **/
       if (nsp_spcolmatrix_resize_col(A,col ,nel+Ais) == FAIL) return FAIL;
       for ( k =0 ; k < Rows->mn ; k++ )
 	{

@@ -597,6 +597,11 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
     {
       if ((B = GetSpCol(stack,rhs)) == NULLSPCOL) goto ret_bug;
     }
+  else 
+    {
+      Scierror("Error: expecting matrix or sparse when setting values in a sparse\n");
+      goto ret_bug;
+    }
 
   if ( B == A ) 
     { if ((B = GetSpColCopy(stack,rhs)) == NULLSPCOL) goto ret_bug;}
