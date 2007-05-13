@@ -873,8 +873,10 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
 
-  if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrix of numbers or booleans */
+  if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
     {
+      /* Matrix of numbers or booleans 
+       */
       if ( elt_size == sizeof(double) )
 	{
 	  double *fromd = (double *) from, *tod = (double *) to;
@@ -899,20 +901,26 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 	    memcpy(to + i*elt_size, from + ind[i]*elt_size, elt_size);
 	}
     }
-  else                                                        /* Matrix of pointers (cells, strings, poly,...) */
+  else                                                        
     {
+      /* Matrix of pointers (cells, strings, poly,...) 
+       */
       char **fromv = (char **) from, **tov = (char **) to, *elt;
       for ( i = 0 ; i < nb_elts ; i++ )
 	{
-	  if ( fromv[ind[i]] != NULL )   /* just for cells which may have undefined elements */
+	  if ( fromv[ind[i]] == NULL )  
 	    {
-	      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[ind[i]])) == NULL )
-		{
-		  nsp_object_destroy(&Loc); 
-		  return NULLOBJ;
-		}
-	      tov[i] = elt;
+	      /* just for cells which may have undefined elements */
+	      NspMatrix *M= nsp_matrix_create("ce",'r',0,0);
+	      if ( M == NULLMAT) return NULLOBJ;
+	      fromv[ind[i]] = M;
 	    }
+	  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[ind[i]])) == NULL )
+	    {
+	      nsp_object_destroy(&Loc); 
+	      return NULLOBJ;
+	    }
+	  tov[i] = elt;
 	}
     }
   return Loc;
@@ -2645,10 +2653,13 @@ int int_matint_concatr(Stack stack, int rhs, int opt, int lhs)
 
   if ( Ocheckname(ObjA, NVOID) )   
     {
-      /* ObjA has no name */ 
-      if (((NspSMatrix *) ObjA)->mn == 0)
+      /* here ObjA has no name we can return the result in ObjA 
+       * there's a special case when A=0x0 in that case we can directly 
+       * return B. 
+       */
+      if (((NspSMatrix *) ObjA)->m == 0 && ((NspSMatrix *) ObjA)->n == 0 )
 	{
-	  /* return ObjB */
+	  /* we can return B */
 	  /* this is a bit tricky since A and B may point to the same object */
 	  if ( ObjA == ObjB ) 
 	    {
@@ -2735,10 +2746,11 @@ int int_matint_concatd(Stack stack, int rhs, int opt, int lhs)
 
   if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
     {
-      if (((NspSMatrix *) ObjA)->mn == 0)
+      if (((NspSMatrix *) ObjA)->m == 0 && ((NspSMatrix *) ObjA)->n == 0)
 	{
-	  /* return B */
-	  /* this is a bit tricky since A and B may point to the same object */
+	  /* when A is 0x0 we can return B 
+	   * this is a bit tricky since A and B may point to the same object 
+	   */
 	  if ( ObjA == ObjB ) 
 	    {
 	      NthObj(2) = NULLOBJ;
