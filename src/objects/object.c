@@ -1449,6 +1449,7 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Nsp scanf function
+ * scanf(n,"format") or scanf("format")
  */
 
 
@@ -1459,7 +1460,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
   char buf[256];
   int buf_size= 256 -3, eof; 
   int args,i,ret,rep,iter = 1,iof=0;
-  char *Format,*String=NULL;
+  char *Format;
   CheckRhs(1,2);
   if ( lhs < 0  ) return 0;
   if ( rhs == 2)
@@ -1477,7 +1478,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
   
   scanf_get_line("==>",buf,buf_size,&eof);
   stack.first += iof+1;
-  rep = do_scanf("scanf",(FILE *) 0,Format,stack,0,&args,String,&ret);
+  rep = do_scanf("scanf",(FILE *) 0,Format,stack,0,&args,buf,&ret);
   stack.first -= iof+1;
   if ( rep == FAIL ) return RET_BUG; 
   rep = Min(args,lhs);
@@ -1511,7 +1512,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
 	  int rep1;
 	  scanf_get_line("==>",buf,buf_size,&eof);
 	  stack.first += iof+1;
-	  rep1 = do_scanf("scanf",(FILE *) 0,Format,stack,i,&args,String,&ret);
+	  rep1 = do_scanf("scanf",(FILE *) 0,Format,stack,i,&args,buf,&ret);
 	  stack.first -= iof+1;
 	  if ( rep1 == FAIL ) return RET_BUG; 
 	}
@@ -1641,7 +1642,7 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
 	iter = count_lines(F->file)+1;
       else 
 	iter = count_lines(F->file);
-      Scierror("Error:\tfound %d lines\n",iter);
+      /* Scierror("Error:\tfound %d lines\n",iter);*/
     }
   else if ( iter == 0) iter = 1;
   
