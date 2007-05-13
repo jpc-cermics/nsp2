@@ -145,15 +145,8 @@ int nsp_bmatrix_resize(NspBMatrix *A, int m, int n)
 {
   if ( A->mn == m*n ) 
     {
-      if ( A->mn == 0) 
-	{
-	  A->m = A->n = 0;
-	}
-      else 
-	{
-	  A->m=m;
-	  A->n=n;
-	}
+      A->m=m;
+      A->n=n;
       return(OK);
     };
   if ( m*n < 0) return FAIL;

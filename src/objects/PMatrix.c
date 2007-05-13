@@ -315,16 +315,8 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
   int i;
   if ( A->mn == m*n ) 
     {
-      /* easy case : nothing to allocate **/
-      if ( A->mn == 0) 
-	{
-	  A->m = A->n = 0;
-	}
-      else 
-	{
-	  A->m=m;
-	  A->n=n;
-	}
+      A->m=m;
+      A->n=n;
       return(OK);
     };
   if ( m*n < 0) return FAIL;
