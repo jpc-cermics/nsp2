@@ -913,7 +913,7 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 	      /* just for cells which may have undefined elements */
 	      NspMatrix *M= nsp_matrix_create("ce",'r',0,0);
 	      if ( M == NULLMAT) return NULLOBJ;
-	      fromv[ind[i]] = M;
+	      fromv[ind[i]] = (char *)  M;
 	    }
 	  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[ind[i]])) == NULL )
 	    {
