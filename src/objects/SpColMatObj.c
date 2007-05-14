@@ -380,7 +380,10 @@ static int int_spcolmatrix_create(Stack stack, int rhs, int opt, int lhs)
  * Creation of a Sparse Matrix 
  * returns NULLSPCOLon failure 
  * sparse(rc,values [, [m,n]])
+ * sparse(m,n) 
+ * 
  */
+
 static int int_spcolmatrix_m2sp(Stack stack, int rhs, int opt, int lhs);
 
 static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
@@ -392,6 +395,15 @@ static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,3);
   CheckLhs(1,1);
   if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+  if ( RC->mn == 1) 
+    {
+      /* special case sparse(m,n) */
+      int m = RC->R[0], n;
+      if ( GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+      if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n) ) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) A);
+      return 1;
+    }
   if (RC->mn != 0 &&  RC->n != 2)
     {
       Scierror("Error: first argument of function %s must have 2 columns\n\n",
