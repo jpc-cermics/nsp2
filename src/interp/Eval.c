@@ -874,7 +874,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    char old[FSIZE+1], fname_expanded[FSIZE+1];
 	    nsp_expand_file_and_update_exec_dir(&stack,old,(char *) L1->O,fname_expanded);
 	    /* 1-ary exec  */
-	    rep =nsp_parse_eval_file(fname_expanded,FALSE,FALSE,FALSE,stack.val->pause);
+	    rep =nsp_parse_eval_file(fname_expanded,FALSE,FALSE,FALSE,stack.val->pause,FALSE);
 	    nsp_reset_exec_dir(&stack,old);
 	    return rep;
 	  }

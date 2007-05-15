@@ -77,6 +77,7 @@ void controlC_handler_void (int sig)
  * @echo: %TRUE or %FALSE 
  * @errcatch: %TRUE or %FALSE 
  * @pause: %TRUE or %FALSE 
+ * @mtlb:  %TRUE or %FALSE 
  * 
  * parses and evaluates the contents of the file given by @Str 
  * the return value is strictly negative if an error was found 
@@ -90,7 +91,7 @@ void controlC_handler_void (int sig)
  * Return value: an integer which gives the status of the execution.
  **/
 
-int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause)
+int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause,int mtlb)
 {
   FILE *input;
   Tokenizer T;
@@ -105,6 +106,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
       return RET_BUG;
     }
   nsp_init_tokenizer(&T);
+  T.mtlb = mtlb;
   /* set tokenizer input */
   nsp_tokeniser_file(&T,input);
   /** reset the line counter **/

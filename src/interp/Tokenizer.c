@@ -40,6 +40,8 @@ static SciReadFunc SciSMatReadLine;
 /* FIXME : */
 extern char *nsp_force_prompt(void);
 
+#define PERCENT_CHECK(c) (((c) == '%') && (T->mtlb == FALSE) )
+
 /**
  * nsp_init_tokenizer:
  * @T: 
@@ -76,7 +78,7 @@ extern void nsp_init_tokenizer(Tokenizer *T)
   T->code2name=code2name;
   T->token.Line = 0;
   T->token_readline = DefSciReadLine;
-
+  T->mtlb = FALSE;
 }
 
 
@@ -152,7 +154,7 @@ static int next_token(Tokenizer *T)
       T->IgnoreWSpaces(T);
       return(OK);
     }
-  if (isalnum(T->token.NextC) || T->token.NextC == '%' 
+  if (isalnum(T->token.NextC) || PERCENT_CHECK(T->token.NextC)
       || T->token.NextC == '_' || T->token.NextC == '$') 
     {
       int key;
@@ -204,7 +206,18 @@ static int next_token(Tokenizer *T)
 	  return T->NextToken(T);
 	}
     }
-  else if ( T->token.id == '/' && T->token.NextC == '/' )
+  else if ( (T->mtlb == TRUE)  && ( T->token.id == '%' ))
+    {
+      /*  ----------- comments : ignore up to end of line
+	  char c;
+	  c=T->GetChar(T);
+	  while (c != '\n') c=T->GetChar(T);
+	  T->token.id = '\n';
+	  return(OK);
+      */
+      return T->ParseComment(T);
+    }
+  else if ( T->mtlb == FALSE && ( T->token.id == '/' && T->token.NextC == '/' ))
     {
       /*  ----------- comments : ignore up to end of line
 	  char c;
@@ -601,7 +614,7 @@ static int parse_symb(Tokenizer *T,char *str, int *l)
      and we would like to add . in order to have 
      + dealing with $ 
   */
-  while ( (isalnum(c) || c =='_' || c == '#' || c == '%' || c == '$' ) && (*l) < NAME_MAXL )
+  while ( (isalnum(c) || c =='_' || c == '#' || PERCENT_CHECK(c) || c == '$' ) && (*l) < NAME_MAXL )
     {
       str[(*l)++] = c;
       c=T->GetChar(T);
@@ -958,7 +971,7 @@ static int is_dot_star_star(Tokenizer *T)
 static int is_dot_alpha_old(Tokenizer *T)
 {
   char c = T->curline.buf[T->curline.lpt3];
-  if ( T->token.NextC == '.' &&  (isalnum(c) || c =='_' || c == '%' || c == '$' ) && !isdigit(c) )
+  if ( T->token.NextC == '.' &&  (isalnum(c) || c =='_' || PERCENT_CHECK(c) || c == '$' ) && !isdigit(c) )
     return(OK);
   else
     return(FAIL);
@@ -968,7 +981,7 @@ static int is_dot_alpha(Tokenizer *T)
 {
   char c = T->curline.buf[T->curline.lpt2];
   if ( T->token.id == '.' && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' 
-       &&  (isalnum(c) || c =='_' || c == '%' || c == '$' ) && !isdigit(c) )
+       &&  (isalnum(c) || c =='_' || PERCENT_CHECK(c) || c == '$' ) && !isdigit(c) )
     return(OK);
   else
     return(FAIL);

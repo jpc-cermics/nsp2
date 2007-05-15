@@ -149,7 +149,7 @@ void nsp_reset_exec_dir(Stack *stack,char *old)
  * [ok,H]=exec(...)
  */
 
-static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
+static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb)
 {
   char old[FSIZE+1], fname_expanded[FSIZE+1];
   NspObject *Ob;
@@ -188,13 +188,15 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 	      goto err;
 	    }
 	}
-      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,
+			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,
+			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
     }
   if ( rep < 0 )
     {
@@ -213,6 +215,23 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
   nsp_reset_exec_dir(&stack,old);
   return ret;
 }
+
+
+static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_parseevalfile_gen(stack,rhs,opt,lhs,FALSE);
+}
+
+/* use a tokenize for which % is used for comments 
+ * so as to parse most of matlab syntax
+ * 
+ */
+
+static int int_parseevalfile_mtlb(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_parseevalfile_gen(stack,rhs,opt,lhs,TRUE);
+}
+
 
 /*
  * execstr(...) 
@@ -557,6 +576,7 @@ extern function int_astnode_create;
 static OpTab Parse_func[]={
   {"parse_eval" , int_parseevalfile },
   {"exec" , int_parseevalfile },
+  {"exec_mtlb" , int_parseevalfile_mtlb },
   {"remove_lib",int_remove_lib},
   {"add_lib",int_add_lib},
   {"find_macro",int_find_macro},

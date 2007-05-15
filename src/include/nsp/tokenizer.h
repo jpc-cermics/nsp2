@@ -94,6 +94,7 @@ struct _tokenizer {
   FILE *file; /* used when the tokenizer uses a File as input */
   smat_tokenizer strings; /* used when the tokenizer uses a string matrix as input */
   string_tokenizer string; /* used when the tokenizer uses a string matrix as input */
+  int mtlb; /* is % a comment or not */
   /* methods */
   SciReadFunction token_readline;
   token_NextToken *NextToken;

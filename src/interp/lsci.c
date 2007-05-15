@@ -244,7 +244,7 @@ int main(int argc, char **argv)
   if ( initial_script != NULL ) 
     {
       /* execute initial script if given */
-      int rep =nsp_parse_eval_file(initial_script,init_disp,init_echo,init_errcatch,TRUE );
+      int rep =nsp_parse_eval_file(initial_script,init_disp,init_echo,init_errcatch,TRUE,FALSE );
       if ( rep == RET_QUIT ) 
 	{
 	  sci_clear_and_exit(0);

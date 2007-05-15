@@ -1136,6 +1136,9 @@ static int _nsp_plist_pretty_print_opname(int type, int indent, int pos)
 
 /* a set of Args separated by sep */
 
+/* #define WITH_SYMB_TABLE_DEBUG  */
+
+
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep)
 {
   int j,  newpos=pos,indent1=indent;
