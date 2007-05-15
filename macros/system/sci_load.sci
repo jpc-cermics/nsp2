@@ -93,7 +93,7 @@ function x=sci_load_mat(F1)
   x=matrix(x,s(1),s(2));
 endfunction
 
-function x=sci_load_spmat(F1)
+function x=sci_load_spmat_old(F1)
 // load a scimatrix 
 // utility function for sci_load
 // Copyright (C) 2006 Jean-Philippe Chancelier
@@ -119,6 +119,31 @@ function x=sci_load_spmat(F1)
   x=sparse(IJ,val(:),[m,n]);
   //x=matrix(x,s(1),s(2));
 endfunction
+
+function x=sci_load_spmat(F1)
+// load a scimatrix 
+// utility function for sci_load
+// Copyright (C) 2006 Jean-Philippe Chancelier
+  s=F1.get[n=4,type='il']
+  m=s(1);n=s(2);
+  // nnz 
+  nel=s(4);
+  // number of non-null elements for each row 
+  rows=F1.get[n=m,type='il'];
+  // column indices of non-nul elements 
+  ind=F1.get[n=nel,type='il'];
+  // non-nul values 
+  val=F1.get[n=nel*(s(3)+1),type='dl'];
+  if s(3)==1 then val = val(1:nel)+%i*val(nel+1:$);end 
+  // from rows/ind/val to matlab triplet for the 
+  // transposed matrix 
+  Jc = [0,cumsum(rows)];
+  x=spfrommtlb(Jc,ind-1,val,[n,m]);
+  x=x';
+  //x=matrix(x,s(1),s(2));
+endfunction
+
+
 
 function x=sci_load_bmat(F1)
 // load a boolean matrix 
@@ -287,6 +312,8 @@ function sci_save(fname,varargopt)
     select obj_type
      case 'm' then 
       sci_save_mat(F1,val);
+     case 'sp' then 
+      sci_save_spmat(F1,val);
      case 'b' then 
       sci_save_bmat(F1,val);
      case 's' then 
@@ -318,6 +345,26 @@ function sci_save_mat(F1,val)
   end
 endfunction
 
+function sci_save_spmat(F1,val)
+// save a matrix 
+// utility for sci_save
+// Copyright (C) 2006 Jean-Philippe Chancelier
+  F1.put[5,type='il'];
+  nn=size(val);
+  // get the triplet of the transpose
+  [Jc,Ir,Pr]=spget_mtlb(val');
+  if nnz(imag(val))==0 then m_type=0;else m_type=1;end;
+  // [m,n,type_rc,nnz]
+  F1.put[[nn,m_type,length(Ir)],type='il']
+  // number of non-null elements for each row 
+  row= Jc(2:$)-Jc(1:$-1);
+  F1.put[row,type='il'];
+  F1.put[Ir+1,type='il'];
+  F1.put[real(Pr),type='dl'];
+  if m_type == 1 then 
+    F1.put[imag(Pr),type='dl'];
+  end
+endfunction
 
 function sci_save_bmat(F1,val)
 // save a boolean 
@@ -368,6 +415,7 @@ function sci_save_list(F1,val,obj_type)
     if ok then 
       select type(elt,'short')
        case 'm' then x(i+1) = sci_save_count_mat(elt);
+       case 'sp' then x(i+1) = sci_save_count_spmat(elt);
        case 'b' then x(i+1) = sci_save_count_bmat(elt);
        case 's' then x(i+1) = sci_save_count_smat(elt);
        case 'l' then x(i+1) = sci_save_count_list(elt);
@@ -387,6 +435,7 @@ function sci_save_list(F1,val,obj_type)
     if ok then 
       select type(elt,'short')
        case 'm' then sci_save_mat( F1,elt);
+       case 'sp' then sci_save_spmat( F1,elt);
        case 'b' then sci_save_bmat( F1,elt);
        case 's' then sci_save_smat( F1,elt);
        case 'l' then sci_save_list( F1,elt);
@@ -463,6 +512,16 @@ function y=sci_save_count_smat(val)
   end
 endfunction
 
+function y=sci_save_count_spmat(val)
+// sparse matrix
+// utility for sci_save
+// Copyright (C) 2007 Jean-Philippe Chancelier
+  nn=size(val,'*');
+  if nnz(imag(val))==0 then m_type=0;else m_type=1;end;
+  y = 2 + nn(1) + nnz(val)*(2+m_type);
+endfunction
+
+
 function y=sci_save_count_list(val)
 // A list
 // utility for sci_save
@@ -473,6 +532,7 @@ function y=sci_save_count_list(val)
     elt=val(i);
     select type(elt,'short')
      case 'm' then y = y + sci_save_count_mat(elt);
+     case 'sp' then y = y + sci_save_count_spmat(elt);
      case 'b' then y = y + sci_save_count_bmat(elt);
      case 's' then y = y + sci_save_count_smat(elt);
      case 'l' then y = y + sci_save_count_list(elt)
