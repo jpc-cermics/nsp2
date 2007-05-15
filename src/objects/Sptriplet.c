@@ -365,7 +365,6 @@ static int nsp_sprow_alloc_triplet(NspSpRowMatrix *M,int nzmax)
 
 
 static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M);
-static void nsp_spcol_free_triplet( NspSpColMatrix *M);
 static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag);
 static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M);
 
@@ -635,12 +634,15 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
  *
  **/
 
-static void nsp_spcol_free_triplet(NspSpColMatrix *M)
+void nsp_spcol_free_triplet(NspSpColMatrix *M)
 {
-  M->convert = 'v';
-  FREE(M->triplet.Jc);
-  FREE(M->triplet.Ir);
-  FREE(M->triplet.Pr);
-  FREE(M->triplet.Pi);
+  if ( M->convert == 't') 
+    {
+      M->convert = 'v';
+      FREE(M->triplet.Jc);
+      FREE(M->triplet.Ir);
+      FREE(M->triplet.Pr);
+      FREE(M->triplet.Pi);
+    }
 }
 

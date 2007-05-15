@@ -442,10 +442,10 @@ static int int_spcolmatrix_sparse_sp(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/*
- * Creation of a Sparse Matrix 
- * returns NULLSPCOLon failure 
- * sparse(rc,values [, [m,n]])
+/*                                                                              
+ * return [rc,values,[m,n]] from                                                
+ * a sparse matrix.                                                             
+ * This could be a method                                                       
  */
 
 static int int_spcolmatrix_get(Stack stack, int rhs, int opt, int lhs)
@@ -474,6 +474,138 @@ static int int_spcolmatrix_get(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) RC);
   return Max(lhs,1);
 }
+
+/* get a mtlb triplet                                                           
+ *                                                                              
+ */
+static int int_spcolmatrix_get_mtlb(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  NspMatrix *Jc=NULL,*Ir=NULL,*Pr=NULL;
+  int nzmax,i;
+  CheckRhs(1,1);
+  CheckLhs(1,3);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ( nsp_spcol_set_triplet_from_m(A,TRUE) == FAIL) return RET_BUG;
+  nzmax = A->triplet.Aisize;
+  if ( lhs >=2 ) 
+    {
+      if ((Ir = nsp_matrix_create(NVOID,'r',1,nzmax))== NULLMAT) goto err;
+      for ( i= 0 ; i < nzmax ; i++) Ir->R[i]= A->triplet.Ir[i];
+      MoveObj(stack,2,NSP_OBJECT(Ir));
+    }
+  if ( lhs >= 3 ) 
+    {
+      if ( A->rc_type == 'r')
+	{
+	  if ((Pr = nsp_matrix_create(NVOID,'r',1,nzmax))== NULLMAT) goto err;
+	  memcpy(Pr->R,A->triplet.Pr, nzmax*sizeof(double));
+	}
+      else 
+	{
+	  int i;
+	  if ((Pr = nsp_matrix_create(NVOID,A->rc_type,1,nzmax))== NULLMAT) goto err;
+	  for ( i= 0 ; i < Pr->mn ; i++) 
+	    {
+	      Pr->C[i].r = A->triplet.Pr[i];
+	      Pr->C[i].i = A->triplet.Pi[i];
+	    }
+	}
+      MoveObj(stack,3,NSP_OBJECT(Pr));
+    }
+  /* Note that this one is performed last because 
+   * MoveObj will free the triplet of matrix A.
+   */
+  if ((Jc = nsp_matrix_create(NVOID,'r',1,(A->n+1)))== NULLMAT) goto err;
+  for ( i= 0 ; i < (A->n+1) ; i++) Jc->R[i]= A->triplet.Jc[i];
+  nsp_spcol_free_triplet(A);
+  MoveObj(stack,1,NSP_OBJECT(Jc));
+  return Max(lhs,1);
+ err:
+  nsp_matrix_destroy(Jc);
+  nsp_matrix_destroy(Ir);
+  nsp_matrix_destroy(Pr);
+  if (A->convert == 't') 
+    nsp_spcol_free_triplet(A);
+  return RET_BUG;
+}
+
+/* XXX: remains to check that arguments are 
+ * correct 
+ *
+ */
+
+static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  NspMatrix *Jc=NULL,*Ir=NULL,*Pr=NULL,*Mn=NULL;
+  int i, imin,imax, prev;
+  CheckRhs(4,4);
+  if ((Jc = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((Ir = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Pr = GetMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((Mn = GetMat(stack,4)) == NULLMAT) return RET_BUG;
+  if ( ((int)Mn->R[0]) < 0 || ((int) Mn->R[1] < 0))
+    {
+      Scierror("Error: fourth argument of %s should be [m,n] with non negative values\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ( ((int) Mn->R[1] ) != Jc->mn -1 )
+    {
+      Scierror("Error: first argument of %s should be of length %d+1\n", NspFname(stack),Mn->R[1]);
+      return RET_BUG;
+    }
+
+  if ( Pr->mn != Jc->R[Jc->mn-1] )
+    {
+      Scierror("Error: third argument of %s should be of length %d\n", NspFname(stack), Jc->R[Jc->mn-1]);
+      return RET_BUG;
+    }
+  if ( Ir->mn != Jc->R[Jc->mn-1] )
+    {
+      Scierror("Error: second argument of %s should be of length %d\n", NspFname(stack), Jc->R[Jc->mn-1]);
+      return RET_BUG;
+    }
+  Bounds (Ir,&imin,&imax);
+  if ( imin < 0 || imax > ((int) Mn->R[0]) -1) 
+    {
+      Scierror("Error: second argument of %s should have values in [%d,%d]\n", NspFname(stack),0,((int) Mn->R[0]) -1);
+      return RET_BUG;
+    }
+  /* checks that Jc is increasing with positive numbers */
+  prev=0;
+  for ( i= 0 ; i < Jc->mn ; i++)
+    {
+      if ( Jc->R[i] < prev )
+	{
+	  Scierror("Error: third argument of %s should have increasing values\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      prev = Jc->R[i];
+    }
+  /* XXX : check mn [m,n] */
+  if ((A =nsp_spcolmatrix_create(NVOID,Pr->rc_type,Mn->R[0],Mn->R[1]) ) == NULLSPCOL) return RET_BUG;
+  if ( nsp_spcol_alloc_col_triplet(A,Jc->R[Jc->mn-1])== FAIL) return RET_BUG;
+  for ( i= 0 ; i < Ir->mn ; i++)  A->triplet.Ir[i] = Ir->R[i];
+  for ( i= 0 ; i < Jc->mn ; i++)  A->triplet.Jc[i] = Jc->R[i];
+  if ( Pr->rc_type == 'r' ) 
+    {
+      memcpy(A->triplet.Pr,Pr->R, Pr->mn*sizeof(double));
+    }
+  else 
+    {
+      for ( i = 0 ; i < Pr->mn ; i++) 
+	{
+	  A->triplet.Pr[i]= Pr->C[i].r;
+	  A->triplet.Pi[i]= Pr->C[i].i;
+	}
+    }
+  if ( nsp_spcol_update_from_triplet(A) == FAIL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return Max(lhs,1);
+}
+
+
 
 
 /*
@@ -2124,6 +2256,8 @@ static OpTab SpColMatrix_func[]={
   {"sparse", int_spcolmatrix_sparse},
   {"sparse_sp", int_spcolmatrix_sparse_sp},
   {"spget", int_spcolmatrix_get},
+  {"spfrommtlb",int_spcolmatrix_from_mtlb},
+  {"spget_mtlb", int_spcolmatrix_get_mtlb},
   {"full_sp",int_spcolmatrix_sp2m},
   {"sum_sp_s" ,  int_spcolmatrix_sum },
   {"sum_sp" ,  int_spcolmatrix_sum },
