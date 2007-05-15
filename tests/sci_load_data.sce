@@ -1,6 +1,6 @@
 
 // prepare data to be reloaded by sci_load 
-// this file is to be executed byscilab !!
+// this file is to be executed by scilab !!
 
 A=1:10;A=matrix(A,2,5);
 Ac=(1:10)+%i*(10:-1:1);
@@ -11,3 +11,4 @@ As=string(A);
 L=list(A,As,Ab);
 T=tlist(['poo','A','B'],A,Ab);
 save('sci_data_saved.dat',A,Ac,Asp,Aspc,Ab,As,L,T);
+
