@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+
+\mansection{unique}
+\begin{mandesc}
+  \short{acquire}{search a variable in callers} \\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y = acquire(name);
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{name}: a string giving the name of symbol to search.
+    \vname{y} : a nsp object.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function is used to copy in the current frame a variable found in callers 
+  with the given name. 
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{x=1:3;\Hnewline
+      function y=f(n)\Hnewline
+        if n >= 10 y=acquire('x'); \Hnewline
+	else y=f(n+1);\Hnewline
+	end \Hnewline
+      endfunction \Hnewline
+      \Hnewline
+      y=f(0);}\Hnewline
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{resume}{resume}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Jean-Philippe Chancelier
+\end{authors}
