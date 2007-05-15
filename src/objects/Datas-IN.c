@@ -90,6 +90,28 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* return a copy in the local frame of 
+ * object from calling frames 
+ */
+
+static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
+{
+  char *name;
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((name = GetString (stack, 1)) == (char *) 0) return RET_BUG;
+  if (( Obj =nsp_frames_search_object(name)) == NULLOBJ) 
+    {
+      Scierror("Error: object %s not found in callers environemnt\n",name);
+      return RET_BUG;
+    }
+  if (( Obj = nsp_object_copy(Obj)) == NULLOBJ) 
+    return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return Max(lhs,1);
+}
+
 /*
  * global('A','B',.....) : set a b etc... as global 
  *   variables 
@@ -254,6 +276,7 @@ static OpTab Datas_func[]={
   {"who",int_who},
   {"frames_inhibit_search",int_frames_flag},
   {"frame_to_hash",int_frame_to_hash},
+  {"acquire", int_nsp_acquire}, 
   {(char *) 0, NULL}
 };
 
