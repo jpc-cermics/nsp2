@@ -204,6 +204,7 @@ extern int nsp_spcol_update_from_triplet(NspSpColMatrix *M);
 extern int nsp_spcol_set_triplet_from_m(NspSpColMatrix *M,int flag);
 extern int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax);
 extern int nsp_spcol_realloc_col_triplet(NspSpColMatrix *M,int nzmax);
+extern void nsp_spcol_free_triplet(NspSpColMatrix *M);
 
 #endif 
 
