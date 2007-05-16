@@ -233,7 +233,7 @@ static int nsp_hobj_is_true(NspHobj *H)
 
 static int nsp_hobj_xdr_save(XDR *xdrs, NspHobj *O)
 {
-  NspObject *O2,*O1;
+  NspObject *O2,*O1=NULLOBJ;
   if ( O  == NULLHOBJ) return OK;
   if ( Ocheckname(O,NVOID) )  
     {
@@ -251,6 +251,7 @@ static int nsp_hobj_xdr_save(XDR *xdrs, NspHobj *O)
       if (( O1 =nsp_object_copy(O2)) == NULLOBJ ) return FAIL;
     }
   if (nsp_object_set_name(O1,NSP_OBJECT(O)->name) == FAIL) return FAIL;
+  nsp_object_destroy(&O1);
   return nsp_object_xdr_save(xdrs,O1);
 }
 
