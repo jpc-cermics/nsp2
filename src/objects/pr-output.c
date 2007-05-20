@@ -373,7 +373,7 @@ void nsp_gen_matrix_as_read_syntax(const nsp_num_formats *fmt,
 		Sciprintf(";\n");
 	    }
 	  else
-	    Sciprintf(" ,\n");
+	    Sciprintf(" ,...\n");
 	}
     }
 }
