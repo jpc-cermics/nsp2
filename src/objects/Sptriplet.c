@@ -428,6 +428,7 @@ int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
   if ((M->triplet.Jc = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
+  M->triplet.Jc[M->n]=0;
   if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
   if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax))) == NULL)
       return FAIL;
