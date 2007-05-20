@@ -990,8 +990,8 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
       if ( Loc->arity != -1 ) 
 	{
 	  /* search return value in local variables */
-	  O = ((NspFrame *) Datas->first->O)->table->objs[Loc->arity];
-	  ((NspFrame *) Datas->first->O)->table->objs[Loc->arity]=  NULL;
+	  O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Loc->arity)];
+	  ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Loc->arity)]=  NULL;
 	}
       else 
 	{

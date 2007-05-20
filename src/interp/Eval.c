@@ -845,13 +845,23 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return rep;
 	  break;
 	case CLEAR:  
-	  /* 1-ary clear */
-	  nsp_frame_remove_object((char *) L1->O);
+	  /* n-ary clear n>= 1 */
+	  loc = L1;
+	  for ( j = 1 ; j <= L->arity ;  j++ )
+	    {
+	      nsp_frame_remove_object((char *) loc->O);
+	      loc = loc->next ;
+	    }
 	  return 0;
 	  break;
 	case CLEARGLOBAL:  
-	  /* 1-ary clearglobal */
-	  nsp_global_frame_remove_object((char *) L1->O);
+	  /* n-ary clearglobal n>= 1 */
+	  loc = L1;
+	  for ( j = 1 ; j <= L->arity ;  j++ )
+	    {
+	      nsp_global_frame_remove_object((char *) loc->O);
+	      loc = loc->next ;
+	    }
 	  return 0;
 	  break;
 	case HELP  : 
@@ -864,8 +874,13 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return 0;
 	  break;
 	case GLOBAL:
-	  /* 1-ary global */
-	  if (nsp_declare_global((char *) L1->O)== FAIL) return RET_BUG;
+	  /* n-ary global */
+	  loc = L1;
+	  for ( j = 1 ; j <= L->arity ;  j++ )
+	    {
+	      if (nsp_declare_global((char *) loc->O,loc->arity)== FAIL) return RET_BUG;
+	      loc = loc->next ;
+	    }
 	  return 0;
 	  break;
 	case EXEC: 
@@ -936,7 +951,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	      return RET_BUG;
 	    }
 	  /* get current frame local variable table */
-	  stack->val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[L->arity];
+	  stack->val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L->arity)];
 	  if (stack->val->S[first]== NULL) 
 	    {
 	      /* maybe the local variable has a value in calling stacks */
@@ -1035,7 +1050,8 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       Sciprintf("clear without arguments\n");
       return 0;
     case CLEARGLOBAL:  
-      Sciprintf("clearglobal without arguments\n");
+      /*       Sciprintf("clearglobal without arguments\n"); */
+      nsp_global_frame_remove_all_objects(); 
       return 0;
     case HELP:
 #ifdef WITH_GTKHTML
@@ -1156,8 +1172,8 @@ static int EvalFor(PList L1, Stack stack, int first)
       if ( L1->arity != -1 ) 
 	{
 	  /* object is a local variable */
-	  O = ((NspFrame *) Datas->first->O)->table->objs[L1->arity];
-	  ((NspFrame *) Datas->first->O)->table->objs[L1->arity] = NULL;
+	  O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)];
+	  ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
 	  nsp_object_destroy(&O);
 	}
       else
@@ -1717,7 +1733,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   /* Object L which is changed
    */
   if (Datas != NULLLIST 
-      && ( ( L->arity != -1 && (O=((NspFrame *) Datas->first->O)->table->objs[L->arity]) != NULLOBJ)
+      && ( ( L->arity != -1 && (O=((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L->arity)]) != NULLOBJ)
 	   || (O= nsp_eframe_search_object((NspFrame *) Datas->first->O,name,FALSE)) != NULLOBJ))
     {
       /* Object is in the current frame or as a variable in the local table which has a value 
@@ -2329,6 +2345,16 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 	      opt=0; for ( k = 0 ; k < count ; k++ ) if ( IsHopt(stack.val->S[first+k]) ) opt++;
 	      if ( Larg->type == CELLARGS )
 		{
+		  /* Special case when we are performing a {} extraction */
+		  NspObject *O1 =  stack.val->S[first];
+		  /* XXXX If we keep a pointer here next operations are wrong 
+		   * but changing the pointer is dangerous since object can 
+		   * then be changed by methods. 
+		   * this is dangerous because methods can then change the object ? 
+		   */
+		  HOBJ_GET_OBJECT(O1,RET_BUG);
+		  stack.val->S[first] = O1;
+		  
 		  if ( j == arity -1 )
 		    {
 		      if ((nret = nsp_eval_extract_cells(stack,first,count,opt,-1)) < 0)
@@ -2460,7 +2486,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       else
 	{
 	  /* direct acces to object through table of local variables */
-	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[Lf->arity];
+	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Lf->arity)];
 	  /* maybe the local variable has a value in calling stacks */
 	  if ( stack.val->S[first] == NULLOBJ ) 
 	    stack.val->S[first]=nsp_frames_search_local_in_calling(name);
@@ -2749,7 +2775,7 @@ int nsp_store_result(char *str, Stack stack, int first)
 
 /**
  *nsp_store_result_in_symb_table:
- * @position:
+ * @position: id of variable in the local table.
  * @str: 
  * @stack: 
  * @first: 
@@ -2781,7 +2807,7 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 	  return RET_BUG; 
 	}
       /* get current frame local variable table */
-      O1 = ((NspFrame *) Datas->first->O)->table->objs[position];
+      O1 = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(position)];
       if ( Ocheckname(Ob,str) ) 
 	{
 	  /* Ob->name == str 
@@ -2820,11 +2846,13 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 		    }
 		  return RET_BUG;
 		}
+	      /* now O1 must points to the new global value */
+	      ((NspHobj *) O1)->O = Ob;
 	    }
 	  else 
 	    {
 	      if ( O1 != NULL )  nsp_object_destroy(&O1);
-	      ((NspFrame *) Datas->first->O)->table->objs[position]= Ob;
+	      ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(position)]= Ob;
 	    }
 	  /* note that the object which as at position first 
 	   * need not be destroyed since it is a named object 

@@ -733,6 +733,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret);
 static int _nsp_plist_pretty_print_opname(int type, int indent, int pos);
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep);
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret);
+static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret);
 
 /**
  * nsp_plist_pretty_print:
@@ -771,7 +772,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 {
   PList L=List;
   const char *s;
-  int j,newpos=0;
+  int j,newpos=0,ret=FALSE;
   /* just in case L is not the first */
   while ( L->prev != NULL) L= L->prev;
   List = L->next;
@@ -942,16 +943,23 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
-	  newpos =_nsp_plist_pretty_print_arg(List,indent,pos,posret);
-	  newpos =_nsp_plist_pretty_print_opname(L->type,0,newpos);
-	  if ( newpos > CMAX )
+	  newpos =_nsp_plist_pretty_print_arg_ret(List,indent,pos,posret,&ret);
+	  if ( newpos == 0) 
 	    {
-	      Sciprintf("\n");
-	      newpos =_nsp_plist_pretty_print_arg(List->next,posret,0,posret);
+	      newpos =_nsp_plist_pretty_print_opname(L->type,posret,newpos);
 	    }
 	  else 
 	    {
-	      newpos =_nsp_plist_pretty_print_arg(List->next,0,newpos,posret);
+	      newpos =_nsp_plist_pretty_print_opname(L->type,0,newpos);
+	    }
+	  if ( newpos > CMAX )
+	    {
+	      Sciprintf("\n");
+	      newpos =_nsp_plist_pretty_print_arg_ret(List->next,posret,0,posret,&ret);
+	    }
+	  else 
+	    {
+	      newpos =_nsp_plist_pretty_print_arg_ret(List->next,0,newpos,posret,&ret);
 	    }
 	  return newpos;
 	  break;
@@ -1119,6 +1127,25 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  newpos =_nsp_plist_pretty_print_arg(List,posret+2,0,posret+2);
 	  return newpos;
 	  break;
+	case GLOBAL:
+	  /* n-ary global */
+	  PRINTTAG("global");Sciprintf(" ");
+	  /* newpos = NSP_PRINTF1_COLOR(posret,p_blue,"global ") ; */
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CLEAR:
+	  /* n-ary global */
+	  PRINTTAG("clear");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CLEARGLOBAL:
+	  /* n-ary global */
+	  PRINTTAG("clearglobal");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
 	default:
 	  Sciprintf("Warning in PlistPrettyPrint :");
 	  s=nsp_astcode_to_name(L->type);
@@ -1136,8 +1163,7 @@ static int _nsp_plist_pretty_print_opname(int type, int indent, int pos)
 
 /* a set of Args separated by sep */
 
-/* #define WITH_SYMB_TABLE_DEBUG  */
-
+#define WITH_SYMB_TABLE_DEBUG
 
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep)
 {
@@ -1196,9 +1222,10 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       break;
     case STRING:
       /* return pos+Sciprintf1(i,"\"%s\"",(char *) L->O);*/
-      n=Sciprintf1(i,"");
+      n= pos + Sciprintf1(i,"");
       n+= strlen(((char *) L->O));
       nsp_print_string_as_read((char *) L->O);
+      return n;
       break;
     case COMMENT:
       return pos+Sciprintf1(i,"//%s",(char *) L->O);
@@ -1239,7 +1266,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
     case CLEAR :
       return pos+NSP_PRINTF1_COLOR(i,p_blue,"clear");
       break;
-    case CLEARGLOBAL:
+    case CLEARGLOBAL :
       return pos+NSP_PRINTF1_COLOR(i,p_blue,"clearglobal");
       break;
     default:
@@ -1249,6 +1276,25 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
   return 0;
 }
 
+/* similar to _nsp_plist_pretty_print_arg_ 
+ * but add a newline if ar is a comment 
+ */
+
+static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret)
+{
+  int newpos= _nsp_plist_pretty_print_arg(L,i,pos,posret);
+  if ( L != NULLPLIST  &&  L->type == COMMENT )
+    {
+      Sciprintf("\n");
+      newpos = 0;
+      *ret = TRUE;
+    }
+  else 
+    {
+      *ret = FALSE;
+    }
+  return newpos; 
+}
 
 /**
  * nsp_plist_print:
@@ -1573,6 +1619,36 @@ static void _nsp_plist_print(PList List, int indent)
 	case LASTCASE :
 	  Sciprintf("else ") ;
 	  _nsp_plist_print_arg(List,indent);
+	  break;
+	case GLOBAL:
+	  /* n-ary global */
+	  Sciprintf("global ");
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _nsp_plist_print_arg(List,indent);
+	      Sciprintf((j == L->arity -1 ) ? "" : ",");
+	      List = List->next;
+	    }
+	  break;
+	case CLEAR:
+	  /* n-ary global */
+	  Sciprintf("clear ");
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _nsp_plist_print_arg(List,indent);
+	      Sciprintf((j == L->arity -1 ) ? "" : ",");
+	      List = List->next;
+	    }
+	  break;
+	case CLEARGLOBAL:
+	  /* n-ary global */
+	  Sciprintf("clearglobal ");
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _nsp_plist_print_arg(List,indent);
+	      Sciprintf((j == L->arity -1 ) ? "" : ",");
+	      List = List->next;
+	    }
 	  break;
 	default:
 	  Sciprintf("Warning in PlistPrint :");
@@ -1976,6 +2052,15 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	  break;
 	case LASTCASE :
 	  Arg_name_to_local_name(rec,List,H);
+	  break;
+	case CLEAR:
+	case GLOBAL:
+	case CLEARGLOBAL:
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      Arg_name_to_local_name(rec,List,H);
+	      List = List->next;
+	    }
 	  break;
 	default:
 	  s=nsp_astcode_to_name(L->type);

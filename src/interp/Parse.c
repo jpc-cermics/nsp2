@@ -126,7 +126,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     nsp_error_message_show();
   else 
     nsp_error_message_to_lasterror();
-  /** restore current input function **/
+ /** restore current input function **/
   nsp_set_echo_input_line(cur_echo);
   NspFileName(SciStack) = file_name;
   return rep;

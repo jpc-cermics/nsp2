@@ -81,6 +81,10 @@ static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist);
 static int Check_Func_Call(Tokenizer *T,PList plist, int tag);
 static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int nsp_parse_add_to_symbol_table(NspBHash *symb_table,PList plist);
+static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int keyword, int line);
+static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int flag);
+
 
 #ifdef  WITH_SYMB_TABLE 
 static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
@@ -320,9 +324,14 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
-
-    case EXEC :
     case GLOBAL:
+      /* n-ary prefix n>=1 */
+      return  parse_declaration(T,symb_table,plist,TRUE); 
+    case CLEAR:  
+    case CLEARGLOBAL:
+      /* n-ary prefix n>=0 */
+      return  parse_declaration(T,symb_table,plist,FALSE); 
+    case EXEC :
     case APROPOS:
       /* a set of commands with one string argument or function call */
       if ( T->token.NextC == '(') 
@@ -346,10 +355,9 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL); 
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
-    case CLEAR:  /* a set of commands with zero or one argument  */
-    case CLEARGLOBAL:
     case PAUSE:  
     case HELP  : 
+      /* a set of commands with zero or one argument  */
       if ( T->token.NextC == '(') 
 	{
 	  /* switch to function call */
@@ -383,6 +391,89 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
     default:
       return(parse_equal(T,symb_table,plist,0));
     }
+}
+
+
+
+/***********************************************
+ * for keyword <name> op <name>  op1 
+ * op = , | ' '
+ * op1 = ; | '\n' 
+ *
+ **********************************************/
+
+static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int flag)
+{
+  int id,line;
+  PList plist1 = NULLPLIST ;
+  /* a set of commands with n-names arguments or function call */
+  if ( T->token.NextC == '(') 
+    {
+      /* switch to function call mode */
+      T->token.id = NAME;
+      return(parse_equal(T,symb_table,plist,0));
+    }
+  id = T->token.id; line = T->token.Line;
+  if ( T->NextToken(T) == FAIL) return(FAIL);
+  if (  T->token.id == SEMICOLON_OP || T->token.id == RETURN_OP )
+    {
+      if ( flag == TRUE ) 
+	{
+	  T->ParseError(T,"Parse Error: %s must have at least one argument \n",T->code2name(T,id));
+	  return(FAIL);
+	}
+      else 
+	{
+	  /* we accept 0-arry operator */
+	  if (nsp_parse_add(plist,id,0,line) == FAIL) return(FAIL);
+	  return OK;
+	}
+    }
+  if ( parse_nary_keyword(T,symb_table,&plist1,id,line)== FAIL) 
+    return FAIL;
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL); 
+  return OK;
+}
+
+
+static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int keyword, int line)
+{
+  PList plist1 = NULLPLIST ;
+  int excnt=1, iter=1;
+  /* x1,....,x2]=.... **/
+  while (iter) 
+    {
+      plist1=NULLPLIST;
+      /* parse_name only here */
+      if (parse_name(T,symb_table,&plist1) == FAIL ) return (FAIL);
+      /* if (parse_equal(T,symb_table,&plist1,0) == FAIL ) return (FAIL); */
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
+      switch ( T->token.id ) 
+	{
+	case COMMA_OP : 
+	  ++excnt;       
+	  if ( T->NextToken(T) == FAIL) return(FAIL);
+	  parse_nblines(T);
+	  break;
+	case NAME: 
+	  ++excnt;
+	  break;
+	case SEMICOLON_OP:
+	case RETURN_OP:
+	  iter=0;
+	  break;
+	default:  
+	  T->ParseError(T,"Parse Error: waiting for `,', `;', or '\\n' \n");
+	  return(FAIL);
+	}
+    }
+  /* if ( T->NextToken(T) == FAIL) return(FAIL); */
+  if (debug) Sciprintf("[names:%d)",excnt);
+  /* excnt counts the arguments + the function name f(a,b)==> excnt=3**/
+  if (nsp_parse_add(plist,keyword,excnt,line) == FAIL) return(FAIL);
+  /* add symbols to symbol_table */
+  if ( nsp_parse_add_to_symbol_table(symb_table,*plist) == FAIL) return FAIL;
+  return(OK);
 }
 
 /************************************************
@@ -544,6 +635,32 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return FAIL;
 }
 
+/* name only 
+ *
+ */
+
+static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist)
+{
+  char id[NAME_MAXL];
+  switch ( T->token.id ) 
+    {
+    case '\0':
+      /*  *********** we are at end-of-line and need an other <fact> */
+      if ( T->ForceNextChar(T) == FAIL) return(FAIL);
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+      return(parse_name(T,symb_table,plist));
+    case NAME :
+      strncpy(id,T->token.syn,NAME_MAXL);
+      if (nsp_parse_add_name(plist,id) == FAIL) return(FAIL);
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+      return OK;
+    default:
+      return(FAIL);
+    }
+  if (debug) scidebug(--debugI,"<fact]");
+  return(OK);
+}
+
 /*********************************************************
  * returns the function name in a function PLIST 
  * WARNING : no check is done this is Ugly
@@ -596,7 +713,9 @@ static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
   while ( T->token.id != ']' ) 
     {
       plist1=NULLPLIST;
-      if (parse_equal(T,symb_table,&plist1,0) == FAIL ) return (FAIL);
+      /* parse_name only here */
+      if (parse_name(T,symb_table,&plist1) == FAIL ) return (FAIL);
+      /* if (parse_equal(T,symb_table,&plist1,0) == FAIL ) return (FAIL); */
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->token.id ) 
 	{
@@ -1895,16 +2014,33 @@ static int IsColMatOp(Tokenizer *T,int *op,char opt)
     }
 }
 
+/* row separator is , or white space 
+ * but as in Matlab ,[ ]*\n is considered as colseparator
+ *
+ */
+
 static int IsRowMatOp(Tokenizer *T,int *op,char opt)
 {
   int colconcat = (opt == ']') ? COLCONCAT : CELLCOLCONCAT;
+  *op = colconcat; 
   switch ( T->token.id) 
     {
     case ' ' :
-    case COMMA_OP : *op = colconcat; 
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
-    default: *op= colconcat; return(FAIL);
+    case COMMA_OP : 
+      if ( T->token.NextC == '\n') 
+	{
+	  /* comma followed by \n is not considered as 
+	   * row separator
+	   */
+	  T->NextToken(T);
+	  return FAIL;
+	}
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+      return(OK);
+    default: 
+      return(FAIL);
     }
 }
 
