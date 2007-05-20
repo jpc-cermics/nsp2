@@ -39,11 +39,21 @@ struct _NspFrame {
   NspBHash *local_vars; /* used to make the link between local variables and their value */
   NspCells *table; /* table of local variables */
 #ifdef FRAME_AS_LIST
-  NspList  *vars; /* struct to store variables in */
+  NspList  *vars; /* struct to store non local variables */
 #else 
-  NspHash  *vars; /* struct to store variables in */
+  NspHash  *vars; /* struct to store non local variables */
 #endif 
 };
+
+/* we use val to code the variable id in 0xffff and use 0xffff0000 
+ * for tags 
+ */
+
+#define VAR_ID(val)  (val & 0xffff)
+#define VAR_TAG(val) (val >> 16 )
+
+#define VAR_GLOBAL   0x10000 
+#define VAR_PERSISTENT   0x20000 
 
 extern const char nsp_frame_header[];
 

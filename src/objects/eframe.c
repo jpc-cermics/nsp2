@@ -458,6 +458,7 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag )
       /* Sciprintf("searching a local object %s with nsp_eframe_search_object\n",name); */
       if ( VARS_LOCAL(name) )
 	{
+	  val = VAR_ID(val);
 	  if ( F->table->objs[val] == NULLOBJ ) 
 	    {
 	      /* Sciprintf("local object %s found but has no value\n",name); */
@@ -497,6 +498,7 @@ int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
       /* Sciprintf("Replace a local object %s with nsp_eframe_replace_object\n",nsp_object_get_name(A));*/
       if ( VARS_LOCAL(nsp_object_get_name(A))) 
 	{
+	  val = VAR_ID(val);
 	  /* object is a local variable */
 	  nsp_object_destroy(&F->table->objs[val]);
 	  F->table->objs[val]= A;
@@ -535,6 +537,7 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
       if ( VARS_LOCAL(str)) 
 	{
 	  NspObject *O1;
+	  val = VAR_ID(val);
 	  O1 = F->table->objs[val];
 	  F->table->objs[val]= NULL;
 	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
@@ -602,8 +605,24 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
     
 void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 {
-#ifdef FRAME_AS_LIST
   NspObject *O;
+  if ( F->local_vars != NULL ) 
+    {
+      /* first search in local variables */
+      int val; 
+      /* Sciprintf("Trying a search and remove for %s \n",str); */
+      if ( VARS_LOCAL(str)) 
+	{
+	  NspObject *O1;
+	  val = VAR_ID(val);
+	  O1 = F->table->objs[val];
+	  nsp_object_destroy(&O1);
+	  F->table->objs[val]= NULL;
+	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
+	  return ;
+	}
+    }
+#ifdef FRAME_AS_LIST
   /* Sciprintf("Trying a remove for %s \n",str); */
   O=nsp_sorted_list_search_and_remove(F->vars,str);
   nsp_object_destroy(&O);

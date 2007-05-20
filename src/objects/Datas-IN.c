@@ -126,7 +126,7 @@ static int int_global(Stack stack, int rhs, int opt, int lhs)
   for ( i= 1; i <= rhs ; i++)
     {
       if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
-      if (nsp_declare_global(str)== FAIL) return RET_BUG;
+      if (nsp_declare_global(str,-1)== FAIL) return RET_BUG;
     }
   return 0;
 }

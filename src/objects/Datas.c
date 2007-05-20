@@ -40,11 +40,13 @@ extern int frames_search_inhibit;
  * Used to store the calling frames for function invocation 
  * It is a list of list each list is called a frame here 
  */
-NspList  *Datas = NULLLIST;
-NspObject   *Reserved= NULLOBJ;/* used to fill stack with non empty object */
+
+NspList   *Datas = NULLLIST; /* contains the list of frames */
+NspObject *Reserved= NULLOBJ;/* used to fill stack with non empty object */
 NspMatrix *Dollar = NULLMAT; /* Direct access to $ **/
-NspObject *Null = NULLOBJ;    /* Direct access to %null **/
+NspObject *Null = NULLOBJ;   /* Direct access to %null **/
 NspFrame  *GlobalFrame = NULLFRAME; /* Direct access to GlobalFrame **/
+NspFrame  *ConstantFrame = NULLFRAME; /* Direct access to constants **/
 
 
 /**
@@ -63,11 +65,12 @@ int nsp_init_frames(int argc, char **argv)
   NspObject *O;
   NspFrame *frame; 
   if ((Datas =nsp_list_create("datas")) ==NULLLIST ) return(FAIL);
-  if (( frame=nsp_frame_create("global",NULL))== NULLFRAME) return FAIL;
+  if ((GlobalFrame=nsp_frame_create("global",NULL))== NULLFRAME) return FAIL;
+  /* The GlobalFrame is not stored in Datas */
+  if (( frame=nsp_frame_create("constants",NULL))== NULLFRAME) return FAIL;
+  ConstantFrame = frame; /* Direct access to constants **/
   /* store the new frame in Datas */
   if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
-  /* this first frame is the global one */
-  GlobalFrame = frame;
   /* Create first Object in the initial frame **/
   if ((O= (NspObject *) nsp_smatrix_create_from_array("%argv",argc,(const char **) argv))
       == NULLOBJ) return FAIL;
@@ -124,6 +127,10 @@ int nsp_init_frames(int argc, char **argv)
   /* ast */
   if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O,-1);
+  
+  /* the top level frame */
+  if (( frame=nsp_frame_create("top",NULL))== NULLFRAME) return FAIL;
+  if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
   return(OK);
 }
 
@@ -289,7 +296,9 @@ int nsp_frame_replace_object( NspObject *A,int local_id)
       else 
 	{
 	  /* insert as a local variable */
-	  NspObject *O1 = ((NspFrame *) Datas->first->O)->table->objs[local_id];
+	  NspObject *O1;
+	  local_id = VAR_ID(local_id);
+	  O1 = ((NspFrame *) Datas->first->O)->table->objs[local_id];
 	  if ( O1 != NULL )  nsp_object_destroy(&O1);
 	  ((NspFrame *) Datas->first->O)->table->objs[local_id]=A;
 	  return OK;
@@ -436,6 +445,10 @@ NspObject *nsp_global_frame_search_object(nsp_const_string str)
  * @str: an object name. 
  * 
  * Remove object with name @str in the global frame
+ * XXXX : here it should be good to also remove object from 
+ * the local variables or frame if object is a pointer to 
+ * a global var to avoid the message 
+ * Pointer to a global non existant variable
  * 
  **/
 
@@ -443,6 +456,22 @@ void nsp_global_frame_remove_object(nsp_const_string str)
 {
   if ( GlobalFrame == NULL )  return ;
   nsp_eframe_remove_object((NspFrame *)GlobalFrame,str);
+}
+
+/**
+ * nsp_global_frame_remove_all_objects:
+ * 
+ * remove all objects from global frame 
+ **/
+
+int nsp_global_frame_remove_all_objects(void)
+{
+  if ( GlobalFrame == NULL ) return OK;
+  nsp_frame_destroy((NspFrame *)GlobalFrame);
+  if ((GlobalFrame = nsp_frame_create("global",NULL)) == NULLFRAME)
+    return FAIL;
+  else
+    return OK;
 }
 
 /**
@@ -560,7 +589,7 @@ int nsp_frame_move_up_object(NspObject *O)
  */
 
 
-int nsp_declare_global(char *name) 
+int nsp_declare_global(char *name, int id) 
 {
   NspObject *O;
   NspHobj *O1;
@@ -592,7 +621,7 @@ int nsp_declare_global(char *name)
     }
   /* we create a pointer to O in the local frame */
   if ((O1= GobjCreate(name,O)) == NULLHOBJ) return FAIL;
-  return nsp_frame_replace_object((NspObject *) O1,-1);
+  return nsp_frame_replace_object((NspObject *) O1,id);
 }
 
 
