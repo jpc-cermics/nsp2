@@ -1146,6 +1146,30 @@ int nsp_mat_get_imag(NspMatrix *A)
 }
 
 /**
+ * nsp_mat_isreal:
+ * @A: a #NspMatrix 
+ * @strict: %TRUE or %FALSE 
+ * 
+ * checks if @A is a real matrix.
+ * @A is a real matrix if @A->rc_type is equal to 'r'
+ * or if the imaginary part is only filled with 0.0.
+ * If @strict is set to %TRUE then the function returns 
+ * %TRUE only if @A->rc_type is equal to 'r'
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
+int nsp_mat_isreal(const NspMatrix *A, int strict)
+{
+  int i;
+  if ( A->rc_type == 'r') return TRUE;
+  if ( strict == TRUE ) return FALSE;
+  for ( i = 0 ; i < A->mn ; i++) 
+    if (A->C[i].i != 0.0) return FALSE;
+  return TRUE;
+}
+
+/**
  * nsp_mat_inv_el:
  * @A: a #NspMatrix 
  * 

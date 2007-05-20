@@ -1827,6 +1827,27 @@ static int int_sprowmatrix_imag(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * checks is matrix is real
+ */
+
+static int int_sprowmatrix_isreal (Stack stack, int rhs, int opt, int lhs)
+{
+  int strict = FALSE;
+  NspSpRowMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((HMat = GetSpRow(stack, 1)) == NULLSPROW)   return RET_BUG;
+  if (rhs==2) 
+    {
+       if ( GetScalarBool (stack,2,&strict) == FAIL) return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,nsp_sprowmatrix_isreal(HMat,strict)) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
+/*
  * The Interface for sparse ops
  */
 
@@ -1912,6 +1933,7 @@ static OpTab SpRowMatrix_func[]={
   {"clean_sprow",int_sprowmatrix_clean},  
   {"real_sprow", int_sprowmatrix_real},
   {"imag_sprow", int_sprowmatrix_imag},
+  {"isreal_sprow", int_sprowmatrix_isreal},
   {(char *) 0, NULL}
 };
 

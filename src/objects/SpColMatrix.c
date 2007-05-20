@@ -4512,6 +4512,37 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
   return OK;
 }
 
+
+/**
+ * nsp_spcolmatrix_isreal:
+ * @A: a #NspMatrix 
+ * @strict: %TRUE or %FALSE 
+ * 
+ * checks if @A is a real sparse matrix.
+ * @A is a real matrix if @A->rc_type is equal to 'r'
+ * or if the imaginary part is only filled with 0.0.
+ * If @strict is set to %TRUE then the function returns 
+ * %TRUE only if @A->rc_type is equal to 'r'
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
+int nsp_spcolmatrix_isreal(const NspSpColMatrix *A, int strict)
+{
+  int i,k;
+  if ( A->rc_type == 'r') return TRUE;
+  if ( strict == TRUE ) return FALSE;
+
+  for ( i=0 ; i < A->n ; i++)
+    {
+      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
+	{
+	  if ( A->D[i]->C[k].i != 0.0) return FALSE;
+	}
+    }
+  return TRUE;
+}
+
 /*
  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
  */

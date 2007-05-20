@@ -2210,6 +2210,27 @@ static int int_spcolmatrix_imag(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * checks is matrix is real
+ */
+
+static int int_spcolmatrix_isreal (Stack stack, int rhs, int opt, int lhs)
+{
+  int strict = FALSE;
+  NspSpColMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if (rhs==2) 
+    {
+       if ( GetScalarBool (stack,2,&strict) == FAIL) return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,nsp_spcolmatrix_isreal(HMat,strict)) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
+/*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
  */
@@ -2305,6 +2326,7 @@ static OpTab SpColMatrix_func[]={
   {"clean_sp",int_spcolmatrix_clean},  
   {"real_sp", int_spcolmatrix_real},
   {"imag_sp", int_spcolmatrix_imag},
+  {"isreal_sp", int_spcolmatrix_isreal},
   {(char *) 0, NULL}
 };
 

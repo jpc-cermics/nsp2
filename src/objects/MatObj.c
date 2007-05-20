@@ -1419,6 +1419,28 @@ int_mximagpart (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * checks is matrix is real
+ */
+
+static int int_matrix_isreal (Stack stack, int rhs, int opt, int lhs)
+{
+  int strict = FALSE;
+  NspMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((HMat = GetMat(stack, 1)) == NULLMAT)   return RET_BUG;
+  if (rhs==2) 
+    {
+       if ( GetScalarBool (stack,2,&strict) == FAIL) return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,nsp_mat_isreal(HMat,strict)) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
 /*
  * Returns a kroeneker product A.*.B 
  */
@@ -4458,6 +4480,7 @@ static OpTab Matrix_func[] = {
   {"ge_m_m", int_mxge},
   {"gt_m_m", int_mxgt},
   {"imag_m", int_mximagpart},
+  {"isreal_m", int_matrix_isreal},
   {"dstd_m_m", int_mxkron},	/* operator:  .*. */
   {"latexmat_m", int_mx2latexmat},
   {"latextab_m", int_mx2latextab},

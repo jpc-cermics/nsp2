@@ -1975,6 +1975,26 @@ int nsp_sprowmatrix_imagpart(NspSpRowMatrix *A)
   return nsp_spcolmatrix_imagpart((NspSpColMatrix *) A);
 }
 
+
+/**
+ * nsp_sprowmatrix_isreal:
+ * @A: a #NspMatrix 
+ * @strict: %TRUE or %FALSE 
+ * 
+ * checks if @A is a real sparse matrix.
+ * @A is a real matrix if @A->rc_type is equal to 'r'
+ * or if the imaginary part is only filled with 0.0.
+ * If @strict is set to %TRUE then the function returns 
+ * %TRUE only if @A->rc_type is equal to 'r'
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
+int nsp_sprowmatrix_isreal(const NspSpRowMatrix *A, int strict)
+{
+  return nsp_spcolmatrix_isreal((NspSpColMatrix *) A,strict);
+}
+
 /*
  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
  */
