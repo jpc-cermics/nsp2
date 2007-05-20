@@ -42,7 +42,8 @@ TESTS= \
 	createbyset.dia \
 	sparse-mixed.dia \
 	extract_empty.dia \
-	sci_save_load.dia 
+	sci_save_load.dia \
+	global.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
