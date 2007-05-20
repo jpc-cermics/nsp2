@@ -1,7 +1,7 @@
-40% symbol docs coverage.
-907 symbols documented.
-224 symbols incomplete.
-1379 not documented.
+41% symbol docs coverage.
+934 symbols documented.
+227 symbols incomplete.
+1349 not documented.
 
 
 Abs
@@ -663,33 +663,21 @@ mxCalloc (n, size)
 mxChar
 mxClassID
 mxComplexity
-mxCreateCellArray
-mxCreateCellMatrix
 mxCreateCharMatrixFromStrings (Returns)
-mxCreateLogicalArray
-mxCreateLogicalMatrix
 mxCreateLogicalScalar (value)
 mxCreateSparse
-mxCreateSparseLogicalMatrix
-mxCreateString
-mxCreateStructArray
 mxCreateStructMatrix
 mxDOUBLE_CLASS
 mxFUNCTION_CLASS
 mxFree (ptr)
 mxFreeMatrix (ptr)
-mxGetCell
-mxGetChars
-mxGetClassName
+mxGetClassName (Returns)
 mxGetEps
-mxGetField (pa, i, fieldname, Returns)
-mxGetFieldByNumber
+mxGetField (Returns)
 mxGetFieldNameByNumber
 mxGetInf
-mxGetLogicals
 mxGetNaN
 mxGetNumberOfDimensions
-mxGetNumberOfElements
 mxGetNumberOfFields
 mxGetNzmax
 mxGetScalar
@@ -697,43 +685,27 @@ mxINT16_CLASS
 mxINT32_CLASS
 mxINT64_CLASS
 mxINT8_CLASS
-mxIsCell
-mxIsChar
 mxIsComplex
 mxIsEmpty
-mxIsFinite
 mxIsFull
-mxIsInf
-mxIsNaN
 mxIsNumeric
-mxIsSharedArray
 mxIsSparse
-mxIsStruct
 mxLOGICAL_CLASS
 mxLogical
 mxMalloc
 mxOBJECT_CLASS
 mxOPAQUE_CLASS
-mxRealloc
+mxRealloc (Returns)
 mxSINGLE_CLASS
 mxSPARSE_CLASS
 mxSTRUCT_CLASS
-mxSetCell
-mxSetData
 mxSetField (pa, i, fieldname, value)
-mxSetIr
-mxSetJc
-mxSetM
-mxSetN
 mxSetNzmax
-mxSetPi
-mxSetPr
 mxUINT16_CLASS
 mxUINT32_CLASS
 mxUINT64_CLASS
 mxUINT8_CLASS
 mxUNKNOWN_CLASS
-mxUnshareArray
 myzabs (Returns)
 new_bhash
 new_block
@@ -864,6 +836,7 @@ nsp_classb_object
 nsp_classb_print
 nsp_clearerr
 nsp_cosh_c
+nsp_declare_global (id)
 nsp_det (mode, Returns)
 nsp_dialog
 nsp_dialog1

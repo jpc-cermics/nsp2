@@ -228,6 +228,8 @@ extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) 
 extern int nsp_mat_complexify(NspMatrix *Mat, double d); 
 extern int nsp_mat_get_real(NspMatrix *A); 
 extern int nsp_mat_get_imag(NspMatrix *A); 
+extern int nsp_mat_isreal(const NspMatrix *A, int strict);
+
 extern int nsp_mat_inv_el(NspMatrix *A); 
 extern NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B); 
 extern NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2); 
