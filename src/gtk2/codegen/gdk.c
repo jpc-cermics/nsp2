@@ -1403,7 +1403,7 @@ static int
 _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 {
   int val;
-  if ( IntScalar(self,&val) == FAIL) return FAIL;
+  if ( IntScalar(value,&val) == FAIL) return FAIL;
   if (!strcmp(attr, "red")) nspg_boxed_get(self, GdkColor)->red = val;
   else if (!strcmp(attr, "green"))  nspg_boxed_get(self, GdkColor)->green = val;	    
   else if (!strcmp(attr, "blue"))   nspg_boxed_get(self, GdkColor)->blue = val;
