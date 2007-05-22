@@ -954,6 +954,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	    }
 	  if ( newpos > CMAX )
 	    {
+	      if ( L->type == COLCONCAT ) Sciprintf("...");
 	      Sciprintf("\n");
 	      newpos =_nsp_plist_pretty_print_arg_ret(List->next,posret,0,posret,&ret);
 	    }

@@ -1582,7 +1582,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	  break;
 	default :       /* when multi dim arrays will be supported we will have to verify in fact
                            if fargs > nb dim of the array */
-	  Sciprintf("Error: multi-dimensionnal arrays not currently supported");
+	  Sciprintf("Error: multi-dimensionnal arrays not currently supported\n");
 	  return RET_BUG;
 	  break;
 	}

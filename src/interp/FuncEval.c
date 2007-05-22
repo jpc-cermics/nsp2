@@ -353,7 +353,7 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
     }
   else  /* rhs > 3  currently not implemented */
     {
-      Sciprintf("Error: multi-dimensionnal arrays not currently supported");
+      Scierror("Error: multi-dimensionnal arrays not currently supported\n");
       /* voir pour le message d'erreur */
       n = -1;
     }
