@@ -635,7 +635,7 @@ int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if ( T->NextToken(T) == FAIL) return RET_BUG;
   if ( T->token.id != RETURN_OP && T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP )
     {
-      if (parse_top(T,symb_table,plist) == FAIL) return RET_BUG;
+      if (nsp_parse_top(T,symb_table,plist) == FAIL) return RET_BUG;
     }
   return RET_OK;
 }

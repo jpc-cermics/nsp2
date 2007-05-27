@@ -36,8 +36,13 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
 #define IsName(x) ((x)!= NULLPLIST && (x)->type ==NAME && (x)->next == NULLPLIST)
 #define IsPList(x) ((x)!= NULLPLIST && (x)->type ==PLIST && (x)->next == NULLPLIST)
 
-
-/************************************************************
+/**
+ * nsp_check_is_mlhs:
+ * @plist: 
+ * @plist1: 
+ * @kount: 
+ * 
+ * 
  * IsMlhs checks for  [<x>,<x>,.....,<x>] 
  * where x can be a <name> or <feval>:= f(...) 
  * ( scilab multiple left hand side )
@@ -49,9 +54,10 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
  * 
  * XXXXX Attention IsMlhs peut renvoyer False et plist1 peut-etre 
  * non vide : il faut alors le netoyer .
- *************************************************************/
-
-int is_mlhs(PList plist, PList *plist1, int *kount)
+ * 
+ * Returns: 
+ **/
+int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
 {
   PList loc;
   if (Isname(plist,plist1,kount)==OK) return(OK);
@@ -74,13 +80,20 @@ int is_mlhs(PList plist, PList *plist1, int *kount)
   return(FAIL);
 }
 
-/************************************************************
+/**
+ * IsColConc:
+ * @plist: 
+ * @plist1: 
+ * @kount: 
+ * 
  * if plist = ( <x> <y> COLCONCAT )
  * <y> := <name> or <feval> 
  * <x> := <name> or <feval> or (<x> <y> COLCONCAT) 
  * returns true and all the 
  *     <name> and <feval> are added at end of list plist1
- *************************************************************/
+ * 
+ * Returns: 
+ **/
 
 static int IsColConc(PList plist, PList *plist1, int *kount)
 {
@@ -101,11 +114,17 @@ static int IsColConc(PList plist, PList *plist1, int *kount)
   return(FAIL);
 }
 
-/************************************************************
+/**
+ * Isname:
+ * @plist: 
+ * @plist1: 
+ * @kount: 
+ *
  * if plist = ( <name> ..... )
  * returns true and <name> is added at end of list plist1
- *************************************************************/
-
+ * 
+ * Returns: 
+ **/
 static int Isname(PList plist, PList *plist1, int *kount)
 {
   if ( plist != NULLPLIST && plist->type == NAME )
@@ -119,14 +138,21 @@ static int Isname(PList plist, PList *plist1, int *kount)
 }
 
 
-/************************************************************
+/**
+ * IsFeval:
+ * @plist: 
+ * @plist1: 
+ * @kount: 
+ * 
+ * 
  * if plist = ((.... FEVAL) ...... )
  * returns true and a copy of 
  * (.... FEVAL) is added at end of list plist1
  * 
  * also valid for LISTEVAL 
- *************************************************************/
-
+ * 
+ * Returns: 
+ **/
 static int IsFeval(PList plist, PList *plist1, int *kount)
 {
   if ( plist != NULLPLIST && plist->type == PLIST)
@@ -147,14 +173,19 @@ static int IsFeval(PList plist, PList *plist1, int *kount)
   return FAIL;
 }
 
-
-/* Checks if a LISTEVAL is a simple one 
- * i.e  (name (... "ARGS") LISTEVAL)
+/**
+ * nsp_check_simple_listeval:
+ * @plist: a #PList 
+ * 
+ * checks if @plist is a simple LISTEVAL 
+ * i.e  (LISTEVAL name (ARGS ... ))
  * if true LISTEVAL is replaced by CALLEVAL 
  * (a function call or elt extraction)
- */ 
+ * 
+ * Returns: %TRUE or %FALSE
+ **/
 
-int check_simple_listeval(PList plist)
+int nsp_check_simple_listeval(PList plist)
 {
   if ( plist->type == LISTEVAL
        && plist->arity == 2 
@@ -170,8 +201,14 @@ int check_simple_listeval(PList plist)
   return FAIL;
 }
 
-/* checks that a MLHS is just composed of names 
- */
+/**
+ * nsp_check_simple_mlhs:
+ * @L: a #PList 
+ * 
+ * checks that @L is a MLHS just composed of names. 
+ * 
+ * Returns: %TRUE or %FALSE
+ **/
 
 int nsp_check_simple_mlhs(PList L)
 {

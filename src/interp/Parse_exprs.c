@@ -25,6 +25,7 @@
 #include "nsp/object.h" 
 #include "nsp/plistc.h"
 #include "nsp/interf.h"
+#include "nsp/parse.h"
 #include "Functions.h" 
 
 typedef int (*ExprsStop) (Tokenizer *T,int token);
@@ -99,7 +100,7 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
  */
 
 
-int parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
+int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int count=0;
   PList plist1 = NULLPLIST ;
@@ -1268,7 +1269,7 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
     }
   else 
     {
-      if (is_mlhs(plist1,&plist3,&kount)== OK) 
+      if (nsp_check_is_mlhs(plist1,&plist3,&kount)== OK) 
 	{
 	  /* we change expr1 into a mlhs **/
 	  if (nsp_parse_add(&plist3,MLHS,kount,T->token.Line) == FAIL) return(FAIL);
@@ -1386,7 +1387,7 @@ static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 
 static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
-int nsp_is_or_op(Tokenizer *T,int *op)
+static int nsp_is_or_op(Tokenizer *T,int *op)
 {
   if  ( T->token.id == OR_OP || T->token.id == SEQOR )
     {
@@ -1887,7 +1888,7 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       /* check if this is a simple call or extract f(...) 
        * if yes LISTEVAL is changed to CALLEVAL to simplify evaluation 
        */
-      if ( check_simple_listeval(*plist) == OK ) 
+      if ( nsp_check_simple_listeval(*plist) == OK ) 
 	{
 	  /* Sciprintf("This is a simple one\n");
 	   *nsp_plist_print_internal(*plist);

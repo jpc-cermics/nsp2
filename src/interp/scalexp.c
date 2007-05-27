@@ -25,7 +25,7 @@
 
 #define  ScalExp_Private 
 #include "nsp/object.h"
-#include "scalexp.h"
+#include "nsp/scalexp.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
 #include "nsp/plisttoken.h" /*for name_maxl **/

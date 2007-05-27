@@ -27,7 +27,7 @@
 
 #define  AstNode_Private 
 #include "nsp/object.h"
-#include "astnode.h"
+#include "nsp/astnode.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
 

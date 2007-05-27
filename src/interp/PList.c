@@ -31,7 +31,7 @@
 
 #include "nsp/machine.h"
 #include "nsp/object.h"
-#include "astnode.h"
+#include "nsp/astnode.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
 #include "nsp/pr-output.h"
