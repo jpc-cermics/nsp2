@@ -330,8 +330,7 @@ void nsp_init_macro_table(void)
 
 /**
  * nsp_macro_table_reset_cache:
- * @void
- *
+ * 
  * reset the macros cache 
  */
 

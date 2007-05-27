@@ -42,8 +42,10 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
  * @plist1: 
  * @kount: 
  * 
- * 
- * IsMlhs checks for  [<x>,<x>,.....,<x>] 
+ * Returns: 
+ */
+/*
+ * checks for  [<x>,<x>,.....,<x>] 
  * where x can be a <name> or <feval>:= f(...) 
  * ( scilab multiple left hand side )
  * inside plist a mlhs is coded as a set of colconcat 
@@ -55,7 +57,7 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
  * XXXXX Attention IsMlhs peut renvoyer False et plist1 peut-etre 
  * non vide : il faut alors le netoyer .
  * 
- * Returns: 
+ * 
  **/
 int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
 {
@@ -85,7 +87,10 @@ int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
  * @plist: 
  * @plist1: 
  * @kount: 
- * 
+ *
+ *  Returns: 
+ */
+/* 
  * if plist = ( <x> <y> COLCONCAT )
  * <y> := <name> or <feval> 
  * <x> := <name> or <feval> or (<x> <y> COLCONCAT) 
@@ -120,10 +125,12 @@ static int IsColConc(PList plist, PList *plist1, int *kount)
  * @plist1: 
  * @kount: 
  *
+ * Returns: 
+ */
+/*
  * if plist = ( <name> ..... )
  * returns true and <name> is added at end of list plist1
  * 
- * Returns: 
  **/
 static int Isname(PList plist, PList *plist1, int *kount)
 {
