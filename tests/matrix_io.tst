@@ -114,7 +114,7 @@ if ~rep then pause;end
 if max(a1-a) > 1.e-1 then pause,end 
 
 // write matrix with printf method 
-// -------------------------------
+// ------------------------------- 
 
 n=5;
 a=rand(n,n,'u');

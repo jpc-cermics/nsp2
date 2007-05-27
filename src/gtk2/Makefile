@@ -10,7 +10,7 @@ LIBRARY = nsp.a
 OBJSC = gboxed.o gobject.o  gdkatom.o gtk.o atk.o \
 	pango.o gdk.o pangoattribute.o to_be_done.o \
 	to_be_done1.o gpointer.o strings.o graphics.o \
-	gmarkup.o
+	gmarkup.o gdate.o
 
 OBJSF = 
 

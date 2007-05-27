@@ -102,5 +102,75 @@ A(:,1)      // 2x1
 // {H(:)} transforme une hash en cell (on perds les noms) 
 // H.__keys donne la table des noms 
 
+// enlarge size by affectation 
+// standard case for cells 
+
+C=cells_create(1,0);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // OK
+if C{3}<>6 then pause;end 
+C=cells_create(1,1);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // OK 
+if C{3}<>6 then pause;end 
+C=cells_create(1,2);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // OK 
+if C{3}<>6 then pause;end 
+
+C=cells_create(0,0);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // BUG 
+if C{3}<>6 then pause;end 
+C=cells_create(0,1);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // BUG 
+if C{3}<>6 then pause;end 
+C=cells_create(0,2);C{3}= 6;
+if or(size(C)<>[1,3]) then pause;end // BUG 
+if C{3}<>6 then pause;end 
+
+C=cells_create(2,0);C{3}= 6;
+if or(size(C)<>[3,1]) then pause;end // OK 
+if C{3}<>6 then pause;end 
+C=cells_create(2,1);C{3}= 6;
+if or(size(C)<>[3,1]) then pause;end // OK 
+if C{3}<>6 then pause;end 
 
 
+// XXX we need the same when B is a vector or a matrix 
+// 
+
+
+// enlarge size by affectation 
+// path extract case for cells 
+
+A=[];A(2,2)=6;
+
+C=cells_create(1,0);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+C=cells_create(1,1);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+C=cells_create(1,2);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+
+C=cells_create(0,0);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+C=cells_create(0,1);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+C=cells_create(0,2);C{3}(2,2)= 6;
+if or(size(C)<>[1,3]) then pause;end 
+if or(C{3}<>A) then pause;end 
+	
+C=cells_create(2,0);C{3}(2,2)= 6;
+if or(size(C)<>[3,1]) then pause;end 
+if or(C{3}<>A) then pause;end 
+C=cells_create(2,1);C{3}(2,2)= 6;
+if or(size(C)<>[3,1]) then pause;end 
+if or(C{3}<>A) then pause;end 
+
+// two indices 
+
+C=cells_create(0,0);C{3,4}(2,2)= 6;
+if or(size(C)<>[3,4]) then pause;end 
+if C{3,4}<>6 then pause;end 

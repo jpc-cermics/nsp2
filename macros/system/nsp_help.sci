@@ -25,7 +25,7 @@ function nsp_help(topic)
   else
     printf('No man for %s\n",topic);
   end
-endfunction
+  endfunction
   
 
 

@@ -41,7 +41,7 @@ function ilib_gen_gateway(name,tables)
     if L<> 1 then 
       tname = name +m2s(itable,'%.f');
     else 
-       tname = name ;
+      tname = name ;
     end
     table = tables(itable);
     [mt,nt]=size(table);
@@ -176,14 +176,14 @@ function ilib_gen_loader(name,tables,libs)
     fd.printf["%s_path=file(''join'',[''.'',''%s%s'']);\n",name,name,lib_suf];
     fd.printf["addinter(%s_path,''%s'');\n",name,name];
   else
-     // on link then a set of addinter 
-     fd.printf["%s_path=file(''join'',[''.'',''%s%s'']);\n",name,name,lib_suf];
-     fd.printf["ilib=link(%s_path);\n",name];
-     for itable=1:L 
-       // loop on a list of tables 
-       table = tables(itable);
-       fd.printf["addinter(ilib,''%s'');\n",name+m2s(itable,'%.f')];
-     end
+    // on link then a set of addinter 
+    fd.printf["%s_path=file(''join'',[''.'',''%s%s'']);\n",name,name,lib_suf];
+    fd.printf["ilib=link(%s_path);\n",name];
+    for itable=1:L 
+      // loop on a list of tables 
+      table = tables(itable);
+      fd.printf["addinter(ilib,''%s'');\n",name+m2s(itable,'%.f')];
+    end
   end
   fd.close[];
 endfunction
@@ -209,7 +209,7 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
     if nt<>0 & nt<>3 then error('second argument has wrong size ');end 
     tables(it)=table;
   end
-      
+  
   if getenv('WIN32','NO')=='OK' then
     comp_target = COMPILER;
     if with_lcc() == %T then
@@ -257,7 +257,7 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway,ldflags
     if L==1 then 
       fprintf(fd," %s.o",name);
     else
-       for i=1:L , fprintf(fd," %s.o",name+m2s(i,'%.f'));end 
+      for i=1:L , fprintf(fd," %s.o",name+m2s(i,'%.f'));end 
     end
   end
   for it=1:L 
@@ -279,12 +279,12 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway,ldflags
     for x=libs(:)' ; fprintf(fd," %s.a",x);end
     fprintf(fd,"\n");
     fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/routines\"""+...
-	     " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
+	    " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
     fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/routines\"""+...
-	     " -Dmexfunction=mex$* "+ fflags +"\n"); 
+	    " -Dmexfunction=mex$* "+ fflags +"\n"); 
   else
-     fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DmexFunction=mex_$* "+cflags+ "\n");
-     fprintf(fd,"FFLAGS = $(FC_OPTIONS) -Dmexfunction=mex$* "+fflags+ "\n");
+    fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DmexFunction=mex_$* "+cflags+ "\n");
+    fprintf(fd,"FFLAGS = $(FC_OPTIONS) -Dmexfunction=mex$* "+fflags+ "\n");
   end
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+ "\n");
   if getenv('WIN32','NO')=='OK' then
@@ -292,7 +292,7 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway,ldflags
     // and not libtool up to now XXX 
     fprintf(fd,"include $(SCIDIR)/config/Makecygdll.incl\n");
   else
-     fprintf(fd,"include $(SCIDIR)/config/Makeso.incl\n");
+    fprintf(fd,"include $(SCIDIR)/config/Makeso.incl\n");
   end
   fd.close[];
 
@@ -321,14 +321,14 @@ function ilib_gen_Make_win32(name,tables,files,libs,Makename,with_gateway,ldflag
     if L==1 then 
       fprintf(fd," %s.obj",name);
     else
-       for i=1:L , fprintf(fd," %s.obj",name+m2s(i,'%.f'));end 
+      for i=1:L , fprintf(fd," %s.obj",name+m2s(i,'%.f'));end 
     end
   end
   
   for it=1:L 
     table = tables(it)
     [mt,nt]=size(table);
- 
+    
     for i=1:mt ; 
       // mex files to be added 
       if table(i,3)=='cmex' | table(i,3)=='fmex' | table(i,3)=='Fmex' 
@@ -342,15 +342,15 @@ function ilib_gen_Make_win32(name,tables,files,libs,Makename,with_gateway,ldflag
   fprintf(fd,"\n");
   fprintf(fd,"!include $(SCIDIR1)\\Makefile.incl.mak\n");
   fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/routines\"""+...
-	   " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
+	  " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
   fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/routines\"""+...
-	   " -Dmexfunction=mex$* "+ fflags +"\n"); 
+	  " -Dmexfunction=mex$* "+ fflags +"\n"); 
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+"\n");
   fprintf(fd,"!include $(SCIDIR1)\\config\\Makedll.incl \n");
   fd.close[];
 endfunction
 
-         
+
 function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,cflags,fflags,flag)
 // Allan CORNET
 //INRIA 2004
@@ -362,9 +362,9 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
   fprintf(fd,"SCIDIR1 =%s\n",pathconvert(SCI,%f,%f,'w'));
   fprintf(fd,"DUMPEXTS=""$(SCIDIR1)\\bin\\dumpexts""\n");
   if ( with_atlas()==%T ) then
-  	fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\LibScilabLCC.lib $(SCIDIR1)\\bin\\atlaslcc.lib\n\n");
+    fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\LibScilabLCC.lib $(SCIDIR1)\\bin\\atlaslcc.lib\n\n");
   else
-  	fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\LibScilabLCC.lib\n\n");
+    fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\LibScilabLCC.lib\n\n");
   end
   fprintf(fd,"CC=lcc\n");
   fprintf(fd,"LINKER=lcclnk\n");
@@ -373,7 +373,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
   fprintf(fd,"LINKER_FLAGS=-dll -nounderscores\n");
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+"\n");
   fprintf(fd,"O=.obj\n");
- 
+  
   fprintf(fd,"# name of the dll to be built\n"); 
   fprintf(fd,"LIBRARY = %s\n",name);
   fprintf(fd,"# list of objects file\n");
@@ -390,14 +390,14 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
     if L==1 then 
       fprintf(fd," %s$(O)",name);
     else
-       for i=1:L , fprintf(fd," %s$(O)",name+m2s(i,'%.f'));end 
+      for i=1:L , fprintf(fd," %s$(O)",name+m2s(i,'%.f'));end 
     end
   end
   
   for it=1:L 
     table = tables(it)
     [mt,nt]=size(table);
- 
+    
     for i=1:mt ; 
       // mex files to be added 
       if table(i,3)=='cmex' | table(i,3)=='fmex' | table(i,3)=='Fmex' 
@@ -419,13 +419,13 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
   fprintf(fd,"\n$(LIBRARY).dll: $(OBJS)\n");
   fprintf(fd,"	$(DUMPEXTS) -o ""$(LIBRARY).def"" ""$*"" $(OBJS)\n");
   fprintf(fd,"	$(LINKER) $(LINKER_FLAGS) $(OBJS) $(OTHERLIBS) $(SCIIMPLIB) $(XLIBSBIN) $(TERMCAPLIB) $(EXTRA_LDFLAGS) $*.def -o $(LIBRARY).dll\n\n");
- 
+  
 
   for x=files(:)' ;
-  	x=strsubst(x,".obj","");
-   	x=strsubst(x,".o","");
-  	fprintf(fd,"%s$(O):\n",x);
-  	fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n\n");
+    x=strsubst(x,".obj","");
+    x=strsubst(x,".o","");
+    fprintf(fd,"%s$(O):\n",x);
+    fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n\n");
   end
 
 
@@ -434,20 +434,20 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
       fprintf(fd,"\n%s$(O):\n",name);
       fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n");
     else
-       for i=1:L ;
-       fprintf(fd,"\n%s$(O):\n",name+m2s(i,'%.f'));
-       fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n");
-       end 
+      for i=1:L ;
+	fprintf(fd,"\n%s$(O):\n",name+m2s(i,'%.f'));
+	fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n");
+      end 
     end
   end
   
-  	
+  
   fprintf(fd,"\nclean:\n");
   fprintf(fd,"	del *.obj\n");
   fprintf(fd,"	del *.dll\n");
   fprintf(fd,"	del *.lib\n");
   fprintf(fd,"	del *.def\n");
- 
+  
   fd.close[];
 
 endfunction
@@ -551,7 +551,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
 endfunction 
 
 
-  
+
 
 
 

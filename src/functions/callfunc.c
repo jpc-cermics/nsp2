@@ -78,6 +78,17 @@ extern  sci_interface  Lapack_Interf ;extern  interface_info  Lapack_Interf_Info
 extern  sci_interface  Fft_Interf ;extern  interface_info  Fft_Interf_Info ;
 extern  sci_interface  Module_Interf ;extern  interface_info  Module_Interf_Info ;
 extern  sci_interface  ModuleElt_Interf ;extern  interface_info  ModuleElt_Interf_Info ;
+extern  sci_interface  gdate_Interf ;extern  interface_info  gdate_Interf_Info ;
+extern  sci_interface  BHash_Interf  ;extern  interface_info  BHash_Interf_Info  ;
+extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
+extern  sci_interface  Sound_Interf ;extern  interface_info  Sound_Interf_Info ;
+extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
+extern  sci_interface  Scicos_Interf ;extern  interface_info  Scicos_Interf_Info ;
+extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
+extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
+extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
+extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node_Interf_Info ;
+extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_Info ;
 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #ifdef WITH_MAXPLUSLIB
@@ -89,28 +100,9 @@ extern  sci_interface  ClassD_Interf ;extern  interface_info  ClassD_Interf_Info
 extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 #endif 
 
-#define BHASH 1
-
-#ifdef BHASH
-extern  sci_interface  BHash_Interf  ;extern  interface_info  BHash_Interf_Info  ;
-#endif 
-
-extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
-extern  sci_interface  Sound_Interf ;extern  interface_info  Sound_Interf_Info ;
-extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
-extern  sci_interface  Scicos_Interf ;extern  interface_info  Scicos_Interf_Info ;
 #ifdef WITH_SNDFILE
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
 #endif 
-
-extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
-extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
-extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
-extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node_Interf_Info ;
-extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_Info ;
-
-#define WITH_SCALEXP
-/* #define WITH_PREMIA  */
 
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
@@ -184,9 +176,7 @@ InterfTab Interfaces[]={
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
 #endif
-#ifdef BHASH
   {BHash_Interf , BHash_Interf_Info},
-#endif
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},
 #endif
@@ -194,9 +184,8 @@ InterfTab Interfaces[]={
   {premiamodel_Interf , premiamodel_Interf_Info},
 #endif
   {gmarkup_node_Interf , gmarkup_node_Interf_Info},
-#ifdef WITH_SCALEXP
   {scalexp_Interf , scalexp_Interf_Info},
-#endif 
+  {gdate_Interf,  gdate_Interf_Info},
   {NULL,NULL}
 }; 
 
