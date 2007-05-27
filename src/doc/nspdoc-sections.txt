@@ -113,7 +113,6 @@ dequeue_nsp_command
 
 <SECTION>
 <FILE>parse</FILE>
-TokenLineSet
 nsp_parse_eval_dir
 nsp_parse_eval_dir_full
 nsp_parse_eval_from_std
@@ -122,6 +121,9 @@ nsp_parse_eval_file
 nsp_parse_eval_from_string
 
 <SUBSECTION used to build ast list>
+nsp_parse
+nsp_parse_expr
+nsp_parse_top
 nsp_parse_append
 nsp_parse_add
 nsp_parse_add_comment
@@ -135,6 +137,18 @@ nsp_parse_add_object
 nsp_parse_add_opname
 nsp_parse_add_string
 
+<SUBSECTION checks ast parts>
+nsp_check_is_mlhs
+nsp_check_simple_listeval
+nsp_check_simple_mlhs
+
+<SUBSECTION astnode> 
+nsp_astcode_to_nickname
+nsp_astcode_to_name
+nsp_astcode_to_string
+nsp_is_nsp_keyword
+nsp_is_code_keyword
+nsp_print_opname
 </SECTION>
 
 <SECTION>
@@ -1022,11 +1036,8 @@ nsp_matint_delete_elements2
 nsp_matint_delete_rows
 nsp_matint_extract
 nsp_matint_extract1
-nsp_matint_extract_columns
 nsp_matint_extract_columns1
-nsp_matint_extract_elements
 nsp_matint_extract_elements1
-nsp_matint_extract_rows
 nsp_matint_extract_rows1
 nsp_matint_perm_elem
 nsp_matint_redim

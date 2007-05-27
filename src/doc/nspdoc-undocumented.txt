@@ -1,7 +1,7 @@
 41% symbol docs coverage.
-934 symbols documented.
-227 symbols incomplete.
-1349 not documented.
+941 symbols documented.
+231 symbols incomplete.
+1353 not documented.
 
 
 Abs
@@ -425,7 +425,6 @@ Stack
 StackInfo
 StackStore
 SwapObjs (stack, i, j)
-TokenLineSet
 USE_SHARP_SIGN
 USE_SWAP
 VERSION
@@ -775,6 +774,9 @@ nsp_activate_gtk_events_check
 nsp_aint_c
 nsp_arg_c
 nsp_asin_c (x, res)
+nsp_astcode_to_name (code)
+nsp_astcode_to_nickname (code)
+nsp_astcode_to_string
 nsp_atk_hash_table
 nsp_basic_to_string
 nsp_bhash_copy
@@ -819,6 +821,7 @@ nsp_cells_xdr_load
 nsp_cells_xdr_save
 nsp_check_events_activated
 nsp_check_gtk_events
+nsp_check_is_mlhs
 nsp_choices_with_combobox
 nsp_choose
 nsp_choose_
@@ -916,7 +919,9 @@ nsp_insert_module_last
 nsp_int2double (Returns)
 nsp_int2float (Returns)
 nsp_intialize_reader
+nsp_is_code_keyword (keyc)
 nsp_is_gtk_window
+nsp_is_nsp_keyword (id)
 nsp_iset (Returns)
 nsp_isinf_c
 nsp_isnan_c
@@ -1097,6 +1102,7 @@ nsp_norm_c
 nsp_object_load_def
 nsp_object_save_def
 nsp_pango_hash_table
+nsp_parse
 nsp_parse_add (plist, op, arity, line)
 nsp_parse_add_comment (plist, str)
 nsp_parse_add_doublei (plist, str)
@@ -1111,6 +1117,7 @@ nsp_parse_add_string (plist, str)
 nsp_parse_append (plist, l)
 nsp_parse_eval_dir (Dir, Fname)
 nsp_parse_eval_dir_full (Dir)
+nsp_parse_top
 nsp_plist2smatrix (L, indent)
 nsp_plist_copy (L)
 nsp_plist_copy_no_local_vars (L)
@@ -1165,6 +1172,7 @@ nsp_pr_float
 nsp_pr_imag_float
 nsp_pr_white
 nsp_print_dialog
+nsp_print_opname
 nsp_prod_c
 nsp_putstr (F, str, Returns)
 nsp_qsort

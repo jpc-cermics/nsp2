@@ -3681,6 +3681,122 @@ double
 char *cmach
 </FUNCTION>
 <STRUCT>
+<NAME>NspAstNode</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeAstNode</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeAstNode</NAME>
+struct _NspTypeAstNode {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+};
+</STRUCT>
+<STRUCT>
+<NAME>nsp_astnode</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_astnode</NAME>
+struct _nsp_astnode {
+  int op;
+  int arity; /* arity for operators or tag for names etc.. */
+  void *obj; /* used to store a string pointer, 
+	      * an object pointer a parse_double
+	      * an int. Maybe an union could help.
+	      */
+  int ref_count;
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspAstNode</NAME>
+struct _NspAstNode {
+  /*< private >*/
+  NspObject father;
+  NspTypeAstNode*type;
+  /*< public >*/
+  nsp_astnode *obj;
+};
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_astnode_id</NAME>
+extern int nsp_type_astnode_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_astnode</NAME>
+extern NspTypeAstNode *nsp_type_astnode;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_astnode</NAME>
+<RETURNS>NspTypeAstNode *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_astnode</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLASTNODE</NAME>
+#define NULLASTNODE (NspAstNode*) 0
+</MACRO>
+<FUNCTION>
+<NAME>astnode_create</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+char *name,int op,int arity,void *data,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astnode_copy</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+NspAstNode *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astnode_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspAstNode *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astnode_info</NAME>
+<RETURNS>void </RETURNS>
+NspAstNode *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astnode_print</NAME>
+<RETURNS>void </RETURNS>
+NspAstNode *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astnode_object</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsAstNodeObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsAstNode</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetAstNodeCopy</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetAstNode</NAME>
+<RETURNS>NspAstNode *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>int_astnode_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<STRUCT>
 <NAME>NspConnector</NAME>
 </STRUCT>
 <STRUCT>
@@ -5540,11 +5656,6 @@ ELT_TYPE),n*sizeof(int),(dir == 'i' ) ? XCNAME(compareC,ELT_TYPE):XCNAME(compare
 ELT_TYPE),sizeof(int),(dir == 'i' ) ? XCNAME(LexiColcompareC,ELT_TYPE):XCNAME(LexiColcompareD,ELT_TYPE),XCNAME(LexiColswapcode,ELT_TYPE),swapcodeind
 </FUNCTION>
 <FUNCTION>
-<NAME>TokenLineSet</NAME>
-<RETURNS>int </RETURNS>
-int l
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_parse_eval_file</NAME>
 <RETURNS>int </RETURNS>
 char *Str, int display,int echo, int errcatch, int pause,int mtlb
@@ -5573,6 +5684,76 @@ const char *Dir, char *Fname
 <NAME>nsp_parse_eval_dir_full</NAME>
 <RETURNS>int </RETURNS>
 const char *Dir
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse</NAME>
+<RETURNS>int </RETURNS>
+Tokenizer *T,NspBHash *symb_table,PList *plist
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_top</NAME>
+<RETURNS>int </RETURNS>
+Tokenizer *T,NspBHash *symb_table,PList *plist
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_expr</NAME>
+<RETURNS>PList </RETURNS>
+NspSMatrix *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_function_name</NAME>
+<RETURNS>char *</RETURNS>
+PList plist
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_check_simple_mlhs</NAME>
+<RETURNS>int </RETURNS>
+PList L
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_check_simple_listeval</NAME>
+<RETURNS>int </RETURNS>
+PList plist
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_check_simple_listeval</NAME>
+<RETURNS>int </RETURNS>
+PList plist
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_check_is_mlhs</NAME>
+<RETURNS>int </RETURNS>
+PList plist, PList *plist1, int *kount
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astcode_to_nickname</NAME>
+<RETURNS>const char *</RETURNS>
+int code
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astcode_to_name</NAME>
+<RETURNS>const char *</RETURNS>
+int code
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astcode_to_string</NAME>
+<RETURNS>char *</RETURNS>
+int type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_is_nsp_keyword</NAME>
+<RETURNS>int </RETURNS>
+const char *id
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_is_code_keyword</NAME>
+<RETURNS>int </RETURNS>
+int keyc
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_print_opname</NAME>
+<RETURNS>int </RETURNS>
+int code
 </FUNCTION>
 <TYPEDEF>
 <NAME>Boolean</NAME>
@@ -11274,6 +11455,134 @@ NspIVect *IV
 <RETURNS>int </RETURNS>
 NspObject *O
 </FUNCTION>
+<STRUCT>
+<NAME>NspScalExp</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeScalExp</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeScalExp</NAME>
+struct _NspTypeScalExp {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspScalExp</NAME>
+struct _NspScalExp {
+  /*< private >*/
+  NspObject father;
+  NspTypeScalExp*type;
+  /*< public >*/
+  PList code;
+  NspSMatrix *expr;
+  NspSMatrix *vars;
+  NspSMatrix *extra_vars;
+  NspMatrix *bcode;
+  NspMatrix *values;
+};
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_scalexp_id</NAME>
+extern int nsp_type_scalexp_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_scalexp</NAME>
+extern NspTypeScalExp *nsp_type_scalexp;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_scalexp</NAME>
+<RETURNS>NspTypeScalExp *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_scalexp</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLSCALEXP</NAME>
+#define NULLSCALEXP (NspScalExp*) 0
+</MACRO>
+<FUNCTION>
+<NAME>scalexp_create</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+char *name,NspSMatrix *expr,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_scalexp_copy</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+NspScalExp *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_scalexp_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspScalExp *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_scalexp_info</NAME>
+<RETURNS>void </RETURNS>
+NspScalExp *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_scalexp_print</NAME>
+<RETURNS>void </RETURNS>
+NspScalExp *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_scalexp_object</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsScalExpObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsScalExp</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetScalExpCopy</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetScalExp</NAME>
+<RETURNS>NspScalExp *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>int_scalexp_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<ENUM>
+<NAME>f_enum</NAME>
+typedef enum { 
+  f_sin, f_cos, f_tan, f_exp, f_log, f_sinh, f_cosh, f_tanh,
+  f_int, f_round, f_ceil, f_floor, f_sign, f_abs, f_max, f_min,
+  f_asin, f_acos, f_atan, f_asinh, f_acosh, f_atanh,
+  f_atan2, f_log10, f_gamma
+} f_enum;
+</ENUM>
+<STRUCT>
+<NAME>expr_func</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>expr_func</NAME>
+struct _expr_func {
+  const char *name;
+  f_enum id;
+  double (*f1)(double);
+  double (*f2)(double,double);
+  int logical;
+};
+</STRUCT>
 <STRUCT>
 <NAME>NspHobj</NAME>
 </STRUCT>
