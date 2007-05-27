@@ -1906,7 +1906,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	{
 	case ARGS :
 	  /* Sciprintf("Using args\n"); */
-	  stack.val->S[*ipos] =nsp_create_empty_matrix_object(name);
+	  stack.val->S[*ipos] = nsp_create_empty_matrix_object(name);
 	  break;
 	case DOTARGS :
 	  /* Sciprintf("Using dotargs\n");*/

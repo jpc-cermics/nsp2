@@ -185,6 +185,7 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
   int count = 0,op=0;
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
+  PList plist2_last = NULLPLIST;
   if (debug) scidebug(debugI++,"[exprs>");
   while (1) 
     {
@@ -222,13 +223,25 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
       if ( funcflag == 1 &&  T->token.id == 0 ) break;
       plist1= NULLPLIST;
       if (parse_stmt(T,symb_table,&plist1) == FAIL ) return(FAIL);
-      if (T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP && T->token.id != RETURN_OP && T->token.id != COMMENT &&  ~(*F)(T,T->token.id) ) 
+      if (T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP 
+	  && T->token.id != RETURN_OP && T->token.id != COMMENT &&  ~(*F)(T,T->token.id) ) 
         {
 	  if ( plist1 != NULLPLIST) 
 	    {
 	      if (nsp_parse_add(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
 	      if (nsp_parse_add_list1(&plist1,&plist1)== FAIL) return(FAIL);
-	      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
+	      /* keep track of last to accelerate insertion */
+	      if ( plist2 == NULL) 
+		{
+		  if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
+		  plist2_last = plist2; 
+		  while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		}
+	      else 
+		{
+		  if (nsp_parse_add_list(&plist2_last,&plist1)== FAIL) return(FAIL);
+		  while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		}
 	      count++;
 	    }
           break ;
@@ -261,11 +274,31 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 		  break;
 		} 
 	      if (nsp_parse_add_list1(&plist1,&plist1)== FAIL) return(FAIL);
-	      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
-	      count++; 
-	      if ( T->token.id == COMMENT )
+	      if ( plist2 == NULL) 
 		{
-		  if (nsp_parse_add_comment(&plist2,T->token.buf) == FAIL) return(FAIL); count++;
+		  if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
+		  plist2_last = plist2; 
+		  while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		}
+	      else 
+		{
+		  if (nsp_parse_add_list(&plist2_last,&plist1)== FAIL) return(FAIL);
+		  while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		}
+	      count++; 
+	      if ( T->token.id == COMMENT  )
+		{
+		  if ( plist2 == NULL) 
+		    {
+		      if (nsp_parse_add_comment(&plist2,T->token.buf) == FAIL) return(FAIL); count++;
+		      plist2_last = plist2; 
+		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		    }
+		  else 
+		    {
+		      if (nsp_parse_add_comment(&plist2_last,T->token.buf) == FAIL) return(FAIL); count++;
+		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
+		    }
 		}
 	    }
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -279,6 +312,7 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
     }
   else 
     {
+      /* add at the start */
       if (nsp_parse_add(&plist2,STATEMENTS,count,T->token.Line)==FAIL) return(FAIL);
     }
   if (nsp_parse_add_list(plist,&plist2)==FAIL)  return(FAIL);

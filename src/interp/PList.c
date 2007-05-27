@@ -478,40 +478,43 @@ void nsp_plist_destroy(PList *List)
 static PList _nsp_plist_copy(PList L,int tag)
 {
   NspObject *obj;
-  PList Res = NULLPLIST,loc=NULLPLIST,loc1=NULLPLIST;
+  PList Res = NULLPLIST,loc=NULLPLIST,loc1=NULLPLIST, Res_last = NULLPLIST;
+  /* we keep track of last element to accelerate the copy */
   while ( L  != NULLPLIST ) 
     {
       switch ( L->type) 
 	{
 	case NAME :
-	  if ( ParseAdd_name(&Res,(char*) L->O,NAME,(tag==TRUE) ? L->arity: -1)==FAIL) return(NULLPLIST);
+	  if ( ParseAdd_name(&Res_last,(char*) L->O,NAME,(tag==TRUE) ? L->arity: -1)==FAIL) return(NULLPLIST);
 	  break;
 	case OPNAME :
-	  if (nsp_parse_add_opname(&Res,(char*) L->O)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_opname(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
 	  break;
 	case OBJECT :
 	  if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return(NULLPLIST); 
-	  if (nsp_parse_add_object(&Res,obj)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_object(&Res_last,obj)==FAIL) return(NULLPLIST);
 	  break;
 	case STRING :
-	  if (nsp_parse_add_string(&Res,(char*) L->O)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_string(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
 	  break;
 	case COMMENT :
-	  if (nsp_parse_add_comment(&Res,(char*) L->O)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_comment(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
 	  break;
 	case NUMBER :
-	  if (nsp_parse_add_doublei(&Res,((parse_double *) L->O)->str)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_doublei(&Res_last,((parse_double *) L->O)->str)==FAIL) return(NULLPLIST);
 	  break;
 	case PLIST: 
 	  if ((loc=_nsp_plist_copy((PList) L->O,tag)) == NULLPLIST) return(NULLPLIST);
 	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) return (NULLPLIST);
-	  if (nsp_parse_add_list(&Res,&loc1)== FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_list(&Res_last,&loc1)== FAIL) return(NULLPLIST);
 	  break;
 	default: 
-	  if (nsp_parse_add_last(&Res,L->type,L->arity,NSP_POINTER_TO_INT( L->O)) == FAIL) 
+	  if (nsp_parse_add_last(&Res_last,L->type,L->arity,NSP_POINTER_TO_INT( L->O)) == FAIL) 
 	    return(NULLPLIST);
 	}
       L= L->next;
+      if ( Res == NULL) Res = Res_last; 
+      while ( Res_last->next != NULL) Res_last = Res_last->next;
     }
   return(Res);
 }
@@ -1164,7 +1167,7 @@ static int _nsp_plist_pretty_print_opname(int type, int indent, int pos)
 
 /* a set of Args separated by sep */
 
-#define WITH_SYMB_TABLE_DEBUG
+/* #define WITH_SYMB_TABLE_DEBUG */
 
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep)
 {
