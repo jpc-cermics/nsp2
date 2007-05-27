@@ -2874,18 +2874,18 @@ int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( rmax > C->mn ) 
 	{
-	  /* we must enlarge C */
-	  if ( C->m == 1 )
+	  /* we must enlarge C ZZZ */
+	  if ( C->m == 1 || C->m == 0 )
 	    {
 	      if ( nsp_cells_enlarge(C, 1, rmax) == FAIL ) goto err;
 	    }
-	  else if ( C->n == 1 )
+	  else if ( C->n == 1 || C->n == 0) 
 	    {
 	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
 	    } 
-	  else  /* C is a matrix or a empty matrix */
+	  else
 	    {
-	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
+	      Scierror("Error: indice %d is out of bounds for affectation in %dx%d\n",rmax,C->m,C->n);
 	    }
 	}
 

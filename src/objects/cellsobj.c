@@ -253,6 +253,14 @@ int nsp_cells_neq(NspObject *A, NspObject *B)
  *        on elements. 
  */
 
+#define RETURN_CELL_ELT(ival)  if ( C->objs[ival] == NULLOBJ )	\
+    {									\
+      if ((C->objs[ival]=nsp_create_empty_matrix_object("ce"))== NULLOBJ) \
+	return NULLOBJ;							\
+    }									\
+  return C->objs[ival];
+
+
 static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
 {
   int ival;
@@ -264,8 +272,34 @@ static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
 	  if ( IntScalar(*Objs,&ival) == FAIL ) return NULLOBJ ;
 	  if ( ival >= 1 && ival <= C->mn )
 	    {
-	      /* note that we can return NULLOBJ */
-	      return C->objs[ival-1];
+	      RETURN_CELL_ELT(ival-1);
+	    }
+	  else if ( ival >=1 )
+	    {
+	      switch (C->m) 
+		{
+		case 1 :
+		case 0: 
+		  if (nsp_cells_resize(C, 1,ival)== FAIL) 
+		    return NULLOBJ;
+		  RETURN_CELL_ELT(ival-1);
+		  break;
+		default: 
+		  if ( C->n == 0 || C->n == 1 ) 
+		    {
+		      /* mx0 -> newx 1 */
+		      if (nsp_cells_resize(C, ival,1)== FAIL) 
+			return NULLOBJ;
+		      RETURN_CELL_ELT(ival-1);
+		    }
+		  Scierror("Error: indice %d is out of bounds for affectation in %dx%d\n",ival,C->m,C->n);
+		  return NULLOBJ;
+		}
+	    }
+	  else 
+	    {
+	      Scierror("Error: indice is out of bounds for affectation\n");
+	      return NULLOBJ;
 	    }
 	}
       break;
@@ -275,11 +309,21 @@ static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
 	  int row,col;
 	  if ( IntScalar(Objs[0],&row) == FAIL ) return NULLOBJ ;
 	  if ( IntScalar(Objs[1],&col) == FAIL ) return NULLOBJ ;
-	  ival = (row-1) + C->m *(col-1);
-	  if ( ival >= 0 && ival < C->mn )
+	  if ( row < 1 || col < 1 ) 
 	    {
-	      /* note that we can return NULLOBJ */
-	      return C->objs[ival];
+	      Scierror("Error: indices {%d,%d} should be strictly positive\n",row,col);
+	      return NULLOBJ;	      
+	    }
+	  if ( row <= C->m && col <= C->n) 
+	    {
+	      ival = (row-1) + C->m *(col-1);
+	      RETURN_CELL_ELT(ival);
+	    }
+	  else 
+	    {
+	      if ( nsp_cells_enlarge(C,row,col)==FAIL) return NULLOBJ;
+	      ival = (row-1) + C->m *(col-1);
+	      RETURN_CELL_ELT(ival);
 	    }
 	}
       break;
