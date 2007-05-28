@@ -27,6 +27,7 @@
 #include <nsp/gtk/gdate.h> 
 #include <nsp/interf.h>
 
+
 /* 
  * NspGDate inherits from NspObject 
  */
@@ -463,6 +464,7 @@ static int int_gdate_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_gdate = new_type_gdate(T_BASE);
   if ( rhs == 0 )
     {
+#if  GTK_CHECK_VERSION(2,8,0)
       GTimeVal result;
       /* use current date */
       if(( H = gdate_create_void(NVOID, (NspTypeBase *) nsp_type_gdate)) == NULLGDATE)
@@ -470,6 +472,10 @@ static int int_gdate_create(Stack stack, int rhs, int opt, int lhs)
       H->gdate = g_date_new();
       g_get_current_time(&result);
       g_date_set_time_val(H->gdate,&result);
+#else 
+      Scierror("Error: gdate with no argument needs gtk 2.8.0 or newer \n");
+      return RET_BUG;
+#endif 
     }
   else if ( rhs == 1 ) 
     {
@@ -621,14 +627,17 @@ static int _wrap_g_date_set_parse(NspGDate *self,Stack stack,int rhs,int opt,int
 
 static int _wrap_g_date_set_time_t(NspGDate *self,Stack stack,int rhs,int opt,int lhs)
 {
+#if  GTK_CHECK_VERSION(2,8,0)
   int_types T[] = {s_int,t_end};
   time_t timet;
   if ( GetArgs(stack,rhs,opt,T,&timet) == FAIL) return RET_BUG;
   g_date_set_time_t(self->gdate, timet);
   return 0;
+#else 
+  Scierror("Error: set_time_t needs gtk 2.8.0 or newer \n");
+  return RET_BUG;
+#endif 
 }
-
-/* XXXXXX a faire */
 
 
 static int _wrap_g_date_set_month(NspGDate *self,Stack stack,int rhs,int opt,int lhs)
@@ -1196,6 +1205,9 @@ void gdate_Interf_Info(int i, char **fname, function (**f))
 
 /* ----------- enums and flags ----------- */
 
+/* unused 
+ *
+ */
 
 void
 gdate_add_constants(NspObject *module, const gchar *strip_prefix)
@@ -1204,6 +1216,7 @@ gdate_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_enum_add_constants((NspHash *) module, G_TYPE_DATE_MONTH, strip_prefix);
 }
 
+#if  GTK_CHECK_VERSION(2,8,0)
 
 static GType g_date_month_get_type(void)
 {
@@ -1249,3 +1262,6 @@ static GType g_date_weekday_get_type(void)
   }
   return etype;
 }
+
+#endif 
+
