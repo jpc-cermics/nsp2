@@ -81,10 +81,15 @@ static AttrTab gdate_attrs[];
 static NspMethods *gdate_get_methods(void);
 static int int_gdate_create(Stack stack, int rhs, int opt, int lhs);
 static NspGDate *gdate_create_void(char *name,NspTypeBase *type);
+#if  GTK_CHECK_VERSION(2,8,0)
 #define G_TYPE_DATE_MONTH (g_date_month_get_type())
 static GType g_date_month_get_type(void);
 #define G_TYPE_DATE_WEEKDAY (g_date_weekday_get_type())
 static GType g_date_weekday_get_type(void);
+#else 
+#define G_TYPE_DATE_MONTH G_TYPE_NONE
+#define G_TYPE_DATE_WEEKDAY G_TYPE_NONE
+#endif 
 
 #endif /* GDate_Private */
 
