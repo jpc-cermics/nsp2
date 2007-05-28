@@ -64,7 +64,7 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
     }
 }
 
-#include "../interp/scalexp.h" 
+#include "nsp/scalexp.h" 
 
 #define SCICOS_OP_EVAL_BINARY(exp)					\
   if(block_ng>0) nzcr=nzcr+1;						\
