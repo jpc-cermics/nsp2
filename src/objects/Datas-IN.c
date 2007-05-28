@@ -206,14 +206,49 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
+extern NspFrame  *GlobalFrame;
+extern NspFrame  *ConstantFrame;
+
 static int int_who(Stack stack, int rhs, int opt, int lhs)
 {
+  Cell *C;
+  int rep = 0;
+  static char *exists_list[] = {"local", "global", "caller","constants", NULL};
   NspHash *H;
-  CheckRhs(-1,0);
+  CheckRhs(0,1);
   CheckLhs(1,1);
-  /* get current frame and return it as a hash table */
-  if ( Datas == NULLLIST ) return RET_BUG;
-  if ((H= nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULLHASH) return RET_BUG;
+  if ( rhs == 1 )
+    {
+      if ((rep= GetStringInArray(stack,1,exists_list,1)) == -1) return RET_BUG; 
+    }
+  switch (rep) 
+    {
+    case 0: 
+      /* get current frame and return it as a hash table */
+      if ( Datas == NULLLIST ) return RET_BUG;
+      if ((H= nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULLHASH) return RET_BUG;
+      break;
+    case 1:
+      if ( GlobalFrame == NULLFRAME ) return RET_BUG;
+      if ((H= nsp_eframe_to_hash(GlobalFrame)) == NULLHASH) return RET_BUG;
+      break;
+    case 2:
+      if ( Datas == NULLLIST ) return RET_BUG;
+      C = Datas->first->next;
+      if (  C == NULLCELL)  return RET_BUG;
+      if ( ((NspFrame *) C->O) == ConstantFrame) 
+	{
+	  Scierror("Error: caller frame does not exist\n");
+	  return RET_BUG;
+	}
+      if ((H= nsp_eframe_to_hash((NspFrame *) C->O)) == NULLHASH) return RET_BUG;
+      break;
+    case 3: 
+      if ( ConstantFrame == NULLFRAME
+ ) return RET_BUG;
+      if ((H= nsp_eframe_to_hash(ConstantFrame)) == NULLHASH) return RET_BUG;
+      break;
+    }
   MoveObj(stack,1,(NspObject *) H);
   return 1;
 }
