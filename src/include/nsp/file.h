@@ -11,8 +11,16 @@
 #include "nsp/object.h"
 #include "nsp/xdr.h"
 
-/*
+/**
  * nsp_file:
+ * @file : file structure FILE
+ * @xdrs:   xdr struture 
+ * @flag:      flag for special open (xdr) 
+ * @openf:  flags used in fopen 
+ * @fname:   file name 
+ *
+ * used to store informations 
+ * for files.
  */
 
 typedef struct _nsp_file nsp_file;
@@ -28,15 +36,10 @@ struct _nsp_file {
 
 /**
  * NspFile:
- * @file : file structure FILE
- * @xdrs:   xdr struture 
- * @flag:      flag for special open (xdr) 
- * @openf:  flags used in fopen 
- * @fname:   file name 
+ * @obj : a #nsp_file pointer.
  *
  * inherits from #NspObject used to store informations 
- * for files. XXX this is to be changed since a NspFile 
- * must be a by reference object.
+ * for files.
  */
 
 typedef struct _NspFile NspFile;
