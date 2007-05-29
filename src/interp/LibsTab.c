@@ -265,7 +265,7 @@ NspObject *nsp_find_macro(char *str)
       while (1) 
 	{
 	  NspObject *Ob1;
-	  if ((Ob1=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) break;
+	  if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
 	  if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
 	    {
 	      found = TRUE;

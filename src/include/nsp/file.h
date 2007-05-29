@@ -11,6 +11,21 @@
 #include "nsp/object.h"
 #include "nsp/xdr.h"
 
+/*
+ * nsp_file:
+ */
+
+typedef struct _nsp_file nsp_file;
+
+struct _nsp_file {
+  FILE *file ;   /* the file */
+  XDR  xdrs[1];  /* xdr struture */
+  int  flag;     /* flag for special open (xdr) */
+  char openf[4]; /* flags used in fopen */
+  char *fname;  /* file name */
+  int ref_count;
+};
+
 /**
  * NspFile:
  * @file : file structure FILE
@@ -36,11 +51,7 @@ struct _NspFile {
   NspObject father; 
   NspTypeSciFile *type; 
   /*< public >*/
-  FILE *file ;   /* the file */
-  XDR  xdrs[1];  /* xdr struture */
-  int  flag;     /* flag for special open (xdr) */
-  char openf[4]; /* flags used in fopen */
-  char *fname;  /* file name */
+  nsp_file *obj;
 };
 
 extern int nsp_type_file_id;

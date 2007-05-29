@@ -1142,12 +1142,12 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
       break;
     case file_out : 
       /* changes io in order to write to file F */
-      if ( !IS_OPENED(F->flag))
+      if ( !IS_OPENED(F->obj->flag))
 	{
-	  Scierror("Warning:\tfile %s is already closed\n",F->fname);
+	  Scierror("Warning:\tfile %s is already closed\n",F->obj->fname);
 	  return RET_BUG;
 	}
-      f=Sciprint_file(F->file); 
+      f=Sciprint_file(F->obj->file); 
       def = SetScilabIO(Sciprint2file);
       mf =nsp_set_nsp_more(scimore_void);
       break;
@@ -1276,7 +1276,7 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 	  if ( GetScalarBool (stack,2,&diary_echo) == FAIL) return RET_BUG;
 	}
       /* changes io in order to write to file F */
-      Sciprint_set_diary(F->file,diary_echo);
+      Sciprint_set_diary(F->obj->file,diary_echo);
       def = SetScilabIO(Sciprint_diary);
     }
   else 
@@ -1355,9 +1355,9 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
     { Scierror("Error:\tRhs must be >= 2\n",rhs);return RET_BUG;}
   CheckLhs(0,1);
   if ((F = GetSciFile(stack,1)) == NULLSCIFILE) return RET_BUG;
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Error:\tfile %s is not opened \n",F->fname);
+      Scierror("Error:\tfile %s is not opened \n",F->obj->fname);
       return RET_BUG;
     }
   if ((Format = GetString(stack,2)) == (char*)0) return RET_BUG;
@@ -1366,13 +1366,13 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
       rows = print_count_rows(stack,3,rhs); 
       for ( i= 0 ; i < rows ; i++)
 	{
-	  if ( do_printf("printf",F->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
+	  if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
 	    return RET_BUG;
 	}
     }
   else 
     {
-      if ( do_printf("printf",F->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
+      if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
 	return RET_BUG;
     }
   return 0;
@@ -1612,14 +1612,14 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
       iof=1;
     }
   if ((F = GetSciFile(stack,iof+1)) == NULLSCIFILE) return RET_BUG;
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Error:\tfile %s is not opened \n",F->fname);
+      Scierror("Error:\tfile %s is not opened \n",F->obj->fname);
       return RET_BUG;
     }
   if ((Format = GetString(stack,iof+2)) == (char*)0) return RET_BUG;
   stack.first += iof+2;
-  rep = do_scanf("fscanf",F->file,Format,stack,0,&args,NULL,&ret);
+  rep = do_scanf("fscanf",F->obj->file,Format,stack,0,&args,NULL,&ret);
   stack.first -= iof+2;
   if ( rep == FAIL ) return RET_BUG; 
   rep = Min(args,lhs);
@@ -1639,9 +1639,9 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
        * the end of file 
        */
       if ( Format[strlen(Format)-1] == '\n')
-	iter = count_lines(F->file)+1;
+	iter = count_lines(F->obj->file)+1;
       else 
-	iter = count_lines(F->file);
+	iter = count_lines(F->obj->file);
       /* Scierror("Error:\tfound %d lines\n",iter);*/
     }
   else if ( iter == 0) iter = 1;
@@ -1664,7 +1664,7 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
     {
       int rep1;
       stack.first += iof+2;
-      rep1 = do_scanf("fscanf",F->file,Format,stack,i,&args,NULL,&ret);
+      rep1 = do_scanf("fscanf",F->obj->file,Format,stack,i,&args,NULL,&ret);
       stack.first -= iof+2;
       if ( rep1 == FAIL ) return RET_BUG; 
     }
@@ -1777,13 +1777,13 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
   if (( F =nsp_file_open_xdr_w(buf)) == NULLSCIFILE) return RET_BUG;
   for ( i = 2 ; i <= rhs ; i++ )
     {
-      if (nsp_object_xdr_save(F->xdrs,NthObj(i))== FAIL) 
+      if (nsp_object_xdr_save(F->obj->xdrs,NthObj(i))== FAIL) 
 	{
 	  rep = RET_BUG;
 	  break;
 	}
     }
-  nsp_xdr_save_i(F->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
+  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
   if (nsp_file_close_xdr_w(F) == FAIL) 
     {
       nsp_file_destroy(F);
@@ -1812,7 +1812,7 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
   while (1) 
     {
-      if ((O=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) 
+      if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) 
 	break;
       nsp_frame_replace_object(O,-1);
     }

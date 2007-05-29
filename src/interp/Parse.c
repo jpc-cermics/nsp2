@@ -477,9 +477,9 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
           sprintf(Name,"%s/%s.bin",Dir,nsp_object_get_name(C->O));
           if (( F =nsp_file_open_xdr_w(Name)) == NULLSCIFILE) 
 	    { rep = RET_BUG; break;} 
-          if (nsp_object_xdr_save(F->xdrs,C->O)== FAIL) 
+          if (nsp_object_xdr_save(F->obj->xdrs,C->O)== FAIL) 
 	    { rep = RET_BUG; break;} 
-	  nsp_xdr_save_i(F->xdrs,nsp_no_type_id); /** flag for detecting end of obj at reload **/
+	  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /** flag for detecting end of obj at reload **/
           if (nsp_file_close_xdr_w(F) == FAIL) 
 	    { rep = RET_BUG; break;} 
         }

@@ -101,9 +101,9 @@ NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on)
       if ( f != stdin && f != stdout && f != stderr) fclose(f);
       return(NULLSCIFILE);
     }
-  if ( xdr_on == TRUE) XDR_ON(F->flag);
-  if ( swap_on == TRUE) SWAP_ON(F->flag);
-  OPEN_ON(F->flag);
+  if ( xdr_on == TRUE) XDR_ON(F->obj->flag);
+  if ( swap_on == TRUE) SWAP_ON(F->obj->flag);
+  OPEN_ON(F->obj->flag);
   return F;
 }
 
@@ -118,21 +118,21 @@ NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on)
 
 int nsp_file_close(NspFile  *F)
 {
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->fname);
+      Scierror("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
-  if ( F->file != stdin && F->file != stdout && F->file != stderr)
+  if ( F->obj->file != stdin && F->obj->file != stdout && F->obj->file != stderr)
     {
-      if ( fclose(F->file) == 0) 
+      if ( fclose(F->obj->file) == 0) 
 	{
-	  OPEN_OFF(F->flag);
+	  OPEN_OFF(F->obj->flag);
 	  return OK;
 	}
       else 
 	{
-	  Scierror("Error: close failed on file %s\n",F->fname);
+	  Scierror("Error: close failed on file %s\n",F->obj->fname);
 	  return FAIL;
 	}
     }
@@ -180,11 +180,11 @@ NspFile *nsp_file_open_xdr_r(char *fname)
       fclose(f);
       return(NULLSCIFILE);
     }
-  XDR_ON(F->flag);
-  OPEN_ON(F->flag);
-  xdrstdio_create(F->xdrs,F->file, XDR_DECODE) ;
+  XDR_ON(F->obj->flag);
+  OPEN_ON(F->obj->flag);
+  xdrstdio_create(F->obj->xdrs,F->obj->file, XDR_DECODE) ;
 
-  if (nsp_xdr_load_string(F->xdrs,SciF_version,SCIF_V) == FAIL ) 
+  if (nsp_xdr_load_string(F->obj->xdrs,SciF_version,SCIF_V) == FAIL ) 
     {
       /* clear the xdr message */
       nsp_error_message_clear();
@@ -219,30 +219,30 @@ int nsp_file_close_xdr_r(NspFile  *F)
 {
   int rep =OK;
   static char type[TYPE_S];
-  if ( !IS_XDR(F->flag))
+  if ( !IS_XDR(F->obj->flag))
     {
-      Scierror("Error: file %s is not an xdr file\n",F->fname);
+      Scierror("Error: file %s is not an xdr file\n",F->obj->fname);
     }
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->fname);
+      Scierror("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
-  nsp_xdr_load_string(F->xdrs,type,TYPE_S) ;
+  nsp_xdr_load_string(F->obj->xdrs,type,TYPE_S) ;
   if ( strcmp(type,"endsave") != 0)
     {
-      Scierror("Warning: Closing xdr file %s while not at end of file\n",F->fname);
+      Scierror("Warning: Closing xdr file %s while not at end of file\n",F->obj->fname);
       rep = FAIL;
     }
   /* FIXME : here assertR does not work on macOSX 
-     assertR(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
-     xdr_destroy(F->xdrs);
-     assertR(fclose(F->file) != EOF) ;
+     assertR(fflush((FILE *) F->obj->xdrs->x_private) != EOF) ; 
+     xdr_destroy(F->obj->xdrs);
+     assertR(fclose(F->obj->file) != EOF) ;
   */
-  fflush((FILE *) F->xdrs->x_private);
-  xdr_destroy(F->xdrs);
-  fclose(F->file);
-  OPEN_OFF(F->flag);
+  fflush((FILE *) F->obj->xdrs->x_private);
+  xdr_destroy(F->obj->xdrs);
+  fclose(F->obj->file);
+  OPEN_OFF(F->obj->flag);
   return rep;
 }
 
@@ -275,10 +275,10 @@ NspFile *nsp_file_open_xdr_w(char *fname)
       fclose(f);
       return(NULLSCIFILE);
     }
-  XDR_ON(F->flag);
-  OPEN_ON(F->flag);
-  xdrstdio_create(F->xdrs, F->file, XDR_ENCODE) ;
-  nsp_xdr_save_string(F->xdrs,scis);
+  XDR_ON(F->obj->flag);
+  OPEN_ON(F->obj->flag);
+  xdrstdio_create(F->obj->xdrs, F->obj->file, XDR_ENCODE) ;
+  nsp_xdr_save_string(F->obj->xdrs,scis);
   return F;
 }
 
@@ -293,22 +293,22 @@ NspFile *nsp_file_open_xdr_w(char *fname)
 
 int nsp_file_close_xdr_w(NspFile  *F)
 {
-  if ( !IS_XDR(F->flag))
+  if ( !IS_XDR(F->obj->flag))
     {
       Scierror("Error: close: file %s was not opened for xdr writting\n",
-	       F->fname);
+	       F->obj->fname);
       return FAIL;
     }
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->fname);
+      Scierror("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
-  nsp_xdr_save_string(F->xdrs,"endsave");
-  assertW(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
-  xdr_destroy(F->xdrs);
-  assertW(fclose(F->file) != EOF) ;
-  OPEN_OFF(F->flag);
+  nsp_xdr_save_string(F->obj->xdrs,"endsave");
+  assertW(fflush((FILE *) F->obj->xdrs->x_private) != EOF) ; 
+  xdr_destroy(F->obj->xdrs);
+  assertW(fclose(F->obj->file) != EOF) ;
+  OPEN_OFF(F->obj->flag);
   return OK;
 }
 
@@ -627,8 +627,8 @@ int is_little_endian(void)
 
 int nsp_feof(NspFile *f)
 {       
-  if ( !IS_OPENED(f->flag)) return TRUE;
-  return (feof(f->file)) ? TRUE : FALSE;
+  if ( !IS_OPENED(f->obj->flag)) return TRUE;
+  return (feof(f->obj->file)) ? TRUE : FALSE;
 }
 
 /**
@@ -642,8 +642,8 @@ int nsp_feof(NspFile *f)
 
 int nsp_ferror(NspFile *f)
 {       
-  if ( !IS_OPENED(f->flag)) return FALSE;
-  return ferror(f->file) ? TRUE : FALSE ; 
+  if ( !IS_OPENED(f->obj->flag)) return FALSE;
+  return ferror(f->obj->file) ? TRUE : FALSE ; 
 }
 
 /**
@@ -654,8 +654,8 @@ int nsp_ferror(NspFile *f)
  **/
 void nsp_clearerr(NspFile *f)
 {       
-  if ( !IS_OPENED(f->flag)) return ; 
-  clearerr(f->file);
+  if ( !IS_OPENED(f->obj->flag)) return ; 
+  clearerr(f->obj->file);
 }
 
 #if (defined(sun) && !defined(SYSV)) || defined(sgi)
@@ -680,9 +680,9 @@ int nsp_fseek(NspFile *F,long int offset,const char *flag)
 #if (defined(sun) && !defined(SYSV)) || defined(sgi)
   int irep;
 #endif
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
   if ( strncmp(flag,"set",3)==0 ) 
@@ -697,14 +697,14 @@ int nsp_fseek(NspFile *F,long int offset,const char *flag)
       return FAIL;
     }
 #if (defined(sun) && !defined(SYSV)) || defined(sgi)
-  irep = fseek(F->file,iflag) ;
+  irep = fseek(F->obj->file,iflag) ;
   if ( irep != 0 ) 
     {
       Scierror(strerror(irep));
       return FAIL;
     }
 #else
-  if (fseek(F->file,offset,iflag) == -1 ) 
+  if (fseek(F->obj->file,offset,iflag) == -1 ) 
     {
       Scierror("fseek: error\n");
       return FAIL;
@@ -724,12 +724,12 @@ int nsp_fseek(NspFile *F,long int offset,const char *flag)
  **/
 int nsp_ftell(NspFile *F,long int *offset)
 {     
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
-  *offset = ftell(F->file) ;
+  *offset = ftell(F->obj->file) ;
   return OK;
 }
 
@@ -777,13 +777,13 @@ int nsp_mput(NspFile *F,void *x,int n, char *type)
       Scierror("mput: format is of length 0\n");
       return FAIL;
     }
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
   
-  swap = ( USE_SWAP(F->flag) ) ? (( is_little_endian() ) ? FALSE :  TRUE) : FALSE; 
+  swap = ( USE_SWAP(F->obj->flag) ) ? (( is_little_endian() ) ? FALSE :  TRUE) : FALSE; 
   /* check if swap was given in type */
   swap_c = type[strlen(type)-1]; 
   if (swap_c == 'b' ) 
@@ -793,21 +793,21 @@ int nsp_mput(NspFile *F,void *x,int n, char *type)
 
   switch ( type[0] )
     {
-    case 'i' : MPUT_(x,n,F->file,swap,int,swapi);       break;
-    case 'l' : MPUT_(x,n,F->file,swap,long,swapl);      break;
-    case 's' : MPUT_(x,n,F->file,swap,short,swapw);     break;
-    case 'c' : MPUT_CHARS_(x,n,F->file,char) ;                 break;
-    case 'd' : MPUT_(x,n,F->file,swap,double,swapd);    break;
-    case 'f' : MPUT_(x,n,F->file,swap,float,swapf);     break;
+    case 'i' : MPUT_(x,n,F->obj->file,swap,int,swapi);       break;
+    case 'l' : MPUT_(x,n,F->obj->file,swap,long,swapl);      break;
+    case 's' : MPUT_(x,n,F->obj->file,swap,short,swapw);     break;
+    case 'c' : MPUT_CHARS_(x,n,F->obj->file,char) ;                 break;
+    case 'd' : MPUT_(x,n,F->obj->file,swap,double,swapd);    break;
+    case 'f' : MPUT_(x,n,F->obj->file,swap,float,swapf);     break;
     case 'u' :
       c1=( strlen(type) < 1) ? ' ': type[1];
       switch ( c1)
 	{
-	case 'i' :  MPUT_(x,n,F->file,swap,unsigned int,swapi); break;
-	case 'l' :  MPUT_(x,n,F->file,swap,unsigned long,swapl); break;
-	case 's' :  MPUT_(x,n,F->file,swap,unsigned short,swapw); break;
-	case ' ' :  MPUT_(x,n,F->file,swap,unsigned int,swapi); break;
-	case 'c' :  MPUT_CHARS_(x,n,F->file,unsigned char); break;
+	case 'i' :  MPUT_(x,n,F->obj->file,swap,unsigned int,swapi); break;
+	case 'l' :  MPUT_(x,n,F->obj->file,swap,unsigned long,swapl); break;
+	case 's' :  MPUT_(x,n,F->obj->file,swap,unsigned short,swapw); break;
+	case ' ' :  MPUT_(x,n,F->obj->file,swap,unsigned int,swapi); break;
+	case 'c' :  MPUT_CHARS_(x,n,F->obj->file,unsigned char); break;
 	default : 
 	  Scierror("mput '%c' unrecognized conversion character\n",c1);
 	  return FAIL;
@@ -862,13 +862,13 @@ int nsp_mget(NspFile *F,void *x,int n,const char *type,int *items_read)
       Scierror("mget: format is of length 0\r\n");
       return FAIL;
     }
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
   
-  swap = ( USE_SWAP(F->flag) ) ? (( is_little_endian() ) ? FALSE :  TRUE) : FALSE; 
+  swap = ( USE_SWAP(F->obj->flag) ) ? (( is_little_endian() ) ? FALSE :  TRUE) : FALSE; 
   /* check if swap was given in type */
   swap_c = type[strlen(type)-1]; 
   if (swap_c == 'b' ) 
@@ -878,21 +878,21 @@ int nsp_mget(NspFile *F,void *x,int n,const char *type,int *items_read)
 
   switch ( type[0] )
     {
-    case 'i' : MGET_(x,n,F->file,swap,int,swapi);break;
-    case 'l' : MGET_(x,n,F->file,swap,long,swapl);break;
-    case 's' : MGET_(x,n,F->file,swap,short,swapw);break;
-    case 'c' : MGET_CHARS_(x,n,F->file,char) ; break;
-    case 'd' : MGET_(x,n,F->file,swap,double,swapd);break;
-    case 'f' : MGET_(x,n,F->file,swap,float,swapf);break;
+    case 'i' : MGET_(x,n,F->obj->file,swap,int,swapi);break;
+    case 'l' : MGET_(x,n,F->obj->file,swap,long,swapl);break;
+    case 's' : MGET_(x,n,F->obj->file,swap,short,swapw);break;
+    case 'c' : MGET_CHARS_(x,n,F->obj->file,char) ; break;
+    case 'd' : MGET_(x,n,F->obj->file,swap,double,swapd);break;
+    case 'f' : MGET_(x,n,F->obj->file,swap,float,swapf);break;
     case 'u' :
       c1=( strlen(type) < 1) ? ' ': type[1];
       switch ( c1)
 	{
-	case 'i' :  MGET_(x,n,F->file,swap,unsigned int,swapi); break;
-	case 'l' :  MGET_(x,n,F->file,swap,unsigned long,swapl); break;
-	case 's' :  MGET_(x,n,F->file,swap,unsigned short,swapw); break;
-	case ' ' :  MGET_(x,n,F->file,swap,unsigned int,swapi); break;
-	case 'c' :  MGET_CHARS_(x,n,F->file,unsigned char); break;
+	case 'i' :  MGET_(x,n,F->obj->file,swap,unsigned int,swapi); break;
+	case 'l' :  MGET_(x,n,F->obj->file,swap,unsigned long,swapl); break;
+	case 's' :  MGET_(x,n,F->obj->file,swap,unsigned short,swapw); break;
+	case ' ' :  MGET_(x,n,F->obj->file,swap,unsigned int,swapi); break;
+	case 'c' :  MGET_CHARS_(x,n,F->obj->file,unsigned char); break;
 	default :  
 	  Scierror("mput '%c' unrecognized conversion character\n",c1);
 	  return FAIL;
@@ -921,9 +921,9 @@ int nsp_mget(NspFile *F,void *x,int n,const char *type,int *items_read)
 int nsp_mgetstr(NspFile *F, char **start, int n)
 { 
   int count;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
   *start= (char *) malloc((n+1)*sizeof(char));
@@ -932,7 +932,7 @@ int nsp_mgetstr(NspFile *F, char **start, int n)
       Scierror("No more memory\n");
       return FAIL;
     }
-  count=fread(*start,sizeof(char),n,F->file);
+  count=fread(*start,sizeof(char),n,F->obj->file);
   (*start)[n]='\0';
   if ( count != n ) 
     {
@@ -946,12 +946,12 @@ int nsp_mgetstr(NspFile *F, char **start, int n)
 int nsp_mgetstr1 (NspFile *F, char *start, int n,int *n_read)
 { 
   int count;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
-  count=fread(start,sizeof(char),n,F->file);
+  count=fread(start,sizeof(char),n,F->obj->file);
   start[n]='\0';
   *n_read = count;
   return OK;
@@ -969,12 +969,12 @@ int nsp_mgetstr1 (NspFile *F, char *start, int n,int *n_read)
 
 int nsp_putstr(NspFile *F, char *str)
 {   
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
-  if ( fprintf(F->file,"%s",str) <= 0 ) 
+  if ( fprintf(F->obj->file,"%s",str) <= 0 ) 
     {
       Scierror("putstr: failed for string '%s' \n",str);
       return FAIL;
@@ -1015,9 +1015,9 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
   double x;
   int i,j,rows,cols,n,c;
   int vl=-1;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
 
@@ -1027,20 +1027,20 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
 
   /* mark position */
   
-  offset = ftell(F->file) ;
+  offset = ftell(F->obj->file) ;
 
   /* first pass to get colums and rows ***/
   strcpy(Info,"--------");
   n =0; 
   while ( sscanf(Info,"%lf",&x) <= 0 && n != EOF ) 
     { 
-      n=nsp_read_line(F->file,&mem); 
+      n=nsp_read_line(F->obj->file,&mem); 
       if ( mem == 1) return FAIL;
       vl++;
     }
   if ( n == EOF )
     {
-      Scierror("fscanfMat: cannot find matrix data (file %s)\n",F->fname);
+      Scierror("fscanfMat: cannot find matrix data (file %s)\n",F->obj->fname);
       return FAIL;
     }
   cols = count_tokens(Info);
@@ -1048,7 +1048,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
   while (1) 
     { 
       int cols1;
-      n=nsp_read_line(F->file,&mem);
+      n=nsp_read_line(F->obj->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
       if ( sscanf(Info,"%lf",&x) <= 0) break;
@@ -1076,7 +1076,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
 
   for ( i = 0 ; i < vl ; i++) 
     {
-      nsp_read_line(F->file,&mem);
+      nsp_read_line(F->obj->file,&mem);
       if ( mem == 1) return FAIL;
       if ( flag == TRUE ) 
 	{
@@ -1092,11 +1092,11 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
       for (j=0 ; j < cols;j++)
 	{ 
 	  double xloc;
-	  fscanf(F->file,"%lf",&xloc);
+	  fscanf(F->obj->file,"%lf",&xloc);
 	  (*M)->R[i+rows*j]=xloc;
 	}
     }
-  while ( (c = getc(F->file)) != '\n' && c != EOF) {};
+  while ( (c = getc(F->obj->file)) != '\n' && c != EOF) {};
 
   /* just in case Info is too Big */ 
 
@@ -1173,9 +1173,9 @@ static int count_tokens(char *string)
 int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
 {
   int mem=0,i,n;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
   if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
@@ -1183,7 +1183,7 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
   if ((*S =nsp_smatrix_create_with_length(NVOID,nlines,1,-1))== NULLSMAT) return FAIL;
   for ( i= 0 ; i < nlines ; i++)
     {
-      n = nsp_read_line(F->file,&mem);
+      n = nsp_read_line(F->obj->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
       if (((*S)->S[i]=new_nsp_string(Info))==NULL) return FAIL;
@@ -1228,9 +1228,9 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
   long int offset;
   int mem=0;
   int rows=0,n;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
 
@@ -1239,13 +1239,13 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
 
   /* mark position */
   
-  offset = ftell(F->file) ;
+  offset = ftell(F->obj->file) ;
 
   /* first pass to get number of rows ***/
 
   while (1) 
     { 
-      n=nsp_read_line(F->file,&mem);
+      n=nsp_read_line(F->obj->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
       rows++;
@@ -1259,7 +1259,7 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
   rows=0;
   while (1)
     {
-      n = nsp_read_line(F->file,&mem);
+      n = nsp_read_line(F->obj->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
       if (((*S)->S[rows++]=new_nsp_string(Info))==NULL) return FAIL;
@@ -1294,21 +1294,21 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
   char *separator = " ";
   if ( format != NULL) fmt= format; 
   if ( sep != NULL) separator = sep;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
-  if ( S != NULL) for ( i=0 ; i < S->mn ; i++) fprintf(F->file,"%s\n",S->S[i]);
+  if ( S != NULL) for ( i=0 ; i < S->mn ; i++) fprintf(F->obj->file,"%s\n",S->S[i]);
 
   for (i = 0 ; i < M->m ; i++ ) 
     {
       for ( j = 0 ; j < M->n ; j++) 
 	{
-	  fprintf(F->file,fmt,M->R[i+M->m*j]);
-	  fprintf(F->file,separator);
+	  fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
+	  fprintf(F->obj->file,separator);
 	}
-      fprintf(F->file,"\n");
+      fprintf(F->obj->file,"\n");
     }
   return OK;
 }  
@@ -1326,12 +1326,12 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
 int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S)
 {
   int i;
-  if ( !IS_OPENED(F->flag)) 
+  if ( !IS_OPENED(F->obj->flag)) 
     {
-      Scierror("File %s is not opened\n",F->fname);
+      Scierror("File %s is not opened\n",F->obj->fname);
       return FAIL;
     }
-  for ( i=0 ; i < S->mn ; i++) fprintf(F->file,"%s\n",S->S[i]);
+  for ( i=0 ; i < S->mn ; i++) fprintf(F->obj->file,"%s\n",S->S[i]);
   return OK;
 }  
 

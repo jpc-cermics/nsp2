@@ -4189,7 +4189,7 @@ int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax)
     {
       for (j = 1; j <= mm; ++j) 
 	{
-	  int ns= fscanf(F->file,fmt,&tmp[j - 1]);
+	  int ns= fscanf(F->obj->file,fmt,&tmp[j - 1]);
 	  /* printf("read = %s %lf\n",fmt,tmp[j - 1]); */
 	  /* Here we should be able to return to 
 	   * scicos a stop to tell that we have 

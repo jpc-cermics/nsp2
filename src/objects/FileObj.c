@@ -151,6 +151,7 @@ NspFile *nsp_new_file()
   if ( (loc = malloc(sizeof(NspFile)))== NULLSCIFILE) return loc;
   /* initialize object */
   if (nsp_init_file(loc,nsp_type_file) == FAIL) return NULLSCIFILE;
+  loc->obj = NULL;
   return loc;
 }
 
@@ -184,29 +185,16 @@ static char *nsp_file_type_short_string(NspObject *v)
   return(nsp_file_short_type_name);
 }
 
-
-static int nsp_file_full_comp(NspFile * A,NspFile * B,char *op,int *err)
-{
-  Scierror("SciFileFullComp: to be implemented \n");
-  return FALSE;
-}
-
 static int nsp_file_eq(NspObject *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return FALSE ;
-  rep =nsp_file_full_comp((NspFile *) A,(NspFile *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( check_cast(B,nsp_type_file_id) == FALSE) return FALSE ;
+  if ( ((NspFile *) A)->obj == ((NspFile *) B)->obj ) return TRUE ;
+  return FALSE;
 }
 
 static int nsp_file_neq(NspObject *A, NspObject *B)
 {
-  int err=0,rep;
-  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
-  rep =nsp_file_full_comp((NspFile *) A,(NspFile *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return nsp_file_eq(A,B)== TRUE ? FALSE : TRUE ;
 }
 
 /*
@@ -215,13 +203,15 @@ static int nsp_file_neq(NspObject *A, NspObject *B)
 
 void nsp_file_destroy(NspFile  *F)
 {
-  if ( F != NULLSCIFILE )
-    {
-      /* XXXXXX : we must close file ? before destroying everything **/
-      nsp_object_destroy_name(NSP_OBJECT(F));
-      FREE(F->fname);
-      FREE(F) ;
-    };
+  nsp_object_destroy_name(NSP_OBJECT(F));
+  F->obj->ref_count--;
+  if ( F->obj->ref_count == 0 )
+   {
+     /* XXXXXX : we must close file ? before destroying everything **/
+     FREE(F->obj->fname);
+     FREE(F->obj);
+   }
+  FREE(F);
 }
 
 /*
@@ -239,7 +229,7 @@ void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
   pname = (name != NULL) ? name : NSP_OBJECT(F)->name;
   Sciprintf1(indent,"%s\t= \t\tSciFile (fname=\"%s\",%s,Flag=%d)\n",
 	     (pname==NULL) ? "" : pname,
-	     F->fname,F->openf,F->flag);
+	     F->obj->fname,F->obj->openf,F->obj->flag);
 }
 
 
@@ -299,7 +289,7 @@ NspFile *GetSciFile(Stack stack, int i)
  * constructor 
  *-----------------------------------------------------*/
 
-NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
+NspFile *nsp_file_create_void(char *name,NspTypeBase *type)
 {
   NspFile *F =nsp_new_file() ;
   if ( F == NULLSCIFILE) 
@@ -310,10 +300,19 @@ NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
   if ( nsp_object_set_initial_name(NSP_OBJECT(F),name) == NULL)
     return NULLSCIFILE;
   NSP_OBJECT(F)->ret_pos = -1 ; 
-  if ((F->fname =new_nsp_string(fname)) == NULLSTRING) return NULLSCIFILE;
-  strncpy(F->openf,str,4);
-  F->flag =flag;
-  F->file =f;
+  return F;
+}
+
+NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
+{
+  NspFile *F =nsp_file_create_void(name,(NspTypeBase *) nsp_type_file);
+  if ( F == NULLSCIFILE)  return NULLSCIFILE;
+  if ((F->obj = malloc(sizeof(nsp_file))) == NULL) return NULLSCIFILE;
+  F->obj->ref_count=1;
+  if ((F->obj->fname =new_nsp_string(fname)) == NULLSTRING) return NULLSCIFILE;
+  strncpy(F->obj->openf,str,4);
+  F->obj->flag =flag;
+  F->obj->file =f;
   return(F);
 }
 
@@ -321,9 +320,13 @@ NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
  * copy 
  */
 
-NspFile *nsp_file_copy(NspFile  *A)
+NspFile *nsp_file_copy(NspFile  *self)
 {
-  return (nsp_file_create(NVOID,A->fname,A->openf,A->flag,A->file));
+  NspFile *F  = nsp_file_create_void(NVOID,(NspTypeBase *) nsp_type_file);
+  if ( F ==  NULLSCIFILE) return NULLSCIFILE;
+  F->obj = self->obj;
+  self->obj->ref_count++;
+  return F;
 }
 
 
@@ -612,9 +615,9 @@ static int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
   if ( rhs < 1 ) 
     { Scierror("Error:\tRhs must be >= 1\n",rhs);return RET_BUG;}
   CheckLhs(0,1);
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Error:\tfile %s is not opened \n",F->fname);
+      Scierror("Error:\tfile %s is not opened \n",F->obj->fname);
       return RET_BUG;
     }
   if ((Format = GetString(stack,1)) == (char*)0) return RET_BUG;
@@ -623,14 +626,14 @@ static int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
       rows = print_count_rows(stack,2,rhs); 
       for ( i= 0 ; i < rows ; i++)
 	{
-	  if ( do_printf("printf",F->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
+	  if ( do_printf("printf",F->obj->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
 	    return RET_BUG;
 	}
       return 0;
     }
   else
     {
-      if ( do_printf("printf",F->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
+      if ( do_printf("printf",F->obj->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
 	return RET_BUG;
     }
   return 0;
@@ -672,12 +675,12 @@ static int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
 			 &indent,&latex,&name,&table) == FAIL) 
     return RET_BUG;
   /* changes io in order to write to file F */
-  if ( !IS_OPENED(F->flag))
+  if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning:\tfile %s is already closed\n",F->fname);
+      Scierror("Warning:\tfile %s is already closed\n",F->obj->fname);
       return RET_BUG;
     }
-  f=Sciprint_file(F->file); 
+  f=Sciprint_file(F->obj->file); 
   def = SetScilabIO(Sciprint2file);
   mf =nsp_set_nsp_more(scimore_void);
   /* print object */
