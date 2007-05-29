@@ -550,7 +550,7 @@ int int_pvm_set_timer( Stack stack, int rhs, int opt, int lhs)
 
 int int_pvm_get_timer( Stack stack, int rhs, int opt, int lhs)
 {
-  double t;
+  double t=0.0;
   int rep;
   CheckRhs(0,0);
   CheckLhs(1,1);

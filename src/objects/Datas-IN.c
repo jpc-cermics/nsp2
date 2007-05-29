@@ -214,7 +214,7 @@ static int int_who(Stack stack, int rhs, int opt, int lhs)
   Cell *C;
   int rep = 0;
   static char *exists_list[] = {"local", "global", "caller","constants", NULL};
-  NspHash *H;
+  NspHash *H=NULL;
   CheckRhs(0,1);
   CheckLhs(1,1);
   if ( rhs == 1 )
@@ -244,8 +244,7 @@ static int int_who(Stack stack, int rhs, int opt, int lhs)
       if ((H= nsp_eframe_to_hash((NspFrame *) C->O)) == NULLHASH) return RET_BUG;
       break;
     case 3: 
-      if ( ConstantFrame == NULLFRAME
- ) return RET_BUG;
+      if ( ConstantFrame == NULLFRAME ) return RET_BUG;
       if ((H= nsp_eframe_to_hash(ConstantFrame)) == NULLHASH) return RET_BUG;
       break;
     }

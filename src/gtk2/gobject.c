@@ -1422,7 +1422,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
 
 static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
-  int nargs = 0, i, n,rep =FAIL;
+  int nargs = 0, i, n=0,rep =FAIL;
   stack_count++;
   nspg_block_threads();
   if ( func  == NULLP_PLIST && fname == NULL) 
