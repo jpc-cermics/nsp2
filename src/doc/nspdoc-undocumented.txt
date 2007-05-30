@@ -1,7 +1,7 @@
-41% symbol docs coverage.
-941 symbols documented.
-231 symbols incomplete.
-1353 not documented.
+42% symbol docs coverage.
+953 symbols documented.
+218 symbols incomplete.
+1341 not documented.
 
 
 Abs
@@ -452,7 +452,7 @@ connector_object
 create_plugged_main_menu
 def_loop
 dequeue_nsp_command
-do_printf
+do_printf (n_args)
 do_scanf
 dpchim (x, u, d, n, inc)
 enqueue_nsp_command
@@ -837,7 +837,6 @@ nsp_classb_destroy
 nsp_classb_info
 nsp_classb_object
 nsp_classb_print
-nsp_clearerr
 nsp_cosh_c
 nsp_declare_global (id)
 nsp_det (mode, Returns)
@@ -856,26 +855,18 @@ nsp_dzset (Returns)
 nsp_error_vprintf
 nsp_exec_method_util
 nsp_exp_c
-nsp_feof (f)
-nsp_ferror (f)
-nsp_file_close_xdr_w
 nsp_file_copy
 nsp_file_create
 nsp_file_destroy
 nsp_file_info
 nsp_file_object
 nsp_file_open (mode, xdr_on, swap_on)
-nsp_file_open_xdr_w
 nsp_file_print
 nsp_finite_c
 nsp_float2double (Returns)
 nsp_floor_c
 nsp_frame_insert_hash_contents (H)
 nsp_from_texmacs
-nsp_fscanf_matrix (F, format, M, flag, S, Returns)
-nsp_fscanf_smatrix (F, S, Returns)
-nsp_fseek (F, offset, flag, Returns)
-nsp_ftell (F, offset, Returns)
 nsp_gdk_hash_table
 nsp_get_attribute_object
 nsp_get_attribute_util
@@ -992,8 +983,6 @@ nsp_message
 nsp_message_
 nsp_message_modeless
 nsp_message_modeless_
-nsp_mget (F, x, n, type, items_read)
-nsp_mgetstr (F, start, n, Returns)
 nsp_mgetstr1
 nsp_module_import
 nsp_module_search_name
@@ -1085,7 +1074,6 @@ nsp_mpmat_triu
 nsp_mpmat_zeros
 nsp_mpmatrix_clone (init)
 nsp_mpmatrix_redim
-nsp_mput (F, x, n, type)
 nsp_multi_dialog
 nsp_multi_dialog_
 nsp_new_boolean_obj (ival)
@@ -1174,7 +1162,7 @@ nsp_pr_white
 nsp_print_dialog
 nsp_print_opname
 nsp_prod_c
-nsp_putstr (F, str, Returns)
+nsp_putstr (Returns)
 nsp_qsort
 nsp_qsort_bp_double
 nsp_qsort_bp_int
@@ -1203,7 +1191,6 @@ nsp_qsort_stable_incr_double
 nsp_qsort_stable_incr_int
 nsp_qsort_stable_incr_nsp_string
 nsp_read_history
-nsp_read_lines (F, S, nlines, Returns)
 nsp_readline_clear_line
 nsp_realtime
 nsp_realtime_init
@@ -1439,18 +1426,6 @@ nsp_type_type_id
 nsp_types
 nsp_types_hash_table
 nsp_write_history
-nsp_xdr_load_array_c
-nsp_xdr_load_array_d
-nsp_xdr_load_array_i
-nsp_xdr_load_c
-nsp_xdr_load_i
-nsp_xdr_load_string
-nsp_xdr_save_array_c (nx, l)
-nsp_xdr_save_array_d
-nsp_xdr_save_array_i (nx, l)
-nsp_xdr_save_c (c)
-nsp_xdr_save_i (ix)
-nsp_xdr_save_string
 nsp_zadd (Returns)
 nsp_zasum
 nsp_zsub (Returns)

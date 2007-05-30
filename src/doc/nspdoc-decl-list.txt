@@ -148,6 +148,7 @@ ELT_TYPE
 
 <SECTION>
 <FILE>file</FILE>
+nsp_file
 NspFile
 NspTypeSciFile
 nsp_type_file_id

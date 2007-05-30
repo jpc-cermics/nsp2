@@ -673,6 +673,20 @@ NspObject *obj
 #define ELT_TYPE int 
 </MACRO>
 <STRUCT>
+<NAME>nsp_file</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_file</NAME>
+struct _nsp_file {
+  FILE *file ;   /* the file */
+  XDR  xdrs[1];  /* xdr struture */
+  int  flag;     /* flag for special open (xdr) */
+  char openf[4]; /* flags used in fopen */
+  char *fname;  /* file name */
+  int ref_count;
+};
+</STRUCT>
+<STRUCT>
 <NAME>NspFile</NAME>
 </STRUCT>
 <STRUCT>
@@ -689,11 +703,7 @@ struct _NspFile {
   NspObject father; 
   NspTypeSciFile *type; 
   /*< public >*/
-  FILE *file ;   /* the file */
-  XDR  xdrs[1];  /* xdr struture */
-  int  flag;     /* flag for special open (xdr) */
-  char openf[4]; /* flags used in fopen */
-  char *fname;  /* file name */
+  nsp_file *obj;
 };
 </STRUCT>
 <VARIABLE>

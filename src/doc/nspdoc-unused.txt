@@ -186,6 +186,7 @@ nsp_expand_file_and_update_exec_dir
 nsp_expand_file_with_exec_dir
 nsp_expm
 nsp_export_dialog
+nsp_file
 nsp_firstel
 nsp_frames_search_local_in_calling
 nsp_function_name
