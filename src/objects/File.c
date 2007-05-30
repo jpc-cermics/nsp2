@@ -247,7 +247,7 @@ int nsp_file_close_xdr_r(NspFile  *F)
 }
 
 /**
- *nsp_file_open_xdr_r:
+ *nsp_file_open_xdr_w:
  * @fname: file name 
  * 
  * Opens a file given its name for xdr writing 
@@ -283,10 +283,10 @@ NspFile *nsp_file_open_xdr_w(char *fname)
 }
 
 /**
- *nsp_file_close_xdr_r:
+ *nsp_file_close_xdr_w:
  * @F: a  #Nspfile Object
  * 
- * Close the file described by F. 
+ * Close the file described by @F. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -318,7 +318,7 @@ int nsp_file_close_xdr_w(NspFile  *F)
  * @xdrs: a  #XDR structure
  * @x: a double precision number to be saved in F.
  * 
- * Saves a double in a file with xdr coding. 
+ * Saves a double in a xdr stream with xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -336,7 +336,7 @@ int nsp_xdr_save_d(XDR *xdrs, double x)
  * @xdrs: a  #XDR structure
  * @x: a pointer to a double precision number to be read in F.
  * 
- * Reads a double in a file assuming xdr coding. 
+ * Reads a double in a  xdr stream assuming xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -353,9 +353,9 @@ int nsp_xdr_load_d(XDR *xdrs, double *x)
 /**
  *nsp_xdr_save_i:
  * @xdrs: a  #XDR structure
- * @ix: 
+ * @ix: an integer 
  * 
- * Saves an int in a file with xdr coding. 
+ * Saves an int in a xdr stream with xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -371,8 +371,9 @@ int nsp_xdr_save_i(XDR *xdrs, int ix)
 /**
  *nsp_xdr_load_i:
  * @xdrs: a  #XDR structure
- * @ix: 
- * 
+ * @ix: an int pointer 
+ *
+ * Reads an integer in a  xdr stream assuming xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -387,10 +388,9 @@ int nsp_xdr_load_i(XDR *xdrs, int *ix)
 /**
  *nsp_xdr_save_c:
  * @xdrs: a  #XDR structure
- * @c: 
+ * @c: a character 
  * 
- * Saves a char in a file with xdr coding. 
- * 
+ * Saves a character in a xdr stream with xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -405,10 +405,13 @@ int nsp_xdr_save_c(XDR *xdrs, char c)
 /**
  *nsp_xdr_load_c:
  * @xdrs: a  #XDR structure
- * @c: 
+ * @c: a char pointer
+ * 
+ * Reads a character in a  xdr stream assuming xdr coding.  
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_xdr_load_c(XDR *xdrs, char *c)
 {
   szof = sizeof(char);
@@ -419,10 +422,10 @@ int nsp_xdr_load_c(XDR *xdrs, char *c)
 /**
  *nsp_xdr_save_array_i:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @l: 
+ * @nx: pointer to an array of integers
+ * @l: size of array 
  * 
- * Saves an int array in a file with xdr coding. 
+ * Saves an int array @nx of size @l in a xdr stream with xdr coding. 
  *
  * Return value: %OK or %FAIL
  **/
@@ -440,8 +443,11 @@ int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l)
 /**
  *nsp_xdr_load_array_i:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @l: 
+ * @nx: pointer to an array of integers
+ * @l: an integer
+ *
+ * fills the array pointed by @nx whith @l integers 
+ * which are read from the xdr stream @xdr.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -459,10 +465,10 @@ int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l)
 /**
  *nsp_xdr_save_array_c:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @l: 
+ * @nx: pointer to an array of characters 
+ * @l: an integer 
  * 
- * Saves an int array in a file with xdr coding. 
+ * Saves an array of characters @nx of size @l in a xdr stream with xdr coding. 
  *
  * Return value: %OK or %FAIL
  **/
@@ -480,8 +486,11 @@ int nsp_xdr_save_array_c(XDR *xdrs,char *nx, int l)
 /**
  *nsp_xdr_load_array_c:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @l: 
+ * @nx:  pointer to an array of characters 
+ * @l: an integer 
+ *
+ * fills the array pointed by @nx whith @l characters
+ * which are read from the xdr stream @xdr.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -500,9 +509,10 @@ int nsp_xdr_load_array_c(XDR *xdrs,char *nx, int l)
 /**
  *nsp_xdr_save_array_d:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @l: 
- * Saves an array of double in a file with xdr coding. 
+ * @nx: an array of double 
+ * @l: an integer 
+ *
+ * Saves an array of double in a xdr stream with xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -521,9 +531,11 @@ int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l)
 /**
  *nsp_xdr_load_array_d:
  * @xdrs: a  #XDR structure
- * @nx: 
- * @mn: 
+ * @nx: an array of double 
+ * @mn: an integer
  * 
+ * fills the array pointed by @nx whith @l doubles
+ * which are read from the xdr stream @xdr.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -546,6 +558,8 @@ int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn)
  *nsp_xdr_save_string:
  * @xdrs: a  #XDR structure
  * @str: string to be saved 
+ *
+ * Saves string @str in a xdr stream with xdr coding. 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -562,10 +576,15 @@ int nsp_xdr_save_string(XDR *xdrs, char *str)
 /**
  *nsp_xdr_load_string:
  * @xdrs: a  #XDR structure
- * @buf: 
- * @buf_len: 
+ * @buf: a char pointer as buffer 
+ * @buf_len: buffer length 
+ *
+ * fills the array pointed by @buf with a string 
+ * read from the xdr stream @xdr. If the string is larger 
+ * than the buffer length @buf_len an error is raised and 
+ * %FAIL is returned.
  * 
- * Return value: 
+ * Return value: %OK and %FAIL.
  **/
 
 int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len)
@@ -619,9 +638,10 @@ int is_little_endian(void)
 
 /**
  * nsp_feof:
- * @f: 
+ * @f: a #NspFile
  * 
- * checks eof 
+ * checks if eof was reached in #NspFile @f.
+ *  
  * Return value: %TRUE or %FALSE
  **/
 
@@ -633,9 +653,9 @@ int nsp_feof(NspFile *f)
 
 /**
  * nsp_ferror:
- * @f: 
+ * @f: a #NspFile
  * 
- * checks error
+ * checks if an error was raised in #NspFile @f.
  * 
  * Return value: %TRUE or %FALSE
  **/
@@ -648,10 +668,12 @@ int nsp_ferror(NspFile *f)
 
 /**
  * nsp_clearerr:
- * @f: 
- * clear errors 
+ * @f: a #NspFile
+ * 
+ * clears raised error if any in #NspFile @f
  * 
  **/
+
 void nsp_clearerr(NspFile *f)
 {       
   if ( !IS_OPENED(f->obj->flag)) return ; 
@@ -666,14 +688,15 @@ void nsp_clearerr(NspFile *f)
 
 /**
  * nsp_fseek:
- * @F: 
- * @offset: 
- * @flag: 
+ * @F: a #NspFile
+ * @offset: a long int 
+ * @flag: a string from "set",or "cur" ,or "end"
  * 
- * fseek function 
+ * call the fseek function. 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
+
 int nsp_fseek(NspFile *F,long int offset,const char *flag)
 {     
   int iflag;
@@ -715,13 +738,14 @@ int nsp_fseek(NspFile *F,long int offset,const char *flag)
 
 /**
  * nsp_ftell:
- * @F: 
- * @offset: 
+ * @F: a #NspFile
+ * @offset: a pointer to a long int 
  * 
  * calls the tell function 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
+
 int nsp_ftell(NspFile *F,long int *offset)
 {     
   if ( !IS_OPENED(F->obj->flag)) 
@@ -755,14 +779,14 @@ int nsp_ftell(NspFile *F,long int *offset)
 
 /**
  * nsp_mput:
- * @F: 
- * @x: 
- * @n: 
- * @type: 
+ * @F: a #NspFile
+ * @x: a pointer to an array 
+ * @n: size of array as an integer 
+ * @type: type of @x coded as string.
  *
- * writes array x of size n in the stream described by F 
- * using type described by type and controlling the byte order 
- * This routine assume that the array x is type compatible type
+ * writes array @x of size @n in the stream described by @F 
+ * using type described by @type and controlling the byte order.
+ * This routine assume that the array @x is type compatible wih @type
  * i.e Type *val = (Type *) x and *val++ works for iterating on x 
  * 
  * Return value: %TRUE or %FALSE
@@ -837,17 +861,16 @@ int nsp_mput(NspFile *F,void *x,int n, char *type)
 
 /**
  * nsp_mget:
- * @F: 
- * @x: 
- * @n: 
- * @type: 
- * @items_read: 
+ * @F: a #NspFile 
+ * @x: an array pointer 
+ * @n: an integer 
+ * @type: a string coding type of @x.
+ * @items_read: an int pointer 
  * 
- * mget functions  read data in a machine 
- * independant way (i.e write in little-endian) 
- * or can be used to read in little or big endian 
- * if read fails *ierr contains the number of properly read items 
- * 
+ * reads data from #NspFile the byte order being controled by 
+ * the way @F was opened. This function can be used to read data coded 
+ * in little or big endian 
+ * if read fails @items_read will contain the number of properly read items. 
  * 
  * Return value: %TRUE or %FALSE
  **/
@@ -909,13 +932,14 @@ int nsp_mget(NspFile *F,void *x,int n,const char *type,int *items_read)
 
 /**
  * nsp_mgetstr:
- * @F: 
- * @start: 
- * @n: 
+ * @F: a #NspFile 
+ * @start: pointer to string to be returned 
+ * @n: an integer 
  * 
- * reads a string 
+ * allocate and read a string of size @n which is 
+ * returned in @start.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_mgetstr(NspFile *F, char **start, int n)
@@ -959,10 +983,10 @@ int nsp_mgetstr1 (NspFile *F, char *start, int n,int *n_read)
 
 /**
  * nsp_putstr:
- * @F: 
- * @str: 
+ * @F: a #NspFile
+ * @str: a char pointer 
  * 
- * writes a string 
+ * writes string @str in stream @F.
  * 
  * Return value: 
  **/
@@ -996,16 +1020,18 @@ static int count_tokens(char *string);
 
 /**
  * nsp_fscanf_matrix:
- * @F: 
- * @format: 
- * @M: 
- * @flag: 
- * @S: 
+ * @F: a #NspFile 
+ * @format: a string 
+ * @M: A #NspMatrix 
+ * @flag: an integer 
+ * @S: a #NspSMatrix
  * 
- * read a scalar matrix in the File given by F.
- * the first non numeric values found are stored in a string matrix S 
+ * reads a scalar matrix in the file given by @F.
+ * The first non numeric values found in file @F are stored in a string matrix @S 
+ * (only if @flag is %TRUE). The matrix is returned in @M. 
+ * @format is unused.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix **S)
@@ -1161,13 +1187,14 @@ static int count_tokens(char *string)
 
 /**
  * nsp_read_lines:
- * @F: 
- * @S: 
- * @nlines: 
+ * @F: a #NspFile 
+ * @S: a #NspSMatrix
+ * @nlines: an integer 
  * 
- * Fills a #NspSMatrix object with lines read from file F.
+ * Fills a #NspSMatrix object with lines read from file @F. 
+ * @nlines gives the maximum number of lines to read. 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
@@ -1215,12 +1242,12 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
 
 /**
  * nsp_fscanf_smatrix:
- * @F: 
- * @S: 
+ * @F: a #NspFile
+ * @S: a #NspSMatrix
  * 
  * Creates and fills a #NspSMatrix object with file contents.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
@@ -1277,16 +1304,19 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
 
 /**
  * nsp_fprintf_matrix:
- * @F: 
- * @format: 
- * @sep: 
- * @M: 
- * @S: 
+ * @F: a #NspFile 
+ * @format: a string.
+ * @sep: a string 
+ * @M: a #NspMatrix 
+ * @S: a #NspSMatrix
  * 
+ * prints matrix @M in file @F using @format for formating numbers and 
+ * @sep as separator. if @S is non null it is writen first in the file 
+ * and stands as comments.
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
+
 int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix *S)
 {
   int i,j;
@@ -1315,12 +1345,12 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
 
 /**
  * nsp_fprintf_smatrix:
- * @F: 
- * @S: 
+ * @F: a #NspFile 
+ * @S:  a #NspSMatrix
  * 
+ * prints the contents of @S in @F.
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S)
@@ -1369,7 +1399,7 @@ typedef int (*PRINTER) (FILE *, char *,...);
  * @strv:  a string
  * @retval: the return value of the scanf or fscanf function 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL.
  **/
 
 int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int *nargs, char *strv, int *retval)
@@ -1908,11 +1938,22 @@ static char * P_GetString(Stack stack,int first_arg,int n_args,int col,int line)
   return S->S[line+ S->m*obj_col];
 }
 
-/*
- * nargs: number of arguments 
- * arg_cnt: position of first argument 
- * line: current line 
- */
+
+/**
+ * do_printf:
+ * @fname: file name 
+ * @fp: stream to use 
+ * @format: format for printing 
+ * @stack: a  #Stack.
+ * @nargs: number of arguments 
+ * @arg_cnt: position of first argument 
+ * @line:  current line 
+ * @strv: if present printing is performed in a string buffer
+ * 
+ * emulates the printf (or sprintf()) function using #NspObjects as arguments 
+ * 
+ * Returns: %OK or %FAIL 
+ **/
 
 int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int arg_cnt, int line, char **strv)
 {

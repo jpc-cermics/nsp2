@@ -739,8 +739,8 @@ static NspMethods *nsp_file_get_methods(void) { return nsp_file_methods;};
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-/*
- * f=fopen(fname [,mode])
+/* interface:
+ * f=fopen(fname [,mode,xdr,swap])
  */
 
 static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
@@ -764,7 +764,8 @@ static int int_file_fopen(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*
+/* interface: 
+ * putfile(fname,S)
  */
 
 static int int_file_putfile(Stack stack, int rhs, int opt, int lhs)
@@ -783,7 +784,8 @@ static int int_file_putfile(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*
+/* interface: 
+ * getfile(fname);
  */
 
 static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
@@ -809,6 +811,7 @@ static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
 
 /* compatibility with Scilab 
  * format is not used. 
+ * fscanfMat(fname, format='fmt')
  */
 
 static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
@@ -836,8 +839,8 @@ static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/*
- * 
+/* interface: 
+ * is_little_endian()
  */
 
 static int int_file_is_little_endian(Stack stack, int rhs, int opt, int lhs)
