@@ -1770,6 +1770,9 @@ link_lock_update
 link_split
 link_check
 link_add_control
+link_create
+link_create_n
+link_remove_control
 </SECTION>
 
 <SECTION>
@@ -2306,6 +2309,8 @@ nsp_sprowmatrix_transpose
 nsp_sprowmatrix_tril
 nsp_sprowmatrix_triu
 nsp_sprowmatrix_zeros
+nsp_sprowmatrix_isreal
+nsp_sprowmatrix_mini
 </SECTION>
 
 <SECTION>
@@ -2411,6 +2416,10 @@ nsp_spcolmatrix_transpose
 nsp_spcolmatrix_tril
 nsp_spcolmatrix_triu
 nsp_spcolmatrix_zeros
+nsp_spcolmatrix_divel
+nsp_spcolmatrix_isreal
+nsp_spcolmatrix_mini
+nsp_spcolmatrix_spones
 </SECTION>
 
 
@@ -2465,4 +2474,8 @@ update_exec_dir
 update_exec_dir_from_dir
 user_pref
 user_preferences
+nsp_expand_dir_and_update_exec_dir
+nsp_expand_file_and_update_exec_dir
+nsp_expand_file_with_exec_dir
 </SECTION>
+

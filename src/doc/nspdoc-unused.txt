@@ -144,9 +144,6 @@ int_scalexp_create
 int_sprowmatrix_minus
 isnan
 it_gen_f
-link_create
-link_create_n
-link_remove_control
 lock_dir
 lock_type
 matint_workid
@@ -181,9 +178,6 @@ nsp_current_frame_to_hash
 nsp_double2complex
 nsp_eplist_create
 nsp_eval_macro_code
-nsp_expand_dir_and_update_exec_dir
-nsp_expand_file_and_update_exec_dir
-nsp_expand_file_with_exec_dir
 nsp_expm
 nsp_export_dialog
 nsp_file
@@ -226,12 +220,6 @@ nsp_scalexp_print
 nsp_set_nsp_getchar
 nsp_sparse_triplet
 nsp_spcol_free_triplet
-nsp_spcolmatrix_divel
-nsp_spcolmatrix_isreal
-nsp_spcolmatrix_mini
-nsp_spcolmatrix_spones
-nsp_sprowmatrix_isreal
-nsp_sprowmatrix_mini
 nsp_stimer
 nsp_type_astnode
 nsp_type_astnode_id

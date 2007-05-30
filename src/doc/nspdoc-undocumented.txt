@@ -1,7 +1,7 @@
 42% symbol docs coverage.
-953 symbols documented.
-218 symbols incomplete.
-1341 not documented.
+961 symbols documented.
+222 symbols incomplete.
+1345 not documented.
 
 
 Abs
@@ -627,6 +627,9 @@ is_string_in_struct
 kill_process_group
 linint
 link_add_control
+link_create
+link_create_n
+link_remove_control
 lockqueue_nsp_command
 mat_is_increasing
 matint_get_methods
@@ -855,6 +858,9 @@ nsp_dzset (Returns)
 nsp_error_vprintf
 nsp_exec_method_util
 nsp_exp_c
+nsp_expand_dir_and_update_exec_dir (stack, dirname, dirname_exec)
+nsp_expand_file_and_update_exec_dir (stack)
+nsp_expand_file_with_exec_dir (stack)
 nsp_file_copy
 nsp_file_create
 nsp_file_destroy
@@ -1240,6 +1246,7 @@ nsp_sort
 nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
+nsp_spcolmatrix_divel
 nsp_spcolmatrix_get (RC, Values)
 nsp_spcolmatrix_insert_elt (Returns)
 nsp_spcolmatrix_minitt (flag, err)
@@ -1300,6 +1307,7 @@ nsp_sprowmatrix_logel (A)
 nsp_sprowmatrix_maxi (A, flag, Imax, lhs)
 nsp_sprowmatrix_maximinitt_g (A, B, flag, minmaxflag, err)
 nsp_sprowmatrix_maxitt (A, B, flag, err)
+nsp_sprowmatrix_mini (A, flag, Imax, lhs)
 nsp_sprowmatrix_minitt (A, B, flag, err)
 nsp_sprowmatrix_minus (A)
 nsp_sprowmatrix_mult (A, B)
