@@ -559,11 +559,12 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 
 /**
  * nsp_eframe_to_hash:
- * @F: 
+ * @F: a #NspFrame 
  * 
+ * returns a copy of the content of the frame @F 
+ * in a #NspHash object. 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspHash or %NULLHASH
  **/
 
 NspHash *nsp_eframe_to_hash(NspFrame *F)
@@ -576,6 +577,7 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
 #else 
   Obj= nsp_hash_copy(F->vars);
 #endif
+  /* if we only have local variables this is wrong ? XXXXX */
   if ( Obj == NULLHASH) return Obj;
   if ( F->table == NULL) return Obj;
   for ( i = 1 ; i < F->table->mn ; i++) 
@@ -590,6 +592,63 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
 	  if (( Elt =nsp_object_copy_with_name(Elt)) == NULLOBJ )
 	    return NULLHASH;
 	  if (nsp_hash_enter( Obj,Elt) == FAIL) return NULLHASH;
+	}
+    }
+  return Obj;
+} 
+
+/**
+ * nsp_eframe_to_smat:
+ * @F: a #NspFrame 
+ * 
+ * returns the names contained in frame @F 
+ * in a #NspSMatrix object. 
+ * 
+ * Return value: a new #NspSMatrix or %NULLHASH
+ **/
+
+NspSMatrix *nsp_eframe_to_smat(NspFrame *F)
+{
+  int i;
+  NspSMatrix  *Obj;
+  NspObject *Elt;
+  /* first insert the names in the list part of Frame */
+#ifdef FRAME_AS_LIST
+  /* XXXX:  This should be turned in a function in List.c */
+  if ((Obj = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT) 
+    return NULLSMAT;
+  if (F->vars != NULLLIST ) 
+    {
+      Cell *C = F->vars->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ ) 
+	    {
+	      const char *str = nsp_object_get_name(NSP_OBJECT(C->O));
+	      if ( strcmp(str,NVOID) != 0) 
+		{
+		  if ( nsp_row_smatrix_append_string(Obj,str) == FAIL) 
+		    return NULLSMAT;
+		}
+	    }
+	  C = C->next ;
+	}
+    }
+#else
+  Obj = nsp_hash_get_keys(F->vars);
+#endif
+  /* if we only have local variables this is wrong ? XXXXX */
+  if ( Obj == NULLSMAT) return Obj;
+  /* then insert the names from local variables */
+  if ( F->table == NULL) return Obj;
+  for ( i = 1 ; i < F->table->mn ; i++) 
+    {
+      Elt= F->table->objs[i];
+      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	{
+	  const char *str = nsp_object_get_name(NSP_OBJECT(Elt));
+	  if ( nsp_row_smatrix_append_string(Obj,str) == FAIL) 
+	    return NULLSMAT;
 	}
     }
   return Obj;

@@ -99,6 +99,7 @@ extern int nsp_eframe_replace_object(NspFrame *F, NspObject *A);
 extern NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str);
 extern void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str);
 extern NspHash *nsp_eframe_to_hash(NspFrame *F);
+extern NspSMatrix *nsp_eframe_to_smat(NspFrame *F);
 
 #endif 
 

@@ -101,7 +101,8 @@ static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((name = GetString (stack, 1)) == (char *) 0) return RET_BUG;
-  if (( Obj =nsp_frames_search_object(name)) == NULLOBJ) 
+  /* get value from callers */
+  if (( Obj = nsp_frames_search_local_in_calling(name)) == NULLOBJ) 
     {
       Scierror("Error: object %s not found in callers environemnt\n",name);
       return RET_BUG;
@@ -209,15 +210,22 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
 extern NspFrame  *GlobalFrame;
 extern NspFrame  *ConstantFrame;
 
-static int int_who(Stack stack, int rhs, int opt, int lhs)
+static int nsp_int_who(Stack stack, int rhs, int opt, int lhs)
 {
   Cell *C;
-  int rep = 0;
+  int rep = 0, as_hash=TRUE;
+  nsp_option opts[] ={{"hash",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   static char *exists_list[] = {"local", "global", "caller","constants", NULL};
   NspHash *H=NULL;
-  CheckRhs(0,1);
+  NspSMatrix *S=NULL;
+  CheckStdRhs(0,1);
   CheckLhs(1,1);
-  if ( rhs == 1 )
+
+  if ( get_optional_args(stack,rhs,opt,opts,&as_hash) == FAIL) 
+    return RET_BUG;
+
+  if ( rhs -opt == 1 )
     {
       if ((rep= GetStringInArray(stack,1,exists_list,1)) == -1) return RET_BUG; 
     }
@@ -226,11 +234,25 @@ static int int_who(Stack stack, int rhs, int opt, int lhs)
     case 0: 
       /* get current frame and return it as a hash table */
       if ( Datas == NULLLIST ) return RET_BUG;
-      if ((H= nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULLHASH) return RET_BUG;
+      if ( as_hash == TRUE) 
+	{
+	  if ((H= nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULLHASH) return RET_BUG;
+	}
+      else 
+	{
+	  if ((S=nsp_eframe_to_smat((NspFrame *) Datas->first->O)) == NULLSMAT) return RET_BUG;
+	}
       break;
     case 1:
       if ( GlobalFrame == NULLFRAME ) return RET_BUG;
-      if ((H= nsp_eframe_to_hash(GlobalFrame)) == NULLHASH) return RET_BUG;
+      if ( as_hash == TRUE) 
+	{
+	  if ((H= nsp_eframe_to_hash(GlobalFrame)) == NULLHASH) return RET_BUG;
+	}
+      else
+	{
+	  if ((S=nsp_eframe_to_smat(GlobalFrame)) == NULLSMAT) return RET_BUG;
+	}
       break;
     case 2:
       if ( Datas == NULLLIST ) return RET_BUG;
@@ -241,14 +263,28 @@ static int int_who(Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: caller frame does not exist\n");
 	  return RET_BUG;
 	}
-      if ((H= nsp_eframe_to_hash((NspFrame *) C->O)) == NULLHASH) return RET_BUG;
+      if ( as_hash == TRUE) 
+	{
+	  if ((H= nsp_eframe_to_hash((NspFrame *) C->O)) == NULLHASH) return RET_BUG;
+	}
+      else
+	{
+	  if ((S= nsp_eframe_to_smat((NspFrame *) C->O)) == NULLSMAT) return RET_BUG;
+	}
       break;
     case 3: 
       if ( ConstantFrame == NULLFRAME ) return RET_BUG;
-      if ((H= nsp_eframe_to_hash(ConstantFrame)) == NULLHASH) return RET_BUG;
+      if ( as_hash == TRUE) 
+	{
+	  if ((H= nsp_eframe_to_hash(ConstantFrame)) == NULLHASH) return RET_BUG;
+	}
+      else 
+	{
+	  if ((S= nsp_eframe_to_smat(ConstantFrame)) == NULLSMAT) return RET_BUG;
+	}
       break;
     }
-  MoveObj(stack,1,(NspObject *) H);
+  MoveObj(stack,1,((as_hash == TRUE) ? (NspObject *) H :(NspObject *)  S ));
   return 1;
 }
 
@@ -307,7 +343,7 @@ static OpTab Datas_func[]={
   {"clear",int_clear},
   {"clearglobal",int_clearglobal},
   {"insert_env",int_insert_env},
-  {"who",int_who},
+  {"who",nsp_int_who},
   {"frames_inhibit_search",int_frames_flag},
   {"frame_to_hash",int_frame_to_hash},
   {"acquire", int_nsp_acquire}, 
