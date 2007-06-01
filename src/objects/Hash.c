@@ -449,6 +449,50 @@ int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2)
 } 
 
 
+/**
+ * nsp_hash_get_keys:
+ * @H: a #NspHash 
+ * 
+ * get the keys of the hash table @H as a #NspSMatrix object.
+ * 
+ * Returns: a new #NspSMatrix or NULL.
+ **/
+
+NspSMatrix * nsp_hash_get_keys(NspHash *H)
+{
+  NspSMatrix *Loc;
+  NspObject *O;
+  int i=0,count =0;
+  if ( H->filled == 0) 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,0,0,-1) ) == NULLSMAT) return NULLSMAT;
+    }
+  else 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,H->filled,1,-1) ) == NULLSMAT) return NULLSMAT;
+      /* allocate elements and store keys **/
+      while (1) 
+	{
+	  int rep = nsp_hash_get_next_object(H,&i,&O);
+	  if ( O != NULLOBJ )
+	    { 
+	      if (( Loc->S[count++] =nsp_string_copy(NSP_OBJECT(O)->name)) == (nsp_string) 0)
+		return NULLSMAT;
+	    }
+	  if (rep == FAIL) break;
+	}
+      if ( count != H->filled )
+	{
+	  int i;
+	  Sciprintf("Warning: less objects (%d) in hash table than expected (%d) !\n",count,H->filled);
+	  for ( i = count ; i < H->filled ; i++) Loc->S[i]=NULL;
+	  if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLSMAT;
+	}
+    }
+  return Loc;
+}
+
+
 
 /*
  * Hashtable code : 

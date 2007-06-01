@@ -567,37 +567,7 @@ int int_htcreate(Stack stack, int rhs, int opt, int lhs)
 
 static NspObject * int_hash_get_keys(void *Hv, char *attr)
 {
-  NspSMatrix *Loc;
-  NspHash *H = Hv;
-  NspObject *O;
-  int i=0,count =0;
-  if ( H->filled == 0) 
-    {
-      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,0,0,-1) ) == NULLSMAT) return NULLOBJ;
-    }
-  else 
-    {
-      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,H->filled,1,-1) ) == NULLSMAT) return NULLOBJ;
-      /* allocate elements and store keys **/
-      while (1) 
-	{
-	  int rep = nsp_hash_get_next_object(H,&i,&O);
-	  if ( O != NULLOBJ )
-	    { 
-	      if (( Loc->S[count++] =nsp_string_copy(NSP_OBJECT(O)->name)) == (nsp_string) 0)
-		return NULLOBJ;
-	    }
-	  if (rep == FAIL) break;
-	}
-      if ( count != H->filled )
-	{
-	  int i;
-	  Sciprintf("Warning: less objects (%d) in hash table than expected (%d) !\n",count,H->filled);
-	  for ( i = count ; i < H->filled ; i++) Loc->S[i]=NULL;
-	  if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLOBJ;
-	}
-    }
-  return (NspObject *) Loc;
+  return (NspObject *) nsp_hash_get_keys(Hv);
 }
 
 static int int_hash_set_keys(void *Hv,const char *attr, NspObject *O)
