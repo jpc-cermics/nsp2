@@ -137,6 +137,7 @@ extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
 NspHash *nsp_hcreate(char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);
 extern NspHash *nsp_current_frame_to_hash(void);
+extern NspSMatrix * nsp_hash_get_keys(NspHash *H);
 
 #endif
 
