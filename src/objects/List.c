@@ -744,12 +744,15 @@ void  nsp_list_remove_first(NspList *L)
   Loc = L->first;
   if ( L->nel == 1 )   /* list with one cell => become an empty list */
     {
-      L->first = NULLCELL; L->last = NULLCELL;
+      L->first = L->current= L->last = NULLCELL;
+      L->icurrent=0;
     }
   else  /* list with at least 2 cells */
     {
       L->first = Loc->next; 
       Loc->next->prev = NULLCELL;
+      L->current= L->first;
+      L->icurrent=1;
     }
   nsp_cell_destroy(&Loc);
   L->nel--;
@@ -768,12 +771,18 @@ void  nsp_list_remove_last(NspList *L)
   Loc = L->last;
   if ( L->nel == 1 )   /* list with one cell => become an empty list */
     {
-      L->first = NULLCELL; L->last = NULLCELL;
+      L->first = L->current= L->last = NULLCELL;
+      L->icurrent=0;
     }
   else  /* list with at least 2 cells */
     {
       L->last = Loc->prev; 
       Loc->prev->next = NULLCELL;
+      if ( L->current== Loc) 
+	{
+	  L->current= L->first;
+	  L->icurrent=1;
+	}
     }
   nsp_cell_destroy(&Loc);
   L->nel--;
