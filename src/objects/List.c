@@ -742,6 +742,7 @@ void  nsp_list_remove_first(NspList *L)
 {
   Cell *Loc;
   Loc = L->first;
+  if ( Loc == NULLCELL) return ; 
   if ( L->nel == 1 )   /* list with one cell => become an empty list */
     {
       L->first = L->current= L->last = NULLCELL;
@@ -769,6 +770,7 @@ void  nsp_list_remove_last(NspList *L)
 {
   Cell *Loc;
   Loc = L->last;
+  if ( L->first == NULLCELL) return ; 
   if ( L->nel == 1 )   /* list with one cell => become an empty list */
     {
       L->first = L->current= L->last = NULLCELL;
