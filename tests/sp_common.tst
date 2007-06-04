@@ -13,10 +13,14 @@ A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 // create a null matrix 
-// XXX: maybe emulate the Matlab sparse(m,n) call 
-// as an equivalent way.
-
+//--------------------
 Sp1=sp_create(7,8);
+A1=sp2m(Sp1);
+if or(A1<>zeros(7,8)) then pause;end
+
+// sparse(m,n) as in matlab 
+
+Sp1=sparse(7,8);
 A1=sp2m(Sp1);
 if or(A1<>zeros(7,8)) then pause;end
 
@@ -54,6 +58,7 @@ end
 // nsp_spcolmatrix_enlarge_cols
 // nsp_spcolmatrix_enlarge
 // XXX pas interfacée : devrait etre des méthodes 
+
 
 // nsp_spcolmatrix_concatr
 
@@ -227,7 +232,6 @@ if or(A1<>A2) then pause;end
 // A is changed. 
 // elts must be increasing 
 // XXXXXXXXXXX pas ecrite
-
 
 // Res=nsp_matrix_extract(A,Rows,Cols)
 // nsp_spcolmatrix_extract
@@ -450,7 +454,29 @@ A2=rand(A);
 A1= A2 + Sp;
 if or(A1<>A +  A2 ) then pause;end
 
-// NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
+
+// Sp - Sp 
+//--------------------------
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1=Sp - Sp2 
+A1=sp2m(Sp1);
+if or(A1<>A -  A2 ) then pause;end
+
+// Sp - full -> full
+//--------------------------
+
+A2=rand(A);
+A1=Sp - A2 
+if or(A1<>A -  A2 ) then pause;end
+
+// full - Sp -> full
+//--------------------------
+
+A2=rand(A);
+A1= A2 - Sp;
+if or(A1<>A -  A2 ) then pause;end
 
 // SP .* SP 
 //--------------
