@@ -4160,25 +4160,6 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * isreal 
- */
-
-int
-int_mx_isreal (Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *A;
-  NspBMatrix *B;
-  CheckRhs (1, 1);
-  CheckLhs (1, 1);
-  if ((A = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ( (B = nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT )
-    return RET_BUG;
-  B->B[0] = A->rc_type == 'r';
-  MoveObj (stack, 1, (NspObject *) B);
-  return 1;
-}
 
 /*
  */
@@ -4581,7 +4562,6 @@ static OpTab Matrix_func[] = {
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
   {"findm_m", int_mxfindm},
-  {"isreal_m", int_mx_isreal},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
