@@ -1908,40 +1908,45 @@ NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 }
 
 
-/* compute at the same time the min and max of a vector 
- * Note that it is difficult
- * to use the minmax algorithm (which compares first A[i] and A[i+1]
- * before comparing one to the current minimum and the other to the
- * current maximum) because of eventual Nan components.
+/* 
+ *  compute the min and max of a vector taking care of Nan.
+ *  Note : it is difficult to use the the minmax algorithm 
+ *  (which compares first A[i] and A[i+1] before comparing 
+ *  one to the current minimum and the other to the current 
+ *  maximum) because it mail fails if there are Nan components.
  */
-static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
-		      int *imin, int *imax)
+static void VMiniMaxi(int n, double *A, int incr, double *Amin, double *Amax,
+		      int *Imin, int *Imax)
 {
-  int i,i1;
-  *imin = *imax = 1;
-  *amax = *amin = A[0];
+  int i,i1, imin, imax;
+  double amin, amax;
+  imin = imax = 1; amin = amax = A[0];
 
   /* look for the first non Nan component */
   i = 0; i1 = 1;
-  while ( i < n && ISNAN(A[i]) ) { i += incr; i1++; }
+  while ( i1 <= n && ISNAN(A[i]) ) { i += incr; i1++; }
 
-  if ( i < n )  /* this vector is not only with Nan... */
+  if ( i1 <= n )
     {
       /* init with the first non Nan component then do the usual loop */
-      *amin = *amax = A[i]; *imin = *imax = i1;
-      for (  ; i < n ; i += incr, i1++ )
+      amin = amax = A[i]; imin = imax = i1;
+
+      i1++; i+=incr;
+      for (  ; i1 <= n ; i += incr, i1++ )
 	{
-	  if ( A[i] < *amin )
+	  if ( A[i] < amin )
 	    {
-	      *amin = A[i]; *imin = i1;
+	      amin = A[i]; imin = i1;
 	    }
-	  else if ( A[i] > *amax )
+	  else if ( A[i] > amax )
 	    {
-	      *amax = A[i];
-	      *imax = i1;
+	      amax = A[i];
+	      imax = i1;
 	    }
 	}
     }
+
+  *Amax = amax; *Amin = amin; *Imax = imax; *Imin = imin;
   return;
 }
 
@@ -1961,27 +1966,26 @@ static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
  * Return value: 
  **/
 
-int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
+int nsp_mat_minmax(NspMatrix *A, int dim, NspMatrix **Amin, NspMatrix **Imin,
 		   NspMatrix **Amax, NspMatrix **Imax, int lhs)
 {
   NspMatrix *amin=NULLMAT, *imin=NULLMAT, *amax=NULLMAT, *imax=NULLMAT;
-  int k, m, n, flag, indmin, indmax;
+  int k, m, n, indmin, indmax;
 
-  switch (str[0]) 
+  switch (dim) 
     {
-    default:
-      Sciprintf("\nInvalid flag '%c'  must be 'r','c' or 'F'\n",str[0]);
-      return FAIL;
-    case 'f': 
-    case 'F':
-      m = 1; n = 1; flag = 0; break;
-    case 'r':
-    case 'R':
-      m = 1; n = A->n; flag = 1; break;
-    case 'c':
-    case 'C':
-      m = A->m; n = 1; flag = 2; break;
+    default : 
+      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+    case 0: 
+      m = 1; n = 1; break;
+    case 1:
+      m = 1; n = A->n; break;
+    case 2:
+      m = A->m; n = 1; break;
     }
+
+  if ( A->mn == 0 )
+    m = n = 0;
 
   if (    (amin = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT
        || (amax = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT ) goto err;
@@ -1996,12 +2000,12 @@ int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
       return OK; 
     }
 
-  if ( flag == 0 )
+  if ( dim == 0 )
     {
       VMiniMaxi(A->mn, A->R, 1, amin->R, amax->R, &indmin, &indmax);
       if (lhs > 2) {imin->R[0] = (double) indmin; imax->R[0] = (double) indmax;}
     }
-  else if ( flag == 1 )
+  else if ( dim == 1 )
     for ( k = 0 ; k < A->n ; k++ )
       {
 	VMiniMaxi(A->m, &(A->R[k*A->m]), 1, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
@@ -2010,7 +2014,7 @@ int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
   else
     for ( k = 0 ; k < A->m ; k++ )
       {
-	VMiniMaxi(A->mn, &(A->R[k]), A->m, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
+	VMiniMaxi(A->n, &(A->R[k]), A->m, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
 	if (lhs > 2) {imin->R[k] = (double) indmin; imax->R[k] = (double) indmax;}
       }
 
@@ -2573,7 +2577,6 @@ int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B)
 		      A->R[i] = pow(A->R[i],B->R[i]);
 		    else if ( floor(B->R[i]) == B->R[i] ) /* exposant is integer => result is still real */
 		      A->R[i] = pow(A->R[i],B->R[i]);
-/* 		      A->R[i] = nsp_pow_di(A->R[i],(int) B->R[i]); */
 		    else
 		      {
 			if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
@@ -2634,7 +2637,7 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
 	    {
 	      if ( fabs(B->R[0]) <= 65536.0 ) 
 		/* use power algorithm (2^16 = 65536 so less than 16 multiplications, */
-		/* we hope it is stable enough */
+		/* so the relative error is bounded by 16 epsm)                       */
 		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int) B->R[0]);
 	      else
 		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i], B->R[0]);

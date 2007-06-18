@@ -1725,14 +1725,14 @@ int_mxmini (Stack stack, int rhs, int opt, int lhs)
 
 
 /* 
- *  [amin, amax, imin, imax] = minmax(A) or minmax(A,'c' or 'r' or 'F')
- *  to compute min and max at same time 3n/2 comparizons in place of 2n
- *  Routine introduced by Bruno Pinçon
+ *  [amin, amax, imin, imax] = minmax(A) or minmax(A,dir)
+ *  with dir = 'c','r','F','*' or 0, 1, 2
+ *  to compute min and max at same time
  */
 static int
 int_mxminmax(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str;
+  int dim = 0;
   NspMatrix *A, *Amin, *Imin, *Amax, *Imax;
 
   if ( rhs < 1  ||  rhs > 2 )
@@ -1746,16 +1746,10 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (rhs == 2)
-    {
-      if ((str = GetString (stack, 2)) == (char *) 0)
-	return RET_BUG;
-    }
-  else
-    {
-      str = "F";
-    }
+    if ( GetDimArg(stack, 2, &dim) == FAIL )
+      return RET_BUG;
 
-  if ( nsp_mat_minmax(A, str, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
+  if ( nsp_mat_minmax(A, dim, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
     return RET_BUG;
 
   MoveObj (stack, 1, (NspObject *) Amin);
@@ -4167,6 +4161,26 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * isreal 
+ */
+
+int
+int_mx_isreal (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  NspBMatrix *B;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ( (B = nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT )
+    return RET_BUG;
+  B->B[0] = A->rc_type == 'r';
+  MoveObj (stack, 1, (NspObject *) B);
+  return 1;
+}
+
+/*
  */
 
 int int_matrix_nnz (Stack stack, int rhs, int opt, int lhs)
@@ -4567,6 +4581,7 @@ static OpTab Matrix_func[] = {
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
   {"findm_m", int_mxfindm},
+  {"isreal_m", int_mx_isreal},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
