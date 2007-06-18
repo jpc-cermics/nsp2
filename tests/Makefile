@@ -20,6 +20,7 @@ TESTS= \
 	lu.dia \
 	matrix_io.dia \
 	matelm-nsp.dia \
+	minmax.dia \
 	qr.dia \
 	regexp.dia \
 	serial.dia \
