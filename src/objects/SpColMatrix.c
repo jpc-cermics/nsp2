@@ -28,6 +28,7 @@
 #include "nsp/matutil.h" 
 #include "nsp/gsort-p.h" 
 #include "nsp/cnumeric.h" 
+#include "nsp/nsp_lapack.h" /* vector_norm */
 #include "../librand/grand.h"
 
 static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
@@ -6344,3 +6345,167 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
   nsp_spcolmatrix_destroy(A);
   return NULLSPCOL;
 }
+
+
+/*
+ **/
+
+static double nsp_spcolmatrix_norm1(NspSpColMatrix *A)
+{
+  int i,j;
+  double norm=0.0;
+  switch ( A->rc_type ) 
+    {
+    case 'r': 
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  double vnorm=0.0;
+	  for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	    {
+	      vnorm += Abs(A->D[i]->R[j]);
+	    }
+	  norm = Max(norm,vnorm);
+	}
+      break;
+    case 'c': 
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  double vnorm=0.0;
+	  for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	    {
+	      vnorm += nsp_abs_c(&A->D[i]->C[j]);
+	    }
+	  norm = Max(norm,vnorm);
+	}
+    }
+  return norm;
+}
+
+/* return a < 0 norm when there's an allocation problem 
+ **/
+
+static double nsp_spcolmatrix_norminf(NspSpColMatrix *A)
+{
+  double norm;
+  int i,j;
+  NspMatrix *N=NULL;
+  if ((N = nsp_mat_zeros(A->m,1)) == NULLMAT )
+    return -1;
+  switch ( A->rc_type ) 
+    {
+    case 'r': 
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	    {
+	      int row = A->D[i]->J[j];
+	      N->R[row] +=  Abs(A->D[i]->R[j]);
+	    }
+	}
+      break;
+    case 'c': 
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	    {
+	      int row = A->D[i]->J[j];
+	      N->R[row] += nsp_abs_c(&A->D[i]->C[j]);
+	    }
+	}
+    }
+  nsp_array_maxi(N->mn,N->R,1,&norm);
+  nsp_matrix_destroy(N);
+  return norm;
+}
+
+/**
+ * nsp_spcolmatrix_norm:
+ * @A: a real or complex #NspSpColMatrix
+ * @flag: character defining the kind of matrix norm to compute:
+ *
+ *        @flag='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
+ *        @flag='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
+ *        @flag='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
+ *        @flag='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
+ *        @flag='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
+ *
+ * @A is not modified.
+ * 
+ * Return value: the matrix norm or -1 in case of failure (alloc problem or problem in
+ *               svd (2-norm))
+ **/
+
+double nsp_spcolmatrix_norm(NspSpColMatrix *A, char c)
+{
+  switch (c) {
+  case '1':
+    return nsp_spcolmatrix_norm1(A);
+  case '2': 
+    Scierror("Error: norm(.,2) not implemented for sparse matrices\n");
+    return -1;
+  case 'I':
+    return nsp_spcolmatrix_norminf(A);
+  case 'F':
+    Scierror("Error: Froebenius norm not implemented for sparse matrices\n");
+    return -1;
+  case 'M': 
+    Scierror("Error: M norm not implemented for sparse matrices\n");
+    return -1;
+  }
+  Scierror("Error: %c norm not implemented for sparse matrices\n",c);
+  return -1;
+}
+
+/**
+ * nsp_spcolmatrix_vnorm:
+ * @A: a real or complex sparse vector in a #bNspSpColMatrix
+ * @p: a #double which must be >= 1 
+ * 
+ * Computes the p-norm of the vector @A : 
+ *
+ *     ( sum_k |A_k|^p )^(1/p)
+ * 
+ * @p must be +Inf to compute the infinite norm ( max_k |A_k| )
+ * @A is not modified
+ * 
+ * Return value: the p-norm of the vector @A or -1.0 in case of alloc
+ *               problem (which may happen only for intzvnorm)
+ **/
+
+double nsp_spcolmatrix_vnorm(NspSpColMatrix *A, double p)
+{
+  int i,j;
+  double norm;
+  NspMatrix *V=NULL;
+  int nnz = nsp_spcolmatrix_nnz(A), count=0;
+  if ((V=nsp_matrix_create(NVOID,A->rc_type,nnz,1)) == NULLMAT)
+    return -1;
+  if ( A->n == 1 ) 
+    {
+      if ( A->m == 0) return 0;
+      memcpy(V->R,A->D[0]->R,nnz*sizeof(double)*((A->rc_type=='r') ? 1: 2));
+      norm = nsp_vector_norm(V, p);
+      nsp_matrix_destroy(V);
+    }
+  else 
+    {
+      if ( A->n == 0) return 0;
+      switch ( A->rc_type ) 
+	{
+	case 'r': 
+	  for ( i = 0 ; i < A->n ; i++) 
+	    for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	      V->R[count++]= A->D[i]->R[j];
+	  break;
+	case 'c' :
+	  for ( i = 0 ; i < A->n ; i++) 
+	    for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	      V->C[count++]= A->D[i]->C[j];
+	  break;
+	}
+      norm = nsp_vector_norm(V, p);
+      nsp_matrix_destroy(V);
+    }
+  return norm;
+}
+

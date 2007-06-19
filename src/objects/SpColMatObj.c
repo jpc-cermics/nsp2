@@ -2313,7 +2313,79 @@ static int int_spcolmatrix_isreal (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
+ 
+/* norm 1 and inf 
+ *
+ */
 
+static int int_spcolmatrix_norm( Stack stack, int rhs, int opt, int lhs)
+{
+  double norm, p=2.0;
+  int id=1, is_vector;
+  char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
+  char norm_lapack_table[] = {'1','2','I'  ,'F'  ,'I'  ,'F'  ,'M'};
+  NspSpColMatrix *A;
+
+  CheckRhs(1,2);
+  CheckLhs(0,1);
+
+  if ( (A=GetSpCol(stack, 1)) == NULLSPCOL ) return RET_BUG;
+  is_vector = A->m==1 || A->n==1;
+  
+  if (rhs == 2)
+    {
+      if (IsMatObj(stack,2))
+	{
+	  if ( GetScalarDouble(stack, 2, &p) == FAIL ) return RET_BUG; 
+	  if ( is_vector )
+	    {
+	      if ( !(p >= 1.0) )   /* to detect also nan */ 
+		{ 
+		  Scierror("%s: second argument must be >= 1 and not equal to %%nan\n",NspFname(stack));
+		  return RET_BUG;
+		}
+	    }
+	  else  /* A is a matrix */
+	    {
+	      if ( !(p==1.0 || p==2.0 || isinf(p)) )
+		{ 
+		  Scierror("%s: second argument must be 1, 2 or %%inf \n",NspFname(stack));
+		  return RET_BUG;
+		}
+	      if ( isinf(p) ) id = 2; else id = floor(p)-1;
+	    }
+	}
+      else if ( IsSMatObj(stack,2))
+	{
+	  if ( (id=GetStringInArray(stack,2,norm_table,1)) == -1) return RET_BUG; 
+	  if ( is_vector ) /* define p (p is initialised with 2 so corresponding to id == 1 || id == 3 || id == 5)  */
+	    {
+	      if ( id == 0 ) p = 1.0;
+	      else if ( id == 2 || id == 4 || id == 6 ) p = 1.0/(2.0 - p);  /* got an Inf */
+	    }
+	}
+      else
+	{
+	  Scierror("%s: second argument must be 1,2,%%inf or '1','2','inf','fro','Inf','Fro','M' \n      (or any real >= 1 for a vector)\n",
+		   NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( is_vector )
+    {
+      norm = nsp_spcolmatrix_vnorm(A, p);
+    }
+  else
+    {
+      norm = nsp_spcolmatrix_norm(A,norm_lapack_table[id]);
+    }
+  if ( norm < 0 ) return RET_BUG;  /* in some cases a work array must be allocated  */ 
+                                   /* and if this fails, nsp_xxxx_norm return -1.0  */
+
+  if ( nsp_move_double(stack,1,norm) == FAIL ) return RET_BUG;
+  return Max(lhs,1);
+}
 
 /*
  * The Interface for basic numerical sparse matrices operation 
@@ -2412,6 +2484,7 @@ static OpTab SpColMatrix_func[]={
   {"real_sp", int_spcolmatrix_real},
   {"imag_sp", int_spcolmatrix_imag},
   {"isreal_sp", int_spcolmatrix_isreal},
+  {"norm_sp", int_spcolmatrix_norm},
   {(char *) 0, NULL}
 };
 
