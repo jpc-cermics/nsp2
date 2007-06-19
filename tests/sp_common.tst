@@ -468,7 +468,7 @@ if or(A1<>A -  A2 ) then pause;end
 //--------------------------
 
 A2=rand(A);
-A1=Sp - A2 
+A1=Sp - A2 ;
 if or(A1<>A -  A2 ) then pause;end
 
 // full - Sp -> full
@@ -476,7 +476,7 @@ if or(A1<>A -  A2 ) then pause;end
 
 A2=rand(A);
 A1= A2 - Sp;
-if or(A1<>A -  A2 ) then pause;end
+if or(A1<> A2-full(Sp) ) then pause;end
 
 // SP .* SP 
 //--------------
