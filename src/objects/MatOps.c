@@ -4375,8 +4375,8 @@ static int SearchComp(const char *op, CompOp (**realop), C_CompOp (**C_realop))
       j = strcmp(op,comptab[i].name);
       if ( j == 0 )
 	{
-	  *realop = comptab[i].foncop;
-	  *C_realop = comptab[i].C_foncop;
+	  *realop = comptab[i].fonc;
+	  *C_realop = comptab[i].C_fonc;
 	  return(OK);
 	}
       else
@@ -4524,7 +4524,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	      if ( B->rc_type == 'r' ) 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*realop)(A->R[i],B->R[0]) ) Loc->B[i] = FALSE;
+		    if ( (*realop)(A->R[i],B->R[0])==FALSE  ) Loc->B[i] = FALSE;
 		}
 	      else 
 		{
@@ -4532,7 +4532,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) return NULLBMAT;
 		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) return NULLBMAT;
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&LocA->C[i],&B->C[0])) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&LocA->C[i],&B->C[0])==FALSE ) Loc->B[i] = FALSE;
 		  nsp_matrix_destroy(LocA);
 		}
 	    }
@@ -4542,12 +4542,12 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 		{
 		  doubleC Z={ B->R[0],0.0};
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&Z) ) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[i],&Z)==FALSE  ) Loc->B[i] = FALSE;
 		}
 	      else 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[0]) ) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[0])==FALSE  ) Loc->B[i] = FALSE;
 		}
 	    }
 	  return(Loc);
@@ -4562,13 +4562,13 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	      if ( B->rc_type == 'r' ) 
 		{
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*realop)(A->R[0],B->R[i]) ) Loc->B[i] = FALSE;
+		    if ( (*realop)(A->R[0],B->R[i])==FALSE  ) Loc->B[i] = FALSE;
 		}
 	      else
 		{
 		  doubleC Z={ A->R[0],0.0};
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&Z,&B->C[i]) ) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&Z,&B->C[i])==FALSE  ) Loc->B[i] = FALSE;
 		}
 	    }
 	  else
@@ -4579,12 +4579,12 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) return NULLBMAT;
 		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) return NULLBMAT;
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[0],&B->C[i])) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[0],&B->C[i])==FALSE ) Loc->B[i] = FALSE;
 		}
 	      else
 		{
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[i]) ) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[i])==FALSE  ) Loc->B[i] = FALSE;
 		}
 	    }
 	  return(Loc);
@@ -4628,7 +4628,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	{
 	  Loc =nsp_bmatrix_create(NVOID,1,1);
 	  if ( Loc == NULLBMAT) return(NULLBMAT);
-	  if ( (*realop)(1.0,1.0)) Loc->B[0] = FALSE;
+	  if ( (*realop)(1.0,1.0)==FALSE ) Loc->B[0] = FALSE;
 	}
       else
 	{
@@ -4639,7 +4639,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	      if ( B->rc_type == 'r') 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*realop)(A->R[i],B->R[i])) Loc->B[i] = FALSE;
+		    if ( (*realop)(A->R[i],B->R[i])==FALSE ) Loc->B[i] = FALSE;
 		}
 	      else
 		{
@@ -4647,7 +4647,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) return NULLBMAT;
 		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) return  NULLBMAT;
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&LocA->C[i],&B->C[i])) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&LocA->C[i],&B->C[i])==FALSE ) Loc->B[i] = FALSE;
 		  nsp_matrix_destroy(LocA);
 		}
 	    }
@@ -4659,13 +4659,13 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) return NULLBMAT;
 		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) return NULLBMAT;
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&LocB->C[i])) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[i],&LocB->C[i])==FALSE ) Loc->B[i] = FALSE;
 		  nsp_matrix_destroy(LocB);
 		}
 	      else
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[i])) Loc->B[i] = FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[i])==FALSE ) Loc->B[i] = FALSE;
 		}
 	    }
 	}
@@ -4674,10 +4674,9 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 }
 
 
-#define MAKE_REAL_COMP(op) \
-for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B ) \
-   Loc->B[i] = A->R[iA] op B->R[iB] 
-
+#define MAKE_REAL_COMP(op)					    \
+  for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B )	\
+    Loc->B[i] = A->R[iA] op B->R[iB] 
 
 
 /**
@@ -4787,7 +4786,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 	      if ( B->rc_type == 'r' ) 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*realop)(A->R[i],B->R[0]) ) return FALSE;
+		    if ( (*realop)(A->R[i],B->R[0])==FALSE ) return FALSE;
 		}
 	      else 
 		{
@@ -4795,7 +4794,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) { *err=TRUE; return FALSE;}
 		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) { *err=TRUE; return FALSE;}
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&LocA->C[i],&B->C[0])) 
+		    if ( (*C_realop)(&LocA->C[i],&B->C[0]) ==FALSE ) 
 		      {
 			nsp_matrix_destroy(LocA);
 			return FALSE;
@@ -4809,12 +4808,12 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 		{
 		  doubleC Z={ B->R[0],0.0};
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&Z) ) return FALSE;
+		    if ( (*C_realop)(&A->C[i],&Z) ==FALSE  ) return FALSE;
 		}
 	      else 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[0]) ) return FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[0]) ==FALSE  ) return FALSE;
 		}
 	    }
 	  return(Loc);
@@ -4827,13 +4826,13 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 	      if ( B->rc_type == 'r' ) 
 		{
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*realop)(A->R[0],B->R[i]) ) return FALSE;
+		    if ( (*realop)(A->R[0],B->R[i]) ==FALSE ) return FALSE;
 		}
 	      else
 		{
 		  doubleC Z={ A->R[0],0.0};
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&Z,&B->C[i]) ) return  FALSE;
+		    if ( (*C_realop)(&Z,&B->C[i]) ==FALSE  ) return  FALSE;
 		}
 	    }
 	  else
@@ -4844,7 +4843,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) { *err=TRUE; return FALSE;}
 		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[0],&B->C[i])) 
+		    if ( (*C_realop)(&A->C[0],&B->C[i]) ==FALSE ) 
 		      {
 			nsp_matrix_destroy(LocB);
 			return  FALSE;
@@ -4855,7 +4854,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 	      else
 		{
 		  for ( i = 0 ; i < B->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[i]) ) return FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[i]) ==FALSE  ) return FALSE;
 		}
 	    }
 	  return(Loc);
@@ -4891,7 +4890,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
       /* A and B are of same dimensions */
       if ( A->mn == 0) 
 	{
-	  if ( (*realop)(1.0,1.0)) return  FALSE;
+	  if ( (*realop)(1.0,1.0) ==FALSE ) return  FALSE;
 	}
       else
 	{
@@ -4900,7 +4899,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 	      if ( B->rc_type == 'r') 
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*realop)(A->R[i],B->R[i])) return FALSE;
+		    if ( (*realop)(A->R[i],B->R[i]) ==FALSE ) return FALSE;
 		}
 	      else
 		{
@@ -4908,7 +4907,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) { *err=TRUE; return FALSE;}
 		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&LocA->C[i],&B->C[i])) 
+		    if ( (*C_realop)(&LocA->C[i],&B->C[i]) ==FALSE ) 
 		      {
 			nsp_matrix_destroy(LocA);
 			return FALSE;
@@ -4924,7 +4923,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) { *err=TRUE; return FALSE;}
 		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&LocB->C[i])) 
+		    if ( (*C_realop)(&A->C[i],&LocB->C[i]) ==FALSE ) 
 		      {
 			nsp_matrix_destroy(LocB);
 			return FALSE;
@@ -4934,7 +4933,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 	      else
 		{
 		  for ( i = 0 ; i < A->mn ; i++ )  
-		    if ( (*C_realop)(&A->C[i],&B->C[i])) return FALSE;
+		    if ( (*C_realop)(&A->C[i],&B->C[i]) ==FALSE ) return FALSE;
 		}
 	    }
 	}

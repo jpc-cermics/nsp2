@@ -2090,115 +2090,53 @@ int_mxclean (Stack stack, int rhs, int opt, int lhs)
  * Operation leading to Boolean result 
  */
 
+static int _int_matrix_comp_gen (Stack stack, int rhs, int opt, int lhs, char *op)
+{
+  NspMatrix *A, *B;
+  NspBMatrix *Res;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ((B = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+  Res = nsp_mat_comp (A, B, op);
+  if (Res == NULLBMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
 /* A < B */
-int
-int_mxlt (Stack stack, int rhs, int opt, int lhs)
+int int_mxlt (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetRealMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetRealMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, "<");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,"<");
 }
 
-int
-int_mxle (Stack stack, int rhs, int opt, int lhs)
+int int_mxle (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetRealMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetRealMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, "<=");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,"<=");
 }
 
-int
-int_mxneq (Stack stack, int rhs, int opt, int lhs)
+int int_mxneq (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, "<>");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,"<>");
 }
 
-int
-int_mxeq (Stack stack, int rhs, int opt, int lhs)
+int int_mxeq (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, "==");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,"==");
 }
 
-int
-int_mxgt (Stack stack, int rhs, int opt, int lhs)
+int int_mxgt (Stack stack, int rhs, int opt, int lhs)
 {
-
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetRealMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetRealMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, ">");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,">");
 }
 
 
-int
-int_mxge (Stack stack, int rhs, int opt, int lhs)
+int int_mxge (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
-  NspBMatrix *Res;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((A = GetRealMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((B = GetRealMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  Res = nsp_mat_comp (A, B, ">=");
-  if (Res == NULLBMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Res);
-  return 1;
+  return _int_matrix_comp_gen(stack,rhs,opt,lhs,">=");
 }
 
 /*
@@ -2213,9 +2151,9 @@ int_mxf_gen (Stack stack, int rhs, int opt, int lhs, char *op)
   NspObject *Res;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
-  if ((A = GetRealMat (stack, 1)) == NULLMAT)
+  if ((A = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  if ((B = GetRealMat (stack, 2)) == NULLMAT)
+  if ((B = GetMat (stack, 2)) == NULLMAT)
     return RET_BUG;
   rep = nsp_mat_fullcomp (A, B, op, &err);
   if (err == TRUE)
@@ -4038,7 +3976,7 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *  multiple find (findm)
+ *  multiple find (mfind)
  *
  *  [ind1,...,indk,indk+1] = mfind( x, op1, sc1, ...., opk, sck ) 
  *
@@ -4162,7 +4100,6 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *  nnz
  */
 
 int int_matrix_nnz (Stack stack, int rhs, int opt, int lhs)
