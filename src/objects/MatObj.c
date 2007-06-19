@@ -4162,6 +4162,7 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ *  nnz
  */
 
 int int_matrix_nnz (Stack stack, int rhs, int opt, int lhs)
