@@ -28,6 +28,7 @@
 
 /* FIXME */
 extern void nsp_init_gtk_types(void);
+extern void nsp_init_gtk_types_added(void);
 
 /* 
  * NspType inherits from NspObject
@@ -533,6 +534,8 @@ void primitive_types_register(void)
   new_type_serial(T_BASE);
   new_type_spcolmatrix(T_BASE);
   new_type_bhash(T_BASE);
+  /* new */
+  nsp_init_gtk_types_added(); 
 }
 
 /*

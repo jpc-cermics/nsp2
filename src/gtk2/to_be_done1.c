@@ -390,12 +390,17 @@ void nsp_init_gtk_types(void)
   new_type_gtkcellview(T_BASE);
 #endif 
 
-  /* from glib */
-  new_type_gdate(T_BASE);
-		 
-
   add_constants();
 
+}
+
+/* more types 
+ */
+
+void nsp_init_gtk_types_added(void)
+{
+  /* from glib */
+  new_type_gdate(T_BASE);
 }
 
 /*
