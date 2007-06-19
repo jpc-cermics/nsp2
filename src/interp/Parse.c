@@ -126,9 +126,10 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     nsp_error_message_show();
   else 
     nsp_error_message_to_lasterror();
-  /* restore current input function **/
+  /* restore current input function */
   nsp_set_echo_input_line(cur_echo);
   NspFileName(SciStack) = file_name;
+  fclose(input);
   return rep;
 }
 
@@ -340,7 +341,8 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
 	  /* Only when strerror exists XXXXXXX **/
 	  Scierror("Error:\tCan't open file %s for reading\n %s\n"
 		   ,F1,strerror(errno));
-	  return RET_BUG;
+	  rep = RET_BUG;
+	  goto end;
 	}
       strcpy(F2,F1);
       strcpy(F2+strlen(F2)-3,"bin");
@@ -370,6 +372,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
 	  break;
 	}
     }
+ end: 
   fclose(f);
   return rep;
 }
@@ -425,7 +428,8 @@ int nsp_parse_eval_dir_full(const char *Dir)
 		  /* Only when strerror exists XXXXXXX */
 		  Scierror("Error:\tCan't open file %s for reading\n %s\n"
 			   ,F1,strerror(errno));
-		  return RET_BUG;
+		  rep = RET_BUG;
+		  goto end;
 		}
 	      strcpy(F2,F1);
 	      strcpy(F2+strlen(F2)-3,"bin");
@@ -434,7 +438,10 @@ int nsp_parse_eval_dir_full(const char *Dir)
 		  /* checks if file really need to be binary saved */
 		  stat(F1,&buf1);
 		  if (buf2.st_mtime > buf1.st_mtime ) 
-		    continue ;
+		    {
+		      fclose(SciInput);
+		      continue ;
+		    }
 		}
 	      Sciprintf("Processing file: %s\n",F1);
 	      /* set current file name  */
@@ -446,7 +453,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	       */
 	      rep= DirParseAndXdrSave(&T,dirname);
 	      fclose(SciInput);
-	      /** restore current input function **/
+	      /* restore current input function */
 	      NspFileName(SciStack) = file_name;
 	      if ( rep < 0 ) 
 		{
@@ -456,6 +463,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	    }
 	}
     }
+ end: 
   g_dir_close (dir);
   return rep;
 }
@@ -486,7 +494,7 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
           if (( F =nsp_file_open_xdr_w(Name)) == NULLSCIFILE) 
 	    { rep = RET_BUG; break;} 
           if (nsp_object_xdr_save(F->obj->xdrs,C->O)== FAIL) 
-	    { rep = RET_BUG; break;} 
+	    { rep = RET_BUG;nsp_file_close_xdr_w(F); break;} 
 	  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /** flag for detecting end of obj at reload **/
           if (nsp_file_close_xdr_w(F) == FAIL) 
 	    { rep = RET_BUG; break;} 
