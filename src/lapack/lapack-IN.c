@@ -453,24 +453,6 @@ static int int_lu( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/*
- * interface for nsp_lufact
- * dans cette routine on ressort la factorisation de manière
- * compacte dans une table de hachage
- */
-
-/* static int int_lufact( Stack stack, int rhs, int opt, int lhs) */
-/* {  */
-/*   NspMatrix *A, *E; */
-/*   int_types T[] = {matcopy,t_end} ; */
-/*   CheckLhs(1,1); */
-/*   CheckRhs(1,1); */
-/*   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG; */
-  
-/*   if ( nsp_lu(A,&L,&U,hE)== FAIL) return RET_BUG; */
-/*   MoveObj(stack,1,NSP_OBJECT(L)); */
-/*   return Max(lhs,1); */
-/* } */
 
 /*
  * interface for norm 
