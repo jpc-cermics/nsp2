@@ -109,8 +109,8 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   T.mtlb = mtlb;
   /* set tokenizer input */
   nsp_tokeniser_file(&T,input);
-  /** reset the line counter **/
-  /** Calling the evaluator **/
+  /* reset the line counter */
+  /* Calling the evaluator */
   NspFileName(SciStack) =  Str;
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
@@ -126,7 +126,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     nsp_error_message_show();
   else 
     nsp_error_message_to_lasterror();
- /** restore current input function **/
+  /* restore current input function **/
   nsp_set_echo_input_line(cur_echo);
   NspFileName(SciStack) = file_name;
   return rep;
@@ -159,13 +159,16 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
 
 int nsp_parse_eval_from_string(char *Str,int display,int echo, int errcatch,int pause)
 {
+  char *file_name;
   Tokenizer T;
   int rep ;
   int cur_echo= nsp_set_echo_input_line(echo);
   nsp_init_tokenizer(&T);
   /* set tokenizer input */
   nsp_tokeniser_string(&T,Str);
-  /** Calling the evaluator **/
+  file_name = NspFileName(SciStack);
+  NspFileName(SciStack) =  NULL;
+  /* Calling the evaluator */
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   if ( rep == RET_EOF ) 
     {
@@ -183,7 +186,8 @@ int nsp_parse_eval_from_string(char *Str,int display,int echo, int errcatch,int 
     nsp_error_message_show();
   else 
     nsp_error_message_to_lasterror();
-  /** restore current input function **/
+  /* restore current input function */
+  NspFileName(SciStack) = file_name;
   nsp_set_echo_input_line(cur_echo);
   return rep ;
 }
@@ -212,12 +216,15 @@ int nsp_parse_eval_from_string(char *Str,int display,int echo, int errcatch,int 
 
 int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,int pause)
 {
+  char *file_name;
   Tokenizer T;
   int rep ;
   int cur_echo= nsp_set_echo_input_line(echo);
   nsp_init_tokenizer(&T);
   nsp_tokeniser_strings(&T,M->S);
-  /** Calling the evaluator **/
+  file_name = NspFileName(SciStack);
+  NspFileName(SciStack)= NULL;
+  /* Calling the evaluator */
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   /* normal return  */
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
@@ -243,7 +250,8 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
     nsp_error_message_show();
   else 
     nsp_error_message_to_lasterror();
-  /** restore current input function **/
+  /* restore current input function */
+  NspFileName(SciStack) = file_name;
   nsp_set_echo_input_line(cur_echo);
   return rep ;
 }
@@ -599,11 +607,13 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 
 PList nsp_parse_expr(NspSMatrix *M)
 {
+  char *file_name;
   PList plist = NULLPLIST ;
   Tokenizer T;
   int rep, cur_echo= nsp_set_echo_input_line(FALSE);
   nsp_init_tokenizer(&T);
   nsp_tokeniser_strings(&T,M->S);
+  file_name = NspFileName(SciStack);
   /* call the parser */
   if ((rep=nsp_parse(&T,NULLBHASH,&plist)) < 0 ) 
     {
@@ -613,6 +623,7 @@ PList nsp_parse_expr(NspSMatrix *M)
       plist = NULLPLIST;
     }
   /* restore current input function */
+  NspFileName(SciStack) = file_name;
   nsp_set_echo_input_line(cur_echo);
   return plist;
 }
