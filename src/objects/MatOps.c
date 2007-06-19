@@ -5023,7 +5023,7 @@ static CompOp *SearchCompBis(const char *op)
 }
 
 /**
- * nsp_mat_findm:
+ * nsp_mat_mfind:
  * @x: a #NspMatrix 
  * @m: number of tests
  * @ops: string array given the operator of each of the m tests 
@@ -5032,7 +5032,7 @@ static CompOp *SearchCompBis(const char *op)
  * 
  * Return value: %OK or %FAIL
  *
- * multiple find  [ind1,...,indm, indm+1] = findm( x, ops1, sc1, ..., opsm, scm )
+ * multiple find  [ind1,...,indm, indm+1] = mfind( x, ops1, sc1, ..., opsm, scm )
  * 
  * opsk is the operator for the k th test (<,<=, >, ...) and sck is the scalar
  * for the k th test. 
@@ -5046,7 +5046,7 @@ static CompOp *SearchCompBis(const char *op)
  *
  **/
 
-int nsp_mat_findm(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind)
+int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind)
 {
   CompOp **func = NULL;
   int *length = NULL;

@@ -4040,7 +4040,7 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
 /*
  *  multiple find (findm)
  *
- *  [ind1,...,indk,indk+1] = findm( x, op1, sc1, ...., opk, sck ) 
+ *  [ind1,...,indk,indk+1] = mfind( x, op1, sc1, ...., opk, sck ) 
  *
  *    opj is a string defining a comparizon operator "<", "<=", ">", ">=", "==", "~=" or "<>"
  *
@@ -4048,7 +4048,7 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
  */
 
 int
-int_mxfindm (Stack stack, int rhs, int opt, int lhs)
+int_mxmfind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x, **ind = NULL;
   int i, j, m;
@@ -4084,7 +4084,7 @@ int_mxfindm (Stack stack, int rhs, int opt, int lhs)
     goto err;
   for ( i = 0 ; i <= m ; i++ ) ind[i] = NULLMAT;
 
-  if ( nsp_mat_findm(x, m, ops, scalars, ind) == FAIL )
+  if ( nsp_mat_mfind(x, m, ops, scalars, ind) == FAIL )
     goto err;
 
   for ( j = 0 ; j <= m ; j++ )
@@ -4562,7 +4562,7 @@ static OpTab Matrix_func[] = {
   {"mult_m_m", int_mxmult},
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
-  {"findm_m", int_mxfindm},
+  {"mfind_m", int_mxmfind},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
