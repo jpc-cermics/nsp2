@@ -1727,7 +1727,7 @@ NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
 }
 
 
-typedef int (*MaMi) (int,double *,int,double *);
+typedef int (*MaMi) (int,const double *,int,double *);
 
 /*
  * Max =nsp_mat_maxi(A,B,Imax,lhs)
@@ -1804,7 +1804,7 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lh
   return M;
 }
 
-static int VMaxi(int n, double *A, int incr, double *amax)
+int nsp_array_maxi(int n,const double *A, int incr, double *amax)
 {
   int imax,i,i1=1;
   imax = 1;
@@ -1849,7 +1849,7 @@ static int VMaxi(int n, double *A, int incr, double *amax)
 
 NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,flag,Imax,lhs,VMaxi);
+  return MatMaxiMini(A,flag,Imax,lhs,nsp_array_maxi);
 }
 
 
@@ -1860,7 +1860,7 @@ NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
  */
 
 
-static int VMini(int n, double *A, int incr, double *amin)
+int nsp_array_mini(int n, const double *A, int incr, double *amin)
 {
   int imin,i,i1=0;
   *amin= A[0]; imin = 1;
@@ -1904,7 +1904,7 @@ static int VMini(int n, double *A, int incr, double *amin)
  **/
 NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,flag,Imax,lhs,VMini);
+  return MatMaxiMini(A,flag,Imax,lhs,nsp_array_mini);
 }
 
 
