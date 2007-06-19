@@ -319,7 +319,8 @@ extern int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) ;
 extern NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B);
 extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
 
-
+extern int nsp_array_maxi(int n,const double *A, int incr, double *amax);
+extern int nsp_array_mini(int n,const double *A, int incr, double *amax);
 
 /*
  * inlined functions 
