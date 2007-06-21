@@ -39,10 +39,13 @@ extern int C2F(zperm) (doubleC A[],int ind[],int *nv);
 
 typedef void (*BopLeft) (SpCol *,char,int *,SpCol *,char,int);
 typedef void (*BopBoth) (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
+typedef void (*BopBothNull) (SpCol *,char,int *);
 typedef void (*BopRight) (SpCol *,char,int *,SpCol *,char,int);
 
 static NspSpColMatrix *BinaryOp (NspSpColMatrix *,NspSpColMatrix *,BopLeft,BopBoth,
 			      BopRight);
+static NspSpColMatrix *BinaryOp_bis(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, 
+				    BopBothNull BinBothNull, BopRight BinRight);
 
 static void PlusLeft (SpCol *,char,int *,SpCol *,char,int);
 static void PlusBoth (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
@@ -3294,23 +3297,41 @@ static void DivttBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, 
     }
 }
 
+static void DivttBothNull(SpCol *Li, char Ltype, int *count)
+{
+  double d= 0;
+  if ( Ltype == 'r') 
+    {
+      Li->R[*count] =  d/d;
+    }
+  else 
+    {
+      Li->C[*count].r =       Li->C[*count].i = d/d;
+    }
+  (*count)++; 
+}
+
 static void DivttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
 {
   /* DivttRight  is used when A(i,j) == 0  and B(i,j) != 0 */
   if ( Ltype == 'r') 
-    Li->R[*count] = 0.0/ Bi->R[k1];
+    {
+      Li->R[*count] = 0.0/ Bi->R[k1];
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
   else 
     {
       if ( Btype == 'r' )
 	{
 	  Li->C[*count].r = Li->C[*count].i = 0/ Bi->R[k1];
+	  if ( Li->C[*count].r != 0.00 ) (*count)++; 
 	}
       else 
 	{
 	  nsp_div_dc(0.0,&Bi->C[k1],&Li->C[*count]);
+	  if ( Li->C[*count].r != 0.00 ||  Li->C[*count].i != 0.00  ) (*count)++; 
 	}
     }
-  (*count)++;
 }
 
 
@@ -3359,7 +3380,7 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 }
 
 /**
- * nsp_spcolmatrix_div_el:
+ * nsp_spcolmatrix_divel:
  * @A: a #NspSpColMatrix
  * @B: a #NspSpColMatrix
  * 
@@ -3374,9 +3395,220 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 
 NspSpColMatrix *nsp_spcolmatrix_divel(NspSpColMatrix *A, NspSpColMatrix *B)
 {
-  return(BinaryOp(A,B,DivttLeft,DivttBoth,DivttRight));
+  return(BinaryOp_bis(A,B,DivttLeft,DivttBoth,DivttBothNull,DivttRight));
 }
 
+/* A ./ sparse(0) 
+ * scalar 0
+ */ 
+
+NspSpColMatrix * nsp_spcolmatrix_div_zero_tt(NspSpColMatrix *A)
+{
+  double zero = 0;
+  int i,j;
+  NspSpColMatrix *Loc;
+  if (( Loc=nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLSPCOL) return(NULLSPCOL);
+  for ( i = 0 ; i < Loc->n ; i++ )  
+    {
+      if (nsp_spcolmatrix_resize_col(Loc,i,A->m)== FAIL) return NULLSPCOL;
+      for ( j = 0 ; j < Loc->D[i]->size ; j++ ) 
+	{
+	  Loc->D[i]->J[j]=j;
+	  if ( Loc->rc_type == 'r' ) 
+	    Loc->D[i]->R[j]= 0/ zero;
+	  else 
+	    Loc->D[i]->C[j].r = Loc->D[i]->C[j].i = 0/ zero;
+	}
+      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+	{
+	  int k = A->D[i]->J[j];
+	  if ( Loc->rc_type == 'r' ) 
+	    Loc->D[i]->R[j] = A->D[i]->R[k]/ zero;
+	  else 
+	    {
+	      Loc->D[i]->C[j].r = A->D[i]->C[k].r / zero;
+	      Loc->D[i]->C[j].i = A->D[i]->C[k].i / zero;
+	    }
+	}
+    }
+  return Loc;
+}
+
+/* A ./ sparse(x) x!= 0 scalar 
+ *
+ */ 
+
+int nsp_spcolmatrix_div_scal_tt(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  int i,k,ndel;
+  if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
+    {
+      if (nsp_spcolmatrix_complexify(A) == FAIL ) return(FAIL);
+    }
+  for (  i  = 0 ;  i  < A->n  ;  i++ ) 
+    {
+      int compress=0;
+      doubleC C;
+      SpCol *Ai = A->D[i];
+      for  ( k = 0  ;  k < Ai->size ; k++)
+	{ 
+	  if ( A->rc_type == 'r' ) 
+	    {
+	      if ( B->rc_type == 'r' )
+		{
+		  Ai->R[k] /= B->D[0]->R[0];
+		  if ( Ai->R[k]== 0) 
+		    {
+		      Ai->J[k]= -1; compress=1;
+		    }
+		}
+	      else 
+		{
+		  Scierror("Error: we should never get there ! \n");
+		  return FAIL;    
+		}
+	    }
+	  else 
+	    {
+	      if ( B->rc_type == 'r' )
+		{
+		  Ai->C[k].r /= B->D[0]->R[0];
+		  Ai->C[k].i /= B->D[0]->R[0];
+		  if ( Ai->C[k].i == 0 && Ai->C[k].r==0 )
+		    {
+		      compress=1;Ai->J[k]= -1;
+		    }
+		} 
+	      else 
+		{
+		  nsp_div_cc(&Ai->C[k],&B->D[0]->C[0],&C);
+		  Ai->C[k]= C;
+		  if ( Ai->C[k].i == 0 && Ai->C[k].r==0 ) 
+		    {
+		      Ai->J[k]= -1;
+		      compress=1;
+		    }
+		}
+	    }
+	}
+      /* Note that 0 can appear as result to division for example 6/%inf 
+       */
+      if ( compress == 1 ) 
+	{
+	  ndel =nsp_spcolmatrix_compress_col_simple(A,i);
+	  if (nsp_spcolmatrix_resize_col(A,i, Ai->size-ndel ) == FAIL) return(FAIL) ;
+	}
+    }
+  return OK ;
+}
+
+/* A ./ B and A is 1x1 scalar and != 0 
+ *
+ */ 
+
+NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  NspSpColMatrix *Loc;
+  int i,k,ndel;
+  doubleC czero={0,0};
+  double zero=0;
+  char t = 'r';
+  double Ar = 0;
+  doubleC Ac = {0,0};
+  if ( A->D[0]->size == 1 ) 
+    {
+      if ( A->rc_type == 'r' ) 
+	Ar = A->D[0]->R[0];
+      else 
+	Ac = A->D[0]->C[0];
+    }
+
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) t= 'c';
+  if (( Loc=nsp_spcolmatrix_create(NVOID,t,B->m,B->n)) == NULLSPCOL) return(NULLSPCOL);
+  for (  i  = 0 ;  i  < Loc->n  ;  i++ ) 
+    {
+      int compress=0;
+      doubleC C;
+      SpCol *Bi = B->D[i];
+      SpCol *Li;
+      if (nsp_spcolmatrix_resize_col(Loc,i,B->m)== FAIL) return NULLSPCOL;
+      Li = Loc->D[i];
+      if (  A->rc_type == 'r' ) 
+	{
+	  for  ( k = 0  ;  k < Li->size ; k++)
+	    {
+	      if ( t == 'r' )
+		Li->R[k] = Ar / zero;
+	      else 
+		{
+		  nsp_div_dc(Ar ,&czero,&Li->C[k]);
+		}
+	      Li->J[k] = k;
+	    }
+	}
+      else 
+	{
+	  for  ( k = 0  ;  k < Li->size ; k++)
+	    {
+	      nsp_div_cc(&Ac,&czero,&Li->C[k]);
+	      Li->J[k] = k;
+	    }
+	}
+      for  ( k = 0  ;  k < Bi->size ; k++)
+	{ 
+	  int j = Bi->J[k];
+	  if ( A->rc_type == 'r' ) 
+	    {
+	      if ( B->rc_type == 'r' )
+		{
+		  Li->R[j] = Ar / Bi->R[j];
+		  if ( Li->R[j]== 0) 
+		    {
+		      Li->J[j]= -1; compress=1;
+		    }
+		}
+	      else 
+		{
+		  nsp_div_dc(Ar ,&Bi->C[j],&Li->C[j]);
+		  if ( Li->C[j].r == 0 && Li->C[j].i == 0) 
+		    {
+		      Li->J[j]= -1; compress=1;
+		    }
+		}
+	    }
+	  else 
+	    {
+	      if ( B->rc_type == 'r' )
+		{
+		  Li->C[j].r = Ac.r / Bi->R[j];
+		  Li->C[j].i = Ac.i / Bi->R[j];
+		  if ( Li->C[j].i == 0 && Li->C[j].r==0 )
+		    {
+		      compress=1;Li->J[j]= -1;
+		    }
+		} 
+	      else 
+		{
+		  nsp_div_cc(&Ac,&Bi->C[j],&C);
+		  Li->C[j]= C;
+		  if ( Li->C[j].i == 0 && Li->C[j].r==0 ) 
+		    {
+		      Li->J[j]= -1;
+		      compress=1;
+		    }
+		}
+	    }
+	}
+      /* Note that 0 can appear as result to division for example 6/%inf 
+       */
+      if ( compress == 1 ) 
+	{
+	  ndel =nsp_spcolmatrix_compress_col_simple(Loc,i);
+	  if (nsp_spcolmatrix_resize_col(Loc,i, Li->size-ndel ) == FAIL) return NULL;
+	}
+    }
+  return Loc ;
+}
 
 
 
@@ -3404,6 +3636,7 @@ NspSpColMatrix *nsp_spcolmatrix_divel(NspSpColMatrix *A, NspSpColMatrix *B)
  *    the result (if #0) in the sparse matrix Loc 
  *    and increment a counter for counting #0 elements 
  * 
+ * This function implicitly use the fact that 0 op 0 returns 0
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
@@ -3473,6 +3706,137 @@ static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft Bi
 	    }
 	  /* Count doit maintenant nous donner la taille de la ligne i **/
 	  /* Resizer Loc->D[i] : car on peut avoir moins d'el que pr'evus **/
+	  if (nsp_spcolmatrix_resize_col(Loc,i,count) == FAIL) return(NULLSPCOL) ;
+	}
+      return(Loc);
+    }
+  else 
+    {
+      Scierror("Mat1 & Mat2 don't have same size \n");
+      return(NULLSPCOL);
+    }
+}
+
+/**
+ * BinaryOp_bis:
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
+ * @BinLeft: a function 
+ * @BinBoth: a function 
+ * @BinBothNull: a function 
+ * @BinRight: a function 
+ * 
+ * A generic function for performing Res(i,j) = A(i,j) op B(i,j)
+ * assuming that 0 op 0 --> 0  (WARNING)
+ * For performing a specific operation the function is called 
+ * with three operators 
+ *    BopLeft for performing  A(i,j) op B(i,j) when 
+ *            A(i,j) != 0  and B(i,j) == 0 
+ *    BopRight for performing A(i,j) op B(i,j) when 
+ *            A(i,j) == 0  and B(i,j) != 0
+ *    BopBoth  for performing A(i,j) op B(i,j) when 
+ *            A(i,j) !=    and B(i,j) != 0 
+ *    BopBothNull for performing 0 op 0 
+ * each Bopxxx functions performs the operation, stores 
+ *    the result (if #0) in the sparse matrix Loc 
+ *    and increment a counter for counting #0 elements 
+ * 
+ * This function implicitly use the fact that 0 op 0 returns 0
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+static NspSpColMatrix *BinaryOp_bis(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, 
+				    BopBothNull BinBothNull, BopRight BinRight)
+{ 
+  int i,count,k1,k2,k,j3;
+  NspSpColMatrix *Loc;
+  char type = 'r';
+  if ( SameDim(A,B) ) 
+    {
+      if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
+      Loc =nsp_spcolmatrix_create(NVOID,type, A->m,A->n);
+      if ( Loc == NULLSPCOL ) return(NULLSPCOL) ; 
+      for ( i = 0 ; i < Loc->n ; i++ ) 
+	{
+	  int iest,lx;
+	  SpCol *Ai = A->D[i];
+	  SpCol *Bi = B->D[i];
+	  SpCol *Li = Loc->D[i];
+	  /* since here 0 op 0 can return non zero values */
+	  iest=  A->m; 
+	  if (nsp_spcolmatrix_resize_col(Loc,i,(int)iest ) == FAIL) return(NULLSPCOL) ;
+	  /* We explore the ith column of A and B in increasing order of row 
+	   *  and want to merge the rows found ( in increasing order ) 
+	   *  when a same row number appear in both A and B we call the 
+	   *  2-ary operator op 
+	   *  This is very near to a merge sort of two sorted arrays 
+	   */ 
+	  k1 = 0 ; k2 = 0 ; lx=0;
+	  count = 0;
+	  /* merge part */
+	  while ( k1 < Ai->size && k2 <  Bi->size) 
+	    { 
+	      int j1,j2;
+	      j1 = Ai->J[k1] ;
+	      j2 = Bi->J[k2] ;
+	      for ( j3 = lx ; j3 < Min(j1,j2) ; j3++)
+		{
+		  Li->J[count] = j3;
+		  (*BinBothNull)(Li,Loc->rc_type,&count);
+		}
+	      lx = Min(j1,j2)+1;
+	      if ( j1 < j2 ) 
+		{ 
+		  Li->J[count] = j1;
+		  (*BinLeft)(Li,Loc->rc_type,&count,Ai,A->rc_type,k1);
+		  k1++; 
+		}
+	      else if ( j1 == j2 ) 
+		{ 
+		  Li->J[count] = j1;
+		  (*BinBoth)(Li,Loc->rc_type,&count,Ai,A->rc_type,k1,Bi,B->rc_type,k2);
+		  k1++; k2 ++; 
+		}
+	      else 
+		{ 
+		  Li->J[count] = j2;
+		  (*BinRight)(Li,Loc->rc_type,&count,Bi,B->rc_type,k2);
+		  k2++;
+		}
+	    }
+	  /* Keep inserting remaining arguments for A */
+	  for ( k = k1 ; k < Ai->size ; k++) 
+	    { 
+	      for ( j3 = lx ; j3 < Ai->J[k] ; j3++)
+		{
+		  Li->J[count] = j3;
+		  (*BinBothNull)(Li,Loc->rc_type,&count);
+		}
+	      lx = Ai->J[k] +1;
+	      Li->J[count] = Ai->J[k];
+	      (*BinLeft)(Li,Loc->rc_type,&count,Ai,A->rc_type,k);
+	    }
+	  /* Keep inserting remaining arguments for B */
+	  for ( k = k2 ; k < Bi->size ; k++) 
+	    { 
+	      for ( j3 = lx ; j3 < Bi->J[k] ; j3++)
+		{
+		  Li->J[count] = j3;
+		  (*BinBothNull)(Li,Loc->rc_type,&count);
+		}
+	      lx = Bi->J[k] +1;
+	      Li->J[count] = Bi->J[k] ;
+	      (*BinRight)(Li,Loc->rc_type,&count,Bi,B->rc_type,k);
+	    }
+	  /* keep inserting the last 0 op 0 */
+	  for ( j3 = lx ; j3 < A->m ; j3++)
+	    {
+	      Li->J[count] = j3;
+	      (*BinBothNull)(Li,Loc->rc_type,&count);
+	    }
+	  /* Count doit maintenant nous donner la taille de la ligne i */
+	  /* Resizer Loc->D[i] : car on peut avoir moins d'el que pr'evus */
 	  if (nsp_spcolmatrix_resize_col(Loc,i,count) == FAIL) return(NULLSPCOL) ;
 	}
       return(Loc);

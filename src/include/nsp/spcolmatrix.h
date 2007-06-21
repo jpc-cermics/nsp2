@@ -211,6 +211,11 @@ extern void nsp_spcol_free_triplet(NspSpColMatrix *M);
 extern double nsp_spcolmatrix_norm(NspSpColMatrix *A, char c);
 extern double nsp_spcolmatrix_vnorm(NspSpColMatrix *A, double p);
 
+extern int nsp_spcolmatrix_div_scal_tt(NspSpColMatrix *A, NspSpColMatrix *B);
+extern NspSpColMatrix * nsp_spcolmatrix_div_zero_tt(NspSpColMatrix *A);
+extern NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B);
+
+
 #endif 
 
 #ifdef SpColMatrix_Private 

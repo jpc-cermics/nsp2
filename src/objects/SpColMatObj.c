@@ -1456,6 +1456,10 @@ static int int_spcolmatrix_sub_m_sp(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/* A - 
+ *
+ */
+
 static int int_spcolmatrix_sub_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A;
@@ -1497,11 +1501,7 @@ static int int_spcolmatrix_sub_sp_m(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-
-
-/*
- * OHMat3 = OHMat1 .* OHMat2 
- * return NULLSPCOLon failure 
+/* As .* Bs 
  */
 
 static int int_spcolmatrix_multt(Stack stack, int rhs, int opt, int lhs)
@@ -1509,6 +1509,9 @@ static int int_spcolmatrix_multt(Stack stack, int rhs, int opt, int lhs)
   return int_spcolmatrix_mult_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_multtt);
 }
 
+/* A .* Bs 
+ *
+ */
 
 static int int_spcolmatrix_multt_m_sp(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1548,6 +1551,10 @@ static int int_spcolmatrix_multt_m_sp(Stack stack, int rhs, int opt, int lhs)
   nsp_spcolmatrix_destroy(As);
   return RET_BUG;
 }
+
+/* As .* B 
+ *
+ */
 
 static int int_spcolmatrix_multt_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1591,24 +1598,145 @@ static int int_spcolmatrix_multt_sp_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * OHMat3 = OHMat1 ./ OHMat2 
- * The scalar cases are to be done XXX 
+ * As ./ Bs 
  */
 
 int int_spcolmatrix_div_el(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpColMatrix *A,*B,*Res;
+  NspSpColMatrix *HMat1,*HMat2,*HMat3;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((B = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( SameDim(A,B) ) 
+  if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
+  if ( HMat2->m == 1 && HMat2->n == 1 ) 
     {
-      if ((Res = nsp_spcolmatrix_divel(A,B)) == NULLSPCOL) return RET_BUG;
+      if ( HMat2->D[0]->size == 0 ) 
+	{
+	  if ((HMat3 = nsp_spcolmatrix_div_zero_tt(HMat1)) == NULLSPCOL) return RET_BUG;
+	  MoveObj(stack,1,(NspObject *) HMat3);
+	}
+      else 
+	{
+	  if ((HMat1 = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
+	  if (nsp_spcolmatrix_div_scal_tt(HMat1,HMat2) != OK) return RET_BUG;
+	  NSP_OBJECT(HMat1)->ret_pos = 1;
+	}
+    }
+  else if ( HMat1->m == 1 && HMat1->n == 1 ) 
+    {
+      if ((HMat3 =nsp_spcolmatrix_scal_div_tt(HMat1,HMat2))  == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) HMat3);
+    }
+  else 
+    {
+      if ((HMat3 = nsp_spcolmatrix_divel(HMat1,HMat2)) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) HMat3);
+    }
+  return 1;
+}
+
+/* A ./ As 
+ *
+ */
+
+static int int_spcolmatrix_div_el_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *B,*As=NULL,*Res=NULL;
+  NspMatrix *A;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetMat(stack,1)) == NULLMAT) goto err;
+  if ((B = GetSpCol(stack,2)) == NULLSPCOL) goto err;
+  if ((As=nsp_spcolmatrix_from_mat(A)) == NULLSPCOL) goto err;
+  if ( A->mn == 1) 
+    {
+      /* A * <non-nul-scalar> **/
+      if ((Res =nsp_spcolmatrix_scal_div_tt(As,B))  == NULLSPCOL) goto err;
       MoveObj(stack,1,(NspObject *) Res);
+      nsp_spcolmatrix_destroy(As);
       return 1;
     }
-  Scierror("Error: Unfinished \n");
+  if ( B->mn == 1) 
+    {
+      if ( B->D[0]->size == 0 ) 
+	{
+	  if ((Res = nsp_spcolmatrix_div_zero_tt(As)) == NULLSPCOL) goto err;
+	  nsp_spcolmatrix_destroy(As);
+	  MoveObj(stack,1,(NspObject *) Res);
+	}
+      else 
+	{
+	  if (nsp_spcolmatrix_div_scal_tt(As,B) != OK) goto err;
+	  MoveObj(stack,1,(NspObject *) As);
+	}
+      return 1;
+    }
+  if ( SameDim(A,B) ) 
+    {
+      NspSpColMatrix *Res;
+      if ((Res=nsp_spcolmatrix_divel(As,B)) == NULLSPCOL) goto err;
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      nsp_spcolmatrix_destroy(As);
+      return 1;
+    }
+  Scierror("Error: incompatible dimensions\n");
+ err: 
+  nsp_spcolmatrix_destroy(As);
+  return RET_BUG;
+}
+
+/* As ./ A 
+ *
+ */
+
+static int int_spcolmatrix_div_el_sp_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A, *Bs=NULL,*Res=NULL;
+  NspMatrix *B;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto err;
+  if ((B = GetMat(stack,2)) == NULLMAT) goto err;
+  if ((Bs=nsp_spcolmatrix_from_mat(B)) == NULLSPCOL) goto err;
+
+  if ( B->mn == 1) 
+    {
+      if ( Bs->D[0]->size == 0 ) 
+	{
+	  if ((Res = nsp_spcolmatrix_div_zero_tt(A)) == NULLSPCOL) goto err;
+	  nsp_spcolmatrix_destroy(Bs);
+	  MoveObj(stack,1,(NspObject *) Res);
+	}
+      else 
+	{
+	  if ((A = GetSpColCopy(stack,1)) == NULLSPCOL) goto err;
+	  if (nsp_spcolmatrix_div_scal_tt(A,Bs) != OK) goto err;
+	  nsp_spcolmatrix_destroy(Bs);
+	  NSP_OBJECT(A)->ret_pos = 1;
+	}
+      return 1;
+    }
+
+  if ( A->mn == 1) 
+    {
+      /* A * <non-nul-scalar> **/
+      if ((Res =nsp_spcolmatrix_scal_div_tt(A,Bs))  == NULLSPCOL) goto err;
+      MoveObj(stack,1,(NspObject *) Res);
+      nsp_spcolmatrix_destroy(Bs);
+      return 1;
+    }
+
+  if ( SameDim(A,B) ) 
+    {
+      NspSpColMatrix *Res;
+      if ((Res=nsp_spcolmatrix_divel(A,Bs)) == NULLSPCOL) goto err;
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      nsp_spcolmatrix_destroy(Bs);
+      return 1;
+    }
+  Scierror("Error: incompatible dimensions\n");
+ err:
+  nsp_spcolmatrix_destroy(Bs);
   return RET_BUG;
 }
 
@@ -2400,7 +2528,9 @@ static OpTab SpColMatrix_func[]={
   {"dst_sp_sp",int_spcolmatrix_multt},
   {"dst_m_sp",int_spcolmatrix_multt_m_sp},
   {"dst_sp_m",int_spcolmatrix_multt_sp_m},
-  /* {"dsl_sp_sp",int_spcolmatrix_div_el}, */
+  {"dsl_sp_sp",int_spcolmatrix_div_el},
+  {"dsl_m_sp",int_spcolmatrix_div_el_m_sp},
+  {"dsl_sp_m",int_spcolmatrix_div_el_sp_m},
   {"mult_sp_sp",int_spcolmatrix_mult},
   {"mult_sp_m",int_spcolmatrix_mult_sp_m},
   {"mult_m_sp",int_spcolmatrix_mult_m_sp},
