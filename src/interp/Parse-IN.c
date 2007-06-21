@@ -30,6 +30,7 @@
 #include "nsp/parse.h"
 #include "nsp/stack.h"
 #include "Eval.h"
+#include "nsp/menus.h"
 
 static function  int_parseevalfile;
 static function  int_add_lib;
@@ -298,6 +299,66 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
     }
   return Max(1,lhs);
 }
+
+
+
+/*
+ * input('message',gui=%f,eval=%t,env=..)
+ */
+
+static int int_input(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Res;
+  Tokenizer To;
+  char buf[1024],*prompt;
+  int buf_size=1024, len_line, eof;
+  NspHash *E=NULL;
+  int display=FALSE,eval=TRUE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
+  int_types T[] = {string,new_opts, t_end} ;
+  nsp_option opts[] ={{ "eval",s_bool,NULLOBJ,-1},
+		      { "env", obj_check,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&prompt,&opts,&eval,&nsp_type_hash,&E) == FAIL) 
+    return RET_BUG;
+  nsp_init_tokenizer(&To);
+  To.token_readline(&To,prompt,buf, &buf_size, &len_line, &eof);
+  /* evaluate the string in a new frame and returns the 
+   * frame as a hash table : take care that frame must be deleted 
+   * at the end. 
+   */
+  if ( nsp_new_frame() == FAIL) return RET_BUG;
+  /* insert the contente of E in new frame */
+  if ( E != NULL) 
+    {
+      if ( nsp_frame_insert_hash_contents(E) == FAIL) 
+	{
+	  Scierror("Error: inserting values in environement failed\n");
+	  nsp_frame_delete();
+	  return RET_BUG; 
+	}
+    }
+  rep =nsp_parse_eval_from_string(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+  if ( rep >= 0 ) 
+    {
+      /* get a copy of ans in the current frame and return it */
+      if ((Res = nsp_frame_search_object("ans"))== NULLOBJ) 
+	{
+	  nsp_frame_delete();
+	  Scierror("Error: evaluation of expression '%s' should give a value to ans\n",buf);
+	  return RET_BUG; 
+	}
+      if ((Res = nsp_object_copy(Res))== NULLOBJ) 
+	{
+	  nsp_frame_delete();
+	  return RET_BUG;
+	}
+    }
+  nsp_frame_delete();
+  if ( rep < 0 )return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return Max(1,lhs);
+}
+
 
 /*
  * lasterror
@@ -589,6 +650,7 @@ static OpTab Parse_func[]={
   {"lasterror", int_lasterror},
   {"error", int_error},
   {"astnode_create", int_astnode_create},
+  {"input", int_input},
   {(char *) 0, NULL}
 };
 
