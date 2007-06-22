@@ -409,6 +409,7 @@ static int *get_index_vector(Stack stack, int ipos,NspObject **Obj, int *Nb_elts
  * 
  * Return value: 
  **/
+
 /* previous function could use this one XXX */
 
 int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork)
@@ -928,10 +929,13 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 
 NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
 {
+  NspObject *Res;
   int *elts,nr, rmin, rmax;
   elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
   if ( elts == NULL) return NULLOBJ;
-  return nsp_matint_extract_elements(Obj,Elts,elts,nr, rmin, rmax);
+  Res = nsp_matint_extract_elements(Obj,Elts,elts,nr, rmin, rmax);
+  if ( elts != matint_work[matint_iwork1] ) FREE(elts);
+  return Res;
 }
 
 
@@ -1007,10 +1011,13 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts, con
 
 NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 {
+  NspObject *Res;
   int *cols,nr, rmin, rmax;
   cols = get_index_vector_from_object(Cols,&nr, &rmin, &rmax,matint_iwork1);
   if ( cols == NULL) return NULLOBJ;
-  return nsp_matint_extract_columns(Obj,Cols,cols,nr, rmin, rmax);
+  Res = nsp_matint_extract_columns(Obj,Cols,cols,nr, rmin, rmax);
+  if ( cols != matint_work[matint_iwork1] ) FREE(cols);
+  return Res; 
 }
 
 
@@ -1113,10 +1120,13 @@ static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts,  const
 
 NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
 {
+  NspObject *Res;
   int *rows,nr, rmin, rmax;
   rows = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
   if ( rows == NULL) return NULLOBJ;
-  return nsp_matint_extract_rows(Obj,Rows,rows,nr, rmin, rmax);
+  Res =  nsp_matint_extract_rows(Obj,Rows,rows,nr, rmin, rmax);
+  if ( rows != matint_work[matint_iwork1] ) FREE(rows);
+  return Res;
 }
 
 
@@ -1235,12 +1245,16 @@ NspObject *nsp_matint_extract(NspObject *Obj,
 
 NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols)
 {
+  NspObject *Res;
   int *row,*col,nr, rmin, rmax, nc, cmin, cmax;
   row = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
   if ( row == NULL) return NULLOBJ;
-  col = get_index_vector_from_object(Cols,&nc, &cmin, &cmax,matint_iwork1);
+  col = get_index_vector_from_object(Cols,&nc, &cmin, &cmax,matint_iwork2);
   if ( col == NULL) return NULLOBJ;
-  return nsp_matint_extract(Obj,row,nr, rmin, rmax,col, nc, cmin, cmax);
+  Res = nsp_matint_extract(Obj,row,nr, rmin, rmax,col, nc, cmin, cmax);
+  if ( row != matint_work[matint_iwork1] ) FREE(row);
+  if ( col != matint_work[matint_iwork2] ) FREE(col);
+  return Res;
 }
 
 
@@ -1457,12 +1471,16 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
 
 int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB)
 {
+  int Res;
   int *row,*col,nr, rmin, rmax, nc, cmin, cmax;
   row = get_index_vector_from_object(Row,&nr, &rmin, &rmax,matint_iwork1);
   if ( row == NULL) return FAIL;
-  col = get_index_vector_from_object(Col,&nc, &cmin, &cmax,matint_iwork1);
+  col = get_index_vector_from_object(Col,&nc, &cmin, &cmax,matint_iwork2);
   if ( col == NULL) return FAIL;
-  return nsp_matint_set_submatrix(ObjA,row,nr, rmin, rmax,col, nc, cmin, cmax,ObjB);
+  Res = nsp_matint_set_submatrix(ObjA,row,nr, rmin, rmax,col, nc, cmin, cmax,ObjB);
+  if ( row != matint_work[matint_iwork1] ) FREE(row);
+  if ( col != matint_work[matint_iwork2] ) FREE(col);
+  return Res;
 }
 
 
@@ -1655,10 +1673,13 @@ int nsp_matint_set_elts(NspObject *ObjA,
 
 int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
 {
+  int Res;
   int *elts,nr, rmin, rmax;
   elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
   if ( elts == NULL) return FAIL;
-  return nsp_matint_set_elts(ObjA,elts,nr, rmin, rmax,ObjB);
+  Res = nsp_matint_set_elts(ObjA,elts,nr, rmin, rmax,ObjB);
+  if ( elts != matint_work[matint_iwork1] ) FREE(elts);
+  return Res; 
 }
 
 
@@ -2419,14 +2440,11 @@ static int int_matint_delete_gen(Stack stack, int rhs, int opt, int lhs, delfunc
 
   if ( (ind =get_index_vector(stack, 2,NULL, &nb_elts, &imin, &imax, matint_iwork1)) == NULL )
     return RET_BUG;
-
   if ( (*F)(Obj, ind, nb_elts, imin, imax) == FAIL )
     goto err;
-
   if ( nb_elts > WORK_SIZE ) FREE(ind);
   Obj->ret_pos = 1;
   return 1;
-
  err:
   if ( nb_elts > WORK_SIZE ) FREE(ind);
   return RET_BUG;

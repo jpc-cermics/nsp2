@@ -379,7 +379,7 @@ NspObject *nsp_frames_search_object(const char *str)
  * 
  * This function is used when a local variable has no 
  * value and we want to see if the local variable can 
- * be initialized by a variable with same name in callin stack. 
+ * be initialized by a variable with same name in calling stack. 
  * for example function f();if y >=0; y=y+1;endfunction 
  * y is considered local because of y=y+1 but can be inherited. 
  * 
