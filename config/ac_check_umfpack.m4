@@ -109,3 +109,4 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  LDFLAGS=${ac_save_ldflags}
 
 ])
+
