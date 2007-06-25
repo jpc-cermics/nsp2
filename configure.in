@@ -1090,8 +1090,7 @@ if test "$with_maxpluslib" = yes; then
 fi 
 
 #################
-## umfpack 
-## prepared for future use 
+## umfpack and cholmod 
 #################
 
 UFSPARSE_LIB=
@@ -1117,6 +1116,29 @@ if test "xx$amd_libs" != "xx" ; then
    else 
     AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
     CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+   fi
+  fi	          
+fi
+
+builtin(include,config/ac_check_cholmod.m4)
+AC_CHECK_COLAMD()
+if test "xx$colamd_libs" != "xx" ; then
+   AC_MSG_RESULT([using "$colamd_libs" for colamd libraries])
+   AC_MSG_RESULT([using "-I${colamd_includedir}" for colamd includes])
+fi
+
+if test "xx$colamd_libs" != "xx" ; then
+  AC_CHECK_CHOLMOD()
+  if test "xx$cholmod_libs" != "xx" ; then
+   AC_DEFINE(WITH_CHOLMOD)
+   AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
+   CHOLMOD_LIBS=$cholmod_libs
+   if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 
+    AC_MSG_RESULT([using "-I${cholmod_includedir} -I${colamd_includedir}" for cholmod includes])
+    CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir} -I${colamd_includedir}"
+   else 
+    AC_MSG_RESULT([using "-I${cholmod_includedir}" for cholmod includes])
+    CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir}"
    fi
   fi	          
 fi
@@ -1405,6 +1427,7 @@ AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
 AC_SUBST(ENABLE_DEBUG)
 AC_SUBST(UMFPACK_LIBS)
+AC_SUBST(CHOLMOD_LIBS)
 AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
@@ -1429,6 +1452,9 @@ if test "$HAVE_GMP" = "yes"; then
    echo "gmp....................:" $GMP_LIBS
 fi
 echo "Terminal...............:" $TERMCAPLIB
+if test "xx$cholmod_libs" != "xx" ; then
+   echo "cholmod................:" $CHOLMOD_LIBS
+fi
 if test "xx$umfpack_libs" != "xx" ; then
    echo "umfpack................:" $UMFPACK_LIBS
 fi
