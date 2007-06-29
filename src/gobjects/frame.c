@@ -23,6 +23,8 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/graphics/Graphics.h"
+#include "gridblock.h" 
+
 
 /* graphic frame 
  * NspGFrame inherits from NspObject 
@@ -589,6 +591,21 @@ int int_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* XXX test */
+NspObject * gframe_create_new_gridblock(NspGFrame *F);
+
+int int_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = gframe_create_new_gridblock(((NspGFrame *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
 int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
@@ -780,7 +797,7 @@ static NspMethods gframe_methods[] = {
   { "draw",   int_gfdraw},
   { "tops",   int_gf_tops},
   { "new_link", int_gf_new_link },
-  { "new_block", int_gf_new_block },
+  { "new_block", int_gf_new_gridblock },
   { "new_connector", int_gf_new_connector },
   { "new_rect", int_gf_new_rect },
   { "hilite_near_pt", int_gf_hilite_near_pt },
@@ -827,26 +844,18 @@ void GFrame_Interf_Info(int i, char **fname, function (**f))
 }
 
 /*********************************************************************
- * GFrame Object in Scilab : a graphic GFrameangle 
+ * GFrame Object in Scilab : a graphic GFrame
  *********************************************************************/
 
 static int pixmap = FALSE ; /* XXXXX */
 
-/**
- * gframe_draw:
- * @R: a graphic frame  
- * 
- * draw the objects contained in frame @R.
- * 
- **/
-
-void gframe_draw(NspGFrame *R)
+void nsp_gframe_draw(nsp_gframe *gf)
 {
-  BCG *Xgc = R->obj->Xgc;
-  Cell *C = R->obj->objs->first;
+  BCG *Xgc = gf->Xgc;
+  Cell *C = gf->objs->first;
   if ( Xgc == NULL) return;
   /* using current values */
-  Nsetscale2d(Xgc,NULL,NULL,R->obj->scale,"nn");
+  Nsetscale2d(Xgc,NULL,NULL,gf->scale,"nn");
   Xgc->graphic_engine->clearwindow(Xgc);
   /* XXX xtape('replay',win); */
   /* 
@@ -863,6 +872,19 @@ void gframe_draw(NspGFrame *R)
       C = C->next ;
     }
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+}  
+
+/**
+ * gframe_draw:
+ * @R: a graphic frame  
+ * 
+ * draw the objects contained in frame @R.
+ * 
+ **/
+
+void gframe_draw(NspGFrame *R)
+{
+  nsp_gframe_draw(R->obj);
 }
 
 /**
@@ -1583,6 +1605,39 @@ NspObject * gframe_create_new_block(NspGFrame *F)
   if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
   return NSP_OBJECT(B);
 }
+
+/**
+ * gframe_create_new_gridblock:
+ * @F: a #NspGFrame 
+ * 
+ * creates a new block which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE.
+ **/
+
+NspObject * gframe_create_new_gridblock(NspGFrame *F)
+{
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,10,10}, pt[]={0,100};
+  NspGridBlock *B;
+  /* unhilite all */
+  gframe_unhilite_objs(F,FALSE);
+  B=gridblock_create("fe",rect,color,thickness,background,NULL);
+  if ( B == NULLGRIDBLOCK) return NULLOBJ;
+  ((NspBlock *)B)->obj->frame = F->obj;
+  ((NspBlock *)B)->obj->hilited = TRUE;
+#ifdef WITH_GRID_FRAME 
+  B->obj->Xgc = F->obj->Xgc;
+#endif 
+  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
+  rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return NULLOBJ;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
+  return NSP_OBJECT(B);
+}
+
 
 /**
  * gframe_create_new_connector:

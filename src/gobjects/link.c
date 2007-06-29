@@ -119,6 +119,8 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->is_lock_connected =(gr_is_lock_connected *) link_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) link_set_lock_pos;
   gri->full_copy =(gr_full_copy *) link_full_copy;
+  gri->unlock =(gr_unlock *) link_unlock;
+
   if ( nsp_type_link_id == 0 ) 
     {
       /* 

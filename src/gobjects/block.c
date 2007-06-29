@@ -113,6 +113,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
   gri->full_copy =(gr_full_copy *) block_full_copy;
+  gri->unlock =(gr_unlock *) block_unlock;
   
   if ( nsp_type_block_id == 0 ) 
     {
@@ -380,13 +381,10 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
-NspBlock *block_create(char *name,double *rect,int color,int thickness,int background,
-		       NspTypeBase *type )
+NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int background) 
 {
   double pt[2];
   int i;
-  NspBlock *H  = block_create_void(name,type);
-  if ( H ==  NULLBLOCK) return NULLBLOCK;
   if ((H->obj = malloc(sizeof(nsp_block))) == NULL) return NULL;
   H->obj->ref_count=1;
   H->obj->frame = NULL; 
@@ -419,6 +417,16 @@ NspBlock *block_create(char *name,double *rect,int color,int thickness,int backg
   block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
   block_set_lock_pos_rel(H,2,(pt[0]=0.0,pt[1]=0.5,pt));
   block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
+  return H;
+}
+
+
+NspBlock *block_create(char *name,double *rect,int color,int thickness,int background,
+		       NspTypeBase *type )
+{
+  NspBlock *H  = block_create_void(name,type);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_block_create(H,rect,color,thickness,background) == NULL) return NULLBLOCK;
   return H;
 }
 
@@ -1106,7 +1114,7 @@ void block_move_control_init( NspBlock *B,int cp,double ptc[2])
  * @ptc: point coordinates 
  * 
  * Updates the block structure when a control point (there's just one control point 
- * for blocks atdown right corner) is moved.
+ * for blocks at down right corner) is moved.
  * @mpt gives the mouse position where the control point is to be moved.translation vector which is to be applied to the control point.
  **/
 
