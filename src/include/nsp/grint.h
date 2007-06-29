@@ -63,6 +63,7 @@ typedef int gr_is_lock_connectable(void *B,int i);
 typedef int gr_is_lock_connected(void *B,int i);
 typedef void * gr_full_copy(void *B);
 typedef void gr_set_lock_pos(void *B, int i,const double pt[],int keep_flag,lock_dir dir);
+typedef void gr_unlock(void *B,int i);
 
 typedef struct _NspTypeGRint NspTypeGRint ;
 
@@ -95,6 +96,7 @@ struct _NspTypeGRint {
   gr_is_lock_connected * is_lock_connected;
   gr_set_lock_pos * set_lock_pos;
   gr_full_copy * full_copy;
+  gr_unlock *unlock ; 
 };
 
 

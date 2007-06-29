@@ -34,7 +34,7 @@ typedef struct _NspTypeGFrame {
  * nsp_gframe: 
  * @objs: a #NspList of objects contained in the frame
  * @Xgc: graphic context to be used for drawing,
- * @scale: scales of the frame
+ * @scale: scales to be used inside the frame as an array of size four.
  * @r: frame position in its father as an array of size four.
  * @ref_count: a reference counter
  *
@@ -45,10 +45,10 @@ typedef struct _NspTypeGFrame {
 typedef struct _nsp_gframe nsp_gframe;
 
 struct _nsp_gframe {
-  NspList *objs ;       /* Object of type list: list of internal objects */
-  BCG *Xgc;
+  NspList *objs ;   /* Object of type list: list of internal objects */
+  BCG *Xgc;         /* graphic context to ne used */
   double scale[4];  /* the scales */
-  double r[4] ;     /* frame position in its father */
+  double r[4] ;     /* frame position in its father as relative numbers */
   int ref_count;
 };
 
@@ -109,6 +109,8 @@ extern int gframe_select_link_and_remove_control(NspGFrame *R,const double pt[2]
 
 extern NspObject * gframe_get_hilited(NspGFrame *R) ;
 extern void gframe_set_frame_field(NspGFrame *F);
+
+extern void nsp_gframe_draw(nsp_gframe *gf);
 
 
 #endif
