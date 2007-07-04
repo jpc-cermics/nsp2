@@ -20,19 +20,28 @@ L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
     \verb+"stdout"+, or \verb+"stderr"+ in order to use the standard input, output or output error 
     stream.
     \vname{mode}: The argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
-    \begin{itemize}
+    \begin{description}
       \item[r]: open text file for reading. The stream is positioned at the beginning of the
-        file.
+        file. 
+      \item[r+]: open text file for reading and writing. The stream is positioned at the beginning of the
+        file. 
       \item[w] truncate  file  to  zero  length  or create text file for writing.  The stream is
         positioned at the beginning of the file.
+      \item[w+] open for reading and writing.  The file is created if it  does  not
+        exist,  otherwise it is truncated.  The stream is positioned at the beginning of the file.
       \item[a] open for appending (writing at end of file).  The file is created if it does not 
 	exist.  The stream is positioned at the end of the file.
-    \end{itemize}
+      \item[a+]  Open for reading and appending (writing at end of file).  The  file
+        is  created  if  it  does not exist.  The initial file position for
+        reading is at the beginning of  the  file,  but  output  is  always
+        appended to the end of the file.
+    \end{description}
     The mode string can also include the letter \verb+b+ as a last character. 
     Adding \verb+b+ b is used if you do I/O to a binary file 
     (but note that \verb+b+ is ignored on all POSIX conforming systems, including Linux).
-    \vname{swap} If true then byte swaping is forced when using the \verb+mget+ and 
-    \verb+mput+ functions. 
+    \vname{swap} If true (the default value) then byte swaping is forced when using the \verb+mget+ and 
+    \verb+mput+ functions in order to have binary files always filed with data coded as little endian. 
+    If \verb+swap+ is false then data is writen in the machine native mode. 
     \vname{xdr} If true then reading and writing is used using \verb+xdr+.
   \end{varlist}
 \end{parameters}
@@ -51,9 +60,10 @@ The \emph{File} data type is used for file I/O operations.
   among \verb+"l", \verb+"i"+, \verb+"s"+, \verb+"ul"+, \verb+"ui"+, \verb+"us"+, \verb+"d"+, \verb+"f"+, 
   \verb+"c"+,\verb+"uc"+ for writing respectively a long, an int, a short, an unsigned long, 
   an unsigned int, an unsigned short, a double, a float, a char and an unsigned char. 
-  The bytes which are read are automatically swapped if necessary (by checking little-endian status). 
-  This default swapping mode can be suppressed by adding a flag in the \verb!mopen! function. 
-  It is also possible to read in little-endian or big-endian mode  by adding a \verb+'l'+ or \verb+'b'+  
+  The bytes which are read are automatically swapped if necessary. 
+  This default swapping mode can be suppressed by adding a flag in the \verb!mopen! function 
+  (see the description of the \verb+swap+ parameter above).
+  It is also possible to force read in little-endian mode or big-endian mode by adding a \verb+'l'+ or \verb+'b'+  
   character at the end of a type specification. For example \verb+'db'+ can be used to read a double 
   in big-endian mode. 
   \vname{F.get[n=val,type='string']}: reads \verb+n+ values of type given by \verb+type+ 
@@ -63,9 +73,10 @@ The \emph{File} data type is used for file I/O operations.
   \vname{F.eof[]}: returns \verb+%t+ if an end-of-file was encountered. 
   \vname{F.seek[value,str]}:  sets  the  file  position indicator. The new position, 
   measured in bytes, is obtained by adding offset bytes to  the
-  position  specified by _verb+str+. If \verb+str+ is set to \verb+'set'+, \verb+cur+, 
+  position  specified by \verb+str+. If \verb+str+ is set to \verb+'set'+, \verb+'cur'+, 
   \verb+'end'+ the offset is relative to the start of the file, 
-  the current position indicator, or  end of file,  respectively. 
+  the current position indicator, or  end of file,  respectively. The default value 
+  is \verb+set+.
   Successful call clears the end of file indicator.
   \vname{F.tell[]}: returns the current value of the file position indicator. 
   \vname{F.clearerr[]}: clears any previously raised error.

@@ -1,0 +1,109 @@
+% -*- mode: latex -*-
+
+\mansection{gdate}
+\begin{mandesc}
+  \short{gdate}{days representation}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+D = gdate_create();
+D = gdate_create(day,month,year);
+D = gdate_create(julian);
+D = gdate_create(string);
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{julian}: an integer, giving a julian day 
+    \vname{day,month,year}: integers (or strings) giving a valid day.
+    \vname{string}: a string coding a day quoting the glib manual we ''This function is not appropriate for file formats and the like; it isn't very precise, and its exact behavior varies with the locale. It's intended to be a heuristic routine that guesses what the user means by a given string (and it does work pretty well in that capacity).''
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{gdate} data type is used to encapsulate \verb+GDate+ from the glib. It 
+represents a day between January 1, Year 1 and a few thousand years in the future.
+
+``The GDate implementation has several nice features; it is only a 64-bit struct, 
+so storing large numbers of dates is very efficient. It can keep both a Julian 
+and day-month-year representation of the date, since some calculations are much 
+easier with one representation or the other. A Julian representation is simply a
+ count of days since some fixed day in the past; for 
+GDate the fixed day is January 1, 1 AD. ("Julian" dates in the GDate API aren't 
+really Julian dates in the technical sense; technically, Julian dates count from 
+the start of the Julian period, Jan 1, 4713 BC).'' 
+
+\end{mandescription}
+
+\paragraph{Operations on gdate}
+The following methods are herited from the functions with the same name and prefixed 
+by \verb+g_date+ in the glib. The following manual is copied from the glib manual.
+\itemdesc{methods}
+  \begin{varlist}
+    \vname{.add_days[n]}: increments a date some number of days. To move forward by weeks, add weeks*7 days. 
+    \vname{.add_months[n]}: increments a date by some number of months. If the day of the month is greater than 28, 
+    this routine may change the day of the month (because the destination month may not have the current day in it). 
+    \vname{.add_years[n]}: increments a date by some number of years. If the date is February 29, 
+    and the destination year is not a leap year, the date will be changed to February 28. 
+    \vname{.clamp[date_min,date_max]}: If date is prior to min_date, sets date equal to min_date. If date falls 
+    after max_date, sets date equal to max_date. 
+    \vname{D.compare[D1]}: qsort()-style comparsion function for dates.
+    \vname{D.days_between[D1]}: Computes the number of days between \verb+D+ and \verb+D1+.
+    If \verb+D1+ is prior to \verb+D+, the returned value is negative. 
+    \vname{.get_day[]}: returns the day of the month.
+    \vname{.get_day_of_year[]}: returns the day of the year, where Jan 1 is the first day of the year. 
+    \vname{.get_iso8601_week_of_year[]}: returns the week of the year, where weeks are interpreted according to ISO 8601.
+    \vname{.get_julian[]}: returns the Julian day or "serial number" of the gdate. The Julian day is simply the number 
+    of days since January 1, Year 1; i.e., January 1, Year 1 is Julian day 1; January 2, Year 1 is Julian day 2, etc. 
+    \vname{.get_monday_week_of_year[]}: returns the week of the year, where weeks are understood to start on Monday. 
+    If the date is before the first Monday of the year, return 0. 
+    \vname{.get_month[]}: returns the month of the year.
+    \vname{.get_sunday_week_of_year[]}: returns the week of the year during which this date falls, if weeks are understood to being on Sunday.  Can return 0 if the day is before the first Sunday of the year.
+    \vname{.get_weekday[]}: returns the day of the week for a gdate object.
+    \vname{.get_year[]}: returns the year of a gdate
+    \vname{.is_first_of_month[]}: returns TRUE if the date is on the first of a month. 
+    \vname{.is_last_of_month[]}: returns TRUE if the date is the last day of the month. 
+    \vname{D.order[D1]}: checks if \verb+D+ is less than or equal to \verb+D1+, and swap the values if this is not the case.
+    \vname{.set_day[day]}: sets the day of the month for a gdate. If the resulting day-month-year triplet is invalid, the date will be invalid.
+    \vname{.set_dmy[day,month,year]}: sets the value of a gdate from a day, month, and year. 
+    The day-month-year triplet must be valid; if you aren't sure it is, call g_date_valid_dmy() to check before you set it.
+    \vname{.set_julian[n]}: sets the value of a gdate from a Julian day number.
+    \vname{.set_month[month]}: sets the month of the year for a gdate. If the resulting day-month-year triplet is invalid, the date will be invalid.
+    \vname{.set_parse[str]}: parses a user-inputted string str, and try to figure out what date it represents, taking the current locale into account. If the string is successfully parsed, the date will be valid after the call. Otherwise, it will be invalid. You should check using g_date_valid() to see whether the parsing succeeded.
+    \vname{.set_time_t[d]}: sets the value of a date from a time_t value.
+    \vname{.set_year[n]}: sets the year for a gdate. If the resulting day-month-year triplet is invalid, the date will be invalid.
+    \vname{.strftime[format]}: generates a printed representation of the date, in a locale-specific way. Works just like the standard C strftime() function, but only accepts date-related formats; time-related formats give undefined results. Date must be valid.
+    \vname{.subtract_days[n]}: moves a date some number of days into the past. To move by weeks, just move by weeks*7 days. 
+    \vname{.subtract_months[n]}: moves a date some number of months into the past. If the current day of the month doesn't exist in the destination month, the day of the month may change. 
+    \vname{.subtract_years[n]}: moves a date some number of years into the past. If the current day doesn't exist in the destination year (i.e. it's February 29 and you move to a non-leap-year) then the day is changed to February 29. 
+    \vname{.valid[]}: checks the validity of the gdate object.
+  \end{varlist}
+
+\itemdesc{Some functions}
+\begin{itemize}
+  \item \verb+gdate_create+:
+  \item \verb+g_date_valid_day(day)+: checks if given day ( integer or string) is a valid day.
+  \item \verb+g_date_valid_month(month)+: checks if given month ( integer or string) is a valid month.
+  \item \verb+g_date_valid_year(year)+: checks if given year is valid 
+  \item \verb+g_date_valid_weekday+: checks if given day ( integer or string) is a valid weekday 
+  \item \verb+g_date_valid_julian+: checks if given number  is a valid julian.
+  \item \verb+g_date_valid_dmy(day,month,year)+: checks if given day, month, year triplet is a valid date?
+  \item \verb+g_date_is_leap_year(year)+: checks if given year is a leap year.
+  \item \verb+g_date_get_days_in_month(day,month)+: gets the number of days in given month taking leap years into account.
+  \item \verb+g_date_get_monday_weeks_in_year+: returns the number of weeks in the year, where weeks are taken to start on Monday. Will be 52 or 53. The date must be valid. (Years always have 52 7-day periods, plus 1 or 2 extra days depending on whether it's a leap year. This function is basically telling you how many Mondays are in the year, i.e. there are 53 Mondays if one of the extra days happens to be a Monday.)
+  \item \verb+g_date_get_sunday_weeks_in_year+: returns the number of weeks in the year, where weeks are taken to start on Sunday. Will be 52 or 53. The date must be valid. (Years always have 52 7-day periods, plus 1 or 2 extra days depending on whether it's a leap year. This function is basically telling you how many Sundays are in the year, i.e. there are 53 Sundays if one of the extra days happens to be a Sunday.)
+\end{itemize}
+
+\begin{examples}
+  \begin{program}\HCode{D = gdate_new(20,11,1960);\Hnewline
+    }
+  \end{program}
+ \end{examples}
+
+% -- Authors
+\begin{authors}
+  Jean-Philippe Chancelier
+\end{authors}
