@@ -90,7 +90,7 @@ struct _string_tokenizer {
 struct _tokenizer {
   /* data */
   Curline curline; 
-  token  token;
+  token  tokenv;
   FILE *file; /* used when the tokenizer uses a File as input */
   smat_tokenizer strings; /* used when the tokenizer uses a string matrix as input */
   string_tokenizer string; /* used when the tokenizer uses a string matrix as input */

@@ -334,7 +334,7 @@ static inline NspMatrix *GetMatCopy(Stack stack, int i)
 {
   NspMatrix *M= Mat2double(matrix_object(stack.val->S[stack.first+i-1]));
   if ( M== NULLMAT) { ArgMessage (stack, i);return M;}
-  /**/ return  MaybeObjCopy (&stack.val->S[stack.first+i-1]);
+  /**/ return (NspMatrix *)  MaybeObjCopy (&stack.val->S[stack.first+i-1]);
 }
 
 static inline NspMatrix *GetMat(Stack stack, int i)

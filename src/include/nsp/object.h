@@ -44,16 +44,34 @@ typedef void *(create_func) (void);
 
 typedef struct _NspTypeBase  NspTypeBase ;
 
-#define NSP_TYPE_OBJECT__ \
+#ifdef __cplusplus				
+/* new is reserved in C++ XXXX */
+
+#define NSP_TYPE_OBJECT__					      \
   NspTypeId id ;                      /* each type has a unique id */ \
-  NspTypeBase *surtype;               /* type of parent */ \
+  NspTypeBase *surtype;               /* type of parent */		\
   NspTypeBase *interface ;  	      /* chained types for interfaces */ \
-  init_func *init ;		      /* initializer */ \
-  new_func *new ;		      /* allocations */ \
-  AttrTab *attrs; 		      /* attribute table */ \
-  attrs_func *get_attrs;	      /* get attribute wrapper */ \
-  attrs_func *set_attrs;	      /* get attribute wrapper */ \
-  methods_func *methods;	      /* methods */ \
+  init_func *init ;		      /* initializer */			\
+  new_func *newf ;		      /* allocations */			\
+  AttrTab *attrs; 		      /* attribute table */		\
+  attrs_func *get_attrs;	      /* get attribute wrapper */	\
+  attrs_func *set_attrs;	      /* get attribute wrapper */	\
+  methods_func *methods;	      /* methods */		
+
+#else 
+
+#define NSP_TYPE_OBJECT__					      \
+  NspTypeId id ;                      /* each type has a unique id */ \
+  NspTypeBase *surtype;               /* type of parent */		\
+  NspTypeBase *interface ;  	      /* chained types for interfaces */ \
+  init_func *init ;		      /* initializer */			\
+  new_func *new ;		      /* allocations */			\
+  AttrTab *attrs; 		      /* attribute table */		\
+  attrs_func *get_attrs;	      /* get attribute wrapper */	\
+  attrs_func *set_attrs;	      /* get attribute wrapper */	\
+  methods_func *methods;	      /* methods */		
+
+#endif
 
 struct _NspTypeBase {
   NSP_TYPE_OBJECT__ 

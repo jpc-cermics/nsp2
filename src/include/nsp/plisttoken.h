@@ -11,7 +11,6 @@
  * they are treated in eval_arg;
  */
 
-typedef enum _nsp_basic_types nsp_basic_types;
 enum _nsp_basic_types { 
   NUMBER =-10,
   NAME, 
@@ -21,6 +20,8 @@ enum _nsp_basic_types {
   OBJECT ,
 };
 
+typedef enum _nsp_basic_types nsp_basic_types;
+
 /* Names are of max size */ 
 #define NAME_MAXL 52
 
@@ -29,7 +30,6 @@ enum _nsp_basic_types {
  * the code for operators are positives 
  */
 
-typedef enum _nsp_ops nsp_ops; 
 enum _nsp_ops { 
   NOTCODE_OP =129, /* start after standard ascii codes */			    
   QUOTE_OP ,			      
@@ -76,12 +76,12 @@ enum _nsp_ops {
   LASTCODE_OP                         
 };
 
+typedef enum _nsp_ops nsp_ops; 
 
 /*
  *  SPECIAL code used in internal list coding
  */
 
-typedef enum _nsp_codes nsp_codes ;
 enum _nsp_codes {
   FEVAL = -200, /* must be the fisrt and such that LASTCODE_NEG_OP is negative <= nsp_basic */
   ROWCONCAT ,
@@ -142,6 +142,9 @@ enum _nsp_codes {
   /* guard */
   LASTCODE_NEG_OP  
 };
+
+typedef enum _nsp_codes nsp_codes ;
+
 
 #endif 
 

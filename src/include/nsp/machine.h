@@ -94,8 +94,11 @@
 /* Define if use maxplus lib  */
 /* #undef WITH_MAXPLUSLIB */
 
-/* Define if use maxplus lib  */
+/* Define if use umfpack lib  */
 #define WITH_UMFPACK 1
+
+/* Define if use  cholmod lib  */
+#define WITH_CHOLMOD 1
 
 /* Define if use fftw3 lib  */
 #define WITH_FFTW3 1
