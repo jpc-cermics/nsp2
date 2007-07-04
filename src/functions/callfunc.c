@@ -108,6 +108,17 @@ extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_In
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
 #endif 
 
+/* #define WITH_SQLITE3  */
+
+#ifdef WITH_SQLITE3 
+extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
+#endif 
+
+/* #define WITH_DCLASS */
+#ifdef WITH_DCLASS
+extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
+#endif
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -186,6 +197,13 @@ InterfTab Interfaces[]={
   {gmarkup_node_Interf , gmarkup_node_Interf_Info},
   {scalexp_Interf , scalexp_Interf_Info},
   {gdate_Interf,  gdate_Interf_Info},
+#ifdef WITH_SQLITE3 
+  {sqlc_Interf , sqlc_Interf_Info},
+#endif
+#ifdef WITH_DCLASS
+  {DClass_Interf , DClass_Interf_Info},
+#endif
+
   {NULL,NULL}
 }; 
 

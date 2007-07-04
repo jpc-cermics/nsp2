@@ -149,7 +149,9 @@ int SWIG_AsVal_unsigned_SS_long (NspObject *obj, unsigned long *val)
     {
       double d = ((NspMatrix *) obj)->R[0];
       if ( SWIG_CanCastAsInteger(&d, 0 , LONG_MAX) )
-	if (val) *val = (long) ((NspMatrix *) obj)->R[0];
+	{
+	  if (val) *val = (long) ((NspMatrix *) obj)->R[0];
+	}
       else 
 	{
 	  Scierror("Given double cannot be casted to an unsigned long\n");

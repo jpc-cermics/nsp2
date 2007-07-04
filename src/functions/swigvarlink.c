@@ -532,7 +532,8 @@ static float            fvar;
 static double           dvar;
 static char            *strvar;
 static const char       cstrvar[256];
-static int             *iptrvar;
+/* static int             *iptrvar; */
+
 static char             name[256];
 
 /*

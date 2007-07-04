@@ -55,8 +55,8 @@ NspSwigGlobalVar *new_swigglobalvar();
 
 #define NULLSWIGGLOBALVAR (NspSwigGlobalVar*) 0
 
-extern NspSwigGlobalVar *swigglobalvar_create(char *name,swig_gv_get_attr *get_attr,swig_gv_set_attr *set_attr,
-				       NspTypeBase *type);
+extern NspSwigGlobalVar *swigglobalvar_create(const char *name,swig_gv_get_attr *get_attr,swig_gv_set_attr *set_attr,
+					      NspTypeBase *type);
 
 /* from SwigGlobalVarObj.c */
 
@@ -85,6 +85,6 @@ static NspSwigGlobalVar *nsp_swigglobalvar_xdr_load(XDR *xdrs);
 static AttrTab swigglobalvar_attrs[];
 static NspMethods *swigglobalvar_get_methods(void);
 static int int_swigglobalvar_create(Stack stack, int rhs, int opt, int lhs);
-static NspSwigGlobalVar *swigglobalvar_create_void(char *name,NspTypeBase *type);
+static NspSwigGlobalVar *swigglobalvar_create_void(const char *name,NspTypeBase *type);
 #endif /* SwigGlobalVar_Private */
 

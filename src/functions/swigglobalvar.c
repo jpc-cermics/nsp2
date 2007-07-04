@@ -327,7 +327,7 @@ NspSwigGlobalVar  *GetSwigGlobalVar(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-static NspSwigGlobalVar *swigglobalvar_create_void(char *name,NspTypeBase *type)
+static NspSwigGlobalVar *swigglobalvar_create_void(const char *name,NspTypeBase *type)
 {
  NspSwigGlobalVar *H  = (type == NULL) ? new_swigglobalvar() : type->new();
  if ( H ==  NULLSWIGGLOBALVAR)
@@ -343,7 +343,7 @@ static NspSwigGlobalVar *swigglobalvar_create_void(char *name,NspTypeBase *type)
 }
 
 
-NspSwigGlobalVar *swigglobalvar_create(char *name,swig_gv_get_attr *get_attr,swig_gv_set_attr *set_attr,
+NspSwigGlobalVar *swigglobalvar_create(const char *name,swig_gv_get_attr *get_attr,swig_gv_set_attr *set_attr,
 				       NspTypeBase *type)
 {
  NspSwigGlobalVar *H  = swigglobalvar_create_void(name,type);
