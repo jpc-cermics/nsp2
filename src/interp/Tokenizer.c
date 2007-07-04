@@ -76,7 +76,7 @@ extern void nsp_init_tokenizer(Tokenizer *T)
   T->ParseComment=parse_comment;
   T->ParseError=parse_error;
   T->code2name=code2name;
-  T->token.Line = 0;
+  T->tokenv.Line = 0;
   T->token_readline = DefSciReadLine;
   T->mtlb = FALSE;
 }
@@ -117,7 +117,7 @@ void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
   int len_line;
   nsp_init_tokenizer(&T);
   T.token_readline(&T,prompt,buffer,&buf_size, &len_line, eof);
-  /* we add  \n ( which was swallowed by T->token_readline*/
+  /* we add  \n ( which was swallowed by T->tokenv_readline*/
   buffer[len_line] ='\n';
   buffer[len_line+1] = '\0';
   buffer[len_line+2] = '\0'; /* ??? xxxx*/
@@ -147,37 +147,37 @@ static int next_token(Tokenizer *T)
   T->IgnoreWSpaces(T);
   T->curline.lpt1 = T->curline.lpt2;
   T->curline.lpt2 = T->curline.lpt3;
-  if ( isdigit(T->token.NextC))
+  if ( isdigit(T->tokenv.NextC))
     {
       /*    --------------parsing a number  */
       if ( T->ParseNumber(T) == FAIL) return FAIL;
       T->IgnoreWSpaces(T);
       return(OK);
     }
-  if (isalnum(T->token.NextC) || PERCENT_CHECK(T->token.NextC)
-      || T->token.NextC == '_' || T->token.NextC == '$') 
+  if (isalnum(T->tokenv.NextC) || PERCENT_CHECK(T->tokenv.NextC)
+      || T->tokenv.NextC == '_' || T->tokenv.NextC == '$') 
     {
       int key;
       /*     -------------name or Scilab keyword */
-      T->token.id = NAME;
-      if ( T->ParseSymb(T,T->token.syn,&chcnt) == FAIL) return(FAIL);
+      T->tokenv.id = NAME;
+      if ( T->ParseSymb(T,T->tokenv.syn,&chcnt) == FAIL) return(FAIL);
       T->IgnoreWSpaces(T);
-      key =nsp_is_nsp_keyword(T->token.syn);
+      key =nsp_is_nsp_keyword(T->tokenv.syn);
       if ( key != LASTCODE_NEG_OP ) 
-	T->token.id = key;
+	T->tokenv.id = key;
       return(OK);
     }
-  T->token.id = T->token.NextC;
-  if ( T->token.id == '\n' ) 
+  T->tokenv.id = T->tokenv.NextC;
+  if ( T->tokenv.id == '\n' ) 
     {
       T->GetChar(T);
-      T->token.id= RETURN_OP;
+      T->tokenv.id= RETURN_OP;
       return(OK);
     }
   T->GetChar(T);
-  if ( T->token.id == '.' ) 
+  if ( T->tokenv.id == '.' ) 
     {
-      if ( isdigit(T->token.NextC )) 
+      if ( isdigit(T->tokenv.NextC )) 
 	{
 	  /*     ------------number with leading dot */
 	  T->backch(T);T->backch(T);T->GetChar(T);
@@ -206,24 +206,24 @@ static int next_token(Tokenizer *T)
 	  return T->NextToken(T);
 	}
     }
-  else if ( (T->mtlb == TRUE)  && ( T->token.id == '%' ))
+  else if ( (T->mtlb == TRUE)  && ( T->tokenv.id == '%' ))
     {
       /*  ----------- comments : ignore up to end of line
 	  char c;
 	  c=T->GetChar(T);
 	  while (c != '\n') c=T->GetChar(T);
-	  T->token.id = '\n';
+	  T->tokenv.id = '\n';
 	  return(OK);
       */
       return T->ParseComment(T);
     }
-  else if ( T->mtlb == FALSE && ( T->token.id == '/' && T->token.NextC == '/' ))
+  else if ( T->mtlb == FALSE && ( T->tokenv.id == '/' && T->tokenv.NextC == '/' ))
     {
       /*  ----------- comments : ignore up to end of line
 	  char c;
 	  c=T->GetChar(T);
 	  while (c != '\n') c=T->GetChar(T);
-	  T->token.id = '\n';
+	  T->tokenv.id = '\n';
 	  return(OK);
       */
       return T->ParseComment(T);
@@ -231,7 +231,7 @@ static int next_token(Tokenizer *T)
   T->ParseOperators(T);
   T->IgnoreWSpaces(T);
   /* XXXXXX : changing EOL to 0 XXX */
-  if ( T->token.id == 0)  T->token.id= '\0';
+  if ( T->tokenv.id == 0)  T->tokenv.id= '\0';
   return(OK);
 } 
 
@@ -242,140 +242,140 @@ static int next_token(Tokenizer *T)
 static void  parse_operators(Tokenizer *T)
 {
   /* Comparaisons */
-  switch ( T->token.id ) 
+  switch ( T->tokenv.id ) 
     {
     case '>' :
-      if (T->token.NextC == '=' ) 
+      if (T->tokenv.NextC == '=' ) 
 	{
-	  T->token.id = GEQ ;  T->GetChar(T);  break;
+	  T->tokenv.id = GEQ ;  T->GetChar(T);  break;
 	}
       break;
     case '=' : 
-      if (T->token.NextC == '=' ) 
+      if (T->tokenv.NextC == '=' ) 
 	{
-	  T->token.id = EQ ;  T->GetChar(T);  break;
+	  T->tokenv.id = EQ ;  T->GetChar(T);  break;
 	}
       break;
     case '<' :
-      if (T->token.NextC == '=' ) 
+      if (T->tokenv.NextC == '=' ) 
 	{
-	  T->token.id = LEQ ;  T->GetChar(T);  break;
+	  T->tokenv.id = LEQ ;  T->GetChar(T);  break;
 	}
-      else if (T->token.NextC == '>' ) 
+      else if (T->tokenv.NextC == '>' ) 
 	{
-	  T->token.id = NEQ ;  T->GetChar(T);  break;
+	  T->tokenv.id = NEQ ;  T->GetChar(T);  break;
 	}
       break;
     case '~' :
-      if (T->token.NextC == '=' ) 
+      if (T->tokenv.NextC == '=' ) 
 	{
-	  T->token.id = NEQ ;  T->GetChar(T);  break;
+	  T->tokenv.id = NEQ ;  T->GetChar(T);  break;
 	}
       break;
     case '*' :
-      if (T->token.NextC == '*' ) 
+      if (T->tokenv.NextC == '*' ) 
 	{
-	  T->token.id = HAT_OP ;  T->GetChar(T);  break;
+	  T->tokenv.id = HAT_OP ;  T->GetChar(T);  break;
 	}
       break;
     case '.' :
-      switch ( T->token.NextC )
+      switch ( T->tokenv.NextC )
 	{
 	case '.' :
 	  T->GetChar(T); 
-	  if ( T->token.NextC == '.' )
+	  if ( T->tokenv.NextC == '.' )
 	    {
 	      char c;
 	      c=T->GetChar(T);
 	      while (c != '\n') c=T->GetChar(T);
-	      T->token.id = RETURN_OP;
+	      T->tokenv.id = RETURN_OP;
 	      break;
 	    }
 	  else 
 	    {
-	      T->token.id = ' '; /* XXX : operatuer .. : A finir*/
+	      T->tokenv.id = ' '; /* XXX : operatuer .. : A finir*/
 	      break;
 	    }
 	case '*' :
 	  T->GetChar(T);
-	  if ( T->token.NextC == '.' ) 
+	  if ( T->tokenv.NextC == '.' ) 
 	    {
-	      T->token.id = DOTSTARDOT; T->GetChar(T);  break;
+	      T->tokenv.id = DOTSTARDOT; T->GetChar(T);  break;
 	    }
-	  else if ( T->token.NextC == '*' )
+	  else if ( T->tokenv.NextC == '*' )
 	    {
-	      T->token.id = DOTHAT ; T->GetChar(T) ; break;
+	      T->tokenv.id = DOTHAT ; T->GetChar(T) ; break;
 	    }
 	  else 
 	    {
-	      T->token.id = DOTSTAR; break;
+	      T->tokenv.id = DOTSTAR; break;
 	    }
 	  break;
 	case '+' :
 	  T->GetChar(T);
-	  T->token.id = DOTPLUS; break;
+	  T->tokenv.id = DOTPLUS; break;
 	case '/' :
 	  T->GetChar(T); 
-	  if ( T->token.NextC == '/') 
+	  if ( T->tokenv.NextC == '/') 
 	    {
 	      T->backch(T);
 	      break;
 	    }
-	  else if ( T->token.NextC == '.' ) 
+	  else if ( T->tokenv.NextC == '.' ) 
 	    {
-	      T->token.id = DOTSLASHDOT; T->GetChar(T);  break;
+	      T->tokenv.id = DOTSLASHDOT; T->GetChar(T);  break;
 	    }
 	  else
 	    {
-	      T->token.id = DOTSLASH; break;
+	      T->tokenv.id = DOTSLASH; break;
 	    }
 	  break;
 	case '\\' :
 	  T->GetChar(T); 
-	  if ( T->token.NextC == '.' ) 
+	  if ( T->tokenv.NextC == '.' ) 
 	    {
-	      T->token.id = DOTBSLASHDOT; T->GetChar(T);  break;
+	      T->tokenv.id = DOTBSLASHDOT; T->GetChar(T);  break;
 	    }
 	  else
 	    {
-	      T->token.id = DOTBSLASH; break;
+	      T->tokenv.id = DOTBSLASH; break;
 	    }
 	  break;
 	case '^' :
 	  T->GetChar(T);
-	  T->token.id = DOTHAT ; 
+	  T->tokenv.id = DOTHAT ; 
 	  break;
 	case '>' :
 	  T->GetChar(T);
-	  if ( T->token.NextC == '=' ) 
+	  if ( T->tokenv.NextC == '=' ) 
 	    {
-	      T->token.id = DOTGEQ; T->GetChar(T);  break;
+	      T->tokenv.id = DOTGEQ; T->GetChar(T);  break;
 	    }
 	  else 
 	    {
-	      T->token.id = DOTGT; break;
+	      T->tokenv.id = DOTGT; break;
 	    }
 	  break;
 	case '<' :
 	  T->GetChar(T);
-	  if ( T->token.NextC == '=' ) 
+	  if ( T->tokenv.NextC == '=' ) 
 	    {
-	      T->token.id = DOTLEQ; T->GetChar(T);  break;
+	      T->tokenv.id = DOTLEQ; T->GetChar(T);  break;
 	    }
-	  else if ( T->token.NextC == '>' ) 
+	  else if ( T->tokenv.NextC == '>' ) 
 	    {
-	      T->token.id = DOTNEQ; T->GetChar(T);  break;
+	      T->tokenv.id = DOTNEQ; T->GetChar(T);  break;
 	    }
 	  else 
 	    {
-	      T->token.id = DOTLT; break;
+	      T->tokenv.id = DOTLT; break;
 	    }
 	  break;
 	case '~' :
 	  T->GetChar(T);
-	  if ( T->token.NextC == '=' ) 
+	  if ( T->tokenv.NextC == '=' ) 
 	    {
-	      T->token.id = DOTNEQ; T->GetChar(T);  break;
+	      T->tokenv.id = DOTNEQ; T->GetChar(T);  break;
 	    }
 	  else 
 	    {
@@ -385,9 +385,9 @@ static void  parse_operators(Tokenizer *T)
 	  break;
 	case '=' :
 	  T->GetChar(T);
-	  if ( T->token.NextC == '=' ) 
+	  if ( T->tokenv.NextC == '=' ) 
 	    {
-	      T->token.id = DOTEQ; T->GetChar(T);  break;
+	      T->tokenv.id = DOTEQ; T->GetChar(T);  break;
 	    }
 	  else 
 	    {
@@ -398,64 +398,64 @@ static void  parse_operators(Tokenizer *T)
 	}
       break;
     case '/' :
-      if ( T->token.NextC == '.' )
+      if ( T->tokenv.NextC == '.' )
 	{
 	  T->GetChar(T); 
-	  if ( isdigit(T->token.NextC) )
+	  if ( isdigit(T->tokenv.NextC) )
 	    T->backch(T);
 	  else
-	    T->token.id = SLASHDOT;
+	    T->tokenv.id = SLASHDOT;
 	  break;
 	}
       break;
     case '\\' :
-      if ( T->token.NextC == '.' )
+      if ( T->tokenv.NextC == '.' )
 	{
 	  T->GetChar(T); 
-	  if ( isdigit(T->token.NextC) )
+	  if ( isdigit(T->tokenv.NextC) )
 	    T->backch(T);
 	  else
-	    T->token.id = BSLASHDOT;
+	    T->tokenv.id = BSLASHDOT;
 	  break;
 	}
       break;
     case '&' : 
-      if ( T->token.NextC == '&' ) 
+      if ( T->tokenv.NextC == '&' ) 
 	{
 	  T->GetChar(T); 
-	  T->token.id = SEQAND;
+	  T->tokenv.id = SEQAND;
 	}
       break;
     case '|' : 
-      if ( T->token.NextC == '|' ) 
+      if ( T->tokenv.NextC == '|' ) 
 	{
 	  T->GetChar(T); 
-	  T->token.id = SEQOR;
+	  T->tokenv.id = SEQOR;
 	}
       break;
     }
   /* basic operators are coded here with their ascii code 
    * set them to internal code 
    */
-  switch ( T->token.id ) 
+  switch ( T->tokenv.id ) 
     {
-    case '\'': T->token.id =  QUOTE_OP ;break;
-    case '*': T->token.id =  STAR_OP ;break;
-    case '+': T->token.id =  PLUS_OP ;break;
-    case '^': T->token.id =  HAT_OP ;break;
-    case ':': T->token.id =  COLON_OP ;break;
-    case '|': T->token.id =  OR_OP ;break;
-    case '&': T->token.id =  AND_OP ;break;
-    case '~': T->token.id =  TILDE_OP ;break;
-    case '\n': T->token.id =  RETURN_OP ;break;
-    case ',': T->token.id =  COMMA_OP ;break;
-    case ';': T->token.id =  SEMICOLON_OP ;break;
-    case '-': T->token.id =  MINUS_OP ;break;
-    case '/': T->token.id =  SLASH_OP ;break;
-    case '\\': T->token.id =  BACKSLASH_OP ;break;
-    case '>': T->token.id =  GT_OP ;break;
-    case '<': T->token.id =  LT_OP ;break;
-    case '=': T->token.id =  EQUAL_OP ;break;
+    case '\'': T->tokenv.id =  QUOTE_OP ;break;
+    case '*': T->tokenv.id =  STAR_OP ;break;
+    case '+': T->tokenv.id =  PLUS_OP ;break;
+    case '^': T->tokenv.id =  HAT_OP ;break;
+    case ':': T->tokenv.id =  COLON_OP ;break;
+    case '|': T->tokenv.id =  OR_OP ;break;
+    case '&': T->tokenv.id =  AND_OP ;break;
+    case '~': T->tokenv.id =  TILDE_OP ;break;
+    case '\n': T->tokenv.id =  RETURN_OP ;break;
+    case ',': T->tokenv.id =  COMMA_OP ;break;
+    case ';': T->tokenv.id =  SEMICOLON_OP ;break;
+    case '-': T->tokenv.id =  MINUS_OP ;break;
+    case '/': T->tokenv.id =  SLASH_OP ;break;
+    case '\\': T->tokenv.id =  BACKSLASH_OP ;break;
+    case '>': T->tokenv.id =  GT_OP ;break;
+    case '<': T->tokenv.id =  LT_OP ;break;
+    case '=': T->tokenv.id =  EQUAL_OP ;break;
     default:
       break;
     }
@@ -463,7 +463,7 @@ static void  parse_operators(Tokenizer *T)
 
 /*
  * Parse a Scilab number 
- * as a string in T->token.buf 
+ * as a string in T->tokenv.buf 
  */
 
 static int parse_number(Tokenizer *T)
@@ -471,45 +471,45 @@ static int parse_number(Tokenizer *T)
   double deno;
   int count=0,count1;
   char c;
-  c = T->token.NextC;
-  T->token.syv= 0.00;
+  c = T->tokenv.NextC;
+  T->tokenv.syv= 0.00;
   while ( isdigit(c) )
     {
-      T->token.buf[count++]=c;
-      /* T->token.syv = 10.00*(  T->token.syv) + cdigit2num(c) ; */
+      T->tokenv.buf[count++]=c;
+      /* T->tokenv.syv = 10.00*(  T->tokenv.syv) + cdigit2num(c) ; */
       c=T->GetChar(T);
     }
   if ( c == 'x' ) 
     {
       /* hexa */ 
-      if ( count == 1 && T->token.buf[0]== '0') 
+      if ( count == 1 && T->tokenv.buf[0]== '0') 
 	{
-	  T->token.buf[count++]=c;
+	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
 	  while (1) 
 	    {
 	      if ( isdigit(c) ) 
 		{
-		  T->token.buf[count++]=c;
-		  /* T->token.syv = 16.00*(  T->token.syv) + cdigit2num(c) ; */
+		  T->tokenv.buf[count++]=c;
+		  /* T->tokenv.syv = 16.00*(  T->tokenv.syv) + cdigit2num(c) ; */
 		  c=T->GetChar(T);
 		}
 	      else  if ( (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
 		{
-		  T->token.buf[count++]=c;
-		  /* T->token.syv = 16.00*(  T->token.syv) + c - 'a' + 10 ; */
+		  T->tokenv.buf[count++]=c;
+		  /* T->tokenv.syv = 16.00*(  T->tokenv.syv) + c - 'a' + 10 ; */
 		  c=T->GetChar(T);
 		}
 	      else break;
 	    }
-	  T->token.buf[count]='\0';
-	  T->token.id = NUMBER;
+	  T->tokenv.buf[count]='\0';
+	  T->tokenv.id = NUMBER;
 	  return OK;
 	}
       else
 	{
-	  T->token.buf[count]='\0';
-	  T->ParseError(T,"Error while parsing a number: 'x' is preceeded by %s\n",T->token.buf);
+	  T->tokenv.buf[count]='\0';
+	  T->ParseError(T,"Error while parsing a number: 'x' is preceeded by %s\n",T->tokenv.buf);
 	  return FAIL;
 	}
     }
@@ -525,7 +525,7 @@ static int parse_number(Tokenizer *T)
 	}
       else
 	{
-	  T->token.buf[count++]=c;
+	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
 	  deno=0.00;
 	  count1=0;
@@ -533,25 +533,25 @@ static int parse_number(Tokenizer *T)
 	    {
 	      while ( isdigit(c) )
 		{
-		  T->token.buf[count++]=c;
+		  T->tokenv.buf[count++]=c;
 		  deno = 10.00*deno + cdigit2num(c) ;
 		  c=T->GetChar(T);
 		  count1++;
 		}
-	      /* T->token.syv += (deno/pow(10.00,(double)count1)); */
+	      /* T->tokenv.syv += (deno/pow(10.00,(double)count1)); */
 	    }
 	}
     }
   if ( c == 'e' || c == 'E' || c == 'd' || c == 'D') 
     {
       char sign = '+';
-      T->token.buf[count++]='E';
+      T->tokenv.buf[count++]='E';
       /* parsing e+xxx or e-xxx or exxx*/
       c=T->GetChar(T);
       if ( c == '+' || c == '-' ) 
 	{
 	  sign = c;
-	  T->token.buf[count++]=c;
+	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
 	}
       if ( isdigit(c)) 
@@ -560,11 +560,11 @@ static int parse_number(Tokenizer *T)
 	  ipow=0;
 	  while ( isdigit(c) )
 	    {
-	      T->token.buf[count++]=c;
+	      T->tokenv.buf[count++]=c;
 	      ipow = 10*ipow + cdigit2num(c) ;
 	      c=T->GetChar(T);
 	    }
-	  /* T->token.syv  *= pow(10.00,(double)((sign == '+') ? ipow : -ipow)); */
+	  /* T->tokenv.syv  *= pow(10.00,(double)((sign == '+') ? ipow : -ipow)); */
 	}
       else if ( c == '\t' || c == ' ' ) 
 	{
@@ -587,8 +587,8 @@ static int parse_number(Tokenizer *T)
 	  /*xxxxx T->ParseError(T,"Error while parsing a number\n"); */
 	}
     }
-  T->token.buf[count]='\0';
-  T->token.id = NUMBER;
+  T->tokenv.buf[count]='\0';
+  T->tokenv.id = NUMBER;
   return OK;
 }
       
@@ -604,7 +604,7 @@ static int cdigit2num(char c)
 static int parse_symb(Tokenizer *T,char *str, int *l)
 {
   char c;
-  c = T->token.NextC;
+  c = T->tokenv.NextC;
   *l =0;
   /* 
      FIXME 
@@ -643,17 +643,17 @@ static int parse_comment(Tokenizer *T)
     {
       if ( count < TBUF-1 ) 
 	{
-	  T->token.buf[count++]= c;
+	  T->tokenv.buf[count++]= c;
 	}
       else
 	{
-	  T->token.buf[Min(10,TBUF-1)] = '\0';
-	  T->ParseError(T,"Parse Error: comment begining with %s... is too long (>%d)\n",T->token.buf,TBUF);
+	  T->tokenv.buf[Min(10,TBUF-1)] = '\0';
+	  T->ParseError(T,"Parse Error: comment begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
 	  return(FAIL);
 	}
     }
-  T->token.buf[count]= '\0';
-  T->token.id = COMMENT;
+  T->tokenv.buf[count]= '\0';
+  T->tokenv.id = COMMENT;
   return(OK);
 }
 
@@ -671,7 +671,7 @@ static int parse_comment(Tokenizer *T)
 
 static int parse_command_arg(Tokenizer *T)
 {
-  char c = T->token.NextC;
+  char c = T->tokenv.NextC;
   int count=0;
   /* back to the begining of string*/
   while ( count < TBUF ) 
@@ -706,17 +706,17 @@ static int parse_command_arg(Tokenizer *T)
 		  if ( isdigit(c1)) 
 		    {
 		      d = (d << 3)+ (c1 -'0') ;
-		      T->token.buf[count++]= d ;
+		      T->tokenv.buf[count++]= d ;
 		    }
 		  else 
 		    {
-		      T->token.buf[count++]= d ;
+		      T->tokenv.buf[count++]= d ;
 		      T->backch(T);
 		    }
 		}
 	      else 
 		{
-		  T->token.buf[count++]= d ;
+		  T->tokenv.buf[count++]= d ;
 		  T->backch(T);
 		}
 	    }
@@ -724,34 +724,34 @@ static int parse_command_arg(Tokenizer *T)
 	    {
 	      switch (c1 )
 		{
-		case 'a' :  T->token.buf[count++]='\a';break;
-		case 'b' :  T->token.buf[count++]='\b';break;
-		case 'f' :  T->token.buf[count++]='\f';break;
-		case 'n' :  T->token.buf[count++]='\n';break;
-		case 'r' :  T->token.buf[count++]='\r';break;
-		case 't' :  T->token.buf[count++]='\t';break;
-		case 'v' :  T->token.buf[count++]='\v';break;
+		case 'a' :  T->tokenv.buf[count++]='\a';break;
+		case 'b' :  T->tokenv.buf[count++]='\b';break;
+		case 'f' :  T->tokenv.buf[count++]='\f';break;
+		case 'n' :  T->tokenv.buf[count++]='\n';break;
+		case 'r' :  T->tokenv.buf[count++]='\r';break;
+		case 't' :  T->tokenv.buf[count++]='\t';break;
+		case 'v' :  T->tokenv.buf[count++]='\v';break;
 		default: 
-		  T->token.buf[count++]= c ;
+		  T->tokenv.buf[count++]= c ;
 		  T->backch(T);
 		  break;
 		}
 	    }
 	}
       else 
-	T->token.buf[count++]=c;
+	T->tokenv.buf[count++]=c;
       /* get next char */
       c=T->GetChar(T);
     }
   if ( count >= TBUF )
     {
-      T->token.buf[Min(10,TBUF-1)] = '\0';
-      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->token.buf,TBUF);
+      T->tokenv.buf[Min(10,TBUF-1)] = '\0';
+      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
       return(FAIL);
     }
-  while (count != 0 &&  T->token.buf[count-1] == ' ') count--;
-  T->token.buf[count]='\0';
-  if (debug) Sciprintf("[Str:%s]",T->token.buf);
+  while (count != 0 &&  T->tokenv.buf[count-1] == ' ') count--;
+  T->tokenv.buf[count]='\0';
+  if (debug) Sciprintf("[Str:%s]",T->tokenv.buf);
   return(OK);
 } 
 
@@ -776,21 +776,21 @@ static int parse_string(Tokenizer *T)
       if ( c == '\0' ) 
 	{
 	  /* Delete ...\n ..\n or \n from the stored string*/
-	  if ( count >= 4 && strncmp(&T->token.buf[count-4],"...\n",4)==0) 
+	  if ( count >= 4 && strncmp(&T->tokenv.buf[count-4],"...\n",4)==0) 
 	    count -= 4;
-	  else if ( count >= 3 && strncmp(&T->token.buf[count-3],"..\n",4)==0) 
+	  else if ( count >= 3 && strncmp(&T->tokenv.buf[count-3],"..\n",4)==0) 
 	    count -= 3;
-	  else if (T->token.buf[count-1]== '\n') 
+	  else if (T->tokenv.buf[count-1]== '\n') 
 	    count--;
 	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
-	  c= T->token.NextC;
+	  c= T->tokenv.NextC;
 	}
       if ( c == '\'' || c == '\"' ) 
 	{ 
 	  c= T->GetChar(T);
 	  if ( c == '\'' || c == '\"' ) 
 	    {
-	      T->token.buf[count++]=c;
+	      T->tokenv.buf[count++]=c;
 	    }
 	  else 
 	    {
@@ -814,17 +814,17 @@ static int parse_string(Tokenizer *T)
 		  if ( isdigit(c1)) 
 		    {
 		      d = (d << 3)+ (c1 -'0') ;
-		      T->token.buf[count++]= d ;
+		      T->tokenv.buf[count++]= d ;
 		    }
 		  else 
 		    {
-		      T->token.buf[count++]= d ;
+		      T->tokenv.buf[count++]= d ;
 		      T->backch(T);
 		    }
 		}
 	      else 
 		{
-		  T->token.buf[count++]= d ;
+		  T->tokenv.buf[count++]= d ;
 		  T->backch(T);
 		}
 	    }
@@ -832,32 +832,32 @@ static int parse_string(Tokenizer *T)
 	    {
 	      switch (c1 )
 		{
-		case 'a' :  T->token.buf[count++]='\a';break;
-		case 'b' :  T->token.buf[count++]='\b';break;
-		case 'f' :  T->token.buf[count++]='\f';break;
-		case 'n' :  T->token.buf[count++]='\n';break;
-		case 'r' :  T->token.buf[count++]='\r';break;
-		case 't' :  T->token.buf[count++]='\t';break;
-		case 'v' :  T->token.buf[count++]='\v';break;
-		case '\\' :  T->token.buf[count++]='\\';break;
+		case 'a' :  T->tokenv.buf[count++]='\a';break;
+		case 'b' :  T->tokenv.buf[count++]='\b';break;
+		case 'f' :  T->tokenv.buf[count++]='\f';break;
+		case 'n' :  T->tokenv.buf[count++]='\n';break;
+		case 'r' :  T->tokenv.buf[count++]='\r';break;
+		case 't' :  T->tokenv.buf[count++]='\t';break;
+		case 'v' :  T->tokenv.buf[count++]='\v';break;
+		case '\\' :  T->tokenv.buf[count++]='\\';break;
 		default: 
-		  T->token.buf[count++]= c ;
+		  T->tokenv.buf[count++]= c ;
 		  T->backch(T);
 		  break;
 		}
 	    }
 	}
       else 
-	T->token.buf[count++]=c;
+	T->tokenv.buf[count++]=c;
     }
   if ( count >= TBUF )
     {
-      T->token.buf[Min(10,TBUF-1)] = '\0';
-      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->token.buf,TBUF);
+      T->tokenv.buf[Min(10,TBUF-1)] = '\0';
+      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
       return(FAIL);
     }
-  T->token.buf[count]='\0';
-  if (debug) Sciprintf("[Str:%s]",T->token.buf);
+  T->tokenv.buf[count]='\0';
+  if (debug) Sciprintf("[Str:%s]",T->tokenv.buf);
   return(OK);
 } 
 
@@ -869,20 +869,20 @@ static int parse_string(Tokenizer *T)
 
 static int get_char(Tokenizer *T)
 {
-  T->token.NextC = T->curline.buf[T->curline.lpt3];
-  if (T->token.NextC != '\0') 
+  T->tokenv.NextC = T->curline.buf[T->curline.lpt3];
+  if (T->tokenv.NextC != '\0') 
     {
       T->curline.lpt3++ ;
     }
-  return(T->token.NextC) ;
+  return(T->tokenv.NextC) ;
 } 
 
 /* used when current char is '\0' and we need an other line*/
 
 static int force_next_char(Tokenizer *T)
 {
-  T->token.NextC = T->curline.buf[T->curline.lpt3];
-  if (T->token.NextC != '\0') 
+  T->tokenv.NextC = T->curline.buf[T->curline.lpt3];
+  if (T->tokenv.NextC != '\0') 
     {
       Sciprintf("Parse Error: ForceNextChar should only be called \n");
       Sciprintf("\twhen curent char is 0\n");
@@ -904,8 +904,8 @@ static int force_next_char(Tokenizer *T)
 
 static int func_force_next_char(Tokenizer *T)
 {
-  T->token.NextC = T->curline.buf[T->curline.lpt3];
-  if (T->token.NextC != '\0') 
+  T->tokenv.NextC = T->curline.buf[T->curline.lpt3];
+  if (T->tokenv.NextC != '\0') 
     {
       Sciprintf("Parse Error: ForceNextChar should only be called \n");
       Sciprintf("\twhen curent char is 0\n");
@@ -922,7 +922,7 @@ static int func_force_next_char(Tokenizer *T)
 
 static int ignore_white_spaces(Tokenizer *T)
 {
-  while ( T->token.NextC == ' ' || T->token.NextC == '\t' ) T->GetChar(T);
+  while ( T->tokenv.NextC == ' ' || T->tokenv.NextC == '\t' ) T->GetChar(T);
   return 0;
 }
 
@@ -930,8 +930,8 @@ static int ignore_white_spaces(Tokenizer *T)
 
 static int view_char(Tokenizer *T)
 {
-  T->token.NextC = T->curline.buf[T->curline.lpt3];
-  return(T->token.NextC) ;
+  T->tokenv.NextC = T->curline.buf[T->curline.lpt3];
+  return(T->tokenv.NextC) ;
 } 
 
 /* back character */
@@ -944,7 +944,7 @@ static int back_char(Tokenizer *T)
 
 static int is_dot_dot_dot(Tokenizer *T)
 {
-  if ( T->token.NextC == '.' && T->curline.buf[T->curline.lpt3] == '.') 
+  if ( T->tokenv.NextC == '.' && T->curline.buf[T->curline.lpt3] == '.') 
     return(OK);
   else
     return(FAIL);
@@ -952,7 +952,7 @@ static int is_dot_dot_dot(Tokenizer *T)
 
 static int is_dot_dot(Tokenizer *T)
 {
-  if ( T->token.NextC == '.' && T->curline.buf[T->curline.lpt3] != '.')
+  if ( T->tokenv.NextC == '.' && T->curline.buf[T->curline.lpt3] != '.')
     return(OK);
   else
     return(FAIL);
@@ -960,7 +960,7 @@ static int is_dot_dot(Tokenizer *T)
 
 static int is_dot_star_star(Tokenizer *T)
 {
-  if ( T->token.NextC == '*' && T->curline.buf[T->curline.lpt3] == '*' ) 
+  if ( T->tokenv.NextC == '*' && T->curline.buf[T->curline.lpt3] == '*' ) 
     return(OK);
   else
     return(FAIL);
@@ -971,7 +971,7 @@ static int is_dot_star_star(Tokenizer *T)
 static int is_dot_alpha_old(Tokenizer *T)
 {
   char c = T->curline.buf[T->curline.lpt3];
-  if ( T->token.NextC == '.' &&  (isalnum(c) || c =='_' || PERCENT_CHECK(c) || c == '$' ) && !isdigit(c) )
+  if ( T->tokenv.NextC == '.' &&  (isalnum(c) || c =='_' || PERCENT_CHECK(c) || c == '$' ) && !isdigit(c) )
     return(OK);
   else
     return(FAIL);
@@ -980,7 +980,7 @@ static int is_dot_alpha_old(Tokenizer *T)
 static int is_dot_alpha(Tokenizer *T)
 {
   char c = T->curline.buf[T->curline.lpt2];
-  if ( T->token.id == '.' && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' 
+  if ( T->tokenv.id == '.' && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' 
        &&  (isalnum(c) || c =='_' || PERCENT_CHECK(c) || c == '$' ) && !isdigit(c) )
     return(OK);
   else
@@ -989,11 +989,11 @@ static int is_dot_alpha(Tokenizer *T)
 
 static int is_transpose(Tokenizer *T)
 {
-  if ( T->token.id == QUOTE_OP && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' ) 
+  if ( T->tokenv.id == QUOTE_OP && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' ) 
     return QUOTE_OP;
-  else if ( T->token.id == '.' && T->token.NextC == '\'' ) 
+  else if ( T->tokenv.id == '.' && T->tokenv.NextC == '\'' ) 
     {
-      T->token.id = DOTPRIM ;  T->GetChar(T);
+      T->tokenv.id = DOTPRIM ;  T->GetChar(T);
       return DOTPRIM;
     }
   else return(-1);
@@ -1016,11 +1016,11 @@ static int get_line(Tokenizer *T,char *prompt)
   token_read_line(T,prompt,T->curline.buf,&curlinesize,&eof);
   if ( firstentry == 0 ) 
     {
-      T->token.Line = 0;
+      T->tokenv.Line = 0;
       firstentry++;
     }
   n= strlen(T->curline.buf);
-  T->token.Line++;
+  T->tokenv.Line++;
   T->curline.lpt3 = 0;
   T->curline.lpt2 = 0;
   T->curline.lpt1 = 0;
@@ -1037,7 +1037,7 @@ static int token_read_line(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 {
   int len_line;
   T->token_readline(T,prompt,buffer, buf_size, &len_line, eof);
-  /* we add  \n ( which was swallowed by T->token_readline*/
+  /* we add  \n ( which was swallowed by T->tokenv_readline*/
   buffer[len_line] ='\n';
   buffer[len_line+1] = '\0';
   buffer[len_line+2] = '\0'; /* ??? xxxx*/
@@ -1059,8 +1059,8 @@ static int token_read_line(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 
 static int token_line_set(Tokenizer *T,int l)
 {
-  int rep =   T->token.Line;
-  T->token.Line = l;
+  int rep =   T->tokenv.Line;
+  T->tokenv.Line = l;
   return rep;
 }
 
@@ -1112,11 +1112,11 @@ static const char *code2name(Tokenizer *T,int key)
   if (s != NULL) return s;
   switch (key) 
     {
-    case COMMENT : return(T->token.buf);
-    case NUMBER : return(T->token.buf);
-    case NAME   : return(T->token.syn);
-    case OPNAME : return(T->token.buf);
-    case STRING : return(T->token.buf);
+    case COMMENT : return(T->tokenv.buf);
+    case NUMBER : return(T->tokenv.buf);
+    case NAME   : return(T->tokenv.syn);
+    case OPNAME : return(T->tokenv.buf);
+    case STRING : return(T->tokenv.buf);
     default: return(" ");
     }
 }

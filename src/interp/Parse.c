@@ -120,7 +120,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     }
   else if ( rep < 0 ) 
     {
-      Scierror("Error: at line %d of file %s\n",T.token.Line,Str);
+      Scierror("Error: at line %d of file %s\n",T.tokenv.Line,Str);
     }
   if ( errcatch == FALSE ) 
     nsp_error_message_show();
@@ -643,8 +643,8 @@ PList nsp_parse_expr(NspSMatrix *M)
 
 int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
-  T->token.id = RETURN_OP;
-  T->token.FlagEqu = 0;
+  T->tokenv.id = RETURN_OP;
+  T->tokenv.FlagEqu = 0;
   if ( T->Getlin(T,nsp_prompt()) == TRUE ) 
     {
       /** Sciprintf("Eof : Quitting ...\n"); **/
@@ -652,7 +652,7 @@ int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
     }
   /* Instruction Scilab */
   if ( T->NextToken(T) == FAIL) return RET_BUG;
-  if ( T->token.id != RETURN_OP && T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP )
+  if ( T->tokenv.id != RETURN_OP && T->tokenv.id != COMMA_OP && T->tokenv.id != SEMICOLON_OP )
     {
       if (nsp_parse_top(T,symb_table,plist) == FAIL) return RET_BUG;
     }
