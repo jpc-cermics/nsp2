@@ -64,8 +64,8 @@
 #define Max(x,y)	(((x)>(y))?(x):(y))
 #endif 
 
-extern double Mini();  /* XXXX a mettre ailleurs **/
-extern double Maxi();  /* XXXX a mettre ailleurs **/
+extern double Mini  (const double vect[],int);
+extern double Maxi  (const double vect[],int);
 
 #define PI0 (int *) 0
 #define PD0 (double *) 0
