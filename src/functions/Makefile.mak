@@ -8,7 +8,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.lib
 
 OBJSC = callfunc.obj FunTab.obj linking.obj addinter.obj Functions-IN.obj \
-	mexlib.obj mex-IN.obj accelerated_tab.obj 
+	mexlib.obj mex-IN.obj accelerated_tab.obj swiglib.obj swigglobalvar.obj swigvarlink.obj
 
 OBJSF=
 

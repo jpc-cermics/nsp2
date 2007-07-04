@@ -441,12 +441,15 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
  * The Interface for basic function operation 
  *************************************************************/
 
+extern function  int_swigvarlink_create;
+
 static OpTab Functions_func[]={
   {"link",int_link},
   {"ulink",int_ulink},
   {"c_link",int_c_link},
   {"addinter",int_addinter},
   {"call",int_call},
+  { "swigvarlink_create", int_swigvarlink_create},
   {(char *) 0, NULL}
 };
 
