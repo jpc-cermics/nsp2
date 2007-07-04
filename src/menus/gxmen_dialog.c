@@ -41,14 +41,19 @@ static menu_answer nsp_dialog_(const char *title,const char *init_value,char **a
 
 menu_answer nsp_dialog(NspSMatrix *title,NspSMatrix *init,NspObject **answer)
 {
+  char def_init[]="";
   NspSMatrix *S;
   char *text_answer = NULL;
   int rep =menu_cancel ;
   nsp_string str_title =nsp_smatrix_elts_concat(title,"\n",1,"\n",1);
-  nsp_string str_init =nsp_smatrix_elts_concat(init,"\n",1,"\n",1);
+  nsp_string str_init; 
+  if ( init != NULL) 
+    str_init =nsp_smatrix_elts_concat(init,"\n",1,"\n",1);
+  else 
+    str_init = def_init;
   /* answer is allocated and must be freed here  */
   rep = nsp_dialog_(str_title,str_init,&text_answer);
-  nsp_string_destroy(&str_init);
+  if ( str_init != def_init ) nsp_string_destroy(&str_init);
   nsp_string_destroy(&str_title);
   switch (rep ) 
     {
