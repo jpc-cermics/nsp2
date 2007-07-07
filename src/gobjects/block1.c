@@ -392,6 +392,7 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   /* create the own part */
 #ifdef WITH_GRID_FRAME 
   if ((Gf = gframe_create(NVOID,NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
+  Gf->obj->top = FALSE;
   H->obj = Gf->obj;
   /* to prevent destruction of obj */
   Gf->obj->ref_count++;
@@ -598,7 +599,6 @@ void gridblock_draw(NspGridBlock *B)
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
-
 
 
 /*

@@ -337,6 +337,7 @@ NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double *scale,
       H->obj->objs = NULLLIST;
     }
   H->obj->Xgc = Xgc;
+  H->obj->top = TRUE;
   return H;
 }
 
@@ -797,7 +798,8 @@ static NspMethods gframe_methods[] = {
   { "draw",   int_gfdraw},
   { "tops",   int_gf_tops},
   { "new_link", int_gf_new_link },
-  { "new_block", int_gf_new_gridblock },
+  { "new_block", int_gf_new_block },
+  { "new_gridblock", int_gf_new_gridblock },
   { "new_connector", int_gf_new_connector },
   { "new_rect", int_gf_new_rect },
   { "hilite_near_pt", int_gf_hilite_near_pt },
@@ -856,7 +858,7 @@ void nsp_gframe_draw(nsp_gframe *gf)
   if ( Xgc == NULL) return;
   /* using current values */
   Nsetscale2d(Xgc,NULL,NULL,gf->scale,"nn");
-  Xgc->graphic_engine->clearwindow(Xgc);
+  if ( gf->top ) Xgc->graphic_engine->clearwindow(Xgc);
   /* XXX xtape('replay',win); */
   /* 
    * XXX A GFrame could be casted info a Rect 
