@@ -49,6 +49,7 @@ struct _nsp_gframe {
   BCG *Xgc;         /* graphic context to ne used */
   double scale[4];  /* the scales */
   double r[4] ;     /* frame position in its father as relative numbers */
+  int top;
   int ref_count;
 };
 
