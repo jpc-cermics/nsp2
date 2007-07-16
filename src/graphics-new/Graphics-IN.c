@@ -2103,11 +2103,14 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   
-  if ((l5 = nsp_matrix_create(NVOID,'r',1,4)) == NULLMAT ) return RET_BUG;
-  for (i=0; i < 4 ; i++) l5->R[i] =  Xgc->scales->WIRect1[i];
   NSP_OBJECT(l3)->ret_pos = 1;     StackStore(stack,(NspObject *) l3,rhs+1);
   NSP_OBJECT(l4)->ret_pos = 2;     StackStore(stack,(NspObject *) l4,rhs+2);
-  if ( lhs >= 3 )  {   NSP_OBJECT(l5)->ret_pos = 3;     StackStore(stack,(NspObject *) l5,rhs+3);}
+  if ( lhs >= 3 )  
+    { 
+      if ((l5 = nsp_matrix_create(NVOID,'r',1,4)) == NULLMAT ) return RET_BUG;
+      for (i=0; i < 4 ; i++) l5->R[i] =  Xgc->scales->WIRect1[i];
+      NSP_OBJECT(l5)->ret_pos = 3;     StackStore(stack,(NspObject *) l5,rhs+3);
+    }
   return Max(lhs,2);
 }
 
