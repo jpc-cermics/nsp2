@@ -119,7 +119,7 @@ function menu=create_right_menu (win)
     menuitem.show[];
   end
   // new
-  tags = ['new link';'new block';'new_connector']
+  tags = ['new link';'new block';'new_connector';'new block1']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
@@ -152,17 +152,15 @@ function menuitem_response(w,args)
   win='win'+string(args($));
   select args(1) 
    case 1 then  GF(win).new_link[];
-   case 2 then  
-    // print(GF(win));
-    GF(win).new_block[];
-    // print(GF(win));
+   case 2 then  GF(win).new_block[];
    case 3 then  GF(win).new_connector[] ;
-   case 4 then  
+   case 4 then  GF(win).new_gridblock[] ;
+   case 5 then  
     fname = xgetfile();
     if fname <> "" then 
       save(fname,diagram=GF(win));
     end
-   case 5 then 
+   case 6 then 
     fname = xgetfile();
     if fname <> "" then 
       load(fname);
@@ -171,7 +169,7 @@ function menuitem_response(w,args)
 	GF(win)=diagram;
       end
     end
-   case 6 then 
+   case 7 then 
   end
   GF(win).draw[]
 endfunction
@@ -355,7 +353,7 @@ xsetech(arect=[0,0,0,0]);
 
 seteventhandler('my_eventhandler');
 
-xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My second diagram opengl=%f',opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 seteventhandler('my_eventhandler');
