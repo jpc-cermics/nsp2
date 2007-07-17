@@ -221,6 +221,8 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 void nsp_classb_destroy(NspClassB *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_matrix_destroy(H->classb_val);
+  nsp_matrix_destroy(((NspClassA *)H)->classa_val);
   FREE(H);
 }
 
@@ -385,6 +387,8 @@ static int int_clb_set_val(void *Hv,const char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
+  /* free previous value */
+  nsp_matrix_destroy(((NspClassB *)Hv)->classb_val);
   ((NspClassB *)Hv)->classb_val = m;
   return OK ;
 }
