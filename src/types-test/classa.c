@@ -454,13 +454,9 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-extern int int_circle_create(Stack stack, int rhs, int opt, int lhs); 
-
-
 static OpTab ClassA_func[]={
   {"setrowscols_cla",int_set_attribute},/* a(xxx)= b */
   {"test_cla",int_cla_test},
-  {"circle",int_circle_create},
   {(char *) 0, NULL}
 };
 

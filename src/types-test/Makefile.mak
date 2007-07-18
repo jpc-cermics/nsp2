@@ -7,8 +7,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
-OBJSC = classa.obj classb.obj classc.obj
-# kiko.obj mpz.obj
+OBJSC = classa.obj classb.obj classc.obj example_wrap.obj example.obj 
 
 OBJSF=
 
@@ -28,4 +27,11 @@ Makefile.mak	: Makefile
 	protoize -k -c -I../include $*.c 
 	egrep -v "/usr/|nsp/" $*.c.X | grep -v "static " | sed -e 's+/\*[^/]*/++g' -e "s/ extern/extern/" > $*.X 
 	rm -f $*.c.X
+
+example.obj	: example.cxx 
+	g++ -g -c example.cxx 
+
+example_wrap.obj	: example_wrap.cpp
+	g++ -I../include -g -c example_wrap.cpp
+
 
