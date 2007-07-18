@@ -4,7 +4,8 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a 
 
-OBJSC = classa.o classb.o classc.o example_wrap.o example.o 
+OBJSC = classa.o classb.o classc.o 
+# example_wrap.o example.o 
 
 OBJSF=
 
