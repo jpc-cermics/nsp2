@@ -221,6 +221,7 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 void nsp_classa_destroy(NspClassA *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_matrix_destroy(H->classa_val);
   FREE(H);
 }
 
