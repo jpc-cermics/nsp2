@@ -238,7 +238,7 @@ static int nsp_hobj_xdr_save(XDR *xdrs, NspHobj *O)
   if ( O  == NULLHOBJ) return OK;
   if ( Ocheckname(O,NVOID) )  
     {
-      Scierror("Warning:\t trying to save an object without name\n");
+      Sciprintf("Warning:\t trying to save an object without name\n");
       return OK;
     }
   /* FIXME: is it worth saving an hobj ? */

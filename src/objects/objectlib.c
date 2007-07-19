@@ -300,7 +300,7 @@ int nsp_object_xdr_save(XDR *xdrs, NspObject *O)
   if ( O  == NULLOBJ) return OK;
   if ( Ocheckname(O,NVOID) )  
     {
-      Scierror("Warning:\t trying to save an object without name\n");
+      Sciprintf("Warning:\t trying to save an object without name\n");
       return OK;
     }
   return O->type->save(xdrs,O);
