@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
   
-/* gridgridblock: a test  */
+/* gridblock: a test  */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -33,22 +33,11 @@ struct _NspTypeGridBlock {
 };
 
 /**
- * grb_lock: 
- *  @port: a #gr_port. 
- *  @pt: position of the lock point in the frame
- *  @ptr: relative position of the lock point in the gridblock
- *  @type: type of the lock point.
- *
- * used for storing information about lock points of a gridblock. 
- * 
- */
-
-/**
  * nsp_gridblock: 
  * @frame: a gridblock must be in a frame to be drawn 
  * @object_sid: 
  * @r: the gridblock enclosing rectangle 
- * @@color: color of the gridblock
+ * @color: color of the gridblock
  * @thickness: thickness of the enclosing rectangle 
  * @background: color of the background
  * @n_locks:  number of lock points 

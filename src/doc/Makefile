@@ -4,7 +4,7 @@ all: scan mktmpl mkdb mkhtml
 
 scan :
 	./gtkdoc-scan --module=nspdoc --source-dir=../include/nsp --source-dir=../include/mex \
-	--source-dir=./ --ignore-headers="blas.h  gtk TAGS all-gtk.h all-pango.h all-gdk.h integ.h graphics tokenizer.h lapack-c.h machine-h.vc machine.h.in"
+	--source-dir=./ --ignore-headers="blas.h  gtk TAGS all-gtk.h all-pango.h all-gdk.h integ.h machine-h.vc lapack-c.h machine.h.in graphics"
 
 mktmpl:
 	gtkdoc-mktmpl --module=nspdoc

@@ -623,6 +623,31 @@ NspSpColMatrix *M,int nzmax
 NspSpColMatrix *M
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_spcolmatrix_norm</NAME>
+<RETURNS>double </RETURNS>
+NspSpColMatrix *A, char c
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_vnorm</NAME>
+<RETURNS>double </RETURNS>
+NspSpColMatrix *A, double p
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_div_scal_tt</NAME>
+<RETURNS>int </RETURNS>
+NspSpColMatrix *A, NspSpColMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_div_zero_tt</NAME>
+<RETURNS>NspSpColMatrix *</RETURNS>
+NspSpColMatrix *A
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_scal_div_tt</NAME>
+<RETURNS>NspSpColMatrix *</RETURNS>
+NspSpColMatrix *A, NspSpColMatrix *B
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_double2int</NAME>
 <RETURNS>int </RETURNS>
 int *n, double *dx, int *ix
@@ -918,6 +943,10 @@ double *tab, int size
 <MACRO>
 <NAME>WITH_UMFPACK</NAME>
 #define WITH_UMFPACK 1
+</MACRO>
+<MACRO>
+<NAME>WITH_CHOLMOD</NAME>
+#define WITH_CHOLMOD 1
 </MACRO>
 <MACRO>
 <NAME>WITH_FFTW3</NAME>
@@ -1283,6 +1312,11 @@ NspObject *O
 <NAME>block_create</NAME>
 <RETURNS>NspBlock *</RETURNS>
 char *name,double rect[],int color,int thickness,int background, NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_block_create</NAME>
+<RETURNS>NspBlock *</RETURNS>
+NspBlock *H,double *rect,int color,int thickness,int background
 </FUNCTION>
 <MACRO>
 <NAME>NULLBLOCK</NAME>
@@ -1876,7 +1910,7 @@ NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag
 <FUNCTION>
 <NAME>nsp_mat_minmax</NAME>
 <RETURNS>int </RETURNS>
-NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,NspMatrix **Amax, NspMatrix **Imax, int lhs
+NspMatrix *A, int dim, NspMatrix **Amin, NspMatrix **Imin,NspMatrix **Amax, NspMatrix **Imax, int lhs
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_slec</NAME>
@@ -2324,7 +2358,7 @@ NspMatrix *A, NspMatrix *B, char *op, int *err
 NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mat_findm</NAME>
+<NAME>nsp_mat_mfind</NAME>
 <RETURNS>int </RETURNS>
 const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind
 </FUNCTION>
@@ -2347,6 +2381,16 @@ NspMatrix *A, NspMatrix *B
 <NAME>nsp_mat_minplus_mult</NAME>
 <RETURNS>NspMatrix *</RETURNS>
 NspMatrix *A, NspMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_array_maxi</NAME>
+<RETURNS>int </RETURNS>
+int n,const double *A, int incr, double *amax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_array_mini</NAME>
+<RETURNS>int </RETURNS>
+int n,const double *A, int incr, double *amax
 </FUNCTION>
 <FUNCTION>
 <NAME>GetMatCopy</NAME>
@@ -2429,6 +2473,7 @@ struct _NspTypeGRint {
   gr_is_lock_connected * is_lock_connected;
   gr_set_lock_pos * set_lock_pos;
   gr_full_copy * full_copy;
+  gr_unlock *unlock ; 
 };
 </STRUCT>
 <MACRO>
@@ -3172,12 +3217,12 @@ extern user_preferences user_pref;
 <FUNCTION>
 <NAME>Mini</NAME>
 <RETURNS>double </RETURNS>
-
+const double vect[],int
 </FUNCTION>
 <FUNCTION>
 <NAME>Maxi</NAME>
 <RETURNS>double </RETURNS>
-
+const double vect[],int
 </FUNCTION>
 <MACRO>
 <NAME>PI0</NAME>
@@ -5307,19 +5352,36 @@ typedef unsigned int NspTypeId ;
 </STRUCT>
 <MACRO>
 <NAME>NSP_TYPE_OBJECT__</NAME>
-#define NSP_TYPE_OBJECT__ \
+#define NSP_TYPE_OBJECT__					      \
   NspTypeId id ;                      /* each type has a unique id */ \
-  NspTypeBase *surtype;               /* type of parent */ \
+  NspTypeBase *surtype;               /* type of parent */		\
   NspTypeBase *interface ;  	      /* chained types for interfaces */ \
-  init_func *init ;		      /* initializer */ \
-  new_func *new ;		      /* allocations */ \
-  AttrTab *attrs; 		      /* attribute table */ \
-  attrs_func *get_attrs;	      /* get attribute wrapper */ \
-  attrs_func *set_attrs;	      /* get attribute wrapper */ \
-  methods_func *methods;	      /* methods */ \
-
-struct _NspTypeBase {
+  init_func *init ;		      /* initializer */			\
+  new_func *newf ;		      /* allocations */			\
+  AttrTab *attrs; 		      /* attribute table */		\
+  attrs_func *get_attrs;	      /* get attribute wrapper */	\
+  attrs_func *set_attrs;	      /* get attribute wrapper */	\
+  methods_func *methods;	      /* methods */		
 </MACRO>
+<MACRO>
+<NAME>NSP_TYPE_OBJECT__</NAME>
+#define NSP_TYPE_OBJECT__					      \
+  NspTypeId id ;                      /* each type has a unique id */ \
+  NspTypeBase *surtype;               /* type of parent */		\
+  NspTypeBase *interface ;  	      /* chained types for interfaces */ \
+  init_func *init ;		      /* initializer */			\
+  new_func *new ;		      /* allocations */			\
+  AttrTab *attrs; 		      /* attribute table */		\
+  attrs_func *get_attrs;	      /* get attribute wrapper */	\
+  attrs_func *set_attrs;	      /* get attribute wrapper */	\
+  methods_func *methods;	      /* methods */		
+</MACRO>
+<STRUCT>
+<NAME>NspTypeBase</NAME>
+struct _NspTypeBase {
+  NSP_TYPE_OBJECT__ 
+} ;
+</STRUCT>
 <STRUCT>
 <NAME>NspTypeObject</NAME>
 </STRUCT>
@@ -6224,6 +6286,162 @@ Stack stack, int i
 <NAME>GetNone</NAME>
 <RETURNS>NspNone *</RETURNS>
 Stack stack, int i
+</FUNCTION>
+<MACRO>
+<NAME>LINEMAXSIZE</NAME>
+#define LINEMAXSIZE 4096 
+</MACRO>
+<TYPEDEF>
+<NAME>Curline</NAME>
+typedef struct _curline Curline; 
+</TYPEDEF>
+<STRUCT>
+<NAME>curline</NAME>
+struct _curline {
+    int lpt1; /* position of the begining of the before last recognised token */
+    int lpt2; /* position of the begining of the last recognised token */
+    int lpt3; /* current char position in buf */
+    char buf[LINEMAXSIZE];
+} ;
+</STRUCT>
+<MACRO>
+<NAME>TBUF</NAME>
+#define TBUF 1024
+</MACRO>
+<STRUCT>
+<NAME>token</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>token</NAME>
+struct _token 
+{
+  char buf[TBUF];
+  char syn[NAME_MAXL];
+  double syv;
+  char NextC;
+  int id;
+  int FlagEqu;
+  int Line;
+};
+</STRUCT>
+<TYPEDEF>
+<NAME>Tokenizer</NAME>
+typedef struct _tokenizer Tokenizer; 
+</TYPEDEF>
+<TYPEDEF>
+<NAME>SciReadFunction</NAME>
+typedef SciReadFunc *SciReadFunction;
+</TYPEDEF>
+<VARIABLE>
+<NAME>nsp_defscireadline_rl</NAME>
+extern SciReadFunc nsp_defscireadline_rl;
+</VARIABLE>
+<VARIABLE>
+<NAME>DefSciReadLine_textview</NAME>
+extern SciReadFunc DefSciReadLine_textview;
+</VARIABLE>
+<VARIABLE>
+<NAME>DefSciReadLine</NAME>
+extern SciReadFunction DefSciReadLine;
+</VARIABLE>
+<STRUCT>
+<NAME>smat_tokenizer</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>smat_tokenizer</NAME>
+struct _smat_tokenizer { 
+  char **S;
+  int ind;
+  int pos;
+  char *line;
+} ;
+</STRUCT>
+<STRUCT>
+<NAME>string_tokenizer</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>string_tokenizer</NAME>
+struct _string_tokenizer { 
+  char *str;
+  int pos;
+} ;
+</STRUCT>
+<STRUCT>
+<NAME>tokenizer</NAME>
+struct _tokenizer {
+  /* data */
+  Curline curline; 
+  token  tokenv;
+  FILE *file; /* used when the tokenizer uses a File as input */
+  smat_tokenizer strings; /* used when the tokenizer uses a string matrix as input */
+  string_tokenizer string; /* used when the tokenizer uses a string matrix as input */
+  int mtlb; /* is % a comment or not */
+  /* methods */
+  SciReadFunction token_readline;
+  token_NextToken *NextToken;
+  token_ParseCommandArg *ParseCommandArg;
+  token_ParseString *ParseString;
+  token_GetChar *GetChar;
+  token_ForceNextChar *ForceNextChar;
+  token_FuncForceNextChar *FuncForceNextChar;
+  token_IgnoreWSpaces *IgnoreWSpaces;
+  token_viewch *viewch;
+  token_backch *backch;
+  token_IsDotDotDot *IsDotDotDot;
+  token_IsDotDot *IsDotDot;
+  token_IsDotStarStar *IsDotStarStar;
+  token_IsDotAlphaOld *IsDotAlphaOld;
+  token_IsDotAlpha *IsDotAlpha;
+  token_IsTranspose *IsTranspose;
+  token_ParseShowLine *ParseShowLine;
+  token_Getlin *Getlin;
+  token_TokenLineSet *TokenLineSet;
+  token_ParseOperators *ParseOperators;
+  token_ParseNumber *ParseNumber;
+  token_ParseSymb *ParseSymb;
+  token_ParseComment *ParseComment;
+  token_ParseError *ParseError;
+  token_code2name *code2name;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>nsp_init_tokenizer</NAME>
+<RETURNS>void </RETURNS>
+Tokenizer *T
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_tokeniser_file</NAME>
+<RETURNS>void </RETURNS>
+Tokenizer *T,FILE *f
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_tokeniser_string</NAME>
+<RETURNS>void </RETURNS>
+Tokenizer *T,char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_tokeniser_strings</NAME>
+<RETURNS>void </RETURNS>
+Tokenizer *T,char **S
+</FUNCTION>
+<USER_FUNCTION>
+<NAME>MoreFun</NAME>
+<RETURNS>void </RETURNS>
+int *n
+</USER_FUNCTION>
+<VARIABLE>
+<NAME>scimore</NAME>
+extern MoreFun scimore ;
+</VARIABLE>
+<FUNCTION>
+<NAME>scimore_void</NAME>
+<RETURNS>void </RETURNS>
+int *n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_set_nsp_more</NAME>
+<RETURNS>MoreFun </RETURNS>
+MoreFun F
 </FUNCTION>
 <VARIABLE>
 <NAME>debug</NAME>
@@ -8348,6 +8566,11 @@ NspHash *H
 <RETURNS>NspHash *</RETURNS>
 void
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_hash_get_keys</NAME>
+<RETURNS>NspSMatrix *</RETURNS>
+NspHash *H
+</FUNCTION>
 <ENUM>
 <NAME>nsp_basic_types</NAME>
 enum nsp_basic_types { 
@@ -9425,7 +9648,7 @@ const  doubleC *x,doubleC *res
 <FUNCTION>
 <NAME>nsp_div_cc</NAME>
 <RETURNS>void </RETURNS>
- const doubleC *x,doubleC *y,doubleC *res
+ const doubleC *x,const doubleC *y,doubleC *res
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_div_dc</NAME>
@@ -10046,10 +10269,11 @@ typedef struct _NspTypeGFrame {
 <STRUCT>
 <NAME>nsp_gframe</NAME>
 struct _nsp_gframe {
-  NspList *objs ;       /* Object of type list: list of internal objects */
-  BCG *Xgc;
+  NspList *objs ;   /* Object of type list: list of internal objects */
+  BCG *Xgc;         /* graphic context to ne used */
   double scale[4];  /* the scales */
-  double r[4] ;     /* frame position in its father */
+  double r[4] ;     /* frame position in its father as relative numbers */
+  int top;
   int ref_count;
 };
 </STRUCT>

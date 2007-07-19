@@ -56,7 +56,7 @@ NspTypeGridBlock *new_type_gridblock(type_mode mode)
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods =  gridblock_get_methods; 
   type->new = (new_func *) new_gridblock;
-
+  
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
@@ -91,7 +91,7 @@ NspTypeGridBlock *new_type_gridblock(type_mode mode)
 
   /* copy from father interface */
   *gri = *((NspTypeGRint *) type->surtype->interface);
-
+  
   /* change localy */
   gri->draw  =(gr_draw *) gridblock_draw;
   gri->full_copy =(gr_full_copy *) gridblock_full_copy;
@@ -104,7 +104,7 @@ NspTypeGridBlock *new_type_gridblock(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeMatrix called nsp_type_gridblock
+       * an instance of NspTypeGridBlock called nsp_type_gridblock
        */
       type->id =  nsp_type_gridblock_id = nsp_new_type_id();
       nsp_type_gridblock = type;
@@ -391,12 +391,12 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
   /* create the own part */
 #ifdef WITH_GRID_FRAME 
-  if ((Gf = gframe_create(NVOID,NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
+  if ((Gf = gframe_create("gf",NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
   Gf->obj->top = FALSE;
   H->obj = Gf->obj;
   /* to prevent destruction of obj */
   Gf->obj->ref_count++;
-  /*XXXXX  delete unused H */
+  /* XXXXX  delete unused H */
   /* gframe_destroy(H);*/
   /* insert a first object in the frame */
   {
@@ -615,16 +615,6 @@ static NspGridBlock * gridblock_full_copy( NspGridBlock *B)
       == NULLGRIDBLOCK) 
     return NULLGRIDBLOCK;
   /* the lock points */
-  ((NspBlock *) M)->obj->object_sid =(NspBlock *) B;
-  if ( ((NspBlock *) M)->obj->locks != NULL) FREE(((NspBlock *) M)->obj->locks);
-  ((NspBlock *) M)->obj->n_locks =   ((NspBlock *) B)->obj->n_locks;
-  if (( ((NspBlock *) M)->obj->locks = malloc(((NspBlock *) M)->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLGRIDBLOCK;
-  for ( i = 0 ; i < ((NspBlock *) M)->obj->n_locks ; i++) 
-    {
-      ((NspBlock *) M)->obj->locks[i]= ((NspBlock *) B)->obj->locks[i];
-      ((NspBlock *) M)->obj->locks[i].port.object_id = NULLOBJ;
-      ((NspBlock *) M)->obj->locks[i].port.object_sid = ((NspBlock *) B)->obj->locks[i].port.object_id;
-    }
   return M;
 }
 

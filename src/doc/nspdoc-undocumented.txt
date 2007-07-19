@@ -1,7 +1,7 @@
 42% symbol docs coverage.
-961 symbols documented.
-222 symbols incomplete.
-1345 not documented.
+967 symbols documented.
+224 symbols incomplete.
+1338 not documented.
 
 
 Abs
@@ -467,10 +467,7 @@ function_destroy
 function_info
 function_object
 function_print
-gen_all_elements_are_int_or_inf_or_nan
-gen_any_element_is_inf_or_nan
-gen_any_element_is_negative
-gen_pr_min_max_internal
+gen_pr_min_max_internal (flag, dmin, dmax)
 gen_set_format
 get_echo_mode
 get_is_reading
@@ -880,6 +877,7 @@ nsp_get_echo_input_line
 nsp_get_file_window
 nsp_get_object_copy (Returns)
 nsp_get_type_from_id
+nsp_gframe (top)
 nsp_global_frame_remove_object
 nsp_gtk_hash_table
 nsp_gtk_init
@@ -939,10 +937,8 @@ nsp_log10_c
 nsp_log_c
 nsp_mat_clean (rhs)
 nsp_mat_comp
-nsp_mat_comp_real
 nsp_mat_createinit (name, type, m, n, func)
 nsp_mat_find
-nsp_mat_findm
 nsp_mat_fullcomp
 nsp_mat_ioru (res, Returns)
 nsp_mat_maxi
@@ -1246,7 +1242,6 @@ nsp_sort
 nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
-nsp_spcolmatrix_divel
 nsp_spcolmatrix_get (RC, Values)
 nsp_spcolmatrix_insert_elt (Returns)
 nsp_spcolmatrix_minitt (flag, err)

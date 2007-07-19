@@ -118,6 +118,11 @@ nsp_spcol_set_triplet_from_m
 nsp_spcol_alloc_col_triplet
 nsp_spcol_realloc_col_triplet
 nsp_spcol_free_triplet
+nsp_spcolmatrix_norm
+nsp_spcolmatrix_vnorm
+nsp_spcolmatrix_div_scal_tt
+nsp_spcolmatrix_div_zero_tt
+nsp_spcolmatrix_scal_div_tt
 </SECTION>
 
 <SECTION>
@@ -191,6 +196,7 @@ WITH_PVM
 WITH_GTKGLEXT
 WITH_GTKHTML
 WITH_UMFPACK
+WITH_CHOLMOD
 WITH_FFTW3
 WITH_SNDFILE
 WITH_ASOUND
@@ -270,6 +276,7 @@ GetBlockCopy
 GetBlock
 IsBlock
 block_create
+nsp_block_create
 NULLBLOCK
 </SECTION>
 
@@ -477,11 +484,13 @@ nsp_mat_magic
 nsp_mat_franck
 nsp_mat_hilbert
 nsp_mat_find
-nsp_mat_findm
+nsp_mat_mfind
 nsp_mat_nnz
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
 nsp_mat_minplus_mult
+nsp_array_maxi
+nsp_array_mini
 GetMatCopy
 GetMat
 </SECTION>
@@ -1305,6 +1314,31 @@ GetNone
 </SECTION>
 
 <SECTION>
+<FILE>tokenizer</FILE>
+LINEMAXSIZE
+Curline
+curline
+TBUF
+token
+Tokenizer
+SciReadFunction
+nsp_defscireadline_rl
+DefSciReadLine_textview
+DefSciReadLine
+smat_tokenizer
+string_tokenizer
+tokenizer
+nsp_init_tokenizer
+nsp_tokeniser_file
+nsp_tokeniser_string
+nsp_tokeniser_strings
+MoreFun
+scimore
+scimore_void
+nsp_set_nsp_more
+</SECTION>
+
+<SECTION>
 <FILE>plistc</FILE>
 debug
 debugI
@@ -1753,6 +1787,7 @@ nsp_hcreate_from_list
 nsp_hcreate
 nsp_hdestroy
 nsp_current_frame_to_hash
+nsp_hash_get_keys
 </SECTION>
 
 <SECTION>
