@@ -634,6 +634,44 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+
+/* 
+ * [U,T]=schur(A) 
+ * T = schur(A);
+ */
+
+extern int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMatrix **Sdim);
+extern int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) ;
+
+static int int_schur( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A,*U,**hU=NULL;
+  CheckRhs(1,1);
+  CheckLhs(0,2);
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+  if ( lhs == 2) hU = &U;
+  if ( A->rc_type == 'r' ) 
+    {
+      if( intdgees0(A,hU,NULL,NULL)== FAIL)  return RET_BUG;
+    }
+  else 
+    {
+      if ( intzgees0(A,hU,NULL,NULL)== FAIL)  return RET_BUG;
+    }
+  if ( lhs < 2) 
+    NSP_OBJECT(A)->ret_pos = 1;
+  else 
+    {
+      NthObj(2) = NSP_OBJECT(A);
+      NSP_OBJECT(A)->ret_pos = 2;
+      NthObj(1) = NSP_OBJECT(U);
+      NthObj(1)->ret_pos = 1;
+    }
+  return Max(lhs,1);
+}
+
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -655,6 +693,7 @@ static OpTab Lapack_func[] = {
   {"expm",int_expm},
   {"solve_banded",int_solve_banded},
   {"rank_m",int_rank},
+  {"schur_m",int_schur},
   {(char *) 0, NULL}
 };
 
