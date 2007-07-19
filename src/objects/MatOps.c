@@ -4682,13 +4682,16 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 /**
  * nsp_mat_comp_real:
  * @A: a #NspMatrix 
- * @B: 
- * @op: 
+ * @B: a #NspMatrix 
+ * @op: comparison operator as a string
  * 
+ * returns in a #NspBMatrix the result of the comparison 
+ * operation @A @op @B. op can be chosen among the following values 
+ * "==", "<>", "<=", ">=", "<", ">". 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or %NULLBMAT
  **/
+
 NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
 {
   /* comparizon for both A and B of type real */
