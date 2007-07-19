@@ -636,36 +636,102 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
 
 
 /* 
- * [U,T]=schur(A) 
- * T = schur(A);
+ * interface for schur 
  */
 
-extern int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMatrix **Sdim);
-extern int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) ;
+extern int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(const double *re,const double *im),
+		     NspMatrix **Sdim);
+extern int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(const doubleC *w), NspMatrix **Sdim) ;
+
+extern int nsp_dschur_cont_stable(const double *reig,const double *ieig);
+extern int nsp_dschur_discr_stable(const double *reig,const double *ieig);
+extern int nsp_zschur_cont_stable(const doubleC *eig);
+extern int nsp_zschur_discr_stable(const doubleC *eig);
 
 static int int_schur( Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A,*U,**hU=NULL;
-  CheckRhs(1,1);
-  CheckLhs(0,2);
+  int (*F)(const double *reig,const double *ieig)= NULL;
+  int (*Fc)(const doubleC *reig)= NULL;
+  nsp_option opts[] ={{ "sort",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspObject *select=NULL;
+  NspMatrix *A,*U=NULL,**hU=NULL,*Dim=NULL,**hDim=NULL;
+  CheckStdRhs(1,1);
+  CheckLhs(0,3);
   if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
-  if ( lhs == 2) hU = &U;
+
+  if ( get_optional_args(stack,rhs,opt,opts,&select) == FAIL) return RET_BUG;
+  
+  if ( select != NULL) 
+    {
+      /* optional argument for eigenvalues selection */
+      if (IsString(select) )
+	{
+	  char *str = ((NspSMatrix *) select)->S[0];
+	  if ( strcmp(str,"c") ==0) 
+	    {
+	      F= nsp_dschur_cont_stable;
+	      Fc= nsp_zschur_cont_stable;
+	      hDim = &Dim;
+	    }
+	  else if ( strcmp(str,"d") ==0) 
+	    {
+	      F= nsp_dschur_discr_stable;
+	      Fc= nsp_zschur_discr_stable;
+	      hDim = &Dim;
+	    }
+	  else
+	    {
+	      Scierror("Error: optional argument sort, when given as a string should be 'c' or 'd'\n");
+	      return RET_BUG;
+	    }
+	}
+    }
+  /* check if U is requested */
+
+  if ( lhs == 3 || lhs == 2 ) hU = &U;
+
   if ( A->rc_type == 'r' ) 
     {
-      if( intdgees0(A,hU,NULL,NULL)== FAIL)  return RET_BUG;
+      if( intdgees0(A,hU,F,hDim)== FAIL)  return RET_BUG;
     }
   else 
     {
-      if ( intzgees0(A,hU,NULL,NULL)== FAIL)  return RET_BUG;
+      if ( intzgees0(A,hU,Fc,hDim)== FAIL)  return RET_BUG;
     }
-  if ( lhs < 2) 
-    NSP_OBJECT(A)->ret_pos = 1;
-  else 
+  switch (lhs ) 
     {
-      NthObj(2) = NSP_OBJECT(A);
-      NSP_OBJECT(A)->ret_pos = 2;
+    case -1:
+    case 0:
+    case 1: 
+      NSP_OBJECT(A)->ret_pos = 1;
+      if (  select != NULL && Dim != NULL ) nsp_matrix_destroy(Dim);
+      break;
+    case 2: 
+      if ( select == NULL) 
+	{
+	  NthObj(2) = NSP_OBJECT(A);
+	  NSP_OBJECT(A)->ret_pos = 2;
+	  NthObj(1) = NSP_OBJECT(U);
+	  NthObj(1)->ret_pos = 1;
+	}
+      else 
+	{
+	  NthObj(2) = NSP_OBJECT(Dim);
+	  NSP_OBJECT(Dim)->ret_pos = 2;
+	  NthObj(1) = NSP_OBJECT(U);
+	  NthObj(1)->ret_pos = 1;
+	  nsp_matrix_destroy(A);
+	}
+      break;
+    case 3: 
+      NthObj(3) = NSP_OBJECT(A);
+      NSP_OBJECT(A)->ret_pos = 3;
+      NthObj(2) = NSP_OBJECT(Dim);
+      NSP_OBJECT(Dim)->ret_pos = 2;
       NthObj(1) = NSP_OBJECT(U);
       NthObj(1)->ret_pos = 1;
+      break;
     }
   return Max(lhs,1);
 }

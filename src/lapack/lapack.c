@@ -2701,59 +2701,69 @@ static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,
 
 int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMatrix **Sdim) 
 {
-  NspMatrix *wr,*wi,*dwork,*iwork;
-  int info,lworkMin,sdim; 
+  NspMatrix *wr=NULL,*wi=NULL,*dwork=NULL,*iwork=NULL;
+  char jobN[]="N", *job= jobN;
+  double *Uval=NULL, dwork_opt;
+  int info,lworkMin=-1,sdim; 
   int m = A->m, n = A->n, *Iwork = NULL;
   char *sort = "N";
-  /*  A = [] return empty matrices */ 
+
+  /* to facilitate cleaning in case of bug */
+
+  if ( U != NULL) *U=NULL;
+  if ( Sdim != NULL) *Sdim=NULL;
   
-  if ( A->mn == 0 ) {
-    if ( U != NULL) {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+  /*  A = [] return empty matrices */ 
+
+  if ( A->mn == 0 ) 
+    {
+      if ( U != NULL) {
+	if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto fail;
+      }
+      if ( Sdim != NULL) {
+	if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto fail;
+	(*Sdim)->R[0] = 0;
+      }
+      return OK ; 
     }
-    if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
-      (*Sdim)->R[0] = 0;
-    }
-    return OK ; 
-  }
   
   if (m != n) { 
-
-
     Scierror("Error: first argument of schur should be square and it is (%dx%d)\n", 
 	     m,n);
-    return FAIL;
+    goto fail;
   }
 
-  if (( wr =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( wi =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( wr =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;
+  if (( wi =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;
 
-  lworkMin = n * 3;
-
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
-  
   if ( F != NULL ) 
     {
-      if (( iwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;   
+      if (( iwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;   
       Iwork = (int *) iwork->R;
       sort = "S";
     }
 
   if ( U != NULL ) 
     {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-      C2F(dgees)("V",sort, F, &n,A->R,&n, &sdim,wr->R, wi->R,(*U)->R,
-		 &n, dwork->R, &lworkMin, Iwork, &info, 4L, 4L);
-    }
-  else 
-    { 
-      C2F(dgees)("N",sort, F, &n,A->R,&n, &sdim,wr->R, wi->R,NULL,
-		 &n, dwork->R, &lworkMin, Iwork, &info, 4L, 4L);
+      job = "V";
+      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto fail;   
+      Uval = (*U)->R;      
     }
 
+  /* get work size */
+
+  C2F(dgees)(job,sort, F, &n,A->R,&n, &sdim,wr->R, wi->R,Uval,
+	     &n, &dwork_opt, &lworkMin, Iwork, &info, 4L, 4L);
+
+  lworkMin = dwork_opt;
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) goto fail;   
+
+  
+  C2F(dgees)(job,sort, F, &n,A->R,&n, &sdim,wr->R, wi->R,Uval,
+	     &n, dwork->R, &lworkMin, Iwork, &info, 4L, 4L);
+
   if ( Sdim != NULL ) {
-    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto fail;   
     (*Sdim)->R[0] = sdim;
   }
 
@@ -2765,73 +2775,116 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
     else if (info == n + 2) {
       Scierror("Error: in schur roundoff errors make leading eigenvalues no longer satisfy criterion\n");
     }
-    return FAIL;
+    goto fail;
   }
-  /* menage XXXX */ 
+
+  if ( wr != NULL) nsp_matrix_destroy(wr); 
+  if ( wi != NULL) nsp_matrix_destroy(wi); 
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
 
   return OK ;
+ fail:
+  if ( U != NULL) nsp_matrix_destroy(*U);
+  if ( Sdim != NULL) nsp_matrix_destroy(*Sdim);
+  if ( wr != NULL) nsp_matrix_destroy(wr); 
+  if ( wi != NULL) nsp_matrix_destroy(wi); 
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
+  return FAIL;
 }
 
 /* 
- * XXX  couvre lecas int C2F(intzschur)(fname, fname_len)
- * XXX  Attention rwork est pas créée a finir 
+ * complex case 
  */
 
 int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) 
 {
-  NspMatrix *W,*dwork,*rwork=NULLMAT,*iwork=NULLMAT;
-  int info,lworkMin,sdim; 
+  char jobN[]="N", *job= jobN;
+  doubleC *Uval=NULL, dwork_opt;
+  NspMatrix *W=NULLMAT,*dwork=NULLMAT,*rwork=NULLMAT,*iwork=NULLMAT;
+  int info,lworkMin,sdim, *Iwork=NULL; 
   int m = A->m, n = A->n;
   char *sort = "N";
+
+  /* to facilitate cleaning in case of bug */
+
+  if ( U != NULL) *U=NULL;
+  if ( Sdim != NULL) *Sdim=NULL;
+
   /*  A = [] return empty matrices */ 
   
   if ( A->mn == 0 ) {
     if ( U != NULL) {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto fail;   
     }
     if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto fail;   
       (*Sdim)->R[0] = 0;
     }
     return OK ; 
   }
   
   if (m != n) { 
-    Scierror("Error: first argument of schur should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
+    Scierror("Error: first argument of schur should be square and it is (%dx%d)\n", m,n);
+    goto fail;
   }
 
-  if (( W =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
+  if (( W =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) goto fail;
 
-  lworkMin = n * 2;
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
+  if (( rwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;
   
   if ( F != NULL ) 
     {
-      if (( iwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;   
+      if (( iwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;   
       sort = "S";
+      Iwork = iwork->I;
     }
 
   if ( U != NULL ) 
     {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-      C2F(zgees)("V",sort, F, &n,A->C,&n, &sdim,W->C,(*U)->C,
-		 &n, dwork->C, &lworkMin,rwork->R, iwork->I, &info, 4L, 4L);
+      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto fail;   
+      Uval = (*U)->C;
+      job = "V";
     }
-  else 
-    { 
-      C2F(zgees)("N",sort, F, &n,A->C,&n, &sdim,W->C,NULL,
-		 &n, dwork->C, &lworkMin,rwork->R, iwork->I, &info, 4L, 4L);
-    }
+
+  lworkMin = -1; 
+  C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
+	     &n, &dwork_opt, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+  
+  lworkMin = dwork_opt.r;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) goto fail;   
+
+  C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
+	     &n, dwork->C, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+
+  if ( Sdim != NULL ) {
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto fail;   
+    (*Sdim)->R[0] = sdim;
+  }
+
   if (info > 0) {
     Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
-    return FAIL;
+    goto fail;
   }
 
   /* menage XXXX */ 
 
+  if ( W != NULL) nsp_matrix_destroy(W); 
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( rwork != NULL) nsp_matrix_destroy(rwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
+
   return OK ;
+
+ fail:
+  if ( U != NULL) nsp_matrix_destroy(*U);
+  if ( Sdim != NULL) nsp_matrix_destroy(*Sdim);
+  if ( W != NULL) nsp_matrix_destroy(W); 
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( rwork != NULL) nsp_matrix_destroy(rwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
+  return FAIL;
 }
 
 
@@ -3910,3 +3963,92 @@ static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag)
     }
   return AA;
 }
+
+
+
+
+/* 
+ *  selects the stable eigenvalues for continuous time. 
+ */
+
+int nsp_dschur_cont_stable(const double *reig,const double *ieig)
+{
+  return  *reig < 0.0; 
+}
+
+/*
+ *    selects the stable eigenvalues for discrete-time 
+ */
+
+int nsp_dschur_discr_stable(const double *reig,const double *ieig)
+{
+  return hypot(*reig, *ieig) < 1.;
+}
+
+/*
+ *   selects the stable generalized eigenvalues for continuous-time 
+ */
+
+int nsp_dgschur_cont_stable(double *alphar, double *alphai, double *beta)
+{
+  return  ((*alphar < 0. && *beta > 0.) ||( *alphar > 0. && *beta < 0.)) 
+    && abs(*beta) > abs(*alphar) * nsp_dlamch("p");
+}
+
+/*
+ *   selects the stable generalized eigenvalues for discrete-time 
+ */
+
+
+int nsp_dgschur_discr_stable(double *alphar, double *alphai, double *beta)
+{
+  return  hypot(*alphar, *alphai) < abs(*beta);
+}
+
+/*
+ *  selects the stable eigenvalues for complex matrices and continuous time
+ */
+
+int nsp_zschur_cont_stable(const doubleC *eig)
+{
+  return  eig->r < 0.;
+}
+
+/*
+ *  selects the stable eigenvalues for complex matrices and discrete time
+ */
+
+int nsp_zschur_discr_stable(const doubleC *eig)
+{
+  return  nsp_abs_c(eig) < 1.;
+} 
+
+/*
+ *  selects the stable generalized eigenvalues for complex matrices and continuous time
+ */
+
+int nsp_zgschur_cont_stable(const doubleC *alpha, doubleC *beta)
+{
+  doubleC z;
+  if (nsp_abs_c(beta) != 0.) 
+    {
+      nsp_div_cc(alpha,beta,&z);
+      return  z.r < 0.;
+    } 
+  else 
+    {
+      return 0;
+    }
+}
+
+/*
+ *  selects the stable generalized eigenvalues for complex matrices and discrete time
+ */
+
+int nsp_zgschur_discr_stable(const doubleC *alpha, const doubleC *beta)
+{
+  return  nsp_abs_c(alpha) < nsp_abs_c(beta);
+} 
+
+
+
