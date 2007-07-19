@@ -70,6 +70,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
   static int first = 0;
+  GdkColor white={0,0,0,0};
+  GdkColor black={0,65535,65535,65535};
   BCG *NewXgc ;
   /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX */
   int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
@@ -107,6 +109,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->context = NULL;
   private->desc = NULL;
   private->mark_desc = NULL;
+  private->gcol_bg = white;
+  private->gcol_fg = black;
 #ifdef PERIGL 
   private->ft2_context = NULL;
   private->gdk_only= FALSE;
@@ -142,15 +146,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
       first++;
     }
 
-  if ( win != NULL )
-    {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
-    }
-  else 
-    {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
-    }
-
   /* recheck with valgrind 
    * valgrind detecte des variables non initialisees dans 
    * initialize a cause d'initialisation croisées 
@@ -175,6 +170,22 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->NumForeground=0;
   NewXgc->NumHidden3d=0; 
   NewXgc->Autoclear=0;
+  /* default colormap not instaled */
+  NewXgc->CmapFlag = -1; 
+  /* default resize not yet defined */
+  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
+  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+
+  if ( win != NULL )
+    {
+      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
+    }
+  else 
+    {
+      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
+    }
+
+  
 
   /* next values are to be set since initialize_gc 
    * action depend on the current state defined by these 
@@ -186,11 +197,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 #ifdef PERIGL 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
-  /* default colormap not instaled */
-  NewXgc->CmapFlag = -1; 
-  /* default resize not yet defined */
-  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
-  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
 
   nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
 
