@@ -504,6 +504,11 @@ void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c)
   if (! fmt->bank_format)
     {
       double i = c.i;
+      if ( c.i == 0.0) 
+	{
+	  nsp_pr_white(fmt->curr_imag_fw+2);
+	  return;
+	}
       if (i < 0)
 	{
 	  Sciprintf("-");
