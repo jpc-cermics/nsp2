@@ -2143,6 +2143,12 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 	      char *elt;
 	      int step=elt_size_A;
 	      char *to=(char *) A->S, *fromA = (char *) A->S;
+	      /* take care that resize can allocate values thus we have to free. 
+	       * give an option to resize ? 
+	       */
+	      if (A->S+Am*A->n  != NULL)
+		for ( j= Am*A->n ; j < A->mn ; j++)
+		  MAT_INT(type)->free_elt((void **) A->S+j);
 	      for ( j = A->n-1  ; j >= 1 ; j-- ) 
 		{
 		  memmove(to +j*(A->m)*step,fromA+j*Am*step,Am*step);
