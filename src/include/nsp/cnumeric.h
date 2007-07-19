@@ -25,7 +25,7 @@ void nsp_pow_dc( double x, const doubleC *y,doubleC *res);
 void nsp_pow_ci(const  doubleC *x, int p,doubleC *y);
 void nsp_sin_c(const  doubleC *x,doubleC *res);
 void nsp_sinh_c(const  doubleC *x,doubleC *res);
-void nsp_div_cc( const doubleC *x,doubleC *y,doubleC *res);
+void nsp_div_cc( const doubleC *x,const doubleC *y,doubleC *res);
 void nsp_div_dc( double x,const doubleC *y,doubleC *res);
 void nsp_sqrt_c(const  doubleC *x,doubleC *res);
 void nsp_prod_c( doubleC *x,const doubleC *y);

@@ -337,7 +337,7 @@ void nsp_sinh_c(const doubleC *x, doubleC *res)
  * 
  * 
  **/
-void nsp_div_cc(const doubleC *x, doubleC *y, doubleC *res)
+void nsp_div_cc(const doubleC *x,const  doubleC *y, doubleC *res)
 {
   double t,d,loc;
   if ( Abs (y->r) <= Abs (y->i) )
