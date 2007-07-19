@@ -44,17 +44,20 @@ user_preferences user_pref= {
   TRUE /* only print if active is true */
 };
 
-/*
- * Utility Functions used to get elements 
- * of strutures (NspMatrix SpMatrix ....)
- * in a structure independant way.
- * In the way iterator works. 
- * 
- * Init function are used for initialization 
- * Next : used to get next value until end 
- */
 
-/* generic code */
+/**
+ * gen_any_element_is_negative:
+ * @M: a void pointer 
+ * @Init: initialize iterator 
+ * @Next: get next element 
+ * 
+ * generic function which checks if any element of given object @M is negative. 
+ * @Init function is used for initialization of iteration
+ * and @Next is used to get next value until end of object. Returns 1 if 
+ * a negative element is found.
+ * 
+ * Returns: 1 or 0.
+ **/
 
 int gen_any_element_is_negative(const void *M, nsp_it_init Init, nsp_it_next Next)
 {
@@ -79,11 +82,20 @@ int gen_any_element_is_negative(const void *M, nsp_it_init Init, nsp_it_next Nex
 }
 
 
-/*
- * int XX_any_element_is_inf_or_nan (M,Init,Next)
- * Checks if NspMatrix contains Inf or Nan 
- * Real or complex matrix 
- */
+
+/**
+ * gen_any_element_is_inf_or_nan:
+ * @M: a void pointer 
+ * @Init: initialize iterator 
+ * @Next: get next element 
+ *
+ * generic function which checks if any element of given object @M is inf or nan.
+ * @Init function is used for initialization of iteration
+ * and @Next is used to get next value until end of object. Returns 1 if 
+ * an inf or nan is found.
+ * 
+ * Returns: 1 or 0.
+ **/
 
 int gen_any_element_is_inf_or_nan (const void *M, nsp_it_init Init, nsp_it_next Next)
 {
@@ -109,10 +121,21 @@ int gen_any_element_is_inf_or_nan (const void *M, nsp_it_init Init, nsp_it_next 
   return 0;
 }
 
-/*
- * Checks if Matrix contains Inf or Nan or Ints
- * Real or complex matrix 
- */
+
+/**
+ * gen_all_elements_are_int_or_inf_or_nan:
+ * @M: a void pointer 
+ * @Init: initialize iterator 
+ * @Next: get next element 
+ *
+ * generic function which checks if all element of given object @M are inf or nan or 
+ * can be casted to integers. 
+ * @Init function is used for initialization of iteration
+ * and @Next is used to get next value until end of object. Returns 1 in case of 
+ * success.
+ * 
+ * Returns: 1 or 0.
+ **/
 
 int gen_all_elements_are_int_or_inf_or_nan (const void *M, nsp_it_init Init, nsp_it_next Next)
 {
@@ -145,17 +168,28 @@ int gen_all_elements_are_int_or_inf_or_nan (const void *M, nsp_it_init Init, nsp
   return 1;
 }
 
-/*
- * max(abs(m)) for real matrix 
- * max(abs(real(m))) or max(abs(imag(m))) for complex matrix 
- *        according to the flag value ( flag = 'r' or 'c') 
- *        ignoring isinf and isnan values 
- * same for min 
- */
+/**
+ * gen_pr_min_max_internal:
+ * @M: a void pointer 
+ * @flag: 
+ * @dmin: 
+ * @dmax: 
+ * @Init: initialize iterator 
+ * @Next: get next element 
+ *
+ * generic function which returns in @dmin and @dmax 
+ * max(abs(m)) for real matrix and max(abs(real(m))) or max(abs(imag(m))) for complex matrix 
+ * according to the flag value ( flag = 'r' or 'c'). inf and nan values are ignored. 
+ * @Init function is used for initialization of iteration
+ * and @Next is used to get next value until end of object.
+ * this function is used to find a common format for displaying numbers, exact zeros are ignored 
+ * when computing @dmin and @dmax.
+ *
+ **/
 
 void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dmax, nsp_it_init Init, nsp_it_next Next)
 {
-  int work[2];
+  int work[2],zero = FALSE;
   double r;
   doubleC c;
   char type = Init(M,work);
@@ -167,6 +201,7 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
       while ( Next(M,&r,&c,work) != 0) 
 	{ 
 	  if (isinf (r) || isnan(r) )  continue ;
+	  if ( r == 0.0 ) {zero = TRUE ; continue;}
 	  if ( Abs(r) < *dmin ) *dmin = Abs(r);
 	  if ( Abs(r) > *dmax ) *dmax = Abs(r);
 	} 
@@ -177,6 +212,7 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
 	  while ( Next(M,&r,&c,work) != 0) 
 	    { 
 	      if ( isinf (c.r) || isnan(c.r)) continue;
+	      if ( c.r == 0.0 ) {zero = TRUE ; continue;}
 	      if ( Abs(c.r) < *dmin ) *dmin = Abs(c.r);
 	      if ( Abs(c.r) > *dmax ) *dmax = Abs(c.r);
 	    } 
@@ -186,11 +222,18 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
 	  while ( Next(M,&r,&c,work) != 0) 
 	    { 
 	      if ( isinf (c.i) || isnan(c.i)) continue;
+	      if ( c.i == 0.0 ) {zero = TRUE ; continue;}
 	      if ( Abs(c.i) < *dmin ) *dmin = Abs(c.i);
 	      if ( Abs(c.i) > *dmax ) *dmax = Abs(c.i);
 	    } 
 	}
       break;
+    }
+  if ( zero == TRUE ) 
+    {
+      /* if a zero was found and ignored check */
+      if ( *dmax ==   DBL_MIN ) *dmax=0.0;
+      if ( *dmin ==   DBL_MAX ) *dmin=0.0;
     }
 }
 
@@ -424,8 +467,11 @@ void nsp_pr_any_float (const char *fmt, double d, int fw)
 	}
       else
 	{
-	  /*** XXXXX : can be improved : retirer les 000e+00 a la fin ? **/
-	  Sciprintf(fmt,d);	  
+	  /* special case for zero as in matlab */
+	  if ( d == 0 ) 
+	    Sciprintf("%*d",fw,0);
+	  else
+	    Sciprintf(fmt,d);	  
 	}
     }
   else
