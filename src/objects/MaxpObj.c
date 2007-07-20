@@ -2410,7 +2410,7 @@ static OpWrapTab Matrix_func[]={
   {"acosh_mp",int_mxacosh,int_mp_wrap1},
   {"addcols_mp_mp",int_mpaddcols ,NULL},
   {"addrows_mp_mp",int_mpaddrows ,NULL},
-  {"_and_mp_mp",int_mpmini,NULL},
+  {"and_mp_mp",int_mpmini,NULL},
   {"arg_mp",int_mxarg,int_mp_wrap1},
   {"asin_mp",int_mxasin,int_mp_wrap1},
   {"asinh_mp",int_mxasinh,int_mp_wrap1},
