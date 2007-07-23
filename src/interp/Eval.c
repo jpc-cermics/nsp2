@@ -786,7 +786,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  Scierror("Error: too many values (%d) returned as a case condition evaluation\n",nargs);
 		  SHOWBUG(stack,RET_BUG,L1);
 		}
-
+	      
 	      else if ( nargs == 0 ) 
 		{
 		  Scierror("Error: case expression which evaluation returns no value\n");
@@ -799,28 +799,94 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	   * the case expression is at position first+1 
 	   * note that the value at position first is preserved at first-1 
 	   * and cannot be destroyed since it has a name 
+	   * 
 	   */
-	  nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
-	  if ( nargs != 1 ) 
+	  if (IsCells(stack.val->S[first+1])) 
 	    {
-	      if ( nargs > 1 ) 
+	      /* when case expression is a cell  {val1,....,valn} */
+	      int ic,ok =FALSE;
+	      NspObject *C = stack.val->S[first+1];
+	      /* 
+	       * Scierror("Error: case {...} is to be done to match matlab\n");
+	       * SHOWBUG(stack,RET_BUG,L1);
+	       */
+	      if ( C->basetype == NSP_TYPE_BASE(nsp_type_hobj)) C = ((NspHobj *) C)->O;
+	      /* the test is to be done looping on elements of the cell */
+	      for ( ic = 0 ; ic < ((NspCells *) C)->mn; ic++)
 		{
-		  /* to many argument returned we ignore the last ones */
-		  nsp_void_seq_object_destroy(stack,first+1+2,first+1+n+1);
-		  nargs=1;
+		  /* clean from previous iteration */
+		  if ( stack.val->S[first] != stack.val->S[first-1])
+		    {
+		      nsp_void_object_destroy(&stack.val->S[first]);
+		      stack.val->S[first]= stack.val->S[first-1];
+		    }
+		  stack.val->S[first+1]= ((NspCells *) C)->objs[ic];
+		  if ( stack.val->S[first+1] == NULL) continue; 
+		  /* test for element ic */
+		  nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
+		  if ( nargs != 1 ) 
+		    {
+		      /* destroy the case value if needed */
+		      nsp_void_object_destroy(&C);
+		      if ( nargs > 1 ) 
+			{
+			  /* to many argument returned we ignore the last ones */
+			  nsp_void_seq_object_destroy(stack,first+1,first+1+n);
+			  nargs=1;
+			}
+		      else if ( nargs == 0 ) 
+			{
+			  Scierror("The comparison between select value and case value has no value\n");
+			  SHOWBUG(stack,RET_BUG,L1);
+			}
+		      else 
+			{
+			  SHOWBUG(stack,nargs,L1);
+			}
+		    }
+		  /* */ 
+		  /* Now check if comparison is true */ 
+		  rep =nsp_object_is_true(stack.val->S[first]); 
+		  if ( rep == TRUE) 
+		    {
+		      /* Ok we have to clean and switch to then part */
+		      nsp_void_object_destroy(&C);
+		      ok = TRUE;
+		      break;
+		    }
 		}
-	      else if ( nargs == 0 ) 
+	      /* all the comparisons have led to false : we return */
+	      if ( ok == FALSE ) 
 		{
-		  Scierror("The comparison between select value and case value has no value\n");
-		  SHOWBUG(stack,RET_BUG,L1);
+		  nsp_void_object_destroy(&C);
+		  return 1; 
 		}
-	      else 
-		SHOWBUG(stack,nargs,L1);
 	    }
-	  /* Now evaluate the then part if OK */ 
-	  rep =nsp_object_is_true(stack.val->S[first]); 
-	  if ( rep == FALSE) return 1; 
-	  /* */
+	  else 
+	    {
+	      /* when case expression is not a cell */
+	      nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
+	      if ( nargs != 1 ) 
+		{
+		  if ( nargs > 1 ) 
+		    {
+		      /* to many argument returned we ignore the last ones */
+		      nsp_void_seq_object_destroy(stack,first+1+2,first+1+n+1);
+		      nargs=1;
+		    }
+		  else if ( nargs == 0 ) 
+		    {
+		      Scierror("The comparison between select value and case value has no value\n");
+		      SHOWBUG(stack,RET_BUG,L1);
+		    }
+		  else 
+		    SHOWBUG(stack,nargs,L1);
+		}
+	      /* Now check if comparison is true */ 
+	      rep =nsp_object_is_true(stack.val->S[first]); 
+	      if ( rep == FALSE) return 1; 
+	    }
+	  /* evaluate the then part if OK  */
 	  nargs=nsp_eval_arg(L1->next,&stack,first+1,1,1,display);
 	  if ( nargs >= 0 ) nargs +=1;
 	  return nargs;
@@ -909,6 +975,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 /*   nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL); */
   return nargs ;
 }
+
 
 
 /**
@@ -2951,13 +3018,13 @@ static int show_eval_bug(Stack stack,int n, PList L)
 
 /**
  * nsp_void_seq_object_destroy:
- * @stack: 
+ * @stack: objects stack
  * @from: first object to be removed 
  * @to: last object to be remove is @to-1
  * 
- * deallocate a sequence of objects 
- * using nsp_void_object_destroy
- * and remove them from @stack.
+ * deallocate a sequence of objects from position @from to position @to-1
+ * using nsp_void_object_destroy and remove them from @stack.
+ * 
  **/
 
 void nsp_void_seq_object_destroy(Stack stack,int from, int to)
