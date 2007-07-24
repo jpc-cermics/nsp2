@@ -2194,39 +2194,72 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
   PList plist1 = NULLPLIST ;
+  /* we parse a row expression */
   if ( T->tokenv.id == stop ) 
     {
+      /* row is empty and ended by ] */
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;] should not be used \n");
     }
   else if ( T->tokenv.id == SEMICOLON_OP )
     {
+      /* row is empty and ended by ; */
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;; should not be used \n");
     }
   else
     {
+      /* parse a set of expressions separated by , the white space case is 
+       * parsed below in the while 
+       */ 
       if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
     }
-  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop && T->tokenv.id != '#' &&
-	 T->tokenv.id != COMMENT )
+  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop 
+	 && T->tokenv.id != '#' &&  T->tokenv.id != COMMENT )
     {
       PList plist2=NULLPLIST;
       if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
-      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist1,colconcat,2,T->tokenv.Line) == FAIL) return(FAIL);
-      plist2=plist1;
-      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
+      /* We have to take care here of the merge of CELLCOLCONCAT when plist1 and plist2 are 
+       * both  CELLCOLCONCAT. This happens when colconcat is performed with white spaces. 
+       */
+      if ( plist1->type == PLIST && ((PList) plist1->O)->type == CELLCOLCONCAT ) 
+	{
+	  PList loc1 = (PList) plist1->O;
+	  PList loc2 = (PList) plist2->O;
+	  if (  plist2->type == PLIST && loc2->type == CELLCOLCONCAT )
+	    {
+	      /* merge the two cellcolconcat */
+	      if (nsp_parse_append(&loc1,&loc2->next) == FAIL) return(FAIL);
+	      loc1->arity += loc2->arity;
+	      /* free unused part of loc2 */
+	      loc2->next = NULL;
+	      loc2->arity= 0;
+	      nsp_plist_destroy(&plist2);
+	    }
+	  else 
+	    {
+	      if (nsp_parse_add_list(&loc1,&plist2) == FAIL) return(FAIL);
+	      loc1->arity++;
+	    }
+	}
+      else 
+	{
+	  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,colconcat,2,T->tokenv.Line) == FAIL) return(FAIL);
+	  plist2=plist1;
+	  if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
+	}
     }
   nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
 
+
 static int parse_colcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
-  return (parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop));
+  return parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop);
 }
   
 
