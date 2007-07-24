@@ -958,6 +958,11 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
     {
       if ((L =(NspObject *) GetCells(stack,1 )) == NULLOBJ ) return RET_BUG;
     }
+  else 
+    {
+      Scierror("Error: cannot extract element specified by a list argument\n");
+      return RET_BUG;
+    }
   L_name=Ocheckname(L,NVOID);
   if ((Lind = GetList(stack,2 )) == NULLLIST) return RET_BUG;
   C= Lind->first;
