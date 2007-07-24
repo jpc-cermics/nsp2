@@ -989,9 +989,16 @@ static int is_dot_alpha(Tokenizer *T)
 
 static int is_transpose(Tokenizer *T)
 {
-  if ( T->tokenv.id == QUOTE_OP && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' ) 
-    return QUOTE_OP;
-  else if ( T->tokenv.id == '.' && T->tokenv.NextC == '\'' ) 
+  if ( T->tokenv.id == QUOTE_OP && T->curline.lpt2 -2 >= 0 
+       &&  T->curline.buf[T->curline.lpt2-2] != ' '
+       &&  T->curline.buf[T->curline.lpt2-2] != '\t' ) 
+    {
+      return QUOTE_OP;
+    }
+  else if ( T->tokenv.id == '.' && T->tokenv.NextC == '\'' 
+	    && T->curline.lpt2 -2 >= 0 
+	    &&  T->curline.buf[T->curline.lpt2-2] != ' '
+	    &&  T->curline.buf[T->curline.lpt2-2] != '\t' ) 
     {
       T->tokenv.id = DOTPRIM ;  T->GetChar(T);
       return DOTPRIM;
