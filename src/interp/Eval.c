@@ -386,9 +386,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:
 	  /* 
-	   * CELLROWCONCAT ( exp1 ..... expn CELLROWCONCAT) 
-	   * is in fact a row cell creation 
-	   * it is a nary operator.
+	   * a cell is always (P_CELL (CELLDIAGCONCAT arg1 ... argn ))
+	   *                   argi = (CELLROWCONCAT carg1 .... cargn))
+	   *                   cargi =(CELLCOLCONCAT exp1 .... expn) 
+	   * Thus CELLROWCONCAT and CELLDIAGCONCAT could be accelerated 
+	   * when they are of arity one since they do nothing in that case. 
 	   */
 	  loc = L1;
 	  fname = ( L->type == CELLCOLCONCAT) 
