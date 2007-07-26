@@ -1767,6 +1767,46 @@ static int int_spcolmatrix__sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
   return 1;
 }
 
+
+static int int_spcolmatrix_isnan(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str = NULL;
+  NspSpColMatrix *Res,*HMat; 
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((HMat = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ( rhs == 2) 
+    {
+      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+    }
+  else 
+    { str = "*"; }
+  if ((Res= nsp_spcolmatrix_isnan(HMat,str)) == NULLSPCOL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
+static int int_spcolmatrix_isinf(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str = NULL;
+  NspSpColMatrix *Res,*HMat; 
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((HMat = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ( rhs == 2) 
+    {
+      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+    }
+  else 
+    { str = "*"; }
+  if ((Res= nsp_spcolmatrix_isinf(HMat,str)) == NULLSPCOL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
+
 /* added by Bruno : return the number of non zero elements */
 static int int_spcolmatrix_nnz(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2615,6 +2655,8 @@ static OpTab SpColMatrix_func[]={
   {"imag_sp", int_spcolmatrix_imag},
   {"isreal_sp", int_spcolmatrix_isreal},
   {"norm_sp", int_spcolmatrix_norm},
+  {"isnan_sp",int_spcolmatrix_isnan},
+  {"isinf_sp",int_spcolmatrix_isinf},
   {(char *) 0, NULL}
 };
 

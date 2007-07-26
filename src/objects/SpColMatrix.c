@@ -5043,7 +5043,7 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
       if ( count != 0 ) 
 	{
 	  int ndel =nsp_spcolmatrix_compress_col(Sum,0);
-	  if (nsp_spcolmatrix_resize_col(Sum,0,A->D[0]->size-ndel ) == FAIL) return NULLSPCOL;
+	  if (nsp_spcolmatrix_resize_col(Sum,0,A->m-ndel ) == FAIL) return NULLSPCOL;
 	}
       break;
     case 'r':
@@ -6871,5 +6871,236 @@ double nsp_spcolmatrix_vnorm(NspSpColMatrix *A, double p)
       nsp_matrix_destroy(V);
     }
   return norm;
+}
+
+
+/**
+ * nsp_spcolmatrix_isnan:
+ * @A: a #NspSpColMatrix
+ * @flag: a string "c", or "r", or "f", or "." or a NULL Pointer
+ * 
+ * if @flag is not given (or ".") then a new #NspSpColMatrix is returned 
+ * containing for each entries of the matrix @A the value of isinf(A(i;j)).
+ * 
+ * if B= 'c' a sparse column vector is returned. The i-th row of the column vector 
+ * contains a non null entry if the coresponding row of @A contains a nan.
+ * if B= 'r' a sparse row vector is returned. The i-th column of the row vector 
+ * contains a non null entry if the coresponding column of @A contains a nan.
+ * if B= 'f'. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
+ * 
+ * The returned type should be changed to boolean sparse when thi stype will be implemented.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+typedef int (*Fis)(double) ;
+static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *flag, Fis F);
+
+static int isnan_f(double r)
+{
+  /* isnan is a macro */
+  return isnan(r);
+}
+
+NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,const char *flag)
+{
+  return nsp_spcolmatrix_isnan_gen(A,flag,isnan_f);
+}
+
+
+static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *flag, Fis F)
+{
+  int S;
+  NspSpColMatrix *Res=NULL;
+  int i,k,count,j;
+  char c = ( flag == NULL) ? '.' : flag[0];
+  if ( A->m == 0 || A->n == 0  )
+    {
+      switch (c ) 
+	{
+	case 'F':
+	case 'f': 
+	  return nsp_spcolmatrix_create(NVOID,'r',0,0);
+	case 'c': 
+	case 'C': 
+	  return nsp_spcolmatrix_create(NVOID,'r',A->m,(A->n == 0) ? 0: 1);
+	case 'r': 
+	case 'R':
+	  return nsp_spcolmatrix_create(NVOID,'r',(A->m == 0) ? 0: 1,A->n);
+	case '.':
+	  return nsp_spcolmatrix_create(NVOID,'r',A->m,A->n);
+	defaut: 
+	  Scierror("Error: unknown flag \"%s\" \n",( flag == NULL) ? "" : flag);
+	  return NULLSPCOL;
+	}
+    }
+  switch (c) 
+    {
+    case 'f': 
+    case 'F':
+    case '*':
+      /* return a 1x1 result */
+      if ((Res =nsp_spcolmatrix_create(NVOID,'r',1,1)) == NULLSPCOL) return(NULLSPCOL);
+      switch ( A->rc_type) 
+	{
+	case 'r' : 
+	  S=0;
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->R[j]) ) {  S=1; break;}
+	      if ( S== 1) break;
+	    }
+	  break;
+	case 'c' :  
+	  S = 0; 
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->C[j].r) ||  F(A->D[i]->C[j].i) ) {  S=1; break;}
+	      if ( S== 1) break;
+	    }
+	  break;
+	}
+      if ( S != 0) 
+	{
+	  if (nsp_spcolmatrix_resize_col(Res,0,1)== FAIL) return NULLSPCOL;
+	  Res->D[0]->R[0] = 1;
+	  Res->D[0]->J[0] = 0;
+	}
+      break;
+    case 'c':
+    case 'C':
+      /* return a A->mx1 result */
+      if ((Res =nsp_spcolmatrix_create(NVOID,'r',A->m,1)) == NULLSPCOL) return NULLSPCOL;
+      if (nsp_spcolmatrix_resize_col(Res,0,A->m)== FAIL) return NULLSPCOL;
+      for ( k=0 ; k < Res->D[0]->size ; k++) 
+	{
+	  Res->D[0]->J[k]=k;
+	  Res->D[0]->R[k]=0.0;
+	}
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	    {
+	      switch ( A->rc_type ) 
+		{
+		case 'r' : if ( F( A->D[i]->R[k]))  Res->D[0]->R[A->D[i]->J[k]] =1; break;
+		case 'c' : if ( F( A->D[i]->C[k].r) ||F( A->D[i]->C[k].i)) 
+		    Res->D[0]->R[A->D[i]->J[k]] = 1;break;
+		}
+	    }
+	}
+      count =0;
+      for ( k=0 ; k < Res->D[0]->size ; k++) 
+	{
+	  if ( Res->D[0]->R[k] == 0.0 ) { count=1; Res->D[0]->J[k]=-1;}
+	}
+      if ( count != 0 ) 
+	{
+	  int ndel =nsp_spcolmatrix_compress_col(Res,0);
+	  if (nsp_spcolmatrix_resize_col(Res,0,Res->D[0]->size-ndel ) == FAIL) return NULLSPCOL;
+	}
+      break;
+    case 'r':
+    case 'R':
+      /* return a 1x A->n result */
+      if ((Res =nsp_spcolmatrix_create(NVOID,'r',1,A->n)) == NULLSPCOL) return NULLSPCOL;
+      switch ( A->rc_type) 
+	{
+	case 'r' : 
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      int S=0;
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->R[j]) ) {  S=1; break;}
+	      if ( S != 0.0 ) 
+		{
+		  if (nsp_spcolmatrix_resize_col(Res,i,1)== FAIL) return NULLSPCOL;
+		  Res->D[i]->R[0] = 1;
+		  Res->D[i]->J[0] = 0;
+		}
+	    }
+	  break ;
+	case 'c' :  
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      int S=0;
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->C[j].r) ||  F(A->D[i]->C[j].i) ) {  S=1; break;}
+	      if ( S  != 0.0 ) 
+		{
+		  if (nsp_spcolmatrix_resize_col(Res,i,1)== FAIL) return NULLSPCOL;
+		  Res->D[i]->R[0] = 1;
+		  Res->D[i]->J[0] = 0;
+		}
+	    }
+	  break;
+	}
+      break;
+    case '.': 
+      if ((Res =nsp_spcolmatrix_create(NVOID,'r',A->m,A->n)) == NULLSPCOL) return NULLSPCOL;
+      switch ( A->rc_type) 
+	{
+	case 'r' : 
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      int k=0;
+	      if (nsp_spcolmatrix_resize_col(Res,i,A->D[i]->size)== FAIL) return NULLSPCOL;
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->R[j]) ) 
+		  {
+		    Res->D[i]->J[k]=A->D[i]->J[j];
+		    Res->D[i]->R[k]=1;
+		    k++;
+		  }
+	      if (nsp_spcolmatrix_resize_col(Res,i,k)== FAIL) return NULLSPCOL;
+	    }
+	  break ;
+	case 'c' :  
+	  for ( i = 0 ; i < A->n ; i++) 
+	    {
+	      int k=0;
+	      for ( j = 0 ; j < A->D[i]->size ; j++ ) 
+		if ( F(A->D[i]->C[j].r) ||  F(A->D[i]->C[j].i) )
+		  {
+		    Res->D[i]->J[k]=A->D[i]->J[j];
+		    Res->D[i]->R[k]=1;
+		    k++;
+		  }
+	      if (nsp_spcolmatrix_resize_col(Res,i,k)== FAIL) return NULLSPCOL;
+	    }
+	  break;
+	}
+      break;
+    default: 
+      Scierror("Error: unknown flag \"%s\" \n",( flag == NULL) ? "" : flag);
+      return NULLSPCOL;
+    }
+  return Res;
+}
+
+/**
+ * nsp_spcolmatrix_isinf:
+ * @A: a #NspSpColMatrix
+ * @flag: a string "c", or "r", or "f", or "." or a NULL Pointer
+ * 
+ * if @flag is not given (or ".") then a new #NspSpColMatrix is returned 
+ * containing for each entries of the matrix @A the value of isinf(A(i;j)).
+ * 
+ * if B= 'c' a sparse column vector is returned. The i-th row of the column vector 
+ * contains a non null entry if the coresponding row of @A contains a nan.
+ * if B= 'r' a sparse row vector is returned. The i-th column of the row vector 
+ * contains a non null entry if the coresponding column of @A contains a nan.
+ * if B= 'f'. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
+ * 
+ * The returned type should be changed to boolean sparse when thi stype will be implemented.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,const char *flag)
+{
+  return nsp_spcolmatrix_isnan_gen(A,flag,isinf);
 }
 
