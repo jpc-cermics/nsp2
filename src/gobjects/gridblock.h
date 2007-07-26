@@ -61,7 +61,6 @@ struct _nsp_gridblock {
 };
 #endif 
 
-
 struct _NspGridBlock {
   /*< private >*/
   NspBlock father; 
