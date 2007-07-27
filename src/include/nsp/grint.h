@@ -45,8 +45,7 @@ typedef struct _gr_port gr_port;
 
 struct _gr_port {
   NspObject *object_id ; /* object connected to the associated port or NULL */  
-  void *object_sid;      /* used to keep track of connections while 
-			  * copying or saving */
+  void *object_sid;      /* used to keep track of connections while copying or saving */
   int lock;              /* object is connected through his lock point lock */
   int port;              /* and port number port */
 };

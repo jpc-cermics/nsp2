@@ -147,6 +147,9 @@ extern NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
 extern NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B); 
 extern NspSpColMatrix *nsp_spcolmatrix_divel(NspSpColMatrix *A, NspSpColMatrix *B);
 
+extern NspSpColMatrix *nsp_spcolmatrix_and(NspSpColMatrix *A, NspSpColMatrix *B);
+extern NspSpColMatrix *nsp_spcolmatrix_or(NspSpColMatrix *A, NspSpColMatrix *B);
+
 extern int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B); 
 extern NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *flag, char op); 
 

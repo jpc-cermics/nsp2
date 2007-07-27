@@ -1353,7 +1353,6 @@ static int int_spcolmatrix_plus_sp_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  * OHMat3 = OHMat1-OHMat2 
  * return NULLSPCOLon failure 

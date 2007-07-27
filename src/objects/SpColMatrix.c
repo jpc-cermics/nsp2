@@ -43,7 +43,7 @@ typedef void (*BopBothNull) (SpCol *,char,int *);
 typedef void (*BopRight) (SpCol *,char,int *,SpCol *,char,int);
 
 static NspSpColMatrix *BinaryOp (NspSpColMatrix *,NspSpColMatrix *,BopLeft,BopBoth,
-			      BopRight);
+				 BopRight,int force_real);
 static NspSpColMatrix *BinaryOp_bis(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, 
 				    BopBothNull BinBothNull, BopRight BinRight);
 
@@ -3335,6 +3335,87 @@ static void DivttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype,
 }
 
 
+
+/*
+ * and 
+ */
+
+static void AndLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+{
+  (*count)++;
+}
+
+static void AndBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+{
+  if ( Atype == 'r') 
+    {
+      if ( Btype == 'r' )
+	Li->R[*count] =  (Ai->R[k1] != 0 ) && (Bi->R[k2] != 0) ;
+      else
+	Li->R[*count] =  (Ai->R[k1] != 0 ) && ( Bi->C[k2].i != 0 ||  Bi->C[k2].r != 0) ;
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
+  else 
+    {
+      if ( Btype == 'r' )
+	Li->R[*count] =  ( Ai->C[k1].i != 0 ||  Ai->C[k1].i != 0) && (Bi->R[k2] != 0);
+      else 
+	Li->R[*count] =  ( Ai->C[k1].i != 0 ||  Ai->C[k1].i != 0) && ( Bi->C[k2].i != 0 ||  Bi->C[k2].r != 0);
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
+}
+
+
+static void AndRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+{
+  (*count)++;
+}
+
+
+/*
+ * or 
+ */
+
+static void OrRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+{
+  if ( Btype == 'r') 
+    Li->R[*count] = (Bi->R[k1] != 0 );
+  else 
+    Li->R[*count] = ( Bi->C[k1].i != 0 ||  Bi->C[k1].i != 0);
+   if ( Li->R[*count] != 0.00 ) (*count)++;
+}
+
+static void OrLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+{
+  if ( Atype == 'r') 
+    Li->R[*count] = (Ai->R[k1] != 0 );
+  else 
+    Li->R[*count] = ( Ai->C[k1].i != 0 ||  Ai->C[k1].i != 0);
+   if ( Li->R[*count] != 0.00 ) (*count)++;
+}
+
+static void OrBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+{
+  if ( Atype == 'r') 
+    {
+      if ( Btype == 'r' )
+	Li->R[*count] =  (Ai->R[k1] != 0 ) || (Bi->R[k2] != 0) ;
+      else
+	Li->R[*count] =  (Ai->R[k1] != 0 ) || ( Bi->C[k2].i != 0 ||  Bi->C[k2].r != 0) ;
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
+  else 
+    {
+      if ( Btype == 'r' )
+	Li->R[*count] =  ( Ai->C[k1].i != 0 ||  Ai->C[k2].i != 0) || (Bi->R[k2] != 0);
+      else 
+	Li->R[*count] =  ( Ai->C[k1].i != 0 ||  Ai->C[k2].i != 0) || ( Bi->C[k2].i != 0 ||  Bi->C[k2].r != 0);
+      if ( Li->R[*count] != 0.00 ) (*count)++; 
+    }
+}
+
+
+
 /**
  * nsp_spcolmatrix_add:
  * @A: a #NspSpColMatrix
@@ -3347,7 +3428,7 @@ static void DivttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype,
 
 NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
 {
-  return(BinaryOp(A,B,PlusLeft,PlusBoth,PlusRight));
+  return(BinaryOp(A,B,PlusLeft,PlusBoth,PlusRight,FALSE));
 }
 
 /**
@@ -3361,7 +3442,7 @@ NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
  **/
 NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
 {
-  return(BinaryOp(A,B,MinusLeft,MinusBoth,MinusRight));
+  return(BinaryOp(A,B,MinusLeft,MinusBoth,MinusRight,FALSE));
 }
 
 /**
@@ -3376,8 +3457,42 @@ NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
 
 NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 {
-  return(BinaryOp(A,B,MultttLeft,MultttBoth,MultttRight));
+  return(BinaryOp(A,B,MultttLeft,MultttBoth,MultttRight,FALSE));
 }
+
+/**
+ * nsp_spcolmatrix_and:
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
+ * 
+ * A.*B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_and(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  return(BinaryOp(A,B,AndLeft,AndBoth,AndRight,TRUE));
+}
+
+/**
+ * nsp_spcolmatrix_or:
+ * @A: a #NspSpColMatrix
+ * @B: a #NspSpColMatrix
+ * 
+ * A.*B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_or(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  return(BinaryOp(A,B,OrLeft,OrBoth,OrRight,TRUE));
+}
+
+
+
+
 
 /**
  * nsp_spcolmatrix_divel:
@@ -3621,6 +3736,7 @@ NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B
  * @BinLeft: a function 
  * @BinBoth: a function 
  * @BinRight: a function 
+ * @force_real: an integer to force the result not to be complex.
  * 
  * A generic function for performing Res(i,j) = A(i,j) op B(i,j)
  * assuming that 0 op 0 --> 0  (WARNING)
@@ -3641,7 +3757,8 @@ NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, BopRight BinRight)
+static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, BopRight BinRight,
+				int force_real)
 { 
   int i,count,k1,k2,k;
   NspSpColMatrix *Loc;
@@ -3649,6 +3766,7 @@ static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft Bi
   if ( SameDim(A,B) ) 
     {
       if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
+      if ( force_real ) type ='r';
       Loc =nsp_spcolmatrix_create(NVOID,type, A->m,A->n);
       if ( Loc == NULLSPCOL ) return(NULLSPCOL) ; 
       for ( i = 0 ; i < Loc->n ; i++ ) 
@@ -6929,7 +7047,7 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 	  return nsp_spcolmatrix_create(NVOID,'r',(A->m == 0) ? 0: 1,A->n);
 	case '.':
 	  return nsp_spcolmatrix_create(NVOID,'r',A->m,A->n);
-	defaut: 
+	default: 
 	  Scierror("Error: unknown flag \"%s\" \n",( flag == NULL) ? "" : flag);
 	  return NULLSPCOL;
 	}

@@ -1766,6 +1766,21 @@ static int get_dim_from_string(char *str)
     }
 }
 
+/**
+ * GetDimArg:
+ * @stack: calling stack 
+ * @pos: position in calling stack 
+ * @dim: an integer 
+ * 
+ * Cheks that argument at position @pos in the calling stack 
+ * can be considered as an array dimension specification and 
+ * return the array dimension as an integer. For example to 
+ * denote the row dimension of a matrix one can use 1 or 'r' at 
+ * nsp level. 
+ * 
+ * Returns: %OK or %FAIL 
+ **/
+
 int GetDimArg(Stack stack, int pos, int *dim)
 {
   char *str;
