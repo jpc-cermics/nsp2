@@ -497,7 +497,12 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
 	    { rep = RET_BUG;nsp_file_close_xdr_w(F); break;} 
 	  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /** flag for detecting end of obj at reload **/
           if (nsp_file_close_xdr_w(F) == FAIL) 
-	    { rep = RET_BUG; break;} 
+	    { 
+	      rep = RET_BUG; 
+	      nsp_file_destroy(F);
+	      break;
+	    } 
+	  nsp_file_destroy(F);
         }
       C = C->next ;
     }
