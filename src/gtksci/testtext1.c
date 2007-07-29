@@ -253,6 +253,7 @@ static void nsp_append_history(char *text,view_history *data)
 char *nsp_xhistory_up(view_history *data)
 {
   if ( data == NULL) return NULL;
+  if ( data->history_cur == NULL) return NULL;
   if (data->dir != 0 && data->history_cur->prev != NULL) {
     data->history_cur = data->history_cur->prev;
   }
