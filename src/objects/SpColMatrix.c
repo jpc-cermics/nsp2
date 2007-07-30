@@ -7028,7 +7028,7 @@ NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,const char *flag)
 
 static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *flag, Fis F)
 {
-  int S;
+  int S=0;
   NspSpColMatrix *Res=NULL;
   int i,k,count,j;
   char c = ( flag == NULL) ? '.' : flag[0];
