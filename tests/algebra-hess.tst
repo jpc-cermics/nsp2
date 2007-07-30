@@ -43,6 +43,6 @@ if Err(U'*A*U-H1)  >1000*%eps then pause,end
 A=rand(20,20)+%i*rand(20,20);
 H=hess(A);
 [U,H1]=hess(A);
-if Err(H-H1)>1000*%eps then pause,end
-if Err(U'*U-eye(U'*U)) >1000*%eps then pause,end
-if Err(U'*A*U-H1)  >1000*%eps then pause,end
+if Err(H-H1)>5000*%eps then pause,end
+if Err(U'*U-eye(U'*U)) >5000*%eps then pause,end
+if Err(U'*A*U-H1)  >5000*%eps then pause,end
