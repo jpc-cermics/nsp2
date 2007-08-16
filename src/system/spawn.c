@@ -449,7 +449,7 @@ static gboolean stderr_read( GIOChannel *source, GIOCondition condition, gpointe
 
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 {
-  GIOChannel  *channel_out, *channel_err, *channel_in;
+  GIOChannel  *channel_out, *channel_err, *channel_in=NULL;
   int pid;
   nsp_string res,pr;
   int stdout_pipe=0, stderr_pipe=0,stdin_pipe=0;

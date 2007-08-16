@@ -1238,8 +1238,11 @@ nspg_closure_invalidate(gpointer data, GClosure *closure)
   /* 
    * Scierror("==>nspg_closure_invalidate\n");
    */
-  nsp_object_destroy((NspObject **) &pc->callback);
-  if (pc->extra_args != NULL)nsp_object_destroy((NspObject **) &pc->extra_args);
+  /* NspPList *callback;
+   * NspList *extra_args; 
+   */
+  NspPListDestroy(pc->callback);
+  if (pc->extra_args != NULL)nsp_list_destroy(pc->extra_args);
   if (pc->swap_data != NULL)nsp_object_destroy(&pc->swap_data);
   pc->callback = NULL;
   pc->extra_args = NULL;
