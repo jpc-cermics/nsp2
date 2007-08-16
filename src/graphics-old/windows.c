@@ -615,7 +615,7 @@ static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, doub
     {
       count++; listptr1 = listptr1->next;
     }
-  Sciprintf("Number of scales : %d\n",count);
+  /* Sciprintf("Number of scales : %d\n",count); */
   while ( listptr != NULL) 
     {
       if ( same_subwin( listptr->subwin_rect,subwin_rect)) return listptr;
