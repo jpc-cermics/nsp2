@@ -427,16 +427,17 @@ int int_scalexp_create(Stack stack, int rhs, int opt, int lhs)
  */
 
 /**
- * nsp_scalarexp_byte_eval:
- * @code: 
- * @lcode: 
- * @constv: 
- * @vars: 
- * @res: 
+ * nsp_scalarexp_meth_eval:
+ * @self: 
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
  * 
+ * A method which returns the result of the evaluation of the scalexp expression when
+ * variables are set to the value given by argument. 
  * 
- * 
- * Return value: 
+ * Return value: an integer 
  **/
 
 static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
@@ -477,9 +478,9 @@ static int int_scalexp_meth_eval(NspScalExp *self, Stack stack, int rhs, int opt
  * @opt: 
  * @lhs: 
  * 
+ * byte compile the scalexp expression
  * 
- * 
- * Return value: 
+ * Return value: 0 or %RET_BUG
  **/
 
 static int int_scalexp_meth_bcomp(NspScalExp *self, Stack stack, int rhs, int opt, int lhs)
@@ -1005,7 +1006,7 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 	    if ( Lf->arity == -1 ) 
 	      {
 		/* Sciprintf("Try to detect %s on first call\n",name); */
-		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) >=0)
+		if ((n = is_string_in_struct(name,(void **) expr_functions ,sizeof(expr_func),1)) >=0)
 		  {
 		    Lf->arity = n;
 		  }
