@@ -2831,7 +2831,7 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   }
 
   if (( W =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) goto fail;
-
+  
   if (( rwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto fail;
   
   if ( F != NULL ) 
@@ -2851,8 +2851,11 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   lworkMin = -1; 
   C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
 	     &n, &dwork_opt, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
-  
-  lworkMin = dwork_opt.r;
+  if ( info == 0 ) 
+    lworkMin = Max(dwork_opt.r,2*n);
+  else 
+    lworkMin = Max(1,2*n);
+
   if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) goto fail;   
 
   C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
@@ -2862,13 +2865,33 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto fail;   
     (*Sdim)->R[0] = sdim;
   }
-
-  if (info > 0) {
-    Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
+  
+  if (info > 0 ) {
+    if ( info <= n ) 
+      Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
+    else if ( info == n+1) 
+      {
+	Scierror("Error: in schur, the eigenvalues could not be reordered\n");
+	Scierror("\tbecause some eigenvalues were too close to separate \n");
+	Scierror("\t(the problem  is  very  ill-conditioned);\n");
+      }
+    else if ( info == n+2) 
+      {
+	Scierror("Error: in schur, after reordering, roundoff changed values of some complex\n");
+	
+        Scierror("\teigenvalues so that leading eigenvalues in the Schur form no longer satisfy\n");
+	
+	Scierror("\tSELECT = .TRUE.. This could also be caused by underflow due to scaling.\n");
+      }
     goto fail;
-  }
+  } 
+  else if ( info < 0 )
+    {
+      Scierror("Error: in schur the %d-th argument had an illegal value.\n",-info);
+      goto fail;
+    }
 
-  /* menage XXXX */ 
+  /* menage */ 
 
   if ( W != NULL) nsp_matrix_destroy(W); 
   if ( iwork != NULL) nsp_matrix_destroy(iwork); 
@@ -2887,44 +2910,6 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   return FAIL;
 }
 
-
-/*
- *   [U,T]=schur(A, 'r' | 'c' ) 
- *   like intdgees0 but matrix A can be complexified if 
- *   requested 
- */
-
-int intdgees1(NspMatrix *A,NspMatrix **U,char flag)
-{
-  if ( flag == 'r' ) 
-    return  intdgees0(A,U,NULL,NULL);
-  else   if ( flag == 'c' ) 
-    {
-      if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
-      return  intzgees0(A,U,NULL,NULL);
-    }
-  else 
-    {
-      Scierror("Error: wrong flag '%c' in intdgees1\n",flag);
-      return FAIL;
-    }
-  return OK;
-}
-
-
-int intzgees1(NspMatrix *A,NspMatrix **U,char flag)
-{
-  if ( flag == 'c' ) 
-    {
-      return  intzgees0(A,U,NULL,NULL);
-    }
-  else 
-    {
-      Scierror("Error: wrong flag '%c' in intzgees1\n",flag);
-      return FAIL;
-    }
-  return OK;
-}
 
 /*--------------------------------------------
  * A and B are overwriten by their schur form 

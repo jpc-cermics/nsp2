@@ -648,19 +648,177 @@ extern int nsp_dschur_discr_stable(const double *reig,const double *ieig);
 extern int nsp_zschur_cont_stable(const doubleC *eig);
 extern int nsp_zschur_discr_stable(const doubleC *eig);
 
+/* external function for schur where code is redirected 
+ * to nsp evaluation. 
+ */
+
+static int nsp_zschur_fun(const doubleC *eig);
+static int nsp_dschur_fun(const double *reig,const double *ieig);
+
+/* 
+ * data used when nsp is used to evaluate a schur function 
+ */
+
+typedef struct _schur_data schur_data;
+
+struct _schur_data
+{
+  NspObject *args; /* a list to pass extra arguments to the objective function */
+  NspMatrix *x;  /* value of x */
+  NspObject *objective; /* schur function */
+};
+
+static schur_data schur_d= {NULL,NULL,NULL};
+static int schur_prepare(NspObject *f,NspObject *args,schur_data *obj);
+static void schur_clean(schur_data *obj);
+
+/**
+ * schur_prepare:
+ * @f: a #NspPList giving the nsp code of the function to be called
+ * @args: extra arguments which are transmited to the nsp objective function 
+ * @obj: a #schur_data structure used to store objective function nsp data.
+ * 
+ * fills @obj with data. @obj is used in nsp_dschur_fun() or nsp_zschur_fun() to evaluate the 
+ * nsp function @f.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
+
+static int schur_prepare(NspObject *f,NspObject *args,schur_data *obj)
+{
+  if (( obj->objective =nsp_object_copy(f)) == NULL) return FAIL;
+  if (( nsp_object_set_name(obj->objective,"schur_f")== FAIL)) return FAIL;
+  if ( args != NULL ) 
+    {
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
+      if (( nsp_object_set_name((NspObject *) obj->args,"arg")== FAIL)) return FAIL;
+    }
+  else 
+    {
+      obj->args = NULL;
+    }
+  if ((obj->x = nsp_matrix_create("y",'c',1,1))== NULL) return FAIL;
+  return OK;
+}
+
+/**
+ * schur_clean:
+ * @obj: a #schur_data structure used to store objective function nsp data.
+ * 
+ * deallocate data stored in @obj
+ * 
+ **/
+
+static void schur_clean(schur_data *obj)
+{
+  if ( obj->args != NULL) nsp_object_destroy(&obj->args);
+  nsp_object_destroy(&obj->objective);
+  nsp_matrix_destroy(obj->x);
+}
+
+/*
+ * nsp_dschur_fun:
+ * @x: state 
+ * @f: a #NspPList giving the nsp code of the function to be called
+ * @schur_d: a #schur_data structure used to store objective function nsp data.
+ * 
+ * evaluates the objective function and return the value 
+ * in @f. The nsp coded objective function is stored in @schur_d together with 
+ * nsp data.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+
+/**
+ * nsp_dschur_fun:
+ * @reig: a double pointer 
+ * @ieig: a double pointer 
+ * 
+ * evaluates the nsp function for given eigenvalue and returns 1 or 0 
+ * In case of problems in the function an error is raised but the program 
+ * is not stopped since we do not have control on it.
+ * 
+ * Returns: 0 or 1 
+ **/
+
+static int nsp_dschur_fun(const double *reig,const double *ieig)
+{
+  int rep;
+  schur_data *schur = &schur_d;
+  NspObject *targs[2];/* arguments to be transmited to schur->objective */
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 1;
+  /*
+   * targs[0]= NSP_OBJECT(schur->n); 
+   * schur->n->R[0] = *n;
+   */
+  targs[0]= NSP_OBJECT(schur->x); 
+  schur->x->C[0].r= *reig;
+  schur->x->C[0].i= *ieig;
+  if (schur->args != NULL ) 
+    {
+      targs[1]= NSP_OBJECT(schur->args);
+      nargs= 2;
+    }
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)schur->objective ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      return FAIL;
+    }
+  if ( nret ==1 && IsBMat(nsp_ret) &&((NspBMatrix *) nsp_ret)->mn == 1 ) 
+    {
+      rep = ((NspBMatrix *) nsp_ret)->B[0];
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else 
+    {
+      Scierror("Error: schur objective function returned argument is wrong\n");
+      return 0;
+    }
+  return rep;
+ 
+}
+
+/**
+ * nsp_zschur_fun:
+ * @reig: a double pointer 
+ * @ieig: a double pointer 
+ * 
+ * evaluates the nsp function for given eigenvalue and returns 1 or 0 
+ * In case of problems in the function an error is raised but the program 
+ * is not stopped since we do not have control on it.
+ * 
+ * Returns: 0 or 1 
+ **/
+
+static int nsp_zschur_fun(const doubleC *eig)
+{
+  return  nsp_dschur_fun( &eig->r, &eig->i);
+}
+
+/* interface for schur function 
+ *
+ */
+
+
 static int int_schur( Stack stack, int rhs, int opt, int lhs)
 {
+  int complex=FALSE,rep ;
   int (*F)(const double *reig,const double *ieig)= NULL;
   int (*Fc)(const doubleC *reig)= NULL;
   nsp_option opts[] ={{ "sort",obj,NULLOBJ,-1},
+		      { "args",list,NULLOBJ,-1},
+		      { "complex", s_bool, NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspObject *select=NULL;
+  NspObject *extra_args=NULL;
   NspMatrix *A,*U=NULL,**hU=NULL,*Dim=NULL,**hDim=NULL;
   CheckStdRhs(1,1);
   CheckLhs(0,3);
   if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
 
-  if ( get_optional_args(stack,rhs,opt,opts,&select) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&select,&extra_args,&complex) == FAIL) return RET_BUG;
   
   if ( select != NULL) 
     {
@@ -686,26 +844,60 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
 	      return RET_BUG;
 	    }
 	}
+      else if ( IsNspPList(select) )
+	{
+	  F = nsp_dschur_fun;
+	  Fc =  nsp_zschur_fun;
+	}
+      else 
+	{
+	  Scierror("%s: sort optional argument should be a string or a function\n",NspFname(stack));
+	  return RET_BUG;
+	}
     }
-  /* check if U is requested */
 
+
+  /* check if U is requested */
   if ( lhs == 3 || lhs == 2 ) hU = &U;
+  /* check for dim */
+  if ( lhs >= 2) hDim = &Dim;
+
+  /* deals with external fun */
+
+  if ( F == nsp_dschur_fun ) 
+    {
+      if ( schur_prepare(select,extra_args,&schur_d) == FAIL ) 
+	return RET_BUG;
+    }
+  
+  /* force complex result */
+  if ( complex == TRUE && A->rc_type == 'r'  ) 
+    {
+      if (nsp_mat_complexify(A,0.0) == FAIL) return RET_BUG;
+    }
 
   if ( A->rc_type == 'r' ) 
     {
-      if( intdgees0(A,hU,F,hDim)== FAIL)  return RET_BUG;
+      rep =intdgees0(A,hU,F,hDim); 
     }
   else 
     {
-      if ( intzgees0(A,hU,Fc,hDim)== FAIL)  return RET_BUG;
+      rep = intzgees0(A,hU,Fc,hDim);
     }
+
+  if ( F == nsp_dschur_fun ) 
+    {
+      schur_clean(&schur_d);
+    }
+  if ( rep == FAIL) return RET_BUG;
+
   switch (lhs ) 
     {
     case -1:
     case 0:
     case 1: 
       NSP_OBJECT(A)->ret_pos = 1;
-      if (  select != NULL && Dim != NULL ) nsp_matrix_destroy(Dim);
+      if (  Dim != NULL ) nsp_matrix_destroy(Dim);
       break;
     case 2: 
       if ( select == NULL) 
@@ -714,6 +906,7 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
 	  NSP_OBJECT(A)->ret_pos = 2;
 	  NthObj(1) = NSP_OBJECT(U);
 	  NthObj(1)->ret_pos = 1;
+	  if (  Dim != NULL ) nsp_matrix_destroy(Dim);
 	}
       else 
 	{
