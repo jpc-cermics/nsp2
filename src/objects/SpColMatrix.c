@@ -7217,8 +7217,14 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
+static int isinf_f(double r)
+{
+  /* isinf can be a macro */
+  return isinf(r);
+}
+
 NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,const char *flag)
 {
-  return nsp_spcolmatrix_isnan_gen(A,flag,isinf);
+  return nsp_spcolmatrix_isnan_gen(A,flag,isinf_f);
 }
 
