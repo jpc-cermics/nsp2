@@ -119,11 +119,9 @@ Token
 Tokenizer
 UPDATE_EXEC_DIR
 WITH_ASOUND
-WITH_CHOLMOD
 WITH_GMP
 WITH_SNDFILE
 WITH_SYMB_TABLE
-WITH_UMFPACK
 XCNAME
 accelerated_ops
 astnode_create
@@ -237,9 +235,13 @@ nsp_set_nsp_getchar
 nsp_set_nsp_more
 nsp_sparse_triplet
 nsp_spcol_free_triplet
+nsp_spcolmatrix_and
 nsp_spcolmatrix_div_scal_tt
 nsp_spcolmatrix_div_zero_tt
+nsp_spcolmatrix_isinf
+nsp_spcolmatrix_isnan
 nsp_spcolmatrix_norm
+nsp_spcolmatrix_or
 nsp_spcolmatrix_scal_div_tt
 nsp_spcolmatrix_vnorm
 nsp_stimer

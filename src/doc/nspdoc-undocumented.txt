@@ -1,7 +1,7 @@
 42% symbol docs coverage.
-967 symbols documented.
+968 symbols documented.
 224 symbols incomplete.
-1338 not documented.
+1336 not documented.
 
 
 Abs
@@ -44,7 +44,6 @@ GetClassB
 GetClassBCopy
 GetConnector
 GetConnectorCopy
-GetDimArg
 GetFunction
 GetFunctionCopy
 GetGFrame
@@ -431,7 +430,6 @@ VERSION
 VoidPt_Type
 WITH_FFTW3
 WITH_GTKGLEXT
-WITH_GTKHTML
 WITH_PVM
 WTU
 Widget
