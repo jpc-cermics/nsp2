@@ -1029,6 +1029,11 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
   /* int incx=1,incy=2 */
   int i;
   if ( Mat->rc_type == 'c' ) return(OK);
+  if ( Mat->mn == 0)
+    {
+      Mat->rc_type = 'c';
+      return OK;
+    }
   /* take care that R and C are at the same memory location */
   R = Mat->R;
   Mat->C =nsp_alloc_doubleC(Mat->mn);
