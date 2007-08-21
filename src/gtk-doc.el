@@ -193,8 +193,9 @@ Only C/C++ function types are properly supported currently."
   (interactive)
   (let (c-insert-here (point))
     (save-restriction
-      (save-excursion
+      (save-excursion	
 	(beginning-of-defun)
+	(search-forward ")") ;; jpc juillet 2007 
 	(narrow-to-page)
 	(let (c-arglist
 	      c-funcname
