@@ -61,11 +61,11 @@ static NspMethods *gpointer_get_methods(void);
 
 #define NULLGPOINTER (NspGPointer*) 0
 
-NspGPointer *gpointer_create(char *name,GType gtype, gpointer pointer,NspTypeBase *type);
-NspGPointer *gpointer_copy(NspGPointer *H);
-void gpointer_destroy(NspGPointer *H);
-void gpointer_info(NspGPointer *H, int indent,char *name, int rec_level);
-void gpointer_print(NspGPointer *H, int indent,char *name, int rec_level);
+extern NspGPointer *gpointer_create(char *name,GType gtype, gpointer pointer,NspTypeBase *type);
+extern NspGPointer *gpointer_copy(NspGPointer *H);
+extern void gpointer_destroy(NspGPointer *H);
+extern int gpointer_info(NspGPointer *H, int indent,char *name, int rec_level);
+extern int gpointer_print(NspGPointer *H, int indent,char *name, int rec_level);
 
 /* from GPointerObj.c */
 

@@ -238,13 +238,13 @@ void pangoattribute_destroy(NspPangoAttribute *self)
  * info 
  */
 
-void pangoattribute_info(NspPangoAttribute *self, int indent,char *name,int rec_level)
+int pangoattribute_info(NspPangoAttribute *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLPATTR) 
     {
       Sciprintf("Null Pointer PangoAttribute \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
@@ -261,15 +261,17 @@ void pangoattribute_info(NspPangoAttribute *self, int indent,char *name,int rec_
     {
       Sciprintf1(indent,"%s\t= PangoAttribute \n", pname);
     }
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level)
+int pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level)
 {
   pangoattribute_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

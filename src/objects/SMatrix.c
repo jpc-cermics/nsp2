@@ -381,7 +381,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
  * display Info on Matrix @Mat 
  **/
 
-void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
 
@@ -397,6 +397,7 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int re
       Sciprintf1(indent,"%s\t= [...]\t\ts (%dx%d)\n",pname,Mat->m,Mat->n);
       break;
     }
+  return TRUE;
 }
 
 
@@ -410,8 +411,9 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int re
  * prints the contents of @Mat.
  **/
 
-void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
@@ -429,7 +431,7 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int r
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_smatrix_info(Mat,indent,pname,rec_level);
-	  return;
+	  return rep;
 	}
       Sciprintf1(indent,"%s\t=%s\t\ts (%dx%d)\n",pname,
 		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
@@ -438,8 +440,9 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int r
     {
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
-      nsp_smatrix_print_internal(&fmt,Mat,indent);
+      rep = nsp_smatrix_print_internal(&fmt,Mat,indent);
     }
+  return rep;
 }
 
 /**
@@ -450,7 +453,7 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int r
  * syntax. 
  */
 
-void nsp_smatrix_latex_print(NspSMatrix *SMat)
+int nsp_smatrix_latex_print(NspSMatrix *SMat)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -472,6 +475,7 @@ void nsp_smatrix_latex_print(NspSMatrix *SMat)
     }
   Sciprintf("\\end{array}\\right)}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 /**
@@ -482,7 +486,7 @@ void nsp_smatrix_latex_print(NspSMatrix *SMat)
  * syntax. 
  */
 
-void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
+int nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -502,6 +506,7 @@ void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
     }
   Sciprintf("\\end{tabular}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 

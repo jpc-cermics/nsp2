@@ -205,6 +205,7 @@ void nsp_frames_info(void)
     Sciprintf("Empty Datas\n");
   else 
     nsp_list_info(Datas,0,NULL,0) ;
+  
 }
 
 /**

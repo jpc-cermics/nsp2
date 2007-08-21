@@ -85,19 +85,21 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
  * PMatInfo : display Info on NspPMatrix PMat 
  */
 
-void nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name,int rec_level)
+int nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   Sciprintf1(indent,"%s\t= [%s]\t\tp %c (%dx%d)\n",pname,(Mat->mn == 0) ? "": "...",
 	     Mat->rc_type,Mat->m,Mat->n);
+  return TRUE;
 }
 
 /*
  * PMatPrint : writes PMat Objet 
  */
 
-void nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
@@ -116,7 +118,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_lev
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_pmatrix_info(Mat,indent,pname,rec_level);
-	  return;
+	  return rep;
 	}
       Sciprintf1(indent,"%s\t=%s\t\tp (%dx%d)\n",pname,
 		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
@@ -125,8 +127,9 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_lev
     {
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
-      nsp_pmatrix_print_internal (&fmt,Mat,indent);
+      rep = nsp_pmatrix_print_internal (&fmt,Mat,indent);
     }
+  return rep;
 }
 
 

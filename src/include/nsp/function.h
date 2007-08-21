@@ -58,11 +58,11 @@ NspFunction *new_function();
 
 #define NULLFUNC (NspFunction*) 0
 
-NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type);
-NspFunction *function_copy(NspFunction *H);
-void function_destroy(NspFunction *H);
-void function_info(NspFunction *H, int indent,const char *name, int rec_level);
-void function_print(NspFunction *H, int indent,const char *name, int rec_level);
+extern NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type);
+extern NspFunction *function_copy(NspFunction *H);
+extern void function_destroy(NspFunction *H);
+extern int function_info(NspFunction *H, int indent,const char *name, int rec_level);
+extern int function_print(NspFunction *H, int indent,const char *name, int rec_level);
 
 /* from FunctionObj.c */
 

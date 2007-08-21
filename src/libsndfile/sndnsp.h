@@ -66,11 +66,11 @@ static NspMethods *nsp_sndfile_get_methods(void);
 static AttrTab nsp_sndfile_attrs[];
 #endif 
 
-NspSndFile *nsp_sndfile_create(char *name, char *fname);
-NspSndFile *nsp_sndfile_copy(NspSndFile *H);
-void nsp_sndfile_destroy(NspSndFile *H);
-void nsp_sndfile_info(NspSndFile *H, int indent,char *name, int rec_level);
-void nsp_sndfile_print(NspSndFile *H, int indent,char *name, int rec_level);
+extern NspSndFile *nsp_sndfile_create(char *name, char *fname);
+extern NspSndFile *nsp_sndfile_copy(NspSndFile *H);
+extern void nsp_sndfile_destroy(NspSndFile *H);
+extern void nsp_sndfile_info(NspSndFile *H, int indent,char *name, int rec_level);
+extern int nsp_sndfile_print(NspSndFile *H, int indent,char *name, int rec_level);
 
 #define NULLSNDFILE (NspSndFile *) 0
 

@@ -102,17 +102,18 @@ void nsp_ivect_destroy(NspIVect *IV)
  * Displays Info on IV
  **/
 
-void nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
+int nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
 {
   int i;
   if ( IV == NULLIVECT) 
     {
       Sciprintf("Null Pointer IVect \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("IVect %s %f:%f:%f %d\n",NSP_OBJECT(IV)->name,
 	    IV->first,IV->step,IV->last,IV->flag);
+  return TRUE;
 }
 
 /**
@@ -125,9 +126,10 @@ void nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
  * writes IVect Objet 
  **/
 
-void nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
+int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
 {
   nsp_ivect_info(IV,indent,NULL,0);
+  return TRUE;
 }
 
 /**

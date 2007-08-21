@@ -57,11 +57,11 @@ NspClassB *new_classb();
 
 #define NULLCLB (NspClassB*) 0
 
-NspClassB *nsp_classb_create(char *name,int color,int thickness,NspTypeBase *type);
-NspClassB *nsp_classb_copy(NspClassB *H);
-void nsp_classb_destroy(NspClassB *H);
-void nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
-void nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
+extern NspClassB *nsp_classb_create(char *name,int color,int thickness,NspTypeBase *type);
+extern NspClassB *nsp_classb_copy(NspClassB *H);
+extern void nsp_classb_destroy(NspClassB *H);
+extern int nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
+extern int nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
 
 /* from ClassBObj.c */
 

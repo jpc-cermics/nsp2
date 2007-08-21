@@ -250,7 +250,7 @@ void nsp_astnode_destroy(NspAstNode *H)
  * info 
  */
 
-void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
+int nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -261,13 +261,14 @@ void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
 	    M->obj->op, M->obj->arity,
 	    NSP_POINTER_TO_INT(M->obj->obj),
 	    nsp_astnode_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level)
+int nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if (user_pref.pr_as_read_syntax)
@@ -316,6 +317,7 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
 	}
       Sciprintf("}\t\t%s\n",nsp_astnode_type_short_string(NSP_OBJECT(M)));
     }
+  return TRUE;
 }
 
 

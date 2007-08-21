@@ -61,11 +61,11 @@ static NspObject *pangoattribute_path_extract(NspPangoAttribute *A,int n, NspObj
 
 #define NULLPATTR (NspPangoAttribute*) 0
 
-NspPangoAttribute *pangoattribute_create(char *name,  PangoAttribute *attr, NspTypeBase *type);
-NspPangoAttribute *pangoattribute_copy(NspPangoAttribute *H);
-void pangoattribute_destroy(NspPangoAttribute *H);
-void pangoattribute_info(NspPangoAttribute *H, int indent,char *name, int rec_level);
-void pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level);
+extern NspPangoAttribute *pangoattribute_create(char *name,  PangoAttribute *attr, NspTypeBase *type);
+extern NspPangoAttribute *pangoattribute_copy(NspPangoAttribute *H);
+extern void pangoattribute_destroy(NspPangoAttribute *H);
+extern int pangoattribute_info(NspPangoAttribute *H, int indent,char *name, int rec_level);
+extern int pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level);
 
 /* from PangoAttributeObj.c */
 

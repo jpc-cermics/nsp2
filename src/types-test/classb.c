@@ -230,26 +230,28 @@ void nsp_classb_destroy(NspClassB *H)
  * info 
  */
 
-void nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level)
+int nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == NULLCLB) 
     {
       Sciprintf("Null Pointer ClassB \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[ClassB %s, col=%d th=%d]\n", NSP_OBJECT(H)->name,
 	    H->classb_color,H->classb_thickness);
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level)
+int nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level)
 {
   nsp_classb_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

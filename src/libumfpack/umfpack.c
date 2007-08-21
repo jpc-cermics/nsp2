@@ -257,7 +257,7 @@ void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
  * print 
  */
 
-void nsp_umfpack_print(NspUmfpack *Mat, int indent,char *name, int rec_level)
+int nsp_umfpack_print(NspUmfpack *Mat, int indent,char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
@@ -268,6 +268,7 @@ void nsp_umfpack_print(NspUmfpack *Mat, int indent,char *name, int rec_level)
     {
       nsp_umfpack_info(Mat,indent,pname,rec_level);
     }
+  return TRUE;
 }
 
 /*-----------------------------------------------------

@@ -51,11 +51,11 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
 
 #define @NULL@ (Nsp@TYPENAME@*) 0
 
-Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
-Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
-void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
-void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
-void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
+extern Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
+extern Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
+extern void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
+extern int nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
+extern int nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
 
 /* from @TYPENAME@Obj.c */
 

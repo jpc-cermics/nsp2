@@ -239,26 +239,28 @@ static void rect_destroy(NspRect *H)
  
 
 
-static void rect_info(NspRect *H, int indent,char *name,int rec_level)
+static int rect_info(NspRect *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLRECT) 
     {
       Sciprintf("Null Pointer Rect \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Rect %s, r=[%5.2f,%5.2f,%5.2f,%5.2f] co=%d, th=%d bg=%d]\n",
 	    NSP_OBJECT(H)->name,H->r[0],H->r[1],H->r[2],H->r[3],H->color,H->thickness,H->background);
+  return TRUE;
 }
 
 /*
  * print
  */
 
-static void rect_print(NspRect *H, int indent,char *name, int rec_level)
+static int rect_print(NspRect *H, int indent,char *name, int rec_level)
 {
   rect_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

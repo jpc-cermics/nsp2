@@ -239,13 +239,13 @@ void module_destroy(NspModule *H)
  * info 
  */
 
-void module_info(NspModule *H, int indent,char *name,int rec_level)
+int module_info(NspModule *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLMODULE) 
     {
       Sciprintf("Null Pointer Module \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Module %s, path=%s mname=%s\n", NSP_OBJECT(H)->name,
@@ -253,19 +253,20 @@ void module_info(NspModule *H, int indent,char *name,int rec_level)
   if ( H->T != NULL) nsp_hash_info(H->T,indent+2,NULL,0);
   if ( H->L != NULL)nsp_list_info(H->L,indent+2,NULL,0);
   for ( i=0 ; i < indent ; i++) Sciprintf("]\n");
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void module_print(NspModule *H, int indent,char *name, int rec_level)
+int module_print(NspModule *H, int indent,char *name, int rec_level)
 {
   int i;
   if ( H == NULLMODULE) 
     {
       Sciprintf("Null Pointer Module \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s =\tmodule\n",NSP_OBJECT(H)->name); 
@@ -275,6 +276,7 @@ void module_print(NspModule *H, int indent,char *name, int rec_level)
   if ( H->L != NULL)  nsp_list_print(H->L,indent+2,NULL,0);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf(">\n");
+  return TRUE;
 
 }
 

@@ -248,18 +248,19 @@ void nsp_none_destroy(NspNone *H)
  * info 
  */
 
-void nsp_none_info(NspNone *H, int indent,char *name,int rec_level)
+int nsp_none_info(NspNone *H, int indent,char *name,int rec_level)
 {
   const char *pname;
   if (H == NULLNONE) 
     {
       Sciprintf1(indent,"Null Pointer None\n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   Sciprintf1(indent,"%s\t= \t\t%s\n",
 	     (pname==NULL) ? "" : pname,
 	     nsp_none_type_short_string(NSP_OBJECT(H)));
+  return TRUE;
 }
 
 
@@ -268,9 +269,10 @@ void nsp_none_info(NspNone *H, int indent,char *name,int rec_level)
  */
 
 
-void nsp_none_print(NspNone *H, int indent,char *name, int rec_level)
+int nsp_none_print(NspNone *H, int indent,char *name, int rec_level)
 {
   nsp_none_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 

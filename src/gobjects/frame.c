@@ -237,23 +237,25 @@ static void gframe_destroy(NspGFrame *H)
   FREE(H);
 }
 
-static void gframe_info(NspGFrame *H, int indent,char *name,int rec_level)
+static int gframe_info(NspGFrame *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLGFRAME) 
     {
       Sciprintf("Null Pointer GFrame \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (%d) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
 	    gframe_type_short_string(NSP_OBJECT(H)), nsp_list_length(H->obj->objs),
 	    H->obj,H->obj->ref_count );
+  return TRUE;
 }
 
-static void gframe_print(NspGFrame *H, int indent,char *name, int rec_level)
+static int gframe_print(NspGFrame *H, int indent,char *name, int rec_level)
 {
   gframe_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

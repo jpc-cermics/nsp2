@@ -28,7 +28,7 @@
 #include <nsp/matutil.h> /* icopy iset */
 
 
-static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent);
+static int nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent);
 
 /**
  * nsp_bmatrix_create:
@@ -194,7 +194,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  * 
  */
 
-void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_level)
+int nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
   if ( BMat->m >=1 &&  BMat->mn >= 2 ) 
@@ -209,6 +209,8 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_lev
 		 (BMat->mn != 0) ? ((BMat->B[0]==FALSE) ? "F " : "T " ) : "",
 		 BMat->m,BMat->n);
     }
+  return TRUE;
+
 }
 
 
@@ -226,8 +228,9 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_lev
  * 
  */
 
-void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_level)
+int nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
 
   if (user_pref.pr_as_read_syntax)
@@ -246,7 +249,7 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_le
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_bmatrix_info(BMat,indent,pname,rec_level);
-	  return;
+	  return rep;
 	}
       Sciprintf1(indent,"%s\t=%s\t\t b (%dx%d)\n",pname,
 		(BMat->mn==0 ) ? " []" : "",BMat->m,BMat->n);
@@ -255,8 +258,9 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_le
     {
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
-      nsp_bmatrix_print_internal (&fmt,BMat,indent);
+      rep =nsp_bmatrix_print_internal (&fmt,BMat,indent);
     }
+  return rep;
 }
 
 
@@ -268,7 +272,7 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_le
  * syntax. 
  */
 
-void nsp_bmatrix_latex_print(NspBMatrix *BMat)
+int nsp_bmatrix_latex_print(NspBMatrix *BMat)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -290,6 +294,7 @@ void nsp_bmatrix_latex_print(NspBMatrix *BMat)
 
   Sciprintf("\\end{array}\\right)}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 /**
@@ -301,7 +306,7 @@ void nsp_bmatrix_latex_print(NspBMatrix *BMat)
  */
 
 
-void nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
+int nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -321,6 +326,7 @@ void nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
     }
   Sciprintf("\\end{tabular}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 
@@ -1240,14 +1246,11 @@ static void BMij(const nsp_num_formats *fmt,const void *m, int i, int j)
   Sciprintf("%c",M->B[i+(M->m)*j]==FALSE ? 'F' :'T');
 }
 
-/* XXXX */
-typedef  void (*Mijplus) (const void *,int i,int j);
-extern void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int indent);
-extern void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F);
 
 
-static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent)
+static int nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent)
 {
+  int rep = TRUE;
   int nr = cm->m;
   int nc = cm->n;
   if (fmt->plus_format && ! user_pref.pr_as_read_syntax)
@@ -1276,9 +1279,10 @@ static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int
 	}
       else
 	{
-	  nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
-			     indent,BMij);
+	  rep = nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
+				   indent,BMij);
 	}
     }
+  return rep;
 }
 

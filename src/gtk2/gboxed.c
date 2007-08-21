@@ -222,13 +222,13 @@ void gboxed_destroy(NspGBoxed *self)
  * info 
  */
 
-void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
+int gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGBOXED) 
     {
       Sciprintf("Null Pointer GBoxed \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
@@ -247,15 +247,17 @@ void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 		 g_type_name(self->gtype),
 		 (long)self->boxed);
     }
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
+int gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
 {
   gboxed_info(self,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

@@ -242,13 +242,13 @@ void nsp_gdate_destroy(NspGDate *H)
  * info 
  */
 
-void nsp_gdate_info(NspGDate *M,int indent,const char *name,int rec_level)
+int nsp_gdate_info(NspGDate *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLGDATE) 
     {
       Sciprintf("Null Pointer GDate \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( g_date_valid(M->gdate) == TRUE ) 
@@ -261,6 +261,7 @@ void nsp_gdate_info(NspGDate *M,int indent,const char *name,int rec_level)
     Sciprintf1(indent,"%s\t=[invalid]\t\t%s \n",pname,
 	       nsp_gdate_type_short_string(NSP_OBJECT(M)));
   
+  return TRUE;
 }
 
 
@@ -268,13 +269,13 @@ void nsp_gdate_info(NspGDate *M,int indent,const char *name,int rec_level)
  * print 
  */
 
-void nsp_gdate_print(NspGDate *M, int indent,const char *name, int rec_level)
+int nsp_gdate_print(NspGDate *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGDATE) 
     {
       Sciprintf("Null Pointer GDate \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -286,7 +287,7 @@ void nsp_gdate_print(NspGDate *M, int indent,const char *name, int rec_level)
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_gdate_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       if ( g_date_valid(M->gdate) == TRUE ) 
 	Sciprintf1(indent,"%s\t=[%d,%d,%d]\t\t%s \n",pname,
@@ -299,13 +300,14 @@ void nsp_gdate_print(NspGDate *M, int indent,const char *name, int rec_level)
 		   nsp_gdate_type_short_string(NSP_OBJECT(M)));
 	
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_gdate_latex_print(NspGDate *M, int indent,const char *name, int rec_level)
+int nsp_gdate_latex_print(NspGDate *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -319,6 +321,7 @@ void nsp_gdate_latex_print(NspGDate *M, int indent,const char *name, int rec_lev
     Sciprintf1(indent,"%s\t=[invalid]\t\t%s \n",pname,
 	       nsp_gdate_type_short_string(NSP_OBJECT(M)));
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 /*-----------------------------------------------------

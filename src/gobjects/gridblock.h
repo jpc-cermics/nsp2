@@ -109,7 +109,7 @@ static NspGridBlock *gridblock_object (NspObject *O);
 static NspGridBlock *gridblock_copy (NspGridBlock *H); 
 static void gridblock_destroy (NspGridBlock *H); 
 static void gridblock_info (NspGridBlock *H, int indent,char *name, int rec_level); 
-static void gridblock_print (NspGridBlock *H, int indent,char *name, int rec_level); 
+static int gridblock_print (NspGridBlock *H, int indent,char *name, int rec_level); 
 static NspMethods *gridblock_get_methods(void);
 static int int_gridblock_create( Stack stack, int rhs, int opt, int lhs); 
 

@@ -247,21 +247,23 @@ void nsp_serial_destroy(NspSerial *H)
  * info 
  */
 
-void nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level)
+int nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t= <%d-bytes>\t\t serial\n",pname,H->nbytes);
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level)
+int nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level)
 {
   nsp_serial_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

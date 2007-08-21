@@ -298,22 +298,24 @@ static void block_destroy(NspBlock *H)
 }
 
 
-static void block_info(NspBlock *H, int indent,char *name,int rec_level)
+static int block_info(NspBlock *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLBLOCK) 
     {
       Sciprintf("Null Pointer Block \n");
-      return;
+      return TRUE;;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
 	    block_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
+  return TRUE;
 }
 
-static void block_print(NspBlock *H, int indent,char *name, int rec_level)
+static int block_print(NspBlock *H, int indent,char *name, int rec_level)
 {
   block_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

@@ -211,13 +211,13 @@ void gpointer_destroy(NspGPointer *self)
  * info 
  */
 
-void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
+int gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGPOINTER) 
     {
       Sciprintf("Null Pointer GPointer \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
@@ -236,15 +236,18 @@ void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 		g_type_name(self->gtype),
 		(long)self->pointer);
     }
+  return TRUE;
+
 }
 
 /*
  * print 
  */
 
-void gpointer_print(NspGPointer *self, int indent,char *name, int rec_level)
+int gpointer_print(NspGPointer *self, int indent,char *name, int rec_level)
 {
   gpointer_info(self,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

@@ -240,14 +240,14 @@ void gdkatom_destroy(NspGdkAtom *H)
  * info 
  */
 
-void gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
+int gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   char *a_name;
   if ( self == NULLGDKATOM) 
     {
       Sciprintf("Null Pointer GdkAtom \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
@@ -268,15 +268,17 @@ void gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
 		 (unsigned long)self->atom);
       g_free(a_name);
     }
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level)
+int gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level)
 {
   gdkatom_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

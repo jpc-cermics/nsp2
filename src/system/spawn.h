@@ -68,7 +68,7 @@ extern NspSpawn *spawn_create(char *name,NspTypeBase *type);
 extern NspSpawn *nsp_spawn_copy(NspSpawn *H);
 extern void nsp_spawn_destroy(NspSpawn *H);
 extern void nsp_spawn_info(NspSpawn *H, int indent);
-extern void nsp_spawn_print(NspSpawn *H, int indent);
+extern int nsp_spawn_print(NspSpawn *H, int indent);
 extern NspSpawn *nsp_spawn_object (NspObject *O); 
 extern int IsSpawnObj (Stack stack, int i); 
 extern int IsSpawn(NspObject *O);

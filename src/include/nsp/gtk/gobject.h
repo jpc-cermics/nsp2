@@ -68,12 +68,12 @@ static NspObject *gobject_path_extract(NspGObject *A,int n, NspObject **Objs);
 
 #define NSP_GOBJECT_GET(ob) ((NspGObject *) ob)->obj 
 
-NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type);
-NspGObject *gobject_gettype_and_create(char *name,  GObject *obj);
-NspGObject *gobject_copy(NspGObject *H);
-void gobject_destroy(NspGObject *H);
-void gobject_info(NspGObject *H, int indent,char *name, int rec_level);
-void gobject_print(NspGObject *H, int indent,char *name, int rec_level);
+extern NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type);
+extern NspGObject *gobject_gettype_and_create(char *name,  GObject *obj);
+extern NspGObject *gobject_copy(NspGObject *H);
+extern void gobject_destroy(NspGObject *H);
+extern int gobject_info(NspGObject *H, int indent,char *name, int rec_level);
+extern int gobject_print(NspGObject *H, int indent,char *name, int rec_level);
 
 /* from NspGObjectObj.c */
 

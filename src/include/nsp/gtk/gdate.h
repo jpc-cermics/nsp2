@@ -57,9 +57,9 @@ extern NspGDate *gdate_create(char *name,GDate *gdate ,NspTypeBase *type);
 
 extern NspGDate *nsp_gdate_copy(NspGDate *H);
 extern void nsp_gdate_destroy(NspGDate *H);
-extern void nsp_gdate_info(NspGDate *H, int indent,const char *name, int rec_level);
-extern void nsp_gdate_print(NspGDate *H, int indent,const char *name, int rec_level);
-extern void nsp_gdate_latex_print(NspGDate *H, int indent,const char *name, int rec_level);
+extern int nsp_gdate_info(NspGDate *H, int indent,const char *name, int rec_level);
+extern int nsp_gdate_print(NspGDate *H, int indent,const char *name, int rec_level);
+extern int nsp_gdate_latex_print(NspGDate *H, int indent,const char *name, int rec_level);
 extern NspGDate *nsp_gdate_object (NspObject *O); 
 extern int IsGDateObj (Stack stack, int i); 
 extern int IsGDate(NspObject *O);

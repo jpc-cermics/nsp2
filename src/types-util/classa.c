@@ -246,9 +246,10 @@ void nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level)
  * print 
  */
 
-void nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level)
+int nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level)
 {
   nsp_classa_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

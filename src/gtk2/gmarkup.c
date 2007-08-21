@@ -235,7 +235,7 @@ void nsp_gmarkup_node_info(NspGMarkupNode *M, int indent,const char *name, int r
  * print 
  */
 
-void nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int rec_level)
+int nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if (user_pref.pr_as_read_syntax)
@@ -256,6 +256,7 @@ void nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int 
       Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)),M->name);
       nsp_object_print((NspObject *)M->children,indent+1,"",rec_level+1);
     }
+  return TRUE;
 }
 
 

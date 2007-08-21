@@ -111,9 +111,9 @@ extern doubleC *nsp_alloc_work_doubleC(unsigned int n);
 /* from MatObj.c */
 
 extern void nsp_matrix_destroy(NspMatrix *Mat); 
-extern void nsp_matrix_info ( NspMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_matrix_info ( NspMatrix *Mat, int indent,const char *name, int rec_level); 
 extern NspMatrix *nsp_matrix_copy(const NspMatrix *A); 
-extern void nsp_matrix_print (NspMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_matrix_print (NspMatrix *Mat, int indent,const char *name, int rec_level); 
 extern unsigned int  nsp_matrix_elt_size(NspMatrix *M);
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMatrix  *matrix_object(NspObject *O);
@@ -162,8 +162,8 @@ extern NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,cons
 extern int nsp_matrix_fill_with (NspMatrix *A, const NspMatrix *B); 
 extern int nsp_matrix_resize (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_scalar_to_mn (NspMatrix *A, int m, int n); 
-extern void nsp_matrix_latex_print (const NspMatrix *Mat); 
-extern void nsp_matrix_latex_tab_print(const NspMatrix *Mat); 
+extern int nsp_matrix_latex_print (const NspMatrix *Mat); 
+extern int nsp_matrix_latex_tab_print(const NspMatrix *Mat); 
 extern int nsp_matrix_redim (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_enlarge (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_concat_right(NspMatrix *A, const NspMatrix *B); 

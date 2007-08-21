@@ -278,9 +278,10 @@ void nsp_frame_info(NspFrame *H, int indent,const char *name, int rec_level)
  * print 
  */
 
-void nsp_frame_print(NspFrame *H, int indent,const char *name, int rec_level)
+int nsp_frame_print(NspFrame *H, int indent,const char *name, int rec_level)
 {
   nsp_frame_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

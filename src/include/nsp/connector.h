@@ -84,8 +84,8 @@ static AttrTab connector_attrs[];
 static NspConnector *connector_object (NspObject *O); 
 static NspConnector *connector_copy (NspConnector *H); 
 static void connector_destroy (NspConnector *H); 
-static void connector_info (NspConnector *H, int indent,char *name, int rec_level); 
-static void connector_print (NspConnector *H, int indent,char *name, int rec_level); 
+static int connector_info (NspConnector *H, int indent,char *name, int rec_level); 
+static int connector_print (NspConnector *H, int indent,char *name, int rec_level); 
 static NspMethods *connector_get_methods(void);
 static int int_connector_create( Stack stack, int rhs, int opt, int lhs);
 

@@ -276,7 +276,7 @@ void nsp_scalexp_destroy(NspScalExp *H)
  * info 
  */
 
-void nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level)
+int nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -284,13 +284,14 @@ void nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level)
   Sciprintf("%s\t= \t\t%s ()\n",
 	    pname,
 	    nsp_scalexp_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level)
+int nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if (user_pref.pr_as_read_syntax)
@@ -312,6 +313,7 @@ void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level
       /* nsp_plist_pretty_print(M->code, indent+2); 
 	 Sciprintf("\n"); */
     }
+  return TRUE;
 }
 
 

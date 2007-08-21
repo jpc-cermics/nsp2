@@ -87,8 +87,8 @@ NspHash *new_hash();
 extern NspHash *nsp_hash_create(char *name, unsigned int size);
 extern NspHash *nsp_hash_copy(NspHash *H);
 extern void nsp_hash_destroy(NspHash *H);
-extern void nsp_hash_info(NspHash *H, int indent,char *name, int rec_level);
-extern void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level);
+extern int nsp_hash_info(NspHash *H, int indent,char *name, int rec_level);
+extern int nsp_hash_print(NspHash *H, int indent,char *name, int rec_level);
 
 /* from HashObj.c */
 

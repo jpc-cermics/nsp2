@@ -307,9 +307,10 @@ static void gridblock_info(NspGridBlock *H, int indent,char *name,int rec_level)
 	    gridblock_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
 }
 
-static void gridblock_print(NspGridBlock *H, int indent,char *name, int rec_level)
+static int gridblock_print(NspGridBlock *H, int indent,char *name, int rec_level)
 {
   gridblock_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------
@@ -396,8 +397,8 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   H->obj = Gf->obj;
   /* to prevent destruction of obj */
   Gf->obj->ref_count++;
-  /* XXXXX  delete unused H */
-  /* gframe_destroy(H);*/
+  /* XXXXX  delete unused Gf */
+  /* gframe_destroy(Gf);*/
   /* insert a first object in the frame */
   {
     int color=4,thickness=1, background=9;
@@ -698,5 +699,12 @@ void gridblock_move_control(NspGFrame *F, NspGridBlock *B,const double mpt[2], i
   /* return a copy of mpt */
   ptc[0]=mpt[0];
   ptc[1]=mpt[1];
+}
+
+
+void gridblock_set_diagram(NspGridBlock *B, NspGFrame *F)
+{
+  /* ZZZ */
+
 }
 

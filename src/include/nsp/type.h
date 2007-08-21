@@ -60,11 +60,11 @@ static NspObject *type_path_extract(NspType *A,int n, NspObject **Objs);
 
 #define NULLTYPE (NspType*) 0
 
-NspType *type_create(char *name,NspTypeBase *type,NspTypeBase *derived_type);
-NspType *type_copy(NspType *H);
-void type_destroy(NspType *H);
-void type_info(NspType *H, int indent,char *name, int rec_level);
-void type_print(NspType *H, int indent,char *name, int rec_level);
+extern NspType *type_create(char *name,NspTypeBase *type,NspTypeBase *derived_type);
+extern NspType *type_copy(NspType *H);
+extern void type_destroy(NspType *H);
+extern int type_info(NspType *H, int indent,char *name, int rec_level);
+extern int type_print(NspType *H, int indent,char *name, int rec_level);
 
 /* from TypeObj.c */
 

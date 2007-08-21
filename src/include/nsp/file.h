@@ -68,11 +68,11 @@ NspFile *nsp_new_file();
  * Object methods redefined for file 
  */
 
-NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
-NspFile *nsp_file_copy(NspFile *H);
-void nsp_file_destroy(NspFile *H);
-void nsp_file_info(NspFile *H, int indent,char *name, int rec_level);
-void nsp_file_print(NspFile *H, int indent,char *name, int rec_level);
+extern NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
+extern NspFile *nsp_file_copy(NspFile *H);
+extern void nsp_file_destroy(NspFile *H);
+extern int nsp_file_info(NspFile *H, int indent,char *name, int rec_level);
+extern int nsp_file_print(NspFile *H, int indent,char *name, int rec_level);
 
 /* setting file flags  **/
 

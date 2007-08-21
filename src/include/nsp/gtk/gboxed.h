@@ -61,13 +61,13 @@ static NspMethods *gboxed_get_methods(void);
 
 #define NULLGBOXED (NspGBoxed*) 0
 
-NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean copy_boxed,
+extern NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean copy_boxed,
 			 gboolean own_ref, /* (NspTypeBase *) */ void *  type );
 
-NspGBoxed *gboxed_copy(NspGBoxed *H);
-void gboxed_destroy(NspGBoxed *H);
-void gboxed_info(NspGBoxed *H, int indent,char *name, int rec_level);
-void gboxed_print(NspGBoxed *H, int indent,char *name, int rec_level);
+extern NspGBoxed *gboxed_copy(NspGBoxed *H);
+extern void gboxed_destroy(NspGBoxed *H);
+extern int gboxed_info(NspGBoxed *H, int indent,char *name, int rec_level);
+extern int gboxed_print(NspGBoxed *H, int indent,char *name, int rec_level);
 
 /* from GBoxedObj.c */
 

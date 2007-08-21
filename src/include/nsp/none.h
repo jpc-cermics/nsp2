@@ -60,11 +60,11 @@ static NspObject *nsp_none_path_extract(NspNone *A,int n, NspObject **Objs);
 
 #define NULLNONE (NspNone*) 0
 
-NspNone *nsp_none_create(char *name,NspTypeBase *type);
-NspNone *nsp_none_copy(NspNone *H);
-void nsp_none_destroy(NspNone *H);
-void nsp_none_info(NspNone *H, int indent,char *name, int rec_level);
-void nsp_none_print(NspNone *H, int indent,char *name, int rec_level);
+extern NspNone *nsp_none_create(char *name,NspTypeBase *type);
+extern NspNone *nsp_none_copy(NspNone *H);
+extern void nsp_none_destroy(NspNone *H);
+extern int nsp_none_info(NspNone *H, int indent,char *name, int rec_level);
+extern int nsp_none_print(NspNone *H, int indent,char *name, int rec_level);
 
 /* from NoneObj.c */
 

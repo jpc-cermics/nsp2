@@ -299,7 +299,7 @@ void nsp_bhash_destroy(NspBHash *H)
 
 static void nsp_bhash_info_tree(NspBHash *H, int indent,char *name,int rec_level);
 
-void nsp_bhash_info(NspBHash *H, int indent,char *name,int rec_level)
+int nsp_bhash_info(NspBHash *H, int indent,char *name,int rec_level)
 {
   int colors[]={ 34,32,31,35,36};
   const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
@@ -307,7 +307,7 @@ void nsp_bhash_info(NspBHash *H, int indent,char *name,int rec_level)
   if ( user_pref.list_as_tree == TRUE ) 
     {
       nsp_bhash_info_tree(H,indent,name,rec_level);
-      return;
+      return TRUE;
     }
 
   if ( rec_level <= user_pref.pr_depth ) 
@@ -336,6 +336,7 @@ void nsp_bhash_info(NspBHash *H, int indent,char *name,int rec_level)
     {
       Sciprintf1(indent,"%s\t= ...\t\th (%d/%d)\n",(strcmp(pname,NVOID) != 0) ? pname : "",H->filled,H->hsize);
     }
+  return TRUE;
 } 
 
 static void nsp_bhash_info_tree(NspBHash *H, int indent,char *name,int rec_level)
@@ -383,8 +384,9 @@ static void nsp_bhash_info_tree(NspBHash *H, int indent,char *name,int rec_level
  * print 
  */
 
-void nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level)
+int nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   int count = 0;
   unsigned int i1;
@@ -426,6 +428,7 @@ void nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level)
 	  Sciprintf1(indent,"%s\t= ...\t\th (%d/%d)\n",pname,H->filled,H->hsize);
 	}
     }
+  return rep;
 }
 
 

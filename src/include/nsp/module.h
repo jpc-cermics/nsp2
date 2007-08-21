@@ -50,11 +50,11 @@ NspModule *new_module();
 
 #define NULLMODULE (NspModule*) 0
 
-NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBase *type);
-NspModule *module_copy(NspModule *H);
-void module_destroy(NspModule *H);
-void module_info(NspModule *H, int indent,char *name, int rec_level);
-void module_print(NspModule *H, int indent,char *name, int rec_level);
+extern NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBase *type);
+extern NspModule *module_copy(NspModule *H);
+extern void module_destroy(NspModule *H);
+extern int module_info(NspModule *H, int indent,char *name, int rec_level);
+extern int module_print(NspModule *H, int indent,char *name, int rec_level);
 
 /* from ModuleObj.c */
 

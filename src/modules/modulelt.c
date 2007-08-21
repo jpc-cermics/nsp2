@@ -226,25 +226,27 @@ void modulelt_destroy(NspModuleElt *H)
  * info 
  */
 
-void modulelt_info(NspModuleElt *H, int indent,char *name,int rec_level)
+int modulelt_info(NspModuleElt *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLME) 
     {
       Sciprintf("Null Pointer ModuleElt \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[ModuleElt %s]\n", NSP_OBJECT(H)->name);
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level)
+int modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level)
 {
   modulelt_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

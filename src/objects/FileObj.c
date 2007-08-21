@@ -218,18 +218,19 @@ void nsp_file_destroy(NspFile  *F)
  * info 
  */
 
-void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
+int nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
 {
   const char *pname;
   if (F == NULLSCIFILE) 
     {
       Sciprintf("Null Pointer SciFile \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(F)->name;
   Sciprintf1(indent,"%s\t= \t\tSciFile (fname=\"%s\",%s,Flag=%d)\n",
 	     (pname==NULL) ? "" : pname,
 	     F->obj->fname,F->obj->openf,F->obj->flag);
+  return TRUE;
 }
 
 
@@ -238,9 +239,10 @@ void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
  */
 
 
-void nsp_file_print(NspFile  *F, int indent,char *name, int rec_level)
+int nsp_file_print(NspFile  *F, int indent,char *name, int rec_level)
 {
   nsp_file_info(F,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

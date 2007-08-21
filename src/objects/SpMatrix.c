@@ -29,7 +29,7 @@
 #include "nsp/gsort-p.h" 
 #include "nsp/cnumeric.h" 
 
-static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *m, int indent);
+static int nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *m, int indent);
 /* In file Perm.c **/
 
 extern int C2F(dperm) (double A[],int ind[],int *nv);
@@ -244,15 +244,14 @@ int nsp_sprowmatrix_nnz(const NspSpRowMatrix *HMat)
  * displays info on Sparse Matrix @Sp.
  **/
 
-void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,const char *name, int rec_level)
+int nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
   if ( Sp == NULLSPROW) 
-    {
-      Sciprintf("Null SpMatrix pointer\n");
-      return;
-    }
-  Sciprintf1(indent,"%s\t= [...]\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+    Sciprintf("Null SpMatrix pointer\n");
+  else 
+    Sciprintf1(indent,"%s\t= [...]\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+  return TRUE;
 }
 
 /**
@@ -265,8 +264,9 @@ void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,const char *name, int r
  * displays a sparse Matrix.
  **/
 
-void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_level)
+int nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_level)
 { 
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name; 
   if (user_pref.pr_as_read_syntax)
     {
@@ -276,7 +276,7 @@ void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_le
       if ( nsp_sprowmatrix_get(Sp,&RC,&Values)== FAIL)
 	{
 	  Sciprintf("Error: failed to print sparse matrix as_read\n");
-	  return;
+	  return rep;
 	}
       sprintf(epname,"%s__rc",pname);
       nsp_matrix_print(RC,indent,epname,rec_level);
@@ -299,13 +299,14 @@ void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_le
 	  if ( user_pref.pr_depth  <= rec_level -1 ) 
 	    {
 	      Sciprintf1(indent,"%s\t= [...]\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
-	      return;
+	      return rep;
 	    }
 	  nsp_init_pr_format (&fmt);
 	  Sciprintf1(indent,"%s\t=\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
-	  nsp_sprowmatrix_print_internal(&fmt,Sp,indent+1);
+	  rep =nsp_sprowmatrix_print_internal(&fmt,Sp,indent+1);
 	}
     }
+  return rep;
 }
 
 /**
@@ -1789,7 +1790,7 @@ static void SpM_plus_format(NspSpRowMatrix *Sp, int indent)
     }
 }
 
-static void SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
+static int SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
 {
   int i,j;
   switch ( Sp->rc_type ) 
@@ -1818,10 +1819,12 @@ static void SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
 	}
       break;
     }
+  return TRUE;
 }
 
-static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *m, int indent)
+static int nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *m, int indent)
 {
+  int rep = TRUE;
   if ( m->mn == 0) 
     {
       Sciprintf("[]\n");
@@ -1841,7 +1844,7 @@ static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *
 	  /* XXXXXX xxxx Sciprintf(m); **/
 	  if (user_pref.pr_as_read_syntax)
 	    Sciprintf("]");
-	  return;
+	  return rep;
 	}
       if (user_pref.pr_as_read_syntax)
 	{
@@ -1849,9 +1852,10 @@ static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *
 	}
       else
 	{
-	  SpM_general(fmt,m,indent);
+	  rep = SpM_general(fmt,m,indent);
 	}
     }
+  return rep;
 }
 
 

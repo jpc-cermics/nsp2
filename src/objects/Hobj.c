@@ -408,23 +408,23 @@ void nsp_hobj_destroy(NspHobj *H)
  * HobjInfo 
  */
 
-void nsp_hobj_info(NspHobj *H, int indent,char *name,int rec_level)
+int nsp_hobj_info(NspHobj *H, int indent,char *name,int rec_level)
 {
-  nsp_hobj_print(H,indent,name,rec_level);
+  return nsp_hobj_print(H,indent,name,rec_level);
 }
 
 /*
  * HobjPrint 
  */
 
-void nsp_hobj_print(NspHobj *H, int indent,char *name, int rec_level)
+int nsp_hobj_print(NspHobj *H, int indent,char *name, int rec_level)
 {
   const char *pname;
   NspObject *O;
   if ( H == NULLHOBJ) 
     {
       Sciprintf1(indent,"Null Pointer Hobj \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   if ( H->htype == 'g' ) 
@@ -432,7 +432,7 @@ void nsp_hobj_print(NspHobj *H, int indent,char *name, int rec_level)
       if ((O= nsp_global_frame_search_object(NSP_OBJECT(H)->name)) == NULLOBJ) 
 	{
 	  Sciprintf1(indent,"Pointer to a global non existant variable\n");
-	  return;
+	  return TRUE;
 	}
     }
   else 
@@ -442,7 +442,7 @@ void nsp_hobj_print(NspHobj *H, int indent,char *name, int rec_level)
   Sciprintf1(indent,"%s\t-> %s\t\thobj\n",
 	     (pname==NULL) ? "" : pname,
 	     nsp_object_get_name(O));
-  nsp_object_print(O,indent+2,NULL,rec_level);
+  return nsp_object_print(O,indent+2,NULL,rec_level);
 }
 
 

@@ -297,22 +297,24 @@ static void link_destroy(NspLink *H)
  * info 
  */
 
-static void link_info(NspLink *H, int indent,char *name,int rec_level)
+static int link_info(NspLink *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLLINK) 
     {
       Sciprintf("Null Pointer Link \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
 	    link_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
+  return TRUE;
 }
 
-static void link_print(NspLink *H, int indent,char *name, int rec_level)
+static int link_print(NspLink *H, int indent,char *name, int rec_level)
 {
   link_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

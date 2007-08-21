@@ -29,10 +29,7 @@
 #include "nsp/blas.h"
 #include "nsp/matutil.h"
 
-/* XXX */
-extern void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
-extern void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
-extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);
+/* should be moved in matint */
 
 #define WORK_SIZE 100
 int iwork1[WORK_SIZE];
@@ -514,7 +511,7 @@ void nsp_matrix_destroy(NspMatrix *Mat)
  * @indent is the given indentation for printing.
  */
 
-void nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
@@ -536,6 +533,7 @@ void nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
 	( Mat->rc_type == 'r') ? nsp_pr_float (&fmt,Mat->R[0]) : nsp_pr_complex (&fmt, Mat->C[0]);
       Sciprintf(" ]\t\t%c (%dx%d)\n",Mat->rc_type,Mat->m,Mat->n);
     }
+  return TRUE;
 }
 
 /**
@@ -552,8 +550,9 @@ void nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
 static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,const char *name, int rec_level,
 						 int slice);
 
-void nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int slice=10000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
@@ -563,7 +562,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_leve
       if ( Mat->mn > slice ) 
 	{
 	  nsp_matrix_print_as_read_with_slice(Mat,indent,pname,rec_level,slice);
-	  return;
+	  return rep;
 	}
       if ( strcmp(pname,NVOID) != 0) 
 	{
@@ -579,7 +578,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_leve
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_matrix_info(Mat,indent,pname,rec_level);
-	  return;
+	  return rep;
 	}
       Sciprintf1(indent,"%s\t=%s\t\t%c (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
@@ -590,10 +589,11 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_leve
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
       if ( Mat->rc_type == 'r') 
-	nsp_real_matrix_print_internal (&fmt,Mat,indent);
+	rep = nsp_real_matrix_print_internal (&fmt,Mat,indent);
       else 
-	nsp_complex_matrix_print_internal (&fmt,Mat,indent);
+	rep = nsp_complex_matrix_print_internal (&fmt,Mat,indent);
     }
+  return rep;
 }
 
 /* used when matrix is large */
@@ -646,7 +646,7 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
  * syntax. 
  */
 
-void nsp_matrix_latex_print(const NspMatrix *Mat)
+int nsp_matrix_latex_print(const NspMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
@@ -677,6 +677,7 @@ void nsp_matrix_latex_print(const NspMatrix *Mat)
     {
       Sciprintf("Fixme : to be done\n");
     }
+  return TRUE;
 }
 
 /**
@@ -687,7 +688,7 @@ void nsp_matrix_latex_print(const NspMatrix *Mat)
  * syntax. 
  */
 
-void nsp_matrix_latex_tab_print(const NspMatrix *Mat)
+int nsp_matrix_latex_tab_print(const NspMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
@@ -715,6 +716,7 @@ void nsp_matrix_latex_tab_print(const NspMatrix *Mat)
     {
       Sciprintf("Fixme : to be done\n");
     }
+  return TRUE;
 }
 
 /**
@@ -1555,8 +1557,6 @@ static void nsp_real_matrix_elt_plus_format(const void *m, int i, int j)
     Sciprintf("+");
 }
 
-typedef  void (*Mijplus) (const void *,int i,int j);
-
 void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int indent)
 {
   int i,j;
@@ -1578,8 +1578,12 @@ static void Mij_float(const nsp_num_formats *fmt,const void *m, int i, int j)
   nsp_pr_float (fmt,M->R[i+(M->m)*j]);
 }
 
+/* print matrix elements 
+ * return value is TRUE if the print was fully done and FALSE if print 
+ * was canceled after answering no to scimore.
+ */
 
-void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F)
+int nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F)
 {
   int i,j;
   int p_rows=0;
@@ -1607,7 +1611,7 @@ void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int 
 	  if ( p_rows >= winrows ) 
 	    {
 	      scimore(&imore);
-	      if ( imore == 1) return;
+	      if ( imore == 1) return FALSE;
 	      p_rows=0;
 	    }
 	  nsp_pr_white(indent);Sciprintf(" |");
@@ -1618,10 +1622,12 @@ void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int 
 	  Sciprintf(" |\n");
 	}
     }
+  return TRUE;
 }
 
-void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent)
+int nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent)
 {
+  int rep = TRUE;
   int nr = m->m;
   int nc = m->n;
   if ( m->mn == 0) 
@@ -1651,9 +1657,8 @@ void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int inden
 	  if (user_pref.pr_as_read_syntax)
 	    Sciprintf("[\n");
 	  /* XXXXXX xxxx Sciprintf(m); **/
-	  if (user_pref.pr_as_read_syntax)
-	    Sciprintf("];");
-	  return;
+	  if (user_pref.pr_as_read_syntax)   Sciprintf("];");
+	  return rep ;
 	}
       inc = nc;
       if (total_width > max_width && user_pref.split_long_rows)
@@ -1667,10 +1672,11 @@ void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int inden
 	}
       else
 	{
-	  nsp_matrix_general(fmt,m,nr,nc,inc,total_width,max_width,winrows,
-			     indent,Mij_float);
+	  rep= nsp_matrix_general(fmt,m,nr,nc,inc,total_width,max_width,winrows,
+				  indent,Mij_float);
 	}
     }
+  return rep;
 }
 
 /*
@@ -1694,8 +1700,9 @@ static void CMij_float(const nsp_num_formats *fmt,const void *m, int i, int j)
   nsp_pr_complex (fmt, M->C[i+(M->m)*j]);
 }
 
-void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent)
+int nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent)
 {
+  int rep = TRUE;
   int nr = cm->m;
   int nc = cm->n;
 
@@ -1729,7 +1736,7 @@ void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int 
 	  if (user_pref.pr_as_read_syntax)
 	    Sciprintf("];");
 
-	  return;
+	  return rep;
 	}
 
       inc = nc;
@@ -1745,10 +1752,11 @@ void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int 
 	}
       else
 	{
-	  nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
-			     indent,CMij_float);
+	  rep= nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
+				  indent,CMij_float);
 	}
     }
+  return rep;
 }
 
 

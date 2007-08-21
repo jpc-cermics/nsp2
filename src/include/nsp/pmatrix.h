@@ -91,8 +91,8 @@ extern nsp_polynom nsp_basic_to_polynom(doubleC *d, char type);
 extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
 extern unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M);
 extern void nsp_pmatrix_destroy(NspPMatrix *A); 
-extern void nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
-extern void nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
 extern void nsp_polynom_destroy(nsp_polynom *P); 
 
 extern int IsPMatObj (Stack stack, int i); 

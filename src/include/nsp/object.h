@@ -19,13 +19,13 @@ typedef struct  _NspMethods NspMethods;
 
 /* typedef void (*print_fun)(void *);  */
 typedef unsigned int NspTypeId ;   
-typedef void  (print_func) (void *,int,char *name, int rec_level);
+typedef int (print_func) (void *,int,char *name, int rec_level);
 typedef void  (dealloc_func) (void *);
 typedef void* (copy_func) (const void *);
 typedef int   (size_func) (const void *,int );
 typedef char* (s_type_func) (void);
 typedef char* (sh_type_func) (void *);
-typedef void  (info_func) (void *,int,char *name, int rec_level);
+typedef int  (info_func) (void *,int,char *name, int rec_level);
 typedef char* (set_name_func) (void *,const char *);
 typedef char* (get_name_func) (void *);
 typedef int   (is_true_func)  (void *);
@@ -380,8 +380,8 @@ extern char *nsp_object_type_as_string(const NspObject *O);
 extern char *nsp_object_type_short( NspObject *O); 
 extern int nsp_object_type(const NspObject *O, NspTypeId id); 
 extern int nsp_object_implements(NspObject *O, NspTypeId id); 
-extern void nsp_object_info(NspObject *O, int indent,char *name, int rec_level); 
-extern void nsp_object_print(NspObject *O, int indent,char *name, int rec_level); 
+extern int nsp_object_info(NspObject *O, int indent,char *name, int rec_level); 
+extern int nsp_object_print(NspObject *O, int indent,char *name, int rec_level); 
 extern void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level); 
 extern int nsp_object_is_true(NspObject *O); 
 extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep); 

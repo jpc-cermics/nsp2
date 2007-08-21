@@ -258,28 +258,30 @@ void type_destroy(NspType *H)
  * info 
  */
 
-void type_info(NspType *H, int indent,char *name,int rec_level)
+int type_info(NspType *H, int indent,char *name,int rec_level)
 {
   NspTypeObject *top;
   if ( H == NULLTYPE) 
     {
       Sciprintf("Null Pointer Type \n");
-      return;
+      return TRUE;
     }
   top = NSP_TYPE_OBJECT(H->nsp_type);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
   Sciprintf1(indent,"%s\t = %s\t\ttype\n",
 	    NSP_OBJECT(H)->name,
 	    top->s_type());
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void type_print(NspType *H, int indent,char *name, int rec_level)
+int type_print(NspType *H, int indent,char *name, int rec_level)
 {
   type_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

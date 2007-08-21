@@ -76,8 +76,8 @@ extern unsigned int  nsp_smatrix_elt_size(NspMatrix *M);
 extern NspSMatrix *nsp_smatrix_copy(const NspSMatrix *A); 
 extern int nsp_smatrix_resize(NspSMatrix *A, int m, int n); 
 extern void nsp_smatrix_destroy(NspSMatrix *A); 
-extern void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
-extern void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
 extern int nsp_smatrix_redim(NspSMatrix *A, int m, int n); 
 extern int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n); 
 extern int nsp_smatrix_concat_right(NspSMatrix *A,const NspSMatrix *B); 
@@ -132,8 +132,8 @@ extern NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char
 extern int nsp_smatrix_to_utf8(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
-extern void nsp_smatrix_latex_print(NspSMatrix *SMat);
-extern void nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
+extern int nsp_smatrix_latex_print(NspSMatrix *SMat);
+extern int nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
 
 extern int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix **S);
 extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);

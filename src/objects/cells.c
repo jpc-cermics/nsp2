@@ -281,18 +281,19 @@ void nsp_cells_destroy(NspCells *A)
  * 
  **/
 
-void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
+int nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
 {
   const char *pname;
   if ( Mat == NULLCELLS) 
     {
       Sciprintf("Null Pointer NspCells \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   Sciprintf1(indent,"%s\t= {%s}\t\tcells (%dx%d)\n",
 	     (pname==NULL) ? "" : pname,
 	     (Mat->mn==0 ) ? "" : "...",Mat->m,Mat->n);
+  return TRUE;
 }
 
 /**
@@ -306,7 +307,7 @@ void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
  * 
  **/
 
-void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
+int nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
@@ -323,7 +324,7 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 	{
 	  Sciprintf1(indent,"%s\t= {%s}\t\tcells (%dx%d)\n",pname,
 		     (Mat->mn==0 ) ? "" : "...",Mat->m,Mat->n);
-	  return;
+	  return TRUE;
 	}
       Sciprintf1(indent,"%s\t=%s\t\tcells (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " {}" : "",Mat->m,Mat->n);
@@ -350,12 +351,14 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 		  {
 		    sprintf(epname,"(%d,%d)",i+1,j+1);
 		  }
-		object->type->pr(object,indent+2,epname,rec_level+1);
+		if ( object->type->pr(object,indent+2,epname,rec_level+1)==FALSE) 
+		  return FALSE;
 	      }
 	  }
       for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
       Sciprintf("}\n");
     }
+  return TRUE;
 }
 
 

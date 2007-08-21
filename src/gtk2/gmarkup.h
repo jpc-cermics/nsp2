@@ -70,7 +70,7 @@ extern NspGMarkupNode *gmarkup_node_create(const char *name,NspTypeBase *type);
 extern NspGMarkupNode *nsp_gmarkup_node_copy(NspGMarkupNode *H);
 extern void nsp_gmarkup_node_destroy(NspGMarkupNode *H);
 extern void nsp_gmarkup_node_info(NspGMarkupNode *M, int indent,const char *name, int rec_level);
-extern void nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int rec_level);
+extern int nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int rec_level);
 extern NspGMarkupNode *nsp_gmarkup_node_object (NspObject *O); 
 extern int IsGMarkupNodeObj (Stack stack, int i); 
 extern int IsGMarkupNode(NspObject *O);

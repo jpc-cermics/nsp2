@@ -78,7 +78,7 @@ NspFrame *nsp_frame_create(const char *name,const NspCells *C);
 NspFrame *nsp_frame_copy(const NspFrame *H);
 void nsp_frame_destroy(NspFrame *H);
 void nsp_frame_info(NspFrame *H, int indent,const char *name, int rec_level);
-void nsp_frame_print(NspFrame *H, int indent,const char *name, int rec_level);
+int nsp_frame_print(NspFrame *H, int indent,const char *name, int rec_level);
 
 /* from FrameObj.c */
 

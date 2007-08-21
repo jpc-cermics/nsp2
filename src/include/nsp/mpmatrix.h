@@ -80,9 +80,9 @@ static int mpmatrix_is_true(NspMaxpMatrix *M);
 /* from MatObj.c */
 
 extern void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat); 
-extern void nsp_mpmatrix_info ( NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_mpmatrix_info ( NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
 extern NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A); 
-extern void nsp_mpmatrix_print (NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_mpmatrix_print (NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
 
 extern NspObject * mpmatrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMaxpMatrix *mpmatrix_copy (const NspMaxpMatrix *A); 
@@ -121,8 +121,8 @@ extern NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,int m,in
 extern int nsp_mpmatrix_fill_with (NspMaxpMatrix *A, const NspMaxpMatrix *B); 
 extern int nsp_mpmatrix_resize (NspMaxpMatrix *A, int m, int n); 
 extern int nsp_mpmatrix_scalar_to_mn (NspMaxpMatrix *A, int m, int n); 
-extern void nsp_mpmatrix_latex_print (const NspMaxpMatrix *Mat); 
-extern void nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat); 
+extern int nsp_mpmatrix_latex_print (const NspMaxpMatrix *Mat); 
+extern int nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat); 
 extern int nsp_mpmatrix_redim (NspMaxpMatrix *A, int m, int n); 
 extern int nsp_mpmatrix_enlarge (NspMaxpMatrix *A, int m, int n); 
 extern int nsp_mpmatrix_concat_right(NspMaxpMatrix *A, const NspMaxpMatrix *B); 

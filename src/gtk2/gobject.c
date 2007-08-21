@@ -263,13 +263,13 @@ void gobject_destroy(NspGObject *self)
  * info 
  */
 
-void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
+int gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
   if ( self == NULLGOBJECT) 
     {
       Sciprintf("Null Pointer NspGObject \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
@@ -290,15 +290,17 @@ void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 		(long) self->obj, 
 		((GObject *) self->obj)->ref_count);
     }
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void gobject_print(NspGObject *H, int indent,char *name, int rec_level)
+int gobject_print(NspGObject *H, int indent,char *name, int rec_level)
 {
   gobject_info(H,indent,name,rec_level);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

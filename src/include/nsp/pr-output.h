@@ -54,6 +54,13 @@ extern void nsp_init_pr_format (nsp_num_formats *fmt);
 extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);
 extern void nsp_print_string_as_read(const char *str);
 
+extern int nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
+extern int nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
+
+typedef  void (*Mijplus) (const void *,int i,int j);
+extern void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int indent);
+extern int nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F);
+
 
 #endif 
 

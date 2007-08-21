@@ -61,8 +61,8 @@ extern NspScalExp *scalexp_create(char *name,NspSMatrix *expr,NspTypeBase *type)
 
 extern NspScalExp *nsp_scalexp_copy(NspScalExp *H);
 extern void nsp_scalexp_destroy(NspScalExp *H);
-extern void nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level);
-extern void nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level);
+extern int nsp_scalexp_info(NspScalExp *M, int indent,const char *name, int rec_level);
+extern int nsp_scalexp_print(NspScalExp *M, int indent,const char *name, int rec_level);
 extern NspScalExp *nsp_scalexp_object (NspObject *O); 
 extern int IsScalExpObj (Stack stack, int i); 
 extern int IsScalExp(NspObject *O);

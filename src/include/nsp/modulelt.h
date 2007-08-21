@@ -47,11 +47,11 @@ NspModuleElt *new_modulelt();
 
 #define NULLME (NspModuleElt*) 0
 
-NspModuleElt *modulelt_create(char *name,NspTypeBase *type);
-NspModuleElt *modulelt_copy(NspModuleElt *H);
-void modulelt_destroy(NspModuleElt *H);
-void modulelt_info(NspModuleElt *H, int indent,char *name, int rec_level);
-void modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level);
+extern NspModuleElt *modulelt_create(char *name,NspTypeBase *type);
+extern NspModuleElt *modulelt_copy(NspModuleElt *H);
+extern void modulelt_destroy(NspModuleElt *H);
+extern int modulelt_info(NspModuleElt *H, int indent,char *name, int rec_level);
+extern int modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level);
 
 /* from ModuleEltObj.c */
 

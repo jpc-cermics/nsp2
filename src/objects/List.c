@@ -854,7 +854,7 @@ int nsp_list_concat(NspList *L1, NspList *L2)
 
 static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level);
 
-void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
+int nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 {
   int colors[]={ 34,32,31,35,36};
   const int name_len=128;
@@ -866,7 +866,7 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
   if ( user_pref.list_as_tree == TRUE ) 
     {
       nsp_list_info_tree(L,indent,name,rec_level);
-      return;
+      return TRUE;
     }
 
   if ( rec_level <= user_pref.pr_depth ) 
@@ -903,6 +903,7 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
     {
       Sciprintf1(indent,"%s\t= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
     }
+  return TRUE;
 } 
 
 static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
@@ -959,7 +960,7 @@ static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
  * display of a list 
  **/
 
-void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
+int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 {
   const int name_len=128;
   char epname[name_len],epname1[name_len];
@@ -1017,7 +1018,8 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 		}
 	      if ( C->O != NULLOBJ )
 		{
-		  nsp_object_print(C->O,indent+2,epname,rec_level+1);      
+		  if ( nsp_object_print(C->O,indent+2,epname,rec_level+1) == FALSE) 
+		    return FALSE;
 		}
 	      else
 		{
@@ -1033,6 +1035,7 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 	  Sciprintf("%s\t= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
 	}
     }
+  return TRUE;
 }
 
 

@@ -290,22 +290,24 @@ static void connector_destroy(NspConnector *H)
   FREE(H);
 }
 
-static void connector_info(NspConnector *H, int indent,char *name,int rec_level)
+static int connector_info(NspConnector *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLCONNECTOR) 
     {
       Sciprintf("Null Pointer Connector \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
 	    connector_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
+  return TRUE;
 }
 
-static void connector_print(NspConnector *H, int indent,char *name, int rec_level)
+static int connector_print(NspConnector *H, int indent,char *name, int rec_level)
 {
   connector_info(H,indent,NULL,0);
+  return TRUE;
 }
 
 /*-----------------------------------------------------

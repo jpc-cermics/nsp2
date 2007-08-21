@@ -125,8 +125,8 @@ static AttrTab block_attrs[];
 static NspBlock *block_object (NspObject *O); 
 static NspBlock *block_copy (NspBlock *H); 
 static void block_destroy (NspBlock *H); 
-static void block_info (NspBlock *H, int indent,char *name, int rec_level); 
-static void block_print (NspBlock *H, int indent,char *name, int rec_level); 
+static int block_info (NspBlock *H, int indent,char *name, int rec_level); 
+static int block_print (NspBlock *H, int indent,char *name, int rec_level); 
 static NspMethods *block_get_methods(void);
 static int int_block_create( Stack stack, int rhs, int opt, int lhs); 
 

@@ -242,13 +242,13 @@ void nsp_port_info(NspPort *M, int indent,char *name,int rec_level)
  * print 
  */
 
-void nsp_port_print(NspPort *M, int indent,char *name, int rec_level)
+int nsp_port_print(NspPort *M, int indent,char *name, int rec_level)
 {
   int i;
   if ( M == NULLPORT) 
     {
       Sciprintf("Null Pointer Port \n");
-      return;
+      return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("Port %s {\n", NSP_OBJECT(M)->name);
@@ -256,6 +256,7 @@ void nsp_port_print(NspPort *M, int indent,char *name, int rec_level)
   for ( i=0 ; i < indent+2 ; i++) Sciprintf(" "); Sciprintf("port=%d\n",M->obj->port);
   for ( i=0 ; i < indent+2 ; i++) Sciprintf(" "); Sciprintf("Object=0x%x\n",M->obj->object_id);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\n");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 

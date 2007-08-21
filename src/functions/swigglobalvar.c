@@ -245,13 +245,13 @@ void nsp_swigglobalvar_info(NspSwigGlobalVar *M,int indent,const char *name,int 
  * print 
  */
 
-void nsp_swigglobalvar_print(NspSwigGlobalVar *M, int indent,const char *name, int rec_level)
+int nsp_swigglobalvar_print(NspSwigGlobalVar *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSWIGGLOBALVAR) 
     {
       Sciprintf("Null Pointer SwigGlobalVar \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -262,10 +262,11 @@ void nsp_swigglobalvar_print(NspSwigGlobalVar *M, int indent,const char *name, i
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_swigglobalvar_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_swigglobalvar_type_short_string(NSP_OBJECT(M)));
     }
+  return TRUE;
 }
 
 /*

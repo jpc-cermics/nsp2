@@ -242,7 +242,7 @@ void nsp_premiamodel_info(NspPremiaModel *M, int indent,const char *name, int re
  * print 
  */
 
-void nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int rec_level)
+int nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if (user_pref.pr_as_read_syntax)
@@ -265,6 +265,7 @@ void nsp_premiamodel_print(NspPremiaModel *M,int indent,const char *name, int re
         }
       Sciprintf1(indent,"%s\t= ...\t\t premia pb\n",pname);
     }
+  return TRUE;
 }
 
 

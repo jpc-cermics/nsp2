@@ -256,32 +256,33 @@ void function_destroy(NspFunction *H)
  * info 
  */
 
-void function_info(NspFunction *H, int indent,const char *name,int rec_level)
+int function_info(NspFunction *H, int indent,const char *name,int rec_level)
 {
   const char *pname;
   if (H == NULLFUNC) 
     {
       Sciprintf1(indent,"Null Pointer SciFile \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   Sciprintf1(indent,"%s\t= %s\t\t%s\n",
 	     (pname==NULL) ? "" : pname,
 	     (H->fname==NULL) ? "" : H->fname,
 	     function_type_short_string(NSP_OBJECT(H)));
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void function_print(NspFunction *H, int indent,const char *name, int rec_level)
+int function_print(NspFunction *H, int indent,const char *name, int rec_level)
 {
   const char *pname;
   if ( H == NULLFUNC) 
     {
       Sciprintf1(indent,"Null Pointer Function \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   if (user_pref.pr_as_read_syntax)
@@ -294,6 +295,7 @@ void function_print(NspFunction *H, int indent,const char *name, int rec_level)
     {
       function_info(H,indent,name,rec_level);
     }
+  return TRUE;
 }
 
 /*-----------------------------------------------------

@@ -31,7 +31,7 @@
 #include "nsp/nsp_lapack.h" /* vector_norm */
 #include "../librand/grand.h"
 
-static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
+static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
 /* In file Perm.c **/
 
 extern int C2F(dperm) (double A[],int ind[],int *nv);
@@ -483,15 +483,16 @@ int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
  * @indent is the given indentation for printing.
  **/
 
-void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,const char *name, int rec_level)
+int nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
   if ( Sp == NULLSPCOL) 
     {
       Sciprintf("Null SpMatrix pointer\n");
-      return;
+      return TRUE;
     }
   Sciprintf1(indent,"%s\t= [...]\t\tspcol %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+  return TRUE;
 }
 
 
@@ -505,8 +506,9 @@ void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,const char *name, int r
  * displays a sparse Matrix.
  **/
 
-void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_level)
+int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_level)
 { 
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name; 
   if (user_pref.pr_as_read_syntax)
     {
@@ -516,7 +518,7 @@ void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_le
       if ( nsp_spcolmatrix_get(Sp,&RC,&Values)== FAIL)
 	{
 	  Sciprintf("Error: failed to print sparse matrix as_read\n");
-	  return;
+	  return rep;
 	}
       sprintf(epname,"%s__rc",pname);
       nsp_matrix_print(RC,indent,epname,rec_level);
@@ -539,13 +541,14 @@ void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_le
 	  if ( user_pref.pr_depth  <= rec_level -1 ) 
 	    {
 	      Sciprintf1(indent,"%s\t= [...]\t\tspcol %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
-	      return;
+	      return rep;
 	    }
 	  nsp_init_pr_format (&fmt);
 	  Sciprintf1(indent,"%s\t=\t\tspcol %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
-	  nsp_spcolmatrix_print_internal(&fmt,Sp,indent+1);
+	  rep = nsp_spcolmatrix_print_internal(&fmt,Sp,indent+1);
 	}
     }
+  return rep;
 }
 
 /**
@@ -4451,7 +4454,7 @@ static void SpM_plus_format(NspSpColMatrix *Sp, int indent)
     }
 }
 
-static void SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
+static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 {
   int i,j;
   switch ( Sp->rc_type ) 
@@ -4480,10 +4483,12 @@ static void SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 	}
       break;
     }
+  return TRUE;
 }
 
-static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
+static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
 {
+  int rep = TRUE;
   if ( m->mn == 0) 
     {
       Sciprintf("[]\n");
@@ -4503,7 +4508,7 @@ static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *
 	  /* XXXXXX xxxx Sciprintf(m); **/
 	  if (user_pref.pr_as_read_syntax)
 	    Sciprintf("]");
-	  return;
+	  return rep;
 	}
       if (user_pref.pr_as_read_syntax)
 	{
@@ -4511,9 +4516,10 @@ static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *
 	}
       else
 	{
-	  SpM_general(fmt,m,indent);
+	  rep =SpM_general(fmt,m,indent);
 	}
     }
+  return rep;
 }
 
 /* Operations XXX

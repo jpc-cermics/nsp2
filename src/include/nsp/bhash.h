@@ -83,8 +83,8 @@ NspBHash *new_bhash();
 extern NspBHash *nsp_bhash_create(const char *name, unsigned int size);
 extern NspBHash *nsp_bhash_copy(const NspBHash *H);
 extern void nsp_bhash_destroy(NspBHash *H);
-extern void nsp_bhash_info(NspBHash *H, int indent,char *name, int rec_level);
-extern void nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level);
+extern int nsp_bhash_info(NspBHash *H, int indent,char *name, int rec_level);
+extern int nsp_bhash_print(NspBHash *H, int indent,char *name, int rec_level);
 
 /* from BHashObj.c */
 

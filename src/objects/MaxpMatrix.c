@@ -33,11 +33,6 @@
 #include "nsp/matutil.h"
 
 
-/* XXX */
-extern void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
-extern void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
-
-
 /*
  * Max Plus matrices 
  * It is always possible to cast a NspMaxpMatrix * to a NspMatrix * 
@@ -335,7 +330,7 @@ void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
  *
  */
 
-void nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
@@ -357,6 +352,7 @@ void nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,const char *name, int rec_
 	( Mat->rc_type == 'r') ? nsp_pr_float (&fmt,Mat->R[0]) : nsp_pr_complex (&fmt, Mat->C[0]);
       Sciprintf(" ]\t\tmp %c (%dx%d)\n",Mat->rc_type,Mat->m,Mat->n);
     }
+  return TRUE;
 }
 
 
@@ -371,8 +367,9 @@ void nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,const char *name, int rec_
  * @indent is the given indentation for printing.
  */
 
-void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,const char *name, int rec_level)
+int nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,const char *name, int rec_level)
 {
+  int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);
   if (user_pref.pr_as_read_syntax)
@@ -391,7 +388,7 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,const char *name, int re
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_mpmatrix_info(Mat,indent,pname,rec_level);
-	  return;
+	  return rep;
 	}
       Sciprintf1(indent,"%s\t=%s\t\tmp %c(%dx%d) \n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
@@ -401,10 +398,11 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,const char *name, int re
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
       if ( Mat->rc_type == 'r') 
-	nsp_real_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
+	rep = nsp_real_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
       else 
-	nsp_complex_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
+	rep = nsp_complex_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
     }
+  return rep;
 }
 
 /**
@@ -415,7 +413,7 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,const char *name, int re
  * syntax. 
  */
 
-void nsp_mpmatrix_latex_print(const NspMaxpMatrix *Mat)
+int nsp_mpmatrix_latex_print(const NspMaxpMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
@@ -433,6 +431,7 @@ void nsp_mpmatrix_latex_print(const NspMaxpMatrix *Mat)
 	}
       Sciprintf("\\end{array}\\right)}\n");
     }
+  return TRUE;
 }
 
 /**
@@ -444,7 +443,7 @@ void nsp_mpmatrix_latex_print(const NspMaxpMatrix *Mat)
  */
 
 
-void nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
+int nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
@@ -465,6 +464,7 @@ void nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
 	}
       Sciprintf("\\end{tabular}\n");
     }
+  return TRUE;
 }
 
 /**

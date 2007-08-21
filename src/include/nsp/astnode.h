@@ -67,8 +67,8 @@ extern NspAstNode *astnode_create(char *name,int op,int arity,void *data,NspType
 
 extern NspAstNode *nsp_astnode_copy(NspAstNode *H);
 extern void nsp_astnode_destroy(NspAstNode *H);
-extern void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level);
-extern void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level);
+extern int nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level);
+extern int nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level);
 extern NspAstNode *nsp_astnode_object (NspObject *O); 
 extern int IsAstNodeObj (Stack stack, int i); 
 extern int IsAstNode(NspObject *O);

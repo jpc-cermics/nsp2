@@ -228,7 +228,7 @@ void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
  * info 
  */
 
-void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
+int nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == @NULL@) 
@@ -245,9 +245,10 @@ void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int 
  * print 
  */
 
-void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
+int nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
 {
   nsp_@TYPEDOWNCASE@_info(H,indent,NULL,0);
+  return TRUE
 }
 
 /*-----------------------------------------------------

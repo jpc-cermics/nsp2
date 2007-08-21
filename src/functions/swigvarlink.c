@@ -256,13 +256,13 @@ void nsp_swigvarlink_info(NspSwigVarLink *M,int indent,const char *name,int rec_
  * print 
  */
 
-void nsp_swigvarlink_print(NspSwigVarLink *M, int indent,const char *name, int rec_level)
+int nsp_swigvarlink_print(NspSwigVarLink *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSWIGVARLINK) 
     {
       Sciprintf("Null Pointer SwigVarLink \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -273,10 +273,11 @@ void nsp_swigvarlink_print(NspSwigVarLink *M, int indent,const char *name, int r
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_swigvarlink_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_swigvarlink_type_short_string(NSP_OBJECT(M)));
     }
+  return TRUE;
 }
 
 /*

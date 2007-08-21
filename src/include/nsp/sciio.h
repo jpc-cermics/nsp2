@@ -14,7 +14,7 @@
 #include "nsp/tokenizer.h"
 
 typedef int (*IOVFun) (const char *fmt, va_list ap);
-extern IOVFun Scivprintf;
+/* extern IOVFun Scivprintf; */
 IOVFun SetScilabIO(IOVFun F);
 int Sciprintf1(int indent,const char *fmt,...);
 int Sciprintf(const char *fmt,...); 

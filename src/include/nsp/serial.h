@@ -63,11 +63,11 @@ NspSerial *new_serial();
 
 #define NULLSERIAL (NspSerial*) 0
 
-NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes);
-NspSerial *nsp_serial_copy(NspSerial *H);
-void nsp_serial_destroy(NspSerial *H);
-void nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level);
-void nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level);
+extern NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes);
+extern NspSerial *nsp_serial_copy(NspSerial *H);
+extern void nsp_serial_destroy(NspSerial *H);
+extern int nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level);
+extern int nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level);
 
 /* from SerialObj.c */
 

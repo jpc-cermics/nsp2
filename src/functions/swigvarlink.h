@@ -63,7 +63,7 @@ extern NspSwigVarLink *swigvarlink_create(char *name);
 extern NspSwigVarLink *nsp_swigvarlink_copy(NspSwigVarLink *H);
 extern void nsp_swigvarlink_destroy(NspSwigVarLink *H);
 extern void nsp_swigvarlink_info(NspSwigVarLink *H, int indent,const char *name, int rec_level);
-extern void nsp_swigvarlink_print(NspSwigVarLink *H, int indent,const char *name, int rec_level);
+extern int nsp_swigvarlink_print(NspSwigVarLink *H, int indent,const char *name, int rec_level);
 extern void nsp_swigvarlink_latex_print(NspSwigVarLink *H, int indent,const char *name, int rec_level);
 extern NspSwigVarLink *nsp_swigvarlink_object (NspObject *O); 
 extern int IsSwigVarLinkObj (Stack stack, int i); 
