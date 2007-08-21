@@ -36,7 +36,7 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	pr-output.obj bhash.obj \
 	serial.obj \
 	SpColMatrix.obj SpColMatObj.obj \
-	eframe.obj 
+	eframe.obj mtlb.obj
 
 
 

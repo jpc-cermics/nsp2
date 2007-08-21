@@ -89,6 +89,7 @@ extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 extern  sci_interface  premiamodel_Interf ;extern  interface_info  premiamodel_Interf_Info ;
 extern  sci_interface  gmarkup_node_Interf ;extern  interface_info  gmarkup_node_Interf_Info ;
 extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_Info ;
+extern  sci_interface  Mtlb_Interf ;extern  interface_info  Mtlb_Interf_Info ;
 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #ifdef WITH_MAXPLUSLIB
@@ -203,7 +204,7 @@ InterfTab Interfaces[]={
 #ifdef WITH_DCLASS
   {DClass_Interf , DClass_Interf_Info},
 #endif
-
+  {Mtlb_Interf, Mtlb_Interf_Info},
   {NULL,NULL}
 }; 
 

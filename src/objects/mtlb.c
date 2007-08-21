@@ -31,11 +31,12 @@
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
 
-/*
+
+/* mtlb issparse
  * 
  */
 
-int int_nsp_issparse(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_issparse(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(0,1);
@@ -46,7 +47,10 @@ int int_nsp_issparse(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-int int_nsp_isstruct(Stack stack, int rhs, int opt, int lhs)
+/* mtlb isstruct 
+ */
+
+static int int_nsp_isstruct(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(0,1);
@@ -57,7 +61,11 @@ int int_nsp_isstruct(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-int int_nsp_islogical(Stack stack, int rhs, int opt, int lhs)
+/* mtlb islogical
+ *
+ */
+
+static int int_nsp_islogical(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(0,1);
@@ -68,7 +76,11 @@ int int_nsp_islogical(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-int int_nsp_isfield(Stack stack, int rhs, int opt, int lhs)
+/* mtlb isfield 
+ *
+ */
+
+static int int_nsp_isfield(Stack stack, int rhs, int opt, int lhs)
 {
   NspHash *H;
   char *key;
@@ -83,7 +95,11 @@ int int_nsp_isfield(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
+/* mtlb any(Mat [,dim])
+ *
+ */
+
+static int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *ret;
   NspMatrix *M;
@@ -143,7 +159,11 @@ int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
+/* mtlb all(Mat [,dim])
+ *
+ */
+
+static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *ret;
   NspMatrix *M;
@@ -204,7 +224,12 @@ int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
+/* mtlb any(BMat)
+ *
+ */
+
+
+static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *ret;
   NspBMatrix *M;
@@ -261,7 +286,11 @@ int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
+/* mtlb all(BMat)
+ *
+ */
+
+static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *ret;
   NspBMatrix *M;
@@ -340,9 +369,9 @@ int Mtlb_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(Mtlb_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-
 /* used to walk through the interface table 
-   (for adding or removing functions) **/
+ * (for adding or removing functions) 
+ */
 
 void Mtlb_Interf_Info(int i, char **fname, function (**f))
 {
