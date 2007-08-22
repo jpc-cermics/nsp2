@@ -20,12 +20,10 @@
  *
  */
 
-#include <nsp/object.h>
 #include <gtk/gtk.h>
-/* ----------- Umfpack ----------- */
 #define  Umfpack_Private 
 #include "nsp/object.h"
-#include "nsp_umfpack.h"
+#include "nsp/umfpack.h"
 #include "nsp/interf.h"
 #include <umfpack.h>
 
@@ -326,7 +324,9 @@ static NspUmfpack *umfpack_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLUMFPACK;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLUMFPACK;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLUMFPACK;
+
  NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = NULL;
  return H;
@@ -372,16 +372,22 @@ static const char *nsp_umfpack_error(int num_error)
     }
 }
 
-static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
+/**
+ * nsp_umfpack_create:
+ * @A: a #NspSpCoLMatrix
+ * 
+ * creates a #NspUmfpack from a sparse matrix. 
+ * @A is unchanged. 
+ * 
+ * Returns: a new #NspUmfpack or %NULLUMFPACK
+ **/
+
+NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A)
 {
-  NspSpColMatrix *A;
   double *Control = NULL, *Info = NULL;
   void *Symbolic=NULL, *Numeric=NULL;
   int stat;
   NspUmfpack *H=NULL;
-  /* Get a sparse matrix */
-  CheckStdRhs(1,1);
-  if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto err;
   if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) goto err;
   if ( A->rc_type == 'r' ) 
     {
@@ -420,21 +426,34 @@ static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
   A->triplet.Ir=NULL;
   A->triplet.Pr=NULL;
   A->triplet.Pi=NULL;
-  MoveObj(stack,1,NSP_OBJECT(H));
-  return 1;
-
+  return H;
  symb_fact_error: 
-  Scierror("Error: symbolic factorization failed in %s (%s)\n",NspFname(stack),
+  Scierror("Error: symbolic factorization failed in umfpack (%s)\n",
 	   nsp_umfpack_error(stat));
-  return RET_BUG;
+  return NULLUMFPACK;
  num_fact_error:
-  Scierror("Error: numeric factorization failed in %s (%s)\n",NspFname(stack),
+  Scierror("Error: numeric factorization failed in umfpack (%s)\n",
 	   nsp_umfpack_error(stat));
-  return RET_BUG;
+  return NULLUMFPACK;
  err: 
   /* clean stuff here XXXX ? */
   if ( Numeric != NULL) umfpack_di_free_numeric(&Numeric);
-  return RET_BUG;
+  return NULLUMFPACK;
+} 
+
+
+static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  NspUmfpack *H=NULL;
+  /* Get a sparse matrix */
+  CheckStdRhs(1,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) 
+    return RET_BUG;
+  if ((H = nsp_umfpack_create(A)) == NULLUMFPACK)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
 } 
 
 
@@ -806,21 +825,61 @@ static AttrTab umfpack_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
+#include "mex/mex.h"
 
-static OpTab umfpack_func[]={
-  { "umfpack_create", int_umfpack_create},
-  { NULL, NULL}
+extern function int_cholmod_create;
+extern function int_cholmod_chol;
+extern function int_cholmod_norm;
+extern function int_cholmod_analyze;
+extern mexfun nsp_analyze;
+extern mexfun nsp_chol2;
+extern mexfun nsp_bisect;
+extern mexfun nsp_cholmod;
+extern mexfun nsp_etree2;
+extern mexfun nsp_ldlchol;
+extern mexfun nsp_ldlsolve;
+extern mexfun nsp_ldlupdate;
+extern mexfun nsp_resymbol;
+extern mexfun nsp_septree;
+extern mexfun nsp_sparse2;
+extern mexfun nsp_symbfact2;
+extern mexfun nsp_lchol;
+
+static OpWrapTab umfpack_func[]={
+  /*  {"analyze", (function *) nsp_analyze,(function_wrapper *) nsp_mex_wrapper},
+  {"chol2",  (function *) nsp_chol2,(function_wrapper *) nsp_mex_wrapper},
+  {"bisect", (function *) nsp_bisect,(function_wrapper *) nsp_mex_wrapper},
+  {"cholmod",(function *)  nsp_cholmod,(function_wrapper *) nsp_mex_wrapper},
+  {"etree2", (function *) nsp_etree2,(function_wrapper *) nsp_mex_wrapper},
+  {"ldlchol",(function *)  nsp_ldlchol,(function_wrapper *) nsp_mex_wrapper},
+  {"ldlsolve", (function *)  nsp_ldlsolve,(function_wrapper *) nsp_mex_wrapper},
+  {"ldlupdate",(function *)   nsp_ldlupdate,(function_wrapper *) nsp_mex_wrapper},
+  {"resymbol",(function *)   nsp_resymbol,(function_wrapper *) nsp_mex_wrapper},
+  {"septree",(function *)   nsp_septree,(function_wrapper *) nsp_mex_wrapper},
+  {"sparse2", (function *)  nsp_sparse2,(function_wrapper *) nsp_mex_wrapper},
+  {"symbfact2", (function *)  nsp_symbfact2,(function_wrapper *) nsp_mex_wrapper},
+  {"lchol",(function *)   nsp_lchol,(function_wrapper *) nsp_mex_wrapper},
+  */
+  { "chol_sp", int_cholmod_chol, NULL},
+  { "analyze", int_cholmod_analyze, NULL},
+  { "umfpack_create", int_umfpack_create, NULL},
+  { "cholmod_create", int_cholmod_create, NULL},
+  {(char *) 0, NULL,NULL}
 };
 
 /* call ith function in the umfpack interface */
 
 int umfpack_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(umfpack_func[i].fonc))(stack,rhs,opt,lhs);
+  if ( umfpack_func[i].wrapper == NULL)
+     return (*(umfpack_func[i].fonc)) (stack, rhs, opt, lhs);
+  else 
+     return (*(umfpack_func[i].wrapper)) (stack, rhs, opt, lhs,umfpack_func[i].fonc);
 }
 
 /* used to walk through the interface table 
@@ -831,6 +890,5 @@ void umfpack_Interf_Info(int i, char **fname, function (**f))
   *fname = umfpack_func[i].name;
   *f = umfpack_func[i].fonc;
 }
-
 
 

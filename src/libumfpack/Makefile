@@ -6,10 +6,11 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a
 
-CFLAGS = $(CC_OPTIONS)
+CFLAGS = $(CC_OPTIONS) -I../include/mex/
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = umfpack.o
+OBJSC = cholmod.o umfpack.o
+
 OBJSF = 
 
 include ../Make.lib
