@@ -41,7 +41,7 @@
 #define SPUMONI 0
 #endif
 
-static void sputil_config (int spumoni, cholmod_common *cm, int in_mex );
+static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex );
 static void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *dummy) ;
 static NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_common *cm);
 static void nsp_cholmod_sparse_free(cholmod_sparse *B);
@@ -944,7 +944,7 @@ static int int_cholmod_norm(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   cm = &Common ;
   cholmod_start (cm) ;
-  sputil_config(SPUMONI, cm,FALSE) ;
+  nsp_sputil_config(SPUMONI, cm,FALSE) ;
   /* Get a sparse matrix */
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   if ( A->m != A->n )
@@ -1037,7 +1037,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
    */
   
   cholmod_start (&(cm)) ;
-  sputil_config (SPUMONI, &(cm),FALSE) ;
+  nsp_sputil_config (SPUMONI, &(cm),FALSE) ;
   
   /* only do the simplicial analysis (L->Perm and L->ColCount) */
   cm.supernodal = CHOLMOD_SIMPLICIAL ;
@@ -1142,7 +1142,7 @@ static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *be
    */
 
   cholmod_start (&(Ch->obj->Common)) ;
-  sputil_config (SPUMONI, &(Ch->obj->Common),FALSE) ;
+  nsp_sputil_config (SPUMONI, &(Ch->obj->Common),FALSE) ;
   /* In nsp solve should return complex */
   Ch->obj->Common.prefer_zomplex = FALSE ;
 
@@ -1564,10 +1564,10 @@ static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse
  * Timothy A. Davis
  */ 
 
-static void sputil_error_handler_mex (int status, char *file, int line, char *message);
-static void sputil_error_handler (int status, char *file, int line, char *message);
+static void nsp_sputil_error_handler_mex (int status, char *file, int line, char *message);
+static void nsp_sputil_error_handler (int status, char *file, int line, char *message);
 
-static void sputil_config (int spumoni, cholmod_common *cm, int in_mex )
+static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 {
   /* cholmod_solve must return a real or zomplex X for MATLAB */
   cm->prefer_zomplex = TRUE ;
@@ -1597,9 +1597,9 @@ static void sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 
   /* error handler */
   if ( in_mex == TRUE ) 
-    cm->error_handler  = sputil_error_handler_mex ;
+    cm->error_handler  = nsp_sputil_error_handler_mex ;
   else
-    cm->error_handler  = sputil_error_handler ;
+    cm->error_handler  = nsp_sputil_error_handler ;
 
   /* complex arithmetic */
   cm->complex_divide = cholmod_divcomplex ;
@@ -1623,7 +1623,7 @@ static void sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 }
 
 
-static void sputil_error_handler_mex (int status, char *file, int line, char *message)
+static void nsp_sputil_error_handler_mex (int status, char *file, int line, char *message)
 {
   if (status < CHOLMOD_OK)
     {
@@ -1637,7 +1637,7 @@ static void sputil_error_handler_mex (int status, char *file, int line, char *me
     }
 }
 
-static void sputil_error_handler (int status, char *file, int line, char *message)
+static void nsp_sputil_error_handler (int status, char *file, int line, char *message)
 {
   if (status < CHOLMOD_OK)
     {
