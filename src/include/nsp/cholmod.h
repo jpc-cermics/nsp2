@@ -79,8 +79,8 @@ extern NspCholmod *cholmod_create(char *name,NspTypeBase *type);
 
 extern NspCholmod *nsp_cholmod_copy(NspCholmod *H);
 extern void nsp_cholmod_destroy(NspCholmod *H);
-extern void nsp_cholmod_info(NspCholmod *M, int indent,const char *name, int rec_level);
-extern void nsp_cholmod_print(NspCholmod *Mat, int indent,char *name, int rec_level);
+extern int nsp_cholmod_info(NspCholmod *M, int indent,const char *name, int rec_level);
+extern int nsp_cholmod_print(NspCholmod *Mat, int indent,char *name, int rec_level);
 extern NspCholmod *nsp_cholmod_object (NspObject *O); 
 extern int IsCholmodObj (Stack stack, int i); 
 extern int IsCholmod(NspObject *O);

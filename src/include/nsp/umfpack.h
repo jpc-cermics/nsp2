@@ -79,7 +79,7 @@ extern NspUmfpack *umfpack_create(char *name,char rc_type,char* data,NspTypeBase
 
 extern NspUmfpack *nsp_umfpack_copy(NspUmfpack *H);
 extern void nsp_umfpack_destroy(NspUmfpack *H);
-extern void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level);
+extern int nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level);
 extern int nsp_umfpack_print(NspUmfpack *Mat, int indent,char *name, int rec_level);
 extern NspUmfpack *nsp_umfpack_object (NspObject *O); 
 extern int IsUmfpackObj (Stack stack, int i); 
