@@ -44,7 +44,8 @@ TESTS= \
 	sparse-mixed.dia \
 	extract_empty.dia \
 	sci_save_load.dia \
-	global.dia
+	global.dia \
+	cholmod.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
@@ -73,8 +74,6 @@ AFINIR= \
 	sparse-nsp.tst \
 	sparse.tst \
 	sp-sci.tst \
-
-
 
 VL=$(ALG:.dia=.vl) $(TESTS:.dia=.vl) 
 
