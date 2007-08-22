@@ -2978,6 +2978,8 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 
 /*-----------------------------------------------------------
  *  xpause(microsecs,events=TRUE or FALSE)
+ *  make a pause for given microsecs dealing or not with Gtk events according 
+ *  to the flag events.
  *-----------------------------------------------------------*/
 
 int int_xpause(Stack stack, int rhs, int opt, int lhs)
@@ -4711,6 +4713,10 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
 extern GdkImage* nsp_get_image(BCG *Xgc) ;
 extern GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) ;
 
+/* get the content of a graphic window as an image. 
+ *
+ */
+
 int int_get_image( Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ret1;
@@ -4731,6 +4737,10 @@ int int_get_image( Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,ret1);
   return Max(lhs,1);
 }
+
+/* get the content of a graphic window as a pixbuf 
+ *
+ */
 
 int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
@@ -4755,6 +4765,9 @@ int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/* insert a pixbuf given by a file-name in a graphic window 
+ *
+ */
 
 extern int nsp_insert_pixbuf_from_file(char *filename);
 
@@ -4768,31 +4781,9 @@ int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* experimental: draw a pixbuf in a region of a graphic window. 
+ */
 
-
-/*
-int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
-{
-  NspGObject *pixbuf = NULL;
-  BCG *Xgc;
-  CheckRhs(0,1);
-  CheckLhs(0,0); 
-  if ((pixbuf = GetGObject(stack,1)) == NULL) return RET_BUG; 
-  if ( !nspgobject_check(pixbuf,(NspTypeBase *) nsp_type_gdkpixbuf)) 
-    { 
-      Scierror("first argument should be a GdkPixbuf");
-      return RET_BUG;
-    }
-  Xgc=nsp_check_graphic_context();
-  if ( Xgc->private == NULL) 
-    {
-      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
-      return RET_BUG;
-    }
-  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,pixbuf,0,0,0,0,0,0);
-  return 0;
-}
-*/
 
 int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
