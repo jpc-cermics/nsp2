@@ -830,56 +830,24 @@ static AttrTab umfpack_attrs[] = {
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
-#include "mex/mex.h"
 
-extern function int_cholmod_create;
-extern function int_cholmod_chol;
-extern function int_cholmod_norm;
 extern function int_cholmod_analyze;
-extern mexfun nsp_analyze;
-extern mexfun nsp_chol2;
-extern mexfun nsp_bisect;
-extern mexfun nsp_cholmod;
-extern mexfun nsp_etree2;
-extern mexfun nsp_ldlchol;
-extern mexfun nsp_ldlsolve;
-extern mexfun nsp_ldlupdate;
-extern mexfun nsp_resymbol;
-extern mexfun nsp_septree;
-extern mexfun nsp_sparse2;
-extern mexfun nsp_symbfact2;
-extern mexfun nsp_lchol;
+extern function int_cholmod_chol;
+extern function int_cholmod_create;
 
-static OpWrapTab umfpack_func[]={
-  /*  {"analyze", (function *) nsp_analyze,(function_wrapper *) nsp_mex_wrapper},
-  {"chol2",  (function *) nsp_chol2,(function_wrapper *) nsp_mex_wrapper},
-  {"bisect", (function *) nsp_bisect,(function_wrapper *) nsp_mex_wrapper},
-  {"cholmod",(function *)  nsp_cholmod,(function_wrapper *) nsp_mex_wrapper},
-  {"etree2", (function *) nsp_etree2,(function_wrapper *) nsp_mex_wrapper},
-  {"ldlchol",(function *)  nsp_ldlchol,(function_wrapper *) nsp_mex_wrapper},
-  {"ldlsolve", (function *)  nsp_ldlsolve,(function_wrapper *) nsp_mex_wrapper},
-  {"ldlupdate",(function *)   nsp_ldlupdate,(function_wrapper *) nsp_mex_wrapper},
-  {"resymbol",(function *)   nsp_resymbol,(function_wrapper *) nsp_mex_wrapper},
-  {"septree",(function *)   nsp_septree,(function_wrapper *) nsp_mex_wrapper},
-  {"sparse2", (function *)  nsp_sparse2,(function_wrapper *) nsp_mex_wrapper},
-  {"symbfact2", (function *)  nsp_symbfact2,(function_wrapper *) nsp_mex_wrapper},
-  {"lchol",(function *)   nsp_lchol,(function_wrapper *) nsp_mex_wrapper},
-  */
-  { "chol_sp", int_cholmod_chol, NULL},
-  { "analyze", int_cholmod_analyze, NULL},
-  { "umfpack_create", int_umfpack_create, NULL},
-  { "cholmod_create", int_cholmod_create, NULL},
-  {(char *) 0, NULL,NULL}
+static OpTab umfpack_func[]={
+  { "analyze", int_cholmod_analyze},
+  { "chol_sp", int_cholmod_chol},
+  { "cholmod_create", int_cholmod_create},
+  { "umfpack_create", int_umfpack_create},
+  { NULL, NULL}
 };
 
 /* call ith function in the umfpack interface */
 
 int umfpack_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  if ( umfpack_func[i].wrapper == NULL)
-     return (*(umfpack_func[i].fonc)) (stack, rhs, opt, lhs);
-  else 
-     return (*(umfpack_func[i].wrapper)) (stack, rhs, opt, lhs,umfpack_func[i].fonc);
+  return (*(umfpack_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 

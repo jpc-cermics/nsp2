@@ -1079,7 +1079,6 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
 
 } 
 
-
 static OpTab cholmod_func[]={
   { "analyze", int_cholmod_analyze},
   { "chol_sp", int_cholmod_chol},

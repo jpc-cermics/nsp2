@@ -89,16 +89,16 @@
 #define WITH_GTKGLEXT 1
 
 /* Define if have and use GTKHTML */
-/* #undef WITH_GTKHTML */
+#define WITH_GTKHTML 1
 
 /* Define if use maxplus lib  */
 /* #undef WITH_MAXPLUSLIB */
 
 /* Define if use umfpack lib  */
-/* #undef WITH_UMFPACK */
+#define WITH_UMFPACK 1
 
 /* Define if use  cholmod lib  */
-/* #undef WITH_CHOLMOD */
+#define WITH_CHOLMOD 1
 
 /* Define if use fftw3 lib  */
 #define WITH_FFTW3 1
