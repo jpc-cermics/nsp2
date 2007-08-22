@@ -237,7 +237,7 @@ void nsp_umfpack_destroy(NspUmfpack *H)
  * info 
  */
 
-void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
+int nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -245,10 +245,11 @@ void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
   if ( M == NULLUMFPACK || M->obj == NULL ) 
     {
       Sciprintf("Null Pointer Umfpack \n");
-      return;
+      return TRUE;
     }
   Sciprintf("%s\t= [...]\t%s %c (%dx%d)\n",pname,nsp_umfpack_type_short_string(NSP_OBJECT(M)),
 	    M->obj->rc_type,M->obj->mtlb_T.m,M->obj->mtlb_T.n);
+  return TRUE;
 }
 
 /*

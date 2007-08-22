@@ -259,7 +259,7 @@ void nsp_cholmod_destroy(NspCholmod *H)
  * info 
  */
 
-void nsp_cholmod_info(NspCholmod *M, int indent,const char *name, int rec_level)
+int nsp_cholmod_info(NspCholmod *M, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -267,18 +267,19 @@ void nsp_cholmod_info(NspCholmod *M, int indent,const char *name, int rec_level)
   if ( M == NULLCHOLMOD || M->obj == NULL ) 
     {
       Sciprintf("Null Pointer Cholmod \n");
-      return;
+      return TRUE;
     }
   Sciprintf("%s\t= [...]\t%s %c (%dx%d)\n",pname,nsp_cholmod_type_short_string(NSP_OBJECT(M)),
 	    (M->obj->L->xtype ==  CHOLMOD_ZOMPLEX) ? 'c' : 'r', 
 	    M->obj->m,M->obj->n); 
+  return TRUE;
 }
 
 /*
  * print 
  */
 
-void nsp_cholmod_print(NspCholmod *Mat, int indent,char *name, int rec_level)
+int nsp_cholmod_print(NspCholmod *Mat, int indent,char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
@@ -289,6 +290,7 @@ void nsp_cholmod_print(NspCholmod *Mat, int indent,char *name, int rec_level)
     {
       nsp_cholmod_info(Mat,indent,pname,rec_level);
     }
+  return TRUE;
 }
 
 /*-----------------------------------------------------
@@ -550,7 +552,6 @@ static int int_cholmod_meth_get_ld(NspCholmod *self, Stack stack, int rhs, int o
 {
   cholmod_factor *Lc;
   cholmod_sparse *Lsparse;
-  int  minor ;
   NspSpColMatrix *Res;
 
   CheckRhs(0,0); 
@@ -578,6 +579,7 @@ static int int_cholmod_meth_get_ld(NspCholmod *self, Stack stack, int rhs, int o
   /* return minor (translate to MATLAB convention) */
   if ( lhs  > 1)
     {
+      int minor = self->obj->L->minor;
       nsp_move_double(stack,2,(minor == self->obj->n) ? 0 : (minor+1));
     }
   if ( lhs > 2 ) 
