@@ -20,7 +20,7 @@
  *------------------------------------------------------------------*/
 
 #include "files.h" 
-#include "Sun.h"
+/* #include "Sun.h" */
 #include "nsp/sciio.h"
 #include "nsp/object.h"
 

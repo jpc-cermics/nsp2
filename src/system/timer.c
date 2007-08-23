@@ -46,7 +46,7 @@
  * nsp_timer:
  * 
  * returns the elapsed processor time between successive calls.
- * If getrusage() is fount it is used else clock() is used. 
+ * If getrusage() is found it is used else clock() is used. 
  * Note that acording to clock man page:  the  time  can  wrap  around.  
  * On a 32bit system  where CLOCKS_PER_SEC  equals 1000000 this function 
  * will return the same value approximately every 72 minutes.
@@ -57,6 +57,7 @@
 #ifdef HAVE_GETRUSAGE
 /* exists in  psapi.dll for full getrusage function emulation on windows 
  */
+
 double nsp_timer(void)
 {
   static struct rusage usage1={{0,0},{0,0}};
@@ -72,8 +73,8 @@ double nsp_timer(void)
 }
 
 #else 
-
 #ifdef HAVE_CLOCK
+
 double nsp_timer(void)
 {
   double etime;
@@ -85,9 +86,58 @@ double nsp_timer(void)
   return etime;
 }
 
-#else 
+#else  /* HAVE_CLOCK */
 
 double nsp_timer_void(void)
+{
+  Sciprintf("Warning: timer is not available\n");
+  return 0;
+}
+
+#endif  /* HAVE_CLOCK */
+#endif  /* HAVE_GETRUSAGE */
+
+/**
+ * nsp_cputime:
+ * 
+ * returns the elapsed processor time since nsp started. 
+ * If getrusage() is found it is used else clock() is used. 
+ * Note that acording to clock man page:  the  time  can  wrap  around.  
+ * On a 32bit system  where CLOCKS_PER_SEC  equals 1000000 this function 
+ * will return the same value approximately every 72 minutes.
+ * 
+ * Return value: a double.
+ **/
+
+#ifdef HAVE_GETRUSAGE
+/* exists in  psapi.dll for full getrusage function emulation on windows 
+ */
+
+double nsp_cputime(void)
+{
+  double etime;
+  struct rusage usage2;
+  if ( getrusage(RUSAGE_SELF,&usage2) !=0) return 0;
+  etime= (double)(usage2.ru_utime.tv_sec);
+  etime += (double)(usage2.ru_stime.tv_sec);
+  etime +=  1.0e-6 *(usage2.ru_utime.tv_usec);
+  etime +=  1.0e-6 *(usage2.ru_stime.tv_usec);
+  return etime;
+}
+
+#else 
+
+#ifdef HAVE_CLOCK
+
+double nsp_cputime(void)
+{
+  clock_t t2 = clock();
+  return (double)((double)(t2)/(double)CLOCKS_PER_SEC);
+}
+
+#else 
+
+double nsp_cputime_void(void)
 {
   Sciprintf("Warning: timer is not available\n");
   return 0;
@@ -103,8 +153,9 @@ double nsp_timer_void(void)
  * 
  * returns the microseconds part of timeofday using g_get_current_time().
  * Equivalent to the UNIX gettimeofday() function, but portable.
- * Represents a precise time, with seconds and microseconds. Same as
- * Return value: 
+ * Represents a precise time, with seconds and microseconds. 
+ * 
+ * Return value: the microseconds part of timeofday as an integer.
  **/
 
 int nsp_stimer(void)

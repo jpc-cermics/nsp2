@@ -64,6 +64,22 @@ static int int_timer(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
+ * Interface for cputime
+ */
+
+static int int_cputime(Stack stack,int rhs,int opt,int lhs) 
+{
+  NspObject *OM;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ( (OM=nsp_create_object_from_double(NVOID,nsp_cputime())) == NULLOBJ) 
+    return RET_BUG;
+  MoveObj(stack,1,OM);
+  return 1;
+}
+
+
+/*
  * Interface for tic toc 
  */
 
@@ -428,6 +444,7 @@ static OpTab System_func[]={
   {"setenv",int_setenv},
   {"unsetenv",int_unsetenv},
   {"timer", int_timer},
+  {"cputime", int_cputime},
   {"tic", int_tic},
   {"toc", int_toc},
   {"system",int_system},
