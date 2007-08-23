@@ -495,11 +495,22 @@ typedef int (*MPM) (NspBMatrix *,const NspBMatrix*);
 
 static int int_bmatrix__and_or(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2)
 {
-  NspBMatrix *HMat1,*HMat2;
+  int rep = RET_BUG;
+  NspMatrix *Mat2 = NULLMAT;
+  NspBMatrix *HMat1=NULLBMAT,*HMat2=NULLBMAT,*B=NULLBMAT;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetBMatCopy(stack,1)) == NULLBMAT) return RET_BUG;
-  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
+  if ((HMat1 = GetBMatCopy(stack,1)) == NULLBMAT) goto bug;
+  if (0 &&  IsMatObj(stack,2) )
+    {
+      /* remove 0 above to accept Matrix */
+      if ((Mat2 = GetMat(stack,2)) == NULLMAT) goto bug;
+      if ((HMat2 = B = nsp_matrix_to_bmatrix(Mat2)) == NULLBMAT ) goto bug;
+    }
+  else 
+    {
+      if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) goto bug;
+    }
   if ( HMat1->mn == 0) 
     {
       NSP_OBJECT(HMat2)->ret_pos = 1;
@@ -512,24 +523,28 @@ static int int_bmatrix__and_or(Stack stack, int rhs, int opt, int lhs, MPM F1, M
     }
   if ( HMat2->mn == 1) 
     {
-      if ( (*F1)(HMat1,HMat2) != OK) return RET_BUG;
+      if ( (*F1)(HMat1,HMat2) != OK) goto bug;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
   else if ( HMat1->mn == 1 ) 
     {
       /* since Mat1 is scalar we store the result in Mat2 so we 
-       *  must copy it 
-       **/
-      if ((HMat2 = GetBMatCopy(stack,2)) == NULLBMAT) return RET_BUG;
-      if ( (*F1)(HMat2,HMat1) != OK) return RET_BUG;
+       * must copy it. If B is non null Mat2 was already previously created. 
+       */
+      if ( B== NULL && (HMat2 = GetBMatCopy(stack,2)) == NULLBMAT) goto bug;
+      if ( (*F1)(HMat2,HMat1) != OK) goto bug;
       NSP_OBJECT(HMat2)->ret_pos = 1;
     }
   else 
     {
-      if ( (*F2)(HMat1,HMat2) != OK) return RET_BUG;
+      if ( (*F2)(HMat1,HMat2) != OK) goto bug;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
-  return 1;
+  rep = 1;
+ bug: 
+  /* destroy B if it is not returned */
+  if ( B != NULLBMAT && NSP_OBJECT(B)->ret_pos != 1) nsp_bmatrix_destroy(B);
+  return rep;
 }
 
 /*
@@ -552,7 +567,7 @@ static int int_bmatrix_and(Stack stack, int rhs, int opt, int lhs)
   if (rhs - opt == 2)
     {
       /* or(A,B); */
-      return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_or,nsp_bmatrix_and);
+      return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_and,nsp_bmatrix_and);
     }
   /* and(A,dim=) */
   if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL )
@@ -1005,7 +1020,7 @@ static OpTab BMatrix_func[]={
   {"addcols_b_m",int_bmatrix_addcols},
   {"addrows_b_m",int_bmatrix_addrows},
   {"and_b",int_bmatrix_and},
-  /* {"and_b_b",int_bmatrix_and}, */
+  {"and_b_b",int_bmatrix_and},
   {"seq_and_b",int_bmatrix_and},
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
@@ -1021,7 +1036,7 @@ static OpTab BMatrix_func[]={
   {"m2b",int_bmatrix_m2b},
   {"not_b",int_bmatrix_not},
   {"or_b",int_bmatrix_or},
-  /* {"or_b_b",int_bmatrix_or}, */
+  {"or_b_b",int_bmatrix_or},
   {"seq_or_b",int_bmatrix_or},
   {"seq_or_b_b",int_bmatrix_or},
   {"redim_b",int_matint_redim}, 
