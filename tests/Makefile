@@ -45,7 +45,8 @@ TESTS= \
 	extract_empty.dia \
 	sci_save_load.dia \
 	global.dia \
-	cholmod.dia
+	cholmod.dia \
+	bool.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
