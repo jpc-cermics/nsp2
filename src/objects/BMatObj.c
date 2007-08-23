@@ -565,13 +565,11 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n", dim);
-      
+      Sciprintf("Invalid dim flag '%d' assuming 0\n", dim);
     case 0 : 
       if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
       HMat->B[0] = NSP_OBJECT(HMat1)->type->is_true(HMat1);
       break;
-
     case 1:   /* row */
       if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG;
       for ( j= 0 ; j < HMat1->n ; j++)
@@ -581,7 +579,6 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 	    if (  HMat1->B[i+HMat1->m*j]== FALSE ) { HMat->B[j] = FALSE; break;}
 	}
       break;
-      
     case 2:  /* column */
       if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
       for ( i= 0 ; i < HMat1->m ; i++)
@@ -614,7 +611,7 @@ static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n", dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n", dim);
 
     case 0 : 
       if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;

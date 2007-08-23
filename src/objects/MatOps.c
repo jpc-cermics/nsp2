@@ -1319,7 +1319,7 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0: 
       if ((Sum = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
@@ -1393,7 +1393,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0:
       if ((Prod = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
@@ -1479,7 +1479,7 @@ NspMatrix *nsp_mat_cum_prod(NspMatrix *A, int dim)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0: 
       if ( A->rc_type == 'r' ) 
@@ -1568,7 +1568,7 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0: 
       if ( A->rc_type == 'r' ) 
@@ -1652,7 +1652,7 @@ NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0: 
       if ( A->mn - order <= 0 )
@@ -1980,7 +1980,7 @@ int nsp_mat_minmax(NspMatrix *A, int dim, NspMatrix **Amin, NspMatrix **Imin,
   switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid dim flag '%d' assuming 0\n",dim);
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
     case 0: 
       m = 1; n = 1; break;
     case 1:
