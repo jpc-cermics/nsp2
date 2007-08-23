@@ -532,36 +532,35 @@ static int int_bmatrix__and_or(Stack stack, int rhs, int opt, int lhs, MPM F1, M
   return 1;
 }
 
+/*
+ * and(A,B)
+ * and(A,dim=) 
+ * A and B must have the same size except if A or B is scalar 
+ * or A and B are []
+ */
+
 static int int_bmatrix_and(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_and,nsp_bmatrix_and);
-}
-
-/*
- * A(i;j) = "A(i;j) or B(i;j)" : A is changed  B unchanged 
- *    A and B must have the same size except if A or B is scalar 
- *    or A and B are []
- */
-
-static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_or,nsp_bmatrix_or);
-}
-
-/*
- * res = " and A(i;j)"
- */
-
-static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
-{
   int dim=0,i,j;
+  NspObject *Obj = NULLOBJ;
   NspBMatrix *HMat1,*HMat;
-  CheckRhs(1,2);
+  nsp_option opts[] ={{"dim",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
-  
+  if (rhs - opt == 2)
+    {
+      /* or(A,B); */
+      return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_or,nsp_bmatrix_and);
+    }
+  /* and(A,dim=) */
+  if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL )
+    return RET_BUG;
+  if ( Obj != NULL) 
+    {
+      if ( GetDimArg(stack, opts[0].position, &dim) == FAIL ) return RET_BUG;
+    }
   switch (dim) 
     {
     default : 
@@ -595,24 +594,38 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * res = " or A(i;j)"
+ * or(A,B)
+ * or(A,dim=) 
+ * A and B must have the same size except if A or B is scalar 
+ * or A and B are []
  */
 
-static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
+static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
 {
   int dim=0,i,j;
   NspBMatrix *HMat1,*HMat=NULLBMAT;
-  CheckRhs(1,2);
+  NspObject *Obj=NULLOBJ;
+  nsp_option opts[] ={{"dim",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
-
+  if (rhs - opt == 2)
+    {
+      /* or(A,B); */
+      return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_or,nsp_bmatrix_or);
+    }
+  /* or(A,dim=) */
+  if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL )
+    return RET_BUG;
+  if ( Obj != NULL) 
+    {
+      if ( GetDimArg(stack, opts[0].position, &dim) == FAIL ) return RET_BUG;
+    }
   switch (dim) 
     {
     default : 
       Sciprintf("Invalid dim flag '%d' assuming 0\n", dim);
-
     case 0 : 
       if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
       HMat->B[0] = FALSE;
@@ -991,9 +1004,9 @@ static OpTab BMatrix_func[]={
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
   {"addrows_b_m",int_bmatrix_addrows},
-  {"and_b",int_bmatrix_and1},
-  {"and_b_b",int_bmatrix_and},
-  {"seq_and_b",int_bmatrix_and1},
+  {"and_b",int_bmatrix_and},
+  /* {"and_b_b",int_bmatrix_and}, */
+  {"seq_and_b",int_bmatrix_and},
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
   {"concatd_b_b", int_matint_concatd}, /* int_bmatrix_concatd}, */
@@ -1007,9 +1020,9 @@ static OpTab BMatrix_func[]={
   {"find_b",int_bmatrix_find},
   {"m2b",int_bmatrix_m2b},
   {"not_b",int_bmatrix_not},
-  {"or_b",int_bmatrix_or1},
-  {"or_b_b",int_bmatrix_or},
-  {"seq_or_b",int_bmatrix_or1},
+  {"or_b",int_bmatrix_or},
+  /* {"or_b_b",int_bmatrix_or}, */
+  {"seq_or_b",int_bmatrix_or},
   {"seq_or_b_b",int_bmatrix_or},
   {"redim_b",int_matint_redim}, 
   {"matrix_b", int_matint_redim},
