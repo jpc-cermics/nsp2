@@ -41,7 +41,6 @@
 
 #include <gtk/gtk.h>
 #include "nsp/math.h"
-#include "../system/Sun.h"
 #include "nsp/gtksci.h"
 #include "nsp/sciio.h"
 
