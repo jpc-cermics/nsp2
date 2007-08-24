@@ -1,7 +1,7 @@
-43% symbol docs coverage.
-995 symbols documented.
+44% symbol docs coverage.
+1009 symbols documented.
 236 symbols incomplete.
-1302 not documented.
+1288 not documented.
 
 
 Abs
@@ -125,17 +125,10 @@ GetTypeCopy
 GobjCreate
 GtkE_Type
 HAS_STDARG
-HAVE_FINITE
 HAVE_FLOAT_H
 HAVE_INLINE
-HAVE_ISINF
-HAVE_ISNAN
 HAVE_LIMITS_H
-HAVE_SLEEP
-HAVE_STRERROR
 HAVE_SYS_TIME_H
-HAVE_TERMCAP
-HAVE_USLEEP
 HAVE_VALUES_H
 Hash_Type
 HobjCreate
@@ -368,7 +361,6 @@ OptCheck
 PD0
 PI0
 PMatrix_Type
-POINTER_INT
 P_PList_Type
 ParseError
 PushClickQueue
@@ -409,15 +401,9 @@ Stack
 StackInfo
 StackStore
 SwapObjs (stack, i, j)
-USE_SHARP_SIGN
 USE_SWAP
 VERSION
 VoidPt_Type
-WITH_FFTW3
-WITH_GTKGLEXT
-WITH_GTKHTML
-WITH_PVM
-WTU
 Widget
 XDR_MASK
 XDR_OFF
