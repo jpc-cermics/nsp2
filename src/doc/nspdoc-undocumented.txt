@@ -1,7 +1,7 @@
 42% symbol docs coverage.
-968 symbols documented.
-224 symbols incomplete.
-1336 not documented.
+979 symbols documented.
+246 symbols incomplete.
+1326 not documented.
 
 
 Abs
@@ -399,25 +399,16 @@ SciGtkReadLine
 SciReadClean
 SciStack
 Sci_Help
-Scierror
 Scifprintf
 Scig_click_handler
 Scig_command_handler
 Scigetchar
-Sciprint2file
-Sciprint2string
-Sciprint2string_reset
-Sciprint_diary
-Sciprint_diary_on
 Sciprint_diary_only
-Sciprint_file
 Sciprint_set_diary
 Sciprintf (Returns)
-Sciprintf1
+Sciprintf1 (Returns)
 Scisncr
-Scivprintf
 Scopy
-SetScilabIO
 Sp_Type
 Sset
 Stack
@@ -430,6 +421,7 @@ VERSION
 VoidPt_Type
 WITH_FFTW3
 WITH_GTKGLEXT
+WITH_GTKHTML
 WITH_PVM
 WTU
 Widget
@@ -450,7 +442,6 @@ connector_object
 create_plugged_main_menu
 def_loop
 dequeue_nsp_command
-do_printf (n_args)
 do_scanf
 dpchim (x, u, d, n, inc)
 enqueue_nsp_command
@@ -466,7 +457,6 @@ function_info
 function_object
 function_print
 gen_pr_min_max_internal (flag, dmin, dmax)
-gen_set_format
 get_echo_mode
 get_is_reading
 get_one_char
@@ -800,16 +790,21 @@ nsp_bhcreate_from_list
 nsp_bmatrix_elt_size
 nsp_bmatrix_find
 nsp_bmatrix_full_compare (err)
-nsp_bmatrix_print (rec_level)
+nsp_bmatrix_info (Returns)
+nsp_bmatrix_latex_print (Returns)
+nsp_bmatrix_latex_tab_print (Returns)
+nsp_bmatrix_print (rec_level, Returns)
 nsp_bmatrix_redim
 nsp_ceil_c
 nsp_cells_clone
 nsp_cells_concat_down
 nsp_cells_eq
+nsp_cells_info (Returns)
 nsp_cells_is_true
 nsp_cells_loop_extract
 nsp_cells_neq
 nsp_cells_object
+nsp_cells_print (Returns)
 nsp_cells_redim
 nsp_cells_strcmp
 nsp_cells_type_as_string
@@ -853,7 +848,6 @@ nsp_dzset (Returns)
 nsp_error_vprintf
 nsp_exec_method_util
 nsp_exp_c
-nsp_expand_dir_and_update_exec_dir (stack, dirname, dirname_exec)
 nsp_expand_file_and_update_exec_dir (stack)
 nsp_expand_file_with_exec_dir (stack)
 nsp_file_copy
@@ -922,14 +916,16 @@ nsp_ivect_2_mat (IV)
 nsp_ivect_copy (A)
 nsp_ivect_create (name, first, step, last, flag)
 nsp_ivect_destroy (IV)
-nsp_ivect_info (IV)
+nsp_ivect_info (IV, Returns)
 nsp_ivect_object
-nsp_ivect_print (IV)
+nsp_ivect_print (IV, Returns)
 nsp_list_create (name, Returns)
 nsp_list_fold_right (x)
+nsp_list_info (Returns)
 nsp_list_not_equal
 nsp_list_object
 nsp_list_path_extract
+nsp_list_print (Returns)
 nsp_list_unique (Ind, Occ)
 nsp_log10_c
 nsp_log_c
@@ -942,6 +938,7 @@ nsp_mat_ioru (res, Returns)
 nsp_mat_maxi
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
+nsp_mat_mfind
 nsp_mat_mini
 nsp_mat_minmax
 nsp_mat_minplus_mult
@@ -966,8 +963,12 @@ nsp_matrix_clone (init)
 nsp_matrix_column_sort
 nsp_matrix_companion
 nsp_matrix_dialog
+nsp_matrix_info (Returns)
+nsp_matrix_latex_print (Returns)
+nsp_matrix_latex_tab_print (Returns)
 nsp_matrix_lexical_column_sort
 nsp_matrix_lexical_row_sort
+nsp_matrix_print (Returns)
 nsp_matrix_redim
 nsp_matrix_row_sort
 nsp_matrix_set_format
@@ -1073,6 +1074,10 @@ nsp_mpmat_tril
 nsp_mpmat_triu
 nsp_mpmat_zeros
 nsp_mpmatrix_clone (init)
+nsp_mpmatrix_info (Returns)
+nsp_mpmatrix_latex_print (Returns)
+nsp_mpmatrix_latex_tab_print (Returns)
+nsp_mpmatrix_print (Returns)
 nsp_mpmatrix_redim
 nsp_multi_dialog
 nsp_multi_dialog_
@@ -1087,7 +1092,9 @@ nsp_none_info
 nsp_none_object
 nsp_none_print
 nsp_norm_c
+nsp_object_info (Returns)
 nsp_object_load_def
+nsp_object_print (Returns)
 nsp_object_save_def
 nsp_pango_hash_table
 nsp_parse
@@ -1215,12 +1222,16 @@ nsp_smatrix_eq
 nsp_smatrix_extract
 nsp_smatrix_extract_columns
 nsp_smatrix_extract_elements
+nsp_smatrix_info (Returns)
 nsp_smatrix_is_true
+nsp_smatrix_latex_print (Returns)
+nsp_smatrix_latex_tab_print (Returns)
 nsp_smatrix_lexical_column_sort
 nsp_smatrix_lexical_row_sort
 nsp_smatrix_loop_extract
 nsp_smatrix_neq
 nsp_smatrix_object
+nsp_smatrix_print (Returns)
 nsp_smatrix_redim
 nsp_smatrix_row_sort
 nsp_smatrix_sort (Returns)
@@ -1241,10 +1252,11 @@ nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
 nsp_spcolmatrix_get (RC, Values)
+nsp_spcolmatrix_info (Returns)
 nsp_spcolmatrix_insert_elt (Returns)
 nsp_spcolmatrix_minitt (flag, err)
 nsp_spcolmatrix_object
-nsp_spcolmatrix_print (Sp, indent, name, rec_level)
+nsp_spcolmatrix_print (Sp, indent, name, rec_level, Returns)
 nsp_spcolmatrix_store (r, c, col, r1, c1)
 nsp_spcolmatrix_sum (flag)
 nsp_spcolmatrix_tril (k)
@@ -1293,7 +1305,7 @@ nsp_sprowmatrix_from_mat (A)
 nsp_sprowmatrix_get (A, RC, Values)
 nsp_sprowmatrix_get_elt
 nsp_sprowmatrix_imagpart (A)
-nsp_sprowmatrix_info (Sp, indent, name, rec_level)
+nsp_sprowmatrix_info (Sp, indent, name, rec_level, Returns)
 nsp_sprowmatrix_insert_elt
 nsp_sprowmatrix_int (A)
 nsp_sprowmatrix_logel (A)
@@ -1444,7 +1456,7 @@ sci_get_screen_size
 sci_sig_tstp
 sci_usr1_signal
 sci_winch_signal
-scidebug
+scidebug (Returns)
 scig_click_handler_none
 scig_click_handler_sci
 scig_command_handler_none

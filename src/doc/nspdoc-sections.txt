@@ -1649,7 +1649,6 @@ Link_Type
 <SECTION>
 <FILE>sciio</FILE>
 IOVFun
-Scivprintf
 SetScilabIO
 Sciprintf1
 Sciprintf
@@ -2041,7 +2040,7 @@ nsp_mat_magic
 nsp_mat_franck
 nsp_mat_hilbert
 nsp_mat_find
-nsp_mat_findm
+nsp_mat_mfind
 nsp_mat_maxplus_add
 nsp_mat_maxplus_mult
 nsp_mat_minplus_mult

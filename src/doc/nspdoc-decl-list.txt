@@ -52,6 +52,9 @@ HAVE_ISNAN
 HAVE_FINITE
 WITH_PVM
 WITH_GTKGLEXT
+WITH_GTKHTML
+WITH_UMFPACK
+WITH_CHOLMOD
 WITH_FFTW3
 WITH_SNDFILE
 WITH_ASOUND
@@ -713,6 +716,11 @@ nsp_pr_any_float
 nsp_init_pr_format
 nsp_matrix_set_format
 nsp_print_string_as_read
+nsp_real_matrix_print_internal
+nsp_complex_matrix_print_internal
+Mijplus
+nsp_matrix_plus_format
+nsp_matrix_general
 </SECTION>
 
 <SECTION>
@@ -769,6 +777,28 @@ IsAstNode
 GetAstNodeCopy
 GetAstNode
 int_astnode_create
+</SECTION>
+
+<SECTION>
+<FILE>umfpack</FILE>
+NspUmfpack
+NspTypeUmfpack
+nsp_umfpack
+nsp_type_umfpack_id
+nsp_type_umfpack
+new_type_umfpack
+new_umfpack
+NULLUMFPACK
+umfpack_create
+nsp_umfpack_copy
+nsp_umfpack_destroy
+nsp_umfpack_info
+nsp_umfpack_print
+nsp_umfpack_object
+IsUmfpackObj
+IsUmfpack
+GetUmfpackCopy
+GetUmfpack
 </SECTION>
 
 <SECTION>
@@ -1593,6 +1623,29 @@ int_sprowmatrix_minus
 </SECTION>
 
 <SECTION>
+<FILE>cholmod</FILE>
+NspCholmod
+NspTypeCholmod
+nsp_cholmod
+nsp_type_cholmod_id
+nsp_type_cholmod
+new_type_cholmod
+new_cholmod
+NULLCHOLMOD
+cholmod_create
+nsp_cholmod_copy
+nsp_cholmod_destroy
+nsp_cholmod_info
+nsp_cholmod_print
+nsp_cholmod_object
+IsCholmodObj
+IsCholmod
+GetCholmodCopy
+GetCholmod
+int_cholmod_create
+</SECTION>
+
+<SECTION>
 <FILE>scalexp</FILE>
 NspScalExp
 NspTypeScalExp
@@ -2111,7 +2164,6 @@ swapcodeind
 <SECTION>
 <FILE>sciio</FILE>
 IOVFun
-Scivprintf
 SetScilabIO
 Sciprintf1
 Sciprintf
@@ -2538,6 +2590,7 @@ int_mxbdiv
 <SECTION>
 <FILE>system</FILE>
 nsp_timer
+nsp_cputime
 nsp_realtime
 nsp_realtime_init
 nsp_stimer

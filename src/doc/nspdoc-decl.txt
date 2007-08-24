@@ -218,6 +218,18 @@ NspBlock *H,double *rect,int color,int thickness,int background
 #define WITH_GTKGLEXT 1
 </MACRO>
 <MACRO>
+<NAME>WITH_GTKHTML</NAME>
+#define WITH_GTKHTML 1
+</MACRO>
+<MACRO>
+<NAME>WITH_UMFPACK</NAME>
+#define WITH_UMFPACK 1
+</MACRO>
+<MACRO>
+<NAME>WITH_CHOLMOD</NAME>
+#define WITH_CHOLMOD 1
+</MACRO>
+<MACRO>
 <NAME>WITH_FFTW3</NAME>
 #define WITH_FFTW3 1
 </MACRO>
@@ -239,7 +251,7 @@ NspBlock *H,double *rect,int color,int thickness,int background
 </MACRO>
 <MACRO>
 <NAME>NSP_INT_TO_POINTER</NAME>
-#define NSP_INT_TO_POINTER(i) ((int *) (i))
+#define NSP_INT_TO_POINTER(i) ((int *) (i)) 
 </MACRO>
 <MACRO>
 <NAME>NSP_POINTER_TO_INT</NAME>
@@ -304,11 +316,11 @@ typedef int integer;
 </TYPEDEF>
 <MACRO>
 <NAME>DBL_EPSILON</NAME>
-#   define  DBL_EPSILON             2.2204460492503131e-16
+#   define  DBL_EPSILON             2.2204460492503131e-16   
 </MACRO>
 <MACRO>
 <NAME>DBL_MAX</NAME>
-#   define  DBL_MAX                 1.7976931348623158e+308
+#   define  DBL_MAX                 1.7976931348623158e+308  
 </MACRO>
 <MACRO>
 <NAME>DBL_MIN</NAME>
@@ -344,7 +356,7 @@ typedef int integer;
 </MACRO>
 <MACRO>
 <NAME>WITH_SYMB_TABLE</NAME>
-#define WITH_SYMB_TABLE 1
+#define WITH_SYMB_TABLE 1 
 </MACRO>
 <MACRO>
 <NAME>MTLB_MODE</NAME>
@@ -460,12 +472,12 @@ NspCells *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_cells_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspCells *Mat, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_cells_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspCells *Mat, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -920,12 +932,12 @@ NspClassA *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classa_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspClassA *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classa_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspClassA *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -1022,12 +1034,12 @@ NspFile *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_file_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspFile *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_file_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspFile *H, int indent,char *name, int rec_level
 </FUNCTION>
 <MACRO>
@@ -1255,7 +1267,7 @@ NspFile *F, char *str
 <FUNCTION>
 <NAME>do_printf</NAME>
 <RETURNS>int </RETURNS>
-char *fname,FILE * fp, char *format,Stack stack,int n_args,int arg_cnt,int line, char **strv
+char *fname, FILE *fp, char *format, Stack stack,int nargs, int arg_cnt, int line, char **strv
 </FUNCTION>
 <FUNCTION>
 <NAME>do_scanf</NAME>
@@ -1749,12 +1761,12 @@ NspModule *H
 </FUNCTION>
 <FUNCTION>
 <NAME>module_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspModule *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>module_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspModule *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -1882,12 +1894,12 @@ NspBHash *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhash_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBHash *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bhash_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBHash *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -2304,7 +2316,7 @@ NspMatrix *Mat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
  NspMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -2314,7 +2326,7 @@ const NspMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -2534,12 +2546,12 @@ NspMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_latex_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspMatrix *Mat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_latex_tab_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspMatrix *Mat
 </FUNCTION>
 <FUNCTION>
@@ -3391,6 +3403,31 @@ nsp_num_formats *fmt,NspMatrix *M
 <RETURNS>void </RETURNS>
 const char *str
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_real_matrix_print_internal</NAME>
+<RETURNS>int </RETURNS>
+nsp_num_formats *fmt,NspMatrix *m, int indent
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_complex_matrix_print_internal</NAME>
+<RETURNS>int </RETURNS>
+nsp_num_formats *fmt,NspMatrix *cm, int indent
+</FUNCTION>
+<USER_FUNCTION>
+<NAME>Mijplus</NAME>
+<RETURNS>void </RETURNS>
+const void *,int i,int j
+</USER_FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_plus_format</NAME>
+<RETURNS>void </RETURNS>
+const void *m, int nr, int nc, Mijplus F, int indent
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_general</NAME>
+<RETURNS>int </RETURNS>
+const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F
+</FUNCTION>
 <STRUCT>
 <NAME>NspLink</NAME>
 </STRUCT>
@@ -3621,12 +3658,12 @@ NspAstNode *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_astnode_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspAstNode *M, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_astnode_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspAstNode *M, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -3658,6 +3695,114 @@ Stack stack, int i
 <NAME>int_astnode_create</NAME>
 <RETURNS>int </RETURNS>
 Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<STRUCT>
+<NAME>NspUmfpack</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeUmfpack</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeUmfpack</NAME>
+struct _NspTypeUmfpack {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+};
+</STRUCT>
+<STRUCT>
+<NAME>nsp_umfpack</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_umfpack</NAME>
+struct _nsp_umfpack {
+  char rc_type;
+  char* data;
+  nsp_sparse_triplet mtlb_T;
+  int ref_count;
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspUmfpack</NAME>
+struct _NspUmfpack {
+  /*< private >*/
+  NspObject father;
+  NspTypeUmfpack*type;
+  /*< public >*/
+  nsp_umfpack *obj;
+};
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_umfpack_id</NAME>
+extern int nsp_type_umfpack_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_umfpack</NAME>
+extern NspTypeUmfpack *nsp_type_umfpack;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_umfpack</NAME>
+<RETURNS>NspTypeUmfpack *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_umfpack</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLUMFPACK</NAME>
+#define NULLUMFPACK (NspUmfpack*) 0
+</MACRO>
+<FUNCTION>
+<NAME>umfpack_create</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+char *name,char rc_type,char* data,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_umfpack_copy</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+NspUmfpack *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_umfpack_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspUmfpack *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_umfpack_info</NAME>
+<RETURNS>int </RETURNS>
+NspUmfpack *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_umfpack_print</NAME>
+<RETURNS>int </RETURNS>
+NspUmfpack *Mat, int indent,char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_umfpack_object</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsUmfpackObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsUmfpack</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetUmfpackCopy</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetUmfpack</NAME>
+<RETURNS>NspUmfpack *</RETURNS>
+Stack stack, int i
 </FUNCTION>
 <VARIABLE>
 <NAME>VoidPt_Type</NAME>
@@ -3950,12 +4095,12 @@ NspList *L1, NspList *L2
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_list_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspList *L, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_list_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspList *L, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -4491,12 +4636,12 @@ NspSMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspSMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspSMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -4741,12 +4886,12 @@ NspMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_latex_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSMatrix *SMat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_latex_tab_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSMatrix *SMat
 </FUNCTION>
 <FUNCTION>
@@ -5542,12 +5687,12 @@ NspHash *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_hash_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspHash *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_hash_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspHash *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -5737,12 +5882,12 @@ NspFunction *H
 </FUNCTION>
 <FUNCTION>
 <NAME>function_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspFunction *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>function_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspFunction *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -5940,12 +6085,12 @@ NspClassB *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classb_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspClassB *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classb_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspClassB *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -6171,7 +6316,7 @@ NspMaxpMatrix *Mat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
  NspMaxpMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -6181,7 +6326,7 @@ const NspMaxpMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspMaxpMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -6351,12 +6496,12 @@ NspMaxpMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_latex_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspMaxpMatrix *Mat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_latex_tab_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const NspMaxpMatrix *Mat
 </FUNCTION>
 <FUNCTION>
@@ -6953,12 +7098,12 @@ NspType *H
 </FUNCTION>
 <FUNCTION>
 <NAME>type_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspType *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>type_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspType *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -7420,12 +7565,12 @@ NspModuleElt *H
 </FUNCTION>
 <FUNCTION>
 <NAME>modulelt_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspModuleElt *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>modulelt_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspModuleElt *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -7512,12 +7657,12 @@ NspNone *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_none_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspNone *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_none_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspNone *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -7549,6 +7694,119 @@ Stack stack, int i
 <NAME>int_sprowmatrix_minus</NAME>
 extern function int_sprowmatrix_minus;
 </VARIABLE>
+<STRUCT>
+<NAME>NspCholmod</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeCholmod</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeCholmod</NAME>
+struct _NspTypeCholmod {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+};
+</STRUCT>
+<STRUCT>
+<NAME>nsp_cholmod</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_cholmod</NAME>
+struct _nsp_cholmod {
+  cholmod_factor *L ;
+  cholmod_common Common;
+  int m,n;
+  int ref_count;
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspCholmod</NAME>
+struct _NspCholmod {
+  /*< private >*/
+  NspObject father;
+  NspTypeCholmod*type;
+  /*< public >*/
+  nsp_cholmod *obj;
+};
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_cholmod_id</NAME>
+extern int nsp_type_cholmod_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_cholmod</NAME>
+extern NspTypeCholmod *nsp_type_cholmod;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_cholmod</NAME>
+<RETURNS>NspTypeCholmod *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_cholmod</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLCHOLMOD</NAME>
+#define NULLCHOLMOD (NspCholmod*) 0
+</MACRO>
+<FUNCTION>
+<NAME>cholmod_create</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+char *name,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cholmod_copy</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+NspCholmod *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cholmod_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspCholmod *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cholmod_info</NAME>
+<RETURNS>int </RETURNS>
+NspCholmod *M, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cholmod_print</NAME>
+<RETURNS>int </RETURNS>
+NspCholmod *Mat, int indent,char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cholmod_object</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsCholmodObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsCholmod</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetCholmodCopy</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetCholmod</NAME>
+<RETURNS>NspCholmod *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>int_cholmod_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
 <STRUCT>
 <NAME>NspScalExp</NAME>
 </STRUCT>
@@ -7617,12 +7875,12 @@ NspScalExp *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_scalexp_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspScalExp *M, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_scalexp_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspScalExp *M, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -8370,12 +8628,12 @@ NspPMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_pmatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspPMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_pmatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspPMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -8900,12 +9158,12 @@ NspObject *O, NspTypeId id
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_object_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspObject *O, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_object_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspObject *O, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -9100,12 +9358,12 @@ NspHobj *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_hobj_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspHobj *H,int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_hobj_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspHobj *H,int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -9214,12 +9472,12 @@ NspIVect *IV
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_ivect_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspIVect *IV, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_ivect_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspIVect *IV, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -9355,12 +9613,12 @@ const NspSpRowMatrix *HMat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSpRowMatrix *Sp, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSpRowMatrix *Sp, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -10059,10 +10317,6 @@ char *a, char *tab,int flag, int n, int es, int es1,int (*cmp) (), int (*swapcod
 <RETURNS>int </RETURNS>
 const char *fmt, va_list ap
 </USER_FUNCTION>
-<VARIABLE>
-<NAME>Scivprintf</NAME>
-extern IOVFun Scivprintf;
-</VARIABLE>
 <FUNCTION>
 <NAME>SetScilabIO</NAME>
 <RETURNS>IOVFun </RETURNS>
@@ -10139,7 +10393,7 @@ char *fmt,...
 <FUNCTION>
 <NAME>scidebug</NAME>
 <RETURNS>int </RETURNS>
-int i,char *fmt,...
+int indent,char *fmt,...
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>IOFun2</NAME>
@@ -10354,12 +10608,12 @@ const NspSpColMatrix *HMat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSpColMatrix *Sp, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSpColMatrix *Sp, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -11192,12 +11446,12 @@ NspSerial *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_serial_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSerial *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_serial_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspSerial *H, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
@@ -11961,6 +12215,11 @@ extern function int_mxbdiv;
 void
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_cputime</NAME>
+<RETURNS>double </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_realtime</NAME>
 <RETURNS>int </RETURNS>
 double *t
@@ -12112,22 +12371,22 @@ NspBMatrix *BMat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_info</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBMatrix *BMat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBMatrix *BMat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_latex_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBMatrix *BMat
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_latex_tab_print</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 NspBMatrix *BMat
 </FUNCTION>
 <FUNCTION>
