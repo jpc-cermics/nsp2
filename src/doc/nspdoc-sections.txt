@@ -1808,14 +1808,6 @@ nsp_type_cells_id
 nsp_type_cells
 new_type_cells
 new_cells
-nsp_cells_type_as_string
-nsp_cells_type_short_string
-nsp_cells_loop_extract
-nsp_cells_eq
-nsp_cells_neq
-nsp_cells_is_true
-nsp_cells_xdr_load
-nsp_cells_xdr_save
 nsp_cells_object
 nsp_cells_clone
 nsp_cells_elt_size

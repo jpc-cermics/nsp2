@@ -33,8 +33,8 @@ SHELL		=	/bin/sh
 # Pass Options Down
 #
 
-PVMOPTS		=	CC=$(CC) \
-				F77=$(F77)
+PVMOPTS		=	CC=gcc \
+				F77=gfortran
 
 #				CFLOPTS=$(CFLOPTS)
 #				FFLOPTS=$(FFLOPTS)

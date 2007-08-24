@@ -3,6 +3,6 @@
 #
 # call libtool to produce a shared libary 
 # using Makefiles 
-make -f /tmp/usr/lib/nsp/config/Makelib $* SCIDIR=/tmp/usr/lib/nsp 
+make -f /usr/local/lib/nsp/config/Makelib $* SCIDIR=/usr/local/lib/nsp 
 
 

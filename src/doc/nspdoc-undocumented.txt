@@ -1,7 +1,7 @@
-42% symbol docs coverage.
-979 symbols documented.
-246 symbols incomplete.
-1326 not documented.
+43% symbol docs coverage.
+995 symbols documented.
+236 symbols incomplete.
+1302 not documented.
 
 
 Abs
@@ -125,22 +125,16 @@ GetTypeCopy
 GobjCreate
 GtkE_Type
 HAS_STDARG
-HAVE_EXP10
 HAVE_FINITE
 HAVE_FLOAT_H
-HAVE_GETCWD
-HAVE_GETWD
 HAVE_INLINE
 HAVE_ISINF
 HAVE_ISNAN
-HAVE_LGAMMA
 HAVE_LIMITS_H
-HAVE_MKSTEMP
 HAVE_SLEEP
 HAVE_STRERROR
 HAVE_SYS_TIME_H
 HAVE_TERMCAP
-HAVE_TGAMMA
 HAVE_USLEEP
 HAVE_VALUES_H
 Hash_Type
@@ -798,20 +792,12 @@ nsp_bmatrix_redim
 nsp_ceil_c
 nsp_cells_clone
 nsp_cells_concat_down
-nsp_cells_eq
 nsp_cells_info (Returns)
-nsp_cells_is_true
-nsp_cells_loop_extract
-nsp_cells_neq
 nsp_cells_object
 nsp_cells_print (Returns)
 nsp_cells_redim
 nsp_cells_strcmp
-nsp_cells_type_as_string
-nsp_cells_type_short_string
 nsp_cells_unique (Ind, Occ)
-nsp_cells_xdr_load
-nsp_cells_xdr_save
 nsp_check_events_activated
 nsp_check_gtk_events
 nsp_check_is_mlhs
@@ -919,14 +905,8 @@ nsp_ivect_destroy (IV)
 nsp_ivect_info (IV, Returns)
 nsp_ivect_object
 nsp_ivect_print (IV, Returns)
-nsp_list_create (name, Returns)
-nsp_list_fold_right (x)
-nsp_list_info (Returns)
-nsp_list_not_equal
 nsp_list_object
 nsp_list_path_extract
-nsp_list_print (Returns)
-nsp_list_unique (Ind, Occ)
 nsp_log10_c
 nsp_log_c
 nsp_mat_clean (rhs)
@@ -1215,36 +1195,23 @@ nsp_set_echo_input_line
 nsp_signum_c
 nsp_sin_c
 nsp_sinh_c
-nsp_smatrix_column_concat_padded (str, flag)
 nsp_smatrix_column_sort
-nsp_smatrix_convert
 nsp_smatrix_eq
-nsp_smatrix_extract
-nsp_smatrix_extract_columns
-nsp_smatrix_extract_elements
-nsp_smatrix_info (Returns)
 nsp_smatrix_is_true
-nsp_smatrix_latex_print (Returns)
 nsp_smatrix_latex_tab_print (Returns)
 nsp_smatrix_lexical_column_sort
 nsp_smatrix_lexical_row_sort
 nsp_smatrix_loop_extract
 nsp_smatrix_neq
 nsp_smatrix_object
-nsp_smatrix_print (Returns)
 nsp_smatrix_redim
 nsp_smatrix_row_sort
 nsp_smatrix_sort (Returns)
 nsp_smatrix_sort_old
 nsp_smatrix_split_string
-nsp_smatrix_strip_blanks (Returns)
 nsp_smatrix_subst
-nsp_smatrix_to_utf8
-nsp_smatrix_transpose
 nsp_smatrix_type_as_string
 nsp_smatrix_type_short_string
-nsp_smatrix_utf8_from_unichar
-nsp_smatrix_utf8_validate
 nsp_smatrix_xdr_load
 nsp_smatrix_xdr_save
 nsp_sort
@@ -1353,7 +1320,6 @@ nsp_sqrt_c
 nsp_string
 nsp_string_object
 nsp_string_resize
-nsp_string_to_utf8
 nsp_tan_c
 nsp_tanh_c
 nsp_tictoc

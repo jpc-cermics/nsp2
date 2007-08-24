@@ -108,9 +108,7 @@ function midle_menuitem_response(w,args)
 endfunction
 
 function menu=create_right_menu (win)
-// midle button menu construction 
-// midle button is for the current selected object 
-// if more than one object is selected this menu is deactivated.
+// right button menu construction 
   tearoff=%t;
   menu = gtkmenu_new ();
   if tearoff then 
@@ -146,7 +144,7 @@ endfunction
 
 
 function menuitem_response(w,args) 
-// midle button menu activation 
+// right button menu activation 
   global('GF');
   printf("Menu item [%d] activated \n",args(1));
   win='win'+string(args($));
@@ -290,8 +288,6 @@ function draw_vanne(rect)
   xstringb(orig(1),orig(2),'String',sz(1),sz(2));
 endfunction;
 
-
-
 function draw_plot2d(rect)
 // test function for block drawing 
   print(rect)
@@ -304,7 +300,6 @@ function draw_plot2d(rect)
   plot3d();
   xsetech(wrect=wrect,frect=frect,arect=arect);
 endfunction;
-
 
 function draw_scope(rect)
 // test function for block drawing 

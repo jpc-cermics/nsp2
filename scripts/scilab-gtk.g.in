@@ -29,6 +29,15 @@ export PVM_ROOT PVM_ARCH
 PATH=$PATH:$SCI:$SCI/util
 export PATH
 
+do_help()
+{
+echo "Usage:"
+echo     "	scilab [-ns -nw -display display -f file  -l lang -args arguments]"
+echo     "	scilab [-ns -nw -display display -e expression]"
+echo     "	scilab -link <objects>"
+exit
+}
+
 # calling Scilab with no argument or special cases of calling Scilab
 rest="no"
 case $# in

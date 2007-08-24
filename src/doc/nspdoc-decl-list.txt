@@ -128,14 +128,6 @@ nsp_cells_strcmp
 CellsCompOp
 CellsFullComp
 nsp_cells_transpose
-nsp_cells_type_as_string
-nsp_cells_type_short_string
-nsp_cells_loop_extract
-nsp_cells_eq
-nsp_cells_neq
-nsp_cells_is_true
-nsp_cells_xdr_load
-nsp_cells_xdr_save
 </SECTION>
 
 <SECTION>

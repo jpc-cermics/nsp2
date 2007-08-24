@@ -589,46 +589,6 @@ NspCells *A, NspCells *B, char *op, int *err
 <RETURNS>NspCells *</RETURNS>
 const NspCells *A
 </FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_type_as_string</NAME>
-<RETURNS>char *</RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_type_short_string</NAME>
-<RETURNS>char *</RETURNS>
-NspObject *v
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_loop_extract</NAME>
-<RETURNS>NspObject *</RETURNS>
-char *str, NspObject *O, NspObject *O1, int i, int *rep
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_eq</NAME>
-<RETURNS>int </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_neq</NAME>
-<RETURNS>int </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_is_true</NAME>
-<RETURNS>int </RETURNS>
-NspCells *M
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_xdr_load</NAME>
-<RETURNS>NspCells *</RETURNS>
-XDR  *F
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_xdr_save</NAME>
-<RETURNS>int </RETURNS>
-XDR *xdrs, NspCells *M
-</FUNCTION>
 <STRUCT>
 <NAME>NspLmo</NAME>
 </STRUCT>

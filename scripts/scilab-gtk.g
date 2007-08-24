@@ -29,6 +29,15 @@ export PVM_ROOT PVM_ARCH
 PATH=$PATH:$SCI:$SCI/util
 export PATH
 
+do_help()
+{
+echo "Usage:"
+echo     "	scilab [-ns -nw -display display -f file  -l lang -args arguments]"
+echo     "	scilab [-ns -nw -display display -e expression]"
+echo     "	scilab -link <objects>"
+exit
+}
+
 # calling Scilab with no argument or special cases of calling Scilab
 rest="no"
 case $# in
@@ -140,12 +149,22 @@ if test "$rest" = "yes"; then
           now="-nw"
 	      sci_args="$sci_args"
           ;;
+      -tv) 
+	  now="-nw"
+          sci_args="$sci_args -tv"
+	  ;;
       -display|-d)
           prevarg="display"
           ;;
        -f)
           prevarg="start_file"
           ;;
+       -font)
+	  prevarg="fontname"
+	  ;;
+       -n)
+	  prevarg="history"
+	  ;;
        -l)
           prevarg="language"
           ;;
@@ -177,17 +196,25 @@ if test "$rest" = "yes"; then
     sci_args="$sci_args -l $language"
   fi
 
+  zterm_arg=
+  if test -n "$fontname"; then
+    zterm_arg="-f $fontname"
+  fi
+  if test -n "$history"; then
+    zterm_arg="$zterm_arg -n $history"
+  fi
+
   if test -n "$now"; then
       sci_exe="$SCI/bin/scilex "
   else
-      sci_exe="$SCI/bin/zterm -e $SCI/bin/scilex"
+      sci_exe="$SCI/bin/zterm  $zterm_arg -e  $SCI/bin/scilex"
   fi
 
   if test -n "$debug"; then 
      if test -n "$now"; then
         gdb $SCI/bin/scilex
      else
-        $SCI/bin/zterm -e gdb $SCI/bin/scilex
+        $SCI/bin/zterm  $zterm_arg  -e gdb $SCI/bin/scilex
      fi
   else
       $sci_exe $sci_args 

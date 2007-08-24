@@ -12,7 +12,7 @@ mktmpl:
 mkdb:
 	gtkdoc-mkdb --module=nspdoc --source-dir=../include/nsp --source-dir=../objects --source-dir=../zcalelm \
 	--source-dir=../libapprox --source-dir=../functions --source-dir=../types-test --source-dir=../lapack \
-	--source-dir=../gobjects 	--source-dir=../interp \
+	--source-dir=../gobjects 	--source-dir=../interp --source-dir=../gtk2 \
 	--sgml-mode --output-format=xml
 
 mkhtml:
