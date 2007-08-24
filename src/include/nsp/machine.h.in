@@ -21,7 +21,7 @@
 /* Define for using dld for sunos */
 #undef SUNOSDLD
 
-/*
+/**
  *  WLU:
  *
  * Defined if leading underscores are needed in dld
@@ -31,7 +31,7 @@
 
 #undef WLU
 
-/*
+/**
  *  WTU:
  *
  * Defined if trailing underscores are needed in dld
@@ -40,7 +40,7 @@
 /* Define if trailing underscores */
 #undef WTU
 
-/*
+/**
  *  USE_SHARP_SIGN:
  *
  * Defined if sharpsigns are recognized by cpp
@@ -104,7 +104,7 @@
 /* Define if have mkstemp */
 #undef HAVE_MKSTEMP 
 
-/*
+/**
  * HAVE_SLEEP:
  *
  * Defined if sleep exists
@@ -113,7 +113,7 @@
 /* Define if have sleep: used in graphics/periX11.c */
 #undef HAVE_SLEEP
 
-/*
+/**
  *  HAVE_STRERROR:
  *
  * Defined if strerror exists 
@@ -122,7 +122,7 @@
 /* Define if have strerror: used in sound/misc.c */
 #undef HAVE_STRERROR
 
-/*
+/**
  *  HAVE_TERMCAP:
  *
  * Defined if termcap library exists 
@@ -131,7 +131,7 @@
 /* Define if have termcap library: used in sun/zzledt.c */
 #undef HAVE_TERMCAP
 
-/*
+/**
  *  HAVE_USLEEP:
  *
  * Defined if usleep exists 
@@ -140,7 +140,7 @@
 /* Define if have usleep: used in graphics/periX11.c */
 #undef HAVE_USLEEP
 
-/*
+/**
  *  HAVE_GETRUSAGE:
  *
  * Defined if getrusage exists 
@@ -149,7 +149,7 @@
 /* Define if have getrusage */
 #undef HAVE_GETRUSAGE
 
-/*
+/**
  *  HAVE_CLOCK:
  *
  * Defined if clock exists 
@@ -158,7 +158,7 @@
 /* Define if have clock */
 #undef HAVE_CLOCK
 
-/*
+/**
  *  HAVE_TIMES:
  *
  * Defined if times exists 
@@ -167,7 +167,7 @@
 /* Define if have times */
 #undef HAVE_TIMES
 
-/*
+/**
  *  HAVE_ISINF:
  *
  * Defined if isinf exists 
@@ -176,7 +176,7 @@
 /* Define if have isinf */
 #undef HAVE_ISINF
 
-/*
+/**
  *  HAVE_ISNAN:
  *
  * Defined if isnan exists 
@@ -185,7 +185,7 @@
 /* Define if have isnan */
 #undef HAVE_ISNAN
 
-/*
+/**
  *  HAVE_FINITE:
  *
  * Defined if finite exists 
@@ -194,7 +194,7 @@
 /* Define if have finite*/
 #undef HAVE_FINITE
 
-/*
+/**
  *  WITH_TK:
  *
  * Defined if tcl/tk is used 
@@ -203,7 +203,7 @@
 /* Define if have and use TCL/TK */
 #undef WITH_TK
 
-/*
+/**
  *  WITH_PVM:
  *
  * Defined if pvm is used 
@@ -212,7 +212,7 @@
 /* Define if have and use PVM */
 #undef WITH_PVM
 
-/*
+/**
  *  WITH_GTKGLEXT:
  *
  * Defined if gtkglext is used 
@@ -221,7 +221,7 @@
 /* Define if have and use GTKGLEXT */
 #undef WITH_GTKGLEXT
 
-/*
+/**
  *  WITH_GTKHTML:
  *
  * Defined if gtkhtml is used 
@@ -230,7 +230,7 @@
 /* Define if have and use GTKHTML */
 #undef WITH_GTKHTML
 
-/*
+/**
  *  WITH_MAXPLUSLIB:
  *
  * Defined if maxplus is used 
@@ -239,7 +239,7 @@
 /* Define if use maxplus lib  */
 #undef WITH_MAXPLUSLIB
 
-/*
+/**
  *  WITH_UMFPACK:
  *
  * Defined if umfpack is used 
@@ -248,7 +248,7 @@
 /* Define if use umfpack lib  */
 #undef WITH_UMFPACK
 
-/*
+/**
  *  WITH_CHOLMOD:
  *
  * Defined if cholmod is used 
@@ -257,7 +257,7 @@
 /* Define if use  cholmod lib  */
 #undef WITH_CHOLMOD
 
-/*
+/**
  *  WITH_FFTW3:
  *
  * Defined if fftw3 is used 
@@ -266,7 +266,7 @@
 /* Define if use fftw3 lib  */
 #undef WITH_FFTW3
 
-/*
+/**
  *  WITH_SNDFILE:
  *
  * Defined if sndfile library is used 
@@ -275,7 +275,7 @@
 /* Define if use sndfile lib  */
 #undef WITH_SNDFILE
 
-/*
+/**
  *  WITH_ASOUND:
  *
  * Defined if asound is used 
@@ -284,7 +284,7 @@
 /* Define if use asound lib  */
 #undef WITH_ASOUND
 
-/*
+/**
  *  WITH_GMP:
  *
  * Defined if gmp library is used 
@@ -293,7 +293,7 @@
 /* Define if use gmp lib  */
 #undef WITH_GMP
 
-/*
+/**
  *  POINTER_INT :
  *
  * Defined if sizeof(int*)==sizeof(int) 
