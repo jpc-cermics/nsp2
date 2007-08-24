@@ -79,22 +79,6 @@ extern NspMatrix *new_matrix();
  * Object methods redefined for matrix 
  */
 
-#ifdef Matrix_Private
-static int init_matrix(NspMatrix *ob,NspTypeMatrix *type);
-static int init_matrix(NspMatrix *o,NspTypeMatrix *type);
-static int matrix_size(NspMatrix *Mat, int flag);
-static char *matrix_type_as_string(void);
-static char *matrix_type_short_string(NspObject *v);
-static int matrix_neq(NspObject *A,NspObject *B);
-static int matrix_eq(NspObject *A,NspObject *B);
-static int matrix_xdr_save(XDR *xdrs, NspMatrix *M);
-static NspMatrix  *matrix_xdr_load(XDR  *F);
-static AttrTab matrix_attrs[];
-static NspMethods *matrix_get_methods(void); 
-/*static NspObject *matrix_path_extract(NspMatrix *A, NspObject *O); */
-static int matrix_is_true(NspMatrix *M);
-#endif 
-
 #define NULLMAT (NspMatrix*) 0
 
 extern double *nsp_alloc_doubles(unsigned int n);
@@ -348,3 +332,19 @@ static inline NspMatrix *GetMat(Stack stack, int i)
 
 #endif 
 
+
+#ifdef Matrix_Private
+static int init_matrix(NspMatrix *ob,NspTypeMatrix *type);
+static int init_matrix(NspMatrix *o,NspTypeMatrix *type);
+static int matrix_size(NspMatrix *Mat, int flag);
+static char *matrix_type_as_string(void);
+static char *matrix_type_short_string(NspObject *v);
+static int matrix_neq(NspObject *A,NspObject *B);
+static int matrix_eq(NspObject *A,NspObject *B);
+static int matrix_xdr_save(XDR *xdrs, NspMatrix *M);
+static NspMatrix  *matrix_xdr_load(XDR  *F);
+static AttrTab matrix_attrs[];
+static NspMethods *matrix_get_methods(void); 
+/*static NspObject *matrix_path_extract(NspMatrix *A, NspObject *O); */
+static int matrix_is_true(NspMatrix *M);
+#endif 

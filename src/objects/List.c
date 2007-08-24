@@ -39,11 +39,11 @@ extern NspObject *nsp_eval_macro_code(NspPList *PL, NspObject **O, NspList *args
 
 /**
  *nsp_list_create:
- * @name: 
+ * @name: name of the list or %NVOID.
  * 
  * Creates a new empty list with name @name 
  * 
- * Return value: 
+ * Return value: a new #NspList or %NULLLIST
  **/
 
 NspList*nsp_list_create(const char *name)
@@ -850,6 +850,7 @@ int nsp_list_concat(NspList *L1, NspList *L2)
  * 
  * Display of infos an Object of type #NspList 
  *
+ * Returns: %TRUE or %FALSE
  **/
 
 static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level);
@@ -957,7 +958,9 @@ static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
  * @name: a string 
  * @rec_level: an integer
  * 
- * display of a list 
+ * display of a list.
+ *
+ * Return value: %TRUE or %FALSE.
  **/
 
 int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
@@ -1278,7 +1281,7 @@ static NspObject *cell_fold_right(Cell *C,NspObject *x, NspPList *PL, NspList *a
 /**
  *nsp_list_fold_right:
  * @L: a #NspList 
- * @x: 
+ * @x: a #NspObject
  * @PL: a #NspPList
  * @args: a #NspList 
  * 
@@ -1408,6 +1411,7 @@ NspBMatrix  *nsp_list_equal(NspList *L1, NspList *L2)
  *nsp_list_not_equal:
  * @L1: a #NspList
  * @L2: a #NspList
+ * 
  * if the two lists do not have the same length returns the %t  #NspBMatrix 
  * else returns a #NspBMatrix @B such that @B(i)= and(@L1(i) <> @L2(i))
  * 
@@ -1522,7 +1526,9 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_unique:
- * @L: a #NspList 
+ * @L: a #NspList
+ * @Ind: a #NspMatrix 
+ * @Occ:  a #NspMatrix 
  * 
  *  build a new list LL with unique elements of L
  *  if Ind != NULL , Ind->R[k] give an index i such that LL(k) = L(i)

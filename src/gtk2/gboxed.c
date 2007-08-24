@@ -268,9 +268,9 @@ int gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
 
 NspGBoxed   *gboxed_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer **/
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
+  /* Check type **/
   if ( check_cast(O,nsp_type_gboxed_id) == TRUE) return ((NspGBoxed *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_gboxed));
@@ -396,14 +396,14 @@ static OpTab GBoxed_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the GBoxed interface **/
+/* call ith function in the GBoxed interface **/
 
 int GBoxed_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(GBoxed_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
+/* used to walk through the interface table 
     (for adding or removing functions) **/
 
 void GBoxed_Interf_Info(int i, char **fname, function (**f))

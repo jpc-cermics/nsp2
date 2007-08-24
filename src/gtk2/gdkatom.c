@@ -289,9 +289,9 @@ int gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level)
 
 NspGdkAtom   *gdkatom_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer **/
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
+  /* Check type **/
   if ( check_cast(O,nsp_type_gdkatom_id) == TRUE) return ((NspGdkAtom *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_gdkatom));
@@ -430,14 +430,14 @@ static OpTab GdkAtom_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the GdkAtom interface **/
+/* call ith function in the GdkAtom interface **/
 
 int GdkAtom_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(GdkAtom_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
+/* used to walk through the interface table 
     (for adding or removing functions) **/
 
 void GdkAtom_Interf_Info(int i, char **fname, function (**f))

@@ -379,6 +379,8 @@ void nsp_smatrix_destroy(NspSMatrix *A)
  * @rec_level: depth counter 
  * 
  * display Info on Matrix @Mat 
+ *
+ * Return value: %TRUE or %FALSE
  **/
 
 int nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
@@ -409,6 +411,8 @@ int nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec
  * @rec_level: depth counter 
  * 
  * prints the contents of @Mat.
+ *
+ * Return value: %TRUE or %FALSE
  **/
 
 int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
@@ -451,6 +455,8 @@ int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int re
  * 
  * print the #NspSMatrix @SMat using the default Sciprintf() function and LaTeX 
  * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_smatrix_latex_print(NspSMatrix *SMat)
@@ -830,10 +836,10 @@ int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 /**
  * nsp_smatrix_extract:
  * @A: a #NspSMatrix 
- * @Rows: 
- * @Cols: 
+ * @Rows: a #NspMatrix 
+ * @Cols: a #NspMatrix 
  * 
- * 
+ * extracts @A(@Rows,@Cols)
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
@@ -848,10 +854,10 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 /**
  * nsp_smatrix_extract_elements:
  * @A: a #NspSMatrix 
- * @Elts: 
- * @err: 
+ * @Elts: a #NspMatrix 
+ * @err: int pointer 
  * 
- * 
+ * extracts @A(@Elts), @err is unused.
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
@@ -866,10 +872,10 @@ NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err
 /**
  * nsp_smatrix_extract_columns:
  * @A: a #NspSMatrix 
- * @Cols: 
- * @err: 
+ * @Cols: a #NspMatrix 
+ * @err: int pointer 
  * 
- * 
+ * extracts @A(:,@Cols), @err is unused.
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
@@ -1199,8 +1205,8 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
 /**
  * nsp_smatrix_column_concat_padded:
  * @A: a #NspSMatrix 
- * @str: 
- * @flag: 
+ * @str: a constant string 
+ * @flag: an integer
  * 
  * returns a mx1 matrix such that Res(i) = "A(i,1)str A(i,2)str  ...A(i,n)"
  * white spaces are inserted and @str separator is used if @flag =1 
@@ -2050,20 +2056,16 @@ int SMatFullComp(NspSMatrix *A, NspSMatrix *B, char *op,int *err)
 }
 
 
-
-/*
- * Res =nsp_smatrix_transpose(A) 
- * Transpose A 
- */
-
 /**
  * nsp_smatrix_transpose:
  * @A: a #NspSMatrix 
  * 
+ * Transpose A 
  * 
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
+
 NspSMatrix*nsp_smatrix_transpose(const NspSMatrix *A)
 {
   int i,j;
@@ -2151,7 +2153,7 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
  * 
  * strips blanck characters at the begining and end of each entry of @A.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_smatrix_strip_blanks(NspSMatrix *A)

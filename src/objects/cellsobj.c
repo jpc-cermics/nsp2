@@ -349,11 +349,9 @@ int nsp_cells_is_true(NspCells *M)
 
 /*
  * Save a NspCells object 
- * FIXME: this is unfinished 
- *   NULL elements are badly processed
  */
 
-int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
+static int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
 {
   int i,rep;
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
@@ -365,8 +363,6 @@ int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
       if (M->objs[i]   == NULLOBJ)
 	{
 	  if ( nsp_xdr_save_c(xdrs,'N') == FAIL) return FAIL;
-	  /* Scierror("Warning:\t trying to save a null object in a cell\n"); */
-	  /* return FAIL; */
 	}
       else 
 	{
@@ -382,7 +378,7 @@ int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
  * Load a NspCells 
  */
 
-NspCells *nsp_cells_xdr_load(XDR *xdrs)
+static NspCells *nsp_cells_xdr_load(XDR *xdrs)
 {
   int m,n,i;
   NspCells *M;

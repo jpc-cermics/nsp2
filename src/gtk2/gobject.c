@@ -1254,9 +1254,9 @@ nspg_closure_invalidate(gpointer data, GClosure *closure)
 
 /**
  * nspg_closure_new:
- * callback: a Nsp callable object
- * extra_args: a tuple of extra arguments, or None/NULL.
- * swap_data: an alternative Nsp object to pass first.
+ * @callback: a Nsp callable object
+ * @extra_args: a tuple of extra arguments, or None/NULL.
+ * @swap_data: an alternative Nsp object to pass first.
  *
  * Creates a GClosure wrapping a Nsp callable and optionally a set
  * of additional function arguments.  This is needed to attach Nsp
@@ -1912,7 +1912,7 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   return 0;
 }
 
-/**
+/*
  * utilities to attach a nsp_type to a gtype 
  * this is used in nspg_value_as_nspobject 
  * to detect which nsp_type to use in gobject_create 

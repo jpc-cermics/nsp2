@@ -111,8 +111,8 @@ int scidebug(int indent,char *fmt,...)
   int j,n;
   va_list ap;
   va_start(ap,fmt);
-  Sciprintf("\n%d",i);
-  for ( j=0; j < i; j++) Sciprintf("|");
+  Sciprintf("\n%d",indent);
+  for ( j=0; j < indent; j++) Sciprintf("|");
   n= Scivprintf( fmt, ap );
   va_end(ap);
   return n;
