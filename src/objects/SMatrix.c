@@ -2258,7 +2258,7 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
   if (nr == 0 || nc == 0) nsp_print_empty_matrix ( nr, nc);
   sci_get_screen_size(&winrows,&max_width);
   /* Allocate a table to store each column width **/
-  if ((Iloc =nsp_alloc_int(m->n)) == (int*) 0) return(FAIL);
+  if ((Iloc =nsp_alloc_int(m->n)) == (int*) 0) return TRUE;
   /* set Iloc[j] to the max len of column j **/
   for ( j=0 ; j < m->n ; j++ )
     {
@@ -2287,7 +2287,7 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
   if ( user_pref.pr_as_read_syntax )
     {
       nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,SMij_string_as_read);
-      return 0;
+      return TRUE;
     }
   col=0;
   while ( col < nc )
@@ -2321,7 +2321,7 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
 	  if ( p_rows >= winrows ) 
 	    {
 	      scimore(&imore);
-	      if ( imore == 1) return(OK);
+	      if ( imore == 1) return TRUE;
 	      p_rows=0;
 	    }
 	  nsp_pr_white(indent);
@@ -2345,7 +2345,7 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
       col += inc;
     }
   FREE(Iloc);
-  return(OK);
+  return TRUE;
 }
 
 

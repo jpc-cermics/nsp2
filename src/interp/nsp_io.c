@@ -43,8 +43,9 @@ static int  DefScivprintf(const char *fmt, va_list ap)
   return  vprintf(fmt, ap );
 }
 
-/**
- * Scivprinf: 
+/*
+ * Scivprintf: 
+ *
  * a variable set to the default function used for 
  * printing. This variable can be changed using SetScilabIO().
  */
@@ -105,7 +106,7 @@ int  Sciprintf1 (int indent,const char *fmt,...)
  *   
  */
 
-int scidebug(int i,char *fmt,...)
+int scidebug(int indent,char *fmt,...)
 {
   int j,n;
   va_list ap;
@@ -343,7 +344,6 @@ int Sciprint_diary_only (const char *fmt,...)
 
 /**
  * Sciprint_diary_on:
- * @void: 
  * 
  * check if a diary redirection is active.
  * 

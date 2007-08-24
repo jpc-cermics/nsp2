@@ -75,12 +75,12 @@ void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,c
  
 /**
  * nsp_expand_dir_and_update_exec_dir:
- * @stack: 
+ * @stack: #Stack object 
  * @old:  a pointer to a string of size %FSIZE+1 used to store current exec directory 
- * @filename: filename to be used to change the default exec directory 
- * @filename_exec: expanded version of filename using current exec directory 
+ * @dirname: filename to be used to change the default exec directory 
+ * @dirname_exec: expanded version of filename using current exec directory 
  * 
- * expand @filename in @filename_exec using macros and current exec directory. 
+ * expand @dirname in @dirname_exec using macros and current exec directory. 
  * The current exec directory is also updated using the dirname of the expanded 
  * filename.
  * 

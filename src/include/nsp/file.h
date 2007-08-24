@@ -133,8 +133,9 @@ extern int nsp_mgetstr(NspFile *F, char **start, int n);
 extern int nsp_mgetstr1 (NspFile *F, char *start, int n, int *n_read);
 extern int nsp_putstr(NspFile *F, char *str);
 
-extern int do_printf (char *fname,FILE * fp, char *format,Stack stack,int n_args,
-	       int arg_cnt,int line, char **strv);
+extern int do_printf (char *fname, FILE *fp, char *format, Stack stack, 
+		      int nargs, int arg_cnt, int line, char **strv);
+
 
 extern int do_scanf (char *command,FILE *fp,
 		     char *format,Stack stack,int iline, int *nargs, 

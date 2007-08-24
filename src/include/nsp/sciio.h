@@ -39,7 +39,7 @@ typedef int (*IOFun1) (int indent,const char *fmt,...);
 extern iofun Scierror ;
 
 int  ParseError  (char *fmt,...);
-int scidebug(int i,char *fmt,...);
+int scidebug(int indent,char *fmt,...);
 typedef int (*IOFun2) (FILE *f,const char *fmt,...);
 extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);

@@ -1955,22 +1955,20 @@ static void VMiniMaxi(int n, double *A, int incr, double *Amin, double *Amax,
   return;
 }
 
-
 /**
  * nsp_mat_minmax:
  * @A: a #NspMatrix 
- * @str: 
- * @Amin: 
- * @Imin: 
- * @Amax: 
- * @Imax: 
- * @lhs: 
+ * @dim: 
+ * @Amin: a #NspMatrix handler 
+ * @Imin: a #NspMatrix handler 
+ * @Amax: a #NspMatrix handler 
+ * @Imax: a #NspMatrix handler 
+ * @lhs: an integer 
  * 
  * 
  * 
- * Return value: 
+ * Returns: %OK or %FAIL
  **/
-
 int nsp_mat_minmax(NspMatrix *A, int dim, NspMatrix **Amin, NspMatrix **Imin,
 		   NspMatrix **Amax, NspMatrix **Imax, int lhs)
 {
