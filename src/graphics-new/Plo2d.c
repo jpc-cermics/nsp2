@@ -289,7 +289,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 	{
 	  /* first check that we are not changing from normal<-->log */
 	  int xlog = ((int)strlen(xf) >= 2 && xf[1]=='l' ) ? 1: 0;
-	  int ylog = ((int)strlen(xf) >=3  && xf[2]=='l' ) ? 2: 0;
+	  int ylog = ((int)strlen(xf) >=3  && xf[2]=='l' ) ? 1: 0;
 	  if ( (xlog == 1 && Xgc->scales->logflag[0] == 'n') 
 	       || (xlog == 0 && Xgc->scales->logflag[0] == 'l')
 	       || (ylog == 1 && Xgc->scales->logflag[1] == 'n')
@@ -299,14 +299,23 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 	    }
 	  else 
 	    {
-	      FRect[0] = Min(FRect[0],Xgc->scales->frect[0]);
-	      FRect[1] = Min(FRect[1],Xgc->scales->frect[1]);
-	      FRect[2] = Max(FRect[2],Xgc->scales->frect[2]);
-	      FRect[3] = Max(FRect[3],Xgc->scales->frect[3]);
-	      if ( FRect[0] < Xgc->scales->frect[0] 
-		   || FRect[1] < Xgc->scales->frect[1] 
-		   || FRect[2] > Xgc->scales->frect[2] 
-		   || FRect[3] > Xgc->scales->frect[3] )
+	      double crect[4];
+	      int i;
+	      for ( i = 0 ; i < 4 ; i++) crect[i]=Xgc->scales->frect[i];
+	      if ( xlog == 1 ) 
+		for ( i = 0 ; i < 4 ; i +=2 ) crect[i]=exp10(crect[i]);
+	      if ( ylog == 1 ) 
+		for ( i = 1 ; i < 4 ; i +=2 ) crect[i]=exp10(crect[i]);
+	      FRect[0] = Min(FRect[0],crect[0]);
+	      FRect[2] = Max(FRect[2],crect[2]);
+	      if ( FRect[0] < crect[0]  || FRect[2] > crect[2] )
+		{
+		  Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of autoscale" );
+		  redraw = 1;
+		}
+	      FRect[1] = Min(FRect[1],crect[1]);
+	      FRect[3] = Max(FRect[3],crect[3]);
+	      if ( FRect[1] < crect[1] || FRect[3] > crect[3] )
 		{
 		  Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of autoscale" );
 		  redraw = 1;
@@ -314,7 +323,6 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 	    }
 	}
     }
-
 
   /* switch strflag so as to use now FRect   */
   plot2d_strf_change('d',strflag);
