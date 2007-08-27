@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{save}
+\begin{mandesc}
+  \texttt{save} -- machine independent binary save of variables \\ % @mandesc@
+\end{mandesc}
+\index{save}\label{save}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    save(filename,obj1,...,objn,name1=obj1,...,namen=objn)  
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{filename}: a string giving a file pathname 
+    \vname{obji}: nsp objects. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!save! command can be used to save variables in a binary machine independant way 
+  in a given file. The given objects must have names and names can be given using the optional 
+  variable mechanism i.e \verb+name=value+. Note that all nsp objects cannot be save as for example 
+  a File object. The content of the file \verb+filename+ can be read back using the \verb+load+ command.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    a=rand(2,2);
+    save('foo.dat',a,b=ones(4,2));
+    clear a,b;
+    load('foo.dat');
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{load}{load}
+\end{manseealso}
+

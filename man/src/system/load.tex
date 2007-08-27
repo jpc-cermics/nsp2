@@ -1,0 +1,41 @@
+% -*- mode: latex -*-
+\mansection{load}
+\begin{mandesc}
+  \texttt{load} --  load saved objects\\ % @mandesc@
+\end{mandesc}
+\index{load}\label{load}
+  %-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    load(filename [,name1,...,namen])  
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{filename} : a string giving a file pathname.
+    \vname{namei} : strings specifying object names. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!load! command is used to reload in the running nsp context 
+  objects previously saved in a file by the \verb!save! command. 
+  If the function is called with only one argument then the 
+  whole file content is reloaded. If explicit names are given then 
+  objects with corresponding names are searched and if found reloaded in 
+  the running nsp session. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    a=rand(2,2);
+    save('foo.dat',a,b=ones(4,2));
+    clear a,b;
+    load('foo.dat');
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{save}{save} 
+\end{manseealso}
+
