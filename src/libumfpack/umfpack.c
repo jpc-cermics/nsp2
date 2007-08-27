@@ -567,44 +567,37 @@ the_end:
 }
 
 
-/* solve Pr=b */
+/* solve self*x=B
+ * B is unchanged 
+ */
 
-int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B)
 {
   double *Control = NULL, *Info = NULL;
-  NspMatrix *B,*X=NULL,*Wi=NULL,*W=NULL;
+  NspMatrix *Bc=NULL, *X=NULL,*Wi=NULL,*W=NULL,*rep=NULLMAT;
   nsp_sparse_triplet T;
   char rc_type, rc_x;
   void *Numeric=NULL;
-  int i,rep=RET_BUG;
-  
-  CheckRhs(1,1); 
-  CheckLhs(1,1);
+  int i;
 
-  if ( self->obj == NULL || self->obj->data  == NULL) 
-    {
-      Scierror("Error: umfpack object is not properly built\n");
-      return RET_BUG;
-    }
   Numeric= self->obj->data; 
   rc_type = self->obj->rc_type; 
   T = self->obj->mtlb_T;
-  if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   
   if ( B->m != T.m || B->n < 1 )
     {
       Scierror("Error: first argument to method has wrong dimensions (%d,%d)\n",
 	       B->m,B->n);
-      return RET_BUG;
+      return rep;
     };
   if ( B->rc_type  == 'c')
     {
-      if ((B = GetMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+      if ( (B=Bc =nsp_matrix_copy(B)) == NULLMAT) return rep;
       Mat2mtlb_cplx (B);
     }
   /* allocate memory for the solution */
   rc_x = ( rc_type == 'c'   ||  B->rc_type == 'c' ) ? 'c' : 'r' ;
-  if ((X =nsp_matrix_create(NVOID,rc_x,B->m,B->n)) == NULLMAT ) return RET_BUG;
+  if ((X =nsp_matrix_create(NVOID,rc_x,B->m,B->n)) == NULLMAT ) goto err;
   /* allocate memory for working arrays */
   if ((Wi =nsp_matrix_create(NVOID,'r',T.m,1)) == NULLMAT ) goto err;
   if ((W  =nsp_matrix_create(NVOID,'r',((rc_type == 'c') ? 10: 5)*T.m,1)) == NULLMAT ) 
@@ -612,7 +605,7 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
   if ( rc_type == 'c' &&  B->rc_type  == 'r' )
     {
       /* A is complex -> B is complexified and matlab converted */
-      if (nsp_mat_complexify(B,0.00) == FAIL ) return RET_BUG;
+      if (nsp_mat_complexify(B,0.00) == FAIL ) goto err;
       Mat2mtlb_cplx (B);
     }
   if (self->obj->rc_type == 'r' )
@@ -642,12 +635,29 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
       X->convert = 'c';
       Mat2double (X);
     }
-  rep=1;
-  MoveObj(stack,1,NSP_OBJECT(X));
+  rep = X;
  err:
   if ( W != NULL) nsp_matrix_destroy(W);
   if ( Wi != NULL) nsp_matrix_destroy(Wi);
+  if ( Bc != NULL) nsp_matrix_destroy(Bc);
   return rep;
+}
+
+int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *B,*X=NULL;
+  CheckRhs(1,1); 
+  CheckLhs(1,1);
+
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((X = nsp_umfpack_solve(self,B))== NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(X));
+  return 1;
 }
 
 /* Unfinished : in complex cases the triplet must be in nsp-complex mode 
@@ -832,15 +842,46 @@ static AttrTab umfpack_attrs[] = {
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
+{
+  int rep = RET_BUG;
+  NspSpColMatrix *A;
+  NspMatrix *B ,*X=NULL;
+  NspUmfpack *H=NULL;
+  /* Get a sparse matrix */
+  CheckStdRhs(2,2);
+  CheckLhs(0,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) 
+    return RET_BUG;
+  if ((B = GetMat(stack,2)) == NULLMAT) 
+    return RET_BUG;
+  if ((H = nsp_umfpack_create(A)) == NULLUMFPACK)
+    return RET_BUG;
+  if ( H->obj == NULL || H->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  if ((X = nsp_umfpack_solve(H,B))== NULLMAT) goto err;
+  MoveObj(stack,1,NSP_OBJECT(X));
+  rep =1;
+ err:
+  if ( H != NULL) nsp_umfpack_destroy(H);
+  return rep;
+} 
+
+
+
 extern function int_cholmod_analyze;
 extern function int_cholmod_chol;
 extern function int_cholmod_create;
 
 static OpTab umfpack_func[]={
-  { "analyze", int_cholmod_analyze},
-  { "chol_sp", int_cholmod_chol},
-  { "cholmod_create", int_cholmod_create},
+  { "analyze", int_cholmod_analyze}, /* cholmod */
+  { "chol_sp", int_cholmod_chol},/* cholmod */
+  { "cholmod_create", int_cholmod_create},/* cholmod */
   { "umfpack_create", int_umfpack_create},
+  { "umfpack_solve",int_umfpack_solve},
   { NULL, NULL}
 };
 
