@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+
+\mansection{umfpack}
+\begin{mandesc}
+  \short{Umfpack}{datatype for umfpack factorization of sparse matrices}
+  \short{umfpack_create}{creates a Umfpack object from a sparse matrix} 
+  \short{umfpack_solve}{solves a linear system with umfpack}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Au=umfpack_create(As)
+xf=umfpack_solve(As,Bf)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{As}: a real or complex sparse matrix
+    \vname{Au}: An Umfpack nsp object.
+    \vname{Bf,xf}: real or complex full matrices 
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{Umfpack} data type (\verb+type(Au,'short')== 'umfpack'+) is used to 
+encapsulate Umfpack LU factorization of matrices (provided by Tim Davis' Umfpack library). 
+\end{mandescription}. It is possible to check using the boolean variable \verb+%umfpack+ 
+if your current nsp version has been compiled with umfpack support. The \verb+solve+ method 
+can then be used to solve linear systems. \emph{Umfpack} data type are usefull if 
+repeated use of the \verb+solve+ method for the same matrix is to be used, 
+since the factorization is kept in the \emph{Umfpack} object. When just one linear 
+system is to be solved the simplified version \verb+xf=umfpack_solve(As,Bf)+ can be used. 
+
+\paragraph{Operations on umfpack}
+The following methods are available for Umfpack objects~:
+\begin{varlist}
+  \vname{A.solve[B]}: solves the linear system \verb+A*x=B\verb+, \verb+B+ is given as a full 
+   matrix. 
+  \vname{[L,U,p,q,r]=A.luget[]}: returns the \verb+LU+ factorization contained in Umfpack object \verb+A+ i.e the following relation should be met~: \verb+Ap= diag(1 ./ r) *A+ and 
+  \verb+L*U=Ap(p,q)+ 
+  \vname{A.isreal[]}: returns a boolean to check if the given Umfpack object comes from a real 
+(\verb+%t+) or complex (\verb+%f+) matrix. 
+\vname{A.det[]}: returns the determinant of Umfpack object \verb+A+.
+  \end{varlist}
+
+\begin{examples}
+  \begin{program}\HCode{Af = sprand(10,10,0.8);\Hnewline
+      A= umfpack_create(Af);\Hnewline
+      A.isreal[]\Hnewline
+      A.det[] \Hnewline
+      b=rand(10,2);\Hnewline 
+      xu= A.solve[b];\Hnewline 
+      norm(Af*xu- b)\Hnewline 
+      xu1 = umfpack_solve(Af,b);} 
+  \end{program}
+ \end{examples}
+
+% -- Authors
+\begin{authors}
+  Jean-Philippe Chancelier
+\end{authors}
