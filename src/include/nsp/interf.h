@@ -224,7 +224,12 @@ extern NspMe *GetMeCopy (Stack stack,int i);
 extern NspLmo *GetLmoCopy (Stack S,int  i);
 extern NspLmo *GetLmo (Stack S,int i);
 
-extern int GetDimArg(Stack stack, int pos, int *dim);
+
+#define  DIM_STD  0x1
+#define  DIM_DOT  0x2
+#define  DIM_MTLB 0x4 
+
+extern int GetDimArg(Stack stack, int pos, int *dim, int flag);
 
 
 /**

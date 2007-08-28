@@ -7001,16 +7001,16 @@ double nsp_spcolmatrix_vnorm(NspSpColMatrix *A, double p)
 /**
  * nsp_spcolmatrix_isnan:
  * @A: a #NspSpColMatrix
- * @flag: a string "c", or "r", or "f", or "." or a NULL Pointer
+ * @flag: an integer 
  * 
- * if @flag is not given (or ".") then a new #NspSpColMatrix is returned 
+ * if @flag is -1 then a new #NspSpColMatrix is returned 
  * containing for each entries of the matrix @A the value of isinf(A(i;j)).
  * 
- * if B= 'c' a sparse column vector is returned. The i-th row of the column vector 
+ * if @flag = 2 a sparse column vector is returned. The i-th row of the column vector 
  * contains a non null entry if the coresponding row of @A contains a nan.
- * if B= 'r' a sparse row vector is returned. The i-th column of the row vector 
+ * if @flag = 1 a sparse row vector is returned. The i-th column of the row vector 
  * contains a non null entry if the coresponding column of @A contains a nan.
- * if B= 'f'. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
+ * if @flag = 0. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
  * 
  * The returned type should be changed to boolean sparse when thi stype will be implemented.
  * 
@@ -7018,7 +7018,7 @@ double nsp_spcolmatrix_vnorm(NspSpColMatrix *A, double p)
  **/
 
 typedef int (*Fis)(double) ;
-static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *flag, Fis F);
+static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,int flag, Fis F);
 
 static int isnan_f(double r)
 {
@@ -7026,43 +7026,38 @@ static int isnan_f(double r)
   return isnan(r);
 }
 
-NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,const char *flag)
+NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag)
 {
   return nsp_spcolmatrix_isnan_gen(A,flag,isnan_f);
 }
 
 
-static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *flag, Fis F)
+static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,int flag, Fis F)
 {
   int S=0;
   NspSpColMatrix *Res=NULL;
   int i,k,count,j;
-  char c = ( flag == NULL) ? '.' : flag[0];
+  int c =  flag;
   if ( A->m == 0 || A->n == 0  )
     {
       switch (c ) 
 	{
-	case 'F':
-	case 'f': 
+	case 0: 
 	  return nsp_spcolmatrix_create(NVOID,'r',0,0);
-	case 'c': 
-	case 'C': 
+	case 2:
 	  return nsp_spcolmatrix_create(NVOID,'r',A->m,(A->n == 0) ? 0: 1);
-	case 'r': 
-	case 'R':
+	case 1: 
 	  return nsp_spcolmatrix_create(NVOID,'r',(A->m == 0) ? 0: 1,A->n);
-	case '.':
+	case -1: 
 	  return nsp_spcolmatrix_create(NVOID,'r',A->m,A->n);
 	default: 
-	  Scierror("Error: unknown flag \"%s\" \n",( flag == NULL) ? "" : flag);
+	  Scierror("Error: unknown dim flag %d\n", flag);
 	  return NULLSPCOL;
 	}
     }
   switch (c) 
     {
-    case 'f': 
-    case 'F':
-    case '*':
+    case 0:
       /* return a 1x1 result */
       if ((Res =nsp_spcolmatrix_create(NVOID,'r',1,1)) == NULLSPCOL) return(NULLSPCOL);
       switch ( A->rc_type) 
@@ -7093,8 +7088,7 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 	  Res->D[0]->J[0] = 0;
 	}
       break;
-    case 'c':
-    case 'C':
+    case 2:
       /* return a A->mx1 result */
       if ((Res =nsp_spcolmatrix_create(NVOID,'r',A->m,1)) == NULLSPCOL) return NULLSPCOL;
       if (nsp_spcolmatrix_resize_col(Res,0,A->m)== FAIL) return NULLSPCOL;
@@ -7126,8 +7120,7 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 	  if (nsp_spcolmatrix_resize_col(Res,0,Res->D[0]->size-ndel ) == FAIL) return NULLSPCOL;
 	}
       break;
-    case 'r':
-    case 'R':
+    case 1: 
       /* return a 1x A->n result */
       if ((Res =nsp_spcolmatrix_create(NVOID,'r',1,A->n)) == NULLSPCOL) return NULLSPCOL;
       switch ( A->rc_type) 
@@ -7162,7 +7155,7 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 	  break;
 	}
       break;
-    case '.': 
+    case -1: 
       if ((Res =nsp_spcolmatrix_create(NVOID,'r',A->m,A->n)) == NULLSPCOL) return NULLSPCOL;
       switch ( A->rc_type) 
 	{
@@ -7198,7 +7191,7 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 	}
       break;
     default: 
-      Scierror("Error: unknown flag \"%s\" \n",( flag == NULL) ? "" : flag);
+      Scierror("Error: unknown flag %d \n", flag);
       return NULLSPCOL;
     }
   return Res;
@@ -7207,16 +7200,16 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,const char *f
 /**
  * nsp_spcolmatrix_isinf:
  * @A: a #NspSpColMatrix
- * @flag: a string "c", or "r", or "f", or "." or a NULL Pointer
+ * @flag: an integer. 
  * 
- * if @flag is not given (or ".") then a new #NspSpColMatrix is returned 
+ * if @flag is -1 then a new #NspSpColMatrix is returned 
  * containing for each entries of the matrix @A the value of isinf(A(i;j)).
  * 
- * if B= 'c' a sparse column vector is returned. The i-th row of the column vector 
+ * if @flag = 2 a sparse column vector is returned. The i-th row of the column vector 
  * contains a non null entry if the coresponding row of @A contains a nan.
- * if B= 'r' a sparse row vector is returned. The i-th column of the row vector 
+ * if @flag = 1 a sparse row vector is returned. The i-th column of the row vector 
  * contains a non null entry if the coresponding column of @A contains a nan.
- * if B= 'f'. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
+ * if @flag=0. A 1x1 sparse is returned containing a non null entry is @A contains a nan.
  * 
  * The returned type should be changed to boolean sparse when thi stype will be implemented.
  * 
@@ -7229,7 +7222,7 @@ static int isinf_f(double r)
   return isinf(r);
 }
 
-NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,const char *flag)
+NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
 {
   return nsp_spcolmatrix_isnan_gen(A,flag,isinf_f);
 }

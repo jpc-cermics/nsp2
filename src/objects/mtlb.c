@@ -109,7 +109,7 @@ static int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
     }
   if ( rhs == 1 ) 
     {
@@ -173,7 +173,7 @@ static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
     }
   if ( rhs == 1 ) 
     {
@@ -239,7 +239,7 @@ static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
     }
   if ( rhs == 1 ) 
     {
@@ -300,7 +300,7 @@ static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
     }
   if ( rhs == 1 ) 
     {

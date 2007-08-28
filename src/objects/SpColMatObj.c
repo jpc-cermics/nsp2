@@ -1769,18 +1769,22 @@ static int int_spcolmatrix__sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
 
 static int int_spcolmatrix_isnan(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str = NULL;
+  NspObject *Obj=NULLOBJ;
+  int dim=-1; /* default value isnan(A,dim='.') */
   NspSpColMatrix *Res,*HMat; 
-  CheckRhs(1,2);
+  nsp_option opts[] ={{"dim",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ( rhs == 2) 
+  /* and(A,dim=) */
+  if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL )
+    return RET_BUG;
+  if ( Obj != NULL) 
     {
-      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD | DIM_DOT ) == FAIL ) return RET_BUG;
     }
-  else 
-    { str = "*"; }
-  if ((Res= nsp_spcolmatrix_isnan(HMat,str)) == NULLSPCOL) return RET_BUG;
+  if ((Res= nsp_spcolmatrix_isnan(HMat,dim)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -1788,18 +1792,22 @@ static int int_spcolmatrix_isnan(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_isinf(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str = NULL;
+  int dim=-1; /* default value isnan(A,dim='.') */
+  NspObject *Obj=NULLOBJ;
   NspSpColMatrix *Res,*HMat; 
-  CheckRhs(1,2);
+  nsp_option opts[] ={{"dim",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ( rhs == 2) 
+  /* and(A,dim=) */
+  if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL )
+    return RET_BUG;
+  if ( Obj != NULL) 
     {
-      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD | DIM_DOT ) == FAIL ) return RET_BUG;
     }
-  else 
-    { str = "*"; }
-  if ((Res= nsp_spcolmatrix_isinf(HMat,str)) == NULLSPCOL) return RET_BUG;
+  if ((Res= nsp_spcolmatrix_isinf(HMat,dim)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }

@@ -1748,6 +1748,7 @@ NspObject *nsp_new_boolean_obj(int ival)
  * 
  * Return value: 0, 1 or 2
  **/
+
 static int get_dim_from_string(char *str)
 {
   switch(str[0])
@@ -1781,14 +1782,25 @@ static int get_dim_from_string(char *str)
  * Returns: %OK or %FAIL 
  **/
 
-int GetDimArg(Stack stack, int pos, int *dim)
+int GetDimArg(Stack stack, int pos, int *dim, int flag)
 {
-  char *str;
+  char *dim_sort[]={ ".", "*", "f", "F" , "r" , "R", "c", "C", NULL };
+  int   dim_val[] ={ -1 , 0  , 0  ,  0  , 1   , 1  , 2  , 2  , 0 };
+  int rep;
   if ( IsSMatObj(stack, pos) )
     {
-      if ((str = GetString (stack, pos)) == (char *) 0)
-	return FAIL;
-      *dim = get_dim_from_string(str);
+      if ( flag & DIM_DOT ) 
+	{
+	  /* '.' is accepted */
+	  if ((rep = GetStringInArray(stack, pos, dim_sort,1)) == -1 ) return FAIL;
+	  *dim = dim_val[rep];
+	}
+      else 
+	{
+	  /* '.' is not accepted */
+	  if ((rep = GetStringInArray(stack, pos, dim_sort+1,1)) == -1 ) return FAIL;
+	  *dim = dim_val[rep+1];
+	}
     }
   else
     {

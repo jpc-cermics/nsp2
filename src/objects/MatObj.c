@@ -1550,7 +1550,7 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
     return RET_BUG;
 
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim) == FAIL )
+    if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ((Res = (*F) (HMat, dim)) == NULLMAT)
@@ -1618,7 +1618,7 @@ int_mxdiff (Stack stack, int rhs, int opt, int lhs)
       CheckNonNegative(NspFname(stack),order,2);
 
       if ( rhs == 3 )
-	if ( GetDimArg(stack, 3, &dim) == FAIL )
+	if ( GetDimArg(stack, 3, &dim, DIM_STD) == FAIL )
 	  return RET_BUG;
     }
   
@@ -1746,7 +1746,7 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim) == FAIL )
+    if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ( nsp_mat_minmax(A, dim, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )

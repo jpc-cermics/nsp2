@@ -85,7 +85,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( rhs == 3 )
-    if ( GetDimArg(stack, 3, &dim_flag) == FAIL )
+    if ( GetDimArg(stack, 3, &dim_flag, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ((x = GetMatCopy(stack,1)) == NULLMAT) 
@@ -246,7 +246,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( rhs == 3 )
-    if ( GetDimArg(stack, 3, &dim_flag) == FAIL )
+    if ( GetDimArg(stack, 3, &dim_flag, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ((x = GetMatCopy(stack,1)) == NULLMAT) 
@@ -572,7 +572,7 @@ static int int_nsp_fftshift(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim_flag) == FAIL )
+    if ( GetDimArg(stack, 2, &dim_flag, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ( dim_flag > 2 )
@@ -599,7 +599,7 @@ static int int_nsp_ifftshift(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim_flag) == FAIL )
+    if ( GetDimArg(stack, 2, &dim_flag, DIM_STD) == FAIL )
       return RET_BUG;
 
   if ( ( y = nsp_mat_shift(x, dim_flag, 'i') ) == NULLMAT )
