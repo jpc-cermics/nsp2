@@ -54,7 +54,7 @@ AC_DEFUN([AC_CHECK_COLAMD],
       AC_CHECK_LIB(colamd,colamd,[colamd_libs="-lcolamd"])
     else 
       LDFLAGS="-L${ac_colamd_libdir} ${LDFLAGS}"
-      AC_CHECK_LIB(colamd,colamd_postorder,[colamd_libs="-L${ac_colamd_libdir} -lcolamd"])
+      AC_CHECK_LIB(colamd,colamd,[colamd_libs="-L${ac_colamd_libdir} -lcolamd"])
     fi
  fi
  CPPFLAGS=${ac_save_cppflags}
