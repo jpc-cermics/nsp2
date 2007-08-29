@@ -1,7 +1,7 @@
-44% symbol docs coverage.
-1009 symbols documented.
-236 symbols incomplete.
-1288 not documented.
+45% symbol docs coverage.
+1032 symbols documented.
+222 symbols incomplete.
+1274 not documented.
 
 
 Abs
@@ -44,6 +44,7 @@ GetClassB
 GetClassBCopy
 GetConnector
 GetConnectorCopy
+GetDimArg (flag)
 GetFunction
 GetFunctionCopy
 GetGFrame
@@ -622,51 +623,28 @@ mpmatrix_copy
 mpmatrix_loop_extract
 mpmatrix_object
 mwSize
+mxArray
 mxAssert
 mxCELL_CLASS
 mxCHAR_CLASS
-mxCalcSingleSubscript (Returns)
-mxCalloc (n, size)
 mxChar
 mxClassID
 mxComplexity
-mxCreateCharMatrixFromStrings (Returns)
-mxCreateLogicalScalar (value)
-mxCreateSparse
-mxCreateStructMatrix
 mxDOUBLE_CLASS
 mxFUNCTION_CLASS
-mxFree (ptr)
-mxFreeMatrix (ptr)
-mxGetClassName (Returns)
-mxGetEps
-mxGetField (Returns)
 mxGetFieldNameByNumber
-mxGetInf
-mxGetNaN
-mxGetNumberOfDimensions
-mxGetNumberOfFields
-mxGetNzmax
-mxGetScalar
 mxINT16_CLASS
 mxINT32_CLASS
 mxINT64_CLASS
 mxINT8_CLASS
-mxIsComplex
-mxIsEmpty
-mxIsFull
-mxIsNumeric
-mxIsSparse
 mxLOGICAL_CLASS
 mxLogical
 mxMalloc
 mxOBJECT_CLASS
 mxOPAQUE_CLASS
-mxRealloc (Returns)
 mxSINGLE_CLASS
 mxSPARSE_CLASS
 mxSTRUCT_CLASS
-mxSetField (pa, i, fieldname, value)
 mxSetNzmax
 mxUINT16_CLASS
 mxUINT32_CLASS
@@ -767,14 +745,6 @@ nsp_bhash_print
 nsp_bhash_remove (H, str)
 nsp_bhash_resize (H, new_size)
 nsp_bhcreate_from_list
-nsp_bmatrix_elt_size
-nsp_bmatrix_find
-nsp_bmatrix_full_compare (err)
-nsp_bmatrix_info (Returns)
-nsp_bmatrix_latex_print (Returns)
-nsp_bmatrix_latex_tab_print (Returns)
-nsp_bmatrix_print (rec_level, Returns)
-nsp_bmatrix_redim
 nsp_ceil_c
 nsp_cells_clone
 nsp_cells_concat_down
@@ -896,7 +866,6 @@ nsp_list_path_extract
 nsp_log10_c
 nsp_log_c
 nsp_mat_clean (rhs)
-nsp_mat_comp
 nsp_mat_createinit (name, type, m, n, func)
 nsp_mat_find
 nsp_mat_fullcomp
@@ -1204,12 +1173,15 @@ nsp_sort
 nsp_sorted_list_insert (L, O)
 nsp_sorted_list_search (L, str)
 nsp_sorted_list_search_and_remove (L, str)
+nsp_spcolmatrix_div_scal_tt
+nsp_spcolmatrix_div_zero_tt
 nsp_spcolmatrix_get (RC, Values)
 nsp_spcolmatrix_info (Returns)
 nsp_spcolmatrix_insert_elt (Returns)
 nsp_spcolmatrix_minitt (flag, err)
 nsp_spcolmatrix_object
 nsp_spcolmatrix_print (Sp, indent, name, rec_level, Returns)
+nsp_spcolmatrix_scal_div_tt
 nsp_spcolmatrix_store (r, c, col, r1, c1)
 nsp_spcolmatrix_sum (flag)
 nsp_spcolmatrix_tril (k)

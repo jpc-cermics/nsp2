@@ -844,6 +844,7 @@ nsp_fscanf_smatrix
 
 <SECTION>
 <FILE>mex</FILE>
+mxArray
 INTERSIZ
 mxCELL_CLASS
 mxCHAR_CLASS
@@ -1073,7 +1074,6 @@ nsp_bmatrix_info
 nsp_bmatrix_print
 nsp_bmatrix_latex_print
 nsp_bmatrix_latex_tab_print
-nsp_bmatrix_redim
 nsp_bmatrix_enlarge
 nsp_bmatrix_concat_right
 nsp_bmatrix_add_columns
@@ -2411,6 +2411,15 @@ nsp_spcolmatrix_divel
 nsp_spcolmatrix_isreal
 nsp_spcolmatrix_mini
 nsp_spcolmatrix_spones
+nsp_spcolmatrix_and
+nsp_spcolmatrix_div_scal_tt
+nsp_spcolmatrix_div_zero_tt
+nsp_spcolmatrix_isinf
+nsp_spcolmatrix_isnan
+nsp_spcolmatrix_norm
+nsp_spcolmatrix_or
+nsp_spcolmatrix_scal_div_tt
+nsp_spcolmatrix_vnorm
 </SECTION>
 
 

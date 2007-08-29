@@ -4,6 +4,9 @@ BHashOperation
 BHash_Entry
 Cell
 Curline
+DIM_DOT
+DIM_MTLB
+DIM_STD
 DefSciReadLine
 DefSciReadLine_textview
 ELT_TYPE
@@ -174,7 +177,6 @@ lock_dir
 lock_type
 matint_workid
 menu_answer
-mxArray
 mxCreateNumericArray
 mxFreeSparseMtlbTriplet
 mxSetFieldByNumber
@@ -202,6 +204,7 @@ nsp_basic_to_polynom
 nsp_basic_types
 nsp_block
 nsp_block_create
+nsp_bmatrix_redim
 nsp_cholmod
 nsp_cholmod_copy
 nsp_cholmod_destroy
@@ -268,15 +271,6 @@ nsp_set_nsp_getchar
 nsp_set_nsp_more
 nsp_sparse_triplet
 nsp_spcol_free_triplet
-nsp_spcolmatrix_and
-nsp_spcolmatrix_div_scal_tt
-nsp_spcolmatrix_div_zero_tt
-nsp_spcolmatrix_isinf
-nsp_spcolmatrix_isnan
-nsp_spcolmatrix_norm
-nsp_spcolmatrix_or
-nsp_spcolmatrix_scal_div_tt
-nsp_spcolmatrix_vnorm
 nsp_stimer
 nsp_tokeniser_file
 nsp_tokeniser_string

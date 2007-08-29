@@ -1549,6 +1549,9 @@ GetMe
 GetMeCopy
 GetLmoCopy
 GetLmo
+DIM_STD
+DIM_DOT
+DIM_MTLB
 GetDimArg
 CheckSameDims
 CheckDims

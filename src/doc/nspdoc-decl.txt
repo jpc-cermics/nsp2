@@ -251,7 +251,7 @@ NspBlock *H,double *rect,int color,int thickness,int background
 </MACRO>
 <MACRO>
 <NAME>NSP_INT_TO_POINTER</NAME>
-#define NSP_INT_TO_POINTER(i) ((int *) (i)) 
+#define NSP_INT_TO_POINTER(i) ((int *) (i))
 </MACRO>
 <MACRO>
 <NAME>NSP_POINTER_TO_INT</NAME>
@@ -316,11 +316,11 @@ typedef int integer;
 </TYPEDEF>
 <MACRO>
 <NAME>DBL_EPSILON</NAME>
-#   define  DBL_EPSILON             2.2204460492503131e-16   
+#   define  DBL_EPSILON             2.2204460492503131e-16
 </MACRO>
 <MACRO>
 <NAME>DBL_MAX</NAME>
-#   define  DBL_MAX                 1.7976931348623158e+308  
+#   define  DBL_MAX                 1.7976931348623158e+308
 </MACRO>
 <MACRO>
 <NAME>DBL_MIN</NAME>
@@ -356,7 +356,7 @@ typedef int integer;
 </MACRO>
 <MACRO>
 <NAME>WITH_SYMB_TABLE</NAME>
-#define WITH_SYMB_TABLE 1 
+#define WITH_SYMB_TABLE 1
 </MACRO>
 <MACRO>
 <NAME>MTLB_MODE</NAME>
@@ -7377,10 +7377,22 @@ Stack S,int  i
 <RETURNS>NspLmo *</RETURNS>
 Stack S,int i
 </FUNCTION>
+<MACRO>
+<NAME>DIM_STD</NAME>
+#define  DIM_STD  0x1
+</MACRO>
+<MACRO>
+<NAME>DIM_DOT</NAME>
+#define  DIM_DOT  0x2
+</MACRO>
+<MACRO>
+<NAME>DIM_MTLB</NAME>
+#define  DIM_MTLB 0x4 
+</MACRO>
 <FUNCTION>
 <NAME>GetDimArg</NAME>
 <RETURNS>int </RETURNS>
-Stack stack, int pos, int *dim
+Stack stack, int pos, int *dim, int flag
 </FUNCTION>
 <MACRO>
 <NAME>CheckSameDims</NAME>
@@ -11114,12 +11126,12 @@ NspSpColMatrix *A, NspSpColMatrix *B
 <FUNCTION>
 <NAME>nsp_spcolmatrix_isnan</NAME>
 <RETURNS>NspSpColMatrix *</RETURNS>
-NspSpColMatrix *A,const char *flag
+NspSpColMatrix *A,int flag
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_isinf</NAME>
 <RETURNS>NspSpColMatrix *</RETURNS>
-NspSpColMatrix *A,const char *flag
+NspSpColMatrix *A,int flag
 </FUNCTION>
 <ENUM>
 <NAME>nsp_print_mode</NAME>
@@ -12512,12 +12524,12 @@ const NspBMatrix *A,const  NspBMatrix *B, char *op, int *err
 <FUNCTION>
 <NAME>nsp_mat_comp</NAME>
 <RETURNS>NspBMatrix *</RETURNS>
-NspMatrix *A, NspMatrix *B, char *op
+NspMatrix *A, NspMatrix *B,const char *op
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_comp_real</NAME>
 <RETURNS>NspBMatrix *</RETURNS>
-NspMatrix *A, NspMatrix *B, char *op
+NspMatrix *A, NspMatrix *B,const char *op
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_isinf</NAME>
