@@ -1000,7 +1000,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   /* Get a sparse matrix */
   CheckStdRhs(1,1);
-  CheckLhs(0,3);
+  CheckLhs(0,2);
   
   if ((Obj = nsp_get_object(stack,1)) == NULL)   return RET_BUG;
   
