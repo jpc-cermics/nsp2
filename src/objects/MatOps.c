@@ -4485,26 +4485,21 @@ NspBMatrix  *nsp_mat_finite(NspMatrix *A)
 }
 
 
-/*
- * Operation on Matrices leading to Boolean Matrices results 
- * Res = A(i,j) op B(i;j) 
- * with the special case : 
- *      A(i;j)op B(0,0) or A(0,0) op B(i,j) if A or B are of size 1x1
- *      
- * A and B are unchanged : Res is created 
- */
-
 /**
  * nsp_mat_comp:
  * @A: a #NspMatrix 
- * @B: 
- * @op: 
+ * @B: a #NspMatrix 
+ * @op: the code for the comparison as a string
  * 
+ * Operation on Matrices leading to Boolean Matrices results 
+ * Res = A(i,j) op B(i;j). A and B must be size compatible with 
+ * the standard promotion of scalars i.e 1x1 matrices. 
+ * A and B are unchanged : Res is created 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix
  **/
-NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
+
+NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B,const char *op)
 {
   CompOp *realop;
   C_CompOp *C_realop;
@@ -4517,9 +4512,12 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
   if ( SearchComp(op,&realop,&C_realop) == FAIL) return(NULLBMAT);
   if ( !( A->m == B->m && A->n == B->n ) )
     {
-      if ( B->mn == 1 && A->mn != 0 ) 
+      /* dimensions are not the same */
+      if ( B->mn == 1 ) 
 	{
-	  /* Special case B is a constant, Loc created with true */
+	  /* Special case B is a 1x1 constant, size of result is controled by A 
+	   * even the 0xn and nx0 cases 
+	   */
 	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
 	  if ( Loc == NULLBMAT) { return(NULLBMAT);   }
 	  if ( A->rc_type == 'r') 
@@ -4555,7 +4553,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	    }
 	  return(Loc);
 	}
-      if ( A->mn == 1 && B->mn != 0 ) 
+      if ( A->mn == 1 )
 	{
 	  /* Special case A is a constant */
 	  Loc =nsp_bmatrix_create(NVOID,B->m,B->n);
@@ -4592,7 +4590,9 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	    }
 	  return(Loc);
 	}
-      /* Incompatible dimensions */
+      /* Incompatible dimensions: we return a boolean scalar as in Scilab 
+       * this is not the matlab way.
+       */
       if ( strcmp(op,"==") == 0) 
 	{
 	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
@@ -4629,9 +4629,8 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
       /* A and B are of same dimensions */
       if ( A->mn == 0) 
 	{
-	  Loc =nsp_bmatrix_create(NVOID,1,1);
+	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
 	  if ( Loc == NULLBMAT) return(NULLBMAT);
-	  if ( (*realop)(1.0,1.0)==FALSE ) Loc->B[0] = FALSE;
 	}
       else
 	{
@@ -4677,10 +4676,9 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 }
 
 
-#define MAKE_REAL_COMP(op)					    \
+#define MAKE_REAL_COMP(op)						\
   for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B )	\
     Loc->B[i] = A->R[iA] op B->R[iB] 
-
 
 /**
  * nsp_mat_comp_real:
@@ -4695,23 +4693,24 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
  * Return value: a new #NspBMatrix or %NULLBMAT
  **/
 
-NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
+NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B,const char *op)
 {
   /* comparizon for both A and B of type real */
   int i, iA, iB, inc_A, inc_B, m, n;
   NspBMatrix *Loc ;
   if ( !( A->m == B->m  &&  A->n == B->n ) )
     {
-      if ( B->mn == 1 && A->mn != 0 ) 
+      if ( B->mn == 1 ) 
 	{
 	  m = A->m; n = A->n; inc_A = 1; inc_B = 0;
 	}
-      else if ( A->mn == 1 && B->mn != 0 ) 
+      else if ( A->mn == 1 ) 
 	{
 	  m = B->m; n = B->n; inc_A = 0; inc_B = 1;
 	}
-      else    /* Incompatible dimensions */
+      else   
 	{
+	  /* Incompatible dimensions */
 	  if ( (Loc =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT ) return NULLBMAT;
 	  if ( strcmp(op,"<>") == 0 ) 
 	    Loc->B[0] = TRUE;
@@ -4724,11 +4723,7 @@ NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
     {
       if ( A->mn == 0) 
 	{
-	  if ( (Loc =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT ) return NULLBMAT;
-	  if ( strcmp(op,"==") == 0  ||  strcmp(op,"<=") == 0  ||  strcmp(op,">=") == 0 ) 
-	    Loc->B[0] = TRUE;
-	  else
-	    Loc->B[0] = FALSE;
+	  if ( (Loc =nsp_bmatrix_create(NVOID,A->m,A->n)) == NULLBMAT ) return NULLBMAT;
 	  return Loc;
 	}
       else
