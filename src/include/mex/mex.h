@@ -7,6 +7,13 @@
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
 
+/**
+ * mxArray: 
+ *
+ * object used in mex interfaces. This is just an alias (through 
+ * typedef) of #NspObject.
+ */
+
 typedef NspObject mxArray ;
 typedef int mxLogical; /* should be int on Nsp */
 typedef char mxChar;

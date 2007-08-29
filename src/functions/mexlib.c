@@ -398,6 +398,9 @@ int mxIsString(const mxArray *ptr)
  * mxIsNumeric:
  * @ptr: an #mxArray 
  * 
+ * checks if @ptr is a Matrix (#NspMatrix) or a sparse Matrix 
+ *(#NspSpColMatrix).
+ * 
  * Return value: 1 if @ptr is a #NspMatrix or #NspSpMatrix else 0.
  **/
 
@@ -409,6 +412,8 @@ int mxIsNumeric(const mxArray *ptr)
 /**
  * mxIsFull:
  * @ptr: an #mxArray 
+ *
+ * checks if @ptr is a full Matrix (#NspMatrix).
  * 
  * Return value: 1 if @ptr is a #NspMatrix else 0.
  **/
@@ -422,6 +427,8 @@ int mxIsFull(const mxArray *ptr)
  * mxIsSparse:
  * @ptr: an #mxArray 
  * 
+ * checks if @ptr is a sparse Matrix. 
+ * 
  * Return value: 1 if @ptr is a #NspSpMatrix else 0.
  **/
 
@@ -433,6 +440,8 @@ int mxIsSparse(const mxArray *ptr)
 /**
  * mxIsComplex:
  * @ptr: an #mxArray 
+ * 
+ * checks if @ptr is a complex Matrix (#NspMatrix or #NspSpColMatrix).
  * 
  * Return value: 1 if @ptr is a complex #NspMatrix or complex #NspSpMatrix else 0.
  **/
@@ -455,7 +464,7 @@ int mxIsComplex(const mxArray *ptr)
  * mxGetScalar:
  * @ptr: an #mxArray 
  * 
- * 
+ * get scalar value from a 1x1 mxArray. 
  * 
  * Return value: a double if @ptr is a scalar else an error jump.
  **/
@@ -589,8 +598,8 @@ mxArray *mxCreateFull(int m, int n, int it)
 
 /**
  * mxCalloc:
- * @n: 
- * @size: 
+ * @n: number of array element to allocate 
+ * @size: size of array element
  * 
  * allocates an array of size @n x @size*sizeof(char). 
  * Note that in Nsp the array is not freed when quiting the mex.
@@ -658,7 +667,7 @@ char *mxArrayToString(const mxArray *ptr)
       
 /**
  * mxFreeMatrix:
- * @ptr: 
+ * @ptr: a pointer 
  * 
  * XXXX : to be done 
  * 
@@ -672,9 +681,9 @@ void mxFreeMatrix (mxArray *ptr)
 
 /**
  * mxFree:
- * @ptr: 
+ * @ptr: a pointer 
  * 
- * free previously allocated memmory ( mxCalloc() or mxMalloc() )
+ * frees previously allocated memmory ( mxCalloc() or mxMalloc() )
  **/
 
 void mxFree(void *ptr)
@@ -699,13 +708,15 @@ int mexAtExit(void (*ExitFcn)(void))
 
 /**
  * mxCreateSparse:
- * @m: 
- * @n: 
- * @nzmax: 
- * @ComplexFlag: 
+ * @m: number of rows 
+ * @n: number of columns 
+ * @nzmax: number of non null elements 
+ * @ComplexFlag:  mxREAL, mxCOMPLEX. 
  * 
+ * creates a new @mx@n sparse matrix and initialize arrays 
+ * using the @nzmax value. 
  * 
- * Return value: 
+ * Return value: a new #NspSpColMatrix or NULLSPCOL
  **/
 
 mxArray *mxCreateSparse(int m, int n, int nzmax, 
@@ -750,13 +761,13 @@ mxArray *mxCreateString(const char *string)
  * @i:  an integer 
  * @fieldname: a string 
  * 
- * here pas is supposed to be a Hash Table 
+ * here @pa is supposed to be a Hash Table 
  * the index is not used i.e we only accept 
- * i==0;
- * fieldname ->  const char *fieldname
+ * i==0; The object associated to name @fieldname 
+ * is searched and returned from the @pa Hash Table without copy.
  * 
  * 
- * Return value: 
+ * Return value: a #NspObject or %NULL
  **/
 
 mxArray *mxGetField (const mxArray *pa, int i,const char *fieldname)
@@ -782,14 +793,15 @@ mxArray *mxGetField (const mxArray *pa, int i,const char *fieldname)
 
 /**
  * mxCreateStructMatrix:
- * @m: 
- * @n: 
- * @nfields: 
- * @field_names: 
+ * @m: number of rows 
+ * @n: number of columns 
+ * @nfields: number of fields 
+ * @field_names: a table giving the field names
  * 
+ * Only 1x1 strcut matrice are handled and they are stored 
+ * in nsp hash table objets. 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspHash object or %NULLHASH
  **/
 
 mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_names)
@@ -809,12 +821,15 @@ mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_name
 
 /**
  * mxSetField:
- * @pa: 
- * @i: 
- * @fieldname: 
- * @value: 
+ * @pa: a #mxArray object 
+ * @i: an integer 
+ * @fieldname: a string 
+ * @value: an nsp object. 
  *
- * @value is inserted in @pa without copy. 
+ * The name of object @value is set to @fieldname and @value
+ * is inserted in hash table @pa without copy. @i is ignored 
+ * since only 1x1 struct are supported. 
+ * 
  * (changed April 2007)
  * 
  **/
@@ -842,11 +857,11 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
 
 /**
  * mxGetNumberOfDimensions:
- * @ptr: 
+ * @ptr: an mxArray 
  * 
+ * returns the number of dimensions of given array @ptr.
  * 
- * 
- * Return value: 
+ * Return value: an integer 
  **/
 int mxGetNumberOfDimensions (const mxArray *ptr)
 {
@@ -855,11 +870,11 @@ int mxGetNumberOfDimensions (const mxArray *ptr)
 
 /**
  * mxGetNumberOfFields:
- * @ptr: 
+ * @ptr: an mxArray 
  * 
+ * returns the number of fields of given array @ptr.
  * 
- * 
- * Return value: 
+ * Return value: an integer 
  **/
 
 int mxGetNumberOfFields (const mxArray *ptr)
@@ -873,7 +888,7 @@ int mxGetNumberOfFields (const mxArray *ptr)
  * mxIsChar:
  * @ptr: a #mxArray 
  * 
- * Checks if @ptr is a matrix of strings 
+ * checks if @ptr is a matrix of strings 
  * 
  * Return value: %TRUE or %FALSE 
  **/
@@ -899,6 +914,8 @@ void mexWarnMsgTxt(const char *error_msg)
 /**
  * mxGetInf:
  * 
+ * returns <literal>%inf</literal>. 
+ * 
  * Return value: ieee Infinity as a double
  **/
 
@@ -908,6 +925,8 @@ double mxGetInf(void)
 
 /**
  * mxGetNaN:
+ * 
+ * returns <literal>%nan</literal>. 
  * 
  * Return value: ieee Nan as a double 
  **/
@@ -921,6 +940,8 @@ double mxGetNaN(void)
 
 /**
  * mxGetEps:
+ * 
+ * returns <literal>%eps</literal>. 
  * 
  * Return value: returns <literal>nsp_dlamch("e")</literal>
  **/
@@ -1135,7 +1156,7 @@ mxArray *mxCreateCellArray(int ndim, const int *dims)
  * array @subs. The unique indice can be used instead of the @subs array to 
  * access the same element of array @ptr.
  * 
- * Return value: 
+ * Return value: an indice as an integer 
  **/
 
 int mxCalcSingleSubscript(const mxArray *ptr, int nsubs, const int *subs)
@@ -1258,7 +1279,7 @@ int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_p
  * returns an array of strings of size @mx1 filled with 
  * strings (copy) from the array @str.
  * 
- * Return value: 
+ * Return value: a new #NspSMatrix or %NULLSMAT
  **/
 mxArray *mxCreateCharMatrixFromStrings(int m, const char **str)
 {
@@ -1352,9 +1373,10 @@ int mexEvalString(char *command)
  * mxGetNzmax:
  * @array_ptr: Pointer to an #mxArray.
  * 
+ * Get the size of arrays allocated to keep the 
+ * non null values of sparse matrix pointed by @array_ptr
  * 
- * 
- * Return value: 
+ * Return value: an integer 
  **/
 
 int mxGetNzmax(const mxArray *array_ptr)
@@ -1497,6 +1519,8 @@ int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,
  * mxIsEmpty:
  * @array_ptr: Pointer to an #mxArray.
  * 
+ * checks if given mxArray has empty dimension or not.
+ * 
  * Return value: Logical 1 (true) if the mxArray is empty, 
  * and logical 0 (false) otherwise.
  **/
@@ -1547,7 +1571,7 @@ void mexMakeArrayPersistent(mxArray *array_ptr)
 
 /**
  * mxCreateLogicalScalar:
- * @value: 
+ * @value: 1 or 0
  * 
  * Create scalar NspBMat
  * value
@@ -1991,7 +2015,7 @@ mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
  * 
  * returns the type of the array @array_ptr as a string pointer
  * 
- * Returns: 
+ * Returns: a string 
  **/
 const char *mxGetClassName(const mxArray *array_ptr)
 {
@@ -2391,6 +2415,7 @@ void mxSetIr(mxArray *array_ptr,int *ir)
  * 
  * reallocates the pointer given by @ptr.
  * 
+ * Return value: pointer to reallocated zone.
  **/
 
 void *mxRealloc(void *ptr, size_t size)

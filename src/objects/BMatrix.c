@@ -110,7 +110,7 @@ NspBMatrix  *nsp_bmatrix_copy(NspBMatrix *A)
 
 
 /**
- * nsp_matrix_elt_size:
+ * nsp_bmatrix_elt_size:
  * @M: a #NspMatrix 
  * 
  * size of matrix elements.
@@ -192,6 +192,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  * then this name is displayed but it can be replaced by the value of the argument 
  * @name is such an argument is non null. 
  * 
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_level)
@@ -219,13 +220,14 @@ int nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_leve
  * @BMat: a #NspBMatrix
  * @indent: an int 
  * @name: %NULL or name to be used.
- * @rec_level:
+ * @rec_level: deph level of the print.
  *
  * Print the #NspMBatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing. If the #NspBMatrix has a name 
  * then this name is displayed but it can be replaced by the value of the argument 
  * @name is such an argument is non null. 
  * 
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_level)
@@ -270,6 +272,8 @@ int nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_lev
  * 
  * print the #NspBMatrix @A using the default Sciprintf() function and LaTeX 
  * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_bmatrix_latex_print(NspBMatrix *BMat)
@@ -303,6 +307,8 @@ int nsp_bmatrix_latex_print(NspBMatrix *BMat)
  * 
  * print the #NspBMatrix @A using the default Sciprintf() function and LaTeX tabular
  * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 
@@ -945,6 +951,7 @@ NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A)
  * returns in a #NspMatrix the indices for which the 
  * #NspBMatrix @A is true considering @A as o one dimensional array.
  * 
+ * Return value:  a new #NspMatrix or %NULLMAT
  */
 
 NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
@@ -1158,7 +1165,7 @@ NspBMatrix  *nsp_bmatrix_compare(const NspBMatrix *A,const  NspBMatrix *B, char 
  * @A: a #NspBMatrix 
  * @B: a #NspBMatrix 
  * @op: can be "<>" or "==" 
- * @err: 
+ * @err: pointer to an integer
  * 
  * %TRUE is returned if @A(i,j) op @B(i,j) is %TRUE for all indices. 
  * Note that, if @A or @B is a 1x1 matrix its size is promoted to the size of the 

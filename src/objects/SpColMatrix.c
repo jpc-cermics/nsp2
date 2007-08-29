@@ -6925,13 +6925,13 @@ static double nsp_spcolmatrix_norminf(NspSpColMatrix *A)
 /**
  * nsp_spcolmatrix_norm:
  * @A: a real or complex #NspSpColMatrix
- * @flag: character defining the kind of matrix norm to compute:
+ * @c: character defining the kind of matrix norm to compute:
  *
- *        @flag='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
- *        @flag='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
- *        @flag='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
- *        @flag='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
- *        @flag='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
+ *        @c='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
+ *        @c='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
+ *        @c='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
+ *        @c='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
+ *        @c='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
  *
  * @A is not modified.
  * 
