@@ -2974,7 +2974,7 @@ static int show_eval_bug(Stack stack,int n, PList L)
 {
   IOVFun def ;
   MoreFun mf; 
-  if ( n >= RET_BUG-2 && n <= RET_BUG )
+  if (  n >= RET_BUG-2 && n <= RET_BUG ) 
     { 
       NspSMatrix *res;
       Scierror("\t==>");
@@ -3011,9 +3011,22 @@ static int show_eval_bug(Stack stack,int n, PList L)
 	}
       /* to get rid of next potential messages */
       return n-5;
-    } 
+    }
+  else if ( n == RET_ERROR_RAISED )
+    {
+      /* we get here after a call to the nsp function error("...") */
+      if ( 0 && NspFileName(stack) != NULL) 
+	{
+	  int line= nsp_parser_get_line(L);
+	  if ( line != -1 ) 
+	    Scierror("\tline %d of file %s\n",line,NspFileName(stack));
+	}
+      return n;
+    }
   else 
-    return n;
+    {
+      return n;
+    }
 }
 
 
