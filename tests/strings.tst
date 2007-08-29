@@ -67,7 +67,7 @@ B=strstr(A,'1');
 B1=0*B;
 for i=1:size(A,'*');
   C=strindex(A(i),'1');
-  if C<>[] then B1(i)=C(1);end 
+  if ~isempty(C) then B1(i)=C(1);end 
 end 
 if or(B1<>B) then pause;end 
 B1=strstr(A,'12');

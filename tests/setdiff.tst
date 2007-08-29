@@ -83,7 +83,7 @@ if ~and(C == A(k)) then, pause; end
 A = []
 B = [1,2,3];
 C = setdiff(A,B);
-if ~and(C == []) then, pause; end
+if ~isempty(C) then, pause; end
 
 [C,k] = setdiff(A,B);
 if C ~= [] then, pause; end
