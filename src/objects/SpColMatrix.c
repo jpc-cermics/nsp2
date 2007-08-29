@@ -4456,7 +4456,9 @@ static void SpM_plus_format(NspSpColMatrix *Sp, int indent)
 
 static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 {
-  int i,j;
+  int i,j,imore,p_rows=0;
+  int max_width ,winrows;
+  sci_get_screen_size(&winrows,&max_width);
   switch ( Sp->rc_type ) 
     {
     case 'r' : 
@@ -4467,6 +4469,13 @@ static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 	    {
 	      nsp_pr_white(indent) ;Sciprintf("(%d,%d) ",Ri->J[j]+1,i+1);
 	      nsp_pr_float(fmt, Ri->R[j]);Sciprintf("\n");
+	      p_rows++;
+	      if ( p_rows >= winrows ) 
+		{
+		  scimore(&imore);
+		  if ( imore == 1) return FALSE;
+		  p_rows=0;
+		}
 	    }
 	}
       break;
@@ -4479,6 +4488,13 @@ static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 	      nsp_pr_white(indent) ; Sciprintf("(%d,%d) ",Ri->J[j]+1,i+1);
 	      nsp_pr_complex(fmt, Ri->C[j]);
 	      Sciprintf("\n");
+	      p_rows++;
+	      if ( p_rows >= winrows ) 
+		{
+		  scimore(&imore);
+		  if ( imore == 1) return FALSE;
+		  p_rows=0;
+		}
 	    }
 	}
       break;
