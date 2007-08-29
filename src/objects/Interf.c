@@ -1777,14 +1777,16 @@ static int get_dim_from_string(char *str)
  * can be considered as an array dimension specification and 
  * return the array dimension as an integer. For example to 
  * denote the row dimension of a matrix one can use 1 or 'r' at 
- * nsp level. 
+ * nsp level. The valid answers for dimensions given as a string are 
+ * ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL". full strings 
+ * or abreviation are accepted.
  * 
  * Returns: %OK or %FAIL 
  **/
 
 int GetDimArg(Stack stack, int pos, int *dim, int flag)
 {
-  char *dim_sort[]={ ".", "*", "f", "F" , "r" , "R", "c", "C", NULL };
+  char *dim_sort[]={ ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
   int   dim_val[] ={ -1 , 0  , 0  ,  0  , 1   , 1  , 2  , 2  , 0 };
   int rep;
   if ( IsSMatObj(stack, pos) )
@@ -1792,13 +1794,13 @@ int GetDimArg(Stack stack, int pos, int *dim, int flag)
       if ( flag & DIM_DOT ) 
 	{
 	  /* '.' is accepted */
-	  if ((rep = GetStringInArray(stack, pos, dim_sort,1)) == -1 ) return FAIL;
+	  if ((rep = GetStringInArray(stack, pos, dim_sort,0)) == -1 ) return FAIL;
 	  *dim = dim_val[rep];
 	}
       else 
 	{
 	  /* '.' is not accepted */
-	  if ((rep = GetStringInArray(stack, pos, dim_sort+1,1)) == -1 ) return FAIL;
+	  if ((rep = GetStringInArray(stack, pos, dim_sort+1,0)) == -1 ) return FAIL;
 	  *dim = dim_val[rep+1];
 	}
     }
