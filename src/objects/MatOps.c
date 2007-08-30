@@ -4943,68 +4943,82 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 }
 
 
-/*
- * returns in a NspMatrix the indices for which the 
- * Matrix A has non zero entries 
- * A is left unchanged
- * according to lhs one or two arguments are returned 
- */
 
 /**
  * nsp_mat_find:
  * @A: a #NspMatrix 
- * @lhs: 
- * @Res1: 
- * @Res2: 
+ * @lhs: 1 or 2 
+ * @Res1: a pointer to a #NspMatrix
+ * @Res2: a pointer to a #NspMatrix
  * 
+ * returns in one or two #NspMatrix the indices for which the 
+ * Matrix @A has non zero entries. A is left unchanged
+ * according to the value of @lhs one or two arguments are returned 
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL  
  **/
+
 int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
-  int j,i,count=0;
-  /* first pass for counting **/
-  for ( i=0 ; i < A->mn ; i++) 
+  int j,i,count=0,  nrow = 1;
+  /* first pass for counting */
+  if ( A->mn == 0) nrow =0;
+  if ( A->rc_type == 'r' ) 
     {
-      if ( A->rc_type == 'r' && A->R[i] != 0.0 ) count++;
-      if ( A->rc_type == 'c' && (A->C[i].r != 0.0 || A->C[i].i != 0.0))
-	count++;
+      for ( i=0 ; i < A->mn ; i++) 
+	if ( A->R[i] != 0.0 ) count++;
+    }
+  else 
+    {
+      for ( i=0 ; i < A->mn ; i++) 
+	if (A->C[i].r != 0.0 || A->C[i].i != 0.0) count++;
     }
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
-      for ( i = 0 ; i < A->mn ; i++ )
+      if ( A->rc_type == 'r' ) 
 	{
-	  if ( A->rc_type == 'r' && A->R[i] != 0.0 ) 
-	    (*Res1)->R[count++] = i+1;
-	  if ( A->rc_type == 'c' && (A->C[i].r != 0.0 || A->C[i].i != 0.0))
-	    (*Res1)->R[count++] = i+1;
+	  for ( i = 0 ; i < A->mn ; i++ )
+	    if ( A->R[i] != 0.0 ) (*Res1)->R[count++] = i+1;
+	}
+      else 
+	{
+	  for ( i = 0 ; i < A->mn ; i++ )
+	    if ((A->C[i].r != 0.0 || A->C[i].i != 0.0))
+	      (*Res1)->R[count++] = i+1;
 	}
     }
   else 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res2 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
       if ( *Res2 == NULLMAT) return FAIL;
       count=0;
-      for ( i = 0 ; i < A->m ; i++ )
-	for ( j = 0 ; j < A->n ; j++ )
-	  {
-	    if ( A->rc_type == 'r' && A->R[i+(A->m)*j] != 0.0 ) 
+      if ( A->rc_type == 'r' ) 
+	{
+	  for ( i = 0 ; i < A->m ; i++ )
+	    for ( j = 0 ; j < A->n ; j++ )
 	      {
-		(*Res1)->R[count] = i+1;
-		(*Res2)->R[count++] = j+1;
+		if (  A->R[i+(A->m)*j] != 0.0 ) 
+		  {
+		    (*Res1)->R[count] = i+1;
+		    (*Res2)->R[count++] = j+1;
+		  }
 	      }
-	    if ( A->rc_type == 'c' && (A->C[i+(A->m)*j].r != 0.0 || A->C[i+(A->m)*j].i != 0.0))
-	      {
-		(*Res1)->R[count] = i+1;
-		(*Res2)->R[count++] = j+1;
-	      }
-	  }
+	}
+      else 
+	{
+	  for ( i = 0 ; i < A->m ; i++ )
+	    for ( j = 0 ; j < A->n ; j++ )
+	      if ( (A->C[i+(A->m)*j].r != 0.0 || A->C[i+(A->m)*j].i != 0.0))
+		{
+		  (*Res1)->R[count] = i+1;
+		  (*Res2)->R[count++] = j+1;
+		}
+	}
     }
   return OK;
 }
