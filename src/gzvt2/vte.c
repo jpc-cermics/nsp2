@@ -30,7 +30,6 @@ static void
 window_title_changed(GtkWidget *widget, gpointer win)
 {
   GtkWindow *window;
-
   g_return_if_fail(VTE_TERMINAL(widget));
   g_return_if_fail(GTK_IS_WINDOW(win));
   g_return_if_fail(VTE_TERMINAL(widget)->window_title != NULL);
@@ -43,7 +42,6 @@ static void
 icon_title_changed(GtkWidget *widget, gpointer win)
 {
   GtkWindow *window;
-
   g_return_if_fail(VTE_TERMINAL(widget));
   g_return_if_fail(GTK_IS_WINDOW(win));
   g_return_if_fail(VTE_TERMINAL(widget)->icon_title != NULL);
@@ -66,21 +64,59 @@ char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
 
   terminal = VTE_TERMINAL(widget);
   window = GTK_WINDOW(data);
+  if (!GTK_WIDGET_REALIZED (window)) return;
 
   vte_terminal_get_padding(terminal, &xpad, &ypad);
-
-  geometry.width_inc = terminal->char_width;
-  geometry.height_inc = terminal->char_height;
+  
+  geometry.width_inc = width;
+  geometry.height_inc = height;
   geometry.base_width = xpad;
   geometry.base_height = ypad;
-  geometry.min_width = xpad + terminal->char_width * 2;
-  geometry.min_height = ypad + terminal->char_height * 2;
+  geometry.min_width = xpad + width * 2;
+  geometry.min_height = ypad + height * 2;
 
   gtk_window_set_geometry_hints(window, widget, &geometry,
 				GDK_HINT_RESIZE_INC |
 				GDK_HINT_BASE_SIZE |
 				GDK_HINT_MIN_SIZE);
 }
+
+
+static void
+char_size_realized(GtkWidget *widget, gpointer data)
+{
+	VteTerminal *terminal;
+	GtkWindow *window;
+	GdkGeometry geometry;
+	guint width, height;
+	int xpad, ypad;
+
+	g_assert(GTK_IS_WINDOW(data));
+	g_assert(VTE_IS_TERMINAL(widget));
+
+	terminal = VTE_TERMINAL(widget);
+	window = GTK_WINDOW(data);
+	if (!GTK_WIDGET_REALIZED (window))
+		return;
+
+	vte_terminal_get_padding(terminal, &xpad, &ypad);
+
+	width = vte_terminal_get_char_width (terminal);
+	height = vte_terminal_get_char_height (terminal);
+	geometry.width_inc = width;
+	geometry.height_inc = height;
+	geometry.base_width = xpad;
+	geometry.base_height = ypad;
+	geometry.min_width = xpad + width * 2;
+	geometry.min_height = ypad + height * 2;
+
+	gtk_window_set_geometry_hints(window, widget, &geometry,
+				      GDK_HINT_RESIZE_INC |
+				      GDK_HINT_BASE_SIZE |
+				      GDK_HINT_MIN_SIZE);
+}
+
+
 
 static void
 deleted_and_quit(GtkWidget *widget, GdkEvent *event, gpointer data)
@@ -122,6 +158,7 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
   char *match;
   int tag;
   gint xpad, ypad;
+
   switch (event->button) {
   case 3:
     terminal = VTE_TERMINAL(widget);
@@ -171,6 +208,7 @@ deiconify_window(GtkWidget *widget, gpointer data)
 static void
 raise_window(GtkWidget *widget, gpointer data)
 {
+
   if (GTK_IS_WIDGET(data)) {
     if ((GTK_WIDGET(data))->window) {
       gdk_window_raise((GTK_WIDGET(data))->window);
@@ -181,6 +219,7 @@ raise_window(GtkWidget *widget, gpointer data)
 static void
 lower_window(GtkWidget *widget, gpointer data)
 {
+
   if (GTK_IS_WIDGET(data)) {
     if ((GTK_WIDGET(data))->window) {
       gdk_window_lower((GTK_WIDGET(data))->window);
@@ -345,7 +384,6 @@ take_xconsole_ownership(GtkWidget *widget, gpointer data)
     {"TEXT", 0, 0},
     {"STRING", 0, 0},
   };
-
   memset(hostname, '\0', sizeof(hostname));
   gethostname(hostname, sizeof(hostname) - 1);
 
@@ -549,6 +587,9 @@ main(int argc, char **argv)
     char_size_changed(widget, 0, 0, window);
     g_signal_connect(G_OBJECT(widget), "char-size-changed",
 		     G_CALLBACK(char_size_changed), window);
+    g_signal_connect(G_OBJECT(widget), "realize",
+		     G_CALLBACK(char_size_realized), window);
+
   }
 
   /* Connect to the "window_title_changed" signal to set the main
