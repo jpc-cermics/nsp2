@@ -407,7 +407,7 @@ static int *get_index_vector(Stack stack, int ipos,NspObject **Obj, int *Nb_elts
  * @iwork: 
  * 
  * 
- * Return value: 
+ * Return value: an int pointer or %NULL
  **/
 
 /* previous function could use this one XXX */
@@ -927,6 +927,16 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
   return Loc;
 }
 
+/**
+ * nsp_matint_extract_elements1:
+ * @Obj: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @Elts: a NspObject from which @ind was extracted
+ *
+ * Computes @Obj(@Elts) and returns the new #Matrix 
+ *
+ * Returns: a new #NspObject with same type as @Obj or %NULLOBJ
+ **/
+
 NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
 {
   NspObject *Res;
@@ -1008,6 +1018,16 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts, con
     }
   return Loc;
 }
+
+/**
+ * nsp_matint_extract_columns1:
+ * @Obj: a #NspObject which implements the matint interface.
+ * @Cols: a #NspObject
+ * 
+ * Compute Obj(:,Cols) and returns the new #Matrix 
+ * 
+ * Returns: an object with same type as @Obj or %NULLOBJ
+ **/
 
 NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 {
@@ -1118,6 +1138,16 @@ static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts,  const
   return Loc;
 }
 
+/**
+ * nsp_matint_extract_rows1:
+ * @Obj: a #NspObject which implements the matint interface.
+ * @Rows: a #NspObject
+ * 
+ * Compute Obj(Rows,:) and returns the new #Matrix 
+ * 
+ * Returns: an object with same type as @Obj or %NULLOBJ
+ **/
+
 NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
 {
   NspObject *Res;
@@ -1128,7 +1158,6 @@ NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
   if ( rows != matint_work[matint_iwork1] ) FREE(rows);
   return Res;
 }
-
 
 /**
  * nsp_matint_extract:
@@ -1243,6 +1272,16 @@ NspObject *nsp_matint_extract(NspObject *Obj,
 }
 
 
+/**
+ * nsp_matint_extract1:
+ * @Obj: a #NspObject
+ * @Rows: a #NspObject
+ * @Cols: a #NspObject
+ * 
+ * returns in a new NspObject @Obj(@Rows,@Cols).
+ * 
+ * Returns: a #NspObject or %NULL 
+ **/
 NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols)
 {
   NspObject *Res;
@@ -1469,6 +1508,17 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
   return OK;
 }
 
+/**
+ * nsp_matint_set_submatrix1:
+ * @ObjA: a #NspObject which implements the matint interface.
+ * @Row: a #NspObject
+ * @Col: a #NspObject
+ * @ObjB: a #NspObject
+ * 
+ * @ObjA(@Row,@Col) = @ObjB
+ * 
+ * Returns:  %OK or %FAIL 
+ **/
 int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB)
 {
   int Res;
@@ -1671,6 +1721,16 @@ int nsp_matint_set_elts(NspObject *ObjA,
 }
 
 
+/**
+ * nsp_matint_set_elts1:
+ * @ObjA: a #NspObject which implements the matint interface.
+ * @Elts:  a #NspObject
+ * @ObjB:  a #NspObject
+ * 
+ * sets the elements of @ObjA i.e @ObjA(@Elts)= @ObjB.
+ * 
+ * Returns: %OK or %FAIL
+ **/
 int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
 {
   int Res;
@@ -1685,9 +1745,10 @@ int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
 
 /**
  * nsp_matint_concat_right:
- * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
- * @ObjB: 
+ * @ObjA:  a #NspObject which implements the matint interface.
+ * @ObjB:  a #NspObject
  * 
+ * computes and retuns [@ObjA,@ObjB]
  * 
  * Return value: returns [@ObjA,@ObjB] or %NULLOBJ 
  **/
@@ -2024,6 +2085,16 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
 }
 
 
+/**
+ * nsp_matint_concat_down_bis:
+ * @ObjA: a #NspObject 
+ * @ObjB: a #NspObject 
+ * 
+ * performe @ObjA =  [@ObjA;@ObjB]
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
 int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 {
   int copy=FALSE;
@@ -2324,14 +2395,16 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 
 /**
  * nsp_matint_perm_elem:
- * @ObjA: 
- * @p: 
- * @q: 
- * @dim_flag: 
+ * Returns: an object with same type as @Obj or %NULLOBJ
+ * @ObjA: a #NspObject which implements the matint interface.
+ * @p: an integer 
+ * @q: an integer 
+ * @dim_flag: an integer 
  * 
+ * permutes elemnts, rows or columns of an object which implements the 
+ * matint interface. 
  * 
- * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
@@ -2423,12 +2496,22 @@ int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
  * or called in Eval.c 
  */
 
-/* various deletions functions */
+/**
+ * int_matint_tozero:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ *
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  <literal>Obj(:) = [], Obj(:,:) = []</literal> 
+ * 
+ * Returns: 1 
+ **/
 
 int int_matint_tozero(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
-
   Obj = NthObj(1);
   nsp_matint_tozero(Obj);
   Obj->ret_pos = 1;
@@ -2456,6 +2539,20 @@ static int int_matint_delete_gen(Stack stack, int rhs, int opt, int lhs, delfunc
   return RET_BUG;
 }
 
+/**
+ * int_matint_deleteelts:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform elements deletions
+ * 
+ * 
+ * Returns: 1 or %RET_BUG
+ **/
+
 int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs)
 {
   if ( rhs == 3 )
@@ -2464,17 +2561,57 @@ int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs)
     return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
 }
 
+/**
+ * int_matint_deletecols:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  column deletion
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
+
 int int_matint_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns);
 }
 
+/**
+ * int_matint_deleterows:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  row deletion
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows);
 }
 
 
+/**
+ * int_matint_deleteelts2:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  elements deletion <literal>A(I,J)=[]</literal> 
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_deleteelts2(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
@@ -2503,6 +2640,19 @@ int int_matint_deleteelts2(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/**
+ * int_matint_resize2vect:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  <literal>A(:)</literal> operation.
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 /* various extractions interfaces */
 
 int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs)
@@ -2561,22 +2711,72 @@ static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extrac
   return RET_BUG;
 }
 
+/**
+ * int_matint_extractelts:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform elements extractions.
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_extractelts(Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_elements);
 }
 
+/**
+ * int_matint_extractcols:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform column extractions
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_extractcols(Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_columns);
 }
 
+/**
+ * int_matint_extractrows:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform row extractions
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_extractrows(Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_extract_gen(stack, rhs, opt, lhs, (extractfunc) nsp_matint_extract_rows);
 }
 
 
+/**
+ * int_matint_extract:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  extractions.
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj, *Res;
@@ -2605,6 +2805,19 @@ int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/**
+ * int_matint_setrowscols:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform <literal>A(I,J)=B</literal> 
+ * 
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
 /* insertion interface */
 
 int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
@@ -2654,10 +2867,10 @@ int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_concatr:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * This interface is used for concatr_x_x operations with 
  * x implementing the matint interface. This interface is 
@@ -2711,10 +2924,10 @@ int int_matint_concatr(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_concat_emptymat_and_mat:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * generix interface for [A,B] and [A;B] with A the real empty 0x0 matrix
  *
@@ -2746,10 +2959,10 @@ int int_matint_concat_emptymat_and_mat(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_concatd:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * generix interface for [A;B]
  * This interface is used for concatr_x_x operations with 
@@ -2801,11 +3014,11 @@ int int_matint_concatd(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_concat_down:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
- * @F: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * @F: function to be used for performing concatenation.
  * 
  * an other interface for concatd, this one 
  * can be used when we do not go through the 
@@ -2856,14 +3069,14 @@ int int_matint_concat_down(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
 
 /**
  * int_matint_cells_setrowscols:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * interface for set cells elements C{exps}=(....) or C{exp,exp,..}=(...)
  * 
- * Return value: 
+ * Return value:  1 or %RET_BUG
  **/
 
 int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
@@ -2984,16 +3197,16 @@ int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_redim:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * redim interface for objects which implements matint 
  * interface 
  * 
  * 
- * Return value: 
+ * Return value:  1 or %RET_BUG
  **/
 int int_matint_redim(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -3050,15 +3263,15 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_matint_repmat:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * repmat interface for objects which implements matint interface 
  * 
  * 
- * Return value: 
+ * Return value:  1 or %RET_BUG
  **/
 
 int int_matint_repmat(Stack stack, int rhs, int opt, int lhs) 
@@ -3231,17 +3444,17 @@ NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB)
 
 /**
  * int_matint_concat_diag:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
  * 
  * interface for concat_diag which is to be used 
  * when calling concatdiag_x_x and x is supposed 
  * to implement the matint interface 
  * similar to concat_diag
  * 
- * Return value: 
+ * Return value: 1 or %RET_BUG
  **/
 
 int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs) 
@@ -3286,7 +3499,7 @@ int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * nsp_matint_canonic:
- * @obj: 
+ * @obj: a #NspObject
  * 
  * sets a matint object to its canonic type. This is 
  * mainly used to back-convert matrices to double since 
