@@ -1,7 +1,7 @@
-45% symbol docs coverage.
-1032 symbols documented.
-222 symbols incomplete.
-1274 not documented.
+46% symbol docs coverage.
+1053 symbols documented.
+213 symbols incomplete.
+1253 not documented.
 
 
 Abs
@@ -457,25 +457,6 @@ int_create_with_attributes
 int_get_attribute
 int_get_failed
 int_get_object_failed
-int_matint_cells_setrowscols (stack, rhs, opt, lhs, Returns)
-int_matint_concat_diag (stack, rhs, opt, lhs, Returns)
-int_matint_concat_down (stack, rhs, opt, lhs, F)
-int_matint_concat_emptymat_and_mat (stack, rhs, opt, lhs)
-int_matint_concatd (stack, rhs, opt, lhs)
-int_matint_concatr (stack, rhs, opt, lhs)
-int_matint_deletecols
-int_matint_deleteelts
-int_matint_deleteelts2
-int_matint_deleterows
-int_matint_extract
-int_matint_extractcols
-int_matint_extractelts
-int_matint_extractrows
-int_matint_redim (stack, rhs, opt, lhs, Returns)
-int_matint_repmat (stack, rhs, opt, lhs, Returns)
-int_matint_resize2vect
-int_matint_setrowscols
-int_matint_tozero
 int_mx2latexmat
 int_mx2latextab
 int_mx_finite
@@ -867,7 +848,6 @@ nsp_log10_c
 nsp_log_c
 nsp_mat_clean (rhs)
 nsp_mat_createinit (name, type, m, n, func)
-nsp_mat_find
 nsp_mat_fullcomp
 nsp_mat_ioru (res, Returns)
 nsp_mat_maxi
@@ -882,17 +862,7 @@ nsp_mat_mult_el (B)
 nsp_mat_set_ival (dval)
 nsp_mat_slec (file, Count)
 nsp_mat_sort
-nsp_matint_canonic (obj)
-nsp_matint_concat_down_bis
-nsp_matint_concat_right
-nsp_matint_extract1
-nsp_matint_extract_columns1
-nsp_matint_extract_elements1
-nsp_matint_extract_rows1
-nsp_matint_perm_elem
 nsp_matint_repmat
-nsp_matint_set_elts1
-nsp_matint_set_submatrix1
 nsp_matrix_boundster
 nsp_matrix_clone (init)
 nsp_matrix_column_sort
