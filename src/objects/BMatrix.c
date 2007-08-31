@@ -957,13 +957,13 @@ NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A)
 NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
 {
   NspMatrix *Res;
-  int i,count=0;
+  int i,count=0, nrow = ( A->mn == 0) ? 0: 1;
   /* first pass for counting **/
   for ( i=0 ; i < A->mn ; i++) 
     {
       if ( A->B[i] ) count++;
     }
-  Res = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+  Res = nsp_matrix_create(NVOID,'r',(int) nrow,(int) count);
   if ( Res == NULLMAT) return NULLMAT;
   count=0;
   for ( i = 0 ; i < A->mn ; i++ )
@@ -993,10 +993,10 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 {
   int j,i,count=0;
   double ii = 0.0;
-
+  int nrow = ( A->mn == 0) ? 0: 1;
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r', 1, A->mn);
+      *Res1 = nsp_matrix_create(NVOID,'r', nrow, A->mn);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
@@ -1013,9 +1013,9 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 	{
 	  if ( A->B[i] ) count++;
 	}
-      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',nrow , count);
       if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      *Res2 = nsp_matrix_create(NVOID,'r',nrow , count);
       if ( *Res2 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->m ; i++ )
