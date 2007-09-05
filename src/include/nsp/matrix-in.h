@@ -31,7 +31,7 @@ extern function int_mxclean;
 extern function int_mxcomplexify;
 extern function int_mxconcatd;
 extern function int_mxconcatdiag;
-extern function int_mxconcatr;
+/* extern function int_mxconcatr; */
 extern function int_mxconcatr_mb;
 extern function int_mxconj;
 extern function int_mxcopy;

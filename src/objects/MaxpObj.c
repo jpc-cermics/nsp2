@@ -538,7 +538,7 @@ NspMaxpMatrix *MpMat2double(NspMaxpMatrix *A)
  * Utility function : Converts to int 
  */
 
-NspMaxpMatrix * MpMat2int(NspMaxpMatrix *A)
+NspMaxpMatrix *MpMat2int(NspMaxpMatrix *A)
 {
   if ( A != NULLMAXPMAT &&  A->convert !=  'i' ) 
     {
@@ -563,7 +563,7 @@ NspMaxpMatrix * MpMat2int(NspMaxpMatrix *A)
  * Utility function : Converts to float 
  */
 
-NspMaxpMatrix *MpMat2float(NspMaxpMatrix *A)
+NspMaxpMatrix *MpMat2float(NspMaxpMatrix *A) 
 {
   static int inc=-1;
   if ( A!= NULLMAXPMAT &&  A->convert != 'f' ) 
@@ -611,7 +611,7 @@ static NspMethods *mpmatrix_get_methods(void) { return NULL;}
  * The matrix is created with no initial value 
  */
 
-int int_mpcreate(Stack stack, int rhs, int opt, int lhs)
+static int int_mpcreate(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspMaxpMatrix *HMat;
@@ -628,7 +628,7 @@ int int_mpcreate(Stack stack, int rhs, int opt, int lhs)
  * convert a matrix to a max plus matrix 
  */
 
-int int_m2mp(Stack stack, int rhs, int opt, int lhs)
+static int int_m2mp(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *B;
   NspMatrix *A;
@@ -644,7 +644,7 @@ int int_m2mp(Stack stack, int rhs, int opt, int lhs)
  * convert a max plus matrix to a  matrix 
  */
 
-int int_mp2m(Stack stack, int rhs, int opt, int lhs)
+static int int_mp2m(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *B;
   NspMaxpMatrix *A;
@@ -662,7 +662,7 @@ int int_mp2m(Stack stack, int rhs, int opt, int lhs)
  * The imag part is not initialized 
  */
 
-int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
+static int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   double d=0.00;
@@ -679,7 +679,7 @@ int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
  * Returns real(A) 
  */
 
-int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
+static int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -698,7 +698,7 @@ int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
  * Returns imag(A), the Imaginary part of Matrix A 
  */
 
-int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
+static int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -824,8 +824,7 @@ static int getdimfromstring(char *str)
     }
 }
 
-static int
-int_mp_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
+static int int_mp_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
   char *str;
   int dim=0;
@@ -857,7 +856,7 @@ int_mp_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
   return 1;
 }
 
-int int_mpsum(Stack stack, int rhs, int opt, int lhs)
+static int int_mpsum(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_sum) );
 }
@@ -867,7 +866,7 @@ int int_mpsum(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int int_mpprod(Stack stack, int rhs, int opt, int lhs)
+static int int_mpprod(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_prod) );
 }
@@ -877,7 +876,7 @@ int int_mpprod(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int int_mpcusum(Stack stack, int rhs, int opt, int lhs)
+static int int_mpcusum(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_sum) );
 }
@@ -887,7 +886,7 @@ int int_mpcusum(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int int_mpcuprod(Stack stack, int rhs, int opt, int lhs)
+static int int_mpcuprod(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_prod) );
 }
@@ -958,7 +957,7 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
 }
 
 
-int int_mpmaxi(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmaxi(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_maxi(stack,rhs,opt,lhs,nsp_mat_maxi,nsp_mat_maxitt1) );
 }
@@ -970,7 +969,7 @@ int int_mpmaxi(Stack stack, int rhs, int opt, int lhs)
  * rs and ri are set to the result 
  */
 
-int int_mpmini(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmini(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_maxi(stack,rhs,opt,lhs,nsp_mat_mini,nsp_mat_minitt1) );
 }
@@ -980,7 +979,7 @@ int int_mpmini(Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int int_mptriu(Stack stack, int rhs, int opt, int lhs)
+static int int_mptriu(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
   NspMaxpMatrix *HMat;
@@ -1001,7 +1000,7 @@ int int_mptriu(Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int int_mptril(Stack stack, int rhs, int opt, int lhs)
+static int int_mptril(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
   NspMaxpMatrix  *HMat; 
@@ -1050,7 +1049,7 @@ static int int_mp_gen(Stack stack, int rhs, int opt, int lhs, Mfunc F)
   return 1;
 }
 
-int int_mpones(Stack stack, int rhs, int opt, int lhs)
+static int int_mpones(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_gen(stack,rhs,opt,lhs,nsp_mat_ones) ;
 }
@@ -1062,7 +1061,7 @@ int int_mpones(Stack stack, int rhs, int opt, int lhs)
  * A is created  m,n no
  */
 
-int int_mpeye(Stack stack, int rhs, int opt, int lhs)
+static int int_mpeye(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_gen(stack,rhs,opt,lhs,nsp_mat_eye);
 }
@@ -1072,7 +1071,7 @@ int int_mpeye(Stack stack, int rhs, int opt, int lhs)
  * A is created  m,n no
  */
 
-int int_mpzeros(Stack stack, int rhs, int opt, int lhs)
+static int int_mpzeros(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_gen(stack,rhs,opt,lhs,nsp_mat_zeros);
 }
@@ -1081,7 +1080,7 @@ int int_mpzeros(Stack stack, int rhs, int opt, int lhs)
  * setr(A,d) <=> real(A) = d, im(A) unchanged 
  */
 
-int int_mpsetr(Stack stack, int rhs, int opt, int lhs)
+static int int_mpsetr(Stack stack, int rhs, int opt, int lhs)
 {
   double dval;
   NspMaxpMatrix *HMat; 
@@ -1099,7 +1098,7 @@ int int_mpsetr(Stack stack, int rhs, int opt, int lhs)
  * seti(A,d) <=> imag(A) = d, real(A) unchanged 
  */
 
-int int_mpseti(Stack stack, int rhs, int opt, int lhs)
+static int int_mpseti(Stack stack, int rhs, int opt, int lhs)
 {
   double dval;
   NspMaxpMatrix *HMat;
@@ -1119,7 +1118,7 @@ int int_mpseti(Stack stack, int rhs, int opt, int lhs)
  * XXXX A Changer : mettre le vrai eps 
  */
 
-int int_mpclean(Stack stack, int rhs, int opt, int lhs)
+static int int_mpclean(Stack stack, int rhs, int opt, int lhs)
 {
   double epsa=1.e-8,epsr=1.e-8;
   NspMaxpMatrix *HMat;
@@ -1144,7 +1143,7 @@ int int_mpclean(Stack stack, int rhs, int opt, int lhs)
  */
 
 /* A < B */ 
-int int_mplt(Stack stack, int rhs, int opt, int lhs)
+static int int_mplt(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1157,7 +1156,7 @@ int int_mplt(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_mple(Stack stack, int rhs, int opt, int lhs)
+static int int_mple(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1170,7 +1169,7 @@ int int_mple(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_mpneq(Stack stack, int rhs, int opt, int lhs)
+static int int_mpneq(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1183,7 +1182,7 @@ int int_mpneq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_mpeq(Stack stack, int rhs, int opt, int lhs)
+static int int_mpeq(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1196,7 +1195,7 @@ int int_mpeq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_mpgt(Stack stack, int rhs, int opt, int lhs)
+static int int_mpgt(Stack stack, int rhs, int opt, int lhs)
 {
 
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
@@ -1211,7 +1210,7 @@ int int_mpgt(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_mpge(Stack stack, int rhs, int opt, int lhs)
+static int int_mpge(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -1255,32 +1254,32 @@ static int int_mpf_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   return 1;
 }
 
-int int_mpflt(Stack stack, int rhs, int opt, int lhs)
+static int int_mpflt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,"<");
 }
 
-int int_mpfle(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfle(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,"<=");
 }
 
-int int_mpfneq(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfneq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,"<>");
 }
 
-int int_mpfeq(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfeq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,"==");
 }
 
-int int_mpfgt(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfgt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,">");
 }
 
-int int_mpfge(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfge(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mpf_gen(stack,rhs,opt,lhs,">=");
 }
@@ -1291,7 +1290,7 @@ int int_mpfge(Stack stack, int rhs, int opt, int lhs)
  * keeps m*n constant
  */
 
-int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspMaxpMatrix  *A,*B;
@@ -1321,196 +1320,76 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
 /*
- * Right Concatenation  A= [A,B] 
- * When A is Maxplus and B is Maxplus or Mat 
+ * Right and Down Concatenation in mixed operations with Mat and MaxpMat
+ * The result should always be a maxp matrix 
  */
 
-int int_mpconcatr(Stack stack, int rhs, int opt, int lhs)
+static int int_mxconcat_mixed_mmp (Stack stack, int rhs, int opt, int lhs,function F)
 {
-  NspMaxpMatrix *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetMpMat(stack,1))  == NULLMAXPMAT) return RET_BUG;
-  if ( HMat1->mn == 0) 
+  NspMatrix *A;
+  NspMaxpMatrix *Amp,*B;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if (IsMatObj (stack, 1))
     {
-      /* return 2 but maybe change 2 to Maxplus */
-      if ( IsMat(NSP_OBJECT(HMat1) ))
+      if ((A = GetMat(stack, 1)) == NULLMAT) return RET_BUG;
+      if ( A->mn == 0)
 	{
-	  NspMaxpMatrix *Res;
-	  if (( Res = nsp_mpmatrix_copy(HMat1)) == NULLMAXPMAT) return RET_BUG;
-	  MoveObj(stack,1,NSP_OBJECT(Res));
+	  /* [[],B] --> B : Note that result is maxp  */
+	  NSP_OBJECT (NthObj (2))->ret_pos = 1;
+	  return 1;
 	}
-      else 
-	NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ( IsMatObj(stack,2) )
-    {
-      if ((HMat2 = (NspMaxpMatrix *) GetMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else if ( IsMpMatObj(stack,2)) 
-    {
-      if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else 
-    {
-      Scierror("Error:\t second argument of function %s\n",NspFname(stack));
-      Scierror("\tshould be of type Mat or MaxpMat\n");
-      return RET_BUG;
-    }
-  if ( HMat2->mn == 0) 
-    {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
+      else
+	{
+	  /* Copy A if necessary  */
+	  if ((A = GetMatCopy(stack, 1)) == NULLMAT) return RET_BUG;
+	  /* cast A to Maxp */
+	  Amp = nsp_matrix_cast_to_mpmatrix(A);
+	  if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;    
+	  return F(stack, rhs, opt, lhs);
+	}
     }
   else
     {
-      if ((HMat1 = GetMpMatCopy(stack,1))  == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mpmatrix_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
+      /* [B,A]-> [ B,maxp(A)]  */
+      if ((A = GetMat(stack, 2)) == NULLMAT) return RET_BUG;
+      if (A->mn == 0)
+	{
+	  /* Note that the result will be boolean */
+	  NthObj (1)->ret_pos = 1;
+	  return 1;
+	}
+      /* Copy A if necessary  */
+      if ((A = GetMatCopy(stack,2)) == NULLMAT) return RET_BUG;
+      /* cast A to Maxp */
+      Amp = nsp_matrix_cast_to_mpmatrix(A);
+      if ((B = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;    
+      return F(stack, rhs, opt, lhs);
     }
-  return 1;
 }
 
-/*
- * Right Concatenation A= [A,B] 
- * When A is Mat and B is Maxplus 
- */
 
-int int_mpconcatr_m(Stack stack, int rhs, int opt, int lhs)
+static int int_mpconcatr_mpm (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A;
-  NspMaxpMatrix *Res;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
-  /* change A to MaxPlus */
-  if (( Res = nsp_mpmatrix_copy((NspMaxpMatrix *) A)) == NULLMAXPMAT) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  /* switch to A=[A,B] when A is a Maxplus Matrix */
-  return int_mpconcatr(stack,rhs,opt,lhs);
+  return int_mxconcat_mixed_mmp (stack,rhs,opt,lhs,int_matint_concatr);
 }
 
-/*
- * Down Concatenation  Res = [A;B] 
- * when  type(A,B)=(MaxpMat, MaxpMat) 
- * return NULLMAXPMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+static int int_mpconcatd_mpm (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mxconcat_mixed_mmp (stack,rhs,opt,lhs,int_matint_concatd);
+}
 
 typedef NspMaxpMatrix * (*Fconcat) (const NspMaxpMatrix *,const NspMaxpMatrix *);
 
-static int int_mp_concat(Stack stack, int rhs, int opt, int lhs, Fconcat F)
+/* mixed diag concatenation */
+
+static int int_mpconcatdiag_mpm(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMaxpMatrix *HMat1,*HMat2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetMpMat(stack,1))  == NULLMAXPMAT) return RET_BUG;
-  if ( HMat1->mn == 0) 
-    {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-  if ( HMat2->mn == 0) 
-    {
-      NSP_OBJECT(HMat1)->ret_pos =1;
-      return 1;
-    }
-  else
-    {
-      NspMaxpMatrix *HMat3;
-      if (( HMat3 = (*F)(HMat1,HMat2)) == NULLMAXPMAT)  return RET_BUG;
-      MoveObj(stack,1,(NspObject *)HMat3);
-    }
-  return 1;
+  return int_mxconcat_mixed_mmp (stack,rhs,opt,lhs,int_matint_concat_diag);
 }
 
-int int_mpconcatd(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
-  /* return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down); */
-}
-
-/*
- * Down Concatenation  Res = [A;B] 
- * when  type(A,B)=(Mat,MaxpMat) or (MaxpMat,Mat) 
- * return NULLMAXPMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
-
-static int int_mp_concat_m(Stack stack, int rhs, int opt, int lhs, Fconcat F)
-{
-  NspMaxpMatrix *Res;
-  NspMaxpMatrix *A,*B;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ( IsMatObj(stack,1) )
-    {
-      if ((A = (NspMaxpMatrix *) GetMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else if ( IsMpMatObj(stack,1)) 
-    {
-      if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else 
-    {
-      Scierror("Error:\t first argument of function %s\n",NspFname(stack));
-      Scierror("\tshould be of type Mat or MaxpMat\n");
-      return RET_BUG;
-    }
-  if ( IsMatObj(stack,2) )
-    {
-      if ((B = (NspMaxpMatrix *) GetMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else if ( IsMpMatObj(stack,2)) 
-    {
-      if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-    }
-  else 
-    {
-      Scierror("Error:\t second argument of function %s\n",NspFname(stack));
-      Scierror("\tshould be of type Mat or MaxpMat\n");
-      return RET_BUG;
-    }
-  if (( Res= (*F)(A,B)) == NULLMAXPMAT)  return RET_BUG;
-  MoveObj(stack,1,(NspObject *)Res);
-  return 1;
-}
-
-int int_mpconcatd_m(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_concat_m(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down);
-}
-
-
-
-/*
- * Diag Concatenation  Res = [A,0;0,B] 
- * when  type(A,B)=(MaxpMat,MaxpMat) 
- * return NULLMAXPMAT on failure ( No more space )
- * A and B are left unchanged 
- */
-
-int int_mpconcatdiag(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_diag);
-}
-
-
-/*
- * Diag Concatenation  Res = [A,0;0,B] 
- * when  type(A,B)=(Mat,MaxpMat) or (MaxpMat,Mat) 
- * return NULLMAXPMAT on failure ( No more space )
- * A and B are left unchanged 
- */
-
-int int_mpconcatdiag_m(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_concat_m(stack,rhs,opt,lhs,nsp_mpmatrix_concat_diag);
-}
 
 
 
@@ -1520,7 +1399,7 @@ int int_mpconcatdiag_m(Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-int int_mpaddcols(Stack stack, int rhs, int opt, int lhs)
+static int int_mpaddcols(Stack stack, int rhs, int opt, int lhs)
 {
   int n1;
   NspMaxpMatrix *HMat;
@@ -1541,7 +1420,7 @@ int int_mpaddcols(Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged 
  */
 
-int int_mpaddrows(Stack stack, int rhs, int opt, int lhs)
+static int int_mpaddrows(Stack stack, int rhs, int opt, int lhs)
 {
   int m1;
   NspMaxpMatrix *HMat;
@@ -1559,7 +1438,7 @@ int int_mpaddrows(Stack stack, int rhs, int opt, int lhs)
  * Scilab diag function 
  */
 
-int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
   NspMaxpMatrix *A,*Res;
@@ -1582,7 +1461,7 @@ int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
  * Returns the kthe diag of a Matrix 
  */
 
-int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
   NspMaxpMatrix *A,*Res;
@@ -1604,7 +1483,7 @@ int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
  * WARNING : A is not copied we want this routine to change A
  */
 
-int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
 {
   int k1;
   NspMaxpMatrix *A,*Diag;
@@ -1622,7 +1501,7 @@ int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
  *  Creates a Matrix with kth diag set to Diag 
  */
 
-int int_mpdiagcre(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdiagcre(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
   NspMaxpMatrix *Diag,*Res;
@@ -1644,7 +1523,7 @@ int int_mpdiagcre(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int int_mpresize(Stack stack, int rhs, int opt, int lhs)
+static int int_mpresize(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspMaxpMatrix  *HMat;
@@ -1662,7 +1541,7 @@ int int_mpresize(Stack stack, int rhs, int opt, int lhs)
  * A'
  */
 
-int int_mpquote(Stack stack, int rhs, int opt, int lhs)
+static int int_mpquote(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix  *A,*B;
   CheckRhs(1,1);
@@ -1678,7 +1557,7 @@ int int_mpquote(Stack stack, int rhs, int opt, int lhs)
  * A'
  */
 
-int int_mpdquote(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdquote(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix  *A,*B;
   CheckRhs(1,1);
@@ -1694,7 +1573,7 @@ int int_mpdquote(Stack stack, int rhs, int opt, int lhs)
  * Delete the Matrix Mat 
  */
 
-int int_mpdestroy(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdestroy(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -1708,7 +1587,7 @@ int int_mpdestroy(Stack stack, int rhs, int opt, int lhs)
  * Matinfo : display info on Matrix Mat 
  */
 
-int int_mpinfo(Stack stack, int rhs, int opt, int lhs)
+static int int_mpinfo(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat; 
   CheckRhs(1,1);
@@ -1722,7 +1601,7 @@ int int_mpinfo(Stack stack, int rhs, int opt, int lhs)
  * nsp_mpmatrix_latex_print: writes Mat Objet on fd in tex language
  */
 
-int int_mp2latexmat(Stack stack, int rhs, int opt, int lhs)
+static int int_mp2latexmat(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -1736,7 +1615,7 @@ int int_mp2latexmat(Stack stack, int rhs, int opt, int lhs)
  *  Mat2LaTeXTab: writes Mat Objet on fd in TeX language
  */
 
-int int_mp2latextab(Stack stack, int rhs, int opt, int lhs)
+static int int_mp2latextab(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -1761,7 +1640,7 @@ typedef int (*M11) (NspMatrix *A);
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
+static int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B;
   CheckRhs(2,2);
@@ -1780,7 +1659,7 @@ int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
  */
 
 
-int int_mppolar(Stack stack, int rhs, int opt, int lhs)
+static int int_mppolar(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B;
   CheckRhs(2,2);
@@ -1805,7 +1684,7 @@ int int_mppolar(Stack stack, int rhs, int opt, int lhs)
  * A=iand(A,B)
  */
 
-int int_mpiand(Stack stack, int rhs, int opt, int lhs)
+static int int_mpiand(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B;
   CheckRhs(1,2);
@@ -1840,7 +1719,7 @@ int int_mpiand(Stack stack, int rhs, int opt, int lhs)
  * A= ior(A,B)
  */
 
-int int_mpior(Stack stack, int rhs, int opt, int lhs)
+static int int_mpior(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A,*B;
   CheckRhs(1,2);
@@ -1876,7 +1755,7 @@ int int_mpior(Stack stack, int rhs, int opt, int lhs)
  * A is changed  if imaginary not changed if real 
  */
 
-int int_mpconj(Stack stack, int rhs, int opt, int lhs)
+static int int_mpconj(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat;
   CheckRhs(1,1);
@@ -1899,7 +1778,7 @@ int int_mpconj(Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int int_mpmodulo(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmodulo(Stack stack, int rhs, int opt, int lhs)
 {
   int n;
   NspMaxpMatrix *HMat;
@@ -1917,7 +1796,7 @@ int int_mpmodulo(Stack stack, int rhs, int opt, int lhs)
  * A is changed   A(i)=A(i)/b 
  */
 
-int int_mpidiv(Stack stack, int rhs, int opt, int lhs)
+static int int_mpidiv(Stack stack, int rhs, int opt, int lhs)
 {
   int n;
   NspMaxpMatrix *HMat;
@@ -2025,7 +1904,7 @@ static int int_mp_mopscal(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2
 
 static int nsp_mp_max(NspMatrix *A, NspMatrix *B);
 
-int int_mpdadd(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdadd(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal (stack, rhs, opt, lhs,
 			 nsp_mp_max, nsp_mp_max,
@@ -2047,7 +1926,7 @@ static int nsp_mp_max(NspMatrix *A, NspMatrix *B)
  * 
  */
 
-int int_mpdsub(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdsub(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
 			nsp_mat_sub_scalar_maxplus,nsp_mat_dsub,
@@ -2061,7 +1940,7 @@ int int_mpdsub(Stack stack, int rhs, int opt, int lhs)
  * Note: B here is a standard Matrix 
  */
 
-int int_mppowel(Stack stack, int rhs, int opt, int lhs)
+static int int_mppowel(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A;
   NspMatrix *B;
@@ -2113,7 +1992,7 @@ int int_mppowel(Stack stack, int rhs, int opt, int lhs)
  * A=DivEl(A,B),  A ./ B 
  */
 
-int int_mpdivel(Stack stack, int rhs, int opt, int lhs)
+static int int_mpdivel(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
 			nsp_mat_div_scalar,nsp_mat_div_el,nsp_mat_bdiv_scalar,MpMatNoOp,1);
@@ -2124,7 +2003,7 @@ int int_mpdivel(Stack stack, int rhs, int opt, int lhs)
  * A=BackDivEl(A,B),  A .\ B 
  */
 
-int int_mpbackdivel(Stack stack, int rhs, int opt, int lhs)
+static int int_mpbackdivel(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
 			nsp_mat_bdiv_scalar,nsp_mat_bdiv_el,nsp_mat_div_scalar,MpMatNoOp,1);
@@ -2136,7 +2015,7 @@ int int_mpbackdivel(Stack stack, int rhs, int opt, int lhs)
  */
 
 
-int int_mpmultel(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmultel(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
 			nsp_mat_add_scalar_maxplus,nsp_mat_dadd_maxplus,nsp_mat_add_scalar_maxplus,MpMatNoOp,1);
@@ -2287,7 +2166,7 @@ static int int_mpbdiv(Stack stack, int rhs, int opt, int lhs)
  * returns in a Matrix the indices for which the Matrix is true 
  */
 
-int int_mpfind(Stack stack, int rhs, int opt, int lhs)
+static int int_mpfind(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A;
   NspMatrix *Rc,*Rr;
@@ -2310,7 +2189,7 @@ int int_mpfind(Stack stack, int rhs, int opt, int lhs)
  * isinf 
  */
 
-int int_mp_isinf(Stack stack, int rhs, int opt, int lhs)
+static int int_mp_isinf(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A; 
   NspBMatrix *B;
@@ -2326,7 +2205,7 @@ int int_mp_isinf(Stack stack, int rhs, int opt, int lhs)
  * isnan 
  */
 
-int int_mp_isnan(Stack stack, int rhs, int opt, int lhs)
+static int int_mp_isnan(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A; 
   NspBMatrix *B;
@@ -2342,7 +2221,7 @@ int int_mp_isnan(Stack stack, int rhs, int opt, int lhs)
  * finite 
  */
 
-int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
+static int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *A; 
   NspBMatrix *B;
@@ -2359,7 +2238,7 @@ int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
  * FIXME : just a test 
  */
 
-int int_mp_cast(Stack stack, int rhs, int opt, int lhs)
+static int int_mp_cast(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   CheckRhs(1,1);
@@ -2422,14 +2301,14 @@ static OpWrapTab Matrix_func[]={
   {"ceil_mp",int_mxceil,int_mp_wrap1},
   {"clean_mp" ,  int_mpclean ,NULL},
   {"complexify_mp" ,  int_mpcomplexify ,NULL},
-  {"concatd_m_mp" ,  int_mpconcatd_m ,NULL},
-  {"concatd_mp_m" ,  int_mpconcatd_m ,NULL},
+  {"concatd_m_mp" ,  int_mpconcatd_mpm ,NULL},
+  {"concatd_mp_m" ,  int_mpconcatd_mpm ,NULL},
   {"concatd_mp_mp" , int_matint_concatd ,NULL},
-  {"concatdiag_m_mp" ,  int_mpconcatdiag_m ,NULL},
-  {"concatdiag_mp_m" ,  int_mpconcatdiag_m ,NULL},
+  {"concatdiag_m_mp" ,  int_mpconcatdiag_mpm ,NULL},
+  {"concatdiag_mp_m" ,  int_mpconcatdiag_mpm ,NULL},
   {"concatdiag_mp_mp" , int_matint_concat_diag ,NULL},
-  {"concatr_m_mp" ,  int_mpconcatr_m,NULL},
-  {"concatr_mp" ,  int_mpconcatr ,NULL},
+  {"concatr_m_mp" ,  int_mpconcatr_mpm,NULL},
+  {"concatr_mp_m" ,  int_mpconcatr_mpm ,NULL},
   {"concatr_mp_mp" , int_matint_concatr   ,NULL},
   {"conj_mp",int_mpconj,NULL},
   {"cos_mp",int_mxcos,int_mp_wrap1},
@@ -2519,12 +2398,12 @@ static OpWrapTab Matrix_func[]={
   {"tril_mp" ,  int_mptril ,NULL},
   {"triu_mp" ,  int_mptriu ,NULL},
   {"zeros_mp_mp", int_mpzeros ,NULL},
-
-  /* 
-     {"polar",int_mppolar,NULL},
-     {"dsl",int_mpdivel,NULL},
-     {"dbs",int_mpbackdivel,NULL},
-  */
+  {"isinf", int_mp_isinf,NULL},
+  {"isnan", int_mp_isnan,NULL},
+  {"finite", int_mp_finite,NULL},
+  {"polar",int_mppolar,NULL},
+  {"dsl",int_mpdivel,NULL},
+  {"dbs",int_mpbackdivel,NULL},
   {(char *) 0, NULL,NULL},
 };
 

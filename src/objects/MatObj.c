@@ -2239,177 +2239,89 @@ int_mxredim (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* xxxx ecrire le Enlarge ***/
 
 /*
- * Right Concatenation 
- * A= [A,B] 
- */
-
-int int_mxconcatr(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *HMat1, *HMat2;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  if (HMat1->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT(HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT(HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-
-  if (HMat2->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
-    }
-  else
-    {
-      if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)	return RET_BUG;
-      if (nsp_matrix_concat_right (HMat1, HMat2) != OK)	return RET_BUG;
-    }
-  NSP_OBJECT(HMat1)->ret_pos = 1;
-  return 1;
-}
-
-
-
-
-/*
- * Right Concatenation Mat & BMat  
- * A= [A,B] 
+ * Right and Down Concatenation in mixed operations with Mat and Bmat
  * we have to deal with [] 
  * if Mat<>[]  -->  [Mat,Bmat] -> [Mat,b2m(BMat)] 
  * if Mat==[]  -->  [Mat,Bmat] -> BMat
  */
 
-int
-int_mxconcatr_mb (Stack stack, int rhs, int opt, int lhs)
+int int_mxconcat_mixed_mb (Stack stack, int rhs, int opt, int lhs,function F)
 {
-  NspMatrix *HMat;
+  NspMatrix *A,*M;
+  NspBMatrix *B;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
   if (IsMatObj (stack, 1))
     {
-      if ((HMat = GetMat (stack, 1)) == NULLMAT)
-	return RET_BUG;
-      if (HMat->mn == 0)
+      /* [Mat, BMat] */
+      if ((A = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+      if (A->mn == 0)
 	{
-	  /* [[],B] --> B * */
+	  /* [[],B] --> B : Note that result is a boolean  */
 	  NSP_OBJECT (NthObj (2))->ret_pos = 1;
 	  return 1;
 	}
       else
 	{
-	  /* [A,B] --> [A, b2m(B)] * */
-	  stack.first += 1;
-	  if (int_bmatrix_b2m (stack, 1, 0, 1) < 0) return RET_BUG;
-	  stack.first -= 1;
-	  NSP_OBJECT (NthObj (2))->ret_pos = -1;
-	  return int_mxconcatr (stack, rhs, opt, lhs);
+	  /* [A,B] --> [A, b2m(B)]  */
+	  if ((B = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;    
+	  if ((M=nsp_bmatrix_to_matrix(B)) == NULLMAT ) return RET_BUG;
+	  MoveObj(stack,2,NSP_OBJECT(M));
+	  return F(stack, rhs, opt, lhs);
 	}
     }
   else
     {
-      /* we can get here when called from boolean matrix interface 
-       * [B,A]-> [ b2m(B),A]
-       */
-      if ((HMat = GetMat (stack, 2)) == NULLMAT)
+      /* [BMat,Mat], [B,A]-> [ b2m(B),A]  */
+      if ((A = GetMat (stack, 2)) == NULLMAT)
 	return RET_BUG;
-      if (HMat->mn == 0)
+      if (A->mn == 0)
 	{
+	  /* Note that the result will be boolean */
 	  NthObj (1)->ret_pos = 1;
 	  return 1;
 	}
-      if (int_bmatrix_b2m (stack, 1, 0, 1) < 0) return RET_BUG;
-      return int_mxconcatr (stack, rhs, opt, lhs);
+      if ((B = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;    
+      if ((M=nsp_bmatrix_to_matrix(B)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(M));
+      return F(stack, rhs, opt, lhs);
     }
 }
 
-
 /*
- * Down Concatenation 
- * Res = [A;B] 
- * return NULLMAT on failure ( incompatible size or No more space )
- * A and B are left unchanged 
+ * Right Concatenation in mixed operations with Mat and Bmat
+ * we have to deal with [] 
+ * if Mat<>[]  -->  [Mat,Bmat] -> [Mat,b2m(BMat)] 
+ * if Mat==[]  -->  [Mat,Bmat] -> BMat
+ */
+
+int int_mxconcatr_mb (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mxconcat_mixed_mb (stack,rhs,opt,lhs,int_matint_concatr);
+}
+
+/* Down concatenation 
  */
 
 typedef NspMatrix *(*Fconcat) (const NspMatrix *, const NspMatrix *);
 
-static int
-int_mx_concat (Stack stack, int rhs, int opt, int lhs, Fconcat F)
-{
-  NspMatrix *HMat1, *HMat2;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  if (HMat1->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT(HMat1)->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT(HMat2)->ret_pos = 1;
-	}
-      return 1;
-    }
-
-  if (HMat2->mn == 0)
-    {
-      /* this is a bit tricky since HMat1 and HMat2 may point 
-       * to the same object 
-       */
-      if ( HMat1 == HMat2 )  NthObj(2) = NULLOBJ;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-    }
-  else
-    {
-      NspMatrix *HMat3;
-      if ((HMat3 = (*F) (HMat1, HMat2)) == NULLMAT)
-	return RET_BUG;
-      MoveObj (stack, 1, (NspObject *) HMat3);
-    }
-  return 1;
-}
-
-int
-int_mxconcatd_old (Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_concat (stack, rhs, opt, lhs, nsp_matrix_concat_down);
-}
-
-/* The same but using the matint implementation. 
- *
- */
-
 int int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
 {
   return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+}
+
+/*
+ * Down concatenation in mixed operations with Mat and Bmat
+ * we have to deal with [] 
+ * if Mat<>[]  -->  [Mat,Bmat] -> [Mat,b2m(BMat)] 
+ * if Mat==[]  -->  [Mat,Bmat] -> BMat
+ */
+
+int int_mxconcatd_mb (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mxconcat_mixed_mb (stack,rhs,opt,lhs,int_matint_concatd);
 }
 
 /*
@@ -4375,6 +4287,8 @@ static OpTab Matrix_func[] = {
   {"clean", int_mxclean},
   {"complexify_m", int_mxcomplexify},
   {"concatd_m_m", int_matint_concatd},
+  {"concatd_b_m", int_mxconcatd_mb},
+  {"concatd_m_b", int_mxconcatd_mb}, 
   {"concatr_m_m", int_matint_concatr},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
