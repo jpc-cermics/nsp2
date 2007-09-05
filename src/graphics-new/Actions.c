@@ -222,13 +222,13 @@ void  scig_erase(int win_num)
  */ 
 
 extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
-extern Gengine Pos_gengine ; 
+extern BCG ScilabGCXfig ;
+extern Gengine Pos_gengine, XFig_gengine ; 
 
 void scig_tops(int win_num, int colored, char *bufname, char *driver,char option)
 {
   int wdim[2],*wdim_p=NULL;
-  BCG *Xgc;
-  Gengine *graphic_engine = NULL;
+  BCG *Xgc,*Ggc;
   int zero=0,un=1;
   if ( scig_buzy  == 1 ) return ;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
@@ -237,27 +237,37 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
   
   if ( strcmp(driver,"Pos")==0 ) 
     {
-      graphic_engine =&Pos_gengine;
+      Ggc = &ScilabGCPos;
+      Ggc->graphic_engine = &Pos_gengine ; 
     }
-
+  else if ( strcmp(driver,"Fig")==0 ) 
+    {
+      Ggc = &ScilabGCXfig;
+      Ggc->graphic_engine = &XFig_gengine ; 
+    }
+  else 
+    {
+      Sciprintf("Unknow driver %s using Pos\n",driver);
+      Ggc = &ScilabGCPos;
+      Ggc->graphic_engine = &Pos_gengine ; 
+    }
   if ( option == 'k') 
     {
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       wdim_p = wdim;
     }
-  
-  graphic_engine->initgraphic(bufname,&win_num,wdim_p,NULL,NULL,NULL,option);
+  Ggc->graphic_engine->initgraphic(bufname,&win_num,wdim_p,NULL,NULL,NULL,option);
   if (colored==1) 
-    graphic_engine->xset_usecolor(Xgc,un);
+    Ggc->graphic_engine->xset_usecolor(Xgc,un);
   else
-    graphic_engine->xset_usecolor(Xgc,zero);
-  ScilabGCPos.record_flag = TRUE ;
-  ScilabGCPos.plots = Xgc->plots ; 
-  xgc_reset_scales_to_default(&ScilabGCPos);
-  graphic_engine->tape_replay(&ScilabGCPos,win_num);
-  ScilabGCPos.plots = NULL ; 
-  ScilabGCPos.record_flag = FALSE ;
-  graphic_engine->xend(Xgc);
+    Ggc->graphic_engine->xset_usecolor(Xgc,zero);
+  Ggc->record_flag = TRUE ;
+  Ggc->plots = Xgc->plots ; 
+  xgc_reset_scales_to_default(Ggc);
+  Ggc->graphic_engine->tape_replay(Ggc,win_num);
+  Ggc->plots = NULL ; 
+  Ggc->record_flag = FALSE ;
+  Ggc->graphic_engine->xend(Xgc);
   scig_buzy = 0;
 }
 
