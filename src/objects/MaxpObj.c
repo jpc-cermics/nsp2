@@ -1569,33 +1569,6 @@ static int int_mpdquote(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Delete the Matrix Mat 
- */
-
-static int int_mpdestroy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(0,0);
-  if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  nsp_object_destroy(&NthObj(1));
-  return 0;
-}
-
-/*
- * Matinfo : display info on Matrix Mat 
- */
-
-static int int_mpinfo(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix *HMat; 
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  nsp_mpmatrix_info(HMat,0,NULL,0);
-  return 0;
-}
 
 /*
  * nsp_mpmatrix_latex_print: writes Mat Objet on fd in tex language
@@ -2318,7 +2291,6 @@ static OpWrapTab Matrix_func[]={
   {"cumsum_mp" ,  int_mpcusum ,NULL},
   {"cumsum_mp_s" ,  int_mpcusum ,NULL},
   {"dadd_mp_mp" ,   int_mpdadd ,NULL},
-  {"destroy_mp" ,  int_mpdestroy ,NULL},
   {"dh_mp_m",int_mppowel,NULL},
   {"diag_mp",int_mpdiag,NULL},
   {"diag_mp_mp",int_mpdiag,NULL},
@@ -2351,7 +2323,6 @@ static OpWrapTab Matrix_func[]={
   {"iand_mp_mp",int_mpiand,NULL},
   {"idiv_mp_mp",int_mpidiv,NULL},
   {"imag_mp" ,  int_mpimagpart ,NULL},
-  {"info_mp" ,  int_mpinfo ,NULL},
   {"int_mp",int_mxint,int_mp_wrap1},
   {"ior_mp_mp",int_mpior,NULL},
   {"latexmat_mp" ,  int_mp2latexmat ,NULL},
