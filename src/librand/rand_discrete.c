@@ -30,6 +30,7 @@
 #define PUSH_BIG_STACK(k) stack[--ib]=k
 #define POP_BIG_STACK() stack[ib++]
 
+
 int nsp_alias_method(double *p, double *q, int *j, int n)
 {
   int k, l, is, ib, *stack;
@@ -111,18 +112,18 @@ int nsp_rand_discrete_alias(double *q, int *j, int n)
 }
 
 
-int nsp_guide_table_method(double *p, double *q, int *key, int n)
+int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
 {
   int i, j, k;
   double tol = n*DBL_EPSILON, lim;
 
   /* compute cumulative probabilities q[i] with some verifications */
   q[0] = 0.0;
-  for ( k = 0 ; k < n ; k++ )
+  for ( k = 0, j = 0 ; k < n ; k++, j+=inc )
     {
-      if ( ! (p[k] >= 0) )
+      if ( ! (p[j] >= 0) )
 	return FAIL;
-      q[k+1] = q[k] + p[k];
+      q[k+1] = q[k] + p[j];
     }
 
   /* probabilities must sum up to 1 */
@@ -150,7 +151,70 @@ int nsp_guide_table_method(double *p, double *q, int *key, int n)
 
   return OK;
 }
+
+int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
+{
+  /* this version is taylored for a probability vector with n-1 
+   * components, the last one being supposed to be 1- sum_k p_k
+   */
+  int i, j, k;
+  double tol = n*DBL_EPSILON, lim;
+
+  /* compute cumulative probabilities q[i] with some verifications */
+  q[0] = 0.0;
+  for ( k = 0 ; k < n-1 ; k++)
+    {
+      if ( ! (p[k] >= 0) )
+	return FAIL;
+      q[k+1] = q[k] + p[k];
+    }
+
+  /* probabilities must sum up to 1 */
+  if ( ! (q[n-1] < 1.0) )
+    return FAIL;
+
+  q[n] = 1.0;
+
+  /* computes guide keys for fast generation  */
+  /*      keys[i] =   max j                   */
+  /*                q[j] < (i+1)/n            */
+  j = 0;
+  for ( i = 0 ; i < n-1 ; i++ )
+    {
+      lim = (i+1.0) / n;
+      while ( q[j] < lim ) j++;
+      key[i] = j-1;
+    }
+  key[n-1] = n-1;
+
+  return OK;
+}
   
+
+int nsp_verify_probability_vector(double *p, int n)
+{
+  /* p is a probability vector for a discrete distribution 
+   * with n events ; only the probability of the n-1 first events
+   * is given, the last one being supposed to be 1- sum_k p_k.
+   * The code verify that all probability are positive or null.
+   */
+  int k;
+  double q;
+
+  q = 0.0;
+  for ( k = 0 ; k < n-1 ; k++ )
+    {
+      if ( ! (p[k] >= 0.0) )
+	return FAIL;
+      q += p[k];
+    }
+
+  /* probabilities must sum up to 1 */
+  if ( ! (q <= 1.0) )
+    return FAIL;
+
+  return OK;
+}
 
 int nsp_rand_discrete_guide(double *q, int *key, int n)
 {
@@ -163,9 +227,77 @@ int nsp_rand_discrete_guide(double *q, int *key, int n)
   return X;
 }
 
+/* multinomial distribution for n not too big compared to ncat */
+void nsp_rand_multinomial1(double *q, int *key, int *ix, int ncat, int n)
+{
+  int i;
+  for ( i = 0 ; i < ncat ; i++ )
+    ix[i] = 0;
+
+  for ( i = 0 ; i < n ; i++ )
+    ix[nsp_rand_discrete_guide(q, key, ncat)]++;
+}
+
+/* multinomial distribution for n enough bigger than ncat */
+void nsp_rand_multinomial2(double *p, int *ix, int ncat, int n)
+{
+  int i, j;
+  double ptot = 1;
+  for ( i = 0 ; i < ncat-1 ; i++ )
+    {
+      ix[i] = rand_bin_direct(n,p[i]/ptot);
+      n -= ix[i];
+      if ( n == 0 )
+	{
+	  for ( j = i+1 ; j <= ncat-1 ; j++ ) ix[j] = 0;
+	  return;
+	}
+      ptot -= p[i];
+    }
+  ix[ncat-1] = n;
+}
 
 
- 
+
+int nsp_verif_markov_initial_state(double *X0, int mnX0, int n)
+{
+  int i, j;
+  for ( i = 0 ; i < mnX0 ; i++ )
+    {
+      j = (int) X0[i];
+      if ( j < 1 || j > n )
+	{
+	  Scierror("Error: X0(%d) must be in the range [1,%d]\n", i+1, n);
+	  return FAIL;
+	}
+    }
+  return OK;
+}
+
+int nsp_markov_setup(double *p, double *q, int *key, int n)
+{
+  int i;
+  for ( i = 0 ; i < n ; i++ )
+    if ( nsp_guide_table_method(&(p[i]), n, &(q[(n+1)*i]), &(key[n*i]), n) == FAIL )
+      return FAIL;
+  return OK;
+}
+
+
+void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn, int m)
+{
+  int i, j, k, icur;
+
+  for ( i = 0 ; i < X0mn ; i++ )
+    {
+      icur = (int) X0[i] - 1;
+      for ( j = 0, k = i ; j < m ; j++, k+=X0mn )
+	{
+	  icur = nsp_rand_discrete_guide(&q[(n+1)*icur], &key[n*icur], n);
+	  X[k] = (double) (icur + 1);
+	}
+    }
+}
 	 
 	 
 

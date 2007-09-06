@@ -36,33 +36,45 @@
 
 #include "grand.h" 
 
-static double logp1(double x);
+/* double logp1(double x); */
 static double lnp1m1(double);
 
-unsigned int rand_igngeom(double p)
+int init_rand_geom(double p, GeomStruct *G)
 {
-  static double p_save = 1.0, inv_ln_1_m_p = 0.0;
 
-  if ( p == 1 )
-    return ( 1.0 );
-  else if ( p != p_save )   /* => recompute log(1-p) */
-    {
-      p_save = p; inv_ln_1_m_p = 1.0/logp1(-p);
-    };
-  return (unsigned int) (1.0 -inv_ln_1_m_p * rand_exp_core());
+  if ( ! (1.3e-307 <= p && p <= 1 ) )
+    return FAIL;
+  G->p = p;
+  G->inv_ln_1_m_p = 1.0/logp1(-p);
+  return OK;
 }
+ 
+unsigned int rand_geom(GeomStruct *G)
+{
+  if ( G->p == 1.0 )
+    return 1;
+  else
+    return (unsigned int) (1.0 - G->inv_ln_1_m_p * rand_exp_core());
+}
+
+ 
+unsigned int rand_geom_direct(double p)
+{
+  if ( p == 1.0 )
+    return 1;
+  else
+    return (unsigned int) (1.0 -  rand_exp_core()/logp1(-p));
+}
+
+
    
 /* log(1+x) */
 
-static double logp1(double x)
+double logp1(double x)
 {
   const double a = -1.0E0/3.0E0;
   const double b = 0.5E0; 
-  if (x < -1.) 
-    {
-      return  (x - x) / (x - x); /* Nan */
-    }
-  else if ( a <= x && x <= b) 
+  if ( a <= x && x <= b) 
     {
       /* use the function log((1+g)/(1-g)) with g = x/(x + 2) */
       return lnp1m1( x / (x + 2.0));
@@ -104,10 +116,27 @@ static double logp1(double x)
  *         very near floating point numbers) 
  */
 
+/* static double lnp1m1(double s) */
+/* { */
+/*   double  s2; */
+/*   const double E = 3.032E-3, C3  = 2E0 / 3E0, C5  = 2E0 / 5E0; */
+/*   const double  */
+/*     D3 = 0.66666666666672679472E0, D5 = 0.39999999996176889299E0, */
+/*     D7 = 0.28571429392829380980E0, D9 = 0.22222138684562683797E0, */
+/*     D11= 0.18186349187499222459E0, D13= 0.15250315884469364710E0, */
+/*     D15= 0.15367270224757008114E0; */
+/*   s2 = s * s; */
+/*   if (Abs(s) <=  E)  */
+/*     return  s * (2E0 + s2*(C3 + C5*s2)); */
+/*   else */
+/*     return s * (2.E0 + s2*(D3 + s2*(D5 + s2*( D7 + s2*(D9 + s2*(D11 + s2*(D13 + s2*D15))))))); */
+/* } */
+
+
 static double lnp1m1(double s)
 {
   double  s2;
-  const double E = 3.032E-3, C3  = 2E0 / 3E0, C5  = 2E0 / 5E0;
+  const double E = 1.e-2, C3  = 2.0/3.0, C5  = 2.0/5.0, C7 = 2.0/7.0;
   const double 
     D3 = 0.66666666666672679472E0, D5 = 0.39999999996176889299E0,
     D7 = 0.28571429392829380980E0, D9 = 0.22222138684562683797E0,
@@ -115,7 +144,7 @@ static double lnp1m1(double s)
     D15= 0.15367270224757008114E0;
   s2 = s * s;
   if (Abs(s) <=  E) 
-    return  s * (2E0 + s2*(C3 + C5*s2));
+    return  s * (2E0 + s2*(C3 + s2*(C5 + s2*C7)));
   else
     return s * (2.E0 + s2*(D3 + s2*(D5 + s2*( D7 + s2*(D9 + s2*(D11 + s2*(D13 + s2*D15)))))));
 }

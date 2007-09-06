@@ -32,8 +32,6 @@
 
 #define PNBINOM(k,n,r) ((k+0.5)*log((k+1)/(r*(n+1-k)))+stirling_error(k)+stirling_error(n-k))
 
-static double cumpr[SMALL_MEAN+3] = {0.0};
-
 
 #define C1 0.08333333333333333333333333333  /* 1/12 */
 #define C2 0.03333333333333333333333333333  /* 1/30 */
@@ -82,89 +80,198 @@ double stirling_error(int k)
     return C1/(N+ C2/(N + C3/( N + C4/( N + C5/N ))));
 }
 
-
-
-int bin_trd(int n, double p)
+int init_rand_bin(int n, double p, BinomialStruct *B)
 {
-  int flipped = p > 0.5, k, km;
-  double q, u, v, us, k_real, f, pc;
-  static int n_save = -1, nn_save = -1;
-  static double p_save = -1.0, pp_save = -1.0;
-  static int m, taille, K;
-  static double r, npq, b, a, c, alpha, vr, urvr, h, aa, invvr;
+  double q;
+
+  if ( ! ( n > 0 && 0.0 <= p && p <= 1.0 ) )
+    return FAIL;
+
+  B->n = n;
+  B->flipped = p > 0.5;
+
+  if ( B->flipped ) 
+    { q = p; B->p = 1 - p;}
+  else 
+    { q = 1 - p; B->p = p;}
+
+  B->r = B->p / q;
+
+  if ( n*B->p <= SMALL_MEAN_BINOMIAL )
+    {
+      B->K = 1; 
+      B->cumpr[0] = 0.0;
+      B->cumpr[1] = pow(q, n); 
+      B->taille = 2 + (int) n*B->p;
+    }
+  else
+    {
+      B->m = (int) (n+1)*B->p;
+      B->npq = n*B->p*q;
+      B->b = 1.15 + 2.53*sqrt(B->npq);
+      B->a = -0.0873 + 0.0248*B->b + 0.01*B->p; 
+      B->aa = 2.0*B->a;
+      B->c = n*B->p + 0.5;
+      B->alpha = (2.83 + 5.1/B->b)*sqrt(B->npq);
+      B->vr = 0.92 - 4.2/B->b; 
+      B->invvr = 1.0/B->vr;
+      B->urvr = 0.86*B->vr;
+      B->h = PNBINOM(B->m,n,B->r);
+    }  
+
+  return OK;
+}
+
+int rand_bin(BinomialStruct *B)
+{
+  int k, n = B->n;
+  double u, p = B->p, r = B->r, f;
+
+  if ( n*p <= SMALL_MEAN )     /* BINV algorithm with recording */
+    {
+      double pc;
+      u = rand_ranf();
+      k = B->K-1;
+      if ( u <= B->cumpr[B->K] )
+	while ( u < B->cumpr[k] ) k--;
+      else
+	{
+	  f = B->cumpr[B->K] - B->cumpr[k]; pc = B->cumpr[B->K];
+	  do
+	    {
+	      k++;
+	      if ( k == B->n ) break;  /* security in case of floating point errors */
+	      f *= (r*(n+1-k))/k;
+	      pc += f;
+	      if ( k < B->taille )
+		B->cumpr[++B->K] = pc;
+	    }
+	  while ( u > pc );
+	}
+    }
+  else                          /* BTRD algorithm */
+    {
+      double v, us, k_real;
+      int km, m = B->m;
+      while ( 1 )
+	{
+	  v = rand_ranf();
+	  if ( v <= B->urvr )
+	    {
+	      u = v * B->invvr - 0.43;
+	      k = ((B->aa/(0.5 - fabs(u)) + B->b)*u + B->c);
+	      break;
+	    }
+	  
+	  if ( v >= B->vr )
+	    u = rand_ranf() - 0.5;
+	  else
+	    {
+	      u = v * B->invvr - 0.93;
+	      u = u >= 0 ? 0.5 - u : -0.5 - u;
+	      v = B->vr*rand_ranf();
+	    }
+	  us = 0.5 - fabs(u);
+
+	  if ( (k_real = (B->aa/us + B->b)*u + B->c) >= 0 && (k = (int) k_real) <= n ) 
+	    {
+	      v = v*B->alpha/(B->a/(us*us) + B->b);
+	      km = abs(k - m);
+
+	      /* now we must know if  v <= f(k)/f(m) (k accepted) or not (k rejected)  */
+
+	      if ( km <= FAR_FROM_MODE_LIMIT )  /*  recursive evaluation of f(k)        */
+		{                               /*  (for k not too far from the mode m) */
+		  int i;
+		  f = 1.0;
+		  if ( m < k )
+		    for ( i = m+1 ; i <= k ; i++ ) f *= (r*(n+1-i))/i;
+		  else if ( m > k )
+		    for ( i = k+1 ; i <= m ; i++ ) v *= (r*(n+1-i))/i;
+		  if ( v <= f )
+		    break;
+		}
+	      else   /* in this case the test is in the form log(v) <= log(f(k)) - log(f(m)) */
+		{
+		  double kmr = fabs(-0.5 + (double)(k-m));
+		  v = log(v);
+		  if ( kmr < 0.5*B->npq - 1.0) /* try Kachitvichyanukul and Schmeiser squeeze */
+                                               /* (based on Laplace-DeMoivre) */
+		    {                          /* to speed up acceptation or rejection */
+		      double rho, t, vv = v*(B->npq/kmr);
+		      rho = ((ONE_THIRD*kmr + 0.625)*kmr + ONE_SIXTH)/B->npq + 0.5;
+		      t = -0.5*kmr;
+		      if ( vv < t - rho )
+			break;
+		      else if ( vv > t + rho )
+			continue;
+		    }
+
+		  /* the previous squeeze couldn't be applied or have not concluded  */
+                  /* so we really test if  log(v) <= log(f(k)) - log(f(m))           */
+		  if ( v <= B->h + (n+1)*log((n+1-m)/((double) (n+1-k))) -  PNBINOM(k,n,r) )
+		    break;
+		}
+	    }
+	}
+    }
+
+  if ( B->flipped )
+    return n - k;
+  else
+    return k;
+}
+
+int rand_bin_direct(int n, double p)
+{
+  int flipped = p > 0.5;
+  int k;
+  double q, r;
 
   if ( flipped ) 
     { q = p; p = 1 - p; }
   else 
     { q = 1 - p;}
 
-  if ( n*p <= SMALL_MEAN )     /* BINV algorithm with recording */
+  if ( n*p <= SMALL_MEAN )     /* BINV algorithm */
     {
-      if ( n != n_save || p != p_save )   /* setup */
-	{
-	  r = p/q;
-	  K = 1; cumpr[1] = pow(q, n); taille = 2 + (int) n*p;
-	  p_save = p;
-	  n_save = n;
-	}
-
+      double f, pc, u;
+      r = p/q;
+      f = pow(q, n);
+      pc = f;
       u = rand_ranf();
-      k = K-1;
-      if ( u <= cumpr[K] )
-	while ( u < cumpr[k] ) k--;
-      else
+      k = 0;
+      while ( u > pc )
 	{
-	  f = cumpr[K] - cumpr[k]; pc = cumpr[K];
-	  do
-	    {
-	      k++;
-	      if ( k == n ) break;  /* security in case of floating point errors */
-	      f *= (r*(n+1-k))/k;
-	      pc += f;
-	      if ( k <= taille )
-		cumpr[++K] = pc;
-	    }
-	  while ( u > pc );
+	  if ( k == n ) break;  /* security in case of floating point errors */
+	  k++;
+	  f *= (r*(n+1-k))/k;
+	  pc += f;
 	}
     }
  
   else                          /* BTRD algorithm */
     {
+      int m, km;
+      double npq, b, a, c, alpha, vr, u, v, us, k_real;
 
-      if ( n != n_save || p != p_save )   /* setup */
-	{
-	  m = (int) (n+1)*p;
-	  r = p/q;
-	  npq = n*p*q;
-	  b = 1.15 + 2.53*sqrt(npq);
-	  a = -0.0873 + 0.0248*b + 0.01*p; aa = 2.0*a;
-	  c = n*p + 0.5;
-	  alpha = (2.83 + 5.1/b)*sqrt(npq);
-	  vr = 0.92 - 4.2/b; invvr = 1.0/vr;
-	  urvr = 0.86*vr;
-	  p_save = p;
-	  n_save = n;
-	}
+      /* setup */
+      m = (int) (n+1)*p;
+      r = p/q;
+      npq = n*p*q;
+      b = 1.15 + 2.53*sqrt(npq);
+      a = -0.0873 + 0.0248*b + 0.01*p;
+      c = n*p + 0.5;
+      alpha = (2.83 + 5.1/b)*sqrt(npq);
+      vr = 0.92 - 4.2/b;
 
       while ( 1 )
 	{
-
-	  /* 	  u = rand_ranf() - 0.5; */
-	  /* 	  v = rand_ranf(); */
-	  /* 	  us = 0.5 - fabs(u); */
-	  /* 	  if ( us >= 0.07 && v <= vr ) */
-	  /* 	    { */
-	  /* 	      k = (2*a/us + b)*u + c; */
-	  /* 	      break; */
-	  /* 	    } */
-
 	  v = rand_ranf();
-	  if ( v <= urvr )
+	  if ( v <=  0.86*vr )
 	    {
-	      /* 	      u = v / vr - 0.43; */
-	      u = v * invvr - 0.43;
-	      /* 	      k = ((2*a/(0.5 - fabs(u)) + b)*u + c); */
-	      k = ((aa/(0.5 - fabs(u)) + b)*u + c);
+	      u = v/vr - 0.43;
+	      k = ((2*a/(0.5 - fabs(u)) + b)*u + c);
 	      break;
 	    }
 	  
@@ -172,15 +279,13 @@ int bin_trd(int n, double p)
 	    u = rand_ranf() - 0.5;
 	  else
 	    {
-	      /* 	      u = v / vr - 0.93; */
-	      u = v * invvr - 0.93;
+	      u = v / vr - 0.93;
 	      u = u >= 0 ? 0.5 - u : -0.5 - u;
 	      v = vr*rand_ranf();
 	    }
 	  us = 0.5 - fabs(u);
 
-	  /* 	  if ( (k_real = (2*a/us + b)*u + c) >= 0 && (k = (int) k_real) <= n )  */
-	  if ( (k_real = (aa/us + b)*u + c) >= 0 && (k = (int) k_real) <= n ) 
+	  if ( (k_real = (2.0*a/us + b)*u + c) >= 0.0 && (k = (int) k_real) <= n ) 
 	    {
 	      v = v*alpha/(a/(us*us) + b);
 	      km = abs(k - m);
@@ -190,7 +295,7 @@ int bin_trd(int n, double p)
 	      if ( km <= FAR_FROM_MODE_LIMIT )  /*  recursive evaluation of f(k)        */
 		{                               /*  (for k not too far from the mode m) */
 		  int i;
-		  f = 1.0;
+		  double f = 1.0;
 		  if ( m < k )
 		    for ( i = m+1 ; i <= k ; i++ ) f *= (r*(n+1-i))/i;
 		  else if ( m > k )
@@ -216,12 +321,7 @@ int bin_trd(int n, double p)
 
 		  /* the previous squeeze couldn't be applied or have not concluded  */
                   /* so we really test if  log(v) <= log(f(k)) - log(f(m))           */
-		  if ( n != nn_save || p != pp_save )
-		    {
-		      h = PNBINOM(m,n,r);
-		      nn_save = n; pp_save = p;
-		    }
-		  if ( v <= h + (n+1)*log((n+1-m)/((double) (n+1-k))) -  PNBINOM(k,n,r) )
+		  if ( v <= PNBINOM(m,n,r) + (n+1)*log((n+1-m)/((double) (n+1-k))) -  PNBINOM(k,n,r) )
 		    break;
 		}
 	    }

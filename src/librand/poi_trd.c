@@ -18,95 +18,179 @@
  */
 
 /*   
- *   algorithm PTRD of Wolfgang Hormann, for Poisson distribution
+ *   Generation of poisson variates.
+ *   For small parameter mu the code uses inv algorithm else
+ *   it uses algorithm TRD of Wolfgang Hormann described in :
+ *         W. Hörmann
+ *         The transformed rejection method for generating Poisson random variables
+ *         Insurance: Mathematics and Economics 12, 39-45 (1993)
+ *
+ *   see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
+ *   to download the preprint paper.
+ *
+ *   There are 2 versions : 
+ *     1/ poi_trd which is taylored in case of successive calls
+ *        with the same parameter mu. You must first init a struct
+ *        with the init_poi_trd routine
+ *     2/ poi_trd_direct for successive calls with different parameters
  */
 
 
 #include "grand.h"
 #include <math.h>
 
-#define SMALL_MEAN 25
+
 #define LOG_SQRT_2PI 0.9189385332046727417803297363
-static double cumpr[SMALL_MEAN+4] = {0.0};
 static double logfact[10] = {1., 1., 2., 6., 24., 120., 720., 5040., 40320., 362880.};
 
-int poi_trd(double mu)
+int init_poi_trd(double mu, PoissonStruct *P)
 {
-  int k;
-  double f, pc, u, v, k_real, us;
-  static double mu_save = -1.0, smu, a, aa, b, c, invalpha, vr, urvr, invvr;
-  static int taille, K;
+  if ( mu < 0.0 ) 
+    return FAIL;
 
-  if ( mu <= SMALL_MEAN )     /* INV algorithm with recording */
+  P->mu = mu;
+  if ( mu <= SMALL_MEAN_POISSON )   /* setup INV algorithm with recording */
     {
-      if ( mu != mu_save )    /* setup */
-	{
-	  K = 1; cumpr[1] = exp(-mu); taille = 3 + (int) mu;
-	  mu_save = mu;
-	}
+      P->cumpr[0] = 0.0;
+      P->K = 1; P->cumpr[1] = exp(-mu); P->taille = 3 + (int) mu;
+    }
+  else                              /* setup TRD algorithm */
+    {
+      P->smu = sqrt(mu);
+      P->b = 0.931 + 2.53 * P->smu;
+      P->a = -0.059 + 0.02483 * P->b;
+      P->aa = 2.0 * P->a;
+      P->c = P->mu + 0.445;
+      P->invalpha = 1.1239 + 1.1328/(P->b - 3.4);
+      P->vr = 0.9277 - 3.6224/(P->b - 2.0);
+      P->invvr = 1.0 / P->vr;
+      P->urvr = 0.86 * P->vr;
+    }
+  return OK;
+}
 
+int poi_trd(PoissonStruct *P)
+{
+  unsigned int k;
+  double f, pc, u, v, k_real, us;
+
+  if ( P->mu <= SMALL_MEAN_POISSON )     /* INV algorithm with recording */
+    {
       u = rand_ranf();
-      k = K-1;
-      if ( u <= cumpr[K] )
-	while ( u < cumpr[k] ) k--;
+      k = P->K - 1;
+      if ( u <= P->cumpr[P->K] )
+	while ( u < P->cumpr[k] ) k--;
       else
 	{
-	  f = cumpr[K] - cumpr[k]; pc = cumpr[K];
+	  f = P->cumpr[P->K] - P->cumpr[k]; pc = P->cumpr[P->K];
 	  do
 	    {
 	      k++;
-	      f *= mu/k;
+	      f *= P->mu / k;
 	      pc += f;
-	      if ( k <= taille )
-		cumpr[++K] = pc;
+	      if ( k < P->taille )
+		{
+		  P->K++;
+		  P->cumpr[P->K] = pc;
+		}
 	    }
 	  while ( u > pc );
 	}
-
       return k;
     }
- 
-  else                          /* PTRD algorithm */
+  else                                   /* PTRD algorithm */
     {
-
-      if ( mu != mu_save )   /* setup */
+      while ( 1 )
 	{
-	  smu = sqrt(mu);
-	  b = 0.931 + 2.53*smu;
-	  a = -0.059 + 0.02483*b;
-	  aa = 2.0*a;
-	  c = mu + 0.445;
-	  invalpha = 1.1239 + 1.1328/(b-3.4);
-	  vr = 0.9277 - 3.6224/(b-2.0);
-	  invvr = 1.0/vr;
-	  urvr = 0.86*vr;
-	  mu_save = mu;
+	  v = rand_ranf();
+	  if ( v <= P->urvr )
+	    {
+	      u = v * P->invvr - 0.43;
+	      return (int) ((P->aa/(0.5 - fabs(u)) + P->b)*u + P->c);
+	    }
+	  
+	  if ( v >= P->vr )
+	    u = rand_ranf() - 0.5;
+	  else
+	    {
+	      u = v * P->invvr - 0.93;
+	      u = u >= 0 ? 0.5 - u : -0.5 - u;
+	      v = P->vr*rand_ranf();
+	    }
+	  us = 0.5 - fabs(u);
+
+	  if ( (us >= 0.013  ||  v <= us)  && (k_real = (P->aa/us + P->b)*u + P->c) >= 0 )
+	    {
+	      k = (int) k_real;
+	      v = v*P->invalpha/(P->a/(us*us) + P->b);
+
+	      if ( k >= 10 )
+		{
+		  if ( log(v*P->smu) <= (k+0.5)*log(P->mu/k) - P->mu - LOG_SQRT_2PI
+		       + k - (1./12. - 1./(360.*k*k))/k )
+		    return k;
+		}
+	      else
+		{
+		  if  ( log(v) <= k*log(P->mu) - P->mu - logfact[k] )
+		    return k;
+		}
+	    }
 	}
+    }
+}
+
+
+int poi_trd_direct(double mu)
+{
+  int k;
+  double s, p, u, v, us, smu, a, b, invalpha, vr, k_real;
+
+  if ( mu <= SMALL_MEAN_POISSON ) /* INV algorithm */
+    {
+      u = rand_ranf();
+      k = 0;
+      p = exp(-mu);
+      s = p;
+      while ( u > s )
+	{
+	  k++;
+	  p = mu*p / k;
+	  s += p;
+	}
+      return k;
+    }
+   else                           /* PTRD algorithm */
+    {
+      smu = sqrt(mu);
+      b = 0.931 + 2.53*smu;
+      a = -0.059 + 0.02483*b;
+      invalpha = 1.1239 + 1.1328/(b-3.4);
+      vr = 0.9277 - 3.6224/(b-2.0);
 
       while ( 1 )
 	{
 	  v = rand_ranf();
-	  if ( v <= urvr )
+	  if ( v <= 0.86*vr )
 	    {
-	      u = v * invvr - 0.43;
-	      return (int) ((aa/(0.5 - fabs(u)) + b)*u + c);
+	      u = v/vr - 0.43;
+	      return (int) ((2.0*a/(0.5 - fabs(u)) + b)*u + mu + 0.445);
 	    }
 	  
 	  if ( v >= vr )
 	    u = rand_ranf() - 0.5;
 	  else
 	    {
-	      u = v * invvr - 0.93;
+	      u = v/vr - 0.93;
 	      u = u >= 0 ? 0.5 - u : -0.5 - u;
 	      v = vr*rand_ranf();
 	    }
 	  us = 0.5 - fabs(u);
 
-	  if ( (k_real = (aa/us + b)*u + c) >= 0.0 )
+	  if ( (us >= 0.013 || v <= us) && (k_real = (2.0*a/us + b)*u + mu + 0.445) >= 0 )
 	    {
-	      k = k_real;
+	      k = (int) k_real;
 	      v = v*invalpha/(a/(us*us) + b);
-
 	      if ( k >= 10 )
 		{
 		  if ( log(v*smu) <= (k+0.5)*log(mu/k) - mu - LOG_SQRT_2PI
@@ -122,4 +206,3 @@ int poi_trd(double mu)
 	}
     }
 }
-

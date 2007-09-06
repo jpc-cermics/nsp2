@@ -160,10 +160,3 @@ int rand_ignuin(int a, int b)
     }
 }
 
-double rand_beta(double a, double b)
-{
-  double x1, x2;
-  x1 = rand_sgamma(a);
-  x2 = rand_sgamma(b);
-  return x1 / (x1 + x2);
-}
