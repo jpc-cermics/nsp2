@@ -49,28 +49,13 @@ struct _NspTypeGridBlock {
  * used for storing information for a graphic gridblock.
  */
 
-#define WITH_GRID_FRAME 
-
-
-#ifndef WITH_GRID_FRAME
-typedef struct _nsp_gridblock nsp_gridblock;
-
-struct _nsp_gridblock {
-  int foo;
-  int ref_count;
-};
-#endif 
 
 struct _NspGridBlock {
   /*< private >*/
   NspBlock father; 
   NspTypeGridBlock *type; 
   /*< public >*/
-#ifdef WITH_GRID_FRAME
   nspgframe *obj;
-#else 
-  nsp_gridblock *obj;
-#endif
 };
 
 extern int nsp_type_gridblock_id;

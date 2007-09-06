@@ -286,13 +286,11 @@ static void gridblock_destroy(NspGridBlock *H)
      FREE(B->obj->locks);
      FREE(B->obj);
    }
-#ifdef WITH_GRID_FRAME
   if ( H->obj->ref_count == 0 )
     {
       nsp_list_destroy(H->obj->objs);
       FREE(H->obj);
     }
-#endif 
   FREE(H);
 }
 
@@ -382,11 +380,9 @@ static NspGridBlock *gridblock_create_void(char *name,NspTypeBase *type)
 NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,int background,
 			       NspTypeBase *type )
 {
-#ifdef WITH_GRID_FRAME 
   NspGFrame *Gf;
   double gf_scale[]={0,0,100,100};
   double gf_rect[]={0,0,100,100};
-#endif 
   NspBlock *B;
   NspGridBlock *H  = gridblock_create_void(name,type);
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
@@ -394,7 +390,6 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   /* create the part from father */
   if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
   /* create the own part */
-#ifdef WITH_GRID_FRAME 
   if ((Gf = nsp_gframe_create("gf",NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
   Gf->obj->top = FALSE;
   H->obj = Gf->obj;
@@ -417,10 +412,6 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
     B->obj->frame = Gf->obj;
     nsp_list_end_insert(Gf->obj->objs,(NspObject  *) B);
   }
-#else 
-  if ((H->obj = malloc(sizeof(nsp_gridblock))) == NULL) return NULL;
-  H->obj->ref_count=1;
-#endif 
   return H;
 }
 
@@ -428,12 +419,10 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
 
 NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) 
 {
-#ifdef WITH_GRID_FRAME 
   int i;
   NspGFrame *Gf;
   double gf_scale[]={0,0,100,100};
   double gf_rect[]={0,0,100,100};
-#endif 
   NspBlock *B;
   NspGridBlock *H  = gridblock_create_void(name,NULL);
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
@@ -441,7 +430,6 @@ NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color
   /* create the part from father */
   if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
   /* create the own part */
-#ifdef WITH_GRID_FRAME 
   if ((Gf = nsp_gframe_full_copy(F))== NULLGFRAME) return NULLGRIDBLOCK; 
   Gf->obj->top = FALSE; /* not a top frame */
   H->obj = Gf->obj;
@@ -451,7 +439,6 @@ NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color
   /* gframe_destroy(Gf);*/
   for ( i=0; i < 4 ; i++) Gf->obj->r[i]=gf_rect[i];
   for ( i=0; i < 4 ; i++) H->obj->scale[i]=gf_scale[i];
-#endif 
   return H;
 }
 
@@ -594,32 +581,28 @@ void GridBlock_Interf_Info(int i, char **fname, function (**f))
  *
  **/
 
+/* #define DRAW_INSIDE */
 
 void gridblock_draw(NspGridBlock *B)
 {
+#ifdef DRAW_INSIDE
   double WRect[4],WRect1[4], FRect[4], ARect[4];
   char logscale[2];
+#endif 
   NspBlock *Bl = (NspBlock *) B;
   /* take care of the fact that str1 must be writable */
   BCG *Xgc;
   int cpat, cwidth;
-#ifndef WITH_GRID_FRAME
-  int fill=FALSE;
-  char str[256];
-  char str1[] = "my\ngridblock";
-  double loc[4];
-  BCG *Xgc1;
-#endif 
   /* only draw gridblock which are in a frame */
   if ( Bl->obj->frame == NULL) return;
   /* check the show attribute */
   if ( Bl->obj->show == FALSE ) return ;
-  
   Xgc=Bl->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-
-#ifdef WITH_GRID_FRAME
+#ifdef DRAW_INSIDE
+  /* Draw the super block inside the block ! 
+   */
   /* set the scale for drawing inside the frame */
   getscale2d(Xgc,WRect,FRect,logscale,ARect);
   /* use gf->r to modify the scales */
@@ -635,14 +618,6 @@ void gridblock_draw(NspGridBlock *B)
   nspgframe_draw(B->obj);
   /* scale back */
   set_scale(Xgc,"fTtfff",WRect,FRect,NULL,NULL,NULL);
-#else 
-  /* just a test we draw a Matrix inside the gridblock */
-  Xgc1 = window_list_get_first(); 
-  if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-  sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",Bl->obj->r[0],Bl->obj->r[1]-Bl->obj->r[3],
-	  Bl->obj->r[0]+Bl->obj->r[2],Bl->obj->r[1]);
-  nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
-  if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
 #endif 
   /* call the father draw */
   GR_INT(Bl->type->interface)->draw(Bl);
@@ -691,10 +666,8 @@ int gridblock_translate(NspGridBlock *B,const double tr[2])
 {
   NspBlock *Bl = (NspBlock *) B;
   GR_INT(Bl->type->interface)->translate(Bl,tr);
-#ifdef WITH_GRID_FRAME
   /* we want here to update the position of the frame inside its parent frame */
   memcpy(B->obj->r,Bl->obj->r,4*sizeof(double));
-#endif 
   return OK;
 }
 
@@ -702,10 +675,8 @@ int gridblock_set_pos(NspGridBlock *B,const double tr[2])
 {
   NspBlock *Bl = (NspBlock *) B;
   GR_INT(Bl->type->interface)->set_pos(Bl,tr);
-#ifdef WITH_GRID_FRAME
   /* we want here to update the position of the frame inside its parent frame */
   memcpy(B->obj->r,Bl->obj->r,4*sizeof(double));
-#endif 
   Sciprintf("Set position of a gridblock\n");
   return OK;
 }
@@ -724,10 +695,8 @@ void gridblock_resize(NspGridBlock *B,const double size[2])
 {
   NspBlock *Bl = (NspBlock *) B;
   GR_INT(Bl->type->interface)->resize(Bl,size);
-#ifdef WITH_GRID_FRAME
   /* we want here to update the position of the frame inside its parent frame */
   memcpy(B->obj->r,Bl->obj->r,4*sizeof(double));
-#endif 
 }
 
 
