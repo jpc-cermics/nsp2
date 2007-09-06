@@ -60,21 +60,6 @@ NspMaxpMatrix *new_mpmatrix();
  * Object methods redefined for matrix 
  */
 
-#ifdef MaxpMatrix_Private
-static int init_mpmatrix(NspMaxpMatrix *ob,NspTypeMaxpMatrix *type);
-static int mpmatrix_size(NspMaxpMatrix *Mat, int flag);
-static char *mpmatrix_type_as_string(void);
-static char *mpmatrix_type_short_string(NspObject *v);
-static int mpmatrix_neq(NspObject *A,NspObject *B);
-static int mpmatrix_eq(NspObject *A,NspObject *B);
-static int mpmatrix_xdr_save(XDR  *F, NspMaxpMatrix *M);
-static NspMaxpMatrix  *mpmatrix_xdr_load(XDR  *F);
-static AttrTab mpmatrix_attrs[];
-static NspMethods *mpmatrix_get_methods(void); 
-/*static NspObject *mpmatrix_path_extract(NspMaxpMatrix *A, NspObject *O); */
-static int mpmatrix_is_true(NspMaxpMatrix *M);
-#endif 
-
 #define NULLMAXPMAT (NspMaxpMatrix*) 0
 
 /* from MatObj.c */
@@ -237,3 +222,18 @@ extern NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M);
 
 #endif 
 
+
+#ifdef MaxpMatrix_Private
+static int init_mpmatrix(NspMaxpMatrix *ob,NspTypeMaxpMatrix *type);
+static int mpmatrix_size(NspMaxpMatrix *Mat, int flag);
+static char *mpmatrix_type_as_string(void);
+static char *mpmatrix_type_short_string(NspObject *v);
+static int mpmatrix_neq(NspObject *A,NspObject *B);
+static int mpmatrix_eq(NspObject *A,NspObject *B);
+static int mpmatrix_xdr_save(XDR  *F, NspMaxpMatrix *M);
+static NspMaxpMatrix  *mpmatrix_xdr_load(XDR  *F);
+static AttrTab mpmatrix_attrs[];
+static NspMethods *mpmatrix_get_methods(void); 
+/*static NspObject *mpmatrix_path_extract(NspMaxpMatrix *A, NspObject *O); */
+static int mpmatrix_is_true(NspMaxpMatrix *M);
+#endif 

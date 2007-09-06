@@ -36,7 +36,7 @@ struct _grl_lock {
 typedef struct _nsp_link nsp_link;
 
 struct _nsp_link {
-  nsp_gframe *frame; /* a link must be in a frame to be drawn */
+  nspgframe *frame; /* a link must be in a frame to be drawn */
   void *object_sid;
   int color; 
   int thickness;
@@ -66,6 +66,25 @@ NspLink *new_link();
 /*
  * Object methods redefined for link 
  */
+
+#define NULLLINK (NspLink*) 0
+
+/* from LinkObj.c */
+
+extern int IsLinkObj (Stack stack, int i); 
+extern NspLink *GetLinkCopy (Stack stack, int i); 
+extern NspLink *GetLink (Stack stack, int i); 
+extern NspLink *link_create_n(char *name,int n,int color,int thickness);
+extern void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]);
+extern int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2]);
+extern void link_check(NspGFrame *F,NspLink *L);
+extern int IsLink(NspObject *O);
+extern int link_add_control(NspLink *L,const double pt[2]);
+extern int link_remove_control(NspLink *L,const double pt[2]);
+extern NspLink *link_create(char *name,NspMatrix *D,int color,int thickness, NspTypeBase *type );
+
+#endif
+
 
 #ifdef Link_Private 
 static int init_link(NspLink *ob,NspTypeLink *type);
@@ -113,27 +132,6 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 static NspLink * link_full_copy( NspLink *L);
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs);
-
+static void link_set_frame( NspBlock *B, NspGFrame *Gf);
 
 #endif /* Link_Private */
-
-#define NULLLINK (NspLink*) 0
-
-/* from LinkObj.c */
-
-extern int IsLinkObj (Stack stack, int i); 
-extern NspLink *GetLinkCopy (Stack stack, int i); 
-extern NspLink *GetLink (Stack stack, int i); 
-extern NspLink *link_create_n(char *name,int n,int color,int thickness);
-extern void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]);
-extern int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2]);
-extern void link_check(NspGFrame *F,NspLink *L);
-extern int IsLink(NspObject *O);
-extern int link_add_control(NspLink *L,const double pt[2]);
-extern int link_remove_control(NspLink *L,const double pt[2]);
-extern NspLink *link_create(char *name,NspMatrix *D,int color,int thickness, NspTypeBase *type );
-
-
-
-#endif
-

@@ -81,7 +81,7 @@ NspTypeGridBlock *new_type_gridblock(type_mode mode)
   top->save  = (save_func *) gridblock_xdr_save;
   top->load  = (load_func *) gridblock_xdr_load;
   top->create = (create_func*) int_gridblock_create;
-
+  
   /* specific methods for gridblock */
 
   type->init =  (init_func *) init_gridblock;
@@ -395,13 +395,13 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
   /* create the own part */
 #ifdef WITH_GRID_FRAME 
-  if ((Gf = gframe_create("gf",NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
+  if ((Gf = nsp_gframe_create("gf",NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
   Gf->obj->top = FALSE;
   H->obj = Gf->obj;
   /* to prevent destruction of obj */
   Gf->obj->ref_count++;
-  /* XXXXX  delete unused Gf */
-  /* gframe_destroy(Gf);*/
+  /* delete unused Gf */
+  nsp_gframe_destroy(Gf);
   /* insert a first object in the frame */
   {
     int color=4,thickness=1, background=9;
@@ -425,9 +425,8 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
 }
 
 
-extern NspGFrame *frame_full_copy( NspGFrame *F);
 
-NspGridBlock *gridblock_create_from_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) 
+NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) 
 {
 #ifdef WITH_GRID_FRAME 
   int i;
@@ -443,7 +442,7 @@ NspGridBlock *gridblock_create_from_gframe(char *name,double *rect,int color,int
   if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
   /* create the own part */
 #ifdef WITH_GRID_FRAME 
-  if ((Gf = frame_full_copy(F))== NULLGFRAME) return NULLGRIDBLOCK; 
+  if ((Gf = nsp_gframe_full_copy(F))== NULLGFRAME) return NULLGRIDBLOCK; 
   Gf->obj->top = FALSE; /* not a top frame */
   H->obj = Gf->obj;
   /* to prevent destruction of obj */
@@ -538,7 +537,19 @@ static AttrTab gridblock_attrs[] = {
  * methods
  *------------------------------------------------------*/
 
+
+
+int int_gridblock_edit(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspGFrame *gf; 
+  if ((gf = nsp_gframe_from_nspgframe(NVOID,NULL,((NspGridBlock *) self)->obj ))== NULLGFRAME) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(gf));
+  return 1;
+}
+
 static NspMethods gridblock_methods[] = {
+  { "edit", int_gridblock_edit},
   { (char *) 0, NULL}
 };
 
@@ -621,7 +632,7 @@ void gridblock_draw(NspGridBlock *B)
    * thus we use T in flag[1].
    */
   set_scale(Xgc,"fTtfff",WRect1,B->obj->scale,NULL,NULL,NULL);
-  nsp_gframe_draw(B->obj);
+  nspgframe_draw(B->obj);
   /* scale back */
   set_scale(Xgc,"fTtfff",WRect,FRect,NULL,NULL,NULL);
 #else 
@@ -647,15 +658,22 @@ void gridblock_draw(NspGridBlock *B)
 
 static NspGridBlock * gridblock_full_copy( NspGridBlock *B)
 {
-  NspGridBlock *M=NULLGRIDBLOCK;
-  if (( M = gridblock_create(NVOID,((NspBlock *) B)->obj->r,((NspBlock *) B)->obj->color,
-			     ((NspBlock *) B)->obj->thickness,((NspBlock *) B)->obj->background,NULL))
-      == NULLGRIDBLOCK) 
+  int i;
+  double gf_scale[]={0,0,100,100};
+  double gf_rect[]={0,0,100,100};
+  NspBlock *Blnew, *Bl =((NspBlock *) B) ;
+  NspGridBlock *Bnew  = gridblock_create_void(NVOID,NULL);
+  if ( Bnew ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
+  Blnew = (NspBlock *) Bnew;
+  /* create the part from father */
+  if ( nsp_block_create(Blnew, Bl->obj->r,Bl->obj->color, Bl->obj->thickness,Bl->obj->background) == NULL) 
     return NULLGRIDBLOCK;
-#ifdef WITH_GRID_FRAME 
-  M->obj->Xgc = B->obj->Xgc;
-#endif 
-  return M;
+  /* create the own part */
+  if ((Bnew->obj = nspgframe_full_copy(B->obj))  == NULL) return NULLGRIDBLOCK;
+  Bnew->obj->top = FALSE;
+  for ( i=0; i < 4 ; i++) Bnew->obj->r[i]= gf_rect[i];
+  for ( i=0; i < 4 ; i++) Bnew->obj->scale[i]= gf_scale[i];
+  return Bnew;
 }
 
 

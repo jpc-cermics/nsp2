@@ -114,6 +114,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
   gri->full_copy =(gr_full_copy *) block_full_copy;
   gri->unlock =(gr_unlock *) block_unlock;
+  gri->set_frame =(gr_set_frame *) block_set_frame;
   
   if ( nsp_type_block_id == 0 ) 
     {
@@ -850,7 +851,11 @@ void block_draw(NspBlock *B)
   double loc[4];
   int cpat, cwidth,i, draw_script, fill=FALSE;
   /* only draw block which are in a frame */
-  if ( B->obj->frame == NULL) return;
+  if ( B->obj->frame == NULL) 
+    {
+      Sciprintf("trying to draw a unframed block");
+      return;
+    }
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
 
@@ -1416,6 +1421,18 @@ static void block_unlock( NspBlock *B,int lp)
     }
   /* unset the lock on the block */
   block_unset_lock_connection(B,lp,0);
+}
+
+/**
+ * block_set_frame:
+ * @Gf: a #NspGFrame 
+ * 
+ * attach the block frame reference to @GF
+ **/
+
+static void block_set_frame( NspBlock *B, NspGFrame *Gf)
+{
+  B->obj->frame = Gf->obj;
 }
 
 

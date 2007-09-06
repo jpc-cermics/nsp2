@@ -67,7 +67,7 @@ struct _NspGridBlock {
   NspTypeGridBlock *type; 
   /*< public >*/
 #ifdef WITH_GRID_FRAME
-  nsp_gframe *obj;
+  nspgframe *obj;
 #else 
   nsp_gridblock *obj;
 #endif

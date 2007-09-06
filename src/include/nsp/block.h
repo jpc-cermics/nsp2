@@ -57,7 +57,7 @@ struct b_lock {
  * @frame: a block must be in a frame to be drawn 
  * @object_sid: 
  * @r: the block enclosing rectangle 
- * @@color: color of the block
+ * @color: color of the block
  * @thickness: thickness of the enclosing rectangle 
  * @background: color of the background
  * @n_locks:  number of lock points 
@@ -72,7 +72,7 @@ struct b_lock {
 typedef struct _nsp_block nsp_block;
 
 struct _nsp_block {
-  nsp_gframe *frame;/* a block must be in a frame to be drawn */
+  nspgframe *frame;/* a block must be in a frame to be drawn */
   void *object_sid;
   double r[4]; 		
   int color;
@@ -162,6 +162,7 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
+static void block_set_frame( NspBlock *B, NspGFrame *Gf);
 
 #endif 
 

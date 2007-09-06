@@ -45,7 +45,7 @@ struct _gr_lock {
 typedef struct _nsp_connector nsp_connector;
 
 struct _nsp_connector {
-  nsp_gframe *frame; /* a link must be in a frame to be drawn */
+  nspgframe *frame; /* a link must be in a frame to be drawn */
   void *object_sid;
   double r[4];
   int color; 
@@ -71,6 +71,20 @@ extern NspTypeConnector *nsp_type_connector;
 NspTypeConnector *new_type_connector(type_mode mode);
 NspConnector *new_connector();
 
+
+#define NULLCONNECTOR (NspConnector*) 0
+
+extern NspConnector *connector_object(NspObject *O); 
+extern int IsConnectorObj (Stack stack, int i); 
+extern NspConnector *GetConnectorCopy (Stack stack, int i); 
+extern NspConnector *GetConnector (Stack stack, int i); 
+extern int IsConnector (NspObject *O); 
+extern NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
+				      NspTypeBase *type );
+
+
+#endif
+
 #ifdef Connector_Private 
 static int init_connector(NspConnector *ob,NspTypeConnector *type);
 static int connector_size(NspConnector *Mat, int flag);
@@ -81,7 +95,6 @@ static int connector_neq(NspConnector *A, NspObject *B);
 static int connector_xdr_save(XDR *xdrs, NspConnector *M);
 static NspConnector  *connector_xdr_load(XDR  *F);
 static AttrTab connector_attrs[];
-static NspConnector *connector_object (NspObject *O); 
 static NspConnector *connector_copy (NspConnector *H); 
 static void connector_destroy (NspConnector *H); 
 static int connector_info (NspConnector *H, int indent,char *name, int rec_level); 
@@ -117,22 +130,6 @@ static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
 static NspConnector * connector_full_copy( NspConnector *C);
-
+static void connector_set_frame( NspBlock *B, NspGFrame *Gf);
 
 #endif /* Connector_Private */
-
-#define NULLCONNECTOR (NspConnector*) 0
-
-
-extern NspConnector *connector_object(NspObject *O); 
-extern int IsConnectorObj (Stack stack, int i); 
-extern NspConnector *GetConnectorCopy (Stack stack, int i); 
-extern NspConnector *GetConnector (Stack stack, int i); 
-extern int IsConnector (NspObject *O); 
-
-extern NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
-				      NspTypeBase *type );
-
-
-#endif
-

@@ -120,6 +120,7 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->set_lock_pos =(gr_set_lock_pos *) link_set_lock_pos;
   gri->full_copy =(gr_full_copy *) link_full_copy;
   gri->unlock =(gr_unlock *) link_unlock;
+  gri->set_frame =(gr_set_frame *) link_set_frame;
 
   if ( nsp_type_link_id == 0 ) 
     {
@@ -906,6 +907,20 @@ static void link_unlock( NspLink *L,int lp)
   link_unset_lock_connection(L,lp,0);
 }
 
+
+/**
+ * link_set_frame:
+ * @Gf: a #NspGFrame 
+ * 
+ * attach the link frame reference to @GF
+ **/
+
+static void link_set_frame( NspBlock *B, NspGFrame *Gf)
+{
+  B->obj->frame = Gf->obj;
+}
+
+
 /**
  * link_lock: 
  * @F: a graphic frame  
@@ -959,7 +974,7 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
     {
       NspObject *Ob;
       int cp1;
-      int rep = gframe_select_lock(F,ptnew, &Ob, &cp1,&lock_c) ;
+      int rep = nsp_gframe_select_lock(F,ptnew, &Ob, &cp1,&lock_c) ;
       if ( rep != 0 ) 
 	{
 	  if ( lock_c == TRUE)
@@ -1157,7 +1172,7 @@ void link_check(NspGFrame *F,NspLink *L)
     {
       link_get_lock_pos(L,i,pt);
       /* checks if pt is a lock point of */
-      if ( gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
+      if ( nsp_gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
 	{
 	  /* pt is near a lock point */ 
 	  if ( link_is_lock_connected(L,i)== FALSE) 
@@ -1179,7 +1194,7 @@ void link_check(NspGFrame *F,NspLink *L)
 	    }
 	}
       /* checks if lock point is over a link */
-      if ( gframe_select_obj(F,pt,&obj,(NspObject *)L) != 0) 
+      if ( nsp_gframe_select_obj(F,pt,&obj,(NspObject *)L) != 0) 
 	{
 	  if ( link_is_lock_connected(L,i)== FALSE) 
 	    {
@@ -1207,7 +1222,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      link_lock(F,(NspLink *)obj,1,&p); 
 		      link_lock(F,link,0,&p); 
 		      link_lock(F,L,i,&p); 
-		      gframe_locks_update(F,NSP_OBJECT(C));/* align the locks */
+		      nsp_gframe_locks_update(F,NSP_OBJECT(C));/* align the locks */
 		      GR_INT(((NspObject *)C)->basetype->interface)->draw(C);
 
 		    }
@@ -1223,7 +1238,7 @@ void link_check(NspGFrame *F,NspLink *L)
     {
       pt[0]= L->obj->poly->R[i]; 
       pt[1]= L->obj->poly->R[i+L->obj->poly->m]; 
-      if ( gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
+      if ( nsp_gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
 	{
 	  L->obj->poly->R[i]+= 2*lock_size;
 	}

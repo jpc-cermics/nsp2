@@ -112,6 +112,9 @@ NspTypeConnector *new_type_connector(type_mode mode)
   gri->is_lock_connected =(gr_is_lock_connected *) connector_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) connector_set_lock_pos;
   gri->full_copy =(gr_full_copy *) connector_full_copy;
+  gri->unlock =(gr_unlock *) connector_unlock;
+  gri->set_frame =(gr_set_frame *) connector_set_frame;
+
   if ( nsp_type_connector_id == 0 ) 
     {
       /* 
@@ -1212,6 +1215,17 @@ static void connector_unlock( NspConnector *B,int lp)
 }
 
 
+/**
+ * connector_set_frame:
+ * @Gf: a #NspGFrame 
+ * 
+ * attach the connector frame reference to @GF
+ **/
+
+static void connector_set_frame( NspBlock *B, NspGFrame *Gf)
+{
+  B->obj->frame = Gf->obj;
+}
 
 
 /*
