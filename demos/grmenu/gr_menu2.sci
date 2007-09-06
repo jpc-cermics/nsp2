@@ -50,6 +50,13 @@ function w=create_midle_menu (win,xc,yc)
     menu.append[menuitem]
     menuitem.show[];
   end
+  if name == 'GridBlock' then 
+    menuitem = gtkmenuitem_new(label="edit super block");
+    menuitem.connect["activate",midle_menuitem_response,list(6,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+  end
+  
   //-- copy 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
   if ~is_sel then 
@@ -103,6 +110,20 @@ function midle_menuitem_response(w,args)
 	x_message('Clipboard is empty');end 
     end
     GF('clipboard') = list();
+   case 6 then 
+    // edit a super block 
+    printf("enter super block edit\n");
+    [test,obj]= GF(win).get_selection[];
+    xinit(name='Super Block',dim=[1000,1000],popup_dim=[600,400])
+    newwin= xget('window');
+    xset('recording',0)
+    xsetech(arect=[0,0,0,0]);
+    newgf=obj.edit[];
+    winid= 'win'+string(newwin);
+    GF(winid)= newgf;
+    GF(winid).attach_to_window[newwin];
+    GF(winid).draw[];
+    seteventhandler('my_eventhandler');
   end
   GF(win).draw[]
 endfunction
@@ -117,7 +138,7 @@ function menu=create_right_menu (win)
     menuitem.show[];
   end
   // new
-  tags = ['new link';'new block';'new_connector';'new block1']
+  tags = ['new link';'new block';'new_connector';'new block1';'new_rect']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
@@ -153,12 +174,13 @@ function menuitem_response(w,args)
    case 2 then  GF(win).new_block[];
    case 3 then  GF(win).new_connector[] ;
    case 4 then  GF(win).new_gridblock[] ;
-   case 5 then  
+   case 5 then  printf("Menu item [%d] ignored \n",args(1));
+   case 6 then  
     fname = xgetfile();
     if fname <> "" then 
       save(fname,diagram=GF(win));
     end
-   case 6 then 
+   case 7 then 
     fname = xgetfile();
     if fname <> "" then 
       load(fname);
@@ -167,7 +189,7 @@ function menuitem_response(w,args)
 	GF(win)=diagram;
       end
     end
-   case 7 then 
+   case 8 then 
   end
   GF(win).draw[]
 endfunction
