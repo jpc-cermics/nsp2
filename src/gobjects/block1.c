@@ -30,7 +30,10 @@
 #include "gridblock.h" 
 
 /* 
- * NspXXX inherits from NspGridBlock
+ * NspGridBlock inherits from NspBlock. 
+ * A NspGridBlock, is a NspBlock with 
+ * a list of sub-blocks in a nsp_gframe. 
+ * It is used to implement a super block. 
  */
 
 int nsp_type_gridblock_id=0;
@@ -377,7 +380,7 @@ static NspGridBlock *gridblock_create_void(char *name,NspTypeBase *type)
 
 
 NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,int background,
-		       NspTypeBase *type )
+			       NspTypeBase *type )
 {
 #ifdef WITH_GRID_FRAME 
   NspGFrame *Gf;
@@ -417,6 +420,38 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
 #else 
   if ((H->obj = malloc(sizeof(nsp_gridblock))) == NULL) return NULL;
   H->obj->ref_count=1;
+#endif 
+  return H;
+}
+
+
+extern NspGFrame *frame_full_copy( NspGFrame *F);
+
+NspGridBlock *gridblock_create_from_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) 
+{
+#ifdef WITH_GRID_FRAME 
+  int i;
+  NspGFrame *Gf;
+  double gf_scale[]={0,0,100,100};
+  double gf_rect[]={0,0,100,100};
+#endif 
+  NspBlock *B;
+  NspGridBlock *H  = gridblock_create_void(name,NULL);
+  if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
+  B = (NspBlock *) H;
+  /* create the part from father */
+  if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
+  /* create the own part */
+#ifdef WITH_GRID_FRAME 
+  if ((Gf = frame_full_copy(F))== NULLGFRAME) return NULLGRIDBLOCK; 
+  Gf->obj->top = FALSE; /* not a top frame */
+  H->obj = Gf->obj;
+  /* to prevent destruction of obj */
+  Gf->obj->ref_count++;
+  /* XXXXX  delete unused Gf */
+  /* gframe_destroy(Gf);*/
+  for ( i=0; i < 4 ; i++) Gf->obj->r[i]=gf_rect[i];
+  for ( i=0; i < 4 ; i++) H->obj->scale[i]=gf_scale[i];
 #endif 
   return H;
 }

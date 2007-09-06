@@ -112,6 +112,7 @@ extern NspObject * gframe_get_hilited(NspGFrame *R) ;
 extern void gframe_set_frame_field(NspGFrame *F);
 
 extern void nsp_gframe_draw(nsp_gframe *gf);
+extern NspGFrame *frame_full_copy( NspGFrame *F);
 
 
 #endif
@@ -135,7 +136,6 @@ static int gframe_info (NspGFrame *H, int indent,char *name, int rec_level);
 static int gframe_print (NspGFrame *H, int indent,char *name, int rec_level); 
 static NspMethods *gframe_get_methods(void);
 static int int_gframe_create(Stack stack, int rhs, int opt, int lhs);
-static NspGFrame *frame_full_copy( NspGFrame *F);
 
 #endif /* GFrame_Private */
 

@@ -26,8 +26,12 @@
 #include "gridblock.h" 
 
 
-/* graphic frame 
- * NspGFrame inherits from NspObject 
+/* NspGFrame inherits from NspObject 
+ * 
+ * graphic frame for scicos: a NspGFrame object 
+ * contains blocks, links and connectors. 
+ * 
+ * 
  */
 
 int nsp_type_gframe_id=0;
@@ -695,8 +699,11 @@ int int_gf_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
   return 2;
 }
 
+/* insert objects in a frame. 
+ *
+ */
 
-int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(-1,0);
@@ -737,6 +744,10 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+/* connect a gframe to a physical window 
+ *
+ */
 
 int int_gf_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -794,6 +805,7 @@ int int_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
   /* XXXXXXXXX gframe_tops(self,filename); */
   return 0;
 }
+
 
 
 static NspMethods gframe_methods[] = {
@@ -1620,6 +1632,9 @@ NspObject * gframe_create_new_block(NspGFrame *F)
  * Return value: %OK or %FALSE.
  **/
 
+/* XXX */
+extern NspGridBlock *gridblock_create_from_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) ;
+
 NspObject * gframe_create_new_gridblock(NspGFrame *F)
 {
   int color=4,thickness=1, background=9,rep;
@@ -1627,7 +1642,11 @@ NspObject * gframe_create_new_gridblock(NspGFrame *F)
   NspGridBlock *B;
   /* unhilite all */
   gframe_unhilite_objs(F,FALSE);
+#if 0 
   B=gridblock_create("fe",rect,color,thickness,background,NULL);
+#else 
+  B=gridblock_create_from_gframe("fe",rect,color,thickness,background,F);
+#endif 
   if ( B == NULLGRIDBLOCK) return NULLOBJ;
   ((NspBlock *)B)->obj->frame = F->obj;
   ((NspBlock *)B)->obj->hilited = TRUE;
@@ -1641,6 +1660,11 @@ NspObject * gframe_create_new_gridblock(NspGFrame *F)
   if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
   return NSP_OBJECT(B);
 }
+
+
+
+
+
 
 
 /**
@@ -1857,7 +1881,7 @@ NspObject * gframe_create_new_link(NspGFrame *F)
 
 static NspList * nsp_list_full_copy(NspList *L);
 
-static NspGFrame *frame_full_copy( NspGFrame *F)
+NspGFrame *frame_full_copy( NspGFrame *F)
 {
   NspGFrame *M=NULLGFRAME;
   if (( M = gframe_create(NVOID,NULL,FALSE,F->obj->scale,F->obj->r,NULL)) == NULLGFRAME) 

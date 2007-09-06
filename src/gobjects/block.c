@@ -28,8 +28,8 @@
 #include "nsp/parse.h"
 
 /*
- * NspBlock inherits from NspObject and implements GRint 
- * graphic blocks 
+ * NspBlock inherits from NspObject and implements GRint. 
+ * It is used to define a scicos basic block. 
  */
 
 int nsp_type_block_id=0;
