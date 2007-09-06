@@ -2369,12 +2369,12 @@ static OpWrapTab Matrix_func[]={
   {"tril_mp" ,  int_mptril ,NULL},
   {"triu_mp" ,  int_mptriu ,NULL},
   {"zeros_mp_mp", int_mpzeros ,NULL},
-  {"isinf", int_mp_isinf,NULL},
-  {"isnan", int_mp_isnan,NULL},
-  {"finite", int_mp_finite,NULL},
-  {"polar",int_mppolar,NULL},
-  {"dsl",int_mpdivel,NULL},
-  {"dbs",int_mpbackdivel,NULL},
+  {"isinf_mp", int_mp_isinf,NULL},
+  {"isnan_mp", int_mp_isnan,NULL},
+  {"finite_mp", int_mp_finite,NULL},
+  {"polar_mp",int_mppolar,NULL},
+  {"dsl_mp",int_mpdivel,NULL},
+  {"dbs_mp",int_mpbackdivel,NULL},
   {(char *) 0, NULL,NULL},
 };
 
