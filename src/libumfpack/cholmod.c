@@ -30,6 +30,8 @@
  * 
  */
 
+#ifdef WITH_CHOLMOD 
+
 #include <cholmod.h>
 #define  Cholmod_Private 
 #include "nsp/object.h"
@@ -1651,3 +1653,4 @@ static void nsp_sputil_error_handler (int status, char *file, int line, char *me
     }
 }
 
+#endif /* WITH_CHOLMOD */

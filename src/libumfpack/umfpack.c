@@ -877,9 +877,11 @@ extern function int_cholmod_chol;
 extern function int_cholmod_create;
 
 static OpTab umfpack_func[]={
+#ifdef WITH_CHOLMOD
   { "analyze", int_cholmod_analyze}, /* cholmod */
   { "chol_sp", int_cholmod_chol},/* cholmod */
   { "cholmod_create", int_cholmod_create},/* cholmod */
+#endif 
   { "umfpack_create", int_umfpack_create},
   { "umfpack_solve",int_umfpack_solve},
   { NULL, NULL}
