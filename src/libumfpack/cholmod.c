@@ -30,6 +30,7 @@
  * 
  */
 
+#include "nsp/machine.h"
 #ifdef WITH_CHOLMOD 
 
 #include <cholmod.h>
