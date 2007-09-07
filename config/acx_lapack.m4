@@ -72,6 +72,20 @@ if test $acx_lapack_ok = no; then
         LIBS="$save_LIBS"
 fi
 
+# when atlas is in /usr/lib/atlas !
+
+if test $acx_lapack_ok = no; then
+   	ac_save_ldflags=${LDFLAGS}
+        LDFLAGS="-L/usr/lib/atlas ${LDFLAGS}"
+	save_LIBS="$LIBS"; LIBS="-llapack $BLAS_LIBS $LIBS"
+	AC_MSG_CHECKING([for $cheev in -llapack $BLAS_LIBS])
+	AC_TRY_LINK_FUNC($cheev, [acx_lapack_ok=yes 
+				  LAPACK_LIBS="-L/usr/lib/atlas -llapack"],[])
+	AC_MSG_RESULT($acx_lapack_ok)
+	LIBS="$save_LIBS"
+	LDFLAGS=${ac_save_ldflags}
+fi
+
 # Generic LAPACK library?
 # adding the atlas lapack library f77lapack jpc 2005 april 
 

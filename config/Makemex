@@ -21,7 +21,7 @@ STATIC =
 CPPFLAGS = 
 LDFLAGS = 
 LIBS = -lm 
-FLIBS =  -L/usr/lib/gcc/i386-redhat-linux/4.1.1 -L/usr/lib/gcc/i386-redhat-linux/4.1.1/../../.. -lgfortranbegin -lgfortran -lm -lgcc_s
+FLIBS =  -L/usr/lib/gcc/i386-redhat-linux/4.1.2 -L/usr/lib/gcc/i386-redhat-linux/4.1.2/../../.. -lgfortranbegin -lgfortran -lm
 
 INCLUDES= -I$(SCIDIR)/src/include -I$(SCIDIR)/src/include/mex
 CFLAGS = $(CC_OPTIONS) 
