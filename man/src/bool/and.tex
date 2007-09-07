@@ -1,18 +1,15 @@
 % -*- mode: latex -*-
-
-
 \mansection{and}
-
 \begin{mandesc}
-  \short{and}{logical and operator \verb+&+}
+  \short{and}{logical and operator}
 \end{mandesc}
-\index{&} 
+%\index{} 
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
   C= and(A [,dim=dimarg]);
   C= and(A,B);
-  A & B 
+  A  B 
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -21,16 +18,16 @@
     \vname{A,B,C}: boolean matrices. 
     \vname{dimarg}: a string (\verb!'*'!,or \verb!'r'!,or \verb!'c'!) or an integer which defines 
     a dimension along which the and operation is performed. 
-\end{varlist}
+  \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
   \begin{itemize} 
   \item \verb!and(A)! is the logical AND of the elements of the boolean matrix \verb!A!. 
     \verb!and(A)! returns \verb!%t! iff all entries of \verb!A! are \verb!%T!. 
-  \item \verb!y=and(A,'r')! (or, equivalently, \verb!y=and(A,1)!) returns in \verb+y+ a row vector 
+  \item \verb!y=and(A,'r')! (or, equivalently, \verb!y=and(A,1)!) returns in \verb!y! a row vector 
     such that \verb!y(j)= and(A(i,j),i=1,m)!). 
-    \verb!y=and(A,'c')! (or, equivalently, \verb!y=and(A,2)!) returns in \verb+y+ a colum vector 
+    \verb!y=and(A,'c')! (or, equivalently, \verb!y=and(A,2)!) returns in \verb!y! a colum vector 
     such that \verb!y(i)= and(A(i,j),j=1,n)!)).
   \item \verb!A & B! or \verb!and(A,B)! gives the element-wise logical \verb!and!
     of the booleans matrices \verb!A! and  \verb!B!. The two matrices must have the same size 
