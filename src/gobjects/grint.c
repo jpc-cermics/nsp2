@@ -46,7 +46,7 @@ NspTypeGRint *new_type_grint(type_mode mode)
       return nsp_type_grint;
     }
 
-  if ((type =  malloc(sizeof(NspTypeGRint)))==NULL) return NULL;
+  if ((type =  calloc(1,sizeof(NspTypeGRint)))==NULL) return NULL;
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -54,15 +54,16 @@ NspTypeGRint *new_type_grint(type_mode mode)
   top = NSP_TYPE_OBJECT (type->surtype);
   while (top->surtype != NULL)
     top = NSP_TYPE_OBJECT (top->surtype);
-
+  
   /* object methods redefined for matint */
 
   top->s_type = (s_type_func *) grint_type_as_string;
 
-  /* specific methods for grint */
-      
+  /* be sure that fields are initialized to zero */
+  
   type->init = NULL;
-      
+  type->attrs = NULL;
+  type->methods = NULL;
   /* 
    * GRint interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
