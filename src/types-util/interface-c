@@ -32,7 +32,7 @@ NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
       return nsp_type_@TYPEDOWNCASE@;
     }
 
-  if ((type =  malloc(sizeof(NspType@TYPENAME@)))==NULL) return NULL;
+  if ((type =  calloc(1,sizeof(NspType@TYPENAME@)))==NULL) return NULL;
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;

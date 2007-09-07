@@ -53,7 +53,7 @@ NspTypeMatint *new_type_matint(type_mode mode)
       return nsp_type_matint;
     }
 
-  if ((type =  malloc(sizeof(NspTypeMatint)))==NULL) return NULL;
+  if ((type =  calloc(1,sizeof(NspTypeMatint)))==NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
