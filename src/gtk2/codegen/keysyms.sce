@@ -1,7 +1,7 @@
 
 // keycodes 
 
-GTK.Keysyms =hcreate(1500);
+GTK.Keysyms =hash_create(1500);
 GTK.Keysyms.VoidSymbol = 0xFFFFFF;
 GTK.Keysyms.BackSpace = 0xFF08;
 GTK.Keysyms.Tab = 0xFF09;
