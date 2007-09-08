@@ -97,7 +97,7 @@ function midle_menuitem_response(w,args)
    case 4 then 
     //- copy 
     [test,obj]= GF(win).get_selection_copy[];
-    pause 
+    // pause 
     if test then GF('clipboard') = list(obj); 
     else x_message('No selection');end 
    case 5 then 
