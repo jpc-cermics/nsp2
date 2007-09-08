@@ -172,11 +172,11 @@ static void xset_win_protect(BCG *Xgc, int val) {};
 
 /* Wait for mouse click in graphic window : Empty here **/
 
-static void xclick(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
+static void xclick(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
 
-static void xclick_any(BCG *Xgc,char *str, int *ibutton, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr) {};
+static void xclick_any(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr) {};
 
-static void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int queue,int motion,int release,int key){};
+static void xgetmouse(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int queue,int motion,int release,int key){};
 
 /* Clear a rectangle **/
 

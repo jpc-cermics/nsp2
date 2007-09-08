@@ -95,13 +95,13 @@ function midle_menuitem_response(w,args)
     GF(win).hilite_near_pt[[args(2),args(3)]];
     GF(win).select_link_and_remove_control[[args(2),args(3)]];
    case 4 then 
+    //- copy 
     [test,obj]= GF(win).get_selection_copy[];
+    pause 
     if test then GF('clipboard') = list(obj); 
     else x_message('No selection');end 
    case 5 then 
-    // attention ici il faut que l'on insere des 
-    // copies car on veut pouvoir inserer plusieurs 
-    // fois 
+    //- paste 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	GF('clipboard')(1).set_pos[[args(2),args(3)]];
@@ -231,10 +231,16 @@ function w=create_menu (depth, length, tearoff)
 endfunction 
 
 
-function my_eventhandler(win,x,y,ibut)
+function my_eventhandler(win,x,y,ibut,imask)
   global('gr_objects');
   global('GF');
   global('count');
+  // keys are described in src/gtk2/codegen/keysyms.sce
+  // mask in gdk-types.defs are accessible in GDK hash table.
+  // shift-mask GDK.SHIFT_MASK 
+  // control-mask GDK_CONTROL_MASK 
+  // if ibut<>-1 then printf("ibutton = %d, mask = %d\n",ibut,imask);end 
+  if ibut<>-1 then printf("ibutton = %d, mask = %d\n",ibut,imask);end 
   winid= 'win'+string(win);
   if ~GF.iskey[winid];then
     GF(winid)=%types.GFrame.new[[0,0,100,100],[0,0,100,100],win];
@@ -252,8 +258,15 @@ function my_eventhandler(win,x,y,ibut)
     xinfo('Mouse position is ('+string(xc)+','+string(yc)+')')
   elseif ibut==0 then 
     // left press 
-    [xc,yc]=xchange(x,y,'i2f')
-    GF(winid).select_and_move[[xc,yc]];
+    if iand(imask,GDK.SHIFT_MASK) 
+      // add to selection and move the whole stuff 
+      [xc,yc]=xchange(x,y,'i2f')
+      GF(winid).select_and_move_list[[xc,yc]];
+    else
+      // select the new, unhilite others and move selected 
+      [xc,yc]=xchange(x,y,'i2f')
+      GF(winid).select_and_move[[xc,yc]];
+    end
   elseif ibut==1 then 
     // midle press 
     [xc,yc]=xchange(x,y,'i2f')

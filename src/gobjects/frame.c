@@ -228,6 +228,14 @@ static NspGFrame  *nsp_gframe_xdr_load(XDR  *xdrs)
   return M;
 }
 
+/**
+ * nsp_gframe_destroy:
+ * @H: a #NspGFrame 
+ * 
+ * delete object @H. Note that @H is a by reference object 
+ * thus a reference counter is decremented.
+ **/
+
 void nsp_gframe_destroy(NspGFrame *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
@@ -541,10 +549,9 @@ static AttrTab nsp_gframe_attrs[] = {
  * methods
  *------------------------------------------------------*/
 
-
 /* draw */
 
-int int_gfdraw(void  *self, Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gfdraw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   nsp_gframe_draw(self);
@@ -552,9 +559,9 @@ int int_gfdraw(void  *self, Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* select_and_move */
+/* select_and_move select current unhilite others and move current */
 
-int int_gf_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
   CheckRhs(1,1);
@@ -564,9 +571,24 @@ int int_gf_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
   nsp_gframe_select_and_move(((NspGFrame *) self),pt->R);
   return 0;
 }
-/* select_and_move */
 
-int int_gf_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
+/* select_and_move_list: select current and move all hilited in group */
+
+static int int_meth_gf_select_and_move_list(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_gframe_select_and_move_list(((NspGFrame *) self),pt->R);
+  return 0;
+}
+
+
+/* select_and_hilite */
+
+static int int_meth_gf_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
   NspObject *bool;
@@ -584,7 +606,7 @@ int int_gf_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
 
 /* split link */
 
-int int_gf_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
   CheckRhs(1,1);
@@ -597,7 +619,7 @@ int int_gf_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
 
 /* split link */
 
-int int_gf_select_link_and_add_control(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_select_link_and_add_control(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
   CheckRhs(1,1);
@@ -610,7 +632,7 @@ int int_gf_select_link_and_add_control(void *self,Stack stack, int rhs, int opt,
 
 /* shorten link */
 
-int int_gf_select_link_and_remove_control(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_select_link_and_remove_control(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
   CheckRhs(1,1);
@@ -622,7 +644,7 @@ int int_gf_select_link_and_remove_control(void *self,Stack stack, int rhs, int o
 }
 
 
-int int_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
   CheckRhs(1,1);
@@ -633,7 +655,7 @@ int int_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-int int_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
   CheckRhs(0,0);
@@ -648,7 +670,7 @@ int int_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 /* XXX test */
 NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F);
 
-int int_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
   CheckRhs(0,0);
@@ -660,7 +682,7 @@ int int_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
   CheckRhs(0,0);
@@ -672,7 +694,7 @@ int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   CheckLhs(-1,1);
@@ -680,7 +702,7 @@ int int_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-int int_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj;
   CheckRhs(0,0);
@@ -692,7 +714,7 @@ int int_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   CheckLhs(-1,1);
@@ -700,7 +722,7 @@ int int_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-int int_gf_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj,*bool;
   CheckRhs(0,0);
@@ -721,7 +743,7 @@ int int_gf_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
   return 2;
 }
 
-int int_gf_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj,*bool;
   NspTypeGRint *bf;
@@ -750,7 +772,7 @@ int int_gf_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(-1,0);
@@ -796,7 +818,7 @@ static int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int int_gf_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int winid;
@@ -815,7 +837,7 @@ int int_gf_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-int int_gf_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspGFrame *F;
   CheckRhs(0,0);
@@ -829,9 +851,10 @@ int int_gf_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-void nsp_gframe_tops(NspGFrame *R,char *fname);
+/* XXX */
+extern void nsp_gframe_tops(NspGFrame *R,char *fname);
 
-int int_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   int rep=1,color=-1;
   char *filename= NULL, *mode = NULL;
@@ -857,25 +880,26 @@ int int_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 
 
 static NspMethods nsp_gframe_methods[] = {
-  { "draw",   int_gfdraw},
-  { "tops",   int_gf_tops},
-  { "new_link", int_gf_new_link },
-  { "new_block", int_gf_new_block },
-  { "new_gridblock", int_gf_new_gridblock },
-  { "new_connector", int_gf_new_connector },
-  { "new_rect", int_gf_new_rect },
-  { "hilite_near_pt", int_gf_hilite_near_pt },
-  { "select_and_move", int_gf_select_and_move},
-  { "select_and_hilite", int_gf_select_and_hilite},
-  { "select_and_split", int_gf_select_and_split},
-  { "select_link_and_add_control", int_gf_select_link_and_add_control},
-  { "select_link_and_remove_control", int_gf_select_link_and_remove_control},
-  { "delete_hilited", int_gf_delete_hilited },
-  { "insert",int_gf_insert},
-  { "get_selection",int_gf_get_selection},
-  { "get_selection_copy",int_gf_get_selection_copy},
-  { "attach_to_window",int_gf_attach_to_window},
-  { "copy",int_gf_full_copy},
+  { "draw",   int_meth_gfdraw},
+  { "tops",   int_meth_gf_tops},
+  { "new_link", int_meth_gf_new_link },
+  { "new_block", int_meth_gf_new_block },
+  { "new_gridblock", int_meth_gf_new_gridblock },
+  { "new_connector", int_meth_gf_new_connector },
+  { "new_rect", int_meth_gf_new_rect },
+  { "hilite_near_pt", int_meth_gf_hilite_near_pt },
+  { "select_and_move", int_meth_gf_select_and_move},
+  { "select_and_move_list", int_meth_gf_select_and_move_list},
+  { "select_and_hilite", int_meth_gf_select_and_hilite},
+  { "select_and_split", int_meth_gf_select_and_split},
+  { "select_link_and_add_control", int_meth_gf_select_link_and_add_control},
+  { "select_link_and_remove_control", int_meth_gf_select_link_and_remove_control},
+  { "delete_hilited", int_meth_gf_delete_hilited },
+  { "insert",int_meth_gf_insert},
+  { "get_selection",int_meth_gf_get_selection},
+  { "get_selection_copy",int_meth_gf_get_selection_copy},
+  { "attach_to_window",int_meth_gf_attach_to_window},
+  { "copy",int_meth_gf_full_copy},
   { (char *) 0, NULL}
 };
 
@@ -1211,6 +1235,108 @@ int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2])
 }
 
 
+/**
+ * nsp_gframe_get_hilited_list:
+ * @gf: a #nspgframe 
+ * 
+ * returns in a list the hilited objects of #nspgframe.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+NspList *nsp_gframe_get_hilited_list(nspgframe *gf)
+{
+  NspObject *obj=NULL;
+  NspList *Loc;
+  Cell *cloc= gf->objs->first ;
+  if ( (Loc = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
+	  if ( bf->get_hilited(cloc->O) == TRUE) 
+	    {
+	      if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return Loc;
+ err:
+  nsp_list_destroy(Loc);
+  return NULLLIST;
+} 
+
+
+/**
+ * nsp_gframe_select_and_move_list:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and move it with the mouse moving with him all 
+ * the hilited blocks 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_gframe_select_and_move_list(NspGFrame *R,const double pt[2])
+{
+  BCG *Xgc;
+  int k1, cp;
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = nsp_gframe_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  /* are we inside a control point ? */
+  bf = GR_INT(O->basetype->interface);
+  k1 = bf->control_near_pt(O,pt,&cp);
+  /* hide the moving object and its locked objects */
+  bf->set_show(O,FALSE);
+  if ( IsBlock(O)|| IsConnector(O) )  nsp_gframe_locks_set_show(R,O,FALSE);
+  /* nsp_gframe_unhilite_objs(R,FALSE); */
+  bf->set_hilited(O,TRUE);
+  if (0) 
+    {
+      /* global draw of all but the moving object 
+       * we record the state to redraw faster. 
+       * Pb this will reset scales to default and we do not want this XXX
+       */
+      Xgc = R->obj->Xgc;
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+      nsp_gframe_draw(R);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+    }
+  else
+    {
+      nsp_gframe_draw(R);
+    }
+  /* */
+  bf->set_show(O,TRUE);
+  if ( IsBlock(O) || IsConnector(O) )  nsp_gframe_locks_set_show(R,O,TRUE);
+  if ( k1 == FALSE ) 
+    {
+      int rep;
+      NspList *L= nsp_gframe_get_hilited_list(R->obj);
+      if ( L== NULLLIST) return OK;
+      rep = nsp_gframe_move_list_obj(R,L, pt, -5,cp,MOVE );
+      nsp_list_destroy(L);
+      if ( rep == -100) return OK;
+    }
+  else
+    {
+      /* give a warning */
+      Xgc = R->obj->Xgc;
+      Xgc->graphic_engine->xinfo(Xgc,"cannot make a move control in multiselection, just make a move");
+    }
+  nsp_gframe_draw(R);
+  return OK;
+}
+
 
 /**
  * nsp_gframe_select_and_hilite:
@@ -1492,7 +1618,7 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
   int record,rep;
   BCG *Xgc = F->obj->Xgc;
   int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
-  int wstop = 0, ibutton, iwait=FALSE;
+  int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
@@ -1528,7 +1654,7 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
 	}
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
       if ( ibutton == -100 ) 
 	{
 	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
@@ -1560,6 +1686,139 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
   Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
+
+/**
+ * nsp_gframe_move_list_obj:
+ * @F: : a #NspGFrame 
+ * @L: the #NspList of Objects to be moved. 
+ * @pt: the initial position of the mouse.
+ * @stop: an integer giving the mouse code to accept for ending the move 
+ * @cp: the id of the control point to be moved
+ * @action: %MOVE
+ * 
+ * move a list of objects, The only action for a list of objects is %MOVE
+ * (%MOVE_CONTROL has no sense).
+ * 
+ * Return value: an integer 
+ **/
+
+/* utiliy function */ 
+
+typedef enum _list_move_action list_move_action; 
+
+enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
+
+static int nsp_gframe_list_obj_action(NspGFrame *F,NspList *L,const double pt[2],list_move_action action)
+{
+  int rep = OK;
+  Cell *C = L->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* cast to a BlockFType */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  switch ( action )
+	    {
+	    case L_DRAW : 
+	      if ( IsBlock(C->O)  || IsConnector(C->O))
+		{
+		  bf->draw(C->O);
+		  if ( IsBlock(C->O)  || IsConnector(C->O))  nsp_gframe_locks_draw(F,C->O);
+		}
+	      break;
+	    case L_TRANSLATE : 
+	      rep= bf->translate(C->O,pt);
+	      if ( rep == FAIL) return rep;
+	      break;
+	    case L_LOCK_UPDATE:
+	      if ( IsBlock(C->O)  || IsConnector(C->O))
+		nsp_gframe_locks_update(F,C->O);
+	      break;
+	    case L_LINK_CHECK:
+	      if ( IsLink(C->O)) link_check(F,(NspLink *) (C->O));
+	      break;
+	    }
+	}
+      C = C->next ;
+    }
+  return OK;
+}
+
+int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,move_action action)
+{
+  int record,rep;
+  BCG *Xgc = F->obj->Xgc;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int wstop = 0, ibutton,imask, iwait=FALSE;
+  double mpt[2],pt1[2]= {pt[0],pt[1]};
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+
+  if ( action == MOVE_CONTROL) 
+    {
+      /* nothing to do */
+    }
+  /*
+   * mpt is the mouse position, 
+   * ptwork is the control point position 
+   */
+
+  while ( wstop==0 ) 
+    {
+      if (0)
+	{
+	  /* draw the rest of the world : using recorded state */
+	  Xgc->graphic_engine->clearwindow(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+	  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  /* draw the moving block */
+	  nsp_gframe_list_obj_action(F,L,pt,L_DRAW);
+	}
+      else 
+	{
+	  /* full redraw for fast graphics */
+	  nsp_gframe_draw(F);
+	}
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+      /* get new mouse position */
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      if ( ibutton == -100 ) 
+	{
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
+	  return ibutton;
+	}
+      if ( ibutton == stop ) wstop= 1;
+      Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
+      /* clear block shape using redraw */
+      /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
+      /* move object */
+      switch ( action ) 
+	{
+	case MOVE : 
+	  rep=  nsp_gframe_list_obj_action(F,L,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1),L_TRANSLATE);
+	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
+	  break;
+	case MOVE_CONTROL :
+	  /* unused */
+	  break;
+	}
+      /* update locks positions for objects locked to objects  */ 
+      nsp_gframe_list_obj_action(F,L,pt, L_LOCK_UPDATE);
+      pt1[0] = mpt[0];
+      pt1[1] = mpt[1];
+    }
+  /* XXX
+  nsp_gframe_list_obj_action(F,L,pt,L_LINK_CHECK);
+  */
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
+  return ibutton;
+}
+
 
 
 /**
@@ -1796,7 +2055,7 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
   NspObject *Ob;
   int cp1,record;
   double mpt[2],pt[2];
-  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, iwait=FALSE;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
   NspTypeGRint *bf;
@@ -1825,7 +2084,7 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
       bf->draw(L);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
       if ( ibutton == -100 ) 
 	{
 	  /* we stop : window was killed */

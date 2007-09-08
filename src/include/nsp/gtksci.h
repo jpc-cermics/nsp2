@@ -4,14 +4,11 @@
 /* about.c:11:OF */ extern void create_nsp_about (void); 
 
 /* click.c */
-extern int scig_click_handler_none (int win, int x, int y, int ibut, int motion, int release); 
-extern int scig_click_handler_sci (int win, int x, int y, int ibut, int motion, int release); 
-typedef int (*Scig_click_handler) (int,int,int,int,int,int);
+extern int scig_click_handler_none (int win, int x, int y, int ibut,int imask, int motion, int release); 
+extern int scig_click_handler_sci (int win, int x, int y, int ibut,int imask, int motion, int release); 
+typedef int (*Scig_click_handler) (int,int,int,int,int,int,int);
 extern Scig_click_handler set_scig_click_handler (Scig_click_handler f); 
 extern void reset_scig_click_handler (void); 
-extern int PushClickQueue (int win, int x, int y, int ibut, int motion, int release); 
-extern int CheckClickQueue (int *win, int *x, int *y, int *ibut); 
-extern int ClearClickQueue (int win); 
 
 /* helpbrowser.c*/ 
 

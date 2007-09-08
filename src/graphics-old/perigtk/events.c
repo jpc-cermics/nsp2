@@ -50,7 +50,7 @@ typedef struct _GTK_locator_info GTK_locator_info;
 
 struct _GTK_locator_info {
   guint win, x,y, ok;
-  int getrelease,getmotion,getmen,getkey, button;
+  int getrelease,getmotion,getmen,getkey, button, mask ;
   int sci_click_activated; /* TRUE when we are in a xclick or xclick_any function */
   guint timer;
   char *str;
@@ -83,13 +83,14 @@ static gboolean locator_button_press(GtkWidget *widget,
 
   if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
-      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,0,0};
+      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,event->state,0,0};
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
       nsp_event_info.ok = 1; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x; nsp_event_info.y = event->y; 
       nsp_event_info.button = id;
+      nsp_event_info.mask = event->state ;
       gtk_main_quit();
     }
   return TRUE;
@@ -104,13 +105,14 @@ static gboolean locator_button_release(GtkWidget *widget,
 {
   if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getrelease == 0 ) 
     {
-      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,0,1};
+      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,event->state,0,1};
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
       nsp_event_info.ok =1 ; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
       nsp_event_info.button = event->button -6;
+      nsp_event_info.mask = event->state;
       gtk_main_quit();
     }
   return TRUE;
@@ -135,7 +137,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
     }
   if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getmotion == 0 ) 
     {
-      nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,1,0},evlast;
+      nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,event->state,1,0},evlast;
       if ( nsp_queue_empty(&gc->queue)== FALSE ) 
 	{
 	  /* to not keep multi motion events */
@@ -151,6 +153,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
     {
       nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = x;  nsp_event_info.y = y;
       nsp_event_info.button = -1;
+      nsp_event_info.mask = event->state;
       gtk_main_quit();
     }
   return TRUE;
@@ -171,14 +174,16 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	  nsp_event_info.x=x ; nsp_event_info.y=y;
 	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; 
 	  nsp_event_info.button = event->keyval;
+	  nsp_event_info.mask = event->state;
 	  gtk_main_quit();
 	}
     }
-  else {
-    gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-    nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,0,1};
-    nsp_enqueue(&gc->queue,&ev);
-  }
+  else 
+    {
+      gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
+      nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
+      nsp_enqueue(&gc->queue,&ev);
+    }
   return FALSE; /* also want other handlers to be activated */
 }
 
@@ -193,6 +198,7 @@ static gint timeout_test (BCG *gc)
   if ( dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
     {
       nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
+      nsp_event_info.mask = 0;
       nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
       gtk_main_quit();
     }
@@ -215,27 +221,27 @@ static gint timeout_tk (void *v)
  * to be merged to just one function 
  */
 
-void xclick_any(BCG *Xgc,char *str, int *ibutton, int *x1,int *yy1, int *iwin, 
+void xclick_any(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1, int *iwin, 
 		int iflag,int getmotion,int getrelease,int getkey,int lstr)
 {
   int change_cursor = TRUE;
-  SciClick(Xgc,ibutton,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
 }
 
-void xclick(BCG * Xgc,char *str, int *ibutton, int *x1,int *yy1,int iflag,int motion,
+void xclick(BCG * Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1,int iflag,int motion,
 	    int release,int key, int istr)
 {
   int change_cursor = TRUE;
   int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
 }
 
-void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue,
+void xgetmouse(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int usequeue,
 	       int motion,int release,int key)
 {
   int change_cursor = TRUE;
   int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
 }
 
 
@@ -280,7 +286,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
  * FIXME:  must add support for Ctrl-C ? 
  */
 
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
+static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
 		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
 {
 #ifdef WITH_TK
@@ -289,7 +295,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
   GTK_locator_info rec_info ; 
   int win=*iwin,wincount=0,win1;
   if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
-    *ibutton = -100;     return;
+    *ibutton = -100; *imask=0;     return;
   }
 
   if ( win == -1 ) 
@@ -309,7 +315,8 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
       nsp_gwin_event ev;
       if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
 	{
-	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
+	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; 
+	  *ibutton= ev.ibutton, *imask= ev.mask;
 	  return;
 	}
     }
@@ -358,6 +365,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
   *x1 = nsp_event_info.x;
   *yy1 = nsp_event_info.y;
   *ibutton = nsp_event_info.button;
+  *imask = nsp_event_info.mask;
   *iwin = nsp_event_info.win;
   
   /* remove timer if it was set by us */ 

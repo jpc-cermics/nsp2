@@ -35,6 +35,7 @@
  * @x: 
  * @y: 
  * @ibut: 
+ * @imask: 
  * @motion: 
  * @release: 
  * 
@@ -44,7 +45,7 @@
  **/
 
 int scig_click_handler_none (int win,int x,int y,int ibut,
-			     int motion,int release) 
+			     int imask, int motion,int release) 
 {return 0;}
 
 
@@ -54,6 +55,7 @@ int scig_click_handler_none (int win,int x,int y,int ibut,
  * @x: 
  * @y: 
  * @ibut: 
+ * @imask:
  * @motion: 
  * @release: 
  * 
@@ -69,13 +71,13 @@ int scig_click_handler_none (int win,int x,int y,int ibut,
  * Return value: 0 or 1 
  **/
 
-int scig_click_handler_sci (int win,int x,int y,int ibut,int motion,int release)
+int scig_click_handler_sci (int win,int x,int y,int ibut,int imask,int motion,int release)
 {
   static char buf[256];
   BCG *SciGc;
   SciGc = window_list_search(win);
   if (strlen(SciGc->EventHandler)!=0) {
-    sprintf(buf,"%s(%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut);
+    sprintf(buf,"%s(%d,%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut,imask);
     enqueue_nsp_command(buf);
     return 1;}
   else
@@ -116,7 +118,7 @@ void reset_scig_click_handler(void)
 int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
 {
   /* first let a click_handler do the job  */
-  if ( scig_click_handler(ev->win,ev->x,ev->y,ev->ibutton,ev->motion,ev->release)== 1) return 0;
+  if ( scig_click_handler(ev->win,ev->x,ev->y,ev->ibutton,ev->mask,ev->motion,ev->release)== 1) return 0;
   
 
   /* XXX: do not record motion events and release button 

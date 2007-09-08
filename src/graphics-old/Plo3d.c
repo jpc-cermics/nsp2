@@ -1594,7 +1594,7 @@ void I3dRotation(BCG *Xgc)
   int iflag[]={0,0,0,0};
   int xc,yc;
   double theta0,alpha0;
-  int ibutton,iwait=FALSE,istr=0;
+  int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,bbox[4];
   /* FIXME */
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
@@ -1609,7 +1609,7 @@ void I3dRotation(BCG *Xgc)
     }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   theta0 = theta = Xgc->scales->theta ;
   alpha0 = alpha = Xgc->scales->alpha ;
   x0 = x = xc;
@@ -1638,7 +1638,7 @@ void I3dRotation(BCG *Xgc)
 	  /* immediate redraw */
 	  Xgc->graphic_engine->force_redraw(Xgc);
 	}
-      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
       x=xc;
       y=yc;
     }

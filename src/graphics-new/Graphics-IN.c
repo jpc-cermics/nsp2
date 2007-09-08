@@ -2332,7 +2332,7 @@ int int_xclear(Stack stack, int rhs, int opt, int lhs)
 int int_xclick(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int clearq=FALSE,motion=FALSE,release=FALSE,winall=FALSE,istr=0,key=FALSE,win, iflag, button,iw,i;
+  int clearq=FALSE,motion=FALSE,release=FALSE,winall=FALSE,istr=0,key=FALSE,win, iflag, button,imask,iw,i;
   char buf[128];
   int buf_len=128;
   NspSMatrix *S;
@@ -2390,11 +2390,11 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   if ( winall ) 
     {
       iw=-1;
-      Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
+      Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&imask,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
     }
   else 
     {
-      Xgc->graphic_engine->scale->xclick(Xgc,buf,&button,&drep[1],&drep[2],iflag,motion,release,key,istr);
+      Xgc->graphic_engine->scale->xclick(Xgc,buf,&button,&imask,&drep[1],&drep[2],iflag,motion,release,key,istr);
       iw=win;
     }
 
@@ -4065,7 +4065,7 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *M;
   int clearq=FALSE,motion=TRUE,release=FALSE,key=FALSE, iflag;
-  int button;
+  int button,mask;
   double x,y;
 
   nsp_option opts[] ={
@@ -4080,7 +4080,7 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&key,&motion,&release) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
   iflag = (clearq == TRUE) ? FALSE : TRUE;
-  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&x,&y,iflag,motion,release,key);
+  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&mask,&x,&y,iflag,motion,release,key);
   if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
   M->R[0] = x;  M->R[1] = y;  M->R[2] = (double) button;
   NSP_OBJECT(M)->ret_pos=1;

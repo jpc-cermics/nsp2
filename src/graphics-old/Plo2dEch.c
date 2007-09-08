@@ -267,7 +267,7 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,pixmode,alumode,color,style,fg;
-  int ibutton,iwait=FALSE,istr=0;
+  int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,xl,yl;
   if ( Xgc == NULL ) return; 
   if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
@@ -286,7 +286,7 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
+  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
   x=x0;y=y0;
   ibutton=-1;
   while ( ibutton == -1 ) 
@@ -297,7 +297,7 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
       zoom_rect(Xgc,x0,y0,x,y);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       Xgc->graphic_engine->force_redraw(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,FALSE,FALSE);
       x=xl;y=yl;
     }
   /* Back to the default driver which must be Rec and redraw the recorded
@@ -322,7 +322,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,th1=1, pixmode,alumode,color,style,fg;
-  int ibutton,iwait=FALSE,istr=0,rf;
+  int ibutton,imask,iwait=FALSE,istr=0,rf;
   double x0,yy0,x,y,xl,yl;
   if ( Xgc == NULL ) return; 
   rf = Xgc->record_flag ;
@@ -345,7 +345,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
  
   /** XXXXXX : a regler pour Win32 in = 6 **/
   Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
   x=x0;y=yy0;
   ibutton=-1;
   while ( ibutton == -1 ) 
@@ -353,7 +353,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
       /* dessin d'un rectangle */
       zoom_rect(Xgc,x0,yy0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,FALSE,FALSE);
       /* effacement du rectangle */
       zoom_rect(Xgc,x0,yy0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);

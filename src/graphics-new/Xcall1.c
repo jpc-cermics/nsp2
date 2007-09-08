@@ -517,20 +517,20 @@ static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
  * click 
  *-----------------------------------------------------------------------------*/
 
-static void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr)
+static void xclick_1(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, double *y, int iflag,int motion,int release,int key, int istr)
 { 
   int x1,yy1,n=1;
-  Xgc->graphic_engine->xclick(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key,istr);
+  Xgc->graphic_engine->xclick(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key,istr);
   scale_i2f(Xgc,x,y,&x1,&yy1,n);
 }
 /*-----------------------------------------------------------------------------
  *  click_any
  *-----------------------------------------------------------------------------*/
 
-static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
+static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
 { 
   int x1,y1;
-  Xgc->graphic_engine->xclick_any(Xgc,str,ibutton,&x1,&y1,iwin,iflag,motion,release,key,istr);
+  Xgc->graphic_engine->xclick_any(Xgc,str,ibutton,imask,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
     BCG *Xgc_win =window_list_search(*iwin);
     scale_i2f(Xgc_win,x,y,&x1,&y1,1);
@@ -541,10 +541,10 @@ static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y,
  *   xgetmouse
  *-----------------------------------------------------------------------------*/
 
-static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag, int motion,int release,int key)
+static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, int *imask,double *x, double *y, int iflag, int motion,int release,int key)
 { 
   int x1,yy1;
-  Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key);
+  Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key);
   scale_i2f(Xgc,x,y,&x1,&yy1,1);
 }
 
