@@ -722,9 +722,7 @@ fi
 ##################
 
 BLAS_LOCAL=libblas 
-BLAS_LIBS=libs/blas.a 
 LAPACK_LOCAL=liblapack
-LAPACK_LIBS=libs/lapack.a 
 USE_LOCAL_BLAS=yes
 USE_LOCAL_LAPACK=yes
 
@@ -738,6 +736,7 @@ if test "$USE_LOCAL_BLAS" = no; then
    BLAS_LOCAL=
 else 
    BLAS_LIBS=libs/blas.a 
+   AC_MSG_WARN([using $BLAS_LIBS for blas: umfpack and cholmod xheck will fail ])
 fi 
 
 if test "$USE_LOCAL_LAPACK" = no; then 
