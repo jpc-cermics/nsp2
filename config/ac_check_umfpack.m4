@@ -72,8 +72,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  ac_save_cppflags=${CPPFLAGS}
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
- LIBS="$amd_libs ${LIBS}"
-
+ LIBS="$amd_libs ${LIBS} ${BLAS_LIBS}"
  # check umfpack includes 
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
