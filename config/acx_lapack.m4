@@ -73,8 +73,11 @@ if test $acx_lapack_ok = no; then
 fi
 
 # when atlas is in /usr/lib/atlas !
+# this way is not be used since /usr/lib/atlas should only be used 
+# at run time. When blas, lapacak and atlas are installed 
+# atlas libraries are used at run time 
 
-if test $acx_lapack_ok = no; then
+if test XXX$acx_lapack_ok = no; then
    	ac_save_ldflags=${LDFLAGS}
         LDFLAGS="-L/usr/lib/atlas ${LDFLAGS}"
 	save_LIBS="$LIBS"; LIBS="-llapack $BLAS_LIBS $LIBS"

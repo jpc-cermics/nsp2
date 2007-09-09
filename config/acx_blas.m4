@@ -73,19 +73,12 @@ if test $acx_blas_ok = no; then
 	LIBS="$save_LIBS"
 fi
 
-# BLAS in atlas when atlas is in /usr/lib/atlas. 
+# Maybe it should be better to first check generic blas 
+# since on Linux when both atlas and generic are installed 
+# using the generic library -lblas (will in fact use atlas 
+# and will continue to work if atlas is removed without 
+# recompiling ! 
 
-if test $acx_blas_ok = no; then
-   	ac_save_ldflags=${LDFLAGS}
-        LDFLAGS="-L/usr/lib/atlas ${LDFLAGS}"
-	save_LIBS="$LIBS"; LIBS="-lblas $LIBS"
-	AC_MSG_CHECKING([for $sgemm in -L/usr/lib/atlas -lblas])
-	AC_TRY_LINK_FUNC($sgemm, [acx_blas_ok=yes
-				  BLAS_LIBS="-L/usr/lib/atlas -lblas"],[])
-	AC_MSG_RESULT($acx_blas_ok)
-	LIBS="$save_LIBS"
-	LDFLAGS=${ac_save_ldflags}
-fi
 
 # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
 if test $acx_blas_ok = no; then
@@ -100,7 +93,8 @@ fi
 
 # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
 # when atlas is in /usr/lib/atlas !
-if test $acx_blas_ok = no; then
+# unused 
+if test XXX$acx_blas_ok = no; then
    	ac_save_ldflags=${LDFLAGS}
         LDFLAGS="-L/usr/lib/atlas ${LDFLAGS}"
 	AC_CHECK_LIB(atlas, ATL_xerbla,
