@@ -62,7 +62,6 @@ NspCholmod
 NspFileName
 NspFname
 NspFnameH
-NspGFrame
 NspIVect
 NspMaxpMatrix
 NspModuleElt
@@ -292,6 +291,7 @@ nsp_umfpack_info
 nsp_umfpack_object
 nsp_umfpack_print
 nsp_vector_norm
+nspgframe
 parse_cell
 parse_double
 plist_get_nargs

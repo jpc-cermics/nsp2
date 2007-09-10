@@ -1,7 +1,7 @@
 46% symbol docs coverage.
-1053 symbols documented.
-213 symbols incomplete.
-1253 not documented.
+1054 symbols documented.
+212 symbols incomplete.
+1247 not documented.
 
 
 Abs
@@ -16,8 +16,6 @@ Bounds
 C2F
 CNAME
 CellsLoopCol (str, Col, A, icol, rep, Returns)
-CheckClickQueue
-ClearClickQueue
 DBL_EPSILON
 DBL_MAX
 DBL_MIN
@@ -311,7 +309,6 @@ NULLSTRING
 NULLTYPE
 NULLXME
 NVOID
-NspGframe
 NspHobj
 NspIvect
 NspLink
@@ -364,7 +361,6 @@ PI0
 PMatrix_Type
 P_PList_Type
 ParseError
-PushClickQueue
 PutLhsObj (stack, nv, ind)
 REALLOC
 RectDraw
@@ -443,7 +439,6 @@ get_is_reading
 get_one_char
 getcolordef
 getwd
-gframe_create
 graphic_initial_menu
 gtkcombobox_select_color
 gtkcombobox_select_color_in_table
@@ -479,7 +474,6 @@ int_mxclean
 int_mxcomplexify
 int_mxconcatd
 int_mxconcatdiag
-int_mxconcatr
 int_mxconcatr_mb
 int_mxconj
 int_mxcopy
@@ -792,7 +786,6 @@ nsp_get_echo_input_line
 nsp_get_file_window
 nsp_get_object_copy (Returns)
 nsp_get_type_from_id
-nsp_gframe (top)
 nsp_global_frame_remove_object
 nsp_gtk_hash_table
 nsp_gtk_init

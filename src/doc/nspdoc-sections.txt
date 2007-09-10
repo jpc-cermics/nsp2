@@ -5,9 +5,6 @@ scig_click_handler_sci
 Scig_click_handler
 set_scig_click_handler
 reset_scig_click_handler
-PushClickQueue
-CheckClickQueue
-ClearClickQueue
 Sci_Help
 Scisncr
 sciprint2
@@ -215,7 +212,6 @@ int_mxclean
 int_mxcomplexify
 int_mxconcatd
 int_mxconcatdiag
-int_mxconcatr
 int_mxconcatr_mb
 int_mxconj
 int_mxcopy
@@ -1776,20 +1772,19 @@ link_remove_control
 
 <SECTION>
 <FILE>gframe</FILE>
-NspGframe
+NspGFrame
 nsp_type_gframe_id
 nsp_type_gframe
 new_type_gframe
 new_gframe
 NULLGFRAME
 IsGFrame
-nsp_gframe
-gframe_select_and_hilite
-gframe_create
-gframe_draw
-gframe_select_obj
-gframe_select_lock
-gframe_select_and_move
+nsp_gframe_select_and_hilite
+nsp_gframe_create
+nsp_gframe_draw
+nsp_gframe_select_obj
+nsp_gframe_select_lock
+nsp_gframe_select_and_move
 </SECTION>
 
 <SECTION>

@@ -436,9 +436,6 @@ scig_click_handler_sci
 Scig_click_handler
 set_scig_click_handler
 reset_scig_click_handler
-PushClickQueue
-CheckClickQueue
-ClearClickQueue
 Sci_Help
 Scisncr
 sciprint2
@@ -2407,8 +2404,7 @@ nsp_matrix_to_serial
 <FILE>gframe</FILE>
 NspGFrame
 NspTypeGFrame
-nsp_gframe
-NspGframe
+nspgframe
 nsp_type_gframe_id
 nsp_type_gframe
 new_type_gframe
@@ -2418,12 +2414,12 @@ IsGFrameObj
 GetGFrameCopy
 GetGFrame
 IsGFrame
-gframe_create
-gframe_draw
-gframe_select_obj
-gframe_select_lock
-gframe_select_and_move
-gframe_select_and_hilite
+nsp_gframe_create
+nsp_gframe_draw
+nsp_gframe_select_obj
+nsp_gframe_select_lock
+nsp_gframe_select_and_move
+nsp_gframe_select_and_hilite
 </SECTION>
 
 <SECTION>
@@ -2492,7 +2488,6 @@ int_mxclean
 int_mxcomplexify
 int_mxconcatd
 int_mxconcatdiag
-int_mxconcatr
 int_mxconcatr_mb
 int_mxconj
 int_mxcopy

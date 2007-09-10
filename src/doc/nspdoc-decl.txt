@@ -38,7 +38,7 @@ struct b_lock {
 <STRUCT>
 <NAME>nsp_block</NAME>
 struct _nsp_block {
-  nsp_gframe *frame;/* a block must be in a frame to be drawn */
+  nspgframe *frame;/* a block must be in a frame to be drawn */
   void *object_sid;
   double r[4]; 		
   int color;
@@ -251,7 +251,7 @@ NspBlock *H,double *rect,int color,int thickness,int background
 </MACRO>
 <MACRO>
 <NAME>NSP_INT_TO_POINTER</NAME>
-#define NSP_INT_TO_POINTER(i) ((int *) (i))
+#define NSP_INT_TO_POINTER(i) ((int *) (i)) 
 </MACRO>
 <MACRO>
 <NAME>NSP_POINTER_TO_INT</NAME>
@@ -316,11 +316,11 @@ typedef int integer;
 </TYPEDEF>
 <MACRO>
 <NAME>DBL_EPSILON</NAME>
-#   define  DBL_EPSILON             2.2204460492503131e-16
+#   define  DBL_EPSILON             2.2204460492503131e-16   
 </MACRO>
 <MACRO>
 <NAME>DBL_MAX</NAME>
-#   define  DBL_MAX                 1.7976931348623158e+308
+#   define  DBL_MAX                 1.7976931348623158e+308  
 </MACRO>
 <MACRO>
 <NAME>DBL_MIN</NAME>
@@ -356,7 +356,7 @@ typedef int integer;
 </MACRO>
 <MACRO>
 <NAME>WITH_SYMB_TABLE</NAME>
-#define WITH_SYMB_TABLE 1
+#define WITH_SYMB_TABLE 1 
 </MACRO>
 <MACRO>
 <NAME>MTLB_MODE</NAME>
@@ -700,7 +700,7 @@ struct _gr_lock {
 <STRUCT>
 <NAME>nsp_connector</NAME>
 struct _nsp_connector {
-  nsp_gframe *frame; /* a link must be in a frame to be drawn */
+  nspgframe *frame; /* a link must be in a frame to be drawn */
   void *object_sid;
   double r[4];
   int color; 
@@ -1983,17 +1983,17 @@ NspBHash *H
 <FUNCTION>
 <NAME>scig_click_handler_none</NAME>
 <RETURNS>int </RETURNS>
-int win, int x, int y, int ibut, int motion, int release
+int win, int x, int y, int ibut,int imask, int motion, int release
 </FUNCTION>
 <FUNCTION>
 <NAME>scig_click_handler_sci</NAME>
 <RETURNS>int </RETURNS>
-int win, int x, int y, int ibut, int motion, int release
+int win, int x, int y, int ibut,int imask, int motion, int release
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>Scig_click_handler</NAME>
 <RETURNS>int </RETURNS>
-int,int,int,int,int,int
+int,int,int,int,int,int,int
 </USER_FUNCTION>
 <FUNCTION>
 <NAME>set_scig_click_handler</NAME>
@@ -2004,21 +2004,6 @@ Scig_click_handler f
 <NAME>reset_scig_click_handler</NAME>
 <RETURNS>void </RETURNS>
 void
-</FUNCTION>
-<FUNCTION>
-<NAME>PushClickQueue</NAME>
-<RETURNS>int </RETURNS>
-int win, int x, int y, int ibut, int motion, int release
-</FUNCTION>
-<FUNCTION>
-<NAME>CheckClickQueue</NAME>
-<RETURNS>int </RETURNS>
-int *win, int *x, int *y, int *ibut
-</FUNCTION>
-<FUNCTION>
-<NAME>ClearClickQueue</NAME>
-<RETURNS>int </RETURNS>
-int win
 </FUNCTION>
 <FUNCTION>
 <NAME>Sci_Help</NAME>
@@ -3416,7 +3401,7 @@ struct _grl_lock {
 <STRUCT>
 <NAME>nsp_link</NAME>
 struct _nsp_link {
-  nsp_gframe *frame; /* a link must be in a frame to be drawn */
+  nspgframe *frame; /* a link must be in a frame to be drawn */
   void *object_sid;
   int color; 
   int thickness;
@@ -8376,6 +8361,7 @@ struct _NspTypeGRint {
   gr_set_lock_pos * set_lock_pos;
   gr_full_copy * full_copy;
   gr_unlock *unlock ; 
+  gr_set_frame *set_frame;
 };
 </STRUCT>
 <MACRO>
@@ -11471,10 +11457,9 @@ const NspSerial *S
 <RETURNS>NspSerial *</RETURNS>
 const NspMatrix *A
 </FUNCTION>
-<TYPEDEF>
+<STRUCT>
 <NAME>NspGFrame</NAME>
-typedef struct _NspGframe NspGFrame;
-</TYPEDEF>
+</STRUCT>
 <STRUCT>
 <NAME>NspTypeGFrame</NAME>
 typedef struct _NspTypeGFrame { 
@@ -11483,11 +11468,11 @@ typedef struct _NspTypeGFrame {
 } NspTypeGFrame;
 </STRUCT>
 <STRUCT>
-<NAME>nsp_gframe</NAME>
+<NAME>nspgframe</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>nsp_gframe</NAME>
-struct _nsp_gframe {
+<NAME>nspgframe</NAME>
+struct _nspgframe {
   NspList *objs ;   /* Object of type list: list of internal objects */
   BCG *Xgc;         /* graphic context to ne used */
   double scale[4];  /* the scales */
@@ -11497,13 +11482,13 @@ struct _nsp_gframe {
 };
 </STRUCT>
 <STRUCT>
-<NAME>NspGframe</NAME>
-struct _NspGframe {
+<NAME>NspGFrame</NAME>
+struct _NspGFrame {
   /*< private >*/
   NspObject father; 
   NspTypeGFrame *type; 
   /*< public >*/
-  nsp_gframe *obj;
+  nspgframe *obj;
 };
 </STRUCT>
 <VARIABLE>
@@ -11549,32 +11534,32 @@ Stack stack, int i
 NspObject *O
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_create</NAME>
+<NAME>nsp_gframe_create</NAME>
 <RETURNS>NspGFrame *</RETURNS>
 char *name,BCG *Xgc,int init_objs,const double scale[],double r[],NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_draw</NAME>
+<NAME>nsp_gframe_draw</NAME>
 <RETURNS>void </RETURNS>
 NspGFrame *R
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_select_obj</NAME>
+<NAME>nsp_gframe_select_obj</NAME>
 <RETURNS>int </RETURNS>
 NspGFrame *R, const double *pt, NspObject **Objs,NspObject *exclude
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_select_lock</NAME>
+<NAME>nsp_gframe_select_lock</NAME>
 <RETURNS>int </RETURNS>
 NspGFrame *F,double pt[2], NspObject **O, int *cp, int *lock_c
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_select_and_move</NAME>
+<NAME>nsp_gframe_select_and_move</NAME>
 <RETURNS>int </RETURNS>
 NspGFrame *R, const double *pt
 </FUNCTION>
 <FUNCTION>
-<NAME>gframe_select_and_hilite</NAME>
+<NAME>nsp_gframe_select_and_hilite</NAME>
 <RETURNS>int </RETURNS>
 NspGFrame *R,const double pt[2]
 </FUNCTION>
@@ -11828,10 +11813,6 @@ extern function int_mxconcatd;
 <VARIABLE>
 <NAME>int_mxconcatdiag</NAME>
 extern function int_mxconcatdiag;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxconcatr</NAME>
-extern function int_mxconcatr;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxconcatr_mb</NAME>
