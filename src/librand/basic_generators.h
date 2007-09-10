@@ -44,7 +44,7 @@ extern int set_initial_seed_clcg4(double s[]);
 extern void advance_state_clcg4(int k);
 
 
-#endif /** SCI_BASIC_GEN   **/
+#endif /* SCI_BASIC_GEN  */
 
 
 
