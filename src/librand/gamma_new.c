@@ -18,17 +18,22 @@
  */
 
 
-/*    gamma generator as explained in "Marsaglia G and WW Tsang,
- *    A Simple Method for Generating Gamma Variables"
- *    ACM Transactions on math. Software, Vol 26, No 3, Sept 2000,
- *    pages 363-372"
- */
 
 #include "grand.h"
 #include <math.h>
 
-
-int init_rand_gamma(double a, GammaStruct *G)
+/**
+ * nsp_rand_gamma_init:
+ * @a:  parameter of the gamma distribution
+ * @G: a pointer to an allocated #GammaStruct
+ * 
+ * initialize the struct @G for random generation
+ * with nsp_rand_gamma 
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_gamma_init(double a, GammaStruct *G)
 {
   if ( ! ( a > 0.0 ) )
     return FAIL;
@@ -41,7 +46,24 @@ int init_rand_gamma(double a, GammaStruct *G)
   return OK;
 }
 
-double rand_gamma(GammaStruct *G)
+/**
+ * nsp_rand_gamma:
+ * @G: a pointer to an initialized #GammaStruct
+ * 
+ * generates a random number from G(a).@G must be
+ * initilized with nsp_rand_gamma_init. This routine 
+ * must be used when several gamma deviates of same
+ * fixed parameter are needed. Otherwise uses 
+ * nsp_rand_gamma_direct.
+ *
+ * method:see "Marsaglia G and WW Tsang, A Simple 
+ * Method for Generating Gamma Variables", ACM 
+ * Transactions on math. Software, Vol 26, No 3, 
+ * Sept 2000, pages 363-372"
+ *
+ * Returns a double
+ **/
+double nsp_rand_gamma(GammaStruct *G)
 {
   double x, x2, u, v, res;
 
@@ -49,7 +71,7 @@ double rand_gamma(GammaStruct *G)
     {
       do
 	{
-	  x = rand_nor_core();
+	  x = nsp_rand_nor_core();
 	  v = 1.0 + G->c*x;
 	}
       while ( v <= 0.0 );
@@ -68,10 +90,26 @@ double rand_gamma(GammaStruct *G)
   if ( G->a >= 1.0 )
     return res;
   else
-    return res * exp(-rand_exp_core()/G->a);
+    return res * exp(-nsp_rand_exp_core()/G->a);
 }
 
-double rand_gamma_direct(double a)
+
+/**
+ * nsp_rand_gamma_direct:
+ * @a: parameter of the gamma distribution
+ * 
+ * generates a random number from G(a). When several
+ * random deviates from G(a) are needed it is faster 
+ * to use nsp_rand_gamma.
+ *
+ * method:see "Marsaglia G and WW Tsang, A Simple 
+ * Method for Generating Gamma Variables", ACM 
+ * Transactions on math. Software, Vol 26, No 3, 
+ * Sept 2000, pages 363-372"
+ *
+ * Returns a double
+ **/
+double nsp_rand_gamma_direct(double a)
 {
   double aa, d, c, x, x2, u, v;
 
@@ -84,7 +122,7 @@ double rand_gamma_direct(double a)
     {
       do
 	{
-	  x = rand_nor_core();
+	  x = nsp_rand_nor_core();
 	  v = 1.0 + c*x;
 	}
       while ( v <= 0.0 );
@@ -102,65 +140,142 @@ double rand_gamma_direct(double a)
   if ( a >= 1.0 )
     return d*v;
   else
-    return d*v*exp(-rand_exp_core()/a);
+    return d*v*exp(-nsp_rand_exp_core()/a);
 }
 
-/*    
- * beta generator using the previous gamma generator
- * see Knuth TAOCP vol 2, 2d ed, p. 129
- */
 
-int init_rand_beta(double a, double b, BetaStruct *B)
+/**
+ * nsp_rand_beta_init:
+ * @a:  first parameter of the beta distribution
+ * @b:  second parameter of the beta distribution
+ * @B: a pointer to an allocated #BetaStruct
+ * 
+ * initialize the struct @B for random generation
+ * with nsp_rand_beta 
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_beta_init(double a, double b, BetaStruct *B)
 {
-  if ( init_rand_gamma(a, &(B->a)) == FAIL )
+  if ( nsp_rand_gamma_init(a, &(B->a)) == FAIL )
     return FAIL;
-  if ( init_rand_gamma(b, &(B->b)) == FAIL )
+  if ( nsp_rand_gamma_init(b, &(B->b)) == FAIL )
     return FAIL;
   return OK;
 }
 
-double rand_beta(BetaStruct *B)
+
+/**
+ * nsp_rand_beta:
+ * @B: a pointer to an initialized #BetaStruct
+ * 
+ * generates a random number from B(a,b).@B must be
+ * initilized with nsp_rand_beta_init. This routine 
+ * must be used when several gamma deviates with same
+ * fixed parameters are needed. Otherwise uses 
+ * nsp_rand_beta_direct.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 129
+ *
+ * Returns a double
+ **/
+double nsp_rand_beta(BetaStruct *B)
 {
   double x1, x2;
-  x1 = rand_gamma(&(B->a));
-  x2 = rand_gamma(&(B->b));
+  x1 = nsp_rand_gamma(&(B->a));
+  x2 = nsp_rand_gamma(&(B->b));
   return x1 / (x1 + x2);
 }
 
-double rand_beta_direct(double a, double b)
+/**
+ * nsp_rand_beta_direct:
+ * @a:  first parameter of the beta distribution
+ * @b:  second parameter of the beta distribution
+ * 
+ * generates a random number from B(a,b). When several
+ * random deviates from B(a,b) are needed, it is faster 
+ * to use nsp_rand_beta.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 129
+ *
+ * Returns a double
+ **/
+double nsp_rand_beta_direct(double a, double b)
 {
   double x1, x2;
-  x1 = rand_gamma_direct(a);
-  x2 = rand_gamma_direct(b);
+  x1 = nsp_rand_gamma_direct(a);
+  x2 = nsp_rand_gamma_direct(b);
   return x1 / (x1 + x2);
 }
 
-/*    
- * chi-square generator using the previous gamma generator
- * see Knuth TAOCP vol 2, 2d ed, p. 130
- */
-
-int init_rand_chi2(double nu, Chi2Struct *C)
+/**
+ * nsp_rand_chi2_init:
+ * @nu: parameter of the chi2 distribution (number of df)
+ * @C: a pointer to an allocated #Chi2Struct
+ * 
+ * initialize the struct @C for random generation
+ * with nsp_rand_chi2
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_chi2_init(double nu, Chi2Struct *C)
 {
   C->nu = nu;
-  return init_rand_gamma(0.5*nu, &(C->G));
+  return nsp_rand_gamma_init(0.5*nu, &(C->G));
 }
 
-double rand_chi2(Chi2Struct *C)
+/**
+ * nsp_rand_chi2:
+ * @C: a pointer to an initialized #Chi2Struct
+ * 
+ * generates a random number from chi square distribution.
+ * @C must be initilized with nsp_rand_chi2_init. This routine 
+ * must be used when several chi2 deviates with the same
+ * fixed parameter are needed. Otherwise uses 
+ * nsp_rand_chi2_direct.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 130
+ *
+ * Returns a double
+ **/
+double nsp_rand_chi2(Chi2Struct *C)
 {
-  return 2.0 * rand_gamma(&(C->G));
+  return 2.0 * nsp_rand_gamma(&(C->G));
 }
 
-double rand_chi2_direct(double nu)
+/**
+ * nsp_rand_chi2_direct:
+ * @nu: parameter of the chi2 distribution (number of df) 
+ * 
+ * generates a random number from chi square distribution.
+ * When several random deviates from chi2(nu) are needed, 
+ * it is faster to use nsp_rand_chi2.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 130
+ *
+ * Returns a double
+ **/
+double nsp_rand_chi2_direct(double nu)
 {
-  return 2.0 * rand_gamma_direct(0.5*nu);
+  return 2.0 * nsp_rand_gamma_direct(0.5*nu);
 }
 
-/*    
- * non central chi-square generator using the previous gamma generator
- */
 
-int init_rand_nc_chi2(double nu, double xnonc, NcChi2Struct *C)
+/**
+ * nsp_rand_ncchi2_init:
+ * @nu: first parameter of the non central chi2 distribution
+ * @xnonc: second parameter of the non central chi2 distribution
+ * @C: a pointer to an allocated #NcChi2Struct
+ * 
+ * initialize the struct @C for random generation
+ * with nsp_rand_ncchi2
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_ncchi2_init(double nu, double xnonc, NcChi2Struct *C)
 {
   if ( ! ( nu >= 1.0 && xnonc >= 0 ) )
     return FAIL;
@@ -168,113 +283,250 @@ int init_rand_nc_chi2(double nu, double xnonc, NcChi2Struct *C)
   C->xnonc = xnonc;
   C->sqrt_xnonc = sqrt(xnonc);
   if ( nu > 1.0 ) 
-    return init_rand_gamma(0.5*(nu-1.0), &(C->G));
+    return nsp_rand_gamma_init(0.5*(nu-1.0), &(C->G));
   else
     return OK;
 }
 
-double rand_nc_chi2(NcChi2Struct *C)
+
+/**
+ * nsp_rand_ncchi2:
+ * @C: a pointer to an initialized #NcChi2Struct
+ * 
+ * generates a random number from the non central chi square distribution.
+ * @C must be initilized with nsp_rand_ncchi2_init. This routine 
+ * must be used when several non central chi2 deviates with the same
+ * fixed parameter are needed. Otherwise uses 
+ * nsp_rand_ncchi2_direct.
+ *
+ * Returns a double
+ **/
+double nsp_rand_ncchi2(NcChi2Struct *C)
 {
   double Y;
-  Y = C->sqrt_xnonc + rand_nor_core();
+  Y = C->sqrt_xnonc + nsp_rand_nor_core();
   Y *= Y;
   if ( C->nu > 1.0 )
-    Y += 2.0 * rand_gamma(&(C->G));
+    Y += 2.0 * nsp_rand_gamma(&(C->G));
   return Y;
 }
 
-double rand_nc_chi2_direct(double nu, double xnonc)
+/**
+ * nsp_rand_ncchi2_direct:
+ * @nu: first parameter of the non central chi2 distribution
+ * @xnonc: second parameter of the non central chi2 distribution
+ * 
+ * generates a random number from the non central chi square distribution.
+ * When several non central chi2 deviates with the same
+ * fixed parameter are needed, it is faster to use nsp_rand_chi2.
+ *
+ * Returns a double
+ **/
+double nsp_rand_ncchi2_direct(double nu, double xnonc)
 {
   double Y;
-  Y = sqrt(xnonc) + rand_nor_core();
+  Y = sqrt(xnonc) + nsp_rand_nor_core();
   Y *= Y;
   if ( nu > 1.0 )
-    Y += 2.0 * rand_gamma_direct(0.5*(nu-1.0));
+    Y += 2.0 * nsp_rand_gamma_direct(0.5*(nu-1.0));
   return Y;
 }
 
 
-/*    
- * F (variance-ratio) generator using the previous gamma generator
- * see Knuth TAOCP vol 2, 2d ed, p. 130
- */
-
-int init_rand_F(double nu1, double nu2, FStruct *F)
+/**
+ * nsp_rand_F_init:
+ * @nu1: first parameter of the F distribution
+ * @nu2: second parameter of the F distribution
+ * @F: a pointer to an allocated #FStruct
+ * 
+ * initialize the struct @F for random generation
+ * with nsp_rand_F
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_F_init(double nu1, double nu2, FStruct *F)
 {
   F->nu1 = nu1;
   F->nu2 = nu2;
-  if ( init_rand_gamma(0.5*nu1, &(F->G1)) == FAIL )
+  if ( nsp_rand_gamma_init(0.5*nu1, &(F->G1)) == FAIL )
     return FAIL;
-  if ( init_rand_gamma(0.5*nu2, &(F->G2)) == FAIL )
-    return FAIL;
-  return OK;
-}
-
-double rand_F(FStruct *F)
-{
-  return F->nu2*rand_gamma(&(F->G1)) / (F->nu1*rand_gamma(&(F->G2)));
-}
-
-double rand_F_direct(double nu1, double nu2)
-{
-  return  nu2*rand_gamma_direct(0.5*nu1) / (nu1*rand_gamma_direct(0.5*nu2));
-}
-
-
-/*    
- * non central F (variance-ratio) generator
- * uses  (X/nu1)/(Y/nu2) where X is a non central chi2 variate (nu1 dof and xnonc)
- * and Y a chi2 variate (nu2 dof)
- */
-
-int init_rand_nc_F(double nu1, double nu2, double xnonc, NcFStruct *E)
-{
-  if ( init_rand_nc_chi2(nu1, xnonc, &(E->X)) == FAIL )
-    return FAIL;
-  if ( init_rand_chi2(nu2, &(E->Y)) == FAIL )
+  if ( nsp_rand_gamma_init(0.5*nu2, &(F->G2)) == FAIL )
     return FAIL;
   return OK;
 }
 
-double rand_nc_F(NcFStruct *E)
+/**
+ * nsp_rand_F:
+ * @F: a pointer to an initialized #FStruct
+ * 
+ * generates a random number from the F (variance-ratio) distribution.
+ * @F must be initilized with nsp_rand_F_init. This routine 
+ * must be used when several F deviates with the same
+ * fixed parameters are needed. Otherwise uses 
+ * nsp_rand_F_direct.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 130
+ *
+ * Returns a double
+ **/
+double nsp_rand_F(FStruct *F)
 {
-  return (E->Y.nu)*rand_nc_chi2(&(E->X)) / ((E->X.nu)*rand_chi2(&(E->Y)));
+  return F->nu2*nsp_rand_gamma(&(F->G1)) / (F->nu1*nsp_rand_gamma(&(F->G2)));
 }
 
-double rand_nc_F_direct(double nu1, double nu2, double xnonc)
+/**
+ * nsp_rand_F_direct:
+ * @nu1: first parameter of the F distribution
+ * @nu2: second parameter of the F distribution
+ * 
+ * generates a random number from the F (variance-ratio) 
+ * distribution of parameters nu1 and nu2..
+ * @F must be initilized with nsp_rand_F_init. 
+ * When several random deviates from the F distribution
+ * with the same fixed parameters are needed, 
+ * it is faster to use nsp_rand_F.
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 130
+ *
+ * Returns a double
+ **/
+double nsp_rand_F_direct(double nu1, double nu2)
 {
-  return  nu2*rand_nc_chi2_direct(nu1,xnonc) / (nu1*rand_chi2_direct(nu2));
+  return  nu2*nsp_rand_gamma_direct(0.5*nu1) / (nu1*nsp_rand_gamma_direct(0.5*nu2));
 }
 
 
-/*    
- * negative binomial generator using the previous gamma generator
- *     Algorithm from page 489 of Luc Devroye,
- *     Non-Uniform Random Variate Generation.  Springer-Verlag,
- *     New York, 1986.
- *     (available at the Luc Devroye 's home page :
- *      http://cg.scs.carleton.ca/~luc/rnbookindex.html)
- */
+/**
+ * nsp_rand_ncF_init:
+ * @nu1: first parameter of the non central F distribution
+ * @nu2: second parameter of the non central F distribution
+ * @xnonc: third parameter of the non central F distribution
+ * @E: a pointer to an allocated #NcFStruct
+ * 
+ * initialize the struct @E for random generation
+ * with nsp_rand_ncF
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_ncF_init(double nu1, double nu2, double xnonc, NcFStruct *E)
+{
+  if ( nsp_rand_ncchi2_init(nu1, xnonc, &(E->X)) == FAIL )
+    return FAIL;
+  if ( nsp_rand_chi2_init(nu2, &(E->Y)) == FAIL )
+    return FAIL;
+  return OK;
+}
 
-int init_rand_nbn(int n, double p, NbnStruct *N)
+/**
+ * nsp_rand_ncF:
+ * @E: a pointer to an initialized #NcFStruct
+ * 
+ * generates a random number from the non central F (variance-ratio) distribution.
+ * @E must be initilized with nsp_rand_ncF_init. This routine 
+ * must be used when several ncF deviates with the same
+ * fixed parameters are needed. Otherwise uses 
+ * nsp_rand_ncF_direct.
+ *
+ * method: uses  (X/nu1)/(Y/nu2) where X is a non central 
+ * chi2 variate (nu1 dof and xnonc) and Y a chi2 variate (nu2 dof)
+ *
+ * Returns a double
+ **/
+double nsp_rand_ncF(NcFStruct *E)
+{
+  return (E->Y.nu)*nsp_rand_ncchi2(&(E->X)) / ((E->X.nu)*nsp_rand_chi2(&(E->Y)));
+}
+
+/**
+ * nsp_rand_ncF_direct:
+ * @nu1: first parameter of the non central F distribution
+ * @nu2: second parameter of the non central F distribution
+ * 
+ * generates a random number from the non central F (variance-ratio) 
+ * distribution of parameters nu1, nu2 and xnonc
+ * When several random deviates from the ncF distribution
+ * with the same fixed parameters are needed, 
+ * it is faster to use nsp_rand_ncF.
+ *
+ * method: uses  (X/nu1)/(Y/nu2) where X is a non central 
+ * chi2 variate (nu1 dof and xnonc) and Y a chi2 variate (nu2 dof)
+ *
+ * Returns a double
+ **/
+double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc)
+{
+  return  nu2*nsp_rand_ncchi2_direct(nu1,xnonc) / (nu1*nsp_rand_chi2_direct(nu2));
+}
+
+
+/**
+ * nsp_rand_nbn_init:
+ * @n: first parameter of the distribution
+ * @p: second parameter of the distribution
+ * @N: a pointer to an allocated #NbnStruct
+ * 
+ * initialize the struct @N for random generation
+ * with nsp_rand_nbn
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_nbn_init(int n, double p, NbnStruct *N)
 {
   if ( ! ( 0 < n  &&  0.0 < p  &&  p <= 1.0 ) )
     return FAIL;
   N->n = n;
   N->p = p;
   N->coef = (1.0 - p)/p;
-  return init_rand_gamma((double) n, &(N->G));
+  return nsp_rand_gamma_init((double) n, &(N->G));
 }
 
-int rand_nbn(NbnStruct *N)
+/**
+ * nsp_rand_nbn:
+ * @N: a pointer to an initialized #NbnStruct
+ * 
+ * generates a random number from the negative binomial distribution.
+ * @N must be initilized with nsp_rand_nbn_init. This routine 
+ * must be used when several Nbn(n,p) deviates with the same
+ * fixed parameters n and p are needed. Otherwise uses 
+ * nsp_rand_nbn_direct.
+ *
+ * method: Algorithm from page 489 of Luc Devroye,
+ * Non-Uniform Random Variate Generation.  Springer-Verlag,
+ * New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns an int
+ **/
+int nsp_rand_nbn(NbnStruct *N)
 {
-  return poi_trd_direct( N->coef * rand_gamma(&(N->G)) );
+  return nsp_rand_poisson_direct( N->coef * nsp_rand_gamma(&(N->G)) );
 }
 
-int rand_nbn_direct(int n, double p)
+/**
+ * nsp_rand_nbn_direct:
+ * @n: first parameter of the negative binomial distribution
+ * @p: second parameter of the distribution
+ * 
+ * generates a random number from the negative binomial distribution.
+ * When several Nbn(n,p) random deviates with the same fixed parameters 
+ * n and p are needed, it is faster to use nsp_rand_nbn.
+ *
+ * method: Algorithm from page 489 of Luc Devroye,
+ * Non-Uniform Random Variate Generation.  Springer-Verlag,
+ * New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns an int
+ **/
+int nsp_rand_nbn_direct(int n, double p)
 {
   double Y;
-  Y = rand_gamma_direct((double) n)*(1.0-p)/p;
-  return poi_trd_direct(Y);
+  Y = nsp_rand_gamma_direct((double) n)*(1.0-p)/p;
+  return nsp_rand_poisson_direct(Y);
 }
 

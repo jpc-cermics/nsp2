@@ -17,11 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*   
- *   algorithm BTRD of Wolfgang Hormann, described in "The generation 
- *   of Binomial Random Variates", J. Statist. Comput. Simul., Vol 46, 
- *   pp. 101-110.
- */
 
 
 #include "grand.h"
@@ -49,7 +44,7 @@
  *  the different cut levels (114,32,15,10) have been computed with pari-gp
  *  to get 1e-16 relative accuracy (in exact arithmetic)
  */
-double stirling_error(int k)
+static double stirling_error(int k)
 {
   static const double stir_er[11] = {
     0.08106146679532725821967026361,
@@ -80,7 +75,19 @@ double stirling_error(int k)
     return C1/(N+ C2/(N + C3/( N + C4/( N + C5/N ))));
 }
 
-int init_rand_bin(int n, double p, BinomialStruct *B)
+/**
+ * nsp_rand_binomial_init:
+ * @n: first parameter of the binomial distribution (number of Bernoulli trials)
+ * @p: second parameter of the binomial distribution (probability of success of a Bernoulli event)
+ * @B: a pointer to an allocated #BinomialStruct
+ * 
+ * initialize the struct @B for random generation
+ * with nsp_rand_binomial
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_binomial_init(int n, double p, BinomialStruct *B)
 {
   double q;
 
@@ -122,7 +129,27 @@ int init_rand_bin(int n, double p, BinomialStruct *B)
   return OK;
 }
 
-int rand_bin(BinomialStruct *B)
+/**
+ * nsp_rand_binomial:
+ * @B: a pointer to an initialized #BinomialStruct
+ * 
+ * generates a random number from the binomial distribution.
+ * @B must be initilized with nsp_rand_binomial_init. This routine 
+ * must be used when several B(n,p) deviates with the same
+ * fixed parameters n and p are needed. Otherwise uses 
+ * nsp_rand_binomial_direct.
+ *
+ * method: for small mean n*p the code uses inv algorithm with
+ * partial recording of the cumulative probabilities
+ * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
+ * Wolfgang Hormann, "The generation of Binomial Random Variates", 
+ * J. Statist. Comput. Simul., Vol 46, pp. 101-110.
+ * see http://statmath.wu-wien.ac.at/papers/92-04-07.wh.ps
+ * to download the preprint paper.
+ *
+ * Returns an int
+ **/
+int nsp_rand_binomial(BinomialStruct *B)
 {
   int k, n = B->n;
   double u, p = B->p, r = B->r, f;
@@ -222,7 +249,24 @@ int rand_bin(BinomialStruct *B)
     return k;
 }
 
-int rand_bin_direct(int n, double p)
+/**
+ * nsp_rand_binomial_direct:
+ * @n: parameter of the binomial distribution
+ * 
+ * generates a random number from the binomial distribution.
+ * When several B(n,p) random deviates with the same fixed parameters 
+ * n and p are needed, it is faster to use nsp_rand_binomial.
+ *
+ * method: for small mean n*p the code uses inv algorithm
+ * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
+ * Wolfgang Hormann, "The generation of Binomial Random Variates", 
+ * J. Statist. Comput. Simul., Vol 46, pp. 101-110.
+ * see http://statmath.wu-wien.ac.at/papers/92-04-07.wh.ps
+ * to download the preprint paper.
+ *
+ * Returns an int
+ **/
+int nsp_rand_binomial_direct(int n, double p)
 {
   int flipped = p > 0.5;
   int k;

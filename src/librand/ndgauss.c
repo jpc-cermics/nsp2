@@ -21,9 +21,10 @@
 #include <math.h>
 
 /**
- * rand_ndgauss:
+ * nsp_rand_ndgauss:
  * @Mean: (input) a vector with @n components
- * @C: (input) @nx@n matrix (lower triangular factor of the covariance matrix)
+ * @C: (input) @nx@n matrix (lower triangular matrix of the Cholesky
+ *             factorization of the covariance matrix)
  * @res: (output) random vector generated
  * @n: dimension of the nd gaussian distribution
  *
@@ -35,7 +36,7 @@
  *              with n independant samples from N(0,1)
  * 
  **/
-void rand_ndgauss(double *Mean, double *C, double *res, int n)
+void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n)
 {
   int i, j;
   double *col, u;
@@ -49,7 +50,7 @@ void rand_ndgauss(double *Mean, double *C, double *res, int n)
    */
   for ( j = 0, col = C ; j < n ; j++, col+=n )
     {
-      u = rand_nor_core();
+      u = nsp_rand_nor_core();
       for ( i = j ; i < n ; i++ )
 	res[i] += col[i]*u;
     }

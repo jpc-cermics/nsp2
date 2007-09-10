@@ -39,9 +39,8 @@
 /* double logp1(double x); */
 static double lnp1m1(double);
 
-int init_rand_geom(double p, GeomStruct *G)
+int nsp_rand_geom_init(double p, GeomStruct *G)
 {
-
   if ( ! (1.3e-307 <= p && p <= 1 ) )
     return FAIL;
   G->p = p;
@@ -49,21 +48,21 @@ int init_rand_geom(double p, GeomStruct *G)
   return OK;
 }
  
-unsigned int rand_geom(GeomStruct *G)
+unsigned int nsp_rand_geom(GeomStruct *G)
 {
   if ( G->p == 1.0 )
     return 1;
   else
-    return (unsigned int) (1.0 - G->inv_ln_1_m_p * rand_exp_core());
+    return (unsigned int) (1.0 - G->inv_ln_1_m_p * nsp_rand_exp_core());
 }
 
  
-unsigned int rand_geom_direct(double p)
+unsigned int nsp_rand_geom_direct(double p)
 {
   if ( p == 1.0 )
     return 1;
   else
-    return (unsigned int) (1.0 -  rand_exp_core()/logp1(-p));
+    return (unsigned int) (1.0 -  nsp_rand_exp_core()/logp1(-p));
 }
 
 

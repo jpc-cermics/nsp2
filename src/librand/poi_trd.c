@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2006-2007 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,25 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*   
- *   Generation of poisson variates.
- *   For small parameter mu the code uses inv algorithm else
- *   it uses algorithm TRD of Wolfgang Hormann described in :
- *         W. Hörmann
- *         The transformed rejection method for generating Poisson random variables
- *         Insurance: Mathematics and Economics 12, 39-45 (1993)
- *
- *   see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
- *   to download the preprint paper.
- *
- *   There are 2 versions : 
- *     1/ poi_trd which is taylored in case of successive calls
- *        with the same parameter mu. You must first init a struct
- *        with the init_poi_trd routine
- *     2/ poi_trd_direct for successive calls with different parameters
- */
-
-
 #include "grand.h"
 #include <math.h>
 
@@ -43,7 +24,19 @@
 #define LOG_SQRT_2PI 0.9189385332046727417803297363
 static double logfact[10] = {1., 1., 2., 6., 24., 120., 720., 5040., 40320., 362880.};
 
-int init_poi_trd(double mu, PoissonStruct *P)
+
+/**
+ * nsp_rand_poisson_init:
+ * @mu: parameter of the Poisson distribution
+ * @P: a pointer to an allocated #PoissonStruct
+ * 
+ * initialize the struct @P for random generation
+ * with nsp_rand_poisson
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_poisson_init(double mu, PoissonStruct *P)
 {
   if ( mu < 0.0 ) 
     return FAIL;
@@ -69,7 +62,28 @@ int init_poi_trd(double mu, PoissonStruct *P)
   return OK;
 }
 
-int poi_trd(PoissonStruct *P)
+/**
+ * nsp_rand_poisson:
+ * @P: a pointer to an initialized #PoissonStruct
+ * 
+ * generates a random number from the Poisson distribution.
+ * @P must be initilized with nsp_rand_poisson_init. This routine 
+ * must be used when several P(mu) deviates with the same
+ * fixed parameter mu are needed. Otherwise uses 
+ * nsp_rand_poisson_direct.
+ *
+ * method: for small parameter mu the code uses inv algorithm with
+ * partial recording of the cumulative probabilities
+ * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
+ * W. Hörmann, "The transformed rejection method for generating 
+ * Poisson random variables", Insurance: Mathematics and Economics 
+ * 12, 39-45 (1993)
+ * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
+ * to download the preprint paper.
+ *
+ * Returns an int
+ **/
+int nsp_rand_poisson(PoissonStruct *P)
 {
   unsigned int k;
   double f, pc, u, v, k_real, us;
@@ -141,7 +155,25 @@ int poi_trd(PoissonStruct *P)
 }
 
 
-int poi_trd_direct(double mu)
+/**
+ * nsp_rand_poisson_direct:
+ * @mu: parameter of the Poisson distribution
+ * 
+ * generates a random number from the Poisson distribution.
+ * When several P(mu) random deviates with the same fixed parameter 
+ * mu are needed, it is faster to use nsp_rand_poisson.
+ *
+ * method: for small parameter mu the code uses inv algorithm
+ * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
+ * W. Hörmann, "The transformed rejection method for generating 
+ * Poisson random variables", Insurance: Mathematics and Economics 
+ * 12, 39-45 (1993)
+ * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
+ * to download the preprint paper.
+ *
+ * Returns an int
+ **/
+int nsp_rand_poisson_direct(double mu)
 {
   int k;
   double s, p, u, v, us, smu, a, b, invalpha, vr, k_real;

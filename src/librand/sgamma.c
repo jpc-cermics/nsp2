@@ -185,7 +185,7 @@ double rand_sgamma (double a)
   /*               T=(B,SI)-DOUBLE EXPONENTIAL (LAPLACE) SAMPLE */
 
  L70:
-  e = rand_exp_core ();
+  e = rand_sexpo ();
   u = rand_ranf ();
   u = u + u - 1.;
   d__1 = si * e;
@@ -278,14 +278,14 @@ double rand_sgamma (double a)
       goto L150;
     }
   ret_val = exp (log (p) / a);
-  if (rand_exp_core () < ret_val)
+  if (rand_sexpo () < ret_val)
     {
       goto L140;
     }
   return ret_val;
  L150:
   ret_val = -log ((b0 - p) / a);
-  if (rand_exp_core () < (1. - a) * log (ret_val))
+  if (rand_sexpo () < (1. - a) * log (ret_val))
     {
       goto L140;
     }

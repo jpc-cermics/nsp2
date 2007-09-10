@@ -572,7 +572,7 @@ static int int_mn_part(Stack stack, int rhs, int opt, int lhs, int suite, int Re
   
   /* generation */
   for ( i=0 ; i < nn ; i++) 
-    rand_ndgauss(Mean->R, Cov->R, Res->R + m*i, m);
+    nsp_rand_ndgauss(Mean->R, Cov->R, Res->R + m*i, m);
   
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
@@ -681,7 +681,6 @@ static int int_mul_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 
 static int int_bet_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
-  BetaStruct Bet;
   NspMatrix *M, *A, *B;
   int i, ia, ib, inca, incb;
   if ( rhs != suite + 1) 
@@ -697,9 +696,10 @@ static int int_bet_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 
   if ( A->mn == 1  &&  B->mn == 1 )  /* fixed parameter(s) case */
     {
+      BetaStruct Bet;
       ia = 0; ib = 0;
-      if ( init_rand_beta(A->R[0], B->R[0], &Bet) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_beta(&Bet);
+      if ( nsp_rand_beta_init(A->R[0], B->R[0], &Bet) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_beta(&Bet);
     }
   else                               /* varying parameter(s) case */
     {
@@ -707,15 +707,15 @@ static int int_bet_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       incb = B->mn == 1 ? 0 : 1;
       for ( i=0, ia=0, ib=0 ; i < M->mn ; i++, ia+=inca, ib+=incb) 
 	{
-	  if ( init_rand_beta(A->R[ia], B->R[ib], &Bet) == FAIL ) goto err;
-	  M->R[i]= rand_beta(&Bet);
+	  if ( ! (A->R[ia] > 0.0  &&  B->R[ib] > 0.0) ) goto err;
+	  nsp_rand_beta_direct(A->R[ia], B->R[ib]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
   return 1;
   
  err:
-  Scierror("Error: grand(..'beta',a,b) : a (=%g) or b (=%g) <= 0 \n",A->R[ia], B->R[ib]); 
+  Scierror("Error: grand(..'bet',a,b) : a (=%g) or b (=%g) <= 0 \n",A->R[ia], B->R[ib]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -739,8 +739,8 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs, int suite, int Res
   if ( nu1->mn == 1  &&  nu2->mn == 1 )  /* fixed parameter(s) case */
     {
       i1 = 0; i2 = 0;
-      if ( init_rand_F(nu1->R[0], nu2->R[0], &F) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_F(&F);
+      if ( nsp_rand_F_init(nu1->R[0], nu2->R[0], &F) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_F(&F);
     }
   else                                   /* varying parameter(s) case */
     {
@@ -749,7 +749,7 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs, int suite, int Res
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
 	  if ( ! (nu1->R[i1] > 0.0 && nu2->R[i2] > 0.0) ) goto err;
-	  M->R[i]= rand_F_direct(nu1->R[i1],nu2->R[i2]);
+	  M->R[i]= nsp_rand_F_direct(nu1->R[i1],nu2->R[i2]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -780,16 +780,16 @@ static int int_gam_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   if ( A->mn == 1 )  /* first parameter is fixed */
     {
       i = 0;
-      if ( init_rand_gamma(A->R[0], &G) == FAIL ) goto err;
+      if ( nsp_rand_gamma_init(A->R[0], &G) == FAIL ) goto err;
       if ( B->mn == 1 )
 	{
 	  double coef = 1.0/B->R[0];
 	  for ( i=0 ; i < M->mn ; i++) 
-	    M->R[i]= coef * rand_gamma(&G);
+	    M->R[i]= coef * nsp_rand_gamma(&G);
 	}
       else
 	for ( i=0 ; i < M->mn ; i++) 
-	  M->R[i]= rand_gamma(&G) / B->R[i];
+	  M->R[i]= nsp_rand_gamma(&G) / B->R[i];
     }
   else               /* first parameter is varying */      
     {
@@ -799,14 +799,14 @@ static int int_gam_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 	  for ( i=0 ; i < M->mn ; i++) 
 	    {
 	      if ( ! (A->R[i] > 0.0 ) ) goto err;
-	      M->R[i]= coef * rand_gamma_direct(A->R[i]);
+	      M->R[i]= coef * nsp_rand_gamma_direct(A->R[i]);
 	    }
 	}
       else
 	for ( i=0 ; i < M->mn ; i++) 
 	  {
 	    if ( ! (A->R[i] > 0.0 ) ) goto err;
-	    M->R[i]= rand_gamma_direct(A->R[i]) / B->R[i];
+	    M->R[i]= nsp_rand_gamma_direct(A->R[i]) / B->R[i];
 	  }
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -839,7 +839,7 @@ static int int_nor_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       i1 = i2 = 0;
       if ( s < 0.0 ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i] = m + s*rand_nor_core(); 
+	M->R[i] = m + s*nsp_rand_nor_core(); 
     }
   else                                        /* varying parameter(s) case */
     {
@@ -848,7 +848,7 @@ static int int_nor_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
 	  if (  sigma->R[i2] < 0.0 ) goto err;
-	  M->R[i] = mu->R[i1] + sigma->R[i2] * rand_nor_core();
+	  M->R[i] = mu->R[i1] + sigma->R[i2] * nsp_rand_nor_core();
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -1003,8 +1003,8 @@ static int int_nch_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
     {
       NcChi2Struct C;
       i1 = i2 = 0;
-      if ( init_rand_nc_chi2(nu->R[0], xnonc->R[0], &C) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_nc_chi2(&C);
+      if ( nsp_rand_ncchi2_init(nu->R[0], xnonc->R[0], &C) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_ncchi2(&C);
     }
   else                                   /* varying parameter(s) case */
     {
@@ -1013,7 +1013,7 @@ static int int_nch_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
 	  if ( ! (nu->R[i1] >= 1.0  &&  xnonc->R[i2] >= 0.0) ) goto err;
-	  M->R[i] = rand_nc_chi2_direct(nu->R[i1], xnonc->R[i2]);
+	  M->R[i] = nsp_rand_ncchi2_direct(nu->R[i1], xnonc->R[i2]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -1047,8 +1047,8 @@ static int int_nf_part(Stack stack, int rhs, int opt, int lhs, int suite, int Re
     {
       NcFStruct E;
       i1 = i2 = i3 = 0;
-      if ( init_rand_nc_F(nu1->R[0], nu2->R[0], xnonc->R[0], &E) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_nc_F(&E);
+      if ( nsp_rand_ncF_init(nu1->R[0], nu2->R[0], xnonc->R[0], &E) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_ncF(&E);
     }
   else                                                         /* varying parameter(s) case */
     {
@@ -1058,7 +1058,7 @@ static int int_nf_part(Stack stack, int rhs, int opt, int lhs, int suite, int Re
       for ( i=0, i1=0, i2=0, i3=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2, i3+=inc3) 
 	{
 	  if ( ! (nu1->R[i1] >= 1.0  &&  nu2->R[i2] > 0.0 && xnonc->R[i3] >= 0.0) ) goto err;
-	  M->R[i] = rand_nc_F_direct(nu1->R[i1], nu2->R[i2], xnonc->R[i3]);
+	  M->R[i] = nsp_rand_ncF_direct(nu1->R[i1], nu2->R[i2], xnonc->R[i3]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -1086,15 +1086,15 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   if ( nu->mn == 1 )  /* fixed parameter case */
     {
       Chi2Struct C;
-      if ( init_rand_chi2(nu->R[0], &C) == FAIL ) goto err;
+      if ( nsp_rand_chi2_init(nu->R[0], &C) == FAIL ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i]= rand_chi2(&C);
+	M->R[i]= nsp_rand_chi2(&C);
     }
   else               /* varying parameter case */      
     for ( i=0 ; i < M->mn ; i++) 
       {
 	if ( ! (nu->R[i] > 0) ) goto err;
-	M->R[i]= rand_chi2_direct(nu->R[i]);
+	M->R[i]= nsp_rand_chi2_direct(nu->R[i]);
       }
   
   MoveObj(stack,1,(NspObject *) M);
@@ -1122,15 +1122,15 @@ static int int_poi_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
     {
       PoissonStruct P;
       i = 0;
-      if ( init_poi_trd(mu->R[0], &P) == FAIL ) goto err;
+      if ( nsp_rand_poisson_init(mu->R[0], &P) == FAIL ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i]= poi_trd(&P);
+	M->R[i]= nsp_rand_poisson(&P);
     }
   else               /* varying parameter case */      
     for ( i=0 ; i < M->mn ; i++) 
       {
 	if ( mu->R[i] < 0.0 ) goto err;
-	M->R[i]= poi_trd_direct(mu->R[i]);
+	M->R[i]= nsp_rand_poisson_direct(mu->R[i]);
       }
   
   MoveObj(stack,1,(NspObject *) M);
@@ -1157,15 +1157,15 @@ static int int_geom_part(Stack stack, int rhs, int opt, int lhs, int suite, int 
   if ( p->mn == 1 )  /* fixed parameter case */
     {
       GeomStruct G;
-      if ( init_rand_geom(p->R[0], &G) == FAIL ) goto err;
+      if ( nsp_rand_geom_init(p->R[0], &G) == FAIL ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i]= (double) rand_geom(&G);
+	M->R[i]= (double) nsp_rand_geom(&G);
     }
   else               /* varying parameter case */      
     for ( i=0 ; i < M->mn ; i++) 
       {
 	if ( ! (1.3e-307 <= p->R[i]  &&  p->R[i] <= 1) ) goto err;
-	M->R[i]= (double) rand_geom_direct(p->R[i]);
+	M->R[i]= (double) nsp_rand_geom_direct(p->R[i]);
       }
   
   MoveObj(stack,1,(NspObject *) M);
@@ -1194,13 +1194,13 @@ static int int_exp_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       i = 0;
       if ( ! (A->R[0] >= 0.0) ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i]= rand_exp(A->R[0]);
+	M->R[i]= nsp_rand_exp(A->R[0]);
     }
   else               /* varying parameter case */      
     for ( i=0 ; i < M->mn ; i++) 
       {
 	if ( ! (A->R[i] >= 0.0) ) goto err;
-	M->R[i]= rand_exp(A->R[i]);
+	M->R[i]= nsp_rand_exp(A->R[i]);
       }
 
   MoveObj(stack,1,(NspObject *) M);
@@ -1231,8 +1231,8 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
     {
       NbnStruct N;
       i1 = i2 = 0;
-      if ( init_rand_nbn((int) n->R[0], p->R[0], &N) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i]= rand_nbn(&N);
+      if ( nsp_rand_nbn_init((int) n->R[0], p->R[0], &N) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_nbn(&N);
     }
   else                                   /* varying parameter(s) case */
     {
@@ -1241,7 +1241,7 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
 	  if ( ! (((int) n->R[i1]) > 0.0 && 0 < p->R[i2] && p->R[i2] <= 1.0) ) goto err;
-	  M->R[i]= rand_nbn_direct((int) n->R[i1], p->R[i2]);
+	  M->R[i]= nsp_rand_nbn_direct((int) n->R[i1], p->R[i2]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -1272,8 +1272,8 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
     {
       BinomialStruct B;
       i1 = i2 = 0;
-      if ( init_rand_bin((int) N->R[0], p->R[0], &B) == FAIL ) goto err;
-      for ( i=0 ; i < M->mn ; i++) M->R[i] = (double) rand_bin(&B);
+      if ( nsp_rand_binomial_init((int) N->R[0], p->R[0], &B) == FAIL ) goto err;
+      for ( i=0 ; i < M->mn ; i++) M->R[i] = (double) nsp_rand_binomial(&B);
     }
   else                                   /* varying parameter(s) case */
     {
@@ -1282,7 +1282,7 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
 	  if ( ! ((int) N->R[i1] >= 1  &&  0.0 <= p->R[i2] && p->R[i2] <= 1.0) ) goto err;
-	  M->R[i] = rand_bin_direct((int) N->R[i1], p->R[i2]);
+	  M->R[i] = nsp_rand_binomial_direct((int) N->R[i1], p->R[i2]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -1662,7 +1662,7 @@ static int int_nsp_randn(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   for ( k = 0 ; k < A->mn ; k++ )
-    A->R[k] = rand_nor_core();
+    A->R[k] = nsp_rand_nor_core();
 
   MoveObj(stack,1,(NspObject *) A);
   return 1;

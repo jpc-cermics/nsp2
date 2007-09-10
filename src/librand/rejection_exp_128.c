@@ -17,19 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*    rejection ziggurat method for the exponential distribution
- *    as explained in "Marsaglia G and WW Tsang,The Ziggurat 
- *    Method for Generating Random Variables
- *    Journal of Statistical Software, vol. 5 (2000), no. 8"
- *    (this paper together with a C implementation is available 
- *    at http://www.jstatsoft.org/v05/i08/)
- *
- *    Our implementation uses 128 rectangles and the current "base"
- *    generator of Nsp (which can be mt, kiss, clcg4, clcg2, fsultra
- *    and urand). The constants (x_k and y_k values) have been 
- *    calculated with the pari-gp software.
- */
-
 #include "grand.h"
 #include <math.h>
 
@@ -105,7 +92,27 @@ const double rej_exp_y[128]={
   0.00487233313651831522,0.00346489667612250272,0.00216530760995327540,0.00100948486124341257
 };
 
-double rand_exp_core()
+/**
+ * nsp_rand_exp_core:
+ *
+ * generates a random number from E(1), the exponential distribution
+ * of parameter 1.
+ *
+ * Method: rejection ziggurat method for the exponential distribution
+ * as explained in "Marsaglia G and WW Tsang,The Ziggurat 
+ * Method for Generating Random Variables
+ * Journal of Statistical Software, vol. 5 (2000), no. 8"
+ * (this paper together with a C implementation is available 
+ *  at http://www.jstatsoft.org/v05/i08/)
+ *
+ * Our implementation uses 128 rectangles and the current "base"
+ * generator of Nsp (mt, kiss, clcg4, clcg2, fsultra, ...)
+ * The constants (x_k and y_k values) have been calculated with 
+ * the pari-gp software.
+ *
+ * Returns a double
+ */
+double nsp_rand_exp_core()
 {
   int k;
   double u, y;
@@ -137,7 +144,15 @@ double rand_exp_core()
     }
 }
 
-double rand_exp(double tau)
+/**
+ * nsp_rand_exp:
+ * @tau: parameter of the exponential distribution
+ * generates a random number from E(tau), the exponential distribution
+ * of parameter tau.
+ *
+ * Returns a double
+ */
+double nsp_rand_exp(double tau)
 {
-  return tau*rand_exp_core();
+  return tau*nsp_rand_exp_core();
 }

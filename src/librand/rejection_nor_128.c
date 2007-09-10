@@ -17,19 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*    rejection ziggurat method for the normal distribution
- *    as explained in "Marsaglia G and WW Tsang,The Ziggurat 
- *    Method for Generating Random Variables
- *    Journal of Statistical Software, vol. 5 (2000), no. 8"
- *    (this paper together with a C implementation is available 
- *    at http://www.jstatsoft.org/v05/i08/)
- *
- *    Our implementation uses 128 rectangles and the current "base"
- *    generator of Nsp (which can be mt, kiss, clcg4, clcg2, fsultra
- *    and urand). The constants (x_k and y_k values) have been 
- *    calculated with the pari-gp software.
- */
-
 #include "grand.h"
 #include <math.h>
 
@@ -104,7 +91,27 @@ double rej_nor_y[128]={
   0.00472326861457955805,0.00344067147898109344,0.00221372880732917423,0.00106502791455805240
 };
 
-double rand_nor_core()
+/**
+ * nsp_rand_nor_core:
+ *
+ * generates a random number from N(0,1), the normal distribution
+ * of mean 0 and standard deviation 1.
+ *
+ * Method: rejection ziggurat method for the exponential distribution
+ * as explained in "Marsaglia G and WW Tsang,The Ziggurat 
+ * Method for Generating Random Variables
+ * Journal of Statistical Software, vol. 5 (2000), no. 8"
+ * (this paper together with a C implementation is available 
+ *  at http://www.jstatsoft.org/v05/i08/)
+ *
+ * Our implementation uses 128 rectangles and the current "base"
+ * generator of Nsp (mt, kiss, clcg4, clcg2, fsultra, ...)
+ * The constants (x_k and y_k values) have been calculated with 
+ * the pari-gp software.
+ *
+ * Returns a double
+ */
+double nsp_rand_nor_core()
 {
   int k, positif;
   double u, v, y;
@@ -156,7 +163,16 @@ double rand_nor_core()
     return -u;
 }
 
-double rand_nor(double mu, double sigma)
+
+/**
+ * nsp_rand_nor:
+ * @mu: first parameter of the normal distribution (mean)
+ * @sigma: second parameter of the normal distribution (standard deviation)
+ * generates a random number from N(mu,sigma).
+ *
+ * Returns a double
+ */
+double nsp_rand_nor(double mu, double sigma)
 {
-  return mu + sigma*rand_nor_core();
+  return mu + sigma*nsp_rand_nor_core();
 }

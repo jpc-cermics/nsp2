@@ -245,7 +245,7 @@ void nsp_rand_multinomial2(double *p, int *ix, int ncat, int n)
   double ptot = 1;
   for ( i = 0 ; i < ncat-1 ; i++ )
     {
-      ix[i] = rand_bin_direct(n,p[i]/ptot);
+      ix[i] = nsp_rand_binomial_direct(n,p[i]/ptot);
       n -= ix[i];
       if ( n == 0 )
 	{
