@@ -29,6 +29,13 @@
 #include "grand.h"
 #include "basic_generators.h"
 
+
+/* header for clcg2 */
+static unsigned long clcg2();
+static int set_state_clcg2(double g[]);
+static int set_state_clcg2_simple(double g);
+static void get_state_clcg2(double g[]);
+
 NspRandomGen Clcg2 = { CLCG2 , clcg2, "clcg2", 2, 
 		       2147483561ul,
 		       4.6566130595601735e-10,
@@ -40,7 +47,7 @@ NspRandomGen Clcg2 = { CLCG2 , clcg2, "clcg2", 2,
 static long s1 = 1234567890 ;
 static long s2 = 123456789  ;
 
-unsigned long clcg2()
+static unsigned long clcg2()
 {
   register long k,z;
 
@@ -70,7 +77,7 @@ unsigned long clcg2()
   return( (unsigned long) z );
 }
 
-int set_state_clcg2(double g[])
+static int set_state_clcg2(double g[])
 {
   
   if ( g[0] == floor(g[0]) && g[1] == floor(g[1])  && 
@@ -88,7 +95,9 @@ int set_state_clcg2(double g[])
       return FAIL;
     }
 }
-int set_state_clcg2_simple(double seed)
+
+
+static int set_state_clcg2_simple(double seed)
 {
   unsigned long s_test;
   
@@ -112,7 +121,7 @@ int set_state_clcg2_simple(double seed)
   return OK;
 }
 
-void get_state_clcg2(double g[])
+static void get_state_clcg2(double g[])
 {
   g[0] = (double) s1;
   g[1] = (double) s2;

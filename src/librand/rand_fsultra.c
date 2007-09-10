@@ -61,6 +61,13 @@
 #include "grand.h"
 #include "basic_generators.h"
 
+
+/* header for fsultra */
+static unsigned long fsultra();
+static int set_state_fsultra(double g[]);
+static int set_state_fsultra_simple(double g);
+static void get_state_fsultra(double g[]);
+
 NspRandomGen Fsultra = { FSULTRA , fsultra, "fsultra", 40, 
 			 4294967295ul,
 			 2.3283064365386963e-10,
@@ -121,7 +128,7 @@ static void advance_state_swb()
   swb_index = 0;
 }
 
-unsigned long fsultra()
+static unsigned long fsultra()
 {
   if (swb_index >= N)  /* generate N words at one time */
     { 
@@ -155,7 +162,7 @@ unsigned long fsultra()
    on s1).
 */
 
-int set_state_fsultra_simple(double s1)
+static int set_state_fsultra_simple(double s1)
 { 
   unsigned long shrgx, tidbits=0;
   int i, j;
@@ -186,7 +193,7 @@ int set_state_fsultra_simple(double s1)
   return OK;
 }
 
-int set_state_fsultra(double *s)
+static int set_state_fsultra(double *s)
 { 
   double try;
   int i;
@@ -225,7 +232,7 @@ int set_state_fsultra(double *s)
 
 
 /*  to return the state at the nsp level  */
-void get_state_fsultra(double s[])
+static void get_state_fsultra(double s[])
 {
   int i;
 

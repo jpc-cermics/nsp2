@@ -60,6 +60,11 @@
 #include "grand.h"
 #include "basic_generators.h"
 
+static unsigned long clcg4();
+static int set_state_clcg4(double s[]);
+static int set_state_clcg4_simple(double s0);
+static void get_state_clcg4(double s[]);
+
 NspRandomGen Clcg4 = { CLCG4 , clcg4, "clcg4", 4, 
 		       2147483646ul,
 		       4.6566128752457969e-10,
@@ -199,7 +204,7 @@ static int four_seed_from_one(double seed, long s[])
 /*---------------------------------------------------------------------*/
 
 
-int set_state_clcg4(double *s)
+static int set_state_clcg4(double *s)
 {
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
 
@@ -220,7 +225,7 @@ int set_state_clcg4(double *s)
     }
 }
 
-int set_state_clcg4_simple(double s0)
+static int set_state_clcg4_simple(double s0)
 {
   long s[4];
 
@@ -254,7 +259,7 @@ int set_current_clcg4(int new_clcg4_gen)
   return OK;
 }
 
-void get_state_clcg4(double *s)
+static void get_state_clcg4(double *s)
 {
   int j;
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
@@ -329,7 +334,7 @@ int set_initial_seed_clcg4(double *s)
   return OK;
 }
 
-unsigned long clcg4()
+static unsigned long clcg4()
 {
   /* Modif Bruno : the generator have now the form (1) in place of (2) */
 

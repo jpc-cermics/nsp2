@@ -19,6 +19,12 @@
 #include "grand.h"
 #include "basic_generators.h"
 
+/* header for the well1024a */
+static unsigned long well1024a();
+static int set_state_well1024a_simple(double s);
+static int set_state_well1024a(double seed_array[]);
+static void get_state_well1024a(double state[]);
+
 NspRandomGen Well1024a = { WELL1024A , well1024a, "well1024a", 33, 
 			   4294967295ul,
 			   2.3283064365386963e-10,
@@ -51,7 +57,7 @@ static int is_init=0;
 static double DEFAULT_SEED=2006.0;
 
 
-int set_state_well1024a(double seed_array[])
+static int set_state_well1024a(double seed_array[])
 {
   int i, state_i_try;
 
@@ -68,7 +74,7 @@ int set_state_well1024a(double seed_array[])
   return OK;
 }
 
-int set_state_well1024a_simple(double s)
+static int set_state_well1024a_simple(double s)
 {
   /*   set the initial state with the same procedure than for the *
    *   mersenne-twister (see rand_mt.c)                           */
@@ -95,7 +101,7 @@ int set_state_well1024a_simple(double s)
     }
 }
 
-void get_state_well1024a(double state[])
+static void get_state_well1024a(double state[])
 {
   int i;
 
@@ -107,7 +113,7 @@ void get_state_well1024a(double state[])
     state[i+1] = (double) STATE[i];
 }
 
-unsigned long well1024a (void)
+static unsigned long well1024a (void)
 {
 
   if ( ! is_init )
