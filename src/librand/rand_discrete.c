@@ -158,7 +158,8 @@ int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
    * components, the last one being supposed to be 1- sum_k p_k
    */
   int i, j, k;
-  double tol = n*DBL_EPSILON, lim;
+  double  lim;
+  /* double tol = n*DBL_EPSILON*/
 
   /* compute cumulative probabilities q[i] with some verifications */
   q[0] = 0.0;
