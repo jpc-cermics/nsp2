@@ -42,7 +42,7 @@ unsigned long int (*current_gen)() = randmt;
 /* the current factor (avoid an indirection) */
 static double current_factor = 2.3283064365386963e-10;
 
-/* the current factor (avoid an indirection) */
+/* the current max int (avoid an indirection) */
 static long unsigned current_max_int = 4294967295ul;
 
 /* an auxiliary generator only used ... */

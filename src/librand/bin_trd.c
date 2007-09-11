@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-
 #include "grand.h"
 #include <math.h>
 
@@ -82,7 +80,7 @@ static double stirling_error(int k)
  * @B: a pointer to an allocated #BinomialStruct
  * 
  * initialize the struct @B for random generation
- * with nsp_rand_binomial
+ * with #nsp_rand_binomial
  *
  * Returns %OK or %FAIL
  *
@@ -134,10 +132,10 @@ int nsp_rand_binomial_init(int n, double p, BinomialStruct *B)
  * @B: a pointer to an initialized #BinomialStruct
  * 
  * generates a random number from the binomial distribution.
- * @B must be initilized with nsp_rand_binomial_init. This routine 
+ * @B must be initilized with nsp_#nsp_rand_binomial_init. This routine 
  * must be used when several B(n,p) deviates with the same
  * fixed parameters n and p are needed. Otherwise uses 
- * nsp_rand_binomial_direct.
+ * #nsp_rand_binomial_direct.
  *
  * method: for small mean n*p the code uses inv algorithm with
  * partial recording of the cumulative probabilities
@@ -251,11 +249,12 @@ int nsp_rand_binomial(BinomialStruct *B)
 
 /**
  * nsp_rand_binomial_direct:
- * @n: parameter of the binomial distribution
+ * @n: first parameter of the binomial distribution
+ * @p: second parameter of the binomial distribution
  * 
  * generates a random number from the binomial distribution.
  * When several B(n,p) random deviates with the same fixed parameters 
- * n and p are needed, it is faster to use nsp_rand_binomial.
+ * n and p are needed, it is faster to use #nsp_rand_binomial.
  *
  * method: for small mean n*p the code uses inv algorithm
  * otherwise it uses algorithm TRD of Wolfgang Hormann described in :

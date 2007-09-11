@@ -1177,6 +1177,39 @@ static int int_geom_part(Stack stack, int rhs, int opt, int lhs, int suite, int 
   return RET_BUG;
 }
 
+static int int_disc_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *Res, *p;
+  double *q=NULL;
+  int n, *key=NULL;
+  if ( rhs != suite ) 
+    { Scierror("Error: 1 parameter required for 'disc' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+
+  if ( (p = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),suite,p);
+  n = p->mn;
+
+  if ( (Res = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( (q = nsp_alloc_work_doubles(n+1)) == NULL  ||  (key = nsp_alloc_work_int(n+1)) == NULL )
+    goto err;
+
+  if ( nsp_rand_discrete(p->R, q, Res->R, key, n, Res->mn) == FAIL )
+    {
+      Scierror("Error: grand(..'disc',p), bad probability vector p\n");
+      goto err;
+    }
+
+  FREE(q); FREE(key);
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+
+ err:
+  FREE(q); FREE(key);
+  nsp_matrix_destroy(Res);
+  return RET_BUG;
+}
+
 static int int_exp_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   NspMatrix *M, *A;
@@ -1622,6 +1655,9 @@ static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"exp")==0)
     return int_exp_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"disc")==0)
+    return int_disc_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {

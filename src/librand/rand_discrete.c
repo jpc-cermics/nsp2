@@ -228,6 +228,19 @@ int nsp_rand_discrete_guide(double *q, int *key, int n)
   return X;
 }
 
+int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n, int mn)
+{
+  int i;
+
+  if ( nsp_guide_table_method(p, 1, q, key, n) == FAIL ) 
+    return FAIL;
+  
+  for ( i = 0 ; i < mn ; i++ )
+    Res[i] = 1.0 + (double) nsp_rand_discrete_guide(q, key, n);
+
+  return OK;
+}
+
 /* multinomial distribution for n not too big compared to ncat */
 void nsp_rand_multinomial1(double *q, int *key, int *ix, int ncat, int n)
 {

@@ -31,7 +31,7 @@ static double logfact[10] = {1., 1., 2., 6., 24., 120., 720., 5040., 40320., 362
  * @P: a pointer to an allocated #PoissonStruct
  * 
  * initialize the struct @P for random generation
- * with nsp_rand_poisson
+ * with #nsp_rand_poisson
  *
  * Returns %OK or %FAIL
  *
@@ -67,15 +67,15 @@ int nsp_rand_poisson_init(double mu, PoissonStruct *P)
  * @P: a pointer to an initialized #PoissonStruct
  * 
  * generates a random number from the Poisson distribution.
- * @P must be initilized with nsp_rand_poisson_init. This routine 
+ * @P must be initilized with #nsp_rand_poisson_init. This routine 
  * must be used when several P(mu) deviates with the same
  * fixed parameter mu are needed. Otherwise uses 
- * nsp_rand_poisson_direct.
+ * #nsp_rand_poisson_direct.
  *
  * method: for small parameter mu the code uses inv algorithm with
  * partial recording of the cumulative probabilities
  * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
- * W. Hörmann, "The transformed rejection method for generating 
+ * W. Hormann, "The transformed rejection method for generating 
  * Poisson random variables", Insurance: Mathematics and Economics 
  * 12, 39-45 (1993)
  * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
@@ -161,11 +161,11 @@ int nsp_rand_poisson(PoissonStruct *P)
  * 
  * generates a random number from the Poisson distribution.
  * When several P(mu) random deviates with the same fixed parameter 
- * mu are needed, it is faster to use nsp_rand_poisson.
+ * mu are needed, it is faster to use #nsp_rand_poisson.
  *
  * method: for small parameter mu the code uses inv algorithm
  * otherwise it uses algorithm TRD of Wolfgang Hormann described in :
- * W. Hörmann, "The transformed rejection method for generating 
+ * W. Hormann, "The transformed rejection method for generating 
  * Poisson random variables", Insurance: Mathematics and Economics 
  * 12, 39-45 (1993)
  * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 

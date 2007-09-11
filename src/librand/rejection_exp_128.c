@@ -146,7 +146,8 @@ double nsp_rand_exp_core()
 
 /**
  * nsp_rand_exp:
- * @tau: parameter of the exponential distribution
+ * @tau: parameter of the exponential distribution.
+ *
  * generates a random number from E(tau), the exponential distribution
  * of parameter tau.
  *

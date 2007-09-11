@@ -168,6 +168,7 @@ double nsp_rand_nor_core()
  * nsp_rand_nor:
  * @mu: first parameter of the normal distribution (mean)
  * @sigma: second parameter of the normal distribution (standard deviation)
+ *
  * generates a random number from N(mu,sigma).
  *
  * Returns a double
