@@ -1141,16 +1141,43 @@ void nspgframe_set_frame_field(nspgframe *gf)
     }
 }
 
-/*
- * set the frame field for all objects 
- * Note that all object can be casted to block for accessing that field
- * XXXX this should be turned into o GR_INT method 
+/**
+ * nsp_gframe_get_adress:
+ * @F: a #NspGFrame 
+ * @old: a void pointer 
+ * 
+ * This function is used to get the new adress in @F of an 
+ * object which was previouly stored at adress @old. The old 
+ * adresses are stored in objects in the field @sid. 
+ * This is used when performing full copy of objects to restore 
+ * new crossed references in the copy. If the new adress is not 
+ * found then %NULL is returned. This can happen if a full copy 
+ * was performed but on a subset of the objects (for example 
+ * just the hilited objects), then in the full copy reference 
+ * to unfound objects are to be set to %NULL. Thus %NULL can 
+ * be a correct answer. 
+ * 
+ * Returns: a pointer as a void pointer 
  **/
 
 void *nsp_gframe_get_adress(NspGFrame *F,void *old )
 {
   return nspgframe_get_adress(F->obj,old);
 }
+
+/**
+ * nspgframe_get_adress:
+ * @gf: a #nspgframe object. 
+ * @old: a void pointer 
+ * 
+ * This function is used to get the new adress in @gf of an 
+ * object which was previouly stored at adress @old. The old 
+ * adresses are stored in objects in the field @sid. 
+ * This is used when performing full copy of objects to restore 
+ * new crossed references in the copy. 
+ * 
+ * Returns: a pointer as a void pointer 
+ **/
 
 void *nspgframe_get_adress(nspgframe *gf,void *old )
 {
@@ -1604,7 +1631,15 @@ void nsp_gframe_locks_update(NspGFrame *R,NspObject *O)
 }
 
 /**
- * ZZZZ
+ * nspgframe_recompute_obj_pointers:
+ * @gf: a #nspgframe 
+ * @O: a #NspObject
+ * 
+ * This function updates the cross references to other objects 
+ * for object @O. Object @O contains in the sid field the old 
+ * adresses of objects to be searched. And the new adresses are 
+ * used to update the id field. 
+ * 
  **/
 
 static void nspgframe_recompute_obj_pointers(nspgframe *gf,NspObject *O)
@@ -1633,9 +1668,14 @@ static void nspgframe_recompute_obj_pointers(nspgframe *gf,NspObject *O)
     }
 }
 
-
-/*
- *
+/**
+ * nspgframe_recompute_obj_pointers:
+ * @gf: a #nspgframe 
+ * 
+ * This function updates all the cross references contained 
+ * in objects stored in @gf. This is used after a full copy
+ * and works even if only a subset of @gf was full copied.
+ * 
  **/
 
 static void nspgframe_recompute_pointers(nspgframe *gf)
