@@ -122,7 +122,9 @@ extern void nsp_gframe_set_frame_field(NspGFrame *F);
 extern NspGFrame *nsp_gframe_full_copy( NspGFrame *F);
 extern NspGFrame *nsp_gframe_from_nspgframe(char *name,BCG *Xgc, nspgframe *gf);
 extern void nsp_gframe_destroy (NspGFrame *H); 
-
+extern NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy);
+extern int nsp_gframe_select_and_move_list(NspGFrame *R,const double pt[2]);
+extern int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,move_action action);
 
 /* functions for nspgframe */
 
