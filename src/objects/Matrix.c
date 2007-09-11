@@ -509,6 +509,8 @@ void nsp_matrix_destroy(NspMatrix *Mat)
  * 
  * Display info on the #NspMatrix @A using the default Sciprintf() function. 
  * @indent is the given indentation for printing.
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
@@ -545,6 +547,8 @@ int nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
  *
  * Print the #NspMatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing.
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,const char *name, int rec_level,
@@ -644,6 +648,8 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
  * 
  * print the #NspMatrix @A using the default Sciprintf() function and LaTeX 
  * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
  */
 
 int nsp_matrix_latex_print(const NspMatrix *Mat)

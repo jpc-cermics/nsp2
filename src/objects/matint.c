@@ -2395,7 +2395,6 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 
 /**
  * nsp_matint_perm_elem:
- * Returns: an object with same type as @Obj or %NULLOBJ
  * @ObjA: a #NspObject which implements the matint interface.
  * @p: an integer 
  * @q: an integer 

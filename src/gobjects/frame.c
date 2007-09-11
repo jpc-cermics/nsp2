@@ -2186,10 +2186,25 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
   return NSP_OBJECT(L);
 }
 
+
 /*
  * Make a full copy of object B
  * this is to be inserted in grint 
  */
+
+
+
+/**
+ * nsp_gframe_full_copy:
+ * @F: a #NspGFrame
+ * 
+ * Make a full copy of a @F. Since @F contains 
+ * a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * 
+ * Returns: a new #NspGFrame or %NULLGFRAME
+ **/
 
 static NspList * nsp_gframe_list_full_copy(NspList *L);
 
@@ -2200,6 +2215,18 @@ NspGFrame *nsp_gframe_full_copy( NspGFrame *F)
   if ((H->obj = nspgframe_full_copy(F->obj))  == NULL) return NULLGFRAME;
   return H;
 }
+
+/**
+ * nspgframe_full_copy:
+ * @gf: a #nspgframe 
+ * 
+ * Make a full copy of a @gf. Since @gf contains 
+ * a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * 
+ * Returns: a new #nspgframe or %NULL 
+ **/
 
 nspgframe *nspgframe_full_copy(nspgframe *gf)
 {
@@ -2226,6 +2253,18 @@ nspgframe *nspgframe_full_copy(nspgframe *gf)
 }
 
 
+
+/**
+ * nsp_gframe_list_full_copy:
+ * @L: a #NspList 
+ * 
+ * Make a full copy of a list of objects which all 
+ * implements the Grint interface and are all to be full copied. 
+ * Note that, after the copy the cross references in the objects 
+ * are wrong and are to be restored by nspgframe_recompute_pointers() 
+ * 
+ * Returns: a new #NspList
+ **/
 
 static NspList * nsp_gframe_list_full_copy(NspList *L)
 {
