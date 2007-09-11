@@ -25,6 +25,10 @@
 #include "nsp/graphics/Graphics.h"
 #include "gridblock.h" 
 
+typedef enum _list_move_action list_move_action; 
+enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
+static int nsp_gframe_list_obj_action(NspGFrame *F,NspList *L,const double pt[2],list_move_action action);
+
 
 /* NspGFrame inherits from NspObject 
  * 
@@ -551,7 +555,7 @@ static AttrTab nsp_gframe_attrs[] = {
 
 /* draw */
 
-static int int_meth_gfdraw(void  *self, Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   nsp_gframe_draw(self);
@@ -798,19 +802,19 @@ static int int_meth_gf_get_selection_copy_as_list(void *self,Stack stack, int rh
 }
 
 
-/* insert objects in a frame. 
+/* insert an object in a frame. 
  *
  */
 
 static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(1,1);
-  CheckLhs(-1,0);
   NspBlock  *B; 
   NspLink *L;
   NspConnector *C;
   NspObject *obj=NULL;
   int flag = TRUE;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
   if ( IsBlockObj(stack,1) )
     { 
       if ((B=GetBlockCopy(stack,1)) == NULLBLOCK) return RET_BUG;
@@ -842,6 +846,57 @@ static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
+
+/* used for the paste of a multiselection 
+ * insert a list of objects: 
+ *
+ */
+
+static int int_meth_gf_insert_list(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  double pt1[2]= {5,5};
+  NspGFrame *F = self;
+  Cell *C;
+  NspList *L;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((L=GetList(stack,1)) == NULLLIST) return RET_BUG;
+  /* now we loop on objects and insert them 
+   * this could be turned into a new function 
+   */
+  C = L->first; 
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* we check that all objects implements grint 
+	   */
+	  NspTypeBase *type;
+	  if (( type = check_implements(C->O,nsp_type_grint_id)) != NULL ) 
+	    {
+	      NspObject *obj;
+	      if ((obj=nsp_object_copy_with_name(C->O)) == NULLOBJ) return RET_BUG;
+	      if (nsp_list_end_insert(F->obj->objs,obj) == FAIL ) 
+		return RET_BUG;
+	    }
+	}
+      C = C->next ;
+    }
+  nsp_gframe_list_obj_action(F,L,pt1,L_TRANSLATE);
+  /* need to recompute pointers of L because of the copy 
+   * could be done only on the copy of L
+   */
+  nspgframe_recompute_pointers(F->obj);
+
+  /* This could be done in the previous while since 
+   * it is only usefull on new inserted object 
+   */
+  nsp_gframe_set_frame_field(F);
+
+  return 0;
+}
+
+
 
 
 /* connect a gframe to a physical window 
@@ -910,7 +965,7 @@ static int int_meth_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 
 
 static NspMethods nsp_gframe_methods[] = {
-  { "draw",   int_meth_gfdraw},
+  { "draw",   int_meth_gf_draw},
   { "tops",   int_meth_gf_tops},
   { "new_link", int_meth_gf_new_link },
   { "new_block", int_meth_gf_new_block },
@@ -926,6 +981,7 @@ static NspMethods nsp_gframe_methods[] = {
   { "select_link_and_remove_control", int_meth_gf_select_link_and_remove_control},
   { "delete_hilited", int_meth_gf_delete_hilited },
   { "insert",int_meth_gf_insert},
+  { "insert_list",int_meth_gf_insert_list},
   { "get_selection",int_meth_gf_get_selection},
   { "get_selection_copy",int_meth_gf_get_selection_copy},
   { "get_selection_as_list",int_meth_gf_get_selection_as_list},
@@ -1154,7 +1210,7 @@ void nspgframe_set_frame_field(nspgframe *gf)
  * found then %NULL is returned. This can happen if a full copy 
  * was performed but on a subset of the objects (for example 
  * just the hilited objects), then in the full copy reference 
- * to unfound objects are to be set to %NULL. Thus %NULL can 
+ * unfound objects are to be set to %NULL. Thus %NULL can 
  * be a correct answer. 
  * 
  * Returns: a pointer as a void pointer 
@@ -1162,27 +1218,29 @@ void nspgframe_set_frame_field(nspgframe *gf)
 
 void *nsp_gframe_get_adress(NspGFrame *F,void *old )
 {
-  return nspgframe_get_adress(F->obj,old);
+  return nspgframe_get_adress(F->obj->objs,old);
 }
 
 /**
  * nspgframe_get_adress:
- * @gf: a #nspgframe object. 
+ * @L: a #NspList
  * @old: a void pointer 
  * 
- * This function is used to get the new adress in @gf of an 
+ * This function is used to get the new adress in @L of an 
  * object which was previouly stored at adress @old. The old 
  * adresses are stored in objects in the field @sid. 
  * This is used when performing full copy of objects to restore 
- * new crossed references in the copy. 
+ * new crossed references in the copy. The list @L must contains 
+ * objects implementing grint interface
+ * 
  * 
  * Returns: a pointer as a void pointer 
  **/
 
-void *nspgframe_get_adress(nspgframe *gf,void *old )
+void *nspgframe_get_adress(NspList *L,void *old )
 {
   int count = 1;
-  Cell *C = gf->objs->first;
+  Cell *C = L->first;
   while ( C != NULLCELL) 
     {
       if ( C->O != NULLOBJ )
@@ -1311,8 +1369,12 @@ int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2])
 /**
  * nsp_gframe_get_hilited_list:
  * @gf: a #nspgframe 
+ * @full_copy: %TRUE for a full copy.
  * 
- * returns in a list the hilited objects of #nspgframe.
+ * returns in a list a copy of the hilited objects of #nspgframe.
+ * Depending on the parameter @full_copy, we perform a copy or a full copy.
+ * Note that when a full copy is performed cross-references within the copy 
+ * are updated.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -1345,6 +1407,8 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
 	}
       cloc = cloc->next;
     }
+  /* update the cross references in the copy */
+  nsp_gframe_list_recompute_pointers(Loc); 
   return Loc;
  err:
   nsp_list_destroy(Loc);
@@ -1642,7 +1706,7 @@ void nsp_gframe_locks_update(NspGFrame *R,NspObject *O)
  * 
  **/
 
-static void nspgframe_recompute_obj_pointers(nspgframe *gf,NspObject *O)
+static void nspgframe_recompute_obj_pointers(NspList *L,NspObject *O)
 {
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
   int   n = bf->get_number_of_locks(O), i;
@@ -1657,7 +1721,7 @@ static void nspgframe_recompute_obj_pointers(nspgframe *gf,NspObject *O)
 	    {
 	      if ( p.object_sid != NULL) 
 		{
-		  void *new= nspgframe_get_adress(gf,p.object_sid );
+		  void *new= nspgframe_get_adress(L,p.object_sid );
 		  p.object_id = new;
 		  p.object_sid = NULL;
 		  /* A uniformiser */
@@ -1680,18 +1744,36 @@ static void nspgframe_recompute_obj_pointers(nspgframe *gf,NspObject *O)
 
 static void nspgframe_recompute_pointers(nspgframe *gf)
 {
+  nsp_gframe_list_recompute_pointers(gf->objs);
+}
+
+/**
+ * nsp_gframe_list_recompute_obj_pointers:
+ * @L: a #NspList 
+ * 
+ * This function updates all the cross references contained 
+ * in objects stored in @L. Note that cross references refering 
+ * to objects not in @L are set to NULL. Thus this function can 
+ * be used when a full copy of a subset of a #nspgframe is done.
+ *
+ **/
+
+static void nsp_gframe_list_recompute_pointers(NspList *L)
+{
   int count = 1;
-  Cell *C = gf->objs->first;
+  Cell *C = L->first;
   while ( C != NULLCELL) 
     {
       if ( C->O != NULLOBJ )
 	{
-	  nspgframe_recompute_obj_pointers(gf,C->O);
+	  nspgframe_recompute_obj_pointers(L,C->O);
 	}
       C = C->next ;
       count++;
     }
 }
+
+
 
 
 /**
@@ -1799,9 +1881,6 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
 
 /* utiliy function */ 
 
-typedef enum _list_move_action list_move_action; 
-
-enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 
 static int nsp_gframe_list_obj_action(NspGFrame *F,NspList *L,const double pt[2],list_move_action action)
 {

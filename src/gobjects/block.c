@@ -1447,8 +1447,9 @@ static NspBlock * block_full_copy( NspBlock *B)
   NspBlock *M=NULLBLOCK;
   if (( M = block_create(NVOID,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,NULL))
       == NULLBLOCK) return NULLBLOCK;
-  /* the lock points */
+  /* keep old address */
   M->obj->object_sid = B;
+  /* the lock points */
   if ( M->obj->locks != NULL) FREE(M->obj->locks);
   M->obj->n_locks =   B->obj->n_locks;
   if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
