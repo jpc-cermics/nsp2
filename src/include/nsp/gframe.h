@@ -130,9 +130,8 @@ extern int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],i
 
 extern void nspgframe_draw(nspgframe *gf);
 extern void nspgframe_set_frame_field(nspgframe *gf);
-extern void *nspgframe_get_adress(nspgframe *gf,void *old );
+extern void *nspgframe_get_adress(NspList *L,void *old );
 extern nspgframe *nspgframe_full_copy(nspgframe *gf);
-
 
 #endif
 
@@ -155,6 +154,8 @@ static int nsp_gframe_print (NspGFrame *H, int indent,char *name, int rec_level)
 static NspMethods *nsp_gframe_get_methods(void);
 static int int_nsp_gframe_create(Stack stack, int rhs, int opt, int lhs);
 static void nspgframe_recompute_pointers(nspgframe *gf);
+static void nsp_gframe_list_recompute_pointers(NspList *L);
+
 
 
 #endif /* GFrame_Private */
