@@ -2,8 +2,9 @@
 // a new scicos editor 
 // this works with objects of src/gobjects 
 
-function w=create_midle_menu (win,xc,yc)
+function w=create_midle_menu_old (win,xc,yc)
 // midle button menu construction 
+  
   global('GF');
   s_win='win'+string(win);
   [is_sel,ov]= GF(s_win).get_selection[];
@@ -15,7 +16,7 @@ function w=create_midle_menu (win,xc,yc)
       [is_sel,ov]= GF(s_win).get_selection[];
     end
   end
-
+  
   menu = gtkmenu_new ();
   // title of the sub menu 
   if is_sel then 
@@ -80,32 +81,126 @@ function w=create_midle_menu (win,xc,yc)
   w=menu;
 endfunction 
 
+function w=create_midle_menu (win,xc,yc)
+// midle button menu construction 
+// version where selection is a list 
+    
+  global('GF');
+  s_win='win'+string(win);
+  L= GF(s_win).get_selection_as_list[];
+  if isempty(L) then 
+    // no selection try to find one 
+    rep=GF(s_win).select_and_hilite[[xc,yc]];
+    if rep then 
+      GF(s_win).draw[];
+      L= GF(s_win).get_selection_as_list[];
+    end
+  end
+  
+  menu = gtkmenu_new ();
+  // title of the sub menu 
+  if ~isempty(L) then 
+    if length(L)==1 then  
+      name = type(L(1),'string')
+    else
+      name = 'Agregation '
+    end
+    menuitem = gtkmenuitem_new(label=name+ ' Menu' );
+    menu.append[menuitem]
+    menuitem.show[];
+    menuitem = gtkseparatormenuitem_new()
+    menu.append[menuitem]
+    menuitem.show[];
+  else
+    name = 'void';
+  end
+  
+  //
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-delete");
+  if isempty(L) then 
+    menuitem.set_sensitive[%f];
+  end
+  menuitem.connect["activate",midle_menuitem_response,list(1,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  //
+  if name == 'Link' then 
+    menuitem = gtkmenuitem_new(label="add control point");
+    menuitem.connect["activate",midle_menuitem_response,list(2,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+    //
+    menuitem = gtkmenuitem_new(label="remove control point");
+    menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+  end
+  if name == 'GridBlock' then 
+    menuitem = gtkmenuitem_new(label="edit super block");
+    menuitem.connect["activate",midle_menuitem_response,list(6,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+  end
+  
+  //-- copy 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
+  if isempty(L) then 
+    menuitem.set_sensitive[%f];
+  end
+  menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  // sensitive or not 
+  // menuitem.set_sensitive[%f];
+  //-- paste 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
+  if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
+    // nothing to paste 
+    menuitem.set_sensitive[%f];
+  end
+  menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  //  
+  w=menu;
+endfunction 
+
 function midle_menuitem_response(w,args) 
 // midle button menu activation 
 // the midle menu should be a by object menu 
   global('GF');
-  printf("Menu item [%d] activated for win=%d\n",args(1),args($));
+  // printf("Menu item [%d] activated for win=%d\n",args(1),args($));
   win='win'+string(args($))
   select args(1) 
-   case 1 then  GF(win).delete_hilited[] ; GF(win).draw[];
+   case 1 then  
+    // delete hilited objects 
+    GF(win).delete_hilited[] ; 
+    GF(win).draw[];
    case 2 then  
+    // add a control to a link 
     GF(win).hilite_near_pt[[args(2),args(3)]];
     GF(win).select_link_and_add_control[[args(2),args(3)]];
    case 3 then  
+    // remove a link control 
     GF(win).hilite_near_pt[[args(2),args(3)]];
     GF(win).select_link_and_remove_control[[args(2),args(3)]];
    case 4 then 
-    //- copy 
-    [test,obj]= GF(win).get_selection_copy[];
+    // copy selection into the clipboard 
+    L= GF(win).get_selection_copy_as_list[];
     // pause 
-    if test then GF('clipboard') = list(obj); 
+    if ~isempty(L) then GF('clipboard') = list(L); 
     else x_message('No selection');end 
    case 5 then 
-    //- paste 
+    // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
-	GF('clipboard')(1).set_pos[[args(2),args(3)]];
-	GF(win).insert[GF('clipboard')(1)];
+	L= GF('clipboard')(1);
+	if length(L)==1 then 
+	  L(1).set_pos[[args(2),args(3)]];
+	  GF(win).insert[L(1)];
+	else
+	  x_message('Paste multiple');
+	end 
       else 
 	x_message('Clipboard is empty');end 
     end
