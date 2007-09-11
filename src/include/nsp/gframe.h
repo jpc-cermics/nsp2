@@ -131,7 +131,8 @@ extern int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],i
 extern void nspgframe_draw(nspgframe *gf);
 extern void nspgframe_set_frame_field(nspgframe *gf);
 extern void *nspgframe_get_adress(NspList *L,void *old );
-extern nspgframe *nspgframe_full_copy(nspgframe *gf);
+extern nspgframe *nspgframe_full_copy(nspgframe *gf,int hilited_only);
+extern NspGFrame *nsp_gframe_hilited_full_copy( NspGFrame *F);
 
 #endif
 

@@ -778,29 +778,15 @@ static int int_meth_gf_get_selection_copy(void *self,Stack stack, int rhs, int o
 
 /* get the hilited objects as a list with or without full copy */
 
-static int _int_meth_gf_get_selection_as_list(void *self,Stack stack, int rhs, int opt, int lhs, int full_copy)
+static int int_meth_gf_get_selection_as_gframe(void *self,Stack stack, int rhs, int opt, int lhs) 
 {
-  NspList *obj;
+  NspGFrame *obj;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  if ((obj = nsp_gframe_get_hilited_list(((NspGFrame *) self)->obj, full_copy))== NULL) 
-    {
-      return RET_BUG;
-    }
+  if ((obj =nsp_gframe_hilited_full_copy((NspGFrame *) self)) == NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(obj));
   return 1;
 }
-
-static int int_meth_gf_get_selection_as_list(void *self,Stack stack, int rhs, int opt, int lhs) 
-{
-  return _int_meth_gf_get_selection_as_list(self,stack,rhs,opt,lhs,FALSE);
-}
-
-static int int_meth_gf_get_selection_copy_as_list(void *self,Stack stack, int rhs, int opt, int lhs) 
-{
-  return _int_meth_gf_get_selection_as_list(self,stack,rhs,opt,lhs,TRUE);
-}
-
 
 /* insert an object in a frame. 
  *
@@ -848,56 +834,38 @@ static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used for the paste of a multiselection 
- * insert a list of objects: 
- *
+ * insert a list of objects which are in a gframe. 
  */
 
-static int int_meth_gf_insert_list(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_meth_gf_insert_gframe(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   double pt1[2]= {5,5};
   NspGFrame *F = self;
   Cell *C;
-  NspList *L;
+  NspGFrame *GF;
   CheckRhs(1,1);
   CheckLhs(-1,0);
-  if ((L=GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((GF=GetGFrame(stack,1)) == NULLGFRAME ) return RET_BUG;
   /* now we loop on objects and insert them 
    * this could be turned into a new function 
    */
-  C = L->first; 
+  if ((GF = nsp_gframe_full_copy(GF))== NULLGFRAME)
+    return RET_BUG;
+  nsp_gframe_list_obj_action(GF,GF->obj->objs,pt1,L_TRANSLATE);
+  /* insert each object */
+  C = GF->obj->objs->first; 
   while ( C != NULLCELL) 
     {
       if ( C->O != NULLOBJ )
 	{
-	  /* we check that all objects implements grint 
-	   */
-	  NspTypeBase *type;
-	  if (( type = check_implements(C->O,nsp_type_grint_id)) != NULL ) 
-	    {
-	      NspObject *obj;
-	      if ((obj=nsp_object_copy_with_name(C->O)) == NULLOBJ) return RET_BUG;
-	      if (nsp_list_end_insert(F->obj->objs,obj) == FAIL ) 
-		return RET_BUG;
-	    }
+	  if ( nsp_list_end_insert(F->obj->objs,C->O) == FAIL )
+	    return RET_BUG;
 	}
       C = C->next ;
     }
-  nsp_gframe_list_obj_action(F,L,pt1,L_TRANSLATE);
-  /* need to recompute pointers of L because of the copy 
-   * could be done only on the copy of L
-   */
-  nspgframe_recompute_pointers(F->obj);
-
-  /* This could be done in the previous while since 
-   * it is only usefull on new inserted object 
-   */
-  nsp_gframe_set_frame_field(F);
-
+  /* we would need here to clear the copy XXXX */
   return 0;
 }
-
-
-
 
 /* connect a gframe to a physical window 
  *
@@ -963,6 +931,15 @@ static int int_meth_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_meth_gf_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int length;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  length =nsp_list_length( ((NspGFrame *) self)->obj->objs);
+  if ( nsp_move_double(stack,1,(double) length) == FAIL)  return RET_BUG;
+  return 1;
+}
 
 static NspMethods nsp_gframe_methods[] = {
   { "draw",   int_meth_gf_draw},
@@ -981,13 +958,13 @@ static NspMethods nsp_gframe_methods[] = {
   { "select_link_and_remove_control", int_meth_gf_select_link_and_remove_control},
   { "delete_hilited", int_meth_gf_delete_hilited },
   { "insert",int_meth_gf_insert},
-  { "insert_list",int_meth_gf_insert_list},
+  { "insert_gframe",int_meth_gf_insert_gframe},
   { "get_selection",int_meth_gf_get_selection},
   { "get_selection_copy",int_meth_gf_get_selection_copy},
-  { "get_selection_as_list",int_meth_gf_get_selection_as_list},
-  { "get_selection_copy_as_list",int_meth_gf_get_selection_copy_as_list},
+  { "get_selection_as_gframe",int_meth_gf_get_selection_as_gframe},
   { "attach_to_window",int_meth_gf_attach_to_window},
   { "copy",int_meth_gf_full_copy},
+  { "nobjs", int_meth_gf_get_nobjs},
   { (char *) 0, NULL}
 };
 
@@ -2361,13 +2338,6 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
 }
 
 
-/*
- * Make a full copy of object B
- * this is to be inserted in grint 
- */
-
-
-
 /**
  * nsp_gframe_full_copy:
  * @F: a #NspGFrame
@@ -2380,35 +2350,58 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
  * Returns: a new #NspGFrame or %NULLGFRAME
  **/
 
-static NspList * nsp_gframe_list_full_copy(NspList *L);
+static NspList * nsp_gframe_list_full_copy(NspList *L,int hilited_only);
 
 NspGFrame *nsp_gframe_full_copy( NspGFrame *F)
 {
   NspGFrame *H  = nsp_gframe_create_void(NVOID,NULL);
   if ( H ==  NULLGFRAME ) return NULLGFRAME;
-  if ((H->obj = nspgframe_full_copy(F->obj))  == NULL) return NULLGFRAME;
+  if ((H->obj = nspgframe_full_copy(F->obj,FALSE))  == NULL) return NULLGFRAME;
+  return H;
+}
+
+/**
+ * nsp_gframe_hilited_full_copy:
+ * @F: a #NspGFrame
+ * 
+ * Make a full copy of a @F but only for hilited objects. 
+ * Since @F contains a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * 
+ * Returns: a new #NspGFrame or %NULLGFRAME
+ **/
+
+NspGFrame *nsp_gframe_hilited_full_copy( NspGFrame *F)
+{
+  NspGFrame *H  = nsp_gframe_create_void(NVOID,NULL);
+  if ( H ==  NULLGFRAME ) return NULLGFRAME;
+  if ((H->obj = nspgframe_full_copy(F->obj,TRUE))  == NULL) return NULLGFRAME;
   return H;
 }
 
 /**
  * nspgframe_full_copy:
  * @gf: a #nspgframe 
+ * @hilited_only: %TRUE or %FALSE
  * 
  * Make a full copy of a @gf. Since @gf contains 
  * a list of objects which are themselves objects with 
  * references, the full copy must be performed on these
  * objects and cross references are to be updates.
+ * If @hilited_only is %TRUE, only hilited objects are copied.
  * 
  * Returns: a new #nspgframe or %NULL 
  **/
 
-nspgframe *nspgframe_full_copy(nspgframe *gf)
+nspgframe *nspgframe_full_copy(nspgframe *gf,int hilited_only)
 {
   int i;
   nspgframe *loc; 
   if ((loc = malloc(sizeof(nspgframe))) == NULL) return NULL;
   loc->ref_count=1;
-  if ((loc->objs = nsp_gframe_list_full_copy(gf->objs))== NULL)  return NULL;
+  if ((loc->objs = nsp_gframe_list_full_copy(gf->objs, hilited_only))== NULL) 
+    return NULL;
   /* restore lost pointers 
    */
   nspgframe_set_frame_field(loc);
@@ -2426,21 +2419,21 @@ nspgframe *nspgframe_full_copy(nspgframe *gf)
   return loc;
 }
 
-
-
 /**
  * nsp_gframe_list_full_copy:
  * @L: a #NspList 
+ * @hilited_only: %TRUE or %FALSE
  * 
  * Make a full copy of a list of objects which all 
  * implements the Grint interface and are all to be full copied. 
  * Note that, after the copy the cross references in the objects 
- * are wrong and are to be restored by nspgframe_recompute_pointers() 
+ * are wrong and are to be restored by nspgframe_recompute_pointers(). 
+ * If @hilited_only is %TRUE, only hilited objects are copied.
  * 
  * Returns: a new #NspList
  **/
 
-static NspList * nsp_gframe_list_full_copy(NspList *L)
+static NspList * nsp_gframe_list_full_copy(NspList *L,int hilited_only) 
 {
   NspObject *obj=NULL;
   NspList *Loc;
@@ -2452,10 +2445,13 @@ static NspList * nsp_gframe_list_full_copy(NspList *L)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
-	  if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
-	  if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
+	  if ( hilited_only == FALSE || bf->get_hilited(cloc->O) == TRUE) 
+	    {
+	      if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	      if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
+	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
+	    }
 	}
-      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
       cloc = cloc->next;
     }
   return Loc;
