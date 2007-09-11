@@ -608,6 +608,23 @@ static int int_meth_gf_select_and_hilite(void *self,Stack stack, int rhs, int op
   return 1;
 }
 
+
+static int int_meth_gf_select_and_toggle_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  NspObject *bool;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  rep= nsp_gframe_select_and_toggle_hilite(((NspGFrame *) self),pt->R);
+  if ((bool = nsp_create_boolean_object(NVOID,(rep == OK) ? TRUE : FALSE))
+      == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,bool);
+  return 1;
+}
+
 /* split link */
 
 static int int_meth_gf_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -953,6 +970,7 @@ static NspMethods nsp_gframe_methods[] = {
   { "select_and_move", int_meth_gf_select_and_move},
   { "select_and_move_list", int_meth_gf_select_and_move_list},
   { "select_and_hilite", int_meth_gf_select_and_hilite},
+  { "select_and_toggle_hilite", int_meth_gf_select_and_toggle_hilite},
   { "select_and_split", int_meth_gf_select_and_split},
   { "select_link_and_add_control", int_meth_gf_select_link_and_add_control},
   { "select_link_and_remove_control", int_meth_gf_select_link_and_remove_control},
@@ -1482,6 +1500,32 @@ int nsp_gframe_select_and_hilite(NspGFrame *R,const double pt[2])
   bf = GR_INT(O->basetype->interface);
   nsp_gframe_unhilite_objs(R,FALSE);
   bf->set_hilited(O,TRUE);
+  return OK;
+}
+
+
+/**
+ * nsp_gframe_select_and_toggle_hilite:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and changes its hilite status the object.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_gframe_select_and_toggle_hilite(NspGFrame *R,const double pt[2])
+{
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = nsp_gframe_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  bf = GR_INT(O->basetype->interface);
+  if ( bf->get_hilited(O) == TRUE) 
+    bf->set_hilited(O,FALSE);
+  else 
+    bf->set_hilited(O,TRUE);
   return OK;
 }
 

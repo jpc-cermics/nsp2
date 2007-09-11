@@ -101,6 +101,7 @@ extern int nsp_gframe_select_obj (NspGFrame *R, const double *pt, NspObject **Ob
 extern int nsp_gframe_select_lock(NspGFrame *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
 extern int nsp_gframe_select_and_move (NspGFrame *R, const double *pt); 
 extern int nsp_gframe_select_and_hilite(NspGFrame *R,const double pt[2]);
+extern int nsp_gframe_select_and_toggle_hilite(NspGFrame *R,const double pt[2]);
 
 typedef enum { MOVE, MOVE_CONTROL } move_action ; 
 extern int nsp_gframe_move_obj (NspGFrame *R,NspObject *O, const double *pt, int stop, int cp,move_action  action ); 
