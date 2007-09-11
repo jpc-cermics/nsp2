@@ -1,7 +1,7 @@
 46% symbol docs coverage.
-1054 symbols documented.
-212 symbols incomplete.
-1247 not documented.
+1088 symbols documented.
+214 symbols incomplete.
+1256 not documented.
 
 
 Abs
@@ -10,12 +10,15 @@ AttrTab
 BMatIsTrue
 BMatLoopCol
 BMatrix_Type
+BetaStruct
+BinomialStruct
 Block_Type
 Boolean
 Bounds
 C2F
 CNAME
 CellsLoopCol (str, Col, A, icol, rep, Returns)
+Chi2Struct
 DBL_EPSILON
 DBL_MAX
 DBL_MIN
@@ -25,9 +28,11 @@ DoubleScalar
 F2C
 FAIL
 FREE
+FStruct
 F_Enlarge
 Func_Type
 GFrame_Type
+GammaStruct
 GenericMatSeRo
 GetArgs (stack, rhs, opt, T, Varargs)
 GetBHash
@@ -309,6 +314,9 @@ NULLSTRING
 NULLTYPE
 NULLXME
 NVOID
+NbnStruct
+NcChi2Struct
+NcFStruct
 NspHobj
 NspIvect
 NspLink
@@ -361,6 +369,7 @@ PI0
 PMatrix_Type
 P_PList_Type
 ParseError
+PoissonStruct
 PutLhsObj (stack, nv, ind)
 REALLOC
 RectDraw
@@ -855,6 +864,7 @@ nsp_mat_mult_el (B)
 nsp_mat_set_ival (dval)
 nsp_mat_slec (file, Count)
 nsp_mat_sort
+nsp_matint_concat_down (ObjA, ObjB)
 nsp_matint_repmat
 nsp_matrix_boundster
 nsp_matrix_clone (init)
@@ -867,7 +877,6 @@ nsp_matrix_latex_tab_print (Returns)
 nsp_matrix_lexical_column_sort
 nsp_matrix_lexical_row_sort
 nsp_matrix_print (Returns)
-nsp_matrix_redim
 nsp_matrix_row_sort
 nsp_matrix_set_format
 nsp_matrix_sort (A, Index, ind_flag, type, Returns)
@@ -1095,6 +1104,7 @@ nsp_qsort_stable_decr_nsp_string
 nsp_qsort_stable_incr_double
 nsp_qsort_stable_incr_int
 nsp_qsort_stable_incr_nsp_string
+nsp_rand_ncF_direct (xnonc)
 nsp_read_history
 nsp_readline_clear_line
 nsp_realtime
@@ -1438,6 +1448,7 @@ pmatrix:Long_Description
 pmatrix:Short_Description
 pr-output:Long_Description
 pr-output:Short_Description
+random:Long_Description
 rect:Long_Description
 rect:Short_Description
 sciio:Long_Description
