@@ -722,6 +722,8 @@ static int int_meth_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, 
   return 0;
 }
 
+/* get the first hilited object */
+
 static int int_meth_gf_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj,*bool;
@@ -742,6 +744,8 @@ static int int_meth_gf_get_selection(void *self,Stack stack, int rhs, int opt, i
   MoveObj(stack,2,obj);
   return 2;
 }
+
+/* get a full copy of the first hilited object */
 
 static int int_meth_gf_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -767,6 +771,32 @@ static int int_meth_gf_get_selection_copy(void *self,Stack stack, int rhs, int o
   MoveObj(stack,2,obj);
   return 2;
 }
+
+/* get the hilited objects as a list with or without full copy */
+
+static int _int_meth_gf_get_selection_as_list(void *self,Stack stack, int rhs, int opt, int lhs, int full_copy)
+{
+  NspList *obj;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((obj = nsp_gframe_get_hilited_list(((NspGFrame *) self)->obj, full_copy))== NULL) 
+    {
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(obj));
+  return 1;
+}
+
+static int int_meth_gf_get_selection_as_list(void *self,Stack stack, int rhs, int opt, int lhs) 
+{
+  return _int_meth_gf_get_selection_as_list(self,stack,rhs,opt,lhs,FALSE);
+}
+
+static int int_meth_gf_get_selection_copy_as_list(void *self,Stack stack, int rhs, int opt, int lhs) 
+{
+  return _int_meth_gf_get_selection_as_list(self,stack,rhs,opt,lhs,TRUE);
+}
+
 
 /* insert objects in a frame. 
  *
@@ -898,6 +928,8 @@ static NspMethods nsp_gframe_methods[] = {
   { "insert",int_meth_gf_insert},
   { "get_selection",int_meth_gf_get_selection},
   { "get_selection_copy",int_meth_gf_get_selection_copy},
+  { "get_selection_as_list",int_meth_gf_get_selection_as_list},
+  { "get_selection_copy_as_list",int_meth_gf_get_selection_copy_as_list},
   { "attach_to_window",int_meth_gf_attach_to_window},
   { "copy",int_meth_gf_full_copy},
   { (char *) 0, NULL}
@@ -1192,8 +1224,22 @@ int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2])
   NspObject *O;
   int k = nsp_gframe_select_obj(R,pt,&O,NULL);
   if ( k==0 ) return FAIL;
-  /* are we inside a control point ? */
   bf = GR_INT(O->basetype->interface);
+  /* is the object already hilited */
+  if (0 && bf->get_hilited(O) == TRUE) 
+    {
+      /* if object is already hilited 
+       * then maybe it belongs to a set of objects 
+       * thus we have to move to nsp_gframe_select_and_move_list
+       * If in nsp_gframe_select_and_move_list we find that the 
+       * list of hilited is just reduced to the object we got here 
+       * then we should re-switch back here because MOVE_CONTROL is only 
+       * accepted here ! 
+       * 
+       */
+      return nsp_gframe_select_and_move_list(R, pt);
+    }
+  /* are we inside a control point ? */
   k1 = bf->control_near_pt(O,pt,&cp);
   /* hide the moving object and its locked objects */
   bf->set_show(O,FALSE);
@@ -1244,7 +1290,7 @@ int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2])
  * Return value: %OK or %FAIL
  **/
 
-NspList *nsp_gframe_get_hilited_list(nspgframe *gf)
+NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
 {
   NspObject *obj=NULL;
   NspList *Loc;
@@ -1257,7 +1303,16 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf)
 	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
 	  if ( bf->get_hilited(cloc->O) == TRUE) 
 	    {
-	      if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+	      if ( full_copy == TRUE ) 
+		{
+		  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  goto err;
+		  if ( nsp_object_set_name(obj,"lel") == FAIL)goto err;
+
+		}
+	      else
+		{
+		  if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+		}
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }
 	}
@@ -1321,7 +1376,7 @@ int nsp_gframe_select_and_move_list(NspGFrame *R,const double pt[2])
   if ( k1 == FALSE ) 
     {
       int rep;
-      NspList *L= nsp_gframe_get_hilited_list(R->obj);
+      NspList *L= nsp_gframe_get_hilited_list(R->obj,FALSE);
       if ( L== NULLLIST) return OK;
       rep = nsp_gframe_move_list_obj(R,L, pt, -5,cp,MOVE );
       nsp_list_destroy(L);
