@@ -106,9 +106,13 @@ extern void start_sci_gtk();
 
 Gengine * nsp_gengine = &Gtk_gengine ;
 
-/* 
- * force expose events to be executed 
- */
+/**
+ * force_affichage:
+ * @Xgc: a #BCG 
+ * 
+ * force expose events to be executed by calling 
+ * gdk_window_process_updates().
+ **/
 
 static void force_affichage(BCG *Xgc)
 {
@@ -116,9 +120,13 @@ static void force_affichage(BCG *Xgc)
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
-/* 
+/**
+ * force_redraw:
+ * @Xgc: a #BCG 
+ * 
+ * 
  * force an expose_event with draw set to TRUE
- */
+ **/
 
 static void force_redraw(BCG *Xgc)
 {
@@ -127,12 +135,18 @@ static void force_redraw(BCG *Xgc)
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
-
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
  * which is used when xset('pixmap',1) is activated at 
- * scilab level. 
+ * nsp level. 
  *---------------------------------------------------------*/
+
+/**
+ * xset_pixmapclear:
+ * @Xgc: a #BCG 
+ * 
+ * clear the extra pixmap associated to the graphic window.
+ **/
 
 static void xset_pixmapclear(BCG *Xgc)
 {
@@ -141,6 +155,14 @@ static void xset_pixmapclear(BCG *Xgc)
       pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
     }
 }
+
+/**
+ * xset_show:
+ * @Xgc: a #BCG 
+ * 
+ * make a draw using the extra_pixmap as the source for updating 
+ * the graphic window and its standard associated pixmap.
+ **/
 
 static void xset_show(BCG *Xgc)
 {
@@ -161,10 +183,17 @@ static void xset_show(BCG *Xgc)
     }
 }
 
-/*
- * Pixmap clear: clear the extra private->pixmap associated to the window 
- * using the background color.
- */
+/**
+ * pixmap_clear_rect:
+ * @Xgc: a #BCG 
+ * @x: integer 
+ * @y: integer 
+ * @w: integer
+ * @h: integer
+ * 
+ * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
+ * in the extra_pixmap using the background color.
+ **/
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
@@ -176,10 +205,12 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
     }
 }
 
-/* 
- * Resize the Pixmap according to window size change 
- * But only if there's a private->pixmap 
- */
+/**
+ * pixmap_resize:
+ * @Xgc: a #BCG 
+ * 
+ * resizes, if present the extra_pixmap according to window size change 
+ **/
 
 static void pixmap_resize(BCG *Xgc)
 {
@@ -201,14 +232,18 @@ static void pixmap_resize(BCG *Xgc)
 } 
 
 
-/*-----------------------------------------------------
- * General routines callable from Scilab 
- -----------------------------------------------------*/
+/*
+ * General routines callable from nsp 
+ */
 
-/* 
+/**
+ * xselgraphic:
+ * @Xgc: a #BCG 
+ * 
  * To select (raise on the screen )the current graphic Window
  * If there's no graphic window then select creates one 
- */
+ * 
+ **/
 
 static void xselgraphic(BCG *Xgc)
 { 
@@ -218,14 +253,25 @@ static void xselgraphic(BCG *Xgc)
   gdk_flush();
 }
 
-/* End of graphic (do nothing)  */
+/**
+ * xend:
+ * @Xgc: a #BCG  
+ * 
+ * End of graphic (do nothing)  
+ **/
 
 static void xend(BCG *Xgc)
 {
   /* Must destroy everything  */
 }
 
-/* Clear the current graphic window     */
+/**
+ * clearwindow:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * clears the current graphic window.
+ **/
 
 static void clearwindow(BCG *Xgc)
 {
@@ -237,23 +283,42 @@ static void clearwindow(BCG *Xgc)
 }
 
 
-
-/*
- * graphic context modifications 
- */
-
-/* record or not the graphic commands */
+/**
+ * xget_recording:
+ * @Xgc: a #BCG  
+ * 
+ * checks if recording is on or off in the graphic window.
+ * 
+ * Returns: %TRUE or %FALSE.
+ **/
 
 static int xget_recording(BCG *Xgc)
 {
   return Xgc->record_flag;
 }
 
+/**
+ * xset_recording:
+ * @Xgc: a #BCG  
+ * @val: %TRUE or %FALSE
+ * 
+ * sets the recoding mode to %TRUE or %FALSE 
+ **/
+
 static void xset_recording(BCG *Xgc, int val)
 {
   Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
 }
-/* to get the window upper-left point coordinates on the screen  */
+
+/**
+ * xget_windowpos:
+ * @Xgc: a #BCG  
+ * @x: int pointer 
+ * @y: int pointer 
+ * 
+ * to get the window upper-left point position on the 
+ * screen in point coordinates. 
+ **/
 
 static void xget_windowpos(BCG *Xgc,int *x,int *y)
 {
@@ -262,7 +327,16 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
   *x = xx; *y =yy;
 }
 
-/* to set the window upper-left point position on the screen */
+/**
+ * xset_windowpos:
+ * @Xgc: a #BCG  
+ * @x: an integer 
+ * @y: an integer 
+ * 
+ * move the upper-left point position of the graphic window 
+ * at position (@x,@y) on the screen.
+
+ **/
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
@@ -270,7 +344,15 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
-/* To get the drawbox  window size */
+/**
+ * xget_windowdim:
+ * @Xgc: a #BCG  
+ * @x: an int pointer 
+ * @y: an int pointer
+ * 
+ * set (@x,@y) to the dimension of the graphic area.
+ * 
+ **/
 
 static void xget_windowdim(BCG *Xgc,int *x, int *y)
 {     
@@ -279,13 +361,18 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
   *y =  Xgc->CWindowHeight;
 } 
 
-/*
+/**
+ * xset_windowdim:
+ * @Xgc: a #BCG  
+ * @x: an integer 
+ * @y: an integer 
+ * 
  * To change the drawbox window size. 
- *  Here this function set the min size of the graphic window 
- *  which means that if the scrolled window 
- *  is smaller than the min size scrollbar will be drawn 
- *  but if the scrolled window is greater then drawbox will follow 
- */
+ * Here this function set the min size of the graphic window 
+ * which means that if the scrolled window 
+ * is smaller than the min size scrollbar will be drawn 
+ * 
+ **/
 
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
@@ -343,7 +430,14 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
   gdk_flush();
 }
 
-/* To get the popup  window size */
+/**
+ * xget_popupdim:
+ * @Xgc: a #BCG  
+ * @x: an int pointer 
+ * @y: an int pointer
+ * 
+ * To get the popup  window size 
+  **/
 
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
@@ -352,14 +446,29 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
   *x = xx ;  *y = yy ; 
 } 
 
-/* To change the popup window size  */
+/**
+ * xset_popupdim:
+ * @Xgc: a #BCG  
+ * @x: 
+ * @y: 
+ * 
+ * To change the popup window size
+ * 
+ **/
 
 static void xset_popupdim(BCG *Xgc,int x, int y)
 {
   gdk_window_resize(Xgc->private->window->window,x,y);
 }
 
-/* To get the viewport Upper/Left point Position */
+/**
+ * xget_viewport:
+ * @Xgc: a #BCG  
+ * @x: an int pointer 
+ * @y: an int pointer
+ * 
+ * To get the viewport Upper/Left point Position 
+ **/
 
 static void xget_viewport(BCG *Xgc,int *x, int *y)
 {     
@@ -378,7 +487,15 @@ static void xget_viewport(BCG *Xgc,int *x, int *y)
     }
 } 
 
-/* To change the window size  */
+/**
+ * xset_viewport:
+ * @Xgc: a #BCG  
+ * @x: an integer 
+ * @y: an integer 
+ * 
+ * To change the window size 
+ **/
+
 
 static void xset_viewport(BCG *Xgc,int x, int y)
 {
@@ -391,11 +508,17 @@ static void xset_viewport(BCG *Xgc,int x, int y)
     }
 }
 
-/*
+/**
+ * xset_curwin:
+ * @intnum: 
+ * @set_menu: 
+ * 
  * select window intnum as the current window 
  * window is created if necessary 
  * return the value of the previous current window 
- */
+ * 
+ * Returns: 
+ **/
 
 static int xset_curwin(int intnum,int set_menu)
 {
@@ -440,13 +563,19 @@ static int xset_curwin(int intnum,int set_menu)
 }
 
 
-/*
+
+/**
+ * xget_curwin:
+ * @void: 
+ * 
  * Get the id number of the Current Graphic Window 
  * In all the other functions we are sure that Xgc exists 
  * when we call them ( see sciwin in matdes.f ) 
  * exept for this function which is called in sciwin and the previous one 
  * returns -1 when there's no current window 
- */
+ * 
+ * Returns: 
+ **/
  
 static int xget_curwin(void)
 {
@@ -454,7 +583,14 @@ static int xget_curwin(void)
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
-/* Set a clip zone (rectangle ) */
+/**
+ * xset_clip:
+ * @Xgc: 
+ * @x: 
+ * 
+ * Set a clip zone (rectangle) 
+ * 
+ **/
 
 static void xset_clip(BCG *Xgc,int x[])
 {
@@ -465,7 +601,12 @@ static void xset_clip(BCG *Xgc,int x[])
   gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
 }
 
-/* unset clip zone */
+/**
+ * xset_unclip:
+ * @Xgc: a #BCG  
+ * 
+ * unset clip zone 
+ **/
 
 static void xset_unclip(BCG *Xgc)
 {
@@ -474,7 +615,13 @@ static void xset_unclip(BCG *Xgc)
   gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
 }
 
-/* Get the boundaries of the current clip zone */
+/**
+ * xget_clip:
+ * @Xgc: a #BCG  
+ * @x: an int pointer 
+ * 
+ * Get the boundaries of the current clip zone 
+ **/
 
 static void xget_clip(BCG *Xgc,int *x)
 {
@@ -488,14 +635,19 @@ static void xget_clip(BCG *Xgc,int *x)
     }
 }
 
-/*
- * For the private->drawing functions dealing with vectors of 
+/* For the private->drawing functions dealing with vectors of 
  * points, the following routine is used to select the mode 
  * absolute or relative 
  * Absolute mode if *num==0, relative mode if *num != 0
  */
 
-/* to set absolute or relative mode */
+/**
+ * xset_absourel:
+ * @Xgc: a #BCG  
+ * @flag: 
+ * 
+ * to set absolute or relative mode 
+ **/
 
 static void xset_absourel(BCG *Xgc,int flag)
 {
@@ -505,7 +657,14 @@ static void xset_absourel(BCG *Xgc,int flag)
     Xgc->CurVectorStyle =  CoordModePrevious ;
 }
 
-/* to get information on absolute or relative mode */
+/**
+ * xget_absourel:
+ * @Xgc: a #BCG  
+ * 
+ * to get information on absolute or relative mode 
+ *
+ * Returns: 
+ **/
 
 static int xget_absourel(BCG *Xgc)
 {
@@ -539,6 +698,13 @@ static struct alinfo {
       {"GXset" , GDK_SET," 1 "}
     };
 
+/**
+ * xset_alufunction1:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ **/
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
   int value ; 
@@ -574,17 +740,30 @@ static void xset_alufunction1(BCG *Xgc,int num)
 }
 
 
+/**
+ * xget_alufunction:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_alufunction(BCG *Xgc)
 { 
   return  Xgc->CurDrawFunction ;
 }
 
-/*
+
+/**
+ * xset_thickness:
+ * @Xgc: a #BCG  
+ * @value: 
+ * 
  *  to set the thickness of lines : 0 is a possible value 
  *  it gives the thinest line (0 and 1 are the same for X11 but
  *  with diferent algorithms 
  *  defaut value is 1 
- */
+ **/
 
 static void xset_thickness(BCG *Xgc,int value)
 { 
@@ -594,7 +773,15 @@ static void xset_thickness(BCG *Xgc,int value)
   xset_dash(Xgc,val);
 }
 
-/* to get the thickness value */
+/**
+ * xget_thickness:
+ * @Xgc: a #BCG  
+ * 
+ * to get the thickness value 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int xget_thickness(BCG *Xgc)
 {
@@ -638,6 +825,16 @@ static int xget_thickness(BCG *Xgc)
  }
 */
 
+ /**
+ * xset_pattern:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
 static int  xset_pattern(BCG *Xgc,int num)
 { 
   int old = xget_pattern(Xgc);
@@ -661,6 +858,14 @@ static int  xset_pattern(BCG *Xgc,int num)
   return old;
 }
 
+/**
+ * xget_pattern:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* To get the id of the current pattern  */
 
 static int xget_pattern(BCG *Xgc)
@@ -671,6 +876,14 @@ static int xget_pattern(BCG *Xgc)
     return Xgc->CurPattern + 1;
 }
 
+/**
+ * xget_last:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* To get the id of the last pattern */
 
 static int xget_last(BCG *Xgc)
@@ -696,6 +909,15 @@ static int xget_last(BCG *Xgc)
 #define MAXDASH 6
 
 static int DashTab[MAXDASH][4] = {
+/**
+ * xset_dash:
+ * @Xgc: a #BCG  
+ * @value: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
   {2,5,2,5}, {5,2,5,2},  {5,3,2,3}, {8,3,2,3}, {11,3,2,3}, {11,3,5,3}};
 
 static int  xset_dash(BCG *Xgc,int value)
@@ -708,12 +930,27 @@ static int  xset_dash(BCG *Xgc,int value)
   return old;
 }
 
+/**
+ * xget_dash:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_dash(BCG *Xgc)
 {
   return  Xgc->CurDashStyle + 1;
 }
 
 
+/**
+ * xset_line_style:
+ * @Xgc: a #BCG  
+ * @value: 
+ * 
+ * 
+ **/
 static void xset_line_style(BCG *Xgc,int value)
 {
   if (Xgc->CurColorStatus == 0) 
@@ -731,6 +968,15 @@ static void xset_line_style(BCG *Xgc,int value)
  * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots 
  */
 
+/**
+ * xset_dashstyle:
+ * @Xgc: a #BCG  
+ * @value: 
+ * @xx: 
+ * @n: 
+ * 
+ * 
+ **/
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
   if ( value == 0) 
@@ -752,6 +998,15 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 }
 
 
+/**
+ * xset_usecolor:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* used to switch from color to b&w and reverse */
 
 static void xset_usecolor(BCG *Xgc,int num)
@@ -791,6 +1046,14 @@ static void xset_usecolor(BCG *Xgc,int num)
     }
 }
 
+/**
+ * xget_usecolor:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_usecolor(BCG *Xgc)
 {
   return  Xgc->CurColorStatus;
@@ -800,6 +1063,13 @@ static int xget_usecolor(BCG *Xgc)
  * adding or removing a Background Pixmap to it 
  */
 
+/**
+ * xset_pixmapOn:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ **/
 static void xset_pixmapOn(BCG *Xgc,int num)
 { 
   int num1= Min(Max(num,0),2);
@@ -852,6 +1122,14 @@ static void xset_pixmapOn(BCG *Xgc,int num)
   
 }
 
+/**
+ * xget_pixmapOn:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_pixmapOn(BCG *Xgc)
 {
   return Xgc->CurPixmapStatus;
@@ -865,6 +1143,13 @@ static int xget_pixmapOn(BCG *Xgc)
  * size of the grahic window to very small values 
  */
 
+/**
+ * xset_wresize:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ **/
 static void xset_wresize(BCG *Xgc,int num)
 {
   GdkGeometry geometry;
@@ -893,6 +1178,14 @@ static void xset_wresize(BCG *Xgc,int num)
     }
 }
 
+/**
+ * xget_wresize:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_wresize(BCG *Xgc)
 {
   return Xgc->CurResizeStatus;
@@ -900,6 +1193,14 @@ static int xget_wresize(BCG *Xgc)
 
 /* XXXX setting the default colormap with colors defined in color.h */
 
+/**
+ * sedeco:
+ * @flag: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int set_default_colormap_flag = 1;
 
 static void sedeco(int flag)
@@ -913,8 +1214,19 @@ static void sedeco(int flag)
  */
 
 static int XgcAllocColors( BCG *xgc, int m);
+
 static void set_colormap_constants(BCG *Xgc,int m);
 
+/*
+ *
+ */
+
+/**
+ * xset_default_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ **/
 static void xset_default_colormap(BCG *Xgc)
 {
   int i,m ;
@@ -963,6 +1275,15 @@ static void xset_default_colormap(BCG *Xgc)
  * v2 gives the value of m and *v3 must be equal to 3 
  */
 
+/**
+ * xset_colormap:
+ * @Xgc: a #BCG  
+ * @m: 
+ * @n: 
+ * @a: 
+ * 
+ * 
+ **/
 static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
   int i ;
@@ -1006,6 +1327,15 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
   FREE(colors_old);
 }
 
+/**
+ * XgcAllocColors:
+ * @xgc: 
+ * @m: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* utility function */
 
 static int XgcAllocColors( BCG *xgc, int m)
@@ -1021,6 +1351,13 @@ static int XgcAllocColors( BCG *xgc, int m)
   return 1;
 }
 
+/**
+ * set_colormap_constants:
+ * @Xgc: a #BCG  
+ * @m: 
+ * 
+ * 
+ **/
 static void set_colormap_constants(BCG *Xgc,int m)
 {
   /* Black */
@@ -1049,6 +1386,17 @@ static void set_colormap_constants(BCG *Xgc,int m)
   xset_background(Xgc,Xgc->NumForeground+2);
 }
 
+/**
+ * xget_colormap:
+ * @Xgc: a #BCG  
+ * @num: 
+ * @val: 
+ * @color_id: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* getting the colormap */
 
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
@@ -1084,6 +1432,15 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
     }
 }
 
+/**
+ * xset_background:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
@@ -1104,12 +1461,29 @@ static void xset_background(BCG *Xgc,int num)
       gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
     }
 }
+/**
+ * xget_background:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
  
 static int  xget_background(BCG *Xgc)
 { 
   return ( Xgc->CurColorStatus == 1 ) ? Xgc->NumBackground + 1 : 1;
 }
 
+/**
+ * xset_foreground:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* set and get the number of the background or foreground */
 
 static void xset_foreground(BCG *Xgc,int num)
@@ -1125,6 +1499,14 @@ static void xset_foreground(BCG *Xgc,int num)
     }
 }
 
+/**
+ * xget_foreground:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_foreground(BCG *Xgc)
 { 
   if ( Xgc->CurColorStatus == 1 ) 
@@ -1144,6 +1526,13 @@ static int xget_foreground(BCG *Xgc)
  * < 0 same as face color
  */
 
+/**
+ * xset_hidden3d:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ **/
 static void xset_hidden3d(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
@@ -1152,6 +1541,14 @@ static void xset_hidden3d(BCG *Xgc,int num)
     }
 }
 
+/**
+ * xget_hidden3d:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_hidden3d(BCG *Xgc)
 { 
   if ( Xgc->CurColorStatus == 1 ) 
@@ -1171,31 +1568,73 @@ static int xget_hidden3d(BCG *Xgc)
  * this is usefull for replaying with the Rec driver (See Rec.c) 
  *-----------------------------------------------------------------------------*/
 
+/**
+ * xset_autoclear:
+ * @Xgc: a #BCG  
+ * @num: 
+ * 
+ * 
+ **/
 static void xset_autoclear(BCG *Xgc,int num)
 { 
   Xgc->Autoclear = Max(0,Min(1,num));
 }
 
+/**
+ * xset_autoclear_def:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ **/
 static void xset_autoclear_def(BCG *Xgc) 
 {
   Xgc->Autoclear = 0;
 }
 
+/**
+ * xget_autoclear:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int xget_autoclear(BCG *Xgc)
 { 
   return  Xgc->Autoclear;
 }
 
+/**
+ * xget_fpf:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static char *xget_fpf(BCG *Xgc)
 {
   return( Xgc->fp_format);
 }
 
+/**
+ * xset_fpf:
+ * @Xgc: a #BCG  
+ * @fmt: 
+ * 
+ * 
+ **/
 static void xset_fpf(BCG *Xgc,char *fmt) 
 {
   strncpy(Xgc->fp_format,fmt,32);
 }
 
+/**
+ * xset_fpf_def:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ **/
 static void xset_fpf_def(BCG *Xgc) 
 {
   Xgc->fp_format[0]='\0';
@@ -1212,6 +1651,13 @@ static void xset_fpf_def(BCG *Xgc)
  * function must be called. 
  */
 
+/**
+ * nsp_gtk_set_color:
+ * @Xgc: a #BCG  
+ * @col: 
+ * 
+ * 
+ **/
 static void nsp_gtk_set_color(BCG *Xgc,int col)
 {
   int value = AluStruc_[Xgc->CurDrawFunction].id;
@@ -1253,6 +1699,12 @@ GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
  * to come back to the default graphic state}
  */
 
+/**
+ * nsp_initialize_gc:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ **/
 extern void nsp_initialize_gc( BCG *Xgc ) ;
 
 static void xset_default(BCG *Xgc)
@@ -1278,6 +1730,15 @@ static void xset_default(BCG *Xgc)
  *
  */
 
+/**
+ * realize_event:
+ * @widget: 
+ * @data: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 /* signal functions */
 
 static gint realize_event(GtkWidget *widget, gpointer data)
@@ -1328,6 +1789,16 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   return FALSE;
 }
 
+/**
+ * configure_event:
+ * @widget: 
+ * @event: 
+ * @data: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -1352,14 +1823,29 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 }
 
 
+/**
+ * nsp_gtk_invalidate:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ **/
 static void nsp_gtk_invalidate(BCG *Xgc)
 {
-
   gdk_window_invalidate_rect(Xgc->private->drawing->window,
 			     &Xgc->private->drawing->allocation,
 			     FALSE);
 }
 
+/**
+ * expose_event:
+ * @widget: 
+ * @event: 
+ * @data: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -1424,11 +1910,27 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
  *
  */
 
+/**
+ * nsp_get_image:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 GdkImage* nsp_get_image(BCG *Xgc) 
 {
   return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 
+/**
+ * nsp_get_pixbuf:
+ * @Xgc: a #BCG  
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
