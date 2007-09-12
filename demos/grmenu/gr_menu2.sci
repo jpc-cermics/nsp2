@@ -87,21 +87,25 @@ function w=create_midle_menu (win,xc,yc)
     
   global('GF');
   s_win='win'+string(win);
-  L= GF(s_win).get_selection_as_list[];
-  if isempty(L) then 
+  L= GF(s_win).get_selection_as_gframe[];
+  printf("Number of selected objects %d\n",L.nobjs[]);
+    
+  if L.nobjs[]==0 then 
     // no selection try to find one 
     rep=GF(s_win).select_and_hilite[[xc,yc]];
     if rep then 
       GF(s_win).draw[];
-      L= GF(s_win).get_selection_as_list[];
+      L= GF(s_win).get_selection_as_gframe[];
     end
   end
   
   menu = gtkmenu_new ();
   // title of the sub menu 
-  if ~isempty(L) then 
-    if length(L)==1 then  
-      name = type(L(1),'string')
+  
+  if L.nobjs[]<>0 then 
+    if L.nobjs[]==1 then  
+      [ok, Lo] = GF(s_win).get_selection[];
+      name = type(Lo,'string')
     else
       name = 'Agregation '
     end
@@ -117,7 +121,7 @@ function w=create_midle_menu (win,xc,yc)
   
   //
   menuitem = gtkimagemenuitem_new(stock_id="gtk-delete");
-  if isempty(L) then 
+  if L.nobjs[]==0 then 
     menuitem.set_sensitive[%f];
   end
   menuitem.connect["activate",midle_menuitem_response,list(1,win)];
@@ -144,7 +148,7 @@ function w=create_midle_menu (win,xc,yc)
   
   //-- copy 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
-  if isempty(L) then 
+  if  L.nobjs[]==0 then 
     menuitem.set_sensitive[%f];
   end
   menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
@@ -186,20 +190,21 @@ function midle_menuitem_response(w,args)
     GF(win).select_link_and_remove_control[[args(2),args(3)]];
    case 4 then 
     // copy selection into the clipboard 
-    L= GF(win).get_selection_copy_as_list[];
+    L= GF(win).get_selection_as_gframe[];
     // pause 
-    if ~isempty(L) then GF('clipboard') = list(L); 
+    if ~isempty(L) then GF('clipboard') = list(L.copy[]); 
     else x_message('No selection');end 
    case 5 then 
     // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	L= GF('clipboard')(1);
-	if length(L)==1 then 
-	  L(1).set_pos[[args(2),args(3)]];
-	  GF(win).insert[L(1)];
+	if L.nobjs[]==1 then 
+	  L.set_pos[[args(2),args(3)]];
+	  GF(win).insert[L];
 	else
-	  x_message('Paste multiple');
+	  GF(win).insert_gframe[L];
+	  //x_message('Paste multiple');
 	end 
       else 
 	x_message('Clipboard is empty');end 
@@ -357,6 +362,12 @@ function my_eventhandler(win,x,y,ibut,imask)
       // add to selection and move the whole stuff 
       [xc,yc]=xchange(x,y,'i2f')
       GF(winid).select_and_move_list[[xc,yc]];
+    elseif iand(imask,GDK.CONTROL_MASK) 
+	// toggle the selection 
+	printf("control -press \n");
+	[xc,yc]=xchange(x,y,'i2f')
+	GF(winid).select_and_toggle_hilite[[xc,yc]];
+	GF(winid).draw[];
     else
       // select the new, unhilite others and move selected 
       [xc,yc]=xchange(x,y,'i2f')
