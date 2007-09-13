@@ -69,6 +69,7 @@ void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounte
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
+  int i;
   static int first = 0;
   GdkColor white={0,0,0,0};
   GdkColor black={0,65535,65535,65535};
@@ -175,6 +176,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   /* default resize not yet defined */
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+  for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
 
   if ( win != NULL )
     {
