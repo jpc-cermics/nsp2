@@ -38,7 +38,7 @@ user_preferences user_pref= {
   1 ,/* split_long_rows;		*/
   0 ,/* print empty dimensions   */
   0 ,/* pr_as_read_syntax;	*/
-  LONG_MAX ,/* stop printing at given depth for recursive objects */
+  INT_MAX ,/* stop printing at given depth for recursive objects */
   FALSE ,/* flag for list display */
   print_std  ,/* std, latex or latex tables */
   TRUE /* only print if active is true */

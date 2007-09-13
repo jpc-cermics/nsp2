@@ -660,7 +660,7 @@ static int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
   NspObject *object;
   print_func *pr;
   int dp=user_pref.pr_depth;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0;
   char *name = NULL;
   nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 		      { "depth", s_int,NULLOBJ,-1},

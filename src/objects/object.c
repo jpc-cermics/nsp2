@@ -1048,7 +1048,7 @@ int int_object_info_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
-  int depth=LONG_MAX,indent=0,tree=FALSE;
+  int depth=INT_MAX,indent=0,tree=FALSE;
   char *name = NULL;
   nsp_option opts[] ={{ "depth", s_int,NULLOBJ,-1},
 		      { "indent",s_int,NULLOBJ,-1},
@@ -1088,7 +1088,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   print_func *pr;
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0,tree=FALSE;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE;
   char *name = NULL;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 			    { "depth", s_int,NULLOBJ,-1},
