@@ -152,6 +152,8 @@ Tokenizer
 UPDATE_EXEC_DIR
 WITH_ASOUND
 WITH_CHOLMOD
+WITH_GMP
+WITH_SNDFILE
 WITH_SYMB_TABLE
 WITH_UMFPACK
 Well1024a
@@ -254,6 +256,7 @@ nsp_get_filename_open
 nsp_get_filename_save
 nsp_get_id_from_object
 nsp_get_short_string_from_id
+nsp_gframe_select_and_toggle_hilite
 nsp_global_frame_remove_all_objects
 nsp_gsort
 nsp_guide_table_method

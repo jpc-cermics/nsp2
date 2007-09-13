@@ -1,7 +1,7 @@
 *.stamp
-model.txt
-nspdoc-docs.sgml.kp
-xml
+*.back
 .nsp_history
-
-
+tmpl
+xml
+nspdoc-unused.txt
+nspdoc-undocumented.txt 

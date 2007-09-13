@@ -1,7 +1,7 @@
 46% symbol docs coverage.
-1088 symbols documented.
-214 symbols incomplete.
-1256 not documented.
+1087 symbols documented.
+210 symbols incomplete.
+1257 not documented.
 
 
 Abs
@@ -864,19 +864,16 @@ nsp_mat_mult_el (B)
 nsp_mat_set_ival (dval)
 nsp_mat_slec (file, Count)
 nsp_mat_sort
-nsp_matint_concat_down (ObjA, ObjB)
 nsp_matint_repmat
 nsp_matrix_boundster
 nsp_matrix_clone (init)
 nsp_matrix_column_sort
 nsp_matrix_companion
 nsp_matrix_dialog
-nsp_matrix_info (Returns)
-nsp_matrix_latex_print (Returns)
 nsp_matrix_latex_tab_print (Returns)
 nsp_matrix_lexical_column_sort
 nsp_matrix_lexical_row_sort
-nsp_matrix_print (Returns)
+nsp_matrix_redim
 nsp_matrix_row_sort
 nsp_matrix_set_format
 nsp_matrix_sort (A, Index, ind_flag, type, Returns)
