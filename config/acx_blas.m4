@@ -40,7 +40,7 @@ AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
 acx_blas_ok=no
 
 AC_ARG_WITH(blas,
-	[AC_HELP_STRING([--with-blas=<lib>], [use BLAS library <lib>])])
+	[AC_HELP_STRING([--with-blas=<lib>], [use BLAS library <lib>, use --with-blas=no to use local source for lapack and blas ])])
 case $with_blas in
 	yes | "") ;;
 	no) acx_blas_ok=disable ;;
