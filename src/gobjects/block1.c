@@ -644,7 +644,8 @@ static NspGridBlock * gridblock_full_copy( NspGridBlock *B)
   if ( nsp_block_create(Blnew, Bl->obj->r,Bl->obj->color, Bl->obj->thickness,Bl->obj->background) == NULL) 
     return NULLGRIDBLOCK;
   /* create the own part */
-  if ((Bnew->obj = nspgframe_full_copy(B->obj))  == NULL) return NULLGRIDBLOCK;
+  if ((Bnew->obj = nspgframe_full_copy(B->obj,FALSE))  == NULL) 
+    return NULLGRIDBLOCK;
   Bnew->obj->top = FALSE;
   for ( i=0; i < 4 ; i++) Bnew->obj->r[i]= gf_rect[i];
   for ( i=0; i < 4 ; i++) Bnew->obj->scale[i]= gf_scale[i];

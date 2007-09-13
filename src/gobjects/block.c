@@ -327,9 +327,9 @@ static int block_print(NspBlock *H, int indent,char *name, int rec_level)
 
 NspBlock *block_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
+  /* Check type */
   if ( check_cast(O,nsp_type_block_id) == TRUE) return ((NspBlock *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_block));
@@ -774,9 +774,11 @@ void block_set_show(NspBlock *B,int val) {  B->obj->show = val; }
 
 /**
  * lock_draw:
- * @Xgc: 
- * @: 
- * @dir: 
+ * @Xgc: a #BCG context 
+ * @pt: a point 
+ * @dir: direction of lock point #lock_dir
+ * @typ: a #lock_type 
+ * @locked: is lock point locked ?
  * 
  * draw a lock point at lock position @pt 
  * It a lock point in thus the lock point is a the 
@@ -1051,7 +1053,9 @@ int block_contains_pt(const NspBlock *B,const double pt[2])
  * @pt: a point position 
  * @cp: the control point id in case of success.
  * 
- * Checks if the given point is near a block control point. 
+ * Checks if the given point is near a block control point. Note 
+ * that a block just have one control point which is the (down,right) 
+ * corner used for resizing. 
  * 
  * Return value: %True or %False.
  **/
@@ -1206,12 +1210,12 @@ void block_get_lock_pos(const NspBlock *B, int i,double pt[])
 
 /**
  * block_get_lock_dir:
- * @B: 
- * @i: 
+ * @B: a #NspBlock 
+ * @i: a lock point id. 
  * 
+ * returns the lock direction of selected lock point.
  * 
- * 
- * Return value: 
+ * Return value: a #lock_dir 
  **/
 
 lock_dir block_get_lock_dir(const NspBlock *B, int i)
@@ -1311,7 +1315,7 @@ int block_is_lock_connected(NspBlock *B,int i)
  * @pt: a point coordinates 
  * 
  * Sets the lock point @i position to @pt. 
- * XXXX : not supposed to call ths function since 
+ * XXXX : not supposed to call this function since 
  *        relative positions should be moved !!
  *        But it is maybe only called for links.
  **/
@@ -1345,6 +1349,10 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[])
     }
 }
 
+/* utility
+ *
+ */
+
 static void block_set_lock_pos_from_rel(NspBlock *B, int i)
 {
   const double xoffset[]={0,0,lock_size,-lock_size,0};
@@ -1363,10 +1371,17 @@ static void block_set_lock_pos_from_rel(NspBlock *B, int i)
 
 /**
  * block_set_locks:
- * @B: 
- * @Pt: 3xn 
+ * @B: a #NspBlock 
+ * @Pt: 3xn  #NspMatrix
  * 
- * Return value: 
+ * uses the @Pt matrix as the definition of the lock points 
+ * of the block @B. Each lock point is defined by a column of 
+ * @Pt which gives the lock type and its (x,y) position defined 
+ * by its relative position inside the block enclosing rectangle. 
+ * x and y are in the range (0,1). (0,0) is the upper left point 
+ * and (0,1) the lower right point. 
+ *
+ * Return value: %OK or %FAIL
  **/
 
 static int block_set_locks(NspBlock *B,NspMatrix *Pt)
@@ -1399,10 +1414,10 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt)
 
 /**
  * block_unlock:
- * @L: 
- * @lp: 
+ * @L: a #NspBlock 
+ * @lp: an integer
  * 
- * unlock the associated lock point of the block 
+ * unlock the lock point of the block with id @lp.
  **/
 
 static void block_unlock( NspBlock *B,int lp) 
@@ -1436,10 +1451,14 @@ static void block_set_frame( NspBlock *B, NspGFrame *Gf)
 }
 
 
-/*
- * Make a full copy of object B
- * this is to be inserted in grint 
- */
+/**
+ * block_full_copy:
+ * @B: a #NspBlock 
+ * 
+ * returns a full copy of a a #NspBlock object. 
+ * 
+ * Returns: a new #NspBlock  or %NULLBLOCK
+ **/
 
 static NspBlock * block_full_copy( NspBlock *B)
 {
