@@ -856,7 +856,7 @@ static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static int int_meth_gf_insert_gframe(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  double pt1[2]= {5,5};
+  double pt1[2]= {5,-10};
   NspGFrame *F = self;
   Cell *C;
   NspGFrame *GF;
@@ -866,9 +866,9 @@ static int int_meth_gf_insert_gframe(void *self,Stack stack, int rhs, int opt, i
   /* now we loop on objects and insert them 
    * this could be turned into a new function 
    */
-  if ((GF = nsp_gframe_full_copy(GF))== NULLGFRAME)
-    return RET_BUG;
+  if ((GF = nsp_gframe_full_copy(GF))== NULLGFRAME)   return RET_BUG;
   nsp_gframe_list_obj_action(GF,GF->obj->objs,pt1,L_TRANSLATE);
+  nsp_gframe_list_obj_action(GF,GF->obj->objs,pt1, L_LOCK_UPDATE);
   /* insert each object */
   C = GF->obj->objs->first; 
   while ( C != NULLCELL) 
