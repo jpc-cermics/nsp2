@@ -1,104 +1,36 @@
-// test program 
-// a new scicos editor 
+// test program for a scicos-like editor 
 // this works with objects of src/gobjects 
 
-function w=create_midle_menu_old (win,xc,yc)
-// midle button menu construction 
-  
-  global('GF');
-  s_win='win'+string(win);
-  [is_sel,ov]= GF(s_win).get_selection[];
-  if ~is_sel then 
-    // no selection try to find one 
-    rep=GF(s_win).select_and_hilite[[xc,yc]];
-    if rep then 
-      GF(s_win).draw[];
-      [is_sel,ov]= GF(s_win).get_selection[];
-    end
-  end
-  
-  menu = gtkmenu_new ();
-  // title of the sub menu 
-  if is_sel then 
-    name = type(ov,'string')
-    menuitem = gtkmenuitem_new(label=name+ ' Menu' );
-    menu.append[menuitem]
-    menuitem.show[];
-    menuitem = gtkseparatormenuitem_new()
-    menu.append[menuitem]
-    menuitem.show[];
-  else
-    name = 'void';
-  end
-  
-  //
-  menuitem = gtkimagemenuitem_new(stock_id="gtk-delete");
-  if ~is_sel then 
-    menuitem.set_sensitive[%f];
-  end
-  menuitem.connect["activate",midle_menuitem_response,list(1,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  //
-  if name == 'Link' then 
-    menuitem = gtkmenuitem_new(label="add control point");
-    menuitem.connect["activate",midle_menuitem_response,list(2,xc,yc,win)];
-    menu.append[menuitem]
-    menuitem.show[];
-    //
-    menuitem = gtkmenuitem_new(label="remove control point");
-    menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
-    menu.append[menuitem]
-    menuitem.show[];
-  end
-  if name == 'GridBlock' then 
-    menuitem = gtkmenuitem_new(label="edit super block");
-    menuitem.connect["activate",midle_menuitem_response,list(6,xc,yc,win)];
-    menu.append[menuitem]
-    menuitem.show[];
-  end
-  
-  //-- copy 
-  menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
-  if ~is_sel then 
-    menuitem.set_sensitive[%f];
-  end
-  menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  // sensitive or not 
-  // menuitem.set_sensitive[%f];
-  //-- paste 
-  menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
-  if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
-    // nothing to paste 
-    menuitem.set_sensitive[%f];
-  end
-  menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  //  
-  w=menu;
-endfunction 
-
-function w=create_midle_menu (win,xc,yc)
+function w=create_object_menu (win,xc,yc)
 // midle button menu construction 
 // version where selection is a list 
     
   global('GF');
   s_win='win'+string(win);
-  L= GF(s_win).get_selection_as_gframe[];
-  printf("Number of selected objects %d\n",L.nobjs[]);
-    
-  if L.nobjs[]==0 then 
-    // no selection try to find one 
-    rep=GF(s_win).select_and_hilite[[xc,yc]];
-    if rep then 
-      GF(s_win).draw[];
-      L= GF(s_win).get_selection_as_gframe[];
-    end
-  end
   
+  // check if pointer is over an object 
+  
+  [k,hilited] = GF(winid).check_pointer[[xc,yc]]; 
+  if k == %f then 
+    w=create_right_menu (win)
+    return 
+  end
+
+  // if pointer is over an object 
+  // we have to check if object is hilited 
+  // if it is then ok 
+  // if it is not then we have to select it unselect 
+  // others then continue 
+  
+  if ~hilited  then 
+    rep=GF(s_win).select_and_hilite[[xc,yc]];
+    GF(s_win).draw[];
+  end
+    
+  // now selection should not be empty 
+  
+  L= GF(s_win).get_selection_as_gframe[];
+    
   menu = gtkmenu_new ();
   // title of the sub menu 
   
@@ -124,24 +56,24 @@ function w=create_midle_menu (win,xc,yc)
   if L.nobjs[]==0 then 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",midle_menuitem_response,list(1,win)];
+  menuitem.connect["activate",objet_menuitem_response,list(1,win)];
   menu.append[menuitem]
   menuitem.show[];
   //
   if name == 'Link' then 
     menuitem = gtkmenuitem_new(label="add control point");
-    menuitem.connect["activate",midle_menuitem_response,list(2,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(2,xc,yc,win)];
     menu.append[menuitem]
     menuitem.show[];
     //
     menuitem = gtkmenuitem_new(label="remove control point");
-    menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(3,xc,yc,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
   if name == 'GridBlock' then 
     menuitem = gtkmenuitem_new(label="edit super block");
-    menuitem.connect["activate",midle_menuitem_response,list(6,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(6,xc,yc,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
@@ -151,7 +83,7 @@ function w=create_midle_menu (win,xc,yc)
   if  L.nobjs[]==0 then 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
+  menuitem.connect["activate",objet_menuitem_response,list(4,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   // sensitive or not 
@@ -162,16 +94,17 @@ function w=create_midle_menu (win,xc,yc)
     // nothing to paste 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
+  menuitem.connect["activate",objet_menuitem_response,list(5,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   //  
   w=menu;
 endfunction 
 
-function midle_menuitem_response(w,args) 
-// midle button menu activation 
-// the midle menu should be a by object menu 
+function objet_menuitem_response(w,args) 
+// This function is the activated handler 
+// when an object menu is activated 
+//  
   global('GF');
   // printf("Menu item [%d] activated for win=%d\n",args(1),args($));
   win='win'+string(args($))
@@ -251,14 +184,27 @@ function menu=create_right_menu (win)
   menuitem = gtkseparatormenuitem_new()
   menu.append[menuitem]
   menuitem.show[];
+  //-- paste 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
+  if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
+    // nothing to paste 
+    menuitem.set_sensitive[%f];
+  end
+  menuitem.connect["activate",menuitem_response,list(6,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  // separator 
+  menuitem = gtkseparatormenuitem_new()
+  menu.append[menuitem]
+  menuitem.show[];
   // save to file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-save-as");
-  menuitem.connect["activate",menuitem_response,list(4,win)];
+  menuitem.connect["activate",menuitem_response,list(7,win)];
   menu.append[menuitem]
   menuitem.show[];
   // load file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
-  menuitem.connect["activate",menuitem_response,list(5,win)];
+  menuitem.connect["activate",menuitem_response,list(8,win)];
   menu.append[menuitem]
   menuitem.show[];
 endfunction 
@@ -276,11 +222,27 @@ function menuitem_response(w,args)
    case 4 then  GF(win).new_gridblock[] ;
    case 5 then  printf("Menu item [%d] ignored \n",args(1));
    case 6 then  
+    // paste selection 
+    if GF.iskey['clipboard'] then 
+      if length(GF('clipboard'))<> 0 then
+	L= GF('clipboard')(1);
+	if L.nobjs[]==1 then 
+	  L.set_pos[[args(2),args(3)]];
+	  GF(win).insert[L];
+	else
+	  GF(win).insert_gframe[L];
+	  //x_message('Paste multiple');
+	end 
+      else 
+	x_message('Clipboard is empty');end 
+    end
+    GF('clipboard') = list();
+   case 7 then  
     fname = xgetfile();
     if fname <> "" then 
       save(fname,diagram=GF(win));
     end
-   case 7 then 
+   case 8 then 
     fname = xgetfile();
     if fname <> "" then 
       load(fname);
@@ -289,7 +251,7 @@ function menuitem_response(w,args)
 	GF(win)=diagram;
       end
     end
-   case 8 then 
+   case 9 then 
   end
   GF(win).draw[]
 endfunction
@@ -375,14 +337,10 @@ function my_eventhandler(win,x,y,ibut,imask)
     end
   elseif ibut==1 then 
     // midle press 
-    [xc,yc]=xchange(x,y,'i2f')
-    popup_m=create_midle_menu (win,xc,yc)
-    popup_m.popup[button=1,activate_time=0]; //event.time]; 
   elseif ibut==2 then 
     // right press
     [xc,yc]=xchange(x,y,'i2f')
-    [xc,yc]=xchange(x,y,'i2f')
-    popup_m=create_right_menu (win)
+    popup_m=create_object_menu (win)
     popup_m.popup[button=2,activate_time=0]; //event.time]; 
     //popup_menu=create_menu(2,8,%f); 
     //popup_menu.popup[button=3,activate_time=0]; //event.time]; 
