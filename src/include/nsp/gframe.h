@@ -99,7 +99,7 @@ extern NspGFrame *nsp_gframe_create(char *name,BCG *Xgc,int init_objs,const doub
 extern void nsp_gframe_draw (NspGFrame *R); 
 extern int nsp_gframe_select_obj (NspGFrame *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_gframe_select_lock(NspGFrame *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
-extern int nsp_gframe_select_and_move (NspGFrame *R, const double *pt); 
+extern int nsp_gframe_select_and_move (NspGFrame *R, const double *pt, int mask); 
 extern int nsp_gframe_select_and_hilite(NspGFrame *R,const double pt[2]);
 extern int nsp_gframe_select_and_toggle_hilite(NspGFrame *R,const double pt[2]);
 
@@ -110,6 +110,7 @@ extern void nsp_gframe_delete_hilited (NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_block(NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_connector(NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_link(NspGFrame *F);
+extern NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F);
 extern int nsp_gframe_create_new_rect(NspGFrame *F);
 extern int  nsp_gframe_hilite_near_pt(NspGFrame *R,const double pt[2]);
 
@@ -124,8 +125,9 @@ extern NspGFrame *nsp_gframe_full_copy( NspGFrame *F);
 extern NspGFrame *nsp_gframe_from_nspgframe(char *name,BCG *Xgc, nspgframe *gf);
 extern void nsp_gframe_destroy (NspGFrame *H); 
 extern NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy);
-extern int nsp_gframe_select_and_move_list(NspGFrame *R,const double pt[2]);
-extern int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,move_action action);
+extern int nsp_gframe_select_and_move_list(NspGFrame *R,NspObject *Obj,const double pt[2], int *click);
+extern int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,
+				    move_action action, int *click);
 
 /* functions for nspgframe */
 

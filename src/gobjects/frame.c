@@ -572,7 +572,7 @@ static int int_meth_gf_select_and_move(void *self,Stack stack, int rhs, int opt,
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,pt,2);
-  nsp_gframe_select_and_move(((NspGFrame *) self),pt->R);
+  nsp_gframe_select_and_move(((NspGFrame *) self),pt->R, 0);
   return 0;
 }
 
@@ -585,7 +585,7 @@ static int int_meth_gf_select_and_move_list(void *self,Stack stack, int rhs, int
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,pt,2);
-  nsp_gframe_select_and_move_list(((NspGFrame *) self),pt->R);
+  nsp_gframe_select_and_move(((NspGFrame *) self),pt->R, 1);
   return 0;
 }
 
@@ -688,8 +688,8 @@ static int int_meth_gf_new_block(void *self,Stack stack, int rhs, int opt, int l
   return 1;
 }
 
-/* XXX test */
-NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F);
+/* a super block 
+ */
 
 static int int_meth_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1296,54 +1296,62 @@ static void nsp_gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2])
+int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2],int mask)
 {
-  BCG *Xgc;
   int k1, cp;
   NspTypeGRint *bf;
   NspObject *O;
   int k = nsp_gframe_select_obj(R,pt,&O,NULL);
-  if ( k==0 ) return FAIL;
-  bf = GR_INT(O->basetype->interface);
-  /* is the object already hilited */
-  if (0 && bf->get_hilited(O) == TRUE) 
+  if ( k==0 )
     {
-      /* if object is already hilited 
-       * then maybe it belongs to a set of objects 
-       * thus we have to move to nsp_gframe_select_and_move_list
-       * If in nsp_gframe_select_and_move_list we find that the 
-       * list of hilited is just reduced to the object we got here 
-       * then we should re-switch back here because MOVE_CONTROL is only 
-       * accepted here ! 
-       * 
+      /* here we should enter a rectangle acquistion 
        */
-      return nsp_gframe_select_and_move_list(R, pt);
+      nsp_gframe_unhilite_objs(R,TRUE);
+      return FAIL;
     }
+  bf = GR_INT(O->basetype->interface);
   /* are we inside a control point ? */
   k1 = bf->control_near_pt(O,pt,&cp);
+  /* is the object already hilited */
+  if ( bf->get_hilited(O) == TRUE || mask == 1 ) 
+    {
+      if ( k1 == FALSE ) 
+	{
+	  int rep,click;
+	  /* we enter a move selection 
+	   */
+	  rep = nsp_gframe_select_and_move_list(R,O, pt,&click);
+	  if ( rep == -100) return OK;
+	  if ( click == TRUE && mask == 0 ) 
+	    {
+	      /* it was a click not a move */
+	      nsp_gframe_unhilite_objs(R,FALSE); 
+	      bf->set_hilited(O,TRUE);
+	      nsp_gframe_draw(R);
+	    }
+	  return OK;
+	}
+      /* here we keep the selection active but we continue 
+       * here with a MOVE_CONTROL
+       */
+    }
+  else 
+    {
+      /* here the object is newly selected thus we have 
+       * to unhilite others except if we are in a shift move 
+       */
+      nsp_gframe_unhilite_objs(R,FALSE); 
+    }
   /* hide the moving object and its locked objects */
   bf->set_show(O,FALSE);
   if ( IsBlock(O)|| IsConnector(O) )  nsp_gframe_locks_set_show(R,O,FALSE);
-  nsp_gframe_unhilite_objs(R,FALSE);
   bf->set_hilited(O,TRUE);
-  if (0) 
-    {
-      /* global draw of all but the moving object 
-       * we record the state to redraw faster. 
-       * Pb this will reset scales to default and we do not want this XXX
-       */
-      Xgc = R->obj->Xgc;
-      Xgc->graphic_engine->clearwindow(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
-      nsp_gframe_draw(R);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-    }
-  else
-    {
-      nsp_gframe_draw(R);
-    }
-  /* */
+  /* global draw of all but the moving object and linked objects 
+   * we could here record the state to redraw faster 
+   * since during the move this part will be kept constant.
+   */
+  nsp_gframe_draw(R);
+  /*  */
   bf->set_show(O,TRUE);
   if ( IsBlock(O) || IsConnector(O) )  nsp_gframe_locks_set_show(R,O,TRUE);
   if ( k1 == FALSE ) 
@@ -1414,66 +1422,44 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
 /**
  * nsp_gframe_select_and_move_list:
  * @R: a #NspGFrame 
- * @pt: a point position 
+ * @Obj: a #NspObject (which was selected to move the selection)
+ * @pt: a point position
+ * @click: %TRUE or %FALSE 
  * 
  * selects the  object which is near the point @pt 
  * and move it with the mouse moving with him all 
- * the hilited blocks 
+ * the hilited blocks.  We return in @click a boolean which is %TRUE 
+ * if the list of object was in fact unmove (press-release at the same position)
+
  * 
- * Return value: %OK or %FAIL
+ * Return value: %OK or %FAIL XXXXX A revoir
  **/
 
-int nsp_gframe_select_and_move_list(NspGFrame *R,const double pt[2])
+int nsp_gframe_select_and_move_list(NspGFrame *R,NspObject *Obj,const double pt[2], int *click)
 {
-  BCG *Xgc;
-  int k1, cp;
+  int rep, cp;
   NspTypeGRint *bf;
-  NspObject *O;
-  int k = nsp_gframe_select_obj(R,pt,&O,NULL);
-  if ( k==0 ) return FAIL;
-  /* are we inside a control point ? */
-  bf = GR_INT(O->basetype->interface);
-  k1 = bf->control_near_pt(O,pt,&cp);
+  NspList *L;
+  bf = GR_INT(Obj->basetype->interface);
   /* hide the moving object and its locked objects */
-  bf->set_show(O,FALSE);
-  if ( IsBlock(O)|| IsConnector(O) )  nsp_gframe_locks_set_show(R,O,FALSE);
+  bf->set_show(Obj,FALSE);
+  if ( IsBlock(Obj)|| IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,FALSE);
   /* nsp_gframe_unhilite_objs(R,FALSE); */
-  bf->set_hilited(O,TRUE);
-  if (0) 
-    {
-      /* global draw of all but the moving object 
-       * we record the state to redraw faster. 
-       * Pb this will reset scales to default and we do not want this XXX
-       */
-      Xgc = R->obj->Xgc;
-      Xgc->graphic_engine->clearwindow(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
-      nsp_gframe_draw(R);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-    }
-  else
-    {
-      nsp_gframe_draw(R);
-    }
+  bf->set_hilited(Obj,TRUE);
+
+  /* global draw of all but the moving object and linked objects 
+   * we could here record the state to redraw faster 
+   * since during the move this part will be kept constant.
+   */
+  nsp_gframe_draw(R);
   /* */
-  bf->set_show(O,TRUE);
-  if ( IsBlock(O) || IsConnector(O) )  nsp_gframe_locks_set_show(R,O,TRUE);
-  if ( k1 == FALSE ) 
-    {
-      int rep;
-      NspList *L= nsp_gframe_get_hilited_list(R->obj,FALSE);
-      if ( L== NULLLIST) return OK;
-      rep = nsp_gframe_move_list_obj(R,L, pt, -5,cp,MOVE );
-      nsp_list_destroy(L);
-      if ( rep == -100) return OK;
-    }
-  else
-    {
-      /* give a warning */
-      Xgc = R->obj->Xgc;
-      Xgc->graphic_engine->xinfo(Xgc,"cannot make a move control in multiselection, just make a move");
-    }
+  bf->set_show(Obj,TRUE);
+  if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,TRUE);
+  L= nsp_gframe_get_hilited_list(R->obj,FALSE);
+  if ( L== NULLLIST) return OK;
+  rep = nsp_gframe_move_list_obj(R,L, pt, -5,cp,MOVE, click );
+  nsp_list_destroy(L);
+  if ( rep == -100) return rep;
   nsp_gframe_draw(R);
   return OK;
 }
@@ -1834,22 +1820,10 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
 
   while ( wstop==0 ) 
     {
-      if (0)
-	{
-	  /* draw the rest of the world : using recorded state */
-	  Xgc->graphic_engine->clearwindow(Xgc);
-	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-	  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
-	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-	  /* draw the moving block */
-	  bf->draw(O);
-	  if ( IsBlock(O)  || IsConnector(O))  nsp_gframe_locks_draw(F,O);
-	}
-      else 
-	{
-	  /* full redraw for fast graphics */
-	  nsp_gframe_draw(F);
-	}
+      /* draw the frame 
+       * we could here record and use a fixed part.
+       */
+      nsp_gframe_draw(F);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
       Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
@@ -1893,9 +1867,11 @@ int nsp_gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,in
  * @stop: an integer giving the mouse code to accept for ending the move 
  * @cp: the id of the control point to be moved
  * @action: %MOVE
+ * @click: %TRUE or %FALSE 
  * 
  * move a list of objects, The only action for a list of objects is %MOVE
- * (%MOVE_CONTROL has no sense).
+ * (%MOVE_CONTROL has no sense). We return in @click a boolean which is %TRUE 
+ * if the list of object was in fact unmove (press-release at the same position)
  * 
  * Return value: an integer 
  **/
@@ -1940,7 +1916,7 @@ static int nsp_gframe_list_obj_action(NspGFrame *F,NspList *L,const double pt[2]
   return OK;
 }
 
-int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,move_action action)
+int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop,int cp,move_action action, int *click)
 {
   int record,rep;
   BCG *Xgc = F->obj->Xgc;
@@ -1962,21 +1938,10 @@ int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop
 
   while ( wstop==0 ) 
     {
-      if (0)
-	{
-	  /* draw the rest of the world : using recorded state */
-	  Xgc->graphic_engine->clearwindow(Xgc);
-	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-	  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
-	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-	  /* draw the moving block */
-	  nsp_gframe_list_obj_action(F,L,pt,L_DRAW);
-	}
-      else 
-	{
-	  /* full redraw for fast graphics */
-	  nsp_gframe_draw(F);
-	}
+      /* draw the frame 
+       * we could here record and use a fixed part.
+       */
+      nsp_gframe_draw(F);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
       Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
@@ -2006,11 +1971,11 @@ int nsp_gframe_move_list_obj(NspGFrame *F,NspList *L,const double pt[2],int stop
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
     }
-  /* XXX
-  nsp_gframe_list_obj_action(F,L,pt,L_LINK_CHECK);
-  */
+  /* was it a click ? */
+  *click =  ( pt1[0]== pt[0] && pt1[1] == pt[1] ) ? TRUE : FALSE;
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
   Xgc->graphic_engine->xset_recording(Xgc,record);
+  /* we return the last activated button code */
   return ibutton;
 }
 
@@ -2138,33 +2103,30 @@ NspObject * nsp_gframe_create_new_block(NspGFrame *F)
  * nsp_gframe_create_new_gridblock:
  * @F: a #NspGFrame 
  * 
- * creates a new block which is positioned interactively and 
- * inserted in @F.
+ * creates a new super block which is positioned interactively and 
+ * inserted in @F. The super block is filled with current hilited objects 
+ * which are then removed from the frame 
  * 
  * Return value: %OK or %FALSE.
  **/
 
-/* XXX */
 extern NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) ;
 
 NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F)
 {
+  NspGFrame *F1;
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
   NspGridBlock *B;
   /* unhilite all */
-  nsp_gframe_unhilite_objs(F,FALSE);
-#if 0 
-  B=gridblock_create("fe",rect,color,thickness,background,NULL);
-#else 
-  B=gridblock_create_from_nsp_gframe("fe",rect,color,thickness,background,F);
-#endif 
+  if ((F1 = nsp_gframe_hilited_full_copy(F)) == NULLGFRAME) return NULLOBJ;
+  nsp_gframe_delete_hilited(F);
+  B=gridblock_create_from_nsp_gframe("fe",rect,color,thickness,background,F1);
+  nsp_gframe_destroy(F1);
   if ( B == NULLGRIDBLOCK) return NULLOBJ;
   ((NspBlock *)B)->obj->frame = F->obj;
   ((NspBlock *)B)->obj->hilited = TRUE;
-#ifdef WITH_GRID_FRAME 
   B->obj->Xgc = F->obj->Xgc;
-#endif 
   if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;

@@ -415,7 +415,9 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   return H;
 }
 
-
+/* create a NspGridBlock filled with a full copy of objects from @F
+ *
+ */
 
 NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) 
 {
