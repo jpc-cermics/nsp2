@@ -958,6 +958,31 @@ static int int_meth_gf_get_nobjs(void *self,Stack stack, int rhs, int opt, int l
   return 1;
 }
 
+/* check if we are over an object */
+
+static int int_meth_gf_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int k, hilited = FALSE;
+  NspObject *Obj;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(0,2);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  k = nsp_gframe_select_obj(((NspGFrame *) self),pt->R,&Obj,NULL);
+  if ( k !=0 )
+    {
+      NspTypeGRint *bf = GR_INT(Obj->basetype->interface);
+      hilited= bf->get_hilited(Obj);
+    }
+  if ( nsp_move_boolean(stack,1, ( k== 0) ? FALSE : TRUE) == FAIL)  return RET_BUG;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_boolean(stack,2, hilited) == FAIL)  return RET_BUG;
+    }
+  return Max(lhs,1);
+}
+
 static NspMethods nsp_gframe_methods[] = {
   { "draw",   int_meth_gf_draw},
   { "tops",   int_meth_gf_tops},
@@ -981,6 +1006,7 @@ static NspMethods nsp_gframe_methods[] = {
   { "get_selection_copy",int_meth_gf_get_selection_copy},
   { "get_selection_as_gframe",int_meth_gf_get_selection_as_gframe},
   { "attach_to_window",int_meth_gf_attach_to_window},
+  { "check_pointer",int_meth_gf_check_pointer},
   { "copy",int_meth_gf_full_copy},
   { "nobjs", int_meth_gf_get_nobjs},
   { (char *) 0, NULL}
