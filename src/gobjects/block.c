@@ -94,6 +94,8 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->draw    		=(gr_draw *) block_draw;
   gri->translate 	=(gr_translate *) block_translate;
   gri->set_pos  	=(gr_set_pos *) block_set_pos;
+  gri->get_pos  	=(gr_get_pos *) block_get_pos;
+  gri->get_rect  	=(gr_get_rect *) block_get_rect;
   gri->resize 		=(gr_resize *) block_resize;
   gri->update_locks 	=(gr_update_locks *) block_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) block_contains_pt;
@@ -895,6 +897,13 @@ void block_draw(NspBlock *B)
       Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
+    case 3: 
+      Xgc1 = window_list_get_first(); 
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
+      sprintf(str,"draw_plot3d([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
+      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
+      break;
     default: 
       /* fill rectangle */
       Xgc->graphic_engine->xset_pattern(Xgc,B->obj->background);
@@ -979,6 +988,17 @@ int block_set_pos(NspBlock *B,const double tr[2])
   B->obj->r[1] = tr[1] ;
   block_update_locks(B);
   return OK;
+}
+
+void block_get_pos(NspBlock *B, double tr[2])
+{
+  tr[0] = B->obj->r[0]; 
+  tr[1] = B->obj->r[1];
+}
+
+void block_get_rect(NspBlock *B, double r[4])
+{
+  memcpy(r,B->obj->r, 4*sizeof(double));
 }
 
 

@@ -100,6 +100,8 @@ NspTypeGridBlock *new_type_gridblock(type_mode mode)
   gri->full_copy =(gr_full_copy *) gridblock_full_copy;
   gri->translate = (gr_translate *) gridblock_translate;
   gri->set_pos = (gr_set_pos *) gridblock_set_pos;
+  gri->get_pos = (gr_get_pos *) gridblock_get_pos;
+  gri->get_rect = (gr_get_rect *) gridblock_get_rect;
   gri->resize = (gr_resize *) gridblock_resize;
   gri->move_control = ( gr_move_control *) gridblock_move_control;
 
@@ -682,6 +684,18 @@ int gridblock_set_pos(NspGridBlock *B,const double tr[2])
   memcpy(B->obj->r,Bl->obj->r,4*sizeof(double));
   Sciprintf("Set position of a gridblock\n");
   return OK;
+}
+
+void gridblock_get_pos(NspGridBlock *B, double tr[2])
+{
+  NspBlock *Bl = (NspBlock *) B;
+  GR_INT(Bl->type->interface)->get_pos(Bl,tr);
+}
+
+void gridblock_get_rect(NspGridBlock *B, double r[4])
+{
+  NspBlock *Bl = (NspBlock *) B;
+  GR_INT(Bl->type->interface)->get_rect(Bl,r);
 }
 
 

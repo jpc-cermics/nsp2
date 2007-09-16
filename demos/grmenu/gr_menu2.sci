@@ -12,7 +12,7 @@ function w=create_object_menu (win,xc,yc)
   
   [k,hilited] = GF(winid).check_pointer[[xc,yc]]; 
   if k == %f then 
-    w=create_right_menu (win)
+    w=create_right_menu (win,xc,yc)
     return 
   end
 
@@ -89,14 +89,16 @@ function w=create_object_menu (win,xc,yc)
   // sensitive or not 
   // menuitem.set_sensitive[%f];
   //-- paste 
-  menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
-  if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
-    // nothing to paste 
-    menuitem.set_sensitive[%f];
+  if %f then 
+    menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
+    if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
+      // nothing to paste 
+      menuitem.set_sensitive[%f];
+    end
+    menuitem.connect["activate",objet_menuitem_response,list(5,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
   end
-  menuitem.connect["activate",objet_menuitem_response,list(5,xc,yc,win)];
-  menu.append[menuitem]
-  menuitem.show[];
   //  
   w=menu;
 endfunction 
@@ -132,20 +134,15 @@ function objet_menuitem_response(w,args)
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	L= GF('clipboard')(1);
-	if L.nobjs[]==1 then 
-	  L.set_pos[[args(2),args(3)]];
-	  GF(win).insert[L];
-	else
-	  GF(win).insert_gframe[L];
-	  //x_message('Paste multiple');
-	end 
+	GF(win).insert_gframe[L,[args(2),args(3)]];
+	//x_message('Paste multiple');
       else 
 	x_message('Clipboard is empty');end 
     end
-    GF('clipboard') = list();
+    // GF('clipboard') = list();
    case 6 then 
     // edit a super block 
-    printf("enter super block edit\n");
+    // printf("enter super block edit\n");
     [test,obj]= GF(win).get_selection[];
     xinit(name='Super Block',dim=[1000,1000],popup_dim=[600,400])
     newwin= xget('window');
@@ -161,8 +158,11 @@ function objet_menuitem_response(w,args)
   GF(win).draw[]
 endfunction
 
-function menu=create_right_menu (win)
+function menu=create_right_menu (win,xc,yc)
 // right button menu construction 
+  global('GF');
+  s_win='win'+string(win);
+  
   tearoff=%t;
   menu = gtkmenu_new ();
   if tearoff then 
@@ -170,8 +170,8 @@ function menu=create_right_menu (win)
     menu.append[  menuitem]
     menuitem.show[];
   end
-  // new
-  tags = ['new link';'new block';'new_connector';'new block1';'new_rect']
+  //--  new
+  tags = ['link';'block';'connector';'empty super block';'selection to super block']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
@@ -180,8 +180,23 @@ function menu=create_right_menu (win)
     menu.append[menuitem]
     menuitem.show[];
   end
+  // check if there's an hilited object 
+  // if not unset the last menuitem
+  [test,obj]= GF(s_win).get_selection[];
+  if ~test  then 
+    menuitem.set_sensitive[%f];
+  end
   // separator 
   menuitem = gtkseparatormenuitem_new()
+  menu.append[menuitem]
+  menuitem.show[];
+  //-- copy 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
+  [ok, Lo] = GF(s_win).get_selection[];
+  if  ~ok then 
+    menuitem.set_sensitive[%f];
+  end
+  menuitem.connect["activate",menuitem_response,list(9,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   //-- paste 
@@ -190,19 +205,19 @@ function menu=create_right_menu (win)
     // nothing to paste 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",menuitem_response,list(6,win)];
+  menuitem.connect["activate",menuitem_response,list(6,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   // separator 
   menuitem = gtkseparatormenuitem_new()
   menu.append[menuitem]
   menuitem.show[];
-  // save to file 
+  //--  save to file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-save-as");
   menuitem.connect["activate",menuitem_response,list(7,win)];
   menu.append[menuitem]
   menuitem.show[];
-  // load file 
+  //--  load file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
   menuitem.connect["activate",menuitem_response,list(8,win)];
   menu.append[menuitem]
@@ -213,30 +228,24 @@ endfunction
 function menuitem_response(w,args) 
 // right button menu activation 
   global('GF');
-  printf("Menu item [%d] activated \n",args(1));
+  //printf("Menu item [%d] activated \n",args(1));
   win='win'+string(args($));
   select args(1) 
    case 1 then  GF(win).new_link[];
    case 2 then  GF(win).new_block[];
    case 3 then  GF(win).new_connector[] ;
    case 4 then  GF(win).new_gridblock[] ;
-   case 5 then  printf("Menu item [%d] ignored \n",args(1));
+   case 5 then  GF(win).new_gridblock_from_selection[] ;
    case 6 then  
     // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	L= GF('clipboard')(1);
-	if L.nobjs[]==1 then 
-	  L.set_pos[[args(2),args(3)]];
-	  GF(win).insert[L];
-	else
-	  GF(win).insert_gframe[L];
-	  //x_message('Paste multiple');
-	end 
+	GF(win).insert_gframe[L,[args(2),args(3)]];
       else 
 	x_message('Clipboard is empty');end 
     end
-    GF('clipboard') = list();
+    //GF('clipboard') = list();
    case 7 then  
     fname = xgetfile();
     if fname <> "" then 
@@ -252,6 +261,11 @@ function menuitem_response(w,args)
       end
     end
    case 9 then 
+    // copy selection into the clipboard 
+    L= GF(win).get_selection_as_gframe[];
+    // pause 
+    if ~isempty(L) then GF('clipboard') = list(L.copy[]); 
+    else x_message('No selection');end 
   end
   GF(win).draw[]
 endfunction
@@ -302,7 +316,6 @@ function my_eventhandler(win,x,y,ibut,imask)
   // shift-mask GDK.SHIFT_MASK 
   // control-mask GDK_CONTROL_MASK 
   // if ibut<>-1 then printf("ibutton = %d, mask = %d\n",ibut,imask);end 
-  if ibut<>-1 then printf("ibutton = %d, mask = %d\n",ibut,imask);end 
   winid= 'win'+string(win);
   if ~GF.iskey[winid];then
     GF(winid)=%types.GFrame.new[[0,0,100,100],[0,0,100,100],win];
@@ -326,7 +339,7 @@ function my_eventhandler(win,x,y,ibut,imask)
       GF(winid).select_and_move_list[[xc,yc]];
     elseif iand(imask,GDK.CONTROL_MASK) 
 	// toggle the selection 
-	printf("control -press \n");
+	// printf("control -press \n");
 	[xc,yc]=xchange(x,y,'i2f')
 	GF(winid).select_and_toggle_hilite[[xc,yc]];
 	GF(winid).draw[];
@@ -357,6 +370,10 @@ function my_eventhandler(win,x,y,ibut,imask)
     x_message('click on c: 99');
     //gr_copy();
     //gr_draw(win);
+  elseif ibut == 65288 || ibut == 65535 
+    // Delete and supr keys -> delete hilited objects 
+    GF(winid).delete_hilited[] ; 
+    GF(winid).draw[];
   else
     xinfo('Mouse action: ['+string(ibut)+']');
     // test a popup menu 
@@ -387,7 +404,7 @@ function draw_vanne(rect)
   xstringb(orig(1),orig(2),'String',sz(1),sz(2));
 endfunction;
 
-function draw_plot2d(rect)
+function draw_plot3d(rect)
 // test function for block drawing 
   print(rect)
   [wrect,frect,vv,arect]=xgetech();

@@ -110,7 +110,7 @@ extern void nsp_gframe_delete_hilited (NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_block(NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_connector(NspGFrame *R);
 extern NspObject* nsp_gframe_create_new_link(NspGFrame *F);
-extern NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F);
+extern NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F, int flag);
 extern int nsp_gframe_create_new_rect(NspGFrame *F);
 extern int  nsp_gframe_hilite_near_pt(NspGFrame *R,const double pt[2]);
 

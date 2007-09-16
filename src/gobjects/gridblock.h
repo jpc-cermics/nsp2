@@ -73,8 +73,11 @@ extern int IsGridBlock (NspObject *O);
 extern NspGridBlock *gridblock_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
 extern int gridblock_translate(NspGridBlock *B,const double tr[2]);
 extern int gridblock_set_pos(NspGridBlock *B,const double tr[2]);
+extern void gridblock_get_pos(NspGridBlock *B, double tr[2]);
+extern void gridblock_get_rect(NspGridBlock *B, double r[4]);
 extern void gridblock_resize(NspGridBlock *B,const double size[2]);
 extern void gridblock_move_control(NspGFrame *F, NspGridBlock *B,const double mpt[2], int cp,double ptc[2]);
+extern NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) ;
 
 #define NULLGRIDBLOCK (NspGridBlock*) 0
 

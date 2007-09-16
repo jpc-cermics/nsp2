@@ -93,6 +93,8 @@ NspTypeConnector *new_type_connector(type_mode mode)
   gri->draw    		=(gr_draw *) connector_draw;
   gri->translate 	=(gr_translate *) connector_translate;
   gri->set_pos  	=(gr_set_pos *) connector_set_pos;
+  gri->get_pos  	=(gr_get_pos *) connector_get_pos;
+  gri->get_rect  	=(gr_get_rect *) connector_get_rect;
   gri->resize 		=(gr_resize *) connector_resize;
   gri->update_locks 	=(gr_update_locks *) connector_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) connector_contains_pt;
@@ -795,6 +797,17 @@ int connector_set_pos(NspConnector *B,const double pt[2])
   B->obj->r[1] = pt[1] ;
   connector_update_locks(B);
   return OK;
+}
+
+void connector_get_pos(NspConnector *B, double pt[2])
+{
+  pt[0]= B->obj->r[0]; 
+  pt[1]= B->obj->r[1];
+}
+
+void connector_get_rect(NspConnector *B, double r[4])
+{
+  memcpy(r,B->obj->r, 4*sizeof(double));
 }
 
 /**

@@ -100,6 +100,8 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->draw    		=(gr_draw *) link_draw;
   gri->translate 	=(gr_translate *) link_translate;
   gri->set_pos  	=(gr_set_pos *) link_set_pos;
+  gri->get_pos  	=(gr_get_pos *) link_get_pos;
+  gri->get_rect  	=(gr_get_rect *) link_get_rect;
   gri->resize 		=(gr_resize *) link_resize;
   gri->update_locks 	=(gr_update_locks *) link_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) link_contains_pt;
@@ -746,6 +748,37 @@ int link_set_pos(NspLink *L,const double pt[2])
   tr[0]=pt[0]-x[m/2];
   tr[1]=pt[1]-y[m/2];
   return link_translate(L,tr);
+}
+
+void link_get_pos(NspLink *L, double pt[2])
+{
+  int m= L->obj->poly->m;
+  double *x= L->obj->poly->R, *y = x + m; 
+  pt[0]= x[m/2];
+  pt[1]=y[m/2];
+}
+
+void link_get_rect(NspLink *L, double r[4])
+{
+  double dr[2];
+  int m= L->obj->poly->m, i;
+  double *x= L->obj->poly->R, *y = x + m; 
+  if ( m == 0) 
+    {
+      for ( i=0; i < 4 ; i++) r[i]=0;
+      return;
+    }
+  r[0]=dr[0]=x[0];
+  r[1]=dr[1]=y[0];
+  for ( i = 0 ; i < m ; i++) 
+    {
+      if ( x[i] < r[0] ) r[0]= x[i];
+      else if ( x[i] > dr[0]) dr[0]= x[i];
+      if ( y[i] < dr[1] ) dr[1]= y[i];
+      else if ( y[i] > r[1]) r[1]= y[i];
+    }
+  r[2]= dr[0]-r[0]; /* width */
+  r[3]= r[1]- dr[1]; /* height */
 }
 
 

@@ -696,12 +696,25 @@ static int int_meth_gf_new_gridblock(void *self,Stack stack, int rhs, int opt, i
   NspObject *obj;
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  if ((obj = nsp_gframe_create_new_gridblock(((NspGFrame *) self)))== NULL) return RET_BUG;
+  if ((obj = nsp_gframe_create_new_gridblock(((NspGFrame *) self),TRUE))== NULL) return RET_BUG;
   /* since obj is kept on the frame we must return a copy */
   if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1,obj);
   return 1;
 }
+
+static int int_meth_gf_new_gridblock_from_selection(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_gframe_create_new_gridblock(((NspGFrame *) self),FALSE))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
 
 static int int_meth_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -856,31 +869,68 @@ static int int_meth_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static int int_meth_gf_insert_gframe(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspTypeGRint *bf;
+  NspObject *Obj;
+  NspMatrix *pt;
+  int rep,click;
   double pt1[2]= {5,-10};
   NspGFrame *F = self;
   Cell *C;
   NspGFrame *GF;
-  CheckRhs(1,1);
+  CheckRhs(2,2);
   CheckLhs(-1,0);
   if ((GF=GetGFrame(stack,1)) == NULLGFRAME ) return RET_BUG;
+  if ((pt = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),2,pt,2);
   /* now we loop on objects and insert them 
    * this could be turned into a new function 
    */
   if ((GF = nsp_gframe_full_copy(GF))== NULLGFRAME)   return RET_BUG;
+  /* 
+   * pt is the mouse position 
+   * we have to translate or move the upper-left rectangle enclosing the 
+   * selection to pt. Thus we need to now this enclosing rectangle.
+   * XXX: we start here by using the first object position as a position 
+   */
+  Obj = nsp_list_get_element(GF->obj->objs,1);
+  if ( Obj != NULLOBJ ) 
+    {
+      double pt2[2];
+      bf = GR_INT(Obj->basetype->interface);
+      bf->get_pos(Obj,pt2);
+      pt1[0] = pt->R[0]-pt2[0];
+      pt1[1] = pt->R[1]-pt2[1];
+    }
   nsp_gframe_list_obj_action(GF,GF->obj->objs,pt1,L_TRANSLATE);
   nsp_gframe_list_obj_action(GF,GF->obj->objs,pt1, L_LOCK_UPDATE);
-  /* insert each object */
+  /* unselect the objects */
+  nsp_gframe_unhilite_objs(F,FALSE);
+  /* insert each object 
+   * 
+   */
   C = GF->obj->objs->first; 
   while ( C != NULLCELL) 
     {
       if ( C->O != NULLOBJ )
 	{
+	  /* set the frame field of each object */
+	  NspBlock *B = (NspBlock *) C->O; 
+	  B->obj->frame = F->obj;
+	  /* hilite inserted */
+	  bf = GR_INT(C->O->basetype->interface);
+	  bf->set_hilited(C->O,TRUE);
+	  /* add the object */
 	  if ( nsp_list_end_insert(F->obj->objs,C->O) == FAIL )
-	    return RET_BUG;
+	    return RET_BUG; 
+	  C->O= NULLOBJ;
 	}
       C = C->next ;
     }
-  /* we would need here to clear the copy XXXX */
+  /* we can now destroy GF */
+  nsp_gframe_destroy(GF);
+  /* and we can enter a move_selection */
+  rep = nsp_gframe_select_and_move_list(F,NULLOBJ,pt->R,&click);
+  nsp_gframe_draw(F);
   return 0;
 }
 
@@ -903,7 +953,6 @@ static int int_meth_gf_attach_to_window(void *self,Stack stack, int rhs, int opt
     }
   ((NspGFrame *) self)->obj->Xgc = Xgc;
   ((NspGFrame *) self)->obj->top = TRUE;
-  /* ZZZZ */
   return 0;
 }
 
@@ -989,6 +1038,7 @@ static NspMethods nsp_gframe_methods[] = {
   { "new_link", int_meth_gf_new_link },
   { "new_block", int_meth_gf_new_block },
   { "new_gridblock", int_meth_gf_new_gridblock },
+  { "new_gridblock_from_selection", int_meth_gf_new_gridblock_from_selection},
   { "new_connector", int_meth_gf_new_connector },
   { "new_rect", int_meth_gf_new_rect },
   { "hilite_near_pt", int_meth_gf_hilite_near_pt },
@@ -1311,6 +1361,69 @@ static void nsp_gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
     }
 }
 
+
+static void nsp_gframe_zoom_get_rectangle(NspGFrame *R,const double pt[2],double *rect)
+{
+  int th,pixmode,color,style,fg;
+  int ibutton=-1,imask,iwait=FALSE;
+  double x,y;
+  BCG *Xgc = R->obj->Xgc;
+  if ( Xgc == NULL ) return; 
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  th = Xgc->graphic_engine->xget_thickness(Xgc);
+  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  style = Xgc->graphic_engine->xget_dash(Xgc);
+  fg    = Xgc->graphic_engine->xget_foreground(Xgc);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  x=pt[0];y=pt[1];
+  while ( ibutton == -1 ) 
+    {
+      int ok_changed; 
+      Cell *C;
+      rect[0]= Min(pt[0],x);
+      rect[1]= Max(pt[1],y);
+      rect[2]= Abs(pt[0]-x);
+      rect[3]= Abs(pt[1]-y);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&x, &y,iwait,TRUE,TRUE,FALSE);
+      /* hilite objects which are contained in bbox 
+       */ 
+      C = R->obj->objs->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ )
+	    {
+	      double o_rect[4]; 
+	      NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	      bf->get_rect(C->O,o_rect);
+	      /* check if rect is inside rect */
+	      if ( o_rect[0] >= rect[0] && o_rect[1] <= rect[1] 
+		   && o_rect[0]+o_rect[2] <= rect[0]+rect[2] 
+		   && o_rect[1]-o_rect[3] >= rect[1]-rect[3]  ) 
+		{
+		  ok_changed  = TRUE;
+		  bf->set_hilited(C->O,TRUE);
+		}
+	      else 
+		{
+		  bf->set_hilited(C->O,FALSE);
+		}
+	    }
+	  C = C->next ;
+	}
+      nsp_gframe_draw(R);
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+    }
+  Xgc->graphic_engine->xset_thickness(Xgc,th);
+  Xgc->graphic_engine->xset_dash(Xgc,style);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
+  Xgc->graphic_engine->xinfo(Xgc," ");
+  nsp_gframe_draw(R);
+}
+
 /**
  * nsp_gframe_select_and_move:
  * @R: a #NspGFrame 
@@ -1330,10 +1443,11 @@ int nsp_gframe_select_and_move(NspGFrame *R,const double pt[2],int mask)
   int k = nsp_gframe_select_obj(R,pt,&O,NULL);
   if ( k==0 )
     {
-      /* here we should enter a rectangle acquistion 
-       */
+      double bbox[4];
+      /* acquire a rectangle and hilite objects inside */
       nsp_gframe_unhilite_objs(R,TRUE);
-      return FAIL;
+      nsp_gframe_zoom_get_rectangle(R,pt,bbox);
+      return OK;
     }
   bf = GR_INT(O->basetype->interface);
   /* are we inside a control point ? */
@@ -1452,11 +1566,10 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
  * @pt: a point position
  * @click: %TRUE or %FALSE 
  * 
- * selects the  object which is near the point @pt 
- * and move it with the mouse moving with him all 
- * the hilited blocks.  We return in @click a boolean which is %TRUE 
- * if the list of object was in fact unmove (press-release at the same position)
-
+ * move a selection with the mouse (hilited blocks). @pt is the initial mouse position. 
+ * and @Obj the object which was selected to initialize the move. @Obj can be NULL.
+ * We return in @click a boolean which is %TRUE if the list of object was in fact unmoved
+ *  (press-release at the same position)
  * 
  * Return value: %OK or %FAIL XXXXX A revoir
  **/
@@ -1466,21 +1579,23 @@ int nsp_gframe_select_and_move_list(NspGFrame *R,NspObject *Obj,const double pt[
   int rep, cp;
   NspTypeGRint *bf;
   NspList *L;
-  bf = GR_INT(Obj->basetype->interface);
-  /* hide the moving object and its locked objects */
-  bf->set_show(Obj,FALSE);
-  if ( IsBlock(Obj)|| IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,FALSE);
-  /* nsp_gframe_unhilite_objs(R,FALSE); */
-  bf->set_hilited(Obj,TRUE);
-
-  /* global draw of all but the moving object and linked objects 
-   * we could here record the state to redraw faster 
-   * since during the move this part will be kept constant.
-   */
-  nsp_gframe_draw(R);
-  /* */
-  bf->set_show(Obj,TRUE);
-  if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,TRUE);
+  if ( Obj != NULLOBJ) 
+    {
+      bf = GR_INT(Obj->basetype->interface);
+      /* hide the moving object and its locked objects */
+      bf->set_show(Obj,FALSE);
+      if ( IsBlock(Obj)|| IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,FALSE);
+      /* nsp_gframe_unhilite_objs(R,FALSE); */
+      bf->set_hilited(Obj,TRUE);
+      /* global draw of all but the moving object and linked objects 
+       * we could here record the state to redraw faster 
+       * since during the move this part will be kept constant.
+       */
+      nsp_gframe_draw(R);
+      /* */
+      bf->set_show(Obj,TRUE);
+      if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_gframe_locks_set_show(R,Obj,TRUE);
+    }
   L= nsp_gframe_get_hilited_list(R->obj,FALSE);
   if ( L== NULLLIST) return OK;
   rep = nsp_gframe_move_list_obj(R,L, pt, -5,cp,MOVE, click );
@@ -2136,20 +2251,28 @@ NspObject * nsp_gframe_create_new_block(NspGFrame *F)
  * Return value: %OK or %FALSE.
  **/
 
-extern NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color,int thickness,int background, NspGFrame *F) ;
-
-NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F)
+NspObject * nsp_gframe_create_new_gridblock(NspGFrame *F, int flag )
 {
   NspGFrame *F1;
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
   NspGridBlock *B;
-  /* unhilite all */
-  if ((F1 = nsp_gframe_hilited_full_copy(F)) == NULLGFRAME) return NULLOBJ;
-  nsp_gframe_delete_hilited(F);
-  B=gridblock_create_from_nsp_gframe("fe",rect,color,thickness,background,F1);
-  nsp_gframe_destroy(F1);
-  if ( B == NULLGRIDBLOCK) return NULLOBJ;
+  /* create the gridblock */
+  if ( flag == TRUE) 
+    {
+      /* empty super block */
+      B=gridblock_create("fe",rect,color,thickness,background,NULL);
+      if ( B == NULLGRIDBLOCK) return NULLOBJ;
+    }
+  else 
+    {
+      if ((F1 = nsp_gframe_hilited_full_copy(F)) == NULLGFRAME) return NULLOBJ;
+      B=gridblock_create_from_nsp_gframe("fe",rect,color,thickness,background,F1);
+      nsp_gframe_destroy(F1);
+      if ( B == NULLGRIDBLOCK) return NULLOBJ;
+      /* unhilite all */
+      nsp_gframe_delete_hilited(F);
+    }
   ((NspBlock *)B)->obj->frame = F->obj;
   ((NspBlock *)B)->obj->hilited = TRUE;
   B->obj->Xgc = F->obj->Xgc;

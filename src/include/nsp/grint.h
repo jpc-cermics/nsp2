@@ -32,6 +32,8 @@ typedef void gr_set_show (void *B, int val);
 typedef void gr_draw (void *R); 
 typedef int gr_translate (void *R, const double *pt); 
 typedef int gr_set_pos (void *R, const double *pt); 
+typedef void gr_get_pos (void *R, double *pt); 
+typedef void gr_get_rect (void *R, double *r); 
 typedef void gr_resize (void *R, const double *size); 
 typedef void gr_update_locks (void *R); 
 typedef int gr_contains_pt (const void *B, const double *pt); 
@@ -77,6 +79,8 @@ struct _NspTypeGRint {
   gr_draw *draw ;			     
   gr_translate *translate ;		     
   gr_set_pos *set_pos ;		     
+  gr_get_pos *get_pos ;		     
+  gr_get_rect *get_rect ;		     
   gr_resize *resize ;			     
   gr_update_locks *update_locks ;	     
   gr_contains_pt *contains_pt ;		     

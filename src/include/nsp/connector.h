@@ -110,6 +110,8 @@ static void connector_set_show (NspConnector *B, int val);
 static void connector_draw (NspConnector *R); 
 static int connector_translate (NspConnector *R, const double *pt); 
 static int connector_set_pos (NspConnector *R, const double *pt); 
+static void connector_get_pos (NspConnector *R, double *pt); 
+static void connector_get_rect (NspConnector *R, double *r); 
 static void connector_resize (NspConnector *R, const double *size); 
 static void connector_update_locks (NspConnector *R); 
 static int connector_contains_pt (const NspConnector *B, const double *pt); 
