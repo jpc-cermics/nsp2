@@ -1905,6 +1905,10 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       else 
 	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
+      /* if a zrect exists then add it on graphics  */
+      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+	gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			   dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
   gdk_flush();

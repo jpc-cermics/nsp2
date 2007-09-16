@@ -18,6 +18,9 @@
  *
  * jpc@cermics.enpc.fr
  * Open GL Driver 
+ * 
+ * This version draws in graphic window, the periGLGtk version always uses 
+ * a gl rendering to pixmap. 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -1691,6 +1694,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  /* need to redraw */
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);
+	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+	    dd->graphic_engine->drawrectangle(Xgc,dd->zrect);
 	  dd->private->in_expose= FALSE;
 	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
@@ -1699,7 +1704,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	}
       else 
 	{
-	  /* just try a swp buffer ? */
+	  /* just try a swap buffer ? */
 	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
 	  else

@@ -1901,7 +1901,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			dd->CWindowWidth, dd->CWindowHeight);
       /* if a zrect exists then add it on graphics  */
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
-	gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+	gdk_draw_rectangle(dd->private->drawing->window,dd->private->stgc,FALSE,
 			   dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
     }
   gdk_flush();
