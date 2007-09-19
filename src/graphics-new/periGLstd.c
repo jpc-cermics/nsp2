@@ -1695,7 +1695,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
-	    dd->graphic_engine->drawrectangle(Xgc,dd->zrect);
+	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;
 	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
