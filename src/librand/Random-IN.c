@@ -578,6 +578,40 @@ static int int_mn_part(Stack stack, int rhs, int opt, int lhs, int suite, int Re
   return 1;
 }
 
+static int int_sph_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  /* X = grand(1000,"sph",3);
+     param3d(X(1,:)',X(2,:)',X(3,:)',style=-5,flag=[4,4])
+  */
+
+  NspMatrix *Res;
+  int i, nn, dim;
+
+  if ( rhs != 3 || suite != 3) 
+    { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'sph',dim))\n"); return RET_BUG;}
+
+  if ( ResL != 1 || ResC != 1 )
+    { 
+      Scierror("Error: first argument for 'sph' option must be the number of random vectors to generate\n"); 
+      return RET_BUG; 
+    }
+
+  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), nn, 1);
+
+  if ( GetScalarInt(stack,suite,&dim) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), dim, suite);
+  
+  if ((Res = nsp_matrix_create(NVOID, 'r', dim, nn))== NULLMAT) return RET_BUG;
+  
+  /* generation */
+  for ( i=0 ; i < nn ; i++) 
+    nsp_rand_sphere(Res->R + dim*i, dim);
+  
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
 static int int_prm_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   NspMatrix *M, *prm;
@@ -1328,199 +1362,206 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 }  
 
 /*
- *  hand written interface for the librand 
+ *    interface for grand(string,....) which correspond to
+ *    various manipulations onto the bases generators
+ *    (change of base generator, change state of the current
+ *    base generator, set state of the current base generator,...)
  */
-
-static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_grands( Stack stack, int rhs, int opt, int lhs)
 { 
-  char *rand_dist;
+  char *str;
   NspMatrix *M=NULL;
-  int ResL,ResC,suite;
 
-  if (rhs >= 1 &&  IsSMatObj(stack,1)) 
+  if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+
+  if (strcmp("getgen",str)==0) 
     {
-      char *str;
-
-      if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
-
-      if (strcmp("getgen",str)==0) 
+      int current_gen = nsp_get_current_gen();
+      if ( rhs != 1) 
 	{
-	  int current_gen = nsp_get_current_gen();
-	  if ( rhs != 1) 
-	    {
-	      Scierror("Error: rhs should be 1 for 'getgen' option\n");
-	      return RET_BUG;
-	    }
-	  if ( nsp_move_string(stack,1,NspRNG[current_gen]->name_gen,-1)== FAIL) return RET_BUG;
-	  return 1;
+	  Scierror("Error: rhs should be 1 for 'getgen' option\n");
+	  return RET_BUG;
 	}
+      if ( nsp_move_string(stack,1,NspRNG[current_gen]->name_gen,-1)== FAIL) return RET_BUG;
+      return 1;
+    }
 
-      else if (strcmp("setgen",str)==0) 
+  else if (strcmp("setgen",str)==0) 
+    {
+      char *str1; int new_current_gen;
+      if ( rhs != 2) 
 	{
-	  char *str1; int new_current_gen;
-	  if ( rhs != 2) 
-	    {
-	      Scierror("Error: rhs should be 2 for 'setgen' option\n");
-	      return RET_BUG;
-	    }
-	  if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
-	  
-	  if ( (new_current_gen =get_gen_from_name(str1)) == -1 )
-	    {
-	      Scierror("Error: unknown generator !\n");
-	      Sciprintf("       choose among :");
-	      display_gen_names();
-	      return RET_BUG;
-	    }
-	  nsp_set_current_gen(new_current_gen);
-	  return 0;
+	  Scierror("Error: rhs should be 2 for 'setgen' option\n");
+	  return RET_BUG;
 	}
-
-      else if ( strcmp(str,"getsd")==0) 
+      if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
+      
+      if ( (new_current_gen =get_gen_from_name(str1)) == -1 )
 	{
-	  int current_gen = nsp_get_current_gen();
-	  if ( rhs != 1) 
-	    {
-	      Scierror("%s: only one argument expected for grand('getsd')\n",NspFname(stack));
-	      return RET_BUG;
-	    }
-	  
-	  if ( (M =nsp_matrix_create(NVOID,'r',NspRNG[current_gen]->dim_state,1)) == NULLMAT) 
-	    return RET_BUG;
-	  NspRNG[current_gen]->get_state(M->R);
-	  MoveObj(stack,1,(NspObject *) M);
-	  return 1;
+	  Scierror("Error: unknown generator !\n");
+	  Sciprintf("       choose among :");
+	  display_gen_names();
+	  return RET_BUG;
+	}
+      nsp_set_current_gen(new_current_gen);
+      return 0;
+    }
+
+  else if ( strcmp(str,"getsd")==0) 
+    {
+      int current_gen = nsp_get_current_gen();
+      if ( rhs != 1) 
+	{
+	  Scierror("%s: only one argument expected for grand('getsd')\n",NspFname(stack));
+	  return RET_BUG;
 	}
       
-      else if ( strcmp(str,"setsd")==0 ) 
+      if ( (M =nsp_matrix_create(NVOID,'r',NspRNG[current_gen]->dim_state,1)) == NULLMAT) 
+	return RET_BUG;
+      NspRNG[current_gen]->get_state(M->R);
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+      
+  else if ( strcmp(str,"setsd")==0 ) 
+    {
+      int current_gen = nsp_get_current_gen();
+      if ( rhs != 2 ) 
 	{
-	  int current_gen = nsp_get_current_gen();
+	  Scierror("Error: rhs should be 2 for 'setsd' option\n");
+	  return RET_BUG;
+	}
+      
+      if ((M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ( M->mn == 1 ) 
+	{
+	  if ( NspRNG[current_gen]->set_state_simple(M->R[0]) == FAIL ) return RET_BUG;
+	}
+      else
+	{
+	  CheckLength(NspFname(stack),2,M, NspRNG[current_gen]->dim_state);
+	  if ( NspRNG[current_gen]->set_state(M->R) == FAIL ) return RET_BUG; 
+	}
+      return 0;
+    }
+  
+  else if (strcmp("phr2sd",str) == 0) 
+    {
+      char *str1;
+      int i1,i2;
+      if ( rhs != 2) 
+	{
+	  Scierror("Error: rhs should be 2 for 'phr2sd' option\n");
+	  return RET_BUG;
+	}
+      if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ((M = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return RET_BUG;
+      rand_phrtsd(str1,&i1,&i2);
+      M->R[0]=i1; 	  M->R[1]=i2; 
+      MoveObj(stack,1,(NspObject *) M);
+      return 1;
+    }
+  
+  /* from now all the next options are only for the clcg4 generator */
+  
+  else if ( nsp_get_current_gen() == CLCG4 )
+    {
+      if ( strcmp(str,"setall")==0 ) 
+	{
 	  if ( rhs != 2 ) 
 	    {
-	      Scierror("Error: rhs should be 2 for 'setsd' option\n");
+	      Scierror("Error: rhs should be 2 for 'setall'  option\n");
 	      return RET_BUG;
 	    }
-	  
-	  if ((M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-	  if ( M->mn == 1 ) 
-	    {
-	      if ( NspRNG[current_gen]->set_state_simple(M->R[0]) == FAIL ) return RET_BUG;
-	    }
-	  else
-	    {
-	      CheckLength(NspFname(stack),2,M, NspRNG[current_gen]->dim_state);
-	      if ( NspRNG[current_gen]->set_state(M->R) == FAIL ) return RET_BUG; 
-	    }
+	  if ( (M =GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+	  CheckLength(NspFname(stack),2,M, 4);
+	  if ( set_initial_seed_clcg4(M->R) == FAIL ) return RET_BUG;
 	  return 0;
 	}
       
-      else if (strcmp("phr2sd",str) == 0) 
+      else if (strcmp("initgn",str)==0) 
 	{
-	  char *str1;
-	  int i1,i2;
+	  int i1;
+	  SeedType Where;
+	  if ( rhs != 2)  
+	    {
+	      Scierror("Error: rhs should be 2 for 'initgn' option\n");
+	      return RET_BUG;
+	    }
+	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
+	  if ( i1 != 0 && i1 != -1 && i1 != 1)
+	    {
+	      Scierror("Error: for initgn option argument must be -1,0 or 1\n");
+	      return RET_BUG;
+	    }
+	  Where = (SeedType) (i1 + 1);
+	  init_generator_clcg4(Where);	  
+	  return 0;
+	}
+      
+      else if (strcmp("setcgn",str)==0) 
+	{
+	  int i1;
 	  if ( rhs != 2) 
 	    {
-	      Scierror("Error: rhs should be 2 for 'phr2sd' option\n");
+	      Scierror("Error: rhs should be 2 for 'setcgn' option\n");
 	      return RET_BUG;
 	    }
-	  if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
-	  if ((M = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return RET_BUG;
-	  rand_phrtsd(str1,&i1,&i2);
-	  M->R[0]=i1; 	  M->R[1]=i2; 
-	  MoveObj(stack,1,(NspObject *) M);
-	  return 1;
+	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
+	  if ( set_current_clcg4(i1) == FAIL ) return RET_BUG;
+	  return 0;
 	}
-
-      /* from now all the next options are only for the clcg4 generator */
-
-      else if ( nsp_get_current_gen() == CLCG4 )
+      else if (strcmp("advnst",str)==0) 
 	{
-	  if ( strcmp(str,"setall")==0 ) 
+	  int i1;
+	  if ( rhs != 2) 
 	    {
-	      if ( rhs != 2 ) 
-		{
-		  Scierror("Error: rhs should be 2 for 'setall'  option\n");
-		  return RET_BUG;
-		}
-	      if ( (M =GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-	      CheckLength(NspFname(stack),2,M, 4);
-	      if ( set_initial_seed_clcg4(M->R) == FAIL ) return RET_BUG;
-	      return 0;
-	    }
-
-	  else if (strcmp("initgn",str)==0) 
-	    {
-	      int i1;
-	      SeedType Where;
-	      if ( rhs != 2)  
-		{
-		  Scierror("Error: rhs should be 2 for 'initgn' option\n");
-		  return RET_BUG;
-		}
-	      if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
-	      if ( i1 != 0 && i1 != -1 && i1 != 1)
-		{
-		  Scierror("Error: for initgn option argument must be -1,0 or 1\n");
-		  return RET_BUG;
-		}
-	      Where = (SeedType) (i1 + 1);
-	      init_generator_clcg4(Where);	  
-	      return 0;
-	    }
-
-	  else if (strcmp("setcgn",str)==0) 
-	    {
-	      int i1;
-	      if ( rhs != 2) 
-		{
-		  Scierror("Error: rhs should be 2 for 'setcgn' option\n");
-		  return RET_BUG;
-		}
-	      if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
-	      if ( set_current_clcg4(i1) == FAIL ) return RET_BUG;
-	      return 0;
-	    }
-	  else if (strcmp("advnst",str)==0) 
-	    {
-	      int i1;
-	      if ( rhs != 2) 
-		{
-		  Scierror("Error: rhs should be 2 for 'advnst' option\n");
-		  return RET_BUG;
-		}
-	      if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
-	      if ( i1 < 1 )
-		{
-		  Scierror("Error: parameter K must be > 0 for 'advnst' option\n");
-		  return RET_BUG;
-		}
-	      advance_state_clcg4(i1);
-	      return 0;
-	    }
-
-	  else if (strcmp("getcgn",str)==0) 
-	    {
-	      if ( rhs != 1) 
-		{
-		  Scierror("Error: rhs should be 1 for 'getcgn' option\n");
-		  return RET_BUG;
-		}
-	      if ( nsp_move_double(stack,1,(double) get_current_clcg4())== FAIL) return RET_BUG;
-	      return 1;
-	    }
-	  else 
-	    {
-	      Scierror("Error: %s Wrong first argument %s\n",NspFname(stack),str);
+	      Scierror("Error: rhs should be 2 for 'advnst' option\n");
 	      return RET_BUG;
-	    }      
+	    }
+	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
+	  if ( i1 < 1 )
+	    {
+	      Scierror("Error: parameter K must be > 0 for 'advnst' option\n");
+	      return RET_BUG;
+	    }
+	  advance_state_clcg4(i1);
+	  return 0;
+	}
+      
+      else if (strcmp("getcgn",str)==0) 
+	{
+	  if ( rhs != 1) 
+	    {
+	      Scierror("Error: rhs should be 1 for 'getcgn' option\n");
+	      return RET_BUG;
+	    }
+	  if ( nsp_move_double(stack,1,(double) get_current_clcg4())== FAIL) return RET_BUG;
+	  return 1;
 	}
       else 
 	{
 	  Scierror("Error: %s Wrong first argument %s\n",NspFname(stack),str);
 	  return RET_BUG;
-	}
+	}      
     }
+  else 
+    {
+      Scierror("Error: %s Wrong first argument %s\n",NspFname(stack),str);
+      return RET_BUG;
+    }
+}
       
+/*
+ *    interface for grand(M,....) or grand(n,...) or grand(m,n,...)
+ *    which correspond to generate random numbers
+ */
+
+static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
+{ 
+  char *rand_dist;
+  NspMatrix *M=NULL;
+  int ResL,ResC,suite;
 
   if ( rhs >= 2  &&  IsMatObj(stack,2) ) 
     {
@@ -1535,7 +1576,7 @@ static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if ((rand_dist = GetString(stack,3)) == (char*)0) return RET_BUG;
       suite=4;
     }
-  else if ( rhs >= 1 )
+  else /* if ( rhs >= 1 ) */
     {
       if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
       ResL=M->m; ResC=M->n;
@@ -1544,11 +1585,6 @@ static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 
       if ((rand_dist = GetString(stack,2)) == (char*)0) return RET_BUG;
       suite=3;
-    }
-  else
-    {
-      Scierror("Error: %s requires at least one argument\n",NspFname(stack));
-      return RET_BUG;
     }
   
   if ( strcmp(rand_dist,"bet_old")==0 ) 
@@ -1658,6 +1694,9 @@ static int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"disc")==0)
     return int_disc_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"sph")==0)
+    return int_sph_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {
@@ -1873,7 +1912,8 @@ static int int_nsp_logp1(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Random_func[]={
-  {"grand", int_nsp_grand},
+  {"grand_s", int_nsp_grands},
+  {"grand_m", int_nsp_grandm},
   /*     {"rand", int_nsp_rand}, */
   {"randn", int_nsp_randn},
   {"log1p", int_nsp_logp1},

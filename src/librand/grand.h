@@ -219,5 +219,6 @@ extern int nsp_markov_setup(double *p, double *q, int *key, int n);
 extern void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int nn, int m);
 extern int nsp_verif_markov_initial_state(double *X0, int mnX0, int n);
 extern void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n);
+extern void nsp_rand_sphere(double *res, int n);
 
 #endif /*  RANDLIB_H */

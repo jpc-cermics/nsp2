@@ -537,3 +537,68 @@ int nsp_rand_nbn_direct(int n, double p)
   return nsp_rand_poisson_direct(Y);
 }
 
+
+
+/**
+ * nsp_rand_ndgauss:
+ * @Mean: (input) a vector with @n components
+ * @C: (input) @nx@n matrix (lower triangular matrix of the Cholesky
+ *             factorization of the covariance matrix)
+ * @res: (output) random vector generated
+ * @n: dimension of the nd gaussian distribution
+ *
+ * n-dim gaussian normal distribution generator N(Mean,Cov).
+ * @C is obtained from the covariance matrix Cov with a call
+ * to the lapack routine dpotrf.
+ *
+ * Algorithm :  res = C * x + Mean  where x is a vector
+ *              with n independant samples from N(0,1)
+ * 
+ **/
+void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n)
+{
+  int i, j;
+  double *col, u;
+
+  /*  init res with Mean */
+  for ( i = 0 ; i < n ; i++ )
+     res[i] = Mean[i];
+
+  /*  res += C * x  (at each j iteration, col point to 
+   *  the beginning of the jth column of C)
+   */
+  for ( j = 0, col = C ; j < n ; j++, col+=n )
+    {
+      u = nsp_rand_nor_core();
+      for ( i = j ; i < n ; i++ )
+	res[i] += col[i]*u;
+    }
+}
+
+/**
+ * nsp_rand_sphere:
+ * @res: (output) random vector generated
+ * @n: space dimension of the unit hyper-sphere
+ *
+ * provide random vectors uniformly distributed on the
+ * unit sphere
+ *
+ * method: see Knuth TAOCP vol 2, 2d ed, p. 130
+ * 
+ **/
+void nsp_rand_sphere(double *res, int n)
+{
+  int i;
+  double x, r = 0.0;
+
+  for ( i = 0 ; i < n ; i++ )
+    {
+      x = nsp_rand_nor_core();
+      res[i] =  x;
+      r += x*x;
+    }
+  r = sqrt(r);
+
+  for ( i = 0 ; i < n ; i++ )
+    res[i] /= r;
+}
