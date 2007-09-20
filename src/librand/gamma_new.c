@@ -602,3 +602,78 @@ void nsp_rand_sphere(double *res, int n)
   for ( i = 0 ; i < n ; i++ )
     res[i] /= r;
 }
+
+
+/**
+ * nsp_rand_geom_init:
+ * @p: parameter of the distribution
+ * @G: a pointer to an allocated #GeomStruct
+ * 
+ * initialize the struct @G for random generation
+ * with #nsp_rand_geom
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_rand_geom_init(double p, GeomStruct *G)
+{
+  if ( ! (1.3e-307 <= p && p <= 1 ) )
+    return FAIL;
+  G->p = p;
+  G->inv_ln_1_m_p = 1.0/nsp_log1p(-p);
+  return OK;
+}
+ 
+/**
+ * nsp_rand_geom:
+ * @G: a pointer to an initialized #GeomStruct
+ * 
+ * generates a random number from the geometric distribution.
+ * @G must be initilized with #nsp_rand_geom_init. This routine 
+ * must be used when several G(p) deviates with the same
+ * fixed parameter p are needed. Otherwise uses 
+ * #nsp_rand_geom_direct.
+ *
+ * method: 
+ *     inversion of the cdf leads to :
+ *
+ *     X = 1 + floor(log(u)/log(1-p))
+ *
+ *     u being a random deviate from U[0,1). Taking into account 
+ *     that e = -log(u) as exponential distribution, we use finally :
+ *                     
+ *     X = 1 + floor(-e/log(1-p))
+ *
+ *     with e an exponential random variate
+ *
+ * Returns an unsigned int
+ **/
+unsigned int nsp_rand_geom(GeomStruct *G)
+{
+  if ( G->p == 1.0 )
+    return 1;
+  else
+    return (unsigned int) (1.0 - G->inv_ln_1_m_p * nsp_rand_exp_core());
+}
+
+/**
+ * nsp_rand_geom_direct:
+ * @p: parameter of the distribution
+ * 
+ * generates a random number from the geometric distribution.
+ * When several G(p) random deviates with the same fixed parameter 
+ * p are needed, it is faster to use #nsp_rand_geom.
+ *
+ * method: see #nsp_rand_geom
+ *
+ * Returns an unsigned int
+ **/
+ 
+unsigned int nsp_rand_geom_direct(double p)
+{
+  if ( p == 1.0 )
+    return 1;
+  else
+    return (unsigned int) (1.0 -  nsp_rand_exp_core()/nsp_log1p(-p));
+}
+

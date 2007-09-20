@@ -1894,7 +1894,7 @@ static int int_nsp_rand_discrete(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-static int int_nsp_logp1(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
   int i;
@@ -1905,7 +1905,7 @@ static int int_nsp_logp1(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   for ( i = 0 ; i < x->mn ; i++ )
-    x->R[i] = logp1(x->R[i]);
+    x->R[i] = nsp_log1p(x->R[i]);
 
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
@@ -1916,7 +1916,7 @@ static OpTab Random_func[]={
   {"grand_m", int_nsp_grandm},
   /*     {"rand", int_nsp_rand}, */
   {"randn", int_nsp_randn},
-  {"log1p", int_nsp_logp1},
+  {"log1p", int_nsp_log1p},
   {"rand_discrete", int_nsp_rand_discrete},
   {(char *) 0, NULL}
 };

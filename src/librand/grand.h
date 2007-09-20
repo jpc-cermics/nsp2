@@ -211,7 +211,7 @@ extern int nsp_rand_discrete_alias(double *q, int *j, int n);
 extern int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n, int mn);
 extern void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bits);
 extern void rand_unf_01_and_uin_0_127(double *u, int *k_7bits);
-extern double logp1(double x);
+extern double nsp_log1p(double x);
 extern void nsp_rand_multinomial1(double *q, int *key, int *ix, int ncat, int n);
 extern void nsp_rand_multinomial2(double *p, int *ix, int ncat, int n);
 extern int nsp_verify_probability_vector(double *p, int n);
