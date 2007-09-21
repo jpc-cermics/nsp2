@@ -30,7 +30,27 @@
 #define PUSH_BIG_STACK(k) stack[--ib]=k
 #define POP_BIG_STACK() stack[ib++]
 
-
+/**
+ * nsp_alias_method:
+ * @p: (input) array of doubles of size n (p[i] probability of category i)
+ * @q: (output) array of doubles of size n (must be allocated)
+ * @j: (output) array of int of size n (must be allocated)
+ * @n: (input) size of @p, @q and @j
+ * 
+ * initialize the arrays q and j for random generation of a discrete
+ * distribution with #nsp_rand_discrete_alias (sum of the
+ * probability vector components must sum up to 1 (up to roundoff 
+ * errors)
+ *
+ * method: Alias method see chapter III, section 4 (p 107) of 
+ * Luc Devroye 's book, "Non-Uniform Random Variate Generation".  
+ * Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
 int nsp_alias_method(double *p, double *q, int *j, int n)
 {
   int k, l, is, ib, *stack;
@@ -95,7 +115,22 @@ int nsp_alias_method(double *p, double *q, int *j, int n)
 
   return OK;
 }
-  
+
+/**
+ * nsp_rand_discrete_alias:
+ * @q: (input) array of doubles of size n
+ * @j: (intput) array of int of size n
+ * @n: (input) size of @q and @j
+ * 
+ * random generation of an integer between 0 and n-1
+ * from a discrete distribution. Arrays @q and @j must
+ * initialized with #nsp_alias_method.
+ *
+ * method: see #nsp_alias_method
+ *
+ * Returns an int
+ *
+ **/
 int nsp_rand_discrete_alias(double *q, int *j, int n)
 {
   double V;
@@ -112,6 +147,28 @@ int nsp_rand_discrete_alias(double *q, int *j, int n)
 }
 
 
+/**
+ * nsp_guide_table_method
+ * @p: (input) array of doubles of size n (p[i*inc] probability of category i)
+ * @inc: (input) integer increment between 2 components of p (useful for markov)
+ * @q: (output) array of doubles of size n+1 (must be allocated)
+ * @key: (output) array of int of size n (must be allocated)
+ * @n: (input) size of @p
+ * 
+ * initialize the arrays q and key for random generation of a discrete
+ * distribution with #nsp_rand_discrete_guide (sum of the
+ * probability vector components must sum up to 1 (up to roundoff 
+ * errors)
+ *
+ * method: table guide method see chapter III, section 2.4 (p 96) of 
+ * Luc Devroye 's book, "Non-Uniform Random Variate Generation".  
+ * Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
 int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
 {
   int i, j, k;
@@ -152,11 +209,22 @@ int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
   return OK;
 }
 
+/**
+ * nsp_guide_table_method_bis
+ * @p: (input) array of doubles of size n-1 (p[i] probability of category i)
+ * @q: (output) array of doubles of size n+1 (must be allocated)
+ * @key: (output) array of int of size n (must be allocated)
+ * @n: (input) size of @p
+ * 
+ * see #nsp_guide_table_method. This version "bis" is taylored for a 
+ * probability vector with n-1 components, the last one being supposed 
+ * to be 1- sum_k p_k
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
 int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
 {
-  /* this version is taylored for a probability vector with n-1 
-   * components, the last one being supposed to be 1- sum_k p_k
-   */
   int i, j, k;
   double  lim;
   /* double tol = n*DBL_EPSILON*/
@@ -217,6 +285,21 @@ int nsp_verify_probability_vector(double *p, int n)
   return OK;
 }
 
+/**
+ * nsp_rand_discrete_guide
+ * @q: (input) array of doubles of size n+1
+ * @key: (intput) array of int of size n
+ * @n: (input) size of @key 
+ * 
+ * random generation of an integer between 0 and n-1
+ * from a discrete distribution. Arrays @q and @key must
+ * initialized with #nsp_guide_table_method.or with #nsp_guide_table_method_bis
+ *
+ * method: see #nsp_guide_table_method
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
 int nsp_rand_discrete_guide(double *q, int *key, int n)
 {
   double u = rand_ranf();
