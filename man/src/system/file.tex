@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+\mansection{file}
+\begin{mandesc}
+  \texttt{file} -- file and pathnames \\ % @mandesc@
+\end{mandesc}
+\index{file}\label{file}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    file(operation,S);
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{operation}: a string giving an operation on filename
+    \vname{S}: a string matrix.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!file! command is used to get file attributes, or 
+  to get pathname informations, or to build pathnames from 
+  components.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    file("atime","doc.txt") ;
+    file("attributes",file [,attrname, attrset]);
+    file("attributes","doc.txt");
+    //file("copy",["src","dst"])	    dst is a file 
+    //or 
+    //file("copy",["src1","src2","dst"])  dst is a directory 
+    file("mkdir","poo");
+    file("copy",["doc.txt","doc1.txt"]) 
+    file("copy",["doc.txt","poo"]) 
+    // file("delete", "file" or "dir")     dir is deleted if it is empty 
+    file("delete","poo/doc.txt");
+    file("delete","poo");
+    path=file('join',[getcwd(),'doc.txt'])
+    file("dirname",path)
+    file("executable", path)
+    file("exists",path)
+    file("extension",path)
+    file("isdirectory",path)
+    file("isfile",path) 
+    file("lstat", path) 
+    file("mtime", path) 
+    file("nativename",path)
+    file("owned", path)
+    file("pathtype",path) 
+    file("readable",path) 
+    system("ln -f -s doc.txt doc.ln")
+    if file("readlink","doc.ln")<>"doc.txt" then pause;end
+    // file("rename",["src","dst"])
+    // or 
+    // file("rename",["src1","src2","dst"])
+    file("rename",["doc1.txt","doc2.txt"]);
+    file("delete","doc2.txt");
+    file("rootname", path)
+    file("size", path)
+    file("split", path)
+    file("stat", path)
+    file("tail", path)
+    file("type", path)
+    file("volumes")
+    file("writable",path)
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{File}{File}
+\end{manseealso}
+
