@@ -1583,6 +1583,45 @@ static void clean_pixbuf(void *plot)
 }
 
 
+void store_pixbuf_from_file(BCG *Xgc,const char *fname,double x, double y,double w,double h,int src_x,int src_y)
+{
+  struct rec_pixbuf_file *lplot;
+  lplot= ((struct rec_pixbuf_file *) MALLOC(sizeof(struct rec_pixbuf_file)));
+  if (lplot != NULL)
+    {
+      lplot->x=x;
+      lplot->y=y;
+      lplot->w=w;
+      lplot->h=h;
+      lplot->src_x=src_x;
+      lplot->src_y=src_y;
+      if ( 
+	  CopyVectC(&(lplot->pixbuf_file), fname, ((int)strlen(fname))+1)
+	  )
+	{
+	  store_record(Xgc,CODEpixbuf_file, lplot);
+	  return;
+	}
+    }
+  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+}
+
+static void replay_pixbuf_from_file(BCG *Xgc,void *theplot)
+{
+  struct rec_pixbuf_file *plot = (struct rec_pixbuf_file *) theplot;
+  Xgc->graphic_engine->scale->draw_pixbuf_from_file(Xgc,
+						    plot->pixbuf_file, plot->x, plot->y,
+						    plot->w, plot->h,plot->src_x,plot->src_y);
+}
+
+
+static void clean_pixbuf_from_file(void *plot)
+{
+  struct rec_pixbuf_file *theplot = plot;
+  FREE(theplot->pixbuf_file);
+}
+
+
 /*---------------------------------------------------------------------
  * fac3d 
  * added code by polpoth 4/5/2000 

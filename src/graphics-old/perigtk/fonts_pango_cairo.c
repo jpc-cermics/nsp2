@@ -22,7 +22,7 @@
  *--------------------------------------------------------------------------*/
 
 /*
- * Text and symbols with pango 
+ * Text and symbols with pango and cairo 
  */
 
 #define FONTNUMBER 7 
@@ -137,51 +137,4 @@ static const int symbols[] =
     0x2022, /* bullet */
     0x00B0  /* degree sign */
   };
-
-/* utility to rotate a string 
- *
- */
-
-
-static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
-				       const PangoMatrix *matrix, GdkRectangle *rect)
-{
-  gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
-  PangoRectangle logical_rect;
-  gint i, j;
-  pango_layout_get_extents (layout, NULL, &logical_rect);
-  for (i = 0; i < 2; i++)
-    {
-      gdouble x = (i == 0) ? logical_rect.x : logical_rect.x + logical_rect.width;
-      for (j = 0; j < 2; j++)
-	{
-	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
-	  
-	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
-	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
-	  
-	  if (i == 0 && j == 0)
-	    {
-	      x_min = x_max = xt;
-	      y_min = y_max = yt;
-	    }
-	  else
-	    {
-	      if (xt < x_min)
-		x_min = xt;
-	      if (yt < y_min)
-		y_min = yt;
-	      if (xt > x_max)
-		x_max = xt;
-	      if (yt > y_max)
-		y_max = yt;
-	    }
-	}
-    }
-  
-  rect->x = floor (x_min);
-  rect->width = ceil (x_max) - rect->x;
-  rect->y = floor (y_min);
-  rect->height = floor (y_max) - rect->y;
-}
 

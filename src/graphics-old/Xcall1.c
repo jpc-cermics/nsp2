@@ -88,6 +88,7 @@ static  driver_s_xset_show xset_show_1;
 static  driver_s_xset_pixmapclear xset_pixmapclear_1;
 static  driver_s_initialize_gc initialize_gc_1;
 static  driver_s_draw_pixbuf draw_pixbuf_1;
+static  driver_s_draw_pixbuf_from_file draw_pixbuf_from_file_1;
 
 
 Gengine1 nsp_gengine1={
@@ -149,7 +150,8 @@ Gengine1 nsp_gengine1={
   xset_show_1,
   xset_pixmapclear_1,
   initialize_gc_1,
-  draw_pixbuf_1
+  draw_pixbuf_1,
+  draw_pixbuf_from_file_1
 };
 
 
@@ -218,7 +220,7 @@ static void xset_unclip_1(BCG *Xgc)
 
 static void xset_clip_1(BCG *Xgc,double x[])
 {
-  /** and clipping is special its args are floats **/
+  /* and clipping is special its args are floats **/
   int ix[4];
   scale_f2i(Xgc,x,x+1,ix,ix+1,1);
   length_scale_f2i(Xgc,x+2,x+3,ix+2,ix+3,1);
@@ -946,16 +948,30 @@ static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, i
  *-----------------------------------------------------------------------------*/
 
 static void draw_pixbuf_1(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,
-			  double dest_y,int w,int h)
+			  double dest_y,double w,double  h)
 { 
   GdkPixbuf *pixbuf=GDK_PIXBUF(((NspGObject *) pix)->obj);
-  int idest_x,idest_y;
+  int idest_x,idest_y,iw,ih;
   scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
   if (Xgc->record_flag == TRUE)
     store_pixbuf(Xgc,pix,  src_x, src_y,dest_x,dest_y, w, h);
-  Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, w, h);
+  Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, iw, ih);
   
 }
+
+static void draw_pixbuf_from_file_1(BCG *Xgc,const char *fname,int src_x,int src_y,double dest_x,
+				    double dest_y,double w,double  h)
+{ 
+  int idest_x,idest_y,iw,ih;
+  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
+  if (Xgc->record_flag == TRUE)
+    store_pixbuf_from_file(Xgc,fname,  src_x, src_y,dest_x,dest_y, w, h);
+  Xgc->graphic_engine->draw_pixbuf_from_file(Xgc,fname, src_x, src_y,idest_x,idest_y, iw, ih);
+  
+}
+
 
 /*-----------------------------------------------------------------------------
  * Utilities : Allocation 

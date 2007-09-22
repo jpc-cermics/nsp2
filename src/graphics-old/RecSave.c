@@ -896,6 +896,13 @@ static int save_pixbuf(BCG *Xgc,void *the_plot)
   return 1;
 }
 
+static int save_pixbuf_from_file(BCG *Xgc,void *the_plot)
+{
+  Sciprintf("save unimplemented for pixbuf_from_file\n");
+  return 1;
+}
+
+
 
 
 /*---------------------------------------------------------------------
@@ -985,7 +992,8 @@ static Save_Table save_table [] ={
   {CODEColormap		     ,"Colormap",	  save_colormap },
   {CODEdefault_colormap	     ,"default_colormap", save_default_colormap },
   {CODE3dobj	             ,"default_colormap", save_3dobj },
-  {CODEpixbuf		     ,"pixbuf",           save_pixbuf }
+  {CODEpixbuf		     ,"pixbuf",           save_pixbuf },
+  {CODEpixbuf_file	     ,"pixbuf_file",      save_pixbuf_from_file }
 };     	
 
 

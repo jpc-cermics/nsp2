@@ -31,5 +31,6 @@ Format.o: Format.c
 
 periGtk.o : periGtkstd.c periGLGtk.c 
 periGL.o : periGLstd.c periGLGtk.c 
+periCairo.o : periGtkstd.c perigtk/peridraw_cairo_new.c
 
 #--- dependencies generated with gcc ----

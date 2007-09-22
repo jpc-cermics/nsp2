@@ -20,6 +20,7 @@
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
+
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/command.h"
@@ -225,6 +226,8 @@ extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
 extern BCG ScilabGCXfig ;
 extern Gengine Pos_gengine, XFig_gengine ; 
 
+extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option);
+
 void scig_tops(int win_num, int colored, char *bufname, char *driver,char option)
 {
   int wdim[2],*wdim_p=NULL;
@@ -247,6 +250,14 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
     }
   else 
     {
+      /* Try to switch to export via cairo. 
+       */
+      int rep = nsp_cairo_export(Xgc,win_num,colored,bufname,driver,option);
+      if ( rep == OK ) 
+	{
+	  scig_buzy = 0;
+	  return ; 
+	}
       Sciprintf("Unknow driver %s using Pos\n",driver);
       Ggc = &ScilabGCPos;
       Ggc->graphic_engine = &Pos_gengine ; 

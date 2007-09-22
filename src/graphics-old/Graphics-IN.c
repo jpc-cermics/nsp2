@@ -4167,7 +4167,7 @@ int int_xdel(Stack stack, int rhs, int opt, int lhs)
  * used to print or export a graphic window 
  *-----------------------------------------------------------*/
 
-int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
+static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_format)
 {
   int win_id,rep=1,color=-1;
   char *filename= NULL, *mode = NULL;
@@ -4186,45 +4186,40 @@ int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  scig_export(filename,win_id,color,"Pos",Table[rep][0]);
+  scig_export(filename,win_id,color,export_format,Table[rep][0]);
   return 0;
 }
 
 /* backward compatibility */
 
-int int_xg2ps(Stack stack, int rhs, int opt, int lhs)
+int int_xs2ps_old(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xs2ps(stack,rhs,opt,lhs);
+  return int_export_G(stack,rhs,opt,lhs,"Pos");
 }
-
-
-static int int_export_G(Stack stack, int rhs, int opt, int lhs,char * export_format)
-{
-  char *filename;
-  int color = -1,iwin;
-  CheckRhs(2,3);
-  if (GetScalarInt(stack,1,&iwin) == FAIL) return RET_BUG;
-  if ((filename = GetString(stack,2)) == (char*)0) return RET_BUG;
-  /* color or n & b */ 
-  if ( rhs >= 3) {   if (GetScalarInt(stack,3,&color) == FAIL) return RET_BUG;}
-  scig_export(filename,iwin,color,export_format,'p');
-  return 0;
-}
-
 
 int int_xs2fig(Stack stack, int rhs, int opt, int lhs)
 {
   return int_export_G(stack,rhs,opt,lhs,"Fig");
 }
 
-int int_xs2gif(Stack stack, int rhs, int opt, int lhs)
+int int_xs2pdf(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_export_G(stack,rhs,opt,lhs,"GIF");
+  return int_export_G(stack,rhs,opt,lhs,"cairo-pdf");
 }
 
-int int_xs2ppm(Stack stack, int rhs, int opt, int lhs)
+int int_xs2png(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_export_G(stack,rhs,opt,lhs,"PPM");
+  return int_export_G(stack,rhs,opt,lhs,"cairo-png");
+}
+
+int int_xs2svg(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_export_G(stack,rhs,opt,lhs,"cairo-svg");
+}
+
+int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_export_G(stack,rhs,opt,lhs,"cairo-ps");
 }
 
 
@@ -4765,8 +4760,9 @@ int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/* insert a pixbuf given by a file-name in a graphic window 
- *
+/* insert a pixbuf given by a file-name in a text  buffer 
+ * this can be used for display a pixbuf in text main interaction 
+ * window. 
  */
 
 extern int nsp_insert_pixbuf_from_file(char *filename);
@@ -4782,16 +4778,18 @@ int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
 }
 
 /* experimental: draw a pixbuf in a region of a graphic window. 
+ * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
+ * gtk_logo_pixbuf = gdk_pixbuf_new_from_file(gtk_logo);
+ * xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,2,0,1,1)
  */
-
 
 int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   /* window , pix,  src_x,src_y, dest_x,dest_y,  width,height */
-  int_types T[] = {s_int, obj_check, s_int, s_int, s_double, s_double, s_int, s_int,t_end};
-  int src_x, src_y, width, height, win;
-  double  dest_x, dest_y;
+  int_types T[] = {s_int, obj_check, s_int, s_int, s_double, s_double, s_double, s_double ,t_end};
+  int src_x, src_y, win;
+  double  dest_x, dest_y, width, height;
   NspGObject *pixbuf;
   Xgc=nsp_check_graphic_context();  
   if ( GetArgs(stack,rhs,opt,T,&win,&nsp_type_gdkpixbuf, &pixbuf, &src_x, &src_y, 
@@ -4806,6 +4804,33 @@ int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 					  width, height);
   return 0;
 }
+/* experimental: draw a pixbuf in a region of a graphic window. 
+ * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
+ * xdraw_pixbuf_from_file(0,gtk_logo_pixbuf,0,0,2,0,1,1)
+ */
+
+int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  /* window , pix,  src_x,src_y, dest_x,dest_y,  width,height */
+  int_types T[] = {s_int, string , s_int, s_int, s_double, s_double, s_double, s_double ,t_end};
+  int src_x, src_y, win;
+  double  dest_x, dest_y,  width, height;
+  char *fname ; 
+  Xgc=nsp_check_graphic_context();  
+  if ( GetArgs(stack,rhs,opt,T,&win,&fname, &src_x, &src_y, 
+	       &dest_x, &dest_y, &width, &height) == FAIL) return RET_BUG;
+  if ( Xgc->private == NULL) 
+    {
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
+      return RET_BUG;
+    }
+  Xgc->graphic_engine->scale->draw_pixbuf_from_file(Xgc,fname,
+						    src_x, src_y, dest_x, dest_y, 
+						    width, height);
+  return 0;
+}
+
 
 /* Acceleration of scicos standard draw.
  *
@@ -4979,8 +5004,6 @@ static OpTab Graphics_func[]={
   {"champ1",int_champ1},
   {"xdel",int_xdel},
   {"contour2d",int_contour2d},
-  {"xg2ps",int_xg2ps},
-  {"xs2fig",int_xs2fig},
   {"winsid",int_winsid},
   {"param3d1",int_param3d},
   {"xstringb",int_xstringb},
@@ -4994,14 +5017,19 @@ static OpTab Graphics_func[]={
   {"xaxis",int_xaxis},
   {"seteventhandler",int_seteventhandler},
   {"help",int_gtkhelp},
-  {"xs2gif",int_xs2gif},
-  {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
+  {"xs2fig",int_xs2fig},
+  {"xs2ps_old",int_xs2ps_old},
+  {"xs2pdf",int_xs2pdf},
+  {"xs2png",int_xs2png},
+  {"xs2ps",int_xs2ps},
+  {"xs2svg",int_xs2svg},
   {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
   {"xget_image",int_get_image},
   {"xget_pixbuf",int_get_pixbuf},
   {"xdraw_pixbuf",int_draw_pixbuf},
+  {"xdraw_pixbuf_from_file",int_draw_pixbuf_from_file},
   {"xflush",int_xflush},
   {"show_pixbuf",int_show_pixbuf}, 
   {"scicos_draw3D",int_scicos_draw3D},
