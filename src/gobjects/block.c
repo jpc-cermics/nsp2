@@ -904,6 +904,13 @@ void block_draw(NspBlock *B)
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
+    case 4: 
+      Xgc1 = window_list_get_first(); 
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
+      sprintf(str,"draw_gtk_logo([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
+      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
+      break;
     default: 
       /* fill rectangle */
       Xgc->graphic_engine->xset_pattern(Xgc,B->obj->background);
