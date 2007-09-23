@@ -31,6 +31,31 @@ Format.o: Format.c
 
 periGtk.o : periGtkstd.c periGLGtk.c 
 periGL.o : periGLstd.c periGLGtk.c 
-periCairo.o : periGtkstd.c perigtk/peridraw_cairo_new.c
+periCairoNew.o : periGtkstd.c perigtk/peridraw_cairo_new.c
+
+Graphics-IN.o: Plo3dObj.h
+periCairoNew.o: periGtkstd.c 
+periGL.o: periGLstd.c
+periGLGtk.o: perigtk/events.c  
+periGLGtk.o: perigtk/init_gtkgl.c 
+periGLGtk.o: perigtk/fonts_pango_ft2_gl.c
+periGLGtk.o: perigtk/peridraw_gl.c
+periGLGtk.o: perigtk/fonts_pango_gdk.c
+periGLGtk.o: perigtk/fonts_gdk.c 
+periGLGtk.o: perigtk/peridraw_gdk.c
+periGLstd.o: perigtk/events.c  
+periGLstd.o: perigtk/init.c 
+periGLstd.o: perigtk/fonts_pango_ft2_gl.c
+periGLstd.o: perigtk/peridraw_gl.c
+periGtk.o: periGtkstd.c
+periGtkstd.o: perigtk/events.c  
+periGtkstd.o: perigtk/init.c 
+periGtkstd.o: perigtk/fonts_pango_cairo.c
+periGtkstd.o: perigtk/peridraw_cairo_new.c
+periGtkstd.o: perigtk/fonts_pango_gdk.c
+periGtkstd.o: perigtk/fonts_gdk.c 
+periGtkstd.o: perigtk/peridraw_gdk.c
+periGtkstd.o: perigtk/points.c 
+Plo3dObj.o: Plo3dObj.h
 
 #--- dependencies generated with gcc ----

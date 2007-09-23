@@ -515,7 +515,7 @@ static void boundingbox_cairo(BCG *Xgc,char *string, int x, int y, int *rect)
 
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
-  int rect[4],width,height;
+  int width,height;
   cairo_t *cr =  Xgc->private->cairo_cr;
   DRAW_CHECK;
   pango_layout_set_text (Xgc->private->layout, string, -1);
@@ -545,9 +545,9 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
       pango_layout_set_text (Xgc->private->layout,string, -1);
       pango_cairo_update_layout (cr,Xgc->private->layout);
       pango_cairo_show_layout (cr,Xgc->private->layout);
-      if (1) /*  flag == 1)  */
+      if ( flag == 1)  
 	{
-	  cairo_rectangle (cr,0,-height,rect[2],rect[3]);
+	  cairo_rectangle (cr,0,-height,width,height);
 	  cairo_stroke (cr);
 	}
       cairo_restore (cr);
