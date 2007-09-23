@@ -6,14 +6,6 @@ test -z "$srcdir" && srcdir=.
 
 DIE=0
 
-if [ -n "$GNOME2_DIR" ]; then
-	ACLOCAL_FLAGS="-I $GNOME2_DIR/share/aclocal $ACLOCAL_FLAGS"
-	LD_LIBRARY_PATH="$GNOME2_DIR/lib:$LD_LIBRARY_PATH"
-	PATH="$GNOME2_DIR/bin:$PATH"
-	export PATH
-	export LD_LIBRARY_PATH
-fi
-
 (test -f $srcdir/configure.in) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level package directory"
@@ -157,6 +149,7 @@ done
 
 conf_flags="--enable-maintainer-mode"
 conf_flags=
+
 
 if test x$NOCONFIGURE = x; then
   echo Running $srcdir/configure $conf_flags "$@" ...
