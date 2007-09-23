@@ -3562,20 +3562,28 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
       if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
     }
 
-  for (i = S->m -1 ; i >= 0; --i) 
+  if ( S->m == 1 )
     {
-      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
-      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
-      wc = Max(wc,rect[2]);
-      if (i != 0 ) 
-	y += rect[3] * 1.2;
-      else 
-	y += rect[3];
+      /* one rotated string */
+      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,flagx,angle);
     }
-  if (flagx == 1) {
-    double rect[]={x,y,wc, y - yi};
-    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-  }
+  else 
+    {
+      for (i = S->m -1 ; i >= 0; --i) 
+	{
+	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
+	  Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+	  wc = Max(wc,rect[2]);
+	  if (i != 0 ) 
+	    y += rect[3] * 1.2;
+	  else 
+	    y += rect[3];
+	}
+      if (flagx == 1) {
+	double rect[]={x,y,wc, y - yi};
+	Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+      }
+    }
   if ( remove == 1) nsp_smatrix_destroy(S);
   return 0;
 } 

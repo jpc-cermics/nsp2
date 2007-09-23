@@ -575,8 +575,9 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
   cairo_save (cr);
   w = gdk_pixbuf_get_width (pixbuf);
   h = gdk_pixbuf_get_height (pixbuf);
-  cairo_rectangle (cr,dest_x,dest_y,width,height);
-  cairo_stroke (cr);
+  /* cairo_rectangle (cr,dest_x,dest_y,width,height);
+   * cairo_stroke (cr);
+   */
   cairo_translate(cr,  dest_x, dest_y);
   cairo_scale (cr, ((double) width)/w, ((double) height)/h);
   gdk_cairo_set_source_pixbuf (cr,pixbuf,0,0);
@@ -601,8 +602,9 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
     }
   w = cairo_image_surface_get_width (image);
   h = cairo_image_surface_get_height (image);
-  cairo_rectangle (cr,dest_x,dest_y,width,height);
-  cairo_stroke (cr);
+  /* cairo_rectangle (cr,dest_x,dest_y,width,height);
+   *  cairo_stroke (cr);
+   */
   cairo_translate(cr,  dest_x, dest_y);
   cairo_scale (cr, ((double) width)/w, ((double) height)/h);
   cairo_set_source_surface (cr, image,0,0);
@@ -960,7 +962,7 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
-int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char *driver,char option)
+int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option)
 {
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
@@ -995,6 +997,7 @@ int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char 
   cr_current =  Xgc->private->cairo_cr;
   Xgc->private->cairo_cr = cr;
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
+  fprintf(stderr,"colored = %d\n",colored);
   if (colored==1 ) 
     Xgc->graphic_engine->xset_usecolor(Xgc,1);
   else

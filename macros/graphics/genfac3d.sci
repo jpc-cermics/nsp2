@@ -14,8 +14,8 @@ function [xx,yy,zz]=genfac3d(x,y,zmat,mask)
 //  genfac3d() 
 //!
 // Copyright INRIA
-  [lhs,rhs]=argn(0)
-  if rhs <=0 then
+// [lhs,rhs]=argn(0)
+  if nargin <=0 then
     s_mat=['t=(0:10)''*%pi/5;';
 	   '  zmat=sin(t)*cos(t'');';
 	   '[xx,yy,zz]=genfac3d(t,t,zmat,zmat>=0);';
@@ -34,7 +34,7 @@ function [xx,yy,zz]=genfac3d(x,y,zmat,mask)
   xx=matrix(x(indx),4,nrl*nrc/4);
   yy=matrix(y(indy),4,nrl*nrc/4);
   zz=matrix(zmat(indz),4,nrl*nrc/4);
-  if rhs==4 then 
+  if nargin==4 then 
     zl=matrix(mask(indz),4,nrl*nrc/4);
     [xin,yin]=find(zl);
     zz=zz(:,yin);

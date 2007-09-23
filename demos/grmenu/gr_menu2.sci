@@ -468,7 +468,7 @@ endfunction;
 global('GF');
 GF=hash_create(6);
 
-xinit(name='My diagram',dim=[1000,1000],popup_dim=[300,200])
+xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 
