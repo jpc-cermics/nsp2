@@ -93,6 +93,7 @@ function demo_3d_6()
 endfunction
 
 function demo_3d_7() 
+  //xset('colormap',hotcolormap(40));
   xsetech(wrect=[0,0,0.5,0.5])
   // One facet with interpolated shading using colors Id 
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,2,3]',flag=[1,1,3])
@@ -101,7 +102,7 @@ function demo_3d_7()
   // between colors
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,6,12]',flag=[1,1,3])
   xsetech(wrect=[0,0.5,0.5,0.5])
-  // colors are set to zéro : only draw polygons 
+  // colors are set to zero : only draw polygons 
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=0*[1,2,3]',flag=[1,1,3])
   xsetech(wrect=[0.5,0.5,0.5,0.5])
   // colors are negative: only painting no contour drawing
