@@ -124,6 +124,18 @@
 /* Define to 1 if you have the <values.h> header file. */
 #undef HAVE_VALUES_H
 
+/* cairo image supported */
+#undef HAVE_cairo_image_surface
+
+/* cairo pdf supported */
+#undef HAVE_cairo_pdf_surface
+
+/* cairo ps supported */
+#undef HAVE_cairo_ps_surface
+
+/* cairo svg supported */
+#undef HAVE_cairo_svg_surface
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 

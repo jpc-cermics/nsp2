@@ -861,7 +861,7 @@ if test "x$PKG_CONFIG" = x; then
     fi
 fi
 
-AC_MSG_CHECKING([if gtk is version 2.1 or later])
+AC_MSG_CHECKING([gtk version ])
 GTK_VER=`$PKG_CONFIG --modversion gtk+-2.0`
 case $GTK_VER in
       2.2.* | 2.3.0 | 2.3.1| 2.3.2| 2.3.4 )
@@ -900,6 +900,8 @@ else
      AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
 fi
 LIBS=$ac_save_LIBS
+
+# terminal library 
 # check first for vte 
 ac_save_LIBS="$LIBS"
 LIBS=`pkg-config vte --cflags --libs` 
@@ -934,6 +936,32 @@ LIBS=$ac_save_LIBS
      ZZLEDT="reader_rl"
      AC_DEFINE(WITH_READLINE,[],[readline library])
   fi
+
+#detect cairo in gtk 
+
+  ac_save_LIBS="$LIBS"
+  LIBS=`pkg-config gtk+-2.0  --cflags --libs`
+  AC_CHECK_LIB(cairo, cairo_pdf_surface_create, enable_cairo_pdf=yes, :) 
+  AC_CHECK_LIB(cairo, cairo_ps_surface_create, enable_cairo_ps=yes, :) 
+  AC_CHECK_LIB(cairo, cairo_svg_surface_create, enable_cairo_svg=yes, :) 
+  AC_CHECK_LIB(cairo, cairo_image_surface_create, enable_cairo_image=yes, :) 
+  LIBS=$ac_save_LIBS
+  if test X"$enable_cairo_pdf" == Xyes; then 
+     AC_DEFINE(HAVE_cairo_pdf_surface,[],[cairo pdf supported])
+  fi
+  if test X"$enable_cairo_ps" == Xyes; then 
+     AC_DEFINE(HAVE_cairo_ps_surface,[],[cairo ps supported])
+  fi
+  if test X"$enable_cairo_svg" == Xyes; then 
+     AC_DEFINE(HAVE_cairo_svg_surface,[],[cairo svg supported])
+  fi
+  if test X"$enable_cairo_image" == Xyes; then 
+     AC_DEFINE(HAVE_cairo_image_surface,[],[cairo image supported])
+     # switch to cairo driver 
+     PERIFILE=periCairoNew.o
+  fi
+
+
 
 #################
 ## GTKglext 
@@ -1457,6 +1485,22 @@ fi
 if test "xx$umfpack_libs" != "xx" ; then
    echo "umfpack................:" $UMFPACK_LIBS
 fi
+if test X"$enable_cairo_image" == Xyes; then 
+   echo "default graphic driver.:" gtk/cairo
+else 
+   echo "default graphic driver.:" gtk
+fi 
+echo -n "cairo output files.....:"
+if test X"$enable_cairo_pdf" == Xyes; then 
+   echo -n " pdf"
+fi
+if test X"$enable_cairo_ps" == Xyes; then 
+   echo -n " ps"
+fi
+if test X"$enable_cairo_svg" == Xyes; then 
+   echo -n " svg"
+fi
+echo 
 echo 
 echo "C compiler.............:" $CC
 echo "C options..............:" $CC_OPTIONS 
