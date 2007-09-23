@@ -33,6 +33,10 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
+/* XXX */
+extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
+extern char *nsp_get_extension(char *name);
+
 static int sci_demo (const char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static BCG *nsp_check_graphic_context(void);
@@ -509,7 +513,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
+    Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -571,12 +575,12 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int ns,
 
   if ( frameflag < -1 || frameflag > 8 ) 
     {
-      Scierror("%s: frame must be in the range [0,8]\r\n",NspFname(stack));
+      Scierror("%s: frame must be in the range [0,8]\n",NspFname(stack));
       return RET_BUG;
     }   
   if ( axesflag < -1 || axesflag > 5 ) 
     {
-      Scierror("%s: axes must be in the range [0,5]\r\n",NspFname(stack));
+      Scierror("%s: axes must be in the range [0,5]\n",NspFname(stack));
       return RET_BUG;
     }   
 
@@ -632,7 +636,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   CheckVector(NspFname(stack),2,y);
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
+    Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -686,7 +690,7 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   CheckVector(NspFname(stack),2,y);
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
+    Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -1558,7 +1562,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
+    Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -1841,7 +1845,7 @@ static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*
       val = arc;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\r\n",NspFname(stack),rhs);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\n",NspFname(stack),rhs);
       return RET_BUG;
     }
   Xgc=nsp_check_graphic_context();
@@ -1883,7 +1887,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
       if ((styles= GetRealMatInt(stack,2))  == NULLMAT) return RET_BUG;
       CheckVector(NspFname(stack),2,styles);
       if ( styles->mn != arcs->n ) {
-	Scierror("%s: first and second arguments have incompatible length\r\n",NspFname(stack));
+	Scierror("%s: first and second arguments have incompatible length\n",NspFname(stack));
 	return RET_BUG;
       }
     }
@@ -1971,7 +1975,7 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
+	    Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
 	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,(int*) Mstyle->R,1);
@@ -2014,7 +2018,7 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
+	    Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
 	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,(int*) Mstyle->R,1);
@@ -2099,7 +2103,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("%s: dir=%s is wrong \r\n",NspFname(stack),dir);
+      Scierror("%s: dir=%s is wrong \n",NspFname(stack),dir);
       return RET_BUG;
     }
   
@@ -2180,7 +2184,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = l;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\n",NspFname(stack),rhs);
       return FAIL;
     }
   return OK;
@@ -2511,7 +2515,7 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 	  v1=2; /* interpolated shading */
 	  if ( l3->m != 3 && l3->m != 4 ) 
 	    {
-	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\r\n",NspFname(stack));
+	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	} 
@@ -2897,7 +2901,7 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   if (rhs  <= 0) 
     {
-      Scierror("%s: xlfont to be done  \r\n",NspFname(stack));
+      Scierror("%s: xlfont to be done  \n",NspFname(stack));
       return RET_BUG;
       /* XXXXX 
 	 char **S;
@@ -2906,14 +2910,14 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
 	 if (m == 0) { LhsVar(1)=0; return 0;}
 	 if (( S= (char **) MALLOC( (m+1)*sizeof(char*))) == NULL) 
 	 {
-	 Scierror(999,"%s: running out of memory \r\n",fname);
+	 Scierror(999,"%s: running out of memory \n",fname);
 	 return 0;
 	 }
 	 count =0;
 	 for ( i = 0 ; i < m ; i++) {
 	 if ((S[i]= (char *) MALLOC((sz[i]+1)*sizeof(char))) == NULL) 
 	 {
-	 Scierror(999,"%s: running out of memory \r\n",fname);
+	 Scierror(999,"%s: running out of memory \n",fname);
 	 return 0;
 	 }
 	 strncpy(S[i],C2F(cha1).buf+count,sz[i]);
@@ -3069,12 +3073,12 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	  if ( strncmp(type,"lines",5) == 0) dtype = xlines;
 	  else if (strncmp(type,"marks",5) == 0) dtype = xmarks;
 	  else {
-	    Scierror("%s: type must be \"lines\" or \"marks\"\r\n",NspFname(stack));
+	    Scierror("%s: type must be \"lines\" or \"marks\"\n",NspFname(stack));
 	    return RET_BUG;
 	  }
 	  if ( opts[2].obj != NULLOBJ && strncmp(type,"lines",5) == 0 )
 	    {
-	      Sciprintf("type is set to \"marks\" since mark is set \r\n",NspFname(stack));
+	      Sciprintf("type is set to \"marks\" since mark is set \n",NspFname(stack));
 	      dtype = xmarks;
 	    }
 	}
@@ -3540,7 +3544,7 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
   yi=y;
 
-  if (( S = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
+  if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
 
   if ( S->mn == 0 ) {  return 0;} 
 
@@ -3594,7 +3598,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   for ( narg = 1 ; narg <= rhs ; narg++) 
     {
       nsp_string str;
-      if (( S = GetSMat(stack,narg)) == NULLSMAT) return RET_BUG;
+      if (( S = GetSMatUtf8(stack,narg)) == NULLSMAT) return RET_BUG;
       if ( S->mn == 0 ) continue;
       if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
       Xgc->graphic_engine->scale->displaystringa(Xgc,str,narg);
@@ -3620,7 +3624,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(5,6);
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
-  if ((S = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
+  if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) return 0; 
   if (GetScalarDouble(stack,4,&w) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,5,&hx) == FAIL) return RET_BUG;
@@ -3631,7 +3635,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
       fill =1;
     else 
       {
-	Scierror("%s: optional argument has a wrong value 'fill' expected\r\n",NspFname(stack));
+	Scierror("%s: optional argument has a wrong value 'fill' expected\n",NspFname(stack));
 	return RET_BUG;
       }
   }
@@ -3672,7 +3676,8 @@ int int_xstringc(Stack stack, int rhs, int opt, int lhs)
 
   if (( M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,M,4);
-  if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+
+  if ((S = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) return 0; 
   if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
  
@@ -3736,13 +3741,14 @@ int int_xstringl(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
   yi=y;
-  if ((S = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
+
+  if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) return 0; 
 
   if ((M = nsp_matrix_create(NVOID,'r',1,4))== NULLMAT) return RET_BUG;
   NSP_OBJECT(M)->ret_pos = 1;
   StackStore(stack,(NspObject *) M,rhs+1);
-
+  
   if ( S->n != 1 ) 
     {
       remove=1;
@@ -3912,7 +3918,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       if (rhs >= 3) { 
 	if ((logflag = GetString(stack,3)) == (char*)0) return RET_BUG;
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: third argument has a wrong length %d expecting (%d)\r\n",NspFname(stack),strlen(logflag),2 );
+	  Scierror("%s: third argument has a wrong length %d expecting (%d)\n",NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	}
       }
@@ -3944,7 +3950,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       
       if ( logflag != logflag_def ) {
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\r\n",NspFname(stack),strlen(logflag),2 );
+	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\n",NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	} 
       }
@@ -4030,7 +4036,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(NspFname(stack),1,4,x,F);
 
   if ( Tr->n != 5) {
-    Scierror("%s: triangles have %d columns,expecting 5\r\n",NspFname(stack),Tr->n);
+    Scierror("%s: triangles have %d columns,expecting 5\n",NspFname(stack),Tr->n);
     return RET_BUG;
   }
 
@@ -4186,6 +4192,29 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_form
 	  return RET_BUG;
 	}
     }
+  if ( export_format == NULL )
+    {
+      char *extension;
+      int frep = 0;
+      static char *Etable[] = 
+	{".svg", ".pdf", ".eps", ".ps", ".fig", ".png", NULL};
+      static char *Ftable[] = 
+	{"cairo-svg", "cairo-pdf", "cairo-ps", "cairo-ps", "Fig", "cairo-png", NULL};
+      extension = nsp_get_extension(filename);
+      if ( extension == NULL) 
+	{
+	  Scierror("Error: no extension given to filename \"%s\" and no format specified in function %s\n",
+		   filename,NspFname(stack));
+	  return RET_BUG;
+	}
+      frep = is_string_in_array(extension,Etable,1);
+      if ( frep < 0 ) 
+	{
+	  string_not_in_array(stack,extension,Etable,"extension of filename argument");
+	  return RET_BUG;
+	}
+      export_format = Ftable[frep];
+    }
   scig_export(filename,win_id,color,export_format,Table[rep][0]);
   return 0;
 }
@@ -4222,6 +4251,10 @@ int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
   return int_export_G(stack,rhs,opt,lhs,"cairo-ps");
 }
 
+int int_xexport(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_export_G(stack,rhs,opt,lhs,NULL);
+}
 
 /*-----------------------------------------------------------
  *   x=winsid()
@@ -4419,14 +4452,14 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 	return 0;
       break;
     default :
-      Scierror("%s: tics has a wrong value \"%c\" should be one of \"r\",\"v\" and \"i\" \r\n", 
+      Scierror("%s: tics has a wrong value \"%c\" should be one of \"r\",\"v\" and \"i\" \n", 
 	       NspFname(stack),dir);
       return RET_BUG;
     }
 
   if ( val != 0) 
     {
-      /** sciprint("nombre de tics %d\r\n",ntics); **/
+      /** sciprint("nombre de tics %d\n",ntics); **/
       CheckLength(NspFname(stack), opts[8].position, S,ntics);
     }
 
@@ -4469,7 +4502,7 @@ static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int
 	}
       break;
     default :
-      Scierror("%s: dir has a wrong value \"%c\" should be one of \"u\",\"d\",\"r\" and \"l\"\r\n", 
+      Scierror("%s: dir has a wrong value \"%c\" should be one of \"u\",\"d\",\"r\" and \"l\"\n", 
 	       fname,dir);
       return RET_BUG;
     }
@@ -5024,6 +5057,7 @@ static OpTab Graphics_func[]={
   {"xs2png",int_xs2png},
   {"xs2ps",int_xs2ps},
   {"xs2svg",int_xs2svg},
+  {"xexport",int_xexport},
   {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
   {"xget_image",int_get_image},
