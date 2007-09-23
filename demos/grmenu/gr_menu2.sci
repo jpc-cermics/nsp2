@@ -427,6 +427,16 @@ function draw_scope(rect)
   execstr(str);
 endfunction;
 
+gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
+global gtk_logo_pixbuf;
+gtk_logo_pixbuf = gdk_pixbuf_new_from_file(gtk_logo);
+
+function draw_gtk_logo(rect)
+// test function for block drawing 
+  global gtk_logo_pixbuf;
+  xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,rect(1),rect(2),rect(3),rect(4));
+endfunction;
+
 function y=scs_color(i);y=i;endfunction
 
 function F= diagram()
@@ -458,13 +468,13 @@ endfunction;
 global('GF');
 GF=hash_create(6);
 
-xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My diagram',dim=[1000,1000],popup_dim=[300,200])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 
 seteventhandler('my_eventhandler');
 
-xinit(name='My second diagram opengl=%f',opengl=%f,dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 seteventhandler('my_eventhandler');
