@@ -44,7 +44,7 @@
 extern int nsp_smatrix_to_utf8(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 
-static NspSMatrix *GetSMatUtf8(Stack stack,int pos)
+NspSMatrix *GetSMatUtf8(Stack stack,int pos)
 {
   NspSMatrix *Sm;
   if ((Sm = GetSMat(stack,pos)) == NULLSMAT) return NULLSMAT;
@@ -66,7 +66,7 @@ static NspSMatrix *GetSMatUtf8(Stack stack,int pos)
  * to be converted.
  */
 
-static char *GetStringUtf8(Stack stack,int pos)
+char *GetStringUtf8(Stack stack,int pos)
 {
   NspSMatrix *Sm;
   if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
@@ -81,7 +81,7 @@ static char *GetStringUtf8(Stack stack,int pos)
 /* get a copy of a string matrix converted to utf8 
  */
 
-static NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
+NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
 {
   NspSMatrix *Sm;
   if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
