@@ -1,22 +1,27 @@
 /* -*- Mode: C -*- */
+/* Nsp
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *--------------------------------------------------------------------------*/
 
 #ifndef MACHINE_H 
 #define MACHINE_H 
 
-/* 
- * This Software is (Copyright ENPC 1998-2005) 
- * Jean-Philippe Chancelier Enpc/Cermics         
- */
-
-/* Define if you have inline */
-#undef HAVE_INLINE
-
-/* headers */
-#undef HAVE_VALUES_H
-#undef HAVE_FLOAT_H
-#undef HAVE_LIMITS_H
-#undef HAVE_SYS_TIME_H
-#undef HAVE_SYS_RESOURCE_H
+#include "config.h" 
 
 /* Define for using dld for sunos */
 #undef SUNOSDLD
@@ -27,18 +32,11 @@
  * Defined if leading underscores are needed in dld
  */
 
-/* Define if leading underscores */
-
-#undef WLU
-
 /**
  *  WTU:
  *
  * Defined if trailing underscores are needed in dld
  */
-
-/* Define if trailing underscores */
-#undef WTU
 
 /**
  *  USE_SHARP_SIGN:
@@ -46,17 +44,11 @@
  * Defined if sharpsigns are recognized by cpp
  */
 
-/* Define if use sharpsigns */
-#undef USE_SHARP_SIGN
-
 /**
  * HAVE_EXP10:
  * 
  * Defined if exp10 exists
  */
-
-/* Define if have exp10 */
-#undef HAVE_EXP10
 
 /**
  * HAVE_TGAMMA:
@@ -64,18 +56,11 @@
  * Defined if tgamma (true gamma) exists
  */
 
-/* Define if have tgamma (true gamma) */
-#undef HAVE_TGAMMA
-
-
 /**
  * HAVE_LGAMMA:
  * 
  * Defined if lgamma (log gamma) exists
  */
-
-/* Define if have lgamma (log gamma) */
-#undef HAVE_LGAMMA
 
 /**
  * HAVE_GETWD:
@@ -83,17 +68,11 @@
  * Defined if getwd exists
  */
 
-/* Define if have getwd */
-#undef HAVE_GETWD
-
 /**
  * HAVE_GETCWD:
  * 
  * Defined if getcwd exists
  */
-
-/* Define if have getcwd */
-#undef HAVE_GETCWD
 
 /**
  * HAVE_MKSTEMP:
@@ -101,17 +80,11 @@
  * Defined if mkstemp exists
  */
 
-/* Define if have mkstemp */
-#undef HAVE_MKSTEMP 
-
 /**
  * HAVE_SLEEP:
  *
  * Defined if sleep exists
  */
-
-/* Define if have sleep: used in graphics/periX11.c */
-#undef HAVE_SLEEP
 
 /**
  *  HAVE_STRERROR:
@@ -119,17 +92,11 @@
  * Defined if strerror exists 
  */
 
-/* Define if have strerror: used in sound/misc.c */
-#undef HAVE_STRERROR
-
 /**
  *  HAVE_TERMCAP:
  *
  * Defined if termcap library exists 
  */
-
-/* Define if have termcap library: used in sun/zzledt.c */
-#undef HAVE_TERMCAP
 
 /**
  *  HAVE_USLEEP:
@@ -137,17 +104,12 @@
  * Defined if usleep exists 
  */
 
-/* Define if have usleep: used in graphics/periX11.c */
-#undef HAVE_USLEEP
-
 /**
  *  HAVE_GETRUSAGE:
  *
  * Defined if getrusage exists 
  */
 
-/* Define if have getrusage */
-#undef HAVE_GETRUSAGE
 
 /**
  *  HAVE_CLOCK:
@@ -155,17 +117,11 @@
  * Defined if clock exists 
  */
 
-/* Define if have clock */
-#undef HAVE_CLOCK
-
 /**
  *  HAVE_TIMES:
  *
  * Defined if times exists 
  */
-
-/* Define if have times */
-#undef HAVE_TIMES
 
 /**
  *  HAVE_ISINF:
@@ -173,17 +129,11 @@
  * Defined if isinf exists 
  */
 
-/* Define if have isinf */
-#undef HAVE_ISINF
-
 /**
  *  HAVE_ISNAN:
  *
  * Defined if isnan exists 
  */
-
-/* Define if have isnan */
-#undef HAVE_ISNAN
 
 /**
  *  HAVE_FINITE:
@@ -191,17 +141,11 @@
  * Defined if finite exists 
  */
 
-/* Define if have finite*/
-#undef HAVE_FINITE
-
 /**
  *  WITH_TK:
  *
  * Defined if tcl/tk is used 
  */
-
-/* Define if have and use TCL/TK */
-#undef WITH_TK
 
 /**
  *  WITH_PVM:
@@ -209,17 +153,11 @@
  * Defined if pvm is used 
  */
 
-/* Define if have and use PVM */
-#undef WITH_PVM
-
 /**
  *  WITH_GTKGLEXT:
  *
  * Defined if gtkglext is used 
  */
-
-/* Define if have and use GTKGLEXT */
-#undef WITH_GTKGLEXT
 
 /**
  *  WITH_GTKHTML:
@@ -227,17 +165,11 @@
  * Defined if gtkhtml is used 
  */
 
-/* Define if have and use GTKHTML */
-#undef WITH_GTKHTML
-
 /**
  *  WITH_MAXPLUSLIB:
  *
  * Defined if maxplus is used 
  */
-
-/* Define if use maxplus lib  */
-#undef WITH_MAXPLUSLIB
 
 /**
  *  WITH_UMFPACK:
@@ -245,17 +177,11 @@
  * Defined if umfpack is used 
  */
 
-/* Define if use umfpack lib  */
-#undef WITH_UMFPACK
-
 /**
  *  WITH_CHOLMOD:
  *
  * Defined if cholmod is used 
  */
-
-/* Define if use  cholmod lib  */
-#undef WITH_CHOLMOD
 
 /**
  *  WITH_FFTW3:
@@ -263,17 +189,11 @@
  * Defined if fftw3 is used 
  */
 
-/* Define if use fftw3 lib  */
-#undef WITH_FFTW3
-
 /**
  *  WITH_SNDFILE:
  *
  * Defined if sndfile library is used 
  */
-
-/* Define if use sndfile lib  */
-#undef WITH_SNDFILE
 
 /**
  *  WITH_ASOUND:
@@ -281,26 +201,17 @@
  * Defined if asound is used 
  */
 
-/* Define if use asound lib  */
-#undef WITH_ASOUND
-
 /**
  *  WITH_GMP:
  *
  * Defined if gmp library is used 
  */
 
-/* Define if use gmp lib  */
-#undef WITH_GMP
-
 /**
  *  POINTER_INT :
  *
  * Defined if sizeof(int*)==sizeof(int) 
  */
-
-/* Define if sizeof(int*)==sizeof(int) */
-#undef POINTER_INT 
 
 /* storing and retrieving an int in a pointer */
 
@@ -380,12 +291,13 @@ typedef int integer;
 #   define  LARGEST_SHORT_INTEGER   SHRT_MAX
 #   define  LARGEST_LONG_INTEGER    LONG_MAX
 
-
+/* symbol table in functions */
 #define WITH_SYMB_TABLE 1 
+
 /* matlab mode */
 #define MTLB_MODE 1
-/* use relative exec directories */
 
+/* use relative exec directories */
 #define UPDATE_EXEC_DIR 1
 
 #endif /* MACHINE_H  */

@@ -5,7 +5,7 @@ AC_REVISION($Revision$)dnl
 AC_INIT(COPYING)
 SCIDIR=`pwd`
 AC_CONFIG_AUX_DIR(config)
-AC_CONFIG_HEADER(src/include/nsp/machine.h)
+AC_CONFIG_HEADER(src/include/nsp/config.h)
 
 dnl Get system type
 dnl use "config.guess" and "config.sub" from directory "config"
@@ -591,7 +591,7 @@ LDLAGS=$CC_LDFLAGS
 
 AC_C_INLINE
 case $ac_cv_c_inline in
-  inline | yes) AC_DEFINE(HAVE_INLINE) ;;
+  inline | yes) AC_DEFINE(HAVE_INLINE,[],[inline supported]) ;;
 esac
 
 #########################
@@ -639,10 +639,10 @@ if test ! -z "$output"; then
 fi
 
 if test "$FC_LEADING_UNDERSCORE" = yes; then
-  AC_DEFINE(WLU)
+  AC_DEFINE(WLU,[],[Defined if leading underscores are needed in dld])
 fi
 if test "$FC_TRAILING_UNDERSCORE" = yes; then
-  AC_DEFINE(WTU)
+  AC_DEFINE(WTU,[],[trailing underscore in fortran symbols])
 fi
 
 $RM pipof.f pipof.o
@@ -657,7 +657,7 @@ AC_MSG_CHECKING([for use of sharpsign in CPP])
 AC_TRY_COMPILE([#define C2F(name) name##_],
   [C2F(toto)()],  
   AC_MSG_RESULT(yes)
-  AC_DEFINE(USE_SHARP_SIGN),
+  AC_DEFINE(USE_SHARP_SIGN,[],[sharp sign can b eused to in macros]),
   AC_MSG_RESULT(no))
 
 ##############################################################
@@ -711,7 +711,7 @@ if test "$TERMCAPLIB" = no; then
   [TERMCAPLIB=-ltermlib])
 fi
 if test "$TERMCAPLIB" != no; then
-  AC_DEFINE(HAVE_TERMCAP)
+  AC_DEFINE(HAVE_TERMCAP,[],[termcap library available])
 else
   TERMCAPLIB=
 fi
@@ -812,7 +812,7 @@ if test "$with_pvm" != no; then
   PVMTARGET=pvm-bidon
   PVMINST='$(PVMBINDISTFILES)'
  else
-  AC_DEFINE(WITH_PVM)
+  AC_DEFINE(WITH_PVM,[],[pvm library])
   PVMARCH="$ac_cv_PVM_arch"
 
   case "$host" in
@@ -875,7 +875,7 @@ AC_MSG_RESULT([$GTK_VER])
 # result of `gtk-config --cflags`. 
 GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
 GTKLIBS='`pkg-config gtk+-2.0 --libs`'
-AC_DEFINE(WITH_GTK)
+AC_DEFINE(WITH_GTK,[],[gtk library])
 GTK_PKGS='gtk+-2.0'
 GUILIB='gtksci'
 GZVT='gzvt2'
@@ -897,7 +897,7 @@ else
      GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
      GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
      GTKHTMLOBJS='$(OBJSHELP)'
-     AC_DEFINE(WITH_GTKHTML)
+     AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
 fi
 LIBS=$ac_save_LIBS
 # check first for vte 
@@ -932,7 +932,7 @@ LIBS=$ac_save_LIBS
   TERMCAPLIB="$READLINE $TERMCAPLIB"
   if test "no$READLINE" != no; then
      ZZLEDT="reader_rl"
-     AC_DEFINE(WITH_READLINE)
+     AC_DEFINE(WITH_READLINE,[],[readline library])
   fi
 
 #################
@@ -970,7 +970,7 @@ if test "$with_gtkglext" != no; then
 			GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
 			WITH_GL="yes"
 			PERIGLEXT="periGL.o"
-			AC_DEFINE(WITH_GTKGLEXT)
+			AC_DEFINE(WITH_GTKGLEXT,[],[gtkglext: opengl in gtk ])
 		 else
 			AC_MSG_WARN([pangoft2 is missing.]) 
 			AC_MSG_WARN([WARNING OpenGL driver will not be build.])
@@ -1048,7 +1048,7 @@ TCLSCIDIR=
 
 if test X"$with_tk" != Xno; then
  if test $WITH_TKSCI = 1; then
-  AC_DEFINE(WITH_TK)
+  AC_DEFINE(WITH_TK,[],[tk support])
   TCLSCILIB="\$(SCIDIR)/libs/tclsci.a"
   TCLSCIDIR=tclsci
  else
@@ -1083,7 +1083,7 @@ MPLUSLIB=
 MPLUSLIBDIR=
 
 if test "$with_maxpluslib" = yes; then
-   AC_DEFINE(WITH_MAXPLUSLIB)
+   AC_DEFINE(WITH_MAXPLUSLIB,[],[use maxplus library])
    MPLUSLIB=libs/maxplus.a
    MPLUSLIBDIR=libmaxplus
 fi 
@@ -1105,7 +1105,7 @@ fi
 if test "xx$amd_libs" != "xx" ; then
   AC_CHECK_UMFPACK()
   if test "xx$umfpack_libs" != "xx" ; then
-   AC_DEFINE(WITH_UMFPACK)
+   AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
    UMFPACK_LIBS=$umfpack_libs
    UFSPARSE_LIB=libumfpack
@@ -1129,7 +1129,7 @@ fi
 if test "xx$colamd_libs" != "xx" ; then
   AC_CHECK_CHOLMOD()
   if test "xx$cholmod_libs" != "xx" ; then
-   AC_DEFINE(WITH_CHOLMOD)
+   AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
    AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
    CHOLMOD_LIBS=$cholmod_libs
    if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 
@@ -1177,7 +1177,7 @@ else
 fi
 
 if test "$HAVE_FFTW3" = "yes"; then
-  AC_DEFINE(WITH_FFTW3)
+  AC_DEFINE(WITH_FFTW3,[],[fast fourrier transform])
   IN_FFTPACK=NOTHING    
 else
   IN_FFTPACK=FFTPACK
@@ -1223,7 +1223,7 @@ else
 fi
 
 if test "$HAVE_GMP" = "yes"; then
-  AC_DEFINE(WITH_GMP)
+  AC_DEFINE(WITH_GMP,[],[gmp multiprecision library])
 fi
 
 #################
@@ -1265,7 +1265,7 @@ else
 fi
 
 if test "$HAVE_SNDFILE" = "yes"; then
-  AC_DEFINE(WITH_SNDFILE)
+  AC_DEFINE(WITH_SNDFILE,[],[soundfile library])
   SNDFILE_LIB=libsndfile 
 fi
 
@@ -1306,7 +1306,7 @@ else
 fi
 
 if test "$HAVE_ASOUND" = "yes"; then
-  AC_DEFINE(WITH_ASOUND)
+  AC_DEFINE(WITH_ASOUND,[],[asound support])
 fi
 
 

@@ -30,7 +30,7 @@ fi
 
 if test $SIZEOF_INTP = 1; then 
 	AC_MSG_RESULT([yes])
-	AC_DEFINE(POINTER_INT)
+	AC_DEFINE(POINTER_INT,[],[sizeof pointer is sizeof int])
 else 
 	AC_MSG_RESULT([no])
 	if test $SIZEOF_INTP = "cannot_happen" ; then
