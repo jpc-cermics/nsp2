@@ -994,10 +994,12 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
   int j,i,count=0;
   double ii = 0.0;
   int nrow = ( A->mn == 0) ? 0: 1;
+  /* first pass for counting */
+  for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
+  /* special rule for scalars */
+  if ( A-> m == 1 && count ==0) nrow =0;
   if ( lhs == 1) 
     {
-      /* first pass for counting */
-      for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
       *Res1 = nsp_matrix_create(NVOID,'r', nrow, count);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
@@ -1010,11 +1012,6 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
     }
   else 
     {
-      /* first pass for counting */
-      for ( i=0 ; i < A->mn ; i++) 
-	{
-	  if ( A->B[i] ) count++;
-	}
       *Res1 = nsp_matrix_create(NVOID,'r',nrow , count);
       if ( *Res1 == NULLMAT) return FAIL;
       *Res2 = nsp_matrix_create(NVOID,'r',nrow , count);

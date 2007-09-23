@@ -4952,17 +4952,28 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
  * @Res2: a pointer to a #NspMatrix
  * 
  * returns in one or two #NspMatrix the indices for which the 
- * Matrix @A has non zero entries. A is left unchanged
+ * Matrix @A has non zero entries. @A is left unchanged
  * according to the value of @lhs one or two arguments are returned 
+ * When @A is a non null matrix and @lhs is one, the return value is a 1xn row vector. 
+ * But when n is equal to zero and @A is scalar then a 0x0 is returned. 
+ *
+ * In Matlab the rules are different: 
+ * when lhs == 1 
+ *   A 1x1 => result 1x1 or 0x0 (like us) 
+ *   A mx1 => result px1        (diff)
+ *   A 1xn => result 1xp        (like us)
+ *   A mxn => result px min(1,max(m,n)) 
+ *     (this rule is valid for all m,n cases except the ones covered above)
  * 
+ *
  * Return value: %OK or %FAIL  
  **/
 
 int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
-  int j,i,count=0,  nrow = 1;
+  int j,i,count=0; 
+  int nrow = ( A->mn == 0) ? 0: 1;
   /* first pass for counting */
-  if ( A->mn == 0) nrow =0;
   if ( A->rc_type == 'r' ) 
     {
       for ( i=0 ; i < A->mn ; i++) 
@@ -4973,6 +4984,8 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
       for ( i=0 ; i < A->mn ; i++) 
 	if (A->C[i].r != 0.0 || A->C[i].i != 0.0) count++;
     }
+  /* special rule for scalars */
+  if ( A-> m == 1 && count ==0) nrow =0;
   if ( lhs == 1) 
     {
       *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
