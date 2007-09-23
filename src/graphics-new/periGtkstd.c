@@ -349,54 +349,72 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
 
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
-  /* XXXX: not so easy !!! */
+  gint pw,ph,w,h;
   if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
   if ( Xgc->CurResizeStatus == 1) 
     {
       /* here drawing and scrolled move together */
-      gint pw,ph,w,h;
       gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_window_get_size (Xgc->private->scrolled->window,&pw,&ph);
       gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* resize the main window at init time */
-      gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));
+      /* gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));*/
+      /* resize the scrolled */
+      gdk_window_resize(Xgc->private->scrolled->window,x+Max((pw-w),0),y+Max((ph-h),0));
       /* want the expose event to resize pixmap and redraw */
       Xgc->private->resize = 1; 
     }
   else
     {
-      /* here drawing and scrolled do not move together */
+      /* here drawing and scrolled do not move together 
+       * the scrolled window should stay larger than the drawing 
+       */
+      /* inhibit_enlarge: can be changed not to allow the drawing 
+       * window to be smaller than its container 
+       *
+       */
+      int inhibit_enlarge = TRUE;
+      int schrink = FALSE;
       /* gint sc_w,sc_h;*/
       GdkGeometry geometry;
       GdkWindowHints geometry_mask;
+      gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
       /* Limit the scolled window size  */
       /* gdk_window_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
-      geometry.max_width = x+15;
-      geometry.max_height = y+15;
-      geometry_mask = GDK_HINT_MAX_SIZE ; 
-      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
-				     &geometry, geometry_mask);
-      /* here we will only generate a configure event and an expose event 
-       * if the size is schrinked 
-       * thus we activate the redraw by calling appropriate function 
-       */
-      if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) 
+      if ( inhibit_enlarge == TRUE ) 
 	{
-	  Xgc->CWindowWidth = x;
-	  Xgc->CWindowHeight = y;
-	  Xgc->private->resize = 1;/* be sure to put this */
+	  geometry.max_width = x+15;
+	  geometry.max_height = y+15;
+	  geometry_mask = GDK_HINT_MAX_SIZE ;
+	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), 
+					 Xgc->private->scrolled,
+					 &geometry, geometry_mask);
 	}
       else 
 	{
-	  Xgc->CWindowWidth = x;
-	  Xgc->CWindowHeight = y;
-	  Xgc->private->resize = 1;/* be sure to put this */
-	  /* FIXME: NULL to be changed */
+	  /* if window was schrinked then scrolled must follow */
+	  if (  schrink == TRUE ) 
+	    {
+	      /* resize the main window */
+	      gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));
+	    }
+	}
+      Xgc->CWindowWidth = x;
+      Xgc->CWindowHeight = y;
+      Xgc->private->resize = 1;/* be sure to put this */
+      /* here we will only generate a configure event and an expose event 
+       * if the size is enlarged. 
+       */
+      if ( schrink == FALSE && inhibit_enlarge == TRUE ) 
+	{
 	  expose_event( Xgc->private->drawing,NULL, Xgc);
 	}
     }
@@ -415,7 +433,8 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
   gint xx,yy;
-  gdk_window_get_size (Xgc->private->window->window,&xx,&yy);
+  /*   gdk_window_get_size (Xgc->private->window->window,&xx,&yy); */
+  gdk_window_get_size (Xgc->private->scrolled->window,&xx,&yy);
   *x = xx ;  *y = yy ; 
 } 
 
@@ -431,7 +450,33 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
 
 static void xset_popupdim(BCG *Xgc,int x, int y)
 {
-  gdk_window_resize(Xgc->private->window->window,x,y);
+  if ( Xgc->CurResizeStatus == 0) 
+    {
+      int w,h,pw,ph, xoff, yoff;
+      gdk_window_get_size (Xgc->private->scrolled->window,&pw,&ph);
+      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      xoff = Max((pw-w),0); 
+      yoff= Max((ph-h),0);
+      if ( (Xgc->CWindowWidth < x - xoff  ) || (Xgc->CWindowHeight <  y - yoff )) 
+	{
+	  /* scrolled is larger than child we must enlarge the child 
+	   * we use gtk_widget_set_size_request because if 
+	   * gdk_window_resize is used the scroll bars of the scrolled window 
+	   * are not properly updated.
+	   */
+	  /*  gdk_window_resize(Xgc->private->drawing->window,x-xoff,y-yoff);  
+	   */
+	  gtk_widget_set_size_request (Xgc->private->drawing,x-xoff,y-yoff);
+
+	}
+      /* for a resize of the scrolled window */
+      gdk_window_resize(Xgc->private->scrolled->window,x,y);
+    }
+  else
+    {
+      /* now resize the scrolled window */
+      gdk_window_resize(Xgc->private->scrolled->window,x,y);
+    }
 }
 
 /**
@@ -1537,7 +1582,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-
   /* check for resize */
   if(GTK_WIDGET_REALIZED(dd->private->drawing))
     {
@@ -1548,6 +1592,22 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
+	    }
+	}
+      else 
+	{
+	  /* The following code is useless if 
+	   * inhibit_enlarge == TRUE in xset_windowdim
+	   */
+	  if ( (dd->CWindowWidth < event->width) || (dd->CWindowHeight < event->height))
+	    {
+	      int w,h;
+	      dd->CWindowWidth = event->width;
+	      dd->CWindowHeight = event->height;
+	      dd->private->resize = 1;
+	      gdk_window_get_size (dd->private->drawing->window,&w,&h);
+	      /* just to give the scrollbar the possibility to be updated */
+	      gtk_widget_set_size_request (dd->private->drawing,w,h);
 	    }
 	}
     }
