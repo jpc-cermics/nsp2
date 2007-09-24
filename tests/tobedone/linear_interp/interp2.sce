@@ -20,7 +20,6 @@ zp4 = linear_interpn(XP, YP, x, y, z, "by_zero");
 zp5 = linear_interpn(XP, YP, x, y, z, "by_nan");
 
 xbasc()
-xinit(opengl=%t)
 //xset("font",2,2)
 xset("font size",2)
 subplot(2,3,1)
