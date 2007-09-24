@@ -32,17 +32,19 @@ for n = nn
    el = [el ; max(abs(yy - yyl))];         
 end
 
-xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
+//xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
 xbasc()
 hh = (b-a)./(nn');
 [s,q] = least_squares_line(log(hh),log(el));
 ylsl = exp(s*log(hh) + q);
-xset("font",6,1)
+//xset("font",6,1)
+xset("font size",1)
 plot2d(hh, [el ylsl], style=[-9 5], strf="121", logflag = "ll", ...
        leg="linear interp error@least square line",...
        leg_pos="ul")
 xset("color",xget("foreground"))
-xset("font",6,2)
+//xset("font",6,2)
+xset("font size",2)
 xtitle("error function of h","h","e(h)")
 xselect()
 

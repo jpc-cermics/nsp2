@@ -26,14 +26,17 @@ nb_col = 128;
 vmin = min(VF); vmax = max(VF);
 color = bsearch(VF,linspace(vmin,vmax,nb_col+1));
 
-xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
+//xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
 xbasc();
 xset("colormap",jetcolormap(nb_col));
 xset("hidden3d",0)
-xset("font",6,1)
+//xset("font",6,1)
+xset("font size",1)
 colorbar(vmin,vmax)
 plot3d(XF, YF, ZF, colors=-color, flag=[-1 6 4], alpha=75, theta=20)
-xset("font",6,2)
+//xset("font",6,2)
+xset("font size",2)
 xtitle("some slices of "+func)
-xset("font",6,1)
+//xset("font",6,1)
+xset("font size",1)
 xselect()

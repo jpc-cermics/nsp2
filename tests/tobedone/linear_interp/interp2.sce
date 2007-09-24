@@ -20,7 +20,9 @@ zp4 = linear_interpn(XP, YP, x, y, z, "by_zero");
 zp5 = linear_interpn(XP, YP, x, y, z, "by_nan");
 
 xbasc()
-xset("font",2,2)
+xinit(opengl=%t)
+//xset("font",2,2)
+xset("font size",2)
 subplot(2,3,1)
 plot3d(x, y, z, leg="x@y@z", flag = [2 4 4])
 xtitle("Fonction to interpolate")
