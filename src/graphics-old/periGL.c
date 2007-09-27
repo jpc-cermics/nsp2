@@ -1,6 +1,6 @@
 #define PERIGL 
 
-#include "periGLGtk.c"
+#include "periGLstd.c"
 
 
 
