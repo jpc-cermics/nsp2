@@ -189,10 +189,17 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
   mxArray  *plhs[INTERSIZ];
   mxArray *prhs[INTERSIZ];
   int rfl;
+#ifdef WIN32 
+  if (( rfl = _setjmp(MexEnv)) != 0 )
+    {
+      return RET_BUG;
+    }
+#else 
   if (( rfl = sigsetjmp(MexEnv,1)) != 0 )
     {
       return RET_BUG;
     }
+#endif 
   nsp_initmex(NspFname(stack),&stack.first,lhs, plhs, rhs, prhs);
   mexFunction(lhs, plhs, rhs,(c_prhs)  prhs);
   if ( lhs <= 0 && plhs[0] != NULL ) lhs = 1;
@@ -204,7 +211,11 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
 static void nsp_mex_errjump(void)
 {
   nsp_clearmex();
+#ifdef WIN32 
+  longjmp(MexEnv,-1);
+#else 
   siglongjmp(MexEnv,-1);
+#endif 
 }
 
 

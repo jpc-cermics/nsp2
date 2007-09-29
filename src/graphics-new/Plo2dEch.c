@@ -385,11 +385,6 @@ void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
   style = Xgc->graphic_engine->xget_dash(Xgc);
   fg    = Xgc->graphic_engine->xget_foreground(Xgc);
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
-
-#ifdef WIN32
-  SetWinhdc(); 
-  SciMouseCapture(); 
-#endif 
   Xgc->record_flag = FALSE;
   Xgc->graphic_engine->xset_thickness(Xgc,th1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
@@ -428,10 +423,6 @@ void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_pattern(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
-#ifdef WIN32
-  ReleaseWinHdc();
-  SciMouseRelease();
-#endif 
   Xgc->record_flag = rf;
 }
 
