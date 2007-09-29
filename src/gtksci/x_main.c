@@ -197,9 +197,11 @@ void scilab_status_show(char * message)
  * scilab toplevel widget when zterm widget is plugged 
  */
 
+#if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <gdk/gdkx.h>
 #include <gdk/gdkprivate.h>
 #include <gdk/gdkkeysyms.h>
+#endif 
 
 static GtkWidget  *window = NULL;
 
@@ -276,10 +278,12 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   /* show them all! */
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(socket_button);
+#ifndef WIN32
   /* I transmit the socket Id via shared memory  */ 
   xid = (guint32 *) (shm+1); 
   *xid = GDK_WINDOW_XWINDOW(socket_button->window); 
   *shm = '*' ; /* just to tell that there's something to read */
+#endif 
 } 
 
 

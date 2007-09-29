@@ -136,7 +136,7 @@ void nsp_input_feed(char *s)
  * wait for a character and check for pending events 
  */
 
-
+#ifndef WIN32 
 int Xorgetchar_select(void)
 {
   int i;
@@ -269,6 +269,7 @@ int Xorgetchar_select(void)
     }
   }
 }
+#endif 
 
 
 /*
@@ -397,7 +398,11 @@ int Xorgetchar_thread(void)
  *
  */
 
+#ifdef WIN32 
+Get_char Xorgetchar = Xorgetchar_thread ;
+#else 
 Get_char Xorgetchar = Xorgetchar_select ;
+#endif 
 
 Get_char nsp_set_getchar_fun(Get_char F)
 {

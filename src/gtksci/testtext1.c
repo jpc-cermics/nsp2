@@ -34,7 +34,6 @@
 #include <unistd.h> /* for isatty */
 #include <readline/readline.h>
 #include <readline/history.h>
-
 #include "nsp/machine.h"
 #include "nsp/math.h"
 #include "nsp/tokenizer.h" 

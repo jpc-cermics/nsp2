@@ -333,7 +333,7 @@ static void initHelpWidgets(GtkWidget *container)
 
   vbox = container ; 
 
-  sprintf(buf, "This is help for %s", VERSION);
+  sprintf(buf, "This is help for %s", NSP_VERSION);
   label = gtk_label_new (buf) ;
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 
