@@ -20,9 +20,12 @@
  *------------------------------------------------------------------*/
 
 #include "files.h" 
-/* #include "Sun.h" */
 #include "nsp/sciio.h"
 #include "nsp/object.h"
+#ifdef WIN32 
+#include "tcl/generic/tclInt.h"
+#endif 
+
 
 static char tmp_dir[FSIZE+1],buf[FSIZE+1],cur_dir[FSIZE+1];
 
@@ -68,7 +71,7 @@ void set_nsp_tmpdir(void)
       } else {
 	sprintf(tmp_dir,"%s\\SD_%d_",getenv("TEMP"),(int) getpid());
       }
-      SciCreateDirectory(tmp_dir);
+      nsp_create_directory(tmp_dir);
 #else 
       sprintf(tmp_dir,"/tmp/SD_%d_",(int) getpid());
       sprintf(buf,"umask 000;if test ! -d %s; then mkdir %s; fi ",tmp_dir,tmp_dir);
@@ -108,7 +111,7 @@ void clean_tmpdir(void)
 {
   char *tmp_dir = get_nsp_tmpdir(); 
 #ifdef WIN32 
-  SciRemoveDirectory(tmp_dir);
+  nsp_remove_directory(tmp_dir,1,NULL);
 #else 
 #if (defined(hppa))
   hppa_sci_unlink_shared();

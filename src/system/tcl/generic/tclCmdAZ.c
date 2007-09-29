@@ -518,7 +518,14 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	linkLength = -1;
 	errno = EINVAL;
 #else
+#ifdef  WIN32 
+	/* XXX this is to be done with TclWinResolveShortcut*/
+	Scierror("Error: readlink on win32 not implemented \"%s\": %s\n",fileName,nsp_posix_error());
+	result = RET_BUG;
+	goto done;
+#else 
 	linkLength = readlink(fileName, linkValue, sizeof(linkValue) - 1);
+#endif
 #endif /* S_IFLNK */
 	if (linkLength == -1) {
 	  Scierror("Error: couldn't readlink \"%s\": %s\n",fileName,nsp_posix_error());

@@ -533,13 +533,12 @@ TclWinResolveShortcut(bufferPtr)
  * Side effects:
  *	See stat documentation.
  *
+ * CONST char *path;		Path of file to stat (in current CP). 
+ * struct stat *buf; Filled with results of stat call. 
  *----------------------------------------------------------------------
  */
 
-int
-TclWinStat(path, buf)
-    CONST char *path;		/* Path of file to stat (in current CP). */
-    struct stat *buf;		/* Filled with results of stat call. */
+int lstat(CONST char *path,struct stat * buf)
 {
     char name[4];
     int result;
