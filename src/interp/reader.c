@@ -226,7 +226,7 @@ void nsp_intialize_reader(void)
  * (see gtksci/zzledt-rl.c)
  */
 
-void DefSciReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
+void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
   int line_index = 0;
   int line_number;

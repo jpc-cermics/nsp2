@@ -147,6 +147,8 @@ IMPPREF=S
 IMPENV= 
 # strip executable (not to be done on darwin) 
 STRIP=strip
+# src/system : use unix or win subdirectory 
+SYST_FILES=unix
 
 dnl Checks for programs.
 
@@ -449,11 +451,13 @@ case "$host" in
    *-*-mingw32*)
     SCILABSCRIPT=scilab-gcwin32.g
     LIBXDR_LOCAL='libxdr'
+    LIBXDR=libs/xdr.a
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
     IMPPREF=B
     IMPENV=env.o
+    SYST_FILES=win
     # to be used if compilation of f2c is requested too.
     # seams not usefull now since we have gfortran in mingwin.
     #F2C_SUBDIR=f2c/src
@@ -466,7 +470,7 @@ case "$host" in
     WINXFLAGS='-I../xdr'
     # targer linux 
     #MAKEFILE_TARGET=Makefile.gcwin32
-    MAKEFILE_TARGET=Makefile.linux
+    MAKEFILE_TARGET=Makefile.mingw32
     ;;
 # FreeBSD  systems 
   *-*-freebsd*)
@@ -1479,8 +1483,9 @@ AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
 AC_SUBST(GTK_PKGS)
 AC_SUBST(UFSPARSE_LIB)
+AC_SUBST(SYST_FILES)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h)
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile)
 
 echo
 echo
