@@ -109,12 +109,10 @@ FGETARG=fgetarg
 HPPA_OLD=
 # Scilab main file: default is "mainsci.o" for UNIX
 MAIN='mainsci.o'
-# for graphics: default is X11
-#   different for Win32
-PERIFILE=periX11.o
-# specific scilab dirs for graphics: default is "xsci" for X11
-#   different for Win32
-GUILIB=xsci 
+# default graphic driver 
+PERIFILE=periGtk.o
+# 
+GUILIB=gtksci
 # specific for gnome/gtk version 
 GZVT=
 # a directory providing the xdr support 
@@ -430,9 +428,6 @@ case "$host" in
 # CYGWIN32 for Windows 9X/NT/XP 
   *-*-cygwin* )
     SCILABSCRIPT=scilab-gcwin32.g
-    PERIFILE=periWin.o
-    MAIN='mainwin95.o'
-    GUILIB='wsci'
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
@@ -450,18 +445,18 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.cygwin
     ;;
 # mingw32 is detected 
+# this is the case when cross compiling 
    *-*-mingw32*)
     SCILABSCRIPT=scilab-gcwin32.g
-    PERIFILE=periWin.o
-    MAIN='mainwin95.o'
-    GUILIB='wsci'
     LIBXDR_LOCAL='libxdr'
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
     IMPPREF=B
     IMPENV=env.o
-    F2C_SUBDIR=f2c/src
+    # to be used if compilation of f2c is requested too.
+    # seams not usefull now since we have gfortran in mingwin.
+    #F2C_SUBDIR=f2c/src
     # just *-so tests 
     EXAMPLES_TESTS='$(SUBDIRS1)'
     CC_OPTIONS="${CC_OPTIONS} -mieee-fp"
@@ -469,7 +464,9 @@ case "$host" in
     LD=gcc
     LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
     WINXFLAGS='-I../xdr'
-    MAKEFILE_TARGET=Makefile.gcwin32
+    # targer linux 
+    #MAKEFILE_TARGET=Makefile.gcwin32
+    MAKEFILE_TARGET=Makefile.linux
     ;;
 # FreeBSD  systems 
   *-*-freebsd*)
@@ -916,11 +913,15 @@ fi
 LIBS=$ac_save_LIBS
 
 # terminal library 
-# check first for vte 
+# check first for vte then for zvt 
+# but not for mingw32 compilation. 
+
+if test "$host_alias" != "mingw32" ; then 
 ac_save_LIBS="$LIBS"
 LIBS=`pkg-config vte --cflags --libs` 
 VTE=no 
 AC_CHECK_LIB(vte,vte_terminal_new,[VTE=yes])
+
 if test "$VTE" = no; then
    AC_MSG_WARN([Could not find the vte library. I will try libzvt-2.0 ],)
    AC_MSG_WARN([you should install vte and vte-devel ],)
@@ -939,6 +940,8 @@ else
    TERM_LDFLAGS=VTE_LDFLAGS
 fi
 LIBS=$ac_save_LIBS
+fi 
+
 
 # try to use readline with the gtk version 
   ac_save_LIBS="$LIBS"
