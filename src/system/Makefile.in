@@ -4,15 +4,15 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a
 
-F_unix=	tcl/win/tclCmdAZ.o \
-	tcl/win/tclEnv.o \
-	tcl/win/tclfiles.o \
-	tcl/win/tclIOUtil.o \
-	tcl/win/tclUnixFCmd.o \
-	tcl/win/tclUnixFile.o \
-	tcl/win/tclUnixInit.o \
-	tcl/win/Tobedone.o \
-	tcl/win/tclUtil.o 
+F_unix=	tcl/unix/tclCmdAZ.o \
+	tcl/unix/tclEnv.o \
+	tcl/unix/tclfiles.o \
+	tcl/unix/tclIOUtil.o \
+	tcl/unix/tclUnixFCmd.o \
+	tcl/unix/tclUnixFile.o \
+	tcl/unix/tclUnixInit.o \
+	tcl/unix/Tobedone.o \
+	tcl/unix/tclUtil.o 
 
 F_win= tcl/win/tclCmdAZ.o \
 	tcl/win/tclEnv.o \
