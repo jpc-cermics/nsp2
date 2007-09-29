@@ -6,6 +6,12 @@ dnl OUTPUTS
 dnl  1 if sizeof(int*) == sizeof(int)  0 otherwise
 dnl  Check pointer size 
 
+# fro cross compilation 
+if test "$build_alias" != "$host_alias" ; then
+     AC_MSG_WARN([cannot run executable when cross-compiling: assuming true for next test ])
+fi 
+
+
 AC_MSG_CHECKING([if sizeof(int*) == sizeof(int)])
 
 cat > conftest.$ac_ext <<EOF
@@ -26,6 +32,10 @@ if test -s conftest$ac_exeext && (./conftest$ac_exeext; exit) 2>/dev/null; then
   rm -f sizeofintp
 else
   SIZEOF_INTP="cannot_happen"
+  # can happen when cross compiling and cross compiled programs do not run 
+  if test "$build_alias" != "$host_alias" ; then
+     SIZEOF_INTP=1;
+  fi 
 fi
 
 if test $SIZEOF_INTP = 1; then 
