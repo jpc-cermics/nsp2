@@ -25,10 +25,10 @@ F_win= tcl/win/tclCmdAZ.o \
 	tcl/win/tclWinInit.o \
 	tcl/win/Tobedone.o 
 
-OBJSC =  System-IN.o timer.o files.o realtime.o spawn.o regexp.o dstring.o $(F_win)
+OBJSC =  System-IN.o timer.o files.o realtime.o spawn.o regexp.o dstring.o $(F_@SYST_FILES@)
 
 all     ::
-	cd tcl/win ; make all
+	cd tcl/@SYST_FILES@ ; make all
 
 include ../../Makefile.incl
 SCIDIR=../..
@@ -42,7 +42,7 @@ FUNDEF= System1-IN.fun
 timer.o: timer.c ../include/nsp/machine.h
 
 clean	::
-	cd tcl/win ; make clean 
+	cd tcl/@SYST_FILES@ ; make clean 
 
 distclean :: clean 
 
