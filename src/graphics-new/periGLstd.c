@@ -23,6 +23,10 @@
  * a gl rendering to pixmap. 
  *--------------------------------------------------------------------------*/
 
+#ifdef WIN32 
+#include <windows.h> 
+#endif 
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -1828,7 +1832,8 @@ int use_camera(BCG *Xgc)
 	  Xgc->private->camera.xmax ,
 	  Xgc->private->camera.ymin ,
 	  Xgc->private->camera.ymax ,
-	  Xgc->private->camera.near,Xgc->private->camera.far);
+	  Xgc->private->camera.pt_near,
+	  Xgc->private->camera.pt_far);
   glMatrixMode(GL_MODELVIEW);
   return 0;
 }
@@ -1846,8 +1851,8 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.orientation.x=*val;val++;
   Xgc->private->camera.orientation.y=*val;val++;
   Xgc->private->camera.orientation.z=*val;val++;
-  Xgc->private->camera.near=*val;val++;
-  Xgc->private->camera.far=*val;val++;
+  Xgc->private->camera.pt_near=*val;val++;
+  Xgc->private->camera.pt_far=*val;val++;
   Xgc->private->camera.xmin=*val;val++;
   Xgc->private->camera.xmax=*val;val++;
   Xgc->private->camera.ymin=*val;val++;

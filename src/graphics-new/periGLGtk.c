@@ -27,6 +27,9 @@
  * Opengl and gdk drawings but they have to be wrapped with calls 
  * to gdk_gl_drawable_wait_gdk and gdk_gl_drawable_wait_gl
  *--------------------------------------------------------------------------*/
+#ifdef WIN32 
+#include <windows.h> 
+#endif 
 
 #include <stdio.h>
 #include <string.h>
