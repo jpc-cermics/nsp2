@@ -11,6 +11,7 @@ extern   double pow_di (double *, int *);
 
 extern double cdf_algdiv (double a, double b);
 extern double cdf_alngam (double x);
+extern double cdf_alngam_old (double x);
 extern double cdf_dlanor (double x);
 extern double cdf_dlanor1 (double x);
 extern double cdf_alnrel (double a);

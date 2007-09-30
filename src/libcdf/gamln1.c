@@ -9,7 +9,7 @@
  * Returns: a double 
  **/
 
-double cdf_gamln1 (double a)
+double cdf_gamln1_old (double a)
 {
   /* a= -0.2:0.01:1.25; norm(log(gamma(1+a))- cdf_gamln1(a)) */
   const double p0 = .577215664901533;
@@ -70,7 +70,7 @@ double cdf_gamln1 (double a)
 static double cdf_gamln1px(double x);
 static double cdf_gamln2px(double x);
 
-double cdf_gamln1_new (double a)
+double cdf_gamln1 (double a)
 {
   double res = (a <= .6) ? cdf_gamln1px(a) : cdf_gamln2px(a-1);
   return res; /* return (res - cdf_gamln1_old(a))/res; */

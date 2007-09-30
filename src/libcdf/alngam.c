@@ -83,7 +83,7 @@ double cdf_alngam_old (double x)
     {
       goto L90;
     }
-
+  
   n = (int) (12. - x);
   if (!(n > 0))
     {
@@ -156,21 +156,23 @@ double cdf_alngam (double x)
       offset = hln2pi;
       if (x > 12.)
 	{
-	  /* bring back x <= 12 */
-	  n = (int) (x -12.0);
-	  /* now x -n is <= 12 */
-	  xx = x - n; 
-	  /* gamma(x) = xx*(xx+1)*..*(xx+n-1)*gamma(xx) */
-	  prod = xx ;
-	  for (i = 1; i < n ; i++) prod *= xx +i; 
-	  /* log(gamma(x)) = log(prod) + log(gamma(xx)) */
-	  offset += log (prod);
-	}
-      else 
-	{
 	  xx = x;
 	}
-      /* now xx is in the range [6,12]  */
+      else
+	{
+	  n = (int) (12. - x);
+	  if ((n > 0))
+	    {
+	      prod = 1.;
+	      for (i = 0; i < n; ++i)
+		{
+		  prod *= x + ((double) (i));
+		}
+	      offset -= log (prod);
+	      xx = x + (double) n;
+	    }
+	}
+      /* now xx is in the range >= 12  */
       d2 = xx;
       d1 = 1. / (d2 * d2);
       ret_val = cdf_devlpl (coef, c5, d1) / xx;

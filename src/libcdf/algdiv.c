@@ -16,7 +16,7 @@
  * Returns: a double 
  **/
 
-double cdf_algdiv (double a, double b)
+double cdf_algdiv_old (double a, double b)
 {
   /* test
      bs=9;a=-(bs-2):0.1:bs;
@@ -68,7 +68,7 @@ double cdf_algdiv (double a, double b)
 }
 
 
-double cdf_algdiv_new (double a, double b)
+double cdf_algdiv (double a, double b)
 {
   double comp=cdf_stirling_series_diff(b,a);
   /* compute g(b) - g(b+a), where 
