@@ -160,7 +160,7 @@ double cdf_alngam (double x)
 	}
       else
 	{
-	  n = (int) (12. - x);
+	  n = 1 + (int) (12. - x);  /* correction bruno */
 	  if ((n > 0))
 	    {
 	      prod = 1.;
