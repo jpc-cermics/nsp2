@@ -1054,7 +1054,7 @@ static int int_nch_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
   
  err:
-  Scierror("Error: grand(..'nch',nu,xnonc) : nu (=%d) < 1 or xnonc (=%g) < 0 \n",nu->R[i1], xnonc->R[i2]); 
+  Scierror("Error: grand(..'nch',nu,xnonc) : nu (=%g) < 1 or xnonc (=%g) < 0 \n",nu->R[i1], xnonc->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -1911,12 +1911,66 @@ static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nsp_sinpi(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_sinpi(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
+static int int_nsp_gammabr(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_gamma(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
+static int int_nsp_lngamma(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_lngamma(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
 static OpTab Random_func[]={
   {"grand_s", int_nsp_grands},
   {"grand_m", int_nsp_grandm},
   /*     {"rand", int_nsp_rand}, */
   {"randn", int_nsp_randn},
   {"log1p", int_nsp_log1p},
+  {"sinpi", int_nsp_sinpi},
+  {"gammabr", int_nsp_gammabr},
+  {"lngamma", int_nsp_lngamma},
   {"rand_discrete", int_nsp_rand_discrete},
   {(char *) 0, NULL}
 };
