@@ -351,6 +351,6 @@ double nsp_lngamma(double x)
       if ( x == floor(x) ) 
 	return 1.0/0.0;  /* Inf */
       else
-	return log(fabs(gamma(x)));
+	return log(fabs(nsp_gamma(x)));
     }
 }
