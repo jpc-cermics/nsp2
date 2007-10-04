@@ -1052,21 +1052,14 @@ nsp_string new_nsp_string_n(int n)
 }
 
 
-/*
- * int nsp_string_resize(Hstr,n) 
- * resize the string Hstr to size (n+1)
- * returns OK or FAIL 
- * Hstr is not Checked (MUST BE != NULLSTRING )
- */
-
 /**
  * nsp_string_resize:
  * @Hstr: 
  * @n: 
  * 
- * 
- * 
- * Return value: 
+ * resize the string @Hstr to size (@n+1)
+ *
+ * Return value: %OK or %FAIL 
  **/
 
 int nsp_string_resize(nsp_string *Hstr, unsigned int n)
@@ -1079,6 +1072,69 @@ int nsp_string_resize(nsp_string *Hstr, unsigned int n)
     }
   *Hstr = loc;
   return(OK);
+}
+
+/**
+ * nsp_string_protect:
+ * @str: a nsp_const_string 
+ * 
+ * returns a new #nsp_string in which special characters 
+ * are protected by '\'. 
+ * 
+ *
+ * Return value: a new nsp_string or %NULL
+ **/
+
+nsp_string nsp_string_protect(nsp_const_string str)
+{
+  int count = 0;
+  nsp_string loc, str2; 
+  nsp_const_string str1 = str;
+  while ( *str1 != '\0') 
+    {
+      switch (*str1) 
+	{
+	case '\'' :
+	case '\"' : 
+	case '\\' :
+	case '\a' :
+	case '\b' :
+	case '\f' :
+	case '\n' :
+	case '\r' :
+	case '\t' :
+	case '\v' :
+	  count++;
+	default: 
+	  if ( ! isprint(*str1)) count++; 
+	}
+      str1++;
+    }
+  if ( (loc = new_nsp_string_n(strlen(str)+count)) == NULLSTRING ) 
+    return NULL;
+  str1= str; 
+  str2= loc; 
+  while ( *str1 != '\0') 
+    {
+      switch (*str1) 
+	{
+	case '\'' :  *str2++ = '\''; *str2++ = *str1++; break;
+	case '\"' :  *str2++ = '\"'; *str2++ = *str1++; break;
+	case '\\' :  *str2++ = '\\'; *str2++ = *str1++;break;
+	case '\a' :  *str2++ = '\\'; *str2++ = 'a'; str1++; break;
+	case '\b' :  *str2++ = '\\'; *str2++ = 'b'; str1++; break;
+	case '\f' :  *str2++ = '\\'; *str2++ = 'f'; str1++; break;
+	case '\n' :  *str2++ = '\\'; *str2++ = 'n'; str1++; break;
+	case '\r' :  *str2++ = '\\'; *str2++ = 'r'; str1++; break;
+	case '\t' :  *str2++ = '\\'; *str2++ = 't'; str1++; break;
+	case '\v' :  *str2++ = '\\'; *str2++ = 'v'; str1++; break;
+	default: 
+	  if ( ! isprint(*str1))  *str2++ = '\\'; 
+	  *str2++ = *str1++;
+	}
+    }
+  *str2++='\0';
+  return loc;
 }
 
 

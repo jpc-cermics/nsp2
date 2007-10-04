@@ -1763,7 +1763,18 @@ static int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
+static int int_smatrix_protect(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *rep ;
+  nsp_string str1,str2; 
+  if ((str1 = GetString(stack,1)) == ((char *) 0) )
+    return RET_BUG; 
+  if ((str2 =nsp_string_protect(str1)) == NULL) 
+    return RET_BUG; 
+  rep =nsp_create_object_from_str(NVOID,str2);
+  MoveObj(stack,1,rep);
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -1843,6 +1854,7 @@ static OpTab SMatrix_func[]={
   {"new_sort", int_smatrix_sort },
   {"unichar_to_utf8", int_smatrix_utf8_from_unichar},
   {"strtod",int_smatrix_strtod},
+  {"protect",int_smatrix_protect}, /* test */
   {(char *) 0, NULL}
 };
 
