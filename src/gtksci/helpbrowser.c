@@ -714,13 +714,11 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 {
   char buf[FSIZE+1];
   GPrintFunc old;
-  /* char *sci = "/usr/local/src/nsp2-mingw32"; */
-  char *sci = getenv("SCI");
+  char *sci = getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
   /* ignore g_print in libgtkhtml library */
-  fprintf(stderr,"%s\n",mandir);
   old=g_set_print_handler ((GPrintFunc) nsp_void_print_handler);
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
@@ -865,11 +863,11 @@ int nsp_help_topic(const char *topic, char *buf)
   else
     {
       /* Sciprintf("%s --> %s\n",topic,((NspSMatrix *) Obj)->S[0]); */
-#if 0 
+#if !defined(__MSC__) && ! defined(__MINGW32__)
+      strcpy(buf,((NspSMatrix *) Obj)->S[0]);
+#else 
       nsp_path_expand("NSP/man/html/generated/",buf,FSIZE);
       strcat(buf,((NspSMatrix *) Obj)->S[0]);
-#else 
-      strcpy(buf,((NspSMatrix *) Obj)->S[0]);
 #endif 
     }
   return OK;

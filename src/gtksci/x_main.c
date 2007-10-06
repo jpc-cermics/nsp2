@@ -238,6 +238,7 @@ static char *get_shared(void)
 }
 #endif 
 
+
 /*
  *  main routine
  *  Does setup, initialises windows, forks child.
