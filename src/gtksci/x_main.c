@@ -103,9 +103,9 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #endif 
     }
   /* signals */
-  signal(SIGINT,sci_clear_and_exit);
   signal(SIGSEGV,sci_clear_and_exit);
 #if !defined(__MSC__) && ! defined(__MINGW32__)
+  signal(SIGINT,sci_clear_and_exit); 
   signal(SIGBUS,sci_clear_and_exit);
   signal(SIGQUIT,sci_clear_and_exit);
   signal(SIGHUP,sci_clear_and_exit);
@@ -281,7 +281,11 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 #ifndef WIN32
   /* I transmit the socket Id via shared memory  */ 
   xid = (guint32 *) (shm+1); 
+#ifdef  GDK_WINDOW_XWINDOW
   *xid = GDK_WINDOW_XWINDOW(socket_button->window); 
+#else 
+  *xid = socket_button->window;
+#endif
   *shm = '*' ; /* just to tell that there's something to read */
 #endif 
 } 
