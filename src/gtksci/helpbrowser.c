@@ -714,11 +714,13 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 {
   char buf[FSIZE+1];
   GPrintFunc old;
+  /* char *sci = "/usr/local/src/nsp2-mingw32"; */
   char *sci = getenv("SCI");
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
   /* ignore g_print in libgtkhtml library */
+  fprintf(stderr,"%s\n",mandir);
   old=g_set_print_handler ((GPrintFunc) nsp_void_print_handler);
   /* expand topic -> filename in buf */
   if ( help_file == NULL )

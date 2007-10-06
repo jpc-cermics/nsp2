@@ -213,11 +213,9 @@ static GtkWidget  *window = NULL;
 #if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <sys/types.h>
 #include <sys/shm.h>
-#endif 
 
 static char *get_shared(void)
 {
-#if !defined(__MSC__) && ! defined(__MINGW32__)
   int shmid;
   char *shm;
   char *s= getenv("SHMID");
@@ -237,10 +235,8 @@ static char *get_shared(void)
     exit(1);
   }
   return shm;
-#else 
-  return NULL;
-#endif 
 }
+#endif 
 
 /*
  *  main routine
@@ -249,8 +245,10 @@ static char *get_shared(void)
 
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 {
+#if !defined(__MSC__) && ! defined(__MINGW32__)
   guint32 *xid; 
   char * shm = get_shared() ;
+#endif 
   GtkWidget *vbox,*menubar, *socket_button;
   gtk_set_locale();
   gtk_init(&argc, &argv);
@@ -278,7 +276,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   /* show them all! */
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(socket_button);
-#ifndef WIN32
+#if !defined(__MSC__) && ! defined(__MINGW32__)
   /* I transmit the socket Id via shared memory  */ 
   xid = (guint32 *) (shm+1); 
 #ifdef  GDK_WINDOW_XWINDOW
