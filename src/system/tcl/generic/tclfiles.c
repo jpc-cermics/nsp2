@@ -27,18 +27,18 @@ nsp_string nsp_absolute_file_name(char *fname)
   int pargc=2;
   char *pargv[] ={NULL, fname};
   if (( pargv[0] = nsp_get_cwd() ) == NULL) return NULL;
-  if ( nsp_get_path_type(fname)== TCL_PATH_ABSOLUTE )
-    {
-      /* fname is already an absolute path_name */
-      return nsp_new_string(fname,-1);
-    }
-  else 
+  if ( nsp_get_path_type(fname)== TCL_PATH_RELATIVE )
     {
       nsp_tcldstring_init (&buffer);
       nsp_join_path (pargc, pargv, &buffer);
       S= nsp_new_string(nsp_tcldstring_value(&buffer),-1);
       nsp_tcldstring_set_length (&buffer, 0);
       nsp_tcldstring_free (&buffer);
+    }
+  else 
+    {
+      /* fname is already an absolute path_name */
+      return nsp_new_string(fname,-1);
     }
   return S;
 }
@@ -626,9 +626,14 @@ static regexp *macRootPatternPtr = NULL;
 /*
  * The following variable is set in the nsp_tclplatform_init call to one
  * of: TCL_PLATFORM_UNIX, TCL_PLATFORM_MAC, or TCL_PLATFORM_WINDOWS.
+ * NOTE that  nsp_tclplatform_init is not used up to now 
  */
 
+#ifdef WIN32
+TclPlatformType tclPlatform = TCL_PLATFORM_WINDOWS;
+#else 
 TclPlatformType tclPlatform = TCL_PLATFORM_UNIX;
+#endif 
 
 /*
  * Prototypes for local procedures defined in this file:
@@ -660,10 +665,12 @@ static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
 void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length)
 {
+  int path_type = nsp_get_path_type(filename);
   nsp_string dirname = nsp_dirname (filename);
   if ( dirname == NULL) return ;
   if ( exec_dir == NULL ) return ;
-  if ( exec_dir[0] == '\0' || nsp_get_path_type(filename)== TCL_PATH_ABSOLUTE)
+  if ( exec_dir[0] == '\0' || path_type == TCL_PATH_ABSOLUTE 
+       ||  path_type ==      TCL_PATH_VOLUME_RELATIVE)
     {
       /* if exec_dir is not set or the path in filename is absolute */
       if ( strcmp(dirname,".") != 0) 
@@ -712,9 +719,11 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
 
 void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length)
 {
+  int path_type = nsp_get_path_type(dirname);
   if ( dirname == NULL) return ;
   if ( exec_dir == NULL ) return ;
-  if ( exec_dir[0] == '\0' || nsp_get_path_type(dirname)== TCL_PATH_ABSOLUTE)
+  if ( exec_dir[0] == '\0' || path_type == TCL_PATH_ABSOLUTE 
+       ||  path_type ==      TCL_PATH_VOLUME_RELATIVE)
     {
       /* if exec_dir is not set or the path in filename is absolute */
       if ( strcmp(dirname,".") != 0) 
@@ -987,8 +996,9 @@ Tcl_PathType nsp_get_path_type( char *path)
     break;
 	
   case TCL_PLATFORM_WINDOWS:
-    if (path[0] != '~') {
 
+    if (path[0] != '~') {
+      Sciprintf("testing %s\n",path);
       /*
        * Since we have eliminated the easy cases, check for
        * drive relative paths using the regular expression.
