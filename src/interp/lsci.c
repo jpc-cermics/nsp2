@@ -62,7 +62,7 @@ char *ProgramName = NULL;
 
 /**/
 
-static void set_nsp_env (void);
+void set_nsp_env (void);
 static void nsp_syntax (char *badOption) ;
 
 /* #define THREAD_VERSION */
@@ -450,24 +450,34 @@ static void nsp_syntax (char *badOption)
 /* FIXME: should be in a .h */
 extern char * nsp_get_curdir(void);
 extern void set_nsp_tmpdir(void);
+extern nsp_string nsp_absolute_file_name( char *fname);
 
-static void set_nsp_env (void)
+void set_nsp_env (void)
 {
-  char *sci_env, *p1, *nsp_env; 
+  char *sci_env = NULL, *p1, *nsp_env=NULL, *abs_sci=NULL; 
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */
   if ((p1 = getenv ("SCI")) == (char *) 0)
     {
-      sci_env = malloc((strlen(ProgramName)+1+4)*sizeof(char));
+      /* we should check here if path is absolute or not 
+       * with nsp_get_path_type
+       */
+      /* fprintf(stderr,"No SCI trying with %s\n",ProgramName); */
+      abs_sci  = nsp_absolute_file_name(ProgramName);
+      /* fprintf(stderr,"Expanded to %s\n",abs_sci); */
+      if ( abs_sci == NULL) return;
+      sci_env = malloc((strlen(abs_sci)+1+4)*sizeof(char));
       if ( sci_env != NULL) 
 	{
+	  /* fill env with path */
 	  int i;
-	  sprintf (sci_env, "SCI=%s",ProgramName);
+	  sprintf (sci_env, "SCI=%s",abs_sci);
+	  nsp_string_destroy(&abs_sci);
 	  /* removing the trailing /bin/scilex  */
 	  for ( i = strlen(sci_env) ; i >= 0 ; i-- ) 
 	    {
-	      if ( sci_env[i]== '/' ) 
+	      if ( sci_env[i]== '/' || sci_env[i] == '\\' ) 
 		{
 		  if ( i >= 4 ) sci_env[i-4]= '\0';
 		  else { free(sci_env) ; return ;}
