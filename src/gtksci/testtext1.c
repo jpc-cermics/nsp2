@@ -105,6 +105,8 @@ delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
   View *view = view_from_widget (window);
   check_close_view (view);
+  /* take care here that we want to quit the gtk_main */
+  sci_clear_and_exit(0);
   return TRUE;
 }
 
