@@ -169,6 +169,9 @@
 /* asound support */
 #undef WITH_ASOUND
 
+/* cairo driver used */
+#undef WITH_CAIRO
+
 /* cholmod library */
 #undef WITH_CHOLMOD
 
