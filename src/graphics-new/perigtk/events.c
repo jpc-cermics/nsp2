@@ -42,20 +42,6 @@ static void setpopupname(BCG *Xgc,char *name)
   Setpopupname(Xgc,name);
 }
 
-/* event handlers 
- *
- */
-
-typedef struct _GTK_locator_info GTK_locator_info;
-
-struct _GTK_locator_info {
-  guint win, x,y, ok;
-  int getrelease,getmotion,getmen,getkey, button, mask ;
-  int sci_click_activated; /* TRUE when we are in a xclick or xclick_any function */
-  guint timer;
-  char *str;
-  int  lstr;
-};
 
 extern GTK_locator_info nsp_event_info;
 

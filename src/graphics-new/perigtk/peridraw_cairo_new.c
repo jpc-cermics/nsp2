@@ -41,9 +41,9 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
   cairo_fill (cr);
 }
 
-/* line 
- *
- */ 
+/*
+ * line segments arrows 
+ */
 
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
@@ -65,7 +65,6 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
   DRAW_CHECK;
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
-
 
 
 /* Draw a set of arrows 
@@ -671,56 +670,6 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
 
 
 
-/**
- * pixmap_clear_rect:
- * @Xgc: a #BCG 
- * @x: integer 
- * @y: integer 
- * @w: integer
- * @h: integer
- * 
- * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
- * in the extra_pixmap using the background color.
- **/
-
-static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
-{
-  cairo_t *cr =  Xgc->private->cairo_cr;
-  cairo_set_source_rgb(cr,
-		       Xgc->private->gcol_bg.red/65535.0,
-		       Xgc->private->gcol_bg.green/65535.0,
-		       Xgc->private->gcol_bg.blue/65535.0);
-  cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
-  cairo_fill (cr);
-}
-
-/**
- * pixmap_resize:
- * @Xgc: a #BCG 
- * 
- * resizes, if present the extra_pixmap according to window size change 
- **/
-
-static void pixmap_resize(BCG *Xgc)
-{
-  if ( Xgc->CurPixmapStatus == 1) 
-    {
-      int x= Xgc->CWindowWidth; 
-      int y= Xgc->CWindowHeight;
-      /* create a new pixmap */
-      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
-      if ( temp  == NULL ) 
-	{
-	  xinfo(Xgc,"No more space to create Pixmaps");
-	  return;
-	}
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
-      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
-      pixmap_clear_rect(Xgc,0,0,x,y);
-    }
-} 
 
 
 /**
@@ -916,6 +865,57 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
       */
     }
 }
+
+/**
+ * pixmap_clear_rect:
+ * @Xgc: a #BCG 
+ * @x: integer 
+ * @y: integer 
+ * @w: integer
+ * @h: integer
+ * 
+ * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
+ * in the extra_pixmap using the background color.
+ **/
+
+static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
+{
+  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_set_source_rgb(cr,
+		       Xgc->private->gcol_bg.red/65535.0,
+		       Xgc->private->gcol_bg.green/65535.0,
+		       Xgc->private->gcol_bg.blue/65535.0);
+  cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+  cairo_fill (cr);
+}
+
+/**
+ * pixmap_resize:
+ * @Xgc: a #BCG 
+ * 
+ * resizes, if present the extra_pixmap according to window size change 
+ **/
+
+static void pixmap_resize(BCG *Xgc)
+{
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      int x= Xgc->CWindowWidth; 
+      int y= Xgc->CWindowHeight;
+      /* create a new pixmap */
+      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
+      if ( temp  == NULL ) 
+	{
+	  xinfo(Xgc,"No more space to create Pixmaps");
+	  return;
+	}
+      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
+      pixmap_clear_rect(Xgc,0,0,x,y);
+    }
+} 
 
 
 /**

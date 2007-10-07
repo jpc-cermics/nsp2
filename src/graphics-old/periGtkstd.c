@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -18,7 +18,7 @@
  *
  * Graphic library
  * jpc@cermics.enpc.fr
- * Gtk driver 
+ * Gtk/Cairo/OpenGL driver 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -27,92 +27,50 @@
 #include <stdarg.h>
 #include <gtk/gtk.h>
 
-#ifdef PERICAIRO 
-#include <cairo.h>
-#endif 
-
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h" 
 #include "nsp/math.h"
+#ifdef PERIGL 
+#include "nsp/graphics/periGL.h"
+#else 
 #include "nsp/graphics/periGtk.h"
+#endif 
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-#ifdef PERICAIRO 
-#define WITH_PANGO
-#else 
-/* #define WITH_PANGO */
-#endif 
-
 /*
- * 
+ * macro used in each drawing primitive. 
  *  Xgc->record_flag == TRUE if we are recording graphics 
  *  Xgc->private->in_expose == TRUE if the call is from an expose_event 
  *  Xgc->CurPixmapStatus == 0 if we are not using an extra pixmap 
  *  Xgc->private->draw = TRUE we have something to draw 
- * 
- */ 
+ */
 
-#define DRAW_CHECK_OLD  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
-   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
+#ifdef PERIGL 
 
-/*
+#define DRAW_CHECK							\
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
+    {  nsp_gtk_invalidate(Xgc);						\
+      if (Xgc->record_flag == TRUE) {Xgc->private->draw = TRUE;return;} \
+    }
+#else 
+/* PERICAIRO and PERIGTK 
  * we always draw in a drawable which is a pixmap but the expose event is asynchronous
  */
 
 #define DRAW_CHECK							\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
 
+#endif 
 
-/* Global variables to deal with X11 */
+/* Global variables to store graphic drivers 
+ */
 
-static unsigned long maxcol; /* FIXME XXXXX : à revoir */
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
-static void nsp_gtk_invalidate(BCG *Xgc);
-
-/*------------------------------------------------------------------
- * the current graphic data structure 
- *------------------------------------------------------------------*/
-
-/* functions */
-
-static void nsp_gtk_set_color(BCG *Xgc,int col);
-static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
-static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
-static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
-				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-static void scig_deconnect_handlers(BCG *winxgc);
-static void draw_mark(BCG *Xgc,int *x, int *y);
-
-
-static void force_affichage(BCG *Xgc);
-static void nsp_fonts_initialize(BCG *Xgc);
-static void nsp_fonts_finalize(BCG *Xgc);
-
-/* utility for points allocations */
-#ifndef PERICAIRO 
-static GdkPoint *gtk_get_xpoints(void);
-static int GtkReallocVector (int n);
-static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
-#ifndef WITH_PANGO
-static void LoadSymbFonts(void);
-static void loadfamily_n(char *name, int *j);
-static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
-			      int x, int y, int maxx, int maxy, const gchar *text,
-			      gint text_length, double angle);
-#endif /* WITH_PANGO */
-#endif /* PERICAIRO */
-
-void create_graphic_window_menu( BCG *dd);
-extern void start_sci_gtk();
-
-/*---------------------------------------------------------
- * Gtk graphic engine 
- * A définir sans doute ailleurs XXXXX
- *---------------------------------------------------------*/
-
+#if defined(PERIGTK) || defined(PERICAIRO)
 Gengine * nsp_gengine = &Gtk_gengine ;
+GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
+#endif 
 
 /**
  * force_affichage:
@@ -124,7 +82,9 @@ Gengine * nsp_gengine = &Gtk_gengine ;
 
 static void force_affichage(BCG *Xgc)
 {
-  /* Xgc->private->resize = 1; */
+#ifndef PERIGLGTK
+  Xgc->private->resize = 1;
+#endif 
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
@@ -176,13 +136,15 @@ static void xset_show(BCG *Xgc)
 {
   if ( Xgc->CurPixmapStatus == 1) 
     {
-      /* we copy the extra_pixmap to the window and to the backing store pixmap */
-      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
-      /* drawing to the window and to the backing store pixmap */
+      /* we copy the extra_pixmap to the window and to the backing store pixmap 
+       * except for perigl which draw without a Xgc->private->pixmap.
+       */
       gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+#ifndef PERIGK
       gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+#endif 
     }
   else
     {
@@ -190,7 +152,6 @@ static void xset_show(BCG *Xgc)
       force_affichage(Xgc);
     }
 }
-
 
 /*
  * General routines callable from nsp
@@ -248,13 +209,19 @@ static void clearwindow(BCG *Xgc)
 		       Xgc->private->gcol_bg.blue/65535.0);
   cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
   cairo_fill (cr);
-#else 
+#endif 
+#ifdef PERIGTK  
   gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
 		     Xgc->CWindowWidth, Xgc->CWindowHeight);
 #endif 
+#ifdef PERIGL 
+  glClearColor(Xgc->private->gcol_bg.red /255.0,
+	       Xgc->private->gcol_bg.green /255.0,
+	       Xgc->private->gcol_bg.blue /255.0,0.0);
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif 
 }
-
 
 /**
  * xget_recording:
@@ -656,10 +623,11 @@ static int xget_absourel(BCG *Xgc)
 
 static void xset_thickness(BCG *Xgc,int value)
 { 
-  int val =  Xgc->CurDashStyle + 1;
-  Xgc->CurLineWidth =Max(0, value);
+  value = Max(0, value);
+  if ( Xgc->CurLineWidth == value ) return;
+  Xgc->CurLineWidth  = value; 
   /* when line thickness changes we must change the dash style */
-  xset_dash(Xgc,val);
+  xset_dash(Xgc,Xgc->CurDashStyle + 1);
 }
 
 /**
@@ -769,11 +737,10 @@ static int xget_pattern(BCG *Xgc)
  * xget_last:
  * @Xgc: a #BCG  
  * 
- * 
+ * To get the id of the last pattern
  * 
  * Returns: 
  **/
-/* To get the id of the last pattern */
 
 static int xget_last(BCG *Xgc)
 {
@@ -798,6 +765,8 @@ static int xget_last(BCG *Xgc)
 #define MAXDASH 6
 
 static int DashTab[MAXDASH][4] = {
+  {2,5,2,5}, {5,2,5,2},  {5,3,2,3}, {8,3,2,3}, {11,3,2,3}, {11,3,5,3}};
+
 /**
  * xset_dash:
  * @Xgc: a #BCG  
@@ -807,7 +776,6 @@ static int DashTab[MAXDASH][4] = {
  * 
  * Returns: 
  **/
-  {2,5,2,5}, {5,2,5,2},  {5,3,2,3}, {8,3,2,3}, {11,3,2,3}, {11,3,5,3}};
 
 static int  xset_dash(BCG *Xgc,int value)
 {
@@ -921,38 +889,35 @@ static int xget_usecolor(BCG *Xgc)
   return  Xgc->CurColorStatus;
 }
 
-/* Change the private->pixmap status of a Graphic Window. 
- * adding or removing a Background Pixmap to it 
- */
-
 /**
  * xget_pixmapOn:
  * @Xgc: a #BCG  
  * 
- * 
+ * Change the private->pixmap status of a Graphic Window. 
+ * adding or removing a Background Pixmap to it 
  * 
  * Returns: 
  **/
+
 static int xget_pixmapOn(BCG *Xgc)
 {
   return Xgc->CurPixmapStatus;
 }
-
-/* Change the status of a Graphic Window
- * i.e follows or dont follow the viewport resize
- * Here the behaviour is different 
- * If we want the graphic window to follow the viewport resize 
- * (i.e we dont want to see scrollbars) then we fix the minimum 
- * size of the grahic window to very small values 
- */
 
 /**
  * xset_wresize:
  * @Xgc: a #BCG  
  * @num: 
  * 
- * 
+ * Change the status of a Graphic Window
+ * i.e follows or dont follow the viewport resize
+ * Here the behaviour is different 
+ * If we want the graphic window to follow the viewport resize 
+ * (i.e we dont want to see scrollbars) then we fix the minimum 
+ * size of the grahic window to very small values 
+ *
  **/
+
 static void xset_wresize(BCG *Xgc,int num)
 {
   GdkGeometry geometry;
@@ -1020,16 +985,13 @@ static int XgcAllocColors( BCG *xgc, int m);
 
 static void set_colormap_constants(BCG *Xgc,int m);
 
-/*
- *
- */
-
 /**
  * xset_default_colormap:
  * @Xgc: a #BCG  
  * 
  * 
  **/
+
 static void xset_default_colormap(BCG *Xgc)
 {
   int i,m ;
@@ -1087,6 +1049,7 @@ static void xset_default_colormap(BCG *Xgc)
  * 
  * 
  **/
+
 static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
   int i ;
@@ -1139,7 +1102,6 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
  * 
  * Returns: 
  **/
-/* utility function */
 
 static int XgcAllocColors( BCG *xgc, int m)
 {
@@ -1235,16 +1197,16 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
     }
 }
 
+
 /**
  * xset_background:
  * @Xgc: a #BCG  
  * @num: 
  * 
- * 
+ * sets the background color. 
  * 
  * Returns: 
  **/
-/* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
 { 
@@ -1256,12 +1218,15 @@ static void xset_background(BCG *Xgc,int num)
 	  /* we fix the default background in Xgc->private->gcol_bg */
 	  Xgc->private->gcol_bg = Xgc->private->colors[bg];
 	}
+#ifndef PERIGL 
       /* 
        * if we change the background of the window we must change 
        * the gc ( with alufunction ) and the window background 
+       * this is only used for xor mode but we are removing it.
        */
       xset_alufunction1(Xgc,Xgc->CurDrawFunction);
       gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+#endif 
     }
 }
 
@@ -1323,20 +1288,19 @@ static int xget_foreground(BCG *Xgc)
     }
 }
 
-/* set and get the number of the hidden3d color 
- * which is used for backface drawing in 3d plot
- * > 0 then a color is used
- * 0 : no painting 
- * < 0 same as face color
- */
 
 /**
  * xset_hidden3d:
  * @Xgc: a #BCG  
  * @num: 
  * 
- * 
+ *  set and get the number of the hidden3d color 
+ * which is used for backface drawing in 3d plot
+ * > 0 then a color is used
+ * 0 : no painting 
+ * < 0 same as face color
  **/
+
 static void xset_hidden3d(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
@@ -1365,12 +1329,13 @@ static int xget_hidden3d(BCG *Xgc)
     }
 }
 
-/*-----------------------------------------------------------------------------
+/*
  * All the following function xxxx_1 
  * can be called using nsp_engine for a direct call 
  * or using C2F(dr1) using a name table 
  * this is usefull for replaying with the Rec driver (See Rec.c) 
- *-----------------------------------------------------------------------------*/
+ */
+
 
 /**
  * xset_autoclear:
@@ -1445,33 +1410,21 @@ static void xset_fpf_def(BCG *Xgc)
 }
 
 
-/*-------------------------------------------------------------------------
+/*
  * window_list management 
- *-------------------------------------------------------------------------*/
-
-/*
- * set the current color to col 
- * Note that if the alufunction is chnaged this 
- * function must be called. 
- */
-
-/*
- * initgraphic : create initialize graphic windows
  */
 
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
-#include "perigtk/events.c"  
 /* shared by all the drivers */
-GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 
+#include "perigtk/events.c"  
 #include "perigtk/init.c" 
-
 
 /*
  * Initialisation of the graphic context. Used also 
- * to come back to the default graphic state}
+ * to come back to the default graphic state
  */
 
 /**
@@ -1511,8 +1464,8 @@ static void xset_default(BCG *Xgc)
  * 
  * Returns: 
  **/
-/* signal functions */
 
+#if defined(PERIGTK) || defined(PERICAIRO)
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
   GdkColor white={0,0,0,0};
@@ -1565,6 +1518,68 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 #endif 
   return FALSE;
 }
+#endif 
+
+
+#ifdef PERIGL 
+static gint realize_event(GtkWidget *widget, gpointer data)
+{
+  BCG *Xgc = (BCG *) data;
+
+  g_return_val_if_fail(Xgc != NULL, FALSE);
+  g_return_val_if_fail(Xgc->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(Xgc->private->drawing), FALSE);
+  /* we need a gc in xset_wshow */
+  Xgc->private->stdgc = gdk_gc_new(Xgc->private->drawing->window);
+
+  Xgc->private->glcontext = gtk_widget_get_gl_context (widget);
+  Xgc->private->gldrawable = gtk_widget_get_gl_drawable (widget);
+
+  if (!gdk_gl_drawable_gl_begin (Xgc->private->gldrawable, Xgc->private->glcontext))
+    return FALSE;
+ 
+#if 0   
+  glClear(GL_STENCIL_BUFFER_BIT);
+  glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+  glBegin(GL_QUADS);
+  glVertex2f(0,0);
+  glVertex2f(100,0);
+  glVertex2f(100,100);
+  glVertex2f(0,100);
+  glEnd();
+#endif
+
+  xset_background(Xgc,Xgc->NumBackground+1);
+
+#ifdef LIGHTS
+   init_gl_lights(light0_pos); 
+#endif
+
+  glClearDepth(1.0);
+  glEnable(GL_DEPTH_TEST);
+  /*     glDrawBuffer(GL_FRONT_AND_BACK); */
+  /*     glEnable(GL_TEXTURE_2D); */
+  /*     glEnable (GL_CULL_FACE); */
+  /*     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);  */
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  glClearStencil(0x0);
+  glEnable(GL_STENCIL_TEST);
+  /* glEnable(GL_LINE_SMOOTH); */
+  /* glEnable(GL_BLEND); */
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  /*     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE); */
+  /*     glLineWidth(1.5); */
+  /*     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); */
+  /*     glLineWidth(0.5); */
+  glAlphaFunc(GL_GREATER,0.1f);
+  glEnable(GL_ALPHA_TEST);
+  glShadeModel(GL_SMOOTH);
+  gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
+  return FALSE;
+}
+#endif 
+
 
 /**
  * configure_event:
@@ -1576,6 +1591,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
  * 
  * Returns: 
  **/
+
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -1639,7 +1655,7 @@ static void nsp_gtk_invalidate(BCG *Xgc)
  * Returns: 
  **/
 
-
+#if defined(PERIGTK) || defined(PERICAIRO)
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -1715,6 +1731,79 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   gdk_flush();
   return FALSE;
 }
+#endif 
+
+#ifdef PERIGL 
+/* periGL version */
+static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  /* 
+   *  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+   *  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+   */
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  
+  /* glLineWidth(1.5);  FIXME */ 
+
+  if ( dd->private->resize != 0)  
+    { 
+      /* redraw after resize 
+       */
+      dd->private->resize = 0;
+      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+      glClear(GL_DEPTH_BUFFER_BIT);
+      nsp_ogl_set_view(dd);
+      dd->private->in_expose= TRUE;
+      scig_resize(dd->CurWindow);
+      dd->private->in_expose= FALSE;
+      /* Swap buffers or flush */
+      if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
+	gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
+      else
+	glFlush ();
+      gdk_gl_drawable_gl_end (dd->private->gldrawable);
+    }
+  else 
+    {
+      /* just an expose without resizing we need to redraw  */ 
+      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+      /* we could take care here of  dd->private->draw == TRUE 
+       */
+      if ( dd->record_flag == TRUE  ) 
+	{
+	  /* just redraw if we have recorded stuffs */
+	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+	  glClear(GL_DEPTH_BUFFER_BIT);
+	  nsp_ogl_set_view(dd);
+	  dd->private->draw = FALSE;
+	  /* need to redraw */
+	  dd->private->in_expose= TRUE;
+	  scig_replay(dd->CurWindow);
+	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
+	  dd->private->in_expose= FALSE;
+	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
+	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
+	  else
+	    glFlush ();
+	}
+      else 
+	{
+	  /* just try a swap buffer ? */
+	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
+	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
+	  else
+	    glFlush ();
+	}
+      gdk_gl_drawable_gl_end (dd->private->gldrawable);
+    }
+  return FALSE;
+}
+#endif 
 
 
 /**
@@ -1726,10 +1815,12 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
  * Returns: 
  **/
 
+#if defined(PERIGTK) || defined(PERICAIRO)
 GdkImage* nsp_get_image(BCG *Xgc) 
 {
   return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
+#endif 
 
 /**
  * nsp_get_pixbuf:
@@ -1740,6 +1831,7 @@ GdkImage* nsp_get_image(BCG *Xgc)
  * Returns: 
  **/
 
+#if defined(PERIGTK) || defined(PERICAIRO)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
@@ -1748,21 +1840,26 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 				      Xgc->CWindowWidth,Xgc->CWindowHeight);
   /* gdk_colormap_get_system(), */
 }
+#endif 
 
 /* 
- * basic graphics we switch here depending on driver 
+ * basic graphics: we switch here depending on drivers 
  */ 
 
-#ifdef PERICAIRO
 /*
  * include the cairo basic graphic routines 
  */
+
+#ifdef PERICAIRO
 #include "perigtk/fonts_pango_cairo.c"
 #include "perigtk/peridraw_cairo_new.c"
-#else  /* PERICAIRO */
-/*  
+#endif /* PERIGTK */
+
+/*
  * include the gdk basic graphic routines 
  */
+
+#ifdef PERIGTK
 #ifdef WITH_PANGO
 #include "perigtk/fonts_pango_gdk.c"
 #else 
@@ -1771,4 +1868,14 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #include "perigtk/peridraw_gdk.c"
 /* routines for allocating GdkPoints */
 #include "perigtk/points.c" 
-#endif /* PERICAIRO */
+#endif /* PERIGTK */
+
+/*
+ * include the opengl basic graphic routines 
+ */
+
+#ifdef PERIGL 
+#include "perigtk/fonts_pango_ft2_gl.c"
+#include "perigtk/peridraw_gl.c"
+#endif /* PERIGL */
+

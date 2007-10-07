@@ -45,6 +45,7 @@
 #endif 
 
 #ifdef PERIGL 
+#define PERIGLGTK 
 #define HAVE_FREETYPE
 #ifdef HAVE_FREETYPE
 #include <pango/pangoft2.h> 
@@ -63,7 +64,6 @@
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 
 #ifdef PERIGL 
-static GdkGLConfig *glconfig = NULL;
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void realize_event_ogl();
@@ -146,19 +146,29 @@ extern void start_sci_gtk();
 Gengine * nsp_gengine = &Gtk_gengine ;
 #endif 
 
-/* 
- * force expose events to be executed 
- */
+/**
+ * force_affichage:
+ * @Xgc: a #BCG 
+ * 
+ * force expose events to be executed by calling 
+ * gdk_window_process_updates().
+ **/
 
 static void force_affichage(BCG *Xgc)
 {
-  /* Xgc->private->resize = 1; */
+#ifndef PERIGLGTK
+  Xgc->private->resize = 1;
+#endif 
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
-/* 
+/**
+ * force_redraw:
+ * @Xgc: a #BCG 
+ * 
+ * 
  * force an expose_event with draw set to TRUE
- */
+ **/
 
 static void force_redraw(BCG *Xgc)
 {
@@ -168,15 +178,24 @@ static void force_redraw(BCG *Xgc)
 }
 
 
-/*
+/*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
- * which is used when xset('pixmap',1) is activated.
+ * which is used when xset('pixmap',1) is activated at 
+ * nsp level. 
  * FIXME: this is unfinished for OpenGl since we have 
  * to attach a gldrawable to this pixmap.
  * Note also that it is not so usefull since 
  *  nsp graphics are asynchronous and double buffered 
  *  between a pixmap and the graphic windows. 
- */
+ *---------------------------------------------------------*/
+
+/**
+ * xset_pixmapclear:
+ * @Xgc: a #BCG 
+ * 
+ * clear the extra pixmap associated to the graphic window.
+ **/
+
 
 static void xset_pixmapclear(BCG *Xgc)
 {
@@ -185,6 +204,15 @@ static void xset_pixmapclear(BCG *Xgc)
       pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
     }
 }
+
+/**
+ * xset_show:
+ * @Xgc: a #BCG 
+ * 
+ * make a draw using the extra_pixmap as the source for updating 
+ * the graphic window and its standard associated pixmap.
+ **/
+
 
 static void xset_show(BCG *Xgc)
 {
@@ -211,51 +239,7 @@ static void xset_show(BCG *Xgc)
     }
 }
 
-/*
- * clear the current drawable which is always a pixmap 
- */
 
-static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
-{
-  /* if (! gdk_gl_drawable_gl_begin (Xgc->private->gldrawable,Xgc->private->glcontext)) return; */
-  glClearColor(Xgc->private->gcol_bg.red /255.0,
-	       Xgc->private->gcol_bg.green /255.0,
-	       Xgc->private->gcol_bg.blue /255.0,0.0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  /* gdk_gl_drawable_gl_end (Xgc->private->gldrawable); */
-  /* 
-     gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-     gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
-     0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-  */
-}
-
-/* 
- * Resize the Pixmap according to window size change 
- * But only if there's a private->pixmap 
- */
-
-static void pixmap_resize(BCG *Xgc)
-{
-  if ( Xgc->CurPixmapStatus == 1) 
-    {
-      int x= Xgc->CWindowWidth; 
-      int y= Xgc->CWindowHeight;
-      /* create a new pixmap */
-      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
-      if ( temp  == NULL ) 
-	{
-	  xinfo(Xgc,"No more space to create Pixmaps");
-	  return;
-	}
-      gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
-      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
-      /*  gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);*/
-      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-      nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
-      pixmap_clear_rect(Xgc,0,0,x,y);
-    }
-} 
 
 
 /*
@@ -521,66 +505,6 @@ static int xget_curwin(void)
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
-/* Set a clip zone (rectangle ) **/
-
-#ifdef PERIGTK 
-static void xset_clip(BCG *Xgc,int x[])
-{
-  int i;
-  GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
-  Xgc->ClipRegionSet = 1;
-  for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-}
-
-#else 
-/* Note that for Opengl we do both */
-static void xset_clip(BCG *Xgc,int x[])
-{
-  int i;
-  GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
-  Xgc->ClipRegionSet = 1;
-  for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  clip_rectangle(Xgc, clip_rect);
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-}
-
-#endif 
-
-
-/* unset clip zone */
-
-#ifdef PERIGTK 
-static void xset_unclip(BCG *Xgc)
-{
-  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-  Xgc->ClipRegionSet = 0;
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-}
-#else 
-/* Note that for Opengl we do both */
-static void xset_unclip(BCG *Xgc)
-{
-  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-  Xgc->ClipRegionSet = 0;
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-  unclip_rectangle(clip_rect);
-}
-#endif 
-
-/* Get the boundaries of the current clip zone */
-
-static void xget_clip(BCG *Xgc,int *x)
-{
-  x[0] = Xgc->ClipRegionSet;
-  if ( x[0] == 1)
-    {
-      x[1] =Xgc->CurClipRegion[0];
-      x[2] =Xgc->CurClipRegion[1];
-      x[3] =Xgc->CurClipRegion[2];
-      x[4] =Xgc->CurClipRegion[3];
-    }
-}
 
 
 /*
@@ -607,129 +531,6 @@ static int xget_absourel(BCG *Xgc)
   return  Xgc->CurVectorStyle  ;
 }
 
-/* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations 
- */
-
-typedef struct alinfo_ { 
-  char *name;
-  char id;
-  char *info;} alinfo;
-
-static alinfo AluStruc_gtk [] =
-  { 
-    {"GXclear" , GDK_CLEAR," 0 "},
-    {"GXand" , GDK_AND," src AND dst "},
-    {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-    {"GXcopy" , GDK_COPY," src "},
-    {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-    {"GXnoop" , GDK_NOOP," dst "},
-    {"GXxor" , GDK_XOR," src XOR dst "},
-    {"GXor" , GDK_OR," src OR dst "},
-    {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-    {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-    {"GXinvert" , GDK_INVERT," NOT dst "},
-    {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-    {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-    {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-    {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-    {"GXset" , GDK_SET," 1 "}
-  };
-
-#ifdef PERIGL 
-static struct alinfo_gl { 
-  char *name;
-  GLenum id;
-  char *info;} AluStruc_[] =  { 
-    {"GXclear" , GL_CLEAR," 0 "},
-    {"GXand" , GL_AND," src AND dst "},
-    {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
-    {"GXcopy" , GL_COPY," src "},
-    {"GXandInverted" , GL_AND_INVERTED," NOT src AND dst "},
-    {"GXnoop" , GL_NOOP," dst "},
-    {"GXxor" , GL_XOR," src XOR dst "},
-    {"GXor" , GL_OR," src OR dst "},
-    {"GXnor" , GL_NOR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-    {"GXequiv" , GL_EQUIV," NOT src XOR dst "},
-    {"GXinvert" , GL_INVERT," NOT dst "},
-    {"GXorReverse" , GL_OR_REVERSE," src OR NOT dst "},
-    {"GXcopyInverted" , GL_COPY_INVERTED," NOT src "},
-    {"GXorInverted" , GL_OR_INVERTED," NOT src OR dst "},
-    {"GXnand" , GL_NAND," NOT src OR NOT dst "},
-    {"GXset" , GL_SET," 1 "}
-  };
-#endif 
-
-
-static void xset_alufunction1_gtk(BCG *Xgc,int num)
-{   
-  int value ; 
-  GdkColor temp = {0,0,0,0};
-  Xgc->CurDrawFunction = Min(15,Max(0,num));
-  value = AluStruc_gtk[Xgc->CurDrawFunction].id;
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
-      break;
-    case GDK_XOR   : 
-      temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,value);
-      break;
-    }
-  if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
-    {
-      /* the way colors are computed changes if we are in Xor mode 
-       * so we force here the computation of current color  
-       */
-      nsp_gtk_set_color(Xgc,Xgc->CurColor);
-    }
-}
-
-#ifdef PERIGTK 
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  xset_alufunction1_gtk(Xgc,num);
-}
-#endif 
-
-#ifdef PERIGL
-/* we call both functions */
-
-static void xset_alufunction1(BCG *Xgc,int num)
-{   
-  GLenum value ; 
-  Xgc->CurDrawFunction = Min(15,Max(0,num));
-  value = AluStruc_[Xgc->CurDrawFunction].id;
-  /* FIXME: is it a good choice ? 
-   * to disable by default for GL_COPY
-   */
-  if ( value == GL_COPY ) 
-    {
-      glDisable(GL_COLOR_LOGIC_OP);
-    }
-  else 
-    {
-      glEnable(GL_COLOR_LOGIC_OP);
-      glLogicOp(value);
-    }
-  xset_alufunction1_gtk(Xgc,num);
-}
-#endif 
-
-static int xget_alufunction(BCG *Xgc)
-{ 
-  return  Xgc->CurDrawFunction ;
-}
 
 /*
  *  to set the thickness of lines : 0 is a possible value 
@@ -878,79 +679,6 @@ static void xset_line_style(BCG *Xgc,int value)
   }
 }
 
-/*
- *  To change The X11-default dash style
- * if *value == 0, use a solid line, if *value != 0 
- * the dash style is specified by the xx vector of n values 
- * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots 
- */
-
-static void xset_dashstyle_gtk(BCG *Xgc,int value, int *xx, int *n)
-{
-  if ( value == 0) 
-    {
-      gdk_gc_set_line_attributes(Xgc->private->wgc,
-				 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
-				 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
-    }
-  else 
-    {
-      gint8 buffdash[18];
-      int i;
-      for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
-      gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-      gdk_gc_set_line_attributes(Xgc->private->wgc, 
-				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
-				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-    }
-}
-
-#ifdef PERIGTK 
-static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
-{
-  xset_dashstyle_gtk(Xgc,value,xx,n);
-}
-#endif 
-
-#ifdef PERIGL
-static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
-{
-  if ( value == 0) 
-    {
-      /* FIXME : */
-      glLineWidth( ((Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth)*0.5);
-    }
-  else 
-    {
-#if 0 
-      gint8 buffdash[18];
-      int i;
-      for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
-      gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-      gdk_gc_set_line_attributes(Xgc->private->wgc, 
-				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
-				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-#endif 
-    }
-  xset_dashstyle_gtk(Xgc,value,xx,n);
-}
-#endif 
-
-/* 
-   static void xget_dashstyle(BCG *Xgc,int *n,int *value)
-   {
-   int i ;
-   *n =1 ;
-   *value = Xgc->CurDashStyle + 1;
-   if (*value != 1) 
-   {
-   value[1]=4;
-   *n = value[1]+2;
-   for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
-   }
-   }
-*/
-
 
 /* used to switch from color to b&w and reverse */
 
@@ -1009,7 +737,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
   if ( num1 == 1 )
     {
       GdkDrawable *temp ;
-      /** create a new pixmap **/
+      /* create a new pixmap */
       temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
 					    Xgc->CWindowWidth, Xgc->CWindowHeight,
 					    -1);
@@ -1028,7 +756,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     }
   else 
     {
-      /** I remove the extra pixmap to the window **/
+      /* I remove the extra pixmap to the window */
       xinfo(Xgc," ");
       if ( Xgc->private->gldrawable != NULL) 
 	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
@@ -1429,283 +1157,13 @@ static void xset_fpf_def(BCG *Xgc)
 }
 
 
-#ifdef PERIGL
-static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
-{
-  DRAW_CHECK;
-  glBegin(GL_LINES);
-  glVertex3d(x1, y1, z1);
-  glVertex3d(x2, y2, z2);
-  glEnd();
-}
-#endif 
-
-#ifdef PERIGL 
-void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
-{
-  int dash,color,i;
-  DRAW_CHECK;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( iflag == 1) { /* one style per segment */
-    for (i=0 ; i < n/2 ; i++) {
-      xset_line_style(Xgc,style[i]);
-      drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
-    }
-  }
-  else {
-    if (*style >= 1) xset_line_style(Xgc,*style);
-    /* une fonction gtk existe ici FIXME */
-    for (i=0 ; i < n/2 ; i++) 
-      drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
-  }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-}
-#endif 
-
-
-#ifdef PERIGL
-void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
-{
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(1.0,1.0);
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) 
-    {
-      xset_pattern(Xgc,Abs(colors[i]));
-      glVertex2i( vx[i], vy[i]);
-    }
-  glEnd();
-  glDisable(GL_POLYGON_OFFSET_FILL);
-}
-
-static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
-
-void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, 
-			   double *vectsz, int *fillvect,int n, int p)
-{
-  int dash,color,i;
-  DRAW_CHECK;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i = 0 ; i< n ; i++)
-    {
-      /* for each polyline we only take a decision according to the first color */
-      if (fillvect[i] > 0 )
-	{ 
-	  /* fill + boundaries **/
-	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
-	  glDisable(GL_POLYGON_OFFSET_FILL);
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	}
-      else  if (fillvect[i] == 0 )
-	{
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	}
-      else 
-	{
-	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	}
-    }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-}
-
-
-static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) 
-{
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) 
-    {
-      xset_pattern(Xgc,Abs(colors[i]));
-      glVertex3d( vx[i], vy[i], vz[i]);
-    }
-  glEnd();
-}
-
-/*
- * fillpolylines3D:
- * the same for 3D vertices 
- * FIXME: a rajouter ds la table et rendre statique 
- */
-
-void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
-{
-  int dash,color,i;
-  DRAW_CHECK;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i = 0 ; i< n ; i++)
-    {
-      if (fillvect[i] > 0 )
-	{ 
-	  /* fill + boundaries **/
-	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
-	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	  glDisable(GL_POLYGON_OFFSET_FILL);
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	}
-      else  if (fillvect[i] == 0 )
-	{
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	}
-      else 
-	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
-	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	}
-    }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-}
-
-static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag) 
-{
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
-  glEnd();
-}
-
-
-static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
-{ 
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  if ( closeflag == 1 ) 
-    glBegin(GL_LINE_LOOP);
-  else
-    glBegin(GL_LINE_STRIP);
-  for (i=0; i < n ; i++) glVertex3d(vx[i], vy[i], vz[i]);
-  glEnd();
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-}
-#endif 
-
-
-
-#ifdef PERIGL 
-static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
-{
-  DRAW_CHECK;
-  printf("Fuck off : va falloir utiliser le billboarding pour la fct drawpolymark3D !!\n");
-}
-#endif 
-
-/*
- * FIXME: a rajouter ds la table et rendre statique 
- */
-
-#ifdef PERIGL 
-void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
-{ 
-  int symb[2],dash,color,i,close;
-  /* store the current values */
-  DRAW_CHECK;
-  Xgc->graphic_engine->xget_mark(Xgc,symb);
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-
-  for (i=0 ; i< n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{ /* we use the markid : drawvect[i] : with current dash **/
-	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
-	  drawpolymark3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p);
-	}
-      else
-	{/* we use the line-style number abs(drawvect[i])  **/
-	  Xgc->graphic_engine->xset_line_style(Xgc,*(drawvect+i));
-	  close = 0;
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,close);
-	}
-    }
-  /* back to default values **/
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-  Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
-}
-#endif 
-
 /*
  * window_list management 
  */
 
-
 /*
  * Routines for initialization : string is a display name 
  */
-
-
-static void nsp_gtk_set_color_gtk(BCG *Xgc,int col)
-{
-  int value = AluStruc_gtk[Xgc->CurDrawFunction].id;
-  GdkColor temp = {0,0,0,0};
-  /* colors from 1 to Xgc->Numcolors */
-  Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 1));
-  if (Xgc->private->colors  == NULL) return;
-  temp.pixel = Xgc->private->colors[col].pixel;
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      break;
-    case GDK_XOR   : 
-      temp.pixel = temp.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    }
-}
-
-#ifdef PERIGTK 
-static void nsp_gtk_set_color(BCG *Xgc,int col)
-{
-  nsp_gtk_set_color_gtk(Xgc,col);
-}
-#endif 
-
-#ifdef PERIGL
-static void nsp_gtk_set_color(BCG *Xgc,int col)
-{
-  GdkColor c; 
-  col = Max(0,Min(col,Xgc->Numcolors + 1));
-  if (col == Xgc->CurColor) return;
-  Xgc->CurColor=col;
-  if (Xgc->private->colors  == NULL) return;
-  c = Xgc->private->colors[Xgc->CurColor];
-  glColor3ub( c.red >> 8 , c.green >> 8,c.blue >> 8 );
-  /* also set the color for gdk */
-  nsp_gtk_set_color_gtk(Xgc,col);
-
-}
-#endif 
 
 /*
  * initgraphic : create initialize graphic windows
@@ -2056,52 +1514,6 @@ static void gdk_draw_text_rot(GdkDrawable *drawable,
  */
 
 
-/* this is to be called when the pixmap is recreated */
-
-static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
-{
-#ifdef PERIGL 
-  if (glconfig == NULL)  
-    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB    |
-					  GDK_GL_MODE_DEPTH  |
-					  GDK_GL_MODE_SINGLE);
-  if (glconfig == NULL)  
-    {
-      Xgc->private->gldrawable= NULL;
-      Xgc->private->glcontext = NULL;
-      return FALSE;
-    }
-  if ( Xgc->private->gldrawable != NULL 
-       &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
-     gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
-  
-  Xgc->private->gldrawable = GDK_GL_DRAWABLE (gdk_pixmap_set_gl_capability (pixmap,
-									    glconfig,
-									    NULL));
-  /*
-   * Create OpenGL rendering context (not direct or direct: third argument).
-   * 
-   */
-  if (Xgc->private->glcontext == NULL)
-    Xgc->private->glcontext = gdk_gl_context_new (Xgc->private->gldrawable,
-						  NULL,
-						  FALSE,
-						  GDK_GL_RGBA_TYPE);
-  if (Xgc->private->glcontext == NULL)
-    {
-      g_print ("Connot create the OpenGL rendering context\n");
-      return FALSE;
-    }
-  
-  gdk_gl_drawable_make_current(Xgc->private->gldrawable,Xgc->private->glcontext);
-  gdk_gl_drawable_gl_begin(Xgc->private->gldrawable,Xgc->private->glcontext);
-  glClear(GL_DEPTH_BUFFER_BIT);
-  nsp_ogl_set_view(Xgc);
-  /* g_print ("The OpenGL rendering context is created\n"); */
-#endif
-  return TRUE;
-}
-
 #ifdef TESTGL 
 static void nsp_draw_gl_sphere (void)
 {
@@ -2136,119 +1548,12 @@ static void nsp_draw_gl_sphere (void)
 }
 #endif 
 
-#ifdef TOBEUSED 
-static int destroy_gl_context (gpointer data)
-{
-  if (glconfig != NULL)
-    g_object_unref (G_OBJECT (glconfig));
-  if (glcontext != NULL)
-    g_object_unref (G_OBJECT (glcontext));
-  return FALSE;
-}
-#endif 
 
 /*
  * set opengl geometric context 
  */
 
-#ifdef PERIGL 
 
-void nsp_ogl_set_view(BCG *Xgc)
-{
-  /* xset_background(Xgc,Xgc->NumBackground+1); */
-  if ( Xgc->scales->scale_flag3d == 0 ) /* XXX */
-    {
-      nsp_ogl_set_2dview(Xgc);
-    }
-  else 
-    {
-      nsp_ogl_set_3dview(Xgc);
-    }
-}
-
-
-void nsp_ogl_set_2dview(BCG *Xgc)
-{
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
-	      Xgc->private->drawing->allocation.height);
-  /* xset_background(Xgc,Xgc->NumBackground+1); */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity ();
-  gluLookAt (0,0,1,
-	     0,0,-1,
-	     0,1,0);
-  glMatrixMode(GL_PROJECTION); 
-
-  glLoadIdentity();
-  glOrtho(0, Xgc->private->drawing->allocation.width,
-	  Xgc->private->drawing->allocation.height,
-	  0,-4,4);
-  glMatrixMode(GL_MODELVIEW);
-  glDisable(GL_DEPTH_TEST);
-}
-
-void nsp_ogl_set_3dview(BCG *Xgc)
-{
-  /* double xs,ys; */
-  double theta = Xgc->scales->theta;
-  double alpha = Xgc->scales->alpha;
-  double cost=cos((theta)*M_PI/180.0);
-  double sint=sin((theta)*M_PI/180.0);
-  double cosa=cos((alpha)*M_PI/180.0);
-  double sina=sin((alpha)*M_PI/180.0);
-  double cx= Xgc->scales->c[0];
-  double cy= Xgc->scales->c[1];
-  double cz= Xgc->scales->c[2];
-  /* radius and center of the sphere circumscribing the box */
-  double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
-  double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
-  double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
-  double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2; 
-
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
-	      Xgc->private->drawing->allocation.height);
-  /* 
-   * fix the model view using the box center 
-   * and a point on the sphere circumscribing the box
-   * qui sont important pour l'élimination des parties cachées
-   */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity ();
-  gluLookAt (cx+R*cost*sina,
-	     cy+R*sint*sina,
-	     cz+R*cosa,
-	     cx,cy,cz,
-	     0,0,(sina >= 0.0 ) ? 1 : -1);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  /*
-   * setting the modelview 
-   * we use the computed min max points 
-   * FIXME: when we use iso mode we have to change 
-   *      the next code 
-   * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer 
-   *      i.e donner l'info 
-   */
-
-  /* 
-     xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
-     (1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
-     ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
-     (1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
-     glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
-     Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
-     Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
-     Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
-     -2*R,2*R);
-  */
-  glLoadIdentity();
-  glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
-	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
-	  -2*R,2*R);
-  glMatrixMode(GL_MODELVIEW);
-  glEnable(GL_DEPTH_TEST);
-}
 
 /*
  * at the end of realize_event
@@ -2278,43 +1583,7 @@ static void realize_event_ogl(BCG *dd )
   /* gdk_gl_drawable_gl_end (dd->private->gldrawable); */
 }
 
-/* 
- * Gl clipping
- */
 
-static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
-{
-#if 0
-  int bg = Xgc->NumBackground;
-  glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glColor3f(Xgc->private->colors[bg].r/65535.0,
-	    Xgc->private->colors[bg].g/65535.0,
-	    Xgc->private->colors[bg].b/65535.0);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
-#endif
-}
-
-static void unclip_rectangle(GdkRectangle clip_rect)
-{
-#if 0
-  glStencilFunc(GL_ALWAYS, 0x0, 0x0);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
-#endif
-}
-
-#endif /* PERIGL */
 
 #ifdef PERIGTK
 /* get drawable as an image 

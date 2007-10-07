@@ -436,56 +436,6 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
   Xgc->graphic_engine->generic->draw_pixbuf_from_file(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
 }
 
-/**
- * pixmap_clear_rect:
- * @Xgc: a #BCG 
- * @x: integer 
- * @y: integer 
- * @w: integer
- * @h: integer
- * 
- * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
- * in the extra_pixmap using the background color.
- **/
-
-static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
-{
-  if ( Xgc->CurPixmapStatus == 1) 
-    {
-      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-      gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
-			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-    }
-}
-
-
-
-/**
- * pixmap_resize:
- * @Xgc: a #BCG 
- * 
- * resizes, if present the extra_pixmap according to window size change 
- **/
-
-static void pixmap_resize(BCG *Xgc)
-{
-  if ( Xgc->CurPixmapStatus == 1) 
-    {
-      int x= Xgc->CWindowWidth; 
-      int y= Xgc->CWindowHeight;
-      /* create a new pixmap */
-      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
-      if ( temp  == NULL ) 
-	{
-	  xinfo(Xgc,"No more space to create Pixmaps");
-	  return;
-	}
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
-      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-      pixmap_clear_rect(Xgc,0,0,x,y);
-    }
-} 
-
 
 
 
@@ -664,12 +614,64 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 
 
 /**
+ * pixmap_clear_rect:
+ * @Xgc: a #BCG 
+ * @x: integer 
+ * @y: integer 
+ * @w: integer
+ * @h: integer
+ * 
+ * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
+ * in the extra_pixmap using the background color.
+ **/
+
+static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
+{
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+      gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
+			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+    }
+}
+
+
+
+/**
+ * pixmap_resize:
+ * @Xgc: a #BCG 
+ * 
+ * resizes, if present the extra_pixmap according to window size change 
+ **/
+
+static void pixmap_resize(BCG *Xgc)
+{
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      int x= Xgc->CWindowWidth; 
+      int y= Xgc->CWindowHeight;
+      /* create a new pixmap */
+      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
+      if ( temp  == NULL ) 
+	{
+	  xinfo(Xgc,"No more space to create Pixmaps");
+	  return;
+	}
+      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+      pixmap_clear_rect(Xgc,0,0,x,y);
+    }
+} 
+
+
+/**
  * xset_pixmapOn:
  * @Xgc: a #BCG  
  * @num: 
  * 
  * 
  **/
+
 static void xset_pixmapOn(BCG *Xgc,int num)
 { 
   int num1= Min(Max(num,0),2);
