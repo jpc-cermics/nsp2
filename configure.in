@@ -620,8 +620,8 @@ AC_CHECK_POINTER_SIZE()
 ## sizeof(long double)== sizeof(double)
 #########################
 
-builtin(include,config/ac_check_ldouble.m4)
-AC_CHECK_LDOUBLE_SIZE() 
+#builtin(include,config/ac_check_ldouble.m4)
+#AC_CHECK_LDOUBLE_SIZE() 
 
 #######################
 ## test for underscores
