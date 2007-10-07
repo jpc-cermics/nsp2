@@ -489,7 +489,7 @@
  */
 
 extern HANDLE	    TclWinSerialReopen ( HANDLE handle,
-					 const TCHAR *name, DWORD access));
+					 const TCHAR *name, DWORD access);
 
 /*
  * Platform specific mutex definition used by memory allocators.
