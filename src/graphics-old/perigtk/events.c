@@ -466,7 +466,7 @@ static void xinfo(BCG *Xgc,char *format,...)
 }
 
 
-#ifndef PERIGL
+#ifdef PERIGTK
 int window_list_check_top(BCG *dd,void *win) 
 {
   return dd->private->window == (GtkWidget *) win ;

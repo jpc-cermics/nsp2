@@ -67,7 +67,7 @@
 /* Global variables to store graphic drivers 
  */
 
-#if defined(PERIGTK) || defined(PERICAIRO)
+#if defined(PERIGTK) 
 Gengine * nsp_gengine = &Gtk_gengine ;
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif 
@@ -1815,7 +1815,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
  * Returns: 
  **/
 
-#if defined(PERIGTK) || defined(PERICAIRO)
+#if defined(PERIGTK)
 GdkImage* nsp_get_image(BCG *Xgc) 
 {
   return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
@@ -1831,7 +1831,7 @@ GdkImage* nsp_get_image(BCG *Xgc)
  * Returns: 
  **/
 
-#if defined(PERIGTK) || defined(PERICAIRO)
+#if defined(PERIGTK)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,

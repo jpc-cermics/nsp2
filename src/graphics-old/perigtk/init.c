@@ -44,22 +44,20 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
  */
 
 #ifdef PERIGL 
-int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
-  return  nsp_get_win_counter()-1;
-}
-#else 
+#define nsp_graphic_new nsp_graphic_new_gl
+#endif 
+#ifdef PERICAIRO 
+#define nsp_graphic_new nsp_graphic_new_cairo
+#endif 
+
 int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
   return  nsp_get_win_counter()-1;
 }
-#endif 
 
-#ifndef PERIGL
-/* this should be  moved in windows 
- * keep track of window ids
+#ifdef PERIGTK 
+/* this should be  moved in windows: keep track of window ids
  */
 static int EntryCounter = 0;
 int nsp_get_win_counter() { return EntryCounter;};
@@ -137,7 +135,11 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 #ifdef PERIGL 
   NewXgc->graphic_engine = &GL_gengine ;
 #else 
+#ifdef PERICAIRO 
+  NewXgc->graphic_engine = &Cairo_gengine;
+#else   
   NewXgc->graphic_engine = &Gtk_gengine;
+#endif 
 #endif 
   start_sci_gtk(); /* be sure that gtk is started */
 

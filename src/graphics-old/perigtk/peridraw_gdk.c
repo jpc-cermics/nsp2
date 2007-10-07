@@ -755,13 +755,14 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 }
 
 
-/* void function when using gdk 
+/* void function when cairo is not used 
  *
  */
-
+#ifndef WITH_CAIRO 
 int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char *driver,char option)
 {
   return FAIL;
 }
+#endif 
 
 
