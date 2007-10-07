@@ -1726,6 +1726,10 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 extern Gengine GL_gengine; 
 #endif 
 
+#ifdef WITH_CAIRO
+extern Gengine Cairo_gengine; 
+#endif 
+
 extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
 extern BCG  ScilabGCPos, ScilabGCXfig; 
 
@@ -2790,14 +2794,15 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int v1=-1,opengl=FALSE;
+  int v1=-1,opengl=FALSE,cairo=FALSE;
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL, *mode = NULL;
   static char *Table[] = {"d", "l", "n", "p", "k", NULL};
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
-  nsp_option opts[] ={{ "dim",mat_int,NULLOBJ,-1},
+  nsp_option opts[] ={{ "cairo",s_bool,NULLOBJ,-1},
+		      { "dim",mat_int,NULLOBJ,-1},
 		      { "file",string,NULLOBJ,-1},
 		      { "mode",string,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
@@ -2807,7 +2812,8 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 		      { "viewport_pos",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&mode,&name,&opengl,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&cairo,&wdim,&file,&mode,&name,
+	       &opengl,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
 
   if ( mode != NULL) 
     {
@@ -2844,6 +2850,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_current_bcg != NULL) 
     {
+      /* Postscript or Fig */
       nsp_current_bcg->graphic_engine->initgraphic(file,&v1, 
 						   (wdim) ? (int*) wdim->R: NULL ,
 						   (wpdim) ? (int*)wpdim->R: NULL,
@@ -2853,24 +2860,29 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      if ( opengl == FALSE ) 
-	Gtk_gengine.initgraphic(file,&v1,
-				(wdim) ? (int*)wdim->R: NULL ,
-				(wpdim) ? (int*)wpdim->R: NULL,
-				(viewport) ? viewport->R : NULL,
-				(wpos) ? (int*)wpos->R : NULL,
-				'e');
-      else 
+      driver_initgraphic *initg = Gtk_gengine.initgraphic;
+      if ( opengl == TRUE ) 
 	{
 #ifdef WITH_GTKGLEXT 
-	  GL_gengine.initgraphic(file,&v1,
-				 (wdim) ? (int*)wdim->R: NULL ,
-				 (wpdim) ? (int*)wpdim->R: NULL,
-				 (viewport) ? viewport->R : NULL,
-				 (wpos) ? (int*)wpos->R : NULL,
-				 'e');
+	  initg = GL_gengine.initgraphic;
+#else 
+	  Sciprintf("No opengl support in this version\n");
 #endif 
 	}
+      if ( cairo  == TRUE ) 
+	{
+#ifdef WITH_CAIRO 
+	  initg = Cairo_gengine.initgraphic;
+#else 
+	  Sciprintf("No cairo support in this version\n");
+#endif 
+	}
+      initg(file,&v1,
+	    (wdim) ? (int*)wdim->R: NULL ,
+	    (wpdim) ? (int*)wpdim->R: NULL,
+	    (viewport) ? viewport->R : NULL,
+	    (wpos) ? (int*)wpos->R : NULL,
+	    'e');
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 

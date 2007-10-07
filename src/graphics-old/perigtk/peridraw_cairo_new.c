@@ -1048,21 +1048,29 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   cr = cairo_create (surface);
   if ( cr == NULL) return FAIL; 
   cairo_save (cr);
-  cr_current =  Xgc->private->cairo_cr;
-  Xgc->private->cairo_cr = cr;
-  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
-  fprintf(stderr,"colored = %d\n",colored);
-  if (colored==1 ) 
-    Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  else
-    Xgc->graphic_engine->xset_usecolor(Xgc,0);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
-  Xgc->private->cairo_cr = cr_current;
-  Xgc->graphic_engine->xset_usecolor(Xgc,uc);
-  cairo_show_page (cr);
-  cairo_restore (cr);
-  cairo_destroy (cr); 
-  cairo_surface_destroy (surface); 
-  return OK;
+  /* take care here that Xgc can be a non cairo Xgc */
+  if ( Xgc->graphic_engine != &Cairo_gengine ) 
+    {
+      Sciprintf("cannot export a non cairo graphic\n");
+    }
+  else 
+    {
+      cr_current =  Xgc->private->cairo_cr;
+      Xgc->private->cairo_cr = cr;
+      uc = Xgc->graphic_engine->xget_usecolor(Xgc);
+      fprintf(stderr,"colored = %d\n",colored);
+      if (colored==1 ) 
+	Xgc->graphic_engine->xset_usecolor(Xgc,1);
+      else
+	Xgc->graphic_engine->xset_usecolor(Xgc,0);
+      Xgc->graphic_engine->tape_replay(Xgc,win_num);
+      Xgc->private->cairo_cr = cr_current;
+      Xgc->graphic_engine->xset_usecolor(Xgc,uc);
+      cairo_show_page (cr);
+      cairo_restore (cr);
+      cairo_destroy (cr); 
+      cairo_surface_destroy (surface); 
+      return OK;
+    }
 }
 
