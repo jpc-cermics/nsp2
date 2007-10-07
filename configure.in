@@ -109,8 +109,8 @@ FGETARG=fgetarg
 HPPA_OLD=
 # Scilab main file: default is "mainsci.o" for UNIX
 MAIN='mainsci.o'
-# default graphic driver 
-PERIFILE=periGtk.o
+# use cairo driver 
+PERICAIRO=
 # 
 GUILIB=gtksci
 # specific for gnome/gtk version 
@@ -616,6 +616,13 @@ esac
 builtin(include,config/ac_check_pointer.m4)
 AC_CHECK_POINTER_SIZE() 
 
+#########################
+## sizeof(long double)== sizeof(double)
+#########################
+
+builtin(include,config/ac_check_ldouble.m4)
+AC_CHECK_LDOUBLE_SIZE() 
+
 #######################
 ## test for underscores
 ## note that trailing underscores is already checked 
@@ -897,7 +904,7 @@ GZVT='gzvt2'
 # we need a patched version 
 SCILABSCRIPT=scilab-gtk.g
 MENUSOBJS=GOBJS
-PERIFILE=periGtk.o
+PERICAIRO=
 # check for libgtkhtml-2.0
 ac_save_LIBS="$LIBS"
 LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
@@ -980,7 +987,8 @@ if test "$with_cairo" != no; then
   if test X"$enable_cairo_image" == Xyes; then 
      AC_DEFINE(HAVE_cairo_image_surface,[],[cairo image supported])
      # switch to cairo driver 
-     PERIFILE=periCairoNew.o
+     PERICAIRO=periCairoNew.o
+     AC_DEFINE(WITH_CAIRO,[],[cairo driver used ])
   fi
 fi
 
@@ -1399,7 +1407,7 @@ AC_SUBST(GTKLIBS)
 AC_SUBST(TERMCAPLIB)
 AC_SUBST(MAIN)
 AC_SUBST(MAKEFILE_TARGET)
-AC_SUBST(PERIFILE)
+AC_SUBST(PERICAIRO)
 AC_SUBST(GUILIB)
 AC_SUBST(GZVT)
 AC_SUBST(LIBXDR_LOCAL)
