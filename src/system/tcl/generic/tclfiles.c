@@ -1109,7 +1109,7 @@ void nsp_split_path(char *path,int *argcPtr, char ***argvPtr)
    */
 
   p = (char *) &(*argvPtr)[(*argcPtr) + 1];
-  memcpy((VOID *) p, (VOID *) nsp_tcldstring_value(&buffer), (size_t) size);
+  memcpy((void *) p, (void *) nsp_tcldstring_value(&buffer), (size_t) size);
 
   /*
    * Now set up the argv pointers.

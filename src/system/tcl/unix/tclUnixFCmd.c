@@ -65,31 +65,31 @@
  * Callbacks for file attributes code.
  */
 
-static int		GetGroupAttribute _ANSI_ARGS_((
+static int		GetGroupAttribute (
 			    int objIndex, char *fileName,
-			    NspObject **attributePtrPtr));
-static int		GetOwnerAttribute _ANSI_ARGS_((
+			    NspObject **attributePtrPtr);
+static int		GetOwnerAttribute (
 			    int objIndex, char *fileName,
-			    NspObject **attributePtrPtr));
-static int		GetPermissionsAttribute _ANSI_ARGS_((
+			    NspObject **attributePtrPtr);
+static int		GetPermissionsAttribute (
 			    int objIndex, char *fileName,
-			    NspObject **attributePtrPtr));
-static int		SetGroupAttribute _ANSI_ARGS_((
+			    NspObject **attributePtrPtr);
+static int		SetGroupAttribute (
 			    int objIndex, char *fileName,
-			    NspObject *attributePtr));
-static int		SetOwnerAttribute _ANSI_ARGS_((
+			    NspObject *attributePtr);
+static int		SetOwnerAttribute (
 			    int objIndex, char *fileName,
-			    NspObject *attributePtr));
-static int		SetPermissionsAttribute _ANSI_ARGS_((
+			    NspObject *attributePtr);
+static int		SetPermissionsAttribute (
 			    int objIndex, char *fileName,
-			    NspObject *attributePtr));
+			    NspObject *attributePtr);
 			  
 /*
  * Prototype for the TraverseUnixTree callback function.
  */
 
-typedef int (TraversalProc) _ANSI_ARGS_((char *src, char *dst, 
-        struct stat *sb, int type, nsp_tcldstring *errorPtr));
+typedef int (TraversalProc) (char *src, char *dst, 
+        struct stat *sb, int type, nsp_tcldstring *errorPtr);
 
 /*
  * Constants and variables necessary for file attributes subcommand.
@@ -103,7 +103,7 @@ enum {
 
 char *tclpFileAttrStrings[] = {"-group", "-owner", "-permissions",
 	(char *) NULL};
-CONST TclFileAttrProcs tclpFileAttrProcs[] = {
+const TclFileAttrProcs tclpFileAttrProcs[] = {
 	{GetGroupAttribute, SetGroupAttribute},
 	{GetOwnerAttribute, SetOwnerAttribute},
 	{GetPermissionsAttribute, SetPermissionsAttribute}};
@@ -112,20 +112,20 @@ CONST TclFileAttrProcs tclpFileAttrProcs[] = {
  * Declarations for local procedures defined in this file:
  */
 
-static int		CopyFile _ANSI_ARGS_((char *src, char *dst, 
-			    struct stat *srcStatBufPtr));
-static int		CopyFileAtts _ANSI_ARGS_((char *src, char *dst, 
-			    struct stat *srcStatBufPtr));
-static int		TraversalCopy _ANSI_ARGS_((char *src, char *dst, 
-			    struct stat *sbPtr, int type,
-			    nsp_tcldstring *errorPtr));
-static int		TraversalDelete _ANSI_ARGS_((char *src, char *dst, 
-			    struct stat *sbPtr, int type,
-			    nsp_tcldstring *errorPtr));
-static int		TraverseUnixTree _ANSI_ARGS_((
-			    TraversalProc *traversalProc,
-			    nsp_tcldstring *sourcePath, nsp_tcldstring *destPath,
-			    nsp_tcldstring *errorPtr));
+static int		CopyFile (char *src, char *dst, 
+				  struct stat *srcStatBufPtr);
+static int		CopyFileAtts (char *src, char *dst, 
+				      struct stat *srcStatBufPtr);
+static int		TraversalCopy (char *src, char *dst, 
+				       struct stat *sbPtr, int type,
+				       nsp_tcldstring *errorPtr);
+static int		TraversalDelete (char *src, char *dst, 
+					 struct stat *sbPtr, int type,
+					 nsp_tcldstring *errorPtr);
+static int		TraverseUnixTree (
+					  TraversalProc *traversalProc,
+					  nsp_tcldstring *sourcePath, nsp_tcldstring *destPath,
+					  nsp_tcldstring *errorPtr);
 
 /*
  *---------------------------------------------------------------------------

@@ -31,14 +31,14 @@ static int currentDirExitHandlerSet = 0;
 
 static int executableNameExitHandlerSet = 0;
 
-extern pid_t waitpid _ANSI_ARGS_((pid_t pid, int *stat_loc, int options));
+extern pid_t waitpid (pid_t pid, int *stat_loc, int options);
 
 /*
  * Static routines for this file:
  */
 
-static void	FreeCurrentDir _ANSI_ARGS_((ClientData clientData));
-static void	FreeExecutableName _ANSI_ARGS_((ClientData clientData));
+static void	FreeCurrentDir (ClientData clientData);
+static void	FreeExecutableName (ClientData clientData);
 
 /*
  *----------------------------------------------------------------------

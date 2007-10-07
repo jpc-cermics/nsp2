@@ -20,9 +20,6 @@
 #include "nsp/stack.h"
 #include "nsp/interf.h"
 
-/** Attention chez nous VOID veut dire autre chose !!! XXXXXX **/
-#undef VOID  
-
 /*
  * Common include files needed by most of the Tcl source files are
  * included here, so that system-dependent personalizations for the
@@ -88,7 +85,7 @@ typedef struct TclFileAttrProcs {
 extern char *			tclExecutableName;
 extern TclPlatformType		tclPlatform;
 extern char *			tclpFileAttrStrings[];
-extern CONST TclFileAttrProcs   tclpFileAttrProcs[];
+extern const TclFileAttrProcs   tclpFileAttrProcs[];
 
 /*
  *----------------------------------------------------------------

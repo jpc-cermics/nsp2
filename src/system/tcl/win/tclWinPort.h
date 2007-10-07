@@ -488,21 +488,8 @@
  * Declarations for Windows-only functions.
  */
 
-extern HANDLE	    TclWinSerialReopen _ANSI_ARGS_(( HANDLE handle,
-			CONST TCHAR *name, DWORD access));
-
-/*
-extern Tcl_Channel  TclWinOpenSerialChannel _ANSI_ARGS_((HANDLE handle,
-                        char *channelName, int permissions));
-					 
-extern Tcl_Channel  TclWinOpenConsoleChannel _ANSI_ARGS_((HANDLE handle,
-                        char *channelName, int permissions));
-
-extern Tcl_Channel  TclWinOpenFileChannel _ANSI_ARGS_((HANDLE handle,
-                        char *channelName, int permissions, int appendMode));
-
-extern TclFile TclWinMakeFile _ANSI_ARGS_((HANDLE handle));
-*/
+extern HANDLE	    TclWinSerialReopen ( HANDLE handle,
+					 const TCHAR *name, DWORD access));
 
 /*
  * Platform specific mutex definition used by memory allocators.
@@ -513,9 +500,9 @@ extern TclFile TclWinMakeFile _ANSI_ARGS_((HANDLE handle));
 
 #ifdef TCL_THREADS
 typedef CRITICAL_SECTION TclpMutex;
-extern void	TclpMutexInit _ANSI_ARGS_((TclpMutex *mPtr));
-extern void	TclpMutexLock _ANSI_ARGS_((TclpMutex *mPtr));
-extern void	TclpMutexUnlock _ANSI_ARGS_((TclpMutex *mPtr));
+extern void	TclpMutexInit (TclpMutex *mPtr);
+extern void	TclpMutexLock (TclpMutex *mPtr);
+extern void	TclpMutexUnlock (TclpMutex *mPtr);
 #else /* !TCL_THREADS */
 typedef int TclpMutex;
 #define	TclpMutexInit(a)
@@ -524,10 +511,10 @@ typedef int TclpMutex;
 #endif /* TCL_THREADS */
 
 #ifdef TCL_WIDE_INT_TYPE
-extern Tcl_WideInt	strtoll _ANSI_ARGS_((CONST char *string,
-					     char **endPtr, int base));
-extern Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
-					      char **endPtr, int base));
+extern Tcl_WideInt	strtoll (const char *string,
+				 char **endPtr, int base);
+extern Tcl_WideUInt	strtoull (const char *string,
+				  char **endPtr, int base);
 #endif /* TCL_WIDE_INT_TYPE */
 
 #ifndef INVALID_SET_FILE_POINTER

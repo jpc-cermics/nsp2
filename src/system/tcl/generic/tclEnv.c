@@ -76,7 +76,7 @@ void nsp_setenv(const char *name,const char *value)
 
 	    newEnviron = (char **) ckalloc((unsigned)
 		    ((length+5) * sizeof(char *)));
-	    memcpy((VOID *) newEnviron, (VOID *) environ,
+	    memcpy((void *) newEnviron, (void *) environ,
 		    length*sizeof(char *));
 	    if (environSize != 0) {
 		ckfree((char *) environ);
@@ -168,7 +168,7 @@ int nsp_putenv(const char *string)
 	return 0;
     }
     name = (char *) ckalloc((unsigned) nameLength+1);
-    memcpy((VOID *) name, (VOID *) string, (size_t) nameLength);
+    memcpy((void *) name, (void *) string, (size_t) nameLength);
     name[nameLength] = 0;
     nsp_setenv(name, value+1);
     ckfree(name);
@@ -223,7 +223,7 @@ void nsp_unsetenv(const char *name)
 
 #ifdef USE_PUTENV
     string = ckalloc(length+2);
-    memcpy((VOID *) string, (VOID *) name, (size_t) length);
+    memcpy((void *) string, (void *) name, (size_t) length);
     string[length] = '=';
     string[length+1] = '\0';
     putenv(string);
@@ -328,7 +328,7 @@ static void ReplaceString(const char *oldStr, char *newStr)
 
 	newCache = (char **) ckalloc((cacheSize + 5) * sizeof(char *));
 	if (environCache) {
-	    memcpy((VOID *) newCache, (VOID *) environCache,
+	    memcpy((void *) newCache, (void *) environCache,
 		    (size_t) (cacheSize * sizeof(char*)));
 	    ckfree((char *) environCache);
 	}

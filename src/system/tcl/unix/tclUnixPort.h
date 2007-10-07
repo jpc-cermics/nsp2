@@ -263,8 +263,7 @@ extern int errno;
 #endif
 
 #ifdef GETTOD_NOT_DECLARED
-EXTERN int		gettimeofday _ANSI_ARGS_((struct timeval *tp,
-			    struct timezone *tzp));
+EXTERN int		gettimeofday (struct timeval *tp, struct timezone *tzp);
 #endif
 
 /*

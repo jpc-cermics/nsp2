@@ -533,12 +533,12 @@ TclWinResolveShortcut(bufferPtr)
  * Side effects:
  *	See stat documentation.
  *
- * CONST char *path;		Path of file to stat (in current CP). 
+ * const char *path;		Path of file to stat (in current CP). 
  * struct stat *buf; Filled with results of stat call. 
  *----------------------------------------------------------------------
  */
 
-int lstat(CONST char *path,struct stat * buf)
+int lstat(const char *path,struct stat * buf)
 {
     char name[4];
     int result;
@@ -601,11 +601,11 @@ int lstat(CONST char *path,struct stat * buf)
 
 int
 TclWinAccess(
-    CONST char *path,		/* Path of file to access (in current CP). */
+    const char *path,		/* Path of file to access (in current CP). */
     int mode)			/* Permission setting. */
 {
     int result;
-    CONST char *p;
+    const char *p;
 
 #undef access
 

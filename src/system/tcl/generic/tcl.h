@@ -1,8 +1,7 @@
 /*
  * tcl.h --
  *
- *	This header file describes the externally-visible facilities
- *	of the Tcl interpreter.
+ * This header file describes the facilities used in nsp from Tcl 
  *
  * Copyright (c) 1987-1994 The Regents of the University of California.
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
@@ -11,13 +10,13 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tcl.h 1.324 97/08/07 10:26:49
  */
 
 #ifndef _TCL
 #define _TCL
 
 #include "../../dstring.h"
+
 /*
  * When version numbers change here, must also go into the following files
  * and update the version numbers:
@@ -130,18 +129,6 @@
  * without ANSI C features like function prototypes.
  */
 
-#undef _ANSI_ARGS_
-#undef CONST
-
-#if ((defined(__STDC__) || defined(SABER)) && !defined(NO_PROTOTYPE)) || defined(__cplusplus) || defined(USE_PROTOTYPE)
-#   define _USING_PROTOTYPES_ 1
-#   define _ANSI_ARGS_(x)	x
-#   define CONST const
-#else
-#   define _ANSI_ARGS_(x)	()
-#   define CONST
-#endif
-
 #ifdef __cplusplus
 #   define extern extern "C"
 #else
@@ -153,24 +140,14 @@
  * type "void *" in ANSI C;  maps them to type "char *" in
  * non-ANSI systems.
  */
-#ifndef __WIN32__
-#ifndef VOID
-#   ifdef __STDC__
-#       define VOID void
-#   else
-#       define VOID char
-#   endif
-#endif
-#else /* __WIN32__ */
+
+#ifdef __WIN32__
 /*
  * The following code is copied from winnt.h
  */
-#ifndef VOID
-#define VOID void
 typedef char CHAR;
 typedef short SHORT;
 typedef long LONG;
-#endif
 #endif /* __WIN32__ */
 
 /*
@@ -256,12 +233,12 @@ typedef enum Tcl_PathType {
 
 extern void		Tcl_AppendElement ( char *string);
 extern void		Tcl_AppendResult  TCL_VARARGS(char *,arg1);
-extern char		Tcl_Backslash (CONST char *src, int *readPtr);
+extern char		Tcl_Backslash (const char *src, int *readPtr);
 
 extern int		Tcl_CommandComplete (char *cmd);
 
-extern int		Tcl_ConvertCountedElement (CONST char *src, int length, char *dst, int flags);
-extern int		Tcl_ConvertElement (CONST char *src, char *dst, int flags);
+extern int		Tcl_ConvertCountedElement (const char *src, int length, char *dst, int flags);
+extern int		Tcl_ConvertElement (const char *src, char *dst, int flags);
 extern char *		Tcl_DbCkalloc (unsigned int size, char *file, int line);
 extern int		Tcl_DbCkfree (char *ptr,  char *file, int line);
 extern char *		Tcl_DbCkrealloc (char *ptr,  unsigned int size, char *file, int line);
@@ -281,15 +258,15 @@ extern int		Tcl_GetServiceMode (void);
 extern char *		nsp_join_path (int argc, char **argv, nsp_tcldstring *resultPtr);
 extern char *		nsp_posix_error ();
 extern void		Tcl_Preserve (ClientData data);
-extern int		nsp_putenv (CONST char *string);
+extern int		nsp_putenv (const char *string);
 extern void		Tcl_ReapDetachedProcs (void);
 
 extern void		Tcl_Release (ClientData clientData);
 extern void		Tcl_RestartIdleTimer (void);
 
 #define Tcl_Return Tcl_SetResult
-extern int		Tcl_ScanCountedElement (CONST char *string, int length, int *flagPtr);
-extern int		Tcl_ScanElement (CONST char *string, int *flagPtr);
+extern int		Tcl_ScanCountedElement (const char *string, int length, int *flagPtr);
+extern int		Tcl_ScanElement (const char *string, int *flagPtr);
 
 extern int		Tcl_ServiceAll (void);
 extern int		Tcl_ServiceEvent (int flags);
@@ -308,10 +285,8 @@ extern int		nsp_string_match (char *string, char *pattern);
 #define Tcl_TildeSubst nsp_translate_file_name
 
 extern char *		nsp_translate_file_name ( char *name, nsp_tcldstring *bufferPtr);
-
 extern Tcl_Pid		Tcl_WaitPid (Tcl_Pid pid, int *statPtr,  int options);
-
-extern NspObject* Tcl_NewStringObj (char *bytes, int length); 
+extern NspObject*       Tcl_NewStringObj (char *bytes, int length); 
 
 #endif /* RESOURCE_INCLUDED */
 #endif /* _TCL */
