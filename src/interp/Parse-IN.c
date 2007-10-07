@@ -41,8 +41,8 @@ static function  int_lasterror;
 static function  int_error;
 
 
-void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
-void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
+void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
+void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
 
 /**
  * nsp_expand_file_and_update_exec_dir:
@@ -66,7 +66,7 @@ void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,c
   /* protect current_exec_dir in old */
   strncpy(old,stack->val->current_exec_dir,FSIZE);
   /* update current_exec_dir */
-  update_exec_dir(buf1,stack->val->current_exec_dir,filename_exec,FSIZE);
+  nsp_update_exec_dir(buf1,stack->val->current_exec_dir,filename_exec,FSIZE);
   /* Sciprintf("exec(%s)->[%s] dir=%s\n",filename,filename_exec,stack->val->current_exec_dir); */
 #else 
   nsp_path_expand(filename,filename_exec,FSIZE);
@@ -95,7 +95,7 @@ void nsp_expand_dir_and_update_exec_dir(Stack *stack,char *old,char *dirname,cha
   /* protect current_exec_dir in old */
   strncpy(old,stack->val->current_exec_dir,FSIZE);
   /* update current_exec_dir */
-  update_exec_dir_from_dir(buf1,stack->val->current_exec_dir,FSIZE);
+  nsp_update_exec_dir_from_dir(buf1,stack->val->current_exec_dir,FSIZE);
   strncpy(dirname_exec,stack->val->current_exec_dir,FSIZE);
 #else 
   nsp_path_expand(dirname,dirname_exec,FSIZE);
@@ -121,7 +121,7 @@ void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *filename_ex
   nsp_path_expand(filename,buf1,FSIZE);
   strncpy(old,stack->val->current_exec_dir,FSIZE);
   /* update current_exec_dir */
-  update_exec_dir(buf1,old,filename_exec,FSIZE);
+  nsp_update_exec_dir(buf1,old,filename_exec,FSIZE);
   /* Sciprintf("exec(%s)->[%s] dir=%s\n",filename,filename_exec,stack->val->current_exec_dir); */
 #else 
   nsp_path_expand(filename,filename_exec,FSIZE);
