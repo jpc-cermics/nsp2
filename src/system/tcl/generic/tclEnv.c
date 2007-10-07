@@ -34,10 +34,10 @@ static int environSize = 0;	/* Non-zero means that the environ array was
  * Declarations for local procedures defined in this file:
  */
 
-static int		FindVariable (CONST char *name,  int *lengthPtr);
-static void		ReplaceString (CONST char *oldStr,  char *newStr);
-void			nsp_setenv (CONST char *name, CONST char *value);
-void			nsp_unsetenv (CONST char *name);
+static int		FindVariable (const char *name,  int *lengthPtr);
+static void		ReplaceString (const char *oldStr,  char *newStr);
+void			nsp_setenv (const char *name, const char *value);
+void			nsp_unsetenv (const char *name);
 
 
 /**
@@ -338,18 +338,6 @@ static void ReplaceString(const char *oldStr, char *newStr)
 	cacheSize += 5;
     }
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * FindVariable --
- *
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
 
 
 /**

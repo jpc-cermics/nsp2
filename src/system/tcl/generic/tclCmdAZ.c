@@ -1,6 +1,6 @@
 /* 
  * Nsp
- * Copyright (C) 2004-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2007 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,9 +17,8 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * A set of interfaces which use Tcl functions 
+ * A set of interfaces for nsp which call Tcl functions 
  * Some of the following functions should be replaced by glib ones 
- *
  *--------------------------------------------------------------------------
  */
 
@@ -27,6 +26,7 @@
 #include "tclPort.h"
 #include "nsp/stack.h" 
 #include "../../files.h"
+
 /*
  * Prototypes for local procedures defined in this file:
  */
@@ -46,8 +46,7 @@ static int              TclFileAttrsCmd(Stack stack,int,int,int);
 char *tclExecutableName = NULL;
 
 /*
- * int_syscd 
- *	This procedure is invoked to process the "cd" command.
+ * int_syscd: interface to process the chdir (cd) command.
  */
 
 int int_syscd(Stack stack,int rhs,int opt,int lhs) 
@@ -94,8 +93,7 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
 
 /*
  *
- * int_sysfile
- *	This procedure is invoked to process the "file"  command.
+ * int_sysfile: interface to  the "file"  command.
  */
 
 int int_sysfile(Stack stack,int rhs,int opt,int lhs) 
@@ -620,7 +618,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* scilab compatibility 
- *
+ * interface to basename 
  */ 
 
 
@@ -638,6 +636,10 @@ int int_basename(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/* interface to dirname 
+ *
+ */
+
 int int_dirname(Stack stack,int rhs,int opt,int lhs) 
 {
   char *fileName;
@@ -652,22 +654,20 @@ int int_dirname(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-/*
- *
- * StoreStatData --
- *
- *	This is a utility procedure that breaks out the fields of a
- *	"stat" structure and stores them in textual form into the
- *	elements of a string Matrix 
- *
- * Results:
- *	Returns a string Matrix 
- *
- */
+
+/**
+ * StoreStatData:
+ * @statPtr: stat structure 
+ * 
+ * 
+ * this is a utility procedure that breaks out the fields of a
+ * "stat" structure and stores them in textual form into the
+ * elements of a string Matrix 
+ * 
+ * Returns: a #NspSMatrix
+ **/
 
 static NspSMatrix *StoreStatData(struct stat *statPtr) 
-     /* Pointer to buffer containing
-      * stat data to store in varName. */
 {
   char string[30];
   NspSMatrix *S;
@@ -697,6 +697,18 @@ static NspSMatrix *StoreStatData(struct stat *statPtr)
   return S;
 }
 
+/**
+ * StoreStat:
+ * @S: a string Matrix 
+ * @i: an integer 
+ * @str1: a string 
+ * @str2: a string
+ * 
+ * stores @str1 and @str2 in string matrix @S at position @i and @i+11.
+ * 
+ * Returns: %OK or %FAIL 
+ **/
+
 static int StoreStat( NspSMatrix *S, int i, char *str1,char *str2)
 {
   char *loc ;
@@ -710,20 +722,14 @@ static int StoreStat( NspSMatrix *S, int i, char *str1,char *str2)
 }
 
 
-/*
- *
- * GetTypeFromMode --
- *
- *	Given a mode word, returns a string identifying the type of a
- *	file.
- *
- * Results:
- *	A static text string giving the file type from mode.
- *
- * Side effects:
- *	None.
- *
- */
+/**
+ * GetTypeFromMode:
+ * @mode: an integer 
+ * 
+ * returns a file type as a string from a mode description 
+ * 
+ * Returns: a static text string giving the file type from mode
+ **/
 
 static char *GetTypeFromMode(int mode)
 {
@@ -750,10 +756,8 @@ static char *GetTypeFromMode(int mode)
 }
 
 /*
- * TclFileAttrsCmd --
- *
- * Called by the previous interface when first argument if attributes
- * file('attributes',<name>,....)
+ * TclFileAttrsCmd: used by the file interface for dealing with 
+ * file attributes  file('attributes',<name>,....)
  */
 
 static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs) 
@@ -836,10 +840,8 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
 
 
 /*
- * InfoHostnameCmd --
- *
- *      Called to implement the "hostname" command that returns the
- *      host name. 
+ * int_sys_hostname: interface to the "hostname" command that returns the
+ * host name. 
  */
 
 int int_sys_hostname(Stack stack,int rhs,int opt,int lhs) 
@@ -853,8 +855,7 @@ int int_sys_hostname(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
- * int_pwd 
- *	This procedure is invoked to process the "pwd" command.
+ * int_pwd : interface to process the "pwd" command.
  */
 
 int int_pwd(Stack stack,int rhs,int opt,int lhs) 
@@ -872,7 +873,7 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
 }
 
 
-/*
+/* int_get_current_exec_dir: interface to get_current_exec_dir.
  *
  */
 
@@ -901,4 +902,5 @@ int int_get_current_exec_dir(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
+
 

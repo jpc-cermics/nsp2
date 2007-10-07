@@ -19,6 +19,14 @@ static int CopyRenameOneFile( char *source, char *dest, int copyFlag,int force);
 static char *FileBasename( char *path, nsp_tcldstring *bufferPtr);
 static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 
+/**
+ * nsp_absolute_file_name:
+ * @fname: a string 
+ * 
+ * returns the absolute path name corresponding to @fname.
+ * 
+ * Returns: a new string 
+ **/
 
 nsp_string nsp_absolute_file_name(char *fname)
 {
@@ -362,8 +370,7 @@ int nsp_file_delete_cmd(int argc,char **argv,int forceFlag)
  * Return value: %OK or %FAIL ? 
  **/
 
-static int
-CopyRenameOneFile( char *source, char *target, int copyFlag, int force)
+static int CopyRenameOneFile( char *source, char *target, int copyFlag, int force)
 {
     int result;
     nsp_tcldstring sourcePath, targetPath, errorBuffer;
@@ -649,7 +656,7 @@ static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
 
 /**
- * update_exec_dir:
+ * nsp_update_exec_dir:
  * @filename: a file name given on entry 
  * @exec_dir: the current value of exec directory in a string buffer of size @length.
  * @filename_exec: a string buffer of size @length.
@@ -663,7 +670,7 @@ static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
  * 
  **/
 
-void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length)
+void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length)
 {
   int path_type = nsp_get_path_type(filename);
   nsp_string dirname = nsp_dirname (filename);
@@ -707,7 +714,7 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
 }
 
 /**
- * update_exec_dir_from_dir:
+ * nsp_update_exec_dir_from_dir:
  * @dirname: a directory name given on entry 
  * @exec_dir: the current value of exec directory in a string buffer of size @length.
  * @length:  length of @exec_dir and @filename_exec
@@ -717,7 +724,7 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
  * 
  **/
 
-void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length)
+void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length)
 {
   int path_type = nsp_get_path_type(dirname);
   if ( dirname == NULL) return ;
@@ -1785,7 +1792,7 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 
 
 /*
- * int_glob:
+ * int_glob: interface to the glob command 
  *
  */
 

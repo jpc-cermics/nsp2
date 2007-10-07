@@ -1,7 +1,7 @@
 /* 
  * tclMain.c --
  *
- *	Main program for Tcl shells and other Tcl-based applications.
+ * Main program for Tcl shells and other Tcl-based applications.
  *
  * Copyright (c) 1988-1994 The Regents of the University of California.
  * Copyright (c) 1994-1996 Sun Microsystems, Inc.
@@ -9,7 +9,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclMain.c 1.54 97/08/07 19:04:43
  */
 
 #include "tclInt.h"
