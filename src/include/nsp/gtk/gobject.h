@@ -120,7 +120,7 @@ extern void nspg_closure_marshal(GClosure *closure,
 				 gpointer marshal_data);
 
 extern int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
-extern int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+extern int nsp_gtk_eval_function_by_name(const char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
 
 extern void nspg_unblock_threads(void);
 extern void nspg_block_threads(void);
