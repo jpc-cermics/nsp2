@@ -3,6 +3,10 @@
 
 #define INTERSIZ 256
 
+#ifdef __cplusplus
+extern "C" { 
+#endif 
+
 #include "nsp/math.h"
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
@@ -22,7 +26,10 @@ typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 /* typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[]); */
 
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
+
+#ifndef __cplusplus
 typedef int bool;
+#endif 
 
 #ifndef true 
 #define true TRUE 
@@ -44,7 +51,7 @@ extern int mxIsFull (const mxArray *ptr);
 extern int mxIsSparse (const mxArray *ptr);
 extern int mxIsComplex (const mxArray *ptr);
 extern double mxGetScalar (const mxArray *ptr);
-extern void mexErrMsgTxt (char *error_msg);
+extern void mexErrMsgTxt (const char *error_msg);
 
 extern mxArray *mxCreateFull (int m, int n, int it);
 extern mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it);
@@ -95,8 +102,6 @@ typedef int  mxClassID;
 
 extern mxClassID mxGetClassID(const mxArray *ptr) ;
 
-
-
 /* this must be done after the followind id's have 
  * been initialized 
  */
@@ -131,7 +136,7 @@ extern int mexPutVariable(const char *workspace, const char *var_name,mxArray *a
 
 extern mxArray *mxCreateCharMatrixFromStrings(int m, const char **str);
 
-extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[],char *command_name);
+extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[],const char *command_name);
 #define mexCallNsp mexCallMATLAB
 #define mexCallScilab mexCallMATLAB
 
@@ -205,14 +210,18 @@ extern void mxSetM(mxArray *ptr, mwSize m);
 extern mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax);
 
 extern mxArray *mxCreateNumericArray(int ndim, const int *dims, 
-				     mxClassID class, mxComplexity ComplexFlag);
+				     mxClassID xclass,mxComplexity ComplexFlag);
 extern void mxSetFieldByNumber(mxArray *array_ptr, int index,  
 			       int field_number, mxArray *value);
 
 extern void mxFreeSparseMtlbTriplet(const mxArray *ptr);
 extern void mxSparseMtlbTripletTonsp(const mxArray *ptr) ;
 
+extern void mexSetTrapFlag(int trapflag);
 
+#ifdef __cplusplus
+}
+#endif 
 
 #endif /* NSP_MEX */
 
