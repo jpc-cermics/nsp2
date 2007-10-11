@@ -507,7 +507,7 @@ double mxGetScalar(const mxArray *ptr)
  * 
  **/
 
-void mexErrMsgTxt(char *error_msg)
+void mexErrMsgTxt(const char *error_msg)
 {
   Scierror("Error in %s: ","mex");
   Scierror(error_msg);
@@ -1503,7 +1503,7 @@ int mxSetNzmax(mxArray *array_ptr,int n)
  **/
 
 int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,
-		  mxArray *prhs[],char *command_name)
+		  mxArray *prhs[],const char *command_name)
 {
   int i;
   for ( i= 0 ; i < nrhs ; i++) 
@@ -2551,3 +2551,7 @@ void mxSparseMtlbTripletTonsp(const mxArray *ptr)
 }
 
 
+void mexSetTrapFlag(int trapflag)
+{
+
+}
