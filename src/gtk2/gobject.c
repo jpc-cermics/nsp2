@@ -1417,7 +1417,7 @@ nspg_closure_marshal(GClosure *closure,
  * Return value: %OK or %FAIL
  **/
 
-static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
 
 int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
@@ -1425,7 +1425,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret);
 }
 
-static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
+static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
   int nargs = 0, i, n=0,rep =FAIL;
   stack_count++;
@@ -1494,7 +1494,7 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
  **/
 
 
-int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
+int nsp_gtk_eval_function_by_name(const char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
   /* we search here the function by name in the calling stacks
    * since it is used by scicos or mexcallmatlab.
