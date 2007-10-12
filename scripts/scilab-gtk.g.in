@@ -32,9 +32,9 @@ export PATH
 do_help()
 {
 echo "Usage:"
-echo     "	scilab [-ns -nw -display display -f file  -l lang -args arguments]"
-echo     "	scilab [-ns -nw -display display -e expression]"
-echo     "	scilab -link <objects>"
+echo     "	nsp [-ns -nw -display display -f file  -l lang -args arguments]"
+echo     "	nsp [-ns -nw -display display -e expression]"
+echo     "	nsp -link <objects>"
 exit
 }
 
