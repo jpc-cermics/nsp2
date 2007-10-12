@@ -551,8 +551,8 @@ main(int argc, char **argv)
 				GTK_RESIZE_IMMEDIATE);
   g_signal_connect(G_OBJECT(window), "delete_event",
 		   GTK_SIGNAL_FUNC(deleted_and_quit), window);
-  gtk_window_set_title (GTK_WINDOW (window), "Scilab");
-  gtk_window_set_wmclass (GTK_WINDOW (window), "scilab", "Scilab");
+  gtk_window_set_title (GTK_WINDOW (window), "Nsp");
+  gtk_window_set_wmclass (GTK_WINDOW (window), "nsp", "Nsp");
 
   /* create vbox */
   
