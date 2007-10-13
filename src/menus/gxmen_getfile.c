@@ -38,6 +38,7 @@
 menu_answer nsp_get_file_window(const char *title,const char *dirname,int action,char **file)
 {
   G_CONST_RETURN char *loc;
+  char *file_p;
   int result, n_actions = 3, action_length=0,active=0;
   menu_answer rep = menu_fail;
   GtkWidget *combo=NULL,  *window;
@@ -82,19 +83,16 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
 	    active = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
 	    action_length = strlen(actions[active])+3;
 	  }
+	/* useful for win32 \ in pathnames  */
+	if ((file_p = nsp_string_protect(loc)) == NULL) break;
     	/* take care to keep synchronised with "%s('%s');" */
-	if (( *file = new_nsp_string_n(strlen(loc)+6+action_length)) == NULL) 
-	  {
-	    rep = menu_fail;
-	  }
+	if (( *file = new_nsp_string_n(strlen(file_p)+6+action_length)) == NULL) break;
+	if ( action == TRUE ) 
+	  sprintf(*file,"%s('%s');",actions[active],file_p);
 	else 
-	  { 
-	    if ( action == TRUE ) 
-	      sprintf(*file,"%s('%s');",actions[active],loc);
-	    else 
-	      strcpy(*file,loc);
-	  }
-	rep = menu_ok;
+	  strcpy(*file,file_p);
+	nsp_string_destroy(&file_p);
+    	rep = menu_ok;
 	break;
       default:
 	rep = menu_cancel;
