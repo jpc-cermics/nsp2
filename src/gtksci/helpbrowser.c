@@ -811,7 +811,20 @@ static int nsp_help_fill_help_table(const char *index_file)
       *str='\0';
       /* fprintf(stderr,"val=[%s]\n",nsp_tcldstring_value(&name));*/
       /* need a join here */
+      /* Sciprintf("dirname for help [%s]\n",dirname); */
+#ifdef WIN32 
+      if ( strncmp(dirname+1,":",1)==0) 
+	{
+	  strcpy(buf,"//X");buf[2]=dirname[0];
+	}
+      else 
+	{
+	  buf[0]=dirname[0];buf[1]=dirname[1];
+	}
+      strcat(buf,dirname+2);
+#else 
       strcpy(buf,dirname);
+#endif 
       strcat(buf,"/");
       strcat(buf,nsp_tcldstring_value(&filename));
       if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),buf,-1))
@@ -862,16 +875,12 @@ int nsp_help_topic(const char *topic, char *buf)
     }
   else
     {
-      /* Sciprintf("%s --> %s\n",topic,((NspSMatrix *) Obj)->S[0]); */
-#if !defined(__MSC__) && ! defined(__MINGW32__)
       strcpy(buf,((NspSMatrix *) Obj)->S[0]);
-#else 
-      nsp_path_expand("NSP/man/html/generated/",buf,FSIZE);
-      strcat(buf,((NspSMatrix *) Obj)->S[0]);
-#endif 
+      /* Sciprintf("topic help file: [%s]\n",buf); */
     }
   return OK;
 }
+
 
 /*
 static void nsp_input_feed_example(char *example)
