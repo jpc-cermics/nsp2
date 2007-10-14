@@ -466,7 +466,7 @@ void set_nsp_env (void)
        */
       /* fprintf(stderr,"No SCI trying with %s\n",ProgramName); */
       abs_sci  = nsp_absolute_file_name(ProgramName);
-      /* fprintf(stderr,"Expanded to %s\n",abs_sci); */
+      /* fprintf(stderr,"Expanded to %s\n",abs_sci);  */
       if ( abs_sci == NULL) return;
       sci_env = malloc((strlen(abs_sci)+1+4)*sizeof(char));
       if ( sci_env != NULL) 
@@ -497,19 +497,19 @@ void set_nsp_env (void)
 		    {
 		      strcpy(sci_env,"SCI=");
 		      strcat(sci_env,cwd);
-		      putenv(sci_env);
+		      nsp_putenv(sci_env);
 		    }
 		  else 
-		    putenv("SCI=./");
+		    nsp_putenv("SCI=./");
 		}
 	      else 
 		{
-		  putenv("SCI=./");
+		  nsp_putenv("SCI=./");
 		}
 	    }
 	  else 
 	    {
-	      putenv(sci_env);
+	      nsp_putenv(sci_env);
 	    }
 	}
     }
@@ -520,7 +520,7 @@ void set_nsp_env (void)
       if ( nsp_env != NULL) 
 	{
 	  sprintf (nsp_env, "NSP=%s",p1);
-	  putenv(nsp_env);
+	  nsp_putenv(nsp_env);
 	}
     }
 }
