@@ -22,6 +22,8 @@ extern char *nsp_get_cwd (void);
 extern char *nsp_get_extension (char *name);
 extern char *nsp_get_user_home (char *name, nsp_tcldstring *bufferPtr);
 extern char *nsp_getenv (const char *name);
+extern void nsp_setenv(const char *name,const char *value);
+extern void nsp_unsetenv(const char *name);
 extern int nsp_chdir (char *dirName);
 extern int nsp_copy_directory (char *source,char *dest, nsp_tcldstring *errorPtr);
 extern int nsp_copy_file (char *source, char *dest);

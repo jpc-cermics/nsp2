@@ -30,15 +30,11 @@
 
 #include "nsp/interf.h"
 #include "nsp/system.h"
+#include "nsp/nsptcl.h"
 #include "regexp.h"
 
 /* defined in the tcl subdir 
  */
-
-extern char *nsp_getenv (char *name);
-extern void nsp_setenv (const char *name,const char *value);
-extern void nsp_unsetenv (const char *name);
-extern void nsp_tclplatform_init();
 
 extern function int_syscd;
 extern function int_sysfile;
@@ -176,7 +172,7 @@ static int int_setenv(Stack stack,int rhs,int opt,int lhs)
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((val = GetString(stack,2)) == (char*)0) return RET_BUG;
   nsp_setenv(envname, val);
-  nsp_tclplatform_init() ; /* XXXXXXXX : temporaire pour tester */
+  nsp_tclplatform_init() ; 
   /* XXXXXX setenv does not exists on all Ops 
   if ( setenv(envname,val,1) == -1 ) 
     {
@@ -198,9 +194,6 @@ static int int_unsetenv(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   nsp_unsetenv(envname);
-  /* XXXXXX setenv does not exists on all Ops 
-  unsetenv(envname);
-  */
   return 0;
 }
 

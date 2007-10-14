@@ -70,7 +70,7 @@ void set_nsp_tmpdir(void)
       if (! nsp_getenv("TEMP")) {
 	sprintf(tmp_dir,"C:/tmp/SD_%d_",(int) getpid());
       } else {
-	sprintf(tmp_dir,"%s\\SD_%d_",getenv("TEMP"),(int) getpid());
+	sprintf(tmp_dir,"%s\\SD_%d_",nsp_getenv("TEMP"),(int) getpid());
       }
       nsp_create_directory(tmp_dir);
 #else 
