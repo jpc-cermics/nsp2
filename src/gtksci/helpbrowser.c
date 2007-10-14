@@ -724,7 +724,27 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
     {
-      sprintf(buf,"%s/generated/manual.html",mandir);
+#ifdef WIN32 
+      /* X: -> //X/ and \ -> / */
+      if ( strncmp(mandir+1,":",1)==0) 
+	{
+	  char *str = mandir+2;
+	  int i;
+	  strcpy(buf,"//");buf[2]=mandir[0];
+	  for ( i = 0 ; i < strlen(str)+1 ; i++)
+	    {
+	      if ( str[i] == '\\') buf[i+2]='/';
+	      else buf[i+2]= str[i];
+	    }
+	}
+      else 
+	{
+	  strcat(buf,mandir);
+	}
+#else 
+      strcpy(buf,dirname);
+#endif 
+      strcat(buf,"/generated/manual.html");
       if ( window == NULL) 
 	open_browser_dialog (mandir,l,buf);
       else 
@@ -877,7 +897,7 @@ int nsp_help_topic(const char *topic, char *buf)
   else
     {
       strcpy(buf,((NspSMatrix *) Obj)->S[0]);
-      /* Sciprintf("topic help file: [%s]\n",buf); */
+      /* Sciprintf("topic help file: [%s]\n",buf);  */
     }
   return OK;
 }
