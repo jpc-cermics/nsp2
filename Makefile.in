@@ -114,12 +114,12 @@ install:
 	@cd demos ; make install;
 	@cd macros ; make install;
 	@cd man ; make install;
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/lib/nsp/bin/nsp
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/lib/nsp/bin/nsp
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/lib/nsp/bin/nsplibtool
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
 	@$(TOP)/config/install-sh $(opt_PROG) libtool $(prefix)/lib/nsp/
 	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(prefix)/lib/nsp/
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/bin/scilab
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/bin/nsp
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/bin/nsplibtool
 
 cvsclean::
