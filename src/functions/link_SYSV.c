@@ -329,7 +329,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
   static int count=0;
   int i=0;
   char *libs;
-  libs=getenv("SYSLIBS");
+  libs=nsp_getenv("SYSLIBS");
   Sciprintf("linking files ");
   while ( loaded_files[i] != NULL) 
     {

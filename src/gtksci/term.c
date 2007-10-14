@@ -634,8 +634,8 @@ int term_output(int argc, char **argv)
   SetScilabIO(Sciprint2vte);
 
   /* Have to do this early. */
-  if (getenv("VTE_PROFILE_MEMORY")) {
-    if (atol(getenv("VTE_PROFILE_MEMORY")) != 0) {
+  if (nsp_getenv("VTE_PROFILE_MEMORY")) {
+    if (atol(nsp_getenv("VTE_PROFILE_MEMORY")) != 0) {
       g_mem_set_vtable(glib_mem_profiler_table);
     }
   }

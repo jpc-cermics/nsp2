@@ -130,7 +130,7 @@ int F2C(dynload)(ii,ename1,loaded_files,err)
      int *err;
 {
    unsigned long epoint;
-   char str[1000] , tmp_file[80], prog[200],*libs,*getenv();
+   char str[1000] , tmp_file[80], prog[200],*libs;
 
    int readsize, totalsize, diff, n, p, i, nalloc,last;
    float x;
@@ -157,7 +157,7 @@ int F2C(dynload)(ii,ename1,loaded_files,err)
   sprintf(str,"lastlink %d, entry=%d\n",lastlink,*ii);Scistring(str);
 #endif
 
-   libs=getenv("SYSLIBS");
+   libs=nsp_getenv("SYSLIBS");
 
    strcpy(prog,"");
    getpath(prog);/* prog est le pathname du fichier executable*/
@@ -449,7 +449,6 @@ char name[];
 struct stat stbuf;
 short unsigned mode;
 char *searchpath, buf[200],prog[200];
-char *getenv();
 int kd, kf, j, i ,ok, km;
 
 F2C(getpro)(prog,sizeof(prog)-1);
@@ -459,7 +458,7 @@ if ( (index(name,'/')) != 0)
      return;
 
 /* on recupere la regle de recherche */
-if ( (searchpath=getenv("PATH")) == NULL)
+if ( (searchpath=nsp_getenv("PATH")) == NULL)
   {
     printf("variable PATH not defined\n");
     return;

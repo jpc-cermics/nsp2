@@ -9,6 +9,7 @@
 #include "../../pvm3/include/pvm3.h"
 #include "nsp/machine.h"
 #include "nsp/object.h"
+#include "nsp/nsptcl.h"
 #include "../system/files.h" /* FSIZE+1 */
 #include "sci_pvm.h"
 
@@ -27,7 +28,7 @@ int nsp_pvm_start(char *hostfile)
 {
   char path[FSIZE+1];
   struct stat buf;
-  char *home =getenv("HOME") , *sci = getenv("SCI");
+  char *home =nsp_getenv("HOME") , *sci = nsp_getenv("SCI");
   char * argv[2];
   int argc=0;
   argv[0] = "";

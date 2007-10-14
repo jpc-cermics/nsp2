@@ -37,6 +37,7 @@
 #include "../system/files.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h"
+#include "nsp/nsptcl.h"
 
 extern void create_nsp_about(void); 
 extern char GetDriver();
@@ -69,7 +70,7 @@ void create_plugged_main_menu(void)
   static GtkWidget *Plug;
   static GtkItemFactory *item_factory;
   GtkAccelGroup *accel_group = NULL ; 
-  char * plug_info = getenv("SCIWIN");
+  char * plug_info = nsp_getenv("SCIWIN");
 
   if ( plug_info == NULL) return ;
 
@@ -77,7 +78,7 @@ void create_plugged_main_menu(void)
 							  accel_group);
   
   if ( first == 0 ) {
-    Plug = gtk_plug_new(atoi(getenv("SCIWIN")));
+    Plug = gtk_plug_new(atoi(nsp_getenv("SCIWIN")));
     main_menu_entries = sci_window_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;
@@ -844,7 +845,7 @@ static void nspg_menu_print(int winid)
   char *printer,*p1;
   int colored,orientation,type;
   if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
-  if ( ( p1 = getenv("NSP_TMPDIR"))  == (char *) 0 )
+  if ( ( p1 = nsp_getenv("NSP_TMPDIR"))  == (char *) 0 )
     {
       sciprint("Cannot find environment variable NSP_TMPDIR\r\n");
     }

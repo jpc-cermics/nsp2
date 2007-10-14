@@ -38,6 +38,7 @@
 #include "nsp/sciio.h"
 #include "../system/files.h"
 #include "nsp/gtksci.h"
+#include "nsp/nsptcl.h"
 
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern void nsp_create_main_text_view(void);
@@ -65,7 +66,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 {
   if ( no_window == FALSE ) 
     {
-      char *shmid= getenv("SHMID");
+      char *shmid= nsp_getenv("SHMID");
       /* we are using a gtk widget app */
       nsp_in_gtk_window();
       /* initialise gtk */
@@ -176,10 +177,10 @@ static GtkWidget *status = NULL;
 static void create_scilab_status()
 {
   GtkWidget *Plug; 
-  char * plug_info = getenv("SCIINFO");
+  char * plug_info = nsp_getenv("SCIINFO");
   if ( plug_info == NULL) return ; 
 
-  Plug = gtk_plug_new(atoi(getenv("SCIINFO")));
+  Plug = gtk_plug_new(atoi(nsp_getenv("SCIINFO")));
   status  = gtk_statusbar_new ();
   gtk_container_add(GTK_CONTAINER(Plug), status);
   gtk_widget_show_all(Plug);
@@ -218,7 +219,7 @@ static char *get_shared(void)
 {
   int shmid;
   char *shm;
-  char *s= getenv("SHMID");
+  char *s= nsp_getenv("SHMID");
   
   if ( s == NULL) 
     {

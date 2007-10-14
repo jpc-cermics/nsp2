@@ -17,6 +17,7 @@
 #include "nsp/graphics/color.h"
 #include "../system/files.h" /* FSIZE */
 
+extern char *nsp_getenv (const char *name);
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
 static void WriteGeneric(char *string, int nobj, int sizeobj, const int *vx,const  int *vy, int sizev, int flag, const int *fvect);
@@ -1851,7 +1852,7 @@ static int nsp_ps_header(FILE *out,char *bbox)
   static char *buff = NULL;
   static int buflen = 512;
   char header[FSIZE];
-  char *env = getenv("SCI");
+  char *env = nsp_getenv("SCI");
   FILE *fd;
   int stop=0;
   if (env == NULL) 

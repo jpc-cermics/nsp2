@@ -458,7 +458,7 @@ void set_nsp_env (void)
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */
-  if ((p1 = getenv ("SCI")) == (char *) 0)
+  if ((p1 = nsp_getenv ("SCI")) == (char *) 0)
     {
       /* we should check here if path is absolute or not 
        * with nsp_get_path_type
@@ -513,7 +513,7 @@ void set_nsp_env (void)
 	}
     }
   /* NSP (copy of SCI  */
-  if (( p1 = getenv ("SCI")) != NULL )
+  if (( p1 = nsp_getenv ("SCI")) != NULL )
     {
       nsp_env = malloc((strlen(p1)+1+4)*sizeof(char));
       if ( nsp_env != NULL) 

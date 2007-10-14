@@ -50,6 +50,7 @@
 #include "../system/regexp.h"
 #include "nsp/object.h"
 #include "nsp/interf.h"
+#include "nsp/nsptcl.h"
 
 /*  defines  */
 
@@ -714,7 +715,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 {
   char buf[FSIZE+1];
   GPrintFunc old;
-  char *sci = getenv("SCI"); 
+  char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
@@ -889,7 +890,7 @@ static void nsp_input_feed_example(char *example)
   FILE *fd;
   gchar *fname,*instr; 
 
-  if (( tmpdir=getenv("NSP_TMPDIR")) == NULL) 
+  if (( tmpdir=nsp_getenv("NSP_TMPDIR")) == NULL) 
     {
       Sciprintf("NSP_TMPDIR not set \r\n");
       return;

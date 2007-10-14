@@ -941,7 +941,7 @@ static int translate(int ichar)
 static void init_io(void)
 {
   int  tgetent(char *, char *);
-  char *getenv(const char *);
+  char *nsp_getenv(const char *);
   char *tgetstr(char *, char **);
   char tc_buf[1024];       /* holds termcap buffer */
 #ifdef TERMCAP 
@@ -971,7 +971,7 @@ static void init_io(void)
 
 #ifdef TERMCAP
   /* get termcap translations */
-  if(tgetent(tc_buf, getenv("TERM")) == 1) {
+  if(tgetent(tc_buf, nsp_getenv("TERM")) == 1) {
     /* loop thru zero terminated list of input
      * capabilities */
     for(i = 0; *tc_capabilities[i]; i++) {
