@@ -1,4 +1,4 @@
-SHELL = /bin/sh
+SHELL=/bin/bash
 
 # voir http://john.regehr.org/latex/
 
