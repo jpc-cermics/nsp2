@@ -7,6 +7,8 @@
 #ifndef _REGEXP
 #define _REGEXP 1
 
+#include "nsp/dstring.h" 
+
 /* opaque structure to hide regexp */
 
 typedef struct Tcl_RegExp_ *Tcl_RegExp;
@@ -48,7 +50,6 @@ extern int tcl_reg_exec (regexp *prog, char *string, char *start);
 extern void tcl_reg_error (char *msg);
 extern char *tcl_get_reg_error (void);
 
-#include "dstring.h"
 extern int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,nsp_tcldstring *resultDString,
 			  int *nmatch,int all);
 

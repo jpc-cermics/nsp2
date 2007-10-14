@@ -10,7 +10,7 @@
  * XXX: could be replaced by similar structure from the Glib library.
  */
 
-#include "dstring.h"
+#include "nsp/dstring.h"
 
 #define ckalloc(x) malloc(x)
 #define ckfree(x)  free(x)

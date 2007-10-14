@@ -19,6 +19,7 @@
 #include "nsp/object.h"
 #include "nsp/stack.h"
 #include "nsp/interf.h"
+#include "../../files.h"
 
 /*
  * Common include files needed by most of the Tcl source files are
@@ -33,8 +34,6 @@
 #include <stdio.h>
 
 #include "tcl.h"
-#include "../../regexp.h"
-#include "../../dstring.h"
 
 #include <string.h>
 #include <ctype.h>

@@ -15,7 +15,8 @@
 #ifndef _TCL
 #define _TCL
 
-#include "../../dstring.h"
+#include "nsp/nsptcl.h"
+#include "../../regexp.h"
 
 /*
  * When version numbers change here, must also go into the following files

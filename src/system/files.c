@@ -22,6 +22,7 @@
 #include "files.h" 
 #include "nsp/sciio.h"
 #include "nsp/object.h"
+#include "nsp/nsptcl.h"
 #ifdef WIN32 
 #include "tcl/generic/tclInt.h"
 #endif 
@@ -66,7 +67,7 @@ void set_nsp_tmpdir(void)
     {
       first++;
 #ifdef WIN32 
-      if (!getenv("TEMP")) {
+      if (! nsp_getenv("TEMP")) {
 	sprintf(tmp_dir,"C:/tmp/SD_%d_",(int) getpid());
       } else {
 	sprintf(tmp_dir,"%s\\SD_%d_",getenv("TEMP"),(int) getpid());
@@ -78,7 +79,7 @@ void set_nsp_tmpdir(void)
       system(buf);
 #endif 
       sprintf(buf,"NSP_TMPDIR=%s",tmp_dir);
-      putenv(buf);
+      nsp_putenv(buf);
     }
 }
 
@@ -280,7 +281,7 @@ static int expand_aliases(char *env, char **alias,const char *in_name, char *out
 static int get_env(char *var,char *buf,int buflen,int iflag)
 {
   char *local;
-  if (( local=getenv(var)) == NULL)
+  if (( local=nsp_getenv(var)) == NULL)
     {
       if ( iflag == 1 ) Sciprintf("Warning: environment variable %s not found\n",var);
       return FAIL;

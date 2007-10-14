@@ -25,7 +25,6 @@
 #include "tclInt.h"
 #include "tclPort.h"
 #include "nsp/stack.h" 
-#include "../../files.h"
 
 /*
  * Prototypes for local procedures defined in this file:
