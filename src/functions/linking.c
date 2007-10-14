@@ -30,6 +30,8 @@
 #include "nsp/sciio.h"
 #include "nsp/string.h"
 #include "nsp/object.h"
+#include <nsp/nsptcl.h>
+
 #include "linking.h"
 #include "../system/files.h" /* FSIZE */
 
@@ -45,12 +47,12 @@ static int nsp_link_status (void) ;
 #define ENTRYMAX 200         /* maximum number of loaded shared libary 
 			      * and maximum number of entries in a shared library
 			      */
-typedef int (*function) ();
+typedef int (*l_function) ();
 
 typedef char Name[NAME_MAXL];   /* could be changed to dynamic structure */
 
 typedef struct { 
-  function epoint;            /* the entry point */ 
+  l_function epoint;            /* the entry point */ 
   Name     name;              /* entry point name */
   int      Nshared;           /* number of the shared file */
 } Epoints;
@@ -211,7 +213,7 @@ void GetDynFunc_obsolete(int ii, int (**realop)())
   if ( EP[ii].Nshared != -1 ) 
     *realop = EP[ii].epoint;
   else
-    *realop = (function) 0;
+    *realop = (l_function) 0;
 }
 
 /*

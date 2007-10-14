@@ -132,7 +132,7 @@ int nsp_link_status(void)
 #ifdef hppa 
 static function dlsym(void *handle, const char *symbol)
 {
-  function f;
+  l_function f;
   dl handle hd1 = (shl_t) handle;
   irep= shl_findsym(&hd1,symbol,TYPE_PROCEDURE,&f);
   return ( irep == -1 ) ? NULL: f;
@@ -260,7 +260,7 @@ static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
       Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
       return(OK);
     }
-  EP[NEpoints].epoint = (function) dlsym((void *) hd[ish].shl, enamebuf);
+  EP[NEpoints].epoint = (l_function) dlsym((void *) hd[ish].shl, enamebuf);
   if ( (unsigned long) EP[NEpoints].epoint == (unsigned long) 0 )
     {
 #ifndef hppa

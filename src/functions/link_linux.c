@@ -161,7 +161,7 @@ int F2C(dynload)(int *ii,char ename1[],char loaded_files[],int *err)
      int *ii;char ename1[],loaded_files[];int *err;
 #endif
 {
-  function func;
+  l_function func;
   char current_object_file[MAXCHAR];
   int i,j;
   char current_char;
@@ -246,8 +246,8 @@ int F2C(dynload)(int *ii,char ename1[],char loaded_files[],int *err)
   /* grap the entry point for function "ename"  */
   if (dld_function_executable_p (ename1))
     {
-      func = (function) dld_get_func (ename1);
-      if ( func  == (function) 0)
+      func = (l_function) dld_get_func (ename1);
+      if ( func  == (l_function) 0)
 	{
 	  Sciprintf("error when finding \"%s\" in \"%s\"\n",ename1,loaded_files);
 	    
@@ -278,7 +278,7 @@ int F2C(dynload1)(int *ii,char ename1[],char *loaded_files[],int *err)
      int *ii;char ename1[], *loaded_files[];int *err;
 #endif
 {
-  function func;
+  l_function func;
   int i,j;
 
 #ifdef DEBUG
@@ -334,8 +334,8 @@ int F2C(dynload1)(int *ii,char ename1[],char *loaded_files[],int *err)
   /* grap the entry point for function "ename"  */
   if (dld_function_executable_p (ename1))
     {
-      func = (function) dld_get_func (ename1);
-      if ( func  == (function) 0)
+      func = (l_function) dld_get_func (ename1);
+      if ( func  == (l_function) 0)
 	{
 	  Sciprintf("error when finding \"%s\" in \"%s\",... \n",ename1,loaded_files[0]);
 	  Sciprintf("dld_get_func error %s\n",dld_strerror (*err));

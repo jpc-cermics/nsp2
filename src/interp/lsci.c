@@ -37,6 +37,7 @@
 #endif
 #include <gtk/gtk.h>
 #include "nsp/gtksci.h"
+#include "nsp/nsptcl.h"
 #include "../system/files.h"
 
 /* FIXME: these is to be in a .h file */

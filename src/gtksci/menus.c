@@ -946,7 +946,7 @@ static void nspg_menu_load(int winid)
 static void nsp_menu_fileops(void)
 {
   menu_answer rep;
-  char * file = NULL, *file_p=NULL;
+  char * file = NULL;
   rep=nsp_get_file_window("File operations",NULL,1,&file);
   switch (rep) 
     {

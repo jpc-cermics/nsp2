@@ -1749,6 +1749,7 @@ NspObject *nsp_new_boolean_obj(int ival)
  * Return value: 0, 1 or 2
  **/
 
+#if 0
 static int get_dim_from_string(char *str)
 {
   switch(str[0])
@@ -1766,6 +1767,7 @@ static int get_dim_from_string(char *str)
       break;
     }
 }
+#endif 
 
 /**
  * GetDimArg:

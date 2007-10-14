@@ -407,13 +407,13 @@ bad:
    /* set the first entry up to the header value */
 
 #ifdef COFF
-   EP[*ii].epoint = (function)(aouthdr.entry?aouthdr.entry:aouthdr.text_start);
+   EP[*ii].epoint = (l_function)(aouthdr.entry?aouthdr.entry:aouthdr.text_start);
 #if defined mips
 #include <mips/cachectl.h>
    cacheflush(end, totalsize, BCACHE);
 #endif /* mips */
 #else
-   EP[*ii].epoint = (function) header.a_entry;
+   EP[*ii].epoint = (l_function) header.a_entry;
 
 #endif /* COFF */
    lastlink=lastlink+1;
@@ -421,8 +421,8 @@ badclose:
    close(p);
    unlink(tmp_file);
 #else /* _IBMR2 */
-   EP[*ii].epoint =(function) load(tmp_file,1, "");
-   if ( EP[*ii].epoint == (function) 0) {
+   EP[*ii].epoint =(l_function) load(tmp_file,1, "");
+   if ( EP[*ii].epoint == (l_function) 0) {
 	   sprintf (str,"ibm load routine failed: %s\n", sys_errlist[errno]);
 	   Scistring(str);
 	   *err = 6;

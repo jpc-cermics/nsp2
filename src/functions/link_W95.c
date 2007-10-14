@@ -175,7 +175,7 @@ static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
       return(OK);
     }
   hd1 = (HINSTANCE)  hd[ish].shl;
-  EP[NEpoints].epoint = (function) GetProcAddress (hd1,enamebuf);
+  EP[NEpoints].epoint = (l_function) GetProcAddress (hd1,enamebuf);
   if ( EP[NEpoints].epoint == NULL )
     {
       Sciprintf("%s is not an entry point \n",enamebuf);
