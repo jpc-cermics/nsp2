@@ -1005,7 +1005,7 @@ Tcl_PathType nsp_get_path_type( char *path)
   case TCL_PLATFORM_WINDOWS:
 
     if (path[0] != '~') {
-      Sciprintf("testing %s\n",path);
+      /* Sciprintf("testing %s\n",path); */
       /*
        * Since we have eliminated the easy cases, check for
        * drive relative paths using the regular expression.
