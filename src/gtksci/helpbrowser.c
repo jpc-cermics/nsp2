@@ -742,7 +742,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 	  strcat(buf,mandir);
 	}
 #else 
-      strcpy(buf,dirname);
+      strcpy(buf,mandir);
 #endif 
       strcat(buf,"/generated/manual.html");
       if ( window == NULL) 
