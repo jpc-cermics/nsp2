@@ -35,29 +35,36 @@ S=grand(action [,q1,....,ql])
   case you must apply one of the three first forms of the possible
   calling sequences to get an \verb!m x n! matrix. 
   The two firsts are equivalent if \verb!X! is a \verb!m x n! matrix, 
-  and the third one corresponds to vector valued distributions (e.g. multinomial, multivariate
+  and the third one corresponds to multivariate distributions (e.g. multinomial, multivariate
   gaussian, etc...) where a sample is a column vector (says of dim \verb!m!)
   and you get then \verb!n! such random vectors (as an \verb!m x n! matrix). 
   The last form is used to undertake various manipulations onto the base generators
   like changing the base generator or changing or retrieving its internal state (seeds), 
   etc ... These base generators give random integers following a
   uniform distribution on a large integer interval of the form $[0,n)$
-  (lgi). Others distributions are got from the lgi through various transformations.
+  (with $n=2^{32}$ in most cases). Others distributions are got from
+  this one through various transformations.
 \end{mandescription}
 
 %-- section-Getting random numbers from a given distribution
 \paragraph{Getting random numbers from a given distribution}
 
+\begin{description}
+\item[univariate distributions] (Rmk: distribution parameters
+  could be either scalars or vectors or matrices of same dimensions
+  than the wanted output matrix).
   
 \begin{itemize}
 \item \itemdesc{beta} \verb!Y=grand(m,n,"bet",a,b)! generates random variates from 
   the beta distribution with parameters $a$ and $b$ (positive reals).
 %  Related function(s) : \manlink{cdfbet}{cdfbet} .
+
 \item \itemdesc{binomial} 
   \verb!Y=grand(m,n,"bin",n,p)!  generates random variates from the binomial 
   distribution with parameters $n$ (positive integer) and $p$
   (real in [0,1]).
 %  Related function(s) : \manlink{binomial}{binomial} , \manlink{cdfbin}{cdfbin} .
+
 \item \itemdesc{negative binomial} 
   \verb!Y=grand(m,n,"nbn",r,p)! generates random variates from the negative binomial 
   distribution with parameters $r$ (positive real) and $p$ (real 
@@ -104,27 +111,50 @@ S=grand(action [,q1,....,ql])
   (non negative real). 
 % Related function(s) : \manlink{cdfnor}{cdfnor} .
   
-\item \itemdesc{multivariate gaussian (multivariate normal)}
-  \verb!Y=grand(n,"mn",Mean,Cov)! generates  $n$ multivariate normal random variates ; 
-  $Mean$ must be a $m \times 1$ matrix and $Cov$ a  $m \times m$ 
-  symetric positive definite matrix  ($Y$ is then a  $m \times n$
-  matrix).
-
 \item \itemdesc{geometric} \verb!Y=grand(m,n,"geom", p)! generates random variates from the geometric
   distribution with parameter $p$ (positive real): number of Bernoulli trials (with 
   probability succes of $p$) until a succes is met.
-
-\item \itemdesc{markov} 
-  \verb!Y=grand(n,"markov",P,x0)! generates \verb!n! successive states of a Markov chain 
-  described  by the transition matrix \verb!P!. Initial state is  given by 
-  \verb!x0!. If \verb!x0! is a matrix of size \verb!m=size(x0,"*")! 
-  then \verb!Y! is a matrix of size \verb!m x n!. \verb!Y(i,:)! is the sample 
-  path  obtained from initial state \verb!x0(i)!.
 
 \item \itemdesc{finite discrete distributions} 
   \verb!Y=grand(m,n,"disc",P)! could generates random integers from any
   finite discrete probability distribution given by the probability
   vector $P$ ($P(i)$ being the probability to get $X=i$).
+
+\item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",mu)! generates random variates from the Poisson 
+  distribution with mean $mu$ (non negative real).
+
+\item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
+  column vector $vect$.
+
+\item \itemdesc{uniform (def)} \verb!Y=grand(m,n,"def")! generates random variates from the uniform 
+  distribution over $[0,1)$ (1 is never returned).
+
+\item \itemdesc{uniform (unf)} \verb!Y=grand(m,n,"unf",low,high)! generates random reals uniformly distributed 
+    in $[low, high]$.
+
+\item \itemdesc{uniform (uin)} \verb!Y=grand(m,n,"uin",low,high)! generates random integers uniformly 
+      distributed between \verb!low! and \verb!high! (included). \verb!high!
+      and \verb!low! must be integers such that \verb!high-low+1 > 2,147,483,561!.
+
+\item \itemdesc{uniform (lgi)} \verb!Y=grand(m,n,"lgi")! returns the basic output of the current generator : random integers  
+      following a uniform distribution over : 
+      \begin{itemize}
+      \item \verb![0, 2^32 - 1]! for mt, kiss, fsultra and well1024a
+      \item \verb![0, 2^31 - 2]! for clcg4
+      \item \verb![0, 2147483561]! for clcg2
+      \end{itemize}
+
+\item \itemdesc{uniform (8bits)} \verb!Y=grand(m,n,"8bits")! generates random integers uniformly 
+      distributed over $[0,255]$.
+\end{itemize}
+
+\item[multivariate distributions]
+\begin{itemize}
+\item \itemdesc{multivariate gaussian (multivariate normal)}
+  \verb!Y=grand(n,"mn",Mean,Cov)! generates  $n$ multivariate normal random variates ; 
+  $Mean$ must be a $m \times 1$ matrix and $Cov$ a  $m \times m$ 
+  symetric positive definite matrix  ($Y$ is then a  $m \times n$
+  matrix).
 
 \item \itemdesc{multinomial} 
    \verb!Y=grand(n,"mul",nb,P)! generates \verb!n! observations from the Multinomial 
@@ -136,40 +166,26 @@ S=grand(action [,q1,....,ql])
   from multinomial distribution and \verb!Y(i,j)! the number of events falling in category 
   \verb!i! (for the \verb!j! th observation) (\verb!sum(Y(:,j)) = nb!).
   
-\item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",lambda)! generates random variates from the Poisson 
-  distribution with mean $lambda$ (positive real).
-
-\item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
-  column vector $vect$.
-
-\item \itemdesc{uniform (def)} \verb!Y=grand(m,n,"def")! generates random variates from the uniform 
-  distribution over $[0,1)$ (1 is never returned).
-
-\item \itemdesc{uniform (unf)} \verb!Y=grand(m,n,"unf",low,high)! generates random reals uniformly distributed 
-    in $[low, high]$.
-
-\item \itemdesc{uniform (uin)} \verb!Y=grand(m,n,"uin",Low,High)! generates random integers uniformly 
-      distributed between \verb!Low! and \verb!High! (included). \verb!High!
-      and \verb!Low! must be integers such that \verb!High-Low+1 > 2,147,483,561!.
-
-\item \itemdesc{uniform (lgi)} \verb!Y=grand(m,n,"lgi")! returns the basic output of the current generator : random integers  
-      following a uniform distribution over : 
-      \begin{itemize}
-      \item \verb![0, 2^32 - 1]! for mt, kiss, fsultra and well1024a
-      \item \verb![0, 2^31 - 2]! for clcg4
-      \item \verb![0, 2147483561]! for clcg2
-      \end{itemize}
-
-\item \itemdesc{uniform (8bits)} \verb!Y=grand(m,n,"8bits")! generates random integers uniformly 
-      distributed between $0$ and $255$ (included).
-
-\item \itemdesc{uniform (sph)}
+\item \itemdesc{uniform on the (surface of the) sphere}
   \verb!Y=grand(n,"sph",d)! generate ($n$) random points uniformly
   distributed on the unit sphere of \verb!R^d!.
+  
+\item \itemdesc{uniform on simplex}
+  \verb!Y=grand(n,"simp",dim)! generate ($n$) random points uniformly
+  distributed on the simplex $\{ (x_1,...,x_{dim}): x_i >=0, \sum
+  x_i = 1 \}$.
+
+\item \itemdesc{markov} 
+  \verb!Y=grand(n,"markov",P,x0)! generates \verb!n! successive states of a Markov chain 
+  described  by the transition matrix \verb!P!. Initial state is  given by 
+  \verb!x0!. If \verb!x0! is a matrix of size \verb!m=size(x0,"*")! 
+  then \verb!Y! is a matrix of size \verb!m x n!. \verb!Y(i,:)! is the sample 
+  path  obtained from initial state \verb!x0(i)!.
 
 \end{itemize}
-Rmk: in most cases the distribution parameters could be either scalars
-or matrices of same dimensions $(m,n)$ than the wanted output matrix.
+
+\end{description}
+
 
 %-- section-Set/get the current generator and its state
 \paragraph{Set/get the current generator and its state}
