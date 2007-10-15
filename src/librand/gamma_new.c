@@ -18,7 +18,7 @@
  */
 
 #include "grand.h"
-#include "../include/nsp/gsort.h"
+#include "nsp/gsort-p.h"
 #include <math.h>
 
 /**
