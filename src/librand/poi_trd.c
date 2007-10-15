@@ -85,7 +85,7 @@ int nsp_rand_poisson_init(double mu, PoissonStruct *P)
  **/
 int nsp_rand_poisson(PoissonStruct *P)
 {
-  unsigned int k;
+  int k;
   double f, pc, u, v, k_real, us;
 
   if ( P->mu <= SMALL_MEAN_POISSON )     /* INV algorithm with recording */
@@ -178,7 +178,7 @@ int nsp_rand_poisson_direct(double mu)
   int k;
   double s, p, u, v, us, smu, a, b, invalpha, vr, k_real;
 
-  if ( mu <= SMALL_MEAN_POISSON ) /* INV algorithm */
+  if ( mu <= SMALL_MEAN_POISSON_DIRECT_ALGO ) /* INV algorithm */
     {
       u = rand_ranf();
       k = 0;

@@ -48,6 +48,46 @@ static void display_gen_names()
   Sciprintf("%s\n",NspRNG[NbGenInNsp-1]->name_gen);
 }
 
+static int nsp_verify_probability_vector(double *p, int n)
+{
+  /* p is a probability vector for a discrete distribution 
+   * with n events ; only the probability of the n-1 first events
+   * is given, the last one being supposed to be 1- sum_k p_k.
+   * The code verify that all probability are positive or null.
+   */
+  int k;
+  double q;
+
+  q = 0.0;
+  for ( k = 0 ; k < n-1 ; k++ )
+    {
+      if ( ! (p[k] >= 0.0) )
+	return FAIL;
+      q += p[k];
+    }
+
+  /* probabilities must sum up to 1 */
+  if ( ! (q <= 1.0) )
+    return FAIL;
+
+  return OK;
+}
+
+static int nsp_verif_markov_initial_state(double *X0, int mnX0, int n)
+{
+  int i, j;
+  for ( i = 0 ; i < mnX0 ; i++ )
+    {
+      j = (int) X0[i];
+      if ( j < 1 || j > n )
+	{
+	  Scierror("Error: X0(%d) must be in the range [1,%d]\n", i+1, n);
+	  return FAIL;
+	}
+    }
+  return OK;
+}
+
 static int int_binold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   NspMatrix *M;
@@ -565,7 +605,7 @@ static int int_mn_part(Stack stack, int rhs, int opt, int lhs, int suite, int Re
   C2F(dpotrf)("L", &m, Cov->R, &m, &info, 1L);
   if ( info != 0 )
     {
-      Scierror("Error: COV not positive definite\n"); return RET_BUG;
+      Scierror("Error: Cov not positive definite\n"); return RET_BUG;
     }
   
   if ((Res = nsp_matrix_create(NVOID, 'r', m, nn))== NULLMAT) return RET_BUG;
@@ -607,6 +647,38 @@ static int int_sph_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   /* generation */
   for ( i=0 ; i < nn ; i++) 
     nsp_rand_sphere(Res->R + dim*i, dim);
+  
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+static int int_smplx_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  /* X = grand(1000,"simp",3);
+  */
+
+  NspMatrix *Res;
+  int nn, dim;
+
+  if ( rhs != 3 || suite != 3) 
+    { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'simp',dim))\n"); return RET_BUG;}
+
+  if ( ResL != 1 || ResC != 1 )
+    { 
+      Scierror("Error: first argument for 'simp' option must be the number of random vectors to generate\n"); 
+      return RET_BUG; 
+    }
+
+  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), nn, 1);
+
+  if ( GetScalarInt(stack,suite,&dim) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), dim, suite);
+  
+  if ((Res = nsp_matrix_create(NVOID, 'r', dim, nn))== NULLMAT) return RET_BUG;
+  
+  /* generation */
+  nsp_rand_simplex(Res->R, dim, nn);
   
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
@@ -687,7 +759,7 @@ static int int_mul_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 	}
 
       for ( i=0 ; i < nn ; i++)  
-	nsp_rand_multinomial1(q, key, I + ncat*i, ncat, N);
+	nsp_rand_multinomial_bis(q, key, I + ncat*i, ncat, N);
 
       FREE(q); FREE(key);
     }
@@ -699,7 +771,7 @@ static int int_mul_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 	  goto err;
 	}
       for ( i=0 ; i < nn ; i++)  
-	nsp_rand_multinomial2(P->R, I + ncat*i, ncat, N);
+	nsp_rand_multinomial(P->R, I + ncat*i, ncat, N);
     }
 
   B->convert = 'i';
@@ -1281,41 +1353,41 @@ static int int_exp_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
 
 static int int_nbn_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
-  NspMatrix *M, *n, *p;
+  NspMatrix *M, *r, *p;
   int i, i1, i2, inc1, inc2;
   if ( rhs != suite + 1) 
     { Scierror("Error: 2 parameters required for 'nbn' option (got %d)\n",rhs-suite+1); return RET_BUG;}
   
-  if ( (n = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  CheckScalarOrDims(NspFname(stack),suite,n,ResL,ResC);
+  if ( (r = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,r,ResL,ResC);
 
   if ( (p = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
   CheckScalarOrDims(NspFname(stack),suite+1,p,ResL,ResC);
 
   if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
 
-  if ( n->mn == 1  &&  p->mn == 1 )      /* fixed parameter(s) case */
+  if ( r->mn == 1  &&  p->mn == 1 )      /* fixed parameter(s) case */
     {
       NbnStruct N;
       i1 = i2 = 0;
-      if ( nsp_rand_nbn_init((int) n->R[0], p->R[0], &N) == FAIL ) goto err;
+      if ( nsp_rand_nbn_init( r->R[0], p->R[0], &N) == FAIL ) goto err;
       for ( i=0 ; i < M->mn ; i++) M->R[i]= nsp_rand_nbn(&N);
     }
   else                                   /* varying parameter(s) case */
     {
-      inc1 = n->mn == 1 ? 0 : 1;
+      inc1 = r->mn == 1 ? 0 : 1;
       inc2 = p->mn == 1 ? 0 : 1;
       for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
 	{
-	  if ( ! (((int) n->R[i1]) > 0.0 && 0 < p->R[i2] && p->R[i2] <= 1.0) ) goto err;
-	  M->R[i]= nsp_rand_nbn_direct((int) n->R[i1], p->R[i2]);
+	  if ( ! ( r->R[i1] > 0.0 && 0 < p->R[i2] && p->R[i2] <= 1.0) ) goto err;
+	  M->R[i]= nsp_rand_nbn_direct(r->R[i1], p->R[i2]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
   return 1;
 
  err:
-  Scierror("Error: grand(..'nbn',n,p) : n (=%d) <= 0 or p (=%g) not in (0,1] \n",(int) n->R[i1], p->R[i2]); 
+  Scierror("Error: grand(..'nbn',r,p) : r (=%d) <= 0 or p (=%g) not in (0,1] \n", r->R[i1], p->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -1356,7 +1428,7 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 
  err:
-  Scierror("Error: grand(..'bin',N,p) : N (=%d) < 1 or p (=%g) not in [0,1] \n",(int) N->R[i1], p->R[i2]); 
+  Scierror("Error: grand(..'bin',n,p) : n (=%d) < 1 or p (=%g) not in [0,1] \n",(int) N->R[i1], p->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }  
@@ -1697,6 +1769,9 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"sph")==0)
     return int_sph_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"simp")==0)
+    return int_smplx_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {

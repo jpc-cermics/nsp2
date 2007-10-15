@@ -18,6 +18,7 @@
  */
 
 #include "grand.h"
+#include "../include/nsp/gsort.h"
 #include <math.h>
 
 /**
@@ -470,7 +471,7 @@ double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc)
 
 /**
  * nsp_rand_nbn_init:
- * @n: first parameter of the distribution
+ * @r: first parameter of the distribution
  * @p: second parameter of the distribution
  * @N: a pointer to an allocated #NbnStruct
  * 
@@ -480,14 +481,14 @@ double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc)
  * Returns %OK or %FAIL
  *
  **/
-int nsp_rand_nbn_init(int n, double p, NbnStruct *N)
+int nsp_rand_nbn_init(double r, double p, NbnStruct *N)
 {
-  if ( ! ( 0 < n  &&  0.0 < p  &&  p <= 1.0 ) )
+  if ( ! ( 0 < r  &&  0.0 < p  &&  p <= 1.0 ) )
     return FAIL;
-  N->n = n;
+  N->r = r;
   N->p = p;
   N->coef = (1.0 - p)/p;
-  return nsp_rand_gamma_init((double) n, &(N->G));
+  return nsp_rand_gamma_init(r, &(N->G));
 }
 
 /**
@@ -515,12 +516,12 @@ int nsp_rand_nbn(NbnStruct *N)
 
 /**
  * nsp_rand_nbn_direct:
- * @n: first parameter of the negative binomial distribution
+ * @r: first parameter of the negative binomial distribution
  * @p: second parameter of the distribution
  * 
  * generates a random number from the negative binomial distribution.
- * When several Nbn(n,p) random deviates with the same fixed parameters 
- * n and p are needed, it is faster to use #nsp_rand_nbn.
+ * When several Nbn(r,p) random deviates with the same fixed parameters 
+ * r and p are needed, it is faster to use #nsp_rand_nbn.
  *
  * method: Algorithm from page 489 of Luc Devroye,
  * Non-Uniform Random Variate Generation.  Springer-Verlag,
@@ -530,10 +531,10 @@ int nsp_rand_nbn(NbnStruct *N)
  *
  * Returns an int
  **/
-int nsp_rand_nbn_direct(int n, double p)
+int nsp_rand_nbn_direct(double r, double p)
 {
   double Y;
-  Y = nsp_rand_gamma_direct((double) n)*(1.0-p)/p;
+  Y = nsp_rand_gamma_direct(r)*(1.0-p)/p;
   return nsp_rand_poisson_direct(Y);
 }
 
@@ -603,6 +604,43 @@ void nsp_rand_sphere(double *res, int n)
     res[i] /= r;
 }
 
+/**
+ * nsp_rand_simplex:
+ * @res: (output) random vectors generated (array of size m x n, must be pre-allocated)
+ * @m: space dimension of underlying space
+ * @n: number of random vectors to generate
+ *
+ * provide n random vectors uniformly distributed on the
+ * simplex  { (x_1,...,x_m): x_i >=0, sum_i x_i = 1 }
+ *
+ * method: see chap 5 (p 207) of Luc Devroye 's book, "Non-Uniform 
+ * Random Variate Generation".  Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ * 
+ **/
+void nsp_rand_simplex(double *res, int m, int n)
+{
+  int i,j,k;
+  double temp;
+  
+  for ( j = 0, k = 0 ; j < n ; j++, k+=m )
+    {
+      for ( i = 0 ; i < m ; i++ )
+	res[k+i] = rand_ranf();
+      /* sort the array */
+      
+      if ( m == 2 ) 
+	{
+	  if ( res[k] > res[k+1] ) { temp = res[k]; res[k] = res[k+1]; res[k+1] = temp; }
+	}	
+      else
+	nsp_qsort_bp_double( res+k, m, NULL, 0, 'i');
+
+      for ( i = m-1; i > 0 ; i-- )
+	res[k+i] -= res[k+i-1]; 
+    }
+}
 
 /**
  * nsp_rand_geom_init:
@@ -677,3 +715,124 @@ unsigned int nsp_rand_geom_direct(double p)
     return (unsigned int) (1.0 -  nsp_rand_exp_core()/nsp_log1p(-p));
 }
 
+
+/**
+ * nsp_rand_multinomial:
+ * @p: (input) probability vector (p[i] = probability to fall to category i)
+ * @ix: (output) output random vector (ix[i] = number of events which have fall
+ *      in category i)
+ * @ncat: (input) number of categories
+ * @n: (input) number of event to class in ncat categories.
+ *  
+ * generates a random vector from the multinomial distribution.
+ *
+ * method: algorithm chap 11 (p 559) of Luc Devroye 's book, "Non-Uniform 
+ * Random Variate Generation".  Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * When n is not enough bigger than ncat (says roughly n < 5 ncat) 
+ * #nsp_rand_multinomial_bis could be faster
+ *
+ **/
+void nsp_rand_multinomial(double *p, int *ix, int ncat, int n)
+{
+  int i, j;
+  double ptot = 1;
+  for ( i = 0 ; i < ncat-1 ; i++ )
+    {
+      ix[i] = nsp_rand_binomial_direct(n,p[i]/ptot);
+      n -= ix[i];
+      if ( n == 0 )
+	{
+	  for ( j = i+1 ; j <= ncat-1 ; j++ ) ix[j] = 0;
+	  return;
+	}
+      ptot -= p[i];
+    }
+  ix[ncat-1] = n;
+}
+
+/**
+ * nsp_rand_multinomial_bis:
+ * @q: (input) double array
+ * @key: (input) int array
+ * @ix: (output) output random vector (ix[i] = number of events which have fall
+ *      in category i)
+ * @ncat: (input) number of categories
+ * @n: (input) number of event to class in ncat categories.
+ *  
+ * generates a random vector from the multinomial distribution.
+ * @q and @key must be initialized with #nsp_guide_table_method 
+ * or #nsp_guide_table_method_bis from the probability vector.
+ *
+ * To use when n is small comparing to ncat (roughly n < 5 ncat) 
+ * else #nsp_rand_multinomial is faster.
+ *
+ **/
+void nsp_rand_multinomial_bis(double *q, int *key, int *ix, int ncat, int n)
+{
+  int i;
+  for ( i = 0 ; i < ncat ; i++ )
+    ix[i] = 0;
+
+  for ( i = 0 ; i < n ; i++ )
+    ix[nsp_rand_discrete_guide(q, key, ncat)]++;
+}
+
+
+
+/**
+ * nsp_markov_setup
+ * @p: (input) array of double of size n*n
+ * @q: (output) array of doubles of size (n+1)*(n+1) (must be pre-allocated)
+ * @key: (output) array of int of size n*n (must be pre-allocated)
+ * @n: (input) number of states of the Markov chain.
+ * 
+ * initialization routine for random generation of Markov chains with
+ * #nsp_rand_markov. p(i,j) = p(i * n*j) is the transition probability 
+ * from state i to state j.
+ *
+ * Returns %OK or %FAIL
+ *
+ **/
+int nsp_markov_setup(double *p, double *q, int *key, int n)
+{
+  int i;
+  for ( i = 0 ; i < n ; i++ )
+    if ( nsp_guide_table_method(&(p[i]), n, &(q[(n+1)*i]), &(key[n*i]), n) == FAIL )
+      return FAIL;
+  return OK;
+}
+
+
+/**
+ * nsp_rand_markov
+ * @q: (input) array of doubles of size (n+1)*(n+1)
+ * @key: (intput) array of int of size n*n
+ * @X0: (input) array of size X0mn, must be integer values in [1,n]
+ * @X: (output) array of double of size X0mn * m (must be pre-allocated)
+ * @n: (input) number of states of the Markov chain.
+ * @X0mn: (input) size of @X0
+ * @m: (input) number of steps in the markov process
+ * 
+ * random generation of a Markov chain. X0 is the vector of initial states
+ * Arrays @q and @key must initialized with #nsp_markov_setup from the
+ * probability matrix of the Markov chain.
+ *
+ **/
+void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn, int m)
+{
+  int i, j, k, icur;
+
+  for ( i = 0 ; i < X0mn ; i++ )
+    {
+      icur = (int) X0[i] - 1;
+      for ( j = 0, k = i ; j < m ; j++, k+=X0mn )
+	{
+	  icur = nsp_rand_discrete_guide(&q[(n+1)*icur], &key[n*icur], n);
+	  X[k] = (double) (icur + 1);
+	}
+    }
+}
+	 

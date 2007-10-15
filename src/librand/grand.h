@@ -6,8 +6,8 @@
 
 
 typedef struct _PoissonStruct PoissonStruct;
-
-#define SMALL_MEAN_POISSON 25
+#define SMALL_MEAN_POISSON_DIRECT_ALGO 15  /* 15 is the minimum value */
+#define SMALL_MEAN_POISSON 35
 struct _PoissonStruct
 {
   double mu;   /* main parameter */
@@ -78,8 +78,8 @@ typedef struct _NbnStruct NbnStruct;
 
 struct _NbnStruct
 {
+  double r;   /* main parameter */
   double p;   /* main parameter */
-  int n;      /* main parameter */
   double coef;
   GammaStruct G;
 } ;
@@ -196,9 +196,9 @@ extern int nsp_rand_binomial(BinomialStruct *B);
 extern int nsp_rand_binomial_direct(int n, double p);
 extern int rand_ignbin (int *n, double *pp);
 extern int rand_ignnbn (int n, double p);
-extern int nsp_rand_nbn_init(int n, double p, NbnStruct *N);
+extern int nsp_rand_nbn_init(double r, double p, NbnStruct *N);
 extern int nsp_rand_nbn(NbnStruct *N);
-extern int nsp_rand_nbn_direct(int n, double p);
+extern int nsp_rand_nbn_direct(double r, double p);
 extern int rand_ignpoi (double mu);
 extern int rand_lennob (char *string, long int string_len);
 extern int rand_phrtsd(char *phrase,int *seed1, int *seed2) ;
@@ -212,14 +212,13 @@ extern int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n,
 extern void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bits);
 extern void rand_unf_01_and_uin_0_127(double *u, int *k_7bits);
 extern double nsp_log1p(double x);
-extern void nsp_rand_multinomial1(double *q, int *key, int *ix, int ncat, int n);
-extern void nsp_rand_multinomial2(double *p, int *ix, int ncat, int n);
-extern int nsp_verify_probability_vector(double *p, int n);
+extern void nsp_rand_multinomial_bis(double *q, int *key, int *ix, int ncat, int n);
+extern void nsp_rand_multinomial(double *p, int *ix, int ncat, int n);
 extern int nsp_markov_setup(double *p, double *q, int *key, int n);
 extern void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int nn, int m);
-extern int nsp_verif_markov_initial_state(double *X0, int mnX0, int n);
 extern void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n);
 extern void nsp_rand_sphere(double *res, int n);
+extern void nsp_rand_simplex(double *res, int m, int n);
 extern double nsp_sinpi(double x);
 extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);
