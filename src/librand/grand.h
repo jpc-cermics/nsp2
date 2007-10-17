@@ -30,7 +30,8 @@ struct _PoissonStruct
 
 typedef struct _BinomialStruct BinomialStruct;
 
-#define SMALL_MEAN_BINOMIAL 15
+#define SMALL_MEAN_BINOMIAL_DIRECT_ALGO 15
+#define SMALL_MEAN_BINOMIAL 25
 struct _BinomialStruct
 {
   int n;
@@ -41,7 +42,7 @@ struct _BinomialStruct
   double cumpr[SMALL_MEAN_BINOMIAL+4];
   int taille;
   int K;
-  /* parameters used for np >= SMALL_MEAN_BINOMIAL */
+  /* parameters used for np > SMALL_MEAN_BINOMIAL */
   int m;
   double npq;
   double a;
@@ -218,6 +219,7 @@ extern int nsp_markov_setup(double *p, double *q, int *key, int n);
 extern void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int nn, int m);
 extern void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n);
 extern void nsp_rand_sphere(double *res, int n);
+extern void nsp_rand_in_sphere(double *res, int n);
 extern void nsp_rand_simplex(double *res, int m, int n);
 extern double nsp_sinpi(double x);
 extern double nsp_gamma(double x);

@@ -652,6 +652,36 @@ static int int_sph_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 }
 
+static int int_insph_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *Res;
+  int i, nn, dim;
+
+  if ( rhs != 3 || suite != 3) 
+    { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'insph',dim))\n"); return RET_BUG;}
+
+  if ( ResL != 1 || ResC != 1 )
+    { 
+      Scierror("Error: first argument for 'insph' option must be the number of random vectors to generate\n"); 
+      return RET_BUG; 
+    }
+
+  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), nn, 1);
+
+  if ( GetScalarInt(stack,suite,&dim) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), dim, suite);
+  
+  if ((Res = nsp_matrix_create(NVOID, 'r', dim, nn))== NULLMAT) return RET_BUG;
+  
+  /* generation */
+  for ( i=0 ; i < nn ; i++) 
+    nsp_rand_in_sphere(Res->R + dim*i, dim);
+  
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
 static int int_smplx_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   /* X = grand(1000,"simp",3);
@@ -1769,6 +1799,9 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"sph")==0)
     return int_sph_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"insph")==0)
+    return int_insph_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"simp")==0)
     return int_smplx_part(stack, rhs, opt, lhs, suite, ResL, ResC);
