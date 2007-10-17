@@ -888,3 +888,23 @@ void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn
     }
 }
 	 
+/**
+ * rand_genprm:
+ * @array:  array if double.
+ * @n: length of array
+ *
+ * generates a random permutation of @array.
+ *
+ **/
+void rand_genprm (double *array, int n)
+{
+  int i, iwhich;
+  double elt;
+  for ( i = 0 ; i < n-1 ; ++i )
+    {
+      iwhich = rand_ignuin (i, n-1);
+      elt = array[iwhich];
+      array[iwhich] = array[i];
+      array[i] = elt;
+    }
+}
