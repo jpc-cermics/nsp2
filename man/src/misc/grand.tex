@@ -123,9 +123,6 @@ S=grand(action [,q1,....,ql])
 \item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",mu)! generates random variates from the Poisson 
   distribution with mean $mu$ (non negative real).
 
-\item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
-  column vector $vect$.
-
 \item \itemdesc{uniform (def)} \verb!Y=grand(m,n,"def")! generates random variates from the uniform 
   distribution over $[0,1)$ (1 is never returned).
 
@@ -166,21 +163,36 @@ S=grand(action [,q1,....,ql])
   from multinomial distribution and \verb!Y(i,j)! the number of events falling in category 
   \verb!i! (for the \verb!j! th observation) (\verb!sum(Y(:,j)) = nb!).
   
-\item \itemdesc{uniform on the (surface of the) sphere}
+\item \itemdesc{uniform on the unit sphere}
   \verb!Y=grand(n,"sph",d)! generate ($n$) random points uniformly
-  distributed on the unit sphere of \verb!R^d!.
+  distributed on the unit sphere of \verb!R^d!. For a sphere of radius
+  $r$ and center $C$ (a column vector), you can use: 
+  \verb!Y = C*ones(1,n) + r*grand(n,"sph",d)!.
+  
+\item \itemdesc{uniform inside the unit sphere}
+  \verb!Y=grand(n,"insph",d)! generate ($n$) random points uniformly
+  distributed inside the unit sphere of \verb!R^d!. For a sphere of radius
+  $r$ and center $C$ (a column vector), you can use: 
+  \verb!Y = C*ones(1,n) + r*grand(n,"insph",d)!.
   
 \item \itemdesc{uniform on simplex}
   \verb!Y=grand(n,"simp",dim)! generate ($n$) random points uniformly
   distributed on the simplex $\{ (x_1,...,x_{dim}): x_i >=0, \sum
-  x_i = 1 \}$.
-
+  x_i = 1 \}$. To generate on the simplex with vertices (columnwise) 
+  stacked in the matrix \verb!P = [P_1 | .... | P_(dim+1)]! (the jth column of $P$ 
+  correspond to the j th  vertex), you can use:
+  \verb!coord = grand(n,"simp",dim); X = P*[coord; 1-sum(coord,1)];!.
+ 
 \item \itemdesc{markov} 
   \verb!Y=grand(n,"markov",P,x0)! generates \verb!n! successive states of a Markov chain 
   described  by the transition matrix \verb!P!. Initial state is  given by 
   \verb!x0!. If \verb!x0! is a matrix of size \verb!m=size(x0,"*")! 
   then \verb!Y! is a matrix of size \verb!m x n!. \verb!Y(i,:)! is the sample 
   path  obtained from initial state \verb!x0(i)!.
+
+\item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
+  column vector $vect$ (in a uniform way over the all $n!$ possible such
+  permutations).
 
 \end{itemize}
 
