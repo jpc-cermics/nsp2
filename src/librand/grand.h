@@ -209,7 +209,6 @@ extern int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n
 extern int nsp_guide_table_method_bis(double *p, double *q, int *key, int n);
 extern int nsp_rand_discrete_guide(double *q, int *key, int n);
 extern int nsp_rand_discrete_alias(double *q, int *j, int n);
-extern int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n, int mn);
 extern void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bits);
 extern void rand_unf_01_and_uin_0_127(double *u, int *k_7bits);
 extern double nsp_log1p(double x);

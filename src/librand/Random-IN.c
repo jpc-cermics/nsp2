@@ -88,6 +88,20 @@ static int nsp_verif_markov_initial_state(double *X0, int mnX0, int n)
   return OK;
 }
 
+static int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n, int mn)
+{
+  int i;
+
+  if ( nsp_guide_table_method(p, 1, q, key, n) == FAIL ) 
+    return FAIL;
+  
+  for ( i = 0 ; i < mn ; i++ )
+    Res[i] = 1.0 + (double) nsp_rand_discrete_guide(q, key, n);
+
+  return OK;
+}
+
+
 static int int_binold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   NspMatrix *M;
@@ -541,7 +555,7 @@ static int int_markov_part(Stack stack, int rhs, int opt, int lhs, int suite, in
   CheckNonNegative(NspFname(stack), nn, 1);
 
   if ((P = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  if ( ! ( P->m == P->n  &&  P->m >= 1 ) )
+  if ( ! ( (P->m == P->n  &&  P->m >= 1) || (P->m == 1 &&  P->n >= 2) ) )
     { 
       Scierror("Error: P must be a square matrix\n");return RET_BUG;
     }
@@ -551,16 +565,29 @@ static int int_markov_part(Stack stack, int rhs, int opt, int lhs, int suite, in
   
   if ((Res = nsp_matrix_create(NVOID,'r', X0->mn, nn))== NULLMAT) return RET_BUG;
   
-  if ( (q =nsp_alloc_work_doubles(P->n*(P->n+1))) == NULL || (key =nsp_alloc_work_int(P->n*P->n)) == NULL )
-    goto err;
-  
-  if ( nsp_markov_setup(P->R, q, key, P->n) == FAIL )
+  if ( P->m == 1  && P->n >= 2 )   /* discrete distribution */
     {
-      Scierror("Error: incorrect probability matrix\n"); goto err;
+      Sciprintf("Warning: it is better to use directly option 'disc'\n");
+      if ( (q =nsp_alloc_work_doubles(P->n+1)) == NULL || (key =nsp_alloc_work_int(P->n)) == NULL )
+	goto err;
+      if ( nsp_rand_discrete(P->R, q, Res->R, key, P->n, X0->mn*nn) == FAIL )
+	{
+	  Scierror("Error: incorrect probability vector\n"); goto err;
+	}
+    }
+  else                             /* markov case */
+    {
+      if ( (q =nsp_alloc_work_doubles(P->n*(P->n+1))) == NULL || (key =nsp_alloc_work_int(P->n*P->n)) == NULL )
+	goto err;
+  
+      if ( nsp_markov_setup(P->R, q, key, P->n) == FAIL )
+	{
+	  Scierror("Error: incorrect probability matrix\n"); goto err;
+	}
+
+      nsp_rand_markov(q, key, X0->R, Res->R, P->n, X0->mn, nn);
     }
 
-  nsp_rand_markov(q, key, X0->R, Res->R, P->n, X0->mn, nn);
-  
   FREE(q); FREE(key);
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
