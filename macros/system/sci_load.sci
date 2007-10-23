@@ -29,7 +29,7 @@ function sci_load(fname,varargin)
       return;
     end
   end
-  F1=fopen(fname,mode='r');
+  F1=fopen(fname,mode='rb');
   // Note that id1=F1.get[n=4*6,type='c'];
   // does not work when the codes are negatives.
   while %t then 
@@ -299,7 +299,7 @@ function sci_save(fname,varargopt)
     error("You must specify the names of arguments to be saved as name=value");
     return;
   end
-  F1=fopen(fname,mode='w');
+  F1=fopen(fname,mode='wb');
   for i=1:size(S,'*');
     vname=S(i);
     id=str2scilab_code(vname);
