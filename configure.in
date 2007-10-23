@@ -449,6 +449,7 @@ case "$host" in
 # mingw32 is detected 
 # this is the case when cross compiling 
    *-*-mingw32*)
+    MINGW32=yes
     SCILABSCRIPT=scilab-gcwin32.g
     LIBXDR_LOCAL='libxdr'
     LIBXDR=libs/xdr.a
@@ -927,7 +928,7 @@ LIBS=$ac_save_LIBS
 # check first for vte then for zvt 
 # but not for mingw32 compilation. 
 
-if test "$host_alias" != "mingw32" ; then 
+if test "$MINGW32" != "yes" ; then 
 ac_save_LIBS="$LIBS"
 LIBS=`pkg-config vte --cflags --libs` 
 VTE=no 
