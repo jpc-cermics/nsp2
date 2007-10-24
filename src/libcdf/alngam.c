@@ -161,16 +161,13 @@ double cdf_alngam (double x)
       else
 	{
 	  n = 1 + (int) (12. - x);  /* correction bruno */
-	  if ((n > 0))
+	  prod = 1.;
+	  for (i = 0; i < n; ++i)
 	    {
-	      prod = 1.;
-	      for (i = 0; i < n; ++i)
-		{
-		  prod *= x + ((double) (i));
-		}
-	      offset -= log (prod);
-	      xx = x + (double) n;
+	      prod *= x + ((double) (i));
 	    }
+	  offset -= log (prod);
+	  xx = x + (double) n;
 	}
       /* now xx is in the range >= 12  */
       d2 = xx;

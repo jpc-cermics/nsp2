@@ -42,6 +42,7 @@ extern double cdf_rcomp (double a, double x);
 extern double cdf_rexp (double x);
 extern double cdf_rlog (double x);
 extern double cdf_rlog1 (double x);
+extern double cdf_rlog1_old (double x);
 extern double cdf_spmpar (int );
 extern double cdf_stvaln (double *p);
 extern int cdf_dstinv (const double *zsmall,const double *zbig,const double *zabsst,const double *zrelst,
