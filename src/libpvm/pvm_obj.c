@@ -24,9 +24,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../../pvm3/include/pvm3.h"
 #include "nsp/machine.h"
 #include "nsp/object.h"
+#include "../../pvm3/include/pvm3.h"
 #include "sci_pvm.h"
 
 

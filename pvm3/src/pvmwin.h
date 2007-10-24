@@ -39,7 +39,9 @@
 #define __fortran __stdcall
 #endif
 
+#ifndef STRICT 
 #define STRICT
+#endif 
 
 #include <sys/timeb.h>
 #include <time.h>
@@ -109,6 +111,7 @@
 #define MAXHOSTNAMELEN 64
 #define MAXPATHLEN 64
 	   
+/* 
 #ifndef TIME
 #define TIME
 struct timezone {
@@ -116,10 +119,12 @@ struct timezone {
 	int tz_dsttime;
 };
 #endif
+*/
+
 
 
 /* to keep the compiler satisfied */
-extern int gettimeofday(struct timeval *, struct timezone *);
+/* extern int gettimeofday(struct timeval *, struct timezone *); */
 extern char *MyGetUserName();
 extern int kill(int,int, int);
  

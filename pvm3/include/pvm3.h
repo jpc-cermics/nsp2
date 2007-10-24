@@ -35,6 +35,9 @@
  *	Libpvm3 includes.
  *
  * $Log$
+ * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:07  stochopt
  * Imported files
  *
@@ -299,9 +302,9 @@
 #define PVM_PATCH_VERSION	4
 
 #ifndef WIN32
-#include	<sys/time.h>
+#include <sys/time.h>
 #else
-#include "pvmwin.h"
+#include "../src/pvmwin.h"
 #include <sys/timeb.h>
 #include <time.h>
 #endif

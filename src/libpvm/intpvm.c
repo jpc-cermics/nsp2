@@ -26,11 +26,12 @@
 
 #include <string.h> 
 #include <sys/time.h>
-#include "../../pvm3/include/pvm3.h"
 #include "nsp/machine.h"
 #include "nsp/interf.h"
 #include "nsp/stack.h"
 #include "../system/files.h" /* FSIZE+1 */
+#include "../../pvm3/include/pvm3.h"
+
 #include "sci_pvm.h"
 
 /* if set to one error in pvm 
