@@ -80,9 +80,9 @@
  * request.
  */
 enum xdr_op {
-	XDR_ENCODE=0,
-	XDR_DECODE=1,
-	XDR_FREE=2
+  XDR_ENCODE=0,
+  XDR_DECODE=1,
+  XDR_FREE=2
 };
 
 /*
@@ -90,7 +90,7 @@ enum xdr_op {
  */
 #define BYTES_PER_XDR_UNIT	(4)
 #define RNDUP(x)  ((((x) + BYTES_PER_XDR_UNIT - 1) / BYTES_PER_XDR_UNIT) \
-		    * BYTES_PER_XDR_UNIT)
+		   * BYTES_PER_XDR_UNIT)
 
 /*
  * A xdrproc_t exists for each data type which is to be encoded or decoded.
@@ -110,21 +110,21 @@ typedef	bool_t (*xdrproc_t)();
  * and two private fields for the use of the particular implementation.
  */
 typedef struct {
-	enum xdr_op	x_op;		/* operation; fast additional param */
-	struct xdr_ops {
-		bool_t	(*x_getlong)();	/* get a long from underlying stream */
-		bool_t	(*x_putlong)();	/* put a long to " */
-		bool_t	(*x_getbytes)();/* get some bytes from " */
-		bool_t	(*x_putbytes)();/* put some bytes to " */
-		u_int	(*x_getpostn)();/* returns bytes off from beginning */
-		bool_t  (*x_setpostn)();/* lets you reposition the stream */
-		long *	(*x_inline)();	/* buf quick ptr to buffered data */
-		void	(*x_destroy)();	/* free privates of this xdr_stream */
-	} *x_ops;
-	caddr_t 	x_public;	/* users' data */
-	caddr_t		x_private;	/* pointer to private data */
-	caddr_t 	x_base;		/* private used for position info */
-	int		x_handy;	/* extra private word */
+  enum xdr_op	x_op;		/* operation; fast additional param */
+  struct xdr_ops {
+    bool_t	(*x_getlong)();	/* get a long from underlying stream */
+    bool_t	(*x_putlong)();	/* put a long to " */
+    bool_t	(*x_getbytes)();/* get some bytes from " */
+    bool_t	(*x_putbytes)();/* put some bytes to " */
+    u_int	(*x_getpostn)();/* returns bytes off from beginning */
+    bool_t  (*x_setpostn)();/* lets you reposition the stream */
+    long *	(*x_inline)();	/* buf quick ptr to buffered data */
+    void	(*x_destroy)();	/* free privates of this xdr_stream */
+  } *x_ops;
+  caddr_t 	x_public;	/* users' data */
+  caddr_t		x_private;	/* pointer to private data */
+  caddr_t 	x_base;		/* private used for position info */
+  int		x_handy;	/* extra private word */
 } XDR;
 
 /*
@@ -136,47 +136,47 @@ typedef struct {
  * u_int	 len;
  * u_int	 pos;
  */
-#define XDR_GETLONG(xdrs, longp)			\
-	(*(xdrs)->x_ops->x_getlong)(xdrs, longp)
-#define xdr_getlong(xdrs, longp)			\
-	(*(xdrs)->x_ops->x_getlong)(xdrs, longp)
+#define XDR_GETLONG(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
+#define xdr_getlong(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
 
-#define XDR_PUTLONG(xdrs, longp)			\
-	(*(xdrs)->x_ops->x_putlong)(xdrs, longp)
-#define xdr_putlong(xdrs, longp)			\
-	(*(xdrs)->x_ops->x_putlong)(xdrs, longp)
+#define XDR_PUTLONG(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
+#define xdr_putlong(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
 
-#define XDR_GETBYTES(xdrs, addr, len)			\
-	(*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
-#define xdr_getbytes(xdrs, addr, len)			\
-	(*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
+#define XDR_GETBYTES(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
+#define xdr_getbytes(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
 
-#define XDR_PUTBYTES(xdrs, addr, len)			\
-	(*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
-#define xdr_putbytes(xdrs, addr, len)			\
-	(*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
+#define XDR_PUTBYTES(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
+#define xdr_putbytes(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 
-#define XDR_GETPOS(xdrs)				\
-	(*(xdrs)->x_ops->x_getpostn)(xdrs)
-#define xdr_getpos(xdrs)				\
-	(*(xdrs)->x_ops->x_getpostn)(xdrs)
+#define XDR_GETPOS(xdrs)			\
+  (*(xdrs)->x_ops->x_getpostn)(xdrs)
+#define xdr_getpos(xdrs)			\
+  (*(xdrs)->x_ops->x_getpostn)(xdrs)
 
-#define XDR_SETPOS(xdrs, pos)				\
-	(*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
-#define xdr_setpos(xdrs, pos)				\
-	(*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
+#define XDR_SETPOS(xdrs, pos)			\
+  (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
+#define xdr_setpos(xdrs, pos)			\
+  (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
 
-#define	XDR_INLINE(xdrs, len)				\
-	(*(xdrs)->x_ops->x_inline)(xdrs, len)
-#define	xdr_inline(xdrs, len)				\
-	(*(xdrs)->x_ops->x_inline)(xdrs, len)
+#define	XDR_INLINE(xdrs, len)			\
+  (*(xdrs)->x_ops->x_inline)(xdrs, len)
+#define	xdr_inline(xdrs, len)			\
+  (*(xdrs)->x_ops->x_inline)(xdrs, len)
 
-#define	XDR_DESTROY(xdrs)				\
-	if ((xdrs)->x_ops->x_destroy) 			\
-		(*(xdrs)->x_ops->x_destroy)(xdrs)
-#define	xdr_destroy(xdrs)				\
-	if ((xdrs)->x_ops->x_destroy) 			\
-		(*(xdrs)->x_ops->x_destroy)(xdrs)
+#define	XDR_DESTROY(xdrs)			\
+  if ((xdrs)->x_ops->x_destroy)			\
+    (*(xdrs)->x_ops->x_destroy)(xdrs)
+#define	xdr_destroy(xdrs)			\
+  if ((xdrs)->x_ops->x_destroy)			\
+    (*(xdrs)->x_ops->x_destroy)(xdrs)
 
 /*
  * Support struct for discriminated unions.
@@ -190,8 +190,8 @@ typedef struct {
  */
 #define NULL_xdrproc_t ((xdrproc_t)0)
 struct xdr_discrim {
-	int	value;
-	xdrproc_t proc;
+  int	value;
+  xdrproc_t proc;
 };
 
 /*
@@ -259,8 +259,8 @@ extern void	xdr_free 	__P((xdrproc_t, char *));
  */
 #define MAX_NETOBJ_SZ 1024
 struct netobj {
-	u_int	n_len;
-	char	*n_bytes;
+  u_int	n_len;
+  char	*n_bytes;
 };
 typedef struct netobj netobj;
 extern bool_t   xdr_netobj();

@@ -78,11 +78,11 @@ typedef char * caddr_t;
 
 /** for MINGWIN32   
     replaced by winsock.h
-#ifndef PASCAL 
-#define PASCAL      __stdcall
-#endif
-u_long PASCAL htonl (u_long hostlong);
-u_long PASCAL ntohl (u_long netlong);
+    #ifndef PASCAL 
+    #define PASCAL      __stdcall
+    #endif
+    u_long PASCAL htonl (u_long hostlong);
+    u_long PASCAL ntohl (u_long netlong);
 **/
 
 #ifdef __MINGW32__
