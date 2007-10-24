@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Mr. pvm daemon.
  *
  * $Log$
+ * Revision 1.3  2005/07/20 14:03:20  jpc
+ * Fedora core 4 updates
+ *
  * Revision 1.2  2005/05/17 16:20:47  jpc
  * gcc4
  *
@@ -620,8 +623,9 @@ static char rcsid[] =
 #include <pvm3.h>
 
 #if defined(WIN32) || defined(CYGWIN)
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h> 
+
 #else
 #include <rpc/types.h>
 #include <rpc/xdr.h>

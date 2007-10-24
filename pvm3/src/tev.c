@@ -44,8 +44,8 @@ static char rcsid[] =
 #include <pvm3.h>
 
 #if defined(WIN32) || defined(CYGWIN)
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h> 
 #else
 #include <rpc/types.h>
 #include <rpc/xdr.h>

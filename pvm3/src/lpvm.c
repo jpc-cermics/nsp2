@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Libpvm core for unix environment.
  *
  * $Log$
+ * Revision 1.2  2005/07/20 14:03:20  jpc
+ * Fedora core 4 updates
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
  * Imported sources
  *
@@ -583,8 +586,9 @@ static char rcsid[] =
 #include <pvm3.h>
 
 #if defined(WIN32) || defined(CYGWIN)
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h> 
+
 #else
 #include <rpc/types.h>
 #include <rpc/xdr.h>
@@ -728,7 +732,7 @@ extern int nAlert;
 #endif
 
 #ifdef WIN32
-int int_compare(const void *i, const void *j);
+static int int_compare(const void *i, const void *j);
 #endif
 
 /**************************

@@ -65,10 +65,11 @@
 
 #ifdef STDC_HEADERS
 #include <stdlib.h>
-#else
-char *malloc ();
-char *realloc ();
 #endif
+#ifdef WIN32 
+#include <stdlib.h>
+#endif 
+
 
 
 /* Define the syntax stuff for \<, \>, etc.  */

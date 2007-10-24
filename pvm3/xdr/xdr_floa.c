@@ -43,8 +43,8 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
  
 #include <stdio.h>
 
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h>
 
 /*
  * NB: Not portable.

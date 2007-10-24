@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Support routines for pvmd in unix environment.
  *
  * $Log$
+ * Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *
@@ -145,8 +148,9 @@ static char rcsid[] =
 #include <pvm3.h>
 
 #if defined(WIN32) || defined(CYGWIN)
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h> 
+
 #else
 #include <rpc/types.h>
 #include <rpc/xdr.h>

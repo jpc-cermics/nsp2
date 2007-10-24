@@ -433,7 +433,7 @@ HANDLE f;
 char *s;
 int size;
 {
-	int sizewritten=0;
+	DWORD sizewritten=0;
 
 	if (!WriteFile(f,s,size,&sizewritten,NULL)) {
 		pvmlogprintf("Could not write to file :%d \n",GetLastError());
@@ -450,7 +450,7 @@ HANDLE f;
 char *s;
 int size;
 {
-	int sizeread=0;
+	DWORD sizeread=0;
 	if (!ReadFile(f,s,size,&sizeread,NULL)) {
 		pvmlogprintf("Could not read data from file :%d \n",
 				GetLastError());

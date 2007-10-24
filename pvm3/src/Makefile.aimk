@@ -374,12 +374,18 @@ amem.o:	$(SDIR)/amem.s
 ddpro.o:	$(SDIR)/ddpro.c
 	@echo compiling ddpro.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/ddpro.c
+
 host.o:	$(SDIR)/host.c
 	@echo compiling host.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/host.c
 hoster.o:	$(SDIR)/hoster.c
 	@echo compiling hoster.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/hoster.c
+
+hoster-void.o: 	$(SDIR)/hoster-void.c
+	@echo compiling  hoster-void.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/hoster-void.c
+
 imalloc.o:	$(SDIR)/imalloc.c
 	@echo compiling imalloc.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/imalloc.c
@@ -515,6 +521,7 @@ pvmregex.o:	$(REGEXDIR)/pvmregex.o
 	cp $(REGEXDIR)/pvmregex.o .
 regex.o:	$(REGEXDIR)/regex.o
 	cp $(REGEXDIR)/regex.o .
+
 $(REGEXDIR)/pvmregex.o:	$(REGEXCP)
 	cd $(REGEXDIR) ; $(MAKE) $(REGEXOPTS) pvmregex.o
 $(REGEXDIR)/regex.o:	$(REGEXCP)

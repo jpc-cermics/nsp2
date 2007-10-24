@@ -36,6 +36,9 @@ static char rcsid[] =
  *	General PVM Globals.
  *
  * $Log$
+ * Revision 1.2  2005/07/20 08:13:44  jpc
+ * gcc4.0
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
  * Imported sources
  *
@@ -147,8 +150,8 @@ static char rcsid[] =
 #include <pvm3.h>
 
 #if defined(WIN32) || defined(CYGWIN)
-#include "..\xdr\types.h"
-#include "..\xdr\xdr.h"
+#include <../xdr/types.h>
+#include <../xdr/xdr.h> 
 #else
 #include <rpc/types.h>
 #include <rpc/xdr.h>
