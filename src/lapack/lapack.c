@@ -2514,6 +2514,12 @@ int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
     rcond = Max(A->m,A->n)*nsp_dlamch("eps");
   else 
     rcond = *Rcond;
+  
+  if ( A->m != B->m )
+    {
+      Scierror("Error: incompatible row dimensions in lsq\n");
+      return FAIL;
+    }
 
   if ( A->rc_type == 'c' ) 
     {
@@ -2544,6 +2550,13 @@ static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
   int *jpvt = NULL, info, lwork;
   double qrwork[1], *rwork = NULL;
 
+  if ( A->m == 0 || A->n == 0 || B->m == 0 || B->n ==0 ) 
+    {
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
+      for ( j= 0 ; j < B->mn; j++) B->R[j]=0.0;
+      return OK;
+    }
+
   if ( mx > mB )
     /* enlarge B so that it can contains the solution x (needed by lapack) */
     {
@@ -2557,6 +2570,7 @@ static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
   else
     ldB = mB;
 
+  
   if ( (jpvt = nsp_alloc_work_int(nA)) == NULL )
     goto err;
   else
@@ -2564,10 +2578,21 @@ static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
        
   lwork = -1;  /* query work size */
   C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, rank, qrwork, &lwork, &info);
+  
+  if (info != 0) 
+    {
+      goto err;   /* message for info < 0 is given by xerbla.c  */
+    } 
+
+
   lwork = (int) qrwork[0];
   if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
   C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, rank, rwork, &lwork, &info);
 
+  if (info != 0) 
+    {
+      goto err;   /* message for info < 0 is given by xerbla.c  */
+    } 
   
   if ( mx < mB )   /* free a part of B which is not needed */
     {
@@ -2599,6 +2624,13 @@ static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
   int *jpvt = NULL, info, lwork;
   doubleC qcwork[1], *cwork = NULL;
   double *rwork = NULL;
+
+  if ( A->m == 0 || A->n == 0 || B->m == 0 || B->n ==0 ) 
+    {
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
+      for ( j= 0 ; j < B->mn; j++) B->R[j]=0.0;
+      return OK;
+    }
 
   if ( mx > mB )
     /* enlarge B so that it can contains the solution x (needed by lapack) */
