@@ -4273,12 +4273,27 @@ extern void nsp_set_format(int output_max_field_width, int output_precision);
 
 static int int_format(Stack stack, int rhs, int opt, int lhs)
 {
-  int output_max_field_width=10,  output_precision=3;
+  int output_max_field_width=11,  output_precision=4;
+  static char *Table[] = {"long", "medium", "short", NULL};
+  int mf[] = {23,18,11};
+  int op[] = {16,11,4};
+  int id;
+
   CheckRhs(0,2);
+
   if ( rhs >=1 ) 
     {
-      if ( GetScalarInt (stack, 1, &output_max_field_width) == FAIL )
-	return RET_BUG;
+      if ( IsMatObj(stack,1) ) 
+	{
+	  if ( GetScalarInt (stack, 1, &output_max_field_width) == FAIL )
+	    return RET_BUG;
+	}
+      else 
+	{
+	  if ((id= GetStringInArray(stack,1, Table,1))==-1)return RET_BUG; 
+	  nsp_set_format(mf[id],op[id]);
+	  return 0;
+	}
     }
   if ( rhs >=2 ) 
     {
@@ -4288,8 +4303,6 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
   nsp_set_format( output_max_field_width,output_precision);
   return 0;
 }
-
-
 
 
 /*
