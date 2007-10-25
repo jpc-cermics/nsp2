@@ -428,7 +428,7 @@
  * the C level environment in synch with the system level environment.
  */
 
-#define USE_PUTENV	1
+/* #define USE_PUTENV	1 */
 
 /*
  * Msvcrt's putenv() copies the string rather than takes ownership of it.
