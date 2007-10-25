@@ -570,6 +570,13 @@ void nsp_init_pr_format (nsp_num_formats *fmt)
 }
 
 
+void nsp_set_format(int output_max_field_width, int output_precision)
+{
+  user_pref.output_max_field_width = Max(output_max_field_width,0);
+  user_pref.output_precision = Max(output_precision,0);
+}
+
+
 
 
 

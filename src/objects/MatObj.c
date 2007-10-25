@@ -4269,6 +4269,29 @@ int int_test_dperm(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern void nsp_set_format(int output_max_field_width, int output_precision);
+
+static int int_format(Stack stack, int rhs, int opt, int lhs)
+{
+  int output_max_field_width=10,  output_precision=3;
+  CheckRhs(0,2);
+  if ( rhs >=1 ) 
+    {
+      if ( GetScalarInt (stack, 1, &output_max_field_width) == FAIL )
+	return RET_BUG;
+    }
+  if ( rhs >=2 ) 
+    {
+      if ( GetScalarInt (stack, 2, &output_precision) == FAIL )
+	return RET_BUG;
+    }
+  nsp_set_format( output_max_field_width,output_precision);
+  return 0;
+}
+
+
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -4423,6 +4446,7 @@ static OpTab Matrix_func[] = {
   {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
   {"test_dperm",int_test_dperm},
   {"nnz_m",  int_matrix_nnz},
+  {"format", int_format},
   {(char *) 0, NULL}
 };
 
