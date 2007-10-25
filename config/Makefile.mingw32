@@ -1,14 +1,36 @@
+#/* -*- Mode: Makefile -*- */
+
 # Copyright ENPC 
 
 FFLAGS = $(FC_OPTIONS)
 
 LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
 
-bin/scilex: scilex-lib 
+bin/scilex-win : scilex-lib 
+	@$(RM) $@;
+	@echo "linking bin/scilex-win"; 
+	@$(FC) -mwindows  $(FFLAGS) -o $@ src/interp/lsci.o \
+		bin/libnsp.dll.a $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
+
+bin/scilex-static : scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
 	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
 		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
+
+bin/scilex : scilex-lib bin/scilex-win
+	@$(RM) $@;
+	@echo "linking bin/scilex"; 
+	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+		bin/libnsp.dll.a $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
+
+shared-win32 : 
+	@echo "creation of bin/libnsp.dll"	
+	@gcc -mno-cygwin -shared -o bin/libnsp.dll src/interp/lsci.o \
+		-Wl,--export-all-symbols -Wl,--allow-multiple-definition \
+		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
+		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
+
 
 
 
