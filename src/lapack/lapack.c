@@ -796,8 +796,15 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   lwork = -1;
   if ( U == NULL ) /* just compute the singular values */  
     {
+      int lwork1;
       C2F(dgesdd)("N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, qwork, &lwork, iwork, &info, 1L);
       lwork = (int) qwork[0];
+      /* the optimal value seams incorrect for large matrices 
+       * with liblapck or lapack rmp
+       * thus I correct it with the minimum requested.
+       */
+      lwork1 = 3*Minmn*Minmn + Max(Max(m,n),4*Minmn*Minmn+4*Minmn);
+      lwork = Max(lwork, lwork1);
       if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
       C2F(dgesdd)("N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, dwork, &lwork, iwork, &info, 1L);
     } 
