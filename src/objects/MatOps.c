@@ -3312,12 +3312,21 @@ int nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
  * Return value: %OK.
  **/
 
+
+#ifdef WIN32 
+/* XXXX : bug in WIN32 in atanh */
+extern double nsp_log1p(double);
+#define NSP_ATANH(x) 0.5 * nsp_log1p( 2 *(x) / (1 - (x)) )
+#else 
+#define NSP_ATANH(x) atanh(x)
+#endif 
+
 int nsp_mat_atanh(NspMatrix *A)
 {
   int i ;
   if ( A->rc_type == 'r') 
     {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= atanh(A->R[i]);
+      for ( i = 0 ; i < A->mn ; i++) A->R[i]= NSP_ATANH(A->R[i]);
     }
   else
     {
@@ -3325,7 +3334,6 @@ int nsp_mat_atanh(NspMatrix *A)
     }
   return(OK);
 }
-
 
 
 /**
