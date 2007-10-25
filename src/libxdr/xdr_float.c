@@ -51,7 +51,6 @@
  * This routine works on Suns (Sky / 68000's) and Vaxen.
  */
 
-#if defined(vax) || defined(WIN32)
 
 /* What IEEE single precision floating point looks like on a Vax */
 struct	ieee_single {
@@ -71,7 +70,7 @@ struct	vax_single {
 #define VAX_SNG_BIAS	0x81
 #define IEEE_SNG_BIAS	0x7f
 
-#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_)
+#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
 static struct sgl_limits {
   struct vax_single s;
   struct ieee_single ieee;
@@ -82,13 +81,12 @@ static struct sgl_limits {
    { 0x0, 0x0, 0x0 }}		/* Min IEEE */
 };
 #endif
-#endif /* vax */
 
 bool_t
 xdr_float(register XDR *xdrs, register float *fp)
 {
 
-#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_)
+#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
   struct ieee_single is;
   struct vax_single vs, *vsp;
   struct sgl_limits *lim;
@@ -97,7 +95,7 @@ xdr_float(register XDR *xdrs, register float *fp)
   switch (xdrs->x_op) {
 
   case XDR_ENCODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_) || defined(i386)
     return (XDR_PUTLONG(xdrs, (long *)fp));
 #else
     vs = *((struct vax_single *)fp);
@@ -119,7 +117,7 @@ xdr_float(register XDR *xdrs, register float *fp)
 #endif
  
   case XDR_DECODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)|| defined(i386)
     return (XDR_GETLONG(xdrs, (long *)fp));
 #else
     vsp = (struct vax_single *)fp;
@@ -152,7 +150,6 @@ xdr_float(register XDR *xdrs, register float *fp)
  * This routine works on Suns (Sky / 68000's) and Vaxen.
  */
 
-#ifdef vax
 /* What IEEE double precision floating point looks like on a Vax */
 struct	ieee_double {
   unsigned int	mantissa1 : 20;
@@ -185,14 +182,12 @@ static struct dbl_limits {
    { 0x0, 0x0, 0x0, 0x0 }}				/* Min IEEE */
 };
 
-#endif /* vax */
-
 
 bool_t
 xdr_double(register XDR *xdrs, double *dp)
 {
   register long *lp;
-#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
   struct	ieee_double id;
   struct	vax_double vd;
   register struct dbl_limits *lim;
@@ -202,7 +197,7 @@ xdr_double(register XDR *xdrs, double *dp)
   switch (xdrs->x_op) {
 
   case XDR_ENCODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_) || defined(i386)
     lp = (long *)dp;
 #else
     vd = *((struct vax_double *)dp);
@@ -227,15 +222,15 @@ xdr_double(register XDR *xdrs, double *dp)
     id.sign = vd.sign;
     lp = (long *)&id;
 #endif
-#if defined(WIN32) || defined(_X86_) 
+#if defined(WIN32) || defined(_X86_) || defined(i386)
     return (XDR_PUTLONG(xdrs, lp+1) && XDR_PUTLONG(xdrs, lp));
 #else
     return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
 #endif
   case XDR_DECODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)|| defined(i386)
     lp = (long *)dp;
-#if defined(WIN32) || defined(_X86_)
+#if defined(WIN32) || defined(_X86_) || defined(i386)
     return (XDR_GETLONG(xdrs, lp+1) && XDR_GETLONG(xdrs, lp));
 #else
     return (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));

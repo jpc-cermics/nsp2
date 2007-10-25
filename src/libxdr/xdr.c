@@ -45,6 +45,7 @@ static char *rcsid = "$Id$";
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <rpc/xdr_inc.h>
 
 /*
@@ -63,11 +64,9 @@ static char xdr_zero[BYTES_PER_XDR_UNIT] = { 0, 0, 0, 0 };
  * Free a data structure using XDR
  * Not a filter, but a convenient utility nonetheless
  */
-void
-xdr_free(xdrproc_t proc, char *objp)
+void xdr_free(xdrproc_t proc, char *objp)
 {
   XDR x;
-
   x.x_op = XDR_FREE;
   (*proc)(&x, objp);
 }
@@ -75,22 +74,17 @@ xdr_free(xdrproc_t proc, char *objp)
 /*
  * XDR nothing
  */
-bool_t
-xdr_void(void)
-/* XDR *xdrs; */
-/* caddr_t addr; */
-{
 
+bool_t xdr_void() /*  XDR *xdrs, caddr_t addr */
+{
   return (TRUE);
 }
 
 /*
  * XDR integers
  */
-bool_t
-xdr_int(XDR *xdrs, int *ip)
+bool_t xdr_int(XDR *xdrs, int *ip)
 {
-
 #ifdef lint
   (void) (xdr_short(xdrs, (short *)ip));
   return (xdr_long(xdrs, (long *)ip));
@@ -106,8 +100,7 @@ xdr_int(XDR *xdrs, int *ip)
 /*
  * XDR unsigned integers
  */
-bool_t
-xdr_u_int(XDR *xdrs, u_int *up)
+bool_t xdr_u_int(XDR *xdrs, u_int *up)
 {
 
 #ifdef lint
@@ -126,19 +119,14 @@ xdr_u_int(XDR *xdrs, u_int *up)
  * XDR long integers
  * same as xdr_u_long - open coded to save a proc call!
  */
-bool_t
-xdr_long(register XDR *xdrs, long int *lp)
+bool_t xdr_long(register XDR *xdrs, long int *lp)
 {
-
   if (xdrs->x_op == XDR_ENCODE)
     return (XDR_PUTLONG(xdrs, lp));
-
   if (xdrs->x_op == XDR_DECODE)
     return (XDR_GETLONG(xdrs, lp));
-
   if (xdrs->x_op == XDR_FREE)
     return (TRUE);
-
   return (FALSE);
 }
 
@@ -146,10 +134,8 @@ xdr_long(register XDR *xdrs, long int *lp)
  * XDR unsigned long integers
  * same as xdr_long - open coded to save a proc call!
  */
-bool_t
-xdr_u_long(register XDR *xdrs, u_long *ulp)
+bool_t xdr_u_long(register XDR *xdrs, u_long *ulp)
 {
-
   if (xdrs->x_op == XDR_DECODE)
     return (XDR_GETLONG(xdrs, (long *)ulp));
   if (xdrs->x_op == XDR_ENCODE)
@@ -162,24 +148,19 @@ xdr_u_long(register XDR *xdrs, u_long *ulp)
 /*
  * XDR short integers
  */
-bool_t
-xdr_short(register XDR *xdrs, short int *sp)
+bool_t xdr_short(register XDR *xdrs, short int *sp)
 {
   long l;
-
   switch (xdrs->x_op) {
-
   case XDR_ENCODE:
     l = (long) *sp;
     return (XDR_PUTLONG(xdrs, &l));
-
   case XDR_DECODE:
     if (!XDR_GETLONG(xdrs, &l)) {
       return (FALSE);
     }
     *sp = (short) l;
     return (TRUE);
-
   case XDR_FREE:
     return (TRUE);
   }
@@ -189,8 +170,8 @@ xdr_short(register XDR *xdrs, short int *sp)
 /*
  * XDR unsigned short integers
  */
-bool_t
-xdr_u_short(register XDR *xdrs, u_short *usp)
+
+bool_t xdr_u_short(register XDR *xdrs, u_short *usp)
 {
   u_long l;
 
@@ -217,12 +198,9 @@ xdr_u_short(register XDR *xdrs, u_short *usp)
 /*
  * XDR a char
  */
-bool_t
-xdr_char(XDR *xdrs, char *cp)
+bool_t xdr_char(XDR *xdrs, char *cp)
 {
-  int i;
-
-  i = (*cp);
+  int i = (*cp);
   if (!xdr_int(xdrs, &i)) {
     return (FALSE);
   }
@@ -233,12 +211,9 @@ xdr_char(XDR *xdrs, char *cp)
 /*
  * XDR an unsigned char
  */
-bool_t
-xdr_u_char(XDR *xdrs, char *cp)
+bool_t xdr_u_char(XDR *xdrs, char *cp)
 {
-  u_int u;
-
-  u = (*cp);
+  u_int u = (*cp);
   if (!xdr_u_int(xdrs, &u)) {
     return (FALSE);
   }
@@ -249,13 +224,10 @@ xdr_u_char(XDR *xdrs, char *cp)
 /*
  * XDR booleans
  */
-bool_t
-xdr_bool(register XDR *xdrs, int *bp)
+bool_t xdr_bool(register XDR *xdrs, int *bp)
 {
   long lb;
-
   switch (xdrs->x_op) {
-
   case XDR_ENCODE:
     lb = *bp ? XDR_TRUE : XDR_FALSE;
     return (XDR_PUTLONG(xdrs, &lb));
@@ -276,12 +248,10 @@ xdr_bool(register XDR *xdrs, int *bp)
 /*
  * XDR enumerations
  */
-bool_t
-xdr_enum(XDR *xdrs, int *ep)
+bool_t xdr_enum(XDR *xdrs, int *ep)
 {
 #ifndef lint
   enum sizecheck { SIZEVAL };	/* used to find the size of an enum */
-
   /*
    * enums are treated as ints
    */
@@ -303,8 +273,8 @@ xdr_enum(XDR *xdrs, int *ep)
  * Allows the specification of a fixed size sequence of opaque bytes.
  * cp points to the opaque object and cnt gives the byte length.
  */
-bool_t
-xdr_opaque(register XDR *xdrs, caddr_t cp, register u_int cnt)
+
+bool_t xdr_opaque(register XDR *xdrs, caddr_t cp, register u_int cnt)
 {
   register u_int rndup;
   static int crud[BYTES_PER_XDR_UNIT];

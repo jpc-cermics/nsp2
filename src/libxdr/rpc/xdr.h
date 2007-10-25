@@ -227,30 +227,29 @@ struct xdr_discrim {
 /*
  * These are the "generic" xdr routines.
  */
-#define __P(x) x 
-extern bool_t	xdr_void	__P((void));
-extern bool_t	xdr_int		__P((XDR *, int *));
-extern bool_t	xdr_u_int	__P((XDR *, u_int *));
-extern bool_t	xdr_long	__P((XDR *, long *));
-extern bool_t	xdr_u_long	__P((XDR *, u_long *));
-extern bool_t	xdr_short	__P((XDR *, short *));
-extern bool_t	xdr_u_short	__P((XDR *, u_short *));
-extern bool_t	xdr_bool	__P((XDR *, bool_t *));
-extern bool_t	xdr_enum	__P((XDR *, enum_t *));
-extern bool_t	xdr_array	__P((XDR *, char **, u_int *, u_int, u_int, xdrproc_t));
-extern bool_t	xdr_bytes	__P((XDR *, char **, u_int *, u_int));
-extern bool_t	xdr_opaque	__P((XDR *, caddr_t, u_int));
-extern bool_t	xdr_string	__P((XDR *, char **, u_int));
-extern bool_t	xdr_union	__P((XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t));
-extern bool_t	xdr_char	__P((XDR *, char *));
-extern bool_t	xdr_u_char	__P((XDR *, char *));
-extern bool_t	xdr_vector	__P((XDR *, char *, u_int, u_int, xdrproc_t));
-extern bool_t	xdr_float	__P((XDR *, float *));
-extern bool_t	xdr_double	__P((XDR *, double *));
-extern bool_t	xdr_reference	__P((XDR *, caddr_t *, u_int, xdrproc_t));
-extern bool_t	xdr_pointer	__P((XDR *, caddr_t *, u_int, xdrproc_t));
-extern bool_t	xdr_wrapstring	__P((XDR *, char **));
-extern void	xdr_free 	__P((xdrproc_t, char *));
+extern bool_t	xdr_void	(void);
+extern bool_t	xdr_int		(XDR *, int *);
+extern bool_t	xdr_u_int	(XDR *, u_int *);
+extern bool_t	xdr_long	(XDR *, long *);
+extern bool_t	xdr_u_long	(XDR *, u_long *);
+extern bool_t	xdr_short	(XDR *, short *);
+extern bool_t	xdr_u_short	(XDR *, u_short *);
+extern bool_t	xdr_bool	(XDR *, bool_t *);
+extern bool_t	xdr_enum	(XDR *, enum_t *);
+extern bool_t	xdr_array	(XDR *, char **, u_int *, u_int, u_int, xdrproc_t);
+extern bool_t	xdr_bytes	(XDR *, char **, u_int *, u_int);
+extern bool_t	xdr_opaque	(XDR *, caddr_t, u_int);
+extern bool_t	xdr_string	(XDR *, char **, u_int);
+extern bool_t	xdr_union	(XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t);
+extern bool_t	xdr_char	(XDR *, char *);
+extern bool_t	xdr_u_char	(XDR *, char *);
+extern bool_t	xdr_vector	(XDR *, char *, u_int, u_int, xdrproc_t);
+extern bool_t	xdr_float	(XDR *, float *);
+extern bool_t	xdr_double	(XDR *, double *);
+extern bool_t	xdr_reference	(XDR *, caddr_t *, u_int, xdrproc_t);
+extern bool_t	xdr_pointer	(XDR *, caddr_t *, u_int, xdrproc_t);
+extern bool_t	xdr_wrapstring	(XDR *, char **);
+extern void	xdr_free 	(xdrproc_t, char *);
 
 
 /*
@@ -273,24 +272,24 @@ extern bool_t   xdr_netobj();
 __BEGIN_DECLS
 #endif
 /* XDR using memory buffers */
-extern void   xdrmem_create	__P((XDR *, char *, u_int, enum xdr_op));
+extern void   xdrmem_create	(XDR *, char *, u_int, enum xdr_op);
 
 #ifdef _STDIO_H_
 /* XDR using stdio library */
-extern void   xdrstdio_create	__P((XDR *, FILE *, enum xdr_op));
+extern void   xdrstdio_create	(XDR *, FILE *, enum xdr_op);
 #endif
 
 /* XDR pseudo records for tcp */
-extern void   xdrrec_create	__P((XDR *, u_int, u_int, char *, int (*)(), int (*)()));
+extern void   xdrrec_create	(XDR *, u_int, u_int, char *, int (*)(), int (*)());
 
 /* make end of xdr record */
-extern bool_t xdrrec_endofrecord __P((XDR *, int));
+extern bool_t xdrrec_endofrecord (XDR *, int);
 
 /* move to beginning of next record */
-extern bool_t xdrrec_skiprecord	__P((XDR *));
+extern bool_t xdrrec_skiprecord	(XDR *);
 
 /* true if no more input */
-extern bool_t xdrrec_eof	__P((XDR *));
+extern bool_t xdrrec_eof	(XDR *);
 #ifndef __MSC__
 __END_DECLS
 #endif
