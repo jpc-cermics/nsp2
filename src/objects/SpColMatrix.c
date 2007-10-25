@@ -6160,9 +6160,22 @@ void nsp_spcolmatrix_atan(NspSpColMatrix *A)
  * 
  * A=Atanh(A)
  **/
+
+#ifdef WIN32 
+/* XXXX : bug in WIN32 in atanh */
+extern double nsp_log1p(double);
+static double nsp_atanh(double x) {
+  return 0.5 * nsp_log1p( 2 *(x) / (1 - (x)));
+}
+#else 
+static double nsp_atanh(double x) {
+  return atanh(x);
+}
+#endif 
+
 void nsp_spcolmatrix_atanh(NspSpColMatrix *A)
 {
-  SpColUnary(A,atanh,nsp_atanh_c);
+  SpColUnary(A,nsp_atanh,nsp_atanh_c);
 }
 
 /**
