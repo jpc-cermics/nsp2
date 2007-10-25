@@ -899,7 +899,8 @@ AC_MSG_RESULT([$GTK_VER])
 GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
 GTKLIBS='`pkg-config gtk+-2.0 --libs`'
 AC_DEFINE(WITH_GTK,[],[gtk library])
-GTK_PKGS='gtk+-2.0'
+GTK_PKGS_CFLAGS='gtk+-2.0'
+GTK_PKGS_LIBS='gtk+-2.0'
 GUILIB='gtksci'
 GZVT='gzvt2'
 # we need a patched version 
@@ -916,9 +917,10 @@ if test "$GTKHTML" = no; then
    AC_MSG_WARN([Could not find the libgtkhtml-2.0 package.],)
    AC_MSG_WARN([WARNING interactive html  help will not be build .],)
 else 
-     GTK_PKGS="$GTK_PKGS libgtkhtml-2.0"
-     GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-     GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgtkhtml-2.0"
+     GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgtkhtml-2.0"
+     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
      GTKHTMLOBJS='$(OBJSHELP)'
      AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
 fi
@@ -1014,9 +1016,10 @@ if test "$with_gtkglext" != no; then
           # path, then we don't want to generate a full path 
           # for gtk-config or to directly generate the 
           # result of `gtk-config --cflags`. Idem for gnome
-          #GTK_PKGS="$GTK_PKGS gtkglext-1.0"
-          #GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-          #GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+          #GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtkglext-1.0"
+          #GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtkglext-1.0"
+          #GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+          #GTKLIBS="\`pkg-config $GTK_PKGS_CFLAGS --libs\`"
           #WITH_GL="yes"
 	  AC_MSG_CHECKING([if freetype2 exists])
 	  if pkg-config --exists freetype2; then
@@ -1024,9 +1027,10 @@ if test "$with_gtkglext" != no; then
 		 AC_MSG_CHECKING([if pangoft2 exists])
 		 if pkg-config --exists pangoft2; then
 			AC_MSG_RESULT([yes])
-			GTK_PKGS="$GTK_PKGS gtkglext-1.0 pangoft2"
-			GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-			GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+			GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtkglext-1.0 pangoft2 freetype2"
+			GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtkglext-1.0 pangoft2 "
+			GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+			GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 			WITH_GL="yes"
 			PERIGLEXT="periGL.o"
 			AC_DEFINE(WITH_GTKGLEXT,[],[gtkglext: opengl in gtk ])
@@ -1062,9 +1066,10 @@ if test "$WITH_GL" == ZZZyes; then
 	AC_MSG_WARN([Could not find the glut library.],)
 	AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
 	WITH_GL="no"
-	GTK_PKGS=`echo $GTK_PKGS | sed -e 's+gtkglext-1.0++g' `
-	GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-	GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	GTK_PKGS_CFLAGS=`echo $GTK_PKGS_CFLAGS | sed -e 's+gtkglext-1.0++g' `
+	GTK_PKGS_LIBS=`echo $GTK_PKGS_LIBS | sed -e 's+gtkglext-1.0++g' `
+	GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+	GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
      fi
 fi 
 
@@ -1210,11 +1215,12 @@ if test "$with_fftw3" != no; then
    if test "x$PKG_CONFIG" != x; then # try first to use pkg-config	
       ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
       PKG_CHECK_MODULES(FFTW3, fftw3 >= 3.0, HAVE_FFTW3="yes", HAVE_FFTW3="no")
-      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      ## In case of success I just want fftw3 be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_FFTW3" = "yes"; then
-	 GTK_PKGS="$GTK_PKGS fftw3"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS fftw3"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS fftw3"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 	 FFTW3_CFLAGS=""
 	 FFTW3_LIBS=""
       fi 
@@ -1255,11 +1261,12 @@ if test "$with_gmp" != no; then
       ## If gmp.pc is found, set GMP_CFLAGS and GMP_LIBS
       ## this is not supposed to work since gmp.pc does not exists
       PKG_CHECK_MODULES(GMP, gmp >= 1.0, HAVE_GMP="yes", HAVE_GMP="no")
-      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      ## In case of success I just want fftw3 be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_GMP" = "yes"; then
-	 GTK_PKGS="$GTK_PKGS gmp"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gmp"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS gmp"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 	 GMP_CFLAGS=""
 	 GMP_LIBS=""
       fi 
@@ -1298,11 +1305,12 @@ if test "$with_sndfile" != no; then
       ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
       ## this is not supposed to work since sndfile.pc does not exists
       PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0, HAVE_SNDFILE="yes", HAVE_SNDFILE="no")
-      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      ## In case of success I just want fftw3 be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_SNDFILE" = "yes"; then
-	 GTK_PKGS="$GTK_PKGS sndfile"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS sndfile"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS sndfile"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 	 SNDFILE_CFLAGS=""
 	 SNDFILE_LIBS=""
       fi 
@@ -1339,11 +1347,12 @@ if test "$with_asound" != no; then
       ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
       ## this is not supposed to work since sndfile.pc does not exists
       PKG_CHECK_MODULES(ASOUND, alsa >= 1.0, HAVE_ASOUND="yes", HAVE_ASOUND="no")
-      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      ## In case of success I just want fftw3 be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_ASOUND" = "yes"; then
-	 GTK_PKGS="$GTK_PKGS alsa"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS alsa"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS alsa"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 	 ASOUND_CFLAGS=""
 	 ASOUND_LIBS=""
       fi 
@@ -1490,7 +1499,7 @@ AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
-AC_SUBST(GTK_PKGS)
+AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
 
@@ -1505,7 +1514,7 @@ echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
 echo 
-echo "Managed by pkg-config..:" $GTK_PKGS
+echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
 if test "$HAVE_GMP" = "yes"; then
    echo "gmp....................:" $GMP_LIBS
