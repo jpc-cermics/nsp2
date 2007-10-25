@@ -124,6 +124,12 @@ int nsp_init_frames(int argc, char **argv)
   if ((O =nsp_create_false_object("%cholmod"))==NULLOBJ) return FAIL;
 #endif 
   nsp_frame_replace_object(O,-1);
+#ifdef WIN32 
+  if ((O =nsp_create_true_object("%win32"))==NULLOBJ) return FAIL;
+#else 
+  if ((O =nsp_create_false_object("%win32"))==NULLOBJ) return FAIL;
+#endif
+  nsp_frame_replace_object(O,-1);
   /* types */ 
   nsp_frame_replace_object((NspObject *)nsp_types_hash_table,-1); 
   /* gtk */
