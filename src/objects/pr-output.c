@@ -558,6 +558,8 @@ void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c)
     }
 }
 
+static int nsp_print_e_def = 0;
+
 void nsp_init_pr_format (nsp_num_formats *fmt)
 {
   fmt->free_format = 0;
@@ -565,13 +567,14 @@ void nsp_init_pr_format (nsp_num_formats *fmt)
   fmt->bank_format = 0;
   fmt->latex_format = 0;
   fmt->latex_texmacs_format = 0;
-  fmt->print_e = 0;
+  fmt->print_e = nsp_print_e_def;
   fmt->print_big_e = 0;
 }
 
 
-void nsp_set_format(int output_max_field_width, int output_precision)
+void nsp_set_format(int output_max_field_width, int output_precision,int e)
 {
+  nsp_print_e_def = e ;
   user_pref.output_max_field_width = Max(output_max_field_width,0);
   user_pref.output_precision = Max(output_precision,0);
 }

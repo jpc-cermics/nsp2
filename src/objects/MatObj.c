@@ -4269,14 +4269,13 @@ int int_test_dperm(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-extern void nsp_set_format(int output_max_field_width, int output_precision);
 
 static int int_format(Stack stack, int rhs, int opt, int lhs)
 {
   int output_max_field_width=11,  output_precision=4;
-  static char *Table[] = {"long", "medium", "short", NULL};
-  int mf[] = {23,18,11};
-  int op[] = {16,11,4};
+  static char *Table[] = {"long", "medium", "short", "long e", "medium e", "short e",  NULL};
+  int mf[] = {23,18,11,23,18,11 };
+  int op[] = {16,11,4,16,11,4};
   int id;
 
   CheckRhs(0,2);
@@ -4290,8 +4289,10 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
+	  int e=0;
 	  if ((id= GetStringInArray(stack,1, Table,1))==-1)return RET_BUG; 
-	  nsp_set_format(mf[id],op[id]);
+	  if ( id > 2 ) e=1;
+	  nsp_set_format(mf[id],op[id],e);
 	  return 0;
 	}
     }
@@ -4300,7 +4301,7 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarInt (stack, 2, &output_precision) == FAIL )
 	return RET_BUG;
     }
-  nsp_set_format( output_max_field_width,output_precision);
+  nsp_set_format( output_max_field_width,output_precision,0);
   return 0;
 }
 
