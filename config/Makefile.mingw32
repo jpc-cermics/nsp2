@@ -18,7 +18,7 @@ bin/scilex-static : scilex-lib
 	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
 		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
-bin/scilex : scilex-lib bin/scilex-win
+bin/scilex : scilex-lib shared-win32 bin/scilex-win
 	@$(RM) $@;
 	@echo "linking bin/scilex"; 
 	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
@@ -26,7 +26,7 @@ bin/scilex : scilex-lib bin/scilex-win
 
 shared-win32 : 
 	@echo "creation of bin/libnsp.dll"	
-	@gcc -mno-cygwin -shared -o bin/libnsp.dll src/interp/lsci.o \
+	gcc -mno-cygwin -shared -o bin/libnsp.dll src/interp/lsci.o \
 		-Wl,--export-all-symbols -Wl,--allow-multiple-definition \
 		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
 		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
