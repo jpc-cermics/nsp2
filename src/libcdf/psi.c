@@ -211,7 +211,7 @@ double cdf_psi1 (double xx)
 
   double den, aug, sgn, xmx0; 
   double w, x, z__, upper,  xmax1, xmax2,  xsmall;
-  int i__, i , m, n ,  nq;
+  int  i , m, n ,  nq;
   /*     machine dependent constants ... 
    *        xmax1  = the smallest positive floating point constant 
    *                 with entirely int representation.  also used 
@@ -342,7 +342,7 @@ double cdf_psi1 (double xx)
   else 
     {
       /*  0.5 <= X <= 3.0  
-      /*     coefficients for rational approximation of 
+       *  coefficients for rational approximation of 
        *     psi1(x) / (x - dx0),  0.5 .le. x .le. 3.0 
        *  dx0 = zero of psi1 to extended precision 
        */
