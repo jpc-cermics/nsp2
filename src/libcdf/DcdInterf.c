@@ -843,12 +843,23 @@ static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv);
 }
 
-extern double cdf_stirling_series_diff (double z, double y) ;
+static int int_cdf_psi1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_psi1, NULL);
+}
+
+static int int_cdf_psi1_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_psi1_old, NULL);
+}
+
 
 static int int_cdf_stirling_series_diff(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, NULL,cdf_stirling_series_diff );
 }
+
+
 
 
 /*************************************************************
@@ -883,6 +894,8 @@ static OpTab Dcd_func[]={
   {"cdf_alngam",int_cdf_alngam},
   {"cdf_alngam_old",int_cdf_alngam_old},
   {"cdf_dln1px",int_cdf_dln1px},
+  {"cdf_psi1",int_cdf_psi1},
+  {"cdf_psi1_old",int_cdf_psi1_old},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
 };

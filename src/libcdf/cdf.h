@@ -37,7 +37,8 @@ extern double cdf_gamln (double a);
 extern double cdf_gamln1 (double a);
 extern double cdf_gamma (double a);
 extern double cdf_gsumln (double a, double b);
-extern double cdf_psi1 (double *xx);
+extern double cdf_psi1 (double xx);
+extern double cdf_psi1_old (double xx);
 extern double cdf_rcomp (double a, double x);
 extern double cdf_rexp (double x);
 extern double cdf_rexp_old (double x);
@@ -81,7 +82,6 @@ extern int cdf_cumt (double *t, double *df, double *cum, double *ccum);
 extern int cdf_dinvr (int *status, double *x, double *fx, int *qleft, int *qhi);
 
 extern double cdf_stirling_series_diff(double z, double y) ;
-
 
 
 
