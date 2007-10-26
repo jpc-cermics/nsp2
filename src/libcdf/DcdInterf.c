@@ -817,6 +817,12 @@ static int int_cdf_rexp(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp,NULL);
 }
 
+static int int_cdf_rexp_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp_old,NULL);
+}
+
+
 static int int_cdf_dlanor1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor1,NULL);
@@ -865,6 +871,7 @@ static OpTab Dcd_func[]={
   {"cdf_rlog1_old",int_cdf_rlog1_old},
   {"cdf_gam1",int_cdf_gam1},
   {"cdf_rexp",int_cdf_rexp},
+  {"cdf_rexp_old",int_cdf_rexp_old},
   {"cdf_rlog",int_cdf_rlog},
   {"cdf_algdiv",int_cdf_algdiv},
   {"cdf_gamln",int_cdf_gamln},

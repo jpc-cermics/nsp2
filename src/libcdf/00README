@@ -7,7 +7,7 @@ psi and dexpm1 were renamed not to conflict with other entries
 
 The following routines come from Toms708 
 They have the ACM Copyright. They have 
-to be rewriten 
+to be rewriten. 
 
     * ALGDIV computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
     * ALNREL evaluates the function ln(1 + a)
@@ -34,8 +34,14 @@ to be rewriten
     * GSUMLN evaluates the function ln(gamma(a + b))
     * IPMPAR provides the integer machine constants for the computer
     * PSI evaluates the digamma function.
+
+Rewriten code: 
+
     * REXP evaluates the function exp(x) - 1.
+      rewriten with the help of Maple Chebyshev Pade approximations.
     * RLOG1 evaluates the function x - ln(1 + x)
+      rewriten with the help of Maple Chebyshev Pade approximations.
     * SPMPAR provides single precision machine constants for
+      rewriten to use dlamch 
 
 

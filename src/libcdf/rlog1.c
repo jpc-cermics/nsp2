@@ -1,55 +1,28 @@
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * a version of x - ln(1 + x) approximated with Mapple 
+ * 
+ *
+ *
+ */
+
 #include "cdf.h"
-
-/**
- * cdf_rlog1:
- * @x: a pointer to a double 
- * 
- * evaluation of the function x - ln(1 + x) 
- * 
- * Returns: a double 
- **/
-
-double cdf_rlog1_old (double x)
-{
-  /*test:  A=[-0.2:0.01:1]; norm(A-log(1+A) -cdf_rlog1(A))  */
-  const double a = .0566749439387324;
-  const double b = .0456512608815524;
-  const double p0 = .333333333333333;
-  const double p1 = -.224696413112536;
-  const double p2 = .00620886815375787;
-  const double q1 = -1.27408923933623;
-  const double q2 = .354508718369557;
-  double h, r, t, w, w1;
-
-  if (x < -.39 || x > .57)
-    {
-      return  x - log (x + .5 + .5);
-    }
-  if (x < -.18)
-    {
-      h = x + .3;
-      h /= .7;
-      w1 = a - h * .3;
-    }
-  else if (x > .18)
-    {
-      h = x * .75 - .25;
-      w1 = b + h / 3.;      
-    }
-  else 
-    {
-      /* argument reduction */
-      h = x;
-      w1 = 0.;
-    }
-  /* series expansion */
-  r = h / (h + 2.);
-  t = r * r;
-  w = ((p2 * t + p1) * t + p0) / ((q2 * t + q1) * t + 1.);
-  return  t * 2. * (1. / (1. - r) - r * w) + w1;
-}
-
-/* GPL Version, Jean-Philippe Chancelier 2007 */
 
 /** 
  * cdf_rlog1:
@@ -58,7 +31,6 @@ double cdf_rlog1_old (double x)
  * evaluation of the function x - ln(1 + x) 
  * Returns: a double 
  **/
-
 
 /* 
  * Using Maple code for approximation in [-0.1,0.1] of  (f(x)-f(-x))/(2*x^3/3)
@@ -220,4 +192,55 @@ double cdf_rlog1(double x)
 */
 
 
+/**
+ * cdf_rlog1_old:
+ * @x: a pointer to a double 
+ * 
+ * evaluation of the function x - ln(1 + x) 
+ * 
+ * Returns: a double 
+ **/
 
+/* unused ACM code just here for test comparisons. 
+ *
+ */
+
+double cdf_rlog1_old (double x)
+{
+  /*test:  A=[-0.2:0.01:1]; norm(A-log(1+A) -cdf_rlog1(A))  */
+  const double a = .0566749439387324;
+  const double b = .0456512608815524;
+  const double p0 = .333333333333333;
+  const double p1 = -.224696413112536;
+  const double p2 = .00620886815375787;
+  const double q1 = -1.27408923933623;
+  const double q2 = .354508718369557;
+  double h, r, t, w, w1;
+
+  if (x < -.39 || x > .57)
+    {
+      return  x - log (x + .5 + .5);
+    }
+  if (x < -.18)
+    {
+      h = x + .3;
+      h /= .7;
+      w1 = a - h * .3;
+    }
+  else if (x > .18)
+    {
+      h = x * .75 - .25;
+      w1 = b + h / 3.;      
+    }
+  else 
+    {
+      /* argument reduction */
+      h = x;
+      w1 = 0.;
+    }
+  /* series expansion */
+  r = h / (h + 2.);
+  t = r * r;
+  w = ((p2 * t + p1) * t + p0) / ((q2 * t + q1) * t + 1.);
+  return  t * 2. * (1. / (1. - r) - r * w) + w1;
+}
