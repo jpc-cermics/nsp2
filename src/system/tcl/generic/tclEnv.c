@@ -49,7 +49,8 @@ void			nsp_unsetenv (const char *name);
  *	or creating a new variable if there doesn't exist a variable
  *	by the given @name.  This procedure is intended to be a
  *	stand-in for the  UNIX "setenv" procedure so that applications
- *	using that procedure will interface properly.  
+ *	using that procedure will interface properly. 
+ *      @name and @value are copied in the routine. 
  **/
 
 void nsp_setenv(const char *name,const char *value)
