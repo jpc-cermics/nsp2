@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2004 Jean-Philippe Chancelier Cermics/Enpc 
+ * Copyright (C) 1998-2007 Jean-Philippe Chancelier Cermics/Enpc 
  * 
  * This file is part of <NSP> a free cacsd package 
  *
@@ -787,14 +787,25 @@ static int int_cdf_gamln1(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln1,NULL);
 }
 
+static int int_cdf_gamln1_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln1_old,NULL);
+}
+
+
 static int int_cdf_expm1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_expm1,NULL);
 }
 
-static int int_cdf_alnrel(Stack stack, int rhs, int opt, int lhs)
+static int int_cdf_dln1px(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_alnrel,NULL);
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px,NULL);
+}
+
+static int int_cdf_dln1px_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px_old,NULL);
 }
 
 static int int_cdf_gam1(Stack stack, int rhs, int opt, int lhs)
@@ -807,10 +818,6 @@ static int int_cdf_dlanor(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor,NULL);
 }
 
-static int int_cdf_dln1px(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px,NULL);
-}
 
 static int int_cdf_rexp(Stack stack, int rhs, int opt, int lhs)
 {
@@ -841,6 +848,11 @@ static int int_cdf_alngam_old(Stack stack, int rhs, int opt, int lhs)
 static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv);
+}
+
+static int int_cdf_algdiv_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv_old);
 }
 
 static int int_cdf_psi1(Stack stack, int rhs, int opt, int lhs)
@@ -885,15 +897,17 @@ static OpTab Dcd_func[]={
   {"cdf_rexp_old",int_cdf_rexp_old},
   {"cdf_rlog",int_cdf_rlog},
   {"cdf_algdiv",int_cdf_algdiv},
+  {"cdf_algdiv_old",int_cdf_algdiv_old},
   {"cdf_gamln",int_cdf_gamln},
   {"cdf_gamln1",int_cdf_gamln1},
-  {"cdf_alnrel",int_cdf_alnrel}, 
+  {"cdf_gamln1_old",int_cdf_gamln1_old},
+  {"cdf_dln1px",int_cdf_dln1px}, 
+  {"cdf_dln1px_old",int_cdf_dln1px_old},
   {"cdf_expm1",int_cdf_expm1},
   {"cdf_dlanor",int_cdf_dlanor},
   {"cdf_dlanor1",int_cdf_dlanor1},
   {"cdf_alngam",int_cdf_alngam},
   {"cdf_alngam_old",int_cdf_alngam_old},
-  {"cdf_dln1px",int_cdf_dln1px},
   {"cdf_psi1",int_cdf_psi1},
   {"cdf_psi1_old",int_cdf_psi1_old},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},

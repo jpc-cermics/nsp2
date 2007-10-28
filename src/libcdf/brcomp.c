@@ -77,7 +77,7 @@ double cdf_brcomp (double a, double b, double x, double y)
       else
 	{
 	  d1 = -(y);
-	  lnx = cdf_alnrel (d1);
+	  lnx = cdf_dln1px (d1);
 	  lny = log (y);
 	}
     }
@@ -85,7 +85,7 @@ double cdf_brcomp (double a, double b, double x, double y)
     {
       lnx = log (x);
       d1 = -(x);
-      lny = cdf_alnrel (d1);
+      lny = cdf_dln1px (d1);
     }
   z = a * lnx + b * lny;
   if (a0 >= 1.)

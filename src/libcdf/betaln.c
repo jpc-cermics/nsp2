@@ -117,7 +117,7 @@ double cdf_betaln (double a0, double b0)
   h = a / b;
   c = h / (h + 1.);
   u = -(a - .5) * log (c);
-  v = b * cdf_alnrel (h);
+  v = b * cdf_dln1px (h);
   if (u <= v)
     {
       ret_val = log (b) * -.5 + e + w - u - v;

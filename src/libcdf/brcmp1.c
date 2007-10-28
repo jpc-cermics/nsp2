@@ -40,7 +40,7 @@ double cdf_brcmp1 (int *mu, double *a, double *b, double *x, double *y)
     }
   lnx = log (*x);
   d__1 = -(*x);
-  lny = cdf_alnrel (d__1);
+  lny = cdf_dln1px (d__1);
   goto L30;
 L10:
   if (*y > .375)
@@ -48,7 +48,7 @@ L10:
       goto L20;
     }
   d__1 = -(*y);
-  lnx = cdf_alnrel (d__1);
+  lnx = cdf_dln1px (d__1);
   lny = log (*y);
   goto L30;
 L20:

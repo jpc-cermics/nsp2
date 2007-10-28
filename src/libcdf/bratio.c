@@ -830,7 +830,7 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
       goto L10;
     }
   d__1 = -(*y);
-  lnx = cdf_alnrel (d__1);
+  lnx = cdf_dln1px (d__1);
   goto L20;
 L10:
   lnx = log (*x);

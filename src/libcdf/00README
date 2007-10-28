@@ -10,7 +10,6 @@ They have the ACM Copyright. They have
 to be rewriten. 
 
     * ALGDIV computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
-    * ALNREL evaluates the function ln(1 + a)
     * APSER yields the incomplete beta ratio i(sub(1-x))(b,a) for
     * BASYM uses an asymptotic expansion for ix(a,b) for large a and b.
     * BCORR evaluates del(a0) + del(b0) - del(a0 + b0) where
@@ -28,15 +27,19 @@ to be rewriten.
     * EXPARG reports the largest safe arguments for EXP(X).
     * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
     * GAM1 computes 1/gamma(a+1) - 1 for -0.5 .le. a .le. 1.5
-    * GAMLN1 evaluates ln(gamma(1 + a)) for -0.2 .le. a .le. 1.25
     * GAMLN evaluates ln(gamma(a)) for positive a
     * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
     * GSUMLN evaluates the function ln(gamma(a + b))
-    * IPMPAR provides the integer machine constants for the computer
     * PSI evaluates the digamma function.
 
 Rewriten code: 
 
+    * dln1px evaluates the function ln(1 + a)
+      uses nsp_log1p 
+    * IPMPAR provides the integer machine constants for the computer
+      rewriten to use dlamch 
+    * GAMLN1 evaluates ln(gamma(1 + a)) for -0.2 .le. a .le. 1.25
+      rewriten with the help of Maple Chebyshev Pade approximations.
     * REXP evaluates the function exp(x) - 1.
       rewriten with the help of Maple Chebyshev Pade approximations.
     * RLOG1 evaluates the function x - ln(1 + x)

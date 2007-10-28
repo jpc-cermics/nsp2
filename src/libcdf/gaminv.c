@@ -229,7 +229,7 @@ L50:
       goto L60;
     }
   d__1 = -(*q);
-  xn = exp ((cdf_alnrel (d__1) + cdf_gamln1 (*a)) / *a);
+  xn = exp ((cdf_dln1px (d__1) + cdf_gamln1 (*a)) / *a);
   goto L70;
 L60:
   xn = exp (log (*p * g) / *a);
@@ -306,9 +306,9 @@ L110:
 L120:
   t = *a - 1.;
   d__1 = -t / (xn + 1.);
-  xn = y + t * log (xn) - cdf_alnrel (d__1);
+  xn = y + t * log (xn) - cdf_dln1px (d__1);
   d__1 = -t / (xn + 1.);
-  xn = y + t * log (xn) - cdf_alnrel (d__1);
+  xn = y + t * log (xn) - cdf_dln1px (d__1);
   goto L220;
 
 L130:
@@ -529,7 +529,7 @@ L280:
       goto L290;
     }
   d__1 = -(*p);
-  *x = -cdf_alnrel (d__1);
+  *x = -cdf_dln1px (d__1);
   return 0;
 L290:
   *x = -log (*q);

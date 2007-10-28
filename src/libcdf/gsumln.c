@@ -22,7 +22,7 @@ double cdf_gsumln (double a, double b)
 	}
       else 
 	{
-	  return  cdf_gamln1 (x) + cdf_alnrel (x);
+	  return  cdf_gamln1 (x) + cdf_dln1px (x);
 	}
     }
   else 

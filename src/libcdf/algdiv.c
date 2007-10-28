@@ -1,22 +1,21 @@
 #include "cdf.h"
 
-
 /**
  * cdf_algdiv:
  * @a: a double 
  * @b: a double
  * 
- *     computation of ln(gamma(b)/gamma(a+b)) when b >= 8 
- *     in this algorithm, del(x) is the function defined by 
- *     ln(gamma(x)) = (x - 0.5)*ln(x) - x + 0.5*ln(2*pi) + del(x). 
+ * computation of ln(gamma(b)/gamma(a+b)) when b >= 8 
+ * in this algorithm, del(x) is the function defined by 
+ * ln(gamma(x)) = (x - 0.5)*ln(x) - x + 0.5*ln(2*pi) + del(x). 
  *     
- * Cette approximation est utilisée pour b >= 8 mais il faut sans doute 
- * aussi que a+b>=8 i.e 
+ * Note: this approximation is used for b >= 8 but certainly also 
+ * a+b>=8. 
  *      
  * Returns: a double 
  **/
 
-double cdf_algdiv_old (double a, double b)
+double cdf_algdiv (double a, double b)
 {
   /* test
      bs=9;a=-(bs-2):0.1:bs;
@@ -58,7 +57,7 @@ double cdf_algdiv_old (double a, double b)
   w *= c / b;
   /* COMBINE THE RESULTS */
   d1 = a / b;
-  u = d * cdf_alnrel (d1);
+  u = d * cdf_dln1px (d1);
   v = a * (log (b) - 1.);
   if (u <= v)
     {
@@ -67,17 +66,26 @@ double cdf_algdiv_old (double a, double b)
   return  w - v - u;
 }
 
+/*
+ * a revoir il faut augmenter le nbre de termes et Maple marche plus ....
+ */
 
-double cdf_algdiv (double a, double b)
+double cdf_algdiv_old (double a, double b)
 {
-  double comp=cdf_stirling_series_diff(b,a);
+  double comp=cdf_stirling_series_diff(b,a),u,v;
   /* compute g(b) - g(b+a), where 
    * g:= proc(z) (z-1/2)*log(z) -z;end proc;
    * h:= proc(a,b) a - a*log(b)+ (0.5 -a-b)*log(1+a/b);end proc;
    * 
    * g(b) - g(a+b) == h(a,b);
    */
-  return  a - a*log(b)+ (0.5 -a-b)*cdf_alnrel(a/b) + comp;
+  /* 
+   * return  a - a*log(b)+ (0.5 -a-b)*cdf_dln1px(a/b) + comp;
+   */
+  u = ((a <= b) ? b + (a - .5) : a + (b - .5)) * cdf_dln1px (a/b);
+  v = a * (log (b) - 1.);
+  return (u <= v) ? comp - u - v : comp - v - u;
+
 }
 
 
@@ -130,13 +138,18 @@ double cdf_stirling_series_diff(double z, double y)
    * s1= 1; s(n+1)= (1+ (z/(y+z))+ (z/(y+z))^2*s(n));
    * 
    */
-  double sn[NN]={1.0,0},x=(z/(z+y)),x2=x*x,w=(1/z),w2=w*w,res;
+  double sn[NN]={1.0,0},x,x2,w,w2,res;
   int i,nn=NN;
+  /* x = z/(z+y); */
+  x=( y >= z) ? ((z/y)/(1.0 + (z/y))) : 1.0 /(1.0 + (y/z)); 
+  x2=x*x;
+  w=(1/z);
+  w2=w*w;
   for ( i= 1 ; i < nn; i++) sn[i]= (1+x+x2*sn[i-1]);
   /* horner evaluation of sum_{n=1}^{6} b2n*(1/z)^{2*n-1}(sn) */
   res = sn[nn-1]*b[nn-1]*w2;
   for ( i= nn-2 ; i>=0; i--) res = ( res + sn[i]*b[i])*w2;
-  res *=( y*z/(z+y));
+  res *=( y*x);
   return  res;
 }
 

@@ -1,5 +1,26 @@
-#include "cdf.h"
+/* Nsp
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * ln(1+a): redirect computation to nsp_log1p 
+ *
+ */
 
+#include "cdf.h"
 
 /**
  * cdf_dln1px:
@@ -9,13 +30,21 @@
  * Note that the obvious code log(1.0 + @a) won't work for small @a
  * because 1.0+ @a loses accuracy 
  * 
+ * Returns: a double 
+ **/
+
+double cdf_dln1px (double a)
+{
+  return nsp_log1p(a);
+}	
+
+/* acm version used for testing 
  *     Renames ALNREL from: 
  *     DiDinato, A. R. and Morris,  A.   H.  Algorithm 708: Significant 
  *     Digit Computation of the Incomplete  Beta  Function Ratios.  ACM 
  *     Trans. Math.  Softw. 18 (1993), 360-373. 
  * 
- * Returns: a double 
- **/
+ */
 
 double cdf_dln1px_old (double a)
 {
@@ -35,26 +64,6 @@ double cdf_dln1px_old (double a)
   return  t * 2. * w;
 }	
 
-/* test the original values in the ACM file. 
-   
-p1 := -1.29418923021993;
-p2 := .405303492862024;
-p3 := -.0178874546012214;
-q1 := -1.62752256355323;
-q2 := .747811014037616;
-q3 := -.0845104217945565;
-
-g_acm := unapply((((p3 * t2 + p2) * t2 + p1) * t2 + 1.) 
-  / (((q3 * t2 + q2) * t2 + q1) * t2 + 1.),t2);
-f_approx:= proc(x) local u; u:= x/(2+x);2*u*g_acm(u*u);end proc;
-infnorm(f(x)-f_approx(x),x=-0.18..0.18);
-
-m_err(18,100,10);
-
-*/
-
-/* GPL Version, Jean-Philippe Chancelier 2007 */
-
 /** 
  * cdf_dln1px:
  * @a: a double, value for which ln(1+a) is desired.
@@ -63,7 +72,7 @@ m_err(18,100,10);
  * Note that the obvious code log(1.0 + @a) won't work for small @a
  * because 1.0+ @a loses accuracy. We obtain here around 6.e-16 relative error.
  * Rational chebishev pade approximation is obtained with Maple
- * with ideas from alnrel and rlog1 from: 
+ * with ideas from dln1px and rlog1 from: 
  *     DiDinato, A. R. and Morris,  A.   H.  Algorithm 708: Significant 
  *     Digit Computation of the Incomplete  Beta  Function Ratios.  ACM 
  *     Trans. Math.  Softw. 18 (1993), 360-373. 
@@ -84,7 +93,7 @@ m_err(18,100,10);
   g:=proc(x) (f(x)-f(-x))/(2*x);end proc;
   Digits:=50;
   gg:=chebpade(g(x),x=-0.1..0.1,[8,8]);
-  Digits:=16;
+  Digits:=17;
   gg:= convert(gg,float);
   n:= numer(gg);
   xx:=coeffs(n,x)[1];
@@ -112,7 +121,7 @@ m_err(18,100,10);
   
 */
 
-double cdf_dln1px (double x)
+double cdf_dln1px_jpc (double x)
 {
   /* basic test: x=linspace(-0.38,0.56,10000);max(abs(cdf_dln1px(x)-log(1+x)))
    * 
