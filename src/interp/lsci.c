@@ -455,74 +455,36 @@ extern nsp_string nsp_absolute_file_name( char *fname);
 
 void set_nsp_env (void)
 {
-  char *sci_env = NULL, *p1, *nsp_env=NULL, *abs_sci=NULL; 
+  int i;
+  char *p1, *nsp_abs_path=NULL; 
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */
-  if ((p1 = nsp_getenv ("SCI")) == (char *) 0)
+  if ((p1 = nsp_getenv ("SCI")) != (char *) 0)
     {
-      /* we should check here if path is absolute or not 
-       * with nsp_get_path_type
-       */
-      /* fprintf(stderr,"No SCI trying with %s\n",ProgramName); */
-      abs_sci  = nsp_absolute_file_name(ProgramName);
-      /* fprintf(stderr,"Expanded to %s\n",abs_sci);  */
-      if ( abs_sci == NULL) return;
-      sci_env = malloc((strlen(abs_sci)+1+4)*sizeof(char));
-      if ( sci_env != NULL) 
+      nsp_setenv("NSP",p1);
+      return;
+    }
+  /* we should check here if path is absolute or not 
+   * with nsp_get_path_type
+   * fprintf(stderr,"No SCI trying with %s\n",ProgramName);
+   */
+  nsp_abs_path  = nsp_absolute_file_name(ProgramName);
+  /* fprintf(stderr,"Expanded to %s\n",nsp_abs_path);  */
+  if ( nsp_abs_path == NULL) return;
+  /* removing the trailing /bin/program-name  */
+  for ( i = strlen(nsp_abs_path) ; i >= 0 ; i-- ) 
+    {
+      if ( nsp_abs_path[i]== '/' || nsp_abs_path[i] == '\\' ) 
 	{
-	  /* fill env with path */
-	  int i;
-	  sprintf (sci_env, "SCI=%s",abs_sci);
-	  nsp_string_destroy(&abs_sci);
-	  /* removing the trailing /bin/scilex  */
-	  for ( i = strlen(sci_env) ; i >= 0 ; i-- ) 
-	    {
-	      if ( sci_env[i]== '/' || sci_env[i] == '\\' ) 
-		{
-		  if ( i >= 4 ) sci_env[i-4]= '\0';
-		  else { free(sci_env) ; return ;}
-		  break;
-		}
-	    }
-	  if ( strcmp(sci_env,"SCI")==0 )  
-	    {
-	      /* special case when ProgramName = bin/scilex */
-	      char *cwd =  nsp_get_curdir();
-	      if ( cwd  != NULL  ) 
-		{
-		  free(sci_env);
-		  sci_env = malloc((strlen(cwd)+1+4)*sizeof(char));
-		  if ( sci_env != NULL) 
-		    {
-		      strcpy(sci_env,"SCI=");
-		      strcat(sci_env,cwd);
-		      nsp_putenv(sci_env);
-		    }
-		  else 
-		    nsp_putenv("SCI=./");
-		}
-	      else 
-		{
-		  nsp_putenv("SCI=./");
-		}
-	    }
-	  else 
-	    {
-	      nsp_putenv(sci_env);
-	    }
+	  if ( i >= 4 ) nsp_abs_path[i-4]= '\0';
+	  else { free(nsp_abs_path) ; return ;}
+	  break;
 	}
     }
-  /* NSP (copy of SCI  */
-  if (( p1 = nsp_getenv ("SCI")) != NULL )
-    {
-      nsp_env = malloc((strlen(p1)+1+4)*sizeof(char));
-      if ( nsp_env != NULL) 
-	{
-	  sprintf (nsp_env, "NSP=%s",p1);
-	  nsp_putenv(nsp_env);
-	}
-    }
+  nsp_setenv("SCI",nsp_abs_path);
+  nsp_setenv("NSP",nsp_abs_path);
+  free(nsp_abs_path);
 }
 
 #ifdef FORTRAN_MAIN 
