@@ -89,12 +89,25 @@ static void replay_background(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_background(Xgc,val);
 }
 
+
+
 void store_unclip(BCG *Xgc)
 {
   store_void(Xgc,CODEunclip);
 }
 
 static void replay_unclip(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_unclip(Xgc);}
+
+
+void store_test(BCG *Xgc)
+{
+  store_void(Xgc,CODEtest);
+}
+
+static void replay_test(BCG *Xgc,void * theplot ) 
+{ 
+  Xgc->graphic_engine->scale->xset_test(Xgc);
+}
 
 
 void store_clip(BCG *Xgc,double x[])

@@ -31,6 +31,7 @@
 #include <gtk/gtk.h>
 #include "nsp/sciio.h"
 #include "nsp/math.h"
+#include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/perigen.h"
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
@@ -54,6 +55,8 @@ static driver_drawaxis drawaxis_gen;
 static driver_drawarc drawarc_gen; 
 static driver_fillarc fillarc_gen; 
 static driver_draw_pixbuf draw_pixbuf_gen; 
+static driver_draw_pixbuf_from_file draw_pixbuf_from_file_gen; 
+static driver_xset_test xset_test;
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
@@ -69,7 +72,9 @@ nsp_gengine_generic nsp_peri_generic = {
   drawaxis_gen,
   drawarc_gen,
   fillarc_gen,
-  draw_pixbuf_gen
+  draw_pixbuf_gen,
+  draw_pixbuf_from_file_gen,
+  xset_test
 };
 
 /**
@@ -599,3 +604,45 @@ static void   draw_pixbuf_gen(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
 {
   Sciprintf("draw_pixbuf not implemented in this driver\n");
 }
+
+static void draw_pixbuf_from_file_gen(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+{
+  Sciprintf("draw_pixbuf not implemented in this driver\n");
+}
+
+
+
+#define XN2DD 2
+#define NCURVES2DD  1
+
+static void   xset_test(BCG *Xgc)
+{
+  static int count=0;
+  char str[56];
+  int keep;
+  int style[NCURVES2DD],aaint[4],n1,n2;
+  double x[NCURVES2DD*XN2DD],y[NCURVES2DD*XN2DD],brect[4];
+  int i,j;
+  for ( j =0 ; j < NCURVES2DD ; j++)
+    {
+      i=0;
+      x[i+ XN2DD*j]= 2.0;
+      y[i+ XN2DD*j]= 9.0;
+      i=1;
+      x[i+ XN2DD*j]= 3.0;
+      y[i+ XN2DD*j]= 1.0;
+    }
+  for ( i=0 ; i < NCURVES2DD ; i++)
+    style[i]= NCURVES2DD+i;
+  n1=NCURVES2DD;n2=XN2DD;
+  aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
+  brect[0]=brect[1]=0;brect[2]=brect[3]=10.0;
+  keep= Xgc->record_flag;
+  Xgc->record_flag = FALSE;
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
+  sprintf(str,"count=%d",count);
+  count++;
+  Xgc->graphic_engine->scale->displaystring(Xgc,str,5,5,0,0);
+  Xgc->record_flag= keep;
+}
+

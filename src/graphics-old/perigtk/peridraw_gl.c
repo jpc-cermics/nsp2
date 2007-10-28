@@ -922,6 +922,49 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       Xgc->private->gldrawable = gtk_widget_get_gl_drawable (Xgc->private->drawing);
     }
 }
+#else 
+
+static void xset_pixmapOn(BCG *Xgc,int num)
+{ 
+  int num1= Min(Max(num,0),1);
+  if ( Xgc->CurPixmapStatus == num1 ) return;
+  if ( num1 == 1 )
+    {
+      GdkDrawable *temp ;
+      /* create a new pixmap */
+      temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
+					    Xgc->CWindowWidth, Xgc->CWindowHeight,
+					    -1);
+      if ( temp  == NULL ) 
+	{
+	  xinfo(Xgc, "Not enough space to switch to Animation mode");
+	}
+      else 
+	{
+	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
+	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+	  nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
+	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+	  Xgc->CurPixmapStatus = 1;
+	}
+    }
+  else 
+    {
+      /* I remove the extra pixmap to the window */
+      xinfo(Xgc," ");
+      if ( Xgc->private->gldrawable != NULL) 
+	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
+      gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
+      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      /* gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap); */
+      Xgc->private->extra_pixmap = NULL;
+      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      Xgc->CurPixmapStatus = 0; 
+      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
+      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+    }
+}
+
 #endif 
 
 
@@ -1512,4 +1555,10 @@ static void init_gl_lights(GLfloat light0_pos[4])
 }
 #endif 
 
+
+
+static  void xset_test(BCG *Xgc)
+{
+  Xgc->graphic_engine->generic->xset_test(Xgc);
+}
 

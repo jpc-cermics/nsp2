@@ -3537,6 +3537,21 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/*
+ *
+ * test 
+ */
+
+static int int_xtest(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc = NULL;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->scale->xset_test(Xgc);
+  return 0;
+}
+
 
 /*-----------------------------------------------------------
  * xstring(x,y,str,[angle,box])
@@ -5088,6 +5103,7 @@ static OpTab Graphics_func[]={
   {"show_pixbuf",int_show_pixbuf}, 
   {"scicos_draw3D",int_scicos_draw3D},
   {"scicos_lock_draw",int_lock_draw},
+  {"xtest_graphic", int_xtest},
   {(char *) 0, NULL}
 };
 

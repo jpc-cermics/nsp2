@@ -64,6 +64,7 @@ static int load_clipgrf (BCG *Xgc) ;
 static int load_alufunction1 (BCG *Xgc) ;
 static int load_background (BCG *Xgc) ;
 static int load_unclip (BCG *Xgc) ;
+static int load_test (BCG *Xgc) ;
 static int load_clip (BCG *Xgc) ;
 static int load_pattern (BCG *Xgc) ;
 static int load_font_size (BCG *Xgc) ;
@@ -145,6 +146,16 @@ static int load_unclip(BCG *Xgc)
   store_record(Xgc,lplot->code,lplot);
   return 1;
 }
+
+static int load_test(BCG *Xgc)
+{
+  struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
+  if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
+  if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
+  return 1;
+}
+
 
 static int load_clip(BCG *Xgc)
 {
@@ -1257,7 +1268,8 @@ static Load_Table load_table [] ={
   {CODEfpf   	             ,"fpf",              load_fpf},
   {CODEinitialize_gc         ,"init",             load_init},
   {CODEColormap		     ,"Colormap",	  load_colormap },
-  {CODEdefault_colormap	     ,"default_colormap", load_default_colormap }
+  {CODEdefault_colormap	     ,"default_colormap", load_default_colormap },
+  {CODEtest	             ,"test",             load_test }
 };     	
 
 

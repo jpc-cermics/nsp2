@@ -766,3 +766,9 @@ int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char 
 #endif 
 
 
+
+static  void xset_test(BCG *Xgc)
+{
+  Xgc->graphic_engine->generic->xset_test(Xgc);
+}
+

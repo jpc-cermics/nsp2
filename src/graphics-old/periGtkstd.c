@@ -32,6 +32,9 @@
 #include "nsp/math.h"
 #ifdef PERIGL 
 #include "nsp/graphics/periGL.h"
+#ifdef PERIGLGTK 
+static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
+#endif 
 #else 
 #include "nsp/graphics/periGtk.h"
 #endif 
@@ -48,13 +51,24 @@
  */
 
 #ifdef PERIGL 
+#ifdef PERIGLGTK 
+
+/* version for pixmap case */ 
+
+#define DRAW_CHECK							\
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
+    nsp_gtk_invalidate(Xgc);
+
+#else /* PERIGLGTK */
 
 #define DRAW_CHECK							\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
     {  nsp_gtk_invalidate(Xgc);						\
       if (Xgc->record_flag == TRUE) {Xgc->private->draw = TRUE;return;} \
     }
-#else 
+#endif /* PERIGLGTK */
+
+#else /* PERIGL */
 /* PERICAIRO and PERIGTK 
  * we always draw in a drawable which is a pixmap but the expose event is asynchronous
  */
@@ -62,7 +76,7 @@
 #define DRAW_CHECK							\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
 
-#endif 
+#endif /* PERIGL */
 
 /* Global variables to store graphic drivers 
  */
@@ -136,6 +150,21 @@ static void xset_show(BCG *Xgc)
 {
   if ( Xgc->CurPixmapStatus == 1) 
     {
+#ifdef PERIGLGTK 
+      /* we copy the extra_pixmap to the window and to the backing store pixmap */
+      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
+      /* drawing to the window and to the backing store pixmap */
+      if ( Xgc->private->gldrawable != NULL 
+	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
+	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
+      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      if ( Xgc->private->gldrawable != NULL 
+	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
+	gdk_gl_drawable_wait_gdk(Xgc->private->gldrawable);
+#else 
       /* we copy the extra_pixmap to the window and to the backing store pixmap 
        * except for perigl which draw without a Xgc->private->pixmap.
        */
@@ -144,6 +173,7 @@ static void xset_show(BCG *Xgc)
 #ifndef PERIGK
       gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+#endif 
 #endif 
     }
   else
@@ -275,7 +305,7 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
  * 
  * move the upper-left point position of the graphic window 
  * at position (@x,@y) on the screen.
-
+ *
  **/
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
@@ -395,7 +425,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
  * @y: an int pointer
  * 
  * To get the popup  window size 
-  **/
+ **/
 
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
@@ -719,11 +749,10 @@ static int  xset_pattern(BCG *Xgc,int num)
  * xget_pattern:
  * @Xgc: a #BCG  
  * 
- * 
+ *  To get the id of the current pattern
  * 
  * Returns: 
  **/
-/* To get the id of the current pattern  */
 
 static int xget_pattern(BCG *Xgc)
 { 
@@ -1420,7 +1449,11 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 /* shared by all the drivers */
 
 #include "perigtk/events.c"  
+#ifdef PERIGLGTK 
+#include "perigtk/init_gtkgl.c" 
+#else 
 #include "perigtk/init.c" 
+#endif 
 
 /*
  * Initialisation of the graphic context. Used also 
@@ -1522,6 +1555,8 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
 
 #ifdef PERIGL 
+static void realize_event_ogl(BCG *dd );
+#ifndef PERIGLGTK
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
   BCG *Xgc = (BCG *) data;
@@ -1553,9 +1588,66 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   xset_background(Xgc,Xgc->NumBackground+1);
 
 #ifdef LIGHTS
-   init_gl_lights(light0_pos); 
+  init_gl_lights(light0_pos); 
 #endif
+  realize_event_ogl(Xgc);
+  return FALSE;
+}
 
+#else /* PERIGLGTK */
+static gint realize_event(GtkWidget *widget, gpointer data)
+{
+  GdkColor white={0,0,0,0};
+  GdkColor black={0,65535,65535,65535};
+  BCG *dd = (BCG *) data;
+
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  
+  /* create gc */
+  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+  /* standard gc : for private->pixmap copies */
+  /* this gc could be shared by all windows */
+  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
+
+  /* set the cursor */
+  dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
+  dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
+  gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
+  /* set window bg */
+  gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg);
+
+  if ( dd->private->pixmap == NULL)
+    {
+      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+					   dd->CWindowWidth, dd->CWindowHeight,
+					   -1);
+    }
+
+  /* default value is to use the background pixmap */
+  dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
+  nsp_set_gldrawable(dd,dd->private->pixmap);
+  pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
+  /*
+  gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
+  gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
+		     dd->CWindowWidth, dd->CWindowHeight);
+  */
+  if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext))
+    return FALSE;
+  realize_event_ogl(dd);
+  return FALSE;
+}
+#endif /* PERIGLGTK */
+
+
+static void realize_event_ogl(BCG *dd )
+{
   glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
   /*     glDrawBuffer(GL_FRONT_AND_BACK); */
@@ -1575,10 +1667,10 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   glShadeModel(GL_SMOOTH);
-  gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
-  return FALSE;
+  /* gdk_gl_drawable_gl_end (dd->private->gldrawable); */
 }
 #endif 
+
 
 
 /**
@@ -1734,6 +1826,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #endif 
 
 #ifdef PERIGL 
+#ifndef PERIGLGTK 
+
 /* periGL version */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -1803,6 +1897,99 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   return FALSE;
 }
+
+#else 
+
+/* periGL version */
+static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
+  if(dd->private->resize != 0) 
+    { 
+      /* here we execute an expose and it works also when CurPixmapStatus == 1.
+       * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
+       * and the drawing are redirected to the extra_pixmap. If a wshow is 
+       * recorded then it will copy the extra_pixmap to both window and pixmap.
+       * the last gdk_draw_pixmap found here is not usefull in that case. 
+       */
+      dd->private->resize = 0;
+      if ( dd->private->pixmap ) 
+	{
+	  /* free old pixmap */
+	  gdk_pixmap_unset_gl_capability (dd->private->pixmap);
+	  g_object_unref (G_OBJECT (dd->private->pixmap));
+	  /* gdk_pixmap_unref(dd->private->pixmap); */
+	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
+	}
+      /* allocate a new pixmap and set its open Gl capabilities */
+      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+					   dd->CWindowWidth, dd->CWindowHeight,
+					   -1);
+      nsp_set_gldrawable(dd,dd->private->pixmap);
+      /* update drawable */
+      if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
+      /* fill private background with background */
+      pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
+      /* 
+      gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
+      gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,
+			 dd->CWindowWidth, dd->CWindowHeight);
+      */
+      /* we resize and draw  
+       * Note that the gldrawable will be changed in scig_resize if we are 
+       * using the extra_pixmap.
+       */
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+      gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
+      dd->private->in_expose= TRUE;
+      dd->private->gl_only = TRUE;
+      scig_resize(dd->CurWindow);
+      dd->private->in_expose= FALSE;
+      gdk_gl_drawable_gl_end (dd->private->gldrawable);
+      glFlush ();
+      gdk_gl_drawable_wait_gl (dd->private->gldrawable);
+      /* synchronize pixmap */
+      gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+		      dd->CWindowWidth, dd->CWindowHeight);
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+    }
+  else 
+    {
+      if ( dd->private->draw == TRUE ) 
+	{
+	  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+	  gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
+	  dd->private->draw = FALSE;
+	  dd->private->in_expose= TRUE;
+	  dd->private->gl_only = TRUE;
+	  scig_replay(dd->CurWindow);
+	  dd->private->in_expose= FALSE;
+	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
+	}
+      glFlush ();
+      gdk_gl_drawable_wait_gl(dd->private->gldrawable);
+      if (event  != NULL) 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			event->area.x, event->area.y, event->area.x, event->area.y,
+			event->area.width, event->area.height);
+      else 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+			dd->CWindowWidth, dd->CWindowHeight);
+      /* if a zrect exists then add it on graphics  */
+      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+	gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			   dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+    }
+  gdk_flush();
+  return FALSE;
+}
+
+#endif 
 #endif 
 
 

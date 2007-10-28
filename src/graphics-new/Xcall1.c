@@ -59,6 +59,7 @@ static  driver_s_xset_clipgrf xset_clipgrf_1;
 static  driver_s_xset_alufunction1 xset_alufunction1_1;
 static  driver_s_xset_background xset_background_1;
 static  driver_s_xset_unclip xset_unclip_1;
+static  driver_s_xset_test xset_test_1;
 static  driver_s_xset_clip xset_clip_1;
 static  driver_s_xset_pattern xset_pattern_1;
 static  driver_s_xset_colormap xset_colormap_1;
@@ -122,6 +123,7 @@ Gengine1 nsp_gengine1={
   xset_alufunction1_1,
   xset_background_1,
   xset_unclip_1,
+  xset_test_1,
   xset_clip_1,
   xset_pattern_1,
   xset_colormap_1,
@@ -217,6 +219,13 @@ static void xset_unclip_1(BCG *Xgc)
   if (Xgc->record_flag == TRUE)  store_unclip(Xgc);
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
+
+static void xset_test_1(BCG *Xgc)
+{
+  if (Xgc->record_flag == TRUE)  store_test(Xgc);
+  Xgc->graphic_engine->xset_test(Xgc);
+}
+
 
 static void xset_clip_1(BCG *Xgc,double x[])
 {

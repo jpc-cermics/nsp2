@@ -1975,3 +1975,11 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
 {
   Xgc->graphic_engine->generic->draw_pixbuf_from_file(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
 }
+
+
+
+static  void xset_test(BCG *Xgc)
+{
+  Xgc->graphic_engine->generic->xset_test(Xgc);
+}
+

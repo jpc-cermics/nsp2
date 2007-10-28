@@ -89,6 +89,14 @@ static int save_unclip(BCG *Xgc,void * theplot )
   return 1;
 }
 
+static int save_test(BCG *Xgc,void * theplot )
+{
+  struct rec_void *lplot = theplot ;
+  if ( save_LI(Xgc->xdrs,lplot->code)==0) return(0);
+  return 1;
+}
+
+
 static int save_clip(BCG *Xgc,void *theplot)
 {
   struct rec_int4 *lplot  = theplot;
@@ -993,7 +1001,8 @@ static Save_Table save_table [] ={
   {CODEdefault_colormap	     ,"default_colormap", save_default_colormap },
   {CODE3dobj	             ,"default_colormap", save_3dobj },
   {CODEpixbuf		     ,"pixbuf",           save_pixbuf },
-  {CODEpixbuf_file	     ,"pixbuf_file",      save_pixbuf_from_file }
+  {CODEpixbuf_file	     ,"pixbuf_file",      save_pixbuf_from_file },
+  {CODEtest	             ,"test",             save_test }
 };     	
 
 
