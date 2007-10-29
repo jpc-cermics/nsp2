@@ -29,11 +29,12 @@ to be rewriten.
     * GAM1 computes 1/gamma(a+1) - 1 for -0.5 .le. a .le. 1.5
     * GAMLN evaluates ln(gamma(a)) for positive a
     * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
-    * GSUMLN evaluates the function ln(gamma(a + b))
     * PSI evaluates the digamma function.
 
 Rewriten code: 
 
+    * gsumln evaluates the function ln(gamma(a + b))
+      rewriten.
     * algdiv computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
       rewriten with maple code to obtain stirling series differences.
     * dln1px evaluates the function ln(1 + a)

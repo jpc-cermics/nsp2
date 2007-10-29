@@ -6,7 +6,7 @@
  * @b: a double
  * 
  *  evaluation of the function ln(gamma(a + b))
- *  for 1 .le. a .le. 2  and  1 .le. b .le. 2
+ *  for 1 <= a <= 2  and  1 <= b <= 2
  * 
  * Returns: 
  **/
@@ -18,7 +18,7 @@ double cdf_gsumln (double a, double b)
     {
       if (x > 1.25)
 	{
-	  return cdf_gamln1(x-1) + log (x * (x + 1.));
+	  return cdf_gamln1(x-1.0) + log (x * (x + 1.));
 	}
       else 
 	{
