@@ -47,6 +47,7 @@ extern double cdf_rcomp (double a, double x);
 extern double cdf_rexp (double x);
 extern double cdf_rexp_old (double x);
 extern double cdf_rlog (double x);
+extern double cdf_rlog_old (double x);
 extern double cdf_rlog1 (double x);
 extern double cdf_rlog1_old (double x);
 extern double cdf_spmpar (int );
