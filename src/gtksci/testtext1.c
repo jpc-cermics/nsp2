@@ -21,7 +21,11 @@
  * Adapted from the testtext.c file in gtk+/tests 
  * to be used as a terminal for Nsp.
  * jpc (2006).
- *
+ * use : 
+ * gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
+ * to set up emacs editing but note that some editing keys are redefined here 
+ * as in emacs mode.
+ * 
  */
 
 #include <stdio.h>
@@ -145,9 +149,14 @@ create_buffer (void)
   buffer->buffer = gtk_text_buffer_new (NULL);
   buffer->refcount = 1;
   buffer->not_editable_tag =
+#ifdef BEBUG_EDITABLE 
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
                                 "foreground", "purple", NULL);
+#else 
+  gtk_text_buffer_create_tag (buffer->buffer, NULL,
+			      "editable", FALSE,NULL);
+#endif 
   buffer->center_tag = 
     gtk_text_buffer_create_tag (buffer->buffer,NULL,
 				"justification", GTK_JUSTIFY_CENTER,NULL,
@@ -321,8 +330,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	  }
 	/* fprintf(stderr,"<%s>/n",search_string); */
 	nsp_append_history(search_string,data);
-	gtk_text_buffer_insert (buffer, &end,
-				"\n",-1);
+	gtk_text_buffer_insert (buffer, &end, "\n",-1);
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	if ( view->buffer->mark == NULL) 
 	  view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
@@ -332,91 +340,119 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
 				      view->buffer->mark,
 				      0, TRUE, 0.0, 1.0);
-	/* 
-	gtk_text_buffer_remove_tag (view->buffer->buffer,
-				    view->buffer->editable_tag,
-				    &start, &end);
-	*/
 	gtk_text_buffer_apply_tag (view->buffer->buffer,
 				   view->buffer->not_editable_tag,
 				   &start, &end);
-	/* ZZZ */
-	/* fprintf(stderr,"return pressed \n");
-	 * just a test: when cut is entered the 
-	 * buffer is cleared and the mark move on top 
-	 */
-	if ( strcmp(search_string,"cut")==0)
-	  {
-	    gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
-	    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-	  }
-	else if  ( strcmp(search_string,"top")==0)
-	  {
-	    /* fprintf(stderr,"scroll to top\n"); */
-	    gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
-	    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&iter,
-					 0.0,TRUE,
-					 0.0,0.0);
-	  }
+	gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
 	g_signal_stop_emission_by_name (widget, "key_press_event");
 	nsp_expr= search_string;
 	gtk_main_quit();
       }
       return TRUE;
     case GDK_Up:
-      str = nsp_xhistory_up(data);
-      /* fprintf(stdout,"up pressed\n"); */
-      if ( str != NULL) 
-	{
-	  /* fprintf(stdout,"insert text\n"); */
-	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-	  if ( view->buffer->mark != NULL) 
-	    {
-	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
-	      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
-	    }
-	  gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
-	}
-      g_signal_stop_emission_by_name (widget, "key_press_event");
-      return TRUE;
+      goto up; 
       break;
     case GDK_Down:
-      str = nsp_xhistory_down(data);
-      /* fprintf(stdout,"down pressed\n"); */
-      if ( str != NULL) 
-	{
-	  /* fprintf(stdout,"insert text\n"); */
-	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-	  if ( view->buffer->mark != NULL) 
-	    {
-	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
-	      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
-	    }
-	  gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
-	}
-      g_signal_stop_emission_by_name (widget, "key_press_event");
-      return TRUE;
       break;
     case 'p': 
       if ( event->state & GDK_CONTROL_MASK ) 
 	{
-	  fprintf(stdout,"Ctrl-p  pressed\n");
+	  goto up;
 	}
-    default:
-      /* if we are at a position when insertion is not possible 
-       * we jump to end of text view where we are allowed 
-       * to enter text 
-       */
-
-      cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
-      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
-      if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
-	{
-	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-	  gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
-	}
-
+      goto def;
       break;
+    case 'n':
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  goto down;
+	}
+      goto def;
+      break;
+    case 'l' :
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  goto ctrl_l;
+	}
+      goto def;
+      break;
+    case 'b' :
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
+	  gtk_text_iter_backward_char (&iter);
+	  if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
+	    {
+	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+	    }
+	  return TRUE;
+	}
+      goto def;
+      break;
+    case 'a': 
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  if ( view->buffer->mark != NULL) 
+	    {
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+	    }
+	  return TRUE;
+	}
+      goto def; 
+      break;
+    default:
+      goto def;
+      break;
+    }
+  return FALSE;
+ up:    str = nsp_xhistory_up(data);
+  /* fprintf(stdout,"up pressed\n"); */
+  if ( str != NULL) 
+    {
+      /* fprintf(stdout,"insert text\n"); */
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      if ( view->buffer->mark != NULL) 
+	{
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	  gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
+	}
+      gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+    }
+  g_signal_stop_emission_by_name (widget, "key_press_event");
+  return TRUE;
+ down: 
+  str = nsp_xhistory_down(data);
+  /* fprintf(stdout,"down pressed\n"); */
+  if ( str != NULL) 
+    {
+      /* fprintf(stdout,"insert text\n"); */
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      if ( view->buffer->mark != NULL) 
+	{
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	  gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
+	}
+      gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+    }
+  g_signal_stop_emission_by_name (widget, "key_press_event");
+  return TRUE;
+ ctrl_l : 
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
+  gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
+  return TRUE;
+ def: 
+  /* if we are at a position when insertion is not possible 
+   * we jump to end of text view where we are allowed 
+   * to enter text 
+   */
+  cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
+  if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
+    {
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
     }
   return FALSE;
 }
@@ -511,27 +547,28 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
   /* gtk_text_view_copy_clipboard (GtkTextView *text_view) */
   GtkTextIter start,end;
   View *view= user_data;
-  /* 
-  GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
-						      GDK_SELECTION_CLIPBOARD);
-  */
+  /* set the selection to be editable */
   gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_remove_tag(view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
+  /*
+   * set the cursor position at the end because 
+   * we want always to paste at the end 
+   */
   /* 
-  gtk_text_buffer_apply_tag(view->buffer->buffer,
-			    view->buffer->editable_tag,
-			    &start, &end);
+     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   */
-  /* 
-  gtk_text_buffer_copy_clipboard (view->buffer->buffer,
-				  clipboard);
-  gtk_text_buffer_remove_tag(view->buffer->buffer,
-			     view->buffer->editable_tag,
-			     &start, &end);
-  */
-  fprintf(stderr,"Into the copy \n");
+}
+
+static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
+{
+  /* gtk_text_view_copy_clipboard (GtkTextView *text_view) */
+  GtkTextIter start,end;
+  View *view= user_data;
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
 }
 
 
@@ -586,6 +623,11 @@ create_view (Buffer *buffer)
   g_signal_connect (view->text_view,
                     "copy_clipboard",
                     G_CALLBACK (copy_clipboard_callback),
+                    view);
+
+  g_signal_connect (view->text_view,
+                    "paste_clipboard",
+                    G_CALLBACK (paste_clipboard_callback),
                     view);
 
   g_signal_connect (view->buffer->buffer,
