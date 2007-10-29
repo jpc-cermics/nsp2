@@ -9,7 +9,7 @@ The following routines come from Toms708
 They have the ACM Copyright. They have 
 to be rewriten. 
 
-    * ALGDIV computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
+
     * APSER yields the incomplete beta ratio i(sub(1-x))(b,a) for
     * BASYM uses an asymptotic expansion for ix(a,b) for large a and b.
     * BCORR evaluates del(a0) + del(b0) - del(a0 + b0) where
@@ -34,17 +34,19 @@ to be rewriten.
 
 Rewriten code: 
 
+    * algdiv computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
+      rewriten with maple code to obtain stirling series differences.
     * dln1px evaluates the function ln(1 + a)
       uses nsp_log1p 
-    * IPMPAR provides the integer machine constants for the computer
+    * ipmpar provides the integer machine constants for the computer
       rewriten to use dlamch 
-    * GAMLN1 evaluates ln(gamma(1 + a)) for -0.2 .le. a .le. 1.25
+    * gamln1 evaluates ln(gamma(1 + a)) for -0.2 .le. a .le. 1.25
       rewriten with the help of Maple Chebyshev Pade approximations.
-    * REXP evaluates the function exp(x) - 1.
+    * rexp evaluates the function exp(x) - 1.
       rewriten with the help of Maple Chebyshev Pade approximations.
-    * RLOG1 evaluates the function x - ln(1 + x)
+    * rlog1 evaluates the function x - ln(1 + x)
       rewriten with the help of Maple Chebyshev Pade approximations.
-    * SPMPAR provides single precision machine constants for
+    * spmpar provides single precision machine constants for
       rewriten to use dlamch 
 
 
