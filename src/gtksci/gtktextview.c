@@ -1489,6 +1489,7 @@ create_view (Buffer *buffer)
                     "expose_event",
                     G_CALLBACK (line_numbers_expose),
                     NULL);
+
   
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);

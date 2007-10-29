@@ -332,11 +332,19 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
 				      view->buffer->mark,
 				      0, TRUE, 0.0, 1.0);
+	/* 
+	gtk_text_buffer_remove_tag (view->buffer->buffer,
+				    view->buffer->editable_tag,
+				    &start, &end);
+	*/
 	gtk_text_buffer_apply_tag (view->buffer->buffer,
 				   view->buffer->not_editable_tag,
 				   &start, &end);
 	/* ZZZ */
-	/* fprintf(stderr,"return pressed \n"); */
+	/* fprintf(stderr,"return pressed \n");
+	 * just a test: when cut is entered the 
+	 * buffer is cleared and the mark move on top 
+	 */
 	if ( strcmp(search_string,"cut")==0)
 	  {
 	    gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
@@ -389,6 +397,11 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       g_signal_stop_emission_by_name (widget, "key_press_event");
       return TRUE;
       break;
+    case 'p': 
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  fprintf(stdout,"Ctrl-p  pressed\n");
+	}
     default:
       /* if we are at a position when insertion is not possible 
        * we jump to end of text view where we are allowed 
@@ -486,6 +499,40 @@ char *readline_textview(const char *prompt)
   return NULL;
 }
 
+/* when we copy a zone : we change the zone to set it 
+ * editable. The whole buffer is set to non editable 
+ * after a <Return>. 
+ * ZZZZ: est-ce que cela risque pas de finir par etre tres lent 
+ * quand la taille va croitre ? 
+ */
+
+static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
+{
+  /* gtk_text_view_copy_clipboard (GtkTextView *text_view) */
+  GtkTextIter start,end;
+  View *view= user_data;
+  /* 
+  GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
+						      GDK_SELECTION_CLIPBOARD);
+  */
+  gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_remove_tag(view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
+  /* 
+  gtk_text_buffer_apply_tag(view->buffer->buffer,
+			    view->buffer->editable_tag,
+			    &start, &end);
+  */
+  /* 
+  gtk_text_buffer_copy_clipboard (view->buffer->buffer,
+				  clipboard);
+  gtk_text_buffer_remove_tag(view->buffer->buffer,
+			     view->buffer->editable_tag,
+			     &start, &end);
+  */
+  fprintf(stderr,"Into the copy \n");
+}
 
 
 static View *
@@ -535,6 +582,11 @@ create_view (Buffer *buffer)
                     "key_press_event",
                     G_CALLBACK (key_press_text_view),
                     view);  
+
+  g_signal_connect (view->text_view,
+                    "copy_clipboard",
+                    G_CALLBACK (copy_clipboard_callback),
+                    view);
 
   g_signal_connect (view->buffer->buffer,
 		    "mark_set",
