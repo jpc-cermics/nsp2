@@ -1055,7 +1055,7 @@ L20:
     }
 
 L80:
-  u = exp (-cdf_bcorr (a, b));
+  u = exp (-cdf_bcorr (*a, *b));
   ret_val = e0 * t * u * sum;
   return ret_val;
 }				/* basym_ */

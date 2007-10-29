@@ -87,7 +87,7 @@ double cdf_stirling_series_diff(double z, double y)
    * Maple code: 
    * Digits:=17;nm:=6;convert([seq(bernoulli(2*n)/(2*n*(2*n-1)),n=1..nm)],float);
    */
-  #define NN 8
+  #define NN 10
   static const double b[]={.083333333333333333, -.0027777777777777778, 
 			   .00079365079365079365, -.00059523809523809524, 
 			   .00084175084175084175, -.0019175269175269175,
@@ -122,6 +122,33 @@ double cdf_stirling_series_diff(double z, double y)
   res *= (y*x);
   return  res;
 }
+
+double cdf_stirling_series(double a) 
+{
+  /* precompute the sequence [seq(bernoulli(2*n)/(2*n*(2*n-1)),n=1..6)] 
+   * Maple code: 
+   * Digits:=17;nm:=6;convert([seq(bernoulli(2*n)/(2*n*(2*n-1)),n=1..nm)],float);
+   */
+
+  #define NN1 10
+  static const double b[]={.083333333333333333, -.0027777777777777778, 
+			   .00079365079365079365, -.00059523809523809524, 
+			   .00084175084175084175, -.0019175269175269175,
+			   .0064102564102564103, -.029550653594771242, 
+			   .17964437236883057, -1.3924322169059011};
+
+  /* same as above but sn replaced by 1 */
+  double w,w2,res=0.0;
+  int i,nn=NN1;
+  w=(1/a);
+  w2=w*w;
+  /* horner evaluation of sum_{n=1}^{6} b2n*(1/z)^{2*n-1}(sn) */
+  for ( i= nn-1 ; i>=0; i--) 
+    res = ( res + b[i])*w2;
+  res *= a ;
+  return  res;
+}
+
 
 /**
  * cdf_algdiv:

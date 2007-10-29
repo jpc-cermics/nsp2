@@ -113,7 +113,7 @@ double cdf_betaln (double a0, double b0)
 
  L100:
   /* PROCEDURE WHEN A .GE. 8 */
-  w = cdf_bcorr (&a, &b);
+  w = cdf_bcorr (a, b);
   h = a / b;
   c = h / (h + 1.);
   u = -(a - .5) * log (c);

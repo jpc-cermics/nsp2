@@ -179,7 +179,7 @@ L130:
  L190:
   d__1 = -(*a * u + *b * v);
   z__ = cdf_esum (*mu, d__1);
-  ret_val = const__ * sqrt (*b * x0) * z__ * exp (-cdf_bcorr (a, b));
+  ret_val = const__ * sqrt (*b * x0) * z__ * exp (-cdf_bcorr (*a, *b));
   return ret_val;
 }	
 

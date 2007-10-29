@@ -1,18 +1,66 @@
+/* Nsp
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ *
+ * ln(gamma(b)/gamma(a+b)) when b >= 8 a+b too. 
+ *
+ */
+
 #include "cdf.h"
+
 
 /**
  * cdf_bcorr:
  * @a0: 
  * @b0: 
  * 
- *     evaluation of  del(a0) + del(b0) - del(a0 + b0)  where 
- *     ln(gamma(a)) = (a - 0.5)*ln(a) - a + 0.5*ln(2*pi) + del(a). 
- *     it is assumed that a0 .ge. 8 and b0 .ge. 8. 
+ * evaluation of  del(a0) + del(b0) - del(a0 + b0)  where 
+ * ln(gamma(a)) = (a - 0.5)*ln(a) - a + 0.5*ln(2*pi) + del(a). 
+ * it is assumed that a0 .ge. 8 and b0 .ge. 8. 
  *
- * Returns: 
+ * Returns: a double 
  **/
 
-double cdf_bcorr (double *a0, double *b0)
+double cdf_bcorr (double a0, double b0)
+{
+  double a, b; 
+  a = Min (a0, b0);
+  b = Max (a0, b0);
+  return cdf_stirling_series_diff(a,b) 
+    + cdf_stirling_series(b) ;
+}
+
+/**
+ * cdf_bcorr_old:
+ * @a0: 
+ * @b0: 
+ * 
+ * evaluation of  del(a0) + del(b0) - del(a0 + b0)  where 
+ * ln(gamma(a)) = (a - 0.5)*ln(a) - a + 0.5*ln(2*pi) + del(a). 
+ * it is assumed that a0 .ge. 8 and b0 .ge. 8. 
+ *
+ * Returns: a double 
+ **/
+
+/* acm code used for testing. 
+ */
+
+double cdf_bcorr_old (double a0, double b0)
 {
   const double c0 = .0833333333333333;
   const double c1 = -.00277777777760991;
@@ -23,8 +71,8 @@ double cdf_bcorr (double *a0, double *b0)
   double ret_val, d1;
   double a, b, c, h, t, w, x, s3, s5, s7, x2, s9, s11;
 
-  a = Min (*a0, *b0);
-  b = Max (*a0, *b0);
+  a = Min (a0, b0);
+  b = Max (a0, b0);
 
   h = a / b;
   c = h / (h + 1.);

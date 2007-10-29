@@ -15,7 +15,8 @@ extern double cdf_alngam (double x);
 extern double cdf_alngam_old (double x);
 extern double cdf_dlanor (double x);
 extern double cdf_dlanor1 (double x);
-extern double cdf_bcorr (double *a0, double *b0);
+extern double cdf_bcorr (double a0, double b0);
+extern double cdf_bcorr_old (double a0, double b0);
 extern double cdf_betaln (double a0, double b0);
 extern double cdf_brcmp1 (int *mu, double *a, double *b, double *x, double *y);
 extern double cdf_brcomp (double a, double b, double x, double y);
@@ -87,6 +88,8 @@ extern int cdf_cumt (double *t, double *df, double *cum, double *ccum);
 extern int cdf_dinvr (int *status, double *x, double *fx, int *qleft, int *qhi);
 
 extern double cdf_stirling_series_diff(double z, double y) ;
+extern double cdf_stirling_series(double a) ;
+
 
 
 

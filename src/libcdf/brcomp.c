@@ -63,7 +63,7 @@ double cdf_brcomp (double a, double b, double x, double y)
 	  v = cdf_rlog1 (e);
 	}
       z = exp (-(a * u + b * v));
-      ret_val = invsqrt2pi * sqrt (b * x0) * z * exp (-cdf_bcorr (&a, &b));
+      ret_val = invsqrt2pi * sqrt (b * x0) * z * exp (-cdf_bcorr (a, b));
       return ret_val;
     }
   

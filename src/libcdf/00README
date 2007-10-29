@@ -12,7 +12,6 @@ to be rewriten.
 
     * APSER yields the incomplete beta ratio i(sub(1-x))(b,a) for
     * BASYM uses an asymptotic expansion for ix(a,b) for large a and b.
-    * BCORR evaluates del(a0) + del(b0) - del(a0 + b0) where
     * BETALN evaluates the logarithm of the beta function.
     * BFRAC uses a continued fraction expansion for ix(a,b) when a,b .gt. 1.
     * BGRAT uses an asymptotic expansion for ix(a,b) when a is larger than b.
@@ -33,6 +32,9 @@ to be rewriten.
 
 Rewriten code: 
 
+    * bcorr evaluates del(a0) + del(b0) - del(a0 + b0) 
+      rewriten with maple code to obtain stirling series differences and 
+      stirling series.
     * gsumln evaluates the function ln(gamma(a + b))
       rewriten.
     * algdiv computes ln(gamma(b)/gamma(a+b)) when b .ge. 8
