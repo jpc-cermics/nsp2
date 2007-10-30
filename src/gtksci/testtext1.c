@@ -20,8 +20,8 @@
  *
  * Adapted from the testtext.c file in gtk+/tests 
  * to be used as a terminal for Nsp.
- * jpc (2006).
- * use : 
+ * jpc (2006-2007).
+ * 
  * gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
  * to set up emacs editing but note that some editing keys are redefined here 
  * as in emacs mode.
@@ -657,18 +657,68 @@ static char buf[1025];
 
 int  Sciprint2textview(const char *fmt, va_list ap)
 {
-  GtkTextBuffer *buffer;
+  const int ncolor=5;
+  static int xtag = FALSE;
+  static GtkTextTag *color_tags[5], *tag = NULL;
   GtkTextIter start, end;
   int n;
+  char *lbuf = buf ;
+  if ( xtag == FALSE ) 
+    {
+      int i;/* {8,{9,{7,{6,{7,{2,8}}}}}} */
+      const char *cnames[]={"blue","green","red","purple","lightblue"};
+      for ( i = 0 ; i < ncolor ; i++) 
+	color_tags[i] = gtk_text_buffer_create_tag (view->buffer->buffer, NULL,
+						    "foreground", cnames[i] , NULL);
+      xtag = TRUE;
+    }
   n= vsnprintf(buf,1024 , fmt, ap );
-  buffer = view->buffer->buffer;
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
-  gtk_text_buffer_insert (buffer, &end,buf,-1);
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+#if 1 
+  while (1)
+    {
+      if ( *lbuf == '\0') break;
+      if ( *lbuf == '\033')
+	{
+	  /* ignore colors code : "\033[%dm(%d,%d)\033[0m",col,i+1,j+1); */
+	  lbuf = lbuf + 3;
+	  if (*lbuf != 'm')
+	    {
+	      char color = *lbuf;
+	      switch (color) 
+		{
+		case '4': tag = color_tags[0];break;
+		case '2': tag = color_tags[1];break;
+		case '1': tag = color_tags[2];break;
+		case '5': tag = color_tags[3];break;
+		case '6': tag = color_tags[4];break;
+		}
+	      lbuf++;
+	    }
+	  else 
+	    {
+	      tag = NULL;
+	    }
+	  lbuf++;
+	}
+      else 
+	{
+	  if ( tag != NULL) 
+	    gtk_text_buffer_insert_with_tags(view->buffer->buffer, &end,lbuf,1,tag,NULL);
+	  else
+	    gtk_text_buffer_insert (view->buffer->buffer, &end,lbuf,1);
+	  lbuf++;
+	}
+    }
+#else 
+  gtk_text_buffer_insert (view->buffer->buffer, &end,buf,-1);
+#endif 
+
   if ( view->buffer->mark == NULL) 
-    view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+    view->buffer->mark = gtk_text_buffer_create_mark (view->buffer->buffer, NULL, &end, TRUE);
   else 
-    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
+    gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
