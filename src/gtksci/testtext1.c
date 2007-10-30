@@ -56,6 +56,7 @@ extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 
 
+
 typedef struct _Buffer Buffer;
 typedef struct _View View;
 
@@ -581,6 +582,7 @@ create_view (Buffer *buffer)
   GtkWidget *vbox;
   GtkWidget *menu;
   
+
   view = g_new0 (View, 1);
 
   view->buffer = buffer;
@@ -866,4 +868,5 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
   enter--;
   return;
 }
+
 

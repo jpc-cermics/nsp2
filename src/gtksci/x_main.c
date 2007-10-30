@@ -43,6 +43,8 @@
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern void nsp_create_main_text_view(void);
 
+
+
 /* #define STATUS_BAR 1  */
 
 #ifdef STATUS_BAR 
@@ -51,6 +53,7 @@ static void create_scilab_status(void);
 
 static void nsp_gtk_gl_init (int *argc,char ***argv);
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
+static void nsp_set_emacs_key_theme(void) ;
 
 
 /**
@@ -102,6 +105,8 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #ifdef STATUS_BAR 
       create_scilab_status();
 #endif 
+      nsp_set_emacs_key_theme() ;
+
     }
   /* signals */
   signal(SIGSEGV,sci_clear_and_exit);
@@ -139,6 +144,7 @@ void start_sci_gtk(void)
   gtk_init(&argc,&argv);
   nsp_gtk_gl_init (&argc, &argv);
   nsp_activate_gtk_events_check();
+  nsp_set_emacs_key_theme();
 }
 
 static void nsp_gtk_gl_init (int *argc,char ***argv)
@@ -255,6 +261,8 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   gtk_set_locale();
   gtk_init(&argc, &argv);
   nsp_gtk_gl_init (&argc, &argv);
+  /*
+   */
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "Nsp");
   gtk_window_set_wmclass (GTK_WINDOW (window), "toplevel", "Scilab");
@@ -290,5 +298,24 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 #endif 
 } 
 
+/* emacs mode for edition 
+ *
+ */
+
+void nsp_set_emacs_key_theme(void) 
+{
+  GtkSettings *settings;
+  gchar *default_key_theme = NULL;
+  /*
+   * check settings for edition 
+   */
+  settings = gtk_settings_get_default ();
+  if ( settings == NULL) return ;
+  g_object_get (settings, "gtk-key-theme-name", &default_key_theme, NULL);
+  if (strcmp(default_key_theme,"Emacs") != 0) 
+    gtk_settings_set_string_property (settings,
+				      "gtk-key-theme-name", "Emacs",NULL);
+  free(default_key_theme);
+}
 
 
