@@ -24,10 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#undef GTK_DISABLE_DEPRECATED
-
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+
+#include <nsp/object.h>
+#include <nsp/parse.h>
+#include "../system/files.h" /* FSIZE */
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
@@ -89,6 +91,7 @@ static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
 static void  view_set_title   (View   *view);
+static void execute_tag_error(View *view,int line);
 
 GSList *buffers = NULL;
 GSList *views = NULL;
@@ -552,6 +555,80 @@ do_exit    (gpointer             callback_data,
 }
 
 
+static void 
+do_execute (gpointer             callback_data,
+	    guint                callback_action,
+	    GtkWidget           *widget)
+{
+  GtkTextIter start,end;
+  int display=FALSE,echo =FALSE,errcatch=TRUE,rep,pausecatch=TRUE,mtlb=FALSE;
+  View *view = view_from_widget (widget);
+  /* save first */
+  push_active_window (GTK_WINDOW (view->window));
+
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
+                              &start, &end );
+
+  if (!view->buffer->filename)
+    do_save_as (callback_data, callback_action, widget);
+  else
+    save_buffer (view->buffer);
+  /* execute the contents */
+  if (view->buffer->filename)
+    {
+      rep =nsp_parse_eval_file(view->buffer->filename,display,echo,errcatch,
+			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
+      if ( rep < 0 ) 
+	{
+	  char fname[FSIZE+1];
+	  /* get the line number of the Error */
+	  int line=-1,i;
+	  NspSMatrix *error_msg = nsp_lasterror_get();
+	  for ( i=0; i < error_msg->mn ; i++)
+	    {
+	      Sciprintf("%s",error_msg->S[i]);
+	      if ( sscanf(error_msg->S[i],"\tline %d of file %s",&line,fname)==2)
+		{
+		  if ( strcmp(fname,view->buffer->filename) == 0) 
+		    {
+		      execute_tag_error(view,line);
+		      break;
+		    }
+		}
+	    }
+	  /* 
+	  if ( sscanf(error_msg->S[error_msg->mn-1],"Error: at line %d of file",&line)==1)
+	    {
+	      execute_tag_error(view,line);
+	    }
+	  */
+	  nsp_lasterror_clear();
+	}
+    }
+  pop_active_window ();
+}
+
+/* put line in red 
+ *
+ */
+
+static void execute_tag_error(View *view,int line)
+{
+  GtkTextIter istart,iend;
+  /* fprintf(stderr,"-line->%d\n",line); */
+  gtk_text_buffer_get_iter_at_line(view->buffer->buffer,&istart,line-1);
+  
+  gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&istart,0.0,FALSE,0,0);
+  iend = istart ;
+  gtk_text_iter_forward_sentence_end(&iend);
+  gtk_text_buffer_apply_tag (view->buffer->buffer, view->buffer->found_text_tag,
+			     &istart, &iend);
+  
+}
+
+
+
 enum
 {
   RESPONSE_FORWARD,
@@ -657,6 +734,7 @@ static GtkItemFactoryEntry menu_items[] =
   { "/File/_Open",       "<control>O", do_open,     0, NULL },
   { "/File/_Save",       "<control>S", do_save,     0, NULL },
   { "/File/Save _As...", NULL,         do_save_as,  0, NULL },
+  { "/File/_Execute...", NULL,         do_execute,  0, NULL },
   { "/File/sep1",        NULL,         NULL,        0, "<Separator>" },
   { "/File/_Close",     "<control>W" , do_close,    0, NULL },
   { "/File/E_xit",      "<control>Q" , do_exit,     0, NULL },
@@ -1277,7 +1355,7 @@ get_lines (GtkTextView  *text_view,
   
   /* Get iter at first y */
   gtk_text_view_get_line_at_y (text_view, &iter, first_y, NULL);
-
+  
   /* For each iter, get its location and add it to the arrays.
    * Stop when we pass last_y
    */
