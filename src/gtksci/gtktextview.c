@@ -206,7 +206,7 @@ msgbox_no_cb (GtkWidget *widget, gboolean *result)
 static gboolean
 msgbox_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-  fprintf(stderr,"key pressed \n");
+  /* fprintf(stderr,"key pressed \n"); */
   if (event->keyval == GDK_Escape)
     {
       g_signal_stop_emission_by_name (widget, "key_press_event");
@@ -736,7 +736,7 @@ static GtkItemFactoryEntry menu_items[] =
   { "/File/Save _As...", NULL,         do_save_as,  0, NULL },
   { "/File/_Execute...", NULL,         do_execute,  0, NULL },
   { "/File/sep1",        NULL,         NULL,        0, "<Separator>" },
-  { "/File/_Close",     "<control>W" , do_close,    0, NULL },
+  { "/File/_Close",      NULL , do_close,    0, NULL },
   { "/File/E_xit",      "<control>Q" , do_exit,     0, NULL },
 
   { "/_Edit", NULL, 0, 0, "<Branch>" },
