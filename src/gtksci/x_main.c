@@ -312,10 +312,10 @@ void nsp_set_emacs_key_theme(void)
   settings = gtk_settings_get_default ();
   if ( settings == NULL) return ;
   g_object_get (settings, "gtk-key-theme-name", &default_key_theme, NULL);
-  if (strcmp(default_key_theme,"Emacs") != 0) 
+  if ( default_key_theme == NULL || strcmp(default_key_theme,"Emacs") != 0) 
     gtk_settings_set_string_property (settings,
 				      "gtk-key-theme-name", "Emacs",NULL);
-  free(default_key_theme);
+  if ( default_key_theme != NULL)  free(default_key_theme);
 }
 
 

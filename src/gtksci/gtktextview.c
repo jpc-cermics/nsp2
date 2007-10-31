@@ -31,6 +31,8 @@
 #include <nsp/parse.h>
 #include "../system/files.h" /* FSIZE */
 
+extern int nsp_edit(void);
+
 typedef struct _Buffer Buffer;
 typedef struct _View View;
 
@@ -533,6 +535,15 @@ do_close   (gpointer             callback_data,
 }
 
 static void
+do_new   (gpointer             callback_data,
+	  guint                callback_action,
+	  GtkWidget           *widget)
+{
+  nsp_edit();
+}
+
+#ifdef EXIT_USED 
+static void
 do_exit    (gpointer             callback_data,
 	    guint                callback_action,
 	    GtkWidget           *widget)
@@ -553,7 +564,7 @@ do_exit    (gpointer             callback_data,
   /* gtk_main_quit (); */
   pop_active_window ();
 }
-
+#endif 
 
 static void 
 do_execute (gpointer             callback_data,
@@ -731,14 +742,16 @@ do_select_all (gpointer callback_data,
 static GtkItemFactoryEntry menu_items[] =
 {
   { "/_File",            NULL,         NULL,        0, "<Branch>" },
+  { "/File/_New",        NULL,         do_new,     0, NULL },
   { "/File/_Open",       "<control>O", do_open,     0, NULL },
   { "/File/_Save",       "<control>S", do_save,     0, NULL },
   { "/File/Save _As...", NULL,         do_save_as,  0, NULL },
   { "/File/_Execute...", NULL,         do_execute,  0, NULL },
   { "/File/sep1",        NULL,         NULL,        0, "<Separator>" },
   { "/File/_Close",      NULL , do_close,    0, NULL },
-  { "/File/E_xit",      "<control>Q" , do_exit,     0, NULL },
-
+#ifdef EXIT_USED 
+  { "/File/E_xit",      "<control>Q" , do_exit,     0, NULL }, 
+#endif 
   { "/_Edit", NULL, 0, 0, "<Branch>" },
   { "/Edit/Find...", NULL, do_search, 0, NULL },
   { "/Edit/Select All", NULL , do_select_all, 0, NULL }, 
