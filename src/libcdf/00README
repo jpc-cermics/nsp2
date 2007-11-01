@@ -9,7 +9,6 @@ The following routines come from Toms708
 They have the ACM Copyright. They have 
 to be rewriten. 
 
-
     * APSER yields the incomplete beta ratio i(sub(1-x))(b,a) for
     * BASYM uses an asymptotic expansion for ix(a,b) for large a and b.
     * BETALN evaluates the logarithm of the beta function.
@@ -27,11 +26,12 @@ to be rewriten.
     * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
     * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
     * PSI evaluates the digamma function.
-    * GAMLN evaluates ln(gamma(a)) for positive a
-
 
 Rewriten code: 
 
+    * gamln evaluates ln(gamma(a)) for positive a
+      call alngam which was rewriten using 
+      Maple Chebyshev Pade approximations.
     * gam1 computes 1/gamma(a+1) - 1 for -0.5 .le. a .le. 1.5
       rewriten with the help of Maple Chebyshev Pade approximations.
     * bcorr evaluates del(a0) + del(b0) - del(a0 + b0) 
