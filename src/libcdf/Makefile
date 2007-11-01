@@ -4,7 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = dcd.a
 
-OBJSC = DcdInterf.o dlamch.o algdiv.o alngam.o alnrel.o \
+OBJSC = DcdInterf.o dlamch.o algdiv.o alngam.o \
 	bcorr.o betaln.o bratio.o brcmp1.o brcomp.o \
 	cdfbet.o cdfbin.o cdfchi.o cdfchn.o cdff.o cdffnc.o cdfgam.o cdfnbn.o cdfnor.o \
 	cdfpoi.o cdft.o cumbet.o cumbin.o cumchi.o cumchn.o cumf.o cumfnc.o cumgam.o \
