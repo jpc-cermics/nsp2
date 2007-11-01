@@ -2,7 +2,7 @@
 
 /**
  * cdf_gamln:
- * @a: 
+ * @a: a double 
  * 
  * computes ln(gamma(a)) for positive a 
  * written by alfred h. morris 
@@ -11,7 +11,23 @@
  * Returns: a double 
  **/
 
-double cdf_gamln (double a)
+double cdf_gamln(double a)
+{
+  return cdf_alngam(a);
+}
+
+/**
+ * cdf_gamln_old:
+ * @a: a double 
+ * 
+ * computes ln(gamma(a)) for positive a 
+ * written by alfred h. morris 
+ * naval surface warfare center dahlgren, virginia
+ * 
+ * Returns: a double 
+ **/
+
+double cdf_gamln_old (double a)
 {
   /*test: a=0.01:0.01:14; norm(log(gamma(a))- cdf_gamln(a)) */
   /*     D = 0.5*(LN(2*PI) - 1) */

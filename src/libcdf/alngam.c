@@ -24,7 +24,7 @@
 
 
 /**
- * cdf_alngam_old:
+ * cdf_alngam:
  * @x: pointer to double 
  * 
  * computes the natural logarithm of gamma(x). 
@@ -71,9 +71,7 @@ inline double f_approx_1_15(double x)
 double cdf_alngam(double x)
 {
   const double hln2pi=0.91893853320467274178E0;
-  
-  int i, n;
-  double prod, xx, offset;
+  double prod, xx;
 
   if ( x > 12 ) 
     {

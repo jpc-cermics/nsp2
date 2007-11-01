@@ -25,9 +25,10 @@ to be rewriten.
     * ESUM evaluates exp(mu + x).
     * EXPARG reports the largest safe arguments for EXP(X).
     * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
-    * GAMLN evaluates ln(gamma(a)) for positive a
     * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
     * PSI evaluates the digamma function.
+    * GAMLN evaluates ln(gamma(a)) for positive a
+
 
 Rewriten code: 
 
