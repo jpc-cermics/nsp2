@@ -841,9 +841,9 @@ static int int_cdf_gam1_old(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int int_cdf_dlanor1(Stack stack, int rhs, int opt, int lhs)
+static int int_cdf_dlanor_old(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor1,NULL);
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor_old,NULL);
 }
 
 static int int_cdf_alngam(Stack stack, int rhs, int opt, int lhs)
@@ -942,7 +942,7 @@ static OpTab Dcd_func[]={
   {"cdf_dln1px_old",int_cdf_dln1px_old},
   {"cdf_expm1",int_cdf_expm1},
   {"cdf_dlanor",int_cdf_dlanor},
-  {"cdf_dlanor1",int_cdf_dlanor1},
+  {"cdf_dlanor_old",int_cdf_dlanor_old},
   {"cdf_alngam",int_cdf_alngam},
   {"cdf_alngam_old",int_cdf_alngam_old},
   {"cdf_psi1",int_cdf_psi1},
