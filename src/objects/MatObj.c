@@ -934,18 +934,18 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
 
   if ( rhs != 2  &&  rhs != 4  && rhs != 6 )
     { 
-      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,stack.fname);
+      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,NspFname(stack));
       return RET_BUG;
     }
 
   if ((alpha = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
-  CheckScalar(stack.fname,1,alpha);
+  CheckScalar(NspFname(stack),1,alpha);
 
   if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
 
   if ( alpha->rc_type != y->rc_type || x->rc_type != y->rc_type )
     { 
-      Scierror("Error: sorry the arguments must be of same type than self arg %s\n",stack.fname);
+      Scierror("Error: sorry the arguments must be of same type than self arg %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -953,7 +953,7 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
     {
       if ( x->m != y->m || x->n != y->n ) 
 	{ 
-	  Scierror("%s: argument %d should have size %d x %d \n",stack.fname, 2, y->m, y->n );
+	  Scierror("%s: argument %d should have size %d x %d \n",NspFname(stack), 2, y->m, y->n );
 	  return RET_BUG;
 	} 
       
@@ -969,7 +969,7 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
 
   if ( i1 <= 0  || i2 <= 0 )
     { 
-      Scierror("%s: argument 3 and 4 must be positive integer \n",stack.fname);
+      Scierror("%s: argument 3 and 4 must be positive integer \n",NspFname(stack));
       return RET_BUG;
     } 
 
@@ -978,13 +978,13 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
       mn = i2-i1+1;
       if ( x->mn != mn )
 	{ 
-	  Scierror("%s: argument %d should have length %d \n",stack.fname, 2, i2-i1+1);
+	  Scierror("%s: argument %d should have length %d \n",NspFname(stack), 2, i2-i1+1);
 	  return RET_BUG;
 	} 
 
       if ( i2 > y->mn )
 	{ 
-	  Scierror("%s: last index (%d) outside (self) array length (%d) \n",stack.fname, i2, y->mn);
+	  Scierror("%s: last index (%d) outside (self) array length (%d) \n",NspFname(stack), i2, y->mn);
 	  return RET_BUG;
 	} 
 
@@ -1001,20 +1001,20 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
 
   if ( j1 <= 0  || j2 <= 0 )
     { 
-      Scierror("%s: argument 5 and 6 must be positive integer \n",stack.fname);
+      Scierror("%s: argument 5 and 6 must be positive integer \n",NspFname(stack));
       return RET_BUG;
     } 
 
   m = i2-i1+1; n = j2-j1+1;
   if ( x->m != m || x->n != n )
     { 
-      Scierror("%s: argument %d should have size %d x %d \n",stack.fname, 2, m, n);
+      Scierror("%s: argument %d should have size %d x %d \n",NspFname(stack), 2, m, n);
       return RET_BUG;
     } 
 
   if ( i2 > y->mn )
     { 
-      Scierror("%s: last indices (%d,%d) outside (self) array sizes (%d) \n",stack.fname, i2, j2, y->m, y->n);
+      Scierror("%s: last indices (%d,%d) outside (self) array sizes (%d) \n",NspFname(stack), i2, j2, y->m, y->n);
       return RET_BUG;
     }
  
@@ -1046,21 +1046,21 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 
   if ( rhs-opt != 3 && rhs-opt != 7 ) 
     { 
-      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,stack.fname);
+      Scierror("Error: %d arguments is incorrect for method %s\n",rhs,NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,1);
 
   if ((alpha = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
-  CheckScalar(stack.fname,1,alpha);
+  CheckScalar(NspFname(stack),1,alpha);
   if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
-  CheckVector(stack.fname,2,x);
+  CheckVector(NspFname(stack),2,x);
   if ((y = GetMat (stack, 3)) == NULLMAT) return RET_BUG;
-  CheckVector(stack.fname,3,y);
+  CheckVector(NspFname(stack),3,y);
 
   if ( alpha->rc_type != A->rc_type || x->rc_type != A->rc_type || y->rc_type != A->rc_type )
     { 
-      Scierror("Error: sorry the 3 first arguments must be of same type than self arg %s\n",stack.fname);
+      Scierror("Error: sorry the 3 first arguments must be of same type than self arg %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1086,7 +1086,7 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
   mm =  i2-i1+1; nn = j2-j1+1;
   if ( mm != x->mn  ||  nn != y->mn  ||  i1 < 1  ||  j1 < 1  ||  i2 > A->m  ||  j2 > A->n )
     { 
-      Scierror("Error: incompatible dimensions %s\n",stack.fname);
+      Scierror("Error: incompatible dimensions %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1117,10 +1117,10 @@ static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,in
   CheckRhs(1,1);
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
-  CheckVector(stack.fname,1,x);
+  CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->m )
     { 
-      Scierror("%s: the argument should have %d components \n",stack.fname,A->m);
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
       return RET_BUG;
     }
 
@@ -1145,10 +1145,10 @@ static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,in
   CheckRhs(1,1);
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
-  CheckVector(stack.fname,1,x);
+  CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->n )
     { 
-      Scierror("%s: the argument should have %d components \n",stack.fname,A->n);
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
       return RET_BUG;
     }
 
