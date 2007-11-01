@@ -4739,7 +4739,10 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
 
   if ( IsNspPList(f) == FALSE  )
     {
-      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
+      if ( rhs-opt == 2) 
+	Scierror("%s: second argument should be a function\n",NspFname(stack));
+      else 
+	Scierror("%s: third argument should be a function\n",NspFname(stack));
       return RET_BUG;
     }
 
