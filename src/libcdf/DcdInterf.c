@@ -813,10 +813,6 @@ static int int_cdf_dln1px_old(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px_old,NULL);
 }
 
-static int int_cdf_gam1(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gam1,NULL);
-}
 
 static int int_cdf_dlanor(Stack stack, int rhs, int opt, int lhs)
 {
@@ -832,6 +828,16 @@ static int int_cdf_rexp(Stack stack, int rhs, int opt, int lhs)
 static int int_cdf_rexp_old(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp_old,NULL);
+}
+
+static int int_cdf_gam1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gam1,NULL);
+}
+
+static int int_cdf_gam1_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gam1_old,NULL);
 }
 
 
@@ -858,6 +864,16 @@ static int int_cdf_algdiv(Stack stack, int rhs, int opt, int lhs)
 static int int_cdf_algdiv_old(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_algdiv_old);
+}
+
+static int int_cdf_betaln(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_betaln);
+}
+
+static int int_cdf_betaln_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_betaln_old);
 }
 
 static int int_cdf_bcorr(Stack stack, int rhs, int opt, int lhs)
@@ -907,13 +923,16 @@ static OpTab Dcd_func[]={
   {"cdft",int_cdft}, 
   {"cdf_rlog1",int_cdf_rlog1},
   {"cdf_rlog1_old",int_cdf_rlog1_old},
-  {"cdf_gam1",int_cdf_gam1},
   {"cdf_rexp",int_cdf_rexp},
   {"cdf_rexp_old",int_cdf_rexp_old},
+  {"cdf_gam1",int_cdf_gam1},
+  {"cdf_gam1_old",int_cdf_gam1_old},
   {"cdf_rlog",int_cdf_rlog},
   {"cdf_rlog_old",int_cdf_rlog_old},
   {"cdf_algdiv",int_cdf_algdiv},
   {"cdf_algdiv_old",int_cdf_algdiv_old},
+  {"cdf_betaln",int_cdf_betaln},
+  {"cdf_betaln_old",int_cdf_betaln_old},
   {"cdf_bcorr",int_cdf_bcorr},
   {"cdf_bcorr_old",int_cdf_bcorr_old},
   {"cdf_gamln",int_cdf_gamln},

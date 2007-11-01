@@ -10,7 +10,7 @@
  * Returns: a double 
  **/
 
-double cdf_betaln (double a0, double b0)
+double cdf_betaln_old(double a0, double b0)
 {
   /* e = 0.5*LN(2*PI) */
   const double e = .918938533204673;
@@ -129,5 +129,107 @@ double cdf_betaln (double a0, double b0)
       return ret_val;
     }
 
+}
+
+
+/* 
+ *
+ *
+ */
+
+double cdf_betaln(double a0, double b0)
+{
+  /* e = 0.5*LN(2*PI) */
+  const double e = 0.9189385332046727417803297364;
+  int i1, i, n;
+  double a, b, c, h, u, v, w, z;
+
+  a = Min (a0, b0);
+  b = Max (a0, b0);
+  if (a >= 8.)
+    {
+      /* XXX OK */
+      /*  PROCEDURE WHEN A .GE. 8 */
+      w = cdf_bcorr (a, b);
+      h = a / b;
+      c = h / (h + 1.);
+      u = -(a - .5) * log (c);
+      v = b * cdf_dln1px (h);
+      if (u <= v)
+	return  log (b) * -.5 + e + w - u - v;
+      else
+	return  log (b) * -.5 + e + w - v - u;
+    }
+  if ( a < 1 ) 
+    {
+      /* OK */
+      /* PROCEDURE WHEN A .LT. 1   */
+      if (b >= 8.)
+	return  cdf_gamln (a) + cdf_algdiv (a, b);
+      else
+	{
+	  return cdf_gamln (a) + (cdf_gamln (b) - cdf_gamln (a+b));
+	}
+    }
+  /* PROCEDURE WHEN 1 <= A < 8 */
+  if (a > 2.)
+    {
+      if (b > 1e3)
+	{
+	  /* REDUCTION OF A WHEN B .GT. 1000 */
+	  n = (int) (a - 1.);
+	  w = 1.;
+	  i1 = n;
+	  for (i = 1; i <= i1; ++i)
+	    {
+	      a += -1.;
+	      w *= a / (a / b + 1.);
+	    }
+	  return  log (w) - n * log (b) + (cdf_gamln (a) + cdf_algdiv (a, b));
+	}
+      n = (int) (a - 1.);
+      w = 1.;
+      i1 = n;
+      for (i = 1; i <= i1; ++i)
+	{
+	  a += -1.;
+	  h = a / b;
+	  w *= h / (h + 1.);
+	}
+      w = log (w);
+      if (b < 8.)
+	{
+	  n = (int) (b - 1.);
+	  z = 1.;
+	  i1 = n;
+	  for (i = 1; i <= i1; ++i)
+	    {
+	      b += -1.;
+	      z *= b / (a + b);
+	    }
+	  return  w + log (z) + (cdf_gamln (a) + (cdf_gamln (b) - cdf_gsumln (a, b)));
+	}
+      return  w + cdf_gamln (a) + cdf_algdiv (a, b);
+    }
+  /* A in [1,2] */
+
+  if (b > 2.)
+    {
+      w = 0.;
+      if (b < 8.)
+	{
+	  n = (int) (b - 1.);
+	  z = 1.;
+	  i1 = n;
+	  for (i = 1; i <= i1; ++i)
+	    {
+	      b += -1.;
+	      z *= b / (a + b);
+	    }
+	  return  w + log (z) + (cdf_gamln (a) + (cdf_gamln (b) - cdf_gsumln (a, b)));
+	}
+      return  cdf_gamln (a) + cdf_algdiv (a, b);
+    }
+  return cdf_gamln (a) + cdf_gamln (b) - cdf_gsumln (a, b);
 }
 
