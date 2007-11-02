@@ -46,12 +46,7 @@ static double f_approx2(double x)
 double cdf_erf (double x)
 {
   const double c = .564189583547756; /* 1/sqrt(%pi) */
-  const double r__[5] = { 2.10144126479064, 26.2370141675169, 21.3688200555087, 
-			  4.6580782871847,  .282094791773523 };
-  const double s[4] =   { 94.153775055546, 187.11481179959, 99.0191814623914, 
-			  18.0124575948747 };
-
-  double ret_val, t, x2, ax, bot, top;
+  double ret_val, t, x2, ax;
 
   ax = Abs (x);
   if (ax <= 0.5)
