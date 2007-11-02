@@ -22,7 +22,7 @@ double cdf_exparg (const int l)
   const int c__10 = 10;
   int b, m;
   double lnb;
-  b = cdf_ipmpar (&c__4);
+  b = cdf_ipmpar (c__4);
   switch (b ) 
     {
     case 2: 
@@ -39,10 +39,10 @@ double cdf_exparg (const int l)
     }
   if (l == 0)
     {
-      m = cdf_ipmpar (&c__10);
+      m = cdf_ipmpar (c__10);
       return m * lnb * .99999;
     }
-  m = cdf_ipmpar (&c__9) - 1;
+  m = cdf_ipmpar (c__9) - 1;
   return  m * lnb * .99999;
 }
   

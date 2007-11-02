@@ -56,9 +56,9 @@ extern double cdf_dlamch(char *,long int);
  *     for ipmpar(3) 
  */
 
-int cdf_ipmpar(const int *i)
+int cdf_ipmpar(const int i)
 {
-  switch (*i) 
+  switch (i) 
     {
     case 3: return largestint();
     case 4: return (int) cdf_dlamch("b", 1L);

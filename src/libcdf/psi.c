@@ -42,7 +42,6 @@ static double f_approx_gt_3(double x);
 
 double cdf_psi1 (double xx)
 {
-  const int c__3 = 3;
   double aug;
   double x, xmax1, xmax2,  xsmall;
   /*     machine dependent constants ... 
@@ -54,7 +53,7 @@ double cdf_psi1 (double xx)
    *        xsmall = absolute argument below which pi*cotan(pi*x) 
    *                 may be represented by 1/x. 
    */
-  xmax1 = (double) cdf_ipmpar (&c__3);
+  xmax1 = (double) cdf_ipmpar (3);
   xmax2 =  1. / cdf_spmpar(1);
   xmax1 = Min (xmax1, xmax2);
   
@@ -209,7 +208,6 @@ static double f_approx_gt_3(double x)
 
 double cdf_psi1_old (double xx)
 {
-  const int c__3 = 3;
   /*     pivo4 = PI/4 */
   const double piov4 = .785398163397448;
 
@@ -225,7 +223,7 @@ double cdf_psi1_old (double xx)
    *        xsmall = absolute argument below which pi*cotan(pi*x) 
    *                 may be represented by 1/x. 
    */
-  xmax1 = (double) cdf_ipmpar (&c__3);
+  xmax1 = (double) cdf_ipmpar (3);
   xmax2 =  1. / cdf_spmpar(1);
   xmax1 = Min (xmax1, xmax2);
   
