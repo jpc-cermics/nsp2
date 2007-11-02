@@ -896,6 +896,11 @@ static int int_cdf_psi1_old(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_psi1_old, NULL);
 }
 
+static int int_cdf_erf(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_erf, NULL);
+}
+
 
 static int int_cdf_stirling_series_diff(Stack stack, int rhs, int opt, int lhs)
 {
@@ -947,6 +952,7 @@ static OpTab Dcd_func[]={
   {"cdf_alngam_old",int_cdf_alngam_old},
   {"cdf_psi",int_cdf_psi1},
   {"cdf_psi_old",int_cdf_psi1_old},
+  {"cdf_erf",int_cdf_erf},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
 };
