@@ -1,45 +1,50 @@
-#include "cdf.h"
-
-/*
- *     evaluation of the digamma function 
+/* Nsp
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
  *
- *     psi1(xx) is assigned the value 0 when the digamma function cannot 
- *     be computed. 
- *     the main computation involves evaluation of rational chebyshev 
- *     approximations published in math. comp. 27, 123-127(1973) by 
- *     cody, strecok and thacher. 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *     psi1 was written at argonne national laboratory for the funpack 
- *     package of special function subroutines. psi1 was modified by 
- *     a.h. Morris (nswc). 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * a version of psi(x) approximated with Mapple 
  *
  */
 
-double cdf_psi1_old (double xx)
+#include "cdf.h"
+
+static double f_approx_ls(double x);
+static double f_approx_rs(double x);
+static double f_approx_gt_3(double x);
+
+/**
+ * cdf_psi1:
+ * @xx: a double 
+ * 
+ *     evaluation of the digamma function psi(x) 
+ *     psi1(x) is assigned the value 0 when the digamma function cannot 
+ *     be computed. 
+ *     this code was written following the code of psi1 
+ *     (fundef + A.H. Morris (nswc) modification) 
+ *     and all the approximations are recomputed with Maple.
+ * 
+ * Returns: a double
+ **/
+
+double cdf_psi1 (double xx)
 {
   const int c__3 = 3;
-  const int c__1 = 1;
-  /*     pivo4 = PI/4 */
-  const double piov4 = .785398163397448;
-  /* DX0 = ZERO OF PSI1 TO EXTENDED PRECISION */
-  const double dx0 = 1.461632144968362341262659542325721325;
-  /*     coefficients for rational approximation of 
-   *     psi1(x) / (x - x0),  0.5 .le. x .le. 3.0 
-   *     psi1(x) - ln(x) + 1 / (2*x),  x .gt. 3.0 
-   */
-  const double p1[7] = { .0089538502298197, 4.77762828042627, 142.441585084029, 
-			 1186.45200713425,
-			 3633.51846806499, 4138.10161269013, 1305.60269827897 };
-  const double q1[6] = { 44.8452573429826, 520.752771467162, 2210.0079924783, 
-			 3641.27349079381, 1908.310765963, 6.91091682714533e-6 };
-  const double p2[4] =  { -2.12940445131011, -7.01677227766759, -4.48616543918019,
-			  -.648157123766197 };
-  const double q2[4] =  { 32.2703493791143, 89.2920700481861, 54.6117738103215,
-			  7.77788548522962 };
-
-  double den, aug, sgn, xmx0, ret_val, d__1, d__2;
-  double w, x, z__, upper,  xmax1,  xsmall;
-  int i__, m, n ,  nq;
+  double aug;
+  double x, xmax1, xmax2,  xsmall;
   /*     machine dependent constants ... 
    *        xmax1  = the smallest positive floating point constant 
    *                 with entirely int representation.  also used 
@@ -50,160 +55,159 @@ double cdf_psi1_old (double xx)
    *                 may be represented by 1/x. 
    */
   xmax1 = (double) cdf_ipmpar (&c__3);
-  /* Computing MIN */
-  d__1 = xmax1, d__2 = 1. / cdf_spmpar (c__1);
-  xmax1 = Min (d__1, d__2);
+  xmax2 =  1. / cdf_spmpar(1);
+  xmax1 = Min (xmax1, xmax2);
+  
   xsmall = 1e-9;
 
   x = xx;
   aug = 0.;
-  if (x >= .5)
+ 
+  if (x < 0.5)
     {
-      goto L50;
+      /* X < 0.5, we use :  PSI1(1-X) = PSI1(X) + PI * COTAN(PI*X)  
+       * i.e compute psi1(x) with psi1(1-x) - pi*cotan(pi*x) 
+       * first compute aug = - pi*cotan(pi*x)
+       */
+      if (Abs (x) > xsmall)
+	{
+	  aug = - M_PI/ tan(M_PI*x);
+	}
+      else 
+	{
+	  /* Abs (x) < xsmal */
+	  if (x == 0.)
+	    {
+	      return 0;
+	    }
+	  /*  0 < abs(x) <= xsmall. use 1/x as a substitute 
+	   *  for  pi*cotan(pi*x) 
+	   */
+	  aug = -1. / x;
+	}
+      x = 1. - x;
     }
-  /*     X .LT. 0.5,  USE REFLECTION FORMULA 
-   *     PSI1(1-X) = PSI1(X) + PI * COTAN(PI*X) 
-   */
-  if (Abs (x) > xsmall)
+  
+  /* in the range [0.5,xmax1,3,...]  */
+  if (x > 3.0)
     {
-      goto L10;
+      if (x >= xmax1)
+	{
+	  return aug + log (x);
+	}
+      else 
+	{
+	  return aug+f_approx_gt_3(x) + log(x) -1/(2*x);
+	}
     }
-  if (x == 0.)
+  else 
     {
-      goto L100;
+      /*  0.5 <= X <= 3.0  we compute a rational approximation of 
+       *  psi1(x) / (x - dx0),  with Maple 
+       *  dx0 = zero of psi1 to extended precision 
+       */
+      const double dx0 = 1.461632144968362341262659542325721325;
+      if ( x >= dx0) 
+	return f_approx_rs(x)*(x-dx0) +aug ;
+      else	
+	return f_approx_ls(x)*(x-dx0) +aug;
     }
-  /*
-   *     0 .LT. ABS(X) .LE. XSMALL.  USE 1/X AS A SUBSTITUTE 
-   *     FOR  PI*COTAN(PI*X) 
-   */
-  aug = -1. / x;
-  goto L40;
-  /* 
-   *     REDUCTION OF ARGUMENT FOR COTAN 
-   */
- L10:
-  w = -x;
-  sgn = piov4;
-  if (w > 0.)
-    {
-      goto L20;
-    }
-  w = -w;
-  sgn = -sgn;
-  /*
-   *     MAKE AN ERROR EXIT IF X .LE. -XMAX1 
-   */
- L20:
-  if (w >= xmax1)
-    {
-      goto L100;
-    }
-  nq = (int) w;
-  w -= (double) nq;
-  nq = (int) (w * 4.);
-  w = (w - (double) nq * .25) * 4.;
-  /* 
-   *     W IS NOW RELATED TO THE FRACTIONAL PART OF  4.0 * X. 
-   *     ADJUST ARGUMENT TO CORRESPOND TO VALUES IN FIRST 
-   *     QUADRANT AND DETERMINE SIGN 
-   */
-  n = nq / 2;
-  if (n + n != nq)
-    {
-      w = 1. - w;
-    }
-  z__ = piov4 * w;
-  m = n / 2;
-  if (m + m != n)
-    {
-      sgn = -sgn;
-    }
-  /* 
-   *     DETERMINE FINAL VALUE FOR  -PI*COTAN(PI*X) 
-   */
-  n = (nq + 1) / 2;
-  m = n / 2;
-  m += m;
-  if (m != n)
-    {
-      goto L30;
-    }
-  /* 
-   *     CHECK FOR SINGULARITY 
-   */
-  if (z__ == 0.)
-    {
-      goto L100;
-    }
-  /* 
-   *     USE COS/SIN AS A SUBSTITUTE FOR COTAN, AND 
-   *     SIN/COS AS A SUBSTITUTE FOR TAN 
-   */
-  aug = sgn * (cos (z__) / sin (z__) * 4.);
-  goto L40;
- L30:
-  aug = sgn * (sin (z__) / cos (z__) * 4.);
- L40:
-  x = 1. - x;
- L50:
-  if (x > 3.)
-    {
-      goto L70;
-    }
-  /* 
-   *     0.5 .LE. X .LE. 3.0 
-   */
-  den = x;
-  upper = p1[0] * x;
-
-  for (i__ = 1; i__ <= 5; ++i__)
-    {
-      den = (den + q1[i__ - 1]) * x;
-      upper = (upper + p1[i__]) * x;
-      /* L60: */
-    }
-
-  den = (upper + p1[6]) / (den + q1[5]);
-  xmx0 = x - dx0;
-  ret_val = den * xmx0 + aug;
-  return ret_val;
-  /* 
-   *     IF X .GE. XMAX1, PSI1 = LN(X) 
-   */
- L70:
-  if (x >= xmax1)
-    {
-      goto L90;
-    }
-  /* 
-   *     3.0 .LT. X .LT. XMAX1 
-   */
-  w = 1. / (x * x);
-  den = w;
-  upper = p2[0] * w;
-
-  for (i__ = 1; i__ <= 3; ++i__)
-    {
-      den = (den + q2[i__ - 1]) * w;
-      upper = (upper + p2[i__]) * w;
-      /* L80: */
-    }
-
-  aug = upper / (den + q2[3]) - .5 / x + aug;
- L90:
-  ret_val = aug + log (x);
-  return ret_val;
-  /* 
-   *     ERROR RETURN 
-   */
- L100:
-  ret_val = 0.;
-  return ret_val;
 } 
 
+/* [dx0, 3] */
+
+static double f_approx_rs(double x)
+{
+  return((0.1944202116321335E-1+(0.6023197220165417E-1+(0.5013507837380874E-1
++(0.1497783719529072E-1+(0.1580892247487796E-2+(0.4474696461772995E-4+
+0.6664740431685916E-7*x)*x)*x)*x)*x)*x)/(0.1935895616227E-7+(
+0.2841689855839281E-1+(0.5219307314640644E-1+(0.2966216682460071E-1+(
+0.6335518082535423E-2+(0.4777767743644465E-3+0.9029486537581591E-5*x)*x)*x)*x)*
+x)*x));
+
+}
+
+/* [0.5, dx0] */
+
+static double f_approx_ls(double x)
+{
+    return((0.1320643016823474+(0.4253192778241912+(0.3875433094640546+(
+0.1348672821673454+(0.1788325396971957E-1+(0.6938011374594729E-3+
+0.1628066660999515E-5*x)*x)*x)*x)*x)*x)/(0.13188548555E-10+(0.1930294282906748+
+(0.3781764189968253+(0.2403577987227719+(0.608877209974987E-1+(
+0.5829374028059031E-2+0.1504027028852691E-3*x)*x)*x)*x)*x)*x));
+}
+
+static double f_approx_gt_3(double x)
+{
+  return((-0.1166030795749449E-5+(-0.4013284555660655E-5+(
+-0.3142071959165251E-5+(-0.2344315052738454E-5+(-0.139772915509597E-13+
+0.2043488018737909E-15*x)*x)*x)*x)*x)/(-0.2505852419838E-6+(
+0.381347621436607E-5+(0.17753395150168E-4+(0.5097372579550912E-4+(
+0.3770476944594263E-4+0.2813178578851754E-4*x)*x)*x)*x)*x));
+}
 
 
-double cdf_psi1 (double xx)
+/*
+ * Using Maple code for approximation of Psi(x)/(x-dx0) in [0.5,3] 
+ * Approximation of dx0 
+ Digits:= 50;
+ dx0:= 1.461632144968362341262659542325721328468196204;
+ Psi(dx0);
+ * gives  -.62379552335332861548617858697593025567122107441233 1O^(-47) 
+
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) Psi(x)/(x-dx0);end proc;
+
+  Digits:=30;
+  ggp:=chebpade(f(x),x=1.5..3,[7,7]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+  Digits:=60;
+  ggp:=chebpade(f(x),x=0.5..1.45,[7,7]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+  Digits:=60;
+  ggp:=chebpade(Psi(x) - ln(x) + 1 / (2*x),x=3..10,[5,5]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+*/
+
+
+/**
+ * cdf_psi1_old:
+ * @xx: a double 
+ * 
+ *     evaluation of the digamma function 
+ *
+ *     psi1(xx) is assigned the value 0 when the digamma function cannot 
+ *     be computed. 
+ *     the main computation involves evaluation of rational chebyshev 
+ *     approximations published in math. comp. 27, 123-127(1973) by 
+ *     cody, strecok and thacher. 
+ * 
+ *     psi1 was written at argonne national laboratory for the funpack 
+ *     package of special function subroutines. 
+ *     psi1 was modified by a.h. Morris (nswc). 
+ *     this version was C-translated and modified. 
+ * 
+ * Returns: a double
+ **/
+
+double cdf_psi1_old (double xx)
 {
   const int c__3 = 3;
   /*     pivo4 = PI/4 */
@@ -369,4 +373,3 @@ double cdf_psi1 (double xx)
  L100:
   return 0;
 } 
-

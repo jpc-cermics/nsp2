@@ -25,10 +25,11 @@ to be rewriten.
     * EXPARG reports the largest safe arguments for EXP(X).
     * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
     * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
-    * PSI evaluates the digamma function.
 
 Rewriten code: 
 
+    * psi1 evaluates the digamma function.
+      using Maple Chebyshev Pade approximations.
     * gamln evaluates ln(gamma(a)) for positive a
       call alngam which was rewriten using 
       Maple Chebyshev Pade approximations.

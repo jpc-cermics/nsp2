@@ -945,8 +945,8 @@ static OpTab Dcd_func[]={
   {"cdf_dlanor_old",int_cdf_dlanor_old},
   {"cdf_alngam",int_cdf_alngam},
   {"cdf_alngam_old",int_cdf_alngam_old},
-  {"cdf_psi1",int_cdf_psi1},
-  {"cdf_psi1_old",int_cdf_psi1_old},
+  {"cdf_psi",int_cdf_psi1},
+  {"cdf_psi_old",int_cdf_psi1_old},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
 };
