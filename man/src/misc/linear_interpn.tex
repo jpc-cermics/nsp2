@@ -1,0 +1,168 @@
+% -*- mode: latex -*-
+\mansection{linear\_interpn}
+\begin{mandesc}
+  \shortunder{linear\_interpn}{linear_interp}{n dimensional linear interpolation}\\ % @mandesc@
+\end{mandesc}
+\index{linear\_interpn}\label{linear-interpn}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+vp = linear_interpn(xp1,xp2,..,xpn, x1, ..., xn, v [,out_mode])
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{xp1, xp2, .., xpn} : real vectors (or matrices) of same size
+    \vname{x1 ,x2, ..., xn} :  strictly increasing row vectors (with at least 2 components)
+    defining the n dimensional interpolation grid
+    \vname{v} :  vector (case n=1), matrix (case n=2) or hypermatrix (case n $>$ 2) with the
+    values of the underlying interpolated function at the grid points.
+   \vname{out\_mode} : (optionnal) string defining the evaluation outside the grid (extrapolation)
+   \vname{vp} :  vector or matrix of same size than \verb!xp1, ..., xpn!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given a n dimensional grid defined by the n vectors \verb!x1 ,x2, ..., xn! and the
+  values \verb!v! of a function (says {\em f}) at the grid points :
+\begin{verbatim}
+      v(i1,i2,...,in) = f(x1(i1),x2(i2), ..., xn(in))
+\end{verbatim}
+  This function computes the linear interpolant of {\em f} from the grid (called {\em s}
+  in the following) at the points which coordinates are defined by the vectors (or matrices) 
+  \verb!xp1, xp2, ..., xpn!:
+\begin{verbatim}
+   vp(i) = s(xp1(i),xp2(i), ..., xpn(i))
+   or vp(i,j) = s(xp1(i,j),xp2(i,j), ..., xpn(i,j)) in case the xpk are matrices
+\end{verbatim}
+    The \verb!out_mode! parameter set the evaluation rule for extrapolation: if we note 
+    {\em Pi=(xp1(i),xp2(i),...,xpn(i))} then \verb!out_mode! defines the
+    evaluation rule when:
+\begin{verbatim}
+   P(i) not in  [x1(1) x1($)] x [x2(1) x2($)] x ... x [xn(1) xn($)]
+\end{verbatim}
+    The different choices are:
+  \begin{itemize}
+  \item \itemdesc{"by\_zero"} : an extrapolation by zero is done
+  \item \itemdesc{"by\_nan"} : extrapolation by Nan
+  \item \itemdesc{"C0"} : the extrapolation is defined as follows:
+\begin{verbatim}
+     s(P) = s(proj(P)) where proj(P) is nearest point from P 
+                       located on the grid boundary.
+\end{verbatim}
+\item \itemdesc{"natural"} : the extrapolation is done by using the nearest n-linear patch from the point.
+\item \itemdesc{"periodic"} : \verb!s! is extended by periodicity. 
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \paragraph{example 1 : 1d linear interpolation}
+  \begin{program}\HCode{x = linspace(0,2*%pi,11);\Hnewline
+y = sin(x);\Hnewline
+xx = linspace(-2*%pi,4*%pi,400)';\Hnewline
+yy = linear_interpn(xx, x, y, "periodic");\Hnewline
+xbasc()\Hnewline
+plot2d(xx,yy,style=2)\Hnewline
+plot2d(x,y,style=-9, strf="000")\Hnewline
+xtitle("linear interpolation of sin(x) with 11 interpolation points")} 
+    \end{program}
+  \paragraph{example 2 : bilinear interpolation}
+  \begin{program}\HCode{n = 8;\Hnewline
+x = linspace(0,2*%pi,n); y = x;\Hnewline
+z = 2*sin(x')*sin(y);\Hnewline
+xx = linspace(0,2*%pi, 40);\Hnewline
+[xp,yp] = ndgrid(xx,xx);\Hnewline
+zp = linear_interpn(xp,yp, x, y, z);\Hnewline
+xbasc()\Hnewline
+plot3d(xx, xx, zp, flag=[2 6 4])\Hnewline
+[xg,yg] = ndgrid(x,x);\Hnewline
+param3d1(xg,yg, list(z,-9*ones(1,n)), flag=[0 0])\Hnewline
+xtitle("Bilinear interpolation of 2sin(x)sin(y)")\Hnewline
+legends("interpolation points",-9,1)\Hnewline
+xselect()} 
+  \end{program}
+  \paragraph{example 3 : bilinear interpolation and experimentation 
+    with all the outmode features}
+  \begin{program}\HCode{nx = 20; ny = 30;\Hnewline
+x = linspace(0,1,nx);\Hnewline
+y = linspace(0,2, ny);\Hnewline
+[X,Y] = ndgrid(x,y);\Hnewline
+z = 0.4*cos(2*%pi*X).*cos(%pi*Y);\Hnewline
+nxp = 60 ; nyp = 120;\Hnewline
+xp = linspace(-0.5,1.5, nxp);\Hnewline
+yp = linspace(-0.5,2.5, nyp);\Hnewline
+[XP,YP] = ndgrid(xp,yp);\Hnewline
+zp1 = linear_interpn(XP, YP, x, y, z, "natural");\Hnewline
+zp2 = linear_interpn(XP, YP, x, y, z, "periodic");\Hnewline
+zp3 = linear_interpn(XP, YP, x, y, z, "C0");\Hnewline
+zp4 = linear_interpn(XP, YP, x, y, z, "by_zero");\Hnewline
+zp5 = linear_interpn(XP, YP, x, y, z, "by_nan");\Hnewline
+xbasc()\Hnewline
+subplot(2,3,1)\Hnewline
+   plot3d(x, y, z, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("initial function 0.4 cos(2 pi x) cos(pi y)")\Hnewline
+subplot(2,3,2)\Hnewline
+   plot3d(xp, yp, zp1, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("Natural")\Hnewline
+subplot(2,3,3)\Hnewline
+   plot3d(xp, yp, zp2, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("Periodic")\Hnewline
+subplot(2,3,4)\Hnewline
+   plot3d(xp, yp, zp3, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("C0")\Hnewline
+subplot(2,3,5)\Hnewline
+   plot3d(xp, yp, zp4, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("by_zero")\Hnewline
+subplot(2,3,6)\Hnewline
+   plot3d(xp, yp, zp5, leg="x@y@z", flag = [2 4 4])\Hnewline
+   xtitle("by_nan")\Hnewline
+xselect()}
+\end{program}
+
+\paragraph{example 4 : trilinear interpolation}
+(see splin3d help page which have the same example with 
+tricubic spline interpolation)
+\begin{program}\HCode{getf("SCI/demos/interp/interp_demo.sci") \Hnewline
+func =  "v=(x-0.5).^2 + (y-0.5).^3 + (z-0.5).^2";\Hnewline
+deff("v=f(x,y,z)",func);\Hnewline
+n = 5; \Hnewline
+x = linspace(0,1,n); y=x; z=x;\Hnewline
+[X,Y,Z] = ndgrid(x,y,z);\Hnewline
+V = f(X,Y,Z);\Hnewline
+// compute (and display) the linear interpolant on some slices\Hnewline
+m = 41;\Hnewline
+dir = ["z="  "z="  "z="  "x="  "y="];\Hnewline
+val = [ 0.1   0.5   0.9   0.5   0.5];\Hnewline
+ebox = [0 1 0 1 0 1];\Hnewline
+\Hnewline
+XF=[]; YF=[]; ZF=[]; VF=[];\Hnewline
+for i = 1:length(val)\Hnewline
+   [Xm,Xp,Ym,Yp,Zm,Zp] = slice_parallelepiped(dir(i), val(i), ebox, m, m, m);\Hnewline
+   Vm = linear_interpn(Xm,Ym,Zm, x, y, z, V);\Hnewline
+   [xf,yf,zf,vf] = nf3dq(Xm,Ym,Zm,Vm,1);\Hnewline
+   XF = [XF xf]; YF = [YF yf]; ZF = [ZF zf]; VF = [VF vf]; \Hnewline
+   Vp =  linear_interpn(Xp,Yp,Zp, x, y, z, V);\Hnewline
+   [xf,yf,zf,vf] = nf3dq(Xp,Yp,Zp,Vp,1);\Hnewline
+   XF = [XF xf]; YF = [YF yf]; ZF = [ZF zf]; VF = [VF vf]; \Hnewline
+end\Hnewline
+nb_col = 128;\Hnewline
+vmin = min(VF); vmax = max(VF);\Hnewline
+color = dsearch(VF,linspace(vmin,vmax,nb_col+1));\Hnewline
+xset("colormap",jetcolormap(nb_col));\Hnewline
+xbasc()\Hnewline
+xset("hidden3d",xget("background"))\Hnewline
+colorbar(vmin,vmax)\Hnewline
+plot3d(XF, YF, list(ZF,color), flag=[-1 6 4])\Hnewline
+xtitle("tri-linear interpolation of "+func)\Hnewline
+xselect()}
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{interpln}{interpln} \manlink{splin}{splin} \manlink{splin2d}{splin2d} \manlink{splin3d}{splin3d}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  B. Pincon
+\end{authors}
+
