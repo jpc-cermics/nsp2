@@ -9,8 +9,6 @@
  * Returns: a double 
  **/
 
-
-
 double cdf_gam1 (double a)
 {
   double x = a , d = a-0.5,w;

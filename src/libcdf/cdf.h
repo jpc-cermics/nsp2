@@ -43,6 +43,7 @@ extern double cdf_gamln (double a);
 extern double cdf_gamln1 (double a);
 extern double cdf_gamln1_old (double a);
 extern double cdf_gamma (double a);
+extern double cdf_gamma_old (double a);
 extern double cdf_gsumln (double a, double b);
 extern double cdf_psi1 (double xx);
 extern double cdf_psi1_old (double xx);

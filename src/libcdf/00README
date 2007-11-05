@@ -9,22 +9,25 @@ The following routines come from Toms708
 They have the ACM Copyright. They have 
 to be rewriten. 
 
-    * APSER yields the incomplete beta ratio i(sub(1-x))(b,a) for
-    * BASYM uses an asymptotic expansion for ix(a,b) for large a and b.
+    * In bratio.c 
+      * apse yields the incomplete beta ratio i(sub(1-x))(b,a) for
+      * basym uses an asymptotic expansion for ix(a,b) for large a and b.
+      * BFRAC uses a continued fraction expansion for ix(a,b) when a,b .gt. 1.
+      * BGRAT uses an asymptotic expansion for ix(a,b) when a is larger than b.
+      * BPSER uses the power series expansion for evaluating ix(a,b) when b .le. 1
+      * BUP evaluates ix(a,b) - ix(a+n,b) where n is a positive integer.
+      * BRATIO evaluates the incomplete beta function Ix(A,B).
+      * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
+    * used only in bratio
+      * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
+      * BRCMP1 evaluates exp(mu) * (x**a*y**b/beta(a,b))
+         * ESUM evaluates exp(mu + x).
+      * BRCOMP evaluates X**a * y**b / beta(a,b)
+
     * BETALN evaluates the logarithm of the beta function.
-    * BFRAC uses a continued fraction expansion for ix(a,b) when a,b .gt. 1.
-    * BGRAT uses an asymptotic expansion for ix(a,b) when a is larger than b.
-    * BPSER uses the power series expansion for evaluating ix(a,b) when b .le. 1
-    * BRATIO evaluates the incomplete beta function Ix(A,B).
-    * BRCMP1 evaluates exp(mu) * (x**a*y**b/beta(a,b))
-    * BRCOMP evaluates X**a * y**b / beta(a,b)
-    * BUP evaluates ix(a,b) - ix(a+n,b) where n is a positive integer.
     * ERFC1 evaluates the complementary error function
     * ERF evaluates the real error function.
-    * ESUM evaluates exp(mu + x).
     * EXPARG reports the largest safe arguments for EXP(X).
-    * FPSER evaluates Ix(A,B) for small B and X <= 0.5.
-    * GRAT1 evaluates the incomplete gamma ratio functions p(a,x) and q(a,x).
 
 Rewriten code: 
 

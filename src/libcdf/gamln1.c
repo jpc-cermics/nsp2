@@ -37,11 +37,7 @@ static double cdf_gamln2px(double x);
 
 double cdf_gamln1 (double a)
 {
-  return (a <= .6) ? cdf_gamln1px(a) : cdf_gamln2px(a-1);
-  /* 
-   * better result with : 
-   * (a <= .6) ? cdf_gamln1px(a) : (( a <= 0.8) ? lgamma(1+a) : cdf_gamln2px(a-1));
-   */
+  return (a <= .7) ? cdf_gamln1px(a) : cdf_gamln2px(a-1);
 }
 
 /* 
@@ -51,49 +47,34 @@ double cdf_gamln1 (double a)
   with(orthopoly);
   f:= proc(x) log(GAMMA(1+x));end proc;
   g:= proc(x) f(x)/x;end proc;
-  Digits:=50;
-  am:=-20;ap:=60;ad:=100;
-  ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[8,8]);
-  Digits:=16;
+  Digits:=60;
+  ggp:=chebpade(g(x),x=(-0.2)..(0.65),[7,7]);
   gg:= convert(ggp,float);
   gg:= convert(gg,horner);
   f_approx:= unapply(x*gg,x);
-  infnorm(f(x)-f_approx(x),x=(am/ad)..(ap/ad));
   codegen[C](f_approx,optimized);
-  codegen[C](g_cheb,optimized);
-  codegen[C](confracform(n/d));
-  
-  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
-    evalf((u1-u2)/u1,70);
-  end proc;
-  
-  m_err:=proc(am,ap,b,nn)
-    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
-    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
-    serr:= map(f_err,s);
-    convert(max(op(serr)),float);
-  end proc;
-  
-  m_err(am,ap,ad,1);
 
 */
-
-static double cdf_gamln1px(double x)
+double cdf_gamln1px(double x)
 {
-  return (x*(-0.2817006634536722
-	     +(-0.4105736402455481
-	       +(0.8378423180533141E-1
-		 +(0.379859104805501
-		   +(0.1948356322068602
-		     +(0.3249105389946038E-1
-		       +0.1304280947267097E-2*x)*x)*x)*x)*x)*x)
-	  /(0.4880336425064407
-	    +(0.1406692977654196E1
-	      +(0.1520447819039188E1
-		+(0.7606688426616652
-		  +(0.1749446847735022
-		    +(0.1564737968074626E-1
-		      +0.3196847805872678E-3*x)*x)*x)*x)*x)*x));
+  {
+    return(x*(-0.2198906661819617
+	      +(-0.4233198418459166
+		+(-0.7013596901756501E-1
+		  +(0.3408062242957307
+		    +(0.280483198889643
+		      +(0.8269644814016514E-1
+			+(0.9108065849360645E-2
+			  +0.2525398702821731E-3*x)*x)*x)*x)*x)*x)*x)
+	   /(0.3809506213236137
+	     +(0.1276194001721497E1
+	       +(0.1675495107148691E1
+		 +(0.108964227437159E1
+		   +(0.3649845163183046
+		     +(0.5920285367936551E-1
+		       +(0.3837461924420116E-2
+			 +0.576004574077233E-4*x)*x)*x)*x)*x)*x)*x));
+  }
 }
 
 /*
@@ -103,50 +84,35 @@ static double cdf_gamln1px(double x)
   with(orthopoly);
   f:= proc(x) log(GAMMA(2+x));end proc;
   g:= proc(x) f(x)/x;end proc;
-  Digits:=50;
-  am:=-40;ap:=25;ad:=100;
-  ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[8,8]);
-  Digits:=16;
+  Digits:=90;
+  ggp:=chebpade(g(x),x=(-0.4)..(0.25),[7,7]);
   gg:= convert(ggp,float);
   gg:= convert(gg,horner);
   f_approx:= unapply(x*gg,x);
-  infnorm(f(x)-f_approx(x),x=(am/ad)..(ap/ad));
   codegen[C](f_approx,optimized);
-  codegen[C](g_cheb,optimized);
-  codegen[C](confracform(n/d));
-  
-  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
-    evalf((u1-u2)/u1,70);
-  end proc;
-  
-  m_err:=proc(am,ap,b,nn)
-    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
-    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
-    serr:= map(f_err,s);
-    convert(max(op(serr)),float);
-  end proc;
-  
-
-  m_err(am,ap,ad,1);
   
 */
 
 static double cdf_gamln2px(double x)
 {
-  return(x*(0.4509088339066821
-	    +(0.9035354359359669
-	      +(0.6012062835551742
-		+(0.1660902456536165
-		  +(0.1803476058196925E-1
-		    +0.5241953151972274E-3*x)*x)*x)*x)*x)
-	 / (0.1066522092881385E1
-	    +(0.1323647008900873E1
-	      +(0.5823453139920647
-		+(0.107629022644866+
-		  (0.7534275524800251E-2
-		   +0.122129001350747E-3*x)*x)*x)*x)*x));
+  {
+    return(x*(0.4522844244709163
+	      +(0.1133932736059987E1
+		+(0.1073636543983591E1
+		  +(0.4990574663122923
+		    +(0.1210741834314334
+		      +(0.1477101621206509E-1
+			+(0.7774143441506743E-3
+			  +0.1134764538089259E-4*x)*x)*x)*x)*x)*x)*x)
+	   /(0.1069775738889613E1
+	     +(0.186611769077824E1
+	       +(0.1286535286877397E1
+		 +(0.4443464535670653
+		   +(0.802605075180054E-1
+		     +(0.7165776126953171E-2
+		       +(0.2628459447187425E-3+0.2319923649253971E-5*x)*x)*x)*x)*x)*x)*x));
+  }
 }
-
 
 /**
  * cdf_gamln1_old:

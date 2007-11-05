@@ -830,6 +830,30 @@ static int int_cdf_rexp_old(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp_old,NULL);
 }
 
+static int int_cdf_gamma(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamma,NULL);
+}
+
+static int int_cdf_gamma_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamma_old,NULL);
+}
+
+double cdf_grat1_test(double a, double x)
+{
+  double r,p,q, eps=1.e-16;
+  /* e**(-x)*x**a/gamma(a).  */
+  r =  exp(-x)* exp (a * log (x))/(cdf_gamma(a));
+  cdf_grat1 (&a, &x, &r, &p, &q, &eps);
+  return p;
+}
+
+static int int_cdf_grat1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs,NULL, cdf_grat1_test);
+}
+
 static int int_cdf_gam1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_gam1,NULL);
@@ -930,6 +954,8 @@ static OpTab Dcd_func[]={
   {"cdf_rlog1_old",int_cdf_rlog1_old},
   {"cdf_rexp",int_cdf_rexp},
   {"cdf_rexp_old",int_cdf_rexp_old},
+  {"cdf_gamma",int_cdf_gamma},
+  {"cdf_gamma_old",int_cdf_gamma_old},
   {"cdf_gam1",int_cdf_gam1},
   {"cdf_gam1_old",int_cdf_gam1_old},
   {"cdf_rlog",int_cdf_rlog},
@@ -952,6 +978,7 @@ static OpTab Dcd_func[]={
   {"cdf_alngam_old",int_cdf_alngam_old},
   {"cdf_psi",int_cdf_psi1},
   {"cdf_psi_old",int_cdf_psi1_old},
+  {"cdf_grat1",int_cdf_grat1},
   {"cdf_erf",int_cdf_erf},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
