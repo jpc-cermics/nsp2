@@ -106,6 +106,20 @@ nsp_rand_nor_core
 nsp_rand_poisson
 nsp_rand_poisson_direct
 nsp_rand_poisson_init
+nsp_alias_method
+nsp_rand_discrete_alias
+nsp_guide_table_method
+nsp_guide_table_method_bis
+nsp_rand_discrete_guide
+nsp_rand_geom
+nsp_rand_geom_direct
+nsp_rand_geom_init
+nsp_rand_in_sphere
+nsp_rand_markov
+nsp_rand_multinomial
+nsp_rand_multinomial_bis
+nsp_rand_simplex
+nsp_rand_sphere
 </SECTION>
 
 <SECTION>
@@ -1834,11 +1848,14 @@ nsp_gframe_select_and_move
 
 <SECTION>
 <FILE>approx</FILE>
-eval_piecewise_hermite
-dpchim
-cubic_spline
-derivd
-nlinear_interp
+nsp_eval_piecewise_hermite
+nsp_dpchim
+nsp_cubic_spline
+nsp_derivd
+nsp_nlinear_interp
+nsp_bicubic_spline
+nsp_bicubic_subspline
+nsp_eval_bicubic
 </SECTION>
 
 <SECTION>

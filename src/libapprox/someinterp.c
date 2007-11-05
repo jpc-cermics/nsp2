@@ -21,9 +21,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-#include <strings.h>
+#include <string.h>
 #include <nsp/math.h>
 #include "nsp/approx.h"
+#include "nsp/matrix-in.h"
 
 /**
  * SECTION:approx
@@ -124,7 +125,7 @@ static void coord_by_periodicity(double *t,const double x[], int n, int *i)
 }
 
 /**
- * nlinear_interp:
+ * nsp_nlinear_interp:
  * @x: the grid abscissae  (x[j][] are the grid abscissae in the dimension j)
  * @dim: nb of grid points in each dimension (@dim[j] is the nb of points in dimension j)
  * @n: number of dimensions (@n=1 for linear interpolation, @n=2 for bilinear interpolation, etc...) 
@@ -144,25 +145,13 @@ static void coord_by_periodicity(double *t,const double x[], int n, int *i)
  * 
  */
 
-void nlinear_interp(double **x , double val[], int dim[], int n,
-		    double **xp, double yp[], int np, int outmode, 
-		    double u[], double v[], int ad[], int k[])
+void nsp_nlinear_interp(double **x , double val[], int dim[], int n,
+			double **xp, double yp[], int np, int outmode, 
+			double u[], double v[], int ad[], int k[])
 {
-  /*  interpolation lineaire nb_dim-dimensionnelle
-   *  --------------------------------------------
-
-   interface nsp
-   
-   yp = linear_interpn(xp1, x1, val, outmode)
-   yp = linear_interpn(xp1, xp2, x1, x2, val, outmode)
-   .....
-   yp = linear_interpn(xp1, ..., xpN, x1, ..., xN, val, outmode)
-
-   */  
-
-  int i, j, l, p, temp, b,/* toto,*/ two_p_n;
+  int i, j, l, p, temp, b, two_p_n;
   double xx;
-  double nan_val = (2*DBL_MAX)*0.0;
+  double nan_val = 0.0/0.0;
 
   /*   
    *   calcul des decalages d'indices pour retrouver les valeurs
@@ -359,7 +348,7 @@ static void nearly_tri_diag_solve(double *d, double *lsd, double *lll, double *b
 
 
 /**
- * derivd:
+ * nsp_derivd:
  * @x: the n points, @x part must be in strict increasing order
  * @u: the n points, @u part.
  * @du: gives in output the derivatives in each x[i] i = 0..n-1
@@ -393,7 +382,7 @@ static void nearly_tri_diag_solve(double *d, double *lsd, double *lll, double *b
  * 
  **/
 
-void derivd(double *x, double *u, double *du, int n, int inc, int type)
+void nsp_derivd(double *x, double *u, double *du, int n, int inc, int type)
 {
   /*
    *     AUTHOR: Bruno Pincon
@@ -417,7 +406,7 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
 	{
 	  dx_l = dx_r;
 	  du_l = du_r;
-	  dx_r = x[(i+1)*inc] - x[i*inc];
+	  dx_r = x[i+1] - x[i];
 	  du_r = (u[(i+1)*inc] - u[i*inc])/dx_r;
 	  w_l  = dx_r/(dx_l + dx_r);
 	  w_r = 1.0 - w_l;
@@ -428,9 +417,9 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
 
   else  /* type == FAST */
     {
-      dx_l = x[inc] - x[0];
+      dx_l = x[1] - x[0];
       du_l =(u[inc] - u[0])/dx_l;
-      dx_r = x[2*inc] - x[inc];
+      dx_r = x[2] - x[1];
       du_r = (u[2*inc] - u[inc])/dx_r;
       w_l = dx_r/(dx_l + dx_r);
       w_r = 1.0 - w_l;
@@ -440,7 +429,7 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
 	{
 	  dx_l = dx_r;
 	  du_l  = du_r;
-	  dx_r = x[(i+1)*inc] - x[i*inc];
+	  dx_r = x[i+1] - x[i];
 	  du_r  = (u[(i+1)*inc] - u[i*inc])/dx_r;
 	  w_l  = dx_r/(dx_l + dx_r);
 	  w_r = 1.0 - w_l;
@@ -452,7 +441,7 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
 
 
 /**
- * cubic_spline:
+ * nsp_cubic_spline:
  * @x: the n interpolation points, x must be in strict increasing order
  * @y: the n interpolation points, x must be in strict increasing order
  * @d: on output, the derivatives in each x[i] i = 0..n-1
@@ -479,12 +468,12 @@ void derivd(double *x, double *u, double *du, int n, int inc, int type)
  *  NOTE that this routine requires (i)   n >= 3 (for natural) n >=4 (for not_a_knot) 
  *      (ii)  strict increasing abscissae x(i)
  *       (iii) y[0] = y[n-1] in the periodic case
- *  THESE CONDITIONS MUST BE TESTED BEFORE CALLING cubic_spline().
+ *  THESE CONDITIONS MUST BE TESTED BEFORE CALLING nsp_cubic_spline().
  *
  **/
 
-void cubic_spline(double *x, double *y, double *d, int n, int type, 
-		  double *A_d, double *A_sd, double *qdy, double *lll)
+void nsp_cubic_spline(double *x, double *y, double *d, int n, int type, 
+		      double *A_d, double *A_sd, double *qdy, double *lll)
 {
   int i;
   double r;
@@ -501,7 +490,7 @@ void cubic_spline(double *x, double *y, double *d, int n, int type,
 
   if (n == 3  &&  type == NOT_A_KNOT)
     {
-      derivd(x, y, d, n, 1, FAST);
+      nsp_derivd(x, y, d, n, 1, FAST);
       return;
     }
 
@@ -588,7 +577,7 @@ static int dpchst(double arg1, double arg2)
 }
 
 /**
- * dpchim:
+ * nsp_dpchim:
  * @x: 
  * @u: 
  * @d: 
@@ -599,7 +588,7 @@ static int dpchst(double arg1, double arg2)
  * DPCHIM:  Piecewise Cubic Hermite Interpolation to Monotone data 
  **/
 
-void dpchim(double *x, double *u, double *d, int n, int inc)
+void nsp_dpchim(double *x, double *u, double *d, int n, int inc)
 {
   int i;
   double del1, del2, dmax, dmin, drat1, drat2, dsave,
@@ -748,34 +737,33 @@ static void eval_hermite(double t, double xa, double xb, double ya, double da, d
 }
 
 /**
- * eval_piecewise_hermite:
- * @t: 
- * @st: 
- * @dst: 
- * @d2st: 
- * @d3st: 
- * @m: 
- * @x: 
- * @y: 
- * @d: 
- * @n: 
- * @outmode: 
+ * nsp_eval_piecewise_hermite:
+ * @t: (input) vector of abscissae where the spline or subspline must be evaluated
+ * @st: (output) values of the spline or subspline at @t
+ * @dst: (output) values of first derivative of the spline or subspline at @t
+ * @d2st: (output) values of second derivative of the spline or subspline at @t
+ * @d3st: (output) values of the third derivative of the spline or subspline at @t
+ * @m: (input) length of @t
+ * @x: (input) breakpoints of the spline or subspline
+ * @y: (input) values of the spline or subspline at the breakpoint @x
+ * @d: (input) values of the derivative of the spline or subpline at the breakpoint @x
+ * @n: (input) number of breakpoints
+ * @outmode: (input) defines the behavior to evaluate the spline or subspline outside [x[0], x[n-1]]
  * 
- *        evaluation at the abscissae t[0..m-1] of the piecewise hermite function
- *        defined by x[0..n-1], y[0..n-1], d[0..n-1] (d being the derivatives at the
- *        x[i]) together with its derivative, second derivative and third derivative
- *        
- *        outmode defines what return in case t[j] not in [x[0], x[n-1]]
+ * evaluation at the abscissae t[0..m-1] of the piecewise hermite function
+ * defined by x[0..n-1], y[0..n-1], d[0..n-1] (d being the derivatives at the
+ * x[i]) together with its derivative, second derivative and third derivative
+ * outmode defines what return in case t[j] not in [x[0], x[n-1]]
  * 
  **/
 
-void eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st, 
-			    double *d3st, int m, double *x, double *y, double *d, 
-			    int n, int outmode)
+void nsp_eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st, 
+				double *d3st, int m, double *x, double *y, double *d, 
+				int n, int outmode)
 {
   int i, j, i_old=-1;;
   double tt, c2=0, c3=0;
-  double Nan = (2*DBL_MAX)*0.0;
+  double Nan = 0.0/0.0;
 
   i = -1;
   for ( j = 0 ; j < m ; j++ )
@@ -834,3 +822,367 @@ void eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st,
     }
 }
 
+/**
+ * coef_bicubic:
+ * @u: (input) array of size nx x ny, u(i,j)=u[i+nx*j] value u(x,y) at the grid point (@x[i],@y[j])
+ * @p: (input) array of size nx x ny, p(i,j)=p[i+nx*j] value of du/dx at the grid point (@x[i],@y[j])
+ * @q: (input) array of size nx x ny, q(i,j)=q[i+nx*j] value of du/dy at the grid point (@x[i],@y[j])
+ * @r: (input) array of size nx x ny, r(i,j)=r[i+nx*j] value of ddu/dxdy at the grid point (@x[i],@y[j])
+ * @x: (input) first coordinate of the grid points
+ * @y: (input) second coordinate of the grid points
+ * @nx: (input) size of the grid in x
+ * @ny: (input) size of the grid in y
+ * @C: (output) array of size 4 x 4 x (nx-1) x (ny-1)
+ * 
+ * compute for each bicubic polynomial (i,j)-patch (defined on 
+ * [x(i),x(i+1)]x[y(i),y(i+1)]) the following base representation:
+ *
+ *           i,j        _3_  _3_   i,j       k        l
+ *          u   (x,y) = >__  >__  C   (x-x(i)) (y-y(j)) 
+ *                      k=0  l=0   k,l
+ *
+ * from the "Hermite" representation (values of u, p = du/dx,
+ * q = du/dy, r = ddu/dxdy at the 4 vertices (x(i),y(j)),
+ * (x(i+1),y(j)), (x(i+1),y(j+1)), (x(i),y(j+1)). 
+ *
+ * the coef C(k,l,i,j) defined below is stored in C[ k+4*l + 16*(i + (nx-1)j) ]
+ * 
+ **/
+static void coef_bicubic(double *u, double *p, double *q, double *r, double *x, double *y, int nx, int ny, double *C)
+{
+  int i, j, k;
+  double a, b, c, d, dx, dy;
+
+  for (j = 0, k = 0 ; j < ny-1 ; j++ )
+    {
+      dy = 1.0/(y[j+1] - y[j]);
+
+      for ( i = 0 ; i < nx-1 ; i++, k+=16 )
+	{
+	  dx = 1.0/(x[i+1] - x[i]);
+
+	  C[k] = u[i + nx*j];
+	  C[k+1] = p[i + nx*j];
+	  C[k+4] = q[i + nx*j];
+	  C[k+5] = r[i + nx*j];
+
+	  a = (u[i+1 + nx*j] - u[i + nx*j])*dx;
+	  C[k+2] = (3.0*a -2.0*p[i + nx*j] - p[i+1 + nx*j])*dx;
+          C[k+3] = (p[i+1 + nx*j] + p[i + nx*j] - 2.0*a)*(dx*dx);
+
+	  a = (u[i + nx*(j+1)] - u[i + nx*j])*dy;
+	  C[k+8] = (3.0*a -2.0*q[i + nx*j] - q[i + nx*(j+1)])*dy;
+	  C[k+12] = (q[i + nx*(j+1)] + q[i + nx*j] - 2.0*a)*(dy*dy);
+            
+	  a = (q[i+1 + nx*j] - q[i + nx*j])*dx;
+	  C[k+6] = (3.0*a - r[i+1 + nx*j] - 2.0*r[i+nx*j])*dx;
+	  C[k+7] = (r[i+1 + nx*j] + r[i + nx*j] - 2.0*a)*(dx*dx);
+
+	  a = (p[i + nx*(j+1)] - p[i + nx*j])*dy;
+	  C[k+9] = (3.0*a - r[i + nx*(j+1)] - 2.0*r[i + nx*j])*dy;
+	  C[k+13] = (r[i + nx*(j+1)] + r[i + nx*j] - 2.0*a)*(dy*dy);
+
+	  a = (u[i+1 + nx*(j+1)] + u[i + nx*j] - u[i+1 + nx*j] - u[i + nx*(j+1)])*(dx*dx*dy*dy)
+	    - (p[i + nx*(j+1)] - p[i + nx*j])*(dx*dy*dy)
+	    - (q[i+1 + nx*j] - q[i + nx*j])*(dx*dx*dy)
+	    + r[i + nx*j]*(dx*dy);
+
+	  b = (p[i+1 + nx*(j+1)] + p[i + nx*j] - p[i+1 + nx*j] - p[i + nx*(j+1)])*(dx*dy*dy)
+	    - (r[i+1 + nx*j] - r[i + nx*j])*(dx*dy);
+	  c = (q[i+1 + nx*(j+1)] + q[i + nx*j] - q[i+1 + nx*j] - q[i + nx*(j+1)])*(dx*dx*dy)
+	    - (r[i + nx*(j+1)] - r[i + nx*j])*(dx*dy);
+	  d = (r[i+1 + nx*(j+1)] + r[i+nx*j] - r[i+1 + nx*j] - r[i + nx*(j+1)])*(dx*dy);
+
+	  C[k+10] =  9.0*a - 3.0*b - 3.0*c + d;
+	  C[k+14] =(-6.0*a + 2.0*b + 3.0*c - d)*dy;
+	  C[k+11] =(-6.0*a + 3.0*b + 2.0*c - d)*dx;
+	  C[k+15] =( 4.0*a - 2.0*b - 2.0*c + d)*dx*dy;
+	}
+    }
+}
+
+/**
+ * nsp_bicubic_subspline:
+ * @x: (input) first coordinates of the grid points
+ * @y: (input) second coordinates of the grid points
+ * @u: (input) array of size nx x ny, u(i,j)=u[i+nx*j] value u(x,y) at the grid point (@x[i],@y[j])
+ * @nx: (input) size of the grid in x
+ * @ny: (input) size of the grid in y
+ * @C: (output) array of size 4 x 4 x (nx-1) x (ny-1) (must be preallocated)
+ * @type: (input) type of bicubic subspline to compute
+ * 
+ * compute a bicubic subspline s (s is only one time continuously differentiable) 
+ * which interpolates the @u values on the grid defined by @x and @y. (s(x[i],y[j]) 
+ * must be equal to u(i,j)=u[i*nx*j]). The subspline is completly defined with
+ * the triplet (@x,@y,@C) and could be evaluated at some points with #nsp_eval_bicubic.
+ * See #coef_bicubic for detail about the bicubic patch coef @C.
+ * 
+ * return %OK or %FAIL (%FAIL when allocation of works arrays fail or when type is
+ * not good)  
+ **/
+int nsp_bicubic_subspline(double *x, double *y, double *u, int nx, int ny, double *C, int type)
+{
+  double *p=NULL, *q=NULL, *r=NULL;
+  int i, j;
+
+  p = nsp_alloc_doubles(nx*ny);
+  q = nsp_alloc_doubles(nx*ny);
+  r = nsp_alloc_doubles(nx*ny);
+
+  if ( p == NULL || q == NULL || r == NULL )
+    {
+      FREE(p); FREE(q); FREE(r);
+      return FAIL;
+    }
+
+  if (type == MONOTONE)   /*  approximate the derivatives with nsp_dpchim */
+    {
+      /* p = du/dx */
+      for ( j = 0 ; j < ny ; j++ )
+	nsp_dpchim(x, &u[nx*j], &p[nx*j], nx, 1);
+
+      /* q = du/dy */
+      for ( i = 0 ; i < nx ; i++ )
+	nsp_dpchim(y, &u[i], &q[i], ny, nx);
+
+      /* r = d2 u/ dx dy  approchee via  dq / dx */
+      for ( j = 0 ; j < ny ; j++ )
+	nsp_dpchim(x, &q[nx*j], &r[nx*j], nx, 1);
+    }
+
+  else if (type == FAST  ||  type == FAST_PERIODIC) /*  approximate the derivatives with nsp_derivd */
+    {
+      /* p = du/dx  */
+      for ( j = 0 ; j < ny ; j++ )
+	nsp_derivd(x, &u[nx*j], &p[nx*j], nx, 1, type);
+
+      /* q = du/dy */
+      for ( i = 0 ; i < nx ; i++ )
+	nsp_derivd(y, &u[i], &q[i], ny, nx, type);
+
+      /* r = d2 u/ dx dy  approchee via  dq / dx */
+      for ( j = 0 ; j < ny ; j++ )
+	nsp_derivd(x, &q[nx*j], &r[nx*j], nx, 1, type);
+    }
+
+  else  /* not the good type */
+    {
+      FREE(p); FREE(q); FREE(r);
+      return FAIL;
+    }
+
+  /* compute polynomial coefficients in the basis (x-x(i))^k (y-y(j))^l  0<= k,l <= 3
+   * for fast evaluation with Horner 's scheme */
+  coef_bicubic(u, p, q, r, x, y, nx, ny, C);
+
+  return OK;
+}
+
+/**
+ * nsp_bicubic_spline:
+ * @x: (input) first coordinates of the grid points
+ * @y: (input) second coordinates of the grid points
+ * @u: (input) array of size nx x ny, u(i,j)=u[i+nx*j] value u(x,y) at the grid point (@x[i],@y[j])
+ * @nx: (input) size of the grid in x
+ * @ny: (input) size of the grid in y
+ * @C: (output) array of size 4 x 4 x (nx-1) x (ny-1) (must be preallocated)
+ * @type: (input) type of bicubic spline to compute
+ * 
+ * compute a bicubic spline s (s is two time continuously differentiable) 
+ * which interpolates the @u values on the grid defined by @x and @y. (s(x[i],y[j]) 
+ * must be equal to u(i,j)=u[i*nx*j]). The spline is completly defined with
+ * the triplet (@x,@y,@C) and could be evaluated at some points with #nsp_eval_bicubic.
+ * See #coef_bicubic for detail about the bicubic patch coef @C.
+ * 
+ * return %OK or %FAIL (%FAIL when allocation of works arrays fail)
+ *
+ **/
+int nsp_bicubic_spline(double *x, double *y, double *u, int nx, int ny, double *C, int type)
+{
+  double *p=NULL, *q=NULL, *r=NULL, *u_temp=NULL, *d=NULL, *Ad=NULL, *Asd=NULL, *qdu=NULL, *ll=NULL;
+  int i, j, k, n = Max(nx,ny);
+
+  p = nsp_alloc_doubles(nx*ny);
+  q = nsp_alloc_doubles(nx*ny);
+  r = nsp_alloc_doubles(nx*ny);
+  u_temp = nsp_alloc_doubles(ny);
+  d = nsp_alloc_doubles(ny);
+  Ad = nsp_alloc_doubles(n);
+  Asd = nsp_alloc_doubles(n-1);
+  qdu = nsp_alloc_doubles(n-1);
+  if (type == PERIODIC)
+    ll = nsp_alloc_doubles(n-1);
+
+  if ( p == NULL || q == NULL || r == NULL || u_temp == NULL || d == NULL || Ad == NULL || Asd == NULL || qdu == NULL || (type==PERIODIC && ll==NULL) )
+    {
+      FREE(p); FREE(q); FREE(r); FREE(u_temp); FREE(d); FREE(Ad); FREE(Asd); FREE(qdu); FREE(ll);
+      return FAIL;
+    }
+
+  /* compute du/dx */
+  for ( j = 0 ; j < ny ; j++ )
+    nsp_cubic_spline(x, &(u[nx*j]), &(p[nx*j]), nx, type, Ad, Asd, qdu, ll);
+
+  /* compute du/dy */
+  for ( i = 0 ; i < nx ; i++ )
+    {
+      for ( j = 0, k = i; j < ny ; j++, k+=nx ) u_temp[j] = u[k];
+      nsp_cubic_spline(y, u_temp, d, ny, type, Ad, Asd, qdu, ll);
+      for ( j = 0, k = i ; j < ny ; j++, k+=nx ) q[k] = d[j];
+    }
+
+  /*compute ddu/dxdy */
+  nsp_cubic_spline(x, q,  r,  nx, type, Ad, Asd, qdu, ll);
+  nsp_cubic_spline(x, &(q[nx*(ny-1)]), &(r[nx*(ny-1)]), nx, type, Ad, Asd, qdu, ll);
+  for ( i = 0 ; i < nx ; i++ )
+    {
+      for ( j = 0, k = i ; j < ny ; j++, k+=nx ) u_temp[j] = p[k];
+      d[0] = r[i]; d[ny-1] = r[i + nx*(ny-1)];
+      nsp_cubic_spline(y, u_temp, d, ny, CLAMPED, Ad, Asd, qdu, ll);
+      for ( j = 1, k = i+nx ; j < ny-1 ; j++, k+=nx ) r[k] = d[j];
+    }
+
+  /* compute polynomial coefficients in the basis (x-x(i))^k (y-y(j))^l  0<= k,l <= 3
+   * for fast evaluation with Horner 's scheme */
+  coef_bicubic(u, p, q, r, x, y, nx, ny, C);
+
+  return OK;
+}
+
+static double nsp_eval_bicubic_patch(double xx, double yy, double xk, double yk, double *Ck)
+{
+  double dx, dy, u;
+  int i;
+
+  dx = xx - xk;
+  dy = yy - yk;
+
+  u = 0.0;
+  for ( i = 12 ; i > -1 ; i-=4 )
+    u = Ck[i] + dx*(Ck[i+1] + dx*(Ck[i+2] + dx*Ck[i+3])) + u*dy;
+
+  return u;
+}
+
+static void nsp_eval_bicubic_patch_with_grad(double xx, double yy, double xk, double yk, double *Ck, 
+					     double *U, double *DUDX, double *DUDY)
+{
+  double dx, dy, u, dudx, dudy;
+  int i, j;
+
+  dx = xx - xk;
+  dy = yy - yk;
+
+  u = 0.0; dudx = 0.0; dudy = 0.0;
+  for ( j = 3, i = 12 ; j >= 0 ; j--, i-=4 )
+    {
+      u = Ck[i] + dx*(Ck[i+1] + dx*(Ck[i+2] + dx*Ck[i+3])) + u*dy;
+      dudx = Ck[i+1] + dx*(2.0*Ck[i+2] + dx*3.0*Ck[i+3]) + dudx*dy;
+      dudy = Ck[j+4] + dy*(2.0*Ck[j+8] + dy*3.0*Ck[j+12]) + dudy*dx;
+    }
+
+  *U = u; *DUDX = dudx; *DUDY = dudy;
+}
+        
+     
+/**
+ * nsp_eval_bicubic:
+ * @x: (input) first coordinates of the grid points
+ * @y: (input) second coordinates of the grid points
+ * @C: (input) array of size 4 x 4 x (nx-1) x (ny-1)
+ * @nx: (input) size of the grid in x
+ * @ny: (input) size of the grid in y
+ * @x_eval: (input) array of size @m  
+ * @y_eval: (input) array of size @m
+ * @z_eval: (output) array of size @m, z_eval[k] will be the value of the bicubic at the point (x_eval[k],y_eval[k]).
+ * @dzdx_eval: (output) if not NULL must be an array of size @m
+ * @dzdy_eval: (output) if not NULL must be an array of size @m
+ * @m: (input) length of arrays @x_eval and @y_eval, number of points where the bicubic must be evaluated
+ * @outmode: (input) set the behavior to evaluate the bicubic outside the grid
+ *
+ * evaluates the bicubic defined by the triplet  (@x,@y,@C) at the points (x_eval,y_eval). If @dzdx_eval is
+ * not NULL it is assumed that @dzdx_eval and @dzdy_eval are arrays of size @m and the first derivatives
+ * at the (x_eval,y_eval) points are also computed. The bicubic (@x,@y,@C) could be build to interpolate
+ * grid values with either #nsp_bicubic_spline or  #nsp_bicubic_subspline.
+ *
+ **/
+void nsp_eval_bicubic(double *x, double *y, double *C, int nx, int ny, double *x_eval, double *y_eval, 
+		      double *z_eval, double *dzdx_eval, double *dzdy_eval, int m, int outmode)
+{
+  double xx, yy, Nan=0.0/0.0;
+  int k, i, j, change_dzdx, change_dzdy, without_grad = dzdx_eval==NULL;
+  int stride = nx-1;
+
+  i = -1;
+  j = -1;
+  for ( k = 0 ; k < m ; k++ )
+    {
+      xx = x_eval[k];
+      fast_int_search(xx, x, nx, &i);  /* recompute i only if necessary */ 
+      yy = y_eval[k];
+      fast_int_search(yy, y, ny, &j);  /* recompute j only if necessary */ 
+ 
+      if (i != -1  &&  j != -1)
+	{
+	  if ( without_grad )
+	    z_eval[k] = nsp_eval_bicubic_patch(xx, yy, x[i], y[j], &C[16*(i+stride*j)]);
+	  else
+	    nsp_eval_bicubic_patch_with_grad(xx, yy, x[i], y[j], &C[16*(i+stride*j)],
+					     &z_eval[k],&dzdx_eval[k], &dzdy_eval[k]);
+	}
+      else if ( outmode == BY_NAN  ||  ISNAN(xx) || ISNAN(yy) )
+	{
+	  z_eval[k] = Nan;
+          if ( ! without_grad ) { dzdx_eval[k] = Nan; dzdy_eval[k] = Nan; }
+	}
+      else if (outmode == BY_ZERO )
+	{
+	  z_eval[k] = 0.0 ; 
+	  if ( ! without_grad ) { dzdx_eval[k] = 0.0; dzdy_eval[k] = 0.0; }
+	}
+      else if (outmode == PERIODIC)
+	{
+	  if (i == -1) coord_by_periodicity(&xx, x, nx, &i);
+	  if (j == -1) coord_by_periodicity(&yy, y, ny, &j);
+	  if ( without_grad )
+	    z_eval[k] = nsp_eval_bicubic_patch(xx, yy, x[i], y[j], &C[16*(i+stride*j)]);
+	  else
+	    nsp_eval_bicubic_patch_with_grad(xx, yy, x[i], y[j], &C[16*(i+stride*j)],
+					     &z_eval[k],&dzdx_eval[k], &dzdy_eval[k]);
+	}
+      else if (outmode == C0)
+	{
+	  change_dzdx = 0; change_dzdy = 0;
+	  if (i == -1) 
+	    { 
+	      if ( xx < x[0] ) { xx = x[0]; i = 0;} else { xx = x[nx-1]; i = nx-2;}
+	      change_dzdx = 1;
+	    }
+	  if (j == -1)
+	    { 
+	      if ( yy < y[0] ) { yy = y[0]; j = 0;} else { yy = y[ny-1]; j = ny-2;}
+	      change_dzdy = 1;
+	    }
+
+	  if ( without_grad )
+	    z_eval[k] = nsp_eval_bicubic_patch(xx, yy, x[i], y[j], &C[16*(i+stride*j)]);
+	  else
+	    {
+	      nsp_eval_bicubic_patch_with_grad(xx, yy, x[i], y[j], &C[16*(i+stride*j)],
+					       &z_eval[k],&dzdx_eval[k], &dzdy_eval[k]);
+	      if (change_dzdx) dzdx_eval[k] = 0.0;
+	      if (change_dzdy) dzdy_eval[k] = 0.0;
+	    }
+	}
+      else if (outmode == NATURAL)
+	{
+	  if (i == -1) { if ( xx < x[0] ) i = 0; else i = nx-2; }
+	  if (j == -1) { if ( yy < y[0] ) j = 0; else j = ny-2; }
+	  if ( without_grad )
+	    z_eval[k] = nsp_eval_bicubic_patch(xx, yy, x[i], y[j], &C[16*(i+stride*j)]);
+	  else
+	    nsp_eval_bicubic_patch_with_grad(xx, yy, x[i], y[j], &C[16*(i+stride*j)],
+					     &z_eval[k],&dzdx_eval[k], &dzdy_eval[k]);
+	}
+    }
+}

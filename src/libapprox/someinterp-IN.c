@@ -102,18 +102,18 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   m = 1; for ( i = 1 ; i <= n ; i++) m = 2*m;
 
   /* allocate some work arrays */
-  xp = malloc(n*sizeof(double *));
-  x = malloc(n*sizeof(double *));
+  xp = malloc(n*sizeof(double*));
+  x =  malloc(n*sizeof(double*));
   ndim = malloc(n*sizeof(int));
   u = malloc(n*sizeof(double));
   v = malloc(m*sizeof(double));
-  ad = malloc(m*sizeof(int));
-  k = malloc(n*sizeof(int));
+  ad =  malloc(m*sizeof(int));
+  k =  malloc(n*sizeof(int));
   if ( ! (xp && x && ndim && u && v && ad && k) )
     {
-      Scierror("%s: not enough memory\n", NspFname(stack));
+      Scierror("%s : running out of memory\n", NspFname(stack));
       goto err;
-    } 
+    }
 
   /* parse input arg */
   if ((B = GetMat(stack,1)) == NULLMAT) goto err;
@@ -176,7 +176,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   if ((B = nsp_matrix_create(NVOID,'r',mxp,nxp))== NULLMAT) 
     goto err;
 
-  nlinear_interp(x, val, ndim, n, xp, B->R, mnxp, outmode, u, v, ad, k);
+  nsp_nlinear_interp(x, val, ndim, n, xp, B->R, mnxp, outmode, u, v, ad, k);
 
   free(xp); free(x); free(ndim); free(u); free(v); free(ad); free(k);
 
@@ -196,7 +196,8 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
    *   d = splin(x, y [,splin_type, [end_slopes]])
    */
   char *str;
-  NspMatrix *x, *y, *s=NULL, *d, *Ad, *Asd, *qdy, *lll;
+  NspMatrix *x, *y, *s=NULLMAT, *d;
+  double *Ad=NULL, *Asd=NULL, *qdy=NULL, *lll=NULL;
   int n, spline_type;
 
   CheckRhs(2,4);
@@ -261,26 +262,30 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
   switch(spline_type)
     {
     case(FAST) : case(FAST_PERIODIC) :
-      derivd(x->R, y->R, d->R, n, 1, spline_type);
+      nsp_derivd(x->R, y->R, d->R, n, 1, spline_type);
       break;
 
     case(MONOTONE) :
-      dpchim(x->R, y->R, d->R, n, 1);
+      nsp_dpchim(x->R, y->R, d->R, n, 1);
       break;
 
     case(NOT_A_KNOT) : case(NATURAL) : case(CLAMPED) : case(PERIODIC) :
-      if ((Ad = nsp_matrix_create(NVOID,'r',n,1))== NULLMAT) return RET_BUG;
-      if ((Asd= nsp_matrix_create(NVOID,'r',n-1,1))== NULLMAT) return RET_BUG;
-      if ((qdy= nsp_matrix_create(NVOID,'r',n-1,1))== NULLMAT) return RET_BUG;
+      Ad = nsp_alloc_work_doubles(n);
+      Asd = nsp_alloc_work_doubles(n-1);
+      qdy = nsp_alloc_work_doubles(n-1);
+      if (spline_type == PERIODIC) lll= nsp_alloc_work_doubles(n-1);
+
+      if ( Ad == NULL || Asd == NULL || qdy == NULL || (spline_type == PERIODIC && lll == NULL) )
+	{
+	  FREE(Ad); FREE(Asd); FREE(qdy); FREE(lll);
+	  return RET_BUG;
+	}
+
       if (spline_type == CLAMPED) 
 	{ d->R[0] = s->R[0]; d->R[n-1] = s->R[1]; };
-      if (spline_type == PERIODIC)
-	{
-	  if ((lll= nsp_matrix_create(NVOID,'r',n-1,1))== NULLMAT) return RET_BUG;
-	  cubic_spline(x->R, y->R, d->R, n, spline_type, Ad->R, Asd->R, qdy->R, lll->R);
-	}
-      else
-	cubic_spline(x->R, y->R, d->R, n, spline_type, Ad->R, Asd->R, qdy->R, NULL);
+
+      nsp_cubic_spline(x->R, y->R, d->R, n, spline_type, Ad, Asd, qdy, lll);
+      FREE(Ad); FREE(Asd); FREE(qdy); FREE(lll);
       break;
     }
 
@@ -339,7 +344,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
   if ((d2st = nsp_matrix_create(NVOID,'r',t->m,t->n))== NULLMAT) return RET_BUG;
   if ((d3st = nsp_matrix_create(NVOID,'r',t->m,t->n))== NULLMAT) return RET_BUG;
 
-  eval_piecewise_hermite(t->R, st->R, dst->R, d2st->R, d3st->R, m, x->R, y->R, d->R, n, outmode);
+  nsp_eval_piecewise_hermite(t->R, st->R, dst->R, d2st->R, d3st->R, m, x->R, y->R, d->R, n, outmode);
 
   MoveObj(stack,1,(NspObject *) st);
   if (lhs > 1)
@@ -356,10 +361,161 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_nsp_splin2d( Stack stack, int rhs, int opt, int lhs)
+{ 
+  /*  interface on the splin2d routine
+   *
+   *   C = splin2d(x, y, z [, splin_type])
+   */
+  char *str;
+  NspMatrix *x, *y, *z, *C;
+  int spline_type;
+
+  CheckRhs(3,4);
+  CheckLhs(1,4);
+
+  if ((x = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ((y = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),2,y);
+
+  if ( x->mn < 2 || y->mn < 2 )
+    {
+      Scierror("%s: first and second arguments must have at least 2 components\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if (! good_order(x->R, x->mn))  /* verify strict increasing abscissae */
+    {
+      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf or Nan detected\n",  NspFname(stack));
+      return RET_BUG;
+    }
+
+  if (! good_order(y->R, y->mn))  /* verify strict increasing abscissae */
+    {
+      Scierror("%s: elts of arg 2 not (strictly) increasing or +-inf or Nan detected\n",  NspFname(stack));
+      return RET_BUG;
+    }
+      
+  if ((z = GetMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ( z->m != x->mn || z->n != y->mn )
+    {
+      Scierror("%s: incompatibility of arg 3 with arg 1 and arg 2\n",  NspFname(stack));
+      return RET_BUG;
+    }
+
+
+  if ( rhs == 4)   /* get the spline type */
+    {
+      if ((str = GetString(stack,4)) == (char*)0) return RET_BUG;
+      spline_type = get_spline_type(str);
+      if ( spline_type == UNDEFINED ||  spline_type == CLAMPED )
+	{
+	  Scierror("%s: %s is an unknown or unsupported spline type\n",NspFname(stack), str);
+	  return RET_BUG;
+	}
+    }
+  else
+    spline_type = NOT_A_KNOT;
+
+  if ( (C = nsp_matrix_create(NVOID,'r',16*(x->mn-1)*(y->mn-1),1)) == NULLMAT ) 
+    return RET_BUG;
+
+  switch(spline_type)
+    {
+    case(MONOTONE) :  case(FAST) : case(FAST_PERIODIC) :
+      if ( nsp_bicubic_subspline(x->R, y->R, z->R, x->mn, y->mn, C->R, spline_type) == FAIL )
+	{
+	  Scierror("%s: running out of memory\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      break;
+
+    case(NOT_A_KNOT) : case(NATURAL) : case(PERIODIC) :
+      if ( nsp_bicubic_spline(x->R, y->R, z->R, x->mn, y->mn, C->R, spline_type) == FAIL )
+	{
+	  Scierror("%s: running out of memory\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      break;
+    }
+
+  MoveObj(stack,1,(NspObject *) C);
+  return 1;
+}
+
+static int int_nsp_interp2d(Stack stack, int rhs, int opt, int lhs)
+{ 
+  /*  interface on the interp2d routine
+   *
+   *   [u [, dudx, dudy]] = interp2d(xm, ym, x, y, C [,outmode])
+   */
+  char *str;
+  NspMatrix *xm, *ym, *x, *y, *C, *u, *dudx, *dudy;
+  int nx, ny, outmode;
+
+  CheckRhs(5,6);
+  CheckLhs(1,3);
+
+  if ((xm = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((ym = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  CheckSameDims(NspFname(stack),1,2,xm,ym);
+  if ((x = GetMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((y = GetMat(stack,4)) == NULLMAT) return RET_BUG;
+  if ((C = GetMat(stack,5)) == NULLMAT) return RET_BUG;
+  if ( x->mn < 2 || y->mn < 2 || C->mn != 16*(x->mn-1)*(y->mn-1) )
+    {
+      Scierror("%s: incompatible arguments\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  nx = x->mn;
+  ny = y->mn;
+
+  if ( rhs == 6 )   /* get the outmode */
+    {
+      if ((str = GetString(stack,6)) == (char*)0) return RET_BUG;
+      outmode = get_outmode(str);
+      if ( outmode == UNDEFINED || outmode == LINEAR )
+	{
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",NspFname(stack), str);
+	  return RET_BUG;
+	}
+    }
+  else
+    outmode = C0;  /* default outmode */
+
+  /* create output arg */
+  if ((u = nsp_matrix_create(NVOID,'r',xm->m,xm->n))== NULLMAT) return RET_BUG;
+
+  if ( lhs == 1 )
+    nsp_eval_bicubic(x->R, y->R, C->R, nx, ny, xm->R, ym->R, u->R, NULL, NULL, u->mn, outmode);
+  else
+    {
+      if ((dudx = nsp_matrix_create(NVOID,'r',xm->m,xm->n))== NULLMAT) return RET_BUG;
+      if ((dudy = nsp_matrix_create(NVOID,'r',xm->m,xm->n))== NULLMAT) return RET_BUG;
+      nsp_eval_bicubic(x->R, y->R, C->R, nx, ny, xm->R, ym->R, u->R, dudx->R, dudy->R, u->mn, outmode);
+    }
+
+  MoveObj(stack,1,(NspObject *) u);
+  if (lhs > 1)
+    {
+      MoveObj(stack,2,(NspObject *) dudx);
+      if (lhs > 2)
+	{
+	  MoveObj(stack,3,(NspObject *) dudy);
+	}
+    }
+  return lhs;
+}
+
+
 static OpTab Approx_func[]={
     {"linear_interpn", int_nsp_linear_interpn},
     {"splin", int_nsp_splin},
     {"interp", int_nsp_interp},
+    {"splin2d", int_nsp_splin2d},
+    {"interp2d", int_nsp_interp2d},
     {(char *) 0, NULL}
 };
 

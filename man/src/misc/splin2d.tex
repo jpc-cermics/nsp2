@@ -1,0 +1,161 @@
+% -*- mode: latex -*-
+
+\mansection{splin2d}
+\begin{mandesc}
+  \short{splin2d} {bicubic spline or subspline (interpolation of 2d
+    gridded datas)}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+C = splin2d(x, y, z, [,spline_type])
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{x,y} : strictly increasing vectors (with at least 2 components)
+               defining the interpolation grid
+   \vname{z} : nx x ny matrix (nx being the length of \verb!x! and 
+               ny the length of \verb!y!)
+   \vname{spline\_type } : (optionnal) a string selecting the kind of bicubic spline to compute
+   \vname{C} : a big vector with the coefficients of the bicubic patches
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+    This function computes a bicubic spline or sub-spline $s$ which interpolates the 
+    $(x_i,y_j,z_{ij})$ points, ie, we have $s(x_i,y_j)=z_{ij}$ for all  $i=1,..,nx$
+    and $j=1,..,ny$. 
+    The resulting spline $s$ is defined by the triplet $(x,y,C)$ where
+    $C$ is the vector (of length 16(nx-1)(ny-1)) with the coefficients of each
+    of the (nx-1)(ny-1) bicubic patches : on $[x_i, x_{i+1}] \times
+    [y_j, y_{j+1}]$, $s$ is defined by :
+    $$
+       s(x,y) = \sum_{k=1}^4  \sum_{l=1}^4  C_{i,j}(k,l) (x - x_i)^k
+       (y - y_j)^l
+    $$
+
+    The evaluation of  $s$ at some points must be done by the \manlink{interp2d}{interp2d}  
+    function. Several kind of splines may be computed by selecting the appropriate 
+    \verb!spline_type! parameter. The method used to compute the bicubic spline
+    (or sub-spline) is the old fashionned one 's, i.e. to compute on each grid point
+    $(x_i,y_j)$ an approximation of the first derivatives $ds/dx(x_i,y_j)$
+    and $ds/dy(x_i,y_j)$ and of the cross derivative $d2s/dxdy(x_i,y_j)$.
+    Those derivatives are computed by the mean of 1d spline schemes leading to a C2
+    function ($s$ is twice continuously differentiable) or by the mean of a
+    local approximation scheme leading to a C1 function only. This scheme is selected
+    with the \verb!spline_type! parameter (see \manlink{splin}{splin}  for details) :  
+    
+  \begin{itemize}
+
+       \item \itemdesc{"not\_a\_knot"} : this is the default case.
+       \item \itemdesc{"natural"} 
+       \item \itemdesc{"periodic"} : to use if the underlying function is periodic : you must have {\em z(1,j) = z(nx,j) for
+              all j in [1,ny] and  z(i,1) = z(i,ny) for i in [1,nx]} but this is not verified
+              by the interface.
+       \item \itemdesc{"monotone"} 
+       \item \itemdesc{"fast"} 
+       \item \itemdesc{"fast\_periodic"}  
+  \end{itemize}
+
+  \end{mandescription}
+
+  %-- section-Remarks
+
+  \paragraph{Remarks}
+From an accuracy point of view use essentially the {\em not\_a\_knot} type or 
+the {\em periodic} type if the underlying interpolated function is periodic.
+The {\em monotone}, {\em fast},  (or {\em fast\_periodic}) type may
+be useful in some cases, for instance to limit oscillations ({\em monotone} being the
+most powerfull for that purpose).
+    
+
+% --example 
+\begin{examples}
+\paragraph{example 1} interpolation of cos(x)cos(y). 
+\begin{program}\HCode{n = 7;  // a regular grid with n x n interpolation points will be used;\Hnewline
+x = linspace(0,2*}\verb+%pi+\HCode{,n); y = x;\Hnewline
+z = cos(x')*cos(y);\Hnewline
+C = splin2d(x, y, z, "periodic");\Hnewline
+m = 50; // discretisation parameter of the evaluation grid\Hnewline
+xx = linspace(0,2*}\verb+%pi+\HCode{,m); yy = xx;\Hnewline
+[XX,YY] = ndgrid(xx,yy);\Hnewline
+zz = interp2d(XX,YY, x, y, C);\Hnewline
+emax = max(abs(zz - cos(xx')*cos(yy)));\Hnewline
+xbasc()\Hnewline
+plot3d(xx, yy, zz, flag=[2 4 4])\Hnewline
+[X,Y] = ndgrid(x,y);\Hnewline
+param3d1(X,Y,z,style=-9*ones(1,n), flag=[0 0])\Hnewline
+str = sprintf(" with }\verb+%+\HCode{d x }\verb+%+\HCode{d interpolation points. ermax = }\verb+%+\HCode{g",n,n,emax) \Hnewline
+xtitle("spline interpolation of cos(x)cos(y)"+str)}
+\end{program}
+
+\paragraph{example 2} different interpolation functions on random datas
+\begin{program}\HCode{n = 6;\Hnewline
+x = linspace(0,1,n); y = x;\Hnewline
+z = rand(n,n);\Hnewline
+np = 50;\Hnewline
+xp = linspace(0,1,np); yp = xp;\Hnewline
+[XP, YP] = ndgrid(xp,yp);\Hnewline
+ZP1 = interp2d(XP, YP, x, y, splin2d(x, y, z, "not_a_knot"));\Hnewline
+ZP2 = linear_interpn(XP, YP, x, y, z);\Hnewline
+ZP3 = interp2d(XP, YP, x, y, splin2d(x, y, z, "natural"));\Hnewline
+ZP4 = interp2d(XP, YP, x, y, splin2d(x, y, z, "monotone"));\Hnewline
+xset("colormap", jetcolormap(64))\Hnewline
+xbasc()\Hnewline
+subplot(2,2,1)\Hnewline
+   plot3d1(xp, yp, ZP1, flag=[2 2 4])\Hnewline
+   xtitle("not_a_knot")\Hnewline
+subplot(2,2,2)\Hnewline
+   plot3d1(xp, yp, ZP2, flag=[2 2 4])\Hnewline
+   xtitle("bilinear interpolation")\Hnewline
+subplot(2,2,3)\Hnewline
+   plot3d1(xp, yp, ZP3, flag=[2 2 4])\Hnewline
+   xtitle("natural")\Hnewline
+subplot(2,2,4)\Hnewline
+   plot3d1(xp, yp, ZP4, flag=[2 2 4])\Hnewline
+   xtitle("monotone")\Hnewline
+xselect()}
+\end{program}
+
+\paragraph{example 3} ``not a knot'' spline and monotone sub-spline on a step function
+\begin{program}\HCode{a = 0; b = 1; c = 0.25; d = 0.75;\Hnewline
+// create interpolation grid\Hnewline
+n = 11;\Hnewline
+x = linspace(a,b,n);\Hnewline
+ind = find(c }\verb+<+\HCode{= x  }\verb+&+\HCode{  x }\verb+<+\HCode{= d); \Hnewline
+z = zeros(n,n); z(ind,ind) = 1;  // a step inside a square\Hnewline
+// create evaluation grid\Hnewline
+np = 220;\Hnewline
+xp = linspace(a,b, np);\Hnewline
+[XP, YP] = ndgrid(xp, xp);\Hnewline
+zp1 = interp2d(XP, YP, x, x, splin2d(x,x,z));\Hnewline
+zp2 = interp2d(XP, YP, x, x, splin2d(x,x,z,"monotone"));\Hnewline
+// plot\Hnewline
+xbasc()\Hnewline
+xset("colormap",jetcolormap(128))\Hnewline
+subplot(1,2,1)\Hnewline
+   plot3d1(xp, xp, zp1, flag=[-2 6 4])\Hnewline
+   xtitle("spline (not_a_knot)")\Hnewline
+subplot(1,2,2)\Hnewline
+   plot3d1(xp, xp, zp2, flag=[-2 6 4])\Hnewline
+   xtitle("subspline (monotone)")}
+\end{program}
+
+\end{examples}
+
+  %-- see also
+
+\begin{manseealso}
+\manlink{splin}{splin}  \manlink{interp2d}{interp2d} %\manlink{linear\_interpn}{linear\_interpn}  
+\end{manseealso}
+
+  %-- Author
+
+\begin{authors}
+B. Pincon
+\end{authors}
+
