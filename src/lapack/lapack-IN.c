@@ -515,7 +515,10 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
   if ( is_vector )
     norm = nsp_vector_norm(A, p);
   else
-    norm = nsp_matrix_norm(A,norm_lapack_table[id]);
+    {
+      if ( (A=GetMatCopy(stack, 1)) == NULLMAT ) return RET_BUG;
+      norm = nsp_matrix_norm(A,norm_lapack_table[id]);
+    }
 
   if ( norm < 0 ) return RET_BUG;  /* in some cases a work array must be allocated  */ 
                                    /* and if this fails, nsp_xxxx_norm return -1.0  */
