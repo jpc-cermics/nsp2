@@ -1255,7 +1255,7 @@ static OpTab Cells_func[]={
   {"concatr_ce_ce", int_matint_concatr}, /* int_cells_concatr}, */
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},
-  {"concatd_ce_ce", int_matint_concatr}, /* int_cells_concatd}, */
+  {"concatd_ce_ce", int_matint_concatd}, /* int_cells_concatd}, */
   {"concatd_m_ce",int_cells_concatd_m_ce},
   {"concatdiag_ce_ce",int_matint_concat_diag},
   {"addrows_ce",int_cells_addrows},
