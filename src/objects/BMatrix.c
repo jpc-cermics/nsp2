@@ -959,7 +959,7 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
   NspMatrix *Res;
   int i,count=0, nrow = ( A->mn == 0) ? 0: 1;
   /* first pass for counting **/
-  for ( i=0 ; i < A->mn ; i++) 
+  for ( i=0 ; i < A->mn ; i++)
     {
       if ( A->B[i] ) count++;
     }
@@ -972,6 +972,7 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
     }
   return Res;
 }
+
 
 /**
  * nsp_bmatrix_find_2:
@@ -991,18 +992,20 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
 
 int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
-  int j,i,count=0;
-  double ii = 0.0;
+  int j,i,count=0, k;
+  double ii;
   int nrow = ( A->mn == 0) ? 0: 1;
+
   /* first pass for counting */
   for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
   /* special rule for scalars */
   if ( A-> m == 1 && count ==0) nrow =0;
-  if ( lhs == 1) 
+
+  if ( lhs == 1)
     {
       *Res1 = nsp_matrix_create(NVOID,'r', nrow, count);
       if ( *Res1 == NULLMAT) return FAIL;
-      count=0;
+      count=0; ii = 0;
       for ( i = 0 ; i < A->mn ; i++ )
 	{
 	  ii++;
@@ -1010,22 +1013,21 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 	}
       return OK;
     }
-  else 
+  else
     {
       *Res1 = nsp_matrix_create(NVOID,'r',nrow , count);
       if ( *Res1 == NULLMAT) return FAIL;
       *Res2 = nsp_matrix_create(NVOID,'r',nrow , count);
-      if ( *Res2 == NULLMAT) return FAIL;
+      if ( *Res2 == NULLMAT) { nsp_matrix_destroy(*Res1); return FAIL; }
       count=0;
-      for ( i = 0 ; i < A->m ; i++ )
-	for ( j = 0 ; j < A->n ; j++ )
-	  {
-	    if ( A->B[i+(A->m)*j] ) 
-	      {
-		(*Res1)->R[count] = i+1;
-		(*Res2)->R[count++] = j+1;
-	      }
-	  }
+      /* change loop order for speed (bruno) */
+      for ( j = 0, k = 0 ; j < A->n ; j++ )
+	for ( i = 0 ; i < A->m ; i++, k++ )
+	  if ( A->B[k] )
+	    {
+	      (*Res1)->R[count] = i+1;
+	      (*Res2)->R[count++] = j+1;
+	    }
     }
   return OK;
 }
