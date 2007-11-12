@@ -2,8 +2,7 @@
 
 \mansection{unique}
 \begin{mandesc}
-  \short{unique}{compute unique components of a vector (of numbers,
-  strings or cells) or of a list} \\
+  \short{unique}{compute unique components of a vector or of a list}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -38,71 +37,51 @@ y = unique(x)
 
 \begin{examples}
 
-\noindent A first example with a vector of numbers:
-  
-  \begin{program}
-    \HCode{
-    x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
-    [y, ind, occ] = unique(x)
-    }
-  \end{program}
+\paragraph{example 1} with a vector of numbers
+\begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
 
-\noindent   a second example with a vector of strings:
-  
-  \begin{program}
-    \HCode{
-    x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
-    [y, ind, occ] = unique(x)
-    }
-  \end{program}
+\paragraph{example 2} with a vector of strings:
+\begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
 
-\noindent   a third one with a vector of cells:
-  
-  \begin{program}
-    \HCode{
-    x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}\Hnewline
-    [y, ind, occ] = unique(x)
-    }
-  \end{program}
+\paragraph{example 3} with a vector of cells:
+\begin{program}\HCode{x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
 
-\noindent   a fourth one with a list:
-  
-  \begin{program}
-    \HCode{
-    x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")\Hnewline
-    [y, ind, occ] = unique(x)
-    }
-  \end{program}
+\paragraph{example 4} with a list:
+\begin{program}\HCode{x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
 
-\noindent another example:
-  
-  \begin{program}
-    \HCode{
-    // generate a big sample of the binomial distribution B(6,0.4)\Hnewline
-    m = 1e5;\Hnewline
-    x = grand(m,1,"bin",6,0.4); \Hnewline
-    // computes the empirical probabilities associated to each values\Hnewline
-    [y, ind, occ] = unique(x);\Hnewline
-    p_emp = occ/m;\Hnewline
-    // computes exact probabilities (using the cumulative distribution func)\Hnewline
-    v = ones(7,1);\Hnewline
-    p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);\Hnewline
-    p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];\Hnewline
-    // compare both empirical and exact ones\Hnewline
-    xbasc()\Hnewline
-    e = 0.05;\Hnewline
-    plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...\Hnewline
-            rect=[-1,0,7,1.1*max(p_exact)],...\Hnewline
-            leg="exact probabilies@empirical probabilities")\Hnewline
-    }
-  \end{program}
+\paragraph{example 5} using unique for basic statistic:
+\begin{program}\HCode{// generate a big sample of the binomial distribution B(6,0.4)\Hnewline
+m = 1e5;\Hnewline
+x = grand(m,1,"bin",6,0.4); \Hnewline
+// computes the empirical probabilities associated to each values\Hnewline
+[y, ind, occ] = unique(x);\Hnewline
+p_emp = occ/m;\Hnewline
+// computes exact probabilities (using the cumulative distribution func)\Hnewline
+v = ones(7,1);\Hnewline
+p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);\Hnewline
+p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];\Hnewline
+// compare both empirical and exact ones\Hnewline
+xbasc()\Hnewline
+e = 0.05;\Hnewline
+plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...\Hnewline
+         rect=[-1,0,7,1.1*max(p_exact)],...\Hnewline
+         leg="exact probabilies@empirical probabilities")}
+\end{program}
 \end{examples}
 
 \begin{manseealso}
-  \manlink{model}{model}  
+  \manlink{setdiff}{setdiff}  
 \end{manseealso}
 
 % -- Authors
 \begin{authors}
-  Bruno Pin\c{c}on
+  Bruno Pincon
 \end{authors}

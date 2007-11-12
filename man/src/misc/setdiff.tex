@@ -2,8 +2,7 @@
 
 \mansection{setdiff}
 \begin{mandesc}
-  \short{setdiff}{compute the set difference between two vectors (of
-    numbers, strings or cells) or two lists} \\
+  \short{setdiff}{compute the set difference between two vectors or two lists}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -40,65 +39,49 @@ C = setdiff(A,B)
 
 \begin{examples}
 
-\noindent A first example with vectors of numbers:
-  
-  \begin{program}
-    \HCode{
-    A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];\Hnewline
-    B = [2, 0.5];\Hnewline
-    C = setdiff(A,B)\Hnewline
-    [C, ind] = setdiff(A,B)\Hnewline
-    // we must have C = A(ind)\Hnewline
-    and(C == A(ind))
-    }
-  \end{program}
+\paragraph{example 1} with vectors of numbers:
+\begin{program}\HCode{A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];\Hnewline
+B = [2, 0.5];\Hnewline
+C = setdiff(A,B)\Hnewline
+[C, ind] = setdiff(A,B)\Hnewline
+// we must have C = A(ind)\Hnewline
+and(C == A(ind))}
+\end{program}
 
-\noindent   a second example with vectors of strings:
-  
-  \begin{program}
-    \HCode{
-    A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
+\paragraph{example 2} with vectors of strings:
+  \begin{program}\HCode{A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
     B = [ "foo", "bar" ]\Hnewline
     C = setdiff(A,B)\Hnewline
     [C, ind] = setdiff(A,B)\Hnewline
     // we must have C = A(ind)\Hnewline
-    and(C == A(ind))
-    }
+    and(C == A(ind))}
   \end{program}
 
-\noindent   a third example with vectors of cells:
-  
-  \begin{program}
-    \HCode{
-    A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}\Hnewline
+\paragraph{example 3} with vectors of cells:
+  \begin{program}\HCode{A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}\Hnewline
     B = { "foo", 2,  [0,1;1,0] }\Hnewline
     C = setdiff(A,B)\Hnewline
     [C, ind] = setdiff(A,B)\Hnewline
     // we must have C = A(ind)\Hnewline
-    and(C == A(ind))
-    }
+    and(C == A(ind))}
   \end{program}
 
-\noindent   the same example using list:
-  
-  \begin{program}
-    \HCode{
-    A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")\Hnewline
+\paragraph{example 4} with lists:
+  \begin{program}\HCode{A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")\Hnewline
     B = list( "foo", 2,  [0,1;1,0] )\Hnewline
     C = setdiff(A,B)\Hnewline
     [C, ind] = setdiff(A,B)\Hnewline
     // we must have C = A(ind)\Hnewline
-    and(C == A.sublist[ind])
-    }
+    and(C == A.sublist[ind])}
   \end{program}
 
 \end{examples}
 
 \begin{manseealso}
-  \manlink{model}{model}  
+  \manlink{unique}{unique}  \manlink{union}{union}  
 \end{manseealso}
 
 % -- Authors
 \begin{authors}
-  Bruno Pin\c{c}on
+  Bruno Pincon
 \end{authors}
