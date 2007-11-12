@@ -3952,6 +3952,75 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/*
+ *  ndind2ind
+ *
+ *  [ind] = ndind2ind( dims, ind1, ind2, ..., indk)
+ *
+ *  dims must be a vector of length k
+ */
+
+int
+int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Dims, **ndind = NULL, *ind;
+  int nd, *dims=NULL, i;
+  CheckRhs (2, 7);   /* limited to indexing of order 6 */
+
+  if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  nd = Dims->mn; 
+
+  if ( rhs - 1 != nd )
+    {
+      Scierror ("%s: waiting for %d index vectors, got %d\n", NspFname(stack), nd, rhs-1);
+      return RET_BUG;
+    }
+
+  /* parse Dims */
+  if ( (dims = malloc(nd*sizeof(int))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      return RET_BUG;
+    }
+  for ( i = 0 ; i < nd ; i++ )
+    {
+      dims[i] = (int) Dims->R[i];
+      if ( dims[i] < 0 )
+	{
+	  Scierror ("%s: length in the %d th dimension is negative\n", NspFname(stack), i+1);
+	  goto err;
+	}
+    }
+
+  if ( (ndind = malloc((rhs-1)*sizeof(NspMatrix *))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      goto err;
+    }
+
+  for ( i = 2 ; i <= rhs ; i++ )
+    {
+      if ( (ndind[i-2] =  GetRealMat(stack, i)) == NULLMAT )
+	goto err;
+    } 
+
+  if ( nsp_mat_ndind2ind(dims, nd, ndind, &ind) == FAIL )
+    goto err;
+
+  MoveObj (stack, 1, (NspObject *) ind);
+
+  free(dims);
+  free(ndind);
+  return 1;
+
+ err:
+  free(dims);
+  free(ndind);
+  return RET_BUG;
+}
+
 
 /*
  * isinf 
@@ -4451,6 +4520,7 @@ static OpTab Matrix_func[] = {
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
   {"mfind_m", int_mxmfind},
+  {"ndind2ind_m_m", int_ndind2ind},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},

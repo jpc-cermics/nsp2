@@ -5135,6 +5135,84 @@ err:
     nsp_matrix_destroy(Ind[i]);
   return FAIL;
 }
+  
+/**
+ * nsp_mat_ndind2ind:
+ * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensionnal matrix)
+ * @nd: (input) size of dims, number of dimensions of the supposed n-dimensionnal matrix)
+ * @ndind: (input) vector pointer onto nd #NspMatrix each one having the role of an index vector
+ * @Ind: (output) a #NspMatrix having the role of an index vector equivalent to the
+ *       multiple indexing (the supposed n-dimensionnal matrix having the fortran indexing scheme) 
+ * 
+ * [ind] = ndind2ind(dims, I_1, I_2, ..., I_nd)
+ *
+ * dims = [n_1, n_2, ..., n_nd]  each k \in I_k must be 1 <= k <= n_k
+ *
+ * the supposed "submatrix" being adressed is I_1 x I_2 x ... x I_nd
+ *
+ * let (i_1, i_2, ..., i_nd) be such a multi_index in I_1 x I_2 x ... x I_nd
+ * this routine computes for all these multi-indices, their equivalent one-way indices
+ * with the following formula:
+ *
+ *    i_equ = i_1 + n_1*( (i_2 - 1) + n_2*( (i_3 - 1) + .... + n_{nd-1}*(i_nd - 1)))
+ *
+ * Return value: %OK or %FAIL
+ *
+ **/
+int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind)
+{
+  NspMatrix *ind;
+  int *j, i, k, p, ni, ip, K, ntot=1;
+
+  for ( i = 0 ; i < nd ; i++ )
+    ntot *= ndind[i]->mn;
+
+  if ( (ind = nsp_matrix_create(NVOID,'r',1,ntot)) == NULLMAT) return FAIL;
+  j = (int *) ind->R;
+
+  K = ndind[nd-1]->mn;
+  for ( k = 0 ; k < K ; k++ )
+    {
+      j[k] = ((int) ndind[nd-1]->R[k]) - 1;
+      if ( j[k]  < 0  ||  j[k] >= dims[nd-1] )
+	{
+	  Scierror("Error: %d th index out of bounds in the last index vector\n", k+1);
+	  goto err;
+	}
+    }
+
+  for ( i = nd-2 ; i >= 0 ; i-- )
+    {
+      ni = ndind[i]->mn;
+      for ( k = 0 ; k < K ; k++ )
+	j[k] *= dims[i];
+
+      for ( p = ni-1 ; p >= 0 ; p-- )
+	{
+	  ip = ((int) ndind[i]->R[p]) - 1;
+	  if ( ip  < 0  ||  ip >= dims[i] )
+	    {
+	      Scierror("Error: %d th index out of bounds in the %d th index vector\n", p+1, i+1);
+	      goto err;
+	    }
+	  if ( p > 0 ) memcpy(&j[K*p],j,K*sizeof(int));
+	  for ( k = K*p ; k < K*p+K ; k++ )
+	    j[k] += ip;
+	}
+      K *= ni;
+    }
+
+  for ( i = 0 ; i < ntot ; i++ ) j[i]++;
+
+  ind->convert = 'i';
+  ind = Mat2double(ind);
+  *Ind = ind;
+  return OK;
+
+ err:
+  nsp_matrix_destroy(ind);
+  return FAIL;
+}
 
 
 /*

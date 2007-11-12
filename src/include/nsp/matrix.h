@@ -296,6 +296,7 @@ extern NspMatrix *nsp_mat_hilbert(int n,int job);
 extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op, int *err); 
 extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 extern int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind);
+extern int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind);
 extern int nsp_mat_nnz(NspMatrix *A);
 
 /* maxplus operations */
