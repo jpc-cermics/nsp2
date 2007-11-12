@@ -154,7 +154,7 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
   \begin{program}\HCode{// reverse a list using foldr \Hnewline
     function z=rev(x,y);z=list_concat(y,x);endfunction ;\Hnewline
     L=list(1,2,3,4);\Hnewline
-    S=foldr(L,list(),rev)
+    S=foldr(L,list(),rev)\Hnewline
     // sum the elements of a list using foldr \Hnewline
     function z=lplus(x,y);z=x+y;endfunction ;\Hnewline
     L=list(1,2,3,4);\Hnewline
@@ -170,5 +170,5 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
 
 % -- Authors
 \begin{authors}
-   Jean-Philippe Chancelier, Bruno Pin\c{c}on
+   Jean-Philippe Chancelier, Bruno Pincon
 \end{authors}
