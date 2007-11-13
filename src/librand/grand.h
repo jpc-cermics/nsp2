@@ -211,17 +211,16 @@ extern int nsp_rand_discrete_guide(double *q, int *key, int n);
 extern int nsp_rand_discrete_alias(double *q, int *j, int n);
 extern void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bits);
 extern void rand_unf_01_and_uin_0_127(double *u, int *k_7bits);
-extern double nsp_log1p(double x);
 extern void nsp_rand_multinomial_bis(double *q, int *key, int *ix, int ncat, int n);
 extern void nsp_rand_multinomial(double *p, int *ix, int ncat, int n);
 extern int nsp_markov_setup(double *p, double *q, int *key, int n);
-extern void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int nn, int m);
+extern void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn, int m);
 extern void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n);
 extern void nsp_rand_sphere(double *res, int n);
 extern void nsp_rand_in_sphere(double *res, int n);
 extern void nsp_rand_simplex(double *res, int m, int n);
-extern double nsp_sinpi(double x);
-extern double nsp_gamma(double x);
-extern double nsp_lngamma(double x);
+
+
+
 
 #endif /*  RANDLIB_H */

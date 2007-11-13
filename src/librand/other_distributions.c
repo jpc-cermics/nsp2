@@ -19,6 +19,7 @@
 
 #include "grand.h"
 #include "nsp/gsort-p.h"
+#include "nsp/spmf.h"
 #include <math.h>
 
 /**
