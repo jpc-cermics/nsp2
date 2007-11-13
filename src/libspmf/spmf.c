@@ -493,13 +493,16 @@ int nsp_kcdf(double x, double *res, int n)
   return OK;
 }
 
-double nsp_kcdflim(double x)
+double nsp_kcdflim(double x, double *q)
 {
   double const pi = 3.141592653589793238462643383, sqrt_2pi = 2.506628274631000502415765285;
   double u, u2, u3, u5, u7, u8, u9, p, temp;
 
   if ( x <= 0.0 )
-    return 0.0;
+    {  
+      p = 0.0;
+      *q = 1.0;
+    }
   else if ( x <= 0.75 ) 
     {
       temp = pi/x;
@@ -507,14 +510,17 @@ double nsp_kcdflim(double x)
       if ( u == 0.0 ) return 0.0;
       p = u; 
       u8 = pow(u,8);
-      p = u*(1.0 + u8*( 1.0 + u8*u8 ) );
-      return sqrt_2pi*p/x;
+      p = sqrt_2pi * u*(1.0 + u8*( 1.0 + u8*u8 ) )/x;
+      *q = 1.0 - p;
     }
   else
     {
       u = exp(-2*x*x);
       if ( x > 2.5 )
-	return 1.0 - 2.0*u;
+	{
+	  *q = 2.0*u;
+	  p = 1.0 - *q;
+	}
       else
 	{
 	  u2 = u*u;
@@ -522,9 +528,11 @@ double nsp_kcdflim(double x)
 	  u5 = u3*u2;
 	  u7 = u5*u2;
 	  u9 = u7*u2;
-	  return 1.0 - 2.0*u*(1.0 - u3*(1.0 - u5*(1.0 - u7*(1.0 - u9))));
+	  *q = 2.0*u*(1.0 - u3*(1.0 - u5*(1.0 - u7*(1.0 - u9))));
+	  p = 1.0 - *q;
 	}
     }
+  return p;
 }
 
 /* Marsaglia, Tang, K cdf */

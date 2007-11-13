@@ -121,21 +121,36 @@ static int int_nsp_kcdf(Stack stack, int rhs, int opt, int lhs)
 
 static int int_nsp_kcdflim(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *x, *P;
+  NspMatrix *x, *P, *Q;
   int i;
+  double q;
   CheckRhs (1, 1);
-  CheckLhs (1, 1);
+  CheckLhs (1, 2);
 
   if ( (x = GetRealMat(stack, 1)) == NULLMAT )
     return RET_BUG;
 
   if ( (P = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT) return RET_BUG;
 
-  for ( i = 0 ; i < x->mn ; i++ )
-    P->R[i] = nsp_kcdflim(x->R[i]);
+  if ( lhs == 1 )
+    for ( i = 0 ; i < x->mn ; i++ )
+      P->R[i] = nsp_kcdflim(x->R[i], &q);
+  else  /* lhs==2 need q = 1 - p too */
+    {
+      if ( (Q = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT)
+	{
+	  nsp_matrix_destroy(P);
+	  return RET_BUG;
+	}
+      for ( i = 0 ; i < x->mn ; i++ )
+	P->R[i] = nsp_kcdflim(x->R[i], &(Q->R[i]));
+    }
 
   MoveObj(stack,1,(NspObject *) P);
-  return 1;
+  if ( lhs == 2 )
+    MoveObj(stack,2,(NspObject *) Q);
+
+  return lhs;
 }
 
 static int int_nsp_kcdfbis(Stack stack, int rhs, int opt, int lhs)
