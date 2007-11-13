@@ -73,6 +73,7 @@ extern  sci_interface  pango_Interf ;extern  interface_info  pango_Interf_Info ;
 extern  sci_interface  Type_Interf ;extern  interface_info  Type_Interf_Info ;
 extern  sci_interface  Dcd_Interf ;extern  interface_info  Dcd_Interf_Info ;
 extern  sci_interface  Approx_Interf ;extern  interface_info  Approx_Interf_Info ;
+extern  sci_interface  Spmf_Interf ;extern  interface_info  Spmf_Interf_Info ;
 extern  sci_interface  Random_Interf ;extern  interface_info  Random_Interf_Info ;
 extern  sci_interface  Lapack_Interf ;extern  interface_info  Lapack_Interf_Info ;
 extern  sci_interface  Fft_Interf ;extern  interface_info  Fft_Interf_Info ;
@@ -161,6 +162,7 @@ InterfTab Interfaces[]={
   {Type_Interf,Type_Interf_Info},
   {Dcd_Interf , Dcd_Interf_Info },
   {Approx_Interf , Approx_Interf_Info },
+  {Spmf_Interf , Spmf_Interf_Info },
   {Random_Interf , Random_Interf_Info },
   {Lapack_Interf , Lapack_Interf_Info },
   {Fft_Interf , Fft_Interf_Info },
