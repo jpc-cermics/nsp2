@@ -561,6 +561,77 @@ static NspMatrix *nsp_mat_flipud(NspMatrix *x)
   return y;
 }
 
+static NspMatrix *nsp_mat_rot(NspMatrix *x, int nbrot)
+{
+  NspMatrix *y = NULLMAT;
+  int i, j, k, stride;
+
+  while (nbrot < 0) 
+    nbrot+=4;
+  nbrot = nbrot % 4;
+
+  switch ( nbrot )
+    {
+    case 0:
+      y = nsp_matrix_copy(x);
+      break;
+
+    case 1:
+      if ( (y = nsp_matrix_create(NVOID, x->rc_type, x->n, x->m)) == NULLMAT )
+	return NULLMAT;
+
+      if ( x->rc_type == 'r' )
+	{
+	  for ( j = 0, k=0 ; j < x->n ; j++ )
+	    for ( i = 0, stride = x->n-1-j ; i < x->m ; i++, stride+=x->n, k++ )
+	      y->R[stride] = x->R[k];
+	}
+      else
+	{
+	  for ( j = 0, k=0 ; j < x->n ; j++ )
+	    for ( i = 0, stride = x->n-1-j ; i < x->m ; i++, stride+=x->n, k++ )
+	      y->C[stride] = x->C[k];
+	}
+      break;
+
+    case 2:
+      if ( (y = nsp_matrix_create(NVOID, x->rc_type, x->m, x->n)) == NULLMAT )
+	return NULLMAT;
+
+      if ( x->rc_type == 'r' )
+	{
+	  for ( i = 0, k = x->mn-1 ; i < x->mn ; i++, k-- )
+	    y->R[k] = x->R[i];
+	}
+      else
+	{
+	  for ( i = 0, k = x->mn-1 ; i < x->mn ; i++, k-- )
+	    y->C[k] = x->C[i];
+	}
+      break;
+
+    case 3:
+      if ( (y = nsp_matrix_create(NVOID, x->rc_type, x->n, x->m)) == NULLMAT )
+	return NULLMAT;
+
+      if ( x->rc_type == 'r' )
+	{
+	  for ( j = 0, k=0 ; j < x->n ; j++ )
+	    for ( i = 0, stride = j + (x->m-1)*x->n ; i < x->m ; i++, stride-=x->n, k++ )
+	      y->R[stride] = x->R[k];
+	}
+      else
+	{
+	  for ( j = 0, k=0 ; j < x->n ; j++ )
+	    for ( i = 0, stride = j + (x->m-1)*x->n ; i < x->m ; i++, stride-=x->n, k++ )
+	      y->C[stride] = x->C[k];
+	}
+      break;
+    }
+
+  return y;
+}
+
 static int int_nsp_fftshift(Stack stack, int rhs, int opt, int lhs)
 {
   int dim_flag=0;
@@ -647,6 +718,27 @@ static int int_nsp_flipud(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nsp_rot(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *y;
+  int nbrot = 1;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+
+  if ( (x = GetMat (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( rhs == 2 )
+    if (GetScalarInt(stack, 2, &nbrot) == FAIL)
+      return RET_BUG;
+
+  if ( (y = nsp_mat_rot(x,nbrot)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+}
+
 static OpTab Fft_func[]={
     {"fft_m_m", int_nsp_fft},
     {"fft2_m_m", int_nsp_fft2},
@@ -654,6 +746,7 @@ static OpTab Fft_func[]={
     {"ifftshift_m", int_nsp_ifftshift},
     {"fliplr_m", int_nsp_fliplr},
     {"flipud_m", int_nsp_flipud},
+    {"rot90_m", int_nsp_rot},
     {(char *) 0, NULL}
 };
 
