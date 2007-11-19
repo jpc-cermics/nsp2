@@ -58,6 +58,7 @@ extern void nsp_qsort_nsp_string(nsp_string *a,int *tab, int flag, int n,char di
 
 extern void nsp_qsort_bp_int(int x[], int n, int p[],int flag,char dir );
 extern void nsp_qsort_bp_double(double x[], int n, int p[],int flag,char dir );
+extern void nsp_bpsqsort_double(double x[], int n, int p[],char dir);
 
 /* mergesort */
 

@@ -4375,6 +4375,97 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_unique( Stack stack, int rhs, int opt, int lhs)
+{ 
+  Boolean first_ind;
+  NspMatrix *x;
+  NspMatrix *ind, *occ;
+  NspMatrix **Ind=NULL, **Occ=NULL;
+  int_types T[] = {realmatcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind) == FAIL ) return RET_BUG;
+
+  if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
+
+  CheckLhs(1,3);
+
+  if ( lhs >= 2 )
+    {
+      Ind = &ind;
+      if ( lhs == 3 ) Occ = &occ;
+    }
+
+  if ( nsp_mat_unique(x, Ind, Occ, first_ind) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(x)->ret_pos = 1; 
+  if ( lhs >= 2 ) 
+    {
+      MoveObj(stack,2,NSP_OBJECT(ind));
+      if ( lhs >= 3 )
+	MoveObj(stack,3,NSP_OBJECT(occ));
+    }
+
+  return Max(lhs,1);
+}
+
+static int int_bpsqsort( Stack stack, int rhs, int opt, int lhs)
+{ 
+  Boolean skip_nan;
+  NspMatrix *x;
+  NspMatrix *ind=NULLMAT;
+  int *index, i, j;
+  int_types T[] = {realmatcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "skip_nan",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&skip_nan) == FAIL ) return RET_BUG;
+
+  if ( opts[0].obj == NULLOBJ) skip_nan = FALSE;
+
+  CheckLhs(1,2);
+
+  if ( (ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+    return RET_BUG;
+
+  index = (int *) ind->R;
+
+  /* index must be initialised */
+  for ( i = 0 ; i < x->mn ; i++ ) index[i] = i+1;
+
+  if ( skip_nan )
+    {
+      double temp;
+      /* j will be the length of the vector without the nans */
+      for ( i = x->mn-1, j = x->mn ; i >= 0 ; i-- )
+	if ( ISNAN(x->R[i]) )
+	  { 
+	    j--; 
+	    temp = x->R[i]; x->R[i] = x->R[j]; x->R[j] = temp;
+	    index[i] = index[j]; index[j] = i+1;
+	  }
+    }
+  else
+    j = x->mn;
+      
+  nsp_bpsqsort_double( x->R,  j, index, 'i');
+ 
+  NSP_OBJECT(x)->ret_pos = 1;
+ 
+  if ( lhs >= 2 ) 
+    {
+      ind->convert = 'i';
+      ind = Mat2double(ind);
+      MoveObj(stack,2,NSP_OBJECT(ind));
+    }
+  else
+    nsp_matrix_destroy(ind);
+
+  return Max(lhs,1);
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -4531,6 +4622,8 @@ static OpTab Matrix_func[] = {
   {"test_dperm",int_test_dperm},
   {"nnz_m",  int_matrix_nnz},
   {"format", int_format},
+  {"unique_m", int_unique},
+  {"sqsort_m", int_bpsqsort},
   {(char *) 0, NULL}
 };
 
