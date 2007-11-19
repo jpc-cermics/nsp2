@@ -21,28 +21,28 @@
  *
  * x_sorted(i) = x(p(i))  1<=i<=n
  *
+ * this is a try for a stable qsort with the easy way of using
+ * the index array p so p must be always provided. 
+ * Note also that the array p is not initialised inside
+ *
  * Author: B. Pincon (trying to accelerate the initial scilab dsort.f)
  * (i) n must be less than 2**(25) ! due to lengh of work space (ileft, iright)
  * (ii) quicksort is used with Sedgewick tricks
  */
 
-#define XCNAME(x,y) CNAME(x,y)
-
 #define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp;	\
-  if ( flag == TRUE) {itemp = p[i]; p[i] = p[j]; p[j] = itemp;}
+                  itemp = p[i]; p[i] = p[j]; p[j] = itemp;
 
 #define SWITCH_VALUE 20
 
 #define POP_segment(ia,ib) la--; if ( la >= 0 ) { ia = ileft[la]; ib = iright[la]; }
 #define PUSH_segment(ia,ib) ileft[la] = (ia); iright[la] = (ib); la++
 
-void XCNAME(nsp_qsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],int flag,char dir )
+void nsp_bpsqsort_double(double x[], int n, int p[],char dir)
 {
   int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
-  int i, ia, ib, im, la, j, itemp;
-  ELT_TYPE temp, pivot;
-
-  if ( flag == TRUE) for ( i = 0 ; i < n ; i++) p[i]=i+1;
+  int i, ia, ib, im, la, j, itemp, ipiv;
+  double temp, pivot;
 
   if ( n == 1 ) return;
 
@@ -56,8 +56,7 @@ void XCNAME(nsp_qsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],int flag,char d
 	  for ( i = ia+1 ; i <= ib ; i++ )
 	    {
 	      j = i;
-/* 	      while ( j > ia  &&  x[j] < x[j-1] ) */
-	      while ( j > ia  &&  !(x[j] >= x[j-1]) )   /* this form better handles nan */
+	      while ( j > ia  && (( x[j]<x[j-1] || (x[j]==x[j-1] && p[j]<p[j-1]))) )
 		{
 		  SWAP(j,j-1);
 		  j--;
@@ -70,15 +69,16 @@ void XCNAME(nsp_qsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],int flag,char d
 	  im = (ia+ib)/2;
 	  SWAP(ia, im);
 	  i = ia+1; j = ib;
-	  if (x[i] > x[j])  { SWAP(i, j); }
-	  if (x[ia] > x[j]) { SWAP(ia, j); }
-	  else if (x[i] > x[ia]) { SWAP(ia, i); }
+	  if (x[i] > x[j] || (x[i]==x[j] && p[i]>p[j]) )  { SWAP(i, j); }
+	  if (x[ia] > x[j] || (x[ia]==x[j] && p[ia]>p[j]) ) { SWAP(ia, j); }
+	  else if (x[i] > x[ia] || (x[i]==x[ia] && p[i]>p[ia]) ) { SWAP(ia, i); }
 	  pivot = x[ia];
-          /* at this point we have  x[i=ia+1] >= pivot (=x[ia]) >= x[j=ib]  */
+	  ipiv = p[ia];
+          /* at this point we have  x[i=ia+1] <= pivot (=x[ia]) <= x[j=ib]  */
 	  while (1)
 	    {
-	      do i++;  while ( x[i] < pivot );
-	      do j--;  while ( x[j] > pivot );
+	      do i++;  while ( x[i] < pivot || (x[i]==pivot && p[i]<ipiv) );
+	      do j--;  while ( x[j] > pivot || (x[j]==pivot && p[j]>ipiv) );
 	      if (i >= j) break;
 	      SWAP(i, j);
 	    }
@@ -101,5 +101,4 @@ void XCNAME(nsp_qsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],int flag,char d
 	  SWAP(i,n-i-1);
 	}
     }
-
 }

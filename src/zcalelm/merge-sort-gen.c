@@ -27,6 +27,8 @@
 #define arraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(ELT_TYPE)) 
 #define iarraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(int)) 
 
+#define SWITCH_VALUE 18
+
 int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, int toIndex,char dir)
 {
   NspMatrix *M=NULLMAT,*IM=NULLMAT;
@@ -37,15 +39,15 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
    * In general, the code attempts to be simple rather than fast, the
    * idea being that a good optimising JIT will be able to optimise it
    * better than I can, and if I try it will make it more confusing for
-   * the JIT. First presort the array in chunks of length 6 with insertion
+   * the JIT. First presort the array in chunks of length SWITCH_VALUE with insertion
    * sort. A mergesort would give too much overhead for this length.
    */
 
   if ( flag == TRUE) for ( i = fromIndex ; i < toIndex -fromIndex  ; i++) p[i]=i+1;
 
-  for (chunk = fromIndex; chunk < toIndex; chunk += 6)
+  for (chunk = fromIndex; chunk < toIndex; chunk += SWITCH_VALUE)
     {
-      int end = Min(chunk + 6, toIndex);
+      int end = Min(chunk + SWITCH_VALUE, toIndex);
       for (i = chunk + 1; i < end; i++)
 	{
 	  if ( a[i - 1] > a[i] )
@@ -67,8 +69,8 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
 	}
     }
   int len = toIndex - fromIndex;
-  /* If length is smaller or equal 6 we are done. */
-  if (len <= 6) goto end;
+  /* If length is smaller or equal SWITCH_VALUE we are done. */
+  if (len <= SWITCH_VALUE) goto end;
 
   src = a;
   if ((M = nsp_matrix_create(NVOID,'r',1,len) ) == NULLMAT ) return FAIL;
@@ -88,7 +90,7 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
   int srcDestDiff = -fromIndex;
 
   /* The merges are done in this loop */
-  for ( size = 6; size < len; size <<= 1)
+  for ( size = SWITCH_VALUE; size < len; size <<= 1)
     {
       for ( start = fromIndex; start < toIndex; start += size << 1)
 	{

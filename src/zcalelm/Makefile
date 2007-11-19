@@ -10,7 +10,7 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = matutil.o matnum.o qsort.o qsort1.o qsort2.o \
-	qsort-stable.o merge-sort.o gsort.o
+	qsort-stable.o merge-sort.o gsort.o bpsqsort_double.o
 
 OBJSF = 
 
@@ -32,6 +32,6 @@ qsort1.o :  qsort1-gen.c
 qsort2.o : qsort2-gen.c
 qsort.o : qsort-gen.c
 qsort-stable.o:  qsort-stable-gen.c
-
+merge-sort.o: merge-sort-gen.c
 
 
