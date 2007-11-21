@@ -1,0 +1,132 @@
+% -*- mode: latex -*-
+
+\mansection{sort}
+\begin{mandesc}
+  \short{sort}{general sort function}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[y [,k]]  = sort(x)
+[y [,k]]  = sort(x, type_of_sort)
+[y [,k]]  = sort(x, type_of_sort, order)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x} :  matrix or vector of real numbers or strings.
+    \vname{type_of_sort} : a string among
+    \verb+"g","gb","gm","gs","c","r","ldc","ldr","lc","lr"+ (default
+    is \verb+"g"+)
+    \vname{order} : must be \verb+"i"+ for an increasing sort or \verb+"d"+ for a
+                    decreasing sort (current default)
+    \vname{y} : sorted output
+    \vname{k} : vector or matrix of indices such that \verb+y=x(k)+
+    or  \verb+y=x(:,k)+ or  \verb+y=x(k,:)+ or other meaning
+    dependings of the type of the sort.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function is an interface for various kind of sorts depending of
+the input argument \verb+type_of_sort+:
+
+\itemdesc{{\tt type\_of\_sort = "g","gb","gm","gs"}}
+In this case the function sorts the vector $x$ (if $x$ is a matrix
+it is considered as a big vector using the major column order) in 
+decreasing order by default or when \verb+order="d"+ and in increasing
+order when \verb+order="i"+. 
+
+\begin{tabular}{|r|l|}
+\hline
+\verb+"g"+  &  quick sort a la Bentley, McIlroy's "Engineering a Sort Function" \\
+            &  (tends to be the fastest when $x$ have many non unique elements) \\ 
+\hline
+\verb+"gb"+  &  quick sort a la Sedgewick \\
+            &  (tends to be the fastest when $x$ have few non unique elements) \\ 
+\hline
+\verb+"gm"+  &  merge sort \\
+             &  generally slower than the 2 first by always in  O(nlog(n)) \\
+\hline
+\verb+"gs"+  &  stable sort \\
+             &  but not stable currently \\ 
+\hline
+\end{tabular}
+
+Currently only \verb+"g"+ is available for string vectors.
+
+\itemdesc{{\tt type\_of\_sort = "c"}}
+In this case each row of $x$ is sorted independently of the others.
+$k$ is a matrix of indices and \verb+y(i,:)+ should be equal to
+\verb+x(k(i,:),:)+. 
+
+\itemdesc{{\tt type\_of\_sort = "r"}}
+In this case each column of $x$ is sorted independently of the others.
+$k$ is a matrix of indices and \verb+y(:,j)+ should be equal to
+\verb+x(:,k(:,j))+. 
+
+\itemdesc{{\tt type\_of\_sort = "ldc"}}
+In this case the columns are sorted using lexical order (increasing 
+order if \verb+order="i"+). $k$ is a vector of indices such that \verb+y+ should be equal to
+\verb+x(:,k)+. 
+
+\itemdesc{{\tt type\_of\_sort = "lc"}}
+is the same than \verb+"ldc"+ but the matrix is considered as a matrix
+of integers (a cast double to int is done first).
+
+\itemdesc{{\tt type\_of\_sort = "ldr"}}
+In this case the rows are sorted using lexical order (increasing 
+order if \verb+order="i"+). $k$ is a vector of indices such that \verb+y+ should be equal to
+\verb+x(k,:)+. 
+
+\itemdesc{{\tt type\_of\_sort = "lr"}}
+is the same than \verb+"ldr"+ but the matrix is considered as a matrix
+of integers (a cast double to int is done first).
+
+\paragraph{Remark}
+For matrix of floating point numbers, Nan values are considered larger
+than Inf. So all nans are positionned at the end in case of an
+increasing sort and at the beginning for a decreasing sort. 
+
+
+\end{mandescription}
+
+\begin{examples}
+
+\paragraph{example 1} sort of a vector of numbers:
+\begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
+// increasing sort\Hnewline
+y = sort(x,"g","i")\Hnewline
+[y,k] = sort(x,"g","i")\Hnewline
+y.equal[x(k)]  // must be true \Hnewline 
+// increasing sort\Hnewline
+y = sort(x,"g","d")\Hnewline
+[y,k] = sort(x,"g","d")\Hnewline
+y.equal[x(k)]  // must be true \Hnewline 
+// behavior with special values \Hnewline 
+x(2)=}\verb+%+\HCode{nan;x(3)=}\verb+%+\HCode{inf; x(7)=}\verb+%+\HCode{nan; x(8)=-}\verb+%+\HCode{inf\Hnewline   
+y = sort(x,"g","i")\Hnewline
+y = sort(x,"g","d")\Hnewline}
+\end{program}
+
+\paragraph{example 2} sort a vector of strings:
+\begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
+y = sort(x,"g","i")\Hnewline
+y = sort(x,"g","d")\Hnewline
+[y,k] = sort(x,"g","i")\Hnewline
+y.equal[x(k)]  // must be true \Hnewline 
+}
+\end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{unique}{unique}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+Bentley and McIlroy 's code modified by Jean-Philippe Chancelier,"gb"
+code by Bruno Pincon.
+\end{authors}
