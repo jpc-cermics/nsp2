@@ -35,5 +35,7 @@
  */
 
 #define ELT_TYPE double
+#define DOUBLE_ONLY
 #include "qsort2-gen.c"
+#undef DOUBLE_ONLY
 #undef  ELT_TYPE

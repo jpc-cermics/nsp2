@@ -39,66 +39,73 @@
 void XCNAME(nsp_qsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],int flag,char dir )
 {
   int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
-  int i, ia, ib, im, la, j, itemp;
+  int i, ia, ib, im, la, j, itemp, n_init = n;
   ELT_TYPE temp, pivot;
 
   if ( flag == TRUE) for ( i = 0 ; i < n ; i++) p[i]=i+1;
 
-  if ( n == 1 ) return;
+#ifdef DOUBLE_ONLY
+  for ( i = n-1 , j = n ; i >= 0 ; i-- )
+    if ( ISNAN(x[i]) ) { j--; SWAP(i,j); } 
+  n = j;
+#endif
 
-  ia = 0; ib = n-1;  /* ia..ib is the current part (segment) of the array to sort */
-  la = 0;
-
-  while (la >= 0)   /* la >= 0  <=> stay one or some segments to sort */
+  if ( n > 1 )
     {
-      if ( ib-ia < SWITCH_VALUE ) /* segment is short enough => insertion sort */
-	{
-	  for ( i = ia+1 ; i <= ib ; i++ )
-	    {
-	      j = i;
-/* 	      while ( j > ia  &&  x[j] < x[j-1] ) */
-	      while ( j > ia  &&  !(x[j] >= x[j-1]) )   /* this form better handles nan */
-		{
-		  SWAP(j,j-1);
-		  j--;
-		}
-	    };
-	  POP_segment(ia,ib);  /* get the next segment to sort if any */
-	}
-      else    /* quicksort */
-	{
-	  im = (ia+ib)/2;
-	  SWAP(ia, im);
-	  i = ia+1; j = ib;
-	  if (x[i] > x[j])  { SWAP(i, j); }
-	  if (x[ia] > x[j]) { SWAP(ia, j); }
-	  else if (x[i] > x[ia]) { SWAP(ia, i); }
-	  pivot = x[ia];
-          /* at this point we have  x[i=ia+1] >= pivot (=x[ia]) >= x[j=ib]  */
-	  while (1)
-	    {
-	      do i++;  while ( x[i] < pivot );
-	      do j--;  while ( x[j] > pivot );
-	      if (i >= j) break;
-	      SWAP(i, j);
-	    }
-	  SWAP(ia, j);
+      ia = 0; ib = n-1;  /* ia..ib is the current part (segment) of the array to sort */
+      la = 0;
 
-	  /*  store the longer subdivision in workspace and    */
-          /*  update the current segment to be sorted [ia..ib] */
-	  if ( j-ia > ib-j )
-	    { PUSH_segment(ia,j-1); ia = j+1; }
-	  else
-	    { PUSH_segment(j+1,ib); ib = j-1; }
-	  if ( ib-ia <= 0)
-	    { POP_segment(ia,ib); }
+      while (la >= 0)   /* la >= 0  <=> stay one or some segments to sort */
+	{
+	  if ( ib-ia < SWITCH_VALUE ) /* segment is short enough => insertion sort */
+	    {
+	      for ( i = ia+1 ; i <= ib ; i++ )
+		{
+		  j = i;
+		  while ( j > ia  &&  x[j] < x[j-1] )
+		    {
+		      SWAP(j,j-1);
+		      j--;
+		    }
+		};
+	      POP_segment(ia,ib);  /* get the next segment to sort if any */
+	    }
+	  else    /* quicksort */
+	    {
+	      im = (ia+ib)/2;
+	      SWAP(ia, im);
+	      i = ia+1; j = ib;
+	      if (x[i] > x[j])  { SWAP(i, j); }
+	      if (x[ia] > x[j]) { SWAP(ia, j); }
+	      else if (x[i] > x[ia]) { SWAP(ia, i); }
+	      pivot = x[ia];
+	      /* at this point we have  x[i=ia+1] >= pivot (=x[ia]) >= x[j=ib]  */
+	      while (1)
+		{
+		  do i++;  while ( x[i] < pivot );
+		  do j--;  while ( x[j] > pivot );
+		  if (i >= j) break;
+		  SWAP(i, j);
+		}
+	      SWAP(ia, j);
+	      
+	      /*  store the longer subdivision in workspace and    */
+	      /*  update the current segment to be sorted [ia..ib] */
+	      if ( j-ia > ib-j )
+		{ PUSH_segment(ia,j-1); ia = j+1; }
+	      else
+		{ PUSH_segment(j+1,ib); ib = j-1; }
+	      if ( ib-ia <= 0)
+		{ POP_segment(ia,ib); }
+	    }
 	}
     }
+
   if ( dir == 'd' ) 
     {
-      for ( i =0   ; i < n/2 ; i++) 
+      for ( i =0   ; i < n_init/2 ; i++) 
 	{
-	  SWAP(i,n-i-1);
+	  SWAP(i,n_init-i-1);
 	}
     }
 

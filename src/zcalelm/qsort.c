@@ -48,8 +48,11 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
  */
 
 #define ELT_TYPE double
+#define DOUBLE_ONLY
 #include "qsort-gen.c"
+#undef DOUBLE_ONLY
 #undef  ELT_TYPE
+
   
 /*
  * string matrices 

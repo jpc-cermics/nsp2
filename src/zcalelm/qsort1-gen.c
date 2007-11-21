@@ -36,6 +36,7 @@
  *
  *  Modified for Scilab Jean-Philippe Chancelier 
  *  to keep a permutation index 
+ *  Modified to deal with nan by Bruno Pincon (Nov 21, 2007)
  */
 
 /*
@@ -63,8 +64,12 @@
 #ifdef STRING_ONLY 
 #define qs_cmp(a,b) ( strcmp((*(a)),(*(b))) )
 #else 
+/* #ifdef DOUBLE_ONLY */
+/* #define qs_cmp(a,b) ISNAN(*(a)) ? ( ISNAN(*(b)) ? 0 : 1 ) : ( ISNAN(*(b)) ? -1 : (((*(a)) < (*(b))) ? -1 : ((*(a)) == (*(b)) ? 0 : 1)) )  */
+/* #else  */
 #define qs_cmp(a,b) (((*(a)) < (*(b))) ? -1 : ((*(a)) == (*(b)) ? 0 : 1)) 
-#endif 
+/* #endif  */
+#endif
 
 #ifdef qs_vecswap
 #undef qs_vecswap
@@ -108,8 +113,21 @@ void XCNAME(nsp_qsort_,ELT_TYPE)(ELT_TYPE *a,int *tab, int flag, int n,char dir)
 {
   ELT_TYPE temp;
   int i,itemp;
+#ifdef DOUBLE_ONLY
+  int j;
+#endif
+
   if ( flag == TRUE) for ( i = 0 ; i < n ; i++) tab[i]=i+1;
+#ifdef DOUBLE_ONLY
+  for ( i = n-1 , j = n ; i >= 0 ; i-- )
+    if ( ISNAN(a[i]) )
+      {
+	j--; qs_swap(a+i,a+j); qs_swapind(tab+i,tab+j);
+      } 
+  XCNAME(nsp_internal_qsort_,ELT_TYPE)(a,tab,flag,j);
+#else
   XCNAME(nsp_internal_qsort_,ELT_TYPE)(a,tab,flag,n);
+#endif
   if ( dir == 'd' ) 
     {
       for ( i =0   ; i < n/2 ; i++) 

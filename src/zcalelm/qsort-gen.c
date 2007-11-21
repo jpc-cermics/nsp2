@@ -4,6 +4,10 @@
  *
  * Generic code for Sorting Matrices a[i+n*j] 
  * This code is inserted in qsort.c 
+ *
+ * comparizon functions in case of double have been
+ * modified so that nan are considered > Inf 
+ * (Bruno Pincon, Nov 21, 2007)
  */
 
 /* we want y to be expanded in CNAME thus we use XCNAME ! */
@@ -34,6 +38,45 @@ static int XCNAME(compareD,ELT_TYPE)(char *i,char *j)
   return(- strcmp(*((ELT_TYPE *) i),*((ELT_TYPE*) j)));
 }
 #else 
+#ifdef DOUBLE_ONLY
+static int XCNAME(compareC,ELT_TYPE)(char *i,char *j)
+{
+  double a = *((double *)i);
+  double b = *((double *)j);
+  if ( ISNAN(a) )
+    {
+      if ( ! ISNAN(b) ) return 1;
+    }
+  else if ( ISNAN(b) )
+    return -1;
+  else if ( a > b )
+    return 1;
+  else if ( a < b )
+    return -1;
+
+  return 0;
+}
+
+static int XCNAME(compareD,ELT_TYPE)(char *i,char *j)
+{
+  double a = *((double *)i);
+  double b = *((double *)j);
+  if ( ISNAN(a) )
+    {
+      if ( ! ISNAN(b) ) return -1;
+    }
+  else if ( ISNAN(b) )
+    return 1;
+  else if ( a < b )
+    return 1;
+  else if ( a > b )
+    return -1;
+
+  return 0;
+}
+
+#else
+
 static int XCNAME(compareC,ELT_TYPE)(char *i,char *j)
 {
   if ( *((ELT_TYPE *)i) > *((ELT_TYPE *)j))
@@ -52,6 +95,7 @@ static int XCNAME(compareD,ELT_TYPE)(char *i,char *j)
   return (0);
 }
 
+#endif
 #endif 
 
 /******************************************************
@@ -165,7 +209,59 @@ static  int XCNAME(LexiRowcompareD,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 }
 
 #else 
+#ifdef DOUBLE_ONLY
+static  int XCNAME(LexiRowcompareC,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
+{
+  int jc;
+  for ( jc = 0 ; jc < XCNAME(lexicols,ELT_TYPE) ; jc++)
+    {
+      if ( ISNAN(*i) )
+	{
+	  if ( ! ISNAN(*j) ) return 1;
+	}
+      else if ( ISNAN(*j) )
+	{
+	  return -1;
+	}
+      else
+	{
+	  if (*i > *j)
+	    return 1;
+	  if (*i < *j)
+	    return -1;
+	}
+      i += XCNAME(lexirows,ELT_TYPE);
+      j += XCNAME(lexirows,ELT_TYPE);
+    }
+  return 0;
+}
 
+static  int XCNAME(LexiRowcompareD,ELT_TYPE)(ELT_TYPE *i, ELT_TYPE*j)
+{
+  int jc;
+  for ( jc = 0 ; jc < XCNAME(lexicols,ELT_TYPE) ; jc++)
+    {
+      if ( ISNAN(*i) )
+	{
+	  if ( ! ISNAN(*j) ) return -1;
+	}
+      else if ( ISNAN(*j) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  if (*i < *j)
+	    return 1;
+	  if (*i > *j)
+	    return -1;
+	}
+      i += XCNAME(lexirows,ELT_TYPE);
+      j += XCNAME(lexirows,ELT_TYPE);
+    }
+  return (0);
+}
+#else
 static  int XCNAME(LexiRowcompareC,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 {
   int jc;
@@ -194,7 +290,8 @@ static  int XCNAME(LexiRowcompareD,ELT_TYPE)(ELT_TYPE *i, ELT_TYPE*j)
     }
   return (0);
 }
-#endif 
+#endif
+#endif
 
 static int XCNAME(LexiRowswapcode,ELT_TYPE)(char *parmi,char * parmj,int n) 
 { 		
@@ -267,6 +364,60 @@ static  int XCNAME(LexiColcompareD,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 
 #else 
 
+#ifdef DOUBLE_ONLY
+static  int XCNAME(LexiColcompareC,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
+{
+  int ic;
+  for ( ic = 0 ; ic < XCNAME(lexirows,ELT_TYPE) ; ic++) 
+    {
+      if ( ISNAN(*i) )
+	{
+	  if ( ! ISNAN(*j) ) return 1;
+	}
+      else if ( ISNAN(*j) )
+	{
+	  return -1;
+	}
+      else
+	{
+	  if (*i > *j)
+	    return 1;
+	  if (*i < *j)
+	    return -1;
+	}
+      i++;
+      j++;
+    }
+  return 0;
+}
+
+static  int XCNAME(LexiColcompareD,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
+{
+  int ic;
+  for ( ic = 0 ; ic < XCNAME(lexirows,ELT_TYPE) ; ic++) 
+    {
+      if ( ISNAN(*i) )
+	{
+	  if ( ! ISNAN(*j) ) return -1;
+	}
+      else if ( ISNAN(*j) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  if (*i < *j)
+	    return 1;
+	  if (*i > *j)
+	    return -1;
+	}
+      i++;
+      j++;
+    }
+  return 0;
+}
+
+#else
 static  int XCNAME(LexiColcompareC,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 {
   int ic;
@@ -296,6 +447,7 @@ static  int XCNAME(LexiColcompareD,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
   return (0);
 }
 
+#endif 
 #endif 
 
 static int XCNAME(LexiColswapcode,ELT_TYPE)(char *parmi,char* parmj,int n) 
