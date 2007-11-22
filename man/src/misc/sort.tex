@@ -8,9 +8,9 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[y [,k]]  = sort(x)
-[y [,k]]  = sort(x, type_of_sort)
-[y [,k]]  = sort(x, type_of_sort, order)
+[y [,p]]  = sort(x)
+[y [,p]]  = sort(x, type_of_sort)
+[y [,p]]  = sort(x, type_of_sort, order)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -23,9 +23,9 @@
     \vname{order} : must be \verb+"i"+ for an increasing sort or \verb+"d"+ for a
                     decreasing sort (current default)
     \vname{y} : sorted output
-    \vname{k} : vector or matrix of indices such that \verb+y=x(k)+
-    or  \verb+y=x(:,k)+ or  \verb+y=x(k,:)+ or other meaning
-    dependings of the type of the sort.
+    \vname{p} : vector (or matrix) of indices such that \verb+y=x(p)+
+    or  \verb+y=x(:,p)+ or  \verb+y=x(p,:)+ or other meaning
+    dependings of the sort type.
   \end{varlist}
 \end{parameters}
 
@@ -59,18 +59,18 @@ Currently only \verb+"g"+ is available for string vectors.
 
 \itemdesc{{\tt type\_of\_sort = "c"}}
 In this case each row of $x$ is sorted independently of the others.
-$k$ is a matrix of indices and \verb+y(i,:)+ should be equal to
-\verb+x(k(i,:),:)+. 
+$p$ is a matrix of indices and \verb+y(i,:)+ should be equal to
+\verb+x(i,p(i,:))+. 
 
 \itemdesc{{\tt type\_of\_sort = "r"}}
 In this case each column of $x$ is sorted independently of the others.
-$k$ is a matrix of indices and \verb+y(:,j)+ should be equal to
-\verb+x(:,k(:,j))+. 
+$p$ is a matrix of indices and \verb+y(:,j)+ should be equal to
+\verb+x(p(:,j),j)+. 
 
 \itemdesc{{\tt type\_of\_sort = "ldc"}}
 In this case the columns are sorted using lexical order (increasing 
-order if \verb+order="i"+). $k$ is a vector of indices such that \verb+y+ should be equal to
-\verb+x(:,k)+. 
+order if \verb+order="i"+). $p$ is a vector of indices such that \verb+y+ should be equal to
+\verb+x(:,p)+. 
 
 \itemdesc{{\tt type\_of\_sort = "lc"}}
 is the same than \verb+"ldc"+ but the matrix is considered as a matrix
@@ -78,8 +78,8 @@ of integers (a cast double to int is done first).
 
 \itemdesc{{\tt type\_of\_sort = "ldr"}}
 In this case the rows are sorted using lexical order (increasing 
-order if \verb+order="i"+). $k$ is a vector of indices such that \verb+y+ should be equal to
-\verb+x(k,:)+. 
+order if \verb+order="i"+). $p$ is a vector of indices such that \verb+y+ should be equal to
+\verb+x(p,:)+. 
 
 \itemdesc{{\tt type\_of\_sort = "lr"}}
 is the same than \verb+"ldr"+ but the matrix is considered as a matrix
@@ -97,28 +97,63 @@ increasing sort and at the beginning for a decreasing sort.
 
 \paragraph{example 1} sort of a vector of numbers:
 \begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
+\Hnewline
 // increasing sort\Hnewline
 y = sort(x,"g","i")\Hnewline
-[y,k] = sort(x,"g","i")\Hnewline
-y.equal[x(k)]  // must be true \Hnewline 
+[y,p] = sort(x,"g","i")\Hnewline
+y.equal[x(p)]  // must be true \Hnewline 
+\Hnewline
 // increasing sort\Hnewline
 y = sort(x,"g","d")\Hnewline
-[y,k] = sort(x,"g","d")\Hnewline
-y.equal[x(k)]  // must be true \Hnewline 
+[y,p] = sort(x,"g","d")\Hnewline
+y.equal[x(p)]  // must be true \Hnewline 
+\Hnewline
 // behavior with special values \Hnewline 
 x(2)=}\verb+%+\HCode{nan;x(3)=}\verb+%+\HCode{inf; x(7)=}\verb+%+\HCode{nan; x(8)=-}\verb+%+\HCode{inf\Hnewline   
 y = sort(x,"g","i")\Hnewline
-y = sort(x,"g","d")\Hnewline}
+y = sort(x,"g","d")}
 \end{program}
 
 \paragraph{example 2} sort a vector of strings:
 \begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
 y = sort(x,"g","i")\Hnewline
 y = sort(x,"g","d")\Hnewline
-[y,k] = sort(x,"g","i")\Hnewline
-y.equal[x(k)]  // must be true \Hnewline 
-}
+[y,p] = sort(x,"g","i")\Hnewline
+y.equal[x(p)]  // must be true}
 \end{program}
+
+\paragraph{example 3} lexical sorts
+\begin{program}\HCode{A = [0.5, -1, 2; 0.3, 4, 0.7; 0.3, -1, 2]\Hnewline
+// increasing row lexical sort\Hnewline
+B = sort(A,"ldr","i")\Hnewline
+[B,p] = sort(A,"ldr","i")\Hnewline
+B.equal[A(p,:)]  // must be true \Hnewline 
+// increasing column lexical sort\Hnewline
+B = sort(A,"ldc","i")\Hnewline
+[B,p] = sort(A,"ldc","i")\Hnewline
+B.equal[A(:,p)]  // must be true}
+\end{program}
+
+\paragraph{example 4} speed issues
+\begin{program}\HCode{// a case where all or near all vector components are different\Hnewline
+x = rand(1e6,1);\Hnewline
+// g sort (should be slower than gb here)\Hnewline
+t=cputime(); y = sort(x,"g","i"); cputime()-t\Hnewline
+// gb sort (should be faster here)\Hnewline
+t=cputime(); y = sort(x,"gb","i"); cputime()-t\Hnewline
+// merge sort (generally slower than g and gb)\Hnewline
+t=cputime(); y = sort(x,"gm","i"); cputime()-t\Hnewline
+\Hnewline
+// a case with many equal components\Hnewline
+x = grand(1e6,1,"uin",1,100);\Hnewline
+// g sort (should be faster here)\Hnewline
+t=cputime(); y = sort(x,"g","i"); cputime()-t\Hnewline
+// gb sort (should be slower than g)\Hnewline
+t=cputime(); y = sort(x,"gb","i"); cputime()-t\Hnewline
+// merge sort\Hnewline
+t=cputime(); y = sort(x,"gm","i"); cputime()-t}
+\end{program}
+
 \end{examples}
 
 \begin{manseealso}
