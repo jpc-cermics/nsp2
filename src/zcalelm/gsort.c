@@ -62,12 +62,8 @@ int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_so
       /* qsort Bruno */
       nsp_qsort_bp_double(A->R,A->mn,index,ind_flag,dir);break;
     case sort_gs:
-      /* stable quick sort */
-      if ( dir == 'i' )
-	nsp_qsort_stable_incr_double(A->R,index,ind_flag,0,A->mn,dir);
-      else 
-	nsp_qsort_stable_decr_double(A->R,index,ind_flag,0,A->mn,dir);
-      break;
+      /* stable quick sort: caution index must be allocated */
+      nsp_sqsort_bp_double(A->R,A->mn,index,dir);break;
     case sort_gm:
       /* merge sort */
       if ( nsp_mergesort_double(A->R,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;
@@ -169,7 +165,7 @@ int nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char
  * 
  **/
 
-int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir, int type)
 {
   int *index = NULL;
   if ( ind_flag == TRUE ) 
@@ -178,8 +174,14 @@ int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  /* use the specialized version */
-  nsp_qsort_nsp_string(A->S,index,ind_flag,A->mn,dir);
+  
+  if (type == 0)
+    /* non stable qsort */
+    nsp_qsort_nsp_string(A->S,index,ind_flag,A->mn,dir);
+  else
+    /* stable quick sort: caution index must be allocated */
+    nsp_sqsort_bp_nsp_string(A->S,A->mn,index,dir);
+
   return OK;
 }
 
