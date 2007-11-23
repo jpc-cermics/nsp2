@@ -16,17 +16,20 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * sort the double precision array x(1..n) in increasing order
- * and computes the permutation p of the sort :
+ * sort the ELT_TYPE array x(1..n) in increasing or decreasing order
+ * and computes the permutation p of the sort:
  *
  * x_sorted(i) = x(p(i))  1<=i<=n
  *
- * this is a try for a stable qsort with the easy way of using
+ * this is a stable qsort with the easy way of using
  * the index array p so p must be always provided. 
  *
  * Author: B. Pincon
  * (i) n must be less than 2**(25) ! due to lengh of work space (ileft, iright)
  * (ii) quicksort is used with Sedgewick tricks
+ *
+ *
+ * This file is not used directly but through include in qsort3.c 
  */
 
 #define XCNAME(x,y) CNAME(x,y)
