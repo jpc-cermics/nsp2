@@ -24,8 +24,8 @@
                     decreasing sort (current default)
     \vname{y} : sorted output
     \vname{p} : vector (or matrix) of indices such that \verb+y=x(p)+
-    or  \verb+y=x(:,p)+ or  \verb+y=x(p,:)+ or other meaning
-    dependings of the sort type.
+    or  \verb+y=x(:,p)+ or  \verb+y=x(p,:)+ or other meanings
+    depending of the sort type.
   \end{varlist}
 \end{parameters}
 
@@ -50,12 +50,12 @@ order when \verb+order="i"+.
 \verb+"gm"+  &  merge sort \\
              &  generally slower than the 2 first by always in  O(nlog(n)) \\
 \hline
-\verb+"gs"+  &  stable sort \\
-             &  but not stable currently \\ 
+\verb+"gs"+  &  stable quick sort \\
+             &  (adapted quick sort a la Sedgewick)  \\ 
 \hline
 \end{tabular}
 
-Currently only \verb+"g"+ is available for string vectors.
+Currently only \verb+"g"+ and  \verb+"gs"+ are available for string vectors.
 
 \itemdesc{{\tt type\_of\_sort = "c"}}
 In this case each row of $x$ is sorted independently of the others.
@@ -103,7 +103,7 @@ y = sort(x,"g","i")\Hnewline
 [y,p] = sort(x,"g","i")\Hnewline
 y.equal[x(p)]  // must be true \Hnewline 
 \Hnewline
-// increasing sort\Hnewline
+// decreasing sort\Hnewline
 y = sort(x,"g","d")\Hnewline
 [y,p] = sort(x,"g","d")\Hnewline
 y.equal[x(p)]  // must be true \Hnewline 
@@ -162,6 +162,6 @@ t=cputime(); y = sort(x,"gm","i"); cputime()-t}
 
 % -- Authors
 \begin{authors}
-Bentley and McIlroy 's code modified by Jean-Philippe Chancelier,"gb"
-code by Bruno Pincon.
+Bentley and McIlroy 's code adapted and modified by Jean-Philippe Chancelier,"gb"
+and "gs" codes by Bruno Pincon.
 \end{authors}
