@@ -5818,8 +5818,7 @@ int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first
       if ( x->mn > 0 )
 	{
 	  if ( first_ind )
-/* 	    nsp_merge_double( x->R, index, 1, 0, x->mn, 'i'); */
-	    nsp_bpsqsort_double( x->R, x->mn, index, 'i');
+	    nsp_sqsort_bp_double( x->R, x->mn, index, 'i');
 	  else
 	    nsp_qsort_double( x->R, index, 1, x->mn, 'i');
       
