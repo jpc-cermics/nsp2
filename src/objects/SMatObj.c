@@ -1426,7 +1426,7 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *M=NULL;
   NspMatrix *Index=NULL;
-  char *type_sort[]={ "g", "c", "r", "lr" , "lc" , NULL };
+  char *type_sort[]={ "g", "gs", "c", "r", "lr" , "lc" , NULL };
   char *dir_sort[]={ "i", "d",  NULL };
   int iflag = FALSE;
   char direction = 'd';
@@ -1446,22 +1446,23 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
       direction = dir_sort[rep_dir][0];
     }
 
-  if (lhs  == 2) 
+  if (lhs  == 2 || rep_type == 1 )  /* force index allocation for stable quick sort */
     {
       iflag = TRUE;
     }
 
   switch ( rep_type  )
     {
-    case 0 : 
-      nsp_smatrix_sort(M,&Index,iflag,direction);break;
-    case 1 : 
+    case 0: 
+    case 1:
+      nsp_smatrix_sort(M,&Index,iflag,direction,rep_type);break;
+    case 2:
       nsp_smatrix_row_sort(M,&Index,iflag,direction);break;
-    case 2 :
-      nsp_smatrix_column_sort(M,&Index,iflag,direction);break;
     case 3:
-      nsp_smatrix_lexical_row_sort(M,&Index,iflag,direction);break;
+      nsp_smatrix_column_sort(M,&Index,iflag,direction);break;
     case 4:
+      nsp_smatrix_lexical_row_sort(M,&Index,iflag,direction);break;
+    case 5:
       nsp_smatrix_lexical_column_sort(M,&Index,iflag,direction);break;
     }
   if ( iflag == TRUE && Index == NULL) return RET_BUG;
@@ -1776,6 +1777,75 @@ static int int_smatrix_protect(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_bpsqsort( Stack stack, int rhs, int opt, int lhs)
+{ 
+  NspSMatrix *x;
+  NspMatrix *ind=NULLMAT;
+  int *index;
+
+  if (( x = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
+
+  CheckLhs(1,2);
+
+  if ( (ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+    return RET_BUG;
+
+  index = (int *) ind->R;
+
+  nsp_sqsort_bp_nsp_string( x->S,  x->mn, index, 'i');
+ 
+  NSP_OBJECT(x)->ret_pos = 1;
+ 
+  if ( lhs >= 2 ) 
+    {
+      ind->convert = 'i';
+      ind = Mat2double(ind);
+      MoveObj(stack,2,NSP_OBJECT(ind));
+    }
+  else
+    nsp_matrix_destroy(ind);
+
+  return Max(lhs,1);
+}
+
+
+static int int_smatrix_unique( Stack stack, int rhs, int opt, int lhs)
+{
+  Boolean first_ind;
+  NspSMatrix *x;
+  NspMatrix *ind, *occ;
+  NspMatrix **Ind=NULL, **Occ=NULL;
+  int_types T[] = {smatcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind) == FAIL ) return RET_BUG;
+
+  if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
+
+  CheckLhs(1,3);
+
+  if ( lhs >= 2 )
+    {
+      Ind = &ind;
+      if ( lhs == 3 ) Occ = &occ;
+    }
+
+  if ( nsp_smatrix_unique(x, Ind, Occ, first_ind) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(x)->ret_pos = 1;
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(ind));
+      if ( lhs >= 3 )
+	MoveObj(stack,3,NSP_OBJECT(occ));
+    }
+
+  return Max(lhs,1);
+}
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -1855,6 +1925,8 @@ static OpTab SMatrix_func[]={
   {"unichar_to_utf8", int_smatrix_utf8_from_unichar},
   {"strtod",int_smatrix_strtod},
   {"protect",int_smatrix_protect}, /* test */
+  {"sqsort_s", int_bpsqsort},
+  {"unique_s",int_smatrix_unique},
   {(char *) 0, NULL}
 };
 

@@ -2435,3 +2435,101 @@ NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S)
 }
 
 
+/**
+ * nsp_smatrix_unique:
+ * @x: (input-output) #NspSMatrix
+ * @Ind: (output) if NOT NULL must hold the indices...
+ * @Occ: (output) if NOT NULL must hold the number of occurences
+ * @first_ind: (input) used in case Ind is not NULL true if Ind[i]
+ *             should be the first index of x[i]
+ *
+ * Return value: %OK or %FAIL
+ *
+ **/
+int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind)
+{
+  int i0, i, i_old, *index;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  nsp_string val;
+
+  if ( Ind == NULL )
+    {
+      if ( x->mn <= 1 ) return OK;
+      nsp_qsort_nsp_string(x->S, NULL, 0, x->mn, 'i');
+      i0 = 0; val = x->S[0];
+      for ( i = 1 ; i < x->mn ; i++ )
+	if ( strcmp(x->S[i],val) != 0 )
+	  {
+	    val = x->S[i];
+	    i0++;
+	    if ( i > i0 )
+	      {
+		nsp_string_destroy(&(x->S[i0]));
+		x->S[i0] = val; x->S[i] = NULLSTRING;
+	      }
+	  }
+      if ( x->m == 1 )
+	nsp_smatrix_resize(x, 1, i0+1);
+      else
+	nsp_smatrix_resize(x, i0+1, 1);
+      return OK;
+    }
+
+  else
+    {
+      if ( (ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	return FAIL;
+      index = (int *) ind->R;
+
+      if ( Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	  {
+	    nsp_matrix_destroy(ind); return FAIL;
+	  }
+      
+      if ( x->mn > 0 )
+	{
+	  if ( first_ind )
+	    nsp_sqsort_bp_nsp_string( x->S, x->mn, index, 'i');
+	  else
+	    nsp_qsort_nsp_string( x->S, index, 1, x->mn, 'i');
+      
+	  i0 = 0; i_old = 0; val = x->S[0];
+	  for ( i = 1 ; i < x->mn ; i++ )
+	    {
+	      if ( strcmp(x->S[i], val) != 0 )
+		{
+		  if (Occ != NULL) { occ->R[i0] = i - i_old; i_old = i; }
+		  i0++;
+		  val = x->S[i];
+		  if ( i > i0 )
+		    {
+		      nsp_string_destroy(&(x->S[i0]));
+		      x->S[i0] = val; x->S[i] = NULLSTRING;
+		    }
+		  index[i0] = index[i];
+		}
+	    }
+	  if (Occ != NULL) occ->R[i0] = x->mn - i_old;
+	  
+	  if ( x->m == 1 )
+	    {
+	      nsp_smatrix_resize(x, 1, i0+1);
+	      nsp_matrix_resize(ind, 1, i0+1);
+	      if ( Occ != NULL ) nsp_matrix_resize(occ, 1, i0+1);
+	    }
+	  else
+	    {
+	      nsp_smatrix_resize(x, i0+1, 1);
+	      nsp_matrix_resize(ind, i0+1, 1);
+	      if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
+	    }
+	  ind->convert = 'i';
+	  ind = Mat2double(ind);
+	}
+
+      *Ind = ind;
+      if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}

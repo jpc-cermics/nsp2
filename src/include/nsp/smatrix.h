@@ -142,6 +142,7 @@ extern int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S);
 
 extern NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S);
 
+extern int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
 
 #endif 
 
