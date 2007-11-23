@@ -20,7 +20,7 @@ extern int nsp_matrix_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char 
 extern int nsp_matrix_lexical_column_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode);
 extern int nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode);
 
-extern int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
+extern int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir, int type);
 extern int nsp_smatrix_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
 extern int nsp_smatrix_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
 extern int nsp_smatrix_lexical_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
@@ -49,19 +49,20 @@ extern void nsp_qsort_gen_row_sort_int(int *a,int *ind,int flag,int n,int p,char
 extern void nsp_qsort_gen_row_sort_nsp_string(nsp_string *a,int *ind,int flag,int n,int p,char dir);
 
 /* quicksort  */
-
 extern void nsp_qsort_int(int *a,int *tab, int flag, int n,char dir);
 extern void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir);
 extern void nsp_qsort_nsp_string(nsp_string *a,int *tab, int flag, int n,char dir);
 
 /* quicksort B Pincon   */
-
 extern void nsp_qsort_bp_int(int x[], int n, int p[],int flag,char dir );
 extern void nsp_qsort_bp_double(double x[], int n, int p[],int flag,char dir );
-extern void nsp_bpsqsort_double(double x[], int n, int p[],char dir);
+
+/* bruno 's stupid stable quicksort   */
+extern void nsp_sqsort_bp_int(int x[], int n, int p[],char dir );
+extern void nsp_sqsort_bp_double(double x[], int n, int p[], char dir );
+extern void nsp_sqsort_bp_nsp_string(nsp_string x[], int n, int p[],char dir);
 
 /* mergesort */
-
 extern int nsp_mergesort_int(int *a,int *p,int flag, int fromIndex, int toIndex,char dir);
 extern int nsp_mergesort_double(double *a,int *p,int flag, int fromIndex, int toIndex,char dir);
 
