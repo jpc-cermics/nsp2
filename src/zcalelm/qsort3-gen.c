@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  *
  * sort the double precision array x(1..n) in increasing order
- * and computes (if perm == 1) the permutation p of the sort :
+ * and computes the permutation p of the sort :
  *
  * x_sorted(i) = x(p(i))  1<=i<=n
  *
