@@ -32,6 +32,7 @@
  * double arrays or matrices 
  */
 
+#define DOUBLE_ONLY
 #define ELT_TYPE double
 #include "merge-sort-gen.c"
 #undef  ELT_TYPE

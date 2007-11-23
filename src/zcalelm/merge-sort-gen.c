@@ -27,6 +27,16 @@
 #define arraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(ELT_TYPE)) 
 #define iarraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(int)) 
 
+#ifdef qs_swap
+#undef qs_swap
+#endif 
+#define qs_swap(a,b) temp = *(a);*(a)=*(b),*(b)=temp;
+
+#ifdef qs_swapind
+#undef qs_swapind
+#endif 
+#define qs_swapind(a,b) if ( flag== TRUE) {itemp = *(a);*(a)=*(b),*(b)=itemp;}
+
 #define SWITCH_VALUE 18
 
 int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, int toIndex,char dir)
@@ -35,6 +45,10 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
   ELT_TYPE *src,*dest,*t;
   int *psrc=NULL,*pdest=NULL,*pt;
   int chunk,i,size,start;
+#ifdef DOUBLE_ONLY
+  int toIndex_i,n,j,itemp;
+  ELT_TYPE temp;
+#endif 
   /*
    * In general, the code attempts to be simple rather than fast, the
    * idea being that a good optimising JIT will be able to optimise it
@@ -43,7 +57,19 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
    * sort. A mergesort would give too much overhead for this length.
    */
 
-  if ( flag == TRUE) for ( i = fromIndex ; i < toIndex -fromIndex  ; i++) p[i]=i+1;
+  if ( flag == TRUE) for ( i = fromIndex ; i < toIndex  ; i++) p[i]=i+1;
+
+#ifdef DOUBLE_ONLY
+  toIndex_i = toIndex;
+  n = toIndex -fromIndex;
+  for ( i = toIndex-1 , j = n ; i >= fromIndex ; i-- )
+    if ( ISNAN(a[i]) )
+      {
+	j--; qs_swap(a+i,a+j); 
+	if ( flag == TRUE) qs_swapind(p+i,p+j);
+      } 
+  toIndex = fromIndex + j ;
+#endif 
 
   for (chunk = fromIndex; chunk < toIndex; chunk += SWITCH_VALUE)
     {
@@ -182,13 +208,18 @@ int XCNAME(nsp_mergesort_,ELT_TYPE)(ELT_TYPE *a,int *p,int flag, int fromIndex, 
   if ( dir == 'd' ) 
     {
       ELT_TYPE temp;
-      int itemp,n=toIndex-fromIndex;
+      int itemp1,n;
+#ifdef DOUBLE_ONLY
+      n = toIndex_i -fromIndex; 
+#else 
+      n = toIndex-fromIndex;
+#endif 
       for ( i =fromIndex  ; i < (n)/2 ; i++) 
 	{
 	  register int j= n-i-1; 
 	  temp = (a)[i];(a)[i] = (a)[j]; (a)[j] = temp;
 	  if ( flag  == TRUE )  {
-	    itemp= p[i]; p[i] = p[j];  p[j] = itemp; 
+	    itemp1= p[i]; p[i] = p[j];  p[j] = itemp1; 
 	  }
 	}
     }
