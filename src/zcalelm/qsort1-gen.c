@@ -122,7 +122,8 @@ void XCNAME(nsp_qsort_,ELT_TYPE)(ELT_TYPE *a,int *tab, int flag, int n,char dir)
   for ( i = n-1 , j = n ; i >= 0 ; i-- )
     if ( ISNAN(a[i]) )
       {
-	j--; qs_swap(a+i,a+j); qs_swapind(tab+i,tab+j);
+	j--; qs_swap(a+i,a+j); 
+	if ( flag == TRUE) qs_swapind(tab+i,tab+j);
       } 
   XCNAME(nsp_internal_qsort_,ELT_TYPE)(a,tab,flag,j);
 #else
@@ -133,7 +134,7 @@ void XCNAME(nsp_qsort_,ELT_TYPE)(ELT_TYPE *a,int *tab, int flag, int n,char dir)
       for ( i =0   ; i < n/2 ; i++) 
 	{
 	  qs_swap(a+i,a+n-i-1);
-	  qs_swapind(tab+i,tab+n-i-1);
+	  if ( flag == TRUE) qs_swapind(tab+i,tab+n-i-1);
 	}
     }
 }
