@@ -1194,7 +1194,7 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 }
 
 #if 0
-/* unsued */
+/* unuued */
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 {
   int n=A->n;
@@ -2528,6 +2528,14 @@ int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
       return FAIL;
     }
 
+  /* test inf eand nan */
+  if ( nsp_mat_have_nan_or_inf(A) || nsp_mat_have_nan_or_inf(B) )
+    {
+      Scierror("Error: nan or inf detected in matrix or rhs\n");
+      return FAIL;
+    }
+
+
   if ( A->rc_type == 'c' ) 
     {
       if ( B->rc_type == 'r' ) 
@@ -3670,6 +3678,13 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond)
 {  
   /* Note : A->m must be equal to B->m but this is verified at the upper level */
   int mA = A->m, nA = A->n, stat, rank;
+
+  /* test inf and nan */
+  if ( nsp_mat_have_nan_or_inf(A) || nsp_mat_have_nan_or_inf(B) )
+    {
+      Scierror("Error: nan or inf detected in matrix or rhs\n");
+      return FAIL;
+    }
 
   if ( A->rc_type == 'c' ) 
     {
