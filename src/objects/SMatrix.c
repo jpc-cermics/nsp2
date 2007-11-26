@@ -2438,10 +2438,19 @@ NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S)
 /**
  * nsp_smatrix_unique:
  * @x: (input-output) #NspSMatrix
- * @Ind: (output) if NOT NULL must hold the indices...
- * @Occ: (output) if NOT NULL must hold the number of occurences
+ * @Ind: (output) if NOT NULL a real #NspMatrix (see after)
+ * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
  * @first_ind: (input) used in case Ind is not NULL true if Ind[i]
- *             should be the first index of x[i]
+ *             should be the first index of x[i] in the original @x
+ *
+ * Removes from @x multiple occurences of identical entries. Thus after 
+ * calling this function @x will contain strictly different values sorted 
+ * in increasing order. If @Ind is non null, it will be set to 
+ * a new NspMatrix filled with the indice in the original array of each 
+ * output value in @x. Thus @Ind[i] will contain the original indice of 
+ * @x[i] in the input array @x. Note that indices in @Ind start at 1 !
+ * If @Occ is non null, then @Occ[i] will contain the number of occurences 
+ * in the input matrix @x of the output value @x[i]. 
  *
  * Return value: %OK or %FAIL
  *
