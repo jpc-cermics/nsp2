@@ -17,7 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "nsp/object.h" /* for file.h */
 #include "cdf.h"
+
 
 /* A union which permits us to convert between a double and two 32 bit ints.  
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
@@ -31,11 +33,15 @@
  * as in libc (See below).
  */
 
-#define WIN32 
+/* XXX  endian.h should be checked at configure time 
+ * if endian.h does not exists the we can do as in WIN32 case 
+ */
 
 #ifndef WIN32 
 #include <endian.h>
 #include <sys/types.h>
+
+/* compile time check */
 
 typedef union
 {
@@ -60,6 +66,32 @@ typedef union
     sl_u.parts.lsw = (v);					\
     (d) = sl_u.value;						\
   } while (0)
+
+#else 
+
+/* here we use a runntime check */
+
+typedef union
+{
+  double value;
+  struct
+  {
+    u_int32_t msw;
+    u_int32_t lsw;
+  } parts;
+} ieee_double_shape_type;
+
+#define SET_LOW_WORD(d,v)					\
+  do {								\
+    ieee_double_shape_type sl_u;				\
+    sl_u.value = (d);						\
+    if ( is_little_endian())					\
+      sl_u.parts.msw = (v);					\
+    else							\
+      sl_u.parts.lsw = (v);					\
+    (d) = sl_u.value;						\
+  } while (0)
+
 #endif 
 
 static double erf_approx(double x);
@@ -204,9 +236,7 @@ double cdf_erfc(int ind, double x)
   const double c = .564189583547756;
   double ret_val, d1;
   double t,  ax;
-#ifndef WIN32 
   double z=x;
-#endif 
   
   if ( ind == 1) return cdf_erfc1(x);
 
@@ -229,23 +259,15 @@ double cdf_erfc(int ind, double x)
       if ( x * x > -cdf_exparg (1)) return 0.0;
       d1 = 1. / x;
       t = d1 * d1;
-#ifndef WIN32 
       SET_LOW_WORD(z,0);
       ret_val  =  exp(-z*z)*exp((z-x)*(z+x))*  c*(1/ax)*erf_approx2(t);
-#else 
-      ret_val  =  exp(-x*x)*c*(1/ax)*erf_approx2(t);
-#endif 
       return  (x < 0.) ? 2. - ret_val : ret_val;
     }
   else 
     {
       /* 0.5 <= abs(X) <= 4 */
-#ifndef WIN32 
       SET_LOW_WORD(z,0);
       ret_val= exp(-z*z)*exp((z-x)*(z+x))*erf_approx1(ax);
-#else 
-      ret_val= exp(-x*x)*erf_approx1(ax);
-#endif 
       return  (x < 0.) ? 2. - ret_val : ret_val;
     }
 }
@@ -263,9 +285,7 @@ double cdf_erfc1(double x)
 {
   static const double c = .564189583547756;
   double ret_val, d1, t,  ax, expx2;
-#ifndef WIN32 
   double z;
-#endif 
   ax = Abs (x);
   if ( ax <= 0.8 )
     {
@@ -276,13 +296,9 @@ double cdf_erfc1(double x)
       return exp (t)* 0.5*(1 - x*erf_approx(t) +1);
     }
   /* if ( x  > 2.5 ) return c*erfc_cf(x); */
-#ifndef WIN32 
   z=x;
   SET_LOW_WORD(z,0);
   expx2= exp(z*z)*exp(-(z-x)*(z+x));
-#else 
-  expx2= exp(x*x);
-#endif 
   if ( ax > 4.)
     {
       if (x <= -6 )
