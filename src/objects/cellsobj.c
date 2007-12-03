@@ -1247,6 +1247,7 @@ static OpTab Cells_func[]={
   {"repmat_ce", int_matint_repmat},
   /* {"loopextract_m_ce",int_cells_extractcolforloop}, */
   {"cells_create",int_cells_create},
+  {"cell",int_cells_create},   /* matlab name (note that cells is also the matlab name but considered obsolete)*/
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},
   {"diag_cells_create", int_row_cells_create},
