@@ -48,10 +48,12 @@ double nsp_abs_c(const doubleC *x)
  * nsp_arg_c:
  * @x: a double complex (#doubleC) 
  * 
+ * calculates the arc tangent of @x->i and @x->r
+ * using atan2 
  * 
- * 
- * Return value: 
+ * Returns: a double 
  **/
+
 double nsp_arg_c(const doubleC *x)
 {
   return atan2 (x->i, x->r);
@@ -66,6 +68,7 @@ double nsp_arg_c(const doubleC *x)
  * res a double complex built from its polar coordinates 
  * (r,t)
  **/
+
 void nsp_polar_c(double r, double t, doubleC *res)
 {
   res->r=r * cos (t);
@@ -108,6 +111,7 @@ double nsp_norm_c(const doubleC *x, doubleC *res)
  * The complex cosine of x returned in res 
  *
  **/
+
 void nsp_cos_c(const doubleC *x, doubleC *res)
 {
   double loc;
@@ -123,6 +127,7 @@ void nsp_cos_c(const doubleC *x, doubleC *res)
  * 
  * 
  **/
+
 void nsp_cosh_c(const doubleC *x, doubleC *res)
 {
   double loc;
@@ -138,6 +143,7 @@ void nsp_cosh_c(const doubleC *x, doubleC *res)
  * 
  * 
  **/
+
 void nsp_exp_c(const doubleC *x, doubleC *res)
 {
   nsp_polar_c(exp (x->r), x->i,res);
@@ -150,6 +156,7 @@ void nsp_exp_c(const doubleC *x, doubleC *res)
  * 
  * 
  **/
+
 void nsp_log_c(const doubleC *x, doubleC *res)
 {
   double loc;
@@ -161,11 +168,12 @@ void nsp_log_c(const doubleC *x, doubleC *res)
 /**
  * nsp_pow_cc:
  * @x: a  double complex  
- * @y: 
+ * @y: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x raised to the power of @y.
  **/
+
 void nsp_pow_cc(const doubleC *x,const  doubleC *y, doubleC *res)
 {
   double logr = log (nsp_abs_c(x));
@@ -174,14 +182,14 @@ void nsp_pow_cc(const doubleC *x,const  doubleC *y, doubleC *res)
 	       (y->i * logr + y->r * t), res);
 }
 
-
 /**
  * nsp_pow_cd:
  * @x: a  double complex  
- * @y: 
+ * @y: a double 
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x raised to the power of @y. 
+ *
  **/
 void nsp_pow_cd(const  doubleC *x, double y, doubleC *res)
 {
@@ -194,11 +202,12 @@ void nsp_pow_cd(const  doubleC *x, double y, doubleC *res)
 /**
  * nsp_pow_cd_or_ci:
  * @x: a  double complex  
- * @y: 
+ * @y: a double 
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x raised to the power of @y.
  **/
+
 void nsp_pow_cd_or_ci(const  doubleC *x, double y, doubleC *res)
 {
   if ( floor(y) == y && fabs(y) <= 65536.0 ) 
@@ -209,12 +218,13 @@ void nsp_pow_cd_or_ci(const  doubleC *x, double y, doubleC *res)
 
 /**
  * nsp_pow_dc:
- * @x: a  double complex  
- * @y: 
+ * @x: a double
+ * @y: a  double complex 
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x raised to the power of @y.
  **/
+
 void nsp_pow_dc(double x, const doubleC *y, doubleC *res)
 {
   double loc;
@@ -228,7 +238,8 @@ void nsp_pow_dc(double x, const doubleC *y, doubleC *res)
  * nsp_pow_di:
  * @x: a  double
  * @p: an int 
- * return x^p
+ * 
+ * computes in @res the value of @x raised to the power of @y.
  * 
  **/
 
@@ -262,13 +273,15 @@ double nsp_pow_di(double x, int p)
     }
 } 
 
+
+
 /**
  * nsp_pow_ci:
  * @x: a #doubleC
  * @p: an integer 
  * @y: a #doubleC
  *
- * computes y = x^p (can be used with x=x^p)
+ * computes in @y the value of @x raised to the power of @p (can be used with x=x^p).
  *  
  **/
 
@@ -305,6 +318,7 @@ void nsp_pow_ci(const doubleC *x, int p, doubleC *y)
  * @x: a  double complex  
  * @res: a pointer to a double complex  
  * 
+ * computes the sin of a complex @x.
  * 
  **/
 
@@ -320,8 +334,9 @@ void nsp_sin_c(const doubleC *x, doubleC *res)
  * @x: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes the hyperbolic sin of a complex @x.
  **/
+
 void nsp_sinh_c(const doubleC *x, doubleC *res)
 {
   double loc=x->r;
@@ -335,8 +350,9 @@ void nsp_sinh_c(const doubleC *x, doubleC *res)
  * @y: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x divided by @y.
  **/
+
 void nsp_div_cc(const doubleC *x,const  doubleC *y, doubleC *res)
 {
   double t,d,loc;
@@ -360,12 +376,13 @@ void nsp_div_cc(const doubleC *x,const  doubleC *y, doubleC *res)
 
 /**
  * nsp_div_dc:
- * @x: a  double complex  
- * @y: 
+ * @x: a double
+ * @y: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the value of @x divided by @y.
  **/
+
 void nsp_div_dc(double x, const doubleC *y, doubleC *res)
 {
   double t,d;
@@ -385,15 +402,14 @@ void nsp_div_dc(double x, const doubleC *y, doubleC *res)
     }
 }
 
-
-
 /**
  * nsp_sqrt_c:
  * @x: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * 
+ * computes in @res the square root of @x.
  **/
+
 void nsp_sqrt_c(const doubleC *x, doubleC *res)
 {
   double r;
@@ -421,7 +437,9 @@ void nsp_sqrt_c(const doubleC *x, doubleC *res)
  * @x: a  double complex  
  * @y: a  double complex  
  *
+ * computes in @res the value of @x multiplied by @y.
  **/
+
 /* x= x*y : can be used with x=x **/
 
 void nsp_prod_c( doubleC *x,const doubleC *y)
