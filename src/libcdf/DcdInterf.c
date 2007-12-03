@@ -925,6 +925,28 @@ static int int_cdf_erf(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_erf, NULL);
 }
 
+double cdf_erfc_1(double x)
+{
+  return cdf_erfc(0,x);
+}
+
+static int int_cdf_erfc(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_erfc_1, NULL);
+}
+
+double cdf_erfc_2(double x)
+{
+  return cdf_erfc(1,x);
+}
+
+static int int_cdf_erfc1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_genv11( stack,rhs,opt,lhs, cdf_erfc_2, NULL);
+}
+
+
+
 
 static int int_cdf_stirling_series_diff(Stack stack, int rhs, int opt, int lhs)
 {
@@ -980,6 +1002,8 @@ static OpTab Dcd_func[]={
   {"cdf_psi_old",int_cdf_psi1_old},
   {"cdf_grat1",int_cdf_grat1},
   {"cdf_erf",int_cdf_erf},
+  {"cdf_erfc",int_cdf_erfc},
+  {"cdf_erfc1",int_cdf_erfc1},
   {"cdf_stirling_series_diff",int_cdf_stirling_series_diff},
   {(char *) 0, NULL}
 };

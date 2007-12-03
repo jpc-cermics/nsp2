@@ -1,47 +1,39 @@
+/* Nsp
+ * Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "cdf.h"
 
-const double c_b5 = 1.;
+
+static double erf_approx(double x);
+static double erf_approx1(double x);
+static double erf_approx2(double x);
 
 /**
  * cdf_erf:
  * @x: a double 
  * 
+ * cdf_erf function returns the error function of x; defined as
+ * erf(x) = 2/sqrt(pi)* integral from 0 to x of exp(-t*t) dt
+ * max relative error 2.01e-16 on Linux. 
  * 
- *     cdf_erf function returns the error function of x; defined as
- *        erf(x) = 2/sqrt(pi)* integral from 0 to x of exp(-t*t) dt
- * 
- * Returns: 
+ * Returns: a double 
  **/
-
-static double f_approx(double x)
-{
-  double t1 =  x*x;
-  return((0.2132192804233654E1+(0.2507950205818281+(0.7564786793930115E-1+(
-0.210035614139579E-2+0.1234228302254547E-3*t1)*t1)*t1)*t1)/(0.9448033366842427+
-(0.4260650955659615+(0.8106195356401662E-1+(0.784015525419341E-2+
-0.3321975634818686E-3*t1)*t1)*t1)*t1));
-}
-
-static double f_approx1(double x)
-{
-  return((0.3568217177627678E-2+(0.5444297501411179E-2+(0.4135716726130396E-2
-+(0.1888516179006951E-2+(0.5404695127508915E-3+(0.9187011004034143E-4+(
-0.7350874797709247E-5-0.1128729588597506E-11*x)*x)*x)*x)*x)*x)*x)/(
-0.356821717529337E-2+(0.9470599459420979E-2+(0.112539264524628E-1+(
-0.7800815126334948E-2+(0.3428993607308159E-2+(0.9644447087996436E-3+(
-0.1628374909101921E-3+0.130289958082267E-4*x)*x)*x)*x)*x)*x)*x));
-}
-
-static double f_approx2(double x)
-{
-  return((0.1920128783798018E-1+(0.2769423798968193+(0.1364407135799869E1+(
-0.2867943355305776E1+(0.263259262902629E1+(0.9670512406343465+(
-0.1104364005166393+0.1680026092294234E-2*x)*x)*x)*x)*x)*x)*x)/(
-0.1920128897453642E-1+(0.286542962836701+(0.1493279359010387E1+(
-0.343564527820764E1+(0.3642221565674471E1+(0.1691183279839614E1+(
-0.2925780360848024+0.1223013739426987E-1*x)*x)*x)*x)*x)*x)*x));
-}
-
 
 double cdf_erf (double x)
 {
@@ -49,9 +41,10 @@ double cdf_erf (double x)
   double ret_val, t, x2, ax;
 
   ax = Abs (x);
-  if (ax <= 0.5)
+  if (ax <= 0.85)
     {
-      return x*f_approx(x)/2.0;
+      /* f_approx is a pade approximation [10,10] */
+      return x*erf_approx(x*x)/2.0;
     }
   if (ax > 4.)
     {
@@ -65,15 +58,88 @@ double cdf_erf (double x)
        */
       x2 = x * x;
       t = 1. / x2;
-      ret_val =  1 - exp(-x2)*c*(1/ax)*f_approx2(t);
+      ret_val =  1 - exp(-x2)*c*(1/ax)*erf_approx2(t);
       return  (x < 0.) ?  -ret_val : ret_val ;
     }
   
-  ret_val= 0.5 - exp (-(ax) * ax)*f_approx1(ax)+0.5;
+  ret_val= 0.5 - exp (-(ax) * ax)*erf_approx1(ax)+0.5;
   return ( x < 0) ?  -ret_val : ret_val ;
-
 }
 
+/*
+ * Using Maple code for approximation of erf 
+ *
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) (erf(x)-erf(-x))/x ;end proc;
+  g:= proc(x) f(sqrt(x));end proc; 
+
+  Digits:=200;
+  ggp:=chebpade(g(x),x=0.01..0.5,[10,10]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+*/
+
+
+static double erf_approx(double x)
+{
+  {
+    return((0.1991182222397213E1+(0.2919538530000317+(0.974098062698039E-1+(
+0.6589093818965865E-2+(0.927131273455712E-3+(0.3417290206883588E-4+(
+0.2580933874996821E-5+(0.4906587858994353E-7+(0.1928837863588316E-8+(
+0.12412816944941E-10+0.1208762589108909E-12*x)*x)*x)*x)*x)*x)*x)*x)*x)*x)/(
+0.8823196494856359+(0.4234752325876976+(0.9609004247372082E-1+(
+0.1360981777952708E-1+(0.1336356469097111E-2+(0.9536149819709116E-4+(
+0.5026788743980206E-5+(0.1940848549814423E-6+(0.5278156679389076E-8+(
+0.9180481849414321E-10+0.7806230977595437E-12*x)*x)*x)*x)*x)*x)*x)*x)*x)*x));
+  }
+}
+
+static double erf_approx1(double x)
+{
+  return((0.3568217177627678E-2+(0.5444297501411179E-2+(0.4135716726130396E-2
++(0.1888516179006951E-2+(0.5404695127508915E-3+(0.9187011004034143E-4+(
+0.7350874797709247E-5-0.1128729588597506E-11*x)*x)*x)*x)*x)*x)*x)/(
+0.356821717529337E-2+(0.9470599459420979E-2+(0.112539264524628E-1+(
+0.7800815126334948E-2+(0.3428993607308159E-2+(0.9644447087996436E-3+(
+0.1628374909101921E-3+0.130289958082267E-4*x)*x)*x)*x)*x)*x)*x));
+}
+
+/*
+ * Using Maple code for approximation of erf 
+ *
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) erfc(x)*exp(x*x)*x*sqrt(Pi) ;end proc;
+  g:= proc(x) f(1/sqrt(x));end proc; 
+  
+  Digits:=200;
+  ggp:=chebpade(g(x),x=(1/49)..(1/16),[10,10]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+*/
+
+static double erf_approx2(double x)
+{
+  {
+    return((0.2599098159436489+(0.9403918995875176E1+(0.1243729660185006E3+(
+0.7558123106477017E3+(0.2174289444886517E4+(0.273052355666007E4+(
+0.1169641949711052E4+0.7358165519735863E2*x)*x)*x)*x)*x)*x)*x)/(
+0.2599098159436489+(0.9533873903846993E1+(0.1289449706084679E3+(
+0.8136217214287283E3+(0.2500561933068374E4+(0.3557469464700427E4+(
+0.1991626855607897E4+0.2842440147288589E3*x)*x)*x)*x)*x)*x)*x));
+  }
+}
 
 /**
  * cdf_erfc:
@@ -84,163 +150,436 @@ double cdf_erf (double x)
  *     cdf_erfc(0,x) function returns the complementary error function of  x,
  *       that is 1.0 - erf(x).
  *     cdf_erfc(1,x) function returns 
- *        y = exp(x^2 ) * erfc(x)
- *                   1
- *        y  -->  ---------    when x --> +oo
- *                x sqrt(pi) 
- *
- * 
+ *        y = exp(x^2 ) * erfc(x) 
  * 
  * Returns: a double 
  **/
 
-double cdf_erfc (int ind, double x)
-{
-  const int c__1 = 1;
-  const double c__ = .564189583547756;
-  const double a[5] =  { 7.7105849500132e-5, -.00133733772997339, .0323076579225834,
-			 .0479137145607681, .128379167095513  };
-  const double b[3] =  { .00301048631703895, .0538971687740286, .375795757275549 };
-  const double p[8] =  { -1.36864857382717e-7, .564195517478974, 7.21175825088309,
-			 43.1622272220567, 152.98928504694, 339.320816734344, 
-			 451.918953711873,  300.459261020162 };
-  const double q[8] =  { 1., 12.7827273196294, 77.0001529352295, 277.585444743988,
-			 638.980264465631, 931.35409485061, 790.950925327898, 
-			 300.459260956983 };
-  const double r__[5] = { 2.10144126479064, 26.2370141675169, 21.3688200555087, 
-			  4.6580782871847, .282094791773523 };
-  const double s[4] =  { 94.153775055546, 187.11481179959, 99.0191814623914, 
-			 18.0124575948747 };
-  double ret_val, d__1;
-  double e, t, w, ax;
-  double bot, top;
+double cdf_erfc_zone(int ind, double x);
+static double _cdf_erfc1(double x);
 
-  /*                     ABS(X) .LE. 0.5 */
+
+double cdf_erfc(int ind, double x)
+{
+  const double c = .564189583547756;
+  double ret_val, d1;
+  double t,  ax;
+  
+  if ( ind == 1) return _cdf_erfc1(x);
 
   ax = Abs (x);
-  if (ax > .5)
+  if ( ax <= 0.8 )
     {
-      goto L10;
+      /* Abs(x) <= 0.8 
+       * here we use 1 - the same approximation for erf(x) 
+       */
+      return  0.5*(1 - x*erf_approx(x*x) +1) ;
     }
-  t = x * x;
-  top = (((a[0] * t + a[1]) * t + a[2]) * t + a[3]) * t + a[4] + 1.;
-  bot = ((b[0] * t + b[1]) * t + b[2]) * t + 1.;
-  ret_val = .5 - x * (top / bot) + .5;
-  if (ind != 0)
-    {
-      ret_val = exp (t) * ret_val;
-    }
-  return ret_val;
-  /*                  0.5 .LT. ABS(X) .LE. 4 */
- L10:
   if (ax > 4.)
     {
-      goto L20;
+      if (x <= - 6)
+	{
+	  return 2;
+	}
+      if ( x > 100. ) return 0.0;
+      if ( x * x > -cdf_exparg (1)) return 0.0;
+      d1 = 1. / x;
+      t = d1 * d1;
+      ret_val = exp (-(x*x))* c*(1/ax)*erf_approx2(t);
+      return  (x < 0.) ? 2. - ret_val : ret_val;
     }
-  top =
-    ((((((p[0] * ax + p[1]) * ax + p[2]) * ax + p[3]) * ax + p[4]) * ax +
-      p[5]) * ax + p[6]) * ax + p[7];
-  bot =
-    ((((((q[0] * ax + q[1]) * ax + q[2]) * ax + q[3]) * ax + q[4]) * ax +
-      q[5]) * ax + q[6]) * ax + q[7];
-  ret_val = top / bot;
-  goto L40;
-  /*                      ABS(X) .GT. 4 */
- L20:
-  if (x <= -5.6)
+  else 
     {
-      goto L60;
+      /* 0.5 <= abs(X) <= 4 */
+      ret_val= exp (-(x*x))*erf_approx1(ax);
+      return  (x < 0.) ? 2. - ret_val : ret_val;
     }
-  if (ind != 0)
-    {
-      goto L30;
-    }
-  if (x > 100.)
-    {
-      goto L70;
-    }
-  if (x * x > -cdf_exparg (c__1))
-    {
-      goto L70;
-    }
- L30:
-  d__1 = 1. / x;
-  t = d__1 * d__1;
-  top = (((r__[0] * t + r__[1]) * t + r__[2]) * t + r__[3]) * t + r__[4];
-  bot = (((s[0] * t + s[1]) * t + s[2]) * t + s[3]) * t + 1.;
-  ret_val = (c__ - t * top / bot) / ax;
+}
+
+
+/* exp(x^2)*erfc(x);
+ */
+
+static double _cdf_erfc1(double x)
+{
+  const double c = .564189583547756;
+  double ret_val, d1;
+  double t,  ax;
   
- L40:
-  if (ind == 0)
+  ax = Abs (x);
+  if ( ax <= 0.8 )
     {
-      goto L50;
+      /* Abs(x) <= 0.8 
+       * here we use 1 - the same approximation for erf(x) 
+       */
+      double t = x*x;
+      return exp (t)* 0.5*(1 - x*erf_approx(t) +1);
     }
-  if (x < 0.)
+  if (ax > 4.)
     {
-      ret_val = exp (x * x) * 2. - ret_val;
+      if (x <= -6 )
+	{
+	  return exp (x * x) * 2. ;
+	}
+      d1 = 1. / x;
+      t = d1 * d1;
+      ret_val =  c*(1/ax)*erf_approx2(t);
+      return  (x < 0.) ? exp (x*x)* 2 - ret_val : ret_val ;
     }
-  return ret_val;
-L50:
-  w = x * x;
-  t = w;
-  e = w - t;
-  ret_val = (.5 - e + .5) * exp (-t) * ret_val;
-  if (x < 0.)  ret_val = 2. - ret_val;
-  return ret_val;
- L60:
-  /*             LIMIT VALUE FOR LARGE NEGATIVE X */
-  ret_val = 2.;
-  if (ind != 0)
+  else 
     {
-      ret_val = exp (x * x) * 2.;
+      /* 0.5 <= abs(X) <= 4 */
+      ret_val= erf_approx1(ax);
     }
-  return ret_val;
- L70:
-  /*             LIMIT VALUE FOR LARGE POSITIVE X */
-  /*                       WHEN IND = 0 */
-  ret_val = 0.;
-  return ret_val;
+  return ( x< 0) ? exp (x * x) * 2. - ret_val : ret_val;
 }	
 
 
 /*
- * Using Maple code for approximation of log(GAMMA(x)) in [2,3] 
+ * ====================================================
+ * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
- 
-  with(numapprox);
-  with(orthopoly);
-  f:= proc(x) (erf(x)-erf(-x))/x ;end proc;
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
+ * Permission to use, copy, modify, and distribute this
+ * software is freely granted, provided that this notice
+ * is preserved.
+ * ====================================================
+ */
 
-  Digits:=120;
-  ggp:=chebpade(f(x),x=-0.5..0.5,[10,10]);
-  Digits:=20;
-  gg:= convert(ggp,float);
-  gg:= convert(gg,horner);
-  f_approx:= unapply(gg,x);
-  codegen[C](f_approx,optimized);
+#include <endian.h>
+#include <sys/types.h>
 
+/* A union which permits us to convert between a double and two 32 bit
+ * ints.  
+ */
+
+typedef union
+{
+  double value;
+  struct
+  {
+#if __FLOAT_WORD_ORDER == BIG_ENDIAN
+    u_int32_t msw;
+    u_int32_t lsw;
+#else 
+    u_int32_t lsw;
+    u_int32_t msw;
+#endif 
+  } parts;
+} ieee_double_shape_type;
+
+
+#define SET_LOW_WORD(d,v)					\
+  do {								\
+    ieee_double_shape_type sl_u;				\
+    sl_u.value = (d);						\
+    sl_u.parts.lsw = (v);					\
+    (d) = sl_u.value;						\
+  } while (0)
+
+#define GET_HIGH_WORD(i,d)					\
+  do {								\
+    ieee_double_shape_type gh_u;				\
+    gh_u.value = (d);						\
+    (i) = gh_u.parts.msw;					\
+  } while (0)
+
+
+double cdf_erfc_zone(int ind, double x)
+{
+  static const double ra[]  = {-9.86494403484714822705e-03,
+		  -6.93858572707181764372e-01,
+		  -1.05586262253232909814e+01,
+		  -6.23753324503260060396e+01,
+		  -1.62396669462573470355e+02,
+		  -1.84605092906711035994e+02,
+		  -8.12874355063065934246e+01,
+		  -9.81432934416914548592e+00};
+  static const double sa[]  =  {0.0,1.96512716674392571292e+01,
+		   1.37657754143519042600e+02,
+		   4.34565877475229228821e+02,
+		   6.45387271733267880336e+02,
+		   4.29008140027567833386e+02,
+		   1.08635005541779435134e+02,
+		   6.57024977031928170135e+00,
+		   -6.04244152148580987438e-02};
+  static const double one =  1.00000000000000000000e+00 ;
+  static const double two =  2.00000000000000000000e+00 ;
+  double R,S,s,z,r;
   
-  g:= proc(x) (1-erf(x))*exp(x^2) ;end proc;
+  x = fabs(x);
+  s = one/(x*x);
+  R=ra[0]+s*(ra[1]+s*(ra[2]+s*(ra[3]+s*(ra[4]+s*(ra[5]+s*(ra[6]+s*ra[7]))))));
+  S=one+s*(sa[1]+s*(sa[2]+s*(sa[3]+s*(sa[4]+s*(sa[5]+s*(sa[6]+s*(sa[7]+s*sa[8])))))));
+  z  = x;
+  SET_LOW_WORD(z,0);
+  r  =  exp(-z*z-0.5625)*exp((z-x)*(z+x)+R/S);
+  return (x > 0) ? r/x : two-r/x;
+}
 
-  Digits:=120;
-  ggp:=chebpade(g(x),x=0.5..4,[7,7]);
-  Digits:=20;
-  gg:= convert(ggp,float);
-  gg:= convert(gg,horner);
-  f_approx:= unapply(gg,x);
-  codegen[C](f_approx,optimized);
 
-  h:= proc(x) (1 - erf(x))*(exp(x^2)*sqrt(Pi))*x; end proc;
-  h1:= proc(x) h(1/sqrt(x));end proc; 
-  Digits:=120;
-  ggp:=chebpade(h1(x),x=(1/sqrt(5.8))..(1/2),[7,7]);
-  Digits:=20;
-  gg:= convert(ggp,float);
-  gg:= convert(gg,horner);
-  f_approx:= unapply(gg,x);
-  codegen[C](f_approx,optimized);
+/* Modified by Naohiko Shimizu/Tokai University, Japan 1997/08/25,
+ *  for performance improvement on pipelined processors.
+ */
 
+/* double erf(double x)
+ * double erfc(double x)
+ *			     x
+ *		      2      |\
+ *     erf(x)  =  ---------  | exp(-t*t)dt
+ *	 	   sqrt(pi) \|
+ *			     0
+ *
+ *     erfc(x) =  1-erf(x)
+ *  Note that
+ *		erf(-x) = -erf(x)
+ *		erfc(-x) = 2 - erfc(x)
+ *
+ * Method:
+ *	1. For |x| in [0, 0.84375]
+ *	    erf(x)  = x + x*R(x^2)
+ *          erfc(x) = 1 - erf(x)           if x in [-.84375,0.25]
+ *                  = 0.5 + ((0.5-x)-x*R)  if x in [0.25,0.84375]
+ *	   where R = P/Q where P is an odd poly of degree 8 and
+ *	   Q is an odd poly of degree 10.
+ *						 -57.90
+ *			| R - (erf(x)-x)/x | <= 2
+ *
+ *
+ *	   Remark. The formula is derived by noting
+ *          erf(x) = (2/sqrt(pi))*(x - x^3/3 + x^5/10 - x^7/42 + ....)
+ *	   and that
+ *          2/sqrt(pi) = 1.128379167095512573896158903121545171688
+ *	   is close to one. The interval is chosen because the fix
+ *	   point of erf(x) is near 0.6174 (i.e., erf(x)=x when x is
+ *	   near 0.6174), and by some experiment, 0.84375 is chosen to
+ * 	   guarantee the error is less than one ulp for erf.
+ *
+ *      2. For |x| in [0.84375,1.25], let s = |x| - 1, and
+ *         c = 0.84506291151 rounded to single (24 bits)
+ *         	erf(x)  = sign(x) * (c  + P1(s)/Q1(s))
+ *         	erfc(x) = (1-c)  - P1(s)/Q1(s) if x > 0
+ *			  1+(c+P1(s)/Q1(s))    if x < 0
+ *         	|P1/Q1 - (erf(|x|)-c)| <= 2**-59.06
+ *	   Remark: here we use the taylor series expansion at x=1.
+ *		erf(1+s) = erf(1) + s*Poly(s)
+ *			 = 0.845.. + P1(s)/Q1(s)
+ *	   That is, we use rational approximation to approximate
+ *			erf(1+s) - (c = (single)0.84506291151)
+ *	   Note that |P1/Q1|< 0.078 for x in [0.84375,1.25]
+ *	   where
+ *		P1(s) = degree 6 poly in s
+ *		Q1(s) = degree 6 poly in s
+ *
+ *      3. For x in [1.25,1/0.35(~2.857143)],
+ *         	erfc(x) = (1/x)*exp(-x*x-0.5625+R1/S1)
+ *         	erf(x)  = 1 - erfc(x)
+ *	   where
+ *		R1(z) = degree 7 poly in z, (z=1/x^2)
+ *		S1(z) = degree 8 poly in z
+ *
+ *      4. For x in [1/0.35,28]
+ *         	erfc(x) = (1/x)*exp(-x*x-0.5625+R2/S2) if x > 0
+ *			= 2.0 - (1/x)*exp(-x*x-0.5625+R2/S2) if -6<x<0
+ *			= 2.0 - tiny		(if x <= -6)
+ *         	erf(x)  = sign(x)*(1.0 - erfc(x)) if x < 6, else
+ *         	erf(x)  = sign(x)*(1.0 - tiny)
+ *	   where
+ *		R2(z) = degree 6 poly in z, (z=1/x^2)
+ *		S2(z) = degree 7 poly in z
+ *
+ *      Note1:
+ *	   To compute exp(-x*x-0.5625+R/S), let s be a single
+ *	   precision number and s := x; then
+ *		-x*x = -s*s + (s-x)*(s+x)
+ *	        exp(-x*x-0.5626+R/S) =
+ *			exp(-s*s-0.5625)*exp((s-x)*(s+x)+R/S);
+ *      Note2:
+ *	   Here 4 and 5 make use of the asymptotic series
+ *			  exp(-x*x)
+ *		erfc(x) ~ ---------- * ( 1 + Poly(1/x^2) )
+ *			  x*sqrt(pi)
+ *	   We use rational approximation to approximate
+ *      	g(s)=f(1/x^2) = log(erfc(x)*x) - x*x + 0.5625
+ *	   Here is the error bound for R1/S1 and R2/S2
+ *      	|R1/S1 - f(x)|  < 2**(-62.57)
+ *      	|R2/S2 - f(x)|  < 2**(-61.52)
+ *
+ *      5. For inf > x >= 28
+ *         	erf(x)  = sign(x) *(1 - tiny)  (raise inexact)
+ *         	erfc(x) = tiny*tiny (raise underflow) if x > 0
+ *			= 2 - tiny if x<0
+ *
+ *      7. Special case:
+ *         	erf(0)  = 0, erf(inf)  = 1, erf(-inf) = -1,
+ *         	erfc(0) = 1, erfc(inf) = 0, erfc(-inf) = 2,
+ *	   	erfc/erf(NaN) is NaN
+ */
+
+
+static const double
+tiny	    = 1e-300,
+half=  5.00000000000000000000e-01, /* 0x3FE00000, 0x00000000 */
+one =  1.00000000000000000000e+00, /* 0x3FF00000, 0x00000000 */
+two =  2.00000000000000000000e+00, /* 0x40000000, 0x00000000 */
+	/* c = (float)0.84506291151 */
+erx =  8.45062911510467529297e-01, /* 0x3FEB0AC1, 0x60000000 */
+/*
+ * Coefficients for approximation to  erf on [0,0.84375]
+ */
+efx =  1.28379167095512586316e-01, /* 0x3FC06EBA, 0x8214DB69 */
+efx8=  1.02703333676410069053e+00, /* 0x3FF06EBA, 0x8214DB69 */
+pp[]  =  {1.28379167095512558561e-01, /* 0x3FC06EBA, 0x8214DB68 */
+ -3.25042107247001499370e-01, /* 0xBFD4CD7D, 0x691CB913 */
+ -2.84817495755985104766e-02, /* 0xBF9D2A51, 0xDBD7194F */
+ -5.77027029648944159157e-03, /* 0xBF77A291, 0x236668E4 */
+ -2.37630166566501626084e-05}, /* 0xBEF8EAD6, 0x120016AC */
+qq[]  =  {0.0, 3.97917223959155352819e-01, /* 0x3FD97779, 0xCDDADC09 */
+  6.50222499887672944485e-02, /* 0x3FB0A54C, 0x5536CEBA */
+  5.08130628187576562776e-03, /* 0x3F74D022, 0xC4D36B0F */
+  1.32494738004321644526e-04, /* 0x3F215DC9, 0x221C1A10 */
+ -3.96022827877536812320e-06}, /* 0xBED09C43, 0x42A26120 */
+/*
+ * Coefficients for approximation to  erf  in [0.84375,1.25]
+ */
+pa[]  = {-2.36211856075265944077e-03, /* 0xBF6359B8, 0xBEF77538 */
+  4.14856118683748331666e-01, /* 0x3FDA8D00, 0xAD92B34D */
+ -3.72207876035701323847e-01, /* 0xBFD7D240, 0xFBB8C3F1 */
+  3.18346619901161753674e-01, /* 0x3FD45FCA, 0x805120E4 */
+ -1.10894694282396677476e-01, /* 0xBFBC6398, 0x3D3E28EC */
+  3.54783043256182359371e-02, /* 0x3FA22A36, 0x599795EB */
+ -2.16637559486879084300e-03}, /* 0xBF61BF38, 0x0A96073F */
+qa[]  =  {0.0, 1.06420880400844228286e-01, /* 0x3FBB3E66, 0x18EEE323 */
+  5.40397917702171048937e-01, /* 0x3FE14AF0, 0x92EB6F33 */
+  7.18286544141962662868e-02, /* 0x3FB2635C, 0xD99FE9A7 */
+  1.26171219808761642112e-01, /* 0x3FC02660, 0xE763351F */
+  1.36370839120290507362e-02, /* 0x3F8BEDC2, 0x6B51DD1C */
+  1.19844998467991074170e-02}, /* 0x3F888B54, 0x5735151D */
+/*
+ * Coefficients for approximation to  erfc in [1.25,1/0.35]
+ */
+ra[]  = {-9.86494403484714822705e-03, /* 0xBF843412, 0x600D6435 */
+ -6.93858572707181764372e-01, /* 0xBFE63416, 0xE4BA7360 */
+ -1.05586262253232909814e+01, /* 0xC0251E04, 0x41B0E726 */
+ -6.23753324503260060396e+01, /* 0xC04F300A, 0xE4CBA38D */
+ -1.62396669462573470355e+02, /* 0xC0644CB1, 0x84282266 */
+ -1.84605092906711035994e+02, /* 0xC067135C, 0xEBCCABB2 */
+ -8.12874355063065934246e+01, /* 0xC0545265, 0x57E4D2F2 */
+ -9.81432934416914548592e+00}, /* 0xC023A0EF, 0xC69AC25C */
+sa[]  =  {0.0,1.96512716674392571292e+01, /* 0x4033A6B9, 0xBD707687 */
+  1.37657754143519042600e+02, /* 0x4061350C, 0x526AE721 */
+  4.34565877475229228821e+02, /* 0x407B290D, 0xD58A1A71 */
+  6.45387271733267880336e+02, /* 0x40842B19, 0x21EC2868 */
+  4.29008140027567833386e+02, /* 0x407AD021, 0x57700314 */
+  1.08635005541779435134e+02, /* 0x405B28A3, 0xEE48AE2C */
+  6.57024977031928170135e+00, /* 0x401A47EF, 0x8E484A93 */
+ -6.04244152148580987438e-02}, /* 0xBFAEEFF2, 0xEE749A62 */
+/*
+ * Coefficients for approximation to  erfc in [1/.35,28]
+ */
+rb[]  = {-9.86494292470009928597e-03, /* 0xBF843412, 0x39E86F4A */
+ -7.99283237680523006574e-01, /* 0xBFE993BA, 0x70C285DE */
+ -1.77579549177547519889e+01, /* 0xC031C209, 0x555F995A */
+ -1.60636384855821916062e+02, /* 0xC064145D, 0x43C5ED98 */
+ -6.37566443368389627722e+02, /* 0xC083EC88, 0x1375F228 */
+ -1.02509513161107724954e+03, /* 0xC0900461, 0x6A2E5992 */
+ -4.83519191608651397019e+02}, /* 0xC07E384E, 0x9BDC383F */
+sb[]  =  {0.0,3.03380607434824582924e+01, /* 0x403E568B, 0x261D5190 */
+  3.25792512996573918826e+02, /* 0x40745CAE, 0x221B9F0A */
+  1.53672958608443695994e+03, /* 0x409802EB, 0x189D5118 */
+  3.19985821950859553908e+03, /* 0x40A8FFB7, 0x688C246A */
+  2.55305040643316442583e+03, /* 0x40A3F219, 0xCEDF3BE6 */
+  4.74528541206955367215e+02, /* 0x407DA874, 0xE79FE763 */
+ -2.24409524465858183362e+01}; /* 0xC03670E2, 0x42712D62 */
+
+
+double cdf_erfc_libc(int ind, double x)
+{
+  int i;
+  int32_t hx,ix;
+  double R,S,P,Q,s,y,z,r;
+  GET_HIGH_WORD(hx,x);
+  if ( ISNAN(x)) return x;
+  i = isinf(x); 
+  if ( i == 1) return 0.0;
+  if ( i == -1 ) return 2.0;
+  ix = hx&0x7fffffff;
   
-  
+  if(ix < 0x3feb0000) {		/* |x|<0.84375 */
+    double r1,r2,s1,s2,s3,z2,z4;
+    if(ix < 0x3c700000)  	/* |x|<2**-56 */
+      return one-x;
+    z = x*x;
+    r1 = pp[0]+z*pp[1]; z2=z*z;
+    r2 = pp[2]+z*pp[3]; z4=z2*z2;
+    s1 = one+z*qq[1];
+    s2 = qq[2]+z*qq[3];
+    s3 = qq[4]+z*qq[5];
+    r = r1 + z2*r2 + z4*pp[4];
+    s  = s1 + z2*s2 + z4*s3;
+    y = r/s;
+    if(hx < 0x3fd00000) {  	/* x<1/4 */
+      return one-(x+x*y);
+    } else {
+      r = x*y;
+      r += (x-half);
+      return half - r ;
+    }
+  }
+  if(ix < 0x3ff40000) {		/* 0.84375 <= |x| < 1.25 */
+    double s2,s4,s6,P1,P2,P3,P4,Q1,Q2,Q3,Q4;
+    s = fabs(x)-one;
+    P1 = pa[0]+s*pa[1]; s2=s*s;
+    Q1 = one+s*qa[1];   s4=s2*s2;
+    P2 = pa[2]+s*pa[3]; s6=s4*s2;
+    Q2 = qa[2]+s*qa[3];
+    P3 = pa[4]+s*pa[5];
+    Q3 = qa[4]+s*qa[5];
+    P4 = pa[6];
+    Q4 = qa[6];
+    P = P1 + s2*P2 + s4*P3 + s6*P4;
+    Q = Q1 + s2*Q2 + s4*Q3 + s6*Q4;
+    if(hx>=0) {
+      z  = one-erx; return z - P/Q;
+    } else {
+      z = erx+P/Q; return one+z;
+    }
+  }
+  if (ix < 0x403c0000) {		/* |x|<28 */
+    x = fabs(x);
+    s = one/(x*x);
+    if(ix< 0x4006DB6D) {	/* |x| < 1/.35 ~ 2.857143*/
+      double R1,R2,R3,R4,S1,S2,S3,S4,s2,s4,s6,s8;
+      R1 = ra[0]+s*ra[1];s2 = s*s;
+      S1 = one+s*sa[1];  s4 = s2*s2;
+      R2 = ra[2]+s*ra[3];s6 = s4*s2;
+      S2 = sa[2]+s*sa[3];s8 = s4*s4;
+      R3 = ra[4]+s*ra[5];
+      S3 = sa[4]+s*sa[5];
+      R4 = ra[6]+s*ra[7];
+      S4 = sa[6]+s*sa[7];
+      R = R1 + s2*R2 + s4*R3 + s6*R4;
+      S = S1 + s2*S2 + s4*S3 + s6*S4 + s8*sa[8];
+    } else {			/* |x| >= 1/.35 ~ 2.857143 */
+      double R1,R2,R3,S1,S2,S3,S4,s2,s4,s6;
+      if(hx<0&&ix>=0x40180000) return two-tiny;/* x < -6 */
+      R1 = rb[0]+s*rb[1];s2 = s*s;
+      S1 = one+s*sb[1];  s4 = s2*s2;
+      R2 = rb[2]+s*rb[3];s6 = s4*s2;
+      S2 = sb[2]+s*sb[3];
+      R3 = rb[4]+s*rb[5];
+      S3 = sb[4]+s*sb[5];
+      S4 = sb[6]+s*sb[7];
+      R = R1 + s2*R2 + s4*R3 + s6*rb[6];
+      S = S1 + s2*S2 + s4*S3 + s6*S4;
+    }
+    z  = x;
+    SET_LOW_WORD(z,0);
+    r  =  exp(-z*z-0.5625)*exp((z-x)*(z+x)+R/S);
+    if(hx>0) return r/x; else return two-r/x;
+  } else {
+    if(hx>0) return tiny*tiny; else return two-tiny;
+  }
+}
 
-*/
+
