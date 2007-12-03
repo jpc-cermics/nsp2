@@ -250,6 +250,24 @@ extern int GetDimArg(Stack stack, int pos, int *dim, int flag);
      return RET_BUG;} 
 
 /**
+ * CheckScalarOrDims:
+ * @fname: name of the interfaced function (can use NspFname(stack))
+ * @pos1: position of the object in the calling stack
+ * @o1: a matrix 
+ * @m1: number of expected rows 
+ * @n1: number of expected columns 
+ * 
+ * Checks that given matrix have either the @m1 x @n1 size or is a scalar
+ * 
+ * Returns: returns from interface with %RET_BUG if the condition is not satisfied.
+ **/
+
+#define CheckScalarOrDims(fname,pos1,o1,m1,n1) if ( (o1->mn != 1) && (o1->m != m1 || o1->n != n1) ) \
+   { Scierror("%s: argument %d should be a scalar or of size %dx%d\n",fname,pos1,m1,n1); \
+     return RET_BUG;} 
+
+
+/**
  * CheckDims:
  * @fname: name of the interfaced function (can use NspFname(stack))
  * @pos1: position of the object in the calling stack

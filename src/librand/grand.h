@@ -132,10 +132,6 @@ struct _GeomStruct
 } ;
 
 
-#define CheckScalarOrDims(fname,pos1,o1,m1,n1) if ( (o1->mn != 1) && (o1->m != m1 || o1->n != n1) ) \
-   { Scierror("%s: argument %d should be a scalar or of size %dx%d\n",fname,pos1,m1,n1); \
-     return RET_BUG;} 
-
 
 /* supposed to be in fortran library */
 extern double pow_di(double *ap, int *bp);
