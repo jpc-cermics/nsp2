@@ -2839,22 +2839,24 @@ int_mxatan (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B;
+  NspMatrix *A, *B, *C;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
-  if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
+
+  if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  NSP_OBJECT (A)->ret_pos = 1;
-  if (A->mn == 0)
-    {
-      NSP_OBJECT (A)->ret_pos = 1;
-      return 1;
-    }
+
   if ((B = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
-  CheckSameDims (NspFname(stack), 1, 2, A, B);
-  if (nsp_mat_atan2 (A, B) == FAIL)
+
+  if ( A->mn != 1 && B->mn != 1 )
+    CheckSameDims (NspFname(stack), 1, 2, A, B);
+
+  if ( (C = nsp_mat_atan2 (A, B)) == NULLMAT)
     return RET_BUG;
+
+  MoveObj(stack,1,(NspObject *) C);
+
   return 1;
 }
 

@@ -3283,24 +3283,37 @@ int nsp_mat_atan(NspMatrix *A)
  * @A: a #NspMatrix 
  * @B: a #NspMatrix
  * 
- * A=Atan2(A,B). Calculates  the arc tangent of @A(i,j) and @B(i,j).  It is similar to calculating the arc
+ * C=Atan2(A,B). Calculates  the arc tangent of @A(i,j) and @B(i,j).  It is similar to calculating the arc
  * tangent of @A(i,j) / @B(i,j), except that the signs of both arguments are used to determine 
  * the quadrant of the result.
  * 
- * Return value: %OK or %FAIL.
+ * Return value: a #NspMatrix with the result
  **/
 
-int nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
+NspMatrix *nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
 {
   int i ;
-  if ( A->rc_type == 'r' && B->rc_type == 'r' ) 
+  NspMatrix *C = NULLMAT;
+  if ( A->rc_type == 'r' && B->rc_type == 'r' )
     {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= atan2(A->R[i],B->R[i]);
-      return(OK);
+      if ( A->mn == 1 )  /* A is scalar uses dimensions of B */
+	{
+	  if ( (C = nsp_matrix_create(NVOID,'r',B->m,B->n)) == NULLMAT )
+	    return NULLMAT;
+	  for ( i = 0 ; i < B->mn ; i++) C->R[i]= atan2(A->R[0],B->R[i]);
+	}
+      else               /* A is not a scalar uses A dimensions */
+	{
+	  if ( (C = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT )
+	    return NULLMAT;
+	  if ( B->mn == 1 )
+	    for ( i = 0 ; i < A->mn ; i++) C->R[i]= atan2(A->R[i],B->R[0]);
+	  else
+	    for ( i = 0 ; i < A->mn ; i++) C->R[i]= atan2(A->R[i],B->R[i]);
+	}
     }
-  return FAIL;
+  return C;
 }
-
 
 
 /**
