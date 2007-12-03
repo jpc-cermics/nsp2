@@ -11,7 +11,7 @@ FFLAGS = $(FC_OPTIONS)
 
 OBJSC=spmf.o spmf-IN.o
 
-OBJSF= 
+OBJSF=dxlegf.o 
 
 
 include ../Make.lib

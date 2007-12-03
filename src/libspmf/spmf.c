@@ -610,7 +610,63 @@ double marsaglia_K(double x, int n)
   return s;
 }
 
+/*
+ *        computes sqrt(x^2 + y^2) with accuracy and
+ *        without spurious underflow / overflow problems
+ * 
+ *        algorithm by William Kahan,
+ *        which appears in his article "Branch cuts for complex elementary
+ *        functions, or much ado about nothing's sign bit",
+ *        Editors: Iserles, A. and Powell, M. J. D. 
+ *        in "States of the Art in Numerical Analysis"
+ *        Oxford, Clarendon Press, 1987
+ *        ISBN 0-19-853614-3
+ */
+double nsp_hypot(double x, double y)
+{
+  const double   
+    r2 = 1.41421356237309504,         /* sqrt(2) to machine prec */
+    r2p1 = 2.41421356237309504,       /* sqrt(2)+1 to machine prec */
+    t2p1 = 1.25371671790502177e-16;   /* 1+sqrt(2)-r2p1 to machine prec */
 
+  double s, t, temp;
 
+  if ( ISNAN(x) )
+    return x;
+  if ( ISNAN(y) )
+    return y;
 
+  x = fabs(x); y = fabs(y);
+  /*  Order x and y such that 0 <= y <= x  */
+  if ( x < y )
+    {
+      temp = x ; x = y ; y = temp; 
+    }
 
+  /* test for overflowing x */
+  if ( x > DBL_MAX )
+    return x;
+  
+  /* handle generic case */
+  t = x - y;
+  if ( t != x )
+    {
+      if ( t > y )
+	{
+	  /*  2 < x/y < 2/epsm */
+	  s = x / y;
+	  s += sqrt(1.0 + s*s);
+	}
+      else
+	{
+	  /*  1 <= x/y <= 2   */
+	  s = t / y;
+	  t = (2.0 + s) * s;
+	  s = ( ( t2p1 + t/(r2 + sqrt(2.0 + t)) ) + s ) + r2p1;
+        }
+          
+      return x + y/s;
+    }
+  else
+    return x;
+}
