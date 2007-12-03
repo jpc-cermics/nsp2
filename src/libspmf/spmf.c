@@ -77,6 +77,7 @@ double nsp_log1p(double x)
  *        got less or more empiricaly with the pari-gp software.
  *        
  */
+
 static double lnp1m1(double s)
 {
   double  s2;
@@ -178,9 +179,9 @@ double nsp_sinpi(double x)
 double  nsp_stirling_error(double x)
 {
   static const double C0=-1.910444077728e-03,          C1=8.4171387781295e-04,
-                      C2=-5.952379913043012e-04,       C3=7.93650793500350248e-04,
-                      C4=-2.777777777777681622553e-03, C5=8.333333333333333331554247e-02,
-                      C6=5.7083835261e-03;
+    C2=-5.952379913043012e-04,       C3=7.93650793500350248e-04,
+    C4=-2.777777777777681622553e-03, C5=8.333333333333333331554247e-02,
+    C6=5.7083835261e-03;
   double t;
   t = 1.0/x; t = t*t;
   return ((((((C6*t + C0)*t + C1)*t + C2)*t + C3)*t + C4)*t + C5)/x;
@@ -191,25 +192,25 @@ double  nsp_stirling_error(double x)
  */
 static double gamma_in_1_2(double x)
 {
- static const double P[] = {-1.71618513886549492533811    ,  2.47656508055759199108314e+1,
-			    -3.79804256470945635097577e+2 ,  6.29331155312818442661052e+2,
-			    8.66966202790413211295064e+2 , -3.14512729688483675254357e+4,
-			    -3.61444134186911729807069e+4 ,  6.64561438202405440627855e+4 };
+  static const double P[] = {-1.71618513886549492533811    ,  2.47656508055759199108314e+1,
+			     -3.79804256470945635097577e+2 ,  6.29331155312818442661052e+2,
+			     8.66966202790413211295064e+2 , -3.14512729688483675254357e+4,
+			     -3.61444134186911729807069e+4 ,  6.64561438202405440627855e+4 };
 
- static const double Q[] = {-3.08402300119738975254353e+1 ,  3.15350626979604161529144e+2,
-			    -1.01515636749021914166146e+3 , -3.10777167157231109440444e+3,
-			    2.25381184209801510330112e+4 ,  4.75584627752788110767815e+3,
-			    -1.34659959864969306392456e+5 , -1.15132259675553483497211e+5 };
+  static const double Q[] = {-3.08402300119738975254353e+1 ,  3.15350626979604161529144e+2,
+			     -1.01515636749021914166146e+3 , -3.10777167157231109440444e+3,
+			     2.25381184209801510330112e+4 ,  4.75584627752788110767815e+3,
+			     -1.34659959864969306392456e+5 , -1.15132259675553483497211e+5 };
 
- double xnum = 0.0, xden = 1.0;
- int i;
- x -= 1.0;
- for ( i = 0 ; i < 8 ; i++ )
-   {
-     xnum = (xnum + P[i])*x;
-     xden = xden*x + Q[i];
-   }
- return (xnum/xden + 1.0);
+  double xnum = 0.0, xden = 1.0;
+  int i;
+  x -= 1.0;
+  for ( i = 0 ; i < 8 ; i++ )
+    {
+      xnum = (xnum + P[i])*x;
+      xden = xden*x + Q[i];
+    }
+  return (xnum/xden + 1.0);
 }
 
 static double gamma_for_x_big(double x)
@@ -218,9 +219,9 @@ static double gamma_for_x_big(double x)
   double w, q, res;
 
   w = nsp_stirling_error(x);
-/*   we have to compute sqrt(2Pi) x^(x-0.5) exp(-x) exp(w(x)) */
-/*   the "factorisation" by exp: exp( 0.5*log(2Pi) + (x-0.5)log(x) - x + w(x) ) is bad */
-/*   use the gsl method: the trick is that pow seems quite accurate in fact */
+  /*   we have to compute sqrt(2Pi) x^(x-0.5) exp(-x) exp(w(x)) */
+  /*   the "factorisation" by exp: exp( 0.5*log(2Pi) + (x-0.5)log(x) - x + w(x) ) is bad */
+  /*   use the gsl method: the trick is that pow seems quite accurate in fact */
   q = pow(x,0.5*x);
   res = (q*exp(-x))*q;
   res = (sqrt_twopi * (res/sqrt(x))) * exp(w);
@@ -230,35 +231,34 @@ static double gamma_for_x_big(double x)
 
 double nsp_gamma(double x)
 {
-   /* overflow limit is near 171.624 */
- static double const cst1 = DBL_EPSILON, 
-                     cst2 = 15,
-                     Pi=3.1415926535897932384626434;
- double abs_x, xx;
-/*  long double prodxx; */
- double prodxx;
+  /* overflow limit is near 171.624 */
+  static double const cst1 = DBL_EPSILON,    cst2 = 15;
+  /* Pi=3.1415926535897932384626434; */
+  double abs_x, xx;
+  /*  long double prodxx; */
+  double prodxx;
 
- abs_x = fabs(x);
+  abs_x = fabs(x);
 
- if ( x < 0.0  &&  floor(x) == x )
-   return 0.0/0.0;   /* NaN */
-   
- else if ( abs_x <= cst1 )
-   return 1.0/x;
+  if ( x < 0.0  &&  floor(x) == x )
+    return 0.0/0.0;   /* NaN */
+  
+  else if ( abs_x <= cst1 )
+    return 1.0/x;
     
- else if ( abs_x <= cst2 )
-   {
-     if ( x > 2.0 )
-       {
-	 xx = x-1; prodxx = xx;
-	 while ( xx > 2.0 )
-	   {
-	     xx -= 1.0;
-	     prodxx *= xx;
-	   }
-	 return prodxx*gamma_in_1_2(xx);
-       }
-     else if ( x < 1.0 )
+  else if ( abs_x <= cst2 )
+    {
+      if ( x > 2.0 )
+	{
+	  xx = x-1; prodxx = xx;
+	  while ( xx > 2.0 )
+	    {
+	      xx -= 1.0;
+	      prodxx *= xx;
+	    }
+	  return prodxx*gamma_in_1_2(xx);
+	}
+      else if ( x < 1.0 )
 	{
 	  prodxx = x; xx = x+1.0;
 	  while ( xx < 1.0 )
@@ -268,16 +268,16 @@ double nsp_gamma(double x)
 	    }
 	  return gamma_in_1_2(xx)/prodxx;
 	}
-     else
-       return gamma_in_1_2(x);
-   }
- else
-   {
-     if ( x > 0.0 )
-       return gamma_for_x_big(x);
-     else
-       return Pi/(nsp_sinpi(x)*gamma_for_x_big(1.0-x));
-   }     
+      else
+	return gamma_in_1_2(x);
+    }
+  else
+    {
+      if ( x > 0.0 )
+	return gamma_for_x_big(x);
+      else
+	return M_PI/(nsp_sinpi(x)*gamma_for_x_big(1.0-x));
+    }     
 }
 
 /* approximation for lngamma in [4,12] translation in C of the Cody 's code */
@@ -345,7 +345,7 @@ static double lngamma_in_0p68_1p5(double x)
 	   7.738757056935398733233834e3,2.763987074403340708898585e4,
 	   5.499310206226157329794414e4,6.161122180066002127833352e4,
 	   3.635127591501940507276287e4,8.785536302431013170870835e3};
-   double xm1, xnum, xden;
+    double xm1, xnum, xden;
     int i;
     xm1 = x - 1.0;
     xden = 1.0;
@@ -538,35 +538,35 @@ double nsp_kcdflim(double x, double *q)
 /* Marsaglia, Tang, K cdf */
 static void mMultiply(double *A,double *B,double *C,int m)
 {
-    int i,j,k;
-    double s;
-    for(i=0;i<m;i++)
+  int i,j,k;
+  double s;
+  for(i=0;i<m;i++)
     for(j=0;j<m;j++)
-    {
-    s=0.;
-    for(k=0;k<m;k++) s+=A[i*m+k]*B[k*m+j];
-    C[i*m+j]=s;
-    }
+      {
+	s=0.;
+	for(k=0;k<m;k++) s+=A[i*m+k]*B[k*m+j];
+	C[i*m+j]=s;
+      }
 }
 
 static void mPower(double *A,int eA,double *V,int *eV,int m,int n)
 {
-    double *B;int eB,i;
-       if(n==1)
-        {
-        for(i=0;i<m*m;i++) V[i]=A[i];
-        *eV=eA;
-        return;
-        }
-      mPower(A,eA,V,eV,m,n/2);
-      B=(double*)malloc((m*m)*sizeof(double));
-      mMultiply(V,V,B,m);
-      eB=2*(*eV);
-    if(n%2==0) {for(i=0;i<m*m;i++) V[i]=B[i]; *eV=eB;}
-    else   {mMultiply(A,B,V,m);*eV=eA+eB;}
-    if(V[(m/2)*m+(m/2)]>1e140)
-      {for(i=0;i<m*m;i++) V[i]=V[i]*1e-140; *eV+=140;}
- free(B);
+  double *B;int eB,i;
+  if(n==1)
+    {
+      for(i=0;i<m*m;i++) V[i]=A[i];
+      *eV=eA;
+      return;
+    }
+  mPower(A,eA,V,eV,m,n/2);
+  B=(double*)malloc((m*m)*sizeof(double));
+  mMultiply(V,V,B,m);
+  eB=2*(*eV);
+  if(n%2==0) {for(i=0;i<m*m;i++) V[i]=B[i]; *eV=eB;}
+  else   {mMultiply(A,B,V,m);*eV=eA+eB;}
+  if(V[(m/2)*m+(m/2)]>1e140)
+    {for(i=0;i<m*m;i++) V[i]=V[i]*1e-140; *eV+=140;}
+  free(B);
 }
 
 double marsaglia_K(double x, int n)

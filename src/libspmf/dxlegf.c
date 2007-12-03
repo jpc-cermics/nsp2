@@ -260,44 +260,54 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    *$$$      IF(ID.LT.1.OR.ID.GT.4) GO TO 400 
    *$$$      IF((MU1.NE.MU2).AND.(NUDIFF.GT.0)) GO TO 400 
    * 
-   *       IF DNU1 IS NOT AN INTEGER, NORMALIZED P(MU,DNU,X) 
-   *       CANNOT BE CALCULATED.  IF DNU1 IS AN INTEGER AND 
-   *       MU1.GT.DNU2 THEN ALL VALUES OF P(+MU,DNU,X) AND 
-   *       NORMALIZED P(MU,NU,X) WILL BE ZERO. 
+   *       if dnu1 is not an integer, normalized p(mu,dnu,x) 
+   *       cannot be calculated.  if dnu1 is an integer and 
+   *       mu1.gt.dnu2 then all values of p(+mu,dnu,x) and 
+   *       normalized p(mu,nu,x) will be zero. 
    *    special case X = 1 
    */
-  if (*x == 1.) {
-    if (*mu1 == 0) {
-      if (*mu2 == 0) {
-	/*variable NU 
-	 */
-	if (*id == 3) {
-	  i__1 = l;
-	  for (i__ = 1; i__ <= i__1; ++i__) {
-	    pqa[i__] = 1.;
-	  }
-	} else {
-	  /*id = 4 
-	   */
-	  i__1 = l;
-	  for (i__ = 1; i__ <= i__1; ++i__) {
-	    pqa[i__] = sqrt(((*dnu1 + i__ - 1) * 2. + 1.) * .5);
-	  }
+  if (*x == 1.) 
+    {
+      if (*mu1 == 0) 
+	{
+	  if (*mu2 == 0) 
+	    {
+	      /*variable NU 
+	       */
+	      if (*id == 3) 
+		{
+		  i__1 = l;
+		  for (i__ = 1; i__ <= i__1; ++i__) {
+		    pqa[i__] = 1.;
+		  }
+		}
+	      else 
+		{
+		  /*id = 4 
+		   */
+		  i__1 = l;
+		  for (i__ = 1; i__ <= i__1; ++i__) {
+		    pqa[i__] = sqrt(((*dnu1 + i__ - 1) * 2. + 1.) * .5);
+		  }
+		}
+	    } 
+	  else
+	    {
+	      /*variable MU with MU1 = 0 
+	       */
+	      if (*id == 3) 
+		{
+		  pqa[1] = 1.;
+		} 
+	      else 
+		{
+		  /*id = 4 */
+		  pqa[1] = sqrt((*dnu1 * 2. + 1.) * .5);
+		}
+	    }
 	}
-      } else {
-	/*variable MU with MU1 = 0 
-	 */
-	if (*id == 3) {
-	  pqa[1] = 1.;
-	} else {
-	  /*id = 4 
-	   */
-	  pqa[1] = sqrt((*dnu1 * 2. + 1.) * .5);
-	}
-      }
+      return 0;
     }
-    return 0;
-  }
   dnu2 = *dnu1 + *nudiff;
   if (*id == 3 && d_mod(*dnu1, c_b7) != 0.) {
     goto L295;
@@ -321,8 +331,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     goto L360;
   }
   /* 
-   *       FIXED NU, VARIABLE MU 
-   *       CALL DXPMU TO CALCULATE P(-MU1,NU,X),....,P(-MU2,NU,X) 
+   *       fixed nu, variable mu 
+   *       call dxpmu to calculate p(-mu1,nu,x),....,p(-mu2,nu,x) 
    * 
    */
   dxpmu_(dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
@@ -337,8 +347,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     goto L320;
   }
   /* 
-   *       FIXED NU, VARIABLE MU 
-   *       CALL DXQMU TO CALCULATE Q(MU1,NU,X),....,Q(MU2,NU,X) 
+   *       fixed nu, variable mu 
+   *       call dxqmu to calculate q(mu1,nu,x),....,q(mu2,nu,x) 
    * 
    */
   dxqmu_(dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
@@ -347,8 +357,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
   }
   goto L390;
   /* 
-   *       FIXED MU, VARIABLE NU 
-   *       CALL DXQNU TO CALCULATE Q(MU,DNU1,X),....,Q(MU,DNU2,X) 
+   *       fixed mu, variable nu 
+   *       call dxqnu to calculate q(mu,dnu1,x),....,q(mu,dnu2,x) 
    * 
    */
  L320:
@@ -358,8 +368,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
   }
   goto L390;
   /* 
-   *       FIXED MU, VARIABLE NU 
-   *       CALL DXPQNU TO CALCULATE P(-MU,DNU1,X),....,P(-MU,DNU2,X) 
+   *       fixed mu, variable nu 
+   *       call dxpqnu to calculate p(-mu,dnu1,x),....,p(-mu,dnu2,x) 
    * 
    */
  L360:
@@ -368,8 +378,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     return 0;
   }
   /* 
-   *       IF ID = 3, TRANSFORM P(-MU,NU,X) VECTOR INTO 
-   *       P(MU,NU,X) VECTOR. 
+   *       if id = 3, transform p(-mu,nu,x) vector into 
+   *       p(mu,nu,x) vector. 
    * 
    */
  L380:
@@ -380,8 +390,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     return 0;
   }
   /* 
-   *       IF ID = 4, TRANSFORM P(-MU,NU,X) VECTOR INTO 
-   *       NORMALIZED P(MU,NU,X) VECTOR. 
+   *       if id = 4, transform p(-mu,nu,x) vector into 
+   *       normalized p(mu,nu,x) vector. 
    * 
    */
   if (*id == 4) {
@@ -391,8 +401,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     return 0;
   }
   /* 
-   *       PLACE RESULTS IN REDUCED FORM IF POSSIBLE 
-   *       AND RETURN TO MAIN PROGRAM. 
+   *       place results in reduced form if possible 
+   *       and return to main program. 
    * 
    */
  L390:
@@ -405,12 +415,6 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
     /* L395: */
   }
   return 0;
-  /* 
-   *       *****     ERROR TERMINATION     ***** 
-   * 
-   * 400 CALL XERMSG ('SLATEC', 'DXLEGF', 
-   *    +             'DNU1, NUDIFF, MU1, MU2, or ID not valid', 210, 1) 
-   */
  L400:
   *ierror = 210;
   return 0;
@@ -421,19 +425,14 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
   return 0;
 } 
 
-/****BEGIN PROLOGUE  DXPMU 
- ****SUBSIDIARY 
- ****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
+/*
+ * computes the values of Legendre functions for DXLEGF. 
  *           Method: backward mu-wise recurrence for P(-MU,NU,X) for 
  *           fixed nu to obtain P(-MU2,NU1,X), P(-(MU2-1),NU1,X), ..., 
  *           P(-MU1,NU1,X) and store in ascending mu order. 
- ****LIBRARY   SLATEC 
- ****CATEGORY  C3A2, C9 
- ****TYPE      DOUBLE PRECISION (XPMU-S, DXPMU-D) 
- ****KEYWORDS  LEGENDRE FUNCTIONS 
- ****AUTHOR  Smith, John M., (NBS and George Mason University) 
- ****ROUTINES CALLED  DXADD, DXADJ, DXPQNU 
- ****REVISION HISTORY  (YYMMDD) 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
  *  820728  DATE WRITTEN 
  *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
  *  901019  Revisions to prologue.  (DWL and WRB) 
@@ -441,10 +440,6 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
  *          Corrected order of sections in prologue and added TYPE 
  *          section.  (WRB) 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
- ****END PROLOGUE  DXPMU 
- * 
- *       CALL DXPQNU TO OBTAIN P(-MU2,NU,X) 
- * 
  */
 
 static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
@@ -515,20 +510,15 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
   return 0;
 } 
 
-/****BEGIN PROLOGUE  DXPMUP 
- ****SUBSIDIARY 
- ****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
+/*
+ * computes the values of Legendre functions for DXLEGF. 
  *           This subroutine transforms an array of Legendre functions 
  *           of the first kind of negative order stored in array PQA 
  *           into Legendre functions of the first kind of positive 
  *           order stored in array PQA. The original array is destroyed. 
- ****LIBRARY   SLATEC 
- ****CATEGORY  C3A2, C9 
- ****TYPE      DOUBLE PRECISION (XPMUP-S, DXPMUP-D) 
- ****KEYWORDS  LEGENDRE FUNCTIONS 
- ****AUTHOR  Smith, John M., (NBS and George Mason University) 
- ****ROUTINES CALLED  DXADJ 
- ****REVISION HISTORY  (YYMMDD) 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
  *  820728  DATE WRITTEN 
  *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
  *  901019  Revisions to prologue.  (DWL and WRB) 
@@ -536,8 +526,6 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
  *          Corrected order of sections in prologue and added TYPE 
  *          section.  (WRB) 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
- ****END PROLOGUE  DXPMUP 
- ****FIRST EXECUTABLE STATEMENT  DXPMUP 
  */
 
 static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
@@ -645,20 +633,16 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
 } 
 
 
-/****BEGIN PROLOGUE  DXPNRM 
- ****SUBSIDIARY 
- ****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
+/*
+ *
+ * computes the values of Legendre functions for DXLEGF. 
  *           This subroutine transforms an array of Legendre functions 
  *           of the first kind of negative order stored in array PQA 
  *           into normalized Legendre polynomials stored in array PQA. 
  *           The original array is destroyed. 
- ****LIBRARY   SLATEC 
- ****CATEGORY  C3A2, C9 
- ****TYPE      DOUBLE PRECISION (XPNRM-S, DXPNRM-D) 
- ****KEYWORDS  LEGENDRE FUNCTIONS 
- ****AUTHOR  Smith, John M., (NBS and George Mason University) 
- ****ROUTINES CALLED  DXADJ 
- ****REVISION HISTORY  (YYMMDD) 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
  *  820728  DATE WRITTEN 
  *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
  *  901019  Revisions to prologue.  (DWL and WRB) 
@@ -666,8 +650,6 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
  *          Corrected order of sections in prologue and added TYPE 
  *          section.  (WRB) 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
- ****END PROLOGUE  DXPNRM 
- ****FIRST EXECUTABLE STATEMENT  DXPNRM 
  */
 
 static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
@@ -793,37 +775,28 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
 } 
 
 /*
-****SUBSIDIARY 
-****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
-*           This subroutine calculates initial values of P or Q using 
-*           power series, then performs forward nu-wise recurrence to 
-*           obtain P(-MU,NU,X), Q(0,NU,X), or Q(1,NU,X). The nu-wise 
-*           recurrence is stable for P for all mu and for Q for mu=0,1. 
-****LIBRARY   SLATEC 
-****CATEGORY  C3A2, C9 
-****TYPE      DOUBLE PRECISION (XPQNU-S, DXPQNU-D) 
-****KEYWORDS  LEGENDRE FUNCTIONS 
-****AUTHOR  Smith, John M., (NBS and George Mason University) 
-****ROUTINES CALLED  DXADD, DXADJ, DXPSI 
-****COMMON BLOCKS    DXBLK1 
-****REVISION HISTORY  (YYMMDD) 
-*  820728  DATE WRITTEN 
-*  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
-*  901019  Revisions to prologue.  (DWL and WRB) 
-*  901106  Changed all specific intrinsics to generic.  (WRB) 
-*          Corrected order of sections in prologue and added TYPE 
-*          section.  (WRB) 
-*  920127  Revised PURPOSE section of prologue.  (DWL) 
-****END PROLOGUE  DXPQNU 
-* 
-*       J0, IPSIK, AND IPSIX ARE INITIALIZED IN THIS SUBROUTINE. 
-*       J0 IS THE NUMBER OF TERMS USED IN SERIES EXPANSION 
-*       IN SUBROUTINE DXPQNU. 
-*       IPSIK, IPSIX ARE VALUES OF K AND X RESPECTIVELY 
-*       USED IN THE CALCULATION OF THE DXPSI FUNCTION. 
-* 
-****FIRST EXECUTABLE STATEMENT  DXPQNU 
-*/
+ * computes the values of Legendre functions for DXLEGF. 
+ *           This subroutine calculates initial values of P or Q using 
+ *           power series, then performs forward nu-wise recurrence to 
+ *           obtain P(-MU,NU,X), Q(0,NU,X), or Q(1,NU,X). The nu-wise 
+ *           recurrence is stable for P for all mu and for Q for mu=0,1. 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
+ *  820728  DATE WRITTEN 
+ *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
+ *  901019  Revisions to prologue.  (DWL and WRB) 
+ *  901106  Changed all specific intrinsics to generic.  (WRB) 
+ *          Corrected order of sections in prologue and added TYPE 
+ *          section.  (WRB) 
+ *  920127  Revised PURPOSE section of prologue.  (DWL) 
+ *       J0, IPSIK, AND IPSIX ARE INITIALIZED IN THIS SUBROUTINE. 
+ *       J0 IS THE NUMBER OF TERMS USED IN SERIES EXPANSION 
+ *       IN SUBROUTINE DXPQNU. 
+ *       IPSIK, IPSIX ARE VALUES OF K AND X RESPECTIVELY 
+ *       USED IN THE CALCULATION OF THE DXPSI FUNCTION. 
+ * 
+ */
 
 static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
@@ -1102,16 +1075,11 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
 }
 
 
-/****BEGIN PROLOGUE  DXPSI 
- ****SUBSIDIARY 
- ****PURPOSE  To compute values of the Psi function for DXLEGF. 
- ****LIBRARY   SLATEC 
- ****CATEGORY  C7C 
- ****TYPE      DOUBLE PRECISION (XPSI-S, DXPSI-D) 
- ****KEYWORDS  PSI FUNCTION 
- ****AUTHOR  Smith, John M., (NBS and George Mason University) 
- ****ROUTINES CALLED  (NONE) 
- ****REVISION HISTORY  (YYMMDD) 
+/*
+ * computes values of the Psi function for DXLEGF. 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
  *  820728  DATE WRITTEN 
  *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
  *  901019  Revisions to prologue.  (DWL and WRB) 
@@ -1119,7 +1087,6 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
  *          Corrected order of sections in prologue and added TYPE 
  *          section.  (WRB) 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
- ****END PROLOGUE  DXPSI 
  * 
  *       CNUM(I) AND CDENOM(I) ARE THE ( REDUCED ) NUMERATOR 
  *       AND 2*I*DENOMINATOR RESPECTIVELY OF THE 2*I TH BERNOULLI 
@@ -1185,26 +1152,20 @@ double dxpsi_(double *a, int *ipsik, int *ipsix)
 
 
 /*
-****SUBSIDIARY 
-****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
-*           Method: forward mu-wise recurrence for Q(MU,NU,X) for fixed 
-*           nu to obtain Q(MU1,NU,X), Q(MU1+1,NU,X), ..., Q(MU2,NU,X). 
-****LIBRARY   SLATEC 
-****CATEGORY  C3A2, C9 
-****TYPE      DOUBLE PRECISION (XQMU-S, DXQMU-D) 
-****KEYWORDS  LEGENDRE FUNCTIONS 
-****AUTHOR  Smith, John M., (NBS and George Mason University) 
-****ROUTINES CALLED  DXADD, DXADJ, DXPQNU 
-****REVISION HISTORY  (YYMMDD) 
-*  820728  DATE WRITTEN 
-*  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
-*  901019  Revisions to prologue.  (DWL and WRB) 
-*  901106  Corrected order of sections in prologue and added TYPE 
-*          section.  (WRB) 
-*  920127  Revised PURPOSE section of prologue.  (DWL) 
-****END PROLOGUE  DXQMU 
-****FIRST EXECUTABLE STATEMENT  DXQMU 
-*/
+ * computes the values of Legendre functions for DXLEGF. 
+ *           Method: forward mu-wise recurrence for Q(MU,NU,X) for fixed 
+ *           nu to obtain Q(MU1,NU,X), Q(MU1+1,NU,X), ..., Q(MU2,NU,X). 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *
+ *
+ *  820728  DATE WRITTEN 
+ *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
+ *  901019  Revisions to prologue.  (DWL and WRB) 
+ *  901106  Corrected order of sections in prologue and added TYPE 
+ *          section.  (WRB) 
+ *  920127  Revised PURPOSE section of prologue.  (DWL) 
+ */
 
 static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
@@ -1310,27 +1271,19 @@ static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doubl
 
 
 /*
-****SUBSIDIARY 
-****PURPOSE  To compute the values of Legendre functions for DXLEGF. 
-*           Method: backward nu-wise recurrence for Q(MU,NU,X) for 
-*           fixed mu to obtain Q(MU1,NU1,X), Q(MU1,NU1+1,X), ..., 
-*           Q(MU1,NU2,X). 
-****LIBRARY   SLATEC 
-****CATEGORY  C3A2, C9 
-****TYPE      DOUBLE PRECISION (XQNU-S, DXQNU-D) 
-****KEYWORDS  LEGENDRE FUNCTIONS 
-****AUTHOR  Smith, John M., (NBS and George Mason University) 
-****ROUTINES CALLED  DXADD, DXADJ, DXPQNU 
-****REVISION HISTORY  (YYMMDD) 
-*  820728  DATE WRITTEN 
-*  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
-*  901019  Revisions to prologue.  (DWL and WRB) 
-*  901106  Corrected order of sections in prologue and added TYPE 
-*          section.  (WRB) 
-*  920127  Revised PURPOSE section of prologue.  (DWL) 
-****END PROLOGUE  DXQNU 
-****FIRST EXECUTABLE STATEMENT  DXQNU 
-*/
+ * computes the values of Legendre functions for DXLEGF. 
+ *           Method: backward nu-wise recurrence for Q(MU,NU,X) for 
+ *           fixed mu to obtain Q(MU1,NU1,X), Q(MU1,NU1+1,X), ..., 
+ *           Q(MU1,NU2,X). 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Smith, John M., (NBS and George Mason University) 
+ *  820728  DATE WRITTEN 
+ *  890126  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
+ *  901019  Revisions to prologue.  (DWL and WRB) 
+ *  901106  Corrected order of sections in prologue and added TYPE 
+ *          section.  (WRB) 
+ *  920127  Revised PURPOSE section of prologue.  (DWL) 
+ */
 
 static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
@@ -1487,44 +1440,33 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
 
 
 /*
-****PURPOSE  To provide double-precision floating-point arithmetic 
-*           with an extended exponent range. 
-****LIBRARY   SLATEC 
-****CATEGORY  A3D 
-****TYPE      DOUBLE PRECISION (XRED-S, DXRED-D) 
-****KEYWORDS  EXTENDED-RANGE DOUBLE-PRECISION ARITHMETIC 
-****AUTHOR  Lozier, Daniel W., (National Bureau of Standards) 
-*          Smith, John M., (NBS and George Mason University) 
-****DESCRIPTION 
-*    DOUBLE PRECISION X 
-*    INTEGER IX 
-* 
-*                 IF 
-*                 RADIX**(-2L) .LE. (ABS(X),IX) .LE. RADIX**(2L) 
-*                 THEN DXRED TRANSFORMS (X,IX) SO THAT IX=0. 
-*                 IF (X,IX) IS OUTSIDE THE ABOVE RANGE, 
-*                 THEN DXRED TAKES NO ACTION. 
-*                 THIS SUBROUTINE IS USEFUL IF THE 
-*                 RESULTS OF EXTENDED-RANGE CALCULATIONS 
-*                 ARE TO BE USED IN SUBSEQUENT ORDINARY 
-*                 DOUBLE-PRECISION CALCULATIONS. 
-* 
-****SEE ALSO  DXSET 
-****REFERENCES  (NONE) 
-****ROUTINES CALLED  (NONE) 
-****COMMON BLOCKS    DXBLK2 
-****REVISION HISTORY  (YYMMDD) 
-*  820712  DATE WRITTEN 
-*  881020  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
-*  901019  Revisions to prologue.  (DWL and WRB) 
-*  901106  Changed all specific intrinsics to generic.  (WRB) 
-*          Corrected order of sections in prologue and added TYPE 
-*          section.  (WRB) 
-*  920127  Revised PURPOSE section of prologue.  (DWL) 
-****END PROLOGUE  DXRED 
-* 
-****FIRST EXECUTABLE STATEMENT  DXRED 
-*/
+ * provides double-precision floating-point arithmetic 
+ *           with an extended exponent range. 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Lozier, Daniel W., (National Bureau of Standards) 
+ *          Smith, John M., (NBS and George Mason University) 
+ * 
+ *    DOUBLE PRECISION X 
+ *    INTEGER IX 
+ * 
+ *                 IF 
+ *                 RADIX**(-2L) .LE. (ABS(X),IX) .LE. RADIX**(2L) 
+ *                 THEN DXRED TRANSFORMS (X,IX) SO THAT IX=0. 
+ *                 IF (X,IX) IS OUTSIDE THE ABOVE RANGE, 
+ *                 THEN DXRED TAKES NO ACTION. 
+ *                 THIS SUBROUTINE IS USEFUL IF THE 
+ *                 RESULTS OF EXTENDED-RANGE CALCULATIONS 
+ *                 ARE TO BE USED IN SUBSEQUENT ORDINARY 
+ *                 DOUBLE-PRECISION CALCULATIONS. 
+ * 
+ *  820712  DATE WRITTEN 
+ *  881020  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
+ *  901019  Revisions to prologue.  (DWL and WRB) 
+ *  901106  Changed all specific intrinsics to generic.  (WRB) 
+ *          Corrected order of sections in prologue and added TYPE 
+ *          section.  (WRB) 
+ *  920127  Revised PURPOSE section of prologue.  (DWL) 
+ */
 
 static int dxred_(double *x, int *ix, int *ierror)
 {
@@ -1611,6 +1553,7 @@ static int dxred_(double *x, int *ix, int *ierror)
   return 0;
 } /* dxred_ */
 
+
 /*
  *                (X,IX)*(Y,IY) + (U,IU)*(V,IV) 
  * 
@@ -1696,9 +1639,6 @@ static int dxred_(double *x, int *ix, int *ierror)
  ****REFERENCES  Smith, Olver and Lozier, Extended-Range Arithmetic and 
  *                Normalized Legendre Polynomials, ACM Trans on Math 
  *                Softw, v 7, n 1, March 1981, pp 93--105. 
- ****ROUTINES CALLED  I1MACH, XERMSG 
- ****COMMON BLOCKS    DXBLK1, DXBLK2, DXBLK3 
- ****REVISION HISTORY  (YYMMDD) 
  *  820712  DATE WRITTEN 
  *  881020  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
  *  901019  Revisions to prologue.  (DWL and WRB) 
@@ -1707,12 +1647,12 @@ static int dxred_(double *x, int *ix, int *ierror)
  *          section.  (WRB) 
  *          CALLs to XERROR changed to CALLs to XERMSG.  (WRB) 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
- ****END PROLOGUE  DXSET 
- *    dlamch is used in place of i1mach : 
+ *
+ * dlamch is used in place of i1mach : 
  * 
  * 
  *  LOG102 CONTAINS THE FIRST 60 DIGITS OF LOG10(2) FOR USE IN 
- *CONVERSION OF EXTENDED-RANGE NUMBERS TO BASE 10 . 
+ *  CONVERSION OF EXTENDED-RANGE NUMBERS TO BASE 10 . 
  */
 
 static int dxset_(const int *irad,const int *nradpl,const double *dzero,const int *nbits, int *ierror)
@@ -1937,57 +1877,41 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
  L100:
   iflag = 1;
   return 0;
-} /* dxset_ */
+} 
 
 
-  /****BEGIN PROLOGUE  DXADD 
-   ****PURPOSE  To provide double-precision floating-point arithmetic 
-   *           with an extended exponent range. 
-   ****LIBRARY   SLATEC 
-   ****CATEGORY  A3D 
-   ****TYPE      DOUBLE PRECISION (XADD-S, DXADD-D) 
-   ****KEYWORDS  EXTENDED-RANGE DOUBLE-PRECISION ARITHMETIC 
-   ****AUTHOR  Lozier, Daniel W., (National Bureau of Standards) 
-   *          Smith, John M., (NBS and George Mason University) 
-   ****DESCRIPTION 
-   *    DOUBLE PRECISION X, Y, Z 
-   *    INTEGER IX, IY, IZ 
-   * 
-   *                 FORMS THE EXTENDED-RANGE SUM  (Z,IZ) = 
-   *                 (X,IX) + (Y,IY).  (Z,IZ) IS ADJUSTED 
-   *                 BEFORE RETURNING. THE INPUT OPERANDS 
-   *                 NEED NOT BE IN ADJUSTED FORM, BUT THEIR 
-   *                 PRINCIPAL PARTS MUST SATISFY 
-   *                 RADIX**(-2L).LE.ABS(X).LE.RADIX**(2L), 
-   *                 RADIX**(-2L).LE.ABS(Y).LE.RADIX**(2L). 
-   * 
-   ****SEE ALSO  DXSET 
-   ****REFERENCES  (NONE) 
-   ****ROUTINES CALLED  DXADJ 
-   ****COMMON BLOCKS    DXBLK2 
-   ****REVISION HISTORY  (YYMMDD) 
-   *  820712  DATE WRITTEN 
-   *  881020  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
-   *  901019  Revisions to prologue.  (DWL and WRB) 
-   *  901106  Changed all specific intrinsics to generic.  (WRB) 
-   *          Corrected order of sections in prologue and added TYPE 
-   *          section.  (WRB) 
-   *  920127  Revised PURPOSE section of prologue.  (DWL) 
-   ****END PROLOGUE  DXADD 
-   * 
-   *  THE CONDITIONS IMPOSED ON L AND KMAX BY THIS SUBROUTINE 
-   *ARE 
-   *    (1) 1 .LT. L .LE. 0.5D0*LOGR(0.5D0*DZERO) 
-   * 
-   *    (2) NRADPL .LT. L .LE. KMAX/6 
-   * 
-   *    (3) KMAX .LE. (2**NBITS - 4*L - 1)/2 
-   * 
-   *THESE CONDITIONS MUST BE MET BY APPROPRIATE CODING 
-   *IN SUBROUTINE DXSET. 
-   * 
-   ****FIRST EXECUTABLE STATEMENT  DXADD 
-   */
+  
+/*
+ * provides double-precision floating-point arithmetic 
+ *           with an extended exponent range. 
+ * Copyright: SLATEC Library Copyright. 
+ * Authors:  Lozier, Daniel W., (National Bureau of Standards) 
+ *          Smith, John M., (NBS and George Mason University) 
+ *
+ *                 FORMS THE EXTENDED-RANGE SUM  (Z,IZ) = 
+ *                 (X,IX) + (Y,IY).  (Z,IZ) IS ADJUSTED 
+ *                 BEFORE RETURNING. THE INPUT OPERANDS 
+ *                 NEED NOT BE IN ADJUSTED FORM, BUT THEIR 
+ *                 PRINCIPAL PARTS MUST SATISFY 
+ *                 RADIX**(-2L).LE.ABS(X).LE.RADIX**(2L), 
+ *                 RADIX**(-2L).LE.ABS(Y).LE.RADIX**(2L). 
+ * 
+ *  820712  DATE WRITTEN 
+ *  881020  Revised to meet SLATEC CML recommendations.  (DWL and JMS) 
+ *  901019  Revisions to prologue.  (DWL and WRB) 
+ *  901106  Changed all specific intrinsics to generic.  (WRB) 
+ *          Corrected order of sections in prologue and added TYPE 
+ *          section.  (WRB) 
+ *  920127  Revised PURPOSE section of prologue.  (DWL) 
+ * 
+ *  THE CONDITIONS IMPOSED ON L AND KMAX BY THIS SUBROUTINE 
+ *ARE 
+ *    (1) 1 .LT. L .LE. 0.5D0*LOGR(0.5D0*DZERO) 
+ *    (2) NRADPL .LT. L .LE. KMAX/6 
+ *    (3) KMAX .LE. (2**NBITS - 4*L - 1)/2 
+ *THESE CONDITIONS MUST BE MET BY APPROPRIATE CODING 
+ *IN SUBROUTINE DXSET. 
+ */
 
 static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, int *ierror)
 {
@@ -2195,9 +2119,6 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
   dxadj_(z__, iz, ierror);
   return 0;
 } /* dxadd_ */
-
-/*DECK DXADJ 
- */
 
 
 /**
