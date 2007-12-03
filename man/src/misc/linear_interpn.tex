@@ -69,9 +69,9 @@
 
 \begin{examples}
 \paragraph{example 1}  1d linear interpolation
-\begin{program}\HCode{x = linspace(0,2*}\verb+%pi+\HCode{,11);\Hnewline
+\begin{program}\HCode{x = linspace(0,2*\%pi,11);\Hnewline
 y = sin(x);\Hnewline
-xx = linspace(-2*}\verb+%pi+\HCode{,4*}\verb+%pi+\HCode{,400)';\Hnewline
+xx = linspace(-2*}\verb+%pi+\HCode{,4*\%pi,400)';\Hnewline
 yy = linear_interpn(xx, x, y, "periodic");\Hnewline
 xbasc()\Hnewline
 plot2d(xx,yy,style=2)\Hnewline
@@ -81,9 +81,9 @@ xtitle("linear interpolation of sin(x) with 11 interpolation points")\Hnewline
 \end{program}
 \paragraph{example 2} bilinear interpolation
 \begin{program}\HCode{n = 8;\Hnewline
-x = linspace(0,2*}\verb+%pi+\HCode{,n); y = x;\Hnewline
+x = linspace(0,2*\%pi,n); y = x;\Hnewline
 z = 2*sin(x')*sin(y);\Hnewline
-xx = linspace(0,2*}\verb+%pi+\HCode{, 40);\Hnewline
+xx = linspace(0,2*\%pi, 40);\Hnewline
 [xp,yp] = ndgrid(xx,xx);\Hnewline
 zp = linear_interpn(xp,yp, x, y, z);\Hnewline
 xbasc()\Hnewline
@@ -100,7 +100,7 @@ xselect()\Hnewline
 x = linspace(0,1,nx);\Hnewline
 y = linspace(0,2, ny);\Hnewline
 [X,Y] = ndgrid(x,y);\Hnewline
-z = 0.4*cos(2*}\verb+%pi+\HCode{*X).*cos(}\verb+%pi+\HCode{*Y);\Hnewline
+z = 0.4*cos(2*\%pi*X).*cos(\%pi*Y);\Hnewline
 nxp = 60 ; nyp = 120;\Hnewline
 xp = linspace(-0.5,1.5, nxp);\Hnewline
 yp = linspace(-0.5,2.5, nyp);\Hnewline

@@ -77,11 +77,11 @@ most powerfull for that purpose).
 \begin{examples}
 \paragraph{example 1} interpolation of cos(x)cos(y). 
 \begin{program}\HCode{n = 7;  // a regular grid with n x n interpolation points will be used;\Hnewline
-x = linspace(0,2*}\verb+%pi+\HCode{,n); y = x;\Hnewline
+x = linspace(0,2*\%pi,n); y = x;\Hnewline
 z = cos(x')*cos(y);\Hnewline
 C = splin2d(x, y, z, "periodic");\Hnewline
 m = 50; // discretisation parameter of the evaluation grid\Hnewline
-xx = linspace(0,2*}\verb+%pi+\HCode{,m); yy = xx;\Hnewline
+xx = linspace(0,2*\%pi,m); yy = xx;\Hnewline
 [XX,YY] = ndgrid(xx,yy);\Hnewline
 zz = interp2d(XX,YY, x, y, C);\Hnewline
 emax = max(abs(zz - cos(xx')*cos(yy)));\Hnewline

@@ -61,12 +61,12 @@
 \paragraph{example 1} this example shows some different extrapolation features
 \begin{program}\HCode{// interpolation of cos(x)cos(y)\Hnewline
 n = 7;  // a n x n interpolation grid\Hnewline
-x = linspace(0,2*}\verb+%+\HCode{pi,n); y = x;\Hnewline
+x = linspace(0,2*\%pi,n); y = x;\Hnewline
 z = cos(x')*cos(y);\Hnewline
 C = splin2d(x, y, z, "periodic");\Hnewline
 // now evaluate on a bigger domain than [0,2pi]x [0,2pi]\Hnewline
 m = 80; // discretisation parameter of the evaluation grid\Hnewline
-xx = linspace(-0.5*}\verb+%+\HCode{pi,2.5*}\verb+%+\HCode{pi,m); yy = xx;\Hnewline
+xx = linspace(-0.5*\%pi,2.5*\%pi,m); yy = xx;\Hnewline
 [XX,YY] = ndgrid(xx,yy);\Hnewline
 zz1 = interp2d(XX,YY, x, y, C, "C0");\Hnewline
 zz2 = interp2d(XX,YY, x, y, C, "by_zero");\Hnewline
