@@ -1,0 +1,101 @@
+% -*- mode: latex -*-
+
+\mansection{legendre}
+\begin{mandesc}
+   \short{legendre}{associated Legendre functions}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ y = legendre(n,m,x [,normflag]) 
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{n} : non negative integer or vector of non negative integers regularly spaced with increment equal to 1
+   \vname{m} : non negative integer or vector of non negative integers regularly spaced with increment equal to 1
+   \vname{x} : real vector (elements of $x$ must be in $[-1,1]$)
+   \vname{normflag} : (optional) scalar string
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  When $n$ and $m$ are scalars, \verb!legendre(n,m,x)! evaluates the associated Legendre 
+  function $Pnm(x)$ at all the elements of $x$. The definition used is :
+$$  
+P_{nm}(x) = (-1)^m \left(1 - x^2 \right)^{m/2} \frac{d^m}{dx^m} P_n (x)
+$$
+where $Pn$ is the Legendre polynomial of degree $n$. So 
+\verb!legendre(n,0,x)! evaluates the Legendre polynomial $Pn(x)$ at all 
+the elements of $x$. 
+  
+When the normflag is equal to "norm" you get a normalized version (without
+the \verb!(-1)^m! factor) :
+$$
+ P_{nm}^{norm}(x) = \sqrt{\frac{(2n+1) (n-m)!}{2 (n+m)!}} \left(1 - x^2 \right)^{m/2} \frac{d^m}{dx^m} P_n (x)
+$$
+which is useful to compute spherical harmonic functions (see Example 3).
+  
+For efficiency, one of the two first arguments may be a vector, for instance
+\verb!legendre(n1:n2,0,x)! evaluates all the Legendre polynomials of
+degree $n_1, n_1+1, ..., n_2$ at the elements of $x$ and
+\verb!legendre(n,m1:m2,x)! evaluates all the Legendre associated 
+functions $P_{nm}$ for $m=m_1, m_1+1, ..., m_2$ at $x$.
+
+\paragraph{Output format}
+
+In any case, the format of \verb!y! is \verb+max(length(n),length(m)) x length(x)+
+with :
+\begin{verbatim}
+       y(i,j) = P(n(i),m;x(j))   if n is a vector
+       y(i,j) = P(n,m(i);x(j))   if m is a vector
+       y(1,j) = P(n,m;x(j))      if both n and m are scalars
+\end{verbatim}
+so that $x$ is preferably a row vector but any \texttt{mx x nx} matrix
+is excepted and considered as an \texttt{1 x (mx * nx)} matrix, reshaped
+following the column order.
+  
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{example 1} plot the 6 first Legendre polynomials:
+\begin{program}\HCode{x = linspace(-1,1,200)';\Hnewline
+y = legendre(0:5, 0, x);\Hnewline
+xbasc()\Hnewline
+plot2d(x,y', leg="p0@p1@p2@p3@p4@p5@p6")\Hnewline
+xtitle("the 6 th first Legendre polynomials")}
+\end{program}
+
+\paragraph{example 2} plot of the associated Legendre functions of degree 5 
+\begin{program}\HCode{x = linspace(-1,1,200)';\Hnewline
+y = legendre(5, 0:5, x, "norm");\Hnewline
+xbasc()\Hnewline
+plot2d(x,y', leg="p5,0@p5,1@p5,2@p5,3@p5,4@p5,5")\Hnewline
+xtitle("the (normalised) associated Legendre functions of degree 5")}
+\end{program}
+
+\paragraph{example 3} plot spherical harmonics
+\begin{program}\HCode{// define Ylm functions\Hnewline
+function [y] = harm_sph_Y(l,m,phi,theta)\Hnewline
+   pl = legendre(l, abs(m), cos(phi), "norm")\Hnewline
+   pl.redim[size(phi)]\Hnewline
+   if m >= 0 then\Hnewline
+      y = (-1)^m/(sqrt(2*\%pi))*exp(\%i*m*theta).*pl\Hnewline
+   else\Hnewline
+      y = 1/(sqrt(2*\%pi))*exp(\%i*m*theta).*pl\Hnewline
+   end      \Hnewline
+endfunction\Hnewline
+// la suite un autre jour}
+\end{program}
+
+\end{examples}
+
+%-- Authors
+\begin{authors}
+Smith, John M. (code dxlegf.f from Slatec), B. Pincon (nsp interface + slight modifs on dxlegf.f) 
+\end{authors}
+
