@@ -34,23 +34,10 @@
  * 
  */
 
-static double lnp1m1(double s);
 
-double nsp_log1p(double x)
-{
-  if ( -0.5 <= x && x <= 1.0) 
-    {
-      /* use the function log((1+g)/(1-g)) with g = x/(x + 2) */
-      return lnp1m1( x / (x + 2.0));
-    } 
-  else 
-    {
-      /* use the standard formula */
-      return log(x + 1.0);
-    }
-} 
-
-/*     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) 
+/*     internal function used by nsp_log1p 
+ *    
+ *     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) 
  *        for small s, this is for |s| < 0.334
  *     ALGORITHM : 
  *     1/ if |s| is "very small" we use a truncated 
@@ -101,15 +88,45 @@ static double lnp1m1(double s)
     return s * (E1 + s2*(E3 + s2*(E5 + s2*( E7 + s2*(E9 + s2*(E11 + s2*(E13 + s2*(E15 + s2*E17))))))));
 }
 
+/**
+ * nsp_log1p:
+ * @x:  a double 
+ * 
+ * computes log(1+x) with accuracy near x = 0
+ * 
+ * Returns: a double
+ **/
+double nsp_log1p(double x)
+{
+  if ( -0.5 <= x && x <= 1.0) 
+    {
+      /* use the function log((1+g)/(1-g)) with g = x/(x + 2) */
+      return lnp1m1( x / (x + 2.0));
+    } 
+  else 
+    {
+      /* use the standard formula */
+      return log(x + 1.0);
+    }
+} 
 
+
+
+/**
+ * nsp_sinpi:
+ * @x: a double 
+ * 
+ * computes sin(pi x) with accuracy even for |x| big
+ * 
+ * Returns: a double
+ **/
 double nsp_sinpi(double x)
 {
-  /*  compute sin(Pi x)      */
   unsigned int n;
   int odd;
   double a, t, res;
   static double
-    /* sin poly approx (computed with pari-gp */
+    /* sinus polynomial approx (computed with pari-gp) */
     A1 =  3.141592653589793238462643383,  /* Pi in fact */
     A3 = -5.167712780049960279993726290,
     A5 =  2.550164039874133978126524173,
@@ -117,7 +134,7 @@ double nsp_sinpi(double x)
     A9 =  0.08214587022916833811426663266,
     A11= -0.007370034512922470592483313766,
     A13=  0.0004615931209034139599168587169,
-    /* cos poly approx (computed with pari-gp */
+    /* cosinus polynomial approx (computed with pari-gp) */
     B2 = -4.934802200544630057169486610,
     B4 =  4.058712126400859221869361610,
     B6 = -1.335262767189179924892238186,
@@ -173,9 +190,15 @@ double nsp_sinpi(double x)
 }
 
 
-/*  error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x} 
- *  approximated using Cody 's approximation (specfun lib available at Netlib) 
- */
+/**
+ * nsp_stirling_error:
+ * @x: a double 
+ * 
+ *  computes the error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x} 
+ *  using Cody 's approximation (specfun lib available at Netlib) 
+ * 
+ * Returns: a double
+ **/
 double  nsp_stirling_error(double x)
 {
   static const double C0=-1.910444077728e-03,          C1=8.4171387781295e-04,
@@ -187,7 +210,8 @@ double  nsp_stirling_error(double x)
   return ((((((C6*t + C0)*t + C1)*t + C2)*t + C3)*t + C4)*t + C5)/x;
 }
 
-/* Evaluate gamma for x in [1,2]. This uses the rationnal approximation
+/* 
+ *  Evaluate gamma for x in [1,2]. This uses the rationnal approximation
  *  of the Cody 's gamma fortran code (specfun lib available at Netlib) 
  */
 static double gamma_in_1_2(double x)
@@ -228,23 +252,29 @@ static double gamma_for_x_big(double x)
   return res;
 }
 
-
+/**
+ * nsp_gamma:
+ * @x: a double 
+ * 
+ * computes gamma(x) with accuracy and normally with good special values
+ * (Nan for x a negative integer, -Inf for x = -0, + Inf for x = +0)
+ * overflow limit is near 171.624.
+ *
+ * Returns: a double
+ **/
 double nsp_gamma(double x)
 {
-  /* overflow limit is near 171.624 */
-  static double const cst1 = DBL_EPSILON,    cst2 = 15;
-  /* Pi=3.1415926535897932384626434; */
-  double abs_x, xx;
-  /*  long double prodxx; */
-  double prodxx;
+ static double const cst1 = DBL_EPSILON, cst2 = 15;
+ double abs_x, xx;
+ double prodxx;   /* long double prodxx; */
 
-  abs_x = fabs(x);
+ abs_x = fabs(x);
 
-  if ( x < 0.0  &&  floor(x) == x )
-    return 0.0/0.0;   /* NaN */
-  
-  else if ( abs_x <= cst1 )
-    return 1.0/x;
+ if ( x < 0.0  &&  floor(x) == x )
+   return 0.0/0.0;   /* NaN */
+   
+ else if ( abs_x <= cst1 )
+   return 1.0/x;
     
   else if ( abs_x <= cst2 )
     {
@@ -358,7 +388,16 @@ static double lngamma_in_0p68_1p5(double x)
     return xm1*(D + xm1*(xnum/xden));
 }
 
-/* compute log(|gamma(x)|) : follow essentially the Cody's specfun algama fortran Code */
+
+/**
+ * nsp_lngamma:
+ * @x: a double 
+ * 
+ * compute log(|gamma(x)|). This code follow essentially the Cody's specfun 
+ * algama fortran Code
+ *
+ * Returns: a double
+ **/
 double nsp_lngamma(double x)
 {
   double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.709; /* 0.6796875 in the Cody's code */
@@ -388,6 +427,7 @@ double nsp_lngamma(double x)
 
 extern int C2F(dgemm) (char *transa, char *transb, int *m, int *n, int *k, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c__, int *ldc, int transa_len, int transb_len);
 
+/* an utility for nsp_kcdf: this routine computes A^p with some scaling to avoid overflows... */
 static int matpow_for_kcdf(double *A, int m, int p, int *e, double lim_factor, double scale_factor)
 {
   double alpha=1.0,beta=0.0;
@@ -433,6 +473,41 @@ static int matpow_for_kcdf(double *A, int m, int p, int *e, double lim_factor, d
   return OK;
 }
 
+/**
+ * nsp_kcdf:
+ * @x: (input) a double 
+ * @res (output) a pointer to double which hold the final result
+ * @n: (input) an int
+ *
+ * computes P( K_n <= x ) where K_n is the Kolmogorov distribution
+ * of a "n-sample": 
+ *
+ *   K_n = sqrt(n) D_n 
+ *
+ *   D_n = max( x_1 - 0/n, x_2 - 1/n, ...., x_n - (n-1)/n ,
+ *              1/n - x_1, 2/n - x_2, ...., n/n - x_n )
+ *
+ *   x_1 < x_2 < x_3 < ..... an ordered set of uniform [0,1)
+ *
+ *   In general x_i is got from x_i = F_Y(y_i) where y_1,y_2,...,y_n
+ *   is supposed to be a n independant sample from an Y distribution 
+ *   and we want to test if this hypothesis is realistic or not.
+ *
+ *  The code follows the algorithm and code described in:
+ * "Evaluation Kolmogorov's Distribution, G. Marsaglia
+ *  W. W. Tsang and J. Wang, Journal of Statistic Software,
+ *  Vol. 8, Issue 18, Nov 2003" (the paper could be downloaded
+ *  at http://www.jstatsoft.org/v08/i18), with some little 
+ *  changes, it uses :
+ *   - an iterative matrix power algorithm (in place of a recursive one) 
+ *     (see the routine matpow_for_kcdf just before this one)
+ *   - the blas dgemm routine inside the matrix power algorithm 
+ *   - a scaling with a power of 2 in place of a scaling with 
+ *     a power of 10 (trying to avoid supplementary floating point
+ *     errors).
+ * 
+ * Returns: %OK or %FAIL
+ **/
 int nsp_kcdf(double x, double *res, int n)
 {
   double d, sqrt_n = sqrt(n), s, h, *H=NULL, fact;
@@ -492,11 +567,60 @@ int nsp_kcdf(double x, double *res, int n)
   free(H);
   return OK;
 }
+/**
+ * nsp_kcdflim:
+ * @x: (input) a double 
+ * @q (output) a pointer to double which hold 1 - the final "returned" result
+ *
+ * computes p = P( K <= x ) and q = 1 - p, where K is the limit 
+ * Kolmogorov distribution when n the size sample -> + infinity 
+ * (see #nsp_kcdf).
+ *
+ * It is known that:
+ *
+ *  P( K <=  x ) = 1 - 2 sum_{j=1}^{+oo} (-1)^(j-1) exp(-2 j^2 x^2 )
+ *
+ *      or       = sqrt(2pi)/x  sum_{j=1}^{+oo} exp(-(2j-1)^2 pi^2 / 8 x^2 )
+ *
+ *  (see the reference at #nsp_kcdf)
+ *
+ *  For x <= 0.75 we use the second serie. Noting u = exp(-(1/8)(pi/x)^2)
+ *  this one could be expressed as:
+ *
+ *      p =  sqrt(2pi)/x ( u + u^9 + u^25 + u^49 + u^81 + ...)
+ *        =  sqrt(2pi)/x * u * ( 1 + u^8 + u^24 + u^80 + ....)
+ *     
+ *     the max value for u is got for x=0.75 and is near 0.1115.
+ *     u^24 is near 1.38e-23 so, up to double precision machine
+ *     accuracy (2^(-53) = 1.11e-16), we need only 2 terms of the serie.
+ *
+ *  For  x > 0.75 we use the first serie. Noting u = exp(-2 x^2) we
+ *  have:
+ *
+ *      p = 1 - q and q = 2 ( u - u^4 + u^9 - u^16 + u^25 - u^36....)
+ *      q = 2 u * ( 1 - u^3 + u^8 - u^15 + u^24 - u^35.....)
+ *
+ * the max value for u is near 0.324 and we need to use terms until
+ * u^24 (= 1.879e-12), u^35 being less than 2^(-53). If x >= 2.5 
+ * we need only one term. The computation of:
+ *
+ *    q = 2 u ( 1 - u^3 + u^8 - u^15 + u^24 )  
+ *
+ *  is made using an Horner scheme:
+ *  
+ *      = 2 u ( 1 - u^3 ( 1 - u^5 ( 1 - u^7 ( 1 - u^9 ) ) ) )  
+ *
+ *  The switch limit (0.75) between the 2 formulae have been set up
+ *  using the pari-gp software.
+ *
+ * Returns: a double
+ **/
 
 double nsp_kcdflim(double x, double *q)
 {
-  double const pi = 3.141592653589793238462643383, sqrt_2pi = 2.506628274631000502415765285;
-  double u, u2, u3, u5, u7, u8, u9, p, temp;
+  double const pi2d8 = 1.233700550136169827354311375, /* pi^2/8 */
+               sqrt_2pi = 2.506628274631000502415765285;
+  double u, u2, u3, u5, u7, u9, p;
 
   if ( x <= 0.0 )
     {  
@@ -505,12 +629,9 @@ double nsp_kcdflim(double x, double *q)
     }
   else if ( x <= 0.75 ) 
     {
-      temp = pi/x;
-      u = exp(-0.125*temp*temp );
-      if ( u == 0.0 ) return 0.0;
-      p = u; 
-      u8 = pow(u,8);
-      p = sqrt_2pi * u*(1.0 + u8*( 1.0 + u8*u8 ) )/x;
+      u = exp(-pi2d8/(x*x));
+      if ( u == 0.0 ) { *q = 1.0 ; return 0.0;}
+      p = sqrt_2pi * u*(1.0 + pow(u,8))/x;
       *q = 1.0 - p;
     }
   else
@@ -535,7 +656,9 @@ double nsp_kcdflim(double x, double *q)
   return p;
 }
 
-/* Marsaglia, Tang, K cdf */
+/* Marsaglia, Tang, K cdf for test comparizon and test purpose only 
+ * (this will be removed after)
+ */
 static void mMultiply(double *A,double *B,double *C,int m)
 {
   int i,j,k;
@@ -610,18 +733,23 @@ double marsaglia_K(double x, int n)
   return s;
 }
 
-/*
- *        computes sqrt(x^2 + y^2) with accuracy and
- *        without spurious underflow / overflow problems
+/**
+ * nsp_hypot:
+ * @x: a double 
+ * @y: a double 
  * 
- *        algorithm by William Kahan,
- *        which appears in his article "Branch cuts for complex elementary
- *        functions, or much ado about nothing's sign bit",
- *        Editors: Iserles, A. and Powell, M. J. D. 
- *        in "States of the Art in Numerical Analysis"
- *        Oxford, Clarendon Press, 1987
- *        ISBN 0-19-853614-3
- */
+ *  computes sqrt(x^2 + y^2) with accuracy and
+ *  without spurious underflow / overflow problems
+ *
+ *  algorithm by William Kahan,					                                             
+ *  which appears in his article "Branch cuts for complex elementary    
+ *  functions, or much ado about nothing's sign bit", Editors: Iserles, 
+ *  A. and Powell, M. J. D. in "States of the Art in Numerical Analysis"
+ *  Oxford, Clarendon Press, 1987 ISBN 0-19-853614-3                          
+ *       
+ *  Returns: a double     
+ *       
+ **/
 double nsp_hypot(double x, double y)
 {
   const double   
