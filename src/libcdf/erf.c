@@ -38,7 +38,11 @@
  */
 
 #ifndef WIN32 
+#ifdef __APPLE__
+#include <machine/endian.h>
+#else
 #include <endian.h>
+#endif
 #include <sys/types.h>
 
 /* compile time check */
