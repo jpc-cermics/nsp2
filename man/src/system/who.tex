@@ -1,0 +1,36 @@
+% -*- mode: latex -*-
+\mansection{who}
+\begin{mandesc}
+  \short{who}{get current variables}
+\end{mandesc}
+\index{who}\label{who}
+\begin{calling_sequence}
+\begin{verbatim}
+  who
+  x=who(tag,hash= %t|%f )  
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: a hash table or string matrix depending on the value of 
+    the optional named argument \verb+hash+ (default value is \verb+%t+).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!who! returns a hash table filled with the current variables. 
+  A first argument chosen among \verb+'local'+,  \verb+'global'+,
+  \verb+'caller'+, or  \verb+'constants'+ can be given with the following 
+  meaning~:
+\begin{description}
+  \item['local'] get variables from the local environment. 
+  \item['global'] get variables from the global environment \emph{i.e} 
+    variables declared as global.
+  \item['caller'] get variables from the caller. 
+  \item['constants'] get variables from the predefined constants. 
+\end{description}
+  If the optional 
+  named argument \verb+hash+ is set to \verb+%f+ then the function will 
+  return a string matrix filled with variable names instead of a hash table.
+\end{mandescription} 
+
+
