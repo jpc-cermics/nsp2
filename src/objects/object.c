@@ -1039,6 +1039,26 @@ int int_object_is(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * implements( obj , type ) 
+ *   check if obj implements type type. Where type is the 
+ *   type of an interface.
+ */
+
+int int_object_implements(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ob;
+  NspType *type;
+  CheckRhs(2,2);
+  CheckLhs(0,1);
+  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
+  if ((type = GetType(stack,2))== NULLTYPE) return RET_BUG; 
+  if ( nsp_move_boolean(stack,1, check_implements(Ob, type->nsp_type->id ) != NULL )== FAIL) return RET_BUG;
+  return 1;
+}
+
+
+
+/*
  * info(obj) 
  * info on object. 
  * 
@@ -2038,6 +2058,7 @@ static OpTab Obj_func[]={
   {"pvirg",int_object_pvirg},
   {"type",int_object_type},
   {"is",int_object_is},
+  {"implements",int_object_implements},
   {"info",int_object_info},
   {"sinfo",int_object_sinfo},
   {"finfo",int_object_finfo},
