@@ -297,6 +297,7 @@ extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op, int *err);
 extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 extern int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind);
 extern int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind);
+extern int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind);
 extern int nsp_mat_nnz(NspMatrix *A);
 extern int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
 

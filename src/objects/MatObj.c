@@ -4023,6 +4023,83 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/*
+ *  sub2ind
+ *
+ *  [ind] = sub2ind( dims, ind1, ind2, ..., indk)
+ *
+ *  dims must be a vector of length k
+ */
+
+int
+int_sub2ind (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Dims, **ndind = NULL, *ind;
+  int nd, *dims=NULL, i, nb_ind=0;
+  CheckRhs (2, 7);   /* limited to indexing of order 6 */
+
+  if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  nd = Dims->mn; 
+
+  if ( rhs - 1 != nd )
+    {
+      Scierror ("%s: waiting for %d index vectors, got %d\n", NspFname(stack), nd, rhs-1);
+      return RET_BUG;
+    }
+
+  /* parse Dims */
+  if ( (dims = malloc(nd*sizeof(int))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      return RET_BUG;
+    }
+  for ( i = 0 ; i < nd ; i++ )
+    {
+      dims[i] = (int) Dims->R[i];
+      if ( dims[i] < 0 )
+	{
+	  Scierror ("%s: length in the %d th dimension is negative\n", NspFname(stack), i+1);
+	  goto err;
+	}
+    }
+
+  if ( (ndind = malloc((rhs-1)*sizeof(NspMatrix *))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      goto err;
+    }
+
+  for ( i = 2 ; i <= rhs ; i++ )
+    {
+      if ( (ndind[i-2] =  GetRealMat(stack, i)) == NULLMAT )
+	goto err;
+      if ( i == 2 )
+	nb_ind = ndind[0]->mn;
+      else 
+	if ( ndind[i-2]->mn != nb_ind )
+	  {
+	    Scierror ("%s: argument %d must have the same length than argument 2\n", NspFname(stack), i);
+	    goto err;
+	  }
+    }
+
+  if ( nsp_mat_sub2ind(dims, nd, ndind, nb_ind, &ind) == FAIL )
+    goto err;
+
+  MoveObj (stack, 1, (NspObject *) ind);
+
+  free(dims);
+  free(ndind);
+  return 1;
+
+ err:
+  free(dims);
+  free(ndind);
+  return RET_BUG;
+}
+
 
 /*
  * isinf 
@@ -4559,6 +4636,7 @@ static OpTab Matrix_func[] = {
   {"find_m", int_mxfind},
   {"mfind_m", int_mxmfind},
   {"ndind2ind_m_m", int_ndind2ind},
+  {"sub2ind_m_m", int_sub2ind},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},

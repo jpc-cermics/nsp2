@@ -5151,11 +5151,11 @@ err:
   
 /**
  * nsp_mat_ndind2ind:
- * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensionnal matrix)
- * @nd: (input) size of dims, number of dimensions of the supposed n-dimensionnal matrix)
+ * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensional matrix)
+ * @nd: (input) size of dims, number of dimensions of the supposed n-dimensional matrix)
  * @ndind: (input) vector pointer onto nd #NspMatrix each one having the role of an index vector
  * @Ind: (output) a #NspMatrix having the role of an index vector equivalent to the
- *       multiple indexing (the supposed n-dimensionnal matrix having the fortran indexing scheme) 
+ *       multiple indexing (the supposed n-dimensional matrix having the fortran indexing scheme) 
  * 
  * [ind] = ndind2ind(dims, I_1, I_2, ..., I_nd)
  *
@@ -5216,6 +5216,76 @@ int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind)
     }
 
   for ( i = 0 ; i < ntot ; i++ ) j[i]++;
+
+  ind->convert = 'i';
+  ind = Mat2double(ind);
+  *Ind = ind;
+  return OK;
+
+ err:
+  nsp_matrix_destroy(ind);
+  return FAIL;
+}
+
+  
+/**
+ * nsp_mat_sub2ind:
+ * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensional matrix)
+ * @nd: (input) size of dims, number of dimensions of the supposed n-dimensional matrix)
+ * @ndind: (input) vector pointer onto nd #NspMatrix each one having the role of an index vector
+ *         all the index vectors have the same number of components (@nb_ind)
+ * @nb_ind: (input)  number of components of the index vectors
+ * @Ind: (output) a #NspMatrix having the role of a one-way index vector equivalent to the nb_ind
+ *       multiple indices Ind_equ(k) <-> (i_1(k),i_2(k),....,i_nd(k))
+ *
+ * (the supposed n-dimensional matrix having the fortran indexing scheme) 
+ * 
+ * [ind] = sub2ind(dims, I_1, I_2, ..., I_nd)
+ *
+ * dims = [n_1, n_2, ..., n_nd]  each k \in I_k must be 1 <= k <= n_k
+ *
+ * We compute for each k = 1,...,nb_ind 
+ *
+ *    Ind_equ(k) = i_1(k) + n_1*( (i_2(k) - 1) + n_2*( (i_3(k) - 1) + .... + n_{nd-1}*(i_nd(k) - 1)))
+ *
+ * Return value: %OK or %FAIL
+ *
+ **/
+int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind)
+{
+  NspMatrix *ind;
+  int *j, i, k, p;
+
+  if ( (ind = nsp_matrix_create(NVOID,'r',1,nb_ind)) == NULLMAT) return FAIL;
+  j = (int *) ind->R;
+
+  for ( k = 0 ; k < nb_ind ; k++ )
+    {
+      p = (int) ndind[nd-1]->R[k];
+
+      if ( p  < 1  ||  p > dims[nd-1] )
+	{
+	  Scierror("Error: component %d of vector index %d is out of bounds\n", k+1,nd);
+	  goto err;
+	}
+      j[k] = p-1;
+    }
+  
+  for ( i = nd-2 ; i >= 0 ; i-- )
+    {
+      for ( k = 0 ; k < nb_ind ; k++ )
+	{
+	  p = (int) ndind[i]->R[k];
+	  if ( p  < 1  ||  p > dims[i] )
+	    {
+	      Scierror("Error: component %d of vector index %d is out of bounds\n", k+1,i+1);
+	      goto err;
+	    }
+	  j[k] = p-1 + dims[i]*j[k];
+	}
+    }
+
+  for ( k = 0 ; k < nb_ind ; k++ ) j[k]++; /* 1-based indices... and not 0-based */
 
   ind->convert = 'i';
   ind = Mat2double(ind);
