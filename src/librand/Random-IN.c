@@ -1103,7 +1103,7 @@ static int int_uin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 
  err:
-  Scierror("Error: grand(..'uin',low,high) : low (=%g) not inferior or equal to high (=%g)  \n",a,b); 
+  Scierror("Error: grand(..'uin',low,high) : low (=%d) not inferior or equal to high (=%d)  \n",a,b); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
