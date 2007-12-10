@@ -798,3 +798,116 @@ double nsp_hypot(double x, double y)
   else
     return x;
 }
+
+
+/**
+ * nsp_primefactor:
+ * @n: unsigned int number to be factorized 
+ * @factors: array (of size 9) with the factors on output 
+ * @powers: array (of size 9) with the powers of the factors 
+ * @nb_factors: number of factors (normaly <= 9) 
+ *
+ * computes the prime factors of an unsigned int.
+ *
+ **/
+void nsp_primefactors(unsigned int n, unsigned int *factors, int *powers, int *nb_factors)
+{
+  int k=0;
+  unsigned int inc, d, lim;
+
+  if ( n <= 1 )
+    {
+      factors[0] = n;
+      powers[0] = 1;
+      *nb_factors = 1;
+      return;
+    }
+
+  /* test divisibility by 2 */
+  if ( n % 2 == 0 )
+    {
+      factors[k] = 2; powers[k] = 1; n = n / 2;
+      while ( n % 2 == 0 )
+	{
+	  powers[k]++; n = n / 2;
+	}
+      k++;
+    }
+
+  /* test divisibility by 3 */
+  if ( n % 3 == 0 )
+    {
+      factors[k] = 3; powers[k] = 1; n = n / 3;
+      while ( n % 3 == 0 )
+	{
+	  powers[k]++; n = n / 3;
+	}
+      k++;
+    }
+
+  /* general loop avoiding multiples of 2 and 3 */
+  d = 5; inc = 4; lim = (unsigned int) sqrt((double) n);
+
+  while ( n > 1 )
+    {
+      if ( d > lim )
+	{
+	  factors[k] = n; powers[k] = 1; k++; break;
+	}
+
+      if ( n % d == 0 )
+	{
+	  factors[k] = d; powers[k] = 1; n = n / d;
+	  while ( n % d == 0 )
+	    {
+	      powers[k]++; n = n / d;
+	    }
+	  k++;
+	  lim = (unsigned int) sqrt((double) n);
+	}
+      
+      inc = inc == 2 ? 4 : 2;
+      d += inc;
+    }
+
+  *nb_factors = k;
+  return;
+}
+
+
+/**
+ * nsp_isprime:
+ * @n: unsigned int
+ *
+ * tests if n is a prime number
+ *
+ * Returns: %TRUE or %FALSE
+ *       
+ **/
+int nsp_isprime(unsigned int n)
+{
+  unsigned int inc, d, lim;
+
+  if ( n <= 1 )
+    return FALSE;
+
+  if ( n % 2 == 0 )
+    return FALSE;
+
+  if ( n % 3 == 0 )
+    return FALSE;
+
+  /* general loop avoiding multiples of 2 and 3 */
+  d = 5; inc = 4; lim = (unsigned int) sqrt((double) n);
+
+  while ( d <= lim )
+    {
+      if ( n % d == 0 )
+	return FALSE;
+      inc = inc == 2 ? 4 : 2;
+      d += inc;
+    }
+
+  return TRUE;
+}
+

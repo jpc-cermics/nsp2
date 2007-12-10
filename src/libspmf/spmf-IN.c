@@ -278,7 +278,7 @@ static int int_legendre(Stack stack, int rhs, int opt, int lhs)
       xx = fabs(x->R[i]); /* dxleg computes only for x in [0,1) */
       if ( ! ( xx <= 1.0 ) )
 	{
-	  Scierror("%s: %d th component of the 3th argument not in [-1,1]\r\n",i+1, NspFname(stack));
+	  Scierror("%s: %d th component of the 3th argument not in [-1,1]\n",i+1, NspFname(stack));
 	  goto err;
 	};
 
@@ -286,9 +286,9 @@ static int int_legendre(Stack stack, int rhs, int opt, int lhs)
       if ( ierror != 0 )
 	{
 	  if ( ierror == 207 )
-	    Scierror("%s: overflow or underflow of an extended range number\r\n", NspFname(stack));
+	    Scierror("%s: overflow or underflow of an extended range number\n", NspFname(stack));
 	  else
-	    Scierror("%s: error number %d\r\n", NspFname(stack), ierror);
+	    Scierror("%s: error number %d\n", NspFname(stack), ierror);
 	  goto err;
 	};
     }
@@ -368,18 +368,114 @@ static int int_nsp_hypot(Stack stack, int rhs, int opt, int lhs)
    return 1;
 }
 
+static int int_nsp_primefactors(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *f, *p;
+  double x;
+  unsigned int factors[9];
+  int k, nb_factors, powers[9], ntot, i, j;
+  
+  CheckRhs (1, 1);
+  CheckLhs (1, 2);
+
+  if ( GetScalarDouble(stack, 1, &x) == FAIL )
+    return RET_BUG;
+    
+  if ( x < 0 || x != floor(x) || x > 4294967296.0 )  /* 2^32 */
+    {
+      Scierror("%s: input should be a positive integer <= 2^32\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( x == 4294967296.0 )
+    {
+      nb_factors = 1; factors[0] = 2; powers[0] = 32;
+    }
+  else
+    {
+      nsp_primefactors((unsigned int) x, factors, powers, &nb_factors);
+    }
+
+  if ( lhs == 2 )
+    {
+      if ( (f = nsp_matrix_create(NVOID,'r', 1, nb_factors)) == NULLMAT )
+	return RET_BUG;
+      if ( (p = nsp_matrix_create(NVOID,'r', 1, nb_factors)) == NULLMAT )
+	return RET_BUG;
+
+      for ( k = 0 ; k < nb_factors; k++ )
+	{
+	  f->R[k] = (double) factors[k];
+	  p->R[k] = (double) powers[k];
+	}
+      MoveObj(stack,1,(NspObject *) f);
+      MoveObj(stack,2,(NspObject *) p);
+      return 2;
+    }
+  else /* lhs == 1  */
+    {
+      ntot = 0;
+      for ( k = 0; k < nb_factors; k++ )
+	ntot += powers[k];
+      if ( (f = nsp_matrix_create(NVOID,'r', 1, ntot)) == NULLMAT )
+	return RET_BUG;
+      for ( k = 0, i = 0 ; k < nb_factors; k++ )
+	for ( j = 0 ; j < powers[k]; j++, i++ )
+	  f->R[i] = factors[k];
+
+      MoveObj(stack,1,(NspObject *) f);
+      return 1;
+    }
+}
+
+static int int_nsp_isprime(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *X;
+  NspBMatrix *B;
+  double x;
+  int k;
+
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (X = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+    
+  if ( (B = nsp_bmatrix_create(NVOID, X->m, X->n)) == NULLBMAT )
+    return RET_BUG;
+
+  for ( k = 0 ; k < X->mn ; k++ )
+    { 
+      x = X->R[k];
+      if ( x < 0 || x != floor(x) || x > 4294967296.0 )  /* 2^32 */
+	{
+	  Scierror("%s: components of input argument must be positive integers <= 2^32\n", NspFname(stack));
+	  nsp_bmatrix_destroy(B);
+	  return RET_BUG;
+	}
+      B->B[k] = nsp_isprime((unsigned int) x);  /* rmk: in case of x=2^32, (unsigned int) x should be 0 so it is OK */
+    }
+
+  MoveObj(stack,1,(NspObject *) B);
+  return 1;
+}
+
+
 static OpTab Spmf_func[]={
-  {"log1p", int_nsp_log1p},
-  {"sinpi", int_nsp_sinpi},
-  {"gammabr", int_nsp_gammabr},
-  {"lngamma", int_nsp_lngamma},
-  {"kcdf", int_nsp_kcdf},
-  {"kcdflim", int_nsp_kcdflim},
-  {"kcdfbis", int_nsp_kcdfbis},
-  {"legendre", int_legendre},
-  {"hypot", int_nsp_hypot},
+  {"log1p_m", int_nsp_log1p},
+  {"sinpi_m", int_nsp_sinpi},
+  {"gammabr_m", int_nsp_gammabr},
+  {"lngamma_m", int_nsp_lngamma},
+  {"kcdf_m_m", int_nsp_kcdf},
+  {"kcdflim_m", int_nsp_kcdflim},
+  {"kcdfbis_m", int_nsp_kcdfbis},
+  {"legendre_m_m", int_legendre},
+  {"hypot_m_m", int_nsp_hypot},
+  {"factor_m", int_nsp_primefactors},
+  {"isprime_m", int_nsp_isprime},
   {(char *) 0, NULL}
 };
+
 
 int Spmf_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
