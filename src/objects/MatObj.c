@@ -3967,7 +3967,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Dims, **ndind = NULL, *ind;
   int nd, *dims=NULL, i;
-  CheckRhs (2, 7);   /* limited to indexing of order 6 */
+  CheckRhsMin (2);
 
   if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
     return RET_BUG;
@@ -4036,7 +4036,7 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Dims, **ndind = NULL, *ind;
   int nd, *dims=NULL, i, nb_ind=0;
-  CheckRhs (2, 7);   /* limited to indexing of order 6 */
+  CheckRhsMin (2);
 
   if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
     return RET_BUG;
@@ -4489,6 +4489,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 
   return Max(lhs,1);
 }
+
 
 /*
  * The Interface for basic matrices operation 
