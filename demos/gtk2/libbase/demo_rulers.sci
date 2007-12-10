@@ -1,6 +1,5 @@
-
 // Rulers 
-// Les handlers marchent pas XXXXXX 
+// handlers unfinished XXXXXX 
 
 function demo_rulers()
   win = gtkwindow_new()
@@ -11,12 +10,17 @@ function demo_rulers()
   table = gtktable_new(rows=2,columns=3,homogeneous=%f) 
   win.add[table]
   table.show[]
+  
+  // first the x-ruler 
+    
   xruler = gtkhruler_new()
   xruler.set_range[5, 15, 0, 20]
   //	ruler.set_metric(PIXELS)
   xruler.set_metric[GTK.PIXELS]
   
   function [y]=motion_notify(obj, event)
+    y=1;
+    // printf("In motion notify\n");
     // pause
     // y = ruler.emit("motion_notify_event", event)
     // y = gtk_signal_emitv_by_name(xruler,"motion_notify_event",list( event))
@@ -26,6 +30,9 @@ function demo_rulers()
   xoptions=ior(GTK.EXPAND,GTK.FILL),  yoptions=GTK.FILL, 
   table.attach[xruler,1,2,0,1,xoptions=xoptions,yoptions=yoptions];
   xruler.show[]
+  
+  // now the y-ruler 
+  
   yruler = gtkvruler_new()
   yruler.set_range[5, 15, 0, 20]
   yruler.set_metric[GTK.PIXELS];
@@ -33,7 +40,9 @@ function demo_rulers()
   function [y]=motion_notify(obj, event) // ruler=ruler)
     y=1
     //return ruler.emit("motion_notify_event", event)
-    y=gtk_signal_emitv_by_name(yruler,"motion_notify_event",list( event))
+    //y=gtk_signal_emitv_by_name(yruler,"motion_notify_event",list(
+    //event))
+    // printf("In motion notify\n");
   endfunction
   win.connect["motion_notify_event", motion_notify];
   xoptions=GTK.FILL,  yoptions=ior(GTK.EXPAND, GTK.FILL), 

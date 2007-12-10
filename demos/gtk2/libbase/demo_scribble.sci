@@ -66,8 +66,8 @@ function demo_scribble()
   drawing_area.connect["configure_event", scr_configure_event];
   drawing_area.connect["motion_notify_event", scr_motion_notify_event];
   drawing_area.connect["button_press_event", scr_button_press_event];
-  ev=ior([GDK.EXPOSURE_MASK,GDK.LEAVE_NOTIFY_MASK,GDK.BUTTON_PRESS_MASK,
-	  GDK.POINTER_MOTION_MASK,GDK.POINTER_MOTION_HINT_MASK]);
+  ev=ior([GDK.EXPOSURE_MASK;GDK.LEAVE_NOTIFY_MASK;GDK.BUTTON_PRESS_MASK;
+	  GDK.POINTER_MOTION_MASK;GDK.POINTER_MOTION_HINT_MASK]);
   drawing_area.set_events[ev];
   button = gtkbutton_new(label="Quit")
   vbox.pack_start[button,expand= %f,fill=%f,padding=0]
