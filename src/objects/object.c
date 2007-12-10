@@ -1957,6 +1957,18 @@ static int int_object_isempty(Stack stack, int rhs, int opt, int lhs)
   return 1; 
 } 
 
+/*
+ * isscalar(A) for all objects
+ */
+
+static int int_object_isscalar(Stack stack, int rhs, int opt, int lhs) 
+{
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  nsp_move_boolean(stack,1,nsp_object_get_size(NthObj(1),0)==1); 
+  return 1; 
+} 
+
 /* serialize(A).
  */
 
@@ -2068,6 +2080,7 @@ static OpTab Obj_func[]={
   {"diary",int_object_diary},
   {"length",int_object_length},
   {"isempty",int_object_isempty},
+  {"isscalar",int_object_isscalar},
   {"serialize",int_object_serialize},
   {"unserialize",int_serial_unserialize},
   {"unserialize_m",int_serial_munserialize},
