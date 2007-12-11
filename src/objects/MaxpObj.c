@@ -1615,15 +1615,24 @@ typedef int (*M11) (NspMatrix *A);
 
 static int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMaxpMatrix *A,*B;
+  NspMaxpMatrix *A,*B,*Cmp;
+  NspMatrix *C;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A=GetRealMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  if ( A->mn == 0) return 1;
+
+  if ((A=GetRealMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
+
   if ((B=GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
-  CheckSameDims(NspFname(stack),1,2,A,B);
-  if (nsp_mat_atan2((NspMatrix *) A,(NspMatrix *)B) == FAIL ) return RET_BUG;
+
+  if ( A->mn != 1 && B->mn != 1 )
+    CheckSameDims (NspFname(stack), 1, 2, A, B);
+
+  if ( (C = nsp_mat_atan2 ((NspMatrix *) A,(NspMatrix *) B)) == NULLMAT)
+    return RET_BUG;
+
+  /* from matrix to maxplus matrix by moving data */
+  Cmp = nsp_matrix_cast_to_mpmatrix(C);
+  MoveObj(stack,1,(NspObject *) Cmp);
   return 1;
 }
 
