@@ -53,6 +53,7 @@
 #define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp;	\
                   itemp = p[i]; p[i] = p[j]; p[j] = itemp;
 
+
 #define SWITCH_VALUE 20
 
 #define POP_segment(ia,ib) la--; if ( la >= 0 ) { ia = ileft[la]; ib = iright[la]; }
@@ -67,7 +68,10 @@ void XCNAME(nsp_sqsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],char dir )
   int c;
 #endif
 
-  for ( i = 0 ; i < n ; i++) p[i]=i+1;
+  if ( dir == 'd' ) 
+    for ( i = 0 ; i < n ; i++) p[i]=n - i;
+  else
+    for ( i = 0 ; i < n ; i++) p[i]=i+1;
 
 #ifdef DOUBLE_ONLY
   for ( i = n-1 , j = n ; i >= 0 ; i-- )
@@ -131,5 +135,6 @@ void XCNAME(nsp_sqsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],char dir )
 	{
 	  SWAP(i,n-i-1);
 	}
+      for ( i = 0 ; i < n ; i++) p[i]=n - p[i] + 1;
     }
 }
