@@ -55,7 +55,7 @@ struct _NspSpColmatrix {
   NspTypeSpColMatrix *type; 
   /*< public >*/
   char rc_type;        /* 'r' or 'i' : real or complex matrix */
-  int m,n,mn;   /* mn should be removed since m*n can be bigger than int */
+  int m,n;   /* mn should be removed since m*n can be bigger than int */
   SpCol **D; /* array of size m giving the Rows datas */
   char convert; /* 't' : the matrix is stored in triplet , 'n': triplet not used   */
   nsp_sparse_triplet triplet; 

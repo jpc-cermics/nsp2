@@ -289,7 +289,7 @@ int nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_lev
     }
   else
     {
-      if (Sp->mn==0 ) 
+      if (Sp->m ==0 || Sp->n == 0) 
 	{
 	  Sciprintf1(indent,"%s\t= []\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 	}
@@ -366,7 +366,7 @@ int nsp_sprowmatrix_enlarge_rows(NspSpRowMatrix *Sp, int m)
 int nsp_sprowmatrix_enlarge(NspSpRowMatrix *A, int m, int n)
 {
   /* special case **/
-  if ( n > A->n  ) {A->n = n ;A->mn = n*A->m;} /* easy for sparse matrix **/
+  if ( n > A->n  ) {A->n = n ;/* A->mn = n*A->m;*/} /* easy for sparse matrix **/
   if ( m > A->m  ) 
     return nsp_sprowmatrix_enlarge_rows(A,m);
   return OK;
@@ -601,8 +601,8 @@ int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *
   int i;
   int Bscal=0;
   /* Calling a genric function which check arguments **/
-  if (GenericMatSeRo(A,A->m,A->n,A->mn,Inds,
-		     B,B->m,B->n,B->mn,(F_Enlarge)nsp_sprowmatrix_enlarge,&Bscal)== FAIL) 
+  if (GenericMatSeRo(A,A->m,A->n,A->m*A->n,Inds,
+		     B,B->m,B->n,B->m*B->n,(F_Enlarge)nsp_sprowmatrix_enlarge,&Bscal)== FAIL) 
     return FAIL;
   /* */
   if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
@@ -737,7 +737,7 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
   NspMatrix *Work= NULL, *Index = NULL;
   NspSpRowMatrix *Loc;
   int rmin,rmax,cmin,cmax,i,j,Rm;
-  if ( A->mn == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,0,0);
+  if ( A->m || A->n == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n);
   if (flag == 1) 
     {
       Bounds(Rows,&rmin,&rmax);
@@ -840,8 +840,8 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
   NspSpRowMatrix *Loc;
   int rmin,rmax,i,err=0,k;
   Bounds(Elts,&rmin,&rmax);
-  if ( A->mn == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,0,0);
-  if ( rmin < 1 || rmax > A->mn )
+  if ( A->m == 0 || A->n == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n);
+  if ( rmin < 1 || rmax > A->m * A->n ) /* possible overflow */
     {
       Scierror("Error:\tIndices out of bound\n");
       return(NULLSPROW);
@@ -1353,7 +1353,7 @@ NspSpRowMatrix *nsp_sprowmatrix_multtt(NspSpRowMatrix *A, NspSpRowMatrix *B)
 int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
 { 
   int i,k;
-  if ( B->mn == 0 || B->D[0]->size == 0)
+  if ( (B->m == 0 && B->n == 0) || B->D[0]->size == 0)
     {
       /* B is [] or [0] **/
       /* Change A to [] sparse **/
@@ -1367,7 +1367,7 @@ int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
 	  A->D[i]->size =0;
 	}
       FREE(A->D);
-      A->m = A->n = A->mn = 0;
+      A->m = A->n = 0; /* A->mn = 0; */
       return OK;
     }
   if ( B->rc_type == 'c' )
@@ -1432,7 +1432,7 @@ NspMatrix *nsp_sprowmatrix_op_scal(NspSpRowMatrix *A, NspSpRowMatrix *B, int *fl
   char type = 'r';
   int i,j,k;
   NspMatrix *Loc;
-  if ( B->mn == 0 || B->D[0]->size == 0)
+  if ( ( B->m == 0 && B->n == 0 ) || B->D[0]->size == 0)
     {
       /* B is [] or [0] **/
       /* return A unchanged **/
@@ -1825,7 +1825,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
 static int nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *m, int indent)
 {
   int rep = TRUE;
-  if ( m->mn == 0) 
+  if ( m->m == 0 || m->n == 0) 
     {
       Sciprintf("[]\n");
     }

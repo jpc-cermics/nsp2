@@ -89,13 +89,13 @@ int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
   /* fill with Mt */
   M->m=Mt->m;
   M->n=Mt->n;
-  M->mn = M->m*M->n;
+  /* M->mn = M->m*M->n; */
   M->rc_type= Mt->rc_type;
   M->convert = Mt->convert;
   M->triplet = Mt->triplet;
   M->D = Mt->D ;
   /* free Mt */
-  Mt->D= NULL; Mt->m = Mt->n = Mt->mn = 0;
+  Mt->D= NULL; Mt->m = Mt->n =0; /* Mt->mn = 0;*/
   nsp_sprowmatrix_destroy(Mt);
   return OK;
 }
@@ -224,7 +224,7 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
     }
   M->m = M->triplet.m;
   M->n = M->triplet.n;
-  M->mn = M->m*M->n;
+  /* M->mn = M->m*M->n; */
   /* resize each row */
   for ( i = 0 ; i < M->m ; i++) 
     {
@@ -409,7 +409,7 @@ int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
       M->D[i]=NULL;
     }
   FREE(M->D);
-  M->m= M->n = M->mn = 0;
+  M->m= M->n =0; /*  M->mn = 0; */
   if ( nsp_spcol_update_from_triplet_internal(M) == FAIL) return FAIL;
   return OK;
 }
@@ -538,7 +538,7 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
     }
   M->m = M->triplet.m;
   M->n = M->triplet.n;
-  M->mn = M->m*M->n;
+  /* M->mn = M->m*M->n; */
   /* resize each column */
   for ( i = 0 ; i < M->n ; i++) 
     {

@@ -146,7 +146,7 @@ int nsp_sprowmatrix_size(NspSpRowMatrix *H, int flag)
 {
   switch (flag) 
     {
-    case 0: return H->mn;
+    case 0: return H->m*H->n;
     case 1: return H->m;
     case 2: return H->n;
     }
@@ -476,14 +476,14 @@ static int int_sprowmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, Sp
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpRow(stack,1))  == NULLSPROW) return RET_BUG;
-  if ( HMat1->mn == 0) 
+  if ( HMat1->m ==0 && HMat1->n == 0) 
     {
       /* return 2 */
       NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
   if ((HMat2 = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
-  if ( HMat2->mn == 0) 
+  if ( HMat2->m == 0 && HMat2->n == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
@@ -866,19 +866,19 @@ static int int_sprowmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ( HMat1->mn == 0)  
+  if ( HMat1->m == 0 &&  HMat1->n == 0)  
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
   if ((HMat2 = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
-  if ( HMat2->mn == 0 )
+  if ( HMat2->m == 0 && HMat2->n == 0 )
     {
       /* flag == 1 ==> A op [] returns [] **/
       NSP_OBJECT(HMat2)->ret_pos = 1;
       return 1;
     }
-  if ( HMat2->mn == 1) 
+  if ( HMat2->m == 1 && HMat2->n == 1) 
     {
       if ( HMat2->D[0]->size == 0) 
 	{
@@ -895,7 +895,7 @@ static int int_sprowmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21
 	  NSP_OBJECT(HMat1)->ret_pos = 1;
 	}
     }
-  else if ( HMat1->mn == 1 ) 
+  else if ( HMat1->m == 1 &&  HMat1->n == 1 ) 
     {
       if ( HMat1->D[0]->size == 0) 
 	{
@@ -941,7 +941,7 @@ static int int_sprowmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
   if ((HMat1 = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
 
-  if ( HMat1->mn == 0)  
+  if ( HMat1->m== 0 && HMat1->n == 0)  
     {
       /* Not so good we need to return a full XXXX */
       NSP_OBJECT(HMat1)->ret_pos = 1;
@@ -986,7 +986,7 @@ static int int_sprowmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
-  else if ( HMat2->mn == 0 )
+  else if ( HMat2->m==0 && HMat2->n == 0 )
     {
       /* Not so good we need to return a full XXXX */
       NSP_OBJECT(HMat2)->ret_pos = 1;
@@ -1062,7 +1062,7 @@ static int int_sprowmatrix_plus(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) Res);
       return 1;
     }
-  if ( A->mn <= 1) 
+  if ( A->m*A->n <= 1) 
     {
       NspMatrix *C=nsp_sprowmatrix_op_scal(B,A,&flag,'+');
       if ( flag == 1) 
@@ -1077,7 +1077,7 @@ static int int_sprowmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  if ( B->mn <= 1) 
+  if ( B->m*B->n <= 1) 
     {
       NspMatrix *C=nsp_sprowmatrix_op_scal(A,B,&flag,'+');
       if ( flag == 1) 
@@ -1116,7 +1116,7 @@ static int int_sprowmatrix_sub(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) Res);
       return 1;
     }
-  if ( A->mn <= 1) 
+  if ( A->m*A->n <= 1) 
     {
       NspMatrix *C=nsp_sprowmatrix_op_scal(B,A,&flag,'#'); /* -B + scalar **/
       if ( flag == 1) 
@@ -1135,7 +1135,7 @@ static int int_sprowmatrix_sub(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  if ( B->mn <= 1) 
+  if ( B->m*B->n <= 1) 
     {
       NspMatrix *C=nsp_sprowmatrix_op_scal(A,B,&flag,'-');
       if ( flag == 1) 
@@ -1286,7 +1286,7 @@ static int int_sprowmatrix_triu(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m == 0 && A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1313,7 +1313,7 @@ static int int_sprowmatrix_tril(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m == 0 && A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1426,7 +1426,7 @@ static int int_sprowmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1443,7 +1443,7 @@ static int int_sprowmatrix__genv11(Stack stack, int rhs, int opt, int lhs, VM11 
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1547,7 +1547,7 @@ static int int_sprowmatrix_logel(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m == 0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1593,7 +1593,7 @@ static int int_sprowmatrix_sqrtel(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1760,7 +1760,7 @@ static int int_sprowmatrix_conj(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
-  if ( A->mn == 0 || A->rc_type == 'r' )
+  if ( (A->m == 0 || A->n == 0) || A->rc_type == 'r' )
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;

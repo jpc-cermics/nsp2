@@ -167,7 +167,7 @@ int nsp_spcolmatrix_size(NspSpColMatrix *H, int flag)
 {
   switch (flag) 
     {
-    case 0: return H->mn;
+    case 0: return H->m*H->n;
     case 1: return H->m;
     case 2: return H->n;
     }
@@ -640,14 +640,14 @@ static int int_spcolmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, Sp
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpCol(stack,1))  == NULLSPCOL) return RET_BUG;
-  if ( HMat1->mn == 0) 
+  if ( HMat1->m ==0 && HMat1->n == 0) 
     {
       /* return 2 */
       NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
   if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( HMat2->mn == 0) 
+  if ( HMat2->m == 0 && HMat2->n == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
@@ -1044,7 +1044,7 @@ static int int_spcolmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21
   CheckLhs(1,1);
   if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( HMat2->mn == 1) 
+  if ( HMat2->m == 1 && HMat2->n == 1) 
     {
       if ( HMat2->D[0]->size == 0) 
 	{
@@ -1061,7 +1061,7 @@ static int int_spcolmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21
 	  NSP_OBJECT(HMat1)->ret_pos = 1;
 	}
     }
-  else if ( HMat1->mn == 1 ) 
+  else if ( HMat1->m==1 && HMat1->n == 1 ) 
     {
       if ( HMat1->D[0]->size == 0) 
 	{
@@ -1294,7 +1294,7 @@ static int int_spcolmatrix_plus_m_sp(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,(NspObject *) Bfull );
       return 1;
     }
-  if ( B->mn == 1) 
+  if ( B->m == 1 && B->n == 1) 
     {
       int rep;
       if ((A = GetMatCopy(stack,1)) == NULLMAT) return RET_BUG;
@@ -1335,7 +1335,7 @@ static int int_spcolmatrix_plus_sp_m(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( A->mn == 1) 
+  if ( A->m == 1 && A->n == 1) 
     {
       int rep;
       if ((B = GetMatCopy(stack,2)) == NULLMAT) return RET_BUG;
@@ -1530,7 +1530,7 @@ static int int_spcolmatrix_multt_m_sp(Stack stack, int rhs, int opt, int lhs)
       nsp_spcolmatrix_destroy(As);
       return 1;
     }
-  if ( B->mn == 1) 
+  if ( B->m==1 && B->n == 1) 
     {
       if (nsp_spcolmatrix_mult_scal(As,B) != OK) goto err;
       MoveObj(stack,1,NSP_OBJECT(As));
@@ -1575,7 +1575,7 @@ static int int_spcolmatrix_multt_sp_m(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( A->mn == 1) 
+  if ( A->m==1 && A->n == 1) 
     {
       if (nsp_spcolmatrix_mult_scal(Bs,A) != OK) goto err;
       MoveObj(stack,1,NSP_OBJECT(Bs));
@@ -1655,7 +1655,7 @@ static int int_spcolmatrix_div_el_m_sp(Stack stack, int rhs, int opt, int lhs)
       nsp_spcolmatrix_destroy(As);
       return 1;
     }
-  if ( B->mn == 1) 
+  if ( B->m==1 && B->n == 1) 
     {
       if ( B->D[0]->size == 0 ) 
 	{
@@ -1716,7 +1716,7 @@ static int int_spcolmatrix_div_el_sp_m(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( A->mn == 1) 
+  if ( A->m==1 && A->n == 1) 
     {
       /* A * <non-nul-scalar> **/
       if ((Res =nsp_spcolmatrix_scal_div_tt(A,Bs))  == NULLSPCOL) goto err;
@@ -1917,7 +1917,7 @@ static int int_spcolmatrix_triu(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 && A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -1944,7 +1944,7 @@ static int int_spcolmatrix_tril(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 && A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -2067,7 +2067,7 @@ static int int_spcolmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -2084,7 +2084,7 @@ static int int_spcolmatrix__genv11(Stack stack, int rhs, int opt, int lhs, VM11 
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -2191,7 +2191,7 @@ static int int_spcolmatrix_logel(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -2237,7 +2237,7 @@ static int int_spcolmatrix_sqrtel(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0) 
+  if ( A->m==0 || A->n == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
@@ -2404,7 +2404,7 @@ static int int_spcolmatrix_conj(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( A->mn == 0 || A->rc_type == 'r' )
+  if ( (A->m == 0 || A->n == 0) || A->rc_type == 'r' )
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;

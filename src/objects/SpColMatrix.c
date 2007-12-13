@@ -99,7 +99,7 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
   */
   Sp->m=m;
   Sp->n=n;
-  Sp->mn = Sp->m*Sp->n;
+  /* Sp->mn = Sp->m*Sp->n; */
   Sp->rc_type=type;
   Sp->convert = 'n';
   Sp->triplet.Jc=NULL;
@@ -223,7 +223,7 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
   /* fix column size and total size  **/
   if ( m == -1 ) m = maxrow;
   Loc->m = m;
-  Loc->mn = n*m;
+  /* Loc->mn = n*m; */
   /* fill each col with Values 
    */
   for ( i = 0 ; i < Loc->n ; i++) Loc->D[i]->iw=0;
@@ -531,7 +531,7 @@ int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_lev
     }
   else
     {
-      if (Sp->mn==0 ) 
+      if (Sp->m==0 || Sp->n==0 ) 
 	{
 	  Sciprintf1(indent,"%s\t= []\t\tspcol %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 	}
@@ -572,9 +572,9 @@ NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
   int *xb;
   int i,k;
   NspSpColMatrix *Loc;
-  if ( A->mn !=  m*n ) 
+  if ( A->m*A->n !=  m*n )  /* possible overflow */
     {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",m,n,A->mn);
+      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",m,n,A->m*A->n);
       return(NULLSPCOL);
     }
   if ((Loc =nsp_spcolmatrix_create(NVOID,A->rc_type,m,n))== NULLSPCOL ) 
@@ -675,7 +675,7 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
       Sp->D[i]->size = 0 ;
     }
   Sp->n = n;
-  Sp->mn = Sp->n*Sp->m;
+  /* Sp->mn = Sp->n*Sp->m; */
   return(OK);
 }
 
@@ -695,7 +695,7 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n)
 {
   /* special case **/
-  if ( m > A->m  ) {A->m = m ;A->mn=m*A->n;} /* easy for sparse matrix **/
+  if ( m > A->m  ) {A->m = m ;/* A->mn=m*A->n;*/} /* easy for sparse matrix **/
   if ( n > A->n  ) 
     return nsp_spcolmatrix_enlarge_cols(A,n);
   return OK;
@@ -805,7 +805,7 @@ int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B)
 	}
     }
   A->m += B->m;
-  A->mn = A->m*A->n;
+  /* A->mn = A->m*A->n; */
   return(OK);
 }
 
@@ -844,7 +844,7 @@ int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
     }
   /* restore proper row dimensions **/
   A->m = Am + B->m ;
-  A->mn = A->m*A->n;
+  /* A->mn = A->m*A->n; */
   B->m = Bm;
   return(OK);
   
@@ -1051,7 +1051,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
   /* Check compatibility : B is a scalar or B must have compatible 
    * size with Rows and Cols : Note that B=[] is treated elsewhere 
    */
-  if ( B->mn != 1)
+  if ( B->m != 1 || B->n != 1)
     {
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
 	{
@@ -1089,7 +1089,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
       int amin = 0 ;
       int amax = Ais;
       int ib,nel ;
-      if ( B->mn == 1)
+      if ( B->m == 1 && B->n == 1)
 	{
 	  ib = 0;
 	  nel = Rows->mn;
@@ -1106,7 +1106,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
 	  int ok = -1;
 	  int row = ( (int) Rows->R[k])-1;
 	  int ok1,col1,k1,kb;
-	  kb = ( B->mn == 1) ? 0 : k; /* if B is scalar **/
+	  kb = ( B->m == 1 && B->n == 1) ? 0 : k; /* if B is scalar **/
 	  /* search if the kth element of B->D[ib] is non null **/
 	  for ( l = 0 ; l < B->D[ib]->size ; l++) 
 	    {
@@ -1187,8 +1187,8 @@ int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *
   int i;
   int Bscal=0;
   /* Calling a genric function which check arguments **/
-  if (GenericMatSeRo(A,A->m,A->n,A->mn,Inds,
-		     B,B->m,B->n,B->mn,(F_Enlarge)nsp_spcolmatrix_enlarge,&Bscal)== FAIL) 
+  if (GenericMatSeRo(A,A->m,A->n,A->m*A->n,Inds,
+		     B,B->m,B->n,B->m*B->n,(F_Enlarge)nsp_spcolmatrix_enlarge,&Bscal)== FAIL) 
     return FAIL;
   /* */
   if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
@@ -1677,8 +1677,8 @@ NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts)
   NspSpColMatrix *Loc;
   int rmin,rmax,i,err,k;
   Bounds(Elts,&rmin,&rmax);
-  if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0);
-  if ( rmin < 1 || rmax > A->mn )
+  if ( A->m ==0 || A->n == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,A->n);
+  if ( rmin < 1 || rmax > A->m*A->n ) /* possible overflow */
     {
       Scierror("Error:\tIndices out of bound\n");
       return(NULLSPCOL);
@@ -1882,10 +1882,10 @@ int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
   /*ZZZ */
   rmin = Max(0,-k);
   cmin = Max(0,k);
-  rmax = Diag->mn + Max(0,-k);
-  cmax = Diag->mn + Max(0,k);
+  rmax = Diag->m*Diag->n + Max(0,-k);
+  cmax = Diag->m*Diag->n + Max(0,k);
   itmax = Min(A->m-rmin,A->n -cmin );
-  if ( itmax != Diag->mn ) 
+  if ( itmax != Diag->m*Diag->n ) 
     {
       Scierror("Error: the given diag vector should be of size %d\n",itmax);
       return(FAIL);
@@ -2053,8 +2053,8 @@ NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k)
   NspSpColMatrix *Loc;
   rmin = Max(0,-k);
   cmin = Max(0,k);
-  rmax = Diag->mn + Max(0,-k);
-  cmax = Diag->mn + Max(0,k);
+  rmax = Diag->m*Diag->n + Max(0,-k);
+  cmax = Diag->m*Diag->n + Max(0,k);
   /* make a square matrix */
   n = Max(cmax,rmax);
   if ((Loc =nsp_spcolmatrix_create(NVOID,Diag->rc_type,n,n))  == NULLSPCOL) 
@@ -3982,7 +3982,7 @@ static NspSpColMatrix *BinaryOp_bis(NspSpColMatrix *A, NspSpColMatrix *B, BopLef
 int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
 { 
   int i,k;
-  if ( B->mn == 0 || B->D[0]->size == 0)
+  if ( (B->m == 0 || B->n == 0) || B->D[0]->size == 0)
     {
       /* B is [] or [0] **/
       /* Change A to [] sparse **/
@@ -3996,7 +3996,7 @@ int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
 	  A->D[i]->size =0;
 	}
       FREE(A->D);
-      A->m = A->n = A->mn = 0;
+      A->m = A->n = 0 ; /* A->mn = 0; */
       return OK;
     }
   if ( B->rc_type == 'c' )
@@ -4060,7 +4060,7 @@ NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *fl
   char type = 'r';
   int i,j,k;
   NspMatrix *Loc;
-  if ( B->mn == 0 || B->D[0]->size == 0)
+  if ( ( B->m == 0 && B->n == 0 ) || B->D[0]->size == 0)
     {
       /* B is [] or [0] **/
       /* return A unchanged **/
@@ -4505,7 +4505,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
 {
   int rep = TRUE;
-  if ( m->mn == 0) 
+  if ( m->m || m->n == 0) 
     {
       Sciprintf("[]\n");
     }
@@ -5089,7 +5089,7 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
   NspSpColMatrix *Sum=NULL;
   int i,k,count;
   int inc=1;
-  if ( A->mn == 0) 
+  if ( A->m ==0 || A->n == 0) 
     {
       if ( flag[0] == 'F' || flag[0]=='f' )
 	{
@@ -5255,7 +5255,7 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
   NspSpColMatrix *M=NULL;
   int j;
   int inc=1,imax,count;
-  if ( A->mn == 0 ) 
+  if ( A->m == 0 || A->n == 0 ) 
     {
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
       return nsp_spcolmatrix_create(NVOID,'r',0,0);

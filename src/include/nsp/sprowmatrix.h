@@ -56,7 +56,7 @@ struct _NspSpRowmatrix {
   NspTypeSpRowMatrix *type; 
   /*< public >*/
   char rc_type;        /* 'r' or 'i' : real or complex matrix */
-  int n,m,mn;   /* mn should be removed since m*n can be bigger than int 
+  int n,m;   /* mn should be removed since m*n can be bigger than int 
 		 * Warning: the order n,m should be the inverse to the 
 		 * one implemented in _NspSpColmatrix. Thus we can cast 
 		 * from _NspSpColmatrix to _NspSpRowmatrix
