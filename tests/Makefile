@@ -90,7 +90,7 @@ tests: all
 
 .tst.dia :
 	@echo -n "testing $*: "
-	@../bin/scilab -nw -e "nsptest('$*.tst');quit" 
+	@../bin/nsp -nw -e "nsptest('$*.tst');quit" 
 
 .tst.vl :
 	@echo -n "valgrind $*: "
