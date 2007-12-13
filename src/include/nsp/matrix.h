@@ -275,6 +275,7 @@ extern int nsp_mat_tgamma(NspMatrix *A);
 
 extern int nsp_mat_arg(NspMatrix *A); 
 extern int nsp_mat_polar(NspMatrix *A, NspMatrix *B); 
+extern int nsp_mat_nearfloat(int dir, NspMatrix *x);
 extern int nsp_mat_iand(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_iandu(NspMatrix *A, unsigned int *res); 
 extern int nsp_mat_ior(NspMatrix *A, NspMatrix *B); 
