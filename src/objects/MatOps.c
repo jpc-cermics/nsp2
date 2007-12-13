@@ -3801,6 +3801,87 @@ int nsp_mat_polar(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
+/**
+ * nsp_mat_nearfloat:
+ * @x: a #NspMatrix (should be real)
+ * @dir: int 1 for next float -1 for pred float
+ *
+ * x=nearfloat(dir,x)  x is changed
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_mat_nearfloat(int dir, NspMatrix *x)
+{
+  int i, e, digits;
+  double xx, sign;
+  static int base = 0, denorm = 0, emin = 0;
+  static double one_ulp, tiny, tiniest;
+
+  if ( base == 0 )
+    {
+      base = (int) nsp_dlamch("b");
+      emin = (int) nsp_dlamch("m");
+      digits = nsp_dlamch("n");
+      one_ulp = pow(base, -digits);
+      tiny = nsp_dlamch("u");  
+      if ( tiny / base > 0.0 )   /* denormalised number are used */
+	{
+	  denorm = 1;
+	  tiniest = tiny;
+	  for ( i = 0 ; i < digits-1 ; i++ ) tiniest = tiniest / base;
+	}
+    }
+
+  if ( x->rc_type == 'c' ) 
+    {
+      Scierror("nearfloat: second argument should be real\n");
+      return FAIL;
+    }
+
+  if ( base != 2 )
+    {
+      Scierror("nearfloat is not adapted for floating point arithmetic with base radix not 2\n");
+      return FAIL;
+    }
+
+  for ( i = 0 ; i < x->mn ; i++)
+    {
+      xx = x->R[i];
+      if ( ! ISNAN(xx) )
+	{
+	  sign = xx >= 0 ? 1.0 : -1.0;
+	  xx = fabs(xx);
+
+	  if ( xx >= tiny )   /* xx is a normalised floating point number */
+	    {
+	      xx = frexp(xx,&e);
+	      if ( dir*sign < 0.0 )
+		{
+		  /* substract one_ulp but there is a special case */
+		  if ( xx == 0.5 && e > emin)  /* e>emin avoid tiny which is a special inside the special case */
+		      x->R[i] = ldexp(sign*(xx-one_ulp/base),e);
+		  else
+		    x->R[i] = ldexp(sign*(xx-one_ulp),e);
+		}
+	      else
+		{
+		  /* add one_ulp */
+		  x->R[i] = ldexp(sign*(xx+one_ulp),e);
+		}
+	    }
+	  else               /* xx is zero or a denormalised number */
+	    {
+	      if ( denorm )
+		x->R[i] += dir*tiniest;
+	      else
+		x->R[i] += dir*tiny;
+	    }
+	}
+    }
+  return OK;
+}
+
 /*
  * A= A & B logical int &  
  */

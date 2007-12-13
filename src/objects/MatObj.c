@@ -2965,10 +2965,10 @@ int_mxminus (Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
 /*
  * A=Polar(A,B),  * A is changed 
  */
-
 
 int
 int_mxpolar (Stack stack, int rhs, int opt, int lhs)
@@ -3106,7 +3106,7 @@ int int_mxishift (Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
     return RET_BUG;
   NSP_OBJECT (A)->ret_pos = 1;
-  if (A->mn == 0)
+ if (A->mn == 0)
     {
       NSP_OBJECT (A)->ret_pos = 1;
       return 1;
@@ -4233,6 +4233,77 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *  xsucc ou xpred = nearfloat(dir, x)  x is changed
+ */
+int int_nearfloat(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  char *str;
+  int dir;
+
+  if ((str = GetString (stack, 1)) == (char *) 0)
+    return RET_BUG;
+
+  if ( strcmp(str,"succ") == 0 )
+    dir = 1;
+  else if ( strcmp(str,"pred") == 0 )
+    dir = -1;
+  else
+    {
+      Scierror ("%s: argument 1 must be 'pred' or 'succ'\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( (x = GetRealMatCopy(stack, 2)) == NULLMAT )
+    return RET_BUG;
+  NSP_OBJECT (x)->ret_pos = 1;
+
+
+  if ( nsp_mat_nearfloat(dir, x) == FAIL )
+    return RET_BUG;
+
+  return 1;
+}
+
+
+/*
+ * [m,e] = frexp(x)  x is changed (in m) 
+ */
+
+int
+int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
+{
+  int i, exposant;
+  NspMatrix *x, *e;
+  CheckRhs (1, 1);
+  CheckLhs (1, 2);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+  NSP_OBJECT (x)->ret_pos = 1;
+
+  if ( lhs == 1 )
+    {
+      for ( i = 0 ; i < x->mn ; i++ )
+	x->R[i] = frexp( x->R[i], &exposant);
+      return 1;
+    }
+  else  /* lhs == 2 */
+    {
+      if ( (e = nsp_matrix_create(NVOID,'r',x->m, x->n)) == NULLMAT )
+	return RET_BUG;
+
+      for ( i = 0 ; i < x->mn ; i++ )
+	{
+	  x->R[i] = frexp( x->R[i], &exposant);
+	  e->R[i] = (double) exposant;
+	}
+      MoveObj(stack, 2, (NspObject *) e);
+      return 2;
+    }
+}
+
 
 /*
  * push the marix  elements on the stack 
@@ -4644,6 +4715,8 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
+  {"frexp", int_mxfrexp},
+  {"nearfloat", int_nearfloat},
   {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
   {"test_dperm",int_test_dperm},
   {"nnz_m",  int_matrix_nnz},
