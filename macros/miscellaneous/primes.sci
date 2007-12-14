@@ -36,7 +36,7 @@ function [p] = primes_m(n)
       for i=3:2:sqrt(n)
 	 k = (i-1)/2
 	 if sieve(k) then
-	    sieve(i*i/2:i:m) = %f
+	    sieve(k*(i+1):i:m) = %f
 	 end
       end
       p = [2,2*find(sieve)+1]
