@@ -1649,7 +1649,7 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
       return RET_BUG;
     }
   CheckLhs (1, 2);
-  if (rhs == 1 || (rhs - opt ) == 1 )
+  if (rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)) )
     {
       /* maxi(A) or maxi(A,'c' or 'r' or 'F') where A is a matrix * */
       /* idem for mini * */
@@ -1858,10 +1858,103 @@ int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
   return 1;
 }
 
+/* 
+ ONES   Ones array.
+    ONES(N) is an N-by-N matrix of ones.
+    ONES(M,N) or ONES([M,N]) is an M-by-N matrix of ones.
+    ONES(M,N,P,...) or ONES([M N P ...]) is an M-by-N-by-P-by-... array of   ones.
+    ONES(SIZE(A)) is the same size as A and all ones.
+    ONES with no arguments is the scalar 1.
+    ONES(M,N,...,CLASSNAME) or ONES([M,N,...],CLASSNAME) is an M-by-N-by-...
+    array of ones of class CLASSNAME.
+    Example:
+       x = ones(2,3,'int8');
+     See also EYE, ZEROS.
+  
+ */
+
+static int
+int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
+{
+  NspType *type = NULL;
+  char *type_str = NULL;
+  int m1, n1, last=rhs;
+  NspMatrix *HMat;
+  CheckRhsMin(1);
+  CheckLhs (1, 1);
+  /* is last element a classname */
+  if ( IsTypeObj(stack,rhs) ) 
+    {
+      if ((type = GetType(stack,rhs))== NULLTYPE) 
+	return RET_BUG; 
+      last = rhs-1;
+    }
+  else if ( IsSMatObj(stack,rhs) )
+    {
+      if ((type_str = GetString(stack,rhs)) == (char*)0) return RET_BUG;
+      last = rhs-1;
+    }
+
+  if (last == 1)
+    {
+      NspMatrix *M;
+      if ((M = GetRealMat (stack, 1)) == NULLMAT)
+	return RET_BUG; 
+      switch ( M->mn ) 
+	{
+	case 0: 
+	  Scierror("Error: in %s, size vector cannot be an empty matrix\n",NspFname(stack));
+	  return RET_BUG; 
+	case 1: m1 = n1 = (int) M->R[0]; break;
+	case 2: m1 = (int) M->R[0]; n1 = (int) M->R[1]; break;
+	default :
+	  Scierror("Error: in %s, size vector is too long\n",NspFname(stack));
+	  return RET_BUG; 
+	}
+    }
+  else 
+    {
+      if ( last > 2 ) 
+	{
+	  Scierror("Error: in %s, n-arrays are not implemented, max dimensions is two\n",
+		   NspFname(stack));
+	  return RET_BUG; 
+	}
+      if (GetScalarInt (stack, 1, &m1) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack),m1,1);
+      if (last == 2 ) 
+	{
+	  if (GetScalarInt (stack, 2, &n1) == FAIL)
+	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),n1,2);
+	}
+      else 
+	{
+	  n1 = m1;
+	}
+    }
+  if ( last != rhs ) 
+    {
+      Sciprintf("Warning: in %s, type is ignored\n",NspFname(stack));
+    }
+  if ((HMat = (*F) (m1, n1)) == NULLMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) HMat);
+  return 1;
+}
+
+
+int
+int_mxones_deprecated (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_ones);
+}
+
 int
 int_mxones (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_ones);
+  return int_mx_gen_new(stack, rhs, opt, lhs, nsp_mat_ones);
 }
 
 /*
@@ -2003,9 +2096,15 @@ int_mxrand (Stack stack, int rhs, int opt, int lhs)
  */
 
 int
-int_mxeye (Stack stack, int rhs, int opt, int lhs)
+int_mxeye_deprecated (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_eye);
+}
+
+int
+int_mxeye (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_eye);
 }
 
 /*
@@ -2014,10 +2113,17 @@ int_mxeye (Stack stack, int rhs, int opt, int lhs)
  */
 
 int
-int_mxzeros (Stack stack, int rhs, int opt, int lhs)
+int_mxzeros_deprecated (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_zeros);
 }
+
+int
+int_mxzeros (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_zeros);
+}
+
 
 /*
  * setr(A,d) <=> real(A) = d, im(A) unchanged 
@@ -4614,9 +4720,15 @@ static OpTab Matrix_func[] = {
   {"deletecols_m", int_matint_deletecols},
   {"tozero_m", int_matint_tozero},
   {"repmat_m_m", int_matint_repmat},
-  {"eye_m_m", int_mxeye},
-  {"ones_m_m", int_mxones},
-  {"zeros_m_m", int_mxzeros},
+  {"eye_m_m", int_mxeye_deprecated},
+  {"eye_deprecated_m_m", int_mxeye_deprecated},
+  {"eye_new_m_m", int_mxeye},
+  {"ones_m_m", int_mxones_deprecated},
+  {"ones_deprecated_m_m", int_mxones_deprecated},
+  {"ones_new_m", int_mxones},
+  {"zeros_m_m", int_mxzeros_deprecated},
+  {"zeros_deprecated_m_m", int_mxzeros_deprecated},
+  {"zeros_new_m_m", int_mxzeros},
   {"feq_m_m", int_mxfeq},
   {"fge_m_m", int_mxfge},
   {"fgt_m_m", int_mxfgt},

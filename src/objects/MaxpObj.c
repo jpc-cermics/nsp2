@@ -1049,7 +1049,7 @@ static int int_mp_gen(Stack stack, int rhs, int opt, int lhs, Mfunc F)
   return 1;
 }
 
-static int int_mpones(Stack stack, int rhs, int opt, int lhs)
+static int int_mpones_deprecated(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_gen(stack,rhs,opt,lhs,nsp_mat_ones) ;
 }
@@ -2353,7 +2353,8 @@ static OpWrapTab Matrix_func[]={
   {"mpcreate_m_m" ,  int_mpcreate ,NULL},
   {"mult_mp_mp" ,  int_mpmult,NULL},
   {"ne_mp_mp" ,  int_mpneq ,NULL},
-  {"ones_mp_mp" ,  int_mpones,NULL},
+  {"ones_mp_mp" ,  int_mpones_deprecated,NULL},
+  {"ones_deprecated_mp_mp" ,  int_mpones_deprecated,NULL},
   {"plus_mp_mp",   int_mpdadd,NULL},
   {"prod_mp" ,  int_mpprod ,NULL},
   {"prod_mp_s" ,  int_mpprod ,NULL},

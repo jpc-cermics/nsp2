@@ -1424,7 +1424,7 @@ int int_object_eye(Stack stack, int rhs, int opt, int lhs)
   return int_obj_gen_o2m(stack,rhs,opt,lhs,nsp_mat_eye);
 }
 
-int int_object_ones(Stack stack, int rhs, int opt, int lhs)
+int int_object_ones_deprecated(Stack stack, int rhs, int opt, int lhs)
 {
   return int_obj_gen_o2m(stack,rhs,opt,lhs,nsp_mat_ones);
 }
@@ -2054,7 +2054,8 @@ static OpTab Obj_func[]={
   {"ge",int_object_ge},
   {"gt",int_object_gt},
   {"eye", int_object_eye},
-  {"ones", int_object_ones},
+  {"ones", int_object_ones_deprecated },
+  {"ones_deprecated", int_object_ones_deprecated },
   {"zeros", int_object_zeros},
   {"save", int_object_xdr_save},
   {"load", int_object_xdr_load},
