@@ -1649,16 +1649,23 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
       return RET_BUG;
     }
   CheckLhs (1, 2);
-  if (rhs == 1 || (rhs == 2 && IsSMatObj (stack, 2)))
+  if (rhs == 1 || (rhs - opt ) == 1 )
     {
       /* maxi(A) or maxi(A,'c' or 'r' or 'F') where A is a matrix * */
       /* idem for mini * */
       if ((A = GetRealMat (stack, 1)) == NULLMAT)
 	return RET_BUG;
-      if (rhs == 2)
+      if (rhs - opt == 1 )
 	{
-	  if ((str = GetString (stack, 2)) == (char *) 0)
+	  int dim;
+	  if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
 	    return RET_BUG;
+	  switch ( dim ) 
+	    {
+	    case 0: str = "F";break;
+	    case 1: str = "r";break;
+	    case 2: str = "c";break;
+	    }
 	}
       else
 	{
@@ -1741,7 +1748,6 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   CheckLhs (2, 4);
-
 
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
