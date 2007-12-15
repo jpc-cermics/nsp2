@@ -36,9 +36,11 @@ $(SBIN)/nsp: @SCILABSCRIPT@ $(IP) $(IV)
 
 # script which uses prefix 
 
+DESTDIR=$(prefix)/lib/nsp
+
 nsp-inst: @SCILABSCRIPT@ $(IP) $(IV) ../Makefile.incl
 	@$(RM) nsp-inst
-	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+" $(SED_CYGDRIVE) \
+	@sed -e "s+SCILAB_DIRECTORY+$(DESTDIR)+" $(SED_CYGDRIVE) \
 	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
 	-e "s+SCILABGS+@SCILAB_GS@+" @SCILABSCRIPT@ > nsp-inst;
 
@@ -53,12 +55,12 @@ $(SBIN)/nsplibtool: nsplibtool $(IP) $(IV)
 
 nsplibtool-inst: nsplibtool $(IP) $(IV)
 	@$(RM) $@
-	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+g" \
+	@sed -e "s+SCILAB_DIRECTORY+$(DESTDIR)+g" \
 		-e "s+SCILABGS+@SCILAB_GS@+" nsplibtool > $@ 	
 
 Path.incl: $(IP) $(IV) ../Makefile.incl
 	@$(RM) Path.incl
-	@echo "SCIDIR=$(prefix)/lib/nsp" > $@ 
+	@echo "SCIDIR=$(DESTDIR)" > $@ 
 
 $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr

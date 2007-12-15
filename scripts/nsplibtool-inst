@@ -1,8 +1,0 @@
-#!/bin/sh
-#/* -*- Mode: Shell-script -*- */
-#
-# call libtool to produce a shared libary 
-# using Makefiles 
-make -f /usr/local/lib/nsp/config/Makelib $* SCIDIR=/usr/local/lib/nsp 
-
-

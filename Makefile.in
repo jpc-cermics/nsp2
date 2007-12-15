@@ -97,6 +97,12 @@ tarbindist:
 # 	pvm3/lib/@PVMARCH@/pvm \
 # 	pvm3/bin/@PVMARCH@/*
 
+# take care that some scripts are installed in prefix but should contain 
+# a string which is a reference to DESTDIR which can be != from $(prefix)/lib/nsp 
+# this is the case when building a deb package. 
+
+DESTDIR=$(prefix)/lib/nsp
+
 install:
 	@echo "installing bin files"
 	@find bin -type f -exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
@@ -114,13 +120,15 @@ install:
 	@cd demos ; make install;
 	@cd macros ; make install;
 	@cd man ; make install;
+	@cd scripts; rm nsp-inst ; make nsp-inst prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/lib/nsp/bin/nsp
+	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/lib/nsp/bin/nsplibtool
+	@cd scripts; rm Path.incl ; make Path.incl prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
 	@$(TOP)/config/install-sh $(opt_PROG) libtool $(prefix)/lib/nsp/
 	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(prefix)/lib/nsp/
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/bin/nsp
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/bin/nsplibtool
+
 
 cvsclean::
 
