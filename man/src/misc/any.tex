@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{any}
+\begin{mandesc}
+  \short{any}{checks if any element is nonzero or true} 
+\end{mandesc}
+\begin{calling_sequence}
+\begin{verbatim}
+ B= any(A [,dim=str])
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  matrix of numbers or booleans 
+    \vname{B} : a boolean matrix 
+    \vname{dim=str} optional argument chosen among the possible strings '*', 
+    'full', 'FULL', 'row', 'ROW', 'col', or 'COL'  or an non ambiguous abbreviation or an 
+    integer as follows $0$ for 'full', $1$ for 'row', $2$ for 'column'.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!any! checks if any elements are nonzero (resp. are true) when a matrix of numbers (resp. of booleans) 
+  is given as argument. The size of the result and the elements of the matrix taken in consideration depends 
+  on the optional argument \verb!dim! (default value \verb!dim='r'! follows the Matlab choice)
+  \begin{itemize}
+  \item \verb!'*'! The answer is scalar and equal to true if any element of the matrix \verb!A!
+    are nonzero (resp. are true).
+  \item \verb!'r'! The answer is a row vector which contains true value when any element of 
+    the corresponding column of the matrix is nonzero (resp. is true). 
+  \item \verb!'c'! The answer is a column vector which contains true value when any element of 
+    the corresponding row of the matrix is nonzero (resp. is true).
+  \end{itemize}
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{all}{all}, \manlink{and}{and}, \manlink{or}{or}
+\end{manseealso}
+%-- Authors
+
