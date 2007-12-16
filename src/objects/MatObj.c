@@ -1641,7 +1641,7 @@ typedef int (*MiMax1) (NspMatrix * A, NspMatrix * B, NspMatrix * Ind,
 static int
 int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
-  char *str;
+  char *str="F";
   NspMatrix *A, *M, *Imax, *B;
   if (rhs < 1)
     {
@@ -1651,8 +1651,9 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
   CheckLhs (1, 2);
   if (rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)) )
     {
-      /* maxi(A) or maxi(A,'c' or 'r' or 'F') where A is a matrix * */
-      /* idem for mini * */
+      /* maxi(A), or maxi(A,str) or maxi(A,dim=options) 
+       * idem for mini 
+       */
       if ((A = GetRealMat (stack, 1)) == NULLMAT)
 	return RET_BUG;
       if (rhs - opt == 1 )
@@ -1666,10 +1667,6 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 	    case 1: str = "r";break;
 	    case 2: str = "c";break;
 	    }
-	}
-      else
-	{
-	  str = "F";
 	}
       if ((M = (*F) (A, str, &Imax, lhs)) == NULLMAT)
 	return RET_BUG;
@@ -1719,7 +1716,7 @@ int_mxmaxi (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *nsp_mat_mini: Mini(A)
+ * nsp_mat_mini: Mini(A)
  * A is unchanged 
  * rs and ri are set to the result 
  */
