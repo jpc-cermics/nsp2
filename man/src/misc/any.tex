@@ -5,7 +5,8 @@
 \end{mandesc}
 \begin{calling_sequence}
 \begin{verbatim}
- B= any(A [,dim=str])
+ B= any(A [,dim=val])
+ B= any(A [,val])
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -13,7 +14,7 @@
   \begin{varlist}
     \vname{A}:  matrix of numbers or booleans 
     \vname{B} : a boolean matrix 
-    \vname{dim=str} optional argument chosen among the possible strings '*', 
+    \vname{dim=val} optional argument chosen among the possible strings '*', 
     'full', 'FULL', 'row', 'ROW', 'col', or 'COL'  or an non ambiguous abbreviation or an 
     integer as follows $0$ for 'full', $1$ for 'row', $2$ for 'column'.
   \end{varlist}
@@ -22,7 +23,7 @@
 \begin{mandescription}
   \verb!any! checks if any elements are nonzero (resp. are true) when a matrix of numbers (resp. of booleans) 
   is given as argument. The size of the result and the elements of the matrix taken in consideration depends 
-  on the optional argument \verb!dim! (default value \verb!dim='r'! follows the Matlab choice)
+  on the optional argument \verb!dim! as follows~:
   \begin{itemize}
   \item \verb!'*'! The answer is scalar and equal to true if any element of the matrix \verb!A!
     are nonzero (resp. are true).
@@ -31,6 +32,9 @@
   \item \verb!'c'! The answer is a column vector which contains true value when any element of 
     the corresponding row of the matrix is nonzero (resp. is true).
   \end{itemize}
+  The default behaviour is to follow the Matlab rules i.e the mode is by default \verb!'r'! 
+  for a matrix except for row vectors for which the defaultmode is \verb!'*'!. 
+  This mode should also be obtained by \verb!'m'! in a near future. 
 \end{mandescription}
 %-- see also
 \begin{manseealso}
