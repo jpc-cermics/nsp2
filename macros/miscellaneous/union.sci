@@ -37,31 +37,31 @@
 //
 
 function [c,ka,kb] = union(a,b)
-   
-   type_a = type(a,"string")
-   if type_a ~= type(b,"string") then
-      error(" both arg must be of the same type")
-   end
-   
-   if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" then
-      row_flag = size(a,1)==1 & size(b,1)==1
-      a.redim[-1,1]; b.redim[-1,1]
-      n = size(a,"*")
-      if nargout == 1 then
-	 c = unique([a;b]);
-	 if row_flag then, c.redim[1,-1]; end
-      else
-	 [c,ka] = unique([a;b])	 
-	 ind = find(ka > n)
-	 kb = ka(ind) - n
-	 ka(ind) = []
-	 if row_flag then
-	    c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
-	 end
+  
+  type_a = type(a,"string")
+  if type_a ~= type(b,"string") then
+    error(" both arg must be of the same type")
+  end
+  
+  if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" then
+    row_flag = size(a,1)==1 & size(b,1)==1
+    a.redim[-1,1]; b.redim[-1,1]
+    n = size(a,"*")
+    if nargout == 1 then
+      c = unique([a;b]);
+      if row_flag then, c.redim[1,-1]; end
+    else
+      [c,ka] = unique([a;b])	 
+      ind = find(ka > n)
+      kb = ka(ind) - n
+      ka(ind) = []
+      if row_flag then
+	c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
       end
-   else
-      error("union not implemented for "+type_x)
-   end
+    end
+  else
+    error("union not implemented for "+type_x)
+  end
 endfunction
 
 function [c,ka,kb] = union_l_l(a,b)    

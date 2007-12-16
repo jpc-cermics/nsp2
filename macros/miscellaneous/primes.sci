@@ -21,24 +21,24 @@ function [p] = primes_m(n)
 // computes all the primes numbers less or equal to n using the
 // Erathostenes. 1  is not considered to be a prime number.
 //
-   if length(n)~= 1 || ~isreal(n) then
-      error("n should be a (real) scalar")
-   end
-   n = floor(n)
-   if n < 2 then
-      p = []
-   elseif n == 2 then
-      p = 2
-   else
-      if mod(n,2) == 0 then, n=n-1, end
-      m = (n-1)/2;
-      sieve = bmat_create(1,m)
-      for i=3:2:sqrt(n)
-	 k = (i-1)/2
-	 if sieve(k) then
-	    sieve(k*(i+1):i:m) = %f
-	 end
+  if length(n)~= 1 || ~isreal(n) then
+    error("n should be a (real) scalar")
+  end
+  n = floor(n)
+  if n < 2 then
+    p = []
+  elseif n == 2 then
+    p = 2
+  else
+    if mod(n,2) == 0 then, n=n-1, end
+    m = (n-1)/2;
+    sieve = bmat_create(1,m)
+    for i=3:2:sqrt(n)
+      k = (i-1)/2
+      if sieve(k) then
+	sieve(k*(i+1):i:m) = %f
       end
-      p = [2,2*find(sieve)+1]
-   end
+    end
+    p = [2,2*find(sieve)+1]
+  end
 endfunction

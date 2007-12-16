@@ -26,16 +26,16 @@ function [theta,phi,r] = cart2sph_m_m(x,y,z,colat=%f)
 //
 //  each input argument should be both a scalar or of same dimensions
 //  than others. Moreover all input arguments should be real
-   
-   if ( ~isreal(x) | ~isreal(y) | ~isreal(z) )
-      error(" arguments should be real vectors or matrices")
-   end
-   rxy = hypot(x,y)
-   theta = atan(y,x)
-   r = hypot(rxy,z)
-   if colat then
-      phi = atan(rxy,z)
-   else
-      phi = atan(z,rxy)
-   end
+  
+  if ( ~isreal(x) | ~isreal(y) | ~isreal(z) )
+    error(" arguments should be real vectors or matrices")
+  end
+  rxy = hypot(x,y)
+  theta = atan(y,x)
+  r = hypot(rxy,z)
+  if colat then
+    phi = atan(rxy,z)
+  else
+    phi = atan(z,rxy)
+  end
 endfunction

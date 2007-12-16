@@ -41,42 +41,42 @@ function [c,ka] = setdiff(a,b)
 //   ka: ka(i) is an index of c(i) in a, that is a(ka(i)) = c(i)
 //       (a(ka) must be equal to c).
 //
-   
-   type_a = type(a,"string")
-   if type_a ~= type(b,"string") then
-      error(" both argument must be of the same type")
-   end
-   
-   if type_a == "Mat" || type_a == "SMat" then
-      if size(a,"*") == 0 then
-	 c = a; ka = []; return
-      elseif size(b,"*") == 0 then
-	 [c,ka] = unique(a); return
-      end
-      [c,ka] = unique(a)
-      [kb,occ,missed] = bsearch(b,c,match="v") 
-      if missed > 0 then, kb(kb==0) = [], end
-      c(kb) = []; ka(kb) = [];
-   else
-      error("setdiff not currently implemented for "+type_a)
-   end
+  
+  type_a = type(a,"string")
+  if type_a ~= type(b,"string") then
+    error(" both argument must be of the same type")
+  end
+  
+  if type_a == "Mat" || type_a == "SMat" then
+    if size(a,"*") == 0 then
+      c = a; ka = []; return
+    elseif size(b,"*") == 0 then
+      [c,ka] = unique(a); return
+    end
+    [c,ka] = unique(a)
+    [kb,occ,missed] = bsearch(b,c,match="v") 
+    if missed > 0 then, kb(kb==0) = [], end
+    c(kb) = []; ka(kb) = [];
+  else
+    error("setdiff not currently implemented for "+type_a)
+  end
 
 endfunction
 
 function [c,ka] = setdiff_l_l(a,b)
-   [c,ka] = unique(a)
-   for i = 1:length(b)
-      [found,k] = c.has[b.item[i]];
-      if found then, c.remove[k], ka(k) = [], end
-   end
+  [c,ka] = unique(a)
+  for i = 1:length(b)
+    [found,k] = c.has[b.item[i]];
+    if found then, c.remove[k], ka(k) = [], end
+  end
 endfunction
 
 function [c,ka] = setdiff_ce_ce(a,b)
-   [c,ka] = unique(a)
-   for i = 1:length(b)
-      [found,k] = c.has[b{i}];
-      if found then, c(k) = [], ka(k) = [], end
-   end
+  [c,ka] = unique(a)
+  for i = 1:length(b)
+    [found,k] = c.has[b{i}];
+    if found then, c(k) = [], ka(k) = [], end
+  end
 endfunction
 
-   
+

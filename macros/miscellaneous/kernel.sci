@@ -40,14 +40,14 @@ function [kerA] = kernel(A,tol=[],meth="svd")
   [m,n] = size(A)
 
   if meth == "qr" then
-     [Q,R,p,rk] = qr(A',tol=tol)
-     kerA = Q(:,rk+1:n)
+    [Q,R,p,rk] = qr(A',tol=tol)
+    kerA = Q(:,rk+1:n)
   elseif meth == "svd" then
-     [U,s,V] = svd(A)
-     rk = max(find(s >= s(1)*tol))
-     kerA = V(:,rk+1:n)
+    [U,s,V] = svd(A)
+    rk = max(find(s >= s(1)*tol))
+    kerA = V(:,rk+1:n)
   else
-     error("bad optional arg meth")
+    error("bad optional arg meth")
   end
   
 endfunction

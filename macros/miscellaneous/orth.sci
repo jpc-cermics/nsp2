@@ -37,14 +37,14 @@ function [ImA] = orth(A,tol=[],meth="svd")
   if isempty(tol) then, tol = max(size(A))*%eps, end
   
   if meth == "qr" then
-     [Q,R,p,rk] = qr(A,tol=tol)
-     ImA = Q(:,1:rk)
+    [Q,R,p,rk] = qr(A,tol=tol)
+    ImA = Q(:,1:rk)
   elseif meth == "svd" then
-     [U,s,V] = svd(A)
-     rk = max(find(s >= s(1)*tol))
-     ImA = U(:,1:rk)
+    [U,s,V] = svd(A)
+    rk = max(find(s >= s(1)*tol))
+    ImA = U(:,1:rk)
   else
-     error("bad optional arg meth")
+    error("bad optional arg meth")
   end
   
 endfunction

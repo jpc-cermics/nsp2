@@ -25,20 +25,20 @@ function [x,y,z] = sph2cart_m_m(theta,phi,r,colat=%f)
 //      r = radius, euclidian distance |OM| M(x;y;z), O(0;0;0)
 //  each input argument should be both a scalar or of same dimensions
 //  than others. Moreover all input arguments should be real
-   
-   if ( ~isreal(theta) | ~isreal(phi) | ~isreal(r) )
-      error(" arguments should be real vectors or matrices")
-   end
-   
-   if colat then
-      z = r.*cos(phi)
-      rsinphi = r.*sin(phi)
-      x = rsinphi.*cos(theta)
-      y = rsinphi.*sin(theta)
-   else
-      z = r.*sin(phi)
-      rcosphi = r.*cos(phi)
-      x = rcosphi.*cos(theta)
-      y = rcosphi.*sin(theta)
-   end
+  
+  if ( ~isreal(theta) | ~isreal(phi) | ~isreal(r) )
+    error(" arguments should be real vectors or matrices")
+  end
+  
+  if colat then
+    z = r.*cos(phi)
+    rsinphi = r.*sin(phi)
+    x = rsinphi.*cos(theta)
+    y = rsinphi.*sin(theta)
+  else
+    z = r.*sin(phi)
+    rcosphi = r.*cos(phi)
+    x = rcosphi.*cos(theta)
+    y = rcosphi.*sin(theta)
+  end
 endfunction
