@@ -1656,7 +1656,7 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
        */
       if ((A = GetRealMat (stack, 1)) == NULLMAT)
 	return RET_BUG;
-      if (rhs - opt == 1 )
+      if (rhs == 2 )
 	{
 	  int dim;
 	  if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
