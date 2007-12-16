@@ -38,11 +38,12 @@
  */
 
 #ifndef WIN32 
+
 #ifdef __APPLE__
 #include <machine/endian.h>
 #else
 #include <endian.h>
-#endif
+#endif /* __APPLE__ */
 #include <sys/types.h>
 
 /* compile time check */
@@ -74,14 +75,15 @@ typedef union
 #else 
 
 /* here we use a runntime check */
+#include <stdint.h> 
 
 typedef union
 {
   double value;
   struct
   {
-    u_int32_t msw;
-    u_int32_t lsw;
+    uint32_t msw;
+    uint32_t lsw;
   } parts;
 } ieee_double_shape_type;
 
@@ -96,7 +98,7 @@ typedef union
     (d) = sl_u.value;						\
   } while (0)
 
-#endif 
+#endif /* WIN32 */
 
 static double erf_approx(double x);
 static double erf_approx1(double x);
