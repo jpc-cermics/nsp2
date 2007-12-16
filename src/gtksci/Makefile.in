@@ -39,6 +39,13 @@ clean::
 distclean::
 	$(RM) $(OBJTEST) test
 
+# resource file for windows 
+# windres is a link to i686-pc-mingw32-windres on mingwin 
+
+nsp_ico.o: nsp.rc 
+	windres nsp.rc nsp_ico.o
+
+
 
 # generated with gcc -MMD 
 #--------------------------

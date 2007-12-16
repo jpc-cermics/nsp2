@@ -3,25 +3,25 @@
 # Copyright ENPC 
 
 FFLAGS = $(FC_OPTIONS)
+RES = src/gtksci/nsp_ico.o
 
 LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
 
-bin/scilex-win : scilex-lib 
+# bin/scilex is still used on scripts 
+
+bin/scilex: bin/nsp-win.exe bin/nsp-nowin.exe 
+	@cp bin/nsp-win.exe bin/scilex
+
+bin/nsp-win.exe : scilex-lib shared-win32
 	@$(RM) $@;
 	@echo "linking bin/scilex-win"; 
-	@$(FC) -mwindows  $(FFLAGS) -o $@ src/interp/lsci.o \
+	@$(FC) -mwindows  $(FFLAGS) -o $@ src/interp/lsci.o $(RES) \
 		bin/libnsp.dll.a $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
-bin/scilex-static : scilex-lib 
-	@$(RM) $@;
-	@echo "linking"; 
-	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
-		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
-
-bin/scilex : scilex-lib shared-win32 bin/scilex-win
+bin/nsp-nowin.exe : scilex-lib shared-win32 
 	@$(RM) $@;
 	@echo "linking bin/scilex"; 
-	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o $(RES)  \
 		bin/libnsp.dll.a $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
 shared-win32 : 
@@ -31,6 +31,13 @@ shared-win32 :
 		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
 		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
+#unused 
+
+bin/scilex-static : scilex-lib 
+	@$(RM) $@;
+	@echo "linking"; 
+	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
 
 
