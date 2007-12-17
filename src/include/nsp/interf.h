@@ -134,6 +134,7 @@ extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T);
  * @hashcopy:      a hash table copy
  * @opts:          optional arguments follow 
  * @new_opts:      optional arguments follow 
+ * @dim_arg:       argument (constrained scalar string or scalar int) to choose a matrix dim
  * @t_end          end of type table  
  *
  * #int_types are used in #nsp_option to specify the 
@@ -166,7 +167,8 @@ typedef enum _int_types{
   hash,         /* a hash table */
   hashcopy,     /* a hash table copy*/
   opts,         /* optional arguments follow */ 
-  new_opts,         /* optional arguments follow */ 
+  new_opts,     /* optional arguments follow */
+  dim_arg,      /* argument (constrained scalar string or scalar int) to choose a matrix dim */ 
   t_end         /* end of type table  */ 
 } int_types;
 
@@ -236,12 +238,8 @@ extern NspLmo *GetLmoCopy (Stack S,int  i);
 extern NspLmo *GetLmo (Stack S,int i);
 
 
-#define  DIM_STD  0x1
-#define  DIM_DOT  0x2
-#define  DIM_MTLB 0x4 
-
-extern int GetDimArg(Stack stack, int pos, int *dim, int flag);
-
+extern int GetDimArg(Stack stack, int pos, int *dim);
+extern int DimArg(NspObject *O, int *dim);
 
 /**
  * CheckSameDims:
@@ -452,6 +450,19 @@ extern int GetDimArg(Stack stack, int pos, int *dim, int flag);
 #define CheckNonNegative(fname, k, pos1) if ( k < 0 ) \
    { Scierror("%s: argument %d must be non negative\n",fname,pos1); \
      return RET_BUG;} 
+
+
+/**
+ * GiveMatlabDimFlag:
+ * @Mat: a matrix
+ * 
+ * computes the good dim flag for matlab compatibility
+ * 
+ * Returns: an int (0 or 1)
+ **/
+
+#define GiveMatlabDimFlag(Mat) Mat->m == 1 || Mat->n == 1 || (Mat->m == 0 && Mat->n == 0) ? 0 : 1; 
+
 
 extern int call_interf(function *f, Stack stack, int rhs, int opt, int lhs); 
 extern int AllInterf(int i, int num, Stack stack, int rhs, int opt, int lhs);

@@ -574,7 +574,14 @@ static int int_bmatrix_and(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( Obj != NULL) 
     {
-      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat1);
     }
   switch (dim) 
     {
@@ -635,8 +642,16 @@ static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( Obj != NULL) 
     {
-      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat1);
     }
+
   switch (dim) 
     {
     default : 

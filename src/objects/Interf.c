@@ -126,13 +126,16 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
     {
       switch ( *T  ) {
       case s_int : Foo = (void*) va_arg(ap, int *) ;
-	if ( GetScalarInt(stack,count,(int *) Foo) == FAIL) { va_end(ap);return FAIL;}
+	if ( GetScalarInt(stack,count,(int *) Foo) == FAIL ) { va_end(ap);return FAIL;}
 	break;
       case s_double : Foo = (void *) va_arg(ap, double *) ;
-	if (  GetScalarDouble(stack,count,(double *) Foo) == FAIL) { va_end(ap);return FAIL;}
+	if ( GetScalarDouble(stack,count,(double *) Foo) == FAIL ) { va_end(ap);return FAIL;}
 	break;
       case s_bool : Foo = (void *) va_arg(ap, int *) ;
-	if (  GetScalarBool(stack,count,(int *) Foo) == FAIL) { va_end(ap);return FAIL;}
+	if ( GetScalarBool(stack,count,(int *) Foo) == FAIL ) { va_end(ap);return FAIL;}
+	break;
+      case dim_arg : Foo = (void*) va_arg(ap, int *) ;
+	if ( GetDimArg(stack,count,(int *) Foo) == FAIL ) { va_end(ap);return FAIL;}
 	break;
       case string :   Foo = (void **) va_arg(ap, char **) ;
 	if ( ( *((char **) Foo)= GetString(stack,count)) == NULL ) { va_end(ap);return FAIL;}
@@ -381,6 +384,9 @@ static int  extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Ty
     break;
   case s_bool : Foo = (void *) va_arg(*ap, int *) ;
     if ( BoolScalar(Ob,(int *) Foo) == FAIL) return FAIL;
+    break;
+  case dim_arg : Foo = (void*) va_arg(*ap, int *) ;
+    if ( DimArg(Ob, (int *) Foo) == FAIL ) return FAIL;
     break;
   case string :   Foo = (void **) va_arg(*ap, char **) ;
     if ( ( *((char **) Foo)=nsp_string_object(Ob)) == NULL ) return FAIL;
@@ -1780,45 +1786,90 @@ static int get_dim_from_string(char *str)
  * return the array dimension as an integer. For example to 
  * denote the row dimension of a matrix one can use 1 or 'r' at 
  * nsp level. The valid answers for dimensions given as a string are 
- * ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL". full strings 
+ * "m", "M", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL". full strings 
  * or abreviation are accepted.
  * 
  * Returns: %OK or %FAIL 
  **/
 
-int GetDimArg(Stack stack, int pos, int *dim, int flag)
+
+int GetDimArg(Stack stack, int pos, int *dim)
 {
-  char *dim_sort[]={ ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
-  int   dim_val[] ={ -1 , 0  , 0  ,  0  , 1   , 1  , 2  , 2  , 0 };
+  char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
+  int   dim_val[] ={ -2 , -2 , -1 , 0  ,  0    ,  0     ,  1    ,  1   ,  2   ,  2   , 0 };
   int rep;
   if ( IsSMatObj(stack, pos) )
     {
-      if ( flag & DIM_DOT ) 
-	{
-	  /* '.' is accepted */
-	  if ((rep = GetStringInArray(stack, pos, dim_sort,0)) == -1 ) return FAIL;
-	  *dim = dim_val[rep];
-	}
-      else 
-	{
-	  /* '.' is not accepted */
-	  if ((rep = GetStringInArray(stack, pos, dim_sort+1,0)) == -1 ) return FAIL;
-	  *dim = dim_val[rep+1];
-	}
+      if ((rep = GetStringInArray(stack, pos, dim_sort, 0)) == -1 ) return FAIL;
+      *dim = dim_val[rep];
     }
   else
-    {
+   { 
       if ( GetScalarInt(stack, pos, dim) == FAIL )
 	return FAIL;
-      if ( *dim < 0 )    
+      if ( *dim < -2 )    
 	{ 
-	  Scierror("%s: argument %d must be non negative\n",NspFname(stack),pos); 
+	  Scierror("%s: argument %d must be >= -2\n",NspFname(stack),pos); 
 	  return FAIL;
 	} 
     }
   return OK;
 }
 
+
+/**
+ * DimArg:
+ * @O: a #NspObject 
+ * @val: a pointer to #int
+ * 
+ * checks if object @O is a dimensionnal argument if true returns 
+ * the int value in @val.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
+
+int DimArg(NspObject *O, int *dim)
+{
+  char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
+  int   dim_val[] ={ -2 , -2 , -1 , 0  ,  0    ,  0     ,  1    ,  1   ,  2   ,  2   , 0 };
+  int rep;
+
+  if ( IsSMat(O) )
+    {
+      NspSMatrix *S;
+      S = (NspSMatrix *) 0;
+      if ( S->mn != 1 )
+	{
+	  Scierror("Error:\tobject should be a scalar string or a scalar integer"); 
+	  return FAIL;
+	}
+      rep = is_string_in_array(S->S[0], dim_sort, 0);
+      if ( rep < 0 ) 
+	{
+	  char **entry;
+	  Scierror("Error:\tstring is %s", (rep == -2) ? "ambiguous " : "bad ") ;
+	  Scierror("\tmust be '%s'", *dim_sort);
+	  for (entry = dim_sort+1 ; *entry != NULL; entry++) 
+	    {
+	      Scierror(", or '%s'",*entry);
+	    }
+	  Scierror("\n\tor an non ambiguous abbreviation\n");
+	  Scierror("\n");
+	  return FAIL;
+	}
+      *dim = dim_val[rep];
+    }
+  else
+    {
+      if ( IntScalar(O, dim) == FAIL ) return FAIL;
+      if ( *dim < -2 )    
+	{ 
+	  Scierror("Error:\tobject should be a scalar int  >= -2\n");
+	  return FAIL;
+	} 
+    }
+  return OK;
+}
 
 
 

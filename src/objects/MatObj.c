@@ -1550,8 +1550,17 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
     return RET_BUG;
 
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
-      return RET_BUG;
+    {
+      if ( GetDimArg(stack, 2, &dim) == FAIL )
+	return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
+    }
 
   if ((Res = (*F) (HMat, dim)) == NULLMAT)
     return RET_BUG;
@@ -1618,8 +1627,17 @@ int_mxdiff (Stack stack, int rhs, int opt, int lhs)
       CheckNonNegative(NspFname(stack),order,2);
 
       if ( rhs == 3 )
-	if ( GetDimArg(stack, 3, &dim, DIM_STD) == FAIL )
-	  return RET_BUG;
+	{
+	  if ( GetDimArg(stack, 3, &dim) == FAIL )
+	    return RET_BUG;
+	  if ( dim == -1 )
+	    {
+	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	      return RET_BUG;
+	    }
+	  if ( dim == -2 )  /* matlab compatibility flag */
+	    dim = GiveMatlabDimFlag(HMat);
+	}
     }
   
   if ((Res = nsp_mat_diff(HMat, order, dim)) == NULLMAT)
@@ -1659,13 +1677,22 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
       if (rhs == 2 )
 	{
 	  int dim;
-	  if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
 	    return RET_BUG;
+	  if ( dim == -1 )
+	    {
+	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	      return RET_BUG;
+	    }
+	  if ( dim == -2 )  /* matlab compatibility flag */
+	    dim = GiveMatlabDimFlag(A);
+
 	  switch ( dim ) 
 	    {
 	    case 0: str = "F";break;
 	    case 1: str = "r";break;
 	    case 2: str = "c";break;
+	    default: str = "F"; break;  /* FIXME: quick and dirty way when dim > 2 */
 	    }
 	}
       if ((M = (*F) (A, str, &Imax, lhs)) == NULLMAT)
@@ -1749,8 +1776,17 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (rhs == 2)
-    if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL )
-      return RET_BUG;
+    {
+      if ( GetDimArg(stack, 2, &dim) == FAIL )
+	return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(A);
+    }
 
   if ( nsp_mat_minmax(A, dim, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
     return RET_BUG;

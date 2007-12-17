@@ -227,8 +227,10 @@ static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, 
   if ( GetScalarInt(stack, 1, &p) == FAIL ) return RET_BUG;
   if ( GetScalarInt(stack, 2, &q) == FAIL ) return RET_BUG;
   if (rhs == 3)
-    if ( GetDimArg(stack, 3, &dim, DIM_STD) == FAIL )
-      return RET_BUG;
+    {
+      if ( GetDimArg(stack, 3, &dim) == FAIL )
+	return RET_BUG;
+    }
 
   if ( nsp_matint_perm_elem(self, p, q, dim) == FAIL )
     return RET_BUG;

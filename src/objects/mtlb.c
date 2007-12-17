@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *                    2007 Bruno Pincon Esial/Iecn (changes in GetDimArg func) 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -109,26 +110,36 @@ static int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(M);
     }
-  if ( rhs == 1 ) 
+
+  if ( rhs == 1 ) /* here in case dim is not given we use the matlab convention (ie like for dim = -2 or '.') */
+    dim = (M->m == 1 || M->n == 1) ? 0 : 1;
+
+  switch (dim) 
     {
-      if ( M->m == 1) dim=2;
-      else if ( M->n == 1) dim=1;
-    }
-  if ( dim == 0) 
-    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+    case 0: 
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,1)) == NULL) return RET_BUG;
       ret->B[0]= FALSE;
       for ( i= 0 ; i < M->mn; i++)
 	if ( ( M->rc_type == 'r' &&  M->R[i] != 0.0 ) 
 	     || ( M->rc_type == 'c' &&  (M->C[i].r != 0.0 && M->C[i].i != 0.0))) 
 	  {
-	    ret->B[0] = TRUE;break;
+	    ret->B[0] = TRUE; break;
 	  }
-    }
-  else if ( dim == 1) 
-    {
+      break;
+  
+    case 1:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,M->n)) == NULL) return RET_BUG;
       for ( j= 0 ; j < M->n ; j++)
 	{
@@ -137,12 +148,12 @@ static int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
 	    if ( ( M->rc_type == 'r' &&  M->R[i+M->m*j] != 0.0 ) 
 		 || ( M->rc_type == 'c' &&  (M->C[i+M->m*j].r != 0.0 && M->C[i+M->m*j].i != 0.0))) 
 	      {
-		ret->B[j] = TRUE;break;
+		ret->B[j] = TRUE; break;
 	      }
 	}
-    }
-  else 
-    {
+      break;
+ 
+    case 2:
       if ((ret =(NspBMatrix *)  nsp_bmatrix_create(NVOID,M->m,1)) == NULL) return RET_BUG;
       for ( i = 0 ; i < M->m ; i++)
 	{
@@ -151,10 +162,12 @@ static int int_nsp_any_m(Stack stack, int rhs, int opt, int lhs)
 	    if ( ( M->rc_type == 'r' &&  M->R[i+M->m*j] != 0.0 ) 
 		 || ( M->rc_type == 'c' &&  (M->C[i+M->m*j].r != 0.0 && M->C[i+M->m*j].i != 0.0))) 
 	      {
-		ret->B[i] = TRUE;break;
+		ret->B[i] = TRUE; break;
 	      }
 	}
+      break;
     }
+
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
@@ -173,15 +186,25 @@ static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(M);
     }
-  if ( rhs == 1 ) 
+
+  if ( rhs == 1 ) /* here in case dim is not given we use the matlab convention (ie like for dim = -2 or '.') */
+    dim = (M->m == 1 || M->n == 1) ? 0 : 1;
+
+  switch (dim) 
     {
-      if ( M->m == 1) dim=2;
-      else if ( M->n == 1) dim=1;
-    }
-  if ( dim == 0) 
-    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+    case 0:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,1)) == NULL) return RET_BUG;
       ret->B[0]= TRUE;
       for ( i= 0 ; i < M->mn; i++)
@@ -190,9 +213,9 @@ static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
 	  {
 	    ret->B[0] = FALSE;break;
 	  }
-    }
-  else if ( dim == 1) 
-    {
+      break;
+
+    case 1:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,M->n)) == NULL) return RET_BUG;
       for ( j= 0 ; j < M->n ; j++)
 	{
@@ -204,9 +227,9 @@ static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
 		ret->B[j] = FALSE;break;
 	      }
 	}
-    }
-  else 
-    {
+      break;
+
+    case 2:
       if ((ret =(NspBMatrix *)  nsp_bmatrix_create(NVOID,M->m,1)) == NULL) return RET_BUG;
       for ( i = 0 ; i < M->m ; i++)
 	{
@@ -218,7 +241,9 @@ static int int_nsp_all_m(Stack stack, int rhs, int opt, int lhs)
 		ret->B[i] = FALSE;break;
 	      }
 	}
+      break;
     }
+
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
@@ -239,15 +264,25 @@ static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(M);
     }
-  if ( rhs == 1 ) 
+
+  if ( rhs == 1 ) /* here in case dim is not given we use the matlab convention (ie like for dim = -2 or '.') */
+    dim = (M->m == 1 || M->n == 1) ? 0 : 1;
+
+  switch (dim) 
     {
-      if ( M->m == 1) dim=2;
-      else if ( M->n == 1) dim=1;
-    }
-  if ( dim == 0) 
-    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+    case 0:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,1)) == NULL) return RET_BUG;
       ret->B[0]= FALSE;
       for ( i= 0 ; i < M->mn; i++)
@@ -255,9 +290,9 @@ static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
 	  {
 	    ret->B[0] = TRUE;break;
 	  }
-    }
-  else if ( dim == 1) 
-    {
+      break;
+
+    case 1:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,M->n)) == NULL) return RET_BUG;
       for ( j= 0 ; j < M->n ; j++)
 	{
@@ -268,9 +303,9 @@ static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
 		ret->B[j] = TRUE;break;
 	      }
 	}
-    }
-  else 
-    {
+      break;
+
+    case 2:
       if ((ret =(NspBMatrix *)  nsp_bmatrix_create(NVOID,M->m,1)) == NULL) return RET_BUG;
       for ( i = 0 ; i < M->m ; i++)
 	{
@@ -281,7 +316,9 @@ static int int_nsp_any_b(Stack stack, int rhs, int opt, int lhs)
 		ret->B[i] = TRUE;break;
 	      }
 	}
+      break;
     }
+
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
@@ -300,15 +337,25 @@ static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ( GetDimArg(stack, 2, &dim, DIM_STD) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, 2, &dim) == FAIL ) return RET_BUG;
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(M);
     }
-  if ( rhs == 1 ) 
+
+  if ( rhs == 1 ) /* here in case dim is not given we use the matlab convention (ie like for dim = -2 or '.') */
+    dim = (M->m == 1 || M->n == 1) ? 0 : 1;
+
+  switch (dim) 
     {
-      if ( M->m == 1) dim=2;
-      else if ( M->n == 1) dim=1;
-    }
-  if ( dim == 0) 
-    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+    case 0:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,1)) == NULL) return RET_BUG;
       ret->B[0]= TRUE;
       for ( i= 0 ; i < M->mn; i++)
@@ -316,9 +363,9 @@ static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
 	  {
 	    ret->B[0] = FALSE;break;
 	  }
-    }
-  else if ( dim == 1) 
-    {
+      break;
+
+    case 1:
       if ((ret =(NspBMatrix *) nsp_bmatrix_create(NVOID,1,M->n)) == NULL) return RET_BUG;
       for ( j= 0 ; j < M->n ; j++)
 	{
@@ -329,9 +376,9 @@ static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
 		ret->B[j] = FALSE;break;
 	      }
 	}
-    }
-  else 
-    {
+    break;
+
+    case 2:
       if ((ret =(NspBMatrix *)  nsp_bmatrix_create(NVOID,M->m,1)) == NULL) return RET_BUG;
       for ( i = 0 ; i < M->m ; i++)
 	{
@@ -342,7 +389,9 @@ static int int_nsp_all_b(Stack stack, int rhs, int opt, int lhs)
 		ret->B[i] = FALSE;break;
 	      }
 	}
+      break;
     }
+
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
