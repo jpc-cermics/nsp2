@@ -264,7 +264,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ( dim_flag == -2 )  /* matlab compatibility flag */
-	dim_flag = (x->m == 1 || x->n == 1) ? 0 : 1;
+	dim_flag = GiveMatlabDimFlag(x);
     }
 
   if ((x = GetMatCopy(stack,1)) == NULLMAT) 
@@ -670,7 +670,7 @@ static int int_nsp_fftshift(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ( dim_flag == -2 )  /* matlab compatibility flag */
-	dim_flag = (x->m == 1 || x->n == 1) ? 0 : 1;
+	dim_flag = GiveMatlabDimFlag(x);
     }
 
   if ( dim_flag > 2 )
@@ -706,7 +706,7 @@ static int int_nsp_ifftshift(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       if ( dim_flag == -2 )  /* matlab compatibility flag */
-	dim_flag = (x->m == 1 || x->n == 1) ? 0 : 1;
+	dim_flag = GiveMatlabDimFlag(x);
     }
 
   if ( ( y = nsp_mat_shift(x, dim_flag, 'i') ) == NULLMAT )
