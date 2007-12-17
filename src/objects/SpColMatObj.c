@@ -1782,7 +1782,9 @@ static int int_spcolmatrix_isnan(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( Obj != NULL) 
     {
-      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD | DIM_DOT ) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim ) == FAIL ) return RET_BUG;
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
     }
   if ((Res= nsp_spcolmatrix_isnan(HMat,dim)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
@@ -1805,7 +1807,9 @@ static int int_spcolmatrix_isinf(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( Obj != NULL) 
     {
-      if ( GetDimArg(stack, opts[0].position, &dim, DIM_STD | DIM_DOT ) == FAIL ) return RET_BUG;
+      if ( GetDimArg(stack, opts[0].position, &dim ) == FAIL ) return RET_BUG;
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
     }
   if ((Res= nsp_spcolmatrix_isinf(HMat,dim)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
