@@ -896,12 +896,12 @@ static int int_mpcuprod(Stack stack, int rhs, int opt, int lhs)
  * A is unchanged 
  */
 
-typedef NspMatrix *(*MiMax) (NspMatrix *A,char *,NspMatrix **Imax,int lhs);
+typedef NspMatrix *(*MiMax) (NspMatrix *A,int,NspMatrix **Imax,int lhs);
 typedef int (*MiMax1) (NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j,int flag);
 
 static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
-  char *str;
+  int dim;
   NspMaxpMatrix *A,*M,*B; 
   NspMatrix *M1,*Imax;
   if ( rhs < 1) 
@@ -910,18 +910,36 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
       return RET_BUG;
     }
   CheckLhs(1,2);
-  if ( rhs == 1 || ( rhs == 2 && IsSMatObj(stack,2) ))
+  if (rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)) )
     {
-      /* maxi(A) or maxi(A,'c' or 'r' or 'F') where A is a matrix **/
-      /* idem for mini **/
-      if ((A = GetRealMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+      /* maxi(A), or maxi(A,str) or maxi(A,dim=options) idem for mini */
+      if ((A = GetRealMpMat(stack,1)) == NULLMAXPMAT) 
+	return RET_BUG;
       if ( rhs == 2) 
 	{
-	  if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+	  if ( opt == 0 ) 
+	    {
+	      if ( GetDimArg(stack, 2, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  else /* opt == 1 */
+	    {
+	      nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+				  { NULL,t_end,NULLOBJ,-1}};
+	      if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  if ( dim == -1 )
+	    {
+	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n",
+			NspFname(stack));
+	      return RET_BUG;
+	    }
+	  if ( dim == -2 )  /* matlab compatibility flag */
+	    dim = GiveMatlabDimFlag(A);
 	}
-      else 
-	{ str = "F"; }
-      if (( M1= (*F)((NspMatrix *)A,str,&Imax,lhs)) == NULLMAT ) return RET_BUG;
+
+      if (( M1= (*F)((NspMatrix *)A,dim,&Imax,lhs)) == NULLMAT ) return RET_BUG;
       if ( lhs == 2)
 	{
 	  MoveObj(stack,2,(NspObject *)Imax);
