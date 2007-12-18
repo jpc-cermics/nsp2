@@ -2567,6 +2567,42 @@ static int int_spcolmatrix_norm( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * checks that a sparse matrix is empty (this is defined in object.c but 
+ * the implementation in object.c uses the "mn" field which can be 
+ * corrupted for "big" sparse, so we define isempty here using "m" and
+ * "n" fields)
+ */
+
+static int int_spcolmatrix_isempty (Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ( nsp_move_boolean(stack,1, HMat->m==0 || HMat->n==0 ) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+ 
+/*
+ * checks that a sparse matrix is a scalar (this is defined in object.c but 
+ * the implementation in object.c uses the "mn" field which can be 
+ * corrupted for "big" sparse, so we define isscalar here using "m" and
+ * "n" fields)
+ */
+
+static int int_spcolmatrix_isscalar (Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ( nsp_move_boolean(stack,1, HMat->m==1 && HMat->n==1 ) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+ 
+/*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
  */
@@ -2668,6 +2704,8 @@ static OpTab SpColMatrix_func[]={
   {"norm_sp", int_spcolmatrix_norm},
   {"isnan_sp",int_spcolmatrix_isnan},
   {"isinf_sp",int_spcolmatrix_isinf},
+  {"isempty_sp",int_spcolmatrix_isempty},
+  {"isscalar_sp",int_spcolmatrix_isscalar},
   {(char *) 0, NULL}
 };
 
