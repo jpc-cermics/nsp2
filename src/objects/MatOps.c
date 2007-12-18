@@ -1980,15 +1980,12 @@ int nsp_mat_minmax(NspMatrix *A, int dim, NspMatrix **Amin, NspMatrix **Imin,
     default : 
       Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
     case 0: 
-      m = 1; n = 1; break;
+      m = Min(A->m,1); n = Min(1,A->n); break;
     case 1:
-      m = 1; n = A->n; break;
+      m = Min(A->m,1); n = A->n; break;
     case 2:
-      m = A->m; n = 1; break;
+      m = A->m; n = Min(1,A->n); break;
     }
-
-  if ( A->mn == 0 )
-    m = n = 0;
 
   if (    (amin = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT
        || (amax = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT ) goto err;
