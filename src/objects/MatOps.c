@@ -1747,12 +1747,7 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int 
 {
   NspMatrix *M;
   int j;
-  int inc=1,imax;
-  if ( A->mn == 0 )    
-    {
-      if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
-      return nsp_matrix_create(NVOID,'r',0,0);
-    }
+  int inc=1,imax=0;
 
   switch (dim_flag) 
     {
@@ -1760,49 +1755,54 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int 
       Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
 
     case 0: 
-      if ((M = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
+      if ((M = nsp_matrix_create(NVOID,A->rc_type,Min(A->m,1),Min(A->n,1))) == NULLMAT) 
 	return(NULLMAT);
-      imax = (*F)(A->mn,A->R,1,&M->R[0]);
+      if (M->mn == 1) 
+	imax = (*F)(A->mn,A->R,1,&M->R[0]);
       if ( lhs == 2 ) 
 	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT)
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',Min(A->m,1),Min(A->n,1))) == NULLMAT)
 	    return NULLMAT; 
-	  (*Imax)->R[0] = imax;
+	  if (M->mn == 1) (*Imax)->R[0] = imax;
 	}
       break;
 
     case 1:
-      if ((M = nsp_matrix_create(NVOID,A->rc_type,1,A->n)) == NULLMAT) 
+      if ((M = nsp_matrix_create(NVOID,A->rc_type,Min(A->m,1),A->n)) == NULLMAT) 
 	return NULLMAT;
       if ( lhs == 2) 
 	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,A->n)) == NULLMAT) 
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',Min(A->m,1),A->n)) == NULLMAT) 
 	    return NULLMAT; 
+	  if ( M->mn > 0 )
+	    for ( j= 0 ; j < A->n ; j++) 
+	      {
+		(*Imax)->R[j]=(*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
+	      }
+	}
+      else
+	if ( M->mn > 0 )
 	  for ( j= 0 ; j < A->n ; j++) 
 	    {
-	      (*Imax)->R[j]=(*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
+	      (*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
 	    }
-	}
-      else 
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    (*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
-	  }
       break ;
 
     case 2:
-      if ((M = nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT) 
+      if ((M = nsp_matrix_create(NVOID,A->rc_type,A->m,Min(A->n,1))) == NULLMAT) 
 	return NULLMAT;
       inc = A->m;
       if ( lhs == 2) 
 	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT) 
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',A->m,Min(A->n,1))) == NULLMAT) 
 	    return NULLMAT; 
-	  for ( j= 0 ; j < A->m ; j++) 
-	    (*Imax)->R[j] = (*F)(A->mn,A->R+j,inc,&M->R[j]);
+	  if ( M->mn > 0 )
+	    for ( j= 0 ; j < A->m ; j++) 
+	      (*Imax)->R[j] = (*F)(A->mn,A->R+j,inc,&M->R[j]);
 	}
       else
-	for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A->R+j,inc,&M->R[j]);
+	if ( M->mn > 0 )
+	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A->R+j,inc,&M->R[j]);
       break;
     }
   return M;
@@ -1810,10 +1810,10 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int 
 
 int nsp_array_maxi(int n,const double *A, int incr, double *amax)
 {
-  int imax,i,i1=1;
-  imax = 1;
-  *amax = A[0];
+  int imax=1,i,i1=1;
+  if ( n <= 0 ) return 0;
 
+  *amax = A[0];
   /* look for the first non Nan component */
   i = 0; i1 = 0;
   while ( i < n && ISNAN(A[i]) )
@@ -1866,9 +1866,10 @@ NspMatrix *nsp_mat_maxi(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 
 int nsp_array_mini(int n, const double *A, int incr, double *amin)
 {
-  int imin,i,i1=0;
-  *amin= A[0]; imin = 1;
+  int imin=1,i,i1=0;
+  if ( n <= 0 ) return 0;
 
+  *amin= A[0];
   /* look for the first non Nan component */
   i = 0; i1 = 0;
   while ( i < n && ISNAN(A[i]) )
