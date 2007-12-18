@@ -4771,6 +4771,7 @@ static OpTab Matrix_func[] = {
   {"deletecols_m", int_matint_deletecols},
   {"tozero_m", int_matint_tozero},
   {"repmat_m_m", int_matint_repmat},
+  {"isvector_m", int_matint_isvector},
   {"eye_m_m", int_mxeye_deprecated},
   {"eye_deprecated_m_m", int_mxeye_deprecated},
   {"eye_new_m_m", int_mxeye},

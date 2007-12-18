@@ -2601,7 +2601,24 @@ static int int_spcolmatrix_isscalar (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
- 
+
+ /**
+ * check that a sparse matrix is a vector
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
+int int_spcolmatrix_isvector(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ( nsp_move_boolean(stack,1, HMat->m==1 || HMat->n==1 ) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
 /*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
@@ -2706,6 +2723,7 @@ static OpTab SpColMatrix_func[]={
   {"isinf_sp",int_spcolmatrix_isinf},
   {"isempty_sp",int_spcolmatrix_isempty},
   {"isscalar_sp",int_spcolmatrix_isscalar},
+  {"isvector_sp",int_spcolmatrix_isvector},
   {(char *) 0, NULL}
 };
 

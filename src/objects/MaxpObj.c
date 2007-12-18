@@ -2266,6 +2266,7 @@ static OpWrapTab Matrix_func[]={
   {"deleterows_mp", int_matint_deleterows},
   {"deletecols_mp", int_matint_deletecols},
   {"tozero_mp", int_matint_tozero},
+  {"isvector_mp", int_matint_isvector},
   {"abs_mp",int_mxabs,int_mp_wrap1},
   {"acos_mp",int_mxacos,int_mp_wrap1},
   {"acosh_mp",int_mxacosh,int_mp_wrap1},

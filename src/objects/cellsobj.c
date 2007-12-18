@@ -1259,6 +1259,7 @@ static OpTab Cells_func[]={
   {"concatd_ce_ce", int_matint_concatd}, /* int_cells_concatd}, */
   {"concatd_m_ce",int_cells_concatd_m_ce},
   {"concatdiag_ce_ce",int_matint_concat_diag},
+  {"isvector_ce", int_matint_isvector},
   {"addrows_ce",int_cells_addrows},
   {"resize_ce",int_cells_resize},
   {"enlarge_ce", int_cells_enlarge },

@@ -2679,6 +2679,7 @@ int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
 typedef NspObject * (*extractfunc) (NspObject *Obj,NspObject *Elts, int *ind, int nb_elts, int imin, int imax);
 
 static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extractfunc F)
@@ -3199,6 +3200,31 @@ int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/**
+ * int_matint_isvector:
+ * @stack: #Stack object 
+ * @rhs: number of arguments 
+ * @opt: number of optional arguments 
+ * @lhs: expected returned arguments 
+ * 
+ * generic interface which can be used by objects which implement 
+ * matint in order to perform  the isvector test
+ * 
+ * Returns:  1 or %RET_BUG
+ **/
+int int_matint_isvector(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *B;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (B = (NspSMatrix *) nsp_get_object(stack,1)) == NULLSMAT )
+    return RET_BUG;
+
+  if ( nsp_move_boolean(stack,1, B->m == 1 || B->n == 1) == FAIL )
+    return RET_BUG;
+  return 1;
+}
 
 /**
  * int_matint_redim:
@@ -3518,3 +3544,4 @@ NspObject * nsp_matint_canonic(NspObject *obj)
 {
   return obj;
 }
+

@@ -102,6 +102,7 @@ extern int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_tozero(Stack stack, int rhs, int opt, int lhs);
 extern NspObject * nsp_matint_canonic(NspObject *obj);
+extern int int_matint_isvector(Stack stack, int rhs, int opt, int lhs);
 
 #endif 
 

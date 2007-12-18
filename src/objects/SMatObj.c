@@ -1876,6 +1876,7 @@ static OpTab SMatrix_func[]={
   {"concatd_s_m",  int_smxconcatd_s_m}, /*  int_smxconcatd}, */
   {"concatd_m_s", int_smxconcatd_m_s},
   {"concatdiag_s_s",int_matint_concat_diag}, /* int_mxconcatdiag}, */
+  {"isvector_s", int_matint_isvector},
   {"addrows_s",int_smxaddrows},
   {"resize_s",int_smxresize},
   {"concat_s_s", int_smxconcattt },

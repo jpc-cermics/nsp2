@@ -1106,6 +1106,7 @@ static OpTab BMatrix_func[]={
   {"concatd_b_b", int_matint_concatd}, /* int_bmatrix_concatd}, */
   {"concatr_b_b", int_matint_concatr}, /* int_bmatrix_concatr},*/
   {"concatdiag_b_b" , int_matint_concat_diag},/* int_bmatrix_concatdiag },*/
+  {"isvector_b", int_matint_isvector},
   {"copy_b",int_bmatrix_copy},
   {"bmat_create_m",int_bmatrix_create},
   {"diagcre_b",int_bmatrix_diagcre},
