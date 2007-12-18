@@ -620,6 +620,8 @@ static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap)
 	    }
 	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
 	  break;
+	case dim_arg : Scierror("not supported\n"); return NULLLIST;
+	  break;
 	case string :  
 	case stringcopy:
 	  if ((O =nsp_create_object_from_str(NVOID,va_arg(*ap, char *))) == NULLOBJ ) return NULLLIST;
@@ -784,6 +786,8 @@ static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap)
 	  break;
 	case s_bool : 
 	  if ( nsp_move_boolean(stack,count++,(double) va_arg(*ap,int) )== FAIL) return RET_BUG;
+	  break;
+	case dim_arg : Scierror("not supported\n"); return FAIL;
 	  break;
 	case string :  
 	case stringcopy:
