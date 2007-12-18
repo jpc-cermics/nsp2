@@ -1532,7 +1532,7 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*
- *nsp_mat_sum: sum=Sum(a[,b]) 
+ * nsp_mat_sum: s=sum(a[,dim_flag])  or s = sum(a, dim=dim_flag)  
  * a is unchanged 
  */
 
@@ -1543,17 +1543,29 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
   int dim=0;
   NspMatrix *Res, *HMat;
-  CheckRhs (1, 2);
-  CheckLhs (1, 1);
+  CheckRhs(1, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 1);
 
   if ((HMat = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
 
   if (rhs == 2)
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL )
-	return RET_BUG;
-      if ( dim == -1 )
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -1651,7 +1663,7 @@ int_mxdiff (Stack stack, int rhs, int opt, int lhs)
  * A is unchanged 
  */
 
-typedef NspMatrix *(*MiMax) (NspMatrix * A, char *, NspMatrix ** Imax,
+typedef NspMatrix *(*MiMax) (NspMatrix * A, int dim, NspMatrix ** Imax,
 			     int lhs);
 typedef int (*MiMax1) (NspMatrix * A, NspMatrix * B, NspMatrix * Ind,
 		       int j, int flag);
@@ -1659,7 +1671,7 @@ typedef int (*MiMax1) (NspMatrix * A, NspMatrix * B, NspMatrix * Ind,
 static int
 int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
-  char *str="F";
+  int dim = 0;
   NspMatrix *A, *M, *Imax, *B;
   if (rhs < 1)
     {
@@ -1669,16 +1681,23 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
   CheckLhs (1, 2);
   if (rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)) )
     {
-      /* maxi(A), or maxi(A,str) or maxi(A,dim=options) 
-       * idem for mini 
-       */
+      /* maxi(A), or maxi(A,str) or maxi(A,dim=options) idem for mini */
       if ((A = GetRealMat (stack, 1)) == NULLMAT)
 	return RET_BUG;
       if (rhs == 2 )
 	{
-	  int dim;
-	  if ( GetDimArg(stack, 2, &dim) == FAIL )
-	    return RET_BUG;
+	  if ( opt == 0 )
+	    {
+	      if ( GetDimArg(stack, 2, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  else /* opt == 1 */
+	    {
+	      nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+				  { NULL,t_end,NULLOBJ,-1}};
+	      if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+		return RET_BUG;
+	    }
 	  if ( dim == -1 )
 	    {
 	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
@@ -1686,16 +1705,9 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 	    }
 	  if ( dim == -2 )  /* matlab compatibility flag */
 	    dim = GiveMatlabDimFlag(A);
-
-	  switch ( dim ) 
-	    {
-	    case 0: str = "F";break;
-	    case 1: str = "r";break;
-	    case 2: str = "c";break;
-	    default: str = "F"; break;  /* FIXME: quick and dirty way when dim > 2 */
-	    }
 	}
-      if ((M = (*F) (A, str, &Imax, lhs)) == NULLMAT)
+
+      if ((M = (*F) (A, dim, &Imax, lhs)) == NULLMAT)
 	return RET_BUG;
       if (lhs == 2)
 	{
@@ -1703,11 +1715,11 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 	}
       MoveObj (stack, 1, (NspObject *) M);
     }
-  else
+  else        
     {
+      /* Maxi(A1,A2,....,An)   */
       NspMatrix *Ind=NULL;
       int flag = 0, i;
-      /* Maxi(A1,A2,....,An) ** */
       if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
 	return RET_BUG;
       NSP_OBJECT (A)->ret_pos = 1;
@@ -1756,7 +1768,7 @@ int_mxmini (Stack stack, int rhs, int opt, int lhs)
 
 
 /* 
- *  [amin, amax, imin, imax] = minmax(A) or minmax(A,dir)
+ *  [amin, amax, imin, imax] = minmax(A) or minmax(A,dir) or minmax(A,dim=dir)
  *  with dir = 'c','r','F','*' or 0, 1, 2
  *  to compute min and max at same time
  */
@@ -1765,20 +1777,26 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
 {
   int dim = 0;
   NspMatrix *A, *Amin, *Imin, *Amax, *Imax;
-
-  if ( rhs < 1  ||  rhs > 2 )
-    {
-      Scierror ("Error:\t Rhs must be 1 or 2 for function %s\n", NspFname(stack));
-      return RET_BUG;
-    }
+  CheckRhs(1,2);
+  CheckOptRhs(0,1);
   CheckLhs (2, 4);
 
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (rhs == 2)
     {
-      if ( GetDimArg(stack, 2, &dim) == FAIL )
-	return RET_BUG;
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
       if ( dim == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));

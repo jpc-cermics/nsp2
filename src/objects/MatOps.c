@@ -1735,17 +1735,15 @@ NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
 typedef int (*MaMi) (int,const double *,int,double *);
 
 /*
- * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ *  MatMaxiMini(A, dim_flag, Imax, lhs, func)
  *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
- *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
- *       and a Row vector is returned.
- * if B= 'f' the maximum 
- * Imax is created if lhs == 2 
+ *     dim_flag = 0 min or max for the whole matrix (got a scalar)
+ *     dim_flag = 1 min or max of each column (got a row vector)
+ *     dim_flag = 2 min or max of each row (got a column vector)
+ *     Imax is created if lhs == 2 
  */
 
-static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs, MaMi F)
+static NspMatrix *MatMaxiMini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs, MaMi F)
 {
   NspMatrix *M;
   int j;
@@ -1755,12 +1753,13 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lh
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
       return nsp_matrix_create(NVOID,'r',0,0);
     }
-  switch (flag[0]) 
+
+  switch (dim_flag) 
     {
     default :
-      Sciprintf("\nInvalid flag '%c' assuming flag='f'\n",flag[0]);
-    case 'f': 
-    case 'F':
+      Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
+
+    case 0: 
       if ((M = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
 	return(NULLMAT);
       imax = (*F)(A->mn,A->R,1,&M->R[0]);
@@ -1771,8 +1770,8 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lh
 	  (*Imax)->R[0] = imax;
 	}
       break;
-    case 'r':
-    case 'R':
+
+    case 1:
       if ((M = nsp_matrix_create(NVOID,A->rc_type,1,A->n)) == NULLMAT) 
 	return NULLMAT;
       if ( lhs == 2) 
@@ -1790,8 +1789,8 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lh
 	    (*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
 	  }
       break ;
-    case 'c':
-    case 'C':
+
+    case 2:
       if ((M = nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT) 
 	return NULLMAT;
       inc = A->m;
@@ -1852,9 +1851,9 @@ int nsp_array_maxi(int n,const double *A, int incr, double *amax)
  * Return value: 
  **/
 
-NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspMatrix *nsp_mat_maxi(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,flag,Imax,lhs,nsp_array_maxi);
+  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_array_maxi);
 }
 
 
@@ -1907,9 +1906,9 @@ int nsp_array_mini(int n, const double *A, int incr, double *amin)
  * 
  * Return value: 
  **/
-NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspMatrix *nsp_mat_mini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,flag,Imax,lhs,nsp_array_mini);
+  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_array_mini);
 }
 
 

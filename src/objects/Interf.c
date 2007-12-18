@@ -1836,25 +1836,22 @@ int DimArg(NspObject *O, int *dim)
 
   if ( IsSMat(O) )
     {
-      NspSMatrix *S;
-      S = (NspSMatrix *) 0;
-      if ( S->mn != 1 )
-	{
-	  Scierror("Error:\tobject should be a scalar string or a scalar integer"); 
-	  return FAIL;
-	}
-      rep = is_string_in_array(S->S[0], dim_sort, 0);
-      if ( rep < 0 ) 
+      char *str;
+
+      if ( (str = nsp_string_object(O)) == NULL )
+	return FAIL;
+      
+      rep = is_string_in_array(str, dim_sort, 0);
+      if ( rep < 0 )
 	{
 	  char **entry;
 	  Scierror("Error:\tstring is %s", (rep == -2) ? "ambiguous " : "bad ") ;
-	  Scierror("\tmust be '%s'", *dim_sort);
-	  for (entry = dim_sort+1 ; *entry != NULL; entry++) 
+	  Scierror(", choose among:\n\t '%s'", *dim_sort);
+	  for (entry = dim_sort+1 ; *entry != NULL; entry++)
 	    {
-	      Scierror(", or '%s'",*entry);
+	      Scierror(", '%s'",*entry);
 	    }
 	  Scierror("\n\tor an non ambiguous abbreviation\n");
-	  Scierror("\n");
 	  return FAIL;
 	}
       *dim = dim_val[rep];
@@ -1862,11 +1859,11 @@ int DimArg(NspObject *O, int *dim)
   else
     {
       if ( IntScalar(O, dim) == FAIL ) return FAIL;
-      if ( *dim < -2 )    
-	{ 
-	  Scierror("Error:\tobject should be a scalar int  >= -2\n");
+      if ( *dim < -2 )
+	{
+	  Scierror("Error:\targument should be a scalar int  >= -2\n");
 	  return FAIL;
-	} 
+	}
     }
   return OK;
 }
