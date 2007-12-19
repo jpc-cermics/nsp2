@@ -1657,13 +1657,16 @@ static void realize_event_ogl(BCG *dd )
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glClearStencil(0x0);
   glEnable(GL_STENCIL_TEST);
+  /* antialiasing on or off, but when changed 
+   * the effect of glLineWidth is not the same
+   */
   /* glEnable(GL_LINE_SMOOTH); */
   /* glEnable(GL_BLEND); */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   /*     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE); */
   /*     glLineWidth(1.5); */
   /*     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); */
-  /*     glLineWidth(0.5); */
+  glLineWidth(1.5);
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   glShadeModel(GL_SMOOTH);

@@ -800,7 +800,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 	 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
       */
       /* FIXME : */
-      glLineWidth( ((Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth)*0.5);
+      glLineWidth( ((Xgc->CurLineWidth <= 1) ? 2.0 : Xgc->CurLineWidth)*0.5);
     }
   else 
     {
