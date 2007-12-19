@@ -7,10 +7,11 @@ rand('normal')
 //==========================================================================
 
 //Empty matrix
+
 if lsq([],[])<>[] then pause,end
-if execstr('lsq([],1)',errcatch=%t)==%f then pause,end
-if execstr('lsq(1,[])',errcatch=%t)==%f then pause,end
-if execstr('lsq(rand(3,2),rand(2,1))',errcatch=%t)==%f then pause,end
+if execstr('lsq([],1)',errcatch=%t)==%t then pause,end
+if execstr('lsq(1,[])',errcatch=%t)==%t then pause,end
+if execstr('lsq(rand(3,2),rand(2,1))',errcatch=%t)==%t then pause,end
 
 //Small dimensions
 //Real full rank fat

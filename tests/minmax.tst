@@ -10,12 +10,13 @@ if ~m.equal[[]] | ~M.equal[[]] | ~im.equal[[]] | ~iM.equal[[]]  then pause;end
 
 A = zeros(0,4);
 [m,M,im,iM] = minmax(A);
-if ~m.equal[[]] | ~M.equal[[]] | ~im.equal[[]] | ~iM.equal[[]]  then pause;end
+rep=zeros(0,1);
+if ~m.equal[rep] | ~M.equal[rep] | ~im.equal[rep] | ~iM.equal[rep]  then pause;end
 
 A = zeros(4,0);
+rep=zeros(1,0);
 [m,M,im,iM] = minmax(A);
-if ~m.equal[[]] | ~M.equal[[]] | ~im.equal[[]] | ~iM.equal[[]]  then pause;end
-
+if ~m.equal[rep] | ~M.equal[rep] | ~im.equal[rep] | ~iM.equal[rep]  then pause;end
 
 ////////////////////////////////////////////////
 // part2 - minmax on a non empty matrix
