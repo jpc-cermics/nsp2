@@ -16,7 +16,7 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   if isempty(y) then y=1:size(z,'c');end 
   nvs=size(nv,'*') ;
   if nvs==1 then nvs=nv;zmin=min(z);zmax=max(z);nv = zmin + (1:nvs)*(zmax-zmin)./(nvs+1);end;
-  if nargin <= 4 then style = -1*ones(1,nvs);end
+  if nargin <= 4 then style = -1*ones_new(1,nvs);end
   if nargin <= 7 then rect=[min(x),min(y),max(x),max(y)]; end 
   nv1=nv
   [mz,nz] = size(z);
@@ -24,9 +24,9 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   maxz = max(z);
   // Surround the matrix by a very low region to get closed contours, and
   // replace any NaN with low numbers as well.
-  zz=[ %nan*ones(1,nz+2); %nan*ones(mz,1),z,%nan*ones(mz,1);%nan*ones(1,nz+2)];
+  zz=[ %nan*ones_new(1,nz+2); %nan*ones_new(mz,1),z,%nan*ones_new(mz,1);%nan*ones_new(1,nz+2)];
   kk=find(isnan(zz(:)));
-  zz(kk)=minz-1e4*(maxz-minz)+zeros(kk);
+  zz(kk)=minz-1e4*(maxz-minz)+zeros_new(size(kk));
   
   xx = [2*x(1)-x(2); x(:); 2*x(mz)-x(mz-1)];
   yy = [2*y(1)-y(2); y(:); 2*y(nz)-y(nz-1)];

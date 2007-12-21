@@ -44,7 +44,7 @@ function colorbar(umin, umax, colminmax)
 
   nb_grad = 5
   // go on... 
-  vec_ones = ones(1,nb_colors)
+  vec_ones = ones_new(1,nb_colors)
 
   x1 = -0.3 ; x2 = 0.1 ; 
   x_polys = [x1 ; x2 ; x2 ; x1] * vec_ones
@@ -52,7 +52,7 @@ function colorbar(umin, umax, colminmax)
   y = linspace(y1,y2,nb_colors+1)
   y_polys = [y(1:$-1) ; y(1:$-1) ; y(2:$) ; y(2:$)] 
  
-  xtics = x2*ones(1,nb_grad) ; dx_tics = 0.05 ; 
+  xtics = x2*ones_new(1,nb_grad) ; dx_tics = 0.05 ; 
   ytics = linspace(y1, y2, nb_grad) ; dy_tics = 0
 
   valeurs = linspace(umin,umax,nb_grad);

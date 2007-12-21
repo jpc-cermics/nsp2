@@ -10,6 +10,6 @@ function []=xrpoly(orig,n,r,teta)
   b=[cos(teta), -sin(teta); sin(teta), cos(teta)];
   ang=2*%pi/n
   pt=(0:n)'*ang;xy=r*[cos(pt),sin(pt)]
-  xy=ones(n+1,1)*matrix(orig,1,2)+xy*b
+  xy=ones_new(n+1,1)*matrix(orig,1,2)+xy*b
   xpoly(xy(:,1),xy(:,2),"lines",1);
 endfunction

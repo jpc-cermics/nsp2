@@ -5,15 +5,11 @@ function [z]=eval3d(fun,x,y)
 //  assuming that the function fun is able to return a result when 
 //  x and y are matrices of the same size i.e fun(x,y)
 //  ->(fun(x(i),y(i))).
-//!
+//  (simplified by bruno pincon using ndgrid 21/12/2007)
   if nargin <= 2  then
-    nx=size(x,'*');ny=nx;
-    xx=ones(1,nx).*.matrix(x,1,nx);
-    yy=xx;
+    [xx,yy] = ndgrid(x)
   else
-    nx=size(x,'*');ny=size(y,'*');
-    xx=ones(1,ny).*.matrix(x,1,nx);
-    yy=matrix(y,1,ny).*.ones(1,nx);
+    [xx,yy] = ndgrid(x,y)
   end
-  z=matrix(fun(xx,yy),nx,ny)
+  z = fun(xx,yy)
 endfunction

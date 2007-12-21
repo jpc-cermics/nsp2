@@ -18,10 +18,10 @@ function graypolarplot(theta,rho,z,varargin)
   nt=size(theta,'*');theta=matrix(theta,1,-1)*180/%pi
   for k=1:size(rho,'*')-1
     r=rho(k)
-    xfarcs([-r*ones(1,nt-1);
-	    r*ones(1,nt-1);
-	    2*r*ones(1,nt-1);
-	    2*r*ones(1,nt-1);
+    xfarcs([-r*ones_new(1,nt-1);
+	    r*ones_new(1,nt-1);
+	    2*r*ones_new(1,nt-1);
+	    2*r*ones_new(1,nt-1);
 	    theta(1:$-1)*64;
 	    (theta(2:$)-theta(1:$-1))*64],
             (z(1:$-1,k)+z(2:$,k)+z(1:$-1,k+1)+z(2:$,k+1))/4)

@@ -54,7 +54,7 @@ function [varargout] = ndgrid(varargin)
      if nbdim < 2 then
       error(" ndgrid must have at least 2 input or output args")
      end
-     dim = zeros(1,nbdim)
+     dim = zeros_new(1,nbdim)
      for k = 1:nargin
        if type(varargin(k),'short') ~= 'm' then  
 	 error(" ndgrid : bad "+string(k)+" th arg")
@@ -67,7 +67,7 @@ function [varargout] = ndgrid(varargin)
      // try to simulate n-dimensional matrix in nsp: the following 3
      // lines should be removed and fdim replaced by dim in the last redim
      // method: varargout(k).redim[fdim] => varargout(k).redim[dim]
-     fdim = zeros(1,2)
+     fdim = zeros_new(1,2)
      fdim(1) = dim(1)
      fdim(2) = prod(dim(2:$));
      

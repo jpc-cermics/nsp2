@@ -8,14 +8,14 @@ function []=errbar(x,y,em,ep)
 // Exemple : taper errbar()
 //      x=0:0.1:2*%pi;
 //   y=<sin(x);cos(x)>';x=<x;x>';plot2d(x,y);
-//   errbar(x,y,0.05*ones(x),0.03*ones(x));
+//   errbar(x,y,0.05*ones_new(size(x)),0.03*ones_new(size(x)));
 //!
 //
   if nargin <=0 then 
     demo_errbar= ['x=0:0.1:2*%pi;';
 		  'y=[sin(x);cos(x)]'';x=[x;x]''';
 		  'plot2d(x,y);';
-		  'errbar(x,y,0.05*ones(x),0.03*ones(x));'];
+		  'errbar(x,y,0.05*ones_new(size(x)),0.03*ones_new(size(x)));'];
     print(demo_errbar);
     execstr(demo_errbar);
     return;

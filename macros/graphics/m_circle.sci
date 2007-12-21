@@ -14,7 +14,7 @@ titre='isogain contours for y/(1+y)'
 l10=log(10);
 //
 lambda=exp(l10*gain/20)
-rayon=lambda./(lambda.*lambda-ones(lambda))
+rayon=lambda./(lambda.*lambda-ones_new(size(lambda)))
 centre=-lambda.*rayon
 rayon=abs(rayon)
 rect=[mini(centre-rayon),mini(-rayon),maxi(centre+rayon),maxi(rayon)];
@@ -37,7 +37,7 @@ for i=1:prod(size(gain))
     w=-%pi:0.03:0;
   end;
   n=prod(size(w))
-  rf=centre(i)*ones(w)+rayon(i)*exp(%i*w);
+  rf=centre(i)*ones_new(size(w))+rayon(i)*exp(%i*w);
   rf=rf';
   plot2d(real(rf),imag(rf),[3],"000")
   plot2d(real(rf),-imag(rf),[3],"000")

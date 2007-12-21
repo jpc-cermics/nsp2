@@ -54,7 +54,7 @@ function []=xsetm()
     [lrep,lres,rep]=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
     if ~isempty(lrep) then
       if or(rep<>entval) then 
-	rep=rep-ones(rep);
+	rep=rep-ones_new(size(rep));
 	if rep(7)==0 then 
 	  // On passe de couleur a n&b le changement de use color
 	  // doir remettre pattern et dash a z'ero
@@ -77,7 +77,7 @@ function []=xsetm()
     [lrep,lres,rep]=x_choices('Graphic context of graphic window '+string(winid),xch_l,%t);
     if ~isempty(lrep) then
       if or(rep<>entval) then 
-	rep=rep-ones(rep);
+	rep=rep-ones_new(size(rep));
 	if rep(7)==1 then 
 	  // On passe de n&b a couleur le changement de use color
 	  // doir remettre pattern et dash a z'ero

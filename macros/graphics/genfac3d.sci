@@ -24,12 +24,12 @@ function [xx,yy,zz]=genfac3d(x,y,zmat,mask)
     return;
   end;
   [nr,nc]=size(zmat)
-  indy=(ones(1,nc-1).*.[0;1;1;0]+(1:nc-1).*.[1;1;1;1]).*.ones(1,nr-1);
-  indx=ones(1,nc-1).*.(ones(1,nr-1).*.[0;0;1;1]+(1:nr-1).*.[1;1;1;1]);
+  indy=(ones_new(1,nc-1).*.[0;1;1;0]+(1:nc-1).*.[1;1;1;1]).*.ones_new(1,nr-1);
+  indx=ones_new(1,nc-1).*.(ones_new(1,nr-1).*.[0;0;1;1]+(1:nr-1).*.[1;1;1;1]);
   [nrl,nrc]=size(indx)
   indx=matrix(indx,nrl*nrc,1);
   indy=matrix(indy,nrl*nrc,1);
-  indz=indx+(nr)*(indy-1*ones(indy));
+  indz=indx+(nr)*(indy-1*ones_new(size(indy)));
   [nrl,nrc]=size(indx);
   xx=matrix(x(indx),4,nrl*nrc/4);
   yy=matrix(y(indy),4,nrl*nrc/4);

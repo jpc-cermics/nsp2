@@ -29,14 +29,14 @@ function icol=getcolor(win=-1,cinit=-1)
   y=m:-1:1;
   nx=size(x,'*');
   ny=size(y,'*');
-  xx=ones(1,ny).*.matrix(x,1,nx);
-  yy=matrix(y,1,ny).*.ones(1,nx);
+  xx=ones_new(1,ny).*.matrix(x,1,nx);
+  yy=matrix(y,1,ny).*.ones_new(1,nx);
   xsetech(frect=[0,-1,n+2,m+1],arect=[0,0,0,0])
-  rects=[xx;yy;ones(xx);ones(yy)];
+  rects=[xx;yy;ones_new(size(xx));ones_new(size(yy))];
   rects=rects(:,1:p);
   xset('thickness',1);
   xrects(rects,[1:p]);
-  xrects(rects,-(p)*ones(1,p));
+  xrects(rects,-(p)*ones_new(1,p));
   xrects(rects(:,ccol),-(p-1));
   while %t
     [c,x,y]=xclick(clearq=%t)

@@ -138,8 +138,8 @@ while %t
   kk=kk+kk1
   
   if mini(abs(frq(:,ks($))-frq(:,kk))./abs(frq(:,kk)))>0.001 then
-    if mini(sqrt(((repf(:,ks)-repf(:,kk)*ones(ks)).^2)/dx2+..
-        ((repi(:,ks)-repi(:,kk)*ones(ks)).^2)/dy2)) >DIc then
+    if mini(sqrt(((repf(:,ks)-repf(:,kk)*ones_new(size(ks))).^2)/dx2+..
+        ((repi(:,ks)-repi(:,kk)*ones_new(size(ks))).^2)/dy2)) >DIc then
       ks=[ks kk]
       d=0
     end

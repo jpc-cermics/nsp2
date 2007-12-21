@@ -24,23 +24,23 @@ function hist3d(f,T,A,leg,flags,ebox)
     [nl,nc]=size(f);
   else
     [nl,nc]=size(f);
-    x=(1:nl)-(0.5)*ones(1,nl);
-    y=(1:nc)-(0.5)*ones(1,nc);
+    x=(1:nl)-(0.5)*ones_new(1,nl);
+    y=(1:nc)-(0.5)*ones_new(1,nc);
     dx=1/nep; dy=1/nep;
     bnds=[0 nl,0 nc,mini(0,mini(f)) maxi(f)]
   end
-  x=x.*.[1,1] + dx*ones(x).*.[0,1] - dx*ones(x).*.[1,0];
-  y=y.*.[1,1] + dy*ones(y).*.[0,1] - dy*ones(y).*.[1,0];
+  x=x.*.[1,1] + dx*ones_new(size(x)).*.[0,1] - dx*ones_new(size(x)).*.[1,0];
+  y=y.*.[1,1] + dy*ones_new(size(y)).*.[0,1] - dy*ones_new(size(y)).*.[1,0];
   a=[0;0;1;1]
   b=[0;1;1;0]
   c=[0;0;0;0]
   d=[1;1;1;1]
   ix=[b,b,a,a,c,d];
   iy=[a,a,c,d,b,b];
-  indx=ones(1,nc) .*. (ones(1,nl).*.ix +(1:2:2*nl-1).*.ones(ix));
+  indx=ones_new(1,nc) .*. (ones_new(1,nl).*.ix +(1:2:2*nl-1).*.ones_new(size(ix)));
   iy=matrix(iy,24,1);
-  //indy=(ones(1,nl).*.iy+(1:2:2*nl-1).*.ones(iy)) .*. ones(1,nc);
-  indy=(ones(1,nc).*.iy+(1:2:2*nc-1).*.ones(iy)) .*. ones(1,nl);
+  //indy=(ones_new(1,nl).*.iy+(1:2:2*nl-1).*.ones_new(size(iy))) .*. ones_new(1,nc);
+  indy=(ones_new(1,nc).*.iy+(1:2:2*nc-1).*.ones_new(size(iy))) .*. ones_new(1,nl);
   indy=matrix(indy,4,6*nc*nl);
   [nnl,nnc]=size(indx);
 

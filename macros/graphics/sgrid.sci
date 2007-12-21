@@ -30,14 +30,14 @@ end
 	// building a grid 
 	zx = 0:.01:1;
 	[rx,cx]=size(wn);[ry,cy]=size(zx);
-	w=wn.*.ones(cy,1);z=zx'.*.ones(1,cx);
+	w=wn.*.ones_new(cy,1);z=zx'.*.ones_new(1,cx);
 
 	// plot : part I 
 	re = - w .* z;
 	[zr,zc] = size(z);
 	im = w .* sqrt( 1 - z .* z );
-	plot2d(re,im,col*ones(1,zc),"000");
-	plot2d(re,-im,col*ones(1,zc),"000");
+	plot2d(re,im,col*ones_new(1,zc),"000");
+	plot2d(re,-im,col*ones_new(1,zc),"000");
 	
 	// info on curves 
 
@@ -50,15 +50,15 @@ end
 
 	wn = [0,wn,2*wmax];
 	[rx,cx]=size(wn);[ry,cy]=size(zeta);
-	w=wn.*.ones(cy,1);z=zeta'.*.ones(1,cx);
+	w=wn.*.ones_new(cy,1);z=zeta'.*.ones_new(1,cx);
 
 	// plot part II  
 
 	[zr,zc] = size(z);
 	re = -w .* z;
 	im = w .* sqrt( 1 - z .* z );
-	plot2d(re',im',col*ones(1,zr),"000");
-	plot2d(re',-im',col*ones(1,zr),"000");
+	plot2d(re',im',col*ones_new(1,zr),"000");
+	plot2d(re',-im',col*ones_new(1,zr),"000");
 
 	// info on each curve ( straight lines )
 	[rer,rec] = size(re)

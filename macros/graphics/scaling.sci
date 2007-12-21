@@ -16,6 +16,6 @@ end;
 [m,n]=size(xy)
 if m<>2 then  error('xy must be a vector with 2 rows [x;y]'),end
 //
-xy=xy-orig*ones(1,n)
-xy=factor*xy+orig*ones(1,n)
+xy=xy-orig*ones_new(1,n)
+xy=factor*xy+orig*ones_new(1,n)
 endfunction
