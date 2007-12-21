@@ -4505,7 +4505,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
 static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
 {
   int rep = TRUE;
-  if ( m->m || m->n == 0) 
+  if ( m->m ==0 || m->n == 0) 
     {
       Sciprintf("[]\n");
     }
