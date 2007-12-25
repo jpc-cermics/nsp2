@@ -57,9 +57,9 @@ if norm(A*X-B) > 1.e-8 then pause;end
 
 X=umfpack_solve(SpA+%i*SpAi, B);
 if norm((A+%i*Ai)*X-B) > 1.e-8 then pause;end 
-X=umfpack_solve(SpA, B+%i*Bi)
+X=umfpack_solve(SpA, B+%i*Bi);
 if norm(A*X-(B+%i*Bi)) > 1.e-8 then pause;end 
-X=umfpack_solve(SpA+%i*SpAi, B+%i*Bi)
+X=umfpack_solve(SpA+%i*SpAi, B+%i*Bi);
 if norm((A+%i*SpAi)*X- (B+%i*Bi)) > 1.e-8 then pause;end 
 
 
