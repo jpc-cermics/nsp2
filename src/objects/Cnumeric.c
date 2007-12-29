@@ -36,7 +36,7 @@
  * 
  * absolute value of a complex number x=a+ib sqrt(a^2+b^2).
  * 
- * Returns a double
+ * Returns: a double
  */
 
 double nsp_abs_c(const doubleC *x)
@@ -273,6 +273,40 @@ double nsp_pow_di(double x, int p)
     }
 } 
 
+/**
+ * nsp_pow_ii:
+ * @p: an int 
+ * @n: an int 
+ * 
+ * computes value of @p raised to the power of @n.
+ * 
+ * Returns: an int 
+ **/
+
+int nsp_pow_ii(int p, int n)
+{
+  /* from libf2c */
+  int pow;
+  unsigned long u;
+  if (n <= 0) {
+    if (n == 0 || p == 1)
+      return 1;
+    if (p != -1)
+      return p == 0 ? 1/p : 0;
+    n = -n;
+  }
+  u = n;
+  for(pow = 1; ; )
+    {
+      if(u & 01) pow *= p;
+      if(u >>= 1)
+	p *= p;
+      else
+	break;
+    }
+  return(pow);
+} 
+
 
 
 /**
@@ -311,6 +345,7 @@ void nsp_pow_ci(const doubleC *x, int p, doubleC *y)
 	}
     }
 }
+
 
 
 /**
