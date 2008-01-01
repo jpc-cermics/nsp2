@@ -283,30 +283,38 @@ double nsp_pow_di(double x, int p)
  * Returns: an int 
  **/
 
-int nsp_pow_ii(int p, int n)
-{
-  /* from libf2c */
-  int pow;
-  unsigned long u;
-  if (n <= 0) {
-    if (n == 0 || p == 1)
-      return 1;
-    if (p != -1)
-      return p == 0 ? 1/p : 0;
-    n = -n;
-  }
-  u = n;
-  for(pow = 1; ; )
-    {
-      if(u & 01) pow *= p;
-      if(u >>= 1)
-	p *= p;
-      else
-	break;
-    }
-  return(pow);
-} 
+/* from slatec */
 
+int nsp_pow_ii(int x, int p)
+{
+  if ( p < 0 )
+    {
+      if ( p > INT_MIN ) /* p > -2^31 with 32 bits arithmetic */
+	return 1.0/nsp_pow_ii(x, -p);
+      else 
+	{   
+	  /*  1.0/nsp_pow_di(x, -p) don't work because -(-2^31)   */
+	  /*  = 2^31 mathematically but as MAXINT = 2^31-1 we get */
+	  /*  in fact -2^31 with the usual int arithmetic         */
+	  int pp = p + 1;
+	  return 1.0/(nsp_pow_di(x,-pp)*x);
+	}
+    }
+  else if ( p == 0 )
+    return 1.0;
+  else
+    {
+      int z = 1;
+      while ( p > 1 )
+	{
+	  if ( p % 2 == 1 )
+	    z *= x;
+	  x *= x;
+	  p = p/2;
+	}
+      return z*x;
+    }
+} 
 
 
 /**
