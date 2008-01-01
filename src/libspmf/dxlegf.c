@@ -82,7 +82,6 @@ static const int c__2 = 2;
 #define d_lg10 log10
 #define D_SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : -(a >= 0 ? a : -a))
 
-static int nsp_pow_ii(int x, int p);
 static double dxpsi_(double *, int *, int *);
 static int dxadd_(double *, int *, double *, int *, double *, int *, int *);
 static int dxadj_(double *, int *, int *);
@@ -2211,36 +2210,5 @@ static int dxadj_(double *x, int *ix, int *ierror)
 } 
 
 
-
-static int nsp_pow_ii(int x, int p)
-{
-  if ( p < 0 )
-    {
-      if ( p > INT_MIN ) /* p > -2^31 with 32 bits arithmetic */
-	return 1.0/nsp_pow_ii(x, -p);
-      else 
-	{   
-	  /*  1.0/nsp_pow_di(x, -p) don't work because -(-2^31)   */
-	  /*  = 2^31 mathematically but as MAXINT = 2^31-1 we get */
-	  /*  in fact -2^31 with the usual int arithmetic         */
-	  int pp = p + 1;
-	  return 1.0/(nsp_pow_di(x,-pp)*x);
-	}
-    }
-  else if ( p == 0 )
-    return 1.0;
-  else
-    {
-      int z = 1;
-      while ( p > 1 )
-	{
-	  if ( p % 2 == 1 )
-	    z *= x;
-	  x *= x;
-	  p = p/2;
-	}
-      return z*x;
-    }
-} 
 
 
