@@ -42,22 +42,12 @@
 #include <nsp/cnumeric.h> 
 #include <nsp/spmf.h> 
 
-typedef struct Dxblk1_ Dxblk1; 
-
-struct Dxblk1_ {
-  int nbitsf;
-};
-
-static Dxblk1 dxblk1_1;
-
 typedef struct Dxblk2_ Dxblk2; 
 
 struct Dxblk2_ {
   double radix, radixl, rad2l, dlg10r;
-  int l, l2, kmax;
+  int l, l2, kmax, nbitsf, iflag;
 };
-
-static Dxblk2 dxblk2_1;
 
 typedef struct Dxblk3_ Dxblk3; 
 
@@ -83,17 +73,20 @@ static const int c__2 = 2;
 #define D_SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : -(a >= 0 ? a : -a))
 
 static double dxpsi_(double *, int *, int *);
-static int dxadd_(double *, int *, double *, int *, double *, int *, int *);
-static int dxadj_(double *, int *, int *);
-static int dxpmu_(double *, double *, int *, int *, double *, double *, int *, double *, int *, int *);
-static int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror);
-static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror);
-static int dxpqnu_(double *, double *, int *, double *, double *, int *, double *, int *, int *);
-static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror);
-static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror);
-static int dxred_(double *x, int *ix, int *ierror);
-static int dxset_(const int *irad,const int *nradpl,const double *dzero,const int *nbits, int *ierror);
-
+static int dxadd(Dxblk2 *dxblk2,double *, int *, double *, int *, double *, int *, int *);
+static int dxadj(Dxblk2 *dxblk2,double *x, int *ix, int *ierror);
+static  int dxpmu(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *x, 
+		  double *sx, int *id, double *pqa, int *ipqa, int *ierror);
+static  int dxpmup_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror);
+static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, double *sx,
+		   int *id, double *pqa, int *ipqa, int *ierror);
+static int dxqmu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx,
+		  int *id, double *pqa, int *ipqa, int *ierror);
+static int dxqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, 
+		  double *pqa, int *ipqa, int *ierror);
+static int dxred(Dxblk2 *dxblk2,double *x, int *ix, int *ierror);
+static int dxset(Dxblk2 *dxblk2,int irad, int nradpl, double dzero, int nbits, int *ierror);
+static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror);
 
 /*
  * Computes normalized Legendre polynomials and associated Legendre functions. 
@@ -215,6 +208,8 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
 
 int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror)
 {
+  Dxblk2 dxblk2_1;
+
   /* System generated locals */
   int i__1;
 
@@ -230,7 +225,10 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
 
   /* Function Body */
   *ierror = 0;
-  dxset_(&c__0, &c__0, &c_b4, &c__0, ierror);
+
+  dxblk2_1.iflag = 0; /* force initialization */
+  dxset(&dxblk2_1,0, 0, 0.0, 0, ierror);
+
   if (*ierror != 0) {
     return 0;
   }
@@ -334,7 +332,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    *       call dxpmu to calculate p(-mu1,nu,x),....,p(-mu2,nu,x) 
    * 
    */
-  dxpmu_(dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpmu(&dxblk2_1,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -350,7 +348,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    *       call dxqmu to calculate q(mu1,nu,x),....,q(mu2,nu,x) 
    * 
    */
-  dxqmu_(dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxqmu_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -361,7 +359,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
  L320:
-  dxqnu_(dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxqnu_(&dxblk2_1,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -372,7 +370,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
  L360:
-  dxpqnu_(dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(&dxblk2_1,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -383,7 +381,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    */
  L380:
   if (*id == 3) {
-    dxpmup_(dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
+    dxpmup_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -394,7 +392,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
   if (*id == 4) {
-    dxpnrm_(dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
+    dxpnrm_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -407,7 +405,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
  L390:
   i__1 = l;
   for (i__ = 1; i__ <= i__1; ++i__) {
-    dxred_(&pqa[i__], &ipqa[i__], ierror);
+    dxred(&dxblk2_1,&pqa[i__], &ipqa[i__], ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -441,7 +439,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
+static  int dxpmu(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
   int j, n;
   double p0, x1, x2;
@@ -453,7 +451,7 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
 
   /* Function Body */
   *ierror = 0;
-  dxpqnu_(nu1, nu2, mu2, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, mu2, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -464,7 +462,7 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
    *       CALL DXPQNU TO OBTAIN P(-MU2-1,NU,X) 
    * 
    */
-  dxpqnu_(nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -491,11 +489,11 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
    */
   x1 = mu * 2. * *x * *sx * pqa[j + 1];
   x2 = -(*nu1 - mu) * (*nu1 + mu + 1.) * pqa[j + 2];
-  dxadd_(&x1, &ipqa[j + 1], &x2, &ipqa[j + 2], &pqa[j], &ipqa[j], ierror);
+  dxadd(dxblk2,&x1, &ipqa[j + 1], &x2, &ipqa[j + 2], &pqa[j], &ipqa[j], ierror);
   if (*ierror != 0) {
     return 0;
   }
-  dxadj_(&pqa[j], &ipqa[j], ierror);
+  dxadj(dxblk2,&pqa[j], &ipqa[j], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -527,7 +525,7 @@ static  int dxpmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doub
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
+static  int dxpmup_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
 {
   /* System generated locals */
   int i__1;
@@ -589,7 +587,7 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
   for (l = 1; l <= i__1; ++l) {
     prod *= dmu - nu - l;
     /* L220: */
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -602,7 +600,7 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
     }
     pqa[i__] = pqa[i__] * prod * nsp_pow_ii(c_n1, mu);
     ipqa[i__] += iprod;
-    dxadj_(&pqa[i__], &ipqa[i__], ierror);
+    dxadj(dxblk2,&pqa[i__], &ipqa[i__], ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -611,7 +609,7 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
       goto L230;
     }
     prod = (dmu - nu) * prod * (-dmu - nu - 1.);
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -620,7 +618,7 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
     goto L240;
   L230:
     prod = prod * (-dmu - nu - 1.) / (dmu - nu - 1.);
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -651,13 +649,9 @@ static  int dxpmup_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, i
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
+static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   int i__1;
-
-
-  /* Local variables */
   double prod;
   int i__, j, k, l;
   int iprod;
@@ -719,7 +713,7 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
   for (i__ = 1; i__ <= i__1; ++i__) {
     prod *= sqrt(nu + dmu + 1. - i__);
     /* L510: */
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -730,7 +724,7 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
     c1 = prod * sqrt(nu + .5);
     pqa[i__] *= c1;
     ipqa[i__] += iprod;
-    dxadj_(&pqa[i__], &ipqa[i__], ierror);
+    dxadj(dxblk2,&pqa[i__], &ipqa[i__], ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -744,7 +738,7 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
     if (nu > dmu) {
       prod *= sqrt(nu - dmu);
     }
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -762,7 +756,7 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
     if (nu != dmu - 1.) {
       prod /= sqrt(nu - dmu + 1.);
     }
-    dxadj_(&prod, &iprod, ierror);
+    dxadj(dxblk2,&prod, &iprod, ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -797,7 +791,8 @@ static int dxpnrm_(double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, in
  * 
  */
 
-static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
+static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, double *sx,
+		   int *id, double *pqa, int *ipqa, int *ierror)
 {
   /* System generated locals */
   int i__1;
@@ -826,8 +821,8 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
 
   /* Function Body */
   *ierror = 0;
-  j0 = dxblk1_1.nbitsf;
-  ipsik = dxblk1_1.nbitsf / 10 + 1;
+  j0 =    dxblk2->nbitsf;
+  ipsik = dxblk2->nbitsf / 10 + 1;
   ipsix = ipsik * 5;
   ipq = 0;
   /*       FIND NU IN INTERVAL [-.5,.5) IF ID=2  ( CALCULATION OF Q ) 
@@ -854,7 +849,7 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
   for (i__ = 1; i__ <= i__1; ++i__) {
     factmu *= i__;
     /* L50: */
-    dxadj_(&factmu, &if__, ierror);
+    dxadj(dxblk2,&factmu, &if__, ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -899,14 +894,14 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
     for (i__ = 2; i__ <= i__1; ++i__) {
       di = (double) i__;
       a = a * y * (di - 2. - nu) * (di - 1. + nu) / ((di - 1. + dmu) * (di - 1.));
-      dxadj_(&a, &ia, ierror);
+      dxadj(dxblk2,&a, &ia, ierror);
       if (*ierror != 0) {
 	return 0;
       }
       if (a == 0.) {
 	goto L66;
       }
-      dxadd_(&pq, &ipq, &a, &ia, &pq, &ipq, ierror);
+      dxadd(dxblk2,&pq, &ipq, &a, &ia, &pq, &ipq, ierror);
       if (*ierror != 0) {
 	return 0;
       }
@@ -923,14 +918,14 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
     for (i__ = 1; i__ <= i__1; ++i__) {
       x1 *= x2;
       /* L77: */
-      dxadj_(&x1, &ipq, ierror);
+      dxadj(dxblk2,&x1, &ipq, ierror);
     }
     if (*ierror != 0) {
       return 0;
     }
     pq = x1 / factmu;
     ipq -= if__;
-    dxadj_(&pq, &ipq, ierror);
+    dxadj(dxblk2,&pq, &ipq, ierror);
     if (*ierror != 0) {
       return 0;
     }
@@ -970,7 +965,7 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
 	goto L81;
       }
       a = a * y * (flok - 2. - nu) * (flok - 1. + nu) / ((flok - 1. + dmu) * (flok - 1.));
-      dxadj_(&a, &ia, ierror);
+      dxadj(dxblk2,&a, &ia, ierror);
       if (*ierror != 0) {
 	return 0;
       }
@@ -980,7 +975,7 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
       }
       x1 = (dxpsi_(&flok, &ipsik, &ipsix) - w + z__) * a;
       ix1 = ia;
-      dxadd_(&pq, &ipq, &x1, &ix1, &pq, &ipq, ierror);
+      dxadd(dxblk2,&pq, &ipq, &x1, &ix1, &pq, &ipq, ierror);
       if (*ierror != 0) {
 	return 0;
       }
@@ -988,7 +983,7 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
     L83:
       x1 = (nu * (nu + 1.) * (z__ - w + dxpsi_(&flok, &ipsik, &ipsix)) + (nu - flok + 1.) * (nu + flok) / (flok * 2.)) * a;
       ix1 = ia;
-      dxadd_(&pq, &ipq, &x1, &ix1, &pq, &ipq, ierror);
+      dxadd(dxblk2,&pq, &ipq, &x1, &ix1, &pq, &ipq, ierror);
       if (*ierror != 0) {
 	return 0;
       }
@@ -1001,7 +996,7 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
     ixs = 0;
     if (*mu >= 1) {
       d__1 = -xs;
-      dxadd_(&pq, &ipq, &d__1, &ixs, &pq, &ipq, ierror);
+      dxadd(dxblk2,&pq, &ipq, &d__1, &ixs, &pq, &ipq, ierror);
     }
     if (*ierror != 0) {
       return 0;
@@ -1057,11 +1052,11 @@ static int dxpqnu_(double *nu1, double *nu2, int *mu, double *x, double *sx, int
   x1 = (nu * 2. - 1.) / (nu + dmu) * *x * pq1;
   x2 = (nu - 1. - dmu) / (nu + dmu) * pq2;
   d__1 = -x2;
-  dxadd_(&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
+  dxadd(dxblk2,&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
-  dxadj_(&pq, &ipq, ierror);
+  dxadj(dxblk2,&pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1166,7 +1161,8 @@ double dxpsi_(double *a, int *ipsik, int *ipsix)
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
+static int dxqmu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx,
+		  int *id, double *pqa, int *ipqa, int *ierror)
 {
   /* System generated locals */
   double d__1;
@@ -1190,7 +1186,7 @@ static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doubl
    *       CALL DXPQNU TO OBTAIN Q(0.,NU1,X) 
    * 
    */
-  dxpqnu_(nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1201,7 +1197,7 @@ static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doubl
    *       CALL DXPQNU TO OBTAIN Q(1.,NU1,X) 
    * 
    */
-  dxpqnu_(nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1241,11 +1237,11 @@ static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doubl
   x1 = dmu * -2. * *x * *sx * pq1;
   x2 = (nu + dmu) * (nu - dmu + 1.) * pq2;
   d__1 = -x2;
-  dxadd_(&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
+  dxadd(dxblk2,&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
-  dxadj_(&pq, &ipq, ierror);
+  dxadj(dxblk2,&pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1284,7 +1280,7 @@ static int dxqmu_(double *nu1, double *nu2, int *mu1, int *mu2, double *x, doubl
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
+static int dxqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
   /* System generated locals */
   double d__1;
@@ -1317,7 +1313,7 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
    *       CALL DXPQNU TO OBTAIN Q(0.,NU2,X) AND Q(0.,NU2-1,X) 
    * 
    */
-  dxpqnu_(nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1335,7 +1331,7 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
    *       CALL DXPQNU TO OBTAIN Q(1.,NU2,X) AND Q(1.,NU2-1,X) 
    * 
    */
-  dxpqnu_(nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,nu1, nu2, &mu, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1363,11 +1359,11 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
   x1 = dmu * -2. * *x * *sx * pq1;
   x2 = (nu + dmu) * (nu - dmu + 1.) * pq2;
   d__1 = -x2;
-  dxadd_(&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
+  dxadd(dxblk2,&x1, &ipq1, &d__1, &ipq2, &pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
-  dxadj_(&pq, &ipq, ierror);
+  dxadj(dxblk2,&pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1419,11 +1415,11 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
   --k;
   x1 = (nu * 2. + 1.) * *x * pq1 / (nu + dmu);
   x2 = -(nu - dmu + 1.) * pq2 / (nu + dmu);
-  dxadd_(&x1, &ipq1, &x2, &ipq2, &pq, &ipq, ierror);
+  dxadd(dxblk2,&x1, &ipq1, &x2, &ipq2, &pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
-  dxadj_(&pq, &ipq, ierror);
+  dxadj(dxblk2,&pq, &ipq, ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -1439,8 +1435,8 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
 
 
 /*
- * provides double-precision floating-point arithmetic 
- *           with an extended exponent range. 
+ * provides double-precision floating-point 
+ * arithmetic with an extended exponent range. 
  * Copyright: SLATEC Library Copyright. 
  * Authors:  Lozier, Daniel W., (National Bureau of Standards) 
  *          Smith, John M., (NBS and George Mason University) 
@@ -1467,12 +1463,9 @@ static int dxqnu_(double *nu1, double *nu2, int *mu1, double *x, double *sx, int
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static int dxred_(double *x, int *ix, int *ierror)
+static int dxred(Dxblk2 *dxblk2, double *x, int *ix, int *ierror)
 {
-  /* System generated locals */
   int i__1;
-
-  /* Local variables */
   int i__;
   double xa;
   int ixa, ixa1, ixa2;
@@ -1486,8 +1479,8 @@ static int dxred_(double *x, int *ix, int *ierror)
     goto L70;
   }
   ixa = Abs(*ix);
-  ixa1 = ixa / dxblk2_1.l2;
-  ixa2 = ixa % dxblk2_1.l2;
+  ixa1 = ixa / dxblk2->l2;
+  ixa2 = ixa % dxblk2->l2;
   if (*ix > 0) {
     goto L40;
   }
@@ -1495,11 +1488,11 @@ static int dxred_(double *x, int *ix, int *ierror)
   if (xa > 1.) {
     goto L20;
   }
-  xa *= dxblk2_1.rad2l;
+  xa *= dxblk2->rad2l;
   ++ixa1;
   goto L10;
  L20:
-  xa /= pow_di(dxblk2_1.radix, ixa2);
+  xa /= pow_di(dxblk2->radix, ixa2);
   if (ixa1 == 0) {
     goto L70;
   }
@@ -1508,7 +1501,7 @@ static int dxred_(double *x, int *ix, int *ierror)
     if (xa < 1.) {
       goto L100;
     }
-    xa /= dxblk2_1.rad2l;
+    xa /= dxblk2->rad2l;
     /* L30: */
   }
   goto L70;
@@ -1518,11 +1511,11 @@ static int dxred_(double *x, int *ix, int *ierror)
   if (xa < 1.) {
     goto L50;
   }
-  xa /= dxblk2_1.rad2l;
+  xa /= dxblk2->rad2l;
   ++ixa1;
   goto L40;
  L50:
-  xa *= pow_di(dxblk2_1.radix, ixa2);
+  xa *= pow_di(dxblk2->radix, ixa2);
   if (ixa1 == 0) {
     goto L70;
   }
@@ -1531,17 +1524,17 @@ static int dxred_(double *x, int *ix, int *ierror)
     if (xa > 1.) {
       goto L100;
     }
-    xa *= dxblk2_1.rad2l;
+    xa *= dxblk2->rad2l;
     /* L60: */
   }
  L70:
-  if (xa > dxblk2_1.rad2l) {
+  if (xa > dxblk2->rad2l) {
     goto L100;
   }
   if (xa > 1.) {
     goto L80;
   }
-  if (dxblk2_1.rad2l * xa < 1.) {
+  if (dxblk2->rad2l * xa < 1.) {
     goto L100;
   }
  L80:
@@ -1654,23 +1647,19 @@ static int dxred_(double *x, int *ix, int *ierror)
  *  CONVERSION OF EXTENDED-RANGE NUMBERS TO BASE 10 . 
  */
 
-static int dxset_(const int *irad,const int *nradpl,const double *dzero,const int *nbits, int *ierror)
+static int dxset(Dxblk2 *dxblk2,int irad, int nradpl,double dzero,int nbits, int *ierror)
 {
   /* Initialized data */
   static const int log102[20] = { 301,29,995,663,981,195,213,738,894,724,493,26,768,189,881,462,108,541,310,428 };
   static int iflag = 0;
 
-  /* System generated locals */
   int i__1, i__2;
   double d__1;
 
-
-  /* Local variables */
   int lg102x, log2r, i__, j, k, iradx, ic, nb, ii, kk;
   int it, lx, nrdplc, lgtemp[20], iminex, imaxex, nbitsx;
   double dzerox;
   int np1;
-
 
   /* 
    *FOLLOWING CODING PREVENTS DXSET FROM BEING EXECUTED MORE THAN ONCE. 
@@ -1682,46 +1671,43 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
    */
 
   *ierror = 0;
-  if (iflag != 0) {
+  if ( dxblk2->iflag != 0) {
     return 0;
   }
-  iradx = *irad;
-  nrdplc = *nradpl;
-  dzerox = *dzero;
+  dxblk2->iflag = 1;
+
+  iradx = irad;
+  nrdplc = nradpl;
+  dzerox = dzero;
   iminex = 0;
   imaxex = 0;
-  nbitsx = *nbits;
-  /*FOLLOWING 5 STATEMENTS SHOULD BE DELETED IF I1MACH IS 
-   *NOT AVAILABLE OR NOT CONFIGURED TO RETURN THE CORRECT 
-   *MACHINE-DEPENDENT VALUES. 
+  nbitsx = nbits;
+  /* following 5 statements should be deleted if i1mach is 
+   * not available or not configured to return the correct 
+   * machine-dependent values. 
    * 
-   *modif : use a call to dlamch in place of I1MACH 
+   * modif : use a call to dlamch in place of i1mach 
    */
   if (iradx == 0) {
-    iradx = (int) nsp_dlamch("b");
+    iradx = (int) nsp_dlamch("b");   /* I1MACH (10) */
+
   }
-  /*I1MACH (10) 
-   */
   if (nrdplc == 0) {
-    nrdplc = (int) nsp_dlamch("n");
+    nrdplc = (int) nsp_dlamch("n");   /*I1MACH (14) */
   }
-  /*I1MACH (14) 
-   */
+
   if (dzerox == 0.) {
-    iminex = (int) nsp_dlamch("m");
+    iminex = (int) nsp_dlamch("m");  /*I1MACH (15)  */
+
   }
-  /*I1MACH (15) 
-   */
   if (dzerox == 0.) {
-    imaxex = (int) nsp_dlamch("l");
+    imaxex = (int) nsp_dlamch("l");  /*I1MACH (16)  */
+
   }
-  /*I1MACH (16) 
-   */
   if (nbitsx == 0) {
-    nbitsx = 31;
+    nbitsx = 31;  /*I1MACH (8)  */
   }
-  /*I1MACH (8) 
-   */
+
   if (iradx == 2) {
     goto L10;
   }
@@ -1752,9 +1738,9 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   if (iradx == 16) {
     log2r = 4;
   }
-  dxblk1_1.nbitsf = log2r * nrdplc;
-  dxblk2_1.radix = (double) iradx;
-  dxblk2_1.dlg10r = d_lg10(dxblk2_1.radix);
+  dxblk2->nbitsf = log2r * nrdplc;
+  dxblk2->radix = (double) iradx;
+  dxblk2->dlg10r = d_lg10(dxblk2->radix);
   if (dzerox != 0.) {
     goto L14;
   }
@@ -1764,13 +1750,13 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   lx = Min(i__1,i__2);
   goto L16;
  L14:
-  lx = (int) (d_lg10(dzerox) * .5 / dxblk2_1.dlg10r);
+  lx = (int) (d_lg10(dzerox) * .5 / dxblk2->dlg10r);
   /*RADIX**(2*L) SHOULD NOT OVERFLOW, BUT REDUCE L BY 1 FOR FURTHER 
    *PROTECTION. 
    */
   --lx;
  L16:
-  dxblk2_1.l2 = lx << 1;
+  dxblk2->l2 = lx << 1;
   if (lx >= 4) {
     goto L20;
   }
@@ -1779,12 +1765,12 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   *ierror = 202;
   return 0;
  L20:
-  dxblk2_1.l = lx;
-  dxblk2_1.radixl = pow_di(dxblk2_1.radix, dxblk2_1.l);
+  dxblk2->l = lx;
+  dxblk2->radixl = pow_di(dxblk2->radix, dxblk2->l);
   /*Computing 2nd power 
    */
-  d__1 = dxblk2_1.radixl;
-  dxblk2_1.rad2l = d__1 * d__1;
+  d__1 = dxblk2->radixl;
+  dxblk2->rad2l = d__1 * d__1;
   /*   IT IS NECESSARY TO RESTRICT NBITS (OR NBITSX) TO BE LESS THAN SOME 
    *UPPER LIMIT BECAUSE OF BINARY-TO-DECIMAL CONVERSION. SUCH CONVERSION 
    *IS DONE BY DXC210 AND REQUIRES A CONSTANT THAT IS STORED TO SOME FIXED 
@@ -1803,7 +1789,7 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   return 0;
  L30:
   i__1 = nbitsx - 1;
-  dxblk2_1.kmax = nsp_pow_ii(c__2, i__1) - dxblk2_1.l2;
+  dxblk2->kmax = nsp_pow_ii(c__2, i__1) - dxblk2->l2;
   nb = (nbitsx - 1) / 2;
   dxblk3_1.mlg102 = nsp_pow_ii(c__2, nb);
   if (1 <= nrdplc * log2r && nrdplc * log2r <= 120) {
@@ -1858,7 +1844,7 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   /* 
    *CHECK SPECIAL CONDITIONS REQUIRED BY SUBROUTINES... 
    */
-  if (nrdplc < dxblk2_1.l) {
+  if (nrdplc < dxblk2->l) {
     goto L90;
   }
   /*     CALL XERMSG ('SLATEC', 'DXSET', 'NRADPL .GE. L', 205, 1) 
@@ -1866,7 +1852,7 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
   *ierror = 205;
   return 0;
  L90:
-  if (dxblk2_1.l * 6 <= dxblk2_1.kmax) {
+  if (dxblk2->l * 6 <= dxblk2->kmax) {
     goto L100;
   }
   /*     CALL XERMSG ('SLATEC', 'DXSET', '6*L .GT. KMAX', 206, 1) 
@@ -1912,7 +1898,7 @@ static int dxset_(const int *irad,const int *nradpl,const double *dzero,const in
  *IN SUBROUTINE DXSET. 
  */
 
-static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, int *ierror)
+static int dxadd(Dxblk2 *dxblk2,double *x, int *ix, double *y, int *iy, double *z__, int *iz, int *ierror)
 {
   /* System generated locals */
   int i__1;
@@ -1944,7 +1930,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
   if (*ix < 0 && *iy < 0) {
     goto L40;
   }
-  if (Abs(*ix) <= dxblk2_1.l * 6 && Abs(*iy) <= dxblk2_1.l * 6) {
+  if (Abs(*ix) <= dxblk2->l * 6 && Abs(*iy) <= dxblk2->l * 6) {
     goto L40;
   }
   if (*ix >= 0) {
@@ -1977,16 +1963,16 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
   *iz = *ix;
   goto L220;
  L60:
-  s = *x / dxblk2_1.radixl;
-  t = *y / dxblk2_1.radixl;
+  s = *x / dxblk2->radixl;
+  t = *y / dxblk2->radixl;
   *z__ = s + t;
-  *iz = *ix + dxblk2_1.l;
+  *iz = *ix + dxblk2->l;
   goto L220;
  L70:
-  s = *x * dxblk2_1.radixl;
-  t = *y * dxblk2_1.radixl;
+  s = *x * dxblk2->radixl;
+  t = *y * dxblk2->radixl;
   *z__ = s + t;
-  *iz = *ix - dxblk2_1.l;
+  *iz = *ix - dxblk2->l;
   goto L220;
  L80:
   s = *y;
@@ -2004,25 +1990,25 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
    *PART OF THE OTHER INPUT IS STORED IN T. 
    * 
    */
-  i1 = Abs(i__) / dxblk2_1.l;
-  i2 = Abs(i__) % dxblk2_1.l;
-  if (Abs(t) >= dxblk2_1.radixl) {
+  i1 = Abs(i__) / dxblk2->l;
+  i2 = Abs(i__) % dxblk2->l;
+  if (Abs(t) >= dxblk2->radixl) {
     goto L130;
   }
   if (Abs(t) >= 1.) {
     goto L120;
   }
-  if (dxblk2_1.radixl * Abs(t) >= 1.) {
+  if (dxblk2->radixl * Abs(t) >= 1.) {
     goto L110;
   }
   j = i1 + 1;
-  i__1 = dxblk2_1.l - i2;
-  t *= pow_di(dxblk2_1.radix, i__1);
+  i__1 = dxblk2->l - i2;
+  t *= pow_di(dxblk2->radix, i__1);
   goto L140;
  L110:
   j = i1;
   i__1 = -i2;
-  t *= pow_di(dxblk2_1.radix, i__1);
+  t *= pow_di(dxblk2->radix, i__1);
   goto L140;
  L120:
   j = i1 - 1;
@@ -2030,7 +2016,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
     goto L110;
   }
   i__1 = -i2;
-  t = t * pow_di(dxblk2_1.radix, i__1) / dxblk2_1.radixl;
+  t = t * pow_di(dxblk2->radix, i__1) / dxblk2->radixl;
   goto L140;
  L130:
   j = i1 - 2;
@@ -2038,7 +2024,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
     goto L120;
   }
   i__1 = -i2;
-  t = t * pow_di(dxblk2_1.radix, i__1) / dxblk2_1.rad2l;
+  t = t * pow_di(dxblk2->radix, i__1) / dxblk2->rad2l;
  L140:
   /* 
    * AT THIS POINT, SOME OR ALL OF THE DIFFERENCE IN THE 
@@ -2053,7 +2039,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
   if (j == 0) {
     goto L190;
   }
-  if (Abs(s) >= dxblk2_1.radixl || j > 3) {
+  if (Abs(s) >= dxblk2->radixl || j > 3) {
     goto L150;
   }
   if (Abs(s) >= 1.) {
@@ -2063,7 +2049,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
     case 3:  goto L150;
     }
   }
-  if (dxblk2_1.radixl * Abs(s) >= 1.) {
+  if (dxblk2->radixl * Abs(s) >= 1.) {
     switch (j) {
     case 1:  goto L180;
     case 2:  goto L170;
@@ -2080,11 +2066,11 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
   *iz = is;
   goto L220;
  L160:
-  s *= dxblk2_1.radixl;
+  s *= dxblk2->radixl;
  L170:
-  s *= dxblk2_1.radixl;
+  s *= dxblk2->radixl;
  L180:
-  s *= dxblk2_1.radixl;
+  s *= dxblk2->radixl;
  L190:
   /* 
    *  AT THIS POINT, THE REMAINING DIFFERENCE IN THE 
@@ -2101,27 +2087,27 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
     goto L210;
   }
   *z__ = s + t;
-  *iz = is - j * dxblk2_1.l;
+  *iz = is - j * dxblk2->l;
   goto L220;
  L200:
-  s /= dxblk2_1.radixl;
-  t /= dxblk2_1.radixl;
+  s /= dxblk2->radixl;
+  t /= dxblk2->radixl;
   *z__ = s + t;
-  *iz = is - j * dxblk2_1.l + dxblk2_1.l;
+  *iz = is - j * dxblk2->l + dxblk2->l;
   goto L220;
  L210:
-  s *= dxblk2_1.radixl;
-  t *= dxblk2_1.radixl;
+  s *= dxblk2->radixl;
+  t *= dxblk2->radixl;
   *z__ = s + t;
-  *iz = is - j * dxblk2_1.l - dxblk2_1.l;
+  *iz = is - j * dxblk2->l - dxblk2->l;
  L220:
-  dxadj_(z__, iz, ierror);
+  dxadj(dxblk2,z__, iz, ierror);
   return 0;
-} /* dxadd_ */
+} 
 
 
 /**
- * dxadj_:
+ * dxadj:
  * @x: double precision pointer
  * @ix: int pointer 
  * @ierror: int pointer 
@@ -2155,7 +2141,7 @@ static int dxadd_(double *x, int *ix, double *y, int *iy, double *z__, int *iz, 
  * Returns: an int 
  */
 
-static int dxadj_(double *x, int *ix, int *ierror)
+static int dxadj(Dxblk2 *dxblk2,double *x, int *ix, int *ierror)
 {
   
   *ierror = 0;
@@ -2165,36 +2151,36 @@ static int dxadj_(double *x, int *ix, int *ierror)
   if (Abs(*x) >= 1.) {
     goto L20;
   }
-  if (dxblk2_1.radixl * Abs(*x) >= 1.) {
+  if (dxblk2->radixl * Abs(*x) >= 1.) {
     goto L60;
   }
-  *x *= dxblk2_1.rad2l;
+  *x *= dxblk2->rad2l;
   if (*ix < 0) {
     goto L10;
   }
-  *ix -= dxblk2_1.l2;
+  *ix -= dxblk2->l2;
   goto L70;
  L10:
-  if (*ix < -dxblk2_1.kmax + dxblk2_1.l2) {
+  if (*ix < -dxblk2->kmax + dxblk2->l2) {
     goto L40;
   }
-  *ix -= dxblk2_1.l2;
+  *ix -= dxblk2->l2;
   goto L70;
  L20:
-  if (Abs(*x) < dxblk2_1.radixl) {
+  if (Abs(*x) < dxblk2->radixl) {
     goto L60;
   }
-  *x /= dxblk2_1.rad2l;
+  *x /= dxblk2->rad2l;
   if (*ix > 0) {
     goto L30;
   }
-  *ix += dxblk2_1.l2;
+  *ix += dxblk2->l2;
   goto L70;
  L30:
-  if (*ix > dxblk2_1.kmax - dxblk2_1.l2) {
+  if (*ix > dxblk2->kmax - dxblk2->l2) {
     goto L40;
   }
-  *ix += dxblk2_1.l2;
+  *ix += dxblk2->l2;
   goto L70;
  L40:
   *ierror = 207;
@@ -2202,7 +2188,7 @@ static int dxadj_(double *x, int *ix, int *ierror)
  L50:
   *ix = 0;
  L60:
-  if (Abs(*ix) > dxblk2_1.kmax) {
+  if (Abs(*ix) > dxblk2->kmax) {
     goto L40;
   }
  L70:
