@@ -1934,7 +1934,16 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*
- * length(A) for all objects except for string matrices 
+ * length(A) or numel(A) for all objects. length(A) or numel(A) 
+ * give to the number of total elements of the object A (for a 
+ * matrix this is the product m*n of the sizes of the 2 dimensions). 
+ * BUT this rule have an exception for string matrix (where length 
+ * returns a matrix with the length of each strings) and so length 
+ * is redefined in SMatObj.c. numel have not this exception.
+ *
+ * Note that length and numel are redefined for sparse matrix because
+ * the method uses here may be "corrupted" for such matrices (the
+ * product m*n which is stored in a int variable could overflow).  
  */
 
 static int int_object_length(Stack stack, int rhs, int opt, int lhs) 
@@ -2080,6 +2089,7 @@ static OpTab Obj_func[]={
   {"fprint",int_object_fprint},
   {"diary",int_object_diary},
   {"length",int_object_length},
+  {"numel",int_object_length},
   {"isempty",int_object_isempty},
   {"isscalar",int_object_isscalar},
   {"serialize",int_object_serialize},
