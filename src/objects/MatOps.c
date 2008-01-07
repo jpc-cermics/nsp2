@@ -1344,13 +1344,10 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
     case 2:
       if ((Sum = nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT) 
 	return NULLMAT;
-      inc = A->m;
       if ( A->rc_type == 'r' )
-	for ( j= 0 ; j < A->m ; j++)
-	  Sum->R[j] =nsp_dsum(&A->n,A->R+j,&inc);
+	nsp_dsumrows(A->R, Sum->R, A->m, A->n);
       else
-	for ( j= 0 ; j < A->m ; j++)
-	  nsp_zsum(&Sum->C[j],&A->n,A->C+j,&inc);
+	nsp_zsumrows(A->C, Sum->C, A->m, A->n);
       break;
     }
 
@@ -1399,10 +1396,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
       if ((Prod = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
 	return(NULLMAT);
       if ( A->rc_type == 'r' ) 
-	{
-	  Prod->R[0] =1.00;
-	  nsp_dvmul(A->mn,A->R,inc,Prod->R,zero);
-	}
+	Prod->R[0] = nsp_dprod(A->R, A->mn, 1);
       else
 	{
 	  Prod->C[0].r =1.00 ; Prod->C[0].i = 0.00;
@@ -1415,10 +1409,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
 	return NULLMAT;
       if ( A->rc_type == 'r' ) 
 	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    Prod->R[j] =1.00;
-	    nsp_dvmul(A->m,A->R+(A->m)*j,inc,Prod->R+j,zero); 
-	  }
+	  Prod->R[j] = nsp_dprod(A->R+(A->m)*j, A->m, 1);
       else
 	for ( j= 0 ; j < A->n ; j++) 
 	  {
@@ -1432,11 +1423,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
 	return NULLMAT;
       inc = A->m;
       if ( A->rc_type == 'r' ) 
-	for ( j= 0 ; j < A->m ; j++) 
-	  {
-	    Prod->R[j] =1.00;
-	    nsp_dvmul(A->n,A->R+j,inc,Prod->R+j,zero); 
-	  }
+	nsp_dprodrows(A->R, Prod->R, A->m, A->n);
       else
 	for ( j= 0 ; j < A->m ; j++) 
 	  {
@@ -5779,7 +5766,7 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
   if ( A->rc_type == 'r' )
     {
       if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
+	for ( i = 0 ; i < A->mn ; i++ )
 	  A->R[i] *= B->R[0];
       else
 	{
