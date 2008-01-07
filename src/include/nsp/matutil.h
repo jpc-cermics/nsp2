@@ -43,5 +43,10 @@ extern void nsp_hilbert_matrix (double *a, int n);
 extern void nsp_hilbert_inverse_matrix (double *a, int n); 
 extern void nsp_complex2double(double *tab, int size);
 extern void nsp_double2complex( double *tab, int size);
+extern void nsp_dsumrows(double *x, double *res, int m, int n);
+extern void nsp_zsumrows(doubleC *x, doubleC *res, int m, int n);
+extern double nsp_dprod(double *x, int n, int incx);
+extern void nsp_dprodrows(double *x, double *res, int m, int n);
+
 
 #endif /* NSP_INC_   **/

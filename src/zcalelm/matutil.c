@@ -578,6 +578,134 @@ double nsp_dsum(int *n, double *dx, int *incx)
 }
 
 
+void nsp_dsumrows(double *x, double *res, int m, int n)
+{
+  int i, j, k, k2, k3, p;
+  p = n % 3;
+
+  for ( i = 0 ; i < m ; i++ ) 
+    res[i] = 0.0;
+
+  k = 0;
+  for ( j = 0 ; j < p ; j++ )
+    for ( i = 0 ; i < m ; i++, k++)
+      res[i] += x[k];
+
+  k2 = k + m;
+  k3 = k2 + m;
+  for ( j = p ; j < n ; j+=3, k+=2*m, k2+=2*m, k3+=2*m )
+    for ( i = 0 ; i < m ; i++, k++, k2++, k3++)
+      res[i] += x[k] + x[k2] + x[k3];
+}
+
+/**
+ * nsp_zsumrows:
+ * @x: an array m x n of complex with column major order
+ * @res: an array of size m with the result
+ * @m, @n: sizes of the matrix @x
+ * 
+ *   res[i] = sum(x[i,j], j=0,n-1)
+ * 
+ * computes the sum of each row 
+ **/
+void nsp_zsumrows(doubleC *x, doubleC *res, int m, int n)
+{
+  int i, j, k, k2, k3, p;
+  p = n % 3;
+
+  for ( i = 0 ; i < m ; i++ ) 
+    { res[i].r = 0.0; res[i].i = 0.0; }
+
+  k = 0;
+  for ( j = 0 ; j < p ; j++ )
+    for ( i = 0 ; i < m ; i++, k++)
+      { 
+	res[i].r += x[k].r; 
+	res[i].i += x[k].i; 
+      }
+
+  k2 = k + m;
+  k3 = k2 + m;
+  for ( j = p ; j < n ; j+=3, k+=2*m, k2+=2*m, k3+=2*m )
+    for ( i = 0 ; i < m ; i++, k++, k2++, k3++)
+      { 
+	res[i].r += x[k].r + x[k2].r + x[k3].r;
+	res[i].i += x[k].i + x[k2].i + x[k3].i;
+      }
+}
+
+/**
+ * nsp_dprod:
+ * @x: array of double
+ * @n: number of components of @x
+ * @incx: stride between 2 components of @x
+ * 
+ *  prod(x[incx*k], k=0,*n-1)
+ * 
+ * Return value: the calculated product
+ **/
+double nsp_dprod(double *x, int n, int incx)
+{
+  double d=1.0;
+  int i;
+
+  if (incx == 1)
+    {
+      int m = n % 6 ;
+      for ( i = 0 ; i < m ; i++)
+	d *= x[i];
+
+      for ( i = m ; i < n ; i+=6 )
+	d *= x[i] * x[i+1] * x[i+2] * x[i+3] * x[i+4] * x[i+5];
+    }
+  else
+    for ( i = 0 ; i < n*incx ; i += incx ) d  *= x[i];
+
+  return d;
+}
+
+
+/**
+ * nsp_dprodrows:
+ * @x: an array m x n of double with column major order
+ * @res: an array of size m with the result
+ * @m, @n: sizes of the matrix @x
+ * 
+ *   res[i] = prod(x[i,j], j=0,n-1)
+ * 
+ * computes the product of each row 
+ **/
+void nsp_dprodrows(double *x, double *res, int m, int n)
+{
+  int i, j, k, k2, k3, k4, p;
+  p = n % 4;
+
+  for ( i = 0 ; i < m ; i++ )
+    res[i] = 1.0;
+
+  k = 0;
+  for ( j = 0 ; j < p ; j++ )
+    for ( i = 0 ; i < m ; i++, k++)
+      res[i] *= x[k];
+
+  k2 = k + m;
+  k3 = k2 + m;
+  k4 = k3 + m;
+  for ( j = p ; j < n ; j+=4, k+=3*m, k2+=3*m, k3+=3*m, k4+=3*m )
+    for ( i = 0 ; i < m ; i++, k++, k2++, k3++, k4++)
+      res[i] *= (x[k] * x[k2]) * (x[k3] * x[k4]);
+}
+
+/**
+ * nsp_dsumrows:
+ * @x: an array m x n of double with column major order
+ * @res: an array of size m with the result
+ * @m, @n: sizes of the matrix @x
+ * 
+ *   res[i] = sum(x[i,j], j=0,n-1)
+ * 
+ * computes the sum of each row 
+ **/
 
 /**
  * nsp_dvmul:
