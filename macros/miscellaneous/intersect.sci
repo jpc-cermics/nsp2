@@ -41,57 +41,122 @@ function [c,ka,kb] = intersect(a,b)
 //   kb: is an index vector such that c = b(kb)
 //
 
-  type_a = type(a,"string")
-  if type_a ~= type(b,"string") then
-    error(" both arg must be of same type")
-  end
-  
-  if type_a == "Mat" | type_a == "SMat" then
-    na = size(a,"*")
-    nb = size(b,"*")      
-    if na == 0 then
-      c = a; ka = []; kb = [];
-    elseif nb == 0 then
-      c = b; ka = []; kb = [];
-    else
-      row_flag = size(a,1)==1 & size(b,1)==1
-      a.redim[-1,1]; b.redim[-1,1]
-      
-      if nargout == 1 then
-	if na <= nb then
-	  a = unique(a)
-	  [ind,occ] = bsearch(b,a,match="v")
-	  c = a(occ>0)
-	else
-	  b = unique(b)
-	  [ind,occ] = bsearch(a,b,match="v")
-	  c = b(occ>0)
-	end
-	if row_flag then, c.redim[1,-1]; end
-	
+   type_a = type(a,"string")
+   if type_a ~= type(b,"string") then
+      error(" both arg must be of same type")
+   end
+   
+   if type_a == "Mat" | type_a == "SMat" then
+      na = size(a,"*")
+      nb = size(b,"*")      
+      if na == 0 || nb == 0 then
+	 c = []; ka = []; kb = [];
       else
-	[a,ka] = unique(a)
-	[b,kb] = unique(b)
-	if size(a,"*") < size(b,"*") then
-	  ind = bsearch(b,a,match="v")
-	  k = find(ind > 0)
-	  c = b(k)
-	  kb = kb(k)
-	  ka = ka(ind(k))
-	else
-	  ind = bsearch(a,b,match="v")
-	  k = find(ind > 0)
-	  c = a(k)
-	  ka = ka(k)
-	  kb = kb(ind(k))
-	end
-	if row_flag then
-	  c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
-	end
+	 row_flag = size(a,1)==1 & size(b,1)==1
+	 a.redim[-1,1]; b.redim[-1,1]
+	 
+	 if nargout == 1 then
+	    if na <= nb then
+	       a = unique(a)
+	       [ind,occ] = bsearch(b,a,match="v")
+	       c = a(occ>0)
+	    else
+	       b = unique(b)
+	       [ind,occ] = bsearch(a,b,match="v")
+	       c = b(occ>0)
+	    end
+	    if row_flag then, c.redim[1,-1]; end
+	    
+	 else
+	    [a,ka] = unique(a)
+	    [b,kb] = unique(b)
+	    if size(a,"*") >= size(b,"*") then
+	       ind = bsearch(b,a,match="v")
+	       k = find(ind > 0)
+	       c = b(k)
+	       kb = kb(k)
+	       ka = ka(ind(k))
+	    else
+	       ind = bsearch(a,b,match="v")
+	       k = find(ind > 0)
+	       c = a(k)
+	       ka = ka(k)
+	       kb = kb(ind(k))
+	    end
+	    if row_flag then
+	       c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
+	    end
+	 end
       end
-    end
-  else
-    error("intersect not currently implemented for "+type_a)
-  end
-  
+   else
+      error("intersect not currently implemented for "+type_a)
+   end
+   
 endfunction
+
+function [c,ka,kb] = intersect_l_l(a,b)
+   // version for list
+   [a, inda] = unique(a)
+   [b, indb] = unique(b)
+   c = list(); ka = []; kb = [];
+   if length(a) >= length(b) then
+      for i = 1:length(b)
+	 elem = b.item[i]
+	 [found,k] = a.has[elem];
+	 if found then
+	    c.add_last[elem]
+	    ka.concatr[inda(k)]
+	    kb.concatr[indb(i)]
+	 end
+      end
+   else
+      for i = 1:length(a)
+	 elem = a.item[i]
+	 [found,k] = b.has[elem];
+	 if found then
+	    c.add_last[elem]
+	    ka.concatr[inda(i)]
+	    kb.concatr[indb(k)]
+	 end
+      end
+   end
+endfunction
+
+function [c,ka,kb] = intersect_ce_ce(a,b)
+   // version for cell array
+
+   row_flag = size(a,1)==1 & size(b,1)==1
+   a.redim[-1,1]; b.redim[-1,1]
+   
+   [a, inda] = unique(a)
+   [b, indb] = unique(b)
+   c = {}; ka = []; kb = []
+   
+   if length(a) >= length(b) then
+      for i = 1:length(b)
+	 elem = b{i};
+	 [found,k] = a.has[elem];
+	 if found then
+	    c.concatd[{elem}]
+	    ka.concatd[inda(k)]
+	    kb.concatd[indb(i)]
+	 end
+      end
+   else
+      for i = 1:length(a)
+	 elem  = a{i}
+	 [found,k] = b.has[elem]
+	 if found then
+	    c.concatd[{elem}]
+	    ka.concatd[inda(i)]
+	    kb.concatd[indb(k)]
+	 end
+      end
+   end
+
+   if row_flag then
+      c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
+   end
+
+endfunction
+
