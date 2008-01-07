@@ -461,6 +461,37 @@ static int int_nsp_isprime(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_nsp_primes(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *p;
+  int k, *primes, nb_primes, n;
+  
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( GetScalarInt(stack, 1, &n) == FAIL )
+    return RET_BUG;
+    
+  if ( nsp_primes(n, &primes, &nb_primes) == FAIL )
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return RET_BUG;
+    }
+  
+  if ( (p = nsp_matrix_create(NVOID,'r', 1, nb_primes)) == NULLMAT )
+    return RET_BUG;
+
+  for ( k = 0 ; k < nb_primes ; k++ )
+    p->R[k] = (double) primes[k];
+
+  if ( nb_primes > 0 )
+    FREE(primes);
+
+  MoveObj(stack,1,(NspObject *) p);
+  return 1;
+}
+
+
 static OpTab Spmf_func[]={
   {"log1p_m", int_nsp_log1p},
   {"sinpi_m", int_nsp_sinpi},
@@ -473,6 +504,7 @@ static OpTab Spmf_func[]={
   {"hypot_m_m", int_nsp_hypot},
   {"factor_m", int_nsp_primefactors},
   {"isprime_m", int_nsp_isprime},
+  {"primes_m", int_nsp_primes},
   {(char *) 0, NULL}
 };
 

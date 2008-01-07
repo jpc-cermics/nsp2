@@ -891,10 +891,10 @@ int nsp_isprime(unsigned int n)
   if ( n <= 1 )
     return FALSE;
 
-  if ( n % 2 == 0 )
-    return FALSE;
+  if ( n == 2 || n == 3 )
+    return TRUE;
 
-  if ( n % 3 == 0 )
+  if ( n % 2 == 0 || n % 3 == 0 )
     return FALSE;
 
   /* general loop avoiding multiples of 2 and 3 */
@@ -909,5 +909,75 @@ int nsp_isprime(unsigned int n)
     }
 
   return TRUE;
+}
+
+
+/**
+ * nsp_primes:
+ * @n: int
+ * @Primes: int array fill with the prime numbers
+ * @nb_primes: size of Primes
+ *
+ * computes all primes less or equal than n with a basic 
+ * Erathostene 's sieve (just avoiding even numbers)
+ *
+ * Returns: %OK or %FAIL
+ *       
+ **/
+int nsp_primes(int n, int **Primes, int *nb_primes)
+{
+  int *primes, i, j, k, m;
+
+  if ( n <= 1 )
+    {
+      *nb_primes = 0;
+      return OK;
+    }
+
+  if ( n == 2 )
+    {
+      if ( (primes = malloc(sizeof(int))) == NULL )
+	return FAIL;
+      *nb_primes = 1;
+      primes[0] = 2;
+    }
+  else  
+    {
+      char *sieve;
+      if ( n % 2 == 0 ) n--;
+      m = (n-1)/2;
+      if ( (sieve = malloc((m+1)*sizeof(char))) == NULL )
+	return FAIL;
+
+      *nb_primes = 1;
+      memset(sieve,1,m+1);
+      for ( i = 3, k = 1 ; i <= (int) sqrt((double) n) ; i+=2, k++ )
+	{
+	  if ( sieve[k] )
+	    for ( j = (i*i)/2 ; j <= m ; j+=i )
+	      sieve[j] = 0;
+	}
+
+      /* count the number of primes */
+      *nb_primes = 1;
+      for ( k = 1 ; k <= m ; k++ )   
+	*nb_primes = *nb_primes + sieve[k];  /* this is a little faster than if (sieve[k]) (*nb_primes)++ */
+
+      /* allocate then fill the array with the prime numbers */
+      if ( (primes = malloc((*nb_primes)*sizeof(int))) == NULL )
+	{
+	  FREE(sieve);
+	  return FAIL;
+	}
+      primes[0] = 2;
+      i = 1;
+      for ( k = 1 ; k <= m ; k++ )
+	if ( sieve[k] )
+	  primes[i++] = 2*k+1;
+      free(sieve);
+    }
+
+  *Primes = primes;
+  return OK;
 }
 
