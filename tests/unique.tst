@@ -89,10 +89,10 @@ if ~and(B == res) then, pause; end
 if ~and(B == A(ind)) then, pause; end
 if ~and(occ == res_occ) then, pause; end
 
-// $$$ [B,ind,occ] = unique(A,first_ind=%t);
-// $$$ if ~and(B == res) then, pause; end
-// $$$ if ~and(ind == res_ind_first) then, pause; end
-// $$$ if ~and(occ == res_occ) then, pause; end
+[B,ind,occ] = unique(A,first_ind=%t);
+if ~and(B == res) then, pause; end
+if ~and(ind == res_ind_first) then, pause; end
+if ~and(occ == res_occ) then, pause; end
 
 // transpose (to verify that we get outputs in column form)
 A.redim[-1,1]; 
@@ -112,10 +112,10 @@ if ~and(B == res) then, pause; end
 if ~and(B == A(ind)) then, pause; end
 if ~and(occ == res_occ) then, pause; end
 
-// $$$ [B,ind,occ] = unique(A,first_ind=%t);
-// $$$ if ~and(B == res) then, pause; end
-// $$$ if ~and(ind == res_ind_first) then, pause; end
-// $$$ if ~and(occ == res_occ) then, pause; end
+[B,ind,occ] = unique(A,first_ind=%t);
+if ~and(B == res) then, pause; end
+if ~and(ind == res_ind_first) then, pause; end
+if ~and(occ == res_occ) then, pause; end
 
 // for A a matrix verify that we get outputs in column form too
 A.redim[3,3]; 
@@ -132,10 +132,10 @@ if ~and(B == res) then, pause; end
 if ~and(B == A(ind)) then, pause; end
 if ~and(occ == res_occ) then, pause; end
 
-// $$$ [B,ind,occ] = unique(A,first_ind=%t);
-// $$$ if ~and(B == res) then, pause; end
-// $$$ if ~and(ind == res_ind_first) then, pause; end
-// $$$ if ~and(occ == res_occ) then, pause; end
+[B,ind,occ] = unique(A,first_ind=%t);
+if ~and(B == res) then, pause; end
+if ~and(ind == res_ind_first) then, pause; end
+if ~and(occ == res_occ) then, pause; end
 
 
 //
