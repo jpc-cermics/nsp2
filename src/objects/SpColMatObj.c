@@ -2618,6 +2618,21 @@ int int_spcolmatrix_isvector(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
+ 
+/*
+ * computes length or numel of a sparse matrix (because the version
+ * defined in object.c uses the mn field and this last could overflow)
+ */
+static int int_spcolmatrix_numel (Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ( nsp_move_double(stack,1,((double) HMat->m)*((double) HMat->n)) == FAIL)
+    return RET_BUG;
+  return 1;
+}
 
 /*
  * The Interface for basic numerical sparse matrices operation 
@@ -2724,6 +2739,8 @@ static OpTab SpColMatrix_func[]={
   {"isempty_sp",int_spcolmatrix_isempty},
   {"isscalar_sp",int_spcolmatrix_isscalar},
   {"isvector_sp",int_spcolmatrix_isvector},
+  {"length_sp",int_spcolmatrix_numel},
+  {"numel_sp",int_spcolmatrix_numel},
   {(char *) 0, NULL}
 };
 
