@@ -891,7 +891,7 @@ void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn
 	 
 /**
  * rand_genprm:
- * @array:  array if double.
+ * @array:  array of double.
  * @n: length of array
  *
  * generates a random permutation of @array.
@@ -909,3 +909,293 @@ void rand_genprm (double *array, int n)
       array[i] = elt;
     }
 }
+	 
+	 
+/**
+ * nsp_rand_prm:
+ * @array:  array of int
+ * @n: length of array
+ * @base: an int
+ *
+ * fills @array with a random permutation of [base,base+n-1] 
+ *
+ **/
+void nsp_rand_prm (int *array, int n, int base)
+{
+  int i, iwhich, elt;
+  for ( i = 0 ; i < n ; i++ ) 
+    array[i] = base + i;
+  for ( i = 0 ; i < n-1 ; i++ )
+    {
+      iwhich = rand_ignuin (i, n-1);
+      elt = array[iwhich];
+      array[iwhich] = array[i];
+      array[i] = elt;
+    }
+}
+
+
+/**
+ * nsp_rand_smpl:
+ * @p:  array of int of length @n
+ * @n: sample size
+ * @N: set size
+ * @base: an int (see after)
+ * @head, @next: int work arrays of size n
+ *
+ * choose a uniform sample of n elements in [base, base+N-1].
+ * n must be <= N, typically we have n << N but when
+ * n is large enough (says n > N/35 on my machine)
+ * #nsp_rand_smpl_bis should be used instead).
+ *
+ * method: algo p 616 (chapter 12) of Luc Devroye 's book, 
+ * "Non-Uniform Random Variate Generation". Springer-Verlag, 
+ * New York, 1986. (available at the Luc Devroye 's home page: 
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ * 
+ **/
+void nsp_rand_smpl(int *p, int n, int N, int base, int *head, int *next)
+{
+  int i, k, bucket, Top, TopStar;
+
+  /* init bucket search struct */
+  for ( i = 0 ; i < n ; i++ ) { head[i]=-1; next[i]=-1;}
+
+  /* fill the array p */
+  for ( i = 0 ; i < n ; i++ )
+    {
+      do 
+	{
+	  k = rand_ignuin (0, N-1);
+	  /* bucket search */
+	  bucket = (int) ((double) n*k / (double) N);
+	  Top = head[bucket];
+	  if ( Top == -1 )   /* bucket is empty */
+	    {
+	      head[bucket] = i; p[i] = k;
+	    }
+	  else               /* bucket not empty, look if it already contains k or not */
+	    {
+	      while ( p[Top] != k  &&  Top != -1 )
+		{
+		  TopStar = Top; Top = next[Top]; 
+		}
+	      if ( Top == -1 ) /* the bucklet don't contains k */
+		{
+		  next[TopStar] = i; p[i] = k;
+		}
+	    }
+	}
+      while ( Top != -1 );
+    }
+
+  /* add base... */
+  if ( base != 0 )
+    for ( i = 0 ; i < n ; i++ ) p[i] += base;
+}
+
+/**
+ * nsp_rand_smpl_bis:
+ * @p:  array of int of length N
+ * @n: sample size
+ * @N: set size
+ * @base: an int (see after)
+ *
+ * choose a sample of n elements in [base, base+N-1].
+ * n must be <= N
+ *
+ * The sample is located in p[0..n-1]
+ *
+ * This version must be used when n is big enough 
+ * (#nsp_rand_smpl should be faster for n << N)
+ *
+ **/
+void nsp_rand_smpl_bis (int *p, int n, int N, int base)
+{
+  int i, iwhich, elt;
+  for ( i = 0 ; i < N ; i++ ) 
+    p[i] = base + i;
+  for ( i = 0 ; i < n ; i++ )
+    {
+      iwhich = rand_ignuin (i, N-1);
+      elt = p[iwhich];
+      p[iwhich] = p[i];
+      p[i] = elt;
+    }
+}
+
+
+/**
+ * nsp_rand_cauchy:
+ * @sigma: parameter of the distribution
+ * 
+ * generates a random number from the Cauchy distribution.
+ *
+ * method: direct inversion. See p 29 of Luc Devroye 's book, "Non-Uniform 
+ * Random Variate Generation".  Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Rmk: as Pi is not exact we don't need special treatment if ever
+ * rand_ranf() return 0.5
+ *
+ * Returns a double
+ **/
+double nsp_rand_cauchy(double sigma)
+{
+  return sigma * tan( M_PI * rand_ranf() );
+}
+
+
+/**
+ * nsp_rand_pareto:
+ * @a, @b: parameters of the distribution
+ * 
+ * generates a random number from the Pareto distribution.
+ *
+ * method: direct inversion. See p 29 of Luc Devroye 's book, "Non-Uniform 
+ * Random Variate Generation".  Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Rmk: we can't use the simplified form b/U^(1/a) because
+ *      rand_ranf can output 0.
+ *
+ * Returns a double
+ **/
+double nsp_rand_pareto(double a, double b)
+{
+  return b / pow( 1.0-rand_ranf(), 1.0/a );
+}
+
+
+/**
+ * nsp_rand_logistic:
+ * @a, @b: parameters of the distribution
+ * 
+ * generates a random number from the logistic distribution.
+ *
+ * method: direct inversion. See p 39 of Luc Devroye 's book, "Non-Uniform 
+ * Random Variate Generation".  Springer-Verlag, New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns a double
+ **/
+double nsp_rand_logistic(double a, double b)
+{
+  double u;
+
+  do   /* just avoid 0 which could be output by rand_ranf() */
+    {
+      u = rand_ranf(); 
+    }
+  while ( u == 0.0 );
+
+  return a + b * log( u / (1.0 - u) );
+}
+
+
+/**
+ * nsp_rand_rayleigh:
+ * @sigma: parameter of the distribution
+ * 
+ * generates a random number from the Rayleigh distribution.
+ *
+ *  density(x) = 1(x>=0) * x/sigma^2 exp(-0.5(x/sigma)^2)
+ *      cdf(x) = 1(x>=0) * (1 - exp(-0.5(x/sigma)^2))
+ *
+ * method: direct inversion cdf(x) = y, leads to
+ *    invcdf(y) = x = sigma * sqrt(-2 log(1-y))
+ *
+ * with y following the U(0,1) distribution
+ * -log(1-y) follows the exponential distribution E(1)
+ *
+ * Returns a double
+ **/
+double nsp_rand_rayleigh(double sigma)
+{
+  return sigma * sqrt( 2.0 * nsp_rand_exp_core() );
+}
+
+
+/**
+ * nsp_rand_tailrayleigh:
+ * @a, @sigma: parameters of the distribution
+ * 
+ * generates a random number from the tail of Rayleigh distribution.
+ *
+ * density(x) = 1(x>=a) * x/sigma^2 exp(-0.5( (x^2-a^2)/sigma^2 ))
+ *     cdf(x) = 1(x>=a) * (1 - exp(-0.5( (x^2-a^2)/sigma^2 )))
+ *
+ * method: direct inversion cdf(x) = y, leads to
+ *     invcdf(y) = x = sqrt( a^2 - 2 sigma^2 log(1-y) )
+ *
+ * with y following the U(0,1) distribution
+ * -log(1-y) follows the exponential distribution E(1)
+ *
+ * Returns a double
+ **/
+double nsp_rand_tailrayleigh(double a, double sigma)
+{
+  return sqrt( a*a + 2.0*sigma*sigma*nsp_rand_exp_core() );
+}
+
+
+/**
+ * nsp_rand_weibull:
+ * @a, @b: parameters of the distribution
+ * 
+ * generates a random number from the Weibull distribution:
+ * 
+ *   dweibull(x) = (b/a) (x/a)^(b-1) exp(-(x/a)^b)  density
+ *   Fweibull(x) = 1 - exp(-(x/a)^b)   x > 0        cdf
+ *   inversion leads to x = a( (-log(1-y))^(1/b) )
+ *   and we can use:
+ *
+ *        X = a ( E(1)^(1/b) )  where E(1) is an exp(1) rnd variable
+ *
+ * Returns a double
+ **/
+double nsp_rand_weibull(double a, double b)
+{
+  return a * pow( nsp_rand_exp_core(), 1.0/b );
+}
+
+/**
+ * nsp_rand_laplace:
+ * @a: parameter of the distribution
+ * 
+ * generates a random number from the Laplace distribution:
+ * 
+ *   dlaplace(x) = 1/(2a) exp(-|x/a|) density
+ *   Flaplace(x) = (1/2) exp(x/a) x <= 0
+ *               = 1 - (1/2) exp(-x/a) x >= 0
+ *
+ * inversion leads to output -a E(1) with probability 1/2
+ *                      and   a E(1) with probability 1/2   
+ *
+ * Returns a double
+ **/
+double nsp_rand_laplace(double a)
+{
+  if ( rand_ranf() < 0.5 )
+    return - a * nsp_rand_exp_core();
+  else
+    return   a * nsp_rand_exp_core();
+}
+
+
+/**
+ * nsp_rand_lognormal:
+ * @mu,@sigma: parameters of the distribution
+ * 
+ * generates a random number from the lognormal distribution.
+ * 
+ * Returns a double
+ **/
+double nsp_rand_lognormal(double mu, double sigma)
+{
+  return  exp( nsp_rand_nor(mu, sigma) );
+}
+

@@ -71,6 +71,10 @@ S=grand(action [,q1,....,ql])
   in (0,1)).
 %  Related function(s) : \manlink{cdfnbn}{cdfnbn} .
   
+\item \itemdesc{Cauchy} 
+  \verb!Y=grand(m,n,"cauchy", sigma)! generates random variates from the Cauchy distribution 
+  with (scale) parameter $sigma$ (positive real).
+  
 \item \itemdesc{chi square} 
   \verb!Y=grand(m,n,"chi", nu)! generates random variates from the chisquare distribution 
   with $nu$ (positive real) degrees of freedom. 
@@ -107,7 +111,7 @@ S=grand(action [,q1,....,ql])
   
 \item \itemdesc{Gauss Laplace (normal)} 
   \verb!Y=grand(m,n,"nor",mu,sigma)! generates random variates from the normal 
-  distribution with mean $mu$ (real)  and standard deviation $sigma$
+  distribution with mean $\mu$ (real)  and standard deviation $\sigma$
   (non negative real). 
 % Related function(s) : \manlink{cdfnor}{cdfnor} .
   
@@ -119,9 +123,35 @@ S=grand(action [,q1,....,ql])
   \verb!Y=grand(m,n,"disc",P)! could generates random integers from any
   finite discrete probability distribution given by the probability
   vector $P$ ($P(i)$ being the probability to get $X=i$).
+  
+\item \itemdesc{Laplace} 
+  \verb!Y=grand(m,n,"lap",a)! generates random variates from the Laplace 
+  distribution with (scale) parameter $a$ (positive real).
+  
+\item \itemdesc{logistic} 
+  \verb!Y=grand(m,n,"logi",a)! generates random variates from the logistic 
+  distribution with (location) parameter $a$ (real) and (scale) parameter $b$ (positive real).
+  
+\item \itemdesc{log normal} 
+  \verb!Y=grand(m,n,"logn",mu,sigma)! generates random variates from the log normal
+  distribution with parameter $\mu$ (real) and  $\sigma$ (non negative real).
+  
+\item \itemdesc{Pareto} 
+  \verb!Y=grand(m,n,"par",a,b)! generates random variates from the Pareto 
+  distribution with (shape) parameter $a$ (positive real) and (location) parameter $b$ (positive real).
 
-\item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",mu)! generates random variates from the Poisson 
-  distribution with mean $mu$ (non negative real).
+\item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",mu)! generates random
+  variates from the Poisson distribution with parameter $\mu$. 
+  
+\item \itemdesc{Rayleigh} 
+  \verb!Y=grand(m,n,"ray",sigma)! generates random variates from the Rayleigh 
+  distribution with (scale) parameter $\sigma$ (positive real).
+  
+\item \itemdesc{tail Rayleigh} 
+  \verb!Y=grand(m,n,"tray",a, sigma)! generates random variates from the
+  tail (from $a$) of the Rayleigh distribution with (scale) parameter 
+  $\sigma$ (positive real). The (tail) parameter $a$ must be a non negative
+  real (for $a=0$ we have the original Rayleigh distribution).
 
 \item \itemdesc{uniform (def)} \verb!Y=grand(m,n,"def")! generates random variates from the uniform 
   distribution over $[0,1)$ (1 is never returned).
@@ -143,6 +173,10 @@ S=grand(action [,q1,....,ql])
 
 \item \itemdesc{uniform (8bits)} \verb!Y=grand(m,n,"8bits")! generates random integers uniformly 
       distributed over $[0,255]$.
+  
+\item \itemdesc{Weibull} 
+  \verb!Y=grand(m,n,"wei",a,b)! generates random variates from the Weibull 
+  distribution with (scale) parameter $a$ (positive real) and (shape) parameter $b$ (positive real).
 \end{itemize}
 
 \item[multivariate distributions]
@@ -191,8 +225,17 @@ S=grand(action [,q1,....,ql])
   path  obtained from initial state \verb!x0(i)!.
 
 \item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
-  column vector $vect$ (in a uniform way over the all $n!$ possible such
-  permutations).
+  column vector $vect$ (in a uniform way over all possible permutations).
+
+\item \itemdesc{random permutations of $(1,..,m)$}
+  \verb!Y=grand(n,"perm",m)! generate $n$ random permutations of the
+  vector $[1;2;...;m]$ (in a uniform way over the all $m!$ possible permutations).
+
+\item \itemdesc{random samples}
+  \verb!Y=grand(n,"smpl",p,m)! generate $n$ random samples of size $p$
+  of the vector $[1;2;...;m]$ (that is select $p$ different elements
+  of $\{1,2,...,m\}$) in a uniform way. If you need ordered samples
+  sort the resulting matrix with \verb!Y=sort(Y,"r","i")!.
 
 \end{itemize}
 

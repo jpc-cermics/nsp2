@@ -773,6 +773,108 @@ static int int_prm_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 }
 
+static int int_perm_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M;
+  int j, n, m, *col_j;
+
+  if ( rhs != 3 || suite != 3) 
+    { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'perm',m))\n"); return RET_BUG;}
+
+  if ( ResL != 1 || ResC != 1 )
+    { 
+      Scierror("Error: first argument for 'perm' option must be the number of random vectors to generate\n"); 
+      return RET_BUG; 
+    }
+
+  if ( GetScalarInt(stack,1,&n) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), n, 1);
+
+  if ( GetScalarInt(stack,suite,&m) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), m, suite);
+  
+  if ((M = nsp_matrix_create(NVOID,'r',m,n))== NULLMAT) return RET_BUG;
+
+  for ( j = 0, col_j = (int *) M->R ; j < n ; j++, col_j += m) 
+    nsp_rand_prm(col_j, m, 1);
+
+  M->convert = 'i';
+  Mat2double(M);
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+}
+
+static int int_smpl_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M;
+  int *col_j, j, n, m, p, *next=NULL, *head=NULL;
+
+  if ( rhs != 4 || suite != 3) 
+    { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'smpl',p,m))\n"); return RET_BUG;}
+
+  if ( ResL != 1 || ResC != 1 )
+    { 
+      Scierror("Error: first argument for 'smpl' option must be the number of random vectors to generate\n"); 
+      return RET_BUG; 
+    }
+
+  if ( GetScalarInt(stack,1,&n) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), n, 1);
+
+  if ( GetScalarInt(stack,suite,&p) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), p, suite);
+
+  if ( GetScalarInt(stack,suite+1,&m) == FAIL ) return RET_BUG;      
+  CheckNonNegative(NspFname(stack), m, suite+1);
+
+  if ( p > m )
+    { 
+      Scierror("Error: grand(n,'smpl',p,m), p must be inferior or equal to m\n"); 
+      return RET_BUG; 
+    }
+
+  /* 
+   * here we could choose between 2 algorithms: 
+   *               nsp_rand_smpl  for p << m 
+   * and otherwise nsp_rand_smpl_bis 
+   *
+   * 35 is just the cross limit on my machine...
+   */
+  if ( 35*p <= m )   /* use nsp_rand_smpl */
+    { 
+      if ((M = nsp_matrix_create(NVOID,'r',p,n))== NULLMAT) return RET_BUG;
+
+      if ( (head = nsp_alloc_work_int(p)) == NULL || (next = nsp_alloc_work_int(p)) == NULL )
+	goto err;
+      
+      for ( j = 0, col_j = (int *) M->R ; j < n ; j++, col_j += p) 
+	nsp_rand_smpl(col_j, p, m, 1, head, next);
+
+      FREE(head); FREE(next);
+    }
+  else                /* use nsp_rand_smpl_bis */
+    {
+      /*  be careful the array must be of length p*n + m-p, then reduced to p*n 
+       *  (in fact this is not always mandatory as we work with half the space:
+       *  the array needs really to be enlarged when 4(p*n+m-p) > 8 p*n ...)
+      */   
+      if ((M = nsp_matrix_create(NVOID,'r',p*n+m-p,1))== NULLMAT) return RET_BUG;
+
+      for ( j = 0, col_j = (int *) M->R ; j < n ; j++, col_j += p) 
+	nsp_rand_smpl_bis(col_j, p, m, 1);
+      nsp_matrix_resize(M, p, n);
+    }
+
+  M->convert = 'i';
+  Mat2double(M);
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  FREE(head); FREE(next); nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
 static int int_mul_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   int N, *I=NULL, i, nn, ncat, *key=NULL;
@@ -1490,6 +1592,326 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return RET_BUG;
 }  
 
+static int int_cauchy_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *sigma;
+  int i=0;
+  if ( rhs != suite) 
+    { Scierror("Error: 1 parameter required for 'cau' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (sigma = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,sigma,ResL,ResC);
+  
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+  
+  if ( sigma->mn == 1 )  /* fixed parameter case */
+    {
+      if ( ! (sigma->R[0] > 0.0) ) goto err; 
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i]= nsp_rand_cauchy(sigma->R[0]);
+    }
+  else                   /* varying parameter case */      
+    for ( i=0 ; i < M->mn ; i++) 
+      {
+	if ( ! (sigma->R[i] > 0.0) ) goto err;
+	M->R[i]= nsp_rand_cauchy(sigma->R[i]);
+      }
+  
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  Scierror("Error: grand(..'cau',sigma) : sigma (=%g) not positive \n",sigma->R[i]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_pareto_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *a, *b;
+  int i, i1, i2, inc1, inc2;
+
+  if ( rhs != suite + 1) 
+    { Scierror("Error: 2 parameters required for 'par' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+
+  if ( (b = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,b,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( a->mn == 1  &&  b->mn == 1 )      /* fixed parameter(s) case */
+    {
+      double A = a->R[0], B = b->R[0];
+      i1 = i2 = 0;
+      if ( ! (A > 0.0 && B > 0.0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i] = nsp_rand_pareto(A, B); 
+    }
+  else                                   /* varying parameter(s) case */
+    {
+      inc1 = a->mn == 1 ? 0 : 1;
+      inc2 = b->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
+	{
+	  double A = a->R[i1], B = b->R[i2];
+	  if ( ! ( A > 0.0 && B > 0.0) ) goto err;
+	  M->R[i] = nsp_rand_pareto(A, B);
+	}
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+  
+ err:
+  Scierror("Error: grand(..'par',a,b):  a (=%g) or b (=%g) not positive \n", a->R[i1], b->R[i2]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_logistic_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *a, *b;
+  int i, i1, i2, inc1, inc2;
+
+  if ( rhs != suite + 1) 
+    { Scierror("Error: 2 parameters required for 'logi' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+
+  if ( (b = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,b,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( a->mn == 1  &&  b->mn == 1 )      /* fixed parameter(s) case */
+    {
+      double A = a->R[0], B = b->R[0];
+      i1 = i2 = 0;
+      if ( ! (B > 0.0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i] = nsp_rand_logistic(A, B); 
+    }
+  else                                   /* varying parameter(s) case */
+    {
+      inc1 = a->mn == 1 ? 0 : 1;
+      inc2 = b->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
+	{
+	  double A = a->R[i1], B = b->R[i2];
+	  if ( ! (B > 0.0) ) goto err;
+	  M->R[i] = nsp_rand_logistic(A, B);
+	}
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+  
+ err:
+  Scierror("Error: grand(..'logi',a,b):  b (=%g) not positive \n", b->R[i2]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_rayleigh_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *sigma;
+  int i=0;
+  if ( rhs != suite) 
+    { Scierror("Error: 1 parameter required for 'ray' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (sigma = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,sigma,ResL,ResC);
+  
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+  
+  if ( sigma->mn == 1 )  /* fixed parameter case */
+    {
+      if ( ! (sigma->R[0] > 0.0) ) goto err; 
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i]= nsp_rand_rayleigh(sigma->R[0]);
+    }
+  else                   /* varying parameter case */      
+    for ( i=0 ; i < M->mn ; i++) 
+      {
+	if ( ! (sigma->R[i] > 0.0) ) goto err;
+	M->R[i]= nsp_rand_rayleigh(sigma->R[i]);
+      }
+  
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  Scierror("Error: grand(..'ray',sigma) : sigma (=%g) not positive \n",sigma->R[i]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_tailrayleigh_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *a, *sigma;
+  int i, i1, i2, inc1, inc2;
+
+  if ( rhs != suite + 1) 
+    { Scierror("Error: 2 parameters required for 'tray' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+
+  if ( (sigma = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,sigma,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( a->mn == 1  &&  sigma->mn == 1 )      /* fixed parameter(s) case */
+    {
+      double A = a->R[0], s = sigma->R[0];
+      i1 = i2 = 0;
+      if ( ! ( A >= 0.0 && s > 0.0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i] = nsp_rand_tailrayleigh(A, s); 
+    }
+  else                                   /* varying parameter(s) case */
+    {
+      inc1 = a->mn == 1 ? 0 : 1;
+      inc2 = sigma->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
+	{
+	  double A = a->R[i1], s = sigma->R[i2];
+	  if ( ! (A >= 0.0 && s > 0.0) ) goto err;
+	  M->R[i] = nsp_rand_tailrayleigh(A, s);
+	}
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+  
+ err:
+  Scierror("Error: grand(..'tray',a,sigma): a (=%g) negative or sigma (=%g) not positive \n", a->R[i1], sigma->R[i2]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_weibull_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *a, *b;
+  int i, i1, i2, inc1, inc2;
+
+  if ( rhs != suite + 1) 
+    { Scierror("Error: 2 parameters required for 'wei' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+
+  if ( (b = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,b,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( a->mn == 1  &&  b->mn == 1 )      /* fixed parameter(s) case */
+    {
+      double A = a->R[0], B = b->R[0];
+      i1 = i2 = 0;
+      if ( ! (A > 0.0 && B > 0.0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i] = nsp_rand_weibull(A, B); 
+    }
+  else                                   /* varying parameter(s) case */
+    {
+      inc1 = a->mn == 1 ? 0 : 1;
+      inc2 = b->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
+	{
+	  double A = a->R[i1], B = b->R[i2];
+	  if ( ! ( A > 0.0 && B > 0.0) ) goto err;
+	  M->R[i] = nsp_rand_weibull(A, B);
+	}
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+  
+ err:
+  Scierror("Error: grand(..'wei',a,b): a (=%g) or b (=%g) not positive \n", a->R[i1], b->R[i2]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_laplace_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *a;
+  int i=0;
+  if ( rhs != suite) 
+    { Scierror("Error: 1 parameter required for 'lap' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+  
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+  
+  if ( a->mn == 1 )  /* fixed parameter case */
+    {
+      if ( ! (a->R[0] > 0.0) ) goto err; 
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i]= nsp_rand_laplace(a->R[0]);
+    }
+  else                   /* varying parameter case */      
+    for ( i=0 ; i < M->mn ; i++) 
+      {
+	if ( ! (a->R[i] > 0.0) ) goto err;
+	M->R[i]= nsp_rand_laplace(a->R[i]);
+      }
+  
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  Scierror("Error: grand(..'lap',a) : a (=%g) not positive \n",a->R[i]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_lognormal_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *mu, *sigma;
+  int i, i1, i2, inc1, inc2;
+  if ( rhs != suite + 1) 
+    { Scierror("Error: 2 parameters required for 'logn' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (mu = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,mu,ResL,ResC);
+
+  if ( (sigma = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,sigma,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( mu->mn == 1  &&  sigma->mn == 1 )      /* fixed parameter(s) case */
+    {
+      double m = mu->R[0], s = sigma->R[0];
+      i1 = i2 = 0;
+      if ( s < 0.0 ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i] = nsp_rand_lognormal(m, s); 
+    }
+  else                                        /* varying parameter(s) case */
+    {
+      inc1 = mu->mn == 1 ? 0 : 1;
+      inc2 = sigma->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2) 
+	{
+	  if (  sigma->R[i2] < 0.0 ) goto err;
+	  M->R[i] = nsp_rand_lognormal(mu->R[i1],sigma->R[i2]);
+	}
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+  
+ err:
+  Scierror("Error: grand(..'logn',mu,sigma) : sigma (=%g) is negative  \n",sigma->R[i2]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
 /*
  *    interface for grand(string,....) which correspond to
  *    various manipulations onto the bases generators
@@ -1761,6 +2183,12 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
   else if ( strcmp(rand_dist,"prm")==0)
     return int_prm_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
+  else if ( strcmp(rand_dist,"perm")==0)
+    return int_perm_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"smpl")==0)
+    return int_smpl_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
   else if ( strcmp(rand_dist,"nbn_old")==0) 
     return int_nbnold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
@@ -1832,6 +2260,30 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"simp")==0)
     return int_smplx_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"cau")==0)
+    return int_cauchy_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"par")==0)
+    return int_pareto_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"ray")==0)
+    return int_rayleigh_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"tray")==0)
+    return int_tailrayleigh_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"wei")==0)
+    return int_weibull_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"lap")==0)
+    return int_laplace_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"logn")==0)
+    return int_lognormal_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"logi")==0)
+    return int_logistic_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {

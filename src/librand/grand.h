@@ -185,6 +185,9 @@ extern double rand_snorm (void);
 extern int rand_genmn (double *parm, double *x, double *work);
 extern int rand_genmul (int *n, double *p, int *ncat, int *ix);
 extern void rand_genprm (double *array, int larray);
+extern void nsp_rand_prm (int *array, int n, int base);
+extern void nsp_rand_smpl_bis(int *p, int n, int N, int base);
+extern void nsp_rand_smpl(int *p, int n, int N, int base, int *head, int *next);
 extern int nsp_rand_poisson_init(double mu, PoissonStruct *P);
 extern int nsp_rand_poisson(PoissonStruct *P);
 extern int nsp_rand_poisson_direct(double mu);
@@ -215,7 +218,14 @@ extern void nsp_rand_ndgauss(double *Mean, double *C, double *res, int n);
 extern void nsp_rand_sphere(double *res, int n);
 extern void nsp_rand_in_sphere(double *res, int n);
 extern void nsp_rand_simplex(double *res, int m, int n);
-
+extern double nsp_rand_cauchy(double sigma);
+extern double nsp_rand_pareto(double a, double b);
+extern double nsp_rand_logistic(double a, double b);
+extern double nsp_rand_rayleigh(double sigma);
+extern double nsp_rand_tailrayleigh(double a, double sigma);
+extern double nsp_rand_weibull(double a, double b);
+extern double nsp_rand_laplace(double a);
+extern double nsp_rand_lognormal(double mu, double sigma);
 
 
 
