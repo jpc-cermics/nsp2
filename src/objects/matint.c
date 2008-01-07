@@ -260,7 +260,7 @@ NspMethods *matint_get_methods(void) { return matint_methods;};
  * and computes the min and max of A (here staying "1-based")   
  */
 
-static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
+static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 {
   int i, ival;
   *imax = 1;
@@ -270,6 +270,11 @@ static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax
     case 'd':
       for (i = 0; i < A->mn; i++)
 	{
+	  if ( floor(A->R[i]) != A->R[i] )
+	    {
+	      Scierror("Error:\tIndice (%g) not integer\n", A->R[i]); 
+	      return FAIL;
+	    }
 	  ival = (int) A->R[i];
 	  if (ival > *imax)
 	    *imax = ival;
@@ -304,6 +309,7 @@ static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax
       }
       break;
     }
+  return OK;
 }
 
 /**
@@ -392,7 +398,11 @@ static int *get_index_vector(Stack stack, int ipos,NspObject **Obj, int *Nb_elts
 	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
       else
 	ind = matint_work[iwork];
-      nsp_matint_bounds(Elts, ind, &rmin, &rmax);
+      if ( nsp_matint_bounds(Elts, ind, &rmin, &rmax) == FAIL )
+	{
+	  if ( nb_elts > WORK_SIZE ) FREE(ind);
+	  return NULL;
+	}
     }
 
   *Nb_elts = nb_elts; *Rmin = rmin; *Rmax = rmax;
@@ -441,7 +451,11 @@ int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *
 	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
       else
 	ind = matint_work[iwork];
-      nsp_matint_bounds(Elts, ind, &rmin, &rmax);
+      if ( nsp_matint_bounds(Elts, ind, &rmin, &rmax) == FAIL )
+	{
+	  if ( nb_elts > WORK_SIZE ) FREE(ind);
+	  return NULL;
+	}
     }
 
   *Nb_elts = nb_elts; *Rmin = rmin; *Rmax = rmax;
