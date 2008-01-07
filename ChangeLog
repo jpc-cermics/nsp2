@@ -1,3 +1,8 @@
+2008-01-07    <bruno.pincon@iecn.u-nancy.fr>
+	* src/librand:
+	add several new probability distributions
+	for random generation (see the grand help page)
+	
 2005-05-01    <jpc@cermics.enpc.fr>
 
 	* src/objects/cells:
