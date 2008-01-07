@@ -166,6 +166,402 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
+{ 
+  /*  
+   *  interface for y = fft(x, dimflag)
+   *                  = fft(x, dim=dimflag)
+   *  using the fftw3  lib
+   */
+  NspMatrix *x, *y;
+  int i, j, dim_flag=0;
+  static fftw_plan forward_plan=NULL, forward_r2c_plan=NULL;
+  static int last_forward_n=-1, last_forward_r2c_n=-1;
+  fftw_plan multi_plan;
+
+  CheckRhs(1,2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1,1);
+
+  if ((x = GetMat(stack,1)) == NULLMAT) 
+    return RET_BUG;
+
+  if (rhs == 2)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim_flag) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim_flag) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim_flag == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim_flag == -2 )  /* matlab compatibility flag */
+	dim_flag = GiveMatlabDimFlag(x);
+    }
+
+  if ( x->mn == 0 )
+    {
+      NSP_OBJECT (x)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+    return RET_BUG;
+
+  if ( dim_flag == 0 )
+    {
+      if ( x->rc_type == 'r' )
+	{
+	  if ( x->mn != last_forward_r2c_n )
+	    {  
+	      fftw_destroy_plan(forward_r2c_plan);
+	      forward_r2c_plan = fftw_plan_dft_r2c_1d(x->mn, x->R, (fftw_complex *)y->C, 
+						      FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      last_forward_r2c_n = x->mn;
+	    }
+	  fftw_execute_dft_r2c(forward_r2c_plan, x->R , (fftw_complex *)y->C);
+	  /* complete the vector by hermitian symetry */
+	  for ( i = 1 ; i < (1+x->mn)/2 ; i++ )
+	    {
+	      y->C[x->mn-i].r = y->C[i].r;
+	      y->C[x->mn-i].i =-y->C[i].i;
+	    }
+	}
+      else
+	{
+	  if ( x->mn != last_forward_n )
+	    {  
+	      fftw_destroy_plan(forward_plan);
+	      forward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)y->C, 
+					      -1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      last_forward_n = x->mn;
+	    }
+	  fftw_execute_dft(forward_plan, (fftw_complex *)x->C , (fftw_complex *)y->C);
+	}
+    }
+  else    /* fft of the rows or the columns */
+    {
+      if ( dim_flag == 1 )      /* fft of the columns */
+	{
+	  if ( x->rc_type == 'r' )
+	    {
+	      multi_plan = fftw_plan_many_dft_r2c(1, &(x->m), x->n, 
+						  x->R, &(x->mn), 
+						  1, x->m,
+						  (fftw_complex *)y->C, &(y->mn), 
+						  1, x->m,
+						  FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      fftw_execute(multi_plan);
+	      /* complete the matrix by hermitian symetry */
+	      for ( j = 0 ; j < y->n ; j++ )
+		{
+		  int stride = j*x->m; 
+		  for ( i = 1 ; i < (1+y->m)/2 ; i++ )
+		    {
+		      y->C[stride+x->m-i].r = y->C[stride+i].r;
+		      y->C[stride+x->m-i].i =-y->C[stride+i].i;
+		    }
+		}
+	    }
+	  else
+	    {
+	      multi_plan = fftw_plan_many_dft(1, &(x->m), x->n,  
+					      (fftw_complex *)x->C, &(x->mn), 1, x->m,
+					      (fftw_complex *)y->C, &(y->mn), 1, y->m,
+					      -1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      fftw_execute(multi_plan);
+	    }
+	}
+      else if ( dim_flag == 2 )      /* fft of the rows */
+	{
+	  if ( x->rc_type == 'r' )
+	    {
+	      multi_plan = fftw_plan_many_dft_r2c(1, &(x->n), x->m,  
+						  x->R, &(x->mn), x->m, 1,
+						  (fftw_complex *)y->C, &(y->mn), x->m, 1,
+						  FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      fftw_execute(multi_plan);
+	      /* complete the matrix by hermitian symetry */
+	      for ( j = 1 ; j < (1+y->n)/2 ; j++ )
+		{
+		  int stride1 = j*y->m, stride2 = (y->n-j)*y->m; 
+		  for ( i = 0 ; i < y->m ; i++ )
+		    {
+		      y->C[stride2+i].r = y->C[stride1+i].r;
+		      y->C[stride2+i].i =-y->C[stride1+i].i;
+		    }
+		}
+	    }
+	  else
+	    {
+	      multi_plan = fftw_plan_many_dft(1, &(x->n), x->m,  
+					      (fftw_complex *)x->C, &(x->mn), x->m, 1,
+					      (fftw_complex *)y->C, &(y->mn), x->m, 1,
+					      -1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	      fftw_execute(multi_plan);
+	    }
+	}
+      else    /* normaly we shouldn't branch here */
+	{
+	  Scierror("%s: Invalid dim flag '%d' (must be 0, 1 or 2)\n", NspFname(stack), dim_flag);
+	  nsp_matrix_destroy(y);
+	  return RET_BUG;
+	}
+
+      fftw_destroy_plan(multi_plan);
+    }
+
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+}
+
+static int hermitian_redundancy_1d_test(NspMatrix *x, int dim)
+{
+  int flag = 0;
+  double delta, tol = 10*DBL_EPSILON;
+
+  if ( dim == 0 )
+    {
+      int k;
+      flag = fabs(x->C[0].i)  <= tol*fabs(x->C[0].r);
+      for ( k = 1 ; k <= x->mn/2 && flag ; k++ )
+	{
+	  delta = fabs(x->C[x->mn-k].r - x->C[k].r) + fabs(x->C[x->mn-k].i + x->C[k].i);
+	  flag = delta <= tol*( fabs(x->C[k].r) + fabs(x->C[k].i) );
+	}
+    }
+
+  else if ( dim == 1 )
+    {
+      int i, j;
+      doubleC *X;
+      flag = 1;
+      for ( j = 0, X = x->C ; j < x->n  && flag ; j++, X+=x->m )
+	{
+	  flag =  fabs(X[0].i) <= tol*fabs(X[0].r);
+	  for ( i = 1 ; i <= x->m/2 && flag ; i++ )
+	    {
+	      delta = fabs(X[x->m-i].r - X[i].r) + fabs(X[x->m-i].i + X[i].i);
+	      flag = delta <= tol*(fabs(X[i].r) + fabs(X[i].i));
+	    }
+	}
+    }
+
+  else if ( dim == 2 )
+    {
+      int i, j, stride1, stride2;
+      flag = 1;
+      // first column must be real
+      for ( i = 0 ; i < x->m  && flag ; i++ )
+	flag = fabs(x->C[i].i)  <= tol*fabs(x->C[i].r);
+
+      for ( j = 1, stride1 = x->m, stride2 = x->m*(x->n-1) ; j <= x->n/2  && flag ; j++, stride1+=x->m, stride2-=x->m)
+	for ( i = 0 ; i < x->m && flag ; i++ )
+	  {
+	    delta = fabs(x->C[stride2+i].r - x->C[stride1+i].r) + fabs(x->C[stride2+i].i + x->C[stride1+i].i); 
+	    flag = delta <= tol*(fabs(x->C[stride1+i].r) + fabs( x->C[stride1+i].i));
+	  }
+    }
+
+  return flag;
+}
+
+int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
+{ 
+  /*  
+   *  interface for y = ifft(x, dimflag)
+   *                  = ifft(x, dim=dimflag)
+   *  using the fftw3  lib
+   */
+  NspMatrix *x, *xx=NULLMAT, *y;
+  double invn=0;
+  int k, dim_flag=0, have_hermitian_redundancy=0;
+  static fftw_plan backward_plan=NULL, backward_c2r_plan=NULL;
+  static int last_backward_n=-1, last_backward_c2r_n=-1;
+  fftw_plan multi_plan;
+
+  CheckRhs(1,2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1,1);
+
+  if ((x = GetMat(stack,1)) == NULLMAT) 
+    return RET_BUG;
+
+  if (rhs == 2)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim_flag) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim_flag) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim_flag == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim_flag == -2 )  /* matlab compatibility flag */
+	dim_flag = GiveMatlabDimFlag(x);
+    }
+
+  if ( x->mn == 0 )
+    {
+      NSP_OBJECT (x)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( x->rc_type == 'r' )
+    {
+      if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT )
+	return RET_BUG;
+      for ( k = 0 ; k < x->mn ; k++ )
+	{
+	  xx->C[k].r = x->R[k];
+	  xx->C[k].i = 0.0;
+	}
+      x = xx;
+    }
+
+  /* test if x have the hermitian redundancy (if yes the backward transform leads to a 
+   * pure real vector (dim_flag=0) or to pure real vectors (dim_flag=1 or 2) 
+   */
+  have_hermitian_redundancy = hermitian_redundancy_1d_test(x, dim_flag);
+
+  if ( dim_flag == 0 )
+    {
+      invn = 1.0 / x->mn;
+
+      if ( have_hermitian_redundancy )
+	{ 
+	  if ( (y = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	    {
+	      nsp_matrix_destroy(xx); return RET_BUG;
+	    }
+
+	  if ( x->mn != last_backward_c2r_n )
+	    {  
+	      fftw_destroy_plan(backward_c2r_plan);
+	      backward_c2r_plan = fftw_plan_dft_c2r_1d(x->mn, (fftw_complex *)x->C, y->R, 
+						       FFTW_ESTIMATE | FFTW_UNALIGNED | FFTW_PRESERVE_INPUT);
+	      last_backward_c2r_n = x->mn;
+	    } 
+	  fftw_execute_dft_c2r(backward_c2r_plan, (fftw_complex *)x->C , y->R); 
+	}
+      else
+	{
+	  if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+	    {
+	      nsp_matrix_destroy(xx); return RET_BUG;
+	    }
+
+	  if ( x->mn != last_backward_n )
+	    {  
+	      fftw_destroy_plan(backward_plan);
+	      backward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)y->C, 
+					       1, FFTW_ESTIMATE | FFTW_UNALIGNED);
+	      last_backward_n = x->mn;
+	    }
+	  fftw_execute_dft(backward_plan, (fftw_complex *)x->C , (fftw_complex *)y->C);
+	}
+    }
+  else    /* ifft of the rows or the columns */
+    {
+      if ( dim_flag == 1 )        /* ifft of the columns */
+	{
+	  invn = 1.0 / x->m;
+
+	  if ( have_hermitian_redundancy )
+	    { 
+	      if ( (y = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+		{
+		  nsp_matrix_destroy(xx); return RET_BUG;
+		}
+	      multi_plan = fftw_plan_many_dft_c2r(1, &(x->m), x->n,  
+						  (fftw_complex *)x->C, &(x->mn), 1, x->m,
+						  y->R, &(y->mn), 1, y->m,
+						  FFTW_ESTIMATE | FFTW_UNALIGNED | FFTW_PRESERVE_INPUT);
+	    }
+	  else
+	    {
+	      if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+		{
+		  nsp_matrix_destroy(xx); return RET_BUG;
+		}
+	      multi_plan = fftw_plan_many_dft(1, &(x->m), x->n,  
+					      (fftw_complex *)x->C, &(x->mn), 1, x->m,
+					      (fftw_complex *)y->C, &(y->mn), 1, y->m,
+					      1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	    }
+	}
+      else if ( dim_flag == 2 )   /* ifft of the rows */
+	{
+	  invn = 1.0 / x->n;
+
+	  if ( have_hermitian_redundancy )
+	    { 
+	      if ( (y = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+		{
+		  nsp_matrix_destroy(xx); return RET_BUG;
+		}
+	      multi_plan = fftw_plan_many_dft_c2r(1, &(x->n), x->m,  
+						  (fftw_complex *)x->C, &(x->mn), x->m, 1,
+						  y->R, &(y->mn), x->m, 1,
+						  FFTW_ESTIMATE | FFTW_UNALIGNED | FFTW_PRESERVE_INPUT);
+	    }
+	  else
+	    {
+	      if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+		{
+		  nsp_matrix_destroy(xx); return RET_BUG;
+		}
+	      multi_plan = fftw_plan_many_dft(1, &(x->n), x->m,  
+					      (fftw_complex *)x->C, &(x->mn), x->m, 1,
+					      (fftw_complex *)y->C, &(y->mn), x->m, 1,
+					      1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	    }
+	}
+      else                        /* normaly we shouldn't branch here */
+	{
+	  Scierror("%s: Invalid dim flag '%d' (must be 0, 1 or 2)\n", NspFname(stack), dim_flag);
+	  nsp_matrix_destroy(xx);
+	  return RET_BUG;
+	}
+      
+      fftw_execute(multi_plan);
+      fftw_destroy_plan(multi_plan);
+    }
+
+  nsp_matrix_destroy(xx);
+
+  /* apply normalisation */
+  if ( have_hermitian_redundancy )
+    for (k = 0 ; k < y->mn ; k++) y->R[k] *= invn;
+  else
+    for (k = 0 ; k < y->mn ; k++) { y->C[k].r *= invn; y->C[k].i *= invn; }
+  
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+}
+
+
 int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 { 
   /*  interface for y = fft2(x, flag)
@@ -216,6 +612,207 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
+}
+
+
+int int_nsp_fft2new( Stack stack, int rhs, int opt, int lhs)
+{
+  /*  interface for y = fft2new(x)
+   *  using the fftw3 lib
+   */
+  NspMatrix *x, *y;
+  fftw_plan p;
+
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+
+  if ((x = GetMat(stack,1)) == NULLMAT)
+    return RET_BUG;
+
+  if ( x->mn == 0 )
+    {
+      NSP_OBJECT (x)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( ( y = nsp_matrix_create(NVOID, 'c', x->m, x->n) ) == NULLMAT )
+    return RET_BUG;
+
+  if ( x->rc_type == 'r' )
+    {
+      if ( (p = fftw_plan_dft_r2c_2d(x->n, x->m, x->R, (fftw_complex *)y->C, FFTW_ESTIMATE)) == NULL )
+	goto err;
+    }
+  else
+    {
+      if( (p = fftw_plan_dft_2d(x->n, x->m, (fftw_complex *)x->C, (fftw_complex *)y->C, -1, FFTW_ESTIMATE)) == NULL )
+	goto err;
+    }
+
+  fftw_execute(p);
+  fftw_destroy_plan(p);
+
+  if ( x->rc_type == 'r' )  /* complete y by applying hermitian redundancy  */
+    {
+      /* but we must move some blocs first... */
+      int i, j, stride1, stride2, sizebloc = x->m/2 + 1;
+      int sztblc =  sizebloc*sizeof(doubleC);
+      doubleC *from, *to;
+      for ( j = x->n-1, from = &(y->C[sizebloc*(x->n-1)]), to = &(y->C[x->m*(x->n-1)])  ; j > 1 ; j--, from-=sizebloc, to-=x->m )
+	memcpy(to, from, sztblc);
+      memmove(to, from, sztblc);
+
+      /* now complete by hermitian redundancy:   
+       *      y[m-i,0] = conj(y[i, 0])   for i = 1..(x->m-1)/2 
+       * and  y[m-i,j] = conj(y[i, n-j]) for j = 1..y->n  and i = 1..(x->m-1)/2 
+       */
+      for ( i = 1 ; i < (x->m+1)/2 ; i++ )
+	{
+	  y->C[x->m - i].r = y->C[i].r;
+	  y->C[x->m - i].i =-y->C[i].i;
+	}
+      for ( j = 1, stride1 = 2*x->m, stride2 = x->mn-x->m ; j < x->n ; j++, stride1+=x->m, stride2-=x->m )
+	for ( i = 1 ; i < (x->m+1)/2 ; i++ )
+	  {
+	    y->C[stride1 - i].r = y->C[stride2 + i].r;
+	    y->C[stride1 - i].i =-y->C[stride2 + i].i;
+	  }
+    }
+
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+
+ err:
+  nsp_matrix_destroy(y);
+  Scierror ("Error:\t fftw plan not initialised in %s\n", NspFname(stack));
+  return RET_BUG;
+}
+
+static int hermitian_redundancy_2d_test(NspMatrix *x)
+{
+  int i, j, stride1, stride2, flag, m = x->m, n = x->n;
+  double delta, tol = Max(m,n)*DBL_EPSILON;  /* FIXME: to be set more precisely */
+
+  flag = 1;
+
+  /* x[0,0] should be real */
+  flag = fabs(x->C[0].i) <=  tol*fabs(x->C[0].r); 
+  
+  /* x[m-i,0] == conj(x[i, 0]) ? for  i = 1..m/2 */  
+  for ( i = 1 ; i <= m/2 && flag ; i++ )
+    {
+      delta = fabs( x->C[m - i].r - x->C[i].r ) + fabs( x->C[m - i].i + x->C[i].i );
+      flag =  delta <= tol*( fabs(x->C[i].r) + fabs(x->C[i].i) );
+    }
+
+  /* x[0,n-j] == conj(x[0, j]) ? for j = 1..n/2 */  
+  for ( j = 1 ; j <= n/2 && flag ; j++ )
+    {
+      delta = fabs(x->C[m*(n-j)].r - x->C[m*j].r) + fabs(x->C[m*(n-j)].i + x->C[m*j].i);
+      flag =  delta <= tol*( fabs(x->C[m*j].r) + fabs(x->C[m*j].i) );
+    }
+
+  /* x[m-i,j] == conj(x[i, j])  for j=1..n-1 and i=1..m/2 */
+  for ( j = 1, stride1 = 2*m, stride2 = m*(n-1) ; j < n ; j++, stride1+=m, stride2-=m )
+    for ( i = 1 ; i <= m/2  && flag ; i++ )
+      {
+	delta = fabs(x->C[stride1-i].r - x->C[stride2+i].r) + fabs(x->C[stride1-i].i + x->C[stride2+i].i);
+	flag = delta <= tol*( fabs(x->C[stride2 + i].r) + fabs(x->C[stride2 + i].i) );
+      }
+
+  return flag;
+}
+
+int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
+{
+  /*  interface for y = ifft2new(x)
+   *  using the fftw3 lib
+   */
+  NspMatrix *x, *xx=NULLMAT, *y=NULLMAT;
+  doubleC *halfx=NULL;
+  fftw_plan p;
+  int k;
+  double invn;
+
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+
+  if ((x = GetMat(stack,1)) == NULLMAT)
+    return RET_BUG;
+
+  if ( x->mn == 0 )
+    {
+      NSP_OBJECT (x)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( x->rc_type == 'r' )
+    {
+      if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT )
+	return RET_BUG;
+      for ( k = 0 ; k < x->mn ; k++ )
+	{
+	  xx->C[k].r = x->R[k]; xx->C[k].i = 0.0;
+	}
+      x = xx;
+    }
+
+  if ( hermitian_redundancy_2d_test(x) )
+    {
+      int j, sizebloc = x->m/2 + 1, sztblc =  sizebloc*sizeof(doubleC);
+      doubleC *from, *to;
+      
+      /* allocate halfx then copy the non redundant part of x in halfx  */
+      if ( ( halfx = malloc(x->n *sztblc) ) == NULL )
+	{
+	  Scierror ("Error:\t running out memory in %s\n", NspFname(stack));
+ 	  goto err;
+	}
+      for ( j = 0, from = x->C, to = halfx ; j < x->n ; j++, from+=x->m, to+=sizebloc )
+	memcpy(to, from, sztblc);
+
+      if ( ( y = nsp_matrix_create(NVOID, 'r', x->m, x->n) ) == NULLMAT ) goto err;
+
+      /* compute the c2r plan */
+      if ( (p = fftw_plan_dft_c2r_2d(x->n, x->m, (fftw_complex *)halfx, y->R, FFTW_ESTIMATE)) == NULL ) 
+	{
+	  Scierror ("Error:\t fftw plan not initialised in %s\n", NspFname(stack));
+	  goto err;
+	}
+    }
+  else
+    {
+      if ( ( y = nsp_matrix_create(NVOID, 'c', x->m, x->n) ) == NULLMAT ) goto err;
+
+      if ( (p = fftw_plan_dft_2d(x->n, x->m, (fftw_complex *)x->C, (fftw_complex *)y->C, 1, FFTW_ESTIMATE)) == NULL ) 
+	{
+	  Scierror ("Error:\t fftw plan not initialised in %s\n", NspFname(stack));
+	  goto err;
+	}
+    }
+
+  fftw_execute(p);
+  fftw_destroy_plan(p);
+
+  /* apply normalisation */
+  invn = 1.0 / y->mn;
+  if ( y->rc_type == 'r' )
+    {
+      for ( k = 0 ; k < y->mn ; k++ ) y->R[k] *= invn;
+      free(halfx);
+    }
+  else
+    for ( k = 0 ; k < y->mn ; k++ ) { y->C[k].r *= invn; y->C[k].i *= invn; }
+
+  nsp_matrix_destroy(xx);
+  MoveObj (stack, 1, (NspObject *) y);
+  return 1;
+
+ err:
+  free(halfx);
+  nsp_matrix_destroy(xx);
+  nsp_matrix_destroy(y);
+  return RET_BUG;
 }
 
 #else
@@ -429,6 +1026,7 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
 }
+
 
 #endif
 
@@ -777,6 +1375,12 @@ static int int_nsp_rot(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Fft_func[]={
     {"fft_m_m", int_nsp_fft},
+#ifdef WITH_FFTW3
+    {"fftnew_m", int_nsp_fftnew},
+    {"ifftnew_m", int_nsp_ifftnew},
+    {"fft2new_m", int_nsp_fft2new},
+    {"ifft2new_m", int_nsp_ifft2new},
+#endif
     {"fft2_m_m", int_nsp_fft2},
     {"fftshift_m", int_nsp_fftshift},
     {"ifftshift_m", int_nsp_ifftshift},
