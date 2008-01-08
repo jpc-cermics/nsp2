@@ -1620,13 +1620,19 @@ int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_cum_prod));
 }
 
+
+/*
+ * diff
+ *
+ */
 static int
 int_mxdiff (Stack stack, int rhs, int opt, int lhs)
 {
   int dim=0;
   int order=1;
   NspMatrix *Res, *HMat;
-  CheckRhs (1, 3);
+  CheckRhs (1,3);
+  CheckOptRhs(0,2)
   CheckLhs (1, 1);
 
   if ((HMat = GetMat (stack, 1)) == NULLMAT)
@@ -1634,23 +1640,48 @@ int_mxdiff (Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs > 1 )
     {
-      if ( GetScalarInt(stack, 2, &order) == FAIL )
-	return RET_BUG;
-      CheckNonNegative(NspFname(stack),order,2);
-
-      if ( rhs == 3 )
+      if ( rhs == 3 && opt == 1 )
 	{
-	  if ( GetDimArg(stack, 3, &dim) == FAIL )
+	  Scierror ("Error:\t don't use both usual and named optional arguments (in function %s)\n", NspFname(stack));
+	  return RET_BUG;
+	}
+
+      if ( opt == 0 )
+	{
+	  if ( GetScalarInt(stack, 2, &order) == FAIL )
 	    return RET_BUG;
-	  if ( dim == -1 )
+	  CheckNonNegative(NspFname(stack),order,2);
+
+	  if ( rhs == 3 )
 	    {
-	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
-	      return RET_BUG;
+	      if ( GetDimArg(stack, 3, &dim) == FAIL )
+		return RET_BUG;
 	    }
-	  if ( dim == -2 )  /* matlab compatibility flag */
-	    dim = GiveMatlabDimFlag(HMat);
+	}
+      else
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      {"order",s_int,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim, &order) == FAIL )
+	    return RET_BUG;
 	}
     }
+
+  if ( order < 0 )
+    {
+      Scierror ("Error:\t order should be non negative (in function %s)\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( dim == -1 )
+    {
+      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+      return RET_BUG;
+    }
+  if ( dim == -2 )  /* matlab compatibility flag */
+    dim = GiveMatlabDimFlag(HMat);
+  
   
   if ((Res = nsp_mat_diff(HMat, order, dim)) == NULLMAT)
     return RET_BUG;
