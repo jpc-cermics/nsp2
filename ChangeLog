@@ -1,3 +1,11 @@
+2008-01-09  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/interp/Eval.c 
+	* src/objects/Datas.c 
+	changes the way $ is evaluated. Changing $ should 
+	be forbiden and should be added. 
+
+		
 2008-01-09  Pincon Bruno  <bruno@ma088.iecn.u-nancy.fr>
 
 	* src/objects/MatObj.c:
