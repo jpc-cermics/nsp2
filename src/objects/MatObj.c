@@ -4755,6 +4755,91 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+static int
+int_cross (Stack stack, int rhs, int opt, int lhs)
+{
+  int dim, p;
+  char type;
+  NspMatrix *Res, *X, *Y;
+  CheckRhs(2, 3);
+  CheckLhs(1, 1);
+
+  if ((X = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ((Y = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,X,Y);
+
+  if ( X->m != 3 && X->n != 3 )
+    {
+      Scierror ("Error: arg 1 and 2 of %s must have at least one dimension of length 3\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if (rhs == 3)
+    {
+      if ( GetScalarInt (stack, 3, &dim) == FAIL )
+	return RET_BUG;
+      if ( dim != 1 && dim != 2 )
+	{
+	  Scierror ("Error: %s: dim should be equal to 1 or 2\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == 1 && X->m != 3 )
+	{
+	  Scierror ("Error: arg 1 and 2 of %s should have 3 rows when dim=1 \n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == 2 && X->n != 3 )
+	{
+	  Scierror ("Error: arg 1 and 2 of %s should have 3 columns when dim=2 \n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else
+    dim = X->m == 3 ? 1 : 2;
+
+  type =  (X->rc_type == 'r' && Y->rc_type == 'r') ? 'r' : 'c'; 
+  if ( (Res = nsp_matrix_create(NVOID, type, X->m, X->n)) == NULLMAT )
+    return RET_BUG;
+
+  p = dim == 1 ? X->n : X->m;
+
+  if ( X->rc_type == 'r' )
+    {
+      if ( Y->rc_type == 'r' )
+	nsp_dcross(X->R, Y->R, Res->R, p, dim);
+      else
+	{
+	  int k;
+	  doubleC *Xc;
+	  if ( (Xc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return RET_BUG;
+	  for ( k = 0 ; k < 3*p ; k++ ) { Xc[k].r = X->R[k]; Xc[k].i = 0.0; }
+	  nsp_zcross(Xc, Y->C, Res->C, p, dim);
+	  FREE(Xc);
+	}
+    }
+  else
+    {
+      if ( Y->rc_type == 'r' )
+	{
+	  int k;
+	  doubleC *Yc;
+	  if ( (Yc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return RET_BUG;
+	  for ( k = 0 ; k < 3*p ; k++ ) { Yc[k].r = Y->R[k]; Yc[k].i = 0.0; }
+	  nsp_zcross(X->C, Yc, Res->C, p, dim);
+	  FREE(Yc);
+	}
+      else
+	nsp_zcross(X->C, Y->C, Res->C, p, dim);
+    }
+
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
 
 /*
  * The Interface for basic matrices operation 
@@ -4923,6 +5008,7 @@ static OpTab Matrix_func[] = {
   {"nnz_m",  int_matrix_nnz},
   {"format", int_format},
   {"unique_m", int_unique},
+  {"cross_m_m", int_cross},
   {(char *) 0, NULL}
 };
 

@@ -1,3 +1,8 @@
+2008-01-09  Pincon Bruno  <bruno@ma088.iecn.u-nancy.fr>
+
+	* src/objects/MatObj.c:
+	add cross function (basic routines being in matutil)
+
 2008-01-07    <bruno.pincon@iecn.u-nancy.fr>
 	* src/librand:
 	add several new probability distributions

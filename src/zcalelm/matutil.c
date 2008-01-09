@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2008 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -577,7 +578,16 @@ double nsp_dsum(int *n, double *dx, int *incx)
   return d;
 }
 
-
+/**
+ * nsp_dsumrows:
+ * @x: an array m x n of double with column major order
+ * @res: an array of size m with the result
+ * @m, @n: sizes of the matrix @x
+ * 
+ *   res[i] = sum(x[i,j], j=0,n-1)
+ * 
+ * computes the sum of each row 
+ **/
 void nsp_dsumrows(double *x, double *res, int m, int n)
 {
   int i, j, k, k2, k3, p;
@@ -696,16 +706,6 @@ void nsp_dprodrows(double *x, double *res, int m, int n)
       res[i] *= (x[k] * x[k2]) * (x[k3] * x[k4]);
 }
 
-/**
- * nsp_dsumrows:
- * @x: an array m x n of double with column major order
- * @res: an array of size m with the result
- * @m, @n: sizes of the matrix @x
- * 
- *   res[i] = sum(x[i,j], j=0,n-1)
- * 
- * computes the sum of each row 
- **/
 
 /**
  * nsp_dvmul:
@@ -1318,6 +1318,84 @@ int nsp_zvmul(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
       }
     }
   return 0;
+}
+
+/**
+ * nsp_dcross:
+ * @A: (input) 3 x @n or @n x 3  double array
+ * @B: (input) array with same dim than @A
+ * @C: (output) array with same dims than @A and @B
+ * @n: (input) first or second dim length of the arrays
+ * @dim_flag: =1 for 3 x @n arrays and =2 for  @n x 3 arrays
+ * 
+ * compute (in the array @C) the cross product between the
+ * vectors stored in @A or @B. Real version
+ *  
+ **/
+
+void nsp_dcross(double *A, double *B, double *C, int n, int dim_flag)
+{
+  int k;
+
+  if ( dim_flag == 1 )
+    for ( k = 0 ; k < n ; k++, A+=3, B+=3, C+=3 )
+      {
+	C[0] = A[1]*B[2] - A[2]*B[1];
+	C[1] = B[0]*A[2] - B[2]*A[0];
+	C[2] = A[0]*B[1] - A[1]*B[0];
+      }
+  else /* dim_flag == 2 */
+    {
+      double *C1 = C + n, *C2 = C + 2*n, *A1 = A + n, *A2 = A + 2*n, *B1 = B + n, *B2 = B + 2*n;
+      for ( k = 0 ; k < n ; k++ )
+	{
+	  C [k] = A1[k]*B2[k] - A2[k]*B1[k];
+	  C1[k] = B [k]*A2[k] - B2[k]*A [k];
+	  C2[k] = A [k]*B1[k] - A1[k]*B [k];
+	}
+    }
+}
+
+/**
+ * nsp_zcross:
+ * @A: (input) 3 x @n or @n x 3  double array
+ * @B: (input) array with same dim than @A
+ * @C: (output) array with same dims than @A and @B
+ * @n: (input) first or second dim length of the arrays
+ * @dim_flag: =1 for 3 x @n arrays and =2 for  @n x 3 arrays
+ * 
+ * compute (in the array @C) the cross product between the
+ * vectors stored in @A or @B. Complex version
+ *  
+ **/
+
+void nsp_zcross(doubleC *A, doubleC *B, doubleC *C, int n, int dim_flag)
+{
+  int k;
+
+  if ( dim_flag == 1 )
+    for ( k = 0 ; k < n ; k++, A+=3, B+=3, C+=3 )
+      {
+	C[0].r = (A[1].r*B[2].r - A[1].i*B[2].i) - (A[2].r*B[1].r - A[2].i*B[1].i);
+	C[0].i = (A[1].r*B[2].i + A[1].i*B[2].r) - (A[2].r*B[1].i + A[2].i*B[1].r);
+	C[1].r = (B[0].r*A[2].r - B[0].i*A[2].i) - (B[2].r*A[0].r - B[2].i*A[0].i);
+	C[1].i = (B[0].r*A[2].i + B[0].i*A[2].r) - (B[2].r*A[0].i + B[2].i*A[0].r);
+	C[2].r = (A[0].r*B[1].r - A[0].i*B[1].i) - (A[1].r*B[0].r - A[1].i*B[0].i);
+	C[2].i = (A[0].r*B[1].i + A[0].i*B[1].r) - (A[1].r*B[0].i + A[1].i*B[0].r);
+      }
+  else /* dim_flag == 2 */
+    {
+      doubleC *C1 = C + n, *C2 = C + 2*n, *A1 = A + n, *A2 = A + 2*n, *B1 = B + n, *B2 = B + 2*n;
+      for ( k = 0 ; k < n ; k++ )
+	{
+	  C [k].r = (A1[k].r*B2[k].r - A1[k].i*B2[k].i) - (A2[k].r*B1[k].r - A2[k].i*B1[k].i);
+	  C [k].i = (A1[k].r*B2[k].i + A1[k].i*B2[k].r) - (A2[k].r*B1[k].i + A2[k].i*B1[k].r);
+	  C1[k].r = (B [k].r*A2[k].r - B [k].i*A2[k].i) - (B2[k].r*A [k].r - B2[k].i*A [k].i);
+	  C1[k].i = (B [k].r*A2[k].i + B [k].i*A2[k].r) - (B2[k].r*A [k].i + B2[k].i*A [k].r);
+	  C2[k].r = (A [k].r*B1[k].r - A [k].i*B1[k].i) - (A1[k].r*B [k].r - A1[k].i*B [k].i);
+	  C2[k].i = (A [k].r*B1[k].i + A [k].i*B1[k].r) - (A1[k].r*B [k].i + A1[k].i*B [k].r);
+	}
+    }
 }
 
 

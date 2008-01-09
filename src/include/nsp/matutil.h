@@ -47,6 +47,9 @@ extern void nsp_dsumrows(double *x, double *res, int m, int n);
 extern void nsp_zsumrows(doubleC *x, doubleC *res, int m, int n);
 extern double nsp_dprod(double *x, int n, int incx);
 extern void nsp_dprodrows(double *x, double *res, int m, int n);
+extern void nsp_dcross(double *A, double *B, double *C, int n, int dim_flag);
+extern void nsp_zcross(doubleC *A, doubleC *B, doubleC *C, int n, int dim_flag);
+
 
 
 #endif /* NSP_INC_   **/
