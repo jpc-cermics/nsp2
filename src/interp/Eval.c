@@ -50,6 +50,7 @@ static int EvalRhsCall (PList L,Stack, int first, int rhs,int lhs);
 static int show_eval_bug(Stack s,int n, PList L) ;
 
 static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, int first);
+static void nsp_set_dollar(Stack *stack,NspObject *O, int j);
 
 #define SHOWBUG(stack,n,L) return show_eval_bug(stack,n,L)
 
@@ -1012,6 +1013,24 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
     case NAME :
     case OPNAME :
       /* if ( debug ) Sciprintf("==>%s\n",(char *) L->O); */
+      
+      if ( strcmp((char *) L->O,"$")==0)
+	{
+	  NspMatrix *dollar;
+	  if ( stack->dollar == -1 ) 
+	    {
+	      Scierror("Error: trying to use $ in a context where $ do not exists\n");
+	      return RET_BUG;
+	    }
+	  if (( dollar = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT )
+	    {
+	      return RET_BUG;
+	    }
+	  dollar->R[0] = stack->dollar;
+	  stack->val->S[first] = NSP_OBJECT(dollar); 
+	  return 1;
+	}
+
       if ( L->arity != -1 ) 
 	{
 	  if (  Datas == NULLLIST ) 
@@ -1888,7 +1907,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
     {
       int n;
       L=L->next;
-      nsp_set_dollar(stack.val->S[*ipos+1],0);
+      nsp_set_dollar(&stack,stack.val->S[*ipos+1],0);
       if ((n =nsp_eval_arg(L,&stack,*ipos+2,1,1,0)) < 0) 
 	{
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
@@ -2015,7 +2034,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   for ( j = 1 ; j <= arity1 ; j++ )
     {
       int n;
-      nsp_set_dollar(stack.val->S[*ipos+1],arity1 == 1 ? 0 : j );
+      nsp_set_dollar(&stack,stack.val->S[*ipos+1],arity1 == 1 ? 0 : j );
       if ((n =nsp_eval_arg(L,&stack,*ipos+2+fargs,1,1,0)) < 0) 
 	{
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
@@ -2401,7 +2420,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 	      for ( k= 1; k <= Larg->arity ; k++) 
 		{
 		  /* set '$' before evaluation of arguments */
-		  nsp_set_dollar(stack.val->S[first],Larg->arity == 1 ? 0 : k );
+		  nsp_set_dollar(&stack,stack.val->S[first],Larg->arity == 1 ? 0 : k );
 		  if ((n =nsp_eval_arg(L2,&stack,first+count,1,1,0)) < 0)  
 		    {
 		      nsp_void_seq_object_destroy(stack,first,first+count);
@@ -2586,7 +2605,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       for ( k= 1; k <= nargs ; k++) 
 	{
 	  /* set '$' before evaluation of arguments */
-	  nsp_set_dollar(stack.val->S[first],nargs == 1 ? 0 : k );
+	  nsp_set_dollar(&stack,stack.val->S[first],nargs == 1 ? 0 : k );
 	  if ((n =nsp_eval_arg(Largs,&stack,first+count,1,1,0)) < 0)  
 	    {
 	      nsp_void_seq_object_destroy(stack,first,first+count);
@@ -2946,22 +2965,27 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 
 /**
  *nsp_set_dollar:
- * @O: 
- * @j: 
+ * @stack: pointer to a stack object 
+ * @O: an object 
+ * @j: indice to use 
  * 
  * 
  * Fix the value of scilab $ variable 
  * $ is fixed to object dimensions. 
- * Dollar is a global Matrix objet XXXX
+ * The current $ value is stored in the Stack @stack.
  * 
- * Return value: 
  **/
 
-extern NspMatrix *Dollar;
+/* extern NspMatrix *Dollar; */
 
-void nsp_set_dollar(NspObject *O, int j)
+static void nsp_set_dollar(Stack *stack,NspObject *O, int j)
 {
-  if ( O != NULLOBJ ) Dollar->R[0]=nsp_object_get_size(O,j);
+  if ( O != NULLOBJ ) 
+    {
+      /* XXXXX */
+      /* Dollar->R[0]=nsp_object_get_size(O,j); */
+      stack->dollar = nsp_object_get_size(O,j);
+    }
 }
 
 
