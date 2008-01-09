@@ -11,10 +11,6 @@
 #include <gtk/gtk.h>
 
 
-/* ---------- forward type declarations ---------- */
-#define ClassB_Private
-#include "nsp/classb.h"
-
 
 /* ----------- ClassB ----------- */
 
@@ -308,7 +304,7 @@ void nsp_classb_latex_print(NspClassB *M, int indent,const char *name, int rec_l
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for ClassB objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
 NspClassB   *nsp_classb_object(NspObject *O)
@@ -426,7 +422,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 430 "classb.c"
+#line 426 "classb.c"
 
 
 #line 29 "classb.override"
@@ -437,12 +433,12 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 441 "classb.c"
+#line 437 "classb.c"
 
 
 static NspMethods classb_methods[] = {
-  {"color_change",(nsp_method *) _wrap_classb_color_change},
-  {"color_show",(nsp_method *) _wrap_classb_color_show},
+  {"classb_color_change",(nsp_method *) _wrap_classb_color_change},
+  {"classb_color_show",(nsp_method *) _wrap_classb_color_show},
   { NULL, NULL}
 };
 
@@ -493,6 +489,14 @@ static NspObject *_wrap_classb_get_clb_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
+static NspObject *_wrap_classb_get_clb_val_obj(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspMatrix*) ((NspClassB *) self)->clb_val);
+  return (NspObject *) ret;
+}
+
 static int _wrap_classb_set_clb_val(void *self, char *attr, NspObject *O)
 {
   NspMatrix *clb_val;
@@ -508,7 +512,7 @@ static int _wrap_classb_set_clb_val(void *self, char *attr, NspObject *O)
 static AttrTab classb_attrs[] = {
   { "clb_color", (attr_get_function *)_wrap_classb_get_clb_color, (attr_set_function *)_wrap_classb_set_clb_color,(attr_get_object_function *)int_get_object_failed },
   { "clb_thickness", (attr_get_function *)_wrap_classb_get_clb_thickness, (attr_set_function *)_wrap_classb_set_clb_thickness,(attr_get_object_function *)int_get_object_failed },
-  { "clb_val", (attr_get_function *)_wrap_classb_get_clb_val, (attr_set_function *)_wrap_classb_set_clb_val,(attr_get_object_function *)int_get_object_failed },
+  { "clb_val", (attr_get_function *)_wrap_classb_get_clb_val, (attr_set_function *)_wrap_classb_set_clb_val,(attr_get_object_function *)_wrap_classb_get_clb_val_obj },
   { NULL,NULL,NULL,NULL },
 };
 
@@ -551,7 +555,7 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 555 "classb.c"
+#line 559 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &PyClassB_Type, Py_BuildValue("(O)", &PyClassA_Type));
 }
 */

@@ -435,8 +435,8 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
 
 
 static NspMethods classa_methods[] = {
-  {"color_change",(nsp_method *) _wrap_classa_color_change},
-  {"color_show",(nsp_method *) _wrap_classa_color_show},
+  {"classa_color_change",(nsp_method *) _wrap_classa_color_change},
+  {"classa_color_show",(nsp_method *) _wrap_classa_color_show},
   { NULL, NULL}
 };
 
