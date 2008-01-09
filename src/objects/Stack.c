@@ -45,6 +45,7 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->first = 0;
   stack->fname = NULL;
   stack->file_name = NULL;
+  stack->dollar = -1;
   /* XXX : should check here that stack->val != NULL */
   stack->val = calloc(1,sizeof(Stack_ref));
   stack->val->S = S ;

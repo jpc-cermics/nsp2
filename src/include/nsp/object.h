@@ -223,6 +223,7 @@ struct _Stack {
   const char *fname; /* function currently evaluated */
   Stack_ref *val;    /* this part is transmited by ref */
   char *file_name ; /*  function currently evaluated is in file_name */
+  int  dollar ;     /* last dollar value to propagate */
 } ;
 
 #define STACK_SIZE 50000

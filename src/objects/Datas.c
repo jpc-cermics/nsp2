@@ -43,7 +43,7 @@ extern int frames_search_inhibit;
 
 NspList   *Datas = NULLLIST; /* contains the list of frames */
 NspObject *Reserved= NULLOBJ;/* used to fill stack with non empty object */
-NspMatrix *Dollar = NULLMAT; /* Direct access to $ **/
+/* NspMatrix *Dollar = NULLMAT;*/ /* Direct access to $ **/
 NspObject *Null = NULLOBJ;   /* Direct access to %null **/
 NspFrame  *GlobalFrame = NULLFRAME; /* Direct access to GlobalFrame **/
 NspFrame  *ConstantFrame = NULLFRAME; /* Direct access to constants **/
@@ -85,9 +85,12 @@ int nsp_init_frames(int argc, char **argv)
   nsp_frame_replace_object(O,-1);
   if ((O=nsp_create_object_from_double("%e",M_E))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O,-1);
-  if ((O =nsp_create_object_from_double("$", -1.0 ))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
-  Dollar = (NspMatrix *) O;
+  /*
+    if ((O =nsp_create_object_from_double("___$", -1.0 ))==NULLOBJ) return FAIL;
+    nsp_frame_replace_object(O,-1);
+    Dollar = (NspMatrix *) O;
+  */
+
   if ((O =nsp_create_true_object("%t"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O,-1);
   if ((O =nsp_create_false_object("%f"))==NULLOBJ) return FAIL;
