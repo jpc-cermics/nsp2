@@ -36,10 +36,10 @@
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
 extern char *nsp_get_extension(char *name);
+extern BCG *nsp_check_graphic_context(void);
 
 static int sci_demo (const char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
-static BCG *nsp_check_graphic_context(void);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
 /**
@@ -1815,7 +1815,7 @@ static void  nsp_gwin_clear(BCG *Xgc)
  * Return value: #NULL or the current BCG to be used 
  **/
 
-static BCG *nsp_check_graphic_context(void)
+BCG *nsp_check_graphic_context(void)
 {
   if ( nsp_current_bcg != NULL ) 
     return nsp_current_bcg; /* Postscript or Xfig */
@@ -4851,6 +4851,7 @@ int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
 /* experimental: draw a pixbuf in a region of a graphic window. 
  * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
  * gtk_logo_pixbuf = gdk_pixbuf_new_from_file(gtk_logo);
+ * plot2d();
  * xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,2,0,1,1)
  */
 
@@ -5016,6 +5017,8 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
  *************************************************************/
 
 extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int int_polyline_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int int_polyline_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5107,6 +5110,9 @@ static OpTab Graphics_func[]={
   {"scicos_draw3D",int_scicos_draw3D},
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
+  {"polyline_create", int_polyline_create},
+  {"polyline_attach", int_polyline_attach},
+
   {(char *) 0, NULL}
 };
 

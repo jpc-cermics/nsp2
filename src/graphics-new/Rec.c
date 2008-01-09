@@ -26,7 +26,7 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec_private.h"
-
+#include "graphic.h" 
 
 static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l); 
 static int CopyVectLI  (int **,const int *,int ); 
@@ -3256,12 +3256,46 @@ static void store_double4(BCG *Xgc,int code,double vals[])
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
+/* Store a Graphic object  */
+
+void store_graphic_object(BCG *Xgc,NspObject *obj)
+{
+  NspObject *obj_cp;
+  struct rec_object *lplot= MALLOC(sizeof(struct rec_object));
+  if (lplot != NULL)
+    {
+      if ((obj_cp = nsp_object_copy_and_name("Obj",obj)) != NULLOBJ )
+	{
+	  lplot->obj = obj_cp ;
+	  store_record(Xgc,CODEobject, lplot);
+	  return;
+	}
+    }
+  Scistring("Out of memory in store_graphic_object \n");
+  return; 
+}
+
+static void replay_graphic_object(BCG *Xgc,void  *theplot)
+{
+  struct rec_object *lplot= theplot ;
+  NspGraphic *G = (NspGraphic *) lplot->obj;
+  G->type->draw(Xgc,G);
+  Scistring("replay graphic_object \n");
+  /* nsp_graphic_object_replay(Xgc,obj); */
+}
+
+static void clean_graphic_object(void *plot) 
+{
+  NspObject *obj = ((struct rec_object *) plot)->obj;
+  Scistring("clean graphic_object \n");
+  nsp_object_destroy(&obj);
+};
 
 
 
 
 
-
+ 
 
 
 
