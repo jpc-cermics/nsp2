@@ -2,7 +2,7 @@
 // an object of Classa 
 
 
-a=%types.ClassA.new[cla_color=89,cla_thickness=56];
+a=%types.ClassA.new[cla_color=89,cla_thickness=56,cla_val=[]];
 
 // attributes of object 
 
@@ -33,7 +33,7 @@ test(a)
 
 // an object of Classb which inherits from Classa 
 
-b=%types.ClassB.new[clb_color=89,clb_thickness=56,cla_color=3];
+b=%types.ClassB.new[clb_color=89,clb_thickness=56,cla_color=3,clb_val=[]];
 
 b.__attrs 
 
