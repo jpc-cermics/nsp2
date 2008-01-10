@@ -121,6 +121,10 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
 
+#ifdef WITH_LIBAMOS
+extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
+#endif 
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -207,6 +211,9 @@ InterfTab Interfaces[]={
   {DClass_Interf , DClass_Interf_Info},
 #endif
   {Mtlb_Interf, Mtlb_Interf_Info},
+#ifdef WITH_LIBAMOS
+  {AmosCephes_Interf, AmosCephes_Info},
+#endif 
   {NULL,NULL}
 }; 
 
