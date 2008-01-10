@@ -6016,4 +6016,106 @@ int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first
 }
 
 
+/**
+ * nsp_mat_dot:
+ * @A, @B: (input) #NspMatrix with same dimensions
+ * @dim_flag: (input) dim parameter (0, 1 or 2)
+ *
+ * computes scalar products between @A and @B:
+ *
+ *  @dim_flag = 0: sum_i_j conj(A_i_j)* B_i_j
+ *  @dim_flag = 1: sum_i   conj(A_i_j)* B_i_j  for each j (got a row vector)
+ *  @dim_flag = 2: sum_j   conj(A_i_j)* B_i_j  for each i (got a column vector)
+ *
+ * this is easily writing in nsp with sum(A.*B, dim_flag) (real case)
+ *                            or with sum(conj(A).*B, dim_flag) (complex case)
+ * but using various dot function from BLAS and from matutil.c (which completes
+ * the BLAS) is much faster.
+ *
+ * Return value: an #NspMatrix storing the result
+ **/
+NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag)
+{
+  NspMatrix *C;
+  int j, one=1;
+  char type = (A->rc_type == 'r' && B->rc_type == 'r') ? 'r' : 'c';
+  
+  switch (dim_flag) 
+    {
+    default :
+      Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
+
+    case 0: 
+      if ((C = nsp_matrix_create(NVOID,type,Min(A->m,1),Min(A->n,1))) == NULLMAT) 
+	return NULLMAT;
+      if (C->mn == 1)
+	{
+	  if ( A->rc_type == 'r' )
+	    {
+	      if ( B->rc_type == 'r' )
+		C->R[0] = C2F(ddot)(&(A->mn), A->R, &one, B->R, &one);
+	      else
+		C->C[0] = nsp_dzdot(A->R, B->C, A->mn);
+	    }
+	  else
+	    {
+	      if ( B->rc_type == 'c' )
+		C->C[0] = C2F(zdotc)(&(A->mn), A->C, &one, B->C, &one);
+	      else
+		C->C[0] = nsp_zddot(A->C, B->R, A->mn);
+	    }
+	}
+      break;
+
+    case 1:
+      if ((C = nsp_matrix_create(NVOID,type,1,A->n)) == NULLMAT) 
+	return NULLMAT;
+      if ( A->n >= 1 )
+	{
+	  if ( A->rc_type == 'r' )
+	    {
+	      if ( B->rc_type == 'r' )
+		for ( j = 0 ; j < A->n ; j++ ) 
+		  C->R[j] = C2F(ddot)(&(A->m), A->R+j*A->m, &one, B->R+j*A->m, &one);
+	      else
+		for ( j = 0 ; j < A->n ; j++ ) 
+		  C->C[j] = nsp_dzdot(A->R+j*A->m, B->C+j*A->m, A->m);
+	    }
+	  else
+	    {
+	      if ( B->rc_type == 'c' )
+		for ( j = 0 ; j < A->n ; j++ )
+		  C->C[j] = C2F(zdotc)(&(A->m), A->C+j*A->m, &one, B->C+j*A->m, &one);
+	      else
+		for ( j = 0 ; j < A->n ; j++ )
+		  C->C[j] =  nsp_zddot(A->C+j*A->m, B->R+j*A->m, A->m);
+	    }
+	}
+      break ;
+
+    case 2:
+      if ((C = nsp_matrix_create(NVOID,type,A->m,1)) == NULLMAT) 
+	return NULLMAT;
+      if ( A->m >= 1 )
+	{
+	  if ( A->rc_type == 'r' )
+	    {
+	      if ( B->rc_type == 'r' )
+		nsp_rowdddot(A->R, B->R, C->R, A->m, A->n);
+	      else
+		nsp_rowdzdot(A->R, B->C, C->C, A->m, A->n);
+	    }
+	  else
+	    {
+	      if ( B->rc_type == 'r' )
+		nsp_rowzddot(A->C, B->R, C->C, A->m, A->n);
+	      else
+		nsp_rowzzdot(A->C, B->C, C->C, A->m, A->n);
+	    }
+	}
+      break;
+    }
+  
+  return C;
+}
 

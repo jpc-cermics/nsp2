@@ -4756,7 +4756,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 }
 
 static int
-int_cross (Stack stack, int rhs, int opt, int lhs)
+int_mat_cross (Stack stack, int rhs, int opt, int lhs)
 {
   int dim, p;
   char type;
@@ -4835,6 +4835,55 @@ int_cross (Stack stack, int rhs, int opt, int lhs)
       else
 	nsp_zcross(X->C, Y->C, Res->C, p, dim);
     }
+
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
+static int
+int_mat_dot (Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=0;
+  NspMatrix *Res, *A, *B;
+  CheckRhs(2, 3);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 1);
+
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ((B = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,A,B);
+
+  if (rhs == 3)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 3, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(A);
+    }
+
+  if ( (Res = nsp_mat_dot(A, B, dim)) == NULLMAT )
+    return RET_BUG;
 
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
@@ -5008,7 +5057,8 @@ static OpTab Matrix_func[] = {
   {"nnz_m",  int_matrix_nnz},
   {"format", int_format},
   {"unique_m", int_unique},
-  {"cross_m_m", int_cross},
+  {"cross_m_m", int_mat_cross},
+  {"dot_m_m", int_mat_dot},
   {(char *) 0, NULL}
 };
 

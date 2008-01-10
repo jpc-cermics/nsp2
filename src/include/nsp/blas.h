@@ -43,8 +43,10 @@ extern int C2F(lsame) (char *ca, char *cb, int ca_len, int cb_len);
 extern int C2F(xerbla) (char *srname, int *info, int srname_len);
 extern int C2F(zaxpy) (int *n, doubleC *za, doubleC *zx, int *incx, doubleC *zy, int *incy);
 extern int C2F(zcopy) (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy);
-extern void C2F(zdotc) (doubleC * ret_val, int *n, doubleC *zx, int *incx, doubleC *zy, int *incy);
-extern void C2F(zdotu) (doubleC * ret_val, int *n, doubleC *zx, int *incx, doubleC *zy, int *incy);
+/* extern void C2F(zdotc) (doubleC * ret_val, int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); */
+/* extern void C2F(zdotu) (doubleC * ret_val, int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); */
+extern doubleC C2F(zdotc) (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy);
+extern doubleC C2F(zdotu) (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy);
 extern int C2F(zdscal) (int *n, double *da, doubleC *zx, int *incx);
 extern int C2F(zgbmv) (char *trans, int *m, int *n, int *kl, int *ku, doubleC *alpha, doubleC *a, int *lda, doubleC *x, int *incx, doubleC *beta, doubleC *y, int *incy, int trans_len);
 extern int C2F(zgemm) (char *transa, char *transb, int *m, int *n, int *k, doubleC *alpha, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *beta, doubleC *c__, int *ldc, int transa_len, int transb_len);

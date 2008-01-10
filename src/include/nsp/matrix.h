@@ -301,6 +301,7 @@ extern int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **I
 extern int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind);
 extern int nsp_mat_nnz(NspMatrix *A);
 extern int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
+extern NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag);
 
 /* maxplus operations */
 extern int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) ;

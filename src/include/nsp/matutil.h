@@ -49,6 +49,14 @@ extern double nsp_dprod(double *x, int n, int incx);
 extern void nsp_dprodrows(double *x, double *res, int m, int n);
 extern void nsp_dcross(double *A, double *B, double *C, int n, int dim_flag);
 extern void nsp_zcross(doubleC *A, doubleC *B, doubleC *C, int n, int dim_flag);
+extern doubleC nsp_dzdot(double *A, doubleC *B, int n);
+extern doubleC nsp_zddot(doubleC *A, double *B, int n);
+extern void nsp_rowdddot(double *A, double *B, double *Z, int m, int n);
+extern void nsp_rowdzdot(double *A, doubleC *B, doubleC *Z, int m, int n);
+extern void nsp_rowzddot(doubleC *A, double *B, doubleC *Z, int m, int n);
+extern void nsp_rowzzdot(doubleC *A, doubleC *B, doubleC *Z, int m, int n);
+
+
 
 
 

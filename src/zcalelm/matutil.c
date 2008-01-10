@@ -1329,10 +1329,9 @@ int nsp_zvmul(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
  * @dim_flag: =1 for 3 x @n arrays and =2 for  @n x 3 arrays
  * 
  * compute (in the array @C) the cross product between the
- * vectors stored in @A or @B. Real version
+ * respective "3d vectors" stored in @A or @B. Real version
  *  
  **/
-
 void nsp_dcross(double *A, double *B, double *C, int n, int dim_flag)
 {
   int k;
@@ -1365,10 +1364,9 @@ void nsp_dcross(double *A, double *B, double *C, int n, int dim_flag)
  * @dim_flag: =1 for 3 x @n arrays and =2 for  @n x 3 arrays
  * 
  * compute (in the array @C) the cross product between the
- * vectors stored in @A or @B. Complex version
+ * respective "3d vectors" stored in @A or @B. Complex version
  *  
  **/
-
 void nsp_zcross(doubleC *A, doubleC *B, doubleC *C, int n, int dim_flag)
 {
   int k;
@@ -1396,6 +1394,220 @@ void nsp_zcross(doubleC *A, doubleC *B, doubleC *C, int n, int dim_flag)
 	  C2[k].i = (A [k].r*B1[k].i + A [k].i*B1[k].r) - (A1[k].r*B [k].i + A1[k].i*B [k].r);
 	}
     }
+}
+
+/**
+ * nsp_dzdot:
+ * @A: (input) vector of #double of size n
+ * @B: (input) vectors of #doubleC of size n
+ * @n: (input) length of the vectors @A and @B
+ * 
+ * an utility to complete the BLAS ddot and zdot functions, 
+ * this one compute the scalar product A . B with a real A
+ * and a complex B.
+ *
+ * return a #doubleC
+ *  
+ **/
+doubleC nsp_dzdot(double *A, doubleC *B, int n)
+{
+  doubleC Z = { 0.0 , 0.0 };
+  int k, p = n % 3;
+
+  for ( k = 0 ; k < p ; k++ )
+    {
+      Z.r += A[k]*B[k].r;
+      Z.i += A[k]*B[k].i;
+    }
+  for ( k = p ; k < n ; k+=3 )
+    {
+      Z.r += A[k]*B[k].r + A[k+1]*B[k+1].r + A[k+2]*B[k+2].r;
+      Z.i += A[k]*B[k].i + A[k+1]*B[k+1].i + A[k+2]*B[k+2].i;
+    }
+
+  return Z;
+}
+
+/**
+ * nsp_zddot:
+ * @A: (input) vector of #double of size n
+ * @B: (input) vectors of #doubleC of size n
+ * @n: (input) length of the vectors @A and @B
+ * 
+ * an utility to complete the BLAS ddot and zdot functions, 
+ * this one compute the scalar product A . B with a complex A
+ * and a double B.
+ *
+ * return a #doubleC
+ *  
+ **/
+doubleC nsp_zddot(doubleC *A, double *B, int n)
+{
+  doubleC Z = { 0.0 , 0.0 };
+  int k, p = n % 3;
+
+  for ( k = 0 ; k < p ; k++ )
+    {
+      Z.r += A[k].r*B[k];
+      Z.i -= A[k].i*B[k];
+    }
+  for ( k = p ; k < n ; k+=3 )
+    {
+      Z.r += A[k].r*B[k] + A[k+1].r*B[k+1] + A[k+2].r*B[k+2];
+      Z.i -= A[k].i*B[k] + A[k+1].i*B[k+1] + A[k+2].i*B[k+2];
+    }
+  
+  return Z;
+}
+
+/**
+ * nsp_rowdddot:
+ * @A: (input) array of #double of dimensions m x n
+ * @B: (input) array of #double of dimensions m x n
+ * @Z: (output) vector of #double of length m
+ * @m,@m: (input) dimensions sizes
+ *
+ * compute Z_i = sum(j=0,n-1) A_i_j * B_i_j, for 0<= i < m
+ * 
+ * an utility to complete the BLAS ddot and zdot functions.
+ * These ones are not efficient to compute scalar product
+ * of the respective rows of 2 matrices @A and @B (we 
+ * can use m time ddot (with a increment of m) but this is slow). 
+ * This function tries to be more efficient at least on my
+ * machine.
+ *  
+ **/
+void nsp_rowdddot(double *A, double *B, double *Z, int m, int n)
+{
+  int i, j, p = n % 3;
+  double *A1, *A2, *B1, *B2;
+
+  for ( i = 0 ; i < m ; i++ )
+    Z[i] = 0.0;
+
+  for ( j = 0; j < p ; j++, A+=m, B+=m )
+    for ( i = 0 ; i < m ; i++)
+      Z[i] += A[i]*B[i];
+
+  A1 = A+m; A2 = A1+m;
+  B1 = B+m; B2 = B1+m;
+  for ( j = p ; j < n ; j+=3, A+=3*m, A1+=3*m, A2+=3*m, B+=3*m, B1+=3*m, B2+=3*m)
+    for ( i = 0 ; i < m ; i++ )
+      Z[i] += A[i]*B[i] + A1[i]*B1[i] + A2[i]*B2[i];
+}
+
+/**
+ * nsp_rowdzdot:
+ * @A: (input) array of #double of dimensions m x n
+ * @B: (input) array of #doubleC of dimensions m x n
+ * @Z: (output) vector of #doubleC of length m
+ * @m,@m: (input) dimensions sizes
+ *
+ * compute Z_i = sum(j=0,n-1) A_i_j * B_i_j, for 0<= i < m
+ * 
+ * an utility to complete the BLAS ddot and zdot functions.
+ * (see #nsp_rowdddot).
+ *  
+ **/
+void nsp_rowdzdot(double *A, doubleC *B, doubleC *Z, int m, int n)
+{
+  int i, j, p = n % 3;
+  double *A1, *A2;
+  doubleC *B1, *B2, ZeroC = {0.0,0.0};;
+
+  for ( i = 0 ; i < m ; i++ )
+    Z[i] = ZeroC;
+
+  for ( j = 0; j < p ; j++, A+=m, B+=m )
+    for ( i = 0 ; i < m ; i++)
+      {
+	Z[i].r += A[i]*B[i].r; Z[i].i += A[i]*B[i].i;
+      }
+
+  A1 = A+m; A2 = A1+m;
+  B1 = B+m; B2 = B1+m;
+  for ( j = p ; j < n ; j+=3, A+=3*m, A1+=3*m, A2+=3*m, B+=3*m, B1+=3*m, B2+=3*m)
+    for ( i = 0 ; i < m ; i++ )
+      {
+	Z[i].r += A[i]*B[i].r + A1[i]*B1[i].r + A2[i]*B2[i].r;
+	Z[i].i += A[i]*B[i].i + A1[i]*B1[i].i + A2[i]*B2[i].i;
+      }
+}
+
+/**
+ * nsp_rowzddot:
+ * @A: (input) array of #doubleC of dimensions m x n
+ * @B: (input) array of #double of dimensions m x n
+ * @Z: (output) vector of #doubleC of length m
+ * @m,@m: (input) dimensions sizes
+ *
+ * compute Z_i = sum(j=0,n-1) conj(A_i_j) * B_i_j, for 0<= i < m
+ * 
+ * an utility to complete the BLAS ddot and zdot functions.
+ * (see #nsp_rowdddot).
+ *  
+ **/
+void nsp_rowzddot(doubleC *A, double *B, doubleC *Z, int m, int n)
+{
+  int i, j, p = n % 3;
+  doubleC *A1, *A2, ZeroC = {0.0,0.0};
+  double *B1, *B2;
+
+  for ( i = 0 ; i < m ; i++ )
+    Z[i] = ZeroC;
+
+  for ( j = 0; j < p ; j++, A+=m, B+=m )
+    for ( i = 0 ; i < m ; i++)
+      {
+	Z[i].r += A[i].r*B[i]; Z[i].i -= A[i].i*B[i];
+      }
+
+  A1 = A+m; A2 = A1+m;
+  B1 = B+m; B2 = B1+m;
+  for ( j = p ; j < n ; j+=3, A+=3*m, A1+=3*m, A2+=3*m, B+=3*m, B1+=3*m, B2+=3*m)
+    for ( i = 0 ; i < m ; i++ )
+      {
+	Z[i].r += A[i].r*B[i] + A1[i].r*B1[i] + A2[i].r*B2[i];
+	Z[i].i -= A[i].i*B[i] + A1[i].i*B1[i] + A2[i].i*B2[i];
+      }
+}
+
+/**
+ * nsp_rowzzdot:
+ * @A: (input) array of #doubleC of dimensions m x n
+ * @B: (input) array of #doubleC of dimensions m x n
+ * @Z: (output) vector of #doubleC of length m
+ * @m,@m: (input) dimensions sizes
+ *
+ * compute Z_i = sum(j=0,n-1) conj(A_i_j) * B_i_j, for 0<= i < m
+ * 
+ * an utility to complete the BLAS ddot and zdot functions.
+ * (see #nsp_rowdddot).
+ *  
+ **/
+void nsp_rowzzdot(doubleC *A, doubleC *B, doubleC *Z, int m, int n)
+{
+  int i, j, p = n % 3;
+  doubleC *A1, *A2, *B1, *B2, ZeroC = {0.0,0.0};
+
+  for ( i = 0 ; i < m ; i++ )
+    Z[i] = ZeroC;
+
+  for ( j = 0; j < p ; j++, A+=m, B+=m )
+    for ( i = 0 ; i < m ; i++)
+      {
+	Z[i].r += (A[i].r*B[i].r + A[i].i*B[i].i); 
+	Z[i].i += (A[i].r*B[i].i - A[i].i*B[i].r);
+      }
+
+  A1 = A+m; A2 = A1+m;
+  B1 = B+m; B2 = B1+m;
+  for ( j = p ; j < n ; j+=3, A+=3*m, A1+=3*m, A2+=3*m, B+=3*m, B1+=3*m, B2+=3*m)
+    for ( i = 0 ; i < m ; i++ )
+      {
+	Z[i].r += (A[i].r*B[i].r + A[i].i*B[i].i) + (A1[i].r*B1[i].r + A1[i].i*B1[i].i) + (A2[i].r*B2[i].r + A2[i].i*B2[i].i); 
+	Z[i].i += (A[i].r*B[i].i - A[i].i*B[i].r) + (A1[i].r*B1[i].i - A1[i].i*B1[i].r) + (A2[i].r*B2[i].i - A2[i].i*B2[i].r);
+       }
 }
 
 
