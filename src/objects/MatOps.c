@@ -6119,3 +6119,77 @@ NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag)
   return C;
 }
 
+
+/**
+ * nsp_mat_cross:
+ * @X, @Y: (input) #NspMatrix with same dimensions (should be 3 x n or m x 3)
+ * @dim: (input) dim parameter (1 or 2) (if dim = 1 matrices should be 3 x n
+ *       and if dim = 2 matrces should be m x 3)
+ *
+ * computes vectors products between respectives rows or columns vectors of @X and @Y:
+ *
+ * dim = 1  then Z(:,j) = X(:,j) x Y(:,j)  for each j
+ * dim = 2  then Z(i,:) = X(i,:) x Y(i,:)  for each i
+ *
+ * Return value: an #NspMatrix storing the result
+ **/
+NspMatrix *nsp_mat_cross(NspMatrix *X, NspMatrix *Y, int dim)
+{
+  NspMatrix *Z;
+  char type;
+  int p;
+
+  /* these checks are also done by the nsp interface but this is useful in case of internal use */
+  if ( (X->m != Y->m) || (X->n != Y->n) ) return NULLMAT;
+
+  if ( dim == 1 )
+    {
+      if ( X->m != 3 ) return NULLMAT;
+    }
+  else if ( dim == 2 )
+    {
+      if ( X->n != 3 ) return NULLMAT;
+    }
+  else
+    return NULLMAT;
+
+
+  /* type (real or complexe) of the resulting matrix */
+  type =  (X->rc_type == 'r' && Y->rc_type == 'r') ? 'r' : 'c'; 
+  if ( (Z = nsp_matrix_create(NVOID, type, X->m, X->n)) == NULLMAT )
+    return NULLMAT;
+
+  /* number of vectors pairs */
+  p = dim == 1 ? X->n : X->m;
+
+  if ( X->rc_type == 'r' )
+    {
+      if ( Y->rc_type == 'r' )
+	nsp_dcross(X->R, Y->R, Z->R, p, dim);
+      else
+	{
+	  int k;
+	  doubleC *Xc;
+	  if ( (Xc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return NULLMAT;
+	  for ( k = 0 ; k < 3*p ; k++ ) { Xc[k].r = X->R[k]; Xc[k].i = 0.0; }
+	  nsp_zcross(Xc, Y->C, Z->C, p, dim);
+	  FREE(Xc);
+	}
+    }
+  else
+    {
+      if ( Y->rc_type == 'r' )
+	{
+	  int k;
+	  doubleC *Yc;
+	  if ( (Yc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return NULLMAT;
+	  for ( k = 0 ; k < 3*p ; k++ ) { Yc[k].r = Y->R[k]; Yc[k].i = 0.0; }
+	  nsp_zcross(X->C, Yc, Z->C, p, dim);
+	  FREE(Yc);
+	}
+      else
+	nsp_zcross(X->C, Y->C, Z->C, p, dim);
+    }
+
+  return Z;
+}

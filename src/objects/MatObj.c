@@ -4758,9 +4758,9 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 static int
 int_mat_cross (Stack stack, int rhs, int opt, int lhs)
 {
-  int dim, p;
-  char type;
+  int dim;
   NspMatrix *Res, *X, *Y;
+
   CheckRhs(2, 3);
   CheckLhs(1, 1);
 
@@ -4801,40 +4801,8 @@ int_mat_cross (Stack stack, int rhs, int opt, int lhs)
   else
     dim = X->m == 3 ? 1 : 2;
 
-  type =  (X->rc_type == 'r' && Y->rc_type == 'r') ? 'r' : 'c'; 
-  if ( (Res = nsp_matrix_create(NVOID, type, X->m, X->n)) == NULLMAT )
+  if ( (Res = nsp_mat_cross(X, Y, dim)) == NULLMAT )
     return RET_BUG;
-
-  p = dim == 1 ? X->n : X->m;
-
-  if ( X->rc_type == 'r' )
-    {
-      if ( Y->rc_type == 'r' )
-	nsp_dcross(X->R, Y->R, Res->R, p, dim);
-      else
-	{
-	  int k;
-	  doubleC *Xc;
-	  if ( (Xc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return RET_BUG;
-	  for ( k = 0 ; k < 3*p ; k++ ) { Xc[k].r = X->R[k]; Xc[k].i = 0.0; }
-	  nsp_zcross(Xc, Y->C, Res->C, p, dim);
-	  FREE(Xc);
-	}
-    }
-  else
-    {
-      if ( Y->rc_type == 'r' )
-	{
-	  int k;
-	  doubleC *Yc;
-	  if ( (Yc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return RET_BUG;
-	  for ( k = 0 ; k < 3*p ; k++ ) { Yc[k].r = Y->R[k]; Yc[k].i = 0.0; }
-	  nsp_zcross(X->C, Yc, Res->C, p, dim);
-	  FREE(Yc);
-	}
-      else
-	nsp_zcross(X->C, Y->C, Res->C, p, dim);
-    }
 
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
@@ -5019,6 +4987,7 @@ static OpTab Matrix_func[] = {
   {"idiv_m_m", int_mxidiv},
   {"bdiv_m_m", int_mxbdiv},
   {"int_m", int_mxint},
+  {"fix_m", int_mxint},   /* fix is the Matlab name */
   {"floor_m", int_mxfloor},
   {"round_m", int_mxround},
   {"sign_m", int_mxsign},
@@ -5047,6 +5016,7 @@ static OpTab Matrix_func[] = {
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
+  {"isfinite", int_mx_finite},  /* isfinite is the Matlab name */
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},

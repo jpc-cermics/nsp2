@@ -1,3 +1,16 @@
+2008-01-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/MatOps.c (nsp_mat_cross): 
+	create a "high level" nsp_mat_cross
+
+2008-01-10  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/MatOps.c (nsp_mat_dot): 
+	* src/objects/MatObj.c (int_mat_dot): 
+	add the dot function using various nsp_XXXXdot utilities
+	to complete ddot and zdot BLAS function. These ones
+	are in src/zcalelm/matutil.c.
+
 2008-01-09  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/interp/Eval.c 
@@ -6,7 +19,7 @@
 	be forbiden and should be added. 
 
 		
-2008-01-09  Pincon Bruno  <bruno@ma088.iecn.u-nancy.fr>
+2008-01-09  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/objects/MatObj.c:
 	add cross function (basic routines being in matutil)
