@@ -1,5 +1,10 @@
 2008-01-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
+	* macros/miscellaneous/nextpow2_m.sci:
+	add nextpow2
+
+2008-01-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
 	* src/objects/MatOps.c (nsp_mat_cross): 
 	create a "high level" nsp_mat_cross
 
