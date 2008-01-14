@@ -13,4 +13,5 @@ extern double nsp_hypot(double x, double y);
 extern void nsp_primefactors(unsigned int n, unsigned int *factors, int *powers, int *nb_factors);
 extern int nsp_isprime(unsigned int n);
 extern int nsp_primes(int n, int **Primes, int *nb_primes);
+extern void nsp_convhull2d(int n, double *x, double *y, int *nhull, int *ind, int *p);
 #endif 

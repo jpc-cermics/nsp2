@@ -492,6 +492,57 @@ static int int_nsp_primes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_convhull2d(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *y, *indices;
+  int *ind=NULL, *p=NULL, nhull, i;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ( (x = GetRealMat(stack,1)) == NULLMAT )  return RET_BUG;
+  if ( (y = GetRealMat(stack,2)) == NULLMAT )  return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  CheckVector(NspFname(stack),1,x);
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    if ( ! (finite(x->R[i]) && finite(y->R[i])) )
+      {
+	Scierror("%s: the arguments should not have infinite or nan components \n",NspFname(stack));
+	return RET_BUG;
+      }
+  
+  ind = nsp_alloc_work_int(x->mn);
+  p =  nsp_alloc_work_int(x->mn);
+  if ( ind == NULL || p == NULL ) goto err;
+
+  nsp_convhull2d(x->mn, x->R, y->R, &nhull, ind, p);
+
+  if ( nhull > 2 )   /* not degenerate case */
+    {
+      if ( (indices = nsp_matrix_create(NVOID,'r',1,nhull+1)) == NULLMAT ) goto err;
+      for ( i = 0 ; i < nhull ; i++ )
+	indices->R[i] = (double) ind[i];
+      indices->R[nhull] = (double) ind[0];  /* matlab and octave */
+    }
+  else               /* for matlab compat we should raise an error */
+    {
+      if ( (indices = nsp_matrix_create(NVOID,'r',1,nhull)) == NULLMAT ) goto err;
+      for ( i = 0 ; i < nhull ; i++ )
+	indices->R[i] = (double) ind[i];
+    }
+
+  FREE(ind); FREE(p);
+  MoveObj (stack, 1, NSP_OBJECT(indices));
+  return 1; 
+
+ err:
+  FREE(ind); FREE(p);
+  return RET_BUG;
+}
+
+
+
 static OpTab Spmf_func[]={
   {"log1p_m", int_nsp_log1p},
   {"sinpi_m", int_nsp_sinpi},
@@ -505,6 +556,8 @@ static OpTab Spmf_func[]={
   {"factor_m", int_nsp_primefactors},
   {"isprime_m", int_nsp_isprime},
   {"primes_m", int_nsp_primes},
+  {"primes_m", int_nsp_primes},
+  {"convhull_m_m", int_convhull2d},
   {(char *) 0, NULL}
 };
 
