@@ -81,12 +81,12 @@ NspTypeClassA *new_type_classa(type_mode mode)
       
   type->init = (init_func *) init_classa;
 
-/* 
- * ClassA interfaces can be added here 
- * type->interface = (NspTypeBase *) new_type_b();
- * type->interface->interface = (NspTypeBase *) new_type_C()
- * ....
- */
+  /* 
+   * ClassA interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_classa_id == 0 ) 
     {
       /* 

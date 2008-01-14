@@ -69,6 +69,7 @@ extern NspClassB *GetClassB (Stack stack, int i);
 extern int nsp_classb_create_partial(NspClassB *H);
 extern void nsp_classb_destroy_partial(NspClassB *H);
 extern void nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
+extern int int_classb_create(Stack stack, int rhs, int opt, int lhs); 
 
 #endif /* NSP_INC_ClassB */ 
 
@@ -83,7 +84,7 @@ static int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M);
 static NspClassB *nsp_classb_xdr_load(XDR *xdrs);
 static AttrTab classb_attrs[];
 static NspMethods *classb_get_methods(void);
-static int int_classb_create(Stack stack, int rhs, int opt, int lhs);
+/* static int int_classb_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassB *nsp_classb_create_void(char *name,NspTypeBase *type);
 #endif /* ClassB_Private */
 

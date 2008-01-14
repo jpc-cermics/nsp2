@@ -2,15 +2,15 @@
 
 /* generated file */
 
-#line 4 "classb.override"
-
-#line 8 "classb.c"
-
 
 #include <nsp/object.h>
 #include <gtk/gtk.h>
 
 
+
+#line 4 "classb.override"
+
+#line 14 "classb.c"
 
 /* ----------- ClassB ----------- */
 
@@ -81,12 +81,12 @@ NspTypeClassB *new_type_classb(type_mode mode)
       
   type->init = (init_func *) init_classb;
 
-/* 
- * ClassB interfaces can be added here 
- * type->interface = (NspTypeBase *) new_type_b();
- * type->interface->interface = (NspTypeBase *) new_type_C()
- * ....
- */
+  /* 
+   * ClassB interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_classb_id == 0 ) 
     {
       /* 
@@ -399,7 +399,7 @@ NspClassB *nsp_classb_copy(NspClassB *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-static int int_classb_create(Stack stack, int rhs, int opt, int lhs)
+int int_classb_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspClassB *H;
   CheckStdRhs(0,0);
@@ -556,6 +556,8 @@ ClassB_register_classes(NspObject *d)
 
 
 #line 559 "classb.c"
-  nspgobject_register_class(d, "ClassB", ClassB, &PyClassB_Type, Py_BuildValue("(O)", &PyClassA_Type));
+  nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
+
+#line 564 "classb.c"
