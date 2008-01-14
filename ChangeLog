@@ -1,3 +1,8 @@
+2008-01-14  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libspmf/convhull2d.c (nsp_convhull2d):
+	add convhull
+
 2008-01-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* macros/miscellaneous/nextpow2_m.sci:
