@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  *
  *
- * ln(gamma(b)/gamma(a+b)) when b >= 8 a+b too. 
+ * bcorr 
  *
  */
 
