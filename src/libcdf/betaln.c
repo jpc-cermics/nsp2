@@ -2,8 +2,8 @@
 
 /**
  * cdf_betaln:
- * @a0: 
- * @b0: 
+ * @a0: a double 
+ * @b0: a double 
  * 
  * evaluation of the logarithm of the beta function 
  * 
@@ -29,7 +29,7 @@ double cdf_betaln_old(double a0, double b0)
     {
       goto L20;
     }
-  /* PROCEDURE WHEN A .LT. 1   */
+  /* procedure when a .lt. 1   */
   if (b >= 8.)
     {
       ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
@@ -39,7 +39,7 @@ double cdf_betaln_old(double a0, double b0)
   ret_val = cdf_gamln (a) + (cdf_gamln (b) - cdf_gamln (d1));
   return ret_val;
 
-  /* PROCEDURE WHEN 1 .LE. A .LT. 8 */
+  /* procedure when 1 .le. a .lt. 8 */
  L20:
   if (a > 2.)
     {
@@ -60,7 +60,7 @@ double cdf_betaln_old(double a0, double b0)
   ret_val = cdf_gamln (a) + cdf_algdiv (a, b);
   return ret_val;
 
-  /* REDUCTION OF A WHEN B .LE. 1000 */
+  /* reduction of a when b .le. 1000 */
  L40:
   if (b > 1e3)
     {
@@ -74,7 +74,7 @@ double cdf_betaln_old(double a0, double b0)
       a += -1.;
       h = a / b;
       w *= h / (h + 1.);
-      /* L50: */
+      /* l50: */
     }
   w = log (w);
   if (b < 8.)
@@ -85,7 +85,7 @@ double cdf_betaln_old(double a0, double b0)
   return ret_val;
 
  L60:
-  /* REDUCTION OF B WHEN B .LT. 8 */
+  /* reduction of b when b .lt. 8 */
 
   n = (int) (b - 1.);
   z = 1.;
@@ -99,7 +99,7 @@ double cdf_betaln_old(double a0, double b0)
   return ret_val;
 
  L80:
-  /* REDUCTION OF A WHEN B .GT. 1000 */
+  /* reduction of a when b .gt. 1000 */
   n = (int) (a - 1.);
   w = 1.;
   i1 = n;
@@ -112,7 +112,7 @@ double cdf_betaln_old(double a0, double b0)
   return ret_val;
 
  L100:
-  /* PROCEDURE WHEN A .GE. 8 */
+  /* procedure when a .ge. 8 */
   w = cdf_bcorr (a, b);
   h = a / b;
   c = h / (h + 1.);
@@ -139,7 +139,7 @@ double cdf_betaln_old(double a0, double b0)
 
 double cdf_betaln(double a0, double b0)
 {
-  /* e = 0.5*LN(2*PI) */
+  /* e = 0.5*ln(2*pi) */
   const double e = 0.9189385332046727417803297364;
   int i1, i, n;
   double a, b, c, h, u, v, w, z;
@@ -148,8 +148,8 @@ double cdf_betaln(double a0, double b0)
   b = Max (a0, b0);
   if (a >= 8.)
     {
-      /* XXX OK */
-      /*  PROCEDURE WHEN A .GE. 8 */
+      /* xxx ok */
+      /*  procedure when a .ge. 8 */
       w = cdf_bcorr (a, b);
       h = a / b;
       c = h / (h + 1.);
@@ -162,8 +162,8 @@ double cdf_betaln(double a0, double b0)
     }
   if ( a < 1 ) 
     {
-      /* OK */
-      /* PROCEDURE WHEN A .LT. 1   */
+      /* ok */
+      /* procedure when a .lt. 1   */
       if (b >= 8.)
 	return  cdf_gamln (a) + cdf_algdiv (a, b);
       else
@@ -171,12 +171,12 @@ double cdf_betaln(double a0, double b0)
 	  return cdf_gamln (a) + (cdf_gamln (b) - cdf_gamln (a+b));
 	}
     }
-  /* PROCEDURE WHEN 1 <= A < 8 */
+  /* procedure when 1 <= a < 8 */
   if (a > 2.)
     {
       if (b > 1e3)
 	{
-	  /* REDUCTION OF A WHEN B .GT. 1000 */
+	  /* reduction of a when b .gt. 1000 */
 	  n = (int) (a - 1.);
 	  w = 1.;
 	  i1 = n;
@@ -211,7 +211,7 @@ double cdf_betaln(double a0, double b0)
 	}
       return  w + cdf_gamln (a) + cdf_algdiv (a, b);
     }
-  /* A in [1,2] */
+  /* a in [1,2] */
 
   if (b > 2.)
     {
