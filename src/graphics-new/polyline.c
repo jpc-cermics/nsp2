@@ -489,7 +489,7 @@ static AttrTab polyline_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 29 "polyline.override"
-static int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
+int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
   BCG *Xgc;

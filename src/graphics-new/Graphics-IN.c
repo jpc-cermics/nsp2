@@ -5018,7 +5018,7 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
 
 extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_polyline_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
-extern int int_polyline_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int _wrap_polyline_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5111,7 +5111,7 @@ static OpTab Graphics_func[]={
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
   {"polyline_create", int_polyline_create},
-  {"polyline_attach", int_polyline_attach},
+  {"polyline_attach", _wrap_polyline_attach},
 
   {(char *) 0, NULL}
 };
