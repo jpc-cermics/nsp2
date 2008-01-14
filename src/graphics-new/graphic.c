@@ -1,10 +1,23 @@
+/* -*- Mode: C -*- */
+
+/* generated file */
+
 
 #include <nsp/object.h>
 #include <gtk/gtk.h>
 
-#define Graphic_Private
-#include "graphic.h"
 
+
+#line 4 "graphic.override"
+
+#line 14 "graphic.c"
+
+/* ----------- Graphic ----------- */
+
+
+#define  Graphic_Private 
+#include "nsp/object.h"
+#include "graphic.h"
 #include "nsp/interf.h"
 
 /* 
@@ -67,14 +80,13 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   /* specific methods for graphic */
       
   type->init = (init_func *) init_graphic;
-  type->draw = draw_graphic;
 
-/* 
- * Graphic interfaces can be added here 
- * type->interface = (NspTypeBase *) new_type_b();
- * type->interface->interface = (NspTypeBase *) new_type_C()
- * ....
- */
+  /* 
+   * Graphic interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_graphic_id == 0 ) 
     {
       /* 
@@ -98,13 +110,14 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_graphic(NspGraphic *o,NspTypeGraphic *type)
+static int init_graphic(NspGraphic *Obj,NspTypeGraphic *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
+  Obj->obj = NULL;
   return OK;
 }
 
@@ -122,17 +135,6 @@ NspGraphic *new_graphic()
   if ( init_graphic(loc,nsp_type_graphic) == FAIL) return NULLGRAPHIC;
   return loc;
 }
-
-/* 
- * specific methods of graphic 
- */
-
-static void draw_graphic(BCG *Xgc,NspGraphic *o)
-{
-  Sciprintf("draw_graphic not implemented for the given object\n");
-}
-
-
 
 /*----------------------------------------------
  * Object method redefined for Graphic 
@@ -296,7 +298,7 @@ void nsp_graphic_latex_print(NspGraphic *M, int indent,const char *name, int rec
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for Graphic objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
 NspGraphic   *nsp_graphic_object(NspObject *O)
@@ -340,8 +342,8 @@ NspGraphic  *GetGraphic(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type )
-{ 
+static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type)
+{
  NspGraphic *H  = (type == NULL) ? new_graphic() : type->new();
  if ( H ==  NULLGRAPHIC)
   {
@@ -350,7 +352,6 @@ static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type )
   }
  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLGRAPHIC;
  NSP_OBJECT(H)->ret_pos = -1 ;
- H->obj = NULL;
  return H;
 }
 
@@ -361,14 +362,13 @@ int nsp_graphic_create_partial(NspGraphic *H)
   return OK;
 }
 
-
 NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type)
 {
-  NspGraphic *H  = nsp_graphic_create_void(name,type);
-  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
+ NspGraphic *H  = nsp_graphic_create_void(name,type);
+ if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   H->obj->color=color;
-  return H;
+ return H;
 }
 
 /*
@@ -385,9 +385,8 @@ NspGraphic *nsp_graphic_copy(NspGraphic *self)
 {
   NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
-  H->obj = self->obj;
-  self->obj->ref_count++;
-  return H;
+  nsp_graphic_copy_partial(H,self);
+ return H;
 }
 
 /*-------------------------------------------------------------------
@@ -395,26 +394,21 @@ NspGraphic *nsp_graphic_copy(NspGraphic *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-static int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
+int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspGraphic *H;
   CheckStdRhs(0,0);
   /* want to be sure that type graphic is initialized */
   nsp_type_graphic = new_type_graphic(T_BASE);
   if(( H = nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic)) == NULLGRAPHIC) return RET_BUG;
-  if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   /* then we use optional arguments to fill attributes */
+  if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
-
-static NspMethods graphic_methods[] = {
-  { NULL, NULL}
-};
-
-static NspMethods *graphic_get_methods(void) { return graphic_methods;};
+static NspMethods *graphic_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -480,7 +474,9 @@ graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 483 "graphic.c"
-  nspgobject_register_class(d, "Graphic", Graphic, &PyGraphic_Type, Py_BuildValue("(O)", &PyObject_Type));
+#line 478 "graphic.c"
+  nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
+
+#line 483 "graphic.c"

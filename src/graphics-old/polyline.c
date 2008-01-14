@@ -1,7 +1,26 @@
+/* -*- Mode: C -*- */
+
+/* generated file */
+
+
 #include <nsp/object.h>
 #include <gtk/gtk.h>
 
-#define Polyline_Private
+
+
+#line 4 "polyline.override"
+#include "polyline.h"
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj);
+
+#line 18 "polyline.c"
+
+/* ----------- Polyline ----------- */
+
+
+#define  Polyline_Private 
+#include "nsp/object.h"
 #include "polyline.h"
 #include "nsp/interf.h"
 
@@ -65,11 +84,12 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* specific methods for polyline */
       
   type->init = (init_func *) init_polyline;
-  
-  /* father is NspGraphic  */
 
+#line 16 "polyline.override"
+  /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
-  
+
+#line 93 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -99,13 +119,14 @@ NspTypePolyline *new_type_polyline(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_polyline(NspPolyline *o,NspTypePolyline *type)
+static int init_polyline(NspPolyline *Obj,NspTypePolyline *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
+  Obj->obj = NULL;
   return OK;
 }
 
@@ -215,8 +236,8 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-     nsp_matrix_destroy(H->obj->Pts);
-     FREE(H->obj);
+  nsp_matrix_destroy(H->obj->Pts);
+    FREE(H->obj);
    }
 }
 
@@ -290,22 +311,10 @@ void nsp_polyline_latex_print(NspPolyline *M, int indent,const char *name, int r
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
-
-/* redefined in the father methods 
- *
- */
-
-static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
-{
-  NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
-}
-
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for Polyline objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
 NspPolyline   *nsp_polyline_object(NspObject *O)
@@ -359,7 +368,6 @@ static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type)
   }
  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLPOLYLINE;
  NSP_OBJECT(H)->ret_pos = -1 ;
- H->obj = NULL;
  return H;
 }
 
@@ -370,14 +378,14 @@ int nsp_polyline_create_partial(NspPolyline *H)
   H->obj->ref_count=1;
   return OK;
 }
- 
+
 NspPolyline *nsp_polyline_create(char *name,int color,NspMatrix* Pts,NspTypeBase *type)
 {
  NspPolyline *H  = nsp_polyline_create_void(name,type);
  if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
- if ( nsp_polyline_create_partial(H)  == FAIL) return NULLPOLYLINE;
- H->obj->color=color;
- if ((H->obj->Pts = (NspMatrix *)  nsp_object_copy_and_name("Pts",NSP_OBJECT(Pts))) == NULLMAT) return NULL;
+  if ( nsp_polyline_create_partial(H) == FAIL) return NULLPOLYLINE;
+  H->obj->color=color;
+  if ((H->obj->Pts = (NspMatrix *)  nsp_object_copy_and_name("Pts",NSP_OBJECT(Pts))) == NULLMAT) return NULL;
  return H;
 }
 
@@ -387,7 +395,7 @@ NspPolyline *nsp_polyline_create(char *name,int color,NspMatrix* Pts,NspTypeBase
 
 void nsp_polyline_copy_partial(NspPolyline *H,NspPolyline *self)
 {
-  nsp_graphic_copy_partial((NspGraphic *) H, (NspGraphic *)self);
+  nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self );
   H->obj = self->obj;
   self->obj->ref_count++;
 }
@@ -397,7 +405,7 @@ NspPolyline *nsp_polyline_copy(NspPolyline *self)
   NspPolyline *H  =nsp_polyline_create_void(NVOID,(NspTypeBase *) nsp_type_polyline);
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   nsp_polyline_copy_partial(H,self);
-  return H;
+ return H;
 }
 
 /*-------------------------------------------------------------------
@@ -412,6 +420,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   /* want to be sure that type polyline is initialized */
   nsp_type_polyline = new_type_polyline(T_BASE);
   if(( H = nsp_polyline_create_void(NVOID,(NspTypeBase *) nsp_type_polyline)) == NULLPOLYLINE) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
   if ( nsp_polyline_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   if ( H->obj->Pts == NULLMAT) {Scierror("Error: field Pts is to be set\n");return RET_BUG;}
@@ -419,11 +428,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods polyline_methods[] = {
-  { NULL, NULL}
-};
-
-static NspMethods *polyline_get_methods(void) { return polyline_methods;};
+static NspMethods *polyline_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -453,6 +458,14 @@ static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
   return (NspObject *) ret;
 }
 
+static NspObject *_wrap_polyline_get_Pts_obj(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspMatrix*) ((NspPolyline *) self)->obj->Pts);
+  return (NspObject *) ret;
+}
+
 static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
 {
   NspMatrix *Pts;
@@ -467,7 +480,7 @@ static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
 
 static AttrTab polyline_attrs[] = {
   { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed },
-  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)int_get_object_failed },
+  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_Pts_obj },
   { NULL,NULL,NULL,NULL },
 };
 
@@ -475,8 +488,8 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-
-int int_polyline_attach(Stack stack, int rhs, int opt, int lhs)
+#line 29 "polyline.override"
+static int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
   BCG *Xgc;
@@ -487,12 +500,16 @@ int int_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+#line 504 "polyline.c"
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
 static OpTab polyline_func[]={
+  {"polyline_attach", _wrap_polyline_attach},
   { "polyline_create", int_polyline_create},
   { NULL, NULL}
 };
@@ -512,4 +529,31 @@ void polyline_Interf_Info(int i, char **fname, function (**f))
   *fname = polyline_func[i].name;
   *f = polyline_func[i].fonc;
 }
+/* intialise stuff extension classes */
+/* void
+polyline_register_classes(NspObject *d)
+{
 
+#line 11 "polyline.override"
+
+Init portion 
+
+
+#line 543 "polyline.c"
+  nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+}
+*/
+
+#line 55 "polyline.override"
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
+{
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+}
+
+
+#line 560 "polyline.c"

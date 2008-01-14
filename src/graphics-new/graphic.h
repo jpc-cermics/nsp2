@@ -94,7 +94,7 @@ static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
-static void draw_graphic(BCG *Xgc,NspGraphic *o);
+/* static void draw_graphic(BCG *Xgc,NspGraphic *o); */
 
 #endif /* Graphic_Private */
 
