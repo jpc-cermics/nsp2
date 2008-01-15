@@ -68,7 +68,7 @@ extern NspClassB *GetClassBCopy (Stack stack, int i);
 extern NspClassB *GetClassB (Stack stack, int i); 
 extern int nsp_classb_create_partial(NspClassB *H);
 extern void nsp_classb_destroy_partial(NspClassB *H);
-extern void nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
+extern int nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
 extern int int_classb_create(Stack stack, int rhs, int opt, int lhs); 
 
 #endif /* NSP_INC_ClassB */ 

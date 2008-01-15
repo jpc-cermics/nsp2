@@ -68,7 +68,7 @@ extern NspClassA *GetClassACopy (Stack stack, int i);
 extern NspClassA *GetClassA (Stack stack, int i); 
 extern int nsp_classa_create_partial(NspClassA *H);
 extern void nsp_classa_destroy_partial(NspClassA *H);
-extern void nsp_classa_copy_partial(NspClassA *H,NspClassA *self);
+extern int nsp_classa_copy_partial(NspClassA *H,NspClassA *self);
 extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
 #endif /* NSP_INC_ClassA */ 

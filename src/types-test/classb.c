@@ -392,17 +392,29 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
  * copy for gobject derived class  
  */
 
-void nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
+int nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
 {
+  H->clb_color=self->clb_color;
+  H->clb_thickness=self->clb_thickness;
+  if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return FAIL;
+  return OK;
 }
 
 NspClassB *nsp_classb_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  H->clb_color=self->clb_color;
-  H->clb_thickness=self->clb_thickness;
-  if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
+  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA *)self) == FAIL)
+    {
+
+      /* clean */
+      return NULLCLASSB;
+    }
+  if ( nsp_classb_copy_partial( H,self) == FAIL)
+    {
+      /* clean */
+      return NULLCLASSB;
+    }
  return H;
 }
 

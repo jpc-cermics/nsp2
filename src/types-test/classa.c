@@ -283,9 +283,10 @@ void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
-  Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
-  nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+      Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
+      Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
+      if ( M->cla_val != NULL) 
+	nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
       Sciprintf1(indent+1,"}\n");
     }
 }
@@ -385,18 +386,32 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
  * copy for gobject derived class  
  */
 
-void nsp_classa_copy_partial(NspClassA *H,NspClassA *self)
+int nsp_classa_copy_partial(NspClassA *H,NspClassA *self)
 {
+  H->cla_color=self->cla_color;
+  H->cla_thickness=self->cla_thickness;
+  if ( self->cla_val == NULL) 
+    {
+      H->cla_val =  self->cla_val;
+    }
+  else 
+    {
+      if ((H->cla_val = (NspMatrix *) nsp_object_copy_and_name("cla_val",NSP_OBJECT(self->cla_val))) == NULLMAT) 
+	return FAIL;
+    }
+  return OK;
 }
 
 NspClassA *nsp_classa_copy(NspClassA *self)
 {
   NspClassA *H  =nsp_classa_create_void(NVOID,(NspTypeBase *) nsp_type_classa);
   if ( H ==  NULLCLASSA) return NULLCLASSA;
-  H->cla_color=self->cla_color;
-  H->cla_thickness=self->cla_thickness;
-  if ((H->cla_val = (NspMatrix *) nsp_object_copy_and_name("cla_val",NSP_OBJECT(self->cla_val))) == NULLMAT) return NULL;
- return H;
+  if ( nsp_classa_copy_partial(H,self) == FAIL) 
+    {
+      /* clean */
+      return NULLCLASSA;
+    }
+  return H;
 }
 
 /*-------------------------------------------------------------------
