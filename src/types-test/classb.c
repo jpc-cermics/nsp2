@@ -194,6 +194,8 @@ static int nsp_classb_neq(NspClassB *A, NspObject *B)
  * save 
  */
 
+extern int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M);
+
 static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
@@ -201,6 +203,7 @@ static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
   if (nsp_xdr_save_i(xdrs, M->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->clb_thickness) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->clb_val)) == FAIL) return FAIL;
+  if (nsp_classa_xdr_save(xdrs,(NspClassA *) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -208,8 +211,11 @@ static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
  * load 
  */
 
+extern NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs,NspClassA *M);
+
 static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 {
+  int fid;
   NspClassB *M = NULL;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
@@ -217,7 +223,11 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs, &M->clb_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->clb_thickness) == FAIL) return NULL;
   if ((M->clb_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
- return M;
+  /* load father attributes */
+  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
+  if (( M =(NspClassB *) nsp_classa_xdr_load_partial(xdrs,(NspClassA *)M)) == NULL) return NULLCLASSB;
+  return M;
 }
 
 /*
@@ -232,6 +242,7 @@ void nsp_classb_destroy_partial(NspClassB *H)
 void nsp_classb_destroy(NspClassB *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_classa_destroy_partial((NspClassA *)H);/* a automatiser */
   nsp_classb_destroy_partial(H);
   FREE(H);
 }
@@ -278,9 +289,10 @@ void nsp_classb_print(NspClassB *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
-  Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
-  nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
+      Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
+      Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
+      nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
+      nsp_classa_print((NspClassA *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
 }

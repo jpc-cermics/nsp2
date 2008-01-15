@@ -69,6 +69,7 @@ extern NspClassA *GetClassA (Stack stack, int i);
 extern int nsp_classa_create_partial(NspClassA *H);
 extern void nsp_classa_destroy_partial(NspClassA *H);
 extern void nsp_classa_copy_partial(NspClassA *H,NspClassA *self);
+extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
 #endif /* NSP_INC_ClassA */ 
 
@@ -79,7 +80,6 @@ static char *nsp_classa_type_as_string(void);
 static char *nsp_classa_type_short_string(NspObject *v);
 static int nsp_classa_eq(NspClassA *A, NspObject *B);
 static int nsp_classa_neq(NspClassA *A, NspObject *B);
-static int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 static NspClassA *nsp_classa_xdr_load(XDR *xdrs);
 static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void);

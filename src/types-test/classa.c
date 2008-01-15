@@ -194,7 +194,7 @@ static int nsp_classa_neq(NspClassA *A, NspObject *B)
  * save 
  */
 
-static int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
+int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -208,16 +208,21 @@ static int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
  * load 
  */
 
+NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs,NspClassA *M)
+{
+  if (nsp_xdr_load_i(xdrs, &M->cla_color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->cla_thickness) == FAIL) return NULL;
+  if ((M->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+ return M;
+}
+
 static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSA;
   if ((M  = nsp_classa_create_void(name,(NspTypeBase *) nsp_type_classa))== NULLCLASSA) return M;
-  if (nsp_xdr_load_i(xdrs, &M->cla_color) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->cla_thickness) == FAIL) return NULL;
-  if ((M->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
- return M;
+  return nsp_classa_xdr_load_partial(xdrs,M);
 }
 
 /*
