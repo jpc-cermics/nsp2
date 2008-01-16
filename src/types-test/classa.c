@@ -75,7 +75,7 @@ NspTypeClassA *new_type_classa(type_mode mode)
   top->save  = (save_func *) nsp_classa_xdr_save;
   top->load  = (load_func *) nsp_classa_xdr_load;
   top->create = (create_func*) int_classa_create;
-  top->latex = (print_func *) nsp_classa_latex_print;
+  top->latex = (print_func *) nsp_classa_latex;
   
   /* specific methods for classa */
       
@@ -283,10 +283,10 @@ void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-      Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
-      Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
-      if ( M->cla_val != NULL)
-	nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+        Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
+  Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
+  if ( M->cla_val != NULL)
+    nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
       Sciprintf1(indent+1,"}\n");
     }
 }
@@ -295,7 +295,7 @@ void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-void nsp_classa_latex_print(NspClassA *M, int indent,const char *name, int rec_level)
+void nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -304,7 +304,7 @@ void nsp_classa_latex_print(NspClassA *M, int indent,const char *name, int rec_l
     Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
   if ( M->cla_val != NULL)
-    nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+    nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }

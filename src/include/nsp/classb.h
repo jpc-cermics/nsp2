@@ -60,7 +60,7 @@ extern NspClassB *nsp_classb_copy(NspClassB *H);
 extern void nsp_classb_destroy(NspClassB *H);
 extern void nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
 extern void nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
-extern void nsp_classb_latex_print(NspClassB *H, int indent,const char *name, int rec_level);
+extern void nsp_classb_latex(NspClassB *H, int indent,const char *name, int rec_level);
 extern NspClassB *nsp_classb_object (NspObject *O); 
 extern int IsClassBObj (Stack stack, int i); 
 extern int IsClassB(NspObject *O);
