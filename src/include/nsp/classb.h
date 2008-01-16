@@ -68,8 +68,10 @@ extern NspClassB *GetClassBCopy (Stack stack, int i);
 extern NspClassB *GetClassB (Stack stack, int i); 
 extern int nsp_classb_create_partial(NspClassB *H);
 extern void nsp_classb_destroy_partial(NspClassB *H);
-extern int nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
+extern NspClassB * nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
 extern int int_classb_create(Stack stack, int rhs, int opt, int lhs); 
+extern NspClassB *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M);
+extern int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M);
 
 #endif /* NSP_INC_ClassB */ 
 
@@ -80,7 +82,6 @@ static char *nsp_classb_type_as_string(void);
 static char *nsp_classb_type_short_string(NspObject *v);
 static int nsp_classb_eq(NspClassB *A, NspObject *B);
 static int nsp_classb_neq(NspClassB *A, NspObject *B);
-static int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M);
 static NspClassB *nsp_classb_xdr_load(XDR *xdrs);
 static AttrTab classb_attrs[];
 static NspMethods *classb_get_methods(void);

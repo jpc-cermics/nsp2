@@ -2,15 +2,15 @@
 
 /* generated file */
 
-#line 4 "classa.override"
-
-#line 8 "classa.c"
-
 
 #include <nsp/object.h>
 #include <gtk/gtk.h>
 
 
+
+#line 4 "classa.override"
+
+#line 14 "classa.c"
 
 /* ----------- ClassA ----------- */
 
@@ -208,7 +208,7 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
  * load 
  */
 
-NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs,NspClassA *M)
+NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M)
 {
   if (nsp_xdr_load_i(xdrs, &M->cla_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->cla_thickness) == FAIL) return NULL;
@@ -285,7 +285,7 @@ void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent+1,"{\n");
       Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
       Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
-      if ( M->cla_val != NULL) 
+      if ( M->cla_val != NULL)
 	nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
       Sciprintf1(indent+1,"}\n");
     }
@@ -303,7 +303,8 @@ void nsp_classa_latex_print(NspClassA *M, int indent,const char *name, int rec_l
   Sciprintf1(indent+1,"{\n");
     Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
-  nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+  if ( M->cla_val != NULL)
+    nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
@@ -378,7 +379,12 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
  if ( H ==  NULLCLASSA) return NULLCLASSA;
   H->cla_color=cla_color;
   H->cla_thickness=cla_thickness;
-  if ((H->cla_val = (NspMatrix *)  nsp_object_copy_and_name("cla_val",NSP_OBJECT(cla_val))) == NULLMAT) return NULL;
+  if ( cla_val == NULL )
+    { H->cla_val = NULL;}
+  else
+    {
+      if ((H->cla_val = (NspMatrix *)  nsp_object_copy_and_name("cla_val",NSP_OBJECT(cla_val))) == NULLMAT) return NULL;
+    }
  return H;
 }
 
@@ -386,31 +392,25 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
  * copy for gobject derived class  
  */
 
-int nsp_classa_copy_partial(NspClassA *H,NspClassA *self)
+NspClassA *nsp_classa_copy_partial(NspClassA *H,NspClassA *self)
 {
   H->cla_color=self->cla_color;
   H->cla_thickness=self->cla_thickness;
-  if ( self->cla_val == NULL) 
+  if ( self->cla_val == NULL )
+    { H->cla_val = NULL;}
+  else
     {
-      H->cla_val =  self->cla_val;
+      if ((H->cla_val = (NspMatrix *) nsp_object_copy_and_name("cla_val",NSP_OBJECT(self->cla_val))) == NULLMAT) return NULL;
     }
-  else 
-    {
-      if ((H->cla_val = (NspMatrix *) nsp_object_copy_and_name("cla_val",NSP_OBJECT(self->cla_val))) == NULLMAT) 
-	return FAIL;
-    }
-  return OK;
+  return H;
 }
 
 NspClassA *nsp_classa_copy(NspClassA *self)
 {
   NspClassA *H  =nsp_classa_create_void(NVOID,(NspTypeBase *) nsp_type_classa);
   if ( H ==  NULLCLASSA) return NULLCLASSA;
-  if ( nsp_classa_copy_partial(H,self) == FAIL) 
-    {
-      /* clean */
-      return NULLCLASSA;
-    }
+  if ( nsp_classa_copy_partial(H,self)== NULL) return NULLCLASSA;
+
   return H;
 }
 
@@ -419,7 +419,7 @@ NspClassA *nsp_classa_copy(NspClassA *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-static int int_classa_create(Stack stack, int rhs, int opt, int lhs)
+int int_classa_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspClassA *H;
   CheckStdRhs(0,0);
@@ -442,7 +442,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 426 "classa.c"
+#line 446 "classa.c"
 
 
 #line 30 "classa.override"
@@ -451,7 +451,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 435 "classa.c"
+#line 455 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -556,7 +556,7 @@ static int _wrap_test(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 540 "classa.c"
+#line 560 "classa.c"
 
 
 #line 37 "classa.override"
@@ -564,7 +564,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 548 "classa.c"
+#line 568 "classa.c"
 
 
 /*----------------------------------------------------
@@ -604,7 +604,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 588 "classa.c"
-  nspgobject_register_class(d, "ClassA", ClassA, &PyClassA_Type, Py_BuildValue("(O)", &PyObject_Type));
+#line 608 "classa.c"
+  nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
+
+#line 613 "classa.c"

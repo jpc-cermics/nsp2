@@ -194,9 +194,7 @@ static int nsp_classb_neq(NspClassB *A, NspObject *B)
  * save 
  */
 
-extern int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M);
-
-static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
+int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -211,7 +209,13 @@ static int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
  * load 
  */
 
-extern NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs,NspClassA *M);
+NspClassB  *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M)
+{
+  if (nsp_xdr_load_i(xdrs, &M->clb_color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->clb_thickness) == FAIL) return NULL;
+  if ((M->clb_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+ return M;
+}
 
 static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 {
@@ -220,9 +224,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
   if ((M  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return M;
-  if (nsp_xdr_load_i(xdrs, &M->clb_color) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->clb_thickness) == FAIL) return NULL;
-  if ((M->clb_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ( nsp_classb_xdr_load_partial(xdrs,M) == NULLCLASSB) return NULLCLASSB;
   /* load father attributes */
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
@@ -291,7 +293,8 @@ void nsp_classb_print(NspClassB *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent+1,"{\n");
       Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
       Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
-      nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
+      if ( M->clb_val != NULL)
+	nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
       nsp_classa_print((NspClassA *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -309,7 +312,8 @@ void nsp_classb_latex_print(NspClassB *M, int indent,const char *name, int rec_l
   Sciprintf1(indent+1,"{\n");
     Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
   Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
-  nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
+  if ( M->clb_val != NULL)
+    nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
@@ -384,7 +388,12 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
  if ( H ==  NULLCLASSB) return NULLCLASSB;
   H->clb_color=clb_color;
   H->clb_thickness=clb_thickness;
-  if ((H->clb_val = (NspMatrix *)  nsp_object_copy_and_name("clb_val",NSP_OBJECT(clb_val))) == NULLMAT) return NULL;
+  if ( clb_val == NULL )
+    { H->clb_val = NULL;}
+  else
+    {
+      if ((H->clb_val = (NspMatrix *)  nsp_object_copy_and_name("clb_val",NSP_OBJECT(clb_val))) == NULLMAT) return NULL;
+    }
  return H;
 }
 
@@ -392,30 +401,26 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
  * copy for gobject derived class  
  */
 
-int nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
+NspClassB *nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
 {
   H->clb_color=self->clb_color;
   H->clb_thickness=self->clb_thickness;
-  if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return FAIL;
-  return OK;
+  if ( self->clb_val == NULL )
+    { H->clb_val = NULL;}
+  else
+    {
+      if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
+    }
+  return H;
 }
 
 NspClassB *nsp_classb_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA *)self) == FAIL)
-    {
-
-      /* clean */
-      return NULLCLASSB;
-    }
-  if ( nsp_classb_copy_partial( H,self) == FAIL)
-    {
-      /* clean */
-      return NULLCLASSB;
-    }
- return H;
+  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA *) self ) == NULL) return NULLCLASSB;
+  if ( nsp_classb_copy_partial(H,self)== NULL) return NULLCLASSB;
+  return H;
 }
 
 /*-------------------------------------------------------------------
