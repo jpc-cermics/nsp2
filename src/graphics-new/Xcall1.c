@@ -735,12 +735,20 @@ static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, in
 
 static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
 {
-  int x1,yy1;
-  x1 = XDouble2Pixel(x);
-  yy1 = YDouble2Pixel(y);
+  int w,h,ix1,iy1;;
+  double xd1,yd1;
+  xd1 = XDouble2Pixel_d(x);
+  yd1 = YDouble2Pixel_d(y);
+  /* ignore overflows */
+  if ( xd1 > 65536.0 || yd1 > 65536.0 ) return;
   if (Xgc->record_flag == TRUE) 
     store_displaystring_1(Xgc,string,x,y,flag,angle);
-  Xgc->graphic_engine->displaystring(Xgc,string,x1,yy1,flag,angle);
+  Xgc->graphic_engine->xget_windowdim(Xgc,&w,&h);
+  ix1 = inint(xd1);
+  iy1 = inint(yd1);
+  /* ignore points outside of window */
+  if ( ix1 > w || iy1 > h ) return;
+  Xgc->graphic_engine->displaystring(Xgc,string,inint(xd1),inint(yd1),flag,angle);
 }
 
 /*-----------------------------------------------------------------------------
