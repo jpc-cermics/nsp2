@@ -739,16 +739,14 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
   double xd1,yd1;
   xd1 = XDouble2Pixel_d(x);
   yd1 = YDouble2Pixel_d(y);
-  /* ignore overflows */
-  if ( xd1 > 65536.0 || yd1 > 65536.0 ) return;
   if (Xgc->record_flag == TRUE) 
     store_displaystring_1(Xgc,string,x,y,flag,angle);
   Xgc->graphic_engine->xget_windowdim(Xgc,&w,&h);
-  ix1 = inint(xd1);
-  iy1 = inint(yd1);
+  ix1 = (xd1 > int16max ) ? int16max :  ((xd1 < - int16max) ? - int16max : inint(xd1));
+  iy1 = (yd1 > int16max ) ? int16max :  ((yd1 < - int16max) ? - int16max : inint(yd1));
   /* ignore points outside of window */
   if ( ix1 > w || iy1 > h ) return;
-  Xgc->graphic_engine->displaystring(Xgc,string,inint(xd1),inint(yd1),flag,angle);
+  Xgc->graphic_engine->displaystring(Xgc,string,ix1,iy1,flag,angle);
 }
 
 /*-----------------------------------------------------------------------------

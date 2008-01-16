@@ -94,18 +94,18 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
 	  sciprint("Running out of memory \n");
 	  return 0;
 	}      
-      /** Real to Pixel values **/
+      /* Real to Pixel values */
       scale_f2i(Xgc,x,y,xm,ym,n);
-      /** Drawing axes **/
+      /* Drawing axes **/
     }
   axis_draw(Xgc,strflag);
-  /** Drawing the curves **/
+  /* Drawing the curves */
   if ( n != 0 ) 
     {
       frame_clip_on(Xgc);
       Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
       frame_clip_off(Xgc);
-      /** Drawing the Legends **/
+      /* Drawing the Legends */
       if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
 	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 

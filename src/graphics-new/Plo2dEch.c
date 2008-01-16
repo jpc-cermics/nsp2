@@ -63,15 +63,33 @@ void scale_f2wrect(BCG *Xgc,const double x[],double x1[])
 
 void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n)
 {
+  double d;
   int i;
   if (Xgc->scales->logflag[0] == 'n') 
-    for ( i=0 ; i < n  ; i++) x1[i]= XScale(x[i]);
+    for ( i=0 ; i < n  ; i++) 
+      {
+	d = XScale_d(x[i]);
+	x1[i]= (d > int16max ) ? int16max : ((d < - int16max) ? - int16max : inint(d));
+      }
   else 
-    for ( i=0 ; i < n  ; i++) x1[i]= XLogScale(x[i]);
+    for ( i=0 ; i < n  ; i++) 
+      {
+	d = XLogScale_d(x[i]);
+	x1[i]=(d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
+	
+      }
   if (Xgc->scales->logflag[1] == 'n') 
-    for ( i=0 ; i < n ; i++)  y1[i]= YScale(y[i]);
+    for ( i=0 ; i < n ; i++) 
+      {
+	d = YScale_d(y[i]);
+	y1[i]=(d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
+      }
   else 
-    for ( i=0 ; i < n ; i++)  y1[i]= YLogScale(y[i]);
+    for ( i=0 ; i < n ; i++)
+      {
+	d =  YLogScale_d(y[i]);
+	y1[i]= (d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
+      }
 }
 
 
