@@ -366,15 +366,15 @@ NspClassB  *GetClassB(Stack stack, int i)
 
 static NspClassB *nsp_classb_create_void(char *name,NspTypeBase *type)
 {
- NspClassB *H  = (type == NULL) ? new_classb() : type->new();
- if ( H ==  NULLCLASSB)
-  {
-   Sciprintf("No more memory\n");
-   return NULLCLASSB;
-  }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLCLASSB;
- NSP_OBJECT(H)->ret_pos = -1 ;
- return H;
+  NspClassB *H  = (type == NULL) ? new_classb() : type->new();
+  if ( H ==  NULLCLASSB)
+    {
+      Sciprintf("No more memory\n");
+      return NULLCLASSB;
+    }
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLCLASSB;
+  NSP_OBJECT(H)->ret_pos = -1 ;
+  return H;
 }
 
 int nsp_classb_create_partial(NspClassB *H)
@@ -384,8 +384,8 @@ int nsp_classb_create_partial(NspClassB *H)
 
 NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
- NspClassB *H  = nsp_classb_create_void(name,type);
- if ( H ==  NULLCLASSB) return NULLCLASSB;
+  NspClassB *H  = nsp_classb_create_void(name,type);
+  if ( H ==  NULLCLASSB) return NULLCLASSB;
   H->clb_color=clb_color;
   H->clb_thickness=clb_thickness;
   if ( clb_val == NULL )

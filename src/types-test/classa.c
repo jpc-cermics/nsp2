@@ -200,6 +200,7 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_thickness) == FAIL) return FAIL;
+  if (M->cla_val == NULL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_val)) == FAIL) return FAIL;
   return OK;
 }
