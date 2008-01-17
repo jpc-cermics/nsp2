@@ -538,6 +538,8 @@ void primitive_types_register(void)
   new_type_bhash(T_BASE);
   /* new */
   nsp_init_gtk_types_added(); 
+  new_type_classaref(T_BASE);
+  new_type_classbref(T_BASE);
 }
 
 /*
