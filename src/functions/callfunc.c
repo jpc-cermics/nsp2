@@ -62,6 +62,8 @@ extern  sci_interface  Block_Interf ;extern  interface_info  Block_Interf_Info ;
 extern  sci_interface  Link_Interf ;extern  interface_info  Link_Interf_Info ;
 extern  sci_interface  ClassA_Interf ;extern  interface_info  ClassA_Interf_Info ;
 extern  sci_interface  ClassB_Interf ;extern  interface_info  ClassB_Interf_Info ;
+extern  sci_interface  ClassARef_Interf ;extern  interface_info  ClassARef_Interf_Info ;
+extern  sci_interface  ClassBRef_Interf ;extern  interface_info  ClassBRef_Interf_Info ;
 extern  sci_interface  ClassC_Interf ;extern  interface_info  ClassC_Interf_Info ;
 extern  sci_interface  GBoxed_Interf ;extern  interface_info  GBoxed_Interf_Info ;
 extern  sci_interface  GObject_Interf ;extern  interface_info  GObject_Interf_Info ;
@@ -154,6 +156,8 @@ InterfTab Interfaces[]={
   {Link_Interf,Link_Interf_Info},
   {ClassA_Interf,ClassA_Interf_Info},
   {ClassB_Interf,ClassB_Interf_Info},
+  {ClassARef_Interf,ClassARef_Interf_Info},
+  {ClassBRef_Interf,ClassBRef_Interf_Info},
   {ClassC_Interf,ClassC_Interf_Info},
   {GBoxed_Interf,GBoxed_Interf_Info},
   {GObject_Interf,GObject_Interf_Info},
