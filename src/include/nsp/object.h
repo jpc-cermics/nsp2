@@ -356,6 +356,8 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/modulelt.h"
 #include "nsp/classa.h"
 #include "nsp/classb.h"
+#include "nsp/classaref.h"
+#include "nsp/classbref.h"
 #include "nsp/cells.h"
 #include "nsp/matint.h"
 #include "nsp/serial.h"
