@@ -1,8 +1,8 @@
 // -*- Mode: scilab -*- 
-// an object of Classa 
+// an object of ClassaRef 
+// this object is by reference 
 
-
-a=%types.ClassA.new[cla_color=89,cla_thickness=56,cla_val=[]];
+a=%types.ClassARef.new[cla_color=89,cla_thickness=56,cla_val=[]];
 
 // attributes of object 
 
@@ -29,17 +29,17 @@ a('cla_color') = 78  //   {"setrowscols_cla",int_set_attribute},
 
 // a('cla_color')  // extractelts_cla to be done XXX (copy from hash)
 
-clatest(a) 
+clareftest(a) 
 
 // an object of Classb which inherits from Classa 
 
-b=%types.ClassB.new[clb_color=89,clb_thickness=56,cla_color=3,clb_val=[]];
+b=%types.ClassBRef.new[clb_color=89,clb_thickness=56,cla_color=3,clb_val=[]];
 
 b.__attrs 
 
 // inherited attributes 
 
-b.cla_color = 78
+b.cla_color = 78 
 b.cla_val = testmatrix('magic',3);
 b.cla_val(3,3) = 5 
 
@@ -64,5 +64,5 @@ b.classb_color_show[]
 // functions for Classa instances 
 // which can be used for instances of Classb
 
-clatest(b) 
-clatest(a) 
+clareftest(b) 
+clareftest(a) 
