@@ -66,3 +66,11 @@ b.classb_color_show[]
 
 clatest(b) 
 clatest(a) 
+
+b.cla_val = 1:6;
+b1 = b;
+save('TMPDIR/bsave',b,D=89);
+load('TMPDIR/bsave');
+  
+if ~b1.equal[b] then pause;end 
+
