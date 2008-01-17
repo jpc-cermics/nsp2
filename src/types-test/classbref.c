@@ -412,7 +412,7 @@ NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,Ns
 
 NspClassBRef *nsp_classbref_copy_partial(NspClassBRef *H,NspClassBRef *self)
 {
-  nsp_classbref_copy_partial(H,self);
+  H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
 

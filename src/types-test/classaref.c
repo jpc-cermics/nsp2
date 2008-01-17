@@ -402,7 +402,7 @@ NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,Ns
 
 NspClassARef *nsp_classaref_copy_partial(NspClassARef *H,NspClassARef *self)
 {
-  nsp_classaref_copy_partial(H,self);
+  H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
 
@@ -542,19 +542,19 @@ static AttrTab classaref_attrs[] = {
  *-------------------------------------------*/
 #line 43 "classaref.override"
 /* XXXX : the generated code should be corrected */
-static int test(NspClassARef *A)
+static int clareftest(NspClassARef *A)
 {
   nsp_object_print((NspObject *) A,0,NULL,0);
   return TRUE;
 }
 
-static int _wrap_test(Stack stack, int rhs, int opt, int lhs)
+static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   int ret;
   NspObject *A;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_classaref, &A) == FAIL) return RET_BUG;
-  ret = test((NspClassARef *) A);
+  ret = clareftest((NspClassARef *) A);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -575,7 +575,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassARef_func[]={
-  {"test", _wrap_test},
+  {"clareftest", _wrap_clareftest},
   {"setrowscols_classaref", _wrap_setrowscols_classaref},
   { "classaref_create", int_classaref_create},
   { NULL, NULL}

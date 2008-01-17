@@ -200,7 +200,6 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_thickness) == FAIL) return FAIL;
-  if (M->cla_val == NULL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_val)) == FAIL) return FAIL;
   return OK;
 }
@@ -541,19 +540,19 @@ static AttrTab classa_attrs[] = {
  *-------------------------------------------*/
 #line 43 "classa.override"
 /* XXXX : the generated code should be corrected */
-static int test(NspClassA *A)
+static int clatest(NspClassA *A)
 {
   nsp_object_print((NspObject *) A,0,NULL,0);
   return TRUE;
 }
 
-static int _wrap_test(Stack stack, int rhs, int opt, int lhs)
+static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   int ret;
   NspObject *A;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_classa, &A) == FAIL) return RET_BUG;
-  ret = test((NspClassA *) A);
+  ret = clatest((NspClassA *) A);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -574,7 +573,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassA_func[]={
-  {"test", _wrap_test},
+  {"clatest", _wrap_clatest},
   {"setrowscols_classa", _wrap_setrowscols_classa},
   { "classa_create", int_classa_create},
   { NULL, NULL}
