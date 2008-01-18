@@ -1,3 +1,10 @@
+2008-01-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* bug 7 for parsing n-arry operators mixed with comments.
+	The comments are lost in the parsed struture.
+	* new versions of the test classes classa, classb, classaref,
+	classbref.
+	
 2008-01-14  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libspmf/convhull2d.c (nsp_convhull2d):
