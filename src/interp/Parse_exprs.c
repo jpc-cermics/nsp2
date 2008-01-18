@@ -1574,18 +1574,13 @@ static int parse_terme(Tokenizer *T,NspBHash *symb_table,PList *plist)
 } 
 
 /****************************************************
- * Generic function for parsing nary op 
+ * a generic function for parsing a nary operator 
  *  <xxx> op <xxx> op <xxx> 
- *  xxx is parsed with function parsef 
- *  op  is tested with function opfn 
- *  See ParseTerm to see an example 
+ *  - each argument <xxx> is parsed with the given function parsef
+ *  - operator is tested with function opfn 
+ *  to see an example see parse_terme 
  *  expression is parsed using left to right associativity
- *  
- * Remark : \n are authorised after op 
- *  <xxx> op 
- *  
- *    <yyy> 
- * is a valid sentence for parse_nary
+ *  - note that '\n' can be added after operator 
  *
  * This function add at end of plist 
  * (((arg1 arg2 op) arg3 op) arg4 op)
@@ -1603,9 +1598,18 @@ static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist,
     {
       PList plist2=NULLPLIST;
       if (debug) Sciprintf("-arg-");
-      parse_nblines(T);
-      plist2=NULLPLIST;
-      if ( (*parsef)(T,symb_table,&plist2) == FAIL ) return(FAIL);
+      while (1) 
+	{
+	  parse_nblines(T);
+	  plist2=NULLPLIST;
+	  if ( (*parsef)(T,symb_table,&plist2) == FAIL ) return(FAIL);
+	  if ( plist2->type != COMMENT ) break;
+	  /* Note that comments in a parse_nary are not keeped in the 
+	   * parsed structure 
+	   * a way to keep them should be found 
+	   */
+	  nsp_plist_destroy(&plist2);
+	}
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       if (nsp_parse_add(&plist1,op,2,T->tokenv.Line) == FAIL) return(FAIL);
       plist2=plist1;
