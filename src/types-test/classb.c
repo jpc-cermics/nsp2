@@ -382,6 +382,17 @@ int nsp_classb_create_partial(NspClassB *H)
   return OK;
 }
 
+int nsp_classb_check_values(NspClassB *H)
+{
+  if ( H->clb_val == NULLMAT) 
+    {
+     if (( H->clb_val = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT)
+       return FAIL;
+    }
+  nsp_classa_check_values((NspClassA *) H);
+  return OK;
+}
+
 NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
  NspClassB *H  = nsp_classb_create_void(name,type);
@@ -394,6 +405,7 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
     {
       if ((H->clb_val = (NspMatrix *)  nsp_object_copy_and_name("clb_val",NSP_OBJECT(clb_val))) == NULLMAT) return NULL;
     }
+ if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
  return H;
 }
 
@@ -438,7 +450,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   if(( H = nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb)) == NULLCLASSB) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
-  if ( H->clb_val == NULLMAT) {Scierror("Error: field clb_val is to be set\n");return RET_BUG;}
+ if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -452,7 +464,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 456 "classb.c"
+#line 468 "classb.c"
 
 
 #line 29 "classb.override"
@@ -463,7 +475,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 467 "classb.c"
+#line 479 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -585,9 +597,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 589 "classb.c"
+#line 601 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 594 "classb.c"
+#line 606 "classb.c"

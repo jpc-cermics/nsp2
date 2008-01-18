@@ -75,6 +75,7 @@ extern NspClassBRef *GetClassBRef (Stack stack, int i);
 extern int nsp_classbref_create_partial(NspClassBRef *H);
 extern void nsp_classbref_destroy_partial(NspClassBRef *H);
 extern NspClassBRef * nsp_classbref_copy_partial(NspClassBRef *H,NspClassBRef *self);
+extern int nsp_classbref_check_values(NspClassBRef *H);
 extern int int_classbref_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspClassBRef *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M);
 extern int nsp_classbref_xdr_save(XDR  *xdrs, NspClassBRef *M);

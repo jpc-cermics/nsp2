@@ -42,3 +42,8 @@ ajour	:
 	cp /usr/local/src/nsp2-jpc/keep/test/classaref.h ../include/nsp 
 	cp /usr/local/src/nsp2-jpc/keep/test/classbref.c .
 	cp /usr/local/src/nsp2-jpc/keep/test/classbref.h ../include/nsp 
+	cp /usr/local/src/nsp2-jpc/keep/test/classa.c .
+	cp /usr/local/src/nsp2-jpc/keep/test/classa.h ../include/nsp 
+	cp /usr/local/src/nsp2-jpc/keep/test/classb.c .
+	cp /usr/local/src/nsp2-jpc/keep/test/classb.h ../include/nsp 
+

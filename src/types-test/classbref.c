@@ -390,6 +390,17 @@ int nsp_classbref_create_partial(NspClassBRef *H)
   return OK;
 }
 
+int nsp_classbref_check_values(NspClassBRef *H)
+{
+  if ( H->obj->clb_val == NULLMAT) 
+    {
+     if (( H->obj->clb_val = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT)
+       return FAIL;
+    }
+  nsp_classaref_check_values((NspClassARef *) H);
+  return OK;
+}
+
 NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
  NspClassBRef *H  = nsp_classbref_create_void(name,type);
@@ -403,6 +414,7 @@ NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,Ns
     {
       if ((H->obj->clb_val = (NspMatrix *)  nsp_object_copy_and_name("clb_val",NSP_OBJECT(clb_val))) == NULLMAT) return NULL;
     }
+ if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
  return H;
 }
 
@@ -441,7 +453,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
-  if ( H->obj->clb_val == NULLMAT) {Scierror("Error: field clb_val is to be set\n");return RET_BUG;}
+ if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -455,7 +467,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 459 "classbref.c"
+#line 471 "classbref.c"
 
 
 #line 29 "classbref.override"
@@ -466,7 +478,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 470 "classbref.c"
+#line 482 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -588,9 +600,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 592 "classbref.c"
+#line 604 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 597 "classbref.c"
+#line 609 "classbref.c"
