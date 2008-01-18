@@ -893,7 +893,7 @@ int nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 	    }
 	  else
 	    {
-	      Sciprintf(" %d Undefined\n",i);
+	      Sciprintf1(indent+2,"%s Undefined\n",epname);
 	    }
 	  C = C->next ;i++;
 	  /* if ( C != NULLCELL ) Sciprintf("\n"); */
@@ -939,7 +939,7 @@ static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
 	    }
 	  else
 	    {
-	      Sciprintf(" %d Undefined\n",i);
+	      Sciprintf1(indent+2,"%s Undefined\n",epname);
 	    }
 	  C = C->next ;i++;
 	  /* if ( C != NULLCELL ) Sciprintf("\n"); */
@@ -1026,7 +1026,7 @@ int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 		}
 	      else
 		{
-		  Sciprintf(" %d Undefined\n",i);
+		  Sciprintf1(indent+2,"%s Undefined\n",epname);
 		}
 	      C = C->next ;i++;
 	      /* if ( C != NULLCELL ) Sciprintf("\n"); */
