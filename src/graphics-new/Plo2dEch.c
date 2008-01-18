@@ -1,7 +1,23 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 1998-2000 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 
@@ -556,6 +572,7 @@ void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax,
 	  graduate(FRectI,FRectI+2,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
 	}
       /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       * The problem is that proceding that way we can obtain just one point.
        */
       i=0;
       while (1) { 
@@ -585,8 +602,21 @@ void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax,
     }
   if (logf[1] == 'n') 
     {
-      graduate(FRectI+1,FRectI+3,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+      if ( FRectI[0]*FRectI[2] < 0 ) 
+	{
+	  double ymin,ymax;
+	  /* if zero is inside frect we try to find a graduation with zero inside */
+	  ymin = Min(FRectI[1],-FRectI[3]);
+	  ymax = Max(FRectI[3],-FRectI[1]);
+	  graduate(&ymin,&ymax,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+	}
+      else
+	{
+	  graduate(FRectI+1,FRectI+3,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+	}
+
       /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       * The problem is that proceding that way we can obtain just one point.
        */
       i=0;
       while (1)
@@ -607,7 +637,6 @@ void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax,
 	}
       Ydec[1] -= i*(Ydec[1]-Ydec[0])/ynax[1];
       ynax[1] -= i;
-
     }
   else
     {

@@ -1,9 +1,24 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------
+/* Nsp
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr
+ *
  * Axis drawing for 2d plots 
  *--------------------------------------------------------------------------*/
 
@@ -12,6 +27,7 @@
 #include <stdio.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
+
 /* #include "nsp/graphics/PloEch.h" */
 
 static double  x_convert (char xy_type,const double x[] ,int i);
@@ -20,9 +36,14 @@ static void NumberFormat (char *str,int k,int a);
 static void aplotv1_new(BCG *Xgc,char *strflag);
 static void aplotv2 (BCG *Xgc,char*);
 
-/*--------------------------------------------------------------
- * Draw Axis or only rectangle
- *----------------------------------------------------------------*/
+
+/**
+ * axis_draw:
+ * @Xgc: 
+ * @strflag: 
+ * 
+ * draws axis or only rectangle in a graphic frame.
+ **/
 
 void axis_draw(BCG *Xgc,char *strflag)
 {
@@ -91,12 +112,12 @@ static void aplotv2(BCG *Xgc,char *strflag)
       break;
     }
   if ( c != '4' && c != '5' )  
-    /** frame rectangle **/
+    /* frame rectangle */
     Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
-  /** x-axis **/
+  /* x-axis */
   ny=1,nx=3;
   Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
-  /** y-axis **/
+  /* y-axis */
   ny=3,nx=1;
   Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
@@ -137,13 +158,13 @@ static void aplotv1_new(BCG *Xgc,char *strflag)
       break;
     }
   if ( c != '4' && c != '5' )  
-    /** frame rectangle **/
+    /* frame rectangle **/
     Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
-  /** x-axis **/
+  /* x-axis **/
   ny=1,nx=4;
   Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
 	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
-  /** y-axis **/
+  /* y-axis **/
   ny=4,nx=1;
   Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
 	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
@@ -162,7 +183,7 @@ static void aplotv1_new(BCG *Xgc,char *strflag)
  *         'r' means that tics position are in a range i.e given by a vector of size 3 
  *             [min,max,number_of_intervals] 
  *         'i' means that tics positions are in a range given by four number (ints) 
- *             [k1,k2,e,number_of intervale] -> [k1*10^e,k2*10^e] 
+ *             [k1,k2,e,number_of intervals] -> [k1*10^e,k2*10^e] 
  *   x vector of size nx 
  *   y vector of size ny 
  *         if pos = 'r' or 'l' then x must be of size 1 
@@ -234,7 +255,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       smallersize=fontid[1]-2;
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
     }
-  /** Real to Pixel values **/
+  /* Real to Pixel values **/
   switch ( xy_type ) 
     {
     case 'v' : Nx= *nx; Ny= *ny; break;
@@ -253,19 +274,24 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
     default: 
       sciprint("Sci_Axis: wrong type argument xy_type\r\n");
     }
+  /* Note that in that case xy_type = 'i' we can possibly 
+   * have x[3] or y[3] equal to zero which means that we 
+   * cannot distinguish the min and the max on the given interval
+   */ 
+
   switch (pos ) 
     {
     case 'u' : 
     case 'd' :
-      /** Horizontal axes **/
+      /* Horizontal axes **/
       barlength = Xgc->scales->WIRect1[3]/50.0;
-      /** compute a format **/
+      /* compute a format **/
       if (str == NULL && format == NULL )  
 	switch (xy_type ) {
 	case 'v' : ChoixFormatE1(c_format,x,Nx);break;
 	case 'r' : ChoixFormatE (c_format,x[0],x[1],(x[1]-x[0])/x[2]);break;
 	}
-      /** the horizontal segment **/
+      /* the horizontal segment **/
       vx[0] =  XScale(x_convert(xy_type, x , 0));
       vx[1] =  XScale(x_convert(xy_type, x , Nx-1));
       vy[0]= vy[1] = ym[0] = YScale(y[0]);
@@ -275,8 +301,8 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
-
-      /** loop on the ticks **/
+      
+      /* loop on the ticks **/
       for (i=0 ; i < Nx ; i++)
 	{ 
 	  char foo[100];
@@ -287,8 +313,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	    {
 	      /*defaults format **/
 	      if  ( xy_type == 'i') 
-		NumberFormat(foo,((int) (x[0] + i*(x[1]-x[0])/x[3])),
-			     ((int) x[2]));
+		{
+		  if ( x[3] == 0 ) 
+		    NumberFormat(foo,(int) (x[0]), ((int) x[2]));
+		  else
+		    NumberFormat(foo,((int) (x[0] + i*(x[1]-x[0])/x[3])), ((int) x[2]));
+		}
 	      else 
 		sprintf(foo,c_format,vxx);
 	    }
@@ -346,14 +376,14 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       break;
     case 'r' : 
     case 'l' :
-      /** Vertical axes **/
+      /* Vertical axes **/
       barlength = Xgc->scales->WIRect1[2]/75.0;
       if (str == NULL &&  format == NULL )  
 	switch (xy_type ) {
 	case 'v' : ChoixFormatE1(c_format,y,Ny);break;
 	case 'r' : ChoixFormatE(c_format,y[0],y[1],(y[1]-y[0])/y[2]);break;
 	}
-      /** the vertical segment **/
+      /* the vertical segment **/
       vy[0] =  YScale(y_convert(xy_type, y , 0));
       vy[1] =  YScale(y_convert(xy_type, y , Ny-1));
       vx[0]= vx[1] = xm[0]= XScale(x[0]);
@@ -363,7 +393,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
-      /** loop on the ticks **/
+      /* loop on the ticks **/
       for (i=0 ; i < Ny ; i++)
 	{ 
 	  char foo[100];
@@ -373,8 +403,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  else if ( format == NULL)
 	    {
 	      if ( xy_type == 'i') 
-		NumberFormat(foo,((int) (y[0] + i*(y[1]-y[0])/y[3])),
-			     ((int) y[2]));
+		{
+		  if ( y[3] == 0 ) 
+		    NumberFormat(foo,((int) (y[0])), ((int) y[2]));
+		  else
+		    NumberFormat(foo,((int) (y[0] + i*(y[1]-y[0])/y[3])), ((int) y[2]));
+		}
 	      else 
 		sprintf(foo,c_format,vxx);
 	    }
@@ -452,7 +486,8 @@ static double  x_convert(char xy_type,const double x[], int i)
   switch ( xy_type ) { 
   case 'v' :  return x[i];
   case 'r' :  return x[0]+i*(x[1]-x[0])/x[2];
-  case 'i' :  return exp10(x[2])*(x[0] + i*(x[1]-x[0])/x[3]);
+  case 'i' :  return (x[3]==0) ? exp10(x[2])*(x[0])  
+      : exp10(x[2])*(x[0] + i*(x[1]-x[0])/x[3]);
   }
   return 0.0;
 }
@@ -462,7 +497,8 @@ static double y_convert(char xy_type,const double y[], int i)
   switch ( xy_type ) { 
   case 'v' :  return y[i]; 
   case 'r' :  return y[0]+i*(y[1]-y[0])/y[2];
-  case 'i' :  return exp10(y[2])*(y[0] + i*(y[1]-y[0])/y[3]); 
+  case 'i' :  return (y[3]==0) ? exp10(y[2])*(y[0]) 
+      : exp10(y[2])*(y[0] + i*(y[1]-y[0])/y[3]); 
   }
   return 0.0; 
 }
