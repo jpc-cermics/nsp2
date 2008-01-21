@@ -113,12 +113,19 @@ int nsp_init_frames(int argc, char **argv)
   /* flag to know that we are using nsp !! */
   if ((O =nsp_create_true_object("%nsp"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O,-1);
+  /* flag to detect if we have fftw */
+#ifdef WITH_FFTW3
+  if ((O =nsp_create_true_object("%fftw"))==NULLOBJ) return FAIL;
+#else 
+  if ((O =nsp_create_false_object("%fftw"))==NULLOBJ) return FAIL;
+#endif 
+  nsp_frame_replace_object(O,-1);
   /* flag to detect if we have umfpack */
 #ifdef WITH_UMFPACK
   if ((O =nsp_create_true_object("%umfpack"))==NULLOBJ) return FAIL;
-#else 
+#else
   if ((O =nsp_create_false_object("%umfpack"))==NULLOBJ) return FAIL;
-#endif 
+#endif
   nsp_frame_replace_object(O,-1);
   /* flag to detect if we have cholmod */
 #ifdef WITH_CHOLMOD
