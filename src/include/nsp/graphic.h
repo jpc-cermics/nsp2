@@ -67,17 +67,19 @@ extern NspGraphic *nsp_graphic_copy(NspGraphic *H);
 extern void nsp_graphic_destroy(NspGraphic *H);
 extern void nsp_graphic_info(NspGraphic *H, int indent,const char *name, int rec_level);
 extern void nsp_graphic_print(NspGraphic *H, int indent,const char *name, int rec_level);
-extern void nsp_graphic_latex_print(NspGraphic *H, int indent,const char *name, int rec_level);
+extern void nsp_graphic_latex(NspGraphic *H, int indent,const char *name, int rec_level);
 extern NspGraphic *nsp_graphic_object (NspObject *O); 
 extern int IsGraphicObj (Stack stack, int i); 
 extern int IsGraphic(NspObject *O);
 extern NspGraphic *GetGraphicCopy (Stack stack, int i); 
 extern NspGraphic *GetGraphic (Stack stack, int i); 
-
 extern int nsp_graphic_create_partial(NspGraphic *H);
 extern void nsp_graphic_destroy_partial(NspGraphic *H);
-extern void nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self);
-
+extern NspGraphic * nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self);
+extern int nsp_graphic_check_values(NspGraphic *H);
+extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs); 
+extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
+extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
 #endif /* NSP_INC_Graphic */ 
 
@@ -88,13 +90,10 @@ static char *nsp_graphic_type_as_string(void);
 static char *nsp_graphic_type_short_string(NspObject *v);
 static int nsp_graphic_eq(NspGraphic *A, NspObject *B);
 static int nsp_graphic_neq(NspGraphic *A, NspObject *B);
-static int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 static NspGraphic *nsp_graphic_xdr_load(XDR *xdrs);
 static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
-static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
+/* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
-/* static void draw_graphic(BCG *Xgc,NspGraphic *o); */
-
 #endif /* Graphic_Private */
 

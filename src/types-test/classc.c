@@ -172,7 +172,7 @@ NspClassC  *GetClassC(Stack stack, int i)
 
 NspClassC *classc_copy(NspClassC *H)
 {
-  return nsp_classa_create(NVOID,H->cla_color,H->cla_thickness,NULL,(NspTypeBase *) nsp_type_classc);
+  return nsp_classa_create(NVOID,H->cla_color,H->cla_thickness,NULL,NULL,NULL,(NspTypeBase *) nsp_type_classc);
 }
 
 /*-------------------------------------------------------------------
@@ -193,7 +193,7 @@ int int_clc_create(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
   /* want to be sure that type classc is initialized */
   nsp_type_classc = new_type_classc(T_BASE);
-  if(( H = nsp_classa_create(NVOID,color,thickness,NULL,(NspTypeBase *) nsp_type_classc)) == NULLCLC) return RET_BUG;
+  if(( H = nsp_classa_create(NVOID,color,thickness,NULL,NULL,NULL,(NspTypeBase *) nsp_type_classc)) == NULLCLC) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 

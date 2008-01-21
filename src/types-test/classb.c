@@ -117,8 +117,8 @@ static int init_classb(NspClassB *Obj,NspTypeClassB *type)
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
- Obj->clb_color = 0;
- Obj->clb_thickness = 0;
+  Obj->clb_color = 0;
+  Obj->clb_thickness = 0;
   Obj->clb_val = NULLMAT;
   return OK;
 }
@@ -386,7 +386,7 @@ int nsp_classb_check_values(NspClassB *H)
 {
   if ( H->clb_val == NULLMAT) 
     {
-     if (( H->clb_val = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT)
+     if (( H->clb_val = nsp_matrix_create("clb_val",'r',0,0)) == NULLMAT)
        return FAIL;
     }
   nsp_classa_check_values((NspClassA *) H);

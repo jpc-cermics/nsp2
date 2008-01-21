@@ -17,7 +17,7 @@
 
 #define  Graphic_Private 
 #include "nsp/object.h"
-#include "graphic.h"
+#include "nsp/graphic.h"
 #include "nsp/interf.h"
 
 /* 
@@ -75,7 +75,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   top->save  = (save_func *) nsp_graphic_xdr_save;
   top->load  = (load_func *) nsp_graphic_xdr_load;
   top->create = (create_func*) int_graphic_create;
-  top->latex = (print_func *) nsp_graphic_latex_print;
+  top->latex = (print_func *) nsp_graphic_latex;
   
   /* specific methods for graphic */
       
@@ -191,7 +191,7 @@ static int nsp_graphic_neq(NspGraphic *A, NspObject *B)
  * save 
  */
 
-static int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
+int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -203,15 +203,20 @@ static int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
  * load 
  */
 
+NspGraphic  *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M)
+{
+  if ((M->obj = malloc(sizeof(nsp_graphic))) == NULL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
+ return M;
+}
+
 static NspGraphic  *nsp_graphic_xdr_load(XDR *xdrs)
 {
   NspGraphic *M = NULL;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRAPHIC;
   if ((M  = nsp_graphic_create_void(name,(NspTypeBase *) nsp_type_graphic))== NULLGRAPHIC) return M;
-  if ((M->obj = malloc(sizeof(nsp_graphic))) == NULL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
- return M;
+  return nsp_graphic_xdr_load_partial(xdrs,M);
 }
 
 /*
@@ -285,7 +290,7 @@ void nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level
  * latex print 
  */
 
-void nsp_graphic_latex_print(NspGraphic *M, int indent,const char *name, int rec_level)
+void nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -362,12 +367,18 @@ int nsp_graphic_create_partial(NspGraphic *H)
   return OK;
 }
 
+int nsp_graphic_check_values(NspGraphic *H)
+{
+  return OK;
+}
+
 NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type)
 {
  NspGraphic *H  = nsp_graphic_create_void(name,type);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   H->obj->color=color;
+ if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
  return H;
 }
 
@@ -375,18 +386,19 @@ NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type)
  * copy for gobject derived class  
  */
 
-void nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self)
+NspGraphic *nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self)
 {
-  H->obj = self->obj;
-  self->obj->ref_count++;
+  H->obj = self->obj; self->obj->ref_count++;
+  return H;
 }
 
 NspGraphic *nsp_graphic_copy(NspGraphic *self)
 {
   NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
-  nsp_graphic_copy_partial(H,self);
- return H;
+  if ( nsp_graphic_copy_partial(H,self)== NULL) return NULLGRAPHIC;
+
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -404,6 +416,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+ if ( nsp_graphic_check_values(H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -444,29 +457,29 @@ static AttrTab graphic_attrs[] = {
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab graphic_func[]={
+static OpTab Graphic_func[]={
   { "graphic_create", int_graphic_create},
   { NULL, NULL}
 };
 
-/* call ith function in the graphic interface */
+/* call ith function in the Graphic interface */
 
-int graphic_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int Graphic_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(graphic_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(Graphic_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void graphic_Interf_Info(int i, char **fname, function (**f))
+void Graphic_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = graphic_func[i].name;
-  *f = graphic_func[i].fonc;
+  *fname = Graphic_func[i].name;
+  *f = Graphic_func[i].fonc;
 }
 /* intialise stuff extension classes */
 /* void
-graphic_register_classes(NspObject *d)
+Graphic_register_classes(NspObject *d)
 {
 
 #line 7 "graphic.override"
@@ -474,9 +487,9 @@ graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 478 "graphic.c"
+#line 491 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 483 "graphic.c"
+#line 496 "graphic.c"

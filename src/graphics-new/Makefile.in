@@ -11,7 +11,7 @@ OBJSC = Graphics-IN.o periGtk.o @PERICAIRO@ @PERIGLEXT@ periPos.o periFig.o \
 	Plo2d1.o Plo2d2.o Plo2d3.o Plo2d4.o Plo2dEch.o Rec.o Gray.o \
 	Alloc.o RecLoad.o RecSave.o Tests.o Actions.o \
 	Format.o windows.o Xcall1.o clip.o dsearch.o \
-	Plo3dObj.o polyline.o graphic.o 
+	Plo3dObj.o  polyline.o graphic.o compound.o 
 
 OBJSF = 
 
@@ -54,5 +54,18 @@ periGtkstd.c: perigtk/peridraw_gdk.c
 periGtkstd.c: perigtk/points.c 
 Plo3dObj.o: Plo3dObj.h
 Graphics-IN.o: Plo3dObj.h
+
+ajour	:
+	cd /usr/local/src/nsp2-jpc/keep/test;make 
+	cp /usr/local/src/nsp2-jpc/keep/test/polyline.c .
+	cp /usr/local/src/nsp2-jpc/keep/test/polyline.h ../include/nsp 
+	cp /usr/local/src/nsp2-jpc/keep/test/graphic.c .
+	cp /usr/local/src/nsp2-jpc/keep/test/compound.c .
+	cp /usr/local/src/nsp2-jpc/keep/test/compound.h ../include/nsp 
+
+poo	:
+	cp /usr/local/src/nsp2-jpc/keep/test/graphic.h ../include/nsp 
+
+
 
 #--- dependencies generated with gcc ----

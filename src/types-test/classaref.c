@@ -384,7 +384,7 @@ int nsp_classaref_check_values(NspClassARef *H)
 {
   if ( H->obj->cla_val == NULLMAT) 
     {
-     if (( H->obj->cla_val = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT)
+     if (( H->obj->cla_val = nsp_matrix_create("cla_val",'r',0,0)) == NULLMAT)
        return FAIL;
     }
   return OK;
