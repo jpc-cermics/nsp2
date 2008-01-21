@@ -1,3 +1,13 @@
+2008-01-21  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libfft/fft-IN.c: add new fft interfaces (fftnew,
+	ifftnew, fft2new, ifft2new) available both with fftw
+	and fftpack use.
+	* tests/fftnew.tst: more complete tests for fft.
+	* src/objects/Datas.c: add a %fftw variable.
+	* src/objects/IVect.c, src/objects/IVectObj.c: new
+	functions for implicit vectors (experimental).
+
 2008-01-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* bug 7 for parsing n-arry operators mixed with comments.
