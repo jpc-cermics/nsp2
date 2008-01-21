@@ -26,7 +26,7 @@ struct _NspIvect {
   NspObject father; 
   NspTypeIVect *type; 
   /*< public >*/
-  double first,step,last ; /* implicit bounds  */
+  int first,step,last ; /* implicit bounds  */
   int flag ;               /* set to 1 if 1:$ or : else set to 0 */
 };
 
@@ -58,10 +58,11 @@ static NspIVect *nsp_ivect_xdr_load(XDR  *F);
 /* IVectObj.c */
 
 extern NspIVect *nsp_ivect_object(NspObject *O); 
+extern NspObject *nsp_ivect_loop (char *str, NspObject * O, NspObject * O1, int i, int *rep);
 
 /* IVect.c */
 
-extern NspIVect *nsp_ivect_create(char *name, double first, double step, double last, int flag); 
+extern NspIVect *nsp_ivect_create(char *name, int first, int step, int last, int flag); 
 extern int IsIVectF (NspObject *O); 
 extern NspIVect *nsp_ivect_copy(NspIVect *A); 
 extern void nsp_ivect_destroy(NspIVect *IV); 
@@ -70,6 +71,9 @@ extern int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level);
 extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV); 
 
 extern int IsIVect(NspObject *O);
+extern int nsp_ivect_count(NspIVect *iv);
+extern int nsp_ivect_count_with_min_max(NspIVect *iv, int *imin, int *imax);
+
 
 #endif
 

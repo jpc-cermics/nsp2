@@ -39,7 +39,7 @@
  * Return value: a #NspIVect or %NULL
  **/
 
-NspIVect *nsp_ivect_create(char *name, double first, double step, double last, int flag)
+NspIVect *nsp_ivect_create(char *name, int first, int step, int last, int flag)
 {
   NspIVect *IV = new_ivect();
   if ( IV == NULLIVECT) 
@@ -111,7 +111,7 @@ int nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
       return TRUE;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("IVect %s %f:%f:%f %d\n",NSP_OBJECT(IV)->name,
+  Sciprintf("IVect %s %d:%d:%d %d\n",NSP_OBJECT(IV)->name,
 	    IV->first,IV->step,IV->last,IV->flag);
   return TRUE;
 }
@@ -132,6 +132,69 @@ int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
   return TRUE;
 }
 
+
+int nsp_ivect_count(NspIVect *iv)
+{
+  if ( iv->step == 1 )
+    return Max(0, iv->last - iv->first + 1);
+
+  else if ( iv->step == -1 )
+    return Max(0, iv->first - iv->last + 1);
+
+  else if ( iv->step > 0 )
+    {
+      int delta = iv->last - iv->first;
+      return delta >= 0 ? delta/iv->step + 1 : 0;
+    }
+  else if ( iv->step < 0 )
+    {
+      int delta = iv->first - iv->last;
+      return delta >= 0 ? delta/(-iv->step) + 1 : 0;
+    }
+  else
+    return 0;
+}
+
+int nsp_ivect_count_with_min_max(NspIVect *iv, int *imin, int *imax)
+{
+  int count, delta;
+  if ( iv->step == 1 )
+    {
+      count = Max(0, iv->last - iv->first + 1);
+      *imin = iv->first;
+      *imax = iv->last;
+    }
+  else if ( iv->step == -1 )
+    {
+      count = Max(0, iv->first - iv->last + 1);
+      *imin = iv->last;
+      *imax = iv->first;
+    }
+  else if ( iv->step > 0 )
+    {
+      delta = iv->last - iv->first;
+      count = delta >= 0 ? delta/iv->step + 1 : 0;
+      *imin = iv->first;
+      *imax = iv->first + (count-1)*iv->step;
+    }
+  else if ( iv->step < 0 )
+    {
+      delta = iv->first - iv->last;
+      count = delta >= 0 ? delta/(-iv->step) + 1 : 0;
+      *imax = iv->first;
+      *imin = iv->first + (count-1)*iv->step;
+    }
+  else
+    {
+      count = 0;
+      *imin = 0;
+      *imax = 0;
+    }
+  
+  return count;
+}
+
+
 /**
  * nsp_ivect_2_mat:
  * @IV: 
@@ -142,28 +205,23 @@ int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
 
 NspMatrix *nsp_ivect_2_mat(NspIVect *IV)
 {
-  int i;
+  int i, count;
   NspMatrix *Loc;
-  double vals = IV->first;
-  int count=0;
-  if ( ( IV->first < IV->last && IV->step < 0 ) 
-       || ( IV->first >  IV->last && IV->step > 0 ) 
-       || IV->step == 0.00)
-    {
-      Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 0);
-      return(Loc);
-    }
-  /* counting **/
-  while ( vals <= IV->last ) { vals += IV->step ; count++;}
-  Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
-  if ( Loc == NULLMAT) return(NULLMAT);
-  for ( i=0 ; i < count; i++) 
-    {
-      Loc->R[i] = IV->first + ((double) i)*IV->step;
-    }
-  return(Loc);
-}
 
+  count = nsp_ivect_count(IV);
+  
+  if ( (Loc = nsp_matrix_create(NVOID, 'r', 1, count)) == NULLMAT )
+    return NULLMAT;
+
+  if ( count > 0 )
+    {
+      Loc->R[0] = (double) IV->first;
+      for ( i = 1 ; i < count ; i++ )
+	Loc->R[i] = Loc->R[i-1] + (double) IV->step;
+    }
+
+  return Loc;
+}
 
 
 

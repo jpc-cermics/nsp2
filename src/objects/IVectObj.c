@@ -80,7 +80,7 @@ NspTypeIVect *new_type_ivect(type_mode mode)
   top->sh_type = (sh_type_func *)nsp_ivect_type_short_string;
   top->info = (info_func *)nsp_ivect_info;  
   /* top->is_true = (is_true_func  *)nsp_ivect_is_true; */
-  /*top->loop =(loop_func *)nsp_ivect_loop;*/             
+  top->loop =(loop_func *)nsp_ivect_loop;             
   top->path_extract =  NULL;        
   top->get_from_obj = (get_from_obj_func *)nsp_ivect_object; 
   top->eq  = (eq_func *)nsp_ivect_eq;                       
@@ -176,6 +176,43 @@ static char *nsp_ivect_type_short_string(NspIVect *V)
   return(ivect_short_type_name);
 }
 
+
+/* used in for x=ivect ... **/
+NspObject *
+nsp_ivect_loop (char *str, NspObject * O, NspObject * O1, int i, int *rep)
+{
+  NspIVect *iv = (NspIVect *) O1;
+  NspMatrix *LoopVar = NULLMAT;
+  static int count=0;
+
+  if (O == NULLOBJ)
+    {
+      if ( (LoopVar = nsp_matrix_create(str, 'r', 1, 1)) == NULLMAT )
+	return NULLOBJ;
+      count = nsp_ivect_count(iv);  /* may be to be put outside (in case of change in the ivect...) */
+    }
+  else
+    {
+      if ( (LoopVar = matrix_object(O)) == NULLMAT )
+	return NULLOBJ;
+    }
+
+  if ( i > count )
+    {
+      *rep = RET_ENDFOR;
+      return NULLOBJ;
+    }
+  else
+    {
+      LoopVar->R[0] = (double) ( iv->first + (i-1)*iv->step );
+      if ( O == NULLOBJ )
+	return (NspObject *) LoopVar;
+      else
+	return O;
+    }
+}
+
+
 static int IVectFullComp(NspIVect * A,NspIVect * B,char *op,int *err)
 {
   Scierror("IVectFullComp: to be implemented \n");
@@ -208,9 +245,9 @@ static int nsp_ivect_xdr_save(XDR *xdrs, NspIVect *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(xdrs,M->first) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(xdrs,M->step) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(xdrs,M->last) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->first) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->step) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->last) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->flag) == FAIL) return FAIL;
   return OK;
 }
@@ -222,12 +259,12 @@ static int nsp_ivect_xdr_save(XDR *xdrs, NspIVect *M)
 static NspIVect *nsp_ivect_xdr_load(XDR *xdrs)
 {
   int flag;
-  double first,step,last;
+  int first,step,last;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(xdrs,&first) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(xdrs,&step) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(xdrs,&last) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_i(xdrs,&first) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_i(xdrs,&step) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_i(xdrs,&last) == FAIL) return NULLIVECT;
   if (nsp_xdr_load_i(xdrs,&flag) == FAIL) return NULLIVECT;
   return nsp_ivect_create(name,first,step,last,flag); 
 }
@@ -280,6 +317,20 @@ int IsIVect(NspObject *O)
 {
   return nsp_object_type(O , nsp_type_ivect_id);
 }
+/*
+ * Checks that first+i object on the stack 
+ * is a matrix and returns that matrix  
+ * (internal)
+ */
+
+static NspIVect *
+GetIVect (Stack stack, int i)
+{
+  NspIVect *IV;
+  if ((IV = nsp_ivect_object (NthObj (i))) == NULLIVECT)
+    ArgMessage (stack, i);
+  return IV;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the BMatrix 
@@ -306,20 +357,20 @@ int IsIVect(NspObject *O)
 
 static int int_column(Stack stack, int rhs, int opt, int lhs)
 {
-  double dfirst,step,last;
+  int dfirst,step,last;
   NspIVect *IV;
   CheckRhs(2,3);
   CheckLhs(1,1);
-  if (DoubleScalar(NthObj(1),&dfirst) == FAIL) return RET_BUG;
-  if ( rhs == 3 ) 
+  if (IntScalar(NthObj(1),&dfirst) == FAIL) return RET_BUG;
+  if ( rhs == 3 )
     {
-      if (DoubleScalar(NthObj(2),&step) == FAIL) return RET_BUG;
-      if (DoubleScalar(NthObj(3),&last) == FAIL) return RET_BUG;
+      if (IntScalar(NthObj(2),&step) == FAIL) return RET_BUG;
+      if (IntScalar(NthObj(3),&last) == FAIL) return RET_BUG;
     }
   else
     {
-      step = 1.0E0;
-      if (DoubleScalar(NthObj(2),&last) == FAIL) return RET_BUG;
+      step = 1;
+      if (IntScalar(NthObj(2),&last) == FAIL) return RET_BUG;
     }
   if ((IV =nsp_ivect_create(NVOID,dfirst,step,last,0) ) == NULLIVECT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) IV);
@@ -370,6 +421,193 @@ static int int_iv_2latextab(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int
+int_iv_create (Stack stack, int rhs, int opt, int lhs)
+{
+  int first, step, last;
+  NspIVect *IV;
+
+  CheckRhs (2, 3);
+  CheckLhs (1, 1);
+  if (GetScalarInt (stack, 1, &first) == FAIL)
+    return RET_BUG;
+  if ( rhs == 2)
+    step = 1;
+  else
+    if (GetScalarInt (stack, 2, &step) == FAIL)
+      return RET_BUG;
+  
+  if (GetScalarInt (stack, rhs, &last) == FAIL)
+    return RET_BUG;
+
+  if ((IV = nsp_ivect_create (NVOID, first, step, last, 0)) == NULLIVECT)
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) IV);
+  return 1;
+}
+
+
+int
+int_iv_extract_elts(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *X, *Res;
+  NspIVect *iv;
+  int i, j, count, imin, imax;
+
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ( ( X = GetMat(stack, 1) ) == NULLMAT )
+    return RET_BUG;
+
+  if ( ( iv = GetIVect(stack, 2) ) == NULLIVECT )
+    return RET_BUG;
+
+  count = nsp_ivect_count_with_min_max(iv, &imin, &imax);
+
+  if ( count == 0 )
+    {
+      if ( (Res =  nsp_matrix_create(NVOID, 'r', 0, 0)) == NULLMAT)  /* FIXME... */
+	return RET_BUG;
+    }
+  else
+    {
+      if ( imin < 1 || imax > X->mn )
+	{
+	  Scierror("Error:\tIndices out of bound\n");
+	  return RET_BUG;
+	}
+
+      if ( X->m == 1 && X->n > 1 )
+	{
+	  if ( (Res=nsp_matrix_create(NVOID, X->rc_type, 1, count)) == NULLMAT ) 
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( (Res=nsp_matrix_create(NVOID, X->rc_type, count, 1)) == NULLMAT ) 
+	    return RET_BUG;
+	}
+
+      if ( X->rc_type == 'r' )
+	{
+	  if ( iv->step == 1 )
+	    memcpy(Res->R, &(X->R[iv->first-1]), count*sizeof(double));
+	  else
+	    for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	      Res->R[i] = X->R[j];
+	}
+      else
+	{
+	  if ( iv->step == 1 )
+	    memcpy(Res->C, &(X->C[iv->first-1]), count*sizeof(doubleC));
+	  else
+	    for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	      Res->C[i] = X->C[j];
+	}
+    }
+
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+/*  X(i) = Y */
+int
+int_iv_insert_elts(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *X, *Y;
+  NspIVect *iv;
+  int i, j, count, imin, imax, is_scalar;
+
+  CheckRhs(3,3);
+  CheckLhs(0,0);
+
+  if ( ( X = GetMat(stack, 1) ) == NULLMAT )
+    return RET_BUG;
+
+  if ( ( iv = GetIVect(stack, 2) ) == NULLIVECT )
+    return RET_BUG;
+
+  if ( ( Y = GetMat(stack, 3) ) == NULLMAT )
+    return RET_BUG;
+
+  if ( Y->rc_type != X->rc_type ) /* pour faire simple */
+    {
+      Scierror("Error:\t currently arg1 and 3 must be both real or complex\n");
+      return RET_BUG;
+    }
+
+  if ( (Y->mn != 0) && (Y->m != 1 && Y->n != 1) ) 
+    {
+      Scierror("Error:\t arg3 should be a vector");
+      return RET_BUG;
+    }
+
+
+  is_scalar = Y->mn == 1;
+
+  count = nsp_ivect_count_with_min_max(iv, &imin, &imax);
+
+  if ( ! is_scalar )
+    {
+      if ( Y->mn != count )
+	{
+	  Scierror("Error:\t arg2 and arg3 incompatible\n");
+	  return RET_BUG;
+	}
+      if ( X->m == 1 && X->n > 1 && Y->m != 1 )
+	{
+	  Scierror("Error:\t arg3 should be row when arg1 is a row\n");
+	  return RET_BUG;
+	}
+      if ( X->n == 1 && X->m > 1 && Y->n != 1 )
+	{
+	  Scierror("Error:\t arg3 should be column when arg1 is a column\n");
+	  return RET_BUG;
+	}
+    }
+
+  if ( imin < 1 || imax > X->mn )  /* pour faire simple */
+    {
+      Scierror("Error:\t indices out of bounds\n");
+      return RET_BUG;
+    }
+
+  if ( is_scalar )
+    {
+      if ( X->rc_type == 'r' )
+	for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	  X->R[j] = Y->R[0];
+      else
+	for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	  X->C[j] = Y->C[0];
+
+    }
+  else
+    {
+      if ( X->rc_type == 'r' )
+	{
+	if ( iv->step == 1 )
+	  memcpy(&(X->R[iv->first-1]), Y->R, count*sizeof(double));
+	else
+	  for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	    X->R[j] = Y->R[i];
+	}
+      else
+	{
+	if ( iv->step == 1 )
+	  memcpy(&(X->C[iv->first-1]), Y->C, count*sizeof(doubleC));
+	else
+	  for ( i = 0, j = iv->first-1 ; i < count ; i++, j+=iv->step )
+	    X->C[j] = Y->C[i];
+	}
+    }
+
+  return 0;
+}
+
+
 /*
  * The Interface for basic IVect operations 
  */
@@ -379,6 +617,10 @@ static OpTab IVect_func[]={
   {"latextab_iv",int_iv_2latextab},
   {"column",int_column},
   {"iv2mat",int_iviv2mat},
+  {"iv_create_m_m",int_iv_create},
+  {"ivc_m_m",int_iv_create},
+  {"ivextr_m_iv",int_iv_extract_elts},
+  {"ivset_m_iv",int_iv_insert_elts},
   {(char *) 0, NULL}
 };
 
@@ -395,7 +637,6 @@ void IVect_Interf_Info(int i, char **fname, function (**f))
   *fname = IVect_func[i].name;
   *f = IVect_func[i].fonc;
 }
-
 
 
 
