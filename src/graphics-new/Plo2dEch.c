@@ -602,7 +602,7 @@ void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax,
     }
   if (logf[1] == 'n') 
     {
-      if ( FRectI[0]*FRectI[2] < 0 ) 
+      if ( FRectI[1]*FRectI[3] < 0 ) 
 	{
 	  double ymin,ymax;
 	  /* if zero is inside frect we try to find a graduation with zero inside */
