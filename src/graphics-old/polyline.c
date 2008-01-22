@@ -13,8 +13,11 @@
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
 
-#line 18 "polyline.c"
+#line 21 "polyline.c"
 
 /* ----------- Polyline ----------- */
 
@@ -85,11 +88,14 @@ NspTypePolyline *new_type_polyline(type_mode mode)
       
   type->init = (init_func *) init_polyline;
 
-#line 16 "polyline.override"
+#line 19 "polyline.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
 
-#line 93 "polyline.c"
+#line 99 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -521,7 +527,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 29 "polyline.override"
+#line 35 "polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -533,7 +539,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 537 "polyline.c"
+#line 543 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -567,17 +573,17 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
 Polyline_register_classes(NspObject *d)
 {
 
-#line 11 "polyline.override"
+#line 14 "polyline.override"
 
 Init portion 
 
 
-#line 576 "polyline.c"
+#line 582 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 55 "polyline.override"
+#line 61 "polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -588,5 +594,45 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
   Xgc->graphic_engine->scale->fillpolyline(Xgc,M->R,M->R+M->m,M->m,1);
 }
 
+static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  int i; 
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) += tr[0];
+      *(y++) += tr[1];
+    }
+}
 
-#line 593 "polyline.c"
+static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m,x1,y1;
+  for ( i=0; i < M->m ; i++) 
+    {
+      x1 = R[0]*(*x) -R[1]*(*y);
+      y1 = R[1]*(*x) +R[0]*(*y);
+      *(x++) =x1;
+      *(y++) =y1;
+    }
+}
+
+static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) *= alpha[0];
+      *(y++) *= alpha[1];
+    }
+}
+
+#line 639 "polyline.c"

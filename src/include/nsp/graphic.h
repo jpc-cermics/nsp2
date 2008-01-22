@@ -18,13 +18,26 @@
 typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
+
+#line 25 "graphic.override"
+
 typedef void draw_func(BCG *Xgc,NspGraphic *o);
+typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
+typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
+typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
 
 struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
+  
+#line 18 "graphic.override"
+
   draw_func *draw; 
+  translate_func *translate;
+  rotate_func *rotate;
+  scale_func *scale;
+
 };
 
 typedef struct _nsp_graphic nsp_graphic;

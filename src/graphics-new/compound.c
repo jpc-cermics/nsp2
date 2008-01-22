@@ -649,6 +649,7 @@ Init portion
 }
 */
 
+#line 55 "compound.override"
 
 /* inserted verbatim at the end */
 
@@ -708,3 +709,4 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj)
   
   */
 
+#line 713 "compound.c"

@@ -18,10 +18,12 @@
 typedef struct _NspPolyline NspPolyline ;
 typedef struct _NspTypePolyline NspTypePolyline ;
 
+
 struct _NspTypePolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
+  
 };
 
 typedef struct _nsp_polyline nsp_polyline;
