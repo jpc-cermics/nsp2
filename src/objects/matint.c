@@ -3594,31 +3594,33 @@ NspObject * nsp_matint_canonic(NspObject *obj)
   return obj;
 }
 
-
-
+/* basic function accessed through copy_ind method of 
+ * matint interface 
+ */ 
 
 
 int nsp_matint_basic_copy_pointer(const NspTypeBase *type,NspObject *A,NspObject *B, 
 				  const int *ind, int nb_elts)
 {
   char *from = (char *) ((NspSMatrix *) A)->S, *to = (char *)((NspSMatrix *) B)->S;
-  int i, j, k;
-  char **fromv = (char **) from, **tov = (char **) to, *elt;
-  for ( j = 0, k = 0 ; j < ((NspSMatrix *) A)->n ; j++ )
+  int i, j;
+  char **fromv = (char **) from, **fromv1 = fromv, **tov = (char **) to, *elt;
+  for ( j = 0 ; j < ((NspSMatrix *) A)->n ; j++ )
     {
-      int jm = j*((NspSMatrix *) A)->m;
-      for ( i = 0 ; i < nb_elts ; i++, k++ )
+      for ( i = 0 ; i < nb_elts ; i++ )
 	{
-	  if ( fromv[ind[i] + jm] != NULL )   /* just for cells which may have undefined elements */
+	  char *fromvi = fromv1[ind[i]];
+	  if ( fromvi != NULL )   /* just for cells which may have undefined elements */
 	    {
-	      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[ind[i] + jm])) == NULL )
+	      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromvi)) == NULL )
 		{
 		  nsp_object_destroy(&B); 
 		  return FAIL;
 		}
-	      tov[k] = elt;
+	      *(tov++) = elt;
 	    }
 	}
+      fromv1 += ((NspMatrix *) A)->m;
     }
   return OK;
 }
@@ -3626,25 +3628,25 @@ int nsp_matint_basic_copy_pointer(const NspTypeBase *type,NspObject *A,NspObject
 int nsp_matint_basic_copy_mat(const NspTypeBase *type,NspObject *A,NspObject *B, 
 			      const int *ind, int nb_elts)
 {
-  int i, j, k;
+  int i, j;
   if ( ((NspMatrix *) A)->rc_type == 'r') 
     {
-      double *from = ((NspMatrix *) A)->R, *to = ((NspMatrix *) B)->R;
-      for ( j = 0, k = 0 ; j < ((NspMatrix *) A)->n ; j++ )
+      double *from = ((NspMatrix *) A)->R,*from1 = from, *to = ((NspMatrix *) B)->R;
+      for ( j = 0 ; j < ((NspMatrix *) A)->n ; j++ )
 	{
-	  int jm = j*((NspMatrix *) A)->m;
-	  for ( i = 0 ; i < nb_elts ; i++, k++ )
-	    to[k] = from[ind[i]+ jm];
+	  for ( i = 0 ; i < nb_elts ; i++ )
+	    *(to++) = from1[ind[i]];
+	  from1 += ((NspMatrix *) A)->m;
 	}
     }
   else 
     {
-      doubleC *from = ((NspMatrix *) A)->C, *to = ((NspMatrix *) B)->C;
-      for ( j = 0, k = 0 ; j < ((NspMatrix *) A)->n ; j++ )
+      doubleC *from = ((NspMatrix *) A)->C,*from1 = from, *to = ((NspMatrix *) B)->C;
+      for ( j = 0 ; j < ((NspMatrix *) A)->n ; j++ )
 	{
-	  int jm = j*((NspMatrix *) A)->m;
-	  for ( i = 0 ; i < nb_elts ; i++, k++ )
-	    to[k] = from[ind[i]+ jm];
+	  for ( i = 0 ; i < nb_elts ; i++ )
+	    *(to++) = from1[ind[i]];
+	  from1 += ((NspMatrix *) A)->m;
 	}
     }
   return OK;
@@ -3654,13 +3656,13 @@ int nsp_matint_basic_copy_mat(const NspTypeBase *type,NspObject *A,NspObject *B,
 int nsp_matint_basic_copy_int(const NspTypeBase *type,NspObject *A, NspObject *B, 
 			      const int *ind, int nb_elts)
 {
-  int i, j, k;
-  int *from = ((NspBMatrix *) A)->B, *to = ((NspBMatrix *) B)->B;
-  for ( j = 0, k = 0 ; j < ((NspSMatrix *) A)->n ; j++ )
+  int i, j;
+  int *from = ((NspBMatrix *) A)->B,*from1 = from, *to = ((NspBMatrix *) B)->B;
+  for ( j = 0 ; j < ((NspSMatrix *) A)->n ; j++ )
     {
-      int jm = j*((NspSMatrix *) A)->m;
-      for ( i = 0 ; i < nb_elts ; i++, k++ )
-	to[k] = from[ind[i]+ jm];
+      for ( i = 0 ; i < nb_elts ; i++ )
+	*(to++) = from1[ind[i]];
+      from1 += ((NspMatrix *) A)->m;
     }
   return OK;
 }
