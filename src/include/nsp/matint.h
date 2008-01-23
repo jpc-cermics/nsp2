@@ -19,6 +19,11 @@ typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 typedef NspObject * matint_canonic(NspObject *obj);
 
+/* #define COPY_IND */
+
+typedef int matint_basic_copy_ind(const NspTypeBase *type,NspObject *A,NspObject *B, 
+				  const int *ind, int nb_elts);
+
 typedef struct _NspTypeMatint NspTypeMatint ; 
 
 struct _NspTypeMatint {
@@ -32,6 +37,7 @@ struct _NspTypeMatint {
   matint_copy_elt *copy_elt;
   matint_enlarge *enlarge;
   matint_canonic *canonic;
+  matint_basic_copy_ind *copy_ind;
 };
 
 #define MAT_INT(t) ((NspTypeMatint *) t)
@@ -103,6 +109,15 @@ extern int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_tozero(Stack stack, int rhs, int opt, int lhs);
 extern NspObject * nsp_matint_canonic(NspObject *obj);
 extern int int_matint_isvector(Stack stack, int rhs, int opt, int lhs);
+
+extern int nsp_matint_basic_copy_pointer(const NspTypeBase *type,NspObject *A,NspObject *B, 
+				  const int *ind, int nb_elts);
+extern int nsp_matint_basic_copy_mat(const NspTypeBase *type,NspObject *A,NspObject *B, 
+				     const int *ind, int nb_elts);
+extern int nsp_matint_basic_copy_int(const NspTypeBase *type,NspObject *A, NspObject *B, 
+				     const int *ind, int nb_elts);
+extern int nsp_matint_basic_copy(const NspTypeBase *type,NspObject *A, NspObject *B, 
+				 const int *ind, int nb_elts);
 
 #endif 
 

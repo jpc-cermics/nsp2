@@ -119,7 +119,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
   mati->enlarge = (matint_enlarge *) nsp_bmatrix_enlarge;
   mati->canonic =  nsp_matint_canonic;
-
+  mati->copy_ind = nsp_matint_basic_copy_int;
   type->interface = (NspTypeBase *) mati;
   
   if ( nsp_type_bmatrix_id == 0 ) 

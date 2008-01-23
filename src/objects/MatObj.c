@@ -140,6 +140,7 @@ new_type_matrix (type_mode mode)
   mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
   mati->enlarge = (matint_enlarge *) nsp_matrix_enlarge;
   mati->canonic = (matint_canonic *) Mat2double;
+  mati->copy_ind = nsp_matint_basic_copy_mat;
   /* mati->copy = (matint_copy *) nsp_matrix_copy_area; */
 
 

@@ -126,7 +126,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   mati->copy_elt = (matint_copy_elt *) nsp_string_copy; 
   mati->enlarge = (matint_enlarge *) nsp_smatrix_enlarge;
   mati->canonic =  nsp_matint_canonic;
-
+  mati->copy_ind = nsp_matint_basic_copy_pointer;
   type->interface = (NspTypeBase *) mati;
 
   if ( nsp_type_smatrix_id == 0 ) 
