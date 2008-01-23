@@ -1114,24 +1114,33 @@ static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts,  const
     {
       if ( elt_size == sizeof(double) )
 	{
-	  double *fromd = (double *) from, *tod = (double *) to;
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )
-	    for ( i = 0 ; i < nb_elts ; i++, k++ )
-	      tod[k] = fromd[ind[i]+ j*A->m];
+	  double *fromd = (double *) from,*fromd1 = fromd, *tod = ((double *) to);
+	  for ( j = 0 ; j < A->n ; j++ )
+	    {
+	      for ( i = 0 ; i < nb_elts ; i++ )
+		*(tod++) = fromd1[ind[i]];
+	      fromd1 += A->m;
+	    }
 	}
       else if ( elt_size == sizeof(doubleC) )
 	{
-	  doubleC *fromc = (doubleC *) from, *toc = (doubleC *) to;
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )
-	    for ( i = 0 ; i < nb_elts ; i++, k++ )
-	      toc[k] = fromc[ind[i]+ j*A->m];
+	  double *fromd = (double *) from,*fromd1 = fromd, *tod = ((double *) to);
+	  for ( j = 0 ; j < A->n ; j++ )
+	    {
+	      for ( i = 0 ; i < nb_elts ; i++ )
+		*(tod++) = fromd1[ind[i]];
+	      fromd1 += A->m;
+	    }
 	}
       else if ( elt_size == sizeof(int) )
 	{
-	  int *fromi = (int *) from, *toi = (int *) to;
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )
-	    for ( i = 0 ; i < nb_elts ; i++, k++ )
-	      toi[k] = fromi[ind[i]+ j*A->m];
+	  int *fromi = ((int *) from),*fromi1 = fromi, *toi = ((int *) to);
+	  for ( j = 0 ; j < A->n ; j++ )
+	    {
+	      for ( i = 0 ; i < nb_elts ; i++ )
+		*(toi++) = fromi1[ind[i]];
+	      fromi1 += A->m;
+	    }
 	}
       else
 	{
