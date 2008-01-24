@@ -18,17 +18,7 @@ typedef NspObject *matint_clone(const char *name,const void *M, int m,int n, int
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 typedef NspObject * matint_canonic(NspObject *obj);
-
-/* #define COPY_IND */
-/* #define COPY_IND1 */
-
-
-#ifdef COPY_IND1 
-typedef int matint_basic_copy_ind(const NspTypeBase *type,NspObject *A,NspObject *B, 
-				  const int *ind, int nb_elts);
-#else 
 typedef int matint_basic_copy_ind(void);
-#endif 
 
 typedef struct _NspTypeMatint NspTypeMatint ; 
 
@@ -108,6 +98,11 @@ extern int int_matint_extract(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_extractcols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_extractelts(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_extractrows(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractrows_mat(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractrows_int(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractrows_gen(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_extractrows_pointer(Stack stack, int rhs, int opt, int lhs);
+
 extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_repmat(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_resize2vect(Stack stack, int rhs, int opt, int lhs);
