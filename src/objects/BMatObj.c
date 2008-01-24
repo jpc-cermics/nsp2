@@ -1086,7 +1086,7 @@ static OpTab BMatrix_func[]={
   {"extract_b", int_matint_extract}, 
   {"extractelts_b", int_matint_extractelts}, 
   {"extractcols_b", int_matint_extractcols}, 
-  {"extractrows_b", int_matint_extractrows}, 
+  {"extractrows_b", int_matint_extractrows_int}, 
   {"resize2vect_b", int_matint_resize2vect},
   {"setrowscols_b", int_matint_setrowscols},
   {"deleteelts_b", int_matint_deleteelts},

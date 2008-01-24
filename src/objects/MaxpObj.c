@@ -2277,7 +2277,7 @@ static OpWrapTab Matrix_func[]={
   {"extract_mp", int_matint_extract}, 
   {"extractelts_mp", int_matint_extractelts}, 
   {"extractcols_mp", int_matint_extractcols}, 
-  {"extractrows_mp", int_matint_extractrows}, 
+  {"extractrows_mp", int_matint_extractrows_mat}, 
   {"resize2vect_mp", int_matint_resize2vect},
   {"setrowscols_mp", int_matint_setrowscols},
   {"deleteelts_mp", int_matint_deleteelts},

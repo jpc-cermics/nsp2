@@ -1854,7 +1854,7 @@ static OpTab SMatrix_func[]={
   {"extract_s", int_matint_extract}, 
   {"extractelts_s", int_matint_extractelts}, 
   {"extractcols_s", int_matint_extractcols}, 
-  {"extractrows_s", int_matint_extractrows}, 
+  {"extractrows_s", int_matint_extractrows_pointer}, 
   {"resize2vect_s", int_matint_resize2vect},
   {"setrowscols_s", int_matint_setrowscols},
   {"deleteelts_s", int_matint_deleteelts},

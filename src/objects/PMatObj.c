@@ -813,7 +813,7 @@ static OpTab PMatrix_func[]={
   {"extract_p", int_matint_extract}, 
   {"extractelts_p", int_matint_extractelts}, 
   {"extractcols_p", int_matint_extractcols}, 
-  {"extractrows_p", int_matint_extractrows}, 
+  {"extractrows_p", int_matint_extractrows_pointer}, 
   {"resize2vect_p", int_matint_resize2vect},
   {"setrowscols_p", int_matint_setrowscols},
   {"deleteelts_p", int_matint_deleteelts},

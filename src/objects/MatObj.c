@@ -4897,7 +4897,7 @@ static OpTab Matrix_func[] = {
   {"extract_m", int_matint_extract}, 
   {"extractelts_m", int_matint_extractelts}, 
   {"extractcols_m", int_matint_extractcols}, 
-  {"extractrows_m", int_matint_extractrows}, 
+  {"extractrows_m", int_matint_extractrows_mat}, 
   {"resize2vect_m", int_matint_resize2vect},
   {"setrowscols_m", int_matint_setrowscols},
   {"deleteelts_m", int_matint_deleteelts},

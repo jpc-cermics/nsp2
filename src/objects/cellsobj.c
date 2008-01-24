@@ -1237,7 +1237,7 @@ static OpTab Cells_func[]={
   {"extract_ce", int_matint_extract}, 
   {"extractelts_ce", int_matint_extractelts}, 
   {"extractcols_ce", int_matint_extractcols}, 
-  {"extractrows_ce", int_matint_extractrows}, 
+  {"extractrows_ce", int_matint_extractrows_pointer}, 
   {"resize2vect_ce", int_matint_resize2vect},
   {"setrowscols_ce", int_matint_setrowscols},
   {"deleteelts_ce", int_matint_deleteelts},
