@@ -1,3 +1,8 @@
+2008-02-04  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+	* src/libinteg/integ-IN.c (int_intg + others): add intg
+	* src/libinteg/dqags.f: re-introduce author names
+        * man/src/misc/intg.tex: intg man page
+	
 2008-01-21  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libfft/fft-IN.c: add new fft interfaces (fftnew,

@@ -1,0 +1,110 @@
+% -*- mode: latex -*-
+
+\mansection{intg}
+\begin{mandesc}
+  \short{intg}{one dimensional integration over a finite interval}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f)
+[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=L)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a,b}:  real scalars defining the integration interval
+    \vname{f}: nsp function defining the function to integrate
+    \vname{atol=ea}: optional named argument, requested absolute error
+                      on the result (default is 1e-14)
+    \vname{rtol=er}: optional named argument, requested relative error
+                      on the result (default is 1e-8).
+    \vname{args=L}: optional named argument, useful to pass
+    additional parameters needed the function f.
+    \vname{Ia}: computed approximate result
+    \vname{ea_estim}: estimated error
+    \vname{ier}: scalar given some information about the computation.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an approximation $I_a$ of:
+$$
+   I = \int_a^b f(x) dx
+$$
+such that:
+$$
+   | I - I_a | \le  max(atol, rtol*|I|)
+$$
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args+ which must be a
+list. \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
+\verb+ier+ variable could take values from 0 to 5: 
+\begin{itemize}
+\item ier = 0,  normal and reliable termination of the routine. It is assumed that the
+      requested  accuracy has been achieved.
+\item other values correspond to an abnormal termination of the routine. The estimates
+      for integral and error are less reliable. It is assumed that the  requested accuracy
+      has not been achieved:
+      \begin{itemize}
+      \item ier = 1: maximum number of subdivisions (750) allowed has been achieved. Generally
+            it is advised to have a close look at the
+            integrand, in order to determine the integration
+            difficulties. If the position of a local difficulty can
+            be determined (i.e.  singularity, discontinuity within
+            the interval) one will probably gain from  splitting up
+            the interval at this point and calling the integrator
+            on the sub-ranges. If possible, an appropriate
+            special-purpose integrator should be used which is
+            designed for handling the type  of difficulty involved.
+      \item ier = 2: the occurrence of roundoff error is detected
+            which prevents the requested tolerance from being
+            achieved. The error may be under-estimated.
+      \item ier = 3: extremely bad integrand behaviour occurs at 
+            some interior points of the integration interval.
+      \item ier = 4: it is presumed that the requested tolerance 
+            cannot be achieved, and that the returned result is the
+            best which can be obtained.
+      \item ier = 5: the integral is probably divergent, or slowly
+            convergent. It must be noted that divergency can occur with
+            any other value of ier.
+      \end{itemize}
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example 1} a simple example 
+\begin{program}\HCode{function y=f1(x);y=exp(x);endfunction\Hnewline
+[I,ea] = intg(0,1,f1)\Hnewline
+abs(I-\%e-1) //near exact absolute error}
+\end{program}
+  
+\paragraph{example 2} comparizon with the error function
+\begin{program}\HCode{function y=f2(x);y=2*exp(-x^2)/sqrt(\%pi);endfunction\Hnewline
+[Ia,ea] = intg(0,0.5,f2)\Hnewline
+I = erf(0.5)\Hnewline
+abs(I - Ia)}
+\end{program}
+  
+\paragraph{example 3} passing extra parameters
+\begin{program}\HCode{function y=g(x,L);p1=L(1);p2=L(2);y=p1*x + sin(p2*x);endfunction\Hnewline
+[Ia,ea] = intg(0,2*\%pi,g,args=list(1,1))\Hnewline
+// here the exact result should be 2*pi^2\Hnewline
+abs(Ia - 2*\%pi^2)}
+\end{program}
+  
+\end{examples}
+
+\begin{manseealso}
+  \manlink{ode}{ode}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  uses the routine dqags (Robert Piessens and Elise de Doncker) from
+  quadpack. Nsp interface: Bruno Pincon.
+\end{authors}

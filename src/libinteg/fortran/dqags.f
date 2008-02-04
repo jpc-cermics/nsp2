@@ -11,6 +11,13 @@ c           integral of /f/ over (a,b), hopefully
 c           satisfying following claim for accuracy .
 c           abs(i-result) .le. max(epsabs,epsrel*abs(i)).
 c
+C***AUTHOR  Piessens, Robert
+C             Applied Mathematics and Programming Division
+C             K. U. Leuven
+C           de Doncker, Elise
+C             Applied Mathematics and Programming Division
+C             K. U. Leuven
+c
 c          calling sequence
 c           call dqags (f,a,b,epsabs,epsrel,alist,blist,elist,
 c                        rlist,limit,iord,liord,result,abserr,ier)
@@ -97,8 +104,7 @@ c                         = 5 the integral is probably divergent, or
 c                             slowly convergent. it must be noted
 c                             that divergency can occur
 c                             with any other value of ier.
-c                         = -1 an error occurs during the evaluati
-c                             -on of f
+c                         = 6 an error occurs during the evaluation of f
 c     **********************************************************
 c     .. scalar arguments ..
       double precision a, abserr, b, epsabs, epsrel, result
