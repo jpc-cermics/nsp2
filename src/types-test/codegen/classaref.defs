@@ -1,0 +1,36 @@
+;; -*- scheme -*-
+
+(include "classaref-types.defs")
+
+(define-method classa_color_change
+  (of-object "ClassARef")
+  (c-name "classa_color_change")
+  (return-type "int")
+  (parameters
+    '("int" "color")
+  )
+)
+
+(define-method classa_color_show
+  (of-object "ClassARef")
+  (c-name "classa_color_show")
+  (return-type "none")
+  (parameters
+    '("int" "color")
+  )
+)
+
+(define-function clareftest
+  (c-name "clareftest")
+  (return-type "gboolean")
+  (parameters
+    '("ClassARef" "A")
+  )
+)
+
+;; this function is redirected to int_set_attribute 
+
+(define-function setrowscols_classaref
+  (c-name "setrowscols_classaref")
+  (return-type "none")
+)

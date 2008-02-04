@@ -1,0 +1,59 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override classa_color_change kwargs
+static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->cla_color = color;
+  return 0;
+}
+%%
+override classa_color_show kwargs
+static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->cla_color);
+  return 0;
+}
+%%
+override setrowscols_classa kwargs 
+static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
+{
+  return int_set_attribute(stack,rhs,opt,lhs);
+}
+%%
+override clatest kwargs 
+/* XXXX : the generated code should be corrected */
+static int clatest(NspClassA *A)
+{
+  nsp_object_print((NspObject *) A,0,NULL,0);
+  return TRUE;
+}
+
+static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  int ret;
+  NspObject *A;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_classa, &A) == FAIL) return RET_BUG;
+  ret = clatest((NspClassA *) A);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}

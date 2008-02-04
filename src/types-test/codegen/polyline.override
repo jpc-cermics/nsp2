@@ -1,0 +1,142 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/polyline.h"
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type Polyline
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override polyline_attach kwargs
+int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override umfpack_action_do_action
+
+static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
+{
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+}
+
+static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  int i; 
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) += tr[0];
+      *(y++) += tr[1];
+    }
+}
+
+static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m,x1,y1;
+  for ( i=0; i < M->m ; i++) 
+    {
+      x1 = R[0]*(*x) -R[1]*(*y);
+      y1 = R[1]*(*x) +R[0]*(*y);
+      *(x++) =x1;
+      *(y++) =y1;
+    }
+}
+
+static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) *= alpha[0];
+      *(y++) *= alpha[1];
+    }
+}
+
+/* compute in bounds the enclosing rectangle of polyline 
+ *
+ */
+
+static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m, dval;
+  bounds[0]=*x;/* xmin */
+  bounds[1]=*y;/* ymin */
+  bounds[2]=*x;/* xmax */
+  bounds[3]=*y;/* ymax */
+  for (i = 1; i < M->m; i++)
+    {
+      dval = x[i];
+      if ( dval > bounds[2] )
+	bounds[2] = dval;
+      else if ( dval < bounds[0] )
+	bounds[0] = dval;
+      dval = y[i];
+      if ( dval > bounds[3] )
+	bounds[3] = dval;
+      else if ( dval < bounds[1] )
+	bounds[1] = dval;
+    }
+}
+

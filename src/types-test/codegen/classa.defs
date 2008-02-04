@@ -1,0 +1,37 @@
+;; -*- scheme -*-
+
+(include "classa-types.defs")
+
+(define-method classa_color_change
+  (of-object "ClassA")
+  (c-name "classa_color_change")
+  (return-type "int")
+  (parameters
+    '("int" "color")
+  )
+)
+
+(define-method classa_color_show
+  (of-object "ClassA")
+  (c-name "classa_color_show")
+  (return-type "none")
+  (parameters
+    '("int" "color")
+  )
+)
+
+(define-function clatest
+  (c-name "clatest")
+  (return-type "gboolean")
+  (parameters
+    '("ClassA" "A")
+  )
+)
+
+
+;; this function is redirected to int_set_attribute 
+
+(define-function setrowscols_classa
+  (c-name "setrowscols_classa")
+  (return-type "none")
+)

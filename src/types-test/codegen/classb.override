@@ -1,0 +1,35 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+%%
+init 
+
+/ * init * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+%%
+ignore-glob
+  *_get_type
+
+%%
+override classb_color_change kwargs
+static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->clb_color = color;
+  return 0;
+}
+%%
+override classb_color_show kwargs
+static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->clb_color);
+  return 0;
+}
+
+

@@ -1,0 +1,20 @@
+;; -*- scheme -*-
+
+(define-object ClassA
+  (in-module "ClassA")
+  (parent "Object")
+  (c-name "ClassA")
+  (fields
+   ;; "hidden" can be used is the field is to be excluded 
+   ;; from the get/set table 
+   ;; '("int" "cla_color" "hidden")
+   '("int" "cla_color")
+   '("int" "cla_thickness")
+   '("NspMatrix*" "cla_val")
+   '("NspBMatrix*" "cla_bval")
+   '("NspList*" "cla_lval")
+   )
+  (gtype-id "ClassA")
+)
+
+

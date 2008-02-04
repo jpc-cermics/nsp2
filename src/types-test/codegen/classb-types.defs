@@ -1,0 +1,17 @@
+;; -*- scheme -*-
+
+(define-object ClassB
+  (in-module "ClassB")
+  (parent "ClassA")
+  (c-name "ClassB")
+  (fields
+   '("int" "clb_color")
+   '("int" "clb_thickness")
+   '("NspMatrix*" "clb_val")
+   )
+  (gtype-id "ClassB")
+)
+
+
+
+

@@ -1,0 +1,19 @@
+;; -*- scheme -*-
+
+(define-objectref Compound
+  (in-module "Compound")
+  (parent "Graphic")
+  (c-name "Compound")
+  (fields
+    '("NspMatrix*" "frect")
+    '("NspMatrix*" "wrect")
+    '("NspMatrix*" "elts_bounds")
+    '("NspList*" "elts")
+    '("double" "alpha")
+    )
+  (gtype-id "Compound")
+)
+
+
+
+

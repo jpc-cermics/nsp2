@@ -535,7 +535,7 @@ static int _wrap_classaref_set_cla_val(void *self, char *attr, NspObject *O)
   if ( ! IsMat(O) ) return FAIL;
   if ((cla_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassARef *) self)->obj->cla_val != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspClassARef *) self)->obj->cla_val);
+    nsp_matrix_destroy(((NspClassARef *) self)->obj->cla_val);
   ((NspClassARef *) self)->obj->cla_val = cla_val;
   return OK;
 }

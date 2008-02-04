@@ -1,0 +1,17 @@
+;; -*- scheme -*-
+
+(define-objectref ClassBRef
+  (in-module "ClassBRef")
+  (parent "ClassARef")
+  (c-name "ClassBRef")
+  (fields
+   '("int" "clb_color")
+   '("int" "clb_thickness")
+   '("NspMatrix*" "clb_val")
+   )
+  (gtype-id "ClassBRef")
+)
+
+
+
+

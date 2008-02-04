@@ -1,0 +1,15 @@
+;; -*- scheme -*-
+
+(define-objectref ClassARef
+  (in-module "ClassARef")
+  (parent "Object")
+  (c-name "ClassARef")
+  (fields
+    '("int" "cla_color")
+    '("int" "cla_thickness")
+    '("NspMatrix*" "cla_val")
+    )
+  (gtype-id "ClassARef")
+)
+
+

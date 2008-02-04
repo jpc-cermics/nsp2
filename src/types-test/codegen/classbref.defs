@@ -1,0 +1,24 @@
+;; -*- scheme -*-
+
+(include "classbref-types.defs")
+
+(define-method classb_color_change
+  (of-object "ClassBRef")
+  (c-name "classb_color_change")
+  (return-type "int")
+  (parameters
+    '("gint" "color")
+  )
+)
+
+(define-method classb_color_show
+  (of-object "ClassBRef")
+  (c-name "classb_color_show")
+  (return-type "none")
+  (parameters
+    '("gint" "color")
+  )
+)
+
+
+

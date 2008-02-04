@@ -1,0 +1,48 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+%%
+init 
+
+GLURP 
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+%%
+ignore-glob
+  *_get_type
+%%
+override_internal_methods
+
+  draw_func *draw; 
+  translate_func *translate;
+  rotate_func *rotate;
+  scale_func *scale;
+%%
+override_internal_methods_protos
+
+typedef void draw_func(BCG *Xgc,NspGraphic *o);
+typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
+typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
+typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
+%%
+override atk_relation_new kwargs
+static int
+_wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
+{
+
+}
+%%
+override umfpack_action_do_action
+
+static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}

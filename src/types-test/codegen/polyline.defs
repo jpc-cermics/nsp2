@@ -1,0 +1,17 @@
+;; -*- scheme -*-
+
+(include "polyline-types.defs")
+
+
+
+;; overriden 
+
+(define-function polyline_attach
+  (c-name "polyline_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+

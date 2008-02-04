@@ -549,7 +549,7 @@ static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
   if ( ! IsMat(O) ) return FAIL;
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassBRef *) self)->obj->clb_val != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspClassBRef *) self)->obj->clb_val);
+    nsp_matrix_destroy(((NspClassBRef *) self)->obj->clb_val);
   ((NspClassBRef *) self)->obj->clb_val = clb_val;
   return OK;
 }

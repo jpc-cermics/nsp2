@@ -1,0 +1,16 @@
+;; -*- scheme -*-
+
+(define-objectref Polyline
+  (in-module "Polyline")
+  (parent "Graphic")
+  (c-name "Polyline")
+  (fields
+    '("int" "color")
+    '("NspMatrix*" "Pts")
+    )
+  (gtype-id "Polyline")
+)
+
+
+
+

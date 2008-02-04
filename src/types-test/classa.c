@@ -585,7 +585,7 @@ static int _wrap_classa_set_cla_val(void *self, char *attr, NspObject *O)
   if ( ! IsMat(O) ) return FAIL;
   if ((cla_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassA *) self)->cla_val != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspClassA *) self)->cla_val);
+    nsp_matrix_destroy(((NspClassA *) self)->cla_val);
   ((NspClassA *) self)->cla_val = cla_val;
   return OK;
 }
@@ -613,7 +613,7 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   if ( ! IsBMat(O) ) return FAIL;
   if ((cla_bval = (NspBMatrix *) nsp_object_copy_and_name(attr,O)) == NULLBMAT) return FAIL;
   if (((NspClassA *) self)->cla_bval != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspClassA *) self)->cla_bval);
+    nsp_bmatrix_destroy(((NspClassA *) self)->cla_bval);
   ((NspClassA *) self)->cla_bval = cla_bval;
   return OK;
 }
@@ -641,7 +641,7 @@ static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
   if ( ! IsList(O) ) return FAIL;
   if ((cla_lval = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspClassA *) self)->cla_lval != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspClassA *) self)->cla_lval);
+    nsp_list_destroy(((NspClassA *) self)->cla_lval);
   ((NspClassA *) self)->cla_lval = cla_lval;
   return OK;
 }

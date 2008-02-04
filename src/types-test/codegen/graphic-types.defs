@@ -1,0 +1,15 @@
+;; -*- scheme -*-
+
+(define-objectref Graphic
+  (in-module "Graphic")
+  (parent "Object")
+  (c-name "Graphic")
+  (fields
+    '("int" "color")
+    )
+  (gtype-id "Graphic")
+)
+
+
+
+

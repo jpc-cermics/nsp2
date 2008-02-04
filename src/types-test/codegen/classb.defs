@@ -1,0 +1,24 @@
+;; -*- scheme -*-
+
+(include "classb-types.defs")
+
+(define-method classb_color_change
+  (of-object "ClassB")
+  (c-name "classb_color_change")
+  (return-type "int")
+  (parameters
+    '("gint" "color")
+  )
+)
+
+(define-method classb_color_show
+  (of-object "ClassB")
+  (c-name "classb_color_show")
+  (return-type "none")
+  (parameters
+    '("gint" "color")
+  )
+)
+
+
+
