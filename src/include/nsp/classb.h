@@ -18,10 +18,12 @@
 typedef struct _NspClassB NspClassB ;
 typedef struct _NspTypeClassB NspTypeClassB ;
 
+
 struct _NspTypeClassB {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
+  
 };
 
 struct _NspClassB {

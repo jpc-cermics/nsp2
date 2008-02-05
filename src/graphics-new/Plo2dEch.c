@@ -27,6 +27,7 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
+
 static void zoom_rect (BCG *Xgc,double,double,double,double);
 
 /*--------------------------------------------------------------------
@@ -79,35 +80,55 @@ void scale_f2wrect(BCG *Xgc,const double x[],double x1[])
 
 void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n)
 {
-  double d;
+  double xd,yd;
   int i;
-  if (Xgc->scales->logflag[0] == 'n') 
-    for ( i=0 ; i < n  ; i++) 
-      {
-	d = XScale_d(x[i]);
-	x1[i]= (d > int16max ) ? int16max : ((d < - int16max) ? - int16max : inint(d));
-      }
-  else 
-    for ( i=0 ; i < n  ; i++) 
-      {
-	d = XLogScale_d(x[i]);
-	x1[i]=(d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
-	
-      }
-  if (Xgc->scales->logflag[1] == 'n') 
-    for ( i=0 ; i < n ; i++) 
-      {
-	d = YScale_d(y[i]);
-	y1[i]=(d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
-      }
-  else 
-    for ( i=0 ; i < n ; i++)
-      {
-	d =  YLogScale_d(y[i]);
-	y1[i]= (d > int16max ) ? int16max :  ((d < - int16max) ? - int16max : inint(d));
-      }
+  if (Xgc->scales->logflag[0] == 'n' ) 
+    {
+      if (Xgc->scales->logflag[1] == 'n') 
+	{
+	  for ( i=0 ; i < n  ; i++) 
+	    {
+	      xd = XScaleR_d(x[i],y[i]);
+	      yd = YScaleR_d(x[i],y[i]);
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+      else
+	{
+	  for ( i=0 ; i < n  ; i++) 
+	    {
+	      xd = XScaleR_d(x[i],log10(y[i]));
+	      yd = YScaleR_d(x[i],log10(y[i]));
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+    }
+  else
+    {
+      if (Xgc->scales->logflag[1] == 'n') 
+	{
+	  for ( i=0 ; i < n  ; i++) 
+	    {
+	      xd = XScaleR_d(log10(x[i]),y[i]);
+	      yd = YScaleR_d(log10(x[i]),y[i]);
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+      else
+	{
+	  for ( i=0 ; i < n  ; i++) 
+	    {
+	      xd = XScaleR_d(log10(x[i]),log10(y[i]));
+	      yd = YScaleR_d(log10(x[i]),log10(y[i]));
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+    }
 }
-
 
 void scale_i2f(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],int n)
 {
@@ -249,7 +270,7 @@ void rect2d_i2f(BCG *Xgc,double x[],const  int x1[], int n)
 
 
  
-/** meme chose mais pour axis **/
+/* meme chose mais pour axis */
 
 void axis2d(BCG *Xgc,double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
 {

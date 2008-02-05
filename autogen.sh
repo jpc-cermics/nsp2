@@ -7,7 +7,7 @@ test -z "$srcdir" && srcdir=.
 DIE=0
 
 (test -f $srcdir/configure.in) || {
-    echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
+    echo -n "**Error**: Directory "\'$srcdir\'" does not look like the"
     echo " top-level package directory"
     exit 1
 }
@@ -76,7 +76,7 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
-  echo "You can get automake from ftp://ftp.gnu.org/pub/gnu/"
+  echo "You can get automake from ftp://ftp.gnu.org/pub/gnu/" 
   DIE=1
 }
 
@@ -87,7 +87,7 @@ fi
 if test -z "$*"; then
   echo "**Warning**: I am going to run \`configure' with no arguments."
   echo "If you wish to pass any to it, please specify them on the"
-  echo \`$0\'" command line."
+  echo \'$0\'" command line."
   echo
 fi
 
@@ -148,8 +148,7 @@ do
 done
 
 conf_flags="--enable-maintainer-mode"
-conf_flags=
-
+conf_flags="--disable-optimize" 
 
 if test x$NOCONFIGURE = x; then
   echo Running $srcdir/configure $conf_flags "$@" ...

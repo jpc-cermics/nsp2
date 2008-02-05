@@ -16,8 +16,9 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj);
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
 
-#line 21 "polyline.c"
+#line 22 "polyline.c"
 
 /* ----------- Polyline ----------- */
 
@@ -88,14 +89,15 @@ NspTypePolyline *new_type_polyline(type_mode mode)
       
   type->init = (init_func *) init_polyline;
 
-#line 19 "polyline.override"
+#line 20 "polyline.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
 
-#line 99 "polyline.c"
+#line 101 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -512,7 +514,7 @@ static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
   if ( ! IsMat(O) ) return FAIL;
   if ((Pts = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyline *) self)->obj->Pts != NULL ) 
-    nsp_object_destroy((NspObject **) &((NspPolyline *) self)->obj->Pts);
+    nsp_matrix_destroy(((NspPolyline *) self)->obj->Pts);
   ((NspPolyline *) self)->obj->Pts = Pts;
   return OK;
 }
@@ -527,7 +529,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 35 "polyline.override"
+#line 37 "polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -539,7 +541,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 543 "polyline.c"
+#line 545 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -549,7 +551,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Polyline_func[]={
   {"polyline_attach", _wrap_polyline_attach},
-  { "polyline_create", int_polyline_create},
+  {"polyline_create", int_polyline_create},
   { NULL, NULL}
 };
 
@@ -573,17 +575,17 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
 Polyline_register_classes(NspObject *d)
 {
 
-#line 14 "polyline.override"
+#line 15 "polyline.override"
 
 Init portion 
 
 
-#line 582 "polyline.c"
+#line 584 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 61 "polyline.override"
+#line 63 "polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -591,7 +593,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
 {
   NspPolyline *P = (NspPolyline *) Obj;
   NspMatrix *M = P->obj->Pts;
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
 }
 
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -635,4 +637,34 @@ static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
     }
 }
 
-#line 639 "polyline.c"
+/* compute in bounds the enclosing rectangle of polyline 
+ *
+ */
+
+static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  int i;
+  NspPolyline *P = (NspPolyline *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m, dval;
+  bounds[0]=*x;/* xmin */
+  bounds[1]=*y;/* ymin */
+  bounds[2]=*x;/* xmax */
+  bounds[3]=*y;/* ymax */
+  for (i = 1; i < M->m; i++)
+    {
+      dval = x[i];
+      if ( dval > bounds[2] )
+	bounds[2] = dval;
+      else if ( dval < bounds[0] )
+	bounds[0] = dval;
+      dval = y[i];
+      if ( dval > bounds[3] )
+	bounds[3] = dval;
+      else if ( dval < bounds[1] )
+	bounds[1] = dval;
+    }
+}
+
+
+#line 671 "polyline.c"

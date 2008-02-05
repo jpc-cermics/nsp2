@@ -18,17 +18,21 @@
 typedef struct _NspCompound NspCompound ;
 typedef struct _NspTypeCompound NspTypeCompound ;
 
+
 struct _NspTypeCompound {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
+  
 };
 
 typedef struct _nsp_compound nsp_compound;
 struct _nsp_compound {
   NspMatrix* frect;
   NspMatrix* wrect;
+  NspMatrix* elts_bounds;
   NspList* elts;
+  double alpha;
   int ref_count;
 };
 
@@ -58,7 +62,7 @@ NspCompound *new_compound();
 
 #define NULLCOMPOUND (NspCompound*) 0
 
-extern NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,NspList* elts,NspTypeBase *type);
+extern NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,NspMatrix* elts_bounds,NspList* elts,double alpha,NspTypeBase *type);
 
 /* from CompoundObj.c */
 

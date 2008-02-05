@@ -245,7 +245,6 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
 void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 			 int *n1, int *n2, int *aaint,char *strflag, double FRect[4])
 {
-  double eps=2.e-16;
   double FRect1[4];
   int Xdec[3],Ydec[3],i,redraw=0;
   double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;

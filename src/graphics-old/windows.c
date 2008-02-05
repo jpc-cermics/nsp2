@@ -383,6 +383,7 @@ static window_scale_list  default_scale =
     {0.0,0.0,0.0},
     35.0,45.0,
     1,                 /* added by es */
+    1.0,0.0,           /* test: cosa, sina */
     (window_scale_list *) 0, /*unused */
     (window_scale_list *) 0 /*unused */
   };
@@ -704,6 +705,8 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->Wscy1=s2->Wscy1;
   s1->logflag[0] = s2->logflag[0];
   s1->logflag[1] = s2->logflag[1];
+  s1->cosa = s2->cosa;
+  s1->sina = s2->sina;
 }
 
 

@@ -25,6 +25,8 @@ typedef void draw_func(BCG *Xgc,NspGraphic *o);
 typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
 typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
+typedef void bounds_func(BCG *Xgc,NspGraphic *o,double *bounds);
+
 
 struct _NspTypeGraphic {
   /*< private >*/
@@ -37,7 +39,8 @@ struct _NspTypeGraphic {
   translate_func *translate;
   rotate_func *rotate;
   scale_func *scale;
-
+  bounds_func *bounds;
+  
 };
 
 typedef struct _nsp_graphic nsp_graphic;
