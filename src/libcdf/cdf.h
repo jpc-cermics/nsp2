@@ -19,7 +19,7 @@ extern double cdf_bcorr (double a0, double b0);
 extern double cdf_bcorr_old (double a0, double b0);
 extern double cdf_betaln (double a0, double b0);
 extern double cdf_betaln_old (double a0, double b0);
-extern double cdf_brcmp1 (int *mu, double *a, double *b, double *x, double *y);
+extern double cdf_brcmp1 (int mu, double a, double b, double x, double y);
 extern double cdf_brcomp (double a, double b, double x, double y);
 extern double cdf_dbetrm (double *a, double *b);
 extern double cdf_expm1 (double x);
