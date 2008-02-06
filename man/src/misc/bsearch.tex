@@ -8,7 +8,7 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[ind [,occ [,info]]]  = bsearch(X, v ,match=str1, interval=str2)
+[ind [,occ [,info]]]  = bsearch(X, v ,match=str1, interval=str2, assume_sorted=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -24,6 +24,13 @@
     \vname{interval=str2} : optional named argument useful only
                            when  \verb+match="i"+, \verb+interval="[--)"+
                          (default) or  \verb+interval="(--]"+
+    \vname{assume_sorted=b} : boolean optional named argument (default
+                              is \verb+%f+). Using \verb+assume_sorted=%t+ disable the test
+                              on the strictly ordering of
+                              \verb+v+. This can be useful if you know
+                              that \verb+v+ is strictly ordered or to
+                              use bsearch with a \verb+v+ which is
+                              only sorted (that is with redundant elements).  
     \vname{ind} : matrix or vector of indices with same dimensions than X.
     \vname{occ} : vector of same length than v (but with $n-1$ components 
                   when  \verb+match="i"+)

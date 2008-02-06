@@ -68,8 +68,10 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
   char *interval_type=NULL,*match_type=NULL;
   int interval_flag = CLOSED_LEFT; 
   char match_flag='i';
+  Boolean assume_sorted = FALSE;
   nsp_option opts[] ={{ "interval",string,NULLOBJ,-1},
 		      { "match",string,NULLOBJ,-1},
+		      { "assume_sorted",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *x=NULLMAT, *val=NULLMAT, *ind=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
@@ -99,7 +101,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( get_optional_args(stack, rhs, opt, opts, &interval_type, &match_type) == FAIL) 
+  if ( get_optional_args(stack, rhs, opt, opts, &interval_type, &match_type, &assume_sorted) == FAIL) 
     return RET_BUG;
 
   if ( match_type != NULL )
@@ -139,26 +141,28 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 
   if ( (occ=nsp_matrix_create(NVOID,'r',m_occ,n_occ)) == NULLMAT ) return RET_BUG;
 
-  /* Check that val is increasing */
-  if ( flagstr == 0 )
+  if ( ! assume_sorted )      /* Check that val is increasing */
     {
-      for ( i = 0 ; i < mn_val-1 ; i++ ) 
-	if ( ! ( val->R[i] < val->R[i+1]) )
-	  {
-	    Scierror("Error: second argument in function %s\n",NspFname(stack));
-	    Scierror("\tis not strictly increasing \n");
-	    return RET_BUG;
-	  }
-    }
-  else
-    {
-      for ( i = 0 ; i < mn_val-1 ; i++ ) 
-	if ( strcmp(valstr->S[i],valstr->S[i+1]) >= 0 )
-	  {
-	    Scierror("Error: second argument in function %s\n",NspFname(stack));
-	    Scierror("\tis not strictly increasing \n");
-	    return RET_BUG;
-	  }
+      if ( flagstr == 0 )
+	{
+	  for ( i = 0 ; i < mn_val-1 ; i++ ) 
+	    if ( ! ( val->R[i] < val->R[i+1]) )
+	      {
+		Scierror("Error: second argument in function %s\n",NspFname(stack));
+		Scierror("\tis not strictly increasing \n");
+		return RET_BUG;
+	      }
+	}
+      else
+	{
+	  for ( i = 0 ; i < mn_val-1 ; i++ ) 
+	    if ( strcmp(valstr->S[i],valstr->S[i+1]) >= 0 )
+	      {
+		Scierror("Error: second argument in function %s\n",NspFname(stack));
+		Scierror("\tis not strictly increasing \n");
+		return RET_BUG;
+	      }
+	}
     }
 
   if ( match_flag == 'i' ) 
