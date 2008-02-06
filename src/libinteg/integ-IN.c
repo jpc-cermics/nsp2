@@ -513,7 +513,7 @@ extern struct {   /* let the integrator know that the evaluation of the function
 
 static int intg_prepare(NspObject *f, NspList *args, intg_data *obj)
 {
-  if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL; /* FIXME: why copy it ? */
+  if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"intg_f")== FAIL)) return FAIL;
   if ( args != NULL ) 
     {
@@ -626,11 +626,14 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     { "args",list,  NULLOBJ,-1},
     { "atol",s_double,NULLOBJ,-1},
     { "rtol",s_double,NULLOBJ,-1},
+    { "limit",s_int,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
   };
 
-  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit) == FAIL ) 
     return RET_BUG;
+  
+  limit = Max(4, limit);
 
   if ( IsNspPList(f) == FALSE  )
     {

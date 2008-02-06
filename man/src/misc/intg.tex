@@ -9,7 +9,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [Ia, [,ea_estim, [,ier]]]  = intg(a, b, f)
-[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=L)
+[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=L, limit=maxsub)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -23,6 +23,8 @@
                       on the result (default is 1e-8).
     \vname{args=L}: optional named argument, useful to pass
     additional parameters needed the function f.
+    \vname{limit=maxsub}: optional named argument, max number of
+    subdivisions allowed (default 750).
     \vname{Ia}: computed approximate result
     \vname{ea_estim}: estimated error
     \vname{ier}: scalar given some information about the computation.
@@ -49,8 +51,9 @@ list. \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
       for integral and error are less reliable. It is assumed that the  requested accuracy
       has not been achieved:
       \begin{itemize}
-      \item ier = 1: maximum number of subdivisions (750) allowed has been achieved. Generally
-            it is advised to have a close look at the
+      \item ier = 1: maximum number of subdivisions (the limit
+            parameter) allowed has been achieved. You can try to
+            increase limit but generally it is advised to have a close look at the
             integrand, in order to determine the integration
             difficulties. If the position of a local difficulty can
             be determined (i.e.  singularity, discontinuity within
