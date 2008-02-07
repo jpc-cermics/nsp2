@@ -48,6 +48,15 @@ arrays of \emph{double}.
 \item \verb+A.scale_cols[x]+ multiplies each column j of A with a scalar:
   \verb+A(:,j) = x(j) A(:,j)+. %\verb+x+ must be a (row or column) vector
   %with n components (n number of columns of A).
+\item \verb+b=A.has[x]+ look for each component of \verb+x+, 
+  if it is in \verb+A+: \verb+b+ is a boolean vector 
+  (of same dim than \verb+x+) with \verb+b(k)+ true if
+  \verb+x(k)+ is in \verb+A+. Additionaly the first index of
+  \verb+x(k)+ in \verb+A+ could be provided, either in the one index way
+  when 2 output arguments are requested (call of the form \verb+[b,i]=A.has[x]+) or
+  either in the two indices way if 3 output arguments are requested
+  (\verb+[b,i,j]=A.has[x]+). If \verb+x(k)+ is not in \verb+A+ then
+  \verb+i(k)=0+ and \verb+j(k)=0+.
 \end{itemize}
 \itemdesc{Methods from the matint interface}
 \begin{itemize}

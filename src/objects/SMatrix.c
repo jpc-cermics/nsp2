@@ -2542,3 +2542,71 @@ int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean 
       return OK;
     }
 }
+
+/**
+ * nsp_smatrix_has:
+ * @A: (input) #NspSMatrix
+ * @x: (input) #NspSMatrix
+ * @lhs: (input) dim parameter: for lhs=2 ind must be computed, for lhs=3, ind and ind2 must be computed
+ * @ind: (optional output) 
+ * @ind2: (optional output) 
+ *
+ * looks for each component of @x if it in @A or not with additional first 1-index (if lhs=2) or 2-index.
+ * (if lhs=3)
+ * Return value: a NspBMatrix
+ **/
+NspBMatrix *nsp_smatrix_has(NspSMatrix *A, NspSMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2)
+{
+  NspBMatrix *B=NULLBMAT;
+  NspMatrix *Ind=NULLMAT, *Ind2=NULLMAT;
+  int i, k;
+
+  if ( (B = nsp_bmatrix_create(NVOID,x->m,x->n)) == NULLBMAT )
+    return NULLBMAT;
+
+  for ( k = 0 ; k < x->mn ; k++ ) B->B[k] = FALSE;
+
+  if ( lhs >= 2 )
+    {
+      if ( (Ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	goto err;
+      for ( k = 0 ; k < x->mn ; k++ ) Ind->R[k] = 0.0;
+      
+      if ( lhs == 3 )
+	{
+	  if ( (Ind2 = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	    goto err;
+	  for ( k = 0 ; k < x->mn ; k++ ) Ind2->R[k] = 0.0;
+	}
+    }
+
+  for ( k = 0 ; k < x->mn ; k++ )
+    {
+      for ( i = 0 ; i < A->mn ; i++ )
+	if ( strcmp(A->S[i],x->S[k]) == 0 )
+	  {
+	    B->B[k] = TRUE;
+	    if ( lhs == 2 )
+	      Ind->R[k] = i+1;
+	    else if ( lhs == 3 )
+	      {
+		Ind->R[k] = (i % A->m) + 1; Ind2->R[k] = i / A->m + 1;
+	      }
+	    break;
+	  }
+    }
+
+  if ( lhs >= 2 )
+    {
+      *ind = Ind;
+      if ( lhs == 3 )
+	*ind2 = Ind2;
+    }
+  return B;
+
+ err:
+  nsp_bmatrix_destroy(B);
+  nsp_matrix_destroy(Ind);
+  nsp_matrix_destroy(Ind2);
+  return NULLBMAT;
+}

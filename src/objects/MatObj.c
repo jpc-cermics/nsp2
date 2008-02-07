@@ -1187,6 +1187,31 @@ static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int o
   return 0;
 }
 
+static int int_meth_matrix_has(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A = (NspMatrix *) self, *x;
+  NspBMatrix *B;
+  NspMatrix *Ind,*Ind2;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,3);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+
+  if ( (B = nsp_mat_has(A, x, lhs, &Ind, &Ind2)) == NULLBMAT )
+    return RET_BUG;
+
+  MoveObj(stack,1,NSP_OBJECT(B));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(Ind));
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(Ind2));
+    }
+
+  return Max(lhs,1);
+}
+
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
   { "blas_axpy", int_meth_matrix_axpy},  /* possible other name:  add_scal_time_mat  */
@@ -1194,6 +1219,7 @@ static NspMethods matrix_methods[] = {
   { "scale_rows",int_meth_matrix_scale_rows}, 
   { "scale_cols",int_meth_matrix_scale_cols}, 
   { "get_nnz", int_meth_matrix_get_nnz},
+  { "has", int_meth_matrix_has},
   { "set_diag",(nsp_method *) int_meth_matrix_set_diag}, /* this one could be generic in matint */
   { (char *) 0, NULL}
 };
@@ -4858,6 +4884,38 @@ int_mat_dot (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int
+int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=0;
+  Boolean strict_order = FALSE;
+  NspMatrix *A;
+  NspBMatrix *Res;
+  nsp_option opts[] ={{"dim",s_int,NULLOBJ,-1},
+		      {"strict_order",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 2)
+  CheckLhs(1, 1);
+
+  if ((A = GetRealMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &dim, &strict_order) == FAIL )
+    return RET_BUG;
+
+  if ( strict_order && dim != 0 )
+    Sciprintf("\n Warning: strict_order is used only when dim=0\n");
+
+  if ( (Res = nsp_mat_issorted(A, dim, strict_order)) == NULLBMAT )
+    return RET_BUG;
+  
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -5030,6 +5088,7 @@ static OpTab Matrix_func[] = {
   {"unique_m", int_unique},
   {"cross_m_m", int_mat_cross},
   {"dot_m_m", int_mat_dot},
+  {"issorted_m", int_mat_issorted},
   {(char *) 0, NULL}
 };
 

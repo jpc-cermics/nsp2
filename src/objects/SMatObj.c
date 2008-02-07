@@ -668,8 +668,34 @@ static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
+static int int_meth_smatrix_has(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *A = (NspSMatrix *) self, *x;
+  NspBMatrix *B;
+  NspMatrix *Ind,*Ind2;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,3);
+
+  if ((x = GetSMat (stack, 1)) == NULLSMAT) return RET_BUG;
+
+  if ( (B = nsp_smatrix_has(A, x, lhs, &Ind, &Ind2)) == NULLBMAT )
+    return RET_BUG;
+
+  MoveObj(stack,1,NSP_OBJECT(B));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(Ind));
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(Ind2));
+    }
+
+  return Max(lhs,1);
+}
+
 static NspMethods smatrix_methods[] = {
   {"concatd",(nsp_method *) int_smatrix_concat_down},
+  {"has",(nsp_method *) int_meth_smatrix_has},
   { NULL, NULL}
 };
 

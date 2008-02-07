@@ -1,3 +1,9 @@
+2008-02-07  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/MatOps.c (nsp_mat_has): 
+	* src/objects/SMatrix.c (nsp_smatrix_has): 
+	add method has for Mat and SMat.
+
 2008-02-04  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 	* src/libinteg/integ-IN.c (int_intg + others): add intg
 	* src/libinteg/dqags.f: re-introduce author names

@@ -34,6 +34,18 @@ as \verb!1 x n! matrices.
 \end{mandescription}
 
 \paragraph{Operations on string matrices}
+\itemdesc{Matrix methods}
+\begin{itemize}
+\item \verb+b=A.has[x]+ look for each component of
+  \verb+x+, if it is in \verb+A+: \verb+b+ is a boolean vector 
+  (of same dim than \verb+x+) with \verb+b(k)+ true if
+  \verb+x(k)+ is in \verb+A+. Additionaly the first index of
+  \verb+x(k)+ in \verb+A+ could be provided, either in the one index way
+  when 2 output arguments are requested (call of the form \verb+[b,i]=A.has[x]+) or
+  either in the two indices way if 3 output arguments are requested
+  (\verb+[b,i,j]=A.has[x]+). If \verb+x(k)+ is not in \verb+A+ then
+  \verb+i(k)=0+ and \verb+j(k)=0+.
+\end{itemize}
 \itemdesc{Methods from the matint interface}
 \begin{itemize}
 \item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 

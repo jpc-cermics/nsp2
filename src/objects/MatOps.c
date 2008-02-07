@@ -6193,3 +6193,231 @@ NspMatrix *nsp_mat_cross(NspMatrix *X, NspMatrix *Y, int dim)
 
   return Z;
 }
+
+/**
+ * nsp_mat_issorted:
+ * @A: (input) #NspMatrix
+ * @dim_flag: (input) (0, 1 or 2)
+ * @strict_order: (input) true for "<" and false for  "=<"
+ *
+ * Return value: TRUE or FALSE
+ **/
+NspBMatrix *nsp_mat_issorted(NspMatrix *A, int dim_flag, Boolean strict_order)
+{
+  NspBMatrix *C;
+  Boolean bool = TRUE;
+  int i, j, k, c0, c1;
+
+  if ((C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT) 
+    return NULLBMAT;
+  
+  if ( C->mn == 0 )
+    return C;
+
+  switch (dim_flag) 
+    {
+    default :
+      Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
+      
+    case 0: 
+      if ( strict_order )
+	{
+	  bool = ! isnan(A->R[0]);
+	  for ( i = 1 ; i < A->mn && bool ; i++ )
+	    bool = A->R[i-1] < A->R[i];
+	}
+      else
+	{
+	  for ( i = 1 ; i < A->mn && bool ; i++ )
+	    bool = (A->R[i-1] <= A->R[i]) || isnan(A->R[i]);
+	}
+      C->B[0] = bool;
+      break;
+
+    case 1:  /* are rows sorted ? (in the lexicographic meaning) */
+      for ( i = 1 ; i < A->m && bool ; i++ )
+	for ( j = 0, k = i ; j < A->n ; j++, k+=A->m )
+	  {
+	    if ( A->R[k-1] < A->R[k] )
+	      { bool = TRUE; break; }
+	    else if ( A->R[k-1] == A->R[k] )
+	      bool = TRUE;
+	    else if ( A->R[k-1] > A->R[k] )
+	      { bool = FALSE; break; }
+	    else if ( isnan(A->R[k-1]) )
+	      {
+		if ( isnan(A->R[k]) )
+		  bool = TRUE;
+		else
+		  { bool = FALSE; break; }
+	      }
+	    else /* A->R[k] is nan */
+	      { bool = TRUE; break; }
+	  }
+      C->B[0] = bool;
+      break;
+
+    case 2: /* are columns sorted ? (in the lexicographic meaning) */
+      for ( j = 1, c0 = 0, c1 = A->m ; j < A->n && bool ; j++, c0+=A->m, c1+=A->m )
+	for ( i = 0  ; i < A->m ; i++)
+	  {
+	    if ( A->R[i+c0] < A->R[i+c1] )
+	      { bool = TRUE; break; }
+	    else if ( A->R[i+c0] == A->R[i+c1] )
+	      bool = TRUE;
+	    else if ( A->R[i+c0] > A->R[i+c1] )
+	      { bool = FALSE; break; }
+	    else if ( isnan(A->R[i+c0]) )
+	      {
+		if ( isnan(A->R[i+c1]) )
+		  bool = TRUE;
+		else
+		  { bool = FALSE; break; }
+	      }
+	    else /* A->R[i+c1] is nan */
+	      { bool = TRUE; break; }
+	  }
+      C->B[0] = bool;
+      break;
+    }
+  
+  return C;
+}
+
+/**
+ * nsp_mat_has:
+ * @A: (input) #NspMatrix
+ * @x: (input) #NspMatrix
+ * @lhs: (input) dim parameter: for lhs=2 ind must be computed, for lhs=3, ind and ind2 must be computed
+ * @ind: (optional output) 
+ * @ind2: (optional output) 
+ *
+ * looks for each component of @x if it in @A or not with additional first 1-index (if lhs=2) or 2-index.
+ * (if lhs=3)
+ * Return value: a NspBMatrix
+ **/
+NspBMatrix *nsp_mat_has(NspMatrix *A, NspMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2)
+{
+  NspBMatrix *B=NULLBMAT;
+  NspMatrix *Ind=NULLMAT, *Ind2=NULLMAT;
+  int i, k;
+  double val;
+
+  if ( (B = nsp_bmatrix_create(NVOID,x->m,x->n)) == NULLBMAT )
+    return NULLBMAT;
+
+  for ( k = 0 ; k < x->mn ; k++ ) B->B[k] = FALSE;
+
+  if ( lhs >= 2 )
+    {
+      if ( (Ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	goto err;
+      for ( k = 0 ; k < x->mn ; k++ ) Ind->R[k] = 0.0;
+      
+      if ( lhs == 3 )
+	{
+	  if ( (Ind2 = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	    goto err;
+	  for ( k = 0 ; k < x->mn ; k++ ) Ind2->R[k] = 0.0;
+	}
+    }
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( x->rc_type == 'r' )
+	{
+	  for ( k = 0 ; k < x->mn ; k++ )
+	    {
+	      val = x->R[k];
+	      for ( i = 0 ; i < A->mn ; i++ )
+		if ( A->R[i] == val )
+		  {
+		    B->B[k] = TRUE;
+		    if ( lhs == 2 )
+		      Ind->R[k] = i+1;
+		    else if ( lhs == 3 )
+		      {
+			Ind->R[k] = (i % A->m) + 1; Ind2->R[k] = i / A->m + 1;
+		      }
+		    break;
+		  }
+	    }
+	}
+      else /* x->rc_type == 'c' */
+	{
+	  for ( k = 0 ; k < x->mn ; k++ )
+	    {
+	      if ( x->C[k].i == 0.0 )
+		{
+		  val = x->C[k].r;
+		  for ( i = 0 ; i < A->mn ; i++ )
+		    if ( A->R[i] == val )
+		      {
+			B->B[k] = TRUE;
+			if ( lhs == 2 )
+			  Ind->R[k] = i+1;
+			else if ( lhs == 3 )
+			  {
+			    Ind->R[k] = (i % A->m) + 1; Ind2->R[k] = i / A->m + 1;
+			  }
+			break;
+		      }
+		}
+	    }
+	}
+    }
+  else     /* A->rc_type == 'c' */
+    {
+      if ( x->rc_type == 'r' )
+	{
+	  for ( k = 0 ; k < x->mn ; k++ )
+	    {
+	      val = x->R[k];
+	      for ( i = 0 ; i < A->mn ; i++ )
+		if ( A->C[i].i == 0.0  &&  A->C[i].r == val )
+		  {
+		    B->B[k] = TRUE;
+		    if ( lhs == 2 )
+		      Ind->R[k] = i+1;
+		    else if ( lhs == 3 )
+		      {
+			Ind->R[k] = (i % A->m) + 1; Ind2->R[k] = i / A->m + 1;
+		      }
+		    break;
+		  }
+	    }
+	}
+      else  /* both A and x are complex */
+	{
+	  for ( k = 0 ; k < x->mn ; k++ )
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )
+		if ( A->C[i].r == x->C[k].r  &&  A->C[i].i ==  x->C[k].i )
+		  {
+		    B->B[k] = TRUE;
+		    if ( lhs == 2 )
+		      Ind->R[k] = i+1;
+		    else if ( lhs == 3 )
+		      {
+			Ind->R[k] = (i % A->m) + 1; Ind2->R[k] = i / A->m + 1;
+		      }
+		    break;
+		  }
+	    }
+	}
+    }
+
+  if ( lhs >= 2 )
+    {
+      *ind = Ind;
+      if ( lhs == 3 )
+	*ind2 = Ind2;
+    }
+  return B;
+
+ err:
+  nsp_bmatrix_destroy(B);
+  nsp_matrix_destroy(Ind);
+  nsp_matrix_destroy(Ind2);
+  return NULLBMAT;
+}
