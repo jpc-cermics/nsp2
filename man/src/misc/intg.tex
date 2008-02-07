@@ -83,7 +83,7 @@ list. \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
 \paragraph{example 1} a simple example 
 \begin{program}\HCode{function y=f1(x);y=exp(x);endfunction\Hnewline
 [I,ea] = intg(0,1,f1)\Hnewline
-abs(I-\%e-1) //near exact absolute error}
+abs(I-(\%e-1)) //near exact absolute error}
 \end{program}
   
 \paragraph{example 2} comparizon with the error function
