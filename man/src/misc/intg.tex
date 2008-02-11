@@ -9,7 +9,8 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [Ia, [,ea_estim, [,ier]]]  = intg(a, b, f)
-[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=L, limit=maxsub)
+[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=L,
+limit=maxsub, vect_flag=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -25,6 +26,10 @@
     additional parameters needed the function f.
     \vname{limit=maxsub}: optional named argument, max number of
     subdivisions allowed (default 750).
+    \vname{vect_flag=b}: optional named argument, boolean scalar
+    (default \verb+%f+), use \verb+%t+ if you write the function
+                   \verb+f+ such that it could be evaluated on a
+                   vector argument (this speed up the computation).
     \vname{Ia}: computed approximate result
     \vname{ea_estim}: estimated error
     \vname{ier}: scalar given some information about the computation.
@@ -38,7 +43,7 @@ $$
 $$
 such that:
 $$
-   | I - I_a | \le  max(atol, rtol*|I|)
+   | I - I_a | \le  \max (atol, rtol*|I|)
 $$
 Additional parameters for the function $f$ could be passed using the
 named optional argument \verb+args+ which must be a
@@ -99,7 +104,32 @@ abs(I - Ia)}
 // here the exact result should be 2*pi^2\Hnewline
 abs(Ia - 2*\%pi^2)}
 \end{program}
-  
+  \
+\paragraph{example 4} a difficult problem. Here we try to integrate:
+$$
+    f(x) = 2 x \cos \left(\frac{1}{x}\right) +  \sin \left(\frac{1}{x}\right)
+$$ 
+on $[0,1]$. $f$ is not continuous at $0$ and oscillate more and more
+rapidly as $x \rightarrow 0$. The antiderivative of $f$
+is:
+$$
+    F(x) = x^2  \cos \left(\frac{1}{x}\right)
+$$
+so we know the exact result ($I=\cos(1)$). We write the function in a vectorial
+manner so as to experiment also with the \verb+vect_flag+ option. 
+\begin{program}\HCode{function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction\Hnewline
+// 1/ reduce the tolerance\Hnewline
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6)\Hnewline
+// 2/ increase the limit parameter (trying to reach the requested precision)\Hnewline
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6, limit=10000)\Hnewline
+// 3/ compare ea the estimated error with the (near) exact error:\Hnewline
+ea_exact = abs(Ia-cos(1))\Hnewline
+// 4/ increase rtol and measure the computing time\Hnewline
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()\Hnewline
+// 5/ the same using vect_flag=\%t (it must be faster)\Hnewline
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vect_flag=\%t); toc()}
+\end{program}
+
 \end{examples}
 
 \begin{manseealso}

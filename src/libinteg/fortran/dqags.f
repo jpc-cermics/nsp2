@@ -1,5 +1,5 @@
       subroutine dqags(f, a, b, epsabs, epsrel, alist, blist,elist,
-     * rlist, limit, iord, liord, result, abserr, ier)
+     * rlist, limit, iord, liord, result, abserr, ier, quadbase)
 c
 c     based on quadpack routine dqags (formerly qags)
 c     **********************************************************
@@ -114,7 +114,7 @@ c     .. array arguments ..
      * rlist(limit)
       integer iord(liord)
 c     .. function arguments ..
-      double precision f
+*b      double precision f
 c     ..
 c     .. scalars in common ..
       integer jupbnd
@@ -136,7 +136,7 @@ c     .. function references ..
 c     .. subroutine references ..
 c     order, epsalg, quarul
 c     ..
-      external f
+      external f,quadbase
       common /dqa001/ jupbnd
 c
 c            the dimension of /rlist2/ is determined by
@@ -218,7 +218,7 @@ c
       last1 = 1
       ier = 0
       ierro = 0
-      call quarul(f, a, b, result, abserr, defabs, resabs)
+      call quadbase(f, a, b, result, abserr, defabs, resabs)
       if(iero.gt.0) then
          ier=6
          return
@@ -271,12 +271,12 @@ c
          a2 = b1
          b2 = blist(maxerr)
          erlast = errmax
-         call quarul(f, a1, b1, area1, error1, resabs, defab1)
+         call quadbase(f, a1, b1, area1, error1, resabs, defab1)
          if(iero.gt.0) then
             ier=6
             return
          endif
-         call quarul(f, a2, b2, area2, error2, resabs, defab2)
+         call quadbase(f, a2, b2, area2, error2, resabs, defab2)
          if(iero.gt.0) then
             ier=6
             return

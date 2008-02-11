@@ -488,18 +488,28 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0
  * integrator and which evaluates f(x [,List]) from a nsp function.
  */ 
 
-typedef double (*intg_f)(const double *t);
+typedef double (*intg_fs)(const double *t);
+typedef int (*intg_fv)(const double *t, double *y);
+typedef int (*quadbase)(void *f, double *a, double *b, double *result, 
+			  double *abserr, double *resabs, double *resasc);
 
-extern int C2F(dqags)(intg_f f, double *a, double *b, double *epsabs, double *epsrel, 
+extern int C2F(dqk21vect)(intg_fv fvect, double *a, double *b, double *result, 
+			  double *abserr, double *resabs, double *resasc);
+
+extern int C2F(quarul)(intg_fs f, double *a, double *b, double *result, 
+			  double *abserr, double *resabs, double *resasc);
+
+extern int C2F(dqags)(void *f, double *a, double *b, double *epsabs, double *epsrel, 
 		      double *alist, double *blist, double *elist, double *rlist, 
-		      int *limit, int *iord, int *liord, double *result, double *abserr, int *ier);
+		      int *limit, int *iord, int *liord, double *result, 
+		      double *abserr, int *ier, quadbase method);
 
 typedef struct _intg_data intg_data;
  
 struct _intg_data
 {
   NspList *args;   /* a list to pass extra arguments to the integrator */
-  NspMatrix *t;    /* current evaluation point, t is a 1x1 matrix */
+  NspMatrix *x;    /* current evaluation point or vector, x is a 1x1 or 21x1 */
   NspObject *func; /* function to integrate */
 };
 
@@ -511,7 +521,7 @@ extern struct {   /* let the integrator know that the evaluation of the function
 } C2F(ierajf);
 
 
-static int intg_prepare(NspObject *f, NspList *args, intg_data *obj)
+static int intg_prepare(NspObject *f, NspList *args, intg_data *obj, Boolean vect_flag)
 {
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"intg_f")== FAIL)) return FAIL;
@@ -524,7 +534,14 @@ static int intg_prepare(NspObject *f, NspList *args, intg_data *obj)
     {
       obj->args = NULL;
     }
-  if ((obj->t = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+  if ( vect_flag )
+    {
+      if ((obj->x = nsp_matrix_create("t",'r',21,1))== NULL) return FAIL;
+    }
+  else
+    {
+      if ((obj->x = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+    }
   return OK;
 }
 
@@ -539,26 +556,26 @@ static void intg_clean(intg_data *obj)
 {
   if ( obj->args != NULL) nsp_list_destroy(obj->args);
   nsp_object_destroy( (NspObject **) &(obj->func));
-  nsp_matrix_destroy(obj->t);
+  nsp_matrix_destroy(obj->x);
 }
 
 /**
- * intg_system:
- * @t: 
+ * intg_scalar:
+ * @x: 
  * 
- * this function is passed to dqag0 as a function description 
+ * this function is passed to dqags as a scalar function description 
  * 
  * Return value: the value of f(t,args)
  * 
  **/
-static double intg_system(const double *t)
+static double intg_scalar(const double *x)
 {
   intg_data *intg = &intg_d;
   NspObject *targs[2];/* arguments to be transmited to intg->func */
   NspObject *nsp_ret;
   int nret = 1,nargs = 1;
-  targs[0]= NSP_OBJECT(intg->t); 
-  intg->t->R[0] = *t;
+  targs[0]= NSP_OBJECT(intg->x); 
+  intg->x->R[0] = *x;
   double val;
 
   if (intg->args != NULL ) 
@@ -598,6 +615,64 @@ static double intg_system(const double *t)
       return 0.0;
     }
 }
+/**
+ * intg_vect:
+ * @x: 
+ * 
+ * this function is passed to dqags as a vector function description 
+ * 
+ * Return value: the value of f(t,args)
+ * 
+ **/
+static int intg_vect(const double *x, double *y)
+{
+  intg_data *intg = &intg_d;
+  NspObject *targs[2];/* arguments to be transmited to intg->func */
+  NspObject *nsp_ret;
+  int k, nret = 1,nargs = 1;
+  targs[0]= NSP_OBJECT(intg->x);
+ 
+  for ( k = 0 ; k < 21 ; k++ )
+    intg->x->R[k] = x[k];
+
+  if (intg->args != NULL ) 
+    {
+      targs[1]= NSP_OBJECT(intg->args);
+      nargs= 2;
+    }
+
+  /* FIXME : a changer pour mettre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      Scierror("Error: intg: failure in function evaluation\n");
+      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
+      return FAIL;
+    }
+
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == 21) 
+    {
+      for ( k = 0 ; k < 21 ; k++ )
+	y[k] = ((NspMatrix *) (nsp_ret))->R[k];
+      nsp_object_destroy( ((NspObject **) &nsp_ret));
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:  intg: a problem occured in function evaluation:\n");
+      if ( nret != 1 )
+	Scierror("        function return more than one argument\n");
+      else if ( !IsMat(nsp_ret) )
+	Scierror("        function don't return the good type (must be a Mat)\n");
+      else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
+	Scierror("        function return a complex instead of a real\n");
+      else if ( ((NspMatrix *) nsp_ret)->mn != 21 )
+	Scierror("        function don't return a vector of good dimension\n");
+
+      nsp_object_destroy((NspObject **) &nsp_ret);
+      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
+      return FAIL;
+    }
+}
 
 /**
  * int_intg:
@@ -619,6 +694,7 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
   int limit = 750, lwork, liwork; /* sizes of work arrays (lwork = 4*limit, liwork = limit/2 + 2) */
   double *rwork=NULL;
   int ier, *iwork=NULL;
+  Boolean vect_flag=FALSE;
 
   int_types T[] = {s_double, s_double, obj, new_opts, t_end} ;
 
@@ -627,10 +703,11 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     { "atol",s_double,NULLOBJ,-1},
     { "rtol",s_double,NULLOBJ,-1},
     { "limit",s_int,NULLOBJ,-1},
+    { "vect_flag",s_bool,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
   };
 
-  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit, &vect_flag) == FAIL ) 
     return RET_BUG;
   
   limit = Max(4, limit);
@@ -653,18 +730,27 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     }
 
   /* set up intg_d global var */
-  if ( intg_prepare(f,args,&intg_d) == FAIL ) 
+  if ( intg_prepare(f,args,&intg_d, vect_flag) == FAIL ) 
     goto err;
 
   /* allocate output var */
   if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
 
   /* call the integrator  */
-  C2F(dqags)(intg_system, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
-	     &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier);
+  if ( vect_flag )
+    C2F(dqags)((void *) intg_vect, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
+	       &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, 
+	       (quadbase) C2F(dqk21vect));
+  else
+    C2F(dqags)((void *) intg_scalar, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
+	       &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, 
+	       (quadbase) C2F(quarul));
 
   if ( ier == 6 ) goto err;  /* a problem occurs when the interpretor has evaluated */
                              /* the function to integrate at a point */
+
+  if ( ier != 0 )  /* display a warning */
+    Sciprintf("\n Warning: requested precision not reached, ier = %d\n",ier);
 
   intg_clean(&intg_d);
   FREE(rwork); FREE(iwork);
