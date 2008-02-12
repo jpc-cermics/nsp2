@@ -48,7 +48,7 @@ which transmit block parameters through int or double array, should be used with
       L1=unserialize(S);\Hnewline
       A = serialize(L,'m');\Hnewline
       L1=unserialize(A);\Hnewline
-      ok = exec('unserialize(rand(1,10))',errcatch=\%t);}
+      ok = execstr('unserialize(rand(1,10))',errcatch=\%t);}
   \end{program}
  \end{examples}
 
