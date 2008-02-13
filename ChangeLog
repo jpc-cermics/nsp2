@@ -1,3 +1,12 @@
+2008-02-13  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/*/*.c: 
+	changes in fields management in order to 
+	be able to check valid and unvalid affectation 
+	in complex affectation i.e affectation which involves 
+	attr_get_object_function modifiers like in Obj.val(x,y)=z 
+	
+
 2008-02-07  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/objects/MatOps.c (nsp_mat_has): 
