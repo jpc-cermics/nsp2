@@ -764,9 +764,16 @@ NspObject * int_get_failed(NspObject *self, char *attr)
   return NULL;
 }
 
-NspObject * int_get_object_failed(NspObject *self, char *attr)
+NspObject * int_get_object_failed(NspObject *self, char *attr, int *copy)
 {
   Scierror("get attribute %s (as object) for type %s not implemented\n",attr,self->type->s_type());
+  return NULL;
+}
+
+NspObject * int_set_object_failed(NspObject *self, NspObject *val)
+{
+  Scierror("set attribute %s (as object) for type %s not implemented\n",
+	   nsp_object_get_name(NSP_OBJECT(val)),self->type->s_type());
   return NULL;
 }
 
@@ -1029,13 +1036,9 @@ NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy)
   *copy= FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str,copy) ;
 }
 
-/*
- * get attributes object used when we want to modify object attributes 
- * as in a.val(...) = 
- */
 
 /**
  * nsp_get_attribute_object:
@@ -1050,7 +1053,7 @@ NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy)
  * Returns: a #NspObject. 
  **/
 
-NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr) 
+NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr, int *copy) 
 {
   int item; 
   AttrTab *attrs;
@@ -1060,13 +1063,50 @@ NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *
 	{
 	  if (( item=attr_search(attr,attrs)) >=0 )
 	    {
-	      return (attrs[item].get_object != NULL) ? attrs[item].get_object(ob,attr): NULLOBJ;
+	      return (attrs[item].get_object != NULL) ? attrs[item].get_object(ob,attr,copy): NULLOBJ;
 	    }
 	}
       type = type->surtype;
     }
   return NULLOBJ ;
 }
+
+
+/**
+ * nsp_get_attribute_object:
+ * @ob: an object 
+ * @type: a type 
+ * @val: an object
+ * 
+ * utility function which is used to set a field of object @ob to value @val. 
+ * The name of the field is given by the name of @val. This function is used after 
+ * an object has been selected for modification by object_path_extract with a copy 
+ * flag set to %TRUE. A copy of the attribute value is modified and at the end 
+ * nsp_set_attribute_object is called to perform verifications before setting the 
+ * attribute. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val)
+{
+  int item; 
+  AttrTab *attrs;
+  const char *attr = nsp_object_get_name(val);
+  while ( type != NULL) 
+    {
+      if (( attrs = type->attrs) != NULL)
+	{
+	  if (( item=attr_search(attr,attrs)) >=0 )
+	    {
+	      return (attrs[item].get_object != NULL) ? attrs[item].set_object(ob,val): OK;
+	    }
+	}
+      type = type->surtype;
+    }
+  return OK ;
+}
+
 
 /*---------------------------------------------------
  * set of function for dealing with  object methods 

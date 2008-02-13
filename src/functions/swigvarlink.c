@@ -416,7 +416,7 @@ static int int_swigvarlink_set_keys(void *Hv,const char *attr, NspObject *O)
 }
 
 static AttrTab swigvarlink_attrs[] = {
-  { "__keys", 	int_swigvarlink_get_keys , 	int_swigvarlink_set_keys , 	NULL },
+  { "__keys", 	int_swigvarlink_get_keys , 	int_swigvarlink_set_keys , 	NULL, NULL },
   { (char *) 0, NULL}
 };
 

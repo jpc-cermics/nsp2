@@ -563,10 +563,10 @@ static int _wrap_astnode_set_line(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab astnode_attrs[] = {
-  { "op", (attr_get_function *)_wrap_astnode_get_op, (attr_set_function *)_wrap_astnode_set_op,(attr_get_object_function *)int_get_object_failed },
-  { "arity", (attr_get_function *)_wrap_astnode_get_arity, (attr_set_function *)_wrap_astnode_set_arity,(attr_get_object_function *)int_get_object_failed },
-  { "line", (attr_get_function *)_wrap_astnode_get_line, (attr_set_function *)_wrap_astnode_set_line,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "op", (attr_get_function *)_wrap_astnode_get_op, (attr_set_function *)_wrap_astnode_set_op,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
+  { "arity", (attr_get_function *)_wrap_astnode_get_arity, (attr_set_function *)_wrap_astnode_set_arity,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "line", (attr_get_function *)_wrap_astnode_get_line, (attr_set_function *)_wrap_astnode_set_line,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

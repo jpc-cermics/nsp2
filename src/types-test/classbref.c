@@ -555,10 +555,10 @@ static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab classbref_attrs[] = {
-  { "clb_color", (attr_get_function *)_wrap_classbref_get_clb_color, (attr_set_function *)_wrap_classbref_set_clb_color,(attr_get_object_function *)int_get_object_failed },
-  { "clb_thickness", (attr_get_function *)_wrap_classbref_get_clb_thickness, (attr_set_function *)_wrap_classbref_set_clb_thickness,(attr_get_object_function *)int_get_object_failed },
-  { "clb_val", (attr_get_function *)_wrap_classbref_get_clb_val, (attr_set_function *)_wrap_classbref_set_clb_val,(attr_get_object_function *)_wrap_classbref_get_clb_val_obj },
-  { NULL,NULL,NULL,NULL },
+  { "clb_color", (attr_get_function *)_wrap_classbref_get_clb_color, (attr_set_function *)_wrap_classbref_set_clb_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "clb_thickness", (attr_get_function *)_wrap_classbref_get_clb_thickness, (attr_set_function *)_wrap_classbref_set_clb_thickness,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
+  { "clb_val", (attr_get_function *)_wrap_classbref_get_clb_val, (attr_set_function *)_wrap_classbref_set_clb_val,(attr_get_object_function *)_wrap_classbref_get_clb_val_obj,(attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 

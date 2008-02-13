@@ -374,13 +374,13 @@ static int int_sndfile_set_void(void *Hv,const   char *attr, NspObject *O)
 }
 
 static AttrTab nsp_sndfile_attrs[] = {
-  {"frames",int_sndfile_get_frames, int_sndfile_set_void,NULL},
-  {"samplerate",int_sndfile_get_samplerate, int_sndfile_set_void,NULL},
-  {"channels",int_sndfile_get_channels, int_sndfile_set_void,NULL},
-  {"format",int_sndfile_get_format, int_sndfile_set_void,NULL},
-  {"sections",int_sndfile_get_sections, int_sndfile_set_void,NULL},
-  {"seekable",int_sndfile_get_seekable, int_sndfile_set_void,NULL},
-  { (char *) 0, NULL}
+  {"frames",int_sndfile_get_frames, int_sndfile_set_void,NULL,NULL },
+  {"samplerate",int_sndfile_get_samplerate, int_sndfile_set_void,NULL, NULL },
+  {"channels",int_sndfile_get_channels, int_sndfile_set_void,NULL, NULL },
+  {"format",int_sndfile_get_format, int_sndfile_set_void,NULL, NULL },
+  {"sections",int_sndfile_get_sections, int_sndfile_set_void,NULL, NULL },
+  {"seekable",int_sndfile_get_seekable, int_sndfile_set_void,NULL, NULL },
+  { (char *) 0, NULL, NULL, NULL , NULL  }
 };
 
 

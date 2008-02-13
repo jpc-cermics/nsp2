@@ -762,7 +762,7 @@ static NspMethods *cholmod_get_methods(void) { return cholmod_methods;};
  *-------------------------------------------*/
 
 static AttrTab cholmod_attrs[] = {
-  { NULL,NULL,NULL,NULL },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

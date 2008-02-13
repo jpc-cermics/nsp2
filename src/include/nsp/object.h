@@ -239,18 +239,22 @@ extern void nsp_init_stack(Stack *stack,NspObject **S);
  *-----------------------------------------------------------*/
 
 typedef NspObject * (attr_get_function) (void *o,const  char *attr);
-typedef NspObject * (attr_get_object_function) (void *o,const char *str);
 typedef int (attr_set_function) (void *Hv,const char *attr, NspObject *val);
+typedef NspObject * (attr_get_object_function) (void *o,const char *str, int *copy);
+typedef int (attr_set_object_function) (void *o, NspObject *val);
 
 extern NspObject * int_get_failed(NspObject *self, char *attr);
-extern NspObject * int_get_object_failed(NspObject *self, char *attr);
+
 extern int int_set_failed(NspObject *self,char *attr, NspObject *val);
+extern NspObject * int_get_object_failed(NspObject *self, char *attr, int *copy);
+extern NspObject * int_set_object_failed(NspObject *self, NspObject *val);
 
 struct _AttrTab {
   char *name;
   attr_get_function *get;
   attr_set_function *set;
   attr_get_object_function *get_object;
+  attr_set_object_function *set_object;
 };
 
 /* utility function for attributes */
@@ -267,7 +271,8 @@ extern int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int op
 extern int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,NspObject *val);
 extern int int_get_attribute(Stack stack, int rhs, int opt, int lhs);
 extern NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *attr) ;
-extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr) ;
+extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr, int *copy) ;
+extern int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val);
 extern NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy);
 
 

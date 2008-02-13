@@ -500,11 +500,11 @@ static int int_glink_set_show(void *Hv,const  char *attr, NspObject *O)
 }
 
 static AttrTab link_attrs[] = {
-  { "color",        int_glink_get_color ,     int_glink_set_color ,     NULL },
-  { "thickness",    int_glink_get_thickness,  int_glink_set_thickness,  NULL },
-  { "hilited",   int_glink_get_hilited, int_glink_set_hilited, NULL },
-  { "show",   int_glink_get_show, int_glink_set_show, NULL },
-  { (char *) 0, NULL}
+  { "color",        int_glink_get_color ,     int_glink_set_color ,     NULL, NULL },
+  { "thickness",    int_glink_get_thickness,  int_glink_set_thickness,  NULL, NULL },
+  { "hilited",   int_glink_get_hilited, int_glink_set_hilited, NULL, NULL  },
+  { "show",   int_glink_get_show, int_glink_set_show, NULL, NULL  },
+  { (char *) 0, NULL, NULL, NULL  }
 };
 
 

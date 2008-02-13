@@ -769,7 +769,7 @@ static NspMethods *scalexp_get_methods(void) { return scalexp_methods;};
  *-------------------------------------------*/
 
 static AttrTab scalexp_attrs[] = {
-  { NULL,NULL,NULL,NULL },
+  { NULL,NULL,NULL,NULL, NULL  }, 
 };
 
 /*-------------------------------------------

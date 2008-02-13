@@ -543,12 +543,12 @@ static int int_gconnector_set_show(void *Hv,const  char *attr, NspObject *O)
 }
 
 static AttrTab connector_attrs[] = {
-  { "color",        int_gconnector_get_color ,     int_gconnector_set_color ,     NULL },
-  { "background",    int_gconnector_get_background,  int_gconnector_set_background,  NULL },
-  { "thickness",    int_gconnector_get_thickness,  int_gconnector_set_thickness,  NULL },
-  { "hilited",   int_gconnector_get_hilited, int_gconnector_set_hilited, NULL },
-  { "show",   int_gconnector_get_show, int_gconnector_set_show, NULL },
-  { (char *) 0, NULL}
+  { "color",        int_gconnector_get_color ,     int_gconnector_set_color ,     NULL, NULL },
+  { "background",    int_gconnector_get_background,  int_gconnector_set_background,  NULL, NULL },
+  { "thickness",    int_gconnector_get_thickness,  int_gconnector_set_thickness,  NULL , NULL},
+  { "hilited",   int_gconnector_get_hilited, int_gconnector_set_hilited, NULL, NULL },
+  { "show",   int_gconnector_get_show, int_gconnector_set_show, NULL , NULL},
+  { (char *) 0, NULL, NULL , NULL}
 };
 
 /*------------------------------------------------------

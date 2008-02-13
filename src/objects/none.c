@@ -207,7 +207,7 @@ static NspObject *nsp_none_path_extract(NspNone *a,int n, NspObject **ob, int *c
   *copy = FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str,copy) ;
 }
 
 /*

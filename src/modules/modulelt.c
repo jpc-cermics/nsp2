@@ -342,7 +342,7 @@ static int int_me_create(Stack stack, int rhs, int opt, int lhs)
  *------------------------------------------------------*/
 
 static AttrTab modulelt_attrs[] = {
-  { (char *) 0, NULL}
+  { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
 

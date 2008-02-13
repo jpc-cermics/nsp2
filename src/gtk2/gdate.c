@@ -999,7 +999,7 @@ static int _wrap_gdate_set_obj(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab gdate_attrs[] = {
-  { "obj", (attr_get_function *)_wrap_gdate_get_obj, (attr_set_function *)_wrap_gdate_set_obj,(attr_get_object_function *)int_get_object_failed },
+  { "obj", (attr_get_function *)_wrap_gdate_get_obj, (attr_set_function *)_wrap_gdate_set_obj,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL },
 };
 

@@ -196,7 +196,7 @@ static NspObject *pangoattribute_path_extract(NspPangoAttribute *a,int n,NspObje
   *copy = FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str,copy) ;
 }
 
 /*
@@ -393,10 +393,10 @@ _wrap_pango_attr__set_end_index(NspPangoAttribute *self, char *attr,NspObject *v
 
 static AttrTab pangoattribute_attrs[] = {
   { "start_index", (attr_get_function *) _wrap_pango_attr__get_start_index, 
-    (attr_set_function *) _wrap_pango_attr__set_start_index,NULL },
+    (attr_set_function *) _wrap_pango_attr__set_start_index,NULL, NULL  },
   { "end_index", (attr_get_function *) _wrap_pango_attr__get_end_index, 
-    (attr_set_function *) _wrap_pango_attr__set_end_index,NULL },
-  { NULL,NULL,NULL,NULL },
+    (attr_set_function *) _wrap_pango_attr__set_end_index,NULL , NULL },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

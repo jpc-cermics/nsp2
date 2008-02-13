@@ -1601,10 +1601,15 @@ static int EvalEqual(PList L1, Stack stack, int first)
    */
   for ( i = objs_count -1 ; i >= 0 ; i--)
     {
-      Sciprintf("Checking object \n");
-      nsp_object_print(objs_check[i].f,0,0,0);
-      Sciprintf("For field \n");
-      nsp_object_print(objs_check[i].s,0,0,0);
+      int j;
+      if ( nsp_set_attribute_object(objs_check[i].f,objs_check[i].f->basetype,objs_check[i].s) == FAIL) 
+	{
+	  /*XXXX in case of problem we have to free the remaining elements */
+	  Scierror("Error: affectation would produce an invalid value for field %s\n",  
+		   nsp_object_get_name(objs_check[i].s));
+	  for ( j=0; j <= i ; j++)  nsp_object_destroy(&objs_check[j].s);
+	  return RET_BUG;
+	}
     }
   return ret_args; 
 }

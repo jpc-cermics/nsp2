@@ -439,10 +439,10 @@ static int int_grect_set_background(void *Hv,const  char *attr, NspObject *O)
 }
 
 static AttrTab rect_attrs[] = {
-  { "color",        int_grect_get_color ,     int_grect_set_color ,     NULL },
-  { "thickness",    int_grect_get_thickness,  int_grect_set_thickness,  NULL },
-  { "background",   int_grect_get_background, int_grect_set_background, NULL },
-  { (char *) 0, NULL}
+  { "color",        int_grect_get_color ,     int_grect_set_color ,     NULL, NULL  },
+  { "thickness",    int_grect_get_thickness,  int_grect_set_thickness,  NULL, NULL  },
+  { "background",   int_grect_get_background, int_grect_set_background, NULL, NULL  },
+  { (char *) 0, NULL, NULL , NULL }
 };
 
 /*------------------------------------------------------

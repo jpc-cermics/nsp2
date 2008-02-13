@@ -520,9 +520,9 @@ static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab polyline_attrs[] = {
-  { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed },
-  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_Pts_obj },
-  { NULL,NULL,NULL,NULL },
+  { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_Pts_obj,(attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

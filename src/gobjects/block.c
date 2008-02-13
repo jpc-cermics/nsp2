@@ -574,12 +574,12 @@ static int int_gblock_set_show(void *Hv,const  char *attr, NspObject *O)
 
 
 static AttrTab block_attrs[] = {
-  { "color",        int_gblock_get_color ,     int_gblock_set_color ,     NULL },
-  { "background",    int_gblock_get_background,  int_gblock_set_background,  NULL },
-  { "thickness",    int_gblock_get_thickness,  int_gblock_set_thickness,  NULL },
-  { "hilited",   int_gblock_get_hilited, int_gblock_set_hilited, NULL },
-  { "show",   int_gblock_get_show, int_gblock_set_show, NULL },
-  { (char *) 0, NULL}
+  { "color",        int_gblock_get_color ,     int_gblock_set_color ,     NULL,NULL },
+  { "background",    int_gblock_get_background,  int_gblock_set_background,  NULL,NULL },
+  { "thickness",    int_gblock_get_thickness,  int_gblock_set_thickness,  NULL,NULL },
+  { "hilited",   int_gblock_get_hilited, int_gblock_set_hilited, NULL,NULL },
+  { "show",   int_gblock_get_show, int_gblock_set_show, NULL,NULL },
+  { (char *) 0, NULL, NULL,NULL}
 };
 
 /*------------------------------------------------------

@@ -659,11 +659,11 @@ static int _wrap_compound_set_alpha(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab compound_attrs[] = {
-  { "frect", (attr_get_function *)_wrap_compound_get_frect, (attr_set_function *)_wrap_compound_set_frect,(attr_get_object_function *)_wrap_compound_get_frect_obj },
-  { "wrect", (attr_get_function *)_wrap_compound_get_wrect, (attr_set_function *)_wrap_compound_set_wrect,(attr_get_object_function *)_wrap_compound_get_wrect_obj },
-  { "elts_bounds", (attr_get_function *)_wrap_compound_get_elts_bounds, (attr_set_function *)_wrap_compound_set_elts_bounds,(attr_get_object_function *)_wrap_compound_get_elts_bounds_obj },
-  { "elts", (attr_get_function *)_wrap_compound_get_elts, (attr_set_function *)_wrap_compound_set_elts,(attr_get_object_function *)_wrap_compound_get_elts_obj },
-  { "alpha", (attr_get_function *)_wrap_compound_get_alpha, (attr_set_function *)_wrap_compound_set_alpha,(attr_get_object_function *)int_get_object_failed },
+  { "frect", (attr_get_function *)_wrap_compound_get_frect, (attr_set_function *)_wrap_compound_set_frect,(attr_get_object_function *)_wrap_compound_get_frect_obj,(attr_set_object_function *)int_set_object_failed },
+  { "wrect", (attr_get_function *)_wrap_compound_get_wrect, (attr_set_function *)_wrap_compound_set_wrect,(attr_get_object_function *)_wrap_compound_get_wrect_obj,(attr_set_object_function *)int_set_object_failed },
+  { "elts_bounds", (attr_get_function *)_wrap_compound_get_elts_bounds, (attr_set_function *)_wrap_compound_set_elts_bounds,(attr_get_object_function *)_wrap_compound_get_elts_bounds_obj,(attr_set_object_function *)int_set_object_failed },
+  { "elts", (attr_get_function *)_wrap_compound_get_elts, (attr_set_function *)_wrap_compound_set_elts,(attr_get_object_function *)_wrap_compound_get_elts_obj,(attr_set_object_function *)int_set_object_failed },
+  { "alpha", (attr_get_function *)_wrap_compound_get_alpha, (attr_set_function *)_wrap_compound_set_alpha,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
   { NULL,NULL,NULL,NULL },
 };
 

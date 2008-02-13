@@ -390,10 +390,10 @@ static int int_cla_set_val(void *Hv,const char *attr, NspObject *O)
 }
 
 static AttrTab classa_attrs[] = {
-  { "cla_color", 	int_cla_get_color , 	int_cla_set_color , 	NULL },
-  { "cla_thickness",int_cla_get_thickness, 	int_cla_set_thickness,	NULL },
-  { "cla_val", 	int_cla_get_val, 	int_cla_set_val, 	int_cla_get_object_val },
-  { (char *) 0, NULL}
+  { "cla_color", 	int_cla_get_color , 	int_cla_set_color , 	NULL, NULL  },
+  { "cla_thickness",int_cla_get_thickness, 	int_cla_set_thickness,	NULL, NULL  },
+  { "cla_val", 	int_cla_get_val, 	int_cla_set_val, 	int_cla_get_object_val, NULL  },
+  { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
 

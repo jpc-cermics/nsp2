@@ -212,7 +212,7 @@ static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob, int 
   *copy = FALSE;
   if ( n != 1) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str,copy) ;
 }
 
 /*
@@ -481,6 +481,12 @@ static NspObject * int_gobject_get_user_data(void *self,const char *attr)
   return data;
 }
 
+static NspObject * int_gobject_get_user_data_obj(void *self,const char *attr,int *copy)
+{
+  *copy = FALSE;
+  return int_gobject_get_user_data(self,attr);
+}
+
 static int int_gobject_set_user_data(void *self,const char *attr, NspObject *O)
 {
   GQuark quark;
@@ -500,7 +506,8 @@ static int int_gobject_set_user_data(void *self,const char *attr, NspObject *O)
 
 
 static AttrTab gobjects_attrs[] = {
-  { "user_data", int_gobject_get_user_data, int_gobject_set_user_data, 	int_gobject_get_user_data },
+  { "user_data", int_gobject_get_user_data, int_gobject_set_user_data, int_gobject_get_user_data_obj, 
+    (attr_set_object_function *)int_set_object_failed    },
   { (char *) 0, NULL}
 };
 

@@ -424,9 +424,9 @@ static int _wrap_port_set_object_id(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab port_attrs[] = {
-  { "lock", (attr_get_function *)_wrap_port_get_lock, (attr_set_function *)_wrap_port_set_lock,(attr_get_object_function *)int_get_object_failed },
-  { "port", (attr_get_function *)_wrap_port_get_port, (attr_set_function *)_wrap_port_set_port,(attr_get_object_function *)int_get_object_failed },
-  { "object_id", (attr_get_function *)_wrap_port_get_object_id, (attr_set_function *)_wrap_port_set_object_id,(attr_get_object_function *)int_get_object_failed },
+  { "lock", (attr_get_function *)_wrap_port_get_lock, (attr_set_function *)_wrap_port_set_lock,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "port", (attr_get_function *)_wrap_port_get_port, (attr_set_function *)_wrap_port_set_port,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "object_id", (attr_get_function *)_wrap_port_get_object_id, (attr_set_function *)_wrap_port_set_object_id,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL },
 };
 

@@ -401,7 +401,7 @@ static NspMethods *spawn_get_methods(void) { return spawn_methods;};
  *-------------------------------------------*/
 
 static AttrTab spawn_attrs[] = {
-  { NULL,NULL,NULL,NULL },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 /*-------------------------------------------

@@ -626,13 +626,6 @@ static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classa_get_cla_lval_obj(void *self,char *attr)
-{
-  NspList *ret;
-
-  ret = ((NspList*) ((NspClassA *) self)->cla_lval);
-  return (NspObject *) ret;
-}
 
 static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
 {
@@ -646,13 +639,34 @@ static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+/* we use here copy = TRUE
+ * thus 
+ */
+
+static NspObject *_wrap_classa_get_cla_lval_obj(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE;
+  ret = ((NspList*) ((NspClassA *) self)->cla_lval);
+  return (NspObject *) ret;
+}
+
+static int _wrap_classa_set_cla_lval_obj(void *self,NspObject *val)
+{
+  if (((NspClassA *) self)->cla_lval != NULL ) 
+    nsp_list_destroy(((NspClassA *) self)->cla_lval);
+  ((NspClassA *) self)->cla_lval = (NspList *) val;
+  return FAIL;
+}
+
+/* (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },*/
 static AttrTab classa_attrs[] = {
-  { "cla_color", (attr_get_function *)_wrap_classa_get_cla_color, (attr_set_function *)_wrap_classa_set_cla_color,(attr_get_object_function *)int_get_object_failed },
-  { "cla_thickness", (attr_get_function *)_wrap_classa_get_cla_thickness, (attr_set_function *)_wrap_classa_set_cla_thickness,(attr_get_object_function *)int_get_object_failed },
-  { "cla_val", (attr_get_function *)_wrap_classa_get_cla_val, (attr_set_function *)_wrap_classa_set_cla_val,(attr_get_object_function *)_wrap_classa_get_cla_val_obj },
-  { "cla_bval", (attr_get_function *)_wrap_classa_get_cla_bval, (attr_set_function *)_wrap_classa_set_cla_bval,(attr_get_object_function *)_wrap_classa_get_cla_bval_obj },
-  { "cla_lval", (attr_get_function *)_wrap_classa_get_cla_lval, (attr_set_function *)_wrap_classa_set_cla_lval,(attr_get_object_function *)_wrap_classa_get_cla_lval_obj },
-  { NULL,NULL,NULL,NULL },
+  { "cla_color", (attr_get_function *)_wrap_classa_get_cla_color, (attr_set_function *)_wrap_classa_set_cla_color,NULL,NULL},
+  { "cla_thickness", (attr_get_function *)_wrap_classa_get_cla_thickness, (attr_set_function *)_wrap_classa_set_cla_thickness,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
+  { "cla_val", (attr_get_function *)_wrap_classa_get_cla_val, (attr_set_function *)_wrap_classa_set_cla_val,(attr_get_object_function *)_wrap_classa_get_cla_val_obj,(attr_set_object_function *)int_set_object_failed },
+  { "cla_bval", (attr_get_function *)_wrap_classa_get_cla_bval, (attr_set_function *)_wrap_classa_set_cla_bval,(attr_get_object_function *)_wrap_classa_get_cla_bval_obj,(attr_set_object_function *) int_set_object_failed },
+  { "cla_lval", (attr_get_function *)_wrap_classa_get_cla_lval, (attr_set_function *)_wrap_classa_set_cla_lval,(attr_get_object_function *)_wrap_classa_get_cla_lval_obj, _wrap_classa_set_cla_lval_obj },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

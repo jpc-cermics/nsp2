@@ -583,8 +583,8 @@ static int int_hash_set_keys(void *Hv,const char *attr, NspObject *O)
 }
 
 static AttrTab hash_attrs[] = {
-  { "__keys", 	int_hash_get_keys , 	int_hash_set_keys , 	NULL },
-  { (char *) 0, NULL}
+  { "__keys", 	int_hash_get_keys , 	int_hash_set_keys , 	NULL, NULL  },
+  { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
 /* 

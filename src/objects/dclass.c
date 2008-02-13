@@ -468,8 +468,8 @@ static int int_dclass_set_keys(void *Hv,const char *attr, NspObject *O)
 }
 
 static AttrTab dclass_attrs[] = {
-  { "__keys", 	int_dclass_get_keys , 	int_dclass_set_keys , 	NULL },
-  { (char *) 0, NULL}
+  { "__keys", 	int_dclass_get_keys , 	int_dclass_set_keys , 	NULL, NULL  },
+  { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
 /* 

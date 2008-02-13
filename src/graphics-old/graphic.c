@@ -444,8 +444,8 @@ static int _wrap_graphic_set_color(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab graphic_attrs[] = {
-  { "color", (attr_get_function *)_wrap_graphic_get_color, (attr_set_function *)_wrap_graphic_set_color,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "color", (attr_get_function *)_wrap_graphic_get_color, (attr_set_function *)_wrap_graphic_set_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 

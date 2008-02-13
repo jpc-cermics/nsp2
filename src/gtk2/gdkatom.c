@@ -198,7 +198,7 @@ static NspObject *gdkatom_path_extract(NspGdkAtom *a,int n, NspObject **ob, int 
   *copy = FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(ob[0])) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str,copy) ;
 }
 
 /*

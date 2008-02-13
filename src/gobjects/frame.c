@@ -541,11 +541,11 @@ static int int_gframe_set_scale(void *self,const  char *attr, NspObject *O)
 
 static AttrTab nsp_gframe_attrs[] = {
 #ifdef NOK
-  { "color",        int_gframe_get_color ,     int_gframe_set_color ,     NULL },
-  { "background",    int_gframe_get_background,  int_gframe_set_background,  NULL },
-  { "thickness",    int_gframe_get_thickness,  int_gframe_set_thickness,  NULL },
+  { "color",        int_gframe_get_color ,     int_gframe_set_color ,     NULL ,     NULL },
+  { "background",    int_gframe_get_background,  int_gframe_set_background,  NULL ,     NULL },
+  { "thickness",    int_gframe_get_thickness,  int_gframe_set_thickness,  NULL ,     NULL },
 #endif
-  { "scale", int_gframe_get_scale, int_gframe_set_scale, NULL},
+  { "scale", int_gframe_get_scale, int_gframe_set_scale, NULL, NULL , NULL},
   { (char *) 0, NULL}
 
 };

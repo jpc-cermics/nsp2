@@ -480,7 +480,7 @@ static int int_mo_create(Stack stack, int rhs, int opt, int lhs)
  *------------------------------------------------------*/
 
 static AttrTab module_attrs[] = {
-  { (char *) 0, NULL}
+  { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
 

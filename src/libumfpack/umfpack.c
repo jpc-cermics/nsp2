@@ -829,7 +829,7 @@ static NspMethods *umfpack_get_methods(void) { return umfpack_methods;};
  *-------------------------------------------*/
 
 static AttrTab umfpack_attrs[] = {
-  { NULL,NULL,NULL,NULL },
+  { NULL,NULL,NULL,NULL, NULL  },
 };
 
 
