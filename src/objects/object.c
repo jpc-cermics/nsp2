@@ -1023,9 +1023,10 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *at
  *
  **/
 
-NspObject *object_path_extract(NspObject *a,int n, NspObject **ob)
+NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy)
 {
   char *str;
+  *copy= FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;

@@ -209,9 +209,10 @@ NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int 
 }
 
 
-NspObject *nsp_list_path_extract(NspList *L,int n, NspObject **Objs)
+NspObject *nsp_list_path_extract(NspList *L,int n, NspObject **Objs, int *copy)
 {
   int ival;
+  *copy = FALSE;
   if ( n != 1 ) return NULLOBJ ;
   if ( IsMat(*Objs)  ) 
     {

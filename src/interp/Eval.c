@@ -44,7 +44,16 @@ static int EvalOpt (PList L1,Stack stack,int first);
 static int EvalFor (PList L1,Stack stack,int first);
 static int EvalEqual1 (const char *name,Stack stack,int first,int fargs);
 static int EvalEqual2 (const char *name,Stack stack,int first,int largs,int fargs,int dot_flag);
-static int EvalLhsList (PList L,int arity,Stack,int *ipos,int *r_args_1,int *mlhs_r, int *mlhs_flag);
+
+typedef struct _obj_check_field obj_check_field ;
+struct _obj_check_field {
+  NspObject *f;
+  NspObject *s;
+};
+
+static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1, int *mlhs_r, int *mlhs_flag,
+		       obj_check_field *objs, int *objs_count);
+
 static int EvalRhsList (PList L,Stack, int first, int rhs,int lhs);
 static int EvalRhsCall (PList L,Stack, int first, int rhs,int lhs);
 static int show_eval_bug(Stack s,int n, PList L) ;
@@ -1278,7 +1287,7 @@ static int EvalFor(PList L1, Stack stack, int first)
 }
 
 
-#define MAXLHS 100
+#define MAXLHS 128
 
 /**
  * EvalEqual:
@@ -1317,6 +1326,7 @@ static int EvalFor(PList L1, Stack stack, int first)
 
 extern NspObject *Reserved;  /* used to fill stack with non empty object */
 
+
 static int EvalEqual(PList L1, Stack stack, int first)
 {
   int itag;
@@ -1325,7 +1335,8 @@ static int EvalEqual(PList L1, Stack stack, int first)
   int mlhs_dot_flag[MAXLHS]; /* lhs is a set_attribute (DOTVAL) i.e .val or a elts extraction (ARGS, CELLARGS) **/
   char *mlhs_name[MAXLHS]; /*name of lhs argument **/
   int mlhs_r[MAXLHS]; /*number of values requested by lhs argument **/
-  int r_args_1,nargs,rhs_count,freepos,ret_args;
+  obj_check_field objs_check[MAXLHS];
+  int r_args_1,nargs,rhs_count,freepos,ret_args, objs_count=0;
   PList loc,loc1,loc2;
   int i,r_args,ipos;
   stack.first = first;
@@ -1368,7 +1379,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	  loc2 = (PList) loc->O ;
 	  loc1 = loc2->next;
 	  mlhs[i] = ipos;
-	  if ((n= EvalLhsList(loc1,loc2->arity,stack,&ipos,&r_args_1,&mlhs_r[i],&mlhs_dot_flag[i]))<0) 
+	  if ((n= EvalLhsList(loc1,loc2->arity,stack,&ipos,&r_args_1,&mlhs_r[i],&mlhs_dot_flag[i],objs_check,&objs_count))<0) 
 	    {
 	      nsp_void_seq_object_destroy(stack,first,ipos);
 	      return n;
@@ -1584,6 +1595,17 @@ static int EvalEqual(PList L1, Stack stack, int first)
       ret_args =  Min(nargs,r_args);
     }
   nsp_void_seq_object_destroy(stack,first+ret_args,freepos);
+  /*
+   * last pass in case we have changed some fields to 
+   * check if changes were admissible 
+   */
+  for ( i = objs_count -1 ; i >= 0 ; i--)
+    {
+      Sciprintf("Checking object \n");
+      nsp_object_print(objs_check[i].f,0,0,0);
+      Sciprintf("For field \n");
+      nsp_object_print(objs_check[i].s,0,0,0);
+    }
   return ret_args; 
 }
 
@@ -1809,15 +1831,16 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
  * Return value: 
  **/
 
-static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1, int *mlhs_r, int *mlhs_flag)
+static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1, int *mlhs_r, int *mlhs_flag, obj_check_field *objs, int *objs_count)
 {
+  int copy_tag ;
   PList L1;
   char *name;
   int j,fargs,arity1;
   NspObject *O;
   /*Object which is changed **/
   name = L->O;
-
+  
   /* Object L which is changed
    */
   if (Datas != NULLLIST 
@@ -1959,7 +1982,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
       /* XXXX : Pb here because path-extract can have more than one 
        * argument for example A{1,2}... for cells 
        */
-      O= stack.val->S[*ipos+1]->type->path_extract(stack.val->S[*ipos+1],n,&stack.val->S[*ipos+2]);
+      O= stack.val->S[*ipos+1]->type->path_extract(stack.val->S[*ipos+1],n,&stack.val->S[*ipos+2],&copy_tag);
       if ( O == NULLOBJ ) 
 	{
 	  Scierror("Error: path extraction cannot be performed (step %d)\n",j);
@@ -1967,6 +1990,21 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	  SHOWBUG(stack,RET_BUG,L);
 	}
+      if ( copy_tag == TRUE ) 
+	{
+	  /* we record the fields which are extracted for future check at the end of 
+	   * the affectation. If copy_tag is true it means that we have to work on a copy 
+	   * and at the end the resulting object will be checked before accepting the change.
+	   */
+	  objs[*objs_count].f = stack.val->S[*ipos+1];
+	  if ((O =nsp_object_copy_with_name(O)) == NULLOBJ )
+	    {
+	      SHOWBUG(stack,RET_BUG,L);
+	    }
+	  objs[*objs_count].s = O;
+	  (*objs_count)++;
+	}
+      /* store the extracted object on the stack */
       stack.val->S[*ipos+1]= O;
       nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
     }
@@ -2199,7 +2237,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 {
   const char *name;
-  int j,n,arity,nargs,lhs1=1,opt;
+  int j,n,arity,nargs,lhs1=1,opt, copy_tag;
   NspObject *O1;
   PList L2;
   stack.first = first;
@@ -2451,7 +2489,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 		  else if ( stack.val->S[first]->type->path_extract != NULL ) 
 		    {
 		      /* for a cell here we must perform a path_extract */
-		      NspObject *Ob= stack.val->S[first]->type->path_extract(stack.val->S[first],count-1,&stack.val->S[first+1]);
+		      NspObject *Ob= stack.val->S[first]->type->path_extract(stack.val->S[first],count-1,&stack.val->S[first+1],&copy_tag);
 		      if ( Ob == NULLOBJ ) 
 			{
 			  Scierror("Error: extraction cannot be performed (step %d)\n",j);

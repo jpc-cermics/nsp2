@@ -201,9 +201,10 @@ static int nsp_none_neq(NspNone *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *nsp_none_path_extract(NspNone *a,int n, NspObject **ob)
+static NspObject *nsp_none_path_extract(NspNone *a,int n, NspObject **ob, int *copy)
 {
   char *str;
+  *copy = FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;

@@ -170,9 +170,10 @@ static char *nsp_gframe_type_short_string(NspObject *v)
   return(nsp_gframe_short_type_name);
 }
 
-static NspObject *nsp_gframe_path_extract(NspGFrame *H,int n, NspObject **Objs)
+static NspObject *nsp_gframe_path_extract(NspGFrame *H,int n, NspObject **Objs, int *copy)
 {
   int i;
+  *copy = FALSE;
   if ( n != 1 ) return NULLOBJ;
   if ( IntScalar(*Objs,&i) == FAIL) return NULLOBJ ;
   if ( i >= 1 && i <=nsp_list_length(H->obj->objs))
@@ -522,7 +523,7 @@ static int int_gframe_set_background(void *Hv, char *attr, NspObject *O)
 
 #endif 
 
-static NspObject *int_gframe_get_scale(void *self,char *attr)
+static NspObject *int_gframe_get_scale(void *self,const char *attr)
 {
   return (NspObject *) nsp_matrix_create_from_array(NVOID,1,4,((NspGFrame *)self)->obj->r,NULL);
 }

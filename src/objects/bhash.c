@@ -213,10 +213,11 @@ static int bhash_neq(NspBHash *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *bhash_path_extract(NspBHash *H,int n, NspObject **Objs)
+static NspObject *bhash_path_extract(NspBHash *H,int n, NspObject **Objs, int *copy)
 {
   int val;
   NspSMatrix *M;
+  *copy = FALSE;
   /* faire une fonction ou macros pour un string XXXX **/
   if ( n != 1) return NULLOBJ ;
   if (( M =nsp_smatrix_object(Objs[0])) == NULLSMAT || M->mn != 1) return NULLOBJ ;

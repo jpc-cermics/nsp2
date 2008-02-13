@@ -59,7 +59,7 @@ static int gobject_neq(NspGObject *A, NspObject *B);
 static int gobject_xdr_save(XDR  *F, NspGObject *M);
 static NspGObject  *gobject_xdr_load(XDR  *F);
 static NspMethods *gobject_get_methods(void); 
-static NspObject *gobject_path_extract(NspGObject *A,int n, NspObject **Objs);
+static NspObject *gobject_path_extract(NspGObject *A,int n, NspObject **Objs, int *copy);
 #endif /* NspGObject_Private */
 
 #define NULLGOBJECT (NspGObject*) 0

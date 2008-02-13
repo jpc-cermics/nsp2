@@ -206,9 +206,10 @@ static int gobject_neq(NspGObject *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob)
+static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob, int *copy)
 {
   char *str;
+  *copy = FALSE;
   if ( n != 1) return NULLOBJ;
   if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
@@ -467,7 +468,7 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
-static NspObject * int_gobject_get_user_data(void *self,char *attr)
+static NspObject * int_gobject_get_user_data(void *self,const char *attr)
 {
   GQuark quark;
   NspObject *data;

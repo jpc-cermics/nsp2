@@ -56,7 +56,7 @@ static int pangoattribute_xdr_save(XDR *xdrs, NspPangoAttribute *M);
 static NspPangoAttribute  *pangoattribute_xdr_load(XDR *xdrs);
 static AttrTab pangoattribute_attrs[];
 static NspMethods *pangoattribute_get_methods(void); 
-static NspObject *pangoattribute_path_extract(NspPangoAttribute *A,int n, NspObject **Objs);
+static NspObject *pangoattribute_path_extract(NspPangoAttribute *A,int n, NspObject **Objs, int *copy);
 #endif /* PangoAttribute_Private */
 
 #define NULLPATTR (NspPangoAttribute*) 0

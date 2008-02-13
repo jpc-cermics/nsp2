@@ -447,7 +447,7 @@ static int int_link_create(Stack stack, int rhs, int opt, int lhs)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
-static NspObject * int_glink_get_color(void *Hv,char *attr)
+static NspObject * int_glink_get_color(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->obj->color);
 }
@@ -460,7 +460,7 @@ static int int_glink_set_color(void *Hv,const  char *attr, NspObject *O)
   return OK ;
 }
 
-static NspObject * int_glink_get_thickness(void *Hv,char *attr)
+static NspObject * int_glink_get_thickness(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->obj->thickness);
 }
@@ -473,7 +473,7 @@ static int int_glink_set_thickness(void *Hv,const  char *attr, NspObject *O)
   return OK ;
 }
 
-static NspObject * int_glink_get_hilited(void *Hv,char *attr)
+static NspObject * int_glink_get_hilited(void *Hv,const char *attr)
 {
   return nsp_new_boolean_obj(((NspLink *) Hv)->obj->hilited);
 }
@@ -486,7 +486,7 @@ static int int_glink_set_hilited(void *Hv,const  char *attr, NspObject *O)
   return OK ;
 }
 
-static NspObject * int_glink_get_show(void *Hv,char *attr)
+static NspObject * int_glink_get_show(void *Hv,const char *attr)
 {
   return nsp_new_boolean_obj(((NspLink *) Hv)->obj->show);
 }

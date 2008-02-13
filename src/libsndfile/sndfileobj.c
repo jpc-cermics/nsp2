@@ -334,34 +334,34 @@ NspSndFile *nsp_sndfile_copy(NspSndFile  *A)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
-static NspObject * int_sndfile_get_frames(void *Hv,char *attr)
+static NspObject * int_sndfile_get_frames(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspSndFile *) Hv)->snd->sfinfo.frames);
 }
 
-static NspObject * int_sndfile_get_samplerate(void *Hv,char *attr)
+static NspObject * int_sndfile_get_samplerate(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspSndFile *) Hv)->snd->sfinfo.samplerate);
 }
 
-static NspObject * int_sndfile_get_channels(void *Hv,char *attr)
+static NspObject * int_sndfile_get_channels(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspSndFile *) Hv)->snd->sfinfo.channels);
 }
 
 static NspSMatrix *nsp_sndfile_format_to_string(int format);
 
-static NspObject * int_sndfile_get_format(void *Hv,char *attr)
+static NspObject * int_sndfile_get_format(void *Hv,const char *attr)
 {
   return (NspObject *) nsp_sndfile_format_to_string(((NspSndFile *) Hv)->snd->sfinfo.format);
 }
 
-static NspObject * int_sndfile_get_sections(void *Hv,char *attr)
+static NspObject * int_sndfile_get_sections(void *Hv,const char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspSndFile *) Hv)->snd->sfinfo.sections);
 }
 
-static NspObject * int_sndfile_get_seekable(void *Hv,char *attr)
+static NspObject * int_sndfile_get_seekable(void *Hv,const char *attr)
 {
   return nsp_create_boolean_object(NVOID,((NspSndFile *) Hv)->snd->sfinfo.seekable);
 }

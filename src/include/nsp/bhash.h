@@ -148,7 +148,7 @@ static int bhash_eq(NspBHash *A, NspObject *B);
 static int bhash_neq(NspBHash *A, NspObject *B);
 static int bhash_xdr_save(XDR  *F, NspBHash *M);
 static NspBHash  *bhash_xdr_load(XDR  *F);
-static NspObject *bhash_path_extract(NspBHash *A,int n, NspObject **Objs);
+static NspObject *bhash_path_extract(NspBHash *A,int n, NspObject **Objs, int *copy);
 static AttrTab bhash_attrs[]; 
 static int int_bhash_get_attribute(Stack stack, int rhs, int opt, int lhs);
 static int int_bhash_set_attribute(Stack stack, int rhs, int opt, int lhs);

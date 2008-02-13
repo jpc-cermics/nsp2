@@ -45,7 +45,7 @@
  **/
 
 
-static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs);
+static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs, int *copy);
 
 /*
  * NspCells inherits from NspObject 
@@ -261,9 +261,10 @@ int nsp_cells_neq(NspObject *A, NspObject *B)
   return C->objs[ival];
 
 
-static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
+static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs,int *copy)
 {
   int ival;
+  *copy = FALSE;
   switch (n) 
     {
     case 1: 

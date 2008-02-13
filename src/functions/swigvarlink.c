@@ -404,7 +404,7 @@ static NspMethods *swigvarlink_get_methods(void) { return NULL;};
 
 /* return all the keys H.keys entered in the swigvarlink table as a string matrice  */
 
-static NspObject * int_swigvarlink_get_keys(void *Hv, char *attr)
+static NspObject * int_swigvarlink_get_keys(void *Hv,const char *attr)
 {
   return (NspObject *) nsp_hash_get_keys(((NspSwigVarLink *)Hv)->obj->table);
 }

@@ -153,7 +153,7 @@ static int hash_eq(NspHash *A, NspObject *B);
 static int hash_neq(NspHash *A, NspObject *B);
 static int hash_xdr_save(XDR  *F, NspHash *M);
 static NspHash  *hash_xdr_load(XDR  *F);
-static NspObject *hash_path_extract(NspHash *A,int n, NspObject **Objs);
+static NspObject *hash_path_extract(NspHash *A,int n, NspObject **Objs, int *copy);
 static AttrTab hash_attrs[]; 
 static int int_hash_get_attribute(Stack stack, int rhs, int opt, int lhs);
 static int int_hash_set_attribute(Stack stack, int rhs, int opt, int lhs);

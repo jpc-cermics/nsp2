@@ -56,7 +56,7 @@ static int gdkatom_neq(NspGdkAtom *A, NspObject *B);
 static int gdkatom_xdr_save(XDR *xdrs, NspGdkAtom *M);
 static NspGdkAtom  *gdkatom_xdr_load(XDR *xdrs);
 static NspMethods *gdkatom_get_methods(void); 
-static NspObject *gdkatom_path_extract(NspGdkAtom *A,int n, NspObject **Objs);
+static NspObject *gdkatom_path_extract(NspGdkAtom *A,int n, NspObject **Objs, int *copy);
 #endif /* GdkAtom_Private */
 
 #define NULLGDKATOM (NspGdkAtom*) 0

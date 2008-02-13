@@ -30,7 +30,7 @@ typedef char* (set_name_func) (void *,const char *);
 typedef char* (get_name_func) (void *);
 typedef int   (is_true_func)  (void *);
 typedef void *(loop_func) (char *str,void *,void *,int i,int *rep);
-typedef void *(path_func) (void *,int n, void *);
+typedef void *(path_func) (void *,int n, void *,int *);
 typedef void *(get_from_obj_func) (void *);
 typedef int (eq_func) (void *,void *);
 typedef int (save_func) (void *,const void *);
@@ -268,7 +268,7 @@ extern int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *a
 extern int int_get_attribute(Stack stack, int rhs, int opt, int lhs);
 extern NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *attr) ;
 extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr) ;
-extern NspObject *object_path_extract(NspObject *a,int n, NspObject **ob);
+extern NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy);
 
 
 /*-----------------------------------------------------------

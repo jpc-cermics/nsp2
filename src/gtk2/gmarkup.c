@@ -436,7 +436,7 @@ static NspMethods *gmarkup_node_get_methods(void) { return gmarkup_node_methods;
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_gmarkup_node_get_op(void *self,char *attr)
+static NspObject *_wrap_gmarkup_node_get_op(void *self,const char *attr)
 {
   int ret = 0;
   return nsp_new_double_obj((double) ret);
@@ -449,7 +449,7 @@ static int _wrap_gmarkup_node_set_op(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmarkup_node_get_arity(void *self,char *attr)
+static NspObject *_wrap_gmarkup_node_get_arity(void *self,const char *attr)
 {
   int ret=0;
   return nsp_new_double_obj((double) ret);
@@ -462,12 +462,12 @@ static int _wrap_gmarkup_node_set_arity(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmarkup_node_get_attrs(void *Hv,char *attr)
+static NspObject *_wrap_gmarkup_node_get_attrs(void *Hv,const char *attr)
 {
   return (NspObject *) ((NspGMarkupNode *) Hv)->attributes;
 }
 
-static NspObject *_wrap_gmarkup_node_get_object_attrs(void *Hv,char *str)
+static NspObject *_wrap_gmarkup_node_get_object_attrs(void *Hv,const char *str)
 {
   return (NspObject *) ((NspGMarkupNode *) Hv)->attributes;
 }
@@ -481,12 +481,12 @@ static int _wrap_gmarkup_node_set_attrs(void *Hv,const char *attr, NspObject *O)
   return OK ;
 }
 
-static NspObject *_wrap_gmarkup_node_get_children(void *Hv,char *attr)
+static NspObject *_wrap_gmarkup_node_get_children(void *Hv,const char *attr)
 {
   return (NspObject *) ((NspGMarkupNode *) Hv)->children;
 }
 
-static NspObject *_wrap_gmarkup_node_get_object_children(void *Hv,char *str)
+static NspObject *_wrap_gmarkup_node_get_object_children(void *Hv,const char *str)
 {
   return (NspObject *) ((NspGMarkupNode *) Hv)->children;
 }
