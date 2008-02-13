@@ -796,6 +796,14 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *
   NspCompound *P = (NspCompound *) Obj;
   L = P->obj->elts;
   cloc = L->first ;
+  
+  if ( cloc == NULLCELL) 
+    {
+      bounds[0]=bounds[1]=0;
+      bounds[2]=bounds[3]=0;
+      return;
+    }
+  
   bounds[0]=bounds[1]=LARGEST_REAL;
   bounds[2]=bounds[3]=-LARGEST_REAL;
 
@@ -807,11 +815,11 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *
 	  G->type->bounds(Xgc,G,l_bounds);
 	  if ( l_bounds[0] < bounds[0] ) 
 	    bounds[0]= l_bounds[0];
-	  else if (  l_bounds[2] > bounds[2])
+	  if (  l_bounds[2] > bounds[2])
 	    bounds[2]= l_bounds[2];
 	  if ( l_bounds[1] < bounds[1] ) 
 	    bounds[1]= l_bounds[1];
-	  else if (  l_bounds[3] > bounds[3])
+	  if (  l_bounds[3] > bounds[3])
 	    bounds[3]= l_bounds[3];
 	}
       cloc = cloc->next;

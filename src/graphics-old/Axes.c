@@ -28,14 +28,12 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-/* #include "nsp/graphics/PloEch.h" */
-
 static double  x_convert (char xy_type,const double x[] ,int i);
 static double  y_convert (char xy_type,const double x[] ,int i);
 static void NumberFormat (char *str,int k,int a);
 static void aplotv1_new(BCG *Xgc,char *strflag);
 static void aplotv2 (BCG *Xgc,char*);
-
+static void nsp_draw_frame_rectangle(BCG *Xgc) ;
 
 /**
  * axis_draw:
@@ -58,7 +56,7 @@ void axis_draw(BCG *Xgc,char *strflag)
     case '0' :
       break ;
     case '2' :
-      Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+      nsp_draw_frame_rectangle(Xgc);
       break;
     default :
       if ( strflag[1] == '5' || strflag[1] =='6' )
@@ -112,8 +110,10 @@ static void aplotv2(BCG *Xgc,char *strflag)
       break;
     }
   if ( c != '4' && c != '5' )  
-    /* frame rectangle */
-    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+    {
+      /* frame rectangle */
+      nsp_draw_frame_rectangle(Xgc);
+    }
   /* x-axis */
   ny=1,nx=3;
   Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
@@ -158,13 +158,15 @@ static void aplotv1_new(BCG *Xgc,char *strflag)
       break;
     }
   if ( c != '4' && c != '5' )  
-    /* frame rectangle **/
-    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
-  /* x-axis **/
+    {
+      /* frame rectangle */
+      nsp_draw_frame_rectangle(Xgc);
+    }
+  /* x-axis */
   ny=1,nx=4;
   Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
 	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
-  /* y-axis **/
+  /* y-axis */
   ny=4,nx=1;
   Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
 	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
@@ -220,7 +222,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   int Nx=0,Ny=0;
-  double angle=0.0,vxx,vxx1;
+  double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;
   int vx[2],vy[2],xm[2],ym[2];
   char c_format[5];
   int flag=0,xx=0,yy=0,posi[2],rect[4];
@@ -228,14 +230,13 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   int ns=2,style=0,iflag=0;
   int fontid[2],fontsize_kp,logrect[4],smallersize=0,color_kp=0;
   
-  /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001 */
-  /* If  zero ticks are requested, exit */
-  
+  /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001
+   * If  zero ticks are requested, exit
+   */
+
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
- 
-  /* End of modified code */
-  
+      
   Xgc->graphic_engine->xget_font(Xgc,fontid);
   fontsize_kp = fontid[1] ;
 
@@ -255,7 +256,8 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       smallersize=fontid[1]-2;
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
     }
-  /* Real to Pixel values **/
+  
+  /* Real to Pixel values */
   switch ( xy_type ) 
     {
     case 'v' : Nx= *nx; Ny= *ny; break;
@@ -274,6 +276,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
     default: 
       sciprint("Sci_Axis: wrong type argument xy_type\r\n");
     }
+
   /* Note that in that case xy_type = 'i' we can possibly 
    * have x[3] or y[3] equal to zero which means that we 
    * cannot distinguish the min and the max on the given interval
@@ -283,32 +286,44 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
     {
     case 'u' : 
     case 'd' :
-      /* Horizontal axes **/
-      barlength = Xgc->scales->WIRect1[3]/50.0;
-      /* compute a format **/
+      /* Used for an horizontal axis: 
+       * if the sign of d_barlength is changed ticks will
+       * go in the direction of the strings 
+       */
+      barlength = Xgc->scales->WIRect1[3]/40.0;
+      d_barlength = barlength/Xgc->scales->Wscy1;
+      str_offset = Xgc->scales->WIRect1[3]/60.0/Xgc->scales->Wscy1;
+      
+      /* compute a format 
+       */
       if (str == NULL && format == NULL )  
 	switch (xy_type ) {
 	case 'v' : ChoixFormatE1(c_format,x,Nx);break;
 	case 'r' : ChoixFormatE (c_format,x[0],x[1],(x[1]-x[0])/x[2]);break;
 	}
-      /* the horizontal segment **/
-      vx[0] =  XScale(x_convert(xy_type, x , 0));
-      vx[1] =  XScale(x_convert(xy_type, x , Nx-1));
-      vy[0]= vy[1] = ym[0] = YScale(y[0]);
       if ( seg_flag == 1) 
 	{
+	  /* the horizontal segment */
+	  xd = x_convert(xy_type, x , 0);
+	  vx[0] =  inint(XScaleR_d(xd,y[0]));
+	  ym[0] = vy[0] =  inint(YScaleR_d(xd,y[0]));
+	  xd = x_convert(xy_type, x , Nx-1);
+	  vx[1] =  inint(XScaleR_d(xd,y[0]));
+	  vy[1] =  inint(YScaleR_d(xd,y[0]));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       
-      /* loop on the ticks **/
+      /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)
 	{ 
 	  char foo[100];
 	  vxx = x_convert(xy_type,x,i);
 	  if ( str != NULL)  
-	    sprintf(foo,"%s",str[i]);
+	    {
+	      sprintf(foo,"%s",str[i]);
+	    }
 	  else if ( format == NULL) 
 	    {
 	      /*defaults format **/
@@ -325,21 +340,40 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  else 
 	    sprintf(foo,format,vxx);
 	  Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
-
+	  
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
-
-	  vx[0] = vx[1] = xm[0] =  XScale(vxx);
-	  posi[0] = inint( xm[0] -rect[2]/2.0);
-
+	  vx[0] =  inint(XScaleR_d(vxx,y[0]));
+	  vy[0] =  inint(YScaleR_d(vxx,y[0]));
 	  if ( pos == 'd' ) 
 	    {
-	      posi[1]=inint( ym[0] + 1.2*barlength + rect[3]);
-	      vy[0]= ym[0];vy[1]= ym[0] - barlength ;
+	      /* if d_barlength is > 0: ticks are going up and string are displayed 
+	       * below 
+	       */
+	      xd = vxx; 
+	      yd = y[0] + d_barlength;
+	      vx[1]= inint(XScaleR_d(xd,yd));
+	      vy[1]= inint(YScaleR_d(xd,yd));
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
+	      if ( d_barlength > 0 ) 
+		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1; 
+	      else
+		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1; 
+	      posi[0] = inint(XScaleR_d(xd,yd));
+	      posi[1] = inint(YScaleR_d(xd,yd));
 	    }
 	  else 
 	    { 
-	      posi[1]=inint( ym[0] - 1.2*barlength);
-	      vy[0]= ym[0];vy[1]= ym[0] + barlength;
+	      xd = vxx; 
+	      yd = y[0] - d_barlength;
+	      vx[1]= inint(XScaleR_d(xd,yd));
+	      vy[1]= inint(YScaleR_d(xd,yd));
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
+	      if ( d_barlength > 0 ) 
+		yd = y[0] + str_offset;
+	      else
+		yd = y[0] + str_offset - d_barlength;
+	      posi[0] = inint(XScaleR_d(xd,yd));
+	      posi[1] = inint(YScaleR_d(xd,yd));
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
@@ -350,9 +384,8 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
-	  
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
-
+	  
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Nx-1 ) 
@@ -363,11 +396,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      dx = (vxx1-vxx)/subtics;
 	      for ( j = 1 ; j < subtics; j++) 
 		{
-		  vx[0] = vx[1] = XScale(vxx+dx*j);
-		  if ( pos == 'd' ) 
-		    { vy[0]= ym[0];vy[1]= ym[0] - barlength/2.0 ; }
-		  else 
-		    { vy[0]= ym[0];vy[1]= ym[0] + barlength/2.0; }
+		  xd = vxx+dx*j;
+		  vx[0] = inint(XScaleR_d(xd,y[0]));
+		  vy[0] = inint(YScaleR_d(xd,y[0]));
+		  yd = (pos == 'd') ? y[0] + d_barlength/2.0 : y[0] - d_barlength/2.0;
+		  vx[1]= inint(XScaleR_d(xd,yd));
+		  vy[1]= inint(YScaleR_d(xd,yd));
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -376,24 +410,29 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       break;
     case 'r' : 
     case 'l' :
-      /* Vertical axes **/
-      barlength = Xgc->scales->WIRect1[2]/75.0;
+      /* Vertical axes */
+      barlength = Xgc->scales->WIRect1[2]/40.0;
+      d_barlength = barlength/Xgc->scales->Wscx1;
+      str_offset = Xgc->scales->WIRect1[2]/60.0/Xgc->scales->Wscx1;
       if (str == NULL &&  format == NULL )  
 	switch (xy_type ) {
 	case 'v' : ChoixFormatE1(c_format,y,Ny);break;
 	case 'r' : ChoixFormatE(c_format,y[0],y[1],(y[1]-y[0])/y[2]);break;
 	}
-      /* the vertical segment **/
-      vy[0] =  YScale(y_convert(xy_type, y , 0));
-      vy[1] =  YScale(y_convert(xy_type, y , Ny-1));
-      vx[0]= vx[1] = xm[0]= XScale(x[0]);
-      if ( seg_flag == 1) 
+      if ( seg_flag == 1)
 	{
+	  /* the vertical segment */
+	  yd = y_convert(xy_type, y , 0);
+	  vx[0] =  inint(XScaleR_d(x[0],yd));
+	  vy[0] =  inint(YScaleR_d(x[0],yd));
+	  yd = y_convert(xy_type, y , Ny-1);
+	  vx[1] =  inint(XScaleR_d(x[0],yd));
+	  vy[1] = xm[0]= inint(YScaleR_d(x[0],yd));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
-      /* loop on the ticks **/
+      /* loop on the ticks */
       for (i=0 ; i < Ny ; i++)
 	{ 
 	  char foo[100];
@@ -418,19 +457,36 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
-
-	  vy[0]= vy[1] = ym[0] = YScale(vxx);
-	  posi[1]=inint( ym[0] +rect[3]/2.0);
+	  
+	  vx[0] = inint(XScaleR_d(x[0],vxx));
+	  vy[0] = inint(YScaleR_d(x[0],vxx));
 	  if ( pos == 'r' ) 
 	    {
-	      posi[0]=inint( xm[0] + 1.2*barlength);
-	      vx[0]= xm[0];vx[1]= xm[0] - barlength;
+	      xd = x[0] - d_barlength;
+	      vx[1] = inint(XScaleR_d(xd,vxx));
+	      vy[1] = inint(YScaleR_d(xd,vxx));
+	      if ( d_barlength > 0) 
+		xd = x[0] + str_offset;
+	      else 
+		xd = x[0] - d_barlength + str_offset;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
+	      posi[0]= inint(XScaleR_d(xd,yd));
+	      posi[1]= inint(YScaleR_d(xd,yd));
 	    }
 	  else 
 	    { 
-	      posi[0]=inint(xm[0] - 1.2*barlength - rect[2]);
-	      vx[0]= xm[0];vx[1]= xm[0] + barlength;
+	      xd = x[0] + d_barlength;
+	      vx[1] = inint(XScaleR_d(xd,vxx));
+	      vy[1] = inint(YScaleR_d(xd,vxx));
+	      if ( d_barlength > 0) 
+		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1;
+	      else 
+		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
+	      posi[0]= inint(XScaleR_d(xd,yd));
+	      posi[1]= inint(YScaleR_d(xd,yd));
 	    }
+
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
 	  if ( logflag == 'l' )
@@ -453,11 +509,13 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      dy = (vxx1-vxx)/subtics;
 	      for ( j = 1 ; j < subtics; j++) 
 		{
-		  vy[0] = vy[1] = YScale(vxx+dy*j);
-		  if ( pos == 'r' ) 
-		    { vx[0]= xm[0];vx[1]= xm[0] - barlength/2.0 ; }
-		  else 
-		    { vx[0]= xm[0];vx[1]= xm[0] +  barlength/2.0; }
+		  yd= vxx+dy*j;
+		  xd= x[0];
+		  vx[0] = inint(XScaleR_d(xd,yd));
+		  vy[0] = inint(YScaleR_d(xd,yd));
+		  xd = ( pos == 'r' ) ? x[0] -d_barlength/2.0: x[0] +d_barlength/2.0;
+		  vx[1]= inint(XScaleR_d(xd,yd));
+		  vy[1]= inint(YScaleR_d(xd,yd));
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -526,3 +584,26 @@ static void NumberFormat(char *str, int k, int a)
 	}
     }
 }
+
+
+static void nsp_draw_frame_rectangle(BCG *Xgc) 
+{
+  if ( Xgc->scales->cosa == 1.0 ) 
+    {
+      Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+    }
+  else 
+    {
+      double x[4],y[4];
+      x[0]= Xgc->scales->frect[0];
+      y[0]= Xgc->scales->frect[1];
+      x[1]= Xgc->scales->frect[2];
+      y[1]= y[0];
+      x[2]= x[1];
+      y[2]= Xgc->scales->frect[3];
+      x[3]= x[0];
+      y[3]= y[2];
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,4,1);
+    }
+}
+
