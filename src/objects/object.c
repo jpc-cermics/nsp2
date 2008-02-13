@@ -329,7 +329,9 @@ const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
  * nsp_object_destroy_name:
  * @ob: a #NspObject 
  * 
- * free the memory used by object name.
+ * free the memory used by object name. Note that 
+ * a direct call to free is not good since unnamed 
+ * objects share the same empty name. 
  **/
 
 void nsp_object_destroy_name(NspObject *ob)
@@ -347,6 +349,7 @@ void nsp_object_destroy_name(NspObject *ob)
  * 
  * Return value: a string. 
  **/
+
 static const char *get_name(NspObject *ob) 
 {
   return ob->name;
@@ -399,17 +402,36 @@ static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i,
 }
 
 
-
-
 /*
  * save and load when not redefined locally 
  */
 
+/**
+ * nsp_object_save_def:
+ * @F: a void pointer 
+ * @M: a nsp object 
+ * 
+ * This is the default handler for saving a nsp object in 
+ * a file. Each class has to redefine this function.
+ * 
+ * Returns: %FAIL
+ **/
 int  nsp_object_save_def(void * F, NspObject * M)
 {
   Scierror("Error: save not implemented for objects of type %s\n",M->type->s_type());
   return FAIL;
 }
+
+
+/**
+ * nsp_object_load_def:
+ * @F: a void pointer 
+ * 
+ * This is the default handler for loading a nsp object from 
+ * a file. Each class has to redefine this function.
+ * 
+ * Returns: %NULL
+ **/
 
 NspObject *nsp_object_load_def(void  * F)
 {
@@ -420,6 +442,18 @@ NspObject *nsp_object_load_def(void  * F)
 /* print in Latex syntax 
  *
  */
+
+/**
+ * nsp_object_latex_def:
+ * @M: an object 
+ * @indent: an integer 
+ * @name: a string or %NULL
+ * @rec_level: an integer 
+ * 
+ * default function for printing an object in latex syntax.
+ * Each class has to properly redefine this function.
+ *
+ **/
 
 static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level)
 {
@@ -529,9 +563,20 @@ static int int_meth_object_get_name(void *self,Stack stack,int rhs,int opt,int l
 }
 
 
-/* method for setting attributes 
- * ob.set[ attr1=val1, attr2 = val2 ,....]
- */
+
+/**
+ * int_meth_object_set_attributes:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when the set method 
+ * is activated ob.set[ attr1=val1, attr2 = val2 ,....]
+ * 
+ * Returns: 0 
+ **/
 
 static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
@@ -551,10 +596,22 @@ static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt
   return 0;
 }
 
+ 
 
-/* get attributes through method .get 
- * ob.get[smat1,smat2,...], get attributes 
- */
+/**
+ * int_meth_object_get_attributes:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when a get method 
+ * is activated. ob.get[smat1,smat2,...] and the function 
+ * returns as many object as requested by given arguments.
+ * 
+ * Returns: an integer  
+ **/
 
 int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
@@ -581,9 +638,20 @@ int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int l
   return count;
 }
 
-/* get attribute names.
- *
- */
+
+/**
+ * int_meth_object_get_attribute_names:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when the get_attribute_names method 
+ * is activated ob.get_attribute_names[]
+ * 
+ * Returns: 1 or %RET_BUG.
+ **/
 
 static int int_meth_object_get_attribute_names(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
@@ -595,8 +663,17 @@ static int int_meth_object_get_attribute_names(void *ob,Stack stack, int rhs, in
   return 1;
 }
 
-/* get available methods. 
- */
+/**
+ * nsp_get_methods:
+ * @ob: a nsp object 
+ * @type: a nsp type 
+ * 
+ * get available methods in the given type. The @ob
+ * argument is not used. 
+ * 
+ * 
+ * Returns: a string matrix 
+ **/
 
 static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
 {
@@ -634,8 +711,21 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
   return sm;
 }
 
-/* get methods with method !
- */
+
+
+/**
+ * int_meth_object_get_methods:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when the get_method_names method 
+ * is activated ob.get_method_names[].
+ * 
+ * Returns: 1 or %RET_BUG.
+ **/
 
 static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
@@ -737,10 +827,20 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * can be used in the constructor 
- * type.new[ attr1=val1, attr2 = val2 ,....]
- */
+/**
+ * int_create_with_attributes:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * utility function that can be used in the constructor of a class
+ * to walk through optional named arguments and use them to initialize 
+ * fields of an object.
+ * 
+ * Returns: 1 or %RET_BUG
+ **/
 
 int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int lhs)
 {
@@ -758,6 +858,21 @@ int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int 
     }
   return 1;
 }
+
+/**
+ * nsp_set_attribute_util:
+ * @ob: an object 
+ * @type: a type 
+ * @attr: a string giving an attribute name 
+ * @val: a nsp object.
+ * 
+ * set the field @attr of object @ob with value @val. If the 
+ * field @attr is not a correct field then %FAIL is returned. 
+ * Note that most of the time this function is called with 
+ * type set to ob->basetype.
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,NspObject *val)
 {
@@ -790,10 +905,18 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,Nsp
   return OK;
 }
 
-
-/* used to get attributes of an objet through the dot operator 
- * get attributes or R.exp
- */
+/**
+ * int_get_attribute:
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when trying to get an attribute value 
+ * through the use of the dot operator: ob.attr
+ * 
+ * Returns: 1 or %RET_BUG.
+ **/
 
 int int_get_attribute(Stack stack, int rhs, int opt, int lhs)
 {
@@ -811,7 +934,22 @@ int int_get_attribute(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,char *attr) 
+/**
+ * nsp_get_attribute_util:
+ * @ob: an object 
+ * @type: a type 
+ * @attr: a string 
+ * 
+ * returns if it exists the field @attr of object @ob. 
+ * fields are searched in the given type. Note that most 
+ * of the time @type is set to ob->basetype when calling this 
+ * function. Note also that this function returns a copy of the 
+ * field object.
+ * 
+ * Returns: a #NspObject. or %NULLOBJ.
+ **/
+
+NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *attr) 
 {
   int item; 
   AttrTab *attrs;
@@ -870,10 +1008,20 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,char *attr)
 }
 
 
-/* Used in 
- *     obj.attr(xx) = val 
- *     obj(attr)(xx) = val 
- */
+
+/**
+ * object_path_extract:
+ * @a: a nsp object
+ * @n: an integer
+ * @ob: a pointer to a string object. 
+ * 
+ * This function is used when a field of an object is 
+ * requested for modification more complex than the simple 
+ * affectation. For example in obj.attr(4,5) = 7.
+ * 
+ * Returns: a #NspObject. 
+ *
+ **/
 
 NspObject *object_path_extract(NspObject *a,int n, NspObject **ob)
 {
@@ -888,7 +1036,20 @@ NspObject *object_path_extract(NspObject *a,int n, NspObject **ob)
  * as in a.val(...) = 
  */
 
-NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type, char *attr) 
+/**
+ * nsp_get_attribute_object:
+ * @ob: an object 
+ * @type: a type 
+ * @attr: a string 
+ * 
+ * utility function for #object_path_extract or similar functions. 
+ * Returns the field @attr for object @ob for modifications by calling 
+ * the get_object method of the object class. 
+ * 
+ * Returns: a #NspObject. 
+ **/
+
+NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr) 
 {
   int item; 
   AttrTab *attrs;

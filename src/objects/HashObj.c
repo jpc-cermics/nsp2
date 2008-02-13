@@ -570,7 +570,7 @@ int int_htcreate(Stack stack, int rhs, int opt, int lhs)
 
 /* return all the keys H.keys entered in the hash table as a string matrice  */
 
-static NspObject * int_hash_get_keys(void *Hv, char *attr)
+static NspObject * int_hash_get_keys(void *Hv,const char *attr)
 {
   return (NspObject *) nsp_hash_get_keys(Hv);
 }
