@@ -1099,7 +1099,7 @@ int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val)
 	{
 	  if (( item=attr_search(attr,attrs)) >=0 )
 	    {
-	      return (attrs[item].get_object != NULL) ? attrs[item].set_object(ob,val): OK;
+	      return (attrs[item].set_object != NULL) ? attrs[item].set_object(ob,val): OK;
 	    }
 	}
       type = type->surtype;
