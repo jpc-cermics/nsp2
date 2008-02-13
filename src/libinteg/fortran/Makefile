@@ -11,12 +11,11 @@ OBJSF = ainvg.o bnorm.o cfode.o  ewset.o fnorm.o intdy.o lsoda.o lsode.o \
 	stode.o stodi.o svcma1.o svcom1.o vmnorm.o vnorm.o \
 	dqags.o epsalg.o order.o \
 	rgk4.o lsodar.o rscar1.o svcar1.o rchek.o roots.o \
-	colnew.o  rkf45.o rksimp.o twodq.o .o ddaskr.o \
+	colnew.o  rkf45.o rksimp.o twodq.o  ddaskr.o \
 	lsodar2.o rchek2.o roots2.o integ-IN.o xerrwv.o \
 	dgesl.o dgefa.o	dgbsl.o dgbfa.o dqk21vect.o
 
 # from linpack:	dgesl.o dgefa.o	dgbsl.o dgbfa.o
-
 
 TOBEDONE= lsdisc.o ddasrt.o ddassl.o ddaskr.o
 
