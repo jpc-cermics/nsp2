@@ -1,5 +1,5 @@
       subroutine dqags(f, a, b, epsabs, epsrel, alist, blist,elist,
-     * rlist, limit, iord, liord, result, abserr, ier, quadbase)
+     * rlist, limit, iord, liord, result, abserr, ier, vectflag)
 c
 c     based on quadpack routine dqags (formerly qags)
 c     **********************************************************
@@ -17,8 +17,24 @@ C             K. U. Leuven
 C           de Doncker, Elise
 C             Applied Mathematics and Programming Division
 C             K. U. Leuven
+C
+**** modified by Bruno Pincon for nsp: the external f (usually
+*          a nsp func which is evaluated by the nsp interpretor)
+*          is of the form:
+*                      f(double *x, double *y, int *n)
+*          and return an int. The return value is 0 if no error
+*          arises in the evaluation of f (otherwise -1). dqk21 the
+*          basic integrator on an interval has been modified too 
+*          (and named dqk21vect) such that it is possible
+*          to call f with x a vector with the 21 evaluation points
+*          (the result being stored in the vector y). This is the
+*          case when vectflag is TRUE (otherwise a loop with 21
+*          iteration is used to fill the vector y). When an error
+*          occurs in the evaluation of the external, the variable 
+*          stat is set to -1 and dqk21vect then dqags return 
+*          immediatly, this last one setting ier to 6.
 c
-c          calling sequence
+c        calling sequence
 c           call dqags (f,a,b,epsabs,epsrel,alist,blist,elist,
 c                        rlist,limit,iord,liord,result,abserr,ier)
 c
@@ -105,10 +121,14 @@ c                             slowly convergent. it must be noted
 c                             that divergency can occur
 c                             with any other value of ier.
 c                         = 6 an error occurs during the evaluation of f
+c
+c            vectflag - TRUE if the external could evaluated on a vector
 c     **********************************************************
+      implicit none
 c     .. scalar arguments ..
       double precision a, abserr, b, epsabs, epsrel, result
       integer ier, limit, liord
+      logical vectflag
 c     .. array arguments ..
       double precision alist(limit), blist(limit), elist(limit),
      * rlist(limit)
@@ -118,8 +138,6 @@ c     .. function arguments ..
 c     ..
 c     .. scalars in common ..
       integer jupbnd
-      integer       iero
-      common/ierajf/iero
 c     ..
 c     .. local scalars ..
       double precision a1, a2, abseps, area12, area1, area2, area, b1,
@@ -127,16 +145,16 @@ c     .. local scalars ..
      * errbnd, errmax, erro12, error1, error2, errsum,ertest, oflow,
      * resabs, reseps, small, uflow
       integer id, ierro, iroff1, iroff2, iroff3, k, ksgn, ktmin,last1,
-     * last, maxerr, nres, nrmax, numrl2
+     * last, maxerr, nres, nrmax, numrl2, stat
       logical extrap, noext
 c     .. local arrays ..
       double precision res3la(3), rlist2(52)
 c     .. function references ..
       double precision dlamch
 c     .. subroutine references ..
-c     order, epsalg, quarul
+c     order, epsalg, dqk21vect
 c     ..
-      external f,quadbase
+      external f
       common /dqa001/ jupbnd
 c
 c            the dimension of /rlist2/ is determined by
@@ -146,7 +164,6 @@ c
       epmach=dlamch('p')
       uflow=dlamch('u')
       oflow=dlamch('o')
-      iero=0
 c
 c            list of major variables
 c            -----------------------
@@ -211,6 +228,8 @@ c                       we try to decrease the value of
 c                       erlarg
 c           noext     - logical variable denoting that extrapolation
 c                       is no longer allowed(/true/ value)
+*           stat      - tell if the function evaluation f in dqk21vect
+*                       is successful (0) or not (-1)
 c
 c           first approximation to the integral
 c           -----------------------------------
@@ -218,8 +237,9 @@ c
       last1 = 1
       ier = 0
       ierro = 0
-      call quadbase(f, a, b, result, abserr, defabs, resabs)
-      if(iero.gt.0) then
+      call dqk21vect(f, a, b, result, abserr, defabs, resabs,
+     *               vectflag, stat)
+      if(stat.ne.0) then
          ier=6
          return
       endif
@@ -271,13 +291,15 @@ c
          a2 = b1
          b2 = blist(maxerr)
          erlast = errmax
-         call quadbase(f, a1, b1, area1, error1, resabs, defab1)
-         if(iero.gt.0) then
+         call dqk21vect(f, a1, b1, area1, error1, resabs, defab1, 
+     *                  vectflag, stat)
+         if(stat.ne.0) then
             ier=6
             return
          endif
-         call quadbase(f, a2, b2, area2, error2, resabs, defab2)
-         if(iero.gt.0) then
+         call dqk21vect(f, a2, b2, area2, error2, resabs, defab2,
+     *                  vectflag, stat)
+         if(stat.ne.0) then
             ier=6
             return
          endif

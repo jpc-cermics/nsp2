@@ -1,4 +1,5 @@
-      subroutine dqk21vect(fvect, a, b, result, abserr, resabs, resasc)
+      subroutine dqk21vect(fvect, a, b, result, abserr, resabs, resasc, 
+     *                     vectflag, stat)
 c***begin prologue  dqk21vect
 c***date written   800101   (yymmdd)
 c***revision date  830518   (yymmdd)
@@ -56,12 +57,12 @@ c
       double precision a,abserr,b,centr,dhlgth, epmach,fsum,fval1,
      *  fval2,hlgth,resabs,resasc,resg,resk,reskh,result,uflow
       double precision wg(5),wgk(11),xgk(11), dx, allx(21), allf(21)
-      integer j,jg
+      integer j,jg, stat
+      logical vectflag
       external fvect
+      integer fvect
+      integer n1, n21
       double precision dlamch
-c
-      integer         iero
-      common/ierajf/iero
 c
 c           the abscissae and weights are given for the interval (-1,1).
 c           because of symmetry only the positive abscissae and their
@@ -134,9 +135,12 @@ c
 c***first executable statement  dqk21
       epmach = dlamch('p')
       uflow = dlamch('u')
+      stat = 0 
+      n1 = 1
+      n21 = 21
 c
-      centr = 0.5d+00*(a+b)
-      hlgth = 0.5d+00*(b-a)
+      centr = 0.5d0*(a+b)
+      hlgth = 0.5d0*(b-a)
       dhlgth = abs(hlgth)
 c
 c           compute the 21-point kronrod approximation to
@@ -149,9 +153,16 @@ c
       enddo
       allx(11) = centr
 
-      call fvect(allx, allf)
-      if(iero.ne.0) return
-
+      if ( vectflag ) then  ! vector evaluation
+         stat = fvect(allx, allf, n21)
+         if(stat.ne.0) return
+      else                  ! scalar evaluation
+         do j = 1,21
+            stat = fvect(allx(j), allf(j), n1)
+            if(stat.ne.0) return
+         enddo
+      endif
+            
       resg = 0.0d+00
       resk = wgk(11)*allf(11)
       resabs = abs(resk)
@@ -171,7 +182,7 @@ c
          jg = jg + 1
       enddo
 
-      reskh = resk*0.5d+00
+      reskh = resk*0.5d0
       resasc = wgk(11)*abs(allf(11)-reskh)
       do j=1,10
         resasc =resasc+wgk(j)*(abs(allf(j)-reskh)+abs(allf(22-j)-reskh))
@@ -181,7 +192,7 @@ c
       resabs = resabs*dhlgth
       resasc = resasc*dhlgth
       abserr = dabs((resk-resg)*hlgth)
-      if (resasc.ne.0.0d+00.and.abserr.ne.0.0d+00) then
+      if (resasc.ne.0.d0.and.abserr.ne.0.d0) then
          abserr = resasc*min(1.d0,(200.d0*abserr/resasc)**1.5d0)
       endif
       if(resabs.gt.uflow/(50.d0*epmach)) then

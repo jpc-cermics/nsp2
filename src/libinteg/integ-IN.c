@@ -488,21 +488,12 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0
  * integrator and which evaluates f(x [,List]) from a nsp function.
  */ 
 
-typedef double (*intg_fs)(const double *t);
-typedef int (*intg_fv)(const double *t, double *y);
-typedef int (*quadbase)(void *f, double *a, double *b, double *result, 
-			  double *abserr, double *resabs, double *resasc);
+typedef int (*intg_f)(const double *t, double *y, int *n);
 
-extern int C2F(dqk21vect)(intg_fv fvect, double *a, double *b, double *result, 
-			  double *abserr, double *resabs, double *resasc);
-
-extern int C2F(quarul)(intg_fs f, double *a, double *b, double *result, 
-			  double *abserr, double *resabs, double *resasc);
-
-extern int C2F(dqags)(void *f, double *a, double *b, double *epsabs, double *epsrel, 
+extern int C2F(dqags)(intg_f f, double *a, double *b, double *epsabs, double *epsrel, 
 		      double *alist, double *blist, double *elist, double *rlist, 
 		      int *limit, int *iord, int *liord, double *result, 
-		      double *abserr, int *ier, quadbase method);
+		      double *abserr, int *ier, int *vectflag);
 
 typedef struct _intg_data intg_data;
  
@@ -514,11 +505,6 @@ struct _intg_data
 };
 
 static intg_data intg_d ={NULLLIST, NULLMAT, NULLOBJ}; 
-
-
-extern struct {   /* let the integrator know that the evaluation of the function */
-  int iero;       /* by the interpretor has failed */ 
-} C2F(ierajf);
 
 
 static int intg_prepare(NspObject *f, NspList *args, intg_data *obj, Boolean vect_flag)
@@ -560,71 +546,15 @@ static void intg_clean(intg_data *obj)
 }
 
 /**
- * intg_scalar:
+ * intg_func:
  * @x: 
  * 
- * this function is passed to dqags as a scalar function description 
+ * this function is passed to dqags as a function description 
  * 
- * Return value: the value of f(t,args)
- * 
- **/
-static double intg_scalar(const double *x)
-{
-  intg_data *intg = &intg_d;
-  NspObject *targs[2];/* arguments to be transmited to intg->func */
-  NspObject *nsp_ret;
-  int nret = 1,nargs = 1;
-  targs[0]= NSP_OBJECT(intg->x); 
-  intg->x->R[0] = *x;
-  double val;
-
-  if (intg->args != NULL ) 
-    {
-      targs[1]= NSP_OBJECT(intg->args);
-      nargs= 2;
-    }
-
-  /* FIXME : a changer pour mettre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
-    {
-      Scierror("Error: intg: failure in function evaluation\n");
-      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
-      return 0.0;
-    }
-
-  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == 1) 
-    {
-      val = ((NspMatrix *) (nsp_ret))->R[0];
-      nsp_object_destroy( ((NspObject **) &nsp_ret));
-      return val;
-    }
-  else 
-    {
-      Scierror("Error:  intg: a problem occured in function evaluation:\n");
-      if ( nret != 1 )
-	Scierror("        function return more than one argument\n");
-      else if ( !IsMat(nsp_ret) )
-	Scierror("        function don't return the good type (must be a Mat)\n");
-      else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
-	Scierror("        function return a complex instead of a real\n");
-      else if ( ((NspMatrix *) nsp_ret)->mn != 1 )
-	Scierror("        function don't return a real scalar\n");
-
-      nsp_object_destroy((NspObject **) &nsp_ret);
-      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
-      return 0.0;
-    }
-}
-/**
- * intg_vect:
- * @x: 
- * 
- * this function is passed to dqags as a vector function description 
- * 
- * Return value: the value of f(t,args)
+ * Return value: 0 (OK) or -1 (FAIL)
  * 
  **/
-static int intg_vect(const double *x, double *y)
+static int intg_func(const double *x, double *y, int *n)
 {
   intg_data *intg = &intg_d;
   NspObject *targs[2];/* arguments to be transmited to intg->func */
@@ -632,7 +562,7 @@ static int intg_vect(const double *x, double *y)
   int k, nret = 1,nargs = 1;
   targs[0]= NSP_OBJECT(intg->x);
  
-  for ( k = 0 ; k < 21 ; k++ )
+  for ( k = 0 ; k < *n ; k++ )
     intg->x->R[k] = x[k];
 
   if (intg->args != NULL ) 
@@ -645,16 +575,15 @@ static int intg_vect(const double *x, double *y)
   if ( nsp_gtk_eval_function((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
     {
       Scierror("Error: intg: failure in function evaluation\n");
-      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
-      return FAIL;
+      return -1;
     }
 
-  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == 21) 
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
     {
-      for ( k = 0 ; k < 21 ; k++ )
+      for ( k = 0 ; k < *n ; k++ )
 	y[k] = ((NspMatrix *) (nsp_ret))->R[k];
       nsp_object_destroy( ((NspObject **) &nsp_ret));
-      return OK;
+      return 0;
     }
   else 
     {
@@ -665,12 +594,11 @@ static int intg_vect(const double *x, double *y)
 	Scierror("        function don't return the good type (must be a Mat)\n");
       else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
 	Scierror("        function return a complex instead of a real\n");
-      else if ( ((NspMatrix *) nsp_ret)->mn != 21 )
-	Scierror("        function don't return a vector of good dimension\n");
+      else if ( ((NspMatrix *) nsp_ret)->mn != *n )
+	Scierror("        function don't return a vector of good length\n");
 
       nsp_object_destroy((NspObject **) &nsp_ret);
-      C2F(ierajf).iero = 1;  /* communicate the problem to the integrator */      
-      return FAIL;
+      return -1;
     }
 }
 
@@ -737,14 +665,8 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
   if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
 
   /* call the integrator  */
-  if ( vect_flag )
-    C2F(dqags)((void *) intg_vect, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
-	       &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, 
-	       (quadbase) C2F(dqk21vect));
-  else
-    C2F(dqags)((void *) intg_scalar, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
-	       &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, 
-	       (quadbase) C2F(quarul));
+  C2F(dqags)(intg_func, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
+	     &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, &vect_flag); 
 
   if ( ier == 6 ) goto err;  /* a problem occurs when the interpretor has evaluated */
                              /* the function to integrate at a point */
