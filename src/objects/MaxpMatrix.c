@@ -739,19 +739,23 @@ NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int
     }
   else
     {
-      Loc->convert = A->convert;
       switch ( A->convert ) 
 	{
 	case 'u': 
-	  A->R[0]=Loc->impl[0]+(icol-1)*Loc->impl[1];
+	  Loc->R[0] = A->impl[0]+(icol-1)*A->impl[1];
+	  Loc->convert = 'd';
+	  break;
 	case 'd' : 
 	  memcpy(Loc->R,A->R+(icol-1)*A->m ,A->m*sizeof(double));
+	  Loc->convert = A->convert;
 	  break;
 	case 'i': 
 	  memcpy(Loc->I,A->I+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
 	  break;
 	case 'f': 
 	  memcpy(Loc->F,A->F+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
 	  break;
 	}
     }
