@@ -467,8 +467,9 @@ static NspObject *_wrap_gmarkup_node_get_attrs(void *Hv,const char *attr)
   return (NspObject *) ((NspGMarkupNode *) Hv)->attributes;
 }
 
-static NspObject *_wrap_gmarkup_node_get_object_attrs(void *Hv,const char *str)
+static NspObject *_wrap_gmarkup_node_get_object_attrs(void *Hv,const char *str,int *copy)
 {
+  *copy=FALSE;
   return (NspObject *) ((NspGMarkupNode *) Hv)->attributes;
 }
 
@@ -486,8 +487,9 @@ static NspObject *_wrap_gmarkup_node_get_children(void *Hv,const char *attr)
   return (NspObject *) ((NspGMarkupNode *) Hv)->children;
 }
 
-static NspObject *_wrap_gmarkup_node_get_object_children(void *Hv,const char *str)
+static NspObject *_wrap_gmarkup_node_get_object_children(void *Hv,const char *str,int *copy)
 {
+  *copy=FALSE;
   return (NspObject *) ((NspGMarkupNode *) Hv)->children;
 }
 
@@ -502,12 +504,14 @@ static int _wrap_gmarkup_node_set_children(void *Hv,const char *attr, NspObject 
 
 
 static AttrTab gmarkup_node_attrs[] = {
-  { "op", (attr_get_function *)_wrap_gmarkup_node_get_op, (attr_set_function *)_wrap_gmarkup_node_set_op,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "arity", (attr_get_function *)_wrap_gmarkup_node_get_arity, (attr_set_function *)_wrap_gmarkup_node_set_arity,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "attributes", _wrap_gmarkup_node_get_attrs,
-    _wrap_gmarkup_node_set_attrs, _wrap_gmarkup_node_get_object_attrs,(attr_set_object_function *)int_set_object_failed},
-  { "children", _wrap_gmarkup_node_get_children,
-    _wrap_gmarkup_node_set_children, _wrap_gmarkup_node_get_object_children,(attr_set_object_function *)int_set_object_failed},
+  { "op", (attr_get_function *)_wrap_gmarkup_node_get_op, (attr_set_function *)_wrap_gmarkup_node_set_op,
+    (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "arity", (attr_get_function *)_wrap_gmarkup_node_get_arity, (attr_set_function *)_wrap_gmarkup_node_set_arity,
+    (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+  { "attributes", _wrap_gmarkup_node_get_attrs,  _wrap_gmarkup_node_set_attrs,
+    _wrap_gmarkup_node_get_object_attrs, (attr_set_object_function *)int_set_object_failed},
+  { "children", _wrap_gmarkup_node_get_children, _wrap_gmarkup_node_set_children, 
+    _wrap_gmarkup_node_get_object_children,  (attr_set_object_function *)int_set_object_failed},
 
   { NULL,NULL,NULL,NULL },
 };

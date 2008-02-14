@@ -545,7 +545,7 @@ static AttrTab nsp_gframe_attrs[] = {
   { "background",    int_gframe_get_background,  int_gframe_set_background,  NULL ,     NULL },
   { "thickness",    int_gframe_get_thickness,  int_gframe_set_thickness,  NULL ,     NULL },
 #endif
-  { "scale", int_gframe_get_scale, int_gframe_set_scale, NULL, NULL , NULL},
+  { "scale", int_gframe_get_scale, int_gframe_set_scale, NULL, NULL},
   { (char *) 0, NULL}
 
 };
