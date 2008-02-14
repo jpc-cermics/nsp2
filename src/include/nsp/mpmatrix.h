@@ -35,8 +35,9 @@ struct _NspMpmatrix {
     float *F;      /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
-  char convert;    /* 'd','i','f' : double, int, float
+  char convert;    /* 'd','i','f' , 'u' : double, int, float
 		    * used to remember array converted in place */
+  int impl[2];     /* start, step */
 };
 
 #include "nsp/matrix.h" 

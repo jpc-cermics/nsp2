@@ -180,7 +180,6 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
 
 NspMatrix *nsp_matrix_create_int_impl(int first, int step, int last)
 {
-  int i;
   NspMatrix *Loc;
   int vals = first;
   int count=0;
@@ -210,13 +209,13 @@ NspMatrix *nsp_matrix_create_int_impl(int first, int step, int last)
     Scierror("Error:\t step is 0 in an implicit vector specification\n");
     return NULLMAT;
   }
-  Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+  Loc = nsp_matrix_create(NVOID,'r',0,0);
   if ( Loc == NULLMAT) return(NULLMAT);
-  for ( i=0 ; i < count; i++)
-    {
-      Loc->I[i] = first + i*step;
-    }
-  Loc->convert = 'i';
+  Loc->m=1;
+  Loc->n=Loc->mn=count;
+  Loc->impl[0]=first;
+  Loc->impl[1]=step;
+  Loc->convert = 'u';
   return(Loc);
 }
 
@@ -1333,6 +1332,9 @@ NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *re
       Loc->convert = A->convert;
       switch ( A->convert ) 
 	{
+	case 'u': 
+	  A->R[0]=Loc->impl[0]+(icol-1)*Loc->impl[1];
+	  break;
 	case 'd' : 
 	  memcpy(Loc->R,A->R+(icol-1)*A->m ,A->m*sizeof(double));
 	  break;

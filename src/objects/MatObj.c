@@ -614,6 +614,7 @@ IntScalar (NspObject * O, int * val)
     }
   switch ( A->convert ) 
     {
+    case 'u' :  *val = A->impl[0];break; /* A is scalar and implicit */
     case 'i' :  *val = A->I[0]; break;
     case 'f' :  *val = (int) aint( A->F[0]); break;
     case 'd' :  
@@ -643,6 +644,7 @@ GetScalarInt (Stack stack, int i, int * val)
     }
   switch ( M->convert ) 
     {
+    case 'u' :  *val = M->impl[0];break; /* A is scalar and implicit */
     case 'i' :  *val = M->I[0]; break;
     case 'f' :  *val = (int) aint( M->F[0]); break;
     case 'd' :  
@@ -671,6 +673,7 @@ DoubleScalar (NspObject * O, double *val)
     }
   switch ( A->convert ) 
     {
+    case 'u' :  *val = (double) A->impl[0];break; /* A is scalar and implicit */
     case 'i' :  *val = (double) A->I[0]; break;
     case 'f' :  *val = (double) A->F[0]; break;
     case 'd' :  
@@ -700,6 +703,7 @@ GetScalarDouble (Stack stack, int i, double *val)
     }
   switch ( M->convert ) 
     {
+    case 'u' :  *val = M->impl[0];break; /* A is scalar and implicit */
     case 'i' :  *val = M->I[0]; break;
     case 'f' :  *val = M->F[0]; break;
     case 'd' :  
@@ -788,8 +792,19 @@ Mat2double (NspMatrix * A)
   if (A == NULLMAT ) return A;
   if ( A->rc_type == 'r')
     {
+      int i;
       switch (A->convert)
 	{
+	case 'u':
+	  A->R =nsp_alloc_doubles(A->mn);
+	  if ( A->mn != 0 )
+	    {
+	      A->R[0] = A->impl[0];
+	      for ( i = 1 ; i < A->mn ; i++ )
+		A->R[i] = A->R[i-1] + (double) A->impl[1];
+	    }
+	  A->convert = 'd';
+	  break;
 	case 'i':
 	  nsp_int2double (&A->mn, (int *) A->R, &inc, A->R, &inc);
 	  A->convert = 'd';
@@ -820,12 +835,22 @@ Mat2double (NspMatrix * A)
 NspMatrix *
 Mat2mtlb_cplx (NspMatrix * A)
 {
-  int inc = -1;
+  int inc = -1,i;
   if (A == NULLMAT ) return A;
   if ( A->rc_type == 'r')
     {
       switch (A->convert)
 	{
+	case 'u':
+	  A->R =nsp_alloc_doubles(A->mn);
+	  if ( A->mn != 0 )
+	    {
+	      A->R[0] = A->impl[0];
+	      for ( i = 1 ; i < A->mn ; i++ )
+		A->R[i] = A->R[i-1] + (double) A->impl[1];
+	    }
+	  A->convert = 'd';
+	  break;
 	case 'i':
 	  nsp_int2double (&A->mn, (int *) A->R, &inc, A->R, &inc);
 	  A->convert = 'd';
@@ -854,14 +879,25 @@ Mat2mtlb_cplx (NspMatrix * A)
 NspMatrix *
 Mat2int (NspMatrix * A)
 {
+  int i;
   if (A != NULLMAT && A->convert != 'i')
     {
       if (A->rc_type == 'r')
 	{
-	  if (A->convert == 'd')
-	    nsp_double2int (&A->mn, A->R, (int *) A->R);
-	  else if (A->convert == 'f')
-	    nsp_float2int (&A->mn, (float *) A->R, (int *) A->R);
+	  switch ( A->convert) 
+	    {
+	    case 'd':  nsp_double2int (&A->mn, A->R, (int *) A->R); break;
+	    case 'f':  nsp_float2int (&A->mn, (float *) A->R, (int *) A->R);break;
+	    case 'u':  
+	      A->R =nsp_alloc_doubles(A->mn);
+	      if ( A->mn != 0 )
+		{
+		  A->I[0] = A->impl[0];
+		  for ( i = 1 ; i < A->mn ; i++ )
+		    A->I[i] = A->I[i-1] + A->impl[1];
+		}
+	      break;
+	    }
 	  A->convert = 'i';
 	}
       else
@@ -880,15 +916,26 @@ Mat2int (NspMatrix * A)
 NspMatrix *
 Mat2float (NspMatrix * A)
 {
-  static int inc = -1;
+  int i;
+  int inc = -1;
   if (A != NULLMAT && A->convert != 'f')
     {
       if (A->rc_type == 'r')
 	{
-	  if (A->convert == 'd')
-	    nsp_double2float (&A->mn, A->R, (float *) A->R);
-	  else if (A->convert == 'i')
-	    nsp_int2float (&A->mn, (int *) A->R, &inc, (float *) A->R, &inc);
+	  switch ( A->convert) 
+	    {
+	    case 'd':  nsp_double2float (&A->mn, A->R, (float *) A->R);break;
+	    case 'i':  nsp_int2float (&A->mn, (int *) A->R, &inc, (float *) A->R, &inc);break;
+	    case 'u':  
+	      A->R =nsp_alloc_doubles(A->mn);
+	      if ( A->mn != 0 )
+		{
+		  A->F[0] = A->impl[0];
+		  for ( i = 1 ; i < A->mn ; i++ )
+		    A->F[i] = A->F[i-1] + A->impl[1];
+		}
+	      break;
+	    }
 	  A->convert = 'f';
 	}
       else
@@ -1276,7 +1323,7 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble (stack, 3, &last) == FAIL)
 	return RET_BUG;
     }
-  if (0 && dfirst == floor(dfirst) 
+  if ( 0 && dfirst == floor(dfirst) 
        && step == floor(step) 
        && last == floor(last))
     {

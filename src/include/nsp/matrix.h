@@ -29,7 +29,7 @@ typedef struct { double r, i; } doubleC;
  * @n: number of columns
  * @mn: @m x @n
  * @rc_type: 'r' for real or  'c' for complex 
- * @convert: 'd','i','f','c' : double, int, float, old_complex. 
+ * @convert: 'd','i','f','c','u' : double, int, float, old_complex, unexpanded
  *          used to remember array converted in place
  *
  * inherits from #NspObject 
@@ -52,11 +52,13 @@ struct _NspMatrix {
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
     int *I;        /* Pointer on integer values */
-    int *F;        /* Pointer on float values */
+    float *F;        /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
-  char convert;    /* 'd','i','f','c' : double, int, float, old_complex
-		    * used to remember array converted in place */
+  char convert;    /* 'd','i','f','c','u': double, int, float, old_complex, unexpanded
+		    * used to remember array converted in place 
+		    */
+  int impl[2];     /* start, step */
 };
 
 #include "nsp/bmatrix.h" 

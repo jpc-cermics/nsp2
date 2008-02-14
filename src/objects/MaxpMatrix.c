@@ -141,6 +141,8 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
       Mat->R = (double *) 0; 
       Mat->C = M->C;
     }
+  Mat->impl[0]=M->impl[0];
+  Mat->impl[1]=M->impl[1];
   M->R =NULL; M->C = NULL;
   M->m = M->n = M->mn = 0;
   return(Mat);
@@ -737,18 +739,19 @@ NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int
     }
   else
     {
+      Loc->convert = A->convert;
       switch ( A->convert ) 
 	{
+	case 'u': 
+	  A->R[0]=Loc->impl[0]+(icol-1)*Loc->impl[1];
 	case 'd' : 
 	  memcpy(Loc->R,A->R+(icol-1)*A->m ,A->m*sizeof(double));
 	  break;
 	case 'i': 
 	  memcpy(Loc->I,A->I+(icol-1)*A->m ,A->m*sizeof(int));
-	  Loc->convert = A->convert;
 	  break;
 	case 'f': 
 	  memcpy(Loc->F,A->F+(icol-1)*A->m ,A->m*sizeof(int));
-	  Loc->convert = A->convert;
 	  break;
 	}
     }

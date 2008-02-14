@@ -123,6 +123,7 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
 
+#define WITH_LIBAMOS
 #ifdef WITH_LIBAMOS
 extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
 #endif 

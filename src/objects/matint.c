@@ -268,6 +268,22 @@ static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
   *imin = 1;
   switch (  A->convert ) 
     {
+    case 'u': 
+      if ( A->mn != 0) 
+	{
+	  ind[0]= A->impl[0];
+	  for (i = 1; i < A->mn; i++)
+	    ind[i] = ind[i-1] + A->impl[1]; 
+	  if ( ind[0] < ind[A->mn-1] )
+	    {
+	      *imin =ind[0]; *imax= ind[A->mn-1];
+	    }
+	  else 
+	    {
+	      *imin =ind[A->mn-1]; *imax= ind[0];
+	    }
+	}
+      break;
     case 'd':
       for (i = 0; i < A->mn; i++)
 	{
