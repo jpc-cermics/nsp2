@@ -599,6 +599,15 @@ class Wrapper:
         '%(attrcodeafter)s\n' \
         '}\n\n'
 
+    getterobj_tmpl = \
+        'static NspObject *%(funcname)s(void *self,char *attr, int *copy)\n' \
+        '{\n' \
+        '%(varlist)s' \
+        '  *copy = FALSE;\n'\
+        '  ret = %(field)s;\n' \
+        '%(attrcodeafter)s\n' \
+        '}\n\n'
+
     setter_tmpl = \
         'static int %(funcname)s(void *self, char *attr, NspObject *O)\n' \
         '{\n' \
@@ -1234,7 +1243,7 @@ class Wrapper:
         # no overrides for the whole function.  If no fields, don't write a func
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
-            self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL}} ;\n' % lower_name1)
+            self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
             return '0'
         getsets = []
@@ -1242,10 +1251,13 @@ class Wrapper:
             gettername = 'int_get_failed'
             settername = 'int_set_failed'
             getterobjectname = 'int_get_object_failed'
+            setterobjectname = 'int_set_object_failed'
             attrname = self.objinfo.c_name + '.' + fname
-            if self.overrides.attr_is_overriden(attrname):
-                lineno, filename = self.overrides.getstartline(attrname)
-                code = self.overrides.attr_override(attrname)
+            self.fp.write('override attribute ? %s)' % attrname)
+            if self.overrides.attr_is_overriden(fname):
+                self.fp.write('yes for %s\n' % attrname)
+                lineno, filename = self.overrides.getstartline(fname)
+                code = self.overrides.attr_override(fname)
                 self.fp.setline(lineno, filename)
                 self.fp.write(code)
                 self.fp.resetline()
@@ -1253,6 +1265,11 @@ class Wrapper:
                     gettername = getterprefix + fname
                 if string.find(code, setterprefix + fname) >= 0:
                     settername = setterprefix + fname
+                if string.find(code, getterprefix + 'obj_' + fname) >= 0:
+                    getterobjectname = getterprefix + 'obj_' + fname
+                if string.find(code, setterprefix + 'obj_' + fname) >= 0:
+                    setterobjectname = setterprefix + 'obj_' + fname
+
             if gettername == 'int_get_failed':
                 try:
                     funcname = getterprefix + fname
@@ -1268,18 +1285,25 @@ class Wrapper:
                                     'field': self.get_field_accessor(fname,ftype),
                                     'attrcodeafter': info.get_attrcodeafter() })
                     gettername = funcname
+                except:
+                    sys.stderr.write("Could not write getter for %s.%s: %s\n"
+                                     % (self.objinfo.c_name, fname, exc_info()))
+
+            if getterobjectname == 'int_get_object_failed':
+                try:
                     # check if we can use obj.val(xxx) = yyy in get operation 
                     if info.setobj == 't':
-                        getterobjectname = funcname+'_obj'
-                        self.fp.write(self.getter_tmpl %
+                        getterobjectname = getterprefix + 'obj_' + fname 
+                        self.fp.write(self.getterobj_tmpl %
                                       { 'funcname': getterobjectname,
                                         'varlist': info.varlist,
                                         'field': self.get_field_accessor(fname,ftype),
                                         'attrcodeafter': info.get_attrcodeafter() })
                         
                 except:
-                    sys.stderr.write("Could not write getter for %s.%s: %s\n"
+                    sys.stderr.write("Could not write getterobj for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
+
             if settername == 'int_set_failed':
                 try:
                     funcname = setterprefix + fname
@@ -1300,19 +1324,19 @@ class Wrapper:
                     sys.stderr.write("Could not write setter for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
             if opt != 'hidden' and (gettername != 'int_get_failed' or settername != 'int_set_failed'):
-                getsets.append('  { "%s", (attr_get_function *)%s, (attr_set_function *)%s,(attr_get_object_function *)%s },\n' %
-                               (fixname(fname), gettername, settername,getterobjectname))
+                getsets.append('  { "%s", (attr_get_function *)%s, (attr_set_function *)%s,(attr_get_object_function *)%s, (attr_set_object_function *)%s },\n' %
+                               (fixname(fname), gettername, settername,getterobjectname, setterobjectname))
 
         lower_name1 = string.lower(self.objinfo.c_name)
         if not getsets:
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
-            self.fp.write('static AttrTab %s_attrs[] = {{NULL,NULL,NULL}} ;\n' % lower_name1)
+            self.fp.write('static AttrTab %s_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
             return '0'
         else: 
             self.fp.write('static AttrTab %s_attrs[] = {\n' % lower_name1)
             for getset in getsets:
                 self.fp.write(getset)
-            self.fp.write('  { NULL,NULL,NULL,NULL },\n')
+            self.fp.write('  { NULL,NULL,NULL,NULL,NULL },\n')
             self.fp.write('};\n\n')
             lower_name1 = string.lower(self.objinfo.c_name)
             #self.fp.write('static AttrTab *%s_get_attrs_table(void) { return %s;};\n' % (lower_name1, getsets_name))
@@ -1569,7 +1593,7 @@ class NspInterfaceWrapper(NspObjectWrapper):
     def write_getsets(self):
         # interfaces have no fields ...
         lower_name1 = string.lower(self.objinfo.c_name)
-        self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL}} ;\n' % lower_name1)
+        self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
         return '0'
 
     
