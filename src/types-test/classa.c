@@ -570,10 +570,11 @@ static NspObject *_wrap_classa_get_cla_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classa_get_cla_val_obj(void *self,char *attr)
+static NspObject *_wrap_classa_get_obj_cla_val(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
+  *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassA *) self)->cla_val);
   return (NspObject *) ret;
 }
@@ -598,10 +599,11 @@ static NspObject *_wrap_classa_get_cla_bval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classa_get_cla_bval_obj(void *self,char *attr)
+static NspObject *_wrap_classa_get_obj_cla_bval(void *self,char *attr, int *copy)
 {
   NspBMatrix *ret;
 
+  *copy = FALSE;
   ret = ((NspBMatrix*) ((NspClassA *) self)->cla_bval);
   return (NspObject *) ret;
 }
@@ -618,6 +620,34 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+#line 62 "classa.override"
+
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_classa_get_obj_cla_lval(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspClassA *) self)->cla_lval);
+  return (NspObject *) ret;
+}
+
+/* in this function we can check that val is correct before 
+ * setting the field with val 
+ */
+
+static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
+{
+  if (((NspClassA *) self)->cla_lval != NULL ) 
+    nsp_list_destroy(((NspClassA *) self)->cla_lval);
+  ((NspClassA *) self)->cla_lval = (NspList *) val;
+  return FAIL;
+}
+
+#line 651 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -625,7 +655,6 @@ static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
   ret = ((NspList*) ((NspClassA *) self)->cla_lval);
   return (NspObject *) ret;
 }
-
 
 static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
 {
@@ -639,34 +668,13 @@ static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-/* we use here copy = TRUE
- * thus 
- */
-
-static NspObject *_wrap_classa_get_cla_lval_obj(void *self,char *attr, int *copy)
-{
-  NspList *ret;
-  *copy = TRUE;
-  ret = ((NspList*) ((NspClassA *) self)->cla_lval);
-  return (NspObject *) ret;
-}
-
-static int _wrap_classa_set_cla_lval_obj(void *self,NspObject *val)
-{
-  if (((NspClassA *) self)->cla_lval != NULL ) 
-    nsp_list_destroy(((NspClassA *) self)->cla_lval);
-  ((NspClassA *) self)->cla_lval = (NspList *) val;
-  return FAIL;
-}
-
-/* (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },*/
 static AttrTab classa_attrs[] = {
-  { "cla_color", (attr_get_function *)_wrap_classa_get_cla_color, (attr_set_function *)_wrap_classa_set_cla_color,NULL,NULL},
-  { "cla_thickness", (attr_get_function *)_wrap_classa_get_cla_thickness, (attr_set_function *)_wrap_classa_set_cla_thickness,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
-  { "cla_val", (attr_get_function *)_wrap_classa_get_cla_val, (attr_set_function *)_wrap_classa_set_cla_val,(attr_get_object_function *)_wrap_classa_get_cla_val_obj,(attr_set_object_function *)int_set_object_failed },
-  { "cla_bval", (attr_get_function *)_wrap_classa_get_cla_bval, (attr_set_function *)_wrap_classa_set_cla_bval,(attr_get_object_function *)_wrap_classa_get_cla_bval_obj,(attr_set_object_function *) int_set_object_failed },
-  { "cla_lval", (attr_get_function *)_wrap_classa_get_cla_lval, (attr_set_function *)_wrap_classa_set_cla_lval,(attr_get_object_function *)_wrap_classa_get_cla_lval_obj, _wrap_classa_set_cla_lval_obj },
-  { NULL,NULL,NULL,NULL, NULL  },
+  { "cla_color", (attr_get_function *)_wrap_classa_get_cla_color, (attr_set_function *)_wrap_classa_set_cla_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "cla_thickness", (attr_get_function *)_wrap_classa_get_cla_thickness, (attr_set_function *)_wrap_classa_set_cla_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "cla_val", (attr_get_function *)_wrap_classa_get_cla_val, (attr_set_function *)_wrap_classa_set_cla_val,(attr_get_object_function *)_wrap_classa_get_obj_cla_val, (attr_set_object_function *)int_set_object_failed },
+  { "cla_bval", (attr_get_function *)_wrap_classa_get_cla_bval, (attr_set_function *)_wrap_classa_set_cla_bval,(attr_get_object_function *)_wrap_classa_get_obj_cla_bval, (attr_set_object_function *)int_set_object_failed },
+  { "cla_lval", (attr_get_function *)_wrap_classa_get_cla_lval, (attr_set_function *)_wrap_classa_set_cla_lval,(attr_get_object_function *)_wrap_classa_get_obj_cla_lval, (attr_set_object_function *)_wrap_classa_set_obj_cla_lval },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -691,7 +699,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 681 "classa.c"
+#line 703 "classa.c"
 
 
 #line 37 "classa.override"
@@ -699,7 +707,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 689 "classa.c"
+#line 711 "classa.c"
 
 
 /*----------------------------------------------------
@@ -739,9 +747,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 729 "classa.c"
+#line 751 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 734 "classa.c"
+#line 756 "classa.c"

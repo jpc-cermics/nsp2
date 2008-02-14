@@ -534,10 +534,11 @@ static NspObject *_wrap_classbref_get_clb_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classbref_get_clb_val_obj(void *self,char *attr)
+static NspObject *_wrap_classbref_get_obj_clb_val(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
+  *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassBRef *) self)->obj->clb_val);
   return (NspObject *) ret;
 }
@@ -555,9 +556,9 @@ static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab classbref_attrs[] = {
-  { "clb_color", (attr_get_function *)_wrap_classbref_get_clb_color, (attr_set_function *)_wrap_classbref_set_clb_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "clb_thickness", (attr_get_function *)_wrap_classbref_get_clb_thickness, (attr_set_function *)_wrap_classbref_set_clb_thickness,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
-  { "clb_val", (attr_get_function *)_wrap_classbref_get_clb_val, (attr_set_function *)_wrap_classbref_set_clb_val,(attr_get_object_function *)_wrap_classbref_get_clb_val_obj,(attr_set_object_function *)int_set_object_failed },
+  { "clb_color", (attr_get_function *)_wrap_classbref_get_clb_color, (attr_set_function *)_wrap_classbref_set_clb_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "clb_thickness", (attr_get_function *)_wrap_classbref_get_clb_thickness, (attr_set_function *)_wrap_classbref_set_clb_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "clb_val", (attr_get_function *)_wrap_classbref_get_clb_val, (attr_set_function *)_wrap_classbref_set_clb_val,(attr_get_object_function *)_wrap_classbref_get_obj_clb_val, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -600,9 +601,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 604 "classbref.c"
+#line 605 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 609 "classbref.c"
+#line 610 "classbref.c"

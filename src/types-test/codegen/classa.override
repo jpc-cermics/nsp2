@@ -60,16 +60,22 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
 %%
 override-attr cla_lval 
 
-/* here we override get_obj  and set_obj  */
-
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
 
 static NspObject *_wrap_classa_get_obj_cla_lval(void *self,char *attr, int *copy)
 {
   NspList *ret;
-  *copy = TRUE;
+  *copy = TRUE; 
   ret = ((NspList*) ((NspClassA *) self)->cla_lval);
   return (NspObject *) ret;
 }
+
+/* in this function we can check that val is correct before 
+ * setting the field with val 
+ */
 
 static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 {

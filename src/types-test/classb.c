@@ -531,10 +531,11 @@ static NspObject *_wrap_classb_get_clb_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classb_get_clb_val_obj(void *self,char *attr)
+static NspObject *_wrap_classb_get_obj_clb_val(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
+  *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassB *) self)->clb_val);
   return (NspObject *) ret;
 }
@@ -552,10 +553,10 @@ static int _wrap_classb_set_clb_val(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab classb_attrs[] = {
-  { "clb_color", (attr_get_function *)_wrap_classb_get_clb_color, (attr_set_function *)_wrap_classb_set_clb_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "clb_thickness", (attr_get_function *)_wrap_classb_get_clb_thickness, (attr_set_function *)_wrap_classb_set_clb_thickness,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "clb_val", (attr_get_function *)_wrap_classb_get_clb_val, (attr_set_function *)_wrap_classb_set_clb_val,(attr_get_object_function *)_wrap_classb_get_clb_val_obj,(attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL, NULL  },
+  { "clb_color", (attr_get_function *)_wrap_classb_get_clb_color, (attr_set_function *)_wrap_classb_set_clb_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "clb_thickness", (attr_get_function *)_wrap_classb_get_clb_thickness, (attr_set_function *)_wrap_classb_set_clb_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "clb_val", (attr_get_function *)_wrap_classb_get_clb_val, (attr_set_function *)_wrap_classb_set_clb_val,(attr_get_object_function *)_wrap_classb_get_obj_clb_val, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -597,9 +598,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 601 "classb.c"
+#line 602 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 606 "classb.c"
+#line 607 "classb.c"

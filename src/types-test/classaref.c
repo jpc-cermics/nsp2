@@ -520,10 +520,11 @@ static NspObject *_wrap_classaref_get_cla_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classaref_get_cla_val_obj(void *self,char *attr)
+static NspObject *_wrap_classaref_get_obj_cla_val(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
+  *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassARef *) self)->obj->cla_val);
   return (NspObject *) ret;
 }
@@ -541,10 +542,10 @@ static int _wrap_classaref_set_cla_val(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab classaref_attrs[] = {
-  { "cla_color", (attr_get_function *)_wrap_classaref_get_cla_color, (attr_set_function *)_wrap_classaref_set_cla_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "cla_thickness", (attr_get_function *)_wrap_classaref_get_cla_thickness, (attr_set_function *)_wrap_classaref_set_cla_thickness,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
-  { "cla_val", (attr_get_function *)_wrap_classaref_get_cla_val, (attr_set_function *)_wrap_classaref_set_cla_val,(attr_get_object_function *)_wrap_classaref_get_cla_val_obj,(attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL, NULL  },
+  { "cla_color", (attr_get_function *)_wrap_classaref_get_cla_color, (attr_set_function *)_wrap_classaref_set_cla_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "cla_thickness", (attr_get_function *)_wrap_classaref_get_cla_thickness, (attr_set_function *)_wrap_classaref_set_cla_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "cla_val", (attr_get_function *)_wrap_classaref_get_cla_val, (attr_set_function *)_wrap_classaref_set_cla_val,(attr_get_object_function *)_wrap_classaref_get_obj_cla_val, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -569,7 +570,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 573 "classaref.c"
+#line 574 "classaref.c"
 
 
 #line 37 "classaref.override"
@@ -577,7 +578,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 581 "classaref.c"
+#line 582 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -617,9 +618,9 @@ ClassARef_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 621 "classaref.c"
+#line 622 "classaref.c"
   nspgobject_register_class(d, "ClassARef", ClassARef, &NspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 626 "classaref.c"
+#line 627 "classaref.c"
