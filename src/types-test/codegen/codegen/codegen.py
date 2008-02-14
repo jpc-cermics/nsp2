@@ -1253,7 +1253,7 @@ class Wrapper:
             getterobjectname = 'int_get_object_failed'
             setterobjectname = 'int_set_object_failed'
             attrname = self.objinfo.c_name + '.' + fname
-            self.fp.write('override attribute ? %s)' % attrname)
+            #self.fp.write('override attribute ? %s)' % attrname)
             if self.overrides.attr_is_overriden(fname):
                 self.fp.write('yes for %s\n' % attrname)
                 lineno, filename = self.overrides.getstartline(fname)
