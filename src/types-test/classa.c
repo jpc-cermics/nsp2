@@ -636,7 +636,7 @@ static NspObject *_wrap_classa_get_obj_cla_lval(void *self,char *attr, int *copy
 }
 
 /* in this function we can check that val is correct before 
- * setting the field with val 
+ * setting the field with val. return FAIL if val is incorrect.
  */
 
 static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
@@ -644,7 +644,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
   if (((NspClassA *) self)->cla_lval != NULL ) 
     nsp_list_destroy(((NspClassA *) self)->cla_lval);
   ((NspClassA *) self)->cla_lval = (NspList *) val;
-  return FAIL;
+  return OK;
 }
 
 #line 651 "classa.c"
