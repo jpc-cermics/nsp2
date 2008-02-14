@@ -1276,8 +1276,18 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble (stack, 3, &last) == FAIL)
 	return RET_BUG;
     }
-  if ((M = nsp_matrix_create_impl (dfirst, step, last)) == NULLMAT)
-    return RET_BUG;
+  if (0 && dfirst == floor(dfirst) 
+       && step == floor(step) 
+       && last == floor(last))
+    {
+      if ((M = nsp_matrix_create_int_impl (dfirst, step, last)) == NULLMAT)
+	return RET_BUG;
+    }
+  else 
+    {
+      if ((M = nsp_matrix_create_impl (dfirst, step, last)) == NULLMAT)
+	return RET_BUG;
+    }
   MoveObj (stack, 1, (NspObject *) M);
   return 1;
 }

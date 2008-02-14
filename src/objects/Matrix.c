@@ -178,6 +178,49 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
   return(Loc);
 }
 
+NspMatrix *nsp_matrix_create_int_impl(int first, int step, int last)
+{
+  int i;
+  NspMatrix *Loc;
+  int vals = first;
+  int count=0;
+  if ( (first < last && step < 0 )
+       || (first >  last && step > 0 )
+       || step == 0.00)
+    {
+      Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 0);
+      return(Loc);
+    }
+  /* counting **/
+  if ( step > 0 )
+    {
+      /*       while ( vals <= last ) { vals += step ; count++;} */
+      count = 1 + (int) floor((last-first)/step);
+      vals = first + count*step;
+      if ( vals -last <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
+    }
+  else if ( step < 0)
+    {
+      /*       while ( vals >= last ) { vals += step ; count++;} */
+      count = 1 + (int) floor((last-first)/step);
+      vals = first + count*step;
+      if ( last - vals <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
+    }
+  else {
+    Scierror("Error:\t step is 0 in an implicit vector specification\n");
+    return NULLMAT;
+  }
+  Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+  if ( Loc == NULLMAT) return(NULLMAT);
+  for ( i=0 ; i < count; i++)
+    {
+      Loc->I[i] = first + i*step;
+    }
+  Loc->convert = 'i';
+  return(Loc);
+}
+
+
 
 /**
  * nsp_matrix_create_linspace:
