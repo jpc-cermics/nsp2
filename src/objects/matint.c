@@ -500,7 +500,7 @@ int nsp_matint_delete_columns(NspObject  *Obj, int *ind, int nb_elts, int cmin, 
    * to NspSMatrix for accessing common fields.
    */
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *Val = (char *) A->S;
+  char *Val;
   unsigned int elt_size; /* size in number of bytes */
   NspTypeBase *type; 
   int i, j, k1, k2, nn, ncol, ioff=0;
@@ -520,6 +520,9 @@ int nsp_matint_delete_columns(NspObject  *Obj, int *ind, int nb_elts, int cmin, 
       Scierror("Object do not implements matint interface\n"); 
       return FAIL; 
     } 
+
+  MAT_INT(type)->canonic(Obj);
+  Val = (char *) A->S;
 
   elt_size = MAT_INT(type)->elt_size(A); 
   if ( MAT_INT(type)->free_elt != NULL)  
@@ -568,7 +571,7 @@ int nsp_matint_delete_rows(NspObject *Obj, int *ind, int nb_elts, int rmin, int 
    * to NspSMatrix for accessing common fields.
    */
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *Val = (char *) A->S;
+  char *Val;
   unsigned int elt_size; /* size in number of bytes */
   NspTypeBase *type; 
   int i, j, k1, k2, nn, nrow, stride=0, ioff=0;
@@ -588,6 +591,10 @@ int nsp_matint_delete_rows(NspObject *Obj, int *ind, int nb_elts, int rmin, int 
       Scierror("Object do not implements matint interface\n"); 
       return FAIL; 
     } 
+
+  MAT_INT(type)->canonic(Obj);
+  Val = (char *) A->S;
+
   elt_size = MAT_INT(type)->elt_size(A); 
 
   if ( MAT_INT(type)->free_elt != NULL)  
@@ -677,7 +684,7 @@ int nsp_matint_delete_elements(NspObject *Obj, int *ind, int nb_elts, int rmin, 
    * to NspSMatrix for accessing common fields.
    */
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *Val = (char *) A->S;
+  char *Val;
   unsigned int elt_size; /* size in number of bytes */
   int i, k1, k2, nn, ne, ioff=0; 
   NspTypeBase *type; 
@@ -697,6 +704,10 @@ int nsp_matint_delete_elements(NspObject *Obj, int *ind, int nb_elts, int rmin, 
       Scierror("Object do not implements matint interface\n"); 
       return FAIL; 
     } 
+
+  MAT_INT(type)->canonic(Obj);
+  Val = (char *) A->S;
+
   elt_size = MAT_INT(type)->elt_size(A); 
 
   if ( MAT_INT(type)->free_elt != NULL)  
@@ -752,7 +763,7 @@ int nsp_matint_delete_elements2(NspObject *Obj,
    * to NspSMatrix for accessing common fields.
    */
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *Val = (char *) A->S;
+  char *Val;
   unsigned int elt_size; /* size in number of bytes */
   int i, j, ne, k1, k2, nn, nrow, ncol, ioff=0; 
   NspTypeBase *type; 
@@ -773,7 +784,10 @@ int nsp_matint_delete_elements2(NspObject *Obj,
       Scierror("Object do not implements matint interface\n"); 
       return FAIL; 
     } 
-
+  
+  MAT_INT(type)->canonic(Obj);
+  Val = (char *) A->S;
+  
   elt_size = MAT_INT(type)->elt_size(A);
  
   if ( MAT_INT(type)->free_elt != NULL)  
@@ -810,7 +824,7 @@ int nsp_matint_delete_elements2(NspObject *Obj,
 	  k1 = k2;
 	}
     }
-
+  
   ne = nrow*ncol;
   if ( MAT_INT(type)->free_elt != NULL) 
     for ( i = A->mn-ne ; i < A->mn ; i++ ) A->S[i]= NULL;
@@ -861,10 +875,16 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
   NspTypeBase *type; 
   unsigned int elt_size; /* size in number of bytes */
 
-  type = check_implements(Obj, nsp_type_matint_id);
+  if (( type = check_implements(Obj,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Error: first argument does not implements matint interface\n");
+      return NULLOBJ;
+    }
+
   /*
    * be sure that Obj is in a proper state.
    */ 
+
   MAT_INT(type)->canonic(Obj);
   from = (char *) A->S;
 
