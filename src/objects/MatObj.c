@@ -316,18 +316,18 @@ matrix_is_true (NspMatrix * M)
 static int
 matrix_xdr_save (XDR *xdrs, NspMatrix * M)
 {
-  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)
-    return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT (M)->name) == FAIL)
-    return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->m) == FAIL)
-    return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->n) == FAIL)
-    return FAIL;
-  if (nsp_xdr_save_c(xdrs, M->rc_type) == FAIL)
-    return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT (M)->name) == FAIL)    return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->m) == FAIL)    return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->n) == FAIL)    return FAIL;
+  if (nsp_xdr_save_c(xdrs, M->rc_type) == FAIL)  return FAIL;
   if (M->rc_type == 'r')
     {
+      /* be sure in that case that the matrix is in double mode 
+       * XXX: we could decide here to save matrices using their 
+       *      convert mode.
+       */
+      M = Mat2double(M);
       if (nsp_xdr_save_array_d(xdrs, M->R, M->mn) == FAIL)
 	return FAIL;
     }
@@ -797,6 +797,12 @@ Mat2double (NspMatrix * A)
 	{
 	case 'u':
 	  A->R =nsp_alloc_doubles(A->mn);
+	  if ( A->R == (double *) 0 ) 
+	    {
+	      Scierror("Error:\tRunning out of memory\n");
+	      return(NULLMAT);
+	    }
+
 	  if ( A->mn != 0 )
 	    {
 	      A->R[0] = A->impl[0];

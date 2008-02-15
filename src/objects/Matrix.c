@@ -112,7 +112,7 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
 NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n,int init)
 {
   NspMatrix *loc =  nsp_matrix_create(name, A->rc_type, m, n);
-  if ( loc != NULL) loc->convert = A->convert ;
+  /* if ( loc != NULL) loc->convert = A->convert ; */
   if ( init == TRUE ) 
     {
       double d=0.0;
@@ -362,19 +362,33 @@ NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,const doubl
 NspMatrix *nsp_matrix_copy(const NspMatrix *A)
 {
   NspMatrix *Mat;
-  if ((Mat = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) { return(NULLMAT);}
-  switch ( Mat->rc_type ) 
+  if ( A->convert == 'u' )
     {
-    case 'r' :
-      /* C2F(dcopy)(&(Mat->mn),A->R,&inc,Mat->R,&inc); */
-      memcpy(Mat->R,A->R, (Mat->mn)*sizeof(double));
-      break;
-    case 'c' :
-      /* C2F(zcopy)(&(Mat->mn),A->C,&inc,Mat->C,&inc); */
-      memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
-      break;
+      if ((Mat = nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT)
+	return(NULLMAT);
+      Mat->m = A->m;
+      Mat->n = A->n;
+      Mat->mn = A->mn;
+      Mat->impl[0]= A->impl[0];
+      Mat->impl[1]= A->impl[1];
+      Mat->convert=A->convert;
     }
-  Mat->convert=A->convert;
+  else 
+    {
+      if ((Mat = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) { return(NULLMAT);}
+      switch ( Mat->rc_type ) 
+	{
+	case 'r' :
+	  /* C2F(dcopy)(&(Mat->mn),A->R,&inc,Mat->R,&inc); */
+	  memcpy(Mat->R,A->R, (Mat->mn)*sizeof(double));
+	  break;
+	case 'c' :
+	  /* C2F(zcopy)(&(Mat->mn),A->C,&inc,Mat->C,&inc); */
+	  memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
+	  break;
+	}
+      Mat->convert=A->convert;
+    }
   return(Mat);
 }
 

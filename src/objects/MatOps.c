@@ -4862,6 +4862,9 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
   int i;
   int Loc=TRUE ;
   *err=FALSE;
+  /* be sure that A and B are in proper mode */
+  A= Mat2double(A);
+  B= Mat2double(B);
   if ( SearchComp(op,&realop,&C_realop) == FAIL) { *err=TRUE; return FALSE;}
   if ( !( A->m == B->m && A->n == B->n ) )
     {
@@ -5542,6 +5545,7 @@ int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B)
  *
  * Return value: %FAIL or %OK
  **/
+
 int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5551,8 +5555,10 @@ int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B)
   if ( A->rc_type == 'r' )
     {
       if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  A->R[i] += B->R[0];
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->R[i] += B->R[0];
+	}
       else
 	{
 	  if ( nsp_mat_complexify(A, B->C[0].i) == FAIL ) return FAIL;
@@ -5563,11 +5569,15 @@ int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B)
   else
     {
       if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  A->C[i].r += B->R[0];
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r += B->R[0];
+	}
       else
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  { A->C[i].r += B->C[0].r;  A->C[i].i += B->C[0].i; }
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    { A->C[i].r += B->C[0].r;  A->C[i].i += B->C[0].i; }
+	}
     }
   return OK;
 }
@@ -5628,6 +5638,7 @@ int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
  *
  * Return value: %FAIL or %OK
  **/
+
 int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5669,6 +5680,7 @@ int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B)
  *
  * Return value: %FAIL or %OK
  **/
+
 int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B) 
 {
   int i;
@@ -5709,6 +5721,7 @@ int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B)
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
 {
   int i;

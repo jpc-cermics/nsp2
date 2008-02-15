@@ -72,7 +72,7 @@ NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, int m, int n)
 NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n, int init)
 {
   NspMaxpMatrix *loc =  nsp_mpmatrix_create(name, A->rc_type, m, n);
-  if ( loc != NULL) loc->convert = A->convert ;
+  /* if ( loc != NULL) loc->convert = A->convert ; */
   if ( init == TRUE ) 
     {
       double d=0.0;

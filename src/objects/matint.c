@@ -268,22 +268,7 @@ static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
   *imin = 1;
   switch (  A->convert ) 
     {
-    case 'u': 
-      if ( A->mn != 0) 
-	{
-	  ind[0]= A->impl[0];
-	  for (i = 1; i < A->mn; i++)
-	    ind[i] = ind[i-1] + A->impl[1]; 
-	  if ( ind[0] < ind[A->mn-1] )
-	    {
-	      *imin =ind[0]; *imax= ind[A->mn-1];
-	    }
-	  else 
-	    {
-	      *imin =ind[A->mn-1]; *imax= ind[0];
-	    }
-	}
-      break;
+    default: 
     case 'd':
       for (i = 0; i < A->mn; i++)
 	{
@@ -300,6 +285,22 @@ static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 	  ind[i] = ival-1;
 	}
       break;
+    case 'u': 
+      if ( A->mn != 0) 
+	{
+	  ind[0]= A->impl[0]-1;
+	  for (i = 1; i < A->mn; i++)
+	    ind[i] = ind[i-1] + A->impl[1]; 
+	  if ( ind[0] < ind[A->mn-1] )
+	    {
+	      *imin =ind[0]+1; *imax= ind[A->mn-1]+1;
+	    }
+	  else 
+	    {
+	      *imin =ind[A->mn-1]+1; *imax= ind[0]+1;
+	    }
+	}
+      break;
     case 'i' : 
       for (i = 0; i < A->mn; i++)
 	{
@@ -311,12 +312,11 @@ static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 	  ind[i] = ival-1;
 	}
       break;
-    default:
+    case 'f' :
       { 
-	float *AF = (float *) A->R;
 	for (i = 0; i < A->mn; i++)
 	  {
-	    ival = (int) AF[i];
+	    ival = (int) A->F[i];
 	    if (ival > *imax)
 	      *imax = ival;
 	    else if (ival < *imin)
@@ -854,7 +854,7 @@ int nsp_matint_delete_elements2(NspObject *Obj,
 static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, const int *ind, int nb_elts, int rmin, int rmax)
 {
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *from = (char *) A->S, *to;
+  char *from,*to;
   NspObject *Loc; 
   NspSMatrix *B;
   int i;
@@ -862,6 +862,11 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
   unsigned int elt_size; /* size in number of bytes */
 
   type = check_implements(Obj, nsp_type_matint_id);
+  /*
+   * be sure that Obj is in a proper state.
+   */ 
+  MAT_INT(type)->canonic(Obj);
+  from = (char *) A->S;
 
   if ( nb_elts == 0 )
     {
