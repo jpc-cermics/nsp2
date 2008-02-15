@@ -1,3 +1,13 @@
+2008-02-15  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libinteg/integ-IN.c (int_int2d): 
+	add int2d primitive together with its help page.
+	src/libinteg/twodq.f have been modified to let
+	vectorial evaluation of the function to integrate.
+	Also the supplementary args parameter (in ode, intg,
+	int2d) could be now any nsp object (see several 
+	examples in the intg help page).
+
 2008-02-13  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/*/*.c: 

@@ -1,0 +1,138 @@
+% -*- mode: latex -*-
+
+\mansection{int2d}
+\begin{mandesc}
+  \short{int2d}{two dimensional integration over a set of triangles}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f)
+[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f, tol=e, tolflag=b, args=obj, limit=maxtri, iclose=b, vecteval=b)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X,Y}:  $3 \times n$ arrays, respectively the abscissae and
+    ordinates defining the set of triangles, that is the integration domain.
+    \vname{f}: nsp function defining the function to integrate
+    \vname{tol=e}: optional named argument, the requested absolute error
+                   or relative error on the result (default is 1e-10)
+    \vname{tolflag=b}: optional named argument, boolean scalar. Should
+                       \verb+%t+ if the requested tolerance \verb+tol+ is on the absolute
+                       error and \verb+%f+ for a relative error request
+                      (default is \verb+%f+).
+    \vname{args=obj}: optional named argument, useful to pass
+    additional parameters needed by the function f.
+    \vname{limit=maxtri}: optional named argument, max number of
+    triangles allowed in the subdivision process of the initial set of
+    triangles (default 100).
+    \vname{iclose=b}: optional named argument, boolean scalar. The
+    default is \verb+%t+ and the basic integration rule (Lyness and 
+    Jespersen of degree 11) uses some integration points on the
+    boundary of the triangle. With \verb+iclose=%f+, the basic
+    integration rule (Lyness and Jespersen of degree 8) don't
+    use integration points on the boundary.
+    \vname{vecteval=b}: optional named argument, boolean scalar
+    (default \verb+%f+), use \verb+%t+ if you write the function
+                   \verb+f+ such that it could be evaluated on
+                   vectors arguments (this speed up the computation).
+    \vname{Ia}: computed approximate result
+    \vname{ea_estim}: estimated error
+    \vname{ier}: scalar given some information about the computation.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an approximation $I_a$ of:
+$$
+   I = \sum_k \int_{T_k} f(x,y) dxdy
+$$
+such that:
+$$
+   | I - I_a | \le  tol, \mbox{ or } | I - I_a | \le  tol*|I|
+$$
+depending on the \verb+tolflag+ optional parameter.
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args+ which can be any nsp object (see
+examples). \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
+\verb+ier+ variable could take the following values: 
+\begin{itemize}
+\item ier = 0,  normal and reliable termination of the routine. It is assumed that the
+      requested  accuracy has been achieved.
+\item ier = 1: maximum number of triangles (the limit
+      parameter) allowed has been achieved. You can try to
+      increase limit.
+\item ier = 2: the occurrence of roundoff error is detected
+      which prevents the requested tolerance from being
+      achieved ; the error may be under-estimated.
+\item ier = 3: means terminaison with relative error less than 5* machine epsilon.
+      (this can be got when the input tolerance is too stringent).
+\item ier = 4: max number of function calls have been reached ;
+      in the actual interface implementation this other limit is set
+      from the \verb+limit=maxtri+ parameter and should rarely be
+      reached. If this is the case you could increase the
+      \verb+limit=maxtri+ parameter.
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example 1} a simple example, integrating on the unit square: 
+\begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
+// the unit square is divided in 2 triangles:\Hnewline
+X = [0,1;1,1;0,0];\Hnewline
+Y = [0,0;0,1;1,1];\Hnewline
+[Ia,ea,ier] = int2d(X,Y,f)\Hnewline
+I = -cos(2)+2*cos(1)-1 // exact result \Hnewline 
+abs(Ia-I) //near exact absolute error}
+\end{program}
+  
+\paragraph{example 2} a more difficult one's, always on the unit square:
+\begin{program}\HCode{function z=f(x,y);z=cos(10*x+20*y);endfunction\Hnewline
+// the unit square is divided in 2 triangles:\Hnewline
+X = [0,1;1,1;0,0];\Hnewline
+Y = [0,0;0,1;1,1];\Hnewline
+I = (-cos(30)+cos(10)+cos(20)-1)/200 // exact result \Hnewline 
+// first call \Hnewline
+[Ia,ea,ier] = int2d(X,Y,f)\Hnewline
+abs(Ia-I)\Hnewline
+// increase limit\Hnewline
+[Ia,ea,ier] = int2d(X,Y,f,limit=1000)\Hnewline
+abs(Ia-I)\Hnewline
+// the function could be evaluated on vector x and y\Hnewline
+// timing with scalar evaluation\Hnewline
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
+// timing with vectorial evaluation (this should be faster)\Hnewline
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
+\end{program}
+
+\paragraph{example 3} integrating a singularity. Here we try to compute:
+$$
+    \int_T \frac{dxdy}{x+y} = 1, \; T = \{ x \ge 0, y \ge 0, x+y \le 1 \}
+$$ 
+In this case we could always use \verb+iclose=%t+ because the singularity is
+located only at one vertex $(0,0)$:
+\begin{program}\HCode{function z=f(x,y);z = 1./(x+y); endfunction\Hnewline
+X = [0;1;0]; Y = [0;0;1];\Hnewline
+[Ia,ea,ier] = int2d(X,Y,f,limit=1000)\Hnewline
+abs(Ia-1)\Hnewline
+// show one again the speed-up using vector evaluation of f\Hnewline
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
+\end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{intg}{intg}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  uses the routine twodq (D.K. Kahaner, O.W. Rechard, R. Barnhill)
+  Nsp interface: Bruno Pincon.
+\end{authors}

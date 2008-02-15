@@ -44,7 +44,7 @@ typedef struct _ode_data ode_data;
  
 struct _ode_data
 {
-  NspList *args; /* a list to pass extra arguments to the integrator */
+  NspObject *args; /* extra argument to the integrator (a simple Mat, a List,...) */
   int neq;       /* number of equations if neq <  y->mn y can be used to pass 
 		  * extra informations to f
 		  */
@@ -63,7 +63,7 @@ extern struct {
   int iero;
 } C2F(ierode);
 
-int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspList *args,ode_data *obj)
+int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspObject *args,ode_data *obj)
 {
   if (( obj->func =nsp_object_copy(f)) == NULL) return RET_BUG;
   if (( nsp_object_set_name(obj->func,"ode_f")== FAIL)) return RET_BUG;
@@ -78,8 +78,8 @@ int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspList *args,ode_data *
     }
   if ( args != NULL ) 
     {
-      if (( obj->args = nsp_list_copy(args)) == NULL ) return RET_BUG;
-      if (( nsp_object_set_name((NspObject *) obj->args,"arg")== FAIL)) return RET_BUG;
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return RET_BUG;
+      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return RET_BUG;
     }
   else 
     {
@@ -99,7 +99,7 @@ int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspList *args,ode_data *
  **/
 static void ode_clean(ode_data *obj)
 {
-  if ( obj->args != NULL) nsp_list_destroy(obj->args);
+  if ( obj->args != NULL) nsp_object_destroy(&obj->args);
   nsp_object_destroy(&obj->func);
   if ( obj->jac != NULL)   nsp_object_destroy(&obj->jac);
   nsp_matrix_destroy(obj->y);
@@ -133,7 +133,7 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[])
   for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
   if (ode->args != NULL ) 
     {
-      targs[2]= NSP_OBJECT(ode->args);
+      targs[2]= ode->args;
       nargs= 3;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
@@ -184,7 +184,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
   for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
   if (ode->args != NULL ) 
     {
-      targs[2]= NSP_OBJECT(ode->args);
+      targs[2]= ode->args;
       nargs= 3;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
@@ -234,20 +234,20 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
 
 typedef enum {ode_default,adams,stiff,rk,rkf,fix,discrete,roots} ode_method;
 
-static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,NspMatrix *y0,
+static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObject *args,NspMatrix *y0,
 			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol,
 			 NspHash *odeoptions) ;
 
-static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0,
+static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *y0,
 			    double t0,NspMatrix *time);
 
 int int_ode( Stack stack, int rhs, int opt, int lhs)
 {
   ode_method methode= ode_default;
   int jt=2;
-  NspObject *f= NULL, *jac=NULL,*g=NULL;
+  NspObject *f= NULL, *jac=NULL,*g=NULL, *args=NULL;
   NspHash *odeoptions = NULL;
-  NspList *args=NULL, *gargs=NULL;
+  NspList *gargs=NULL;
   double rtol=1.e-7,t0;
   int ng=-1;
   char *type=NULL;
@@ -258,7 +258,7 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {realmatcopy,s_double,realmat,obj,new_opts, t_end} ;
 
   nsp_option opts[] ={
-    { "args",list,  NULLOBJ,-1},
+    { "args",obj,  NULLOBJ,-1},
     { "atol",realmat,NULLOBJ,-1},
     { "g", obj, NULLOBJ,-1},
     { "gargs",list,  NULLOBJ,-1},
@@ -314,7 +314,7 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,
+static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObject *args,
 			   NspMatrix *y0, double t0,NspMatrix *time, double rtol, 
 			   NspMatrix *Matol, NspHash *odeoptions) 
 {
@@ -430,7 +430,7 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspLis
 }
 
 
-static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0,
+static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *y0,
 			    double t0,NspMatrix *time)
 {
   int job=OK, i , j , tk = (int) t0;
@@ -480,11 +480,11 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0
 
 
 /*
- * intg interface: [I,er_estim,info] = intg(a, b, f, atol=, rtol=, args=List)
+ * intg interface: [I,er_estim,info] = intg(a, b, f, atol=, rtol=, limit=, vect_flag=, args=)
  * Author: Bruno Pincon. 
  * Modelled from the ode interface
- * We use a global variable (intg_date) to transmit information 
- * to intg_system. intg_system is the C func passed to the 
+ * We use a global variable (intg_data) to transmit information 
+ * to intg_func. intg_func is the C func passed to the 
  * integrator and which evaluates f(x [,List]) from a nsp function.
  */ 
 
@@ -499,22 +499,22 @@ typedef struct _intg_data intg_data;
  
 struct _intg_data
 {
-  NspList *args;   /* a list to pass extra arguments to the integrator */
+  NspObject *args;   /* the extra argument to the integrator (a simple Mat, or a List, ... */
   NspMatrix *x;    /* current evaluation point or vector, x is a 1x1 or 21x1 */
   NspObject *func; /* function to integrate */
 };
 
-static intg_data intg_d ={NULLLIST, NULLMAT, NULLOBJ}; 
+static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ}; 
 
 
-static int intg_prepare(NspObject *f, NspList *args, intg_data *obj, Boolean vect_flag)
+static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean vect_flag)
 {
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"intg_f")== FAIL)) return FAIL;
   if ( args != NULL ) 
     {
-      if (( obj->args = nsp_list_copy(args)) == NULL ) return FAIL;
-      if (( nsp_object_set_name((NspObject *) obj->args,"arg")== FAIL)) return FAIL;
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
+      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
     }
   else 
     {
@@ -540,7 +540,7 @@ static int intg_prepare(NspObject *f, NspList *args, intg_data *obj, Boolean vec
  **/
 static void intg_clean(intg_data *obj)
 {
-  if ( obj->args != NULL) nsp_list_destroy(obj->args);
+  if ( obj->args != NULL) nsp_object_destroy(&(obj->args));
   nsp_object_destroy( (NspObject **) &(obj->func));
   nsp_matrix_destroy(obj->x);
 }
@@ -567,7 +567,7 @@ static int intg_func(const double *x, double *y, int *n)
 
   if (intg->args != NULL ) 
     {
-      targs[1]= NSP_OBJECT(intg->args);
+      targs[1]= intg->args;
       nargs= 2;
     }
 
@@ -589,7 +589,7 @@ static int intg_func(const double *x, double *y, int *n)
     {
       Scierror("Error:  intg: a problem occured in function evaluation:\n");
       if ( nret != 1 )
-	Scierror("        function return more than one argument\n");
+	Scierror("        function don't return one argument\n");
       else if ( !IsMat(nsp_ret) )
 	Scierror("        function don't return the good type (must be a Mat)\n");
       else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
@@ -616,8 +616,7 @@ static int intg_func(const double *x, double *y, int *n)
 int int_intg(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *res=NULLMAT;
-  NspObject *f=NULLOBJ;
-  NspList *args=NULLLIST;
+  NspObject *f=NULLOBJ, *args=NULLOBJ;
   double a, b, rtol=1.e-8, atol=1.e-14, er_estim;
   int limit = 750, lwork, liwork; /* sizes of work arrays (lwork = 4*limit, liwork = limit/2 + 2) */
   double *rwork=NULL;
@@ -627,11 +626,11 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {s_double, s_double, obj, new_opts, t_end} ;
 
   nsp_option opts[] ={
-    { "args",list,  NULLOBJ,-1},
+    { "args",obj,  NULLOBJ,-1},
     { "atol",s_double,NULLOBJ,-1},
     { "rtol",s_double,NULLOBJ,-1},
     { "limit",s_int,NULLOBJ,-1},
-    { "vect_flag",s_bool,NULLOBJ,-1},
+    { "vecteval",s_bool,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
   };
 
@@ -688,6 +687,251 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
  err:
   FREE(rwork); FREE(iwork);
   intg_clean(&intg_d);
+  nsp_matrix_destroy(res);
+  return RET_BUG;
+}
+
+
+
+/*
+ * int2d interface: [I,er_estim,info] = int2d(x, y, f, tol=, iflag=, iclose=, limit=, vect_flag=, args=List)
+ * Author: Bruno Pincon. 
+ * Modelled from the intg interface
+ * We use a global variable (int2d_data) to transmit information 
+ * to int2d_func. int2d_func is the C func passed to the 
+ * integrant and which evaluates f(x, y [,arg]) from a nsp function.
+ */ 
+
+typedef int (*int2d_f)(const double *x, const double *y, double *z, int *n);
+
+extern int C2F(twodq)(int2d_f f, int *n, double *x, double *y, double *tol, int *iclose, 
+		      int *maxtri, int *mevals, double *result, double *error, 
+		      int *nu, int *nd, int *nevals, int *iflag, double *data, 
+		      int *iwork, int *vectflag, int *stat);
+
+typedef struct _int2d_data int2d_data;
+ 
+struct _int2d_data
+{
+  NspObject *args; /* extra argument of the integrant */
+  NspMatrix *x;    /* current evaluation point abscissae, x is a 1x1 or 28x1 or 46x1 */
+  NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or 28x1 or 46x1 */
+  NspObject *func; /* function to integrate */
+};
+
+static int2d_data int2d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLOBJ}; 
+
+
+static int int2d_prepare(NspObject *f, NspObject *args, int2d_data *obj, Boolean vect_flag, Boolean iclose)
+{
+  if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
+  if (( nsp_object_set_name(obj->func,"int2d_f")== FAIL)) return FAIL;
+  if ( args != NULL ) 
+    {
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
+      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+    }
+  else 
+    {
+      obj->args = NULL;
+    }
+
+  if ( vect_flag )
+    {
+      if ( iclose )  /* lmq1 integration formulae 46/3 points  */
+	{
+	  if ((obj->x = nsp_matrix_create("t",'r',46,1))== NULL) return FAIL;
+	  if ((obj->y = nsp_matrix_create("t",'r',46,1))== NULL) return FAIL;
+	}
+      else           /* lmq0 integration formulae 28/3 points  */
+	{
+	  if ((obj->x = nsp_matrix_create("t",'r',28,1))== NULL) return FAIL;
+	  if ((obj->y = nsp_matrix_create("t",'r',28,1))== NULL) return FAIL;
+	}
+    }
+  else              /* scalar evaluation (so no distinction between lmq0 and lmq1) */
+    {
+      if ((obj->x = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+      if ((obj->y = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+    }
+  return OK;
+}
+
+
+/**
+ * int2d_clean:
+ * @obj:  int2d_data struct
+ * 
+ * clean after integration 
+ **/
+static void int2d_clean(int2d_data *obj)
+{
+  if ( obj->args != NULL) nsp_object_destroy(&(obj->args));
+  nsp_object_destroy( (NspObject **) &(obj->func));
+  nsp_matrix_destroy(obj->x);
+  nsp_matrix_destroy(obj->y);
+}
+
+/**
+ * int2d_func:
+ * @x: 
+ * @y: 
+ * 
+ * this function is passed to twodq as a function description 
+ * 
+ * Return value: 0 (OK) or -1 (FAIL)
+ * 
+ **/
+static int int2d_func(const double *x, const double *y, double *z, int *n)
+{
+  int2d_data *int2d = &int2d_d;
+  NspObject *targs[3];/* arguments to be transmited to intg->func */
+  NspObject *nsp_ret;
+  int k, nret = 1,nargs = 2;
+  targs[0]= NSP_OBJECT(int2d->x);
+  for ( k = 0 ; k < *n ; k++ )
+    int2d->x->R[k] = x[k];
+  targs[1]= NSP_OBJECT(int2d->y);
+  for ( k = 0 ; k < *n ; k++ )
+    int2d->y->R[k] = y[k];
+
+  if (int2d->args != NULL ) 
+    {
+      targs[2]= int2d->args;
+      nargs = 3;
+    }
+
+  /* FIXME : a changer pour mettre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)int2d->func,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      Scierror("Error: int2d: failure in function evaluation\n");
+      return -1;
+    }
+
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
+    {
+      for ( k = 0 ; k < *n ; k++ )
+	z[k] = ((NspMatrix *) (nsp_ret))->R[k];
+      nsp_object_destroy( ((NspObject **) &nsp_ret));
+      return 0;
+    }
+  else 
+    {
+      Scierror("Error:  int2d: a problem occured in function evaluation:\n");
+      if ( nret != 1 )
+	Scierror("        function don't return one argument\n");
+      else if ( !IsMat(nsp_ret) )
+	Scierror("        function don't return the good type (must be a Mat)\n");
+      else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
+	Scierror("        function return a complex instead of a real\n");
+      else if ( ((NspMatrix *) nsp_ret)->mn != *n )
+	Scierror("        function don't return a vector of good length\n");
+
+      nsp_object_destroy((NspObject **) &nsp_ret);
+      return -1;
+    }
+}
+
+/**
+ * int_int2d:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface for int2d
+ * 
+ * Return value: number of returned arguments.
+ **/
+int int_int2d(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT;
+  NspObject *f=NULLOBJ, *args=NULLOBJ;
+  double tol=1.e-10, er_estim;
+  int limit = 100, nu=0, nd=0, meval, neval, stat;
+  int lwork, liwork; /* sizes of work arrays (lwork = 9*limit, liwork = 2*limit) */
+  double *rwork=NULL;
+  int *iwork=NULL;
+  Boolean iflag=FALSE, iclose=TRUE, vect_flag=FALSE;
+
+  int_types T[] = {realmat, realmat, obj, new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "args",obj,  NULLOBJ,-1},
+    { "tol",s_double,NULLOBJ,-1},
+    { "tolflag",s_bool,NULLOBJ,-1},
+    { "limit",s_int,NULLOBJ,-1},
+    { "iclose",s_bool,NULLOBJ,-1},
+    { "vecteval",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+
+  if ( GetArgs(stack,rhs,opt, T, &x, &y, &f, &opts, &args, &tol, &iflag, &limit, &iclose, &vect_flag) == FAIL ) 
+    return RET_BUG;
+  
+  limit = Max(10, limit);
+
+  CheckSameDims (NspFname(stack), 1, 2, x, y);
+  if ( x->m != 3 || x->n < 1 )
+    {
+      Scierror("%s: first and second arguments should be of size 3 x n (n>=1)\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( IsNspPList(f) == FALSE  )
+    {
+      Scierror("%s: third argument should be a function\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  /* allocate working arrays */
+  liwork = 2*limit;
+  lwork = 9*limit;
+  rwork = nsp_alloc_work_doubles(lwork);
+  iwork = nsp_alloc_work_int(liwork);
+  if ( (rwork == NULL) || (iwork == NULL) )
+    {
+      FREE(rwork); FREE(iwork);
+      return RET_BUG;
+    }
+
+  /* set up int2d_d global var */
+  if ( int2d_prepare(f, args, &int2d_d, vect_flag, iclose) == FAIL ) 
+    goto err;
+
+  /* set meval */
+  meval = 100*limit;
+
+  /* allocate output var */
+  if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
+
+  /* call the integrator  */
+  C2F(twodq)(int2d_func, &(x->n), x->R, y->R, &tol, &iclose, &limit, &meval, 
+	     res->R, &er_estim, &nu, &nd, &neval, &iflag, rwork, iwork, &vect_flag, &stat);
+
+  if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
+                              /* the function to integrate at a point */
+
+  if ( iflag != 0 )  /* display a warning */
+    {
+      Sciprintf("\n Warning: requested precision not reached, ier = %d", iflag);
+      Sciprintf("\n          maxtri= %d, nu+nd = %d, nevals = %d, meval = %d\n",limit, nu+nd, neval, meval);
+    }
+
+  int2d_clean(&int2d_d);
+  FREE(rwork); FREE(iwork);
+  MoveObj(stack,1,(NspObject *) res);
+  if ( lhs > 1 )
+    {
+      nsp_move_double(stack,2, er_estim);
+      if ( lhs > 2 )
+	nsp_move_double(stack,3, (double) iflag);
+    }
+  return Max(1,lhs);
+
+ err:
+  FREE(rwork); FREE(iwork);
+  int2d_clean(&int2d_d);
   nsp_matrix_destroy(res);
   return RET_BUG;
 }

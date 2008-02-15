@@ -1,5 +1,5 @@
       SUBROUTINE TWODQ(F,N,X,Y,TOL,ICLOSE,MAXTRI,MEVALS,RESULT,
-     *  ERROR,NU,ND,NEVALS,IFLAG,DATA,IWORK)
+     *  ERROR,NU,ND,NEVALS,IFLAG,DATA,IWORK,vectflag,stat)
 C***BEGIN PROLOGUE  TWODQ
 C***DATE WRITTEN   840518   (YYMMDD)
 C***REVISION DATE  840518   (YYMMDD)
@@ -42,7 +42,7 @@ C   storage arrays - DATA and IWORK - whose sizes are at least
 C   9*MAXTRI and 2*MAXTRI respectively.  The user must also
 C   specify MEVALS, the maximum number of function evaluations
 C   to be allowed.  This number will be effective in limiting
-C   the computation only if it is less than 94*MAXTRI when LQM1
+C   the computation only if it is less than 92*MAXTRI when LQM1
 C   is specified or 56*MAXTRI when LQM0 is specified.
 C
 C   After the subroutine has returned to the calling program
@@ -211,14 +211,13 @@ C
 C***ROUTINES CALLED  HINITD,HINITU,HPACC,HPDEL,HPINS,LQM0,LQM1,
 C                    TRIDV,DLAMCH
 C***END PROLOGUE  TWODQ
-      integer n,iflag,nevals,iclose,nu,nd,mevals,iwork(*),maxtri
-      double precision f,x(3,n),y(3,n),data(*),tol,result,error
+      integer n,iflag,nevals,iclose,nu,nd,mevals,iwork(*),maxtri, stat
+      double precision x(3,n),y(3,n),data(*),tol,result,error
       integer rndcnt
-      logical full
+      logical full, vectflag
       double precision a,r,e,u(3),v(3),node(9),node1(9),node2(9),
      *  epsabs,EMACH,DLAMCH,ATOT,fadd,newres,newerr
       external f,GREATR
-      common/iertwo/iero
       save ATOT
 
       EMACH=DLAMCH('p')
@@ -227,43 +226,43 @@ c      If heaps are empty, apply LQM to each input triangle and
 c      place all of the data on the second heap.
 c
       if((nu+nd).eq.0) then
-      call HINITU(maxtri,9,nu,iwork)
-      call HINITD(maxtri,9,nd,iwork(maxtri+1))
-      ATOT=0.0
-      result=0.0
-      error=0.0
-      rndcnt=0
-      nevals=0
-      do 20 i=1,n
-        do 10 j=1,3
-          u(j)=x(j,i)
-          v(j)=y(j,i)
-   10     continue
-        a=0.5*abs(u(1)*v(2)+u(2)*v(3)+u(3)*v(1)
-     1        -u(1)*v(3)-u(2)*v(1)-u(3)*v(2))
-        ATOT=ATOT+a
-        if(iclose.eq.1) then
-          call LQM1(f,u,v,r,e)
-          if(iero.ne.0) return
-          nevals=nevals+47
-        else
-          call LQM0(f,u,v,r,e)
-          if(iero.ne.0) return
-          nevals=nevals+28
-        end if
-        result=result+r
-        error=error+e
-        node(1)=e
-        node(2)=r
-        node(3)=x(1,i)
-        node(4)=y(1,i)
-        node(5)=x(2,i)
-        node(6)=y(2,i)
-        node(7)=x(3,i)
-        node(8)=y(3,i)
-        node(9)=a
-        call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node,GREATR)
-  20  continue
+         call HINITU(maxtri,9,nu,iwork)
+         call HINITD(maxtri,9,nd,iwork(maxtri+1))
+         ATOT=0.0
+         result=0.0
+         error=0.0
+         rndcnt=0
+         nevals=0
+         do i=1,n
+            do j=1,3
+               u(j)=x(j,i)
+               v(j)=y(j,i)
+            enddo
+            a=0.5*abs(u(1)*v(2)+u(2)*v(3)+u(3)*v(1)
+     *           -u(1)*v(3)-u(2)*v(1)-u(3)*v(2))
+            ATOT=ATOT+a
+            if(iclose.eq.1) then
+               call LQM1VECT(f,u,v,r,e,vectflag,stat)
+               if(stat.ne.0) return
+               nevals=nevals+46
+            else
+               call LQM0VECT(f,u,v,r,e,vectflag,stat)
+               if(stat.ne.0) return
+               nevals=nevals+28
+            endif
+            result=result+r
+            error=error+e
+            node(1)=e
+            node(2)=r
+            node(3)=x(1,i)
+            node(4)=y(1,i)
+            node(5)=x(2,i)
+            node(6)=y(2,i)
+            node(7)=x(3,i)
+            node(8)=y(3,i)
+            node(9)=a
+            call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node,GREATR)
+         enddo
       end if
 c
 c      Check that input tolerance is consistent with
@@ -371,69 +370,68 @@ c
         call HPDEL(maxtri,9,data,nd,iwork(maxtri+1),GREATR,1)
       end if
       call tridv(node,node1,node2,0.5d0,1)
-      do 60 j=1,3
-        u(j)=node1(2*j+1)
-        v(j)=node1(2*j+2)
-  60  continue
+      do j=1,3
+         u(j)=node1(2*j+1)
+         v(j)=node1(2*j+2)
+      enddo
       if(iclose.eq.1) then
-        call LQM1(f,u,v,node1(2),node1(1))
-        if(iero.ne.0) return
-
-        nevals=nevals+47
+         call LQM1VECT(f,u,v,node1(2),node1(1),vectflag,stat)
+         if(stat.ne.0) return
+         nevals=nevals+46
       else
-        call LQM0(f,u,v,node1(2),node1(1))
-        if(iero.ne.0) return
-        nevals=nevals+28
+         call LQM0VECT(f,u,v,node1(2),node1(1),vectflag,stat)
+         if(stat.ne.0) return
+         nevals=nevals+28
       end if
-      do 70 j=1,3
-        u(j)=node2(2*j+1)
-        v(j)=node2(2*j+2)
-  70  continue
+      do j=1,3
+         u(j)=node2(2*j+1)
+         v(j)=node2(2*j+2)
+      enddo
       if(iclose.eq.1) then
-        call LQM1(f,u,v,node2(2),node2(1))
-        if(iero.ne.0) return
-        nevals=nevals+47
+         call LQM1VECT(f,u,v,node2(2),node2(1),vectflag,stat)
+         if(stat.ne.0) return
+         nevals=nevals+46
       else
-        call LQM0(f,u,v,node2(2),node2(1))
-        if(iero.ne.0) return
-        nevals=nevals+28
+         call LQM0VECT(f,u,v,node2(2),node2(1),vectflag,stat)
+         if(stat.ne.0) return
+         nevals=nevals+28
       end if
       newerr=node1(1)+node2(1)
       newres=node1(2)+node2(2)
       if(newerr.gt.0.99*node(1)) then
-        if(abs(node(2)-newres).le.1.D-04*abs(newres)) rndcnt=rndcnt+1
+         if(abs(node(2)-newres).le.1.D-04*abs(newres)) rndcnt=rndcnt+1
       end if
       result=result-node(2)+newres
       error=error-node(1)+newerr
       if(node1(1).gt.node1(9)*epsabs/ATOT) then
-        call HPINS(maxtri,9,data,nu,iwork,node1,GREATR)
+         call HPINS(maxtri,9,data,nu,iwork,node1,GREATR)
       else
-        call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node1,GREATR)
+         call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node1,GREATR)
       end if
       if(node2(1).gt.node2(9)*epsabs/ATOT) then
-        call HPINS(maxtri,9,data,nu,iwork,node2,GREATR)
+         call HPINS(maxtri,9,data,nu,iwork,node2,GREATR)
       else
-        call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node2,GREATR)
+         call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node2,GREATR)
       end if
       if(rndcnt.ge.20) then
-        iflag=2
-        return
+         iflag=2
+         return
       end if
       if(iflag.eq.0) then
-        if(epsabs.lt.0.5*tol*abs(result)) then
-          epsabs=tol*abs(result)
-          j=nu
-   5      if(j.eq.0) go to 40
-          call HPACC(maxtri,9,data,nu,iwork,node,j)
-          if(node(1).le.epsabs*node(9)/ATOT) then
-            call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node,GREATR)
-            call HPDEL(maxtri,9,data,nu,iwork,GREATR,j)
-            if(j.gt.nu) j=j-1
-          else
-            j=j-1
-          end if
-          go to 5
-        end if
+         if(epsabs.lt.0.5*tol*abs(result)) then
+            epsabs=tol*abs(result)
+            j=nu
+ 5          if(j.eq.0) go to 40
+            call HPACC(maxtri,9,data,nu,iwork,node,j)
+            if(node(1).le.epsabs*node(9)/ATOT) then
+               call HPINS(maxtri,9,data,nd,iwork(maxtri+1),node,GREATR)
+               call HPDEL(maxtri,9,data,nu,iwork,GREATR,j)
+               if(j.gt.nu) j=j-1
+            else
+               j=j-1
+            end if
+            go to 5
+         end if
       end if
       go to 40
       end
@@ -658,342 +656,7 @@ C
       J=J2
       GO TO 2
       END
-      SUBROUTINE LQM0(F,U,V,RES8,EST)
-C
-C
-C
-C      PURPOSE
-C           TO COMPUTE - IF = INTEGRAL OF F OVER THE TRIANGLE
-C           WITH VERTICES (U(1),V(1)),(U(2),V(2)),(U(3),V(3)), AND
-C           ESTIMATE THE ERROR,
-C                      - INTEGRAL OF ABS(F) OVER THIS TRIANGLE
-C
-C      CALLING SEQUENCE
-C           CALL LQM0(F,U,V,RES11,EST)
-C        PARAMETERS
-C           F       - FUNCTION SUBPROGRAM DEFINING THE INTEGRAND
-C                     F(X,Y); THE ACTUAL NAME FOR F NEEDS TO BE
-C                     DECLARED E X T E R N A L IN THE CALLING
-C                     PROGRAM
-C           U(1),U(2),U(3)- ABSCISSAE OF VERTICES
-C           V(1),V(2),V(3)- ORDINATES OF VERTICES
-C           RES6    - APPROXIMATION TO THE INTEGRAL IF, OBTAINED BY THE
-C                     LYNESS AND JESPERSEN RULE OF DEGREE 6, USING
-C                     12 POINTS
-C           RES8   - APPROXIMATION TO THE INTEGRAL IF, OBTAINED BY THE
-C                     LYNESS AND JESPERSEN RULE OF DEGREE 8,
-C                     USING 16 POINTS
-C           EST     - ESTIMATE OF THE ABSOLUTE ERROR
-C           DRESC   - APPROXIMATION TO THE INTEGRAL OF ABS(F- IF/DJ),
-C                     OBTAINED BY THE RULE OF DEGREE 6, AND USED FOR
-C                     THE COMPUTATION OF EST
-C
-C      REMARKS
-C           DATE OF LAST UPDATE : 10 APRIL 1984 O.W. RECHARD NBS
-C
-C           SUBROUTINES OR FUNCTIONS CALLED :
-C                   - F (USER-SUPPLIED INTEGRAND FUNCTION)
-C                   - DLAMCH FOR MACHINE DEPENDENT INFORMATION
-C
-C .....................................................................
-C
-      DOUBLE PRECISION DJ,DF0,DRESC,EMACH,EST,F,FV,F0,U,V,
-     *  RES6,RES8,U1,U2,U3,UFLOW,V1,V2,V3,W,W60,W80,X,Y
-     *  ,ZETA1,ZETA2,Z1,Z2,Z3,RESAB6
-      EXTERNAL F
-      DOUBLE PRECISION DLAMCH
-      INTEGER J,KOUNT,L
-      common/iertwo/iero
-C
-      DIMENSION FV(19),W(9),X(3),Y(3),ZETA1(9),ZETA2(9),U(3),V(3)
-C
-C
-C            FIRST HOMOGENEOUS COORDINATES OF POINTS IN DEGREE-6
-C            AND DEGREE-8 FORMULA, TAKEN WITH MULTIPLICITY 3
-      DATA ZETA1(1),ZETA1(2),ZETA1(3),ZETA1(4),ZETA1(5),ZETA1(6),ZETA1(7
-     *  ),ZETA1(8),ZETA1(9)/0.5014265096581342D+00,
-     *  0.8738219710169965D+00,0.6365024991213939D+00,
-     *  0.5314504984483216D-01,0.8141482341455413D-01,
-     *  0.8989055433659379D+00,0.6588613844964797D+00,
-     *  0.8394777409957211D-02,0.7284923929554041D+00/
-C            SECOND HOMOGENEOUS COORDINATES OF POINTS IN DEGREE-6
-C            AND DEGREE-8 FORMULA, TAKEN WITH MUNLTIPLICITY 3
-      DATA ZETA2(1),ZETA2(2),ZETA2(3),ZETA2(4),ZETA2(5),ZETA2(6),ZETA2(7
-     *  ),ZETA2(8),ZETA2(9)/0.2492867451709329D+00,
-     *  0.6308901449150177D-01,0.5314504984483216D-01,
-     *  0.6365024991213939D+00,0.4592925882927229D+00,
-     *  0.5054722831703103D-01,0.1705693077517601D+00,
-     *  0.7284923929554041D+00,0.8394777409957211D-02/
-C           WEIGHTS OF MID-POINT OF TRIANGLE IN DEGREE-6
-C           RESP. DEGREE-8 FORMULAE
-      DATA W60/0.0D+00/
-      DATA W80/0.1443156076777862D+00/
-C           WEIGHTS IN DEGREE-6 AND DEGREE-8 RULE
-      DATA W(1),W(2),W(3),W(4),W(5),W(6),W(7),W(8),W(9)/
-     *  0.1167862757263407D+00,0.5084490637020547D-01,
-     *  0.8285107561839291D-01,0.8285107561839291D-01,
-     *  0.9509163426728497D-01,0.3245849762319813D-01,
-     *  0.1032173705347184D+00,0.2723031417443487D-01,
-     *  0.2723031417443487D-01/
-C
-C           LIST OF MAJOR VARIABLES
-C           ----------------------
-C           DJ      - AREA OF THE TRIANGLE
-C           DRESC   - APPROXIMATION TO INTEGRAL OF
-C                     ABS(F- IF/DJ)  OVER THE TRIANGLE
-C           RESAB6  - APPROXIMATION TO INTEGRAL OF
-C                     ABS(F) OVER THE TRIANGLE
-C           X       - CARTESIAN ABSCISSAE OF THE INTEGRATION
-C                     POINTS
-C           Y       - CARTESIAN ORDINATES OF THE INTEGRATION
-C                     POINTS
-C           FV      - FUNCTION VALUES
-C
-C           COMPUTE DEGREE-6 AND DEGREE-8 RESULTS FOR IF/DJ AND
-C           DEGREE-6 APPROXIMATION FOR ABS(F)
-C
-      EMACH = DLAMCH('p')
-      UFLOW = DLAMCH('u')
-      U1=U(1)
-      U2=U(2)
-      U3=U(3)
-      V1=V(1)
-      V2=V(2)
-      V3=V(3)
-      DJ = ABS(U1*V2-U2*V1-U1*V3+V1*U3+U2*V3-V2*U3)*0.5D+00
-      F0 = F((U1+U2+U3)/3.0D+00,(V1+V2+V3)/3.0D+00)
-      if(iero.ne.0) return
 
-      RES6 = F0*W60
-      RESAB6 = ABS(F0)*W60
-      FV(1) = F0
-      KOUNT = 1
-      RES8 = F0*W80
-      DO 50 J=1,9
-        Z1 = ZETA1(J)
-        Z2 = ZETA2(J)
-        Z3 = 1.0D+00-Z1-Z2
-        X(1) = Z1*U1+Z2*U2+Z3*U3
-        Y(1) = Z1*V1+Z2*V2+Z3*V3
-        X(2) = Z2*U1+Z3*U2+Z1*U3
-        Y(2) = Z2*V1+Z3*V2+Z1*V3
-        X(3) = Z3*U1+Z1*U2+Z2*U3
-        Y(3) = Z3*V1+Z1*V2+Z2*V3
-        IF(J.LE.4) THEN
-           F0 = 0.0D+00
-           DF0 = 0.0D+00
-           DO 10 L=1,3
-             KOUNT = KOUNT+1
-             FV(KOUNT) = F(X(L),Y(L))
-             if(iero.ne.0) return
-             F0 = F0+FV(KOUNT)
-             DF0 = DF0+ABS(FV(KOUNT))
-   10      CONTINUE
-           RES6 = RES6+F0*W(J)
-           RESAB6 = RESAB6+DF0*W(J)
-        ELSE
-           F0 = F(X(1),Y(1))+F(X(2),Y(2))+F(X(3),Y(3))
-           if(iero.ne.0) return
-           RES8 = RES8+F0*W(J)
-        ENDIF
-   50 CONTINUE
-C
-C           COMPUTE DEGREE-6 APPROXIMATION FOR THE INTEGRAL OF
-C           ABS(F-IF/DJ)
-C
-      DRESC = ABS(FV(1)-RES6)*W60
-      KOUNT = 2
-      DO 60 J=1,4
-        DRESC = DRESC+(ABS(FV(KOUNT)-RES6)+ABS(FV(KOUNT+1)-RES6)+ABS(
-     *  FV(KOUNT+2)-RES6))*W(J)
-        KOUNT = KOUNT+3
-   60 CONTINUE
-C
-C           COMPUTE DEGREE-6 AND DEGREE-8 APPROXIMATIONS FOR IF,
-C           AND ERROR ESTIMATE
-C
-      RES6 = RES6*DJ
-      RES8 = RES8*DJ
-      RESAB6 = RESAB6*DJ
-      DRESC = DRESC*DJ
-      EST = ABS(RES6-RES8)
-      IF(DRESC.NE.0.0D+00) EST = MAX(EST,DRESC*MIN(1.0D+00,(20.0D+00
-     *  *EST/DRESC)**1.5D+00))
-      IF(RESAB6.GT.UFLOW) EST = MAX(EMACH*RESAB6,EST)
-      RETURN
-      END
-      SUBROUTINE LQM1(F,U,V,RES11,EST)
-C
-C
-C
-C      PURPOSE
-C           TO COMPUTE - IF = INTEGRAL OF F OVER THE TRIANGLE
-C           WITH VERTICES (U(1),V(1)),(U(2),V(2)),(U(3),V(3)), AND
-C           ESTIMATE THE ERROR,
-C                      - INTEGRAL OF ABS(F) OVER THIS TRIANGLE
-C
-C      CALLING SEQUENCE
-C           CALL LQM1(F,U,V,RES11,EST)
-C        PARAMETERS
-C           F       - FUNCTION SUBPROGRAM DEFINING THE INTEGRAND
-C                     F(X,Y); THE ACTUAL NAME FOR F NEEDS TO BE
-C                     DECLARED E X T E R N A L IN THE CALLING
-C                     PROGRAM
-C           U(1),U(2),U(3)- ABSCISSAE OF VERTICES
-C           V(1),V(2),V(3)- ORDINATES OF VERTICES
-C           RES9    - APPROXIMATION TO THE INTEGRAL IF, OBTAINED BY THE
-C                     LYNESS AND JESPERSEN RULE OF DEGREE 9, USING
-C                     19 POINTS
-C           RES11   - APPROXIMATION TO THE INTEGRAL IF, OBTAINED BY THE
-C                     LYNESS AND JESPERSEN RULE OF DEGREE 11,
-C                     USING 28 POINTS
-C           EST     - ESTIMATE OF THE ABSOLUTE ERROR
-C           DRESC   - APPROXIMATION TO THE INTEGRAL OF ABS(F- IF/DJ),
-C                     OBTAINED BY THE RULE OF DEGREE 9, AND USED FOR
-C                     THE COMPUTATION OF EST
-C
-C      REMARKS
-C           DATE OF LAST UPDATE : 18 JAN 1984 D. KAHANER NBS
-C
-C           SUBROUTINES OR FUNCTIONS CALLED :
-C                   - F (USER-SUPPLIED INTEGRAND FUNCTION)
-C                   - DLAMCH FOR MACHINE DEPENDENT INFORMATION
-C
-C .....................................................................
-C
-      DOUBLE PRECISION DJ,DF0,DRESC,EMACH,EST,F,FV,F0,U,V,
-     *  RES9,RES11,U1,U2,U3,UFLOW,V1,V2,V3,W,W90,W110,X,Y
-     *  ,ZETA1,ZETA2,Z1,Z2,Z3
-      EXTERNAL F
-      DOUBLE PRECISION DLAMCH
-      INTEGER J,KOUNT,L
-      common/iertwo/iero
-C
-      DIMENSION FV(19),W(15),X(3),Y(3),ZETA1(15),ZETA2(15),U(3),V(3)
-C
-C
-C            FIRST HOMOGENEOUS COORDINATES OF POINTS IN DEGREE-9
-C            AND DEGREE-11 FORMULA, TAKEN WITH MULTIPLICITY 3
-      DATA ZETA1(1),ZETA1(2),ZETA1(3),ZETA1(4),ZETA1(5),ZETA1(6),ZETA1(7
-     *  ),ZETA1(8),ZETA1(9),ZETA1(10),ZETA1(11),ZETA1(12),ZETA1(13),
-     *  ZETA1(14),ZETA1(15)/0.2063496160252593D-01,0.1258208170141290D+
-     *  00,0.6235929287619356D+00,0.9105409732110941D+00,
-     *  0.3683841205473626D-01,0.7411985987844980D+00,
-     *  0.9480217181434233D+00,0.8114249947041546D+00,
-     *  0.1072644996557060D-01,0.5853132347709715D+00,
-     *  0.1221843885990187D+00,0.4484167758913055D-01,
-     *  0.6779376548825902D+00,0.0D+00,0.8588702812826364D+00/
-C            SECOND HOMOGENEOUS COORDINATES OF POINTS IN DEGREE-9
-C            AND DEGREE-11 FORMULA, TAKEN WITH MUNLTIPLICITY 3
-      DATA ZETA2(1),ZETA2(2),ZETA2(3),ZETA2(4),ZETA2(5),ZETA2(6),ZETA2(7
-     *  ),ZETA2(8),ZETA2(9),ZETA2(10),ZETA2(11),ZETA2(12),ZETA2(13),
-     *  ZETA2(14),ZETA2(15)/0.4896825191987370D+00,0.4370895914929355D+
-     *  00,0.1882035356190322D+00,0.4472951339445297D-01,
-     *  0.7411985987844980D+00,0.3683841205473626D-01,
-     *  0.2598914092828833D-01,0.9428750264792270D-01,
-     *  0.4946367750172147D+00,0.2073433826145142D+00,
-     *  0.4389078057004907D+00,0.6779376548825902D+00,
-     *  0.4484167758913055D-01,0.8588702812826364D+00,0.0D+00/
-C           WEIGHTS OF MID-POINT OF TRIANGLE IN DEGREE-9
-C           RESP. DEGREE-11 FORMULAE
-      DATA W90/0.9713579628279610D-01/
-      DATA W110/0.8797730116222190D-01/
-C           WEIGHTS IN DEGREE-9 AND DEGREE-11 RULE
-      DATA W(1),W(2),W(3),W(4),W(5),W(6),W(7),W(8),W(9),W(10),W(11),W(12
-     *  ),W(13),W(14),W(15)/0.3133470022713983D-01,0.7782754100477543D-
-     *  01,0.7964773892720910D-01,0.2557767565869810D-01,
-     *  0.4328353937728940D-01,0.4328353937728940D-01,
-     *  0.8744311553736190D-02,0.3808157199393533D-01,
-     *  0.1885544805613125D-01,0.7215969754474100D-01,
-     *  0.6932913870553720D-01,0.4105631542928860D-01,
-     *  0.4105631542928860D-01,0.7362383783300573D-02,
-     *  0.7362383783300573D-02/
-C
-C           LIST OF MAJOR VARIABLES
-C           ----------------------
-C           DJ      - AREA OF THE TRIANGLE
-C           DRESC   - APPROXIMATION TO INTEGRAL OF
-C                     ABS(F- IF/DJ)  OVER THE TRIANGLE
-C           RESAB9  - APPROXIMATION TO INTEGRAL OF
-C                     ABS(F) OVER THE TRIANGLE
-C           X       - CARTESIAN ABSCISSAE OF THE INTEGRATION
-C                     POINTS
-C           Y       - CARTESIAN ORDINATES OF THE INTEGRATION
-C                     POINTS
-C           FV      - FUNCTION VALUES
-C
-C           COMPUTE DEGREE-9 AND DEGREE-11 RESULTS FOR IF/DJ AND
-C           DEGREE-9 APPROXIMATION FOR ABS(F)
-C
-      EMACH = DLAMCH('p')
-      UFLOW = DLAMCH('u')
-      U1=U(1)
-      U2=U(2)
-      U3=U(3)
-      V1=V(1)
-      V2=V(2)
-      V3=V(3)
-      DJ = ABS(U1*V2-U2*V1-U1*V3+V1*U3+U2*V3-V2*U3)*0.5D+00
-      F0 = F((U1+U2+U3)/3.0D+00,(V1+V2+V3)/3.0D+00)
-      if(iero.ne.0) return
-      RES9 = F0*W90
-      RESAB9 = ABS(F0)*W90
-      FV(1) = F0
-      KOUNT = 1
-      RES11 = F0*W110
-      DO 50 J=1,15
-        Z1 = ZETA1(J)
-        Z2 = ZETA2(J)
-        Z3 = 1.0D+00-Z1-Z2
-        X(1) = Z1*U1+Z2*U2+Z3*U3
-        Y(1) = Z1*V1+Z2*V2+Z3*V3
-        X(2) = Z2*U1+Z3*U2+Z1*U3
-        Y(2) = Z2*V1+Z3*V2+Z1*V3
-        X(3) = Z3*U1+Z1*U2+Z2*U3
-        Y(3) = Z3*V1+Z1*V2+Z2*V3
-        IF(J.LE.6) THEN
-           F0 = 0.0D+00
-           DF0 = 0.0D+00
-           DO 10 L=1,3
-             KOUNT = KOUNT+1
-             FV(KOUNT) = F(X(L),Y(L))
-             if(iero.ne.0) return
-             F0 = F0+FV(KOUNT)
-             DF0 = DF0+ABS(FV(KOUNT))
-   10      CONTINUE
-           RES9 = RES9+F0*W(J)
-           RESAB9 = RESAB9+DF0*W(J)
-        ELSE
-           F0 = F(X(1),Y(1))+F(X(2),Y(2))+F(X(3),Y(3))
-           if(iero.ne.0) return
-           RES11 = RES11+F0*W(J)
-        ENDIF
-   50 CONTINUE
-C
-C           COMPUTE DEGREE-9 APPROXIMATION FOR THE INTEGRAL OF
-C           ABS(F-IF/DJ)
-C
-      DRESC = ABS(FV(1)-RES9)*W90
-      KOUNT = 2
-      DO 60 J=1,6
-        DRESC = DRESC+(ABS(FV(KOUNT)-RES9)+ABS(FV(KOUNT+1)-RES9)+ABS(
-     *  FV(KOUNT+2)-RES9))*W(J)
-        KOUNT = KOUNT+3
-   60 CONTINUE
-C
-C           COMPUTE DEGREE-9 AND DEGREE-11 APPROXIMATIONS FOR IF,
-C           AND ERROR ESTIMATE
-C
-      RES9 = RES9*DJ
-      RES11 = RES11*DJ
-      RESAB9 = RESAB9*DJ
-      DRESC = DRESC*DJ
-      EST = ABS(RES9-RES11)
-      IF(DRESC.NE.0.0D+00) EST = MAX(EST,DRESC*MIN(1.0D+00,(20.0D+00
-     *  *EST/DRESC)**1.5D+00))
-      IF(RESAB9.GT.UFLOW) EST = MAX(EMACH*RESAB9,EST)
-      RETURN
-      END
 
       subroutine tridv(node,node1,node2,coef,rank)
       double precision node(10),node1(10),node2(10),coef
@@ -1058,56 +721,425 @@ C
       node1(9)=coef*node(9)
       node2(9)=coef1*node(9)
       end
-      SUBROUTINE INTEGXERROR(MESSG,NMESSG,NERR,LEVEL)
-C***BEGIN PROLOGUE  XERROR
-C***DATE WRITTEN   790801   (YYMMDD)
-C***REVISION DATE  820801   (YYMMDD)
-C***CATEGORY NO.  R3C
-C***KEYWORDS  ERROR,XERROR PACKAGE
-C***AUTHOR  JONES, R. E., (SNLA)
-C***PURPOSE  Processes an error (diagnostic) message.
-C***DESCRIPTION
-C     Abstract
-C        XERROR processes a diagnostic message, in a manner
-C        determined by the value of LEVEL and the current value
-C        of the library error control flag, KONTRL.
-C        (See subroutine XSETF for details.)
-C
-C     Description of Parameters
-C      --Input--
-C        MESSG - the Hollerith message to be processed, containing
-C                no more than 72 characters.
-C        NMESSG- the actual number of characters in MESSG.
-C        NERR  - the error number associated with this message.
-C                NERR must not be zero.
-C        LEVEL - error category.
-C                =2 means this is an unconditionally fatal error.
-C                =1 means this is a recoverable error.  (I.e., it is
-C                   non-fatal if XSETF has been appropriately called.)
-C                =0 means this is a warning message only.
-C                =-1 means this is a warning message which is to be
-C                   printed at most once, regardless of how many
-C                   times this call is executed.
-C
-C     Examples
-C        CALL XERROR('SMOOTH -- NUM WAS ZERO.',23,1,2)
-C        CALL XERROR('INTEG  -- LESS THAN FULL ACCURACY ACHIEVED.',
-C                    43,2,1)
-C        CALL XERROR('ROOTER -- ACTUAL ZERO OF F FOUND BEFORE INTERVAL F
-C    1ULLY COLLAPSED.',65,3,0)
-C        CALL XERROR('EXP    -- UNDERFLOWS BEING SET TO ZERO.',39,1,-1)
-C
-C     Latest revision ---  19 MAR 1980
-C     Written by Ron Jones, with SLATEC Common Math Library Subcommittee
-C***REFERENCES  JONES R.E., KAHANER D.K., "XERROR, THE SLATEC ERROR-
-C                 HANDLING PACKAGE", SAND82-0800, SANDIA LABORATORIES,
-C                 1982.
-C***ROUTINES CALLED  XERRWV
-C***END PROLOGUE  XERROR
-      CHARACTER*(*) MESSG
-C***FIRST EXECUTABLE STATEMENT  XERROR
-      CALL XERRWV(MESSG,NMESSG,NERR,LEVEL,0,0,0,0,0.,0.)
-      RETURN
-      END
+
+      subroutine lqm0vect(f,u,v,res8,est,vectflag,stat)
+*
+*      PURPOSE
+*           compute on approximation of I(f) = \int_T f(x,y) dx dy
+*           T being the triangle with vertices (u(i),v(j)), j=1..3
+*           together with an estimate the error,
+*
+*      PARAMETERS
+*           f       - function subprogram defining the integrand.
+*                     It must have the form:
+*                                 func(x,y,z,n) 
+*                     and should return an int. func computes 
+*                     z(k) = f(x(k),y(k)) for 1<=k<=n. The returned value
+*                     is used to communicate a possible failure in the
+*                     computation of f (in most cases f is evaluated 
+*                     by the nsp interpretor from a function written 
+*                     in the nsp langage). The return value must be
+*                     0 if all is OK, other value imply to return to
+*                     the caller (the variable stat being used to 
+*                     communicate the problem).   
+*                     
+*          u(1),u(2),u(3)- abscissae of vertices
+*          v(1),v(2),v(3)- ordinates of vertices
+*
+*          res8     - approximation of I(f), obtained by the
+*                     Lyness and Jespersen rule of degree 8,
+*                     using 16 points
+*          est      - estimate of the absolute error
+*
+*          vectflag - boolean TRUE if the external f could be evaluated
+*                     on a vector
+*
+*          stat     - return 0 if the evaluation of f by the nsp interpretor
+*                     is successful. Other values stop the computation and
+*                     return immediatly to the caller.
+* 
+*
+*      REMARKS
+*          date of last update : 10 april 1984 o.w. rechard nbs
+*
+*          modified by Bruno Pincon (24 feb 2008) for nsp:
+*            - add the possibility of a "vector" evaluation of f
+*              (this speed-up the computation when f is evaluated
+*               by the nsp interpretor).
+*            - clean up the code
+* 
+*          subroutines or functions called :
+*                   - f (user-supplied integrand function)
+*                   - dlamch for machine dependent information
+*
+      implicit none
+      integer f
+      external f
+      double precision u(3),v(3),res8,est
+      logical vectflag
+      integer stat
+
+*     local var
+      double precision r6, res6, resab6, T_area,dresc,emach,
+     *                 uflow,u1,u2,u3,v1,v2,v3,w(9),w80,x(28),y(28),
+     *                 fvect(28),zeta1(9),zeta2(9),z1,z2,z3
+      double precision dlamch
+      integer k, j, n1, n28
+*
+*
+*     first homogeneous coordinates of points in degree-6
+*     and degree-8 formula, taken with multiplicity 3
+      data zeta1(1),zeta1(2),zeta1(3),zeta1(4),zeta1(5),zeta1(6),zeta1(7
+     *  ),zeta1(8),zeta1(9)/0.5014265096581342d+00,
+     *  0.8738219710169965d+00,0.6365024991213939d+00,
+     *  0.5314504984483216d-01,0.8141482341455413d-01,
+     *  0.8989055433659379d+00,0.6588613844964797d+00,
+     *  0.8394777409957211d-02,0.7284923929554041d+00/
+*     second homogeneous coordinates of points in degree-6
+*     and degree-8 formula, taken with multiplicity 3
+      data zeta2(1),zeta2(2),zeta2(3),zeta2(4),zeta2(5),zeta2(6),zeta2(7
+     *  ),zeta2(8),zeta2(9)/0.2492867451709329d+00,
+     *  0.6308901449150177d-01,0.5314504984483216d-01,
+     *  0.6365024991213939d+00,0.4592925882927229d+00,
+     *  0.5054722831703103d-01,0.1705693077517601d+00,
+     *  0.7284923929554041d+00,0.8394777409957211d-02/
+*     weights of mid-point of triangle in degree-6
+*     resp. degree-8 formulae
+      data w80/0.1443156076777862d+00/
+*     weights in degree-6 and degree-8 rule
+      data w(1),w(2),w(3),w(4),w(5),w(6),w(7),w(8),w(9)/
+     *  0.1167862757263407d+00,0.5084490637020547d-01,
+     *  0.8285107561839291d-01,0.8285107561839291d-01,
+     *  0.9509163426728497d-01,0.3245849762319813d-01,
+     *  0.1032173705347184d+00,0.2723031417443487d-01,
+     *  0.2723031417443487d-01/
+*
+*           list of major variables
+*           ----------------------
+*          res6, resab6 and dresc are used for error estimation:
+*      
+*          res6     - approximation of I(f), obtained by the Lyness and 
+*                     Jespersen rule of degree 6, using 12 points.
+*          resab6   - approximation of I(|f|) by the rule of degree 6
+*          dresc    - approximation of I(|f- I(f)/T_area|) by the rule of degree 6 
+*
+*          r6       - res6 / area(T) (the approximation of I(f)/T_area
+*                     used to compute dresc).
+*
+*           x       - cartesian abscissae of the integration points
+*           y       - cartesian ordinates of the integration points
+
+*
+*     various initialisation
+*
+      emach = dlamch('p')
+      uflow = dlamch('u')
+      n1 = 1
+      n28 = 28
+      u1=u(1)
+      u2=u(2)
+      u3=u(3)
+      v1=v(1)
+      v2=v(2)
+      v3=v(3)
+      T_area = 0.5d0*abs(u1*v2-u2*v1-u1*v3+v1*u3+u2*v3-v2*u3)
+
+*
+*     compute integration points for both degree-6 and degree-8 formulae
+*
+      k = 1
+      do j=1,9
+         z1 = zeta1(j)
+         z2 = zeta2(j)
+         z3 = 1.0d+00-z1-z2
+         x(k) = z1*u1+z2*u2+z3*u3
+         y(k) = z1*v1+z2*v2+z3*v3
+         x(k+1) = z2*u1+z3*u2+z1*u3
+         y(k+1) = z2*v1+z3*v2+z1*v3
+         x(k+2) = z3*u1+z1*u2+z2*u3
+         y(k+2) = z3*v1+z1*v2+z2*v3
+         k = k + 3
+      enddo
+      x(28) = (u1+u2+u3)/3.d0
+      y(28) = (v1+v2+v3)/3.d0
+
+*
+*     evaluation of the function f onto the integration points
+*
+      if ( vectflag) then
+         stat = f(x, y, fvect, n28)
+         if ( stat .ne. 0 ) return
+      else
+         do j = 1,28
+            stat = f(x(j), y(j), fvect(j), n1)
+            if ( stat .ne. 0 ) return
+         enddo
+      endif
+
+*
+*     compute degree-6 approximation for I(f) and I(|f|)
+*
+      r6 = 0.d0
+      resab6 = 0.d0
+      k = 1
+      do j = 1, 4
+         r6 = r6 + w(j)*(fvect(k) + fvect(k+1) + fvect(k+2))
+         resab6 = resab6+ w(j)*(abs(fvect(k)) + abs(fvect(k+1)) + 
+     *                          abs(fvect(k+2)))
+         k = k + 3
+      enddo
+      res6 = T_area*r6
+      resab6 = T_area*resab6
+
+*
+*     compute degree-8 approximation for I(f)
+*
+      res8 = w80*fvect(28)
+      do j = 5, 9
+         res8 = res8 + w(j)*(fvect(k) + fvect(k+1) + fvect(k+2))
+         k = k + 3
+      enddo
+      res8 = T_area*res8
+
+*
+*     compute degree-6 approximation for I(|f - I(f)/T_area|)
+*
+      dresc = 0.d0
+      k = 1
+      do j = 1, 4
+         dresc = dresc + w(j)*(  abs(fvect(k)-r6) 
+     *                         + abs(fvect(k+1)-r6)
+     *                         + abs(fvect(k+2)-r6) )
+         k = k + 3
+      enddo
+      dresc = T_area*dresc
+
+*
+*     compute error estimate
+*
+      est = abs(res8-res6)
+      if(dresc.ne.0.0d0) then
+         est = max(est, dresc*min(1d0,(20d0*est/dresc)**1.5d0))
+      endif
+      if (resab6.gt.uflow) then
+         est = max(emach*resab6,est)
+      endif
+      return
+      end
 
 
+      subroutine lqm1vect(f,u,v,res11,est,vectflag,stat)
+*
+*      PURPOSE
+*           compute on approximation of I(f) = \int_T f(x,y) dx dy
+*           T being the triangle with vertices (u(i),v(j)), j=1..3
+*           together with an estimate the error,
+*
+*      PARAMETERS
+*           f       - function subprogram defining the integrand.
+*                     It must have the form:
+*                                 func(x,y,z,n) 
+*                     and should return an int. func computes 
+*                     z(k) = f(x(k),y(k)) for 1<=k<=n. The returned value
+*                     is used to communicate a possible failure in the
+*                     computation of f (in most cases f is evaluated 
+*                     by the nsp interpretor from a function written 
+*                     in the nsp langage). The return value must be
+*                     0 if all is OK, other value imply to return to
+*                     the caller (the variable stat being used to 
+*                     communicate the problem).   
+*                     
+*          u(1),u(2),u(3)- abscissae of vertices
+*          v(1),v(2),v(3)- ordinates of vertices
+*
+*          res11    - approximation of I(f), obtained by the
+*                     Lyness and Jespersen rule of degree 11,
+*                     using 28 points
+*          est      - estimate of the absolute error
+*
+*          vectflag - boolean TRUE if the external f could be evaluated
+*                     on a vector
+*
+*          stat     - return 0 if the evaluation of f by the nsp interpretor
+*                     is successful. Other values stop the computation and
+*                     return immediatly to the caller.
+* 
+*
+*      REMARKS
+c           date of last update : 18 jan 1984 d. kahaner nbs
+*
+*          modified by Bruno Pincon (24 feb 2008) for nsp:
+*            - add the possibility of a "vector" evaluation of f
+*              (this speed-up the computation when f is evaluated
+*               by the nsp interpretor).
+*            - clean up the code
+* 
+*          subroutines or functions called :
+*                   - f (user-supplied integrand function)
+*                   - dlamch for machine dependent information
+      implicit none
+      integer f
+      external f
+      double precision u(3), v(3), res11, est
+      logical vectflag
+      integer stat
+
+*     local var
+      double precision r9, res9, resab9, T_area,dresc,emach,
+     *                 uflow,u1,u2,u3,v1,v2,v3,w(15),w90,w110, 
+     *                 x(46),y(46),fvect(46),zeta1(15),zeta2(15),
+     *                 z1,z2,z3, f0
+      double precision dlamch
+      integer k, j, n1, n46
+*
+*     first homogeneous coordinates of points in degree-9
+*     and degree-11 formula, taken with multiplicity 3
+      data zeta1(1),zeta1(2),zeta1(3),zeta1(4),zeta1(5),zeta1(6),zeta1(7
+     *  ),zeta1(8),zeta1(9),zeta1(10),zeta1(11),zeta1(12),zeta1(13),
+     *  zeta1(14),zeta1(15)/0.2063496160252593d-01,0.1258208170141290d+
+     *  00,0.6235929287619356d+00,0.9105409732110941d+00,
+     *  0.3683841205473626d-01,0.7411985987844980d+00,
+     *  0.9480217181434233d+00,0.8114249947041546d+00,
+     *  0.1072644996557060d-01,0.5853132347709715d+00,
+     *  0.1221843885990187d+00,0.4484167758913055d-01,
+     *  0.6779376548825902d+00,0.0d+00,0.8588702812826364d+00/
+*     second homogeneous coordinates of points in degree-9
+*     and degree-11 formula, taken with munltiplicity 3
+      data zeta2(1),zeta2(2),zeta2(3),zeta2(4),zeta2(5),zeta2(6),zeta2(7
+     *  ),zeta2(8),zeta2(9),zeta2(10),zeta2(11),zeta2(12),zeta2(13),
+     *  zeta2(14),zeta2(15)/0.4896825191987370d+00,0.4370895914929355d+
+     *  00,0.1882035356190322d+00,0.4472951339445297d-01,
+     *  0.7411985987844980d+00,0.3683841205473626d-01,
+     *  0.2598914092828833d-01,0.9428750264792270d-01,
+     *  0.4946367750172147d+00,0.2073433826145142d+00,
+     *  0.4389078057004907d+00,0.6779376548825902d+00,
+     *  0.4484167758913055d-01,0.8588702812826364d+00,0.0d+00/
+*     weights of mid-point of triangle in degree-9
+*     resp. degree-11 formulae
+      data w90/0.9713579628279610d-01/
+      data w110/0.8797730116222190d-01/
+*     weights in degree-9 and degree-11 rule
+      data w(1),w(2),w(3),w(4),w(5),w(6),w(7),w(8),w(9),w(10),w(11),w(12
+     *  ),w(13),w(14),w(15)/0.3133470022713983d-01,0.7782754100477543d-
+     *  01,0.7964773892720910d-01,0.2557767565869810d-01,
+     *  0.4328353937728940d-01,0.4328353937728940d-01,
+     *  0.8744311553736190d-02,0.3808157199393533d-01,
+     *  0.1885544805613125d-01,0.7215969754474100d-01,
+     *  0.6932913870553720d-01,0.4105631542928860d-01,
+     *  0.4105631542928860d-01,0.7362383783300573d-02,
+     *  0.7362383783300573d-02/
+*
+*           list of major variables
+*           ----------------------
+*          res9, resab9 and dresc are used for error estimation:
+*      
+*          res9     - approximation of I(f), obtained by the Lyness and 
+*                     Jespersen rule of degree 9, using 19 points.
+*          resab9   - approximation of I(|f|) by the rule of degree 9
+*          dresc    - approximation of I(|f- I(f)/T_area|) by the rule of degree 9 
+*
+*          r9       - res9 / area(T) (the approximation of I(f)/T_area
+*                     used to compute dresc).
+*
+*           x       - cartesian abscissae of the integration points
+*           y       - cartesian ordinates of the integration points
+
+*
+*     various initialisation
+*
+      emach = dlamch('p')
+      uflow = dlamch('u')
+      n1 = 1
+      n46 = 46
+      u1=u(1)
+      u2=u(2)
+      u3=u(3)
+      v1=v(1)
+      v2=v(2)
+      v3=v(3)
+      T_area = 0.5d0*abs(u1*v2-u2*v1-u1*v3+v1*u3+u2*v3-v2*u3)
+
+*
+*     compute integration points for both degree-9 and degree-11 formulae
+*
+      k = 1
+      do j=1,15
+         z1 = zeta1(j)
+         z2 = zeta2(j)
+         z3 = 1.0d+00-z1-z2
+         x(k) = z1*u1+z2*u2+z3*u3
+         y(k) = z1*v1+z2*v2+z3*v3
+         x(k+1) = z2*u1+z3*u2+z1*u3
+         y(k+1) = z2*v1+z3*v2+z1*v3
+         x(k+2) = z3*u1+z1*u2+z2*u3
+         y(k+2) = z3*v1+z1*v2+z2*v3
+         k = k + 3
+      enddo
+      x(46) = (u1+u2+u3)/3.d0
+      y(46) = (v1+v2+v3)/3.d0
+
+*
+*     evaluation of the function f onto the integration points
+*
+      if ( vectflag) then
+         stat = f(x, y, fvect, n46)
+         if ( stat .ne. 0 ) return
+      else
+         do j = 1,46
+            stat = f(x(j), y(j), fvect(j), n1)
+            if ( stat .ne. 0 ) return
+         enddo
+      endif
+
+      f0 = fvect(46)
+
+*
+*     compute degree-9 approximation for I(f) and I(|f|)
+*
+      r9 = w90*f0
+      resab9 = w90*abs(f0)
+      k = 1
+      do j = 1, 6
+         r9 = r9 + w(j)*(fvect(k) + fvect(k+1) + fvect(k+2))
+         resab9 = resab9+ w(j)*(abs(fvect(k)) + abs(fvect(k+1)) + 
+     *                          abs(fvect(k+2)))
+         k = k + 3
+      enddo
+      res9 = T_area*r9
+      resab9 = T_area*resab9
+
+*
+*     compute degree-11 approximation for I(f)
+*
+      res11 = w110*f0
+      do j = 7, 15
+         res11 = res11 + w(j)*(fvect(k) + fvect(k+1) + fvect(k+2))
+         k = k + 3
+      enddo
+      res11 = T_area*res11
+
+*
+*     compute degree-9 approximation for I(|f - I(f)/T_area|)
+*
+      dresc = w90*abs(f0 - r9)
+      k = 1
+      do j = 1, 6
+         dresc = dresc + w(j)*(  abs(fvect(k)-r9) 
+     *                         + abs(fvect(k+1)-r9)
+     *                         + abs(fvect(k+2)-r9) )
+         k = k + 3
+      enddo
+      dresc = T_area*dresc
+
+*
+*     compute error estimate
+*
+      est = abs(res11-res9)
+      if(dresc.ne.0.0d0) then
+         est = max(est, dresc*min(1d0,(20d0*est/dresc)**1.5d0))
+      endif
+      if (resab9.gt.uflow) then
+         est = max(emach*resab9,est)
+      endif
+      return
+      end
