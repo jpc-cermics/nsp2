@@ -5018,6 +5018,7 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
 
 extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_intg(Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int int_int2d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_polyline_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int _wrap_polyline_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_compound_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
@@ -5026,6 +5027,7 @@ extern int _wrap_compound_attach( Stack stack, int rhs, int opt, int lhs); /* XX
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
   {"intg",int_intg}, /* FIXME: en construction */
+  {"int2d",int_int2d}, /* FIXME: en construction */
   {"feval",int_feval}, /* FIXME: en construction */
   {"champ",int_champ},
   {"contour",int_contour},
