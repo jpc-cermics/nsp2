@@ -1531,7 +1531,16 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
   if ( A->n == 1  ||  A->m == 1 )   /* vector case */
     {
       if ( Loc->rc_type == 'r' )
-	memcpy(Loc->R, A->R, A->mn*sizeof(double));
+	{
+	  if (A->mn <= 100) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ ) Loc->R[i]= A->R[i];
+	    }
+	  else 
+	    {
+	      memcpy(Loc->R, A->R, A->mn*sizeof(double));
+	    }
+	}
       else
 	for ( i = 0 ; i < A->mn ; i++ )
 	  {

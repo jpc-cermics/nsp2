@@ -796,15 +796,14 @@ Mat2double (NspMatrix * A)
       switch (A->convert)
 	{
 	case 'u':
-	  A->R =nsp_alloc_doubles(A->mn);
-	  if ( A->R == (double *) 0 ) 
-	    {
-	      Scierror("Error:\tRunning out of memory\n");
-	      return(NULLMAT);
-	    }
-
 	  if ( A->mn != 0 )
 	    {
+	      A->R =nsp_alloc_doubles(A->mn);
+	      if ( A->R == (double *) 0 ) 
+		{
+		  Scierror("Error:\tRunning out of memory\n");
+		  return(NULLMAT);
+		}
 	      A->R[0] = A->impl[0];
 	      for ( i = 1 ; i < A->mn ; i++ )
 		A->R[i] = A->R[i-1] + (double) A->impl[1];
@@ -848,9 +847,9 @@ Mat2mtlb_cplx (NspMatrix * A)
       switch (A->convert)
 	{
 	case 'u':
-	  A->R =nsp_alloc_doubles(A->mn);
-	  if ( A->mn != 0 )
+	  if ( A->mn != 0) 
 	    {
+	      A->R =nsp_alloc_doubles(A->mn);
 	      A->R[0] = A->impl[0];
 	      for ( i = 1 ; i < A->mn ; i++ )
 		A->R[i] = A->R[i-1] + (double) A->impl[1];
@@ -895,9 +894,9 @@ Mat2int (NspMatrix * A)
 	    case 'd':  nsp_double2int (&A->mn, A->R, (int *) A->R); break;
 	    case 'f':  nsp_float2int (&A->mn, (float *) A->R, (int *) A->R);break;
 	    case 'u':  
-	      A->R =nsp_alloc_doubles(A->mn);
 	      if ( A->mn != 0 )
 		{
+		  A->R =nsp_alloc_doubles(A->mn);
 		  A->I[0] = A->impl[0];
 		  for ( i = 1 ; i < A->mn ; i++ )
 		    A->I[i] = A->I[i-1] + A->impl[1];
@@ -933,9 +932,9 @@ Mat2float (NspMatrix * A)
 	    case 'd':  nsp_double2float (&A->mn, A->R, (float *) A->R);break;
 	    case 'i':  nsp_int2float (&A->mn, (int *) A->R, &inc, (float *) A->R, &inc);break;
 	    case 'u':  
-	      A->R =nsp_alloc_doubles(A->mn);
 	      if ( A->mn != 0 )
 		{
+		  A->R =nsp_alloc_doubles(A->mn);
 		  A->F[0] = A->impl[0];
 		  for ( i = 1 ; i < A->mn ; i++ )
 		    A->F[i] = A->F[i-1] + A->impl[1];

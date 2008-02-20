@@ -671,8 +671,11 @@ int nsp_matint_tozero(NspObject *Obj)
   FREE(A->S); A->S = NULL;
   A->mn = A->m = A->n = 0;
 
+  MAT_INT(type)->canonic(Obj);
+
   return OK;
 }
+
 
 
 /**
