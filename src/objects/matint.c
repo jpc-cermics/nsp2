@@ -331,12 +331,15 @@ static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 
 /**
  * nsp_matint_indices_for_deletions:
- *
+ * @nb_elts: integer giving the size of @ind
+ * @ind: array of integers 
+ * @count: integer pointer 
+ * 
+ * reorders if needed the array vector @ind and in case of duplicated 
+ * indices it compress the array
  * used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[])
- * performs:
- *       re-ordering of indices (if needed) 
- *       in case of duplicated indices it compress the array
- */
+ * 
+ **/
 
 static void nsp_matint_indices_for_deletions(int nb_elts, int *ind, int *count)
 {
@@ -526,13 +529,15 @@ int nsp_matint_delete_columns(NspObject  *Obj, int *ind, int nb_elts, int cmin, 
 
   elt_size = MAT_INT(type)->elt_size(A); 
   if ( MAT_INT(type)->free_elt != NULL)  
-    for ( j = 0 ; j < ncol ; j++ )  
-      {
-	int k=ind[j]*A->m;
-	for ( i = 0 ; i < A->m ; i++ )  
-	  MAT_INT(type)->free_elt((void **) &(A->S[i+k])); 
-      }
-
+    {
+      for ( j = 0 ; j < ncol ; j++ )  
+	{
+	  int k=ind[j]*A->m;
+	  for ( i = 0 ; i < A->m ; i++ )  
+	    MAT_INT(type)->free_elt((void **) &(A->S[i+k])); 
+	}
+    }
+  
   for ( i = 0 ; i < ncol ; i++)
     {
       k1 = ind[i];
@@ -598,12 +603,15 @@ int nsp_matint_delete_rows(NspObject *Obj, int *ind, int nb_elts, int rmin, int 
   elt_size = MAT_INT(type)->elt_size(A); 
 
   if ( MAT_INT(type)->free_elt != NULL)  
-    for ( i = 0 ; i < nrow ; i++ ) 
-      {
-	int k=ind[i];
-	for ( j = 0 ; j < A->n ; j++ ) 
-	  MAT_INT(type)->free_elt((void **) &(A->S[k+A->m*j])); 
-      }
+    {
+      for ( i = 0 ; i < nrow ; i++ ) 
+	{
+	  int k=ind[i];
+	  for ( j = 0 ; j < A->n ; j++ ) 
+	    MAT_INT(type)->free_elt((void **) &(A->S[k+A->m*j])); 
+	}
+    }
+
   for ( j = 0 ; j < A->n  ; j++)
     {
       k1 = ind[0] + stride;
@@ -623,8 +631,10 @@ int nsp_matint_delete_rows(NspObject *Obj, int *ind, int nb_elts, int rmin, int 
     }
 
   if ( MAT_INT(type)->free_elt != NULL) 
-    for ( i = A->mn- nrow*A->n ; i < A->mn ; i++ ) 
-      A->S[i] = NULL;
+    {
+      for ( i = A->mn- nrow*A->n ; i < A->mn ; i++ ) 
+	A->S[i] = NULL;
+    }
 
   if ( MAT_INT(type)->resize(A, A->m-nrow, A->n) == FAIL) return FAIL;
   return OK;
@@ -658,8 +668,9 @@ int nsp_matint_tozero(NspObject *Obj)
   if ( MAT_INT(type)->free_elt != NULL)  
     for ( i = 0 ; i < A->mn ; i++ )  MAT_INT(type)->free_elt((void **) &(A->S[i])); 
 
-  free(A->S); A->S = NULL;
+  FREE(A->S); A->S = NULL;
   A->mn = A->m = A->n = 0;
+
   return OK;
 }
 
@@ -887,7 +898,7 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 
   MAT_INT(type)->canonic(Obj);
   from = (char *) A->S;
-
+  
   if ( nb_elts == 0 )
     {
       /* Matlab mode ! */
@@ -1027,7 +1038,7 @@ NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
 static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts, const int *ind, int nb_elts, int cmin, int cmax)
 {
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *from = (char *) A->S, *to;
+  char *from, *to;
   NspObject *Loc;
   NspSMatrix *B;
   int i, j, k, ij, L;
@@ -1050,11 +1061,14 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts, con
       return NULLOBJ;
     }
 
+  MAT_INT(type)->canonic(Obj);
+  from = (char *) A->S;
+
   if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, A->m, nb_elts, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
-
+  
   if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrix of numbers or booleans */
     {
       L = A->m * elt_size;
@@ -1120,7 +1134,7 @@ NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts,  const int *ind, int nb_elts, int rmin, int rmax)
 {
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *from = (char *) A->S, *to;
+  char *from, *to;
   NspObject *Loc;
   NspSMatrix *B;
   int i, j, k;
@@ -1147,6 +1161,9 @@ static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts,  const
 
   if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nb_elts, A->n, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
+
+  MAT_INT(type)->canonic(Obj);
+  from = (char *) A->S;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
 
@@ -1241,6 +1258,8 @@ static NspObject *nsp_matint_extract_rows_mat(NspObject *Obj,NspObject *Elts,  c
 {
   EXTRACT_ROW_PREAMBLE(NspMatrix);
   
+  MAT_INT(type)->canonic(Obj);
+
   if ( A->rc_type == 'r') 
     {
       double *from = A->R,*from1 = from, *to = ((NspMatrix *) Loc)->R;
@@ -1368,7 +1387,7 @@ NspObject *nsp_matint_extract(NspObject *Obj,
 			      const int *col, int nc, int cmin, int cmax)
 {
   NspSMatrix *A = (NspSMatrix *) Obj;
-  char *from = (char *) A->S, *to;
+  char *from, *to;
   NspObject *Loc;
   NspSMatrix *B;
   int i, j, k, stride;
@@ -1387,6 +1406,9 @@ NspObject *nsp_matint_extract(NspObject *Obj,
       Scierror("Error:\tIndices out of bound\n");
       return NULLOBJ;
     }
+  
+  MAT_INT(type)->canonic(Obj);
+  from = (char *) A->S;
 
   if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nr, nc, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
