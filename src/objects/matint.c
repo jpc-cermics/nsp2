@@ -424,7 +424,41 @@ static int *get_index_vector(Stack stack, int ipos,NspObject **Obj, int *Nb_elts
 	  return NULL;
 	}
     }
+  else if ( IsIVectObj(stack, ipos) )
+    {
+      NspIVect *Elts;
+      if ( (Elts =GetIVect(stack, ipos)) == NULLIVECT )
+	return NULL;
+      if ( Obj != NULL ) *Obj = NSP_OBJECT(Elts);
+      
+      nb_elts  = nsp_ivect_count(Elts);
 
+      if (  nb_elts > WORK_SIZE ) 
+	{
+	  if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; 
+	}
+      else
+	{
+	  ind = matint_work[iwork];
+	}
+
+      if ( nb_elts != 0) 
+	{
+	  int i;
+	  ind[0]= Elts->first - 1;
+	  for (i = 1; i < nb_elts ; i++)
+	    ind[i] = ind[i-1] + Elts->step; 
+	  if ( ind[0] < ind[nb_elts-1] )
+	    {
+	      rmin =ind[0]+1; rmax= ind[nb_elts-1]+1;
+	    }
+	  else 
+	    {
+	      rmin =ind[nb_elts-1]+1; rmax= ind[0]+1;
+	    }
+	}
+    }
+  
   *Nb_elts = nb_elts; *Rmin = rmin; *Rmax = rmax;
   return ind;
 }
@@ -462,7 +496,7 @@ int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *
 	if ( BElts->B[i] ) ind[j++] = i;
       rmin = ind[0]+1; rmax = ind[nb_elts-1]+1;
     }
-  else
+  else if ( IsMat(Obj))
     {
       NspMatrix *Elts = (NspMatrix *) Obj;
       if ( Elts->rc_type != 'r') return NULL;
@@ -475,6 +509,37 @@ int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *
 	{
 	  if ( nb_elts > WORK_SIZE ) FREE(ind);
 	  return NULL;
+	}
+    }
+  else if ( IsIVect(Obj))
+    {
+      NspIVect *Elts = (NspIVect *) Obj;
+      if ( Elts->flag == 1 )     return NULL;  
+      nb_elts  = nsp_ivect_count(Elts);
+
+      if (  nb_elts > WORK_SIZE ) 
+	{
+	  if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; 
+	}
+      else
+	{
+	  ind = matint_work[iwork];
+	}
+
+      if ( nb_elts != 0) 
+	{
+	  int i;
+	  ind[0]= Elts->first - 1;
+	  for (i = 1; i < nb_elts ; i++)
+	    ind[i] = ind[i-1] + Elts->step; 
+	  if ( ind[0] < ind[nb_elts-1] )
+	    {
+	      rmin =ind[0]+1; rmax= ind[nb_elts-1]+1;
+	    }
+	  else 
+	    {
+	      rmin =ind[nb_elts-1]+1; rmax= ind[0]+1;
+	    }
 	}
     }
 
