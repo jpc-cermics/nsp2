@@ -1709,8 +1709,11 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
       if (IsIVect(stack.val->S[first+k]) )
 	{
 	  NspIVect *IV = (NspIVect *) stack.val->S[first+k];
-	  IV->flag = 0; IV->first = 1;IV->step=1;
-	  IV->last=nsp_object_get_size(stack.val->S[first],fargs == 1 ? 0 : k);
+	  if ( IV->flag == 1 ) 
+	    {
+	      IV->flag = 0; IV->first = 1;IV->step=1;
+	      IV->last=nsp_object_get_size(stack.val->S[first],fargs == 1 ? 0 : k);
+	    }
 	  /* copy at end of stack before evaluation */
 	  stack.val->S[first+fargs+2]= stack.val->S[first+k];
 	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat", 2, stack,first+fargs+2,1,0,1)) < 0) return n;
@@ -1767,8 +1770,11 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
       if (IsIVect(stack.val->S[first+1]) )
 	{
 	  NspIVect *IV = (NspIVect *) stack.val->S[first+1];
-	  IV->flag = 0; IV->first = 1;IV->step=1;
-	  IV->last=nsp_object_get_size(stack.val->S[first], 0);
+	  if ( IV->flag == 1)
+	    {
+	      IV->flag = 0; IV->first = 1;IV->step=1;
+	      IV->last=nsp_object_get_size(stack.val->S[first], 0);
+	    }
 	  /*WARNING: must be sure that int_iv2mat only changes first+1 **/
 	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n;
 	}
@@ -2122,10 +2128,13 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	   */
 	  NspObject *O;
 	  NspIVect *V =nsp_ivect_object(stack.val->S[*ipos+2]);
-	  V->first = 1;
-	  V->last =nsp_object_get_size(stack.val->S[*ipos+1],0);
-	  V->step = 1;
-	  V->flag = 0;
+	  if ( V->flag == 1)
+	    {
+	      V->first = 1;
+	      V->last =nsp_object_get_size(stack.val->S[*ipos+1],0);
+	      V->step = 1;
+	      V->flag = 0;
+	    }
 	  if ((O= (NspObject *)nsp_ivect_2_mat(V)) == NULLOBJ ) 
 	    {
 	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
@@ -2162,10 +2171,13 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	       */
 	      NspObject *O;
 	      NspIVect *V =nsp_ivect_object(stack.val->S[*ipos+2+i]);
-	      V->first = 1;
-	      V->last =nsp_object_get_size(stack.val->S[*ipos+1],(fargs == 1) ? 0: i+1);
-	      V->step = 1;
-	      V->flag = 0;
+	      if ( V->flag == 1)
+		{
+		  V->first = 1;
+		  V->last =nsp_object_get_size(stack.val->S[*ipos+1],(fargs == 1) ? 0: i+1);
+		  V->step = 1;
+		  V->flag = 0;
+		}
 	      if ((O= (NspObject *)nsp_ivect_2_mat(V)) == NULLOBJ ) 
 		{
 		  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
