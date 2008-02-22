@@ -73,6 +73,9 @@ extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV);
 extern int IsIVect(NspObject *O);
 extern int nsp_ivect_count(NspIVect *iv);
 extern int nsp_ivect_count_with_min_max(NspIVect *iv, int *imin, int *imax);
+extern int IsIVectObj(Stack stack, int i); 
+extern NspIVect *GetIVect (Stack stack, int i);
+
 
 
 #endif
