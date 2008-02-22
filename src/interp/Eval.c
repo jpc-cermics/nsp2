@@ -1714,6 +1714,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	      IV->flag = 0; IV->first = 1;IV->step=1;
 	      IV->last=nsp_object_get_size(stack.val->S[first],fargs == 1 ? 0 : k);
 	    }
+#ifdef EXPAND_IVECT 
 	  /* copy at end of stack before evaluation */
 	  stack.val->S[first+fargs+2]= stack.val->S[first+k];
 	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat", 2, stack,first+fargs+2,1,0,1)) < 0) return n;
@@ -1722,6 +1723,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	   */
 	  stack.val->S[first+k]=stack.val->S[first+fargs+2];
 	  stack.val->S[first+fargs+2]=NULLOBJ;
+#endif 
 	}
     }
   return nsp_eval_maybe_accelerated_op("setrowscols",1, setrowscols_tab, stack, first,fargs+2,0,1);
