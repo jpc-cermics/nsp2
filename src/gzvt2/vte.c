@@ -151,37 +151,97 @@ status_line_changed(GtkWidget *widget, gpointer data)
    */
 }
 
+/* menu for right click 
+ */ 
+
+static void
+copy_cb (GtkWidget *widget)
+{
+  vte_terminal_copy_clipboard(VTE_TERMINAL(widget));
+}
+
+static void
+paste_cb (GtkWidget *widget)
+{
+  vte_terminal_paste_clipboard(VTE_TERMINAL(widget));
+}
+
+
+static GtkWidget *popup_menu = NULL ; 
+
+static GtkWidget *create_menu (GtkWidget *wterminal)
+{
+  GtkWidget *menu;
+  GtkWidget *menuitem;
+  VteTerminal *terminal =  VTE_TERMINAL(wterminal);
+  
+  if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
+
+  popup_menu = menu = gtk_menu_new ();
+
+  /* 
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_CUT, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  */
+
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect_swapped (menuitem, "activate",
+			    G_CALLBACK (copy_cb),wterminal);
+
+  gtk_widget_set_sensitive (menuitem,vte_terminal_get_has_selection (terminal) ? TRUE: FALSE);
+  
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_PASTE, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect_swapped (menuitem, "activate",
+			    G_CALLBACK (paste_cb),wterminal);
+  
+  return menu;
+}
+
 static int
 button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
+  GtkWidget *menu;
   VteTerminal *terminal;
   char *match;
   int tag;
   gint xpad, ypad;
-
+  
   switch (event->button) {
   case 3:
     terminal = VTE_TERMINAL(widget);
-    vte_terminal_get_padding(terminal, &xpad, &ypad);
-    match = vte_terminal_match_check(terminal,
-				     (event->x - ypad) /
-				     terminal->char_width,
-				     (event->y - ypad) /
-				     terminal->char_height,
-				     &tag);
-    if (match != NULL) {
-      g_print("Matched `%s' (%d).\n", match, tag);
-      g_free(match);
-      if (GPOINTER_TO_INT(data) != 0) {
-	vte_terminal_match_remove(terminal, tag);
-      }
-    }
+    /* 
+       vte_terminal_get_padding(terminal, &xpad, &ypad);
+       match = vte_terminal_match_check(terminal,
+       (event->x - ypad) /
+       terminal->char_width,
+       (event->y - ypad) /
+       terminal->char_height,
+       &tag);
+       if (match != NULL) {
+       g_print("Matched `%s' (%d).\n", match, tag);
+       g_free(match);
+       if (GPOINTER_TO_INT(data) != 0) {
+       vte_terminal_match_remove(terminal, tag);
+       }
+       }
+    */
+    
+    menu =   create_menu (widget);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
+		    NULL, NULL,0,gtk_get_current_event_time());
+    
     break;
   case 1:
   case 2:
   default:
     break;
   }
+
   return FALSE;
 }
 
