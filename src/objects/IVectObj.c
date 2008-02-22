@@ -323,8 +323,7 @@ int IsIVect(NspObject *O)
  * (internal)
  */
 
-static NspIVect *
-GetIVect (Stack stack, int i)
+NspIVect *GetIVect (Stack stack, int i)
 {
   NspIVect *IV;
   if ((IV = nsp_ivect_object (NthObj (i))) == NULLIVECT)
