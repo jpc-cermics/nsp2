@@ -122,7 +122,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      Scierror("Error: unknown 0-ary operator\n");
 	      return RET_BUG;
 	    }
-	  /*we put an IVect on the stack  **/ 
+	  /* we put an IVect on the stack  */ 
 	  if (( IV =nsp_ivect_create(NVOID,0,0,0,1)) == NULLIVECT) return RET_BUG;
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
@@ -1633,7 +1633,8 @@ static int EvalEqual(PList L1, Stack stack, int first)
 
 int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 {
-  int k,n;
+  NspObject *Obj;
+  int k;
   stack.first = first;
   /* check if w=[] : Not perfect since list() will also return 0 
    */
@@ -1646,7 +1647,9 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
       switch ( fargs ) 
 	{
 	case  1:
-	  if ( IsIVect(stack.val->S[first+1]) )                   /* x(:)=[] ==> x=[] */
+	  Obj = stack.val->S[first+1];
+	  HOBJ_GET_OBJECT(Obj,RET_BUG);
+	  if ( IsIVect(Obj) && ((NspIVect *) Obj)->flag == 1 )   /* x(:)=[] ==> x=[] */
 	    {
 	      /* delete first+1,first+2 */
 	      nsp_void_seq_object_destroy(stack,first+1,first+3);
@@ -1660,9 +1663,13 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	    }
 	  break;
 	case 2: 
-	  if (IsIVect(stack.val->S[first+1]) )
+	  Obj = stack.val->S[first+1];
+	  HOBJ_GET_OBJECT(Obj,RET_BUG);
+	  if (IsIVect(Obj) && ((NspIVect *) Obj)->flag == 1 )
 	    {
-	      if (IsIVect(stack.val->S[first+2]) )		  /* x(:,:)=[] ==> x=[] */
+	      Obj = stack.val->S[first+2];
+	      HOBJ_GET_OBJECT(Obj,RET_BUG);
+	      if (IsIVect(Obj) && ((NspIVect *) Obj)->flag == 1 ) 
 		{
 		  /* delete first+1,first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+1,first+4);
@@ -1681,7 +1688,9 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	    }
 	  else 
 	    {
-	      if (IsIVect(stack.val->S[first+2]) )                /* x(<expr>,:)=[] */
+	      Obj = stack.val->S[first+2];
+	      HOBJ_GET_OBJECT(Obj,RET_BUG);
+	      if (IsIVect(Obj) && ((NspIVect *) Obj)->flag == 1 ) 
 		{
 		  /* we have [x,expr] on the stack : delete first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+2,first+4);
@@ -1706,9 +1715,11 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
   /*Expand implicit `:' vectors **/
   for ( k = 1 ; k <= fargs ; k++)
     {
-      if (IsIVect(stack.val->S[first+k]) )
+      NspObject *Obj =stack.val->S[first+k]; 
+      HOBJ_GET_OBJECT(Obj,RET_BUG);
+      if ( IsIVect(Obj) )
 	{
-	  NspIVect *IV = (NspIVect *) stack.val->S[first+k];
+	  NspIVect *IV = (NspIVect *) Obj;
 	  if ( IV->flag == 1 ) 
 	    {
 	      IV->flag = 0; IV->first = 1;IV->step=1;
@@ -1771,7 +1782,7 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
       /* Expansion should be performed earlier XXXX */
       if (IsIVect(stack.val->S[first+1]) )
 	{
-	  NspIVect *IV = (NspIVect *) stack.val->S[first+1];
+	  NspIVect *IV = nsp_ivect_object(stack.val->S[first+1]);
 	  if ( IV->flag == 1)
 	    {
 	      IV->flag = 0; IV->first = 1;IV->step=1;
@@ -1801,9 +1812,12 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
        */
       if (IsIVect(stack.val->S[first+1]) )
 	{
-	  NspIVect *IV = (NspIVect *) stack.val->S[first+1];
-	  IV->flag = 0; IV->first = 1;IV->step=1;
-	  IV->last=nsp_object_get_size(stack.val->S[first], 0);
+	  NspIVect *IV = nsp_ivect_object(stack.val->S[first+1]);
+	  if ( IV->flag == 1)
+	    {
+	      IV->flag = 0; IV->first = 1;IV->step=1;
+	      IV->last=nsp_object_get_size(stack.val->S[first], 0);
+	    }
 	  /*WARNING: must be sure that int_iv2mat only changes first+1 **/
 	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n;
 	}
@@ -2129,7 +2143,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	   * we expand it.
 	   */
 	  NspObject *O;
-	  NspIVect *V =nsp_ivect_object(stack.val->S[*ipos+2]);
+	  NspIVect *V = nsp_ivect_object(stack.val->S[*ipos+2]);
 	  if ( V->flag == 1)
 	    {
 	      V->first = 1;
