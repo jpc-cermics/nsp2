@@ -58,6 +58,7 @@ static char *object_type_short_string(NspObject *obj);
 static NspMethods *object_get_methods(void);
 static int int_object_create(Stack stack, int rhs, int opt, int lhs);
 static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level);
+static int nsp_object_as_index_def(NspObject * M, index_vector *index);
 
 /*
  * base object : NspObject 
@@ -108,6 +109,7 @@ NspTypeObject *new_type_object(type_mode mode)
   type->save = (save_func *) nsp_object_save_def;
   type->load = (load_func *) nsp_object_load_def;
   type->latex = (print_func *) nsp_object_latex_def;
+  type->as_index  = (get_index_vector_func *) nsp_object_as_index_def;
 
   if ( nsp_type_object_id == 0 ) 
     {
@@ -439,10 +441,6 @@ NspObject *nsp_object_load_def(void  * F)
   return NULL;
 }
 
-/* print in Latex syntax 
- *
- */
-
 /**
  * nsp_object_latex_def:
  * @M: an object 
@@ -464,6 +462,23 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
   else 
     Sciprintf("\\mbox{latex print not implemented for %s}\n",M->type->s_type());
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+}
+
+/**
+ * nsp_object_as_index_def:
+ * @M: an object 
+ * @index: an #index_vector
+ * 
+ * default function for checking if object can be used as a index 
+ * vector 
+ *
+ * Return value: %TRUE or %FALSE 
+ **/
+
+
+static int nsp_object_as_index_def(NspObject * M, index_vector *index)
+{
+  return FALSE;
 }
 
 /*------------------------------------------------------

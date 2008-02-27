@@ -360,4 +360,6 @@ static AttrTab matrix_attrs[];
 static NspMethods *matrix_get_methods(void); 
 /*static NspObject *matrix_path_extract(NspMatrix *A, NspObject *O); */
 static int matrix_is_true(NspMatrix *M);
+static int nsp_matrix_as_index(NspMatrix * M, index_vector *index);
+
 #endif 

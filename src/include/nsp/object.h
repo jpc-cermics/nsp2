@@ -12,6 +12,7 @@
 
 #include "nsp/math.h" 
 #include "nsp/string.h" 
+#include "nsp/index.h" 
 
 typedef struct  _NspObject  NspObject; 
 typedef struct  _AttrTab AttrTab;
@@ -41,6 +42,8 @@ typedef NspMethods *(methods_func) (void );
 typedef void *(new_func) (void);
 typedef void *(attrs_func) (void);
 typedef void *(create_func) (void);
+typedef int (get_index_vector_func)(void *, index_vector *); 
+
 
 typedef struct _NspTypeBase  NspTypeBase ;
 
@@ -102,6 +105,8 @@ struct _NspTypeObject {
   load_func *load;                    /* file load */
   create_func *create;	      	      /* creates a new object  */ 
   print_func *latex;                  /* print in latex syntax */
+  get_index_vector_func *as_index;    /* check if object can be used as index vector */
+
 };
 
 

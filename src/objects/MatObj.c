@@ -114,6 +114,7 @@ new_type_matrix (type_mode mode)
   top->save = (save_func *) matrix_xdr_save;
   top->load = (load_func *) matrix_xdr_load;
   top->latex = (print_func *) nsp_matrix_latex_print;
+  top->as_index  = (get_index_vector_func *) nsp_matrix_as_index;
 
   /* specific methods for matrix */
 
@@ -371,6 +372,133 @@ static NspMatrix *matrix_xdr_load(XDR *xdrs)
     }
   return M;
 }
+
+/**
+ * nsp_matint_bounds:
+ * @A:  a #NspMatrix supposed to be a vector of indices
+ * @index: an #index_vector
+ *
+ * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
+ * and computes the min and max of A (here staying "1-based")   
+ */
+
+static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
+{
+  int i, ival, *ind = index->val;
+  index->max = 1;
+  index->min = 1;
+  index->flag = FALSE;
+  switch (  A->convert ) 
+    {
+    default: 
+    case 'd':
+      for (i = 0; i < A->mn; i++)
+	{
+	  if ( floor(A->R[i]) != A->R[i] )
+	    {
+	      Scierror("Error:\tIndice (%g) not integer\n", A->R[i]); 
+	      index->error = 2;
+	      return FAIL;
+	    }
+	  ival = (int) A->R[i];
+	  if (ival > index->max)
+	    index->max = ival;
+	  else if (ival < index->min)
+	    index->min = ival;
+	  ind[i] = ival-1;
+	}
+      break;
+    case 'u': 
+      if ( A->mn != 0) 
+	{
+	  if ( A->impl[1] == 1) index->flag = TRUE;
+	  ind[0]= A->impl[0]-1;
+	  for (i = 1; i < A->mn; i++)
+	    ind[i] = ind[i-1] + A->impl[1]; 
+	  if ( ind[0] < ind[A->mn-1] )
+	    {
+	      index->min =ind[0]+1; index->max= ind[A->mn-1]+1;
+	    }
+	  else 
+	    {
+	      index->min =ind[A->mn-1]+1; index->max= ind[0]+1;
+	    }
+	}
+      break;
+    case 'i' : 
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = A->I[i];
+	  if (ival > index->max)
+	    index->max = ival;
+	  else if (ival < index->min)
+	    index->min = ival;
+	  ind[i] = ival-1;
+	}
+      break;
+    case 'f' :
+      { 
+	for (i = 0; i < A->mn; i++)
+	  {
+	    if ( floor(A->F[i]) != A->F[i] )
+	      {
+		Scierror("Error:\tIndice (%g) not integer\n", A->F[i]); 
+		index->error = 2;
+		return FAIL;
+	      }
+	    ival = (int) A->F[i];
+	    if (ival > index->max)
+	      index->max = ival;
+	    else if (ival < index->min)
+	      index->min = ival;
+	    ind[i] = ival-1;
+	  }
+      }
+      break;
+    }
+  return OK;
+}
+
+
+/**
+ * nsp_matrix_as_index:
+ * @M: a #NspMatrix 
+ * @index: an #index_vector
+ * 
+ * fills index vector @index with matrix values.
+ *
+ * Return value: %TRUE
+ **/
+
+#define WORK_SIZE 128 
+static int matint_work[2][WORK_SIZE];
+
+static int nsp_matrix_as_index(NspMatrix *M, index_vector *index)
+{
+  index->nval = M->mn;
+  if ( index->nval  > WORK_SIZE ) 
+    {
+      if ( (index->val = nsp_alloc_int(index->nval)) == NULL ) 
+	{
+	  index->error = 1; /* malloc error */
+	  return FALSE;
+	}
+    }
+  else
+    {
+      index->val = matint_work[index->iwork];
+    }
+  if ( nsp_matint_bounds(M, index) == FAIL ) 
+    {
+      /* we assume that index->error is set by nsp_matint_bounds
+       * free allocated memory and return 
+       */
+      if (  index->val  != matint_work[index->iwork] ) FREE(index->val);
+      return FALSE;
+    }
+  return TRUE;
+}
+
 
 /*
  * A = MatObj(O);
