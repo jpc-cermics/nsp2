@@ -374,7 +374,7 @@ static NspMatrix *matrix_xdr_load(XDR *xdrs)
 }
 
 /**
- * nsp_matint_bounds:
+ * nsp_matrix_bounds:
  * @A:  a #NspMatrix supposed to be a vector of indices
  * @index: an #index_vector
  *
@@ -382,12 +382,18 @@ static NspMatrix *matrix_xdr_load(XDR *xdrs)
  * and computes the min and max of A (here staying "1-based")   
  */
 
-static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
+static int nsp_matrix_bounds(const NspMatrix *A,index_vector *index)
 {
   int i, ival, *ind = index->val;
   index->max = 1;
   index->min = 1;
   index->flag = FALSE;
+  if ( A->rc_type == 'c') 
+    {
+      Scierror("Error:\tindices cannot be given by complex values\n");
+      index->error = index_wrong_value;
+      return FAIL;
+    }
   switch (  A->convert ) 
     {
     default: 
@@ -396,8 +402,8 @@ static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
 	{
 	  if ( floor(A->R[i]) != A->R[i] )
 	    {
-	      Scierror("Error:\tIndice (%g) not integer\n", A->R[i]); 
-	      index->error = 2;
+	      Scierror("Error:\tIndice (%g) is not an integer\n", A->R[i]); 
+	      index->error = index_wrong_value;
 	      return FAIL;
 	    }
 	  ival = (int) A->R[i];
@@ -443,7 +449,7 @@ static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
 	    if ( floor(A->F[i]) != A->F[i] )
 	      {
 		Scierror("Error:\tIndice (%g) not integer\n", A->F[i]); 
-		index->error = 2;
+		index->error = index_wrong_value;
 		return FAIL;
 	      }
 	    ival = (int) A->F[i];
@@ -459,6 +465,49 @@ static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
   return OK;
 }
 
+/**
+ * get_index_vector_cache:
+ * @index: an #index_vector 
+ * 
+ * @index field nval and iwork must be set when calling this 
+ * function. This function sets the field val of variable @index 
+ * to a new allocated array 
+ * 
+ * Returns: %TRUE or %FALSE 
+ **/
+
+#define WORK_SIZE 128 
+static int matint_work[2][WORK_SIZE];
+
+int nsp_get_index_vector_cache(index_vector *index)
+{
+  if ( index->nval  > WORK_SIZE ) 
+    {
+      if ( (index->val = nsp_alloc_int(index->nval)) == NULL ) 
+	{
+	  index->error =  index_malloc_fail; /* malloc error */
+	  Scierror("Error: allocation failed\n");
+	  return FALSE;
+	}
+    }
+  else
+    {
+      index->val = matint_work[index->iwork];
+    }
+  return TRUE;
+}
+
+/**
+ * nsp_free_index_vector_cache:
+ * @index: an #index_vector  
+ * 
+ * free memory allocated by nsp_get_index_vector_cache()
+ **/
+
+void nsp_free_index_vector_cache(index_vector *index)
+{
+  if (index->val != NULL &&  index->val  != matint_work[index->iwork] ) FREE(index->val);
+}
 
 /**
  * nsp_matrix_as_index:
@@ -467,36 +516,23 @@ static int nsp_matint_bounds(const NspMatrix *A,index_vector *index)
  * 
  * fills index vector @index with matrix values.
  *
- * Return value: %TRUE
+ * Return value:  %OK or %FAIL
  **/
 
-#define WORK_SIZE 128 
-static int matint_work[2][WORK_SIZE];
 
 static int nsp_matrix_as_index(NspMatrix *M, index_vector *index)
 {
   index->nval = M->mn;
-  if ( index->nval  > WORK_SIZE ) 
-    {
-      if ( (index->val = nsp_alloc_int(index->nval)) == NULL ) 
-	{
-	  index->error = 1; /* malloc error */
-	  return FALSE;
-	}
-    }
-  else
-    {
-      index->val = matint_work[index->iwork];
-    }
-  if ( nsp_matint_bounds(M, index) == FAIL ) 
+  if ( nsp_get_index_vector_cache(index) == FALSE) return FAIL;
+  if ( nsp_matrix_bounds(M, index) == FAIL ) 
     {
       /* we assume that index->error is set by nsp_matint_bounds
        * free allocated memory and return 
        */
       if (  index->val  != matint_work[index->iwork] ) FREE(index->val);
-      return FALSE;
+      return FAIL;
     }
-  return TRUE;
+  return OK;
 }
 
 

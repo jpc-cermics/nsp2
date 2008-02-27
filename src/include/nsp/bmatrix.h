@@ -158,4 +158,5 @@ static AttrTab bmatrix_attrs[];
 static NspMethods *bmatrix_get_methods(void); 
 /*static NspObject *bmatrix_path_extract(NspBMatrix *A, NspObject *O); */
 static int bmatrix_is_true(NspBMatrix *M);
+static int nsp_bmatrix_as_index(NspBMatrix * M, index_vector *index);
 #endif /* BMatrix_Private */

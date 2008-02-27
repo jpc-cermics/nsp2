@@ -6,6 +6,8 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+typedef enum { index_malloc_fail, index_wrong_object, index_wrong_value } index_vector_error;
+
 typedef struct _index_vector index_vector ;
 
 struct  _index_vector {
@@ -15,7 +17,7 @@ struct  _index_vector {
   int nval; /* size of array */
   int flag; /* TRUE if array goes from min to max with step 1 */
   int iwork;/* index of cache vector to use */
-  int error;/* error index */
+  index_vector_error error;/* error index */
 };
 
 

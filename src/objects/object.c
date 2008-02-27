@@ -478,7 +478,9 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
 
 static int nsp_object_as_index_def(NspObject * M, index_vector *index)
 {
-  return FALSE;
+  index->error = index_wrong_object;
+  Sciprintf("Error : object of type %s cannot be used as index vector\n",M->type->s_type());
+  return FAIL;
 }
 
 /*------------------------------------------------------

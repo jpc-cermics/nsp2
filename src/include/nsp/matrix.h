@@ -319,6 +319,10 @@ extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
 extern int nsp_array_maxi(int n,const double *A, int incr, double *amax);
 extern int nsp_array_mini(int n,const double *A, int incr, double *amax);
 
+/* cache */
+void nsp_free_index_vector_cache(index_vector *index);
+int nsp_get_index_vector_cache(index_vector *index);
+
 /*
  * inlined functions 
  */

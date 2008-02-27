@@ -28,8 +28,6 @@
 #include "nsp/interf.h"
 #include "nsp/gsort-p.h"
 
-#define WORK_SIZE 100
-static int matint_work[2][WORK_SIZE];
 
 /* 
  * Interface NspMatint 
@@ -250,84 +248,6 @@ static NspMethods matint_methods[] = {
 
 NspMethods *matint_get_methods(void) { return matint_methods;};
 
-/**
- * nsp_matint_bounds:
- * @A:  a #NspMatrix supposed to be a vector of indices
- * @ind: a int vector (with length >= length(A)  
- * @imin: min of @A after cast to int
- * @imax: max of @A after cast to int
- *
- * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
- * and computes the min and max of A (here staying "1-based")   
- */
-
-static int nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
-{
-  int i, ival;
-  *imax = 1;
-  *imin = 1;
-  switch (  A->convert ) 
-    {
-    default: 
-    case 'd':
-      for (i = 0; i < A->mn; i++)
-	{
-	  if ( floor(A->R[i]) != A->R[i] )
-	    {
-	      Scierror("Error:\tIndice (%g) not integer\n", A->R[i]); 
-	      return FAIL;
-	    }
-	  ival = (int) A->R[i];
-	  if (ival > *imax)
-	    *imax = ival;
-	  else if (ival < *imin)
-	    *imin = ival;
-	  ind[i] = ival-1;
-	}
-      break;
-    case 'u': 
-      if ( A->mn != 0) 
-	{
-	  ind[0]= A->impl[0]-1;
-	  for (i = 1; i < A->mn; i++)
-	    ind[i] = ind[i-1] + A->impl[1]; 
-	  if ( ind[0] < ind[A->mn-1] )
-	    {
-	      *imin =ind[0]+1; *imax= ind[A->mn-1]+1;
-	    }
-	  else 
-	    {
-	      *imin =ind[A->mn-1]+1; *imax= ind[0]+1;
-	    }
-	}
-      break;
-    case 'i' : 
-      for (i = 0; i < A->mn; i++)
-	{
-	  ival = A->I[i];
-	  if (ival > *imax)
-	    *imax = ival;
-	  else if (ival < *imin)
-	    *imin = ival;
-	  ind[i] = ival-1;
-	}
-      break;
-    case 'f' :
-      { 
-	for (i = 0; i < A->mn; i++)
-	  {
-	    ival = (int) A->F[i];
-	    if (ival > *imax)
-	      *imax = ival;
-	    else if (ival < *imin)
-	      *imin = ival;
-	    ind[i] = ival-1;
-	  }
-      }
-      break;
-    }
-  return OK;
-}
 
 /**
  * nsp_matint_indices_for_deletions:
@@ -385,166 +305,40 @@ static void nsp_matint_indices_for_deletions(int nb_elts, int *ind, int *count)
 }
 
 
-static int *get_index_vector(Stack stack, int ipos,NspObject **Obj, int *Nb_elts, int *Rmin, int *Rmax, matint_workid iwork)
+
+/**
+ * get_index_vector:
+ * @stack: stack object 
+ * @ipos: position to check in stack 
+ * @Obj: a #NspObject pointer 
+ * @index: an #index_vector
+ * 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+static int get_index_vector(Stack stack, int ipos,NspObject **Obj,index_vector *index)
 {
-  int nb_elts=0, rmin, rmax, *ind=NULL;
-
-  if ( IsBMatObj(stack, ipos) )
-    {
-      int i, j=0;
-      NspBMatrix *BElts = GetBMat(stack, ipos);
-      if ( Obj != NULL ) *Obj = NSP_OBJECT(BElts);
-      for ( i = 0 ; i < BElts->mn ; i++ ) 
-	if ( BElts->B[i] ) nb_elts++;
-
-      if ( nb_elts > WORK_SIZE )
-	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
-      else
-	ind = matint_work[iwork];
-
-      for ( i = 0 ; i < BElts->mn ; i++ ) 
-	if ( BElts->B[i] ) ind[j++] = i;
-      rmin = ind[0]+1; rmax = ind[nb_elts-1]+1;
-    }
-  else if ( IsMatObj(stack, ipos) )
-    {
-      NspMatrix *Elts;
-      /* Elts must be a real matrix  * */
-      if ( (Elts =GetRealMat_G(stack, ipos)) == NULLMAT )
-	return NULL;
-      if ( Obj != NULL ) *Obj = NSP_OBJECT(Elts);
-      nb_elts = Elts->mn; 
-      if (  nb_elts > WORK_SIZE ) 
-	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
-      else
-	ind = matint_work[iwork];
-      if ( nsp_matint_bounds(Elts, ind, &rmin, &rmax) == FAIL )
-	{
-	  if ( nb_elts > WORK_SIZE ) FREE(ind);
-	  return NULL;
-	}
-    }
-  else if ( IsIVectObj(stack, ipos) )
-    {
-      NspIVect *Elts;
-      if ( (Elts =GetIVect(stack, ipos)) == NULLIVECT )
-	return NULL;
-      if ( Obj != NULL ) *Obj = NSP_OBJECT(Elts);
-      
-      nb_elts  = nsp_ivect_count(Elts);
-
-      if (  nb_elts > WORK_SIZE ) 
-	{
-	  if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; 
-	}
-      else
-	{
-	  ind = matint_work[iwork];
-	}
-
-      if ( nb_elts != 0) 
-	{
-	  int i;
-	  ind[0]= Elts->first - 1;
-	  for (i = 1; i < nb_elts ; i++)
-	    ind[i] = ind[i-1] + Elts->step; 
-	  if ( ind[0] < ind[nb_elts-1] )
-	    {
-	      rmin =ind[0]+1; rmax= ind[nb_elts-1]+1;
-	    }
-	  else 
-	    {
-	      rmin =ind[nb_elts-1]+1; rmax= ind[0]+1;
-	    }
-	}
-    }
-  
-  *Nb_elts = nb_elts; *Rmin = rmin; *Rmax = rmax;
-  return ind;
+  NspObject *Index;
+  if ((Index =nsp_get_object(stack,ipos)) == NULLOBJ ) 
+    return FAIL;
+  if ( Obj != NULL ) *Obj = NSP_OBJECT(Index); 
+  return  NSP_OBJECT(Index)->type->as_index(NSP_OBJECT(Index),index);
 }
 
 
 /**
  * get_index_vector_from_object:
- * @Obj: 
- * @Nb_elts: 
- * @Rmin: 
- * @Rmax: 
- * @iwork: 
+ * @Obj: an Object 
+ * @index: an #index_vector
  * 
- * 
- * Return value: an int pointer or %NULL
+ * Return value: %OK or %FAIL
  **/
 
-/* previous function could use this one XXX */
-
-int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork)
+int get_index_vector_from_object(NspObject *Obj,index_vector *index) 
 {
-  int nb_elts=0, rmin, rmax, *ind=NULL;
-
-  if ( IsBMat(Obj))
-    {
-      int i, j=0;
-      NspBMatrix *BElts = (NspBMatrix *) Obj;
-      for ( i = 0 ; i < BElts->mn ; i++ ) 
-	if ( BElts->B[i] ) nb_elts++;
-      if ( nb_elts > WORK_SIZE )
-	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
-      else
-	ind = matint_work[iwork];
-      for ( i = 0 ; i < BElts->mn ; i++ ) 
-	if ( BElts->B[i] ) ind[j++] = i;
-      rmin = ind[0]+1; rmax = ind[nb_elts-1]+1;
-    }
-  else if ( IsMat(Obj))
-    {
-      NspMatrix *Elts = (NspMatrix *) Obj;
-      if ( Elts->rc_type != 'r') return NULL;
-      nb_elts = Elts->mn; 
-      if (  nb_elts > WORK_SIZE ) 
-	{ if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; }
-      else
-	ind = matint_work[iwork];
-      if ( nsp_matint_bounds(Elts, ind, &rmin, &rmax) == FAIL )
-	{
-	  if ( nb_elts > WORK_SIZE ) FREE(ind);
-	  return NULL;
-	}
-    }
-  else if ( IsIVect(Obj))
-    {
-      NspIVect *Elts = (NspIVect *) Obj;
-      if ( Elts->flag == 1 )     return NULL;  
-      nb_elts  = nsp_ivect_count(Elts);
-
-      if (  nb_elts > WORK_SIZE ) 
-	{
-	  if ( (ind = nsp_alloc_int(nb_elts)) == NULL ) return NULL; 
-	}
-      else
-	{
-	  ind = matint_work[iwork];
-	}
-
-      if ( nb_elts != 0) 
-	{
-	  int i;
-	  ind[0]= Elts->first - 1;
-	  for (i = 1; i < nb_elts ; i++)
-	    ind[i] = ind[i-1] + Elts->step; 
-	  if ( ind[0] < ind[nb_elts-1] )
-	    {
-	      rmin =ind[0]+1; rmax= ind[nb_elts-1]+1;
-	    }
-	  else 
-	    {
-	      rmin =ind[nb_elts-1]+1; rmax= ind[0]+1;
-	    }
-	}
-    }
-
-  *Nb_elts = nb_elts; *Rmin = rmin; *Rmax = rmax;
-  return ind;
+  HOBJ_GET_OBJECT(Obj,FAIL); /* message for FAIL */
+  return  NSP_OBJECT(Obj)->type->as_index(NSP_OBJECT(Obj),index);
 }
 
 
@@ -1080,12 +874,12 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts, co
 
 NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
 {
+  index_vector index={0};
   NspObject *Res;
-  int *elts,nr, rmin, rmax;
-  elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
-  if ( elts == NULL) return NULLOBJ;
-  Res = nsp_matint_extract_elements(Obj,Elts,elts,nr, rmin, rmax);
-  if ( elts != matint_work[matint_iwork1] ) FREE(elts);
+  index.iwork = matint_iwork1;
+  if ( get_index_vector_from_object(Elts,&index) == FAIL) return NULLOBJ ;
+  Res = nsp_matint_extract_elements(Obj,Elts,index.val,index.nval,index.min,index.max);
+  nsp_free_index_vector_cache(&index);
   return Res;
 }
 
@@ -1175,12 +969,12 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts, con
 
 NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 {
+  index_vector index={0};
   NspObject *Res;
-  int *cols,nr, rmin, rmax;
-  cols = get_index_vector_from_object(Cols,&nr, &rmin, &rmax,matint_iwork1);
-  if ( cols == NULL) return NULLOBJ;
-  Res = nsp_matint_extract_columns(Obj,Cols,cols,nr, rmin, rmax);
-  if ( cols != matint_work[matint_iwork1] ) FREE(cols);
+  index.iwork = matint_iwork1;
+  if ( get_index_vector_from_object(Cols,&index) == FAIL) return NULLOBJ ;
+  Res = nsp_matint_extract_columns(Obj,Cols,index.val,index.nval,index.min,index.max);
+  nsp_free_index_vector_cache(&index);
   return Res; 
 }
 
@@ -1424,12 +1218,12 @@ static NspObject *nsp_matint_extract_rows_pointer(NspObject *Obj,NspObject *Elts
 
 NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
 {
+  index_vector index={0};
   NspObject *Res;
-  int *rows,nr, rmin, rmax;
-  rows = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
-  if ( rows == NULL) return NULLOBJ;
-  Res =  nsp_matint_extract_rows(Obj,Rows,rows,nr, rmin, rmax);
-  if ( rows != matint_work[matint_iwork1] ) FREE(rows);
+  index.iwork = matint_iwork1;
+  if ( get_index_vector_from_object(Rows,&index) == FAIL) return NULLOBJ ;
+  Res =  nsp_matint_extract_rows(Obj,Rows,index.val,index.nval,index.min,index.max);
+  nsp_free_index_vector_cache(&index);
   return Res;
 }
 
@@ -1561,15 +1355,17 @@ NspObject *nsp_matint_extract(NspObject *Obj,
  **/
 NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols)
 {
+  index_vector index_r={0},index_c={0};
   NspObject *Res;
-  int *row,*col,nr, rmin, rmax, nc, cmin, cmax;
-  row = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
-  if ( row == NULL) return NULLOBJ;
-  col = get_index_vector_from_object(Cols,&nc, &cmin, &cmax,matint_iwork2);
-  if ( col == NULL) return NULLOBJ;
-  Res = nsp_matint_extract(Obj,row,nr, rmin, rmax,col, nc, cmin, cmax);
-  if ( row != matint_work[matint_iwork1] ) FREE(row);
-  if ( col != matint_work[matint_iwork2] ) FREE(col);
+  index_r.iwork = matint_iwork1;
+  index_c.iwork = matint_iwork2;
+  if ( get_index_vector_from_object(Rows,&index_r) == FAIL) return NULLOBJ ;
+  if ( get_index_vector_from_object(Cols,&index_c) == FAIL) return NULLOBJ ;
+  Res = nsp_matint_extract(Obj,
+			   index_r.val, index_r.nval, index_r.min, index_r.max,
+			   index_c.val, index_c.nval, index_c.min, index_c.max);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return Res;
 }
 
@@ -1798,15 +1594,18 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
  **/
 int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB)
 {
+  index_vector index_r={0},index_c={0};
   int Res;
-  int *row,*col,nr, rmin, rmax, nc, cmin, cmax;
-  row = get_index_vector_from_object(Row,&nr, &rmin, &rmax,matint_iwork1);
-  if ( row == NULL) return FAIL;
-  col = get_index_vector_from_object(Col,&nc, &cmin, &cmax,matint_iwork2);
-  if ( col == NULL) return FAIL;
-  Res = nsp_matint_set_submatrix(ObjA,row,nr, rmin, rmax,col, nc, cmin, cmax,ObjB);
-  if ( row != matint_work[matint_iwork1] ) FREE(row);
-  if ( col != matint_work[matint_iwork2] ) FREE(col);
+  index_r.iwork = matint_iwork1;
+  index_c.iwork = matint_iwork2;
+  if ( get_index_vector_from_object(Row,&index_r) == FAIL) return FAIL;
+  if ( get_index_vector_from_object(Col,&index_c) == FAIL) return FAIL;
+  Res = nsp_matint_set_submatrix(ObjA,
+				 index_r.val, index_r.nval, index_r.min, index_r.max,
+				 index_c.val, index_c.nval, index_c.min, index_c.max,
+				 ObjB);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return Res;
 }
 
@@ -2010,12 +1809,12 @@ int nsp_matint_set_elts(NspObject *ObjA,
  **/
 int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
 {
+  index_vector index={0};
   int Res;
-  int *elts,nr, rmin, rmax;
-  elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
-  if ( elts == NULL) return FAIL;
-  Res = nsp_matint_set_elts(ObjA,elts,nr, rmin, rmax,ObjB);
-  if ( elts != matint_work[matint_iwork1] ) FREE(elts);
+  index.iwork = matint_iwork1;  
+  if ( get_index_vector_from_object(Elts,&index) == FAIL) return FAIL;
+  Res = nsp_matint_set_elts(ObjA,index.val,index.nval,index.min, index.max,ObjB);
+  nsp_free_index_vector_cache(&index);
   return Res; 
 }
 
@@ -2798,20 +2597,19 @@ typedef int (*delfunc) (NspObject *Obj, int *ind, int nb_elts, int imin, int ima
 
 static int int_matint_delete_gen(Stack stack, int rhs, int opt, int lhs, delfunc F)
 {
+  index_vector index={0};
   NspObject *Obj;
-  int nb_elts, *ind=NULL, imin, imax;
-
   Obj = NthObj(1);
-
-  if ( (ind =get_index_vector(stack, 2,NULL, &nb_elts, &imin, &imax, matint_iwork1)) == NULL )
+  index.iwork = matint_iwork1;  
+  if ( get_index_vector(stack, 2,NULL,&index) == FAIL )
     return RET_BUG;
-  if ( (*F)(Obj, ind, nb_elts, imin, imax) == FAIL )
+  if ( (*F)(Obj, index.val, index.nval , index.min, index.max) == FAIL )
     goto err;
-  if ( nb_elts > WORK_SIZE ) FREE(ind);
+  nsp_free_index_vector_cache(&index);
   Obj->ret_pos = 1;
   return 1;
  err:
-  if ( nb_elts > WORK_SIZE ) FREE(ind);
+  nsp_free_index_vector_cache(&index);
   return RET_BUG;
 }
 
@@ -2890,28 +2688,31 @@ int int_matint_deleterows(Stack stack, int rhs, int opt, int lhs)
  **/
 int int_matint_deleteelts2(Stack stack, int rhs, int opt, int lhs)
 {
+  index_vector index_r={0},index_c={0};
   NspObject *Obj;
-  int nr, nc, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
-
+  
   Obj = NthObj(1);
 
-  if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
+  index_r.iwork = matint_iwork1;  
+  if ( get_index_vector(stack, 2,NULL,&index_r) == FAIL )
     return RET_BUG;
   
-  if ( (col =get_index_vector(stack, 3,NULL, &nc, &cmin, &cmax, matint_iwork2)) == NULL )
+  index_c.iwork = matint_iwork2;  
+  if ( get_index_vector(stack, 3,NULL,&index_c) == FAIL )
     goto err;
   
-  if ( nsp_matint_delete_elements2(Obj, row, nr, rmin, rmax, col, nc, cmin, cmax) == FAIL )
+  if ( nsp_matint_delete_elements2(Obj,
+				   index_r.val, index_r.nval , index_r.min, index_r.max,
+				   index_c.val, index_c.nval , index_c.min, index_c.max) 
+       == FAIL) 
     goto err;
 
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   Obj->ret_pos = 1;
   return 1;
   
  err:
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
   return RET_BUG;
 }
 
@@ -2955,13 +2756,14 @@ typedef NspObject * (*extractfunc) (NspObject *Obj,NspObject *Elts, int *ind, in
 
 static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extractfunc F)
 {
+  index_vector index={0};
   NspObject *Obj, *Res,*Elts;
-  int nb_elts, *ind=NULL, imin, imax;
 
   CheckLhs (1, 1);
   Obj = NthObj(1);
 
-  if ( (ind =get_index_vector(stack, 2,&Elts, &nb_elts, &imin, &imax, matint_iwork1)) == NULL )
+  index.iwork = matint_iwork1;  
+  if ( get_index_vector(stack, 2,&Elts,&index) == FAIL )
     {
       if ( rhs != 2 || IsListObj(stack,2) == FALSE ) return RET_BUG;
       /* check if we are using a list access */
@@ -2976,15 +2778,15 @@ static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extrac
       NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
-  if ( (Res = (*F)(Obj,Elts, ind, nb_elts, imin, imax)) == NULLOBJ )
+  if ( (Res = (*F)(Obj,Elts,  index.val, index.nval , index.min, index.max)) == NULLOBJ )
     goto err;
 
-  if ( nb_elts > WORK_SIZE ) FREE(ind);
+  nsp_free_index_vector_cache(&index);
   MoveObj (stack, 1, Res);
   return 1;
 
  err:
-  if ( nb_elts > WORK_SIZE ) FREE(ind);
+  nsp_free_index_vector_cache(&index);
   return RET_BUG;
 }
 
@@ -3076,28 +2878,33 @@ int int_matint_extractrows_pointer(Stack stack, int rhs, int opt, int lhs)
  **/
 int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 {
+  index_vector index_r={0},index_c={0};
   NspObject *Obj, *Res;
-  int nr, nc, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
-
+  
   CheckLhs (1, 1);
   Obj = NthObj(1);
 
-  if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
+  index_r.iwork = matint_iwork1;  
+  if ( get_index_vector(stack, 2,NULL, &index_r)== FAIL )
     return RET_BUG;
   
-  if ( (col =get_index_vector(stack, 3,NULL, &nc, &cmin, &cmax, matint_iwork2)) == NULL )
+  index_c.iwork = matint_iwork2;  
+  if ( get_index_vector(stack, 3,NULL, &index_c)== FAIL )
     goto err;
   
-  if ( (Res =nsp_matint_extract(Obj, row, nr, rmin, rmax, col, nc, cmin, cmax)) == NULLOBJ )
+  if ( (Res =nsp_matint_extract(Obj, 
+				index_r.val, index_r.nval , index_r.min, index_r.max,
+				index_c.val, index_c.nval , index_c.min, index_c.max)) == NULLOBJ )
     goto err;
 
-  if ( nr > WORK_SIZE ) FREE(row);  if ( nc > WORK_SIZE ) FREE(col);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   MoveObj (stack, 1, Res);
   return 1;
   
  err:
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return RET_BUG;
 }
 
@@ -3119,8 +2926,8 @@ int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 
 int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
+  index_vector index_r={0},index_c={0};
   NspObject *ObjA, *ObjB;
-  int nr=0, nc=0, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
 
   CheckRhs (3, 4);
   CheckLhs (1, 1);
@@ -3137,28 +2944,34 @@ int int_matint_setrowscols(Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs == 3 )
     {
-      if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
+      index_r.iwork = matint_iwork1;  
+      if ( get_index_vector(stack, 2,NULL,&index_r)== FAIL )
 	return RET_BUG;
-      if ( nsp_matint_set_elts(ObjA, row, nr, rmin, rmax, ObjB) == FAIL )
+      if ( nsp_matint_set_elts(ObjA,index_r.val, index_r.nval , index_r.min, index_r.max, ObjB) 
+	   == FAIL )
 	goto err;
     }
   else /* rhs = 4 */
     {
-      if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
+      index_r.iwork = matint_iwork1;  
+      if ( get_index_vector(stack, 2,NULL,&index_r)== FAIL )
 	return RET_BUG;
-      if ( (col =get_index_vector(stack, 3,NULL, &nc, &cmin, &cmax, matint_iwork2)) == NULL )
+      index_c.iwork = matint_iwork2;  
+      if ( get_index_vector(stack, 3,NULL,&index_c)== FAIL )
 	goto err;
-      if ( nsp_matint_set_submatrix(ObjA, row, nr, rmin, rmax, col, nc, cmin, cmax, ObjB) == FAIL )
+      if ( nsp_matint_set_submatrix(ObjA, 
+				    index_r.val, index_r.nval , index_r.min, index_r.max,
+				    index_c.val, index_c.nval , index_c.min, index_c.max, ObjB) == FAIL ) 
 	goto err;
     }
 
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   ObjA->ret_pos = 1;
   return 1;
  err:
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return RET_BUG;
 }
 
@@ -3378,8 +3191,8 @@ int int_matint_concat_down(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
 
 int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
+  index_vector index={0},index_r={0},index_c={0};
   int i, j, ind, nind;
-  int nr=0, nc=0, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
   NspCells *C;
   CheckRhs (3, 1000);
 
@@ -3393,86 +3206,95 @@ int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
   switch (nind ) 
     {
     case 1: 
-      if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
-	goto err;
-      if ( nr != rhs - 3 )
+      index.iwork = matint_iwork1;  
+      if ( get_index_vector(stack, 2,NULL,&index)== FAIL )
+	goto err1;
+      if ( index.nval != rhs - 3 )
 	{
 	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
-		   rhs- 3, nr);
-	  goto err;
+		   rhs- 3,index.nval);
+	  goto err1;
 	}
-      if ( rmin <= 0 )
+      if ( index.min <= 0 )
 	{
 	  Scierror("Error:\tNon Positive indices are not allowed\n");
-	  goto err;
+	  goto err1;
 	}
-      if ( rmax > C->mn ) 
+      if (  index.max > C->mn ) 
 	{
 	  /* we must enlarge C ZZZ */
 	  if ( C->m == 1 || C->m == 0 )
 	    {
-	      if ( nsp_cells_enlarge(C, 1, rmax) == FAIL ) goto err;
+	      if ( nsp_cells_enlarge(C, 1, index.max) == FAIL ) goto err1;
 	    }
 	  else if ( C->n == 1 || C->n == 0) 
 	    {
-	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
+	      if ( nsp_cells_enlarge(C, index.max, 1) == FAIL ) goto err1;
 	    } 
 	  else
 	    {
-	      Scierror("Error: indice %d is out of bounds for affectation in %dx%d\n",rmax,C->m,C->n);
+	      Scierror("Error: indice %d is out of bounds for affectation in %dx%d\n",
+		       index.max,C->m,C->n);
 	    }
 	}
 
-      for ( i = 0 ; i < nr ; i++)
+      for ( i = 0 ; i < index.nval ; i++)
 	{
-	  int cij = row[i];
+	  int cij = index.val[i];
 	  NspObject *Ob = nsp_get_object(stack,i+3);
 	  if ( Ocheckname(Ob,NVOID) ) 
 	    {
-	      if (nsp_object_set_name(Ob,"ce") == FAIL) goto err;
+	      if (nsp_object_set_name(Ob,"ce") == FAIL) goto err1;
 	    }
 	  else 
 	    {
-	      if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err;
+	      if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err1;
 	    }
 	  if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
 	  C->objs[cij]= Ob;
 	}
+      NthObj(1)->ret_pos = 1;
+      nsp_free_index_vector_cache(&index);
       break;
-
+      
     case 2: 
-      if ( (row =get_index_vector(stack, 2,NULL, &nr, &rmin, &rmax, matint_iwork1)) == NULL )
-	goto err;
-      if ( (col =get_index_vector(stack, 3,NULL, &nc, &cmin, &cmax, matint_iwork2)) == NULL )
-	goto err;
-      if ( nr*nc != rhs - 4 )
+      index_r.iwork = matint_iwork1;  
+      if ( get_index_vector(stack, 2,NULL,&index_r)== FAIL )
+	goto err2;
+      index_c.iwork = matint_iwork2;  
+      if ( get_index_vector(stack, 3,NULL,&index_c)== FAIL )
+	goto err2;
+      if ( index_r.nval*index_c.nval != rhs - 4 )
 	{
 	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
-		   rhs- 4, nr*nc);
-	  goto err;
+		   rhs- 4, index_r.nval*index_c.nval);
+	  goto err2;
 	}
 
-      if ( rmax > C->m || cmax > C->n ) 
-	if ( nsp_cells_enlarge(C, rmax, cmax) == FAIL ) goto err;
+      if ( index_r.max > C->m || index_c.max > C->n ) 
+	if ( nsp_cells_enlarge(C, index_r.max, index_c.max) == FAIL ) goto err2;
 
       ind = 4;
-      for ( j = 0 ; j < nc ; j++)
-	for ( i = 0 ; i < nr ; i++)
+      for ( j = 0 ; j < index_c.nval ; j++)
+	for ( i = 0 ; i < index_r.nval ; i++)
 	  {
-	    int cij= row[i] + C->m*col[j];
+	    int cij= index_r.val[i] + C->m*index_c.val[j];
 	    NspObject *Ob = nsp_get_object(stack,ind);
 	    if ( Ocheckname(Ob,NVOID) ) 
 	      {
-		if (nsp_object_set_name(Ob,"ce") == FAIL) goto err;
+		if (nsp_object_set_name(Ob,"ce") == FAIL) goto err2;
 	      }
 	    else 
 	      {
-		if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err;
+		if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err2;
 	      }
 	    if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
 	    C->objs[cij] = Ob;
 	    ind++;
 	  }
+      NthObj(1)->ret_pos = 1;
+      nsp_free_index_vector_cache(&index_r);
+      nsp_free_index_vector_cache(&index_c);
       break;
 
     default: 
@@ -3480,14 +3302,15 @@ int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
 
     }
-  NthObj(1)->ret_pos = 1;
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
   return 1;
   
- err:
-  if ( nr > WORK_SIZE ) FREE(row);
-  if ( nc > WORK_SIZE ) FREE(col);
+ err1:
+  nsp_free_index_vector_cache(&index);
+  return RET_BUG;
+
+ err2:
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return RET_BUG;
 }
 

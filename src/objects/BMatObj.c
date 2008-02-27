@@ -95,6 +95,8 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   top->save  = (save_func *) bmatrix_xdr_save;
   top->load  = (load_func *) bmatrix_xdr_load;
   top->latex = (print_func *) nsp_bmatrix_latex_print;
+  top->as_index  = (get_index_vector_func *) nsp_bmatrix_as_index;
+  
   /* specific methods for bmatrix */
 
   type->init = (init_func *) init_bmatrix;
@@ -290,6 +292,33 @@ static NspBMatrix  *bmatrix_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_array_i(xdrs,M->B,M->mn) == FAIL) return NULLBMAT;
   return M;
 }
+
+
+/**
+ * nsp_bmatrix_as_index:
+ * @M: a #NspBMatrix 
+ * @index: an #index_vector
+ * 
+ * fills index vector @index with matrix values.
+ *
+ * Return value: %OK or %FAIL 
+ **/
+
+static int nsp_bmatrix_as_index(NspBMatrix *M, index_vector *index)
+{
+  int i,j=0;
+  index->nval=0;
+  for ( i = 0 ; i < M->mn ; i++ ) 
+    if ( M->B[i] ) index->nval++;
+  if ( nsp_get_index_vector_cache(index) == FALSE) return FAIL;
+  for ( i = 0 ; i < M->mn ; i++ ) 
+    if ( M->B[i] ) index->val[j++] = i;
+  index->min = index->val[0]+1; 
+  index->max = index->val[index->nval-1]+1;
+  index->flag = FALSE;
+  return OK;
+}
+
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 

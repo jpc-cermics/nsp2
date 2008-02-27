@@ -80,7 +80,7 @@ extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 extern int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB);
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
-extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
+extern int get_index_vector_from_object(NspObject *Obj, index_vector *index) ;
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
 extern int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag);
 

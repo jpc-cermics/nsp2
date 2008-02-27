@@ -50,6 +50,7 @@ static int nsp_ivect_eq(NspObject *A,NspObject *B);
 static int nsp_ivect_neq(NspObject *A,NspObject *B);
 static int nsp_ivect_xdr_save(XDR  *F, NspIVect *M);
 static NspIVect *nsp_ivect_xdr_load(XDR  *F);
+static int nsp_ivect_as_index(NspIVect * M, index_vector *index);
 #endif 
 
 

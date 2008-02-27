@@ -88,6 +88,7 @@ NspTypeIVect *new_type_ivect(type_mode mode)
 
   top->save  = (save_func *)nsp_ivect_xdr_save;
   top->load  = (load_func *)nsp_ivect_xdr_load;
+  top->as_index  = (get_index_vector_func *) nsp_ivect_as_index;
 
   /* specific methods for ivect */
   type->init = (init_func *) init_ivect;
@@ -267,6 +268,42 @@ static NspIVect *nsp_ivect_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs,&last) == FAIL) return NULLIVECT;
   if (nsp_xdr_load_i(xdrs,&flag) == FAIL) return NULLIVECT;
   return nsp_ivect_create(name,first,step,last,flag); 
+}
+
+/**
+ * nsp_ivect_as_index:
+ * @M: a #NspIVect
+ * @index: an #index_vector
+ * 
+ * fills index vector @index with matrix values.
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+static int nsp_ivect_as_index(NspIVect *M, index_vector *index)
+{
+  index->nval = nsp_ivect_count(M);
+  index->flag = FALSE;
+  if ( nsp_get_index_vector_cache(index) == FALSE) return FAIL;
+  if ( index->nval != 0) 
+    {
+      int i;
+      index->val[0]= M->first - 1;
+      if ( M->step == 1) index->flag = TRUE;
+      for (i = 1; i < index->nval ; i++)
+	index->val[i] = index->val[i-1] + M->step; 
+      if ( index->val[0] < index->val[index->nval-1] )
+	{
+	  index->min = index->val[0]+1; 
+	  index->max = index->val[index->nval-1]+1;
+	}
+      else 
+	{
+	  index->min = index->val[index->nval-1]+1; 
+	  index->max = index->val[0]+1;
+	}
+    }
+  return OK;
 }
 
 
