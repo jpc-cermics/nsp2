@@ -1121,7 +1121,7 @@ double nsp_rand_rayleigh(double sigma)
 
 /**
  * nsp_rand_tailrayleigh:
- * @a, @sigma: parameters of the distribution
+ * @sigma,@a: parameters of the distribution
  * 
  * generates a random number from the tail of Rayleigh distribution.
  *
@@ -1136,7 +1136,7 @@ double nsp_rand_rayleigh(double sigma)
  *
  * Returns a double
  **/
-double nsp_rand_tailrayleigh(double a, double sigma)
+double nsp_rand_tailrayleigh(double sigma, double a)
 {
   return sqrt( a*a + 2.0*sigma*sigma*nsp_rand_exp_core() );
 }

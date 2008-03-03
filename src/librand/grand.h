@@ -222,7 +222,7 @@ extern double nsp_rand_cauchy(double sigma);
 extern double nsp_rand_pareto(double a, double b);
 extern double nsp_rand_logistic(double a, double b);
 extern double nsp_rand_rayleigh(double sigma);
-extern double nsp_rand_tailrayleigh(double a, double sigma);
+extern double nsp_rand_tailrayleigh(double sigma, double a);
 extern double nsp_rand_weibull(double a, double b);
 extern double nsp_rand_laplace(double a);
 extern double nsp_rand_lognormal(double mu, double sigma);

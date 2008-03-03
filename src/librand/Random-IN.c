@@ -1021,7 +1021,7 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs, int suite, int Res
   return 1;
   
  err:
-  Scierror("Error: grand(..'f',nu1,nu2) : nu1 (=%g) or nu2 (=%g) <= 0 \n",nu1->R[i1], nu2->R[i2]); 
+  Scierror("Error: grand(..'f',nu1,nu2): nu1 (=%g) or nu2 (=%g) <= 0 \n",nu1->R[i1], nu2->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -1505,7 +1505,7 @@ static int int_exp_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 
  err:
-  Scierror("Error: grand(..'exp',Av) : Av (=%g) < 0.0 \n",A->R[i]); 
+  Scierror("Error: grand(..'exp',tau) : tau (=%g) < 0.0 \n",A->R[i]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -1756,11 +1756,11 @@ static int int_tailrayleigh_part(Stack stack, int rhs, int opt, int lhs, int sui
   if ( rhs != suite + 1) 
     { Scierror("Error: 2 parameters required for 'tray' option (got %d)\n",rhs-suite+1); return RET_BUG;}
   
-  if ( (a = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  CheckScalarOrDims(NspFname(stack),suite,a,ResL,ResC);
+  if ( (sigma = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,sigma,ResL,ResC);
 
-  if ( (sigma = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
-  CheckScalarOrDims(NspFname(stack),suite+1,sigma,ResL,ResC);
+  if ( (a = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite+1,a,ResL,ResC);
 
   if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
 
@@ -1770,7 +1770,7 @@ static int int_tailrayleigh_part(Stack stack, int rhs, int opt, int lhs, int sui
       i1 = i2 = 0;
       if ( ! ( A >= 0.0 && s > 0.0) ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i] = nsp_rand_tailrayleigh(A, s); 
+	M->R[i] = nsp_rand_tailrayleigh(s, A); 
     }
   else                                   /* varying parameter(s) case */
     {
@@ -1780,7 +1780,7 @@ static int int_tailrayleigh_part(Stack stack, int rhs, int opt, int lhs, int sui
 	{
 	  double A = a->R[i1], s = sigma->R[i2];
 	  if ( ! (A >= 0.0 && s > 0.0) ) goto err;
-	  M->R[i] = nsp_rand_tailrayleigh(A, s);
+	  M->R[i] = nsp_rand_tailrayleigh(s, A);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
