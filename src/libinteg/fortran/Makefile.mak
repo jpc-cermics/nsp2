@@ -12,14 +12,13 @@ OBJSC =
 OBJSF = ainvg.obj bnorm.obj cfode.obj  ewset.obj fnorm.obj intdy.obj lsoda.obj lsode.obj \
 	lsodi.obj prepj.obj prepji.obj prja.obj rscma1.obj rscom1.obj solsy.obj stoda.obj \
 	stode.obj stodi.obj svcma1.obj svcom1.obj vmnorm.obj vnorm.obj \
-	dqag0.obj dqags.obj epsalg.obj quarul.obj order.obj \
+	fromquadpack.obj \
 	rgk4.obj lsodar.obj rscar1.obj svcar1.obj rchek.obj roots.obj \
-	colnew.obj  rkf45.obj rksimp.obj twodq.obj dcutet.obj daux.obj ddaskr.obj \
+	colnew.obj  rkf45.obj rksimp.obj twodq.obj  ddaskr.obj \
 	lsodar2.obj rchek2.obj roots2.obj integ-IN.obj xerrwv.obj \
-	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj dqk21vect.obj
+	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj daux.obj
 
 # from linpack:	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj
-
 
 TOBEDONE= lsdisc.obj ddasrt.obj ddassl.obj ddaskr.obj
 

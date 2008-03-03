@@ -490,24 +490,28 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
 
 typedef int (*intg_f)(const double *t, double *y, int *n);
 
-extern int C2F(dqags)(intg_f f, double *a, double *b, double *epsabs, double *epsrel, 
-		      double *alist, double *blist, double *elist, double *rlist, 
-		      int *limit, int *iord, int *liord, double *result, 
-		      double *abserr, int *ier, int *vectflag);
+extern int C2F(nspdqagse)(intg_f f, double *a, double *b, double *epsabs, double *epsrel, 
+		          int *limit, double *result, double *abserr, int *neval, int *ier,
+                          double *alist, double *blist, double *rlist, double *elist, 
+		          int *iord, int *last, int *vectflag, int *stat);
+extern int C2F(nspdqagie)(intg_f f, double *bound, int *inf, double *epsabs, double *epsrel, 
+		          int *limit, double *result, double *abserr, int *neval, int *ier,
+                          double *alist, double *blist, double *rlist, double *elist, 
+		          int *iord, int *last, int *vectflag, int *stat);
 
 typedef struct _intg_data intg_data;
  
 struct _intg_data
 {
   NspObject *args;   /* the extra argument to the integrator (a simple Mat, or a List, ... */
-  NspMatrix *x;    /* current evaluation point or vector, x is a 1x1 or 21x1 */
+  NspMatrix *x;    /* current evaluation point or vector, x is a 1x1 or 21x1 or 15x1 or 30x1 */
   NspObject *func; /* function to integrate */
 };
 
 static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ}; 
 
 
-static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean vect_flag)
+static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean vect_flag, Boolean use_dqagse, int inf)
 {
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"intg_f")== FAIL)) return FAIL;
@@ -522,11 +526,25 @@ static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean v
     }
   if ( vect_flag )
     {
-      if ((obj->x = nsp_matrix_create("t",'r',21,1))== NULL) return FAIL;
+      if ( use_dqagse )  /* integration on [a,b] */
+	{
+	  if ((obj->x = nsp_matrix_create("x",'r',21,1))== NULL) return FAIL;
+	}
+      else               /* integration on (-oo,a], [a,+oo) or (-oo,+oo) */
+	{
+	  if ( inf == 2 )  /* integration on (-oo,+oo) 2*15=30 points used */
+	    {
+	      if ((obj->x = nsp_matrix_create("x",'r',30,1))== NULL) return FAIL;
+	    }
+	  else             /* integration on  (-oo,a], [a,+oo) 15 points used */
+	    {
+	      if ((obj->x = nsp_matrix_create("x",'r',15,1))== NULL) return FAIL;
+	    }
+	}
     }
   else
     {
-      if ((obj->x = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+      if ((obj->x = nsp_matrix_create("x",'r',1,1))== NULL) return FAIL;
     }
   return OK;
 }
@@ -595,7 +613,8 @@ static int intg_func(const double *x, double *y, int *n)
       else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
 	Scierror("        function return a complex instead of a real\n");
       else if ( ((NspMatrix *) nsp_ret)->mn != *n )
-	Scierror("        function don't return a vector of good length\n");
+	Scierror("        function don't return a vector of good length (wait for %d and got %d) \n",
+		 *n,((NspMatrix *) nsp_ret)->mn);
 
       nsp_object_destroy((NspObject **) &nsp_ret);
       return -1;
@@ -617,11 +636,11 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *res=NULLMAT;
   NspObject *f=NULLOBJ, *args=NULLOBJ;
-  double a, b, rtol=1.e-8, atol=1.e-14, er_estim;
-  int limit = 750, lwork, liwork; /* sizes of work arrays (lwork = 4*limit, liwork = limit/2 + 2) */
+  double a, b, rtol=1.e-8, atol=1.e-14, er_estim, bound=0.0;
+  int limit = 750, lwork; /* (lwork = 4*limit) */
   double *rwork=NULL;
-  int ier, *iwork=NULL;
-  Boolean vect_flag=FALSE;
+  int ier, *iwork=NULL, neval, last, inf, sign=1, stat;
+  Boolean vect_flag=FALSE, use_dqagse;
 
   int_types T[] = {s_double, s_double, obj, new_opts, t_end} ;
 
@@ -634,9 +653,47 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     { NULL,t_end,NULLOBJ,-1}
   };
 
+  CheckLhs(1,4);
+
   if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit, &vect_flag) == FAIL ) 
     return RET_BUG;
-  
+
+  if ( isnan(a) || isnan(b) )
+    {
+      Scierror("%s: a or b is a Nan\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( finite(a) && finite(b) )
+    use_dqagse = TRUE;
+  else
+    {
+      use_dqagse = FALSE;
+      if ( finite(a) )       /* b is inf or -inf */
+	{
+	  bound = a;
+	  if ( b > 0.0 ) { inf = 1; sign = 1;}
+	  else { inf = -1; sign = -1;}
+	}
+      else if ( finite(b) )  /* a is -inf or inf */
+	{
+	  bound = b;
+	  if ( a < 0.0 ) { inf = -1; sign = 1;}
+	  else  { inf = 1; sign = -1;}
+	}
+      else                   /* a and b are +-inf */
+	{
+	  inf = 2;
+	  if ( a < 0.0 && b > 0.0 ) sign = 1;
+	  else  if ( a > 0.0 && b < 0.0 ) sign = -1;
+	  else
+	    {
+	      Scierror("%s: a and b are both %e\n",NspFname(stack),a);
+	      return RET_BUG;
+	    }
+	}
+    }
+ 
   limit = Max(4, limit);
 
   if ( IsNspPList(f) == FALSE  )
@@ -646,10 +703,9 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     }
 
   /* allocate working arrays */
-  liwork = limit/2 + 2;
   lwork = 4*limit;
   rwork = nsp_alloc_work_doubles(lwork);
-  iwork = nsp_alloc_work_int(liwork);
+  iwork = nsp_alloc_work_int(limit);
   if ( (rwork == NULL) || (iwork == NULL) )
     {
       FREE(rwork); FREE(iwork);
@@ -657,21 +713,36 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     }
 
   /* set up intg_d global var */
-  if ( intg_prepare(f,args,&intg_d, vect_flag) == FAIL ) 
+  if ( intg_prepare(f,args,&intg_d, vect_flag, use_dqagse, inf) == FAIL ) 
     goto err;
 
   /* allocate output var */
   if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
 
   /* call the integrator  */
-  C2F(dqags)(intg_func, &a, &b, &atol, &rtol, rwork, &rwork[limit], &rwork[2*limit],
-	     &rwork[3*limit], &limit, iwork, &liwork, res->R, &er_estim, &ier, &vect_flag); 
+  if ( use_dqagse ) 
+    C2F(nspdqagse)(intg_func, &a, &b, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
+		   rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], iwork, &last, 
+		   &vect_flag, &stat);
+  else
+    {
+      C2F(nspdqagie)(intg_func, &bound, &inf, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
+		     rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], iwork, &last, 
+		     &vect_flag, &stat);
+      if ( sign == -1 ) res->R[0] = -res->R[0];
+    }
 
-  if ( ier == 6 ) goto err;  /* a problem occurs when the interpretor has evaluated */
-                             /* the function to integrate at a point */
 
-  if ( ier != 0 )  /* display a warning */
-    Sciprintf("\n Warning: requested precision not reached, ier = %d\n",ier);
+  if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
+                              /* the function to integrate at a point */
+
+  if ( ier == 6 )
+    {
+      Scierror("Error:  intg: tolerance too stringent\n");
+      goto err;
+    }
+  else if ( ier != 0 )  /* display a warning */
+    Sciprintf("\n Warning: abnormal return from intg (requested precision not reached), ier = %d\n",ier);
 
   intg_clean(&intg_d);
   FREE(rwork); FREE(iwork);
@@ -680,7 +751,11 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     {
       nsp_move_double(stack,2, er_estim);
       if ( lhs > 2 )
-	nsp_move_double(stack,3, (double) ier);
+	{
+	  nsp_move_double(stack,3, (double) ier);
+	  if ( lhs > 3 )
+	    nsp_move_double(stack,4, (double) neval);
+	}
     }
   return Max(1,lhs);
 
@@ -740,19 +815,19 @@ static int int2d_prepare(NspObject *f, NspObject *args, int2d_data *obj, Boolean
     {
       if ( iclose )  /* lmq1 integration formulae 46/3 points  */
 	{
-	  if ((obj->x = nsp_matrix_create("t",'r',46,1))== NULL) return FAIL;
-	  if ((obj->y = nsp_matrix_create("t",'r',46,1))== NULL) return FAIL;
+	  if ((obj->x = nsp_matrix_create("x",'r',46,1))== NULL) return FAIL;
+	  if ((obj->y = nsp_matrix_create("y",'r',46,1))== NULL) return FAIL;
 	}
       else           /* lmq0 integration formulae 28/3 points  */
 	{
-	  if ((obj->x = nsp_matrix_create("t",'r',28,1))== NULL) return FAIL;
-	  if ((obj->y = nsp_matrix_create("t",'r',28,1))== NULL) return FAIL;
+	  if ((obj->x = nsp_matrix_create("x",'r',28,1))== NULL) return FAIL;
+	  if ((obj->y = nsp_matrix_create("y",'r',28,1))== NULL) return FAIL;
 	}
     }
   else              /* scalar evaluation (so no distinction between lmq0 and lmq1) */
     {
-      if ((obj->x = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
-      if ((obj->y = nsp_matrix_create("t",'r',1,1))== NULL) return FAIL;
+      if ((obj->x = nsp_matrix_create("x",'r',1,1))== NULL) return FAIL;
+      if ((obj->y = nsp_matrix_create("y",'r',1,1))== NULL) return FAIL;
     }
   return OK;
 }

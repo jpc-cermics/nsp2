@@ -2,20 +2,20 @@
 
 \mansection{intg}
 \begin{mandesc}
-  \short{intg}{one dimensional integration over a finite interval}
+  \short{intg}{one dimensional integration over a finite or infinite interval}
 \end{mandesc}
 
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f)
-[Ia, [,ea_estim, [,ier]]]  = intg(a, b, f, atol=ea, rtol=er, args=obj, limit=maxsub, vecteval=b)
+Ia = intg(a,b,f)
+[Ia [,ea_estim [,ier [,neval]]]]  = intg(a, b, f, atol=ea, rtol=er, args=obj, limit=maxsub, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{a,b}:  real scalars defining the integration interval
+    \vname{a,b}:  real scalars (including \verb+-%inf+ and\verb+%inf+) defining the integration interval
     \vname{f}: nsp function defining the function to integrate
     \vname{atol=ea}: optional named argument, requested absolute error
                       on the result (default is 1e-14)
@@ -31,7 +31,8 @@
                    vector argument (this speed up the computation).
     \vname{Ia}: computed approximate result
     \vname{ea_estim}: estimated error
-    \vname{ier}: scalar given some information about the computation.
+    \vname{ier}: scalar given some information about the computation (see below)
+    \vname{neval}: number of function evaluations.
   \end{varlist}
 \end{parameters}
 
@@ -122,7 +123,7 @@ function y=g(x,p);a=p{1};b=p{2};y=b*x + sin(b*x);endfunction\Hnewline
 function y=g(x,p);y=p.a*x + sin(p.w*x);endfunction\Hnewline
 [Ia,ea] = intg(0,2*\%pi,g,args=hash(2,a=1,w=1))}
 \end{program}
-  \
+
 \paragraph{example 4} a difficult problem. Here we try to integrate:
 $$
     f(x) = 2 x \cos \left(\frac{1}{x}\right) +  \sin \left(\frac{1}{x}\right)
@@ -148,6 +149,24 @@ tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()\Hnewline
 tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=\%t); toc()}
 \end{program}
 
+  
+\paragraph{example 5} In this example we try to integrate probability 
+density functions, theorical results must be all equal to 1 (see the
+\manlink{pdf}{pdf} help page). 
+\begin{program}\HCode{// a function to handle all pdf functions with intg\Hnewline
+function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction\Hnewline
+// integrating the N(0,1) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"nor",0,1})\Hnewline
+// integrating the gamma (3,1) density\Hnewline
+[Ia, ea, ier] = intg(0, \%inf, f, args={"gam",3,1})\Hnewline
+// integrate the Cauchy (100) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"cau",100})\Hnewline
+// integrate the Laplace (1000) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"lap",1000})\Hnewline
+// integrate the beta (2,6) density\Hnewline
+[Ia, ea, ier] = intg(0, 1, f, args={"bet",2,6})}
+\end{program}
+
 \end{examples}
 
 \begin{manseealso}
@@ -156,6 +175,6 @@ tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=\%t); toc()}
 
 % -- Authors
 \begin{authors}
-  uses the routine dqags (Robert Piessens and Elise de Doncker) from
+  uses the routine dqagse and dqagie (Robert Piessens and Elise de Doncker) from
   quadpack. Nsp interface: Bruno Pincon.
 \end{authors}

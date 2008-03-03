@@ -1,3 +1,10 @@
+2008-03-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libinteg/integ-IN.c (intg_func): add the case
+	of infinite interval for intg
+	* src/libinteg/fromquadpack.f: source from the netlib
+	quadpack used by nsp, adapted for nsp and cleaned
+
 2008-02-15  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libinteg/integ-IN.c (int_int2d): 
