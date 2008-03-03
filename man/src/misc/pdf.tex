@@ -1,7 +1,7 @@
 % -*- mode: latex -*-
 \mansection{pdf}
 \begin{mandesc}
-  \short{pdf}{probability density functions}
+  \short{pdf}{probability density or mass functions}
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
@@ -20,10 +20,11 @@ y=pdf(dist_type, x [,p1,...,pk])
   \end{parameters}
   
 \begin{mandescription}
-  Computes the density function of various distributions. Most of the
+  Computes various probability density functions (for continuous
+  distributions) 
+  and various probability mass functions (for discrete distributions). Most of the
   scalar probability distributions of the \manlink{grand}{grand}
-  function are
-  supported. 
+  function are supported. 
 \begin{itemize}
 
 \item \itemdesc{beta} \verb!y=pdf(x,"bet",a,b)! computes the beta
@@ -35,15 +36,19 @@ $$
 $$
 
 \item \itemdesc{binomial} \verb!y=pdf(x,"bin",n,p)!. Computes
-  the binomial probabilities with parameters $p \in [0,1]$ and $n$
+  the binomial mass function with parameters $p \in [0,1]$ and $n$
   (positive integer):
 $$
      f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
 $$
 
 \item \itemdesc{negative binomial} \verb!y=pdf(x,"bin",n,p)!. Computes
-  the negative binomial probabilities with parameters $n > 0$ ($n$ not
-  necessarily integer) and $p \in [0,1]$.
+  the negative binomial mass function with parameters $n > 0$ ($n$ not
+  necessarily integer) and $p \in [0,1]$:
+$$
+     f(x; n, p) = \frac{ \Gamma(n+x) }{ x! \Gamma(n)} p^n (1-p)^x \;\mbox{for } x \in \{0,1,\dots,n\}
+$$
+
 
 \item \itemdesc{Cauchy} \verb!y=pdf(x,"cau",sigma)! computes the Cauchy
   density with parameter $\sigma > 0$:
@@ -53,7 +58,10 @@ $$
 
 
 \item \itemdesc{chi square} \verb!y=pdf(x,"chi",nu)! computes the chi square
-  density with parameter $\nu > 0$.
+  density with parameter $\nu > 0$ (number of dof):
+$$
+     f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{for } x > 0 
+$$
 
 
 \item \itemdesc{exponential} \verb!y=pdf(x,"exp",tau)! computes the exponential
@@ -87,7 +95,14 @@ $$
 
 
 \item \itemdesc{geometric} \verb!y=pdf(x,"geom",p)!. Computes
-  the geometric probabilities with parameter $p \in (0,1]$:
+  the geometric mass function with parameter $p \in (0,1]$:
+$$
+     f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
+$$
+
+\item \itemdesc{hypergeometric} \verb!y=pdf(x,"hyp",r,b,n)!. Computes
+  the hypergeometric mass function with parameter $r$, $b$ and $n$ all
+  positive integers with $n \le r + b$.
 $$
      f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
 $$
@@ -121,8 +136,8 @@ $$
 $$
 
 
-\item \itemdesc{Poisson} \verb!y=pdf(x,"poi",mu)!. Computes
-  the Poisson probabilities with parameter $\mu \ge 0$:
+\item \itemdesc{Poisson} \verb!y=pdf(x,"poi",mu)! computes
+  the Poisson mass function with parameter $\mu \ge 0$:
 $$
      f(x; \mu) = \frac{\mu^x e^{-\mu}}{x!} \;\mbox{for } x \in \{0, 1, 2, \dots\}
 $$
