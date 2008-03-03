@@ -981,3 +981,232 @@ int nsp_primes(int n, int **Primes, int *nb_primes)
   return OK;
 }
 
+/**
+ * nsp_pdf_normal
+ * @x: double
+ * @mu: double
+ * @sigma: double
+ *
+ * compute the gaussian density N(mu,sigma^2) at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_normal(double x, double mu, double sigma)
+{
+  double const sqrt_two_pi = 2.506628274631000502415765285;
+  double r = (x-mu)/sigma;
+  return  exp(-0.5*r*r)/(sigma*sqrt_two_pi);
+}
+
+/**
+ * nsp_pdf_lognormal
+ * @x: double
+ * @mu: double
+ * @sigma: double
+ *
+ * compute the lognormal density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_lognormal(double x, double mu, double sigma)
+{
+  double const sqrt_two_pi = 2.506628274631000502415765285;
+  if ( x <= 0.0 )
+    return 0.0;
+  else
+    {
+      double r = (log(x)-mu)/sigma;
+      return  exp(-0.5*r*r)/(sigma*sqrt_two_pi*x);
+    }
+}
+
+
+/**
+ * nsp_pdf_chi2
+ * @x: double
+ * @nu: double
+ *
+ * compute the chi2 density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_chi2(double x, double nu)
+{
+  return nsp_pdf_gamma(x, 0.5*nu, 0.5, 0);
+}
+
+/**
+ * nsp_pdf_exp
+ * @x: double
+ * @Av: double
+ *
+ * compute the exponential E(Av) density at x
+ * the parametre is the mean f the distribution
+ * (generally it is lambda = 1/Av)
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_exp(double x, double tau)
+{
+  if ( x < 0.0 )
+    return 0.0;
+  else
+    return exp(-x/tau)/tau;
+}
+
+/**
+ * nsp_pdf_cauchy
+ * @x: double
+ * @sigma: double
+ *
+ * compute the Cauchy density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_cauchy(double x, double sigma)
+{
+  return  sigma/(M_PI*(x*x + sigma*sigma)); 
+}
+
+
+/**
+ * nsp_pdf_pareto
+ * @x: double
+ * @a: double
+ * @b: double
+ *
+ * compute the Pareto density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_pareto(double x, double a, double b)
+{
+  if ( x < b )
+    return 0.0;
+  else
+    return  (a/b) / pow(x/b,a+1.0);
+}
+
+/**
+ * nsp_pdf_laplace
+ * @x: double
+ * @a: double
+ *
+ * compute the Laplace density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_laplace(double x, double a)
+{
+  return exp(-fabs(x/a))/(2.0*a);
+}
+
+/**
+ * nsp_pdf_logistic
+ * @x: double
+ * @a: double
+ * @b: double
+ *
+ * compute the logistic density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_logistic(double x, double a, double b)
+{
+  double y = exp(-fabs((x-a)/b));
+  return y / (b* (1.0+y)*(1.0+y));
+}
+
+/**
+ * nsp_pdf_weibull
+ * @x: double
+ * @a: double
+ * @b: double
+ *
+ * compute the Weibull density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_weibull(double x, double a, double b)
+{
+  if ( x < 0.0 )
+    return 0.0;
+  else if ( b == 1.0 )
+    return exp(-(x/a))/a;
+  else
+    {
+      double y = x/a;
+      return (b/a)*exp( (b-1.0)*log(y) - pow(y,b) );
+    }
+}
+
+/**
+ * nsp_pdf_rayleigh
+ * @x: double
+ * @sigma: double
+ *
+ * compute the Rayleigh density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_rayleigh(double x, double sigma)
+{
+  if ( x < 0.0 )
+    return 0.0;
+  else
+    {
+      double r = x / sigma;
+      return (r/sigma)*exp(-0.5*r*r);
+    }
+}
+
+/**
+ * nsp_pdf_tailrayleigh
+ * @x: double
+ * @sigma: double
+ * @a: double
+ *
+ * compute the tail Rayleigh density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_tailrayleigh(double x, double sigma, double a)
+{
+  if ( x < a )
+    return 0.0;
+  else
+    {
+      double r = x / sigma, s = a / sigma;
+      return (r/sigma)*exp(-0.5*(r-s)*(r+s));
+    }
+}
+
+/**
+ * nsp_pdf_geometric
+ * @x: double
+ * @p: double
+ *
+ * compute the geometric density at x
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_geometric(double x, double p)
+{
+  if ( x < 1.0 || floor(x) != x  )
+    return 0.0;
+  else
+    return p * pow(1.0-p,x-1.0);
+}
+

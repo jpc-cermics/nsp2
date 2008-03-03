@@ -1,5 +1,11 @@
 2008-03-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
+	* src/libspmf/spmf-IN.c (int_nsp_pdf): add a pdf function
+	(2 files are added which correspond to an adaptation
+	for nsp of the Catherine Loader dbinom 's package)
+
+2008-03-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
 	* src/libinteg/integ-IN.c (intg_func): add the case
 	of infinite interval for intg
 	* src/libinteg/fromquadpack.f: source from the netlib

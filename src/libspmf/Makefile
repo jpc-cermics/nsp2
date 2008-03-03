@@ -9,7 +9,7 @@ LIBRARY = spmf.a
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC=spmf.o convhull2d.o spmf-IN.o
+OBJSC=spmf.o convhull2d.o dbinom_raw.o dbinom_dens.o spmf-IN.o
 
 OBJSF=dxlegf.o 
 
