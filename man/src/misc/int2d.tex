@@ -9,21 +9,21 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f)
-[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f, tol=e, tolflag=b, args=obj, limit=maxtri, iclose=b, vecteval=b)
+[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f, tol=e, tolflag=b, args=obj,  
+                                   limit=maxtri, iclose=b, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
     \vname{X,Y}:  $3 \times n$ arrays, respectively the abscissae and
-    ordinates defining the set of triangles, that is the integration domain.
-    \vname{f}: nsp function defining the function to integrate
-    \vname{tol=e}: optional named argument, the requested absolute error
-                   or relative error on the result (default is 1e-10)
-    \vname{tolflag=b}: optional named argument, boolean scalar. Should
-                       \verb+%t+ if the requested tolerance \verb+tol+ is on the absolute
-                       error and \verb+%f+ for a relative error request
-                      (default is \verb+%f+).
+    ordinates of the triangles.
+    \vname{f}: nsp function
+    \vname{tol=e}: optional named argument, the requested absolute or
+    relative error on the result (default is 1e-10).
+    \vname{tolflag=b}: optional named argument, boolean scalar. Should be
+    \verb+%t+ if the requested tolerance \verb+tol+ concerns the absolute
+     error and \verb+%f+ for a relative error request (default is \verb+%f+).
     \vname{args=obj}: optional named argument, useful to pass
     additional parameters needed by the function f.
     \vname{limit=maxtri}: optional named argument, max number of
@@ -37,10 +37,10 @@
     use integration points on the boundary.
     \vname{vecteval=b}: optional named argument, boolean scalar
     (default \verb+%f+), use \verb+%t+ if you write the function
-                   \verb+f+ such that it could be evaluated on
-                   vectors arguments (this speed up the computation).
+    \verb+f+ such that it could be evaluated on vectors arguments 
+    (this speed up the computation).
     \vname{Ia}: computed approximate result
-    \vname{ea_estim}: estimated error
+    \vname{ea_estim}: estimated absolute error
     \vname{ier}: scalar given some information about the computation.
   \end{varlist}
 \end{parameters}
@@ -56,8 +56,8 @@ $$
 $$
 depending on the \verb+tolflag+ optional parameter.
 Additional parameters for the function $f$ could be passed using the
-named optional argument \verb+args+ which can be any nsp object (see
-examples). \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
+optional argument \verb+args+ which can be any nsp object (see
+examples). \verb+ea_estim+ is an estimation of $| I - I_a |$. The
 \verb+ier+ variable could take the following values: 
 \begin{itemize}
 \item ier = 0,  normal and reliable termination of the routine. It is assumed that the
@@ -69,7 +69,7 @@ examples). \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
       which prevents the requested tolerance from being
       achieved ; the error may be under-estimated.
 \item ier = 3: means terminaison with relative error less than 5* machine epsilon.
-      (this can be got when the input tolerance is too stringent).
+      (this can be obtained when the input tolerance is too stringent).
 \item ier = 4: max number of function calls have been reached ;
       in the actual interface implementation this other limit is set
       from the \verb+limit=maxtri+ parameter and should rarely be

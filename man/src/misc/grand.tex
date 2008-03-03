@@ -105,8 +105,9 @@ S=grand(action [,q1,....,ql])
 %  Related function(s) : \manlink{cdffnc}{cdffnc} .
   
 \item \itemdesc{gamma} \verb!Y=grand(m,n,"gam",a,b)! generates random variates from the gamma 
-  distribution with shape parameter $a$ (positive real) and scale
-  parameter $b$ (positive real).
+  distribution with shape parameter $a$ (positive real) and rate
+  parameter $b$ (positive real). Caution: often the second parameter
+  is the ``scale'', the inverse of the ``rate''.  
 %  Related function(s) : \manlink{gamma}{gamma} , \manlink{cdfgam}{cdfgam} .
   
 \item \itemdesc{Gauss Laplace (normal)} 

@@ -1,0 +1,209 @@
+% -*- mode: latex -*-
+\mansection{pdf}
+\begin{mandesc}
+  \short{pdf}{probability density functions}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y=pdf(dist_type, x [,p1,...,pk])  
+\end{verbatim}
+\end{calling_sequence}
+  %-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{dist\_type}: a string given the probability distribution (\verb!"bin"!, \verb!"nor"!, \verb!"poi"!, etc ...)
+    \vname{x}: scalar or vector or matrix with abscissae where the density function must be evaluated
+   \vname{p1, ..., pk}: (scalar) parameters (reals or integers) required to define the distribution \verb!dist_type!
+   \vname{y}: values at \verb+x+ of the given density.
+  \end{varlist}
+  \end{parameters}
+  
+\begin{mandescription}
+  Computes the density function of various distributions. Most of the
+  scalar probability distributions of the \manlink{grand}{grand}
+  function are
+  supported. 
+\begin{itemize}
+
+\item \itemdesc{beta} \verb!y=pdf(x,"bet",a,b)! computes the beta
+  density with parameters $a > 0$ and $b > 0$:
+$$
+     f(x; a, b) =
+        \frac{\Gamma(a+b)}{\Gamma(a) \Gamma(b)} x^{a-1}(1-x)^{b-1} \;
+        \mbox{for } x \in (0,1)
+$$
+
+\item \itemdesc{binomial} \verb!y=pdf(x,"bin",n,p)!. Computes
+  the binomial probabilities with parameters $p \in [0,1]$ and $n$
+  (positive integer):
+$$
+     f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
+$$
+
+\item \itemdesc{negative binomial} \verb!y=pdf(x,"bin",n,p)!. Computes
+  the negative binomial probabilities with parameters $n > 0$ ($n$ not
+  necessarily integer) and $p \in [0,1]$.
+
+\item \itemdesc{Cauchy} \verb!y=pdf(x,"cau",sigma)! computes the Cauchy
+  density with parameter $\sigma > 0$:
+$$
+     f(x; \sigma) = \frac{ \sigma }{ \pi ( x^2 + \sigma^2 ) }
+$$
+
+
+\item \itemdesc{chi square} \verb!y=pdf(x,"chi",nu)! computes the chi square
+  density with parameter $\nu > 0$.
+
+
+\item \itemdesc{exponential} \verb!y=pdf(x,"exp",tau)! computes the exponential
+  density with parameter $\tau > 0$:
+$$
+     f(x; \tau) = \frac{1}{\tau} e^{-x/\tau} \; \mbox{for } x
+     \ge 0
+$$
+Caution: the parameter is more frequently $\lambda = 1/\tau$.
+
+
+\item \itemdesc{F variance ratio} \verb!y=pdf(x,"f",nu1,nu2)! computes
+  the variance ratio density with parameters $\nu_1 > 0$ and $\nu_2 >
+  0$ (respectively number of dof in the numerator and denominator).
+
+
+\item \itemdesc{gamma} \verb!y=pdf(x,"gam",a,b)! computes the gamma
+  density with parameters $a > 0$ (shape parameter) and $b \ge 0$
+  (rate parameter):
+$$
+     f(x; a, b) = \frac{ b^a x^{a-1} e^{-bx} } {\Gamma(a)}\; \mbox{for } x > 0
+$$
+Caution: second parameter is often a scale parameter, says $s = 1/b$.
+
+\item \itemdesc{Gauss Laplace} \verb!y=pdf(x,"nor",mu,sigma)! computes the normal
+  density with parameters $\mu$ and $\sigma > 0$:
+$$
+     f(x; \mu, \sigma) = \frac{ 1 }{ \sigma \sqrt{2\pi}}
+     e^{-\frac{1}{2} \left( \frac{x-\mu}{\sigma} \right)^2 }
+$$
+
+
+\item \itemdesc{geometric} \verb!y=pdf(x,"geom",p)!. Computes
+  the geometric probabilities with parameter $p \in (0,1]$:
+$$
+     f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
+$$
+
+
+\item \itemdesc{Laplace} \verb!y=pdf(x,"lap",a)! computes the Laplace
+  density with parameter $a > 0$:
+$$
+     f(x; a) = \frac{1}{2a} e^{-\frac{|x|}{a}}
+$$
+
+\item \itemdesc{logistic} \verb!y=pdf(x,"logi",a,b)! computes the logistic
+  density with parameter $a$ and $b > 0$:
+$$
+     f(x; a,b) = \frac{y}{b (1+y)^2}, \; \mbox{ with } y = e^{-{|x-a|}{b}}
+$$
+
+
+\item \itemdesc{log normal} \verb!y=pdf(x,"logn",mu,sigma)! computes
+  the log normal density with parameters $\mu$ and $\sigma > 0$:
+$$
+     f(x; \mu, \sigma) = \frac{ 1 }{ \sigma \sqrt{2\pi}}
+     e^{-\frac{1}{2} r^2 }, \; \mbox{ with } r = \frac{\log(x)-\mu}{\sigma}
+$$
+
+
+\item \itemdesc{Pareto} \verb!y=pdf(x,"par",a,b)! computes the Pareto
+  density with parameters $a > 0$ and $b > 0$:
+$$
+     f(x; a, b) = \frac{ a/b }{ (x/b)^{a+1} }, \; \mbox{ for } x \ge b
+$$
+
+
+\item \itemdesc{Poisson} \verb!y=pdf(x,"poi",mu)!. Computes
+  the Poisson probabilities with parameter $\mu \ge 0$:
+$$
+     f(x; \mu) = \frac{\mu^x e^{-\mu}}{x!} \;\mbox{for } x \in \{0, 1, 2, \dots\}
+$$
+
+\item \itemdesc{Rayleigh} \verb!y=pdf(x,"ray",sigma)! computes the Rayleigh
+  density with parameter $\sigma > 0$:
+$$
+     f(x; \sigma) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x/\sigma)^2 }, \; \mbox{ for } x \ge 0
+$$
+
+\item \itemdesc{tail Rayleigh} \verb!y=pdf(x,"ray",sigma, a)! computes
+  the tail Rayleigh density with parameters $\sigma > 0$ and $a \ge 0$:
+$$
+     f(x; \sigma, a) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x-a)(x+a)/\sigma^2 }, \; \mbox{ for } x \ge a
+$$
+
+
+\item \itemdesc{Weibull} \verb!y=pdf(x,"wei",a,b)! computes the Weibull
+  density with parameters $a > 0$ and $b > 0$:
+$$
+     f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \; \mbox{ for } x > 0
+$$
+
+\end{itemize}
+
+\end{mandescription}
+
+
+\begin{examples}
+  
+\paragraph{example 1} draw N(0,1) 
+\begin{program}\HCode{x = linspace(-5,5,200)';\Hnewline
+y = pdf("nor",x,0,1);\Hnewline
+xclear(); plot2d(x,y,style=2);\Hnewline
+xtitle("The N(0,1) density function")}
+\end{program}
+  
+\paragraph{example 2} draw Gamma(5,1) empirically (with simulation and
+an histogram) and exactly (with pdf):
+\begin{program}\HCode{// generate a rather big sample of Gamma(5,1) variates\Hnewline
+X = grand(1e7,1,"gam",5,1);\Hnewline
+// draw an histogram using 200 classes\Hnewline
+xclear();histplot(200,X)\Hnewline
+// superpose the exact Gamma (5,1) density\Hnewline
+x = linspace(0,20,200)';\Hnewline
+y = pdf("gam",x,5,1);\Hnewline
+xset("thickness",2);plot2d(x,y,style=3,strf="000");xset("thickness",1)\Hnewline
+xtitle("Gamma (5,1) histogram and density")}
+\end{program}
+
+\paragraph{example 3} using pdf and \verb+grand(..,"disc",..)+ to simulate
+binomial random variates (when many random variates must be generated
+this is faster than using directly \verb+grand(..,"bin",..)+):
+\begin{program}\HCode{// compute B(500,0.3) probabilities\Hnewline
+p = pdf("bin",0:500,500,0.3);\Hnewline
+// now simulate B(500,0.3)\Hnewline
+tic(); X = grand(1e7,1,"disc",p)-1; toc()\Hnewline
+// compare with grand(..,"bin",..)\Hnewline
+tic(); Y = grand(1e7,1,"bin",500,0.3); toc()\Hnewline
+// display histogram for each sample and superpose exact probabilities\Hnewline
+classes = (100:201 - 0.5);\Hnewline
+xclear();\Hnewline
+subplot(1,2,1); histplot(classes,X)\Hnewline
+plot2d2(classes,p(101:201),style=5)\Hnewline
+xtitle("B(500,0.3) with grand(..,""disc"",...)")\Hnewline
+subplot(1,2,2); histplot(classes,Y)\Hnewline
+plot2d2(classes,p(101:201),style=5)\Hnewline
+xtitle("B(500,0.3) with grand(..,""bin"",...)")}
+\end{program}
+\end{examples}
+
+
+\begin{manseealso}
+  \manlink{grand}{grand}  
+\end{manseealso}
+
+%-- Authors
+
+\begin{authors}
+  beta, binomial, negative binomial, f, gamma and poisson densities uses the
+  Catherine Loader 's dbinom package. Other densities and nsp interface
+  Bruno Pincon.
+\end{authors}
+
