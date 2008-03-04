@@ -18,7 +18,12 @@ typedef NspObject *matint_clone(const char *name,const void *M, int m,int n, int
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 typedef NspObject * matint_canonic(NspObject *obj);
-typedef int matint_basic_copy_ind(void);
+
+typedef enum { nsp_matint_basic_copy_pointer, /* matint object which contain an array of pointers */
+	       nsp_matint_basic_copy_mat,/* matint object which behaves like NspMatrix  */
+	       nsp_matint_basic_copy_int,/* matint object which behaves like NspBMatrix  */
+	       nsp_matint_basic_copy /* matint object which behaves an array of numeric data  */
+} matint_copy_style ;
 
 typedef struct _NspTypeMatint NspTypeMatint ; 
 
@@ -33,7 +38,7 @@ struct _NspTypeMatint {
   matint_copy_elt *copy_elt;
   matint_enlarge *enlarge;
   matint_canonic *canonic;
-  matint_basic_copy_ind *copy_ind;
+  matint_copy_style copy_ind;
 };
 
 #define MAT_INT(t) ((NspTypeMatint *) t)
@@ -79,7 +84,9 @@ extern NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 extern int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB);
+
 typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
+
 extern int get_index_vector_from_object(NspObject *Obj, index_vector *index) ;
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
 extern int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag);
@@ -111,21 +118,7 @@ extern int int_matint_tozero(Stack stack, int rhs, int opt, int lhs);
 extern NspObject * nsp_matint_canonic(NspObject *obj);
 extern int int_matint_isvector(Stack stack, int rhs, int opt, int lhs);
 
-#ifdef COPY_IND1 
-extern int nsp_matint_basic_copy_pointer(const NspTypeBase *type,NspObject *A,NspObject *B, 
-				  const int *ind, int nb_elts);
-extern int nsp_matint_basic_copy_mat(const NspTypeBase *type,NspObject *A,NspObject *B, 
-				     const int *ind, int nb_elts);
-extern int nsp_matint_basic_copy_int(const NspTypeBase *type,NspObject *A, NspObject *B, 
-				     const int *ind, int nb_elts);
-extern int nsp_matint_basic_copy(const NspTypeBase *type,NspObject *A, NspObject *B, 
-				 const int *ind, int nb_elts);
-#else 
-extern int nsp_matint_basic_copy_pointer(void);
-extern int nsp_matint_basic_copy_mat(void);
-extern int nsp_matint_basic_copy_int(void);
-extern int nsp_matint_basic_copy(void);
-#endif 
+
 
 #endif 
 
