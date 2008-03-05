@@ -846,7 +846,37 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
+
+static int int_hyp_part(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  double n, r, b;
+  int i;
+  if ( rhs != 5 ) 
+    { Scierror("Error: 3 parameters required for 'hyp' option (got %d)\n",rhs-2); return RET_BUG;}
   
+  if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
+
+  if (GetScalarDouble(stack,3,&n) == FAIL) return RET_BUG;      
+
+  if (GetScalarDouble(stack,4,&r) == FAIL) return RET_BUG;      
+
+  if (GetScalarDouble(stack,5,&b) == FAIL) return RET_BUG;      
+
+  if ( ! ( n >= 1.0  &&  n == floor(n)  &&  r >= 0.0  &&  r == floor(r) 
+           && b >= 0.0 && b == floor(b) && n <= r + b) )
+    { 
+      Scierror("Error: pdf('hyp',x,n,r,b), invalid parameters\n"); 
+      return RET_BUG;
+    }
+ 
+  for ( i = 0 ; i < x->mn ; i++ )
+     x->R[i] = nsp_pdf_hyper(x->R[i], r, b, n, 0);
+
+  NSP_OBJECT(x)->ret_pos  = 1;
+  return 1;
+}
+   
 static int int_poi_part(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
@@ -1036,6 +1066,9 @@ static int int_nsp_pdf( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"f")==0)
     return int_f_part(stack, rhs, opt, lhs);
+
+  else if ( strcmp(rand_dist,"hyp")==0)
+    return int_hyp_part(stack, rhs, opt, lhs);
 
   else 
     {

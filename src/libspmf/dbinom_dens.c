@@ -188,21 +188,11 @@ double nsp_pdf_hyper(NTYPE x, NTYPE r, NTYPE b, NTYPE n, int give_log)
 { 
   double p, q, p1, p2, p3;
 
-#ifdef IEEE_754
-  if (ISNAN(x) || ISNAN(r) || ISNAN(b) || ISNAN(n))
-    return x + r + b + n;
-#endif
+  if (ISNAN(x))
+    return x;
 
-  if (NOT_NNEG_INT(r) | NOT_NNEG_INT(b) | NOT_NNEG_INT(n) | (n>r+b))
-    return( INVALID_PARAMS );
-
-  if (NOT_NNEG_INT(x)) return(D_0);
-  x = FORCE_INT(x);
-  r = FORCE_INT(r);
-  b = FORCE_INT(b);
-  n = FORCE_INT(n);
-
-  if (n==0) return((x==0) ? D_1 : D_0);
+  /* x goes from max(0,n-b) to min(n,r) */
+  if ( x < 0.0 || x > n || floor(x) != x ) return 0.0;
 
   p = ((double)n)/((double)(r+b));
   q = ((double)(r+b-n))/((double)(r+b));

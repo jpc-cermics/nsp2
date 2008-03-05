@@ -100,12 +100,20 @@ $$
      f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
 $$
 
-\item \itemdesc{hypergeometric} \verb!y=pdf(x,"hyp",r,b,n)!. Computes
-  the hypergeometric mass function with parameter $r$, $b$ and $n$ all
-  positive integers with $n \le r + b$.
+\item \itemdesc{hypergeometric} \verb!y=pdf(x,"hyp",n,r,b)!. Computes
+  the hypergeometric mass function with parameter $n$ (positive
+  integer) $r$ and $b$ non negative integers with $n \le r + b$. 
 $$
-     f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
+     f(x; r,b,n) = 
+    \frac{\left(\begin{array}{c}r\\x\end{array}\right)
+          \left(\begin{array}{c}b\\n-x\end{array}\right)}
+         {\left(\begin{array}{c}r+b\\n\end{array}\right)}
+         \;\mbox{for } x \in \{0, 1, .., n\}.
 $$
+$f(x; r,b,n)$ is the probability to get $x$ red balls
+in a sample (without replacement) of $n$ balls in an urn
+with $r$ red balls and $b$ blue balls. Rmk: possible values
+for $x$ are in fact integers from  $\max(0,n-b)$ to $\min(n,r)$.
 
 
 \item \itemdesc{Laplace} \verb!y=pdf(x,"lap",a)! computes the Laplace
@@ -207,7 +215,24 @@ subplot(1,2,2); histplot(classes,Y)\Hnewline
 plot2d2(classes,p(101:201),style=5)\Hnewline
 xtitle("B(500,0.3) with grand(..,""bin"",...)")}
 \end{program}
+
+\paragraph{example 5} using pdf and \verb+grand(..,"disc",..)+ to simulate
+hypergeometric random variates. This is useful as the grand doesn't
+support hypergeometric random generation.
+\begin{program}\HCode{// compute H(600,700,800) probabilities\Hnewline
+p = pdf("hyp",0:600,600,700,800);\Hnewline
+// now simulate \Hnewline
+tic(); X = grand(1e7,1,"disc",p)-1; toc()\Hnewline
+// display histogram and superpose exact probabilities\Hnewline
+classes = (240:321) - 0.5;\Hnewline
+xclear();\Hnewline
+histplot(classes,X)\Hnewline
+plot2d2(classes,p(241:322),style=5)\Hnewline
+xtitle("H(600,700,800) with grand(..,""disc"",...)")}
+\end{program}
+
 \end{examples}
+
 
 
 \begin{manseealso}
@@ -217,8 +242,8 @@ xtitle("B(500,0.3) with grand(..,""bin"",...)")}
 %-- Authors
 
 \begin{authors}
-  beta, binomial, negative binomial, f, gamma and poisson densities uses the
-  Catherine Loader 's dbinom package. Other densities and nsp interface
-  Bruno Pincon.
+  beta, binomial, negative binomial, f, gamma, hypergeometric and 
+  poisson densities uses the Catherine Loader 's dbinom package. Other 
+  densities and nsp interface Bruno Pincon.
 \end{authors}
 
