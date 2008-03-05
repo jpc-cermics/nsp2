@@ -6,9 +6,9 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-Y=grand(m, n, dist_type [,p1,...,pk])  
-Y=grand(X, dist_type [,p1,...,pk])  
-Y=grand(n, dist_type [,p1,...,pk])  
+X=grand(m, n, dist_type [,p1,...,pk])  
+X=grand(Mat, dist_type [,p1,...,pk])  
+X=grand(n, dist_type [,p1,...,pk])  
 S=grand(action [,q1,....,ql])  
 \end{verbatim}
 \end{calling_sequence}
@@ -16,12 +16,12 @@ S=grand(action [,q1,....,ql])
 \begin{parameters}
   \begin{varlist}
     \vname{m, n}: integers, size of the wanted matrix \verb!Y!
-   \vname{X}: a matrix whom only the dimensions (say \verb!m x n!) are used
+   \vname{Mat}: a matrix whom only the dimensions (say \verb!m x n!) are used
    \vname{dist\_type}: a string given the distribution which (independants) variates are to be 
      generated (\verb!"bin"!, \verb!"nor"!, \verb!"poi"!, etc ...)
    \vname{p1, ..., pk}: the parameters (reals or integers) required to define the distribution 
     \verb!dist_type!
-   \vname{Y}: the resulting \verb!m x n! random matrix
+   \vname{X}: the resulting \verb!m x n! random matrix
    \vname{action}: a string given the action onto the base generator(s) (\verb!"setgen"! to change the current base 
      generator,  \verb!"getgen"! to get the current base generator name, \verb!"getsd"! to get the 
      state (seeds) of the current base generator, etc ...)
@@ -34,7 +34,7 @@ S=grand(action [,q1,....,ql])
   This function may be used to generate random numbers from various distributions. In this 
   case you must apply one of the three first forms of the possible
   calling sequences to get an \verb!m x n! matrix. 
-  The two firsts are equivalent if \verb!X! is a \verb!m x n! matrix, 
+  The two firsts are equivalent if \verb!Mat! is a \verb!m x n! matrix, 
   and the third one corresponds to multivariate distributions (e.g. multinomial, multivariate
   gaussian, etc...) where a sample is a column vector (says of dim \verb!m!)
   and you get then \verb!n! such random vectors (as an \verb!m x n! matrix). 
@@ -50,121 +50,131 @@ S=grand(action [,q1,....,ql])
 \paragraph{Getting random numbers from a given distribution}
 
 \begin{description}
-\item[univariate distributions] (Rmk: distribution parameters
-  could be either scalars or vectors or matrices of same dimensions
-  than the wanted output matrix).
-  
+\item[univariate distributions] Rmk: 
+\begin{enumerate}
+\item distribution parameters could be either scalars or vectors or
+  matrices of same dimensions than the wanted output matrix
+\item densities or mass functions for most these distributions are
+  explicited in the \manlink{pdf}{pdf} help page.
+\end{enumerate}
+
 \begin{itemize}
-\item \itemdesc{beta} \verb!Y=grand(m,n,"bet",a,b)! generates random variates from 
+\item \itemdesc{beta} \verb!X=grand(m,n,"bet",a,b)! generates random variates from 
   the beta distribution with parameters $a$ and $b$ (positive reals).
 %  Related function(s) : \manlink{cdfbet}{cdfbet} .
 
 \item \itemdesc{binomial} 
-  \verb!Y=grand(m,n,"bin",n,p)!  generates random variates from the binomial 
+  \verb!X=grand(m,n,"bin",n,p)!  generates random variates from the binomial 
   distribution with parameters $n$ (positive integer) and $p$
   (real in [0,1]).
 %  Related function(s) : \manlink{binomial}{binomial} , \manlink{cdfbin}{cdfbin} .
 
 \item \itemdesc{negative binomial} 
-  \verb!Y=grand(m,n,"nbn",r,p)! generates random variates from the negative binomial 
+  \verb!X=grand(m,n,"nbn",r,p)! generates random variates from the negative binomial 
   distribution with parameters $r$ (positive real) and $p$ (real 
-  in (0,1)).
+  in $(0,1]$).
 %  Related function(s) : \manlink{cdfnbn}{cdfnbn} .
   
 \item \itemdesc{Cauchy} 
-  \verb!Y=grand(m,n,"cauchy", sigma)! generates random variates from the Cauchy distribution 
+  \verb!X=grand(m,n,"cauchy", sigma)! generates random variates from the Cauchy distribution 
   with (scale) parameter $sigma$ (positive real).
   
 \item \itemdesc{chi square} 
-  \verb!Y=grand(m,n,"chi", nu)! generates random variates from the chisquare distribution 
+  \verb!X=grand(m,n,"chi", nu)! generates random variates from the chisquare distribution 
   with $nu$ (positive real) degrees of freedom. 
 %  Related function(s) : \manlink{cdfchi}{cdfchi} .  
   
 \item \itemdesc{non central chisquare} 
-  \verb!Y=grand(m,n,"nch",nu,xnonc)! generates random variates from the non central chisquare
+  \verb!X=grand(m,n,"nch",nu,xnonc)! generates random variates from the non central chisquare
   distribution with $nu$ degrees of freedom (real $\ge 1$) and
   noncentrality parameter $xnonc$ (non negative real).
 %  Related function(s) : \manlink{cdfchn}{cdfchn} .
   
-\item \itemdesc{exponential} \verb!Y=grand(m,n,"exp",Av)! generates random variates from the exponential
-  distribution with mean $Av$ (non negative real). Caution : usually
-  the exponential distribution 's parameter is $\lambda= 1/Av$.  
+\item \itemdesc{exponential} \verb!X=grand(m,n,"exp",tau)! generates random variates from the exponential
+  distribution with mean $\tau$ (non negative real). Caution : usually
+  the exponential distribution 's parameter is $\lambda= 1/\tau$.  
   
 \item \itemdesc{F variance ratio} 
-  \verb!Y=grand(m,n,"f",nu1,nu2)! generates random variates from the F 
+  \verb!X=grand(m,n,"f",nu1,nu2)! generates random variates from the F 
   (variance ratio) distribution with $nu1$ (positive real)
   degrees of freedom in the numerator and $nu2$ (positive real) 
   degrees of freedom in the denominator. 
 % Related function(s) : \manlink{cdff}{cdff} .
   
 \item \itemdesc{non central F variance ratio} 
-  \verb!Y=grand(m,n,"nf",nu1,nu2,xnonc)! generates random variates from the noncentral 
+  \verb!X=grand(m,n,"nf",nu1,nu2,xnonc)! generates random variates from the noncentral 
   F (variance ratio)  distribution with $nu1$ (real $\ge 1$) degrees of freedom 
   in the numerator, and $nu2$ (positive real) degrees of freedom in the denominator, 
   and noncentrality parameter $xnonc$ (non negative real). 
 %  Related function(s) : \manlink{cdffnc}{cdffnc} .
   
-\item \itemdesc{gamma} \verb!Y=grand(m,n,"gam",a,b)! generates random variates from the gamma 
+\item \itemdesc{gamma} \verb!X=grand(m,n,"gam",a,b)! generates random variates from the gamma 
   distribution with shape parameter $a$ (positive real) and rate
   parameter $b$ (positive real). Caution: often the second parameter
   is the ``scale'', the inverse of the ``rate''.  
 %  Related function(s) : \manlink{gamma}{gamma} , \manlink{cdfgam}{cdfgam} .
   
 \item \itemdesc{Gauss Laplace (normal)} 
-  \verb!Y=grand(m,n,"nor",mu,sigma)! generates random variates from the normal 
+  \verb!X=grand(m,n,"nor",mu,sigma)! generates random variates from the normal 
   distribution with mean $\mu$ (real)  and standard deviation $\sigma$
   (non negative real). 
 % Related function(s) : \manlink{cdfnor}{cdfnor} .
   
-\item \itemdesc{geometric} \verb!Y=grand(m,n,"geom", p)! generates random variates from the geometric
-  distribution with parameter $p$ (positive real): number of Bernoulli trials (with 
+\item \itemdesc{geometric} \verb!X=grand(m,n,"geom", p)! generates random variates from the geometric
+  distribution with parameter $p$ (real in $(0,1]$): number of Bernoulli trials (with 
   probability succes of $p$) until a succes is met.
 
 \item \itemdesc{finite discrete distributions} 
-  \verb!Y=grand(m,n,"disc",P)! could generates random integers from any
+  \verb!X=grand(m,n,"disc",P)! could generates random integers from any
   finite discrete probability distribution given by the probability
-  vector $P$ ($P(i)$ being the probability to get $X=i$).
+  vector $P$ ($P(i)$ being the probability to get $X=i$). Rmk: if the 
+  support of the distribution is not $\{1,\dots,length(P)\}$ you have
+  an additionnal step for generate ramdom variates, for example to
+  generate random variate with support  $\{0,1,\dots,length(P)-1\}$
+  simply use \verb!X=grand(m,n,"disc",P)-1!. More generally if $P(i)$ is
+  the probability associated to $val(i)$ then you can use 
+  \verb!ind=grand(m,n,"disc",P); X = val(ind); X.redim[m,n]!. 
   
 \item \itemdesc{Laplace} 
-  \verb!Y=grand(m,n,"lap",a)! generates random variates from the Laplace 
+  \verb!X=grand(m,n,"lap",a)! generates random variates from the Laplace 
   distribution with (scale) parameter $a$ (positive real).
   
 \item \itemdesc{logistic} 
-  \verb!Y=grand(m,n,"logi",a)! generates random variates from the logistic 
+  \verb!X=grand(m,n,"logi",a)! generates random variates from the logistic 
   distribution with (location) parameter $a$ (real) and (scale) parameter $b$ (positive real).
   
 \item \itemdesc{log normal} 
-  \verb!Y=grand(m,n,"logn",mu,sigma)! generates random variates from the log normal
+  \verb!X=grand(m,n,"logn",mu,sigma)! generates random variates from the log normal
   distribution with parameter $\mu$ (real) and  $\sigma$ (non negative real).
   
 \item \itemdesc{Pareto} 
-  \verb!Y=grand(m,n,"par",a,b)! generates random variates from the Pareto 
+  \verb!X=grand(m,n,"par",a,b)! generates random variates from the Pareto 
   distribution with (shape) parameter $a$ (positive real) and (location) parameter $b$ (positive real).
 
-\item \itemdesc{Poisson} \verb!Y=grand(m,n,"poi",mu)! generates random
+\item \itemdesc{Poisson} \verb!X=grand(m,n,"poi",mu)! generates random
   variates from the Poisson distribution with parameter $\mu$. 
   
 \item \itemdesc{Rayleigh} 
-  \verb!Y=grand(m,n,"ray",sigma)! generates random variates from the Rayleigh 
+  \verb!X=grand(m,n,"ray",sigma)! generates random variates from the Rayleigh 
   distribution with (scale) parameter $\sigma$ (positive real).
   
 \item \itemdesc{tail Rayleigh} 
-  \verb!Y=grand(m,n,"tray",a, sigma)! generates random variates from the
+  \verb!X=grand(m,n,"tray",a, sigma)! generates random variates from the
   tail (from $a$) of the Rayleigh distribution with (scale) parameter 
   $\sigma$ (positive real). The (tail) parameter $a$ must be a non negative
   real (for $a=0$ we have the original Rayleigh distribution).
 
-\item \itemdesc{uniform (def)} \verb!Y=grand(m,n,"def")! generates random variates from the uniform 
+\item \itemdesc{uniform (def)} \verb!X=grand(m,n,"def")! generates random variates from the uniform 
   distribution over $[0,1)$ (1 is never returned).
 
-\item \itemdesc{uniform (unf)} \verb!Y=grand(m,n,"unf",low,high)! generates random reals uniformly distributed 
+\item \itemdesc{uniform (unf)} \verb!X=grand(m,n,"unf",low,high)! generates random reals uniformly distributed 
     in $[low, high]$.
 
-\item \itemdesc{uniform (uin)} \verb!Y=grand(m,n,"uin",low,high)! generates random integers uniformly 
+\item \itemdesc{uniform (uin)} \verb!X=grand(m,n,"uin",low,high)! generates random integers uniformly 
       distributed between \verb!low! and \verb!high! (included). \verb!high!
       and \verb!low! must be integers such that \verb!high-low+1 > 2,147,483,561!.
 
-\item \itemdesc{uniform (lgi)} \verb!Y=grand(m,n,"lgi")! returns the basic output of the current generator : random integers  
+\item \itemdesc{uniform (lgi)} \verb!X=grand(m,n,"lgi")! returns the basic output of the current generator : random integers  
       following a uniform distribution over : 
       \begin{itemize}
       \item \verb![0, 2^32 - 1]! for mt, kiss, fsultra and well1024a
@@ -172,46 +182,46 @@ S=grand(action [,q1,....,ql])
       \item \verb![0, 2147483561]! for clcg2
       \end{itemize}
 
-\item \itemdesc{uniform (8bits)} \verb!Y=grand(m,n,"8bits")! generates random integers uniformly 
+\item \itemdesc{uniform (8bits)} \verb!X=grand(m,n,"8bits")! generates random integers uniformly 
       distributed over $[0,255]$.
   
 \item \itemdesc{Weibull} 
-  \verb!Y=grand(m,n,"wei",a,b)! generates random variates from the Weibull 
+  \verb!X=grand(m,n,"wei",a,b)! generates random variates from the Weibull 
   distribution with (scale) parameter $a$ (positive real) and (shape) parameter $b$ (positive real).
 \end{itemize}
 
 \item[multivariate distributions]
 \begin{itemize}
 \item \itemdesc{multivariate gaussian (multivariate normal)}
-  \verb!Y=grand(n,"mn",Mean,Cov)! generates  $n$ multivariate normal random variates ; 
+  \verb!X=grand(n,"mn",Mean,Cov)! generates  $n$ multivariate normal random variates ; 
   $Mean$ must be a $m \times 1$ matrix and $Cov$ a  $m \times m$ 
-  symetric positive definite matrix  ($Y$ is then a  $m \times n$
+  symetric positive definite matrix  ($X$ is then a  $m \times n$
   matrix).
 
 \item \itemdesc{multinomial} 
-   \verb!Y=grand(n,"mul",nb,P)! generates \verb!n! observations from the Multinomial 
+   \verb!X=grand(n,"mul",nb,P)! generates \verb!n! observations from the Multinomial 
   distribution :  class \verb!nb! events in \verb!m! categories (put \verb!nb!
   "balls" in \verb!m! "boxes"). \verb!P(i)! is the probability 
   that an event will be classified into category i. \verb!P! the vector of probabilities
   is of size  \verb!m-1! (the probability of category \verb!m! being \verb!1-sum(P)!).
-  \verb!Y! is of size \verb!m x n!, each column \verb!Y(:,j)! being an observation 
-  from multinomial distribution and \verb!Y(i,j)! the number of events falling in category 
-  \verb!i! (for the \verb!j! th observation) (\verb!sum(Y(:,j)) = nb!).
+  \verb!X! is of size \verb!m x n!, each column \verb!X(:,j)! being an observation 
+  from multinomial distribution and \verb!X(i,j)! the number of events falling in category 
+  \verb!i! (for the \verb!j! th observation) (\verb!sum(X(:,j)) = nb!).
   
 \item \itemdesc{uniform on the unit sphere}
-  \verb!Y=grand(n,"sph",d)! generate ($n$) random points uniformly
+  \verb!X=grand(n,"sph",d)! generate ($n$) random points uniformly
   distributed on the unit sphere of \verb!R^d!. For a sphere of radius
   $r$ and center $C$ (a column vector), you can use: 
-  \verb!Y = C*ones(1,n) + r*grand(n,"sph",d)!.
+  \verb!X = C*ones(1,n) + r*grand(n,"sph",d)!.
   
 \item \itemdesc{uniform inside the unit sphere}
-  \verb!Y=grand(n,"insph",d)! generate ($n$) random points uniformly
+  \verb!X=grand(n,"insph",d)! generate ($n$) random points uniformly
   distributed inside the unit sphere of \verb!R^d!. For a sphere of radius
   $r$ and center $C$ (a column vector), you can use: 
-  \verb!Y = C*ones(1,n) + r*grand(n,"insph",d)!.
+  \verb!X = C*ones(1,n) + r*grand(n,"insph",d)!.
   
 \item \itemdesc{uniform on simplex}
-  \verb!Y=grand(n,"simp",dim)! generate ($n$) random points uniformly
+  \verb!X=grand(n,"simp",dim)! generate ($n$) random points uniformly
   distributed on the simplex $\{ (x_1,...,x_{dim}): x_i >=0, \sum
   x_i = 1 \}$. To generate on the simplex with vertices (columnwise) 
   stacked in the matrix \verb!P = [P_1 | .... | P_(dim+1)]! (the jth column of $P$ 
@@ -219,24 +229,24 @@ S=grand(action [,q1,....,ql])
   \verb!coord = grand(n,"simp",dim); X = P*[coord; 1-sum(coord,1)];!.
  
 \item \itemdesc{markov} 
-  \verb!Y=grand(n,"markov",P,x0)! generates \verb!n! successive states of a Markov chain 
+  \verb!X=grand(n,"markov",P,x0)! generates \verb!n! successive states of a Markov chain 
   described  by the transition matrix \verb!P!. Initial state is  given by 
   \verb!x0!. If \verb!x0! is a matrix of size \verb!m=size(x0,"*")! 
-  then \verb!Y! is a matrix of size \verb!m x n!. \verb!Y(i,:)! is the sample 
+  then \verb!X! is a matrix of size \verb!m x n!. \verb!X(i,:)! is the sample 
   path  obtained from initial state \verb!x0(i)!.
 
-\item \itemdesc{random permutations} \verb!Y=grand(n,"prm",vect)! generate $n$ random permutations of the
+\item \itemdesc{random permutations} \verb!X=grand(n,"prm",vect)! generate $n$ random permutations of the
   column vector $vect$ (in a uniform way over all possible permutations).
 
 \item \itemdesc{random permutations of $(1,..,m)$}
-  \verb!Y=grand(n,"perm",m)! generate $n$ random permutations of the
+  \verb!X=grand(n,"perm",m)! generate $n$ random permutations of the
   vector $[1;2;...;m]$ (in a uniform way over the all $m!$ possible permutations).
 
 \item \itemdesc{random samples}
-  \verb!Y=grand(n,"smpl",p,m)! generate $n$ random samples of size $p$
+  \verb!X=grand(n,"smpl",p,m)! generate $n$ random samples of size $p$
   of the vector $[1;2;...;m]$ (that is select $p$ different elements
   of $\{1,2,...,m\}$) in a uniform way. If you need ordered samples
-  sort the resulting matrix with \verb!Y=sort(Y,"r","i")!.
+  sort the resulting matrix with \verb!X=sort(X,"r","i")!.
 
 \end{itemize}
 

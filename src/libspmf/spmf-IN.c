@@ -929,25 +929,25 @@ static int int_geom_part(Stack stack, int rhs, int opt, int lhs)
 static int int_nbn_part(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
-  double p, n;
+  double p, r;
   int i;
   if ( rhs != 4 ) 
     { Scierror("Error: 2 parameters required for 'nbn' option (got %d)\n",rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
-  if (GetScalarDouble(stack,3,&n) == FAIL) return RET_BUG;      
+  if (GetScalarDouble(stack,3,&r) == FAIL) return RET_BUG;      
 
   if (GetScalarDouble(stack,4,&p) == FAIL) return RET_BUG;      
 
-  if ( !( n > 0.0  &&  0.0 <= p  &&  p <= 1.0) )
+  if ( !( r > 0.0  &&  0.0 <= p  &&  p <= 1.0) )
     { 
-      Scierror("Error: pdf('nbn',x,n,p), invalid parameters: n should be positive and p in [0,1]\n"); 
+      Scierror("Error: pdf('nbn',x,r,p), invalid parameters: r should be positive and p in [0,1]\n"); 
       return RET_BUG;
     }
 
   for ( i = 0 ; i < x->mn ; i++ )
-    x->R[i] = nsp_pdf_nbinom(x->R[i], n, p, 0);
+    x->R[i] = nsp_pdf_nbinom(x->R[i], r, p, 0);
 
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
