@@ -161,7 +161,6 @@ extern NspMatrix *nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B);
 extern NspMatrix *nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B); 
 extern int nsp_matrix_add_rows(NspMatrix *A, int m); 
 extern int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B); 
-extern int GenericMatSeRo(void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal); 
 extern int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,
 			     void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal);
 extern int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B); 
@@ -320,8 +319,10 @@ extern int nsp_array_maxi(int n,const double *A, int incr, double *amax);
 extern int nsp_array_mini(int n,const double *A, int incr, double *amax);
 
 /* cache */
-void nsp_free_index_vector_cache(index_vector *index);
-int nsp_get_index_vector_cache(index_vector *index);
+extern void nsp_free_index_vector_cache(index_vector *index);
+extern int nsp_get_index_vector_cache(index_vector *index);
+extern int nsp_get_index_vector_from_object(NspObject *Obj,index_vector *index) ;
+extern int nsp_get_index_vector(Stack stack, int ipos,NspObject **Obj,index_vector *index);
 
 /*
  * inlined functions 

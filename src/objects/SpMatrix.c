@@ -36,10 +36,8 @@ extern int C2F(dperm) (double A[],int ind[],int *nv);
 extern int C2F(zperm) (doubleC A[],int ind[],int *nv);
 
 static int nsp_dichotomic_search(int x,const int val[],int imin,int imax);
-
-static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
-				    NspMatrix *Work,NspMatrix *Index,int count);
-
+static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int *val,int imin,int imax,
+				      NspMatrix *Work,NspMatrix *Index,int count);
 
 
 /**
@@ -567,7 +565,7 @@ int nsp_sprowmatrix_get_elt(NspSpRowMatrix *B, int i, int j)
  * Return value:  %OK or %FAIL
  **/
 
-int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpRowMatrix *B)
+int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspObject *Rows, NspObject *Cols, NspSpRowMatrix *B)
 {
   return nsp_spcolmatrix_set_rowcol((NspSpColMatrix *) A,Cols,Rows,(NspSpColMatrix *) B);
 }
@@ -596,28 +594,43 @@ int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Co
  * Return value:  %OK or %FAIL
  **/
 
-int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *B) 
+int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspObject *Inds, NspSpRowMatrix *B) 
 {
+  NspTypeBase *type;
   int i;
   int Bscal=0;
+  index_vector index={0};
+  index.iwork = matint_iwork1;
+
+  /* check that we can cast Inds */
+  
+  if (( type = check_implements(Inds,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Object do not implements matint interface\n");
+      return FAIL;
+    }
+  
+  if ( nsp_get_index_vector_from_object(Inds,&index) == FAIL) goto fail;
+
+
   /* Calling a genric function which check arguments **/
-  if (GenericMatSeRo(A,A->m,A->n,A->m*A->n,Inds,
+  if (GenericMatSeRo(A,A->m,A->n,A->m*A->n,&index,
 		     B,B->m,B->n,B->m*B->n,(F_Enlarge)nsp_sprowmatrix_enlarge,&Bscal)== FAIL) 
-    return FAIL;
+    goto fail;
   /* */
   if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
     {
-      if (nsp_sprowmatrix_complexify(A) == FAIL ) return(FAIL);
+      if (nsp_sprowmatrix_complexify(A) == FAIL ) goto fail;
     }
   if ( Bscal == 0 ) 
     {
-      for ( i = 0  ; i < Inds->mn ; i++) 
+      for ( i = 0  ; i < index.nval ; i++) 
 	{
 	  int rb,cb,kb,ia,ra,ca ;
-	  rb= i % Inds->m;
-	  cb= (i - rb )/Inds->m;
+	  rb= i % ((NspSMatrix *)Inds)->m;
+	  cb= (i - rb )/((NspSMatrix *)Inds)->m;
 	  kb =nsp_sprowmatrix_get_elt(B,rb,cb);
-	  ia = ((int) Inds->R[i])-1;
+	  ia = index.val[i];
 	  ra = ia % A->m;
 	  ca= (ia - ra )/A->m;
 	  if ( kb == -1 ) 
@@ -626,13 +639,13 @@ int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *
 	      int ok1 =nsp_sprowmatrix_delete_elt(A,ra,ca,0,A->D[ra]->size);
 	      if ( ok1 != -1 ) 
 		{
-		  if (nsp_sprowmatrix_resize_row(A,ra,A->D[ra]->size-1) == FAIL) return FAIL;
+		  if (nsp_sprowmatrix_resize_row(A,ra,A->D[ra]->size-1) == FAIL) goto fail;
 		}
 	    }
 	  else
 	    {
 	      /* must change or insert element in A **/
-	      if (nsp_sprowmatrix_insert_elt(A,ra,ca,B,rb,kb)== FAIL) return FAIL;
+	      if (nsp_sprowmatrix_insert_elt(A,ra,ca,B,rb,kb)== FAIL) goto fail;
 	    }
 	}
     }
@@ -643,34 +656,41 @@ int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *
 	{
 	  /* B is a null scalar sparse matrix **/
 	  /* we must remove elements from A **/
-	  for ( i = 0  ; i < Inds->mn ; i++) 
+	  for ( i = 0  ; i < index.nval  ; i++) 
 	    {
 	      int ia,ra,ca,ok1 ;
-	      ia = ((int) Inds->R[i])-1;
+	      ia = index.val[i];
 	      ra = ia % A->m;
 	      ca= (ia - ra )/A->m;
 	      /* we must set the [ra,ca] element of A to 0.0 **/
 	      ok1 =nsp_sprowmatrix_delete_elt(A,ra,ca,0,A->D[ra]->size);
 	      if ( ok1 != -1 ) 
 		{
-		  if (nsp_sprowmatrix_resize_row(A,ra,A->D[ra]->size-1) == FAIL) return FAIL;
+		  if (nsp_sprowmatrix_resize_row(A,ra,A->D[ra]->size-1) == FAIL) goto fail;
 		}
 	    }
 	}
       else 
 	{
 	  /* B is a non null scalar **/
-	  for ( i = 0  ; i < Inds->mn ; i++) 
+	  for ( i = 0  ; i < index.nval  ; i++) 
 	    {
 	      int ia,ra,ca ;
-	      ia = ((int) Inds->R[i])-1;
+	      ia = index.val[i];
 	      ra = ia % A->m;
 	      ca= (ia - ra )/A->m;
-	      if (nsp_sprowmatrix_insert_elt(A,ra,ca,B,0,0)== FAIL) return FAIL;
+	      if (nsp_sprowmatrix_insert_elt(A,ra,ca,B,0,0)== FAIL) goto fail;
 	    }
 	}
     }
-  return(OK);
+
+  nsp_free_index_vector_cache(&index);
+  return OK;
+
+ fail:
+  nsp_free_index_vector_cache(&index);
+  return FAIL;
+
 }
 
 
@@ -706,7 +726,7 @@ int nsp_sprowmatrix_compress_row(NspSpRowMatrix *A, int i)
  * Return value:  %OK or %FAIL
  **/
 
-int nsp_sprowmatrix_delete_cols(NspSpRowMatrix *A, NspMatrix *Cols)
+int nsp_sprowmatrix_delete_cols(NspSpRowMatrix *A, NspObject *Cols)
 {
   return nsp_spcolmatrix_delete_rows((NspSpColMatrix *) A,Cols);
 }
@@ -721,7 +741,7 @@ int nsp_sprowmatrix_delete_cols(NspSpRowMatrix *A, NspMatrix *Cols)
  * Return value:  %OK or %FAIL
  **/
 
-int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspMatrix *Rows)
+int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspObject *Rows)
 {
   return nsp_spcolmatrix_delete_cols((NspSpColMatrix *) A,Rows);
 }
@@ -732,35 +752,43 @@ int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspMatrix *Rows)
  * A unchanged, Rows and Cols are unchanged 
  */	
 
-static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols, int flag, int *err)
+static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject *Cols, int flag, int *err)
 {
   NspMatrix *Work= NULL, *Index = NULL;
   NspSpRowMatrix *Loc;
-  int rmin,rmax,cmin,cmax,i,j,Rm;
-  if ( A->m || A->n == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n);
+  int i,j,Rm;
+
+  index_vector index_c={0}, index_r={0};
+  index_r.iwork = matint_iwork1;
+  index_c.iwork = matint_iwork2;
+
+  /* if ( A->m || A->n == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n); */
   if (flag == 1) 
     {
-      Bounds(Rows,&rmin,&rmax);
-      if ( rmin < 1 ||  rmax > A->m  ) 
+      if ( nsp_get_index_vector_from_object(Rows,&index_r) == FAIL) return NULLSPROW;
+      if ( index_r.min < 1 ||  index_r.max > A->n  ) 
 	{
 	  *err=1;
 	  Scierror("Error:\tIndices out of bound\n");
-	  return(NULLSPROW);
+	  goto err;
 	}
     }
-  Index = nsp_mat_sort (Cols,2,"g","i");
-  cmin = Cols->R[0]; cmax = Cols->R[Cols->mn-1];
+  
+  if ( nsp_get_index_vector_from_object(Cols,&index_c) == FAIL) goto err;
+  if (( Index = nsp_matrix_create(NVOID,'r',index_c.nval,1)) == NULLMAT ) goto err;
+  nsp_qsort_int(index_c.val,Index->I,TRUE,index_c.nval,'i');
+  
   *err=0;
-  if (  cmin < 1 ||  cmax > A->n ) 
+  if (  index_c.min < 1 ||  index_c.max > A->n ) 
     {
       *err=1;
-      return(NULLSPROW);
+      goto err;
     }
-  Rm= (flag == 1) ? Rows->mn : A->m;
-  if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,Rm,Cols->mn))== NULLSPROW) 
+  Rm= (flag == 1) ? index_r.nval : A->m;
+  if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,Rm,index_c.nval))== NULLSPROW) 
     return(NULLSPROW);
   /* used to store elements */
-  if ( ( Work = nsp_matrix_create(NVOID,'r',2,Cols->mn)) == NULLMAT) return NULLSPROW;
+  if ( ( Work = nsp_matrix_create(NVOID,'r',2,index_c.nval)) == NULLMAT) return NULLSPROW;
   
   for ( i = 0 ; i < Loc->m ; i++)
     {
@@ -768,22 +796,22 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
       int imin,imax,k;
       SpRow *Ai, *Li;
       int row;
-      row = (flag == 1) ? ((int) Rows->R[i])-1 : i ;
+      row = (flag == 1) ? index_r.val[i] : i ;
       Ai= A->D[row];
       Li= Loc->D[i];
       Li->iw=0;
       if ( Ai->size == 0) continue; /* nothing to do row is empty */
       imin=0; imax= Ai->size-1 ; k = -1;
       Li->iw=0;
-      count = nsp_bi_dichotomic_search(Cols->R,0,Cols->mn-1,Ai->J,imin,imax,Work,Index,0);
+      count = nsp_bi_dichotomic_search_i(index_c.val,0,index_c.nval-1,Ai->J,imin,imax,Work,Index,0);
       /* now we know the row size */
       if (nsp_sprowmatrix_resize_row(Loc,i,count)==FAIL) return NULLSPROW;
       /* Fill columns of i-th row **/
       Li->iw=0;
       for ( j = 0 ; j < Li->size ; j++ )
 	{	
-	  int k= (int) Work->R[1+2*j];
-	  Li->J[j]= (int) Work->R[2*j];
+	  int k= (int) Work->I[1+2*j];
+	  Li->J[j]= (int) Work->I[2*j];
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : Li->R[j]= Ai->R[k];break;
@@ -802,8 +830,19 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
 	}
 
     }
+
   nsp_matrix_destroy(Work);
+  nsp_matrix_destroy(Index);
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
   return(Loc);
+ err:
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
+  if ( Work  != NULL) nsp_matrix_destroy(Work);
+  if ( Index != NULL) nsp_matrix_destroy(Index);
+  if ( Loc != NULL) nsp_sprowmatrix_destroy(Loc);
+  return NULL;
 }
 
 /**
@@ -817,7 +856,7 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspObject *Rows, NspObject *Cols)
 {
   NspSpColMatrix *loc;
   if ((loc=nsp_spcolmatrix_extract((NspSpColMatrix *) A,Cols,Rows))==NULL)
@@ -835,16 +874,24 @@ NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspM
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
+NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspObject *Elts)
 {
   NspSpRowMatrix *Loc;
-  int rmin,rmax,i,err=0,k;
-  Bounds(Elts,&rmin,&rmax);
-  if ( A->m == 0 || A->n == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n);
-  if ( rmin < 1 || rmax > A->m * A->n ) /* possible overflow */
+  int i,err=0,k;
+  index_vector index={0};
+  index.iwork = matint_iwork1;
+  if ( nsp_get_index_vector_from_object(Elts,&index) == FAIL) return NULLSPROW;
+  
+  if ( A->m == 0 || A->n == 0) 
+    {
+      Loc = nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n);
+      nsp_free_index_vector_cache(&index);
+      return Loc;
+    }
+  if ( index.min < 1 || index.max > A->m * A->n ) /* possible overflow */
     {
       Scierror("Error:\tIndices out of bound\n");
-      return(NULLSPROW);
+      goto fail;
     }
   if ( A->m == 1 && A->n > 1 ) 
     {
@@ -852,17 +899,18 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
       if ((Rows = nsp_matrix_create(NVOID,'r',1,1))== NULLMAT ) return NULLSPROW;
       Rows->R[0] = 1;
       /* like A(1,Elts) **/
-      Loc=  SpExtract_G(A,Rows,Elts,1,&err);
+      Loc=  SpExtract_G(A,NSP_OBJECT(Rows),Elts,1,&err);
       if (err==1 ) Scierror("Error:\tIndices out of bound\n");
+      nsp_free_index_vector_cache(&index);
       return Loc;
     }
   else
     {
-      if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,Elts->mn,1))== NULLSPROW) 
-	return(NULLSPROW);
-      for ( i=0; i < Elts->mn ; i++) 
+      if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,index.nval,1))== NULLSPROW) 
+	goto fail;
+      for ( i=0; i < index.nval ; i++) 
 	{
-	  int el = ((int)Elts->R[i]) -1;
+	  int el = index.val[i];
 	  int row = el % A->m ;   
 	  int col = (el-row)/A->m;
 	  /* Loc[i,0] = A[row,col] **/
@@ -875,7 +923,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
 	  if ( ok != -1) 
 	    {
 	      /*  A[row,col] != 0 **/
-	      if (nsp_sprowmatrix_resize_row(Loc,i,1)==FAIL) return NULLSPROW;
+	      if (nsp_sprowmatrix_resize_row(Loc,i,1)==FAIL) goto fail;
 	      Loc->D[i]->J[0]=0;
 	      switch ( A->rc_type ) 
 		{
@@ -884,8 +932,14 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
 		}
 	    }
 	}
-      return(Loc);
     }
+  nsp_free_index_vector_cache(&index);
+  return Loc;
+
+ fail:
+   nsp_free_index_vector_cache(&index);
+   return NULLSPROW;
+
 }
 
 
@@ -901,7 +955,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols, int *err)
+NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspObject *Cols, int *err)
 {
   NspSpColMatrix *loc;
   if ((loc=nsp_spcolmatrix_extract_rows((NspSpColMatrix *) A,Cols,err))==NULL)
@@ -925,7 +979,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols,
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspMatrix *Rows, int *err)
+NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspObject *Rows, int *err)
 {
   NspSpColMatrix *loc;
   if ((loc=nsp_spcolmatrix_extract_cols((NspSpColMatrix *) A,Rows,err))==NULL)
@@ -1522,13 +1576,12 @@ NspMatrix *nsp_sprowmatrix_op_scal(NspSpRowMatrix *A, NspSpRowMatrix *B, int *fl
   return Loc;
 }
 
-
 /**
  * nsp_dichotomic_search:
- * @x: 
- * @val: 
- * @imin: 
- * @imax: 
+ * @x: an integer 
+ * @val: an array of int (unchanged)
+ * @imin: an integer 
+ * @imax: an integer 
  * 
  * performs a dichotomic search of x in array @val for indices in [@imin,@imax].
  * @val is supposed to be strictly increasing. 
@@ -1573,43 +1626,36 @@ static int nsp_dichotomic_search(int x,const int val[],int imin,int imax)
  * 
  */
 
-
-static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int xmin,int xmax,
-					const int val[],int imin,int imax,
-					NspMatrix *Work,NspMatrix *Index,int count);
-
-
-static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
-				    NspMatrix *Work,NspMatrix *Index,int count)
-{
-  int xmin = nsp_dichotomic_search(x[xpmin]-1,val,imin,imax);
-  int xmax = nsp_dichotomic_search(x[xpmax]-1,val,imin,imax);
-  count = nsp_bi_dichotomic_search_int(x,xpmin,xpmax,xmin,xmax,val,imin,imax,Work,Index,0);
-  /* last point */
-  if ( xmax >= 0 && ((int) x[xpmax])-1 == val[xmax] ) 
-    {
-      /* Sciprintf("OK pour A(i,%d) -> %d \n",xmax+1,((int) Cols->R[Cols->mn-1]));*/
-      Work->R[2*count]= Index->R[xpmax]-1; /* column in final row*/
-      Work->R[1+2*count]= xmax; /* position in Ai of the value */
-      count++;
-    }
-  return count;
-}
-
-/*
+/**
+ * nsp_bi_dichotomic_search_int:
+ * @x: 
+ * @xpmin: 
+ * @xpmax: 
+ * @xmin: 
+ * @xmax: 
+ * @val: 
+ * @imin: 
+ * @imax: 
+ * @Work: 
+ * @Index: 
+ * @count: 
+ * 
  * search x[xpmin,xpmax]-1 in val[imin:imax] 
- * and store information in Work as processing 
- * Th enumber of stored values is returned in count 
+ * and store information in Work as processing. 
+ * The number of stored values is returned in count 
  * xmin >= 0 ==> we know that x[xpmin]-1 is >= val[xmin] 
  * xmin == -1 x[xpmin]-1 is < val[xmin] 
  * xmin == -2 x[xpmin]-1 is > val[xmax] 
  * same rules for for xmax and x[xpmax] 
  * x and val are increasing 
- */
+ * 
+ * 
+ * Return value: 
+ **/
 
-static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int xmin,int xmax,
-					const int val[],int imin,int imax,
-					NspMatrix *Work,NspMatrix *Index,int count)
+static int nsp_bi_dichotomic_search_int_i(const int *x,int xpmin,int xpmax,int xmin,int xmax,
+					  const int *val,int imin,int imax,
+					  NspMatrix *Work,NspMatrix *Index,int count)
 {
   int j,jval;
   /* totally out of range */
@@ -1625,10 +1671,10 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
 	  /* check the whole interval [xpmin,xpmax[ */
 	  for ( k = xpmin ; k < xpmax ; k++) 
 	    {
-	      if (((int) x[k])-1 == val[xmin] ) 
+	      if ( (x[k]) == val[xmin] ) 
 		{
 		  /* Sciprintf("OK pour A(i,%d) -> %d \n",xmin+1,((int) x[k])); */
-		  Work->R[2*count]= Index->R[k]-1; /* column in final row*/
+		  Work->R[2*count]= Index->I[k]-1; /* column in final row*/
 		  Work->R[1+2*count]= xmin; /* position in Ai of the value */
 		  count++;
 		}
@@ -1640,10 +1686,10 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
     }
   if ( xpmin +1 == xpmax )
     {
-      if ( xmin >= 0 && ((int) x[xpmin])-1 == val[xmin] ) 
+      if ( xmin >= 0 && ( x[xpmin]) == val[xmin] ) 
 	{
 	  /* Sciprintf("OK pour A(i,%d) -> %d \n",xmin+1,((int) x[xpmin])); */
-	  Work->R[2*count]= Index->R[xpmin]-1; /* column in final row*/
+	  Work->R[2*count]= Index->I[xpmin]-1; /* column in final row*/
 	  Work->R[1+2*count]= xmin; /* position in Ai of the value */
 	  count++;
 	}
@@ -1656,12 +1702,46 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
       int imin1,imax1;
       /* the midle point */
       j = (xpmax+xpmin)/2 ;
-      jval = nsp_dichotomic_search(((int)x[j])-1,val,imin,imax);
+      jval = nsp_dichotomic_search((x[j]),val,imin,imax);
       /* search in [xpmin,j] */
       imax1= (jval >= 0) ? Min(imax,jval) : imax ;
-      count = nsp_bi_dichotomic_search_int(x,xpmin,j,xmin,jval,val,imin,imax1,Work,Index,count);
+      count = nsp_bi_dichotomic_search_int_i(x,xpmin,j,xmin,jval,val,imin,imax1,Work,Index,count);
       imin1= (jval >= 0) ? Max(imin,jval) : imin ;
-      count =nsp_bi_dichotomic_search_int(x,j,xpmax,jval,xmax,val,imin1,imax,Work,Index,count);
+      count =nsp_bi_dichotomic_search_int_i(x,j,xpmax,jval,xmax,val,imin1,imax,Work,Index,count);
+    }
+  return count;
+}
+
+/**
+ * nsp_bi_dichotomic_search:
+ * @x: 
+ * @xpmin: 
+ * @xpmax: 
+ * @val: 
+ * @imin: 
+ * @imax: 
+ * @Work: 
+ * @Index: 
+ * @count: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int *val,int imin,int imax,
+				      NspMatrix *Work,NspMatrix *Index,int count)
+{
+  int xmin = nsp_dichotomic_search(x[xpmin],val,imin,imax);
+  int xmax = nsp_dichotomic_search(x[xpmax],val,imin,imax);
+  count = nsp_bi_dichotomic_search_int_i(x,xpmin,xpmax,xmin,xmax,val,imin,imax,Work,Index,0);
+  /* last point */
+  if ( xmax >= 0 && ( x[xpmax]) == val[xmax] ) 
+    {
+      /* Sciprintf("OK pour A(i,%d) -> %d \n",xmax+1,((int) Cols->R[Cols->mn-1]));*/
+      Work->R[2*count]= Index->I[xpmax]-1; /* column in final row*/
+      Work->R[1+2*count]= xmax; /* position in Ai of the value */
+      count++;
     }
   return count;
 }

@@ -114,16 +114,16 @@ extern void SpColRowDestroy (SpCol *Row);
  extern int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *B, int rb, int cb); 
  extern int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, int amax); 
  extern int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j); 
- extern int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpColMatrix *B); 
- extern int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *B); 
- extern int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols); 
+ extern int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols, NspSpColMatrix *B); 
+ extern int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspObject *Inds, NspSpColMatrix *B); 
+ extern int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspObject *Cols); 
  extern int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i); 
 extern int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i);
- extern int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows); 
- extern NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
- extern NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts); 
- extern NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols, int *err); 
- extern NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspMatrix *Rows, int *err); 
+ extern int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspObject *Rows); 
+ extern NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols); 
+ extern NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspObject *Elts); 
+ extern NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspObject *Cols, int *err); 
+ extern NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspObject *Rows, int *err); 
  extern NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k); 
  extern int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k); 
  extern NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k); 
@@ -219,6 +219,9 @@ extern NspSpColMatrix * nsp_spcolmatrix_div_zero_tt(NspSpColMatrix *A);
 extern NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B);
 extern NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag);
 extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
+
+extern int GenericMatSeRo(void *A, int Am, int An, int Amn,   index_vector *index,
+			  void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal); 
 
 
 #endif 

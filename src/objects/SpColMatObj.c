@@ -703,10 +703,17 @@ static int int_spcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*B=NULLSPCOL,*B1=NULLSPCOL;
+#if 0 
   NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT, *Bm;
+#else 
+  NspMatrix *Rows1=NULLMAT,*Cols1=NULLMAT, *Bm;
+  NspObject *Rows,*Cols;
+#endif 
+
   CheckRhs(3,4);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto ret_bug;
+#if 0  
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Rows is boolean : use find(Rows) **/
@@ -718,20 +725,29 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
     {
       if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
     }
+#else 
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ)  goto ret_bug;
+#endif
+
   if ( rhs == 4 )
     {
+#if 0 
       /* Cols is boolean : use find(Cols) **/
       if ( IsBMatObj(stack,3)  ) 
 	{
 	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+	  if ((BCols = GetBMat(stack,3)) == NULLBMAT) goto ret_bug;
 	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
 	}  
       else
 	{
 	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
+#else 
+      if ((Cols =nsp_get_object(stack,3)) == NULLOBJ)  goto ret_bug;
+#endif 
     }
+  
   if ( IsMatObj(stack,rhs) )
     {
       if ((Bm = GetMat(stack,rhs)) == NULLMAT ) goto ret_bug;
@@ -774,15 +790,21 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
  * =======
  */	
 
+
 static int int_spcolmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A;
-  NspMatrix *Cols;
+  NspObject *Cols;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  /* A and Cols can't point to the same object **/
-  if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /*  Note that if Cols is authorized to be a sparse 
+   *  then checking that A and Cols are different 
+   *  should be checked 
+   */
+  if ((Cols =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
+  /*
+   */
   if (nsp_spcolmatrix_delete_cols( A, Cols) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
@@ -797,12 +819,17 @@ static int int_spcolmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A;
-  NspMatrix *Rows;
+  NspObject *Rows;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  /* A and Cols can't point to the same object **/
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /*  Note that if Cols is authorized to be a sparse 
+   *  then checking that A and Cols are different 
+   *  should be checked 
+   */
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
+  /*
+   */
   if (nsp_spcolmatrix_delete_rows( A, Rows) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
@@ -816,13 +843,19 @@ static int int_spcolmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_extract(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*Res;
-  NspMatrix *Rows,*Cols;
+  NspObject *Rows,*Cols;
   CheckRhs(3,3);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+#if 0 
   /* Rows id changed by nsp_spcolmatrix_extract */
   if ((Rows = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
   if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+#else 
+  /* Rows is no more changed */
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
+  if ((Cols =nsp_get_object(stack,3)) == NULLOBJ) return RET_BUG;
+#endif 
   Res =nsp_spcolmatrix_extract( A, Rows,Cols);
   if ( Res == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
@@ -839,11 +872,11 @@ static int int_spcolmatrix_extract(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*Res;
-  NspMatrix *Elts;
+  NspObject *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Elts =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   if ((Res =nsp_spcolmatrix_extract_elts( A, Elts)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
@@ -856,12 +889,12 @@ static int int_spcolmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*Res;
-  NspMatrix *Cols;
+  NspObject *Cols;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Cols =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_spcolmatrix_extract_cols( A,Cols,&err);
   /* XXXXX Attention ici il faut un message d''erreur **/
   if ( err == 1) return RET_ENDFOR; 
@@ -878,13 +911,13 @@ static int int_spcolmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*Res;
-  NspMatrix *Rows;
+  NspObject *Rows;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   /* Rows is changed by nsp_spcolmatrix_extract_rows */
-  if ((Rows = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Rows =nsp_get_object_copy(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_spcolmatrix_extract_rows( A,Rows,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSPCOL) return RET_BUG;
@@ -2668,8 +2701,8 @@ static OpTab SpColMatrix_func[]={
   {"concatd_sp_sp" ,  int_spcolmatrix_concatd },
   {"concatr_sp_sp" ,  int_spcolmatrix_concatr },
   {"concatdiag_sp_sp" ,  int_spcolmatrix_concatdiag },
-  {"deletecols_sp_m", int_spcolmatrix_deletecols},
-  {"deleterows_sp_m", int_spcolmatrix_deleterows},
+  {"deletecols_sp", int_spcolmatrix_deletecols},
+  {"deleterows_sp", int_spcolmatrix_deleterows},
   {"extract_sp",int_spcolmatrix_extract},
   {"extractrows_sp",int_spcolmatrix_extractrows},
   {"extractcols_sp",int_spcolmatrix_extractcols},
