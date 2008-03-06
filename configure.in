@@ -1076,16 +1076,16 @@ fi
 #################
 ## detect tcl/tk
 ## unused 
-## uncomment the with_tk=no
+## uncomment the use_tk=no
 ## to check tcl/tk detection
 #################
 
 builtin(include,config/tcl.m4)
 builtin(include,config/ac_tcl.m4)
 
-with_tk=no
+use_tk=no
 
-if test X"$with_tk" != Xno; then
+if test X"$use_tk" != Xno; then
  SC_PATH_TCLCONFIG()
  SC_LOAD_TCLCONFIG()
 
@@ -1110,7 +1110,7 @@ TCLTK_LIBS=
 TCLSCILIB=
 TCLSCIDIR=
 
-if test X"$with_tk" != Xno; then
+if test X"$use_tk" != Xno; then
  if test $WITH_TKSCI = 1; then
   AC_DEFINE(WITH_TK,[],[tk support])
   TCLSCILIB="\$(SCIDIR)/libs/tclsci.a"
