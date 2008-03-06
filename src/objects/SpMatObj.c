@@ -539,34 +539,17 @@ static int int_sprowmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*B;
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
+  NspObject *Rows,*Cols;
+
   CheckRhs(3,4);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) goto ret_bug;
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Rows is boolean : use find(Rows) **/
-      NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
-    }
-  else
-    {
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
-    }
+
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ)  goto ret_bug;
+
   if ( rhs == 4 )
     {
-      /* Cols is boolean : use find(Cols) **/
-      if ( IsBMatObj(stack,3)  ) 
-	{
-	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
-	}  
-      else
-	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
-	}
+      if ((Cols =nsp_get_object(stack,3)) == NULLOBJ)  goto ret_bug;
     }
   if ((B = GetSpRow(stack,rhs)) == NULLSPROW ) goto ret_bug;
   if ( B == A ) 
@@ -576,13 +559,8 @@ static int int_sprowmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
   else 
     { if (nsp_sprowmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
   NSP_OBJECT(A)->ret_pos = 1;
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
   return 1;
  ret_bug: 
-  /* delete if non null; */
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
   return RET_BUG;
 }
 
@@ -597,12 +575,16 @@ static int int_sprowmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A;
-  NspMatrix *Cols;
+  NspObject *Cols;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   /* A and Cols can't point to the same object **/
-  if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /*  Note that if Cols is authorized to be a sparse 
+   *  then checking that A and Cols are different 
+   *  should be checked 
+   */
+  if ((Cols =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   if (nsp_sprowmatrix_delete_cols( A, Cols) < 0) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
@@ -617,12 +599,15 @@ static int int_sprowmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A;
-  NspMatrix *Rows;
+  NspObject *Rows;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  /* A and Cols can't point to the same object **/
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /*  Note that if Rows is authorized to be a sparse 
+   *  then checking that A and Cols are different 
+   *  should be checked 
+   */
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   if (nsp_sprowmatrix_delete_rows( A, Rows) < 0) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
@@ -636,12 +621,13 @@ static int int_sprowmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_extract(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*Res;
-  NspMatrix *Rows,*Cols;
+  NspObject *Rows,*Cols;
   CheckRhs(3,3);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetRealMatCopy(stack,3)) == NULLMAT) return RET_BUG;
+  /* Rows is no more changed */
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
+  if ((Cols =nsp_get_object(stack,3)) == NULLOBJ) return RET_BUG;
   Res =nsp_sprowmatrix_extract( A, Rows,Cols);
   if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
@@ -658,11 +644,11 @@ static int int_sprowmatrix_extract(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*Res;
-  NspMatrix *Elts;
+  NspObject *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Elts =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   if ((Res =nsp_sprowmatrix_extract_elts( A, Elts)) == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
@@ -675,12 +661,12 @@ static int int_sprowmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*Res;
-  NspMatrix *Cols;
+  NspObject *Cols;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Cols = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Cols =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_sprowmatrix_extract_cols( A,Cols,&err);
   /* XXXXX Attention ici il faut un message d''erreur **/
   if ( err == 1) return RET_ENDFOR; 
@@ -697,12 +683,13 @@ static int int_sprowmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*Res;
-  NspMatrix *Rows;
+  NspObject *Rows;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  /* XXX Rows is changed by nsp_spcolmatrix_extract_rows */
+  if ((Rows =nsp_get_object_copy(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_sprowmatrix_extract_rows( A,Rows,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSPROW) return RET_BUG;
