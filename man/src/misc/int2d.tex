@@ -8,9 +8,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f)
-[Ia, [,ea_estim, [,ier]]]  = int2d(X, Y, f, tol=e, tolflag=b, args=obj,  
-                                   limit=maxtri, iclose=b, vecteval=b)
+Ia  = int2d(X, Y, f)
+[Ia, [,ea_estim, [,ier [,neval]]]] = int2d(X, Y, f, tol=e, tolflag=b, args=obj, limit=maxtri, iclose=b, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -42,6 +41,7 @@
     \vname{Ia}: computed approximate result
     \vname{ea_estim}: estimated absolute error
     \vname{ier}: scalar given some information about the computation.
+    \vname{nevals}: number of function evaluations used for the computation.
   \end{varlist}
 \end{parameters}
 
@@ -124,7 +124,12 @@ abs(Ia-1)\Hnewline
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
 \end{program}
-
+Rmk: a singularity at the origine could be removed using polar
+coordinates but in case of the unit triangle it may be better
+to use $x = u(1-v), y = uv$, $dxdy = u dudv$ because $u$ and $v$
+belong in the unit square and so you can use int2d with 2 triangles
+(in example 3 using this transformation leads to integrate $f(u,v)=1$
+on the unit square). 
 \end{examples}
 
 \begin{manseealso}

@@ -941,6 +941,8 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
     { NULL,t_end,NULLOBJ,-1}
   };
 
+  CheckLhs(1,4);
+
   if ( GetArgs(stack,rhs,opt, T, &x, &y, &f, &opts, &args, &tol, &iflag, &limit, &iclose, &vect_flag) == FAIL ) 
     return RET_BUG;
   
@@ -990,7 +992,7 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   if ( iflag != 0 )  /* display a warning */
     {
       Sciprintf("\n Warning: requested precision not reached, ier = %d", iflag);
-      Sciprintf("\n          maxtri= %d, nu+nd = %d, nevals = %d, meval = %d\n",limit, nu+nd, neval, meval);
+/*       Sciprintf("\n          maxtri= %d, nu+nd = %d, nevals = %d, meval = %d\n",limit, nu+nd, neval, meval); */
     }
 
   int2d_clean(&int2d_d);
@@ -1000,7 +1002,11 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
     {
       nsp_move_double(stack,2, er_estim);
       if ( lhs > 2 )
-	nsp_move_double(stack,3, (double) iflag);
+	{
+	  nsp_move_double(stack,3, (double) iflag);
+	  if ( lhs > 3 )
+	    nsp_move_double(stack,4, (double) neval);
+	}
     }
   return Max(1,lhs);
 
