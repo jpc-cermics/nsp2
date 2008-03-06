@@ -1,3 +1,13 @@
+2008-03-06  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/object/*.c: 
+	Storage of implicit vector in matrices added. 
+	A new method named as_index was also added to NspObject. 
+	as_index is implemented in NspMatrix, NspBMatrix ans NspIVect. 
+	as_index can use the implicit vector storage of 
+	matrices. matint.c and sparse matrices were changed 
+	to use as_index. 
+			
 2008-03-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libspmf/spmf-IN.c (int_nsp_pdf): add a pdf function
