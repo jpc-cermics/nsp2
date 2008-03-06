@@ -1492,7 +1492,7 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble (stack, 3, &last) == FAIL)
 	return RET_BUG;
     }
-  if ( 0 && dfirst == floor(dfirst) 
+  if ( 1 && dfirst == floor(dfirst) 
        && step == floor(step) 
        && last == floor(last))
     {
