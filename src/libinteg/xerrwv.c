@@ -25,7 +25,7 @@
 #include <string.h> 
 #include "nsp/interf.h"
 
-extern struct {
+struct {
     int mesflg, lunit;
 } C2F(eh0001);
 
