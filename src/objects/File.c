@@ -1144,7 +1144,7 @@ static int nsp_read_line(FILE *fd,int *mem)
       if ( n > Info_size ) 
 	{
 	  Info_size += INFOSIZE;
-	  if (( Info = realloc(Info,Info_size*sizeof(char)))==NULL) {
+	  if (( Info = realloc(Info,(Info_size+1)*sizeof(char)))==NULL) {
 	    Scierror("Error: no more memory\n");
 	    *mem=1;
 	    return EOF;
