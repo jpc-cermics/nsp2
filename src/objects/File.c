@@ -1164,26 +1164,35 @@ static int nsp_read_line(FILE *fd,int *mem)
 
 static int count_tokens(char *string)
 {
-  char buf[128];
-  int n=1;
+  char prev, *copy = string;
   int lnchar=0,ntok=-1;
   int length = strlen(string)+1;
   if (string != 0)
     { 
-      /* Counting leading white spaces **/
-      sscanf(string,"%*[ \t\n]%n",&lnchar);
-      while ( n != 0 && n != EOF && lnchar <= length  )
-	{ 
-	  int nchar1=0,nchar2=0;
-	  ntok++;
-	  n= sscanf(&(string[lnchar]),
-		    "%[^ \n\t]%n%*[ \t\n]%n",buf,&nchar1,&nchar2);
-	  lnchar += (nchar2 <= nchar1) ? nchar1 : nchar2 ;
-	}
+      while (*copy==' ' || *copy=='\t' || *copy=='\n')
+        {
+          copy++;
+          lnchar++;
+        }
+      /* line begins with a number */
+      if(lnchar==0){
+        prev='0'; ntok++; }
+      else
+        prev=*(copy-1);
+      while (lnchar <= length)
+        {
+          if((*copy!=' ' && *copy!='\t' && *copy!='\n') &&
+             (prev==' ' || prev=='\t' || prev=='\n'))
+            ntok++;
+          prev=*copy;
+          copy++;
+          lnchar++;
+        }
       return(ntok);
     }
   return(FAIL);
 }
+
 
 /**
  * nsp_read_lines:
