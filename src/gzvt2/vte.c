@@ -16,6 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -25,6 +26,7 @@
 #include <gdk/gdkx.h>
 #include <glib-object.h>
 #include <vte/vte.h>
+
 
 static void
 window_title_changed(GtkWidget *widget, gpointer win)
@@ -178,13 +180,7 @@ static GtkWidget *create_menu (GtkWidget *wterminal)
   if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
 
   popup_menu = menu = gtk_menu_new ();
-
-  /* 
-  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_CUT, NULL);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
-  gtk_widget_show (menuitem);
-  */
-
+  
   menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
@@ -214,27 +210,9 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
   switch (event->button) {
   case 3:
     terminal = VTE_TERMINAL(widget);
-    /* 
-       vte_terminal_get_padding(terminal, &xpad, &ypad);
-       match = vte_terminal_match_check(terminal,
-       (event->x - ypad) /
-       terminal->char_width,
-       (event->y - ypad) /
-       terminal->char_height,
-       &tag);
-       if (match != NULL) {
-       g_print("Matched `%s' (%d).\n", match, tag);
-       g_free(match);
-       if (GPOINTER_TO_INT(data) != 0) {
-       vte_terminal_match_remove(terminal, tag);
-       }
-       }
-    */
-    
     menu =   create_menu (widget);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
 		    NULL, NULL,0,gtk_get_current_event_time());
-    
     break;
   case 1:
   case 2:
@@ -242,7 +220,7 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
     break;
   }
 
-  return FALSE;
+  return TRUE;
 }
 
 static void
@@ -713,7 +691,7 @@ main(int argc, char **argv)
   vte_terminal_set_scroll_on_output(VTE_TERMINAL(widget), FALSE);
   vte_terminal_set_scroll_on_keystroke(VTE_TERMINAL(widget), TRUE);
   vte_terminal_set_scrollback_lines(VTE_TERMINAL(widget), lines);
-  vte_terminal_set_mouse_autohide(VTE_TERMINAL(widget), TRUE);
+  vte_terminal_set_mouse_autohide(VTE_TERMINAL(widget), TRUE); 
   if (background != NULL) {
     vte_terminal_set_background_image_file(VTE_TERMINAL(widget),
 					   background);
