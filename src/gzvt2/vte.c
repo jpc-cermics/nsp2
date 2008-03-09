@@ -213,14 +213,14 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
     menu =   create_menu (widget);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
 		    NULL, NULL,0,gtk_get_current_event_time());
+    return TRUE;
     break;
   case 1:
   case 2:
   default:
     break;
   }
-
-  return TRUE;
+  return FALSE;
 }
 
 static void
