@@ -402,7 +402,7 @@ static int nsp_matrix_bounds(const NspMatrix *A,index_vector *index)
 	{
 	  if ( floor(A->R[i]) != A->R[i] )
 	    {
-	      Scierror("Error:\tIndice (%g) is not an integer\n", A->R[i]); 
+	      Scierror("Error:\tIndice (%g) is not an integer\n", A->R[i]);
 	      index->error = index_wrong_value;
 	      return FAIL;
 	    }
@@ -5141,7 +5141,50 @@ int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/**
+ * check that a matrix is a symetric (hermitian in the complex case)
+ * 
+ **/
+static int int_mat_issymetric(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ( nsp_move_boolean(stack,1,nsp_mat_is_symmetric(A)) == FAIL ) 
+    return RET_BUG;
+  return 1;
+}
 
+/**
+ * check that a matrix is a lower or upper triangular
+ * 
+ **/
+static int int_mat_istriangular(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *HMat;
+  char *str;
+  Boolean rep;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((HMat = GetMat(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ((str=GetString(stack,2)) == NULL) return RET_BUG;
+  if ( strcmp(str,"u") == 0 )
+    rep = nsp_mat_is_upper_triangular(HMat);
+  else if ( strcmp(str,"l") == 0 )
+    rep = nsp_mat_is_lower_triangular(HMat);
+  else
+    { 
+      Scierror("%s: second argument must be 'l' or 'u'\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,rep) == FAIL ) 
+    return RET_BUG;
+  return 1;
+}
+ 
 
 /*
  * The Interface for basic matrices operation 
@@ -5315,6 +5358,8 @@ static OpTab Matrix_func[] = {
   {"cross_m_m", int_mat_cross},
   {"dot_m_m", int_mat_dot},
   {"issorted_m", int_mat_issorted},
+  {"issymetric_m", int_mat_issymetric},
+  {"istriangular_m", int_mat_istriangular},
   {(char *) 0, NULL}
 };
 
