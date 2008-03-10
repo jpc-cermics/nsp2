@@ -5169,7 +5169,7 @@ static int int_mat_istriangular(Stack stack, int rhs, int opt, int lhs)
   CheckRhs (2, 2);
   CheckLhs (1, 1);
 
-  if ((HMat = GetMat(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ((HMat = GetMat(stack, 1)) == NULLMAT)   return RET_BUG;
   if ((str=GetString(stack,2)) == NULL) return RET_BUG;
   if ( strcmp(str,"u") == 0 )
     rep = nsp_mat_is_upper_triangular(HMat);
