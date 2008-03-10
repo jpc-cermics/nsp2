@@ -197,13 +197,38 @@ int nsp_spcolmatrix_fullcomp(NspSpColMatrix * A,NspSpColMatrix * B,char *op,int 
   return FALSE;
 }
 
-int nsp_spcolmatrix_eq(NspObject *A, NspObject *B)
+int nsp_spcolmatrix_eq(NspObject *a, NspObject *b)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_spcolmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_spcolmatrix_fullcomp((NspSpColMatrix *) A,(NspSpColMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  int j, k;
+  NspSpColMatrix *A, *B;
+  if ( check_cast(b,nsp_type_spcolmatrix_id) == FALSE) return FALSE ;
+
+  /* quick code by Bruno (I want to test sparse(ij,val,..) function */
+  A = (NspSpColMatrix *) a; B = (NspSpColMatrix *) b; 
+  if ( A->m != B->m) return FALSE;
+  if ( A->n != B->n) return FALSE;
+  if ( A->rc_type != B->rc_type ) return FALSE;
+  
+  for ( j = 0 ; j < B->n ; j++ )
+    {
+      if ( A->D[j]->size !=  B->D[j]->size ) return FALSE;
+      for ( k = 0 ; k < A->D[j]->size ; k++ )
+	if ( A->D[j]->J[k] !=  B->D[j]->J[k] ) 
+	  return FALSE;
+      if ( A->rc_type == 'r' )
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ )
+	    if ( A->D[j]->R[k] !=  B->D[j]->R[k] ) 
+	      return FALSE;
+	}
+      else
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ )
+	    if ( A->D[j]->C[k].r !=  B->D[j]->C[k].r  ||  A->D[j]->C[k].i !=  B->D[j]->C[k].i ) 
+	      return FALSE;
+	}
+    }
+  return TRUE;
 }
 
 int nsp_spcolmatrix_neq(NspObject *A, NspObject *B)
@@ -394,7 +419,8 @@ static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
     return  int_spcolmatrix_m2sp(stack,rhs,opt,lhs);
   CheckRhs(2,3);
   CheckLhs(1,1);
-  if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+  if ((RC = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+/*   if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG; */
   if ( RC->mn == 1) 
     {
       /* special case sparse(m,n) */
@@ -2638,9 +2664,8 @@ static int int_spcolmatrix_isscalar (Stack stack, int rhs, int opt, int lhs)
  /**
  * check that a sparse matrix is a vector
  * 
- * Returns:  1 or %RET_BUG
  **/
-int int_spcolmatrix_isvector(Stack stack, int rhs, int opt, int lhs)
+static int int_spcolmatrix_isvector(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat;
   CheckRhs (1, 1);
@@ -2666,7 +2691,35 @@ static int int_spcolmatrix_numel (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
+ 
+/**
+ * check that a sparse matrix is a lower or upper triangular
+ * 
+ **/
+int int_spcolmatrix_istriangular(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  char *str;
+  Boolean rep;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
 
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ((str=GetString(stack,2)) == NULL) return RET_BUG;
+  if ( strcmp(str,"u") == 0 )
+    rep = nsp_spcolmatrix_is_upper_triangular(HMat);
+  else if ( strcmp(str,"l") == 0 )
+    rep = nsp_spcolmatrix_is_lower_triangular(HMat);
+  else
+    { 
+      Scierror("%s: second argument must be 'l' or 'u'\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,rep) == FAIL ) 
+    return RET_BUG;
+  return 1;
+}
+ 
 /*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
@@ -2772,6 +2825,7 @@ static OpTab SpColMatrix_func[]={
   {"isempty_sp",int_spcolmatrix_isempty},
   {"isscalar_sp",int_spcolmatrix_isscalar},
   {"isvector_sp",int_spcolmatrix_isvector},
+  {"istriangular_sp",int_spcolmatrix_istriangular},
   {"length_sp",int_spcolmatrix_numel},
   {"numel_sp",int_spcolmatrix_numel},
   {(char *) 0, NULL}

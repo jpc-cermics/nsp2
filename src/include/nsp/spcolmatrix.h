@@ -25,11 +25,11 @@ typedef struct _NspTypeSpColMatrix {
 /* Sparse matrices 
  * 
  * m,n :  size of matrix 
- * D[i]-> points to the ith column
- * D[i]-> size : number of non nul elements in col i 
- * D[i]->J : array of rows of the elements of lin i
- * D[i]->R : array of real part of the elements of lin i
- * D[i]->C : array of imaginary part of the elements of lin i
+ * D[j]-> points to the jth column
+ * D[j]->size : number of non nul elements in col j 
+ * D[j]->J : array of rows indices of elements of col j
+ * D[j]->R : array of values (real) of elements of col j
+ * D[j]->C : array of values (complex) of elements of col j
  */
 
 /* used to store a matlab compatible representation */
@@ -219,6 +219,9 @@ extern NspSpColMatrix * nsp_spcolmatrix_div_zero_tt(NspSpColMatrix *A);
 extern NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B);
 extern NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag);
 extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
+extern Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A);
+extern Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A);
+
 
 extern int GenericMatSeRo(void *A, int Am, int An, int Amn,   index_vector *index,
 			  void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal); 

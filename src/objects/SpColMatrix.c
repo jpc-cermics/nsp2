@@ -140,156 +140,185 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
  * Creates a #NspSColMatrix of size @mx@n filed with values specified 
  * in @RC ((i,j) values stored in a two column matrix) and @Values 
  * ( A(@RC(k,1),@RC(k,2))= Values(k)).
- * XXXX should be changed in order to cumulate values when specific
- * indices are repeated as in Matlab.
+ * Rewritten by Bruno Pincon  to cumulate values when specific
+ * indices are repeated as in Matlab (fix also a bug and test
+ * if indices are integer)
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
 NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n)
 {
-  double *rows;
-  NspSpColMatrix *Loc;
-  NspMatrix *Index;
-  int imax,i,maxrow;
-  /* max col indice **/
-  imax = 0;
-  rows = RC->R+RC->m;
-  /* swap cols and row in RC for lexical ordering */
-  for ( i = 0 ; i < RC->m; i++ ) 
+  double *rows, *cols;
+  NspSpColMatrix *Loc = NULLSPCOL;
+  int *jc_ir=NULL, *ir, *p=NULL;
+  int k,kf,first_k,kk,ind,i,imax,j,jmax, colsize, colsize_init;
+
+  if ( (jc_ir=nsp_alloc_work_int(RC->mn)) == NULL || (p=nsp_alloc_work_int(RC->mn)) == NULL ) 
+    goto err;
+ 
+  imax = 0; jmax = 0;
+  rows = RC->R; cols = rows + RC->m;
+  ir = jc_ir + RC->m;
+
+  /* check indices then swap cols and rows stored in jc_ir for lexical ordering */
+  for ( k = 0 ; k < RC->m; k++ )
     {
-      int icol = (int) rows[i];
-      rows[i] = RC->R[i];
-      RC->R[i] = icol;
-    }
-  /* now cols are in RC->R and rows in rows */
-  for ( i = 0 ; i < RC->m; i++ ) 
-    {
-      int icol= (int) RC->R[i];
-      if ( icol <= 0 ) 
+      i = (int) rows[k];
+      j = (int) cols[k];
+
+      if ( i <= 0 || j <= 0  || rows[k] != (double) i  ||  cols[k] != (double) j )
 	{
-	  Scierror("Error:\t negative indice in sparse fisrt argument i=%d ind=%d\n",
-		   i,icol);
-	  return NULLSPCOL;
+	  Scierror("Error:\t sparse(ij,val,..): invalid indice at row %d of ij\n",k+1);
+	  goto err;
 	}
-      if ( icol > imax) imax = icol;
+      if ( i > imax) imax = i;
+      if ( j > jmax) jmax = j;
+      jc_ir[k] = j-1; ir[k] = i-1;
     }
-  if ( n != -1 &&  n < imax ) 
+
+  if ( m == -1 )
+    m = imax;
+  else if ( m < imax )
     {
-      Scierror("Error:\t some given indices for cols are > n=%d\n",n);
-      return NULLSPCOL;
+      Scierror("Error:\t some row indices are > m=%d\n",m); goto err;
     }
-  /* sort RC lexical row increasing */
-  Index = nsp_mat_sort (RC,2,"lr","i");
-  if ( n == -1 ) n = imax;
-  /* allocate space for Loc with proper col size **/
-  if ((Loc =nsp_spcolmatrix_create(name,Values->rc_type,1,n))== NULLSPCOL ) return NULLSPCOL;
-  /* Counting non nul arguments of each column and store it in Loc **/
-  for ( i = 0 ; i < Loc->n ; i++) Loc->D[i]->iw=0;
-  switch ( Values->rc_type )
+
+  if ( n == -1 )
+    n = jmax;
+  else if ( n < jmax )
     {
-    case 'r' :
-      for ( i = 0 ; i < RC->m ; i++)  
+      Scierror("Error:\t some column indices are > n=%d\n",n); goto err;
+    }
+
+  /* sort jc_ir lexical row increasing */
+  nsp_qsort_gen_lexirow_int(jc_ir, p, 1, RC->m, 2, 'i');
+  for ( k = 0 ; k < RC->m ; k++ ) p[k]--;
+
+  /* allocate space for Loc **/
+  if ( (Loc =nsp_spcolmatrix_create(name,Values->rc_type,m,n))== NULLSPCOL)
+    goto err;
+
+  if ( RC->m == 0 ) return Loc;
+
+  /* now form the sparse matrix, column by column */
+  j = jc_ir[0];
+  first_k = 0; k = 1 ;
+  while ( k < RC->m )
+    {
+      if (jc_ir[k] != j  ||  k == RC->m-1 ) /* a column is ended, there are 2 cases */
+	/*
+	 *    1/ elem k is the first of a new column => column is [first_k:k-1]
+	 *    2/ elem k is on the same column but is the last one => column [first_k:k] 
+	 */
 	{
-	  if (Values->R[i] != 0.0 ) Loc->D[((int) RC->R[i])-1]->iw++;
-	} 
-      break;
-    case 'c' : 
-      for ( i = 0 ; i < RC->m ; i++)  
-	{
-	  if (Values->C[i].r != 0.0 || Values->C[i].i ) Loc->D[((int) RC->R[i])-1]->iw++;
-	} 
-      break;
-    }
-  /* Resizing each row */
-  for ( i = 0 ; i < Loc->n ; i++) 
-    {
-      if (nsp_spcolmatrix_resize_col(Loc,i,Loc->D[i]->iw) == FAIL) return(NULLSPCOL);
-    }
-  /* Check columns **/
-  maxrow =0;
-  for ( i = 0 ; i < RC->m ; i++) 
-    {
-      if ( ((int) rows[i]) > maxrow ) maxrow =((int) rows[i]);
-    }
-  
-  if ( m != -1 && m < maxrow ) 
-    {
-      Scierror("Error:\t some given indices for rows (%d) are > m=%d\n",maxrow,m);
-      return NULLSPCOL;
-    }
-  /* fix column size and total size  **/
-  if ( m == -1 ) m = maxrow;
-  Loc->m = m;
-  /* Loc->mn = n*m; */
-  /* fill each col with Values 
-   */
-  for ( i = 0 ; i < Loc->n ; i++) Loc->D[i]->iw=0;
-  for ( i = 0 ; i < RC->m ; i++ ) 
-    {
-      int iloc=((int) RC->R[i])-1;
-      int count = Loc->D[iloc]->iw;
-      int id =((int) Index->R[i])-1;
-      switch ( Values->rc_type )
-	{
-	case 'r' : 
-	  if ( Values->R[id] != 0.0 ) 
+	  if ( jc_ir[k] != j ) kf = k-1;  /* case 1 */
+	  else                 kf = k;    /* case 2 */
+	  colsize = colsize_init = kf - first_k + 1;
+	  if ( nsp_spcolmatrix_resize_col(Loc,j,colsize_init) == FAIL ) goto err;
+	  kk = first_k;
+	  if ( Values->rc_type == 'r' ) /*** scan of the column - real case ***/
 	    {
-	      Loc->D[iloc]->R[count] = Values->R[id];
-	      Loc->D[iloc]->J[count] = ((int) rows[i])-1;
-	      if ( Loc->D[iloc]->J[count] >= 0 && Loc->D[iloc]->J[count] < Loc->m )
-		{ 
-		  if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
-		    {
-		      /* Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);*/
-		      Loc->D[iloc]->R[count-1]+=  Loc->D[iloc]->R[count];
-		    }
-		  else
-		    Loc->D[iloc]->iw++;
-		}
-	      else
+	      /* 1/ look for the first non zero coef of the column */
+	      while ( kk <= kf  &&  Values->R[p[kk]] == 0.0 ) {colsize--; kk++;}
+	      if ( colsize > 0 )
 		{
-		  Scierror("Warning (%d,%d) is out of range, ignored\n",Loc->D[iloc]->J[count]+1,iloc+1);
-		  return NULLSPCOL;
+		  /* 2/ init with the first non null coef (which can become null after summation in some case...) */
+		  Loc->D[j]->R[0] = Values->R[p[kk]]; Loc->D[j]->J[0] = ir[kk];
+		  ind = 0; kk++;
+		  /* 3/ parse the rest of the column */
+		  while ( kk <= kf ) 
+		    {
+		      if ( ir[kk] == ir[kk-1] )  /* same row index => add coef */
+			{
+			  Loc->D[j]->R[ind] += Values->R[p[kk]];
+			  colsize--;
+			}
+		      else                       /* different row index => a new coef */
+			{
+			  if ( Loc->D[j]->R[ind] == 0.0 )  /* previous coef have been cancelled */
+			    colsize--;
+			  else
+			    ind++;
+			  Loc->D[j]->R[ind] = Values->R[p[kk]]; Loc->D[j]->J[ind] = ir[kk];
+			}
+		      kk++;
+		    }
+		  /* 4/ the last one coef of the column could have been cancelled too */
+		  if ( Loc->D[j]->R[ind] == 0.0 ) colsize--;
 		}
 	    }
-	  break;
-	case 'c' : 
-	  if ( Values->C[i].r != 0.0 || Values->C[id].i != 0.0) 
+	  else                          /*** scan of the column - complex case ***/
 	    {
-	      Loc->D[iloc]->C[count] = Values->C[id];
-	      Loc->D[iloc]->J[count] =((int) rows[i])-1;
-	      if ( Loc->D[iloc]->J[count] >= 0 && Loc->D[iloc]->J[count] < Loc->m )
-		{ 
-		  if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
-		    {
-		      /* Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);*/
-		      Loc->D[iloc]->C[count-1].r +=  Loc->D[iloc]->C[count].r;
-		      Loc->D[iloc]->C[count-1].i +=  Loc->D[iloc]->C[count].i;
-		    }
-		  else 
-		    Loc->D[iloc]->iw++;
-		}
-	      else
+	      /* 1/ look for the first non zero coef of the column */
+	      while ( kk <= kf  &&  Values->C[p[kk]].r == 0.0  &&  Values->C[p[kk]].i == 0.0 ){colsize--; kk++;}
+	      if ( colsize > 0 )
 		{
-		  Scierror("Warning (%d,%d) is out of range, ignored\n",Loc->D[iloc]->J[count]+1,iloc+1);
-		  return NULLSPCOL;
+		  /* 2/ init with the first non null coef (which can become null after summation in some case...) */
+		  Loc->D[j]->C[0] = Values->C[p[kk]]; Loc->D[j]->J[0] = ir[kk];
+		  ind = 0; kk++;
+		  /* 3/ parse the rest of the column */
+		  while ( kk <= kf ) 
+		    {
+		      if ( ir[kk] == ir[kk-1] ) /* same row index => add coef */
+			{
+			  Loc->D[j]->C[ind].r += Values->C[p[kk]].r; Loc->D[j]->C[ind].i += Values->C[p[kk]].i;
+			  colsize--;
+			}
+		      else                      /* different row index => a new coef */
+			{
+			  if ( Loc->D[j]->C[ind].r == 0.0 &&  Loc->D[j]->C[ind].i == 0.0 )  /* previous coef have been cancelled */
+			    colsize--;
+			  else
+			    ind++;
+			  Loc->D[j]->C[ind] = Values->C[p[kk]]; Loc->D[j]->J[ind] = ir[kk];
+			}
+		      kk++;
+		    }
+		  /* 4/ the last one coef of the column could have been cancelled too */
+		  if ( Loc->D[j]->C[ind].r == 0.0  &&  Loc->D[j]->C[ind].i == 0.0 )
+		    colsize--;
 		}
 	    }
-	  break;
+	  
+	  if ( colsize < colsize_init ) /* due to zero coef or cancellation we have to resize */
+	    if ( nsp_spcolmatrix_resize_col(Loc,j,colsize) == FAIL ) 
+	      goto err;
+
+	  first_k = kf+1;      /* index of the new column */
+	  j = jc_ir[first_k];  /* column number of the new column */
 	}
+      k++;
     }
-  /* Resizing each col (due to duplicate values) */
-  for ( i = 0 ; i < Loc->n ; i++) 
+
+  /* if the last column is formed of only one element it has not been inserted in the sparse matrix */
+  k = RC->m-1;
+  if ( first_k == k )
     {
-      if ( Loc->D[i]->iw != Loc->D[i]->size ) 
+      j = jc_ir[k];
+      if ( Values->rc_type == 'r' && Values->R[k] != 0.0 )
 	{
-	  if (nsp_spcolmatrix_resize_col(Loc,i,Loc->D[i]->iw) == FAIL) return(NULLSPCOL);
+	  if ( nsp_spcolmatrix_resize_col(Loc,j,1) == FAIL ) goto err;
+	  Loc->D[j]->R[0] = Values->R[p[k]];
+	  Loc->D[j]->J[0] = ir[k];
+	}
+      else if ( Values->rc_type == 'c' &&  (Values->C[k].r != 0.0 || Values->C[k].i != 0.0) )
+	{
+	  if ( nsp_spcolmatrix_resize_col(Loc,j,1) == FAIL ) goto err;
+	  Loc->D[j]->C[0] = Values->C[p[k]];
+	  Loc->D[j]->J[0] = ir[k];
 	}
     }
-  /* no need to sort here */
-  nsp_matrix_destroy(Index);
+     
+  FREE(jc_ir);
+  FREE(p);
   return Loc;
+
+ err:
+  FREE(jc_ir);
+  FREE(p);
+  nsp_spcolmatrix_destroy(Loc);
+  return NULLSPCOL;
 }
 
 
@@ -2400,7 +2429,8 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
        * we store them in C and exclude number which have cancelled during computation 
        */
       
-      nsp_qsort_int(pxb,NULL,FALSE,neli,'i');      
+      nsp_qsort_int(pxb,NULL,FALSE,neli,'i');
+      /* nsp_qsort_bp_int(pxb, neli, NULL, FALSE, 'i'); */
 
       /* but as cancellation is unlikely to occur we allocate first the column
        * with the a priori non null element number neli 
@@ -2480,61 +2510,79 @@ NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B)
     }
 
   if ( (C =nsp_matrix_create(NVOID,type,A->m,B->n)) == NULLMAT ) return NULLMAT;
+
   /* initialize to 0.0 */
   size=(type == 'c') ? 2*C->mn : C->mn;
   nsp_dset(&size,&zero,C->R,&inc);
-  /* process the columns of B */
-  for (i = 0 ; i < B->n ; i++) 
+
+  if ( A->rc_type == 'r' && B->rc_type == 'r' )
     {
-      double *BRi = &B->R[i*B->m];
-      double *CRi = &C->R[i*C->m];
-      doubleC *BCi = &B->C[i*B->m];
-      doubleC *CCi = &C->C[i*C->m];
-      /*  process column i of B */
-      for (jp = 0  ; jp <  B->m  ; jp++) 
+      double *Bj, *Cj, coef;
+      SpCol *Ajp;
+      for ( j = 0, Bj=B->R, Cj=C->R ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
 	{
-	  SpCol *Aj;
-	  /* j is the current row-index for B i.e B(j,i) */
-	  j = jp;
-	  /* column j of A */
-	  Aj = A->D[j];
-	  /*  We process the column j of  A. For efficiency we separate the real case 
-           *  from the 3 complex cases (which are nevertheless treated together)
-	   */
-	  if ( C->rc_type == 'r' )
-	    for (kp = 0 ; kp < Aj->size ; kp++) 
-	      {
-		/* getting non nul A(k,j) */
-		k = Aj->J[kp]; 
-		/* A(k,j)*B(j,i) */
-		CRi[k] += Aj->R[kp] * BRi[jp];
-	      }
-	  else 
-	    for (kp = 0 ; kp < Aj->size ; kp++) 
-	      {
-		/* getting non nul b(j,k) */
-		k = Aj->J[kp];
-		if ( A->rc_type == 'r') 
+	  for (jp = 0 ; jp <  A->n  ; jp++)
+	    {
+	      Ajp = A->D[jp]; coef = Bj[jp];
+	      for (kp = 0 ; kp < Ajp->size ; kp++)
+		Cj[Ajp->J[kp]] += Ajp->R[kp]*coef;
+	    }
+	}
+    }
+  else
+    {
+      /* process the columns of B */
+      for (i = 0 ; i < B->n ; i++) 
+	{
+	  double *BRi = &B->R[i*B->m];
+	  double *CRi = &C->R[i*C->m];
+	  doubleC *BCi = &B->C[i*B->m];
+	  doubleC *CCi = &C->C[i*C->m];
+	  /*  process column i of B */
+	  for (jp = 0  ; jp <  B->m  ; jp++) 
+	    {
+	      SpCol *Aj;
+	      /* j is the current row-index for B i.e B(j,i) */
+	      j = jp;
+	      /* column j of A */
+	      Aj = A->D[j];
+	      /*  We process the column j of  A. For efficiency we separate the real case 
+	       *  from the 3 complex cases (which are nevertheless treated together)
+	       */
+	      if ( C->rc_type == 'r' )
+		for (kp = 0 ; kp < Aj->size ; kp++) 
 		  {
-		    CCi[k].i += Aj->R[kp] * BCi[jp].i;
-		    CCi[k].r += Aj->R[kp] * BCi[jp].r;
+		    /* getting non nul A(k,j) */
+		    k = Aj->J[kp]; 
+		    /* A(k,j)*B(j,i) */
+		    CRi[k] += Aj->R[kp] * BRi[jp];
 		  }
-		else if ( B->rc_type == 'r' ) 
+	      else 
+		for (kp = 0 ; kp < Aj->size ; kp++) 
 		  {
-		    CCi[k].i += Aj->C[kp].i * BRi[jp];
-		    CCi[k].r += Aj->C[kp].r * BRi[jp];
+		    /* getting non nul b(j,k) */
+		    k = Aj->J[kp];
+		    if ( A->rc_type == 'r') 
+		      {
+			CCi[k].i += Aj->R[kp] * BCi[jp].i;
+			CCi[k].r += Aj->R[kp] * BCi[jp].r;
+		      }
+		    else if ( B->rc_type == 'r' ) 
+		      {
+			CCi[k].i += Aj->C[kp].i * BRi[jp];
+			CCi[k].r += Aj->C[kp].r * BRi[jp];
+		      }
+		    else 
+		      {
+			CCi[k].r += Aj->C[kp].r * BCi[jp].r -  Aj->C[kp].i* BCi[jp].i;
+			CCi[k].i += Aj->C[kp].i * BCi[jp].r +  Aj->C[kp].r* BCi[jp].i;
+		      }
 		  }
-		else 
-		  {
-		    CCi[k].r += Aj->C[kp].r * BCi[jp].r -  Aj->C[kp].i* BCi[jp].i;
-		    CCi[k].i += Aj->C[kp].i * BCi[jp].r +  Aj->C[kp].r* BCi[jp].i;
-		  }
-	      }
+	    }
 	}
     }
   return C;
 }
-
 
 
 /**
@@ -7076,6 +7124,55 @@ static double nsp_spcolmatrix_norm1(NspSpColMatrix *A)
   return norm;
 }
 
+/* added by Bruno using lapack way of scaling */
+static double nsp_spcolmatrix_fro(NspSpColMatrix *A)
+{
+  int j,k;
+  double norm=0.0, coef, r, scale=1;
+  switch ( A->rc_type ) 
+    {
+    case 'r': 
+      for ( j = 0 ; j < A->n ; j++) 
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      coef = fabs(A->D[j]->R[k]);
+	      if ( coef <= scale )
+		{
+		  r = coef/scale; norm += r*r;
+		}
+	      else
+		{
+		  r = scale/coef; norm = 1 + norm*(r*r);
+		  scale = coef;
+		}
+	    }
+	}
+      norm = scale*sqrt(norm);
+      break;
+    case 'c': 
+      for ( j = 0 ; j < A->n ; j++) 
+	{
+	  for ( k = 0 ; k < 2*A->D[j]->size ; k++ ) 
+	    {
+	      coef = fabs(A->D[j]->R[k]);
+	      if ( coef <= scale )
+		{
+		  r = coef/scale; norm += r*r;
+		}
+	      else
+		{
+		  r = scale/coef; norm = 1 + norm*(r*r);
+		  scale = coef;
+		}
+	    }
+	}
+      norm = scale*sqrt(norm);
+      break;
+    }
+  return norm;
+}
+
 /* return a < 0 norm when there's an allocation problem 
  **/
 
@@ -7141,8 +7238,7 @@ double nsp_spcolmatrix_norm(NspSpColMatrix *A, char c)
   case 'I':
     return nsp_spcolmatrix_norminf(A);
   case 'F':
-    Scierror("Error: Froebenius norm not implemented for sparse matrices\n");
-    return -1;
+    return nsp_spcolmatrix_fro(A);
   case 'M': 
     Scierror("Error: M norm not implemented for sparse matrices\n");
     return -1;
@@ -7433,4 +7529,100 @@ NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
 {
   return nsp_spcolmatrix_isnan_gen(A,flag,isinf_f);
 }
+
+
+/**
+ * int nsp_spcolmatrix_is_lower_triangular
+ * @A: a #NspSpColMatrix
+ * 
+ * the code should work even if zero elements are stored
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A)
+{
+  int i, j, k;
+
+  if ( A->m != A->n )
+    return FALSE;
+
+  switch ( A->rc_type ) 
+    {
+    case 'r': 
+      for ( j = 1 ; j < A->n ; j++) 
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      i = A->D[j]->J[k];
+	      if ( i >= j ) 
+		break;
+	      else if ( A->D[j]->R[k] != 0.0 )
+		return FALSE;
+	    }
+	}
+      break;
+    case 'c': 
+      for ( j = 1 ; j < A->n ; j++) 
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      i = A->D[j]->J[k];
+	      if ( i >= j ) 
+		break;
+	      else if ( A->D[j]->C[k].r != 0.0 || A->D[j]->C[k].i != 0.0 )
+		return FALSE;
+	    }
+	}
+      break;
+    }
+  return TRUE;
+}
+
+/**
+ * int nsp_spcolmatrix_is_upper_triangular
+ * @A: a #NspSpColMatrix
+ * 
+ * the code should work even if zero elements are stored
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
+{
+  int i, j, k;
+
+  if ( A->m != A->n )
+    return FALSE;
+
+  switch ( A->rc_type ) 
+    {
+    case 'r': 
+      for ( j = 0 ; j < A->n-1 ; j++) 
+	{
+	  for ( k = A->D[j]->size-1 ; k >= 0  ; k-- ) 
+	    {
+	      i = A->D[j]->J[k];
+	      if ( i <= j ) 
+		break;
+	      else if ( A->D[j]->R[k] != 0.0 )
+		return FALSE;
+	    }
+	}
+      break;
+    case 'c': 
+      for ( j = 0 ; j < A->n-1 ; j++) 
+	{
+	  for ( k = A->D[j]->size-1 ; k >= 0  ; k-- ) 
+	    {
+	      i = A->D[j]->J[k];
+	      if ( i <= j ) 
+		break;
+	      else if ( A->D[j]->C[k].r != 0.0 || A->D[j]->C[k].i != 0.0 )
+		return FALSE;
+	    }
+	}
+      break;
+    }
+  return TRUE;
+}
+
 
