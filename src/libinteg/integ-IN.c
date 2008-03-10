@@ -749,12 +749,15 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) res);
   if ( lhs > 1 )
     {
-      nsp_move_double(stack,2, er_estim);
+      if ( nsp_move_double(stack,2, er_estim) == FAIL )
+	goto err;
       if ( lhs > 2 )
 	{
-	  nsp_move_double(stack,3, (double) ier);
+	  if ( nsp_move_double(stack,3, (double) ier) == FAIL )
+	    goto err;
 	  if ( lhs > 3 )
-	    nsp_move_double(stack,4, (double) neval);
+	    if ( nsp_move_double(stack,4, (double) neval) == FAIL )
+	      goto err;
 	}
     }
   return Max(1,lhs);
@@ -907,6 +910,59 @@ static int int2d_func(const double *x, const double *y, double *z, int *n)
     }
 }
 
+static int make_triangles(double a, double b, double c, double d, NspMatrix **XX, NspMatrix **YY)
+{
+  NspMatrix *xx=NULLMAT, *yy=NULLMAT;
+  int m, j, nbtris;
+  double dx = b-a, dy = d-c, x0, x1, y0, y1;
+
+  if ( ! (finite(a) && finite(b) && finite(c) && finite(d) && a < b && c < d  && finite(dx) && finite(dy)) )
+    return FAIL;
+
+  if ( dx > dy )
+    m = (int) (dx/dy);
+  else
+    m = (int) (dy/dx);
+
+  nbtris = 2*m;
+
+  if ( (xx=nsp_matrix_create(NVOID,'r',3,nbtris)) == NULLMAT )
+    return FAIL;
+  if ( (yy=nsp_matrix_create(NVOID,'r',3,nbtris)) == NULLMAT )
+    { nsp_matrix_destroy(xx); return FAIL;}
+
+  if ( dx > dy )
+    {
+      dx = dx / (double) m;
+      x0 = a;
+      for ( j = 0 ; j < nbtris ; j+=2 )
+	{
+	  x1 = j < nbtris-1 ? a+(j+1)*dx : b; 
+	  xx->R[3*j] = x0; xx->R[3*j+1] = x1; xx->R[3*j+2] = x0;
+	  yy->R[3*j] = c;  yy->R[3*j+1] = c;  yy->R[3*j+2] = d;
+	  xx->R[3*j+3] = x1; xx->R[3*j+4] = x1; xx->R[3*j+5] = x0;
+	  yy->R[3*j+3] = c;  yy->R[3*j+4] = d;  yy->R[3*j+5] = d;
+	  x0 = x1;
+	}
+    }
+  else
+    {
+      dy = dy / (double) m;
+      y0 = c;
+      for ( j = 0 ; j < nbtris ; j+=2 )
+	{
+	  y1 = j < nbtris-1 ? c+(j+1)*dx : d; 
+	  xx->R[3*j] = a;  xx->R[3*j+1] = b;  xx->R[3*j+2] = a;
+	  yy->R[3*j] = y0; yy->R[3*j+1] = y0; yy->R[3*j+2] = y1;
+	  xx->R[3*j+3] = b; xx->R[3*j+4] = b; xx->R[3*j+5] = a;
+	  yy->R[3*j+3] = y0;  yy->R[3*j+4] = y1;  yy->R[3*j+5] = y1;
+	  y0 = y1;
+	}
+    }
+  *XX = xx; *YY = yy;
+  return OK;
+}
+	  
 /**
  * int_int2d:
  * @stack: 
@@ -920,14 +976,14 @@ static int int2d_func(const double *x, const double *y, double *z, int *n)
  **/
 int int_int2d(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT;
+  NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT, *xx=NULLMAT, *yy=NULLMAT;
   NspObject *f=NULLOBJ, *args=NULLOBJ;
   double tol=1.e-10, er_estim;
   int limit = 100, nu=0, nd=0, meval, neval, stat;
   int lwork, liwork; /* sizes of work arrays (lwork = 9*limit, liwork = 2*limit) */
   double *rwork=NULL;
   int *iwork=NULL;
-  Boolean iflag=FALSE, iclose=TRUE, vect_flag=FALSE;
+  Boolean iflag=FALSE, iclose=TRUE, vect_flag=FALSE, on_triangles=TRUE;
 
   int_types T[] = {realmat, realmat, obj, new_opts, t_end} ;
 
@@ -946,12 +1002,20 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt, T, &x, &y, &f, &opts, &args, &tol, &iflag, &limit, &iclose, &vect_flag) == FAIL ) 
     return RET_BUG;
   
-  limit = Max(10, limit);
-
   CheckSameDims (NspFname(stack), 1, 2, x, y);
-  if ( x->m != 3 || x->n < 1 )
+  if ( x->mn == 2 )
     {
-      Scierror("%s: first and second arguments should be of size 3 x n (n>=1)\n",NspFname(stack));
+      on_triangles = FALSE;
+      if ( make_triangles(x->R[0],x->R[1], y->R[0], y->R[1], &xx, &yy) == FAIL )
+	{
+	  Scierror("%s: first and second arguments don't define a rectangle (or a memory problem is occured)\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      x = xx; y = yy;
+    }
+  else if ( x->m != 3 || x->n < 1 )
+    {
+      Scierror("%s: first and second arguments should be of length 2 or of size 3 x n (n>=1)\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -962,6 +1026,7 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
     }
 
   /* allocate working arrays */
+  limit = Max(x->n, limit);
   liwork = 2*limit;
   lwork = 9*limit;
   rwork = nsp_alloc_work_doubles(lwork);
@@ -987,25 +1052,30 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
 	     res->R, &er_estim, &nu, &nd, &neval, &iflag, rwork, iwork, &vect_flag, &stat);
 
   if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
-                              /* the function to integrate at a point */
+                              /* the function to integrate  */
 
   if ( iflag != 0 )  /* display a warning */
     {
-      Sciprintf("\n Warning: requested precision not reached, ier = %d", iflag);
+      Sciprintf("\n Warning: requested precision not reached, ier = %d\n", iflag);
 /*       Sciprintf("\n          maxtri= %d, nu+nd = %d, nevals = %d, meval = %d\n",limit, nu+nd, neval, meval); */
     }
 
   int2d_clean(&int2d_d);
   FREE(rwork); FREE(iwork);
+  if ( ! on_triangles )  /* destroy the triangulation of the rectangle */ 
+    { nsp_matrix_destroy(xx);nsp_matrix_destroy(yy); }
   MoveObj(stack,1,(NspObject *) res);
   if ( lhs > 1 )
     {
-      nsp_move_double(stack,2, er_estim);
+      if ( nsp_move_double(stack,2, er_estim) == FAIL )
+	goto err;
       if ( lhs > 2 )
 	{
-	  nsp_move_double(stack,3, (double) iflag);
+	  if ( nsp_move_double(stack,3, (double) iflag) == FAIL )
+	    goto err;
 	  if ( lhs > 3 )
-	    nsp_move_double(stack,4, (double) neval);
+	    if ( nsp_move_double(stack,4, (double) neval) == FAIL )
+	      goto err;
 	}
     }
   return Max(1,lhs);
@@ -1014,8 +1084,7 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   FREE(rwork); FREE(iwork);
   int2d_clean(&int2d_d);
   nsp_matrix_destroy(res);
+  nsp_matrix_destroy(xx); nsp_matrix_destroy(yy);
   return RET_BUG;
 }
-
-
 

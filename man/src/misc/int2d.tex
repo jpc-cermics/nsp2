@@ -2,7 +2,7 @@
 
 \mansection{int2d}
 \begin{mandesc}
-  \short{int2d}{two dimensional integration over a set of triangles}
+  \short{int2d}{two dimensional integration over a rectangle or a set of triangles}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -15,8 +15,9 @@ Ia  = int2d(X, Y, f)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{X,Y}:  $3 \times n$ arrays, respectively the abscissae and
-    ordinates of the triangles.
+    \vname{X,Y}: vectors with 2 components $X=[a,b]$ and $Y=[c,d]$ for
+    the rectangle case or  $3 \times n$ arrays, respectively the
+    abscissae and ordinates of the triangles.
     \vname{f}: nsp function
     \vname{tol=e}: optional named argument, the requested absolute or
     relative error on the result (default is 1e-10).
@@ -48,6 +49,10 @@ Ia  = int2d(X, Y, f)
 \begin{mandescription}
 This function computes an approximation $I_a$ of:
 $$
+   I = \int_a^b \int_c^d f(x,y) dxdy
+$$
+or
+$$
    I = \sum_k \int_{T_k} f(x,y) dxdy
 $$
 such that:
@@ -77,11 +82,21 @@ examples). \verb+ea_estim+ is an estimation of $| I - I_a |$. The
       \verb+limit=maxtri+ parameter.
 \end{itemize}
 
+Rmk: the underlying routine (twodq) integrates only on triangles and
+the rectangle case is handled in providing a simple triangulation of
+the rectangle. 
 \end{mandescription}
 
 \begin{examples}
   
 \paragraph{example 1} a simple example, integrating on the unit square: 
+\begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
+Ia,ea,ier] = int2d([0,1],[0,1],f)\Hnewline 
+I = -cos(2)+2*cos(1)-1 // exact result \Hnewline 
+abs(Ia-I) //near exact absolute error}
+\end{program}
+
+\paragraph{example 1bis} the same exemple using triangles
 \begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
 // the unit square is divided in 2 triangles:\Hnewline
 X = [0,1;1,1;0,0];\Hnewline
@@ -93,21 +108,18 @@ abs(Ia-I) //near exact absolute error}
   
 \paragraph{example 2} a more difficult one's, always on the unit square:
 \begin{program}\HCode{function z=f(x,y);z=cos(10*x+20*y);endfunction\Hnewline
-// the unit square is divided in 2 triangles:\Hnewline
-X = [0,1;1,1;0,0];\Hnewline
-Y = [0,0;0,1;1,1];\Hnewline
 I = (-cos(30)+cos(10)+cos(20)-1)/200 // exact result \Hnewline 
 // first call \Hnewline
-[Ia,ea,ier] = int2d(X,Y,f)\Hnewline
+[Ia,ea,ier] = int2d([0,1],[0,1],f)\Hnewline
 abs(Ia-I)\Hnewline
 // increase limit\Hnewline
-[Ia,ea,ier] = int2d(X,Y,f,limit=1000)\Hnewline
+[Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000)\Hnewline
 abs(Ia-I)\Hnewline
 // the function could be evaluated on vector x and y\Hnewline
 // timing with scalar evaluation\Hnewline
-tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
+tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()\Hnewline
 // timing with vectorial evaluation (this should be faster)\Hnewline
-tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
+tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=\%t); toc()}
 \end{program}
 
 \paragraph{example 3} integrating a singularity. Here we try to compute:
@@ -127,7 +139,7 @@ tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
 Rmk: a singularity at the origine could be removed using polar
 coordinates but in case of the unit triangle it may be better
 to use $x = u(1-v), y = uv$, $dxdy = u dudv$ because $u$ and $v$
-belong in the unit square and so you can use int2d with 2 triangles
+belong in the unit square and so you can use directly int2d
 (in example 3 using this transformation leads to integrate $f(u,v)=1$
 on the unit square). 
 \end{examples}

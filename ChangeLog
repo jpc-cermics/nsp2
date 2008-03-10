@@ -1,3 +1,15 @@
+2008-03-10  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libinteg/integ-IN.c (make_triangles): 
+	int2d could now integrate directly on a rectangle
+	(when X and Y arg of int2d are vectors of length 2
+	a triangulation is computed), see int2d help page.
+	* src/objet/SpColMatrix.c: rewrite sparse function
+	(add 2 elements having the same (i,j) indices), write
+	codes 1/ to compute frobenius norm (using lapack 's 
+	method of scaling) and 2/ to detect if a sparse
+	is lower or upper triangular.
+
 2008-03-06  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/object/*.c: 
