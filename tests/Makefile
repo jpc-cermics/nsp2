@@ -48,7 +48,8 @@ TESTS= \
 	cholmod.dia \
 	bool.dia  \
 	dollar.dia \
-	intg.dia 
+	intg.dia \
+	sparse_ij_val.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
