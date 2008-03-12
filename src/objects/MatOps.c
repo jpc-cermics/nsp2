@@ -2069,28 +2069,25 @@ NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func
  * 
  * A = triu(A,k). 
  **/
-
 void nsp_mat_triu(NspMatrix *A, int k)
 {
-  double d=0.00;
   int i,j;
-  for ( i =0 ; i < A->m ; i++) 
+
+  if ( A->rc_type == 'r' )
     {
-      for ( j = 0 ; j < Min(k+i,A->n) ; j++) 
-	{
-	  switch ( A->rc_type ) 
-	    {
-	    case 'r' : 
-	      A->R[i+A->m*j] = d; break ;
-	    case 'c' : 
-	      A->C[i+A->m*j].r = d;
-	      A->C[i+A->m*j].i = d;
-	    }
-	}
+      double *Aj;
+      for ( j = 0, Aj = A->R ; j < Min(A->m-k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1+k) ; i < A->m ; i++)
+	  Aj[i] = 0.0;
+    }
+  else
+    {
+      doubleC zeroC = {0.0,0.0}, *Aj;
+      for ( j = 0, Aj = A->C ; j < Min(A->m-k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1+k) ; i < A->m ; i++)
+	  Aj[i] = zeroC;
     }
 }
-
-
 
 /**
  * nsp_mat_tril:
@@ -2099,27 +2096,27 @@ void nsp_mat_triu(NspMatrix *A, int k)
  * 
  * A=Tril(A)
  **/
-
 void nsp_mat_tril(NspMatrix *A, int k)
 {
-  double d=0.00;
   int i,j;
-  for ( i =0 ; i < A->m ; i++) 
+
+  if ( A->rc_type == 'r' )
     {
-      for ( j = Max(0,k+i+1) ; j < A->n ; j++) 
-	{
-	  switch ( A->rc_type ) 
-	    {
-	    case 'r' : 
-	      A->R[i+A->m*j] = d; break ;
-	    case 'c' : 
-	      A->C[i+A->m*j].r = d;
-	      A->C[i+A->m*j].i = d;
-	    }
-	}
+      int j0 = Max(0,k+1);
+      double *Aj= &A->R[j0*A->m];
+      for ( j = j0; j < A->n ; j++, Aj += A->m )
+	for ( i = 0 ; i < Min(A->m,j-k) ; i++)
+	  Aj[i] = 0.0;
+    }
+  else
+    {
+      int j0 = Max(0,k+1);
+      doubleC zeroC = {0.0,0.0}, *Aj= &A->C[j0*A->m];
+      for ( j = j0 ; j < A->n ; j++, Aj += A->m )
+	for ( i = 0 ; i < Min(A->m,j-k) ; i++)
+	  Aj[i] = zeroC;
     }
 }
-
 
 
 /**
