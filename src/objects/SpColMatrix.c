@@ -7532,7 +7532,7 @@ NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
 
 
 /**
- * int nsp_spcolmatrix_is_lower_triangular
+ * nsp_spcolmatrix_is_lower_triangular:
  * @A: a #NspSpColMatrix
  * 
  * the code should work even if zero elements are stored
@@ -7579,7 +7579,7 @@ Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A)
 }
 
 /**
- * int nsp_spcolmatrix_is_upper_triangular
+ * nsp_spcolmatrix_is_upper_triangular:
  * @A: a #NspSpColMatrix
  * 
  * the code should work even if zero elements are stored
