@@ -1166,9 +1166,7 @@ NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
  * returns a #Matrix or %NULLOBJ
  */
 
-NspObject *nsp_matint_extract(NspObject *Obj, 
-			      const int *row, int nr, int rmin, int rmax,
-			      const int *col, int nc, int cmin, int cmax)
+static NspObject *nsp_matint_extract(NspObject *Obj, index_vector *index_r, index_vector *index_c)
 {
   NspSMatrix *A = (NspSMatrix *) Obj;
   char *from, *to;
@@ -1180,12 +1178,12 @@ NspObject *nsp_matint_extract(NspObject *Obj,
 
   type = check_implements(Obj, nsp_type_matint_id);
 
-  if ( nr == 0 || nc == 0 )
-     return MAT_INT(type)->clone(NVOID, Obj, nr, nc, FALSE);
+  if ( index_r->nval == 0 || index_c->nval == 0 )
+     return MAT_INT(type)->clone(NVOID, Obj, index_r->nval, index_c->nval, FALSE);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
-  if ( rmin < 1 || rmax > A->m || cmin < 1 || cmax > A->n )
+  if ( index_r->min < 1 || index_r->max > A->m ||  index_c->min < 1 ||  index_c->max > A->n )
     {
       Scierror("Error:\tIndices out of bound\n");
       return NULLOBJ;
@@ -1194,7 +1192,7 @@ NspObject *nsp_matint_extract(NspObject *Obj,
   MAT_INT(type)->canonic(Obj);
   from = (char *) A->S;
 
-  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, nr, nc, FALSE)) == NULLOBJ ) 
+  if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, index_r->nval,index_c->nval, FALSE)) == NULLOBJ ) 
     return NULLOBJ;
 
   B = (NspSMatrix *) Loc; to = (char *) B->S;
@@ -1204,54 +1202,54 @@ NspObject *nsp_matint_extract(NspObject *Obj,
       if ( elt_size == sizeof(double) )
 	{
 	  double *fromd = (double *) from, *tod = (double *) to;
-	  for ( j = 0, k = 0 ; j < nc ; j++ )
+	  for ( j = 0, k = 0 ; j < index_c->nval ; j++ )
 	    {        
-	      stride =  col[j]*A->m;
-	      for ( i = 0 ; i < nr ; i++, k++ )
-		tod[k] = fromd[row[i]+ stride];
+	      stride =  index_c->val[j]*A->m;
+	      for ( i = 0 ; i <  index_r->nval ; i++, k++ )
+		tod[k] = fromd[index_r->val[i]+ stride];
 	    }
 	}
       else if ( elt_size == sizeof(doubleC) )
 	{
 	  doubleC *fromc = (doubleC *) from, *toc = (doubleC *) to;
-	  for ( j = 0, k = 0 ; j < nc ; j++ )
+	  for ( j = 0, k = 0 ; j < index_c->nval ; j++ )
 	    {        
-	      stride =  col[j]*A->m;
-	      for ( i = 0 ; i < nr ; i++, k++ )
-		toc[k] = fromc[row[i]+ stride];
+	      stride =  index_c->val[j]*A->m;
+	      for ( i = 0 ; i < index_r->nval  ; i++, k++ )
+		toc[k] = fromc[index_r->val[i]+ stride];
 	    }
 	}
       else if ( elt_size == sizeof(int) )
 	{
 	  int *fromi = (int *) from, *toi = (int *) to;
-	  for ( j = 0, k = 0 ; j < nc ; j++ )
+	  for ( j = 0, k = 0 ; j <  index_c->nval ; j++ )
 	    {        
-	      stride =  col[j]*A->m;
-	      for ( i = 0 ; i < nr ; i++, k++ )
-		toi[k] = fromi[row[i]+ stride];
+	      stride =  index_c->val[j]*A->m;
+	      for ( i = 0 ; i < index_r->nval ; i++, k++ )
+		toi[k] = fromi[index_r->val[i]+ stride];
 	    }
 	}
       else
 	{
-	  for ( j = 0 ; j < nc ; j++ )
+	  for ( j = 0 ; j < index_c->nval ; j++ )
 	    {
-	      stride =  col[j]*A->m;
-	      for ( i = 0 ; i < nr ; i++, to += elt_size )
-		memcpy(to, from + (row[i]+ stride)*elt_size, elt_size);
+	      stride =  index_c->val[j]*A->m;
+	      for ( i = 0 ; i < index_r->nval ; i++, to += elt_size )
+		memcpy(to, from + (index_r->val[i]+ stride)*elt_size, elt_size);
 	    }
 	}
     }
   else                                                     /* Matrix of pointers (cells, strings, poly,...) */
     {
       char **fromv = (char **) from, **tov = (char **) to, *elt;
-      for ( j = 0, k = 0 ; j < nc ; j++ )
+      for ( j = 0, k = 0 ; j < index_c->nval ; j++ )
 	{
-	  stride = col[j]*A->m;
-	  for ( i = 0 ; i < nr ; i++, k++ )
+	  stride = index_c->val[j]*A->m;
+	  for ( i = 0 ; i < index_r->nval ; i++, k++ )
 	    {
-	      if ( fromv[row[i] + stride] != NULL )   /* just for cells which may have undefined elements */
+	      if ( fromv[index_r->val[i] + stride] != NULL )   /* just for cells which may have undefined elements */
 		{
-		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[row[i]+stride])) == NULL )
+		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromv[index_r->val[i]+stride])) == NULL )
 		    {
 		      nsp_object_destroy(&Loc); 
 		      return NULLOBJ;
@@ -1283,9 +1281,7 @@ NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols)
   index_c.iwork = matint_iwork2;
   if ( nsp_get_index_vector_from_object(Rows,&index_r) == FAIL) return NULLOBJ ;
   if ( nsp_get_index_vector_from_object(Cols,&index_c) == FAIL) return NULLOBJ ;
-  Res = nsp_matint_extract(Obj,
-			   index_r.val, index_r.nval, index_r.min, index_r.max,
-			   index_c.val, index_c.nval, index_c.min, index_c.max);
+  Res = nsp_matint_extract(Obj,&index_r,&index_c);
   nsp_free_index_vector_cache(&index_r);
   nsp_free_index_vector_cache(&index_c);
   return Res;
@@ -2798,6 +2794,7 @@ int int_matint_extractrows_pointer(Stack stack, int rhs, int opt, int lhs)
  * 
  * Returns:  1 or %RET_BUG
  **/
+
 int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
 {
   index_vector index_r={0},index_c={0};
@@ -2814,11 +2811,9 @@ int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_get_index_vector(stack, 3,NULL, &index_c)== FAIL )
     goto err;
   
-  if ( (Res =nsp_matint_extract(Obj, 
-				index_r.val, index_r.nval , index_r.min, index_r.max,
-				index_c.val, index_c.nval , index_c.min, index_c.max)) == NULLOBJ )
+  if ( (Res =nsp_matint_extract(Obj, &index_r, &index_c)) == NULLOBJ )
     goto err;
-
+  
   nsp_free_index_vector_cache(&index_r);
   nsp_free_index_vector_cache(&index_c);
   MoveObj (stack, 1, Res);
