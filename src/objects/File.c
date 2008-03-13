@@ -600,6 +600,31 @@ int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len)
   return OK;
 }
 
+/**
+ *nsp_xdr_load_new_string:
+ * @xdrs: a  #XDR structure
+ * @str: pointer to a string to be set
+ *
+ * read a string from the xdr stream @xdr. a new string is 
+ * allocated and filled. An error is raised and 
+ * %FAIL is returned is allocation fails or if a string cannot be read.
+ * 
+ * Return value: %OK and %FAIL.
+ **/
+
+int nsp_xdr_load_new_string(XDR *xdrs, char **str)
+{
+  assertR( xdr_vector(xdrs,(char *) &szof,(u_int)1,
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  if (( *str =new_nsp_string_n(szof)) == (nsp_string) 0) 
+    {
+      Scierror("Error: running out of memory for reading a string\n");
+      return FAIL;
+    }
+  assertR( xdr_opaque(xdrs, *str ,szof));
+  return OK;
+}
+
 
 
 /*-------------------------------------------------------
