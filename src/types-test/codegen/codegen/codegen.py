@@ -938,7 +938,7 @@ class Wrapper:
         father = self.objinfo.parent
         if father != 'Object':
             str = str + '  int fid;\n  char name[NAME_MAXL];\n'
-
+            
         if self.byref == 't' :
             str = str + '  if ((%s->obj = malloc(sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
             varname = varname +'->obj'

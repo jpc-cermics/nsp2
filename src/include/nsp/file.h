@@ -120,7 +120,7 @@ extern int nsp_xdr_load_array_c(XDR *xdrs,char *nx, int l);
 extern int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l);
 extern int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn);
 extern int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len);
-
+extern int nsp_xdr_load_new_string(XDR *xdrs, char **str);
 extern int is_little_endian(void);
 extern int nsp_feof(NspFile *f);
 extern int nsp_ferror(NspFile *f);

@@ -222,8 +222,7 @@ class StringArg(ArgType):
 
     def attr_write_load(self,pname, varname,byref):
 	"""used when a field is to be reloaded """
-        return '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;\n'\
-               '  if ((%s->%s =nsp_string_copy(name)) == (nsp_string) 0) return NULL;\n'  % (varname,pname)
+        return '  if (nsp_xdr_load_new_string(xdrs,&(%s->%s)) == FAIL) return NULL;\n'  % (varname,pname)
     
     def attr_write_copy(self, pname, left_varname,right_varname,byref):
 	"""used when a variable is to be copied """
@@ -256,7 +255,12 @@ class StringArg(ArgType):
 
     def attr_write_defval(self,pname, varname,byref):
 	"""used to give a default value  """
-        return '  if ((%s->%s =nsp_string_copy("")) == (nsp_string) 0) return NULL;\n'  % (varname,pname)
+        str = '  if ( %s->%s == NULL) \n    {\n' % (varname,pname);    
+        str = str + '     if (( %s->%s = nsp_string_copy("")) == NULL)\n       return FAIL;\n    }\n' \
+            % (varname,pname)
+        return str
+
+
 
 class UCharArg(ArgType):
     # allows strings with embedded NULLs.

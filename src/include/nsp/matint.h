@@ -64,9 +64,9 @@ extern NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols);
 /* extern NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax);*/
 extern NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows);
 
-extern NspObject *nsp_matint_extract(NspObject *Obj, 
+/* extern NspObject *nsp_matint_extract(NspObject *Obj, 
 				     const int *row, int nr, int rmin, int rmax, 
-				     const int *col, int nc, int cmin, int cmax);
+				     const int *col, int nc, int cmin, int cmax); */
 
 extern NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols);
 
