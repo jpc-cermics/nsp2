@@ -2076,15 +2076,15 @@ void nsp_mat_triu(NspMatrix *A, int k)
   if ( A->rc_type == 'r' )
     {
       double *Aj;
-      for ( j = 0, Aj = A->R ; j < Min(A->m-k-1,A->n) ; j++, Aj += A->m )
-	for ( i = Max(0,j+1+k) ; i < A->m ; i++)
+      for ( j = 0, Aj = A->R ; j < Min(A->m+k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1-k) ; i < A->m ; i++)
 	  Aj[i] = 0.0;
     }
   else
     {
       doubleC zeroC = {0.0,0.0}, *Aj;
-      for ( j = 0, Aj = A->C ; j < Min(A->m-k-1,A->n) ; j++, Aj += A->m )
-	for ( i = Max(0,j+1+k) ; i < A->m ; i++)
+      for ( j = 0, Aj = A->C ; j < Min(A->m+k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1-k) ; i < A->m ; i++)
 	  Aj[i] = zeroC;
     }
 }
