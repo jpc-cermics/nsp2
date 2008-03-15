@@ -539,7 +539,7 @@ static int int_sprowmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 static int int_sprowmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *A,*B;
-  NspObject *Rows,*Cols;
+  NspObject *Rows,*Cols=NULL;
 
   CheckRhs(3,4);
   CheckLhs(1,1);

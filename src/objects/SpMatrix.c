@@ -755,7 +755,7 @@ int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspObject *Rows)
 static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject *Cols, int flag, int *err)
 {
   NspMatrix *Work= NULL, *Index = NULL;
-  NspSpRowMatrix *Loc;
+  NspSpRowMatrix *Loc=NULL;
   int i,j,Rm;
 
   index_vector index_c={0}, index_r={0};
@@ -786,7 +786,8 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject
     }
   Rm= (flag == 1) ? index_r.nval : A->m;
   if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,Rm,index_c.nval))== NULLSPROW) 
-    return(NULLSPROW);
+    goto err;
+
   /* used to store elements */
   if ( ( Work = nsp_matrix_create(NVOID,'r',2,index_c.nval)) == NULLMAT) return NULLSPROW;
   

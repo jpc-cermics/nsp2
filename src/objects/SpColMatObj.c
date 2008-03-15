@@ -729,49 +729,16 @@ static int int_spcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*B=NULLSPCOL,*B1=NULLSPCOL;
-#if 0 
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT, *Bm;
-#else 
-  NspMatrix *Rows1=NULLMAT,*Cols1=NULLMAT, *Bm;
-  NspObject *Rows,*Cols;
-#endif 
+  NspMatrix *Bm;
+  NspObject *Rows,*Cols=NULL;
 
   CheckRhs(3,4);
   CheckLhs(1,1);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto ret_bug;
-#if 0  
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Rows is boolean : use find(Rows) **/
-      NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
-    }
-  else
-    {
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
-    }
-#else 
   if ((Rows =nsp_get_object(stack,2)) == NULLOBJ)  goto ret_bug;
-#endif
-
   if ( rhs == 4 )
     {
-#if 0 
-      /* Cols is boolean : use find(Cols) **/
-      if ( IsBMatObj(stack,3)  ) 
-	{
-	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,3)) == NULLBMAT) goto ret_bug;
-	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
-	}  
-      else
-	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
-	}
-#else 
       if ((Cols =nsp_get_object(stack,3)) == NULLOBJ)  goto ret_bug;
-#endif 
     }
   
   if ( IsMatObj(stack,rhs) )
@@ -797,14 +764,10 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
     { if (nsp_spcolmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
   NSP_OBJECT(A)->ret_pos = 1;
   nsp_spcolmatrix_destroy(B1);
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
   return 1;
  ret_bug: 
   /* delete if non null; */
   nsp_spcolmatrix_destroy(B1);
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
   return RET_BUG;
 }
 
