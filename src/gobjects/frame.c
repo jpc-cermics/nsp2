@@ -1577,7 +1577,7 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
 
 int nsp_gframe_select_and_move_list(NspGFrame *R,NspObject *Obj,const double pt[2], int *click)
 {
-  int rep, cp;
+  int rep, cp=0; /* cp unused */
   NspTypeGRint *bf;
   NspList *L;
   if ( Obj != NULLOBJ) 

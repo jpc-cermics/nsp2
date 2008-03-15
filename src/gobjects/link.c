@@ -1175,10 +1175,11 @@ int link_add_control(NspLink *L,const double pt[2])
 int link_remove_control(NspLink *L,const double pt[2])
 {
   int cp;
+  index_vector index = {&cp, cp+1,cp+1,1, FALSE,0};
   if ( link_control_near_pt(L,pt,&cp) == FALSE ) return OK;
   if ( cp == 0 || cp == L->obj->poly->m -1 ) return OK;
   /* remove point in matrix */
-  return nsp_matint_delete_rows( (NspObject *) (L->obj->poly), &cp, 1, cp+1, cp+1);
+  return nsp_matint_delete_rows( (NspObject *) (L->obj->poly), &index);
 }
 
 
