@@ -1,0 +1,36 @@
+;; -*- scheme -*-
+
+(define-objectref Figure
+  (in-module "Figure")
+  (parent "Graphic")
+  (c-name "Figure")
+  (fields
+   '("NspList*" "children")
+   '("char*" "fname")
+   '("gboolean" "wresize")
+   '("int" "id")
+   '("int" "width")
+   '("int" "height")
+   '("int" "gr_width")
+   '("int" "gr_height")
+   '("int" "x")
+   '("int" "y"))
+  (gtype-id "Figure")
+)
+
+;; overriden 
+
+(define-function figure_attach
+  (c-name "figure_attach")
+  (return-type "gboolean")
+)
+
+;; Il sera bien de récuperer les widgets associés si besoin etc....
+
+
+
+
+
+
+
+

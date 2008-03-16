@@ -13,4 +13,6 @@
  polyline.h
  compound.c 
  compound.h 
+figure.h
+figure.c
 

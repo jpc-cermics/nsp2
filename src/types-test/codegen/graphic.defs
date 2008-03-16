@@ -2,5 +2,30 @@
 
 (include "graphic-types.defs")
 
+(define-method translate 
+  (of-object "Graphic")
+  (c-name "graphic_translate")
+  (return-type "none")
+  (parameters
+   '("NspMatrix*" "tr");
+  )
+)
 
+(define-method scale 
+  (of-object "Graphic")
+  (c-name "graphic_scale")
+  (return-type "none")
+  (parameters
+   '("NspMatrix*" "sc");
+  )
+)
+
+(define-method rotate 
+  (of-object "Graphic")
+  (c-name "graphic_rotate")
+  (return-type "none")
+  (parameters
+   '("NspMatrix*" "R");
+  )
+)
 

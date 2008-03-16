@@ -10,9 +10,11 @@ GLURP
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
+
 %%
 ignore-glob
   *_get_type
+
 %%
 override_internal_methods
 
@@ -20,6 +22,8 @@ override_internal_methods
   translate_func *translate;
   rotate_func *rotate;
   scale_func *scale;
+  bounds_func *bounds;
+
 %%
 override_internal_methods_protos
 
@@ -27,22 +31,51 @@ typedef void draw_func(BCG *Xgc,NspGraphic *o);
 typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
 typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
+typedef void bounds_func(BCG *Xgc,NspGraphic *o,double *bounds);
+
 %%
-override atk_relation_new kwargs
-static int
-_wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
+override graphic_translate kwargs
+/* take care that the name to give for override is the c-name of 
+ * the method 
+ */
+static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
-
+  int_types T[] = {realmat,t_end};
+  NspMatrix *tr;
+  if ( GetArgs(stack,rhs,opt,T,&tr) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,tr,2);
+  self->type->translate(NULL,self, tr->R);
+  return 0;
 }
+
 %%
-override umfpack_action_do_action
-
-static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt,int lhs)
+override graphic_scale kwargs
+static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
-  int i, ret;
+  int_types T[] = {realmat,t_end};
+  NspMatrix *sc;
 
-  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
+  if ( GetArgs(stack,rhs,opt,T,&sc) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,sc,2);
+  self->type->scale(NULL,self, sc->R);
+  return 0;
 }
+
+%%
+override graphic_rotate kwargs
+static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {realmat,t_end};
+  NspMatrix *R;
+  if ( GetArgs(stack,rhs,opt,T,&R) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,R,2);
+  self->type->rotate(NULL,self, R->R);
+  return 0;
+}
+
+%%
+last
+
+/* verbatim at the end */
+
+

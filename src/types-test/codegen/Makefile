@@ -15,7 +15,8 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 PYTHON=python 
-ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c polyline.c graphic.c compound.c 
+ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
+	polyline.c graphic.c axes.c figure.c 
 
 all:: $(ALL)
 

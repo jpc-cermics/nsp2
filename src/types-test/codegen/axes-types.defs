@@ -1,17 +1,18 @@
 ;; -*- scheme -*-
 
-(define-objectref Compound
-  (in-module "Compound")
+(define-objectref Axes
+  (in-module "Axes")
   (parent "Graphic")
-  (c-name "Compound")
+  (c-name "Axes")
   (fields
     '("NspMatrix*" "frect")
     '("NspMatrix*" "wrect")
+    '("gboolean" "top")
     '("NspMatrix*" "elts_bounds")
     '("NspList*" "elts")
     '("double" "alpha")
     )
-  (gtype-id "Compound")
+  (gtype-id "Axes")
 )
 
 
