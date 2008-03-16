@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2006 Bruno Pinçon Esial/Iecn
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2008 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -3912,112 +3912,6 @@ int_mxdadd (Stack stack, int rhs, int opt, int lhs)
 #endif
 }
 
-/* FIXME: 
- *   just a test version 
- *
- */
-
-NspMatrix *GetMatSafeCopy (Stack stack, int i)
-{
-  return Mat2double(MaybeObjCopy (&NthObj (i)));
-}
-
-NspMatrix *GetMatSafe(Stack stack, int i)
-{
-  NspObject *ob = NthObj(i);
-  HOBJ_GET_OBJECT(ob,NULL);
-  return Mat2double ((NspMatrix *) ob);
-}
-
-static int
-int_mx_mopscal1(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
-		MPM F3, M11 F4, int flag)
-{
-  NspMatrix *HMat1, *HMat2;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-  if ((HMat1 = GetMatSafeCopy (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if (HMat1->mn == 0)
-    {
-      if (flag == 1)
-	{
-	  /* flag == 1 ==> [] op A  returns [] * */
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	  return 1;
-	}
-      else
-	{
-	  /* flag == 1 ==> [] op A  returns F4(A) * */
-	  if (F4 != MatNoOp)
-	    {
-	      if ((HMat2 = GetMatSafeCopy (stack, 2)) == NULLMAT)
-		return RET_BUG;
-	      if ((*F4) (HMat2) == FAIL)
-		return RET_BUG;
-	      NSP_OBJECT (HMat2)->ret_pos = 1;
-	    }
-	  else
-	    {
-	      if ((HMat2 = GetMatSafe (stack, 2)) == NULLMAT)
-		return RET_BUG;
-	      NSP_OBJECT (HMat2)->ret_pos = 1;
-	    }
-	  return 1;
-	}
-    }
-  if ((HMat2 = GetMatSafe (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  if (HMat2->mn == 0)
-    {
-      if (flag == 1)
-	{
-	  /* flag == 1 ==> A op [] returns [] * */
-	  NSP_OBJECT (HMat2)->ret_pos = 1;
-	  return 1;
-	}
-      else
-	{
-	  /* flag == 1 ==> A op [] returns A * */
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	  return 1;
-	}
-    }
-  if (HMat2->mn == 1)
-    {
-      if ((*F1) (HMat1, HMat2) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-    }
-  else if (HMat1->mn == 1)
-    {
-      /* since Mat1 is scalar we store the result in Mat2 so we 
-         must copy it * */
-      if ((HMat2 = GetMatSafeCopy (stack, 2)) == NULLMAT)
-	return RET_BUG;
-      if ((*F3) (HMat2, HMat1) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat2)->ret_pos = 1;
-    }
-  else
-    {
-      if ((*F2) (HMat1, HMat2) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-    }
-  return 1;
-}
-
-
-int
-int_mxdadd1(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_mopscal1 (stack, rhs, opt, lhs,
-			 nsp_mat_add_scalar, nsp_mat_dadd, nsp_mat_add_scalar,
-			 MatNoOp, 0);
-}
-
-
 
 /*
  * term to term substraction 
@@ -5332,7 +5226,6 @@ static OpTab Matrix_func[] = {
   {"dbs_m_m", int_mxbackdivel},
   {"dst_m_m", int_mxmultel},
   {"plus_m_m", int_mxdadd},
-  {"plussafe_m_m", int_mxdadd1}, /* XXX experimental */
   {"minus_m_m", int_mxdsub},
   {"minus_m", int_mxminus},
   {"mult_m_m", int_mxmult},

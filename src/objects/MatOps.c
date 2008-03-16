@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2006 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2008 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -214,15 +214,12 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
       Scierror("Error:\tIncompatible dimensions\n");
       return NULLMAT;
     }
-
-#ifdef MTLB_MODE
   if ( A->n == 0 )
     {
       if ( (Loc =nsp_matrix_create(NVOID,'r',A->m,B->n)) == NULLMAT ) goto err;
       nsp_mat_set_rval(Loc, 0.0); 
       return Loc;
     }
-#endif
 
   if ( A->rc_type == 'c' ) 
     {
@@ -343,6 +340,55 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
     }
 }
 
+/**
+ * nsp_mat_add_mat:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix  
+ * 
+ * computes in @Mat1 the sum @Mat1 + @Mat2 (i.e @Mat1= @Mat1+@Mat2) when 
+ * @Mat1 and @Mat2 have the same sizes.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+/* supposed to do the same that previous function 
+ *
+ */
+
+int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
+{
+  int i;
+  if (SameDim(A,B))
+    {
+      if ( A->rc_type == 'r' ) 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ )
+	      A->R[i] += B->R[i];
+	  else 
+	    {
+	      if ( nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{ A->C[i].r += B->C[i].r;  A->C[i].i = B->C[i].i; }
+	    }
+	}
+      else 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      A->C[i].r += B->R[i];
+	  else 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      { A->C[i].r += B->C[i].r;  A->C[i].i += B->C[i].i; }
+	}
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return FAIL;
+    }
+}
 
 /**
  * nsp_mat_add_scalar:
@@ -361,6 +407,55 @@ int nsp_mat_add_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 }
 
 /**
+ * nsp_mat_add_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
+ * 
+ * Do the operation A <- A + B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
+ **/
+
+int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->R[i] += B->R[0];
+	}
+      else
+	{
+	  if ( nsp_mat_complexify(A, B->C[0].i) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r += B->C[0].r;
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r += B->R[0];
+	}
+      else
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    { A->C[i].r += B->C[0].r;  A->C[i].i += B->C[0].i; }
+	}
+    }
+  return OK;
+}
+
+
+/**
  * nsp_mat_add_scalar_maxplus:
  * @Mat1: a #NspMatrix 
  * @Mat2: a #NspMatrix of size 1x1 
@@ -371,7 +466,6 @@ int nsp_mat_add_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
  * 
  * Return value:  %OK or %FAIL.
  **/
-
 
 int nsp_mat_add_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 {
@@ -530,6 +624,47 @@ int nsp_mat_sub_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
   return MatOpScalar(Mat1,Mat2,nsp_dsub,nsp_zsub);
 }
 
+/**
+ * nsp_mat_sub_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
+ * 
+ * Do the operation A <- A - B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
+ **/
+
+int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->R[i] -= B->R[0];
+      else
+	{
+	  if ( nsp_mat_complexify(A, -B->C[0].i) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r -= B->C[0].r;
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->C[i].r -= B->R[0];
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r -= B->C[0].r;  A->C[i].i -= B->C[0].i; }
+    }
+  return OK;
+}
 
 /**
  * nsp_mat_sub_scalar_maxplus:
@@ -1302,7 +1437,7 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
   int j;
   int inc=1;
 
-#ifndef MTLB_MODE
+
   if ( A->mn == 0)
     {
       if ( dim == 0 )
@@ -1314,7 +1449,6 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
       else
 	return  nsp_matrix_create(NVOID,'r',0,0);
     }
-#endif
 
   switch (dim) 
     {
@@ -1373,7 +1507,6 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
   int j;
   int inc=1,zero=0;
 
-#ifndef MTLB_MODE
   if ( A->mn == 0) 
     {
       if ( dim == 0 )
@@ -1385,7 +1518,6 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
       else 
 	return  nsp_matrix_create(NVOID,'r',0,0);
     }
-#endif
 
   switch (dim) 
     {
@@ -3122,6 +3254,49 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 int nsp_mat_mult_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dvmul,nsp_zvmul);
+}
+
+/**
+ * nsp_mat_mult_scalar_bis:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix of size 1x1 (that is a scalar) 
+ * 
+ * Do the operation A <- A*B  when B is a scalar
+ * and when nsp is compiled in MTLB_MODE (matlab
+ * 's behavior for empty matrix)
+ *
+ * Return value: %FAIL or %OK
+ **/
+
+int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ )
+	  A->R[i] *= B->R[0];
+      else
+	{
+	  if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    { A->C[i].i = A->C[i].r * B->C[0].i; A->C[i].r *= B->C[0].r; }
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r *= B->R[0]; A->C[i].i *= B->R[0]; }
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  nsp_prod_c(&A->C[i],&B->C[0]);
+    }
+  return OK;
 }
 
 /**
@@ -5532,141 +5707,6 @@ int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B)
 
 
 /**
- * nsp_mat_add_scalar_bis:
- * @A: a #NspMatrix 
- * @B: a #NspMatrix of size 1x1 (that is a scalar) 
- * 
- * Do the operation A <- A + B  when B is a scalar
- * and when nsp is compiled in MTLB_MODE (matlab
- * 's behavior for empty matrix)
- *
- * Return value: %FAIL or %OK
- **/
-
-int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
-{
-  int i;
-  if ( A->mn == 0 )
-    return OK;
-
-  if ( A->rc_type == 'r' )
-    {
-      if ( B->rc_type == 'r' )
-	{
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    A->R[i] += B->R[0];
-	}
-      else
-	{
-	  if ( nsp_mat_complexify(A, B->C[0].i) == FAIL ) return FAIL;
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    A->C[i].r += B->C[0].r;
-	}
-    }
-  else
-    {
-      if ( B->rc_type == 'r' )
-	{
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    A->C[i].r += B->R[0];
-	}
-      else
-	{
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    { A->C[i].r += B->C[0].r;  A->C[i].i += B->C[0].i; }
-	}
-    }
-  return OK;
-}
-
-/**
- * nsp_mat_add_mat:
- * @A: a #NspMatrix 
- * @B: a #NspMatrix  
- * 
- * Do the operation A <- A + B when nsp is compiled 
- * in MTLB_MODE (matlab 's behavior for empty matrix)
- * 
- * Return value: %OK or %FAIL
- **/
-int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
-{
-  int i;
-  if (SameDim(A,B))
-    {
-      if ( A->rc_type == 'r' ) 
-	{
-	  if ( B->rc_type == 'r') 
-	    for ( i = 0 ; i < A->mn ; i++ )
-	      A->R[i] += B->R[i];
-	  else 
-	    {
-	      if ( nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
-	      for ( i = 0 ; i < A->mn ; i++ ) 
-		{ A->C[i].r += B->C[i].r;  A->C[i].i = B->C[i].i; }
-	    }
-	}
-      else 
-	{
-	  if ( B->rc_type == 'r') 
-	    for ( i = 0 ; i < A->mn ; i++ ) 
-	      A->C[i].r += B->R[i];
-	  else 
-	    for ( i = 0 ; i < A->mn ; i++ ) 
-	      { A->C[i].r += B->C[i].r;  A->C[i].i += B->C[i].i; }
-	}
-      return OK;
-    }
-  else 
-    {
-      Scierror("Error:\tArguments must have the same size\n");
-      return FAIL;
-    }
-}
-
-/**
- * nsp_mat_sub_scalar_bis:
- * @A: a #NspMatrix 
- * @B: a #NspMatrix of size 1x1 (that is a scalar) 
- * 
- * Do the operation A <- A - B  when B is a scalar
- * and when nsp is compiled in MTLB_MODE (matlab
- * 's behavior for empty matrix)
- *
- * Return value: %FAIL or %OK
- **/
-
-int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
-{
-  int i;
-  if ( A->mn == 0 )
-    return OK;
-
-  if ( A->rc_type == 'r' )
-    {
-      if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  A->R[i] -= B->R[0];
-      else
-	{
-	  if ( nsp_mat_complexify(A, -B->C[0].i) == FAIL ) return FAIL;
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    A->C[i].r -= B->C[0].r;
-	}
-    }
-  else
-    {
-      if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  A->C[i].r -= B->R[0];
-      else
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  { A->C[i].r -= B->C[0].r;  A->C[i].i -= B->C[0].i; }
-    }
-  return OK;
-}
-
-/**
  * nsp_scalar_sub_mat_bis:
  * @A: a #NspMatrix 
  * @B: a #NspMatrix of size 1x1 (that is a scalar) 
@@ -5754,48 +5794,6 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
     }
 }
 
-/**
- * nsp_mat_mult_scalar_bis:
- * @A: a #NspMatrix 
- * @B: a #NspMatrix of size 1x1 (that is a scalar) 
- * 
- * Do the operation A <- A*B  when B is a scalar
- * and when nsp is compiled in MTLB_MODE (matlab
- * 's behavior for empty matrix)
- *
- * Return value: %FAIL or %OK
- **/
-
-int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
-{
-  int i;
-
-  if ( A->mn == 0 )
-    return OK;
-
-  if ( A->rc_type == 'r' )
-    {
-      if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ )
-	  A->R[i] *= B->R[0];
-      else
-	{
-	  if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
-	  for ( i = 0 ; i < A->mn ; i++ ) 
-	    { A->C[i].i = A->C[i].r * B->C[0].i; A->C[i].r *= B->C[0].r; }
-	}
-    }
-  else
-    {
-      if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  { A->C[i].r *= B->R[0]; A->C[i].i *= B->R[0]; }
-      else
-	for ( i = 0 ; i < A->mn ; i++ ) 
-	  nsp_prod_c(&A->C[i],&B->C[0]);
-    }
-  return OK;
-}
 
 /**
  * nsp_mat_scale_rows:
