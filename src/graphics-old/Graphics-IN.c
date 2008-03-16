@@ -5021,8 +5021,10 @@ extern int int_intg(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_int2d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_polyline_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int _wrap_polyline_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
-extern int int_compound_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
-extern int _wrap_compound_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int _wrap_axes_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int _wrap_figure_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int int_axes_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern function  int_figure_create;
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5118,9 +5120,10 @@ static OpTab Graphics_func[]={
   {"xtest_graphic", int_xtest},
   {"polyline_create", int_polyline_create},
   {"polyline_attach", _wrap_polyline_attach},
-  {"compound_create", int_compound_create},
-  {"compound_attach", _wrap_compound_attach},
-
+  {"axes_create", int_axes_create},
+  {"axes_attach", _wrap_axes_attach},
+  {"figure_create", int_figure_create},
+  {"figure_attach", _wrap_figure_attach},
   {(char *) 0, NULL}
 };
 

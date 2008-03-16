@@ -8,120 +8,132 @@
 
 
 
-
-#include "nsp/compound.h"
+#line 4 "axes.override"
+#include "nsp/axes.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_axes(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_axes(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
+
+
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
+#line 28 "axes.c"
 
-/* ----------- Compound ----------- */
+/* ----------- Axes ----------- */
 
 
-#define  Compound_Private 
+#define  Axes_Private 
 #include "nsp/object.h"
-#include "nsp/compound.h"
+#include "nsp/axes.h"
 #include "nsp/interf.h"
 
 /* 
- * NspCompound inherits from NspGraphic 
+ * NspAxes inherits from NspGraphic 
  */
 
-int nsp_type_compound_id=0;
-NspTypeCompound *nsp_type_compound=NULL;
+int nsp_type_axes_id=0;
+NspTypeAxes *nsp_type_axes=NULL;
 
 /*
- * Type object for Compound 
- * all the instance of NspTypeCompound share the same id. 
- * nsp_type_compound: is an instance of NspTypeCompound 
- *    used for objects of NspCompound type (i.e built with new_compound) 
+ * Type object for Axes 
+ * all the instance of NspTypeAxes share the same id. 
+ * nsp_type_axes: is an instance of NspTypeAxes 
+ *    used for objects of NspAxes type (i.e built with new_axes) 
  * other instances are used for derived classes 
  */
-NspTypeCompound *new_type_compound(type_mode mode)
+NspTypeAxes *new_type_axes(type_mode mode)
 {
-  NspTypeCompound *type= NULL;
+  NspTypeAxes *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_compound != 0 && mode == T_BASE ) 
+  if (  nsp_type_axes != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
-      return nsp_type_compound;
+      return nsp_type_axes;
     }
-  if ((type =  malloc(sizeof(NspTypeCompound))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeAxes))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = compound_attrs ; 
+  type->attrs = axes_attrs ; 
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = compound_get_methods; 
-  type->new = (new_func *) new_compound;
+  type->methods = axes_get_methods; 
+  type->new = (new_func *) new_axes;
 
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
   
-  /* object methods redefined for compound */ 
+  /* object methods redefined for axes */ 
 
-  top->pr = (print_func *) nsp_compound_print;                  
-  top->dealloc = (dealloc_func *) nsp_compound_destroy;
-  top->copy  =  (copy_func *) nsp_compound_copy;                 
-  top->size  = (size_func *) nsp_compound_size;                
-  top->s_type =  (s_type_func *) nsp_compound_type_as_string;  
-  top->sh_type = (sh_type_func *) nsp_compound_type_short_string;
-  top->info = (info_func *) nsp_compound_info ;                  
-  /* top->is_true = (is_true_func  *) nsp_compound_is_true; */
-  /* top->loop =(loop_func *) nsp_compound_loop;*/
+  top->pr = (print_func *) nsp_axes_print;                  
+  top->dealloc = (dealloc_func *) nsp_axes_destroy;
+  top->copy  =  (copy_func *) nsp_axes_copy;                 
+  top->size  = (size_func *) nsp_axes_size;                
+  top->s_type =  (s_type_func *) nsp_axes_type_as_string;  
+  top->sh_type = (sh_type_func *) nsp_axes_type_short_string;
+  top->info = (info_func *) nsp_axes_info ;                  
+  /* top->is_true = (is_true_func  *) nsp_axes_is_true; */
+  /* top->loop =(loop_func *) nsp_axes_loop;*/
   top->path_extract = (path_func *)  object_path_extract; 
-  top->get_from_obj = (get_from_obj_func *) nsp_compound_object;
-  top->eq  = (eq_func *) nsp_compound_eq;
-  top->neq  = (eq_func *) nsp_compound_neq;
-  top->save  = (save_func *) nsp_compound_xdr_save;
-  top->load  = (load_func *) nsp_compound_xdr_load;
-  top->create = (create_func*) int_compound_create;
-  top->latex = (print_func *) nsp_compound_latex;
+  top->get_from_obj = (get_from_obj_func *) nsp_axes_object;
+  top->eq  = (eq_func *) nsp_axes_eq;
+  top->neq  = (eq_func *) nsp_axes_neq;
+  top->save  = (save_func *) nsp_axes_xdr_save;
+  top->load  = (load_func *) nsp_axes_xdr_load;
+  top->create = (create_func*) int_axes_create;
+  top->latex = (print_func *) nsp_axes_latex;
   
-  /* specific methods for compound */
+  /* specific methods for axes */
       
-  type->init = (init_func *) init_compound;
+  type->init = (init_func *) init_axes;
 
-
+#line 26 "axes.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
 
+#line 107 "axes.c"
   /* 
-   * Compound interfaces can be added here 
+   * Axes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  if ( nsp_type_compound_id == 0 ) 
+  if ( nsp_type_axes_id == 0 ) 
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeCompound called nsp_type_compound
+       * an instance of NspTypeAxes called nsp_type_axes
        */
-      type->id =  nsp_type_compound_id = nsp_new_type_id();
-      nsp_type_compound = type;
-      if ( nsp_register_type(nsp_type_compound) == FALSE) return NULL;
-      return ( mode == T_BASE ) ? type : new_type_compound(mode);
+      type->id =  nsp_type_axes_id = nsp_new_type_id();
+      nsp_type_axes = type;
+      if ( nsp_register_type(nsp_type_axes) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_axes(mode);
     }
   else 
     {
-       type->id = nsp_type_compound_id;
+       type->id = nsp_type_axes_id;
        return type;
     }
 }
 
 /*
- * initialize Compound instances 
+ * initialize Axes instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_compound(NspCompound *Obj,NspTypeCompound *type)
+static int init_axes(NspAxes *Obj,NspTypeAxes *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -133,28 +145,28 @@ static int init_compound(NspCompound *Obj,NspTypeCompound *type)
 }
 
 /*
- * new instance of Compound 
+ * new instance of Axes 
  */
 
-NspCompound *new_compound() 
+NspAxes *new_axes() 
 {
-  NspCompound *loc; 
+  NspAxes *loc; 
   /* type must exists */
-  nsp_type_compound = new_type_compound(T_BASE);
-  if ( (loc = malloc(sizeof(NspCompound)))== NULLCOMPOUND) return loc;
+  nsp_type_axes = new_type_axes(T_BASE);
+  if ( (loc = malloc(sizeof(NspAxes)))== NULLAXES) return loc;
   /* initialize object */
-  if ( init_compound(loc,nsp_type_compound) == FAIL) return NULLCOMPOUND;
+  if ( init_axes(loc,nsp_type_axes) == FAIL) return NULLAXES;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for Compound 
+ * Object method redefined for Axes 
  *-----------------------------------------------*/
 /*
  * size 
  */
 
-static int nsp_compound_size(NspCompound *Mat, int flag)
+static int nsp_axes_size(NspAxes *Mat, int flag)
 {
   return 0;
 }
@@ -163,30 +175,31 @@ static int nsp_compound_size(NspCompound *Mat, int flag)
  * type as string 
  */
 
-static char compound_type_name[]="Compound";
-static char compound_short_type_name[]="compound";
+static char axes_type_name[]="Axes";
+static char axes_short_type_name[]="axes";
 
-static char *nsp_compound_type_as_string(void)
+static char *nsp_axes_type_as_string(void)
 {
-  return(compound_type_name);
+  return(axes_type_name);
 }
 
-static char *nsp_compound_type_short_string(NspObject *v)
+static char *nsp_axes_type_short_string(NspObject *v)
 {
-  return(compound_short_type_name);
+  return(axes_short_type_name);
 }
 
 /*
  * A == B 
  */
 
-static int nsp_compound_eq(NspCompound *A, NspObject *B)
+static int nsp_axes_eq(NspAxes *A, NspObject *B)
 {
-  NspCompound *loc = (NspCompound *) B;
-  if ( check_cast(B,nsp_type_compound_id) == FALSE) return FALSE ;
+  NspAxes *loc = (NspAxes *) B;
+  if ( check_cast(B,nsp_type_axes_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->frect)->type->eq(A->obj->frect,loc->obj->frect) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
+  if ( A->obj->top != loc->obj->top) return FALSE;
   if ( NSP_OBJECT(A->obj->elts_bounds)->type->eq(A->obj->elts_bounds,loc->obj->elts_bounds) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->elts)->type->eq(A->obj->elts,loc->obj->elts) == FALSE ) return FALSE;
   if ( A->obj->alpha != loc->obj->alpha) return FALSE;
@@ -197,21 +210,22 @@ static int nsp_compound_eq(NspCompound *A, NspObject *B)
  * A != B 
  */
 
-static int nsp_compound_neq(NspCompound *A, NspObject *B)
+static int nsp_axes_neq(NspAxes *A, NspObject *B)
 {
-  return ( nsp_compound_eq(A,B) == TRUE ) ? FALSE : TRUE;
+  return ( nsp_axes_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
 /*
  * save 
  */
 
-int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
+int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->elts_bounds)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->elts)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
@@ -223,13 +237,14 @@ int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
  * load 
  */
 
-NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
+NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = malloc(sizeof(nsp_compound))) == NULL) return NULL;
+  if ((M->obj = malloc(sizeof(nsp_axes))) == NULL) return NULL;
   if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
   if ((M->obj->elts_bounds =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->elts =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
@@ -239,20 +254,20 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
  return M;
 }
 
-static NspCompound  *nsp_compound_xdr_load(XDR *xdrs)
+static NspAxes  *nsp_axes_xdr_load(XDR *xdrs)
 {
-  NspCompound *M = NULL;
+  NspAxes *M = NULL;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCOMPOUND;
-  if ((M  = nsp_compound_create_void(name,(NspTypeBase *) nsp_type_compound))== NULLCOMPOUND) return M;
-  return nsp_compound_xdr_load_partial(xdrs,M);
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLAXES;
+  if ((M  = nsp_axes_create_void(name,(NspTypeBase *) nsp_type_axes))== NULLAXES) return M;
+  return nsp_axes_xdr_load_partial(xdrs,M);
 }
 
 /*
  * delete 
  */
 
-void nsp_compound_destroy_partial(NspCompound *H)
+void nsp_axes_destroy_partial(NspAxes *H)
 {
   nsp_graphic_destroy_partial((NspGraphic *) H);
   H->obj->ref_count--;
@@ -266,10 +281,10 @@ void nsp_compound_destroy_partial(NspCompound *H)
    }
 }
 
-void nsp_compound_destroy(NspCompound *H)
+void nsp_axes_destroy(NspAxes *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-  nsp_compound_destroy_partial(H);
+  nsp_axes_destroy_partial(H);
   FREE(H);
 }
 
@@ -277,29 +292,29 @@ void nsp_compound_destroy(NspCompound *H)
  * info 
  */
 
-void nsp_compound_info(NspCompound *M,int indent,const char *name,int rec_level)
+void nsp_axes_info(NspAxes *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
-  if ( M == NULLCOMPOUND) 
+  if ( M == NULLAXES) 
     {
-      Sciprintf("Null Pointer Compound \n");
+      Sciprintf("Null Pointer Axes \n");
       return;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_compound_type_short_string(NSP_OBJECT(M)))
+             nsp_axes_type_short_string(NSP_OBJECT(M)))
 ;}
 
 /*
  * print 
  */
 
-void nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_level)
+void nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLCOMPOUND) 
+  if ( M == NULLAXES) 
     {
-      Sciprintf("Null Pointer Compound \n");
+      Sciprintf("Null Pointer Axes \n");
       return;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -310,15 +325,16 @@ void nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_lev
     { 
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
-          nsp_compound_info(M,indent,pname,rec_level);
+          nsp_axes_info(M,indent,pname,rec_level);
           return;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)));
+      Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         if ( M->obj->frect != NULL)
     nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1);
   if ( M->obj->wrect != NULL)
     nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1);
+  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
   if ( M->obj->elts_bounds != NULL)
     nsp_object_print(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1);
   if ( M->obj->elts != NULL)
@@ -333,16 +349,17 @@ void nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_lev
  * latex print 
  */
 
-void nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_level)
+void nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
     if ( M->obj->frect != NULL)
     nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1);
   if ( M->obj->wrect != NULL)
     nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1);
+  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
   if ( M->obj->elts_bounds != NULL)
     nsp_object_latex(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1);
   if ( M->obj->elts != NULL)
@@ -354,41 +371,41 @@ void nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_lev
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Compound objects 
+ * for Axes objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspCompound   *nsp_compound_object(NspObject *O)
+NspAxes   *nsp_axes_object(NspObject *O)
 {
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_compound_id) == TRUE ) return ((NspCompound *) O);
+  if ( check_cast (O,nsp_type_axes_id) == TRUE ) return ((NspAxes *) O);
   else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_compound));
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_axes));
   return NULL;
 }
 
-int IsCompoundObj(Stack stack, int i)
+int IsAxesObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_compound_id);
+  return nsp_object_type(NthObj(i) , nsp_type_axes_id);
 }
 
-int IsCompound(NspObject *O)
+int IsAxes(NspObject *O)
 {
-  return nsp_object_type(O,nsp_type_compound_id);
+  return nsp_object_type(O,nsp_type_axes_id);
 }
 
-NspCompound  *GetCompoundCopy(Stack stack, int i)
+NspAxes  *GetAxesCopy(Stack stack, int i)
 {
-  if (  GetCompound(stack,i) == NULL ) return NULL;
+  if (  GetAxes(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspCompound  *GetCompound(Stack stack, int i)
+NspAxes  *GetAxes(Stack stack, int i)
 {
-  NspCompound *M;
-  if (( M = nsp_compound_object(NthObj(i))) == NULLCOMPOUND)
+  NspAxes *M;
+  if (( M = nsp_axes_object(NthObj(i))) == NULLAXES)
      ArgMessage(stack,i);
   return M;
 }
@@ -399,28 +416,28 @@ NspCompound  *GetCompound(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type)
+static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type)
 {
- NspCompound *H  = (type == NULL) ? new_compound() : type->new();
- if ( H ==  NULLCOMPOUND)
+ NspAxes *H  = (type == NULL) ? new_axes() : type->new();
+ if ( H ==  NULLAXES)
   {
    Sciprintf("No more memory\n");
-   return NULLCOMPOUND;
+   return NULLAXES;
   }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLCOMPOUND;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLAXES;
  NSP_OBJECT(H)->ret_pos = -1 ;
  return H;
 }
 
-int nsp_compound_create_partial(NspCompound *H)
+int nsp_axes_create_partial(NspAxes *H)
 {
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
-  if((H->obj = calloc(1,sizeof(nsp_compound)))== NULL ) return FAIL;
+  if((H->obj = calloc(1,sizeof(nsp_axes)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   return OK;
 }
 
-int nsp_compound_check_values(NspCompound *H)
+int nsp_axes_check_values(NspAxes *H)
 {
   if ( H->obj->frect == NULLMAT) 
     {
@@ -446,11 +463,11 @@ int nsp_compound_check_values(NspCompound *H)
   return OK;
 }
 
-NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,NspMatrix* elts_bounds,NspList* elts,double alpha,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* frect,NspMatrix* wrect,gboolean top,NspMatrix* elts_bounds,NspList* elts,double alpha,NspTypeBase *type)
 {
- NspCompound *H  = nsp_compound_create_void(name,type);
- if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
-  if ( nsp_compound_create_partial(H) == FAIL) return NULLCOMPOUND;
+ NspAxes *H  = nsp_axes_create_void(name,type);
+ if ( H ==  NULLAXES) return NULLAXES;
+  if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
   if ( frect == NULL )
     { H->obj->frect = NULL;}
   else
@@ -463,6 +480,7 @@ NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,Ns
     {
       if ((H->obj->wrect = (NspMatrix *)  nsp_object_copy_and_name("wrect",NSP_OBJECT(wrect))) == NULLMAT) return NULL;
     }
+  H->obj->top=top;
   if ( elts_bounds == NULL )
     { H->obj->elts_bounds = NULL;}
   else
@@ -476,7 +494,7 @@ NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,Ns
       if ((H->obj->elts = (NspList *)  nsp_object_copy_and_name("elts",NSP_OBJECT(elts))) == NULLLIST) return NULL;
     }
   H->obj->alpha=alpha;
- if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
+ if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
  return H;
 }
 
@@ -484,194 +502,223 @@ NspCompound *nsp_compound_create(char *name,NspMatrix* frect,NspMatrix* wrect,Ns
  * copy for gobject derived class  
  */
 
-NspCompound *nsp_compound_copy_partial(NspCompound *H,NspCompound *self)
+NspAxes *nsp_axes_copy_partial(NspAxes *H,NspAxes *self)
 {
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
 
-NspCompound *nsp_compound_copy(NspCompound *self)
+NspAxes *nsp_axes_copy(NspAxes *self)
 {
-  NspCompound *H  =nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound);
-  if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
-  if ( nsp_compound_copy_partial(H,self)== NULL) return NULLCOMPOUND;
+  NspAxes *H  =nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes);
+  if ( H ==  NULLAXES) return NULLAXES;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
+  if ( nsp_axes_copy_partial(H,self)== NULL) return NULLAXES;
 
   return H;
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Compound
+ * wrappers for the Axes
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-int int_compound_create(Stack stack, int rhs, int opt, int lhs)
+int int_axes_create(Stack stack, int rhs, int opt, int lhs)
 {
-  NspCompound *H;
+  NspAxes *H;
   CheckStdRhs(0,0);
-  /* want to be sure that type compound is initialized */
-  nsp_type_compound = new_type_compound(T_BASE);
-  if(( H = nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound)) == NULLCOMPOUND) return RET_BUG;
+  /* want to be sure that type axes is initialized */
+  nsp_type_axes = new_type_axes(T_BASE);
+  if(( H = nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes)) == NULLAXES) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
- if ( nsp_compound_check_values(H) == FAIL) return RET_BUG;
+ if ( nsp_axes_check_values(H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
-static NspMethods *compound_get_methods(void) { return NULL;};
+static NspMethods *axes_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_compound_get_frect(void *self,char *attr)
+static NspObject *_wrap_axes_get_frect(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->frect);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_compound_get_frect_obj(void *self,char *attr)
+static NspObject *_wrap_axes_get_obj_frect(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->frect);
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
   return (NspObject *) ret;
 }
 
-static int _wrap_compound_set_frect(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
 {
   NspMatrix *frect;
 
   if ( ! IsMat(O) ) return FAIL;
   if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspCompound *) self)->obj->frect != NULL ) 
-    nsp_matrix_destroy(((NspCompound *) self)->obj->frect);
-  ((NspCompound *) self)->obj->frect = frect;
+  if (((NspAxes *) self)->obj->frect != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->frect);
+  ((NspAxes *) self)->obj->frect = frect;
   return OK;
 }
 
-static NspObject *_wrap_compound_get_wrect(void *self,char *attr)
+static NspObject *_wrap_axes_get_wrect(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->wrect);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->wrect);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_compound_get_wrect_obj(void *self,char *attr)
+static NspObject *_wrap_axes_get_obj_wrect(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->wrect);
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->wrect);
   return (NspObject *) ret;
 }
 
-static int _wrap_compound_set_wrect(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
 {
   NspMatrix *wrect;
 
   if ( ! IsMat(O) ) return FAIL;
   if ((wrect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspCompound *) self)->obj->wrect != NULL ) 
-    nsp_matrix_destroy(((NspCompound *) self)->obj->wrect);
-  ((NspCompound *) self)->obj->wrect = wrect;
+  if (((NspAxes *) self)->obj->wrect != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->wrect);
+  ((NspAxes *) self)->obj->wrect = wrect;
   return OK;
 }
 
-static NspObject *_wrap_compound_get_elts_bounds(void *self,char *attr)
+static NspObject *_wrap_axes_get_top(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((gboolean) ((NspAxes *) self)->obj->top);
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
+{
+  int top;
+
+  if ( BoolScalar(O,&top) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->top = top;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_elts_bounds(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->elts_bounds);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->elts_bounds);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_compound_get_elts_bounds_obj(void *self,char *attr)
+static NspObject *_wrap_axes_get_obj_elts_bounds(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspCompound *) self)->obj->elts_bounds);
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->elts_bounds);
   return (NspObject *) ret;
 }
 
-static int _wrap_compound_set_elts_bounds(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_elts_bounds(void *self, char *attr, NspObject *O)
 {
   NspMatrix *elts_bounds;
 
   if ( ! IsMat(O) ) return FAIL;
   if ((elts_bounds = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspCompound *) self)->obj->elts_bounds != NULL ) 
-    nsp_matrix_destroy(((NspCompound *) self)->obj->elts_bounds);
-  ((NspCompound *) self)->obj->elts_bounds = elts_bounds;
+  if (((NspAxes *) self)->obj->elts_bounds != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->elts_bounds);
+  ((NspAxes *) self)->obj->elts_bounds = elts_bounds;
   return OK;
 }
 
-static NspObject *_wrap_compound_get_elts(void *self,char *attr)
+static NspObject *_wrap_axes_get_elts(void *self,char *attr)
 {
   NspList *ret;
 
-  ret = ((NspList*) ((NspCompound *) self)->obj->elts);
+  ret = ((NspList*) ((NspAxes *) self)->obj->elts);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_compound_get_elts_obj(void *self,char *attr)
+static NspObject *_wrap_axes_get_obj_elts(void *self,char *attr, int *copy)
 {
   NspList *ret;
 
-  ret = ((NspList*) ((NspCompound *) self)->obj->elts);
+  *copy = FALSE;
+  ret = ((NspList*) ((NspAxes *) self)->obj->elts);
   return (NspObject *) ret;
 }
 
-static int _wrap_compound_set_elts(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_elts(void *self, char *attr, NspObject *O)
 {
   NspList *elts;
 
   if ( ! IsList(O) ) return FAIL;
   if ((elts = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspCompound *) self)->obj->elts != NULL ) 
-    nsp_list_destroy(((NspCompound *) self)->obj->elts);
-  ((NspCompound *) self)->obj->elts = elts;
+  if (((NspAxes *) self)->obj->elts != NULL ) 
+    nsp_list_destroy(((NspAxes *) self)->obj->elts);
+  ((NspAxes *) self)->obj->elts = elts;
   return OK;
 }
 
-static NspObject *_wrap_compound_get_alpha(void *self,char *attr)
-{
-  double ret;
-  NspObject *nsp_ret;
-
-  ret = ((double) ((NspCompound *) self)->obj->alpha);
-  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
-  return nsp_ret;
-}
-
-static int _wrap_compound_set_alpha(void *self, char *attr, NspObject *O)
+#line 69 "axes.override"
+/* override set alpha */
+static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
   double alpha;
   BCG *Xgc;
   if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
-  ((NspCompound *) self)->obj->alpha = alpha;
+  ((NspAxes *) self)->obj->alpha = alpha;
   Xgc=nsp_check_graphic_context();
   Xgc->graphic_engine->force_redraw(Xgc);
   return OK;
 }
 
-static AttrTab compound_attrs[] = {
-  { "frect", (attr_get_function *)_wrap_compound_get_frect, (attr_set_function *)_wrap_compound_set_frect,(attr_get_object_function *)_wrap_compound_get_frect_obj,(attr_set_object_function *)int_set_object_failed },
-  { "wrect", (attr_get_function *)_wrap_compound_get_wrect, (attr_set_function *)_wrap_compound_set_wrect,(attr_get_object_function *)_wrap_compound_get_wrect_obj,(attr_set_object_function *)int_set_object_failed },
-  { "elts_bounds", (attr_get_function *)_wrap_compound_get_elts_bounds, (attr_set_function *)_wrap_compound_set_elts_bounds,(attr_get_object_function *)_wrap_compound_get_elts_bounds_obj,(attr_set_object_function *)int_set_object_failed },
-  { "elts", (attr_get_function *)_wrap_compound_get_elts, (attr_set_function *)_wrap_compound_set_elts,(attr_get_object_function *)_wrap_compound_get_elts_obj,(attr_set_object_function *)int_set_object_failed },
-  { "alpha", (attr_get_function *)_wrap_compound_get_alpha, (attr_set_function *)_wrap_compound_set_alpha,(attr_get_object_function *)int_get_object_failed ,(attr_set_object_function *)int_set_object_failed},
-  { NULL,NULL,NULL,NULL },
+
+#line 696 "axes.c"
+static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
+{
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((double) ((NspAxes *) self)->obj->alpha);
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
+}
+
+static AttrTab axes_attrs[] = {
+  { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
+  { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
+  { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "elts_bounds", (attr_get_function *)_wrap_axes_get_elts_bounds, (attr_set_function *)_wrap_axes_set_elts_bounds,(attr_get_object_function *)_wrap_axes_get_obj_elts_bounds, (attr_set_object_function *)int_set_object_failed },
+  { "elts", (attr_get_function *)_wrap_axes_get_elts, (attr_set_function *)_wrap_axes_set_elts,(attr_get_object_function *)_wrap_axes_get_obj_elts, (attr_set_object_function *)int_set_object_failed },
+  { "alpha", (attr_get_function *)_wrap_axes_get_alpha, (attr_set_function *)_wrap_axes_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
+#line 43 "axes.override"
+int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
   BCG *Xgc;
@@ -682,6 +729,7 @@ int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+#line 733 "axes.c"
 
 
 /*----------------------------------------------------
@@ -689,80 +737,96 @@ int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab Compound_func[]={
-  {"compound_attach", _wrap_compound_attach},
-  { "compound_create", int_compound_create},
+static OpTab axes_func[]={
+  {"axes_attach", _wrap_axes_attach},
+  { "axes_create", int_axes_create},
   { NULL, NULL}
 };
 
-/* call ith function in the Compound interface */
+/* call ith function in the axes interface */
 
-int Compound_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int axes_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Compound_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(axes_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Compound_Interf_Info(int i, char **fname, function (**f))
+void axes_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = Compound_func[i].name;
-  *f = Compound_func[i].fonc;
+  *fname = axes_func[i].name;
+  *f = axes_func[i].fonc;
 }
 /* intialise stuff extension classes */
 /* void
-Compound_register_classes(NspObject *d)
+axes_register_classes(NspObject *d)
 {
 
+#line 21 "axes.override"
 
 Init portion 
 
 
-
-  nspgobject_register_class(d, "Compound", Compound, &NspCompound_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 772 "axes.c"
+  nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
+#line 84 "axes.override"
 
 /* inserted verbatim at the end */
-
-static void nsp_compound_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,
+static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,
 					     int auto_axes, char *xf);
 
-static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
+static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
-static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 {
   char xf[]="onn";
   char strflag[]="151";
-  double WRect[4],WRect1[4], FRect[4], ARect[4], inside_bounds[4];
+  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
   int aaint[4]={10,2,10,2};
   Cell *cloc;
   NspList *L;
-  NspCompound *P = (NspCompound *) Obj;
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,P->obj->wrect->R);
+  NspAxes *P = (NspAxes *) Obj;
   /* draw elements */
   L = P->obj->elts;
   cloc = L->first ;
-  /* we change the scale according to the compound */
+  /* we change the scale according to the axes */
   getscale2d(Xgc,WRect,FRect,logscale,ARect);
-  /* wrect is [left,up,w,h] */
-  WRect1[0]= (P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
-  WRect1[1]= 1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]);
-  WRect1[2]= (P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
-  WRect1[3]= (P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
-  Xgc->scales->cosa= cos( P->obj->alpha);
-  Xgc->scales->sina= sin( P->obj->alpha);
-
+  if ( P->obj->top == TRUE ) 
+    {
+      double arect[4]={0.125,0.125,0.125,0.125};
+      /* wrect is the window proportion to use inside the 
+       * graphic window 
+       */
+      set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,arect);
+      wrect1= P->obj->wrect->R;
+    }
+  else 
+    {
+      /* This is not a top level axes, we draw its enclosing rectangle 
+       * if alpha is non nul we should draw a rotated rectangle
+       */
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,P->obj->wrect->R);
+      /* wrect is [left,up,w,h] */
+      WRect1[0]= (P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
+      WRect1[1]= 1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]);
+      WRect1[2]= (P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
+      WRect1[3]= (P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
+      wrect1 = WRect1;
+      Xgc->scales->cosa= cos( P->obj->alpha);
+      Xgc->scales->sina= sin( P->obj->alpha);
+    }
   /* we directly change the default scale because we do not want 
    * to register all the scales that will be generated by set_scale 
    * thus we use T in flag[1].
    */
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
-  nsp_compound_compute_inside_bounds(Xgc,Obj,inside_bounds);
-  nsp_compound_update_frame_bounds(Xgc,WRect1,
+  nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
+  nsp_axes_update_frame_bounds(Xgc,wrect1,
 				   TRUE ? inside_bounds : P->obj->frect->R,
 				   aaint,
 				   TRUE,
@@ -780,20 +844,28 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj)
     }
   /* scale back */
   set_scale(Xgc,"fTtfff",WRect,FRect,NULL,NULL,NULL);
-  Xgc->scales->cosa=1.0;
-  Xgc->scales->sina=0.0;
+  if (  P->obj->top != TRUE )
+    {
+      Xgc->scales->cosa=1.0;
+      Xgc->scales->sina=0.0;
+    }
 }
 
+
+
 /* compute the bounds of the set of objects countained in the 
- * compound 
+ * axes 
  */
 
-static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
+
+
+
+static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   double l_bounds[4];
   Cell *cloc;
   NspList *L;
-  NspCompound *P = (NspCompound *) Obj;
+  NspAxes *P = (NspAxes *) Obj;
   L = P->obj->elts;
   cloc = L->first ;
   
@@ -826,7 +898,8 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *
     }
 }
 
-void nsp_compound_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,int auto_axes, char *xf)
+
+void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,int auto_axes, char *xf)
 {
   double FRect1[4];
   int Xdec[3],Ydec[3],i;
@@ -966,8 +1039,43 @@ void nsp_compound_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *
 }
 
 
-/*
-  
-  */
+static void nsp_translate_axes(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  NspAxes *P = (NspAxes *) Obj;
+  if ( P->obj->top == TRUE) return ;
+  P->obj->wrect->R[0] += tr[0];
+  P->obj->wrect->R[1] += tr[1];
+}
+
+static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  NspAxes *P = (NspAxes *) Obj;
+  if ( P->obj->top == TRUE) return ;
+  Sciprintf("we should get a double here for alpha\n");
+}
+
+static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  NspAxes *P = (NspAxes *) Obj;
+  if ( P->obj->top == TRUE) return ;
+  P->obj->wrect->R[2] *= alpha[0];
+  P->obj->wrect->R[3] *= alpha[1];
+}
+
+/* compute in bounds the enclosing rectangle of axes 
+ *
+ */
+
+static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspAxes *P = (NspAxes *) Obj;
+  if ( P->obj->top == TRUE) return ;
+  /* get the bound in parent i.e given by wrect : upper-left w,h */
+  bounds[0]=P->obj->wrect->R[0];/* xmin */
+  bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
+  bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
+  bounds[3]=P->obj->wrect->R[1];/* ymax */
+}
 
 
+#line 1082 "axes.c"

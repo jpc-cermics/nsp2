@@ -421,7 +421,60 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *graphic_get_methods(void) { return NULL;};
+#line 38 "graphic.override"
+/* take care that the name to give for override is the c-name of 
+ * the method 
+ */
+static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {realmat,t_end};
+  NspMatrix *tr;
+  if ( GetArgs(stack,rhs,opt,T,&tr) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,tr,2);
+  self->type->translate(NULL,self, tr->R);
+  return 0;
+}
+
+#line 439 "graphic.c"
+
+
+#line 53 "graphic.override"
+static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {realmat,t_end};
+  NspMatrix *sc;
+
+  if ( GetArgs(stack,rhs,opt,T,&sc) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,sc,2);
+  self->type->scale(NULL,self, sc->R);
+  return 0;
+}
+
+#line 454 "graphic.c"
+
+
+#line 66 "graphic.override"
+static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {realmat,t_end};
+  NspMatrix *R;
+  if ( GetArgs(stack,rhs,opt,T,&R) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,R,2);
+  self->type->rotate(NULL,self, R->R);
+  return 0;
+}
+
+#line 468 "graphic.c"
+
+
+static NspMethods graphic_methods[] = {
+  {"translate",(nsp_method *) _wrap_graphic_translate},
+  {"scale",(nsp_method *) _wrap_graphic_scale},
+  {"rotate",(nsp_method *) _wrap_graphic_rotate},
+  { NULL, NULL}
+};
+
+static NspMethods *graphic_get_methods(void) { return graphic_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -444,8 +497,8 @@ static int _wrap_graphic_set_color(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab graphic_attrs[] = {
-  { "color", (attr_get_function *)_wrap_graphic_get_color, (attr_set_function *)_wrap_graphic_set_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL, NULL  },
+  { "color", (attr_get_function *)_wrap_graphic_get_color, (attr_set_function *)_wrap_graphic_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -487,9 +540,15 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 491 "graphic.c"
+#line 544 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 496 "graphic.c"
+#line 78 "graphic.override"
+
+/* verbatim at the end */
+
+
+
+#line 555 "graphic.c"

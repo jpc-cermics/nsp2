@@ -491,15 +491,39 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
+#line 50 "polyline.override"
+
+/* overriden to check dimensions when changing values.
+ */
+
+static NspObject *_wrap_polyline_get_obj_Pts(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
-
+  *copy = TRUE; 
   ret = ((NspMatrix*) ((NspPolyline *) self)->obj->Pts);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_polyline_get_Pts_obj(void *self,char *attr)
+static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
+{
+  NspMatrix *M= (NspMatrix *) val ; 
+  NspPolyline *poly = self ;
+  if ( M->rc_type != 'r' || M->n != 2 )
+    {
+      Scierror("Error: polyline field Pts should be real an mx2 sized\n");
+      return FAIL;
+    }
+  /* before replacing the field we check that dimensions are correct */
+  if ( poly->obj->Pts != NULL )
+    nsp_matrix_destroy(poly->obj->Pts);
+  poly->obj->Pts = (NspMatrix *) val ;
+  return OK;
+}
+
+
+
+#line 526 "polyline.c"
+static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
 
@@ -520,9 +544,9 @@ static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab polyline_attrs[] = {
-  { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_Pts_obj,(attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL, NULL  },
+  { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_obj_Pts, (attr_set_object_function *)_wrap_polyline_set_obj_Pts },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -541,7 +565,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 545 "polyline.c"
+#line 569 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -551,7 +575,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Polyline_func[]={
   {"polyline_attach", _wrap_polyline_attach},
-  {"polyline_create", int_polyline_create},
+  { "polyline_create", int_polyline_create},
   { NULL, NULL}
 };
 
@@ -580,12 +604,12 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 584 "polyline.c"
+#line 608 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 63 "polyline.override"
+#line 82 "polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -667,4 +691,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 671 "polyline.c"
+#line 695 "polyline.c"
