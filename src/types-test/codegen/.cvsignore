@@ -15,4 +15,6 @@
  compound.h 
 figure.h
 figure.c
+axes.c
+axes.h
 
