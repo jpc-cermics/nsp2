@@ -5025,6 +5025,7 @@ extern int _wrap_axes_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int _wrap_figure_attach( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_axes_create( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern function  int_figure_create;
+extern function  int_curve_create;
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5119,11 +5120,10 @@ static OpTab Graphics_func[]={
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
   {"polyline_create", int_polyline_create},
-  {"polyline_attach", _wrap_polyline_attach},
   {"axes_create", int_axes_create},
-  {"axes_attach", _wrap_axes_attach},
   {"figure_create", int_figure_create},
   {"figure_attach", _wrap_figure_attach},
+  {"curve_create", int_curve_create},
   {(char *) 0, NULL}
 };
 

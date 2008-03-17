@@ -70,7 +70,7 @@ clean ::
 ../axes.c : axes.defs axes.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override axes.override \
-	    --prefix Compound axes.defs) > $*.c \
+	    --prefix Axes axes.defs) > $*.c \
 	&& cp axes.h ../../include/nsp 
 
 ../curve.c : curve.defs curve.override codegen/*.py
@@ -82,7 +82,7 @@ clean ::
 ../figure.c : figure.defs figure.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override figure.override \
-	    --prefix Curve figure.defs) > $*.c \
+	    --prefix Figure figure.defs) > $*.c \
 	&& cp figure.h ../../include/nsp 
 
 

@@ -737,30 +737,30 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab Compound_func[]={
+static OpTab Axes_func[]={
   {"axes_attach", _wrap_axes_attach},
-  { "compound_create", int_compound_create},
+  { "axes_create", int_axes_create},
   { NULL, NULL}
 };
 
-/* call ith function in the Compound interface */
+/* call ith function in the Axes interface */
 
-int Compound_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int Axes_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Compound_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(Axes_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Compound_Interf_Info(int i, char **fname, function (**f))
+void Axes_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = Compound_func[i].name;
-  *f = Compound_func[i].fonc;
+  *fname = Axes_func[i].name;
+  *f = Axes_func[i].fonc;
 }
 /* intialise stuff extension classes */
 /* void
-Compound_register_classes(NspObject *d)
+Axes_register_classes(NspObject *d)
 {
 
 #line 21 "axes.override"

@@ -10,7 +10,7 @@
 
 #line 4 "figure.override"
 
-#include "nsp/compound.h"
+#include "nsp/figure.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
@@ -748,30 +748,30 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab Curve_func[]={
+static OpTab Figure_func[]={
   {"figure_attach", _wrap_figure_attach},
-  { "curve_create", int_curve_create},
+  { "figure_create", int_figure_create},
   { NULL, NULL}
 };
 
-/* call ith function in the Curve interface */
+/* call ith function in the Figure interface */
 
-int Curve_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int Figure_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Curve_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(Figure_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Curve_Interf_Info(int i, char **fname, function (**f))
+void Figure_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = Curve_func[i].name;
-  *f = Curve_func[i].fonc;
+  *fname = Figure_func[i].name;
+  *f = Figure_func[i].fonc;
 }
 /* intialise stuff extension classes */
 /* void
-Curve_register_classes(NspObject *d)
+Figure_register_classes(NspObject *d)
 {
 
 #line 12 "figure.override"

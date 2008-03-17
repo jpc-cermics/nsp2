@@ -4,8 +4,8 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a 
 
-OBJSC = classa.o classb.o classc.o classaref.o classbref.o
-# example_wrap.o example.o 
+OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
+	figure.o axes.o polyline.o curve.o graphic.o 
 
 OBJSF=
 
@@ -33,14 +33,6 @@ example_wrap.o	: example_wrap.cpp
 	g++ -I../include -g -c example_wrap.cpp
 
 
-ajour	:
-	cd /usr/local/src/nsp2-jpc/keep/test;make 
-	cp /usr/local/src/nsp2-jpc/keep/test/classaref.c .
-	cp /usr/local/src/nsp2-jpc/keep/test/classaref.h ../include/nsp 
-	cp /usr/local/src/nsp2-jpc/keep/test/classbref.c .
-	cp /usr/local/src/nsp2-jpc/keep/test/classbref.h ../include/nsp 
-	cp /usr/local/src/nsp2-jpc/keep/test/classa.c .
-	cp /usr/local/src/nsp2-jpc/keep/test/classa.h ../include/nsp 
-	cp /usr/local/src/nsp2-jpc/keep/test/classb.c .
-	cp /usr/local/src/nsp2-jpc/keep/test/classb.h ../include/nsp 
+force	:
+	cd codegen ; touch *.defs;  make 
 

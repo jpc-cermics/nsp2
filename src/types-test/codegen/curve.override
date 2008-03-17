@@ -1,0 +1,188 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/curve.h"
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_curve(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_curve(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_curve(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type Curve
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override curve_attach kwargs
+int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override-attr Pts 
+
+/* overriden to check dimensions when changing values.
+ */
+
+static NspObject *_wrap_curve_get_obj_Pts(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = TRUE; 
+  ret = ((NspMatrix*) ((NspCurve *) self)->obj->Pts);
+  return (NspObject *) ret;
+}
+
+static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
+{
+  NspMatrix *M= (NspMatrix *) val ; 
+  NspCurve *poly = self ;
+  if ( M->rc_type != 'r' || M->n != 2 )
+    {
+      Scierror("Error: curve field Pts should be real an mx2 sized\n");
+      return FAIL;
+    }
+  /* before replacing the field we check that dimensions are correct */
+  if ( poly->obj->Pts != NULL )
+    nsp_matrix_destroy(poly->obj->Pts);
+  poly->obj->Pts = (NspMatrix *) val ;
+  return OK;
+}
+
+
+
+%%
+last
+
+/* inserted verbatim at the end */
+/* 
+    '("int" "color"); curve color 
+    '("int" "mark") ; mark to be used 
+    '("double" "width"); line width 
+    '("int" "style"); line style 
+    '("int" "mode"); mode: std, step, stem, arrow.
+    '("NspMatrix*" "Pts")
+*/
+
+typedef enum { curve_std, curve_step, curve_stem , curve_arrow} nsp_curve_mode ; 
+
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
+{
+  NspCurve *P = (NspCurve *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
+  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+  switch ( P->obj->mode ) 
+    {
+    case curve_std: 
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+      break;
+    case curve_step:
+      break;
+    case curve_stem: 
+      break;
+    case curve_arrow: 
+      break;
+    }
+  Xgc->graphic_engine->xset_thickness(Xgc,c_width);
+  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+}
+
+static void nsp_translate_curve(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  int i; 
+  NspCurve *P = (NspCurve *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) += tr[0];
+      *(y++) += tr[1];
+    }
+}
+
+static void nsp_rotate_curve(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  int i;
+  NspCurve *P = (NspCurve *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m,x1,y1;
+  for ( i=0; i < M->m ; i++) 
+    {
+      x1 = R[0]*(*x) -R[1]*(*y);
+      y1 = R[1]*(*x) +R[0]*(*y);
+      *(x++) =x1;
+      *(y++) =y1;
+    }
+}
+
+static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  int i;
+  NspCurve *P = (NspCurve *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  for ( i=0; i < M->m ; i++) 
+    {
+      *(x++) *= alpha[0];
+      *(y++) *= alpha[1];
+    }
+}
+
+/* compute in bounds the enclosing rectangle of curve 
+ *
+ */
+
+static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  int i;
+  NspCurve *P = (NspCurve *) Obj;
+  NspMatrix *M = P->obj->Pts;
+  double *x=M->R,*y= M->R+M->m, dval;
+  bounds[0]=*x;/* xmin */
+  bounds[1]=*y;/* ymin */
+  bounds[2]=*x;/* xmax */
+  bounds[3]=*y;/* ymax */
+  for (i = 1; i < M->m; i++)
+    {
+      dval = x[i];
+      if ( dval > bounds[2] )
+	bounds[2] = dval;
+      else if ( dval < bounds[0] )
+	bounds[0] = dval;
+      dval = y[i];
+      if ( dval > bounds[3] )
+	bounds[3] = dval;
+      else if ( dval < bounds[1] )
+	bounds[1] = dval;
+    }
+}
+

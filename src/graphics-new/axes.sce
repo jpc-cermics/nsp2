@@ -7,7 +7,11 @@
   P=polyline_create();
   P.Pts=[0,0;1,2;2,0;0,0];
   A.elts(1)=P;
-  figure_attach(F);
+  // Insert a curve in A.
+  x=linspace(-%pi/2,%pi/2,100);
+  y=cos(10*x);
+  cu = curve_create(Pts=[x',y'],color=3,width=2);
+  A.elts(2)=cu ;
   // insert a new axes 
   C=axes_create(alpha=%pi/6);
   // the position of the axes in its parent 
@@ -25,8 +29,9 @@
   P=polyline_create();
   P.Pts=[x;sin(x)]';
   C.elts(3)=P;
-  A.elts(2) = C;
+  A.elts(3) = C;
   figure_attach(F);
+  
   
 
   
