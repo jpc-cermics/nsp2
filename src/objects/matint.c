@@ -801,7 +801,11 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts,ind
     {
       /* Matrix of numbers or booleans 
        */
-      if ( elt_size == sizeof(double) )
+      if ( index->flag )   /* val goes from min to max by step of 1 */
+	{
+	  memcpy(to,from + elt_size*index->val[0], elt_size*index->nval);
+	}
+      else if ( elt_size == sizeof(double) )
 	{
 	  double *fromd = (double *) from, *tod = (double *) to;
 	  for ( i = 0 ; i < index->nval ; i++ )
@@ -1645,7 +1649,11 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
       if ( elt_size_B < elt_size_A )    /* just because A is complex and B real... */
 	return nsp_matint_special_set_elts(ObjA, index->val, index->nval, ObjB, typeA);
 
-      if ( elt_size_A == sizeof(double) )
+      if ( index->flag  &&  B->mn == index->nval )  /* values go from min to max by step of 1 */
+	{
+	  memcpy(to+ elt_size_A*index->val[0],from, elt_size_A*index->nval);
+	}
+      else if ( elt_size_A == sizeof(double) )
 	{
 	  double *fromd = (double *) from, *tod = (double *) to;
 	  int inc = B->mn == 1 ? 0 : 1; 
