@@ -19,7 +19,7 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 27 "graphic.override"
+#line 29 "graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *o);
 typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
@@ -33,7 +33,7 @@ struct _NspTypeGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
   
-#line 18 "graphic.override"
+#line 20 "graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
