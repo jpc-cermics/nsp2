@@ -7666,7 +7666,7 @@ static int nsp_spcolmatrix_locate(SpCol *Col,int j)
 }
 
 /**
- * nsp_spcolmatrix_is_symetric:
+ * nsp_spcolmatrix_is_symmetric:
  * @A: a #NspSpColMatrix
  * 
  * the code should work even if zero elements are stored
@@ -7674,7 +7674,7 @@ static int nsp_spcolmatrix_locate(SpCol *Col,int j)
  * Return value: %TRUE or %FALSE
  **/
 /* added by Bruno */
-Boolean nsp_spcolmatrix_is_symetric(NspSpColMatrix *A)
+Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
 {
   int i, j, k, kp;
 

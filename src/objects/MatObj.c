@@ -1478,7 +1478,8 @@ int_mxcreate (Stack stack, int rhs, int opt, int lhs)
 int
 int_mximpl (Stack stack, int rhs, int opt, int lhs)
 {
-  double dfirst, step = 1.0E0, last;
+  double dfirst, step = 1.0, last;
+  /*  int ifirst, istep, ilast; */
   NspMatrix *M;
   CheckRhs (2, 3);
   CheckLhs (1, 1);
@@ -1492,12 +1493,16 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble (stack, 3, &last) == FAIL)
 	return RET_BUG;
     }
-  if ( 1 && dfirst == floor(dfirst) 
-       && step == floor(step) 
-       && last == floor(last))
+
+  /*  ifirst = (int) dfirst; istep = (int) step; ilast = (int) last; */
+  if ( 1 && dfirst == floor(dfirst)
+       && step == floor(step)
+       && last == floor(last) )
     {
       if ((M = nsp_matrix_create_int_impl (dfirst, step, last)) == NULLMAT)
 	return RET_BUG;
+/*       if ((M = nsp_matrix_create_int_impl (ifirst, istep, ilast)) == NULLMAT) */
+/* 	return RET_BUG; */
     }
   else 
     {
@@ -5036,10 +5041,10 @@ int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
 }
 
 /**
- * check that a matrix is a symetric (hermitian in the complex case)
+ * check that a matrix is a symmetric (hermitian in the complex case)
  * 
  **/
-static int int_mat_issymetric(Stack stack, int rhs, int opt, int lhs)
+static int int_mat_issymmetric(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   CheckRhs (1, 1);
@@ -5251,7 +5256,7 @@ static OpTab Matrix_func[] = {
   {"cross_m_m", int_mat_cross},
   {"dot_m_m", int_mat_dot},
   {"issorted_m", int_mat_issorted},
-  {"issymetric_m", int_mat_issymetric},
+  {"issymmetric_m", int_mat_issymmetric},
   {"istriangular_m", int_mat_istriangular},
   {(char *) 0, NULL}
 };
