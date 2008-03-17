@@ -1,3 +1,8 @@
+2008-03-17  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/SpColMatrix.c (nsp_spcolmatrix_is_symetric):
+	add issymetric test for sparse matrix.
+
 2008-03-10  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libinteg/integ-IN.c (make_triangles): 

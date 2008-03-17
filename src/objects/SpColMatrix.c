@@ -7539,6 +7539,7 @@ NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
  *
  * Return value: %TRUE or %FALSE
  **/
+/* added by Bruno */
 Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A)
 {
   int i, j, k;
@@ -7586,6 +7587,7 @@ Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A)
  *
  * Return value: %TRUE or %FALSE
  **/
+/* added by Bruno */
 Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
 {
   int i, j, k;
@@ -7621,6 +7623,110 @@ Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
 	    }
 	}
       break;
+    }
+  return TRUE;
+}
+
+
+/* added by Bruno */
+static int nsp_spcolmatrix_locate(SpCol *Col,int j)
+{
+  int k, n = Col->size, LIM = 16;
+
+  if ( n == 0  ||  j < Col->J[0]  ||  Col->J[n-1] < j )
+    return -1;
+
+  if ( n < LIM )
+    {
+      for ( k = 0 ; k < n ; k++ )
+	{
+	  if ( j == Col->J[k] )
+	    return k;
+	  else if ( j < Col->J[k] )
+	    return -1;
+	}
+    }
+  else  /* dicho search */
+    {
+      int k1 = 0, k2 = n-1, km;
+      while ( k2 - k1 > 1 )
+	{
+	  km = (k1+k2)/2;
+	  if ( j < Col->J[km] )
+	    k2 = km;
+	  else
+	    k1 = km;
+	}
+      if ( j == Col->J[k1] )
+	return k1;
+      else if ( j == Col->J[k2] )
+	return k2;
+    }
+  return -1;
+}
+
+/**
+ * nsp_spcolmatrix_is_symetric:
+ * @A: a #NspSpColMatrix
+ * 
+ * the code should work even if zero elements are stored
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+/* added by Bruno */
+Boolean nsp_spcolmatrix_is_symetric(NspSpColMatrix *A)
+{
+  int i, j, k, kp;
+
+  if ( A->m != A->n )
+    return FALSE;
+
+  if ( A->rc_type == 'r' ) 
+    {
+      double val_ij, val_ji;
+      for ( j = 0 ; j < A->n-1 ; j++ ) 
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      val_ij = A->D[j]->R[k];
+	      i = A->D[j]->J[k];
+	      if ( i != j  &&  val_ij != 0.0 )
+		{
+		  kp = nsp_spcolmatrix_locate(A->D[i],j);
+		  if ( kp < 0 )
+		    return FALSE;
+		  val_ji = A->D[i]->R[kp];
+		  if ( val_ij + fabs(val_ij-val_ji) > val_ij )
+		    return FALSE;
+		}
+	    }
+	}
+    }
+  else
+    {
+      doubleC val_ij, val_ji;
+      double dx;
+      for ( j = 0 ; j < A->n-1 ; j++ ) 
+	{
+	  for ( k = A->D[j]->size-1 ; k >= 0 ; k-- ) 
+	    {
+	      val_ij = A->D[j]->C[k];
+	      i = A->D[j]->J[k];
+	      if ( i != j  &&  (val_ij.r != 0.0 || val_ij.i != 0.0) )
+		{
+		  kp = nsp_spcolmatrix_locate(A->D[i],j);
+		  if ( k < 0 )
+		    return FALSE;
+		  val_ji = A->D[i]->C[kp];
+		  dx = fabs(val_ij.r - val_ji.r);
+		  if ( val_ij.r + dx > val_ij.r )
+		    return FALSE;
+		  dx = fabs(val_ij.i + val_ji.i);
+		  if ( val_ij.i + dx > val_ij.i )
+		    return FALSE;
+		}
+	    }
+	}
     }
   return TRUE;
 }

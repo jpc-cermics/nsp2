@@ -2682,7 +2682,26 @@ int int_spcolmatrix_istriangular(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
- 
+/**
+ * check that a sparse matrix is a lower or upper triangular
+ * 
+ **/
+int int_spcolmatrix_issymetric(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat;
+  Boolean rep;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ((HMat = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+
+  rep = nsp_spcolmatrix_is_symetric(HMat);
+
+  if ( nsp_move_boolean(stack,1,rep) == FAIL ) 
+    return RET_BUG;
+  return 1;
+}
+  
 /*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
@@ -2789,6 +2808,7 @@ static OpTab SpColMatrix_func[]={
   {"isscalar_sp",int_spcolmatrix_isscalar},
   {"isvector_sp",int_spcolmatrix_isvector},
   {"istriangular_sp",int_spcolmatrix_istriangular},
+  {"issymetric_sp",int_spcolmatrix_issymetric},
   {"length_sp",int_spcolmatrix_numel},
   {"numel_sp",int_spcolmatrix_numel},
   {(char *) 0, NULL}

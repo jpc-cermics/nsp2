@@ -221,6 +221,7 @@ extern NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag);
 extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
 extern Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A);
+extern Boolean nsp_spcolmatrix_is_symetric(NspSpColMatrix *A);
 
 
 extern int GenericMatSeRo(void *A, int Am, int An, int Amn,   index_vector *index,
