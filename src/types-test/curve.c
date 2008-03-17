@@ -568,6 +568,20 @@ static int _wrap_curve_set_style(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+#line 50 "curve.override"
+/* override set alpha */
+static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
+{
+  int mode;
+  BCG *Xgc;
+  if ( IntScalar(O,&mode) == FAIL) return FAIL;
+  ((NspCurve *) self)->obj->mode = mode;
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->force_redraw(Xgc);
+  return OK;
+}
+
+#line 585 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -576,16 +590,7 @@ static NspObject *_wrap_curve_get_mode(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
-{
-  int mode;
-
-  if ( IntScalar(O,&mode) == FAIL) return FAIL;
-  ((NspCurve *) self)->obj->mode = mode;
-  return OK;
-}
-
-#line 50 "curve.override"
+#line 64 "curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -616,7 +621,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 620 "curve.c"
+#line 625 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -663,7 +668,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 667 "curve.c"
+#line 672 "curve.c"
 
 
 /*----------------------------------------------------
@@ -702,12 +707,12 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 706 "curve.c"
+#line 711 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 82 "curve.override"
+#line 96 "curve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -719,7 +724,7 @@ Init portion
     '("NspMatrix*" "Pts")
 */
 
-typedef enum { curve_std, curve_step, curve_stem , curve_arrow} nsp_curve_mode ; 
+typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ; 
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
 {
@@ -727,16 +732,62 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
   NspMatrix *M = P->obj->Pts;
   int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
   Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+  /*XXX: we should not be in Rec mode here */
   switch ( P->obj->mode ) 
     {
     case curve_std: 
-      Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
       break;
-    case curve_step:
+    case curve_stairs:
+      {
+	double *xm=NULL,*ym=NULL;
+	int n= 2*M->m,i;
+	xm = graphic_alloc(0,n,sizeof(double));
+	ym = graphic_alloc(1,n,sizeof(double));
+	if ( xm == 0 || ym == 0) 
+	  {
+	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    return;
+	  }
+	for ( i=0 ; i < M->m -1 ; i++) 
+	  {
+	    xm[2*i]= M->R[i];
+	    ym[2*i]= M->R[i+M->m];
+	    xm[2*i+1]= M->R[i+1];
+	    ym[2*i+1]= ym[2*i];
+	  }
+	xm[2*(M->m-1)] = M->R[M->m-1];
+	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+      }
       break;
-    case curve_stem: 
+    case curve_stem:
+      {
+	double *xm=NULL,*ym=NULL;
+	int n= 2*M->m,i;
+	xm = graphic_alloc(0,n,sizeof(double));
+	ym = graphic_alloc(1,n,sizeof(double));
+	if ( xm == 0 || ym == 0) 
+	  {
+	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    return;
+	  }
+	for ( i=0 ; i < M->m ; i++) 
+	  {
+	    xm[2*i]= M->R[i];
+	    ym[2*i]= 0;
+	    xm[2*i+1]= M->R[i];
+	    ym[2*i+1]= M->R[i+M->m];
+	  }
+	for ( i = 0 ; i < M->m ; i++)
+	  {
+	    int iflag=0;
+	    Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&P->obj->color,iflag);
+	  }
+      }
       break;
     case curve_arrow: 
       break;
@@ -816,4 +867,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 820 "curve.c"
+#line 871 "curve.c"
