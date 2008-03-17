@@ -16,7 +16,7 @@ FFLAGS = $(FC_OPTIONS)
 
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
-	polyline.c graphic.c axes.c figure.c 
+	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c 
 
 all:: $(ALL)
 
@@ -29,7 +29,6 @@ clean ::
 	    --prefix $* $*.defs) > gen-$*.c \
 	&& cp gen-$*.c $*.c \
 	&& rm -f gen-$*.c
-
 
 ../classa.c : classa.defs classa.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
@@ -56,24 +55,34 @@ clean ::
 	&& cp classbref.h ../../include/nsp 
 
 
-polyline.c : polyline.defs polyline.override codegen/*.py
+../polyline.c : polyline.defs polyline.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
-	    --override $*.override \
-	    --prefix Polyline $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
+	    --override polyline.override \
+	    --prefix Polyline polyline.defs) > $*.c \
+	&& cp polyline.h ../../include/nsp 
 
-graphic.c : graphic.defs graphic.override codegen/*.py
+../graphic.c : graphic.defs graphic.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
-	    --override $*.override \
-	    --prefix Graphic $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
+	    --override graphic.override \
+	    --prefix Graphic graphic.defs) > $*.c \
+	&& cp graphic.h ../../include/nsp 
 
-compound.c : compound.defs compound.override codegen/*.py
+../axes.c : axes.defs axes.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
-	    --override $*.override \
-	    --prefix Compound $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
+	    --override axes.override \
+	    --prefix Compound axes.defs) > $*.c \
+	&& cp axes.h ../../include/nsp 
+
+../curve.c : curve.defs curve.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override curve.override \
+	    --prefix Curve curve.defs) > $*.c \
+	&& cp curve.h ../../include/nsp 
+
+../figure.c : figure.defs figure.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override figure.override \
+	    --prefix Curve figure.defs) > $*.c \
+	&& cp figure.h ../../include/nsp 
+
 
