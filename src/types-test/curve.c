@@ -283,30 +283,31 @@ void nsp_curve_destroy(NspCurve *H)
  * info 
  */
 
-void nsp_curve_info(NspCurve *M,int indent,const char *name,int rec_level)
+int nsp_curve_info(NspCurve *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLCURVE) 
     {
       Sciprintf("Null Pointer Curve \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_curve_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_curve_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
+int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCURVE) 
     {
       Sciprintf("Null Pointer Curve \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -317,7 +318,7 @@ void nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_curve_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_curve_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
@@ -327,17 +328,19 @@ void nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"style=%d\n",M->obj->style);
   Sciprintf1(indent+2,"mode=%d\n",M->obj->mode);
   if ( M->obj->Pts != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
+int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -349,10 +352,12 @@ void nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"style=%d\n",M->obj->style);
   Sciprintf1(indent+2,"mode=%d\n",M->obj->mode);
   if ( M->obj->Pts != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -581,7 +586,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 585 "curve.c"
+#line 590 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -621,7 +626,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 625 "curve.c"
+#line 630 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -668,7 +673,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 672 "curve.c"
+#line 677 "curve.c"
 
 
 /*----------------------------------------------------
@@ -707,7 +712,7 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 711 "curve.c"
+#line 716 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -867,4 +872,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 871 "curve.c"
+#line 876 "curve.c"

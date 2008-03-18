@@ -16,7 +16,7 @@ FFLAGS = $(FC_OPTIONS)
 
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
-	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c 
+	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c ../groot.c
 
 all:: $(ALL)
 
@@ -84,5 +84,11 @@ clean ::
 	    --override figure.override \
 	    --prefix Figure figure.defs) > $*.c \
 	&& cp figure.h ../../include/nsp 
+
+../groot.c : groot.defs groot.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override groot.override \
+	    --prefix Figure groot.defs) > $*.c \
+	&& cp groot.h ../../include/nsp 
 
 

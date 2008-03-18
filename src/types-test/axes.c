@@ -292,30 +292,31 @@ void nsp_axes_destroy(NspAxes *H)
  * info 
  */
 
-void nsp_axes_info(NspAxes *M,int indent,const char *name,int rec_level)
+int nsp_axes_info(NspAxes *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLAXES) 
     {
       Sciprintf("Null Pointer Axes \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_axes_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_axes_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
+int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLAXES) 
     {
       Sciprintf("Null Pointer Axes \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -326,48 +327,58 @@ void nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_axes_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         if ( M->obj->frect != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->obj->wrect != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"top=%d\n",M->obj->top);
   if ( M->obj->elts_bounds != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->obj->elts != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
+int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
     if ( M->obj->frect != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->obj->wrect != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"top=%d\n",M->obj->top);
   if ( M->obj->elts_bounds != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->obj->elts != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -692,7 +703,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 }
 
 
-#line 696 "axes.c"
+#line 707 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -729,7 +740,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 733 "axes.c"
+#line 744 "axes.c"
 
 
 /*----------------------------------------------------
@@ -768,7 +779,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 772 "axes.c"
+#line 783 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1078,4 +1089,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1082 "axes.c"
+#line 1093 "axes.c"

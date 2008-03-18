@@ -282,30 +282,31 @@ class Wrapper:
               ' * info \n' \
               ' */\n' \
               '\n' \
-              'void nsp_%(typename_dc)s_info(Nsp%(typename)s *M,int indent,const char *name,int rec_level)\n' \
+              'int nsp_%(typename_dc)s_info(Nsp%(typename)s *M,int indent,const char *name,int rec_level)\n' \
               '{\n' \
               '  const char *pname;\n' \
               '  if ( M == NULL%(typename_uc)s) \n' \
               '    {\n' \
               '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-              '      return;\n' \
+              '      return TRUE;\n' \
               '    }\n' \
               '  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
               '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n", (pname==NULL) ? "" : pname,\n' \
-              '             nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)))\n;' \
+              '             nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
+              '  return TRUE;\n' \
               '}\n' \
               '\n' \
               '/*\n' \
               ' * print \n' \
               ' */\n' \
               '\n' \
-              'void nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+              'int nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
               '{\n' \
               '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
               '  if ( M == NULL%(typename_uc)s) \n' \
               '    {\n' \
               '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-              '      return;\n' \
+              '      return TRUE;\n' \
               '    }\n' \
               '  if (user_pref.pr_as_read_syntax) \n' \
               '    { \n' \
@@ -316,18 +317,19 @@ class Wrapper:
               '      if ( user_pref.pr_depth  <= rec_level -1 ) \n' \
               '        {\n' \
               '          nsp_%(typename_dc)s_info(M,indent,pname,rec_level);\n' \
-              '          return;\n' \
+              '          return TRUE;\n' \
               '        }\n' \
               '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
               '      Sciprintf1(indent+1,"{\\n");\n' \
               '      %(fields_print)s' \
               '      Sciprintf1(indent+1,"}\\n");\n' \
               '    }\n' \
+              '  return TRUE;\n' \
               '}\n\n' \
               '/*\n' \
               ' * latex print \n' \
               ' */\n\n' \
-              'void nsp_%(typename_dc)s_latex(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+              'int nsp_%(typename_dc)s_latex(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
               '{\n' \
               '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\002latex:\\\\[");\n' \
@@ -336,6 +338,7 @@ class Wrapper:
               '  %(fields_latex)s' \
               '  Sciprintf1(indent+1,"}\\n");\n' \
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\\\]\\005");\n' \
+              '  return TRUE;\n' \
               '}\n' 
 
 
@@ -402,36 +405,38 @@ class Wrapper:
                     ' * info \n' \
                     ' */\n' \
                     '\n' \
-                    'void nsp_%(typename_dc)s_info(Nsp%(typename)s *M, int indent)\n' \
+                    'int nsp_%(typename_dc)s_info(Nsp%(typename)s *M, int indent)\n' \
                     '{\n' \
                     '  int i;\n' \
                     '  if ( M == NULL%(typename_uc)s) \n' \
                     '    {\n' \
                     '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-                    '      return;\n' \
+                    '      return TRUE;\n' \
                     '    }\n' \
                     '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");\n' \
                     '  Sciprintf("%(typename)s %%s {\\n", NSP_OBJECT(M)->name);\n' \
                     '%(fields_info)s' \
                     '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\\n");\n' \
+                    '  return TRUE;\n' \
                     '}\n' \
                     '\n' \
                     '/*\n' \
                     ' * print \n' \
                     ' */\n' \
                     '\n' \
-                    'void nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent)\n' \
+                    'int nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent)\n' \
                     '{\n' \
                     '  int i;\n' \
                     '  if ( M == NULL%(typename_uc)s) \n' \
                     '    {\n' \
                     '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-                    '      return;\n' \
+                    '      return TRUE;\n' \
                     '    }\n' \
                     '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");\n' \
                     '  Sciprintf("%(typename)s %%s {\\n", NSP_OBJECT(M)->name);\n' \
                     '%(fields_print)s' \
                     '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\\n");\n' \
+                    '  return TRUE;\n' \
                     '}\n' 
 
     
@@ -558,9 +563,9 @@ class Wrapper:
                 '\n' \
                 'extern Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *H);\n' \
                 'extern void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H);\n' \
-                'extern void nsp_%(typename_dc)s_info(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-                'extern void nsp_%(typename_dc)s_print(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-                'extern void nsp_%(typename_dc)s_latex(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+                'extern int nsp_%(typename_dc)s_info(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+                'extern int nsp_%(typename_dc)s_print(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+                'extern int nsp_%(typename_dc)s_latex(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
                 'extern Nsp%(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
                 'extern int Is%(typename)sObj (Stack stack, int i); \n' \
                 'extern int Is%(typename)s(NspObject *O);\n' \

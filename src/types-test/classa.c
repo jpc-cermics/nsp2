@@ -255,30 +255,31 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *M,int indent,const char *name,int rec_level)
+int nsp_classa_info(NspClassA *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLCLASSA) 
     {
       Sciprintf("Null Pointer ClassA \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_classa_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_classa_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
+int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSA) 
     {
       Sciprintf("Null Pointer ClassA \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -289,27 +290,31 @@ void nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_classa_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
   if ( M->cla_val != NULL)
-    nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->cla_bval != NULL)
-    nsp_object_print(NSP_OBJECT(M->cla_bval),indent+2,"cla_bval",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->cla_bval),indent+2,"cla_bval",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->cla_lval != NULL)
-    nsp_object_print(NSP_OBJECT(M->cla_lval),indent+2,"cla_lval",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->cla_lval),indent+2,"cla_lval",rec_level+1)== FALSE ) return FALSE ;
+    }
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
+int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -318,13 +323,17 @@ void nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
     Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
   if ( M->cla_val != NULL)
-    nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->cla_bval != NULL)
-    nsp_object_latex(NSP_OBJECT(M->cla_bval),indent+2,"cla_bval",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_bval),indent+2,"cla_bval",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->cla_lval != NULL)
-    nsp_object_latex(NSP_OBJECT(M->cla_lval),indent+2,"cla_lval",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_lval),indent+2,"cla_lval",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -505,7 +514,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 509 "classa.c"
+#line 518 "classa.c"
 
 
 #line 30 "classa.override"
@@ -514,7 +523,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 518 "classa.c"
+#line 527 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -647,7 +656,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
   return OK;
 }
 
-#line 651 "classa.c"
+#line 660 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -699,7 +708,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 703 "classa.c"
+#line 712 "classa.c"
 
 
 #line 37 "classa.override"
@@ -707,7 +716,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 711 "classa.c"
+#line 720 "classa.c"
 
 
 /*----------------------------------------------------
@@ -747,9 +756,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 751 "classa.c"
+#line 760 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 756 "classa.c"
+#line 765 "classa.c"

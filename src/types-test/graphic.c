@@ -243,30 +243,31 @@ void nsp_graphic_destroy(NspGraphic *H)
  * info 
  */
 
-void nsp_graphic_info(NspGraphic *M,int indent,const char *name,int rec_level)
+int nsp_graphic_info(NspGraphic *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLGRAPHIC) 
     {
       Sciprintf("Null Pointer Graphic \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_graphic_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_graphic_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
+int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGRAPHIC) 
     {
       Sciprintf("Null Pointer Graphic \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -277,20 +278,21 @@ void nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_graphic_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"color=%d\n",M->obj->color);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
+int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -299,6 +301,7 @@ void nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level
     Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -435,7 +438,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 439 "graphic.c"
+#line 442 "graphic.c"
 
 
 #line 53 "graphic.override"
@@ -450,7 +453,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 454 "graphic.c"
+#line 457 "graphic.c"
 
 
 #line 66 "graphic.override"
@@ -464,7 +467,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 468 "graphic.c"
+#line 471 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -540,7 +543,7 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 544 "graphic.c"
+#line 547 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -551,4 +554,4 @@ GLURP
 
 
 
-#line 555 "graphic.c"
+#line 558 "graphic.c"

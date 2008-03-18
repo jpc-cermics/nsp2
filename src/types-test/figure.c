@@ -289,30 +289,31 @@ void nsp_figure_destroy(NspFigure *H)
  * info 
  */
 
-void nsp_figure_info(NspFigure *M,int indent,const char *name,int rec_level)
+int nsp_figure_info(NspFigure *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLFIGURE) 
     {
       Sciprintf("Null Pointer Figure \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_figure_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_figure_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
+int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLFIGURE) 
     {
       Sciprintf("Null Pointer Figure \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -323,12 +324,13 @@ void nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_figure_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         if ( M->obj->children != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"wresize=%d\n",M->obj->wresize);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
@@ -341,20 +343,22 @@ void nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
+int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
     if ( M->obj->children != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"wresize=%d\n",M->obj->wresize);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
@@ -367,6 +371,7 @@ void nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -740,7 +745,7 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 744 "figure.c"
+#line 749 "figure.c"
 
 
 /*----------------------------------------------------
@@ -779,7 +784,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 783 "figure.c"
+#line 788 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -810,4 +815,4 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj)
     }
 }
 
-#line 814 "figure.c"
+#line 819 "figure.c"

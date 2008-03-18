@@ -271,30 +271,31 @@ void nsp_polyline_destroy(NspPolyline *H)
  * info 
  */
 
-void nsp_polyline_info(NspPolyline *M,int indent,const char *name,int rec_level)
+int nsp_polyline_info(NspPolyline *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLPOLYLINE) 
     {
       Sciprintf("Null Pointer Polyline \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_polyline_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_polyline_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_level)
+int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLPOLYLINE) 
     {
       Sciprintf("Null Pointer Polyline \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -305,23 +306,25 @@ void nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_lev
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_polyline_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   if ( M->obj->Pts != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_level)
+int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -329,10 +332,12 @@ void nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_lev
   Sciprintf1(indent+1,"{\n");
     Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   if ( M->obj->Pts != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -522,7 +527,7 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 526 "polyline.c"
+#line 531 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -565,7 +570,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 569 "polyline.c"
+#line 574 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -604,7 +609,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 608 "polyline.c"
+#line 613 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -691,4 +696,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 695 "polyline.c"
+#line 700 "polyline.c"

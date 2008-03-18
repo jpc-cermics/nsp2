@@ -250,30 +250,31 @@ void nsp_classaref_destroy(NspClassARef *H)
  * info 
  */
 
-void nsp_classaref_info(NspClassARef *M,int indent,const char *name,int rec_level)
+int nsp_classaref_info(NspClassARef *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLCLASSAREF) 
     {
       Sciprintf("Null Pointer ClassARef \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_classaref_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_classaref_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_level)
+int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSAREF) 
     {
       Sciprintf("Null Pointer ClassARef \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -284,23 +285,25 @@ void nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_l
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_classaref_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    }
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_level)
+int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -309,9 +312,11 @@ void nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_l
     Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -455,7 +460,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
   self->obj->cla_color = color;
   return 0;
 }
-#line 459 "classaref.c"
+#line 464 "classaref.c"
 
 
 #line 30 "classaref.override"
@@ -464,7 +469,7 @@ static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int op
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
 }
-#line 468 "classaref.c"
+#line 473 "classaref.c"
 
 
 static NspMethods classaref_methods[] = {
@@ -570,7 +575,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 574 "classaref.c"
+#line 579 "classaref.c"
 
 
 #line 37 "classaref.override"
@@ -578,7 +583,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 582 "classaref.c"
+#line 587 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -618,9 +623,9 @@ ClassARef_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 622 "classaref.c"
+#line 627 "classaref.c"
   nspgobject_register_class(d, "ClassARef", ClassARef, &NspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 627 "classaref.c"
+#line 632 "classaref.c"

@@ -1124,7 +1124,7 @@ class NspObjectArg(ArgType):
 
     def attr_write_print(self,pname, varname,byref,print_mode):
 	"""used when a field is to be reloaded """
-        return  '        %s->%s->type->pr(%s->%s,indent+2,"%s",rec_level+1);\n' % (varname,pname,varname,pname,pname)
+        return  '        if ( %s->%s->type->pr(%s->%s,indent+2,"%s",rec_level+1)==FALSE) return FALSE;\n' % (varname,pname,varname,pname,pname)
 
 
 # generic for NspXXX
@@ -1191,7 +1191,7 @@ class NspGenericArg(ArgType):
 
     def attr_write_print(self,pname, varname,byref,print_mode):
 	"""used when a field is to be reloaded """
-        return  '  if ( %s->%s != NULL)\n    nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1);\n' \
+        return  '  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1)== FALSE ) return FALSE ;\n    }\n' \
             % (varname,pname,print_mode,varname,pname,pname)
 
     def attr_write_init(self,pname, varname,byref):

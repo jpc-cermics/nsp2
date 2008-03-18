@@ -257,30 +257,31 @@ void nsp_classbref_destroy(NspClassBRef *H)
  * info 
  */
 
-void nsp_classbref_info(NspClassBRef *M,int indent,const char *name,int rec_level)
+int nsp_classbref_info(NspClassBRef *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLCLASSBREF) 
     {
       Sciprintf("Null Pointer ClassBRef \n");
-      return;
+      return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_classbref_type_short_string(NSP_OBJECT(M)))
-;}
+             nsp_classbref_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
 
 /*
  * print 
  */
 
-void nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_level)
+int nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSBREF) 
     {
       Sciprintf("Null Pointer ClassBRef \n");
-      return;
+      return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
     { 
@@ -291,24 +292,26 @@ void nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_l
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_classbref_info(M,indent,pname,rec_level);
-          return;
+          return TRUE;
         }
       Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"clb_color=%d\n",M->obj->clb_color);
   Sciprintf1(indent+2,"clb_thickness=%d\n",M->obj->clb_thickness);
   if ( M->obj->clb_val != NULL)
-    nsp_object_print(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1);
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_classaref_print((NspClassARef *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
+  return TRUE;
 }
 
 /*
  * latex print 
  */
 
-void nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_level)
+int nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
@@ -317,10 +320,12 @@ void nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_l
     Sciprintf1(indent+2,"clb_color=%d\n",M->obj->clb_color);
   Sciprintf1(indent+2,"clb_thickness=%d\n",M->obj->clb_thickness);
   if ( M->obj->clb_val != NULL)
-    nsp_object_latex(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1);
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_classaref_latex((NspClassARef *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -467,7 +472,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 471 "classbref.c"
+#line 476 "classbref.c"
 
 
 #line 29 "classbref.override"
@@ -478,7 +483,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 482 "classbref.c"
+#line 487 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -601,9 +606,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 605 "classbref.c"
+#line 610 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 610 "classbref.c"
+#line 615 "classbref.c"
