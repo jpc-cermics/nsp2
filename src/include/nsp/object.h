@@ -149,7 +149,7 @@ struct  _NspObject {
   NspTypeObject *type;
   NspTypeBase *basetype;        /* type of base child  */
   int  ret_pos ;                /* used to store return position from an interface */ 
-  /* int  flag */    ;                /* flags for Object protection */
+  int  flag  ;                /* flags for Object protection */
 };
 
 extern int nsp_type_object_id ;
