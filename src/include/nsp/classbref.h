@@ -66,9 +66,9 @@ extern NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thick
 
 extern NspClassBRef *nsp_classbref_copy(NspClassBRef *H);
 extern void nsp_classbref_destroy(NspClassBRef *H);
-extern void nsp_classbref_info(NspClassBRef *H, int indent,const char *name, int rec_level);
-extern void nsp_classbref_print(NspClassBRef *H, int indent,const char *name, int rec_level);
-extern void nsp_classbref_latex(NspClassBRef *H, int indent,const char *name, int rec_level);
+extern int nsp_classbref_info(NspClassBRef *H, int indent,const char *name, int rec_level);
+extern int nsp_classbref_print(NspClassBRef *H, int indent,const char *name, int rec_level);
+extern int nsp_classbref_latex(NspClassBRef *H, int indent,const char *name, int rec_level);
 extern NspClassBRef *nsp_classbref_object (NspObject *O); 
 extern int IsClassBRefObj (Stack stack, int i); 
 extern int IsClassBRef(NspObject *O);

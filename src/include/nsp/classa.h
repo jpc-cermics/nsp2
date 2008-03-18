@@ -62,9 +62,9 @@ extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,N
 
 extern NspClassA *nsp_classa_copy(NspClassA *H);
 extern void nsp_classa_destroy(NspClassA *H);
-extern void nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level);
-extern void nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level);
-extern void nsp_classa_latex(NspClassA *H, int indent,const char *name, int rec_level);
+extern int nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level);
+extern int nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level);
+extern int nsp_classa_latex(NspClassA *H, int indent,const char *name, int rec_level);
 extern NspClassA *nsp_classa_object (NspObject *O); 
 extern int IsClassAObj (Stack stack, int i); 
 extern int IsClassA(NspObject *O);

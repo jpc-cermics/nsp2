@@ -69,9 +69,9 @@ extern NspAxes *nsp_axes_create(char *name,NspMatrix* frect,NspMatrix* wrect,gbo
 
 extern NspAxes *nsp_axes_copy(NspAxes *H);
 extern void nsp_axes_destroy(NspAxes *H);
-extern void nsp_axes_info(NspAxes *H, int indent,const char *name, int rec_level);
-extern void nsp_axes_print(NspAxes *H, int indent,const char *name, int rec_level);
-extern void nsp_axes_latex(NspAxes *H, int indent,const char *name, int rec_level);
+extern int nsp_axes_info(NspAxes *H, int indent,const char *name, int rec_level);
+extern int nsp_axes_print(NspAxes *H, int indent,const char *name, int rec_level);
+extern int nsp_axes_latex(NspAxes *H, int indent,const char *name, int rec_level);
 extern NspAxes *nsp_axes_object (NspObject *O); 
 extern int IsAxesObj (Stack stack, int i); 
 extern int IsAxes(NspObject *O);

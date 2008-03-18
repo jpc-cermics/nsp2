@@ -66,9 +66,9 @@ extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thick
 
 extern NspClassARef *nsp_classaref_copy(NspClassARef *H);
 extern void nsp_classaref_destroy(NspClassARef *H);
-extern void nsp_classaref_info(NspClassARef *H, int indent,const char *name, int rec_level);
-extern void nsp_classaref_print(NspClassARef *H, int indent,const char *name, int rec_level);
-extern void nsp_classaref_latex(NspClassARef *H, int indent,const char *name, int rec_level);
+extern int nsp_classaref_info(NspClassARef *H, int indent,const char *name, int rec_level);
+extern int nsp_classaref_print(NspClassARef *H, int indent,const char *name, int rec_level);
+extern int nsp_classaref_latex(NspClassARef *H, int indent,const char *name, int rec_level);
 extern NspClassARef *nsp_classaref_object (NspObject *O); 
 extern int IsClassARefObj (Stack stack, int i); 
 extern int IsClassARef(NspObject *O);

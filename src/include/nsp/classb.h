@@ -60,9 +60,9 @@ extern NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,N
 
 extern NspClassB *nsp_classb_copy(NspClassB *H);
 extern void nsp_classb_destroy(NspClassB *H);
-extern void nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
-extern void nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
-extern void nsp_classb_latex(NspClassB *H, int indent,const char *name, int rec_level);
+extern int nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
+extern int nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
+extern int nsp_classb_latex(NspClassB *H, int indent,const char *name, int rec_level);
 extern NspClassB *nsp_classb_object (NspObject *O); 
 extern int IsClassBObj (Stack stack, int i); 
 extern int IsClassB(NspObject *O);

@@ -149,6 +149,7 @@ struct  _NspObject {
   NspTypeObject *type;
   NspTypeBase *basetype;        /* type of base child  */
   int  ret_pos ;                /* used to store return position from an interface */ 
+  /* int  flag */    ;                /* flags for Object protection */
 };
 
 extern int nsp_type_object_id ;
@@ -395,7 +396,7 @@ extern int nsp_object_type(const NspObject *O, NspTypeId id);
 extern int nsp_object_implements(NspObject *O, NspTypeId id); 
 extern int nsp_object_info(NspObject *O, int indent,char *name, int rec_level); 
 extern int nsp_object_print(NspObject *O, int indent,char *name, int rec_level); 
-extern void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level); 
+extern int nsp_object_latex(NspObject *O, int indent,char *name, int rec_level); 
 extern int nsp_object_is_true(NspObject *O); 
 extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspObject *def_loop (char *str, NspObject *O, NspObject *O1, int i, int *rep); 

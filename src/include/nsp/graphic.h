@@ -82,9 +82,9 @@ extern NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type);
 
 extern NspGraphic *nsp_graphic_copy(NspGraphic *H);
 extern void nsp_graphic_destroy(NspGraphic *H);
-extern void nsp_graphic_info(NspGraphic *H, int indent,const char *name, int rec_level);
-extern void nsp_graphic_print(NspGraphic *H, int indent,const char *name, int rec_level);
-extern void nsp_graphic_latex(NspGraphic *H, int indent,const char *name, int rec_level);
+extern int nsp_graphic_info(NspGraphic *H, int indent,const char *name, int rec_level);
+extern int nsp_graphic_print(NspGraphic *H, int indent,const char *name, int rec_level);
+extern int nsp_graphic_latex(NspGraphic *H, int indent,const char *name, int rec_level);
 extern NspGraphic *nsp_graphic_object (NspObject *O); 
 extern int IsGraphicObj (Stack stack, int i); 
 extern int IsGraphic(NspObject *O);

@@ -65,9 +65,9 @@ extern NspPolyline *nsp_polyline_create(char *name,int color,NspMatrix* Pts,NspT
 
 extern NspPolyline *nsp_polyline_copy(NspPolyline *H);
 extern void nsp_polyline_destroy(NspPolyline *H);
-extern void nsp_polyline_info(NspPolyline *H, int indent,const char *name, int rec_level);
-extern void nsp_polyline_print(NspPolyline *H, int indent,const char *name, int rec_level);
-extern void nsp_polyline_latex(NspPolyline *H, int indent,const char *name, int rec_level);
+extern int nsp_polyline_info(NspPolyline *H, int indent,const char *name, int rec_level);
+extern int nsp_polyline_print(NspPolyline *H, int indent,const char *name, int rec_level);
+extern int nsp_polyline_latex(NspPolyline *H, int indent,const char *name, int rec_level);
 extern NspPolyline *nsp_polyline_object (NspObject *O); 
 extern int IsPolylineObj (Stack stack, int i); 
 extern int IsPolyline(NspObject *O);

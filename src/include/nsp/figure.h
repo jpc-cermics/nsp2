@@ -73,9 +73,9 @@ extern NspFigure *nsp_figure_create(char *name,NspList* children,char* fname,gbo
 
 extern NspFigure *nsp_figure_copy(NspFigure *H);
 extern void nsp_figure_destroy(NspFigure *H);
-extern void nsp_figure_info(NspFigure *H, int indent,const char *name, int rec_level);
-extern void nsp_figure_print(NspFigure *H, int indent,const char *name, int rec_level);
-extern void nsp_figure_latex(NspFigure *H, int indent,const char *name, int rec_level);
+extern int nsp_figure_info(NspFigure *H, int indent,const char *name, int rec_level);
+extern int nsp_figure_print(NspFigure *H, int indent,const char *name, int rec_level);
+extern int nsp_figure_latex(NspFigure *H, int indent,const char *name, int rec_level);
 extern NspFigure *nsp_figure_object (NspObject *O); 
 extern int IsFigureObj (Stack stack, int i); 
 extern int IsFigure(NspObject *O);

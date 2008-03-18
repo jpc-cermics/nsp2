@@ -69,9 +69,9 @@ extern NspCurve *nsp_curve_create(char *name,int color,int mark,double width,int
 
 extern NspCurve *nsp_curve_copy(NspCurve *H);
 extern void nsp_curve_destroy(NspCurve *H);
-extern void nsp_curve_info(NspCurve *H, int indent,const char *name, int rec_level);
-extern void nsp_curve_print(NspCurve *H, int indent,const char *name, int rec_level);
-extern void nsp_curve_latex(NspCurve *H, int indent,const char *name, int rec_level);
+extern int nsp_curve_info(NspCurve *H, int indent,const char *name, int rec_level);
+extern int nsp_curve_print(NspCurve *H, int indent,const char *name, int rec_level);
+extern int nsp_curve_latex(NspCurve *H, int indent,const char *name, int rec_level);
 extern NspCurve *nsp_curve_object (NspObject *O); 
 extern int IsCurveObj (Stack stack, int i); 
 extern int IsCurve(NspObject *O);
