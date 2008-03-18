@@ -49,22 +49,15 @@ int nsp_mat_is_symmetric(NspMatrix *A)
     {
       for ( i=0 ; i < A->m ; i++)
 	for ( j=0 ; j < i ; j++)
-	  {
-	    double dx= Abs(A->R[i+j*A->m] - A->R[j+i*A->m]);
-	    if ( A->R[i+j*A->m] + dx > A->R[i+j*A->m]) 
-	      return FALSE;
-	  }
+	  if ( A->R[i+j*A->m] != A->R[j+i*A->m]) 
+	    return FALSE;
     }
   else 
     {
       for ( i=0 ; i < A->m ; i++)
 	for ( j=0 ; j < i ; j++)
-	  {
-	    double dxr= Abs(A->C[i+j*A->m].r - A->C[j+i*A->m].r);
-	    double dxi= Abs(A->C[i+j*A->m].i + A->C[j+i*A->m].i);
-	    if ( A->C[i+j*A->m].r + dxr > A->C[i+j*A->m].r) return FALSE;
-	    if ( A->C[i+j*A->m].i + dxi > A->C[i+j*A->m].i) return FALSE;
-	  }
+	  if ( A->C[i+j*A->m].r != A->C[j+i*A->m].r  ||  A->C[i+j*A->m].i != -A->C[j+i*A->m].i )
+	    return FALSE;
     }
   return TRUE;
 }
@@ -279,7 +272,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   C2F(dorgqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, q->R, &m, tau, work, &lwork, &info);
 
   /* make R */ 
-  nsp_mat_triu(r,0); 
+  nsp_mat_triu(r,0);
   if ( flag == 'e' && m > n )  /* we must delete the last rows of R */ 
     {
       for ( j = 1 ; j < n ; j++ )
@@ -295,6 +288,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       int IRank, imin=2, imax=1, ic, id;
       double Tol_rcond, smax, smin, tt=Abs(r->R[0]), *vmin=work, *vmax=&work[Minmn];
       double sminpr, smaxpr, s1, c1, s2, c2;
+
       if (tol_rcond == NULL ) 
 	Tol_rcond = Max(m,n)*nsp_dlamch("eps");
       else 
@@ -4088,6 +4082,5 @@ int nsp_zgschur_discr_stable(const doubleC *alpha, const doubleC *beta)
 {
   return  nsp_abs_c(alpha) < nsp_abs_c(beta);
 } 
-
 
 

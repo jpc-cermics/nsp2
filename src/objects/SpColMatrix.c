@@ -7696,7 +7696,7 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
 		  if ( kp < 0 )
 		    return FALSE;
 		  val_ji = A->D[i]->R[kp];
-		  if ( val_ij + fabs(val_ij-val_ji) > val_ij )
+		  if ( val_ij != val_ji )
 		    return FALSE;
 		}
 	    }
@@ -7705,7 +7705,6 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
   else
     {
       doubleC val_ij, val_ji;
-      double dx;
       for ( j = 0 ; j < A->n-1 ; j++ ) 
 	{
 	  for ( k = A->D[j]->size-1 ; k >= 0 ; k-- ) 
@@ -7718,11 +7717,7 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
 		  if ( k < 0 )
 		    return FALSE;
 		  val_ji = A->D[i]->C[kp];
-		  dx = fabs(val_ij.r - val_ji.r);
-		  if ( val_ij.r + dx > val_ij.r )
-		    return FALSE;
-		  dx = fabs(val_ij.i + val_ji.i);
-		  if ( val_ij.i + dx > val_ij.i )
+		  if ( val_ij.r != val_ji.r  ||  val_ij.i != -val_ji.i ) 
 		    return FALSE;
 		}
 	    }
