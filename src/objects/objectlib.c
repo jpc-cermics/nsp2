@@ -265,9 +265,9 @@ int nsp_object_print(NspObject *O, int indent,char *name, int rec_level)
  * 
  **/
 
-void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level)
+int nsp_object_latex(NspObject *O, int indent,char *name, int rec_level)
 {
-  O->type->latex(O,indent,name,rec_level);
+  return O->type->latex(O,indent,name,rec_level);
 }
 
 /**

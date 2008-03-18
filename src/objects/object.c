@@ -140,6 +140,7 @@ static int init_object(NspObject *o,NspTypeObject *type)
   o->type = type; 
   o->basetype = (NspTypeBase *)type;
   /* specific */
+  o->flag = 0;
   return OK;
 }
 
@@ -580,6 +581,37 @@ static int int_meth_object_get_name(void *self,Stack stack,int rhs,int opt,int l
 }
 
 
+/**
+ * int_object_protect:
+ * @self: an instance of a nsp object.
+ * @stack: a #Stack
+ * @rhs: an int the number of right hand side arguments 
+ * @opt: the number of optional named arguments 
+ * @lhs: the requested number of arguments to return 
+ * 
+ * a nsp method for getting the flag field of @self. 
+ * 
+ * Return value: 1 or %RET_BUG.
+ **/
+
+static int int_meth_object_protect(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int protect; 
+  CheckRhs(0,1);
+  CheckLhs(1,1);
+  if ( rhs == 1 ) 
+    {
+       if ( GetScalarBool (stack,1,&protect) == FAIL) return RET_BUG;
+       NSP_OBJECT(self)->flag = protect;
+    }
+  else 
+    {
+      protect = NSP_OBJECT(self)->flag;
+    }
+  nsp_move_boolean(stack,1,protect);
+  return 1;
+}
+
 
 /**
  * int_meth_object_set_attributes:
@@ -764,6 +796,7 @@ static NspMethods object_methods[] = {
   { "get_attribute_names", int_meth_object_get_attribute_names},
   { "equal",  int_meth_object_equal},
   { "not_equal",  int_meth_object_not_equal},
+  { "protect",  int_meth_object_protect},
   { (char *) 0, NULL}
 };
 
