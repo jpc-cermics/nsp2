@@ -329,7 +329,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
           nsp_axes_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
+      Sciprintf1(indent,"%s\t=\t\t%s ZZZ (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
         if ( M->obj->frect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;

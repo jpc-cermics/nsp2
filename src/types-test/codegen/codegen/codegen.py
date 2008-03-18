@@ -319,7 +319,7 @@ class Wrapper:
               '          nsp_%(typename_dc)s_info(M,indent,pname,rec_level);\n' \
               '          return TRUE;\n' \
               '        }\n' \
-              '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
+              '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s %(ref_count)s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)) %(ref_count_ref)s);\n' \
               '      Sciprintf1(indent+1,"{\\n");\n' \
               '      %(fields_print)s' \
               '      Sciprintf1(indent+1,"}\\n");\n' \
@@ -340,104 +340,6 @@ class Wrapper:
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\\\]\\005");\n' \
               '  return TRUE;\n' \
               '}\n' 
-
-
-    type_tmpl_1_1_1_ref = \
-                    '/*\n' \
-                    ' * A == B \n' \
-                    ' */\n' \
-                    '\n' \
-                    'static int nsp_%(typename_dc)s_eq(Nsp%(typename)s *A, NspObject *B)\n' \
-                    '{\n' \
-                    '  Nsp%(typename)s *loc = (Nsp%(typename)s *) B;\n' \
-                    '  if ( check_cast(B,nsp_type_%(typename_dc)s_id) == FALSE) return FALSE ;\n' \
-                    '  if ( A->obj == loc->obj ) return TRUE;\n' \
-                    '%(fields_equal)s' \
-                    '  return TRUE;\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * A != B \n' \
-                    ' */\n' \
-                    '\n' \
-                    'static int nsp_%(typename_dc)s_neq(Nsp%(typename)s *A, NspObject *B)\n' \
-                    '{\n' \
-                    '  return ( nsp_%(typename_dc)s_eq(A,B) == TRUE ) ? FALSE : TRUE;\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * save \n' \
-                    ' */\n' \
-                    '\n' \
-                    'static int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, Nsp%(typename)s *M)\n' \
-                    '{\n' \
-                    '  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;\n' \
-                    '  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;\n' \
-                    '%(fields_save)s' \
-                    '  return OK;\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * load \n' \
-                    ' */\n' \
-                    '\n' \
-                    'static Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load(XDR *xdrs)\n' \
-                    '{\n' \
-                    '  Nsp%(typename)s *M = NULL;\n' \
-                    '  static char name[NAME_MAXL];\n' \
-                    '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
-                    '  if ((M  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return M;\n' \
-                    '%(fields_load)s' \
-                    ' return M;\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * delete \n' \
-                    ' */\n' \
-                    '\n' \
-                    'void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H)\n' \
-                    '{\n' \
-                    '%(fields_free)s' \
-                    '  FREE(H);\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * info \n' \
-                    ' */\n' \
-                    '\n' \
-                    'int nsp_%(typename_dc)s_info(Nsp%(typename)s *M, int indent)\n' \
-                    '{\n' \
-                    '  int i;\n' \
-                    '  if ( M == NULL%(typename_uc)s) \n' \
-                    '    {\n' \
-                    '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-                    '      return TRUE;\n' \
-                    '    }\n' \
-                    '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");\n' \
-                    '  Sciprintf("%(typename)s %%s {\\n", NSP_OBJECT(M)->name);\n' \
-                    '%(fields_info)s' \
-                    '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\\n");\n' \
-                    '  return TRUE;\n' \
-                    '}\n' \
-                    '\n' \
-                    '/*\n' \
-                    ' * print \n' \
-                    ' */\n' \
-                    '\n' \
-                    'int nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent)\n' \
-                    '{\n' \
-                    '  int i;\n' \
-                    '  if ( M == NULL%(typename_uc)s) \n' \
-                    '    {\n' \
-                    '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-                    '      return TRUE;\n' \
-                    '    }\n' \
-                    '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");\n' \
-                    '  Sciprintf("%(typename)s %%s {\\n", NSP_OBJECT(M)->name);\n' \
-                    '%(fields_print)s' \
-                    '  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\\n");\n' \
-                    '  return TRUE;\n' \
-                    '}\n' 
 
     
     type_tmpl_1_2 = \
@@ -753,7 +655,13 @@ class Wrapper:
         # prototypes for the class methods 
         substdict['internal_methods_proto'] = self.build_internal_methods_protos()
         substdict['fields_ref'] = self.build_fields_ref()
-        
+        if self.byref != 't' :
+            substdict['ref_count']= ''
+            substdict['ref_count_ref']= ''
+        else:
+            # if we are a by ref object print the ref counter 
+            substdict['ref_count']= '(nref=%d)'
+            substdict['ref_count_ref']= ',M->obj->ref_count'
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
         self.fp.write(self.type_tmpl_1_1_1 % substdict)

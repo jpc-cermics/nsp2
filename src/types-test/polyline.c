@@ -308,7 +308,7 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
           nsp_polyline_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)));
+      Sciprintf1(indent,"%s\t=\t\t%s ZZZ (nref=%d)\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   if ( M->obj->Pts != NULL)

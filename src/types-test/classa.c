@@ -292,7 +292,7 @@ int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
           nsp_classa_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
+      Sciprintf1(indent,"%s\t=\t\t%s ZZZ \n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)) );
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
