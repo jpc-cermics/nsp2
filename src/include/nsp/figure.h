@@ -28,16 +28,14 @@ struct _NspTypeFigure {
 
 typedef struct _nsp_figure nsp_figure;
 struct _nsp_figure {
-  NspList* children;
   char* fname;
-  gboolean wresize;
+  char* driver;
   int id;
-  int width;
-  int height;
-  int gr_width;
-  int gr_height;
-  int x;
-  int y;
+  NspMatrix* dims;
+  NspMatrix* viewport_dims;
+  gboolean wresize;
+  NspMatrix* position;
+  NspList* children;
   int ref_count;
 };
 
@@ -67,7 +65,7 @@ NspFigure *new_figure();
 
 #define NULLFIGURE (NspFigure*) 0
 
-extern NspFigure *nsp_figure_create(char *name,NspList* children,char* fname,gboolean wresize,int id,int width,int height,int gr_width,int gr_height,int x,int y,NspTypeBase *type);
+extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,NspTypeBase *type);
 
 /* from FigureObj.c */
 
