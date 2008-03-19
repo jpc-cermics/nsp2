@@ -35,13 +35,15 @@ $\lambda_j$ eigenvalue (\verb+lambda(j)+) : $A v^j = \lambda_j v^j$.
       linearly independant (the dimension of the associated 
       eigenvectors space must be $k'$ at least numerically for
       a not too small tolerance).
-\item When the matrix $A$ is symetric (real case) or hermitian
+\item When the matrix $A$ is symmetric (real case) or hermitian
       (complex case) the eigenvalues are real and the eigenvectors 
-      form a orthonormal basis. The symetry of the matrix $A$ is 
-      detected numerically ($a_{ij}$ must be nearly equal to $a_{ji}$
-      the exact test being $a_{ij} \oplus | a_{ij} - a_{ji}| \le a_{ij}$).
-      If your matrix $A$ must be symetric but lose this property because
-      of floating point errors you can re-symetrise it with \verb-A = 0.5*(A+A')-   
+      form a orthonormal basis. This case is simple and computations
+      of eigenvalues and eigenvectors are faster. To detect the
+      symmetric case the test  $a_{ij} = a_{ji}, \forall 1\le i < j
+      \le n$ is done ($a_{ij} = \bar{a}_{ji}$ in the complex case).
+      If your matrix $A$ must be symmetric but lose this property because
+      of floating point errors you can re-symmetrise it with 
+      \verb-A = 0.5*(A+A')-
 \end{itemize}
 
 \end{mandescription}
