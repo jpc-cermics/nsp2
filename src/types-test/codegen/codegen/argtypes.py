@@ -363,7 +363,7 @@ class IntArg(ArgType):
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """
-        return  '  for ( i=0 ; i < indent+2 ; i++) Sciprintf(" "); Sciprintf("%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_print(self,pname, varname,byref,print_mode):
         """used when a field is to be reloaded """
@@ -427,6 +427,13 @@ class BoolArg(IntArg):
         info.varlist.add('int', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);\n  return nsp_ret;')
+    def attr_write_info(self,pname, varname,byref):
+	"""used when a field is to be reloaded """
+        return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
+
+    def attr_write_print(self,pname, varname,byref,print_mode):
+        """used when a field is to be reloaded """
+        return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
 
     def attr_write_init(self,pname, varname,byref):
 	"""used when a field is to be initialized """

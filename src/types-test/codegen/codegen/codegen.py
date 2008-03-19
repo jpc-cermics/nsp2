@@ -709,7 +709,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt, pdef, pcheck in self.objinfo.fields:
             str = str + '  %s %s;\n' % (ftype,fname)
         return str
 
@@ -728,7 +728,7 @@ class Wrapper:
               'struct _nsp_%s {\n'  % (cn,cn,cn)
         if not self.objinfo.fields:
             return str + '};\n' 
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             str = str + '  %s %s;\n' % (ftype,fname)
         str = str + '  int ref_count;\n};\n\n' 
         return str
@@ -740,7 +740,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             if flag:
                 fftype=''
@@ -773,7 +773,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref)
         return str
@@ -788,7 +788,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_save( fname,varname,self.byref)
         father = self.objinfo.parent
@@ -806,7 +806,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_info( fname,varname,self.byref)
         return str
@@ -823,7 +823,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_print( fname,varname,self.byref,print_mode)
         if father != 'Object':
@@ -839,7 +839,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_init( fname,varname,self.byref)
         return str
@@ -859,7 +859,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_load( fname,varname,self.byref)
 
@@ -884,7 +884,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             # str = str + handler.attr_check_null( fname,varname,self.byref)
         return str
@@ -900,7 +900,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_defval( fname,varname,self.byref)
         if father != 'Object':
@@ -926,7 +926,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_free_fields( fname,varname,self.byref)
         if self.byref == 't':
@@ -968,7 +968,7 @@ class Wrapper:
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_equal_fields( fname,varname,self.byref)
         return str
@@ -1160,7 +1160,7 @@ class Wrapper:
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
             return '0'
         getsets = []
-        for ftype, fname, opt in self.objinfo.fields:
+        for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             gettername = 'int_get_failed'
             settername = 'int_set_failed'
             getterobjectname = 'int_get_object_failed'
@@ -1183,7 +1183,7 @@ class Wrapper:
                 if string.find(code, setterprefix + 'obj_' + fname) >= 0:
                     setterobjectname = setterprefix + 'obj_' + fname
 
-            if gettername == 'int_get_failed':
+            if opt != 'hidden' and gettername == 'int_get_failed':
                 try:
                     funcname = getterprefix + fname
                     info = argtypes.WrapperInfo()
@@ -1202,7 +1202,7 @@ class Wrapper:
                     sys.stderr.write("Could not write getter for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
 
-            if getterobjectname == 'int_get_object_failed':
+            if opt != 'hidden' and getterobjectname == 'int_get_object_failed':
                 try:
                     # check if we can use obj.val(xxx) = yyy in get operation 
                     if info.setobj == 't':
@@ -1217,7 +1217,7 @@ class Wrapper:
                     sys.stderr.write("Could not write getterobj for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
 
-            if settername == 'int_set_failed':
+            if   opt != 'hidden' and settername == 'int_set_failed':
                 try:
                     funcname = setterprefix + fname
                     info = argtypes.WrapperInfo()
