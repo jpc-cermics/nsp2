@@ -337,7 +337,7 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
   if ( M->obj->viewport_dims != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"wresize=%d\n",M->obj->wresize);
+  Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
   if ( M->obj->position != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->position),indent+2,"position",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -369,7 +369,7 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
   if ( M->obj->viewport_dims != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"wresize=%d\n",M->obj->wresize);
+  Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
   if ( M->obj->position != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),indent+2,"position",rec_level+1)== FALSE ) return FALSE ;
     }

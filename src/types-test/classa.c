@@ -119,6 +119,7 @@ static int init_classa(NspClassA *Obj,NspTypeClassA *type)
   /* specific */
   Obj->cla_color = 0;
   Obj->cla_thickness = 0;
+  Obj->cla_hidden = 0;
   Obj->cla_val = NULLMAT;
   Obj->cla_bval = NULLBMAT;
   Obj->cla_lval = NULLLIST;
@@ -179,6 +180,7 @@ static int nsp_classa_eq(NspClassA *A, NspObject *B)
   if ( check_cast(B,nsp_type_classa_id) == FALSE) return FALSE ;
   if ( A->cla_color != loc->cla_color) return FALSE;
   if ( A->cla_thickness != loc->cla_thickness) return FALSE;
+  if ( A->cla_hidden != loc->cla_hidden) return FALSE;
   if ( NSP_OBJECT(A->cla_val)->type->eq(A->cla_val,loc->cla_val) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->cla_bval)->type->eq(A->cla_bval,loc->cla_bval) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->cla_lval)->type->eq(A->cla_lval,loc->cla_lval) == FALSE ) return FALSE;
@@ -204,6 +206,7 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->cla_hidden) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_val)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_bval)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_lval)) == FAIL) return FAIL;
@@ -218,6 +221,7 @@ NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M)
 {
   if (nsp_xdr_load_i(xdrs, &M->cla_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->cla_thickness) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->cla_hidden) == FAIL) return NULL;
   if ((M->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->cla_bval =(NspBMatrix *) nsp_object_xdr_load(xdrs))== NULLBMAT) return NULL;
   if ((M->cla_lval =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
@@ -296,6 +300,7 @@ int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
+  Sciprintf1(indent+2,"cla_hidden=%d\n",M->cla_hidden);
   if ( M->cla_val != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -322,6 +327,7 @@ int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
     Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
+  Sciprintf1(indent+2,"cla_hidden=%d\n",M->cla_hidden);
   if ( M->cla_val != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -420,12 +426,13 @@ int nsp_classa_check_values(NspClassA *H)
   return OK;
 }
 
-NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
+NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,int cla_hidden,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
 {
  NspClassA *H  = nsp_classa_create_void(name,type);
  if ( H ==  NULLCLASSA) return NULLCLASSA;
   H->cla_color=cla_color;
   H->cla_thickness=cla_thickness;
+  H->cla_hidden=cla_hidden;
   if ( cla_val == NULL )
     { H->cla_val = NULL;}
   else
@@ -456,6 +463,7 @@ NspClassA *nsp_classa_copy_partial(NspClassA *H,NspClassA *self)
 {
   H->cla_color=self->cla_color;
   H->cla_thickness=self->cla_thickness;
+  H->cla_hidden=self->cla_hidden;
   if ( self->cla_val == NULL )
     { H->cla_val = NULL;}
   else
@@ -514,7 +522,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 518 "classa.c"
+#line 526 "classa.c"
 
 
 #line 30 "classa.override"
@@ -523,7 +531,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 527 "classa.c"
+#line 535 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -656,7 +664,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
   return OK;
 }
 
-#line 660 "classa.c"
+#line 668 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -708,7 +716,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 712 "classa.c"
+#line 720 "classa.c"
 
 
 #line 37 "classa.override"
@@ -716,7 +724,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 720 "classa.c"
+#line 728 "classa.c"
 
 
 /*----------------------------------------------------
@@ -756,9 +764,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 760 "classa.c"
+#line 768 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 765 "classa.c"
+#line 773 "classa.c"

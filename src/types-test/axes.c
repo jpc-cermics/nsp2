@@ -339,7 +339,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
-  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
+  Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -372,7 +372,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
-  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
+  Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
     }
