@@ -1,20 +1,14 @@
  .nsp_history
  classb.c
- classb.h
  classa.c
- classa.h
  classbref.c
- classbref.h
  classaref.c
- classaref.h
  graphic.c
- graphic.h
  polyline.c
- polyline.h
  compound.c 
- compound.h 
-figure.h
 figure.c
 axes.c
-axes.h
+*.h 
+
+
 

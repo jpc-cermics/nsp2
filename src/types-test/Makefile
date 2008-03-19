@@ -5,7 +5,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.a 
 
 OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
-	figure.o axes.o polyline.o curve.o graphic.o 
+	figure.o axes.o polyline.o curve.o graphic.o groot.o
 
 OBJSF=
 

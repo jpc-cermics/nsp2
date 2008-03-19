@@ -1,0 +1,25 @@
+;; -*- scheme -*-
+
+;; Graphic root object 
+;; used to contain a list of figure 
+
+(define-objectref GRoot 
+  (in-module "GRoot")
+  (parent "Object")
+  (c-name "GRoot")
+  (fields
+   '("NspList*" "figures")
+   )
+  (gtype-id "GRoot")
+)
+
+;; Il sera bien de récuperer les widgets associés si besoin etc....
+
+
+
+
+
+
+
+
+

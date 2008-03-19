@@ -287,7 +287,7 @@ int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_le
           nsp_classaref_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s ZZZ (nref=%d)\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);

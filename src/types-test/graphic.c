@@ -280,7 +280,7 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
           nsp_graphic_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s ZZZ (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"color=%d\n",M->obj->color);
       Sciprintf1(indent+1,"}\n");

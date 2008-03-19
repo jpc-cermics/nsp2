@@ -5,25 +5,32 @@
   (parent "Graphic")
   (c-name "Figure")
   (fields
-   '("NspList*" "children")
    '("char*" "fname")
-   '("gboolean" "wresize")
+   '("char*" "driver")
    '("int" "id")
-   '("int" "width")
-   '("int" "height")
-   '("int" "gr_width")
-   '("int" "gr_height")
-   '("int" "x")
-   '("int" "y"))
+   '("NspMatrix*" "dims")
+   '("NspMatrix*" "viewport_dims")
+   '("gboolean" "wresize")
+   '("NspMatrix*" "position")
+   '("NspList*" "children")
+   )
   (gtype-id "Figure")
 )
 
 ;; overriden 
 
-(define-function figure_attach
-  (c-name "figure_attach")
-  (return-type "gboolean")
-)
+(define-method connect
+  (of-object "Figure")
+  (c-name "nsp_figure_connect")
+  (return-type "none")
+  )
+
+(define-method unconnect
+  (of-object "Figure")
+  (c-name "nsp_figure_unconnect")
+  (return-type "none")
+  )
+
 
 ;; Il sera bien de récuperer les widgets associés si besoin etc....
 

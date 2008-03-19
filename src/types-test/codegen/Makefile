@@ -88,7 +88,7 @@ clean ::
 ../groot.c : groot.defs groot.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override groot.override \
-	    --prefix Figure groot.defs) > $*.c \
+	    --prefix GRoot groot.defs) > $*.c \
 	&& cp groot.h ../../include/nsp 
 
 

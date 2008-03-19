@@ -197,12 +197,13 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   NspAxes *loc = (NspAxes *) B;
   if ( check_cast(B,nsp_type_axes_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->frect)->type->eq(A->obj->frect,loc->obj->frect) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
-  if ( A->obj->top != loc->obj->top) return FALSE;
-  if ( NSP_OBJECT(A->obj->elts_bounds)->type->eq(A->obj->elts_bounds,loc->obj->elts_bounds) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->obj->elts)->type->eq(A->obj->elts,loc->obj->elts) == FALSE ) return FALSE;
   if ( A->obj->alpha != loc->obj->alpha) return FALSE;
+  if ( A->obj->top != loc->obj->top) return FALSE;
+  if ( NSP_OBJECT(A->obj->bounds)->type->eq(A->obj->bounds,loc->obj->bounds) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->arect)->type->eq(A->obj->arect,loc->obj->arect) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->frect)->type->eq(A->obj->frect,loc->obj->frect) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
   return TRUE;
 }
 
@@ -223,12 +224,13 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->elts_bounds)) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->elts)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->bounds)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->arect)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -242,12 +244,13 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = malloc(sizeof(nsp_axes))) == NULL) return NULL;
-  if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
-  if ((M->obj->elts_bounds =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if ((M->obj->elts =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
+  if ((M->obj->bounds =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->arect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -273,10 +276,11 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-  nsp_matrix_destroy(H->obj->frect);
   nsp_matrix_destroy(H->obj->wrect);
-  nsp_matrix_destroy(H->obj->elts_bounds);
-  nsp_list_destroy(H->obj->elts);
+  nsp_matrix_destroy(H->obj->bounds);
+  nsp_matrix_destroy(H->obj->arect);
+  nsp_matrix_destroy(H->obj->frect);
+  nsp_list_destroy(H->obj->children);
     FREE(H->obj);
    }
 }
@@ -329,22 +333,25 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
           nsp_axes_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s ZZZ (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        if ( M->obj->frect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->wrect != NULL)
+        if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
-  if ( M->obj->elts_bounds != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->elts != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1)== FALSE ) return FALSE ;
-    }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
+  if ( M->obj->bounds != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->arect != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->frect != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->children != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -361,20 +368,23 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    if ( M->obj->frect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->wrect != NULL)
+    if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
-  if ( M->obj->elts_bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->elts_bounds),indent+2,"elts_bounds",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->elts != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->elts),indent+2,"elts",rec_level+1)== FALSE ) return FALSE ;
-    }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"top=%d\n",M->obj->top);
+  if ( M->obj->bounds != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->arect != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->frect != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->children != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -450,61 +460,72 @@ int nsp_axes_create_partial(NspAxes *H)
 
 int nsp_axes_check_values(NspAxes *H)
 {
-  if ( H->obj->frect == NULLMAT) 
-    {
-     if (( H->obj->frect = nsp_matrix_create("frect",'r',0,0)) == NULLMAT)
-       return FAIL;
-    }
   if ( H->obj->wrect == NULLMAT) 
     {
      if (( H->obj->wrect = nsp_matrix_create("wrect",'r',0,0)) == NULLMAT)
        return FAIL;
     }
-  if ( H->obj->elts_bounds == NULLMAT) 
+  if ( H->obj->bounds == NULLMAT) 
     {
-     if (( H->obj->elts_bounds = nsp_matrix_create("elts_bounds",'r',0,0)) == NULLMAT)
+     if (( H->obj->bounds = nsp_matrix_create("bounds",'r',0,0)) == NULLMAT)
        return FAIL;
     }
-  if ( H->obj->elts == NULLLIST) 
+  if ( H->obj->arect == NULLMAT) 
     {
-     if (( H->obj->elts = nsp_list_create("elts")) == NULLLIST)
+     if (( H->obj->arect = nsp_matrix_create("arect",'r',0,0)) == NULLMAT)
+       return FAIL;
+    }
+  if ( H->obj->frect == NULLMAT) 
+    {
+     if (( H->obj->frect = nsp_matrix_create("frect",'r',0,0)) == NULLMAT)
+       return FAIL;
+    }
+  if ( H->obj->children == NULLLIST) 
+    {
+     if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* frect,NspMatrix* wrect,gboolean top,NspMatrix* elts_bounds,NspList* elts,double alpha,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,NspList* children,NspTypeBase *type)
 {
  NspAxes *H  = nsp_axes_create_void(name,type);
  if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
-  if ( frect == NULL )
-    { H->obj->frect = NULL;}
-  else
-    {
-      if ((H->obj->frect = (NspMatrix *)  nsp_object_copy_and_name("frect",NSP_OBJECT(frect))) == NULLMAT) return NULL;
-    }
   if ( wrect == NULL )
     { H->obj->wrect = NULL;}
   else
     {
       if ((H->obj->wrect = (NspMatrix *)  nsp_object_copy_and_name("wrect",NSP_OBJECT(wrect))) == NULLMAT) return NULL;
     }
-  H->obj->top=top;
-  if ( elts_bounds == NULL )
-    { H->obj->elts_bounds = NULL;}
-  else
-    {
-      if ((H->obj->elts_bounds = (NspMatrix *)  nsp_object_copy_and_name("elts_bounds",NSP_OBJECT(elts_bounds))) == NULLMAT) return NULL;
-    }
-  if ( elts == NULL )
-    { H->obj->elts = NULL;}
-  else
-    {
-      if ((H->obj->elts = (NspList *)  nsp_object_copy_and_name("elts",NSP_OBJECT(elts))) == NULLLIST) return NULL;
-    }
   H->obj->alpha=alpha;
+  H->obj->top=top;
+  if ( bounds == NULL )
+    { H->obj->bounds = NULL;}
+  else
+    {
+      if ((H->obj->bounds = (NspMatrix *)  nsp_object_copy_and_name("bounds",NSP_OBJECT(bounds))) == NULLMAT) return NULL;
+    }
+  if ( arect == NULL )
+    { H->obj->arect = NULL;}
+  else
+    {
+      if ((H->obj->arect = (NspMatrix *)  nsp_object_copy_and_name("arect",NSP_OBJECT(arect))) == NULLMAT) return NULL;
+    }
+  if ( frect == NULL )
+    { H->obj->frect = NULL;}
+  else
+    {
+      if ((H->obj->frect = (NspMatrix *)  nsp_object_copy_and_name("frect",NSP_OBJECT(frect))) == NULLMAT) return NULL;
+    }
+  if ( children == NULL )
+    { H->obj->children = NULL;}
+  else
+    {
+      if ((H->obj->children = (NspList *)  nsp_object_copy_and_name("children",NSP_OBJECT(children))) == NULLLIST) return NULL;
+    }
  if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
  return H;
 }
@@ -554,35 +575,6 @@ static NspMethods *axes_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_axes_get_frect(void *self,char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_axes_get_obj_frect(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
-  return (NspObject *) ret;
-}
-
-static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *frect;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspAxes *) self)->obj->frect != NULL ) 
-    nsp_matrix_destroy(((NspAxes *) self)->obj->frect);
-  ((NspAxes *) self)->obj->frect = frect;
-  return OK;
-}
-
 static NspObject *_wrap_axes_get_wrect(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -612,6 +604,31 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+#line 69 "axes.override"
+/* override set alpha */
+static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
+{
+  double alpha;
+  BCG *Xgc;
+  if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->alpha = alpha;
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->force_redraw(Xgc);
+  return OK;
+}
+
+
+#line 622 "axes.c"
+static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
+{
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((double) ((NspAxes *) self)->obj->alpha);
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
+}
+
 static NspObject *_wrap_axes_get_top(void *self,char *attr)
 {
   int ret;
@@ -631,96 +648,130 @@ static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_elts_bounds(void *self,char *attr)
+static NspObject *_wrap_axes_get_bounds(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->elts_bounds);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->bounds);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_obj_elts_bounds(void *self,char *attr, int *copy)
+static NspObject *_wrap_axes_get_obj_bounds(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
   *copy = FALSE;
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->elts_bounds);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->bounds);
   return (NspObject *) ret;
 }
 
-static int _wrap_axes_set_elts_bounds(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_bounds(void *self, char *attr, NspObject *O)
 {
-  NspMatrix *elts_bounds;
+  NspMatrix *bounds;
 
   if ( ! IsMat(O) ) return FAIL;
-  if ((elts_bounds = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspAxes *) self)->obj->elts_bounds != NULL ) 
-    nsp_matrix_destroy(((NspAxes *) self)->obj->elts_bounds);
-  ((NspAxes *) self)->obj->elts_bounds = elts_bounds;
+  if ((bounds = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspAxes *) self)->obj->bounds != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->bounds);
+  ((NspAxes *) self)->obj->bounds = bounds;
   return OK;
 }
 
-static NspObject *_wrap_axes_get_elts(void *self,char *attr)
+static NspObject *_wrap_axes_get_arect(void *self,char *attr)
 {
-  NspList *ret;
+  NspMatrix *ret;
 
-  ret = ((NspList*) ((NspAxes *) self)->obj->elts);
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->arect);
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_obj_elts(void *self,char *attr, int *copy)
+static NspObject *_wrap_axes_get_obj_arect(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->arect);
+  return (NspObject *) ret;
+}
+
+static int _wrap_axes_set_arect(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *arect;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((arect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspAxes *) self)->obj->arect != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->arect);
+  ((NspAxes *) self)->obj->arect = arect;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_frect(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_axes_get_obj_frect(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
+  return (NspObject *) ret;
+}
+
+static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *frect;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspAxes *) self)->obj->frect != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->frect);
+  ((NspAxes *) self)->obj->frect = frect;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_children(void *self,char *attr)
+{
+  NspList *ret;
+
+  ret = ((NspList*) ((NspAxes *) self)->obj->children);
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
 {
   NspList *ret;
 
   *copy = FALSE;
-  ret = ((NspList*) ((NspAxes *) self)->obj->elts);
+  ret = ((NspList*) ((NspAxes *) self)->obj->children);
   return (NspObject *) ret;
 }
 
-static int _wrap_axes_set_elts(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 {
-  NspList *elts;
+  NspList *children;
 
   if ( ! IsList(O) ) return FAIL;
-  if ((elts = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspAxes *) self)->obj->elts != NULL ) 
-    nsp_list_destroy(((NspAxes *) self)->obj->elts);
-  ((NspAxes *) self)->obj->elts = elts;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspAxes *) self)->obj->children != NULL ) 
+    nsp_list_destroy(((NspAxes *) self)->obj->children);
+  ((NspAxes *) self)->obj->children = children;
   return OK;
-}
-
-#line 69 "axes.override"
-/* override set alpha */
-static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
-{
-  double alpha;
-  BCG *Xgc;
-  if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
-  ((NspAxes *) self)->obj->alpha = alpha;
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->force_redraw(Xgc);
-  return OK;
-}
-
-
-#line 707 "axes.c"
-static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
-{
-  double ret;
-  NspObject *nsp_ret;
-
-  ret = ((double) ((NspAxes *) self)->obj->alpha);
-  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
-  return nsp_ret;
 }
 
 static AttrTab axes_attrs[] = {
-  { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
-  { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "elts_bounds", (attr_get_function *)_wrap_axes_get_elts_bounds, (attr_set_function *)_wrap_axes_set_elts_bounds,(attr_get_object_function *)_wrap_axes_get_obj_elts_bounds, (attr_set_object_function *)int_set_object_failed },
-  { "elts", (attr_get_function *)_wrap_axes_get_elts, (attr_set_function *)_wrap_axes_set_elts,(attr_get_object_function *)_wrap_axes_get_obj_elts, (attr_set_object_function *)int_set_object_failed },
   { "alpha", (attr_get_function *)_wrap_axes_get_alpha, (attr_set_function *)_wrap_axes_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "bounds", (attr_get_function *)_wrap_axes_get_bounds, (attr_set_function *)_wrap_axes_set_bounds,(attr_get_object_function *)_wrap_axes_get_obj_bounds, (attr_set_object_function *)int_set_object_failed },
+  { "arect", (attr_get_function *)_wrap_axes_get_arect, (attr_set_function *)_wrap_axes_set_arect,(attr_get_object_function *)_wrap_axes_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
+  { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
+  { "children", (attr_get_function *)_wrap_axes_get_children, (attr_set_function *)_wrap_axes_set_children,(attr_get_object_function *)_wrap_axes_get_obj_children, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -740,7 +791,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 744 "axes.c"
+#line 795 "axes.c"
 
 
 /*----------------------------------------------------
@@ -779,7 +830,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 783 "axes.c"
+#line 834 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -787,8 +838,8 @@ Init portion
 #line 84 "axes.override"
 
 /* inserted verbatim at the end */
-static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,
-					     int auto_axes, char *xf);
+static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+					 int *aaint,int isomode, int auto_axes, char *xf);
 
 static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
@@ -803,17 +854,16 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
   /* draw elements */
-  L = P->obj->elts;
+  L = P->obj->children;
   cloc = L->first ;
   /* we change the scale according to the axes */
   getscale2d(Xgc,WRect,FRect,logscale,ARect);
   if ( P->obj->top == TRUE ) 
     {
-      double arect[4]={0.125,0.125,0.125,0.125};
-      /* wrect is the window proportion to use inside the 
-       * graphic window 
+      /* This is a top level axes, wrect gives the axes position in the 
+       * enclosing graphic window. 
        */
-      set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,arect);
+      set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       wrect1= P->obj->wrect->R;
     }
   else 
@@ -822,11 +872,13 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
        * if alpha is non nul we should draw a rotated rectangle
        */
       Xgc->graphic_engine->scale->drawrectangle(Xgc,P->obj->wrect->R);
-      /* wrect is [left,up,w,h] */
-      WRect1[0]= (P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
-      WRect1[1]= 1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]);
-      WRect1[2]= (P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
-      WRect1[3]= (P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
+      /* wrect->R is [left,up,w,h] 
+       * we need to compute wrect->R in term on window/proportions 
+       */
+      WRect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
+      WRect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
+      WRect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
+      WRect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
       wrect1 = WRect1;
       Xgc->scales->cosa= cos( P->obj->alpha);
       Xgc->scales->sina= sin( P->obj->alpha);
@@ -838,11 +890,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
   nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
   nsp_axes_update_frame_bounds(Xgc,wrect1,
-				   TRUE ? inside_bounds : P->obj->frect->R,
-				   aaint,
-				   TRUE,
-				   TRUE,
-				   xf);
+			       TRUE ? inside_bounds : P->obj->frect->R,
+			       P->obj->arect->R,
+			       aaint,
+			       TRUE,
+			       TRUE,
+			       xf);
   axis_draw(Xgc,strflag);
   while ( cloc != NULLCELL ) 
     {
@@ -854,7 +907,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
       cloc = cloc->next;
     }
   /* scale back */
-  set_scale(Xgc,"fTtfff",WRect,FRect,NULL,NULL,NULL);
+  set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect);
   if (  P->obj->top != TRUE )
     {
       Xgc->scales->cosa=1.0;
@@ -877,7 +930,7 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
-  L = P->obj->elts;
+  L = P->obj->children;
   cloc = L->first ;
   
   if ( cloc == NULLCELL) 
@@ -910,12 +963,12 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
 }
 
 
-void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aaint,int isomode,int auto_axes, char *xf)
+void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+				  int *aaint,int isomode,int auto_axes, char *xf)
 {
   double FRect1[4];
   int Xdec[3],Ydec[3],i;
   double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;
-  
   xmin=frect[0];ymin=frect[1];xmax=frect[2];ymax=frect[3];
   
   /*
@@ -926,11 +979,10 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aain
     {
       /* code by S. Mottelet 11/7/2000 */
       double hx=xmax-xmin,hy=ymax-ymin,hx1,hy1, dwdim[2];
-      double ARect[4]={0,0,0,0}; /* XXXX to be modified */
       int wdim[2];
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-ARect[0]-ARect[1])));  /* add corrections for margins */
-      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-ARect[2]-ARect[3])));  /* add corrections for margins */
+      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1])));  /* add corrections for margins */
+      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3])));  /* add corrections for margins */
       if ( hx/dwdim[0] < hy/dwdim[1] ) 
 	{
 	  hx1=dwdim[0]*hy/dwdim[1];
@@ -1004,7 +1056,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,int *aain
   
   /* Update the current scale */
   
-  set_scale(Xgc,"tTtttf",wrect,FRect1,aaint,xf+1,NULL);
+  set_scale(Xgc,"tTtttt",wrect,FRect1,aaint,xf+1,arect);
   
   /* store information about graduation in xtics */
   
@@ -1089,4 +1141,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1093 "axes.c"
+#line 1145 "axes.c"

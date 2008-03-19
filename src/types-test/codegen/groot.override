@@ -1,0 +1,28 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+#include "nsp/groot.h"
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+
+%%
+init 
+
+Init portion 
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override groot_attach kwargs
+
+int _wrap_groot_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  return 0;
+}
+
+%%
+last
+

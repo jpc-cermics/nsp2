@@ -289,7 +289,7 @@ int nsp_classb_print(NspClassB *M, int indent,const char *name, int rec_level)
           nsp_classb_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s ZZZ \n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)) );
       Sciprintf1(indent+1,"{\n");
         Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
   Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);

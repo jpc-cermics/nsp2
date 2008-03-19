@@ -6,6 +6,8 @@ headers
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
+static int nsp_figure_connect(NspFigure *);
+static int nsp_figure_unconnect(NspFigure *);
 
 %%
 init 
@@ -60,4 +62,40 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
+}
+
+/* create a graphic window (in fact a Gtk one)
+ * an set this window as the current one 
+ * then add figure to the Xgc associated to the 
+ * window 
+ */
+
+static int nsp_figure_connect(NspFigure *F)
+{
+  BCG *Xgc = set_graphic_window(F->obj->id);
+  /* use the figure fields 
+   */
+  Xgc->graphic_engine->scale->xset_wresize(Xgc,F->obj->wresize);
+  if ( F->obj->wresize == 0 && F->obj->viewport_dims->mn == 2 )
+    {
+      Xgc->graphic_engine->scale->xset_popupdim(Xgc,F->obj->viewport_dims->R[0],
+						F->obj->viewport_dims->R[1]);
+
+    }
+  if ( F->obj->dims->mn == 2 ) 
+    {
+      Xgc->graphic_engine->scale->xset_popupdim(Xgc,F->obj->dims->R[0],
+						F->obj->dims->R[1]);
+    }
+  store_graphic_object(Xgc,NSP_OBJECT(F));
+  return OK;
+}
+
+/* delete window associated to F 
+ */
+
+static int nsp_figure_unconnect(NspFigure *F)
+{
+  scig_delete(F->obj->id); 
+  return OK ;
 }

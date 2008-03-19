@@ -5,12 +5,14 @@
   (parent "Graphic")
   (c-name "Axes")
   (fields
-    '("NspMatrix*" "frect")
-    '("NspMatrix*" "wrect")
-    '("gboolean" "top")
-    '("NspMatrix*" "elts_bounds")
-    '("NspList*" "elts")
-    '("double" "alpha")
+    '("NspMatrix*" "wrect") ;; the position of this axes in a figure 
+                            ;; or the position of this axes in an other axe
+    '("double" "alpha")     ;; rotation of the rectangle which contains the axe
+    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
+    '("NspMatrix*" "bounds");; bounds to use 
+    '("NspMatrix*" "arect") ;; 
+    '("NspMatrix*" "frect") ;; the scales that this axes defines 
+    '("NspList*" "children") ;; list of graphic object in the axe 
     )
   (gtype-id "Axes")
 )

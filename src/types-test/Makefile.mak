@@ -8,7 +8,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.lib 
 
 OBJSC = classa.obj classb.obj classc.obj classaref.obj classbref.obj \
-	figure.obj axes.obj polyline.obj curve.obj graphic.obj 
+	figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj
 
 OBJSF=
 
