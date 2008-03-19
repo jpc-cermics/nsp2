@@ -9,6 +9,7 @@ static void nsp_translate_axes(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_axes(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
 
 
@@ -78,6 +79,46 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+%%
+override-attr children
+
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspAxes *) self)->obj->children);
+  return (NspObject *) ret;
+}
+
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
+
+static int _wrap_axes_set_obj_children(void *self,NspObject *val)
+{
+  double inside_bounds[4];
+  Cell *cloc;
+  NspList *L = (NspList *) val;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if ( ! IsGraphic(cloc->O)) return FAIL;
+	}
+      cloc = cloc->next;
+    }
+  if (((NspAxes *) self)->obj->children != NULL ) 
+    nsp_list_destroy(((NspAxes *) self)->obj->children);
+  ((NspAxes *) self)->obj->children =  (NspList *) val;
+  nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  return OK;
+}
 
 %%
 last
@@ -86,7 +127,6 @@ last
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
 
-static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 {

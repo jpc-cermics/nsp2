@@ -1,7 +1,7 @@
   fmode = %t; 
   F=figure_create(wresize=%t);
   // a top level axes 
-  A=axes_create(top=%t,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12)
+  A=axes_create(top=%t,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
   P=polyline_create();
   P.Pts=[0,0;1,2;2,0;0,0];
@@ -32,11 +32,4 @@
   C.children(3)=P;
   A.children($+1) = C;
   F.connect[]
-  
-    
-  
-  
-  
-
-  
   

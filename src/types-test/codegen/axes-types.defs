@@ -9,9 +9,10 @@
                             ;; or the position of this axes in an other axe
     '("double" "alpha")     ;; rotation of the rectangle which contains the axe
     '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-    '("NspMatrix*" "bounds");; bounds to use 
+    '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the axe. 
     '("NspMatrix*" "arect") ;; 
-    '("NspMatrix*" "frect") ;; the scales that this axes defines 
+    '("NspMatrix*" "frect") ;; the scales that this axes defines if []
+                            ;; frect is deduced from data. 
     '("NspList*" "children") ;; list of graphic object in the axe 
     )
   (gtype-id "Axes")

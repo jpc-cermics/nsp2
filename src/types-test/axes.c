@@ -17,6 +17,7 @@ static void nsp_translate_axes(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_axes(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
 
 
@@ -24,7 +25,7 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
 extern Gengine GL_gengine;
 #endif 
 
-#line 28 "axes.c"
+#line 29 "axes.c"
 
 /* ----------- Axes ----------- */
 
@@ -95,7 +96,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 26 "axes.override"
+#line 27 "axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -103,7 +104,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
 
-#line 107 "axes.c"
+#line 108 "axes.c"
   /* 
    * Axes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -604,7 +605,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 69 "axes.override"
+#line 70 "axes.override"
 /* override set alpha */
 static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
@@ -616,7 +617,6 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   Xgc->graphic_engine->force_redraw(Xgc);
   return OK;
 }
-
 
 #line 622 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
@@ -645,35 +645,6 @@ static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
 
   if ( BoolScalar(O,&top) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->top = top;
-  return OK;
-}
-
-static NspObject *_wrap_axes_get_bounds(void *self,char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->bounds);
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_axes_get_obj_bounds(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->bounds);
-  return (NspObject *) ret;
-}
-
-static int _wrap_axes_set_bounds(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *bounds;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((bounds = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspAxes *) self)->obj->bounds != NULL ) 
-    nsp_matrix_destroy(((NspAxes *) self)->obj->bounds);
-  ((NspAxes *) self)->obj->bounds = bounds;
   return OK;
 }
 
@@ -735,19 +706,51 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_children(void *self,char *attr)
-{
-  NspList *ret;
+#line 84 "axes.override"
 
-  ret = ((NspList*) ((NspAxes *) self)->obj->children);
-  return (NspObject *) ret;
-}
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
 
 static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
 {
   NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspAxes *) self)->obj->children);
+  return (NspObject *) ret;
+}
 
-  *copy = FALSE;
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
+
+static int _wrap_axes_set_obj_children(void *self,NspObject *val)
+{
+  double inside_bounds[4];
+  Cell *cloc;
+  NspList *L = (NspList *) val;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if ( ! IsGraphic(cloc->O)) return FAIL;
+	}
+      cloc = cloc->next;
+    }
+  if (((NspAxes *) self)->obj->children != NULL ) 
+    nsp_list_destroy(((NspAxes *) self)->obj->children);
+  ((NspAxes *) self)->obj->children =  (NspList *) val;
+  nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  return OK;
+}
+
+#line 750 "axes.c"
+static NspObject *_wrap_axes_get_children(void *self,char *attr)
+{
+  NspList *ret;
+
   ret = ((NspList*) ((NspAxes *) self)->obj->children);
   return (NspObject *) ret;
 }
@@ -768,10 +771,9 @@ static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "alpha", (attr_get_function *)_wrap_axes_get_alpha, (attr_set_function *)_wrap_axes_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "bounds", (attr_get_function *)_wrap_axes_get_bounds, (attr_set_function *)_wrap_axes_set_bounds,(attr_get_object_function *)_wrap_axes_get_obj_bounds, (attr_set_object_function *)int_set_object_failed },
   { "arect", (attr_get_function *)_wrap_axes_get_arect, (attr_set_function *)_wrap_axes_set_arect,(attr_get_object_function *)_wrap_axes_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
   { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
-  { "children", (attr_get_function *)_wrap_axes_get_children, (attr_set_function *)_wrap_axes_set_children,(attr_get_object_function *)_wrap_axes_get_obj_children, (attr_set_object_function *)int_set_object_failed },
+  { "children", (attr_get_function *)_wrap_axes_get_children, (attr_set_function *)_wrap_axes_set_children,(attr_get_object_function *)_wrap_axes_get_obj_children, (attr_set_object_function *)_wrap_axes_set_obj_children },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -779,7 +781,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 43 "axes.override"
+#line 44 "axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -791,7 +793,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 795 "axes.c"
+#line 797 "axes.c"
 
 
 /*----------------------------------------------------
@@ -825,23 +827,22 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
 Axes_register_classes(NspObject *d)
 {
 
-#line 21 "axes.override"
+#line 22 "axes.override"
 
 Init portion 
 
 
-#line 834 "axes.c"
+#line 836 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 84 "axes.override"
+#line 125 "axes.override"
 
 /* inserted verbatim at the end */
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
 
-static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 {
@@ -1141,4 +1142,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1145 "axes.c"
+#line 1146 "axes.c"
