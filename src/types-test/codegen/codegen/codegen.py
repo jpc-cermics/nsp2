@@ -321,7 +321,7 @@ class Wrapper:
               '        }\n' \
               '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s %(ref_count)s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)) %(ref_count_ref)s);\n' \
               '      Sciprintf1(indent+1,"{\\n");\n' \
-              '      %(fields_print)s' \
+              '%(fields_print)s' \
               '      Sciprintf1(indent+1,"}\\n");\n' \
               '    }\n' \
               '  return TRUE;\n' \
@@ -335,7 +335,7 @@ class Wrapper:
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\002latex:\\\\[");\n' \
               '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
               '  Sciprintf1(indent+1,"{\\n");\n' \
-              '  %(fields_latex)s' \
+              '%(fields_latex)s' \
               '  Sciprintf1(indent+1,"}\\n");\n' \
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\\\]\\005");\n' \
               '  return TRUE;\n' \

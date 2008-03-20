@@ -580,7 +580,7 @@ class DoubleArg(ArgType):
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """
-        return  '  for ( i=0 ; i < indent+2 ; i++) Sciprintf(" "); Sciprintf("%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_print(self,pname, varname,byref,print_mode):
         """used when a field is to be reloaded """
@@ -1221,7 +1221,11 @@ class NspGenericArg(ArgType):
     
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
-        return  '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.fullname),varname,pname)
+        if byref == 't':
+            str = '  ' 
+        else:
+            str = ''
+        return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.fullname),varname,pname)
 
     def attr_equal_fields(self,pname, varname,byref):
 	"""used to test fields equality  """
