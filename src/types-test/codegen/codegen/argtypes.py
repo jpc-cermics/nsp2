@@ -148,7 +148,7 @@ class ArgType:
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_print not implemented for %s\n' % self.__class__.__name__
 
-    def attr_write_init(self,pname, varname,byref):
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_init not implemented for %s\n' % self.__class__.__name__
 
@@ -239,7 +239,7 @@ class StringArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%s\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref):
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be reloaded """
         return  '  %s->%s = NULL;\n' % (varname,pname)
 
@@ -369,9 +369,12 @@ class IntArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref):
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be initialized """
-        return '  %s->%s = 0;\n' % (varname,pname)
+        if pdef == 'no': 
+            return '  %s->%s = 0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
     def attr_check_null(self,pname, varname,byref):
 	"""used to check if  a field is set """
@@ -435,9 +438,13 @@ class BoolArg(IntArg):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref):
+
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be initialized """
-        return '  %s->%s = TRUE;\n' % (varname,pname)
+        if pdef == 'no': 
+            return '  %s->%s = TRUE;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
     def attr_check_null(self,pname, varname,byref):
 	"""used to check if  a field is set """
@@ -579,9 +586,12 @@ class DoubleArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref):
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be initialized """
-        return '  %s->%s = 0.0;\n' % (varname,pname)
+        if pdef == 'no': 
+            return '  %s->%s = 0.0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
     def attr_check_null(self,pname, varname,byref):
 	"""used to check if  a field is set """
@@ -1201,7 +1211,7 @@ class NspGenericArg(ArgType):
         return  '  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1)== FALSE ) return FALSE ;\n    }\n' \
             % (varname,pname,print_mode,varname,pname,pname)
 
-    def attr_write_init(self,pname, varname,byref):
+    def attr_write_init(self,pname, varname,byref, pdef ):
 	"""used when a field is to be initialized """
         return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
 
@@ -1289,7 +1299,7 @@ class NspDoubleArrayArg(NspMatArg):
 	info.arglist.append(pname+'->R')
         info.add_parselist(nsp_type, ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL;\n')
-    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos):
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat', byref)
 
 class NspDoubleArrayCopyArg(NspDoubleArrayArg):
@@ -1396,7 +1406,6 @@ matcher.register('gint32', arg)
 matcher.register('GDateYear', arg)
 matcher.register('GDateDay', arg)
 
-
 # nsp
 #
 
@@ -1421,13 +1430,13 @@ matcher.register('double[]', arg)
 arg = NspDoubleArrayCopyArg()
 matcher.register('const double[]', arg)
 
-
 arg = IntPointerArg()
 matcher.register('int*', arg)
 matcher.register('gint*', arg)
 
 arg = BoolArg()
 matcher.register('gboolean', arg)
+matcher.register('boolean', arg)
 
 arg = TimeTArg()
 matcher.register('time_t', arg)

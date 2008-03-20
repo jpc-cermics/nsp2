@@ -841,7 +841,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_init( fname,varname,self.byref)
+            str = str + handler.attr_write_init( fname,varname, self.byref, pdef )
         return str
     
     def build_load_fields(self,varname):
