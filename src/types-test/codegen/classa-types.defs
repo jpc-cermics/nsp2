@@ -10,7 +10,7 @@
    ;; '("int" "cla_color" "hidden")
    '("int" "cla_color")
    '("int" "cla_thickness")
-   '("int" "cla_hidden" "hidden" "default_val" "check_val" )
+   ;;'("int" "cla_hidden" "hidden" "default_val" "check_val" )
    '("NspMatrix*" "cla_val")
    '("NspBMatrix*" "cla_bval")
    '("NspList*" "cla_lval")
