@@ -126,17 +126,17 @@ class ArgType:
         return '  XXXXX attr_write_return not implemented for %s\n' % self.__class__.__name__
         #raise RuntimeError, "write_return not implemented for %s" % self.__class__.__name__
 
-    def attr_write_copy(self, pname, left_varname,right_varname,byref):
+    def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         return '  XXXXX write_copy not implemented for %s' % self.__class__.__name__
 	#raise RuntimeError, "write_copy not implemented for %s" % self.__class__.__name__
 
-    def attr_write_save(self,pname, varname,byref):
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be saved """
         return '  XXXXX attr_write_save not implemented for %s\n' % self.__class__.__name__
 	# raise RuntimeError, "attr_write_save not implemented for %s" % \
     
-    def attr_write_load(self,pname, varname,byref):
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_load not implemented for %s\n' % self.__class__.__name__
 
@@ -144,7 +144,7 @@ class ArgType:
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_info not implemented for %s\n' % self.__class__.__name__
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_print not implemented for %s\n' % self.__class__.__name__
 
@@ -166,7 +166,7 @@ class ArgType:
 
     def attr_write_defval(self,pname, varname,byref):
 	"""used to give a default value  """
-        return '  XXXXX attr_equal_fields not implemented for %s\n' % self.__class__.__name__ 
+        return '  XXXXX attr_write_defval not implemented for %s\n' % self.__class__.__name__ 
 
 class NoneArg(ArgType):
     def write_return(self, ptype, ownsreturn, info):
@@ -217,14 +217,14 @@ class StringArg(ArgType):
         return  '  nsp_string_destroy(&(%s->%s));\n' % (varname,pname)
 
             
-    def attr_write_save(self,pname, varname,byref):
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_save_string(xdrs,%s->%s) == FAIL) return FAIL;\n' % (varname,pname)
 
-    def attr_write_load(self,pname, varname,byref):
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return '  if (nsp_xdr_load_new_string(xdrs,&(%s->%s)) == FAIL) return NULL;\n'  % (varname,pname)
     
-    def attr_write_copy(self, pname, left_varname,right_varname,byref):
+    def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             return '  if ((%s->%s = nsp_string_copy(%s->%s)) == NULL) return NULL;\n' % (left_varname,pname,right_varname,pname)
@@ -235,7 +235,7 @@ class StringArg(ArgType):
 	"""used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%s\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%s\\n",%s->%s);\n' % (pname,varname,pname)
 
@@ -349,23 +349,23 @@ class IntArg(ArgType):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
-    def attr_write_copy(self,pname, left_varname,right_varname,byref):
+    def attr_write_copy(self,pname, left_varname,right_varname,byref, pdef , psize, pcheck):
         if right_varname:
             return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
         else:
             return '  '+ left_varname + '->'+ pname +'='+ pname +';\n'
 
-    def attr_write_save(self,pname, varname,byref):
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_save_i(xdrs, %s->%s) == FAIL) return FAIL;\n' % (varname,pname)
     
-    def attr_write_load(self,pname, varname,byref):
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_load_i(xdrs, &%s->%s) == FAIL) return NULL;\n' % (varname,pname)
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
 
@@ -434,7 +434,7 @@ class BoolArg(IntArg):
 	"""used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
 
@@ -566,23 +566,23 @@ class DoubleArg(ArgType):
 	"""used to give a default value  """
         return ''
 
-    def attr_write_copy(self,pname, left_varname,right_varname,byref):
+    def attr_write_copy(self,pname, left_varname,right_varname,byref, pdef , psize, pcheck):
         if right_varname:
             return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
         else:
             return '  '+ left_varname + '->'+ pname +'='+ pname +';\n'
 
-    def attr_write_save(self,pname, varname,byref):
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_save_d(xdrs, %s->%s) == FAIL) return FAIL;\n' % (varname,pname)
     
-    def attr_write_load(self,pname, varname,byref):
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_load_d(xdrs, &%s->%s) == FAIL) return NULL;\n' % (varname,pname)
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
 
@@ -1139,7 +1139,7 @@ class NspObjectArg(ArgType):
         else:
             info.attrcodeafter.append(' return ret;')
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return  '        if ( %s->%s->type->pr(%s->%s,indent+2,"%s",rec_level+1)==FALSE) return FALSE;\n' % (varname,pname,varname,pname,pname)
 
@@ -1184,14 +1184,14 @@ class NspGenericArg(ArgType):
         info.attrcodeafter.append('  return (NspObject *) ret;')
         info.setobj = 't' 
 
-    def attr_write_save(self,pname, varname,byref):
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(%s->%s)) == FAIL) return FAIL;\n' % (varname,pname)
 
-    def attr_write_load(self,pname, varname,byref):
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return '  if ((%s->%s =(Nsp%s *) nsp_object_xdr_load(xdrs))== NULL%s) return NULL;\n' % (varname,pname,self.fullname,self.shortname_uc)
 
-    def attr_write_copy(self, pname, left_varname,right_varname,byref):
+    def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             str =  '  if ( %s->%s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (right_varname,pname,left_varname,pname)
@@ -1206,7 +1206,7 @@ class NspGenericArg(ArgType):
 	"""used when a field is to be reloaded """
         return  '  nsp_object_info(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1);\n' % (varname,pname,pname)
 
-    def attr_write_print(self,pname, varname,byref,print_mode):
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return  '  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1)== FALSE ) return FALSE ;\n    }\n' \
             % (varname,pname,print_mode,varname,pname,pname)
@@ -1326,6 +1326,40 @@ class NspDoubleArrayArg(NspMatArg):
             '    for ( i = 0 ; i < %s ; i++ )\n' \
             '      if ( A->%s[i] != A[loc->%s[i] ) return FALSE;\n' \
             '  }\n' % (psize, pname,pname)
+
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be saved """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_save_array_d(xdrs,A->%s,%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
+
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_load_array_d(xdrs,A->%s,%s) == FAIL) return NULL;\n' % ( pname , psize) 
+
+    def attr_free_fields(self,pname, varname,byref):
+        return  ''
+
+    def attr_write_copy(self,pname, left_varname,right_varname,byref, pdef , psize, pcheck):
+        if right_varname:
+            return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(double));\n'
+        else:
+            return '  memcpy('+ left_varname + '->'+ pname +','+ pname +','+ psize+ '*sizeof(double));\n'
+
+    def attr_write_defval(self,pname, varname,byref):
+	"""used to give a default value  """
+        return ''
+
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if print_mode == 'latex':
+            tag = 'latex_' 
+        else:
+            tag = '' 
+        return  '  nsp_print_%sarray_double(indent+2,"%s",%s->%s,%s) == FALSE ) return FALSE ;\n    }\n' \
+            % (tag, pname,varname,pname,psize)
 
 class NspDoubleArrayCopyArg(NspDoubleArrayArg):
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):

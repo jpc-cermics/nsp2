@@ -710,9 +710,11 @@ class Wrapper:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
         for ftype, fname, opt, pdef, psize, pcheck in self.objinfo.fields:
-            str = str + '  %s %s;\n' % (ftype,fname)
+            if ftype == 'double[]':
+                str = str + '  double %s[%s];\n' % ( fname, psize ) 
+            else:
+                str = str + '  %s %s;\n' % (ftype,fname)
         return str
-
 
     def build_internal_methods(self):
         return  self.overrides.override_internal_methods
@@ -729,7 +731,10 @@ class Wrapper:
         if not self.objinfo.fields:
             return str + '};\n' 
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
-            str = str + '  %s %s;\n' % (ftype,fname)
+            if ftype == 'double[]':
+                str = str + '  double %s[%s];\n' % ( fname, psize ) 
+            else:
+                str = str + '  %s %s;\n' % (ftype,fname)
         str = str + '  int ref_count;\n};\n\n' 
         return str
 
@@ -775,7 +780,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref)
+            str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref, pdef , psize, pcheck)
         return str
 
 
@@ -790,7 +795,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_save( fname,varname,self.byref)
+            str = str + handler.attr_write_save( fname,varname,self.byref, pdef , psize, pcheck)
         father = self.objinfo.parent
         if father != 'Object':
             str = str + '  if ( nsp_%s_xdr_save(xdrs, (Nsp%s *) M)== FAIL) return FAIL;\n' % (string.lower(father),father)
@@ -825,7 +830,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_print( fname,varname,self.byref,print_mode)
+            str = str + handler.attr_write_print( fname,varname,self.byref,print_mode, pdef , psize, pcheck)
         if father != 'Object':
             str = str + '  nsp_%s_%s((Nsp%s *) M,indent+2,NULL,rec_level);\n'  % (string.lower(father),print_mode,father)
         return str
@@ -861,7 +866,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_load( fname,varname,self.byref)
+            str = str + handler.attr_write_load( fname,varname,self.byref, pdef, psize, pcheck)
 
         if father != 'Object':
             str = str + '  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;\n'
