@@ -148,19 +148,19 @@ class ArgType:
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_print not implemented for %s\n' % self.__class__.__name__
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_init not implemented for %s\n' % self.__class__.__name__
 
     def attr_check_null(self,pname, varname,byref):
 	"""used to check if  a field is set """
-        return '  XXXXX attr_write_init not implemented for %s\n' % self.__class__.__name__
+        return '  XXXXX attr_write_check_null not implemented for %s\n' % self.__class__.__name__
 
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
         return '  XXXXX attr_free_fields not implemented for %s\n' % self.__class__.__name__
 
-    def attr_equal_fields(self,pname, varname,byref):
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         return '  XXXXX attr_equal_fields not implemented for %s\n' % self.__class__.__name__ 
 
@@ -239,7 +239,7 @@ class StringArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%s\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         return  '  %s->%s = NULL;\n' % (varname,pname)
 
@@ -247,7 +247,7 @@ class StringArg(ArgType):
 	"""used to check if  a field is set """
         return '  if ( %s->%s == NULLSTRING) {Scierror("Error: field %s is to be set\\n");return RET_BUG;}\n' % (varname,pname,pname);
 
-    def attr_equal_fields(self,pname, varname,byref):
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
             pname = 'obj->'+pname
@@ -369,7 +369,7 @@ class IntArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%d\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
         if pdef == 'no': 
             return '  %s->%s = 0;\n' % (varname,pname)
@@ -383,7 +383,7 @@ class IntArg(ArgType):
     def attr_free_fields(self,pname, varname,byref):
         return  ''
 
-    def attr_equal_fields(self,pname, varname,byref):
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
             pname = 'obj->'+pname
@@ -439,7 +439,7 @@ class BoolArg(IntArg):
         return  '  Sciprintf1(indent+2,"%s\t= %%s\\n", ( %s->%s == TRUE) ? "T" : "F" );\n' % (pname,varname,pname)
 
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
         if pdef == 'no': 
             return '  %s->%s = TRUE;\n' % (varname,pname)
@@ -586,7 +586,7 @@ class DoubleArg(ArgType):
         """used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=%%f\\n",%s->%s);\n' % (pname,varname,pname)
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
         if pdef == 'no': 
             return '  %s->%s = 0.0;\n' % (varname,pname)
@@ -600,7 +600,7 @@ class DoubleArg(ArgType):
     def attr_free_fields(self,pname, varname,byref):
         return  ''
 
-    def attr_equal_fields(self,pname, varname,byref):
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
             pname = 'obj->'+pname
@@ -1211,7 +1211,7 @@ class NspGenericArg(ArgType):
         return  '  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,"%s",rec_level+1)== FALSE ) return FALSE ;\n    }\n' \
             % (varname,pname,print_mode,varname,pname,pname)
 
-    def attr_write_init(self,pname, varname,byref, pdef ):
+    def attr_write_init(self,pname, varname,byref, pdef, psize, pcheck ):
 	"""used when a field is to be initialized """
         return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
 
@@ -1227,7 +1227,7 @@ class NspGenericArg(ArgType):
             str = ''
         return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.fullname),varname,pname)
 
-    def attr_equal_fields(self,pname, varname,byref):
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
             pname = 'obj->'+pname
@@ -1305,6 +1305,27 @@ class NspDoubleArrayArg(NspMatArg):
         info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL;\n')
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat', byref)
+
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if pdef == 'no': 
+            vdef = '{0}'
+        else: 
+            vdef = pdef
+        return '  {\n' \
+            '    double x_def[%s]=%s;\n' \
+            '    memcpy(%s->%s,x_def,%s*sizeof(double));\n' \
+            '  }\n' % (psize,pdef, varname,pname, psize)
+
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  {\n' \
+            '    int i;\n' \
+            '    for ( i = 0 ; i < %s ; i++ )\n' \
+            '      if ( A->%s[i] != A[loc->%s[i] ) return FALSE;\n' \
+            '  }\n' % (psize, pname,pname)
 
 class NspDoubleArrayCopyArg(NspDoubleArrayArg):
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):

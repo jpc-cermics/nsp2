@@ -38,8 +38,13 @@ class ObjectDef(Definition):
                 for parg in arg[1:]:
                     # we can add an optional field at the end if set to hidden 
                     # then the field is not setable 
+                    # parg_hidden : variable is not added to set/get method 
                     parg_hidden= 'ok'
+                    # code used verbatim to set default value 
                     parg_default= 'no'
+                    # size for a fixed array
+                    parg_size= 'no'
+                    # code used to check variable 
                     parg_check= 'no'
                     if len(parg) == 1: 
                         fp=sys.stderr
@@ -55,9 +60,12 @@ class ObjectDef(Definition):
                     if len(parg) >= 4:
                         parg_default=parg[3]
                     if len(parg) >= 5: 
-                        parg_check =parg[4]
+                        parg_size =parg[4]
+                    if len(parg) >= 6: 
+                        parg_check =parg[5]
+                        
                     #
-                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_check ))
+                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_size, parg_check ))
             elif arg[0] == 'implements':
                 self.implements.append(arg[1])
     def merge(self, old):
@@ -110,26 +118,34 @@ class ObjectRefDef(ObjectDef):
                 for parg in arg[1:]:
                     # we can add an optional field at the end if set to hidden 
                     # then the field is not setable 
-                    parg_hidden= "ok"
-                    parg_default="no"
-                    parg_check="no"
+                    # parg_hidden : variable is not added to set/get method 
+                    parg_hidden= 'ok'
+                    # code used verbatim to set default value 
+                    parg_default= 'no'
+                    # size for a fixed array
+                    parg_size= 'no'
+                    # code used to check variable 
+                    parg_check= 'no'
                     if len(parg) == 1: 
                         fp=sys.stderr
                         fp.write('field ' + parg[1] + ' has no name\n')
                     if len(parg) >= 3:
-                        if parg[2] == "hidden": 
+                        if parg[2] == 'hidden': 
                             parg_hidden = parg[2]
-                        elif parg[2] == "std": 
-                            parg_hidden = "ok"
+                        elif parg[2] == 'std': 
+                            parg_hidden = 'ok'
                         else: 
                             fp=sys.stderr
                             fp.write('option ' + parg[2] + 'for field ' + parg[1] +'is not know and ignored\n')
                     if len(parg) >= 4:
                         parg_default=parg[3]
                     if len(parg) >= 5: 
-                        parg_check =parg[4]
-                    #fp.write('args ' + parg[0] +' ' + parg[1] + '\n')
-                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_check ))
+                        parg_size =parg[4]
+                    if len(parg) >= 6: 
+                        parg_check =parg[5]
+                        
+                    #
+                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_size, parg_check ))
             elif arg[0] == 'implements':
                 self.implements.append(arg[1])
 
