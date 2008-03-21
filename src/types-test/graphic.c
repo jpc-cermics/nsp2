@@ -282,7 +282,7 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -298,7 +298,7 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;

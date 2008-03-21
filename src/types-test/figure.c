@@ -270,10 +270,10 @@ void nsp_figure_destroy_partial(NspFigure *H)
    {
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
-  nsp_matrix_destroy(H->obj->dims);
-  nsp_matrix_destroy(H->obj->viewport_dims);
-  nsp_matrix_destroy(H->obj->position);
-  nsp_list_destroy(H->obj->children);
+    nsp_matrix_destroy(H->obj->dims);
+    nsp_matrix_destroy(H->obj->viewport_dims);
+    nsp_matrix_destroy(H->obj->position);
+    nsp_list_destroy(H->obj->children);
     FREE(H->obj);
    }
 }
@@ -328,7 +328,7 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
+  Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"driver=%s\n",M->obj->driver);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
   if ( M->obj->dims != NULL)
@@ -360,7 +360,7 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
+  Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"driver=%s\n",M->obj->driver);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
   if ( M->obj->dims != NULL)
@@ -867,26 +867,100 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj)
  * window 
  */
 
+#ifdef WITH_GTKGLEXT 
+extern Gengine GL_gengine; 
+#endif 
+
+#ifdef WITH_CAIRO
+extern Gengine Cairo_gengine; 
+#endif 
+
+extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
+
+
 static int nsp_figure_connect(NspFigure *F)
 {
-  BCG *Xgc = set_graphic_window(F->obj->id);
-  /* use the figure fields 
-   */
-  Xgc->graphic_engine->scale->xset_wresize(Xgc,F->obj->wresize);
-  if ( F->obj->wresize == 0 && F->obj->viewport_dims->mn == 2 )
-    {
-      Xgc->graphic_engine->scale->xset_popupdim(Xgc,F->obj->viewport_dims->R[0],
-						F->obj->viewport_dims->R[1]);
+  driver_initgraphic *initg = Gtk_gengine.initgraphic;
+  int v1=-1, wdim[2], wpdim[2],  wpos[2];
+  BCG *Xgc;
 
-    }
-  if ( F->obj->dims->mn == 2 ) 
+  Xgc = window_list_search(F->obj->id);
+  if ( Xgc != NULL) 
     {
-      Xgc->graphic_engine->scale->xset_popupdim(Xgc,F->obj->dims->R[0],
-						F->obj->dims->R[1]);
+      Sciprintf("Error: Figure is already connected\n");
+      return FAIL;
     }
+  
+  if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
+    { 
+      wdim[0] = F->obj->dims->R[0];
+      wdim[1] = F->obj->dims->R[1];
+    }
+
+  if ( F->obj->viewport_dims != NULL &&  F->obj->viewport_dims->mn == 2 ) 
+    { 
+      wpdim[0] = F->obj->viewport_dims->R[0];
+      wpdim[1] = F->obj->viewport_dims->R[1];
+    }
+
+  /* A FAIRE c'est les offset du viewport */
+  /* 
+     if (viewport != NULL && viewport->mn != 2 ) 
+     {
+     viewport[0]= F->obj->viewport_pos->R[0];
+     viewport[1]= F->obj->viewport_pos->R[1];
+     }
+  */
+  if ( F->obj->position != NULL && F->obj->position->mn == 2 )
+    { 
+      wpos[0] = F->obj->position->R[0];
+      wpos[1] = F->obj->position->R[1];
+    }
+  
+  if ( strcmp(F->obj->driver,"Gtk") == 0) initg = Gtk_gengine.initgraphic;
+  else if ( strcmp(F->obj->driver,"OpenGl") == 0) 
+    {
+#ifdef WITH_GTKGLEXT 
+      initg = GL_gengine.initgraphic;
+#else 
+      Sciprintf("No opengl support in this version\n");
+#endif 
+    }
+  else if ( strcmp(F->obj->driver,"Cairo") == 0) 
+    {
+#ifdef WITH_CAIRO 
+      initg = Cairo_gengine.initgraphic;
+#else 
+      Sciprintf("No cairo support in this version\n");
+#endif
+    }
+  else 
+    initg = Gtk_gengine.initgraphic;
+  v1 = F->obj->id;
+  initg("",&v1, 
+	(F->obj->dims != NULL  && F->obj->dims->mn == 2 ) ? wdim :NULL, 
+	(F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
+	NULL, 
+	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
+	'e');
+  /* check ! */
+  Xgc = window_list_search(F->obj->id);
+  if ( Xgc == NULL) 
+    {
+      Sciprintf("failed to connect figure\n");
+      return FAIL;
+    }
+  if ( wpdim != NULL )  
+    {
+      Xgc->graphic_engine->scale->xset_wresize(Xgc,0);
+    }
+  if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
+    Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
   store_graphic_object(Xgc,NSP_OBJECT(F));
   return OK;
 }
+
+
 
 /* delete window associated to F 
  */
@@ -897,4 +971,4 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
-#line 901 "figure.c"
+#line 975 "figure.c"

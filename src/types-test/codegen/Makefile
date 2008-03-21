@@ -16,7 +16,9 @@ FFLAGS = $(FC_OPTIONS)
 
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
-	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c ../groot.c
+	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
+	../groot.c ../gmatrix.c 
+
 
 all:: $(ALL)
 
@@ -90,5 +92,11 @@ clean ::
 	    --override groot.override \
 	    --prefix GRoot groot.defs) > $*.c \
 	&& cp groot.h ../../include/nsp 
+
+../gmatrix.c : gmatrix.defs gmatrix.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override gmatrix.override \
+	    --prefix GMatrix gmatrix.defs) > $*.c \
+	&& cp gmatrix.h ../../include/nsp 
 
 

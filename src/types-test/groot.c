@@ -232,7 +232,7 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-  nsp_list_destroy(H->obj->figures);
+    nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
 }
@@ -287,7 +287,7 @@ int nsp_groot_print(NspGRoot *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_groot_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        if ( M->obj->figures != NULL)
+  if ( M->obj->figures != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->figures),indent+2,"figures",rec_level+1)== FALSE ) return FALSE ;
     }
       Sciprintf1(indent+1,"}\n");
@@ -305,7 +305,7 @@ int nsp_groot_latex(NspGRoot *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_groot_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    if ( M->obj->figures != NULL)
+  if ( M->obj->figures != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->figures),indent+2,"figures",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+1,"}\n");

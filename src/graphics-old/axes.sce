@@ -7,12 +7,14 @@
   P.Pts=[0,0;1,2;2,0;0,0];
   A.children(1)=P;
   // Insert a curve in A.
-  for j=1:1
-    x=linspace(-%pi/2,%pi/2,10);
-    y=cos(2*x);
-    cu = curve_create(Pts=[x',y'],color=3,width=2);
-    A.children(1+j)=cu ;
-  end
+  x=linspace(-%pi/2,%pi/2,10);
+  y=cos(2*x);
+  cu = curve_create(Pts=[x',y'],color=3,width=2);
+  A.children($+1)=cu ;
+  // insert a matrix 
+  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[3,0,1,1])
+  A.children($+1)= ma;
+  
   // insert a new axes 
   C=axes_create(alpha=%pi/6,arect=[1,1,1,1]*0);
   // the position of the axes in its parent 
@@ -30,6 +32,10 @@
   P=polyline_create();
   P.Pts=[x;sin(x)]';
   C.children(3)=P;
+  // matrix 
+  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[3,0,1,1])
+  C.children($+1)= ma;
+    
   A.children($+1) = C;
   F.connect[]
   

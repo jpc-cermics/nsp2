@@ -5,7 +5,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.a 
 
 OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
-	figure.o axes.o polyline.o curve.o graphic.o groot.o
+	figure.o axes.o polyline.o curve.o graphic.o groot.o gmatrix.o
 
 OBJSF=
 
@@ -34,5 +34,5 @@ example_wrap.o	: example_wrap.cpp
 
 
 force	:
-	cd codegen ; touch *.defs;  make 
+	cd codegen ;   make 
 

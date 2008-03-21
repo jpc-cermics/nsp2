@@ -1,0 +1,22 @@
+;; -*- scheme -*-
+
+(define-objectref GMatrix
+  (in-module "GMatrix")
+  (parent "Graphic")
+  (c-name "GMatrix")
+  (fields
+    '("NspMatrix*" "data") ;; Matrix 
+    '("NspMatrix*" "rect")     ;; Matrix is to be drawn inside rect 
+    '("gboolean" "remap")  ;; remap color mode 
+    '("NspMatrix*" "colminmax" );; 
+    '("NspMatrix*" "zminmax") ;; 
+    )
+  (gtype-id "GMatrix")
+)
+
+
+
+
+
+
+

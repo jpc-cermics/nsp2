@@ -85,7 +85,9 @@ static int nsp_figure_connect(NspFigure *F)
 {
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
-  BCG *Xgc = window_list_search(F->obj->id);
+  BCG *Xgc;
+
+  Xgc = window_list_search(F->obj->id);
   if ( Xgc != NULL) 
     {
       Sciprintf("Error: Figure is already connected\n");

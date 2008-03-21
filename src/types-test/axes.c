@@ -277,11 +277,11 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-  nsp_matrix_destroy(H->obj->wrect);
-  nsp_matrix_destroy(H->obj->bounds);
-  nsp_matrix_destroy(H->obj->arect);
-  nsp_matrix_destroy(H->obj->frect);
-  nsp_list_destroy(H->obj->children);
+    nsp_matrix_destroy(H->obj->wrect);
+    nsp_matrix_destroy(H->obj->bounds);
+    nsp_matrix_destroy(H->obj->arect);
+    nsp_matrix_destroy(H->obj->frect);
+    nsp_list_destroy(H->obj->children);
     FREE(H->obj);
    }
 }
@@ -336,7 +336,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        if ( M->obj->wrect != NULL)
+  if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
@@ -369,7 +369,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    if ( M->obj->wrect != NULL)
+  if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);

@@ -5025,6 +5025,7 @@ extern function  int_axes_create;
 extern function  int_figure_create;
 extern function  int_curve_create;
 extern function  int_groot_create;
+extern function  int_gmatrix_create;
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5123,6 +5124,7 @@ static OpTab Graphics_func[]={
   {"figure_create", int_figure_create},
   {"curve_create", int_curve_create},
   {"groot_create",int_groot_create},
+  {"gmatrix_create",int_gmatrix_create},
   {(char *) 0, NULL}
 };
 

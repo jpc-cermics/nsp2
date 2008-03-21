@@ -8,7 +8,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.lib 
 
 OBJSC = classa.obj classb.obj classc.obj classaref.obj classbref.obj \
-	figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj
+	figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj gmatrix.obj
 
 OBJSF=
 
@@ -37,5 +37,5 @@ example_wrap.obj	: example_wrap.cpp
 
 
 force	:
-	cd codegen ; touch *.defs;  make 
+	cd codegen ;   make 
 

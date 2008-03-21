@@ -294,7 +294,7 @@ int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)) );
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
+  Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
   if ( M->cla_val != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
@@ -320,7 +320,7 @@ int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
+  Sciprintf1(indent+2,"cla_color=%d\n",M->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->cla_thickness);
   if ( M->cla_val != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;

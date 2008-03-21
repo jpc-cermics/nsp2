@@ -1,0 +1,119 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/axes.h"
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_gmatrix(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type GMatrix
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_gmatrix  ;
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj)
+{
+  NspGMatrix *P = (NspGMatrix *) Obj;
+  int remap = P->obj->remap; 
+  double xx[]={ P->obj->rect->R[0],P->obj->rect->R[2]};
+  double yy[]={ P->obj->rect->R[1],P->obj->rect->R[3]};
+  int xx1[2],yy1[2];
+  int *xm,*ym,  j;
+  int colminmax[2];
+  double *zminmax = NULL;
+  /* Boundaries of the matrix rectangle in pixel */
+  scale_f2i(Xgc,xx,yy,xx1,yy1,2);
+  xm = graphic_alloc(0,P->obj->data->n+1,sizeof(int));
+  ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
+  if ( xm == 0 || ym == 0 )
+    {
+      Scistring("Xgray: running out of memory\n");
+      return ; 
+    }
+  for ( j =0 ; j < (P->obj->data->n+1) ; j++)	 
+    xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
+  for ( j =0 ; j < (P->obj->data->m+1) ; j++)	 
+    ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
+  if ( P->obj->colminmax->mn == 2 ) 
+    {
+      colminmax[0] = P->obj->colminmax->R[0];
+      colminmax[1] = P->obj->colminmax->R[1];
+    }
+  if ( P->obj->zminmax->mn == 2 ) 
+    zminmax = P->obj->colminmax->R;
+  else
+    remap = FALSE;
+  Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
+					     P->obj->data->m, 
+					     P->obj->data->n,
+					     remap,
+					     colminmax,
+					     zminmax);
+  return; 
+}
+
+
+static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  NspGMatrix *P = (NspGMatrix *) Obj;
+  P->obj->rect->R[0] += tr[0];
+  P->obj->rect->R[1] += tr[1];
+}
+
+static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  /* NspGMatrix *P = (NspGMatrix *) Obj; */
+  Sciprintf("we should get a double here for alpha\n");
+}
+
+static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  NspGMatrix *P = (NspGMatrix *) Obj;
+  P->obj->rect->R[2] *= alpha[0];
+  P->obj->rect->R[3] *= alpha[1];
+}
+
+/* compute in bounds the enclosing rectangle of gmatrix 
+ *
+ */
+
+static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspGMatrix *P = (NspGMatrix *) Obj;
+  /* get the bound in parent i.e given by wrect : upper-left w,h */
+  bounds[0]=P->obj->rect->R[0]; /* xmin */
+  bounds[1]=P->obj->rect->R[1]-P->obj->rect->R[3];/* ymin */
+  bounds[2]=P->obj->rect->R[0]+P->obj->rect->R[2];/* xmax */
+  bounds[3]=P->obj->rect->R[1];/* ymax */
+}
+

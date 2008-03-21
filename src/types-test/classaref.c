@@ -234,7 +234,7 @@ void nsp_classaref_destroy_partial(NspClassARef *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-  nsp_matrix_destroy(H->obj->cla_val);
+    nsp_matrix_destroy(H->obj->cla_val);
     FREE(H->obj);
    }
 }
@@ -289,7 +289,7 @@ int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_le
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-        Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
+  Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
@@ -309,7 +309,7 @@ int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-    Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
+  Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
   Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
