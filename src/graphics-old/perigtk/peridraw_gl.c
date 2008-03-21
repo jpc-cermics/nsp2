@@ -904,9 +904,20 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	}
       else 
 	{
+	  int status;
 	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	  nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
+	  status = nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
+	  if ( status == FALSE )
+	    {
+	      Sciprintf("Gl rendering off-screen not working !\n");
+	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+	      Xgc->private->extra_pixmap = NULL;	
+	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
+	      Xgc->private->glcontext = gtk_widget_get_gl_context (Xgc->private->drawing);
+	      Xgc->private->gldrawable = gtk_widget_get_gl_drawable (Xgc->private->drawing);
+	      return ; 
+	    }
 	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	  Xgc->CurPixmapStatus = 1;
 	}
@@ -941,9 +952,19 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	}
       else 
 	{
+	  int status ; 
 	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	  nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
+	  status = nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
+	  if ( status == FALSE )
+	    {
+	      Sciprintf("Gl rendering off-screen not working !\n");
+	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+	      Xgc->private->extra_pixmap = NULL;	
+	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+	      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
+	      return ; 
+	    }
 	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	  Xgc->CurPixmapStatus = 1;
 	}
@@ -969,7 +990,9 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 
 
 /* used to create a gldrawable and glcontex ref when 
- * we use a pixmap 
+ * we use a pixmap. Note that this function may not work 
+ * since many drivers seems not to accept to render GL scenes 
+ * off-screen. In that case we return FALSE.
  */
 
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
@@ -1005,7 +1028,14 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
       g_print ("Cannot create the OpenGL rendering context\n");
       return FALSE;
     }
+
+  gdk_error_trap_push ();
   gdk_gl_drawable_make_current(Xgc->private->gldrawable,Xgc->private->glcontext);
+  gdk_flush ();
+  if (gdk_error_trap_pop ())
+    {
+      return FALSE;
+    }
   gdk_gl_drawable_gl_begin(Xgc->private->gldrawable,Xgc->private->glcontext);
   glClear(GL_DEPTH_BUFFER_BIT);
   nsp_ogl_set_view(Xgc);
