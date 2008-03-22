@@ -571,15 +571,16 @@ the_end:
  * B is unchanged 
  */
 
-NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B)
+NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irstep)
 {
-  double *Control = NULL, *Info = NULL;
+  double Control[UMFPACK_CONTROL], *dControl=NULL;
+  double *Info = NULL;
   NspMatrix *Bc=NULL, *X=NULL,*Wi=NULL,*W=NULL,*rep=NULLMAT;
   nsp_sparse_triplet T;
   char rc_type, rc_x;
   void *Numeric=NULL;
   int i;
-
+  
   Numeric= self->obj->data; 
   rc_type = self->obj->rc_type; 
   T = self->obj->mtlb_T;
@@ -610,16 +611,22 @@ NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B)
     }
   if (self->obj->rc_type == 'r' )
     {
+      if ( irstep != -1 ) 
+	{
+	  umfpack_di_defaults(Control);
+	  Control[UMFPACK_IRSTEP] = irstep;
+	  dControl = Control;
+	}
       /* Axr = Br */
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr, X->R+i*B->m,B->R+i*B->m,
-			  Numeric, Control, Info, Wi->I, W->R);
+	umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr, X->R+i*B->m,B->R+i*B->m,
+			  Numeric, dControl, Info, Wi->I, W->R);
       if ( B->rc_type == 'c' )
 	{
 	  /* Axi= Bi */
 	  for ( i = 0 ; i < B->n ; i++ )
-	    umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
-			      Numeric, Control, Info, Wi->I, W->R);
+	    umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
+			      Numeric, dControl, Info, Wi->I, W->R);
 	  /* X is mtlb converted we have to back convert */
 	  X->convert = 'c';
 	  Mat2double (X);
@@ -627,10 +634,16 @@ NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B)
     }
   else /* A is complex and B too  */
     {
+      if ( irstep != -1 ) 
+	{
+	  umfpack_zi_defaults(Control);
+	  Control[UMFPACK_IRSTEP] = irstep;
+	  dControl = Control;
+	}
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_zi_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,  T.Pi,
+	umfpack_zi_wsolve(mode, T.Jc, T.Ir, T.Pr,  T.Pi,
 			  X->R+i*B->m, X->R+i*B->m+B->mn, 
-			  B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, Control, Info, Wi->I, W->R);
+			  B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, dControl, Info, Wi->I, W->R);
       /* X is mtlb converted we have to back convert */
       X->convert = 'c';
       Mat2double (X);
@@ -643,11 +656,48 @@ NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B)
   return rep;
 }
 
+
+static int nsp_umfpack_solve_mode( Stack stack,char *mode, int *imode) 
+{
+  char *types[]={ "A", "At",  "Aat", "Pt_L" ,
+		  "L", "Lt_P", "Lat_P", "Lt",
+		  "U_Qt" , "U", "Q_Ut" , "Q_Uat",
+		  "Ut", "Uat", NULL};
+  int modes[]={ UMFPACK_A, UMFPACK_At,  UMFPACK_Aat, UMFPACK_Pt_L ,
+		UMFPACK_L, UMFPACK_Lt_P, UMFPACK_Lat_P, UMFPACK_Lt,
+		UMFPACK_U_Qt , UMFPACK_U, UMFPACK_Q_Ut , UMFPACK_Q_Uat,
+		UMFPACK_Ut, UMFPACK_Uat};
+  int rep = is_string_in_array(mode, types,1);
+  if ( rep < 0 ) 
+    {
+      string_not_in_array(stack,mode,types,"optional argument");
+      return FAIL;
+    }
+  *imode = modes[rep];
+  return OK ;
+}
+
+
+
 int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
 {
+  char *mode = NULL;
+  int irstep=-1, imode = UMFPACK_A ;
   NspMatrix *B,*X=NULL;
-  CheckRhs(1,1); 
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      {"irstep",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(1,1); 
   CheckLhs(1,1);
+
+  if ( get_optional_args(stack,rhs,opt,opts,&mode,&irstep) == FAIL) 
+    return RET_BUG;
+  /* checks the optional type argument */
+  if ( mode != NULL) 
+    {
+      if ( nsp_umfpack_solve_mode(stack,mode,&imode) == FAIL) return RET_BUG;
+    }
 
   if ( self->obj == NULL || self->obj->data  == NULL) 
     {
@@ -655,7 +705,7 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
       return RET_BUG;
     }
   if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((X = nsp_umfpack_solve(self,B))== NULLMAT) return RET_BUG;
+  if ((X = nsp_umfpack_solve(self,B, imode , irstep))== NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(X));
   return 1;
 }
@@ -848,6 +898,13 @@ static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
   NspSpColMatrix *A;
   NspMatrix *B ,*X=NULL;
   NspUmfpack *H=NULL;
+
+  char *mode = NULL;
+  int irstep=-1, imode = UMFPACK_A ;
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      {"irstep",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
   /* Get a sparse matrix */
   CheckStdRhs(2,2);
   CheckLhs(0,1);
@@ -862,7 +919,14 @@ static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: umfpack object is not properly built\n");
       return RET_BUG;
     }
-  if ((X = nsp_umfpack_solve(H,B))== NULLMAT) goto err;
+  if ( get_optional_args(stack,rhs,opt,opts,&mode,&irstep) == FAIL) 
+    return RET_BUG;
+  /* checks the optional type argument */
+  if ( mode != NULL) 
+    {
+      if ( nsp_umfpack_solve_mode(stack,mode,&imode) == FAIL) return RET_BUG;
+    }
+  if ((X = nsp_umfpack_solve(H,B,imode,irstep))== NULLMAT) goto err;
   MoveObj(stack,1,NSP_OBJECT(X));
   rep =1;
  err:
