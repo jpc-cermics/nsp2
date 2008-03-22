@@ -11,7 +11,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 Au=umfpack_create(As)
-xf=umfpack_solve(As,Bf)
+xf=umfpack_solve(As,Bf,mode=string,irstep=int)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -32,12 +32,28 @@ can then be used to solve linear systems. \emph{Umfpack} data type are usefull i
 repeated use of the \verb+solve+ method for the same matrix is to be used, 
 since the factorization is kept in the \emph{Umfpack} object. When just one linear 
 system is to be solved the simplified version \verb+xf=umfpack_solve(As,Bf)+ can be used. 
+The optional arguments of \verb+umfpack_solve+ are described below in the umfpack methode 
+\verb+solve+.
 
 \paragraph{Operations on umfpack}
 The following methods are available for Umfpack objects~:
 \begin{varlist}
-  \vname{A.solve[B]}: solves the linear system \verb+A*x=B\verb+, \verb+B+ is given as a full 
-   matrix. 
+  \vname{A.solve[B,mode=string,irstep=int]}: solves the linear system \verb+A*x=B\verb+ (when mode is not given), \verb+B+ is given as a full 
+   matrix. The optional parameter \verb+irstep+ can be used to set the maximal number of refinement iterations.
+   The optional parameter \verb+mode+ can be used to specify the linear system to solve. Possible values are~:
+     \begin{itemize} 
+        \item \verb+mode='Pt_L'+ for solving \verb+P'Lx=b+
+        \item \verb+mode='L'+for solving \verb+Lx=b+
+        \item \verb+mode='Lt_P'+for solving \verb+L'Px = b+
+        \item \verb+mode='Lat_P'+for solving \verb+L.'Px=b+
+        \item \verb+mode='Lt'+for solving \verb+L.'x=b+
+        \item \verb+mode='U_Qt'+for solving \verb+UQ'x=b+
+        \item \verb+mode='U'+for solving \verb+Ux=b+
+        \item \verb+mode='Q_Ut'+for solving \verb+QU'x=b+
+        \item \verb+mode='Q_Uat'+for solving \verb+QU.'x=b+
+        \item \verb+mode='Ut'+for solving \verb+U'x=b+
+        \item \verb+mode='Uat'+for solving \verb+U.'x=b+
+     \end{itemize}
   \vname{[L,U,p,q,r]=A.luget[]}: returns the \verb+LU+ factorization contained in Umfpack object \verb+A+ i.e the following relation should be met~: \verb+Ap= diag(1 ./ r) *A+ and 
   \verb+L*U=Ap(p,q)+ 
   \vname{A.isreal[]}: returns a boolean to check if the given Umfpack object comes from a real 
