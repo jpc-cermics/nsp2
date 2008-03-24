@@ -31,6 +31,8 @@ struct _nsp_classaref {
   int cla_color;
   int cla_thickness;
   NspMatrix* cla_val;
+  NspBMatrix* cla_bval;
+  NspList* cla_lval;
   int ref_count;
 };
 
@@ -60,7 +62,7 @@ NspClassARef *new_classaref();
 
 #define NULLCLASSAREF (NspClassARef*) 0
 
-extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspTypeBase *type);
+extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
 
 /* from ClassARefObj.c */
 

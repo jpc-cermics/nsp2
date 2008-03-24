@@ -10,10 +10,12 @@
    ;; '("int" "cla_color" "hidden")
    '("int" "cla_color")
    '("int" "cla_thickness")
-   ;;'("int" "cla_hidden" "hidden" "default_val" "check_val" )
    '("NspMatrix*" "cla_val")
    '("NspBMatrix*" "cla_bval")
    '("NspList*" "cla_lval")
+   ;; a double array of fixed size 
+   ;; ("double[]" "name" "std"|"hidden "default-init" "size: an integer" "check_val: code to check the set" )   
+   ;; '("double[]" "xxdaf" "std" "{8,9,10}" "5" "check_val" )   
    )
   (gtype-id "ClassA")
 )

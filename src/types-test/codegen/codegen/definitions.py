@@ -43,7 +43,7 @@ class ObjectDef(Definition):
                     # code used verbatim to set default value 
                     parg_default= 'no'
                     # size for a fixed array
-                    parg_size= 'no'
+                    parg_size= ''
                     # code used to check variable 
                     parg_check= 'no'
                     if len(parg) == 1: 
@@ -123,7 +123,7 @@ class ObjectRefDef(ObjectDef):
                     # code used verbatim to set default value 
                     parg_default= 'no'
                     # size for a fixed array
-                    parg_size= 'no'
+                    parg_size= ''
                     # code used to check variable 
                     parg_check= 'no'
                     if len(parg) == 1: 

@@ -5,10 +5,12 @@
   (parent "Object")
   (c-name "ClassARef")
   (fields
-    '("int" "cla_color")
-    '("int" "cla_thickness")
-    '("NspMatrix*" "cla_val")
-    )
+   '("int" "cla_color")
+   '("int" "cla_thickness")
+   '("NspMatrix*" "cla_val")
+   '("NspBMatrix*" "cla_bval")
+   '("NspList*" "cla_lval")
+   )
   (gtype-id "ClassARef")
 )
 

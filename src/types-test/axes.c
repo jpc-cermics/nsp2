@@ -580,7 +580,7 @@ static NspObject *_wrap_axes_get_wrect(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->wrect);
+  ret = ((NspAxes *) self)->obj->wrect;
   return (NspObject *) ret;
 }
 
@@ -601,7 +601,6 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   if ((wrect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->wrect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->wrect);
-  ((NspAxes *) self)->obj->wrect = wrect;
   return OK;
 }
 
@@ -618,13 +617,13 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 622 "axes.c"
+#line 621 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
   NspObject *nsp_ret;
 
-  ret = ((double) ((NspAxes *) self)->obj->alpha);
+  ret = ((NspAxes *) self)->obj->alpha;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
 }
@@ -634,7 +633,7 @@ static NspObject *_wrap_axes_get_top(void *self,char *attr)
   int ret;
   NspObject *nsp_ret;
 
-  ret = ((gboolean) ((NspAxes *) self)->obj->top);
+  ret = ((NspAxes *) self)->obj->top;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
 }
@@ -644,7 +643,6 @@ static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
   int top;
 
   if ( BoolScalar(O,&top) == FAIL) return FAIL;
-  ((NspAxes *) self)->obj->top = top;
   return OK;
 }
 
@@ -652,7 +650,7 @@ static NspObject *_wrap_axes_get_arect(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->arect);
+  ret = ((NspAxes *) self)->obj->arect;
   return (NspObject *) ret;
 }
 
@@ -673,7 +671,6 @@ static int _wrap_axes_set_arect(void *self, char *attr, NspObject *O)
   if ((arect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->arect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->arect);
-  ((NspAxes *) self)->obj->arect = arect;
   return OK;
 }
 
@@ -681,7 +678,7 @@ static NspObject *_wrap_axes_get_frect(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
+  ret = ((NspAxes *) self)->obj->frect;
   return (NspObject *) ret;
 }
 
@@ -702,7 +699,6 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->frect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->frect);
-  ((NspAxes *) self)->obj->frect = frect;
   return OK;
 }
 
@@ -746,12 +742,12 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 750 "axes.c"
+#line 746 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
 
-  ret = ((NspList*) ((NspAxes *) self)->obj->children);
+  ret = ((NspAxes *) self)->obj->children;
   return (NspObject *) ret;
 }
 
@@ -763,7 +759,6 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspAxes *) self)->obj->children != NULL ) 
     nsp_list_destroy(((NspAxes *) self)->obj->children);
-  ((NspAxes *) self)->obj->children = children;
   return OK;
 }
 
@@ -793,7 +788,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 797 "axes.c"
+#line 792 "axes.c"
 
 
 /*----------------------------------------------------
@@ -832,7 +827,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 836 "axes.c"
+#line 831 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1142,4 +1137,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1146 "axes.c"
+#line 1141 "axes.c"

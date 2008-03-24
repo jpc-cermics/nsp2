@@ -483,7 +483,7 @@ static NspObject *_wrap_polyline_get_color(void *self,char *attr)
 {
   int ret;
 
-  ret = ((int) ((NspPolyline *) self)->obj->color);
+  ret = ((NspPolyline *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
 
@@ -492,7 +492,6 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   int color;
 
   if ( IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspPolyline *) self)->obj->color = color;
   return OK;
 }
 
@@ -527,12 +526,12 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 531 "polyline.c"
+#line 530 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspPolyline *) self)->obj->Pts);
+  ret = ((NspPolyline *) self)->obj->Pts;
   return (NspObject *) ret;
 }
 
@@ -544,7 +543,6 @@ static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
   if ((Pts = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyline *) self)->obj->Pts != NULL ) 
     nsp_matrix_destroy(((NspPolyline *) self)->obj->Pts);
-  ((NspPolyline *) self)->obj->Pts = Pts;
   return OK;
 }
 
@@ -570,7 +568,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 574 "polyline.c"
+#line 572 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -609,7 +607,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 613 "polyline.c"
+#line 611 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -696,4 +694,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 700 "polyline.c"
+#line 698 "polyline.c"

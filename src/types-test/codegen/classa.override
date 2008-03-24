@@ -85,3 +85,4 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
   return OK;
 }
 
+

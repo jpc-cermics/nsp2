@@ -100,6 +100,8 @@ extern void nsp_matrix_destroy(NspMatrix *Mat);
 extern int nsp_matrix_info ( NspMatrix *Mat, int indent,const char *name, int rec_level); 
 extern NspMatrix *nsp_matrix_copy(const NspMatrix *A); 
 extern int nsp_matrix_print (NspMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_print_latex_array_double(int indent, char *name, double *val, int size, int rec_level);
+extern int nsp_print_array_double(int indent, char *name, double *val, int size, int rec_level);
 extern unsigned int  nsp_matrix_elt_size(NspMatrix *M);
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMatrix  *matrix_object(NspObject *O);

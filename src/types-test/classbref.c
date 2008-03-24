@@ -501,7 +501,7 @@ static NspObject *_wrap_classbref_get_clb_color(void *self,char *attr)
 {
   int ret;
 
-  ret = ((int) ((NspClassBRef *) self)->obj->clb_color);
+  ret = ((NspClassBRef *) self)->obj->clb_color;
   return nsp_new_double_obj((double) ret);
 }
 
@@ -510,7 +510,6 @@ static int _wrap_classbref_set_clb_color(void *self, char *attr, NspObject *O)
   int clb_color;
 
   if ( IntScalar(O,&clb_color) == FAIL) return FAIL;
-  ((NspClassBRef *) self)->obj->clb_color = clb_color;
   return OK;
 }
 
@@ -518,7 +517,7 @@ static NspObject *_wrap_classbref_get_clb_thickness(void *self,char *attr)
 {
   int ret;
 
-  ret = ((int) ((NspClassBRef *) self)->obj->clb_thickness);
+  ret = ((NspClassBRef *) self)->obj->clb_thickness;
   return nsp_new_double_obj((double) ret);
 }
 
@@ -527,7 +526,6 @@ static int _wrap_classbref_set_clb_thickness(void *self, char *attr, NspObject *
   int clb_thickness;
 
   if ( IntScalar(O,&clb_thickness) == FAIL) return FAIL;
-  ((NspClassBRef *) self)->obj->clb_thickness = clb_thickness;
   return OK;
 }
 
@@ -535,7 +533,7 @@ static NspObject *_wrap_classbref_get_clb_val(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspMatrix*) ((NspClassBRef *) self)->obj->clb_val);
+  ret = ((NspClassBRef *) self)->obj->clb_val;
   return (NspObject *) ret;
 }
 
@@ -556,7 +554,6 @@ static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassBRef *) self)->obj->clb_val != NULL ) 
     nsp_matrix_destroy(((NspClassBRef *) self)->obj->clb_val);
-  ((NspClassBRef *) self)->obj->clb_val = clb_val;
   return OK;
 }
 
@@ -606,9 +603,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 610 "classbref.c"
+#line 607 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 615 "classbref.c"
+#line 612 "classbref.c"

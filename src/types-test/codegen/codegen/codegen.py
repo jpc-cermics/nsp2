@@ -519,8 +519,7 @@ class Wrapper:
         'static int %(funcname)s(void *self, char *attr, NspObject *O)\n' \
         '{\n' \
         '%(varlist)s' \
-        '%(attrcodebefore)s' \
-        '  %(field)s = %(fname)s;\n' \
+        '%(attr_set_code)s' \
         '  return OK;\n' \
         '}\n\n'
 
@@ -751,6 +750,8 @@ class Wrapper:
                 fftype=''
             else:
                 fftype=ftype
+            if fftype == 'double[]':
+                fftype = 'double*' 
             if str:
                 str = str + ',%s %s' % (fftype,fname)
             else:
@@ -1194,13 +1195,13 @@ class Wrapper:
                     info = argtypes.WrapperInfo()
                     handler = argtypes.matcher.get(ftype)
                     # for attributes, we don't own the "return value"
-                    handler.attr_write_return(ftype, 0, info)
+                    handler.attr_write_return(ftype, 0, info,  pdef, psize, pcheck )
                     # for attributes get we return an NspObject
                     # info.varlist.add('NspObject*', 'nsp_ret')
                     self.fp.write(self.getter_tmpl %
                                   { 'funcname': funcname,
                                     'varlist': info.varlist,
-                                    'field': self.get_field_accessor(fname,ftype),
+                                    'field': self.get_field_accessor(fname,''),
                                     'attrcodeafter': info.get_attrcodeafter() })
                     gettername = funcname
                 except:
@@ -1228,15 +1229,15 @@ class Wrapper:
                     info = argtypes.WrapperInfo()
                     handler = argtypes.matcher.get(ftype)
                     # handler.write_param(upinfo,ptype, pname, pdflt, pnull, psize, info, pos)
-                    handler.write_param('Nsp' + self.objinfo.c_name,ftype,fname ,'','','',info, 4,self.byref)
-
+                    handler.attr_write_set('Nsp' + self.objinfo.c_name,ftype,fname ,'','',psize,info, 4,self.byref)
+                    # a mettre a la fin '  %(field)s = %(fname)s;\n' 
                     # ftype unused in set operation 
                     self.fp.write(self.setter_tmpl %
                                   { 'funcname': funcname,
                                     'varlist': info.varlist,
                                     'field': self.get_field_accessor(fname,''),
                                     'fname': fname,
-                                    'attrcodebefore': info.get_attrcodebefore() })
+                                    'attr_set_code': info.get_attrcodebefore() })
                     settername = funcname
                 except:
                     sys.stderr.write("Could not write setter for %s.%s: %s\n"

@@ -108,10 +108,10 @@ class WrapperInfo:
 
 class ArgType:
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
-	"""Add code to the WrapperInfo instance to handle
-	parameter."""
+	"""Add code to the WrapperInfo instance to handle parameter."""
 	raise RuntimeError, "write_param not implemented for %s" % \
               self.__class__.__name__
+
     def write_return(self, ptype, ownsreturn, info):
 	"""Adds a variable named ret of the return type to
 	info.varlist, and add any required code to info.codeafter to
@@ -119,7 +119,12 @@ class ArgType:
         return '  XXXXX write_return not implemented for %s\n' % self.__class__.__name__
 	#raise RuntimeError, "write_return not implemented for %s" % self.__class__.__name__
         
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+	"""Add code for the setter handler of a field."""
+	raise RuntimeError, "write_param not implemented for %s" % \
+              self.__class__.__name__
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
 	"""Adds a variable named ret of the return type to
 	info.varlist, and add any required code to info.codeafter to
 	convert the return value to a python object."""
@@ -171,13 +176,14 @@ class ArgType:
 class NoneArg(ArgType):
     def write_return(self, ptype, ownsreturn, info):
         info.codeafter.append('  return 0;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.attrcodeafter.append('  return NULLOBJ;')
     def attr_write_defval(self,pname, varname,byref):
 	"""used to give a default value  """
         return ''
 
 class StringArg(ArgType):
+
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
             if pdflt != 'NULL': pdflt = '"' + pdflt + '"'
@@ -192,6 +198,10 @@ class StringArg(ArgType):
         info.attrcodebefore.append('  if ((%s = nsp_string_object(O))==NULL) return FAIL;\n' % pname)
         info.attrcodebefore.append('  if ((%s = nsp_string_copy(%s)) ==NULL) return FAIL;\n' % (pname,pname))
         info.attrcodebefore.append('  nsp_string_destroy(&((%s *) self)->obj->%s);\n' % (upinfo,pname))
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         if ownsreturn:
 	    # have to free result ...
@@ -202,7 +212,7 @@ class StringArg(ArgType):
 	    info.varlist.add('const gchar', '*ret')
             info.codeafter.append('  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;\n'
                                   '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info): 
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck): 
         info.varlist.add('NspObject', '*nsp_ret')
         if ownsreturn:
 	    # have to free result ...
@@ -211,6 +221,7 @@ class StringArg(ArgType):
 	else:
 	    info.varlist.add('const gchar', '*ret')
             info.attrcodeafter.append('  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);\n  return nsp_ret;')
+
 
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
@@ -278,6 +289,10 @@ class UCharArg(ArgType):
 	else:
             info.add_parselist('string', ['&' + pname],
                                [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def attr_write_defval(self,pname, varname,byref):
 	"""used to give a default value  """
         return ''
@@ -291,11 +306,15 @@ class CharArg(ArgType):
 	    info.varlist.add('int', pname)
 	info.arglist.append(pname)
         info.add_parselist('s_int', ['&' + pname], [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('int', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -321,11 +340,15 @@ class GUniCharArg(ArgType):
         info.varlist.add('int', 'nsp_' + pname + ' = 0')
 	info.arglist.append(pname)
         info.add_parselist('s_int', ['&nsp_' + pname], [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('gunichar', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)== FAIL)return RET_BUG;\n  return 1;')
         
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gunichar', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -341,11 +364,15 @@ class IntArg(ArgType):
 	info.arglist.append(pname)
         info.add_parselist('s_int', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('int', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
@@ -401,11 +428,15 @@ class IntPointerArg(ArgType):
 	info.arglist.append('&' + pname)
         info.add_parselist('s_int', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('int', '*ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', '*ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -421,12 +452,16 @@ class BoolArg(IntArg):
 	info.arglist.append(pname)
         info.add_parselist('s_bool', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( BoolScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('int', 'ret')
         info.codeafter.append('  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
         info.attrcodeafter.append('  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);\n  return nsp_ret;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);\n  return nsp_ret;')
@@ -464,11 +499,15 @@ class TimeTArg(ArgType):
 	    info.varlist.add('time_t', pname)
 	info.arglist.append(pname)
         info.add_parselist('s_int', ['&' + pname], [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('time_t', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('time_t', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
@@ -488,11 +527,15 @@ class ULongArg(ArgType):
 	info.arglist.append(pname)
         info.add_parselist('s_int', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ULongScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('gulong', 'ret')
         info.codeafter.append(' if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;\n' +
                               '  return 1;');
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gulong', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
@@ -508,11 +551,15 @@ class Int64Arg(ArgType):
 	    info.varlist.add('gint64', pname)
 	info.arglist.append(pname)
         info.add_parselist('L', ['&' + pname], [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('gint64', 'ret')
         info.codeafter.append('  return PyLong_FromLongLong(ret);')
 
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gint64', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
@@ -534,10 +581,12 @@ class UInt64Arg(ArgType):
         info.varlist.add('NspObject', "*nsp_" + pname + ' = NULL')
         info.arglist.append(pname)
         info.add_parselist('obj_check', ['&PyLong_Type', '&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('guint64', 'ret')
         info.codeafter.append('  return PyLong_FromUnsignedLongLong(ret);')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('guint64', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -554,11 +603,13 @@ class DoubleArg(ArgType):
         info.arglist.append(pname)
         info.add_parselist('s_double', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('double', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('double', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
@@ -649,12 +700,15 @@ class FileArg(ArgType):
 		info.varlist.add('NspObject', '*' + pname)
 		info.arglist.append('PyFile_AsFile(' + pname + ')')
             info.add_parselist('obj_check', ['&PyFile_Type', '&' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
 	info.varlist.add('FILE', '*ret')
         info.codeafter.append('  if (ret == NULL) return NULL;\n' +
                               '  return PyFile_FromFile(ret, "", "", fclose);\n')
                 
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
 	info.varlist.add('FILE', '*ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  if (ret == NULL) return NULL;\n' +
@@ -676,11 +730,14 @@ class EnumArg(ArgType):
                                              'name': pname})
 	info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname]);
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('gint', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gint', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -707,11 +764,14 @@ class FlagsArg(ArgType):
                                             'name':pname})
 	info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('guint', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('guint', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
     def attr_write_defval(self,pname, varname,byref):
@@ -771,6 +831,10 @@ class ObjectArg(ArgType):
 		info.arglist.append('%s(%s->obj)' % (self.cast, pname))
                 info.add_parselist('obj_check', ['&nsp_type_%s' % string.lower(self.objname),
                                           '&' + pname], [pname])
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add(ptype, '*ret')
@@ -787,7 +851,7 @@ class ObjectArg(ArgType):
                                   '  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,' 
                                   '(NspTypeBase *) nsp_type_%(name)s))== NULL) return RET_BUG;\n'  
                                   '  MoveObj(stack,1,nsp_ret);\n  return 1;' %   {'name': string.lower(self.objname)} )            
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add(ptype, '*ret')
         if ownsreturn:
@@ -844,6 +908,9 @@ class BoxedArg(ArgType):
         else:
             info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*':
             info.varlist.add(self.typename, '*ret')
@@ -864,7 +931,7 @@ class BoxedArg(ArgType):
                                 'ret': ret,
                                 'copy': ownsreturn and 'FALSE' or 'TRUE',
                                 'nsptype': 'nsp_type_'+ string.lower(self.typename) })
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*':
             info.varlist.add(self.typename, '*ret')
             ret = 'ret'
@@ -907,11 +974,14 @@ class CustomBoxedArg(ArgType):
 	    info.varlist.add('NspObject', '*' + pname)
 	    info.arglist.append(self.getter + '(' + pname + ')')
             info.add_parselist('obj_check', ['&' + self.pytype, '&' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add(ptype[:-1], '*ret')
         info.codeafter.append('  if (ret == NULL) return RET_BUG;\n' +
                               '  return ' + self.new + '(ret);')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add(ptype[:-1], '*ret')
         info.attrcodeafter.append('  return (ret == NULL) ? NULL : ' + self.new + '(ret);')
         
@@ -947,6 +1017,9 @@ class PointerArg(ArgType):
                                                  'typecode': self.typecode})
         info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*':
             info.varlist.add(self.typename, '*ret')
@@ -956,7 +1029,7 @@ class PointerArg(ArgType):
             info.varlist.add(self.typename, 'ret')
             info.codeafter.append('  /* nspg_pointer_new handles NULL checking */\n' +
                                   '  return nspg_pointer_new(' + self.typecode + ', &ret);')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*':
             info.varlist.add(self.typename, '*ret')
             info.attrcodeafter.append('  /* nspg_pointer_new handles NULL checking */\n' +
@@ -975,13 +1048,16 @@ class AtomArg(IntArg):
 	info.codebefore.append(self.atom % {'name': pname})
 	info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('GdkAtom', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.codeafter.append('  if (( nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL))== NULL);\n' +
                               '    return RET_BUG;\n' +
                               '  MoveObj(stack,1,nsp_ret);\n  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('GdkAtom', 'ret')
         info.attrcodeafter.append('  return (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL);');
 
@@ -995,10 +1071,13 @@ class GTypeArg(ArgType):
 	info.codebefore.append(self.gtype % {'name': pname})
 	info.arglist.append(pname)
         info.add_parselist('obj', ['&nsp_' + pname], [pname])
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('GType', 'ret')
         info.codeafter.append('  return nspg_type_wrapper_new(ret);')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('GType', 'ret')
         info.attrcodeafter.append('  return nspg_type_wrapper_new(ret);')
 
@@ -1012,6 +1091,8 @@ class GErrorArg(ArgType):
         info.varlist.add('GError', '*' + pname + ' = NULL') 
         info.arglist.append('&' + pname)
         info.codeafter.append(self.handleerror % { 'name': pname })
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
 
 class GtkTreePathArg(ArgType):
     # haven't done support for default args.  Is it needed?
@@ -1051,6 +1132,9 @@ class GtkTreePathArg(ArgType):
 	    info.arglist.append(pname)
             info.add_parselist('obj', ['&nsp_' + pname], [pname])
         info.codeafter.append(self.freepath % {'name': pname})
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('GtkTreePath', '*ret')
         if ownsreturn:
@@ -1066,7 +1150,7 @@ class GtkTreePathArg(ArgType):
                                   '      return nsp_ret;\n'
                                   '  }\n'
                                   '  return RET_BUG;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('GtkTreePath', '*ret')
         if ownsreturn:
             info.attrcodeafter.append('  if (ret) {\n'
@@ -1108,6 +1192,9 @@ class GdkRectanglePtrArg(ArgType):
             info.arglist.append('&' + pname)
             info.codebefore.append(self.normal % {'name':  pname})
 
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
 class GdkRectangleArg(ArgType):
     def write_return(self, ptype, ownsreturn, info):
 	info.varlist.add('GdkRectangle', 'ret')
@@ -1115,7 +1202,7 @@ class GdkRectangleArg(ArgType):
 	info.codeafter.append('  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE,&ret, TRUE, TRUE,NULL))==NULL)\n' +
                               '    return RET_BUG;\n  MoveObj(stack,1,nsp_ret);\n  return 1;');
 
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
 	info.varlist.add('GdkRectangle', 'ret')
         info.attrcodeafter.append('  return (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle);')
 
@@ -1124,6 +1211,9 @@ class NspObjectArg(ArgType):
         info.varlist.add('NspObject', '*' + pname)
         info.add_parselist('obj', ['&' + pname], [pname])
         info.arglist.append(pname)
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add("NspObject", "*ret")
         if ownsreturn:
@@ -1132,7 +1222,7 @@ class NspObjectArg(ArgType):
         else:
             info.codeafter.append('  if (ret == NULLOBJ ) return RET_BUG;\n'
                                   '  MoveObj(stack,1,ret);' )
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add("NspObject", "*ret")
         if ownsreturn:
             info.attrcodeafter.append(' return ret;')
@@ -1174,12 +1264,15 @@ class NspGenericArg(ArgType):
             info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
         info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
 
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('Nsp'+self.fullname, '*ret')
         info.codeafter.append('  if ( ret == NULL'+self.shortname_uc+') return RET_BUG;\n'
                               '  MoveObj(stack,1,NSP_OBJECT(ret));\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('Nsp'+self.fullname, '*ret')
         info.attrcodeafter.append('  return (NspObject *) ret;')
         info.setobj = 't' 
@@ -1281,12 +1374,16 @@ class NspMatArg(ArgType):
         info.codebefore.append(' /* %s << %d*/\n' % (pname,pos) )
     def write_param(self, upinfo,ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos, 'mat',byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('NspMatrix', '*ret')
         info.codeafter.append('  if ( ret == NULLMAT) return RET_BUG;\n'
                               '  MoveObj(stack,1,NSP_OBJECT(ret));\n'
                               '  return 1;')
-    def attr_write_return(self, ptype, ownsreturn, info):
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('NspMatrix', '*ret')
         info.attrcodeafter.append('  return ret;')
 
@@ -1294,17 +1391,38 @@ class NspMatCopyArg(NspMatArg):
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'matcopy', byref)
 
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
 class NspDoubleArrayArg(NspMatArg):
+
     def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
 	if pdflt:
-	    info.varlist.add('NspMatrix', '*' + pname + ' = ' + pdflt)
+	    info.varlist.add('double', '*' + pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('NspMatrix', '*' + pname)
+	    info.varlist.add('double', '*' + pname)
 	info.arglist.append(pname+'->R')
-        info.add_parselist(nsp_type, ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL;\n')
+        info.add_parselist(nsp_type, ['&' + pname], [pname]) 
+        
+        info.attrcodebefore.append('  if ( ! IsMat(O) \n' \
+                                   '       || ((NspMatrix *) O)->rc_type != \'r\' \n' \
+                                   '       || ((NspMatrix *) O)->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n' % (psize,pname,psize) )
+
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
-        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat', byref)
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'realmat', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+	"""used to build the field setter """
+        info.varlist.add('NspMatrix', '*M=(NspMatrix *) O')
+        if byref == 't' :
+            pname  = 'obj->'+ pname 
+        pset_name  = '((%s *) self)->%s' % (upinfo,pname)
+        info.attrcodebefore.append('  if ( ! IsMat(O) || M->rc_type != \'r\' || M->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  Mat2double(M);\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n' % (psize,pset_name,psize) )
 
     def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
@@ -1324,20 +1442,20 @@ class NspDoubleArrayArg(NspMatArg):
         return '  {\n' \
             '    int i;\n' \
             '    for ( i = 0 ; i < %s ; i++ )\n' \
-            '      if ( A->%s[i] != A[loc->%s[i] ) return FALSE;\n' \
+            '      if ( A->%s[i] != loc->%s[i] ) return FALSE;\n' \
             '  }\n' % (psize, pname,pname)
 
     def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be saved """
         if byref == 't' :
             pname = 'obj->'+pname
-        return '  if ( nsp_xdr_save_array_d(xdrs,A->%s,%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
+        return '  if ( nsp_xdr_save_array_d(xdrs,M->%s,%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
 
     def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         if byref == 't' :
             pname = 'obj->'+pname
-        return '  if ( nsp_xdr_load_array_d(xdrs,A->%s,%s) == FAIL) return NULL;\n' % ( pname , psize) 
+        return '  if ( nsp_xdr_load_array_d(xdrs,M->%s,%s) == FAIL) return NULL;\n' % ( pname , psize) 
 
     def attr_free_fields(self,pname, varname,byref):
         return  ''
@@ -1358,12 +1476,20 @@ class NspDoubleArrayArg(NspMatArg):
             tag = 'latex_' 
         else:
             tag = '' 
-        return  '  nsp_print_%sarray_double(indent+2,"%s",%s->%s,%s) == FALSE ) return FALSE ;\n    }\n' \
+        return  '  if ( nsp_print_%sarray_double(indent+2,"%s",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n' \
             % (tag, pname,varname,pname,psize)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+	"""used to set a field setter """
+        info.varlist.add('double*', 'ret')
+        info.attrcodeafter.append('  return NSP_OBJECT(nsp_matrix_create_from_array(NVOID,1,%s,ret,NULL));\n' % ( psize ))
 
 class NspDoubleArrayCopyArg(NspDoubleArrayArg):
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        return  self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
 
 class ArgMatcher:
     def __init__(self):

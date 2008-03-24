@@ -267,6 +267,8 @@ extern int C2F(zlatrs) (char *uplo, char *trans, char *diag, char *normin, int *
 extern int C2F(zlatrz) (int *m, int *n, int *l, doubleC *a, int *lda, doubleC *tau, doubleC *work);
 extern int C2F(zpotf2) (char *uplo, int *n, doubleC *a, int *lda, int *info, int uplo_len);
 extern int C2F(zpotrf) (char *uplo, int *n, doubleC *a, int *lda, int *info, int uplo_len);
+extern int C2F(zpotrs) (char *uplo, int *n, int *nrhs, doubleC *a, int *lda, doubleC *b, int *ldb, int *info, int uplo_len);
+
 extern int C2F(zrot) (int *n, doubleC *cx, int *incx, doubleC *cy, int *incy, double *c, doubleC *s);
 extern int C2F(zsteqr) (char *compz, int *n, double *d, double *e, doubleC *z, int *ldz, double *work, int *info, int compz_len);
 extern int C2F(ztgevc) (char *side, char *howmny, int *select, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *vl, int *ldvl, doubleC *vr, int *ldvr, int *mm, int *m, doubleC *work, double *rwork, int *info, int side_len, int howmny_len);
