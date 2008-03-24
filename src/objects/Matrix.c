@@ -1476,6 +1476,83 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
   return Loc;
 }
 
+
+
+/**
+ * nsp_print_array_double:
+ * @indent: an int 
+ * @name: %NULL or name to be used. 
+ * @val: array of doubles 
+ * @size: size of array 
+ * @rec_level: deph level of the print.
+ *
+ * print a double array with the Nsp matrix like 
+ * printing mode 
+ * 
+ * Returns: %TRUE or %FALSE 
+ **/
+int nsp_print_array_double(int indent, char *name, double *val, int size, int rec_level)
+{
+  int rep;
+  /* int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level) */
+  if ( user_pref.pr_depth  <= rec_level -1 ) 
+    {
+      Sciprintf1(indent,"%s\t=[...]\t\t double[%d]\n",name,size);
+      return TRUE;
+    }
+  Sciprintf1(indent,"%s\t= %s\t\t double[%d]\n",name,(size==0) ? "[]": "", size);
+  /* now print the values */
+  if ( size != 0) 
+    {
+      NspMatrix *M= nsp_matrix_create(NVOID,'r',0,0);
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      M->R = val;
+      M->m = 1;
+      M->n = size;
+      M->mn = size;
+      rep = nsp_real_matrix_print_internal (&fmt,M,indent);
+      M->R=NULL; M->m=M->n=M->mn =0;
+      nsp_matrix_destroy(M);
+    }
+  return rep;
+}
+
+/**
+ * nsp_print_latex_array_double:
+ * @indent: an int 
+ * @name: %NULL or name to be used. 
+ * @val: array of doubles 
+ * @size: size of array 
+ * @rec_level: deph level of the print.
+ * 
+ * print a double array with the Nsp matrix like 
+ * latex printing mode 
+ * 
+ * Returns: %TRUE or %FALSE 
+ **/
+
+int nsp_print_latex_array_double(int indent, char *name, double *val, int size, int rec_level)
+{
+  int i, j;
+
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  if ( strcmp(name,NVOID) != 0) 
+    Sciprintf("{%s = \\left(\\begin{array}{",name);
+  else 
+    Sciprintf("{\\left(\\begin{array}{");
+  for (i=0; i <  size ;i++) Sciprintf("c");
+  Sciprintf("}\n");
+  for (j=0; j < size - 1; j++)
+    { 
+      Sciprintf("%g\t& ",val[j]);
+    }
+  Sciprintf("\n");
+  Sciprintf("\\end{array}\\right)}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
+}
+
 /* A set of routines used for displaying matrices 
  */
 
