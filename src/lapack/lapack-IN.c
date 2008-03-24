@@ -932,6 +932,127 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/* interface for solve 
+ *
+ */
+
+static int int_solve( Stack stack, int rhs, int opt, int lhs)
+{
+  char *mode=NULL;
+  char *types[]={ "std","sym", "lo", "up", "lsq", "\\",  NULL};
+  NspMatrix *A,*B,*C=NULLMAT,*Ac=NULLMAT;
+  double  tol_rcond,rcond;
+  int rep=5,stat,info;
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      {"tol", s_double, NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(2,2); 
+  CheckLhs (1, 1);
+
+  if ((A = GetMat (stack, 1)) == NULLMAT)    return RET_BUG;
+  if ((B = GetMat (stack, 2)) == NULLMAT)    return RET_BUG;
+
+  if ( A->m != B->m ) 
+    {
+      Scierror("Error:\tIncompatible dimensions in %s\n",NspFname(stack));
+      return RET_BUG;
+    }
+  
+  if ( A->mn == 0 || B->mn == 0 )  
+    {
+      /* the special case */ 
+      if ((C =nsp_matrix_create(NVOID, 'r', A->n, B->n)) == NULLMAT )
+	return RET_BUG;
+      nsp_mat_set_rval(C,0.0);
+      MoveObj(stack,1,NSP_OBJECT(C));
+      return 1;
+    }
+
+  if ( get_optional_args(stack,rhs,opt,opts,&mode) == FAIL) 
+    goto err;
+
+  if ( opts[1].obj == NULLOBJ) 
+    {
+      tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+    }
+
+  if ( mode != NULL) 
+    {
+      rep = is_string_in_array(mode, types,1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack,mode,types,"optional argument");
+	  goto err;
+	}
+    }
+  
+  if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
+
+  switch ( rep ) {
+  case 0: /* std */
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
+    stat = nsp_mat_bdiv_square(Ac,C, &rcond, tol_rcond);
+    nsp_matrix_destroy(Ac);Ac=NULLMAT;
+    if ( stat == FAIL ) goto err;
+    else if ( rcond <= tol_rcond )
+      {
+	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	goto err;
+      }
+    break;
+  case 1: /* sym */
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
+      {
+	nsp_matrix_destroy(C);
+	return RET_BUG;
+      }
+    stat =  nsp_mat_bdiv_square_symmetric(Ac,C, &rcond, tol_rcond);
+    nsp_matrix_destroy(Ac);Ac=NULLMAT;
+    if ( stat == FAIL ) goto err;
+    else if ( rcond <= tol_rcond )
+      {
+	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	goto err;
+      }
+    break;
+  case 2 :/* lo */
+    if ( nsp_mat_bdiv_triangular(A, C, 'l' , &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
+	goto err;
+      }
+    break;
+  case 3:
+    if ( nsp_mat_bdiv_triangular(A, C, 'u' , &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
+	goto err;
+      }
+    break;
+  case 4: 
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
+    stat=  nsp_mat_bdiv_lsq(Ac,C, tol_rcond);
+    nsp_matrix_destroy(Ac);Ac=NULLMAT;
+    if ( stat == FAIL ) goto err;
+  case 5: 
+    /* default case like bdiv */
+    if ((C = nsp_matrix_bdiv(A,B, tol_rcond)) == NULLMAT) goto err;
+    break;
+  }
+  
+  MoveObj(stack,1,NSP_OBJECT(C));
+  return 1;
+  
+ err:
+  if ( C != NULL) nsp_matrix_destroy(C);
+  if ( Ac != NULL) nsp_matrix_destroy(Ac);
+  return RET_BUG;
+}
+
+
 
 
 /*
@@ -956,6 +1077,7 @@ static OpTab Lapack_func[] = {
   {"solve_banded",int_solve_banded},
   {"rank_m",int_rank},
   {"schur_m",int_schur},
+  {"solve_m",int_solve},
   {(char *) 0, NULL}
 };
 

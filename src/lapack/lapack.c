@@ -3636,7 +3636,7 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
 	    {
 	      Sciprintf("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
 	      Sciprintf("\t=> computing a least square solution\n",rcond);
-	      /* note that here C hash not been modified, we cans switch to bdiv_lsq */
+	      /* note that here C has not been modified, we cans switch to bdiv_lsq */
 	    }
 	  else
 	    {
@@ -4083,4 +4083,80 @@ int nsp_zgschur_discr_stable(const doubleC *alpha, const doubleC *beta)
   return  nsp_abs_c(alpha) < nsp_abs_c(beta);
 } 
 
+/*  symmetric positive definite matrix 
+ *  or hermitian positive definite matrix
+ */
+
+int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
+{
+  int n=A->m, nrhs=B->n, rep = FAIL;  /* mA must be equal to nA */
+  int *iwork=NULL, info;
+  double anorm, *rwork=NULL;
+  doubleC *cwork=NULL;
+
+  /* rmk: - when B is complex while A is real, something better than complexify A can be done */
+  if ( A->rc_type == 'c' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if ( nsp_mat_set_ival(B,0.00) == FAIL ) goto end;
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'c' ) 
+	{
+	  if ( nsp_mat_set_ival(A,0.00) == FAIL ) goto end;
+	}
+    }
+       
+  if ( A->rc_type == 'r' )
+    { 
+      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, NULL, 1);
+      C2F(dpotrf)("U", &n,A->R, &n, &info, 1L);
+      if (info != 0) 
+	{
+	  if (info > 0)
+	    {
+	      Scierror("Error: matrix is not positive definite (minor %d)\n",info); 
+	      *rcond = 0.0; rep = FAIL; goto end;
+	    }
+	  Scierror("Eroor: the %d-th argument of [dz]potrf had an illegal value\n",-info);
+	  goto end;
+	}
+      /* reciprocal of the condition number */
+      if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto end;
+      if ( (rwork = nsp_alloc_work_doubles(4*n)) == NULL ) goto end;      
+      C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
+      if ( *rcond <=  tol_rcond ) 
+	{
+	  rep = OK; goto end;
+	}
+      C2F(dpotrs)("U",&n, &nrhs, A->R,&n, B->R, &n, &info, 1);
+      rep =OK ; goto end;
+    }
+  else
+    {
+      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, NULL, 1);
+      C2F(zpotrf)("U", &n,A->C, &n, &info, 1L);
+      if ( info != 0 )  /* a pivot is exactly zero */
+	{
+	  *rcond = 0.0;rep = OK; goto end;
+	}
+      if ( (rwork = nsp_alloc_work_doubles(2*n)) == NULL ) goto end;      
+      if ( (cwork = nsp_alloc_work_doubleC(2*n)) == NULL ) goto end;
+
+      C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
+      if ( *rcond <= tol_rcond )  /* matrix is too badly conditionned */
+	{
+	  rep =OK ; goto end;
+	}
+      C2F(zpotrs)("U",&n, &nrhs, A->C,&n, B->C, &n, &info, 1);
+      rep =OK ; goto end;
+    }
+
+ end:
+  FREE(cwork); FREE(rwork); FREE(iwork);
+  return rep;
+}
 
