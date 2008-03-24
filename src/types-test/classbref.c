@@ -510,6 +510,7 @@ static int _wrap_classbref_set_clb_color(void *self, char *attr, NspObject *O)
   int clb_color;
 
   if ( IntScalar(O,&clb_color) == FAIL) return FAIL;
+  ((NspClassBRef *) self)->obj->clb_color= clb_color;
   return OK;
 }
 
@@ -526,6 +527,7 @@ static int _wrap_classbref_set_clb_thickness(void *self, char *attr, NspObject *
   int clb_thickness;
 
   if ( IntScalar(O,&clb_thickness) == FAIL) return FAIL;
+  ((NspClassBRef *) self)->obj->clb_thickness= clb_thickness;
   return OK;
 }
 
@@ -554,6 +556,7 @@ static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassBRef *) self)->obj->clb_val != NULL ) 
     nsp_matrix_destroy(((NspClassBRef *) self)->obj->clb_val);
+  ((NspClassBRef *) self)->obj->clb_val= clb_val;
   return OK;
 }
 
@@ -603,9 +606,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 607 "classbref.c"
+#line 610 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 612 "classbref.c"
+#line 615 "classbref.c"

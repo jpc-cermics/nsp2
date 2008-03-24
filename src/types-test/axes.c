@@ -601,6 +601,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   if ((wrect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->wrect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->wrect);
+  ((NspAxes *) self)->obj->wrect= wrect;
   return OK;
 }
 
@@ -617,7 +618,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 621 "axes.c"
+#line 622 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -643,6 +644,7 @@ static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
   int top;
 
   if ( BoolScalar(O,&top) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->top= top;
   return OK;
 }
 
@@ -671,6 +673,7 @@ static int _wrap_axes_set_arect(void *self, char *attr, NspObject *O)
   if ((arect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->arect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->arect);
+  ((NspAxes *) self)->obj->arect= arect;
   return OK;
 }
 
@@ -699,6 +702,7 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->frect != NULL ) 
     nsp_matrix_destroy(((NspAxes *) self)->obj->frect);
+  ((NspAxes *) self)->obj->frect= frect;
   return OK;
 }
 
@@ -742,7 +746,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 746 "axes.c"
+#line 750 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -759,6 +763,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspAxes *) self)->obj->children != NULL ) 
     nsp_list_destroy(((NspAxes *) self)->obj->children);
+  ((NspAxes *) self)->obj->children= children;
   return OK;
 }
 
@@ -788,7 +793,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 792 "axes.c"
+#line 797 "axes.c"
 
 
 /*----------------------------------------------------
@@ -827,7 +832,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 831 "axes.c"
+#line 836 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1137,4 +1142,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1141 "axes.c"
+#line 1146 "axes.c"

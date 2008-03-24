@@ -507,6 +507,7 @@ static int _wrap_classb_set_clb_color(void *self, char *attr, NspObject *O)
   int clb_color;
 
   if ( IntScalar(O,&clb_color) == FAIL) return FAIL;
+  ((NspClassB *) self)->clb_color= clb_color;
   return OK;
 }
 
@@ -523,6 +524,7 @@ static int _wrap_classb_set_clb_thickness(void *self, char *attr, NspObject *O)
   int clb_thickness;
 
   if ( IntScalar(O,&clb_thickness) == FAIL) return FAIL;
+  ((NspClassB *) self)->clb_thickness= clb_thickness;
   return OK;
 }
 
@@ -551,6 +553,7 @@ static int _wrap_classb_set_clb_val(void *self, char *attr, NspObject *O)
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassB *) self)->clb_val != NULL ) 
     nsp_matrix_destroy(((NspClassB *) self)->clb_val);
+  ((NspClassB *) self)->clb_val= clb_val;
   return OK;
 }
 
@@ -600,9 +603,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 604 "classb.c"
+#line 607 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 609 "classb.c"
+#line 612 "classb.c"

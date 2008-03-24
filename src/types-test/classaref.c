@@ -538,6 +538,7 @@ static int _wrap_classaref_set_cla_color(void *self, char *attr, NspObject *O)
   int cla_color;
 
   if ( IntScalar(O,&cla_color) == FAIL) return FAIL;
+  ((NspClassARef *) self)->obj->cla_color= cla_color;
   return OK;
 }
 
@@ -554,6 +555,7 @@ static int _wrap_classaref_set_cla_thickness(void *self, char *attr, NspObject *
   int cla_thickness;
 
   if ( IntScalar(O,&cla_thickness) == FAIL) return FAIL;
+  ((NspClassARef *) self)->obj->cla_thickness= cla_thickness;
   return OK;
 }
 
@@ -582,6 +584,7 @@ static int _wrap_classaref_set_cla_val(void *self, char *attr, NspObject *O)
   if ((cla_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassARef *) self)->obj->cla_val != NULL ) 
     nsp_matrix_destroy(((NspClassARef *) self)->obj->cla_val);
+  ((NspClassARef *) self)->obj->cla_val= cla_val;
   return OK;
 }
 
@@ -610,6 +613,7 @@ static int _wrap_classaref_set_cla_bval(void *self, char *attr, NspObject *O)
   if ((cla_bval = (NspBMatrix *) nsp_object_copy_and_name(attr,O)) == NULLBMAT) return FAIL;
   if (((NspClassARef *) self)->obj->cla_bval != NULL ) 
     nsp_bmatrix_destroy(((NspClassARef *) self)->obj->cla_bval);
+  ((NspClassARef *) self)->obj->cla_bval= cla_bval;
   return OK;
 }
 
@@ -638,6 +642,7 @@ static int _wrap_classaref_set_cla_lval(void *self, char *attr, NspObject *O)
   if ((cla_lval = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspClassARef *) self)->obj->cla_lval != NULL ) 
     nsp_list_destroy(((NspClassARef *) self)->obj->cla_lval);
+  ((NspClassARef *) self)->obj->cla_lval= cla_lval;
   return OK;
 }
 
@@ -672,7 +677,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 676 "classaref.c"
+#line 681 "classaref.c"
 
 
 #line 37 "classaref.override"
@@ -680,7 +685,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 684 "classaref.c"
+#line 689 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -720,9 +725,9 @@ ClassARef_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 724 "classaref.c"
+#line 729 "classaref.c"
   nspgobject_register_class(d, "ClassARef", ClassARef, &NspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 729 "classaref.c"
+#line 734 "classaref.c"

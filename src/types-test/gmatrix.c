@@ -571,6 +571,7 @@ static int _wrap_gmatrix_set_data(void *self, char *attr, NspObject *O)
   if ((data = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix *) self)->obj->data != NULL ) 
     nsp_matrix_destroy(((NspGMatrix *) self)->obj->data);
+  ((NspGMatrix *) self)->obj->data= data;
   return OK;
 }
 
@@ -599,6 +600,7 @@ static int _wrap_gmatrix_set_rect(void *self, char *attr, NspObject *O)
   if ((rect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix *) self)->obj->rect != NULL ) 
     nsp_matrix_destroy(((NspGMatrix *) self)->obj->rect);
+  ((NspGMatrix *) self)->obj->rect= rect;
   return OK;
 }
 
@@ -617,6 +619,7 @@ static int _wrap_gmatrix_set_remap(void *self, char *attr, NspObject *O)
   int remap;
 
   if ( BoolScalar(O,&remap) == FAIL) return FAIL;
+  ((NspGMatrix *) self)->obj->remap= remap;
   return OK;
 }
 
@@ -645,6 +648,7 @@ static int _wrap_gmatrix_set_colminmax(void *self, char *attr, NspObject *O)
   if ((colminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix *) self)->obj->colminmax != NULL ) 
     nsp_matrix_destroy(((NspGMatrix *) self)->obj->colminmax);
+  ((NspGMatrix *) self)->obj->colminmax= colminmax;
   return OK;
 }
 
@@ -673,6 +677,7 @@ static int _wrap_gmatrix_set_zminmax(void *self, char *attr, NspObject *O)
   if ((zminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix *) self)->obj->zminmax != NULL ) 
     nsp_matrix_destroy(((NspGMatrix *) self)->obj->zminmax);
+  ((NspGMatrix *) self)->obj->zminmax= zminmax;
   return OK;
 }
 
@@ -724,7 +729,7 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 728 "gmatrix.c"
+#line 733 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -810,4 +815,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 814 "gmatrix.c"
+#line 819 "gmatrix.c"

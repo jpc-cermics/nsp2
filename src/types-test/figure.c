@@ -602,6 +602,7 @@ static int _wrap_figure_set_fname(void *self, char *attr, NspObject *O)
   if ((fname = nsp_string_object(O))==NULL) return FAIL;
   if ((fname = nsp_string_copy(fname)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspFigure *) self)->obj->fname);
+  ((NspFigure *) self)->obj->fname= fname;
   return OK;
 }
 
@@ -622,6 +623,7 @@ static int _wrap_figure_set_driver(void *self, char *attr, NspObject *O)
   if ((driver = nsp_string_object(O))==NULL) return FAIL;
   if ((driver = nsp_string_copy(driver)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspFigure *) self)->obj->driver);
+  ((NspFigure *) self)->obj->driver= driver;
   return OK;
 }
 
@@ -638,6 +640,7 @@ static int _wrap_figure_set_id(void *self, char *attr, NspObject *O)
   int id;
 
   if ( IntScalar(O,&id) == FAIL) return FAIL;
+  ((NspFigure *) self)->obj->id= id;
   return OK;
 }
 
@@ -666,6 +669,7 @@ static int _wrap_figure_set_dims(void *self, char *attr, NspObject *O)
   if ((dims = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->dims != NULL ) 
     nsp_matrix_destroy(((NspFigure *) self)->obj->dims);
+  ((NspFigure *) self)->obj->dims= dims;
   return OK;
 }
 
@@ -694,6 +698,7 @@ static int _wrap_figure_set_viewport_dims(void *self, char *attr, NspObject *O)
   if ((viewport_dims = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->viewport_dims != NULL ) 
     nsp_matrix_destroy(((NspFigure *) self)->obj->viewport_dims);
+  ((NspFigure *) self)->obj->viewport_dims= viewport_dims;
   return OK;
 }
 
@@ -712,6 +717,7 @@ static int _wrap_figure_set_wresize(void *self, char *attr, NspObject *O)
   int wresize;
 
   if ( BoolScalar(O,&wresize) == FAIL) return FAIL;
+  ((NspFigure *) self)->obj->wresize= wresize;
   return OK;
 }
 
@@ -740,6 +746,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   if ((position = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->position != NULL ) 
     nsp_matrix_destroy(((NspFigure *) self)->obj->position);
+  ((NspFigure *) self)->obj->position= position;
   return OK;
 }
 
@@ -768,6 +775,7 @@ static int _wrap_figure_set_children(void *self, char *attr, NspObject *O)
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspFigure *) self)->obj->children != NULL ) 
     nsp_list_destroy(((NspFigure *) self)->obj->children);
+  ((NspFigure *) self)->obj->children= children;
   return OK;
 }
 
@@ -822,7 +830,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 826 "figure.c"
+#line 834 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -963,4 +971,4 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
-#line 967 "figure.c"
+#line 975 "figure.c"

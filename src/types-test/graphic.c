@@ -495,6 +495,7 @@ static int _wrap_graphic_set_color(void *self, char *attr, NspObject *O)
   int color;
 
   if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspGraphic *) self)->obj->color= color;
   return OK;
 }
 
@@ -542,7 +543,7 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 546 "graphic.c"
+#line 547 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -553,4 +554,4 @@ GLURP
 
 
 
-#line 557 "graphic.c"
+#line 558 "graphic.c"
