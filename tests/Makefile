@@ -49,7 +49,8 @@ TESTS= \
 	bool.dia  \
 	dollar.dia \
 	intg.dia \
-	sparse_ij_val.dia
+	sparse_ij_val.dia \
+	solve.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
