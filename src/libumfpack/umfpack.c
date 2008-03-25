@@ -585,6 +585,12 @@ NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irste
   rc_type = self->obj->rc_type; 
   T = self->obj->mtlb_T;
   
+  if ( T.m != T.n )
+    {
+      Scierror("Error: only square systems are handle\n");
+      return rep;
+    };
+
   if ( B->m != T.m || B->n < 1 )
     {
       Scierror("Error: first argument to method has wrong dimensions (%d,%d)\n",
