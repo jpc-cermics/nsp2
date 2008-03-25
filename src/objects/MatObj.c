@@ -1382,7 +1382,7 @@ static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,in
 static int int_meth_matrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   if ( nsp_move_double(stack,1,nsp_mat_nnz((NspMatrix *) self)) == FAIL) return RET_BUG;
   return 1;
 }
@@ -2846,6 +2846,7 @@ int_mxdiag (Stack stack, int rhs, int opt, int lhs)
     Res = nsp_matrix_create_diag (A, k1);
   else
     Res = nsp_matrix_extract_diag (A, k1);
+      
   if (Res == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);
@@ -4068,6 +4069,10 @@ int int_mxmult (Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ * NspMatrix back division  Res= A\B  
+ */
+
 int int_mxbdiv(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A,*B,*C;
@@ -4987,7 +4992,32 @@ static int int_mat_istriangular(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
  
+/**
+ * compute lower and upper bandwidth
+ * 
+ **/
+static int int_mat_lower_upper_bandwidth(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  int kl, ku;
+  CheckRhs (1, 1);
+  CheckLhs (1, 2);
 
+  if ((A = GetMat(stack, 1)) == NULLMAT)   return RET_BUG;
+
+  if ( nsp_mat_lower_and_upper_bandwidth(A, &kl, &ku) == FAIL )
+    { 
+      Scierror("%s: is only implemented for square matrix\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_move_double(stack,1,(double) kl) == FAIL ) 
+    return RET_BUG;
+  if ( nsp_move_double(stack,2,(double) ku) == FAIL ) 
+    return RET_BUG;
+  return Max(lhs,1);
+}
+ 
 /*
  * The Interface for basic matrices operation 
  */
@@ -5161,6 +5191,7 @@ static OpTab Matrix_func[] = {
   {"issorted_m", int_mat_issorted},
   {"issymmetric_m", int_mat_issymmetric},
   {"istriangular_m", int_mat_istriangular},
+  {"lower_upper_bandwidths_m", int_mat_lower_upper_bandwidth},
   {(char *) 0, NULL}
 };
 
