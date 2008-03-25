@@ -1,3 +1,16 @@
+2008-03-25  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/lapack/lapack.c (nsp_mat_bdiv_banded): 
+	add the banded case for bdiv. This comes with
+	some utilities to detect lower and upper matrix
+	bandwidths (for Mat and SpColMat too)
+	* src/objects/SpColMatrix.c: a few utilities
+	for sparse, 1/add triangular solving for sparse
+	(interfaced with solve_tri but this is just to
+	test), 2/ add scale rows and cols methods.
+	* man/linalg/norm.tex 
+	add man page for norm
+	
 2008-03-17  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/objects/SpColMatrix.c (nsp_spcolmatrix_is_symetric):

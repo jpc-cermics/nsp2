@@ -77,7 +77,7 @@ NspTypeSpColMatrix *new_type_spcolmatrix(type_mode mode)
   type->attrs = NULL; /* spcolmatrix_attrs ;  */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL; /*spcolmatrix_get_methods; */
+  type->methods = spcolmatrix_get_methods;
   type->new = (new_func *) new_spcolmatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -373,6 +373,89 @@ NspSpColMatrix *GetRealSpCol(Stack stack, int i)
     }
   return M;
 }
+
+
+/*
+ *    spcolmatrix methods
+ */
+
+
+/* 
+ *  scale_rows[x]
+ *
+ *    A <- diag(x)*A
+ *
+ *    A.scale_rows[x]
+ */
+static int int_meth_spcolmatrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A = (NspSpColMatrix *) self;
+  NspMatrix *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ *  scale_cols[x]
+ *
+ *    A <- A*diag(x)
+ *
+ *    A.scale_cols[x]
+ */
+static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A = (NspSpColMatrix *) self;
+  NspMatrix *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ * get_nnz 
+ */
+static int int_meth_spcolmatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,0);
+  CheckRhs(0,0);
+  if ( nsp_move_double(stack,1, nsp_spcolmatrix_nnz((NspSpColMatrix *) self)) == FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods spcolmatrix_methods[] = {
+  { "scale_rows",int_meth_spcolmatrix_scale_rows}, 
+  { "scale_cols",int_meth_spcolmatrix_scale_cols}, 
+  { "get_nnz", int_meth_spcolmatrix_get_nnz},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *spcolmatrix_get_methods(void) { return spcolmatrix_methods;};
+
 
 
 typedef int (*SpC) (NspSpColMatrix *A,NspSpColMatrix *B);
@@ -2659,7 +2742,7 @@ static int int_spcolmatrix_numel (Stack stack, int rhs, int opt, int lhs)
  * check that a sparse matrix is a lower or upper triangular
  * 
  **/
-int int_spcolmatrix_istriangular(Stack stack, int rhs, int opt, int lhs)
+static int int_spcolmatrix_istriangular(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat;
   char *str;
@@ -2686,7 +2769,7 @@ int int_spcolmatrix_istriangular(Stack stack, int rhs, int opt, int lhs)
  * check that a sparse matrix is a lower or upper triangular
  * 
  **/
-int int_spcolmatrix_issymmetric(Stack stack, int rhs, int opt, int lhs)
+static int int_spcolmatrix_issymmetric(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat;
   Boolean rep;
@@ -2701,7 +2784,81 @@ int int_spcolmatrix_issymmetric(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return 1;
 }
-  
+
+/**
+ * compute lower and upper bandwidth
+ * 
+ **/
+static int int_spcolmatrix_lower_upper_bandwidth(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  int kl, ku;
+  CheckRhs (1, 1);
+  CheckLhs (1, 2);
+
+  if ((A = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+
+  if ( nsp_spcolmatrix_lower_and_upper_bandwidth(A, &kl, &ku) == FAIL )
+    { 
+      Scierror("%s: is only implemented for square matrix\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_move_double(stack,1,(double) kl) == FAIL ) 
+    return RET_BUG;
+  if ( nsp_move_double(stack,2,(double) ku) == FAIL ) 
+    return RET_BUG;
+  return Max(lhs,1);
+}
+
+static int int_spcolmatrix_solve_tri(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  NspMatrix *b, *x=NULLMAT;
+  char *str, type;
+  int rep;
+
+  CheckRhs (3, 3);
+  CheckLhs (1, 1);
+
+  if ((A = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  CheckSquare(NspFname(stack),1,A);
+
+  if ((b = GetMat(stack, 2)) == NULLMAT)   return RET_BUG;
+  if ( b->m != A->m )
+    { 
+      Scierror("%s: second argument is incompatible\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ((str=GetString(stack,3)) == NULL) return RET_BUG;
+  if ( strcmp(str,"u") != 0  &&  strcmp(str,"l") != 0 )
+    { 
+      Scierror("%s: third argument must be 'l' or 'u'\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  type = A->rc_type == 'r' && b->rc_type == 'r' ? 'r' : 'c';
+  if ( (x = nsp_matrix_create(NVOID, type, b->m, b->n)) == NULLMAT )
+    return RET_BUG;
+
+  if ( strcmp(str,"u") == 0 )
+    rep = nsp_spcolmatrix_solve_utri(A, x, b);
+  else
+    rep = nsp_spcolmatrix_solve_ltri(A, x, b);
+
+  if ( rep != 0 )
+    { 
+      Scierror("%s: non inversible matrix, zero diagonal element at line %d\n",NspFname(stack),rep);
+      nsp_matrix_destroy(x);
+      return RET_BUG;
+    }
+
+  MoveObj(stack,1,NSP_OBJECT(x));
+  return 1;
+}
+
+
 /*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
@@ -2809,6 +2966,8 @@ static OpTab SpColMatrix_func[]={
   {"isvector_sp",int_spcolmatrix_isvector},
   {"istriangular_sp",int_spcolmatrix_istriangular},
   {"issymmetric_sp",int_spcolmatrix_issymmetric},
+  {"lower_upper_bandwidths_sp", int_spcolmatrix_lower_upper_bandwidth},
+  {"solve_tri_sp",int_spcolmatrix_solve_tri},
   {"length_sp",int_spcolmatrix_numel},
   {"numel_sp",int_spcolmatrix_numel},
   {(char *) 0, NULL}

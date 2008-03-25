@@ -7726,4 +7726,374 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
   return TRUE;
 }
 
+/**
+ * nsp_spcolmatrix_lower_and_upper_bandwidth:
+ * @A: a real or complex sparse matrix
+ * @Kl: (output) the lower bandwidth
+ * @Ku: (output) the upper bandwidth
+ *
+ * computes the lower and upper bandwith of @A
+ * don't take into account stored zeros.
+ * 
+ * Return value: %FAIL (if the matrix is not square) or %OK 
+ **/
+/* added by Bruno */
+int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *Ku)
+{
+  int j, k, kl=0, ku=0;
 
+  if ( A->m != A->n )
+    return FAIL;
+
+  for ( j = 0 ; j < A->n ; j++ ) 
+    {
+      k = A->D[j]->size;
+      if ( k != 0 )
+	{
+	  kl = Max( kl, A->D[j]->J[k-1] - j );
+	  ku = Max( ku, j - A->D[j]->J[0]);
+	}
+    }
+  *Kl = kl; *Ku = ku;
+  return OK;
+}
+
+/**
+ * nsp_spcolmatrix_solve_utri
+ * @U: a #NspSpColMatrix
+ * @b: a #NspMatrix
+ * @x: a #NspMatrix
+ *
+ * solve U x = b when @U is upper triangular
+ * the code works only with the upper triangular
+ * part of @U (so that @U need not to be upper 
+ * triangular)
+ * x must be preallocated with the good size
+ * and good rc_type ('r' or 'c')
+ *
+ * Return value: 0 means OK and i > 0 means that U(i,i) = 0
+ *              -1 means a dim problem or a bad type for x
+ *               
+ **/
+/* added by Bruno */
+int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b)
+{
+  int i, j, jj, k, kk;
+  char type;
+  Boolean found;
+
+  /* check dims */
+  if ( U->m != U->n  ||  b->m != U->m  ||  x->m != U->m  ||  x->n != b->n )
+    return -1;
+
+  /* check rc_type */
+  type = (U->rc_type == 'r' &&  b->rc_type == 'r') ? 'r' : 'c';
+  if ( x->rc_type != type )
+    return -1;
+
+  /* init x with b */
+  if ( x->rc_type == 'r' )
+    for ( i = 0 ; i < x->mn ; i++ ) x->R[i] = b->R[i];
+  else if ( b->rc_type == 'c' )
+    for ( i = 0 ; i < x->mn ; i++ ) x->C[i] = b->C[i];
+  else  /* b real and x complex (because U is complex) */
+    for ( i = 0 ; i < x->mn ; i++ ) 
+      { x->C[i].r = b->R[i]; x->C[i].i = 0.0; }
+
+  /* solve now (column triangular algorithm because U is a SpColMat) */
+  for ( j = U->m-1 ; j >= 0 ; j-- ) 
+    {
+      /* look for row index i = j (because the upper form is not mandatory) */
+      for ( k = U->D[j]->size-1, found = FALSE; k >= 0 ; k-- )  
+	{
+	  i = U->D[j]->J[k];
+	  if ( i == j ) { found = TRUE; break; }
+	  else if ( i < j ) return j+1;
+	}
+      if ( ! found ) return j+1;
+
+      if ( U->rc_type == 'r' )
+	{
+	  double piv;
+	  piv = U->D[j]->R[k]; 
+	  /* U(j,j) is stored but verify if it is not zero */
+	  if ( piv == 0.0 )return j+1;
+
+	  if ( x->rc_type == 'r' )
+	    {
+	      for ( jj = 0 ; jj < x->n ; jj++ )
+		{
+		  double *xjj = x->R + jj*x->m;
+		  xjj[j] /= piv;
+		  for ( kk = k-1 ; kk >= 0 ; kk-- )
+		    {
+		      i = U->D[j]->J[kk];
+		      xjj[i] -= U->D[j]->R[kk]*xjj[j];
+		    }
+		}
+	    }
+	  else  /* U real but x complex (because b is complex) */
+	    {
+	      for ( jj = 0 ; jj < x->n ; jj++ )
+		{
+		  doubleC *xjj = x->C + jj*x->m;
+		  xjj[j].r /= piv; xjj[j].i /= piv;
+		  for ( kk = k-1 ; kk >= 0 ; kk-- )
+		    {
+		      i = U->D[j]->J[kk];
+		      xjj[i].r -= U->D[j]->R[kk]*xjj[j].r;
+		      xjj[i].i -= U->D[j]->R[kk]*xjj[j].i;
+		    }
+		}
+	      
+	    }
+	}
+      else  /* U is complex and so x too */
+	{
+	  doubleC piv;
+	  piv = U->D[j]->C[k];
+	  /* U(j,j) is stored but verify if it is not zero */
+	  if ( piv.r == 0.0  &&  piv.i == 0.0 ) return j+1;
+
+	  for ( jj = 0 ; jj < x->n ; jj++ )
+	    {
+	      doubleC *xjj = x->C + jj*x->m;
+	      nsp_div_cc(&xjj[j],&piv,&xjj[j]);
+	      for ( kk = k-1 ; kk >= 0 ; kk-- )
+		{
+		  i = U->D[j]->J[kk];
+		  xjj[i].r -= U->D[j]->C[kk].r*xjj[j].r - U->D[j]->C[kk].i*xjj[j].i;
+		  xjj[i].i -= U->D[j]->C[kk].r*xjj[j].i + U->D[j]->C[kk].i*xjj[j].r;
+		}
+	    }
+	}
+    }
+  return 0;
+}
+
+/**
+ * nsp_spcolmatrix_solve_ltri
+ * @L: a #NspSpColMatrix
+ * @b: a #NspMatrix
+ * @x: a #NspMatrix
+ *
+ * solve L x = b when @L is lower triangular
+ * the code works only with the lower triangular
+ * part of @L (so that @L need not to be upper 
+ * triangular)
+ * x must be preallocated with the good size
+ * and good rc_type ('r' or 'c')
+ *
+ * Return value: 0 means OK and i > 0 means that L(i,i) = 0
+ *              -1 means a dim problem or a bad type for x
+ *               
+ **/
+/* added by Bruno */
+int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
+{
+  int i, j, jj, k, kk;
+  char type;
+  Boolean found;
+
+  /* check dims */
+  if ( L->m != L->n  ||  b->m != L->m  ||  x->m != L->m  ||  x->n != b->n )
+    return -1;
+
+  /* check rc_type */
+  type = (L->rc_type == 'r' &&  b->rc_type == 'r') ? 'r' : 'c';
+  if ( x->rc_type != type )
+    return -1;
+
+  /* init x with b */
+  if ( x->rc_type == 'r' )
+    for ( i = 0 ; i < x->mn ; i++ ) x->R[i] = b->R[i];
+  else if ( b->rc_type == 'c' )
+    for ( i = 0 ; i < x->mn ; i++ ) x->C[i] = b->C[i];
+  else  /* b real and x complex (because L is complex) */
+    for ( i = 0 ; i < x->mn ; i++ ) 
+      { x->C[i].r = b->R[i]; x->C[i].i = 0.0; }
+
+  /* solve now (column triangular algorithm because L is a SpColMat) */
+  for ( j = 0 ; j < L->m ; j++ ) 
+    {
+      /* look for row index i = j (because the lower form is not mandatory) */
+      for ( k = 0, found = FALSE ; k < L->D[j]->size ; k++ )  
+	{
+	  i = L->D[j]->J[k];
+	  if ( i == j ) { found = TRUE; break; }
+	  else if ( i > j ) return j+1;
+	}
+      if ( ! found ) return j+1;
+
+      if ( L->rc_type == 'r' )
+	{
+	  double piv;
+	  piv = L->D[j]->R[k]; 
+	  /* L(j,j) is stored but verify if it is not zero */
+	  if ( piv == 0.0 )return j+1;
+
+	  if ( x->rc_type == 'r' )
+	    {
+	      for ( jj = 0 ; jj < x->n ; jj++ )
+		{
+		  double *xjj = x->R + jj*x->m;
+		  xjj[j] /= piv;
+		  for ( kk = k+1 ; kk < L->D[j]->size ; kk++ )
+		    {
+		      i = L->D[j]->J[kk];
+		      xjj[i] -= L->D[j]->R[kk]*xjj[j];
+		    }
+		}
+	    }
+	  else  /* L real but x complex (because b is complex) */
+	    {
+	      for ( jj = 0 ; jj < x->n ; jj++ )
+		{
+		  doubleC *xjj = x->C + jj*x->m;
+		  xjj[j].r /= piv; xjj[j].i /= piv;
+		  for ( kk = k+1 ; kk < L->D[j]->size ; kk++ )
+		    {
+		      i = L->D[j]->J[kk];
+		      xjj[i].r -= L->D[j]->R[kk]*xjj[j].r;
+		      xjj[i].i -= L->D[j]->R[kk]*xjj[j].i;
+		    }
+		}
+	      
+	    }
+	}
+      else  /* L is complex and so x too */
+	{
+	  doubleC piv;
+	  piv = L->D[j]->C[k];
+	  /* L(j,j) is stored but verify if it is not zero */
+	  if ( piv.r == 0.0  &&  piv.i == 0.0 ) return j+1;
+
+	  for ( jj = 0 ; jj < x->n ; jj++ )
+	    {
+	      doubleC *xjj = x->C + jj*x->m;
+	      nsp_div_cc(&xjj[j],&piv,&xjj[j]);
+	      for ( kk = k+1 ; kk < L->D[j]->size ; kk++ )
+		{
+		  i = L->D[j]->J[kk];
+		  xjj[i].r -= L->D[j]->C[kk].r*xjj[j].r - L->D[j]->C[kk].i*xjj[j].i;
+		  xjj[i].i -= L->D[j]->C[kk].r*xjj[j].i + L->D[j]->C[kk].i*xjj[j].r;
+		}
+	    }
+	}
+    }
+  return 0;
+}
+
+
+
+/**
+ * nsp_spcolmatrix_scale_rows:
+ * @A: a #NspSpColMatrix of size m x n
+ * @x: a #NspMatrix must be a vector of size m (1 x m or m x 1)
+ * 
+ *  for (i from 0 to m-1)  
+ *      multiplie row i of A by x[i]
+ * 
+ * Return value: %FAIL or %OK
+ **/
+
+int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
+{
+  int i,j, k;
+  
+  if(A->rc_type == 'r' ) 
+    {
+      if ( x->rc_type == 'r') 
+	{
+	  for ( j = 0 ; j < A->n ; j++)
+	    for ( k = 0 ; k < A->D[j]->size ; k++ )
+	      {
+		i = A->D[j]->J[k];
+		A->D[j]->R[k] *= x->R[i];
+	      }
+	}
+      else 
+	{
+	  if ( nsp_spcolmatrix_complexify(A) == FAIL ) 
+	    return FAIL;
+	  for ( j = 0 ; j < A->n ; j++)
+	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	      {
+		i = A->D[j]->J[k];
+		A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[i].i;
+		A->D[j]->C[k].r *= x->C[i].r;
+	      }
+	}
+    }
+  else
+    {
+      if ( x->rc_type == 'r') 
+	for ( j = 0 ; j < A->n ; j++)
+	  for ( k = 0 ; k <  A->D[j]->size ; k++ )
+	    {
+	      i = A->D[j]->J[k];
+	      A->D[j]->C[k].r *= x->R[i];
+	      A->D[j]->C[k].i *= x->R[i];
+	    }
+      else 
+	for ( j = 0 ; j < A->n ; j++)
+	  for ( k = 0 ; k <  A->D[j]->size ; k++ )
+	    {
+	      i = A->D[j]->J[k];
+	      nsp_prod_c(&A->D[j]->C[k],&x->C[i]);
+	    }
+    }
+  return OK;
+}
+
+/**
+ * nsp_spcolmatrix_scale_cols:
+ * @A: a #NspSpColMatrix of size m x n
+ * @x: a #NspMatrix must be a vector of size n (1 x n or n x 1)
+ * 
+ *  for (j from 0 to n-1)  
+ *      multiplie column j of A by x[j]
+ * 
+ * Return value: %FAIL or %OK
+ **/
+
+int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
+{
+  int j, k;
+  
+  if(A->rc_type == 'r' ) 
+    {
+      if ( x->rc_type == 'r') 
+	{
+	  for ( j = 0 ; j < A->n ; j++)
+	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	      A->D[j]->R[k] *= x->R[j];
+	}
+      else 
+	{
+	  if ( nsp_spcolmatrix_complexify(A) == FAIL ) 
+	    return FAIL;
+	  for ( j = 0 ; j < A->n ; j++)
+	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	      {
+		A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[j].i;
+		A->D[j]->C[k].r *= x->C[j].r;
+	      }
+	}
+    }
+  else
+    {
+      if ( x->rc_type == 'r') 
+	for ( j = 0 ; j < A->n ; j++)
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      A->D[j]->C[k].r *= x->R[j];
+	      A->D[j]->C[k].i *= x->R[j];
+	    }
+      else 
+	for ( j = 0 ; j < A->n ; j++)
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    nsp_prod_c(&A->D[j]->C[k],&x->C[j]);
+    }
+  return OK;
+}

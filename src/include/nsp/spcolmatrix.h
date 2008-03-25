@@ -222,6 +222,12 @@ extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
 extern Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A);
+extern int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *Ku);
+
+extern int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b);
+extern int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b);
+extern int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x);
+extern int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x);
 
 
 extern int GenericMatSeRo(void *A, int Am, int An, int Amn,   index_vector *index,
@@ -240,4 +246,5 @@ static int nsp_spcolmatrix_eq(NspObject *A,NspObject *B);
 static int nsp_spcolmatrix_neq(NspObject *A,NspObject *B);
 static NspSpColMatrix *nsp_spcolmatrix_xdr_load(XDR  *F);
 static int nsp_spcolmatrix_xdr_save(XDR  *F, NspSpColMatrix *M);
+static NspMethods *spcolmatrix_get_methods(void); 
 #endif 
