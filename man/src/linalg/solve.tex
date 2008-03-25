@@ -1,0 +1,76 @@
+% -*- mode: latex -*-
+
+\mansection{solve}
+\begin{mandesc}
+  \short{solve}{solve a linear system}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ X= solve (A,b, mode=str)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,b}: numerical matrices.
+    \vname{mode}: a string.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function solves the linear system $Ax = b$. The resolution is 
+controled by the optional mode parameter~:
+\begin{itemize}
+  \item \verb+"std"+: A is assumed square, LU decomposition is used 
+    through lapack routines \verb+dgetrf+ and \verb+dgetrs+ 
+    (\verb+zgetrf+ and \verb+zgetrs+ in the complex case).
+  \item \verb+"sympos"+: A is symmetric positive definite and lapack routines 
+    \verb+dpotrf+ and \verb+dpotrs+ (\verb+zpotrf+ and \verb+zpotrs+ for hermitian positive definite) are used. 
+  \item \verb+"lo"+: A is assumed lower triangular (i.e only \verb+tril(A)+ is used) and the 
+    system is solved using lapack routines \verb+dtrtrs+ (resp. \verb+ztrtrs+).
+  \item \verb+"up"+: A is assumed upper triangular (i.e only \verb+triu(A)+ is used) and the system is 
+    solved using lapack routines \verb+dtrtrs+ (resp. \verb+ztrtrs+).
+  \item \verb+"lsq"+: The system is solved in the least-square sense using 
+    lapack routines using lapack routines \verb+dgelsy+ (resp. \verb+zgelsy+).
+  \item \verb+"\\"+ A previous routine is selected by checking properties of \verb+A+.
+  \item \verb+"sym"+ A is symmetric and lapack routines 
+    \verb+dsytrf+ and \verb+dsytrs+ (\verb+zsytrf+ and \verb+zsytrs+ for symmetric complex) are used. 
+\end{itemize}
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{n=10;b=rand(n,2);A=rand(n,n);\Hnewline
+    x=solve(A,b,mode="std"); \Hnewline
+    if norm(A*x-b) > 1.e-12 then pause;end \Hnewline
+    // lower triangular\Hnewline
+    x=solve(A,b,mode="lo"); \Hnewline
+    if norm(tril(A)*x-b)> 1.e-12  then pause;end \Hnewline
+    // upper triangular \Hnewline
+    x=solve(A,b,mode="up"); \Hnewline
+    if norm(triu(A)*x-b)> 1.e-12  then pause;end \Hnewline
+    // symetric \Hnewline
+    x=solve(A*A',b,mode="sym"); \Hnewline
+    if norm(A*A'*x-b)> 1.e-12 then pause;end \Hnewline
+    // least square \Hnewline
+    x=solve(A,b,mode="lsq"); \Hnewline
+    if norm(A*x-b)> 1.e-12 then pause;end \Hnewline
+    // symmetric positive definite \Hnewline
+    x=solve(A*A',b,mode="sympos"); \Hnewline
+    if norm(A*A'*x-b) > 1.e-12 then pause;end \Hnewline
+    b=rand(n,2);A=rand(n,n);\Hnewline
+    A= A + \%i*rand(n,n);\Hnewline
+    // symetric \Hnewline
+    x=solve(A*A.',b,mode="sym"); \Hnewline
+    if norm(A*A.'*x-b)> 1.e-12 then pause;end \Hnewline
+    // hermitian positive definite \Hnewline
+    x=solve(A*A',b,mode="sympos"); \Hnewline
+    if norm(A*A'*x-b) > 1.e-12 then pause;end \Hnewline
+  \end{program}
+\end{examples}
+
+% -- Authors
+\begin{authors}
+   interface by Jean-Philippe Chancelier and Bruno Pincon. Internal use of lapack 
+   routines described above.
+\end{authors}
