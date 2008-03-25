@@ -27,6 +27,7 @@ extern int nsp_expm(NspMatrix *A);
 extern NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond);
 extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond);
 extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
+extern int nsp_mat_bdiv_square_pos_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
 extern int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
 extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info);
 extern int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info);

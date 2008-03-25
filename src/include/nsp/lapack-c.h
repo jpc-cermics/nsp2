@@ -317,4 +317,11 @@ extern int C2F(dspadm)(int *ideg,int *m, double *t, double *H, int *ldh, double 
 extern int C2F(zgpadm)(int *ideg,int *m, double *t, doubleC *H, int *ldh, doubleC *wsp, int *lwsp, int *ipiv,int *iexph, int *ns, int *iflag);
 extern int C2F(zhpadm)(int *ideg,int *m, double *t, doubleC *H, int *ldh, doubleC *wsp, int *lwsp, int *ipiv,int *iexph, int *ns, int *iflag);
 
+extern int C2F(zsytrf)(char *uplo, int *n, doubleC *a, int *lda, int *ipiv, doubleC *work, int *lwork, int *info, int uplo_len);
+		      
+extern int C2F(zsycon)(char *uplo, int *n, doubleC *a, int *lda, int *ipiv, double *anorm, double *rcond, doubleC *work, int *info,int uplo_len);
+					    
+extern int C2F(zsytrs)(char *uplo, int *n, int *nrhs, doubleC *a, int *lda, int *ipiv, doubleC *b, int *ldb, int *info, int uplo_len);
+
+
 #endif

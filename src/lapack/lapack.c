@@ -4211,7 +4211,7 @@ int nsp_zgschur_discr_stable(const doubleC *alpha, const doubleC *beta)
  *  or hermitian positive definite matrix
  */
 
-int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
+int nsp_mat_bdiv_square_pos_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
 {
   int n=A->m, nrhs=B->n, rep = FAIL;  /* mA must be equal to nA */
   int *iwork=NULL, info;
@@ -4248,17 +4248,15 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
 	  Scierror("Eroor: the %d-th argument of [dz]potrf had an illegal value\n",-info);
 	  goto end;
 	}
+
       /* reciprocal of the condition number */
-      /*
       if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto end;
-      if ( (rwork = nsp_alloc_work_doubles(4*n)) == NULL ) goto end;      
-      C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
+      if ( (rwork = nsp_alloc_work_doubles(3*n)) == NULL ) goto end;      
+      C2F(dpocon) ("U", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
       if ( *rcond <=  tol_rcond ) 
 	{
 	  rep = OK; goto end;
 	}
-      */
-      *rcond =10* tol_rcond;
       C2F(dpotrs)("U",&n, &nrhs, A->R,&n, B->R, &n, &info, 1);
       rep =OK ; goto end;
     }
@@ -4266,20 +4264,24 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
     {
       anorm = C2F(zlange) ("1", &n, &n, A->C, &n, NULL, 1);
       C2F(zpotrf)("U", &n,A->C, &n, &info, 1L);
-      if ( info != 0 )  /* a pivot is exactly zero */
+      if (info != 0) 
 	{
-	  *rcond = 0.0;rep = OK; goto end;
+	  if (info > 0)
+	    {
+	      Scierror("Error: matrix is not positive definite (minor %d)\n",info); 
+	      *rcond = 0.0; rep = FAIL; goto end;
+	    }
+	  Scierror("Eroor: the %d-th argument of [dz]potrf had an illegal value\n",-info);
+	  goto end;
 	}
-      /* 
-      if ( (rwork = nsp_alloc_work_doubles(2*n)) == NULL ) goto end;      
+      /* reciprocal of the condition number */
+      if ( (rwork = nsp_alloc_work_doubles(n)) == NULL ) goto end;      
       if ( (cwork = nsp_alloc_work_doubleC(2*n)) == NULL ) goto end;
-
-      C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
+      C2F(zpocon) ("U", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
       if ( *rcond <= tol_rcond ) 
 	{
 	  rep =OK ; goto end;
 	}
-      */
       *rcond =10* tol_rcond;
       C2F(zpotrs)("U",&n, &nrhs, A->C,&n, B->C, &n, &info, 1);
       rep =OK ; goto end;
@@ -4288,5 +4290,88 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
  end:
   FREE(cwork); FREE(rwork); FREE(iwork);
   return rep;
+}
+
+/*  Ok. Sinon lapack a tout ce qu'il faut pour du symétrique indéfini :
+  dsytrf pour factoriser, dsycon pour rcond et dsytrs pour résoudre.
+ *
+ *
+ */
+
+int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
+{
+  int rep = FAIL, lwork;
+  int n=A->m, nrhs=B->n;  /* mA must be equal to nA */
+  int *ipiv=NULL, *iwork=NULL, info;
+  double anorm, *rwork=NULL,q_work;
+  doubleC *cwork=NULL;
+
+  /* rmk: - when B is complex while A is real, something better than complexify A can be done */
+  if ( A->rc_type == 'c' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if ( nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'c' ) 
+	{
+	  if ( nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	}
+    }
+
+  if ( (ipiv = nsp_alloc_work_int(n)) == NULL ) return FAIL;
+       
+  if ( A->rc_type == 'r' )
+    { 
+      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, NULL, 1);
+      lwork = -1;
+      C2F(dsytrf) ("U", &n, A->R, &n,ipiv,&q_work,&lwork,&info,1);
+      lwork =Max(2*n,q_work);
+      if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) goto end;
+      C2F(dsytrf) ("U", &n, A->R, &n,ipiv,rwork,&lwork,&info,1);
+      if ( info > 0 )  
+	{
+	  *rcond = 0.0; FREE(ipiv); return OK;
+	}
+      if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto end;
+      C2F(dsycon) ("U", &n, A->R, &n,ipiv, &anorm, rcond, rwork, iwork, &info, 1);
+      if ( *rcond <=  tol_rcond ) /* matrix is too badly conditionned */
+	{
+	  rep = OK ; goto end ;
+	}
+      
+      C2F(dsytrs) ("U", &n, &nrhs, A->R, &n, ipiv, B->R, &n, &info, 1);
+      rep = OK; goto end;
+    }
+  else
+    {
+      doubleC q_cwork;
+      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, NULL, 1);
+      lwork = -1;
+      C2F(zsytrf) ("U", &n, A->C, &n,ipiv,&q_cwork,&lwork,&info,1);
+      lwork = q_cwork.r;
+      lwork =Max(2*n,lwork);
+      if ( (cwork = nsp_alloc_work_doubleC(lwork)) == NULL ) goto end;
+      C2F(zsytrf) ("U", &n, A->C, &n,ipiv,cwork,&lwork,&info,1);
+      if ( info > 0 ) 
+	{ 
+	  *rcond = 0.0; FREE(ipiv); return OK;
+	}
+      C2F(zsycon) ("U", &n, A->C, &n,ipiv, &anorm, rcond, cwork, &info, 1);
+      if ( *rcond <= tol_rcond )  /* matrix is too badly conditionned */
+	{
+	  rep = OK; goto end;
+	}
+      C2F(zsytrs) ("U", &n, &nrhs, A->C, &n, ipiv, B->C, &n, &info, 1);
+      rep = OK ; goto end;
+    }
+
+ end: 
+  FREE(cwork); FREE(rwork); FREE(iwork); FREE(ipiv); 
+  return rep;
+
 }
 

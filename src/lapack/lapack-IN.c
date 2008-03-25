@@ -981,7 +981,7 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
 static int int_solve( Stack stack, int rhs, int opt, int lhs)
 {
   char *mode=NULL;
-  char *types[]={ "std","sym", "lo", "up", "lsq", "\\",  NULL};
+  char *types[]={ "std","sym", "lo", "up", "lsq", "\\", "sympos", NULL};
   NspMatrix *A,*B,*C=NULLMAT,*Ac=NULLMAT;
   double  tol_rcond,rcond;
   int rep=5,stat,info;
@@ -1066,7 +1066,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
-  case 3:
+  case 3: /* up */
     if ( nsp_mat_bdiv_triangular(A, C, 'u' , &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1074,14 +1074,29 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
-  case 4: 
+  case 4: /* least square */
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat=  nsp_mat_bdiv_lsq(Ac,C, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
     if ( stat == FAIL ) goto err;
-  case 5: 
-    /* default case like bdiv */
+  case 5:  /* like \ */
     if ((C = nsp_matrix_bdiv(A,B, tol_rcond)) == NULLMAT) goto err;
+    break;
+  case 6: 
+    /* symmetric positive definite */
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
+      {
+	nsp_matrix_destroy(C);
+	return RET_BUG;
+      }
+    stat =  nsp_mat_bdiv_square_pos_symmetric(Ac,C, &rcond, tol_rcond);
+    nsp_matrix_destroy(Ac);Ac=NULLMAT;
+    if ( stat == FAIL ) goto err;
+    else if ( rcond <= tol_rcond )
+      {
+	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	goto err;
+      }
     break;
   }
   
