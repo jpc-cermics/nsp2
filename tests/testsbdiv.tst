@@ -6,10 +6,6 @@
 
 eps_bdiv= 1.e-12;
 
-function [b] = isreal(A)  // needed for the test but still not in nsp
-   b = and(imag(A) == 0)
-endfunction
-
 function [st] = subtype(A)
    if isreal(A) then st = "real", else, st = "cmplx", end
 endfunction
@@ -80,7 +76,7 @@ num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-//Small dimensions complex
+//Large dimensions complex
 b=rand(n,2)+%i;A=rand(n,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
@@ -92,6 +88,34 @@ num_test = num_test + 1;
 if err > eps_bdiv then pause;end
 
 b=rand(n,2)+%i;A=rand(n,n)+%i;
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+
+// banded case
+
+// A and b real
+n=50;
+b=rand(n,2);A=tril(triu(rand(n,n),-2),2);
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+// A real, b complex
+b= b + rand(n,2);
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+// A complex, b complex
+A=A+%i*tril(triu(rand(n,n),-2),2);
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+// A complex, b real
+b=rand(n,2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
