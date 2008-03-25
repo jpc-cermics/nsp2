@@ -1,3 +1,10 @@
+2008-03-25  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/lapack/lapack.c: add the symmmetric and positive 
+	definite symmetric cases to bdiv. 
+	* src/lapack/lapack-IN.c: add interface for solve 
+	which uses the different bdiv functions. man added 
+		
 2008-03-25  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/lapack/lapack.c (nsp_mat_bdiv_banded): 
