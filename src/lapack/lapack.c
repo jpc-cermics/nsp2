@@ -4249,6 +4249,7 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
 	  goto end;
 	}
       /* reciprocal of the condition number */
+      /*
       if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto end;
       if ( (rwork = nsp_alloc_work_doubles(4*n)) == NULL ) goto end;      
       C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
@@ -4256,6 +4257,8 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
 	{
 	  rep = OK; goto end;
 	}
+      */
+      *rcond =10* tol_rcond;
       C2F(dpotrs)("U",&n, &nrhs, A->R,&n, B->R, &n, &info, 1);
       rep =OK ; goto end;
     }
@@ -4267,14 +4270,17 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
 	{
 	  *rcond = 0.0;rep = OK; goto end;
 	}
+      /* 
       if ( (rwork = nsp_alloc_work_doubles(2*n)) == NULL ) goto end;      
       if ( (cwork = nsp_alloc_work_doubleC(2*n)) == NULL ) goto end;
 
       C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
-      if ( *rcond <= tol_rcond )  /* matrix is too badly conditionned */
+      if ( *rcond <= tol_rcond ) 
 	{
 	  rep =OK ; goto end;
 	}
+      */
+      *rcond =10* tol_rcond;
       C2F(zpotrs)("U",&n, &nrhs, A->C,&n, B->C, &n, &info, 1);
       rep =OK ; goto end;
     }
