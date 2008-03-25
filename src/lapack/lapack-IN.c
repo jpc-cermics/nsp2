@@ -624,16 +624,58 @@ static int int_expm( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for nsp_solve_banded: 
+ * interface for nsp_solve_banded: [x,rcA] = solve_banded(A,b,bandwidths=[kl,ku])
  */
 static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B, *X;
-  int_types T[] = {mat, mat,t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL ) return RET_BUG;
-  CheckLhs(0,1);
-  if ( nsp_solve_banded(A, B, &X)== FAIL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(X));
+  NspMatrix *A, *B, *kb=NULLMAT;
+  double rcond;
+
+  nsp_option opts[] ={{ "bandwidths",realmat,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int_types T[] = {mat, matcopy, new_opts, t_end} ;
+  int info, kl, ku;
+
+  if ( GetArgs(stack,rhs,opt,T,&A,&B,&opts,&kb) == FAIL ) return RET_BUG;
+  CheckLhs(0,2);
+
+  if ( kb != NULLMAT )
+    {
+      if ( kb->mn != 2 )
+	{
+	  Scierror("%s: optional arg bandwiths must have 2 components\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      kl = (int) kb->R[0]; ku = (int) kb->R[1];
+      if ( kl < 0  ||  ku < 0 )
+	{
+	  Scierror("%s: bandwidths should not be negative\n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      kl = ku = A->m/2;
+    }
+	  
+  if ( nsp_mat_bdiv_banded(A, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
+    return RET_BUG;
+
+  if ( info > 0 )
+    {
+      Scierror("%s: matrix is singular\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if (  rcond <= A->n*nsp_dlamch("eps") )
+    Sciprintf("Warning: matrix is badly conditionned, solution is dubtious\n");
+
+  NSP_OBJECT(B)->ret_pos=1;
+
+  if ( lhs == 2 )
+    if ( nsp_move_double(stack,2,rcond) == FAIL ) 
+      return RET_BUG;
+
   return Max(lhs,1);
 }
 
