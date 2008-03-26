@@ -283,7 +283,7 @@ NspUmfpack   *nsp_umfpack_object(NspObject *O)
   /* Check type */
   if ( check_cast (O,nsp_type_umfpack_id) == TRUE ) return ((NspUmfpack *) O);
   else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_umfpack));
+    Scierror("Error: Argument should be a %s\n",type_get_name(nsp_type_umfpack));
   return NULL;
 }
 
@@ -571,7 +571,7 @@ the_end:
  * B is unchanged 
  */
 
-NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irstep)
+static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irstep, int flag)
 {
   double Control[UMFPACK_CONTROL], *dControl=NULL;
   double *Info = NULL;
@@ -587,14 +587,16 @@ NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irste
   
   if ( T.m != T.n )
     {
-      Scierror("Error: only square systems are handle\n");
+      Scierror("Error: the given linear system is not square (%d,%d)\n",T.m,T.n);
       return rep;
     };
 
   if ( B->m != T.m || B->n < 1 )
     {
-      Scierror("Error: first argument to method has wrong dimensions (%d,%d)\n",
-	       B->m,B->n);
+      if ( flag == TRUE ) 
+	Scierror("Error: first argument of method solve has wrong dimensions (%d,%d)\n", B->m,B->n);
+      else 
+	Scierror("Error: incompatible arguments, B has wrong dimensions (%d,%d)\n", B->m,B->n);
       return rep;
     };
   if ( B->rc_type  == 'c')
@@ -711,7 +713,7 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
       return RET_BUG;
     }
   if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((X = nsp_umfpack_solve(self,B, imode , irstep))== NULLMAT) return RET_BUG;
+  if ((X = nsp_umfpack_solve(self,B, imode , irstep, TRUE))== NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(X));
   return 1;
 }
@@ -932,7 +934,7 @@ static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
     {
       if ( nsp_umfpack_solve_mode(stack,mode,&imode) == FAIL) return RET_BUG;
     }
-  if ((X = nsp_umfpack_solve(H,B,imode,irstep))== NULLMAT) goto err;
+  if ((X = nsp_umfpack_solve(H,B,imode,irstep,FALSE))== NULLMAT) goto err;
   MoveObj(stack,1,NSP_OBJECT(X));
   rep =1;
  err:
