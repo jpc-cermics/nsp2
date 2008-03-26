@@ -323,5 +323,5 @@ extern int C2F(zsycon)(char *uplo, int *n, doubleC *a, int *lda, int *ipiv, doub
 					    
 extern int C2F(zsytrs)(char *uplo, int *n, int *nrhs, doubleC *a, int *lda, int *ipiv, doubleC *b, int *ldb, int *info, int uplo_len);
 		      
-extern int C2F(zpocon)(char *uplo, int *n, doubleC a, int *lda, double *anorm, double *rcond, doubleC *work, double *rwork, int *info, int uplo_len)
+extern int C2F(zpocon)(char *uplo, int *n, doubleC *a, int *lda, double *anorm, double *rcond, doubleC *work, double *rwork, int *info, int uplo_len);
 #endif
