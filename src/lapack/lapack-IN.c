@@ -1011,7 +1011,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( get_optional_args(stack,rhs,opt,opts,&mode) == FAIL) 
+  if ( get_optional_args(stack,rhs,opt,opts,&mode,&tol_rcond) == FAIL) 
     goto err;
 
   if ( opts[1].obj == NULLOBJ) 
