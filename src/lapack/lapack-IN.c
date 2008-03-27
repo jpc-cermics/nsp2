@@ -643,7 +643,7 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
     {
       if ( kb->mn != 2 )
 	{
-	  Scierror("%s: optional arg bandwiths must have 2 components\n", NspFname(stack));
+	  Scierror("%s: optional arg bandwidths must have 2 components\n", NspFname(stack));
 	  return RET_BUG;
 	}
       kl = (int) kb->R[0]; ku = (int) kb->R[1];
