@@ -1161,14 +1161,14 @@ UFSPARSE_LIB=
 builtin(include,config/ac_find_file.m4)
 builtin(include,config/ac_check_umfpack.m4)
 AC_CHECK_AMD()
-if test "xx$amd_libs" != "xx" ; then
+if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
    AC_MSG_RESULT([using "$amd_libs" for amd libraries])
    AC_MSG_RESULT([using "-I${amd_includedir}" for amd includes])
 fi
 
-if test "xx$amd_libs" != "xx" ; then
+if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
   AC_CHECK_UMFPACK()
-  if test "xx$umfpack_libs" != "xx" ; then
+  if test "xx$umfpack_libs" != "xx" -a "x${umfpack_includedir}" != "xNO"; then
    AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
    UMFPACK_LIBS=$umfpack_libs
@@ -1185,14 +1185,14 @@ fi
 
 builtin(include,config/ac_check_cholmod.m4)
 AC_CHECK_COLAMD()
-if test "xx$colamd_libs" != "xx" ; then
+if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
    AC_MSG_RESULT([using "$colamd_libs" for colamd libraries])
    AC_MSG_RESULT([using "-I${colamd_includedir}" for colamd includes])
 fi
 
-if test "xx$colamd_libs" != "xx" ; then
+if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
   AC_CHECK_CHOLMOD()
-  if test "xx$cholmod_libs" != "xx" ; then
+  if test "xx$cholmod_libs" != "xx"  -a "x${cholmod_includedir}" != "xNO" ; then
    AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
    AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
    CHOLMOD_LIBS=$cholmod_libs

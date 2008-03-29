@@ -27,7 +27,7 @@ AC_DEFUN([AC_CHECK_COLAMD],
  # check colamd includes 
  #-------------------
  AC_MSG_CHECKING([for colamd include file directory])
- ac_colamd_includedirs=" /usr/include/colamd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/colamd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+ ac_colamd_includedirs="/usr/include/suitesparse /usr/include/colamd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/colamd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("colamd.h", $ac_colamd_includedirs,colamd_includedir)
  if test "x${colamd_includedir}" != "x" -a "x${colamd_includedir}" != "xNO"; then
   CPPFLAGS="-I${colamd_includedir} ${CPPFLAGS}"
@@ -80,7 +80,7 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  # check cholmod includes 
  #-------------------
  AC_MSG_CHECKING([for cholmod include file directory])
- ac_umf_includedirs="/usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+ ac_umf_includedirs=" /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("cholmod.h", $ac_umf_includedirs, cholmod_includedir)
  if test "x${cholmod_includedir}" != "x" -a "x${cholmod_includedir}" != "xNO"; then
     if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 

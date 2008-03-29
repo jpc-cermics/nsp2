@@ -31,6 +31,9 @@ AC_DEFUN([AC_CHECK_AMD],
  AC_MSG_CHECKING([for amd include file directory])
  ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("amd.h", $ac_amd_includedirs, amd_includedir)
+ if test "x${amd_includedir}" != "xNO"; then
+  CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
+ fi 
  if test "x${amd_includedir}" != "x" -a "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
  fi
