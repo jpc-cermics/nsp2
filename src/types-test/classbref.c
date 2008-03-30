@@ -442,6 +442,33 @@ NspClassBRef *nsp_classbref_copy(NspClassBRef *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspClassBRef *nsp_classbref_full_copy_partial(NspClassBRef *H,NspClassBRef *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_classbref))) == NULL) return NULLCLASSBREF;
+  H->obj->ref_count=1;
+  H->obj->clb_color=self->obj->clb_color;
+  H->obj->clb_thickness=self->obj->clb_thickness;
+  if ( self->obj->clb_val == NULL )
+    { H->obj->clb_val = NULL;}
+  else
+    {
+      if ((H->obj->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->obj->clb_val))) == NULLMAT) return NULL;
+    }
+  return H;
+}
+
+NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
+{
+  NspClassBRef *H  =nsp_classbref_create_void(NVOID,(NspTypeBase *) nsp_type_classbref);
+  if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
+  if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
+  if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the ClassBRef
@@ -472,7 +499,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 476 "classbref.c"
+#line 503 "classbref.c"
 
 
 #line 29 "classbref.override"
@@ -483,7 +510,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 487 "classbref.c"
+#line 514 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -606,9 +633,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 610 "classbref.c"
+#line 637 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 615 "classbref.c"
+#line 642 "classbref.c"

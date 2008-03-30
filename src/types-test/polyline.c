@@ -96,8 +96,9 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
 
-#line 101 "polyline.c"
+#line 102 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -453,6 +454,32 @@ NspPolyline *nsp_polyline_copy(NspPolyline *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspPolyline *nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_polyline))) == NULL) return NULLPOLYLINE;
+  H->obj->ref_count=1;
+  H->obj->color=self->obj->color;
+  if ( self->obj->Pts == NULL )
+    { H->obj->Pts = NULL;}
+  else
+    {
+      if ((H->obj->Pts = (NspMatrix *) nsp_object_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
+    }
+  return H;
+}
+
+NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
+{
+  NspPolyline *H  =nsp_polyline_create_void(NVOID,(NspTypeBase *) nsp_type_polyline);
+  if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
+  if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the Polyline
@@ -474,7 +501,22 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *polyline_get_methods(void) { return NULL;};
+static int _wrap_nsp_polyline_full_copy(NspPolyline *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *ret;
+
+  ret = nsp_polyline_full_copy(self);
+  if (ret == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+
+static NspMethods polyline_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_polyline_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *polyline_get_methods(void) { return polyline_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -496,7 +538,7 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 50 "polyline.override"
+#line 51 "polyline.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -527,7 +569,7 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 531 "polyline.c"
+#line 573 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -558,7 +600,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 37 "polyline.override"
+#line 38 "polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -570,7 +612,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 574 "polyline.c"
+#line 616 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -609,12 +651,12 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 613 "polyline.c"
+#line 655 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 82 "polyline.override"
+#line 83 "polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -696,4 +738,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 700 "polyline.c"
+#line 742 "polyline.c"

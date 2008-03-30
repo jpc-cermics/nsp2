@@ -76,6 +76,8 @@ extern NspPolyline *GetPolyline (Stack stack, int i);
 extern int nsp_polyline_create_partial(NspPolyline *H);
 extern void nsp_polyline_destroy_partial(NspPolyline *H);
 extern NspPolyline * nsp_polyline_copy_partial(NspPolyline *H,NspPolyline *self);
+extern NspPolyline * nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self);
+extern NspPolyline * nsp_polyline_full_copy(NspPolyline *self);
 extern int nsp_polyline_check_values(NspPolyline *H);
 extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspPolyline *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M);

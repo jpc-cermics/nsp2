@@ -2,8 +2,6 @@
 
 (include "polyline-types.defs")
 
-
-
 ;; overriden 
 
 (define-function polyline_attach
@@ -13,5 +11,13 @@
     '("int" "x")
   )
 )
+
+(define-method full_copy 
+  (of-object "Polyline")
+  (c-name "nsp_polyline_full_copy")
+  (return-type "NspObject*")
+  ;; (return-type "Polyline")
+)
+
 
 

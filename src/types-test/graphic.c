@@ -403,6 +403,25 @@ NspGraphic *nsp_graphic_copy(NspGraphic *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspGraphic *nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_graphic))) == NULL) return NULLGRAPHIC;
+  H->obj->ref_count=1;
+  H->obj->color=self->obj->color;
+  return H;
+}
+
+NspGraphic *nsp_graphic_full_copy(NspGraphic *self)
+{
+  NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
+  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
+  if ( nsp_graphic_full_copy_partial(H,self)== NULL) return NULLGRAPHIC;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the Graphic
@@ -424,7 +443,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 38 "graphic.override"
+#line 40 "graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -438,10 +457,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 442 "graphic.c"
+#line 461 "graphic.c"
 
 
-#line 53 "graphic.override"
+#line 55 "graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -453,10 +472,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 457 "graphic.c"
+#line 476 "graphic.c"
 
 
-#line 66 "graphic.override"
+#line 68 "graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -467,7 +486,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 471 "graphic.c"
+#line 490 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -543,15 +562,15 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 547 "graphic.c"
+#line 566 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 78 "graphic.override"
+#line 80 "graphic.override"
 
 /* verbatim at the end */
 
 
 
-#line 558 "graphic.c"
+#line 577 "graphic.c"

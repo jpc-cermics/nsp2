@@ -477,6 +477,36 @@ NspCurve *nsp_curve_copy(NspCurve *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspCurve *nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_curve))) == NULL) return NULLCURVE;
+  H->obj->ref_count=1;
+  H->obj->color=self->obj->color;
+  H->obj->mark=self->obj->mark;
+  H->obj->width=self->obj->width;
+  H->obj->style=self->obj->style;
+  H->obj->mode=self->obj->mode;
+  if ( self->obj->Pts == NULL )
+    { H->obj->Pts = NULL;}
+  else
+    {
+      if ((H->obj->Pts = (NspMatrix *) nsp_object_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
+    }
+  return H;
+}
+
+NspCurve *nsp_curve_full_copy(NspCurve *self)
+{
+  NspCurve *H  =nsp_curve_create_void(NVOID,(NspTypeBase *) nsp_type_curve);
+  if ( H ==  NULLCURVE) return NULLCURVE;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCURVE;
+  if ( nsp_curve_full_copy_partial(H,self)== NULL) return NULLCURVE;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the Curve
@@ -586,7 +616,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 590 "curve.c"
+#line 620 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -626,7 +656,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 630 "curve.c"
+#line 660 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -673,7 +703,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 677 "curve.c"
+#line 707 "curve.c"
 
 
 /*----------------------------------------------------
@@ -712,7 +742,7 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 716 "curve.c"
+#line 746 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -872,4 +902,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 876 "curve.c"
+#line 906 "curve.c"

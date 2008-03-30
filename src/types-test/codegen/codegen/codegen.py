@@ -476,6 +476,8 @@ class Wrapper:
                 'extern int nsp_%(typename_dc)s_create_partial(Nsp%(typename)s *H);\n' \
                 'extern void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H);\n' \
                 'extern Nsp%(typename)s * nsp_%(typename_dc)s_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
+                'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
+                'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self);\n' \
                 'extern int nsp_%(typename_dc)s_check_values(Nsp%(typename)s *H);\n' \
                 'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
                 'extern Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M);\n' \
@@ -632,8 +634,12 @@ class Wrapper:
                 self.fp.write('  %s =  (NspTypeBase *) new_type_%s(T_DERIVED);\n' % (ti,string.lower(interf)));
                 ti = ti + '->interface'
         # insert fields related code in subst dictionary
+        # fields_copy: used in create function 
         substdict['fields_copy'] = self.build_copy_fields('H','')
+        # fields_copy: used in copy function 
         substdict['fields_copy_self'] = self.build_copy_fields('H','self')
+        # fields_copy: used in full copy function 
+        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self')
         substdict['fields_list'] = self.build_list_fields('')
         substdict['fields_call'] = self.build_list_fields('call')
         substdict['fields_save'] = self.build_save_fields('M')
@@ -648,6 +654,7 @@ class Wrapper:
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
         substdict['copy_partial'] = self.build_copy_partial('H')
+        substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
         substdict['fields'] = self.build_fields()
         # methods to be inserted in the class declaration 
         substdict['internal_methods'] = self.build_internal_methods()
@@ -761,18 +768,19 @@ class Wrapper:
     def build_copy_fields(self,left_varname,right_varname):
         # used in copy function and in create function 
         # when right_varname == 'self' we are in copy
+        # if full is 't' then we make a full copy even if we are in
+        # 'self' mode 
         lower_name = self.get_lower_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if self.byref == 't':
             if right_varname == 'self':
-                # used in nsp_type_copy function 
                 str = '  H->obj = self->obj; self->obj->ref_count++;\n' 
                 return str
             else:
                 # used in type_create functions
                 left_varname = left_varname + '->obj' 
-                str = '  if ((H->obj = malloc(sizeof(nsp_%s))) == NULL) return NULL;\n' \
+                str = '  if ((H->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' \
                       '  H->obj->ref_count=1;\n' % (lower_name)
                 str = '  if ( nsp_%s_create_partial(H) == FAIL) return NULL%s;\n' % (lower_name,string.upper(lower_name)) 
 
@@ -785,6 +793,31 @@ class Wrapper:
         return str
 
 
+    def build_fields_full_copy_partial_code(self,substdic, left_varname,right_varname):
+        # generate a full_copy_partial function which is useful 
+        # for full_copy of byref objects.
+        lower_name = self.get_lower_name()
+        if self.byref != 't':
+            return ''
+        right_varname = right_varname + '->obj'
+        # no overrides for the whole function.  If no fields, don't write a func
+        str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self)\n' \
+            '{\n'  % substdic 
+
+        if self.byref == 't':
+            # used in type_create functions
+            left_varname = left_varname + '->obj' 
+            str = str + '  if ((H->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL%s;\n' \
+                '  H->obj->ref_count=1;\n' % (lower_name,string.upper(lower_name))
+
+        if self.objinfo.fields:
+            for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
+                handler = argtypes.matcher.get(ftype)
+                str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref,pdef,psize,pcheck)
+        str = str + '  return H;\n' \
+            '}\n\n'  
+        return str
+
     def build_save_fields(self,varname):
         lower_name = self.get_lower_name()
         # no overrides for the whole function.  If no fields, don't write a func
@@ -796,7 +829,8 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_save( fname,varname,self.byref, pdef , psize, pcheck)
+            if opt != 'hidden' :
+                str = str + handler.attr_write_save( fname,varname,self.byref, pdef , psize, pcheck)
         father = self.objinfo.parent
         if father != 'Object':
             str = str + '  if ( nsp_%s_xdr_save(xdrs, (Nsp%s *) M)== FAIL) return FAIL;\n' % (string.lower(father),father)
@@ -867,7 +901,8 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_load( fname,varname,self.byref, pdef, psize, pcheck)
+            if opt != 'hidden' :
+                str = str + handler.attr_write_load( fname,varname,self.byref, pdef, psize, pcheck)
 
         if father != 'Object':
             str = str + '  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;\n'
@@ -953,8 +988,8 @@ class Wrapper:
         return str
 
     def build_copy_partial(self,varname):
-        lower_name = self.get_lower_name()
         # no overrides for the whole function.  If no fields, don't write a func
+        lower_name = self.get_lower_name()
         str = '' 
         father = self.objinfo.parent
         if father != 'Object':
@@ -962,6 +997,31 @@ class Wrapper:
                 % (string.lower(father),father,father,string.upper(lower_name))
         str = str + '  if ( nsp_%s_copy_partial(H,self)== NULL) return NULL%s;\n' \
             % (lower_name,string.upper(lower_name)) 
+        return str
+
+
+    def build_full_copy_code(self,substdict,varname):
+        # no overrides for the whole function.  If no fields, don't write a func
+        # This function generates the code for full_copy of an object 
+        if self.byref != 't' :
+            # here full_copy is just a copy 
+            str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
+                '{\n'  \
+                '  return nsp_%(typename_dc)s_copy(self);\n' \
+                '}\n' % substdict 
+            return str 
+        str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
+            '{\n'  \
+            '  Nsp%(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
+            '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' % substdict 
+        lower_name = self.get_lower_name()
+        father = self.objinfo.parent
+        if father != 'Object':
+            str = str + '  if ( nsp_%s_full_copy_partial((Nsp%s *) H,(Nsp%s *) self ) == NULL) return NULL%s;\n' \
+                % (string.lower(father),father,father,string.upper(lower_name))
+        str = str + '  if ( nsp_%s_full_copy_partial(H,self)== NULL) return NULL%s;\n' \
+            % (lower_name,string.upper(lower_name)) 
+        str = str + '  return H;\n' + '}\n' 
         return str
 
     def build_equal_fields(self,varname):
@@ -1430,6 +1490,12 @@ class NspObjectWrapper(Wrapper):
         '%(copy_partial)s\n' \
         '  return H;\n' \
         '}\n'  \
+        '/*\n'  \
+        ' * full copy for gobject derived class  \n'  \
+        ' */\n'  \
+        '\n'  \
+        '%(fields_full_copy_partial_code)s' \
+        '%(full_copy_code)s'\
         '\n'  \
         '/*-------------------------------------------------------------------\n'  \
         ' * wrappers for the %(typename)s\n'  \
@@ -1515,157 +1581,6 @@ class NspInterfaceWrapper(NspObjectWrapper):
         self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
         return '0'
 
-    
-
-class GBoxedWrapper(Wrapper):
-    constructor_tmpl = \
-        'static int\n' \
-        '_wrap_%(typename_dc)s_new(Stack stack, int rhs, int opt, int lhs)\n' \
-        '{\n' \
-        '%(varlist)s' \
-        '  GObject *ret; NspObject *nsp_ret;\n' \
-        '%(parseargs)s' \
-        '%(codebefore)s' \
-        '  if ((ret = (GObject *)%(cname)s(%(arglist)s))== NULL) return RET_BUG;\n' \
-        '%(codeafter)s\n' \
-        '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n' \
-        '  nsp_ret = (NspObject *) gboxed_create(NVOID,%(typecode)s, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
-        '  if ( nsp_ret == NULL) return RET_BUG;\n' \
-        '  MoveObj(stack,1,nsp_ret);\n' \
-        '  return 1;\n' \
-        '}\n\n'
-
-    method_tmpl = \
-        'static int _wrap_%(cname)s(Nsp%(typename)s *self,Stack stack,int rhs,int opt,int lhs)\n'\
-        '{\n' \
-        '%(varlist)s' \
-        '%(parseargs)s' \
-        '%(codebefore)s' \
-        '  %(setreturn)s%(cname)s(NSP_GBOXED_GET(self, %(typename)s)%(arglist)s);\n' \
-        '%(codeafter)s\n' \
-        '}\n\n'
-
-    type_tmpl_copy = \
-              '/*\n'  \
-              ' * copy for boxed \n'  \
-              ' */\n'  \
-              '\n'  \
-              'Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *self)\n'  \
-              '{\n'  \
-              '  return %(parent_dc)s_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,\n' \
-              '                              (NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
-              '}\n'  \
-              '\n'  \
-              '/*-------------------------------------------------------------------\n'  \
-              ' * wrappers for the %(typename)s\n'  \
-              ' * i.e functions at Nsp level \n'  \
-              ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  \
-              '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
-              '{\n'  \
-              '  Nsp%(typename)s *H;\n'  \
-              '  CheckRhs(0,0);\n'  \
-              '  /* want to be sure that type %(typename_dc)s is initialized */\n'  \
-              '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
-              '  if(( H = %(parent_dc)s_create(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s)) == NULL%(typename_uc)s) return RET_BUG;\n'  \
-              '  MoveObj(stack,1,(NspObject  *) H);\n'  \
-              '  return 1;\n'  \
-              '} \n'  \
-              '\n'
-
-
-    def get_initial_class_substdict(self):
-        return {'interface_1' : 'check_cast',
-                'interface_2' : 'nsp_object_type',
-                'tp_basicsize'      : 'PyGBoxed',
-                'tp_weaklistoffset' : '0',
-                'tp_dictoffset'     : '0' }
-
-    def get_field_accessor(self, fieldname, fieldtype):
-        return 'NSP_GBOXED_GET(self, %s)->%s' % (self.objinfo.c_name, fieldname)
-
-    def get_initial_constructor_substdict(self):
-        substdict = Wrapper.get_initial_constructor_substdict(self)
-        typename = self.objinfo.c_name 
-        substdict['typename'] =  typename
-        substdict['typename_dc'] = string.lower(typename)
-        substdict['typecode'] = self.objinfo.typecode
-        return substdict
-
-
-class GPointerWrapper(GBoxedWrapper):
-
-    constructor_tmpl = \
-        'static int\n' \
-        '_wrap_%(cname)s(PyGPointer *self%(extraparams)s)\n' \
-        '{\n' \
-        '%(varlist)s' \
-        '%(parseargs)s' \
-        '%(codebefore)s' \
-        '    self->gtype = %(typecode)s;\n' \
-        '    self->pointer = %(cname)s(%(arglist)s);\n' \
-        '%(codeafter)s\n' \
-        '    if (!self->pointer) {\n' \
-        '        PyErr_SetString(PyExc_RuntimeError, "could not create %(typename)s object");\n' \
-        '        return -1;\n' \
-        '    }\n' \
-        '    return 0;\n' \
-        '}\n\n'
-
-    type_tmpl_copy = \
-                   '/*\n'  \
-                   ' * copy for gpointer  \n'  \
-                   ' */\n'  \
-                   '\n'  \
-                   'Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *self)\n'  \
-                   '{\n'  \
-                   '  return %(parent_dc)s_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed,\n' \
-                   '                              (NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
-                   '}\n'  \
-                   '\n'  \
-                   '/*-------------------------------------------------------------------\n'  \
-                   ' * wrappers for the %(typename)s\n'  \
-                   ' * i.e functions at Nsp level \n'  \
-                   ' *-------------------------------------------------------------------*/\n'  \
-                   '\n'  \
-                   '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
-                   '{\n'  \
-                   '  Nsp%(typename)s *H;\n'  \
-                   '  CheckRhs(0,0);\n'  \
-                   '  /* want to be sure that type %(typename_dc)s is initialized */\n'  \
-                   '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
-                   '  if(( H = %(parent_dc)s_create(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s)) == NULL%(typename_uc)s) return RET_BUG;\n'  \
-                   '  MoveObj(stack,1,(NspObject  *) H);\n'  \
-                   '  return 1;\n'  \
-                   '} \n*/ \n'  \
-                   '\n'
-
-
-
-    method_tmpl = \
-        'static int _wrap_%(cname)s(Nsp%(typename)s *self,Stack stack,int rhs,int opt,int lhs)\n'\
-        '{\n' \
-        '%(varlist)s' \
-        '%(parseargs)s' \
-        '%(codebefore)s' \
-        '  %(setreturn)s%(cname)s(nspg_pointer_get(self, %(typename)s)%(arglist)s);\n' \
-        '%(codeafter)s\n' \
-        '}\n\n'
-
-    def get_initial_class_substdict(self):
-        return {'interface_1' : 'check_cast',
-                'interface_2' : 'nsp_object_type',
-                'tp_basicsize'      : 'PyGPointer',
-                'tp_weaklistoffset' : '0',
-                'tp_dictoffset'     : '0' }
-
-    def get_field_accessor(self, fieldname, fieldtype):
-        return 'nspg_pointer_get(self, %s)->%s' % (self.objinfo.c_name, fieldname)
-
-    def get_initial_constructor_substdict(self):
-        substdict = Wrapper.get_initial_constructor_substdict(self)
-        substdict['typecode'] = self.objinfo.typecode
-        return substdict
 
 def write_enums(parser, prefix, fp=sys.stdout):
     if not parser.enums:
@@ -1709,24 +1624,6 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     # used to collect constructors 
     functions =[]
     
-    for boxed in parser.boxes:
-        wrapper = GBoxedWrapper(parser, boxed, overrides, fp)
-        wrapper.write_class()
-        constructor = wrapper.constructor_func
-        if constructor != '':
-            functions.append(wrapper.funcdef_tmpl %
-                             { 'name':  constructor,
-                               'cname': '_wrap_' + constructor })
-        fp.write('\n')
-    for pointer in parser.pointers:
-        wrapper = GPointerWrapper(parser, pointer, overrides, fp)
-        wrapper.write_class()
-        constructor = wrapper.constructor_func
-        if constructor != '':
-            functions.append(wrapper.funcdef_tmpl %
-                             { 'name':  constructor,
-                               'cname': '_wrap_' + constructor })
-        fp.write('\n')
     for interface in parser.interfaces:
         wrapper = NspInterfaceWrapper(parser, interface, overrides, fp)
         wrapper.write_class()

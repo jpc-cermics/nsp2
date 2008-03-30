@@ -228,7 +228,6 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->bounds)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->arect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
@@ -248,7 +247,6 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
-  if ((M->obj->bounds =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->arect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
@@ -550,6 +548,57 @@ NspAxes *nsp_axes_copy(NspAxes *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_axes))) == NULL) return NULLAXES;
+  H->obj->ref_count=1;
+  if ( self->obj->wrect == NULL )
+    { H->obj->wrect = NULL;}
+  else
+    {
+      if ((H->obj->wrect = (NspMatrix *) nsp_object_copy_and_name("wrect",NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
+    }
+  H->obj->alpha=self->obj->alpha;
+  H->obj->top=self->obj->top;
+  if ( self->obj->bounds == NULL )
+    { H->obj->bounds = NULL;}
+  else
+    {
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->arect == NULL )
+    { H->obj->arect = NULL;}
+  else
+    {
+      if ((H->obj->arect = (NspMatrix *) nsp_object_copy_and_name("arect",NSP_OBJECT(self->obj->arect))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->frect == NULL )
+    { H->obj->frect = NULL;}
+  else
+    {
+      if ((H->obj->frect = (NspMatrix *) nsp_object_copy_and_name("frect",NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->children == NULL )
+    { H->obj->children = NULL;}
+  else
+    {
+      if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+    }
+  return H;
+}
+
+NspAxes *nsp_axes_full_copy(NspAxes *self)
+{
+  NspAxes *H  =nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes);
+  if ( H ==  NULLAXES) return NULLAXES;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
+  if ( nsp_axes_full_copy_partial(H,self)== NULL) return NULLAXES;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the Axes
@@ -618,7 +667,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 622 "axes.c"
+#line 671 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -746,7 +795,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 750 "axes.c"
+#line 799 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -793,7 +842,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 797 "axes.c"
+#line 846 "axes.c"
 
 
 /*----------------------------------------------------
@@ -832,7 +881,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 836 "axes.c"
+#line 885 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1142,4 +1191,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1146 "axes.c"
+#line 1195 "axes.c"

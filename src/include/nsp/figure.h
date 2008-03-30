@@ -82,6 +82,8 @@ extern NspFigure *GetFigure (Stack stack, int i);
 extern int nsp_figure_create_partial(NspFigure *H);
 extern void nsp_figure_destroy_partial(NspFigure *H);
 extern NspFigure * nsp_figure_copy_partial(NspFigure *H,NspFigure *self);
+extern NspFigure * nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self);
+extern NspFigure * nsp_figure_full_copy(NspFigure *self);
 extern int nsp_figure_check_values(NspFigure *H);
 extern int int_figure_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspFigure *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M);

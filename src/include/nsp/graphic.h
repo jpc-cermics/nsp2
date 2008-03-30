@@ -19,13 +19,14 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 29 "graphic.override"
+#line 30 "graphic.override"
 
-typedef void draw_func(BCG *Xgc,NspGraphic *o);
-typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
-typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
-typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
-typedef void bounds_func(BCG *Xgc,NspGraphic *o,double *bounds);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj);
+typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
+typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
+typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
+typedef void bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
+typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 
 
 struct _NspTypeGraphic {
@@ -40,6 +41,7 @@ struct _NspTypeGraphic {
   rotate_func *rotate;
   scale_func *scale;
   bounds_func *bounds;
+  full_copy_func *full_copy;
 
 
 };
@@ -93,6 +95,8 @@ extern NspGraphic *GetGraphic (Stack stack, int i);
 extern int nsp_graphic_create_partial(NspGraphic *H);
 extern void nsp_graphic_destroy_partial(NspGraphic *H);
 extern NspGraphic * nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self);
+extern NspGraphic * nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self);
+extern NspGraphic * nsp_graphic_full_copy(NspGraphic *self);
 extern int nsp_graphic_check_values(NspGraphic *H);
 extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);

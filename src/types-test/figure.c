@@ -541,6 +541,53 @@ NspFigure *nsp_figure_copy(NspFigure *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspFigure *nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_figure))) == NULL) return NULLFIGURE;
+  H->obj->ref_count=1;
+  if ((H->obj->fname = nsp_string_copy(self->obj->fname)) == NULL) return NULL;
+  if ((H->obj->driver = nsp_string_copy(self->obj->driver)) == NULL) return NULL;
+  H->obj->id=self->obj->id;
+  if ( self->obj->dims == NULL )
+    { H->obj->dims = NULL;}
+  else
+    {
+      if ((H->obj->dims = (NspMatrix *) nsp_object_copy_and_name("dims",NSP_OBJECT(self->obj->dims))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->viewport_dims == NULL )
+    { H->obj->viewport_dims = NULL;}
+  else
+    {
+      if ((H->obj->viewport_dims = (NspMatrix *) nsp_object_copy_and_name("viewport_dims",NSP_OBJECT(self->obj->viewport_dims))) == NULLMAT) return NULL;
+    }
+  H->obj->wresize=self->obj->wresize;
+  if ( self->obj->position == NULL )
+    { H->obj->position = NULL;}
+  else
+    {
+      if ((H->obj->position = (NspMatrix *) nsp_object_copy_and_name("position",NSP_OBJECT(self->obj->position))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->children == NULL )
+    { H->obj->children = NULL;}
+  else
+    {
+      if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+    }
+  return H;
+}
+
+NspFigure *nsp_figure_full_copy(NspFigure *self)
+{
+  NspFigure *H  =nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure);
+  if ( H ==  NULLFIGURE) return NULLFIGURE;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
+  if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the Figure
@@ -830,7 +877,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 834 "figure.c"
+#line 881 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -971,4 +1018,4 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
-#line 975 "figure.c"
+#line 1022 "figure.c"

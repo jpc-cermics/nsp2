@@ -422,6 +422,30 @@ NspGRoot *nsp_groot_copy(NspGRoot *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspGRoot *nsp_groot_full_copy_partial(NspGRoot *H,NspGRoot *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_groot))) == NULL) return NULLGROOT;
+  H->obj->ref_count=1;
+  if ( self->obj->figures == NULL )
+    { H->obj->figures = NULL;}
+  else
+    {
+      if ((H->obj->figures = (NspList *) nsp_object_copy_and_name("figures",NSP_OBJECT(self->obj->figures))) == NULLLIST) return NULL;
+    }
+  return H;
+}
+
+NspGRoot *nsp_groot_full_copy(NspGRoot *self)
+{
+  NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
+  if ( H ==  NULLGROOT) return NULLGROOT;
+  if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the GRoot
@@ -521,7 +545,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 525 "groot.c"
+#line 549 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -529,4 +553,4 @@ Init portion
 #line 28 "groot.override"
 
 
-#line 533 "groot.c"
+#line 557 "groot.c"

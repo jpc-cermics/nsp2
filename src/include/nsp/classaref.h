@@ -79,6 +79,8 @@ extern NspClassARef *GetClassARef (Stack stack, int i);
 extern int nsp_classaref_create_partial(NspClassARef *H);
 extern void nsp_classaref_destroy_partial(NspClassARef *H);
 extern NspClassARef * nsp_classaref_copy_partial(NspClassARef *H,NspClassARef *self);
+extern NspClassARef * nsp_classaref_full_copy_partial(NspClassARef *H,NspClassARef *self);
+extern NspClassARef * nsp_classaref_full_copy(NspClassARef *self);
 extern int nsp_classaref_check_values(NspClassARef *H);
 extern int int_classaref_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspClassARef *nsp_classaref_xdr_load_partial(XDR *xdrs, NspClassARef *M);

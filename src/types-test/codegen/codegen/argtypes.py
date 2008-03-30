@@ -1334,10 +1334,10 @@ class NspObjectArg(ArgType):
         info.varlist.add("NspObject", "*ret")
         if ownsreturn:
             info.codeafter.append('  if (ret == NULLOBJ ) return RET_BUG;\n'
-                                  '  MoveObj(stack,1,ret);' )
+                                  '  MoveObj(stack,1,ret);\n  return 1;' )
         else:
             info.codeafter.append('  if (ret == NULLOBJ ) return RET_BUG;\n'
-                                  '  MoveObj(stack,1,ret);' )
+                                  '  MoveObj(stack,1,ret);\n  return 1;' )
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add("NspObject", "*ret")
         if ownsreturn:

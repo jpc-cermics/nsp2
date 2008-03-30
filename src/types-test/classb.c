@@ -440,6 +440,14 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspClassB *nsp_classb_full_copy(NspClassB *self)
+{
+  return nsp_classb_copy(self);
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the ClassB
@@ -469,7 +477,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 473 "classb.c"
+#line 481 "classb.c"
 
 
 #line 29 "classb.override"
@@ -480,7 +488,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 484 "classb.c"
+#line 492 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -603,9 +611,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 607 "classb.c"
+#line 615 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 612 "classb.c"
+#line 620 "classb.c"

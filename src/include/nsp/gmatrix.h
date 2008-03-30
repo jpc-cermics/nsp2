@@ -79,6 +79,8 @@ extern NspGMatrix *GetGMatrix (Stack stack, int i);
 extern int nsp_gmatrix_create_partial(NspGMatrix *H);
 extern void nsp_gmatrix_destroy_partial(NspGMatrix *H);
 extern NspGMatrix * nsp_gmatrix_copy_partial(NspGMatrix *H,NspGMatrix *self);
+extern NspGMatrix * nsp_gmatrix_full_copy_partial(NspGMatrix *H,NspGMatrix *self);
+extern NspGMatrix * nsp_gmatrix_full_copy(NspGMatrix *self);
 extern int nsp_gmatrix_check_values(NspGMatrix *H);
 extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspGMatrix *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M);

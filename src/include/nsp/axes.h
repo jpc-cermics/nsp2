@@ -81,6 +81,8 @@ extern NspAxes *GetAxes (Stack stack, int i);
 extern int nsp_axes_create_partial(NspAxes *H);
 extern void nsp_axes_destroy_partial(NspAxes *H);
 extern NspAxes * nsp_axes_copy_partial(NspAxes *H,NspAxes *self);
+extern NspAxes * nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self);
+extern NspAxes * nsp_axes_full_copy(NspAxes *self);
 extern int nsp_axes_check_values(NspAxes *H);
 extern int int_axes_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspAxes *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M);

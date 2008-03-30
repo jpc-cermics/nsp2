@@ -23,6 +23,7 @@ override_type Polyline
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
 
 %%
 modulename atk

@@ -75,6 +75,8 @@ extern NspGRoot *GetGRoot (Stack stack, int i);
 extern int nsp_groot_create_partial(NspGRoot *H);
 extern void nsp_groot_destroy_partial(NspGRoot *H);
 extern NspGRoot * nsp_groot_copy_partial(NspGRoot *H,NspGRoot *self);
+extern NspGRoot * nsp_groot_full_copy_partial(NspGRoot *H,NspGRoot *self);
+extern NspGRoot * nsp_groot_full_copy(NspGRoot *self);
 extern int nsp_groot_check_values(NspGRoot *H);
 extern int int_groot_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspGRoot *nsp_groot_xdr_load_partial(XDR *xdrs, NspGRoot *M);

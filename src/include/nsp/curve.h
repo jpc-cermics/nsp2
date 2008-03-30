@@ -80,6 +80,8 @@ extern NspCurve *GetCurve (Stack stack, int i);
 extern int nsp_curve_create_partial(NspCurve *H);
 extern void nsp_curve_destroy_partial(NspCurve *H);
 extern NspCurve * nsp_curve_copy_partial(NspCurve *H,NspCurve *self);
+extern NspCurve * nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self);
+extern NspCurve * nsp_curve_full_copy(NspCurve *self);
 extern int nsp_curve_check_values(NspCurve *H);
 extern int int_curve_create(Stack stack, int rhs, int opt, int lhs); 
 extern NspCurve *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M);

@@ -23,15 +23,17 @@ override_internal_methods
   rotate_func *rotate;
   scale_func *scale;
   bounds_func *bounds;
+  full_copy_func *full_copy;
 
 %%
 override_internal_methods_protos
 
-typedef void draw_func(BCG *Xgc,NspGraphic *o);
-typedef void translate_func(BCG *Xgc,NspGraphic *o,double *tr);
-typedef void rotate_func(BCG *Xgc,NspGraphic *o,double *R);
-typedef void scale_func(BCG *Xgc,NspGraphic *o,double *alpha);
-typedef void bounds_func(BCG *Xgc,NspGraphic *o,double *bounds);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj);
+typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
+typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
+typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
+typedef void bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
+typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 
 %%
 override graphic_translate kwargs

@@ -520,6 +520,50 @@ NspGMatrix *nsp_gmatrix_copy(NspGMatrix *self)
 
   return H;
 }
+/*
+ * full copy for gobject derived class  
+ */
+
+NspGMatrix *nsp_gmatrix_full_copy_partial(NspGMatrix *H,NspGMatrix *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_gmatrix))) == NULL) return NULLGMATRIX;
+  H->obj->ref_count=1;
+  if ( self->obj->data == NULL )
+    { H->obj->data = NULL;}
+  else
+    {
+      if ((H->obj->data = (NspMatrix *) nsp_object_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->rect == NULL )
+    { H->obj->rect = NULL;}
+  else
+    {
+      if ((H->obj->rect = (NspMatrix *) nsp_object_copy_and_name("rect",NSP_OBJECT(self->obj->rect))) == NULLMAT) return NULL;
+    }
+  H->obj->remap=self->obj->remap;
+  if ( self->obj->colminmax == NULL )
+    { H->obj->colminmax = NULL;}
+  else
+    {
+      if ((H->obj->colminmax = (NspMatrix *) nsp_object_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->zminmax == NULL )
+    { H->obj->zminmax = NULL;}
+  else
+    {
+      if ((H->obj->zminmax = (NspMatrix *) nsp_object_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
+    }
+  return H;
+}
+
+NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
+{
+  NspGMatrix *H  =nsp_gmatrix_create_void(NVOID,(NspTypeBase *) nsp_type_gmatrix);
+  if ( H ==  NULLGMATRIX) return NULLGMATRIX;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
+  if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
+  return H;
+}
 
 /*-------------------------------------------------------------------
  * wrappers for the GMatrix
@@ -729,7 +773,7 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 733 "gmatrix.c"
+#line 777 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -815,4 +859,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 819 "gmatrix.c"
+#line 863 "gmatrix.c"
