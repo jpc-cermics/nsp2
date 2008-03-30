@@ -1187,7 +1187,8 @@ static int nsp_read_line(FILE *fd,int *mem)
     }
 }
 
-static int count_tokens(char *string)
+#if 0 
+static int count_tokens_bug(char *string)
 {
   char prev, *copy = string;
   int lnchar=0,ntok=-1;
@@ -1199,11 +1200,16 @@ static int count_tokens(char *string)
           copy++;
           lnchar++;
         }
-      /* line begins with a number */
-      if(lnchar==0){
-        prev='0'; ntok++; }
+      if(lnchar==0) 
+	{
+	  /* line begins with a number */
+	  prev='0'; ntok++; 
+	}
       else
-        prev=*(copy-1);
+	{
+	  /* line begins with [ \t]*  */
+	  prev=*(copy-1);
+	}
       while (lnchar <= length)
         {
           if((*copy!=' ' && *copy!='\t' && *copy!='\n') &&
@@ -1216,6 +1222,27 @@ static int count_tokens(char *string)
       return(ntok);
     }
   return(FAIL);
+}
+#endif 
+
+static int count_tokens(char *string)
+{
+  char *copy = string; 
+  int ntok=0;
+  /* gobble spaces */
+  while ( *copy==' ' || *copy=='\t' || *copy=='\n') copy++;
+  if ( *copy == '\0') return 0;
+  while (1) 
+    {
+      /* gobble token */
+      while ( *copy != '\0' && *copy !=' ' && *copy !='\t' && *copy !='\n') copy++;
+      ntok++;
+      /* gobble spaces */
+      while ( *copy==' ' || *copy=='\t' || *copy=='\n') copy++;
+      if ( *copy == '\0' ) 
+	return ntok;
+    }
+  return -1;
 }
 
 
