@@ -1,3 +1,9 @@
+2008-03-30  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/type-test/codegen: 
+	generation of code for full_copy of objects 
+	which are by-reference objects. 
+	
 2008-03-25  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/lapack/lapack.c: add the symmmetric and positive 
