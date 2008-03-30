@@ -62,6 +62,51 @@ fd.close[];
 if ~and(txt==texte) then pause,end 
 if max(a1-a) > 1.e-1 then pause,end 
 
+// write matrix in a file with fprintf 
+// without spaces at the end 
+//------------------------------------
+
+n=50;
+a=rand(n,n,'u');
+// now the data 
+fd=fopen('TMPDIR/Mat',mode='w');
+texte=['Some text ';'Some more text'];
+for t=texte 
+  fprintf(fd,'%s\n',t);
+end 
+for i=1:n ,
+  for j=1:n-1, fprintf(fd,'%5.2f ',a(i,j));end;
+  fprintf(fd,'%5.2f',a(i,n));
+  fprintf(fd,'\n');	
+end
+fd.close[];
+
+// read matrix back with method get_matrix 
+// ---------------------------------------
+
+// bypass header 
+fd=fopen('TMPDIR/Mat',mode='r');
+a1=fd.get_matrix[];
+fd.close[];
+if max(a1-a) > 1.e-1 then pause,end 
+
+// read header 
+fd=fopen('TMPDIR/Mat',mode='r');
+[a1,txt]=fd.get_matrix[];
+fd.close[];
+
+if ~and(txt==texte) then pause,end 
+if max(a1-a) > 1.e-1 then pause,end 
+
+// reread with given format 
+
+fd=fopen('TMPDIR/Mat',mode='r');
+[a1,txt]=fd.get_matrix[format='%5.2f'];
+fd.close[];
+
+if ~and(txt==texte) then pause,end 
+if max(a1-a) > 1.e-1 then pause,end 
+
 // write matrix  with put_matrix method 
 //--------------------------------------
 
