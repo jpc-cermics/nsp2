@@ -26,6 +26,9 @@
 #include "nsp/umfpack.h"
 #include "nsp/interf.h"
 #include <umfpack.h>
+#include "nsp/lapack-c.h"
+#include "nsp/spmf.h"
+
 
 /* 
  * NspUmfpack inherits from NspObject 
@@ -873,11 +876,249 @@ static int int_umfpack_meth_det(NspUmfpack *self, Stack stack, int rhs, int opt,
   return Max(lhs,1);
 }
 
+
+/* 
+ *  an utility for nsp_umfpack_dlacon and nsp_umfpack_zlacon 
+ *  added by Bruno Pincon.
+ *  To change if ever we will use the usual complex format for 
+ *  nsp_sparse_triplet T (in this case replace nsp_hypot with
+ *  nsp_abs_c)
+ */
+static double nsp_norm1_sptriplet(nsp_sparse_triplet T, char rc_type)
+{
+  double norm1 = 0.0;
+  int j, k;
+
+  if ( rc_type == 'r' )   /* real case */
+    for ( j = 0 ; j < T.n ; j++ )
+      {
+	double norm1j = 0.0;
+	for ( k = T.Jc[j] ; k < T.Jc[j+1] ; k++ )
+	  norm1j += fabs(T.Pr[k]);
+	norm1 = Max(norm1, norm1j);
+      }
+  else                  /* complex case */
+    for ( j = 0 ; j < T.n ; j++ )
+      {
+	double norm1j = 0.0;
+	for ( k = T.Jc[j] ; k < T.Jc[j+1] ; k++ )
+	  norm1j += nsp_hypot(T.Pr[k],T.Pi[k]);
+	norm1 = Max(norm1, norm1j);
+      }
+  return norm1;
+}
+
+
+/* 
+ *  estimate rcond1 using lapack estimator (real case) 
+ *  added by Bruno Pincon
+ */
+static int nsp_umfpack_dlacon(void *Numeric, nsp_sparse_triplet T, double *Rcond)
+{
+  double Control[UMFPACK_CONTROL];
+  int *iwork=NULL, *isign=NULL, n=T.n, kase, rep;
+  double *X=NULL, *Y=NULL, *V=NULL, *rwork=NULL, Anorm1, est;
+
+  /* compute ||A||_1  */
+  Anorm1 = nsp_norm1_sptriplet(T, 'r');
+  if ( Anorm1 == 0.0 )
+    {
+      *Rcond = 0.0; return OK;
+    }
+
+  /* compute an estimation of ||inv(A)||_1 using lapack dlacon  */
+  X = nsp_alloc_work_doubles(n);
+  Y = nsp_alloc_work_doubles(n);
+  V = nsp_alloc_work_doubles(n);
+  isign = nsp_alloc_work_int(n);
+  iwork = nsp_alloc_work_int(n);
+  rwork = nsp_alloc_work_doubles(n);
+  if ( !X || !V || !isign || !iwork || !rwork ) 
+    goto err;
+  
+  umfpack_di_defaults(Control);
+  Control[UMFPACK_IRSTEP] = 0;
+  kase = 0;
+  do
+    {
+      C2F(dlacon)(&n, V, X, isign, &est, &kase);
+
+      switch (kase)
+	{
+	case 1:
+	  /* solve Y = A^(-1) X <=> A Y = X */
+	  rep = umfpack_di_wsolve(UMFPACK_A, NULL, NULL, NULL, Y, X,
+				  Numeric, Control, NULL, iwork, rwork);
+	  if ( rep != UMFPACK_OK ) goto errbis;
+	  /* X <- Y */
+	  memcpy(X, Y, n*sizeof(double));	  
+	  break;
+
+	case 2:
+	  /* solve Y = A'^(-1) X <=> A' Y = X */
+	  rep = umfpack_di_wsolve(UMFPACK_At, NULL, NULL, NULL, Y, X,
+				  Numeric, Control, NULL, iwork, rwork);
+	  if ( rep != UMFPACK_OK ) goto errbis;
+	  /* X <- Y */
+	  memcpy(X, Y, n*sizeof(double));	  
+	  break;
+	}
+    }
+  while ( kase != 0 );
+
+  FREE(X); FREE(Y); FREE(V); FREE(isign); FREE(iwork); FREE(rwork);
+  *Rcond = 1.0/(Anorm1*est);
+  return OK;
+
+ errbis:
+  FREE(X); FREE(Y); FREE(V); FREE(isign); FREE(iwork); FREE(rwork);
+  if ( rep == UMFPACK_WARNING_singular_matrix )
+    {
+      *Rcond = 0.0; return OK;
+    }
+  else    /* this should not arise */
+    {
+      Sciprintf(" Error: unexpected output from umfpack_di_solve: %s\n", nsp_umfpack_error(rep));
+      return FAIL;
+    }
+ err:
+  FREE(X); FREE(Y); FREE(V); FREE(isign); FREE(iwork); FREE(rwork);
+  return FAIL;
+}
+
+
+
+/* 
+ *  estimate rcond1 using lapack estimator (complex case) 
+ *  added by Bruno Pincon
+ */
+static int nsp_umfpack_zlacon(void *Numeric, nsp_sparse_triplet T, double *Rcond)
+{
+  double Control[UMFPACK_CONTROL];
+  int *iwork=NULL, n=T.n, kase, rep;
+  doubleC *X=NULL, *Y=NULL, *V=NULL;
+  double *rwork=NULL, Anorm1, est;
+
+  /* compute ||A||_1  */
+  Anorm1 = nsp_norm1_sptriplet(T, 'c');
+  if ( Anorm1 == 0.0 )
+    {
+      *Rcond = 0.0; return OK;
+    }
+
+  /* compute an estimation of ||inv(A)||_1 using lapack zlacon  */
+  X = nsp_alloc_work_doubleC(n);
+  Y = nsp_alloc_work_doubleC(n);
+  V = nsp_alloc_work_doubleC(n);
+  iwork = nsp_alloc_work_int(n);
+  rwork = nsp_alloc_work_doubles(4*n);
+  if ( !X || !V || !iwork || !rwork ) 
+    goto err;
+  
+  umfpack_zi_defaults(Control);
+  Control[UMFPACK_IRSTEP] = 0;
+  kase = 0;
+  do
+    {
+      C2F(zlacon)(&n, V, X, &est, &kase);
+
+      switch (kase)
+	{
+	case 1:
+	  /* solve Y = A^(-1) X <=> A Y = X */
+	  rep = umfpack_zi_wsolve(UMFPACK_A, NULL, NULL, NULL, NULL, (double *)Y, NULL,
+				  (double *)X, NULL, Numeric, Control, NULL, iwork, rwork);
+	  if ( rep != UMFPACK_OK ) goto errbis;
+	  /* X <- Y */
+	  memcpy(X, Y, n*sizeof(doubleC));	  
+	  break;
+
+	case 2:
+	  /* solve Y = A'^(-1) X <=> A' Y = X */
+	  rep = umfpack_zi_wsolve(UMFPACK_At, NULL, NULL, NULL, NULL, (double *)Y, NULL,
+				  (double *)X, NULL, Numeric, Control, NULL, iwork, rwork);
+	  if ( rep != UMFPACK_OK ) goto errbis;
+	  /* X <- Y */
+	  memcpy(X, Y, n*sizeof(doubleC));	  
+	  break;
+	}
+    }
+  while ( kase != 0 );
+
+  FREE(X); FREE(Y); FREE(V); FREE(iwork); FREE(rwork);
+  *Rcond = 1.0/(Anorm1*est);
+  return OK;
+
+ errbis:
+  FREE(X); FREE(Y); FREE(V); FREE(iwork); FREE(rwork);
+  if ( rep == UMFPACK_WARNING_singular_matrix )
+    {
+      *Rcond = 0.0; return OK;
+    }
+  else   /* this should not arise */
+    {
+      Sciprintf(" Error: unexpected output from umfpack_zi_solve: %s\n", nsp_umfpack_error(rep));
+      return FAIL;
+    }
+ err:
+  FREE(X); FREE(Y); FREE(V); FREE(iwork); FREE(rwork);
+  return FAIL;
+}
+
+
+/* 
+ *  interface for rcond method
+ *  added by Bruno Pincon
+ */
+int int_umfpack_meth_rcond(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0); 
+  CheckLhs(1,1);
+  void *Numeric;
+  nsp_sparse_triplet T;
+  char rc_type;
+  double rcond;
+
+  if ( self->obj == NULL || self->obj->data  == NULL ) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+
+  Numeric= self->obj->data; 
+  rc_type = self->obj->rc_type; 
+  T = self->obj->mtlb_T;
+
+  if ( T.m != T.n )
+    {
+      Scierror("Error: matrix should be square (it is %d x %d)\n", T.m,T.n);
+      return RET_BUG;
+    };
+
+  if ( rc_type == 'r' )
+    {
+      if ( nsp_umfpack_dlacon(Numeric, T, &rcond) == FAIL )
+	return RET_BUG;
+    }
+  else
+    {
+      if ( nsp_umfpack_zlacon(Numeric, T, &rcond) == FAIL )
+	return RET_BUG;
+    }
+
+  if ( nsp_move_double(stack,1,rcond) == FAIL ) 
+    return RET_BUG;
+
+  return 1;
+}
+
+
 static NspMethods umfpack_methods[] = {
   {"solve",(nsp_method *) int_umfpack_meth_solve},
   {"luget",(nsp_method *) int_umfpack_meth_luget},
   {"isreal",(nsp_method *) int_umfpack_meth_isreal},
   {"det",(nsp_method *) int_umfpack_meth_det},
+  {"rcond",(nsp_method *) int_umfpack_meth_rcond},
   { NULL, NULL}
 };
 

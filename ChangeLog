@@ -1,3 +1,9 @@
+2008-04-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/libumfpack/umfpack.c add rcond method 
+	(nsp_umfpack_dlacon, nsp_umfpack_zlacon) for
+	umfpack objects.
+
 2008-03-30  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/type-test/codegen: 

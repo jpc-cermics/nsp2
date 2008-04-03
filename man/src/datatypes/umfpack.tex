@@ -36,7 +36,7 @@ The optional arguments of \verb+umfpack_solve+ are described below in the umfpac
 \verb+solve+.
 
 \paragraph{Operations on umfpack}
-The following methods are available for Umfpack objects~:
+The following methods are available for Umfpack objects:
 \begin{varlist}
   \vname{A.solve[B,mode=string,irstep=int]}: solves the linear system \verb+A*x=B\verb+ (when mode is not given), \verb+B+ is given as a full 
    matrix. The optional parameter \verb+irstep+ can be used to set the maximal number of refinement iterations.
@@ -57,8 +57,10 @@ The following methods are available for Umfpack objects~:
   \vname{[L,U,p,q,r]=A.luget[]}: returns the \verb+LU+ factorization contained in Umfpack object \verb+A+ i.e the following relation should be met~: \verb+Ap= diag(1 ./ r) *A+ and 
   \verb+L*U=Ap(p,q)+ 
   \vname{A.isreal[]}: returns a boolean to check if the given Umfpack object comes from a real 
-(\verb+%t+) or complex (\verb+%f+) matrix. 
-\vname{A.det[]}: returns the determinant of Umfpack object \verb+A+.
+  (\verb+%t+) or complex (\verb+%f+) matrix. 
+  \vname{A.det[]}: returns the determinant of Umfpack object \verb+A+.
+  \vname{A.rcond[]}: returns an estimation of the reciprocal condition
+  number in 1-norm (using lapack routines dlacon/zlacon) of Umfpack object \verb+A+.
   \end{varlist}
 
 \begin{examples}
@@ -66,6 +68,7 @@ The following methods are available for Umfpack objects~:
       A= umfpack_create(Af);\Hnewline
       A.isreal[]\Hnewline
       A.det[] \Hnewline
+      A.rcond[] \Hnewline
       b=rand(10,2);\Hnewline 
       xu= A.solve[b];\Hnewline 
       norm(Af*xu- b)\Hnewline 
@@ -75,5 +78,6 @@ The following methods are available for Umfpack objects~:
 
 % -- Authors
 \begin{authors}
-  Jean-Philippe Chancelier
+   umfpack lib: Tim Davis, nsp interface: Jean-Philippe Chancelier,
+   Bruno Pincon (rcond)
 \end{authors}
