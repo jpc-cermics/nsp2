@@ -673,9 +673,11 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(B)->ret_pos=1;
 
   if ( lhs == 2 )
-    if ( nsp_move_double(stack,2,rcond) == FAIL ) 
-      return RET_BUG;
-
+    {
+      NthObj(1) = NSP_OBJECT(B);
+      if ( nsp_move_double(stack,2,rcond) == FAIL ) 
+	return RET_BUG;
+    }
   return Max(lhs,1);
 }
 
