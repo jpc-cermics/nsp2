@@ -362,7 +362,8 @@ NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes)
 
 NspSerial *nsp_serial_copy(NspSerial *H)
 {
-  return _nsp_serial_create(NVOID,H->val,H->nbytes,NULL);
+  int len = strlen(nsp_serial_header);
+  return _nsp_serial_create(NVOID,H->val+len,H->nbytes-len,NULL);
 }
 
 /*-------------------------------------------------------------------
