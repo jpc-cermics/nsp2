@@ -459,6 +459,7 @@ main(int argc, char **argv)
   long lines = 5000;
   const char *message = "Launching interactive shell...\r\n";
   const char *font = NULL;
+  const char *name = NULL;
   const char *terminal = NULL;
   const char *command = NULL;
   const char *working_directory = NULL;
@@ -469,6 +470,7 @@ main(int argc, char **argv)
   GdkColor fore, back, tint;
   const char *usage = "Usage: %s "
     "[ [-B image] | [-T] ] "
+    "[-N name] "
     "[-2] "
     "[-a] "
     "[-b] "
@@ -511,13 +513,16 @@ main(int argc, char **argv)
   }
   argv2[i] = NULL;
   g_assert(i < (g_list_length(args) + 2));
-
+  
   /* Parse some command-line options. */
-  while ( cmdindex == 0 && (opt = getopt(argc, argv, "B:T2abe:df:ghkn:st:w:-")) != -1) {
+  while ( cmdindex == 0 && (opt = getopt(argc, argv, "B:TN:2abe:df:ghkn:st:w:-")) != -1) {
     gboolean bail = FALSE;
     switch (opt) {
     case 'B':
       background = optarg;
+      break;
+    case 'N':
+      name  = optarg;
       break;
     case 'T':
       transparent = TRUE;
@@ -589,7 +594,10 @@ main(int argc, char **argv)
 				GTK_RESIZE_IMMEDIATE);
   g_signal_connect(G_OBJECT(window), "delete_event",
 		   GTK_SIGNAL_FUNC(deleted_and_quit), window);
-  gtk_window_set_title (GTK_WINDOW (window), "Nsp");
+  if ( name != NULL) 
+    gtk_window_set_title (GTK_WINDOW (window), name);
+  else 
+    gtk_window_set_title (GTK_WINDOW (window), "Nsp");
   gtk_window_set_wmclass (GTK_WINDOW (window), "nsp", "Nsp");
 
   /* create vbox */
