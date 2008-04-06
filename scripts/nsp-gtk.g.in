@@ -109,6 +109,7 @@ if test "$rest" = "yes"; then
   start_file=
   prevarg=
   language=
+  name=
   for sciarg 
   do
     # If the previous argument needs an argument, assign it.
@@ -118,6 +119,9 @@ if test "$rest" = "yes"; then
       continue
     fi
     case $sciarg in
+      -name) 
+          prevarg="term_name"
+	  ;;
       -ns)
 	  sci_args="$sci_args -ns"
           ;;
@@ -200,6 +204,9 @@ if test "$rest" = "yes"; then
   fi
   if test -n "$history"; then
     zterm_arg="$zterm_arg -n $history"
+  fi
+  if test -n "$term_name"; then
+    zterm_arg="$zterm_arg -N $term_name"
   fi
 
   if test -n "$now"; then
