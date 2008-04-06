@@ -150,6 +150,12 @@ NspSerial *new_serial()
 
 static int nsp_serial_size(NspSerial *Mat, int flag)
 {
+  switch (flag) 
+    {
+    case 0: return Mat->nbytes;
+    case 1: return 1;
+    case 2: return Mat->nbytes;
+    }
   return 0;
 }
 
@@ -442,7 +448,6 @@ NspSerial *nsp_matrix_to_serial(const NspMatrix *A)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-
 int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
 {
   NspSerial *a;
@@ -459,6 +464,23 @@ int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,Obj); 
   return 1; 
 }
+
+/* useful to creatr a buffer which can receive a serialized 
+ * object as in pvm or mpi.
+ */
+
+int int_serial_create(Stack stack, int rhs, int opt, int lhs)
+{
+  int count;
+  NspSerial *S;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ( GetScalarInt(stack,1,&count) == FAIL ) return RET_BUG;
+  if (( S = nsp_serial_create(NVOID,NULL,count))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S)); 
+  return 1; 
+}
+
 
 static OpTab Serial_func[]={
   /* {"unserialize_serial",int_serial_unserialize}, moved in object.c */
