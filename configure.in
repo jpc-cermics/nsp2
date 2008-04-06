@@ -81,8 +81,7 @@ fi
 ## get the version 
 ###############################
 
-SCIVERSION=`cat Version.incl | sed -e "s/SCIVERSION=//" `
-
+NSP_VERSION=${PACKAGE_NAME}-${PACKAGE_VERSION}
 
 ########################
 ## removing and cleaning
@@ -95,12 +94,9 @@ FILES_TO_CLEAN='*.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS ma
 ## Compilers and options according to machine
 #############################################
 
-# use for making scripts in script directory
-#   different for MIPS Ultrix
-SCILAB_GS=sh
 # scilab script file in script directory: default is "scilab.g" for UNIX
 #   for gcwin32 use "scilab-gcwin32.g"
-SCILABSCRIPT=scilab.g
+NSP_SCRIPT=nsp.g
 # Fortran program in src/sun: default is "fgetarg.f" 
 #   for HPUX use "fgetarg-hpux.f"
 FGETARG=fgetarg
@@ -384,7 +380,6 @@ case "$host" in
     if test X"$F77" = Xf77; then
         FC_OPTIONS="${FC_OPTIONS} -O0 -fpe1"
     fi 
-    SCILAB_GS=sh5
     MAKEFILE_TARGET=Makefile.ultrix
     ;;
 # SGI
@@ -429,7 +424,7 @@ case "$host" in
     ;;
 # CYGWIN32 for Windows 9X/NT/XP 
   *-*-cygwin* )
-    SCILABSCRIPT=scilab-gcwin32.g
+    NSP_SCRIPT=nsp-gcwin32.g
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
@@ -450,7 +445,7 @@ case "$host" in
 # this is the case when cross compiling 
    *-*-mingw32*)
     MINGW32=yes
-    SCILABSCRIPT=scilab-gcwin32.g
+    NSP_SCRIPT=nsp-gcwin32.g
     LIBXDR_LOCAL='libxdr'
     LIBXDR=libs/xdr.a
     MENUSOBJS=WOBJS
@@ -904,7 +899,7 @@ GTK_PKGS_LIBS='gtk+-2.0'
 GUILIB='gtksci'
 GZVT='gzvt2'
 # we need a patched version 
-SCILABSCRIPT=scilab-gtk.g
+NSP_SCRIPT=nsp-gtk.g
 MENUSOBJS=GOBJS
 PERICAIRO=
 # check for libgtkhtml-2.0
@@ -1400,8 +1395,7 @@ AC_SUBST(FC_LDFLAGS)
 AC_SUBST(FC_PICFLAGS)
 AC_SUBST(LD)
 AC_SUBST(LD_LDFLAGS)
-AC_SUBST(SCILAB_GS)
-AC_SUBST(SCILABSCRIPT)
+AC_SUBST(NSP_SCRIPT)
 AC_SUBST(FGETARG)
 AC_SUBST(HPPA_OLD)
 AC_SUBST(DLDLIB)
@@ -1468,7 +1462,7 @@ AC_SUBST(OBJDUMP)
 AC_SUBST(PACKAGE)
 AC_SUBST(RANLIB)
 AC_SUBST(STATIC)
-AC_SUBST(SCIVERSION)
+AC_SUBST(NSP_VERSION)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
@@ -1503,7 +1497,7 @@ AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile)
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl)
 
 echo
 echo

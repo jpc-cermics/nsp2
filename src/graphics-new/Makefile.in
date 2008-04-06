@@ -1,6 +1,5 @@
 SHELL = /bin/sh
 SCIDIR=../..
-include ../../Version.incl
 
 LIBRARY = graphics.a
 

@@ -2,7 +2,6 @@
 SHELL = /bin/sh
 
 SCIDIR=../..
-include ../../Version.incl
 
 LIBRARY = nsp.a
 

@@ -2,7 +2,6 @@
 SHELL = /bin/sh
 SCIDIR=../..
 SCIDIR1=..\..
-include ../../Version.incl
 
 LIBRARY = $(SCIDIR)/libs/graphics.lib
 
