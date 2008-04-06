@@ -215,7 +215,11 @@ if test "$rest" = "yes"; then
         $SCI/bin/zterm  $zterm_arg  -e gdb $SCI/bin/scilex
      fi
   else
-      $sci_exe $sci_args 
+      if test -n "$start_exp"; then
+	  $sci_exe $sci_args -e "$start_exp" 
+      else 
+	  $sci_exe $sci_args 
+      fi 
   fi 
 fi
 
