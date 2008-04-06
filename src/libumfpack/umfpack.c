@@ -487,8 +487,10 @@ static int int_umfpack_meth_luget(NspUmfpack *self, Stack stack, int rhs, int op
     umfpack_zi_get_lunz(&lnz, &unz, &n_row, &n_col, &nz_udiag, Numeric);
   
   n = Min(n_row,n_col);
-  /* prepare space for a n_row x n L matrix */
-  if ((Lt= nsp_spcolmatrix_create(NVOID,rc_flag,n_row,n))== NULLSPCOL) 
+  /* prepare space for a n_row x n L matrix
+   * take care that we are using Lt i.e nxn_row 
+   */
+  if ((Lt= nsp_spcolmatrix_create(NVOID,rc_flag,n,n_row))== NULLSPCOL) 
     return RET_BUG;
   /* allocate matlab triplet */
   if ( nsp_spcol_alloc_col_triplet(Lt,lnz)== FAIL) 
@@ -576,6 +578,7 @@ the_end:
 
 static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irstep, int flag)
 {
+  int status;
   double Control[UMFPACK_CONTROL], *dControl=NULL;
   double *Info = NULL;
   NspMatrix *Bc=NULL, *X=NULL,*Wi=NULL,*W=NULL,*rep=NULLMAT;
@@ -587,7 +590,7 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
   Numeric= self->obj->data; 
   rc_type = self->obj->rc_type; 
   T = self->obj->mtlb_T;
-  
+
   if ( T.m != T.n )
     {
       Scierror("Error: the given linear system is not square (%d,%d)\n",T.m,T.n);
@@ -609,10 +612,10 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
     }
   /* allocate memory for the solution */
   rc_x = ( rc_type == 'c'   ||  B->rc_type == 'c' ) ? 'c' : 'r' ;
-  if ((X =nsp_matrix_create(NVOID,rc_x,B->m,B->n)) == NULLMAT ) goto err;
+  if ((X =nsp_matrix_create(NVOID,rc_x,T.n,B->n)) == NULLMAT ) goto err;
   /* allocate memory for working arrays */
-  if ((Wi =nsp_matrix_create(NVOID,'r',T.m,1)) == NULLMAT ) goto err;
-  if ((W  =nsp_matrix_create(NVOID,'r',((rc_type == 'c') ? 10: 5)*T.m,1)) == NULLMAT ) 
+  if ((Wi =nsp_matrix_create(NVOID,'r',Max(T.m,T.n),1)) == NULLMAT ) goto err;
+  if ((W  =nsp_matrix_create(NVOID,'r',((rc_type == 'c') ? 10: 5)*Max(T.m,T.n),1)) == NULLMAT ) 
     goto err;
   if ( rc_type == 'c' &&  B->rc_type  == 'r' )
     {
@@ -630,14 +633,18 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
 	}
       /* Axr = Br */
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr, X->R+i*B->m,B->R+i*B->m,
-			  Numeric, dControl, Info, Wi->I, W->R);
+	{
+	  status = umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr, X->R+i*T.n,B->R+i*B->m,
+				     Numeric, dControl, Info, Wi->I, W->R);
+	}
       if ( B->rc_type == 'c' )
 	{
 	  /* Axi= Bi */
 	  for ( i = 0 ; i < B->n ; i++ )
-	    umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
-			      Numeric, dControl, Info, Wi->I, W->R);
+	    {
+	      status = umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr,X->R+i*T.n+T.m*T.n,B->R+i*B->m+B->mn,
+					 Numeric, dControl, Info, Wi->I, W->R);
+	    }
 	  /* X is mtlb converted we have to back convert */
 	  X->convert = 'c';
 	  Mat2double (X);
@@ -652,12 +659,28 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
 	  dControl = Control;
 	}
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_zi_wsolve(mode, T.Jc, T.Ir, T.Pr,  T.Pi,
-			  X->R+i*B->m, X->R+i*B->m+B->mn, 
-			  B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, dControl, Info, Wi->I, W->R);
+	{
+	  status = umfpack_zi_wsolve(mode, T.Jc, T.Ir, T.Pr,  T.Pi,
+				     X->R+i*T.n, X->R+i*T.n+T.m*T.n, 
+				     B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, dControl, Info, Wi->I, W->R);
+	}
       /* X is mtlb converted we have to back convert */
       X->convert = 'c';
       Mat2double (X);
+    }
+  switch (status) 
+    {
+    case UMFPACK_OK: break;
+    case UMFPACK_WARNING_singular_matrix: 
+      Sciprintf("Warning: A divide-by-zero occurred. Your solution will contain Inf or Nans\n" 
+		"\tSome parts of the solution may be valid.\n");
+      break;
+    case UMFPACK_ERROR_invalid_system: 
+      Scierror("Error: the given linear system is not square (%d,%d)\n",T.m,T.n);
+      goto err;
+    default: 
+      Sciprintf(" Error: umfpack error %s\n", nsp_umfpack_error(Info [UMFPACK_STATUS]));
+      goto err;
     }
   rep = X;
  err:
@@ -933,7 +956,7 @@ static int nsp_umfpack_dlacon(void *Numeric, nsp_sparse_triplet T, double *Rcond
   isign = nsp_alloc_work_int(n);
   iwork = nsp_alloc_work_int(n);
   rwork = nsp_alloc_work_doubles(n);
-  if ( !X || !V || !isign || !iwork || !rwork ) 
+  if ( !X || !Y || !V || !isign || !iwork || !rwork ) 
     goto err;
   
   umfpack_di_defaults(Control);
@@ -1012,7 +1035,7 @@ static int nsp_umfpack_zlacon(void *Numeric, nsp_sparse_triplet T, double *Rcond
   V = nsp_alloc_work_doubleC(n);
   iwork = nsp_alloc_work_int(n);
   rwork = nsp_alloc_work_doubles(4*n);
-  if ( !X || !V || !iwork || !rwork ) 
+  if ( !X || !Y || !V || !iwork || !rwork ) 
     goto err;
   
   umfpack_zi_defaults(Control);
