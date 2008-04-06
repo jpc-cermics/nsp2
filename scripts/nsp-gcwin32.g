@@ -1,41 +1,37 @@
-#!/bin/SCILABGS
+#!/bin/sh
 # Warning : some old versions of sh dont allow inline function definitions
 # like do_scilex()... . In this case use a system V sh (sh5)
-
-# Copyright INRIA
-
+# Set the SCI environment variable if not already set
+# Copyright Inria/Enpc 
+# XXXXX : Attention quand on est en mingwin on veut des 
+# env avec c: pas /cygdrive 
+# de plus en cygwin nsp peut se lancer sans script 
 if test "$PRINTERS" = ""; then
   PRINTERS="lp"
 fi
+
 #############################################################################
 #                                                                           #
 #                       DO NOT MODIFY BELOW THIS LINE                       #
 #                                                                           #
 #############################################################################
+if test "$HOME" = ""; then
+  HOME="NSP_DIRECTORY"
+fi
+export HOME
 if test "$SCI" = ""; then
-  SCI="SCILAB_DIRECTORY"
+  SCI="NSP_DIRECTORY"
 fi
 export SCI
-if test "$DISPLAY" = ""; then
-  DISPLAY="unix:0.0"
+if test "$WSCI" = ""; then
+  WSCI="NSP_DIRECTORY"
 fi
-export DISPLAY
+export WSCI 
 
-export PRINTERS
-VERSION="SCILAB_VERSION"
-export VERSION
+PWD=`pwd`
+export PWD
 
-if test "$PVM_ROOT" = ""; then
-  PVM_ROOT="@PVMROOTR@"
-fi
-if test "$PVM_ARCH" = ""; then
-  PVM_ARCH=`$PVM_ROOT/lib/pvmgetarch`
-fi
-export PVM_ROOT PVM_ARCH
-
-#TCL_LIBRARY
-
-#TK_LIBRARY
+export  PRINTERS
 
 do_scilex()
 {
@@ -43,7 +39,6 @@ do_scilex()
     export PATH
     XAPPLRESDIR=$SCI/X11_defaults
     export XAPPLRESDIR
-    tty -s && stty kill '^U' intr '^C' erase '^H' quit '^\' eof '^D' susp '^Z'
     $SCI/bin/scilex $* 
 }
 
@@ -56,15 +51,20 @@ do_scilex_now()
     $SCI/bin/scilex $* 
 }
 
+
+
 do_help()
 {
-echo "Usage:"
-echo     "	scilab [-ns -nw -display display -f file  -l lang -args arguments]"
-echo     "	scilab [-ns -nw -display display -e expression]"
-echo     "	scilab -link <objects>"
-exit
+echo "Usage  :"
+echo     "	nsp [-ns -nw -nwni -display display -l language]"
+echo     "	nsp -mini"
+echo     "	nsp -link <objects>"
+echo     "	nsp -function <function-name>"
+echo     "	nsp -print_p file printer"
+echo     "	nsp -print_l file printer"
+echo     "	nsp -save_p file format"
+echo     "	nsp -save_l file format"
 }
-
 
 do_compile()
 {
@@ -73,7 +73,7 @@ do_compile()
 	name=`basename $1 .sci`
 	echo generating $name.bin
 	echo "predef();getf('$name.sci');save('$name.bin');quit"\
-	      | $SCI/bin/scilex -ns -nw | sed 1,8d 1>report 2>&1
+	      | $SCI/bin/scilex -ns -nwni | sed 1,8d 1>report 2>&1
 	if (grep error report 1> /dev/null  2>&1);
 	then cat report;echo " " 
 	   echo see `pwd`/report for more informations
@@ -89,7 +89,7 @@ do_lib()
 	umask 002
 	rm -f report
 	echo "$1=lib('$2/');save('$2/lib',$1);quit"\
-	      | $SCI/bin/scilex -ns -nw |sed 1,/--\>/d 1>report 2>&1
+	      | $SCI/bin/scilex -ns -nwni |sed 1,/--\>/d 1>report 2>&1
 	if (grep error report 1> /dev/null  2>&1);
 	then cat report;echo " " 
 		echo see `pwd`/report for more informations
@@ -101,14 +101,32 @@ do_lib()
 }
 
 
+
+do_compile_test ()
+{
+	umask 002
+	rm -f report
+	name=`basename $1 .sci`
+	echo generating $name.bin
+	echo "predef();getf('$name.sci','c');save('$name.bin');quit"\
+	      | $SCI/bin/scilex -ns -nwni | cat  1>report 2>&1
+	if (grep error report 1> /dev/null  2>&1);
+	then cat report;echo " " 
+	   echo see `pwd`/report for more informations
+	   grep libok report>/dev/null; 
+	fi
+	umask 022
+	exit 0
+}
+
+
 do_print() 
 {
 	$SCI/bin/BEpsf $1 $2 
-	lpr -P$3 $2.eps
+	lpr $2.eps
 	rm -f $2 $2.eps
 
 }
-
 do_save() 
 {
 	case $3 in 
@@ -239,8 +257,8 @@ if test "$rest" = "yes"; then
 	  sci_args="$sci_args -nw"
           ;;
       -nwni)
-          now="-nw"
-	  sci_args="$sci_args -nw"
+          now="-nwni"
+	  sci_args="$sci_args -nwni"
           ;;
       -display|-d)
           prevarg="display"
@@ -287,7 +305,7 @@ if test "$rest" = "yes"; then
   fi
 
   if test -n "$debug"; then 
-     gdb  $SCI/bin/scilex
+     gdb -e $SCI/bin/scilex
   else	
       $sci_exe $sci_args 
   fi 

@@ -1,11 +1,9 @@
 SHELL = /bin/sh
 
 include ../Path.incl
-include ../Version.incl
 include ../Makefile.incl
 
 IP = $(SCIDIR)/Path.incl
-IV = $(SCIDIR)/Version.incl
 
 SBIN = $(SCIDIR)/bin
 UTIL = $(SCIDIR)/util
@@ -24,11 +22,10 @@ SED_CYGDRIVE= @SED_CYGDRIVE@
 
 # script for local use 
 
-$(SBIN)/nsp: @SCILABSCRIPT@ $(IP) $(IV)
+$(SBIN)/nsp: @NSP_SCRIPT@ $(IP) 
 	@$(RM) $(SBIN)/nsp
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" $(SED_CYGDRIVE) \
-	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
-	-e "s+SCILABGS+@SCILAB_GS@+" @SCILABSCRIPT@ > nsp;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" $(SED_CYGDRIVE) \
+		@NSP_SCRIPT@ > nsp;
 	@cp nsp $(SBIN)
 	@chmod 775 $(SBIN)/nsp
 	@$(RM) nsp
@@ -38,33 +35,30 @@ $(SBIN)/nsp: @SCILABSCRIPT@ $(IP) $(IV)
 
 DESTDIR=$(prefix)/lib
 
-nsp-inst: @SCILABSCRIPT@ $(IP) $(IV) ../Makefile.incl
+nsp-inst: @NSP_SCRIPT@ $(IP)  ../Makefile.incl
 	@$(RM) nsp-inst
-	@sed -e "s+SCILAB_DIRECTORY+$(DESTDIR)/nsp+" $(SED_CYGDRIVE) \
-	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
-	-e "s+SCILABGS+@SCILAB_GS@+" @SCILABSCRIPT@ > nsp-inst;
+	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)/nsp+" $(SED_CYGDRIVE) \
+		@NSP_SCRIPT@ > nsp-inst;
 
-$(SBIN)/nsplibtool: nsplibtool $(IP) $(IV)
+$(SBIN)/nsplibtool: nsplibtool $(IP) 
 	@$(RM) $@
-	@sed 	-e "s+SCILAB_DIRECTORY+$(SCIDIR)+g" \
-		-e "s+SCILABGS+@SCILAB_GS@+" nsplibtool > $@ 
+	@sed 	-e "s+NSP_DIRECTORY+$(SCIDIR)+g"  nsplibtool > $@ 
 	@chmod 775 $@
 	@echo $@ created
 
 # script which uses prefix 
 
-nsplibtool-inst: nsplibtool $(IP) $(IV)
+nsplibtool-inst: nsplibtool $(IP) 
 	@$(RM) $@
-	@sed -e "s+SCILAB_DIRECTORY+$(DESTDIR)/nsp+g" \
-		-e "s+SCILABGS+@SCILAB_GS@+" nsplibtool > $@ 	
+	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)/nsp+g" nsplibtool > $@ 	
 
-Path.incl: $(IP) $(IV) ../Makefile.incl
+Path.incl: $(IP)  ../Makefile.incl
 	@$(RM) Path.incl
 	@echo "SCIDIR=$(DESTDIR)/nsp" > $@ 
 
 $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blatexpr.g > Blatexpr;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blatexpr.g > Blatexpr;
 	@cp Blatexpr $(SBIN)
 	@chmod 775 $(SBIN)/Blatexpr
 	@$(RM) Blatexpr
@@ -72,7 +66,7 @@ $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 
 $(SBIN)/BEpsf: BEpsf.g $(IP)
 	@$(RM) $(SBIN)/BEpsf
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" BEpsf.g > BEpsf;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" BEpsf.g > BEpsf;
 	@cp BEpsf $(SBIN)
 	@chmod 775 $(SBIN)/BEpsf
 	@$(RM) BEpsf
@@ -80,7 +74,7 @@ $(SBIN)/BEpsf: BEpsf.g $(IP)
 
 $(SBIN)/Blatexpr2: Blatexpr2.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr2
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blatexpr2.g > Blatexpr2;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blatexpr2.g > Blatexpr2;
 	@cp Blatexpr2 $(SBIN)
 	@chmod 775 $(SBIN)/Blatexpr2
 	@$(RM) Blatexpr2
@@ -88,7 +82,7 @@ $(SBIN)/Blatexpr2: Blatexpr2.g $(IP)
 
 $(SBIN)/Blatexprs: Blatexprs.g $(IP)
 	@$(RM) $(SBIN)/Blatexprs
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blatexprs.g > Blatexprs;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blatexprs.g > Blatexprs;
 	@cp Blatexprs $(SBIN)
 	@chmod 775 $(SBIN)/Blatexprs
 	@$(RM) Blatexprs
@@ -96,7 +90,7 @@ $(SBIN)/Blatexprs: Blatexprs.g $(IP)
 
 $(SBIN)/Blpr: Blpr.g $(IP)
 	@$(RM) $(SBIN)/Blpr
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blpr.g > Blpr;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blpr.g > Blpr;
 	@cp Blpr $(SBIN)
 	@chmod 775 $(SBIN)/Blpr
 	@$(RM) Blpr
@@ -104,7 +98,7 @@ $(SBIN)/Blpr: Blpr.g $(IP)
 
 $(UTIL)/Blatdoc: Blatdoc.g $(IP)
 	@$(RM) $(UTIL)/Blatdoc
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blatdoc.g > Blatdoc;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blatdoc.g > Blatdoc;
 	@cp Blatdoc $(UTIL)
 	@chmod 775 $(UTIL)/Blatdoc
 	@$(RM) Blatdoc
@@ -112,7 +106,7 @@ $(UTIL)/Blatdoc: Blatdoc.g $(IP)
 
 $(UTIL)/Blatdocs: Blatdocs.g $(IP)
 	@$(RM) $(UTIL)/Blatdocs
-	@sed -e "s+SCILAB_DIRECTORY+$(SCIDIR)+" Blatdocs.g > Blatdocs;
+	@sed -e "s+NSP_DIRECTORY+$(SCIDIR)+" Blatdocs.g > Blatdocs;
 	@cp Blatdocs $(UTIL)
 	@chmod 775 $(UTIL)/Blatdocs
 	@$(RM) Blatdocs

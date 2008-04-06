@@ -1,8 +1,8 @@
-#!/bin/SCILABGS
+#!/bin/sh
 #/* -*- Mode: Shell-script -*- */
 #
 # call libtool to produce a shared libary 
 # using Makefiles 
-make -f SCILAB_DIRECTORY/config/Makelib $* SCIDIR=SCILAB_DIRECTORY 
+make -f NSP_DIRECTORY/config/Makelib $* SCIDIR=NSP_DIRECTORY 
 
 
