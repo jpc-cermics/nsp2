@@ -187,7 +187,7 @@ if test "$rest" = "yes"; then
   fi
 
   if test -n "$start_exp"; then
-    sci_args="$sci_args -e $start_exp"
+    sci_args="$sci_args -e \"\"$start_exp\"\""
   fi
 
   if test -n "$language"; then
