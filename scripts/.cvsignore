@@ -1,5 +1,9 @@
 Path.incl
 scilab-inst
+nsplibtool-inst
 .nsp_history
 Makefile
 nsp-inst
+nsp.g 
+nsp-gtk.g
+Blatdoc

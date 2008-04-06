@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright INRIA
+# Copyright ENPC
 if test "$SCI" = ""; then
   SCI="NSP_DIRECTORY"
 fi

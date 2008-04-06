@@ -1,8 +1,7 @@
 #!/bin/sh
 # Warning : some old versions of sh dont allow inline function definitions
 # like do_scilex()... . In this case use a system V sh (sh5)
-
-# Copyright INRIA
+# Copyright ENPC
 
 if test "$PRINTERS" = ""; then
   PRINTERS="lp"
