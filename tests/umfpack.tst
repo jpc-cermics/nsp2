@@ -1,4 +1,20 @@
 // -*- Mode: scilab -*- 
+// Copyright (C) 2005 J.P Chancelier Cermics/Enpc
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// 
 // umfpack objects tests 
 
 if %umfpack==%f then quit;end
@@ -143,6 +159,45 @@ if norm(U1'*X -B ) > 1.e-8 then pause;end
 // test U.'x=b 
 X=U.solve[B,mode='Uat'];
 if norm(U1.'*X -B ) > 1.e-8 then pause;end 
+
+
+// LU for rectangular matrices 
+// solve does not work in that case but 
+// we can solve using extended modes (see just before).
+
+
+A=int(rand(5,3)*30);
+Ai=int(rand(A)*30);
+Ac=A+%i*Ai;
+SpA=sparse(A);
+SpAc=sparse(Ac);
+U=umfpack_create(SpA);
+// test of luget for A 
+[L1,U1,p,q,r]=U.luget[];
+A1 = diag( 1 ./ r) *A;
+if norm(full(L1*U1) - A1(p,q)) > 1.e-8 then pause;end 
+
+Uc=umfpack_create(SpAc);
+[L1,U1,p,q,r]=Uc.luget[];
+A1 = diag( 1 ./ r) *Ac;
+if norm(full(L1*U1) - A1(p,q)) > 1.e-8 then pause;end 
+
+A=int(rand(3,5)*30);
+Ai=int(rand(A)*30);
+Ac=A+%i*Ai;
+SpA=sparse(A);
+SpAc=sparse(Ac);
+U=umfpack_create(SpA);
+// test of luget for A 
+[L1,U1,p,q,r]=U.luget[];
+A1 = diag( 1 ./ r) *A;
+if norm(full(L1*U1) - A1(p,q)) > 1.e-8 then pause;end 
+
+Uc=umfpack_create(SpAc);
+// test of luget for A 
+[L1,U1,p,q,r]=Uc.luget[];
+A1 = diag( 1 ./ r) *Ac;
+if norm(full(L1*U1) - A1(p,q)) > 1.e-8 then pause;end 
 
 
 
