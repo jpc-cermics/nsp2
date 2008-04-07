@@ -405,7 +405,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   /* Get a sparse matrix */
   CheckStdRhs(1,1);
-  CheckLhs(0,3);
+  CheckLhs(0,2);
   /* now we can store the Numeric part */
   /* want to be sure that type cholmod is initialized */
   nsp_type_cholmod = new_type_cholmod(T_BASE);
