@@ -1,0 +1,88 @@
+% -*- mode: latex -*-
+
+\mansection{rcond}
+\begin{mandesc}
+  \short{rcond}{estimation of the reciprocal condition in 1-norm}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+rc = rcond(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  square numerical matrix
+    \vname{rc}: real scalar (should be in [0,1])
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an estimation of:
+$$
+     \frac{1}{\kappa_1(A)} =  \frac{1}{||A||_1 ||A^{-1}||_1}
+$$
+(see \manlink{norm}{norm} for definition of matrix 1-norm).
+This can be useful for linear system solving $A x = b$. For instance
+if $x'$ is an approximate solution of the linear system ($x$ being 
+the exact solution), denoting $r = b - Ax'$ the residual we have 
+the inequality:
+$$
+\frac{||x' - x||_1}{||x||_1} \le \kappa_1(A) \frac{||r||_1}{||b||_1}
+$$
+
+A matrix with a reciprocal condition number of the order of
+epsilon machine $\epsilon_m$ (aka as the unit relative rounding 
+error, \verb+%eps+ in nsp) is considered as badly conditionned 
+(for the underlying floating point arithmetic). 
+
+When using \verb+x = A\b+ for solving a linear system $Ax=b$, this
+estimation of the reciprocal condition number is computed. When
+$rc < n \epsilon_m$ ($n$ being the matrix order) the matrix is
+considered numerically singular and a \manlink{qr}{qr}
+factorisation with rank estimation is used to get a minimum norm
+solution. Nevertheless {\bf this test is not done for a triangular 
+matrix} so using \verb+rcond+ could be interesting in this case
+to detect potential numerical problem. See example 2.
+\end{mandescription}
+
+\begin{examples}
+\paragraph{example 1}
+  \begin{program}\HCode{A=rand(51,51);\Hnewline
+    rc=rcond(A)\Hnewline
+    // make a singular system:\Hnewline
+    A(:,5) = 0.3*A(:,1) + 0.9*A(:,21) - 2*A(:,41);\Hnewline
+    rc=rcond(A)\Hnewline
+    // solve a Ax=b linear system (the bad conditionning is detected)\Hnewline
+    b = rand(51,1);\Hnewline
+    x = A}\verb+\+\HCode{b;}
+  \end{program}
+
+\paragraph{example 2} a badly conditionned triangular matrix
+  \begin{program}\HCode{// make such a triangular matrix\Hnewline
+    T = triu(rand(500,500));\Hnewline
+    b = rand(500,1);\Hnewline
+    // solve T x = b with backslash: no warning occurs\Hnewline
+    x = T}\verb+\+\HCode{b;\Hnewline
+    // computing rcond\Hnewline
+    rc = rcond(T)\Hnewline
+    // computing the relative residual\Hnewline
+    norm(T*x-b)/norm(b)\Hnewline
+    // solve in least square meaning with rank detection\Hnewline
+    x = lsq(T,b);\Hnewline
+    // the relative residual is now better\Hnewline
+    norm(T*x-b)/norm(b)}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{lu}{lu}, \manlink{qr}{qr}, \manlink{norm}{norm}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   interface : Bruno Pincon and Jean-Philippe Chancelier. Internally
+   lapack routines dgecon, zgecon, dtrcon, ztrcon could be used.
+\end{authors}
