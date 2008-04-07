@@ -1,3 +1,11 @@
+2008-04-07  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* macros/miscellaneous/derivative.sci: add derivative
+	function with its help page.
+	* src/lapack/lapack.c: replace dgbcon and zgbcon with
+	nsp_dgbcon and nsp_zgbcon (same calling sequence). They
+	are faster but certainly less robust.
+
 2008-04-03  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libumfpack/umfpack.c add rcond method 
