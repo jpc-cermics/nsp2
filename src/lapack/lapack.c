@@ -3936,11 +3936,90 @@ int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
 	  {
 	    nsp_div_cc(&(B->C[kB]),&(A->C[kA]),&res);
 	    B->C[kB] = res;
+      NSP_OBJECT(A)->ret_pos = 2;
 	  }
     }
   return OK;
 }
 
+/* 
+ *  estimate rcond1 using lapack estimator (real case) 
+ *  replace dgbcon which tends to be very slow (far
+ *  more slower than the factorization) when n is big
+ *  enough. The drawback is that nsp_dgbcon is certainly
+ *  less robust because no scaling is done.
+ *  nsp_dgbcon has the same interface than dgbcon for
+ *  easy possible change but some arguments are not used.
+ */
+static void nsp_dgbcon(char *s_rien, int *n, int *kl, int *ku, double *AAb, int *lda, int *ipiv, double *normA1, 
+		       double *rcond, double *work, int *isign, int *ier, int irien)
+{
+  int kase, one=1;
+  double *X=work, *V=&work[*n], est;
+
+  if ( *normA1 == 0.0 ) { *rcond = 0.0; return; }
+
+  /* compute an estimation of ||inv(A)||_1 using lapack dlacon  */
+  kase = 0;
+  do
+    {
+      C2F(dlacon)(n, V, X, isign, &est, &kase);
+
+      switch (kase)
+	{
+	case 1:  /* solve Y = A^(-1) X <=> A Y = X  with X overwritten by Y */
+	  C2F(dgbtrs) ("N", n, kl, ku, &one, AAb, lda, ipiv, X, n, ier, 1);
+	  break;
+
+	case 2: /* solve Y = A'^(-1) X <=> A' Y = X  with X overwritten by Y */
+	  C2F(dgbtrs) ("T", n, kl, ku, &one, AAb, lda, ipiv, X, n, ier, 1);
+	  break;
+	}
+    }
+  while ( kase != 0 );
+
+  *rcond = 1.0/((*normA1)*est);
+}
+
+/* 
+ *  estimate rcond1 using lapack estimator (real case) 
+ *  replace zgbcon which tends to be very slow (far
+ *  more slower than the factorization) when n is big
+ *  enough. The drawback is that nsp_zgbcon is certainly
+ *  less robust because no scaling is done.
+ *  nsp_zgbcon has the same interface than zgbcon for
+ *  easy possible change but some arguments are not used. 
+ */
+static void nsp_zgbcon(char *s_rien, int *n, int *kl, int *ku, doubleC *AAb, int *lda, int *ipiv, double *normA1, 
+		       double *rcond, doubleC *cwork, double *work, int *ier, int irien)
+{
+  int kase, one=1;
+  doubleC *X=cwork, *V=&cwork[*n];
+  double est;
+
+  if ( *normA1 == 0.0 ) { *rcond = 0.0; return; }
+
+  /* compute an estimation of ||inv(A)||_1 using lapack dlacon  */
+  kase = 0;
+  do
+    {
+      C2F(zlacon)(n, V, X, &est, &kase);
+
+      switch (kase)
+	{
+	case 1:  /* solve Y = A^(-1) X <=> A Y = X  with X overwritten by Y */
+	  C2F(zgbtrs) ("N", n, kl, ku, &one, AAb, lda, ipiv, X, n, ier, 1);
+	  break;
+
+	case 2: /* solve Y = A'^(-1) X <=> A' Y = X  with X overwritten by Y */
+	  C2F(zgbtrs) ("T", n, kl, ku, &one, AAb, lda, ipiv, X, n, ier, 1);
+	  break;
+	}
+    }
+  while ( kase != 0 );
+
+  *rcond = 1.0/((*normA1)*est);
+}
 
 /**
  * nsp_mat_bdiv_banded:
@@ -3991,31 +4070,37 @@ int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcon
 
   if ( *info != 0 )
     {
-      *rcond = 0.0;
+      if ( rcond != NULL ) *rcond = 0.0;
       goto err_bis;
     }
 
   /* step 2 compute rcond */
-  if ( AA->rc_type == 'r' ) 
+  if ( rcond != NULL )
     {
-      normA1 = C2F(dlangb)("1", &n, &kl, &ku, A->R, &(A->m), NULL, 1);
-      if ( (iwork =nsp_alloc_work_int(n)) == NULL ) goto err;
-      if ( (work =nsp_alloc_work_doubles(3*n)) == NULL ) goto err;
-      C2F(dgbcon)("1", &n, &kl, &ku, AA->R, &(AA->m), ipiv, &normA1, rcond, work, iwork, &ier,1);
-      FREE(iwork); FREE(work);
-    }
-  else
-    {
-      normA1 = C2F(zlangb)("1", &n, &kl, &ku, A->C, &(A->m), NULL, 1);
-      if ( (work =nsp_alloc_work_doubles(n)) == NULL ) goto err;
-      if ( (cwork =nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
-      C2F(zgbcon)("1", &n, &kl, &ku, AA->C, &(AA->m), ipiv, &normA1, rcond, cwork, work, &ier,1);
-      FREE(cwork); FREE(work);
-    }
-  if ( tol_rcond > 0.0  &&  *rcond <= tol_rcond )  /* matrix is too badly conditionned */
-    {
-      *info = -1;
-      goto err_bis;
+      if ( AA->rc_type == 'r' )
+	{
+	  normA1 = C2F(dlangb)("1", &n, &kl, &ku, A->R, &(A->m), NULL, 1);
+	  if ( (iwork =nsp_alloc_work_int(n)) == NULL ) goto err;
+	  if ( (work =nsp_alloc_work_doubles(3*n)) == NULL ) goto err;
+/* 	  C2F(dgbcon)("1", &n, &kl, &ku, AA->R, &(AA->m), ipiv, &normA1, rcond, work, iwork, &ier,1); */
+	  nsp_dgbcon("1", &n, &kl, &ku, AA->R, &(AA->m), ipiv, &normA1, rcond, work, iwork, &ier,1);
+	  FREE(iwork); FREE(work);
+	}
+      else
+	{
+	  normA1 = C2F(zlangb)("1", &n, &kl, &ku, A->C, &(A->m), NULL, 1);
+	  if ( (cwork =nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
+/* 	  if ( (work =nsp_alloc_work_doubles(n)) == NULL ) goto err; */
+/* 	  C2F(zgbcon)("1", &n, &kl, &ku, AA->C, &(AA->m), ipiv, &normA1, rcond, cwork, work, &ier,1); */
+	  nsp_zgbcon("1", &n, &kl, &ku, AA->C, &(AA->m), ipiv, &normA1, rcond, cwork, NULL, &ier,1);
+	  FREE(cwork); FREE(work);
+	}
+
+      if ( tol_rcond > 0.0  &&  *rcond <= tol_rcond )  /* matrix is too badly conditionned */
+	{
+	  *info = -1;
+	  goto err_bis;
+	}
     }
 
   /* step 3 compute solution solving the 2 triangular systems */
@@ -4066,17 +4151,24 @@ static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku)
   if ( (AA = nsp_matrix_create(NVOID, A->rc_type, kl+1+ku, A->n)) == NULLMAT )
     return NULLMAT;
 
-  for ( j = 0; j < A->n; j++ )
-    {
-      imin = Max(0, j-ku);
-      idest = Max(0, ku + imin - j);
-      imax = Min(A->m, j+kl);
-      size = imax - imin + 1;
-      if ( A->rc_type == 'r' )
+  if (  A->rc_type == 'r' )
+    for ( j = 0; j < A->n; j++ )
+      {
+	imin = Max(0, j-ku);
+	idest = Max(0, ku + imin - j);
+	imax = Min(A->m, j+kl);
+	size = imax - imin + 1;
 	memcpy(&(AA->R[j*AA->m+idest]),&(A->R[j*A->m+imin]),size*sizeof(double));
-      else
+      }
+  else
+    for ( j = 0; j < A->n; j++ )
+      {
+	imin = Max(0, j-ku);
+	idest = Max(0, ku + imin - j);
+	imax = Min(A->m, j+kl);
+	size = imax - imin + 1;
 	memcpy(&(AA->C[j*AA->m+idest]),&(A->C[j*A->m+imin]),size*sizeof(doubleC));
-    }
+      }
   return AA;
 }
 

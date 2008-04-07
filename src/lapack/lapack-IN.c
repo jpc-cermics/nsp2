@@ -657,9 +657,17 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
     {
       kl = ku = A->m/2;
     }
-	  
-  if ( nsp_mat_bdiv_banded(A, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
-    return RET_BUG;
+	
+  if ( lhs == 1 )
+    {
+      if ( nsp_mat_bdiv_banded(A, kl, ku, B, NULL, 0.0, &info) == FAIL ) 
+	return RET_BUG;
+    }
+  else   
+    {
+      if ( nsp_mat_bdiv_banded(A, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
+	return RET_BUG;
+    }
 
   if ( info > 0 )
     {
@@ -667,7 +675,7 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if (  rcond <= A->n*nsp_dlamch("eps") )
+  if ( lhs == 2  &&  rcond <= A->n*nsp_dlamch("eps") )
     Sciprintf("Warning: matrix is badly conditionned, solution is dubtious\n");
 
   NSP_OBJECT(B)->ret_pos=1;
@@ -1016,10 +1024,16 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&mode,&tol_rcond) == FAIL) 
     goto err;
 
-  if ( opts[1].obj == NULLOBJ) 
+  if ( opts[1].obj != NULLOBJ) 
     {
-      tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+      if ( tol_rcond < 0.0 || tol_rcond > 1.0 ) 
+	{
+	  Scierror("%s: tol should be in [0,1] \n",NspFname(stack));
+	  return RET_BUG;
+	}
     }
+  else
+    tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
 
   if ( mode != NULL) 
     {
@@ -1045,6 +1059,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
+
   case 1: /* sym */
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
       {
@@ -1060,6 +1075,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
+
   case 2 :/* lo */
     if ( nsp_mat_bdiv_triangular(A, C, 'l' , &info) == FAIL ) goto err;
     if ( info != 0 )   
@@ -1068,6 +1084,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
+
   case 3: /* up */
     if ( nsp_mat_bdiv_triangular(A, C, 'u' , &info) == FAIL ) goto err;
     if ( info != 0 )   
@@ -1076,14 +1093,18 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	goto err;
       }
     break;
+
   case 4: /* least square */
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat=  nsp_mat_bdiv_lsq(Ac,C, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
     if ( stat == FAIL ) goto err;
+    break;
+
   case 5:  /* like \ */
     if ((C = nsp_matrix_bdiv(A,B, tol_rcond)) == NULLMAT) goto err;
     break;
+
   case 6: 
     /* symmetric positive definite */
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
