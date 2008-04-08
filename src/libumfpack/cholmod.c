@@ -493,14 +493,32 @@ static int int_cholmod_meth_isreal(NspCholmod *self, Stack stack, int rhs, int o
 }
 
 
+static int nsp_cholmod_solve_mode( Stack stack,char *mode, int *imode) 
+{
+  char *types[]={ "A", "LDLt",  "Lt", "LD" , "D", "DLt", "P", "L", "Pt" , NULL};
+  int modes[]={ CHOLMOD_A, CHOLMOD_LDLt,  CHOLMOD_Lt, CHOLMOD_LD ,
+		CHOLMOD_D, CHOLMOD_DLt, CHOLMOD_P, CHOLMOD_L,CHOLMOD_Pt };
+  int rep = is_string_in_array(mode, types,1);
+  if ( rep < 0 ) 
+    {
+      string_not_in_array(stack,mode,types,"optional argument");
+      return FAIL;
+    }
+  *imode = modes[rep];
+  return OK ;
+}
+
 
 static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int opt, int lhs)
 {
+  char *mode = NULL;
   double dummy = 0;
   cholmod_sparse Bspmatrix, *Xs ;
   cholmod_dense Bmatrix, *X ;
-  
-  CheckRhs(1,1); 
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int imode = CHOLMOD_A ;  
+  CheckStdRhs(1,1); 
   CheckLhs(1,1);
 
   if ( self->obj == NULL || self->obj->L  == NULL) 
@@ -508,6 +526,15 @@ static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int op
       Scierror("Error: cholmod object is not properly built\n");
       return RET_BUG;
     }
+
+  if ( get_optional_args(stack,rhs,opt,opts,&mode) == FAIL) 
+    return RET_BUG;
+  /* checks the optional type argument */
+  if ( mode != NULL) 
+    {
+      if ( nsp_cholmod_solve_mode(stack,mode,&imode) == FAIL) return RET_BUG;
+    }
+
   if (IsMatObj(stack,1))
     {
       NspMatrix *A,*Res;
@@ -518,9 +545,7 @@ static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int op
 	  return RET_BUG;
 	}
       nsp_matrix_to_cholmod_dense(A,&Bmatrix,&dummy) ;
-      X = cholmod_solve (CHOLMOD_LDLt, self->obj->L, &Bmatrix, &(self->obj->Common)) ;
-      /* use X to fill a NspMatrix then destroy X */
-      /* XXXX: the complex case is to be done Xmust be complex not zomplex */
+      X = cholmod_solve (imode, self->obj->L, &Bmatrix, &(self->obj->Common)) ;
       Res = nsp_cholmod_dense_to_matrix (&X, &(self->obj->Common)) ;
       if ( Res == NULL) return RET_BUG;
       MoveObj(stack,1,NSP_OBJECT(Res));
@@ -538,7 +563,7 @@ static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int op
       /* get sparse matrix B (unsymmetric) */
       if ( nsp_spcol_to_cholmod_sparse(A,&Bspmatrix, &dummy, 0, FALSE)== FAIL) 
 	return RET_BUG;
-      Xs = cholmod_spsolve (CHOLMOD_LDLt, self->obj->L, &Bspmatrix, &(self->obj->Common)) ;
+      Xs = cholmod_spsolve (imode, self->obj->L, &Bspmatrix, &(self->obj->Common)) ;
       nsp_cholmod_sparse_free( &Bspmatrix);
       /* Create a NspSpColMatrix and free Xs */
       if ((Res = nsp_cholmod_to_spcol_sparse(&Xs, &(self->obj->Common)))== NULL) 
