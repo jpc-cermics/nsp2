@@ -116,8 +116,9 @@ abs((yppa-ypp)/ypp)}
 
 \paragraph{example 2} a more complicated function:
 $$f(x,y,z) = \frac{\cos(x) z}{1+y^2} + e^{-x^2} y^3 (2z^2-1)$$.
-\begin{program}\HCode{function v = f(x)\Hnewline
-v = cos(x(1))/(1+x(2)^2)*x(3) + exp(-x(1)^2)*x(2)^3*(2*x(3)^2-1)\Hnewline
+In the following we note $X = [x,y,z]^{\top}$:
+\begin{program}\HCode{function v = f(X)\Hnewline
+v = cos(X(1))/(1+X(2)^2)*X(3) + exp(-X(1)^2)*X(2)^3*(2*X(3)^2-1)\Hnewline
 endfunction\Hnewline
 // a function providing the exact gradient and hessian:\Hnewline 
 function [J,H] = df(X)\Hnewline
