@@ -4,7 +4,7 @@
 
 if %cholmod==%f then quit;end
 
-n=4;
+n=10;
 A=sparse(rand(n,n));A=A*A';
 ch=cholmod_create(A);
 ld=ch.get_ld[];
@@ -35,7 +35,8 @@ L=tril(ld,-1)+sparse(diag(ones(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - (A+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
 
-// factor A*A' 
+// factor A*A' for A square 
+//------------------------
 
 A=sparse(rand(n,n));
 ch=cholmod_create(A,type='row');
@@ -44,7 +45,7 @@ L=tril(ld,-1)+sparse(diag(ones(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - A*A')) > 100*%eps then pause;end 
 
-beta=2
+beta=2;
 A=sparse(rand(n,n));
 ch=cholmod_create(A,type='row',beta=beta);
 ld=ch.get_ld[];
@@ -52,7 +53,44 @@ L=tril(ld,-1)+sparse(diag(ones(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - (A*A'+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
 
-// factor A'*A, 
+// factor A*A' when A is not square and flat 
+//----------------------------------- 
+
+A=sparse(rand(n,2*n));
+ch=cholmod_create(A,type='row');
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - A*A')) > 100*%eps then pause;end 
+
+beta=2;
+A=sparse(rand(n,2*n));
+ch=cholmod_create(A,type='row',beta=beta);
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - (A*A'+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
+
+// factor A*A' when A is tall 
+//----------------------------------- 
+
+A=sparse(rand(2*n,n));
+[ch,p]=cholmod_create(A,type='row');
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,2*n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - A*A')) > 100*%eps then pause;end 
+
+beta=2;
+A=sparse(rand(n,2*n));
+[ch,p]=cholmod_create(A,type='row',beta=beta);
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - (A*A'+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
+
+// factor A'*A when A is square 
+//-----------------------------
 
 A=sparse(rand(n,n));
 ch=cholmod_create(A,type='col');
@@ -68,8 +106,53 @@ ld=ch.get_ld[];
 L=tril(ld,-1)+sparse(diag(ones(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - (A'*A+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
-  
+
+// factor A'*A when A is flat 
+//-----------------------------
+
+A=sparse(rand(n,2*n));
+[ch,p]=cholmod_create(A,type='col');
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,2*n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - A'*A)) > 100*%eps then pause;end 
+
+beta=2;
+A=sparse(rand(n,2*n));
+[ch,p]=cholmod_create(A,type='col',beta=beta);
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,2*n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - (A'*A+beta*sparse(eye(2*n,2*n))))) > 100*%eps then pause;end 
+
+// factor A'*A when A is tall 
+//-----------------------------
+
+A=sparse(rand(2*n,n));
+[ch,p]=cholmod_create(A,type='col');
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - A'*A)) > 100*%eps then pause;end 
+
+beta=2;
+A=sparse(rand(2*n,n));
+[ch,p]=cholmod_create(A,type='col',beta=beta);
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - (A'*A+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
+
 // test methods 
+//---------------- 
+
+beta=2;
+A=sparse(rand(n,n));
+ch=cholmod_create(A,type='col',beta=beta);
+ld=ch.get_ld[];
+L=tril(ld,-1)+sparse(diag(ones(1,n)));
+D=diag(diag(ld));
+if norm(full(L*D*L' - (A'*A+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
 
 // isreal 
 
