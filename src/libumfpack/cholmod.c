@@ -1053,8 +1053,10 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
   if ( Ac == NULL) 
     return RET_BUG;
 
-  if ( Ac->nrow != Ac->ncol ) 
+
+  if (stype != 0 &&  Ac->nrow != Ac->ncol ) 
     {
+      /* matrix must be square except when factorization of A*A' or A'*A is done */
       Scierror("Error: matrix must be square\n");
       return RET_BUG;
     }
@@ -1148,9 +1150,10 @@ static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *be
   nsp_sputil_config (SPUMONI, &(Ch->obj->Common),FALSE) ;
   /* In nsp solve should return complex */
   Ch->obj->Common.prefer_zomplex = FALSE ;
-
-  if ( Sp->m != Sp->n ) 
+  
+  if (stype != 0 && Sp->m != Sp->n ) 
     {
+      /* matrix must be square except when factorization of A*A' or A'*A is done */
       Scierror("Error: matrix must be square\n");
       return FAIL;
     }
@@ -1291,15 +1294,17 @@ static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,doub
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) 
 	    return FAIL;
+	  B->nrow = A->m;
+	  B->ncol = A->n;
 	}
       else 
 	{
 	  if ( nsp_sprow_set_triplet_from_m((NspSpRowMatrix *)A,TRUE)==FAIL) 
 	    return FAIL;
+	  B->nrow = A->n;
+	  B->ncol = A->m;
 	}
     }
-  B->nrow = A->m;
-  B->ncol = A->n;
   B->p = A->triplet.Jc;
   B->i = A->triplet.Ir;
   Ap = B->p ;
