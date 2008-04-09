@@ -534,7 +534,7 @@ static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int op
     {
       if ( nsp_cholmod_solve_mode(stack,mode,&imode) == FAIL) return RET_BUG;
     }
-
+  
   if (IsMatObj(stack,1))
     {
       NspMatrix *A,*Res;
@@ -1183,8 +1183,16 @@ static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *be
       return FAIL;
     }
   
-  Ch->obj->m =  Sp->m;
-  Ch->obj->n =  Sp->n;
+  if ( stype == 0 ) 
+    {
+      Ch->obj->m =  Ch->obj->n = ( transpose == TRUE) ?  Sp->n : Sp->m;
+    }
+  else 
+    {
+      Ch->obj->m =  Sp->m;
+      Ch->obj->n =  Sp->n;
+    }
+
 
   /* convert to packed LDL' when done */
   Ch->obj->Common.final_asis = FALSE ;
