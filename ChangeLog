@@ -1,3 +1,8 @@
+2008-04-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* macros/miscellaneous/bdiv_sp_m.sci: add a first
+	version for backslash with sparse matrix.
+
 2008-04-07  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* macros/miscellaneous/derivative.sci: add derivative
