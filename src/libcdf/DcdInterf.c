@@ -44,6 +44,7 @@ static void cdfnbnErr (int status,double bound, const int pos[]);
 static void cdfnorErr (int status,double bound, const int pos[]);
 static void cdfpoiErr (int status,double bound, const int pos[]);
 static void cdftErr (int status,double bound, const int pos[]);
+static void cdftncErr (int status,double bound, const int pos[]);
 static void cdfchnErr (int status,double bound, const int pos[]);
 
 /**************************************************
@@ -657,6 +658,64 @@ static void cdftErr(    int status,double bound, const int pos[])
     }
 }
 
+/**************************************************
+ *  hand written interface 
+ *      Interface for cdft
+ *              T distribution non central
+ ***********************************************************************/
+
+
+int int_cdftnc(Stack stack, int rhs, int opt, int lhs)
+{ 
+  int rep;
+  char *Table[] = {"Df", "PQ", "T" , "Pnonc", NULL};
+  int minrhs = 3,maxrhs = 4,minlhs=1,maxlhs=2;
+  CheckRhs(minrhs,maxrhs);
+  CheckLhs(minlhs,maxlhs);
+  if ((rep= GetStringInArray(stack,1,Table,1)) == -1) return RET_BUG; 
+  switch (rep) 
+    {
+    case 1: /* "PQ" */
+      {
+	static const int callpos[5] = {3,4,0,1,2};
+	return CdfBase(stack,rhs,opt,lhs,3,2,callpos,"PQ","T, Df and Pnonc",1,cdf_cdftnc,cdftncErr);
+      }
+      break;
+    case 2: /* "T" */
+      {
+	static const int callpos[5] = {2,3,4,0,1};
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"T","Df, Pnonc, P and Q",2,cdf_cdftnc,cdftncErr);
+      }
+      break;
+    case 0: /* "Df" */
+      {
+	/* XXX here pnonc should be five */
+	static const int callpos[5] = {1,2,3,4,0};
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Df","Pnonc, P,Q and T",3,cdf_cdftnc,cdftncErr);
+      }
+    case 3: /* "Pnonc" */
+      {
+	static const int callpos[5] = {0,1,2,3,4};
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Pnonc","P,Q, T,and Df",4,cdf_cdftnc,cdftncErr);
+      }
+    }
+  return 0;
+}
+
+static void cdftncErr(    int status,double bound, const int pos[])
+{
+  static char *param[7]={"WHICH", "P","Q","T","Df"};
+  switch ( status ) 
+    {
+    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 3 : Scierror(" P + Q .ne. 1 \n");break ;
+    default : 
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+	       param[-status-1],bound);
+    }
+}
+
 
 /**************************************************
  *  hand written interface 
@@ -972,6 +1031,7 @@ static OpTab Dcd_func[]={
   {"cdfnor",int_cdfnor}, 
   {"cdfpoi",int_cdfpoi}, 
   {"cdft",int_cdft}, 
+  {"cdftnc",int_cdftnc}, 
   {"cdf_rlog1",int_cdf_rlog1},
   {"cdf_rlog1_old",int_cdf_rlog1_old},
   {"cdf_rexp",int_cdf_rexp},

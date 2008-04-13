@@ -93,6 +93,8 @@ extern int cdf_dinvr (int *status, double *x, double *fx, int *qleft, int *qhi);
 extern double cdf_stirling_series_diff(double z, double y) ;
 extern double cdf_stirling_series(double a) ;
 
+extern int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df, double *pnonc, int *status, double *bound);
+extern int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum, double *ccum);
 
 
 
