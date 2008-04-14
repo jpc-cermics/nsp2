@@ -641,7 +641,7 @@ static int int_cholmod_meth_updown(NspCholmod *self, Stack stack, int rhs, int o
       return RET_BUG;
     }
   if ((C=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( C->m != self->obj->m || C->n != 1 ) 
+  if ( C->m != self->obj->m ) /* || C->n != 1 )  */
     {
       Scierror("Error: argument should be a  %dx1 column vector\n",self->obj->m);
       return RET_BUG;

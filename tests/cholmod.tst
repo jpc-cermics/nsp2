@@ -165,15 +165,21 @@ X=ch.solve[B];
 if norm(full(B - (A'*A+beta*sparse(eye(n,n)))*X)) > 100*%eps then pause;end 
 
 // update 
+// This must be tested with permutation since C must be permuted 
+// This must also be tested with C with more than one column
+// XXXXX
+// 
 
 C=sparse(rand(n,1));
-ch.update[C]
+ch.update[C];
 ld1=ch.get_ld[];
 L=tril(ld1,-1)+sparse(diag(ones(1,n)));
 D=diag(diag(ld1));
 if norm(full(L*D*L' - (A'*A+C*C'+beta*sparse(eye(n,n))))) > 100*%eps then pause;end 
 
 // downdate 
+// This must be tested with permutation since C must be permuted 
+// XXXXX
 
 ch.downdate[C];
 ld2=ch.get_ld[];
