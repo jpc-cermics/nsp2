@@ -381,10 +381,19 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 #endif
 #endif
 
+#ifdef PERIGTK
+void nsp_pause(int sec_time,int events)
+{
+  xpause(sec_time,events);
+}
+#endif 
+
+extern int nsp_check_events_activated(void);
+
 static void xpause(int sec_time,int events)
 { 
   unsigned useconds = (unsigned) sec_time;
-  if ( events == TRUE ) 
+  if ( events == TRUE && nsp_check_events_activated() == TRUE )
     {
       /* nsp_event_pause need milliseconds */
       nsp_event_pause(useconds/1000) ;
