@@ -2,7 +2,7 @@
 
 \mansection{quapro}
 \begin{mandesc}
-  \short{quapro}{linear quadratic programming solver} \\
+  \short{quapro}{linear quadratic programming solver}
 \end{mandesc}
 \index{quapro}\label{quapro}
 \begin{calling_sequence}
@@ -33,6 +33,11 @@
 \end{parameters}
 
 \begin{mandescription}
+
+Note that \verb!quapro! is not directly accessible in nsp. The \verb!quapro! 
+interface is GPL but you have to get the in order to get the source code 
+for  \verb!quapro!.
+
 \begin{itemize}
 \item \verb![x,lagr,f]=quapro(Q,p,C,b [,x0])!
 \begin{equation*}
