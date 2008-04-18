@@ -1419,7 +1419,7 @@ class NspObjectWrapper(Wrapper):
         '%(codeafter)s\n' \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n' \
         '%(aftercreate)s' \
-        '  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
+        '  nsp_ret = (NspObject *) ZZZgobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
         '  if ( nsp_ret == NULL) return RET_BUG;\n' \
         '  MoveObj(stack,1,nsp_ret);\n' \
         '  return 1;\n' \

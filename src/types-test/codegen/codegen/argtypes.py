@@ -911,35 +911,14 @@ class ObjectArg(ArgType):
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*': ptype = ptype[:-1]
-        info.varlist.add(ptype, '*ret')
-        if ownsreturn:
-            info.varlist.add('NspObject', '*nsp_ret')
-            info.codeafter.append('  nsp_type_%(name)s = new_type_%(name)s(T_BASE);\n' 
-                                  '  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,' 
-                                  '(NspTypeBase *) nsp_type_%(name)s))== NULL) return RET_BUG;\n' 
-                                  '  g_object_unref(ret);\n'  
-                                  '  MoveObj(stack,1,nsp_ret);\n  return 1;' %  {'name': string.lower(self.objname)} )
-        else:
-            info.varlist.add('NspObject', '*nsp_ret')
-            info.codeafter.append('  nsp_type_%(name)s = new_type_%(name)s(T_BASE);\n'  
-                                  '  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,' 
-                                  '(NspTypeBase *) nsp_type_%(name)s))== NULL) return RET_BUG;\n'  
-                                  '  MoveObj(stack,1,nsp_ret);\n  return 1;' %   {'name': string.lower(self.objname)} )            
+        info.varlist.add('Nsp'+ ptype, '*ret')
+        info.codeafter.append('  if (ret == NULL ) return RET_BUG;\n  MoveObj(stack,1,NSP_OBJECT(ret));\n  return 1;' )
+        
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add(ptype, '*ret')
-        if ownsreturn:
-            info.varlist.add('NspObject', '*nsp_ret')
-            info.attrcodeafter.append('  nsp_type_%(name)s = new_type_%(name)s(T_BASE);\n' 
-                                  '  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,'
-                                  '(NspTypeBase *) nsp_type_%(name)s))== NULL) return NULL;\n'  
-                                  '  g_object_unref(ret);\n'  
-                                  '  return nsp_ret;' %  {'name': string.lower(self.objname)} )
-
-        else:
-            info.attrcodeafter.append('  nsp_type_%(name)s = new_type_%(name)s(T_BASE);\n'  
-                                      '  return (NspObject *) gobject_create(NVOID,(GObject *)ret,' 
-                                  '(NspTypeBase *) nsp_type_%(name)s);' %  {'name': string.lower(self.objname)} )
+        info.varlist.add('Nsp'+ ptype, '*ret')
+        info.codeafter.append('  return NSP_OBJECT(ret);' )
 
 
 class BoxedArg(ArgType):
