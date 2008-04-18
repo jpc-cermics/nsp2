@@ -503,11 +503,11 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_nsp_polyline_full_copy(NspPolyline *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *ret;
+  NspPolyline *ret;
 
   ret = nsp_polyline_full_copy(self);
-  if (ret == NULLOBJ ) return RET_BUG;
-  MoveObj(stack,1,ret);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
