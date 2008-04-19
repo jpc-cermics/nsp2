@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{cdft}
+\begin{mandesc}
+  \short{cdftnc}{cumulative distribution function Student's non-central T distribution}
+\end{mandesc}
+\index{cdft}\label{cdft}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,Q]=cdft("PQ",T,Df,Pnonc)  
+  [T]=cdft("T",Df,Pnonc,P,Q)  
+  [Df]=cdft("Df",Pnonc,P,Q,T)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P,Q,T,Df,PNONC} : six real vectors of the same size.
+    \vname{P,Q (Q=1-P)  } : The integral from -infinity to t of the t-density. Input range: (0,1].
+      \vname{T} : Upper limit of integration of the t-density. Input range: ( -infinity, +infinity). Search range: [ -1E150, 1E150 ]
+      \vname{DF:  } Degrees of freedom of the t-distribution. Input range: (0 , +infinity). Search range: [1e-300, 1E10]
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculates any one parameter of the non-central T distribution given
+  values for the others.
+  Upper tail    of  the  cumulative  noncentral t is calculated using 
+  formulae  from page 532  of Johnson, Kotz,  Balakrishnan, Coninuous 
+  Univariate Distributions, Vol 2, 2nd Edition.  Wiley (1995) 
+  Computation of other parameters involve a seach for a value that 
+  produces  the desired  value  of P.   The search relies  on  the 
+  monotinicity of P with the other parameter. 
+\end{mandescription}
+
+\begin{authors}
+  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
+  Library of Fortran Routines for Cumulative Distribution
+  Functions, Inverses, and Other Parameters (February, 1994)
+  Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+\end{authors}

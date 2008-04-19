@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+
+\mansection{cdff}
+\begin{mandesc}
+  \short{cdff}{cumulative distribution function F distribution}
+\end{mandesc}
+\index{cdff}\label{cdff}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,Q]=cdff("PQ",F,Dfn,Dfd)  
+  [F]=cdff("F",Dfn,Dfd,P,Q);  
+  [Dfn]=cdff("Dfn",Dfd,P,Q,F);  
+  [Dfd]=cdff("Dfd",P,Q,F,Dfn)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P,Q,F,Dfn,Dfd} : five real vectors of the same size.
+    \vname{P,Q (Q=1-P)  } :  The integral from 0 to F of the f-density. Input range: [0,1].
+    \vname{F} : Upper limit of integration of the f-density. Input range: [0, +infinity). Search range: [0,1E300]
+      \vname{Dfn} : Degrees of freedom of the numerator sum of squares. Input range: (0, +infinity). Search range: [ 1E-300, 1E300]
+      \vname{Dfd} : Degrees of freedom of the denominator sum of squares. Input range: (0, +infinity). Search range: [ 1E-300, 1E300]
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculates any one parameter of the F distribution
+  given values for the others.
+  Formula   26.6.2   of   Abramowitz   and   Stegun,  Handbook  of
+  Mathematical  Functions (1966) is used to reduce the computation
+  of the  cumulative  distribution function for the  F  variate to
+  that of an incomplete beta.
+  Computation of other parameters involve a seach for a value that
+  produces  the desired  value  of P.   The search relies  on  the
+  monotinicity of P with the other parameter.
+  The value of the  cumulative  F distribution is  not necessarily
+  monotone in  either degrees of freedom.  There  thus may  be two
+  values  that  provide a given CDF  value.   This routine assumes
+  monotonicity and will find an arbitrary one of the two values.
+\end{mandescription}
+
+\begin{authors}
+  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
+  Library of Fortran Routines for Cumulative Distribution
+  Functions, Inverses, and Other Parameters (February, 1994)
+  Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+\end{authors}

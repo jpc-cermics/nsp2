@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+\mansection{cdfbin}
+\begin{mandesc}
+  \short{cdfbin}{cumulative distribution function Binomial distribution}
+\end{mandesc}
+\index{cdfbin}\label{cdfbin}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[P,Q]=cdfbin("PQ",S,Xn,Pr,Ompr)  
+[S]=cdfbin("S",Xn,Pr,Ompr,P,Q)  
+[Xn]=cdfbin("Xn",Pr,Ompr,P,Q,S)  
+[Pr,Ompr]=cdfbin("PrOmpr",P,Q,S,Xn)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P,Q,S,Xn,Pr,Ompr} : six real vectors of the same size.
+    \vname{P,Q (Q=1-P)  } : The cumulation from 0 to S of the binomial distribution. (Probablility of S or fewer successes in XN trials each with probability of success PR.) Input range: [0,1].
+    \vname{S} : The number of successes observed. Input range: [0, XN] Search range: [0, XN]
+    \vname{Xn} : The number of binomial trials. Input range: (0, +infinity). Search range: [1E-300, 1E300]
+    \vname{Pr,Ompr (Ompr=1-Pr)  } : The probability of success in each binomial trial. Input range: [0,1]. Search range: [0,1]
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  Calculates any one parameter of the binomial distribution given values for the others.
+  Formula  26.5.24    of   Abramowitz  and    Stegun,  Handbook   of
+  Mathematical   Functions (1966) is   used  to reduce the  binomial
+  distribution  to  the  cumulative incomplete    beta distribution.
+  Computation of other parameters involve a seach for a value that
+  produces  the desired  value  of P.   The search relies  on  the
+  monotinicity of P with the other parameter.
+\end{mandescription}
+\begin{authors}
+  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
+  Library of Fortran Routines for Cumulative Distribution
+  Functions, Inverses, and Other Parameters (February, 1994)
+  Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+\end{authors}
+

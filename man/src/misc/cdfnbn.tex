@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+\mansection{cdfnbn}
+\begin{mandesc}
+  \short{cdfnbn}{cumulative distribution function  negative binomial distribution}
+\end{mandesc}
+\index{cdfnbn}\label{cdfnbn}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,Q]=cdfnbn("PQ",S,Xn,Pr,Ompr)  
+  [S]=cdfnbn("S",Xn,Pr,Ompr,P,Q)  
+  [Xn]=cdfnbn("Xn",Pr,Ompr,P,Q,S)  
+  [Pr,Ompr]=cdfnbn("PrOmpr",P,Q,S,Xn)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P,Q,S,Xn,Pr,Ompr} : six real vectors of the same size.
+    \vname{P,Q (Q=1-P)  } : The cumulation from 0 to S of the  negative binomial distribution. Input range: [0,1].
+    \vname{S} : The upper limit of cumulation of the binomial distribution. There are F or fewer failures before the XNth success. Input range: [0, +infinity). Search range: [0, 1E300]
+      \vname{Xn} :   The number of successes. Input range: [0, +infinity). Search range: [0, 1E300]
+        \vname{Pr} :   The probability of success in each binomial trial. Input range: [0,1]. Search range: [0,1].
+        \vname{Ompr} :   1-PR Input range: [0,1]. Search range: [0,1] PR + OMPR = 1.0
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculates any one parameter of the negative binomial
+  distribution given values for the others.
+  The  cumulative  negative   binomial  distribution  returns  the
+  probability that there  will be  F or fewer failures before  the
+  XNth success in binomial trials each of which has probability of
+  success PR.
+  The individual term of the negative binomial is the probability of
+  S failures before XN successes and is
+  Choose \verb!( S, XN+S-1 ) * PR^(XN) * (1-PR)^S!
+  Formula   26.5.26   of   Abramowitz  and  Stegun,  Handbook   of
+  Mathematical Functions (1966) is used  to  reduce calculation of
+  the cumulative distribution  function to that of  an  incomplete
+  beta.
+  Computation of other parameters involve a seach for a value that
+  produces  the desired  value  of P.   The search relies  on  the
+  monotinicity of P with the other parameter.
+\end{mandescription}
+
+\begin{authors}
+  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
+  Library of Fortran Routines for Cumulative Distribution
+  Functions, Inverses, and Other Parameters (February, 1994)
+  Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+\end{authors}

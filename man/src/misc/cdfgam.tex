@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+\mansection{cdfgam}
+\begin{mandesc}
+  \short{cdfgam}{cumulative distribution function gamma distribution}
+\end{mandesc}
+\index{cdfgam}\label{cdfgam}
+  %-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[P,Q]=cdfgam("PQ",X,Shape,Scale)  
+[X]=cdfgam("X",Shape,Scale,P,Q)  
+[Shape]=cdfgam("Shape",Scale,P,Q,X)  
+[Scale]=cdfgam("Scale",P,Q,X,Shape)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P,Q,X,Shape,Scale} : five real vectors of the same size.
+    \vname{P,Q (Q=1-P)  } The integral from 0 to X of the gamma density. Input range: [0,1].
+    \vname{X} :  The upper limit of integration of the gamma density. Input range: [0, +infinity). Search range: [0,1E300]
+      \vname{Shape} :  The shape parameter of the gamma density. Input range: (0, +infinity). Search range: [1E-300,1E300]
+      \vname{Scale} :  The scale parameter of the gamma density. Input range: (0, +infinity). Search range: (1E-300,1E300]
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculates any one parameter of the gamma distribution given values for the others.
+  The gamma density is given by for $x>0$ by~:
+  \begin{equation}
+    x^{\alpha-1} \frac{ \beta^\alpha  e^{- \beta x}}{\Gamma(\alpha)}
+  \end{equation}
+  where $\alpha = \mbox{\tt Shape}$ and $\beta = \mbox{\tt Scale}$. 
+  Note that \verb!Scale! is in fact an inverse scale parameter also 
+  called rate. 
+
+  Cumulative distribution function (P) is calculated directly by
+  the code associated with: DiDinato, A. R. and Morris, A. H. 
+  Computation of the  incomplete
+  gamma function  ratios  and their  inverse.   ACM  Trans.  Math.
+  Softw. 12 (1986), 377-393.
+  Computation of other parameters involve a seach for a value that
+  produces  the desired  value  of P.   The search relies  on  the
+  monotinicity of P with the other parameter.
+\end{mandescription}
+
+\begin{program}\HCode{x=linspace(0,20,100);\Hnewline
+shape =1;\Hnewline
+scale =0.5;\Hnewline
+y= cdfgam("PQ",x,shape*ones(x),scale*ones(x));\Hnewline
+\Hnewline
+function y=f(x)\Hnewline
+  y = x^(shape-1)*scale^shape*exp(-x*scale)./gamma(shape);\Hnewline
+endfunction;\Hnewline
+\Hnewline
+z=x;\Hnewline
+for i=1:length(x)\Hnewline
+  z(i) = intg(0,x(i),f);\Hnewline
+end\Hnewline
+err=max(abs(y-z));}
+\end{program}
+
+\begin{authors}
+  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
+  Library of Fortran Routines for Cumulative Distribution
+  Functions, Inverses, and Other Parameters (February, 1994)
+  Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+\end{authors}
