@@ -23,7 +23,11 @@
 \end{parameters}
 \begin{mandescription}
   Calculates any one parameter of the T distribution given
-  values for the others.
+  values for the others. The T distribution is given by~:
+  \begin{equation}
+    \frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\pi}\,\Gamma(\frac{\nu}{2})} \left(1+\frac{t^2}{\nu} \right)^{-(\frac{\nu+1}{2})} 
+  \end{equation}
+  with $\nu = \mbox{\tt Df}$  and where $\Gamma$ is the Gamma function.
   Formula  26.5.27  of   Abramowitz   and  Stegun,   Handbook   of
   Mathematical Functions  (1966) is used to reduce the computation
   of the cumulative distribution function to that of an incomplete
@@ -32,6 +36,21 @@
   produces  the desired  value  of P.   The search relies  on  the
   monotinicity of P with the other parameter.
 \end{mandescription}
+
+\begin{program}\HCode{x=linspace(-10,10,100);\Hnewline
+df = 3;\Hnewline
+y= cdft("PQ",x,df*ones(x));\Hnewline
+function y=f(x)\Hnewline
+  y = gamma((df+1)/2)/( sqrt(df*\%pi) *gamma(df/2))*(1+x^2/df)^(-(df+1)/2);\Hnewline
+endfunction;\Hnewline
+\Hnewline
+z=x;\Hnewline
+for i=1:length(x)\Hnewline
+  z(i) = intg(-1000,x(i),f);\Hnewline
+end\Hnewline
+err=max(abs(y-z));}
+\end{program}
+
 
 \begin{authors}
   Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
