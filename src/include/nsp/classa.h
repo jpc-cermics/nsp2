@@ -36,6 +36,7 @@ struct _NspClassA {
   NspMatrix* cla_val;
   NspBMatrix* cla_bval;
   NspList* cla_lval;
+  double xxdaf[5];
 };
 
 extern int nsp_type_classa_id;
@@ -56,7 +57,7 @@ NspClassA *new_classa();
 
 #define NULLCLASSA (NspClassA*) 0
 
-extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
+extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,double* xxdaf,NspTypeBase *type);
 
 /* from ClassAObj.c */
 

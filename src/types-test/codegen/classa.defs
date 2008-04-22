@@ -28,7 +28,6 @@
   )
 )
 
-
 ;; this function is redirected to int_set_attribute 
 
 (define-function setrowscols_classa

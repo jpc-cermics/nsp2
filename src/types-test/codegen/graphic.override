@@ -76,6 +76,17 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 }
 
 %%
+override graphic_full_copy kwargs
+static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGraphic *ret;
+  CheckRhs(0,0);
+  ret = self->type->full_copy(self);
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+%%
 last
 
 /* verbatim at the end */

@@ -6,6 +6,8 @@
   (c-name "Graphic")
   (fields
     '("int" "color")
+    '("int" "id" "hidden" "-1");; id of the graphic window when a graphic window is used 
+    '("gboolean" "hidden" "std" "FALSE" );; id of the graphic window when a graphic window is used 
     )
   (gtype-id "Graphic")
 )

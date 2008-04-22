@@ -90,15 +90,17 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   type->init = (init_func *) init_polyline;
 
 #line 20 "polyline.override"
-  /* inserted verbatim in the type definition */
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
-((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
 
-#line 102 "polyline.c"
+#line 104 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -538,7 +540,7 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 51 "polyline.override"
+#line 53 "polyline.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -566,8 +568,6 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
   poly->obj->Pts = (NspMatrix *) val ;
   return OK;
 }
-
-
 
 #line 573 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
@@ -600,7 +600,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 38 "polyline.override"
+#line 40 "polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -664,7 +664,8 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
 {
   NspPolyline *P = (NspPolyline *) Obj;
   NspMatrix *M = P->obj->Pts;
-  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+  if ( ((NspGraphic *) P)->obj->hidden == FALSE )
+    Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
 }
 
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -738,4 +739,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 742 "polyline.c"
+#line 743 "polyline.c"

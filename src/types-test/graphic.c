@@ -175,6 +175,8 @@ static int nsp_graphic_eq(NspGraphic *A, NspObject *B)
   if ( check_cast(B,nsp_type_graphic_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->id != loc->obj->id) return FALSE;
+  if ( A->obj->hidden != loc->obj->hidden) return FALSE;
   return TRUE;
 }
 
@@ -196,6 +198,7 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->hidden) == FAIL) return FAIL;
   return OK;
 }
 
@@ -207,6 +210,7 @@ NspGraphic  *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M)
 {
   if ((M->obj = malloc(sizeof(nsp_graphic))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->hidden) == FAIL) return NULL;
  return M;
 }
 
@@ -283,6 +287,8 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -299,6 +305,8 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -375,12 +383,14 @@ int nsp_graphic_check_values(NspGraphic *H)
   return OK;
 }
 
-NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type)
+NspGraphic *nsp_graphic_create(char *name,int color,int id,gboolean hidden,NspTypeBase *type)
 {
  NspGraphic *H  = nsp_graphic_create_void(name,type);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   H->obj->color=color;
+  H->obj->id=id;
+  H->obj->hidden=hidden;
  if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
  return H;
 }
@@ -412,6 +422,8 @@ NspGraphic *nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self)
   if ((H->obj = calloc(1,sizeof(nsp_graphic))) == NULL) return NULLGRAPHIC;
   H->obj->ref_count=1;
   H->obj->color=self->obj->color;
+  H->obj->id=self->obj->id;
+  H->obj->hidden=self->obj->hidden;
   return H;
 }
 
@@ -457,7 +469,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 461 "graphic.c"
+#line 473 "graphic.c"
 
 
 #line 55 "graphic.override"
@@ -472,7 +484,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 476 "graphic.c"
+#line 488 "graphic.c"
 
 
 #line 68 "graphic.override"
@@ -486,13 +498,27 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 490 "graphic.c"
+#line 502 "graphic.c"
+
+
+#line 80 "graphic.override"
+static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGraphic *ret;
+  CheckRhs(0,0);
+  ret = self->type->full_copy(self);
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+#line 515 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
   {"translate",(nsp_method *) _wrap_graphic_translate},
   {"scale",(nsp_method *) _wrap_graphic_scale},
   {"rotate",(nsp_method *) _wrap_graphic_rotate},
+  {"full_copy",(nsp_method *) _wrap_graphic_full_copy},
   { NULL, NULL}
 };
 
@@ -518,8 +544,28 @@ static int _wrap_graphic_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_graphic_get_hidden(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspGraphic *) self)->obj->hidden;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_graphic_set_hidden(void *self, char *attr, NspObject *O)
+{
+  int hidden;
+
+  if ( BoolScalar(O,&hidden) == FAIL) return FAIL;
+  ((NspGraphic *) self)->obj->hidden= hidden;
+  return OK;
+}
+
 static AttrTab graphic_attrs[] = {
   { "color", (attr_get_function *)_wrap_graphic_get_color, (attr_set_function *)_wrap_graphic_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hidden", (attr_get_function *)_wrap_graphic_get_hidden, (attr_set_function *)_wrap_graphic_set_hidden,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -562,15 +608,15 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 566 "graphic.c"
+#line 612 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 80 "graphic.override"
+#line 91 "graphic.override"
 
 /* verbatim at the end */
 
 
 
-#line 577 "graphic.c"
+#line 623 "graphic.c"

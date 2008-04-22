@@ -49,6 +49,8 @@ struct _NspTypeGraphic {
 typedef struct _nsp_graphic nsp_graphic;
 struct _nsp_graphic {
   int color;
+  int id;
+  gboolean hidden;
   int ref_count;
 };
 
@@ -78,7 +80,7 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,int color,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create(char *name,int color,int id,gboolean hidden,NspTypeBase *type);
 
 /* from GraphicObj.c */
 
