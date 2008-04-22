@@ -42,6 +42,7 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec_private.h"
+typedef int gboolean ;
 #include "nsp/graphic.h" 
 
 static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l); 
