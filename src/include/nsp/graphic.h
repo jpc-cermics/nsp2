@@ -28,12 +28,13 @@ typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
 typedef void bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
 typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 
+#line 32 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
 #line 20 "graphic.override"
 
   draw_func *draw; 
@@ -44,13 +45,14 @@ struct _NspTypeGraphic {
   full_copy_func *full_copy;
 
 
+#line 49 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
 struct _nsp_graphic {
   int color;
   int id;
-  gboolean hidden;
+  Boolean hidden;
   int ref_count;
 };
 
@@ -80,7 +82,7 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,int color,int id,gboolean hidden,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create(char *name,int color,int id,Boolean hidden,NspTypeBase *type);
 
 /* from GraphicObj.c */
 

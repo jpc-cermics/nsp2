@@ -18,12 +18,14 @@
 typedef struct _NspFigure NspFigure ;
 typedef struct _NspTypeFigure NspTypeFigure ;
 
+#line 22 "./figure.h"
 
 struct _NspTypeFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./figure.h"
 };
 
 typedef struct _nsp_figure nsp_figure;

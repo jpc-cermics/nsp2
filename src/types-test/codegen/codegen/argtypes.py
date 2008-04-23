@@ -1737,7 +1737,8 @@ matcher.register('gint*', arg)
 
 arg = BoolArg()
 matcher.register('gboolean', arg)
-matcher.register('boolean', arg)
+matcher.register('Boolean', arg)
+# matcher.register('boolean', arg)
 
 arg = TimeTArg()
 matcher.register('time_t', arg)

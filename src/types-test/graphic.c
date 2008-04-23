@@ -383,7 +383,7 @@ int nsp_graphic_check_values(NspGraphic *H)
   return OK;
 }
 
-NspGraphic *nsp_graphic_create(char *name,int color,int id,gboolean hidden,NspTypeBase *type)
+NspGraphic *nsp_graphic_create(char *name,int color,int id,Boolean hidden,NspTypeBase *type)
 {
  NspGraphic *H  = nsp_graphic_create_void(name,type);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;

@@ -18,12 +18,14 @@
 typedef struct _NspGRoot NspGRoot ;
 typedef struct _NspTypeGRoot NspTypeGRoot ;
 
+#line 22 "./groot.h"
 
 struct _NspTypeGRoot {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./groot.h"
 };
 
 typedef struct _nsp_groot nsp_groot;

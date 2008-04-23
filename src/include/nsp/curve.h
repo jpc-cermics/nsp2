@@ -18,12 +18,14 @@
 typedef struct _NspCurve NspCurve ;
 typedef struct _NspTypeCurve NspTypeCurve ;
 
+#line 22 "./curve.h"
 
 struct _NspTypeCurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./curve.h"
 };
 
 typedef struct _nsp_curve nsp_curve;

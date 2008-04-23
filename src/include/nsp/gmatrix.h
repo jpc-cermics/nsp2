@@ -18,12 +18,14 @@
 typedef struct _NspGMatrix NspGMatrix ;
 typedef struct _NspTypeGMatrix NspTypeGMatrix ;
 
+#line 22 "./gmatrix.h"
 
 struct _NspTypeGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./gmatrix.h"
 };
 
 typedef struct _nsp_gmatrix nsp_gmatrix;

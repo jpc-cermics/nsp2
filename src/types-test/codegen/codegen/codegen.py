@@ -403,100 +403,100 @@ class Wrapper:
 
     # This is the part used for the generation of the header associated to the class
     # 
-    type_header = \
-                '/* -*- Mode: C -*- */\n' \
-                '#ifndef NSP_INC_%(typename)s\n' \
-                '#define NSP_INC_%(typename)s\n' \
-                '\n' \
-                '/*\n' \
-                ' * This Software is GPL (Copyright ENPC 1998-2007) \n' \
-                ' * Jean-Philippe Chancelier Enpc/Cermics         \n' \
-                ' */\n\n' \
-                '/* %(typename)s */\n' \
-                '\n' \
-                '#include "nsp/%(parent_dc)s.h"\n' \
-                '\n' \
-                '/*\n' \
-                ' * Nsp%(typename)s inherits from Nsp%(parent)s\n' \
-                ' */\n' \
-                '\n' \
-                'typedef struct _Nsp%(typename)s Nsp%(typename)s ;\n' \
-                'typedef struct _NspType%(typename)s NspType%(typename)s ;\n' \
-                '\n' \
-                '%(internal_methods_proto)s' \
-                '\n' \
-                'struct _NspType%(typename)s {\n' \
-                '  /*< private >*/\n' \
-                '  NSP_TYPE_OBJECT__\n' \
-                '  /*< public >*/\n' \
-                '  %(internal_methods)s\n' \
-                '};\n' \
-                '\n' \
-                '%(fields_ref)s' \
-                'struct _Nsp%(typename)s {\n' \
-                '  /*< private >*/\n' \
-                '  Nsp%(parent)s father;\n' \
-                '  NspType%(typename)s*type;\n' \
-                '  /*< public >*/\n' \
-                '  %(fields)s' \
-                '};\n' \
-                '\n' \
-                'extern int nsp_type_%(typename_dc)s_id;\n' \
-                'extern NspType%(typename)s *nsp_type_%(typename_dc)s;\n' \
-                '\n' \
-                '/* type instances for %(parent_dc)s */\n' \
-                '\n' \
-                'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode);\n' \
-                '\n' \
-                '/* instance for %(typename)s */\n' \
-                '\n' \
-                'Nsp%(typename)s *new_%(typename_dc)s();\n' \
-                '\n' \
-                '/*\n' \
-                '* Object methods redefined for %(typename_dc)s \n' \
-                '*/\n' \
-                '\n' \
-                '\n' \
-                '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
-                '\n' \
-                'extern Nsp%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
-                '\n' \
-                '/* from %(typename)sObj.c */\n' \
-                '\n' \
-                'extern Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *H);\n' \
-                'extern void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H);\n' \
-                'extern int nsp_%(typename_dc)s_info(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-                'extern int nsp_%(typename_dc)s_print(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-                'extern int nsp_%(typename_dc)s_latex(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-                'extern Nsp%(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
-                'extern int Is%(typename)sObj (Stack stack, int i); \n' \
-                'extern int Is%(typename)s(NspObject *O);\n' \
-                'extern Nsp%(typename)s *Get%(typename)sCopy (Stack stack, int i); \n' \
-                'extern Nsp%(typename)s *Get%(typename)s (Stack stack, int i); \n' \
-                'extern int nsp_%(typename_dc)s_create_partial(Nsp%(typename)s *H);\n' \
-                'extern void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H);\n' \
-                'extern Nsp%(typename)s * nsp_%(typename_dc)s_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
-                'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
-                'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self);\n' \
-                'extern int nsp_%(typename_dc)s_check_values(Nsp%(typename)s *H);\n' \
-                'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
-                'extern Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M);\n' \
-                'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, Nsp%(typename)s *M);\n' \
-                '\n' \
-                '#endif /* NSP_INC_%(typename)s */ \n\n' \
-                '#ifdef %(typename)s_Private \n' \
-                'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
-                'static int nsp_%(typename_dc)s_size(Nsp%(typename)s *Mat, int flag);\n' \
-                'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
-                'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
-                'static int nsp_%(typename_dc)s_eq(Nsp%(typename)s *A, NspObject *B);\n' \
-                'static int nsp_%(typename_dc)s_neq(Nsp%(typename)s *A, NspObject *B);\n' \
-                'static Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load(XDR *xdrs);\n' \
-                'static AttrTab %(typename_dc)s_attrs[];\n' \
-                'static NspMethods *%(typename_dc)s_get_methods(void);\n' \
-                '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/ \n' \
-                'static Nsp%(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' \
-                '#endif /* %(typename)s_Private */\n\n'
+    type_header_1 = \
+        '/* -*- Mode: C -*- */\n' \
+        '#ifndef NSP_INC_%(typename)s\n' \
+        '#define NSP_INC_%(typename)s\n' \
+        '\n' \
+        '/*\n' \
+        ' * This Software is GPL (Copyright ENPC 1998-2007) \n' \
+        ' * Jean-Philippe Chancelier Enpc/Cermics         \n' \
+        ' */\n\n' \
+        '/* %(typename)s */\n' \
+        '\n' \
+        '#include "nsp/%(parent_dc)s.h"\n' \
+        '\n' \
+        '/*\n' \
+        ' * Nsp%(typename)s inherits from Nsp%(parent)s\n' \
+        ' */\n' \
+        '\n' \
+        'typedef struct _Nsp%(typename)s Nsp%(typename)s ;\n' \
+        'typedef struct _NspType%(typename)s NspType%(typename)s ;\n' \
+        '\n' 
+    type_header_2 = \
+        '\n' \
+        'struct _NspType%(typename)s {\n' \
+        '  /*< private >*/\n' \
+        '  NSP_TYPE_OBJECT__\n' \
+        '  /*< public >*/\n' 
+    type_header_3 = \
+        '};\n' \
+        '\n' \
+        '%(fields_ref)s' \
+        'struct _Nsp%(typename)s {\n' \
+        '  /*< private >*/\n' \
+        '  Nsp%(parent)s father;\n' \
+        '  NspType%(typename)s*type;\n' \
+        '  /*< public >*/\n' \
+        '  %(fields)s' \
+        '};\n' \
+        '\n' \
+        'extern int nsp_type_%(typename_dc)s_id;\n' \
+        'extern NspType%(typename)s *nsp_type_%(typename_dc)s;\n' \
+        '\n' \
+        '/* type instances for %(parent_dc)s */\n' \
+        '\n' \
+        'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode);\n' \
+        '\n' \
+        '/* instance for %(typename)s */\n' \
+        '\n' \
+        'Nsp%(typename)s *new_%(typename_dc)s();\n' \
+        '\n' \
+        '/*\n' \
+        '* Object methods redefined for %(typename_dc)s \n' \
+        '*/\n' \
+        '\n' \
+        '\n' \
+        '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
+        '\n' \
+        'extern Nsp%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
+        '\n' \
+        '/* from %(typename)sObj.c */\n' \
+        '\n' \
+        'extern Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *H);\n' \
+        'extern void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H);\n' \
+        'extern int nsp_%(typename_dc)s_info(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern int nsp_%(typename_dc)s_print(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern int nsp_%(typename_dc)s_latex(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern Nsp%(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
+        'extern int Is%(typename)sObj (Stack stack, int i); \n' \
+        'extern int Is%(typename)s(NspObject *O);\n' \
+        'extern Nsp%(typename)s *Get%(typename)sCopy (Stack stack, int i); \n' \
+        'extern Nsp%(typename)s *Get%(typename)s (Stack stack, int i); \n' \
+        'extern int nsp_%(typename_dc)s_create_partial(Nsp%(typename)s *H);\n' \
+        'extern void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H);\n' \
+        'extern Nsp%(typename)s * nsp_%(typename_dc)s_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
+        'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
+        'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self);\n' \
+        'extern int nsp_%(typename_dc)s_check_values(Nsp%(typename)s *H);\n' \
+        'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
+        'extern Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M);\n' \
+        'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, Nsp%(typename)s *M);\n' \
+        '\n' \
+        '#endif /* NSP_INC_%(typename)s */ \n\n' \
+        '#ifdef %(typename)s_Private \n' \
+        'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
+        'static int nsp_%(typename_dc)s_size(Nsp%(typename)s *Mat, int flag);\n' \
+        'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
+        'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
+        'static int nsp_%(typename_dc)s_eq(Nsp%(typename)s *A, NspObject *B);\n' \
+        'static int nsp_%(typename_dc)s_neq(Nsp%(typename)s *A, NspObject *B);\n' \
+        'static Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load(XDR *xdrs);\n' \
+        'static AttrTab %(typename_dc)s_attrs[];\n' \
+        'static NspMethods *%(typename_dc)s_get_methods(void);\n' \
+        '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/ \n' \
+        'static Nsp%(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' \
+        '#endif /* %(typename)s_Private */\n\n'
     
     slots_list = ['tp_getattr', 'tp_setattr' ]
 
@@ -680,7 +680,15 @@ class Wrapper:
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.c_name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
-        self.fhp.write(self.type_header %substdict)
+
+        self.fhp.write(self.type_header_1 %substdict)
+        self.fhp.write('%(internal_methods_proto)s' %substdict)
+        self.fhp.resetline()
+        self.fhp.write(self.type_header_2 %substdict)
+        self.fhp.write(' %(internal_methods)s\n' %substdict)
+        self.fhp.resetline()
+        self.fhp.write(self.type_header_3 %substdict)
+
         self.fhp.close() 
         
         substdict['tp_init'] = self.write_constructor()

@@ -18,12 +18,14 @@
 typedef struct _NspAxes NspAxes ;
 typedef struct _NspTypeAxes NspTypeAxes ;
 
+#line 22 "./axes.h"
 
 struct _NspTypeAxes {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./axes.h"
 };
 
 typedef struct _nsp_axes nsp_axes;

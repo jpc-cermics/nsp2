@@ -18,12 +18,14 @@
 typedef struct _NspPolyline NspPolyline ;
 typedef struct _NspTypePolyline NspTypePolyline ;
 
+#line 22 "./polyline.h"
 
 struct _NspTypePolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
-  
+ 
+#line 29 "./polyline.h"
 };
 
 typedef struct _nsp_polyline nsp_polyline;
