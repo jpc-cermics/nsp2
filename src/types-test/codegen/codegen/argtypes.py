@@ -277,7 +277,6 @@ class StringArg(ArgType):
         return str
 
 
-
 class UCharArg(ArgType):
     # allows strings with embedded NULLs.
     # XXXXX : to be implemented ...
@@ -1607,6 +1606,99 @@ class NspDoubleArrayCopyArg(NspDoubleArrayArg):
         self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
 
+
+class VoidPointerArg(ArgType):
+    
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+            if pdflt != 'NULL': pdflt = '"' + pdflt + '"'
+	    info.varlist.add('void', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('void', '*' + pname)
+	info.arglist.append(pname)
+	if pnull:
+            info.add_parselist('void*', ['&' + pname], [pname])
+	else:
+            info.add_parselist('void*', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ((%s = nsp_string_object(O))==NULL) return FAIL;\n' % pname)
+        info.attrcodebefore.append('  if ((%s = nsp_string_copy(%s)) ==NULL) return FAIL;\n' % (pname,pname))
+        info.attrcodebefore.append('  nsp_string_destroy(&((%s *) self)->obj->%s);\n' % (upinfo,pname))
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+        info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
+    def write_return(self, ptype, ownsreturn, info):
+        if ownsreturn:
+	    # have to free result ...
+	    info.varlist.add('void', '*ret')
+            info.codeafter.append('  if ( nsp_move_double(stack,1, ret)== FAIL) return RET_BUG;\n' +
+                                  '  return 1;')
+	else:
+	    info.varlist.add('const gchar', '*ret')
+            info.codeafter.append('  if ( nsp_move_double(stack,1,ret )== FAIL) return RET_BUG;\n'
+                                  '  return 1;')
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck): 
+        info.varlist.add('NspObject', '*nsp_ret')
+        if ownsreturn:
+	    # have to free result ...
+	    info.varlist.add('void', '*ret')
+            info.attrcodeafter.append('  nsp_ret = nsp_new_double_obj(NVOID,ret);\n  return nsp_ret;')
+	else:
+	    info.varlist.add('void', '*ret')
+            info.attrcodeafter.append('  nsp_ret = nsp_new_double_obj(NVOID,ret);\n  return nsp_ret;')
+
+    def attr_free_fields(self,pname, varname,byref):
+	"""used to free allocated fields  """
+        return  ''
+            
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
+        return ''
+
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return '  %s->%s = NULL;\n'  % (varname,pname)
+    
+    def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
+	"""used when a variable is to be copied """
+        if right_varname:
+            return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
+        else:
+            return '  %s->%s = %s;\n' % (left_varname,pname,pname)
+
+    def attr_write_info(self,pname, varname,byref):
+	"""used when a field is to be reloaded """
+        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
+        """used when a field is to be reloaded """
+        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return  '  %s->%s = NULL;\n' % (varname,pname)
+
+    def attr_check_null(self,pname, varname,byref):
+	"""used to check if  a field is set """
+        return ''
+
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
+
+    def attr_write_defval(self,pname, varname,byref):
+	"""used to give a default value  """
+        # str = '  %s->%s = NULL;\n' % (varname,pname);    
+        str = ''
+        return str
+
+
 class ArgMatcher:
     def __init__(self):
 	self.argtypes = {}
@@ -1771,22 +1863,23 @@ matcher.register('gfloat', arg)
 arg = FileArg()
 matcher.register('FILE*', arg)
 
+arg = VoidPointerArg()
+matcher.register('void*', arg)
+
 # enums, flags, objects
 
 matcher.register('GdkAtom', AtomArg())
-
 matcher.register('GType', GTypeArg())
 matcher.register('GtkType', GTypeArg())
-
 matcher.register('GError**', GErrorArg())
 matcher.register('GtkTreePath*', GtkTreePathArg())
 matcher.register('GdkRectangle*', GdkRectanglePtrArg())
 matcher.register('GtkAllocation*', GdkRectanglePtrArg())
 matcher.register('GdkRectangle', GdkRectangleArg())
 matcher.register('NspObject*', NspObjectArg())
-
 matcher.register('GdkNativeWindow', ULongArg())
-
 matcher.register_object('GObject', None, 'G_TYPE_OBJECT')
+
+
 
 del arg

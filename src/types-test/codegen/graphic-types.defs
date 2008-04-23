@@ -8,6 +8,7 @@
     '("int" "color")
     '("int" "id" "hidden" "-1");; id of the graphic window when a graphic window is used 
     '("Boolean" "hidden" "std" "FALSE" );; id of the graphic window when a graphic window is used 
+    '("void*" "Fig" "hidden" "NULL");; 
     )
   (gtype-id "Graphic")
 )
