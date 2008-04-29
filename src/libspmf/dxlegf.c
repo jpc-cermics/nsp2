@@ -42,12 +42,7 @@
 #include <nsp/cnumeric.h> 
 #include <nsp/spmf.h> 
 
-typedef struct Dxblk2_ Dxblk2; 
-
-struct Dxblk2_ {
-  double radix, radixl, rad2l, dlg10r;
-  int l, l2, kmax, nbitsf, iflag;
-};
+/* seams unused ! just set but not used */
 
 typedef struct Dxblk3_ Dxblk3; 
 
@@ -57,7 +52,6 @@ struct Dxblk3_ {
 
 static Dxblk3 dxblk3_1;
 
-extern int dxlegf_(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror);
 
 /* Table of constant values */
 
@@ -206,10 +200,11 @@ static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, 
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror)
-{
-  Dxblk2 dxblk2_1;
 
+
+
+int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror)
+{
   /* System generated locals */
   int i__1;
 
@@ -225,9 +220,8 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
 
   /* Function Body */
   *ierror = 0;
-
-  dxblk2_1.iflag = 0; /* force initialization */
-  dxset(&dxblk2_1,0, 0, 0.0, 0, ierror);
+  
+  dxset(dxblk2,0, 0, 0.0, 0, ierror);
 
   if (*ierror != 0) {
     return 0;
@@ -332,7 +326,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    *       call dxpmu to calculate p(-mu1,nu,x),....,p(-mu2,nu,x) 
    * 
    */
-  dxpmu(&dxblk2_1,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpmu(dxblk2,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -348,7 +342,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    *       call dxqmu to calculate q(mu1,nu,x),....,q(mu2,nu,x) 
    * 
    */
-  dxqmu_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxqmu_(dxblk2,dnu1, &dnu2, mu1, mu2, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -359,7 +353,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
  L320:
-  dxqnu_(&dxblk2_1,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxqnu_(dxblk2,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -370,7 +364,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
  L360:
-  dxpqnu_(&dxblk2_1,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
+  dxpqnu_(dxblk2,dnu1, &dnu2, mu1, x, &sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
     return 0;
   }
@@ -381,7 +375,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    */
  L380:
   if (*id == 3) {
-    dxpmup_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
+    dxpmup_(dxblk2,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -392,7 +386,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
    * 
    */
   if (*id == 4) {
-    dxpnrm_(&dxblk2_1,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
+    dxpnrm_(dxblk2,dnu1, &dnu2, mu1, mu2, &pqa[1], &ipqa[1], ierror);
   }
   if (*ierror != 0) {
     return 0;
@@ -405,7 +399,7 @@ int C2F(dxlegf)(double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *i
  L390:
   i__1 = l;
   for (i__ = 1; i__ <= i__1; ++i__) {
-    dxred(&dxblk2_1,&pqa[i__], &ipqa[i__], ierror);
+    dxred(dxblk2,&pqa[i__], &ipqa[i__], ierror);
     if (*ierror != 0) {
       return 0;
     }

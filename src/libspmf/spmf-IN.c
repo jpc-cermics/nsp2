@@ -26,7 +26,6 @@
 #include <nsp/bmatrix-in.h>
 #include <nsp/spmf.h>
 
-
 static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
@@ -193,28 +192,30 @@ static int verify_cstr(double x[], int nb_elt, int *xmin, int *xmax)
   return OK;
 } 
 
+/*
+ *   Interface for the dxlegf function (Slatec code).
+ *   nsp calling sequence :
+ *
+ *   p = legendre(n, m, x [, norm_flag] )
+ *
+ *      x is a vector with mnx elements (it is better to
+ *        have a row vector but this is not forced)
+ *
+ *      n : a non negative integer scalar (or a vector of such
+ *          integer regularly speced with an increment of 1)
+ *      m : same constraints than for n
+ *
+ *      n and m may not be both vectors
+ *
+ *      norm_flag : optional. When it is present and equal to "norm"
+ *                  it is a normalised version which is computed
+ *    AUTHOR 
+ *       Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
+ */
+
 static int int_legendre(Stack stack, int rhs, int opt, int lhs)
 {
-  /*
-   *   Interface onto the (Slatec) dxleg.f code. 
-   *   nsp calling sequence :
-   *
-   *   p = legendre(n, m, x [, norm_flag] )
-   *
-   *      x is a vector with mnx elements (it is better to
-   *        have a row vector but this is not forced)
-   *
-   *      n : a non negative integer scalar (or a vector of such
-   *          integer regularly speced with an increment of 1)
-   *      m : same constraints than for n
-   *
-   *      n and m may not be both vectors
-   *
-   *      norm_flag : optional. When it is present and equal to "norm"
-   *                  it is a normalised version which is computed
-   *    AUTHOR 
-   *       Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
-   */
+  Dxblk2 dxblk2 = {0}; /* iflag should be set to zero for initialization */
   NspMatrix *N, *M, *x, *y=NULLMAT;
   int n1, n2, m1, m2, id=3, ierror, i, j, nudiff, MNp1;
   Boolean M_is_scalar, N_is_scalar;
@@ -282,7 +283,7 @@ static int int_legendre(Stack stack, int rhs, int opt, int lhs)
 	  goto err;
 	};
 
-      C2F(dxlegf) (&dnu1, &nudiff, &m1, &m2, &xx, &id, &(y->R[i*MNp1]), &(ipqa[i*MNp1]), &ierror);
+      dxlegf(&dxblk2,&dnu1, &nudiff, &m1, &m2, &xx, &id, &(y->R[i*MNp1]), &(ipqa[i*MNp1]), &ierror);
       if ( ierror != 0 )
 	{
 	  if ( ierror == 207 )
