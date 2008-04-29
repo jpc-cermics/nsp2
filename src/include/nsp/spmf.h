@@ -38,7 +38,6 @@ extern double nsp_lngamma(double x);
 extern int nsp_kcdf(double x, double *res, int n);
 extern double nsp_kcdflim(double x, double *q);
 extern double marsaglia_K(double x, int n);
-extern int C2F(dxlegf) (double *dnu1, int *nudiff, int *m1, int *m2, double *xx, int *id, double *y, int *ipqa, int *ierror);
 extern double nsp_hypot(double x, double y);
 extern void nsp_primefactors(unsigned int n, unsigned int *factors, int *powers, int *nb_factors);
 extern int nsp_isprime(unsigned int n);
@@ -56,4 +55,17 @@ extern double nsp_pdf_weibull(double x, double a, double b);
 extern double nsp_pdf_rayleigh(double x, double sigma);
 extern double nsp_pdf_tailrayleigh(double x, double sigma, double a);
 extern double nsp_pdf_geometric(double x, double p);
+
+
+typedef struct Dxblk2_ Dxblk2; 
+
+struct Dxblk2_ {
+  int iflag, l, l2, kmax, nbitsf;
+  double radix, radixl, rad2l, dlg10r;
+  
+};
+
+extern int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror);
+
+
 #endif 
