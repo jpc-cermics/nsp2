@@ -16,8 +16,11 @@ extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
+static void nsp_figure_children_unlink_figure(NspFigure *F);
+static void nsp_figure_children_link_figure(NspFigure *F);
+static int nsp_figure_check_children(NspFigure *F,NspList *L);
 
-#line 21 "figure.c"
+#line 24 "figure.c"
 
 /* ----------- Figure ----------- */
 
@@ -88,11 +91,12 @@ NspTypeFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 19 "figure.override"
+#line 22 "figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
 
-#line 96 "figure.c"
+#line 100 "figure.c"
   /* 
    * Figure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -281,6 +285,12 @@ void nsp_figure_destroy_partial(NspFigure *H)
 void nsp_figure_destroy(NspFigure *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+
+#line 32 "figure.override"
+  /* inserted verbatim at the begining of destroy */
+  nsp_figure_children_unlink_figure(H);
+
+#line 294 "figure.c"
   nsp_figure_destroy_partial(H);
   FREE(H);
 }
@@ -797,19 +807,13 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_figure_get_children(void *self,char *attr)
-{
-  NspList *ret;
+#line 51 "figure.override"
 
-  ret = ((NspFigure *) self)->obj->children;
-  return (NspObject *) ret;
-}
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
   NspList *ret;
-
-  *copy = FALSE;
+  *copy = TRUE;
   ret = ((NspList*) ((NspFigure *) self)->obj->children);
   return (NspObject *) ret;
 }
@@ -821,9 +825,40 @@ static int _wrap_figure_set_children(void *self, char *attr, NspObject *O)
   if ( ! IsList(O) ) return FAIL;
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspFigure *) self)->obj->children != NULL ) 
-    nsp_list_destroy(((NspFigure *) self)->obj->children);
+    {
+      nsp_figure_children_unlink_figure(self);
+      nsp_list_destroy(((NspFigure *) self)->obj->children);
+    }
   ((NspFigure *) self)->obj->children= children;
+  nsp_figure_children_link_figure(self);
   return OK;
+}
+
+static int _wrap_figure_set_obj_children(void *self,NspObject *val)
+{
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_figure_check_children(self,(NspList *) val )== FAIL) 
+    {
+      return FAIL;
+    }
+  if (((NspFigure *) self)->obj->children != NULL ) 
+    {
+      nsp_figure_children_unlink_figure(self);
+      nsp_list_destroy(((NspFigure *) self)->obj->children);
+    }
+  ((NspFigure *) self)->obj->children=(NspList *) val ;
+  nsp_figure_children_link_figure(self);
+  return OK;
+}
+
+
+#line 856 "figure.c"
+static NspObject *_wrap_figure_get_children(void *self,char *attr)
+{
+  NspList *ret;
+
+  ret = ((NspFigure *) self)->obj->children;
+  return (NspObject *) ret;
 }
 
 static AttrTab figure_attrs[] = {
@@ -834,7 +869,7 @@ static AttrTab figure_attrs[] = {
   { "viewport_dims", (attr_get_function *)_wrap_figure_get_viewport_dims, (attr_set_function *)_wrap_figure_set_viewport_dims,(attr_get_object_function *)_wrap_figure_get_obj_viewport_dims, (attr_set_object_function *)int_set_object_failed },
   { "wresize", (attr_get_function *)_wrap_figure_get_wresize, (attr_set_function *)_wrap_figure_set_wresize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "position", (attr_get_function *)_wrap_figure_get_position, (attr_set_function *)_wrap_figure_set_position,(attr_get_object_function *)_wrap_figure_get_obj_position, (attr_set_object_function *)int_set_object_failed },
-  { "children", (attr_get_function *)_wrap_figure_get_children, (attr_set_function *)_wrap_figure_set_children,(attr_get_object_function *)_wrap_figure_get_obj_children, (attr_set_object_function *)int_set_object_failed },
+  { "children", (attr_get_function *)_wrap_figure_get_children, (attr_set_function *)_wrap_figure_set_children,(attr_get_object_function *)_wrap_figure_get_obj_children, (attr_set_object_function *)_wrap_figure_set_obj_children },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -872,17 +907,17 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 14 "figure.override"
+#line 17 "figure.override"
 
 Init portion 
 
 
-#line 881 "figure.c"
+#line 916 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 42 "figure.override"
+#line 97 "figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1018,4 +1053,76 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
-#line 1022 "figure.c"
+
+/* set all the children Fig field 
+ *
+ */
+
+static void nsp_figure_children_link_figure(NspFigure *F)
+{
+  Cell *cloc;
+  NspList *L = F->obj->children;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( G->obj->Fig == NULL ) 
+	    {
+	      F->obj->ref_count++;
+	      ((NspGraphic *) F)->obj->ref_count++;
+	      G->obj->Fig = F;
+	    }
+	}
+      cloc = cloc->next;
+    }
+}
+
+
+static void nsp_figure_children_unlink_figure(NspFigure *F)
+{
+  Cell *cloc;
+  NspList *L = F->obj->children;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( G->obj->Fig == F ) 
+	    {
+	      F->obj->ref_count--;
+	      ((NspGraphic *) F)->obj->ref_count--;
+	      G->obj->Fig = NULL ;
+	    }
+	}
+      cloc = cloc->next;
+    }
+}
+
+static int nsp_figure_check_children(NspFigure *F,NspList *L)
+{
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if ( ! IsGraphic( cloc->O))
+	    {
+	      Scierror("Error: List should only contain graphic objects\n");
+	      return FAIL;
+	    }
+	  if ( ((NspGraphic *) cloc->O)->obj->Fig != NULL && ((NspGraphic *) cloc->O)->obj->Fig != F) 
+	    {
+	      Scierror("Error: A graphic object already belongs to an other figure\n");
+	      return FAIL;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return OK;
+}
+
+
+#line 1129 "figure.c"

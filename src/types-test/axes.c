@@ -103,7 +103,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
 #line 108 "axes.c"
   /* 
    * Axes interfaces can be added here 
@@ -287,6 +287,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
 void nsp_axes_destroy(NspAxes *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 291 "axes.c"
   nsp_axes_destroy_partial(H);
   FREE(H);
 }
@@ -667,7 +668,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 671 "axes.c"
+#line 672 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -795,7 +796,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 799 "axes.c"
+#line 800 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -842,7 +843,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 846 "axes.c"
+#line 847 "axes.c"
 
 
 /*----------------------------------------------------
@@ -881,7 +882,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 885 "axes.c"
+#line 886 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1191,4 +1192,4 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1195 "axes.c"
+#line 1196 "axes.c"

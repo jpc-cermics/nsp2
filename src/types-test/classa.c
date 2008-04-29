@@ -245,6 +245,7 @@ void nsp_classa_destroy_partial(NspClassA *H)
 void nsp_classa_destroy(NspClassA *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 249 "classa.c"
   nsp_classa_destroy_partial(H);
   FREE(H);
 }
@@ -520,7 +521,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 524 "classa.c"
+#line 525 "classa.c"
 
 
 #line 30 "classa.override"
@@ -529,7 +530,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 533 "classa.c"
+#line 534 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -646,7 +647,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 650 "classa.c"
+#line 651 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -697,7 +698,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 701 "classa.c"
+#line 702 "classa.c"
 
 
 #line 37 "classa.override"
@@ -705,7 +706,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 709 "classa.c"
+#line 710 "classa.c"
 
 
 /*----------------------------------------------------
@@ -745,9 +746,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 749 "classa.c"
+#line 750 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 754 "classa.c"
+#line 755 "classa.c"

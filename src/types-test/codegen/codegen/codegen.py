@@ -273,7 +273,9 @@ class Wrapper:
               '}\n\n' \
               'void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H)\n' \
               '{\n' \
-              '  nsp_object_destroy_name(NSP_OBJECT(H));\n' \
+              '  nsp_object_destroy_name(NSP_OBJECT(H));\n' 
+
+    type_tmpl_1_1_1_1 = \
               '  nsp_%(typename_dc)s_destroy_partial(H);\n' \
               '  FREE(H);\n' \
               '}\n' \
@@ -651,6 +653,7 @@ class Wrapper:
         substdict['fields_check'] = self.build_check_fields('H')
         substdict['fields_defval'] = self.build_defval_fields('H')
         substdict['fields_free'] = self.build_free_fields('H')
+        substdict['destroy_prelim'] = self.build_destroy_premil('H')
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
         substdict['copy_partial'] = self.build_copy_partial('H')
@@ -671,6 +674,9 @@ class Wrapper:
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
         self.fp.write(self.type_tmpl_1_1_1 % substdict)
+        self.fp.write('%(destroy_prelim)s' %substdict)
+        self.fp.resetline()
+        self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_2 % substdict)
         # object copy and interface for creation
@@ -971,7 +977,6 @@ class Wrapper:
         else:
             if father != 'Object':
                 str = str + '  nsp_%s_destroy_partial((Nsp%s *) H);\n'  % (string.lower(father),father)
-        
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
@@ -980,8 +985,14 @@ class Wrapper:
             str = str + handler.attr_free_fields( fname,varname,self.byref)
         if self.byref == 't':
             str = str + '    FREE(%s);\n   }\n'  % (varname)
-            
         return str
+
+
+    def build_destroy_premil(self,varname):
+        # code to be called before the standard 
+        # destroy code. By defaut this code is 
+        # empty but can be filled in override code 
+        return  self.overrides.override_destroy_prelim
 
     def build_create_partial(self,varname):
         lower_name = self.get_lower_name()

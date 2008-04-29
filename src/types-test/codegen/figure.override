@@ -8,6 +8,9 @@ extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
+static void nsp_figure_children_unlink_figure(NspFigure *F);
+static void nsp_figure_children_link_figure(NspFigure *F);
+static int nsp_figure_check_children(NspFigure *F,NspList *L);
 
 %%
 init 
@@ -18,10 +21,16 @@ Init portion
 override_type Figure
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
 
 %%
 ignore-glob
   *_get_type
+
+%%
+override_destroy_prelim
+  /* inserted verbatim at the begining of destroy */
+  nsp_figure_children_unlink_figure(H);
 
 %%
 override figure_attach kwargs
@@ -36,6 +45,52 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
   store_graphic_object(Xgc, pl);
   return 0;
 }
+
+%%
+override-attr children
+
+
+static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE;
+  ret = ((NspList*) ((NspFigure *) self)->obj->children);
+  return (NspObject *) ret;
+}
+
+static int _wrap_figure_set_children(void *self, char *attr, NspObject *O)
+{
+  NspList *children;
+
+  if ( ! IsList(O) ) return FAIL;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspFigure *) self)->obj->children != NULL ) 
+    {
+      nsp_figure_children_unlink_figure(self);
+      nsp_list_destroy(((NspFigure *) self)->obj->children);
+    }
+  ((NspFigure *) self)->obj->children= children;
+  nsp_figure_children_link_figure(self);
+  return OK;
+}
+
+static int _wrap_figure_set_obj_children(void *self,NspObject *val)
+{
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_figure_check_children(self,(NspList *) val )== FAIL) 
+    {
+      return FAIL;
+    }
+  if (((NspFigure *) self)->obj->children != NULL ) 
+    {
+      nsp_figure_children_unlink_figure(self);
+      nsp_list_destroy(((NspFigure *) self)->obj->children);
+    }
+  ((NspFigure *) self)->obj->children=(NspList *) val ;
+  nsp_figure_children_link_figure(self);
+  return OK;
+}
+
 
 %%
 last
@@ -173,3 +228,75 @@ static int nsp_figure_unconnect(NspFigure *F)
   scig_delete(F->obj->id); 
   return OK ;
 }
+
+
+/* set all the children Fig field 
+ *
+ */
+
+static void nsp_figure_children_link_figure(NspFigure *F)
+{
+  Cell *cloc;
+  NspList *L = F->obj->children;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( G->obj->Fig == NULL ) 
+	    {
+	      F->obj->ref_count++;
+	      ((NspGraphic *) F)->obj->ref_count++;
+	      G->obj->Fig = F;
+	    }
+	}
+      cloc = cloc->next;
+    }
+}
+
+
+static void nsp_figure_children_unlink_figure(NspFigure *F)
+{
+  Cell *cloc;
+  NspList *L = F->obj->children;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( G->obj->Fig == F ) 
+	    {
+	      F->obj->ref_count--;
+	      ((NspGraphic *) F)->obj->ref_count--;
+	      G->obj->Fig = NULL ;
+	    }
+	}
+      cloc = cloc->next;
+    }
+}
+
+static int nsp_figure_check_children(NspFigure *F,NspList *L)
+{
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if ( ! IsGraphic( cloc->O))
+	    {
+	      Scierror("Error: List should only contain graphic objects\n");
+	      return FAIL;
+	    }
+	  if ( ((NspGraphic *) cloc->O)->obj->Fig != NULL && ((NspGraphic *) cloc->O)->obj->Fig != F) 
+	    {
+	      Scierror("Error: A graphic object already belongs to an other figure\n");
+	      return FAIL;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return OK;
+}
+

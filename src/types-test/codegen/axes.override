@@ -30,7 +30,7 @@ override_type Axes
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */

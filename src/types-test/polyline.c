@@ -266,6 +266,7 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
 void nsp_polyline_destroy(NspPolyline *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 270 "polyline.c"
   nsp_polyline_destroy_partial(H);
   FREE(H);
 }
@@ -569,7 +570,7 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 573 "polyline.c"
+#line 574 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -612,7 +613,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 616 "polyline.c"
+#line 617 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -651,7 +652,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 655 "polyline.c"
+#line 656 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -739,4 +740,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 743 "polyline.c"
+#line 744 "polyline.c"

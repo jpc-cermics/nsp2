@@ -240,6 +240,7 @@ void nsp_groot_destroy_partial(NspGRoot *H)
 void nsp_groot_destroy(NspGRoot *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 244 "groot.c"
   nsp_groot_destroy_partial(H);
   FREE(H);
 }
@@ -545,7 +546,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 549 "groot.c"
+#line 550 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -553,4 +554,4 @@ Init portion
 #line 28 "groot.override"
 
 
-#line 557 "groot.c"
+#line 558 "groot.c"

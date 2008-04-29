@@ -244,6 +244,7 @@ void nsp_classb_destroy_partial(NspClassB *H)
 void nsp_classb_destroy(NspClassB *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 248 "classb.c"
   nsp_classb_destroy_partial(H);
   FREE(H);
 }
@@ -477,7 +478,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 481 "classb.c"
+#line 482 "classb.c"
 
 
 #line 29 "classb.override"
@@ -488,7 +489,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 492 "classb.c"
+#line 493 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -611,9 +612,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 615 "classb.c"
+#line 616 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 620 "classb.c"
+#line 621 "classb.c"

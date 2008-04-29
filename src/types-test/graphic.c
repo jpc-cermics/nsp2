@@ -240,6 +240,7 @@ void nsp_graphic_destroy_partial(NspGraphic *H)
 void nsp_graphic_destroy(NspGraphic *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 244 "graphic.c"
   nsp_graphic_destroy_partial(H);
   FREE(H);
 }
@@ -474,7 +475,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 478 "graphic.c"
+#line 479 "graphic.c"
 
 
 #line 55 "graphic.override"
@@ -489,7 +490,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 493 "graphic.c"
+#line 494 "graphic.c"
 
 
 #line 68 "graphic.override"
@@ -503,7 +504,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 507 "graphic.c"
+#line 508 "graphic.c"
 
 
 #line 80 "graphic.override"
@@ -516,7 +517,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 520 "graphic.c"
+#line 521 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -613,7 +614,7 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 617 "graphic.c"
+#line 618 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -624,4 +625,4 @@ GLURP
 
 
 
-#line 628 "graphic.c"
+#line 629 "graphic.c"

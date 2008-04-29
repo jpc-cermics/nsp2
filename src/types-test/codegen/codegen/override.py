@@ -25,6 +25,7 @@ class Overrides:
         self.override_type = {} # inserted verbatim in type definition 
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
+        self.override_destroy_prelim = '' # inserted verbatim before standard destroy
         self.init = ''
         self.last = ''
         self.imports = []
@@ -99,7 +100,9 @@ class Overrides:
         elif words[0] == 'override_internal_methods_protos':
             self.override_internal_methods_protos = '%s\n#line %d "%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
-
+        elif words[0] == 'override_destroy_prelim':
+            self.override_destroy_prelim = '%s\n#line %d "%s"\n%s' % \
+                           (self.override_destroy_prelim, startline + 1, filename, rest)
         elif words[0] == 'init':
             self.init = '%s\n#line %d "%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)

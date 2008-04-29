@@ -275,6 +275,7 @@ void nsp_curve_destroy_partial(NspCurve *H)
 void nsp_curve_destroy(NspCurve *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 279 "curve.c"
   nsp_curve_destroy_partial(H);
   FREE(H);
 }
@@ -616,7 +617,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 620 "curve.c"
+#line 621 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -656,7 +657,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 660 "curve.c"
+#line 661 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -703,7 +704,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 707 "curve.c"
+#line 708 "curve.c"
 
 
 /*----------------------------------------------------
@@ -742,7 +743,7 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 746 "curve.c"
+#line 747 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -902,4 +903,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 906 "curve.c"
+#line 907 "curve.c"

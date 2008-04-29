@@ -279,6 +279,7 @@ void nsp_gmatrix_destroy_partial(NspGMatrix *H)
 void nsp_gmatrix_destroy(NspGMatrix *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+#line 283 "gmatrix.c"
   nsp_gmatrix_destroy_partial(H);
   FREE(H);
 }
@@ -773,7 +774,7 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 777 "gmatrix.c"
+#line 778 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -859,4 +860,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 863 "gmatrix.c"
+#line 864 "gmatrix.c"
