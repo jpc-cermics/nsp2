@@ -50,7 +50,8 @@ TESTS= \
 	dollar.dia \
 	intg.dia \
 	sparse_ij_val.dia \
-	solve.dia 
+	solve.dia \
+	legendre.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
