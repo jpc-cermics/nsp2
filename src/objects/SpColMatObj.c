@@ -1185,18 +1185,7 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 
   if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
   if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
-  /* 
-  if ( HMat1->mn == 0)  
-    {
-    NSP_OBJECT(HMat1)->ret_pos = 1;
-    return 1;
-    }
-    else if ( HMat2->mn == 0 )
-    {
-    NSP_OBJECT(HMat2)->ret_pos = 1;
-    return 1;
-    }
-  */
+
   if ( HMat2->m == 1 && HMat2->n == 1 )
     {
       if ((HMat1 = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
@@ -1205,7 +1194,7 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
     }
   else if ( HMat1->n == HMat2->m )
     {
-      if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+      if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2, NULLMAT)) == NULLMAT ) return RET_BUG;
       MoveObj(stack,1,(NspObject *) HMat3);
     }
   else

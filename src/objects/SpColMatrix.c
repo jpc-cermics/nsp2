@@ -2489,95 +2489,111 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
  * nsp_spcolmatrix_mult_sp_m:
  * @A: a #NspSpColMatrix
  * @B: a #NspMatrix
- * 
+ * @Res: a #NspMatrix (if NULL space is allocated otherwise Res hold the result)
+ *                     
  * @Ax@B when @B is a full matrix and returns the result as a full matrix.
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B)
+NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res)
 {
   NspMatrix *C = NULLMAT;
-  int i, j, k, jp, kp,size;
+  int j, jp, kp,size;
   const int inc=1;
   char type = 'r';
   double zero=0.0;
+  SpCol *Ajp;
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
-  if ( A->n != B->m ) 
+  if ( A->n != B->m )
     {
       Scierror("SpMult : incompatible arguments\n");
       return NULLMAT;
     }
 
-  if ( (C =nsp_matrix_create(NVOID,type,A->m,B->n)) == NULLMAT ) return NULLMAT;
+  if ( Res == NULL )
+    {
+      if ( (C =nsp_matrix_create(NVOID,type,A->m,B->n)) == NULLMAT ) return NULLMAT;
+    }
+  else  
+    {
+      /* Res should hold the result verify if it is valid... */
+      if ( Res->m != A->m || Res->n != B->n || Res->rc_type != type )
+	{
+	  Scierror("SpMult : result badly allocated\n");
+	  return NULLMAT;
+	}
+      C = Res;
+    }
 
   /* initialize to 0.0 */
   size=(type == 'c') ? 2*C->mn : C->mn;
   nsp_dset(&size,&zero,C->R,&inc);
 
-  if ( A->rc_type == 'r' && B->rc_type == 'r' )
+  if ( A->rc_type == 'r' )
     {
-      double *Bj, *Cj, coef;
-      SpCol *Ajp;
-      for ( j = 0, Bj=B->R, Cj=C->R ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
+      if ( B->rc_type == 'r' )      /* A real, B real */
 	{
-	  for (jp = 0 ; jp <  A->n  ; jp++)
+	  double *Bj, *Cj, coef;
+	  for ( j = 0, Bj=B->R, Cj=C->R ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
 	    {
-	      Ajp = A->D[jp]; coef = Bj[jp];
-	      for (kp = 0 ; kp < Ajp->size ; kp++)
-		Cj[Ajp->J[kp]] += Ajp->R[kp]*coef;
+	      for (jp = 0 ; jp <  A->n  ; jp++)
+		{
+		  Ajp = A->D[jp]; coef = Bj[jp];
+		  for (kp = 0 ; kp < Ajp->size ; kp++)
+		    Cj[Ajp->J[kp]] += Ajp->R[kp]*coef;
+		}
+	    }
+	}
+      else                          /* A real, B complex */
+	{
+	  doubleC *Bj, *Cj, coef;
+	  for ( j = 0, Bj=B->C, Cj=C->C ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
+	    {
+	      for (jp = 0 ; jp <  A->n  ; jp++)
+		{
+		  Ajp = A->D[jp]; coef = Bj[jp];
+		  for (kp = 0 ; kp < Ajp->size ; kp++)
+		    {
+		      Cj[Ajp->J[kp]].r += Ajp->R[kp]*coef.r;
+		      Cj[Ajp->J[kp]].i += Ajp->R[kp]*coef.i;
+		    }
+		}
 	    }
 	}
     }
   else
     {
-      /* process the columns of B */
-      for (i = 0 ; i < B->n ; i++) 
+      if ( B->rc_type == 'r' )      /* A complex, B real */
 	{
-	  double *BRi = &B->R[i*B->m];
-	  double *CRi = &C->R[i*C->m];
-	  doubleC *BCi = &B->C[i*B->m];
-	  doubleC *CCi = &C->C[i*C->m];
-	  /*  process column i of B */
-	  for (jp = 0  ; jp <  B->m  ; jp++) 
+	  double *Bj, coef; doubleC *Cj;
+	  for ( j = 0, Bj=B->R, Cj=C->C ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
 	    {
-	      SpCol *Aj;
-	      /* j is the current row-index for B i.e B(j,i) */
-	      j = jp;
-	      /* column j of A */
-	      Aj = A->D[j];
-	      /*  We process the column j of  A. For efficiency we separate the real case 
-	       *  from the 3 complex cases (which are nevertheless treated together)
-	       */
-	      if ( C->rc_type == 'r' )
-		for (kp = 0 ; kp < Aj->size ; kp++) 
-		  {
-		    /* getting non nul A(k,j) */
-		    k = Aj->J[kp]; 
-		    /* A(k,j)*B(j,i) */
-		    CRi[k] += Aj->R[kp] * BRi[jp];
-		  }
-	      else 
-		for (kp = 0 ; kp < Aj->size ; kp++) 
-		  {
-		    /* getting non nul b(j,k) */
-		    k = Aj->J[kp];
-		    if ( A->rc_type == 'r') 
-		      {
-			CCi[k].i += Aj->R[kp] * BCi[jp].i;
-			CCi[k].r += Aj->R[kp] * BCi[jp].r;
-		      }
-		    else if ( B->rc_type == 'r' ) 
-		      {
-			CCi[k].i += Aj->C[kp].i * BRi[jp];
-			CCi[k].r += Aj->C[kp].r * BRi[jp];
-		      }
-		    else 
-		      {
-			CCi[k].r += Aj->C[kp].r * BCi[jp].r -  Aj->C[kp].i* BCi[jp].i;
-			CCi[k].i += Aj->C[kp].i * BCi[jp].r +  Aj->C[kp].r* BCi[jp].i;
-		      }
-		  }
+	      for (jp = 0 ; jp <  A->n  ; jp++)
+		{
+		  Ajp = A->D[jp]; coef = Bj[jp];
+		  for (kp = 0 ; kp < Ajp->size ; kp++)
+		    {
+		      Cj[Ajp->J[kp]].r += Ajp->C[kp].r*coef;
+		      Cj[Ajp->J[kp]].i += Ajp->C[kp].i*coef;
+		    }
+		}
+	    }
+	}
+      else                          /* A complex, B complex */
+	{
+	  doubleC *Bj, *Cj, coef;
+	  for ( j = 0, Bj=B->C, Cj=C->C ; j < B->n ; j++, Bj+=B->m, Cj+=C->m )
+	    {
+	      for (jp = 0 ; jp <  A->n  ; jp++)
+		{
+		  Ajp = A->D[jp]; coef = Bj[jp];
+		  for (kp = 0 ; kp < Ajp->size ; kp++)
+		    {
+		      Cj[Ajp->J[kp]].r += Ajp->C[kp].r*coef.r - Ajp->C[kp].i*coef.i;
+		      Cj[Ajp->J[kp]].i += Ajp->C[kp].r*coef.i + Ajp->C[kp].i*coef.r;
+		    }
+		}
 	    }
 	}
     }
@@ -3236,34 +3252,45 @@ NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A)
   /* Space allocation for Rows */
   for (  i  = 0 ;  i  < Loc->n  ;  i++ ) 
     {
-      if (nsp_spcolmatrix_resize_col(Loc,i,(int) Loc->D[i]->iw) == FAIL) return(NULLSPCOL) ;
+      if (nsp_spcolmatrix_resize_col(Loc,i,(int) Loc->D[i]->iw) == FAIL) return NULLSPCOL;
       Loc->D[i]->iw = 0 ; /* working storage reinit */
     } 
-  /* filling the Tranposed matrix rows by rows  */
-  for (  i = 0 ;  i < A->n  ;  i++) 
-    {
-      SpCol *Ai = A->D[i];
-      for  ( k = 0  ;  k < Ai->size ; k++)
-	{ 
-	  int jt;
-	  j = Ai->J[k];
-	  jt = Loc->D[j]->iw ;
-	  Loc->D[j]->J[jt]= i;
-	  switch ( Loc->rc_type ) 
-	    {
-	    case 'r' : 
-	      Loc->D[j]->R[jt]= A->D[i]->R[k] ;
-	      break ;
-	    case 'c' :  
-	      Loc->D[j]->C[jt].r = A->D[i]->C[k].r  ;
-	      Loc->D[j]->C[jt].i = - A->D[i]->C[k].i  ; 
-	      break;
-	    }
 
-	  (Loc->D[j]->iw)++;
+  /* filling the Tranposed matrix rows by rows  */
+  if ( Loc->rc_type == 'r' )
+    {  
+      for (  i = 0 ;  i < A->n  ;  i++) 
+	{
+	  SpCol *Ai = A->D[i];
+	  for  ( k = 0  ;  k < Ai->size ; k++)
+	    { 
+	      int jt;
+	      j = Ai->J[k];
+	      jt = Loc->D[j]->iw ;
+	      Loc->D[j]->J[jt]= i;
+	      Loc->D[j]->R[jt]= A->D[i]->R[k] ;
+	      (Loc->D[j]->iw)++;
+	    }
 	}
     }
-  return(Loc) ;
+  else
+    {
+      for (  i = 0 ;  i < A->n  ;  i++) 
+	{
+	  SpCol *Ai = A->D[i];
+	  for  ( k = 0  ;  k < Ai->size ; k++)
+	    { 
+	      int jt;
+	      j = Ai->J[k];
+	      jt = Loc->D[j]->iw ;
+	      Loc->D[j]->J[jt]= i;
+	      Loc->D[j]->C[jt].r = A->D[i]->C[k].r  ;
+	      Loc->D[j]->C[jt].i = - A->D[i]->C[k].i  ; 
+	      (Loc->D[j]->iw)++;
+	    }
+	}
+    }
+  return Loc;
 } 
 
 /*

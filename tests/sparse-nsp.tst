@@ -375,6 +375,51 @@ if or(full(zer*ac)<>full(zer)) then BUG,end
 //AFAIREif  norm(full(ac.*ac)-full(ac).*full(ac),1)>100*%eps then BUG,end
 //AFAIREif  norm(full(bc.*bc)-full(bc).*full(bc),1)>100*%eps then BUG,end
 //AFAIREif  norm(full(bc.*ac)-full(bc).*full(ac),1)>100*%eps then BUG,end
+
+//----------------------------------------------------------
+// sparse * full  tests
+//----------------------------------------------------------
+//  real * real
+A = sprand(30,50,0.2,"nor");
+x = randn(50,3);
+y = A*x; yf = full(A)*x;
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+//  real * complex
+x = randn(50,3) + %i*randn(50,3);
+y = A*x; yf = full(A)*x;
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+// complex * complex
+A = A + %i*sprand(30,50,0.2,"nor"); 
+y = A*x; yf = full(A)*x;
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+// complex * real
+x = randn(50,3);
+y = A*x; yf = full(A)*x;
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+
+//----------------------------------------------------------
+// full * sparse  tests
+//----------------------------------------------------------
+//  real * real
+x = randn(3,50);
+A = sprand(50,40,0.2,"nor");
+y = x*A; yf = x*full(A);
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+//  real * complex
+x = randn(3,50) + %i*randn(3,50);
+y = x*A; yf = x*full(A);
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+// complex * complex
+A = A + %i*sprand(50,40,0.2,"nor"); 
+y = x*A; yf = x*full(A);
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+// complex * real
+x = randn(3,50);
+y = x*A; yf = x*full(A);
+if norm(y-yf)/norm(yf) > 10*%eps then, BUG, end
+
+
+
 // ----------------------------------------------------------
 // test de la transposition
 //-----------------------------------------------------------
