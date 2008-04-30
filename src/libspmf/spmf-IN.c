@@ -549,7 +549,7 @@ static int int_nor_part(Stack stack, int rhs, int opt, int lhs)
   double mu, sigma;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'nor' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'nor' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -573,7 +573,7 @@ static int int_gam_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'gam' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'gam' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -597,7 +597,7 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs)
   double nu;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'chi' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'chi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -619,7 +619,7 @@ static int int_exp_part(Stack stack, int rhs, int opt, int lhs)
   double tau;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'exp' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'exp' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -641,7 +641,7 @@ static int int_cau_part(Stack stack, int rhs, int opt, int lhs)
   double sigma;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'cau' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'cau' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -663,7 +663,7 @@ static int int_par_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'par' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'par' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -687,7 +687,7 @@ static int int_ray_part(Stack stack, int rhs, int opt, int lhs)
   double sigma;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'ray' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'ray' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -709,7 +709,7 @@ static int int_tray_part(Stack stack, int rhs, int opt, int lhs)
   double sigma, a;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameter required for 'tray' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameter are required for 'tray' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -733,7 +733,7 @@ static int int_wei_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'wei' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'wei' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -757,7 +757,7 @@ static int int_lap_part(Stack stack, int rhs, int opt, int lhs)
   double a;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'lap' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'lap' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -779,7 +779,7 @@ static int int_logn_part(Stack stack, int rhs, int opt, int lhs)
   double mu, sigma;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'logn' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'logn' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -803,7 +803,7 @@ static int int_logi_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'logi' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'logi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -827,7 +827,7 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs)
   double p, n;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'bin' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'bin' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -842,8 +842,8 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs)
     }
  
   for ( i = 0 ; i < x->mn ; i++ )
-     x->R[i] = nsp_pdf_binom(x->R[i], n, p, 0);
-
+    x->R[i] = nsp_pdf_binom(x->R[i], n, p, 0);
+  
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -854,7 +854,7 @@ static int int_hyp_part(Stack stack, int rhs, int opt, int lhs)
   double n, r, b;
   int i;
   if ( rhs != 5 ) 
-    { Scierror("Error: 3 parameters required for 'hyp' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 3 parameters are required for 'hyp' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -884,7 +884,7 @@ static int int_poi_part(Stack stack, int rhs, int opt, int lhs)
   double mu;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'poi' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'poi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -909,7 +909,7 @@ static int int_geom_part(Stack stack, int rhs, int opt, int lhs)
   double p;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter required for 'geom' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 1 parameter is required for 'geom' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -933,7 +933,7 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs)
   double p, r;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'nbn' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'nbn' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -960,7 +960,7 @@ static int int_bet_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'bet' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'bet' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -987,7 +987,7 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs)
   double nu1, nu2;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters required for 'f' option (got %d)\n",rhs-2); return RET_BUG;}
+    { Scierror("Error: 2 parameters are required for 'f' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
   
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
 
@@ -1007,75 +1007,36 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
+
+
+static OpTab pdf_table[]={
+  {"nor", int_nor_part},
+  {"gam", int_gam_part},
+  {"chi", int_chi_part},
+  {"exp", int_exp_part},
+  {"cau", int_cau_part},
+  {"par", int_par_part},
+  {"ray", int_ray_part},
+  {"tray", int_tray_part},
+  {"wei", int_wei_part},
+  {"lap", int_lap_part},
+  {"logn", int_logn_part},
+  {"logi", int_logi_part},
+  {"bin", int_bin_part},
+  {"poi", int_poi_part},
+  {"geom", int_geom_part},
+  {"nbn", int_nbn_part},
+  {"bet", int_bet_part},
+  {"f", int_f_part},
+  {"hyp", int_hyp_part},
+  {(char *) 0, NULL}
+};
          
 static int int_nsp_pdf( Stack stack, int rhs, int opt, int lhs)
 { 
-  char *rand_dist;
-
-  if ((rand_dist = GetString(stack,1)) == (char*)0) return RET_BUG;
-
-  if ( strcmp(rand_dist,"nor")==0 ) 
-    return int_nor_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"gam")==0) 
-    return int_gam_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"chi")==0)
-    return int_chi_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"exp")==0)
-    return int_exp_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"cau")==0)
-    return int_cau_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"par")==0)
-    return int_par_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"ray")==0)
-    return int_ray_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"tray")==0)
-    return int_tray_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"wei")==0)
-    return int_wei_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"lap")==0)
-    return int_lap_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"logn")==0)
-    return int_logn_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"logi")==0)
-    return int_logi_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"bin")==0)
-    return int_bin_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"poi")==0)
-    return int_poi_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"geom")==0)
-    return int_geom_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"nbn")==0)
-    return int_nbn_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"bet")==0)
-    return int_bet_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"f")==0)
-    return int_f_part(stack, rhs, opt, lhs);
-
-  else if ( strcmp(rand_dist,"hyp")==0)
-    return int_hyp_part(stack, rhs, opt, lhs);
-
-  else 
-    {
-      Scierror("Error: %s unknown or unsupported probability density %s\n",NspFname(stack),rand_dist);
-      return RET_BUG;
-    }      
+  int rep;
+  if ((rep= GetStringInStruct(stack,1,pdf_table,sizeof(OpTab),1)) == -1) return RET_BUG; 
+  return pdf_table[rep].fonc(stack, rhs, opt, lhs);
 }
 
 
@@ -1094,7 +1055,7 @@ static OpTab Spmf_func[]={
   {"primes_m", int_nsp_primes},
   {"primes_m", int_nsp_primes},
   {"convhull_m_m", int_convhull2d},
-  {"pdf_s_m", int_nsp_pdf},
+  {"pdf", int_nsp_pdf},
   {(char *) 0, NULL}
 };
 
