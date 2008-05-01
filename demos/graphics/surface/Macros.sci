@@ -14,8 +14,8 @@ function [X,Y]=field(x,y)
   [ry,cy]=size(y);
   if rx<>1, write(%io(2),"x must be a row vector");return;end;
   if ry<>1, write(%io(2),"y must be a row vector");return;end;
-  X=x.*.ones(cy,1);
-  Y=y'.*.ones(1,cx);
+  X=x.*.ones_new(cy,1);
+  Y=y'.*.ones_new(1,cx);
 endfunction
 
 function [z]=dup(x,n)
@@ -24,9 +24,9 @@ function [z]=dup(x,n)
 // depending on x 
 // Copyright INRIA
   [nr,nc]=size(x)
-  if nr==1 then y=ones(n,1) ; z= x.*.y ; 
+  if nr==1 then y=ones_new(n,1) ; z= x.*.y ; 
   else if nc<>1 then error("dup : x must be a vector");
-  else y=ones(1,n) ; z= x.*.y ; end;end
+  else y=ones_new(1,n) ; z= x.*.y ; end;end
 endfunction
 
 function [z] = bezier(p,t)
@@ -41,11 +41,11 @@ function [z] = bezier(p,t)
 // p must be a k x n+1 matrix (n+1) points, dimension k.
 // Copyright INRIA
   n=size(p,'c')-1;// i=nonzeros(t~=1);
-  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(t1z);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
   T=dup(t./t1,n)';
   b=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
   b=cumprod(b,'c');
-  if (size(t1z,'c')>0); b(t1z,:)= dup([ 0*ones(1,n),1],size(t1z,'c')); end;
+  if (size(t1z,'c')>0); b(t1z,:)= dup([ 0*ones_new(1,n),1],size(t1z,'c')); end;
   z=p*b';
 endfunction
 
@@ -70,20 +70,20 @@ function [X,Y,Z]=beziersurface (x,y,z,n)
   if rhs <= 3 ; n=20;end 
   t=linspace(0,1,n);
   n=size(x,'r')-1; // i=nonzeros(t~=1);
-  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(t1z);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
   T=dup(t./t1,n)';
   b1=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
   b1=cumprod(b1,'c');
   if (size(t1z,'c')>0); 
-    b1(t1z,:)= dup([ 0*ones(1,n),1],size(t1z,'c')); end;
+    b1(t1z,:)= dup([ 0*ones_new(1,n),1],size(t1z,'c')); end;
     
     n=size(x,'c')-1; // i=nonzeros(t~=1);
-    t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(t1z);
+    t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
     T=dup(t./t1,n)';
     b2=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
     b2=cumprod(b2,'c');
     if (size(t1z,'c')>0); 
-      b2(t1z,:)= dup([ 0*ones(1,n),1],size(t1z,'c')); end;
+      b2(t1z,:)= dup([ 0*ones_new(1,n),1],size(t1z,'c')); end;
       X=b1*x*b2';Y=b1*y*b2';Z=b1*z*b2';
 endfunction
 
@@ -98,7 +98,7 @@ function cplxmap(z,w,varargin)
   v = imag(w);
   M = max(u);
   m = min(u);
-  s = ones(size(z));
+  s = ones_deprecated(size(z));
   //mesh(x,y,m*s,blue*s);
   //hold on
   [X,Y,U]=nf3d(x,y,u);

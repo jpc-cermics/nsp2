@@ -17,7 +17,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // 
 
-a=1:10;b=a+1;c=ones(2,3)+2;
+a=1:10;b=a+1;c=ones_new(2,3)+2;
 // calling C function 
 //--------------------
 [x,y,z,t]=ex1c('mul',a,b,c);

@@ -10,7 +10,7 @@ t = linspace(0,2*%pi,200);
 r = sqrt(0.5);
 xx = r*cos(t)+0.5;
 yy = r*sin(t)+0.5;
-zz = zeros(xx);
+zz = zeros_deprecated(xx);
 color = 1;
 L1 = tlist(["polyline" "coord" "color" "mark"], [xx;yy;zz], color);
 

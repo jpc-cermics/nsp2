@@ -1,9 +1,9 @@
 // exemple 4 : un peu comme un plot3d1
 x = linspace(-1,1,80);
 y = x;
-z = (x.^2)'*ones(y) - ones(x')*y.^2;
+z = (x.^2)'*ones_deprecated(y) - ones_deprecated(x')*y.^2;
 
-z2 =  0.2*(x'*ones(y) + ones(x')*y);
+z2 =  0.2*(x'*ones_deprecated(y) + ones_deprecated(x')*y);
 
 P = zsurf_to_polyhedron(x, y, z, 1, 64, 0);
 

@@ -412,7 +412,7 @@ function draw_plot3d(rect)
   wy= abs(rect(2)-frect(4))/(frect(4)-frect(2));
   ww= rect(3)/(frect(3)-frect(1));
   wh= rect(4)/(frect(4)-frect(2));
-  xsetech(wrect=[wx,wy,ww,wh],arect=ones(1,4)/8);
+  xsetech(wrect=[wx,wy,ww,wh],arect=ones_new(1,4)/8);
   plot3d();
   xsetech(wrect=wrect,frect=frect,arect=arect);
 endfunction;

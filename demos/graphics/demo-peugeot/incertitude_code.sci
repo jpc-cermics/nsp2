@@ -10,9 +10,9 @@ function mat_show(nomsh,nomsv,val)
   plot2d([],[],rect=[min(x),min(y),max(x),max(y)],strf='070');
   //a=gca();
   //a.clip_state="off"; // xclip() ne marche plus 
-  xp=[x;x]; yp=[min(y)*ones(x);max(y)*ones(x)];
+  xp=[x;x]; yp=[min(y)*ones_deprecated(x);max(y)*ones_deprecated(x)];
   xpolys(xp,yp);
-  yp=[y;y]; xp=[min(x)*ones(y);max(x)*ones(y)];
+  yp=[y;y]; xp=[min(x)*ones_deprecated(y);max(x)*ones_deprecated(y)];
   xpolys(xp,yp);
   
   S= [ '', nomsh; [ nomsv, string(val)]];

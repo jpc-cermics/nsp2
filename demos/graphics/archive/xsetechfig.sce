@@ -7,7 +7,7 @@ wrect=[0.2 0.1 0.6 0.6] ;
 frect=[0,-1, 10, 1] ;// coordonnees utilsateurs
 dx=frect(3)-frect(1) ;ex=0.07*dx
 dy=frect(4)-frect(2) ;ey=0.07*dy
-f=1/7 ;arect=ones(4,1)*f
+f=1/7 ;arect=ones_new(4,1)*f
 
 xsetech(wrect=wrect,frect=frect,arect=arect)
 xset('thickness',3)
@@ -37,12 +37,12 @@ xstring(frect(1)-f*L+ex/2,(frect(2)-f*H+H+frect(4)+f*H+wrect(2)*Ht)/2,'yup')
 //width and height
 
 ;xset('font',4,2)
-xsegs((frect(1)-f*L-ex)*ones(2,2),[frect(4)+f*H ,frect(4)+f*H-H/2-ey ;
+xsegs((frect(1)-f*L-ex)*ones_new(2,2),[frect(4)+f*H ,frect(4)+f*H-H/2-ey ;
                                    frect(4)+f*H-H/2+ey,frect(4)+f*H-H])
 xstring(frect(1)-f*L-ex,frect(4)+f*H-H/2-ey/2,'h')
 
 xsegs([frect(1)-f*L,frect(1)-f*L+L/2+ex
-       frect(1)-f*L+L/2-ex,frect(1)-f*L+L],(frect(4)+f*H+ey)*ones(2,2))
+       frect(1)-f*L+L/2-ex,frect(1)-f*L+L],(frect(4)+f*H+ey)*ones_new(2,2))
 
 xstring(frect(1)-f*L+L/2,frect(4)+f*H+ey/2,'w')
 xset('font',2,1)

@@ -1,5 +1,5 @@
 function F=feuille3D(X,M,e,vv)
-  VertF=vv*ones(4,1);
+  VertF=vv*ones_new(4,1);
   F=[e*[Feuille1;Feuille2;Feuille3;Feuille4;Feuille5;Feuille6;..
 	Feuille7;Feuille8;Feuille9;Feuille10;Feuille11;..
 	Feuille12;Feuille13],[VertF;VertF;VertF;VertF;VertF;VertF;..
@@ -82,8 +82,8 @@ endfunction
 function Imo=Simil(T,M,e,Imn)
   Mp=M'
   [np,nd]=size(Imn)
-  Tp=ones(np,1)*T'
-  S=e*eye(4,4)
+  Tp=ones_new(np,1)*T'
+  S=e*eye_new(4,4)
   S(4,4)=1
   Imo=Imn*S*Mp+Tp
 endfunction
@@ -95,7 +95,7 @@ endfunction
 
 function Imo=TransIm(Imn,T)
   [np,nd]=size(Imn)
-  Tp=ones(np,1)*T'
+  Tp=ones_new(np,1)*T'
   Imo=Imn+Tp
 endfunction
 
@@ -111,25 +111,25 @@ endfunction
 
 function []=plotarbre3D(n,m)
   a=%pi/2; b=-%pi/6; f=1/3; q=1/24;
-  Id=eye(4,4);
-  Ze=zeros(4,1);
+  Id=eye_new(4,4);
+  Ze=zeros_new(4,1);
 
   //vv=13;
-  //VertF=vv*ones(4,1);
-  Vert=15*ones(4,1);
-  Brun1=26*ones(4,1);
-  Brun2=25*ones(4,1);
-  Brun3=27*ones(4,1);
-  Mauve1=22*ones(4,1);
-  Mauve2=23*ones(4,1);
-  Mauve3=24*ones(4,1);
-  Mauve4=31*ones(4,1);
-  jaune=3*ones(4,1);
-  rose1=28*ones(4,1);
-  rose2=29*ones(4,1);
-  rose3=30*ones(4,1);
-  rose4=32*ones(4,1);
-  bleu=12*ones(4,1);
+  //VertF=vv*ones_new(4,1);
+  Vert=15*ones_new(4,1);
+  Brun1=26*ones_new(4,1);
+  Brun2=25*ones_new(4,1);
+  Brun3=27*ones_new(4,1);
+  Mauve1=22*ones_new(4,1);
+  Mauve2=23*ones_new(4,1);
+  Mauve3=24*ones_new(4,1);
+  Mauve4=31*ones_new(4,1);
+  jaune=3*ones_new(4,1);
+  rose1=28*ones_new(4,1);
+  rose2=29*ones_new(4,1);
+  rose3=30*ones_new(4,1);
+  rose4=32*ones_new(4,1);
+  bleu=12*ones_new(4,1);
 
   Bourgeon1=0.05*[1,1,0;-1,1,0;-1,-1,0;1,-1,0];
   Bourgeon2=0.05*[-1,1,0;1,1,0;2,2,2;-2,2,2];
@@ -174,9 +174,9 @@ function []=plotarbre3D(n,m)
   age=m;
   posxy=15*rand(n,2);
   //posxy=0*rand(n,2); // FIXME
-  zer2=zeros(n,2);
+  zer2=zeros_new(n,2);
   pos=[posxy,zer2];
-  A=zeros(0,4);
+  A=zeros_new(0,4);
   //A=fond();
   for i=1:n
     A=[A;arbre3D(m,pos(i,:)',Id,0.3)];

@@ -207,7 +207,7 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
    case 'define' then 
     sd1= tlist(["rect","show","hilited","data","color","thickness","locks","locks status","pt"],...
                %t,%f,sd,30*rand(1),2,[],[],[0,0]);
-    sd1('locks status')=0*ones(1,4); // 4 lock points 
+    sd1('locks status')=0*ones_new(1,4); // 4 lock points 
     gr_objects($+1)=sd1;
     n=size(gr_objects,0);
     gr_rect('locks',n);
@@ -251,7 +251,7 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
    case 'inside lock' then 
     // check if we are near a lock point 
     d= gr_objects(sd)('locks'); 
-    d1= d - ones(4,1)*pt; 
+    d1= d - ones_new(4,1)*pt; 
     [d1]= max(abs(d1),'c');
     [d1,kd]=min(d1);
     if d1 < 5 then 
@@ -331,10 +331,10 @@ function sd1 =gr_poly(action,sd,pt,pt1)
       xpoly(sd('x'),sd('y'),type='lines');
       if sd('hilited') then 
 	// hilited part 
-	rects=[sd('x')-1;sd('y')+1;2*ones(sd('x'));2*ones(sd('x'))];
+	rects=[sd('x')-1;sd('y')+1;2*ones_deprecated(sd('x'));2*ones_deprecated(sd('x'))];
 	n=size(rects,'c');
 	control_color=10;
-	colors=control_color*ones(1,n);
+	colors=control_color*ones_new(1,n);
 	if sd('lock first')(1) then colors(1)=1;end 
 	if sd('lock last')(1) then colors($)=1;end 
 	xrects(rects,colors);
@@ -395,7 +395,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
       ptn=[gr_objects(sd)('x')(pt1+1),gr_objects(sd)('y')(pt1+1)];
       ptmin=min(ptb,ptn);ptmax=max(ptb,ptn);
       pts=[ptmin;ptmax;ptmin(1),ptmax(2);ptmax(1),ptmin(2)]
-      dd= abs(pts-ones(4,1)*ptnew);
+      dd= abs(pts-ones_new(4,1)*ptnew);
       k=find(max(dd,'c') < 5);
       if ~isempty(k) then 
 	xinfo('found '+string(pts(k(1),1))+' '+string(pts(k(1),2)));

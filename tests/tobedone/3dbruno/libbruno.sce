@@ -47,7 +47,7 @@ function [R] = mat_rot(theta, n)
    n = n/sqrt(n'*n)
    [nm, im] = max(abs(n))
    ind = 1:3; ind(im)=[]
-   u = ones(3,1)
+   u = ones_new(3,1)
    u(im) = -sum(n(ind))/n(im)
    u = u/sqrt(u'*u)
    v = prod_vect(n,u)
@@ -70,7 +70,7 @@ endfunction
 
 function [v]=prod_vect(v1,v2)
   // produit vectoriel v = v1 /\ v2
-  v = zeros(v1)
+  v = zeros_deprecated(v1)
   v(1,:) = v1(2,:).*v2(3,:) - v1(3,:).*v2(2,:)
   v(2,:) = v1(3,:).*v2(1,:) - v1(1,:).*v2(3,:)
   v(3,:) = v1(1,:).*v2(2,:) - v1(2,:).*v2(1,:)
@@ -149,7 +149,7 @@ function [P] = zsurf_to_polyhedron(x, y, z, color_low, color_high, back_color)
    [nx, ny] = size(z)
    [X, Y]=ndgrid(x, y);
    coord = [X(:)' ; Y(:)'; z(:)'];
-   face = zeros(4,(nx-1)*(ny-1));
+   face = zeros_new(4,(nx-1)*(ny-1));
    for j=1:ny-1
       ix = nx*(j-1)+1:nx*j-1
       face(:,(nx-1)*(j-1)+1:(nx-1)*j) = [ix ; ix+1 ; ix+nx+1 ; ix+nx]
@@ -176,7 +176,7 @@ function [P] = zsurf_to_spolyhedron(x, y, z, color_low, color_high, back_color)
    [nx, ny] = size(z)
    [X, Y]=ndgrid(x, y);
    coord = [X(:)' ; Y(:)'; z(:)']
-   face = zeros(4,(nx-1)*(ny-1))
+   face = zeros_new(4,(nx-1)*(ny-1))
    for j=1:ny-1
       ix = nx*(j-1)+1:nx*j-1
       face(:,(nx-1)*(j-1)+1:(nx-1)*j) = [ix ; ix+1 ; ix+nx+1 ; ix+nx]
@@ -198,7 +198,7 @@ function [P] = psurf_to_spolyhedron(u, v, func_surf, color_low, color_high, back
    end
    nu = size(u,'*')
    nv = size(v,'*')
-   face = zeros(4,(nu-1)*(nv-1))
+   face = zeros_new(4,(nu-1)*(nv-1))
    for j=1:nv-1
       iu = nu*(j-1)+1:nu*j-1
       face(:,(nu-1)*(j-1)+1:(nu-1)*j) = [iu ; iu+1 ; iu+nu+1 ; iu+nu]
@@ -225,7 +225,7 @@ function [P] = psurf_to_polyhedron(u, v, func_surf, color_low, color_high, back_
    end
    nu = size(u,'*')
    nv = size(v,'*')
-   face = zeros(4,(nu-1)*(nv-1))
+   face = zeros_new(4,(nu-1)*(nv-1))
    for j=1:nv-1
       iu = nu*(j-1)+1:nu*j-1
       face(:,(nu-1)*(j-1)+1:(nu-1)*j) = [iu ; iu+1 ; iu+nu+1 ; iu+nu]
@@ -388,7 +388,7 @@ function [S] = sphere_bis(C,r,level)
    end
    // normalisation
    normV = sqrt(sum(V.^2,"r"))
-   V = r*V ./ (ones(3,1)*normV)
+   V = r*V ./ (ones_new(3,1)*normV)
    for i=1:3, V(i,:) = V(i,:) + C(i); end
    S = tlist(["polyhedron" "coord" "face" "color" "back_color"], V, F, ...
 	     2,3)
@@ -410,7 +410,7 @@ function [S] = sphere_ter(C,r,level, color_low, color_high, back_color)
    end
    // normalisation
    normV = sqrt(sum(V.^2,"r"))
-   V = r*V ./ (ones(3,1)*normV)
+   V = r*V ./ (ones_new(3,1)*normV)
    for i=1:3, V(i,:) = V(i,:) + C(i); end
    val = V(3,:)
    valminmax = [min(val), max(val)]
@@ -422,8 +422,8 @@ endfunction
 
 function [E,F2E] = edge_table(F)
    nf = size(F,2)
-   Tab = zeros(4,3*nf)
-   v = ones(1,nf)
+   Tab = zeros_new(4,3*nf)
+   v = ones_new(1,nf)
    Tab = [F(1,:) F(2,:) F(3,:);...
 	  F(2,:) F(3,:) F(1,:);...
 	  1:nf   1:nf   1:nf  ;...
@@ -443,7 +443,7 @@ function [E,F2E] = edge_table(F)
    [t, k] = sort(-Tab(2,:))
    F2E = Tab(1,k)
    num = matrix(Tab(3,k),3,nf)
-   num = num + ones(3,1)*(0:3:3*(nf-1))
+   num = num + ones_new(3,1)*(0:3:3*(nf-1))
    F2E(num)  = F2E
    F2E = matrix(F2E,3,nf)
 endfunction

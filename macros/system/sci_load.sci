@@ -66,10 +66,10 @@ function str=sci_load_get_name(F1)
 // Copyright (C) 2006 Jean-Philippe Chancelier
   id1=F1.get[n=6,type='il'];
   if isempty(id1) then str=[];return;end
-  id = ones(4,6);
+  id = ones_new(4,6);
   for j=1:6 
     idl=id1(j);
-    ch=ones(4,1);
+    ch=ones_new(4,1);
     for  i=1:4 
       k=idiv(idl+128,256)
       if k < 0 then  k=k-1;end
@@ -111,7 +111,7 @@ function x=sci_load_spmat_old(F1)
   IJ=[] 
   Im=find(rows <> 0);
   for i=Im, nbi=rows(i),
-    IJi=zeros(nbi,2);
+    IJi=zeros_new(nbi,2);
     indi=ind(1:nbi);ind(1:nbi)=[];
     IJi(:,1)=i,IJi(:,2)=indi';
     IJ=[IJ;IJi];
@@ -304,7 +304,7 @@ function sci_save(fname,varargopt)
     vname=S(i);
     id=str2scilab_code(vname);
     id = id(1:min(24,length(id)));
-    if length(id) < 24 then id=[id,40*ones(1,24-length(id))];end
+    if length(id) < 24 then id=[id,40*ones_new(1,24-length(id))];end
     id=[1,256,256^2,256^3]*matrix(id,4,6);
     F1.put[id,type='il'];
     val=varargopt(S(i));
@@ -409,7 +409,7 @@ function sci_save_list(F1,val,obj_type)
   F1.put[obj_type,type='il'];
   nn=size(val);
   F1.put[nn,type='il'];
-  x=ones(1,nn+1);
+  x=ones_new(1,nn+1);
   for i=1:nn
     ok=execstr('elt=val(i)',errcatch=%t);
     if ok then 

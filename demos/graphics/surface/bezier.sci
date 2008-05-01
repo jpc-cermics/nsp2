@@ -64,11 +64,11 @@ function c1test()
   [xb1,yb1,zb1]=beziersurface(x1,y1,z1,10);
   // second surface 
   x2=dup(-0.5:0.25:0.5,5);
-  y2=[(ones(4,5));[0,0,0,0,0]];
+  y2=[(ones_new(4,5));[0,0,0,0,0]];
   z2=-dup(-1:0.25:0,5)';
   [xb2,yb2,zb2]=beziersurface(x2,y2,z2,10);
   // a surface to link the two previous ones 
-  x=zeros(5,5); y=x; z=x;
+  x=zeros_new(5,5); y=x; z=x;
 
   x(1,:)=x1(1,:); x(2,:)=x(1,:)-(x1(2,:)-x1(1,:));
   x(5,:)=x2(1,:); x(4,:)=x(5,:)-(x2(2,:)-x2(1,:));

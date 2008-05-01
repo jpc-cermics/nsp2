@@ -46,7 +46,7 @@ function []=meshvisu(col,rect)
   y=noeul(xx,3)
   y=matrix(y,triang,3);
   x=[x,x(:,1)]';y=[y,y(:,1)]'
-  xpolys(x,y,col*ones(1,triang));
+  xpolys(x,y,col*ones_new(1,triang));
   xset("clipoff");
 endfunction 
 
@@ -85,7 +85,7 @@ function []=emc2V(i,j,k,sca,FN,rect)
   nmax=max(nm);if nmax<>0; nm=nm/nmax;end
   xarrows([noeul(:,2)-(1/sca)*resu(:,1),noeul(:,2)+(1/sca)*resu(:,1)]',...
 	[noeul(:,3)-(1/sca)*resu(:,2),noeul(:,3)+(1/sca)*resu(:,2)]',...
-	style=16*ones(nm)-16*nm);
+	style=16*ones_deprecated(nm)-16*nm);
   xset("clipoff");
 endfunction 
 

@@ -51,7 +51,7 @@ function  demo_calendar()
   calendar=gtkcalendar_new();
   
   // we store data in calendar 
-  settings=0*ones(1,5);
+  settings=0*ones_new(1,5);
   calendar.set_data[window=calendar,settings=settings]
   calendar_set_flags(calendar,settings);
   calendar.mark_day[19];	

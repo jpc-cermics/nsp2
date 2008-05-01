@@ -12,13 +12,13 @@ end
 
 function y = linspace(d1, d2, n)
   if nargin <= 2 then n = 100;end
-  y = [d1*ones(1,n-1)+(0:n-2)*(d2-d1)./(n-1),d2];
+  y = [d1*ones_new(1,n-1)+(0:n-2)*(d2-d1)./(n-1),d2];
 endfunction
 
 function [x,y,z]=sph(alp,tet)
-  x=r*cos(alp).*cos(tet)+orig(1)*ones(tet);
-  y=r*cos(alp).*sin(tet)+orig(2)*ones(tet);
-  z=r*sin(alp)+orig(3)*ones(tet);
+  x=r*cos(alp).*cos(tet)+orig(1)*ones_deprecated(tet);
+  y=r*cos(alp).*sin(tet)+orig(2)*ones_deprecated(tet);
+  z=r*sin(alp)+orig(3)*ones_deprecated(tet);
 endfunction;
   
 r=1;orig=[0 0 0];

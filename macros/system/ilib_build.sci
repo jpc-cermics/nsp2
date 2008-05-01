@@ -45,7 +45,7 @@ function ilib_gen_gateway(name,tables)
     end
     table = tables(itable);
     [mt,nt]=size(table);
-    if nt==2 then col= "csci"; table = [table, col(ones(mt,1))];nt = 3 ; end 
+    if nt==2 then col= "csci"; table = [table, col(ones_new(mt,1))];nt = 3 ; end 
     if nt<>3 then error('second argument has wrong size ');end 
     [gate,names,cast,declar,have_mex]=new_names(table); 
     mex_include='';
@@ -100,13 +100,13 @@ function [gate,names,cast,declar,have_mex]=new_names(table)
   [mt,nt]=size(table);
   have_mex=%f;
   gate= "NULL";
-  gate = gate(ones(mt,1));
+  gate = gate(ones_new(mt,1));
   names= " "; 
-  names= names(ones(mt,1)); 
+  names= names(ones_new(mt,1)); 
   cast = "";
-  cast = cast(ones(mt,1)); 
+  cast = cast(ones_new(mt,1)); 
   declar= "function";
-  declar = declar(ones(mt,1)); 
+  declar = declar(ones_new(mt,1)); 
   for i=1:mt 
     select table(i,3) 
      case 'cmex' then 
@@ -205,7 +205,7 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
   for it = 1:L 
     table = tables(it);
     [mt,nt]=size(table);
-    if nt==2 then col= "csci"; table = [table, col(ones(mt,1))];nt=3; end 
+    if nt==2 then col= "csci"; table = [table, col(ones_new(mt,1))];nt=3; end 
     if nt<>0 & nt<>3 then error('second argument has wrong size ');end 
     tables(it)=table;
   end

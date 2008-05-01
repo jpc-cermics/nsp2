@@ -53,8 +53,8 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
    end
    
    if isempty(Q) then 
-      Q = eye(n,n);
-   elseif norm(clean(Q*Q'-eye(n,n)))>0 then
+      Q = eye_new(n,n);
+   elseif norm(clean(Q*Q'-eye_new(n,n)))>0 then
       error("Q must be orthogonal");
    end   
    
