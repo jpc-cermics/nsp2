@@ -380,6 +380,7 @@ int nsp_matint_delete_columns(NspObject  *Obj,index_vector *index)
       return FAIL; 
     } 
 
+
   MAT_INT(type)->canonic(Obj);
   Val = (char *) A->S;
 
@@ -902,7 +903,6 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts,inde
   if ( index->nval == 0 )
     return MAT_INT(type)->clone(NVOID, Obj, A->m, 0, FALSE);
 
-  elt_size = MAT_INT(type)->elt_size(Obj); 
   if ( A->m == 0 || A->n == 0) 
     {
       return nsp_object_copy(Obj);
@@ -913,7 +913,14 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts,inde
       return NULLOBJ;
     }
 
+  /* be sure that Obj is in a canonic form 
+   * Note also that it can change elt_size which must 
+   * be called after 
+   */
+
   MAT_INT(type)->canonic(Obj);
+  elt_size = MAT_INT(type)->elt_size(Obj); 
+
   from = (char *) A->S;
 
   if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, A->m, index->nval, FALSE)) == NULLOBJ ) 
@@ -1169,15 +1176,20 @@ static NspObject *nsp_matint_extract(NspObject *Obj, index_vector *index_r, inde
   if ( index_r->nval == 0 || index_c->nval == 0 )
      return MAT_INT(type)->clone(NVOID, Obj, index_r->nval, index_c->nval, FALSE);
 
-  elt_size = MAT_INT(type)->elt_size(Obj); 
-
   if ( index_r->min < 1 || index_r->max > A->m ||  index_c->min < 1 ||  index_c->max > A->n )
     {
       Scierror("Error:\tIndices out of bound\n");
       return NULLOBJ;
     }
   
+  /* be sure that Obj is in a canonic form 
+   * Note also that it can change elt_size which must 
+   * be called after 
+   */
+  
   MAT_INT(type)->canonic(Obj);
+  elt_size = MAT_INT(type)->elt_size(Obj); 
+
   from = (char *) A->S;
 
   if ( (Loc =MAT_INT(type)->clone(NVOID, Obj, index_r->nval,index_c->nval, FALSE)) == NULLOBJ ) 
@@ -2280,6 +2292,7 @@ NspObject *nsp_matint_repmat(const NspObject *ObjA, int m, int n)
 
   type = check_implements(ObjA, nsp_type_matint_id);
 
+  MAT_INT(type)->canonic(NSP_OBJECT(ObjA));
   elt_size_A = MAT_INT(type)->elt_size(ObjA);
 
   if ( (ObjB = MAT_INT(type)->clone(NVOID, ObjA, m*A->m, n*A->n, FALSE)) == NULLOBJ )
@@ -2391,6 +2404,8 @@ int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag)
   unsigned int elt_size_A; /* size in number of bytes */
   
   type = check_implements(ObjA, nsp_type_matint_id);
+
+  MAT_INT(type)->canonic(ObjA);
   elt_size_A = MAT_INT(type)->elt_size(ObjA);
 
   if ( p < 1 || q < 1 )
@@ -3367,7 +3382,8 @@ NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB)
                                                          (so we don't check) */
 
   /* be sure that we are back converted */
-  MAT_INT(type)->canonic(ObjA);  MAT_INT(type)->canonic(ObjB);
+  MAT_INT(type)->canonic(ObjA);  
+  MAT_INT(type)->canonic(ObjB);
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
