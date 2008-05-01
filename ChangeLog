@@ -1,3 +1,8 @@
+2008-05-01  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* *.sci: changes ones, zeros, eye to xxx_deprecated or 
+	xxx_new in sci, sce and tst files. 
+	
 2008-04-11  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* macros/miscellaneous/bdiv_sp_m.sci: add a first
