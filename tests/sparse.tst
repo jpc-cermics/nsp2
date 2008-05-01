@@ -26,7 +26,7 @@ if %t then
 //-------------------------------------------------------------
 //test of sparse(ij,v [,mn]) 
 //--------------------------------------------------------------
-deff('[a]=sparse1(ij,v,m,n)',['a=0*ones(m*n,1);';
+deff('[a]=sparse1(ij,v,m,n)',['a=0*ones_new(m*n,1);';
 		'if ij<>[] then a(ij(:,1)+m*(ij(:,2)-1))=v(:);end';
 		'a=matrix(a,m,n);']);
 deff('[T]=sptest1(ij,v,mn)','T=or(sparse1(ij,v,mn(1),mn(2))<>full(sparse(ij,v,mn)))')
@@ -134,7 +134,7 @@ if or(full(v-v)<>full(v)-full(v)) then pause,end
 if or(full(vt+sparse([],[],[1,6]))<>full(vt)) then pause,end
 if or(full(vt+vt)<>full(vt)+full(vt)) then pause,end
 if or(full(vt-vt)<>full(vt)-full(vt)) then pause,end
-if or(full(zer+zer)<>0*ones(6,6)) then pause,end
+if or(full(zer+zer)<>0*ones_new(6,6)) then pause,end
 if or(full(a+a)<>full(a)+full(a)) then pause,end
 if or(full(b+b)<>full(b)+full(b)) then pause,end
 if or(full(a+zer)<>full(a)) then pause,end
@@ -195,26 +195,26 @@ if or(full(bc-ac)<>full(bc)-full(ac)) then pause,end
 // sparse full and full sparse operation (soft coded apoerations)
 if or(full(a+1)<>full(a)+1) then pause,end
 if or(full(1+a)<>full(a)+1) then pause,end
-if or(full(a+ones(6,6))<>full(a)+ones(6,6)) then pause,end
-if or(full(ones(6,6)+a)<>full(a)+ones(6,6)) then pause,end
+if or(full(a+ones_new(6,6))<>full(a)+ones_new(6,6)) then pause,end
+if or(full(ones_new(6,6)+a)<>full(a)+ones_new(6,6)) then pause,end
 if or(full(a+2*eye)<>full(a)+2*eye) then pause,end
 if or(full(2*eye+a)<>full(a)+2*eye) then pause,end
 if or(full(a-1)<>full(a)-1) then pause,end
 if or(full(1-a)<>1-full(a)) then pause,end
-if or(full(a-ones(6,6))<>full(a)-ones(6,6)) then pause,end
-if or(full(ones(6,6)-a)<>ones(6,6)-full(a)) then pause,end
+if or(full(a-ones_new(6,6))<>full(a)-ones_new(6,6)) then pause,end
+if or(full(ones_new(6,6)-a)<>ones_new(6,6)-full(a)) then pause,end
 if or(full(a-2*eye)<>full(a)-2*eye) then pause,end
 if or(full(2*eye-a)<>2*eye-full(a)) then pause,end
 if or(full(ac+1)<>full(ac)+1) then pause,end
 if or(full(1+ac)<>full(ac)+1) then pause,end
-if or(full(ac+ones(6,6))<>full(ac)+ones(6,6)) then pause,end
-if or(full(ones(6,6)+ac)<>full(ac)+ones(6,6)) then pause,end
+if or(full(ac+ones_new(6,6))<>full(ac)+ones_new(6,6)) then pause,end
+if or(full(ones_new(6,6)+ac)<>full(ac)+ones_new(6,6)) then pause,end
 if or(full(ac+2*eye)<>full(ac)+2*eye) then pause,end
 if or(full(2*eye+ac)<>full(ac)+2*eye) then pause,end
 if or(full(ac-1)<>full(ac)-1) then pause,end
 if or(full(1-ac)<>1-full(ac)) then pause,end
-if or(full(ac-ones(6,6))<>full(ac)-ones(6,6)) then pause,end
-if or(full(ones(6,6)-ac)<>ones(6,6)-full(ac)) then pause,end
+if or(full(ac-ones_new(6,6))<>full(ac)-ones_new(6,6)) then pause,end
+if or(full(ones_new(6,6)-ac)<>ones_new(6,6)-full(ac)) then pause,end
 if or(full(ac-2*eye)<>full(ac)-2*eye) then pause,end
 if or(full(2*eye-ac)<>2*eye-full(ac)) then pause,end
 if or(full(ac+full(bc))<>full(ac)+full(bc)) then pause,end

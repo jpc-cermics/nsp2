@@ -48,7 +48,7 @@ for m=0:6
     if norm(y1-y2) > 1.e-10 then pause;end 
 end 
 
-Y2 = ones(7,length(x));
+Y2 = ones_new(7,length(x));
 for m=0:6 
     execstr('y2=P5_'+string(m)+'(x);');
     Y2(m+1,:) = (-1)^m*(1-x.^2).^(m/2).*y2;

@@ -42,9 +42,9 @@ end
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   b=0*a;for j=1:min(m,n), b(j,j)=1;end
-  if test(eye(m,n),b) then pause,end
-  if test(eye(a),b) then pause,end
-  if test(eye(a+[]),b) then pause,end
+  if test(eye_new(m,n),b) then pause,end
+  if test(eye_deprecated(a),b) then pause,end
+  if test(eye_deprecated(a+[]),b) then pause,end
 end 
 
 //----- test of ones 
@@ -55,34 +55,34 @@ function [a]=Mones(m,n)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);a=rand(m,n,'uniform');
-  if test(ones(m,n),Mones(m,n)) then pause,end
-  if test(ones(a),Mones(m,n)) then pause,end
-  if test(ones(a+[]),Mones(m,n)) then pause,end
+  if test(ones_new(m,n),Mones(m,n)) then pause,end
+  if test(ones_deprecated(a),Mones(m,n)) then pause,end
+  if test(ones_deprecated(a+[]),Mones(m,n)) then pause,end
 end 
 
 //------- cross test eye-ones-diag 
 
 function [a]=Meye(m,n)
-  if m<n then a=[diag(ones(1,m)),0*ones(m,n-m)];
-  else a=[diag(ones(1,n));0*ones(m-n,n)];end
+  if m<n then a=[diag(ones_new(1,m)),0*ones_new(m,n-m)];
+  else a=[diag(ones_new(1,n));0*ones_new(m-n,n)];end
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
-  if test(eye(m,n),Meye(m,n)) then pause,end
-  if test(eye(a),Meye(m,n)) then pause,end
-  if test(eye(a+[]),Meye(m,n)) then pause,end
+  if test(eye_new(m,n),Meye(m,n)) then pause,end
+  if test(eye_deprecated(a),Meye(m,n)) then pause,end
+  if test(eye_deprecated(a+[]),Meye(m,n)) then pause,end
 end 
 
 //------- test of diag (creation) 
 
 function [a]=Mdiag(d)
-  m=size(d,'*');a=0*ones(m,m);for j=1:m, a(j,j)=d(j);end
+  m=size(d,'*');a=0*ones_new(m,m);for j=1:m, a(j,j)=d(j);end
 endfunction
 
 for i=1:6, m=M(i);
   d=1:m
-  b=0*ones(m,m);for j=1:m, b(j,j)=d(j);end
+  b=0*ones_new(m,m);for j=1:m, b(j,j)=d(j);end
   if test(diag(d),b) then pause,end
   if test(diag(d+[]),b) then pause,end
 end 
@@ -90,8 +90,8 @@ end
 function [a]=MFdiag(d,j)
   a=Mdiag(d);m=size(a,'r');
   if a<>[] then 
-    if j>=0; a=[0*ones(m+j,j),[a;0*ones(j,m)]];
-    else a=[0*ones(-j,m-j);[a,0*ones(m,-j)]];end
+    if j>=0; a=[0*ones_new(m+j,j),[a;0*ones_new(j,m)]];
+    else a=[0*ones_new(-j,m-j);[a,0*ones_new(m,-j)]];end
   end
 endfunction
 
@@ -112,7 +112,7 @@ Mde=[nr,nc,0];
 Nde=[nc,nr,0];
 for i=1:3, m=Mde(i);n=Nde(i);
   d=rand(m,n,'uniform');
-  b=0*ones(min(m,n),1);for j=1:min(m,n), b(j)=d(j,j);end
+  b=0*ones_new(min(m,n),1);for j=1:min(m,n), b(j)=d(j,j);end
   if test(diag(d),b) then pause,end
   if test(diag(d+[]),b) then pause,end
 end 
@@ -127,7 +127,7 @@ endfunction
 for i=1:3, m=Mde(i);n=Nde(i);
   for j=-(m+1):m+1;
     d=rand(m,n,'uniform');
-    b=0*ones(min(m,n),1);for k=1:min(m,n), b(k)=d(k,k);end
+    b=0*ones_new(min(m,n),1);for k=1:min(m,n), b(k)=d(k,k);end
     if test(diag(d),b) then pause,end
     if test(diag(d+[]),b) then pause,end
   end 
@@ -281,9 +281,9 @@ end
 
 function [y]=Msum(x,j)
   [m,n]=size(x);
-  if j==2, y= x*ones(n,1);
-  elseif j==1,y=ones(1,m)*x;
-  else y= ones(1,m)*x*ones(n,1);end;
+  if j==2, y= x*ones_new(n,1);
+  elseif j==1,y=ones_new(1,m)*x;
+  else y= ones_new(1,m)*x*ones_new(n,1);end;
 endfunction
 
 function [y]=MsumG(x,j)
@@ -308,8 +308,8 @@ exit
 
 function [p]=Mprod(x,j)
   [m,n]=size(x);
-  if j==2 then ;p=0*ones(m,1);for i=1:m,p(i)=Vprod(x(i,:));end;
-  elseif j==1 then p=0*ones(1,n);for i=1:n,p(i)=Vprod(x(:,i));end;
+  if j==2 then ;p=0*ones_new(m,1);for i=1:m,p(i)=Vprod(x(i,:));end;
+  elseif j==1 then p=0*ones_new(1,n);for i=1:n,p(i)=Vprod(x(:,i));end;
   else p= Mprod(Mprod(x,1),2);end;
 endfunction
 
@@ -343,7 +343,7 @@ end
 
 function [y]=Mcumsum(x,j)
   [m,n]=size(x);
-  if j==2, y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones(i,1);end;
+  if j==2, y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones_new(i,1);end;
   elseif j==1,y=Mcumsum(x',2)';
   else y=x(:);y=Mcumsum(y,1);y=matrix(y,m,n);end
 endfunction
@@ -458,9 +458,9 @@ function [y,k]=Mmax(x)',['k=1,y=x(1),';
 endfunction
 
 function [y,k]=MmaxG(x,j)',['[m,n]=size(x);';
-		    'if j=='c', y=0*ones(m,1),k=y;for i=1:m,[yi,ki]=Mmax(x(i,:));'
+		    'if j=='c', y=0*ones_new(m,1),k=y;for i=1:m,[yi,ki]=Mmax(x(i,:));'
 		    'y(i)=yi;k(i)=ki;end;';
-		    'else  y=0*ones(1,n),k=y;for i=1:n,[yi,ki]=Mmax(x(:,i));'
+		    'else  y=0*ones_new(1,n),k=y;for i=1:n,[yi,ki]=Mmax(x(:,i));'
 		    'y(i)=yi;k(i)=ki;end;end']);
 endfunction
 

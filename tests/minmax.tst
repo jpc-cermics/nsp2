@@ -8,13 +8,13 @@ A = [];
 [m,M,im,iM] = minmax(A);
 if ~m.equal[[]] | ~M.equal[[]] | ~im.equal[[]] | ~iM.equal[[]]  then pause;end
 
-A = zeros(0,4);
+A = zeros_new(0,4);
 [m,M,im,iM] = minmax(A);
-rep=zeros(0,1);
+rep=zeros_new(0,1);
 if ~m.equal[rep] | ~M.equal[rep] | ~im.equal[rep] | ~iM.equal[rep]  then pause;end
 
-A = zeros(4,0);
-rep=zeros(1,0);
+A = zeros_new(4,0);
+rep=zeros_new(1,0);
 [m,M,im,iM] = minmax(A);
 if ~m.equal[rep] | ~M.equal[rep] | ~im.equal[rep] | ~iM.equal[rep]  then pause;end
 
@@ -113,7 +113,7 @@ if ~m.equal[Am] | ~M.equal[AM] | ~im.equal[indm] | ~iM.equal[indM]  then pause;e
 ///////////////////////////////////////////////////////
 // part4 - only nan
 //////////////////////////////////////////////////////
-A = %nan*zeros(2,3);
+A = %nan*zeros_new(2,3);
 
 [m,M,im,iM] = minmax(A);
 if ~isnan(m) | ~isnan(M) | ~im.equal[1] | ~iM.equal[1] then, pause;end

@@ -3,7 +3,7 @@
 
 n=20;
 m=30;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -14,7 +14,7 @@ end
 
 n=0;
 m=10;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -25,7 +25,7 @@ end
 
 n=0;
 m=0;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -40,7 +40,7 @@ end
 
 n=20;
 m=30;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -51,7 +51,7 @@ end
 
 n=0;
 m=10;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -62,7 +62,7 @@ end
 
 n=0;
 m=0;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -77,7 +77,7 @@ end
 
 n=20;
 m=30;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -88,7 +88,7 @@ end
 
 n=0;
 m=10;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -99,7 +99,7 @@ end
 
 n=0;
 m=0;
-Av={ rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -114,7 +114,7 @@ end
 
 n=20;
 m=30;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -125,7 +125,7 @@ end
 
 n=0;
 m=10;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 
@@ -136,7 +136,7 @@ end
 
 n=0;
 m=0;
-Av={ rand(n,m)+%i*rand(n,m),2,zeros(n,m),ones(n,m)};
+Av={ rand(n,m)+%i*rand(n,m),2,zeros_new(n,m),ones_new(n,m)};
 
 for i=1:4 
   for j=1:4 

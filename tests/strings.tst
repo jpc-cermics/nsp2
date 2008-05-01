@@ -34,7 +34,7 @@ if or(part(['abc';'x'],[1 1])<>['aa';'xx']) then pause,end
 if length('abd')<>3 then pause,end
 if length('')<>0 then pause,end
 if or(length(['abd';''])<>[3;0]) then pause,end
-if or(length(string(ones(10,10)))<>1) then pause,end
+if or(length(string(ones_new(10,10)))<>1) then pause,end
 if or(length(["poo",'f'])<>[3,1]) then pause,end
 
 //string

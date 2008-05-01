@@ -22,7 +22,7 @@ if or(A1<>A) then pause;end
 
 Sp1=sprow_create(7,8);
 A1=sprow2m(Sp1);
-if or(A1<>zeros(7,8)) then pause;end
+if or(A1<>zeros_new(7,8)) then pause;end
 
 // nsp_spcolmatrix_sparse
 // nsp_spcolmatrix_get
@@ -268,8 +268,8 @@ A1=sprow2m(Sp1);
 [ma,na]=size(A);
 B=[diag(diag(A))-diag(1:nd)];
 [mb,nb]=size(B);
-B=[B;zeros(ma-mb,na)];
-if nb < na then B=[B,zeros(ma,na-nb)];end
+B=[B;zeros_new(ma-mb,na)];
+if nb < na then B=[B,zeros_new(ma,na-nb)];end
 A2=A-B;
 if or(A1<>A2) then pause;end
 
@@ -286,9 +286,9 @@ for i=-3:3
   if nb > na then B(:,(na+1):nb)=[];end;
   if mb > ma then B(ma+1:mb,:)=[];
   else 
-    B=[B;zeros(ma-mb,na)];
+    B=[B;zeros_new(ma-mb,na)];
   end
-  if nb < na then B=[B,zeros(ma,na-nb)];end
+  if nb < na then B=[B,zeros_new(ma,na-nb)];end
   A2=A-B;
   if or(A1<>A2) then pause;end
 end
@@ -376,7 +376,7 @@ if or(A1<>A*4) then pause;end
 
 Sp1=Sp*m2sprow([]);
 A1=sprow2m(Sp1);
-if or(A1<>zeros(0,0)) then pause;end
+if or(A1<>zeros_new(0,0)) then pause;end
 
 // op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
 // NspMatrix *nsp_spcolmatrix_op_scal
@@ -538,21 +538,21 @@ end
 
 Sp1=sprow_eye(4,7);
 A1=sprow2m(Sp1);
-A2=eye(4,7);
+A2=eye_new(4,7);
 if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
 
 Sp1=sprow_ones(4,7);
 A1=sprow2m(Sp1);
-A2=ones(4,7);
+A2=ones_new(4,7);
 if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
 
 Sp1=sprow_zeros(4,7);
 A1=sprow2m(Sp1);
-A2=zeros(4,7);
+A2=zeros_new(4,7);
 if or(A1<>A2) then pause;end
 
 // nsp_mat_rand: A=rand(m,n,percent)
@@ -562,7 +562,7 @@ function A=sprand(m,n,percent)
   nv=m*percent;
   RC=[];V=[];
   for i=1:n 
-    RC=[RC;[grand(nv,1,'uin',1,m),ones(nv,1)*i]];
+    RC=[RC;[grand(nv,1,'uin',1,m),ones_new(nv,1)*i]];
     V =[V;rand(nv,1)];
   end
   A=sparsecol(RC,V,[m,n]);

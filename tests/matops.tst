@@ -27,9 +27,9 @@ end
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   b=0*a;for j=1:mini(m,n), b(j,j)=1;end
-  if test(eye(m,n),b) then pause,end
-  if test(eye(a),b) then pause,end
-  if test(eye(a+[]),b) then pause,end
+  if test(eye_new(m,n),b) then pause,end
+  if test(eye_deprecated(a),b) then pause,end
+  if test(eye_deprecated(a+[]),b) then pause,end
 end 
 
 //----- test of ones 
@@ -37,37 +37,37 @@ end
 deff('[a]=Mones(m,n)',['a=rand(m,n,''uniform''),a(a>=0)=1']);
 
 for i=1:6, m=M(i);n=N(i);a=rand(m,n,'uniform');
-  if test(ones(m,n),Mones(m,n)) then pause,end
-  if test(ones(a),Mones(m,n)) then pause,end
-  if test(ones(a+[]),Mones(m,n)) then pause,end
+  if test(ones_new(m,n),Mones(m,n)) then pause,end
+  if test(ones_deprecated(a),Mones(m,n)) then pause,end
+  if test(ones_deprecated(a+[]),Mones(m,n)) then pause,end
 end 
 
 //------- cross test eye-ones-diag 
 
-deff('[a]=Meye(m,n)',['if m<n ; a=[diag(ones(1,m)),0*ones(m,n-m)];';
-		      'else a=[diag(ones(1,n));0*ones(m-n,n)];end']);
+deff('[a]=Meye(m,n)',['if m<n ; a=[diag(ones_new(1,m)),0*ones_new(m,n-m)];';
+		      'else a=[diag(ones_new(1,n));0*ones_new(m-n,n)];end']);
 
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
-  if test(eye(m,n),Meye(m,n)) then pause,end
-  if test(eye(a),Meye(m,n)) then pause,end
-  if test(eye(a+[]),Meye(m,n)) then pause,end
+  if test(eye_new(m,n),Meye(m,n)) then pause,end
+  if test(eye_deprecated(a),Meye(m,n)) then pause,end
+  if test(eye_deprecated(a+[]),Meye(m,n)) then pause,end
 end 
 
 //------- test of diag (creation) 
 
-deff('[a]=Mdiag(d)','m=size(d,''*'');a=0*ones(m,m);for j=1:m, a(j,j)=d(j);end;');
+deff('[a]=Mdiag(d)','m=size(d,''*'');a=0*ones_new(m,m);for j=1:m, a(j,j)=d(j);end;');
 
 for i=1:6, m=M(i);
   d=1:m
-  b=0*ones(m,m);for j=1:m, b(j,j)=d(j);end
+  b=0*ones_new(m,m);for j=1:m, b(j,j)=d(j);end
   if test(diag(d),b) then pause,end
   if test(diag(d+[]),b) then pause,end
 end 
 
 deff('[a]=MFdiag(d,j)',['a=Mdiag(d);m=size(a,''r'');if a==[] then return;end;'
-			'if j>=0; a=[0*ones(m+j,j),[a;0*ones(j,m)]]';
-			'else a=[0*ones(-j,m-j);[a,0*ones(m,-j)]];end;']);
+			'if j>=0; a=[0*ones_new(m+j,j),[a;0*ones_new(j,m)]]';
+			'else a=[0*ones_new(-j,m-j);[a,0*ones_new(m,-j)]];end;']);
 
 for i=1:6, m=M(i);
   for j=-2:2
@@ -84,7 +84,7 @@ Mde=[nr,nc,0];
 Nde=[nc,nr,0];
 for i=1:3, m=Mde(i);n=Nde(i);
     d=rand(m,n,'uniform');
-    b=0*ones(mini(m,n),1);for j=1:mini(m,n), b(j)=d(j,j);end
+    b=0*ones_new(mini(m,n),1);for j=1:mini(m,n), b(j)=d(j,j);end
     if test(diag(d),b) then pause,end
     if test(diag(d+[]),b) then pause,end
 end 
@@ -97,7 +97,7 @@ deff('[d]=DiagE(a,j)',['if j>0 ; d=diag(a(1:$-j,j+1:$));';
 for i=1:3, m=Mde(i);n=Nde(i);
     for j=-(m+1):m+1;
      d=rand(m,n,'uniform');
-     b=0*ones(mini(m,n),1);for j=1:mini(m,n), b(j)=d(j,j);end
+     b=0*ones_new(mini(m,n),1);for j=1:mini(m,n), b(j)=d(j,j);end
      if test(diag(d),b) then pause,end
      if test(diag(d+[]),b) then pause,end
     end 
@@ -237,9 +237,9 @@ end
 
 //----------test of sum 
 
-deff('[y]=Msum(x,j)',['[m,n]=size(x);if j==''c'', y= x*ones(n,1);';
-		      'elseif j==''r'',y=ones(1,m)*x;';
-		      'else y= ones(1,m)*x*ones(n,1);end']);
+deff('[y]=Msum(x,j)',['[m,n]=size(x);if j==''c'', y= x*ones_new(n,1);';
+		      'elseif j==''r'',y=ones_new(1,m)*x;';
+		      'else y= ones_new(1,m)*x*ones_new(n,1);end']);
 
 deff('[y]=MsumG(x,j)',['if and([x==[],j==''f'']) then y=0;else y=Msum(x,j);end']);
 
@@ -259,8 +259,8 @@ end
 //----------test of prod
 
 deff('[p]=Mprod(x,j)',['[m,n]=size(x);';
-    'if j==''c'' then ;p=0*ones(m,1);for i=1:m,p(i)=det(diag(x(i,:)));end;';
-    'elseif j==''r'' then p=0*ones(1,n);for i=1:n,p(i)=det(diag(x(:,i)));end;'
+    'if j==''c'' then ;p=0*ones_new(m,1);for i=1:m,p(i)=det(diag(x(i,:)));end;';
+    'elseif j==''r'' then p=0*ones_new(1,n);for i=1:n,p(i)=det(diag(x(:,i)));end;'
     'else p= Mprod(Mprod(x,''r''),''c'');end;']);
 
 deff('[y]=MprodG(x,j)',['if and([x==[],j==''f'']) then y=1;else y=Mprod(x,j);end']);
@@ -285,7 +285,7 @@ end
 //----------test of cumsum
 
 deff('[y]=Mcumsum(x,j)',['[m,n]=size(x);'
-  'if j==''c'', y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones(i,1);end;';
+  'if j==''c'', y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones_new(i,1);end;';
   'elseif j==''r'',y=Mcumsum(x'',''c'')'';';
   'else y=x(:);y=Mcumsum(y,''r'');y=matrix(y,m,n);end']);
 
@@ -396,9 +396,9 @@ deff('[y,k]=Mmaxi(x)',['k=1,y=x(1),';
 	'for i=1:size(x,''*''),if x(i)>y,y=x(i),k=i;end;end']);
 
 deff('[y,k]=MmaxiG(x,j)',['[m,n]=size(x);';
-	'if j==''c'', y=0*ones(m,1),k=y;for i=1:m,[yi,ki]=Mmaxi(x(i,:));'
+	'if j==''c'', y=0*ones_new(m,1),k=y;for i=1:m,[yi,ki]=Mmaxi(x(i,:));'
 	'y(i)=yi;k(i)=ki;end;';
-	'else  y=0*ones(1,n),k=y;for i=1:n,[yi,ki]=Mmaxi(x(:,i));'
+	'else  y=0*ones_new(1,n),k=y;for i=1:n,[yi,ki]=Mmaxi(x(:,i));'
 	'y(i)=yi;k(i)=ki;end;end']);
 
 for i=1:6, m=M(i);n=N(i);

@@ -57,7 +57,7 @@ if ~A.equal[B] then, pause; end
 ij = [1, 4, 4, 4, 4, 9, 9, 1, 2, 2, 2, 9, 9, 9;...
       2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]';
 val= [1, 1,-2, 2,-1, 1,-5, 1, 3,-6,-4, 5,-4,-1];
-Res = zeros(9,2);
+Res = zeros_new(9,2);
 Res(1,1) = 1; Res(1,2)= 1; Res(2,1)=-7; Res(9,2) = -4; 
 A = sparse(ij,val);
 if ~A.equal[sparse(Res)] then, pause; end
@@ -71,8 +71,8 @@ if ~A.equal[sparse(Res)] then, pause; end
 // 5- null coefs
 ij = [1, 4, 4, 4, 4, 9, 9, 1, 2, 2, 2, 9, 9, 9;...
       2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]';
-val = zeros(14,1);
-Res = zeros(9,2);
+val = zeros_new(14,1);
+Res = zeros_new(9,2);
 A = sparse(ij,val);
 if ~A.equal[sparse(Res)] then, pause; end
 

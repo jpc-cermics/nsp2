@@ -8,7 +8,7 @@ rand('normal')
 
 function A=testmat3(a,n)
 //eigen values are given by a dilation of nth roots of 1
-  A=diag(a*ones(1,n-1),1)+diag((1/a)*ones(1,n-1),-1)
+  A=diag(a*ones_new(1,n-1),1)+diag((1/a)*ones_new(1,n-1),-1)
   A(1,n)=1/a;
 endfunction
 

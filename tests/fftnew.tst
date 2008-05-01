@@ -19,11 +19,11 @@
 
 // test 0
 if ~fftnew([]).equal[[]] then pause,end 
-if ~fftnew(zeros(0,2)).equal[zeros(0,2)] then pause,end 
-if ~fftnew(zeros(2,0)).equal[zeros(2,0)] then pause,end 
+if ~fftnew(zeros_new(0,2)).equal[zeros_new(0,2)] then pause,end 
+if ~fftnew(zeros_new(2,0)).equal[zeros_new(2,0)] then pause,end 
 if ~ifftnew([]).equal[[]] then pause,end 
-if ~ifftnew(zeros(0,2)).equal[zeros(0,2)] then pause,end 
-if ~ifftnew(zeros(2,0)).equal[zeros(2,0)] then pause,end 
+if ~ifftnew(zeros_new(0,2)).equal[zeros_new(0,2)] then pause,end 
+if ~ifftnew(zeros_new(2,0)).equal[zeros_new(2,0)] then pause,end 
 
 
 // test 1
@@ -186,11 +186,11 @@ if e > 20*%eps then pause,end
 
 // test 6
 if ~fft2new([]).equal[[]] then pause,end
-if ~fft2new(zeros(0,4)).equal[zeros(0,4)] then pause,end
-if ~fft2new(zeros(3,0)).equal[zeros(3,0)] then pause,end
+if ~fft2new(zeros_new(0,4)).equal[zeros_new(0,4)] then pause,end
+if ~fft2new(zeros_new(3,0)).equal[zeros_new(3,0)] then pause,end
 if ~ifft2new([]).equal[[]] then pause,end
-if ~ifft2new(zeros(0,4)).equal[zeros(0,4)] then pause,end
-if ~ifft2new(zeros(3,0)).equal[zeros(3,0)] then pause,end
+if ~ifft2new(zeros_new(0,4)).equal[zeros_new(0,4)] then pause,end
+if ~ifft2new(zeros_new(3,0)).equal[zeros_new(3,0)] then pause,end
 
 
 // test 7 (test hermitian redundancy for big vectors)

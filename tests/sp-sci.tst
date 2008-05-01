@@ -26,7 +26,7 @@ if or(A1<>A) then pause;end
 // Sp1=create_sp(7,8);
 Sp1=sparse([],[],[7,8]);
 A1=full(Sp1);
-if or(A1<>zeros(7,8)) then pause;end
+if or(A1<>zeros_new(7,8)) then pause;end
 
 // nsp_spcolmatrix_sparse
 // nsp_spcolmatrix_get
@@ -291,8 +291,8 @@ if %f then
   [ma,na]=size(A);
   B=[diag(diag(A))-diag(1:nd)];
   [mb,nb]=size(B);
-  B=[B;zeros(ma-mb,na)];
-  if nb < na then B=[B,zeros(ma,na-nb)];end
+  B=[B;zeros_new(ma-mb,na)];
+  if nb < na then B=[B,zeros_new(ma,na-nb)];end
   A2=A-B;
   if or(A1<>A2) then pause;end
 
@@ -309,9 +309,9 @@ if %f then
     if nb > na then B(:,(na+1):nb)=[];end;
     if mb > ma then B(ma+1:mb,:)=[];
     else 
-      B=[B;zeros(ma-mb,na)];
+      B=[B;zeros_new(ma-mb,na)];
     end
-    if nb < na then B=[B,zeros(ma,na-nb)];end
+    if nb < na then B=[B,zeros_new(ma,na-nb)];end
     A2=A-B;
     if or(A1<>A2) then pause;end
   end
@@ -553,34 +553,34 @@ for k=-3:3
 end
 
 if exists('%nsp') then 
-  Sp1=sp_eye(4,7);
+  Sp1=sp_eye_new(4,7);
   A1=full(Sp1);
-  A2=eye(4,7);
+  A2=eye_new(4,7);
   if or(A1<>A2) then pause;end
 
-  Sp1=sp_ones(4,7);
+  Sp1=sp_ones_new(4,7);
   A1=full(Sp1);
-  A2=ones(4,7);
+  A2=ones_new(4,7);
   if or(A1<>A2) then pause;end
 
-  Sp1=sp_zeros(4,7);
+  Sp1=sp_zeros_new(4,7);
   A1=full(Sp1);
-  A2=zeros(4,7);
+  A2=zeros_new(4,7);
   if or(A1<>A2) then pause;end
 else 
-  Sp1=sparse(eye(4,7));
+  Sp1=sparse(eye_new(4,7));
   A1=full(Sp1);
-  A2=eye(4,7);
+  A2=eye_new(4,7);
   if or(A1<>A2) then pause;end
 
-  Sp1=sparse(ones(4,7));
+  Sp1=sparse(ones_new(4,7));
   A1=full(Sp1);
-  A2=ones(4,7);
+  A2=ones_new(4,7);
   if or(A1<>A2) then pause;end
 
   Sp1=sparse([],[],[4,7]);
   A1=full(Sp1);
-  A2=zeros(4,7);
+  A2=zeros_new(4,7);
   if or(A1<>A2) then pause;end
 end 
 
@@ -591,7 +591,7 @@ function A=sprand(m,n,percent)
   nv=m*percent;
   RC=[];V=[];
   for i=1:n 
-    RC=[RC;[grand(nv,1,'uin',1,m),ones(nv,1)*i]];
+    RC=[RC;[grand(nv,1,'uin',1,m),ones_new(nv,1)*i]];
     V =[V;rand(nv,1)];
   end
   A=sparsecol(RC,V,[m,n]);

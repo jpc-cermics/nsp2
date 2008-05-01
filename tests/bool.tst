@@ -40,7 +40,7 @@ if and(A,dim=1)<>[%f,%f,%t,%f] then pause;end
 if and(A,dim=2)<>[%f,%f,%f]' then pause;end 
 if and(A,dim=0)<>%f then pause;end 
 
-if and(m2b(ones(5,8)))<>%t then pause;end 
-if or(m2b(zeros(5,8)))<>%f then pause;end 
+if and(m2b(ones_new(5,8)))<>%t then pause;end 
+if or(m2b(zeros_new(5,8)))<>%f then pause;end 
 
 
