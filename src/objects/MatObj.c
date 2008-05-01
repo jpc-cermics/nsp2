@@ -5017,6 +5017,20 @@ static int int_mat_lower_upper_bandwidth(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   return Max(lhs,1);
 }
+
+
+static int int_test_convert(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  NspMatrix *A;
+  CheckRhs (1, 1);
+  CheckLhs (0,1);
+  if ((Obj = nsp_get_object(stack, 1)) == NULLOBJ)   return RET_BUG;
+  if ( ! IsMat(Obj))  return RET_BUG;
+  A = (NspMatrix *) Obj;
+  Sciprintf("Matrix is %c and with convert=%c\n",A->rc_type, A->convert);
+  return 0;
+}
  
 /*
  * The Interface for basic matrices operation 
@@ -5192,6 +5206,7 @@ static OpTab Matrix_func[] = {
   {"issymmetric_m", int_mat_issymmetric},
   {"istriangular_m", int_mat_istriangular},
   {"lower_upper_bandwidths_m", int_mat_lower_upper_bandwidth},
+  {"test_convert", int_test_convert},
   {(char *) 0, NULL}
 };
 
