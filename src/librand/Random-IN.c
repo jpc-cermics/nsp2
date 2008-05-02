@@ -897,9 +897,9 @@ static int int_mul_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   if ((P = GetMat(stack,4)) == NULLMAT) return RET_BUG;
   ncat = P->mn+1;
 
-  if ( N < 0  ||  ncat <= 1 ) 
+  if ( N < 0 ) 
     {
-      Scierror("Error: bad parameters (N < 0  and/or Ncat <= 1 \n"); return RET_BUG;
+      Scierror("Error: bad parameter N (should be non negative)\n"); return RET_BUG;
     }
 
   if ((B = nsp_matrix_create(NVOID,'r',ncat,nn))== NULLMAT) return RET_BUG;

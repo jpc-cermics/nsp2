@@ -226,8 +226,7 @@ int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
 int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
 {
   int i, j, k;
-  double  lim;
-  /* double tol = n*DBL_EPSILON*/
+  double tol = (n-1)*DBL_EPSILON, lim;
 
   /* compute cumulative probabilities q[i] with some verifications */
   q[0] = 0.0;
@@ -238,11 +237,16 @@ int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
       q[k+1] = q[k] + p[k];
     }
 
-  /* probabilities must sum up to 1 */
-  if ( ! (q[n-1] < 1.0) )
+  /* probabilities must sum up to 1 (up to floating points errors) */
+  if (  q[n-1] >= 1.0 + tol )
     return FAIL;
 
   q[n] = 1.0;
+  k = n-1;
+  while( q[k] > 1.0 )
+    {
+      q[k] = 1.0; k--;
+    }
 
   /* computes guide keys for fast generation  */
   /*      keys[i] =   max j                   */
