@@ -502,7 +502,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      z =(NspMatrix *) fobj;
+      y = Mat2double((NspMatrix *) fobj);
     }
   else
     {
@@ -920,7 +920,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      z =(NspMatrix *) fobj;
+      y = Mat2double((NspMatrix *) fobj);
     }
   else
     {
@@ -1074,6 +1074,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 	  goto end;
 	if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==1 )
 	  {
+	    Mat2double((NspMatrix *) nsp_ret);
 	    z->R[i+z->m*j]= ((NspMatrix *) nsp_ret)->R[0];
 	    nsp_matrix_destroy((NspMatrix *) nsp_ret);
 	  }
@@ -1225,9 +1226,11 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  return RET_BUG;
 	}
     }
+
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      y =(NspMatrix *) fobj;
+      /* be sure that y is in a proper state */
+      y = Mat2double((NspMatrix *) fobj);
     }
   else
     {
@@ -1443,6 +1446,7 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 	goto end;
       if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==1 )
 	{
+	  Mat2double((NspMatrix *) nsp_ret);
 	  y->R[i]= ((NspMatrix *) nsp_ret)->R[0];
 	}
       else 
@@ -1551,7 +1555,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      z =(NspMatrix *) fobj;
+      z= Mat2double((NspMatrix *) fobj);
     }
   else
     {
@@ -4699,6 +4703,7 @@ static int feval_system(int dim,double x,double y,double * val,feval_data *feval
   if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' 
       && ((NspMatrix *) nsp_ret)->mn==1 ) 
     {
+      Mat2double((NspMatrix *) nsp_ret);
       *val= ((NspMatrix *) nsp_ret)->R[0];
       nsp_object_destroy((NspObject **) &nsp_ret);
     }
