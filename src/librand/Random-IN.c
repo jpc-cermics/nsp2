@@ -54,20 +54,21 @@ static int nsp_verify_probability_vector(double *p, int n)
    * with n events ; only the probability of the n-1 first events
    * is given, the last one being supposed to be 1- sum_k p_k.
    * The code verify that all probability are positive or null.
+   * 
    */
   int k;
-  double q;
+  double q, tol=(n-1)*DBL_EPSILON;
 
   q = 0.0;
   for ( k = 0 ; k < n-1 ; k++ )
     {
-      if ( ! (p[k] >= 0.0) )
+      if ( ! (p[k] >= 0.0) )  /* to detect also Nan */
 	return FAIL;
       q += p[k];
     }
 
-  /* probabilities must sum up to 1 */
-  if ( ! (q <= 1.0) )
+  /* probabilities must sum up to 1 (up to floating point errors) */
+  if ( q >= 1.0 + tol )
     return FAIL;
 
   return OK;
