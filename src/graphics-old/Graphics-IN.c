@@ -920,7 +920,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      y = Mat2double((NspMatrix *) fobj);
+      z = Mat2double((NspMatrix *) fobj);
     }
   else
     {
