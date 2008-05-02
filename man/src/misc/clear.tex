@@ -1,0 +1,35 @@
+% -*- mode: latex -*-
+
+\mansection{clear}
+
+\begin{mandesc}
+  \short{clear}{remove variables from current environment} \\
+  \short{clearglobal}{remove variables from global environment} 
+\end{mandesc}
+\index{clear}\label{clear}
+\index{clearglobal}\label{clearglobal}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  clear name1,...,namen;
+  clear ;
+  clear('name1',...,'namen');
+  clear();
+  clearglobal name1,...,namen;
+  clearglobal ;
+  clearglobal('name1',...,'namen');
+  clearglobal();
+\end{verbatim}
+
+\end{calling_sequence}
+
+\begin{mandescription}
+  The \verb+clear+ (resp. \verb+clearglobal+) is used to remove (unprotected) variables given by their names 
+  form the current (resp. the global) environment. If no argument is given to the command then all the 
+  variables current (resp global) are removed. 
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{who}{who}  
+\end{manseealso}
+
