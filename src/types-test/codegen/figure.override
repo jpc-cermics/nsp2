@@ -229,55 +229,37 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
+/* utilities */
 
-/* set all the children Fig field 
- *
- */
-
-static void nsp_figure_children_link_figure(NspFigure *F)
+void nsp_list_link_figure(NspList *L, NspFigure *F)
 {
-  Cell *cloc;
-  NspList *L = F->obj->children;
-  cloc = L->first ;
+  Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->obj->Fig == NULL ) 
-	    {
-	      F->obj->ref_count++;
-	      ((NspGraphic *) F)->obj->ref_count++;
-	      G->obj->Fig = F;
-	    }
+	  G->type->link_figure(G,F);
 	}
       cloc = cloc->next;
     }
 }
 
-
-static void nsp_figure_children_unlink_figure(NspFigure *F)
+void nsp_list_unlink_figure(NspList *L, NspFigure *F)
 {
-  Cell *cloc;
-  NspList *L = F->obj->children;
-  cloc = L->first ;
+  Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->obj->Fig == F ) 
-	    {
-	      F->obj->ref_count--;
-	      ((NspGraphic *) F)->obj->ref_count--;
-	      G->obj->Fig = NULL ;
-	    }
+	  G->type->unlink_figure(G,F);
 	}
       cloc = cloc->next;
     }
 }
 
-static int nsp_figure_check_children(NspFigure *F,NspList *L)
+int nsp_list_check_figure(NspList *L, NspFigure *F)
 {
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -298,5 +280,27 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
       cloc = cloc->next;
     }
   return OK;
+}
+
+
+/* set all the children Fig field 
+ *
+ */
+
+static void nsp_figure_children_link_figure(NspFigure *F)
+{
+  nsp_list_link_figure(F->obj->children,F);
+}
+
+
+static void nsp_figure_children_unlink_figure(NspFigure *F)
+{
+  nsp_list_unlink_figure(F->obj->children,F);
+}
+
+
+static int nsp_figure_check_children(NspFigure *F,NspList *L)
+{
+  return  nsp_list_check_figure(F->obj->children,F);
 }
 

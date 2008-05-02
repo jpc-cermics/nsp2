@@ -23,6 +23,9 @@ override_type Curve
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
+  /* next method are defined in NspGraphic and need not be chnaged here for Curve */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

@@ -8,7 +8,7 @@
 
 
 
-#line 4 "classbref.override"
+#line 4 "codegen/classbref.override"
 
 #line 14 "classbref.c"
 
@@ -212,7 +212,7 @@ NspClassBRef  *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = malloc(sizeof(nsp_classbref))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_classbref))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->clb_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->clb_thickness) == FAIL) return NULL;
   if ((M->obj->clb_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -629,7 +629,7 @@ void ClassBRef_Interf_Info(int i, char **fname, function (**f))
 ClassBRef_register_classes(NspObject *d)
 {
 
-#line 7 "classbref.override"
+#line 7 "codegen/classbref.override"
 
 / * init * /
 

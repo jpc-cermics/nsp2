@@ -2,6 +2,10 @@
 %%
 headers
 
+#include <nsp/figure.h>
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+
 %%
 init 
 
@@ -24,6 +28,8 @@ override_internal_methods
   scale_func *scale;
   bounds_func *bounds;
   full_copy_func *full_copy;
+  link_figure_func *link_figure;
+  unlink_figure_func *unlink_figure;
 
 %%
 override_internal_methods_protos
@@ -34,6 +40,24 @@ typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
 typedef void bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
 typedef NspGraphic *full_copy_func(NspGraphic *Obj);
+typedef void link_figure_func(NspGraphic *Obj,void *F);
+typedef void unlink_figure_func(NspGraphic *Obj,void *F);
+
+%%
+override_type Graphic
+
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   * this method of class Graphic are to be defined by subclasses.
+   */
+  type->draw = NULL;
+  type->translate = NULL;
+  type->rotate = NULL;
+  type->scale = NULL;
+  type->bounds = NULL;
+  type->full_copy = NULL; 
+  type->link_figure = nsp_graphic_link_figure;
+  type->unlink_figure = nsp_graphic_unlink_figure;
 
 %%
 override graphic_translate kwargs
@@ -90,5 +114,30 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
 last
 
 /* verbatim at the end */
+
+/* default methods in graphic */
+
+void nsp_graphic_link_figure(NspGraphic *G,void *F)
+{
+  NspFigure *Fi = F;
+  if ( G->obj->Fig == NULL ) 
+    {
+      Fi->obj->ref_count++;
+      ((NspGraphic *) Fi)->obj->ref_count++;
+      G->obj->Fig = Fi;
+    }
+}
+
+void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
+{
+  NspFigure *Fi = F;
+  if ( G->obj->Fig == F ) 
+    {
+      Fi->obj->ref_count--;
+      ((NspGraphic *) Fi)->obj->ref_count--;
+      G->obj->Fig = NULL ;
+    }
+}
+
 
 

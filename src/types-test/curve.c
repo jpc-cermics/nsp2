@@ -8,7 +8,7 @@
 
 
 
-#line 4 "curve.override"
+#line 4 "codegen/curve.override"
 #include "nsp/curve.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -96,8 +96,11 @@ NspTypeCurve *new_type_curve(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
+  /* next method are defined in NspGraphic and need not be chnaged here for Curve */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 101 "curve.c"
+#line 104 "curve.c"
   /* 
    * Curve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -235,7 +238,7 @@ NspCurve  *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = malloc(sizeof(nsp_curve))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_curve))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->width) == FAIL) return NULL;
@@ -275,7 +278,7 @@ void nsp_curve_destroy_partial(NspCurve *H)
 void nsp_curve_destroy(NspCurve *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 279 "curve.c"
+#line 282 "curve.c"
   nsp_curve_destroy_partial(H);
   FREE(H);
 }
@@ -604,7 +607,7 @@ static int _wrap_curve_set_style(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 50 "curve.override"
+#line 53 "curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -617,7 +620,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 621 "curve.c"
+#line 624 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -626,7 +629,7 @@ static NspObject *_wrap_curve_get_mode(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 64 "curve.override"
+#line 67 "curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -657,7 +660,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 
 
 
-#line 661 "curve.c"
+#line 664 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -692,7 +695,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 37 "curve.override"
+#line 40 "curve.override"
 int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -704,7 +707,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 708 "curve.c"
+#line 711 "curve.c"
 
 
 /*----------------------------------------------------
@@ -738,17 +741,17 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
 Curve_register_classes(NspObject *d)
 {
 
-#line 15 "curve.override"
+#line 15 "codegen/curve.override"
 
 Init portion 
 
 
-#line 747 "curve.c"
+#line 750 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 96 "curve.override"
+#line 99 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -903,4 +906,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 907 "curve.c"
+#line 910 "curve.c"

@@ -8,9 +8,13 @@
 
 
 
-#line 4 "graphic.override"
+#line 4 "codegen/graphic.override"
 
-#line 14 "graphic.c"
+#include <nsp/figure.h>
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+
+#line 18 "graphic.c"
 
 /* ----------- Graphic ----------- */
 
@@ -81,6 +85,22 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
       
   type->init = (init_func *) init_graphic;
 
+#line 48 "graphic.override"
+
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   * this method of class Graphic are to be defined by subclasses.
+   */
+  type->draw = NULL;
+  type->translate = NULL;
+  type->rotate = NULL;
+  type->scale = NULL;
+  type->bounds = NULL;
+  type->full_copy = NULL; 
+  type->link_figure = nsp_graphic_link_figure;
+  type->unlink_figure = nsp_graphic_unlink_figure;
+
+#line 104 "graphic.c"
   /* 
    * Graphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -209,7 +229,7 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
 
 NspGraphic  *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M)
 {
-  if ((M->obj = malloc(sizeof(nsp_graphic))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_graphic))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->hidden) == FAIL) return NULL;
  return M;
@@ -240,7 +260,7 @@ void nsp_graphic_destroy_partial(NspGraphic *H)
 void nsp_graphic_destroy(NspGraphic *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 244 "graphic.c"
+#line 264 "graphic.c"
   nsp_graphic_destroy_partial(H);
   FREE(H);
 }
@@ -461,7 +481,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 40 "graphic.override"
+#line 64 "graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -475,10 +495,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 479 "graphic.c"
+#line 499 "graphic.c"
 
 
-#line 55 "graphic.override"
+#line 79 "graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -490,10 +510,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 494 "graphic.c"
+#line 514 "graphic.c"
 
 
-#line 68 "graphic.override"
+#line 92 "graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -504,10 +524,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 508 "graphic.c"
+#line 528 "graphic.c"
 
 
-#line 80 "graphic.override"
+#line 104 "graphic.override"
 static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspGraphic *ret;
@@ -517,7 +537,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 521 "graphic.c"
+#line 541 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -609,20 +629,45 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
 Graphic_register_classes(NspObject *d)
 {
 
-#line 7 "graphic.override"
+#line 11 "codegen/graphic.override"
 
 GLURP 
 
 
-#line 618 "graphic.c"
+#line 638 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 91 "graphic.override"
+#line 115 "codegen/graphic.override"
 
 /* verbatim at the end */
 
+/* default methods in graphic */
+
+void nsp_graphic_link_figure(NspGraphic *G,void *F)
+{
+  NspFigure *Fi = F;
+  if ( G->obj->Fig == NULL ) 
+    {
+      Fi->obj->ref_count++;
+      ((NspGraphic *) Fi)->obj->ref_count++;
+      G->obj->Fig = Fi;
+    }
+}
+
+void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
+{
+  NspFigure *Fi = F;
+  if ( G->obj->Fig == F ) 
+    {
+      Fi->obj->ref_count--;
+      ((NspGraphic *) Fi)->obj->ref_count--;
+      G->obj->Fig = NULL ;
+    }
+}
 
 
-#line 629 "graphic.c"
+
+
+#line 674 "graphic.c"

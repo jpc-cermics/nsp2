@@ -8,7 +8,7 @@
 
 
 
-#line 4 "classb.override"
+#line 4 "codegen/classb.override"
 
 #line 14 "classb.c"
 
@@ -607,7 +607,7 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
 ClassB_register_classes(NspObject *d)
 {
 
-#line 7 "classb.override"
+#line 7 "codegen/classb.override"
 
 / * init * /
 

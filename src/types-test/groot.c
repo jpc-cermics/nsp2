@@ -8,7 +8,7 @@
 
 
 
-#line 4 "groot.override"
+#line 4 "codegen/groot.override"
 
 #include "nsp/groot.h"
 extern BCG *nsp_check_graphic_context(void);
@@ -209,7 +209,7 @@ int nsp_groot_xdr_save(XDR *xdrs, NspGRoot *M)
 
 NspGRoot  *nsp_groot_xdr_load_partial(XDR *xdrs, NspGRoot *M)
 {
-  if ((M->obj = malloc(sizeof(nsp_groot))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_groot))) == NULL) return NULL;
   if ((M->obj->figures =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
  return M;
 }
@@ -541,7 +541,7 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 GRoot_register_classes(NspObject *d)
 {
 
-#line 11 "groot.override"
+#line 11 "codegen/groot.override"
 
 Init portion 
 
@@ -551,7 +551,7 @@ Init portion
 }
 */
 
-#line 28 "groot.override"
+#line 28 "codegen/groot.override"
 
 
 #line 558 "groot.c"

@@ -88,26 +88,26 @@ class Overrides:
             self.override_slots[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'headers':
-            self.headers = '%s\n#line %d "%s"\n%s' % \
+            self.headers = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.headers, startline + 1, filename, rest)
         elif words[0] == 'override_type':
             slot = words[1]
             self.override_type[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_internal_methods':
-            self.override_internal_methods = '%s\n#line %d "%s"\n%s' % \
+            self.override_internal_methods = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods, startline + 1, filename, rest)
         elif words[0] == 'override_internal_methods_protos':
-            self.override_internal_methods_protos = '%s\n#line %d "%s"\n%s' % \
+            self.override_internal_methods_protos = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
         elif words[0] == 'override_destroy_prelim':
-            self.override_destroy_prelim = '%s\n#line %d "%s"\n%s' % \
+            self.override_destroy_prelim = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_destroy_prelim, startline + 1, filename, rest)
         elif words[0] == 'init':
-            self.init = '%s\n#line %d "%s"\n%s' % \
+            self.init = '%s\n#line %d "codegen/%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)
         elif words[0] == 'last':
-            self.last = '%s\n#line %d "%s"\n%s' % \
+            self.last = '%s\n#line %d "codegen/%s"\n%s' % \
                         (self.last, startline + 1, filename, rest)
         elif words[0] == 'modulename':
             self.modulename = words[1]

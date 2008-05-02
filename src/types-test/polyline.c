@@ -8,7 +8,7 @@
 
 
 
-#line 4 "polyline.override"
+#line 4 "codegen/polyline.override"
 #include "nsp/polyline.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -99,8 +99,11 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 104 "polyline.c"
+#line 107 "polyline.c"
   /* 
    * Polyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -230,7 +233,7 @@ NspPolyline  *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = malloc(sizeof(nsp_polyline))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_polyline))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if ((M->obj->Pts =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -266,7 +269,7 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
 void nsp_polyline_destroy(NspPolyline *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 270 "polyline.c"
+#line 273 "polyline.c"
   nsp_polyline_destroy_partial(H);
   FREE(H);
 }
@@ -541,7 +544,7 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 53 "polyline.override"
+#line 56 "polyline.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -570,7 +573,7 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 574 "polyline.c"
+#line 577 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -601,7 +604,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 40 "polyline.override"
+#line 43 "polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -613,7 +616,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 617 "polyline.c"
+#line 620 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -647,17 +650,17 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
 Polyline_register_classes(NspObject *d)
 {
 
-#line 15 "polyline.override"
+#line 15 "codegen/polyline.override"
 
 Init portion 
 
 
-#line 656 "polyline.c"
+#line 659 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 83 "polyline.override"
+#line 86 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -720,6 +723,11 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
   NspPolyline *P = (NspPolyline *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m, dval;
+  if (M->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+      return;
+    }
   bounds[0]=*x;/* xmin */
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
@@ -740,4 +748,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 744 "polyline.c"
+#line 752 "polyline.c"

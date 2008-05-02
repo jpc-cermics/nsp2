@@ -8,7 +8,7 @@
 
 
 
-#line 4 "classaref.override"
+#line 4 "codegen/classaref.override"
 
 #line 14 "classaref.c"
 
@@ -213,7 +213,7 @@ int nsp_classaref_xdr_save(XDR *xdrs, NspClassARef *M)
 
 NspClassARef  *nsp_classaref_xdr_load_partial(XDR *xdrs, NspClassARef *M)
 {
-  if ((M->obj = malloc(sizeof(nsp_classaref))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_classaref))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->cla_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->cla_thickness) == FAIL) return NULL;
   if ((M->obj->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -759,7 +759,7 @@ void ClassARef_Interf_Info(int i, char **fname, function (**f))
 ClassARef_register_classes(NspObject *d)
 {
 
-#line 7 "classaref.override"
+#line 7 "codegen/classaref.override"
 
 / * init code  * /
 

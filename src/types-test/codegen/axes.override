@@ -1,7 +1,8 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/axes.h"
+#include <nsp/figure.h>
+
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj);
@@ -10,8 +11,15 @@ static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_axes(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
+static void nsp_axes_link_figure(NspGraphic *G, void *F);
+static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
+/* should be inserted in figure.h */
 
-
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, NspFigure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -31,6 +39,9 @@ override_type Axes
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
+
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
@@ -102,21 +113,37 @@ static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
 static int _wrap_axes_set_obj_children(void *self,NspObject *val)
 {
   double inside_bounds[4];
-  Cell *cloc;
-  NspList *L = (NspList *) val;
-  cloc = L->first ;
-  while ( cloc != NULLCELL ) 
-    {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  if ( ! IsGraphic(cloc->O)) return FAIL;
-	}
-      cloc = cloc->next;
-    }
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
   if (((NspAxes *) self)->obj->children != NULL ) 
-    nsp_list_destroy(((NspAxes *) self)->obj->children);
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspAxes *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspAxes *) self)->obj->children);
+    }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
   nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+  return OK;
+}
+
+static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
+{
+  double inside_bounds[4];
+  NspList *children;
+  if ( ! IsList(O) ) return FAIL;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspAxes *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspAxes *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspAxes *) self)->obj->children);
+    }
+  ((NspAxes *) self)->obj->children= children;
+  nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
   return OK;
 }
 
@@ -425,3 +452,22 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[3]=P->obj->wrect->R[1];/* ymax */
 }
 
+
+
+
+static void nsp_axes_link_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_link_figure(G,F);
+  /* link children */
+  nsp_list_link_figure(((NspAxes *) G)->obj->children,F);
+}
+
+
+static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_unlink_figure(G,F);
+  /* link children */
+  nsp_list_unlink_figure(((NspAxes *) G)->obj->children,F);
+}

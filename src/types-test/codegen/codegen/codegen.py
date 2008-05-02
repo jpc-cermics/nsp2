@@ -908,7 +908,7 @@ class Wrapper:
             str = str + '  int fid;\n  char name[NAME_MAXL];\n'
             
         if self.byref == 't' :
-            str = str + '  if ((%s->obj = malloc(sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
+            str = str + '  if ((%s->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
             varname = varname +'->obj'
             
         if not self.objinfo.fields:

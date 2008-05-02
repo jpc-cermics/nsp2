@@ -8,7 +8,7 @@
 
 
 
-#line 4 "figure.override"
+#line 4 "codegen/figure.override"
 
 #include "nsp/figure.h"
 extern BCG *nsp_check_graphic_context(void);
@@ -238,7 +238,7 @@ NspFigure  *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = malloc(sizeof(nsp_figure))) == NULL) return NULL;
+  if ((M->obj = calloc(1,sizeof(nsp_figure))) == NULL) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->fname)) == FAIL) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->driver)) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->id) == FAIL) return NULL;
@@ -286,7 +286,7 @@ void nsp_figure_destroy(NspFigure *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
 
-#line 32 "figure.override"
+#line 32 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
@@ -907,7 +907,7 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 17 "figure.override"
+#line 17 "codegen/figure.override"
 
 Init portion 
 
@@ -917,7 +917,7 @@ Init portion
 }
 */
 
-#line 97 "figure.override"
+#line 97 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1053,55 +1053,37 @@ static int nsp_figure_unconnect(NspFigure *F)
   return OK ;
 }
 
+/* utilities */
 
-/* set all the children Fig field 
- *
- */
-
-static void nsp_figure_children_link_figure(NspFigure *F)
+void nsp_list_link_figure(NspList *L, NspFigure *F)
 {
-  Cell *cloc;
-  NspList *L = F->obj->children;
-  cloc = L->first ;
+  Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->obj->Fig == NULL ) 
-	    {
-	      F->obj->ref_count++;
-	      ((NspGraphic *) F)->obj->ref_count++;
-	      G->obj->Fig = F;
-	    }
+	  G->type->link_figure(G,F);
 	}
       cloc = cloc->next;
     }
 }
 
-
-static void nsp_figure_children_unlink_figure(NspFigure *F)
+void nsp_list_unlink_figure(NspList *L, NspFigure *F)
 {
-  Cell *cloc;
-  NspList *L = F->obj->children;
-  cloc = L->first ;
+  Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->obj->Fig == F ) 
-	    {
-	      F->obj->ref_count--;
-	      ((NspGraphic *) F)->obj->ref_count--;
-	      G->obj->Fig = NULL ;
-	    }
+	  G->type->unlink_figure(G,F);
 	}
       cloc = cloc->next;
     }
 }
 
-static int nsp_figure_check_children(NspFigure *F,NspList *L)
+int nsp_list_check_figure(NspList *L, NspFigure *F)
 {
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -1125,4 +1107,26 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
 }
 
 
-#line 1129 "figure.c"
+/* set all the children Fig field 
+ *
+ */
+
+static void nsp_figure_children_link_figure(NspFigure *F)
+{
+  nsp_list_link_figure(F->obj->children,F);
+}
+
+
+static void nsp_figure_children_unlink_figure(NspFigure *F)
+{
+  nsp_list_unlink_figure(F->obj->children,F);
+}
+
+
+static int nsp_figure_check_children(NspFigure *F,NspList *L)
+{
+  return  nsp_list_check_figure(F->obj->children,F);
+}
+
+
+#line 1133 "figure.c"
