@@ -669,7 +669,7 @@ int int_cdftnc(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
   char *Table[] = {"Df", "PQ", "T" , "Pnonc", NULL};
-  int minrhs = 3,maxrhs = 4,minlhs=1,maxlhs=2;
+  int minrhs = 3,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
   if ((rep= GetStringInArray(stack,1,Table,1)) == -1) return RET_BUG; 
