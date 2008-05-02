@@ -20,6 +20,7 @@ extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
 extern int nsp_list_check_figure(NspList *L, NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw( NspFigure *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -82,11 +83,13 @@ override-attr alpha
 static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
   double alpha;
-  BCG *Xgc;
   if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
-  ((NspAxes *) self)->obj->alpha = alpha;
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->force_redraw(Xgc);
+
+  if ( ((NspAxes *) self)->obj->alpha != alpha) 
+    {
+      ((NspAxes *) self)->obj->alpha = alpha;
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+    }
   return OK;
 }
 
@@ -420,6 +423,8 @@ static void nsp_translate_axes(BCG *Xgc,NspGraphic *Obj,double *tr)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
 }
 
 static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
@@ -427,6 +432,7 @@ static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
   Sciprintf("we should get a double here for alpha\n");
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
@@ -435,6 +441,7 @@ static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[2] *= alpha[0];
   P->obj->wrect->R[3] *= alpha[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 /* compute in bounds the enclosing rectangle of axes 

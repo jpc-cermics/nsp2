@@ -638,7 +638,7 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 62 "codegenclassa.override"
+#line 62 "codegen/classa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 

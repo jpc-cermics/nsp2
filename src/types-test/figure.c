@@ -807,7 +807,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 51 "codegenfigure.override"
+#line 51 "codegen/figure.override"
 
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)

@@ -2,6 +2,7 @@
 %%
 headers
 #include "nsp/axes.h"
+#include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj);
@@ -9,6 +10,8 @@ static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_gmatrix(BCG *Xgc,NspGraphic *o,double *bounds);
+
+extern void nsp_figure_force_redraw( NspFigure *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -90,20 +93,27 @@ static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   P->obj->rect->R[0] += tr[0];
+  P->obj->rect->R[2] += tr[0];
   P->obj->rect->R[1] += tr[1];
+  P->obj->rect->R[3] += tr[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *R)
 {
   /* NspGMatrix *P = (NspGMatrix *) Obj; */
   Sciprintf("we should get a double here for alpha\n");
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *Obj,double *alpha)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
+  P->obj->rect->R[0] *= alpha[0];
   P->obj->rect->R[2] *= alpha[0];
   P->obj->rect->R[3] *= alpha[1];
+  P->obj->rect->R[1] *= alpha[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 /* compute in bounds the enclosing rectangle of gmatrix 
@@ -115,8 +125,8 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
   NspGMatrix *P = (NspGMatrix *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   bounds[0]=P->obj->rect->R[0]; /* xmin */
-  bounds[1]=P->obj->rect->R[1]-P->obj->rect->R[3];/* ymin */
-  bounds[2]=P->obj->rect->R[0]+P->obj->rect->R[2];/* xmax */
-  bounds[3]=P->obj->rect->R[1];/* ymax */
+  bounds[1]=P->obj->rect->R[1] ; /* ymin */
+  bounds[2]=P->obj->rect->R[2];/* xmax */
+  bounds[3]=P->obj->rect->R[3];/* ymax */
 }
 

@@ -2,6 +2,7 @@
 %%
 headers
 #include "nsp/curve.h"
+#include <nsp/figure.h>
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj);
@@ -10,6 +11,7 @@ static void nsp_rotate_curve(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_curve(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
 
+extern void nsp_figure_force_redraw( NspFigure *F);
 %%
 init 
 
@@ -54,11 +56,12 @@ override-attr mode
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
   int mode;
-  BCG *Xgc;
   if ( IntScalar(O,&mode) == FAIL) return FAIL;
-  ((NspCurve *) self)->obj->mode = mode;
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->force_redraw(Xgc);
+  if ( ((NspCurve *) self)->obj->mode !=  mode)
+    {
+      ((NspCurve *) self)->obj->mode =  mode;
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+    }
   return OK;
 }
 
@@ -190,6 +193,7 @@ static void nsp_translate_curve(BCG *Xgc,NspGraphic *Obj,double *tr)
       *(x++) += tr[0];
       *(y++) += tr[1];
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_rotate_curve(BCG *Xgc,NspGraphic *Obj,double *R)
@@ -205,6 +209,7 @@ static void nsp_rotate_curve(BCG *Xgc,NspGraphic *Obj,double *R)
       *(x++) =x1;
       *(y++) =y1;
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
@@ -218,6 +223,7 @@ static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 /* compute in bounds the enclosing rectangle of curve 

@@ -1257,7 +1257,7 @@ class Wrapper:
                 #self.fp.write('yes for %s\n' % attrname)
                 lineno, filename = self.overrides.getstartline(fname)
                 code = self.overrides.attr_override(fname)
-                self.fp.setline(lineno, 'codegen'+ filename)
+                self.fp.setline(lineno, 'codegen/'+ filename)
                 self.fp.write(code)
                 self.fp.resetline()
                 if string.find(code, getterprefix + fname) >= 0:

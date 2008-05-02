@@ -28,12 +28,13 @@ extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
 extern int nsp_list_check_figure(NspList *L, NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw( NspFigure *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-#line 37 "axes.c"
+#line 38 "axes.c"
 
 /* ----------- Axes ----------- */
 
@@ -104,7 +105,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 35 "codegen/axes.override"
+#line 36 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -115,7 +116,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
 
-#line 119 "axes.c"
+#line 120 "axes.c"
   /* 
    * Axes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -298,7 +299,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
 void nsp_axes_destroy(NspAxes *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 302 "axes.c"
+#line 303 "axes.c"
   nsp_axes_destroy_partial(H);
   FREE(H);
 }
@@ -666,20 +667,22 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 81 "codegenaxes.override"
+#line 82 "codegen/axes.override"
 /* override set alpha */
 static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
   double alpha;
-  BCG *Xgc;
   if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
-  ((NspAxes *) self)->obj->alpha = alpha;
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->force_redraw(Xgc);
+
+  if ( ((NspAxes *) self)->obj->alpha != alpha) 
+    {
+      ((NspAxes *) self)->obj->alpha = alpha;
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+    }
   return OK;
 }
 
-#line 683 "axes.c"
+#line 686 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -767,7 +770,7 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 95 "codegenaxes.override"
+#line 98 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -823,7 +826,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 827 "axes.c"
+#line 830 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -846,7 +849,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 55 "codegen/axes.override"
+#line 56 "codegen/axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -858,7 +861,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 862 "axes.c"
+#line 865 "axes.c"
 
 
 /*----------------------------------------------------
@@ -892,17 +895,17 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
 Axes_register_classes(NspObject *d)
 {
 
-#line 30 "codegen/axes.override"
+#line 31 "codegen/axes.override"
 
 Init portion 
 
 
-#line 901 "axes.c"
+#line 904 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 152 "codegen/axes.override"
+#line 155 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1174,6 +1177,8 @@ static void nsp_translate_axes(BCG *Xgc,NspGraphic *Obj,double *tr)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
 }
 
 static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
@@ -1181,6 +1186,7 @@ static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
   Sciprintf("we should get a double here for alpha\n");
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
@@ -1189,6 +1195,7 @@ static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[2] *= alpha[0];
   P->obj->wrect->R[3] *= alpha[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 /* compute in bounds the enclosing rectangle of axes 
@@ -1226,4 +1233,4 @@ static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
   nsp_list_unlink_figure(((NspAxes *) G)->obj->children,F);
 }
 
-#line 1230 "axes.c"
+#line 1237 "axes.c"

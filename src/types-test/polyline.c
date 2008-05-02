@@ -547,7 +547,7 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 59 "codegenpolyline.override"
+#line 59 "codegen/polyline.override"
 
 /* overriden to check dimensions when changing values.
  */
