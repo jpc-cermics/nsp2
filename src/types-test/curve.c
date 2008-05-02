@@ -89,7 +89,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
       
   type->init = (init_func *) init_curve;
 
-#line 20 "curve.override"
+#line 20 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
@@ -607,7 +607,7 @@ static int _wrap_curve_set_style(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 53 "curve.override"
+#line 53 "codegencurve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -629,7 +629,7 @@ static NspObject *_wrap_curve_get_mode(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 67 "curve.override"
+#line 67 "codegencurve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -695,7 +695,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 40 "curve.override"
+#line 40 "codegen/curve.override"
 int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;

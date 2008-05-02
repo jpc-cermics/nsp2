@@ -93,7 +93,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
       
   type->init = (init_func *) init_gmatrix;
 
-#line 24 "gmatrix.override"
+#line 24 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;

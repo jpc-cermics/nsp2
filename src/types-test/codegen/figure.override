@@ -154,7 +154,7 @@ static int nsp_figure_connect(NspFigure *F)
       wdim[0] = F->obj->dims->R[0];
       wdim[1] = F->obj->dims->R[1];
     }
-
+  
   if ( F->obj->viewport_dims != NULL &&  F->obj->viewport_dims->mn == 2 ) 
     { 
       wpdim[0] = F->obj->viewport_dims->R[0];
@@ -303,4 +303,24 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
 {
   return  nsp_list_check_figure(F->obj->children,F);
 }
+
+
+/* send a force redraw to a figure 
+ * should be improved with a rectangle to be used.
+ * Note that a force redraw is only effective when gtk events 
+ * can be activated.
+ */
+
+void nsp_figure_force_redraw( NspFigure *F) 
+{
+  /* XX should be stored in figure to avoid a search */
+  BCG *Xgc;
+  if ( F == NULL) return ;
+  Xgc = window_list_search(F->obj->id);
+  if ( Xgc == NULL) return;
+  Xgc->graphic_engine->force_redraw(Xgc);
+}
+
+
+  
 

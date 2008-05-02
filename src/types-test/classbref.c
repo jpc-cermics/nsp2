@@ -491,7 +491,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 19 "classbref.override"
+#line 19 "codegen/classbref.override"
 static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -503,7 +503,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
 #line 504 "classbref.c"
 
 
-#line 29 "classbref.override"
+#line 29 "codegen/classbref.override"
 static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->obj->clb_color);

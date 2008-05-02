@@ -2,6 +2,7 @@
 %%
 headers
 #include "nsp/polyline.h"
+#include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj);
@@ -9,6 +10,8 @@ static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
+
+extern void nsp_figure_force_redraw( NspFigure *F);
 
 %%
 init 
@@ -90,7 +93,8 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
 {
   NspPolyline *P = (NspPolyline *) Obj;
   NspMatrix *M = P->obj->Pts;
-  if ( ((NspGraphic *) P)->obj->hidden == FALSE )
+  if ( M->mn != 0 
+       && ((NspGraphic *) P)->obj->hidden == FALSE )
     Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
 }
 
@@ -105,6 +109,8 @@ static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
       *(x++) += tr[0];
       *(y++) += tr[1];
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
 }
 
 static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
@@ -120,6 +126,7 @@ static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
       *(x++) =x1;
       *(y++) =y1;
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
@@ -133,6 +140,7 @@ static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
+  nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 /* compute in bounds the enclosing rectangle of polyline 

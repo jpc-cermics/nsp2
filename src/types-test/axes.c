@@ -104,7 +104,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 35 "axes.override"
+#line 35 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -666,7 +666,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 81 "axes.override"
+#line 81 "codegenaxes.override"
 /* override set alpha */
 static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
@@ -767,7 +767,7 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 95 "axes.override"
+#line 95 "codegenaxes.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -846,7 +846,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 55 "axes.override"
+#line 55 "codegen/axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;

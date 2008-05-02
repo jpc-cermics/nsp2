@@ -91,7 +91,7 @@ NspTypeFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 22 "figure.override"
+#line 22 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
@@ -807,7 +807,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 51 "figure.override"
+#line 51 "codegenfigure.override"
 
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
@@ -978,7 +978,7 @@ static int nsp_figure_connect(NspFigure *F)
       wdim[0] = F->obj->dims->R[0];
       wdim[1] = F->obj->dims->R[1];
     }
-
+  
   if ( F->obj->viewport_dims != NULL &&  F->obj->viewport_dims->mn == 2 ) 
     { 
       wpdim[0] = F->obj->viewport_dims->R[0];
@@ -1129,4 +1129,24 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
 }
 
 
-#line 1133 "figure.c"
+/* send a force redraw to a figure 
+ * should be improved with a rectangle to be used.
+ * Note that a force redraw is only effective when gtk events 
+ * can be activated.
+ */
+
+void nsp_figure_force_redraw( NspFigure *F) 
+{
+  /* XX should be stored in figure to avoid a search */
+  BCG *Xgc;
+  if ( F == NULL) return ;
+  Xgc = window_list_search(F->obj->id);
+  if ( Xgc == NULL) return;
+  Xgc->graphic_engine->force_redraw(Xgc);
+}
+
+
+  
+
+
+#line 1153 "figure.c"

@@ -532,7 +532,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 20 "classaref.override"
+#line 20 "codegen/classaref.override"
 static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -544,7 +544,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
 #line 545 "classaref.c"
 
 
-#line 30 "classaref.override"
+#line 30 "codegen/classaref.override"
 static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->obj->cla_color);
@@ -698,7 +698,7 @@ static AttrTab classaref_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 43 "classaref.override"
+#line 43 "codegen/classaref.override"
 /* XXXX : the generated code should be corrected */
 static int clareftest(NspClassARef *A)
 {
@@ -719,7 +719,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
 #line 720 "classaref.c"
 
 
-#line 37 "classaref.override"
+#line 37 "codegen/classaref.override"
 static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);

@@ -85,7 +85,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
       
   type->init = (init_func *) init_graphic;
 
-#line 48 "graphic.override"
+#line 48 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -481,7 +481,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 64 "graphic.override"
+#line 64 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -498,7 +498,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
 #line 499 "graphic.c"
 
 
-#line 79 "graphic.override"
+#line 79 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -513,7 +513,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 #line 514 "graphic.c"
 
 
-#line 92 "graphic.override"
+#line 92 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -527,7 +527,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 528 "graphic.c"
 
 
-#line 104 "graphic.override"
+#line 104 "codegen/graphic.override"
 static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspGraphic *ret;

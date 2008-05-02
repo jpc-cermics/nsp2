@@ -624,7 +624,7 @@ class Wrapper:
         self.fp.write(self.type_tmpl_1_0 % substdict)
         if self.overrides.part_type_is_overriden(typename):
             lineno, filename = self.overrides.getstartline(typename)
-            self.fp.setline(lineno, filename)
+            self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_type(typename))
             self.fp.resetline()
 
@@ -712,7 +712,7 @@ class Wrapper:
                 slotfunc = '&' + slotfunc
             if self.overrides.slot_is_overriden(slotname):
                 lineno, filename = self.overrides.getstartline(slotname)
-                self.fp.setline(lineno, filename)
+                self.fp.setline(lineno,'codegen/'+ filename)
                 self.fp.write(self.overrides.slot_override(slotname))
                 self.fp.resetline()
                 self.fp.write('\n\n')
@@ -1147,7 +1147,7 @@ class Wrapper:
                 if self.overrides.is_overriden(constructor.c_name):
                     lineno, filename = self.overrides.getstartline(
                         constructor.c_name)
-                    self.fp.setline(lineno, filename)
+                    self.fp.setline(lineno, 'codegen/'+ filename)
                     self.fp.write(self.overrides.override(constructor.c_name))
                     self.fp.resetline()
                     self.fp.write('\n\n')
@@ -1188,7 +1188,7 @@ class Wrapper:
                 if self.overrides.is_overriden(meth.c_name):
                     if not self.overrides.is_already_included(meth.c_name):
                         lineno, filename = self.overrides.getstartline(meth.c_name)
-                        self.fp.setline(lineno, filename)
+                        self.fp.setline(lineno,'codegen/'+ filename)
                         self.fp.write(self.overrides.override(meth.c_name))
                         self.fp.resetline()
                         self.fp.write('\n\n')
@@ -1257,7 +1257,7 @@ class Wrapper:
                 #self.fp.write('yes for %s\n' % attrname)
                 lineno, filename = self.overrides.getstartline(fname)
                 code = self.overrides.attr_override(fname)
-                self.fp.setline(lineno, filename)
+                self.fp.setline(lineno, 'codegen'+ filename)
                 self.fp.write(code)
                 self.fp.resetline()
                 if string.find(code, getterprefix + fname) >= 0:
@@ -1358,7 +1358,7 @@ class Wrapper:
                 methflags = 'METH_VARARGS'
                 if self.overrides.is_overriden(func.c_name):
                     lineno, filename = self.overrides.getstartline(func.c_name)
-                    self.fp.setline(lineno, filename)
+                    self.fp.setline(lineno, 'codegen/'+ filename)
                     self.fp.write(self.overrides.override(func.c_name))
                     self.fp.resetline()
                     self.fp.write('\n\n')

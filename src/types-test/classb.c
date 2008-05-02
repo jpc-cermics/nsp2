@@ -469,7 +469,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 19 "classb.override"
+#line 19 "codegen/classb.override"
 static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -481,7 +481,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
 #line 482 "classb.c"
 
 
-#line 29 "classb.override"
+#line 29 "codegen/classb.override"
 static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->clb_color);

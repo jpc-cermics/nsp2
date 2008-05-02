@@ -514,7 +514,7 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 20 "classa.override"
+#line 20 "codegen/classa.override"
 static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -526,7 +526,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
 #line 527 "classa.c"
 
 
-#line 30 "classa.override"
+#line 30 "codegen/classa.override"
 static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->cla_color);
@@ -638,7 +638,7 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 62 "classa.override"
+#line 62 "codegenclassa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -700,7 +700,7 @@ static AttrTab classa_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 43 "classa.override"
+#line 43 "codegen/classa.override"
 /* XXXX : the generated code should be corrected */
 static int clatest(NspClassA *A)
 {
@@ -721,7 +721,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
 #line 722 "classa.c"
 
 
-#line 37 "classa.override"
+#line 37 "codegen/classa.override"
 static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
