@@ -1144,7 +1144,8 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	  return RET_BUG;
 	}
     case CLEAR:  
-      Sciprintf("clear without arguments\n");
+      /* Sciprintf("clear without arguments\n"); */
+      nsp_frame_remove_all_objects(); 
       return 0;
     case CLEARGLOBAL:  
       /*       Sciprintf("clearglobal without arguments\n"); */

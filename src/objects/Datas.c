@@ -465,7 +465,7 @@ NspObject *nsp_global_frame_search_object(nsp_const_string str)
 } 
 
 /**
- * GlobalFrameObjRemove:
+ * nsp_global_frame_remove_object:
  * @str: an object name. 
  * 
  * Remove object with name @str in the global frame
@@ -526,6 +526,19 @@ void nsp_frame_remove_object(nsp_const_string str)
 {
   if ( Datas == NULLLIST ) return;
   nsp_eframe_remove_object((NspFrame *)Datas->first->O,str);
+} 
+
+/**
+ *nsp_frame_remove_all_objects:
+ * 
+ * Search for an object  with name @str in the first frame and 
+ * remove the object 
+ **/
+
+void nsp_frame_remove_all_objects(void)
+{
+  if ( Datas == NULLLIST ) return;
+  nsp_eframe_remove_all_objects((NspFrame *)Datas->first->O);
 } 
 
 /**

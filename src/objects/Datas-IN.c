@@ -137,12 +137,18 @@ static int int_clear(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   char *str;
-  CheckRhs(1,1000);
-  CheckLhs(1,1);
-  for ( i= 1; i <= rhs ; i++)
+  CheckLhs(0,1);
+  if ( rhs == 0) 
     {
-      if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
-      nsp_frame_remove_object(str);
+      nsp_frame_remove_all_objects();
+    }
+  else 
+    {
+      for ( i= 1; i <= rhs ; i++)
+	{
+	  if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
+	  nsp_frame_remove_object(str);
+	}
     }
   return 0;
 }
@@ -152,12 +158,18 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   char *str;
-  CheckRhs(1,1000);
   CheckLhs(1,1);
-  for ( i= 1; i <= rhs ; i++)
+  if ( rhs == 0)
     {
-      if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
-      nsp_global_frame_remove_object(str);
+      nsp_global_frame_remove_all_objects();
+    }
+  else 
+    {
+      for ( i= 1; i <= rhs ; i++)
+	{
+	  if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
+	  nsp_global_frame_remove_object(str);
+	}
     }
   return 0;
 }

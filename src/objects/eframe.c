@@ -692,6 +692,61 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 #endif
 }
 
+/**
+ * nsp_eframe_remove_all_objects:
+ * @F: 
+ * 
+ * 
+ **/
+    
+void nsp_eframe_remove_all_objects(NspFrame *F)
+{
+  if ( F->local_vars != NULL ) 
+    {
+      /* first search in local variables */
+      int i; 
+      if ( F->table != NULL) 
+	for ( i = 1 ; i < F->table->mn ; i++) 
+	  {
+	    NspObject *Elt= F->table->objs[i];
+	    if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	      {
+		nsp_object_destroy(&Elt);
+		F->table->objs[i]= NULL;
+	      }
+	  }
+    }
+#ifdef FRAME_AS_LIST
+  if ( F->vars != NULLLIST)
+    {
+      Cell *loc= F->vars->first,*loc1;
+      while ( loc != NULLCELL) 
+	{
+	  loc1= loc->next ;
+	  nsp_cell_destroy(&loc);
+	  loc = loc1;
+	}
+      F->vars->first =F->vars->last =F->vars->current= NULLCELL;
+    }
+#else 
+  /* */
+  if ( F->vars != NULLHASH )
+    {
+      for ( i =0 ; i <= F->vars->hsize ; i++) 
+	{
+	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
+	  if ( loc->used && loc->data != NULLOBJ ) 
+	    nsp_object_destroy( &loc->data);
+	  loc->used = 0; 
+	  loc->data =  NULLOBJ;
+	}
+    }
+#endif
+}
+
+
+
+
 /* utility */
 
 #ifdef SMAT_SYMB_TABLE
