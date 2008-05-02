@@ -502,7 +502,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
-      y = Mat2double((NspMatrix *) fobj);
+      z = Mat2double((NspMatrix *) fobj);
     }
   else
     {
