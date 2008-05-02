@@ -202,6 +202,7 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->cla_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->cla_thickness) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_val)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->cla_bval)) == FAIL) return FAIL;
@@ -215,6 +216,7 @@ int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M)
 
 NspClassA  *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M)
 {
+  if (nsp_xdr_load_i(xdrs, &M->cla_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->cla_thickness) == FAIL) return NULL;
   if ((M->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->cla_bval =(NspBMatrix *) nsp_object_xdr_load(xdrs))== NULLBMAT) return NULL;
@@ -245,7 +247,7 @@ void nsp_classa_destroy_partial(NspClassA *H)
 void nsp_classa_destroy(NspClassA *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 249 "classa.c"
+#line 251 "classa.c"
   nsp_classa_destroy_partial(H);
   FREE(H);
 }
@@ -521,7 +523,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 525 "classa.c"
+#line 527 "classa.c"
 
 
 #line 30 "classa.override"
@@ -530,7 +532,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 534 "classa.c"
+#line 536 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -543,6 +545,23 @@ static NspMethods *classa_get_methods(void) { return classa_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
+
+static NspObject *_wrap_classa_get_cla_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspClassA *) self)->cla_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_classa_set_cla_color(void *self, char *attr, NspObject *O)
+{
+  int cla_color;
+
+  if ( IntScalar(O,&cla_color) == FAIL) return FAIL;
+  ((NspClassA *) self)->cla_color= cla_color;
+  return OK;
+}
 
 static NspObject *_wrap_classa_get_cla_thickness(void *self,char *attr)
 {
@@ -647,7 +666,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 651 "classa.c"
+#line 670 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -669,6 +688,7 @@ static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab classa_attrs[] = {
+  { "cla_color", (attr_get_function *)_wrap_classa_get_cla_color, (attr_set_function *)_wrap_classa_set_cla_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "cla_thickness", (attr_get_function *)_wrap_classa_get_cla_thickness, (attr_set_function *)_wrap_classa_set_cla_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "cla_val", (attr_get_function *)_wrap_classa_get_cla_val, (attr_set_function *)_wrap_classa_set_cla_val,(attr_get_object_function *)_wrap_classa_get_obj_cla_val, (attr_set_object_function *)int_set_object_failed },
   { "cla_bval", (attr_get_function *)_wrap_classa_get_cla_bval, (attr_set_function *)_wrap_classa_set_cla_bval,(attr_get_object_function *)_wrap_classa_get_obj_cla_bval, (attr_set_object_function *)int_set_object_failed },
@@ -698,7 +718,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 702 "classa.c"
+#line 722 "classa.c"
 
 
 #line 37 "classa.override"
@@ -706,7 +726,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 710 "classa.c"
+#line 730 "classa.c"
 
 
 /*----------------------------------------------------
@@ -746,9 +766,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 750 "classa.c"
+#line 770 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 755 "classa.c"
+#line 775 "classa.c"

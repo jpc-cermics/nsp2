@@ -344,7 +344,7 @@ class Wrapper:
               '}\n' 
 
     
-    type_tmpl_1_2 = \
+    type_tmpl_interface_util = \
               '/*-----------------------------------------------------\n'  \
               ' * a set of functions used when writing interfaces \n'  \
               ' * for %(typename)s objects \n'  \
@@ -678,7 +678,8 @@ class Wrapper:
         self.fp.resetline()
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
         # insert the end of type defintion 
-        self.fp.write(self.type_tmpl_1_2 % substdict)
+        # i.e a set of functions used for writing interfaces 
+        self.fp.write(self.type_tmpl_interface_util % substdict)
         # object copy and interface for creation
         # override of this should be enabled ?
         self.fp.write(self.type_tmpl_copy % substdict)

@@ -8,7 +8,7 @@
    ;; "hidden" can be used if the field is to be excluded 
    ;; from the get/set table 
    ;; '("int" "cla_color" "hidden")
-   '("int" "cla_color" "hidden" "-1")
+   '("int" "cla_color" "std" "-1")
    '("int" "cla_thickness")
    '("NspMatrix*" "cla_val")
    '("NspBMatrix*" "cla_bval")
