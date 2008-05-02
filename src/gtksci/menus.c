@@ -788,6 +788,7 @@ static void * sci_window_initial_menu(void)
 			      "Abort||$abort",
 			      "Restart||$restart",
 			      "Stop||$stop" } ;
+
   char *graphic_entries[] = { "Create or Select||$gwselect",
 			      "Raise||$gwraise", 
 			      "Delete||$gwdelete",
@@ -1145,7 +1146,7 @@ static int call_predefined_callbacks(char *name, int winid)
   else if (strcmp(name,"$about")== 0)  create_nsp_about ();
   else if (strcmp(name,"$resume")== 0)  enqueue_nsp_command("resume");
   else if (strcmp(name,"$abort")== 0)   enqueue_nsp_command("abort");
-  else if (strcmp(name,"$restart")== 0) enqueue_nsp_command("exec SCI/scilab.star;");
+  else if (strcmp(name,"$restart")== 0) enqueue_nsp_command("clear();");
   else if (strcmp(name,"$quit")== 0) enqueue_nsp_command("quit;");
   else if (strcmp(name,"$scicos_stop")== 0) nsp_menu_scicos_stop ();
   else if (strcmp(name,"$editor")== 0) nsp_menu_start_editor();
