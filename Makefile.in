@@ -120,11 +120,11 @@ install:
 	@cd demos ; make install;
 	@cd macros ; make install;
 	@cd man ; make install;
-	@cd scripts; rm nsp-inst ; make nsp-inst prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
+	@cd scripts; rm nsp-inst ; make nsp-inst DESTDIR=$(DESTDIR)
+	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst DESTDIR=$(DESTDIR)
+	@cd scripts; rm Path.incl ; make Path.incl DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/lib/nsp/bin/nsp
-	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/lib/nsp/bin/nsplibtool
-	@cd scripts; rm Path.incl ; make Path.incl prefix=$(DESTDIR)/lib DESTDIR=$(DESTDIR)
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
 	@$(TOP)/config/install-sh $(opt_PROG) libtool $(prefix)/lib/nsp/
 	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(prefix)/lib/nsp/

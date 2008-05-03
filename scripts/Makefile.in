@@ -32,12 +32,15 @@ $(SBIN)/nsp: @NSP_SCRIPT@ $(IP)
 	@echo $(SBIN)/nsp created
 
 # script which uses prefix 
+# DESTDIR is where the software will be installed 
+# it can be different from $(prefix)/lib/nsp when 
+# packaging scripts are used 
 
-DESTDIR=$(prefix)/lib
+DESTDIR=$(prefix)/lib/nsp
 
 nsp-inst: @NSP_SCRIPT@ $(IP)  ../Makefile.incl
 	@$(RM) nsp-inst
-	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)/nsp+" $(SED_CYGDRIVE) \
+	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)+" $(SED_CYGDRIVE) \
 		@NSP_SCRIPT@ > nsp-inst;
 
 $(SBIN)/nsplibtool: nsplibtool $(IP) 
@@ -50,11 +53,11 @@ $(SBIN)/nsplibtool: nsplibtool $(IP)
 
 nsplibtool-inst: nsplibtool $(IP) 
 	@$(RM) $@
-	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)/nsp+g" nsplibtool > $@ 	
+	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)+g" nsplibtool > $@ 	
 
 Path.incl: $(IP)  ../Makefile.incl
 	@$(RM) Path.incl
-	@echo "SCIDIR=$(DESTDIR)/nsp" > $@ 
+	@echo "SCIDIR=$(DESTDIR)" > $@ 
 
 $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr
