@@ -22,7 +22,7 @@ install::
 	do ( \
 	  $(TOP)/config/install-sh  $(opt_SCRIPT) $$i $(prefix)/lib/nsp/config/$$i ); \
 	done
-	@for i in Make* ;\
+	@for i in Make* *.desktop *.png ;\
 	do ( \
 	  $(TOP)/config/install-sh  $(opt_DATA) $$i $(prefix)/lib/nsp/config/$$i ); \
 	done
