@@ -56,7 +56,7 @@ void create_nsp_about(void)
 
   gtk_container_add (GTK_CONTAINER (box1), pixmapwid);
   
-  label = gtk_label_new ("Nsp \n  GPL Copyright 2004/2006 Cermics/Enpc");
+  label = gtk_label_new ("Nsp \n  GPL Copyright 2004/2008");
   gtk_box_pack_start (GTK_BOX (box1), label , FALSE, TRUE, 5);
 
   gtk_widget_show_all (window);
