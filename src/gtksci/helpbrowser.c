@@ -40,6 +40,10 @@
 
 #include <libgtkhtml/gtkhtml.h>
 
+extern gchar *html_selection_get_text (HtmlView *view);
+
+
+
 /* XXXX */
 #include "nsp/math.h"
 #include "nsp/sciio.h"
