@@ -14,9 +14,9 @@ endfunction
 function T=table(p,n) 
   // table de vérité automatique pour un operateur n-aire 
   T=[%t;%f]
-  T1=ones(2^n,n) 
+  T1=ones_new(2^n,n) 
   for i=1:n 
-    T1(:,i) =ones(2^(i-1),1).*.(bool2s(T).*.ones(2^(n-i),1)) ; 
+    T1(:,i) =ones_new(2^(i-1),1).*.(bool2s(T).*.ones_new(2^(n-i),1)) ; 
   end 
   T=[T1==1 , p(T1)]
 endfunction 

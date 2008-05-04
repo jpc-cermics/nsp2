@@ -166,7 +166,7 @@ static int int_sctree(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   for ( i = 0 ; i < 5 ; i++) 
     {
-      if ((M[i] = GetRealMat(stack,i+1)) == NULLMAT) return RET_BUG;
+      if ((M[i] = GetRealMatCopy(stack,i+1)) == NULLMAT) return RET_BUG;
       M[i]= Mat2int(M[i]);
     }
   nb = M[0]->mn;
@@ -195,7 +195,7 @@ static int int_tree2(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(2,2);
   for ( i = 0 ; i < 4 ; i++) 
     {
-      if ((M[i] = GetRealMat(stack,i+1)) == NULLMAT) return RET_BUG;
+      if ((M[i] = GetRealMatCopy(stack,i+1)) == NULLMAT) return RET_BUG;
       M[i]= Mat2int(M[i]);
     }
   nmvec = M[0]->mn;
@@ -228,7 +228,7 @@ static int int_tree3(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(2,2);
   for ( i = 0 ; i < 7 ; i++) 
     {
-      if ((M[i] = GetRealMat(stack,i+1)) == NULLMAT) return RET_BUG;
+      if ((M[i] = GetRealMatCopy(stack,i+1)) == NULLMAT) return RET_BUG;
       M[i]= Mat2int(M[i]);
     }
   nb = M[0]->mn;

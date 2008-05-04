@@ -54,8 +54,8 @@ function demo_xmdialog()
 		['P gain';'I gain '],[' ';' '])
 
   n=5;m=4;mat=rand(n,m);
-  row='row';labelv=row(ones(1,n))+string(1:n)
-  col='col';labelh=col(ones(1,m))+string(1:m)
+  row='row';labelv=row(ones_new(1,n))+string(1:n)
+  col='col';labelh=col(ones_new(1,m))+string(1:m)
   smat=m2s(mat,"%5.2f");
   x_mdialog('Matrix to edit',labelv,labelh,smat);
   x_mdialog('Matrix to edit',string([]),string([]),smat);
