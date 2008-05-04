@@ -24,8 +24,7 @@ reads file contents and store the result line by line in a string matrix.
 
 \begin{examples}
   \begin{program}
-    \HCode{
-    A = string([1,2;3,4]);\Hnewline
+    \HCode{A = string([1,2;3,4]);\Hnewline
     putfile('A.txt',A);\Hnewline
     A1= getfile('A.txt');\Hnewline
     A1== A(:)
