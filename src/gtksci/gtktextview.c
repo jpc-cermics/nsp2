@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gstdio.h>
 
 #include <nsp/object.h>
 #include <nsp/parse.h>
@@ -771,11 +772,11 @@ save_buffer (Buffer *buffer)
 
   bak_filename = g_strconcat (buffer->filename, "~", NULL);
   
-  if (rename (buffer->filename, bak_filename) != 0)
+  if ( g_rename (buffer->filename, bak_filename) != 0)
     {
       if (errno != ENOENT)
 	{
-	  gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
+	  gchar *err = g_strdup_printf ("1/Cannot back up '%s' to '%s': %s",
 					buffer->filename, bak_filename, g_strerror (errno));
 	  msgbox_run (NULL, err, "OK", NULL, NULL, 0);
 	  g_free (err);
@@ -788,7 +789,7 @@ save_buffer (Buffer *buffer)
   file = fopen (buffer->filename, "w");
   if (!file)
     {
-      gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
+      gchar *err = g_strdup_printf ("2/Cannot back up '%s' to '%s': %s",
 				    buffer->filename, bak_filename, g_strerror (errno));
       msgbox_run (NULL, err, "OK", NULL, NULL, 0);
     }
@@ -820,7 +821,7 @@ save_buffer (Buffer *buffer)
 
   if (!result && have_backup)
     {
-      if (rename (bak_filename, buffer->filename) != 0)
+      if ( g_rename (bak_filename, buffer->filename) != 0)
 	{
 	  gchar *err = g_strdup_printf ("Error restoring backup file '%s' to '%s': %s\nBackup left as '%s'",
 					buffer->filename, bak_filename, g_strerror (errno), bak_filename);
@@ -1481,7 +1482,7 @@ line_numbers_expose (GtkWidget      *widget,
                                              NULL,
                                              &pos);
 
-      str = g_strdup_printf ("%d", g_array_index (numbers, gint, i));
+      str = g_strdup_printf ("%d",1+ g_array_index (numbers, gint, i));
 
       pango_layout_set_text (layout, str, -1);
 
