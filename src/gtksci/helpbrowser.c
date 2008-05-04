@@ -541,6 +541,78 @@ drag_data_get (GtkWidget        *widget,
                           strlen (current_ref));
 }
 
+
+
+
+/* Add a menu for right click 
+ * which copy to clipboard. 
+ */ 
+
+static GtkWidget *popup_menu = NULL ; 
+static gchar *copy_cb_str = NULL;
+
+static void
+copy_cb (GtkWidget *widget)
+{
+  if (copy_cb_str) 
+    {
+      GtkClipboard *clipboard;
+      GdkDisplay *display;
+      /* GdkAtom board= GDK_SELECTION_PRIMARY; */
+      GdkAtom board= GDK_SELECTION_CLIPBOARD; 
+      display = gtk_widget_get_display(widget);
+      clipboard= gtk_clipboard_get_for_display(display, board);
+      gtk_clipboard_set_text(clipboard, copy_cb_str, -1);
+      /* fprintf(stderr,"%s",str); */
+      g_free (copy_cb_str);
+    }
+}
+
+static GtkWidget *create_copy_menu (GtkWidget *html)
+{
+  GtkWidget *menu;
+  GtkWidget *menuitem;
+  
+  if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
+
+  popup_menu = menu = gtk_menu_new ();
+  
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect_swapped (menuitem, "activate",
+			    G_CALLBACK (copy_cb),html);
+
+  copy_cb_str = html_selection_get_text (HTML_VIEW (html));
+  gtk_widget_set_sensitive (menuitem, (copy_cb_str == NULL) ?  FALSE : TRUE );
+
+  return menu;
+
+
+}
+
+static int
+button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+  GtkWidget *menu;
+  
+  switch (event->button) {
+  case 3:
+    menu =   create_copy_menu (widget);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
+		    NULL, NULL,0,gtk_get_current_event_time());
+    return TRUE;
+    break;
+  case 1:
+  case 2:
+  default:
+    break;
+  }
+  return FALSE;
+}
+
+
+
 static void
 open_browser_dialog (const gchar *help_path,
 		     const gchar *locale,
@@ -692,6 +764,9 @@ open_browser_dialog (const gchar *help_path,
   g_signal_connect (HTML_VIEW (html)->document, "request_url",
                     G_CALLBACK (request_url),
                     NULL);
+
+  g_signal_connect(G_OBJECT(html), "button-press-event",
+		   G_CALLBACK(button_pressed),html);
 
   gtk_widget_show (window);
 
@@ -966,4 +1041,6 @@ static void nsp_input_feed_example(char *example)
 }
   
 */
+
+
 
