@@ -43,7 +43,8 @@
 #include "nsp/tokenizer.h" 
 #include "nsp/gtksci.h" 
 #include "nsp/command.h" 
-#include "nsp/sciio.h" 
+#include "nsp/sciio.h"
+#include "nsp/interf.h"
 
 /* #undef GTK_DISABLE_DEPRECATED */
 
@@ -291,7 +292,7 @@ char *nsp_xhistory_down(view_history *data)
  */
 
 static gchar *nsp_expr=NULL;
-static int count=0;
+
 
 static gboolean
 key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
@@ -329,15 +330,17 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	  {
 	    search_string = gtk_text_iter_get_text (&start, &end);
 	  }
-	/* fprintf(stderr,"<%s>/n",search_string); */
+	/* fprintf(stderr,"<%s>\n",search_string); */
 	nsp_append_history(search_string,data);
-	gtk_text_buffer_insert (buffer, &end, "\n",-1);
-	gtk_text_buffer_get_bounds (buffer, &start, &end);
-	if ( view->buffer->mark == NULL) 
-	  view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-	else 
-	  gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-	
+	if ( search_string[strlen(search_string)-1] != '\n')
+	  {
+	    gtk_text_buffer_insert (buffer, &end, "\n",-1);
+	    gtk_text_buffer_get_bounds (buffer, &start, &end);
+	    if ( view->buffer->mark == NULL) 
+	      view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+	    else 
+	      gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+	  }
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
 				      view->buffer->mark,
 				      0, TRUE, 0.0, 1.0);
@@ -475,11 +478,12 @@ static gint timeout_command (void *v)
 
 int Xorgetchar_textview(void)
 {
+  static int count=0;
   guint timer;
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   if ( nsp_expr != NULL ) 
     {
-      int val1 = nsp_expr[count];
+      int val1;
       if (count <= strlen(nsp_expr))
 	{
 	  g_print ("char returned '%c'\n",val1);
@@ -502,16 +506,51 @@ int Xorgetchar_textview(void)
   return nsp_expr[0];
 }
 
+/* used to evaluate a pasted sequence which contains multiple 
+ * \n since readline_textview is supposed to only return one 
+ * line 
+ */
+
+void nsp_eval_pasted_from_clipboard(gchar *nsp_expr)
+{
+  gchar *str;
+  int i, pos=0;
+  for ( i= 0; i < strlen(nsp_expr)+1; i++)
+    {
+      if ( nsp_expr[i]== '\n' || nsp_expr[i]== '\0' ) 
+	{
+	  int rep;
+	  str = g_strndup(nsp_expr +pos,i-pos);
+	  /* fprintf(stderr,"string to be evaluated '%s'\n",str); */
+	  rep =nsp_parse_eval_from_string(str,FALSE,FALSE,TRUE,TRUE );
+	  if ( rep == RET_QUIT ) 
+	    {
+	      sci_clear_and_exit(0);
+	      return;
+	    }
+	  else if  ( rep < 0 ) 
+	    {
+	      Scierror("Error: during evaluation of %s\n",nsp_expr);
+	      nsp_error_message_show();
+	    }
+	  pos = i +1;
+	}
+    }
+}
+
+
 
 /* DefSciReadLine will enter here 
  *
  */
+
 
 char *readline_textview(const char *prompt)
 {
   static int use_prompt=1;
   guint timer;
   if ( nsp_check_events_activated()== FALSE) return readline(prompt);
+  
   if ( use_prompt == 1) 
     {
       nsp_insert_prompt(prompt);
@@ -529,12 +568,29 @@ char *readline_textview(const char *prompt)
     }
   else 
     {
+      int i,ncount=0;
+      gchar *str;
       use_prompt=1;
-      /* g_print ("string returned '%s'\n",nsp_expr); */
-      return g_strdup(nsp_expr);
+      if ( nsp_expr == NULL) return NULL;
+      for ( i= 0; i < strlen(nsp_expr) ;i++) 
+	{
+	  if ( nsp_expr[i]=='\n') ncount++;
+	}
+      if ( ncount != 0 )
+	{
+	  nsp_eval_pasted_from_clipboard(nsp_expr);
+	  return NULL;
+	}
+      str= g_strdup(nsp_expr);
+      nsp_expr = NULL;
+      return str;
     }
   return NULL;
 }
+
+
+
+
 
 /* when we copy a zone : we change the zone to set it 
  * editable. The whole buffer is set to non editable 
@@ -563,13 +619,47 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
   */
 }
 
+/* Note that even if paste_clipboard_callback is called after 
+ * the default one we do not get the pasted date because 
+ * gtk_text_buffer_paste_clipboard is asynchronous.
+ */
+
 static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
-  /* gtk_text_view_copy_clipboard (GtkTextView *text_view) */
-  GtkTextIter start,end;
+  gchar *search_string;
   View *view= user_data;
-  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  GtkTextBuffer *buffer = view->buffer->buffer;
+  GtkTextIter iter,start,end;
+
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  if ( view->buffer->mark != NULL )
+    {
+      gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
+      search_string = gtk_text_iter_get_text (&iter, &end);
+    }
+  else 
+    {
+      search_string = gtk_text_iter_get_text (&start, &end);
+    }
+  /* nsp_append_history(search_string,data); */
+  gtk_text_buffer_insert (buffer, &end, "\n",-1);
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  if ( view->buffer->mark == NULL) 
+    view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+  else 
+    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 0.0, 1.0);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
   gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+  
+  /*
+   * in case we would like to remove the default */
+  /* g_signal_stop_emission_by_name (text_view, "paste_clipboard"); */
+  gtk_main_quit();
 }
 
 
@@ -627,7 +717,7 @@ create_view (Buffer *buffer)
                     G_CALLBACK (copy_clipboard_callback),
                     view);
 
-  g_signal_connect (view->text_view,
+  g_signal_connect_after (view->text_view,
                     "paste_clipboard",
                     G_CALLBACK (paste_clipboard_callback),
                     view);
