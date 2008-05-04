@@ -776,7 +776,7 @@ save_buffer (Buffer *buffer)
     {
       if (errno != ENOENT)
 	{
-	  gchar *err = g_strdup_printf ("1/Cannot back up '%s' to '%s': %s",
+	  gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
 					buffer->filename, bak_filename, g_strerror (errno));
 	  msgbox_run (NULL, err, "OK", NULL, NULL, 0);
 	  g_free (err);
@@ -789,7 +789,7 @@ save_buffer (Buffer *buffer)
   file = fopen (buffer->filename, "w");
   if (!file)
     {
-      gchar *err = g_strdup_printf ("2/Cannot back up '%s' to '%s': %s",
+      gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
 				    buffer->filename, bak_filename, g_strerror (errno));
       msgbox_run (NULL, err, "OK", NULL, NULL, 0);
     }
