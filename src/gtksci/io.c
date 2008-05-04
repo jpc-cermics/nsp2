@@ -269,7 +269,8 @@ int Xorgetchar_select(void)
     }
   }
 }
-#endif 
+
+#endif /*  WIN32  */
 
 
 /*

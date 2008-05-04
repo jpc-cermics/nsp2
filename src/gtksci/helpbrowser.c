@@ -568,6 +568,7 @@ copy_cb (GtkWidget *widget)
       clipboard= gtk_clipboard_get_for_display(display, board);
       gtk_clipboard_set_text(clipboard, copy_cb_str, -1);
       /* fprintf(stderr,"%s",str); */
+      /* nsp_input_feed( copy_cb_str); */
       g_free (copy_cb_str);
     }
 }

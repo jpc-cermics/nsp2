@@ -486,8 +486,8 @@ int Xorgetchar_textview(void)
       int val1;
       if (count <= strlen(nsp_expr))
 	{
-	  g_print ("char returned '%c'\n",val1);
 	  val1 = nsp_expr[count];
+	  g_print ("char returned '%c'\n",val1);
 	  count++;
 	}
       else

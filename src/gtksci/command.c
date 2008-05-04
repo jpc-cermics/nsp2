@@ -76,7 +76,7 @@ int enqueue_nsp_command(char *command)
   if ( scig_command_handler(command) == 1) return 0;
   /*
    *  if scilab is at the prompt level 
-   *  using nsp_input_feed will entre command at the prompt level 
+   *  using nsp_input_feed will enter command at the prompt level 
    *  as if user has entered it 
    */
   /* if (get_is_reading()) 
