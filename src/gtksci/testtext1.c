@@ -515,6 +515,7 @@ void nsp_eval_pasted_from_clipboard(gchar *nsp_expr)
 {
   gchar *str;
   int i, pos=0;
+  Sciprintf("\n");
   for ( i= 0; i < strlen(nsp_expr)+1; i++)
     {
       if ( nsp_expr[i]== '\n' || nsp_expr[i]== '\0' ) 
@@ -522,20 +523,19 @@ void nsp_eval_pasted_from_clipboard(gchar *nsp_expr)
 	  int rep;
 	  str = g_strndup(nsp_expr +pos,i-pos);
 	  /* fprintf(stderr,"string to be evaluated '%s'\n",str); */
+	  Sciprintf("%s\n",str);
 	  rep =nsp_parse_eval_from_string(str,FALSE,FALSE,TRUE,TRUE );
-	  if ( rep == RET_QUIT ) 
+	  if  ( rep < 0 ) 
 	    {
-	      sci_clear_and_exit(0);
-	      return;
-	    }
-	  else if  ( rep < 0 ) 
-	    {
-	      Scierror("Error: during evaluation of %s\n",nsp_expr);
+	      Scierror("Error: during evaluation of %s\n",str);
 	      nsp_error_message_show();
+	      break;
 	    }
 	  pos = i +1;
 	}
     }
+  Sciprintf("// pasted selection evaluated\n");
+  gtk_main_quit();
 }
 
 
@@ -622,6 +622,12 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 /* Note that even if paste_clipboard_callback is called after 
  * the default one we do not get the pasted date because 
  * gtk_text_buffer_paste_clipboard is asynchronous.
+ * 
+ * Attention, pour etre complet il faut 
+ *   utiliser GDK_SELECTION_PRIMARY pour click milieu et 
+ *   GDK_SELECTION_CLIPBOARD pour le menu click droit 
+ * ou 
+ * 
  */
 
 static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
@@ -648,7 +654,7 @@ static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data
     view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
   else 
     gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+  gtk_text_view_scroll_to_mark (text_view,
 				view->buffer->mark,
 				0, TRUE, 0.0, 1.0);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
@@ -661,6 +667,28 @@ static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data
   /* g_signal_stop_emission_by_name (text_view, "paste_clipboard"); */
   gtk_main_quit();
 }
+
+
+/* copied from gtk-cvs 
+ *
+ *
+ */
+
+static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
+{
+  GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
+						      GDK_SELECTION_CLIPBOARD);
+  gchar *str = gtk_clipboard_wait_for_text(clipboard);
+  /* fprintf(stderr,"A clipboard text: %s\n",str); */
+  g_signal_stop_emission_by_name (text_view, "paste_clipboard");
+  if ( str ) 
+    {
+      nsp_eval_pasted_from_clipboard(str);
+      g_free(str);
+    }
+}
+
+
 
 
 static View *
@@ -716,11 +744,17 @@ create_view (Buffer *buffer)
                     "copy_clipboard",
                     G_CALLBACK (copy_clipboard_callback),
                     view);
-
+  /* 
   g_signal_connect_after (view->text_view,
-                    "paste_clipboard",
-                    G_CALLBACK (paste_clipboard_callback),
-                    view);
+			  "paste_clipboard",
+			  G_CALLBACK (paste_clipboard_callback),
+			  view);
+  */
+  g_signal_connect (view->text_view,
+			  "paste_clipboard",
+			  G_CALLBACK (new_paste_clipboard_callback),
+			  view);
+
 
   g_signal_connect (view->buffer->buffer,
 		    "mark_set",
