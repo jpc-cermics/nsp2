@@ -2600,19 +2600,19 @@ NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix 
   return C;
 }
 /**
- * nsp_spcolmatrix_mult_spt_m:
+ * nsp_spcolmatrix_pmult_sp_m:
  * @A: a #NspSpColMatrix
  * @B: a #NspMatrix
  * @Res: a #NspMatrix (if NULL space is allocated otherwise Res hold the result)
  *                     
- * @A' x @B when @B is a full matrix and returns the result as a full matrix.
+ * @A' * @B when @B is a full matrix and returns the result as a full matrix.
  * 
  * Return value: a new  #NspMatrix or %NULLMAT (in case of failure)
  **/
 extern NspSpRowMatrix *nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M);
 extern NspSpColMatrix *nsp_sprowmatrix_cast_to_spcol(NspSpRowMatrix *M);
 
-NspMatrix *nsp_spcolmatrix_mult_spt_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res)
+NspMatrix *nsp_spcolmatrix_pmult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res)
 {
   NspMatrix *C = NULLMAT;
   NspSpRowMatrix *AA;

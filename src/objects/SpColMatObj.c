@@ -1207,9 +1207,10 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ *   prime mult:
  *   Res = A' * X , A sparse matrix, X full matrix
  */
-static int int_spcolmatrix_mult_spt_m(Stack stack, int rhs, int opt, int lhs)
+static int int_spcolmatrix_pmult_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat1;
   NspMatrix *HMat2, *HMat3;
@@ -1221,7 +1222,7 @@ static int int_spcolmatrix_mult_spt_m(Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat1->m == HMat2->m )
     {
-      if ( (HMat3 = nsp_spcolmatrix_mult_spt_m(HMat1, HMat2, NULLMAT)) == NULLMAT ) return RET_BUG;
+      if ( (HMat3 = nsp_spcolmatrix_pmult_sp_m(HMat1, HMat2, NULLMAT)) == NULLMAT ) return RET_BUG;
       MoveObj(stack,1,(NspObject *) HMat3);
     }
   else
@@ -2869,7 +2870,7 @@ static OpTab SpColMatrix_func[]={
   {"dsl_sp_m",int_spcolmatrix_div_el_sp_m},
   {"mult_sp_sp",int_spcolmatrix_mult},
   {"mult_sp_m",int_spcolmatrix_mult_sp_m},
-  {"pmult_sp_m",int_spcolmatrix_mult_spt_m},
+  {"pmult_sp_m",int_spcolmatrix_pmult_sp_m},
   {"mult_m_sp",int_spcolmatrix_mult_m_sp},
   {"plus_sp_sp",int_spcolmatrix_plus},
   {"plus_m_sp",int_spcolmatrix_plus_m_sp},
