@@ -2493,7 +2493,7 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
  *                     
  * @Ax@B when @B is a full matrix and returns the result as a full matrix.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT (in case of failure)
  **/
 
 NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res)
@@ -2599,7 +2599,76 @@ NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix 
     }
   return C;
 }
+/**
+ * nsp_spcolmatrix_mult_spt_m:
+ * @A: a #NspSpColMatrix
+ * @B: a #NspMatrix
+ * @Res: a #NspMatrix (if NULL space is allocated otherwise Res hold the result)
+ *                     
+ * @A' x @B when @B is a full matrix and returns the result as a full matrix.
+ * 
+ * Return value: a new  #NspMatrix or %NULLMAT (in case of failure)
+ **/
+extern NspSpRowMatrix *nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M);
+extern NspSpColMatrix *nsp_sprowmatrix_cast_to_spcol(NspSpRowMatrix *M);
 
+NspMatrix *nsp_spcolmatrix_mult_spt_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res)
+{
+  NspMatrix *C = NULLMAT;
+  NspSpRowMatrix *AA;
+  int k;
+  char type='r';
+
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
+
+  /* A' has dimensions A->n x A->m so compatibility condition is: */
+  if ( A->m != B->m )
+    {
+      Scierror("SptMult : incompatible arguments\n");
+      return NULLMAT;
+    }
+
+  if ( Res == NULL )
+    {
+      if ( (C =nsp_matrix_create(NVOID,type,A->n,B->n)) == NULLMAT ) return NULLMAT;
+    }
+  else  
+    {
+      /* Res should hold the result verify if it is valid... */
+      if ( Res->m != A->n || Res->n != B->n || Res->rc_type != type )
+	{
+	  Scierror("SptMult : result badly allocated\n");
+	  return NULLMAT;
+	}
+      C = Res;
+    }
+
+  AA = nsp_spcolmatrix_cast_to_sprow(A);
+
+  if ( B->rc_type == 'c' )  /* B should be conjugated */
+    {
+      for ( k = 0 ; k < B->mn ; k++ )
+	B->C[k].i = - B->C[k].i;
+    }
+
+  nsp_sprowmatrix_mult_sp_m(AA, B, C);
+
+  if ( C->rc_type == 'c' )
+    {
+      for ( k = 0 ; k < B->mn ; k++ )
+	C->C[k].i = - C->C[k].i;
+    }
+
+  if ( B->rc_type == 'c' )   /* return to initial state for B */
+    {
+      for ( k = 0 ; k < B->mn ; k++ )
+	B->C[k].i = - B->C[k].i;
+    }
+  
+  nsp_sprowmatrix_cast_to_spcol(AA);
+
+  return C;
+}
 
 /**
  * nsp_spcolmatrix_mult_m_sp:

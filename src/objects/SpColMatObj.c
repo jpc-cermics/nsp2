@@ -1207,6 +1207,33 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ *   Res = A' * X , A sparse matrix, X full matrix
+ */
+static int int_spcolmatrix_mult_spt_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat1;
+  NspMatrix *HMat2, *HMat3;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ((HMat1 = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+
+  if ( HMat1->m == HMat2->m )
+    {
+      if ( (HMat3 = nsp_spcolmatrix_mult_spt_m(HMat1, HMat2, NULLMAT)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) HMat3);
+    }
+  else
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return RET_BUG;
+    }
+
+  return 1;
+}
+
+/*
  *   Res = X * A , A sparse matrix, X full matrix
  *   A and X are left unchanged
  *   added by Bruno
@@ -2842,6 +2869,7 @@ static OpTab SpColMatrix_func[]={
   {"dsl_sp_m",int_spcolmatrix_div_el_sp_m},
   {"mult_sp_sp",int_spcolmatrix_mult},
   {"mult_sp_m",int_spcolmatrix_mult_sp_m},
+  {"pmult_sp_m",int_spcolmatrix_mult_spt_m},
   {"mult_m_sp",int_spcolmatrix_mult_m_sp},
   {"plus_sp_sp",int_spcolmatrix_plus},
   {"plus_m_sp",int_spcolmatrix_plus_m_sp},

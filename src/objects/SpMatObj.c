@@ -946,7 +946,7 @@ static int int_sprowmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( (HMat3 = nsp_sprowmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  if ( (HMat3 = nsp_sprowmatrix_mult_sp_m(HMat1, HMat2, NULLMAT)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }

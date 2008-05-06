@@ -133,7 +133,7 @@ extern int nsp_sprowmatrix_compress_row_simple(NspSpRowMatrix *A, int i);
  extern int nsp_sprowmatrix_diag_set(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k); 
  extern NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k); 
  extern NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B); 
-extern NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X);
+extern NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X, NspMatrix *Res);
 extern NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A);
 extern int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B); 
  extern int nsp_sprowmatrix_complexify(NspSpRowMatrix *A); 

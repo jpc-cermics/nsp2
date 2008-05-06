@@ -42,14 +42,14 @@ static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int
 
 /**
  * nsp_spcolmatrix_cast_to_sprow:
- * @M: a NspMatrix *
+ * @M: a NspSpColMatrix *
  * 
  * Changes the type fields of @M in such a way that 
  * @M becomes a NspSpRowMatrix. Note that 
  * the casted matrix contains the representation of the 
  * transpose of @M.
  * 
- * Returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * Returns a #NspSpRowMatrix or %NULLSPROW.
  */
 
 NspSpRowMatrix * nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M)
@@ -73,7 +73,7 @@ NspSpRowMatrix * nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M)
  * Returns a #NspMaxpMatrix 
  */
 
-NspSpColMatrix * nsp_spowmatrix_cast_to_spcol(NspSpRowMatrix *M)
+NspSpColMatrix * nsp_sprowmatrix_cast_to_spcol(NspSpRowMatrix *M)
 {
   if ( M == NULL ) return NULLSPCOL;
   M->type = (NspTypeSpRowMatrix *) new_type_spcolmatrix(T_BASE);
@@ -1063,28 +1063,48 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
 
 /**
  * nsp_sprowmatrix_mult_sp_m:
- * @A: 
- * @X: 
+ * @A: a #NspSpRowMatrix
+ * @X:  a #NspMatrix
+ * @Res: a #NspMatrix (if NULL space is allocated otherwise Res hold the result)
  * 
  * @Ax@X when @X is a full matrix and returns the result as a full matrix.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a #NspMatrix or %NULLMAT (in case of failure)
  **/
 
 /* (added by Bruno) */
 
-NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X)
+NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X, NspMatrix *Res)
 {
   int i, j, k, ij, m = A->m, n = X->n, p = X->m;
   char rtype;
-  NspMatrix *B;
+  NspMatrix *B=NULLMAT;
 
   rtype = 'c';
   if ( A->rc_type == 'r' && X->rc_type == 'r' )
     rtype = 'r';
+  if ( A->n != X->m )
+    {
+      Scierror("SpMult : incompatible arguments\n");
+      return NULLMAT;
+    }
 
-  if ( (B = nsp_matrix_create(NVOID,rtype,m,n)) == NULLMAT ) 
-    return NULLMAT;
+  if ( Res == NULL )
+    {
+      if ( (B = nsp_matrix_create(NVOID,rtype,m,n)) == NULLMAT ) 
+	return NULLMAT;
+    }
+  else
+    {
+      /* Res should hold the result verify if it is valid... */
+      if ( Res->m != A->m || Res->n != X->n || Res->rc_type != rtype )
+	{
+	  Scierror("SpMult : result badly allocated\n");
+	  return NULLMAT;
+	}
+      B = Res;
+    }
+
 
   /* la suite est pas belle ... */
   ij = 0;
