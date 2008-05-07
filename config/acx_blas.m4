@@ -73,15 +73,9 @@ if test $acx_blas_ok = no; then
 	LIBS="$save_LIBS"
 fi
 
-# Maybe it should be better to first check generic blas 
-# since on Linux when both atlas and generic are installed 
-# using the generic library -lblas (will in fact use atlas 
-# and will continue to work if atlas is removed without 
-# recompiling ! 
-
-
 # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
-if test $acx_blas_ok = no; then
+if test $acx_blas_ok = no; then 
+        AC_MSG_NOTICE([looking for blas/atlas in standard search pathes])
 	AC_CHECK_LIB(atlas, ATL_xerbla,
 		[AC_CHECK_LIB(f77blas, $sgemm,
 		[AC_CHECK_LIB(cblas, cblas_dgemm,
@@ -93,11 +87,20 @@ fi
 
 # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
 # when atlas is in /usr/lib/atlas !
-# unused 
-if test XXX$acx_blas_ok = no; then
+# 
+# Note that this is UNUSED on Linux since the 
+# ld.so.conf is modified when the atlas package is installed 
+# thus previous search will in fact use atlas if atlas is 
+# installed in /usr/lib. 
+# thus the package will work if or if not atlas is installed.
+# 
+
+if test xxx$acx_blas_ok = no; then
    	ac_save_ldflags=${LDFLAGS}
         LDFLAGS="-L/usr/lib/atlas ${LDFLAGS}"
-	AC_CHECK_LIB(atlas, ATL_xerbla,
+        AC_MSG_NOTICE([looking for blas/atlas in /usr/lib/atlas ])
+	# we change the searched symbol not to be perturbed by cache.
+	AC_CHECK_LIB(atlas, ATL_dgemm,
 		[AC_CHECK_LIB(f77blas, $sgemm,
 		[AC_CHECK_LIB(cblas, cblas_dgemm,
 			[acx_blas_ok=yes
@@ -106,6 +109,7 @@ if test XXX$acx_blas_ok = no; then
 			[], [-latlas])])
 	 LDFLAGS=${ac_save_ldflags}
 fi
+
 
 # BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
 if test $acx_blas_ok = no; then
