@@ -506,44 +506,29 @@ int Xorgetchar_textview(void)
   return nsp_expr[0];
 }
 
-/* used to evaluate a pasted sequence which contains multiple 
- * \n since readline_textview is supposed to only return one 
- * line 
+/* used for evaluation of sequence obtained 
+ * by drag and drop or copy/paste 
  */
 
 void nsp_eval_pasted_from_clipboard(gchar *nsp_expr)
 {
   gchar *str;
   int i, pos=0;
-  Sciprintf("\n");
   for ( i= 0; i < strlen(nsp_expr)+1; i++)
     {
       if ( nsp_expr[i]== '\n' || nsp_expr[i]== '\0' ) 
 	{
-	  int rep;
 	  str = g_strndup(nsp_expr +pos,i-pos);
-	  /* fprintf(stderr,"string to be evaluated '%s'\n",str); */
-	  Sciprintf("%s\n",str);
-	  rep =nsp_parse_eval_from_string(str,FALSE,FALSE,TRUE,TRUE );
-	  if  ( rep < 0 ) 
-	    {
-	      Scierror("Error: during evaluation of %s\n",str);
-	      nsp_error_message_show();
-	      break;
-	    }
+	  enqueue_nsp_command(str);
+	  g_free(str);
 	  pos = i +1;
 	}
     }
-  Sciprintf("// pasted selection evaluated\n");
-  gtk_main_quit();
 }
-
-
 
 /* DefSciReadLine will enter here 
  *
  */
-
 
 char *readline_textview(const char *prompt)
 {
@@ -563,24 +548,15 @@ char *readline_textview(const char *prompt)
     {
       char buf[256];
       dequeue_nsp_command(buf,255);
-      use_prompt=0;
+      use_prompt=1;
+      /* fprintf(stderr,"Something in queue %s\n",buf); */
+      Sciprintf("%s\n",buf);
       return g_strdup(buf);
     }
   else 
     {
-      int i,ncount=0;
       gchar *str;
       use_prompt=1;
-      if ( nsp_expr == NULL) return NULL;
-      for ( i= 0; i < strlen(nsp_expr) ;i++) 
-	{
-	  if ( nsp_expr[i]=='\n') ncount++;
-	}
-      if ( ncount != 0 )
-	{
-	  nsp_eval_pasted_from_clipboard(nsp_expr);
-	  return NULL;
-	}
       str= g_strdup(nsp_expr);
       nsp_expr = NULL;
       return str;
@@ -609,69 +585,11 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
   gtk_text_buffer_remove_tag(view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
-  /*
-   * set the cursor position at the end because 
-   * we want always to paste at the end 
-   */
-  /* 
-     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
-  */
 }
 
 /* Note that even if paste_clipboard_callback is called after 
  * the default one we do not get the pasted date because 
  * gtk_text_buffer_paste_clipboard is asynchronous.
- * 
- * Attention, pour etre complet il faut 
- *   utiliser GDK_SELECTION_PRIMARY pour click milieu et 
- *   GDK_SELECTION_CLIPBOARD pour le menu click droit 
- * ou 
- * 
- */
-
-static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
-{
-  gchar *search_string;
-  View *view= user_data;
-  GtkTextBuffer *buffer = view->buffer->buffer;
-  GtkTextIter iter,start,end;
-
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
-  if ( view->buffer->mark != NULL )
-    {
-      gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
-      search_string = gtk_text_iter_get_text (&iter, &end);
-    }
-  else 
-    {
-      search_string = gtk_text_iter_get_text (&start, &end);
-    }
-  /* nsp_append_history(search_string,data); */
-  gtk_text_buffer_insert (buffer, &end, "\n",-1);
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
-  if ( view->buffer->mark == NULL) 
-    view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-  else 
-    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-  gtk_text_view_scroll_to_mark (text_view,
-				view->buffer->mark,
-				0, TRUE, 0.0, 1.0);
-  gtk_text_buffer_apply_tag (view->buffer->buffer,
-			     view->buffer->not_editable_tag,
-			     &start, &end);
-  gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
-  
-  /*
-   * in case we would like to remove the default */
-  /* g_signal_stop_emission_by_name (text_view, "paste_clipboard"); */
-  gtk_main_quit();
-}
-
-
-/* copied from gtk-cvs 
- *
- *
  */
 
 static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
@@ -688,6 +606,180 @@ static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_
     }
 }
 
+/* change drag and drop behaviour because we want to 
+ * be able to drop anywhere in the terminal window 
+ * even in non editable zones. Because the evaluation 
+ * of pasted data will be then added at the end.
+ */
+
+static void
+gtk_text_view_drag_end (GtkWidget        *widget,
+                        GdkDragContext   *context,
+			gpointer data)
+{
+  GtkTextIter start,end;
+  View *view= (View *) data;
+  GtkTextBuffer *buffer = view->buffer->buffer;
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_apply_tag(buffer,   view->buffer->not_editable_tag,   &start, &end);
+}
+
+static gboolean
+gtk_text_view_drag_motion (GtkWidget        *widget,
+                           GdkDragContext   *context,
+                           gint              x,
+                           gint              y,
+                           guint             time,
+			   gpointer data)
+{
+  View *view= (View *) data;
+  GtkTextBuffer *buffer = view->buffer->buffer;
+  GtkTextIter start;
+  GtkTextIter end;
+  /* during the drag motion we pretend all the textview is editable */
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_remove_tag(buffer,   view->buffer->not_editable_tag,   &start, &end);
+  /* TRUE return means don't propagate the drag motion to parent
+   * widgets that may also be drop sites.
+   */
+  return FALSE;
+}
+
+
+static void
+insert_text_data (GtkTextView      *text_view,
+		  GtkTextBuffer    *buffer,
+                  GtkTextIter      *drop_point,
+                  GtkSelectionData *selection_data)
+{
+  guchar *str;
+  str = gtk_selection_data_get_text (selection_data);
+  if (str)
+    {
+      if (!gtk_text_buffer_insert_interactive (buffer,
+                                               drop_point, (gchar *) str, -1,
+                                               text_view->editable))
+        {
+	  Sciprintf("Drop failed\n");
+        }
+      g_free (str);
+    }
+}
+
+static void
+gtk_text_view_drag_data_received (GtkWidget        *widget,
+                                  GdkDragContext   *context,
+                                  gint              x,
+                                  gint              y,
+                                  GtkSelectionData *selection_data,
+                                  guint             info,
+                                  guint             time,
+				  gpointer data)
+{
+  gboolean success = TRUE;
+  GtkTextIter drop_point;
+  View *view= (View *) data;
+  GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
+  GtkTextBuffer *buffer = view->buffer->buffer;
+
+  g_signal_stop_emission_by_name (widget, "drag_data_received");
+  gtk_text_buffer_begin_user_action (buffer); 
+  
+  gtk_text_buffer_get_iter_at_mark (buffer,
+                                    &drop_point,
+                                    text_view->dnd_mark);
+
+  if (info == GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS)
+    {
+      GtkTextBuffer *src_buffer = NULL;
+      GtkTextIter start, end;
+      gboolean copy_tags = TRUE;
+
+      if (selection_data->length != sizeof (src_buffer))
+        return;
+
+      memcpy (&src_buffer, selection_data->data, sizeof (src_buffer));
+
+      if (src_buffer == NULL)
+        return;
+
+      g_return_if_fail (GTK_IS_TEXT_BUFFER (src_buffer));
+
+      if (gtk_text_buffer_get_tag_table (src_buffer) !=
+          gtk_text_buffer_get_tag_table (buffer))
+        {
+          /*  try to find a suitable rich text target instead  */
+          GdkAtom *atoms;
+          gint     n_atoms;
+          GList   *list;
+          GdkAtom  target = GDK_NONE;
+
+          copy_tags = FALSE;
+
+          atoms = gtk_text_buffer_get_deserialize_formats (buffer, &n_atoms);
+
+          for (list = context->targets; list; list = g_list_next (list))
+            {
+              gint i;
+
+              for (i = 0; i < n_atoms; i++)
+                if (GUINT_TO_POINTER (atoms[i]) == list->data)
+                  {
+                    target = atoms[i];
+                    break;
+                  }
+            }
+
+          g_free (atoms);
+
+          if (target != GDK_NONE)
+            {
+              gtk_drag_get_data (widget, context, target, time);
+	      gtk_text_buffer_end_user_action (buffer); 
+              return;
+            }
+        }
+
+      if (gtk_text_buffer_get_selection_bounds (src_buffer,
+                                                &start,
+                                                &end))
+        {
+	  gchar *str;
+	  str = gtk_text_iter_get_visible_text (&start, &end);
+	  nsp_eval_pasted_from_clipboard(str);
+	  g_free (str);
+        }
+    }
+  else if (selection_data->length > 0 &&
+           info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT)
+    {
+      /* 
+      gboolean retval;
+      GError *error = NULL;
+      retval = gtk_text_buffer_deserialize (buffer, buffer,
+                                            selection_data->target,
+                                            &drop_point,
+                                            (guint8 *) selection_data->data,
+                                            selection_data->length,
+                                            &error);
+      if (!retval)
+        {
+          g_warning ("error pasting: %s\n", error->message);
+          g_clear_error (&error);
+        }
+      */
+      
+    }
+  else
+    {
+      insert_text_data (text_view,buffer, &drop_point, selection_data);
+    }
+
+  gtk_drag_finish (context, success,
+		   success && context->action == GDK_ACTION_MOVE,
+		   time);
+  gtk_text_buffer_end_user_action (buffer);
+}
 
 
 
@@ -740,6 +832,10 @@ create_view (Buffer *buffer)
                     G_CALLBACK (key_press_text_view),
                     view);  
 
+  g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
+  g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
+  g_signal_connect(view->text_view,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),view);
+    
   g_signal_connect (view->text_view,
                     "copy_clipboard",
                     G_CALLBACK (copy_clipboard_callback),

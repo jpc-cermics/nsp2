@@ -72,7 +72,7 @@ static NspList *L = NULLLIST;
 int enqueue_nsp_command(char *command)
 {
   NspObject *O;
-  /** first check if we have a special handler set for commands **/
+  /* first check if we have a special handler set for commands */
   if ( scig_command_handler(command) == 1) return 0;
   /*
    *  if scilab is at the prompt level 
