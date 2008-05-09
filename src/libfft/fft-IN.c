@@ -51,7 +51,7 @@ static void transpose_cmplx_mat(NspMatrix *x, NspMatrix *y)
 
 #ifdef WITH_FFTW3
 
-int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
+int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
 { 
   /*  
    *  interface for y = fft(x, forward_backward_flag, row_col_flag)
@@ -565,7 +565,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
+int int_nsp_fft2_deprecated( Stack stack, int rhs, int opt, int lhs)
 { 
   /*  interface for y = fft2(x, flag)
    *  using the fftw3 lib
@@ -821,7 +821,7 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 #else
 
 
-int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
+int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
 { 
   /*  
    *  interface for y = fft(x, forward_backward_flag, row_col_flag)
@@ -1162,7 +1162,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
+int int_nsp_fft2_deprecated( Stack stack, int rhs, int opt, int lhs)
 { 
   /*  
    *  interface for y = fft2_bis(x, forward_backward_flag)
@@ -1740,10 +1740,12 @@ static int int_nsp_rot(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Fft_func[]={
-    {"fft_m_m", int_nsp_fft},
+    {"fft_m_m", int_nsp_fft_deprecated},
+    {"fft_deprecated_m_m", int_nsp_fft_deprecated},
     {"fftnew_m", int_nsp_fftnew},
     {"ifftnew_m", int_nsp_ifftnew},
-    {"fft2_m_m", int_nsp_fft2},
+    {"fft2_m_m", int_nsp_fft2_deprecated},
+    {"fft2_deprecated_m_m", int_nsp_fft2_deprecated},
     {"fft2new_m", int_nsp_fft2new},
     {"ifft2new_m", int_nsp_ifft2new},
     {"fftshift_m", int_nsp_fftshift},
