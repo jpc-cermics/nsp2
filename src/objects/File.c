@@ -1864,11 +1864,11 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 
 /*---------- types and defs for doing printf ------------*/
 
-typedef enum {PF_C,PF_S,PF_D, PF_LD,PF_F} printf_cv;
+typedef enum {PF_C,PF_S,PF_D, PF_LD,PF_F, PF_UD, PF_LUD} printf_cv;
 
 /* for switch on number of '*' and type */
 
-#define  AST(num,type)  (5*(num)+(type))
+#define  AST(num,type)  (7*(num)+(type))
 
 /* Buffer for printf **/
 
@@ -2275,24 +2275,28 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 
 	case 'o':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_D;
+	  pf_type = PF_UD;
 	  break;
 
 	case 'x':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_D;
+	  pf_type = PF_UD;
 	  break;
 
 	case 'X':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_D;
+	  pf_type = PF_UD;
 	  break;
 
 	case 'i':
-	case 'u':
 	  /* use strod() here */
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
 	  pf_type = l_flag ? PF_LD : PF_D;
+	  break;
+	case 'u':
+	  /* use strod() here */
+	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
+	  pf_type = l_flag ? PF_LUD : PF_UD;
 	  break;
 
 	case 'e':
@@ -2365,6 +2369,18 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  retval += (*printer) ( target, p, ast[0], ast[1], (int) dval);
 	  break;
 
+	case AST (0, PF_UD):
+	  retval += (*printer) ( target, p, (unsigned int) dval);
+	  break;
+
+	case AST (1, PF_UD):
+	  retval += (*printer) ( target, p, ast[0], (unsigned int) dval);
+	  break;
+
+	case AST (2, PF_UD):
+	  retval += (*printer) ( target, p, ast[0], ast[1], (unsigned int) dval);
+	  break;
+
 	case AST (0, PF_LD):
 	  retval += (*printer) ( target, p, (long int) dval);
 	  break;
@@ -2375,6 +2391,18 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 
 	case AST (2, PF_LD):
 	  retval += (*printer) ( target, p, ast[0], ast[1], (long int) dval);
+	  break;
+
+	case AST (0, PF_LUD):
+	  retval += (*printer) ( target, p, (long unsigned int) dval);
+	  break;
+
+	case AST (1, PF_LUD):
+	  retval += (*printer) ( target, p, ast[0], (long unsigned int) dval);
+	  break;
+
+	case AST (2, PF_LUD):
+	  retval += (*printer) ( target, p, ast[0], ast[1], (long unsigned int) dval);
 	  break;
 
 	case AST (0, PF_F):
