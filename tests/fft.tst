@@ -15,18 +15,18 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // 
-// script to test fft and fft2
+// script to test fft_deprecated and fft2_deprecated
 
 // test 0
-if (fft([],-1) ~= []) then pause,end 
+if (fft_deprecated([],-1) ~= []) then pause,end 
 
 // test 1
 n = 200;
 x = rand(n,1);
-y = fft(x,-1);
-z = fft(y,1);
+y = fft_deprecated(x,-1);
+z = fft_deprecated(y,1);
 e=max(abs(x-z));
-//printf("\n test 1: z=fft(fft(x,-1),1), max(|x-z|) = %g",e)
+//printf("\n test 1: z=fft_deprecated(fft_deprecated(x,-1),1), max(|x-z|) = %g",e)
 if e > 10*%eps then pause,end 
 
 
@@ -34,44 +34,44 @@ if e > 10*%eps then pause,end
 n = 209;
 m = 100;
 x = rand(m,n);
-y = fft(x,-1,"row");
-z = fft(y,1,"row");
+y = fft_deprecated(x,-1,"row");
+z = fft_deprecated(y,1,"row");
 e=max(abs(x-z));
-//printf("\n test 2: z=fft(fft(x,-1,""row""),1,""row""), max(|x-z|) = %g",e)
+//printf("\n test 2: z=fft_deprecated(fft_deprecated(x,-1,""row""),1,""row""), max(|x-z|) = %g",e)
 if e > 10*%eps then pause,end 
 
 // test 3
 n = 209;
 m = 100;
 x = rand(m,n);
-y = fft(x,-1,"col");
-z = fft(y,1,"col");
+y = fft_deprecated(x,-1,"col");
+z = fft_deprecated(y,1,"col");
 e=max(abs(x-z));
-//printf("\n test 3: z=fft(fft(x,-1,""col""),1,""col""), max(|x-z|) = %g",e)
+//printf("\n test 3: z=fft_deprecated(fft_deprecated(x,-1,""col""),1,""col""), max(|x-z|) = %g",e)
 if e > 10*%eps then pause,end 
 
 // test 4
 n = 209;
 m = 100;
 x = rand(m,n);
-y = fft(x,-1,"*");
-z = fft(y,1,"*");
+y = fft_deprecated(x,-1,"*");
+z = fft_deprecated(y,1,"*");
 e=max(abs(x-z));
-//printf("\n test 4: z=fft(fft(x,-1,""*""),1,""*""), max(|x-z|) = %g",e)
+//printf("\n test 4: z=fft_deprecated(fft_deprecated(x,-1,""*""),1,""*""), max(|x-z|) = %g",e)
 if e > 10*%eps then pause,end 
 
 // test 5
 n = 209;
 m = 100;
 x = rand(m,n);
-y = fft2(x,-1);
-z = fft2(y,1);
+y = fft2_deprecated(x,-1);
+z = fft2_deprecated(y,1);
 e=max(abs(x-z));
-//printf("\n test 5: z=fft2(fft2(x,-1),1), max(|x-z|) = %g",e)
+//printf("\n test 5: z=fft2_deprecated(fft2_deprecated(x,-1),1), max(|x-z|) = %g",e)
 if e > 10*%eps then pause,end 
 
 // test 6
-if (fft2([],-1) ~= []) then pause,end
+if (fft2_deprecated([],-1) ~= []) then pause,end
 
 
 
