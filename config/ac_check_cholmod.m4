@@ -56,6 +56,9 @@ AC_DEFUN([AC_CHECK_COLAMD],
       LDFLAGS="-L${ac_colamd_libdir} ${LDFLAGS}"
       AC_CHECK_LIB(colamd,colamd,[colamd_libs="-L${ac_colamd_libdir} -lcolamd"])
     fi
+ else 
+    # maybe we just have shared libraries in standard path 
+    AC_CHECK_LIB(colamd,colamd,[colamd_libs="-lcolamd"])
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
@@ -106,6 +109,9 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
       AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod ${colamd_libs} "])
    fi
    AC_SUBST(cholmod_libs)
+ else 
+    # maybe we just have shared libraries in standard path 
+    AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}

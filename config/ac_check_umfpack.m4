@@ -50,9 +50,7 @@ AC_DEFUN([AC_CHECK_AMD],
  if test "x${ac_amd_libdir}" != "x" -a "x${ac_amd_libdir}" != "xNO"; then
   amd_library=$ac_amd_libdir/libamd.a
  fi
- AC_MSG_RESULT([$amd_library])
-
- # check for umfpack if amd was found 
+ # check for amd_postorder in amd library 
  #----------------------------------
  if test "xx$amd_library" != "xxno";then 
     if test "${ac_amd_libdir}" = "/usr/lib"; then 
@@ -61,6 +59,9 @@ AC_DEFUN([AC_CHECK_AMD],
       LDFLAGS="-L${ac_amd_libdir} ${LDFLAGS}"
       AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-L${ac_amd_libdir} -lamd"])
     fi
+ else 
+    # maybe we just have shared libraries in standard path 
+    AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-lamd"])
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
@@ -105,6 +106,9 @@ AC_DEFUN([AC_CHECK_UMFPACK],
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
    fi
    AC_SUBST(umfpack_libs)
+ else 
+    # maybe we just have shared libraries in standard path 
+    AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
