@@ -1,8 +1,8 @@
 .SUFFIXES: .defs .c $(SUFFIXES)
 SHELL = /bin/sh
 
-SCIDIR=../../../
-SCIDIR1=..\..\..\
+SCIDIR=../../..
+SCIDIR1=..\..\..
 
 LIBRARY = nsp-cla.a 
 
