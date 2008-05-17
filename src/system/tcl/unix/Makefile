@@ -1,8 +1,8 @@
 # Generated automatically from Makefile.in by configure.
 SHELL = /bin/sh
 
-SCIDIR=../../../../
-SCIDIR1=..\..\..\..\
+SCIDIR=../../../..
+SCIDIR1=..\..\..\..
 
 include ../../../../Makefile.incl
 
