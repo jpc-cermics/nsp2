@@ -201,7 +201,12 @@ int Xorgetchar_select(void)
      * if too large gtk_timeout and gtk_idle won't work fine without gtk_main.
      */
     select_timeout.tv_sec =  0; /* could be more */
+#ifdef __APPLE__
+    select_timeout.tv_usec = 1000;
+#else 
     select_timeout.tv_usec = 5;
+#endif 
+
 #ifdef WITH_GTK_MAIN 
     while ( gtk_events_pending()) 
       {
