@@ -1,5 +1,5 @@
 
-/* $Id$ */
+/* Id: trclib.h,v 1.2 2007/01/23 10:03:20 jpc Exp $ */
 
 /*
  *         Tracer version 1.0:  A Trace File Generator for PVM

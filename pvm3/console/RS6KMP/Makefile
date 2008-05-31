@@ -1,5 +1,5 @@
 #
-# $Id$
+# Id: Makefile,v 1.1.1.1 2004/04/26 15:36:58 stochopt Exp $
 #
 
 PVMDIR		=	../..

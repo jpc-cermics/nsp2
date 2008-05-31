@@ -1,6 +1,5 @@
 
-static char rcsid[] =
-	"$Id$";
+
 
 /*
  *         Trcsort version 1.0:  A Trace File Sorter for PVM

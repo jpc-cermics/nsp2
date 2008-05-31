@@ -1,5 +1,5 @@
 
-/* $Id$ */
+/* Id: pmsg.h,v 1.3 2008-05-31 06:23:45 jpc Exp $ */
 
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System

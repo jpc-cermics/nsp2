@@ -26,9 +26,6 @@
  * 2550 Garcia Avenue
  * Mountain View, California  94043
  *
- *	from: @(#)types.h 1.18 87/07/24 SMI
- *	from: @(#)types.h	2.3 88/08/15 4.0 RPCSRC
- *	$Id$
  */
 
 /*

@@ -1,6 +1,5 @@
 
-static char rcsid[] =
-	"$Id$";
+
 
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System

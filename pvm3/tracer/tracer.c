@@ -1,6 +1,5 @@
 
-static char rcsid[] =
-	"$Id$";
+
 
 /*
  *         Tracer version 1.0:  A Trace File Generator for PVM

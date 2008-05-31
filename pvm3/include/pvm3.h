@@ -1,5 +1,5 @@
 
-/* $Id$ */
+/* Id: pvm3.h,v 1.2 2007/10/24 14:26:20 jpc Exp $ */
 
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
@@ -34,7 +34,10 @@
  *
  *	Libpvm3 includes.
  *
- * $Log$
+ * : pvm3.h,v $
+ * Revision 1.2  2007/10/24 14:26:20  jpc
+ * updates win32
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
  * Imported sources
  *

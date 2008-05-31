@@ -1,5 +1,5 @@
 
-/* $Id$ */
+/* Id: trccompatrev.h,v 1.1.1.1 2004/04/26 15:36:59 stochopt Exp $ */
 
 /*
  *         Tracer version 1.0:  A Trace File Generator for PVM

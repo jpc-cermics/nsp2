@@ -1,5 +1,5 @@
 
-/* $Id$ */
+/* Id: pvmgsd.h,v 1.1.1.1 2004/04/26 15:36:58 stochopt Exp $ */
 
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
