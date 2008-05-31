@@ -1,7 +1,3 @@
-
-static char rcsid[] =
-	"$Id$";
-
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
  *               University of Tennessee, Knoxville TN.
@@ -35,7 +31,10 @@ static char rcsid[] =
  *
  *	Packet buffers.
  *
- * $Log$
+ * : pkt.c,v $
+ * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *

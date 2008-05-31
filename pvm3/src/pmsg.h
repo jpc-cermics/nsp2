@@ -34,7 +34,10 @@
  *
  *	Libpvm and pvmd message descriptors.
  *
- * $Log$
+ * : pmsg.h,v $
+ * Revision 1.2  2007/10/24 14:06:09  jpc
+ * updates for win32
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
  * Imported sources
  *

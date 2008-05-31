@@ -34,7 +34,10 @@
  *
  *	Generic includes.
  *
- * $Log$
+ * : global.h,v $
+ * Revision 1.4  2005/07/20 08:13:44  jpc
+ * gcc4.0
+ *
  * Revision 1.3  2005/05/17 17:42:15  jpc
  * update
  *

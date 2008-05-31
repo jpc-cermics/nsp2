@@ -34,7 +34,10 @@
  *
  *	Wait context descriptors.
  *
- * $Log$
+ * : waitc.h,v $
+ * Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *

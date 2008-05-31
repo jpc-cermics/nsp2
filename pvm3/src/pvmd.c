@@ -1,7 +1,3 @@
-
-static char rcsid[] =
-	"$Id$";
-
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
  *               University of Tennessee, Knoxville TN.
@@ -35,7 +31,10 @@ static char rcsid[] =
  *
  *	Mr. pvm daemon.
  *
- * $Log$
+ * : pvmd.c,v $
+ * Revision 1.4  2007/10/24 14:06:09  jpc
+ * updates for win32
+ *
  * Revision 1.3  2005/07/20 14:03:20  jpc
  * Fedora core 4 updates
  *

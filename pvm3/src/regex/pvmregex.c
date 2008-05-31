@@ -1,7 +1,3 @@
-
-static char rcsid[] =
-	"$Id$";
-
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
  *               University of Tennessee, Knoxville TN.

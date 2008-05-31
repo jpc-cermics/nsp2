@@ -72,7 +72,10 @@
  *			Remove node/process-type from active list.
  *			tp: task pointer.
  *
-$Log$
+: pvmdmimd.c,v $
+Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
+Imported sources
+
 Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
 Imported files
 
@@ -163,7 +166,7 @@ int tidnmask = TIDNODE;			/* mask for node field of tids */
 
 /* private */
 
-static char rcsid[] = "$Id$";
+
 static struct nodeset *busynodes;	/* active nodes; ordered by proc type */
 static char pvmtxt[512];		/* scratch for error log */
 static int ptypemask;			/* mask; we use these bits of ptype in tids */

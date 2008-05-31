@@ -1,7 +1,3 @@
-
-static char rcsid[] =
-	"$Id$";
-
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
  *               University of Tennessee, Knoxville TN.
@@ -35,7 +31,10 @@ static char rcsid[] =
  *
  *	Wait context descriptors.
  *
- * $Log$
+ * : waitc.c,v $
+ * Revision 1.2  2007/10/24 14:06:09  jpc
+ * updates for win32
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
  * Imported sources
  *

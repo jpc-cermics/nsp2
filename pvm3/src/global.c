@@ -1,7 +1,3 @@
-
-static char rcsid[] =
-	"$Id$";
-
 /*
  *         PVM version 3.4:  Parallel Virtual Machine System
  *               University of Tennessee, Knoxville TN.
@@ -35,7 +31,10 @@ static char rcsid[] =
  *
  *	General PVM Globals.
  *
- * $Log$
+ * : global.c,v $
+ * Revision 1.3  2007/10/24 14:06:09  jpc
+ * updates for win32
+ *
  * Revision 1.2  2005/07/20 08:13:44  jpc
  * gcc4.0
  *
