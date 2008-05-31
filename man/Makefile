@@ -13,5 +13,4 @@ clean:: distclean
 
 install::
 	@$(TOP)/config/install-sh -d $(prefix)/lib/nsp/man/html/generated/
-	@$(TOP)/config/install-sh html/generated/*.html  $(prefix)/lib/nsp/man/html/generated/
-	@$(TOP)/config/install-sh html/generated/*.css  $(prefix)/lib/nsp/man/html/generated/
+	@$(TOP)/config/install-sh html/generated/*  $(prefix)/lib/nsp/man/html/generated/
