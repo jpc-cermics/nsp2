@@ -260,6 +260,7 @@
 #include <sys/select.h>
 #endif
 
+#include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>

@@ -394,6 +394,7 @@ lmsg.o:	$(SDIR)/lmsg.c
 lpvm.o:	$(SDIR)/lpvm.c
 	@echo compiling lpvm.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/lpvm.c
+
 lpvmshmem.o:	$(SDIR)/lpvmshmem.c
 	@echo compiling lpvmshmem.c $(PLOCKFILE)
 	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmshmem.c $(PLOCKFILE)

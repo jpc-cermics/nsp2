@@ -565,6 +565,7 @@
 #endif
 #endif
 
+#include <unistd.h>
 #include <stdio.h>
 
 #ifdef IMA_TITN
