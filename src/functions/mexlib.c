@@ -252,6 +252,10 @@ double *mxGetPr(const mxArray *ptr)
       Sciprintf("Warning: mxGetPr should be replaced by mxGetData for booleans\n");
       return (double *) ((NspBMatrix *) ptr)->B;
     }
+  else if ( IsString(ptr) )
+    {
+      return ((NspSMatrix *) ptr)->S[0];
+    }
   Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
   return NULL;
@@ -1919,12 +1923,29 @@ int mxGetElementSize(const mxArray *array_ptr)
 mxArray *mxCreateNumericArray(int ndim, const int *dims, 
 			      mxClassID class, mxComplexity ComplexFlag)
 {
-  if ( ndim != 2 && class != mxDOUBLE_CLASS )
+  if ( ndim == 2 ) 
     {
-      Scierror("Error: mxCreateNumericArray only works for doubles and 2dims\n");
-      nsp_mex_errjump();      
+      if ( class == mxDOUBLE_CLASS )
+	{
+	  return mxCreateDoubleMatrix(dims[0],dims[1],ComplexFlag);
+	}
+      else if ( class == mxCHAR_CLASS ) 
+	{
+	  NspSMatrix *S;
+	  if ( dims[0] != 1) 
+	    {
+	      Scierror("Error: mxCreateNumericArray with mxchar only works with dims[0]==1\n");
+	    }
+	  /* dims[0] strings, each string is of length (strlen) dims[1] */
+	  S = (mxArray *) nsp_smatrix_create_with_length(NVOID,dims[0],1,dims[1]);
+	  /* be sure that string is not null terminated */
+	  S->S[0][dims[1]] = '\0';
+	  return (mxArray *) S;
+	}
     }
-  return mxCreateDoubleMatrix(dims[0],dims[1],ComplexFlag);
+  Scierror("Error: mxCreateNumericArray only works for doubles/char and 2dims\n");
+  nsp_mex_errjump();   
+  return NULL;
 }
 
 /**
