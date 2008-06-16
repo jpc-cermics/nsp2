@@ -2224,7 +2224,7 @@ int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
   CheckLhs (1, 1);
   /* is last element a classname */
   if ( IsTypeObj(stack,rhs) ) 
-    {
+   { 
       if ((type = GetType(stack,rhs))== NULLTYPE) 
 	return RET_BUG; 
       last = rhs-1;
@@ -4061,10 +4061,45 @@ int int_mxmult (Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if ( (HMat3 = nsp_mat_mult(HMat1, HMat2)) == NULLMAT )
+      if ( (HMat3 = nsp_mat_mult(HMat1, HMat2, 0)) == NULLMAT )
 	return RET_BUG;
       MoveObj(stack, 1, (NspObject *) HMat3);
     }
+  return 1;
+}
+
+/*
+ * NspMatrix special multiplication  Res= A*B or A'*B or A*B' or A'*B'   
+ *   pmult(A,B [,flag])   flag is optional and should be 0, 1, 2 or 3
+ *   with default 1
+ */
+
+int int_mxpmult (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *HMat1, *HMat2, *HMat3;
+  int flag=1;
+
+  CheckRhs (2, 3);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+  if ( (HMat2 = GetMat(stack, 2)) == NULLMAT )
+    return RET_BUG;
+
+  if ( rhs == 3 )
+    if (GetScalarInt (stack, 3, &flag) == FAIL) return RET_BUG;
+
+  if ( flag < 0 || flag > 3 )
+    {
+      Scierror ("%s: third argument should be an integer in [0,3]\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( (HMat3 = nsp_mat_mult(HMat1, HMat2, flag)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj(stack, 1, (NspObject *) HMat3);
   return 1;
 }
 
@@ -5181,6 +5216,7 @@ static OpTab Matrix_func[] = {
   {"minus_m_m", int_mxdsub},
   {"minus_m", int_mxminus},
   {"mult_m_m", int_mxmult},
+  {"pmult_m_m", int_mxpmult},
   {"div_m_m", int_mxdiv},
   {"find_m", int_mxfind},
   {"mfind_m", int_mxmfind},

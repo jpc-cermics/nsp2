@@ -192,31 +192,56 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
 
 
 /**
- * nsp_mat_mul:
+ * nsp_mat_mult:
  * @A: a #NspMatrix 
  * @B: a #NspMatrix
+ * @flag: an int
  * 
- * multiplies 2 #NspMatrix @A and @B and returns the product.
+ * computes A*B (flag=0) or A' * B  (flag=1) or  A * B' (flag=2)
+ *  or A'*B' (flag=3)
  * @A and @B are not modified by this function.
  *
  * Returns a #NspMatrix or %NULLMAT.
  */
  
-NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
+NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B, int flag)
 {  
   doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
   double alpha=1.00,beta=0.00;
   NspMatrix *Loc;
-  int A_is_copied = 0, B_is_copied = 0;
+  int m, n, left, right, A_is_copied = 0, B_is_copied = 0;
+  char *flagA, *flagB;
 
-  if ( A->n != B->m ) 
+  switch ( flag ) 
+    {  
+    default: 
+      Sciprintf("Invalid flag '%d' assuming 0\n", flag);
+    case 0: 
+      m = A->m; left = A->n; right = B->m; n = B->n; 
+      flagA = "N"; flagB = "N";      
+      break;
+    case 1: 
+      m = A->n; left = A->m; right = B->m; n = B->n; 
+      flagA = "C"; flagB = "N";
+      break;
+    case 2: 
+      m = A->m; left = A->n; right = B->n; n = B->m; 
+      flagA = "N"; flagB = "C"; 
+      break;
+    case 3: 
+      m = A->n; left = A->m; right = B->n; n = B->m;
+      flagA = "C"; flagB = "C"; 
+      break;
+    }
+		 
+  if ( left != right ) 
     {
       Scierror("Error:\tIncompatible dimensions\n");
       return NULLMAT;
     }
-  if ( A->n == 0 )
+  if ( left == 0 )
     {
-      if ( (Loc =nsp_matrix_create(NVOID,'r',A->m,B->n)) == NULLMAT ) goto err;
+      if ( (Loc = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT ) goto err;
       nsp_mat_set_rval(Loc, 0.0); 
       return Loc;
     }
@@ -238,17 +263,17 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 	}
     }
 
-  if ( (Loc =nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) == NULLMAT ) goto err;
+  if ( (Loc =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) goto err;
 
   if ( Loc->m != 0 && Loc->n != 0) 
     {
       /* we have checked empty case to avoid a Scierror raised by zgemm or dgemm */
       if ( Loc->rc_type == 'c' ) 
-	C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
-		   &zbeta,Loc->C,&A->m,1,1);
+	C2F(zgemm)(flagA,flagB,&m,&n,&left,&zalpha,A->C,&A->m,B->C,&B->m,
+		   &zbeta,Loc->C,&Loc->m,1,1);
       else 
-	C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
-		   &beta,Loc->R,&A->m,1,1); 
+	C2F(dgemm)(flagA,flagB,&m,&n,&left,&alpha,A->R,&A->m,B->R,&B->m,
+		   &beta,Loc->R,&Loc->m,1,1); 
     }
 
   if ( A_is_copied ) nsp_matrix_destroy(A);

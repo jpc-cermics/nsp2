@@ -190,7 +190,7 @@ extern int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B);
 extern void nsp_mat_set_rval(NspMatrix *A, double dval); 
 extern NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A);
 extern int nsp_mat_set_ival(NspMatrix *A, double dval); 
-extern NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B); 
+extern NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B, int flag);
 extern int nsp_mat_add(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2); 
 extern int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2); 
