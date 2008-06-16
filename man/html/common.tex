@@ -1,14 +1,15 @@
 \usepackage{a4wide}
 %\usepackage[french]{babel}
 \usepackage[dvips]{epsfig} 
-%\usepackage[dvips]{hyperref}
 \usepackage[latin1]{inputenc}
 \usepackage{verbatim,moreverb,alltt}
 \usepackage{makeidx}
 \usepackage{amsmath}
+\usepackage[tex4ht]{hyperref}
 
+\newenvironment{mansection}[1]{\newpage\section*{#1}} %\hypertarget{#1}{}}
 
-\newenvironment{mansection}[1]{\newpage\section*{#1}}
+%\newenvironment{mansectionunder}[2]{\newpage\section*{#1}\hypertarget{#2}{}}
 
 \newenvironment{mandesc-old}{%
   \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
@@ -17,13 +18,21 @@
 \newenvironment{mandesc}{%
   \HCode{<div class="manref">}\begin{flushleft}}{\end{flushleft}\HCode{</div>}}
 
+% \def\short#1#2{%
+%   \index{#1}\label{#1}%
+%   \addcontentsline{toc}{section}{\texttt{#1}\mansep #2} \texttt{#1} \mansep #2}%
+
 \def\short#1#2{%
-  \index{#1}\label{#1}%
-  \addcontentsline{toc}{section}{\texttt{#1}\mansep #2} \texttt{#1} \mansep #2}%
+  \index{#1}\hypertarget{#1}{}
+  \texttt{#1} \mansep #2}%
+
+% \def\shortunder#1#2#3{%
+%   \index{#1}\label{#2}%
+%   \addcontentsline{toc}{section}{\texttt{#1}\mansep #3} \texttt{#1} \mansep #3}%
 
 \def\shortunder#1#2#3{%
-  \index{#1}\label{#2}%
-  \addcontentsline{toc}{section}{\texttt{#1}\mansep #3} \texttt{#1} \mansep #3}%
+  \index{#1}\hypertarget{#2}{}
+  \texttt{#1} \mansep #3}%
 
 \newenvironment{calling_sequence}{\paragraph{Calling sequence}}{}
 \newenvironment{parameters}{\paragraph{Parameters}}{}
@@ -41,7 +50,7 @@
 \renewenvironment{varlist}{%
   \begin{itemize}}{\end{itemize}}
 
-\def\manlink#1#2{{#1} (\ref{#2})\quad}
+\def\manlink#1#2{\hyperlink{#2}{#1}\quad}
 
 \newenvironment{programold}%
  {\HCode{<div class="programlisting">}\verbatim}%

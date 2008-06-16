@@ -7,14 +7,15 @@
 %\author{}
 
 \makeindex
+
+\setcounter{tocdepth}{-1}
 	     
 \begin{document}\maketitle
 
-%\tableofcontents
 
-% essais
-%\TocAt{document,chapter,/likechapter}
-%\setcounter{tocdepth}{-1}
+\tableofcontents
+
+%\TocAt{part,likechapter}
 
 
 % fin des essais
@@ -29,7 +30,8 @@
 %%\include{model}
 
 
-\chapter{Index}
+\chapter*{Index}\addcontentsline{toc}{chapter}{index}
+
 \printindex
 
 \end{document}
