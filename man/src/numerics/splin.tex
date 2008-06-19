@@ -1,0 +1,152 @@
+% -*- mode: latex -*-
+
+\mansection{splin}
+\begin{mandesc}
+  \short{splin}{cubic spline interpolation}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+   d = splin(x, y [,spline_type [, der]])
+  \end{verbatim}
+\end{calling_sequence}
+
+  %-- Parameters
+
+\begin{parameters}
+  \begin{varlist}
+   \vname{x } : a strictly increasing (row or column) vector with at least 2 components
+   \vname{y } : a vector of same format than \verb!x!
+   \vname{spline\_type } : (optional) a string selecting the kind of spline to compute
+   \vname{der } : (optional) a vector with 2 components, with the end points derivatives (to 
+               provide when spline\_type="clamped")
+   \vname{d  } : vector of the same format than \verb!x!
+  \end{varlist}
+  \end{parameters}
+
+  \begin{mandescription}
+    This function computes a cubic spline or sub-spline $s$ which interpolates the 
+    $(x_i,y_i)$ points, ie, we have $s(x_i)=yi$ for $i=1,..,n$. 
+    The resulting spline $s$ is completly defined by the triplet $(x,y,d)$ where
+    $d$ is the vector with the derivatives at the $x_i$: $s'(x_i)=d_i$.
+    (this is called the {\em Hermite} form). 
+    The evaluation of the spline at some points must be done by the  \manlink{interp}{interp}  function.
+    Several kind of splines may be computed by selecting the appropriate \verb!spline_type!
+    parameter: 
+    
+  \begin{itemize}
+
+       \item \itemdesc{"not\_a\_knot"}  this is the default case, the cubic spline is computed by using the
+             following conditions (considering $n$ points
+             $x_1,...,x_n$ :
+	     $$
+    s^{(3)}(x_2-) = s^{(3)}(x_2+), \; s^{(3)}(x_{n-1}-) = s^{(3)}(x_{n-1}+)
+         $$
+
+       \item \itemdesc{"clamped"} in this case the cubic spline is computed by using the end points
+             derivatives which must be provided as the last argument \verb!der!:
+    $$
+    s'(x_1) = der_1, \; s'(x_n) = der_2
+    $$     
+
+       \item \itemdesc{"natural"} the cubic spline is computed by using the conditions:
+    $$
+    s''(x_1) = 0, \; s''(x_n) = 0
+    $$     
+
+       \item \itemdesc{"periodic"} a periodic cubic spline is computed ($y$ must verify $y_1=y_n$)
+              by using the conditions:
+    $$
+    s'(x_1) = s'(x_n), \;  s''(x_1) = s''(x_n)
+    $$     
+
+       \item \itemdesc{"monotone"} in this case a sub-spline ($s$ is  only one continuously differentiable)
+              is computed by using a local scheme for the $d_i$ such that
+              $s$ is monotone on each interval:
+    \begin{quote}
+    when $y_i <= y_{i+1}$,  $s$ is increasing on $[x_i, x_{i+1}]$ \newline
+    and when $y_i >= y_{i+1}$,  $s$ is decreasing on $[x_i, x_{i+1}]$ 
+    \end{quote}
+
+       \item \itemdesc{"fast"} in this case a sub-spline is also computed by using a simple local scheme for 
+              the $d_i$ :  $d_i$ is the derivative at $x_i$ of the interpolation polynomial of 
+              $(x_{i-1},y_{i-1}), \; (x_i,y_i), \; (x_{i+1},y_{i+1})$, except for the end points ($d_1$ being
+              computed from the 3 left most points and $d_n$ from the 3 right most points).
+       \item \itemdesc{"fast\_periodic"} same as before but use also a centered formula for $d_1 = s'(x_1) = d_n = s'(x_n)$.
+              by using the periodicity of the underlying function ($y$ must verify $y_1=y_n$). 
+  \end{itemize}
+
+  \end{mandescription}
+
+  %-- section-Remarks
+
+  \paragraph{Remarks}
+  \begin{itemize}
+
+       \item From an accuracy point of view use essentially the  type "clamped" if you know the
+       end point derivatives, else use "not\_a\_knot". But if the underlying approximated
+       function is periodic use the "periodic" type. Under the good assumptions these
+       kind of splines got an $O(h^4)$ asymptotic behavior of the error. Don't use the 
+        type "natural" unless the underlying function have zero second end points 
+       derivatives.
+       \item The "monotone" or "fast" type may be useful in some cases, for
+       instance to limit oscillations (these kind of
+       sub-splines have an $O(h^3)$ asymptotic behavior of the error).
+       \item If $n=2$ (and \verb!spline_type! is not "clamped") linear interpolation
+       is used. If {\em n=3} and \verb!spline_type! is  "not\_a\_knot", then
+       a  sub-spline type is in fact computed.
+    \end{itemize}
+
+  %--example 
+
+  \begin{examples}
+\paragraph{example 1} interpolating the Runge function.
+\begin{program}\HCode{function y=runge(x), y = 1./(1 + x.^2), endfunction;\Hnewline
+a = -5; b = 5; n = 11; m = 400;\Hnewline
+x = linspace(a, b, n)';\Hnewline
+y = runge(x);\Hnewline
+d = splin(x, y);\Hnewline
+xx = linspace(a, b, m)';\Hnewline
+yyi = interp(xx, x, y, d);\Hnewline
+yye = runge(xx);\Hnewline
+xbasc()\Hnewline
+plot2d(xx, [yyi yye], style=[2 5], leg="interpolation spline@exact function")\Hnewline
+plot2d(x, y, style=-9)\Hnewline
+xtitle("interpolation of the Runge function")\Hnewline
+}
+    \end{program}
+\paragraph{example 2} behavior of different splines on some random datas.
+ \begin{program}\HCode{a = 0; b = 1;        // interval of interpolation\Hnewline
+n = 10;              // nb of interpolation  points\Hnewline
+m = 800;             // discretisation for evaluation\Hnewline
+x = linspace(a,b,n)'; // abscissae of interpolation points\Hnewline
+y = rand(x);          // ordinates of interpolation points\Hnewline
+xx = linspace(a,b,m)';\Hnewline
+yk = interp(xx, x, y, splin(x,y,"not_a_knot"));\Hnewline
+yf = interp(xx, x, y, splin(x,y,"fast"));\Hnewline
+ym = interp(xx, x, y, splin(x,y,"monotone"));\Hnewline
+xbasc()\Hnewline
+plot2d(xx, [yf ym yk], style=[5 2 3], strf="121", leg="fast@monotone@not a knot spline")\Hnewline
+plot2d(x,y,style=-9, strf="000")  // to show interpolation points\Hnewline
+xtitle("Various spline and sub-splines on random datas")\Hnewline
+xselect()\Hnewline
+ }
+\end{program}
+
+  \end{examples}
+
+  %-- see also
+
+  \begin{manseealso}
+\manlink{interp}{interp} \manlink{linear\_interpn}{linear_interpn}
+  \end{manseealso}
+
+  %-- Authors
+
+  \begin{authors}
+	\paragraph{} Bruno Pincon
+	\paragraph{} F. N. Fritsch (pchim.f Slatec routine translated
+	in C is used for monotone interpolation) 
+  \end{authors}
+

@@ -1,0 +1,180 @@
+% -*- mode: latex -*-
+
+\mansection{intg}
+\begin{mandesc}
+  \short{intg}{one dimensional integration over a finite or infinite interval}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Ia = intg(a,b,f)
+[Ia [,ea_estim [,ier [,neval]]]]  = intg(a, b, f, atol=ea, rtol=er, args=obj, limit=maxsub, vecteval=b)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a,b}:  real scalars (including \verb+-%inf+ and\verb+%inf+) defining the integration interval
+    \vname{f}: nsp function defining the function to integrate
+    \vname{atol=ea}: optional named argument, requested absolute error
+                      on the result (default is 1e-14)
+    \vname{rtol=er}: optional named argument, requested relative error
+                      on the result (default is 1e-8).
+    \vname{args=obj}: optional named argument, useful to pass
+    additional parameters needed by the function f.
+    \vname{limit=maxsub}: optional named argument, max number of
+    subdivisions allowed (default 750).
+    \vname{vecteval=b}: optional named argument, boolean scalar
+    (default \verb+%f+), use \verb+%t+ if you write the function
+                   \verb+f+ such that it could be evaluated on a
+                   vector argument (this speed up the computation).
+    \vname{Ia}: computed approximate result
+    \vname{ea_estim}: estimated error
+    \vname{ier}: scalar given some information about the computation (see below)
+    \vname{neval}: number of function evaluations.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an approximation $I_a$ of:
+$$
+   I = \int_a^b f(x) dx
+$$
+such that:
+$$
+   | I - I_a | \le  \max (atol, rtol*|I|)
+$$
+An additional parameter for the function $f$ could be passed using the
+named optional argument \verb+args+ which can be any nsp object (see
+examples). \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
+\verb+ier+ variable could take values from 0 to 5: 
+\begin{itemize}
+\item ier = 0,  normal and reliable termination of the routine. It is assumed that the
+      requested  accuracy has been achieved.
+\item other values correspond to an abnormal termination of the routine. The estimates
+      for integral and error are less reliable. It is assumed that the  requested accuracy
+      has not been achieved:
+      \begin{itemize}
+      \item ier = 1: maximum number of subdivisions (the limit
+            parameter) allowed has been achieved. You can try to
+            increase limit but generally it is advised to have a close look at the
+            integrand, in order to determine the integration
+            difficulties. If the position of a local difficulty can
+            be determined (i.e.  singularity, discontinuity within
+            the interval) one will probably gain from  splitting up
+            the interval at this point and calling the integrator
+            on the sub-ranges. If possible, an appropriate
+            special-purpose integrator should be used which is
+            designed for handling the type  of difficulty involved.
+      \item ier = 2: the occurrence of roundoff error is detected
+            which prevents the requested tolerance from being
+            achieved. The error may be under-estimated.
+      \item ier = 3: extremely bad integrand behaviour occurs at 
+            some interior points of the integration interval.
+      \item ier = 4: it is presumed that the requested tolerance 
+            cannot be achieved, and that the returned result is the
+            best which can be obtained.
+      \item ier = 5: the integral is probably divergent, or slowly
+            convergent. It must be noted that divergency can occur with
+            any other value of ier.
+      \end{itemize}
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example 1} a simple example 
+\begin{program}\HCode{function y=f1(x);y=exp(x);endfunction\Hnewline
+[I,ea] = intg(0,1,f1)\Hnewline
+abs(I-(\%e-1)) //near exact absolute error}
+\end{program}
+  
+\paragraph{example 2} comparizon with the error function
+\begin{program}\HCode{function y=f2(x);y=2*exp(-x^2)/sqrt(\%pi);endfunction\Hnewline
+[Ia,ea] = intg(0,0.5,f2)\Hnewline
+I = erf(0.5)\Hnewline
+abs(I - Ia)}
+\end{program}
+  
+\paragraph{example 3} passing extra parameters. If your function needs
+only one additional parameter \verb+p+, says a scalar, or a vector or matrice, 
+you can use \verb+args=p+. Several scalar parameters could thus be
+stacked in a vector but you can use in fact any kind of nsp object,
+for instance a list, a cells array or a hash table. Here is different
+possibilities on a same example. In this exemple the parameters of
+the function will be called a and w:
+\begin{program}\HCode{// 3-1 put parameters in a vector\Hnewline
+function y=g(x,p);a=p(1);w=p(2);y=a*x + sin(w*x);endfunction\Hnewline
+[Ia,ea] = intg(0,2*\%pi,g,args=[1,1])\Hnewline
+// here the exact result should be 2*pi^2\Hnewline
+abs(Ia - 2*\%pi^2)\Hnewline
+//\Hnewline
+// 3-2 put parameters in a list\Hnewline
+// in this case the function f have the same definition\Hnewline
+[Ia,ea] = intg(0,2*\%pi,g,args=list(1,1))\Hnewline
+//\Hnewline
+// 3-3 put parameters in a cells array\Hnewline
+function y=g(x,p);a=p{1};b=p{2};y=b*x + sin(b*x);endfunction\Hnewline
+[Ia,ea] = intg(0,2*\%pi,g,args={1,1})\Hnewline
+//\Hnewline
+// 3-4 put parameters in a hash table\Hnewline
+function y=g(x,p);y=p.a*x + sin(p.w*x);endfunction\Hnewline
+[Ia,ea] = intg(0,2*\%pi,g,args=hash(2,a=1,w=1))}
+\end{program}
+
+\paragraph{example 4} a difficult problem. Here we try to integrate:
+$$
+    f(x) = 2 x \cos \left(\frac{1}{x}\right) +  \sin \left(\frac{1}{x}\right)
+$$ 
+on $[0,1]$. $f$ is not continuous at $0$ and oscillate more and more
+rapidly as $x \rightarrow 0$. The antiderivative of $f$
+is:
+$$
+    F(x) = x^2  \cos \left(\frac{1}{x}\right)
+$$
+so we know the exact result ($I=\cos(1)$). We write the function in a vectorial
+manner so as to experiment also with the \verb+vecteval+ option. 
+\begin{program}\HCode{function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction\Hnewline
+// 1/ reduce the tolerance\Hnewline
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6)\Hnewline
+// 2/ increase the limit parameter (trying to reach the requested precision)\Hnewline
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6, limit=10000)\Hnewline
+// 3/ compare ea the estimated error with the (near) exact error:\Hnewline
+ea_exact = abs(Ia-cos(1))\Hnewline
+// 4/ increase rtol and measure the computing time\Hnewline
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()\Hnewline
+// 5/ the same using vecteval=\%t (it must be faster)\Hnewline
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=\%t); toc()}
+\end{program}
+
+  
+\paragraph{example 5} In this example we try to integrate probability 
+density functions, theorical results must be all equal to 1 (see the
+\manlink{pdf}{pdf} help page). 
+\begin{program}\HCode{// a function to handle all pdf functions with intg\Hnewline
+function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction\Hnewline
+// integrating the N(0,1) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"nor",0,1})\Hnewline
+// integrating the gamma (3,1) density\Hnewline
+[Ia, ea, ier] = intg(0, \%inf, f, args={"gam",3,1})\Hnewline
+// integrate the Cauchy (100) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"cau",100})\Hnewline
+// integrate the Laplace (1000) density\Hnewline
+[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"lap",1000})\Hnewline
+// integrate the beta (2,6) density\Hnewline
+[Ia, ea, ier] = intg(0, 1, f, args={"bet",2,6})}
+\end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{int2d}{int2d}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  uses the routine dqagse and dqagie (Robert Piessens and Elise de Doncker) from
+  quadpack. Nsp interface: Bruno Pincon.
+\end{authors}

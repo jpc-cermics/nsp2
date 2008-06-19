@@ -1,0 +1,113 @@
+% -*- mode: latex -*-
+
+\mansection{quapro}
+\begin{mandesc}
+  \short{quapro}{linear quadratic programming solver}
+\end{mandesc}
+\index{quapro}\label{quapro}
+\begin{calling_sequence}
+  \begin{verbatim}
+    [x,lagr,f]=quapro(Q,p,C,b [,x0,imp])  
+    [x,lagr,f]=quapro(Q,p,C,b,ci,cs [,x0,imp])  
+    [x,lagr,f]=quapro(Q,p,C,b,ci,cs,me [,x0,imp])  
+    [x,lagr,f]=quapro(Q,p,C,b,ci,cs,me,x0 [,imp])  
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Q} : real symmetric matrix (dimension \verb!n x n!).
+    \vname{p} : real (column) vector (dimension \verb! n!)
+    \vname{C} : real matrix (dimension \verb! (me + md) x n!) (If no constraints are given, you can set \verb!C = []!)
+   \vname{b} : RHS column vector (dimension \verb! (me + md)!) (If no constraints are given, you can set \verb!b = []!)
+   \vname{ci} : column vector of lower-bounds (dimension \verb!n!). If there are no lower bound constraints, put \verb!ci = []!. If some components of \verb!x! are bounded from below, set the other (unconstrained) values of \verb!ci! to a very  large negative  number (e.g. \verb!ci(j) = -number_properties('huge')!.
+   \vname{cs} : column vector of upper-bounds. (Same remarks as above).
+   \vname{me} : number of equality constraints (i.e. \verb!C(1:me,:)*x = b(1:me)!)
+   \vname{x0} : either an initial guess for \verb!x!    or one of the character strings \verb!'v'! or \verb!'g'!. If \verb!x0='v'! the calculated initial feasible point is a vertex. If \verb!x0='g'! the calculated initial feasible point is arbitrary.
+   \vname{imp} : verbose option (optional parameter)   (Try \verb!imp=7,8,...!). warning the message are output in the window where scilab has been started.
+   \vname{x} : optimal solution found.
+   \vname{f} : optimal value of the cost function (i.e. \verb!f=0.5*x'*Q*x+p'!).
+   \vname{lagr} : vector of Lagrange multipliers.  If lower and upper-bounds \verb!ci,cs! are provided, \verb!lagr! has  \verb!n + me + md! components and \verb!lagr(1:n)! is the Lagrange  vector associated with the bound constraints and  \verb!lagr (n+1 : n + me + md)! is the Lagrange vector associated  with the linear constraints. (If an upper-bound (resp. lower-bound) constraint \verb!i! is active  \verb!lagr(i)! is $>$ 0 (resp. $<$0). If no bounds are provided, \verb!lagr! has only \verb!me + md! components.
+  \end{varlist}
+
+\end{parameters}
+
+\begin{mandescription}
+
+Note that \verb!quapro! is not directly accessible in nsp. The \verb!quapro! 
+interface is GPL but you have to get the in order to get the source code 
+for  \verb!quapro!.
+
+\begin{itemize}
+\item \verb![x,lagr,f]=quapro(Q,p,C,b [,x0])!
+\begin{equation*}
+\begin{split}
+  \min_{x}& \hspace{1cm}  \frac{1}{2} x^T Q x + p^T *x \\
+  C x \le b  & \\
+\end{split}
+\end{equation*}
+\item  \verb![x,lagr,f]=quapro(Q,p,C,b,ci,cs [,x0])!
+\begin{equation*}
+\begin{split}
+  \min_{x} &\hspace{1cm}  \frac{1}{2} x^T Q x + p^T *x \\
+  C x \le b  & \\
+  ci \le x \le cs & \\
+\end{split}
+\end{equation*}
+\item \verb![x,lagr,f]=quapro(Q,p,C,b,ci,cs,me [,x0])!
+\begin{equation*}
+\begin{split}
+  \min_{x} &\hspace{1cm}  \frac{1}{2} x^T Q x + p^T *x \\
+  C(j,:) x = b(j) , \,  j \in [1,me] & \\
+  C(j,:) x \le b(j), \, j \in [me+1,md] & \\
+  ci \le x \le cs &\\
+\end{split}
+\end{equation*}
+\end{itemize}
+  If no initial point is given the
+  program computes a feasible initial point
+  which is a vertex of the region of feasible points if
+  \verb!x0='v'!.
+  If \verb!x0='g'!, the program computes a feasible initial 
+  point which is not necessarily a vertex. This mode is
+  advisable when the quadratic form is positive
+  definite and there are  few constraints in
+  the problem or when there are large bounds
+  on the variables that are just security bounds and
+  very likely not active at the optimal solution.
+  Note that \verb!Q! is not necessarily non-negative, i.e.
+  \verb!Q! may have negative eigenvalues.
+\end{mandescription}
+\begin{examples}
+  \begin{program}\HCode{//Find x in R^6 such that:\Hnewline
+      //C1*x = b1 (3 equality constraints i.e me=3)\Hnewline
+      C1= [1,-1,1,0,3,1;\Hnewline
+	-1,0,-3,-4,5,6;\Hnewline
+	2,5,3,0,1,0];\Hnewline
+      b1=[1;2;3];\Hnewline
+      //C2*x $<$= b2 (2 inequality constraints)\Hnewline
+      C2=[0,1,0,1,2,-1;\Hnewline
+	-1,0,2,1,1,0];\Hnewline
+      b2=[-1;2.5];\Hnewline
+      //with  x between ci and cs:\Hnewline
+      ci=[-1000;-10000;0;-1000;-1000;-1000];cs=[10000;100;1.5;100;100;1000];\Hnewline
+      //and minimize 0.5*x'*Q*x + p'*x with\Hnewline
+      p=[1;2;3;4;5;6]; Q=eye(6,6);\Hnewline
+      //No initial point is given;\Hnewline
+      C=[C1;C2] ; //\Hnewline
+      b=[b1;b2] ;  //\Hnewline
+      me=3;\Hnewline
+      [x,lagr,f]=quapro(Q,p,C,b,ci,cs,me)\Hnewline
+      //Only linear constraints (1 to 4) are active (lagr(1:6)=0):\Hnewline
+      [x,lagr,f]=quapro(Q,p,C,b,[],[],me)   //Same result as above\Hnewline}
+  \end{program} 
+\end{examples}
+%-- see also
+\begin{manseealso}
+%%  \manlink{linpro}{linpro} \manlink{optim}{optim}  
+\end{manseealso}
+
+\begin{authors}
+  \paragraph{Eduardo Casas  Renteria} , Universidad de Cantabria,
+  \paragraph{Cecilia Pola Mendez}  , Universidad de Cantabria 
+\end{authors}
