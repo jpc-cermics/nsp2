@@ -49,7 +49,7 @@ all:: $(LIBRARY_NAME).la
 
 $(LIBRARY_NAME).la : $(OBJECTS) 
 	@echo linking 
-	@$(LINK) -rpath `pwd` -module -avoid-version -export-dynamic $(OBJECTS) 
+	@$(LINK) -rpath `pwd` -avoid-version -export-dynamic $(OBJECTS) 
 	@$(LIBTOOL) --mode=install $(QUIET) cp $(LIBRARY_NAME).la `pwd`/$(LIBRARY_NAME).la > /dev/null
 
 clean	::
