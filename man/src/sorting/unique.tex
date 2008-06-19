@@ -1,0 +1,87 @@
+% -*- mode: latex -*-
+
+\mansection{unique}
+\begin{mandesc}
+  \short{unique}{compute unique components of a vector or of a list}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y = unique(x)
+[y [,ind [,occ]]] = unique(x)
+[y [,ind [,occ]]] = unique(x,first_ind=value)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x} : vector of numbers or strings or cells, or a list.
+    \vname{y} : vector (or list when x is a list) containing unique components of x
+    \vname{ind} : vector of same length than y, ind(i) is an index
+                  such that y(i)=x(ind(i)).
+    \vname{occ} : vector of same length than y, occ(i) is the number
+                  of occurrences of y(i) in the x.
+    \vname{first\_ind} : optional boolean scalar, useful only when x is a vector
+    of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
+    the smaller index such that y(i) = x(ind(i)).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function computes the unique components of a vector of numbers,
+  strings or cells. As the number of occurrences of each unique
+  component may be returned, it can be also useful for basic statistic
+  computations.
+\end{mandescription}
+
+\begin{examples}
+
+\paragraph{example 1} with a vector of numbers
+\begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
+
+\paragraph{example 2} with a vector of strings:
+\begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
+
+\paragraph{example 3} with a vector of cells:
+\begin{program}\HCode{x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
+
+\paragraph{example 4} with a list:
+\begin{program}\HCode{x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")\Hnewline
+[y, ind, occ] = unique(x)}
+\end{program}
+
+\paragraph{example 5} using unique for basic statistic:
+\begin{program}\HCode{// generate a big sample of the binomial distribution B(6,0.4)\Hnewline
+m = 1e5;\Hnewline
+x = grand(m,1,"bin",6,0.4); \Hnewline
+// computes the empirical probabilities associated to each values\Hnewline
+[y, ind, occ] = unique(x);\Hnewline
+p_emp = occ/m;\Hnewline
+// computes exact probabilities (using the cumulative distribution func)\Hnewline
+v = ones(7,1);\Hnewline
+p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);\Hnewline
+p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];\Hnewline
+// compare both empirical and exact ones\Hnewline
+xbasc()\Hnewline
+e = 0.05;\Hnewline
+plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...\Hnewline
+         rect=[-1,0,7,1.1*max(p_exact)],...\Hnewline
+         leg="exact probabilies@empirical probabilities")}
+\end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{setdiff}{setdiff}, \manlink{union}{union}, \manlink{intersect}{intersect}, \manlink{setxor}{setxor}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}

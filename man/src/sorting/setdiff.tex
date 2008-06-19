@@ -1,0 +1,87 @@
+% -*- mode: latex -*-
+
+\mansection{setdiff}
+\begin{mandesc}
+  \short{setdiff}{compute the set difference between two vectors or two lists}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+C = setdiff(A,B)
+[C [,ind]] = setdiff(A,B)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} : vector of numbers, strings or cells (if A is a matrix, it is
+    considered as a big column vector), or list.
+    \vname{B} : vector of same type than A, or list if A is a list. 
+    \vname{C} : vector or list with elements of A but not in B.
+    \vname{ind} : vector of same length than C, ind(i) is an index
+                  such that C(i)=A(ind(i)).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function computes the set difference $C = A \setminus B$
+  between 2 vectors (of numbers, strings or cells) or between 2
+  lists. $C$ contains the components
+  of $A$ which are not in $B$. Note that multiple equal components in
+  $A$ are reduced to one such component (if it is not in $B$) and that
+  $C$ is sorted in ascending order (only for vectors of numbers or strings).
+
+  $C$ and $ind$ are row vectors if  A is a row vector, otherwise they
+  are column vectors.
+  
+\end{mandescription}
+
+\begin{examples}
+
+\paragraph{example 1} with vectors of numbers:
+\begin{program}\HCode{A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];\Hnewline
+B = [2, 0.5];\Hnewline
+C = setdiff(A,B)\Hnewline
+[C, ind] = setdiff(A,B)\Hnewline
+// we must have C = A(ind)\Hnewline
+and(C == A(ind))}
+\end{program}
+
+\paragraph{example 2} with vectors of strings:
+  \begin{program}\HCode{A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
+    B = [ "foo", "bar" ]\Hnewline
+    C = setdiff(A,B)\Hnewline
+    [C, ind] = setdiff(A,B)\Hnewline
+    // we must have C = A(ind)\Hnewline
+    and(C == A(ind))}
+  \end{program}
+
+\paragraph{example 3} with vectors of cells:
+  \begin{program}\HCode{A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}\Hnewline
+    B = { "foo", 2,  [0,1;1,0] }\Hnewline
+    C = setdiff(A,B)\Hnewline
+    [C, ind] = setdiff(A,B)\Hnewline
+    // we must have C = A(ind)\Hnewline
+    and(C == A(ind))}
+  \end{program}
+
+\paragraph{example 4} with lists:
+  \begin{program}\HCode{A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")\Hnewline
+    B = list( "foo", 2,  [0,1;1,0] )\Hnewline
+    C = setdiff(A,B)\Hnewline
+    [C, ind] = setdiff(A,B)\Hnewline
+    // we must have C = A(ind)\Hnewline
+    and(C == A.sublist[ind])}
+  \end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{unique}{unique}, \manlink{union}{union}, \manlink{intersect}{intersect}, \manlink{setxor}{setxor}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}
