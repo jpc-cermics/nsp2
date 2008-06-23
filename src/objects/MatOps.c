@@ -3997,7 +3997,7 @@ int nsp_mat_nearfloat(int dir, NspMatrix *x)
   int i, e, digits;
   double xx, sign;
   static int base = 0, denorm = 0, emin = 0;
-  static double one_ulp, tiny, tiniest;
+  static double one_ulp, tiny, tiniest, huge;
 
   if ( base == 0 )
     {
@@ -4012,6 +4012,7 @@ int nsp_mat_nearfloat(int dir, NspMatrix *x)
 	  tiniest = tiny;
 	  for ( i = 0 ; i < digits-1 ; i++ ) tiniest = tiniest / base;
 	}
+      huge = nsp_dlamch("o");
     }
 
   if ( x->rc_type == 'c' ) 
@@ -4029,7 +4030,18 @@ int nsp_mat_nearfloat(int dir, NspMatrix *x)
   for ( i = 0 ; i < x->mn ; i++)
     {
       xx = x->R[i];
-      if ( ! ISNAN(xx) )
+
+      if ( ISNAN(xx) )
+	/* nothing to do */
+	;
+      else if ( fabs(xx) > huge ) /* +Inf or -Inf */
+	{	  
+	  sign = xx >= 0 ? 1.0 : -1.0;
+	  if ( dir*sign < 0 )
+	    x->R[i] = sign * huge;
+	  /* else nothing to do: succ(Inf) is Inf and pred(-Inf) is -Inf */
+	}
+      else  /* finite case */
 	{
 	  sign = xx >= 0 ? 1.0 : -1.0;
 	  xx = fabs(xx);
