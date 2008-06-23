@@ -1,0 +1,58 @@
+% -*- mode: latex -*-
+
+
+\mansection{isreal}
+
+\begin{mandesc}
+\short{isreal}{check if a variable has real or complex entries}
+\end{mandesc}
+
+
+%-- Calling sequence section
+\begin{calling_sequence}
+    \begin{verbatim}
+       b=isreal(x)  
+       b=isreal(x,strict)  
+    \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{x} : numerical scalar vector or matrix (full or sparse).
+   \vname{strict} : boolean scalar (default is \%f).
+   \vname{b} : boolean scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+In nsp numerical matrices are formed with real or complex coefficients
+(in fact floating point numbers see
+\manlink{number\_properties}{number_properties}). This function
+lets distinguish between these two cases:
+\begin{itemize}
+\item \verb!isreal(x)! (or \verb!isreal(x,%f)!) returns true when 
+\verb!x! is stored as a real variable or when it is stored 
+as a complex variable with all imaginary parts equal
+to zero. 
+\item \verb!isreal(x,\%t)! returns true when \verb!x! is stored as a real
+variable and otherwise returns false.
+\end{itemize}
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+
+\begin{program}\HCode{isreal([1,2])\Hnewline
+isreal(1+0*\%i)\Hnewline
+isreal(1+0*\%i,\%t)\Hnewline
+A = sprand(3,3,0.4);
+isreal(A)\Hnewline
+B = A + \%i*(0*A);\Hnewline
+isreal(A)\Hnewline
+isreal(A,\%t)}
+\end{program}
+
+\end{examples}
+
