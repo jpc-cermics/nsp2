@@ -1,0 +1,75 @@
+% -*- mode: latex -*-
+
+\mansection{tests for special floating-point numbers}
+
+\begin{mandesc}
+\short{isfinite}{check for "Finite" entries}\\
+\short{isnan}{check for "Not a Number" entries}\\
+\short{isinf}{check for "Infinite" entries}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+    \begin{verbatim}
+      b=isfinite(x)  
+      b=isnan(x)  
+      b=isinf(x)  
+    \end{verbatim}
+\end{calling_sequence}
+
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{x}: real or complex vector or matrix
+   \vname{b}: boolean vector or matrix (of same size than x).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+With the IEEE 754 floating point normalisation special
+``floating-point'' numbers were defined. For instance 
+when the magnitude of a result is (enough) outside the
+floating-point max limit (the huge number see 
+\manlink{number\_properties}{number_properties}) then
+the special number $-Inf$ or $Inf$ is returned. Also
+the special number $NaN$ is returned for instance
+as a result for $0 / 0$ or $Inf - Inf$, etc...(in fact
+several digit patterns correspond to $NaN$).     
+
+\begin{description}
+\item[isfinite(x)]: 
+    returns a boolean vector or matrix which contains true
+    entries for corresponding finite entries (that is entries
+    not $Inf$, $-Inf$ or $NaN$).
+\item[isnan(x)]: 
+    returns a boolean vector or matrix which contains true
+    entries for corresponding $NaN$ entries.
+\item[isinf(x)]: 
+    returns a boolean vector or matrix which contains true
+    entries for corresponding $Inf$ and $-Inf$ entries.
+\end{description}
+
+When applied on a complex vector the real and imaginary parts should
+be both finite to get \%t with isfinite and only one should be $Inf$
+or $NaN$ to get \%t with isinf or isnan. 
+  
+\end{mandescription}
+
+%--example 
+
+\begin{examples}
+
+\begin{program}\HCode{x = [0, \%inf, -8e34, \%nan, 67, -\%inf]\Hnewline
+isfinite(x)\Hnewline
+isnan(x)\Hnewline
+isinf(x)}
+\end{program}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{number\_properties}{number_properties}
+\end{manseealso}
+

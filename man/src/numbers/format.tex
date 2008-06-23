@@ -1,0 +1,85 @@
+% -*- mode: latex -*-
+
+\mansection{format}
+
+\begin{mandesc}
+  \short{format}{number printing and display format}
+\end{mandesc}
+
+
+%-- Calling sequence section
+\begin{calling_sequence}
+   \begin{verbatim}
+     format()
+     format(str)
+     format(field, prec)
+     format(field, prec, eflag)
+   \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+
+\begin{parameters}
+
+  \begin{varlist}
+   \vname{str} : a string among "long", "medium", "short", "long e", "medium e", "short e"
+   \vname{field} : integer max size of characters to print the number
+   \vname{prec} : min number of significative digits
+   \vname{eflag} : boolean scalar.
+  \end{varlist}
+
+  \end{parameters}
+
+  \begin{mandescription}
+    Sets the current printing format. Default is "short" and
+    correspond to prec=4, field=11, eflag=\%f. Using
+    "long", "medium", "short" or the form \verb+format(field, prec)+
+    or \verb+format(field, prec, %f)+ leads to a ``variable format'' 
+    which tries to use a fixed point notation when possible (that
+    is when the number magnitude is not too large or too small) and 
+    otherwise writes the number with a mantissa plus an exponent
+    part.
+
+    On the other hand using  "long e", "medium e", "short e" or
+     \verb+format(field, prec, %t)+  displays always numbers
+    with mantissa plus exponent part.
+
+    \verb+format()+ lets recover the default format.
+
+  \begin{tabular}{|c|c|c|}
+     string & field & prec \\
+  \hline
+   "short"   & 11 & 4 \\
+   "medium"  & 18 & 11 \\
+   "long"    & 23 & 16 \\
+   \end{tabular}
+
+
+  \end{mandescription}
+
+  %--example 
+
+\begin{examples}
+
+\begin{program}\HCode{\%pi\Hnewline
+format("medium")\Hnewline
+\%pi\Hnewline
+format("long")\Hnewline
+\%pi\Hnewline
+format()\Hnewline
+// default format should output the next number as is\Hnewline
+// (because 11 char could be used to print it in fixed\Hnewline
+//  point notation together with 4 significant digits)\Hnewline
+x = 0.000001234\Hnewline
+// but should use notation with exponent on the following number\Hnewline
+x = 0.0000001234}
+\end{program}
+
+\end{examples}
+
+  %-- see also
+
+\begin{manseealso}
+% \manlink{write}{write} \manlink{disp}{disp} \manlink{print}{print}  
+\end{manseealso}
+

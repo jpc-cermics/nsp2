@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+
+\mansection{nearfloat}
+
+\begin{mandesc}
+   \short{nearfloat}{get previous or next floating-point number}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+    \begin{verbatim}
+      xnear = nearfloat(dir, x)  
+    \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{dir} : string ("succ" or "pred")
+   \vname{x} : real scalar, vector or matrix
+   \vname{xnear} : real scalar, vector or matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+    This function computes, in the element wise meaning, the corresponding neighbours 
+    of the elements of \verb!x! (in the underlying floating point set,
+    see \manlink{number\_properties}{number_properties}).
+    The successors if \verb!dir = "succ"! and the predecessors if  \verb!dir = "pred"!
+\end{mandescription}
+
+%--example 
+\begin{examples}
+
+\paragraph{example 1} Here we show the fact that the distance
+between 2 neighboring floating numbers increases by a factor
+of $b$ at each positive or negative power of the base $b$.
+Here $b$ is assumed to be 2.   
+\begin{program}\HCode{format("long e")\Hnewline
+// 0.125 = 2^(-3)\Hnewline
+inc_before = 0.125 - nearfloat("pred",0.125)\Hnewline
+inc_after = nearfloat("succ",0.125) - 0.125\Hnewline
+inc_after/inc_before\Hnewline
+// 1 = 2^0\Hnewline
+inc_before = 1 - nearfloat("pred",1)\Hnewline
+inc_after = nearfloat("succ",1) - 1\Hnewline
+inc_after/inc_before\Hnewline
+// 8 = 2^3\Hnewline
+inc_before = 8 - nearfloat("pred",8)\Hnewline
+inc_after = nearfloat("succ",8) - 8\Hnewline
+inc_after/inc_before}
+\end{program}
+
+\paragraph{example 2}
+\begin{program}\HCode{format("long e")\Hnewline
+// successor of huge (should be Inf)\Hnewline
+huge = number_properties("huge")\Hnewline
+nearfloat("succ",huge)\Hnewline
+// predecessor of Inf (should be huge)\Hnewline
+nearfloat("pred",\%inf) - huge}
+\end{program}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{number\_properties}{number_properties}
+\end{manseealso}
+
+%-- Author
+\begin{authors}
+Bruno Pincon
+\end{authors}
+

@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+
+\mansection{frexp}
+
+\begin{mandesc}
+  \short{frexp}{dissect floating-point numbers into base 2 exponent and mantissa}
+\end{mandesc}
+
+
+%-- Calling sequence section
+\begin{calling_sequence}
+    \begin{verbatim}
+       [m,e]=frexp(x)  
+    \end{verbatim}
+\end{calling_sequence}
+
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{x} : real scalar, vector or matrix
+   \vname{m} : array of real values, usually in the range $0.5 \le |m| < 1$.
+   \vname{e} : array of integers that satisfy the equation: $x = m
+   \times 2^e$ (\verb+ x = m.*2.^e+ is nsp language).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+    This function corresponds to the ANSI C function frexp().
+  Any zeros in $x$ produce $m=0$ and $e=0$.
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+
+\begin{program}\HCode{[m,e]=frexp(0)\Hnewline
+[m,e]=frexp(0.5*2^(-3))\Hnewline
+tiny = number_properties("tiny")\Hnewline
+[m,e]=frexp(tiny)\Hnewline
+tiniest = number_properties("tiniest")\Hnewline
+[m,e]=frexp(tiniest)\Hnewline
+[m,e]=frexp(\%inf)\Hnewline
+[m,e]=frexp(\%nan)}
+\end{program}
+
+\end{examples}
+
+%-- see also
+
+\begin{manseealso}
+\manlink{number\_properties}{number_properties} %, \manlink{log2}{log2}  
+\end{manseealso}
+

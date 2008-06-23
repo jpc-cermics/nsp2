@@ -1,0 +1,102 @@
+% -*- mode: latex -*-
+
+\mansection{number\_properties}
+\begin{mandesc}
+  \shortunder{number\_properties}{number_properties}{determine floating-point parameters}
+\end{mandesc}
+
+%-- Calling sequence section
+
+\begin{calling_sequence}
+    \begin{verbatim}
+       pr = number_properties(prop)  
+    \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+
+\begin{parameters}
+  \begin{varlist}
+   \vname{prop} : string
+   \vname{pr} : real or boolean scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+    This function may be used to get the characteristic
+    numbers/properties of the floating point set denoted here by
+    $F(b,p,emin,emax)$ (usually the 64 bits float numbers set prescribed 
+    by IEEE 754). Numbers of $F$ are of the form:
+    $$
+     sign * m * b^e
+    $$
+    $e$ is the exponent and $m$ the mantissa:
+    $$
+     m = d_1 b^{-1} + d_2 b^{-2} + .... + d_p b^{-p}
+    $$
+    where $d_i$, the $p$ digits, are integers in $[0, b-1]$ and $e$ is in 
+    $[emin, emax]$. The number is said \textbf{"normalised"} if $d_1
+    \ne 0$. The following may be got: 
+  \begin{tabular}{|r|l|}
+    input parameter (prop) & output (pr) \\
+  \hline
+   "radix"  & $b$ \\
+   "digits" & $p$ (number of digits) \\
+   "huge"   & max positive float of $F$ \\
+   "tiny"   & min positive normalised float of $F$ \\
+   "denorm" & \%t when denormalised numbers are used \\
+   "tiniest"& min positive denormalised number (*) \\ 
+   "eps"    & epsilon machine (see Remarks here after) \\
+   "minexp" & $emin$ \\
+   "maxexp" & $emax$ \\
+   \end{tabular}
+
+(*) return the tiny number when denormalised numbers are not used.
+
+  %-- section-Remarks
+
+  \paragraph{Remarks}
+    \begin{itemize}
+    \item CAUTION: there are different definitions for the epsilon
+      machine. In this function we use the one from the
+      Goldberg 's paper ``What Every Computer Scientist Should Known 
+      About Floating-Point Arithmetic'' which  is the max
+    relative bound between a real and its floating point approximation
+    (assuming that the absolute value of the real is in $[tiny,
+    huge]$). In more recent works this quantity
+    tends to be call \textbf{u} (probably to avoid
+    confusion). Generally if normal rounding occurs then :
+    $$
+      eps = \frac{1}{2} b^{1-p}
+    $$
+    \item Currently nsp uses only the so called ``double
+      floating-point'' numbers.
+    \item This function uses the lapack routine dlamch to get the
+      machine parameters. The names (radix, digit, huge, etc...) 
+      are those recommended  by the LIA 1 standard and are different 
+      from the corresponding lapack's  ones.
+  \end{itemize}
+
+\end{mandescription}
+  
+% --example 
+
+\begin{examples}
+
+\begin{program}\HCode{b = number_properties("radix")\Hnewline
+eps = number_properties("eps")}
+\end{program}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{nearfloat}{nearfloat}, \manlink{frexp}{frexp}, \manlink{isfinite}{isfinite}, \manlink{isnan}{isnan}, \manlink{isinf}{isinf}  % \manlink{frexp}{frexp}  
+\end{manseealso}
+
+%-- Author
+\begin{authors}
+Bruno Pincon (dlamch 's nsp interface) 
+\end{authors}
+

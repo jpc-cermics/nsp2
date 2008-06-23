@@ -15,13 +15,14 @@
 
 \tableofcontents
 
-%\TocAt{part,likechapter}
+%\TocAt{likepart,likechapter}
 
-
-% fin des essais
+%\part*{Tutorial}\addcontentsline{toc}{part}{Tutorial}
+%\part*{Help pages}\addcontentsline{toc}{part}{Help pages}
 
 \include{datatypes}
 \include{strings}
+\include{numbers}
 \include{misc}
 \include{numerics}
 \include{sorting}
@@ -31,6 +32,7 @@
 \include{system}
 %%\include{model}
 
+%\part*{Topics}\addcontentsline{toc}{part}{Topics}
 
 % \chapter*{Index}
 \printindex \addcontentsline{toc}{chapter}{index}
