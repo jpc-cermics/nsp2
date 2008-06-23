@@ -33,8 +33,7 @@ lets distinguish between these two cases:
 \begin{itemize}
 \item \verb!isreal(x)! (or \verb!isreal(x,%f)!) returns true when 
 \verb!x! is stored as a real variable or when it is stored 
-as a complex variable with all imaginary parts equal
-to zero. 
+as a complex variable with all imaginary parts equal to zero. 
 \item \verb!isreal(x,\%t)! returns true when \verb!x! is stored as a real
 variable and otherwise returns false.
 \end{itemize}
@@ -47,11 +46,11 @@ variable and otherwise returns false.
 \begin{program}\HCode{isreal([1,2])\Hnewline
 isreal(1+0*\%i)\Hnewline
 isreal(1+0*\%i,\%t)\Hnewline
-A = sprand(3,3,0.4);
+A = sprand(3,3,0.4)\Hnewline
 isreal(A)\Hnewline
-B = A + \%i*(0*A);\Hnewline
-isreal(A)\Hnewline
-isreal(A,\%t)}
+B = A + \%i*(0*A)\Hnewline
+isreal(B)\Hnewline
+isreal(B,\%t)}
 \end{program}
 
 \end{examples}
