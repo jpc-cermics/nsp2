@@ -12,6 +12,7 @@
    \begin{verbatim}
      format()
      format(str)
+     format(field)
      format(field, prec)
      format(field, prec, eflag)
    \end{verbatim}
@@ -24,36 +25,39 @@
   \begin{varlist}
    \vname{str} : a string among "long", "medium", "short", "long e", "medium e", "short e"
    \vname{field} : integer max size of characters to print the number
-   \vname{prec} : min number of significative digits
-   \vname{eflag} : boolean scalar.
+   \vname{prec} : min number of significative digits (default is 4)
+   \vname{eflag} : boolean scalar, should be \%t to force number
+   display with the form mantissa and exponent part (default is \%f).
   \end{varlist}
 
   \end{parameters}
 
   \begin{mandescription}
     Sets the current printing format. Default is "short" and
-    correspond to prec=4, field=11, eflag=\%f. Using
-    "long", "medium", "short" or the form \verb+format(field, prec)+
+    correspond to prec=4, field=11, eflag=\%f (see the following
+    table). Using  "long", "medium", "short" or the form \verb+format(field, prec)+
     or \verb+format(field, prec, %f)+ leads to a ``variable format'' 
     which tries to use a fixed point notation when possible (that
-    is when the number magnitude is not too large or too small) and 
-    otherwise writes the number with a mantissa plus an exponent
-    part.
+    is if the fixed point notation with at least $prec$ significant digits
+    inside the max $field$ chars is possible). Otherwise the number is
+    written with a mantissa plus an exponent part.
 
     On the other hand using  "long e", "medium e", "short e" or
-     \verb+format(field, prec, %t)+  displays always numbers
-    with mantissa plus exponent part.
+     \verb+format(field, prec, %t)+  displays numbers always
+    with a mantissa and an exponent part.
 
     \verb+format()+ lets recover the default format.
 
-  \begin{tabular}{|c|c|c|}
-     string & field & prec \\
+  \begin{tabular}{|c|c|c|c|}
+     string  & field & prec & eflag \\
   \hline
-   "short"   & 11 & 4 \\
-   "medium"  & 18 & 11 \\
-   "long"    & 23 & 16 \\
+   "short"   & 11    & 4    &  \%f \\
+   "short e" & 11    & 4    &  \%t \\
+   "medium"  & 18    & 11   &  \%f \\
+   "medium e"& 18    & 11   &  \%t \\
+   "long"    & 23    & 16   &  \%f \\
+   "long e"  & 23    & 16   &  \%t \\
    \end{tabular}
-
 
   \end{mandescription}
 
@@ -79,7 +83,7 @@ x = 0.0000001234}
 
   %-- see also
 
-\begin{manseealso}
+%\begin{manseealso}
 % \manlink{write}{write} \manlink{disp}{disp} \manlink{print}{print}  
-\end{manseealso}
+%\end{manseealso}
 
