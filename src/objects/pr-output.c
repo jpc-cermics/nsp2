@@ -33,8 +33,8 @@
 #include "nsp/sciio.h"
 
 user_preferences user_pref= {
-  10 ,/* output_max_field_width; */
-  3 ,/* output_precision;	*/
+  11 ,/* output_max_field_width; */
+  4 ,/* output_precision;	*/
   1 ,/* split_long_rows;		*/
   0 ,/* print empty dimensions   */
   0 ,/* pr_as_read_syntax;	*/
