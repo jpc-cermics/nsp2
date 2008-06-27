@@ -1,0 +1,62 @@
+% -*- mode: latex -*-
+
+\mansection{kernel}
+\begin{mandesc}
+  \short{kernel}{computes an orthonormal basis of the null space of a matrix}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[kerA] = kernel(A) 
+[kerA] = kernel(A,tol=rscal,meth=str) 
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} :  numerical matrix (says of size $m \times n$).
+    \vname{tol=rscal} : optional named argument, \verb+rscal+ must be  a real scalar in (0,1) (default \verb+max(m,n)*%eps+).
+    \vname{meth=str} : optional named argument, a string among "svd" (default) or "qr"
+    \vname{kerA} : numerical matrix.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an orthonormal basis of the null space of the
+matrix $A$ :
+$$
+    Null(A) = \{ x : Ax = 0 \} 
+$$
+ If $A$ has size $m \times n$ then $kerA$ should have 
+size $n \times p$ where $p$ is the dimension of  $Null(A)$ 
+and the basis is formed by the column vectors of $kerA$. 
+\begin{itemize}
+\item By default or when  meth="svd", the null space orthonormal basis 
+is computed from the singular value factorization of $A$ and by 
+neglecting the singular values less than $tol \times \sigma_1$
+($\sigma_1$ being the larger singular value). 
+\item When  meth="qr", $kerA$ is computed from a \manlink{qr}{qr} 
+factorization of $A'$. This is faster than using the svd but 
+the cut level is computed from an estimation only of the min 
+and max singular values.
+\end{itemize}
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{A=randn(6,5);\Hnewline
+kerA=kernel(A) // should be 5 x 0 empty matrix \Hnewline
+// define the last column as a linear combinaison of the others\Hnewline
+A(:,$) = sum(A(:,1:$-1),2);\Hnewline
+kerA=kernel(A) // should be now 5 x 1}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{qr}, \manlink{orth}{orth}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   Bruno Pincon
+\end{authors}

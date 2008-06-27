@@ -1,0 +1,78 @@
+% -*- mode: latex -*-
+
+\mansection{has}
+\begin{mandesc}
+  \short{has}{(method) test if a vector or list has a given element}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+b = M.has[elem]
+[b, ind] = M.has[elem]
+[b, i, j] = M.has[elem]
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}:  a vector or matrix (of numbers or strings) or a list
+    or an array of cells
+    \vname{elem}: any nsp object when M is a list or a cells array, a
+    numerical scalar or vector or matrix when M is a numerical matrix 
+    or a string, a vector/matrix of strings when M is a matrix
+    of strings.
+    \vname{b}: a scalar boolean (or a vector of booleans)               
+    \vname{ind, i, j}: indices (or vectors of indices)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{itemize}
+\item  If $M$ is a list or an array of cells, this method looks if $M$
+  has the element $elem$. If yes $b$ is true and the first index $ind$ 
+  of $elem$ in $M$ ($M(ind)==elem$) could be provided (for a array
+  of cells you can use the third form to get the first index in terms
+  of (row,column) indexing). When $elem$ is not in $M$ then $b$ is false
+  and $ind$ or $i$ and $j$ are set to 0.
+
+\item If $M$ is a numerical or strings matrix, $elem$ could be a scalar but
+  also a vector or matrix. In this case $b$, $ind$ (or $i$
+  and $j$ for (row,column) indexing) have the same meaning than before
+  but take the same vector or matrix form than $elem$ ($b(i)$ is true
+  if $M$ has $elem(i)$ as element.
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example 1} using has with a list or a cells array. 
+\begin{program}\HCode{L=list(0, "toto", [0;0], \%t)\Hnewline
+L.has["toto"]\Hnewline
+L.has[\%f]\Hnewline
+[b,ind] = L.has["toto"]\Hnewline
+// same example with an array of cells\Hnewline
+C = {0, "toto", [0;0], \%t}\Hnewline
+C.has["toto"]\Hnewline
+C.has[\%f]\Hnewline
+[b,ind] = C.has["toto"]\Hnewline
+[b,i,j] = C.has["toto"]}
+\end{program}
+   
+\paragraph{example 2} using has with a numerical matrix
+\begin{program}\HCode{M=[0,-1, 2, 4, 9]\Hnewline
+M.has[[2,3,4]]\Hnewline
+[b,ind]=M.has[[2,3,4]]}
+\end{program}
+   
+\end{examples}
+
+\begin{manseealso}
+  \manlink{find}{find}, \manlink{bsearch}{bsearch}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}

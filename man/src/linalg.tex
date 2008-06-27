@@ -1,8 +1,5 @@
 \chapter*{linear algebra}\addcontentsline{toc}{chapter}{linear algebra}
 
-\HCode{<hr>}
-Various matrix factorizations
-
 \begin{quote}
 \noindent
 \hyperlink{qr}{qr} - QR factorization\\
@@ -11,13 +8,8 @@ Various matrix factorizations
 - LU factorization (for sparse matrix) \\
 \hyperlink{spec}{spec} - matrix spectrum, eigenvalues and eigenvectors\\
 \hyperlink{solve}{solve} - solve a linear system\\
-\end{quote}
-
-\HCode{<hr>}
-Matrix characteristic numbers and structure properties
-
-\begin{quote}
-\noindent
+\hyperlink{kernel}{kernel} - computes an orthonormal basis of the null space of a matrix\\
+\hyperlink{orth}{orth} - computes an orthonormal basis of the range of a matrix\\
 \hyperlink{norm}{norm} - vector and matrix norm\\
 \hyperlink{rcond}{rcond} - estimation of the reciprocal condition in 1-norm\\
 \hyperlink{issymmetric}{issymmetric} - symmetry or hermitian test\\
@@ -30,6 +22,8 @@ Matrix characteristic numbers and structure properties
 \input linalg/spec.tex 
 \input linalg/chol.tex 
 \input linalg/solve.tex 
+\input linalg/kernel.tex
+\input linalg/orth.tex
 \input linalg/norm.tex 
 \input linalg/rcond.tex 
 \input linalg/properties.tex 
