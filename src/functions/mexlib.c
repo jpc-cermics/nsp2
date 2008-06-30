@@ -254,7 +254,7 @@ double *mxGetPr(const mxArray *ptr)
     }
   else if ( IsString(ptr) )
     {
-      return ((NspSMatrix *) ptr)->S[0];
+      return (double *)  ((NspSMatrix *) ptr)->S[0];
     }
   Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
@@ -634,26 +634,35 @@ void *mxCalloc(unsigned int n, unsigned int size)
  * @strl: maximum number of characters which can be writen in @str.
  * 
  * 
- * Return in @str at most @strl characters from first element of 
- * string NspMatrix pointed by @ptr (@ptr is assumed to be a String NspMatrix ).
- * The returned string can be non #NULL terminated.
+ * Return in @str at most @strl -1 characters from the string matrix 
+ * pointed by @ptr (If @ptr is a mxn String NspMatrix, the str will contain 
+ * the concatenation of the strings contained in @ptr).
+ * The string @str is always #NULL terminated. 
  * 
- * Return value: 0 on success and error jump in case of error.
+ * Return value: 0 on success and 1 in case of error. The possible reasons for error are: 
+ *  @ptr is not a string mxArray.
+ *  @strl is less than the number of characters needed to store the entire mxArray 
+ *  pointed to by @str. If this is the case, 1 is returned and the string is truncated.
  **/
 
 int mxGetString(const mxArray *ptr, char *str, int strl)
 {
+  int rep;
   nsp_string message;
   const NspSMatrix *A = (const NspSMatrix *) ptr;
-  if ( ! IsSMat(ptr) ) nsp_mex_errjump();
+  if ( ! IsSMat(ptr) ) {
+    str[0]='\0';    return 1;
+  }
   message =nsp_smatrix_elts_concat(A,"",1,"",1);
   if ( message == NULL) 
     {
       nsp_mex_errjump();
     }
-  strncpy(str,message,strl);
+  strncpy(str,message,strl-1);
+  str[strl-1]='\0';
+  rep = (strlen(message) > strl-1) ? 1: 0;
   nsp_string_destroy(&message);
-  return 0;
+  return rep;
 }
 
 /**
@@ -1937,13 +1946,28 @@ mxArray *mxCreateNumericArray(int ndim, const int *dims,
 	      Scierror("Error: mxCreateNumericArray with mxchar only works with dims[0]==1\n");
 	    }
 	  /* dims[0] strings, each string is of length (strlen) dims[1] */
-	  S = (mxArray *) nsp_smatrix_create_with_length(NVOID,dims[0],1,dims[1]);
+	  S = nsp_smatrix_create_with_length(NVOID,dims[0],1,dims[1]);
 	  /* be sure that string is not null terminated */
 	  S->S[0][dims[1]] = '\0';
 	  return (mxArray *) S;
 	}
     }
-  Scierror("Error: mxCreateNumericArray only works for doubles/char and 2dims\n");
+  else if ( ndim == 0) 
+    {
+      if ( class == mxDOUBLE_CLASS )
+	{
+	  return mxCreateDoubleMatrix(0,0,ComplexFlag);
+	}
+      else if ( class == mxCHAR_CLASS ) 
+	{
+	  NspSMatrix *S;
+	  /* dims[0] strings, each string is of length (strlen) dims[1] */
+	  S = nsp_smatrix_create_with_length(NVOID,0,0,0);
+	  /* be sure that string is not null terminated */
+	  return (mxArray *) S;
+	}
+    }
+  Scierror("Error: mxCreateNumericArray only works for doubles/char and 2 dims\n");
   nsp_mex_errjump();   
   return NULL;
 }
