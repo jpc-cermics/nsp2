@@ -1475,10 +1475,11 @@ NspSMatrix*nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind)
     return(Loc);
   for ( i = 0 ; i < A->mn ; i ++) 
     {
+      int strlen_i =  (int) strlen(A->S[i]);
       for ( k =0; k < Ind->mn ; k++ ) 
 	{
 	  ind = ((int) Ind->R[k])-1;
-	  if ( ind < 0 || ind >= (int) strlen(A->S[i]))
+	  if ( ind < 0 || ind >= strlen_i )
 	    Loc->S[i][k]=' ';
 	  else 
 	    Loc->S[i][k] = A->S[i][ind];
