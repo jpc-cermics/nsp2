@@ -192,6 +192,7 @@ extern mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
 				    const char **field_names);
 
 extern mxArray *mexGetVariable(const char *workspace, const char *var_name);
+extern mxArray *mexGetVariablePtr(const char *workspace, const char *var_name);
 extern mxArray *mexGetArray(const char *name, const char *workspace);
 extern void mxSetLogical(mxArray *array_ptr);
 
@@ -218,6 +219,9 @@ extern void mxFreeSparseMtlbTriplet(const mxArray *ptr);
 extern void mxSparseMtlbTripletTonsp(const mxArray *ptr) ;
 
 extern void mexSetTrapFlag(int trapflag);
+
+extern int mexCheck(char *str,int nbvars) ;
+
 
 #ifdef __cplusplus
 }

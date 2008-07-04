@@ -2218,10 +2218,50 @@ mxArray *mexGetVariable(const char *workspace, const char *var_name)
     }
   else
     {
-      Scierror("Error: mexGetVariable workspace %s is not known\n",workspace);
-      nsp_mex_errjump();
+      /* 
+       * Scierror("Error: mexGetVariable workspace %s is not known\n",workspace);
+       * nsp_mex_errjump();
+       */
+      return NULL;
     }
   if ( Obj != NULL ) Obj=nsp_object_copy(Obj);
+  return Obj;
+}
+
+/**
+ * mexGetVariablePtr:
+ * @workspace: "base","caller" or "global"
+ * @var_name:  name of variable to be searched
+ * 
+ * get a variable in a workspace. The variable 
+ * is not copied and should only be used for reading.
+ * 
+ * Return value: a new #mxArray or %NULL
+ **/
+
+mxArray *mexGetVariablePtr(const char *workspace, const char *var_name)
+{
+  mxArray *Obj=NULLOBJ;
+  if (strcmp(workspace,"caller")==0) 
+    {
+      Obj = nsp_frame_search_object(var_name);
+    }
+  else if ( strcmp(workspace,"global")==0) 
+    {
+      Obj = nsp_global_frame_search_object(var_name);
+    }
+  else if ( strcmp(workspace,"base")== 0)
+    {
+      /* this should be changed */
+      Obj = nsp_global_frame_search_object(var_name);
+    }
+  else
+    {
+      return NULL;
+      /* Scierror("Error: mexGetVariable workspace %s is not known\n",workspace);
+       * nsp_mex_errjump();
+       */
+    }
   return Obj;
 }
 
@@ -2600,3 +2640,12 @@ void mexSetTrapFlag(int trapflag)
 {
 
 }
+
+
+int mexCheck(char *str,int nbvars) 
+{ 
+  if ( nbvars != -1 ) 
+    fprintf(stderr,"%s %d\r\n",str,nbvars);
+  return 0 ;
+}
+
