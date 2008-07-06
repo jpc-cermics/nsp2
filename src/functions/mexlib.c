@@ -2224,6 +2224,8 @@ mxArray *mexGetVariable(const char *workspace, const char *var_name)
        */
       return NULL;
     }
+  if ( Obj != NULL && Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
+    Obj = ((NspHobj *) Obj)->O;
   if ( Obj != NULL ) Obj=nsp_object_copy(Obj);
   return Obj;
 }
@@ -2262,6 +2264,8 @@ mxArray *mexGetVariablePtr(const char *workspace, const char *var_name)
        * nsp_mex_errjump();
        */
     }
+  if ( Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
+    Obj = ((NspHobj *) Obj)->O;
   return Obj;
 }
 
