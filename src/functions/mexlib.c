@@ -2264,7 +2264,7 @@ mxArray *mexGetVariablePtr(const char *workspace, const char *var_name)
        * nsp_mex_errjump();
        */
     }
-  if ( Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
+  if ( Obj != NULL &&  Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
     Obj = ((NspHobj *) Obj)->O;
   return Obj;
 }
