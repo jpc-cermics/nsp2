@@ -961,13 +961,26 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	    Scierror("\n");
 	  if ( stack.val->errcatch == FALSE ) 
 	    {
+	      int stop;
 	      nsp_error_message_show();
 	      Sciprintf("\tEntering a pause in function %s\n",Feval->next->O);
 	      inc_pause_prompt();
-	      nsp_parse_eval_from_std(1);
+	      stop= nsp_parse_eval_from_std(1);
 	      dec_pause_prompt();
 	      nsp_readline_clear_line();
-	      Sciprintf("\treturning from %s with error\n",Feval->next->O);
+	      /* 
+	       * here we must know if nsp_parse_eval_from_std was stopped 
+	       * by a quit or a abort.
+	       */
+	      if ( stop == RET_ABORT ) 
+		{
+		  Sciprintf("\tAborting %s execution\n",Feval->next->O);
+		  return RET_ABORT;
+		}
+	      else 
+		{
+		  Sciprintf("\treturning from %s with error\n",Feval->next->O);
+		}
 	    }
 	  return RET_BUG ; /* we want here the next error message */
 	}

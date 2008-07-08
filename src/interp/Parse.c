@@ -530,7 +530,10 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
   static int count = 0;
   int err,rep,  first =0;
   PList plist = NULLPLIST ;
+  int errcatch_cur = SciStack.val->errcatch;
+  int pause_cur = SciStack.val->pause;
   count++;
+  /* must be reset at the end */
   SciStack.val->errcatch = errcatch; 
   SciStack.val->pause = pause; 
   if ( count != 1 ) 
@@ -560,7 +563,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 	      count--;
 	      if ( errcatch == FALSE ) nsp_error_message_show();
 	      nsp_plist_destroy(&plist);
-	      return err;
+	      goto ret_err;
 	    }
 	  if (plist != NULLPLIST ) 
 	    {
@@ -575,7 +578,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 		  count--;
 		  if ( errcatch == FALSE ) nsp_error_message_show();
 		  nsp_plist_destroy(&plist);
-		  return err;
+		  goto ret_err;
 		}
 	    }
 	}
@@ -605,7 +608,13 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
     {
       *Ob = NULL;  Ob++;
     }
+  SciStack.val->errcatch= errcatch_cur; 
+  SciStack.val->pause= pause_cur;
   return RET_CTRLC;
+ ret_err:
+  SciStack.val->errcatch= errcatch_cur; 
+  SciStack.val->pause= pause_cur;
+  return err;
 }
 
 
