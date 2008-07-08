@@ -693,12 +693,13 @@ char *mxArrayToString(const mxArray *ptr)
  * mxFreeMatrix:
  * @ptr: a pointer 
  * 
- * XXXX : to be done 
+ *
  * 
  **/
 
 void mxFreeMatrix (mxArray *ptr)
 {
+  nsp_object_destroy(&ptr);
   return ;
 }
 
