@@ -374,7 +374,8 @@ linux_play (int argc, char *argv [])
 	} ;
 
       if (sfinfo.channels < 1 || sfinfo.channels > 2)
-	{	printf ("Error : channels = %d.\n", sfinfo.channels) ;
+	{	
+	  printf ("Error : channels = %d.\n", sfinfo.channels) ;
 	  continue ;
 	} ;
 
@@ -546,7 +547,8 @@ macosx_play (int argc, char *argv [])
   count = sizeof (AudioDeviceID) ;
   if ((err = AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice,
 				       &count, (void *) &(audio_data.device))) != noErr)
-    {	printf ("AudioHardwareGetProperty (kAudioDevicePropertyDefaultOutputDevice) failed.\n") ;
+    {	
+      printf ("AudioHardwareGetProperty (kAudioDevicePropertyDefaultOutputDevice) failed.\n") ;
       return ;
     } ;
 
@@ -554,7 +556,8 @@ macosx_play (int argc, char *argv [])
   count = sizeof (UInt32) ;
   if ((err = AudioDeviceGetProperty (audio_data.device, 0, false, kAudioDevicePropertyBufferSize,
 				     &count, &buffer_size)) != noErr)
-    {	printf ("AudioDeviceGetProperty (kAudioDevicePropertyBufferSize) failed.\n") ;
+    {	
+      printf ("AudioDeviceGetProperty (kAudioDevicePropertyBufferSize) failed.\n") ;
       return ;
     } ;
 
@@ -562,7 +565,8 @@ macosx_play (int argc, char *argv [])
   count = sizeof (AudioStreamBasicDescription) ;
   if ((err = AudioDeviceGetProperty (audio_data.device, 0, false, kAudioDevicePropertyStreamFormat,
 				     &count, &(audio_data.format))) != noErr)
-    {	printf ("AudioDeviceGetProperty (kAudioDevicePropertyStreamFormat) failed.\n") ;
+    {	
+      printf ("AudioDeviceGetProperty (kAudioDevicePropertyStreamFormat) failed.\n") ;
       return ;
     } ;
 
@@ -590,7 +594,8 @@ macosx_play (int argc, char *argv [])
 
       if ((err = AudioDeviceSetProperty (audio_data.device, NULL, 0, false, kAudioDevicePropertyStreamFormat,
 					 sizeof (AudioStreamBasicDescription), &(audio_data.format))) != noErr)
-	{	printf ("AudioDeviceSetProperty (kAudioDevicePropertyStreamFormat) failed.\n") ;
+	{	
+	  printf ("AudioDeviceSetProperty (kAudioDevicePropertyStreamFormat) failed.\n") ;
 	  return ;
 	} ;
 
@@ -601,7 +606,8 @@ macosx_play (int argc, char *argv [])
       /* Fire off the device. */
       if ((err = AudioDeviceAddIOProc (audio_data.device, macosx_audio_out_callback,
 				       (void *) &audio_data)) != noErr)
-	{	printf ("AudioDeviceAddIOProc failed.\n") ;
+	{	
+	  printf ("AudioDeviceAddIOProc failed.\n") ;
 	  return ;
 	} ;
 
@@ -615,13 +621,15 @@ macosx_play (int argc, char *argv [])
 	usleep (10 * 1000) ; /* 10 000 milliseconds. */
 
       if ((err = AudioDeviceStop (audio_data.device, macosx_audio_out_callback)) != noErr)
-	{	printf ("AudioDeviceStop failed.\n") ;
+	{	
+	  printf ("AudioDeviceStop failed.\n") ;
 	  return ;
 	} ;
 
       err = AudioDeviceRemoveIOProc (audio_data.device, macosx_audio_out_callback) ;
       if (err != noErr)
-	{	printf ("AudioDeviceRemoveIOProc failed.\n") ;
+	{	
+	  printf ("AudioDeviceRemoveIOProc failed.\n") ;
 	  return ;
 	} ;
 
@@ -740,7 +748,8 @@ win32_play (int argc, char *argv [])
   audio_data.hwave = 0 ;
 
   for (k = 1 ; k < argc ; k++)
-    {	printf ("Playing %s\n", argv [k]) ;
+    {	
+      printf ("Playing %s\n", argv [k]) ;
 
       if (! (audio_data.sndfile = sf_open (argv [k], SFM_READ, &(audio_data.sfinfo))))
 	{	puts (sf_strerror (NULL)) ;
@@ -786,13 +795,15 @@ win32_play (int argc, char *argv [])
 
       /* Prepare the WAVEHDRs */
       if ((error = waveOutPrepareHeader (audio_data.hwave, &(audio_data.whdr [0]), sizeof (WAVEHDR))))
-	{	printf ("waveOutPrepareHeader [0] failed : %08X\n", error) ;
+	{	
+	  printf ("waveOutPrepareHeader [0] failed : %08X\n", error) ;
 	  waveOutClose (audio_data.hwave) ;
 	  continue ;
 	} ;
 
       if ((error = waveOutPrepareHeader (audio_data.hwave, &(audio_data.whdr [1]), sizeof (WAVEHDR))))
-	{	printf ("waveOutPrepareHeader [1] failed : %08X\n", error) ;
+	{	
+	  printf ("waveOutPrepareHeader [1] failed : %08X\n", error) ;
 	  waveOutUnprepareHeader (audio_data.hwave, &(audio_data.whdr [0]), sizeof (WAVEHDR)) ;
 	  waveOutClose (audio_data.hwave) ;
 	  continue ;
@@ -845,20 +856,23 @@ solaris_play (int argc, char *argv [])
   int				audio_fd, error, done ;
 
   for (k = 1 ; k < argc ; k++)
-    {	printf ("Playing %s\n", argv [k]) ;
+    {	
+      printf ("Playing %s\n", argv [k]) ;
       if (! (sndfile = sf_open (argv [k], SFM_READ, &sfinfo)))
 	{	puts (sf_strerror (NULL)) ;
 	  continue ;
 	} ;
 
       if (sfinfo.channels < 1 || sfinfo.channels > 2)
-	{	printf ("Error : channels = %d.\n", sfinfo.channels) ;
+	{
+	  printf ("Error : channels = %d.\n", sfinfo.channels) ;
 	  continue ;
 	} ;
 
       /* open the audio device - write only, non-blocking */
       if ((audio_fd = open ("/dev/audio", O_WRONLY | O_NONBLOCK)) < 0)
-	{	perror ("open (/dev/audio) failed") ;
+	{	
+	  perror ("open (/dev/audio) failed") ;
 	  return ;
 	} ;
 

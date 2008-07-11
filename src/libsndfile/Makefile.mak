@@ -9,12 +9,12 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib
 
-CFLAGS = $(CC_OPTIONS)
+CFLAGS = $(CC_OPTIONS) -DWITH_PLAY 
 FFLAGS = $(FC_OPTIONS)
 
 #sndfile-play.obj
 
-OBJSC = sndfileobj.obj 
+OBJSC = sndfileobj.obj sndfile-play.obj
 OBJSF = 
 
 include ../Make.lib.mak
