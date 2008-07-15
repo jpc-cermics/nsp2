@@ -1020,10 +1020,10 @@ int FindFunctionB(char *key, int Int, int Num)
 void nsp_print_function_table(void)
 {
   unsigned int i;
-  printf("Whole Table\n");
+  Sciprintf("Whole Table\n");
   for ( i = 0 ; i <= hsize ; i++ ) 
     if ( f_htable[i].used )
-      printf("%s %d %d \n",f_htable[i].entry.key,
+      Sciprintf("%s %d %d \n",f_htable[i].entry.key,
 	     f_htable[i].entry.data.Int,f_htable[i].entry.data.Num);
 }
 
