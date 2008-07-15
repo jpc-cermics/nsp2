@@ -1847,23 +1847,28 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	}
       while ( w_flag )
 	{
+	  int dot;
 	  plist1=NULLPLIST;
 	  switch ( T->tokenv.id ) {
+	    
 	  case '(' : 
 	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,')')==FAIL) return FAIL;
-	    if ( T->tokenv.id != '.' && T->tokenv.id != '('  
+	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	    if ( !dot && T->tokenv.id != '('  
 		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
 	      w_flag =0;
 	    break;
 	  case '[' :
 	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,']')==FAIL) return FAIL;
-	    if ( T->tokenv.id != '.' && T->tokenv.id != '('
+	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	    if ( !dot  && T->tokenv.id != '('
 		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
 	      w_flag =0;
 	    break;
 	  case '{' :
 	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,'}')==FAIL) return FAIL;
-	    if ( T->tokenv.id != '.' && T->tokenv.id != '(' 
+	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	    if ( !dot && T->tokenv.id != '(' 
 		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
 	      w_flag =0;
 	    break;
