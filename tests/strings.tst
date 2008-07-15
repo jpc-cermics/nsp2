@@ -40,7 +40,7 @@ if or(length(["poo",'f'])<>[3,1]) then pause,end
 //string
 // m2s
 if m2s(1)<>'1' then pause,end
-if m2s(1.5)<>'1.500' then pause,end
+if m2s(1.5)<>'1.5000' then pause,end
 if m2s(1.5,"%5.2f")<>' 1.50' then pause,end
 if or(m2s(1:3,"%.0f")<>['1','2','3']) then pause,end
 if or(m2s([1;2;3],"%.0f")<>['1';'2';'3']) then pause,end
