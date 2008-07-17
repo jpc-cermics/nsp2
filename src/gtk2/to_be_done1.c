@@ -393,10 +393,6 @@ void nsp_init_gtk_types(void)
 #if GTK_CHECK_VERSION(2,6,0)
   new_type_gtkcellview(T_BASE);
 #endif 
-  new_type_gtkaction(T_BASE);
-  new_type_gtkactiongroup(T_BASE);
-  new_type_gtktoggleaction(T_BASE);  
-  new_type_gtkradioaction(T_BASE);
   add_constants();
 }
 
@@ -407,6 +403,11 @@ void nsp_init_gtk_types_added(void)
 {
   /* from glib */
   new_type_gdate(T_BASE);
+  /* for gtk */
+  new_type_gtkaction(T_BASE);
+  new_type_gtkactiongroup(T_BASE);
+  new_type_gtktoggleaction(T_BASE);  
+  new_type_gtkradioaction(T_BASE);
 }
 
 /*

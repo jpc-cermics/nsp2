@@ -68,7 +68,7 @@ static NspObject *gobject_path_extract(NspGObject *A,int n, NspObject **Objs, in
 
 #define NSP_GOBJECT_GET(ob) ((NspGObject *) ob)->obj 
 
-extern NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type);
+extern NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type);
 extern NspGObject *gobject_gettype_and_create(char *name,  GObject *obj);
 extern NspGObject *gobject_copy(NspGObject *H);
 extern void gobject_destroy(NspGObject *H);
@@ -85,7 +85,7 @@ extern NspGObject *GetGObject (Stack stack, int i);
 
 extern void nspg_destroy_notify(gpointer user_data);
 
-extern NspGObject *nspgobject_new(GObject *go);
+extern NspGObject *nspgobject_new(const char *,GObject *go);
 extern int nspgobject_check(void *value, void *type); 
 #define nspgobject_get(x) ((NspGObject *) x)->obj
 
