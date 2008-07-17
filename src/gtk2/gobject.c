@@ -349,7 +349,7 @@ NspGObject  *GetGObject(Stack stack, int i)
  * constructor for gobject or derived classes 
  */
 
-NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type)
+NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
 {
   NspGObject *H = (type == NULL) ? new_gobject() : type->new();
   if ( H ==  NULLGOBJECT)
@@ -1127,10 +1127,10 @@ int nspgobject_check(void *value, void *type)
 
 /* sans doute à reprendre XXXXXX */
 
-NspGObject *nspgobject_new(GObject *obj)
+NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
   NspTypeBase *type = nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(obj)));
-  return gobject_create(NVOID,obj,type);
+  return gobject_create(name,obj,type);
 }
 
 /**
@@ -1964,6 +1964,7 @@ void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype)
 NspObject *
 nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 {
+  gpointer *gobj;
   NspMatrix *M; 
 
   switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(value))) 
@@ -2047,7 +2048,13 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       Scierror("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
       return NULL;
     case G_TYPE_OBJECT:
-      return (NspObject *) gobject_create(NVOID, g_value_get_object(value),nsp_type_from_gtype(G_VALUE_TYPE(value)));
+      /* we need here to return the most specific NspObject which contains the GObject */ 
+      gobj = g_value_get_object(value);
+      return (NspObject *) gobject_create(NVOID,(GObject *)gobj, nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
+      /* 
+      * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
+      *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
+      */
     default:
       break;
     }
