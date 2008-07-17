@@ -2297,6 +2297,23 @@
   (gtype-id "GTK_TYPE_ACTION")
 )
 
+;; added July 2008 
+
+(define-object ToggleAction
+  (in-module "Gtk")
+  (parent "GtkAction")
+  (c-name "GtkToggleAction")
+  (gtype-id "GTK_TYPE_TOGGLE_ACTION")
+)
+
+;; added July 2008 
+(define-object RadioAction
+  (in-module "Gtk")
+  (parent "GtkToggleAction")
+  (c-name "GtkRadioAction")
+  (gtype-id "GTK_TYPE_RADIO_ACTION")
+)
+
 (define-object ActionGroup
   (in-module "Gtk")
   (parent "GObject")
