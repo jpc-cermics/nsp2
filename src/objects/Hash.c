@@ -182,7 +182,10 @@ int nsp_hash_get_next_object(NspHash *H, int *i, NspObject **O)
   
 int nsp_hash_enter_copy(NspHash *H, NspObject *O)
 {
+  const char *str; 
   if ( O == NULLOBJ) return FAIL; 
+  str = nsp_object_get_name(O);
+  if ( str[0]=='\0') return FAIL;
   if ( H->filled >= 2*(H->hsize/3) ) 
     {
       if (nsp_hash_resize(H,2*H->hsize) == FAIL ) 
@@ -191,7 +194,7 @@ int nsp_hash_enter_copy(NspHash *H, NspObject *O)
 	  return FAIL;
 	}
     }
-  return( nsp_hsearch(H,nsp_object_get_name(O),&O,H_ENTER_COPY));
+  return( nsp_hsearch(H,str,&O,H_ENTER_COPY));
 }
 
 #define FAIL_FULL -2
@@ -208,7 +211,10 @@ int nsp_hash_enter_copy(NspHash *H, NspObject *O)
 
 int nsp_hash_enter(NspHash *H, NspObject *O)
 {
+  const char *str; 
   if ( O == NULLOBJ) return FAIL; 
+  str = nsp_object_get_name(O);
+  if ( str[0]=='\0') return FAIL;
   if ( H->filled >= 2*(H->hsize/3) ) 
     {
       if (nsp_hash_resize(H,2*H->hsize) == FAIL ) 
@@ -217,7 +223,7 @@ int nsp_hash_enter(NspHash *H, NspObject *O)
 	  return FAIL;
 	}
     }
-  return( nsp_hsearch(H,nsp_object_get_name(O),&O,H_ENTER));
+  return( nsp_hsearch(H,str,&O,H_ENTER));
 }
 
 /**
