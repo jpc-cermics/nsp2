@@ -2453,7 +2453,7 @@ _wrap_pango_context_list_families(NspGObject *self)
   for (i = 0; i < n_families; i++) {
     NspObject *family;
 
-    family = (NspObject *)nspgobject_new((GObject *)families[i]);
+    family = (NspObject *)nspgobject_new(NVOID,(GObject *)families[i]);
     NspTuple_SetItem(ret, i, family);
   }
   g_free(families);
@@ -3344,7 +3344,7 @@ _wrap_pango_font_family_list_faces(NspGObject *self)
   
   ret = NspTuple_New(n_faces);
   for (i = 0; i < n_faces; i++) {
-    NspObject *face = (NspObject *)nspgobject_new((GObject *)faces[i]);
+    NspObject *face = (NspObject *)nspgobject_new(NVOID,(GObject *)faces[i]);
     NspTuple_SetItem(ret, i, face);
   }
   g_free(faces);
@@ -3632,7 +3632,7 @@ _wrap_pango_font_map_list_families(NspGObject *self)
 			       &n_families);
   ret = NspTuple_New(n_families);
   for (i = 0; i < n_families; i++) {
-    NspObject *family= (NspObject *) nspgobject_new((GObject *)families[i]);
+    NspObject *family= (NspObject *) nspgobject_new(NVOID,(GObject *)families[i]);
     NspTuple_SetItem(ret, i, family);
   }
   g_free(families);

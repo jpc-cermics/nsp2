@@ -2048,7 +2048,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
   NspObject *nsp_model,*nsp_path; 
   if (gtk_tree_get_row_drag_data(nspg_boxed_get(self, GtkSelectionData), &tree_model, &path)) 
     {
-      nsp_model = (NspObject *)  nspgobject_new((GObject *)tree_model);
+      nsp_model = (NspObject *)  nspgobject_new(NVOID,(GObject *)tree_model);
       nsp_path =  (NspObject *)  nsp_gtk_tree_path_to_nspobject(path);
       gtk_tree_path_free(path);
       if ( nsp_model == NULL || nsp_path == NULL) return RET_BUG; 
@@ -2408,7 +2408,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   GdkBitmap *ret;
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_stipple;
   /* nspgobject_new handles NULL checking */
-  return (NspObject *) nspgobject_new((GObject *)ret);
+  return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
 #line 2414 "gtk24.c"
 #line 6542 "gtk24.override"
@@ -2419,7 +2419,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
 
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_stipple;
   /* nspgobject_new handles NULL checking */
-  return (NspObject *) nspgobject_new((GObject *)ret);
+  return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
 #line 2425 "gtk24.c"
 #line 6553 "gtk24.override"
@@ -3078,7 +3078,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new((GObject *)tmp->data),g_slist_free);
+  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 #line 3084 "gtk24.c"
 
@@ -3204,7 +3204,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new((GObject *)tmp->data),g_slist_free);
+  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 #line 3210 "gtk24.c"
 
@@ -15484,8 +15484,8 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
   GtkTooltips *tips = GTK_TOOLTIPS(self->obj);
   GtkTooltipsData *data = tips->active_tips_data;
   if (data == NULL) return NULL;
-  return (NspObject *)BuildListFromArgs(T, nspgobject_new((GObject *)data->tooltips),
-			   nspgobject_new((GObject *)data->widget),
+  return (NspObject *)BuildListFromArgs(T, nspgobject_new(NVOID,(GObject *)data->tooltips),
+			   nspgobject_new(NVOID,(GObject *)data->widget),
 			   data->tip_text, data->tip_private);
 }
 #line 15492 "gtk24.c"
@@ -18940,7 +18940,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   context = gtk_drag_begin(GTK_WIDGET(self->obj), targets, actions, button,
 			   nspg_boxed_get(event, GdkEvent));
   gtk_target_list_unref(targets);
-  if ((nsp_ret = (NspObject *) nspgobject_new((GObject *)context))==NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)context))==NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29766,7 +29766,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   }
 
   if (column != NULL) {
-    nsp_column =(NspObject *) nspgobject_new((GObject*)column);
+    nsp_column =(NspObject *) nspgobject_new(NVOID,(GObject*)column);
   } else {
     nsp_path =(NspObject *) nsp_none_create(NVOID,NULL);
   }
@@ -29810,7 +29810,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
       else 
 	nsp_path =(NspObject *) nsp_none_create(NVOID,NULL);
       if ( nsp_path == NULL) return RET_BUG; 
-      if ((nsp_column =(NspObject *) nspgobject_new((GObject *)column)) == NULL) return RET_BUG; 
+      if ((nsp_column =(NspObject *) nspgobject_new(NVOID,(GObject *)column)) == NULL) return RET_BUG; 
       return RetArgs(stack,lhs,ret_T, nsp_path,nsp_column,cell_x,cell_y);
     }
   Scierror("%s: failed to get path\n",NspFname(stack));

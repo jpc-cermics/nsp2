@@ -405,7 +405,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "is_hint"))
 	return nsp_new_double_obj((double) (event->motion.is_hint));
       if (!strcmp(attr, "device"))
-	return (NspObject *) nspgobject_new((GObject *)event->motion.device);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->motion.device);
       if (!strcmp(attr, "x_root"))
 	return nsp_new_double_obj((double)event->motion.x_root);
       if (!strcmp(attr, "y_root"))
@@ -441,7 +441,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "button"))
 	return nsp_new_double_obj((double) (event->button.button));
       if (!strcmp(attr, "device"))
-	return (NspObject *) nspgobject_new((GObject *)event->button.device);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->button.device);
       if (!strcmp(attr, "x_root"))
 	return nsp_new_double_obj((double)event->button.x_root);
       if (!strcmp(attr, "y_root"))
@@ -475,7 +475,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "__attrs"))
 	return (NspObject *)nsp_smatrix_create_from_table(tab);
       if (!strcmp(attr, "subwindow"))
-	return (NspObject *) nspgobject_new((GObject *)event->crossing.subwindow);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->crossing.subwindow);
       if (!strcmp(attr, "time"))
 	return nsp_new_double_obj((double) (event->crossing.time));
       if (!strcmp(attr, "x"))
@@ -563,7 +563,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "time"))
 	return nsp_new_double_obj((double) (event->proximity.time));
       if (!strcmp(attr, "device"))
-	return (NspObject *) nspgobject_new((GObject *)event->proximity.device);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->proximity.device);
       break;
     }
   case GDK_DRAG_ENTER:        /* GdkEventDND               dnd*/
@@ -577,7 +577,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "__attrs"))
 	return (NspObject *)nsp_smatrix_create_from_table(tab);
       if (!strcmp(attr, "context"))
-	return (NspObject *) nspgobject_new((GObject *)event->dnd.context);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->dnd.context);
       if (!strcmp(attr, "time"))
 	return nsp_new_double_obj((double) (event->dnd.time));
       if (!strcmp(attr, "x_root"))
@@ -628,7 +628,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "direction"))
 	return nsp_new_double_obj((double) (event->scroll.direction));
       if (!strcmp(attr, "device"))
-	return (NspObject *) nspgobject_new((GObject *)event->scroll.device);
+	return (NspObject *) nspgobject_new(NVOID,(GObject *)event->scroll.device);
       if (!strcmp(attr, "x_root"))
 	return nsp_new_double_obj((double)event->scroll.x_root);
       if (!strcmp(attr, "y_root"))
@@ -663,7 +663,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   if (!strcmp(attr, "type"))
     return nsp_new_double_obj((double) (event->type));
   if (!strcmp(attr, "window"))
-    return (NspObject *) nspgobject_new((GObject *)event->any.window);
+    return (NspObject *) nspgobject_new(NVOID,(GObject *)event->any.window);
   if (!strcmp(attr, "send_event"))
     return nsp_new_double_obj((double) (event->any.send_event));
   if (!strcmp(attr, "__attrs"))
@@ -3140,7 +3140,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   gdk_drag_find_window(GDK_DRAG_CONTEXT(self->obj),
 		       GDK_WINDOW(drag_window->obj), x_root, y_root,
 		       &dest_window, &protocol);
-  if ((ret = (NspObject *) nspgobject_new((GObject *)dest_window)) == NULL)  return RET_BUG;
+  if ((ret = (NspObject *) nspgobject_new(NVOID,(GObject *)dest_window)) == NULL)  return RET_BUG;
   MoveObj(stack,1,ret);
   if ( nsp_move_double(stack,2,(double) protocol)== FAIL) return RET_BUG;
   return 2;
@@ -4297,7 +4297,7 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     targets = g_list_append(targets, GUINT_TO_POINTER((guint)nsp_targets->R[i]));
   context = gdk_drag_begin(GDK_WINDOW(self->obj), targets);
   g_list_free(targets);
-  nsp_context = (NspObject *) nspgobject_new((GObject *)context);
+  nsp_context = (NspObject *) nspgobject_new(NVOID,(GObject *)context);
   gdk_drag_context_unref(context);
   MoveObj(stack,1, nsp_context);
   return 1;
@@ -4983,7 +4983,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
   children = gdk_window_get_children(GDK_WINDOW(self->obj));
 
   for (tmp = children; tmp != NULL; tmp = tmp->next) {
-    NspObject *item = (NspObject *) nspgobject_new((GObject *)tmp->data);
+    NspObject *item = (NspObject *) nspgobject_new("lel",(GObject *)tmp->data);
     if ( item == NULLOBJ) goto clean;
     if ( nsp_list_end_insert(ret, item) == FAIL ) goto clean; 
   }
@@ -6394,7 +6394,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   case 0 : return (NspObject *)nsp_smatrix_create_from_table(_gdkgc_attrs); break; 
   case 1: /* "background" */ return (NspObject *) gboxed_create(NVOID,GDK_TYPE_COLOR, &gc.background, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
   case 2: /* "cap_style" */  return nsp_new_double_obj((double) (gc.cap_style));
-  case 3: /* "clip_mask" */  return (NspObject *)nspgobject_new((GObject *)gc.clip_mask);
+  case 3: /* "clip_mask" */  return (NspObject *)nspgobject_new(NVOID,(GObject *)gc.clip_mask);
   case 4: /* "clip_x_origin" */  return nsp_new_double_obj((double) (gc.clip_x_origin));
   case 5: /* "clip_y_origin" */  return nsp_new_double_obj((double) (gc.clip_y_origin));
   case 6: /* "fill" */      return nsp_new_double_obj((double) (gc.fill));
@@ -6405,9 +6405,9 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   case 11: /* "join_style" */      return nsp_new_double_obj((double) (gc.join_style));
   case 12: /* "line_style" */      return nsp_new_double_obj((double) (gc.line_style));
   case 13: /* "line_width" */      return nsp_new_double_obj((double) (gc.line_width));
-  case 14: /* "stipple" */      return (NspObject *)nspgobject_new((GObject *)gc.stipple);
+  case 14: /* "stipple" */      return (NspObject *)nspgobject_new(NVOID,(GObject *)gc.stipple);
   case 15: /* "subwindow_mode"*/      return nsp_new_double_obj((double) (gc.subwindow_mode));
-  case 16: /* "tile" */      return (NspObject *)nspgobject_new((GObject *)gc.tile);
+  case 16: /* "tile" */      return (NspObject *)nspgobject_new(NVOID,(GObject *)gc.tile);
   case 17: /* "ts_x_origin" */      return nsp_new_double_obj((double) (gc.ts_x_origin));
   case 18: /* "ts_y_origin" */      return nsp_new_double_obj((double) (gc.ts_y_origin));
   }
@@ -7265,8 +7265,8 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
 	  Scierror("%s: can't get mask from pixbuf\n",NspFname(stack));
 	  return RET_BUG; 
 	}
-      nsp_pixmap = (NspObject *) nspgobject_new((GObject *) pixmap);
-      nsp_mask = (NspObject *) nspgobject_new((GObject *) mask);
+      nsp_pixmap = (NspObject *) nspgobject_new(NVOID,(GObject *) pixmap);
+      nsp_mask = (NspObject *) nspgobject_new(NVOID,(GObject *) mask);
       if ( nsp_pixmap == NULL || nsp_mask == NULL )  return RET_BUG; 
       MoveObj(stack,1,nsp_pixmap);
       MoveObj(stack,2,nsp_mask);
@@ -7279,7 +7279,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
 	{
 	  return RET_BUG; 
 	}
-      nsp_pixmap = (NspObject *) nspgobject_new((GObject *) pixmap);
+      nsp_pixmap = (NspObject *) nspgobject_new(NVOID,(GObject *) pixmap);
       if ( nsp_pixmap == NULL )  return RET_BUG; 
       MoveObj(stack,1,nsp_pixmap);
       return 1;
@@ -10414,11 +10414,11 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     Scierror("%s: can't create pixmap\n");
     return RET_BUG;
   }
-  if ((ret = (NspObject *) nspgobject_new((GObject *)pixmap))== NULL) return RET_BUG; 
+  if ((ret = (NspObject *) nspgobject_new(NVOID,(GObject *)pixmap))== NULL) return RET_BUG; 
   MoveObj(stack,1,ret);
   if ( lhs == 2 ) 
     {
-      if ((ret = (NspObject *) nspgobject_new((GObject *)mask))== NULL) return RET_BUG; 
+      if ((ret = (NspObject *) nspgobject_new(NVOID,(GObject *)mask))== NULL) return RET_BUG; 
       MoveObj(stack,2,ret);
       return 2;
     }
