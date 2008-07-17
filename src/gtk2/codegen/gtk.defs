@@ -16477,6 +16477,16 @@
   (return-type "gint")
 )
 
+(define-method set_current_value
+  (of-object "GtkRadioAction")
+  (c-name "gtk_radio_action_set_current_value")
+  (return-type "none")
+  (parameters
+    '("gint" "value")
+  )
+)
+
+
 (define-virtual changed
   (of-object "GtkRadioAction")
   (return-type "none")
