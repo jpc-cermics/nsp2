@@ -1,3 +1,8 @@
+2008-07-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* GetActions added and improvement in GList GSlist management 
+	in gtk2/codegen. 
+	
 2008-05-02  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* clear, clearglobal without arguments added for 
