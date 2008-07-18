@@ -39,6 +39,7 @@ function demo_main_window()
   B('status bar')=  demo_statusbar,
   B('cursor')=  demo_cursor,
   B('scribble')=  demo_scribble, 
+  B('actions')= demo_actions,
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]	
