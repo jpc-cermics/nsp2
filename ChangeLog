@@ -1,3 +1,8 @@
+2008-05-02  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* clear, clearglobal without arguments added for 
+	clearing all the variables of the current or global frame.
+	
 2008-05-01  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* *.sci: changes ones, zeros, eye to xxx_deprecated or 
