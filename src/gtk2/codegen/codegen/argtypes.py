@@ -398,14 +398,35 @@ class GSList(ArgType):
         info.add_parselist('GSLists_double', ['&' + pname], [pname])
         info.attrcodebefore.append('GSList  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
     def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GSListdouble', 'ret')
-        info.codeafter.append('GSList  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;\n'
-                              '  return 1;')
+        info.varlist.add('GSList*', 'list')
+        info.varlist.add('GSList*', 'tmp')
+        info.varlist.add('NspList*', 'nsp_list')
+        info.codeafter.append('NSP_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
     def attr_write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GSListdouble', 'ret')
-        info.varlist.add('GSListNspObject', '*nsp_ret')
-        info.attrcodeafter.append('GSList  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
+        info.varlist.add('GSList*', 'list')
+        info.varlist.add('GSList*', 'tmp')
+        info.varlist.add('NspList*', 'nsp_list')
+        info.codeafter.append('NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
 
+class GList(ArgType):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+	if pdflt:
+	    info.varlist.add('GListdouble', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('GListdouble', pname)
+        info.arglist.append(pname)
+        info.add_parselist('GLists_double', ['&' + pname], [pname])
+        info.attrcodebefore.append('GList  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('GList*', 'list')
+        info.varlist.add('GList*', 'tmp')
+        info.varlist.add('NspList*', 'nsp_list')
+        info.codeafter.append('NSP_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
+    def attr_write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('GList*', 'list')
+        info.varlist.add('GList*', 'tmp')
+        info.varlist.add('NspList*', 'nsp_list')
+        info.codeafter.append('NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
 
         
 class FileArg(ArgType):
@@ -928,6 +949,26 @@ class NspObjectArg(ArgType):
         else:
             info.attrcodeafter.append(' return ret;')
 
+class NspGListArg(ArgType):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+        info.varlist.add('GList-NspObject', '*' + pname)
+        info.add_parselist('obj', ['&' + pname], [pname])
+        info.arglist.append(pname)
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add("GList-NspObject", "*ret")
+        if ownsreturn:
+            info.codeafter.append('  if (ret == NULLOBJ ) return RET_BUG;\n'
+                                  '  MoveObj(stack,1,ret);' )
+        else:
+            info.codeafter.append('  if (ret == NULLOBJ ) return RET_BUG;\n'
+                                  '  MoveObj(stack,1,ret);' )
+    def attr_write_return(self, ptype, ownsreturn, info):
+        info.varlist.add("GList-NspObject", "*ret")
+        if ownsreturn:
+            info.attrcodeafter.append(' return ret;')
+        else:
+            info.attrcodeafter.append(' return ret;')
+
 # added for nsp : matrix
 # -------------------------
     
@@ -1128,22 +1169,21 @@ matcher.register('FILE*', arg)
 
 # enums, flags, objects
 
-## matcher.register('GSList*', GSList())
+# XXX A finir !
+#matcher.register('GSList*', GSList())
+#matcher.register('GList*', GSList())
 
 matcher.register('GdkAtom', AtomArg())
-
 matcher.register('GType', GTypeArg())
 matcher.register('GtkType', GTypeArg())
-
 matcher.register('GError**', GErrorArg())
 matcher.register('GtkTreePath*', GtkTreePathArg())
 matcher.register('GdkRectangle*', GdkRectanglePtrArg())
 matcher.register('GtkAllocation*', GdkRectanglePtrArg())
 matcher.register('GdkRectangle', GdkRectangleArg())
 matcher.register('NspObject*', NspObjectArg())
-
 matcher.register('GdkNativeWindow', ULongArg())
-
 matcher.register_object('GObject', None, 'G_TYPE_OBJECT')
+
 
 del arg
