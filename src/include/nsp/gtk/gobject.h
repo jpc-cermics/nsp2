@@ -193,5 +193,10 @@ extern void NspTuple_SetItem(NspObject *,int n, void *);
 extern int nspg_type_wrapper_new(GType ret);
 
 
+extern GList *glist_from_typed_nsp_list(Stack stack,NspList *L,NspTypeBase *type);
+extern GList *nsp_glist_from_nsplist(Stack stack,NspList *L);
+extern GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L);
+
+
 #endif 
 

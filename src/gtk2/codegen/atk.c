@@ -2690,7 +2690,7 @@ int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs)
   AtkRegistry *ret;
   NspObject *nsp_ret;
 
-    ret = atk_get_default_registry();
+ret = atk_get_default_registry();
   nsp_type_atkregistry = new_type_atkregistry(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkregistry))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -2704,7 +2704,7 @@ int _wrap_atk_relation_type_register(Stack stack, int rhs, int opt, int lhs)
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-    ret = atk_relation_type_register(name);
+ret = atk_relation_type_register(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2716,7 +2716,7 @@ int _wrap_atk_relation_type_for_name(Stack stack, int rhs, int opt, int lhs)
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-    ret = atk_relation_type_for_name(name);
+ret = atk_relation_type_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2728,7 +2728,7 @@ int _wrap_atk_state_type_for_name(Stack stack, int rhs, int opt, int lhs)
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-    ret = atk_state_type_for_name(name);
+ret = atk_state_type_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2743,7 +2743,7 @@ int _wrap_atk_text_attribute_get_name(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
-    ret = atk_text_attribute_get_name(attr);
+ret = atk_text_attribute_get_name(attr);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -2759,7 +2759,7 @@ int _wrap_atk_text_attribute_get_value(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr, &index) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
-    ret = atk_text_attribute_get_value(attr, index);
+ret = atk_text_attribute_get_value(attr, index);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -2770,7 +2770,7 @@ int _wrap_atk_remove_focus_tracker(Stack stack, int rhs, int opt, int lhs)
   int tracker_id;
 
   if ( GetArgs(stack,rhs,opt,T,&tracker_id) == FAIL) return RET_BUG;
-    atk_remove_focus_tracker(tracker_id);
+atk_remove_focus_tracker(tracker_id);
   return 0;
 }
 
@@ -2780,7 +2780,7 @@ int _wrap_atk_focus_tracker_notify(Stack stack, int rhs, int opt, int lhs)
   NspGObject *object;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &object) == FAIL) return RET_BUG;
-    atk_focus_tracker_notify(ATK_OBJECT(object->obj));
+atk_focus_tracker_notify(ATK_OBJECT(object->obj));
   return 0;
 }
 
@@ -2790,7 +2790,7 @@ int _wrap_atk_remove_global_event_listener(Stack stack, int rhs, int opt, int lh
   int listener_id;
 
   if ( GetArgs(stack,rhs,opt,T,&listener_id) == FAIL) return RET_BUG;
-    atk_remove_global_event_listener(listener_id);
+atk_remove_global_event_listener(listener_id);
   return 0;
 }
 
@@ -2800,7 +2800,7 @@ int _wrap_atk_remove_key_event_listener(Stack stack, int rhs, int opt, int lhs)
   int listener_id;
 
   if ( GetArgs(stack,rhs,opt,T,&listener_id) == FAIL) return RET_BUG;
-    atk_remove_key_event_listener(listener_id);
+atk_remove_key_event_listener(listener_id);
   return 0;
 }
 
@@ -2809,7 +2809,7 @@ int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs)
   AtkObject *ret;
   NspObject *nsp_ret;
 
-    ret = atk_get_root();
+ret = atk_get_root();
   nsp_type_atkobject = new_type_atkobject(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -2820,7 +2820,7 @@ int _wrap_atk_get_toolkit_name(Stack stack, int rhs, int opt, int lhs)
 {
   const gchar *ret;
 
-    ret = atk_get_toolkit_name();
+ret = atk_get_toolkit_name();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -2829,7 +2829,7 @@ int _wrap_atk_get_toolkit_version(Stack stack, int rhs, int opt, int lhs)
 {
   const gchar *ret;
 
-    ret = atk_get_toolkit_version();
+ret = atk_get_toolkit_version();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -2841,7 +2841,7 @@ int _wrap_atk_role_for_name(Stack stack, int rhs, int opt, int lhs)
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-    ret = atk_role_for_name(name);
+ret = atk_role_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }

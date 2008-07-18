@@ -338,7 +338,7 @@ class Wrapper:
         '%(varlist)s' \
         '%(parseargs)s' \
         '%(codebefore)s' \
-        '    %(setreturn)s%(cname)s(%(arglist)s);\n' \
+        '%(setreturn)s%(cname)s(%(arglist)s);\n' \
         '%(codeafter)s\n' \
         '}\n\n'
 
@@ -503,8 +503,8 @@ class Wrapper:
         substdict['typecodes'] = info.parsestr
         substdict['parselist'] = info.get_parselist()
         substdict['arglist'] = info.get_arglist()
-        substdict['codebefore'] = deprecated + \
-            string.replace(info.get_codebefore(),
+        substdict['codebefore'] = deprecated +  \
+            string.replace(info.get_codebefore() ,
             'return NULL', 'return ' + substdict['errorreturn'])
         substdict['codeafter'] = string.replace(info.get_codeafter(),
             'return NULL', 'return ' + substdict['errorreturn'])

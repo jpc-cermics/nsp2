@@ -5,7 +5,7 @@ headers
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
-
+#include <nsp/gtk/gobject-util.h>
 
 #define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object) 
 

@@ -8,137 +8,7 @@ headers
 #include "nsp/interf.h"
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
-
-/* XXX even in case of success free_name(list); should be performed */
-
-/**
- * NSP_LIST_FROM_GLIST: 
- * @sel_code: 
- * @free_name: 
- *
- * This macro is used to buil a #NspList from a GList in the context of 
- * an interface i.e the #NspList is stored on the stack and returned by 
- * this macro. All the items contained in the GList are suposed to be of the same type. 
- * The user must provide in @sel_code the code which is to be used to create 
- * a #NspObject from an item contained in the GList 
- * and @free_name is the function name to be used for freeing 
- * the memory associated to the GList. 
- * The GList is assumed to be named list and the current GList item list is 
- * named tmp.
- * Note that @free_name is only called in case of error.
- * 
- */
-
-#define NSP_LIST_FROM_GLIST( sel_code, free_name) \
-  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
-    { \
-      free_name(list); \
-      return RET_BUG; \
-    } \
-  for (tmp = list; tmp != NULL; tmp = tmp->next)  \
-    { \
-      NspObject *gtk_obj = (NspObject *)sel_code ;\
-      if (gtk_obj == NULL) goto clean ;  \
-      if ( nsp_list_end_insert(nsp_list, gtk_obj) == FAIL ) goto clean; \
-    } \
-  MoveObj(stack,1,(NspObject *)nsp_list); \
-  return 1; \
-  clean :  \
-    { \
-      free_name(list); \
-      nsp_list_destroy(nsp_list); \
-      return RET_BUG; \
-    } 
-
-/**
- * NSP_OBJ_LIST_FROM_GLIST: 
- * @sel_code: 
- * @free_name: 
- *
- * This macro is similar to NSP_LIST_FROM_GLIST() except that this macro 
- * returns the builded #NspList.
- */
-
-#define NSP_OBJ_LIST_FROM_GLIST( sel_code, free_name) \
-  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
-    { \
-      free_name(list); \
-      return NULLOBJ; \
-    } \
-  for (tmp = list; tmp != NULL; tmp = tmp->next)  \
-    { \
-      NspObject *gtk_obj = (NspObject *)sel_code ;\
-      if (gtk_obj == NULL) goto clean ;  \
-      if ( nsp_list_end_insert(nsp_list, gtk_obj) == FAIL ) goto clean; \
-    } \
-  return (NspObject *) nsp_list; \
-  clean :  \
-    { \
-      free_name(list); \
-      nsp_list_destroy(nsp_list); \
-      return NULL; \
-    } 
-
-/* Build a NspList */ 
-
-#define NSP_LIST_DEC NspList *nsp_list;
-
-#define NSP_LIST(iter_code , sel_code ) \
-  if ( (nsp_list = nsp_list_create(NVOID)) == NULLLIST )  return RET_BUG; \
-  iter_code \
-    { NspObject *nsp_node; \
-      sel_code ; \
-      if ( nsp_node == NULL) goto clean ;  \
-      if ( nsp_list_end_insert(nsp_list, nsp_node) == FAIL ) goto clean; \
-    } 
-
-#define NSP_OBJ_LIST(iter_code , sel_code ) \
-  if ( (nsp_list =nsp_list_create(NVOID)) == NULLLIST )  return NULL; \
-  iter_code \
-    { NspObject *nsp_node; \
-      sel_code ; \
-      if ( nsp_node == NULL) goto clean ;  \
-      if ( nsp_list_end_insert(nsp_list, nsp_node) == FAIL ) goto clean; \
-    } 
-
-
-#define NSP_LIST_CLEAN \
-  clean :  \
-    { \
-       nsp_list_destroy(nsp_list); \
-      return RET_BUG; \
-    }
-
-#define NSP_OBJ_LIST_CLEAN \
-  clean :  \
-    { \
-      nsp_list_destroy(nsp_list); \
-      return NULL; \
-    }
-
-GList *glist_from_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
-{
-  GList *items = NULL;
-  Cell *cloc = L->first ; 
-  while ( cloc != NULLCELL) 
-    {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  if (! nspgobject_check(cloc->O, type)) 
-	    {
-	      Scierror("%s:list item is not a %s",NspFname(stack),type_get_name(type));
-	      g_list_free(items);
-	      return NULL;
-	    }
-	  else 
-	    {
-	      items = g_list_append(items, nspgobject_get(cloc->O));
-	    }
-	}
-      cloc = cloc->next;
-    }
-  return items ;
-}
+#include <nsp/gtk/gobject-util.h>
 
 /* utility */
 
@@ -932,7 +802,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   NspList *nsp_list;
 
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
-  NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)), g_list_free);
+  NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)), g_list_free);
 }
 %%
 override gtk_container_set_focus_chain kwargs
@@ -977,7 +847,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
 
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   
-  NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free); 
+  NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free); 
   
 }
 %%
@@ -1410,7 +1280,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   NspList *nsp_list;
   CheckRhs(0,0);
   list = gtk_window_list_toplevels();
-  NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
+  NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
 %%
 override gtk_window_set_geometry_hints kwargs
@@ -2780,7 +2650,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   NspList *nsp_list;
   list = gtk_tree_view_column_get_cell_renderers(GTK_TREE_VIEW_COLUMN(self->obj));
   
-  NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
+  NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
 %%
 override gtk_tree_view_column_set_cell_data_func kwargs
@@ -3159,7 +3029,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
   GList *list, *tmp;
   NspList *nsp_list;
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(self->obj));
-  NSP_LIST_FROM_GLIST(gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
+  NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
 %%
 override gtk_tree_selection_get_selected noargs
@@ -4399,7 +4269,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NspList *nsp_list;
   GSList *list, *tmp;
   list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(self->obj));
-  NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_slist_free);
+  NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
 %%
@@ -5394,7 +5264,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+  NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 %%
 override gtk_text_iter_get_toggled_tags kwargs
@@ -5410,7 +5280,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
   if (GetArgs(stack,rhs,opt,T,&toggled_on) == FAIL) return RET_BUG;;
   list = gtk_text_iter_get_toggled_tags(nspg_boxed_get(self, GtkTextIter), toggled_on);
     
-  NSP_LIST_FROM_GLIST(gobject_gettype_and_create("lel",(GObject *)tmp->data),g_slist_free);
+  NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",(GObject *)tmp->data),g_slist_free);
 }
 %%
 override gtk_text_iter_get_tags noargs
@@ -5420,7 +5290,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+  NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 %%
 override gtk_text_iter_forward_search kwargs
@@ -5838,7 +5708,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   GList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
-  NSP_LIST_FROM_GLIST(gobject_gettype_and_create("lel",(GObject *)tmp->data),g_list_free);
+  NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",(GObject *)tmp->data),g_list_free);
 }
 %%
 override gtk_text_view_get_visible_rect noargs
@@ -6190,7 +6060,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
   GSList *list, *tmp;
   NspList *nsp_list; 
   list = gtk_stock_list_ids();
-  NSP_LIST_FROM_GLIST(nsp_new_string_obj("lel",tmp->data,-1),g_slist_free);
+  NSP_LIST_FROM_GLIST(list,nsp_new_string_obj("lel",tmp->data,-1),g_slist_free);
   /* XXX
    * g_slist_foreach (list, (GFunc)g_free, NULL);
    * g_slist_free (list);  
@@ -6912,7 +6782,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NspList *nsp_list;
   GSList  *tmp;
   GSList *list = gtk_radio_action_get_group(GTK_RADIO_ACTION(self->obj));
-  NSP_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
+  NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
 
@@ -6930,7 +6800,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   /* be sure that gtk action is initialized */
   nsp_type_gtkaction = new_type_gtkaction(T_BASE);
   /* create a list of gtkaction objects */
-  NSP_LIST_FROM_GLIST(gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
+  NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
 %%
@@ -6942,7 +6812,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   NspList *nsp_list;
   list = gtk_window_get_icon_list(GTK_WINDOW(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  NSP_LIST_FROM_GLIST(gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
+  NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
 %%
 override gtk_window_set_icon_list args
@@ -6957,7 +6827,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   /* here we have to convert nsp_list to glist 
    * checking that all elements are gdkpixbuf 
    */
-  icon_list = glist_from_nsp_list(stack,L,(NspTypeBase *) new_type_gdkpixbuf(T_BASE));
+  icon_list = glist_from_typed_nsp_list(stack,L,(NspTypeBase *) new_type_gdkpixbuf(T_BASE));
   if ( icon_list == NULL) return RET_BUG;
   gtk_window_set_icon_list(GTK_WINDOW(self->obj), icon_list);
   g_list_free(icon_list);

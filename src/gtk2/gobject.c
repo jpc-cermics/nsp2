@@ -468,6 +468,10 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
+/* all the gobject have a user_data field in which 
+ * an object can be stored and changed without copy 
+ */
+
 static NspObject * int_gobject_get_user_data(void *self,const char *attr)
 {
   GQuark quark;
@@ -536,6 +540,9 @@ GType  nspg_type_from_object(NspObject *obj)
 {
   return g_type_from_name (NSP_OBJECT(obj)->type->s_type());
 }
+
+/* gets in a NspSMatrix the property names of a NspGObject.
+ */
 
 static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_flag)
 {
@@ -693,7 +700,12 @@ static int nspgobject_thaw_notify(NspGObject *self, Stack stack,int rhs,int opt,
   return 0;
 }
 
-/* .get_data['name'] */
+/* we can attach data to a widget using .set_data[name=value,...] 
+ * and get_data through .get_data[name]
+ * XXX The problem is that in order to modify datas we have to make a copy 
+ * It should be good to implement extraction and insertion as in hash tables. 
+ * or check why for methods x.get_data[name](2)=values is not accepted. 
+ */
 
 static int nspgobject_get_data(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -763,7 +775,6 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
  * method connect  self.connect['signal-name',function,list-of-extra-args];
  * 
  */ 
-
 
 static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
 {
@@ -1568,6 +1579,8 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
     return FAIL;
   }
   
+  /* Sciprintf("XXXX: `%s' : enum type\n", g_type_name(enum_type)); */
+
   eclass = G_ENUM_CLASS(g_type_class_ref(enum_type));
   
   for (i = 0; i < eclass->n_values; i++) {
@@ -1576,6 +1589,7 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
     if (strip_prefix != NULL) name= nsp_constant_strip_prefix(name, strip_prefix);
     if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,(double)value))== NULL) return FAIL;
     /* XXXXX */
+    /* Sciprintf("YYY: `%s' derived from %s\n",name,g_type_name(enum_type)); */
     if (nsp_hash_find(table,name,&O)== OK) 
       {
 	Scierror("Warning: %s is already stored in table %s\n",name,nsp_object_get_name((NspObject *)table));
@@ -1924,6 +1938,7 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
  * utilities to attach a nsp_type to a gtype 
  * this is used in nspg_value_as_nspobject 
  * to detect which nsp_type to use in gobject_create 
+ * It could be useful to also register basic Gtk types. 
  */
 
 static const gchar *nsp_gobject_class_id     = "NspGObject::class";
@@ -2097,7 +2112,7 @@ nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
  * find a GType corresponding to the given object.
  * Returns: the corresponding GType or 0 
  * 
- * This is usefull for list ans tree where column 
+ * This is usefull for list and tree where column 
  * types are to be given. 
  */
 
@@ -2972,5 +2987,63 @@ static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs)
   handlerid = nsp_gtk_quit_add_full(main_level, callback,extra_args,NULL);
   if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
   return 1;
+}
+
+/*-------------------------------------------------
+ * gslist, glist and nsplist utilities 
+ *------------------------------------------------*/
+
+GList *glist_from_typed_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
+{
+  GList *items = NULL;
+  Cell *cloc = L->first ; 
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if (! nspgobject_check(cloc->O, type)) 
+	    {
+	      Scierror("%s:list item is not a %s",NspFname(stack),type_get_name(type));
+	      g_list_free(items);
+	      return NULL;
+	    }
+	  else 
+	    {
+	      items = g_list_append(items, nspgobject_get(cloc->O));
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return items ;
+}
+
+GList *nsp_glist_from_nsplist(Stack stack,NspList *L)
+{
+  GList *items = NULL;
+  Cell *cloc = L->first ; 
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  items = g_list_append(items, nspgobject_get(cloc->O));
+	}
+      cloc = cloc->next;
+    }
+  return items ;
+}
+
+GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L)
+{
+  GSList *items = NULL;
+  Cell *cloc = L->first ; 
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  items = g_slist_append(items, nspgobject_get(cloc->O));
+	}
+      cloc = cloc->next;
+    }
+  return items ;
 }
 

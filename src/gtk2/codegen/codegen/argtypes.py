@@ -378,7 +378,7 @@ class DoubleArg(ArgType):
 	    info.varlist.add('double', pname)
         info.arglist.append(pname)
         info.add_parselist('s_double', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+        info.attrcodebefore.append('  if (DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('double', 'ret')
         info.codeafter.append('  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;\n'
@@ -391,42 +391,48 @@ class DoubleArg(ArgType):
 class GSList(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
-	    info.varlist.add('GSListdouble', pname + ' = ' + pdflt)
+	    info.varlist.add('NspList','*nsp_' + pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('GSListdouble', pname)
+	    info.varlist.add('NspList','*nsp_' + pname)
+        info.varlist.add('GSList','*'+ pname)
         info.arglist.append(pname)
-        info.add_parselist('GSLists_double', ['&' + pname], [pname])
-        info.attrcodebefore.append('GSList  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+        info.add_parselist('list', ['&nsp_' + pname], [pname])
+        info.codebefore.append('  '+pname+'=nsp_gslist_from_nsplist(stack,nsp_'+ pname+');\n');
+        info.codebefore.append('  if ('+pname+'== NULL) return RET_BUG;\n')
+
     def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GSList*', 'list')
-        info.varlist.add('GSList*', 'tmp')
-        info.varlist.add('NspList*', 'nsp_list')
-        info.codeafter.append('NSP_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
+        info.varlist.add('GSList', '*ret')
+        info.varlist.add('GSList', '*tmp')
+        info.varlist.add('NspList', '*nsp_list')
+        info.codeafter.append('  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
     def attr_write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GSList*', 'list')
-        info.varlist.add('GSList*', 'tmp')
-        info.varlist.add('NspList*', 'nsp_list')
-        info.codeafter.append('NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
+        info.varlist.add('GSList', '*ret')
+        info.varlist.add('GSList', '*tmp')
+        info.varlist.add('NspList', '*nsp_list')
+        info.codeafter.append('  NSP_OBJ_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);\n')
 
 class GList(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
-	    info.varlist.add('GListdouble', pname + ' = ' + pdflt)
+	    info.varlist.add('NspList','*nsp_' +  pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('GListdouble', pname)
+	    info.varlist.add('NspList','*nsp_' +  pname)
+        info.varlist.add('GList','*'+ pname)
         info.arglist.append(pname)
-        info.add_parselist('GLists_double', ['&' + pname], [pname])
-        info.attrcodebefore.append('GList  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+        info.add_parselist('list', ['&nsp_' + pname], [pname])
+        info.codebefore.append('  '+pname+'=nsp_glist_from_nsplist(stack,nsp_'+ pname+');\n');
+        info.codebefore.append('  if ('+pname+'== NULL) return RET_BUG;\n')
+
     def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GList*', 'list')
-        info.varlist.add('GList*', 'tmp')
-        info.varlist.add('NspList*', 'nsp_list')
-        info.codeafter.append('NSP_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
+        info.varlist.add('GList', '*ret')
+        info.varlist.add('GList', '*tmp')
+        info.varlist.add('NspList', '*nsp_list')
+        info.codeafter.append('  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
     def attr_write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('GList*', 'list')
-        info.varlist.add('GList*', 'tmp')
-        info.varlist.add('NspList*', 'nsp_list')
-        info.codeafter.append('NSP_OBJ_LIST_FROM_GLIST(nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
+        info.varlist.add('GList', '*ret')
+        info.varlist.add('GList', '*tmp')
+        info.varlist.add('NspList', '*nsp_list')
+        info.codeafter.append('  NSP_OBJ_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);\n')
 
         
 class FileArg(ArgType):
@@ -1169,9 +1175,10 @@ matcher.register('FILE*', arg)
 
 # enums, flags, objects
 
-# XXX A finir !
-#matcher.register('GSList*', GSList())
-#matcher.register('GList*', GSList())
+
+# 
+matcher.register('GSList*', GSList())
+matcher.register('GList*', GList())
 
 matcher.register('GdkAtom', AtomArg())
 matcher.register('GType', GTypeArg())
