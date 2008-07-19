@@ -539,7 +539,6 @@ static void delete_window(BCG *dd,int intnum)
   if (winxgc->private->ccursor != NULL)gdk_cursor_unref (winxgc->private->ccursor);
   if (winxgc->private->stdgc != NULL)g_object_unref(winxgc->private->stdgc);
   if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
-  if (winxgc->private->item_factory != NULL) g_object_unref(winxgc->private->item_factory);
   nsp_fonts_finalize(winxgc);
   FREE(winxgc->private);
   /* remove current window from window list */
