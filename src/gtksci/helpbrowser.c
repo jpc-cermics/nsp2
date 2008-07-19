@@ -198,16 +198,17 @@ entry_changed_callback (GtkWidget *widget,
 {
   GList       *list;
   HistoryItem *item;
-  const gchar *entry_text;
   gchar       *compare_text;
   gboolean     found = FALSE;
+  gchar       *active_text;
 
-  entry_text = gtk_entry_get_text (GTK_ENTRY (widget));
-
+  /* newly allocated text */
+  active_text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(widget));
+  if ( active_text == NULL) return;
+  /* Sciprintf("In combo callback with %s\n",active_text); */
   for (list = history; list && !found; list = list->next)
     {
       item = (HistoryItem *) list->data;
-
       if (item->count)
         {
           compare_text = g_strdup_printf ("%s <%i>",
@@ -217,18 +218,18 @@ entry_changed_callback (GtkWidget *widget,
         {
           compare_text = (gchar *) item->title;
         }
-
-      if (strcmp (compare_text, entry_text) == 0)
+      if (strcmp (compare_text, active_text) == 0)
 	{
+	  /* Sciprintf("Found in history compare_text=%s, active_text=%s\n",compare_text,active_text); */
 	  load_page (item->ref, TRUE);
 	  found = TRUE;
 	}
-
       if (item->count)
         {
           g_free (compare_text);
         }
     }
+  if ( active_text != NULL)  g_free(active_text);
 }
 
 static void
@@ -238,7 +239,6 @@ history_add (const gchar *ref,
   GList       *list;
   GList       *found = NULL;
   HistoryItem *item;
-  GList       *combo_list = NULL;
   gint         title_found_count = 0;
 
   for (list = history; list && !found; list = list->next)
@@ -257,49 +257,25 @@ history_add (const gchar *ref,
         }
     }
 
-  if (found)
+  if (! found)
     {
-      item = (HistoryItem *) found->data;
-      history = g_list_remove_link (history, found);
-    }
-  else
-    {
+      gchar *combo_title;
       item = g_new (HistoryItem, 1);
       item->ref   = g_strdup (ref);
       item->title = g_strdup (title);
       item->count = title_found_count;
-    }
-
-  history = g_list_prepend (history, item);
-
-  for (list = history; list; list = list->next)
-    {
-      gchar* combo_title;
-
-      item = (HistoryItem *) list->data;
-
+      history = g_list_prepend (history, item);
       if (item->count)
 	combo_title = g_strdup_printf ("%s <%i>",
 				       item->title,
 				       item->count + 1);
       else
 	combo_title = g_strdup (item->title);
-
-      combo_list = g_list_prepend (combo_list, combo_title);
+      g_signal_handlers_block_by_func (GTK_COMBO_BOX(combo), entry_changed_callback,NULL);
+      gtk_combo_box_prepend_text(GTK_COMBO_BOX (combo),combo_title);
+      g_signal_handlers_unblock_by_func (GTK_COMBO_BOX(combo), entry_changed_callback,NULL);
+      g_free(combo_title);
     }
-
-  combo_list = g_list_reverse (combo_list);
-
-  g_signal_handlers_block_by_func (GTK_COMBO (combo)->entry,
-                                   entry_changed_callback, combo);
-  gtk_combo_set_popdown_strings (GTK_COMBO (combo), combo_list);
-  g_signal_handlers_unblock_by_func (GTK_COMBO (combo)->entry,
-                                     entry_changed_callback, combo);
-
-  for (list = combo_list; list; list = list->next)
-    g_free (list->data);
-
-  g_list_free (combo_list);
 }
 
 static void
@@ -308,20 +284,14 @@ title_changed (HtmlDocument *doc,
                gpointer      data)
 {
   gchar *title;
-
-  if (!new_title)
-    new_title = (_("<Untitled>"));
-      
+  if (!new_title) new_title = (_("<Untitled>"));
   title = g_strstrip (g_strdup (new_title));
-
   history_add (current_ref, title);
-
-  g_signal_handlers_block_by_func (GTK_COMBO (combo)->entry,
-                                   entry_changed_callback, combo);
-  gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), title);
-  g_signal_handlers_unblock_by_func (GTK_COMBO (combo)->entry,
-                                     entry_changed_callback, combo);
-
+  /* 
+  g_signal_handlers_block_by_func (GTK_COMBO_BOX(combo),entry_changed_callback,NULL);
+  gtk_combo_box_set_title(GTK_COMBO_BOX(combo), title);
+  g_signal_handlers_unblock_by_func (GTK_COMBO_BOX (combo),entry_changed_callback,NULL);
+  */
   g_free (title);
 }
 
@@ -727,18 +697,15 @@ open_browser_dialog (const gchar *help_path,
   gtk_widget_show (image);
 
   /*  the title combo  */
-  combo = gtk_combo_new ();
+  combo = gtk_combo_box_entry_new_text ();
   gtk_widget_set_size_request (GTK_WIDGET (combo), 360, -1);
-  gtk_combo_set_use_arrows (GTK_COMBO (combo), TRUE);
-  g_object_set (GTK_COMBO (combo)->entry, "editable", FALSE, NULL); 
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 
-  g_signal_connect (GTK_COMBO (combo)->entry, "changed",
+  g_signal_connect (GTK_COMBO_BOX(combo), "changed",
                     G_CALLBACK (entry_changed_callback), 
-                    combo);
-
-
+                    NULL);
+  
   /*  HTML view  */
   html  = html_view_new ();
   queue = queue_new ();

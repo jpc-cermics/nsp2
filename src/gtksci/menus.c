@@ -43,21 +43,20 @@ extern void create_nsp_about(void);
 extern char GetDriver();
 
 static void *sci_window_initial_menu(void) ;
-static void sci_menu_to_item_factory(GtkItemFactory *ifactory,menu_entry *m);
-static void sci_menu_delete(menu_entry **m,const char *name) ;
+static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
 static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,int action_type,char *fname);
-static menu_entry * sci_menu_set_status(menu_entry *m,int winid,const char *name,int subid,int status);
 static int call_predefined_callbacks(char *name, int winid);
-static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m);
-static void sci_factory_add_last_menu_entry(GtkItemFactory *ifactory,menu_entry *m);
-
+static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m);
+static void sci_menubar_add_last_menu_entry(GtkWidget *menubar,menu_entry *m);
+static GtkWidget *sci_menu_to_gtkmenubar(menu_entry *m,GtkAccelGroup *accel_group);
+static int is_menu_name(const char *name,const char *name1) ;
 /*--------------------------------------------------------------
  * main menu. i.e the menu of the main scilab window 
  *            this menu is attached to a zterm through a plug widget
  *--------------------------------------------------------------*/
 
 static menu_entry *main_menu_entries = NULL;
-static GtkItemFactory  *main_item_factory= NULL;
+static GtkWidget  *main_menu_menubar = NULL;
 
 /*
  * used when the menu is plugged 
@@ -65,18 +64,12 @@ static GtkItemFactory  *main_item_factory= NULL;
 
 void create_plugged_main_menu(void)
 {
-  static GtkWidget *menubar = NULL; 
   static int first = 0; 
   static GtkWidget *Plug;
-  static GtkItemFactory *item_factory;
   GtkAccelGroup *accel_group = NULL ; 
   char * plug_info = nsp_getenv("SCIWIN");
 
   if ( plug_info == NULL) return ;
-
-  main_item_factory= item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", 
-							  accel_group);
-  
   if ( first == 0 ) {
     Plug = gtk_plug_new(atoi(nsp_getenv("SCIWIN")));
     main_menu_entries = sci_window_initial_menu();
@@ -84,23 +77,14 @@ void create_plugged_main_menu(void)
     first = 1;
   }
 
+  accel_group = gtk_accel_group_new ();
   /* This function generates the menu items from scilab description */
-  /* Attention il faut aussi gerer les menu en set unset XXXXX */
-
-  sci_menu_to_item_factory(item_factory, main_menu_entries);
-  
+  main_menu_menubar= sci_menu_to_gtkmenubar(main_menu_entries,accel_group);
   /* Attach the new accelerator group to the window. */
   /* gtk_window_add_accel_group (GTK_WINDOW (window), accel_group); */ 
-  
-  /* Finally, return the actual menu bar created by the item factory. */ 
-
-  if ( menubar != NULL) gtk_widget_destroy(menubar);
-  menubar = gtk_item_factory_get_widget (item_factory, "<main>");
-  gtk_container_add(GTK_CONTAINER(Plug),menubar);
-  if ( accel_group != NULL ) 
-    gtk_window_add_accel_group (GTK_WINDOW (Plug), accel_group);
+  gtk_container_add(GTK_CONTAINER(Plug),main_menu_menubar);
+  gtk_window_add_accel_group (GTK_WINDOW (Plug), accel_group);
   gtk_widget_show_all(Plug);
-
 }
 
 /*
@@ -110,32 +94,21 @@ void create_plugged_main_menu(void)
 GtkWidget *create_main_menu( GtkWidget  *window)
 {
   static int first = 0;
-  static GtkWidget *menubar = NULL; 
-  static GtkItemFactory *item_factory;
   GtkAccelGroup *accel_group = NULL ; 
   
   /* Make an accelerator group (shortcut keys) */
   if ( window != NULL)  accel_group = gtk_accel_group_new ();
 
-  main_item_factory= item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", 
-							  accel_group);
   if ( first == 0 ) {
     main_menu_entries = sci_window_initial_menu();
     if ( main_menu_entries == NULL) return NULL;
     first = 1;
   }
-
   /* This function generates the menu items from scilab description */
-  /* Attention il faut aussi gerer les menu en set unset XXXXX */
-
-  sci_menu_to_item_factory(item_factory, main_menu_entries);
-  
+  main_menu_menubar= sci_menu_to_gtkmenubar(main_menu_entries,accel_group);
   /* Finally, return the actual menu bar created by the item factory. */ 
-  if ( menubar != NULL) gtk_widget_destroy(menubar);
-  menubar = gtk_item_factory_get_widget (item_factory, "<main>");
-  if ( window != NULL )  gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
-  return menubar;
-
+  gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
+  return main_menu_menubar;
 }
 
 /*--------------------------------------------------------------
@@ -154,14 +127,14 @@ void MenuFixCurrentWin(int ivalue)
 			      "+||$gwplus" ,
 			      "-||$gwminus" } ;
   if ( ivalue == lab_count ) return ; 
-  if ( main_item_factory == NULL ) return;
+  if ( main_menu_menubar == NULL ) return;
   sprintf( gwin_name, "Graphic Window %d", (int) lab_count );
   nsp_menus_delete_button(w, gwin_name);
   sprintf( gwin_name, "Graphic Window %d", (int) ivalue );
   lab_count = ivalue;
   sci_menu_add(&main_menu_entries,-1,gwin_name,
 	       graphic_entries,5,0,"$graphic_window");
-  sci_factory_add_last_menu_entry(main_item_factory,main_menu_entries);
+  sci_menubar_add_last_menu_entry(main_menu_menubar,main_menu_entries);
 }
 
 
@@ -171,26 +144,18 @@ void MenuFixCurrentWin(int ivalue)
 
 void create_graphic_window_menu(BCG *dd)
 {
+  GtkWidget *menubar;
   GtkAccelGroup *accel_group=  gtk_accel_group_new ();
-
   /* Attach the new accelerator group to the window. */
   gtk_window_add_accel_group (GTK_WINDOW (dd->private->window), accel_group);
-
-  dd->private->item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", 
-					   accel_group);
-  
   /* This function generates the menu items from scilab description */
-  /* Attention il faut aussi gerer les menu en set unest XXXXX */
-  
-  sci_menu_to_item_factory(dd->private->item_factory,dd->private->menu_entries);
-  
-  /* Finally, return the actual menu bar created by the item factory. */ 
-
-  dd->private->menubar = gtk_item_factory_get_widget (dd->private->item_factory, "<main>");
+  menubar= sci_menu_to_gtkmenubar(dd->private->menu_entries,accel_group);
+  dd->private->menubar = GTK_WIDGET(menubar);
   gtk_box_pack_start (GTK_BOX (dd->private->vbox),dd->private->menubar, FALSE, TRUE, 0);
   gtk_widget_show (dd->private->menubar);
   return ;
 }
+
 
 /*
  * General routines for dynamic menu item creation and deletion
@@ -203,7 +168,6 @@ void create_graphic_window_menu(BCG *dd)
 
 int nsp_menus_delete_button(int win_num,const char *button_name)
 {
-  GtkItemFactory  *item_factory;
   static char btn[64];
   char *p;
   const char *but= button_name;
@@ -217,17 +181,14 @@ int nsp_menus_delete_button(int win_num,const char *button_name)
   *p = '\0';
   if ( win_num == -1 ) 
     {
-      item_factory = main_item_factory; 
-      sci_menu_delete(&main_menu_entries,button_name);
+      nsp_menu_delete_menuitem(&main_menu_entries,button_name);
     }
   else 
     {
       BCG *dd = window_list_search(win_num);
-      if ( dd == NULL || dd->private->item_factory == NULL) return 0;
-      item_factory = dd->private->item_factory;
-      sci_menu_delete(&dd->private->menu_entries,button_name);
+      if ( dd == NULL) return 0;
+      nsp_menu_delete_menuitem(&dd->private->menu_entries,button_name);
     }
-  gtk_item_factory_delete_item (item_factory,btn);
   return 0;
 }
 
@@ -248,23 +209,23 @@ int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,in
   if ( win_num == -1 ) 
     {
       /* Scilab main menu */ 
-      if ( main_item_factory == NULL ) return OK;
+      if ( main_menu_menubar == NULL ) return OK;
       if ( sci_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 ) 
 	{
 	  return FAIL;
 	}
-      sci_factory_add_last_menu_entry(main_item_factory,main_menu_entries);
+      sci_menubar_add_last_menu_entry(main_menu_menubar,main_menu_entries);
     }
   else 
     {
       BCG *dd = window_list_search(win_num);
-      if ( dd == NULL || dd->private->item_factory == NULL ) return OK;
+      if ( dd == NULL ) return OK;
       if ( sci_menu_add(&dd->private->menu_entries,win_num,button_name,entries,
 			ne,typ,fname) == 1 ) 
 	{
 	  return FAIL;
 	}
-      sci_factory_add_last_menu_entry(dd->private->item_factory,dd->private->menu_entries);
+      sci_menubar_add_last_menu_entry(dd->private->menubar,dd->private->menu_entries);
     }
   return OK;
 }
@@ -273,70 +234,44 @@ int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,in
  * Activate or deactivate a menu 
  *---------------------------------------------------*/
 
-static void nsp_menus_set_unset(int win_num,const char *button_name,int ne,int flag)
+static void nsp_menus_set_unset(int win_num,const char *name,int subid,int status)
 { 
-  menu_entry *e,*entries;
-  GtkItemFactory  *item_factory;
+  menu_entry *entries;
   if ( win_num == -1 ) 
     {
-      item_factory = main_item_factory; 
       entries =main_menu_entries;
     }
   else 
     {
       BCG *dd = window_list_search(win_num);
-      if ( dd == NULL || dd->private->item_factory == NULL) return ;
-      item_factory = dd->private->item_factory;
+      if ( dd == NULL ) return ;
       entries = dd->private->menu_entries;
     }
-  
-  e = sci_menu_set_status(entries,win_num,button_name,ne,flag);
-  if ( e != NULL) 
+  /* find name in the entries */
+  while ( entries != NULL) 
     {
-      GtkWidget *w;
-      char buf[128];
-      if ( ne == 0)
-	{ 
-	  /* top menu */ 
-	  char *loc = e->name, *pbuf; 
-	  strcpy(buf,"<main>/");
-	  pbuf = buf + strlen(buf);
-	  while ( *loc != '\0' ) 
-	    { 
-	      if ( *loc != '_' ) { *pbuf = *loc ; pbuf++; loc++;} 
-	      else loc++;
-	    }
-	  *pbuf = '\0';
-	}
-      else 
+      if ( is_menu_name(entries->name,name)==0) 
 	{
-	  /* sub_menu */
-	  char *loc = e->menu->name, *pbuf; 
-	  strcpy(buf,"<main>/");
-	  pbuf = buf + strlen(buf);
-	  while ( *loc != '\0' ) 
-	    { 
-	      if ( *loc != '_' ) { *pbuf = *loc ; pbuf++; loc++;} 
-	      else loc++;
+	  if ( subid == 0) 
+	    {
+	      entries->status = status ;
+	      gtk_widget_set_sensitive (entries->widget,status);
+	      return;
 	    }
-	  *pbuf = '/';pbuf++;
-	  loc = e->name ; 
-	  while ( *loc != '\0' ) 
-	    { 
-	      if ( *loc != '_' ) { *pbuf = *loc ; pbuf++; loc++;} 
-	      else loc++;
-	    }
-	  *pbuf = '\0';
-	}
-      w = gtk_item_factory_get_widget (item_factory,buf);
-      /* rend le menu non sensitif */
-      if ( w != NULL) 
-	{
-	  if ( flag == TRUE ) 
-	    gtk_widget_set_sensitive (w, TRUE);
 	  else 
-	    gtk_widget_set_sensitive (w, FALSE);
+	    {
+	      int count;
+	      /* walk to find submenu number subid */
+	      entries = entries->subs; 
+	      for ( count = 0 ; count < subid -1 ; count++) 
+		entries = (entries == NULL) ? NULL : entries->next ;
+	      if ( entries == NULL) return;
+	      entries->status = status;
+	      gtk_widget_set_sensitive (entries->widget,status);
+	      return;
+	    }
 	}
+      entries = entries->next ;
     }
 }
 
@@ -410,7 +345,6 @@ static menu_entry *new_menu_entry(const char *name,const char *accel,const char 
   if ((loc->name = MALLOC((strlen(name)+1)*sizeof(char)))==NULL) 
     return NULL;
   strcpy(loc->name,name);
-
   if (accel != NULL) 
     {
       if ((loc->accel = MALLOC((strlen(accel)+1)*sizeof(accel)))==NULL) 
@@ -418,7 +352,7 @@ static menu_entry *new_menu_entry(const char *name,const char *accel,const char 
       strcpy(loc->accel,accel);
     }
   else loc->accel = NULL;
-
+  
   if ( stock_name  != NULL) 
     {
       if ((loc->stock_name = MALLOC((strlen(stock_name)+1)*sizeof(stock_name)))==NULL) 
@@ -435,6 +369,7 @@ static menu_entry *new_menu_entry(const char *name,const char *accel,const char 
     }
   else loc->fname= NULL;
 
+  loc->widget = NULL;
   loc->status = status;
   loc->nsub = nsub;
   loc->subs = subs;
@@ -565,7 +500,7 @@ static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries
  *Delete the menu name in menu_entry list 
  *----------------------------------------------------------------*/
 
-static void sci_menu_delete(menu_entry **m,const char *name) 
+static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) 
 { 
   menu_entry *loc,*nloc;
   if ( *m == NULL ) return ;
@@ -577,6 +512,8 @@ static void sci_menu_delete(menu_entry **m,const char *name)
       *m = (*m)->next ; 
       /* change loc->next to prevent menu_entry_delete to recursively delete */
       loc->next = NULL;
+      if ( loc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(loc->widget),NULL);
+      gtk_widget_destroy(loc->widget);
       menu_entry_delete(loc);
       return ;
     }
@@ -588,6 +525,8 @@ static void sci_menu_delete(menu_entry **m,const char *name)
 	  loc->next = nloc->next ;
 	  /* change nloc->next to prevent menu_entry_delete to recursively delete */
 	  nloc->next = NULL;
+	  if ( nloc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(nloc->widget),NULL);
+	  gtk_widget_destroy(nloc->widget);
 	  menu_entry_delete(nloc);
 	  return ;
 	}
@@ -596,59 +535,105 @@ static void sci_menu_delete(menu_entry **m,const char *name)
     }
 }
 
-/*----------------------------------------------------------------
- * Set the status of a menu 
- *----------------------------------------------------------------*/
-
-static menu_entry * sci_menu_set_status(menu_entry *m,int winid,const char *name,int subid,int status)
-{  
-  menu_entry *loc = m ;
-  while ( loc != NULL) 
-    {
-      if ( is_menu_name(loc->name,name)==0) 
-	{
-	  if ( subid == 0) 
-	    {
-	      loc->status = status ;
-	      return loc;
-	    }
-	  else 
-	    {
-	      int count;
-	      /* walk to find submenu number subid */
-	      loc = loc->subs; 
-	      for ( count = 0 ; count < subid -1 ; count++) 
-		loc = (loc == NULL) ? NULL : loc->next ;
-	      if ( loc == NULL) return NULL ;
-	      loc->status = status;
-	      return loc;
-	    }
-	}
-      loc = loc->next ;
-    }
-  return NULL;
-}
 
 /*------------------------------------------------------
- * menu default callback 
+ * fill an item factory with a menu_entry description 
  *------------------------------------------------------*/
 
-static void sci_menu_default_callback (gpointer  callback_data, guint callback_action,GtkWidget  *widget)
+static GtkWidget *sci_menu_to_gtkmenubar(menu_entry *m,GtkAccelGroup *accel_group)
+{
+  GtkWidget *menubar= gtk_menu_bar_new ();
+  g_object_set_data (G_OBJECT (menubar), "user_data", accel_group);
+  while ( m != NULL) 
+    {
+      sci_menubar_add_menu_entry(menubar,m);
+      m= m->next;
+    }
+  return menubar;
+}
+
+/*-------------------------------------------------------------------
+ * build items associated to the last menu_entry contained in m 
+ * and add them in the factory ifactory 
+ *-------------------------------------------------------------------*/
+
+static void sci_menubar_add_last_menu_entry(GtkWidget *menubar,menu_entry *m)
+{
+  if ( m == NULL ) return ;
+  while ( m->next != NULL) m = m->next ; 
+  sci_menubar_add_menu_entry(menubar,m);
+}
+
+/*-------------------------------------------------------------------
+ * build items associated to the first menu_entry contained in m 
+ * and add them in the factory ifactory 
+ *-------------------------------------------------------------------*/
+
+static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data);
+
+static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m)
+{
+  GtkAccelGroup *accel_group = g_object_get_data (G_OBJECT (menubar), "user_data");
+  GtkWidget *menuitem;
+  if ( m == NULL ) return ;
+  if ( m->stock_name != NULL ) 
+    menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
+  else 
+    menuitem = gtk_menu_item_new_with_mnemonic (m->name);
+  if ( m->accel != NULL )
+    {
+      guint keyval;
+      GdkModifierType mods;
+      gtk_accelerator_parse (m->accel, &keyval, &mods);
+      gtk_widget_add_accelerator (menuitem,"activate",accel_group,keyval,mods, GTK_ACCEL_VISIBLE);
+    }
+  /* keep ref in m */
+  m->widget = menuitem;
+  if ( m->subs != NULL) 
+    {
+      menu_entry *loc;
+      GtkWidget *menu;
+      GtkWidget *menuitem1;
+      menu = gtk_menu_new ();
+      gtk_menu_set_accel_group (GTK_MENU (menu), accel_group);
+      /* gtk_item_factory_create_item(ifactory,&entry,(void *)m,1); */
+      loc =  m->subs ; 
+      while ( loc != NULL) 
+	{
+	  if ( loc->stock_name != NULL ) 
+	    menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL);
+	  else 
+	    menuitem1 = gtk_menu_item_new_with_mnemonic(loc->name);
+	  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem1);
+	  /* entry.callback = sci_menu_default_callback; */
+	  if ( loc->accel != NULL ) 
+	    {
+	      guint keyval;
+	      GdkModifierType mods;
+	      gtk_accelerator_parse (loc->accel, &keyval, &mods);
+	      gtk_widget_add_accelerator (menuitem1,"activate",accel_group,keyval,mods, GTK_ACCEL_VISIBLE);
+	    }
+	  g_signal_connect(menuitem1,  "activate",G_CALLBACK ( nsp_menu_default_callback),loc);
+	  loc->widget = menuitem1;
+	  loc = loc->next;
+	}
+      gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
+    }
+  else 
+    {
+      g_signal_connect(menuitem,  "activate",G_CALLBACK ( nsp_menu_default_callback),m);
+    }
+  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), menuitem);
+  gtk_widget_show_all(menuitem);
+}
+
+
+static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data)
 {
   static char buf[256];
-  menu_entry *m = (menu_entry *) callback_data;
-#ifdef DEBUG
-  fprintf(stdout,"menu activated \"%s\"", gtk_item_factory_path_from_widget (widget));
-#endif 
+  menu_entry *m = (menu_entry *) func_data;
   if ( m== NULL) return ;
-  /* 
-     fprintf(stdout,"name = %s ",m->name);
-     fprintf(stdout,"status %d nsub=%d win=%d action=%d fname=%s\n",
-     m->status,m->nsub,m->winid,m->action_type,m->fname);
-  */
-
   if ( call_predefined_callbacks(m->fname, m->winid)==1) return ;
-
   if (m->action_type == 0) 
     { 
       /* Interpreted mode : we store the action on a queue */
@@ -672,91 +657,13 @@ static void sci_menu_default_callback (gpointer  callback_data, guint callback_a
       /* hard coded mode XXXX */
       Sciprintf("Hardcoded button: to be done \n");
       /*
-      int rep ;
-      C2F(setfbutn)(m->fname,&rep);
-      if ( rep == 0) 
+	int rep ;
+	C2F(setfbutn)(m->fname,&rep);
+	if ( rep == 0) 
 	F2C(fbutn)((m->fname),&(m->winid),&(m->nsub));
       */
     }
 }
-
-/*------------------------------------------------------
- * fill an item factory with a menu_entry description 
- *------------------------------------------------------*/
-
-static void sci_menu_to_item_factory(GtkItemFactory *ifactory,menu_entry *m)
-{
-  while ( m != NULL) 
-    {
-      sci_factory_add_menu_entry(ifactory,m);
-      m= m->next;
-    }
-}
-
-/*-------------------------------------------------------------------
- * build items associated to the last menu_entry contained in m 
- * and add them in the factory ifactory 
- *-------------------------------------------------------------------*/
-
-static void sci_factory_add_last_menu_entry(GtkItemFactory *ifactory,menu_entry *m)
-{
-  if ( m == NULL ) return ;
-  while ( m->next != NULL) m = m->next ; 
-  sci_factory_add_menu_entry(ifactory,m);
-}
-
-/*-------------------------------------------------------------------
- * build items associated to the first menu_entry contained in m 
- * and add them in the factory ifactory 
- *-------------------------------------------------------------------*/
-
-static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m)
-{
-  char buf_path[128];
-  GtkItemFactoryEntry entry = { NULL,NULL, sci_menu_default_callback,0,NULL};
-  if ( m == NULL ) return ;
-  sprintf(buf_path,"/%s",m->name);
-  entry.path = buf_path;
-  entry.accelerator = m->accel;
-  entry.extra_data = m->stock_name;
-  if ( m->subs == NULL) 
-    {
-      if ( entry.extra_data == NULL ) 
-	{
-	  entry.item_type = "<Item>";
-	  gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
-	}
-      else 
-	{
-	  entry.item_type = "<StockItem>";
-	  gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
-	}
-    }
-  else 
-    {
-      menu_entry *loc;
-      if ( is_menu_name(m->name,"Help")==0) 
-	entry.item_type = "<LastBranch>";
-      else 
-	entry.item_type = "<Branch>";
-      entry.callback = NULL;
-      gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
-      loc =  m->subs ; 
-      while ( loc != NULL) 
-	{
-	  entry.extra_data = loc->stock_name;
-	  entry.item_type =  ( entry.extra_data == NULL ) ?  "<Item>" :  "<StockItem>";
-	  sprintf(buf_path,"/%s/%s",m->name,loc->name);
-	  entry.path = buf_path;
-	  entry.accelerator = loc->accel;
-	  entry.callback = sci_menu_default_callback;
-	  gtk_item_factory_create_item(ifactory,&entry,(void*)loc,1);
-	  loc = loc->next;
-	}
-    }
-}
-
-
 
 void * graphic_initial_menu(int winid) 
 {
