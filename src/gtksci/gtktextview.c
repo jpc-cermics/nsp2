@@ -64,8 +64,8 @@ struct _View
   GtkWidget *window;
   GtkWidget *text_view;
   GtkAccelGroup *accel_group;
-  GtkItemFactory *item_factory;
   Buffer *buffer;
+  GtkItemFactory *item_factory;
 };
 
 static void push_active_window (GtkWindow *window);

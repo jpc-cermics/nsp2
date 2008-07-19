@@ -79,7 +79,6 @@ struct _View
 };
 
 static Buffer * create_buffer      (void);
-static View *view_from_widget (GtkWidget *widget);
 static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
@@ -109,7 +108,7 @@ void fill_buffer_with_logo (View *view)
 static gint
 delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
-  View *view = view_from_widget (window);
+  View *view = g_object_get_data (G_OBJECT (window), "view");      
   check_close_view (view);
   /* take care here that we want to quit the gtk_main */
   sci_clear_and_exit(0);
@@ -119,21 +118,6 @@ delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 /*
  * Menu callbacks
  */
-
-static View *
-view_from_widget (GtkWidget *widget)
-{
-  if (GTK_IS_MENU_ITEM (widget))
-    {
-      GtkItemFactory *item_factory = gtk_item_factory_from_widget (widget);
-      return g_object_get_data (G_OBJECT (item_factory), "view");      
-    }
-  else
-    {
-      GtkWidget *app = gtk_widget_get_toplevel (widget);
-      return g_object_get_data (G_OBJECT (app), "view");
-    }
-}
 
 enum
 {
@@ -498,13 +482,14 @@ int Xorgetchar_textview(void)
 	}
       return val1;
     }
-  timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
+  timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
-  gtk_timeout_remove(timer);
+  g_source_remove(timer);
   count=1;
   g_print ("char returned '%c'\n",nsp_expr[0]);
   return nsp_expr[0];
 }
+
 
 /* used for evaluation of sequence obtained 
  * by drag and drop or copy/paste 
@@ -541,9 +526,9 @@ char *readline_textview(const char *prompt)
       nsp_insert_prompt(prompt);
     }
   /* fprintf(stderr,"in my readline\n"); */
-  timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
+  timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
-  gtk_timeout_remove(timer);
+  g_source_remove(timer);
   if ( checkqueue_nsp_command() == TRUE) 
     {
       char buf[256];

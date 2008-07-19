@@ -44,10 +44,9 @@ void create_nsp_about(void)
   box1 = GTK_DIALOG(window)->vbox;
   pixmap = gdk_pixmap_create_from_xpm_d (window->window, &mask, NULL,
 					 (gchar **) nsp_logo_xpm);
-  pixmapwid = gtk_pixmap_new (pixmap, mask);
-  gdk_pixmap_unref (pixmap);
-  gdk_pixmap_unref (mask);
-
+  pixmapwid =gtk_image_new_from_pixmap(pixmap, mask);
+  g_object_unref(G_OBJECT(pixmap));
+  g_object_unref(G_OBJECT(mask));
   /* XXXX : A garder ds un coin */ 
 
   pixmap = gdk_pixmap_create_from_xpm_d (window->window, &mask, NULL,
