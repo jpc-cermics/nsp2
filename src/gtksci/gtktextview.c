@@ -65,7 +65,6 @@ struct _View
   GtkWidget *text_view;
   GtkAccelGroup *accel_group;
   Buffer *buffer;
-  GtkItemFactory *item_factory;
 };
 
 static void push_active_window (GtkWindow *window);
@@ -88,7 +87,7 @@ static void     buffer_set_colors      (Buffer  *buffer,
                                         gboolean enabled);
 static void     buffer_cycle_colors    (Buffer  *buffer);
 
-static View *view_from_widget (GtkWidget *widget);
+static View *view_from_action (GtkAction *action);
 
 static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
@@ -423,8 +422,7 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
 static gint
 delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
-  View *view = view_from_widget (window);
-
+  View *view = g_object_get_data (G_OBJECT (window), "view");      
   push_active_window (GTK_WINDOW (window));
   check_close_view (view);
   pop_active_window ();
@@ -444,21 +442,6 @@ get_empty_view (View *view)
     return view;
   else
     return create_view (create_buffer ());
-}
-
-static View *
-view_from_widget (GtkWidget *widget)
-{
-  if (GTK_IS_MENU_ITEM (widget))
-    {
-      GtkItemFactory *item_factory = gtk_item_factory_from_widget (widget);
-      return g_object_get_data (G_OBJECT (item_factory), "view");      
-    }
-  else
-    {
-      GtkWidget *app = gtk_widget_get_toplevel (widget);
-      return g_object_get_data (G_OBJECT (app), "view");
-    }
 }
 
 
@@ -484,72 +467,73 @@ open_ok_func (const char *filename, gpointer data)
     }
 }
 
-static void
-do_open (gpointer             callback_data,
-	 guint                callback_action,
-	 GtkWidget           *widget)
-{
-  View *view = view_from_widget (widget);
+/* get view for an action callback 
+ */
 
+static View *view_from_action (GtkAction *action)
+{
+  GtkActionGroup *action_group;
+  GValue val = { 0, };  
+  g_value_init (&val, G_TYPE_OBJECT);
+  g_object_get_property(G_OBJECT(action),"action-group",&val);
+  action_group = g_value_get_object (&val);
+  g_value_unset (&val);
+  return g_object_get_data (G_OBJECT (action_group), "view");      
+}
+
+static void do_open(GtkAction *action)
+{
+  View *view;
+  /* 
+  const gchar *name = gtk_action_get_name (action);
+  const gchar *typename = G_OBJECT_TYPE_NAME (action);
+  g_message ("Action %s (type=%s) activated", name, typename);
+  */
+  view = view_from_action (action);
   push_active_window (GTK_WINDOW (view->window));
   filesel_run (NULL, "Open File", NULL, open_ok_func, view);
   pop_active_window ();
 }
 
-static void
-do_save_as (gpointer             callback_data,
-	    guint                callback_action,
-	    GtkWidget           *widget)
+static void do_save_as(GtkAction *action)
 {
-  View *view = view_from_widget (widget);  
+  View *view = view_from_action (action);  
 
   push_active_window (GTK_WINDOW (view->window));
   save_as_buffer (view->buffer);
   pop_active_window ();
 }
 
-static void
-do_save (gpointer             callback_data,
-	 guint                callback_action,
-	 GtkWidget           *widget)
+static void do_save (GtkAction *action)
 {
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
 
   push_active_window (GTK_WINDOW (view->window));
   if (!view->buffer->filename)
-    do_save_as (callback_data, callback_action, widget);
+    do_save_as (action);
   else
     save_buffer (view->buffer);
   pop_active_window ();
 }
 
-static void
-do_close   (gpointer             callback_data,
-	    guint                callback_action,
-	    GtkWidget           *widget)
+static void do_close(GtkAction *action)
 {
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
 
   push_active_window (GTK_WINDOW (view->window));
   check_close_view (view);
   pop_active_window ();
 }
 
-static void
-do_new   (gpointer             callback_data,
-	  guint                callback_action,
-	  GtkWidget           *widget)
+static void do_new (GtkAction *action)
 {
   nsp_edit();
 }
 
 #ifdef EXIT_USED 
-static void
-do_exit    (gpointer             callback_data,
-	    guint                callback_action,
-	    GtkWidget           *widget)
+static void do_exit(GtkAction *action)
 {
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
 
   GSList *tmp_list = buffers;
 
@@ -567,14 +551,11 @@ do_exit    (gpointer             callback_data,
 }
 #endif 
 
-static void 
-do_execute (gpointer             callback_data,
-	    guint                callback_action,
-	    GtkWidget           *widget)
+static void do_execute (GtkAction *action)
 {
   GtkTextIter start,end;
   int display=FALSE,echo =FALSE,errcatch=TRUE,rep,pausecatch=TRUE,mtlb=FALSE;
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
   /* save first */
   push_active_window (GTK_WINDOW (view->window));
 
@@ -583,7 +564,7 @@ do_execute (gpointer             callback_data,
                               &start, &end );
 
   if (!view->buffer->filename)
-    do_save_as (callback_data, callback_action, widget);
+    do_save_as (action);
   else
     save_buffer (view->buffer);
   /* execute the contents */
@@ -639,8 +620,6 @@ static void execute_tag_error(View *view,int line)
   
 }
 
-
-
 enum
 {
   RESPONSE_FORWARD,
@@ -680,16 +659,12 @@ dialog_response_callback (GtkWidget *dialog, gint response_id, gpointer data)
   gtk_widget_destroy (dialog);
 }
 
-static void
-do_search (gpointer callback_data,
-           guint callback_action,
-           GtkWidget *widget)
+static void do_search (GtkAction *action)
 {
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
   GtkWidget *dialog;
   GtkWidget *search_text;
   GtkTextBuffer *buffer;
-
   dialog = gtk_dialog_new_with_buttons ("Search",
                                         GTK_WINDOW (view->window),
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -697,38 +672,25 @@ do_search (gpointer callback_data,
                                         "Backward", RESPONSE_BACKWARD,
                                         GTK_STOCK_CANCEL,
                                         GTK_RESPONSE_NONE, NULL);
-
-
   buffer = gtk_text_buffer_new (NULL);
-
   search_text = gtk_text_view_new_with_buffer (buffer);
-
   g_object_unref (buffer);
-  
   gtk_box_pack_end (GTK_BOX (GTK_DIALOG (dialog)->vbox),
                     search_text,
                     TRUE, TRUE, 0);
-
   g_object_set_data (G_OBJECT (dialog), "buffer", buffer);
-  
   g_signal_connect (dialog,
                     "response",
                     G_CALLBACK (dialog_response_callback),
                     view);
-
   gtk_widget_show (search_text);
-
   gtk_widget_grab_focus (search_text);
-  
   gtk_widget_show_all (dialog);
 }
 
-static void
-do_select_all (gpointer callback_data,
-               guint callback_action,
-               GtkWidget *widget)
+static void do_select_all (GtkAction *action)
 {
-  View *view = view_from_widget (widget);
+  View *view = view_from_action (action);
   GtkTextBuffer *buffer;
   GtkTextIter start, end;
 
@@ -739,27 +701,44 @@ do_select_all (gpointer callback_data,
 }
 
 
-
-static GtkItemFactoryEntry menu_items[] =
-{
-  { "/_File",            NULL,         NULL,        0, "<Branch>" },
-  { "/File/_New",        NULL,         do_new,     0, NULL },
-  { "/File/_Open",       "<control>O", do_open,     0, NULL },
-  { "/File/_Save",       "<control>S", do_save,     0, NULL },
-  { "/File/Save _As...", NULL,         do_save_as,  0, NULL },
-  { "/File/_Execute...", NULL,         do_execute,  0, NULL },
-  { "/File/sep1",        NULL,         NULL,        0, "<Separator>" },
-  { "/File/_Close",      NULL , do_close,    0, NULL },
+static GtkActionEntry menu_actions[] = {
+  {"FileAction", NULL, "_File" },
+  {"EditAction", NULL, "_Edit" },
+  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)}, 
+  {"Open", GTK_STOCK_OPEN,"_Open","<control>O",NULL, G_CALLBACK (do_open)},
+  {"Save", GTK_STOCK_SAVE,"_Save","<control>S",NULL, G_CALLBACK (do_save)},
+  {"SaveAs", GTK_STOCK_SAVE_AS, "Save _As...", NULL,NULL, G_CALLBACK (do_save_as)},
+  {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
+  {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
 #ifdef EXIT_USED 
-  { "/File/E_xit",      "<control>Q" , do_exit,     0, NULL }, 
+  {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
 #endif 
-  { "/_Edit", NULL, 0, 0, "<Branch>" },
-  { "/Edit/Find...", NULL, do_search, 0, NULL },
-  { "/Edit/Select All", NULL , do_select_all, 0, NULL }, 
+  {"Find",GTK_STOCK_FIND, "Find...", NULL,NULL, G_CALLBACK (do_search)},
+  {"SelectAll",GTK_STOCK_SELECT_ALL, "Select All", NULL ,NULL, G_CALLBACK (do_select_all)}
 };
 
-static gboolean
-save_buffer (Buffer *buffer)
+static guint n_menu_actions = G_N_ELEMENTS (menu_actions);
+
+/* XML description of the menus for the test app.  The parser understands
+ * a subset of the Bonobo UI XML format, and uses GMarkup for parsing */
+static const gchar *ui_info =
+  "  <menubar>\n"
+  "    <menu name=\"_File\" action=\"FileAction\">\n"
+  "      <menuitem name=\"new\" action=\"New\" />\n"
+  "      <menuitem name=\"open\" action=\"Open\" />\n"
+  "      <menuitem name=\"save\" action=\"Save\" />\n"
+  "      <menuitem name=\"saveas\" action=\"SaveAs\" />\n"
+  "      <separator name=\"sep1\" />\n"
+  "      <menuitem name=\"close\" action=\"Close\" />\n"
+  "    </menu>\n"
+  "    <menu name=\"_Edit\" action=\"EditAction\">\n"
+  "      <menuitem name=\"find\" action=\"Find\" />\n"
+  "      <menuitem name=\"selectall\" action=\"SelectAll\" />\n"
+  "    </menu>\n"
+  "  </menubar>\n";
+
+
+static gboolean save_buffer (Buffer *buffer)
 {
   GtkTextIter start, end;
   gchar *chars;
@@ -872,14 +851,12 @@ save_as_ok_func (const char *filename, gpointer data)
     }
 }
 
-static gboolean
-save_as_buffer (Buffer *buffer)
+static gboolean save_as_buffer (Buffer *buffer)
 {
   return filesel_run (NULL, "Save File", NULL, save_as_ok_func, buffer);
 }
 
-static gboolean
-check_buffer_saved (Buffer *buffer)
+static gboolean check_buffer_saved (Buffer *buffer)
 {
   if (gtk_text_buffer_get_modified (buffer->buffer))
     {
@@ -905,8 +882,7 @@ check_buffer_saved (Buffer *buffer)
 
 #define N_COLORS 16
 
-static Buffer *
-create_buffer (void)
+static Buffer *create_buffer (void)
 {
   Buffer *buffer;
   PangoTabArray *tabs;
@@ -1296,7 +1272,6 @@ close_view (View *view)
   views = g_slist_remove (views, view);
   buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
-  g_object_unref (view->item_factory);
   g_free (view);
 }
 
@@ -1511,17 +1486,29 @@ line_numbers_expose (GtkWidget      *widget,
 }
 
 
+/* called by the uimanager 
+ *
+ */
 
-
+static void
+add_widget (GtkUIManager *merge,
+	    GtkWidget   *widget,
+	    GtkContainer *container)
+{
+  gtk_box_pack_start (GTK_BOX (container), widget, FALSE, FALSE, 0);
+  gtk_widget_show (widget);
+}
 
 static View *
 create_view (Buffer *buffer)
 {
+  GError *error = NULL;
+
+  GtkActionGroup *action_group = NULL;
   View *view;
-  
   GtkWidget *sw;
   GtkWidget *vbox;
-  
+  GtkUIManager *merge;
   view = g_new0 (View, 1);
   views = g_slist_prepend (views, view);
 
@@ -1535,24 +1522,30 @@ create_view (Buffer *buffer)
 		    G_CALLBACK (delete_event_cb), NULL);
 
   view->accel_group = gtk_accel_group_new ();
-  view->item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", view->accel_group);
-  g_object_set_data (G_OBJECT (view->item_factory), "view", view);
-  
-  gtk_item_factory_create_items (view->item_factory, G_N_ELEMENTS (menu_items), menu_items, view);
-
-  gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
+  merge = gtk_ui_manager_new ();
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
+  
+  action_group = gtk_action_group_new ("TestActions");
+  g_object_set_data (G_OBJECT (action_group), "view", view);
 
-  gtk_box_pack_start (GTK_BOX (vbox),
-		      gtk_item_factory_get_widget (view->item_factory, "<main>"),
-		      FALSE, FALSE, 0);
+  gtk_action_group_add_actions (action_group,  menu_actions,  n_menu_actions, NULL);
+  gtk_ui_manager_insert_action_group (merge, action_group, 0);
+  g_signal_connect (merge, "add_widget", G_CALLBACK (add_widget), vbox);
+  view->accel_group = gtk_ui_manager_get_accel_group (merge);
+  gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
+
+  if (!gtk_ui_manager_add_ui_from_string (merge, ui_info, -1, &error))
+    {
+      g_message ("building menus failed: %s", error->message);
+      g_error_free (error);
+    }
   
   sw = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                 GTK_POLICY_AUTOMATIC,
-                                 GTK_POLICY_AUTOMATIC);
+				  GTK_POLICY_AUTOMATIC,
+				  GTK_POLICY_AUTOMATIC);
 
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
@@ -1563,7 +1556,6 @@ create_view (Buffer *buffer)
                                   5);
   
   /* Draw tab stops in the top and bottom windows. */
-
   g_signal_connect (view->buffer->buffer,
 		    "mark_set",
 		    G_CALLBACK (cursor_set_callback),
@@ -1576,22 +1568,15 @@ create_view (Buffer *buffer)
   gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
                                         GTK_TEXT_WINDOW_LEFT,
                                         30);
-  
   g_signal_connect (view->text_view,
                     "expose_event",
                     G_CALLBACK (line_numbers_expose),
                     NULL);
-
-  
-  gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);
-
   gtk_window_set_default_size (GTK_WINDOW (view->window), 500, 500);
-
   gtk_widget_grab_focus (view->text_view);
-
   view_set_title (view);
-
   gtk_widget_show_all (view->window);
   return view;
 }

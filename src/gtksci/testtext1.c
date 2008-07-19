@@ -46,8 +46,6 @@
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
 
-/* #undef GTK_DISABLE_DEPRECATED */
-
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
