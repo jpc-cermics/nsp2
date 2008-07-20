@@ -2320,3 +2320,88 @@
   (c-name "GtkActionGroup")
   (gtype-id "GTK_TYPE_ACTION_GROUP")
 )
+
+;; added 19 Jul 
+
+(define-interface FileChooser
+  (in-module "Gtk")
+  (c-name "GtkFileChooser")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER")
+  (prerequisite "GtkWidget")
+)
+
+(define-object FileChooserButton
+  (in-module "Gtk")
+  (parent "GtkHBox")
+  (c-name "GtkFileChooserButton")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_BUTTON")
+  (implements "GtkFileChooser")
+)
+
+(define-object FileChooserDialog
+  (in-module "Gtk")
+  (parent "GtkDialog")
+  (c-name "GtkFileChooserDialog")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_DIALOG")
+  (implements "GtkFileChooser")
+)
+
+(define-object FileChooserWidget
+  (in-module "Gtk")
+  (parent "GtkVBox")
+  (c-name "GtkFileChooserWidget")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_WIDGET")
+  (implements "GtkFileChooser")
+)
+
+(define-object FileFilter
+  (in-module "Gtk")
+  (parent "GtkObject")
+  (c-name "GtkFileFilter")
+  (gtype-id "GTK_TYPE_FILE_FILTER")
+)
+
+(define-enum FileChooserAction
+  (in-module "Gtk")
+  (c-name "GtkFileChooserAction")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_ACTION")
+  (values
+    '("open" "GTK_FILE_CHOOSER_ACTION_OPEN")
+    '("save" "GTK_FILE_CHOOSER_ACTION_SAVE")
+    '("select-folder" "GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER")
+    '("create-folder" "GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER")
+  )
+)
+
+(define-enum FileChooserConfirmation
+  (in-module "Gtk")
+  (c-name "GtkFileChooserConfirmation")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_CONFIRMATION")
+  (values
+    '("confirm" "GTK_FILE_CHOOSER_CONFIRMATION_CONFIRM")
+    '("accept-filename" "GTK_FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME")
+    '("select-again" "GTK_FILE_CHOOSER_CONFIRMATION_SELECT_AGAIN")
+  )
+)
+
+(define-enum FileChooserError
+  (in-module "Gtk")
+  (c-name "GtkFileChooserError")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_ERROR")
+  (values
+    '("nonexistent" "GTK_FILE_CHOOSER_ERROR_NONEXISTENT")
+    '("bad-filename" "GTK_FILE_CHOOSER_ERROR_BAD_FILENAME")
+  )
+)
+
+(define-flags FileFilterFlags
+  (in-module "Gtk")
+  (c-name "GtkFileFilterFlags")
+  (gtype-id "GTK_TYPE_FILE_FILTER_FLAGS")
+  (values
+    '("filename" "GTK_FILE_FILTER_FILENAME")
+    '("uri" "GTK_FILE_FILTER_URI")
+    '("display-name" "GTK_FILE_FILTER_DISPLAY_NAME")
+    '("mime-type" "GTK_FILE_FILTER_MIME_TYPE")
+  )
+)

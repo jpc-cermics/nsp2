@@ -161,7 +161,7 @@
   (is-constructor-of GtkAccelLabel)
   (return-type "GtkWidget*")
   (parameters
-    '("const-gchar*" "string")
+   '("const-gchar*" "string")
   )
 )
 
@@ -16701,3 +16701,596 @@
     '("const-gchar*" "action_name")
   )
 )
+
+;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilechooser.h
+;;----------------------------------------------------------
+
+(define-function gtk_file_chooser_get_type
+  (c-name "gtk_file_chooser_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_file_chooser_error_quark
+  (c-name "gtk_file_chooser_error_quark")
+  (return-type "GQuark")
+)
+
+(define-method set_action
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_action")
+  (return-type "none")
+  (parameters
+    '("GtkFileChooserAction" "action")
+  )
+)
+
+(define-method get_action
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_action")
+  (return-type "GtkFileChooserAction")
+)
+
+(define-method set_local_only
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_local_only")
+  (return-type "none")
+  (parameters
+    '("gboolean" "local_only")
+  )
+)
+
+(define-method get_local_only
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_local_only")
+  (return-type "gboolean")
+)
+
+(define-method set_select_multiple
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_select_multiple")
+  (return-type "none")
+  (parameters
+    '("gboolean" "select_multiple")
+  )
+)
+
+(define-method get_select_multiple
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_select_multiple")
+  (return-type "gboolean")
+)
+
+(define-method set_show_hidden
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_show_hidden")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show_hidden")
+  )
+)
+
+(define-method get_show_hidden
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_show_hidden")
+  (return-type "gboolean")
+)
+
+(define-method set_do_overwrite_confirmation
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_do_overwrite_confirmation")
+  (return-type "none")
+  (parameters
+    '("gboolean" "do_overwrite_confirmation")
+  )
+)
+
+(define-method get_do_overwrite_confirmation
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_do_overwrite_confirmation")
+  (return-type "gboolean")
+)
+
+(define-method set_current_name
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_current_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_filename
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_filename")
+  (return-type "gchar*")
+)
+
+(define-method set_filename
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_filename")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "filename")
+  )
+)
+
+(define-method select_filename
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_select_filename")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "filename")
+  )
+)
+
+(define-method unselect_filename
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_unselect_filename")
+  (return-type "none")
+  (parameters
+    '("const-char*" "filename")
+  )
+)
+
+(define-method select_all
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_select_all")
+  (return-type "none")
+)
+
+(define-method unselect_all
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_unselect_all")
+  (return-type "none")
+)
+
+(define-method get_filenames
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_filenames")
+  (return-type "GSList*")
+)
+
+(define-method set_current_folder
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_current_folder")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "filename")
+  )
+)
+
+(define-method get_current_folder
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_current_folder")
+  (return-type "gchar*")
+)
+
+(define-method get_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_uri")
+  (return-type "gchar*")
+)
+
+(define-method set_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_uri")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+(define-method select_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_select_uri")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+(define-method unselect_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_unselect_uri")
+  (return-type "none")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+(define-method get_uris
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_uris")
+  (return-type "GSList*")
+)
+
+(define-method set_current_folder_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_current_folder_uri")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "uri")
+  )
+)
+
+(define-method get_current_folder_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_current_folder_uri")
+  (return-type "gchar*")
+)
+
+(define-method set_preview_widget
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_preview_widget")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "preview_widget")
+  )
+)
+
+(define-method get_preview_widget
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_preview_widget")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_preview_widget_active
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_preview_widget_active")
+  (return-type "none")
+  (parameters
+    '("gboolean" "active")
+  )
+)
+
+(define-method get_preview_widget_active
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_preview_widget_active")
+  (return-type "gboolean")
+)
+
+(define-method set_use_preview_label
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_use_preview_label")
+  (return-type "none")
+  (parameters
+    '("gboolean" "use_label")
+  )
+)
+
+(define-method get_use_preview_label
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_use_preview_label")
+  (return-type "gboolean")
+)
+
+(define-method get_preview_filename
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_preview_filename")
+  (return-type "char*")
+)
+
+(define-method get_preview_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_preview_uri")
+  (return-type "char*")
+)
+
+(define-method set_extra_widget
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_extra_widget")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "extra_widget")
+  )
+)
+
+(define-method get_extra_widget
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_extra_widget")
+  (return-type "GtkWidget*")
+)
+
+(define-method add_filter
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_add_filter")
+  (return-type "none")
+  (parameters
+    '("GtkFileFilter*" "filter")
+  )
+)
+
+(define-method remove_filter
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_remove_filter")
+  (return-type "none")
+  (parameters
+    '("GtkFileFilter*" "filter")
+  )
+)
+
+(define-method list_filters
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_list_filters")
+  (return-type "GSList*")
+)
+
+(define-method set_filter
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_set_filter")
+  (return-type "none")
+  (parameters
+    '("GtkFileFilter*" "filter")
+  )
+)
+
+(define-method get_filter
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_get_filter")
+  (return-type "GtkFileFilter*")
+)
+
+(define-method add_shortcut_folder
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_add_shortcut_folder")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "folder")
+    '("GError**" "error")
+  )
+)
+
+(define-method remove_shortcut_folder
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_remove_shortcut_folder")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "folder")
+    '("GError**" "error")
+  )
+)
+
+(define-method list_shortcut_folders
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_list_shortcut_folders")
+  (return-type "GSList*")
+)
+
+(define-method add_shortcut_folder_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_add_shortcut_folder_uri")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "uri")
+    '("GError**" "error")
+  )
+)
+
+(define-method remove_shortcut_folder_uri
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_remove_shortcut_folder_uri")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "uri")
+    '("GError**" "error")
+  )
+)
+
+(define-method list_shortcut_folder_uris
+  (of-object "GtkFileChooser")
+  (c-name "gtk_file_chooser_list_shortcut_folder_uris")
+  (return-type "GSList*")
+)
+
+;; From /opt/gnome-2.10/include/gtk-2.0/gtk/gtkfilechooserbutton.h
+;;----------------------------------------------------------
+
+(define-function gtk_file_chooser_button_get_type
+  (c-name "gtk_file_chooser_button_get_type")
+  (return-type "GType")
+)
+
+(define-function file_chooser_button_new
+  (c-name "gtk_file_chooser_button_new")
+  (is-constructor-of "GtkFileChooserButton")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '(GtkFileChooserAction action)
+
+  )
+)
+
+(define-function file_chooser_button_new_with_backend
+  (c-name "gtk_file_chooser_button_new_with_backend")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("GtkFileChooserAction" "action")
+    '("const-gchar*" "backend")
+  )
+  (caller-owns-return #t)
+)
+
+(define-function file_chooser_button_new_with_dialog
+  (c-name "gtk_file_chooser_button_new_with_dialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkWidget*" "dialog")
+  )
+  (caller-owns-return #t)
+)
+
+(define-method get_title
+  (of-object "GtkFileChooserButton")
+  (c-name "gtk_file_chooser_button_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_title
+  (of-object "GtkFileChooserButton")
+  (c-name "gtk_file_chooser_button_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method get_width_chars
+  (of-object "GtkFileChooserButton")
+  (c-name "gtk_file_chooser_button_get_width_chars")
+  (return-type "gint")
+)
+
+(define-method set_width_chars
+  (of-object "GtkFileChooserButton")
+  (c-name "gtk_file_chooser_button_set_width_chars")
+  (return-type "none")
+  (parameters
+    '("gint" "n_chars")
+  )
+)
+
+;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilechooserdialog.h
+;;----------------------------------------------------------
+
+(define-function gtk_file_chooser_dialog_get_type
+  (c-name "gtk_file_chooser_dialog_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_file_chooser_dialog_new
+  (c-name "gtk_file_chooser_dialog_new")
+  (is-constructor-of "GtkFileChooserDialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("GtkWindow*" "parent")
+    '("GtkFileChooserAction" "action")
+    '("const-gchar*" "first_button_text")
+  )
+  (varargs #t)
+)
+
+(define-function file_chooser_dialog_new_with_backend
+  (c-name "gtk_file_chooser_dialog_new_with_backend")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("GtkWindow*" "parent")
+    '("GtkFileChooserAction" "action")
+    '("const-gchar*" "backend")
+    '("const-gchar*" "first_button_text")
+  )
+  (varargs #t)
+)
+
+;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilechooserwidget.h
+;;----------------------------------------------------------
+
+(define-function gtk_file_chooser_widget_get_type
+  (c-name "gtk_file_chooser_widget_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_file_chooser_widget_new
+  (c-name "gtk_file_chooser_widget_new")
+  (is-constructor-of "GtkFileChooserWidget")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkFileChooserAction" "action")
+  )
+)
+
+(define-function file_chooser_widget_new_with_backend
+  (c-name "gtk_file_chooser_widget_new_with_backend")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkFileChooserAction" "action")
+    '("const-gchar*" "backend")
+  )
+  (caller-owns-return #t)
+)
+
+
+;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilefilter.h
+;;--------------------------------------------------
+
+(define-function gtk_file_filter_get_type
+  (c-name "gtk_file_filter_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_file_filter_new
+  (c-name "gtk_file_filter_new")
+  (is-constructor-of "GtkFileFilter")
+  (return-type "GtkFileFilter*")
+)
+
+(define-method set_name
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_set_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_name
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method add_mime_type
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_add_mime_type")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "mime_type")
+  )
+)
+
+(define-method add_pattern
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_add_pattern")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "pattern")
+  )
+)
+
+(define-method add_pixbuf_formats
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_add_pixbuf_formats")
+  (return-type "none")
+)
+
+(define-method add_custom
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_add_custom")
+  (return-type "none")
+  (parameters
+    '("GtkFileFilterFlags" "needed")
+    '("GtkFileFilterFunc" "func")
+    '("gpointer" "data")
+    '("GDestroyNotify" "notify")
+  )
+)
+
+(define-method get_needed
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_get_needed")
+  (return-type "GtkFileFilterFlags")
+)
+
+(define-method filter
+  (of-object "GtkFileFilter")
+  (c-name "gtk_file_filter_filter")
+  (return-type "gboolean")
+  (parameters
+    '("const-GtkFileFilterInfo*" "filter_info")
+  )
+)
+
+

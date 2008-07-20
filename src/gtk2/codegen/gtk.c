@@ -213,13 +213,18 @@ extern int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,in
 #include "nsp/gtk/gtktoggleaction.h"
 #include "nsp/gtk/gtkradioaction.h"
 #include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkactiongroup.h"
+#include "nsp/gtk/gtkfilechooserbutton.h"
+#include "nsp/gtk/gtkfilechooserdialog.h"
+#include "nsp/gtk/gtkfilechooserwidget.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/gtk/gtkfilefilter.h"
 
 
 /* ----------- GtkTreePath ----------- */
@@ -470,7 +475,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     }
   return NULL;
 }
-#line 474 "gtk.c"
+#line 479 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_to_string(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -522,7 +527,7 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 526 "gtk.c"
+#line 531 "gtk.c"
 
 
 #line 166 "gtk.override"
@@ -551,7 +556,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
-#line 555 "gtk.c"
+#line 560 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -898,7 +903,7 @@ _wrap_gtk_requisition__set_width(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->width = val;
   return OK;
 }
-#line 902 "gtk.c"
+#line 907 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_width(NspObject *self,char *attr)
 {
   int ret;
@@ -916,7 +921,7 @@ _wrap_gtk_requisition__set_height(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->height = val;
   return 0;
 }
-#line 920 "gtk.c"
+#line 925 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 {
   int ret;
@@ -1166,7 +1171,7 @@ _wrap_gtkiconset_new(Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_gtk_icon_set_new_from_pixbuf(stack,rhs,opt,lhs);
 }
-#line 1170 "gtk.c"
+#line 1175 "gtk.c"
 
 
 static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
@@ -1238,7 +1243,7 @@ _wrap_gtk_icon_set_get_sizes(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,(NspObject *) ret) ; 
   return 1;
 }
-#line 1242 "gtk.c"
+#line 1247 "gtk.c"
 
 
 static NspMethods gtkiconset_methods[] = {
@@ -1888,7 +1893,7 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 			 type, format,(const guchar *) data, length);
   return 0;
 }
-#line 1892 "gtk.c"
+#line 1897 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_set_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -1919,7 +1924,7 @@ _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,in
   Scierror("To be done XXXXX gtk_selection_data_get_text");
   return 0;
 }
-#line 1923 "gtk.c"
+#line 1928 "gtk.c"
 
 
 #line 502 "gtk.override"
@@ -1940,7 +1945,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1; 
   NSP_LIST_CLEAN; 
 }
-#line 1944 "gtk.c"
+#line 1949 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_targets_include_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -1994,7 +1999,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
-#line 1998 "gtk.c"
+#line 2003 "gtk.c"
 
 
 static NspMethods gtkselectiondata_methods[] = {
@@ -2057,7 +2062,7 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
     return nsp_new_string_obj(NVOID,NULL,0);
   }
 }
-#line 2061 "gtk.c"
+#line 2066 "gtk.c"
 static AttrTab gtkselectiondata_attrs[] = {
   { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2325,7 +2330,7 @@ _wrap_gtk_text_attributes__get_bg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2329 "gtk.c"
+#line 2334 "gtk.c"
 #line 6448 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
@@ -2334,7 +2339,7 @@ _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2338 "gtk.c"
+#line 2343 "gtk.c"
 #line 6457 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
@@ -2344,7 +2349,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2348 "gtk.c"
+#line 2353 "gtk.c"
 #line 6467 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
@@ -2355,7 +2360,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2359 "gtk.c"
+#line 2364 "gtk.c"
 #line 6478 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
@@ -2364,7 +2369,7 @@ _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.rise;
   return nsp_new_double_obj((double) ret);
 }
-#line 2368 "gtk.c"
+#line 2373 "gtk.c"
 #line 6487 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
@@ -2373,7 +2378,7 @@ _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.underline;
   return nsp_new_double_obj((double) ret);
 }
-#line 2377 "gtk.c"
+#line 2382 "gtk.c"
 #line 6496 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
@@ -2381,7 +2386,7 @@ _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.strikethrough;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2385 "gtk.c"
+#line 2390 "gtk.c"
 #line 6504 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
@@ -2389,7 +2394,7 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.draw_bg;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2393 "gtk.c"
+#line 2398 "gtk.c"
 static NspObject *_wrap_gtk_text_attributes__get_justification(NspObject *self,char *attr)
 {
   gint ret;
@@ -2809,7 +2814,7 @@ _wrap_gtk_text_iter_copy(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   return (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, nspg_boxed_get(self, GtkTextIter), TRUE, TRUE,NULL);
 }
-#line 2813 "gtk.c"
+#line 2818 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_offset(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -2901,7 +2906,7 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   Scierror("XXXX To be done gtk_text_iter_get_slice");
   return 0;
 }
-#line 2905 "gtk.c"
+#line 2910 "gtk.c"
 
 
 #line 5178 "gtk.override"
@@ -2930,7 +2935,7 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   Scierror("To be done gtk_text_iter_get_text");
   return 0;
 }
-#line 2934 "gtk.c"
+#line 2939 "gtk.c"
 
 
 #line 5205 "gtk.override"
@@ -2960,7 +2965,7 @@ _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int op
   Scierror("To be done gtk_text_iter_get_visible_slice");
   return 0;
 }
-#line 2964 "gtk.c"
+#line 2969 "gtk.c"
 
 
 #line 5233 "gtk.override"
@@ -2990,7 +2995,7 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
   Scierror("To be done gtk_text_iter_get_visible_text");
   return 0;
 }
-#line 2994 "gtk.c"
+#line 2999 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3014,7 +3019,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3018 "gtk.c"
+#line 3023 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3044,7 +3049,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
     
   NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3048 "gtk.c"
+#line 3053 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3140,7 +3145,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3144 "gtk.c"
+#line 3149 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_editable(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3662,7 +3667,7 @@ _wrap_gtk_text_iter_forward_search(NspGBoxed *self,Stack stack,int rhs,int opt,i
     }
   return 0;
 }
-#line 3666 "gtk.c"
+#line 3671 "gtk.c"
 
 
 #line 5333 "gtk.override"
@@ -3700,7 +3705,7 @@ _wrap_gtk_text_iter_backward_search(NspGBoxed *self,Stack stack,int rhs,int opt,
     }
   return 0;
 }
-#line 3704 "gtk.c"
+#line 3709 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4309,7 +4314,7 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4313 "gtk.c"
+#line 4318 "gtk.c"
 
 
 #line 3577 "gtk.override"
@@ -4330,7 +4335,7 @@ static int _wrap_gtk_editable_insert_text(NspGtkEditable *self,Stack stack,int r
   if ( nsp_move_double(stack,1,(double)position) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4334 "gtk.c"
+#line 4339 "gtk.c"
 
 
 static int _wrap_gtk_editable_delete_text(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4979,7 +4984,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
 				    nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 4983 "gtk.c"
+#line 4988 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_clear_attributes(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5247,7 +5252,7 @@ static int _wrap_gtk_tree_model_get_column_type(NspGtkTreeModel *self,Stack stac
   return 1; 
 }
 
-#line 5251 "gtk.c"
+#line 5256 "gtk.c"
 
 
 #line 1499 "gtk.override"
@@ -5280,7 +5285,7 @@ _wrap_gtk_tree_model_get_iter(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
 }
-#line 5284 "gtk.c"
+#line 5289 "gtk.c"
 
 
 #line 1530 "gtk.override"
@@ -5305,7 +5310,7 @@ _wrap_gtk_tree_model_get_iter_from_string(NspGObject *self,Stack stack,int rhs,i
     return RET_BUG;
   }
 }
-#line 5309 "gtk.c"
+#line 5314 "gtk.c"
 
 
 #line 2319 "gtk.override"
@@ -5324,7 +5329,7 @@ _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt
     }
   return RET_BUG;
 }
-#line 5328 "gtk.c"
+#line 5333 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -5378,7 +5383,7 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 5382 "gtk.c"
+#line 5387 "gtk.c"
 
 
 #line 2336 "gtk.override"
@@ -5400,7 +5405,7 @@ _wrap_gtk_tree_model_iter_next(NspGObject *self,Stack stack,int rhs,int opt,int 
   if ( nsp_move_boolean(stack,1,rep)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 5404 "gtk.c"
+#line 5409 "gtk.c"
 
 
 #line 2356 "gtk.override"
@@ -5432,7 +5437,7 @@ _wrap_gtk_tree_model_iter_children(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
 }
-#line 5436 "gtk.c"
+#line 5441 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -5503,7 +5508,7 @@ _wrap_gtk_tree_model_iter_nth_child(NspGObject *self,Stack stack,int rhs,int opt
   else 
     return RET_BUG;
 }
-#line 5507 "gtk.c"
+#line 5512 "gtk.c"
 
 
 #line 2417 "gtk.override"
@@ -5536,7 +5541,7 @@ _wrap_gtk_tree_model_iter_parent(NspGObject *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
 }
-#line 5540 "gtk.c"
+#line 5545 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -5633,7 +5638,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   /* XXXX detecter les erreurs ? */
   return 0;
 }
-#line 5637 "gtk.c"
+#line 5642 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -6517,7 +6522,7 @@ _wrap_gtk_tree_sortable_get_sort_column_id(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,n,(double) sort_column_id,(double) order) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 6521 "gtk.c"
+#line 6526 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_set_sort_column_id(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -6594,7 +6599,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#line 6598 "gtk.c"
+#line 6603 "gtk.c"
 
 
 #line 1745 "gtk.override"
@@ -6621,7 +6626,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
 					  nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 6625 "gtk.c"
+#line 6630 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_has_default_sort_func(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -6645,6 +6650,769 @@ static NspMethods gtktreesortable_methods[] = {
 
 static NspMethods *gtktreesortable_get_methods(void) { return gtktreesortable_methods;};
 static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
+
+
+/* ----------- GtkFileChooser ----------- */
+
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2007 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  GtkFileChooser_Private 
+#include "nsp/gtk/gtkfilechooser.h"
+#include "nsp/interf.h"
+
+/* NspGtkFileChooser inherits from NspGObject */ 
+
+int nsp_type_gtkfilechooser_id=0;
+NspTypeGtkFileChooser *nsp_type_gtkfilechooser=NULL;
+
+NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
+{
+  NspTypeGtkFileChooser *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkfilechooser != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkfilechooser;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkfilechooser_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = gtkfilechooser_get_methods; 
+  type->new = (new_func *) new_gtkfilechooser;
+
+  /* specific methods for gtkfilechooser */
+      
+  type->init = (init_func *) init_gtkfilechooser;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for gtkfilechooser */ 
+
+  top->s_type =  (s_type_func *) gtkfilechooser_type_as_string;    
+  top->sh_type = (sh_type_func *) gtkfilechooser_type_short_string;
+  /* top->create = (create_func*) int_gtkfilechooser_create;*/ 
+  
+  /* specific methods for gtkfilechooser */
+      
+  type->init = (init_func *) init_gtkfilechooser;
+
+  if ( nsp_type_gtkfilechooser_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkFileChooser called nsp_type_gtkfilechooser
+       */
+      type->id =  nsp_type_gtkfilechooser_id = nsp_new_type_id();
+      nsp_type_gtkfilechooser = type;
+      if ( nsp_register_type(nsp_type_gtkfilechooser) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkfilechooser, GTK_TYPE_FILE_CHOOSER);
+      return ( mode == T_BASE ) ? type : new_type_gtkfilechooser(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_gtkfilechooser_id;
+       return type;
+    }
+}
+
+/*
+ * initialize GtkFileChooser instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkfilechooser(NspGtkFileChooser *o,NspTypeGtkFileChooser *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of GtkFileChooser 
+ */
+
+NspGtkFileChooser *new_gtkfilechooser() 
+{
+  NspGtkFileChooser *loc; 
+  /* type must exists */
+  nsp_type_gtkfilechooser = new_type_gtkfilechooser(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkFileChooser)))== NULLGTKFILECHOOSER) return loc;
+  /* initialize object */
+  if ( init_gtkfilechooser(loc,nsp_type_gtkfilechooser) == FAIL) return NULLGTKFILECHOOSER;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for GtkFileChooser 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char gtkfilechooser_type_name[]="GtkFileChooser";
+static char gtkfilechooser_short_type_name[]="GtkFileChooser";
+
+static char *gtkfilechooser_type_as_string(void)
+{
+  return(gtkfilechooser_type_name);
+}
+
+static char *gtkfilechooser_type_short_string(NspObject *v)
+{
+  return(gtkfilechooser_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for GtkFileChooser objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspGtkFileChooser   *gtkfilechooser_object(NspObject *O)
+{
+  /** Follow pointer **/
+  HOBJ_GET_OBJECT(O,NULL);
+  /** Check type **/
+  if ( check_implements (O,nsp_type_gtkfilechooser_id) ) return ((NspGtkFileChooser *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooser));
+  return NULL;
+}
+
+int IsGtkFileChooserObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_gtkfilechooser_id);
+}
+
+int IsGtkFileChooser(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_gtkfilechooser_id);
+}
+
+NspGtkFileChooser  *GetGtkFileChooserCopy(Stack stack, int i)
+{
+  if (  GetGtkFileChooser(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkFileChooser  *GetGtkFileChooser(Stack stack, int i)
+{
+  NspGtkFileChooser *M;
+  if (( M = gtkfilechooser_object(NthObj(i))) == NULLGTKFILECHOOSER)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkFileChooser *gtkfilechooser_copy(NspGtkFileChooser *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooser);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooser);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkFileChooser
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGtkFileChooser *H;
+  CheckRhs(0,0);
+  / * want to be sure that type gtkfilechooser is initialized * /
+  nsp_type_gtkfilechooser = new_type_gtkfilechooser(T_BASE);
+  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooser)) == NULLGTKFILECHOOSER) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+*/ 
+
+static int _wrap_gtk_file_chooser_set_action(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,t_end};
+  GtkFileChooserAction action;
+  NspObject *nsp_action = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_action) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
+      return RET_BUG;
+  gtk_file_chooser_set_action(GTK_FILE_CHOOSER(self->obj), action);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_action(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint ret;
+
+  ret = gtk_file_chooser_get_action(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_local_only(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int local_only;
+
+  if ( GetArgs(stack,rhs,opt,T,&local_only) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(self->obj), local_only);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_local_only(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_local_only(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_select_multiple(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int select_multiple;
+
+  if ( GetArgs(stack,rhs,opt,T,&select_multiple) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(self->obj), select_multiple);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_select_multiple(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_show_hidden(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int show_hidden;
+
+  if ( GetArgs(stack,rhs,opt,T,&show_hidden) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(self->obj), show_hidden);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_show_hidden(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_show_hidden(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_do_overwrite_confirmation(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int do_overwrite_confirmation;
+
+  if ( GetArgs(stack,rhs,opt,T,&do_overwrite_confirmation) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(self->obj), do_overwrite_confirmation);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_do_overwrite_confirmation(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_do_overwrite_confirmation(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_current_name(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *name;
+
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(self->obj), name);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_filename(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_filename(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *filename;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(self->obj), filename);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_select_filename(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *filename;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(self->obj), filename);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_unselect_filename(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *filename;
+
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  gtk_file_chooser_unselect_filename(GTK_FILE_CHOOSER(self->obj), filename);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_select_all(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gtk_file_chooser_select_all(GTK_FILE_CHOOSER(self->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_unselect_all(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gtk_file_chooser_unselect_all(GTK_FILE_CHOOSER(self->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_filenames(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GSList *ret, *tmp;
+
+  ret = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(self->obj));
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+static int _wrap_gtk_file_chooser_set_current_folder(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *filename;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(self->obj), filename);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_get_current_folder(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_get_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_set_uri(GTK_FILE_CHOOSER(self->obj), uri);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_select_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_select_uri(GTK_FILE_CHOOSER(self->obj), uri);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_unselect_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  gtk_file_chooser_unselect_uri(GTK_FILE_CHOOSER(self->obj), uri);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_uris(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GSList *ret, *tmp;
+
+  ret = gtk_file_chooser_get_uris(GTK_FILE_CHOOSER(self->obj));
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+static int _wrap_gtk_file_chooser_set_current_folder_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(self->obj), uri);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_get_current_folder_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_current_folder_uri(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_preview_widget(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *preview_widget;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &preview_widget) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(self->obj), GTK_WIDGET(preview_widget->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_preview_widget(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  GtkWidget *ret;
+
+  ret = gtk_file_chooser_get_preview_widget(GTK_FILE_CHOOSER(self->obj));
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_preview_widget_active(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int active;
+
+  if ( GetArgs(stack,rhs,opt,T,&active) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(self->obj), active);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_preview_widget_active(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_preview_widget_active(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_use_preview_label(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int use_label;
+
+  if ( GetArgs(stack,rhs,opt,T,&use_label) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_use_preview_label(GTK_FILE_CHOOSER(self->obj), use_label);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_use_preview_label(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_get_use_preview_label(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_get_preview_filename(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_get_preview_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+
+  ret = gtk_file_chooser_get_preview_uri(GTK_FILE_CHOOSER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_set_extra_widget(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *extra_widget;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &extra_widget) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(self->obj), GTK_WIDGET(extra_widget->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_extra_widget(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  GtkWidget *ret;
+
+  ret = gtk_file_chooser_get_extra_widget(GTK_FILE_CHOOSER(self->obj));
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_add_filter(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *filter;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkfilefilter, &filter) == FAIL) return RET_BUG;
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(self->obj), GTK_FILE_FILTER(filter->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_remove_filter(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *filter;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkfilefilter, &filter) == FAIL) return RET_BUG;
+  gtk_file_chooser_remove_filter(GTK_FILE_CHOOSER(self->obj), GTK_FILE_FILTER(filter->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_list_filters(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GSList *ret, *tmp;
+
+  ret = gtk_file_chooser_list_filters(GTK_FILE_CHOOSER(self->obj));
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+static int _wrap_gtk_file_chooser_set_filter(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *filter;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkfilefilter, &filter) == FAIL) return RET_BUG;
+  gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(self->obj), GTK_FILE_FILTER(filter->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_get_filter(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  GtkFileFilter *ret;
+
+  ret = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(self->obj));
+  nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkfilefilter))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_add_shortcut_folder(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *folder;
+  int ret;
+  GError *error = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,&folder) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(self->obj), folder, &error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_remove_shortcut_folder(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *folder;
+  int ret;
+  GError *error = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,&folder) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_remove_shortcut_folder(GTK_FILE_CHOOSER(self->obj), folder, &error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_list_shortcut_folders(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GSList *ret, *tmp;
+
+  ret = gtk_file_chooser_list_shortcut_folders(GTK_FILE_CHOOSER(self->obj));
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+static int _wrap_gtk_file_chooser_add_shortcut_folder_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+  int ret;
+  GError *error = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_add_shortcut_folder_uri(GTK_FILE_CHOOSER(self->obj), uri, &error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_remove_shortcut_folder_uri(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *uri;
+  int ret;
+  GError *error = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret = gtk_file_chooser_remove_shortcut_folder_uri(GTK_FILE_CHOOSER(self->obj), uri, &error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_list_shortcut_folder_uris(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GSList *ret, *tmp;
+
+  ret = gtk_file_chooser_list_shortcut_folder_uris(GTK_FILE_CHOOSER(self->obj));
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+static NspMethods gtkfilechooser_methods[] = {
+  {"set_action",(nsp_method *) _wrap_gtk_file_chooser_set_action},
+  {"get_action",(nsp_method *) _wrap_gtk_file_chooser_get_action},
+  {"set_local_only",(nsp_method *) _wrap_gtk_file_chooser_set_local_only},
+  {"get_local_only",(nsp_method *) _wrap_gtk_file_chooser_get_local_only},
+  {"set_select_multiple",(nsp_method *) _wrap_gtk_file_chooser_set_select_multiple},
+  {"get_select_multiple",(nsp_method *) _wrap_gtk_file_chooser_get_select_multiple},
+  {"set_show_hidden",(nsp_method *) _wrap_gtk_file_chooser_set_show_hidden},
+  {"get_show_hidden",(nsp_method *) _wrap_gtk_file_chooser_get_show_hidden},
+  {"set_do_overwrite_confirmation",(nsp_method *) _wrap_gtk_file_chooser_set_do_overwrite_confirmation},
+  {"get_do_overwrite_confirmation",(nsp_method *) _wrap_gtk_file_chooser_get_do_overwrite_confirmation},
+  {"set_current_name",(nsp_method *) _wrap_gtk_file_chooser_set_current_name},
+  {"get_filename",(nsp_method *) _wrap_gtk_file_chooser_get_filename},
+  {"set_filename",(nsp_method *) _wrap_gtk_file_chooser_set_filename},
+  {"select_filename",(nsp_method *) _wrap_gtk_file_chooser_select_filename},
+  {"unselect_filename",(nsp_method *) _wrap_gtk_file_chooser_unselect_filename},
+  {"select_all",(nsp_method *) _wrap_gtk_file_chooser_select_all},
+  {"unselect_all",(nsp_method *) _wrap_gtk_file_chooser_unselect_all},
+  {"get_filenames",(nsp_method *) _wrap_gtk_file_chooser_get_filenames},
+  {"set_current_folder",(nsp_method *) _wrap_gtk_file_chooser_set_current_folder},
+  {"get_current_folder",(nsp_method *) _wrap_gtk_file_chooser_get_current_folder},
+  {"get_uri",(nsp_method *) _wrap_gtk_file_chooser_get_uri},
+  {"set_uri",(nsp_method *) _wrap_gtk_file_chooser_set_uri},
+  {"select_uri",(nsp_method *) _wrap_gtk_file_chooser_select_uri},
+  {"unselect_uri",(nsp_method *) _wrap_gtk_file_chooser_unselect_uri},
+  {"get_uris",(nsp_method *) _wrap_gtk_file_chooser_get_uris},
+  {"set_current_folder_uri",(nsp_method *) _wrap_gtk_file_chooser_set_current_folder_uri},
+  {"get_current_folder_uri",(nsp_method *) _wrap_gtk_file_chooser_get_current_folder_uri},
+  {"set_preview_widget",(nsp_method *) _wrap_gtk_file_chooser_set_preview_widget},
+  {"get_preview_widget",(nsp_method *) _wrap_gtk_file_chooser_get_preview_widget},
+  {"set_preview_widget_active",(nsp_method *) _wrap_gtk_file_chooser_set_preview_widget_active},
+  {"get_preview_widget_active",(nsp_method *) _wrap_gtk_file_chooser_get_preview_widget_active},
+  {"set_use_preview_label",(nsp_method *) _wrap_gtk_file_chooser_set_use_preview_label},
+  {"get_use_preview_label",(nsp_method *) _wrap_gtk_file_chooser_get_use_preview_label},
+  {"get_preview_filename",(nsp_method *) _wrap_gtk_file_chooser_get_preview_filename},
+  {"get_preview_uri",(nsp_method *) _wrap_gtk_file_chooser_get_preview_uri},
+  {"set_extra_widget",(nsp_method *) _wrap_gtk_file_chooser_set_extra_widget},
+  {"get_extra_widget",(nsp_method *) _wrap_gtk_file_chooser_get_extra_widget},
+  {"add_filter",(nsp_method *) _wrap_gtk_file_chooser_add_filter},
+  {"remove_filter",(nsp_method *) _wrap_gtk_file_chooser_remove_filter},
+  {"list_filters",(nsp_method *) _wrap_gtk_file_chooser_list_filters},
+  {"set_filter",(nsp_method *) _wrap_gtk_file_chooser_set_filter},
+  {"get_filter",(nsp_method *) _wrap_gtk_file_chooser_get_filter},
+  {"add_shortcut_folder",(nsp_method *) _wrap_gtk_file_chooser_add_shortcut_folder},
+  {"remove_shortcut_folder",(nsp_method *) _wrap_gtk_file_chooser_remove_shortcut_folder},
+  {"list_shortcut_folders",(nsp_method *) _wrap_gtk_file_chooser_list_shortcut_folders},
+  {"add_shortcut_folder_uri",(nsp_method *) _wrap_gtk_file_chooser_add_shortcut_folder_uri},
+  {"remove_shortcut_folder_uri",(nsp_method *) _wrap_gtk_file_chooser_remove_shortcut_folder_uri},
+  {"list_shortcut_folder_uris",(nsp_method *) _wrap_gtk_file_chooser_list_shortcut_folder_uris},
+  { NULL, NULL}
+};
+
+static NspMethods *gtkfilechooser_get_methods(void) { return gtkfilechooser_methods;};
+static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 
 
 /* ----------- GtkAccelGroup ----------- */
@@ -7849,7 +8617,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 7853 "gtk.c"
+#line 8621 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_construct(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -7883,7 +8651,7 @@ static int _wrap_gtk_item_factory_get_item(NspGtkItemFactory *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 7887 "gtk.c"
+#line 8655 "gtk.c"
 
 
 #line 3672 "gtk.override"
@@ -7900,7 +8668,7 @@ static int _wrap_gtk_item_factory_get_widget(NspGtkItemFactory *self,Stack stack
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 7904 "gtk.c"
+#line 8672 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_get_widget_by_action(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -8062,7 +8830,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 0;
 }
-#line 8066 "gtk.c"
+#line 8834 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_delete_item(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -8334,7 +9102,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 8338 "gtk.c"
+#line 9106 "gtk.c"
 
 
 #line 6171 "gtk.override"
@@ -8358,7 +9126,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 8362 "gtk.c"
+#line 9130 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -8430,7 +9198,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 8434 "gtk.c"
+#line 9202 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -9138,7 +9906,7 @@ _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,in
   if (  nsp_move_doubles(stack,1,1,4,(double)  x_offset,(double) y_offset, (double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 9142 "gtk.c"
+#line 9910 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -9245,7 +10013,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG; 
   return 1; 
 }
-#line 9249 "gtk.c"
+#line 10017 "gtk.c"
 
 
 static NspMethods gtkcellrenderer_methods[] = {
@@ -10197,7 +10965,7 @@ _wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("deprecated: use individual setters");
   return RET_BUG;
 }
-#line 10201 "gtk.c"
+#line 10969 "gtk.c"
 
 
 static int _wrap_gtk_adjustment_changed(NspGtkAdjustment *self,Stack stack,int rhs,int opt,int lhs)
@@ -10267,7 +11035,7 @@ _wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_value_changed(adjustment);
   return 0;
 }
-#line 10271 "gtk.c"
+#line 11039 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_value(NspObject *self,char *attr)
 {
   double ret;
@@ -10289,7 +11057,7 @@ _wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10293 "gtk.c"
+#line 11061 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_lower(NspObject *self,char *attr)
 {
   double ret;
@@ -10311,7 +11079,7 @@ _wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10315 "gtk.c"
+#line 11083 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_upper(NspObject *self,char *attr)
 {
   double ret;
@@ -10333,7 +11101,7 @@ _wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10337 "gtk.c"
+#line 11105 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_step_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -10355,7 +11123,7 @@ _wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10359 "gtk.c"
+#line 11127 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -10377,7 +11145,7 @@ _wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *val
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10381 "gtk.c"
+#line 11149 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr)
 {
   double ret;
@@ -11924,7 +12692,7 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 11928 "gtk.c"
+#line 12696 "gtk.c"
 
 
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
@@ -12578,7 +13346,7 @@ _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
   Scierror("Use method .get_fg[pos]\n");
   return NULL;
 }
-#line 12582 "gtk.c"
+#line 13350 "gtk.c"
 #line 201 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
@@ -12586,7 +13354,7 @@ _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
   Scierror("Use method .get_bg[pos]\n");
   return NULL;
 }
-#line 12590 "gtk.c"
+#line 13358 "gtk.c"
 #line 209 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light(NspGObject *self, char *attr)
@@ -12594,7 +13362,7 @@ _wrap_gtk_style__get_light(NspGObject *self, char *attr)
   Scierror("Use method .get_light[pos]\n");
   return NULL;
 }
-#line 12598 "gtk.c"
+#line 13366 "gtk.c"
 #line 217 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
@@ -12602,7 +13370,7 @@ _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
   Scierror("Use method .get_dark[pos]\n");
   return NULL;
 }
-#line 12606 "gtk.c"
+#line 13374 "gtk.c"
 #line 225 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
@@ -12610,7 +13378,7 @@ _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
   Scierror("Use method .get_mid[pos]\n");
   return NULL;
 }
-#line 12614 "gtk.c"
+#line 13382 "gtk.c"
 #line 233 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text(NspGObject *self, char *attr)
@@ -12618,7 +13386,7 @@ _wrap_gtk_style__get_text(NspGObject *self, char *attr)
   Scierror("Use method .get_text[pos]\n");
   return NULL;
 }
-#line 12622 "gtk.c"
+#line 13390 "gtk.c"
 #line 241 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base(NspGObject *self, char *attr)
@@ -12626,7 +13394,7 @@ _wrap_gtk_style__get_base(NspGObject *self, char *attr)
   Scierror("Use method .get_base[pos]\n");
   return NULL;
 }
-#line 12630 "gtk.c"
+#line 13398 "gtk.c"
 #line 249 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
@@ -12634,7 +13402,7 @@ _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa[pos]\n");
   return NULL;
 }
-#line 12638 "gtk.c"
+#line 13406 "gtk.c"
 #line 257 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white(NspGObject *self, char *attr)
@@ -12653,7 +13421,7 @@ _wrap_gtk_style__set_white(NspGObject *self, char *attr, NspObject *value)
   style->white = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 12657 "gtk.c"
+#line 13425 "gtk.c"
 #line 276 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black(NspGObject *self, char *attr)
@@ -12672,7 +13440,7 @@ _wrap_gtk_style__set_black(NspGObject *self, char *attr, NspObject *value)
   style->black = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 12676 "gtk.c"
+#line 13444 "gtk.c"
 static NspObject *_wrap_gtk_style__get_font_desc(NspObject *self,char *attr)
 {
   PangoFontDescription *ret;
@@ -12705,7 +13473,7 @@ _wrap_gtk_style__get_fg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_fg_gc[pos]\n");
   return NULL;
 }
-#line 12709 "gtk.c"
+#line 13477 "gtk.c"
 #line 303 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
@@ -12713,7 +13481,7 @@ _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_gc[pos]\n");
   return NULL;
 }
-#line 12717 "gtk.c"
+#line 13485 "gtk.c"
 #line 311 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
@@ -12721,7 +13489,7 @@ _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_light_gc[pos]\n");
   return NULL;
 }
-#line 12725 "gtk.c"
+#line 13493 "gtk.c"
 #line 319 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
@@ -12729,7 +13497,7 @@ _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_dark_gc[pos]\n");
   return NULL;
 }
-#line 12733 "gtk.c"
+#line 13501 "gtk.c"
 #line 327 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
@@ -12737,7 +13505,7 @@ _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_mid_gc[pos]\n");
   return NULL;
 }
-#line 12741 "gtk.c"
+#line 13509 "gtk.c"
 #line 335 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
@@ -12745,7 +13513,7 @@ _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_gc[pos]\n");
   return NULL;
 }
-#line 12749 "gtk.c"
+#line 13517 "gtk.c"
 #line 343 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
@@ -12753,7 +13521,7 @@ _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_base_gc[pos]\n");
   return NULL;
 }
-#line 12757 "gtk.c"
+#line 13525 "gtk.c"
 #line 351 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
@@ -12761,7 +13529,7 @@ _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa_gc[pos]\n");
   return NULL;
 }
-#line 12765 "gtk.c"
+#line 13533 "gtk.c"
 #line 359 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white_gc(NspGObject *self, char *attr)
@@ -12780,7 +13548,7 @@ _wrap_gtk_style__set_white_gc(NspGObject *self, char *attr, NspObject *value)
   style->white_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 12784 "gtk.c"
+#line 13552 "gtk.c"
 #line 378 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black_gc(NspGObject *self, char *attr)
@@ -12799,7 +13567,7 @@ _wrap_gtk_style__set_black_gc(NspGObject *self, char *attr, NspObject *value)
   style->black_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 12803 "gtk.c"
+#line 13571 "gtk.c"
 #line 397 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
@@ -12807,7 +13575,7 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-#line 12811 "gtk.c"
+#line 13579 "gtk.c"
 static AttrTab gtkstyle_attrs[] = {
   { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -13100,7 +13868,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 13104 "gtk.c"
+#line 13872 "gtk.c"
 
 
 #line 5646 "gtk.override"
@@ -13117,7 +13885,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 13121 "gtk.c"
+#line 13889 "gtk.c"
 
 
 #line 5661 "gtk.override"
@@ -13131,7 +13899,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 13135 "gtk.c"
+#line 13903 "gtk.c"
 
 
 #line 5673 "gtk.override"
@@ -13152,7 +13920,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 13156 "gtk.c"
+#line 13924 "gtk.c"
 
 
 #line 5692 "gtk.override"
@@ -13167,7 +13935,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 13171 "gtk.c"
+#line 13939 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13262,7 +14030,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 13266 "gtk.c"
+#line 14034 "gtk.c"
 
 
 #line 5402 "gtk.override"
@@ -13297,7 +14065,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 13301 "gtk.c"
+#line 14069 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13775,7 +14543,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13779 "gtk.c"
+#line 14547 "gtk.c"
 
 
 #line 5489 "gtk.override"
@@ -13795,7 +14563,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13799 "gtk.c"
+#line 14567 "gtk.c"
 
 
 #line 5507 "gtk.override"
@@ -13815,7 +14583,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13819 "gtk.c"
+#line 14587 "gtk.c"
 
 
 #line 5525 "gtk.override"
@@ -13834,7 +14602,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13838 "gtk.c"
+#line 14606 "gtk.c"
 
 
 #line 5542 "gtk.override"
@@ -13852,7 +14620,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13856 "gtk.c"
+#line 14624 "gtk.c"
 
 
 #line 5558 "gtk.override"
@@ -13866,7 +14634,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13870 "gtk.c"
+#line 14638 "gtk.c"
 
 
 #line 5570 "gtk.override"
@@ -13880,7 +14648,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13884 "gtk.c"
+#line 14652 "gtk.c"
 
 
 #line 5582 "gtk.override"
@@ -13900,7 +14668,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 13904 "gtk.c"
+#line 14672 "gtk.c"
 
 
 #line 5600 "gtk.override"
@@ -13918,7 +14686,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 13922 "gtk.c"
+#line 14690 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13976,7 +14744,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 13980 "gtk.c"
+#line 14748 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -14292,7 +15060,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 14296 "gtk.c"
+#line 15064 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -15422,7 +16190,7 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
 					nspgobject_new(NVOID,(GObject *)data->widget),
 					data->tip_text, data->tip_private);
 }
-#line 15426 "gtk.c"
+#line 16194 "gtk.c"
 #line 6224 "gtk.override"
 static NspObject *
 _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
@@ -15452,7 +16220,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-#line 15456 "gtk.c"
+#line 16224 "gtk.c"
 static NspObject *_wrap_gtk_tooltips__get_delay(NspObject *self,char *attr)
 {
   int ret;
@@ -15760,7 +16528,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15764 "gtk.c"
+#line 16532 "gtk.c"
 
 
 #line 1839 "gtk.override"
@@ -15806,7 +16574,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 15810 "gtk.c"
+#line 16578 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -15850,7 +16618,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 15854 "gtk.c"
+#line 16622 "gtk.c"
 
 
 #line 1910 "gtk.override"
@@ -15877,7 +16645,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 15881 "gtk.c"
+#line 16649 "gtk.c"
 
 
 #line 1935 "gtk.override"
@@ -15904,7 +16672,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 15908 "gtk.c"
+#line 16676 "gtk.c"
 
 
 #line 1960 "gtk.override"
@@ -15929,7 +16697,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 15933 "gtk.c"
+#line 16701 "gtk.c"
 
 
 #line 1983 "gtk.override"
@@ -15955,7 +16723,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 15959 "gtk.c"
+#line 16727 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -16606,7 +17374,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 16610 "gtk.c"
+#line 17378 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16662,7 +17430,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 16666 "gtk.c"
+#line 17434 "gtk.c"
 
 
 #line 3078 "gtk.override"
@@ -16727,7 +17495,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 16731 "gtk.c"
+#line 17499 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -17160,7 +17928,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 17164 "gtk.c"
+#line 17932 "gtk.c"
 
 
 #line 2077 "gtk.override"
@@ -17207,7 +17975,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 17211 "gtk.c"
+#line 17979 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -17257,7 +18025,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 17261 "gtk.c"
+#line 18029 "gtk.c"
 
 
 #line 2153 "gtk.override"
@@ -17293,7 +18061,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 17297 "gtk.c"
+#line 18065 "gtk.c"
 
 
 #line 2187 "gtk.override"
@@ -17328,7 +18096,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 17332 "gtk.c"
+#line 18100 "gtk.c"
 
 
 #line 2220 "gtk.override"
@@ -17378,7 +18146,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 17382 "gtk.c"
+#line 18150 "gtk.c"
 
 
 #line 2268 "gtk.override"
@@ -17431,7 +18199,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 17435 "gtk.c"
+#line 18203 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -17754,7 +18522,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 17758 "gtk.c"
+#line 18526 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_pack_start(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -17795,7 +18563,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   
   NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
-#line 17799 "gtk.c"
+#line 18567 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_add_attribute(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -17844,7 +18612,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 17848 "gtk.c"
+#line 18616 "gtk.c"
 
 
 #line 2657 "gtk.override"
@@ -17915,7 +18683,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 17919 "gtk.c"
+#line 18687 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -18292,7 +19060,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 18296 "gtk.c"
+#line 19064 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -18562,7 +19330,7 @@ _wrap_gtkwidget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 18566 "gtk.c"
+#line 19334 "gtk.c"
 
 
 #line 661 "gtk.override"
@@ -18577,7 +19345,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 18581 "gtk.c"
+#line 19349 "gtk.c"
 
 
 static int _wrap_gtk_drag_check_threshold(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -18688,7 +19456,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 18692 "gtk.c"
+#line 19460 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_set_proxy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -18739,7 +19507,7 @@ _wrap_gtk_drag_dest_find_target(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 18743 "gtk.c"
+#line 19511 "gtk.c"
 
 
 #line 5012 "gtk.override"
@@ -18772,7 +19540,7 @@ _wrap_gtk_drag_dest_get_target_list(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 18776 "gtk.c"
+#line 19544 "gtk.c"
 
 
 #line 5043 "gtk.override"
@@ -18795,7 +19563,7 @@ _wrap_gtk_drag_dest_set_target_list(NspGObject *self,Stack stack,int rhs,int opt
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 18799 "gtk.c"
+#line 19567 "gtk.c"
 
 
 #line 5064 "gtk.override"
@@ -18821,7 +19589,7 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 18825 "gtk.c"
+#line 19593 "gtk.c"
 
 
 static int _wrap_gtk_drag_source_unset(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -18899,7 +19667,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 18903 "gtk.c"
+#line 19671 "gtk.c"
 
 
 static int _wrap_gtk_grab_add(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -18977,7 +19745,7 @@ _wrap_gtk_selection_add_targets(NspGObject *self,Stack stack,int rhs,int opt,int
   g_free(targets);
   return 0;
 }
-#line 18981 "gtk.c"
+#line 19749 "gtk.c"
 
 
 static int _wrap_gtk_selection_clear_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19147,7 +19915,7 @@ _wrap_gtk_widget_size_request(NspGObject *self,Stack stack,int rhs,int opt,int l
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19151 "gtk.c"
+#line 19919 "gtk.c"
 
 
 static int _wrap_gtk_widget_size_allocate(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19173,7 +19941,7 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19177 "gtk.c"
+#line 19945 "gtk.c"
 
 
 #line 608 "gtk.override"
@@ -19228,7 +19996,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 19232 "gtk.c"
+#line 20000 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19382,7 +20150,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else 
     return RET_BUG;
 }
-#line 19386 "gtk.c"
+#line 20154 "gtk.c"
 
 
 static int _wrap_gtk_widget_freeze_child_notify(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19557,7 +20325,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 19561 "gtk.c"
+#line 20329 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19684,7 +20452,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 19688 "gtk.c"
+#line 20456 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19825,7 +20593,7 @@ _wrap_gtk_widget_get_pointer(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if (  nsp_move_doubles(stack,1,1,2,(double) x, (double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19829 "gtk.c"
+#line 20597 "gtk.c"
 
 
 static int _wrap_gtk_widget_is_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -19870,7 +20638,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 19874 "gtk.c"
+#line 20642 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -20179,7 +20947,7 @@ _wrap_gtk_widget_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, result);
   return 1;
 }
-#line 20183 "gtk.c"
+#line 20951 "gtk.c"
 
 
 #line 756 "gtk.override"
@@ -20198,7 +20966,7 @@ _wrap_gtk_widget_class_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,result);
   return 1;
 }
-#line 20202 "gtk.c"
+#line 20970 "gtk.c"
 
 
 static NspMethods gtkwidget_methods[] = {
@@ -21287,7 +22055,7 @@ _wrap_gtk_ruler_get_range(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,4,(double) lower,(double) upper,(double) position,(double) max_size ) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 21291 "gtk.c"
+#line 22059 "gtk.c"
 
 
 static NspMethods gtkruler_methods[] = {
@@ -24689,7 +25457,7 @@ _wrap_gtk_misc_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 24693 "gtk.c"
+#line 25461 "gtk.c"
 
 
 static int _wrap_gtk_misc_set_padding(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
@@ -24712,7 +25480,7 @@ _wrap_gtk_misc_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 24716 "gtk.c"
+#line 25484 "gtk.c"
 
 
 static NspMethods gtkmisc_methods[] = {
@@ -25335,7 +26103,7 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;;
 }
 
-#line 25339 "gtk.c"
+#line 26107 "gtk.c"
 
 
 static int _wrap_gtk_image_set_from_pixmap(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -25739,7 +26507,7 @@ _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 25743 "gtk.c"
+#line 26511 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -26007,7 +26775,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1; 
 }
-#line 26011 "gtk.c"
+#line 26779 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -26032,7 +26800,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 26036 "gtk.c"
+#line 26804 "gtk.c"
 
 
 static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -26061,7 +26829,7 @@ _wrap_gtk_label_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 26065 "gtk.c"
+#line 26833 "gtk.c"
 
 
 static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -26985,7 +27753,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 26989 "gtk.c"
+#line 27757 "gtk.c"
 
 
 static int _wrap_gtk_entry_append_text(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -27349,7 +28117,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1; 
 
 }
-#line 27353 "gtk.c"
+#line 28121 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -27374,7 +28142,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG; 
   return 1; 
 }
-#line 27378 "gtk.c"
+#line 28146 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -28022,7 +28790,7 @@ _wrap_gtk_curve_get_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) ret);
   return 1;
 }
-#line 28026 "gtk.c"
+#line 28794 "gtk.c"
 
 
 #line 1463 "gtk.override"
@@ -28041,7 +28809,7 @@ _wrap_gtk_curve_set_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   v = Mat2double(v);
   return 0;
 }
-#line 28045 "gtk.c"
+#line 28813 "gtk.c"
 
 
 static int _wrap_gtk_curve_set_curve_type(NspGtkCurve *self,Stack stack,int rhs,int opt,int lhs)
@@ -28387,7 +29155,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 28391 "gtk.c"
+#line 29159 "gtk.c"
 
 
 #line 797 "gtk.override"
@@ -28401,7 +29169,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 28405 "gtk.c"
+#line 29173 "gtk.c"
 
 
 #line 789 "gtk.override"
@@ -28411,7 +29179,7 @@ _wrap_gtk_container_children(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("Deprecated: use GtkContainer.get_children");
   return RET_BUG;
 }
-#line 28415 "gtk.c"
+#line 29183 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_expose(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -28464,7 +29232,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 28468 "gtk.c"
+#line 29236 "gtk.c"
 
 
 #line 842 "gtk.override"
@@ -28479,7 +29247,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free); 
   
 }
-#line 28483 "gtk.c"
+#line 29251 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -28573,7 +29341,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1; 
 }
 
-#line 28577 "gtk.c"
+#line 29345 "gtk.c"
 
 
 #line 1067 "gtk.override"
@@ -28626,7 +29394,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
-#line 28630 "gtk.c"
+#line 29398 "gtk.c"
 
 
 #line 948 "gtk.override"
@@ -28683,7 +29451,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 28687 "gtk.c"
+#line 29455 "gtk.c"
 
 
 #line 1003 "gtk.override"
@@ -28749,7 +29517,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 28753 "gtk.c"
+#line 29521 "gtk.c"
 
 
 #line 902 "gtk.override"
@@ -28797,7 +29565,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 28801 "gtk.c"
+#line 29569 "gtk.c"
 
 
 #line 855 "gtk.override"
@@ -28846,7 +29614,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 28850 "gtk.c"
+#line 29618 "gtk.c"
 
 
 static NspMethods gtkcontainer_methods[] = {
@@ -29170,7 +29938,7 @@ _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29174 "gtk.c"
+#line 29942 "gtk.c"
 
 
 #line 2543 "gtk.override"
@@ -29188,7 +29956,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   return 1;
 }
 
-#line 29192 "gtk.c"
+#line 29960 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -29419,7 +30187,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29423 "gtk.c"
+#line 30191 "gtk.c"
 
 
 #line 2726 "gtk.override"
@@ -29471,7 +30239,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 29475 "gtk.c"
+#line 30243 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -29498,7 +30266,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(self->obj));
   NSP_LIST_FROM_GLIST(list,gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 29502 "gtk.c"
+#line 30270 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -29739,7 +30507,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 29743 "gtk.c"
+#line 30511 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -29782,7 +30550,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 29786 "gtk.c"
+#line 30554 "gtk.c"
 
 
 #line 2916 "gtk.override"
@@ -29812,7 +30580,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 29816 "gtk.c"
+#line 30584 "gtk.c"
 
 
 #line 2944 "gtk.override"
@@ -29841,7 +30609,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 29845 "gtk.c"
+#line 30613 "gtk.c"
 
 
 #line 2901 "gtk.override"
@@ -29858,7 +30626,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 29862 "gtk.c"
+#line 30630 "gtk.c"
 
 
 #line 2971 "gtk.override"
@@ -29874,7 +30642,7 @@ _wrap_gtk_tree_view_widget_to_tree_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) tx,(double) ty) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 29878 "gtk.c"
+#line 30646 "gtk.c"
 
 
 #line 2985 "gtk.override"
@@ -29890,7 +30658,7 @@ _wrap_gtk_tree_view_tree_to_widget_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) wx,(double) wy) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 29894 "gtk.c"
+#line 30662 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -30332,7 +31100,7 @@ _wrap_gtk_toolbar_append_item(NspGObject *self,Stack stack,int rhs,int opt,int l
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_append_item);
 }
 
-#line 30336 "gtk.c"
+#line 31104 "gtk.c"
 
 
 #line 4601 "gtk.override"
@@ -30342,7 +31110,7 @@ _wrap_gtk_toolbar_prepend_item(NspGObject *self,Stack stack,int rhs,int opt,int 
 {
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_prepend_item);
 }
-#line 30346 "gtk.c"
+#line 31114 "gtk.c"
 
 
 #line 4609 "gtk.override"
@@ -30377,7 +31145,7 @@ _wrap_gtk_toolbar_insert_stock(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,TRUE,ret,callback,params);
 }
-#line 30381 "gtk.c"
+#line 31149 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_space(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -30457,7 +31225,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 30461 "gtk.c"
+#line 31229 "gtk.c"
 
 
 #line 4688 "gtk.override"
@@ -30505,7 +31273,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 30509 "gtk.c"
+#line 31277 "gtk.c"
 
 
 #line 4734 "gtk.override"
@@ -30557,7 +31325,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 30561 "gtk.c"
+#line 31329 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_widget(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -31055,7 +31823,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31059 "gtk.c"
+#line 31827 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -31096,7 +31864,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31100 "gtk.c"
+#line 31868 "gtk.c"
 
 
 #line 6390 "gtk.override"
@@ -31115,7 +31883,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31119 "gtk.c"
+#line 31887 "gtk.c"
 
 
 #line 6371 "gtk.override"
@@ -31136,7 +31904,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG; 
   return 1; 
 }
-#line 31140 "gtk.c"
+#line 31908 "gtk.c"
 
 
 #line 6354 "gtk.override"
@@ -31155,7 +31923,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 31159 "gtk.c"
+#line 31927 "gtk.c"
 
 
 #line 5728 "gtk.override"
@@ -31177,7 +31945,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 31181 "gtk.c"
+#line 31949 "gtk.c"
 
 
 #line 5748 "gtk.override"
@@ -31199,7 +31967,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 31203 "gtk.c"
+#line 31971 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -33680,7 +34448,7 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 33684 "gtk.c"
+#line 34452 "gtk.c"
 
 
 static int _wrap_gtk_notebook_set_tab_label_packing(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -34342,7 +35110,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 34346 "gtk.c"
+#line 35114 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -34476,7 +35244,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 34480 "gtk.c"
+#line 35248 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -35064,7 +35832,7 @@ _wrap_gtk_layout_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 1; 
 
 }
-#line 35068 "gtk.c"
+#line 35836 "gtk.c"
 
 
 static int _wrap_gtk_layout_get_hadjustment(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -36809,7 +37577,7 @@ _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 36813 "gtk.c"
+#line 37581 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -37586,7 +38354,7 @@ _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 37590 "gtk.c"
+#line 38358 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -37927,7 +38695,7 @@ _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 37931 "gtk.c"
+#line 38699 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_get_group(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -38187,7 +38955,7 @@ _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 38191 "gtk.c"
+#line 38959 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -38792,7 +39560,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 38796 "gtk.c"
+#line 39564 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -39767,7 +40535,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 39771 "gtk.c"
+#line 40539 "gtk.c"
 
 
 static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -40128,7 +40896,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 40132 "gtk.c"
+#line 40900 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -40462,7 +41230,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 40466 "gtk.c"
+#line 41234 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -40712,7 +41480,7 @@ _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 40716 "gtk.c"
+#line 41484 "gtk.c"
 
 
 #line 4267 "gtk.override"
@@ -40724,7 +41492,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 40728 "gtk.c"
+#line 41496 "gtk.c"
 
 
 static NspMethods gtkradiobutton_methods[] = {
@@ -41334,7 +42102,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 41338 "gtk.c"
+#line 42106 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -41863,7 +42631,7 @@ _wrap_gtk_color_selection_set_current_color(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 41867 "gtk.c"
+#line 42635 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -41894,7 +42662,7 @@ _wrap_gtk_color_selection_get_current_color(NspGObject *self,Stack stack,int rhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 41898 "gtk.c"
+#line 42666 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -41932,7 +42700,7 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 41936 "gtk.c"
+#line 42704 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -41960,7 +42728,7 @@ _wrap_gtk_color_selection_get_previous_color(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 41964 "gtk.c"
+#line 42732 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -43379,7 +44147,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 43383 "gtk.c"
+#line 44151 "gtk.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -43654,7 +44422,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 43658 "gtk.c"
+#line 44426 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -43727,7 +44495,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 43731 "gtk.c"
+#line 44499 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -44187,7 +44955,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 44191 "gtk.c"
+#line 44959 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -44481,7 +45249,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 44485 "gtk.c"
+#line 45253 "gtk.c"
 
 
 #line 4139 "gtk.override"
@@ -44495,7 +45263,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 44499 "gtk.c"
+#line 45267 "gtk.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -45214,7 +45982,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 45218 "gtk.c"
+#line 45986 "gtk.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -45255,7 +46023,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 45259 "gtk.c"
+#line 46027 "gtk.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -45851,7 +46619,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 45855 "gtk.c"
+#line 46623 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -45954,7 +46722,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
 }
 
 
-#line 45958 "gtk.c"
+#line 46726 "gtk.c"
 
 
 #line 6808 "gtk.override"
@@ -45967,7 +46735,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 45971 "gtk.c"
+#line 46739 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46199,7 +46967,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 46203 "gtk.c"
+#line 46971 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46224,7 +46992,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 46228 "gtk.c"
+#line 46996 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -46248,7 +47016,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 46252 "gtk.c"
+#line 47020 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -47157,7 +47925,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 47161 "gtk.c"
+#line 47929 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -47248,7 +48016,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47252 "gtk.c"
+#line 48020 "gtk.c"
 
 
 static NspMethods gtkdialog_methods[] = {
@@ -47534,7 +48302,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 47538 "gtk.c"
+#line 48306 "gtk.c"
 
 
 static NspMethods *gtkmessagedialog_get_methods(void) { return NULL;};
@@ -48398,7 +49166,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 48402 "gtk.c"
+#line 49170 "gtk.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -49366,7 +50134,7 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 49370 "gtk.c"
+#line 50138 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -50869,7 +51637,7 @@ static int _wrap_gtk_radio_action_set_group(NspGtkRadioAction *self,Stack stack,
   return 0;
 }
 
-#line 50873 "gtk.c"
+#line 51641 "gtk.c"
 
 
 #line 6779 "gtk.override"
@@ -50883,7 +51651,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
 }
 
 
-#line 50887 "gtk.c"
+#line 51655 "gtk.c"
 
 
 static int _wrap_gtk_radio_action_get_current_value(NspGtkRadioAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -51209,7 +51977,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 51213 "gtk.c"
+#line 51981 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -51288,6 +52056,978 @@ static NspMethods *gtkactiongroup_get_methods(void) { return gtkactiongroup_meth
 
 static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 
+
+/* ----------- GtkFileChooserButton ----------- */
+
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2007 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  GtkFileChooserButton_Private 
+#include "nsp/gtk/gtkfilechooserbutton.h"
+#include "nsp/interf.h"
+
+/* NspGtkFileChooserButton inherits from NspGtkHBox */ 
+
+int nsp_type_gtkfilechooserbutton_id=0;
+NspTypeGtkFileChooserButton *nsp_type_gtkfilechooserbutton=NULL;
+
+NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
+{
+  NspTypeGtkFileChooserButton *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkfilechooserbutton != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkfilechooserbutton;
+    }
+  if ((type =  malloc(sizeof(NspTypeGtkHBox))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gtkhbox(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkfilechooserbutton_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = gtkfilechooserbutton_get_methods; 
+  type->new = (new_func *) new_gtkfilechooserbutton;
+
+  /* specific methods for gtkfilechooserbutton */
+      
+  type->init = (init_func *) init_gtkfilechooserbutton;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for gtkfilechooserbutton */ 
+
+  top->s_type =  (s_type_func *) gtkfilechooserbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) gtkfilechooserbutton_type_short_string;
+  /* top->create = (create_func*) int_gtkfilechooserbutton_create;*/ 
+  
+  /* specific methods for gtkfilechooserbutton */
+      
+  type->init = (init_func *) init_gtkfilechooserbutton;
+
+  type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
+  if ( nsp_type_gtkfilechooserbutton_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkFileChooserButton called nsp_type_gtkfilechooserbutton
+       */
+      type->id =  nsp_type_gtkfilechooserbutton_id = nsp_new_type_id();
+      nsp_type_gtkfilechooserbutton = type;
+      if ( nsp_register_type(nsp_type_gtkfilechooserbutton) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkfilechooserbutton, GTK_TYPE_FILE_CHOOSER_BUTTON);
+      return ( mode == T_BASE ) ? type : new_type_gtkfilechooserbutton(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_gtkfilechooserbutton_id;
+       return type;
+    }
+}
+
+/*
+ * initialize GtkFileChooserButton instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkfilechooserbutton(NspGtkFileChooserButton *o,NspTypeGtkFileChooserButton *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of GtkFileChooserButton 
+ */
+
+NspGtkFileChooserButton *new_gtkfilechooserbutton() 
+{
+  NspGtkFileChooserButton *loc; 
+  /* type must exists */
+  nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkFileChooserButton)))== NULLGTKFILECHOOSERBUTTON) return loc;
+  /* initialize object */
+  if ( init_gtkfilechooserbutton(loc,nsp_type_gtkfilechooserbutton) == FAIL) return NULLGTKFILECHOOSERBUTTON;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for GtkFileChooserButton 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char gtkfilechooserbutton_type_name[]="GtkFileChooserButton";
+static char gtkfilechooserbutton_short_type_name[]="GtkFileChooserButton";
+
+static char *gtkfilechooserbutton_type_as_string(void)
+{
+  return(gtkfilechooserbutton_type_name);
+}
+
+static char *gtkfilechooserbutton_type_short_string(NspObject *v)
+{
+  return(gtkfilechooserbutton_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for GtkFileChooserButton objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspGtkFileChooserButton   *gtkfilechooserbutton_object(NspObject *O)
+{
+  /** Follow pointer **/
+  HOBJ_GET_OBJECT(O,NULL);
+  /** Check type **/
+  if ( check_cast (O,nsp_type_gtkfilechooserbutton_id) ) return ((NspGtkFileChooserButton *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserbutton));
+  return NULL;
+}
+
+int IsGtkFileChooserButtonObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_gtkfilechooserbutton_id);
+}
+
+int IsGtkFileChooserButton(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkfilechooserbutton_id);
+}
+
+NspGtkFileChooserButton  *GetGtkFileChooserButtonCopy(Stack stack, int i)
+{
+  if (  GetGtkFileChooserButton(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkFileChooserButton  *GetGtkFileChooserButton(Stack stack, int i)
+{
+  NspGtkFileChooserButton *M;
+  if (( M = gtkfilechooserbutton_object(NthObj(i))) == NULLGTKFILECHOOSERBUTTON)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkFileChooserButton *gtkfilechooserbutton_copy(NspGtkFileChooserButton *self)
+{
+  /* return gtkhbox_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserbutton);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserbutton);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkFileChooserButton
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGtkFileChooserButton *H;
+  CheckRhs(0,0);
+  / * want to be sure that type gtkfilechooserbutton is initialized * /
+  nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
+  if(( H = gtkhbox_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserbutton)) == NULLGTKFILECHOOSERBUTTON) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+*/ 
+
+static int
+_wrap_gtkfilechooserbutton_new(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string, obj,t_end};
+  char *title;
+  GtkFileChooserAction action;
+  NspObject *nsp_action = NULL;
+
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&title, &nsp_action) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
+      return RET_BUG;
+  if ((ret = (GObject *)gtk_file_chooser_button_new(title, action))== NULL) return RET_BUG;
+
+  nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_button_get_title(NspGtkFileChooserButton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+
+  ret = gtk_file_chooser_button_get_title(GTK_FILE_CHOOSER_BUTTON(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_button_set_title(NspGtkFileChooserButton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *title;
+
+  if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
+  gtk_file_chooser_button_set_title(GTK_FILE_CHOOSER_BUTTON(self->obj), title);
+  return 0;
+}
+
+static int _wrap_gtk_file_chooser_button_get_width_chars(NspGtkFileChooserButton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_file_chooser_button_get_width_chars(GTK_FILE_CHOOSER_BUTTON(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_chooser_button_set_width_chars(NspGtkFileChooserButton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int n_chars;
+
+  if ( GetArgs(stack,rhs,opt,T,&n_chars) == FAIL) return RET_BUG;
+  gtk_file_chooser_button_set_width_chars(GTK_FILE_CHOOSER_BUTTON(self->obj), n_chars);
+  return 0;
+}
+
+static NspMethods gtkfilechooserbutton_methods[] = {
+  {"get_title",(nsp_method *) _wrap_gtk_file_chooser_button_get_title},
+  {"set_title",(nsp_method *) _wrap_gtk_file_chooser_button_set_title},
+  {"get_width_chars",(nsp_method *) _wrap_gtk_file_chooser_button_get_width_chars},
+  {"set_width_chars",(nsp_method *) _wrap_gtk_file_chooser_button_set_width_chars},
+  { NULL, NULL}
+};
+
+static NspMethods *gtkfilechooserbutton_get_methods(void) { return gtkfilechooserbutton_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
+
+
+/* ----------- GtkFileChooserDialog ----------- */
+
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2007 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  GtkFileChooserDialog_Private 
+#include "nsp/gtk/gtkfilechooserdialog.h"
+#include "nsp/interf.h"
+
+/* NspGtkFileChooserDialog inherits from NspGtkDialog */ 
+
+int nsp_type_gtkfilechooserdialog_id=0;
+NspTypeGtkFileChooserDialog *nsp_type_gtkfilechooserdialog=NULL;
+
+NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
+{
+  NspTypeGtkFileChooserDialog *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkfilechooserdialog != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkfilechooserdialog;
+    }
+  if ((type =  malloc(sizeof(NspTypeGtkDialog))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gtkdialog(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkfilechooserdialog_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = gtkfilechooserdialog_get_methods; 
+  type->new = (new_func *) new_gtkfilechooserdialog;
+
+  /* specific methods for gtkfilechooserdialog */
+      
+  type->init = (init_func *) init_gtkfilechooserdialog;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for gtkfilechooserdialog */ 
+
+  top->s_type =  (s_type_func *) gtkfilechooserdialog_type_as_string;    
+  top->sh_type = (sh_type_func *) gtkfilechooserdialog_type_short_string;
+  /* top->create = (create_func*) int_gtkfilechooserdialog_create;*/ 
+  
+  /* specific methods for gtkfilechooserdialog */
+      
+  type->init = (init_func *) init_gtkfilechooserdialog;
+
+  type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
+  if ( nsp_type_gtkfilechooserdialog_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkFileChooserDialog called nsp_type_gtkfilechooserdialog
+       */
+      type->id =  nsp_type_gtkfilechooserdialog_id = nsp_new_type_id();
+      nsp_type_gtkfilechooserdialog = type;
+      if ( nsp_register_type(nsp_type_gtkfilechooserdialog) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkfilechooserdialog, GTK_TYPE_FILE_CHOOSER_DIALOG);
+      return ( mode == T_BASE ) ? type : new_type_gtkfilechooserdialog(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_gtkfilechooserdialog_id;
+       return type;
+    }
+}
+
+/*
+ * initialize GtkFileChooserDialog instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *o,NspTypeGtkFileChooserDialog *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of GtkFileChooserDialog 
+ */
+
+NspGtkFileChooserDialog *new_gtkfilechooserdialog() 
+{
+  NspGtkFileChooserDialog *loc; 
+  /* type must exists */
+  nsp_type_gtkfilechooserdialog = new_type_gtkfilechooserdialog(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkFileChooserDialog)))== NULLGTKFILECHOOSERDIALOG) return loc;
+  /* initialize object */
+  if ( init_gtkfilechooserdialog(loc,nsp_type_gtkfilechooserdialog) == FAIL) return NULLGTKFILECHOOSERDIALOG;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for GtkFileChooserDialog 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char gtkfilechooserdialog_type_name[]="GtkFileChooserDialog";
+static char gtkfilechooserdialog_short_type_name[]="GtkFileChooserDialog";
+
+static char *gtkfilechooserdialog_type_as_string(void)
+{
+  return(gtkfilechooserdialog_type_name);
+}
+
+static char *gtkfilechooserdialog_type_short_string(NspObject *v)
+{
+  return(gtkfilechooserdialog_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for GtkFileChooserDialog objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspGtkFileChooserDialog   *gtkfilechooserdialog_object(NspObject *O)
+{
+  /** Follow pointer **/
+  HOBJ_GET_OBJECT(O,NULL);
+  /** Check type **/
+  if ( check_cast (O,nsp_type_gtkfilechooserdialog_id) ) return ((NspGtkFileChooserDialog *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserdialog));
+  return NULL;
+}
+
+int IsGtkFileChooserDialogObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_gtkfilechooserdialog_id);
+}
+
+int IsGtkFileChooserDialog(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkfilechooserdialog_id);
+}
+
+NspGtkFileChooserDialog  *GetGtkFileChooserDialogCopy(Stack stack, int i)
+{
+  if (  GetGtkFileChooserDialog(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkFileChooserDialog  *GetGtkFileChooserDialog(Stack stack, int i)
+{
+  NspGtkFileChooserDialog *M;
+  if (( M = gtkfilechooserdialog_object(NthObj(i))) == NULLGTKFILECHOOSERDIALOG)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkFileChooserDialog *gtkfilechooserdialog_copy(NspGtkFileChooserDialog *self)
+{
+  /* return gtkdialog_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserdialog);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserdialog);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkFileChooserDialog
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGtkFileChooserDialog *H;
+  CheckRhs(0,0);
+  / * want to be sure that type gtkfilechooserdialog is initialized * /
+  nsp_type_gtkfilechooserdialog = new_type_gtkfilechooserdialog(T_BASE);
+  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserdialog)) == NULLGTKFILECHOOSERDIALOG) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+*/ 
+
+static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
+
+
+/* ----------- GtkFileChooserWidget ----------- */
+
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2007 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  GtkFileChooserWidget_Private 
+#include "nsp/gtk/gtkfilechooserwidget.h"
+#include "nsp/interf.h"
+
+/* NspGtkFileChooserWidget inherits from NspGtkVBox */ 
+
+int nsp_type_gtkfilechooserwidget_id=0;
+NspTypeGtkFileChooserWidget *nsp_type_gtkfilechooserwidget=NULL;
+
+NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
+{
+  NspTypeGtkFileChooserWidget *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkfilechooserwidget != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkfilechooserwidget;
+    }
+  if ((type =  malloc(sizeof(NspTypeGtkVBox))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gtkvbox(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkfilechooserwidget_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = gtkfilechooserwidget_get_methods; 
+  type->new = (new_func *) new_gtkfilechooserwidget;
+
+  /* specific methods for gtkfilechooserwidget */
+      
+  type->init = (init_func *) init_gtkfilechooserwidget;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for gtkfilechooserwidget */ 
+
+  top->s_type =  (s_type_func *) gtkfilechooserwidget_type_as_string;    
+  top->sh_type = (sh_type_func *) gtkfilechooserwidget_type_short_string;
+  /* top->create = (create_func*) int_gtkfilechooserwidget_create;*/ 
+  
+  /* specific methods for gtkfilechooserwidget */
+      
+  type->init = (init_func *) init_gtkfilechooserwidget;
+
+  type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
+  if ( nsp_type_gtkfilechooserwidget_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkFileChooserWidget called nsp_type_gtkfilechooserwidget
+       */
+      type->id =  nsp_type_gtkfilechooserwidget_id = nsp_new_type_id();
+      nsp_type_gtkfilechooserwidget = type;
+      if ( nsp_register_type(nsp_type_gtkfilechooserwidget) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkfilechooserwidget, GTK_TYPE_FILE_CHOOSER_WIDGET);
+      return ( mode == T_BASE ) ? type : new_type_gtkfilechooserwidget(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_gtkfilechooserwidget_id;
+       return type;
+    }
+}
+
+/*
+ * initialize GtkFileChooserWidget instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *o,NspTypeGtkFileChooserWidget *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of GtkFileChooserWidget 
+ */
+
+NspGtkFileChooserWidget *new_gtkfilechooserwidget() 
+{
+  NspGtkFileChooserWidget *loc; 
+  /* type must exists */
+  nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkFileChooserWidget)))== NULLGTKFILECHOOSERWIDGET) return loc;
+  /* initialize object */
+  if ( init_gtkfilechooserwidget(loc,nsp_type_gtkfilechooserwidget) == FAIL) return NULLGTKFILECHOOSERWIDGET;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for GtkFileChooserWidget 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char gtkfilechooserwidget_type_name[]="GtkFileChooserWidget";
+static char gtkfilechooserwidget_short_type_name[]="GtkFileChooserWidget";
+
+static char *gtkfilechooserwidget_type_as_string(void)
+{
+  return(gtkfilechooserwidget_type_name);
+}
+
+static char *gtkfilechooserwidget_type_short_string(NspObject *v)
+{
+  return(gtkfilechooserwidget_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for GtkFileChooserWidget objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspGtkFileChooserWidget   *gtkfilechooserwidget_object(NspObject *O)
+{
+  /** Follow pointer **/
+  HOBJ_GET_OBJECT(O,NULL);
+  /** Check type **/
+  if ( check_cast (O,nsp_type_gtkfilechooserwidget_id) ) return ((NspGtkFileChooserWidget *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserwidget));
+  return NULL;
+}
+
+int IsGtkFileChooserWidgetObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_gtkfilechooserwidget_id);
+}
+
+int IsGtkFileChooserWidget(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkfilechooserwidget_id);
+}
+
+NspGtkFileChooserWidget  *GetGtkFileChooserWidgetCopy(Stack stack, int i)
+{
+  if (  GetGtkFileChooserWidget(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkFileChooserWidget  *GetGtkFileChooserWidget(Stack stack, int i)
+{
+  NspGtkFileChooserWidget *M;
+  if (( M = gtkfilechooserwidget_object(NthObj(i))) == NULLGTKFILECHOOSERWIDGET)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkFileChooserWidget *gtkfilechooserwidget_copy(NspGtkFileChooserWidget *self)
+{
+  /* return gtkvbox_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserwidget);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilechooserwidget);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkFileChooserWidget
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGtkFileChooserWidget *H;
+  CheckRhs(0,0);
+  / * want to be sure that type gtkfilechooserwidget is initialized * /
+  nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
+  if(( H = gtkvbox_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserwidget)) == NULLGTKFILECHOOSERWIDGET) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+*/ 
+
+static int
+_wrap_gtkfilechooserwidget_new(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj,t_end};
+  GtkFileChooserAction action;
+  NspObject *nsp_action = NULL;
+
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_action) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
+      return RET_BUG;
+  if ((ret = (GObject *)gtk_file_chooser_widget_new(action))== NULL) return RET_BUG;
+
+  nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserwidget );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static NspMethods *gtkfilechooserwidget_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
+
+
+/* ----------- GtkFileFilter ----------- */
+
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2007 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  GtkFileFilter_Private 
+#include "nsp/gtk/gtkfilefilter.h"
+#include "nsp/interf.h"
+
+/* NspGtkFileFilter inherits from NspGtkObject */ 
+
+int nsp_type_gtkfilefilter_id=0;
+NspTypeGtkFileFilter *nsp_type_gtkfilefilter=NULL;
+
+NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
+{
+  NspTypeGtkFileFilter *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkfilefilter != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkfilefilter;
+    }
+  if ((type =  malloc(sizeof(NspTypeGtkObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gtkobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkfilefilter_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = gtkfilefilter_get_methods; 
+  type->new = (new_func *) new_gtkfilefilter;
+
+  /* specific methods for gtkfilefilter */
+      
+  type->init = (init_func *) init_gtkfilefilter;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for gtkfilefilter */ 
+
+  top->s_type =  (s_type_func *) gtkfilefilter_type_as_string;    
+  top->sh_type = (sh_type_func *) gtkfilefilter_type_short_string;
+  /* top->create = (create_func*) int_gtkfilefilter_create;*/ 
+  
+  /* specific methods for gtkfilefilter */
+      
+  type->init = (init_func *) init_gtkfilefilter;
+
+  if ( nsp_type_gtkfilefilter_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkFileFilter called nsp_type_gtkfilefilter
+       */
+      type->id =  nsp_type_gtkfilefilter_id = nsp_new_type_id();
+      nsp_type_gtkfilefilter = type;
+      if ( nsp_register_type(nsp_type_gtkfilefilter) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkfilefilter, GTK_TYPE_FILE_FILTER);
+      return ( mode == T_BASE ) ? type : new_type_gtkfilefilter(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_gtkfilefilter_id;
+       return type;
+    }
+}
+
+/*
+ * initialize GtkFileFilter instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkfilefilter(NspGtkFileFilter *o,NspTypeGtkFileFilter *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of GtkFileFilter 
+ */
+
+NspGtkFileFilter *new_gtkfilefilter() 
+{
+  NspGtkFileFilter *loc; 
+  /* type must exists */
+  nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkFileFilter)))== NULLGTKFILEFILTER) return loc;
+  /* initialize object */
+  if ( init_gtkfilefilter(loc,nsp_type_gtkfilefilter) == FAIL) return NULLGTKFILEFILTER;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for GtkFileFilter 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char gtkfilefilter_type_name[]="GtkFileFilter";
+static char gtkfilefilter_short_type_name[]="GtkFileFilter";
+
+static char *gtkfilefilter_type_as_string(void)
+{
+  return(gtkfilefilter_type_name);
+}
+
+static char *gtkfilefilter_type_short_string(NspObject *v)
+{
+  return(gtkfilefilter_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for GtkFileFilter objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspGtkFileFilter   *gtkfilefilter_object(NspObject *O)
+{
+  /** Follow pointer **/
+  HOBJ_GET_OBJECT(O,NULL);
+  /** Check type **/
+  if ( check_cast (O,nsp_type_gtkfilefilter_id) ) return ((NspGtkFileFilter *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilefilter));
+  return NULL;
+}
+
+int IsGtkFileFilterObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_gtkfilefilter_id);
+}
+
+int IsGtkFileFilter(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkfilefilter_id);
+}
+
+NspGtkFileFilter  *GetGtkFileFilterCopy(Stack stack, int i)
+{
+  if (  GetGtkFileFilter(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkFileFilter  *GetGtkFileFilter(Stack stack, int i)
+{
+  NspGtkFileFilter *M;
+  if (( M = gtkfilefilter_object(NthObj(i))) == NULLGTKFILEFILTER)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkFileFilter *gtkfilefilter_copy(NspGtkFileFilter *self)
+{
+  /* return gtkobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilefilter);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkfilefilter);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkFileFilter
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGtkFileFilter *H;
+  CheckRhs(0,0);
+  / * want to be sure that type gtkfilefilter is initialized * /
+  nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
+  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkfilefilter)) == NULLGTKFILEFILTER) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+*/ 
+
+static int
+_wrap_gtkfilefilter_new(Stack stack, int rhs, int opt, int lhs)
+{
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  if ((ret = (GObject *)gtk_file_filter_new())== NULL) return RET_BUG;
+
+  nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilefilter );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_file_filter_set_name(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *name;
+
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  gtk_file_filter_set_name(GTK_FILE_FILTER(self->obj), name);
+  return 0;
+}
+
+static int _wrap_gtk_file_filter_get_name(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+
+  ret = gtk_file_filter_get_name(GTK_FILE_FILTER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_file_filter_add_mime_type(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *mime_type;
+
+  if ( GetArgs(stack,rhs,opt,T,&mime_type) == FAIL) return RET_BUG;
+  gtk_file_filter_add_mime_type(GTK_FILE_FILTER(self->obj), mime_type);
+  return 0;
+}
+
+static int _wrap_gtk_file_filter_add_pattern(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *pattern;
+
+  if ( GetArgs(stack,rhs,opt,T,&pattern) == FAIL) return RET_BUG;
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(self->obj), pattern);
+  return 0;
+}
+
+static int _wrap_gtk_file_filter_add_pixbuf_formats(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gtk_file_filter_add_pixbuf_formats(GTK_FILE_FILTER(self->obj));
+  return 0;
+}
+
+static int _wrap_gtk_file_filter_get_needed(NspGtkFileFilter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  guint ret;
+
+  ret = gtk_file_filter_get_needed(GTK_FILE_FILTER(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods gtkfilefilter_methods[] = {
+  {"set_name",(nsp_method *) _wrap_gtk_file_filter_set_name},
+  {"get_name",(nsp_method *) _wrap_gtk_file_filter_get_name},
+  {"add_mime_type",(nsp_method *) _wrap_gtk_file_filter_add_mime_type},
+  {"add_pattern",(nsp_method *) _wrap_gtk_file_filter_add_pattern},
+  {"add_pixbuf_formats",(nsp_method *) _wrap_gtk_file_filter_add_pixbuf_formats},
+  {"get_needed",(nsp_method *) _wrap_gtk_file_filter_get_needed},
+  { NULL, NULL}
+};
+
+static NspMethods *gtkfilefilter_get_methods(void) { return gtkfilefilter_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
+
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
@@ -51333,7 +53073,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 51337 "gtk.c"
+#line 53077 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
@@ -51613,7 +53353,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 51617 "gtk.c"
+#line 53357 "gtk.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
@@ -51727,7 +53467,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 51731 "gtk.c"
+#line 53471 "gtk.c"
 
 
 int _wrap_gtk_icon_size_register(Stack stack, int rhs, int opt, int lhs)
@@ -51933,7 +53673,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 51937 "gtk.c"
+#line 53677 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
@@ -51964,7 +53704,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 51968 "gtk.c"
+#line 53708 "gtk.c"
 
 
 #line 3560 "gtk.override"
@@ -51980,7 +53720,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 51984 "gtk.c"
+#line 53724 "gtk.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
@@ -52134,7 +53874,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 52138 "gtk.c"
+#line 53878 "gtk.c"
 
 
 #line 5895 "gtk.override"
@@ -52147,7 +53887,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52151 "gtk.c"
+#line 53891 "gtk.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
@@ -52321,7 +54061,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 52325 "gtk.c"
+#line 54065 "gtk.c"
 
 
 #line 6071 "gtk.override"
@@ -52341,7 +54081,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 52345 "gtk.c"
+#line 54085 "gtk.c"
 
 
 #line 6057 "gtk.override"
@@ -52357,7 +54097,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 52361 "gtk.c"
+#line 54101 "gtk.c"
 
 
 int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs)
@@ -52623,8 +54363,62 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 52627 "gtk.c"
+#line 54367 "gtk.c"
 
+
+int _wrap_gtk_file_chooser_button_new_with_backend(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string, obj, string,t_end};
+  char *title, *backend;
+  GtkFileChooserAction action;
+  NspObject *nsp_action = NULL, *nsp_ret;
+  GtkWidget *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&title, &nsp_action, &backend) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
+      return RET_BUG;
+ret = gtk_file_chooser_button_new_with_backend(title, action, backend);
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  g_object_unref(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_gtk_file_chooser_button_new_with_dialog(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *dialog;
+  NspObject *nsp_ret;
+  GtkWidget *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &dialog) == FAIL) return RET_BUG;
+ret = gtk_file_chooser_button_new_with_dialog(GTK_WIDGET(dialog->obj));
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  g_object_unref(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_gtk_file_chooser_widget_new_with_backend(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj, string,t_end};
+  char *backend;
+  GtkFileChooserAction action;
+  NspObject *nsp_action = NULL, *nsp_ret;
+  GtkWidget *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_action, &backend) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
+      return RET_BUG;
+ret = gtk_file_chooser_widget_new_with_backend(action, backend);
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  g_object_unref(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 
 /*----------------------------------------------------
  * Interface 
@@ -52733,6 +54527,9 @@ static OpTab gtk_func[]={
   {"gtktoggleaction_new", _wrap_gtktoggleaction_new},
   {"gtkradioaction_new", _wrap_gtkradioaction_new},
   {"gtkactiongroup_new", _wrap_gtkactiongroup_new},
+  {"gtkfilechooserbutton_new", _wrap_gtkfilechooserbutton_new},
+  {"gtkfilechooserwidget_new", _wrap_gtkfilechooserwidget_new},
+  {"gtkfilefilter_new", _wrap_gtkfilefilter_new},
   {"nsp_graphic_new", _wrap_nsp_graphic_new},
   {"gtk_accelerator_valid", _wrap_gtk_accelerator_valid},
   {"gtk_accelerator_name", _wrap_gtk_accelerator_name},
@@ -52825,6 +54622,9 @@ static OpTab gtk_func[]={
   {"gtk_window_set_default_icon_from_file", _wrap_gtk_window_set_default_icon_from_file},
   {"gtk_window_set_auto_startup_notification", _wrap_gtk_window_set_auto_startup_notification},
   {"gtk_window_list_toplevels", _wrap_gtk_window_list_toplevels},
+  {"gtk_file_chooser_button_new_with_backend", _wrap_gtk_file_chooser_button_new_with_backend},
+  {"gtk_file_chooser_button_new_with_dialog", _wrap_gtk_file_chooser_button_new_with_dialog},
+  {"gtk_file_chooser_widget_new_with_backend", _wrap_gtk_file_chooser_widget_new_with_backend},
   { NULL, NULL}
 };
 
@@ -52924,6 +54724,10 @@ gtk_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_flags_add_constants((NspHash *)module, GTK_TYPE_WIDGET_FLAGS, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_WIDGET_HELP_TYPE, strip_prefix);
   nsp_flags_add_constants((NspHash *)module, GTK_TYPE_UI_MANAGER_ITEM_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash *) module, GTK_TYPE_FILE_CHOOSER_ACTION, strip_prefix);
+  nsp_enum_add_constants((NspHash *) module, GTK_TYPE_FILE_CHOOSER_CONFIRMATION, strip_prefix);
+  nsp_enum_add_constants((NspHash *) module, GTK_TYPE_FILE_CHOOSER_ERROR, strip_prefix);
+  nsp_flags_add_constants((NspHash *)module, GTK_TYPE_FILE_FILTER_FLAGS, strip_prefix);
 }
 
 /* intialise stuff extension classes */
@@ -52981,7 +54785,7 @@ gtk_register_classes(NspObject *d)
 
 #line 58 "gtk.override"
 
-#line 52985 "gtk.c"
+#line 54789 "gtk.c"
   nspg_register_boxed(d, "TreePath", GTK_TYPE_TREE_PATH, &PyGtkTreePath_Type);
   nspg_register_boxed(d, "Requisition", GTK_TYPE_REQUISITION, &PyGtkRequisition_Type);
   nspg_register_boxed(d, "IconSet", GTK_TYPE_ICON_SET, &PyGtkIconSet_Type);
@@ -52997,6 +54801,7 @@ gtk_register_classes(NspObject *d)
   nspg_register_interface(d, "TreeDragSource", GTK_TYPE_TREE_DRAG_SOURCE, &PyGtkTreeDragSource_Type);
   nspg_register_interface(d, "TreeDragDest", GTK_TYPE_TREE_DRAG_DEST, &PyGtkTreeDragDest_Type);
   nspg_register_interface(d, "TreeSortable", GTK_TYPE_TREE_SORTABLE, &PyGtkTreeSortable_Type);
+  nspg_register_interface(d, "FileChooser", GTK_TYPE_FILE_CHOOSER, &PyGtkFileChooser_Type);
   nspgobject_register_class(d, "GtkAccelGroup", GTK_TYPE_ACCEL_GROUP, &PyGtkAccelGroup_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "GtkAccessible", GTK_TYPE_ACCESSIBLE, &PyGtkAccessible_Type, Py_BuildValue("(O)", &PyAtkObject_Type));
   nspgobject_register_class(d, "GtkIconFactory", GTK_TYPE_ICON_FACTORY, &PyGtkIconFactory_Type, Py_BuildValue("(O)", &PyGObject_Type));
@@ -53117,5 +54922,9 @@ gtk_register_classes(NspObject *d)
   nspgobject_register_class(d, "GtkToggleAction", GTK_TYPE_TOGGLE_ACTION, &PyGtkToggleAction_Type, Py_BuildValue("(O)", &PyGtkAction_Type));
   nspgobject_register_class(d, "GtkRadioAction", GTK_TYPE_RADIO_ACTION, &PyGtkRadioAction_Type, Py_BuildValue("(O)", &PyGtkToggleAction_Type));
   nspgobject_register_class(d, "GtkActionGroup", GTK_TYPE_ACTION_GROUP, &PyGtkActionGroup_Type, Py_BuildValue("(O)", &PyGObject_Type));
+  nspgobject_register_class(d, "GtkFileChooserButton", GTK_TYPE_FILE_CHOOSER_BUTTON, &PyGtkFileChooserButton_Type, Py_BuildValue("(OO)", &PyGtkHBox_Type, &PyGtkFileChooser_Type));
+  nspgobject_register_class(d, "GtkFileChooserDialog", GTK_TYPE_FILE_CHOOSER_DIALOG, &PyGtkFileChooserDialog_Type, Py_BuildValue("(OO)", &PyGtkDialog_Type, &PyGtkFileChooser_Type));
+  nspgobject_register_class(d, "GtkFileChooserWidget", GTK_TYPE_FILE_CHOOSER_WIDGET, &PyGtkFileChooserWidget_Type, Py_BuildValue("(OO)", &PyGtkVBox_Type, &PyGtkFileChooser_Type));
+  nspgobject_register_class(d, "GtkFileFilter", GTK_TYPE_FILE_FILTER, &PyGtkFileFilter_Type, Py_BuildValue("(O)", &PyGtkObject_Type));
 }
 */
