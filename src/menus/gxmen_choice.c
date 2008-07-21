@@ -392,9 +392,9 @@ static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Mm,int
     {
       cbox = gtk_button_new_with_label("");
     }
-  gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
-		      GTK_SIGNAL_FUNC(nsp_button_filename_save),
-		      title);
+  g_signal_connect (GTK_OBJECT (cbox), "clicked",
+		    GTK_SIGNAL_FUNC(nsp_button_filename_save),
+		    title);
   return cbox;
 }
 

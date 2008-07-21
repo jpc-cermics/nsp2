@@ -35,6 +35,8 @@
  * Return value: 
  **/
 
+#if !defined(GTK_DISABLE_DEPRECATED)
+
 menu_answer nsp_get_file_window(const char *title,const char *dirname,int action,char **file)
 {
   G_CONST_RETURN char *loc;
@@ -46,7 +48,7 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
 
   start_sci_gtk(); /* be sure that gtk is started */
   window = gtk_file_selection_new (title);
-
+  
   if ( dirname != NULL ) 
     {
       if ( strcmp(dirname,".") == 0) 
@@ -101,6 +103,8 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
   gtk_widget_destroy (window);
   return rep;
 }
+#endif 
+
 
 /* specific widget for save or open 
  */

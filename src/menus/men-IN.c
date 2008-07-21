@@ -377,6 +377,15 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   }
 
+#if defined(GTK_DISABLE_DEPRECATED)
+  if ( save == FALSE && open == FALSE ) 
+    {
+      Sciprintf("Warning: gtk_file_selection is deprecated, you have to use save or open flag in %s\n",
+		NspFname(stack));
+      return RET_BUG;
+    }
+#endif 
+
   if ( save == TRUE ) 
     {
       /* specific dialog for saving */
@@ -402,6 +411,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
       else 
 	res = def_res;
     }
+#if !defined(GTK_DISABLE_DEPRECATED)
   else 
     {
       menu_answer rep= nsp_get_file_window(title_utf8,dirname,action,&res);
@@ -417,6 +427,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
+#endif 
   if (( Rep =nsp_create_object_from_str(NVOID,res))==NULLOBJ ) goto ret_bug;
   MoveObj(stack,1,Rep);
   if (title_utf8 != NULL&& title_utf8 != title ) g_free (title_utf8);

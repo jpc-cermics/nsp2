@@ -853,19 +853,16 @@ static void nspg_menu_load(int winid)
 
 static void nsp_menu_fileops(void)
 {
-  menu_answer rep;
+  nsp_string loc;
   char * file = NULL;
-  rep=nsp_get_file_window("File operations",NULL,1,&file);
-  switch (rep) 
-    {
-    case menu_fail : 
-    case menu_cancel : 
-    case menu_bad_argument:
-      return ;
-    case menu_ok: 
-      enqueue_nsp_command(file);
-      FREE(file); 
-    }
+  if ((file = nsp_get_filename_open("Exec file",NULL,NULL)) == NULL) 
+    return; 
+  if ((loc =new_nsp_string_n(strlen(file)+strlen("exec('');"))) == (nsp_string) 0)
+    return; 
+  sprintf(loc,"exec('%s');",file);
+  enqueue_nsp_command(loc);
+  FREE(loc);
+  FREE(file);
 }
 
 /*-----------------------------------------------------------------**
