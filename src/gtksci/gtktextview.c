@@ -94,6 +94,14 @@ static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
 static void  view_set_title   (View   *view);
 static void execute_tag_error(View *view,int line);
+typedef gboolean (*FileselOKFunc) (const char *filename, gpointer data);
+
+static gboolean filechooser_open_run (GtkWindow    *parent, 
+				      const char   *title,
+				      const char   *start_file,
+				      FileselOKFunc func,
+				      gpointer      data);
+
 
 GSList *buffers = NULL;
 GSList *views = NULL;
@@ -125,8 +133,8 @@ get_active_window (void)
  * Filesel utility function
  */
 
-typedef gboolean (*FileselOKFunc) (const char *filename, gpointer data);
-
+#if 0 
+/* deprecated code */
 static void
 filesel_ok_cb (GtkWidget *button, GtkWidget *filesel)
 {
@@ -145,12 +153,11 @@ filesel_ok_cb (GtkWidget *button, GtkWidget *filesel)
     gtk_widget_show (filesel);
 }
 
-gboolean
-filesel_run (GtkWindow    *parent, 
-	     const char   *title,
-	     const char   *start_file,
-	     FileselOKFunc func,
-	     gpointer      data)
+static gboolean filesel_run (GtkWindow    *parent, 
+			     const char   *title,
+			     const char   *start_file,
+			     FileselOKFunc func,
+			     gpointer      data)
 {
   GtkWidget *filesel = gtk_file_selection_new (title);
   gboolean result = FALSE;
@@ -186,6 +193,101 @@ filesel_run (GtkWindow    *parent,
 
   return result;
 }
+#endif 
+
+
+gboolean filechooser_open_run (GtkWindow    *parent, 
+			       const char   *title,
+			       const char   *start_file,
+			       FileselOKFunc func,
+			       gpointer      data)
+{
+  gboolean result = FALSE;
+  char *filename=NULL;
+  GtkWidget *dialog;
+
+  if (!parent)  parent = get_active_window ();
+  
+  dialog = gtk_file_chooser_dialog_new (title,
+					parent,
+					GTK_FILE_CHOOSER_ACTION_OPEN,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+    
+  /* if (parent)  gtk_window_set_transient_for (GTK_WINDOW (dialog), parent); */
+
+  if (start_file)
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), start_file);
+  
+  while (1)
+    {
+      int rep = gtk_dialog_run (GTK_DIALOG (dialog));
+      if ( rep ==  GTK_RESPONSE_ACCEPT ) 
+	{
+	  filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+	  if ((*func) (filename,data))
+	    {
+	      result = TRUE;
+	      break;
+	    }
+	}
+      else if ( rep == GTK_RESPONSE_CANCEL )
+	{
+	  break;
+	}
+    }
+  gtk_widget_destroy (dialog);
+  return result;
+}
+
+gboolean filechooser_save_run (GtkWindow    *parent, 
+			       const char   *title,
+			       const char   *start_file,
+			       FileselOKFunc func,
+			       gpointer      data)
+{
+  gboolean result = FALSE;
+  char *filename=NULL;
+  GtkWidget *dialog;
+
+  if (!parent)  parent = get_active_window ();
+  
+  dialog = gtk_file_chooser_dialog_new (title,
+					parent,
+					GTK_FILE_CHOOSER_ACTION_SAVE,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+					NULL);
+    
+  /* if (parent)  gtk_window_set_transient_for (GTK_WINDOW (dialog), parent); */
+
+  if (start_file)
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), start_file);
+  
+  while (1)
+    {
+      int rep = gtk_dialog_run (GTK_DIALOG (dialog));
+      if ( rep ==  GTK_RESPONSE_ACCEPT ) 
+	{
+	  filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+	  if ((*func) (filename,data))
+	    {
+	      result = TRUE;
+	      break;
+	    }
+	}
+      else if ( rep == GTK_RESPONSE_CANCEL )
+	{
+	  break;
+	}
+    }
+  gtk_widget_destroy (dialog);
+  return result;
+}
+
+
+
 
 /*
  * MsgBox utility functions
@@ -491,7 +593,8 @@ static void do_open(GtkAction *action)
   */
   view = view_from_action (action);
   push_active_window (GTK_WINDOW (view->window));
-  filesel_run (NULL, "Open File", NULL, open_ok_func, view);
+  /* filesel_run (NULL, "Open File", NULL, open_ok_func, view); */
+  filechooser_open_run (NULL, "Open File", NULL, open_ok_func, view);
   pop_active_window ();
 }
 
@@ -853,7 +956,8 @@ save_as_ok_func (const char *filename, gpointer data)
 
 static gboolean save_as_buffer (Buffer *buffer)
 {
-  return filesel_run (NULL, "Save File", NULL, save_as_ok_func, buffer);
+  /* return filesel_run (NULL, "Save File", NULL, save_as_ok_func, buffer); */
+  return filechooser_save_run(NULL, "Save File", NULL, save_as_ok_func, buffer);
 }
 
 static gboolean check_buffer_saved (Buffer *buffer)
