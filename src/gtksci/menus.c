@@ -42,10 +42,10 @@
 extern void create_nsp_about(void); 
 extern char GetDriver();
 
-static void *sci_window_initial_menu(void) ;
+static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
 static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,int action_type,char *fname);
-static int call_predefined_callbacks(char *name, int winid);
+static int nsp_call_predefined_callbacks(const char *name, int winid);
 static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m);
 static void sci_menubar_add_last_menu_entry(GtkWidget *menubar,menu_entry *m);
 static GtkWidget *sci_menu_to_gtkmenubar(menu_entry *m,GtkAccelGroup *accel_group);
@@ -72,7 +72,7 @@ void create_plugged_main_menu(void)
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
     Plug = gtk_plug_new(atoi(nsp_getenv("SCIWIN")));
-    main_menu_entries = sci_window_initial_menu();
+    main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;
   }
@@ -100,7 +100,7 @@ GtkWidget *create_main_menu( GtkWidget  *window)
   if ( window != NULL)  accel_group = gtk_accel_group_new ();
 
   if ( first == 0 ) {
-    main_menu_entries = sci_window_initial_menu();
+    main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return NULL;
     first = 1;
   }
@@ -191,6 +191,49 @@ int nsp_menus_delete_button(int win_num,const char *button_name)
     }
   return 0;
 }
+
+/*---------------------------------------------------
+ * Rename a menuitem name in a menubar 
+ *---------------------------------------------------*/
+
+#if 0 
+static void nsp_menus_rename_button(int win_num,const char *button_name, const char *new_name)
+{
+  menu_entry *m;
+  static char btn[64];
+  char *p;
+  const char *but= button_name;
+  p = btn ; 
+  *(p++) = '/';
+  while ( *but != '\0' ) {
+    if ( *but == '/') break ; 
+    else if ( *but == '_') but++ ; 
+    else { *(p++)= *(but++);}
+  }
+  *p = '\0';
+  if ( win_num == -1 ) 
+    {
+      m = main_menu_entries; 
+    }
+  else 
+    {
+      BCG *dd = window_list_search(win_num);
+      if ( dd == NULL) return ;
+      m = dd->private->menu_entries;
+    }
+  while ( m != NULL) 
+    {
+      if ( is_menu_name(m->name,btn) ==0) 
+	{
+	  /* rename the label or accel_label contained 
+	   * inside 
+	   */ 
+	  return;
+	}
+      m = m->next;
+    }
+}
+#endif 
 
 /*---------------------------------------------------
  * Add a menu in  window  number wun_num or in Main window
@@ -512,7 +555,9 @@ static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
       *m = (*m)->next ; 
       /* change loc->next to prevent menu_entry_delete to recursively delete */
       loc->next = NULL;
-      if ( loc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(loc->widget),NULL);
+      /* 
+       * if ( loc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(loc->widget),NULL);
+       */
       gtk_widget_destroy(loc->widget);
       menu_entry_delete(loc);
       return ;
@@ -525,7 +570,9 @@ static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
 	  loc->next = nloc->next ;
 	  /* change nloc->next to prevent menu_entry_delete to recursively delete */
 	  nloc->next = NULL;
-	  if ( nloc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(nloc->widget),NULL);
+	  /* 
+	   * if ( nloc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(nloc->widget),NULL);
+	   */
 	  gtk_widget_destroy(nloc->widget);
 	  menu_entry_delete(nloc);
 	  return ;
@@ -633,7 +680,7 @@ static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data)
   static char buf[256];
   menu_entry *m = (menu_entry *) func_data;
   if ( m== NULL) return ;
-  if ( call_predefined_callbacks(m->fname, m->winid)==1) return ;
+  if ( nsp_call_predefined_callbacks(m->fname, m->winid)==1) return ;
   if (m->action_type == 0) 
     { 
       /* Interpreted mode : we store the action on a queue */
@@ -682,7 +729,7 @@ void * graphic_initial_menu(int winid)
   return m;
 }
 
-static void * sci_window_initial_menu(void)
+static void * nsp_window_create_initial_menu(void)
 {
   menu_entry *m = NULL;
   int winid = -1;
@@ -1025,7 +1072,7 @@ static void nsp_menu_gwdelete(void)
  *-----------------------------------------------------------------*/
 
 
-static int call_predefined_callbacks(char *name, int winid)
+static int nsp_call_predefined_callbacks(const char *name, int winid)
 {
   if      (strcmp(name,"$clear")== 0)  nspg_menu_erase(winid);
   else if (strcmp(name,"$select")== 0) nspg_menu_select(winid) ;
