@@ -20,11 +20,11 @@
  *
  * Adapted from the testtext.c file in gtk+/tests 
  * to be used as a terminal for Nsp.
- * jpc (2006-2007).
- * 
- * gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
- * to set up emacs editing but note that some editing keys are redefined here 
- * as in emacs mode.
+ * jpc (2006-2008).
+ * Note: you can use 
+ *   gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
+ * to set up emacs editing mode in gtk widgets but note that some editing 
+ * keys are redefined here as in emacs mode.
  * 
  */
 
@@ -54,6 +54,7 @@ extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 
+void nsp_eval_pasted_from_clipboard(gchar *nsp_expr);
 
 
 typedef struct _Buffer Buffer;
@@ -444,6 +445,36 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 }
 
 
+/* paste with middle button, redefined 
+ */
+
+
+static gint
+gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpointer xdata)
+{
+  View *view= xdata;
+  GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
+  gtk_widget_grab_focus (view->text_view);
+
+  if (event->type == GDK_BUTTON_PRESS && event->button == 2 ) 
+    {
+      
+      GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
+							    GDK_SELECTION_PRIMARY);
+      gchar *str = gtk_clipboard_wait_for_text(clipboard);
+      /* fprintf(stderr,"A clipboard text: %s\n",str); */
+      g_signal_stop_emission_by_name (text_view, "button_press");
+      if ( str ) 
+	{
+	  nsp_eval_pasted_from_clipboard(str);
+	  g_free(str);
+	}
+      return TRUE;
+    }
+  return FALSE;
+}
+
+
 static gint timeout_command (void *v)
 {
   if ( checkqueue_nsp_command() == TRUE) 
@@ -538,9 +569,8 @@ char *readline_textview(const char *prompt)
     }
   else 
     {
-      gchar *str;
+      gchar *str = g_strdup(nsp_expr);
       use_prompt=1;
-      str= g_strdup(nsp_expr);
       nsp_expr = NULL;
       return str;
     }
@@ -630,26 +660,6 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 
 
 static void
-insert_text_data (GtkTextView      *text_view,
-		  GtkTextBuffer    *buffer,
-                  GtkTextIter      *drop_point,
-                  GtkSelectionData *selection_data)
-{
-  guchar *str;
-  str = gtk_selection_data_get_text (selection_data);
-  if (str)
-    {
-      if (!gtk_text_buffer_insert_interactive (buffer,
-                                               drop_point, (gchar *) str, -1,
-                                               text_view->editable))
-        {
-	  Sciprintf("Drop failed\n");
-        }
-      g_free (str);
-    }
-}
-
-static void
 gtk_text_view_drag_data_received (GtkWidget        *widget,
                                   GdkDragContext   *context,
                                   gint              x,
@@ -733,31 +743,60 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  g_free (str);
         }
     }
-  else if (selection_data->length > 0 &&
-           info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT)
+  else if (selection_data->length > 0 ) 
     {
-      /* 
-      gboolean retval;
-      GError *error = NULL;
-      retval = gtk_text_buffer_deserialize (buffer, buffer,
-                                            selection_data->target,
-                                            &drop_point,
-                                            (guint8 *) selection_data->data,
-                                            selection_data->length,
-                                            &error);
-      if (!retval)
-        {
-          g_warning ("error pasting: %s\n", error->message);
-          g_clear_error (&error);
-        }
-      */
-      
+      if ( info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT) 
+	{
+	  /* 
+	     gboolean retval;
+	     GError *error = NULL;
+	     retval = gtk_text_buffer_deserialize (buffer, buffer,
+	     selection_data->target,
+	     &drop_point,
+	     (guint8 *) selection_data->data,
+	     selection_data->length,
+	     &error);
+	     if (!retval)
+	     {
+	     g_warning ("error pasting: %s\n", error->message);
+	     g_clear_error (&error);
+	     }
+	  */
+	}
+      else 
+	{
+	  /* this case should be the GTK_TEXT_BUFFER_TARGET_INFO_TEXT case */
+	  guchar *str;
+	  gint n_atoms=0;
+	  GdkAtom *targets;
+	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms)) 
+	    {
+	      if ( gtk_selection_data_targets_include_text (selection_data))
+		{
+		  fprintf(stderr, "Selection contains text \n");
+		}
+	      if ( gtk_selection_data_targets_include_uri (selection_data))
+		{
+		  fprintf(stderr, "Selection contains uri \n");
+		}
+	      if ( gtk_selection_data_targets_include_rich_text (selection_data,buffer))
+		{
+		  fprintf(stderr, "Selection contains rich-text \n");
+		}
+	      if ( gtk_selection_data_targets_include_image (selection_data,TRUE))
+		{
+		  fprintf(stderr, "Selection contains image \n");
+		}
+	    }
+	  str = gtk_selection_data_get_text (selection_data);
+	  if (str)
+	    {
+	      nsp_eval_pasted_from_clipboard((gchar *) str);
+	      g_free (str);
+	    }
+	}
     }
-  else
-    {
-      insert_text_data (text_view,buffer, &drop_point, selection_data);
-    }
-
+  
   gtk_drag_finish (context, success,
 		   success && context->action == GDK_ACTION_MOVE,
 		   time);
@@ -814,6 +853,12 @@ create_view (Buffer *buffer)
                     "key_press_event",
                     G_CALLBACK (key_press_text_view),
                     view);  
+
+  g_signal_connect (view->text_view,
+                    "button_press_event",
+                    G_CALLBACK (gtk_text_view_button_press_event),
+                    view);  
+
 
   g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
   g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
@@ -1121,5 +1166,6 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
   enter--;
   return;
 }
+
 
 
