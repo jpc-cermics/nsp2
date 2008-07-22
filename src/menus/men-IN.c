@@ -353,6 +353,11 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&Masks,&title,&action,&save,&open) == FAIL) 
     return RET_BUG;
+  if ( save == TRUE && open == TRUE ) 
+    {
+      Scierror("Error: save and open cannot be both set to %t\n");
+      return RET_BUG; 
+    }
 
   if ( dirname != NULL ) 
     {
