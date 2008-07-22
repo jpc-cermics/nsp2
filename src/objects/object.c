@@ -724,13 +724,18 @@ static int int_meth_object_get_attribute_names(void *ob,Stack stack, int rhs, in
  * Returns: a string matrix 
  **/
 
-static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
+static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
 {
+  int cu_level = 0;
   NspMethods *methods;
   NspSMatrix *sm=NULLSMAT,*sm1;
   /* build a string matrix with all methods */
   while ( type != NULL) 
     {
+      if ( level >= 0 && cu_level !=  level)
+	{
+	  type = type->surtype;cu_level++;continue;
+	}
       methods = (type->methods != NULL) ? type->methods(): NULL;
       /* return attributes as a String Matrix */
       if ( methods != NULL)
@@ -748,6 +753,7 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
 	    }
 	}
       type = type->surtype;
+      cu_level++;
     }
   if ( sm == NULL) 
     {
@@ -771,17 +777,25 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
  * @lhs: an integer 
  * 
  * This interface is called when the get_method_names method 
- * is activated ob.get_method_names[].
+ * is activated ob.get_method_names[] or ob.get_method_names[level];
+ * Whith no arguments we obtain all the method names that can be used on 
+ * object @ob. When level is given the methods of the base class is given 
+ * for level=0 then the methods of father class for level=1 and so on. 
  * 
  * Returns: 1 or %RET_BUG.
  **/
 
 static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
+  int level = -1;
   NspObject *Ob=ob;
   NspSMatrix *S;
-  CheckRhs(0,0);
-  if ((S = nsp_get_methods(Ob,Ob->basetype)) == NULL) 
+  CheckRhs(0,1);
+  if ( rhs==1) 
+    {
+      if (GetScalarInt(stack,1,&level) == FAIL) return RET_BUG;
+    }
+  if ((S = nsp_get_methods(Ob,Ob->basetype,level)) == NULL) 
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;

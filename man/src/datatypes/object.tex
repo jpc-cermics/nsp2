@@ -23,7 +23,10 @@ a method as described in next paragraph.
 \item \verb+O.set[attr1=val1,attr2=val2,...]+  set attributes values for object \verb+O+ 
 \item \verb+O.get[smat1,...]+ get attribute values. Note that attributes can also be obtained with the dot 
   operator.
-\item \verb+O.get_method_names[]+ get the method names as a string matrix.
+\item \verb+O.get_method_names[]+ get the method names as a string matrix. If an extra argument is given 
+  as in \verb+O.get_method_names[level]+ only the method names for a certain class level are returned. If 
+  \verb+level=0+ the base class method names are returned, if \verb+level=1+ the method names inherited from the 
+  father class are returned and so on.
 \item \verb+O.get_attribute_names[]+ get the attribute names as a string matrix.
 \item \verb+O.get_name[]+ get name of object. 
 \item \verb+O1.equal[O2]+ test equality. 
