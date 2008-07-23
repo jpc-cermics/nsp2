@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -195,10 +195,10 @@ static void nsp_interfaces_initialize(void)
 
 /**
  * RemoveInterf:
- * @Nshared: 
+ * @Nshared: integer 
  * 
- * remove entries associated to shared lib Nshared 
- * when It is an interface 
+ * removes entries associated to the shared/dynamic library 
+ * which is associated to id @Nshared and which is a Nsp interface. 
  * 
  **/
 

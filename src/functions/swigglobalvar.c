@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
- * Copyright (C) 2007-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007-2008 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -20,7 +20,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * objects for swig 
+ * objects for swig interface library 
  *--------------------------------------------------------------------------*/
 
 #include <nsp/object.h>

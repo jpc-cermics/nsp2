@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006 Bruno Pinçon
+ * Copyright (C) 2006-2008 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,7 +19,7 @@
 
 #include "FunTab.h"  /* FindFunction */
 #include "nsp/accelerated_tab.h"
-#include "nsp/plisttoken.h" /*for name_maxl **/
+#include "nsp/plisttoken.h" /*for name_maxl */
 #include "callfunc.h"
 #include "nsp/plistc.h"
 

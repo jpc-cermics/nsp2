@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
- * Copyright (C) 2007-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007-2008 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 

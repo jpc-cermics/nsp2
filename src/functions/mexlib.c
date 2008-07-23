@@ -1,6 +1,5 @@
 /*------------------------------------------------------------------------
- * mexlib  library
- * Copyright (C) 2004-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2008 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -22,6 +21,9 @@
  * Boston, MA 02111-1307, USA.
  *
  * 
+ * mexlib library for Nsp.
+ * rewrite for nsp of the scilab mexlib library (Chancelier, Delebecque).
+ *
  *--------------------------------------------------------------------------*/
 
 static void nsp_mex_errjump(void);

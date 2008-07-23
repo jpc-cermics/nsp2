@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
 /******************************************************
  * Test for scilab library loaded when needed 
  * similar to addinter but we do not add the function list 
@@ -27,11 +26,7 @@
  * XXXXXX
  ******************************************************/
 
-int  SciLibLoad(num_names,names,files,nums,err)
-     char *names[];
-     char **files;
-     int *err;
-     int nums[],num_names;
+int  zzSciLibLoad(int num_names,char *names[],char **files,int nums[],int *err)
 {
   int i,rhs=2,inum,ilib=0,j;
   SciLinkInit();
@@ -64,7 +59,8 @@ int  SciLibLoad(num_names,names,files,nums,err)
     {
       *err=1;  return -1;
     }
-  /** store the linked function in the interface function table DynInterf **/
+  /* store the linked function in the interface function table DynInterf 
+   */
 
   for ( j=0 ; j < num_names ; j++) 
     {
@@ -86,8 +82,7 @@ int  SciLibLoad(num_names,names,files,nums,err)
 
 #define MAX_ENV 256 
 
-BuildName(name,str)
-     char *name,*str;
+void zzBuildName(char *name,char *str)
 {
   int  nc= MAX_ENV;
   GetenvB("SCI",name,nc);
@@ -95,11 +90,7 @@ BuildName(name,str)
   strcat(name,str);
 }
 
-CallDynInterf(pos,num_names,namepos,names,nums,files)
-     int *pos;
-     char *names[];
-     char *files[];
-     int namepos,num_names,nums[];
+void zzCallDynInterf(int *pos,int num_names,int namepos,char *names[],int nums[],char *files[])
 {
   int imes = 9999;
   if ( *pos == -1 || DynInterf[*pos].ok == 0) 

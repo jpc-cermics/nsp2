@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -15,11 +15,10 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- */
-
-/************************************************************
+ *
+ *
  * Call a function given (Int,Num) 
- ************************************************************/
+ */
 
 #include <math.h>
 #include <stdio.h>
@@ -450,17 +449,7 @@ int  reorder_stack(Stack stack, int ret)
 	}
       O1++; count++;
     }
-  /* extra pass to detected non back-converted matrix 
-   * this feature should not be used any-more because of 
-   * matint ...
-   */
 
-  /*   for ( k = 1 ; k <= count ; k++ ) */
-  /*     { */
-  /*       if (obj[k]->ret_pos != -1 && IsMat(obj[k]) && ((NspMatrix *) obj[k])->convert != 'd' ) */
-  /* 	Sciprintf("Warning: backconvert forgotten in %s\n", NspFname(stack)); */
-  /*     } */
-  
   /* second pass to destroy non returned objects  */
   kn = 0;
   for ( k = 1 ; k <= count ; k++ )
@@ -518,7 +507,6 @@ int  reorder_stack(Stack stack, int ret)
 
   return ret;
 }
-
 
 
 static int show_returned_positions(Stack stack,int pos)

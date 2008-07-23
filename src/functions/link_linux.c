@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "../dld/dld.h"
 
-
-
 #if defined(__STDC__)
 extern void getpro_(char *,long int);
 extern char * dld_strerror(int code);
@@ -11,7 +9,6 @@ extern char * dld_strerror(int code);
 extern void getpro_();
 extern char * dld_strerror();
 #endif 
-
 
 /*************************************
  * New version : link entry names 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -15,12 +15,11 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * 
+ * Contains a set a mex interface (used for test purposes).
  */
 
-
-/***************************************************
- * Interface for testing mex interfaces function 
- ***************************************************/
 
 #include <math.h>
 #include <stdio.h>
@@ -121,8 +120,8 @@ typedef  struct  {
 
 
 static nsp_mex_tab mex_func[]={
-  {"mexfun", mexFunction},
-  {"mexfun1", mexFunction1},
+  {"mexfun_test1", mexFunction},
+  {"mexfun_test2", mexFunction1},
   {(char *) 0, NULL}
 };
 
