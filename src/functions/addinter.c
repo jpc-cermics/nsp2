@@ -105,7 +105,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
    * shared_lib
    */
   
-  SciDynLoad(shared_lib,names,'c',&ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
+  nsp_dynamic_load(shared_lib,names,'c',&ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
 
   if ( ilib < 0 )
     {

@@ -83,7 +83,7 @@ static int NEpoints = 0   ;   /* Number of Linked names */
  * Warning: en_names should be a  null terminated string arrays
  */
 
-void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
+void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
 {
   int lib;
   nsp_link_initialize(); 
@@ -101,7 +101,7 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
     }
 
   /* calling the linker */
-  SciLink(iflag,rhs,ilib,shared_path,en_names,strf);
+  nsp_link_library(iflag,rhs,ilib,shared_path,en_names,strf);
 }
 
 #if defined(netbsd) || defined(freebsd) || defined(sun) || defined(__alpha) || defined(sgi) || (!defined(hppa_old) && defined(hppa))  || defined(__APPLE__) || defined(__CYGWIN__) 

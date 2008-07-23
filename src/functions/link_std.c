@@ -41,9 +41,7 @@ extern char *index();
 
 static int lastlink={0};
 
-void SciLink(iflag,rhs,ilib,files,en_names,strf)
-     int iflag,*ilib,*rhs;
-     char *files[],*en_names[],*strf;
+void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
 {
   char enamebuf[NAME_MAXL];
   int i,ii,err=0;

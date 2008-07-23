@@ -43,7 +43,7 @@ static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
  *   -5 : pb with one of the entry point 
  *************************************/
 
-void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
+void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
 {
   int i;
   if ( iflag == 0 )

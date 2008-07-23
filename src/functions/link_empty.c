@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-void SciLink(int iflag,int *rhs,int *ilib,char *files[],char *en_names[],char *strf)
+void nsp_link_library(int iflag,int *rhs,int *ilib,char *files[],char *en_names[],char *strf)
 {
   Sciprintf("Sorry: Dynamic linking is not implemented  \r\n");
 }

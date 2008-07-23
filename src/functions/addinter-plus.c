@@ -54,7 +54,7 @@ int  zzSciLibLoad(int num_names,char *names[],char **files,int nums[],int *err)
 	nums[j]=inum;
       if ( inum == LastInterf ) LastInterf++;
     }
-  SciLink(0,&rhs,&ilib,files,names,"f");
+  nsp_link_library(0,&rhs,&ilib,files,names,"f");
   if ( ilib < 0 ) 
     {
       *err=1;  return -1;
