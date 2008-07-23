@@ -1,2 +1,2 @@
-addinter('./tutorial.so','tutorial');
+addinter('./libtutorial.so','tutorial');
 first(40)

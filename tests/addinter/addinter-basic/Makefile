@@ -7,7 +7,7 @@
 # 
 
 SCIDIR=../../../
-LIBRARY=tutorial
+LIBRARY=libtutorial
 SOURCES=interf.c
 OBJS=$(SOURCES:.c=.o)
 
