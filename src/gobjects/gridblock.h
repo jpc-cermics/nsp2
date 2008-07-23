@@ -2,7 +2,7 @@
 #define NSP_INC_GridBlock
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2008) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
   
