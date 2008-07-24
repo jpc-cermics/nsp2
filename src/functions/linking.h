@@ -1,6 +1,8 @@
 #ifndef NSP_LINKING
 #define NSP_LINKING
 
+#include <nsp/string.h>
+#include <nsp/object.h> /* for Hash */
 /* Nsp
  * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
