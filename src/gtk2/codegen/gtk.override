@@ -53,6 +53,12 @@ extern int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,in
 #define gtk_calendar_set_display_options gtk_calendar_display_options
 #define gtk_calendar_get_display_options(x) 0 
 
+static void
+nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
+			       GtkCellRenderer *cell,
+			       GtkTreeModel *tree_model,
+			       GtkTreeIter *iter, gpointer data); 
+
 %%
 init
 %%
