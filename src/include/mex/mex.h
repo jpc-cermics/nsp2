@@ -10,6 +10,18 @@ extern "C" {
 #include "nsp/math.h"
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
+#ifdef  PACKAGE
+  /* remove defines from config.h not to conflict with other 
+   * included packages 
+   */
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT 
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#undef VERSION
+#endif 
 
 /**
  * mxArray: 
