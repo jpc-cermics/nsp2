@@ -1,7 +1,7 @@
   fmode = %t; 
-  mode = "Cairo"
-  mode = "Gtk"
-  mode = "OpenGl"
+  mode = "Cairo";
+  mode = "Gtk";
+  //mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
   A=axes_create(top=%t,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
@@ -15,7 +15,7 @@
   cu = curve_create(Pts=[x',y'],color=3,width=2);
   A.children($+1)=cu ;
   // insert a matrix 
-  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[3,0,1,1])
+  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   A.children($+1)= ma;
   
   // insert a new axes 
@@ -36,9 +36,10 @@
   P.Pts=[x;sin(x)]';
   C.children(3)=P;
   // matrix 
-  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[3,0,1,1])
+  ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   C.children($+1)= ma;
     
   A.children($+1) = C;
   F.connect[]
+  
   
