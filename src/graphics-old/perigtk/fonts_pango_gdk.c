@@ -35,7 +35,7 @@ static const int pango_size[] = { 8 ,10,12,14,18,24};
 
 static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
-#undef FREETYPE
+#undef HAVE_FREETYPE
 
 static void nsp_fonts_finalize(BCG *Xgc)
 {
@@ -55,9 +55,9 @@ static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL) 
     {
+#ifdef HAVE_FREETYPE
       PangoFT2FontMap* pango_fm;
       /* a revoir deprecated XXXX */
-#ifdef HAVE_FREETYPE
       pango_fm = (PangoFT2FontMap *) pango_ft2_font_map_new();
       pango_ft2_font_map_set_resolution (pango_fm,72,72);
       Xgc->private->context= pango_ft2_font_map_create_context(pango_fm);
@@ -294,6 +294,7 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 }
 
 
+#if 0
 static void
 composite (guchar *src_buf,
 	   gint    src_rowstride,
@@ -465,6 +466,7 @@ static void displaystring_xxx(BCG *Xgc,char *str, int x, int y, int flag,double 
       g_free(graybitmap);
     }
 }
+#endif 
 
 
 

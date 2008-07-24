@@ -257,8 +257,11 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      /* gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); */
-      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
+#if 1 
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); 
+#else 
+      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE); 
+#endif 
       gtk_widget_realize(dd->private->window);
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
@@ -268,8 +271,11 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       dd->private->window = win ;
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      /* gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); */
-      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
+#if 1 
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); 
+#else 
+      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE); 
+#endif 
       /* gtk_widget_realize(dd->private->window);*/
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER(box) , vbox);
