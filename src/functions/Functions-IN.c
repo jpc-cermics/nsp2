@@ -66,7 +66,9 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,NSP_OBJECT(obj));
       return 1;
     }
-
+  /* first argument can be a number (ref to a previously linked library)
+   * or a string giving a path to a new library to be linked.
+   */
   if ( IsMatObj(stack,1 ) ) 
     {
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
@@ -75,14 +77,16 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
     {
       if ((shared_lib = GetString(stack,1)) == NULLSTRING) return RET_BUG;
       iflag = 0;
-    }      
+    }
   if ( rhs > 1 ) 
     {
+      /* list of entry names to be added */
       if ((Enames = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
       enames = Enames->S;
     }
   if ( rhs > 2 ) 
     {
+      /* entries type: c or fortran */
       if ((Str = GetString(stack,3)) == (char*)0) return RET_BUG;
     }
   else
@@ -450,7 +454,7 @@ static OpTab Functions_func[]={
   {"c_link",int_c_link},
   {"addinter",int_addinter},
   {"call",int_call},
-  { "swigvarlink_create", int_swigvarlink_create},
+  {"swigvarlink_create", int_swigvarlink_create},
   {(char *) 0, NULL}
 };
 
