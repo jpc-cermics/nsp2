@@ -17,7 +17,16 @@ OBJSF =
 include ../../Makefile.incl
 SCIDIR=../..
 
-CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/
+CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ 
+
+GTKFLAGS= -DG_DISABLE_DEPRECATED  \
+	-DGDK_PIXBUF_DISABLE_DEPRECATED \
+	-DGDK_DISABLE_DEPRECATED \
+	-DGTK_DISABLE_DEPRECATED \
+	-DPANGO_DISABLE_DEPRECATED
+
+CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ 
+
 
 include ../Make.lib
 

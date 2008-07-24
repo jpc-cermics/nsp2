@@ -4,6 +4,33 @@
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdk.h
 
+(define-function notify_startup_complete
+  (c-name "gdk_notify_startup_complete")
+  (return-type "none")
+)
+
+(define-function get_display_arg_name
+  (c-name "gdk_get_display_arg_name")
+  (return-type "const-gchar*")
+)
+
+(define-function get_program_class
+  (c-name "gdk_get_program_class")
+  (return-type "const-gchar*")
+)
+
+(define-function set_program_class
+  (c-name "gdk_set_program_class")
+  (parameters
+    '("const-gchar*" "program_class")
+  )
+)
+
+(define-function get_display
+  (c-name "gdk_get_display")
+  (return-type "const-gchar*")
+)
+
 (define-function pointer_grab
   (c-name "gdk_pointer_grab")
   (return-type "GdkGrabStatus")
@@ -93,8 +120,193 @@
   (return-type "none")
 )
 
+(define-function parse_args
+  (c-name "gdk_parse_args")
+  (return-type "none")
+  (parameters
+    '("gint*" "argc")
+    '("gchar***" "argv")
+  )
+)
+
+(define-function init
+  (c-name "gdk_init")
+  (return-type "none")
+  (parameters
+    '("gint*" "argc")
+    '("gchar***" "argv")
+  )
+)
+
+(define-function init_check
+  (c-name "gdk_init_check")
+  (return-type "gboolean")
+  (parameters
+    '("gint*" "argc")
+    '("gchar***" "argv")
+  )
+)
+
+(define-function add_option_entries_libgtk_only
+  (c-name "gdk_add_option_entries_libgtk_only")
+  (return-type "none")
+  (parameters
+    '("GOptionGroup*" "group")
+  )
+)
+
+(define-function pre_parse_libgtk_only
+  (c-name "gdk_pre_parse_libgtk_only")
+  (return-type "none")
+)
+
+(define-function exit
+  (c-name "gdk_exit")
+  (return-type "none")
+  (parameters
+    '("gint" "error_code")
+  )
+)
+
+(define-function set_locale
+  (c-name "gdk_set_locale")
+  (return-type "gchar*")
+)
+
+(define-function error_trap_push
+  (c-name "gdk_error_trap_push")
+  (return-type "none")
+)
+
+(define-function error_trap_pop
+  (c-name "gdk_error_trap_pop")
+  (return-type "gint")
+)
+
+(define-function set_use_xshm
+  (c-name "gdk_set_use_xshm")
+  (return-type "none")
+  (parameters
+    '("gboolean" "use_xshm")
+  )
+)
+
+(define-function get_use_xshm
+  (c-name "gdk_get_use_xshm")
+  (return-type "gboolean")
+)
+
+(define-function input_add_full
+  (c-name "gdk_input_add_full")
+  (return-type "gint")
+  (parameters
+    '("gint" "source")
+    '("GdkInputCondition" "condition")
+    '("GdkInputFunction" "function")
+    '("gpointer" "data")
+    '("GdkDestroyNotify" "destroy")
+  )
+)
+
+(define-function input_add
+  (c-name "gdk_input_add")
+  (return-type "gint")
+  (parameters
+    '("gint" "source")
+    '("GdkInputCondition" "condition")
+    '("GdkInputFunction" "function")
+    '("gpointer" "data")
+  )
+)
+
+(define-function input_remove
+  (c-name "gdk_input_remove")
+  (return-type "none")
+  (parameters
+    '("gint" "tag")
+  )
+)
+
+(define-function pointer_grab_info_libgtk_only
+  (c-name "gdk_pointer_grab_info_libgtk_only")
+  (return-type "gboolean")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("GdkWindow**" "grab_window")
+    '("gboolean*" "owner_events")
+  )
+)
+
+(define-function keyboard_grab_info_libgtk_only
+  (c-name "gdk_keyboard_grab_info_libgtk_only")
+  (return-type "gboolean")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("GdkWindow**" "grab_window")
+    '("gboolean*" "owner_events")
+  )
+)
+
+(define-function rectangle_get_type
+  (c-name "gdk_rectangle_get_type")
+  (return-type "GType")
+)
+
+(define-function wcstombs
+  (c-name "gdk_wcstombs")
+  (return-type "gchar*")
+  (parameters
+    '("const-GdkWChar*" "src")
+  )
+)
+
+(define-function mbstowcs
+  (c-name "gdk_mbstowcs")
+  (return-type "gint")
+  (parameters
+    '("GdkWChar*" "dest")
+    '("const-gchar*" "src")
+    '("gint" "dest_max")
+  )
+)
+
+(define-method send_client_message
+  (of-object "GdkEvent")
+  (c-name "gdk_event_send_client_message")
+  (return-type "gboolean")
+  (parameters
+    '("GdkNativeWindow" "winid")
+  )
+)
+
+(define-method send_clientmessage_toall
+  (of-object "GdkEvent")
+  (c-name "gdk_event_send_clientmessage_toall")
+  (return-type "none")
+)
+
+(define-function event_send_client_message_for_display
+  (c-name "gdk_event_send_client_message_for_display")
+  (return-type "gboolean")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("GdkEvent*" "event")
+    '("GdkNativeWindow" "winid")
+  )
+)
+
+(define-function threads_set_lock_functions
+  (c-name "gdk_threads_set_lock_functions")
+  (return-type "none")
+  (parameters
+    '("GCallback" "enter_fn")
+    '("GCallback" "leave_fn")
+  )
+)
+
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkcolor.h
+
 
 (define-function gdk_color_new
   (c-name "gdk_color_new")
@@ -198,8 +410,6 @@
   )
 )
 
-
-
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkcursor.h
 
 (define-function cursor_new
@@ -224,8 +434,6 @@
     '("gint" "y")
   )
 )
-
-
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkdnd.h
 
@@ -351,8 +559,6 @@
     '("guint32" "time")
   )
 )
-
-
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkdrawable.h
 

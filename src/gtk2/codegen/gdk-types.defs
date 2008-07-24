@@ -25,6 +25,20 @@
   )
 )
 
+(define-object Display
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkDisplay")
+  (gtype-id "GDK_TYPE_DISPLAY")
+)
+
+(define-object DisplayManager
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkDisplayManager")
+  (gtype-id "GDK_TYPE_DISPLAY_MANAGER")
+)
+
 (define-object DragContext
   (in-module "Gdk")
   (parent "GObject")
@@ -56,6 +70,14 @@
   (c-name "GdkWindow")
   (gtype-id "GDK_TYPE_WINDOW")
 )
+
+;; to be fixed XX parent should be defined 
+;; (define-object PangoRenderer
+;;   (in-module "Gdk")
+;;   (parent "PangoRenderer")
+;;   (c-name "GdkPangoRenderer")
+;;   (gtype-id "GDK_TYPE_PANGO_RENDERER")
+;; )
 
 (define-object Pixmap
   (in-module "Gdk")
@@ -126,6 +148,28 @@
   (gtype-id "GDK_TYPE_PIXBUF_LOADER")
 )
 
+;; to be fixed XX 
+;; (define-object PixbufSimpleAnim
+;;   (in-module "Gdk")
+;;   (parent "GdkPixbufAnimation")
+;;   (c-name "GdkPixbufSimpleAnim")
+;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM")
+;; )
+
+;; (define-object PixbufSimpleAnimIter
+;;   (in-module "Gdk")
+;;   (parent "GdkPixbufAnimationIter")
+;;   (c-name "GdkPixbufSimpleAnimIter")
+;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM_ITER")
+;; )
+
+(define-object Screen
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkScreen")
+  (gtype-id "GDK_TYPE_SCREEN")
+)
+
 (define-object Visual
   (in-module "Gdk")
   (parent "GObject")
@@ -147,24 +191,6 @@
     '("gint" "blue_shift")
     '("gint" "blue_prec")
   )
-)
-
-;; added Screen jpc 
-
-(define-object Screen
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkScreen")
-  (gtype-id "GDK_TYPE_SCREEN")
-)
-
-;; added Display jpc 
-
-(define-object Display
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkDisplay")
-  (gtype-id "GDK_TYPE_DISPLAY")
 )
 
 ;; Boxed types ...
@@ -226,6 +252,13 @@
     '("gint" "height")
   )
 )
+
+; need to be fixed for nsp XX 
+;(define-boxed Region
+;  (in-module "Gdk")
+;  (c-name "GdkRegion")
+;  (gtype-id "NSPGDK_TYPE_REGION")
+;)
 
 ;; Enumerations and flags ...
 
@@ -885,7 +918,7 @@
   )
 )
 
-; (define-enum Colorspace
+;(define-enum Colorspace
 ;   (in-module "Gdk")
 ;   (c-name "GdkColorspace")
 ;   (gtype-id "GDK_TYPE_COLORSPACE")
@@ -911,6 +944,19 @@
   )
 )
 
+(define-enum PixbufRotation
+  (in-module "Gdk")
+  (c-name "GdkPixbufRotation")
+  (gtype-id "GDK_TYPE_PIXBUF_ROTATION")
+  (values
+    '("none" "GDK_PIXBUF_ROTATE_NONE")
+    '("counterclockwise" "GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE")
+    '("upsidedown" "GDK_PIXBUF_ROTATE_UPSIDEDOWN")
+    '("clockwise" "GDK_PIXBUF_ROTATE_CLOCKWISE")
+  )
+)
+
+
 (define-enum InterpType
   (in-module "Gdk")
   (c-name "GdkInterpType")
@@ -922,3 +968,29 @@
     '("hyper" "GDK_INTERP_HYPER")
   )
 )
+
+(define-enum OwnerChange
+  (in-module "Gdk")
+  (c-name "GdkOwnerChange")
+  (gtype-id "GDK_TYPE_OWNER_CHANGE")
+  (values
+    '("new-owner" "GDK_OWNER_CHANGE_NEW_OWNER")
+    '("destroy" "GDK_OWNER_CHANGE_DESTROY")
+    '("close" "GDK_OWNER_CHANGE_CLOSE")
+  )
+)
+
+;; need to be fixed for nsp 
+;; (define-object PixmapObject
+;;   (in-module "Gdk")
+;;   (parent "GdkDrawable")
+;;   (c-name "GdkPixmapObject")
+;;   (gtype-id "GDK_TYPE_PIXMAP_OBJECT")
+;; )
+
+;; (define-object WindowObject
+;;   (in-module "Gdk")
+;;   (parent "GdkDrawable")
+;;   (c-name "GdkWindowObject")
+;;   (gtype-id "GDK_TYPE_WINDOW_OBJECT")
+;; )
