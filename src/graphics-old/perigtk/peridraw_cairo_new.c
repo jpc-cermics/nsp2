@@ -913,7 +913,7 @@ static void pixmap_resize(BCG *Xgc)
 	  xinfo(Xgc,"No more space to create Pixmaps");
 	  return;
 	}
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
       Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
@@ -970,7 +970,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     {
       /* deleting and removing the extra pixmap as the default drawable */
       xinfo(Xgc," ");
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
       if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);

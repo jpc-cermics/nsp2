@@ -870,7 +870,7 @@ static void pixmap_resize(BCG *Xgc)
 	  return;
 	}
 #if 1 
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
 #else
       gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
       g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
@@ -926,7 +926,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     {
       /* I remove the extra pixmap to the window **/
       xinfo(Xgc," ");
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->drawable);
+      g_object_unref (G_OBJECT (Xgc->private->drawable));
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
       Xgc->CurPixmapStatus = 0; 
       Xgc->private->glcontext = gtk_widget_get_gl_context (Xgc->private->drawing);

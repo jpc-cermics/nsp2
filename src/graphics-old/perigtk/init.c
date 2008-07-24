@@ -261,9 +261,9 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   dd->private->wgc = NULL;
   dd->private->gcursor = NULL;
   dd->private->ccursor = NULL;
-  gdk_rgb_init();
-  gtk_widget_push_visual(gdk_rgb_get_visual());
-  gtk_widget_push_colormap(gdk_rgb_get_cmap());
+  /* gdk_rgb_init(); */
+  /* gtk_widget_push_visual(gdk_rgb_get_visual()); */
+  /* gtk_widget_push_colormap(gdk_rgb_get_cmap()); */
 
   /* create window etc */
   if ( wdim != NULL ) 
@@ -282,7 +282,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+      /* gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); */
+      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
       gtk_widget_realize(dd->private->window);
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
@@ -292,7 +293,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       dd->private->window = win ;
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+      /*  gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); */
+      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
       /* gtk_widget_realize(dd->private->window);*/
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER(box) , vbox);
@@ -368,14 +370,14 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
 
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
-		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
-		     (GtkSignalFunc) locator_button_release, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-		     (GtkSignalFunc) locator_button_motion, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-		     (GtkSignalFunc) realize_event, (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
+		   G_CALLBACK(locator_button_press), (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
+		   G_CALLBACK(locator_button_release), (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
+		   G_CALLBACK(locator_button_motion), (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
+		   G_CALLBACK(realize_event), (gpointer) dd);
 
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
@@ -398,25 +400,25 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     gtk_widget_show(dd->private->drawing);
 
   /* connect to signal handlers, etc */
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
-		     (GtkSignalFunc) configure_event, (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
+		   G_CALLBACK(configure_event), (gpointer) dd);
 
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		     (GtkSignalFunc) expose_event, (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
+		   G_CALLBACK(expose_event), (gpointer) dd);
   
   /* 
    *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
    *  G_CALLBACK (cairo_paint),(gpointer) dd );
    */
 
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
-		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
+		   G_CALLBACK(sci_destroy_window), (gpointer) dd);
   
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
-		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
+		   G_CALLBACK(sci_delete_window), (gpointer) dd);
 
-  gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-		      (GtkSignalFunc) key_press_event, (gpointer) dd);
+  g_signal_connect (GTK_OBJECT(dd->private->window), "key_press_event",
+		    G_CALLBACK(key_press_event), (gpointer) dd);
 
   /* show everything */
 
@@ -439,7 +441,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     }
 
   /* let other widgets use the default colour settings */
-  gtk_widget_pop_visual();
-  gtk_widget_pop_colormap();
+  /* gtk_widget_pop_visual(); */
+  /* gtk_widget_pop_colormap(); */
 }
 

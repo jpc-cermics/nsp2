@@ -324,13 +324,13 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   if ( nsp_event_info.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
-      nsp_event_info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test, Xgc);
+      nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_test, Xgc);
       nsp_event_info.str   = str;
       nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
     }
   
 #ifdef WITH_TK
-  timer_tk=  gtk_timeout_add(100,  (GtkFunction) timeout_tk , NULL);
+  timer_tk=  g_timeout_add(100,  (GSourceFunc) timeout_tk , NULL);
 #endif
   
   while (1) 
@@ -345,7 +345,7 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
     }
 
 #ifdef WITH_TK
-  gtk_timeout_remove(timer_tk);
+  g_source_remove(timer_tk);
 #endif
 
   *x1 = nsp_event_info.x;
@@ -355,7 +355,7 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   *iwin = nsp_event_info.win;
   
   /* remove timer if it was set by us */ 
-  if ( nsp_event_info.getmen == TRUE )  gtk_timeout_remove (nsp_event_info.timer);
+  if ( nsp_event_info.getmen == TRUE )  g_source_remove (nsp_event_info.timer);
 
   /* take care of recursive calls i.e restore info  */
   nsp_event_info = rec_info ; 
@@ -501,7 +501,7 @@ static void delete_window(BCG *dd,int intnum)
   if ( winxgc->CurPixmapStatus == 1 ) 
     {
       /* switch to non extra pixmap mode */
-      gdk_pixmap_unref(winxgc->private->extra_pixmap);
+      g_object_unref(G_OBJECT(winxgc->private->extra_pixmap));
       winxgc->private->extra_pixmap = NULL;
       winxgc->private->drawable = NULL;
       winxgc->CurPixmapStatus = 0; 
@@ -509,12 +509,12 @@ static void delete_window(BCG *dd,int intnum)
   if ( winxgc->private->extra_pixmap != NULL) 
     {
       /* we can have a non null extra_pixmap */
-      gdk_pixmap_unref(winxgc->private->extra_pixmap);
+      g_object_unref(G_OBJECT(winxgc->private->extra_pixmap));
     }
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
-  if (winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
+  if (winxgc->private->pixmap != NULL) g_object_unref(G_OBJECT(winxgc->private->pixmap));
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
@@ -550,22 +550,22 @@ static void scig_deconnect_handlers(BCG *winxgc)
 {
   int n=0;
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
+					  G_CALLBACK( configure_event), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
+					  G_CALLBACK( expose_event), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
-					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
+					  G_CALLBACK(  sci_destroy_window), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
-					   (GtkSignalFunc) key_press_event, (gpointer) winxgc);
+					   G_CALLBACK( key_press_event), (gpointer) winxgc);
 
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
+					  G_CALLBACK( locator_button_press), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
+					  G_CALLBACK( locator_button_release), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
+					  G_CALLBACK( locator_button_motion), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
+					  G_CALLBACK( realize_event), (gpointer) winxgc);
 }
 
 
@@ -591,7 +591,7 @@ static gint timeout_pause (int *stop)
 static void nsp_event_pause(int number) 
 {
   int stop = FALSE;
-  guint tid= gtk_timeout_add(number,(GtkFunction) timeout_pause, &stop);
+  guint tid= g_timeout_add(number,(GSourceFunc) timeout_pause, &stop);
   while (1) 
     {
       gtk_main();

@@ -162,9 +162,9 @@ static void xset_show(BCG *Xgc)
       if ( Xgc->private->gldrawable != NULL 
 	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
 	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
-      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       if ( Xgc->private->gldrawable != NULL 
 	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
@@ -173,10 +173,10 @@ static void xset_show(BCG *Xgc)
       /* we copy the extra_pixmap to the window and to the backing store pixmap 
        * except for perigl which draw without a Xgc->private->pixmap.
        */
-      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
 #ifndef PERIGK
-      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
 #endif 
 #endif 
@@ -356,9 +356,9 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
   if ( Xgc->CurResizeStatus == 1) 
     {
       /* here drawing and scrolled move together */
-      gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_window_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* resize the main window at init time */
@@ -382,15 +382,15 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       /* gint sc_w,sc_h;*/
       GdkGeometry geometry;
       GdkWindowHints geometry_mask;
-      gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
       /* Limit the scolled window size  */
-      /* gdk_window_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
+      /* gdk_drawable_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
       if ( inhibit_enlarge == TRUE ) 
 	{
 	  geometry.max_width = x+15;
@@ -436,8 +436,8 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
   gint xx,yy;
-  /*   gdk_window_get_size (Xgc->private->window->window,&xx,&yy); */
-  gdk_window_get_size (Xgc->private->scrolled->window,&xx,&yy);
+  /*   gdk_drawable_get_size (Xgc->private->window->window,&xx,&yy); */
+  gdk_drawable_get_size (Xgc->private->scrolled->window,&xx,&yy);
   *x = xx ;  *y = yy ; 
 } 
 
@@ -456,8 +456,8 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
   if ( Xgc->CurResizeStatus == 0) 
     {
       int w,h,pw,ph, xoff, yoff;
-      gdk_window_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       xoff = Max((pw-w),0); 
       yoff= Max((ph-h),0);
       if ( (Xgc->CWindowWidth < x - xoff  ) || (Xgc->CWindowHeight <  y - yoff )) 
@@ -972,7 +972,7 @@ static void xset_wresize(BCG *Xgc,int num)
   else 
     {
       int w,h;
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       Xgc->CurResizeStatus = num1 ;
       xset_windowdim(Xgc,w,h);
     }
@@ -1719,7 +1719,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
-	      gdk_window_get_size (dd->private->drawing->window,&w,&h);
+	      gdk_drawable_get_size (dd->private->drawing->window,&w,&h);
 	      /* just to give the scrollbar the possibility to be updated */
 	      gtk_widget_set_size_request (dd->private->drawing,w,h);
 	    }
@@ -1768,7 +1768,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
        * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
        * and the drawing are redirected to the extra_pixmap. If a wshow is 
        * recorded then it will copy the extra_pixmap to both window and pixmap.
-       * the last gdk_draw_pixmap found here is not usefull in that case. 
+       * the last gdk_draw_drawable found here is not usefull in that case. 
        */
 
       dd->private->resize = 0;
@@ -1794,7 +1794,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       scig_resize(dd->CurWindow);
 #endif 
       dd->private->in_expose= FALSE;
-      gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
     }
   else 
@@ -1814,11 +1814,11 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	}
 
       if (event  != NULL) 
-	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       else 
-	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
       /* if a zrect exists then add it on graphics  */
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
@@ -1921,7 +1921,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
        * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
        * and the drawing are redirected to the extra_pixmap. If a wshow is 
        * recorded then it will copy the extra_pixmap to both window and pixmap.
-       * the last gdk_draw_pixmap found here is not usefull in that case. 
+       * the last gdk_draw_drawable found here is not usefull in that case. 
        */
       dd->private->resize = 0;
       if ( dd->private->pixmap ) 
@@ -1960,7 +1960,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       glFlush ();
       gdk_gl_drawable_wait_gl (dd->private->gldrawable);
       /* synchronize pixmap */
-      gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
@@ -1980,11 +1980,11 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       glFlush ();
       gdk_gl_drawable_wait_gl(dd->private->gldrawable);
       if (event  != NULL) 
-	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       else 
-	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
       /* if a zrect exists then add it on graphics  */
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 

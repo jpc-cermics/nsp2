@@ -320,8 +320,8 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
     {
       /* here drawing and scrolled move together */
       gint pw,ph,w,h;
-      gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* resize the main window at init time */
@@ -340,7 +340,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
       /* Limit the scolled window size  */
-      /* gdk_window_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
+      /* gdk_drawable_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
       geometry.max_width = x+15;
       geometry.max_height = y+15;
       geometry_mask = GDK_HINT_MAX_SIZE ; 
@@ -373,7 +373,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
   gint xx,yy;
-  gdk_window_get_size (Xgc->private->window->window,&xx,&yy);
+  gdk_drawable_get_size (Xgc->private->window->window,&xx,&yy);
   *x = xx ;  *y = yy ; 
 } 
 
@@ -1004,7 +1004,7 @@ static void xset_wresize(BCG *Xgc,int num)
   else 
     {
       int w,h;
-      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       Xgc->CurResizeStatus = num1 ;
       xset_windowdim(Xgc,w,h);
     }
