@@ -158,7 +158,8 @@ class StringArg(ArgType):
 	else:
 	    info.varlist.add('const gchar', '*ret')
             info.attrcodeafter.append('  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);\n  return nsp_ret;')
-            
+
+          
 
 class UCharArg(ArgType):
     # allows strings with embedded NULLs.
@@ -387,6 +388,7 @@ class DoubleArg(ArgType):
         info.varlist.add('double', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
+
 
 class GSList(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):

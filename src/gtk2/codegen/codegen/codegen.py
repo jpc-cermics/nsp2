@@ -668,7 +668,7 @@ class Wrapper:
                 except:
                     sys.stderr.write("Could not write getter for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
-            if settername == 'int_set_failed':
+            if settername == 'XXXint_set_failed':
                 try:
                     funcname = setterprefix + fname
                     info = argtypes.WrapperInfo()
