@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "nsp/machine.h"
-#include "../functions/link.h"
+#include "../functions/linking.h"
 #include "nsp/graphics/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 

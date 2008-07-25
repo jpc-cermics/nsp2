@@ -78,7 +78,7 @@ sciblk2.c: ../include/nsp/object.h
 sciblk2.c: ../include/scicos/scicos.h
 
 scicos.c: ../include/nsp/machine.h
-scicos.c: ../functions/link.h
+scicos.c: ../functions/linking.h
 scicos.c: ../include/nsp/graphics/Graphics.h 
 scicos.c: ../include/nsp/object.h 
 scicos.c: ../include/nsp/blas.h 
