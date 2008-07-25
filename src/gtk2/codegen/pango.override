@@ -49,6 +49,24 @@ pango_glyph_string_index_to_x
 pango_glyph_string_x_to_index
 pango_break
 pango_shape
+
+%%
+override pango_color_new kwargs
+static int
+_wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
+{
+  PangoColor src={0,0,0}; 
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  if ((ret = (GObject *)pango_color_copy(&src))== NULL) return RET_BUG;
+  nsp_type_pangocolor = new_type_pangocolor(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_COLOR, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangocolor );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+
 %%
 override pango_attr_language_new kwargs
 static int
@@ -830,3 +848,7 @@ _wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lh
   pango_layout_set_text(PANGO_LAYOUT(self->obj), text, length);
   return 0;
 }
+
+
+
+

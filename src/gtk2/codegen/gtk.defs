@@ -327,6 +327,18 @@
   )
 )
 
+(define-method activate
+  (of-object "GtkAccelGroup")
+  (c-name "gtk_accel_group_activate")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "accel_quark")
+    '("GObject*" "acceleratable")
+    '("guint" "accel_key")
+    '("GdkModifierType" "accel_mods")
+  )
+)
+
 (define-function accel_groups_activate
   (c-name "gtk_accel_groups_activate")
   (return-type "gboolean")
@@ -403,7 +415,25 @@
   (return-type "guint")
 )
 
+(define-method query
+  (of-object "GtkAccelGroup")
+  (c-name "gtk_accel_group_query")
+  (return-type "GtkAccelGroupEntry*")
+  (parameters
+    '("guint" "accel_key")
+    '("GdkModifierType" "accel_mods")
+    '("guint*" "n_entries")
+  )
+)
 
+(define-function accelerator_get_label
+  (c-name "gtk_accelerator_get_label")
+  (return-type "gchar*")
+  (parameters
+    '("guint" "accelerator_key")
+    '("GdkModifierType" "accelerator_mods")
+  )
+)
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkaccellabel.h
 
@@ -455,17 +485,15 @@
   (c-name "gtk_accel_label_set_accel_closure")
   (return-type "none")
   (parameters
-    '("GClosure*" "accel_closure")
+   '("GClosure*" "accel_closure")
+   )
   )
-)
 
 (define-method refetch
   (of-object "GtkAccelLabel")
   (c-name "gtk_accel_label_refetch")
   (return-type "gboolean")
-)
-
-
+  )
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkaccelmap.h
 

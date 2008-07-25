@@ -4,6 +4,15 @@
 
 ;; From /opt/gtk2/include/pango-1.0/pango/pango-attributes.h
 
+;; XXX les fonction get sur les attributs sont générées mais 
+;; pas les fonction set 
+
+(define-function pango_color_new
+  (c-name "pango_color_new")
+  (return-type "PangoColor*")
+  (is-constructor-of "PangoColor")
+)
+
 (define-function pango_color_get_type
   (c-name "pango_color_get_type")
   (return-type "GType")
