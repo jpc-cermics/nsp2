@@ -1881,7 +1881,7 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   case G_TYPE_POINTER:
     /* XXX A FAIRE 
     if (obj == Py_None)
-      g_value_set_pointer(value, NULL);
+    g_value_set_pointer(value, NULL);
     else 
     if ( ISGPointer(obj) && G_VALUE_HOLDS(value, ((NspGPointer *)obj)->gtype))
       g_value_set_pointer(value, NSP_GPOINTER_GET(obj, gpointer));
