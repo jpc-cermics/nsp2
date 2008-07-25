@@ -844,7 +844,7 @@ NspObject * int_set_object_failed(NspObject *self, NspObject *val)
 int int_set_failed(NspObject *self,char *attr, NspObject *val)
 {
   Scierror("set attribute %s for type %s not implemented\n",attr,self->type->s_type());
-  return RET_BUG;
+  return FAIL;
 }
 
 /**
