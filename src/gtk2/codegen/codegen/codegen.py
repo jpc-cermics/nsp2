@@ -668,13 +668,15 @@ class Wrapper:
                 except:
                     sys.stderr.write("Could not write getter for %s.%s: %s\n"
                                      % (self.objinfo.c_name, fname, exc_info()))
-            if settername == 'XXXXint_set_failed':
+            if settername == 'int_set_failed':
                 try:
                     funcname = setterprefix + fname
                     info = argtypes.WrapperInfo()
                     handler = argtypes.matcher.get(ftype)
                     # XXXXXX
-                    handler.write_param(ftype,"val",'','', info)
+                    handler.write_param(ftype,"val",'','',0, info,0)
+                    # handler.write_param(ptype, pname, pdflt, pnull, psize, info, pos)
+
                     self.fp.write(self.setter_tmpl %
                                   { 'funcname': funcname,
                                     'varlist': info.varlist,
