@@ -1908,6 +1908,7 @@ static OpTab SMatrix_func[]={
   {"concat_s_s", int_smxconcattt },
   {"plus_s_s", int_smxconcattt },
   {"comp_s_s", int_smxcomp },
+  {"strcmp_s_s", int_smxcomp },
   {"catenate", int_smxconcat },
   {"part", int_smxpart },
   {"length_s", int_smxlength },
