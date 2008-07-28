@@ -44,9 +44,15 @@ function []=do_quit(win,L)
   //gtk_main_quit()
 endfunction 
 
+function []=do_delete(win,L)
+  // the first argument is win or button 
+  win.destroy[];
+  //gtk_main_quit()
+endfunction 
+
 function []=demo_spinbutton()
   window = gtkwindow_new()
-  window.connect[ "delete_event", do_quit,list(window)];
+  window.connect[ "delete_event", do_delete,list(window)];
   window.connect[ "destroy", do_quit,list(window)];
   window.set_title[ "GtkSpinButton"];
 
