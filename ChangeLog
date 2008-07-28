@@ -1,3 +1,10 @@
+2008-07-28  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* eye,ones,zeros: semantic has changed to follow Matlab rules.
+	eye_new, ones_new, zeros_new are the same. eye_deprecated, 
+	ones_deprecated, zeros_deprecated follow old rules.
+	
+
 2008-07-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* GetActions added and improvement in GList GSlist management 
