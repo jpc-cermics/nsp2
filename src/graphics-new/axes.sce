@@ -2,7 +2,7 @@
   mode = "Cairo";
   mode = "Gtk";
   //mode = "OpenGl";
-  F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
+  F=figure_create(wresize=%f,fname=mode,driver=mode,id=20);
   // a top level axes 
   A=axes_create(top=%t,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
@@ -17,7 +17,6 @@
   // insert a matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   A.children($+1)= ma;
-  
   // insert a new axes 
   C=axes_create(alpha=%pi/6,arect=[1,1,1,1]*0);
   // the position of the axes in its parent 
@@ -38,7 +37,6 @@
   // matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   C.children($+1)= ma;
-    
   A.children($+1) = C;
   F.connect[]
   

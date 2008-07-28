@@ -5022,6 +5022,124 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
+/* test code for an activaed thread 
+ */
+
+#ifdef TEST_EVENT_BOX_THREAD
+
+static void
+event_box_label_pressed (GtkWidget        *widget,
+			 GdkEventButton   *event,
+			 gpointer user_data)
+{
+  g_print ("clicked on event box\n");
+}
+
+static void
+event_box_button_clicked (GtkWidget *widget,
+			  GtkWidget *button,
+			  gpointer user_data)
+{
+  g_print ("pushed button\n");
+}
+
+static void create_event_box (GtkWidget *widget, char *title )
+{
+  GtkWidget *window = NULL;
+  GtkWidget *box1;
+  GtkWidget *hbox;
+  GtkWidget *vbox;
+  GtkWidget *button;
+  GtkWidget *event_box;
+  GtkWidget *label;
+
+      
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  /* gtk_window_set_screen (GTK_WINDOW (window),
+     gtk_widget_get_screen (widget)); */
+
+  g_signal_connect (window, "destroy",
+		    G_CALLBACK (gtk_widget_destroyed),
+		    &window);
+
+  gtk_window_set_title (GTK_WINDOW (window), title );
+  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
+
+  box1 = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (window), box1);
+  
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (box1), hbox, TRUE, FALSE, 0);
+      
+  event_box = gtk_event_box_new ();
+  gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, FALSE, 0);
+
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (event_box), vbox);
+  g_signal_connect (event_box, "button_press_event",
+		    G_CALLBACK (event_box_label_pressed),
+		    NULL);
+      
+  label = gtk_label_new ("Click on this label");
+  gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 0);
+  
+  button = gtk_button_new_with_label ("button in eventbox");
+  gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, FALSE, 0);
+  g_signal_connect (button, "clicked",
+		    G_CALLBACK (event_box_button_clicked),
+		    NULL);
+  gtk_widget_show_all (window);
+}
+
+
+GMainLoop *loop;
+
+static gboolean idle_thingy (gpointer nothing)
+{
+  static int poo=1;
+  /* fprintf(stderr,"Inside the idle\n"); */
+  poo++;
+  usleep(100);
+  if ( poo > 100000) g_main_loop_quit(loop); 
+  return TRUE;
+}
+
+static gpointer run_thread (gpointer thread)
+{
+  GSource *s;
+  GMainContext* ct;
+  ct = g_main_context_new ();
+  s = g_idle_source_new ();
+  loop = g_main_loop_new (NULL, FALSE);
+  g_source_set_callback (s, idle_thingy, NULL, NULL);
+  g_source_attach (s, ct);
+  g_source_unref (s);
+  gdk_threads_enter ();
+  create_event_box (NULL,"Thread event Box");
+  gdk_threads_leave ();
+  g_main_loop_run (loop);
+  g_main_loop_unref (loop);
+  g_print ("Thread is done\n");
+  return NULL;
+}
+
+static int int_gtk_loop(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  GThread *thread;
+  g_thread_init (NULL);
+  gdk_threads_init();
+  thread = g_thread_create (run_thread, NULL, TRUE, NULL);
+  gdk_threads_enter ();
+  nsp_message_modeless_("Quit the thread message");
+  gdk_threads_leave ();
+  g_print ("make the main thread sleep \n");
+  sleep(60);
+  g_print ("main thread re-activated \n");
+  return 0;
+} 
+#endif 
+
 
 /*************************************************************
  * The Interface for graphic functions 
@@ -5136,6 +5254,9 @@ static OpTab Graphics_func[]={
   {"curve_create", int_curve_create},
   {"groot_create",int_groot_create},
   {"gmatrix_create",int_gmatrix_create},
+#ifdef TEST_EVENT_BOX_THREAD
+  {"gtk_test_loop",int_gtk_loop},
+#endif 
   {(char *) 0, NULL}
 };
 
