@@ -1246,8 +1246,29 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
   NspMatrix *Loc;
   if ( A->mn != B->mn ) 
     {
-      Scierror("Error: incompatible dimensions for strcmp");
-      return(NULLMAT);
+      if ( A->mn == 1 ) 
+	{
+	  if ( ( Loc = nsp_matrix_create(NVOID,'r',B->m,B->n) ) == NULLMAT ) return(NULLMAT);
+	  for ( i = 0 ; i < B->mn ; i++) 
+	    {
+	      Loc->R[i]= strcmp(A->S[0],B->S[i]);
+	    }
+	  return(Loc);
+	}
+      else if ( B->mn == 1) 
+	{
+	  if ( ( Loc = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return(NULLMAT);
+	  for ( i = 0 ; i < A->mn ; i++) 
+	    {
+	      Loc->R[i]= strcmp(A->S[i],B->S[0]);
+	    }
+	  return(Loc);
+	}
+      else 
+	{
+	  Scierror("Error: incompatible dimensions for strcmp\n");
+	  return(NULLMAT);
+	}
     }
   if ( ( Loc = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return(NULLMAT);
   for ( i = 0 ; i < A->mn ; i++) 
@@ -2552,10 +2573,13 @@ int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean 
  * @ind: (optional output) 
  * @ind2: (optional output) 
  *
- * looks for each component of @x if it in @A or not with additional first 1-index (if lhs=2) or 2-index.
- * (if lhs=3)
+ * looks for each component of @x if it is in @A returning the value in a boolean matrix of same size as @x. 
+ * Additional indices are returned is requested i.e a one dimensional indice is returned in @ind if lhs=2 and 
+ * two indices are returned in @ind (row indice) and @ind2 (column indice) if lhs=3. 
+ * 
  * Return value: a NspBMatrix
  **/
+
 NspBMatrix *nsp_smatrix_has(NspSMatrix *A, NspSMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2)
 {
   NspBMatrix *B=NULLBMAT;
