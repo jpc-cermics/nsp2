@@ -1,0 +1,69 @@
+% -*- mode: latex -*-
+
+\mansection{ilib\_for\_link}
+\begin{mandesc}
+  \shortunder{ilib\_for\_link}{ilib_for_link}{utility for dynamic library management}\\
+\end{mandesc}
+\index{ilib\_for\_link}\label{ilib-for-link}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  ilib_for_link(names,files,libs,flag [
+         ,makename=,loadername=,libname=,ldflags=,cflags=,fflags=,cc=]);
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{names} : a string matrix giving the entry names which are to be linked.
+    \vname{files} : a string matrix giving objects files needed for shared library creation. 
+    Note that the suffix to use for object files is \verb+.o+ on all operating systems. 
+    \vname{libs} : a string matrix giving extra libraries needed for shared library creation
+    \vname{flag} : a string flag ("c" or "f") for C or Fortran entry points.
+    \vname{makename} : a string giving the name of the Makefile to be generated  (default value \verb!Makelib!).
+    \vname{loadername} : a string giving the name of the loader file to be generated (default value  \verb!loader.sce!).
+    \vname{libname} : a string giving the name of the dynamic library to be generated (default value is build from the first 
+    given file name in \verb!files!).
+    \vname{ldflags}: optional string to be given to the linker.
+    \vname{cflags}: optional string to be given to the C/C++ compiler.
+    \vname{fflags}: optional string to be given to the Fortran compiler.
+    \vname{cc}: optional string to give the C compiler name.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!ilib_for_link! can be used to build a dynamic library from a set of given files 
+  and to obtain a script which contains a proper call to nsp function \verb!link! for loading 
+  the shared library ane add entry points given by \verb!names! to nsp. The advantage of this
+  script comes from the fact that the compilation and link process can be achieved from nsp 
+  for all the supported operating systems. The script \verb!ilib_for_link! will generate a
+  makefile (whose name is given by \verb!makename!) which can be used directly to compile 
+  the dynamic library. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    f1=['int ext1c(n, a, b, c)'
+         'int *n;     double *a, *b, *c;'
+         '{int k;'
+         '  for (k = 0; k $<$ *n; ++k) '
+         '      c[k] = a[k] + b[k];'
+         '  return(0);}'];
+    mputl(f1,'fun1.c')
+    //creating the shared library (a gateway, a Makefile and a loader are 
+    //generated. 
+    ilib_for_link('ext1c','fun1.o',[],"c") 
+    // load the shared library 
+    exec loader.sce 
+    //using the new primitive
+    a=[1,2,3];b=[4,5,6];n=3;
+    c=call('ext1c',n,1,'i',a,2,'d',b,3,'d','out',[1,3],4,'d');
+    if norm(c-(a+b)) $>$ %eps then pause,end
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{link}{link} 
+  \manlink{ulink}{ulink}
+  \manlink{c\_link}{c-link}
+\end{manseealso}
+

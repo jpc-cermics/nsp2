@@ -1,0 +1,36 @@
+% -*- mode: latex -*-
+
+\mansection{addinter}
+\begin{mandesc}
+  \texttt{addinter} --  new functions interface incremental linking at run time\\ % @mandesc@
+\end{mandesc}
+\index{addinter}\label{addinter}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+      addinter(files,spname,fcts)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{files} : a character string or a vector of character string contain object files used to define the new Scilab interface routine (interface code, user routines or libraries, system libraries).
+    \vname{spname} : a character string. Name of interface routine entry point
+    \vname{fcts} : vector of character strings. The name of new Scilab function implemented in the new interface (in \verb! fin! the order ).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!addinter! performs incremental linking of a compiled C or Fortran
+  new Scilab interface routine (see \verb!intersci! documentation)
+  and define corresponding scilab functions.
+  For machines using dlopen functionality one can unlink an interface 
+  with \verb!ulink! ( use the command \verb!link('show')! to get the number 
+  of the shared library ). And to reload a new version of an interface a call to \verb!ulink! is 
+  necessary to get rid of the old version.
+  See \verb!link! for more precision on use.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{link}{link} \manlink{intersci}{intersci} \manlink{newfun}{newfun} \manlink{clearfun}{clearfun}  
+\end{manseealso}
+

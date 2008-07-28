@@ -1,5 +1,7 @@
-\chapter*{files and pathnames}\addcontentsline{toc}{chapter}{files and pathnames}
+\chapter*{system functions}\addcontentsline{toc}{chapter}{system functions}
 
+\HCode{<hr>}
+Files and pathnames
 \begin{quote}
 \noindent
 \hyperlink{file}{file} - file and pathnames\\
@@ -8,7 +10,19 @@
 \hyperlink{who}{who} - get current variables\\
 \end{quote}
 
-\input system/file.tex 
+\HCode{<hr>}
+Dynamic library management
+\begin{quote}
+\noindent 
+\hyperlink{c_link}{c-link} - check entries from dynamic library \\
+\hyperlink{ilib_for_link}{ilib-for-link} - create a dynamic library and call link \\
+\hyperlink{link}{link} - add entries from dynamic library \\
+\hyperlink{ulink}{ulink} - unload dynamic library \\
+\end{quote}
+
+\input system/file.tex
+\input system/ilib_for_link.tex  
+\input system/link.tex  
 \input system/load.tex 
 \input system/save.tex 
 \input system/who.tex 

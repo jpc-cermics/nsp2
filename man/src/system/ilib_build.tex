@@ -1,0 +1,76 @@
+% -*- mode: latex -*-
+
+\mansection{ilib\_build}
+\begin{mandesc}
+  \texttt{ilib\_build} --  utility for shared library management\\ % @mandesc@
+\end{mandesc}
+\index{ilib\_build}\label{ilib-build}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ilib_build(lib_name,table,files,libs [,makename,ldflags,cflags,fflags])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{lib\_name} : a character string, the generic name of the library without path and extension.
+    \vname{table} : 2 column string matrix giving the table of pairs 'scilab-name', 'interface name'
+    \vname{files} : string matrix giving objects files needed for shared library creation
+    \vname{libs} : string matrix giving extra libraries needed for shred library creation
+    \vname{makename} : character string. The path of the Makefile file without extension.
+    \vname{ldflags,cflags,fflags} : character strings to provide options for the loader, the C compiler and the Fortran compiler.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This tool is used to create shared libraries and to generate a 
+  loader file which can be used to dynamically load the shared library 
+  into Scilab with \verb!addinter!
+  Many examples are provided in \verb!examples/interface-tour-so!
+  directory.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    //Here with give a complete example on adding new primitive to Scilab
+    //create the procedure files
+    f1=['extern double fun2();'
+      'void fun1(x,y)'
+      'double *x, *y;'
+      '{*y=fun2(*x)/(*x);}'];
+    mputl(f1,'fun1.c')
+    f2=['#include $<$math.h$>$'
+      'double fun2(x)'
+      'double x;'
+      '{ return( sin(x+1.));}'];
+    mputl(f2,'fun2.c');
+    //creating the interface file
+    i=['#include ""stack-c.h""'
+      'extern int fun1 _PARAMS(( double *x, double *y));'
+      'int intfun1(fname)' 
+      'char * fname;'
+      '{'
+        '  int m1,n1,l1;'
+        '  CheckRhs(1,1);'
+        '  CheckLhs(1,1);'
+        '  GetRhsVar(1, ""d"", \&amp;m1, \&amp;n1, \&amp;l1);'
+        '  fun1(stk(l1),stk(l1));'
+        '  LhsVar(1) = 1;'
+        '  return 0;'
+        '}'];
+    mputl(i,'intfun1.c')
+    //creating the shared library (a gateway, a Makefile and a loader are 
+    //generated. 
+    files=['fun1.o','fun2.o','intfun1.o'];
+    ilib_build('foo',['scifun1','intfun1'],files,[]);
+    // load the shared library 
+    exec loader.sce 
+    //using the new primitive
+    scifun1(33)
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{addinter}{addinter} \manlink{link}{link} \manlink{ilib\_compile}{ilib-compile} \manlink{ilib\_gen\_Make}{ilib-gen-Make} \manlink{ilib\_gen\_gateway}{ilib-gen-gateway} \manlink{ilib\_gen\_loader}{ilib-gen-loader} \manlink{ilib\_for\_link}{ilib-for-link}  
+  \end{manseealso}
+

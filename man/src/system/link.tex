@@ -1,0 +1,81 @@
+% -*- mode: latex -*-
+\mansection{link}
+\begin{mandesc}
+  \short{link}{load dynamic library}\\ 
+  \short{ulink}{unload dynamic library}\\
+  \shortunder{c\_link}{c_link}{check entry points in link table}
+\end{mandesc}
+\index{c\_link}\label{c-link}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ H=link();
+ id=link(library,entry-points [,flag]);
+ id=link(library);
+ link('show');
+ ulink(id);
+ [rep,id]=c_link(name [, id]);
+\end{verbatim}
+
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{library}: It can be an integer giving the id of a previously linked dynamic library or it can be the pathname 
+    of a dynamic library (Note that relative pathnames which only contain a library name as for example in \verb!libfoo.so! 
+    are not valid, use \verb!./libfoo.so! in that case).
+    \vname{entry-points}: a string matrix containing all the symbols to be searched in the dynamic library. 
+    \vname{flag}: an optional string which can be \verb!'f'! (naming Fortran) or \verb!'c'! (name C). The default value being 
+    \verb!'c'! 
+    \vname{id}: an integer which gives the internal id of the shared library. 
+    \vname{H}: a hash table. 
+    \vname{rep}: a boolean. 
+    \vname{name}: a string.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!link! function is used to load a dynamic library into nsp. 
+  Then, entry points from the dynamic libraries can be added to an internal array of 
+  nsp. These entry points can be accessed by a set of nsp functions as for example 
+  by the \verb!call! function. The \verb!ulink! function can be used to unload 
+  a dynamic library and remove the added entry points. 
+  In order to create a dynamic library from a set of file and obtain an link 
+  code which does not depend on the underlying operating system the script 
+  \verb!ilib_for_link! can be used.
+  \begin{itemize} 
+  \item \verb!id_libfoo=link('./libfoo.so',['foo','goo'],'f')! load the library 
+    \verb!'./libfoo.so'! and add the entries \verb!foo! and \verb!goo! from this 
+    library. \verb!'f'! is used to tell that \verb!foo! and \verb!goo! are to be 
+    searched as Fortran symbols which on some systems implies that their internal 
+    names are to be suffixed and/or prefixed with an underscore. 
+  \item \verb!link(id_libfoo,['poo'])! add the entry \verb!poo! which is searched 
+    on a previously linked library with id \verb!id_libfoo! 
+  \item \verb!id_libfoo=link('./libfoo.so')! just load the library \verb!./libfoo.so! 
+    and returns an id which can be used on next calls to \verb!link!. 
+    Note that in that case the exprorted symbols from the library \verb!'./libfoo.so'! 
+    are global. It means that if you link in a subsequent call an other library 
+    which need the symbols from \verb!'./libfoo.so'! to resolve its dependences 
+    then \verb!'./libfoo.so'! will be properly used for the dependence resolution. 
+    But note that the global propery can also lead to name clashes. If you try 
+    to link from an other library a symbol already defined in \verb!'./libfoo.so'! 
+    it won't work and the symbol from \verb!'./libfoo.so'! will be used. 
+  \item \verb!link('nsp')! or \verb!link('nsp','foo')! can be used to access 
+    symbols from the nsp executable.
+  \item \verb!H=link()! returns in a hash table all the entry points, the value 
+    of each entry point in \verb!H! being the id of the dynamic library it was loaded 
+    from. Note that the id information is wrong when a symbol is found in a 
+    global (as described in the previous item) library.  
+  \item \verb![rep,idr]=c_link(name [,id])! checks if entry point with name \verb!name! 
+    is present in the dynamic entry points table. If the answer is positive then \verb!rep!
+    is set to true and \verb!idr! is set to the id of the dynamic library containing the 
+    symbol \verb!name!. An optional argument can be given to \verb!c_link! to limit the search 
+    to the symbols loaded from a dynamic library with id \verb!id!.
+  \end{itemize}
+\end{mandescription} 
+\begin{manseealso}
+  \manlink{ulink}{ulink}
+  \manlink{c\_link}{c-link}
+  \manlink{addinter}{addinter}  
+  \manlink{ilib\_for\_link}{ilib-for-link}  
+\end{manseealso}
+
