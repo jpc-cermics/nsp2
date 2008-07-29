@@ -11,7 +11,7 @@ if rcond(A)<>[] then pause,end
 
 //Rectangular matrix
 if execstr('rcond(rand(2,3))',errcatch=%t)==%t then pause,end
-if execstr('rcond(rand(2,3)+%i*eye_deprecated())',errcatch=%t)==%t then pause,end
+if execstr('rcond(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 //Small dimension
 //---------------
 //Real Case

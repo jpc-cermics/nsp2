@@ -30,9 +30,9 @@ xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
 xbasc()
 hh = (b-a)./(nn');
 
-A = [ones_deprecated(hh) log(hh)]; coefs = A\log(er);
+A = [ones(size(hh)) log(hh)]; coefs = A\log(er);
 
-ylsl = exp(log(hh)*coefs(2,:) + ones_deprecated(hh)*coefs(1,:));
+ylsl = exp(log(hh)*coefs(2,:) + ones(size(hh))*coefs(1,:));
 
 xset("font",6,1)
 xset("mark size", 2)

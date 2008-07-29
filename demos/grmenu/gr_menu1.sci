@@ -331,7 +331,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
       xpoly(sd('x'),sd('y'),type='lines');
       if sd('hilited') then 
 	// hilited part 
-	rects=[sd('x')-1;sd('y')+1;2*ones_deprecated(sd('x'));2*ones_deprecated(sd('x'))];
+	rects=[sd('x')-1;sd('y')+1;2*ones(size(sd('x')));2*ones(size(sd('x')))];
 	n=size(rects,'c');
 	control_color=10;
 	colors=control_color*ones_new(1,n);

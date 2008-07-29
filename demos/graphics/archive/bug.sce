@@ -22,7 +22,7 @@ endfunction
 function [x,y,z]=rings(alp,tet,a,b)
   x=(a+b*cos(alp)).*cos(tet)
   y=(a+b*cos(alp)).*sin(tet)
-  z=(a+b*sin(alp)).*ones_deprecated(tet);
+  z=(a+b*sin(alp)).*ones(size(tet));
 endfunction;
 
 // the tube 
@@ -31,7 +31,7 @@ alpha=linspace(-%pi,%pi,10);
 theta=linspace(0,%pi*2,40);
 
 function [r]=curve(alpha,theta)
-  r = 2+cos(4*(theta)).*ones_deprecated(alpha)
+  r = 2+cos(4*(theta)).*ones(size(alpha))
 endfunction
 
 m=size(alpha,'*');n=size(theta,'*');

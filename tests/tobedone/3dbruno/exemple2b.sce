@@ -5,7 +5,7 @@ function [z] = rozen(x,y)
    C = 1
    x = x(:)
    y = (y(:))'
-   z = C*(ones_deprecated(x)*y - x.^2*ones_deprecated(y)).^2 + (1 - x).^2*ones_deprecated(y)
+   z = C*(ones(size(x))*y - x.^2*ones(size(y))).^2 + (1 - x).^2*ones(size(y))
 endfunction
 
 n = 20;

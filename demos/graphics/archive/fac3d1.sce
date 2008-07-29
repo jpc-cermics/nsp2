@@ -16,9 +16,9 @@ function y = linspace(d1, d2, n)
 endfunction
 
 function [x,y,z]=sph(alp,tet)
-  x=r*cos(alp).*cos(tet)+orig(1)*ones_deprecated(tet);
-  y=r*cos(alp).*sin(tet)+orig(2)*ones_deprecated(tet);
-  z=r*sin(alp)+orig(3)*ones_deprecated(tet);
+  x=r*cos(alp).*cos(tet)+orig(1)*ones(size(tet));
+  y=r*cos(alp).*sin(tet)+orig(2)*ones(size(tet));
+  z=r*sin(alp)+orig(3)*ones(size(tet));
 endfunction;
   
 r=1;orig=[0 0 0];

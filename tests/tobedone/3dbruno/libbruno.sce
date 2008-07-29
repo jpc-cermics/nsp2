@@ -70,7 +70,7 @@ endfunction
 
 function [v]=prod_vect(v1,v2)
   // produit vectoriel v = v1 /\ v2
-  v = zeros_deprecated(v1)
+  v = zeros(size(v1))
   v(1,:) = v1(2,:).*v2(3,:) - v1(3,:).*v2(2,:)
   v(2,:) = v1(3,:).*v2(1,:) - v1(1,:).*v2(3,:)
   v(3,:) = v1(1,:).*v2(2,:) - v1(2,:).*v2(1,:)

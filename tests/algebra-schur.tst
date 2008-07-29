@@ -45,8 +45,8 @@ if U<>[]|N<>0|S<>[] then pause,end
 if execstr('schur(rand(2,3))',errcatch=%t)==%t then pause,end
 if execstr('[U,S]=schur(rand(2,3))',errcatch=%t)==%t then pause,end
 
-if execstr('schur(rand(2,3)+%i*eye_deprecated())',errcatch=%t)==%t then pause,end
-if execstr('[U,S]=schur(rand(2,3)+%i*eye_deprecated())',errcatch=%t)==%t then pause,end
+if execstr('schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
+if execstr('[U,S]=schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 
 //Small dimension
 A=testmat1(3,5);Ac=testmat1(3+%i,5);

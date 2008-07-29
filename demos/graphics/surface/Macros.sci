@@ -41,7 +41,7 @@ function [z] = bezier(p,t)
 // p must be a k x n+1 matrix (n+1) points, dimension k.
 // Copyright INRIA
   n=size(p,'c')-1;// i=nonzeros(t~=1);
-  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
   T=dup(t./t1,n)';
   b=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
   b=cumprod(b,'c');
@@ -70,7 +70,7 @@ function [X,Y,Z]=beziersurface (x,y,z,n)
   if rhs <= 3 ; n=20;end 
   t=linspace(0,1,n);
   n=size(x,'r')-1; // i=nonzeros(t~=1);
-  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
   T=dup(t./t1,n)';
   b1=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
   b1=cumprod(b1,'c');
@@ -78,7 +78,7 @@ function [X,Y,Z]=beziersurface (x,y,z,n)
     b1(t1z,:)= dup([ 0*ones_new(1,n),1],size(t1z,'c')); end;
     
     n=size(x,'c')-1; // i=nonzeros(t~=1);
-    t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones_deprecated(t1z);
+    t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
     T=dup(t./t1,n)';
     b2=[((1-t').^n),(T.*dup((n-(1:n)+1)./(1:n),size(t,'c')))];
     b2=cumprod(b2,'c');
@@ -98,7 +98,7 @@ function cplxmap(z,w,varargin)
   v = imag(w);
   M = max(u);
   m = min(u);
-  s = ones_deprecated(size(z));
+  s = ones(size(size(z)));
   //mesh(x,y,m*s,blue*s);
   //hold on
   [X,Y,U]=nf3d(x,y,u);

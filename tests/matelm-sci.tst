@@ -87,19 +87,19 @@ if or(eye_new(2,n)<>[1 0;0 1]) then pause,end
 if or(eye_new(n,n)<>[1 0;0 1]) then pause,end
 //AFAIRE if or(size(eye_deprecated())<>[-1 -1]) then pause,end
 a=[1 2;3 4];
-if or(eye_deprecated(a)<>[1 0;0 1]) then pause,end
-if or(eye_deprecated(a+0)<>[1 0;0 1]) then pause,end
+if or(eye(size(a))<>[1 0;0 1]) then pause,end
+if or(eye(size(a+0))<>[1 0;0 1]) then pause,end
 //AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(eye_deprecated(a)<>[1 0;0 1]) then pause,end
-//AFAIRE if or(eye_deprecated(a+0)<>[1 0;0 1]) then pause,end
+//AFAIRE if or(eye(size(a))<>[1 0;0 1]) then pause,end
+//AFAIRE if or(eye(size(a+0))<>[1 0;0 1]) then pause,end
 a=string([1 2;3 4]);
-if or(eye_deprecated(a)<>[1 0;0 1]) then pause,end
-if or(eye_deprecated(a+a)<>[1 0;0 1]) then pause,end
+if or(eye(size(a))<>[1 0;0 1]) then pause,end
+if or(eye(size(a+a))<>[1 0;0 1]) then pause,end
 a=[1 2;3 4]>1;
-if or(eye_deprecated(a)<>[1 0;0 1]) then pause,end
-if or(eye_deprecated(a&a)<>[1 0;0 1]) then pause,end
+if or(eye(size(a))<>[1 0;0 1]) then pause,end
+if or(eye(size(a&a))<>[1 0;0 1]) then pause,end
 
-if eye_deprecated([])<>[] then pause,end
+if eye(size([]))<>[] then pause,end
 //ones
 if or(ones_new(2,2)<>[1 1;1 1]) then pause,end
 if or(ones_new(2,1)<>[1;1]) then pause,end
@@ -107,20 +107,20 @@ n=2;
 if or(ones_new(n,2)<>[1 1;1 1]) then pause,end
 if or(ones_new(2,n)<>[1 1;1 1]) then pause,end
 if or(ones_new(n,n)<>[1 1;1 1]) then pause,end
-if ones_deprecated(1)<>1 then pause,end
-if ones_deprecated([])<>[] then pause,end
+if ones(1,1)<>1 then pause,end
+if ones(size([]))<>[] then pause,end
 a=[1 2;3 4];
-if or(ones_deprecated(a)<>[1 1;1 1]) then pause,end
-if or(ones_deprecated(a+0)<>[1 1;1 1]) then pause,end
+if or(ones(size(a))<>[1 1;1 1]) then pause,end
+if or(ones(size(a+0))<>[1 1;1 1]) then pause,end
 //AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(ones_deprecated(a)<>[1 1;1 1]) then pause,end
-//AFAIRE if or(ones_deprecated(a+0)<>[1 1;1 1]) then pause,end
+//AFAIRE if or(ones(size(a))<>[1 1;1 1]) then pause,end
+//AFAIRE if or(ones(size(a+0))<>[1 1;1 1]) then pause,end
 a=string([1 2;3 4]);
-if or(ones_deprecated(a)<>[1 1;1 1]) then pause,end
-if or(ones_deprecated(a+a)<>[1 1;1 1]) then pause,end
+if or(ones(size(a))<>[1 1;1 1]) then pause,end
+if or(ones(size(a+a))<>[1 1;1 1]) then pause,end
 a=[1 2;3 4]>1;
-if or(ones_deprecated(a)<>[1 1;1 1]) then pause,end
-if or(ones_deprecated(a&a)<>[1 1;1 1]) then pause,end
+if or(ones(size(a))<>[1 1;1 1]) then pause,end
+if or(ones(size(a&a))<>[1 1;1 1]) then pause,end
 //rand
 if or(size(rand(2,2))<>[2 2]) then pause,end
 if or(size(rand(2,1))<>[2 1]) then pause,end

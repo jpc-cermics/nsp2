@@ -85,7 +85,7 @@ function []=emc2V(i,j,k,sca,FN,rect)
   nmax=max(nm);if nmax<>0; nm=nm/nmax;end
   xarrows([noeul(:,2)-(1/sca)*resu(:,1),noeul(:,2)+(1/sca)*resu(:,1)]',...
 	[noeul(:,3)-(1/sca)*resu(:,2),noeul(:,3)+(1/sca)*resu(:,2)]',...
-	style=16*ones_deprecated(nm)-16*nm);
+	style=16*ones(size(nm))-16*nm);
   xset("clipoff");
 endfunction 
 

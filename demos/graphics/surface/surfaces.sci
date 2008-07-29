@@ -7,13 +7,13 @@ function hole3d()
     plot3d1(t,t,z);
 function hole3d1()
 // Holes in surfaces using %inf 
-     deff('[x,y,z]=sph(alp,tet)',['x=r*cos(alp).*cos(tet)+orig(1)*ones_deprecated(tet)';
-     'y=r*cos(alp).*sin(tet)+orig(2)*ones_deprecated(tet)';
-     'z=r*sin(alp)+orig(3)*ones_deprecated(tet)']);
+     deff('[x,y,z]=sph(alp,tet)',['x=r*cos(alp).*cos(tet)+orig(1)*ones(size(tet))';
+     'y=r*cos(alp).*sin(tet)+orig(2)*ones(size(tet))';
+     'z=r*sin(alp)+orig(3)*ones(size(tet))']);
      r=1;orig=[0 0 0];
      x=linspace(-%pi/2,%pi/2,40);y=linspace(0,%pi*2,20); 
-     x(5:8)=%inf*ones_deprecated(5:8);  
-     x(30:35)=%inf*ones_deprecated(30:35); 
+     x(5:8)=%inf*ones(size(5:8));  
+     x(30:35)=%inf*ones(size(30:35)); 
      [x1,y1,z1]=eval3dp(sph,x,y);
      plot3d1(x1,y1,z1)      
 function sphere
@@ -21,7 +21,7 @@ function sphere
      v = linspace(0,2*%pi,20);
      x= cos(u)'*cos(v);
      y= cos(u)'*sin(v);
-     z= sin(u)'*ones_deprecated(v);
+     z= sin(u)'*ones(size(v));
      plot3d2(x,y,z);
 function shell
      u = linspace(0,2*%pi,40);
@@ -65,7 +65,7 @@ function torus1
      factor=1.5+cos(y);
      X=factor*cos(x);
      Y=factor*sin(x);
-     Z=sin(y)*ones_deprecated(x)+ ones_deprecated(y)*cos(2*x);
+     Z=sin(y)*ones(size(x))+ ones(size(y))*cos(2*x);
      plot3d2(X,Y,Z);
 function moebius
 // the Moebius band

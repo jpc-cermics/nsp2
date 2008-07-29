@@ -16,7 +16,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfbet("PQ",RdevS,1-RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS));
+[P]=cdfbet("PQ",RdevS,1-RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)));
 //plot2d(RdevS,P,style=2);
 if norm(P-PS) > prec then pause,end
 
@@ -28,7 +28,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdff("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS));
+[P]=cdff("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -43,7 +43,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfgam("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS));
+[P]=cdfgam("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -55,7 +55,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfnor("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS));
+[P]=cdfnor("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -112,7 +112,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfnbn("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS),(1-B)*ones_deprecated(RdevS));
+[P]=cdfnbn("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)),(1-B)*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 //XXXX need an other test 
 //if norm(P-PS) > prec then pause,end
@@ -126,7 +126,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfbin("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS),(1-B)*ones_deprecated(RdevS));
+[P]=cdfbin("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)),(1-B)*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 //XXX need to change test 
 //if norm(P-PS) > prec then pause,end
@@ -153,7 +153,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfchn("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS));
+[P]=cdfchn("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -165,7 +165,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdffnc("PQ",RdevS,A*ones_deprecated(RdevS),B*ones_deprecated(RdevS),C*ones_deprecated(RdevS));
+[P]=cdffnc("PQ",RdevS,A*ones(size(RdevS)),B*ones(size(RdevS)),C*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -177,7 +177,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfchi("PQ",RdevS,A*ones_deprecated(RdevS));
+[P]=cdfchi("PQ",RdevS,A*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 if norm(P-PS) > prec then pause,end
 
@@ -189,7 +189,7 @@ RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);
 // theorical result 
-[P]=cdfpoi("PQ",RdevS,A*ones_deprecated(RdevS));
+[P]=cdfpoi("PQ",RdevS,A*ones(size(RdevS)));
 //plot2d(RdevS,P,2,"000")
 // idem need an other test P is piecewize linear and PS 
 // linear 
@@ -228,23 +228,23 @@ end
 // test de cdfnor 
 
 v=[-5:0.1:5];
-[P,Q]=cdfnor("PQ",v,0*ones_deprecated(v),1*ones_deprecated(v));
-v1=cdfnor("X",0*ones_deprecated(v),1*ones_deprecated(v),P,Q);
+[P,Q]=cdfnor("PQ",v,0*ones(size(v)),1*ones(size(v)));
+v1=cdfnor("X",0*ones(size(v)),1*ones(size(v)),P,Q);
 if max(abs(v-v1)) > 1.e-14 then pause,end
-M=cdfnor("Mean",1*ones_deprecated(v),P,Q,v);
+M=cdfnor("Mean",1*ones(size(v)),P,Q,v);
 if max(abs(M)) > 1.e-14 then pause,end
-St=cdfnor("Std",P,Q,v,0*ones_deprecated(v));
+St=cdfnor("Std",P,Q,v,0*ones(size(v)));
 // result can be false near P=0.5
 if max(abs(St-1)) > 0.3 then pause,end
 
 // test de cdfgam
 
 v=[0:0.01:3];
-[P,Q]=cdfgam("PQ",v,0.1*ones_deprecated(v),0.3*ones_deprecated(v));
-v1=cdfgam("X",0.1*ones_deprecated(v),0.3*ones_deprecated(v),P,Q);
+[P,Q]=cdfgam("PQ",v,0.1*ones(size(v)),0.3*ones(size(v)));
+v1=cdfgam("X",0.1*ones(size(v)),0.3*ones(size(v)),P,Q);
 if max(abs(v-v1)) > 1.e-14 then pause,end
-Shape=cdfgam("Shape",0.3*ones_deprecated(v),P,Q,v);
+Shape=cdfgam("Shape",0.3*ones(size(v)),P,Q,v);
 // Shape est faux si P==0;
 if max(abs(Shape(2:$)-0.1)) > 1.e-8 then pause,end
-Scale=cdfgam("Scale",P,Q,v,0.1*ones_deprecated(v));
+Scale=cdfgam("Scale",P,Q,v,0.1*ones(size(v)));
 if max(abs(Scale(2:$)-0.3)) > 1.e-8 then pause,end

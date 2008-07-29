@@ -9,7 +9,7 @@ a = 0; b = 2*%pi;
 c = 0; d = b;
 
 function [a,b] = least_squares_line(x,y)
-   A = [ones_deprecated(x) x];
+   A = [ones(size(x)) x];
    M = A'*A
    v = A'*y
    // Mx=v par Cramer... (waiting x=A\b)

@@ -152,8 +152,8 @@ function demo_3d_11_old()
   n = size(u,'*');
   x= cos(u)'*exp(cos(v));
   y= cos(u)'*sin(v);
-  z= sin(u)'*ones_deprecated(v);
-  col=ones_deprecated(u)'*cos(v);
+  z= sin(u)'*ones(size(v));
+  col=ones(size(u))'*cos(v);
   col=(n-1)*(col-min(col))/(max(col)-min(col))+1;
   xset('colormap',hotcolormap(n));
   [xx,yy,zzcol]=nf3d(x,y,col);
@@ -167,8 +167,8 @@ function demo_3d_11()
   n = size(u,'*');
   x= cos(u)'*exp(cos(v));
   y= cos(u)'*sin(v);
-  z= sin(u)'*ones_deprecated(v);
-  col=ones_deprecated(u)'*cos(v); 
+  z= sin(u)'*ones(size(v));
+  col=ones(size(u))'*cos(v); 
   col=(n-1)*(col-min(col))/(max(col)-min(col))+1; 
   xset('colormap',hotcolormap(n));
   [xx,yy,zz]=nf3d(x,y,z);
@@ -235,11 +235,11 @@ function demo_3d_13()
     r=0.3;
     pts=r*v*cos(alpha)+r*w*sin(alpha);
     if i==1 then 
-      ptg=pts+pt*ones_deprecated(alpha);
+      ptg=pts+pt*ones(size(alpha));
     else
       ptg=ptd;
     end
-    ptd=pts+ptn*ones_deprecated(alpha);
+    ptd=pts+ptn*ones(size(alpha));
     xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
     ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
     zpol=[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)];
@@ -249,7 +249,7 @@ endfunction
 
 function demo_3d_14() 
   t=4*%pi*(0:20)/20;
-  ptc=[t.*sin(t);t.*cos(t);0*ones_deprecated(t)];
+  ptc=[t.*sin(t);t.*cos(t);0*ones(size(t))];
   for i=1:(size(ptc,'c')-1)
     pt=ptc(:,i);
     ptn=ptc(:,i+1);
@@ -273,11 +273,11 @@ function demo_3d_14()
 
     pts=r*v*cos(alpha)+r*w*sin(alpha);
     if i==1 then 
-      ptg=pts+pt*ones_deprecated(alpha);
+      ptg=pts+pt*ones(size(alpha));
     else
       ptg=ptd;
     end
-    ptd=pts+ptn*ones_deprecated(alpha);
+    ptd=pts+ptn*ones(size(alpha));
 
     xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
     ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
@@ -287,32 +287,32 @@ function demo_3d_14()
 endfunction
 
 function demo_prim_1()
-  function [v]=transl(x,t); v=x+t*ones_deprecated(x); endfunction 
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
   xsetech(frect=[-100,-100,500,600]);
   xset('clipgrf')
   // xrects 
   x=0:40:240;
-  boxes=[x;10*ones_deprecated(x);30*ones_deprecated(x);30*ones_deprecated(x)];
+  boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
   xstring(-50,-5,'xrects');
   xrects(boxes);
   // xrects
-  boxes=[x;45*ones_deprecated(x);30*ones_deprecated(x);30*ones_deprecated(x)];
+  boxes=[x;45*ones(size(x));30*ones(size(x));30*ones(size(x))];
   pats=[0,4,8,12,15,xget("white"),0];
   xstring(-50,20,'xrects');
   xrects(boxes,pats);
   // xarcs 
-  boxes=[x;90*ones_deprecated(x);30*ones_deprecated(x);30*ones_deprecated(x)];
-  arcs=[boxes; 0*ones_deprecated(x);64*180*ones_deprecated(x)];
+  boxes=[x;90*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  arcs=[boxes; 0*ones(size(x));64*180*ones(size(x))];
   pats=[0,4,8,12,15,xget("white"),0];
   xstring(-50,75,'xarcs');
   xarcs(arcs,pats);
   // xarcs 
-  boxes=[x;135*ones_deprecated(x);30*ones_deprecated(x);30*ones_deprecated(x)];
-  arcs=[boxes; 0*ones_deprecated(x);64*360*ones_deprecated(x)];
+  boxes=[x;135*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  arcs=[boxes; 0*ones(size(x));64*360*ones(size(x))];
   xarcs(arcs);
   // xfpolys
   x1=[0,10,20,30,20,10,0];
-  y1=[15,30,30,15,0,0,15];y1=160*ones_deprecated(y1)+y1;
+  y1=[15,30,30,15,0,0,15];y1=160*ones(size(y1))+y1;
   xpols=[x1;transl(x1,40);transl(x1,80);transl(x1,120);
 	 transl(x1,160);transl(x1,200);transl(x1,240)];
   ypols=[y1;y1;y1;y1;y1;y1;y1];
@@ -328,21 +328,21 @@ function demo_prim_1()
   ypols=transl(ypols,180);
   xpolys(xpols',ypols',-(1:7));
   // 
-  xsegs([x;x+30*ones_deprecated(x)],[(360+40)*ones_deprecated(x);(360+70)*ones_deprecated(x)]);
+  xsegs([x;x+30*ones(size(x))],[(360+40)*ones(size(x));(360+70)*ones(size(x))]);
   xinfo("[I.5] xsegs(x,y)");
   // 
-  xarrows([x;x+30*ones_deprecated(x)],[(360+70)*ones_deprecated(x);(360+100)*ones_deprecated(x)]);
+  xarrows([x;x+30*ones(size(x))],[(360+70)*ones(size(x));(360+100)*ones(size(x))]);
   xinfo(["[I.6] xarrows(x,y)"]);
   // 
   x=0:100:200;
-  xnumb(x,500*ones_deprecated(x),[10,20,35],1);
-  xnumb(x,550*ones_deprecated(x),[10,20,35],0);
+  xnumb(x,500*ones(size(x)),[10,20,35],1);
+  xnumb(x,550*ones(size(x)),[10,20,35],0);
   xinfo(["[[II.3] xnumb()"]);
   xset('clipoff')
 endfunction
 
 function demo_prim_2()
-  function [v]=transl(x,t); v=x+t*ones_deprecated(x); endfunction 
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
   xsetech(frect=[-100,-100,500,600]);
   xset('clipgrf')
   xrect(20,120,60,60)
@@ -351,8 +351,8 @@ function demo_prim_2()
   xfarc(100,200,50,70,0,64*225)
   x=0:1:%pi;
   [n1,n2]=size(x);
-  x1=50*sin(x)+40*ones_deprecated(x);
-  y1=50*cos(x)+90*ones_deprecated(x);
+  x1=50*sin(x)+40*ones(size(x));
+  y1=50*cos(x)+90*ones(size(x));
   y1=transl(y1,200);
   xpoly(x1,y1,mark=6);
   xset("mark",4,6);
@@ -376,7 +376,7 @@ function demo_prim_2()
   x1=[sin(x);10*sin(x)];
   y1=[cos(x);10*cos(x)];
   y1=transl(y1,20);
-  xsegs(10*x1+200*ones_deprecated(x1),10*y1+200*ones_deprecated(y1));
+  xsegs(10*x1+200*ones(size(x1)),10*y1+200*ones(size(y1)));
   xset("clipgrf");
   
   xset("font",2,0);

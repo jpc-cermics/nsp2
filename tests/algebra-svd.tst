@@ -144,15 +144,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>100*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>100*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>200*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>200*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 
 //XX if Err(U1*S1*V'-A) >200*%eps  then pause,end
 
@@ -176,15 +176,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>200*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>200*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 //XXX if Err(U1*S1*V'-A) >200*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -206,15 +206,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>200*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>200*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 //if Err(U1*S1*V'-A) >30*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -237,15 +237,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>200*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>200*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>200*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>200*%eps  then pause,end
 //XXX if Err(U1*S1*V'-A) >200*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -269,15 +269,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>1000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>1000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>1000*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>1000*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>1000*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>1000*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>1000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>1000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>1000*%eps  then pause,end
 //if Err(U1*S1*V'-A) >1000*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -300,15 +300,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>5000*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>5000*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 //if Err(U1*S1*V'-A) >5000*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -331,15 +331,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>5000*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>5000*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 //if Err(U1*S1*V'-A) >5000*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -362,15 +362,15 @@ if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U1'*U1-eye_deprecated(U1'*U1))>5000*%eps  then pause,end
+if Err(U1'*U1-eye(size(U1'*U1)))>5000*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
 if Err(S-S1)>5000*%eps  then pause,end
-if Err(U'*U-eye_deprecated(U'*U))>5000*%eps  then pause,end
+if Err(U'*U-eye(size(U'*U)))>5000*%eps  then pause,end
 //if Err(U1*S1*V'-A) >5000*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");

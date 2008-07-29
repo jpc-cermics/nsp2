@@ -43,8 +43,8 @@ for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   b=0*a;for j=1:min(m,n), b(j,j)=1;end
   if test(eye_new(m,n),b) then pause,end
-  if test(eye_deprecated(a),b) then pause,end
-  if test(eye_deprecated(a+[]),b) then pause,end
+  if test(eye(size(a)),b) then pause,end
+  if test(eye(size(a+[])),b) then pause,end
 end 
 
 //----- test of ones 
@@ -56,8 +56,8 @@ endfunction
 
 for i=1:6, m=M(i);n=N(i);a=rand(m,n,'uniform');
   if test(ones_new(m,n),Mones(m,n)) then pause,end
-  if test(ones_deprecated(a),Mones(m,n)) then pause,end
-  if test(ones_deprecated(a+[]),Mones(m,n)) then pause,end
+  if test(ones(size(a)),Mones(m,n)) then pause,end
+  if test(ones(size(a+[])),Mones(m,n)) then pause,end
 end 
 
 //------- cross test eye-ones-diag 
@@ -70,8 +70,8 @@ endfunction
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   if test(eye_new(m,n),Meye(m,n)) then pause,end
-  if test(eye_deprecated(a),Meye(m,n)) then pause,end
-  if test(eye_deprecated(a+[]),Meye(m,n)) then pause,end
+  if test(eye(size(a)),Meye(m,n)) then pause,end
+  if test(eye(size(a+[])),Meye(m,n)) then pause,end
 end 
 
 //------- test of diag (creation) 
