@@ -112,6 +112,7 @@ extern NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2);
 extern NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2);
+extern int nsp_hash_find_by_number(NspHash *H,int k, NspObject **O);
 
 /**
  * HashOperation:

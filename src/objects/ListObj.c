@@ -999,6 +999,16 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 		      return RET_BUG;
 		    }
 		}
+	      else if (IsHash(O))
+		{
+		  NspObject *O1;
+		  if ( nsp_hash_find_by_number((NspHash *)O ,n,&O1)==FAIL) 
+		    {
+		      Scierror("Error: object at indice %d does not exist in hash table\n",n);
+		      return RET_BUG;
+		    }
+		  O=O1;
+		}
 	      else 
 		{
 		  Scierror("Errro:\t, error in list extraction which does not give a list\n");

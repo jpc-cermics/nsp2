@@ -261,8 +261,8 @@ int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O)
 
 /**
  *nsp_hash_find:
- * @H: 
- * @str: 
+ * @H: a #NspHash
+ * @str: a string 
  * @O: 
  * 
  * Search hash table entry with key str and returns it in #NspObject O
@@ -274,6 +274,42 @@ int nsp_hash_find(NspHash *H,const char *str, NspObject **O)
 {
   *O = NULLOBJ;
   return( nsp_hsearch(H,str,O,H_FIND));
+}
+
+
+/**
+ *nsp_hash_find_by_number:
+ * @H: a #NspHash
+ * @i: and integer 
+ * @O: object handler for storing result
+ * 
+ * Search hash table for object stored with key number @i and returns it in #NspObject O.
+ * The hash table is searched in sequence and the @i-th key is @i-th key int the #NspSMatrix 
+ * returned by nsp_hash_get_keys() (Note that @i starts at 1).
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_hash_find_by_number(NspHash *H,int k, NspObject **O)
+{
+  int hcount = 0,i=0;
+  *O = NULLOBJ;
+  if ( k < 0 || k > H->filled ) return FAIL;
+  /* we check here for object at position k in __keys */
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(H,&i,O);
+      if ( *O != NULLOBJ )
+	{ 
+	  if ( hcount == k-1 ) 
+	    {
+	      return OK;
+	    }
+	  hcount++;
+	}
+      if (rep == FAIL) break;
+    }
+  return FAIL;
 }
 
 
