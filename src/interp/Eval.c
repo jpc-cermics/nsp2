@@ -2688,7 +2688,8 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	}
       /* counting optional arguments */
       opt=0; for ( k = 0 ; k < count ; k++ ) if ( IsHopt(stack.val->S[first+k]) ) opt++;
-      if ((nret =nsp_eval_extract(stack,first,count,opt,-1)) < 0) 
+      
+      if ((nret =nsp_eval_extract(stack,first,count,opt,lhs)) < 0) 
 	{
 	  nsp_void_seq_object_destroy(stack,first,first+count);
 	  return nret;
