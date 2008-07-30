@@ -31,6 +31,12 @@
   (return-type "none")
   )
 
+(define-function get_current_figure 
+  (c-name "nsp_get_current_figure")
+  (return-type "Figure*")
+)
+
+
 
 ;; Il sera bien de récuperer les widgets associés si besoin etc....
 

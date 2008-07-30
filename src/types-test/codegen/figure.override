@@ -11,6 +11,7 @@ static int nsp_figure_unconnect(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
+static NspFigure *nsp_get_current_figure(void);
 
 %%
 init 
@@ -141,7 +142,7 @@ static int nsp_figure_connect(NspFigure *F)
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
-
+  
   Xgc = window_list_search(F->obj->id);
   if ( Xgc != NULL) 
     {
@@ -322,5 +323,16 @@ void nsp_figure_force_redraw( NspFigure *F)
 }
 
 
-  
 
+extern NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber);
+
+static NspFigure *nsp_get_current_figure(void)
+{
+  NspObject  *F = NULL;
+  BCG *Xgc = nsp_check_graphic_context();
+  if ( Xgc == NULL) return NULL;
+  F = tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) return NULL;
+  if ( ! IsFigure(F)) return NULL;
+  return (NspFigure *) F;
+}
