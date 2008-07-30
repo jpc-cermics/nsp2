@@ -3047,3 +3047,113 @@ GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L)
   return items ;
 }
 
+/*--------------------------------------------------------------
+ * utility to get back values from a list or tree store 
+ *-------------------------------------------------------------*/
+
+static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
+{
+  GType mtype;
+  GValue value = { 0, };
+  int ncols,count=0,col;
+  GtkTreeIter iter; 
+  NspObject *ret;
+  if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
+    Scierror("Error: expecting a list or tree store model\n");
+    return NULLOBJ;
+  }
+  /* get first element to detect the type to give to the matrix 
+   */
+  if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+  gtk_tree_model_get_value(model,&iter ,0, &value);
+  mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+  if ( mtype != G_TYPE_STRING 
+       && mtype != G_TYPE_BOOLEAN 
+       && mtype != G_TYPE_DOUBLE )
+    {
+      Scierror("Do not know how to build an object from a gvalue of type %s\n",
+	       g_type_name(G_VALUE_TYPE(&value)));
+      return NULL;
+    }
+  g_value_unset(&value);
+  /* count the rows and columns */
+  count++;
+  ncols= gtk_tree_model_get_n_columns(GTK_TREE_MODEL(model));
+  while ( gtk_tree_model_iter_next(model,&iter) ) count++;
+  /* Check that all the columns have the same type */
+  if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+  for ( col = 1 ; col < ncols  ; col++) 
+    {
+      GType ctype;
+      gtk_tree_model_get_value(model,&iter ,col, &value);
+      ctype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+      g_value_unset(&value);
+      if ( ctype != mtype )
+	{
+	  Scierror("Error: all the colmuns should be of the same type, column %d is wrong\n",col+1);
+	  return NULL;
+	}
+    }
+  
+  /* initialize matrix */
+  switch ( mtype ) 
+    {
+    case G_TYPE_STRING:  
+      if ((ret = (NspObject *) nsp_smatrix_create_with_length(NVOID,count,ncols,-1))== NULLOBJ)
+	return NULL;     
+      break;
+    case G_TYPE_BOOLEAN: 
+      if ((ret = (NspObject *) nsp_bmatrix_create(NVOID,count,ncols))== NULLOBJ) 
+	return NULL;     
+      break;
+      break;
+    case G_TYPE_DOUBLE :
+      if ((ret = (NspObject *) nsp_matrix_create(NVOID,'r',count,ncols))== NULLOBJ) 
+	return NULL;     
+      break;
+     }
+  for ( col = 0 ; col < ncols  ; col++) 
+    {
+      int i;
+      if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+      for ( i = 0 ; i < count ; i++) 
+	{
+	  const gchar *str;
+	  gtk_tree_model_get_value(model,&iter ,col, &value);
+	  switch ( mtype ) 
+	    {
+	    case G_TYPE_STRING:  
+	      str = g_value_get_string(&value);
+	      ((NspSMatrix *) ret)->S[i+ count*col]=nsp_string_copy(str);
+	      if ( ((NspSMatrix *) ret)->S[i+ count*col] == NULL) 
+		return NULL;
+	      break;
+	    case G_TYPE_BOOLEAN: 
+	      ((NspBMatrix *) ret)->B[i+ count*col]= g_value_get_boolean(&value);
+	      break;
+	    case G_TYPE_DOUBLE: 
+	      ((NspMatrix *) ret)->R[i+ count*col]= g_value_get_double(&value);
+	      break;
+	    }
+	  g_value_unset(&value);
+	  gtk_tree_model_iter_next(model,&iter);
+	}
+    }
+  if ( ret == NULLOBJ ) 
+    {
+      Scierror("Error: get_value method return a NULL Object \n");
+      return NULL;
+    }
+  return ret;
+}
+
+
+NspObject *nsp_get_matrix_from_list_store(GtkListStore *model)
+{
+  return nsp_get_matrix_from_list_or_tree_store(GTK_TREE_MODEL(model));
+}
+
+NspObject *nsp_get_matrix_from_tree_store(GtkTreeStore *model)
+{
+  return nsp_get_matrix_from_list_or_tree_store(GTK_TREE_MODEL(model));
+}

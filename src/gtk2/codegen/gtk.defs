@@ -9786,6 +9786,16 @@
    )
   )
 
+;; added to obtain the content
+;; as a matrix when the listore is 
+;; homogeneous.
+
+(define-method get_matrix 
+  (of-object "GtkListStore")
+  (c-name "nsp_get_matrix_from_list_store")
+  (return-type "NspObject*")
+  )
+
 (define-method set_column_types
   (of-object "GtkListStore")
   (c-name "gtk_list_store_set_column_types")
@@ -19953,6 +19963,17 @@
    '("GType*" "types")
    )
   )
+
+;; added to obtain the content
+;; as a matrix when the listore is 
+;; homogeneous.
+
+(define-method get_matrix 
+  (of-object "GtkTreeStore")
+  (c-name "nsp_get_matrix_from_tree_store")
+  (return-type "NspObject*")
+  )
+
 
 (define-method set_column_types
   (of-object "GtkTreeStore")
