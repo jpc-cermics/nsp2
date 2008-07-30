@@ -5155,6 +5155,7 @@ extern function  int_figure_create;
 extern function  int_curve_create;
 extern function  int_groot_create;
 extern function  int_gmatrix_create;
+extern function   _wrap_nsp_get_current_figure;
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
@@ -5254,6 +5255,7 @@ static OpTab Graphics_func[]={
   {"curve_create", int_curve_create},
   {"groot_create",int_groot_create},
   {"gmatrix_create",int_gmatrix_create},
+  {"get_current_figure", _wrap_nsp_get_current_figure},
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop",int_gtk_loop},
 #endif 

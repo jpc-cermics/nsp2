@@ -1,3 +1,4 @@
+if %f then 
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";
@@ -39,5 +40,24 @@
   C.children($+1)= ma;
   A.children($+1) = C;
   F.connect[]
-  
-  
+end
+
+
+function myplot(x,y,varargopt)
+  mode = "Gtk";
+  ok=execstr('F=get_current_figure()',errcatch=%t);
+  if ~ok then 
+    F=figure_create(fname=mode,driver=mode,id=20);
+  end
+  if length(F.children)== 0 then 
+    rect = [min(x),min(y),max(x),max(y)];
+    A = axes_create(top=%t,wrect=[0,0,1,1],frect=rect,arect=[1,1,1,1]/12);
+    F.children(1)= A; 
+  else
+    A = F.children(1);
+  end
+  cu = curve_create(Pts=[x,y]); 
+  A.children($+1)= cu;
+  F.connect[];
+endfunction
+

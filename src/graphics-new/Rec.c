@@ -1,4 +1,4 @@
-/*/* Nsp
+/* Nsp
  * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
@@ -3143,6 +3143,23 @@ void tape_replay(BCG *Xgc,int winnumber)
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
+/*
+ * search a graphic object in the recorded objects 
+ */
+
+NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber)
+{ 
+  list_plot *list;
+  if ( Xgc == NULL ) return NULL ;
+  list = Xgc->plots ;
+  while (list)
+    {
+      if ( list->theplot != NULL && ((plot_code *) list->theplot)->code == CODEobject )
+	return ((struct rec_object *) list->theplot)->obj ;
+      list =list->next;
+    }
+  return NULL;
+}
 
 
 /*---------------------------------------------------------------------
