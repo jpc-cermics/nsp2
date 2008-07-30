@@ -59,6 +59,12 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 			       GtkTreeModel *tree_model,
 			       GtkTreeIter *iter, gpointer data); 
 
+/* undefined macro */
+#ifndef GDK_DISPLAY
+#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object) 
+#endif 
+
+
 %%
 init
 %%
@@ -6840,6 +6846,66 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
+%%
+ignore radio_tool_button_new_with_stock_from_widget
+%%
+ignore radio_tool_button_new_from_stock
+%%
+ignore radio_tool_button_new_with_widget
+%%
+override gtk_radio_tool_button_new noargs 
+/* mixes all the constructors */
+static int
+_wrap_gtkradiotoolbutton_new(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *nsp_group = NULL;
+  gchar *stock = NULL;
+  GtkRadioToolButton *group= NULL;
+  GtkToolItem *ret;
+  NspObject *nsp_ret;
+  int_types T[] = {new_opts,  t_end} ;
+  nsp_option opts[] = {
+    {"group",obj,NULLOBJ,-1}, 
+    {"stock",string,NULLOBJ,-1}, 
+    {NULL,t_end,NULLOBJ,-1} };
+  if (GetArgs(stack,rhs,opt,T, &opts,&nsp_group, &stock) == FAIL)  return RET_BUG;
+  if ( nsp_group != NULL )
+    {
+      if (nspgobject_check(nsp_group,nsp_type_gtkradiotoolbutton))
+	group = GTK_RADIO_TOOL_BUTTON(nspgobject_get(nsp_group));
+      else {
+	Scierror("group argument must be a GtkRadioToolButton");
+	return RET_BUG;
+      }
+    }
+  if ( stock != NULL) 
+    {
+      if ( group == NULL) 
+	{
+	  if ((ret = gtk_radio_tool_button_new_from_stock(NULL,stock)) == NULL) return RET_BUG;
+	}
+      else 
+	{
+	  if ((ret = gtk_radio_tool_button_new_with_stock_from_widget(group,stock)) == NULL) return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ( group == NULL) 
+	{
+	  if ((ret = gtk_radio_tool_button_new(NULL)) == NULL) return RET_BUG;
+	}
+      else 
+	{
+	  if ((ret = gtk_radio_tool_button_new_from_widget(group)) == NULL) return RET_BUG;
+	}
+    }
+  nsp_type_gtktoolbutton = new_type_gtktoolbutton(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *) ret,(NspTypeBase *) nsp_type_gtktoolbutton );
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 
 %%
 ignore-win32
