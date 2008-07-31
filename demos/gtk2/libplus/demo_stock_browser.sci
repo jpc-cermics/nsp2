@@ -15,11 +15,13 @@ endfunction
 function ids1=icon_collect(window)
   ids = gtk_stock_list_ids ();
   ids1= list();
-  for i=1:size(ids,1)
+  for i=1:size(ids,1) // 1:min(size(ids,1),75)
     [ok,l]=gtk_stock_lookup(ids(i));
+    // printf("i=%d ok=%d\n",i,ok);
     // l = stock_id, label,modifier,keyval,translation_domain);
     if ok then 
       icon_set = gtk_icon_factory_lookup_default(l(1));
+      sz=-1;
       if ~is(icon_set,%types.None) 
 	sz=icon_set.get_sizes[]
 	I=find(sz== GTK.ICON_SIZE_MENU)
@@ -29,18 +31,22 @@ function ids1=icon_collect(window)
 	  sz=sz(1);
 	end
       end
-      small_icon = window.render_icon[l(1),sz]	
-      if sz <> GTK.ICON_SIZE_MENU 
-	// Make the result the proper size for our thumbnail */
-	[wh]= gtk_icon_size_lookup(GTK.ICON_SIZE_MENU);
-	small_icon =  small_icon.scale_simple[ wh(1),wh(2), GDK.INTERP_BILINEAR];
+      // if an icon set is not found then 
+      // window.render_icon can crash !
+      if sz<>-1 then 
+	small_icon = window.render_icon[l(1),sz]	
+	if sz <> GTK.ICON_SIZE_MENU 
+	  // Make the result the proper size for our thumbnail */
+	  [wh]= gtk_icon_size_lookup(GTK.ICON_SIZE_MENU);
+	  small_icon =  small_icon.scale_simple[ wh(1),wh(2), GDK.INTERP_BILINEAR];
+	end
+	if l(4)<>0 then 
+	  accel_str = gtk_accelerator_name (l(4),l(3));
+	else
+	  accel_str = "";
+	end
+	ids1($+1)= list(ids(i), l,sz,small_icon,accel_str, id_to_macro(ids(i)));
       end
-      if l(4)<>0 then 
-	accel_str = gtk_accelerator_name (l(4),l(3));
-      else
-	accel_str = "";
-      end
-      ids1($+1)= list(ids(i), l,sz,small_icon,accel_str, id_to_macro(ids(i)));
     end
   end
 endfunction 
