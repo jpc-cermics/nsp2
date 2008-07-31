@@ -30,6 +30,12 @@
  * available window number 
  */
 
+#ifdef PERICAIRO 
+#include <cairo-pdf.h>
+#include <cairo-ps.h>
+#include <cairo-svg.h>
+#endif 
+
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
@@ -179,16 +185,32 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
 
-  if ( win != NULL )
+  /* cairo graphics without window */
+#ifdef PERICAIRO
+  if ( string == NULL) 
     {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
+#endif 
+      if ( win != NULL )
+	{
+	  gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
+	}
+      else 
+	{
+	  gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
+	}
+#ifdef PERICAIRO
     }
-  else 
+  else
     {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
+      cairo_surface_t *surface;
+      surface = cairo_pdf_surface_create (string,400,600 );
+      if ( surface != NULL)
+	{
+	  NewXgc->private->cairo_cr= cairo_create (surface); 
+	  cairo_surface_destroy (surface); 
+	}
     }
-
-  
+#endif
 
   /* next values are to be set since initialize_gc 
    * action depend on the current state defined by these 

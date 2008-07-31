@@ -3143,6 +3143,30 @@ void tape_replay(BCG *Xgc,int winnumber)
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
+/* replay the plots of an Xgc with an other Xgc 
+ * Xgc1 is used for list of recorded graphics.
+ */
+
+void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
+{ 
+  list_plot *list;
+  if ( Xgc == NULL ) return ;
+  if ( Xgc->record_flag == FALSE ) return ;
+  Xgc->record_flag = FALSE; /* be sure not to record during replay */
+  list = Xgc1->plots ;
+  while (list)
+    {
+      if ( list->theplot != NULL) 
+	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
+      list =list->next;
+    }
+  /* Is there a replay handler */
+  scig_handler(Xgc,winnumber);
+  Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
+}
+
+
+
 /*
  * search a graphic object in the recorded objects 
  */

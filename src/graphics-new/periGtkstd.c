@@ -73,8 +73,15 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
  * we always draw in a drawable which is a pixmap but the expose event is asynchronous
  */
 
+#ifdef PERICAIRO
+#define DRAW_CHECK							\
+  if ( Xgc->private->cairo_cr == NULL) return;				\
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0	\
+       && Xgc->private->drawing != NULL) nsp_gtk_invalidate(Xgc); 
+#else 
 #define DRAW_CHECK							\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
+#endif /* PERICAIRO */
 
 #endif /* PERIGL */
 
@@ -1254,7 +1261,8 @@ static void xset_background(BCG *Xgc,int num)
        * this is only used for xor mode but we are removing it.
        */
       xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-      gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+      if (Xgc->private->drawing!= NULL) 
+	gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
 #endif 
     }
 }
