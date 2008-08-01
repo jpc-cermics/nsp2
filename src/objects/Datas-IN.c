@@ -102,7 +102,7 @@ static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((name = GetString (stack, 1)) == (char *) 0) return RET_BUG;
   /* get value from callers */
-  if (( Obj = nsp_frames_search_local_in_calling(name)) == NULLOBJ) 
+  if (( Obj = nsp_frames_search_local_in_calling(name,FALSE)) == NULLOBJ) 
     {
       Scierror("Error: object %s not found in callers environemnt\n",name);
       return RET_BUG;
@@ -181,7 +181,8 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
  * in the current env if this macros is in the search list 
  */
 
-static char *exists_list[] = {"all", "local", "global", "function", NULL};
+static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", NULL};
+typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function} _exist_tag;
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
@@ -195,17 +196,23 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
     if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 
   }
   switch (rep) {
-  case 0: 
+  case in_all: 
     if (nsp_frames_search_object(Name) != NULLOBJ) irep=1;
     break;
-  case 1:
+  case in_local:
     if (nsp_frame_search_object(Name) != NULLOBJ) irep=1;
     break;
-  case 2:    
+  case in_global:    
     if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
     break;
-  case 3: 
+  case in_function:  /* XXX */
     if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
+    break;
+  case in_callers: 
+    if ( nsp_frames_search_local_in_calling(Name,FALSE) != NULLOBJ) irep=1;
+    break;
+  case in_caller:
+    if ( nsp_frames_search_local_in_calling(Name,TRUE) != NULLOBJ) irep=1;
     break;
   } 
   if ((O = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;

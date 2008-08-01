@@ -399,19 +399,21 @@ NspObject *nsp_frames_search_object(const char *str)
 
 /**
  * nsp_frames_search_local_in_calling:
- * @str: 
+ * @str: a string 
+ * @caller_flag: %TRUE or %FALSE
  * 
  * This function is used when a local variable has no 
  * value and we want to see if the local variable can 
  * be initialized by a variable with same name in calling stack. 
  * for example function f();if y >=0; y=y+1;endfunction 
  * y is considered local because of y=y+1 but can be inherited. 
+ * If @caller_flag is set to %TRUE then the value is only searched in 
+ * the caller frame.
  * 
- * 
- * Return value: 
+ * Return value: a #NspObject
  **/
 
-NspObject *nsp_frames_search_local_in_calling(const char *str)
+NspObject *nsp_frames_search_local_in_calling(const char *str, int caller_flag)
 {
   NspObject *Obj;
   Cell *C = Datas->first->next;
@@ -425,6 +427,7 @@ NspObject *nsp_frames_search_local_in_calling(const char *str)
        */
       if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str,FALSE)) != NULLOBJ ) 
 	return Obj;
+      if ( caller_flag == TRUE ) break; /* stop in the caller */
       C = C->next ;
     }
   return NULLOBJ ;
