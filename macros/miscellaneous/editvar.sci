@@ -275,51 +275,41 @@ endfunction
 // list and hash tables 
 //---------------------
 
-// XXX: Il y a une diffculté ici 
-// si dans f on definit g et h que g appelle h 
-// et que g est connecté comme signal 
-// ensuite a l'évaluation de g il y a un plantage 
-// quand on appelle g par signal -> normalement le message devrait etre 
-// que h est pas trouvée !
-// get_nsp_list_path_from_tree_path
-// --------------------------------------------------
-  
-function Il =get_nsp_list_path_from_tree_path(tree_view,path)
-// here we must build a list which permits to 
-// get the value of the selected row from a 
-// gtktreepath path. 
-// we cannot use path.get_list_indices[] 
-// because the acces to hash element must be 
-// performed with strings not with indices 
-// (it works with indices but their order 
-//  changes with copy or affectations).
-// 
-  model = tree_view.get_model[];
-  etype=type(tree_view.user_data,'short');
-  // get a path with 0-based indices 
-  I=path.get_indices[];
-  // walk along the path and build 
-  // a list to access to the given element 
-  Il=list();
-  for p=1:length(I)
-    np = gtktreepath_new(I(1:p));
-    iter1 = model.get_iter[np];
-    name=model.get_value[iter1,0];
-    if etype == 'h' then 
-      // we search in a hash table 
-      Il($+1)=name;
-    else 
-      // we search in a list 
-      Il($+1)=I(p)+1;
-    end
-    // update type.
-    etype=model.get_value[iter1,1];
-  end
-endfunction
-
-
 function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
 
+  function Il =get_nsp_list_path_from_tree_path(tree_view,path)
+  // here we must build a list which permits to 
+  // get the value of the selected row from a 
+  // gtktreepath path. 
+  // we cannot use path.get_list_indices[] 
+  // because the acces to hash element must be 
+  // performed with strings not with indices 
+  // (it works with indices but their order 
+  //  changes with copy or affectations).
+  // 
+    model = tree_view.get_model[];
+    etype=type(tree_view.user_data,'short');
+    // get a path with 0-based indices 
+    I=path.get_indices[];
+    // walk along the path and build 
+    // a list to access to the given element 
+    Il=list();
+    for p=1:length(I)
+      np = gtktreepath_new(I(1:p));
+      iter1 = model.get_iter[np];
+      name=model.get_value[iter1,0];
+      if etype == 'h' then 
+	// we search in a hash table 
+	Il($+1)=name;
+      else 
+	// we search in a list 
+	Il($+1)=I(p)+1;
+      end
+      // update type.
+      etype=model.get_value[iter1,1];
+    end
+  endfunction
+  
   function tree_model_append(model,h,iter) 
   // A recursive function which walks through the given 
   // list or hash table and inserts all the elements in the 
@@ -331,7 +321,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     h_names =sort(h.__keys,'g','i')
    case 'l' 
     n=length(h);
-    if n<>0 then h_names = h.get_name[]+'('+string(1:n)+')';else h_names=[];end
+    if n<>0 then h_names ='('+string(1:n)+')';else h_names=[];end
   end
   for i=1:size(h_names,'*');
     name = h_names(i);
