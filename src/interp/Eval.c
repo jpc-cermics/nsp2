@@ -1052,7 +1052,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	  if (stack->val->S[first]== NULL) 
 	    {
 	      /* maybe the local variable has a value in calling stacks */
-	      stack->val->S[first]=nsp_frames_search_local_in_calling((char *) L->O );
+	      stack->val->S[first]=nsp_frames_search_local_in_calling((char *) L->O, FALSE );
 	    }
 	  if (stack->val->S[first]== NULL) 
 	    {
@@ -2649,7 +2649,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Lf->arity)];
 	  /* maybe the local variable has a value in calling stacks */
 	  if ( stack.val->S[first] == NULLOBJ ) 
-	    stack.val->S[first]=nsp_frames_search_local_in_calling(name);
+	    stack.val->S[first]=nsp_frames_search_local_in_calling(name,FALSE);
 	}
     }
   else 

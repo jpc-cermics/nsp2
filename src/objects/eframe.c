@@ -466,7 +466,7 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag )
 	      /* Sciprintf("local object %s found but has no value\n",name); */
 	      /* search un calling frames */
 	      if ( tag == TRUE )
-		return nsp_frames_search_local_in_calling(name);
+		return nsp_frames_search_local_in_calling(name,FALSE);
 	      else 
 		return NULLOBJ;
 	    }
