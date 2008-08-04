@@ -1643,7 +1643,7 @@ nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_pref
 /**
  * nspg_enum_get_value:
  * @enum_type: the GType of the flag.
- * @obj: a Nsp object representing the flag value
+ * @obj: a Nsp object representing the flag value (unchanged).
  * @val: a pointer to the location to store the integer representation of the flag.
  *
  * Converts a Nsp object to the integer equivalent.  The conversion
@@ -1658,7 +1658,7 @@ gint nspg_enum_get_value(GType enum_type, NspObject *obj, void *val)
 {
   gint *gval=val;
   GEnumClass *eclass = NULL;
-  char *str;
+  const char *str;
   if ( val == NULL) return FAIL;
 
   if (!obj) { *gval = 0 ; return OK;}
@@ -2673,7 +2673,7 @@ static int nsp_gtk_tree_model_set_row_from_generic_matrix(GtkTreeModel *model, G
 
 static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,GtkTreeIter *iter1,set_val F,NspObject *M,int column)
 {
-  GtkTreeIter iter, *h_iter;
+  GtkTreeIter iter;
   gint n_columns, i=0,j;
   GValue value = { 0, };
   GType type = gtype_from_nsp_object((NspObject *) M);
@@ -2706,28 +2706,21 @@ static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,Gt
 	{
 	  /* start from the begining */
 	  if (!gtk_tree_model_get_iter_first(model, &iter)) return FAIL;
-	  h_iter = &iter; 
 	}
       else 
 	{
-	  /* start using iter1 */
-	  if ((h_iter = gtk_tree_iter_copy(iter1))== NULL) 
-	    {
-	      Scierror("Unable to allocate iterator \n");
-	      return FAIL;
-	    }   
+	  iter = *iter1; 
 	}
       for ( i= 0 ; i < nsp_object_get_size(M,1) ; i++) 
 	{
 	  (*F)(&value,M,i,j);
 	  if (GTK_IS_LIST_STORE(model))
-	    gtk_list_store_set_value(GTK_LIST_STORE(model), h_iter, column, &value);
+	    gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, column, &value);
 	  else if (GTK_IS_TREE_STORE(model))
-	    gtk_tree_store_set_value(GTK_TREE_STORE(model), h_iter, column, &value);      
-	  if ( i < nsp_object_get_size(M,1)-1) { if (!gtk_tree_model_iter_next(model, h_iter)) return FAIL; }
+	    gtk_tree_store_set_value(GTK_TREE_STORE(model), &iter, column, &value);      
+	  if ( i < nsp_object_get_size(M,1)-1) { if (!gtk_tree_model_iter_next(model, &iter)) return FAIL; }
 	}
       g_value_unset(&value);
-      if ( iter1== NULL)    gtk_tree_iter_free(h_iter);
       column++;
     }
   return OK;

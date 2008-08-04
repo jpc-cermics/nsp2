@@ -119,7 +119,8 @@ _wrap_gtktreepath_new(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   nsp_type_gtktreepath = new_type_gtktreepath(T_BASE);
-  nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_PATH, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_gtktreepath );
+  /* no need to copy ret here */
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_PATH, ret,FALSE,TRUE,(NspTypeBase *) nsp_type_gtktreepath );
    if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -156,6 +157,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     {
       int i;
       NspMatrix *M = (NspMatrix *) object;
+      M= Mat2double (M);
       path = gtk_tree_path_new();
       for (i = 0; i < M->mn; i++)  gtk_tree_path_append_index(path,(gint) M->R[i]);
       return path;
@@ -4010,7 +4012,7 @@ static int _wrap_gtk_image_new_from_pixbuf(Stack stack, int rhs, int opt, int lh
 static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs)
 {
   char *str;
-  int_types T[] = {string,string, objcopy,t_end};
+  int_types T[] = {string,string, obj,t_end};
   char *stock_id;
   GtkIconSize size;
   NspObject *nsp_size = NULL, *nsp_ret;
@@ -4029,7 +4031,7 @@ static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs
 static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int lhs)
 {
   char *str;
-  int_types T[] = {string,obj, objcopy,t_end};
+  int_types T[] = {string,obj, obj,t_end};
   NspObject *nsp_icon_set, *nsp_size = NULL, *nsp_ret;
   GtkIconSize size;
   GtkWidget *ret;
