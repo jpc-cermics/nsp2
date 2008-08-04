@@ -102,7 +102,7 @@ function tree_view=create_tree(demo_list)
   tree_view.set_model[model=model];
   selection = tree_view.get_selection[];
   selection.set_mode[ GTK.SELECTION_BROWSE];
-  tree_view.set_size_request[  200, -1]
+  tree_view.set_size_request[250, -1] //
   // walk through demo_list and insert
   tree_model_append(model,demo_list,0,0) 
   cell = gtkcellrenderertext_new ();
@@ -169,7 +169,11 @@ function graphics_demo_in_gtk(demo_list,ogl)
   hbox = gtkhbox_new(homogeneous=%f,spacing=0);
   window.add[hbox]
   tree = create_tree (demo_list);
-  hbox.pack_start[ tree,expand=%f,fill=%f,padding=0]
+  sw = gtkscrolledwindow_new();
+  sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
+  sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
+  sw.add[tree]
+  hbox.pack_start[ sw,expand=%f,fill=%t,padding=0]
 
   notebook = gtknotebook_new ();
   hbox.pack_start[ notebook,expand=%t,fill=%t,padding=0]
