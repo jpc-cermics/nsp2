@@ -23,7 +23,7 @@ enum _nsp_basic_types {
 typedef enum _nsp_basic_types nsp_basic_types;
 
 /* Names are of max size */ 
-#define NAME_MAXL 52
+#define NAME_MAXL 128
 
 /*
  * OPERATORS
