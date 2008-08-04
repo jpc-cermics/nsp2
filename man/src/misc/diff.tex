@@ -1,0 +1,85 @@
+\mansection{diff}
+\begin{mandesc}
+  \short{diff}{difference of a vector or a matrix}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  d=diff(x)  
+  d=diff(x,dim=dimval, order=orderval)  
+  d=diff(x,dimval,orderval)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x} : numerical vector or matrix
+    \vname{dimval} : A string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{orderval} : a non negative integer (default is 1)   
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+diff+ computes the difference of a vector \verb+x+:
+$$
+d_1 = x_1 - x_2, \, d_2 = x_2 - x_3, \dots, d_{n-1} = x_{n-1} - x_n
+$$
+ so you get a vector (row if $x$ is row or column if $x$ is column) with 
+ $n-1$ components (if $x$ has $n$ components).
+
+ The {\em order} parameter lets to compute second, third, etc... differences of the vector
+ with the following meaning: \verb+diff(x, order=k)+ correspond to successively apply 
+ $k$ time the diff operator, for instance  \verb+dd=diff(x, order=2)+ gives a vector of
+ length $n-2$ with:
+$$
+dd_1 = x_1 - 2x_2 + x_3, \, dd_2 = x_2 - 2x_3 + x_4, \dots, dd_{n-2} = x_{n-2} - 2x_{n-1} + x_n
+$$
+Using the {\em dim} argument you could compute the difference of the rows or columns vectors
+of a matrix \verb+A+, precisely ($A$ being $m \times n$):
+  \begin{itemize}
+    \item 'row' or 1  computes the difference of the column vectors (the output is then a $(m-order) \times n$
+          sized matrix).
+    \item 'col' or 2  computes the difference of the rows vectors (the output is then a $m \times (n-order)$
+          sized matrix).
+    \item 'full' or 0 (the default case) if the matrix is not a row vector it is considered as 
+           a big column vector (using the column major order), so the output is of size $(mn - order) \times 1$
+    \item 'm' is the difference along the first non singleton dimension of the given matrice 
+          (for Matlab compatibility). 
+  \end{itemize}
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{example 1} basic examples
+  \begin{program}\HCode{x = 0:6;\Hnewline
+    diff(x)\Hnewline
+    x = (0:6).^2;\Hnewline
+    diff(x,order=1)\Hnewline
+    diff(x,order=2)\Hnewline
+    diff(x,order=3)}
+  \end{program}
+
+\paragraph{example 2} approximate derivatives of a function
+  \begin{program}\HCode{n = 12;\Hnewline
+    x = linspace(0,2*\%pi,n);\Hnewline
+    y = sin(x);\Hnewline
+    // diff(y)./diff(x) gives a good approximation\Hnewline
+    // of the derivatives at the middle point of the mesh\Hnewline
+    // Here as the mesh is uniform diff(x) could be replaced with\Hnewline
+    // the (uniform) step size 2*\%pi/n\Hnewline
+    d = diff(y)/(2*\%pi/n)\Hnewline
+    // compute middle points:\Hnewline
+    xm = 0.5*(x(1:$-1) + x(2:$));\Hnewline
+    // now compute the exact derivative\Hnewline
+    d_exact = cos(xm)\Hnewline
+    abs(d - d_exact)}
+  \end{program}
+
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{sum}{sum},\manlink{derivative}{derivative} 
+\end{manseealso}
+
