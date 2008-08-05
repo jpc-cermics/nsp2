@@ -2090,12 +2090,14 @@ int
 nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
 {
   HOBJ_GET_OBJECT(object,FALSE);
-  if (IsMat(object) && ((NspMatrix *) object)->rc_type == 'r'  ) {
-    rectangle->x= ((NspMatrix *) object)->R[0]; 
-    rectangle->y= ((NspMatrix *) object)->R[1];
-    rectangle->width= ((NspMatrix *) object)->R[2]; 
-    rectangle->height= ((NspMatrix *) object)->R[3]; 
-    return TRUE; 
+  if (IsMat(object) && ((NspMatrix *) object)->rc_type == 'r'  ) 
+    {
+      Mat2double((NspMatrix *) object); /* be sure that we are in a canonic mode */
+      rectangle->x= ((NspMatrix *) object)->R[0]; 
+      rectangle->y= ((NspMatrix *) object)->R[1];
+      rectangle->width= ((NspMatrix *) object)->R[2]; 
+      rectangle->height= ((NspMatrix *) object)->R[3]; 
+      return TRUE; 
   }
   else if ( nspg_boxed_check(object, GDK_TYPE_RECTANGLE)) {
     *rectangle = *nspg_boxed_get(object, GdkRectangle);
@@ -2429,6 +2431,7 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
 	    }
 	  else if ( IsMat(cloc->O) )
 	    {
+	      Mat2double((NspMatrix *) cloc->O); /* be sure that we are in a canonic mode */
 	      if ( nsp_gtk_tree_model_set_col_from_mat(model,iter,(NspMatrix *) cloc->O,count)== FAIL) 
 		return FAIL;
 	      count +=nsp_object_get_size(cloc->O,2);
