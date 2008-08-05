@@ -542,13 +542,8 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     // a modal window undestroyed at end of run. 
     response = window.run[];
     if response == ok_rep; // GTK.RESPONSE_OK 
-      //to get the new value of matrix 
-      //we can use the above function get_matrix_from_gtkliststore
-      //x=get_matrix_from_gtkliststore(model,type_x);
-      //or directly use the method get_matrix which 
-      //extract a matrix from a model (for which all the values are 
-      //of the same type).
-      //x=model.get_matrix[];
+      // to get the new value of list/hash 
+      L= treeview.user_data;
     end
     window.destroy[];
   end
