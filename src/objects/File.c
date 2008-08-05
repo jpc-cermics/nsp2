@@ -1445,7 +1445,7 @@ int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S)
 
 typedef enum {SF_C,SF_S,SF_LUI,SF_SUI,SF_UI,SF_LI,SF_SI,SF_I,SF_LF,SF_F} sfdir;
 
-typedef int (*PRINTER) (FILE *, char *,...);
+typedef int (*PRINTER) (FILE *,const char *,...);
 
 /**
  * do_scanf:
@@ -2000,6 +2000,7 @@ static char * P_GetString(Stack stack,int first_arg,int n_args,int col,int line)
 }
 
 
+
 /**
  * do_printf:
  * @fname: file name 
@@ -2046,6 +2047,11 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
       /* doing sprintf */
       target = s_target =  sprintf_buff;
       printer = (PRINTER) sprintf;
+    }
+  else if ( fp == stdout ) 
+    {
+      printer = do_printf_stdout;
+      target = stdout;
     }
   else
     {

@@ -97,6 +97,30 @@ int  Sciprintf1 (int indent,const char *fmt,...)
 }
 
 /**
+ * do_printf_stdout:
+ * @ignore: 
+ * @fmt: 
+ * @: 
+ * 
+ * used in do_printf for stream stdout when 
+ * we are using a texview widget as terminal. 
+ * In a standard xterm this is not necessary.
+ * 
+ * Returns: 
+ **/
+
+int do_printf_stdout(FILE *ignore,const char *fmt, ...)
+{
+  int n;
+  va_list ap;
+  va_start(ap,fmt);
+  n= DefScivprintf(fmt, ap );
+  va_end(ap);
+  return n;
+}
+
+
+/**
  * scidebug: 
  * @indent: integer giving level of indentation
  * @fmt: The  format  string
