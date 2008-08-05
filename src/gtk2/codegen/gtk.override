@@ -6521,6 +6521,43 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.draw_bg;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
+
+%%
+override gtk_cell_layout_set_attributes kwargs
+static int
+_wrap_gtk_cell_layout_set_attributes(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspHash *h =NULL;
+  GtkCellRenderer *cell;
+  NspGtkCellRenderer *nsp_cell;
+  gint i = 0;
+  
+  CheckRhs(2,2) ;
+  if ((nsp_cell = GetGtkCellRenderer(stack,1)) == NULL) return RET_BUG; 
+  cell = GTK_CELL_RENDERER(nspgobject_get(nsp_cell));
+  if ((h = GetHash(stack,2)) == NULL) return RET_BUG; 
+  gtk_cell_layout_clear_attributes(GTK_CELL_LAYOUT(self->obj),cell);
+
+  for ( i =0 ; i < h->hsize ; i++) 
+    {
+      Hash_Entry *loc = ((Hash_Entry *) h->htable) + i;
+      if ( loc->used )
+	{
+	  if ( IsMat(loc->data) 
+	       && (((NspMatrix *) loc->data)->mn == 1) 
+	       && (((NspMatrix *) loc->data)->rc_type == 'r' ))
+	    gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(self->obj), cell,nsp_object_get_name(loc->data),
+					  ((NspMatrix *) loc->data)->R[0]);
+	  else 
+	    {
+	      Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
+	      return RET_BUG;
+	    }
+	}
+    }
+  return 0;
+}
+
 %%
 override gtk_cell_layout_set_cell_data_func kwargs
 

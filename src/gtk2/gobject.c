@@ -2129,24 +2129,11 @@ GType gtype_from_nsp_object(NspObject *obj)
     return G_TYPE_NONE;
   else if (IsType(obj))
     {
+      GType gtype;
       NspTypeBase *type  = ((NspType *) obj)->nsp_type; 
-      NspTypeObject *top = NSP_TYPE_OBJECT(type);
-      while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-      Scierror("Error: Trying to find a gtype from a Nsp type %s\n",
-	       top->s_type());
-      /* if (PyType_Check(obj)) {
-	PyTypeObject *tp = (PyTypeObject *)obj;
-	if (tp == &PyInt_Type)
-	  return G_TYPE_INT;
-	else if (tp == &PyLong_Type)
-	  return G_TYPE_LONG;
-	else if (tp == &PyFloat_Type)
-	  return G_TYPE_DOUBLE;
-	else if (tp == &PyString_Type)
-	  return G_TYPE_STRING;
-	else if (tp == &PyBaseObject_Type)
-	  return PY_TYPE_OBJECT;
-      */
+      /* Sciprintf("Gtype: %s\n",(type_get_name(type)));*/
+      if ((gtype= g_type_from_name (type_get_name(type))) != G_TYPE_INVALID) 
+	return gtype;
     }
   else if (IsSMat(obj)) 
     return G_TYPE_STRING;
@@ -2158,12 +2145,10 @@ GType gtype_from_nsp_object(NspObject *obj)
     return G_OBJECT_TYPE( NSP_GOBJECT_GET(obj));
   else if (IsGBoxed(obj))
     return ((NspGBoxed *) obj)->gtype ;
-  else 
-    {
-      Scierror("Error: could not get a gtype code from object of type %s\n",
-	       obj->type->s_type());
-    }
-  return 0;
+  
+  Scierror("Error: could not get a gtype code from object of type %s\n",
+	   obj->type->s_type());
+  return G_TYPE_INVALID;
 }
 
 
@@ -2174,11 +2159,11 @@ GType gtype_from_nsp_object(NspObject *obj)
 
 /* 
  * Utility function: returns an array of GType from a Nsp List 
- * if a list element is a mxn matrix then n Gtypes are adde 
+ * if a list element is a mxn matrix then n Gtypes are added 
  * if a list element is a list(x1,....) then the Gtype associated to 
  * x1 is added 
- * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4)) 
- *  -> [double,double,double,string,string,boolean,double]
+ * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....)) 
+ *  -> [double,double,double,string,string,boolean,double,pixbuf]
  * the caller will have to take care of freeing the returned value 
  * the size of the returned array is returned in len 
  */ 
@@ -2223,23 +2208,20 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
   cloc = L->first ;
   while ( cloc != NULLCELL) 
     {
+      GType gtype = G_TYPE_NONE;
       if ( IsList(cloc->O))
 	{
 	  Cell *cloc1 = ((NspList *) cloc->O)->first ; 
-	  if ( cloc1->O != NULLOBJ) 
-	    column_types[count++] = gtype_from_nsp_object(cloc1->O);
-	  else 	    
-	    column_types[count++] = G_TYPE_NONE;
+	  if ( cloc1->O != NULLOBJ) gtype = gtype_from_nsp_object(cloc1->O);
+	  if ( gtype == G_TYPE_INVALID) goto fail;
+	  column_types[count++] = gtype;
 	}
       else
 	{
 	  int n =nsp_object_get_size(cloc->O,2), n1 = count,i;
-	  column_types[count++] = gtype_from_nsp_object(cloc->O);
-	  if ( column_types[count-1] == 0 ) 
-	    {
-	      g_free(column_types);
-	      return NULL;
-	    }
+	  gtype = gtype_from_nsp_object(cloc->O);
+	  if ( gtype == G_TYPE_INVALID) goto fail;
+	  column_types[count++] = gtype;
 	  for (i=1 ; i < n ; i++) 
 	    column_types[count++] = column_types[n1];
 	}
@@ -2247,6 +2229,9 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
     }
   *len = n_columns ; 
   return column_types; 
+ fail:
+  g_free(column_types);
+  return NULL;
 }
 
 /* 
