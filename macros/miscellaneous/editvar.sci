@@ -559,7 +559,10 @@ endfunction
 
 
 // nsp cells 
-//---------
+//---------- 
+//XXXX: Attention si la fonction on_treeview_button_press_event
+// renvoit %t ça fait planter nsp 
+// Il faut corriger 
 
 function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
   
@@ -654,10 +657,8 @@ function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],heade
   // last colmun could be used to store an edit flag for each cell.
   edit_flag = ones(size(x,1),1) >= 0
   ncol_x = size(x,2);
-  xs = m2s([]);
-  for i=1:ncol_x, xs=[xs, "("+string(1:size(x,1))'+ ","+string(i)+")"];end 
-  l_s = list(xs) ;//  edit_flag);
-  model = gtkliststore_new(l_s) 
+  xs = cellstostr(x);
+  model = gtkliststore_new(list(xs)) 
   
   // create tree view 
   treeview = gtktreeview_new(model);

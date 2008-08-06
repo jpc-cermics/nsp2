@@ -36,6 +36,7 @@ atk.o : atk.c  codegen/atk.c
 gtk.o : gtk.c  codegen/gtk.c 
 gdk.o : gdk.c  codegen/gdk.c 
 pango.o : pango.c codegen/pango.c
-gtk.o : gtk.c codegen/gtk.c codegen/gtk24.c
+gtk.o : gtk.c codegen/gtk.c
+
 
 

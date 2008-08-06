@@ -1080,7 +1080,7 @@ static NspMethods *gobject_get_methods(void) { return gobject_methods;};
  *-------------------------------------------*/
 
 /* XXX
- *
+ * should be documented somewhere
  */
 extern function int_cellstopixbuf;
 extern function int_pixbuftocells;
@@ -1088,6 +1088,21 @@ extern function int_pixbuftocells;
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs);
+
+static NspSMatrix *nsp_cells_to_string(NspCells *ce);
+
+static int int_cells_to_str(Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S;
+  NspCells *C;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((C = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
+  if ((S = nsp_cells_to_string(C)) == NULLSMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
 
 /*----------------------------------------------------
  * Interface 
@@ -1103,6 +1118,7 @@ static OpTab NspGObject_func[]={
   {"gtk_idle_add",int_gtk_idle_add},
   {"pixbuftocells",int_pixbuftocells},
   {"cellstopixbuf",int_cellstopixbuf},
+  {"cellstostr",int_cells_to_str},
   {(char *) 0, NULL}
 };
 
@@ -3137,4 +3153,53 @@ NspObject *nsp_get_matrix_from_list_store(GtkListStore *model)
 NspObject *nsp_get_matrix_from_tree_store(GtkTreeStore *model)
 {
   return nsp_get_matrix_from_list_or_tree_store(GTK_TREE_MODEL(model));
+}
+
+/*--------------------------------------------------------------------------
+ * utilities for editvar 
+ * --------------------------------------------------------------------------*/
+
+NspSMatrix * nsp_cells_to_string(NspCells *ce)
+{
+  int i;
+  NspSMatrix *Loc;
+  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,ce->m,ce->n,-1)) == NULLSMAT) 
+    return(NULLSMAT);
+  for ( i = 0 ; i < ce->mn ; i++) 
+    {
+      if ( ce->objs[i] == NULLOBJ) 
+	{
+	  if ((Loc->S[i] =nsp_string_copy("*")) == (nsp_string) 0) return(NULLSMAT);
+	}
+      else 
+	{
+	  if ( IsMat(ce->objs[i]) && ((NspMatrix *) ce->objs[i])->mn == 1 && ((NspMatrix *) ce->objs[i])->rc_type== 'r')
+	    {
+	      nsp_const_string format; 
+	      char buf[1024];
+	      nsp_num_formats fmt;
+	      nsp_init_pr_format (&fmt);
+	      nsp_matrix_set_format(&fmt,((NspMatrix *) ce->objs[i])) ;
+	      format = fmt.curr_real_fmt;
+	      sprintf(buf,format,((NspMatrix *) ce->objs[i])->R[0]);
+	      if ((Loc->S[i] =nsp_basic_to_string(buf)) == (nsp_string) 0)  return(NULLSMAT);
+	    }
+	  else if ( IsSMat(ce->objs[i]) && ((NspSMatrix *) ce->objs[i])->mn == 1)
+	    {
+	      if ((Loc->S[i] =nsp_string_copy(((NspSMatrix *) ce->objs[i])->S[0])) == (nsp_string) 0) 
+		return(NULLSMAT);
+	    }
+	  else if ( IsBMat(ce->objs[i]) && ((NspBMatrix *) ce->objs[i])->mn == 1) 
+	    {
+	      const char *str = ((NspBMatrix *) ce->objs[i])->B[0] ? "T": "F";
+	      if ((Loc->S[i] =nsp_string_copy(str)) == (nsp_string) 0)
+		return(NULLSMAT);
+	    }
+	  else
+	    {
+	      if ((Loc->S[i] =nsp_string_copy("*")) == (nsp_string) 0) return(NULLSMAT);
+	    }
+	}
+    }
+  return(Loc);
 }
