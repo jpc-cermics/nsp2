@@ -144,6 +144,9 @@ extern NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S);
 
 extern int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
 extern NspBMatrix *nsp_smatrix_has(NspSMatrix *A, NspSMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2);
+extern NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k);
+extern int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k);
+extern NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k);
 
 #endif 
 
