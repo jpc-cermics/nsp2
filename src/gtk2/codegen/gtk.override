@@ -2567,6 +2567,32 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override gtk_icon_view_get_model noargs
+/* I do not want gtk_icon_view_get_model to return a tree model 
+ * but a more specific object i.e a liststore or treestore 
+ */
+/* XXXX: all the other get_model should be corrected that way */
+static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GtkTreeModel *ret;
+  NspObject *nsp_ret;
+  ret = gtk_icon_view_get_model(GTK_ICON_VIEW(self->obj));
+  if ((nsp_ret =(NspObject *) gobject_gettype_and_create(NVOID,(GObject *) ret))==NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+%%
+override gtk_icon_view_get_selected_items noargs
+/* take care that here the glist contain boxed not gobjects */
+static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GList *ret, *tmp;
+  ret = gtk_icon_view_get_selected_items(GTK_ICON_VIEW(self->obj));
+  NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
+}
+
 
 %%
 override gtk_tree_view_get_visible_rect noargs
