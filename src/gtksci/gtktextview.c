@@ -16,6 +16,10 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ *
+ *  modified for a text editor for nsp 
+ *
  */
 
 #include <stdio.h>
@@ -831,6 +835,7 @@ static const gchar *ui_info =
   "      <menuitem name=\"open\" action=\"Open\" />\n"
   "      <menuitem name=\"save\" action=\"Save\" />\n"
   "      <menuitem name=\"saveas\" action=\"SaveAs\" />\n"
+  "      <menuitem name=\"execute\" action=\"Execute\" />\n"
   "      <separator name=\"sep1\" />\n"
   "      <menuitem name=\"close\" action=\"Close\" />\n"
   "    </menu>\n"
