@@ -39,8 +39,14 @@ endfunction
 //---------
 
 function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
-
+  
+  function on_treeview_button_press_event(treeview, event, args)
+    //printf("Button pressed \n");
+    //[p,col]=treeview.get_path_at_pos[event.x,event.y];
+  endfunction
+  
   function entry_toggle_evaluate_str (checkbutton,args)
+  
     args(1).set_data[evaluate_str= checkbutton.get_active[]];
   endfunction
 
@@ -60,6 +66,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   function cell_edited (cell,path_string,new_text,data)
   // we enter this function after cell edition for 
   // strings or numbers 
+    printf("cell edited\n");
     tree_view = data(1);
     model = tree_view.get_model[];
     col = cell.get_data["column"];
@@ -204,6 +211,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   
   // create tree view 
   treeview = gtktreeview_new(model);
+  // treeview.connect["button-press-event", on_treeview_button_press_event];
   treeview.set_rules_hint[  %t]
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers 
@@ -550,7 +558,153 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 endfunction 
 
 
+// nsp cells 
+//---------
 
-
-
-
+function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
+  
+  function on_treeview_button_press_event(treeview, event, args)
+    if event.button == 3 then 
+      printf("Button pressed \n");
+      [path,col]=treeview.get_path_at_pos[event.x,event.y];
+      colid= col.get_data['id'];
+      row= path.get_indices[];
+      printf("we must edit (%d,%d)\n",row+1,colid);
+      val = edit_object(treeview.user_data{row+1,colid});      
+    end
+  endfunction
+  
+  function entry_toggle_evaluate_str (checkbutton,args)
+    args(1).set_data[evaluate_str= checkbutton.get_active[]];
+  endfunction
+  
+  function cell_edited (cell,path_string,new_text,data)
+  // we enter this function after cell edition for 
+  // strings or numbers 
+    printf("cell edited\n");
+    tree_view = data(1);
+    model = tree_view.get_model[];
+    col = cell.get_data["column"];
+    path = gtktreepath_new(path_string);
+    // i = path.get_indices[];
+    iter = model.get_iter[path_string];
+    ok=execstr('val='+new_text',errcatch=%t);
+    if ok then 
+      row= path.get_indices[];
+      printf("we must set (%d,%d)\n",row+1,col+1);
+      tree_view.user_data{row+1,col+1}= val;
+    else
+      x_message("Given expression does not evaluate to a nsp object !");
+    end
+  endfunction
+  
+  function add_columns (treeview,ncol,type_x)
+    // used to enter each element in a cell 
+    model = treeview.get_model[];
+    col_editable = ncol;
+    cols="C"+string(1:ncol);
+    
+    for col= 0:(ncol-1)
+      renderer = gtkcellrenderertext_new ();
+      renderer.connect[  "edited",  cell_edited,list(treeview,type_x)]
+      renderer.set_data[column=col ];
+      // direct use of property 
+      renderer.set_property['editable',%t];
+      //properties of the renderer are transmited through hash table.
+      //Note that we can replace text with markup to use the Pango markup 
+      //language 
+      attrs= hash_create(markup= col);// editable= col_editable);
+      tc = gtktreeviewcolumn_new(title=cols[col+1],renderer=renderer,attrs=attrs);
+      // can we resize the columns with mouse 
+      tc.set_resizable[%t];
+      // tc.get_resizable[];
+      // can we sort columns 
+      tc.set_reorderable[%t];
+      tc.set_sort_column_id[col];
+      // column can expand (added 2007)
+      tc.set_expand[%t]
+      tc.set_data[id=col+1];
+      //
+      treeview.append_column[tc];
+    end 
+  endfunction
+  
+  hbox = gtkhbox_new(homogeneous=%f,spacing=8);
+  
+  if top.equal[[]] then 
+    // we want a top level windows 
+    flags = ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),
+    window = gtkdialog_new(title= title,flags = flags,...
+			   buttons = ["gtk-ok","gtk-cancel"]);
+    ok_rep = 1; // buttons return code is their indice in buttons matrix
+    
+    // window.set_border_width[  5]
+    // window.connect[  "destroy",gtk_widget_destroyed, &window]
+    window.vbox.pack_start[hbox,expand=%f,fill=%f,padding=0]
+    vbox = window.vbox;
+  else
+    vbox = top;
+  end
+  
+  stock = gtkimage_new("stock","gtk-edit" , GTK.ICON_SIZE_DIALOG);
+  hbox.pack_start[stock,expand=%f,fill=%f,padding=0]
+  label=gtklabel_new(str=catenate(title));
+  hbox.pack_start[label,expand=%t,fill=%t,padding=0]
+        
+  // last colmun could be used to store an edit flag for each cell.
+  edit_flag = ones(size(x,1),1) >= 0
+  ncol_x = size(x,2);
+  xs = m2s([]);
+  for i=1:ncol_x, xs=[xs, "("+string(1:size(x,1))'+ ","+string(i)+")"];end 
+  l_s = list(xs) ;//  edit_flag);
+  model = gtkliststore_new(l_s) 
+  
+  // create tree view 
+  treeview = gtktreeview_new(model);
+  treeview.user_data = x;
+  treeview.connect["button-press-event", on_treeview_button_press_event];
+  treeview.set_rules_hint[  %t]
+  treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
+  // show column headers 
+  treeview.set_headers_visible[headers];
+  type_x = type(x,'short');
+  add_columns(treeview,ncol_x,type_x);
+  if ncol_x >= 20 || size(x,1) >= 60 then with_scroll = %t; end 
+  
+  if with_scroll then 
+    // insert the matrix edition in a scrolled window 
+    sw = gtkscrolledwindow_new();
+    sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
+    sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
+    sw.add[treeview]
+    vbox.pack_start[ sw,expand=%t,fill=%t,padding=0];
+    if isempty(size_request) then
+      size_request=[400,400];
+    end
+    sw.set_size_request[min(60*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+  else
+    vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
+    vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
+  end
+    
+  if type_x == 's' then 
+    vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
+    evaluate_str_check = gtkcheckbutton_new(label="Evaluate entries");
+    vbox.pack_start[ evaluate_str_check,expand=%f,fill=%t,padding=0]
+    evaluate_str_check.connect[  "toggled",entry_toggle_evaluate_str, list(treeview)]
+    val = %f;
+    evaluate_str_check.set_active[val];
+    treeview.set_data[evluate_str=val];
+  end 
+  
+  if top.equal[[]] then 
+    window.show_all[];
+    // treeview.columns_autosize[];
+    // a modal window undestroyed at end of run. 
+    response = window.run[];
+    if response == ok_rep; // GTK.RESPONSE_OK 
+      x= treeview.user_data ;
+    end
+    window.destroy[];
+  end
+endfunction 
