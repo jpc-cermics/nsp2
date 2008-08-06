@@ -886,6 +886,23 @@ NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
   return (NspSMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
+/**
+ * nsp_smatrix_extract_rows:
+ * @A: a #NspSMatrix 
+ * @Rows: a #NspMatrix 
+ * @err: a int pointer for error.
+ * 
+ * returns a sub matrix of matrix @A by selecting rows from @Row
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
+
+NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
+{
+  *err=0;
+  return (NspSMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
+}
+
 
 /**
  * SMatLoopCol:
@@ -921,21 +938,104 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
 }
 
 
-/**
- * nsp_smatrix_extract_rows:
- * @A: a #NspSMatrix 
- * @Rows: a #NspMatrix 
- * @err: a int pointer for error.
- * 
- * returns a sub matrix of matrix @A by selecting rows from @Row
- * 
- * Return value:  a new #NspSMatrix or %NULLSMAT 
- **/
 
-NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
+/**
+ * nsp_smatrix_extract_diag:
+ * @A: a #NspSMatrix
+ * @k: an integer 
+ *
+ * Extract the @k-th diagonal of matrix @A and returns 
+ * its value as a column vector. 
+ * 
+ * returns a #NspSMatrix or %NULLSMAT 
+ */
+
+NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k)
 {
-  *err=0;
-  return (NspSMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
+  NspSMatrix *Loc;
+  int j,i;
+  int imin,imax;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  if ( imin > imax ) 
+    {
+      Loc =nsp_smatrix_create(NVOID,(int) 0 , (int) 0,"",0);
+      return(Loc);
+    }
+  if (( Loc =nsp_smatrix_create_with_length(NVOID,imax-imin,1,-1)) == NULLSMAT)
+    return(NULLSMAT);
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    if ((Loc->S[j++] = nsp_string_copy(A->S[i+(i+k)*A->m])) == (nsp_string) 0)
+      return(NULLSMAT);
+  return(Loc);
+}
+
+/**
+ * nsp_smatrix_set_diag:
+ * @A: a #NspSMatrix
+ * @Diag: a #NspSMatrix
+ * @k: an integer 
+ *
+ * sets the @k-th diagonal of matrix @A with values from @Diag. 
+ * 
+ * returns %OK or %FAIL.
+ */
+
+int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k)
+{
+  int i,j;
+  int imin,imax,isize;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  isize = imax-imin ;
+  if ( isize > Diag->mn ) 
+    {
+      Scierror("Error:\tGiven vector is too small\n");
+      return(FAIL);
+    }
+  if ( isize < Diag->mn ) 
+    {
+      imax = Diag->mn +imin;
+      if (nsp_smatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
+    }
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      nsp_string_destroy(&(A->S[i+(i+k)*A->m]));
+      if ((A->S[i+(i+k)*A->m] = nsp_string_copy(Diag->S[j++])) == (nsp_string) 0)
+	return FAIL;
+    }
+  return OK;
+}
+
+/**
+ * nsp_smatrix_create_diag:
+ * @Diag: a #NspSMatrix
+ * @k: an integer 
+ *
+ * Creates a square marix with its @k-th diagonal filled with @Diag.
+ * 
+ * returns a #NspSMatrix or %NULLSMAT 
+ */
+
+NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k)
+{
+  int i,j;
+  int imin,imax;
+  NspSMatrix *Loc;
+  imin = Max(0,-k);
+  imax = Diag->mn +imin;
+  if (( Loc =nsp_smatrix_create(NVOID,imax,imax+k,"",1)) == NULLSMAT) 
+    return(NULLSMAT);
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      nsp_string_destroy(&Loc->S[i+(i+k)*Loc->m]);
+      if ((Loc->S[i+(i+k)*Loc->m] =nsp_string_copy( Diag->S[j++])) == (nsp_string) 0)
+	return(NULLSMAT);
+    }
+  return(Loc);
 }
 
 /**

@@ -936,6 +936,66 @@ static int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 #endif 
 
 /*
+ * Returns the kthe diag of a NspSMatrix 
+ */
+
+static int int_smatrix_diage(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1;
+  NspSMatrix *A,*Res;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  Res =nsp_smatrix_extract_diag( A,k1);
+  if ( Res == NULLSMAT)  return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+/*
+ * Set the kth Diag of A to Diag 
+ *  A is enlarged & comlexified if necessary 
+ *  int nsp_bmatrix_create_diag(A,Diag,k)
+ * WARNING: A is not copied we want this routine to change A
+ */
+
+static int int_smatrix_diagset(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1;
+  NspSMatrix *A,*Diag;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Diag = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
+  if (nsp_smatrix_set_diag( A, Diag,k1) != OK) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+}
+
+/*
+ *  Creates a NspSMatrix with kth diag set to Diag 
+ */
+
+static int int_smatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1=0;
+  NspSMatrix *Diag,*Res;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((Diag = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+    }
+  if ( (Res =nsp_smatrix_create_diag(Diag,k1)) == NULLSMAT ) return RET_BUG ;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
+/*
  *nsp_smatrix_resize: Changes NspSMatrix dimensions
  * Warning : this routine only enlarges the array 
  * of the NspSMatrix storage so as to contain mxn 
@@ -1955,6 +2015,9 @@ static OpTab SMatrix_func[]={
   {"protect",int_smatrix_protect}, /* test */
   {"sqsort_s", int_bpsqsort},
   {"unique_s",int_smatrix_unique},
+  {"diagcre_s",int_smatrix_diagcre},
+  {"diage_s",int_smatrix_diage},
+  {"diagset_s",int_smatrix_diagset},
   {(char *) 0, NULL}
 };
 
