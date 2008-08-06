@@ -89,7 +89,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->CinfoW =NULL;           
   private->vbox=NULL;              
   private->menubar=NULL;
-  private->item_factory=NULL;
   private->menu_entries=NULL;
   private->pixmap=NULL;       
   private->extra_pixmap=NULL;
