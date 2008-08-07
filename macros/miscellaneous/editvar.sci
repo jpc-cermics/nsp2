@@ -353,6 +353,46 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	treeview.user_data(L).Poo=0;
       end
     end     
+    update_model([],list(treeview))
+    //selection.select_path[path];
+  endfunction
+  
+  function insert_at_end (button, data)
+    treeview=data(1);
+    model = treeview.get_model[];
+    iter = model.get_iter_first[];
+    while model.iter_next[iter] 
+    end
+    if type(iter,'short') <> 'GtkTreeIter' then return;end
+    path=model.get_path[iter];
+    L=get_nsp_list_path_from_tree_path(treeview,path)
+    // model.insert_after[parent=iter or ignored, sibling =iter or
+    // ignored, lis(....) to also set the value 
+    model.insert_after[[],iter,list("--",'m',"1x1","0")];
+    // we must insert the element 
+    tag=L.last[];
+    L.remove_last[];
+    if length(L)==0 then 
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data.add[0,tag+1];
+      else
+	// hash 
+	treeview.user_data.Poo=0;
+      end
+    else
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data(L).add[0,tag+1];
+      else
+	// hash 
+	treeview.user_data(L).Poo=0;
+      end
+    end     
+    update_model([],list(treeview))
+    //selection.select_path[path];
   endfunction
   
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
@@ -468,6 +508,12 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       tree_view.user_data(Il)=M1;
       xs = cellstostr({M1});
       model.set[iter,1,xs];
+      octype = type(M,'short');
+      ctype = type(M1,'short');
+      if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
+	//  we need to update the treeview 
+	update_model([],list(tree_view))
+      end 
     end
   endfunction 
   
@@ -489,12 +535,14 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       model = tree_view.get_model[];
       path = gtktreepath_new(path_string);
       iter = model.get_iter[path_string];
-      ctype = model.get_value[iter,1];
-      if ctype == 'l' || ctype == 'h' then return;end 
+      octype = model.get_value[iter,1];
+      //if ctype == 'l' || ctype == 'h' then return;end 
       // evaluate newtext 
       ok=execstr('val='+new_text',errcatch=%t);
       if ~ok then 
 	// just push the text and change the type to string 
+	// except if old object type was list or hash 
+	if octype == 'l' || octype == 'h' then return;end 
 	model.set[iter,3,new_text];
 	model.set[iter,2,"1x1"];
 	model.set[iter,1,"s"];
@@ -537,9 +585,11 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
 	  tree_view.user_data(Il) = val;
 	  model.set[iter,3,"*"];
-	  // ignore 
-	  // x_message("result of evaluation is not managed");
 	end
+	if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
+	  //  we need to update the treeview 
+	  update_model([],list(tree_view))
+	end 
       end
   endfunction
 
@@ -628,8 +678,8 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
   button.connect[ "clicked",insert_after_selected,list(treeview)] 
   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
 
-  button = gtkbutton_new(label="Update tree view");
-  button.connect[ "clicked", update_model,list(treeview)] 
+  button = gtkbutton_new(label="Insert at end");
+  button.connect[ "clicked",insert_at_end,list(treeview)] 
   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
   
   if top.equal[[]] then 
