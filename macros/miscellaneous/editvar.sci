@@ -560,13 +560,10 @@ endfunction
 
 // nsp cells 
 //---------- 
-//XXXX: Attention si la fonction on_treeview_button_press_event
-// renvoit %t ça fait planter nsp 
-// Il faut corriger 
 
 function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
   
-  function on_treeview_button_press_event(treeview, event, args)
+  function y=on_treeview_button_press_event(treeview, event, args)
     if event.button == 3 then 
       printf("Button pressed \n");
       [path,col]=treeview.get_path_at_pos[event.x,event.y];
@@ -574,6 +571,9 @@ function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],heade
       row= path.get_indices[];
       printf("we must edit (%d,%d)\n",row+1,colid);
       val = edit_object(treeview.user_data{row+1,colid});      
+      y=%t;
+    else 
+      y=%f
     end
   endfunction
   
