@@ -8,7 +8,7 @@ function editvar(x,varargopt)
   end
   M1=edit_object(M,varargopt(:));
   if M1.equal[[M]] then return;end 
-  resume(x=M1);
+  execstr('resume('+x+'=M1);');
 endfunction
   
 function x=edit_object_m(x,varargopt)
@@ -29,6 +29,10 @@ endfunction
 
 function x=edit_object_h(x,varargopt)
   x=edit_object_list_or_hash(x,varargopt(:));
+endfunction
+
+function x=edit_object_ce(x,varargopt)
+  x=edit_cells(x,varargopt(:));
 endfunction
 
 function x=edit_object(x,varargopt)
@@ -285,6 +289,76 @@ endfunction
 
 function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
 
+  function selected_remove (button, data)
+    treeview=data(1);
+    selection = treeview.get_selection[];
+    [iter,model] = selection.get_selected[]; 
+    if type(iter,'short') <> 'GtkTreeIter' then return;end
+    path=model.get_path[iter];
+    L=get_nsp_list_path_from_tree_path(treeview,path)
+    model.remove[iter];
+    // we must remove the element described by L 
+    tag=L.last[];
+    L.remove_last[];
+    if length(L)==0 then 
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data.remove[tag];
+      else
+	// hash 
+	treeview.user_data.delete[tag];
+      end
+    else
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data(L).remove[tag];
+      else
+	// hash 
+	treeview.user_data(L).delete[tag];
+      end
+    end    
+  endfunction
+  
+  function insert_after_selected (button, data)
+    treeview=data(1);
+    selection = treeview.get_selection[];
+    [iter,model] = selection.get_selected[]; 
+    if type(iter,'short') <> 'GtkTreeIter' then return;end
+    path=model.get_path[iter];
+    L=get_nsp_list_path_from_tree_path(treeview,path)
+    // model.insert_after[parent=iter or ignored, sibling =iter or
+    // ignored, lis(....) to also set the value 
+    model.insert_after[[],iter,list("--",'m',"1x1","0")];
+    // we must insert the element 
+    tag=L.last[];
+    L.remove_last[];
+    if length(L)==0 then 
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data.add[0,tag+1];
+      else
+	// hash 
+	treeview.user_data.Poo=0;
+      end
+    else
+      stype = type(treeview.user_data,'short');
+      if stype == 'l' then 
+	// list 
+	treeview.user_data(L).add[0,tag+1];
+      else
+	// hash 
+	treeview.user_data(L).Poo=0;
+      end
+    end     
+    pause
+  endfunction
+  
+  
+  
+  
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
   // here we must build a list which permits to 
   // get the value of the selected row from a 
@@ -392,21 +466,12 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     //printf("row %s activated\n",name);
     Il = get_nsp_list_path_from_tree_path(tree_view,path);
     M=tree_view.user_data(Il);
-    // XXX here we need a generic edit 
-    if type(M,'short')=='l' then return;end 
-    if type(M,'short')=='h' then return;end 
-    rep =edit_matrix(M);
-    if ~rep.equal[[M]] then 
-      tree_view.user_data(Il)=M;
-      value = '*';
-      if size(rep,'*')== 1 then 
-	select type(rep,'short')  
-	 case 'm' then value=m2s(rep);
-	 case 'b' then value=m2s(b2m(rep));
-	 case 's' then value=rep;
-	end
-	model.set[iter,3,value];
-      end
+    // here we need a generic edit 
+    M1=edit_object(M);
+    if ~M1.equal[M] then 
+      tree_view.user_data(Il)=M1;
+      xs = cellstostr({M1});
+      model.set[iter,3,value];
     end
   endfunction 
   
@@ -470,8 +535,13 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
 	  tree_view.user_data(Il) = val;
 	else
+	  model.set[iter,1,ctype];
+	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
+	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
+	  tree_view.user_data(Il) = val;
+	  model.set[iter,3,"*"];
 	  // ignore 
-	  x_message("result of evaluation is not managed");
+	  // x_message("result of evaluation is not managed");
 	end
       end
   endfunction
@@ -544,6 +614,14 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
   end
   
+  button = gtkbutton_new(label="Remove selection");
+  button.connect[ "clicked", selected_remove,list(treeview)] 
+  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+        
+  button = gtkbutton_new(label="Insert after selection");
+  button.connect[ "clicked",insert_after_selected,list(treeview)] 
+  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
   if top.equal[[]] then 
     window.show_all[];
     // treeview.columns_autosize[];
@@ -561,7 +639,7 @@ endfunction
 // nsp cells 
 //---------- 
 
-function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
+function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers=%t,top=[]) 
   
   function y=on_treeview_button_press_event(treeview, event, args)
     if event.button == 3 then 
@@ -596,6 +674,8 @@ function x=edit_cells(x,with_scroll=%f,title="Edit matrix",size_request=[],heade
       row= path.get_indices[];
       printf("we must set (%d,%d)\n",row+1,col+1);
       tree_view.user_data{row+1,col+1}= val;
+      xs = cellstostr({val});
+      model.set[iter,col, xs];
     else
       x_message("Given expression does not evaluate to a nsp object !");
     end

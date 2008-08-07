@@ -885,10 +885,12 @@ static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, 
 
 static int int_ht_extract_l(Stack stack, int rhs, int opt, int lhs) 
 {
+  char name[NAME_MAXL];
   int rep,n ;
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
   /* last extraction : here O can be anything */ 
-  if ((n=nsp_eval_func(NULLOBJ,"extractelts",1,stack,stack.first+1,2,0,1)) < 0)
+  nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
+  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0)
     {
       return RET_BUG;
     }

@@ -1949,7 +1949,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   GtkTreeIter iter;
   NspList *row = NULL;
   NspObject *ret;
-
+  
   CheckRhs(1,2);
   if (( sibling = GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
   gtk_list_store_insert_after(GTK_LIST_STORE(self->obj), &iter,
@@ -2168,22 +2168,21 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   NspList *row = NULL;
   NspObject *ret;
   NspGtkTreeIter *nsp_parent,*nsp_sibling;
-  int pos=0;
-
-  CheckRhs(1,3);
+  CheckRhs(2,3);
   if ( IsGtkTreeIterObj(stack,1) ) 
     {
       if (( nsp_parent = GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
       parent = nspg_boxed_get(nsp_parent, GtkTreeIter);
-      pos = 1; 
     }
-  CheckRhs(1+pos,2+pos);
-  if (( nsp_sibling = GetGtkTreeIter(stack,1+pos))== NULL) return RET_BUG; 
-  sibling = nspg_boxed_get(sibling, GtkTreeIter);
+  if ( IsGtkTreeIterObj(stack,2) ) 
+    {
+      if (( nsp_sibling = GetGtkTreeIter(stack,2))== NULL) return RET_BUG; 
+      sibling = nspg_boxed_get(nsp_sibling, GtkTreeIter);
+    }
   gtk_tree_store_insert_before(GTK_TREE_STORE(self->obj),&iter,parent,sibling);
-  if ( rhs == pos+2) 
+  if ( rhs == 3) 
     { 
-      if (( row = GetList(stack,pos+2)) == NULL) return RET_BUG;
+      if (( row = GetList(stack,3)) == NULL) return RET_BUG;
       if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj), &iter,parent, row) ==FAIL) 
 	return RET_BUG;
     }
@@ -2202,21 +2201,21 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   NspList *row = NULL;
   NspObject *ret; 
   NspGtkTreeIter *nsp_parent,*nsp_sibling;
-  int pos=0;
-  CheckRhs(1,3);
+  CheckRhs(2,3);
   if ( IsGtkTreeIterObj(stack,1) ) 
     {
       if (( nsp_parent = GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
       parent = nspg_boxed_get(nsp_parent, GtkTreeIter);
-      pos = 1; 
     }
-  CheckRhs(1+pos,2+pos);
-  if (( nsp_sibling = GetGtkTreeIter(stack,1+pos))== NULL) return RET_BUG; 
-  sibling = nspg_boxed_get(sibling, GtkTreeIter);
+  if ( IsGtkTreeIterObj(stack,2) ) 
+    {
+      if (( nsp_sibling = GetGtkTreeIter(stack,2))== NULL) return RET_BUG; 
+      sibling = nspg_boxed_get(nsp_sibling, GtkTreeIter);
+    }
   gtk_tree_store_insert_after(GTK_TREE_STORE(self->obj),&iter,parent,sibling);
-  if ( rhs == pos+2) 
+  if ( rhs == 3 ) 
     { 
-      if (( row = GetList(stack,pos+2)) == NULL) return RET_BUG;
+      if (( row = GetList(stack,3)) == NULL) return RET_BUG;
       if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj), &iter,parent, row) ==FAIL) 
 	return RET_BUG;
     }
@@ -3090,8 +3089,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
 	return RET_BUG; 
       if ( lhs == 2) 
 	{
-	  if ((nsp_ret2 = (NspObject *) gobject_create(NVOID,(GObject *)model,(NspTypeBase *) nsp_type_gtktreemodel )) 
-	      == NULL) 
+	  if ((nsp_ret2 = (NspObject *) nspgobject_new(NVOID,(GObject *) model) )  == NULL) 
 	    return RET_BUG; 
 	}
     }
@@ -3105,6 +3103,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
 	    return RET_BUG; 
 	}
     }
+
   MoveObj(stack,1,nsp_ret1);
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
@@ -3235,6 +3234,17 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
 					 cunote,
 					 nspgtk_custom_destroy_notify);
   return 0;
+}
+
+%%
+override gtk_tree_selection_get_selected_rows noargs
+/* take care that here the glist contain boxed not gobjects */
+static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *nsp_list;
+  GList *ret, *tmp;
+  ret = gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(self->obj),NULL);
+  NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
 %%
