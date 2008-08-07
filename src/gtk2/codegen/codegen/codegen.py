@@ -46,7 +46,7 @@ class FileOutput:
     def setline(self, linenum, filename):
         '''writes out a #line statement, for use by the C
         preprocessor.''' # "
-        self.write('#line %d "%s"\n' % (linenum, filename))
+        self.write('#line %d "codegen/%s"\n' % (linenum, filename))
     def resetline(self):
         '''resets line numbering to the original file'''
         self.setline(self.lineno + 1, self.filename)

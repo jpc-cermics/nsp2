@@ -83,10 +83,10 @@ class Overrides:
             self.override_slots[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'headers':
-            self.headers = '%s\n#line %d "%s"\n%s' % \
+            self.headers = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.headers, startline + 1, filename, rest)
         elif words[0] == 'init':
-            self.init = '%s\n#line %d "%s"\n%s' % \
+            self.init = '%s\n#line %d "codegen/%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)
         elif words[0] == 'modulename':
             self.modulename = words[1]

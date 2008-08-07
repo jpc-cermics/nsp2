@@ -1,13 +1,13 @@
 /* -*- Mode: C -*- */
 
 
-#line 4 "atk.override"
+#line 4 "codegen/atk.override"
 
 #include "nsp/gtk/gobject.h"
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>
-#line 11 "atk.c"
+#line 11 "codegen/atk.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -1797,7 +1797,7 @@ NspAtkRelation *atkrelation_copy(NspAtkRelation *self)
 } 
 */ 
 
-#line 18 "atk.override"
+#line 18 "codegen/atk.override"
 static int
 _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
 {
@@ -1838,7 +1838,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1842 "atk.c"
+#line 1842 "codegen/atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -3066,7 +3066,7 @@ atk_register_classes(NspObject *d)
   }
 
 
-#line 3070 "atk.c"
+#line 3070 "codegen/atk.c"
   nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));

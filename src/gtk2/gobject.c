@@ -365,16 +365,7 @@ NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
   return H;
 }
 
-/*
- * an other constructor : the nsp_type to use is extracted 
- * from the GType of GObject. 
- */
 
-NspGObject *gobject_gettype_and_create(char *name,  GObject *obj)
-{
-  NspTypeBase *type = nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(obj)));
-  return gobject_create(name, obj,type);
-}
 
 /*
  * copy a gobject or a derived object (which is copied as a derived object!) 
@@ -451,7 +442,7 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 	}
     }      
   if ((gobj = g_object_newv(object_type, n_params, params))== NULL) goto cleanup;
-  if ((nsp_ret =(NspObject *) gobject_gettype_and_create(NVOID,gobj))== NULL)  goto cleanup;
+  if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,gobj))== NULL)  goto cleanup;
   MoveObj(stack,1,nsp_ret);
   rep=1;
  cleanup:
@@ -1143,16 +1134,33 @@ void GObject_Interf_Info(int i, char **fname, function (**f))
  * Utilities 
  *---------------------------------------------------*/
 
-/*
- * check that value can be casted to type 
- */
+/**
+ * nspgobject_check:
+ * @value: a void pointer that can be casted to a #NspObject
+ * @type: a void pointer that can be casted to a #NspTypeBase
+ * 
+ * checks that object @value can be casted to an object of type @type
+ * 
+ * Returns: %TRUE or %FALSE.
+ **/
 
 int nspgobject_check(void *value, void *type)
 {
   return check_cast((NspObject *) value, ((NspTypeBase *) type)->id); 
 }
 
-/* sans doute à reprendre XXXXXX */
+/**
+ * nspgobject_new:
+ * @name: a string 
+ * @obj: a #GObject
+ * 
+ * creates a new nsp object which belong to a class derived from #NspGObject. 
+ * The nsp_type to use is extracted from the GType of the given GObject, 
+ * this is only possible if the associated nsp type was registered using 
+ * register_nsp_type_in_gtype().
+ * 
+ * Returns: a new #NspGObject 
+ **/
 
 NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
@@ -1814,7 +1822,6 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
     if ((str =nsp_string_object(obj)) != NULL)
       g_value_set_char(value, str[0]);
     else {
-      /* PyErr_Clear(); */
       return FAIL;
     }
     break;
@@ -1950,12 +1957,18 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   return 0;
 }
 
-/*
- * utilities to attach a nsp_type to a gtype 
- * this is used in nspg_value_as_nspobject 
- * to detect which nsp_type to use in gobject_create 
+
+/**
+ * nsp_type_from_gtype:
+ * @gtype: a GType
+ * 
+ * utility function used to obtain a nsp type given a GType.
+ * This is used when proper nsp objects are to be build from 
+ * GObjects. 
  * It could be useful to also register basic Gtk types. 
- */
+ * 
+ * Returns: a #NspTypeBase
+ **/
 
 static const gchar *nsp_gobject_class_id     = "NspGObject::class";
 static GQuark       nsp_gobject_class_key    = 0;
@@ -1968,6 +1981,18 @@ NspTypeBase * nsp_type_from_gtype(GType gtype)
     Scierror("get type in gtype failed for gtype %s \n",g_type_name(gtype));
   return type;
 }
+
+/**
+ * register_nsp_type_in_gtype:
+ * @type: 
+ * @gtype: 
+ * 
+ * utility function used to attach a nsp type to a GType.
+ * This is used when proper nsp objects are to be build from 
+ * GObjects. 
+ * It could be useful to also register basic Gtk types. 
+ * 
+ **/
 
 void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype) 
 {
@@ -2128,7 +2153,7 @@ nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
  * @obj: an object
  *
  * find a GType corresponding to the given object.
- * Returns: the corresponding GType or 0 
+ * Returns: the corresponding GType or G_TYPE_NONE. 
  * 
  * This is usefull for list and tree where column 
  * types are to be given. 
