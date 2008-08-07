@@ -929,16 +929,22 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
   return nret;
 }
 
-/* extract list element with a list argument : L(List(....))  */ 
-/* first step :  At the end of this step 
- * first argument is the list 
- * next is the extracted list element 
- * next is the last extraction indices 
- */ 
-/* XXXX : améliorer le netoyage en cas d'erreur 
- * following path for a recursive object with list,
- * hash tables or cells as sucessive nodes 
- */ 
+
+/**
+ * ListFollowExtract:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * When entering this function first stack argument is an object O and 
+ * second argument is a list list(e1,....,en). At the end is the list is 
+ * not empty then, first argument is O, second is O(list(e1,....,e_(n-1))) 
+ * and last is en. 
+ * If the list is empty then first argument is O and second is also O.
+ * 
+ * Returns: an integer 
+ **/
 
 int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 {
@@ -967,6 +973,11 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
   L_name=Ocheckname(L,NVOID);
   if ((Lind = GetList(stack,2 )) == NULLLIST) return RET_BUG;
   C= Lind->first;
+  if ( C == NULLCELL )
+    {
+      NthObj(2)=L;
+      return 2;
+    }
   O= (NspObject *) L;
   while ( C != NULLCELL) 
     {
@@ -1056,7 +1067,7 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 	}
       C = C->next ;
     }
-  /* XXXX : pas clair **/ 
+  
   return 3;
 }
 
@@ -1067,11 +1078,14 @@ static int int_lxextract_l(Stack stack, int rhs, int opt, int lhs)
   char name[NAME_MAXL];
   int rep,n ;
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
-  /* last extraction : here O can be anything */ 
-  nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
-  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0) 
+  if ( rep == 3 ) 
     {
-      return RET_BUG;
+      /* last extraction : here O can be anything */ 
+      nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
+      if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0) 
+	{
+	  return RET_BUG;
+	}
     }
   nsp_void_object_destroy(&NthObj(1));
   NSP_OBJECT(NthObj(2))->ret_pos = 1;

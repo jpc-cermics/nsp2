@@ -2682,14 +2682,19 @@ static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extrac
   index.iwork = matint_iwork1;  
   if ( nsp_get_index_vector(stack, 2,&Elts,&index) == FAIL )
     {
+      char name[NAME_MAXL];
       if ( rhs != 2 || IsListObj(stack,2) == FALSE ) return RET_BUG;
       /* check if we are using a list access */
       int rep,n ;
       if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
-      /* last extraction : here O can be anything */ 
-      if ((n=nsp_eval_func(NULLOBJ,"extractelts",1,stack,stack.first+1,2,0,1)) < 0)
+      if ( rep == 3 ) 
 	{
-	  return RET_BUG;
+	  /* last extraction : here O can be anything */ 
+	  nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
+	  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0)
+	    {
+	      return RET_BUG;
+	    }
 	}
       nsp_void_object_destroy(&NthObj(1));
       NSP_OBJECT(NthObj(2))->ret_pos = 1;

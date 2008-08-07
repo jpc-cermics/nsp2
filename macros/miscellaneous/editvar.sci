@@ -326,33 +326,30 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     selection = treeview.get_selection[];
     [iter,model] = selection.get_selected[]; 
     if type(iter,'short') <> 'GtkTreeIter' then return;end
+    insert_after_iter(treeview,model,iter);
+  endfunction
+  
+  function insert_after_iter(treeview,model,iter) 
     path=model.get_path[iter];
     L=get_nsp_list_path_from_tree_path(treeview,path)
+    L1=L;L1.remove_last[];
+    stype = type(treeview.user_data(L1),'short');
+    if stype == 'h' then 
+      str=get_key_name ();
+      if str=="" then return;end 
+    else
+      str="--";
+    end
     // model.insert_after[parent=iter or ignored, sibling =iter or
     // ignored, lis(....) to also set the value 
-    model.insert_after[[],iter,list("--",'m',"1x1","0")];
-    // we must insert the element 
-    tag=L.last[];
-    L.remove_last[];
-    if length(L)==0 then 
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data.add[0,tag+1];
-      else
-	// hash 
-	treeview.user_data.Poo=0;
-      end
+    model.insert_after[[],iter,list(str,'m',"1x1","0")];
+    if stype == 'h' then 
+      L($)=str
+      treeview.user_data(L)=0;
     else
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data(L).add[0,tag+1];
-      else
-	// hash 
-	treeview.user_data(L).Poo=0;
-      end
-    end     
+      L($)=L($)+1;
+      treeview.user_data(L)=0;
+    end 
     update_model([],list(treeview))
     //selection.select_path[path];
   endfunction
@@ -364,36 +361,30 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     while model.iter_next[iter] 
     end
     if type(iter,'short') <> 'GtkTreeIter' then return;end
-    path=model.get_path[iter];
-    L=get_nsp_list_path_from_tree_path(treeview,path)
-    // model.insert_after[parent=iter or ignored, sibling =iter or
-    // ignored, lis(....) to also set the value 
-    model.insert_after[[],iter,list("--",'m',"1x1","0")];
-    // we must insert the element 
-    tag=L.last[];
-    L.remove_last[];
-    if length(L)==0 then 
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data.add[0,tag+1];
-      else
-	// hash 
-	treeview.user_data.Poo=0;
-      end
-    else
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data(L).add[0,tag+1];
-      else
-	// hash 
-	treeview.user_data(L).Poo=0;
-      end
-    end     
-    update_model([],list(treeview))
-    //selection.select_path[path];
+    insert_after_iter(treeview,model,iter);
   endfunction
+  
+  function str=get_key_name ()
+    str="";
+    flags = ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),
+    window = gtkdialog_new(title= "Enter hash key",flags = flags,...
+			   buttons = ["gtk-ok","gtk-cancel"]);
+    ok_rep = 1; // buttons return code is their indice in buttons matrix
+    
+    box1 = window.vbox;
+    entry = gtkentry_new ();
+    entry.set_text["name"]
+    entry.select_region[ 0, 5];
+    box1.pack_start[ entry,expand=%t,fill=%t,padding=0]
+    window.show_all[];
+    response = window.run[];
+    if response == ok_rep then 
+      // GTK.RESPONSE_OK 
+      // print the entry ? 
+      str = entry.get_text[];
+    end
+    window.destroy[];
+  endfunction 
   
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
   // here we must build a list which permits to 

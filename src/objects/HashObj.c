@@ -827,7 +827,7 @@ static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, 
 {
   NspSMatrix *S;
   int i,j,count=0;
-  NspObject *O;
+  NspObject *O=NULLOBJ;
   lhs=Max(lhs,1);
   for ( j = j_init ; j <= rhs ; j++ )
     {
@@ -836,10 +836,17 @@ static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, 
 	  if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
 	  for ( i = 0 ; i < S->mn ; i++ ) 
 	    {
+	      /* 
 	      if (nsp_hash_find_and_copy(H,S->S[i],&O) == FAIL)   
 		{
 		  Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
 		  nsp_void_object_destroy(&O);
+		  return RET_BUG  ;
+		}
+	      */
+	      if (nsp_hash_find(H,S->S[i],&O) == FAIL)   
+		{
+		  Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
 		  return RET_BUG  ;
 		}
 	      else
@@ -861,7 +868,7 @@ static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, 
 	      Scierror("%s: key number %d not found in hash table \n",NspFname(stack),k);
 	      return RET_BUG;
 	    }
-	  if ((O=nsp_object_copy(O))== NULLOBJ) return RET_BUG;
+	  /* 	  if ((O=nsp_object_copy(O))== NULLOBJ) return RET_BUG; */
 	  NthObj(rhs+ ++count) = O ;
 	  NSP_OBJECT(O)->ret_pos = count;	  
 	  if (count == lhs) break;
@@ -888,11 +895,14 @@ static int int_ht_extract_l(Stack stack, int rhs, int opt, int lhs)
   char name[NAME_MAXL];
   int rep,n ;
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
-  /* last extraction : here O can be anything */ 
-  nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
-  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0)
+  if ( rep == 3 ) 
     {
-      return RET_BUG;
+      /* last extraction : here O can be anything */ 
+      nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
+      if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0)
+	{
+	  return RET_BUG;
+	}
     }
   nsp_void_object_destroy(&NthObj(1));
   NSP_OBJECT(NthObj(2))->ret_pos = 1;
