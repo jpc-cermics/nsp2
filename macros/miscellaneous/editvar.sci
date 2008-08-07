@@ -353,11 +353,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	treeview.user_data(L).Poo=0;
       end
     end     
-    pause
   endfunction
-  
-  
-  
   
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
   // here we must build a list which permits to 
@@ -471,19 +467,20 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     if ~M1.equal[M] then 
       tree_view.user_data(Il)=M1;
       xs = cellstostr({M1});
-      model.set[iter,3,value];
+      model.set[iter,1,xs];
     end
   endfunction 
   
   function selection_cb(selection,args)
     // this callback is activated when a row is selected 
-    model=args(1);
+    tree_view=args(1);
+    model =tree_view.get_model[];
     iter=selection.get_selected[];
     if type(iter,'short')== 'none' then return;end 
     fname= model.get_value[iter,0];
     //printf("row %s selected\n",fname);
   endfunction 
-
+  
   function cell_edited (cell,path_string,new_text,data)
     // we enter this function after cell edition for 
     // strings or numbers 
@@ -546,6 +543,15 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       end
   endfunction
 
+  function update_model(button,data)
+    tree_view = data(1);
+    // this function is to be called when 
+    // the model is not in adequation with tree_view.user_data. 
+    model = gtktreestore_new(list("var","type","mxn","value"),%f);
+    tree_model_append(model,tree_view.user_data,0);
+    tree_view.set_model[model=model];
+  endfunction
+    
   function tree_view=create_tree_view(h)
     model = gtktreestore_new(list("var","type","mxn","value"),%f);
     tree_model_append(model,h,0);
@@ -564,8 +570,8 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       end 
       tree_view.append_column[col];
     end
-    selection.connect["changed", selection_cb,list(model)]
-    tree_view.connect["row_activated",row_activated_cb,list(model)]
+    selection.connect["changed", selection_cb,list(tree_view)]
+    tree_view.connect["row_activated",row_activated_cb]
     tree_view.user_data=h;
     tree_view.expand_all[];
   endfunction
@@ -620,6 +626,10 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
         
   button = gtkbutton_new(label="Insert after selection");
   button.connect[ "clicked",insert_after_selected,list(treeview)] 
+  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+
+  button = gtkbutton_new(label="Update tree view");
+  button.connect[ "clicked", update_model,list(treeview)] 
   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
   
   if top.equal[[]] then 
