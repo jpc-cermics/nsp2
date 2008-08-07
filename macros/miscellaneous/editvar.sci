@@ -507,9 +507,10 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     if ~M1.equal[M] then 
       tree_view.user_data(Il)=M1;
       xs = cellstostr({M1});
-      model.set[iter,1,xs];
       octype = type(M,'short');
       ctype = type(M1,'short');
+      model.set[iter,3,xs];
+      model.set[iter,2,sprintf("%dx%d',size(M1,1),size(M1,2))];
       if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
 	//  we need to update the treeview 
 	update_model([],list(tree_view))
@@ -708,7 +709,13 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
       colid= col.get_data['id'];
       row= path.get_indices[];
       printf("we must edit (%d,%d)\n",row+1,colid);
-      val = edit_object(treeview.user_data{row+1,colid});      
+      val = edit_object(treeview.user_data{row+1,colid});
+      if ~val.equal[M] then 
+	treeview.user_data{row+1,colid}=val;
+	xs = cellstostr({val});
+	// need to update the string 
+	// model.set[iter,1,xs];
+      end
       y=%t;
     else 
       y=%f
