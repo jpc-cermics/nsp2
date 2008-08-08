@@ -1476,7 +1476,7 @@ static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *ar
   /* make a copy to be sure that some 
    * values are preserved through recursion
    */
-  Stack stack = stack; 
+  Stack stack = Marshal_stack; 
   int nargs = 0, i, n=0,rep =FAIL;
   stack_count++;
   nspg_block_threads();
