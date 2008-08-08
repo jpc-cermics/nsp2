@@ -470,7 +470,7 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
  * @M: an object 
  * @index: an #index_vector
  * 
- * default function for checking if object can be used as a index 
+ * default function for checking if object can be used as an index 
  * vector 
  *
  * Return value: %TRUE or %FALSE 
@@ -480,7 +480,7 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
 static int nsp_object_as_index_def(NspObject * M, index_vector *index)
 {
   index->error = index_wrong_object;
-  Sciprintf("Error : object of type %s cannot be used as index vector\n",M->type->s_type());
+  Sciprintf("Error: object of type %s cannot be used as index vector\n",M->type->s_type());
   return FAIL;
 }
 
