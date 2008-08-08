@@ -1,4 +1,7 @@
 // Tree View/Editable Cells
+// To be done: 
+//  1/ the parent in the dialogs should de set when recursively editing 
+//  2/ the buttons in list edition must be changed.
 
 function editvar(x,varargopt) 
   if ~exists(x,'callers') then return;end 
@@ -42,8 +45,9 @@ endfunction
 // matrices 
 //---------
 
-function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[]) 
+function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[],parent=[]) 
   
+  pause
   function on_treeview_button_press_event(treeview, event, args)
     //printf("Button pressed \n");
     //[p,col]=treeview.get_path_at_pos[event.x,event.y];
@@ -485,7 +489,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     Il = get_nsp_list_path_from_tree_path(tree_view,path);
     M=tree_view.user_data(Il);
     // here we need a generic edit 
-    M1=edit_object(M);
+    M1=edit_object(M,parent=tree_view);
     if ~M1.equal[M] then 
       tree_view.user_data(Il)=M1;
       xs = cellstostr({M1});
@@ -691,7 +695,7 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
       colid= col.get_data['id'];
       row= path.get_indices[];
       printf("we must edit (%d,%d)\n",row+1,colid);
-      val = edit_object(treeview.user_data{row+1,colid});
+      val = edit_object(treeview.user_data{row+1,colid},parent=treeview);
       if ~val.equal[M] then 
 	treeview.user_data{row+1,colid}=val;
 	xs = cellstostr({val});
