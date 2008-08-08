@@ -27,7 +27,7 @@
 #include "nsp/matint.h" 
 #include "nsp/interf.h"
 #include "nsp/gsort-p.h"
-
+#include "../interp/Eval.h"
 
 /* 
  * Interface NspMatint 
