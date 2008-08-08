@@ -237,11 +237,38 @@ static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, 
   return 0;
 }
 
+static NspCells *nsp_matint_to_cells(NspSMatrix *A,int  direction);
+
+
+/* 
+ * method to_cells
+ */
+static int int_matint_to_cells(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NspCells *C;
+  int dim=0;
+  CheckRhs (0,1);
+  CheckLhs (0,1); 
+  if (rhs == 1)
+    {
+      if ( GetDimArg(stack, 1, &dim) == FAIL )
+	return RET_BUG;
+    }
+  if ( (C = nsp_matint_to_cells((NspSMatrix *)self,dim)) == NULLCELLS) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(C));
+  return 1;
+}
+
+
+
+
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
   {"concatr",(nsp_method *) int_matint_meth_concatr},
   {"concatd",(nsp_method *) int_matint_meth_concatd},
   {"perm_elem",(nsp_method *) int_matint_perm_elem},
+  {"to_cells",(nsp_method *) int_matint_to_cells},
   { NULL, NULL}
 };
 
@@ -3580,3 +3607,79 @@ NspObject * nsp_matint_canonic(NspObject *obj)
 }
 
 
+/**
+ * nsp_matint_to_cells:
+ * @A: a #NspObject which implements MatInt 
+ * @dim: an integer 
+ * 
+ * create a new #NspCells C 
+ * for dim -1 or 0 : C is such that C{i,j}==A(i,j).
+ * for dim 1 : C is a row cell C{i}= A(i,:);
+ * for dim 2 : C is a column cell C{j}= A(:,j);
+ * 
+ * Returns: a new #NspCells or NULLCELLS
+ **/
+
+static NspCells *nsp_matint_to_cells(NspSMatrix *A,int  dim)
+{
+  int i;
+  NspObject *Res= NULLOBJ;
+  NspCells *Loc=NULLCELLS; 
+  NspMatrix *Elts=NULLMAT; 
+  switch (dim) 
+    {
+    case 0:
+    case -1: 
+      if ((Loc = nsp_cells_create(NVOID, A->m,A->n)) == NULLCELLS) 
+	return NULLCELLS;
+      if ((Elts = nsp_matrix_create(NVOID,'r',1,1))== NULLMAT )
+	goto fail;
+      for ( i = 0 ; i < A->mn; i++) 
+	{
+	  Elts->R[0]=i+1;
+	  if ((Res= nsp_matint_extract_elements1((NspObject *) A,(NspObject *)Elts))== NULLOBJ)
+	    goto fail;
+	  Loc->objs[i]=Res;
+	}
+      nsp_matrix_destroy(Elts);
+      return Loc;
+    case 1:
+      /* row case */
+      if ((Loc = nsp_cells_create(NVOID, A->m,1)) == NULLCELLS) 
+	return NULLCELLS;
+      if ((Elts = nsp_matrix_create(NVOID,'r',1,1))== NULLMAT )
+	goto fail;
+      for ( i = 0 ; i < A->m; i++) 
+	{
+	  Elts->R[0]=i+1;
+	  if ((Res = nsp_matint_extract_rows1((NspObject *) A,(NspObject *)Elts))== NULLOBJ)
+	    goto fail;
+	  Loc->objs[i]=Res;
+	}
+      nsp_matrix_destroy(Elts);
+      return Loc;
+    case 2:
+      /* column */
+      if ((Loc = nsp_cells_create(NVOID, 1, A->n)) == NULLCELLS) 
+	return NULLCELLS;
+      if ((Elts = nsp_matrix_create(NVOID,'r',1,1))== NULLMAT )
+	goto fail;
+      for ( i = 0 ; i < A->n ; i++) 
+	{
+	  Elts->R[0]=i+1;
+	  if ((Res = nsp_matint_extract_columns1((NspObject *) A,(NspObject *)Elts))== NULLOBJ)
+	    goto fail;
+	  Loc->objs[i]=Res;
+	}
+      nsp_matrix_destroy(Elts);
+      return Loc;
+      
+    default:
+      Scierror("Error: dim specification not valid\n");
+      goto fail;
+    }
+ fail:
+  nsp_matrix_destroy(Elts);
+  nsp_cells_destroy(Loc);
+  return NULLCELLS;
+}
