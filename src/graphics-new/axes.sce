@@ -1,4 +1,4 @@
-if %f then 
+if %t then 
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";

@@ -1,7 +1,8 @@
 // Tree View/Editable Cells
 // To be done: 
-//  1/ the parent in the dialogs should de set when recursively editing 
+//  1/ the parent in the dialogs should be set when recursively editing 
 //  2/ the buttons in list edition must be changed.
+//  3/ right-click to edit instead of double click. 
 
 function editvar(x,varargopt) 
   if ~exists(x,'callers') then return;end 
@@ -47,7 +48,6 @@ endfunction
 
 function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],headers=%t,top=[],parent=[]) 
   
-  pause
   function on_treeview_button_press_event(treeview, event, args)
     //printf("Button pressed \n");
     //[p,col]=treeview.get_path_at_pos[event.x,event.y];
@@ -188,7 +188,12 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
       treeview.append_column[tc];
     end 
   endfunction
-  
+
+  if size(x,'*') == 0 then  
+    x_message("Matrix is of null size.")
+    return;
+  end 
+     
   hbox = gtkhbox_new(homogeneous=%f,spacing=8);
   
   if top.equal[[]] then 
