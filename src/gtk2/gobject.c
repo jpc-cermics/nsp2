@@ -168,23 +168,15 @@ static char *gobject_type_short_string(NspObject *v)
   return(gobject_short_type_name);
 }
 
-static int gobject_full_comp(NspGObject * A,NspGObject * B,char *op,int *err)
-{
-  Scierror("gobject_full_comp: to be implemented \n");
-  return FALSE;
-}
-
 /*
  * A == B 
  */
 
 static int gobject_eq(NspGObject *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_gobject_id) == FALSE) return FALSE ;
-  rep = gobject_full_comp(A,(NspGObject *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->obj == ((NspGObject *)B)->obj ) return TRUE; 
+  return FALSE;
 }
 
 /*
@@ -193,11 +185,9 @@ static int gobject_eq(NspGObject *A, NspObject *B)
 
 static int gobject_neq(NspGObject *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_gobject_id) == FALSE) return TRUE;
-  rep = gobject_full_comp(A,(NspGObject *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  if ( A->obj == ((NspGObject *)B)->obj ) return FALSE;
+  return TRUE;
 }
 
 /* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
@@ -2103,7 +2093,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	 g_value_get_boxed(value),FALSE,FALSE);
 	 }
       */
-    
+      
     case G_TYPE_PARAM:
       /* 
       return nspg_param_spec_new(g_value_get_param(value));

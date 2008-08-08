@@ -165,23 +165,15 @@ static char *gboxed_type_short_string(NspObject *v)
   return(gboxed_short_type_name);
 }
 
-static int gboxed_full_comp(NspGBoxed * A,NspGBoxed * B,char *op,int *err)
-{
-  Scierror("gboxed_full_comp: to be implemented \n");
-  return FALSE;
-}
-
 /*
  * A == B 
  */
 
 static int gboxed_eq(NspGBoxed *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_gboxed_id) == FALSE) return FALSE ;
-  rep = gboxed_full_comp(A,(NspGBoxed *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->boxed == ((NspGBoxed *) B)->boxed ) return TRUE;
+  return FALSE;
 }
 
 /*
@@ -190,11 +182,9 @@ static int gboxed_eq(NspGBoxed *A, NspObject *B)
 
 static int gboxed_neq(NspGBoxed *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_gboxed_id) == FALSE) return TRUE;
-  rep = gboxed_full_comp(A,(NspGBoxed *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  if ( A->boxed == ((NspGBoxed *) B)->boxed ) return FALSE;
+  return TRUE;
 }
 
 /*

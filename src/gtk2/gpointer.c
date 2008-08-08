@@ -165,23 +165,15 @@ static char *gpointer_type_short_string(NspObject *v)
   return(gpointer_short_type_name);
 }
 
-static int gpointer_full_comp(NspGPointer * A,NspGPointer * B,char *op,int *err)
-{
-  Scierror("gpointer_full_comp: to be implemented \n");
-  return FALSE;
-}
-
 /*
  * A == B 
  */
 
 static int gpointer_eq(NspGPointer *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_gpointer_id) == FALSE) return FALSE ;
-  rep = gpointer_full_comp(A,(NspGPointer *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->pointer == ((NspGPointer *) B)->pointer ) return TRUE;
+  return FALSE;
 }
 
 /*
@@ -190,11 +182,9 @@ static int gpointer_eq(NspGPointer *A, NspObject *B)
 
 static int gpointer_neq(NspGPointer *A, NspObject *B)
 {
-  int err=0,rep;
   if ( check_cast(B,nsp_type_gpointer_id) == FALSE) return TRUE;
-  rep = gpointer_full_comp(A,(NspGPointer *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  if ( A->pointer == ((NspGPointer *) B)->pointer ) return FALSE;
+  return TRUE;
 }
 
 /*
