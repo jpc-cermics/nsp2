@@ -872,6 +872,65 @@ int int_cells_extractcolforloop(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * Returns the kthe diag of a NspSMatrix 
+ */
+
+static int int_cells_diage(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1;
+  NspCells *A,*Res;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+  if ((A = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
+  Res =nsp_cells_extract_diag( A,k1);
+  if ( Res == NULLSMAT)  return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+/*
+ * Set the kth Diag of A to Diag 
+ *  A is enlarged & comlexified if necessary 
+ *  int nsp_bmatrix_create_diag(A,Diag,k)
+ * WARNING: A is not copied we want this routine to change A
+ */
+
+static int int_cells_diagset(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1;
+  NspCells *A,*Diag;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((A = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Diag = GetCells(stack,2)) == NULLSMAT) return RET_BUG;
+  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
+  if (nsp_cells_set_diag( A, Diag,k1) != OK) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+}
+
+/*
+ *  Creates a NspCells with kth diag set to Diag 
+ */
+
+static int int_cells_diagcre(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1=0;
+  NspCells *Diag,*Res;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((Diag = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+    }
+  if ( (Res =nsp_cells_create_diag(Diag,k1)) == NULLSMAT ) return RET_BUG ;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+/*
  *nsp_cells_resize: Changes NspCells dimensions
  * Warning : this routine only enlarges the array 
  * of the NspCells storage so as to contain mxn 
@@ -1283,6 +1342,9 @@ static OpTab Cells_func[]={
   {"setrowscols_ce", int_matint_setrowscols}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {"unique_ce" ,  int_cells_unique },
   {"map_ce", int_cells_map},
+  {"diagcre_ce",int_cells_diagcre},
+  {"diage_ce",int_cells_diage},
+  {"diagset_ce",int_cells_diagset},
   {(char *) 0, NULL}
 };
 

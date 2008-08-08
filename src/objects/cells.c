@@ -724,6 +724,126 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
 }
 
 /**
+ * nsp_cells_extract_diag:
+ * @A: a #NspCells
+ * @k: an integer 
+ *
+ * Extract the @k-th diagonal of matrix @A and returns 
+ * its value as a column vector. 
+ * 
+ * returns a #NspCells or %NULLCELLS 
+ */
+
+NspCells  *nsp_cells_extract_diag(NspCells *A, int k)
+{
+  NspCells *Loc;
+  int j,i;
+  int imin,imax;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  if ( imin > imax ) 
+    {
+      Loc =nsp_cells_create(NVOID,0,0);
+      return(Loc);
+    }
+  if (( Loc =nsp_cells_create(NVOID,imax-imin,1)) == NULLCELLS)
+    return(NULLCELLS);
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      if ( A->objs[i+(i+k)*A->m] != NULLOBJ) 
+	{
+	  if ((Loc->objs[j++] =nsp_object_copy_with_name(A->objs[i+(i+k)*A->m])) == NULLOBJ) return NULLCELLS;
+	}
+      else 
+	{
+	  Loc->objs[j++] = NULLOBJ;
+	}
+    }
+  return(Loc);
+}
+
+/**
+ * nsp_cells_set_diag:
+ * @A: a #NspCells
+ * @Diag: a #NspCells
+ * @k: an integer 
+ *
+ * sets the @k-th diagonal of matrix @A with values from @Diag. 
+ * 
+ * returns %OK or %FAIL.
+ */
+
+int nsp_cells_set_diag(NspCells *A, NspCells *Diag, int k)
+{
+  int i,j;
+  int imin,imax,isize;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  isize = imax-imin ;
+  if ( isize > Diag->mn ) 
+    {
+      Scierror("Error:\tGiven vector is too small\n");
+      return(FAIL);
+    }
+  if ( isize < Diag->mn ) 
+    {
+      imax = Diag->mn +imin;
+      if (nsp_cells_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
+    }
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      if (Diag->objs[j] != NULLOBJ) 
+	{
+	  if ((A->objs[i+(i+k)*A->m] =nsp_object_copy_with_name(Diag->objs[j++])) == NULLOBJ)
+	    return FAIL;
+	}
+      else 
+	{
+	  A->objs[i+(i+k)*A->m] = NULLOBJ;
+	}
+    }
+  return OK;
+}
+
+/**
+ * nsp_cells_create_diag:
+ * @Diag: a #NspCells
+ * @k: an integer 
+ *
+ * Creates a square marix with its @k-th diagonal filled with @Diag.
+ * 
+ * returns a #NspCells or %NULLCELLS 
+ */
+
+NspCells  *nsp_cells_create_diag(NspCells *Diag, int k)
+{
+  int i,j;
+  int imin,imax;
+  NspCells *Loc;
+  imin = Max(0,-k);
+  imax = Diag->mn +imin;
+  if (( Loc =nsp_cells_create(NVOID,imax,imax+k)) == NULLCELLS) 
+    return(NULLCELLS);
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      if (Diag->objs[j] != NULLOBJ) 
+	{
+	  if ((Loc->objs[i+(i+k)*Loc->m] =nsp_object_copy_with_name(Diag->objs[j++])) == NULLOBJ)
+	    return NULLCELLS;
+	}
+      else 
+	{
+	  Loc->objs[i+(i+k)*Loc->m]  = NULLOBJ;
+	}
+    }
+  return(Loc);
+} 
+
+
+/**
  * nsp_cells_extract_rows:
  * @A:  a #NspCells object 
  * @Rows:  a #NspMatrix object 

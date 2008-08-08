@@ -86,13 +86,15 @@ extern NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
 extern Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind);
 extern NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)  ;
 
-
 #define NULLCELLS (NspCells *) NULL
 
 extern NspMatrix *nsp_cells_strcmp(NspCells *A, NspCells *B); 
 extern NspBMatrix *CellsCompOp (NspCells *A, NspCells *B, char *op); 
 extern int CellsFullComp (NspCells *A, NspCells *B, char *op, int *err); 
 extern NspCells *nsp_cells_transpose(const NspCells *A); 
+extern NspCells  *nsp_cells_extract_diag(NspCells *A, int k);
+extern int nsp_cells_set_diag(NspCells *A, NspCells *Diag, int k);
+extern NspCells  *nsp_cells_create_diag(NspCells *Diag, int k);
 
 #endif 
 
