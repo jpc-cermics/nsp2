@@ -792,6 +792,7 @@ static int int_meth_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static NspMethods hash_methods[] = {
   { "delete", int_htdelete},
+  { "remove", int_htdelete},
   { "enter", int_htenter},
   { "iskey", int_meth_iskey},
   { "find", int_meth_htfind},

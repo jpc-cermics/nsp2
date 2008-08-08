@@ -2,7 +2,8 @@
 
 \mansection{hash tables}
 \begin{mandesc}
-  \short{hash}{hash tables}
+  \short{Hash}{Hash table data type} \\
+  \short{hash}{create hash tables}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -43,6 +44,7 @@ objects.
   \begin{varlist}
   \vname{.delete[S1,...,Sn]}: delete the entries whose keys are present in the string matrices 
   \verb+S1,...,Sn+.
+  \vname{.remove[S1,...,Sn]}: same as delete for compatibility with list.
   \vname{.enter[var1,...,varn,name1=val1,...]}: enter new objects in the hash table with keys 
   given by their names or by explicit naming (\verb+name=val+). Note that if some keys 
   already preexist in the hash table, their value are replaced by new ones. 
@@ -57,7 +59,7 @@ objects.
 
 \itemdesc{extraction, insertion, deletion}
 \begin{itemize}
-\item If ^verb+key+ is a string \verb+H(key)+ returns the element of \verb+H+ given by \verb+key+. 
+\item If \verb+key+ is a string \verb+H(key)+ returns the element of \verb+H+ given by \verb+key+. 
   This is therefore equivalent to \verb+H.find[key]+. It is also possible to use 
   the syntax \verb+H.name+ (Note that in that case name given the key name not an expression 
   which evaluates to a string) 

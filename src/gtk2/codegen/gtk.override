@@ -2329,16 +2329,20 @@ static int
 _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkTreeIter iter;
-  
+  NspObject *ret;  
   if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(self->obj), &iter))
     {
-      NspObject *ret;
       if ((ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE,nsp_type_gtktreeiter)) == NULL)
 	return RET_BUG;
       MoveObj(stack,1,ret);
-      return 1;
     }
-  return RET_BUG;
+  else
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+      MoveObj(stack,1,ret);
+    }
+  return 1;
 }
 %%
 override gtk_tree_model_iter_next kwargs

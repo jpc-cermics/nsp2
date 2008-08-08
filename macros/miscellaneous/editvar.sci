@@ -300,25 +300,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     // we must remove the element described by L 
     tag=L.last[];
     L.remove_last[];
-    if length(L)==0 then 
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data.remove[tag];
-      else
-	// hash 
-	treeview.user_data.delete[tag];
-      end
-    else
-      stype = type(treeview.user_data,'short');
-      if stype == 'l' then 
-	// list 
-	treeview.user_data(L).remove[tag];
-      else
-	// hash 
-	treeview.user_data(L).delete[tag];
-      end
-    end    
+    treeview.user_data(L).remove[tag];
   endfunction
   
   function insert_after_selected (button, data)
@@ -326,10 +308,11 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     selection = treeview.get_selection[];
     [iter,model] = selection.get_selected[]; 
     if type(iter,'short') <> 'GtkTreeIter' then return;end
-    insert_after_iter(treeview,model,iter);
+    insert_at_or_after_iter(treeview,model,iter);
   endfunction
   
-  function insert_after_iter(treeview,model,iter) 
+  
+  function insert_at_or_after_iter(treeview,model,iter,flag=%t) 
     path=model.get_path[iter];
     L=get_nsp_list_path_from_tree_path(treeview,path)
     L1=L;L1.remove_last[];
@@ -347,8 +330,12 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       L($)=str
       treeview.user_data(L)=0;
     else
-      L($)=L($)+1;
-      treeview.user_data(L)=0;
+      if flag then 
+	tag = L($)+1;
+      else
+	tag = L($);
+	end
+      treeview.user_data(L1).add[0,tag];
     end 
     update_model([],list(treeview))
     //selection.select_path[path];
@@ -358,10 +345,14 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     treeview=data(1);
     model = treeview.get_model[];
     iter = model.get_iter_first[];
-    while model.iter_next[iter] 
+    if type(iter,'short') <> 'GtkTreeIter' then 
+      // model is empty 
+      iter=model.append[]
+      insert_at_or_after_iter(treeview,model,iter,flag=%f);
+    else 
+      while model.iter_next[iter] ; end
+      insert_at_or_after_iter(treeview,model,iter);
     end
-    if type(iter,'short') <> 'GtkTreeIter' then return;end
-    insert_after_iter(treeview,model,iter);
   endfunction
   
   function str=get_key_name ()
