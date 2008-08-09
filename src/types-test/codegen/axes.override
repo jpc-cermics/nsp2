@@ -13,6 +13,8 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 static void nsp_axes_link_figure(NspGraphic *G, void *F);
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_axes_children(NspGraphic *Obj);
+
 /* should be inserted in figure.h */
 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
@@ -42,7 +44,7 @@ override_type Axes
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
-
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
@@ -148,6 +150,16 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
   return OK;
+}
+
+%%
+override nsp_extractelts_axes kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs) /* extractelts_axes */
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
 %%
@@ -477,4 +489,9 @@ static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
   nsp_graphic_unlink_figure(G,F);
   /* link children */
   nsp_list_unlink_figure(((NspAxes *) G)->obj->children,F);
+}
+
+static NspList *nsp_axes_children(NspGraphic *Obj)
+{
+  return  ((NspFigure *) Obj)->obj->children;
 }

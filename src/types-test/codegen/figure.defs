@@ -36,7 +36,12 @@
   (return-type "Figure*")
 )
 
+;; just for the name, the code is overriten 
 
+(define-function extractelts_figure
+  (c-name "nsp_extractelts_figure")
+  (return-type "none")
+)
 
 ;; Il sera bien de récuperer les widgets associés si besoin etc....
 

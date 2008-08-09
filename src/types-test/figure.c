@@ -20,8 +20,9 @@ static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
+static NspList *nsp_figure_children(NspGraphic *Obj);
 
-#line 25 "figure.c"
+#line 26 "figure.c"
 
 /* ----------- Figure ----------- */
 
@@ -92,12 +93,13 @@ NspTypeFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 23 "codegen/figure.override"
+#line 24 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
-#line 101 "figure.c"
+#line 103 "figure.c"
   /* 
    * Figure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -287,11 +289,11 @@ void nsp_figure_destroy(NspFigure *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
 
-#line 33 "codegen/figure.override"
+#line 35 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 295 "figure.c"
+#line 297 "figure.c"
   nsp_figure_destroy_partial(H);
   FREE(H);
 }
@@ -808,7 +810,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 52 "codegen/figure.override"
+#line 54 "codegen/figure.override"
 
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
@@ -852,8 +854,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-
-#line 857 "figure.c"
+#line 858 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -888,6 +889,18 @@ int _wrap_nsp_get_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_
   return 1;
 }
 
+#line 99 "codegen/figure.override"
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs) /* extractelts_figure */
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+#line 902 "figure.c"
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -895,6 +908,7 @@ int _wrap_nsp_get_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_
 
 static OpTab Figure_func[]={
   {"get_current_figure", _wrap_nsp_get_current_figure},
+  {"extractelts_figure", _wrap_nsp_extractelts_figure},
   { "figure_create", int_figure_create},
   { NULL, NULL}
 };
@@ -919,17 +933,17 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/figure.override"
+#line 19 "codegen/figure.override"
 
 Init portion 
 
 
-#line 928 "figure.c"
+#line 942 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 98 "codegen/figure.override"
+#line 109 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1172,4 +1186,9 @@ static NspFigure *nsp_get_current_figure(void)
   return (NspFigure *) F;
 }
 
-#line 1176 "figure.c"
+static NspList *nsp_figure_children(NspGraphic *Obj)
+{
+  return  ((NspFigure *) Obj)->obj->children;
+}
+
+#line 1195 "figure.c"

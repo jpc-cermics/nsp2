@@ -11,10 +11,11 @@
 #line 4 "codegen/graphic.override"
 
 #include <nsp/figure.h>
+#include "../interp/Eval.h"
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
-#line 18 "graphic.c"
+#line 19 "graphic.c"
 
 /* ----------- Graphic ----------- */
 
@@ -85,7 +86,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
       
   type->init = (init_func *) init_graphic;
 
-#line 48 "codegen/graphic.override"
+#line 51 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -99,8 +100,8 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->full_copy = NULL; 
   type->link_figure = nsp_graphic_link_figure;
   type->unlink_figure = nsp_graphic_unlink_figure;
-
-#line 104 "graphic.c"
+  type->children = NULL;
+#line 105 "graphic.c"
   /* 
    * Graphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -260,7 +261,7 @@ void nsp_graphic_destroy_partial(NspGraphic *H)
 void nsp_graphic_destroy(NspGraphic *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 264 "graphic.c"
+#line 265 "graphic.c"
   nsp_graphic_destroy_partial(H);
   FREE(H);
 }
@@ -481,7 +482,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 64 "codegen/graphic.override"
+#line 67 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -495,10 +496,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 499 "graphic.c"
+#line 500 "graphic.c"
 
 
-#line 79 "codegen/graphic.override"
+#line 82 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -510,10 +511,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 514 "graphic.c"
+#line 515 "graphic.c"
 
 
-#line 92 "codegen/graphic.override"
+#line 95 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -524,10 +525,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 528 "graphic.c"
+#line 529 "graphic.c"
 
 
-#line 104 "codegen/graphic.override"
+#line 107 "codegen/graphic.override"
 static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspGraphic *ret;
@@ -537,7 +538,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 541 "graphic.c"
+#line 542 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -629,17 +630,17 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
 Graphic_register_classes(NspObject *d)
 {
 
-#line 11 "codegen/graphic.override"
+#line 12 "codegen/graphic.override"
 
 GLURP 
 
 
-#line 638 "graphic.c"
+#line 639 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 115 "codegen/graphic.override"
+#line 118 "codegen/graphic.override"
 
 /* verbatim at the end */
 
@@ -667,7 +668,124 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
     }
 }
 
+/* interface shared by all graphic objects */
 
+/*
+ * Extract requested child of a graphicobject 
+ * the returned object is not copied.
+ */
 
+int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Elts;
+  int i, nret, L_name;
+  NspObject *O;
+  NspList *L;
+  NspGraphic *Gr;
+  
+  CheckRhs (2,2);
+  if ((Gr=GetGraphic(stack,1)) == NULLGRAPHIC) return RET_BUG;
+  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( Gr->type->children == NULL) return RET_BUG;
+  if ((L = Gr->type->children(Gr)) == NULLLIST) return RET_BUG;
+  
+  nret = Elts->mn;
+  L_name = Ocheckname(L,NVOID);
 
-#line 674 "graphic.c"
+  for ( i = 0 ; i < nret ; i++ )
+    {
+      if ( (O=nsp_list_get_element(L,((int) Elts->R[i]))) ==  NULLOBJ )
+	return RET_BUG;  /* error message done in nsp_list_get_element */
+      /* If NspList has no name or list element has no name we must copy */
+      if ( L_name || Ocheckname(O,NVOID) ) 
+	if ( (O=nsp_object_copy(O)) == NULLOBJ )  return RET_BUG;
+      NthObj(rhs+i+1) = O;
+    }
+
+  nsp_void_object_destroy(&NthObj(1));
+  nsp_void_object_destroy(&NthObj(2));
+  for ( i = 0 ; i < nret ; i++) 
+    {
+      NthObj(i+1)= NthObj(i+rhs+1);
+      NSP_OBJECT(NthObj(i+1))->ret_pos = i+1;
+      NthObj(i+rhs+1)= NULLOBJ;
+    }
+  return nret;
+}
+
+/* extract a field  grobject('field') <=> grobject.field
+ * or grobject.get['field']
+ *
+ */
+
+int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Gr;
+  NspObject *Ret;
+  NspSMatrix *S;
+  int i,j,count=0;
+  CheckRhs(2,1000);
+  CheckLhs(1,1000);
+  lhs=Max(lhs,1);
+  if ((Gr= (NspObject *) GetGraphic(stack,1)) == NULLOBJ) return RET_BUG;
+  for ( j = 2 ; j <= rhs ; j++ )
+    {
+      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
+      for ( i = 0 ; i < S->mn ; i++ ) 
+	{
+	  Ret = nsp_get_attribute_util(Gr,Gr->basetype,S->S[i]);
+	  if ( Ret == NULL) return RET_BUG;
+	  NthObj(rhs+ ++count) = Ret ;
+	  NSP_OBJECT(Ret)->ret_pos = count;
+	  if (count == lhs) break;
+	}
+      if (count == lhs) break;
+    }
+  return count;
+}
+
+/* extraction part when argument is a list  */ 
+
+int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
+{
+  char name[NAME_MAXL];
+  int rep,n ;
+  if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
+  if ( rep == 3 ) 
+    {
+      /* last extraction : here O can be anything */ 
+      nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
+      if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0) 
+	{
+	  return RET_BUG;
+	}
+    }
+  nsp_void_object_destroy(&NthObj(1));
+  NSP_OBJECT(NthObj(2))->ret_pos = 1;
+  return 1;
+}
+
+int int_nspgraphic_extract(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(2,2);
+  if (IsMatObj(stack,2)) 
+    {
+      return int_nspgraphic_extract_m(stack,rhs,opt,lhs);
+    }
+  else if (IsSMatObj(stack,2)) 
+    {
+      return int_nspgraphic_extract_s(stack,rhs,opt,lhs);
+    }
+  else if ( IsListObj(stack,2) ) 
+    {
+      return int_nspgraphic_extract_l(stack,rhs,opt,lhs);
+    }
+  else 
+    {
+      Scierror("Error: Wrong type for argument in list extraction int or list required\n");
+      return RET_BUG;
+    }
+  return 1;
+}
+
+#line 792 "graphic.c"
