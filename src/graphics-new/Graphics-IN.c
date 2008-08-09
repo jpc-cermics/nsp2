@@ -2367,7 +2367,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   
   if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&motion,&release,&key,&win,&winall) == FAIL) return RET_BUG;
 
-  if ( opts != 0 && winall != TRUE &&  opts[4].obj != NULLOBJ) 
+  if ( winall != TRUE &&  opts[4].obj != NULLOBJ) 
     {
       /* win=window_id was given */
       win = Max(win,0);
@@ -5149,14 +5149,6 @@ extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_intg(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_int2d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 
-extern function  int_polyline_create;
-extern function  int_axes_create;
-extern function  int_figure_create;
-extern function  int_curve_create;
-extern function  int_groot_create;
-extern function  int_gmatrix_create;
-extern function   _wrap_nsp_get_current_figure;
-
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
   {"intg",int_intg}, /* FIXME: en construction */
@@ -5249,13 +5241,6 @@ static OpTab Graphics_func[]={
   {"scicos_draw3D",int_scicos_draw3D},
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
-  {"polyline_create", int_polyline_create},
-  {"axes_create", int_axes_create},
-  {"figure_create", int_figure_create},
-  {"curve_create", int_curve_create},
-  {"groot_create",int_groot_create},
-  {"gmatrix_create",int_gmatrix_create},
-  {"get_current_figure", _wrap_nsp_get_current_figure},
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop",int_gtk_loop},
 #endif 
