@@ -1,4 +1,4 @@
-if %t then 
+if %f then 
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";
@@ -43,7 +43,7 @@ if %t then
 end
 
 
-function myplot(x,y,varargopt)
+function F=myplot(x,y,varargopt)
   mode = "Gtk";
   ok=execstr('F=get_current_figure()',errcatch=%t);
   if ~ok then 
@@ -56,7 +56,7 @@ function myplot(x,y,varargopt)
   else
     A = F.children(1);
   end
-  cu = curve_create(Pts=[x,y]); 
+  cu = curve_create(Pts=[x(:),y(:)]); 
   A.children($+1)= cu;
   F.connect[];
 endfunction
