@@ -36,7 +36,6 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
   // 
     model = tree_view.get_model[];
     etype=type(tree_view.user_data,'short');
-    grt= is(tree_view.user_data,%types.Graphic);
     // get a path with 0-based indices 
     I=path.get_indices[];
     // walk along the path and build 
@@ -46,12 +45,12 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
       np = gtktreepath_new(I(1:p));
       iter1 = model.get_iter[np];
       name=model.get_value[iter1,0];
-      if etype == 'h' || grt  then 
-	// we search in a hash table 
-	Il($+1)=name;
-      else 
+      if etype == 'l' then 
 	// we search in a list 
 	Il($+1)=I(p)+1;
+      else 
+      	// we search in a hash table or gaphic object 
+	Il($+1)=name;
       end
       // update type.
       etype=model.get_value[iter1,1];
@@ -90,11 +89,13 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
       iter1=model.append[list(name,t,osize,value)];
     end
     // recursive call we use the current iter1 to enter the given hashtable 
-//     if t == 'h' || t == 'l' then 
-//       for x=objname 
-// 	tree_model_append(model,x,iter1);
-//       end
-//     end
+    if t == 'h' || t == 'l' then 
+      for j=1:length(objname);
+	name = sprintf("(%d)",j);
+	iter2=model.append[iter1,list(name,type(x,'short'),"","*")];
+	tree_model_append(model,objname(j),iter2);
+      end
+    end
   end
   endfunction
   
