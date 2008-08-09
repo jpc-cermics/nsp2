@@ -882,9 +882,9 @@ static int int_cells_diage(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
-  if ((A = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   Res =nsp_cells_extract_diag( A,k1);
-  if ( Res == NULLSMAT)  return RET_BUG;
+  if ( Res == NULLCELLS)  return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -902,8 +902,8 @@ static int int_cells_diagset(Stack stack, int rhs, int opt, int lhs)
   NspCells *A,*Diag;
   CheckRhs(3,3);
   CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Diag = GetCells(stack,2)) == NULLSMAT) return RET_BUG;
+  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
+  if ((Diag = GetCells(stack,2)) == NULLCELLS) return RET_BUG;
   if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
   if (nsp_cells_set_diag( A, Diag,k1) != OK) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
@@ -920,12 +920,12 @@ static int int_cells_diagcre(Stack stack, int rhs, int opt, int lhs)
   NspCells *Diag,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
-  if ((Diag = GetCells(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Diag = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ( rhs == 2 ) 
     {
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
-  if ( (Res =nsp_cells_create_diag(Diag,k1)) == NULLSMAT ) return RET_BUG ;
+  if ( (Res =nsp_cells_create_diag(Diag,k1)) == NULLCELLS ) return RET_BUG ;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
