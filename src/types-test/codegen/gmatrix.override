@@ -42,6 +42,27 @@ modulename atk
 ignore-glob
   *_get_type
 
+
+%%
+override nsp_extractelts_gmatrix kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_gmatrix kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
 %%
 last
 

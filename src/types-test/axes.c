@@ -828,7 +828,8 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 832 "axes.c"
+
+#line 833 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -863,19 +864,32 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 867 "axes.c"
+#line 868 "axes.c"
 
 
-#line 157 "codegen/axes.override"
+#line 158 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs) /* extractelts_axes */
+int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs) 
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 879 "axes.c"
+#line 880 "axes.c"
+
+
+#line 168 "codegen/axes.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+#line 893 "axes.c"
 
 
 /*----------------------------------------------------
@@ -886,6 +900,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs) /* extrac
 static OpTab Axes_func[]={
   {"axes_attach", _wrap_axes_attach},
   {"extractelts_axes", _wrap_nsp_extractelts_axes},
+  {"setrowscols_axes", _wrap_nsp_setrowscols_axes},
   { "axes_create", int_axes_create},
   { NULL, NULL}
 };
@@ -915,12 +930,12 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 919 "axes.c"
+#line 934 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 167 "codegen/axes.override"
+#line 179 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1253,4 +1268,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1257 "axes.c"
+#line 1272 "axes.c"

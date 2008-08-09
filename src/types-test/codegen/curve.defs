@@ -12,4 +12,15 @@
   )
 )
 
+;; just for the name, the code is overriten 
+
+(define-function extractelts_curve
+  (c-name "nsp_extractelts_curve")
+  (return-type "none")
+)
+(define-function setrowscols_curve
+  (c-name "nsp_setrowscols_curve")
+  (return-type "none")
+)
+
 

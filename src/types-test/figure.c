@@ -893,12 +893,25 @@ int _wrap_nsp_get_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs) /* extractelts_figure */
+int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs) 
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
 #line 902 "figure.c"
+
+
+#line 109 "codegen/figure.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+#line 915 "figure.c"
 
 
 /*----------------------------------------------------
@@ -909,6 +922,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs) /* extr
 static OpTab Figure_func[]={
   {"get_current_figure", _wrap_nsp_get_current_figure},
   {"extractelts_figure", _wrap_nsp_extractelts_figure},
+  {"setrowscols_figure", _wrap_nsp_setrowscols_figure},
   { "figure_create", int_figure_create},
   { NULL, NULL}
 };
@@ -938,12 +952,12 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 942 "figure.c"
+#line 956 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 109 "codegen/figure.override"
+#line 120 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1191,4 +1205,4 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1195 "figure.c"
+#line 1209 "figure.c"

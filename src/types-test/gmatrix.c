@@ -745,12 +745,38 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
+#line 48 "codegen/gmatrix.override"
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+#line 758 "gmatrix.c"
+
+
+#line 58 "codegen/gmatrix.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+#line 770 "gmatrix.c"
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
 static OpTab GMatrix_func[]={
+  {"extractelts_gmatrix", _wrap_nsp_extractelts_gmatrix},
+  {"setrowscols_gmatrix", _wrap_nsp_setrowscols_gmatrix},
   { "gmatrix_create", int_gmatrix_create},
   { NULL, NULL}
 };
@@ -780,12 +806,12 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 784 "gmatrix.c"
+#line 810 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 47 "codegen/gmatrix.override"
+#line 68 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -873,4 +899,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 877 "gmatrix.c"
+#line 903 "gmatrix.c"

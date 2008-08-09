@@ -661,9 +661,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-
-
-#line 667 "curve.c"
+#line 665 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -710,7 +708,32 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 714 "curve.c"
+#line 712 "curve.c"
+
+
+#line 100 "codegen/curve.override"
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+#line 724 "curve.c"
+
+
+#line 110 "codegen/curve.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+#line 737 "curve.c"
 
 
 /*----------------------------------------------------
@@ -720,6 +743,8 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Curve_func[]={
   {"curve_attach", _wrap_curve_attach},
+  {"extractelts_curve", _wrap_nsp_extractelts_curve},
+  {"setrowscols_curve", _wrap_nsp_setrowscols_curve},
   { "curve_create", int_curve_create},
   { NULL, NULL}
 };
@@ -749,12 +774,12 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 753 "curve.c"
+#line 778 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 102 "codegen/curve.override"
+#line 121 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -912,4 +937,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 916 "curve.c"
+#line 941 "curve.c"

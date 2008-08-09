@@ -11,13 +11,18 @@
     '("int" "x")
   )
 )
+
+
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_axes
   (c-name "nsp_extractelts_axes")
   (return-type "none")
 )
-
+(define-function setrowscols_axes
+  (c-name "nsp_setrowscols_axes")
+  (return-type "none")
+)
 
 
 

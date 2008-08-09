@@ -14,6 +14,16 @@
   (gtype-id "GMatrix")
 )
 
+;; just for the name, the code is overriten 
+
+(define-function extractelts_gmatrix
+  (c-name "nsp_extractelts_gmatrix")
+  (return-type "none")
+)
+(define-function setrowscols_gmatrix
+  (c-name "nsp_setrowscols_gmatrix")
+  (return-type "none")
+)
 
 
 

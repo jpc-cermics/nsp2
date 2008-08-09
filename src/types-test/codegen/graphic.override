@@ -239,6 +239,8 @@ int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* extraction part */
+
 int int_nspgraphic_extract(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(2,2);
@@ -261,3 +263,31 @@ int int_nspgraphic_extract(Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
+
+/*
+ * set an attribute value. 
+ */
+
+int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Gr;
+  NspObject *Obj;
+  const char *name;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((Gr= (NspObject *) GetGraphic(stack,1)) == NULLOBJ) return RET_BUG;
+  if ( IsSMatObj(stack,2) )
+    {
+      if ((name = GetString(stack,2)) == (char*)0) return RET_BUG;  
+    }
+  else 
+    {
+      Scierror("%s: indice for extraction should be a string\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ((  Obj = nsp_get_object(stack,3)) == NULLOBJ ) return RET_BUG;
+  if ( nsp_set_attribute_util(Gr,Gr->basetype,name,Obj) == FAIL) return RET_BUG;
+  NSP_OBJECT(Gr)->ret_pos = 1;
+  return 1;
+}
+

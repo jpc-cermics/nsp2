@@ -20,4 +20,14 @@
 )
 
 
+;; just for the name, the code is overriten 
+
+(define-function extractelts_polyline
+  (c-name "nsp_extractelts_polyline")
+  (return-type "none")
+)
+(define-function setrowscols_polyline
+  (c-name "nsp_setrowscols_polyline")
+  (return-type "none")
+)
 

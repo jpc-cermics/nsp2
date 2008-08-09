@@ -622,6 +622,31 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 #line 623 "polyline.c"
 
 
+#line 89 "codegen/polyline.override"
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+#line 635 "polyline.c"
+
+
+#line 99 "codegen/polyline.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+#line 648 "polyline.c"
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -629,6 +654,8 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Polyline_func[]={
   {"polyline_attach", _wrap_polyline_attach},
+  {"extractelts_polyline", _wrap_nsp_extractelts_polyline},
+  {"setrowscols_polyline", _wrap_nsp_setrowscols_polyline},
   { "polyline_create", int_polyline_create},
   { NULL, NULL}
 };
@@ -658,12 +685,12 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 662 "polyline.c"
+#line 689 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 89 "codegen/polyline.override"
+#line 110 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -756,4 +783,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 760 "polyline.c"
+#line 787 "polyline.c"

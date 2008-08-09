@@ -42,6 +42,10 @@
   (c-name "nsp_extractelts_figure")
   (return-type "none")
 )
+(define-function setrowscols_figure
+  (c-name "nsp_setrowscols_figure")
+  (return-type "none")
+)
 
 ;; Il sera bien de récuperer les widgets associés si besoin etc....
 
