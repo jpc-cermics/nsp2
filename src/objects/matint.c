@@ -2709,10 +2709,12 @@ static int int_matint_extract_gen(Stack stack, int rhs, int opt, int lhs, extrac
   index.iwork = matint_iwork1;  
   if ( nsp_get_index_vector(stack, 2,&Elts,&index) == FAIL )
     {
+      int rep,n ;
       char name[NAME_MAXL];
       if ( rhs != 2 || IsListObj(stack,2) == FALSE ) return RET_BUG;
       /* check if we are using a list access */
-      int rep,n ;
+      /* we must clear the error raised by nsp_get_index_vector */
+      nsp_error_message_clear();
       if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
       if ( rep == 3 ) 
 	{

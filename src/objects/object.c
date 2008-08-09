@@ -480,7 +480,7 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
 static int nsp_object_as_index_def(NspObject * M, index_vector *index)
 {
   index->error = index_wrong_object;
-  Sciprintf("Error: object of type %s cannot be used as index vector\n",M->type->s_type());
+  Scierror("Error: object of type %s cannot be used as index vector\n",M->type->s_type());
   return FAIL;
 }
 
@@ -664,7 +664,6 @@ static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt
 
 int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
-
   NspObject *Ob=ob,*Ret;
   NspSMatrix *S;
   int i,j,count=0;

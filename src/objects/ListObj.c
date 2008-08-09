@@ -953,6 +953,11 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
   NspObject *O = NULLOBJ, *L=NULLOBJ;
   Cell *C;
   NspList *Lind;
+
+#if 1 
+  if ((L= nsp_get_object(stack,1)) == NULLOBJ )
+    return RET_BUG;
+#else
   if ( IsListObj(stack,1 ) ) 
     {
       if ((L =(NspObject *) GetList(stack,1 )) == NULLOBJ ) return RET_BUG;
@@ -970,6 +975,8 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: cannot extract element specified by a list argument\n");
       return RET_BUG;
     }
+#endif 
+  
   L_name=Ocheckname(L,NVOID);
   if ((Lind = GetList(stack,2 )) == NULLLIST) return RET_BUG;
   C= Lind->first;
@@ -983,7 +990,7 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
     {
       if ( C->O == NULLOBJ )
 	{
-	  Scierror("Error: \t%s of list does not exists\n",ArgPosition(count));
+	  Scierror("Error: %s of list does not exists\n",ArgPosition(count));
 	  return RET_BUG;
 	}
       if ( C->next != NULL) 
@@ -1022,8 +1029,23 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 		}
 	      else 
 		{
-		  Scierror("Errro:\t, error in list extraction which does not give a list\n");
-		  return RET_BUG;
+		  char name[NAME_MAXL];
+		  /* we try to execute an extract on the object */
+		  NthObj(3)= O;
+		  NthObj(4)= C->O;
+		  nsp_build_funcname("extractelts",&stack,stack.first+2,1,name);
+		  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+2,2,0,1)) < 0)
+		    {
+		      Scierror("Error: extraction specified by a list failed for %s argument\n",str);
+		      return RET_BUG;
+		    }
+		  if ( n != 1 ) 
+		    {
+		      Scierror("Error: extraction specified by %s argument returned too many values (%d)\n",str,n);
+		      return RET_BUG;
+		    }
+		  O = NthObj(3);
+		  NthObj(3)=NULLOBJ;
 		}
 	    }
 	  else if ((str=nsp_string_object(C->O)) != NULL) 
@@ -1034,15 +1056,30 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 		  if (nsp_hash_find((NspHash *) O,str,&O1) == FAIL) return RET_BUG ;
 		  O= O1;
 		}
-	      else
+	      else 
 		{
-		  Scierror("Errro:\t,error in list extraction argument %s is not applied to a hash table\n",str);
-		  return RET_BUG;
+		  char name[NAME_MAXL];
+		  /* we try to execute an extract on the object */
+		  NthObj(3)= O;
+		  NthObj(4)= C->O;
+		  nsp_build_funcname("extractelts",&stack,stack.first+2,1,name);
+		  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+2,2,0,1)) < 0)
+		    {
+		      Scierror("Error: extraction specified by a list failed for %s argument\n",str);
+		      return RET_BUG;
+		    }
+		  if ( n != 1 ) 
+		    {
+		      Scierror("Error: extraction specified by %s argument returned too many values (%d)\n",str,n);
+		      return RET_BUG;
+		    }
+		  O = NthObj(3);
+		  NthObj(3)=NULLOBJ;
 		}
 	    }
-	  else 
+	  else  
 	    {
-	      Scierror("Errro:\t,error in list extraction index should be an int \n");
+	      Scierror("Error: in extraction specified by a list, index should be an int or a string\n");
 	      return RET_BUG;
 	    }
 	  /* If NspList has no name we must copy */
@@ -1183,7 +1220,7 @@ static int int_lxpath(Stack stack, int rhs, int opt, int lhs)
       if ( ( O =nsp_list_get_element(L,n1)) == NULLOBJ) return RET_BUG;
       if ( i != rhs -1 &&  ! check_cast(O,nsp_type_list_id))
 	{
-	  Scierror("Errro:\t,error in list extraction which does not give a list\n");
+	  Scierror("Error:\t,error in list extraction which does not give a list\n");
 	  return RET_BUG;
 	}
       L= (NspList *) O;
