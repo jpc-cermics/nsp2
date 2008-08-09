@@ -58,26 +58,18 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
   endfunction
   
   function tree_model_append(model,h,iter) 
-  // A recursive function which walks through the given 
-  // list or hash table and inserts all the elements in the 
-  // tree model. When an element is itself a list or hash table 
-  // a recursive call is invoked.
+  // A recursive function which walks through the given graphic 
+  // object and build a tree model.
+  // The call is recursive.
   h_names = h.get_attribute_names[];
   h_names =sort(h_names,'g','i')
   for i=1:size(h_names,'*');
     name = h_names(i);
     objname = h.get[name];
     t = type(objname,'short');
-    value="*"
-    if size(objname,'*')== 1 then 
-      select t 
-       case 'm' then value=m2s(objname);
-       case 'b' then value=m2s(b2m(objname));
-       case 's' then value=objname ;
-      end
-    end
+    // we need an-other-function here XXXX 
+    value = cellstostr({objname});
     if t== 'h' || t == 'l' then 
-      value="";
       osize = sprintf("%d",size(objname,1));
     else
       osize= sprintf("%dx%d",size(objname,1),size(objname,2))
@@ -92,7 +84,7 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
     if t == 'h' || t == 'l' then 
       for j=1:length(objname);
 	name = sprintf("(%d)",j);
-	iter2=model.append[iter1,list(name,type(x,'short'),"","*")];
+	iter2=model.append[iter1,list(name,type(objname(j),'short'),"","*")];
 	tree_model_append(model,objname(j),iter2);
       end
     end
@@ -147,7 +139,6 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
     iter=selection.get_selected[];
     if type(iter,'short')== 'none' then return;end 
     fname= model.get_value[iter,0];
-    //printf("row %s selected\n",fname);
   endfunction 
   
   function cell_edited (cell,path_string,new_text,data)
@@ -291,6 +282,16 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
   else
     vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
     vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
+  end
+  
+  function figure_redraw (button, data)
+    xbasr(data(1));
+  endfunction
+  
+  if type(L,'short')== 'figure' then 
+    button = gtkbutton_new(label="Redraw");
+    button.connect[ "clicked", figure_redraw , list(L.id)] 
+    vbox.pack_start[button,expand=%f,fill=%f,padding=0];
   end
 
   if top.equal[[]] then 
