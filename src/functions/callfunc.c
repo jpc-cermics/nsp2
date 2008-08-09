@@ -127,6 +127,17 @@ extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info 
 extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
 #endif 
 
+#define WITH_GRAPHIC_OBJECTS 
+#ifdef  WITH_GRAPHIC_OBJECTS 
+extern  sci_interface  Axes_Interf;extern  interface_info  Axes_Interf_Info;
+extern  sci_interface  Curve_Interf;extern  interface_info  Curve_Interf_Info;
+extern  sci_interface  Figure_Interf;extern  interface_info  Figure_Interf_Info;
+extern  sci_interface  GMatrix_Interf;extern  interface_info  GMatrix_Interf_Info;
+extern  sci_interface  Graphic_Interf;extern  interface_info  Graphic_Interf_Info;
+extern  sci_interface  GRoot_Interf;extern  interface_info  GRoot_Interf_Info;
+extern  sci_interface  Polyline_Interf;extern  interface_info  Polyline_Interf_Info;
+#endif 
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -217,6 +228,15 @@ InterfTab Interfaces[]={
   {Mtlb_Interf, Mtlb_Interf_Info},
 #ifdef WITH_LIBAMOS
   {AmosCephes_Interf, AmosCephes_Info},
+#endif 
+#ifdef  WITH_GRAPHIC_OBJECTS 
+  {Axes_Interf, Axes_Interf_Info},
+  {Curve_Interf, Curve_Interf_Info},
+  {Figure_Interf, Figure_Interf_Info},
+  {GMatrix_Interf, GMatrix_Interf_Info},
+  {Graphic_Interf, Graphic_Interf_Info},
+  {GRoot_Interf, GRoot_Interf_Info},
+  {Polyline_Interf, Polyline_Interf_Info},
 #endif 
   {NULL,NULL}
 }; 
