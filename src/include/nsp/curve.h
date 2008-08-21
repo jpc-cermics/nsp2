@@ -30,7 +30,6 @@ struct _NspTypeCurve {
 
 typedef struct _nsp_curve nsp_curve;
 struct _nsp_curve {
-  int color;
   int mark;
   double width;
   int style;
@@ -65,7 +64,7 @@ NspCurve *new_curve();
 
 #define NULLCURVE (NspCurve*) 0
 
-extern NspCurve *nsp_curve_create(char *name,int color,int mark,double width,int style,int mode,NspMatrix* Pts,NspTypeBase *type);
+extern NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int mode,NspMatrix* Pts,NspTypeBase *type);
 
 /* from CurveObj.c */
 

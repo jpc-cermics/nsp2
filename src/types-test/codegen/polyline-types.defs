@@ -5,8 +5,12 @@
   (parent "Graphic")
   (c-name "Polyline")
   (fields
-    '("int" "color")
     '("NspMatrix*" "Pts")
+    '("gboolean" "close" "std" "FALSE")
+    '("int" "mark" "std" "-1")
+    '("int" "mark_size" "std" "-1")
+    '("int" "fill_color" "std" "-1")
+    '("int" "thickness")
     )
   (gtype-id "Polyline")
 )

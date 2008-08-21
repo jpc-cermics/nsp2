@@ -11,6 +11,7 @@
 #line 4 "codegen/figure.override"
 
 #include "nsp/figure.h"
+#include "nsp/axes.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
@@ -21,8 +22,9 @@ static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
+static NspAxes *nsp_get_current_axes(void);
 
-#line 26 "figure.c"
+#line 28 "figure.c"
 
 /* ----------- Figure ----------- */
 
@@ -93,13 +95,13 @@ NspTypeFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 24 "codegen/figure.override"
+#line 26 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
-#line 103 "figure.c"
+#line 105 "figure.c"
   /* 
    * Figure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -289,11 +291,11 @@ void nsp_figure_destroy(NspFigure *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
 
-#line 35 "codegen/figure.override"
+#line 37 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 297 "figure.c"
+#line 299 "figure.c"
   nsp_figure_destroy_partial(H);
   FREE(H);
 }
@@ -459,6 +461,14 @@ int nsp_figure_create_partial(NspFigure *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_figure)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  H->obj->fname = NULL;
+  H->obj->driver = NULL;
+  H->obj->id = 0;
+  H->obj->dims = NULLMAT;
+  H->obj->viewport_dims = NULLMAT;
+  H->obj->wresize = TRUE;
+  H->obj->position = NULLMAT;
+  H->obj->children = NULLLIST;
   return OK;
 }
 
@@ -810,7 +820,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 54 "codegen/figure.override"
+#line 56 "codegen/figure.override"
 
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
@@ -854,7 +864,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 858 "figure.c"
+#line 868 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -889,7 +899,17 @@ int _wrap_nsp_get_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_
   return 1;
 }
 
-#line 99 "codegen/figure.override"
+int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
+{
+  NspAxes *ret;
+
+    ret = nsp_get_current_axes();
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+#line 101 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -898,10 +918,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 902 "figure.c"
+#line 922 "figure.c"
 
 
-#line 109 "codegen/figure.override"
+#line 111 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -911,7 +931,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 915 "figure.c"
+#line 935 "figure.c"
 
 
 /*----------------------------------------------------
@@ -921,6 +941,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Figure_func[]={
   {"get_current_figure", _wrap_nsp_get_current_figure},
+  {"get_current_axes", _wrap_nsp_get_current_axes},
   {"extractelts_figure", _wrap_nsp_extractelts_figure},
   {"setrowscols_figure", _wrap_nsp_setrowscols_figure},
   { "figure_create", int_figure_create},
@@ -947,17 +968,17 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 19 "codegen/figure.override"
+#line 21 "codegen/figure.override"
 
 Init portion 
 
 
-#line 956 "figure.c"
+#line 977 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 120 "codegen/figure.override"
+#line 122 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1009,9 +1030,10 @@ static int nsp_figure_connect(NspFigure *F)
   Xgc = window_list_search(F->obj->id);
   if ( Xgc != NULL) 
     {
-      Sciprintf("Error: Figure is already connected\n");
-      return FAIL;
-    }
+      Sciprintf("Warning: Figure is already connected\n");
+      Sciprintf("\tdeleting window %d\n",F->obj->id);
+      scig_delete(F->obj->id);
+     }
   
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
     { 
@@ -1072,10 +1094,9 @@ static int nsp_figure_connect(NspFigure *F)
       Sciprintf("failed to connect figure\n");
       return FAIL;
     }
-  if ( wpdim != NULL )  
-    {
-      Xgc->graphic_engine->scale->xset_wresize(Xgc,0);
-    }
+
+  Xgc->graphic_engine->scale->xset_wresize(Xgc,F->obj->wresize);
+  
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
   store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -1205,4 +1226,35 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1209 "figure.c"
+
+static NspAxes *nsp_current_axes=NULL;
+
+static NspAxes *nsp_get_current_axes(void)
+{
+  NspObject *Obj;
+  NspFigure *cf;
+  NspList *L;
+  if ( nsp_current_axes != NULL) return nsp_current_axes;
+  cf = nsp_get_current_figure();
+  if ( cf == NULL) return NULL;
+  L= cf->obj->children;
+  /* return the first axes */
+  if ( (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
+    {
+      /* maybe we could here build a current axes */
+      return NULL;
+    }
+  return (NspAxes *) Obj;
+}
+
+
+
+
+
+
+
+
+
+
+
+#line 1261 "figure.c"

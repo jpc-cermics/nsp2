@@ -3,6 +3,7 @@
 headers
 
 #include "nsp/figure.h"
+#include "nsp/axes.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
@@ -13,6 +14,7 @@ static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
+static NspAxes *nsp_get_current_axes(void);
 
 %%
 init 
@@ -168,9 +170,10 @@ static int nsp_figure_connect(NspFigure *F)
   Xgc = window_list_search(F->obj->id);
   if ( Xgc != NULL) 
     {
-      Sciprintf("Error: Figure is already connected\n");
-      return FAIL;
-    }
+      Sciprintf("Warning: Figure is already connected\n");
+      Sciprintf("\tdeleting window %d\n",F->obj->id);
+      scig_delete(F->obj->id);
+     }
   
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
     { 
@@ -231,10 +234,9 @@ static int nsp_figure_connect(NspFigure *F)
       Sciprintf("failed to connect figure\n");
       return FAIL;
     }
-  if ( wpdim != NULL )  
-    {
-      Xgc->graphic_engine->scale->xset_wresize(Xgc,0);
-    }
+
+  Xgc->graphic_engine->scale->xset_wresize(Xgc,F->obj->wresize);
+  
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
   store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -363,3 +365,34 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
 {
   return  ((NspFigure *) Obj)->obj->children;
 }
+
+
+static NspAxes *nsp_current_axes=NULL;
+
+static NspAxes *nsp_get_current_axes(void)
+{
+  NspObject *Obj;
+  NspFigure *cf;
+  NspList *L;
+  if ( nsp_current_axes != NULL) return nsp_current_axes;
+  cf = nsp_get_current_figure();
+  if ( cf == NULL) return NULL;
+  L= cf->obj->children;
+  /* return the first axes */
+  if ( (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
+    {
+      /* maybe we could here build a current axes */
+      return NULL;
+    }
+  return (NspAxes *) Obj;
+}
+
+
+
+
+
+
+
+
+
+

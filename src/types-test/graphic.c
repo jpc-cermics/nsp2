@@ -400,6 +400,10 @@ int nsp_graphic_create_partial(NspGraphic *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_graphic)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  H->obj->color = 0;
+  H->obj->id = -1;
+  H->obj->hidden = FALSE;
+  H->obj->Fig = NULL;
   return OK;
 }
 
@@ -496,7 +500,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 500 "graphic.c"
+#line 504 "graphic.c"
 
 
 #line 82 "codegen/graphic.override"
@@ -511,7 +515,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 515 "graphic.c"
+#line 519 "graphic.c"
 
 
 #line 95 "codegen/graphic.override"
@@ -525,7 +529,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 529 "graphic.c"
+#line 533 "graphic.c"
 
 
 #line 107 "codegen/graphic.override"
@@ -538,7 +542,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 542 "graphic.c"
+#line 546 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -635,7 +639,7 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 639 "graphic.c"
+#line 643 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -818,4 +822,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 822 "graphic.c"
+#line 826 "graphic.c"

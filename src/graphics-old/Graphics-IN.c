@@ -3060,7 +3060,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
     { "thickness",s_int,NULLOBJ,-1},
     { "type",string,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}};
-
+  
   CheckStdRhs(2,2);
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;

@@ -192,6 +192,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   /* draw elements */
   L = P->obj->children;
   cloc = L->first ;

@@ -1,5 +1,6 @@
 ;; -*- scheme -*-
 
+
 (define-objectref Figure
   (in-module "Figure")
   (parent "Graphic")
@@ -34,6 +35,11 @@
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")
   (return-type "Figure*")
+)
+
+(define-function get_current_axes
+  (c-name "nsp_get_current_axes")
+  (return-type "Axes*")
 )
 
 ;; just for the name, the code is overriten 

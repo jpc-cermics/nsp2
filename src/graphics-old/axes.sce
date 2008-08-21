@@ -1,9 +1,9 @@
-if %f then 
+if %t then 
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";
   //mode = "OpenGl";
-  F=figure_create(wresize=%f,fname=mode,driver=mode,id=20);
+  F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
   A=axes_create(top=%t,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
@@ -19,7 +19,7 @@ if %f then
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   A.children($+1)= ma;
   // insert a new axes 
-  C=axes_create(alpha=%pi/6,arect=[1,1,1,1]*0);
+  C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0);
   // the position of the axes in its parent 
   // upper-left, width, height 
   C.wrect=[2,1.5,3,2];
@@ -37,13 +37,12 @@ if %f then
   C.children(3)=P;
   // matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
-  C.children($+1)= ma;
+  //C.children($+1)= ma;
   A.children($+1) = C;
   F.connect[]
 end
 
-
-function F=myplot(x,y,varargopt)
+function F=new_plot(x,y,varargopt)
   mode = "Gtk";
   ok=execstr('F=get_current_figure()',errcatch=%t);
   if ~ok then 
@@ -56,8 +55,12 @@ function F=myplot(x,y,varargopt)
   else
     A = F.children(1);
   end
-  cu = curve_create(Pts=[x(:),y(:)]); 
+  varargopt.Pts=[x(:),y(:)]; 
+  cu = curve_create(varargopt(:)); 
   A.children($+1)= cu;
   F.connect[];
+  xbasr(F.id)
 endfunction
 
+
+  

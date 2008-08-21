@@ -886,18 +886,19 @@ class Wrapper:
         return str
 
     def build_init_fields(self,varname):
+        # initialize the fields to default value but only for 
+        # object that are not byref 
         lower_name = self.get_lower_name()
-        # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if self.byref == 't' :
             return '  '+varname+'->obj = NULL;\n'
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
-            return str
+            return str 
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_init( fname,varname, self.byref, pdef, psize, pcheck )
-        return str
+        return str 
     
     def build_load_fields(self,varname):
         lower_name = self.get_lower_name()
@@ -996,8 +997,9 @@ class Wrapper:
         return  self.overrides.override_destroy_prelim
 
     def build_create_partial(self,varname):
+        # used when creating a new instance 
+        # only useful for by ref objects 
         lower_name = self.get_lower_name()
-        # no overrides for the whole function.  If no fields, don't write a func
         str = '' 
         father = self.objinfo.parent
         if self.byref == 't':
@@ -1005,8 +1007,13 @@ class Wrapper:
                 str = '  if ( nsp_%s_create_partial((Nsp%s *) H)== FAIL) return FAIL;\n' % (string.lower(father),father)
             str = str +  '  if((H->obj = calloc(1,sizeof(nsp_%s)))== NULL ) return FAIL;\n' \
                 '  H->obj->ref_count=1;\n' % (lower_name)  
+            if not self.objinfo.fields:
+                return str 
+            for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
+                handler = argtypes.matcher.get(ftype)
+                str = str + handler.attr_write_init( fname,varname+'->obj', self.byref, pdef, psize, pcheck )
         return str
-
+            
     def build_copy_partial(self,varname):
         # no overrides for the whole function.  If no fields, don't write a func
         lower_name = self.get_lower_name()

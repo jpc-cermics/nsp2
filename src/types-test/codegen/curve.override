@@ -139,7 +139,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
-  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+  Xgc->graphic_engine->xset_pattern(Xgc, ((NspGraphic *) P)->obj->color);
   /*XXX: we should not be in Rec mode here */
   switch ( P->obj->mode ) 
     {
@@ -190,7 +190,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
 	for ( i = 0 ; i < M->m ; i++)
 	  {
 	    int iflag=0;
-	    Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&P->obj->color,iflag);
+	    Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&((NspGraphic *)P)->obj->color,iflag);
 	  }
       }
       break;

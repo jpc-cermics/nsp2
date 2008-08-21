@@ -256,9 +256,12 @@ class StringArg(ArgType):
         return  '  Sciprintf1(indent+2,"%s=%%s\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
-	"""used when a field is to be reloaded """
-        return  '  %s->%s = NULL;\n' % (varname,pname)
-
+	"""used when a field of type string is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = NULL;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = nsp_new_string("%s",-1);\n' % (varname,pname,pdef)
+    
     def attr_check_null(self,pname, varname,byref):
 	"""used to check if  a field is set """
         return '  if ( %s->%s == NULLSTRING) {Scierror("Error: field %s is to be set\\n");return RET_BUG;}\n' % (varname,pname,pname);
@@ -1535,7 +1538,7 @@ class NspDoubleArrayArg(NspMatArg):
                                    '  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n' % (psize,pset_name,psize) )
 
     def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
-	"""used when a field is to be reloaded """
+	"""used when a field is to be initialized """
         if pdef == 'no': 
             vdef = '{0}'
         else: 
@@ -1679,7 +1682,7 @@ class VoidPointerArg(ArgType):
         return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
-	"""used when a field is to be reloaded """
+	"""used when a field is to be initialized """
         return  '  %s->%s = NULL;\n' % (varname,pname)
 
     def attr_check_null(self,pname, varname,byref):

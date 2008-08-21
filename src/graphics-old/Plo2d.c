@@ -771,3 +771,4 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
       Xgc->graphic_engine->drawrectangle(Xgc,box);
     }
 }
+

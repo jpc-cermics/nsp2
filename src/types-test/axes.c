@@ -469,6 +469,13 @@ int nsp_axes_create_partial(NspAxes *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_axes)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  H->obj->wrect = NULLMAT;
+  H->obj->alpha = 0.0;
+  H->obj->top = TRUE;
+  H->obj->bounds = NULLMAT;
+  H->obj->arect = NULLMAT;
+  H->obj->frect = NULLMAT;
+  H->obj->children = NULLLIST;
   return OK;
 }
 
@@ -684,7 +691,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 688 "axes.c"
+#line 695 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -829,7 +836,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 833 "axes.c"
+#line 840 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -864,7 +871,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 868 "axes.c"
+#line 875 "axes.c"
 
 
 #line 158 "codegen/axes.override"
@@ -876,7 +883,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 880 "axes.c"
+#line 887 "axes.c"
 
 
 #line 168 "codegen/axes.override"
@@ -889,7 +896,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 893 "axes.c"
+#line 900 "axes.c"
 
 
 /*----------------------------------------------------
@@ -930,7 +937,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 934 "axes.c"
+#line 941 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -952,6 +959,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   /* draw elements */
   L = P->obj->children;
   cloc = L->first ;
@@ -1268,4 +1276,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1272 "axes.c"
+#line 1280 "axes.c"

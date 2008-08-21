@@ -83,6 +83,7 @@ clean ::
 
 ../figure.c : figure.defs figure.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
+		--register ./axes-types.defs \
 	    --override figure.override \
 	    --prefix Figure figure.defs) > $*.c \
 	&& cp figure.h ../../include/nsp 

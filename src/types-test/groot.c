@@ -377,6 +377,7 @@ int nsp_groot_create_partial(NspGRoot *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_groot)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  H->obj->figures = NULLLIST;
   return OK;
 }
 
@@ -546,7 +547,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 550 "groot.c"
+#line 551 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -554,4 +555,4 @@ Init portion
 #line 28 "codegen/groot.override"
 
 
-#line 558 "groot.c"
+#line 559 "groot.c"
