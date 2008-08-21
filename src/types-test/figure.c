@@ -486,18 +486,21 @@ int nsp_figure_check_values(NspFigure *H)
     }
   if ( H->obj->dims == NULLMAT) 
     {
-     if (( H->obj->dims = nsp_matrix_create("dims",'r',0,0)) == NULLMAT)
+       if (( H->obj->dims = nsp_matrix_create("dims",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   if ( H->obj->viewport_dims == NULLMAT) 
     {
-     if (( H->obj->viewport_dims = nsp_matrix_create("viewport_dims",'r',0,0)) == NULLMAT)
+       if (( H->obj->viewport_dims = nsp_matrix_create("viewport_dims",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   if ( H->obj->position == NULLMAT) 
     {
-     if (( H->obj->position = nsp_matrix_create("position",'r',0,0)) == NULLMAT)
+       if (( H->obj->position = nsp_matrix_create("position",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   if ( H->obj->children == NULLLIST) 
     {
@@ -864,7 +867,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 868 "figure.c"
+#line 871 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -918,7 +921,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 922 "figure.c"
+#line 925 "figure.c"
 
 
 #line 111 "codegen/figure.override"
@@ -931,7 +934,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 935 "figure.c"
+#line 938 "figure.c"
 
 
 /*----------------------------------------------------
@@ -973,7 +976,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 977 "figure.c"
+#line 980 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1244,7 +1247,15 @@ static NspAxes *nsp_get_current_axes(void)
       /* maybe we could here build a current axes */
       return NULL;
     }
-  return (NspAxes *) Obj;
+  nsp_current_axes= (NspAxes *) Obj;
+  return nsp_current_axes;
+}
+
+NspFigure *nsp_create_default_figure(void)
+{
+  NspFigure *fig ;
+  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,NULL);
+  return fig;
 }
 
 
@@ -1256,5 +1267,4 @@ static NspAxes *nsp_get_current_axes(void)
 
 
 
-
-#line 1261 "figure.c"
+#line 1271 "figure.c"

@@ -5,13 +5,13 @@
   (parent "Graphic")
   (c-name "Axes")
   (fields
-    '("NspMatrix*" "wrect") ;; the position of this axes in a figure 
+    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this axes in a figure 
                             ;; or the position of this axes in an other axe
     '("double" "alpha")     ;; rotation of the rectangle which contains the axe
     '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
     '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the axe. 
-    '("NspMatrix*" "arect") ;; 
-    '("NspMatrix*" "frect") ;; the scales that this axes defines if []
+    '("NspMatrix*" "arect" "std" "{0.08,0.08,0.08,0.08}" "4") ;; 
+    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this axes defines if []
                             ;; frect is deduced from data. 
     '("NspList*" "children") ;; list of graphic object in the axe 
     )

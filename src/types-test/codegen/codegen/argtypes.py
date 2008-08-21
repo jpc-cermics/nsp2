@@ -169,7 +169,7 @@ class ArgType:
 	"""used to test fields equality  """
         return '  XXXXX attr_equal_fields not implemented for %s\n' % self.__class__.__name__ 
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return '  XXXXX attr_write_defval not implemented for %s\n' % self.__class__.__name__ 
 
@@ -178,7 +178,7 @@ class NoneArg(ArgType):
         info.codeafter.append('  return 0;')
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.attrcodeafter.append('  return NULLOBJ;')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -231,7 +231,6 @@ class StringArg(ArgType):
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
         return  '  nsp_string_destroy(&(%s->%s));\n' % (varname,pname)
-
             
     def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
         return '  if (nsp_xdr_save_string(xdrs,%s->%s) == FAIL) return FAIL;\n' % (varname,pname)
@@ -272,7 +271,7 @@ class StringArg(ArgType):
             pname = 'obj->'+pname
         return '  if ( strcmp(A->%s,loc->%s) != 0) return FALSE;\n' % (pname,pname)
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         str = '  if ( %s->%s == NULL) \n    {\n' % (varname,pname);    
         str = str + '     if (( %s->%s = nsp_string_copy("")) == NULL)\n       return FAIL;\n    }\n' \
@@ -305,7 +304,7 @@ class UCharArg(ArgType):
         self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -334,7 +333,7 @@ class CharArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
         
@@ -372,7 +371,7 @@ class GUniCharArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gunichar', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -441,7 +440,7 @@ class IntArg(ArgType):
         if byref == 't' :
             pname = 'obj->'+pname
         return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
     
@@ -469,7 +468,7 @@ class IntPointerArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('int', '*ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
         
@@ -522,7 +521,7 @@ class BoolArg(IntArg):
 
     def attr_free_fields(self,pname, varname,byref):
         return  ''
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -551,7 +550,7 @@ class TimeTArg(ArgType):
         info.varlist.add('time_t', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -584,7 +583,7 @@ class ULongArg(ArgType):
         info.varlist.add('gulong', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -613,7 +612,7 @@ class Int64Arg(ArgType):
         info.varlist.add('gint64', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -644,7 +643,7 @@ class UInt64Arg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('guint64', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
         
@@ -673,7 +672,7 @@ class DoubleArg(ArgType):
         info.varlist.add('double', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -716,7 +715,7 @@ class DoubleArg(ArgType):
         if byref == 't' :
             pname = 'obj->'+pname
         return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -808,7 +807,7 @@ class EnumArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('gint', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
                                 
@@ -846,7 +845,7 @@ class FlagsArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         info.varlist.add('guint', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -1428,22 +1427,37 @@ class NspGenericArg(ArgType):
             pname = 'obj->'+pname
         return '  if ( NSP_OBJECT(A->%s)->type->eq(A->%s,loc->%s) == FALSE ) return FALSE;\n' % (pname,pname,pname)
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
 	str = '/* defvalue: %s %s %s %s */\n' % (self.fullname, self.shortname,self.shortname_uc,self.nsp_arg_type)
         return str+ '/* [defvalue for %s %s %s]*/ \n' % (pname, varname,byref)
     
 
 class NspGenericArgMat(NspGenericArg):
-    def attr_write_defval(self,pname, varname,byref):
-	"""used to give a default value  """
-        str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
-        str = str + '     if (( %s->%s = nsp_matrix_create("%s",\'r\',0,0)) == NULL%s)\n       return FAIL;\n    }\n' \
-            % (varname,pname,pname,self.shortname_uc)
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value when no value is given """
+        # the following code is used to give a default value for a NspMatrix 
+        if pdef == 'no': 
+            size = '0,0'
+            defi = ''
+        else:
+            size = '1,%s' % psize 
+            defi = '   double x_def[%s]=%s;\n' % (psize,pdef)
+        str = '  if ( %s->%s == NULL%s) \n    {\n  %s' % (varname,pname,self.shortname_uc,defi)    
+        str = str + '     if (( %s->%s = nsp_matrix_create("%s",\'r\',%s)) == NULL%s)\n       return FAIL;\n' \
+            % (varname,pname,pname,size, self.shortname_uc)
+        if pdef != 'no':
+            str = str + '      memcpy(%s->%s->R,x_def,%s*sizeof(double));\n  }\n' % ( varname,pname, psize)
+        else:
+            str = str + '\n    }\n'
         return str
 
+    def attr_write_init(self,pname, varname,byref, pdef, psize, pcheck ):
+	"""used when a field is to be initialized """
+        return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
+
 class NspGenericArgBMat(NspGenericArg):
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
         str = str + '     if (( %s->%s = nsp_bmatrix_create("%s",0,0)) == NULL%s)\n       return FAIL;\n    }\n' \
@@ -1451,7 +1465,7 @@ class NspGenericArgBMat(NspGenericArg):
         return str
 
 class NspGenericArgList(NspGenericArg):
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
         str = str + '     if (( %s->%s = nsp_list_create("%s")) == NULL%s)\n       return FAIL;\n    }\n' \
@@ -1579,7 +1593,7 @@ class NspDoubleArrayArg(NspMatArg):
         else:
             return '  memcpy('+ left_varname + '->'+ pname +','+ pname +','+ psize+ '*sizeof(double));\n'
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
 
@@ -1695,7 +1709,7 @@ class VoidPointerArg(ArgType):
             pname = 'obj->'+pname
         return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
 
-    def attr_write_defval(self,pname, varname,byref):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         # str = '  %s->%s = NULL;\n' % (varname,pname);    
         str = ''

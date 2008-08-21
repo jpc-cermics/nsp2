@@ -392,8 +392,9 @@ int nsp_classb_check_values(NspClassB *H)
 {
   if ( H->clb_val == NULLMAT) 
     {
-     if (( H->clb_val = nsp_matrix_create("clb_val",'r',0,0)) == NULLMAT)
+       if (( H->clb_val = nsp_matrix_create("clb_val",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   nsp_classa_check_values((NspClassA *) H);
   return OK;
@@ -478,7 +479,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 482 "classb.c"
+#line 483 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -489,7 +490,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 493 "classb.c"
+#line 494 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -612,9 +613,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 616 "classb.c"
+#line 617 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 621 "classb.c"
+#line 622 "classb.c"

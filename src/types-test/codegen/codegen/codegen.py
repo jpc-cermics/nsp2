@@ -959,12 +959,12 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_defval( fname,varname,self.byref)
+            str = str +  handler.attr_write_defval( fname,varname,self.byref, pdef , psize, pcheck)
         if father != 'Object':
             str = str + '  nsp_%s_check_values((Nsp%s *) H);\n'  % (string.lower(father),father)
         return str
 
-
+    
     def build_free_fields(self,varname):
         lower_name = self.get_lower_name()
         # no overrides for the whole function.  If no fields, don't write a func

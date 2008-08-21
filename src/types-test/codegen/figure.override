@@ -384,9 +384,16 @@ static NspAxes *nsp_get_current_axes(void)
       /* maybe we could here build a current axes */
       return NULL;
     }
-  return (NspAxes *) Obj;
+  nsp_current_axes= (NspAxes *) Obj;
+  return nsp_current_axes;
 }
 
+NspFigure *nsp_create_default_figure(void)
+{
+  NspFigure *fig ;
+  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,NULL);
+  return fig;
+}
 
 
 

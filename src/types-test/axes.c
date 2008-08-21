@@ -483,24 +483,31 @@ int nsp_axes_check_values(NspAxes *H)
 {
   if ( H->obj->wrect == NULLMAT) 
     {
-     if (( H->obj->wrect = nsp_matrix_create("wrect",'r',0,0)) == NULLMAT)
+     double x_def[4]={0,0,1,1};
+     if (( H->obj->wrect = nsp_matrix_create("wrect",'r',1,4)) == NULLMAT)
        return FAIL;
-    }
+      memcpy(H->obj->wrect->R,x_def,4*sizeof(double));
+  }
   if ( H->obj->bounds == NULLMAT) 
     {
-     if (( H->obj->bounds = nsp_matrix_create("bounds",'r',0,0)) == NULLMAT)
+       if (( H->obj->bounds = nsp_matrix_create("bounds",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   if ( H->obj->arect == NULLMAT) 
     {
-     if (( H->obj->arect = nsp_matrix_create("arect",'r',0,0)) == NULLMAT)
+     double x_def[4]={0.08,0.08,0.08,0.08};
+     if (( H->obj->arect = nsp_matrix_create("arect",'r',1,4)) == NULLMAT)
        return FAIL;
-    }
+      memcpy(H->obj->arect->R,x_def,4*sizeof(double));
+  }
   if ( H->obj->frect == NULLMAT) 
     {
-     if (( H->obj->frect = nsp_matrix_create("frect",'r',0,0)) == NULLMAT)
+     double x_def[4]={0,0,1,1};
+     if (( H->obj->frect = nsp_matrix_create("frect",'r',1,4)) == NULLMAT)
        return FAIL;
-    }
+      memcpy(H->obj->frect->R,x_def,4*sizeof(double));
+  }
   if ( H->obj->children == NULLLIST) 
     {
      if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
@@ -691,7 +698,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 695 "axes.c"
+#line 702 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -836,7 +843,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 840 "axes.c"
+#line 847 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -871,7 +878,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 875 "axes.c"
+#line 882 "axes.c"
 
 
 #line 158 "codegen/axes.override"
@@ -883,7 +890,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 887 "axes.c"
+#line 894 "axes.c"
 
 
 #line 168 "codegen/axes.override"
@@ -896,7 +903,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 900 "axes.c"
+#line 907 "axes.c"
 
 
 /*----------------------------------------------------
@@ -937,7 +944,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 941 "axes.c"
+#line 948 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1276,4 +1283,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1280 "axes.c"
+#line 1287 "axes.c"

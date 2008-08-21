@@ -447,8 +447,9 @@ int nsp_polyline_check_values(NspPolyline *H)
 {
   if ( H->obj->Pts == NULLMAT) 
     {
-     if (( H->obj->Pts = nsp_matrix_create("Pts",'r',0,0)) == NULLMAT)
+       if (( H->obj->Pts = nsp_matrix_create("Pts",'r',0,0)) == NULLMAT)
        return FAIL;
+
     }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
@@ -593,7 +594,7 @@ static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 597 "polyline.c"
+#line 598 "polyline.c"
 static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -727,7 +728,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 731 "polyline.c"
+#line 732 "polyline.c"
 
 
 #line 89 "codegen/polyline.override"
@@ -739,7 +740,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 743 "polyline.c"
+#line 744 "polyline.c"
 
 
 #line 99 "codegen/polyline.override"
@@ -752,7 +753,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 756 "polyline.c"
+#line 757 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -793,7 +794,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 797 "polyline.c"
+#line 798 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -891,4 +892,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 895 "polyline.c"
+#line 896 "polyline.c"
