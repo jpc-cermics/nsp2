@@ -878,26 +878,6 @@ static int int_bmatrix_diage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_bmatrix_create_diag(A,Diag,k)
- * WARNING: A is not copied we want this routine to change A
- */
-
-static int int_bmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspBMatrix *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if ((Diag = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_bmatrix_set_diag( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a NspBMatrix with kth diag set to Diag 
@@ -1140,7 +1120,6 @@ static OpTab BMatrix_func[]={
   {"bmat_create_m",int_bmatrix_create},
   {"diagcre_b",int_bmatrix_diagcre},
   {"diage_b",int_bmatrix_diage},
-  {"diagset_b",int_bmatrix_diagset},
   {"find_b",int_bmatrix_find},
   {"m2b",int_bmatrix_m2b},
   {"not_b",int_bmatrix_not},

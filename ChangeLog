@@ -1,3 +1,8 @@
+2008-08-21  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* diagset functions moved to set_diag method for 
+	matint objects. 
+	
 2008-07-28  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* eye,ones,zeros: semantic has changed to follow Matlab rules.

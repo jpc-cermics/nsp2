@@ -1387,6 +1387,10 @@ static int int_meth_matrix_get_nnz(void *self, Stack stack,int rhs,int opt,int l
   return 1;
 }
 
+/* this method is also implemented in matint for matrix 
+ * this one is a short cut.
+ */
+
 static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   NspMatrix *Diag;
@@ -1436,7 +1440,7 @@ static NspMethods matrix_methods[] = {
   { "scale_cols",int_meth_matrix_scale_cols}, 
   { "get_nnz", int_meth_matrix_get_nnz},
   { "has", int_meth_matrix_has},
-  { "set_diag",(nsp_method *) int_meth_matrix_set_diag}, /* this one could be generic in matint */
+  { "set_diag",(nsp_method *) int_meth_matrix_set_diag}, /* preferred to generic matint method */
   { (char *) 0, NULL}
 };
 
@@ -2879,31 +2883,6 @@ int_mxdiage (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_matrix_create_diag(A,Diag,k)
- * WARNING : A is not copied we want this routine to change A
- */
-
-int
-int_mxdiagset (Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspMatrix *A, *Diag;
-  CheckRhs (3, 3);
-  CheckLhs (1, 1);
-  if ((A = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((Diag = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
-  if (GetScalarInt (stack, 3, &k1) == FAIL)
-    return RET_BUG;
-  if (nsp_matrix_set_diag (A, Diag, k1) != OK)
-    return RET_BUG;
-  NSP_OBJECT (A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a Matrix with kth diag set to Diag 
@@ -5106,7 +5085,6 @@ static OpTab Matrix_func[] = {
   {"diagcre_m_m", int_mxdiagcre},
   {"diage_m", int_mxdiage},
   {"diage_m_m", int_mxdiage},
-  {"diagset_m", int_mxdiagset},
   {"diff_m", int_mxdiff},
   {"eq_m_m", int_mxeq},
   {"extract_m", int_matint_extract}, 

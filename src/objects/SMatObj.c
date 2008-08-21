@@ -953,26 +953,6 @@ static int int_smatrix_diage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_bmatrix_create_diag(A,Diag,k)
- * WARNING: A is not copied we want this routine to change A
- */
-
-static int int_smatrix_diagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspSMatrix *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Diag = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_smatrix_set_diag( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a NspSMatrix with kth diag set to Diag 
@@ -2017,7 +1997,6 @@ static OpTab SMatrix_func[]={
   {"unique_s",int_smatrix_unique},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
-  {"diagset_s",int_smatrix_diagset},
   {(char *) 0, NULL}
 };
 

@@ -1525,26 +1525,6 @@ static int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_mpmatrix_create_diag(A,Diag,k)
- * WARNING : A is not copied we want this routine to change A
- */
-
-static int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspMaxpMatrix *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  if ((Diag = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if ( nsp_mpmatrix_set_diag( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos =1;
-  return 1;
-}
 
 /*
  *  Creates a Matrix with kth diag set to Diag 
@@ -2357,7 +2337,6 @@ static OpWrapTab Matrix_func[]={
   {"diagcre_mp_mp" ,  int_mpdiagcre ,NULL},
   {"diage_mp" ,  int_mpdiage ,NULL},
   {"diage_mp_mp" ,  int_mpdiage ,NULL},
-  {"diagset_mp" ,  int_mpdiagset ,NULL},
   {"div_mp_mp" ,  int_mpdiv,NULL},
   {"dprim_mp",int_mpdquote,NULL},
   {"dst_mp_mp",int_mpmultel,NULL},

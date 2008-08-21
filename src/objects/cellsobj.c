@@ -889,26 +889,7 @@ static int int_cells_diage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_bmatrix_create_diag(A,Diag,k)
- * WARNING: A is not copied we want this routine to change A
- */
 
-static int int_cells_diagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspCells *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-  if ((Diag = GetCells(stack,2)) == NULLCELLS) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_cells_set_diag( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a NspCells with kth diag set to Diag 
@@ -1344,7 +1325,6 @@ static OpTab Cells_func[]={
   {"map_ce", int_cells_map},
   {"diagcre_ce",int_cells_diagcre},
   {"diage_ce",int_cells_diage},
-  {"diagset_ce",int_cells_diagset},
   {(char *) 0, NULL}
 };
 

@@ -217,6 +217,7 @@ static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int op
 /* 
  * method perm_elem
  */
+
 static int int_matint_perm_elem(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   int p, q, dim=0;
@@ -260,7 +261,35 @@ static int int_matint_to_cells(NspObject *self, Stack stack, int rhs, int opt, i
   return 1;
 }
 
+/* method set_diag for matint objects  
+ *
+ */
 
+static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k);
+
+static int int_matint_meth_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  int k=0;
+  NspObject *B;
+  NspTypeBase *typeSelf,*typeB;
+  CheckRhs (1,2);
+  CheckLhs (0,0);
+  if ((B = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+  typeB = check_implements(B, nsp_type_matint_id);
+  typeSelf = check_implements(self, nsp_type_matint_id);
+  if ( typeB != typeSelf )
+    {
+      Scierror("Error: A.set_diag[B], A and B must be of the same type\n");
+      return RET_BUG;
+    }
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt (stack, 2, &k) == FAIL) return RET_BUG;
+    }
+  if ( nsp_matint_set_diag(self,B,k)==FAIL) 
+    return RET_BUG;
+  return 0;
+}
 
 
 static NspMethods matint_methods[] = {
@@ -269,6 +298,7 @@ static NspMethods matint_methods[] = {
   {"concatd",(nsp_method *) int_matint_meth_concatd},
   {"perm_elem",(nsp_method *) int_matint_perm_elem},
   {"to_cells",(nsp_method *) int_matint_to_cells},
+  {"set_diag",(nsp_method *) int_matint_meth_set_diag},
   { NULL, NULL}
 };
 
@@ -3685,3 +3715,97 @@ static NspCells *nsp_matint_to_cells(NspSMatrix *A,int  dim)
   nsp_cells_destroy(Loc);
   return NULLCELLS;
 }
+
+/**
+ * nsp_matint_set_diag:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @k: diagonal 
+ * 
+ * set the k-th diagonal of matrix @A using matrix @B.
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
+{
+  NspSMatrix *A = (NspSMatrix *) ObjA, *Diag = (NspSMatrix *) ObjB;
+  char *to, *from;
+  int i,j;
+  int imin,imax,isize;
+  NspTypeBase *typeA, *typeB; 
+  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+
+  typeA = check_implements(ObjA, nsp_type_matint_id);
+  typeB = check_implements(ObjB, nsp_type_matint_id);
+
+  if ( typeA != typeB )
+    {
+      Scierror("Error: in set_diag method matrix and diag matrix must be of the same type\n");
+      return FAIL;
+    }
+  
+  MAT_INT(typeA)->canonic(ObjA);
+  MAT_INT(typeB)->canonic(ObjB);
+  
+  elt_size_A = MAT_INT(typeA)->elt_size(ObjA); 
+  elt_size_B = MAT_INT(typeB)->elt_size(ObjB); 
+  
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  isize = imax-imin ;
+
+  if ( isize > Diag->mn ) 
+    {
+      Scierror("Error:\tGiven diagonal vector is too small \n");
+      return(FAIL);
+    }
+  if ( isize < Diag->mn ) 
+    {
+      imax = Diag->mn +imin;
+      if ( MAT_INT(typeA)->enlarge(ObjA,imax,imax+k) == FAIL )
+	return FAIL;
+    }
+
+  to = (char *) A->S; from = (char *) Diag->S;
+  
+  if ( MAT_INT(typeA)->free_elt == (matint_free_elt *) 0 ) 
+    {
+      /* object not of pointer type */
+      if ( elt_size_A == sizeof(double) || elt_size_A == sizeof(doubleC) )
+	{
+	  return nsp_matrix_set_diag((NspMatrix *)A, (NspMatrix *)Diag, k);
+	}
+      else if ( elt_size_A == sizeof(int) )
+	{
+	  return nsp_bmatrix_set_diag((NspBMatrix *)A, (NspBMatrix *)Diag, k);
+	}
+      else
+	{
+	  j=0;
+	  for ( i = imin ; i < imax ; i++ ) 
+	    memcpy(((NspBMatrix *)A)->B+ (i+(i+k)*A->m)*elt_size_A, 
+		   ((NspBMatrix *) Diag)->B + (j++)*elt_size_A,elt_size_A );
+	}
+    }
+  else
+    {
+      j=0;
+      for ( i = imin ; i < imax ; i++ ) 
+	{
+	  char **fromv = (char **) from, **tov = (char **) to, *elt;
+	  if (fromv[j] != NULL) 
+	    {
+	      MAT_INT(typeA)->free_elt( (void **) (tov +i+(i+k)*A->m ) ); 
+	      if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[j++])) == NULL ) return FAIL;
+	      tov[i+(i+k)*A->m] = elt;
+	    }
+	  else 
+	    {
+	      tov[i+(i+k)*A->m] = NULL;
+	    }
+	}
+    }
+  return OK;
+}
+
