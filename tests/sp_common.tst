@@ -13,7 +13,7 @@ A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 // create a null matrix 
-//--------------------
+
 Sp1=sp_create(7,8);
 A1=sp2m(Sp1);
 if or(A1<>zeros_new(7,8)) then pause;end
@@ -39,11 +39,25 @@ A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 //  nsp_spcolmatrix_nnz 
-//  XXX should be a method 
 
 n=nnz(Sp);
 n1=size(find(A<>0),'*');
 if n1<>n then pause;end 
+
+//  nnz as a method 
+
+n=Sp.get_nnz[];
+n1=size(find(A<>0),'*');
+if n1<>n then pause;end 
+
+// scale_rows and scale_cols methods 
+
+Sp1=Sp;
+Sp1.scale_rows[1:size(Sp1,1)];
+if norm(diag(1:size(Sp1,1))*full(Sp)-full(Sp1)) > 1.e-10 then pause;end 
+Sp1=Sp;
+Sp1.scale_cols[1:size(Sp1,2)];
+if norm(full(Sp)*diag(1:size(Sp1,2))-full(Sp1)) > 1.e-10 then pause;end 
 
 // nsp_spcolmatrix_redim
 // XXX this should be a method 
