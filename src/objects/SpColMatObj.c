@@ -418,7 +418,7 @@ static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int o
  */
 static int int_meth_spcolmatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  CheckLhs(0,0);
+  CheckLhs(0,1);
   CheckRhs(0,0);
   if ( nsp_move_double(stack,1, nsp_spcolmatrix_nnz((NspSpColMatrix *) self)) == FAIL) return RET_BUG;
   return 1;
