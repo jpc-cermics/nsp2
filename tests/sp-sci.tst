@@ -286,7 +286,7 @@ end
 if %f then 
   Sp1=Sp;
   nd=size(diag(Sp1,0),'*');
-  diagset(Sp1,sparse(1:nd),0);
+  Sp1.set_diag[sparse(1:nd),0];
   A1=full(Sp1);
   [ma,na]=size(A);
   B=[diag(diag(A))-diag(1:nd)];
@@ -301,7 +301,7 @@ if %f then
     Sp1=Sp;
     nd=size(diag(Sp1,i),'*');
     dd1=dd(1:nd);
-    diagset(Sp1,sparse(dd1),i);
+    Sp1.set_diag[sparse(dd1),i];
     A1=full(Sp1);
     [ma,na]=size(A);
     B=[diag(diag(A,i),i)-diag(dd1,i)];

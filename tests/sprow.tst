@@ -263,7 +263,7 @@ end
 
 Sp1=Sp;
 nd=size(diag(Sp1,0),'*');
-diagset(Sp1,m2sprow(1:nd),0);
+Sp1.set_diag[m2sprow(1:nd),0];
 A1=sprow2m(Sp1);
 [ma,na]=size(A);
 B=[diag(diag(A))-diag(1:nd)];
@@ -278,7 +278,7 @@ for i=-3:3
   Sp1=Sp;
   nd=size(diag(Sp1,i),'*');
   dd1=dd(1:nd);
-  diagset(Sp1,m2sprow(dd1),i);
+  Sp1.set_diag[m2sprow(dd1),i];
   A1=sprow2m(Sp1);
   [ma,na]=size(A);
   B=[diag(diag(A,i),i)-diag(dd1,i)];
