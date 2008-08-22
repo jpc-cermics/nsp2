@@ -56,7 +56,7 @@ NspTypeSpRowMatrix *new_type_sprowmatrix(type_mode mode)
   type->attrs = NULL; /* spmatrix_attrs ;  */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL; /*spmatrix_get_methods; */
+  type->methods = sprowmatrix_get_methods;
   type->new = (new_func *) new_sprowmatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -330,6 +330,100 @@ NspSpRowMatrix *GetRealSpRow(Stack stack, int i)
   return M;
 }
 
+/*
+ *    sprowmatrix methods
+ */
+
+
+
+/* 
+ *  A.scale_rows[x]
+ *  A <- diag(x)*A
+ */
+
+static int int_meth_sprowmatrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A = self;
+  NspMatrix *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+  
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
+      return RET_BUG;
+    }
+  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ * A.scale_cols[x]
+ * A <- A*diag(x)
+ */
+
+static int int_meth_sprowmatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A = self;
+  NspMatrix *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+  return 0;
+}
+
+
+/* 
+ * get_nnz 
+ */
+static int int_meth_sprowmatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,0);
+  CheckRhs(0,0);
+  if ( nsp_move_double(stack,1, nsp_sprowmatrix_nnz((NspSpRowMatrix *) self)) == FAIL) 
+    return RET_BUG;
+  return 1;
+}
+
+static int int_meth_sprowmatrix_set_diag(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpRowMatrix *Diag;
+  int k=0;
+  CheckRhs (1,2);
+  CheckLhs (0,0); 
+  if ((Diag = GetSpRow(stack, 1)) == NULLSPROW)   return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
+    }
+  if (nsp_sprowmatrix_set_diag ((NspSpRowMatrix *) self, Diag, k) != OK)
+    return RET_BUG;
+  return 0;
+}
+
+static NspMethods sprowmatrix_methods[] = {
+  { "scale_rows",int_meth_sprowmatrix_scale_rows},  
+  { "scale_cols",int_meth_sprowmatrix_scale_cols},
+  { "get_nnz", int_meth_sprowmatrix_get_nnz},
+  { "set_diag", int_meth_sprowmatrix_set_diag},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *sprowmatrix_get_methods(void) { return sprowmatrix_methods;};
 
 /*
  * Now the interfaced function for basic sparse operations
@@ -744,26 +838,6 @@ static int int_sprowmatrix_diage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_matrix_create_diag(A,Diag,k)
- * WARNING : A is not copied we want this routine to change A
- */
-
-static int int_sprowmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspSpRowMatrix *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Diag = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_sprowmatrix_diag_set( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a Matrix with kth diag set to Diag 
@@ -1867,7 +1941,7 @@ static OpTab SpRowMatrix_func[]={
   {"extractcols_sprow",int_sprowmatrix_extractcols},
   {"diage_sprow" ,  int_sprowmatrix_diage },
   {"diage_sprow_m" ,  int_sprowmatrix_diage },
-  {"diagset_sprow" ,  int_sprowmatrix_diagset },
+  /* {"diagset_sprow" ,  int_sprowmatrix_diagset }, */
   {"diagcre_sprow" ,  int_sprowmatrix_diagcre },
   {"diagcre_sprow_m" ,  int_sprowmatrix_diagcre },
   {"diag_sprow", int_sprowmatrix_diag},

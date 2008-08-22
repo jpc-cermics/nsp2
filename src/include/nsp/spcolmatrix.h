@@ -125,7 +125,7 @@ extern int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i);
  extern NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspObject *Cols, int *err); 
  extern NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspObject *Rows, int *err); 
  extern NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k); 
- extern int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k); 
+ extern int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k); 
  extern NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k); 
  extern NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B); 
  extern NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix *Res);

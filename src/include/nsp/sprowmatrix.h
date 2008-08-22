@@ -130,7 +130,7 @@ extern int nsp_sprowmatrix_compress_row_simple(NspSpRowMatrix *A, int i);
  extern NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspObject *Cols, int *err); 
  extern NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspObject *Rows, int *err); 
  extern NspSpRowMatrix *nsp_sprowmatrix_diag_extract(NspSpRowMatrix *A, int k); 
- extern int nsp_sprowmatrix_diag_set(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k); 
+ extern int nsp_sprowmatrix_set_diag(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k); 
  extern NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k); 
  extern NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B); 
 extern NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X, NspMatrix *Res);
@@ -215,4 +215,5 @@ static char *nsp_sprowmatrix_type_as_string(void);
 static char *nsp_sprowmatrix_type_short_string(NspObject *v);
 static int nsp_sprowmatrix_eq(NspObject *A,NspObject *B);
 static int nsp_sprowmatrix_neq(NspObject *A,NspObject *B);
+static NspMethods *sprowmatrix_get_methods(void); 
 #endif 

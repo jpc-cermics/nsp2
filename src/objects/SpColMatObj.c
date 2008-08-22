@@ -391,6 +391,7 @@ static int int_meth_spcolmatrix_scale_rows(void *self, Stack stack,int rhs,int o
  *
  *    A.scale_cols[x]
  */
+
 static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspSpColMatrix *A = (NspSpColMatrix *) self;
@@ -423,10 +424,27 @@ static int int_meth_spcolmatrix_get_nnz(void *self, Stack stack,int rhs,int opt,
   return 1;
 }
 
+static int int_meth_spcolmatrix_set_diag(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *Diag;
+  int k=0;
+  CheckRhs (1,2);
+  CheckLhs (0,0); 
+  if ((Diag = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
+    }
+  if (nsp_spcolmatrix_set_diag ((NspSpColMatrix *) self, Diag, k) != OK)
+    return RET_BUG;
+  return 0;
+}
+
 static NspMethods spcolmatrix_methods[] = {
   { "scale_rows",int_meth_spcolmatrix_scale_rows}, 
   { "scale_cols",int_meth_spcolmatrix_scale_cols}, 
   { "get_nnz", int_meth_spcolmatrix_get_nnz},
+  { "set_diag", int_meth_spcolmatrix_set_diag},
   { (char *) 0, NULL}
 };
 
@@ -1020,26 +1038,6 @@ static int int_spcolmatrix_diage(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_matrix_create_diag(A,Diag,k)
- * WARNING : A is not copied we want this routine to change A
- */
-
-static int int_spcolmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
-{
-  int k1;
-  NspSpColMatrix *A,*Diag;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ((Diag = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_spcolmatrix_diag_set( A, Diag,k1) != OK) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
 
 /*
  *  Creates a Matrix with kth diag set to Diag 
@@ -2894,7 +2892,7 @@ static OpTab SpColMatrix_func[]={
   {"extractcols_sp",int_spcolmatrix_extractcols},
   {"diage_sp" ,  int_spcolmatrix_diage },
   {"diage_sp_m" ,  int_spcolmatrix_diage },
-  {"diagset_sp" ,  int_spcolmatrix_diagset },
+  /* {"diagset_sp" ,  int_spcolmatrix_diagset }, */
   {"diagcre_sp" ,  int_spcolmatrix_diagcre },
   {"diagcre_sp_m" ,  int_spcolmatrix_diagcre },
   {"diag_sp", int_spcolmatrix_diag},

@@ -2077,7 +2077,7 @@ NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k)
 static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
 
 /**
- * nsp_spcolmatrix_diag_set:
+ * nsp_spcolmatrix_set_diag:
  * @A: a #NspSpColMatrix
  * @Diag: a #NspSpColMatrix
  * @k: an integer 
@@ -2088,7 +2088,7 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
  * Return value: %OK or %FAIL
  **/
 
-int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
+int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 {
   int i,l;
   int rmin,cmin,rmax,cmax,itmax;
