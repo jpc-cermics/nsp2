@@ -116,8 +116,8 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   endfunction
   
   function res=get_matrix_from_gtkliststore(model,type_x)
-  // back create a matrix from the model 
-  // this function can be replaced by the get_matrix[] 
+  // back create a matrix from the model. 
+  // this function is not used and is replaced by the get_matrix[] 
   // method added to gtk tree and list store 
     ncol= model.get_n_columns[] ;
     iter=model.get_iter_first[];
@@ -189,11 +189,14 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     end 
   endfunction
 
+  // now the code for edit matrix. 
+    
   if size(x,'*') == 0 then  
     x_message("Matrix is of null size.")
     return;
   end 
      
+  size_request1 =   size_request;
   hbox = gtkhbox_new(homogeneous=%f,spacing=8);
   
   if top.equal[[]] then 
@@ -215,13 +218,9 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   hbox.pack_start[stock,expand=%f,fill=%f,padding=0]
   label=gtklabel_new(str=catenate(title));
   hbox.pack_start[label,expand=%t,fill=%t,padding=0]
-        
-  // last colmun could be used to store an edit flag for each cell.
-  edit_flag = ones(size(x,1),1) >= 0
+
   ncol_x = size(x,2);
-  ls = list( x) ;//  edit_flag);
-  model = gtkliststore_new(ls) 
-  
+  model = gtkliststore_new(list(x)) 
   // create tree view 
   treeview = gtktreeview_new(model);
   // treeview.connect["button-press-event", on_treeview_button_press_event];
@@ -236,7 +235,6 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   else 
     add_columns(treeview,ncol_x,type_x);
   end
-
   if type_x == 'b' then 
     if ncol_x >= 60 || size(x,1) >= 60 then with_scroll = %t; end 
   else 
@@ -263,23 +261,71 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
   end
   
-  
-  if type_x == 's' then 
+  if  type(x,'short') == 's' then 
     vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
-    evaluate_str_check = gtkcheckbutton_new(label="Evaluate entries");
+    evaluate_str_check = gtkcheckbutton_new(label="Evaluate entries when edited");
     vbox.pack_start[ evaluate_str_check,expand=%f,fill=%t,padding=0]
     evaluate_str_check.connect[  "toggled",entry_toggle_evaluate_str, list(treeview)]
     val = %f;
     evaluate_str_check.set_active[val];
     treeview.set_data[evluate_str=val];
   end 
+
+  function entry_return_handler(w,ev,data)
+  // check if return was entered   
+  // in the gtk_entry
+    treeview=data(1);
+    model = treeview.get_model[];
+    if ev.keyval == 0xFF0D then 
+      // printf("Return pressed in entry: %s\n",w.get_text[]);
+      ok=execstr('x_new='+w.get_text[],errcatch=%t);
+      if ok then 
+	x=model.get_matrix[];
+	if and(size(x)==size(x_new)) && type(x,'short')== type(x_new,'short') then 
+	  // change the model 
+	  // printf("OK  in new_model: %s\n",w.get_text[]);
+	  model = gtkliststore_new(list(x_new)); 
+	  treeview.set_model[model=model];
+	else
+	  // we will return ans start a new editvar 
+	  //x_message(sprintf("expression should evaluate to a matrix \nof type %s and size"+...
+	  // " %dx%d !",type(x,'string'),size(x,1),size(x,2)));
+	  // window is a gtk_dialog we force a quit from dialog run 
+	  window = data(2);
+	  treeview.set_data[x_new=x_new];
+	  window.response[3]; // 
+	end
+      else
+	x_message("Given expression does not evaluate to a nsp object !");
+      end
+    end
+  endfunction
+  
+  hbox = gtkhbox_new(homogeneous=%f,spacing=8);
+  label = gtklabel_new (str="new expression:");
+  label.set_alignment[ 0, 0.5];
+  hbox.pack_start[ label, expand=%f,fill= %t,padding=0]; 
+  
+  entry = gtkentry_new ();
+  select  type(x,'short')
+   case 'm' then   str= sprintf("rand(%d,%d);",size(x,1),size(x,2));
+   case 's' then   str= sprintf("string(rand(%d,%d));",size(x,1),size(x, 2));
+   case 'b' then   str= sprintf("rand(%d,%d)>=0.5;",size(x,1),size(x,2));
+  else
+     str= sprintf("rand(%d,%d);",size(x,1),size(x,2));
+  end
+  entry.set_text[str]
+  // entry.select_region[ 0, 5];
+  entry.connect["key_press_event",entry_return_handler,list(treeview,window)];
+  hbox.pack_start[ entry,expand=%t,fill=%t,padding=0]
+  vbox.pack_start[ hbox,expand=%f,fill=%t,padding=10]
   
   if top.equal[[]] then 
     window.show_all[];
     // treeview.columns_autosize[];
     // a modal window undestroyed at end of run. 
     response = window.run[];
-    if response == ok_rep; // GTK.RESPONSE_OK 
+    if response == ok_rep // GTK.RESPONSE_OK 
       //to get the new value of matrix 
       //we can use the above function get_matrix_from_gtkliststore
       //x=get_matrix_from_gtkliststore(model,type_x);
@@ -287,6 +333,12 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
       //extract a matrix from a model (for which all the values are 
       //of the same type).
       x=model.get_matrix[];
+    elseif response == 3 ; // response called by me in gtk_entry 
+      x=treeview.get_data['x_new'];
+      window.destroy[];
+      editvar('x', with_scroll=with_scroll,size_request=size_request1,...
+		 headers=headers,top=top,parent=parent);
+      return;
     end
     window.destroy[];
   end
@@ -792,12 +844,9 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
   label=gtklabel_new(str=catenate(title));
   hbox.pack_start[label,expand=%t,fill=%t,padding=0]
         
-  // last colmun could be used to store an edit flag for each cell.
-  edit_flag = ones(size(x,1),1) >= 0
   ncol_x = size(x,2);
   xs = cellstostr(x);
   model = gtkliststore_new(list(xs)) 
-  
   // create tree view 
   treeview = gtktreeview_new(model);
   treeview.user_data = x;
@@ -833,7 +882,7 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
     evaluate_str_check.connect[  "toggled",entry_toggle_evaluate_str, list(treeview)]
     val = %f;
     evaluate_str_check.set_active[val];
-    treeview.set_data[evluate_str=val];
+    treeview.set_data[evaluate_str=val];
   end 
   
   if top.equal[[]] then 
