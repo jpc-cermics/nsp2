@@ -1084,6 +1084,38 @@ static int int_cells_to_str(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+extern GtkWidget*create_prop_editor (GObject   *object, GType      type);
+
+
+static int int_create_prop_editor(Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  GType widget_type = 0;
+  NspGObject *gobj1,*gobj2;
+  GtkWidget *wid; 
+  CheckRhs(1,2);
+  CheckLhs(0,1);
+  if ( rhs == 2 ) 
+    {
+      int_types T[] = {obj_check, obj_check,t_end};
+      if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &gobj1,&nsp_type_gobject, &gobj2) == FAIL) return RET_BUG;
+      if ((widget_type = nspg_type_from_object((NspObject *) gobj2)) == FAIL)
+	return RET_BUG;
+    }
+  else 
+    {
+      int_types T[] = {obj_check, t_end};
+      if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &gobj1) == FAIL) return RET_BUG;
+    }
+  wid = create_prop_editor (G_OBJECT(gobj1->obj),widget_type);
+  if (wid == NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) wid))== NULL) 
+    return RET_BUG;  
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+
 
 /*----------------------------------------------------
  * Interface 
@@ -1100,6 +1132,7 @@ static OpTab NspGObject_func[]={
   {"pixbuftocells",int_pixbuftocells},
   {"cellstopixbuf",int_cellstopixbuf},
   {"cellstostr",int_cells_to_str},
+  {"create_prop_editor",int_create_prop_editor},
   {(char *) 0, NULL}
 };
 

@@ -63854,7 +63854,7 @@ gtk_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SELECTION_MODE, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SHADOW_TYPE, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SIDE_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SIGNAL_RUN_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash *)module, GTK_TYPE_SIGNAL_RUN_TYPE, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SIZE_GROUP_MODE, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SORT_TYPE, strip_prefix);
   nsp_enum_add_constants((NspHash *) module, GTK_TYPE_SPIN_BUTTON_UPDATE_POLICY, strip_prefix);
