@@ -396,6 +396,47 @@ NspFigure *nsp_create_default_figure(void)
 }
 
 
+/* checks for a figure and an axes in Xgc 
+ * create one if not present. 
+ * Xgc should not be null here. 
+ * this is not a definitive function just a hack.
+ * since graphic should be driven by Figure Not by Xgc 
+ */
+
+NspAxes * nsp_check_for_axes(BCG *Xgc) 
+{
+  NspObject *Obj;
+  NspList *L;
+  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,NULL);
+      if ( F == NULL) return NULL;
+      /* insert in Xgc */
+      store_graphic_object(Xgc,NSP_OBJECT(F));
+    }
+  if ( ! IsFigure((NspObject *) F)) return NULL;
+  L= F->obj->children;
+  /* return the first axes found  */
+  if ( nsp_list_length(L) <1 ||  (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
+    {
+      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL);
+      if ( axe == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 
+	{
+	  nsp_axes_destroy(axe);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      Obj =(NspObject *) axe;
+    }
+  return (NspAxes *) Obj;
+}
+
+
 
 
 

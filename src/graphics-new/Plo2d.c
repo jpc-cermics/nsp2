@@ -66,7 +66,6 @@ extern Gengine GL_gengine;
  *     if  strflag[2] == '2' -> no axis, only a box around the curves
  *     else no box and no axis 
  *
- * lstr* : unused ( but used by Fortran ) 
  *--------------------------------------------------------------------------*/
   
 int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
@@ -771,4 +770,77 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
       Xgc->graphic_engine->drawrectangle(Xgc,box);
     }
 }
+
+/* a new version with objects 
+ * 
+ *  nsp_plot2d_obj(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
+ *  
+ *  Draw *n1 curves of *n2 points each
+ *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
+ *  position of point i of curve j (i=0,*n2-1 j=0,*n1-1)
+ *
+ *  style[*n1]-> give the style to use for each curve 
+ *     if style is positive --> a mark is used (mark id = style[i])
+ *     if style is strictly negative --> a dashed line is used 
+ *        (dash id = abs(style[i])
+ *     if there's only one curve, style can be of type style[0]=style,
+ *     style[1]=pos ( pos in [1,6]) 
+ *     pos give the legend position (1 to 6) (this can be iteresting
+ *     if you want to superpose curves with different legends by 
+ *     calling plot2d more than one time.
+ *
+ *  strflag[3] is a string
+ *  
+ *     if strflag[0] == '1' then legends are added 
+ *        legend = "leg1@leg2@....@legn"; gives the legend for each curve
+ *	else no legend
+ *
+ *     if strflag[1] == '1' then  the values of brect are used to fix 
+ *        the drawing boundaries :  brect[]= <xmin,ymin,xmax,ymax>;
+ *	if strflag[1] == '2' then the values  are computed from data
+ *	else if strflag[1]=='0' the previous values 
+ *                (previous call or defaut values) are used 
+ *
+ *     if  strflag[2] == '1' ->then an axis is added
+ *        the number of intervals 
+ *        is specified by the vector aaint[4] of ints 
+ *	   <aaint[0],aaint[1]> specifies the x-axis number of  points 
+ *	   <aaint[2],aaint[3]> same for y-axis
+ *     if  strflag[2] == '2' -> no axis, only a box around the curves
+ *     else no box and no axis 
+ *
+ */
+
+#include <gtk/gtk.h>
+#include <nsp/figure.h> 
+#include <nsp/axes.h> 
+#include <nsp/curve.h> 
+
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
+
+int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+		   const char *legend,int legend_pos,double brect[],int aaint[])
+{
+  int i;
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a set of curves and insert them in axe */
+  for ( i = 0 ; i < *n1 ; i++) 
+    {
+      NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
+      if ( Pts == NULL) return FAIL;
+      memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
+      memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
+      /* XXX create should not copy the given Pts argument */
+      NspCurve *curve= nsp_curve_create("curve",0,0,style[i],0,Pts,NULL);
+      /* insert the new curve */
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
+	return FAIL;
+    }
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return OK;
+}
+
+
 
