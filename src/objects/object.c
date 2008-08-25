@@ -728,6 +728,7 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
   int cu_level = 0;
   NspMethods *methods;
   NspSMatrix *sm=NULLSMAT,*sm1;
+  NspTypeBase *interf ;
   /* build a string matrix with all methods */
   while ( type != NULL) 
     {
@@ -751,6 +752,28 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
 	      sm=sm1;
 	    }
 	}
+      /* explore interfaces */
+      interf = type->interface;
+      while ( interf != NULL) 
+	{
+	  methods = (interf->methods != NULL) ? interf->methods(): NULL;
+	  if ( methods != NULL ) 
+	    {
+	      if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,methods,sizeof(NspMethods))) == NULLSMAT) return NULL;
+	      sm1->n=sm1->m;sm1->m=1;/* transpose vector */
+	      if ( sm != NULL) 
+		{
+		  if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
+		  nsp_smatrix_destroy(sm1);
+		}
+	      else 
+		{
+		  sm=sm1;
+		}
+
+	    }
+	  interf = interf->interface;
+	} 
       type = type->surtype;
       cu_level++;
     }
