@@ -920,8 +920,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj)
   int arsize;
 
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-  if ( ((NspGraphic *) P)->obj->x->mn  == 0 
-       || ((NspGraphic *) P)->obj->y->mn  == 0 ) return;
+  if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
   /* get default dash fo rarrows */
   int cpat,uc;
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
@@ -1117,4 +1116,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1121 "vfield.c"
+#line 1120 "vfield.c"
