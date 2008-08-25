@@ -174,3 +174,38 @@ if or(C{3}<>A) then pause;end
 C=cells_create(0,0);C{3,4}(2,2)= 6;
 if or(size(C)<>[3,4]) then pause;end 
 if C{3,4}<>6 then pause;end 
+
+// function map 
+
+A=rand(4,5,'n');
+
+function y=myabs(x);y=abs(x);endfunction 
+  
+C=A.to_cells[];
+C1=map(C,myabs);
+if norm(abs(A) - ce2m(C1)) > 10*%eps then pause;end 
+
+function R=mapce(C,f)
+  R=C;
+  for i=1:size(C,'*')
+    R(i) = {f(C(i).get[])}
+  end
+endfunction
+
+function R=mapce1(C,f)
+  R=C;
+  for i=1:size(C,'*')
+    R{i} = f(C{i});
+  end
+endfunction
+
+C2=mapce(C,myabs);
+if ~C1.equal[C2] then pause;end 
+
+C3=mapce(C,myabs);
+if ~C1.equal[C3] then pause;end 
+
+
+
+
+  
