@@ -353,7 +353,6 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case NSP_EXIT :  
     case QUIT :  
     case WHAT :  
-    case WHO :   
     case PRETURN: 
       if (nsp_parse_add(&plist1,T->tokenv.id,0,T->tokenv.Line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
@@ -392,6 +391,7 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       return(OK);
     case PAUSE:  
     case HELP  : 
+    case WHO :   
       /* a set of commands with zero or one argument  */
       if ( T->tokenv.NextC == '(') 
 	{
