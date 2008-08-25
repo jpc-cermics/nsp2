@@ -37,9 +37,6 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, 
-			     double *zmax,double *coeff,
-			     const int *colminmax,const double *zminmax,const double z[],int zn);
 
 static driver_fill_grid_rectangles fill_grid_rectangles_gen;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
@@ -195,8 +192,8 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 /*
  */
 
-static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
-			     const int *colminmax,const double *zminmax,const double z[],int zn)
+void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
+		      const int *colminmax,const double *zminmax,const double z[],int zn)
 {
   *colmin=1;
   *colmax=Xgc->graphic_engine->xget_last(Xgc);

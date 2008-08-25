@@ -18,6 +18,10 @@ if %t then
   // insert a matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   A.children($+1)= ma;
+  // insert a vector field 
+  vf = vfield_create(x=linspace(0,1,5),y=linspace(0,1,4),fx=rand(5,4),fy= ...
+		     rand(5,4),colored=%t);
+  A.children($+1)= vf;
   // insert a new axes 
   C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0);
   // the position of the axes in its parent 
@@ -37,7 +41,7 @@ if %t then
   C.children(3)=P;
   // matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
-  //C.children($+1)= ma;
+  C.children($+1)= ma;
   A.children($+1) = C;
   F.connect[]
 end

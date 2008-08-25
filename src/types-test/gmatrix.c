@@ -835,19 +835,6 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj)
   int colminmax[2];
   double *zminmax = NULL;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-  /* Boundaries of the matrix rectangle in pixel */
-  scale_f2i(Xgc,xx,yy,xx1,yy1,2);
-  xm = graphic_alloc(0,P->obj->data->n+1,sizeof(int));
-  ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
-  if ( xm == 0 || ym == 0 )
-    {
-      Scistring("Xgray: running out of memory\n");
-      return ; 
-    }
-  for ( j =0 ; j < (P->obj->data->n+1) ; j++)	 
-    xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
-  for ( j =0 ; j < (P->obj->data->m+1) ; j++)	 
-    ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
   if ( P->obj->colminmax->mn == 2 ) 
     {
       colminmax[0] = P->obj->colminmax->R[0];
@@ -857,14 +844,63 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj)
     zminmax = P->obj->colminmax->R;
   else
     remap = FALSE;
-  Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
-					     P->obj->data->m, 
-					     P->obj->data->n,
-					     remap,
-					     colminmax,
-					     zminmax);
-  return; 
+
+  if  (  Xgc->scales->cosa==1.0 ) 
+    {
+      /* Boundaries of the matrix rectangle in pixel */
+      scale_f2i(Xgc,xx,yy,xx1,yy1,2);
+      xm = graphic_alloc(0,P->obj->data->n+1,sizeof(int));
+      ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
+      if ( xm == 0 || ym == 0 )
+	{
+	  Scistring("Xgray: running out of memory\n");
+	  return ; 
+	}
+      for ( j =0 ; j < (P->obj->data->n+1) ; j++)	 
+	xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
+      for ( j =0 ; j < (P->obj->data->m+1) ; j++)	 
+	ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
+      Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
+						 P->obj->data->m, 
+						 P->obj->data->n,
+						 remap,
+						 colminmax,
+						 zminmax);
+    }
+  else
+    {
+      double xp[4],yp[4];
+      const double *z =P->obj->data->R;
+      int nr =P->obj->data->m , nc=P->obj->data->n;
+      int colmin,colmax;
+      double zmin,zmax,coeff;
+      int i,j,fill[1],cpat,xz[2];
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
+      nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
+      
+      for (i = 0 ; i < nc-1 ; i++)
+	for (j = 0 ; j < nr-1 ; j++)
+	  {
+	    fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
+	    /* do not draw rectangles which are outside the colormap range */
+	    if ( fill[0] < colmin || fill[0] > colmax ) continue ;
+	    Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
+	    xp[0]= (( xx[1]*i + xx[0]*(P->obj->data->n-i) )/((double) P->obj->data->n));
+	    yp[0]= (( yy[0]*j + yy[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
+	    xp[1]= xp[0];
+	    yp[1]= (( yy[0]*(j+1) + yy[1]*(P->obj->data->m-(j+1)) )/((double) P->obj->data->m));
+	    xp[2]= (( xx[1]*(i+1) + xx[0]*(P->obj->data->n-(i+1)) )/((double) P->obj->data->n));
+	    yp[2]= yp[1];
+	    xp[3]= xp[2];
+	    yp[3]= yp[0];
+	    Xgc->graphic_engine->scale->fillpolyline(Xgc,xp,yp,4,1);
+	  }
+      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+    }
+  
 }
+
 
 
 static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -909,4 +945,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 913 "gmatrix.c"
+#line 949 "gmatrix.c"

@@ -17,8 +17,7 @@ FFLAGS = $(FC_OPTIONS)
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
-	../groot.c ../gmatrix.c 
-
+	../groot.c ../gmatrix.c ../vfield.c
 
 all:: $(ALL)
 
@@ -99,5 +98,11 @@ clean ::
 	    --override gmatrix.override \
 	    --prefix GMatrix gmatrix.defs) > $*.c \
 	&& cp gmatrix.h ../../include/nsp 
+
+../vfield.c : vfield.defs vfield.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override vfield.override \
+	    --prefix VField vfield.defs) > $*.c \
+	&& cp vfield.h ../../include/nsp 
 
 

@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(define-objectref VField
+  (in-module "VField")
+  (parent "Graphic")
+  (c-name "VField")
+  (fields
+    '("NspMatrix*" "fx") ;; Matrix 
+    '("NspMatrix*" "fy") ;; Matrix 
+    '("NspMatrix*" "x")  ;; vector 
+    '("NspMatrix*" "y")  ;; vector 
+    '("gboolean" "colored")  ;; colored arrows 
+    )
+  (gtype-id "VField")
+)
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_vfield
+  (c-name "nsp_extractelts_vfield")
+  (return-type "none")
+)
+(define-function setrowscols_vfield
+  (c-name "nsp_setrowscols_vfield")
+  (return-type "none")
+)
+
+
+
+
+
+
+
