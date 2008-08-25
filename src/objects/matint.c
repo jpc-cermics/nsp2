@@ -3722,7 +3722,9 @@ static NspCells *nsp_matint_to_cells(NspSMatrix *A,int  dim)
  * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
  * @k: diagonal 
  * 
- * set the k-th diagonal of matrix @A using matrix @B.
+ * set the k-th diagonal of matrix @A using matrix @B. This function is used 
+ * in the set_diag method, note that for #NspMatrix and #NspBMatrix we directly 
+ * use nsp_matrix_set_diag() and nsp_bmatrix_set_diag(). 
  * 
  * Returns: %OK or %FAIL
  **/

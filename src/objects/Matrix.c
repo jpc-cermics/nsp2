@@ -1378,7 +1378,7 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
  * @Diag: a #NspMatrix
  * @k: an int 
  *
- * Creates a square marix with its @k-th diagonal filled with @Diag.
+ * Creates a square matrix with its @k-th diagonal filled with @Diag.
  * 
  * returns a #MspMatrix or %NULLMAT 
  */
