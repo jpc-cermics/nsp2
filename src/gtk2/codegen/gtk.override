@@ -2562,7 +2562,14 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   GtkTreeModel *ret;
   NspObject *nsp_ret;
   ret = gtk_tree_view_get_model(GTK_TREE_VIEW(self->obj));
-  if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,(GObject *) ret))==NULLOBJ) return RET_BUG;
+  if ( ret == NULL) 
+    {
+      if ((nsp_ret =(NspObject *) nsp_none_create(NVOID,NULL)) == NULLOBJ) return RET_BUG;
+    }
+  else
+    {
+      if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,(GObject *) ret))==NULLOBJ) return RET_BUG;
+    }
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2577,7 +2584,14 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   GtkTreeModel *ret;
   NspObject *nsp_ret;
   ret = gtk_icon_view_get_model(GTK_ICON_VIEW(self->obj));
-  if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,(GObject *) ret))==NULLOBJ) return RET_BUG;
+  if ( ret == NULL) 
+    {
+      if ((nsp_ret =(NspObject *) nsp_none_create(NVOID,NULL)) == NULLOBJ) return RET_BUG;
+    }
+  else
+    {
+      if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,(GObject *) ret))==NULLOBJ) return RET_BUG;
+    }
   MoveObj(stack,1,nsp_ret);
   return 1;
 }

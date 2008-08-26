@@ -499,7 +499,6 @@ int int_champ1( Stack stack, int rhs, int opt, int lhs)
 
 
 
-
 /*-----------------------------------------------------------
  *  contour(x,y,z,nz,[theta,alpha,leg,flag,ebox,zlev])
  *-----------------------------------------------------------*/

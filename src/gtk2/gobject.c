@@ -1180,7 +1180,7 @@ int nspgobject_check(void *value, void *type)
  * creates a new nsp object which belong to a class derived from #NspGObject. 
  * The nsp_type to use is extracted from the GType of the given GObject, 
  * this is only possible if the associated nsp type was registered using 
- * register_nsp_type_in_gtype().
+ * register_nsp_type_in_gtype(). 
  * 
  * Returns: a new #NspGObject 
  **/
@@ -2292,11 +2292,14 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
       else
 	{
 	  int n =nsp_object_get_size(cloc->O,2), n1 = count,i;
-	  gtype = gtype_from_nsp_object(cloc->O);
-	  if ( gtype == G_TYPE_INVALID) goto fail;
-	  column_types[count++] = gtype;
-	  for (i=1 ; i < n ; i++) 
-	    column_types[count++] = column_types[n1];
+	  if ( n != 0 ) 
+	    {
+	      gtype = gtype_from_nsp_object(cloc->O);
+	      if ( gtype == G_TYPE_INVALID) goto fail;
+	      column_types[count++] = gtype;
+	      for (i=1 ; i < n ; i++) 
+		column_types[count++] = column_types[n1];
+	    }
 	}
       cloc = cloc->next;
     }
@@ -2317,10 +2320,10 @@ GtkListStore *nsp_gtk_list_store_new_from_list(NspList *L)
   GtkListStore *ls;
   GType *column_types;
   column_types = nsp_gtk_gtypes_from_list(L,&ncols); 
-  if (column_types == NULL) return NULL; 
+  if (column_types == NULL) return NULL;
   /* create the list store */
   ls = gtk_list_store_newv(ncols, column_types);
-  g_free(column_types);
+  if (column_types != NULL) g_free(column_types);
   if (! ls) {
     Scierror("could not create GtkListStore object\n");
     return NULL;
@@ -2407,7 +2410,6 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
 	  return FAIL;
 	}
       cloc = cloc->next;
-      count++;
     }
   *n_rows = nrows ; 
   return OK;

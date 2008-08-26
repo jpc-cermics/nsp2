@@ -190,12 +190,47 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     end 
   endfunction
 
+  function entry_return_handler(w,ev,data)
+  // the handler for the entry text 
+  // when return is entered we evaluate expression.
+    if ev.keyval == 0xFF0D then 
+      treeview=data(1);
+      model = treeview.get_model[];
+      // printf("Return pressed in entry: %s\n",w.get_text[]);
+      ok=execstr('x_new='+w.get_text[],errcatch=%t);
+      if ok then 
+	if is(model,%types.None) then 
+	  window = data(2);
+	  window.set_data[x_new=x_new];
+	  window.response[3]; // 
+	  return;
+	end
+	x=model.get_matrix[];
+	if and(size(x)==size(x_new)) && type(x,'short')== type(x_new,'short') then 
+	  // change the model 
+	  // printf("OK  in new_model: %s\n",w.get_text[]);
+	  model = gtkliststore_new(list(x_new)); 
+	  treeview.set_model[model=model];
+	else
+	  // we will return ans start a new editvar 
+	  //x_message(sprintf("expression should evaluate to a matrix \nof type %s and size"+...
+	  // " %dx%d !",type(x,'string'),size(x,1),size(x,2)));
+	  // window is a gtk_dialog we force a quit from dialog run 
+	  window = data(2);
+	  window.set_data[x_new=x_new];
+	  window.response[3]; // 
+	end
+      else
+	x_message("Given expression does not evaluate to a nsp object !");
+      end
+    end
+  endfunction
+  
   // now the code for edit matrix. 
-    
-  if size(x,'*') == 0 then  
-    x_message("Matrix is of null size.")
-    return;
-  end 
+  //   if size(x,'*') == 0 then  
+  //     x_message("Matrix is of null size.")
+  //     return;
+  //   end 
      
   size_request1 =   size_request;
   hbox = gtkhbox_new(homogeneous=%f,spacing=8);
@@ -220,46 +255,52 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   label=gtklabel_new(str=catenate(title));
   hbox.pack_start[label,expand=%t,fill=%t,padding=0]
 
-  ncol_x = size(x,2);
-  model = gtkliststore_new(list(x)) 
-  // create tree view 
-  treeview = gtktreeview_new(model);
-  // treeview.connect["button-press-event", on_treeview_button_press_event];
-  treeview.set_rules_hint[  %t]
-  treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
-  // show column headers 
-  treeview.set_headers_visible[headers];
-  type_x = type(x,'short');
-  if type_x == 'b' then 
-    // for booleans we use check boxes 
-    add_columns_bool(treeview,ncol_x,type_x);
-  else 
-    add_columns(treeview,ncol_x,type_x);
-  end
-  if type_x == 'b' then 
-    if ncol_x >= 60 || size(x,1) >= 60 then with_scroll = %t; end 
-  else 
-    if ncol_x >= 20 || size(x,1) >= 60 then with_scroll = %t; end 
-  end
-  
-  if with_scroll then 
-    // insert the matrix edition in a scrolled window 
-    sw = gtkscrolledwindow_new();
-    sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
-    sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
-    sw.add[treeview]
-    vbox.pack_start[ sw,expand=%t,fill=%t,padding=0];
-    if isempty(size_request) then
-      size_request=[400,400];
+  if size(x,'*') <> 0 then 
+    ncol_x = size(x,2);
+    model = gtkliststore_new(list(x)) 
+    // create tree view 
+    treeview = gtktreeview_new(model);
+    // treeview.connect["button-press-event", on_treeview_button_press_event];
+    treeview.set_rules_hint[  %t]
+    treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
+    // show column headers 
+    treeview.set_headers_visible[headers];
+    type_x = type(x,'short');
+    if type_x == 'b' then 
+      // for booleans we use check boxes 
+      add_columns_bool(treeview,ncol_x,type_x);
+    else 
+      add_columns(treeview,ncol_x,type_x);
     end
     if type_x == 'b' then 
-      sw.set_size_request[min(30*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+      if ncol_x >= 60 || size(x,1) >= 60 then with_scroll = %t; end 
     else 
-      sw.set_size_request[min(60*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+      if ncol_x >= 20 || size(x,1) >= 60 then with_scroll = %t; end 
+    end
+  
+    if with_scroll then 
+      // insert the matrix edition in a scrolled window 
+      sw = gtkscrolledwindow_new();
+      sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
+      sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
+      sw.add[treeview]
+      vbox.pack_start[ sw,expand=%t,fill=%t,padding=0];
+      if isempty(size_request) then
+	size_request=[400,400];
+      end
+      if type_x == 'b' then 
+	sw.set_size_request[min(30*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+      else 
+	sw.set_size_request[min(60*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+      end
+    else
+      vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
+      vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
     end
   else
-    vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
-    vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
+    treeview= gtktreeview_new();
+    label = gtklabel_new (str="[]");
+    vbox.pack_start[ label, expand=%f,fill= %t,padding=0]; 
   end
   
   if  type(x,'short') == 's' then 
@@ -269,38 +310,8 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     evaluate_str_check.connect[  "toggled",entry_toggle_evaluate_str, list(treeview)]
     val = %f;
     evaluate_str_check.set_active[val];
-    treeview.set_data[evluate_str=val];
+    treeview.set_data[evaluate_str=val];
   end 
-
-  function entry_return_handler(w,ev,data)
-  // the handler for the entry text 
-  // when return is entered we evaluate expression.
-    if ev.keyval == 0xFF0D then 
-      treeview=data(1);
-      model = treeview.get_model[];
-      // printf("Return pressed in entry: %s\n",w.get_text[]);
-      ok=execstr('x_new='+w.get_text[],errcatch=%t);
-      if ok then 
-	x=model.get_matrix[];
-	if and(size(x)==size(x_new)) && type(x,'short')== type(x_new,'short') then 
-	  // change the model 
-	  // printf("OK  in new_model: %s\n",w.get_text[]);
-	  model = gtkliststore_new(list(x_new)); 
-	  treeview.set_model[model=model];
-	else
-	  // we will return ans start a new editvar 
-	  //x_message(sprintf("expression should evaluate to a matrix \nof type %s and size"+...
-	  // " %dx%d !",type(x,'string'),size(x,1),size(x,2)));
-	  // window is a gtk_dialog we force a quit from dialog run 
-	  window = data(2);
-	  treeview.set_data[x_new=x_new];
-	  window.response[3]; // 
-	end
-      else
-	x_message("Given expression does not evaluate to a nsp object !");
-      end
-    end
-  endfunction
   
   hbox = gtkhbox_new(homogeneous=%f,spacing=8);
   label = gtklabel_new (str="new expression:");
@@ -335,9 +346,13 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
       //of the same type).
       // take care that model has maybe changed during interaction 
       model = treeview.get_model[];
-      x=model.get_matrix[];
+      if is(model,%types.None) then 
+	x=x;
+      else
+	x=model.get_matrix[];
+      end
     elseif response == 3 ; // response called by me in gtk_entry 
-      x=treeview.get_data['x_new'];
+      x=window.get_data['x_new'];
       window.destroy[];
       editvar('x', with_scroll=with_scroll,size_request=size_request1,...
 		 headers=headers,top=top,parent=parent);
@@ -532,7 +547,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     dialog.run[];
     dialog.destroy[];
   endfunction 
-
+  
   function y=on_treeview_button_press_event(tree_view, event, args)
     // right click on tree view 
     // action similar to double-click 
@@ -540,13 +555,13 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       // printf("Button pressed \n");
       ok=execstr('[path,col]=treeview.get_path_at_pos[event.x,event.y];',errcatch=%t);
       if ~ok then 
-	popup_menu=create_menu(list(tree_view,[]),%f);
+	popup_menu=create_menu(list(tree_view,[]),args(1),%f);
 	popup_menu.popup[button=3,activate_time=0]; 
 	y=%t; 
       else 
 	sel=tree_view.get_selection[];
 	sel.select_path[path];
-	popup_menu=create_menu(list(tree_view,path),%t);
+	popup_menu=create_menu(list(tree_view,path),args(1),%t);
 	popup_menu.popup[button=3,activate_time=0]; 
 	y=%t;
       end
@@ -567,7 +582,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     end
   endfunction
 
-  function menu=create_menu(data,flag)
+  function menu=create_menu(data,dtype,flag)
     menu = gtkmenu_new ();
     if flag then 
       menuitem = gtkimagemenuitem_new(stock_id="gtk-edit");
@@ -576,11 +591,17 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       menuitem.connect["activate",menuitem_response,data1];
       menu.append[menuitem]
       menuitem.show[];
-      items=["Insert after","Insert at end","Remove"];
-      for i=1:3;
+      if dtype == 'h' then 
+	items=["Insert new","Remove"];	
+	val= [2:3];
+      else
+	items=["Insert after","Insert at end","Remove"];	
+	val= [1:3];
+      end
+      for i=1:size(val,'*');
 	menuitem = gtkmenuitem_new(items(i));
 	data1=data;
-	data1(0)=i;
+	data1(0)=val(i);
 	menuitem.connect["activate",menuitem_response,data1];
 	menu.append[menuitem]
 	menuitem.show[];
@@ -769,7 +790,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers 
   treeview.set_headers_visible[headers];
-  treeview.connect["button-press-event", on_treeview_button_press_event];
+  treeview.connect["button-press-event", on_treeview_button_press_event,list(type(L,'short'))];
     
   if with_scroll then 
     // insert the matrix edition in a scrolled window 
@@ -787,17 +808,17 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
   end
   
-  button = gtkbutton_new(label="Remove selection");
-  button.connect[ "clicked", selected_remove,list(treeview)] 
-  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
-        
-  button = gtkbutton_new(label="Insert after selection");
-  button.connect[ "clicked",insert_after_selected,list(treeview)] 
-  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
-
-  button = gtkbutton_new(label="Insert at end");
-  button.connect[ "clicked",insert_at_end,list(treeview)] 
-  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  //   button = gtkbutton_new(label="Remove selection");
+  //   button.connect[ "clicked", selected_remove,list(treeview)] 
+  //   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
+  //   button = gtkbutton_new(label="Insert after selection");
+  //   button.connect[ "clicked",insert_after_selected,list(treeview)] 
+  //   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
+  //   button = gtkbutton_new(label="Insert at end");
+  //   button.connect[ "clicked",insert_at_end,list(treeview)] 
+  //   vbox.pack_start[button,expand=%f,fill=%f,padding=0];
   
   if top.equal[[]] then 
     window.show_all[];
@@ -912,6 +933,12 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
   else
     vbox = top;
   end
+
+  if size(x,'*') == 0 then  
+    x_message("cell is of null size.")
+    return;
+  end 
+
   
   stock = gtkimage_new("stock","gtk-edit" , GTK.ICON_SIZE_DIALOG);
   hbox.pack_start[stock,expand=%f,fill=%f,padding=0]
