@@ -33,6 +33,19 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
+/* #define NEW_GRAPHICS */
+
+#ifdef NEW_GRAPHICS 
+#include <gtk/gtk.h>
+#include <nsp/figure.h> 
+#include <nsp/axes.h> 
+#include <nsp/curve.h> 
+#include <nsp/polyline.h> 
+#include <nsp/vfield.h> 
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
+#endif 
+
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
 extern char *nsp_get_extension(char *name);
@@ -413,9 +426,31 @@ static char * check_logflags(Stack stack,const char *fname,char *varname,char *l
  * champ1(x,y,fx,fy,[arfact=1.0,rect=[xMin,yMin,xMax,yMax],flag])
  *-------------------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+int nsp_champ_obj(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *fx,NspMatrix *fy,int colored) 
+{
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a vfield and insert-it in axes */
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+  if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
+  if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
+  NspVField *vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
+  if ( vf == NULL) return FAIL;
+  /* insert the new vfield */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return OK;
+}
+
+#endif 
+
 static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
-		       int func(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, 
-				double *brect, double *arfact, int lstr))
+		       int func(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2,
+				char *strflag, double *brect, double *arfact))
 {
   BCG *Xgc;
   NspMatrix *x,*y,*fx,*fy,*rect=NULL;
@@ -442,10 +477,13 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact, 4L);
+#ifdef NEW_GRAPHICS 
+  nsp_champ_obj(Xgc,x,y,fx,fy,( func == nsp_champ ) ? FALSE: TRUE);
+#else 
+  (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact);
+#endif 
   return 0;
 }
-
 
 int int_champ( Stack stack, int rhs, int opt, int lhs)
 {
@@ -458,6 +496,8 @@ int int_champ1( Stack stack, int rhs, int opt, int lhs)
   if (rhs <= 0) return sci_demo(NspFname(stack),"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
   return int_champ_G( stack, rhs, opt, lhs,nsp_champ1);
 }
+
+
 
 
 /*-----------------------------------------------------------
@@ -1391,6 +1431,9 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
       plot2d_strf_change('d',strf);
     }
 
+#ifdef NEW_GRAPHICS 
+  nsp_plot2d_obj(Xgc,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
+#else 
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {
       nsp_plot2d(Xgc,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
@@ -1399,6 +1442,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
     {
       (*func)(Xgc,logflags,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
     }
+#endif 
 
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
 

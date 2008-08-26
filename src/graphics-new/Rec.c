@@ -2152,14 +2152,14 @@ static void replay_Champ(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch = (struct rec_champ *)theplot;
   nsp_champ(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
-	    plch->strflag,plch->vrect,&(plch->arfact),0L);
+	    plch->strflag,plch->vrect,&(plch->arfact));
 }
 
 static void replay_Champ1(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch= (struct rec_champ *)theplot;
   nsp_champ1(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
-	     plch->strflag,plch->vrect,&(plch->arfact),0L);
+	     plch->strflag,plch->vrect,&(plch->arfact));
 }
 
 

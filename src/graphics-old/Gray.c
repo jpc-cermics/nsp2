@@ -48,12 +48,12 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
   int N = Max((nx),(ny));
   double xx[2],yy[2];
   int *xm,*ym, j, nn1=1,nn2=2;
-  /** If Record is on **/
+  /* If Record is on **/
   xx[0]=Mini(x,nx);xx[1]=Maxi(x,nx);
   yy[0]=Mini(y,ny);yy[1]=Maxi(y,ny);
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame **/
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
-  /** Allocation **/
+  /* Allocation **/
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout,FALSE);
@@ -66,9 +66,9 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
       return 0;
     }      
 
-  /** Draw Axis or only rectangle **/
+  /* Draw Axis or only rectangle */
   axis_draw(Xgc,strflag);
-  /** Drawing the curves **/
+  /* Drawing the curves */
   frame_clip_on(Xgc);
   for ( j =0 ; j < (nx) ; j++)	 xm[j]= XScale(x[j]);
   for ( j =0 ; j < (ny) ; j++)	 ym[j]= YScale(y[j]); 
@@ -119,7 +119,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   xx[0]=Mini(x,nx);xx[1]=Maxi(x,nx);
   yy[0]=Mini(y,ny);yy[1]=Maxi(y,ny);
 
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame */
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
@@ -127,7 +127,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout,TRUE);
 
-  /** Allocation **/
+  /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
   ym = graphic_alloc(1,Nnode,sizeof(int));
   if ( xm == 0 || ym == 0) 
@@ -349,7 +349,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 
   frame_clip_off(Xgc);
 
-  /** Draw Axis or only rectangle **/
+  /* Draw Axis or only rectangle **/
   axis_draw(Xgc,strflag);
 
   return(0);
@@ -415,14 +415,14 @@ int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double 
   int nn1=1,nn2=2;
   int *xm,*ym,j;
 
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame **/
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
-  /** If Record is on **/
+  /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Gray1(Xgc,z,nr,nc,strflag,brect,aaint,remap,colminmax,zminmax);
 
-  /** Allocation **/
+  /* Allocation **/
   xm = graphic_alloc(0,nc+1,sizeof(int));
   ym = graphic_alloc(1,nr+1,sizeof(int));
   if ( xm == 0 || ym == 0) 
@@ -431,9 +431,9 @@ int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double 
       return 0;
     }      
 
-  /** Draw Axis or only rectangle **/
+  /* Draw Axis or only rectangle **/
   axis_draw(Xgc,strflag);
-  /** Drawing the curves **/
+  /* Drawing the curves **/
   frame_clip_on(Xgc);
   for ( j =0 ; j < (nc+1) ; j++) xm[j]= XScale(j+0.5);
   for ( j =0 ; j < (nr+1) ; j++) ym[j]= YScale((nr -j+0.5));
@@ -465,11 +465,11 @@ int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect,
   double yy[]={ xrect[1],xrect[3]};
   int xx1[2],yy1[2];
   int *xm,*ym,  j;
-  /** If Record is on **/
+  /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Gray2(Xgc,z,nr,nc,xrect,remap,colminmax,zminmax);
 
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame **/
   scale_f2i(Xgc,xx,yy,xx1,yy1,2);
   xm = graphic_alloc(0,nc+1,sizeof(int));
   ym = graphic_alloc(1,nr+1,sizeof(int));
@@ -518,7 +518,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
 {
   int i,*xm,*ym,j,k, n1=1;
 
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame */
   update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
@@ -527,7 +527,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout,draw);
 
 
-  /** Allocation **/
+  /* Allocation */
   xm = graphic_alloc(0,*Nnode,sizeof(int));
   ym = graphic_alloc(1,*Nnode,sizeof(int));
   if ( xm == 0 || ym == 0) 
@@ -541,9 +541,9 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   /* Fec code */
   frame_clip_on(Xgc);
   {
-    /********************************************************************
+    /*
      *	 beginning of the code modified by Bruno 01/02/2001  
-     ********************************************************************/
+     */
     
     int nz, whiteid; 
     double *zlevel, dz, zmin, zmax, sx[3], sy[3];
@@ -699,16 +699,16 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
 #endif 
   }
 
-  /********************************************************************
+  /*
    *                     end of the modified code
-   ********************************************************************/
+   */
 
   frame_clip_off(Xgc);
 
-  /** Draw Axis or only rectangle **/
+  /* Draw Axis or only rectangle */
   axis_draw(Xgc,strflag);
 
-  /** Drawing the Legends **/
+  /* Drawing the Legends */
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')
     {
       int style = -1;
@@ -717,10 +717,9 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   return(0);
 }
 
-
-/********************************************************************
+/*
  * functions used by the modified code (Bruno 01/02/2001)
- ********************************************************************/
+ */
 
 /**
  * PermutOfSort:

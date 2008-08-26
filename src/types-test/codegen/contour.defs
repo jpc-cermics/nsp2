@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(define-objectref Contour
+  (in-module "Contour")
+  (parent "Graphic")
+  (c-name "Contour")
+  (fields
+    '("NspMatrix*" "z") ;; Matrix 
+    '("NspMatrix*" "x")  ;; vector 
+    '("NspMatrix*" "y")  ;; vector 
+    '("NspMatrix*" "levels")  ;; vector 
+    '("int" "nlevels") ;; number of level curves when zz is NULL.
+    )
+  (gtype-id "Contour")
+)
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_contour
+  (c-name "nsp_extractelts_contour")
+  (return-type "none")
+)
+(define-function setrowscols_contour
+  (c-name "nsp_setrowscols_contour")
+  (return-type "none")
+)
+
+
+
+
+
+
+

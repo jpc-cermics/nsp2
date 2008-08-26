@@ -25,14 +25,8 @@
 #include <string.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
-/* #include "PloEch.h" */
 
 static double min_of_doubles (const double *x,int n);
-
-static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, 
-			  double *fy, int *n1, int *n2, 
-			  char *strflag, double *brect, double *arfact, int lstr);
-
 
 /**
  * nsp_champ:
@@ -61,9 +55,9 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
  **/
 
 int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
-	      int *n2, char *strflag, double *brect, double *arfact, int lstr)
+	      int *n2, char *strflag, double *brect, double *arfact)
 {
-  champ_generic(Xgc,"champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  nsp_draw_vfield_generic(Xgc,"champ",0,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
   return(0); 
 }
 
@@ -88,22 +82,23 @@ int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1,
  * - fx and fy are (*n1)*(*n2) matrix of double
  * - arfact : a factor by which to multiply the default arrow size 
  *          use 1.0 by defaut 
+ * - ng_flag : if %t we are using graphic object next arguments are ignored in that case.
  * - strflag : a string of length 3 (see plot2d) 
  * - brect=[xmin,ymin,xmax,ymax]    (see plot2d) 
- * - lstr : (used when called from Fortran code)
+ * 
  * Return value: unsued 
  **/
 
 int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
-	       int *n2, char *strflag, double *brect, double *arfact, int lstr)
+	       int *n2, char *strflag, double *brect, double *arfact)
 {
-  champ_generic(Xgc,"champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  nsp_draw_vfield_generic(Xgc,"champ1",1,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
   return(0);
 }
 
-static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y, 
-			  double *fx, double *fy, int *n1, int *n2, char *strflag, 
-			  double *brect, double *arfact, int lstr)
+void nsp_draw_vfield_generic(BCG *Xgc,char *name, int colored, double *x, double *y, 
+			     double *fx, double *fy, int n1, int n2,int ng_flag, char *strflag, 
+			     double *brect, double *arfact)
 {
   int clip_box[4];
   static int aaint[]={2,10,2,10};
@@ -120,23 +115,26 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
     cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   else
     cpat = Xgc->graphic_engine->xget_dash(Xgc);
-  /** The arrowsize acording to the windowsize **/
-  n=2*(*n1)*(*n2);
-  xx[0]=x[0];xx[1]=x[*n1-1];
-  yy[0]=y[0];yy[1]=y[*n2-1];
-  /** Boundaries of the frame **/
-
-  update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
-  /* Storing values if using the Record driver */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+  /* The arrowsize acording to the windowsize **/
+  n=2*(n1)*(n2);
+  xx[0]=x[0];xx[1]=x[n1-1];
+  yy[0]=y[0];yy[1]=y[n2-1];
+  /* Boundaries of the frame **/
+  
+  if ( ng_flag == FALSE ) 
     {
-      if (strcmp(name,"champ")==0)
-	store_Champ(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);
-      else 
-	store_Champ1(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);
+      update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+      /* Storing values if using the Record driver */
+      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+	{
+	  if (strcmp(name,"champ")==0)
+	    store_Champ(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
+	  else 
+	    store_Champ1(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
+	}
     }
 
-  /** Allocation **/
+  /* Allocation */
   xm = graphic_alloc(0,n,sizeof(int));
   ym = graphic_alloc(1,n,sizeof(int));
   if ( xm == 0 || ym == 0) 
@@ -153,21 +151,21 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
       }      
   }
   /* From double to pixels */
-  for ( i = 0 ; i < *n1 ; i++)
-    for ( j =0 ; j < *n2 ; j++)
+  for ( i = 0 ; i < n1 ; i++)
+    for ( j =0 ; j < n2 ; j++)
       {
-	xm[2*(i +(*n1)*j)]= XScale(x[i]);
-	ym[2*(i +(*n1)*j)]= YScale(y[j]);
+	xm[2*(i +(n1)*j)]= XScale(x[i]);
+	ym[2*(i +(n1)*j)]= YScale(y[j]);
       }
-  /** Scaling **/
-  nx=min_of_doubles(x,*n1)*Xgc->scales->Wscx1;
-  ny=min_of_doubles(y,*n2)*Xgc->scales->Wscy1;
+  /* Scaling */
+  nx=min_of_doubles(x,n1)*Xgc->scales->Wscx1;
+  ny=min_of_doubles(y,n2)*Xgc->scales->Wscy1;
   sfx= Xgc->scales->Wscx1;
   sfy= Xgc->scales->Wscy1;
   sfx2= sfx*sfx;
   sfy2= sfy*sfy;
   maxx = sfx2*fx[0]*fx[0]+sfy2*fy[0]*fy[0];
-  for (i = 1;  i < (*n1)*(*n2) ; i++)
+  for (i = 1;  i < (n1)*(n2) ; i++)
     {
       double maxx1 = sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i];
       if ( maxx1 > maxx) maxx=maxx1;
@@ -179,8 +177,8 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
   sfx *= sc;
   sfy *= sc;
   /** size of arrow **/
-  arsize1= ((double) Xgc->scales->WIRect1[2])/(5*(*n1));
-  arsize2= ((double) Xgc->scales->WIRect1[3])/(5*(*n2));
+  arsize1= ((double) Xgc->scales->WIRect1[2])/(5*(n1));
+  arsize2= ((double) Xgc->scales->WIRect1[3])/(5*(n2));
   arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
   arsize = (int)(arsize*(*arfact));
 
@@ -193,7 +191,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
     {
       int j=0;
 
-      for ( i = 0 ; i < (*n1)*(*n2) ; i++)
+      for ( i = 0 ; i < (n1)*(n2) ; i++)
 	{
 	  int x1n,y1n,x2n,y2n,flag1=0;
 	  xm[1+2*j]= (int)(sfx*fx[i]/2+xm[2*i]);
@@ -218,7 +216,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
     {
       int x1n,y1n,x2n,y2n,flag1=0, whiteid, j=0;
       whiteid=  Xgc->graphic_engine->xget_last(Xgc);
-      for ( i = 0 ; i < (*n1)*(*n2) ; i++)
+      for ( i = 0 ; i < (n1)*(n2) ; i++)
 	{
 	  double nor= sqrt(sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i]);
 	  zm[j] = inint( ((double) whiteid)*(1.0 - nor/maxx));
@@ -241,9 +239,9 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 	}
       na=2*j;
     }
-  /** Drawing axes **/
-  axis_draw(Xgc,strflag);
-  /** Drawing the arrows  **/
+  /* Drawing axes */
+  if ( ng_flag == FALSE ) axis_draw(Xgc,strflag);
+  /* Drawing the arrows */
   frame_clip_on(Xgc);
   if ( colored ==0) 
     Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);

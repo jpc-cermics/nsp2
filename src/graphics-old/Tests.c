@@ -443,7 +443,7 @@ static void testCh(BCG *Xgc)
 
   vrect[0]=vrect[1]= -1 ,vrect[2]=vrect[3]=1;
   arfact=1.0;
-  nsp_champ(Xgc,x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact,0L);
+  nsp_champ(Xgc,x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact);
 }
 
 

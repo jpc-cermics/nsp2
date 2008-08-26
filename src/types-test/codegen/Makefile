@@ -17,7 +17,7 @@ FFLAGS = $(FC_OPTIONS)
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
-	../groot.c ../gmatrix.c ../vfield.c
+	../groot.c ../gmatrix.c ../vfield.c ../contour.c 
 
 all:: $(ALL)
 
@@ -104,5 +104,11 @@ clean ::
 	    --override vfield.override \
 	    --prefix VField vfield.defs) > $*.c \
 	&& cp vfield.h ../../include/nsp 
+
+../contour.c : contour.defs contour.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override contour.override \
+	    --prefix Contour contour.defs) > $*.c \
+	&& cp contour.h ../../include/nsp 
 
 

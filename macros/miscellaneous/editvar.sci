@@ -539,20 +539,24 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     if event.button == 3 then 
       // printf("Button pressed \n");
       ok=execstr('[path,col]=treeview.get_path_at_pos[event.x,event.y];',errcatch=%t);
-      if ~ok then y=%t; return;end 
-      sel=tree_view.get_selection[];
-      sel.select_path[path];
-      popup_menu=create_menu(list(tree_view,path));
-      popup_menu.popup[button=3,activate_time=0]; //event.time];
-      //edit_at_path(tree_view,path);
-      y=%t;
+      if ~ok then 
+	popup_menu=create_menu(list(tree_view,[]),%f);
+	popup_menu.popup[button=3,activate_time=0]; 
+	y=%t; 
+      else 
+	sel=tree_view.get_selection[];
+	sel.select_path[path];
+	popup_menu=create_menu(list(tree_view,path),%t);
+	popup_menu.popup[button=3,activate_time=0]; 
+	y=%t;
+      end
     else 
       y=%f
     end
   endfunction
 
   function menuitem_response(w,args) 
-    printf("Menu item [%d] activated \n",args(1));
+    // printf("Menu item [%d] activated \n",args(1));
     tree_view = args(2);
     path= args(3);
     select args(1)
@@ -563,19 +567,28 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     end
   endfunction
 
-  function menu=create_menu (data)
+  function menu=create_menu(data,flag)
     menu = gtkmenu_new ();
-    menuitem = gtkimagemenuitem_new(stock_id="gtk-edit");
-    data1=data;
-    data1(0)=0;
-    menuitem.connect["activate",menuitem_response,data1];
-    menu.append[menuitem]
-    menuitem.show[];
-    items=["Insert after","Insert at end","Remove"];
-    for i=1:3;
-      menuitem = gtkmenuitem_new(items(i));
+    if flag then 
+      menuitem = gtkimagemenuitem_new(stock_id="gtk-edit");
       data1=data;
-      data1(0)=i;
+      data1(0)=0;
+      menuitem.connect["activate",menuitem_response,data1];
+      menu.append[menuitem]
+      menuitem.show[];
+      items=["Insert after","Insert at end","Remove"];
+      for i=1:3;
+	menuitem = gtkmenuitem_new(items(i));
+	data1=data;
+	data1(0)=i;
+	menuitem.connect["activate",menuitem_response,data1];
+	menu.append[menuitem]
+	menuitem.show[];
+      end
+    else
+      menuitem = gtkmenuitem_new("New");
+      data1=data;
+      data1(0)=2;
       menuitem.connect["activate",menuitem_response,data1];
       menu.append[menuitem]
       menuitem.show[];

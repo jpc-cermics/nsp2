@@ -137,6 +137,7 @@ extern  sci_interface  Graphic_Interf;extern  interface_info  Graphic_Interf_Inf
 extern  sci_interface  GRoot_Interf;extern  interface_info  GRoot_Interf_Info;
 extern  sci_interface  Polyline_Interf;extern  interface_info  Polyline_Interf_Info;
 extern  sci_interface  VField_Interf;extern  interface_info  VField_Interf_Info;
+extern  sci_interface  Contour_Interf;extern  interface_info  Contour_Interf_Info;
 #endif 
 
 InterfTab Interfaces[]={
@@ -239,6 +240,7 @@ InterfTab Interfaces[]={
   {GRoot_Interf, GRoot_Interf_Info},
   {Polyline_Interf, Polyline_Interf_Info},
   {VField_Interf, VField_Interf_Info},
+  {Contour_Interf, Contour_Interf_Info},
 #endif 
   {NULL,NULL}
 }; 

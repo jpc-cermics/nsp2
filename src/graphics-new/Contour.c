@@ -315,11 +315,6 @@ int nsp_contour2(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
   return 0;
 }
 
-/* interface for contour2di used in macro contourf 
- * used when we want to get the values which constitues the contour inside Scilab 
- * contour2di + c2dex 
- */
-
 static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
 {
   int err=0;
@@ -365,7 +360,42 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   return(0);
 }
 
+/* function used by the contour object 
+ * for drawing itself.
+ */
 
+int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz,  double *zz)
+{
+  int *style = NULL; /* XXX */
+  int err=0,i;
+  int N[3]= {n1, n2, nz}; 
+  
+  frame_clip_on(Xgc);
+  
+  if ( zz == NULL )
+    {
+      double *zconst;
+      double zmin,zmax;
+      zmin=(double) Mini(z,n1*(n2)); 
+      zmax=(double) Maxi(z,n1*(n2));
+      /* we draw nz level curves */
+      if ((zconst = graphic_alloc(5,nz,sizeof(double)))== 0) 
+	{
+	  sciprint("Running out of memory\r\n");
+	  return 0;
+	}
+      for ( i =0 ; i < nz ; i++) 
+	zconst[i]=zmin + (i+1)*(zmax-zmin)/(nz+1);
+      contourI(Xgc,Contstore_2,x,y,z,zconst,N,style,&err);
+    }
+  else
+    {
+      N[0]= n1;N[1]= n2;N[2]= nz;
+      contourI(Xgc,Contstore_2,x,y,z,zz,N,style,&err);
+    }
+  frame_clip_off(Xgc);
+  return(0);
+}
 
 /**
  * nsp_contour_if:
@@ -380,7 +410,8 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
  * @zz: 
  * @style: 
  * 
- * Used to compute level curves and store them 
+ * Used to compute level curves and store them in global variables
+ * instead of drawing them.
  * 
  * Return value: 
  **/
@@ -414,6 +445,9 @@ int nsp_contour_if(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, i
     }
   return(0);
 }
+
+
+
 
 /*-------------------------------------------------------
  *  The function f is given on a grid and we want the level curves 

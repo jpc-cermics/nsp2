@@ -22,6 +22,10 @@ if %t then
   vf = vfield_create(x=linspace(0,1,5),y=linspace(0,1,4),fx=rand(5,4),fy= ...
 		     rand(5,4),colored=%t);
   A.children($+1)= vf;
+  // insert level curves 
+  cf = contour_create(x=linspace(2,4,5),y=linspace(2,3,4),z=rand(5,4), ...
+		      nlevels=5);
+  A.children($+1)= cf;
   // insert a new axes 
   C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0);
   // the position of the axes in its parent 
