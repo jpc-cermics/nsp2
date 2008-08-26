@@ -540,12 +540,47 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       // printf("Button pressed \n");
       ok=execstr('[path,col]=treeview.get_path_at_pos[event.x,event.y];',errcatch=%t);
       if ~ok then y=%t; return;end 
-      edit_at_path(tree_view,path);
+      sel=tree_view.get_selection[];
+      sel.select_path[path];
+      popup_menu=create_menu(list(tree_view,path));
+      popup_menu.popup[button=3,activate_time=0]; //event.time];
+      //edit_at_path(tree_view,path);
       y=%t;
     else 
       y=%f
     end
   endfunction
+
+  function menuitem_response(w,args) 
+    printf("Menu item [%d] activated \n",args(1));
+    tree_view = args(2);
+    path= args(3);
+    select args(1)
+     case 0 then edit_at_path(tree_view,path);
+     case 1 then insert_after_selected ([], list(tree_view));
+     case 2 then insert_at_end ([], list(tree_view));
+     case 3 then selected_remove ([],list(tree_view));
+    end
+  endfunction
+
+  function menu=create_menu (data)
+    menu = gtkmenu_new ();
+    menuitem = gtkimagemenuitem_new(stock_id="gtk-edit");
+    data1=data;
+    data1(0)=0;
+    menuitem.connect["activate",menuitem_response,data1];
+    menu.append[menuitem]
+    menuitem.show[];
+    items=["Insert after","Insert at end","Remove"];
+    for i=1:3;
+      menuitem = gtkmenuitem_new(items(i));
+      data1=data;
+      data1(0)=i;
+      menuitem.connect["activate",menuitem_response,data1];
+      menu.append[menuitem]
+      menuitem.show[];
+    end
+  endfunction 
   
   function row_activated_cb (tree_view,path,data)
     // this callback is activated when a row is activated. 
