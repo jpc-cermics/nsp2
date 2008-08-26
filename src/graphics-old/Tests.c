@@ -388,7 +388,7 @@ static void TestC(BCG *Xgc,     int ii)
   flag[0]=ii;
   flag[1]=2;
   flag[2]=3;
-  nsp_contour(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
+  nsp_gcontour(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
 }
 
 #define LEVELNUM 10

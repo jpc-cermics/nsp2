@@ -534,7 +534,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  nsp_contour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
+  nsp_gcontour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
 	      leg, iflag, ebox, &zlev,strlen(leg));
   return 0;
 }

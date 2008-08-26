@@ -147,7 +147,7 @@ static char   ContNumFormat[100];
 
 
 /**
- * nsp_contour:
+ * nsp_gcontour:
  * @Xgc: 
  * @x: 
  * @y: 
@@ -182,7 +182,7 @@ static char   ContNumFormat[100];
  * Return value: unused 
  **/
 
-int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, 
+int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, 
 		int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, 
 		double *bbox, double *zlev, int lstr)
 {

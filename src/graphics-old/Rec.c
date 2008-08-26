@@ -1860,7 +1860,7 @@ static void replay_Contour(BCG *Xgc,void *theplot)
 {
   struct rec_contour *pl3d;
   pl3d= (struct rec_contour *)theplot;
-  nsp_contour(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
+  nsp_gcontour(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
 	      pl3d->zz,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,&pl3d->zlev,0L);
 }
