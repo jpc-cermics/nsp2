@@ -851,8 +851,9 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
       if ~val.equal[M] then 
 	treeview.user_data{row+1,colid}=val;
 	xs = cellstostr({val});
-	// need to update the string 
-	// model.set[iter,1,xs];
+	model=treeview.get_model[];
+	iter=model.get_iter[path];
+	model.set[iter,colid-1,xs];
       end
       y=%t;
     else 
