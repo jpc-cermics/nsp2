@@ -196,6 +196,34 @@ extern void * new_type_gtktoggleaction(type_mode);
 extern void * new_type_gtkradioaction(type_mode);
 extern void * new_type_gtkuimanager(type_mode);
 
+extern void * new_type_gdkdisplaymanager(type_mode);
+extern void * new_type_gtkaboutdialog(type_mode);
+extern void * new_type_gtkaccelmap(type_mode);
+extern void * new_type_gtkborder(type_mode);
+extern void * new_type_gtkcellrenderercombo(type_mode);
+extern void * new_type_gtkcellrendererprogress(type_mode);
+extern void * new_type_gtkcolorbutton(type_mode);
+extern void * new_type_gtkentrycompletion(type_mode);
+extern void * new_type_gtkexpander(type_mode);
+extern void * new_type_gtkfilechooserbutton(type_mode);
+extern void * new_type_gtkfilechooserdialog(type_mode);
+extern void * new_type_gtkfilechooser(type_mode);
+extern void * new_type_gtkfilechooserwidget(type_mode);
+extern void * new_type_gtkfilefilter(type_mode);
+extern void * new_type_gtkfontbutton(type_mode);
+extern void * new_type_gtkiconinfo(type_mode);
+extern void * new_type_gtkicontheme(type_mode);
+extern void * new_type_gtkiconview(type_mode);
+extern void * new_type_gtkmenutoolbutton(type_mode);
+extern void * new_type_gtkradiotoolbutton(type_mode);
+extern void * new_type_gtkseparatortoolitem(type_mode);
+extern void * new_type_gtktoggletoolbutton(type_mode);
+extern void * new_type_gtktoolbutton(type_mode);
+extern void * new_type_gtktoolitem(type_mode);
+extern void * new_type_gtktreemodelfilter(type_mode);
+extern void * new_type_gtktreerowreference(type_mode);
+
+
 static int add_constants(void);
 
 /* init nsp gtk object types */
@@ -410,6 +438,32 @@ void nsp_init_gtk_types_added(void)
   new_type_gtktoggleaction(T_BASE);  
   new_type_gtkradioaction(T_BASE);
   new_type_gtkuimanager(T_BASE);
+  new_type_gdkdisplaymanager(T_BASE);
+  new_type_gtkaboutdialog(T_BASE);
+  new_type_gtkaccelmap(T_BASE);
+  new_type_gtkborder(T_BASE);
+  new_type_gtkcellrenderercombo(T_BASE);
+  new_type_gtkcellrendererprogress(T_BASE);
+  new_type_gtkcolorbutton(T_BASE);
+  new_type_gtkentrycompletion(T_BASE);
+  new_type_gtkexpander(T_BASE);
+  new_type_gtkfilechooserbutton(T_BASE);
+  new_type_gtkfilechooserdialog(T_BASE);
+  new_type_gtkfilechooser(T_BASE);
+  new_type_gtkfilechooserwidget(T_BASE);
+  new_type_gtkfilefilter(T_BASE);
+  new_type_gtkfontbutton(T_BASE);
+  new_type_gtkiconinfo(T_BASE);
+  new_type_gtkicontheme(T_BASE);
+  new_type_gtkiconview(T_BASE);
+  new_type_gtkmenutoolbutton(T_BASE);
+  new_type_gtkradiotoolbutton(T_BASE);
+  new_type_gtkseparatortoolitem(T_BASE);
+  new_type_gtktoggletoolbutton(T_BASE);
+  new_type_gtktoolbutton(T_BASE);
+  new_type_gtktoolitem(T_BASE);
+  new_type_gtktreemodelfilter(T_BASE);
+  new_type_gtktreerowreference(T_BASE);
 }
 
 /*
