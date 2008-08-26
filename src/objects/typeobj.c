@@ -173,23 +173,14 @@ static char *type_type_short_string(NspObject *v)
   return(type_short_type_name);
 }
 
-static int type_full_comp(NspType * A,NspType * B,char *op,int *err)
-{
-  Scierror("type_full_comp: to be implemented \n");
-  return FALSE;
-}
-
 /*
  * A == B 
  */
 
 static int type_eq(NspType *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_type_id) == FALSE) return FALSE ;
-  rep = type_full_comp(A,(NspType *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  return ( A->nsp_type == ((NspType *) B)->nsp_type) ?  TRUE: FALSE;
 }
 
 /*
@@ -198,11 +189,8 @@ static int type_eq(NspType *A, NspObject *B)
 
 static int type_neq(NspType *A, NspObject *B)
 {
-  int err=0,rep;
   if ( check_cast(B,nsp_type_type_id) == FALSE) return TRUE;
-  rep = type_full_comp(A,(NspType *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return ( A->nsp_type != ((NspType *) B)->nsp_type) ?  TRUE: FALSE;
 }
 
 /* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
