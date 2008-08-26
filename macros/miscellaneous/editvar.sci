@@ -54,7 +54,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   endfunction
   
   function entry_toggle_evaluate_str (checkbutton,args)
-  
+    // handler for the evaluate string button.
     args(1).set_data[evaluate_str= checkbutton.get_active[]];
   endfunction
 
@@ -74,7 +74,6 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   function cell_edited (cell,path_string,new_text,data)
   // we enter this function after cell edition for 
   // strings or numbers 
-    printf("cell edited\n");
     tree_view = data(1);
     model = tree_view.get_model[];
     col = cell.get_data["column"];
@@ -119,6 +118,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   // back create a matrix from the model. 
   // this function is not used and is replaced by the get_matrix[] 
   // method added to gtk tree and list store 
+  // just kept here as an example.
     ncol= model.get_n_columns[] ;
     iter=model.get_iter_first[];
     flag=%t;
@@ -139,7 +139,8 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   function add_columns (treeview,ncol,type_x)
     // used to enter each element in a cell 
     model = treeview.get_model[];
-    col_editable = ncol;
+    // col_editable = ncol;
+    // enter the model in the treeview 
     cols="C"+string(1:ncol);
     
     for col= 0:(ncol-1)
@@ -272,11 +273,11 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   end 
 
   function entry_return_handler(w,ev,data)
-  // check if return was entered   
-  // in the gtk_entry
-    treeview=data(1);
-    model = treeview.get_model[];
+  // the handler for the entry text 
+  // when return is entered we evaluate expression.
     if ev.keyval == 0xFF0D then 
+      treeview=data(1);
+      model = treeview.get_model[];
       // printf("Return pressed in entry: %s\n",w.get_text[]);
       ok=execstr('x_new='+w.get_text[],errcatch=%t);
       if ok then 
@@ -332,6 +333,8 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
       //or directly use the method get_matrix which 
       //extract a matrix from a model (for which all the values are 
       //of the same type).
+      // take care that model has maybe changed during interaction 
+      model = treeview.get_model[];
       x=model.get_matrix[];
     elseif response == 3 ; // response called by me in gtk_entry 
       x=treeview.get_data['x_new'];
@@ -349,8 +352,9 @@ endfunction
 //---------------------
 
 function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
-
+  
   function selected_remove (button, data)
+    // remove selected line 
     treeview=data(1);
     selection = treeview.get_selection[];
     [iter,model] = selection.get_selected[]; 
@@ -365,6 +369,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
   endfunction
   
   function insert_after_selected (button, data)
+    // insert after selected line 
     treeview=data(1);
     selection = treeview.get_selection[];
     [iter,model] = selection.get_selected[]; 
@@ -372,8 +377,8 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     insert_at_or_after_iter(treeview,model,iter);
   endfunction
   
-  
   function insert_at_or_after_iter(treeview,model,iter,flag=%t) 
+    // utility 
     path=model.get_path[iter];
     L=get_nsp_list_path_from_tree_path(treeview,path)
     L1=L;L1.remove_last[];
@@ -403,6 +408,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
   endfunction
   
   function insert_at_end (button, data)
+    // insert at the end 
     treeview=data(1);
     model = treeview.get_model[];
     iter = model.get_iter_first[];
@@ -527,9 +533,27 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     dialog.destroy[];
   endfunction 
 
+  function y=on_treeview_button_press_event(tree_view, event, args)
+    // right click on tree view 
+    // action similar to double-click 
+    if event.button == 3 then 
+      // printf("Button pressed \n");
+      ok=execstr('[path,col]=treeview.get_path_at_pos[event.x,event.y];',errcatch=%t);
+      if ~ok then y=%t; return;end 
+      edit_at_path(tree_view,path);
+      y=%t;
+    else 
+      y=%f
+    end
+  endfunction
+  
   function row_activated_cb (tree_view,path,data)
     // this callback is activated when a row is activated. 
     // i.e double click. 
+      edit_at_path(tree_view,path) 
+  endfunction 
+
+  function edit_at_path(tree_view,path) 
     model = tree_view.get_model[];
     iter = model.get_iter[path];
     // Noter que l'on obtient le chemin recursif avec 
@@ -541,8 +565,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
     // indices demarrant a 1 (car on peut pas faire L+1).
     // 
     // path.to_string[] donne une version string 
-    name=model.get_value[iter,0]; // column 0 is the name 
-    //printf("row %s activated\n",name);
+    //printf("row %s activated\n",model.get_value[iter,0]; );
     Il = get_nsp_list_path_from_tree_path(tree_view,path);
     M=tree_view.user_data(Il);
     // here we need a generic edit 
@@ -552,6 +575,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       xs = cellstostr({M1});
       octype = type(M,'short');
       ctype = type(M1,'short');
+      model.set[iter,1,ctype];
       model.set[iter,3,xs];
       model.set[iter,2,sprintf("%dx%d',size(M1,1),size(M1,2))];
       if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
@@ -559,7 +583,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	update_model([],list(tree_view))
       end 
     end
-  endfunction 
+  endfunction
   
   function selection_cb(selection,args)
     // this callback is activated when a row is selected 
@@ -697,6 +721,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers 
   treeview.set_headers_visible[headers];
+  treeview.connect["button-press-event", on_treeview_button_press_event];
     
   if with_scroll then 
     // insert the matrix edition in a scrolled window 
@@ -746,12 +771,13 @@ endfunction
 function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers=%t,top=[]) 
   
   function y=on_treeview_button_press_event(treeview, event, args)
+    // right click on tree view 
     if event.button == 3 then 
-      printf("Button pressed \n");
+      //printf("Button pressed \n");
       [path,col]=treeview.get_path_at_pos[event.x,event.y];
       colid= col.get_data['id'];
       row= path.get_indices[];
-      printf("we must edit (%d,%d)\n",row+1,colid);
+      //printf("we must edit (%d,%d)\n",row+1,colid);
       val = edit_object(treeview.user_data{row+1,colid},parent=treeview);
       if ~val.equal[M] then 
 	treeview.user_data{row+1,colid}=val;
@@ -772,7 +798,7 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
   function cell_edited (cell,path_string,new_text,data)
   // we enter this function after cell edition for 
   // strings or numbers 
-    printf("cell edited\n");
+  // printf("cell edited\n");
     tree_view = data(1);
     model = tree_view.get_model[];
     col = cell.get_data["column"];
@@ -782,7 +808,7 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
     ok=execstr('val='+new_text',errcatch=%t);
     if ok then 
       row= path.get_indices[];
-      printf("we must set (%d,%d)\n",row+1,col+1);
+      //printf("we must set (%d,%d)\n",row+1,col+1);
       tree_view.user_data{row+1,col+1}= val;
       xs = cellstostr({val});
       model.set[iter,col, xs];
