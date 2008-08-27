@@ -782,7 +782,8 @@ class Wrapper:
 
     def build_copy_fields(self,left_varname,right_varname):
         # used in copy function and in create function 
-        # when right_varname == 'self' we are in copy
+        # when right_varname == 'self' we are in copy function and else 
+        # in create function. 
         # if full is 't' then we make a full copy even if we are in
         # 'self' mode 
         lower_name = self.get_lower_name()

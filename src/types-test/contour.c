@@ -488,30 +488,10 @@ NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y
  NspContour *H  = nsp_contour_create_void(name,type);
  if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_contour_create_partial(H) == FAIL) return NULLCONTOUR;
-  if ( z == NULL )
-    { H->obj->z = NULL;}
-  else
-    {
-      if ((H->obj->z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return NULL;
-    }
-  if ( x == NULL )
-    { H->obj->x = NULL;}
-  else
-    {
-      if ((H->obj->x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return NULL;
-    }
-  if ( y == NULL )
-    { H->obj->y = NULL;}
-  else
-    {
-      if ((H->obj->y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return NULL;
-    }
-  if ( levels == NULL )
-    { H->obj->levels = NULL;}
-  else
-    {
-      if ((H->obj->levels = (NspMatrix *)  nsp_object_copy_and_name("levels",NSP_OBJECT(levels))) == NULLMAT) return NULL;
-    }
+  H->obj->z= z;
+  H->obj->x= x;
+  H->obj->y= y;
+  H->obj->levels= levels;
   H->obj->nlevels=nlevels;
  if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
  return H;
@@ -761,7 +741,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 765 "contour.c"
+#line 745 "contour.c"
 
 
 #line 58 "codegen/contour.override"
@@ -773,7 +753,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 777 "contour.c"
+#line 757 "contour.c"
 
 
 /*----------------------------------------------------
@@ -813,7 +793,7 @@ Contour_register_classes(NspObject *d)
 Init portion 
 
 
-#line 817 "contour.c"
+#line 797 "contour.c"
   nspgobject_register_class(d, "Contour", Contour, &NspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -979,4 +959,4 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 983 "contour.c"
+#line 963 "contour.c"

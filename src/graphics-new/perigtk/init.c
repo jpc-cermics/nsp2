@@ -187,7 +187,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 
   /* cairo graphics without window */
 #ifdef PERICAIRO
-  if ( string == NULL) 
+  if ( string == NULL || string[0]='\0' ) 
     {
 #endif 
       if ( win != NULL )

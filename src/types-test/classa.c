@@ -428,24 +428,9 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
  if ( H ==  NULLCLASSA) return NULLCLASSA;
   H->cla_color=cla_color;
   H->cla_thickness=cla_thickness;
-  if ( cla_val == NULL )
-    { H->cla_val = NULL;}
-  else
-    {
-      if ((H->cla_val = (NspMatrix *)  nsp_object_copy_and_name("cla_val",NSP_OBJECT(cla_val))) == NULLMAT) return NULL;
-    }
-  if ( cla_bval == NULL )
-    { H->cla_bval = NULL;}
-  else
-    {
-      if ((H->cla_bval = (NspBMatrix *)  nsp_object_copy_and_name("cla_bval",NSP_OBJECT(cla_bval))) == NULLBMAT) return NULL;
-    }
-  if ( cla_lval == NULL )
-    { H->cla_lval = NULL;}
-  else
-    {
-      if ((H->cla_lval = (NspList *)  nsp_object_copy_and_name("cla_lval",NSP_OBJECT(cla_lval))) == NULLLIST) return NULL;
-    }
+  H->cla_val= cla_val;
+  H->cla_bval= cla_bval;
+  H->cla_lval= cla_lval;
  if ( nsp_classa_check_values(H) == FAIL) return NULLCLASSA;
  return H;
 }
@@ -524,7 +509,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 528 "classa.c"
+#line 513 "classa.c"
 
 
 #line 30 "codegen/classa.override"
@@ -533,7 +518,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 537 "classa.c"
+#line 522 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -667,7 +652,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 671 "classa.c"
+#line 656 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -719,7 +704,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 723 "classa.c"
+#line 708 "classa.c"
 
 
 #line 37 "codegen/classa.override"
@@ -727,7 +712,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 731 "classa.c"
+#line 716 "classa.c"
 
 
 /*----------------------------------------------------
@@ -767,9 +752,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 771 "classa.c"
+#line 756 "classa.c"
   nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 776 "classa.c"
+#line 761 "classa.c"

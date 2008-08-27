@@ -1388,13 +1388,17 @@ class NspGenericArg(ArgType):
     def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
+            # this part is used in copy or full_copy 
             str =  '  if ( %s->%s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (right_varname,pname,left_varname,pname)
-            str = str + '      if ((%s->%s = (Nsp%s *) nsp_object_copy_and_name("%s",NSP_OBJECT(%s->%s))) == NULL%s) return NULL;\n    }\n' % (left_varname,pname,self.fullname,pname,right_varname,pname,self.shortname_uc)
-            return str
+            str = str + '      if ((%s->%s = (Nsp%s *) nsp_object_copy_and_name("%s",NSP_OBJECT(%s->%s))) == NULL%s) return NULL;\n    }\n' \
+                % (left_varname,pname,self.fullname,pname,right_varname,pname,self.shortname_uc)
         else:
+            # this part is only used on create and we do not want to copy objects. 
             str =  '  if ( %s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (pname,left_varname,pname)
-            str = str + '      if ((%s->%s = (Nsp%s *)  nsp_object_copy_and_name("%s",NSP_OBJECT(%s))) == NULL%s) return NULL;\n    }\n' % (left_varname,pname,self.fullname,pname,pname,self.shortname_uc)
-            return str
+            str = str + '      if ((%s->%s = (Nsp%s *)  zzznsp_object_copy_and_name("%s",NSP_OBJECT(%s))) == NULL%s) return NULL;\n    }\n' \
+                % (left_varname,pname,self.fullname,pname,pname,self.shortname_uc)
+            str = '  %s->%s= %s;\n' % (left_varname,pname,pname)
+        return str
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """

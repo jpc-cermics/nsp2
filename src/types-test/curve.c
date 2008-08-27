@@ -454,12 +454,7 @@ NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int mode,N
   H->obj->width=width;
   H->obj->style=style;
   H->obj->mode=mode;
-  if ( Pts == NULL )
-    { H->obj->Pts = NULL;}
-  else
-    {
-      if ((H->obj->Pts = (NspMatrix *)  nsp_object_copy_and_name("Pts",NSP_OBJECT(Pts))) == NULLMAT) return NULL;
-    }
+  H->obj->Pts= Pts;
  if ( nsp_curve_check_values(H) == FAIL) return NULLCURVE;
  return H;
 }
@@ -605,7 +600,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 609 "curve.c"
+#line 604 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -643,7 +638,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 647 "curve.c"
+#line 642 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -689,7 +684,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 693 "curve.c"
+#line 688 "curve.c"
 
 
 #line 100 "codegen/curve.override"
@@ -701,7 +696,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 705 "curve.c"
+#line 700 "curve.c"
 
 
 #line 110 "codegen/curve.override"
@@ -714,7 +709,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 718 "curve.c"
+#line 713 "curve.c"
 
 
 /*----------------------------------------------------
@@ -755,7 +750,7 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 759 "curve.c"
+#line 754 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -918,4 +913,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 922 "curve.c"
+#line 917 "curve.c"

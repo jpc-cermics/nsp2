@@ -226,7 +226,7 @@ static int nsp_figure_connect(NspFigure *F)
 	(F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
 	NULL, 
 	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
-	'e');
+	'e',NULL);
   /* check ! */
   Xgc = window_list_search(F->obj->id);
   if ( Xgc == NULL) 

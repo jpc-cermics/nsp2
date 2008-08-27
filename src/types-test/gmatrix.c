@@ -488,31 +488,11 @@ NspGMatrix *nsp_gmatrix_create(char *name,NspMatrix* data,NspMatrix* rect,gboole
  NspGMatrix *H  = nsp_gmatrix_create_void(name,type);
  if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_gmatrix_create_partial(H) == FAIL) return NULLGMATRIX;
-  if ( data == NULL )
-    { H->obj->data = NULL;}
-  else
-    {
-      if ((H->obj->data = (NspMatrix *)  nsp_object_copy_and_name("data",NSP_OBJECT(data))) == NULLMAT) return NULL;
-    }
-  if ( rect == NULL )
-    { H->obj->rect = NULL;}
-  else
-    {
-      if ((H->obj->rect = (NspMatrix *)  nsp_object_copy_and_name("rect",NSP_OBJECT(rect))) == NULLMAT) return NULL;
-    }
+  H->obj->data= data;
+  H->obj->rect= rect;
   H->obj->remap=remap;
-  if ( colminmax == NULL )
-    { H->obj->colminmax = NULL;}
-  else
-    {
-      if ((H->obj->colminmax = (NspMatrix *)  nsp_object_copy_and_name("colminmax",NSP_OBJECT(colminmax))) == NULLMAT) return NULL;
-    }
-  if ( zminmax == NULL )
-    { H->obj->zminmax = NULL;}
-  else
-    {
-      if ((H->obj->zminmax = (NspMatrix *)  nsp_object_copy_and_name("zminmax",NSP_OBJECT(zminmax))) == NULLMAT) return NULL;
-    }
+  H->obj->colminmax= colminmax;
+  H->obj->zminmax= zminmax;
  if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
  return H;
 }
@@ -763,7 +743,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 767 "gmatrix.c"
+#line 747 "gmatrix.c"
 
 
 #line 58 "codegen/gmatrix.override"
@@ -775,7 +755,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 779 "gmatrix.c"
+#line 759 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -815,7 +795,7 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 819 "gmatrix.c"
+#line 799 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -945,4 +925,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 949 "gmatrix.c"
+#line 929 "gmatrix.c"

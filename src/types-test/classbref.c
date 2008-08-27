@@ -418,12 +418,7 @@ NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,Ns
   if ( nsp_classbref_create_partial(H) == FAIL) return NULLCLASSBREF;
   H->obj->clb_color=clb_color;
   H->obj->clb_thickness=clb_thickness;
-  if ( clb_val == NULL )
-    { H->obj->clb_val = NULL;}
-  else
-    {
-      if ((H->obj->clb_val = (NspMatrix *)  nsp_object_copy_and_name("clb_val",NSP_OBJECT(clb_val))) == NULLMAT) return NULL;
-    }
+  H->obj->clb_val= clb_val;
  if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
  return H;
 }
@@ -504,7 +499,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 508 "classbref.c"
+#line 503 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -515,7 +510,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 519 "classbref.c"
+#line 514 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -638,9 +633,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 642 "classbref.c"
+#line 637 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 647 "classbref.c"
+#line 642 "classbref.c"

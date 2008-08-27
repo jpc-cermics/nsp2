@@ -488,30 +488,10 @@ NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x
  NspVField *H  = nsp_vfield_create_void(name,type);
  if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_vfield_create_partial(H) == FAIL) return NULLVFIELD;
-  if ( fx == NULL )
-    { H->obj->fx = NULL;}
-  else
-    {
-      if ((H->obj->fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return NULL;
-    }
-  if ( fy == NULL )
-    { H->obj->fy = NULL;}
-  else
-    {
-      if ((H->obj->fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return NULL;
-    }
-  if ( x == NULL )
-    { H->obj->x = NULL;}
-  else
-    {
-      if ((H->obj->x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return NULL;
-    }
-  if ( y == NULL )
-    { H->obj->y = NULL;}
-  else
-    {
-      if ((H->obj->y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return NULL;
-    }
+  H->obj->fx= fx;
+  H->obj->fy= fy;
+  H->obj->x= x;
+  H->obj->y= y;
   H->obj->colored=colored;
  if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
  return H;
@@ -763,7 +743,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 767 "vfield.c"
+#line 747 "vfield.c"
 
 
 #line 58 "codegen/vfield.override"
@@ -775,7 +755,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 779 "vfield.c"
+#line 759 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -815,7 +795,7 @@ VField_register_classes(NspObject *d)
 Init portion 
 
 
-#line 819 "vfield.c"
+#line 799 "vfield.c"
   nspgobject_register_class(d, "VField", VField, &NspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -888,4 +868,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 892 "vfield.c"
+#line 872 "vfield.c"

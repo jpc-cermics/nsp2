@@ -519,31 +519,11 @@ NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatri
   if ((H->obj->fname = nsp_string_copy(fname)) == NULL) return NULL;
   if ((H->obj->driver = nsp_string_copy(driver)) == NULL) return NULL;
   H->obj->id=id;
-  if ( dims == NULL )
-    { H->obj->dims = NULL;}
-  else
-    {
-      if ((H->obj->dims = (NspMatrix *)  nsp_object_copy_and_name("dims",NSP_OBJECT(dims))) == NULLMAT) return NULL;
-    }
-  if ( viewport_dims == NULL )
-    { H->obj->viewport_dims = NULL;}
-  else
-    {
-      if ((H->obj->viewport_dims = (NspMatrix *)  nsp_object_copy_and_name("viewport_dims",NSP_OBJECT(viewport_dims))) == NULLMAT) return NULL;
-    }
+  H->obj->dims= dims;
+  H->obj->viewport_dims= viewport_dims;
   H->obj->wresize=wresize;
-  if ( position == NULL )
-    { H->obj->position = NULL;}
-  else
-    {
-      if ((H->obj->position = (NspMatrix *)  nsp_object_copy_and_name("position",NSP_OBJECT(position))) == NULLMAT) return NULL;
-    }
-  if ( children == NULL )
-    { H->obj->children = NULL;}
-  else
-    {
-      if ((H->obj->children = (NspList *)  nsp_object_copy_and_name("children",NSP_OBJECT(children))) == NULLLIST) return NULL;
-    }
+  H->obj->position= position;
+  H->obj->children= children;
  if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
  return H;
 }
@@ -867,7 +847,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 871 "figure.c"
+#line 851 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -921,7 +901,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 925 "figure.c"
+#line 905 "figure.c"
 
 
 #line 111 "codegen/figure.override"
@@ -934,7 +914,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 938 "figure.c"
+#line 918 "figure.c"
 
 
 /*----------------------------------------------------
@@ -976,7 +956,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 980 "figure.c"
+#line 960 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1089,7 +1069,7 @@ static int nsp_figure_connect(NspFigure *F)
 	(F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
 	NULL, 
 	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
-	'e');
+	'e',NULL);
   /* check ! */
   Xgc = window_list_search(F->obj->id);
   if ( Xgc == NULL) 
@@ -1308,4 +1288,4 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
 
 
 
-#line 1312 "figure.c"
+#line 1292 "figure.c"

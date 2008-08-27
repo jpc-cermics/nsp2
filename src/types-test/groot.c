@@ -396,12 +396,7 @@ NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type)
  NspGRoot *H  = nsp_groot_create_void(name,type);
  if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_create_partial(H) == FAIL) return NULLGROOT;
-  if ( figures == NULL )
-    { H->obj->figures = NULL;}
-  else
-    {
-      if ((H->obj->figures = (NspList *)  nsp_object_copy_and_name("figures",NSP_OBJECT(figures))) == NULLLIST) return NULL;
-    }
+  H->obj->figures= figures;
  if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
  return H;
 }
@@ -547,7 +542,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 551 "groot.c"
+#line 546 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -555,4 +550,4 @@ Init portion
 #line 28 "codegen/groot.override"
 
 
-#line 559 "groot.c"
+#line 554 "groot.c"
