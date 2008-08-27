@@ -512,14 +512,7 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
      case 'l' then objname = h(i);
     end
     t = type(objname,'short');
-    value="*"
-    if size(objname,'*')== 1 then 
-      select t 
-       case 'm' then value=m2s(objname);
-       case 'b' then value=m2s(b2m(objname));
-       case 's' then value=objname ;
-      end
-    end
+    value = cellstostr({objname});
     if t== 'h' || t == 'l' then 
       value="";
       osize = sprintf("%d",size(objname,1));
@@ -685,44 +678,11 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 	model.set[iter,1,"s"];
       else
 	ctype = type(val,'short');
-	if ctype== 's' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,val];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  // we also need to change the string in the user_data 
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	elseif ctype == 'm' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,m2s(val)];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	elseif ctype == 'b' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,m2s(b2m(val))];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	else
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	  model.set[iter,3,"*"];
-	end
+	model.set[iter,1,ctype];
+	model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
+	model.set[iter,3,cellstostr({val})];
+	Il =get_nsp_list_path_from_tree_path(tree_view,path);
+	tree_view.user_data(Il) = val;
 	if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
 	  //  we need to update the treeview 
 	  update_model([],list(tree_view))
