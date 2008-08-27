@@ -30,13 +30,13 @@
  * available window number 
  */
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data);
 
 
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
+static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data)
 { 
-  nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
+  return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data);
 }
 
 /* used when a graphic window is to be inserted in a more complex 
@@ -46,13 +46,13 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
 #ifdef PERIGL 
 int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
+  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
   return  nsp_get_win_counter()-1;
 }
 #else 
 int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
+  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
   return  nsp_get_win_counter()-1;
 }
 #endif 
@@ -66,8 +66,8 @@ int nsp_get_win_counter() { return EntryCounter;};
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
 #endif 
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data)
 {
   int i;
   static int first = 0;

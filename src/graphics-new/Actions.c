@@ -267,11 +267,11 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       wdim_p = wdim;
     }
-  Ggc->graphic_engine->initgraphic(bufname,&win_num,wdim_p,NULL,NULL,NULL,option);
+  Ggc->graphic_engine->initgraphic(bufname,&win_num,wdim_p,NULL,NULL,NULL,option,NULL);
   if (colored==1) 
-    Ggc->graphic_engine->xset_usecolor(Xgc,un);
+    Ggc->graphic_engine->xset_usecolor(Ggc,un);
   else
-    Ggc->graphic_engine->xset_usecolor(Xgc,zero);
+    Ggc->graphic_engine->xset_usecolor(Ggc,zero);
   Ggc->record_flag = TRUE ;
   Ggc->plots = Xgc->plots ; 
   xgc_reset_scales_to_default(Ggc);

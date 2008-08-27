@@ -1705,7 +1705,7 @@ void C2F(drawpolymarkGif)(char *str, int *n, int *vx, int *vy, int *v5, int *v6,
   ------------------------------------------------------*/
 
 void C2F(
-	 initgraphicGif)(char *string, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+	 initgraphicGif)(char *string, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4, void *data)
 { 
   char string1[256];
   static int EntryCounter = 0;

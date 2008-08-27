@@ -1384,7 +1384,7 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
  *        'n': no_header 
  *------------------------------------------------------*/
 
-static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
+static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode,void *data)
 { 
   char bbox[256],geom[256];
   int x[2];
@@ -1455,6 +1455,7 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
   xgc_add_default_scale(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
+  return EntryCounter;
 }
 
 

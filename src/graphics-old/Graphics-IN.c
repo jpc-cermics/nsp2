@@ -2903,7 +2903,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 						   (wpdim) ? (int*)wpdim->R: NULL,
 						   (viewport) ? viewport->R : NULL,
 						   (wpos) ? (int*)wpos->R : NULL,
-						   mode[0]);
+						   mode[0],NULL);
     }
   else 
     {
@@ -2929,7 +2929,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 	    (wpdim) ? (int*)wpdim->R: NULL,
 	    (viewport) ? viewport->R : NULL,
 	    (wpos) ? (int*)wpos->R : NULL,
-	    'e');
+	    'e',NULL);
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 

@@ -1020,6 +1020,8 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
+static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option);
+
 int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option)
 {
   /* default is to follow the window size */
@@ -1028,6 +1030,71 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   int uc;
   cairo_surface_t *surface;
   cairo_t *cr, *cr_current;
+
+  if ( Xgc->graphic_engine != &Cairo_gengine ) 
+    {
+      Sciprintf("cannot export a non cairo graphic\n");
+#if 1 
+      return FAIL;
+#else 
+      /* we are trying to export with cairo a non cairo window */
+      return nsp_cairo_export_mix(Xgc,win_num,colored,bufname,driver,option);
+#endif 
+    }
+  if ( strcmp(driver,"cairo-pdf")==0 ) 
+    {
+      surface = cairo_pdf_surface_create (bufname,width, height );
+    }
+  else if ( strcmp(driver,"cairo-svg")==0 )
+    {
+      surface = cairo_svg_surface_create (bufname,width, height );
+    }
+  else if ( strcmp(driver,"cairo-ps")==0 )
+    {
+      surface = cairo_ps_surface_create (bufname,width, height );
+    }
+  else if ( strcmp(driver,"cairo-png")==0 )
+    {
+      surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,  width, height );
+    }
+  else 
+    {
+      return FAIL;
+    }
+  if ( surface == NULL) return FAIL; 
+  cr = cairo_create (surface);
+  if ( cr == NULL)
+    {
+      cairo_surface_destroy (surface);
+      return FAIL; 
+    }
+  cairo_save (cr);
+  cr_current =  Xgc->private->cairo_cr;
+  Xgc->private->cairo_cr = cr;
+  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
+  if (colored==1 ) 
+    Xgc->graphic_engine->xset_usecolor(Xgc,1);
+  else
+    Xgc->graphic_engine->xset_usecolor(Xgc,0);
+  Xgc->graphic_engine->tape_replay(Xgc,win_num);
+  Xgc->private->cairo_cr = cr_current;
+  Xgc->graphic_engine->xset_usecolor(Xgc,uc);
+  cairo_show_page (cr);
+  cairo_restore (cr);
+  cairo_destroy (cr); 
+  cairo_surface_destroy (surface); 
+  return OK;
+}
+
+static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option)
+{
+  int v1=-1,win;
+  BCG *Xgc1=Xgc; /* used for drawing */
+  /* default is to follow the window size */
+  int width = Xgc->CWindowWidth; 
+  int height= Xgc->CWindowHeight;
+  cairo_surface_t *surface;
+  cairo_t *cr; 
   if ( strcmp(driver,"cairo-pdf")==0 ) 
     {
       surface = cairo_pdf_surface_create (bufname,width, height );
@@ -1051,27 +1118,24 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   if ( surface == NULL) return FAIL; 
   cr = cairo_create (surface);
   if ( cr == NULL) return FAIL; 
-  cairo_save (cr);
-  /* take care here that Xgc can be a non cairo Xgc */
-  if ( Xgc->graphic_engine != &Cairo_gengine ) 
+  /* we must create a cairo Xgc with a file-surface */
+  win= Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
+  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
-    }      
-  cr_current =  Xgc->private->cairo_cr;
-  Xgc->private->cairo_cr = cr;
-  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
-  if (colored==1 ) 
-    Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  else
-    Xgc->graphic_engine->xset_usecolor(Xgc,0);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
-  Xgc->private->cairo_cr = cr_current;
-  Xgc->graphic_engine->xset_usecolor(Xgc,uc);
+    }
+  Xgc1->CWindowWidth=   Xgc->CWindowWidth;
+  Xgc1->CWindowHeight=  Xgc->CWindowHeight;
+  Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
+  tape_replay_mix(Xgc1,Xgc,win_num);
   cairo_show_page (cr);
-  cairo_restore (cr);
   cairo_destroy (cr); 
   cairo_surface_destroy (surface); 
+  if ( Xgc1 != Xgc ) 
+    {
+      /* A revoir scig_delete(win); */
+    }
   return OK;
 }
 

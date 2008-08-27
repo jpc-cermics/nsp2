@@ -36,13 +36,13 @@
 #include <cairo-svg.h>
 #endif 
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data);
 
 
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
+static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data)
 { 
-  nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
+  return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data);
 }
 
 /* used when a graphic window is to be inserted in a more complex 
@@ -58,7 +58,7 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
 
 int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
+  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
   return  nsp_get_win_counter()-1;
 }
 
@@ -70,8 +70,8 @@ int nsp_get_win_counter() { return EntryCounter;};
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
 #endif 
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data)
 {
   int i;
   static int first = 0;
@@ -84,7 +84,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
     {
       Sciprintf("initgraphics: running out of memory \n");
-      return;
+      return -1;
     }
   /* default values  */
   private->colors=NULL;
@@ -129,7 +129,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
-      return;
+      return -1;
     }
 
   NewXgc->CurWindow = WinNum;
@@ -202,13 +202,19 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
     }
   else
     {
-      cairo_surface_t *surface;
-      surface = cairo_pdf_surface_create (string,400,600 );
-      if ( surface != NULL)
+      /* when string is non null then surface can be a transmited surface */
+      cairo_t *cairo_cr = data;
+      if ( cairo_cr == NULL) 
 	{
-	  NewXgc->private->cairo_cr= cairo_create (surface); 
-	  cairo_surface_destroy (surface); 
+	  cairo_surface_t *surface;
+	  surface = cairo_pdf_surface_create (string,400,600 );
+	  if ( surface != NULL)
+	    {
+	      cairo_cr = cairo_create (surface); 
+	      cairo_surface_destroy (surface); 
+	    }
 	}
+      NewXgc->private->cairo_cr = cairo_cr;
     }
 #endif
 
@@ -235,6 +241,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
   nsp_set_win_counter(WinNum);
   gdk_flush();
+  return WinNum;
 }
 
 /*

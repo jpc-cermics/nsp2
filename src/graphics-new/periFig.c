@@ -1324,7 +1324,7 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
   \encadre{Routine for initialisation}
   ------------------------------------------------------*/
 
-static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
+static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data)
 { 
   char string1[256];
   static int EntryCounter = 0;
@@ -1351,6 +1351,7 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
   FileInit(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
+  return EntryCounter;
 }
 
 static void FileInit(BCG *Xgc)
