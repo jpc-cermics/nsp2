@@ -1,3 +1,10 @@
+2008-08-28  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* xexport can use cairo for exporting graphics even 
+	for non cairo graphic windows. pdf svg ps can be used 
+	png depends on the cairo/gtk version available. The 
+	exact list of available format should be added. 
+	
 2008-08-21  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* diagset functions moved to set_diag method for 
