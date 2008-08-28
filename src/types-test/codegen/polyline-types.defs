@@ -5,7 +5,8 @@
   (parent "Graphic")
   (c-name "Polyline")
   (fields
-    '("NspMatrix*" "Pts")
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
     '("gboolean" "close" "std" "FALSE")
     '("int" "mark" "std" "-1")
     '("int" "mark_size" "std" "-1")

@@ -242,9 +242,13 @@ class StringArg(ArgType):
     def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
+            # this part is used in copy or full_copy 
             return '  if ((%s->%s = nsp_string_copy(%s->%s)) == NULL) return NULL;\n' % (left_varname,pname,right_varname,pname)
         else:
-            return '  if ((%s->%s = nsp_string_copy(%s)) == NULL) return NULL;\n' % (left_varname,pname,pname)
+            # this part is only used on create and we do not want to copy the given string 
+            # note that if the given string is NULL it will be set to "" by check_values. 
+            # return '  if ((%s->%s = nsp_string_copy(%s)) == NULL) return NULL;\n' % (left_varname,pname,pname)
+            return '  %s->%s = %s;\n' % (left_varname,pname,pname)
 
     def attr_write_info(self,pname, varname,byref):
 	"""used when a field is to be reloaded """

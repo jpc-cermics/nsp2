@@ -516,8 +516,8 @@ NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatri
  NspFigure *H  = nsp_figure_create_void(name,type);
  if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_figure_create_partial(H) == FAIL) return NULLFIGURE;
-  if ((H->obj->fname = nsp_string_copy(fname)) == NULL) return NULL;
-  if ((H->obj->driver = nsp_string_copy(driver)) == NULL) return NULL;
+  H->obj->fname = fname;
+  H->obj->driver = driver;
   H->obj->id=id;
   H->obj->dims= dims;
   H->obj->viewport_dims= viewport_dims;
@@ -1264,7 +1264,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
   /* return the first axes found  */
   if ( nsp_list_length(L) <1 ||  (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
     {
-      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL);
+      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
       if ( axe == NULL) return NULL;
       /* store in Figure */
       if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 

@@ -36,6 +36,9 @@ struct _nsp_axes {
   NspMatrix* bounds;
   NspMatrix* arect;
   NspMatrix* frect;
+  char* title;
+  char* x;
+  char* y;
   NspList* children;
   int ref_count;
 };
@@ -66,7 +69,7 @@ NspAxes *new_axes();
 
 #define NULLAXES (NspAxes*) 0
 
-extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,NspList* children,NspTypeBase *type);
+extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,NspTypeBase *type);
 
 /* from AxesObj.c */
 

@@ -877,7 +877,6 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj)
 }
 */
 
-static double min_of_doubles(const double *x, int n);
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj)
 {
@@ -892,22 +891,6 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj)
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
   nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R);
 }
-
-static double min_of_doubles(const double *x, int n)
-{
-  int i;
-  double dx=1,mindx=1;
-  if ( n < 2 ) return(mindx);
-  mindx= Abs(x[1]-x[0]);
-  mindx = ( mindx != 0 ) ? mindx : 1;
-  for ( i = 2 ; i < n ; i++) 
-    {
-      dx = Abs(x[i]-x[i-1]);
-      if ( dx < mindx && dx != 0 ) mindx=dx;
-    }
-  return(mindx);
-}
-
 
 
 static void nsp_translate_contour(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -959,4 +942,4 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 963 "contour.c"
+#line 946 "contour.c"

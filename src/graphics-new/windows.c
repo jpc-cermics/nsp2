@@ -71,7 +71,7 @@ static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
  * Return value: the current BCG to be used 
  **/
 
-extern Gengine Gtk_gengine ; /* XXXXX */
+extern Gengine Gtk_gengine; /* XXXXX */
 
 BCG *check_graphic_window(void)
 {

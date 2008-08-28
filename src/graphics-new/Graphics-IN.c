@@ -3085,6 +3085,49 @@ int int_xflush(Stack stack, int rhs, int opt, int lhs)
  *    FIXME: mark_size should be added 
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+int int_xpoly(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPolyline *pl;
+  NspAxes *axe; 
+  BCG *Xgc;
+  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1;
+  char *type;
+  NspMatrix *x,*y;
+
+  nsp_option opts[] ={
+    { "close",s_bool,NULLOBJ,-1},
+    { "color",s_int,NULLOBJ,-1},
+    { "mark",s_int,NULLOBJ,-1},
+    { "thickness",s_int,NULLOBJ,-1},
+    { "type",string,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}};
+  
+  CheckStdRhs(2,2);
+  if ((x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thickness,&type) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+
+  if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
+  if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
+
+  if ((pl = nsp_polyline_create("pl",x,y,close,mark,mark_size,fill_color,thickness,NULL))== NULL)
+    return RET_BUG;
+  ((NspGraphic *) pl)->obj->color=color;
+  /* insert the polyline */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return OK;
+}
+
+#else 
+
 int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -3111,6 +3154,8 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   if ( l1->mn == 0 ) return 0;
 
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
+
+
 
   Xgc=nsp_check_graphic_context();
 
@@ -3148,7 +3193,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	    }
 	}
     }
-
+  
   if ( dtype == xmarks ) 
     Xgc->graphic_engine->scale->drawpolymark(Xgc,l1->R,l2->R,l2->mn);
   else
@@ -3167,6 +3212,9 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 
   return 0;
 }
+
+#endif
+
 
 /*-----------------------------------------------------------
  * xpoly_clip(xv,yv,clip_rect,opts)
@@ -3225,10 +3273,61 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-
 /*-----------------------------------------------------------
  *   xpolys(xpols,ypols,[draw])
  *-----------------------------------------------------------*/
+
+
+#ifdef NEW_GRAPHICS 
+
+int int_xpolys(Stack stack, int rhs, int opt, int lhs)
+{
+  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1,i;
+  NspMatrix *x,*y,*style=NULL;
+  NspPolyline *pl;
+  NspAxes *axe; 
+  BCG *Xgc;
+  CheckRhs(2,3);
+
+  if ((x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  
+  if (rhs == 3) 
+    {
+      if ((style=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
+      CheckVector(NspFname(stack),3,style); 
+      CheckDimProp(NspFname(stack),1,3, style->mn < x->n);
+    }
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+
+  for ( i = 0 ; i < x->n ; i++)
+    {
+      NspMatrix *xp,*yp;
+      if ((xp= nsp_matrix_create_from_array("x",1,x->m,x->R + x->m*i,NULL))== NULL) return RET_BUG;
+      if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
+      if ( style != NULL)
+	{
+	  if ( style->I[i] <= 0) 
+	    mark = - style->I[i];
+	  else
+	    color = style->I[i];
+	}
+      if ((pl = nsp_polyline_create("pl",xp,yp,close,mark,mark_size,fill_color,thickness,NULL))== NULL)
+	return RET_BUG;
+      ((NspGraphic *) pl)->obj->color=color;
+      mark = color=-1;
+      /* insert the polyline */
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+	return RET_BUG;
+    }
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+}
+
+#else 
 
 int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 {
@@ -3258,6 +3357,9 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
   Xgc->graphic_engine->scale->drawpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m);
   return 0;
 }
+
+#endif 
+
 
 /*-----------------------------------------------------------
  * xselect([winid])

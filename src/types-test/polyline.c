@@ -200,7 +200,8 @@ static int nsp_polyline_eq(NspPolyline *A, NspObject *B)
   NspPolyline *loc = (NspPolyline *) B;
   if ( check_cast(B,nsp_type_polyline_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->Pts)->type->eq(A->obj->Pts,loc->obj->Pts) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( A->obj->close != loc->obj->close) return FALSE;
   if ( A->obj->mark != loc->obj->mark) return FALSE;
   if ( A->obj->mark_size != loc->obj->mark_size) return FALSE;
@@ -226,7 +227,8 @@ int nsp_polyline_xdr_save(XDR *xdrs, NspPolyline *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Pts)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->close) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
@@ -245,7 +247,8 @@ NspPolyline  *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_polyline))) == NULL) return NULL;
-  if ((M->obj->Pts =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->close) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark_size) == FAIL) return NULL;
@@ -276,7 +279,8 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->Pts);
+    nsp_matrix_destroy(H->obj->x);
+    nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
    }
 }
@@ -284,7 +288,7 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
 void nsp_polyline_destroy(NspPolyline *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 288 "polyline.c"
+#line 292 "polyline.c"
   nsp_polyline_destroy_partial(H);
   FREE(H);
 }
@@ -332,8 +336,11 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Pts != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->x != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->y != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"close	= %s\n", ( M->obj->close == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
@@ -356,8 +363,11 @@ int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_leve
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Pts != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->x != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->y != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"close	= %s\n", ( M->obj->close == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
@@ -434,7 +444,8 @@ int nsp_polyline_create_partial(NspPolyline *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_polyline)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->Pts = NULLMAT;
+  H->obj->x = NULLMAT;
+  H->obj->y = NULLMAT;
   H->obj->close = FALSE;
   H->obj->mark = -1;
   H->obj->mark_size = -1;
@@ -445,9 +456,15 @@ int nsp_polyline_create_partial(NspPolyline *H)
 
 int nsp_polyline_check_values(NspPolyline *H)
 {
-  if ( H->obj->Pts == NULLMAT) 
+  if ( H->obj->x == NULLMAT) 
     {
-       if (( H->obj->Pts = nsp_matrix_create("Pts",'r',0,0)) == NULLMAT)
+       if (( H->obj->x = nsp_matrix_create("x",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
+  if ( H->obj->y == NULLMAT) 
+    {
+       if (( H->obj->y = nsp_matrix_create("y",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
@@ -455,12 +472,13 @@ int nsp_polyline_check_values(NspPolyline *H)
   return OK;
 }
 
-NspPolyline *nsp_polyline_create(char *name,NspMatrix* Pts,gboolean close,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
+NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
 {
  NspPolyline *H  = nsp_polyline_create_void(name,type);
  if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_polyline_create_partial(H) == FAIL) return NULLPOLYLINE;
-  H->obj->Pts= Pts;
+  H->obj->x= x;
+  H->obj->y= y;
   H->obj->close=close;
   H->obj->mark=mark;
   H->obj->mark_size=mark_size;
@@ -497,11 +515,17 @@ NspPolyline *nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_polyline))) == NULL) return NULLPOLYLINE;
   H->obj->ref_count=1;
-  if ( self->obj->Pts == NULL )
-    { H->obj->Pts = NULL;}
+  if ( self->obj->x == NULL )
+    { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->Pts = (NspMatrix *) nsp_object_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->y == NULL )
+    { H->obj->y = NULL;}
+  else
+    {
+      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   H->obj->close=self->obj->close;
   H->obj->mark=self->obj->mark;
@@ -560,53 +584,61 @@ static NspMethods *polyline_get_methods(void) { return polyline_methods;};
  * Attributes
  *-------------------------------------------*/
 
-#line 59 "codegen/polyline.override"
-
-/* overriden to check dimensions when changing values.
- */
-
-static NspObject *_wrap_polyline_get_obj_Pts(void *self,char *attr, int *copy)
+static NspObject *_wrap_polyline_get_x(void *self,char *attr)
 {
   NspMatrix *ret;
-  *copy = TRUE; 
-  ret = ((NspMatrix*) ((NspPolyline *) self)->obj->Pts);
+
+  ret = ((NspPolyline *) self)->obj->x;
   return (NspObject *) ret;
 }
 
-static int _wrap_polyline_set_obj_Pts(void *self,NspObject *val)
+static NspObject *_wrap_polyline_get_obj_x(void *self,char *attr, int *copy)
 {
-  NspMatrix *M= (NspMatrix *) val ; 
-  NspPolyline *poly = self ;
-  if ( M->rc_type != 'r' || M->n != 2 )
-    {
-      Scierror("Error: polyline field Pts should be real an mx2 sized\n");
-      return FAIL;
-    }
-  /* before replacing the field we check that dimensions are correct */
-  if ( poly->obj->Pts != NULL )
-    nsp_matrix_destroy(poly->obj->Pts);
-  poly->obj->Pts = (NspMatrix *) val ;
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspPolyline *) self)->obj->x);
+  return (NspObject *) ret;
+}
+
+static int _wrap_polyline_set_x(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *x;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspPolyline *) self)->obj->x != NULL ) 
+    nsp_matrix_destroy(((NspPolyline *) self)->obj->x);
+  ((NspPolyline *) self)->obj->x= x;
   return OK;
 }
 
-#line 593 "polyline.c"
-static NspObject *_wrap_polyline_get_Pts(void *self,char *attr)
+static NspObject *_wrap_polyline_get_y(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspPolyline *) self)->obj->Pts;
+  ret = ((NspPolyline *) self)->obj->y;
   return (NspObject *) ret;
 }
 
-static int _wrap_polyline_set_Pts(void *self, char *attr, NspObject *O)
+static NspObject *_wrap_polyline_get_obj_y(void *self,char *attr, int *copy)
 {
-  NspMatrix *Pts;
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspPolyline *) self)->obj->y);
+  return (NspObject *) ret;
+}
+
+static int _wrap_polyline_set_y(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *y;
 
   if ( ! IsMat(O) ) return FAIL;
-  if ((Pts = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspPolyline *) self)->obj->Pts != NULL ) 
-    nsp_matrix_destroy(((NspPolyline *) self)->obj->Pts);
-  ((NspPolyline *) self)->obj->Pts= Pts;
+  if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspPolyline *) self)->obj->y != NULL ) 
+    nsp_matrix_destroy(((NspPolyline *) self)->obj->y);
+  ((NspPolyline *) self)->obj->y= y;
   return OK;
 }
 
@@ -698,7 +730,8 @@ static int _wrap_polyline_set_thickness(void *self, char *attr, NspObject *O)
 }
 
 static AttrTab polyline_attrs[] = {
-  { "Pts", (attr_get_function *)_wrap_polyline_get_Pts, (attr_set_function *)_wrap_polyline_set_Pts,(attr_get_object_function *)_wrap_polyline_get_obj_Pts, (attr_set_object_function *)_wrap_polyline_set_obj_Pts },
+  { "x", (attr_get_function *)_wrap_polyline_get_x, (attr_set_function *)_wrap_polyline_set_x,(attr_get_object_function *)_wrap_polyline_get_obj_x, (attr_set_object_function *)int_set_object_failed },
+  { "y", (attr_get_function *)_wrap_polyline_get_y, (attr_set_function *)_wrap_polyline_set_y,(attr_get_object_function *)_wrap_polyline_get_obj_y, (attr_set_object_function *)int_set_object_failed },
   { "close", (attr_get_function *)_wrap_polyline_get_close, (attr_set_function *)_wrap_polyline_set_close,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mark", (attr_get_function *)_wrap_polyline_get_mark, (attr_set_function *)_wrap_polyline_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mark_size", (attr_get_function *)_wrap_polyline_get_mark_size, (attr_set_function *)_wrap_polyline_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -723,7 +756,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 727 "polyline.c"
+#line 760 "polyline.c"
 
 
 #line 89 "codegen/polyline.override"
@@ -735,7 +768,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 739 "polyline.c"
+#line 772 "polyline.c"
 
 
 #line 99 "codegen/polyline.override"
@@ -748,7 +781,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 752 "polyline.c"
+#line 785 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -789,7 +822,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 793 "polyline.c"
+#line 826 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -800,20 +833,55 @@ Init portion
 
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
 {
+  int xmark[2];
+  int ccolor=-1,cmark=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  if ( M->mn != 0 
-       && ((NspGraphic *) P)->obj->hidden == FALSE )
-    Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+  NspMatrix *x = P->obj->x;
+  NspMatrix *y = P->obj->y;
+  if ( P->obj->x->mn != 0 && ((NspGraphic *) P)->obj->hidden == FALSE )
+    {
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	{
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+	}
+      if ( P->obj->mark != -1 ) 
+	{
+	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+	  cmark=xmark[0];
+	  Xgc->graphic_engine->scale->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	}
+      if ( P->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+	}
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
+      if ( P->obj->mark != -1 ) 
+	Xgc->graphic_engine->scale->drawpolymark(Xgc,x->R,y->R,P->obj->x->mn);
+      /* reset to default values */
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+	}
+      if ( P->obj->mark != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_mark(Xgc,cmark,xmark[1]);
+	}
+      if ( P->obj->thickness != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+	}
+    }
 }
 
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
   int i; 
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m;
-  for ( i=0; i < M->m ; i++) 
+  double *x=P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
@@ -826,9 +894,8 @@ static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m,x1,y1;
-  for ( i=0; i < M->m ; i++) 
+  double *x= P->obj->x->R,*y= P->obj->y->R,x1,y1;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       x1 = R[0]*(*x) -R[1]*(*y);
       y1 = R[1]*(*x) +R[0]*(*y);
@@ -842,9 +909,8 @@ static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m;
-  for ( i=0; i < M->m ; i++) 
+  double *x= P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
@@ -860,9 +926,8 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m, dval;
-  if (M->mn == 0) 
+  double *x= P->obj->x->R,*y= P->obj->y->R,dval;
+  if ( P->obj->x->mn == 0) 
     {
       bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
       return;
@@ -871,7 +936,7 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
   bounds[3]=*y;/* ymax */
-  for (i = 1; i < M->m; i++)
+  for (i = 1; i < P->obj->x->mn; i++)
     {
       dval = x[i];
       if ( dval > bounds[2] )
@@ -887,4 +952,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 891 "polyline.c"
+#line 956 "polyline.c"

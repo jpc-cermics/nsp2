@@ -112,20 +112,55 @@ last
 
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj)
 {
+  int xmark[2];
+  int ccolor=-1,cmark=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  if ( M->mn != 0 
-       && ((NspGraphic *) P)->obj->hidden == FALSE )
-    Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,1);
+  NspMatrix *x = P->obj->x;
+  NspMatrix *y = P->obj->y;
+  if ( P->obj->x->mn != 0 && ((NspGraphic *) P)->obj->hidden == FALSE )
+    {
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	{
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+	}
+      if ( P->obj->mark != -1 ) 
+	{
+	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+	  cmark=xmark[0];
+	  Xgc->graphic_engine->scale->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	}
+      if ( P->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+	}
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
+      if ( P->obj->mark != -1 ) 
+	Xgc->graphic_engine->scale->drawpolymark(Xgc,x->R,y->R,P->obj->x->mn);
+      /* reset to default values */
+      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+	}
+      if ( P->obj->mark != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_mark(Xgc,cmark,xmark[1]);
+	}
+      if ( P->obj->thickness != -1 ) 
+	{
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+	}
+    }
 }
 
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
   int i; 
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m;
-  for ( i=0; i < M->m ; i++) 
+  double *x=P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
@@ -138,9 +173,8 @@ static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m,x1,y1;
-  for ( i=0; i < M->m ; i++) 
+  double *x= P->obj->x->R,*y= P->obj->y->R,x1,y1;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       x1 = R[0]*(*x) -R[1]*(*y);
       y1 = R[1]*(*x) +R[0]*(*y);
@@ -154,9 +188,8 @@ static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m;
-  for ( i=0; i < M->m ; i++) 
+  double *x= P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
@@ -172,9 +205,8 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m, dval;
-  if (M->mn == 0) 
+  double *x= P->obj->x->R,*y= P->obj->y->R,dval;
+  if ( P->obj->x->mn == 0) 
     {
       bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
       return;
@@ -183,7 +215,7 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
   bounds[3]=*y;/* ymax */
-  for (i = 1; i < M->m; i++)
+  for (i = 1; i < P->obj->x->mn; i++)
     {
       dval = x[i];
       if ( dval > bounds[2] )

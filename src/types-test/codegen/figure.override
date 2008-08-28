@@ -421,7 +421,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
   /* return the first axes found  */
   if ( nsp_list_length(L) <1 ||  (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
     {
-      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL);
+      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
       if ( axe == NULL) return NULL;
       /* store in Figure */
       if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 
