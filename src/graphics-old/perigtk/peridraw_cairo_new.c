@@ -1033,8 +1033,8 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
 
   if ( Xgc->graphic_engine != &Cairo_gengine ) 
     {
+#if 0
       Sciprintf("cannot export a non cairo graphic\n");
-#if 1 
       return FAIL;
 #else 
       /* we are trying to export with cairo a non cairo window */
@@ -1086,9 +1086,14 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   return OK;
 }
 
+/* this function is used to export a non-cairo graphics with cairo 
+ * we create a Cairo Xgc which is connected just to a surface 
+ */
+
+
 static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option)
 {
-  int v1=-1,win;
+  int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
@@ -1119,7 +1124,11 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   cr = cairo_create (surface);
   if ( cr == NULL) return FAIL; 
   /* we must create a cairo Xgc with a file-surface */
+  cwin =  Xgc->graphic_engine->xget_curwin();
+  /* create a new graphic with cairo */
   win= Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
+  /* we don't want the cairo graphic to become the current one */
+  xset_curwin(cwin,FALSE);
   if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
@@ -1134,7 +1143,8 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   cairo_surface_destroy (surface); 
   if ( Xgc1 != Xgc ) 
     {
-      /* A revoir scig_delete(win); */
+      /* delete the localy created <<window>> */
+      scig_delete(win);
     }
   return OK;
 }

@@ -964,6 +964,7 @@ static void xset_wresize(BCG *Xgc,int num)
       /* we want here that the graphic window follows the viewport resize 
        * remove the scrolled window size hints 
        */
+      if ( Xgc->private->window == NULL ) return;
       geometry.max_width = G_MAXSHORT;
       geometry.max_height = G_MAXSHORT;
       geometry_mask = GDK_HINT_MAX_SIZE ; 
@@ -976,6 +977,7 @@ static void xset_wresize(BCG *Xgc,int num)
   else 
     {
       int w,h;
+      if ( Xgc->private->drawing == NULL ) return;
       gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
       Xgc->CurResizeStatus = num1 ;
       xset_windowdim(Xgc,w,h);
@@ -1054,15 +1056,14 @@ static void xset_default_colormap(BCG *Xgc)
    * if rgb are coded as guchar
    * gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
    */
-
-  if ( Xgc->private->drawing == NULL ) return;
-  if ( Xgc->private->colormap == NULL ) 
+  if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
   for (i = 0; i < m; i++) {
     Xgc->private->colors[i].red = (default_colors[3*i] << 8);
     Xgc->private->colors[i].green = (default_colors[3*i+1] << 8);
     Xgc->private->colors[i].blue = (default_colors[3*i+2] << 8);
-    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
+    if ( Xgc->private->colormap != NULL) 
+      gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
   }
   set_colormap_constants(Xgc,m);
   FREE(colors_old);
@@ -1101,14 +1102,9 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
     Xgc->private->colors =     colors_old ;
     return;
   }
-
-  if ( Xgc->private->drawing == NULL ) return;
-  if ( Xgc->private->colormap == NULL ) 
+  if ( Xgc->private->colormap == NULL&& Xgc->private->drawing != NULL ) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
-
-  for (i = 0; i < m; i++) {
-  }
-
+  
   /* Checking RGB values */
   for (i = 0; i < m; i++) 
     {
@@ -1123,7 +1119,8 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
       Xgc->private->colors[i].red = (guint16)  (a[i]*65535);
       Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
       Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
-      gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
+      if ( Xgc->private->colormap != NULL )
+	gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
     }
   set_colormap_constants(Xgc,m);
   FREE(colors_old);
@@ -1162,18 +1159,19 @@ static int XgcAllocColors( BCG *xgc, int m)
 static void set_colormap_constants(BCG *Xgc,int m)
 {
   /* Black */
-  if ( Xgc->private->drawing == NULL ) return;
-  if ( Xgc->private->colormap == NULL ) 
+  if ( Xgc->private->colormap == NULL &&  Xgc->private->drawing != NULL ) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
   Xgc->private->colors[m].red = 0; 
   Xgc->private->colors[m].green = 0;
   Xgc->private->colors[m].blue = 0;
-  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m]);      
+  if (  Xgc->private->colormap != NULL ) 
+    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m]);      
   /* White */
   Xgc->private->colors[m+1].red = 65535; 
   Xgc->private->colors[m+1].green = 65535; 
   Xgc->private->colors[m+1].blue = 65535; 
-  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
+  if (  Xgc->private->colormap != NULL ) 
+    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
   /* constants */
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;
