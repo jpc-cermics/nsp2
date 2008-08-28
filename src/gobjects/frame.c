@@ -1155,7 +1155,7 @@ void nsp_gframe_tops(NspGFrame *R,char *fname)
   R->obj->Xgc->graphic_engine->xget_windowdim(R->obj->Xgc,wdim,wdim+1);
   wdim_p = wdim;
   ScilabGCPos.graphic_engine = &Pos_gengine;
-  ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k');
+  ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k',NULL);
   if (colored == TRUE ) 
     ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,un);
   else
