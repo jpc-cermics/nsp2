@@ -1139,6 +1139,9 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
   tape_replay_mix(Xgc1,Xgc,win_num);
   cairo_show_page (cr);
+  if ( strcmp(driver,"cairo-png")==0 )
+    cairo_surface_write_to_png (surface,bufname);
+  
   cairo_destroy (cr); 
   cairo_surface_destroy (surface); 
   if ( Xgc1 != Xgc ) 
