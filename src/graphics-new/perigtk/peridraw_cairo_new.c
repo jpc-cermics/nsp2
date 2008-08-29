@@ -1086,12 +1086,47 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   return OK;
 }
 
+/* the nex function is used by the print menu 
+ */
+
+int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
+{
+  BCG *Xgc = window_list_search(win_num);
+  int v1=-1,win,cwin;
+  BCG *Xgc1=Xgc; /* used for drawing */
+  /* we must create a cairo Xgc with a file-surface */
+  cwin =  Xgc->graphic_engine->xget_curwin();
+  /* create a new graphic with cairo */
+  win= Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr);
+  /* we don't want the cairo graphic to become the current one */
+  xset_curwin(cwin,FALSE);
+  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
+    {
+      Sciprintf("cannot export a non cairo graphic\n");
+      return FAIL;
+    }
+  Xgc1->CWindowWidth= width;
+  Xgc1->CWindowHeight=  height;
+  tape_replay_mix(Xgc1,Xgc,win_num);
+  if ( Xgc1 != Xgc ) 
+    {
+      /* delete the localy created <<window>> 
+       * we need here to avoid the fact that during the 
+       * delete the window is erased 
+       */
+      Xgc1->private->cairo_cr = NULL;
+      scig_delete(win);
+    }
+  return OK;
+}
+
 /* this function is used to export a non-cairo graphics with cairo 
  * we create a Cairo Xgc which is connected just to a surface 
  */
 
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option)
+static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
+				char *driver,char option)
 {
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */

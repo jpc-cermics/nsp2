@@ -763,6 +763,13 @@ int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char 
 {
   return FAIL;
 }
+
+int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
+{
+  return FAIL;
+}
+
+
 #endif 
 
 
