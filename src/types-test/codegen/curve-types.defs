@@ -11,6 +11,7 @@
    '("int" "style"); line style 
    '("int" "mode"); mode: std, step, stem, arrow.
    '("NspMatrix*" "Pts")
+   '("char*" "legend")
     )
   (gtype-id "Curve")
 )

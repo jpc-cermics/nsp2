@@ -10,6 +10,7 @@
 
 #line 4 "codegen/axes.override"
 #include <nsp/figure.h>
+#include <nsp/curve.h>
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -36,7 +37,7 @@ extern void nsp_figure_force_redraw( NspFigure *F);
 extern Gengine GL_gengine;
 #endif 
 
-#line 40 "axes.c"
+#line 41 "axes.c"
 
 /* ----------- Axes ----------- */
 
@@ -107,7 +108,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 38 "codegen/axes.override"
+#line 39 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -118,7 +119,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
-#line 122 "axes.c"
+#line 123 "axes.c"
   /* 
    * Axes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -313,7 +314,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
 void nsp_axes_destroy(NspAxes *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 317 "axes.c"
+#line 318 "axes.c"
   nsp_axes_destroy_partial(H);
   FREE(H);
 }
@@ -700,7 +701,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 84 "codegen/axes.override"
+#line 85 "codegen/axes.override"
 /* override set alpha */
 static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
 {
@@ -715,7 +716,7 @@ static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 719 "axes.c"
+#line 720 "axes.c"
 static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -866,7 +867,7 @@ static int _wrap_axes_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 100 "codegen/axes.override"
+#line 101 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -923,7 +924,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 927 "axes.c"
+#line 928 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -949,7 +950,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 58 "codegen/axes.override"
+#line 59 "codegen/axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -961,10 +962,10 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 965 "axes.c"
+#line 966 "axes.c"
 
 
-#line 158 "codegen/axes.override"
+#line 159 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -973,10 +974,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 977 "axes.c"
+#line 978 "axes.c"
 
 
-#line 168 "codegen/axes.override"
+#line 169 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -986,7 +987,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 990 "axes.c"
+#line 991 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1022,22 +1023,22 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
 Axes_register_classes(NspObject *d)
 {
 
-#line 33 "codegen/axes.override"
+#line 34 "codegen/axes.override"
 
 Init portion 
 
 
-#line 1031 "axes.c"
+#line 1032 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 179 "codegen/axes.override"
+#line 180 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
-
+static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 {
@@ -1104,6 +1105,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
+  nsp_axes_legends(Xgc,P);
   frame_clip_off(Xgc);
   /* title if present */
   if ( P->obj->title[0] != '\0') 
@@ -1122,6 +1124,41 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
     }
 }
 
+/* draw legends from information contained in axe 
+ */
+
+static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
+{
+  int style[56],count=0,legend_pos=1;
+  NspSMatrix *legends=NULL,*legend=NULL;
+  /* get and collect the legends */
+  NspList *L = axe->obj->children;
+  Cell *cloc = L->first ;
+  legends = nsp_smatrix_create_with_length(NVOID,0,0,-1);
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ && IsCurve(cloc->O) ) 
+	{
+	  NspCurve *cv = (NspCurve *) cloc->O;
+	  if (cv->obj->legend[0] != '\0' ) 
+	    {
+	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
+	      style[count++]= ((NspGraphic *) cv)->obj->color;
+	      if (count >= 56 ) break; 
+	    }
+	}
+      cloc = cloc->next;
+    }
+  if ( count != 0) 
+    {
+      legend = nsp_smatrix_row_concat(legends,"@",1);
+      if (legend != NULL) 
+	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@"); 
+    }
+  if ( legend != NULL) nsp_smatrix_destroy(legend);
+  if ( legends != NULL) nsp_smatrix_destroy(legends);
+  return OK;
+}
 
 
 /* compute the bounds of the set of objects countained in the 
@@ -1376,4 +1413,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1380 "axes.c"
+#line 1417 "axes.c"

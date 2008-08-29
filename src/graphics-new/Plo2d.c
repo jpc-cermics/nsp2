@@ -828,12 +828,13 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++) 
     {
+      NspCurve *curve;
       NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
       if ( Pts == NULL) return FAIL;
       memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      /* XXX create should not copy the given Pts argument */
-      NspCurve *curve= nsp_curve_create("curve",0,0,style[i],0,Pts,NULL);
+      curve= nsp_curve_create("curve",0,0,style[i],0,Pts,NULL,NULL);
+      ((NspGraphic *) curve)->obj->color = -style[i];
       /* insert the new curve */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return FAIL;
@@ -841,6 +842,5 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
   return OK;
 }
-
 
 

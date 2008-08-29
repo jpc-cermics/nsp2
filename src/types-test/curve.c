@@ -201,6 +201,7 @@ static int nsp_curve_eq(NspCurve *A, NspObject *B)
   if ( A->obj->style != loc->obj->style) return FALSE;
   if ( A->obj->mode != loc->obj->mode) return FALSE;
   if ( NSP_OBJECT(A->obj->Pts)->type->eq(A->obj->Pts,loc->obj->Pts) == FALSE ) return FALSE;
+  if ( strcmp(A->obj->legend,loc->obj->legend) != 0) return FALSE;
   return TRUE;
 }
 
@@ -226,6 +227,7 @@ int nsp_curve_xdr_save(XDR *xdrs, NspCurve *M)
   if (nsp_xdr_save_i(xdrs, M->obj->style) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mode) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Pts)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,M->obj->legend) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -244,6 +246,7 @@ NspCurve  *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mode) == FAIL) return NULL;
   if ((M->obj->Pts =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_new_string(xdrs,&(M->obj->legend)) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -270,6 +273,7 @@ void nsp_curve_destroy_partial(NspCurve *H)
   if ( H->obj->ref_count == 0 )
    {
     nsp_matrix_destroy(H->obj->Pts);
+  nsp_string_destroy(&(H->obj->legend));
     FREE(H->obj);
    }
 }
@@ -277,7 +281,7 @@ void nsp_curve_destroy_partial(NspCurve *H)
 void nsp_curve_destroy(NspCurve *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 281 "curve.c"
+#line 285 "curve.c"
   nsp_curve_destroy_partial(H);
   FREE(H);
 }
@@ -332,6 +336,7 @@ int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
   if ( M->obj->Pts != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -355,6 +360,7 @@ int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
   if ( M->obj->Pts != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -430,6 +436,7 @@ int nsp_curve_create_partial(NspCurve *H)
   H->obj->style = 0;
   H->obj->mode = 0;
   H->obj->Pts = NULLMAT;
+  H->obj->legend = NULL;
   return OK;
 }
 
@@ -441,11 +448,16 @@ int nsp_curve_check_values(NspCurve *H)
        return FAIL;
 
     }
+  if ( H->obj->legend == NULL) 
+    {
+     if (( H->obj->legend = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int mode,NspMatrix* Pts,NspTypeBase *type)
+NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
 {
  NspCurve *H  = nsp_curve_create_void(name,type);
  if ( H ==  NULLCURVE) return NULLCURVE;
@@ -455,6 +467,7 @@ NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int mode,N
   H->obj->style=style;
   H->obj->mode=mode;
   H->obj->Pts= Pts;
+  H->obj->legend = legend;
  if ( nsp_curve_check_values(H) == FAIL) return NULLCURVE;
  return H;
 }
@@ -496,6 +509,7 @@ NspCurve *nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self)
     {
       if ((H->obj->Pts = (NspMatrix *) nsp_object_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
     }
+  if ((H->obj->legend = nsp_string_copy(self->obj->legend)) == NULL) return NULL;
   return H;
 }
 
@@ -600,7 +614,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 604 "curve.c"
+#line 618 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,char *attr)
 {
   int ret;
@@ -638,7 +652,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 642 "curve.c"
+#line 656 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -659,12 +673,34 @@ static int _wrap_curve_set_Pts(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_curve_get_legend(void *self,char *attr)
+{
+  const gchar *ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspCurve *) self)->obj->legend;
+  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
+  return nsp_ret;
+}
+
+static int _wrap_curve_set_legend(void *self, char *attr, NspObject *O)
+{
+  char *legend;
+
+  if ((legend = nsp_string_object(O))==NULL) return FAIL;
+  if ((legend = nsp_string_copy(legend)) ==NULL) return FAIL;
+  nsp_string_destroy(&((NspCurve *) self)->obj->legend);
+  ((NspCurve *) self)->obj->legend= legend;
+  return OK;
+}
+
 static AttrTab curve_attrs[] = {
   { "mark", (attr_get_function *)_wrap_curve_get_mark, (attr_set_function *)_wrap_curve_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "width", (attr_get_function *)_wrap_curve_get_width, (attr_set_function *)_wrap_curve_set_width,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "style", (attr_get_function *)_wrap_curve_get_style, (attr_set_function *)_wrap_curve_set_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mode", (attr_get_function *)_wrap_curve_get_mode, (attr_set_function *)_wrap_curve_set_mode,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "Pts", (attr_get_function *)_wrap_curve_get_Pts, (attr_set_function *)_wrap_curve_set_Pts,(attr_get_object_function *)_wrap_curve_get_obj_Pts, (attr_set_object_function *)_wrap_curve_set_obj_Pts },
+  { "legend", (attr_get_function *)_wrap_curve_get_legend, (attr_set_function *)_wrap_curve_set_legend,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -684,7 +720,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 688 "curve.c"
+#line 724 "curve.c"
 
 
 #line 100 "codegen/curve.override"
@@ -696,7 +732,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 700 "curve.c"
+#line 736 "curve.c"
 
 
 #line 110 "codegen/curve.override"
@@ -709,7 +745,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 713 "curve.c"
+#line 749 "curve.c"
 
 
 /*----------------------------------------------------
@@ -750,7 +786,7 @@ Curve_register_classes(NspObject *d)
 Init portion 
 
 
-#line 754 "curve.c"
+#line 790 "curve.c"
   nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -913,4 +949,4 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 917 "curve.c"
+#line 953 "curve.c"

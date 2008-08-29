@@ -2,6 +2,7 @@
 %%
 headers
 #include <nsp/figure.h>
+#include <nsp/curve.h>
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -180,7 +181,7 @@ last
 /* inserted verbatim at the end */
 static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
-
+static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 {
@@ -247,6 +248,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
+  nsp_axes_legends(Xgc,P);
   frame_clip_off(Xgc);
   /* title if present */
   if ( P->obj->title[0] != '\0') 
@@ -265,6 +267,41 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
     }
 }
 
+/* draw legends from information contained in axe 
+ */
+
+static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
+{
+  int style[56],count=0,legend_pos=1;
+  NspSMatrix *legends=NULL,*legend=NULL;
+  /* get and collect the legends */
+  NspList *L = axe->obj->children;
+  Cell *cloc = L->first ;
+  legends = nsp_smatrix_create_with_length(NVOID,0,0,-1);
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ && IsCurve(cloc->O) ) 
+	{
+	  NspCurve *cv = (NspCurve *) cloc->O;
+	  if (cv->obj->legend[0] != '\0' ) 
+	    {
+	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
+	      style[count++]= ((NspGraphic *) cv)->obj->color;
+	      if (count >= 56 ) break; 
+	    }
+	}
+      cloc = cloc->next;
+    }
+  if ( count != 0) 
+    {
+      legend = nsp_smatrix_row_concat(legends,"@",1);
+      if (legend != NULL) 
+	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@"); 
+    }
+  if ( legend != NULL) nsp_smatrix_destroy(legend);
+  if ( legends != NULL) nsp_smatrix_destroy(legends);
+  return OK;
+}
 
 
 /* compute the bounds of the set of objects countained in the 
