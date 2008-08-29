@@ -578,7 +578,7 @@ the_end:
 
 static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, int irstep, int flag)
 {
-  int status;
+  int status=0;
   double Control[UMFPACK_CONTROL], *dControl=NULL;
   double *Info = NULL;
   NspMatrix *Bc=NULL, *X=NULL,*Wi=NULL,*W=NULL,*rep=NULLMAT;

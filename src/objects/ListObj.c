@@ -948,7 +948,7 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 
 int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str;
+  char *str = NULL;
   int count=1,n,L_name;
   NspObject *O = NULLOBJ, *L=NULLOBJ;
   Cell *C;
