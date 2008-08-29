@@ -3101,9 +3101,19 @@ GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L)
   return items ;
 }
 
-/*--------------------------------------------------------------
- * utility to get back values from a list or tree store 
- *-------------------------------------------------------------*/
+
+/**
+ * nsp_get_matrix_from_list_or_tree_store:
+ * @model: a #GtkTreeModel
+ * 
+ * extract a matrix with data from a model. This can only be done if the model 
+ * is homogeneous, i.e all the columns share the same type which can be 
+ * G_TYPE_STRING, G_TYPE_BOOLEAN or G_TYPE_DOUBLE. 
+ * This could be extended to non homogeneous models and could return a list 
+ * in that general case. 
+ * 
+ * Returns: a new #NspObject 
+ **/
 
 static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
 {
@@ -3111,7 +3121,7 @@ static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
   GValue value = { 0, };
   int ncols,count=0,col;
   GtkTreeIter iter; 
-  NspObject *ret;
+  NspObject *ret = NULLOBJ;
   if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
     Scierror("Error: expecting a list or tree store model\n");
     return NULLOBJ;
