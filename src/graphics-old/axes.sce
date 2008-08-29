@@ -1,8 +1,8 @@
 if %t then 
   fmode = %t; 
   mode = "Cairo";
-  mode = "Gtk";
-  //mode = "OpenGl";
+  //mode = "Gtk";
+  mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
   A=axes_create(top=%t,title="Main title",x="x",y="y")// ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
@@ -28,7 +28,7 @@ if %t then
 		      nlevels=5);
   A.children($+1)= cf;
   // insert a new axes 
-  C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0);
+  C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0.1);
   C.title="Main title";
   C.y = "vertical";
   // the position of the axes in its parent 
