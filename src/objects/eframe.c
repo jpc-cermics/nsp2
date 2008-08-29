@@ -677,6 +677,7 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
 	  NspObject *O1;
 	  val = VAR_ID(val);
 	  O1 = F->table->objs[val];
+	  if ( O1 != NULL &&  O1->flag == TRUE ) return;
 	  nsp_object_destroy(&O1);
 	  F->table->objs[val]= NULL;
 	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
