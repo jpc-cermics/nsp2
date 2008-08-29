@@ -1,5 +1,6 @@
 // testactions.sce 
-// translated to nsp from testaction.c (Copyright (C) 2003  Matthias Clasen)
+// translated to nsp by J.Ph Chancelier (2008)
+// from testaction.c (Copyright (C) 2003  Matthias Clasen)
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
 // License as published by the Free Software Foundation; either
