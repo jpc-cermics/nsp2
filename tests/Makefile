@@ -51,7 +51,8 @@ TESTS= \
 	intg.dia \
 	sparse_ij_val.dia \
 	solve.dia \
-	legendre.dia 
+	legendre.dia \
+	scalexp.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
