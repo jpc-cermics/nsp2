@@ -795,8 +795,16 @@ static void nspg_menu_delete(int winid)
  * Replot in Postscript style and send to printer 
  *-----------------------------------------------------------------*/
 
+/* for use inside menus */
+#if TEST_GTK_PRINT
+extern  void do_print (GtkAction *action,int winid);
+#endif 
+
 static void nspg_menu_print(int winid)
 {
+#if TEST_GTK_PRINT
+  do_print (NULL,winid);
+#else 
   char *printer,*p1;
   int colored,orientation,type;
   if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
@@ -814,9 +822,10 @@ static void nspg_menu_print(int winid)
      p1,(int)winid,printer);
      system(bufname);
   */
+#endif 
+
 }
 
-/* for use inside menus */
 
 void nspg_print(int winid) 
 {
