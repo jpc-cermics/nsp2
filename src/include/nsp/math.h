@@ -74,10 +74,13 @@ extern double Maxi  (const double vect[],int);
 #define linint(x) ((int) floor(x + 0.5 )) 
 #define inint(x) ((int) floor(x + 0.5 ))  
 
-/* a revoir precisement un jour ou l''autre XXXXXX **/
-/* nearest : **/
-/* #define anint(x) rint(x)  */
-#define anint(x) (x) >= 0.0 ? floor((x)+0.5) :floor((x)-0.5) 
+/* round */
+#if 0
+#define anint(x) rint(x)   
+#else 
+#define anint(x) ((x) >= 0.0 ? floor((x)+0.5) : ceil((x)-0.5))
+#endif 
+
 /* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
 /* from fortran but no pointer here */
