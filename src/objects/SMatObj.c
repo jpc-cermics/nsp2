@@ -579,12 +579,21 @@ void string_not_in_array(Stack stack,const char *key, char **Table,char *message
   }
 }
 
-/* Table : Array of object which can be casted to string  to compare against str
- * size gives the object size 
- * last entry must be NULL
- * and there must not be duplicate entries.
- * 0 or 1, 1 for exact match 
- */
+
+/**
+ * is_string_in_struct:
+ * @key: key to search 
+ * @Table: and array of struct, each element is of size @size and the last one must be %NULL.
+ * @size: size of array elements in @Table
+ * @flag: 1 for exact match, 0 to accept prefix match.
+ * 
+ * returns the index of @key in table @Table. @Table is an array 
+ * of structs of size @size and each struct must start with a string 
+ * in order to be casted to a string. Thus each element in @Table can be 
+ * compared against @key. @Table should be ended by a %NULL element.
+ * 
+ * Returns: -1 if fail or a non negative integer 
+ **/
 
 int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag)
 {
