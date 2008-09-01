@@ -19,6 +19,10 @@ function x=edit_object_m(x,varargopt)
   x=edit_matrix(x,varargopt(:));
 endfunction
 
+function x=edit_object_mp(x,varargopt)
+  x=edit_matrix(x,varargopt(:));
+endfunction
+
 function x=edit_object_b(x,varargopt)
   x=edit_matrix(x,varargopt(:));
 endfunction
@@ -97,7 +101,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
       else
 	model.set[iter,col,new_text];
       end
-    elseif data(2) == 'm' then 
+    elseif data(2) == 'm' || data(2) == 'mp' then 
       ok=execstr('val='+new_text',errcatch=%t);
       if ok then 
 	if type(val,'string') == 'Mat' && size(val,'*')==1 then 
@@ -321,6 +325,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
   entry = gtkentry_new ();
   select  type(x,'short')
    case 'm' then   str= sprintf("rand(%d,%d);",size(x,1),size(x,2));
+   case 'mp' then  str= sprintf("m2mp(rand(%d,%d));",size(x,1),size(x,2));
    case 's' then   str= sprintf("string(rand(%d,%d));",size(x,1),size(x, 2));
    case 'b' then   str= sprintf("rand(%d,%d)>=0.5;",size(x,1),size(x,2));
   else
