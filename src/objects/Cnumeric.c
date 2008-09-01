@@ -1,6 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
- *
+ * Copyright (C) 2008-     Bruno Pinçon Esial/Iecn
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
@@ -24,6 +24,7 @@
 
 #include "nsp/object.h"
 #include "nsp/cnumeric.h"
+#include "nsp/spmf.h"
 
 /*
  * a set of C functions which can be used if res =x 
@@ -632,6 +633,210 @@ void nsp_asinh_c(const doubleC *x, doubleC *res)
  * i * log ((i + x) / (i - x)) / 2.0; 
  * 
  **/
+
+#ifdef NEW
+void nsp_atan_c(const doubleC *x, doubleC *y)
+{
+  /*
+   *     PURPOSE
+   *        atan_c compute the arctangent of a complex number
+   *         y = yr + i yi = atan(x), x = xr + i xi
+   *
+   *     COPYRIGHT (C) 2001 Bruno Pincon and Lydia van Dijk
+   *        Written by Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
+   *        Polished by Lydia van Dijk 
+   *     
+   *     CHANGES : - (Bruno on 2001 May 22) for ysptrk use a 
+   *                 minimax polynome to enlarge the special
+   *                 evaluation zone |s| < SLIM. Also rename
+   *                 this function as lnp1m1.
+   *               - (Bruno on 2001 June 7) better handling
+   *                 of spurious over/underflow ; remove
+   *                 the call to pythag ; better accuracy
+   *                 in the real part for x near +-i
+   *               - (Bruno on 2008 August 18) convert in C
+   *                 for nsp
+   *
+   *     ALGORITHM : noting x = a + i*b, we have:
+   *        y = yr + i*yi = arctan(x) = (i/2) * log( (i+x)/(i-x) )
+   *              
+   *     This function has two branch points at +i and -i and the
+   *     chosen  branch cuts are the two half-straight lines
+   *     D1 = [i, i*oo) and D2 = (-i*oo, i].  The function is then
+   *     analytic in C \ (D1 U D2)). 
+   *
+   *     From the definition it follows that:
+   *
+   *        yr = 0.5 Arg ( (i+x)/(i-x) )                   (1)
+   *        yi = 0.5 log (|(i+x)/(i-x)|)                   (2)
+   *
+   *     so lim (x -> +- i) yr = undefined (and Nan is logical)
+   *        lim (x -> +i)   yi = +oo
+   *        lim (x -> -i)   yi = -oo
+   *
+   *     The real part of arctan(x) is discontinuous across D1 and D2
+   *     and we impose the following definitions:
+   *         if imag(x) > 1 then
+   *             Arg(arctan(x)) =  pi/2 (=lim real(x) -> 0+)
+   *         if imag(x) < 1 then
+   *             Arg(arctan(x)) = -pi/2 (=lim real(x) -> 0-)
+   *                 
+   *
+   *     Basic evaluation: if we write (i+x)/(i-x) using
+   *     x = a + i*b, we get:
+   *
+   *     i+x    1-(a**2+b**2) + i*(2a)
+   *     --- =  ---------------------- 
+   *     i-x       a**2 + (1-b)**2
+   *
+   *     then, with r2 = |x|^2 = a**2 + b**2 :
+   *  
+   *     yr = 0.5 * Arg(1-r2 + (2*a)*i)
+   *        = 0.5 * atan2(2a, (1-r2))                      (3)
+   *
+   *     This formula is changed when r2 > DBL_MAX (max pos float)
+   *     and also when |1-r2| and |a| are near 0 (see comments
+   *     in the code).
+   *
+   *     After some math:
+   *             
+   *     yi = 0.25 * log( (a**2 + (b + 1)**2) /
+   *                      (a**2 + (b - 1)**2) )            (4)     
+   *               
+   *     Evaluation for "big" |x|
+   *     ------------------------
+   *
+   *     If |x| is "big", the direct evaluation of yi by (4) may
+   *     suffer of innaccuracies and of spurious overflow.  Noting 
+   *     that  s = 2 b / (1 + |x|**2), we have:
+   *
+   *     yi = 0.25 log ( (1 + s)/(1 - s) )                 (5)
+   *
+   *                                3        5    
+   *     yi = 0.25*( 2 * ( s + 1/3 s  + 1/5 s  + ... ))
+   *
+   *     yi = 0.25 * lnp1m1(s)    if  |s| < SLIM
+   *
+   *     So if |s| is less than SLIM we switch to a special
+   *     evaluation done by the function lnp1m1. The 
+   *     threshold value SLIM is choosen by experiment 
+   *     (with the Pari-gp software). For |s| 
+   *     "very small" we used a truncated taylor dvp, 
+   *     else a minimax polynome (see lnp1m1).
+   *
+   *     To avoid spurious overflows (which result in spurious
+   *     underflows for s) in computing s with s= 2 b / (1 + |x|**2)
+   *     when |x|^2 > RMAX (max positive float) we use :
+   *
+   *            s = 2 / ( (a/b)*a + b )
+   *     
+   *     but if |b| = Inf  this formula leads to NaN when
+   *     |a| is also Inf. As we have :
+   *
+   *            |s| <= 2 / |b|
+   *
+   *     we impose simply : s = 0  when |b| = Inf
+   *
+   *     Evaluation for x very near to i or -i:
+   *     --------------------------------------
+   *     Floating point numbers of the form a+i or a-i with 0 <
+   *     a**2 < tiny (approximately 1d-308) may lead to underflow
+   *     (i.e., a**2 = 0) and the logarithm will break formula (4).
+   *     So we switch to the following formulas:
+   *
+   *     If b = +-1 and |a| < sqrt(tiny) approximately 1d-150 (say)
+   *     then (by using that a**2 + 4 = 4 in machine for such a):
+   *         
+   *         yi = 0.5 * log( 2/|a| )   for b=1
+   * 
+   *         yi = 0.5 * log( |a|/2 )   for b=-1
+   *
+   *     finally: yi = 0.5 * sign(b) * log( 2/|a| )     
+   *              yi = 0.5 * sign(b) * (log(2) - log(|a|)) (6)
+   *
+   *     The last trick is to avoid overflow for |a|=tiny!  In fact
+   *     this formula may be used until a**2 + 4 = 4 so that the
+   *     threshold value may be larger.
+   */
+
+  double const SLIM=0.2, ALIM=1e-150, TOL=0.3, LN2=0.69314718055994531,
+               HALFPI=1.570796326794896619231321692;
+  double r2, s, a, b;
+
+
+  /*   Avoid problems due to sharing the same memory locations by
+   *   x->r, y->r and x->i, y->i.
+   */
+  a = x->r;
+  b = x->i;
+
+  if (b == 0.0) /* x is real */
+    {       
+      y->r = atan(a);
+      y->i = 0.0;
+    }
+  else          /* x is complex */
+    {
+      /* (1) Compute the imaginary part of arctan(x) */
+      r2 = a*a + b*b;
+      if ( r2  > DBL_MAX )
+	{
+	  if ( fabs(b) > DBL_MAX ) /* |b| is Inf => s = 0 */
+	    s = 0.0;
+	  else
+            /*  try to avoid the spurious underflow in s when |b| is not
+             *  negligible with respect to |a|
+             */
+	    s = 1.0 / ( ((0.5*a)/b)*a + 0.5*b );
+	}
+      else
+	s = 2.0*b / (1.0 + r2);
+
+      if ( fabs(s) < SLIM )
+	/*  s is small: |s| < SLIM  <=>  |x| outside the following disks:
+         *  D+ = D(center = [0;  1/slim], radius = sqrt(1/slim**2 - 1)) if b > 0
+         *  D- = D(center = [0; -1/slim], radius = sqrt(1/slim**2 - 1)) if b < 0
+         *  use the special evaluation of log((1+s)/(1-s)) (5)
+         */
+	y->i = 0.25*lnp1m1(s); /* cette fct est en static pour le moment */
+
+      else   /* |s| >= SLIM  => |x| is inside D+ or D-  */
+	{
+	  if ( (fabs(b) == 1.0) && (fabs(a) <= ALIM) )
+	    /*  x is very near +- i : use formula (6)  */
+	    y->i = b > 0.0 ? 0.5*(LN2 - log(fabs(a))) : -0.5*(LN2 - log(fabs(a)));
+	  else
+            /*  use formula (4) */
+	    y->i = 0.25 * log( (a*a + (b + 1.0)*(b + 1.0)) /
+                               (a*a + (b - 1.0)*(b - 1.0)) );
+	}
+
+      /* (2) Compute the real part of arctan(x) */
+      if (a == 0.0)  /* x is purely imaginary */
+	{
+	  if ( fabs(b) > 1.0 )
+            /* got sign(b) * pi/2 */
+	    y->r = b > 0.0 ? HALFPI : -HALFPI; 
+	  else if ( fabs(b) == 1.0 )
+            /* got a Nan with 0/0 */
+	    y->r = (a - a) / (a - a);
+	  else
+	    y->r = 0.0;
+	}
+      else if ( r2 > DBL_MAX )
+	/* yr is necessarily very near sign(a)* pi/2 */
+	y->r = a > 0.0 ? HALFPI : -HALFPI;
+      else if ( fabs(1.0 - r2) + fabs(a) <= TOL )
+	/*  |b| is very near 1 (and a is near 0)  some
+         *  cancellation occur in the (next) generic formula 
+         */
+	y->r = 0.5 * atan2(2.0*a, (1.0-b)*(1.0+b) - a*a);
+      else
+	/*  generic formula */
+	y->r = 0.5 * atan2(2.0*a, 1.0 - r2);
+    }
+}
+#else
 void nsp_atan_c(const doubleC *x, doubleC *res)
 {
   doubleC zloc,zloc1;
@@ -642,13 +847,35 @@ void nsp_atan_c(const doubleC *x, doubleC *res)
   res->r = - zloc.i/2.00; 
   res->i = zloc.r/2.00;
 }
+#endif
 
+#ifdef NEW
 /**
  * nsp_atanh_c:
  * @x: a  double complex  
  * @res: a pointer to a double complex  
  * 
- * log ((1 + x) / (1 - x)) / 2.0; 
+ * based on the formula  atanh(x) = i atan(-i x)
+ * 
+ **/
+void nsp_atanh_c(const doubleC *x, doubleC *res)
+{
+  doubleC xloc;
+
+  /* xloc = -i x */
+  xloc.r = x->i; xloc.i = -x->r;
+  /* xloc <- atan(xloc) */
+  nsp_atan_c_new(&xloc, &xloc);
+  /* res = i * xloc */
+  res->r = -xloc.i; res->i = xloc.r;
+}
+#else
+/**
+ * nsp_atanh_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ *  based on the formula  log ((1 + x) / (1 - x)) / 2.0; 
  * 
  **/
 void nsp_atanh_c(const doubleC *x, doubleC *res)
@@ -661,6 +888,7 @@ void nsp_atanh_c(const doubleC *x, doubleC *res)
   res->r /= 2.00; 
   res->i /= 2.00;
 }
+#endif
 
 /**
  * nsp_ceil_c:

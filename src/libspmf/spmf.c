@@ -35,8 +35,7 @@
  */
 
 
-/*     internal function used by nsp_log1p 
- *    
+/*
  *     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) 
  *        for small s, this is for |s| < 0.334
  *     ALGORITHM : 
@@ -65,7 +64,7 @@
  *        
  */
 
-static double lnp1m1(double s)
+double lnp1m1(double s)
 {
   double  s2;
   const double E = 1.e-2, C3  = 2.0/3.0, C5  = 2.0/5.0, C7 = 2.0/7.0;
