@@ -3338,13 +3338,25 @@ int nsp_mat_acos(NspMatrix *A)
   int i ;
   if ( A->rc_type == 'r') 
     {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= acos(A->R[i]);
+      for ( i = 0 ; i < A->mn ; i++) 
+	{ 
+	  if ( A->R[i] > 1.0 || A->R[i] < -1.0) /* switch to complex */ 
+	    {
+	      if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( ; i < A->mn ; i++) 
+		nsp_acos_c(&A->C[i],&A->C[i]);
+	    }
+	  else 
+	    A->R[i]= acos(A->R[i]);
+	}
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_acos_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++) 
+	nsp_acos_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
 
 
@@ -3362,13 +3374,25 @@ int nsp_mat_acosh(NspMatrix *A)
   int i ;
   if ( A->rc_type == 'r') 
     {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= acosh(A->R[i]);
+      for ( i = 0 ; i < A->mn ; i++)
+	{ 
+	  if ( A->R[i] < 1.0 ) /* switch to complex */ 
+	    {
+	      if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( ; i < A->mn ; i++) 
+		nsp_acosh_c(&A->C[i],&A->C[i]);
+	    }
+	  else 
+	    A->R[i]= acosh(A->R[i]);
+	}
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_acosh_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++)
+	nsp_acosh_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
 
 
@@ -3388,14 +3412,11 @@ int nsp_mat_asin(NspMatrix *A)
     {
       for ( i = 0 ; i < A->mn ; i++) 
 	{ 
-	  if ( A->R[i] > 1.0 || A->R[i] < -1.0) 
+	  if ( A->R[i] > 1.0 || A->R[i] < -1.0) /* switch to complex */ 
 	    {
-	      int j;
-	      /* switch to complex */ 
-	      if (nsp_mat_complexify(A,0.0) == FAIL ) 
-		return(FAIL);
-	      for (j = i ; j < A->mn ; j++)nsp_asin_c(&A->C[j],&A->C[j]);
-	      return OK;
+	      if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( ; i < A->mn ; i++) 
+		nsp_asin_c(&A->C[i],&A->C[i]);
 	    }
 	  else 
 	    A->R[i]= asin(A->R[i]);
@@ -3403,9 +3424,11 @@ int nsp_mat_asin(NspMatrix *A)
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_asin_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++)
+	nsp_asin_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
 
 
@@ -3427,7 +3450,7 @@ int nsp_mat_asinh(NspMatrix *A)
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_asinh_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++) nsp_asinh_c(&A->C[i],&A->C[i]);
     }
   return(OK);
 }
@@ -3452,11 +3475,10 @@ int nsp_mat_atan(NspMatrix *A)
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_atan_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++) nsp_atan_c(&A->C[i],&A->C[i]);
     }
   return(OK);
 }
-
 
 
 /**
@@ -3496,6 +3518,40 @@ NspMatrix *nsp_mat_atan2(NspMatrix *A,NspMatrix *B)
   return C;
 }
 
+/**
+ * nsp_mat_angle:
+ * @Z: a #NspMatrix 
+ * 
+ * A=angle(Z). Calculates  the angle of the complex numbers of @Z. @A(i,j) = angle(@Z(i,j)).  
+ * 
+ * Return value: a #NspMatrix with the result
+ **/
+
+NspMatrix *nsp_mat_angle(NspMatrix *Z)
+{
+  int k ;
+  NspMatrix *A;
+
+  if ( (A = nsp_matrix_create(NVOID,'r',Z->m,Z->n)) == NULLMAT )
+    return NULLMAT;
+
+  if ( Z->rc_type == 'r' )
+    for ( k = 0 ; k < Z->mn ; k++ )
+      {
+	if ( Z->R[k] >= 0.0 )
+	  A->R[k] = 0.0;
+	else if ( Z->R[k] < 0.0 )
+	  A->R[k] = -M_PI;
+	else         /*  we should collect Nans here... */
+	  A->R[k] = Z->R[k];
+      }
+  else
+    for ( k = 0 ; k < Z->mn ; k++) 
+      A->R[k]= atan2(Z->C[k].i, Z->C[k].r);
+
+  return A;
+}
+
 
 /**
  * nsp_mat_atanh:
@@ -3518,15 +3574,27 @@ extern double nsp_log1p(double);
 int nsp_mat_atanh(NspMatrix *A)
 {
   int i ;
-  if ( A->rc_type == 'r') 
+  if ( A->rc_type == 'r')
     {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= NSP_ATANH(A->R[i]);
+      for ( i=0 ; i < A->mn ; i++) 
+	{
+	  if ( fabs(A->R[i]) > 1.00 ) /* switch to the complex case */ 
+	    {
+	      if ( nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for (  ; i < A->mn ; i++ )
+		nsp_atanh_c(&A->C[i],&A->C[i]);
+	    }
+	  else
+	    A->R[i]= NSP_ATANH(A->R[i]);
+	}
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_atanh_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++)
+	nsp_atanh_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
 
 
@@ -3714,7 +3782,6 @@ void nsp_mat_round(NspMatrix *A)
     }
 }
 
-
 /**
  * nsp_mat_sign:
  * @A: a #NspMatrix 
@@ -3766,7 +3833,7 @@ int nsp_mat_tan(NspMatrix *A)
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_tan_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++) nsp_tan_c(&A->C[i],&A->C[i]);
     }
   return(OK);
 }
@@ -3790,7 +3857,7 @@ int nsp_mat_tanh(NspMatrix *A)
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++)nsp_tanh_c(&A->C[i],&A->C[i]);
+      for ( i = 0 ; i < A->mn ; i++) nsp_tanh_c(&A->C[i],&A->C[i]);
     }
   return(OK);
 }
@@ -4301,34 +4368,25 @@ int nsp_mat_logel(NspMatrix *A)
   int i ;
   if ( A->rc_type == 'r')
     {
-      /* Check if really real or imaginary case */
-      int itr = 0;
       for ( i=0 ; i < A->mn ; i++) 
 	{
-	  if ( A->R[i] < 0.00 ) 
+	  if ( A->R[i] < 0.00 ) /* switch to the complex case */ 
 	    {
-	      itr = 1; break;
+	      if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
+	      for (   ; i < A->mn ; i++ )
+		nsp_log_c(&A->C[i],&A->C[i]);
 	    }
-	}
-      if ( itr == 0) 
-	{
-	  /* real case */
-	  for ( i=0 ; i < A->mn ; i++) A->R[i] = log(A->R[i]);
-	}
-      else 
-	{
-	  /* realto imaginary imaginary case */
-	  double d=00;
-	  if (nsp_mat_set_ival(A,d) == FAIL ) return(FAIL);
-	  for ( i=0 ; i < A->mn ; i++)nsp_log_c(&A->C[i],&A->C[i]);
+	  else
+	    A->R[i] = log(A->R[i]);
 	}
     }
   else
     {
-      /* imaginary case **/
-      for ( i=0 ; i < A->mn ; i++)nsp_log_c(&A->C[i],&A->C[i]);
+      for ( i=0 ; i < A->mn ; i++)
+	nsp_log_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
 
 
@@ -4371,7 +4429,7 @@ void nsp_mat_sinh(NspMatrix *A)
     }
   else
     {
-      for ( i=0 ; i < A->mn ; i++)nsp_sinh_c(&A->C[i],&A->C[i]);
+      for ( i=0 ; i < A->mn ; i++) nsp_sinh_c(&A->C[i],&A->C[i]);
     }
 }
 
@@ -4380,7 +4438,7 @@ void nsp_mat_sinh(NspMatrix *A)
  * @A: a #NspMatrix 
  * 
  * computes the term to term square root of the elements of matrix @A. 
- * Note that the result can be imaginary when starting from a real matrix. 
+ * Note that the result can be complex when starting from a real matrix. 
  * 
  * Return value: %OK or %FAIL.
  **/
@@ -4390,38 +4448,26 @@ int nsp_mat_sqrtel(NspMatrix *A)
   int i ;
   if ( A->rc_type == 'r')
     {
-      /* Check if really real or imaginary case */
-      int itr = 0;
       for ( i=0 ; i < A->mn ; i++) 
 	{
-	  if ( A->R[i] < 0.00 ) 
+	  if ( A->R[i] < 0.00 ) /* switch to the complex case */ 
 	    {
-	      itr = 1; break;
+	      if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
+	      for (   ; i < A->mn ; i++ )
+		nsp_sqrt_c(&A->C[i],&A->C[i]);
 	    }
-	}
-      if ( itr == 0) 
-	{
-	  /* real case */
-	  for ( i=0 ; i < A->mn ; i++) A->R[i] = sqrt(A->R[i]);
-	}
-      else 
-	{
-	  /* imaginary case */
-	  double d=00;
-	  if (nsp_mat_set_ival(A,d) == FAIL ) return(FAIL);
-	  for ( i=0 ; i < A->mn ; i++)nsp_sqrt_c(&A->C[i],&A->C[i]);
+	  else
+	    A->R[i] = sqrt(A->R[i]);
 	}
     }
   else
     {
-      for ( i=0 ; i < A->mn ; i++)nsp_sqrt_c(&A->C[i],&A->C[i]);
+      for ( i=0 ; i < A->mn ; i++)
+	nsp_sqrt_c(&A->C[i],&A->C[i]);
     }
-  return(OK);
+
+  return OK;
 }
-
-
-
-
 
 
 /**

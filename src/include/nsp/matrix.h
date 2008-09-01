@@ -262,6 +262,7 @@ extern int nsp_mat_asin(NspMatrix *A);
 extern int nsp_mat_asinh(NspMatrix *A); 
 extern int nsp_mat_atan(NspMatrix *A); 
 extern NspMatrix *nsp_mat_atan2(NspMatrix *A,NspMatrix *B);
+extern NspMatrix *nsp_mat_angle(NspMatrix *Z);
 extern int nsp_mat_atanh(NspMatrix *A); 
 extern void nsp_mat_ceil(NspMatrix *A); 
 extern void nsp_mat_modulo(NspMatrix *A, int n); 

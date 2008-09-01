@@ -1125,6 +1125,7 @@ Mat2float (NspMatrix * A)
  * methods 
  *------------------------------------------------------*/
 
+
 static int int_meth_matrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *B;
@@ -1134,6 +1135,7 @@ static int int_meth_matrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_mat_add(a,B) == FAIL )  return RET_BUG;
   return 0;
 }
+
 
 /* 
  *  blas 1 operation : 
@@ -3262,6 +3264,7 @@ int_mxatan (Stack stack, int rhs, int opt, int lhs)
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_atan);
 }
 
+
 /*
  * Atan2(A,B), 
  */
@@ -3288,6 +3291,24 @@ int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   MoveObj(stack,1,(NspObject *) C);
+
+  return 1;
+}
+
+int
+int_mxangle (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Z, *A;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ((Z = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ( (A = nsp_mat_angle(Z)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj(stack,1,(NspObject *) A);
 
   return 1;
 }
@@ -5175,6 +5196,7 @@ static OpTab Matrix_func[] = {
   {"atan_m", int_mxatan},
   {"atan_m_m", int_mxatan2},
   {"atanh_m", int_mxatanh},
+  {"angle_m", int_mxangle},
   {"ceil_m", int_mxceil},
   {"modulo_m_m", int_mxmodulo},
   {"mod_m_m", int_mxmod},
