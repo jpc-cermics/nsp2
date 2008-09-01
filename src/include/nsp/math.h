@@ -76,7 +76,8 @@ extern double Maxi  (const double vect[],int);
 
 /* a revoir precisement un jour ou l''autre XXXXXX **/
 /* nearest : **/
-#define anint(x) rint(x) 
+/* #define anint(x) rint(x)  */
+#define anint(x) (x) >= 0.0 ? floor((x)+0.5) :floor((x)-0.5) 
 /* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
 /* from fortran but no pointer here */
