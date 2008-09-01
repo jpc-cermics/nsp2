@@ -2212,7 +2212,7 @@ GType gtype_from_nsp_object(NspObject *obj)
     return G_TYPE_STRING;
   else if (IsBMat(obj)) 
     return G_TYPE_BOOLEAN;
-  else if (IsMat(obj))
+  else if (IsMat(obj) || IsMpMat(obj))
     return G_TYPE_DOUBLE;
   else if (IsGObject(obj))
     return G_OBJECT_TYPE( NSP_GOBJECT_GET(obj));
@@ -2261,7 +2261,7 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
 	  /* column described by a list */
 	  n_columns++;
 	}
-      else if ( IsMat(cloc->O) || IsSMat(cloc->O) || IsBMat(cloc->O) )
+      else if ( IsMat(cloc->O) || IsMpMat(cloc->O) || IsSMat(cloc->O) || IsBMat(cloc->O) )
 	{
 	  /* n_columns coluns of object */
 	  n_columns +=nsp_object_get_size(cloc->O,2);
@@ -2389,7 +2389,7 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
 	  else nrows = m;
 	  count++;
 	}
-      else if ( IsMat(cloc->O) || IsSMat(cloc->O) || IsBMat(cloc->O) )
+      else if ( IsMat(cloc->O) ||  IsMpMat(cloc->O) || IsSMat(cloc->O) || IsBMat(cloc->O) )
 	{
 	  int m =nsp_object_get_size(cloc->O,1); 
 	  if ( nrows != -1) 
@@ -2502,7 +2502,7 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
 	      /* ignore */
 	      count++;
 	    }
-	  else if ( IsMat(cloc->O) )
+	  else if ( IsMat(cloc->O) || IsMpMat(cloc->O) )
 	    {
 	      Mat2double((NspMatrix *) cloc->O); /* be sure that we are in a canonic mode */
 	      if ( nsp_gtk_tree_model_set_col_from_mat(model,iter,(NspMatrix *) cloc->O,count)== FAIL) 
@@ -3240,7 +3240,7 @@ NspSMatrix * nsp_cells_to_string(NspCells *ce)
 	}
       else 
 	{
-	  if ( IsMat(ce->objs[i]) && ((NspMatrix *) ce->objs[i])->mn == 1 && ((NspMatrix *) ce->objs[i])->rc_type== 'r')
+	  if (( IsMat(ce->objs[i]) ||  IsMpMat(ce->objs[i])) && ((NspMatrix *) ce->objs[i])->mn == 1 && ((NspMatrix *) ce->objs[i])->rc_type== 'r')
 	    {
 	      nsp_const_string format; 
 	      char buf[1024];
@@ -3251,6 +3251,7 @@ NspSMatrix * nsp_cells_to_string(NspCells *ce)
 	      sprintf(buf,format,((NspMatrix *) ce->objs[i])->R[0]);
 	      if ((Loc->S[i] =nsp_basic_to_string(buf)) == (nsp_string) 0)  return(NULLSMAT);
 	    }
+
 	  else if ( IsSMat(ce->objs[i]) && ((NspSMatrix *) ce->objs[i])->mn == 1)
 	    {
 	      if ((Loc->S[i] =nsp_string_copy(((NspSMatrix *) ce->objs[i])->S[0])) == (nsp_string) 0) 

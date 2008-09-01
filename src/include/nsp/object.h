@@ -343,6 +343,7 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/plisttoken.h"
 #include "nsp/file.h"
 #include "nsp/matrix.h"
+#include "nsp/mpmatrix.h"
 #include "nsp/smatrix.h"
 #include "nsp/sprowmatrix.h"
 #include "nsp/spcolmatrix.h"
