@@ -1,3 +1,8 @@
+2008-09-01  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/MatOps.c (nsp_mat_angle): add
+	angle function
+
 2008-08-28  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* xexport can use cairo for exporting graphics even 
