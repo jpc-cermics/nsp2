@@ -1106,6 +1106,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
       cloc = cloc->next;
     }
   nsp_axes_legends(Xgc,P);
+  /* Note that clipping is wrong when an axe is rotated 
+   * since clipping only works with rectangles 
+   */
   frame_clip_off(Xgc);
   /* title if present */
   if ( P->obj->title[0] != '\0') 
@@ -1114,7 +1117,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
   if ( P->obj->y[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
-
+  
   /* scale back */
   set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect);
   if (  P->obj->top != TRUE )
@@ -1413,4 +1416,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspFigure *) Obj)->obj->children;
 }
 
-#line 1417 "axes.c"
+#line 1420 "axes.c"
