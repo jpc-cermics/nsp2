@@ -64,7 +64,8 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
 
   function cell_edited_bool(cell, path_string, data)
   // we enter this function after cell edition for boolean
-    model=data(1);
+    tree_view = data(1);
+    model = tree_view.get_model[];
     column_number = cell.get_data["column"];
     // get toggled iter */
     iter=model.get_iter[path_string];
@@ -178,7 +179,7 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     cols="C"+string(1:ncol);
     for col= 0:(ncol-1)
       renderer = gtkcellrenderertoggle_new ();
-      renderer.connect[  "toggled",  cell_edited_bool,list(model,type_x)]
+      renderer.connect[  "toggled",  cell_edited_bool,list(treeview,type_x)]
       renderer.set_data[column=col ];
       attrs= hash_create(active= col);
       tc = gtktreeviewcolumn_new(title=cols[col+1],renderer=renderer,attrs=attrs);
