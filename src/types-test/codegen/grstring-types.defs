@@ -1,0 +1,20 @@
+;; -*- scheme -*-
+
+(define-objectref Grstring
+  (in-module "Grstring")
+  (parent "Graphic")
+  (c-name "Grstring")
+  (fields
+   '("int" "x" ) 
+   '("int" "y" ) 
+   '("char*" "font" ) 
+   '("char*" "text" ) 
+   '("int" "position" ) 
+   '("double" "angle" ) 
+    )
+  (gtype-id "Grstring")
+)
+
+
+
+

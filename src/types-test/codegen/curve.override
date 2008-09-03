@@ -133,18 +133,30 @@ typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
 {
+  int cmark=-1;
+  int xmark[2];
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
-  Xgc->graphic_engine->xset_pattern(Xgc, ((NspGraphic *) P)->obj->color);
+      if ( P->obj->mark != -1 ) 
+	{
+	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+	  cmark=xmark[0];
+	  Xgc->graphic_engine->scale->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	}
+  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+    Xgc->graphic_engine->xset_pattern(Xgc, ((NspGraphic *) P)->obj->color);
   /*XXX: we should not be in Rec mode here */
   switch ( P->obj->mode ) 
     {
     case curve_std: 
-      Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+      if ( P->obj->mark == -1 ) 
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+      else
+	Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
       break;
     case curve_stairs:
       {
@@ -166,7 +178,11 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
 	  }
 	xm[2*(M->m-1)] = M->R[M->m-1];
 	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
-	Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	if ( P->obj->mark == -1 ) 
+	  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	else 
+	  Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
+	  
       }
       break;
     case curve_stem:
@@ -195,10 +211,15 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
       }
       break;
     case curve_arrow: 
+      /* a faire */
       break;
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+  if ( P->obj->mark != -1 ) 
+    {
+      Xgc->graphic_engine->scale->xset_mark(Xgc,cmark,xmark[1]);
+    }
 }
 
 static void nsp_translate_curve(BCG *Xgc,NspGraphic *Obj,double *tr)

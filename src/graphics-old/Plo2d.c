@@ -828,13 +828,16 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++) 
     {
+      int mark=-1,mode=0;
       NspCurve *curve;
       NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
       if ( Pts == NULL) return FAIL;
       memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      curve= nsp_curve_create("curve",0,0,style[i],0,Pts,NULL,NULL);
-      ((NspGraphic *) curve)->obj->color = -style[i];
+      if ( style[i] >= 0 ) mark = style[i];
+      curve= nsp_curve_create("curve",mark,0,0,mode,Pts,NULL,NULL);
+      if ( style[i] < 0 ) 
+	((NspGraphic *) curve)->obj->color = - style[i];
       /* insert the new curve */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return FAIL;
