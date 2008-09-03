@@ -832,11 +832,10 @@ void nspg_print(int winid)
   nspg_menu_print( winid);
 }
 
-/*-----------------------------------------------------------------
- * Replot in Postscript or Xfig style and save 
- *-----------------------------------------------------------------*/
+/* activate a gtk dialog fro graphic export 
+ */
 
-static void nspg_menu_saveps(int winid) 
+static void nspg_menu_export(int winid)
 {
   char *fname;
   integer colored,orientation,type;
@@ -864,15 +863,20 @@ static void nspg_menu_saveps(int winid)
     case 6 : /* PPM */
       scig_tops(winid,colored,fname,"PPM",'n');
       break;
+    case 7 : /* cairo-pdf */
+      scig_tops(winid,colored,fname,"cairo-pdf",'n');
+      break;
+    case 8: /* cairo-svg */
+      scig_tops(winid,colored,fname,"cairo-svg",'n');
+      break;
+    case 9: /* cairo-ps */
+      scig_tops(winid,colored,fname,"cairo-ps",'n');
+      break;
+    case 10: /* cairo-png */
+      scig_tops(winid,colored,fname,"cairo-png",'n');
+      break;
     }
   nsp_string_destroy(&fname);
-}
-
-/* for use inside menus */
-
-static void nspg_menu_export(int winid)
-{
-  nspg_menu_saveps(winid) ;
 }
 
 /*-----------------------------------------------------------------*

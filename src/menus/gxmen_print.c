@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -79,8 +79,20 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
 {
   static NspList *L=NULL;
   char *title="Export dialog";
-  char *formats[] = {"Postscript", "Postscript No Preamble",  
-		    "Postscript-Latex","Xfig","Gif","PPM", NULL };
+  char *formats[] = {"Postscript", 
+		     "Postscript No Preamble",  
+		     "Postscript-Latex",
+		     "Xfig",
+		     "Gif",
+		     "PPM",
+#ifdef WITH_CAIRO 
+		     "pdf",
+		     "svg",
+		     "eps",
+		     "png",
+#endif 
+		     NULL };
+  
   char *types[]={ "color", "black and white",NULL};
   char *orientations[]={"landscape", "portrait", "keep size",NULL };
   char *save[]={"Untitled.eps",NULL};
