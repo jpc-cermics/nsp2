@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,14 +17,26 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/**
+ * SECTION:gboxed 
+ * @title: NspGBoxed
+ * @short_description: An object used to store GBoxed objects. 
+ * @see_also: 
+ *
+ * <para>
+ * A #NspGBoxed is used to store a G_TYPE_BOXED object. Note 
+ * however that a G_TYPE_BOXED object have a most specific type 
+ * and for each specific type a Nsp type is defined and inherits from 
+ * #NspGBoxed. Thus object of type #NspGBoxed are scarcely created at Nsp level. 
+ * One exception is when a NspObject itself is stored in a GBoxed. 
+ * 
+ * </para>
+ **/
+
 #include "nsp/object.h"
 #define  GBoxed_Private 
 #include "nsp/gtk/gboxed.h"
 #include "nsp/interf.h"
-
-/* XXXXX : temporaire ici */ 
-
-#include <gtk/gtk.h>
 
 /* 
  * NspGBoxed inherits from NspObject
@@ -291,21 +303,26 @@ NspGBoxed  *GetGBoxed(Stack stack, int i)
   return M;
 }
 
-/*-----------------------------------------------------
- * constructor 
+
+/**
+ * gboxed_create:
+ * @name: name of object to be created 
  * @boxed_type: the GType of the boxed value.
  * @boxed: the boxed value.
  * @copy_boxed: whether the new boxed wrapper should hold a copy of the value.
  * @own_ref: whether the boxed wrapper should own the boxed value.
- *
- * Creates a wrapper for a boxed value.  If @copy_boxed is set to
- * True, the wrapper will hold a copy of the value, instead of the
- * value itself.  If @own_ref is True, then the value held by the
- * wrapper will be freed when the wrapper is deallocated.  If
- * @copy_boxed is True, then @own_ref must also be True.
- *
- * Returns: the boxed wrapper.
- *-----------------------------------------------------*/
+ * @tp: The nsp type of the object to be created. 
+ * 
+ * Creates a wrapper for a boxed value i.e a Nsp object which contains a GObject as data.
+ * If @copy_boxed is set to True, then a copy of the transmited @boxed is done. 
+ * If @own_ref is True, then the value held by the wrapper will be freed when the wrapper is deallocated.  If
+ * @copy_boxed is True, then @own_ref must also be True. 
+ * @tp gives the Nsp type of the object which is to be created. If @tp is %NULL then a #NspBoxed object 
+ * is created else @tp can be set to a type which inherits from #NspBoxed. For example if 
+ * @tp is et to nsp_type_gdkcolor then a NspGdkColor object will de created.
+ * 
+ * Returns: a new #NspGBoxed object 
+ **/
 
 NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean copy_boxed,
 			 gboolean own_ref,void *tp)
@@ -370,7 +387,6 @@ NspGBoxed *gboxed_copy(NspGBoxed *self)
 
 static NspMethods *gboxed_get_methods(void) { return NULL;};
 
-
 /*-------------------------------------------
  * function 
  *-------------------------------------------*/
@@ -380,9 +396,51 @@ static NspMethods *gboxed_get_methods(void) { return NULL;};
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+/* we create a new boxed type to be able to store a 
+ * NspObject in a Gtk typed object 
+ */
+
+static NspObject * g_nspobj_copy (NspObject *Obj)
+{
+  return nsp_object_copy_with_name(Obj);
+}
+
+static void g_nspobj_free (NspObject *Obj)
+{
+  nsp_object_destroy(&Obj);
+}
+
+
+GType gdk_nspobj_get_type (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static (g_intern_static_string ("Gnspobj"),
+					     (GBoxedCopyFunc) g_nspobj_copy,
+					     (GBoxedFreeFunc) g_nspobj_free);
+  return our_type;
+}
+
+int int_obj2gboxed(Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *Obj;
+  NspObject *nsp_ret;
+  int_types T[] = {obj, t_end} ;
+  GType type = gdk_nspobj_get_type ();
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if (GetArgs(stack,rhs,opt,T,&Obj)== FAIL)  return RET_BUG;
+  nsp_ret = (NspObject *) gboxed_create(NVOID,type,Obj, TRUE, TRUE,NULL);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static OpTab GBoxed_func[]={
   /* #include "gboxed-in.nam" */ 
   {"setrowscols_gb",int_set_attribute},
+  {"gboxed",int_obj2gboxed},
   {(char *) 0, NULL}
 };
 
@@ -410,5 +468,4 @@ int nspg_boxed_check(NspObject *self,GType boxed_type)
 {
   return ((NspGBoxed *) self)->gtype ==  boxed_type;
 }
-
   
