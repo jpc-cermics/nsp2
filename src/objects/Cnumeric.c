@@ -151,30 +151,25 @@ void nsp_exp_c(const doubleC *x, doubleC *res)
   nsp_polar_c(exp (x->r), x->i,res);
 }
 
+
+#ifdef NEW
+
 /**
  * nsp_log_c:
- * @x: a  double complex  
- * @res: a pointer to a double complex  
+ * @x: a pointer to a double complex  
+ * @y: a pointer to a double complex  
  * 
- * 
- **/
-#ifdef NEW
-/*
- *        compute the logarithm of a complex number
- *        y = yr + i yi = log(x), x = xr + i xi 
+ * computes the logarithm of a complex number
+ * @y = yr + i yi = log(@x), @x = xr + i xi 
+ * adapted with some modifications from Hull, Fairgrieve, Tang, 
+ *  "Implementing Complex Elementary Functions Using Exception Handling", 
+ *  ACM TOMS, Vol. 20 (1994), pp 215-244
+ * yr = log(|@x|) = various formulae depending on @x value. 
+ * yi = Arg(@x) = atan2(xi, xr)
+ * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>.
  *
- *        adapted with some modifications from Hull, 
- *        Fairgrieve, Tang, "Implementing Complex 
- *        Elementary Functions Using Exception Handling", 
- *        ACM TOMS, Vol. 20 (1994), pp 215-244
- *
- *        y = yr + i yi = log(x)
- *        yr = log(|x|) = various formulae depending where x is ...
- *        yi = Arg(x) = atan2(xi, xr)
- *        
- *     AUTHOR
- *        Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
+
 void nsp_log_c(const doubleC *x, doubleC *y)
 {
   double a = x->r, b = x->i, t;
@@ -212,6 +207,14 @@ void nsp_log_c(const doubleC *x, doubleC *y)
     }
 }
 #else
+
+/**
+ * nsp_log_c:
+ * @x: a pointer double complex  
+ * @res: a pointer to a double complex  
+ * 
+ **/
+
 void nsp_log_c(const doubleC *x, doubleC *res)
 {
   double loc;
@@ -680,28 +683,26 @@ void nsp_asinh_c(const doubleC *x, doubleC *res)
 }
 
 
+#ifdef NEW
+
 /**
  * nsp_atan_c:
- * @x: a  double complex  
- * @res: a pointer to a double complex  
+ * @x: a pointer to a double complex  
+ * @y: a pointer to a double complex  
  * 
- * i * log ((i + x) / (i - x)) / 2.0; 
+ * computes the arctangent of a complex number
+ * @y = yr + i yi = atan(@x), @x = xr + i xi
+ * @y = (i/2) * log( (i+x)/(i-x) )
  * 
- **/
+ * Author: Bruno Pincon and Lydia van Dijk (2001).
+ * (Written by Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>, 
+ *  Polished by Lydia van Dijk).
+**/
 
-#ifdef NEW
 void nsp_atan_c(const doubleC *x, doubleC *y)
 {
-  /*
-   *     PURPOSE
-   *        atan_c compute the arctangent of a complex number
-   *         y = yr + i yi = atan(x), x = xr + i xi
-   *
-   *     COPYRIGHT (C) 2001 Bruno Pincon and Lydia van Dijk
-   *        Written by Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
-   *        Polished by Lydia van Dijk 
-   *     
-   *     CHANGES : - (Bruno on 2001 May 22) for ysptrk use a 
+  /* Notes: 
+   * CHANGES : - (Bruno on 2001 May 22) for ysptrk use a 
    *                 minimax polynome to enlarge the special
    *                 evaluation zone |s| < SLIM. Also rename
    *                 this function as lnp1m1.
@@ -712,8 +713,8 @@ void nsp_atan_c(const doubleC *x, doubleC *y)
    *               - (Bruno on 2008 August 18) convert in C
    *                 for nsp
    *
-   *     ALGORITHM : noting x = a + i*b, we have:
-   *        y = yr + i*yi = arctan(x) = (i/2) * log( (i+x)/(i-x) )
+   * ALGORITHM : noting x = a + i*b, we have:
+   *     y = yr + i*yi = arctan(x) = (i/2) * log( (i+x)/(i-x) )
    *              
    *     This function has two branch points at +i and -i and the
    *     chosen  branch cuts are the two half-straight lines
@@ -815,10 +816,9 @@ void nsp_atan_c(const doubleC *x, doubleC *y)
    */
 
   double const SLIM=0.2, ALIM=1e-150, TOL=0.3, LN2=0.69314718055994531,
-               HALFPI=1.570796326794896619231321692;
+    HALFPI=1.570796326794896619231321692;
   double r2, s, a, b;
-
-
+  
   /*   Avoid problems due to sharing the same memory locations by
    *   x->r, y->r and x->i, y->i.
    */
@@ -891,7 +891,18 @@ void nsp_atan_c(const doubleC *x, doubleC *y)
 	y->r = 0.5 * atan2(2.0*a, 1.0 - r2);
     }
 }
+
 #else
+
+/**
+ * nsp_atan_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ * i * log ((i + x) / (i - x)) / 2.0; 
+ * 
+ **/
+
 void nsp_atan_c(const doubleC *x, doubleC *res)
 {
   doubleC zloc,zloc1;
@@ -905,6 +916,7 @@ void nsp_atan_c(const doubleC *x, doubleC *res)
 #endif
 
 #ifdef NEW
+
 /**
  * nsp_atanh_c:
  * @x: a  double complex  
@@ -913,6 +925,7 @@ void nsp_atan_c(const doubleC *x, doubleC *res)
  * based on the formula  atanh(x) = i atan(-i x)
  * 
  **/
+
 void nsp_atanh_c(const doubleC *x, doubleC *res)
 {
   doubleC xloc;
@@ -924,7 +937,9 @@ void nsp_atanh_c(const doubleC *x, doubleC *res)
   /* res = i * xloc */
   res->r = -xloc.i; res->i = xloc.r;
 }
+
 #else
+
 /**
  * nsp_atanh_c:
  * @x: a  double complex  
@@ -933,6 +948,7 @@ void nsp_atanh_c(const doubleC *x, doubleC *res)
  *  based on the formula  log ((1 + x) / (1 - x)) / 2.0; 
  * 
  **/
+
 void nsp_atanh_c(const doubleC *x, doubleC *res)
 {
   doubleC zloc,zloc1;
