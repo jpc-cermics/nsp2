@@ -26,6 +26,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/spmf.h"
 
+
 /*
  * a set of C functions which can be used if res =x 
  * ex nsp_cos_c(&x,&x);
@@ -157,7 +158,60 @@ void nsp_exp_c(const doubleC *x, doubleC *res)
  * 
  * 
  **/
+#ifdef NEW
+/*
+ *        compute the logarithm of a complex number
+ *        y = yr + i yi = log(x), x = xr + i xi 
+ *
+ *        adapted with some modifications from Hull, 
+ *        Fairgrieve, Tang, "Implementing Complex 
+ *        Elementary Functions Using Exception Handling", 
+ *        ACM TOMS, Vol. 20 (1994), pp 215-244
+ *
+ *        y = yr + i yi = log(x)
+ *        yr = log(|x|) = various formulae depending where x is ...
+ *        yi = Arg(x) = atan2(xi, xr)
+ *        
+ *     AUTHOR
+ *        Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
+ */
+void nsp_log_c(const doubleC *x, doubleC *y)
+{
+  double a = x->r, b = x->i, t;
+  double const R2 = 1.41421356237309504,  /* sqrt(2) */ 
+    LSUP = 9.48075190810917589e+153, /* sqrt(0.5*DBL_MAX) */
+    LINF = 1.49166814624004135e-154; /* sqrt(dlamch('U')) */  
 
+  /* compute imaginary part */
+  y->i = atan2(b,a);
+
+  /* compute real part */
+  a = fabs(a); b = fabs(b);
+  /* order a and b such that 0 <= b <= a */
+  if ( b > a ) { t = b; b = a; a = t; }
+
+  if ( 0.5 <= a  &&  a <= R2 )
+    y->r = 0.5*nsp_log1p( (a-1.0)*(a+1.0) + b*b );
+  else if ( LINF <= b  &&  a <= LSUP ) 
+    /*no overflow or underflow can occur in computing a*a + b*b */
+    y->r = 0.5*log(a*a + b*b);
+  else if ( a > DBL_MAX ) 
+    /* overflow */
+    y->r = a;
+  else
+    {
+      t = nsp_hypot(a,b);
+      if ( t <= DBL_MAX )
+	y->r = log(t);
+      else
+	{
+	  /*handle rare spurious overflow with: */
+	  t = b/a;
+	  y->r = log(a) + 0.5*nsp_log1p(t*t);
+	}
+    }
+}
+#else
 void nsp_log_c(const doubleC *x, doubleC *res)
 {
   double loc;
@@ -165,6 +219,7 @@ void nsp_log_c(const doubleC *x, doubleC *res)
   res->i=nsp_arg_c(x);
   res->r=loc;
 }
+#endif
 
 /**
  * nsp_pow_cc:
@@ -865,7 +920,7 @@ void nsp_atanh_c(const doubleC *x, doubleC *res)
   /* xloc = -i x */
   xloc.r = x->i; xloc.i = -x->r;
   /* xloc <- atan(xloc) */
-  nsp_atan_c_new(&xloc, &xloc);
+  nsp_atan_c(&xloc, &xloc);
   /* res = i * xloc */
   res->r = -xloc.i; res->i = xloc.r;
 }
