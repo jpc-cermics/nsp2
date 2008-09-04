@@ -1,0 +1,61 @@
+% -*- mode: latex -*-
+
+\mansection{complex numbers basics}
+\begin{mandesc}
+   \short{complex}{build complex numbers from real and imaginary parts}\\
+   \short{real}{extract real part of a complex scalar, vector or matrix}\\
+   \short{imag}{extract imaginary part of a complex scalar, vector or matrix}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ c = complex(a,b)
+ a = real(z)
+ b = imag(z)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{a,b}: real scalars or vectors or matrices
+   \vname{c}: complex scalar, vector or matrix
+   \vname{z}: complex (or real) scalar, vector or matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{description}
+\item[complex]  Build a complex scalar, vector or matrix $c$ from its real and imaginary parts
+  $a$ and $b$: $c = a + i \, b$.
+ $a$ and $b$ should be of same size or one could be a scalar.
+\item[real, imag] extract respectively the real and imaginay part of a complex scalar, 
+ vector or matrix; if $c = a + i \, b$, $ a = real(c)$ and $ b = imag(c)$. 
+\end{description}
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{example 1} build a complex matrix of Gaussian random numbers.
+\begin{program}\HCode{c=complex(randn(1e5,1),randn(1e5,1));}
+\end{program}
+
+\paragraph{example 2} forming a special complex number
+\begin{program}\HCode{c=complex(0,\%inf)\Hnewline
+real(c)\Hnewline
+imag(c)\Hnewline
+// rmk: the following don't work:\Hnewline
+cc=\%i*\%inf\Hnewline
+real(cc)\Hnewline
+imag(cc)}
+\end{program}
+
+
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{isreal}{isreal}
+\end{manseealso}

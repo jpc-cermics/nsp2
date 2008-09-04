@@ -1,3 +1,8 @@
+2008-09-04  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* src/objects/MatOps.c (nsp_mat_complex): add complex
+	function
+
 2008-09-01  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/objects/MatOps.c (nsp_mat_angle): add

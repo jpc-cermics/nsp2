@@ -3313,6 +3313,30 @@ int_mxangle (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int
+int_mxcomplex (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A, *B, *C;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((A = GetRealMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ((B = GetRealMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  CheckScalarOrDims(NspFname(stack),2, B, A->m, A->n);
+
+  if ( (C = nsp_mat_complex(A,B)) == NULLMAT )
+    return RET_BUG;
+
+  MoveObj(stack,1,(NspObject *) C);
+
+  return 1;
+}
+
+
 /*
  * MatArcTangH : res= atanh(A) 
  * A is not changed, A must be squared
@@ -5238,6 +5262,7 @@ static OpTab Matrix_func[] = {
   {"number_properties",int_number_properties},
   {"frexp", int_mxfrexp},
   {"nearfloat", int_nearfloat},
+  {"complex", int_mxcomplex},
   {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
   {"test_dperm",int_test_dperm},
   {"nnz_m",  int_matrix_nnz},

@@ -3554,6 +3554,62 @@ NspMatrix *nsp_mat_angle(NspMatrix *Z)
 
 
 /**
+ * nsp_mat_complex:
+ * @A: a real #NspMatrix 
+ * @B: a real #NspMatrix 
+ * 
+ * C=complex(A,B). Returns the complex matrix @C = @A + i @B
+ * @A or @B could be a scalar and then @C has the dimension of
+ * the other input variable.
+ * 
+ **/
+
+NspMatrix *nsp_mat_complex(NspMatrix *A, NspMatrix *B)
+{
+  int k ;
+  NspMatrix *C;
+
+  if ( A->rc_type != 'r' ||  B->rc_type != 'r' )
+    return NULLMAT;
+
+  if ( A->mn == 1 )
+    {
+      if ( (C = nsp_matrix_create(NVOID,'c',B->m,B->n)) == NULLMAT )
+	return NULLMAT;
+      for ( k = 0 ; k < B->mn ; k++ )
+	{
+	  C->C[k].r = A->R[0]; C->C[k].i = B->R[k];
+	}
+    }
+
+  else if ( B->mn == 1 )
+    {
+      if ( (C = nsp_matrix_create(NVOID,'c',A->m,A->n)) == NULLMAT )
+	return NULLMAT;
+      for ( k = 0 ; k < A->mn ; k++ )
+	{
+	  C->C[k].r = A->R[k]; C->C[k].i = B->R[0];
+	}
+    }
+
+  else if ( A->m == B->m  &&  A->n == B->n )
+    {
+      if ( (C = nsp_matrix_create(NVOID,'c',A->m,A->n)) == NULLMAT )
+	return NULLMAT;
+      for ( k = 0 ; k < A->mn ; k++ )
+	{
+	  C->C[k].r = A->R[k]; C->C[k].i = B->R[k];
+	}
+    }
+  
+  else
+    return NULLMAT;
+
+  return C;
+}
+
+
+/**
  * nsp_mat_atanh:
  * @A: a #NspMatrix 
  * 
