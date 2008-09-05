@@ -3541,7 +3541,7 @@ NspMatrix *nsp_mat_angle(NspMatrix *Z)
 	if ( Z->R[k] >= 0.0 )
 	  A->R[k] = 0.0;
 	else if ( Z->R[k] < 0.0 )
-	  A->R[k] = -M_PI;
+	  A->R[k] = M_PI;
 	else         /*  we should collect Nans here... */
 	  A->R[k] = Z->R[k];
       }
