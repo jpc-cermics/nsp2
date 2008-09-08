@@ -3982,7 +3982,7 @@ static void nsp_dgbcon(char *s_rien, int *n, int *kl, int *ku, double *AAb, int 
 }
 
 /* 
- *  estimate rcond1 using lapack estimator (real case) 
+ *  estimate rcond1 using lapack estimator (complex case) 
  *  replace zgbcon which tends to be very slow (far
  *  more slower than the factorization) when n is big
  *  enough. The drawback is that nsp_zgbcon is certainly
