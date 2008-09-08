@@ -26,6 +26,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/spmf.h"
 
+/* #define NEW 1 */
 
 /*
  * a set of C functions which can be used if res =x 
@@ -504,6 +505,7 @@ void nsp_div_dc(double x, const doubleC *y, doubleC *res)
     }
 }
 
+#ifdef NEW
 /**
  * nsp_sqrt_c:
  * @x: a  double complex  
@@ -511,7 +513,131 @@ void nsp_div_dc(double x, const doubleC *y, doubleC *res)
  * 
  * computes in @res the square root of @x.
  **/
+void nsp_sqrt_c(const doubleC *x, doubleC *res)
+{
 
+/*     ALGORITHM
+ *        essentially the classic one which consists in
+ *        choosing the good formula such as avoid cancellation ; 
+ *        Also rare spurious overflow are treated with a
+ *        "manual" method. For some more "automated" methods
+ *        (but currently difficult to implement in a portable
+ *        way) see :
+ *
+ *          Hull, Fairgrieve, Tang,
+ *          "Implementing Complex Elementary Functions Using
+ *          Exception Handling", ACM TOMS, Vol. 20 (1994), pp 215-244
+ *
+ *        Noting y = sqrt(x)
+ *
+ *        for xr > 0 :                            
+ *          yr = sqrt(2( xr + sqrt( xr^2 + xi^2)) )/ 2
+ *          yi = xi / sqrt(2(xr + sqrt(xr^2 + xi^2)))
+ *
+ *        and for xr < 0 :                           
+ *          yr = |xi| / sqrt( 2( -xr + sqrt( xr^2 + xi^2 )) )
+ *          yi = sign(xi) sqrt(2(-xr + sqrt( xr^2 + xi^2))) / 2
+ *     
+ *        for xr = 0 use          
+ *          yr = sqrt(0.5)*sqrt(|xi|)  when |xi| is such that 0.5*|xi| may underflow
+ *             = sqrt(0.5*|xi|)        else
+ *          yi = sign(xi) yr
+ *
+ *        Noting t = sqrt( 2( |xr| + sqrt( xr^2 + yr^2)) ) 
+ *                 = sqrt( 2( |xr| + nsp_hypot(xr,xi) ) )
+ *        it comes :
+ *
+ *          for xr > 0   |  for xr < 0
+ *         --------------+---------------------
+ *           yr = 0.5*t  |  yr =  |xi| / t
+ *           yi = xi / t |  yi = sign(xi)*0.5* t
+ *    
+ *        as the function nsp_hypot must not underflow (and overflow only 
+ *        if sqrt(x^2+y^2) > DBL_MAX) only spurious (rare) case of overflow 
+ *        occurs in which case a scaling is done.
+ */
+  double a = x->r, b = x->i, t;
+  double const brmin = 4.450147717014402766180465435e-308; /* 2*dlamch('u') */
+
+  if ( a == 0.0 )   /*pure imaginary case */
+    {
+      if ( fabs(b) >= brmin )
+	res->r = sqrt(0.5*fabs(b));
+      else
+	res->r = sqrt(0.5)*sqrt(fabs(b));
+      res->i = b >= 0 ? res->r : -res->r;
+    }
+  else if ( fabs(a) <= DBL_MAX  &&  fabs(b) <= DBL_MAX ) /* standard case */
+    {
+      t = sqrt(2.0*(fabs(a) + nsp_hypot(a,b)));
+      if ( t <= DBL_MAX )
+	{
+	  /* classic switch to get the stable formulae */
+	  if ( a >= 0.0 )
+	    {
+	      res->r = 0.5*t; res->i = b/t;
+	    }
+	  else
+	    {
+	      res->r = fabs(b)/t;
+	      res->i = b >= 0 ? 0.5*t : -0.5*t;
+	    }
+	}
+      else
+	{
+	  /* handle spurious overflow by scaling a and b */
+	  a /= 16.0; b /= 16.0;
+	  t = sqrt(2.0*(fabs(a) + nsp_hypot(a,b)));
+	  if ( a <= 0 )
+	    {
+	      res->r = 2.0*t; res->i = 4.0*b/t;
+	    }
+	  else
+	    {
+	      res->r = 4*fabs(b)/t;
+	      res->i = b >= 0 ? 2.0*t : -2.0*t;
+	    }
+	}
+    }
+  else  /* special cases where a or b are +-oo or Nan */
+    {
+      /*
+       *  The following is the treatment recommended by the C99 standard
+       *  with the simplification of returning NaN + i NaN if the
+       *  the real part or the imaginary part is NaN (C99 recommends
+       *  something more complicated)
+       */
+      if ( isnan(a) || isnan(b) )
+	{
+	  /* got Nan + i Nan */
+	  res->r = a + b; res->i = res->r;
+	}
+      else if ( fabs(b) > DBL_MAX )  
+	/*  case x = a +- i oo -> result must be +oo +- i oo  for all a (finite or not) */
+	{
+	  res->r = fabs(b); res->i = b;
+	}
+      else if ( a < -DBL_MAX )
+	/* here a is -Inf and b is finite */
+	{
+	  res->r = 0.0;
+	  res->i = b >= 0 ? fabs(a) : -fabs(a);
+	}
+      else
+	/* here a is +Inf and b is finite */
+	{
+	  res->r = a; res->i = 0.0;
+	}
+    }
+}
+#else
+/**
+ * nsp_sqrt_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ * computes in @res the square root of @x.
+ **/
 void nsp_sqrt_c(const doubleC *x, doubleC *res)
 {
   double r;
@@ -533,6 +659,7 @@ void nsp_sqrt_c(const doubleC *x, doubleC *res)
       res->r = loc / res->i / 2;
     }
 }
+#endif
 
 /**
  * nsp_prod_c:
@@ -1044,6 +1171,98 @@ void nsp_signum_c(const doubleC *x, doubleC *res)
     }
 }
 
+#ifdef NEW
+/**
+ * nsp_tan_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ * computes the tangent of the complex number x
+ *
+ * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>.
+ **/
+void nsp_tan_c(const doubleC *x, doubleC *res)
+{
+  /*
+   *     ALGORITHM
+   *        based on the formula :
+   *
+   *                         0.5 sin(2 xr) +  i 0.5 sinh(2 xi)
+   *        tan(xr + i xi) = ---------------------------------
+   *                             cos(xr)^2  + sinh(xi)^2
+   *        
+   *        noting  d = cos(xr)^2 + sinh(xi)^2, we have :
+   *
+   *                yr = 0.5 * sin(2 * xr) / d       (1)
+   *
+   *                yi = 0.5 * sinh(2 * xi) / d      (2)
+   *
+   *        to avoid spurious overflows in computing yi with 
+   *        formula (2) (which results in NaN for yi)
+   *        we use also the following formula :
+   *
+   *                yi = sign(xi)   when |xi| > LIM  (3)
+   *
+   *        Explanations for (3) :
+   *
+   *        we have d = sinh(xi)^2 ( 1 + (cos(xr)/sinh(xi))^2 ), 
+   *        so when : 
+   *
+   *           (cos(xr)/sinh(xi))^2 < epsm   ( epsm = max relative error
+   *                                          for coding a real in a f.p.
+   *                                          number set F(b,p,emin,emax) 
+   *                                             epsm = 0.5 b^(1-p) )
+   *        which is forced  when :
+   *
+   *            1/sinh(xi)^2 < epsm   (4) 
+   *        <=> |xi| > asinh(1/sqrt(epsm)) (= 19.06... in ieee 754 double)
+   *
+   *        sinh(xi)^2 is a good approximation for d (relative to the f.p. 
+   *        arithmetic used) and then yr may be approximate with :
+   *
+   *         yr = cosh(xi)/sinh(xi) 
+   *            = sign(xi) (1 + exp(-2 |xi|))/(1 - exp(-2|xi|)) 
+   *            = sign(xi) (1 + 2 u + 2 u^2 + 2 u^3 + ...)
+   *
+   *        with u = exp(-2 |xi|)). Now when :
+   *
+   *            2 exp(-2|xi|) < epsm  (2)  
+   *        <=> |xi| > 0.5 * log(2/epsm) (= 18.71... in ieee 754 double)
+   * 
+   *        sign(xi)  is a good approximation for yr.
+   *
+   *        Constraint (1) is stronger than (2) and we take finaly 
+   *
+   *        LIM = 1 + log(2/sqrt(epsm)) 
+   *
+   *        (log(2/sqrt(epsm)) being very near asinh(1/sqrt(epsm))
+   *
+   */
+  double const LIM = 20.06154746539849600897388334;
+  double c, s, d, xr = x->r, xi = x->i;
+
+  if ( xi == 0.0 )
+    {
+      res->r = tan(x->r);
+      res->i = 0.0;
+    }
+  else if ( xr == 0.0 )
+    {
+      res->r = 0.0;
+      res->i = tanh(x->i);
+    }
+  else
+    {
+      c = cos(xr); s = sinh(xi);
+      d = c*c + s*s;
+      res->r = 0.5*sin(2.0*xr)/d;
+      if ( fabs(xi) < LIM )
+	res->i = 0.5*sinh(2.0*xi)/d;
+      else
+	res->i = xi >= 0.0 ? 1.0 : -1.0;
+    }
+}
+#else
 /**
  * nsp_tan_c:
  * @x: a  double complex  
@@ -1058,7 +1277,26 @@ void nsp_tan_c(const doubleC *x, doubleC *res)
   nsp_cos_c(x,&loc2);
   nsp_div_cc(&loc1,&loc2,res);
 }
+#endif
 
+#ifdef NEW
+/**
+ * nsp_tanh_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ *
+ * computes the tanh of a complex number
+ * based on the formula  tanh(x) = -i tan(i x)
+ * 
+ **/
+void nsp_tanh_c(const doubleC *x, doubleC *res)
+{
+  doubleC ix;
+  ix.r = -x->i; ix.i = x->r;
+  nsp_tan_c(&ix, &ix);
+  res->r = ix.i; res->i = -ix.r;
+}
+#else
 /**
  * nsp_tanh_c:
  * @x: a  double complex  
@@ -1073,6 +1311,6 @@ void nsp_tanh_c(const doubleC *x, doubleC *res)
   nsp_cosh_c(x,&loc2);
   nsp_div_cc(&loc1,&loc2,res);
 }
-
+#endif
 
 
