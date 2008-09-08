@@ -3326,7 +3326,11 @@ int_mxcomplex (Stack stack, int rhs, int opt, int lhs)
   if ((B = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
 
-  CheckScalarOrDims(NspFname(stack),2, B, A->m, A->n);
+  if ( ! ( (A->m == B->m && A->n == B->n) || A->mn == 1  || B->mn == 1 ) )
+    { 
+      Scierror ("Error: both arguments should have same dimensions (or one could be a scalar)\n", NspFname(stack));
+      return RET_BUG;
+    }
 
   if ( (C = nsp_mat_complex(A,B)) == NULLMAT )
     return RET_BUG;
