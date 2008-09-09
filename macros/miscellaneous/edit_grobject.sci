@@ -62,7 +62,15 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
   // object and build a tree model.
   // The call is recursive.
   h_names = h.get_attribute_names[];
-  h_names =sort(h_names,'g','i')
+  h_names = sort(h_names,'g','i');
+  // just keep the children names 
+  if %f then 
+    if  h_names.has['children'] then 
+      h_names='children';
+    else
+      h_names=m2s([]);
+    end
+  end
   for i=1:size(h_names,'*');
     name = h_names(i);
     objname = h.get[name];
@@ -162,44 +170,12 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
 	model.set[iter,1,"s"];
       else
 	ctype = type(val,'short');
-	if ctype== 's' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,val];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  // we also need to change the string in the user_data 
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	elseif ctype == 'm' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,m2s(val)];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	elseif ctype == 'b' then 
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  if size(val,'*')==1 then 
-	    model.set[iter,3,m2s(b2m(val))];
-	  else
-	    model.set[iter,3,"*"];
-	  end
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	else
-	  model.set[iter,1,ctype];
-	  model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
-	  Il =get_nsp_list_path_from_tree_path(tree_view,path);
-	  tree_view.user_data(Il) = val;
-	  model.set[iter,3,"*"];
-	end
+	model.set[iter,1,ctype];
+	model.set[iter,2,sprintf("%dx%d",size(val,1),size(val,2))];
+	model.set[iter,3,cellstostr({val})];
+	// we also need to change the string in the user_data 
+	Il =get_nsp_list_path_from_tree_path(tree_view,path);
+	tree_view.user_data(Il) = val;
 	if octype == 'l' || octype == 'h' || ctype == 'l' || ctype == 'h' then 
 	  //  we need to update the treeview 
 	  update_model([],list(tree_view))
@@ -306,3 +282,5 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
     window.destroy[];
   end
 endfunction 
+
+
