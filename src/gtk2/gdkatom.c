@@ -453,7 +453,7 @@ void GdkAtom_Interf_Info(int i, char **fname, function (**f))
 
 GdkAtom nsp_gdkatom_get(NspObject *object)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(object,NULL);
   return ((NspGdkAtom *) object)->atom;
 }
