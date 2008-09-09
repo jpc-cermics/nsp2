@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS  */
+/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -1953,8 +1953,6 @@ static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*
 {
   BCG *Xgc;
   double *val=NULL;
-  NspMatrix *M1;
-  int i;
   if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
   f(Xgc,val);
@@ -1980,8 +1978,6 @@ int int_xfarc(Stack stack, int rhs, int opt, int lhs)
  *-----------------------------------------------------------*/
 
 #ifdef NEW_GRAPHICS 
-
-typedef  void (*f_xarcs)(BCG *Xgc,double vects[],int fillvect[], int n);
 
 int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
 {
@@ -2061,6 +2057,9 @@ int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
 
 
 #else 
+
+typedef  void (*f_xarcs)(BCG *Xgc,double vects[],int fillvect[], int n);
+
 
 int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *name,f_xarcs f)
 {
