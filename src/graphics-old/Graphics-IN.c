@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS  */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -42,6 +42,10 @@
 #include <nsp/curve.h> 
 #include <nsp/polyline.h> 
 #include <nsp/vfield.h> 
+#include <nsp/grarc.h> 
+#include <nsp/grrect.h> 
+#include <nsp/arrows.h> 
+
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
 #endif 
@@ -417,6 +421,33 @@ static char * check_logflags(Stack stack,const char *fname,char *varname,char *l
 	}
     }
   return logflags_loc;
+}
+
+
+static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
+{
+  NspMatrix *M1;
+  int i;
+  static double l[6];
+  switch ( rhs -opt ) 
+    {
+    case 1 :
+      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
+      CheckLength(NspFname(stack),1,M1,6);
+      *val = M1->R;
+      break;
+    case 6 :
+      for ( i = 1 ; i <= 6 ; i++) 
+	{
+	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
+	}
+      *val = l;
+      break;
+    default :
+      Scierror("%s: wrong number of standard rhs arguments (%d), rhs must be 1 or 6\n",NspFname(stack),rhs);
+      return FAIL;
+    }
+  return OK;
 }
 
 
@@ -1871,6 +1902,49 @@ BCG *nsp_check_graphic_context(void)
 } 
 
 
+#ifdef NEW_GRAPHICS 
+
+/*-----------------------------------------------------------
+ *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
+ *   opts: color =       ( line color )
+ *         thickness =       ( line width )
+ *         background=   ( also fill the rectangle)
+ *-----------------------------------------------------------*/
+
+int int_xarc(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGrArc *arc;
+  NspAxes *axe; 
+  BCG *Xgc;
+  double *val=NULL;
+  int back=-1,color=-1,width=-1;
+  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,6);
+  if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,NULL))== NULL)
+    return RET_BUG;
+  ((NspGraphic *) arc)->obj->color=color;
+  /* insert the object */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) arc )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+int int_xfarc(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_xarc(stack,rhs,opt,lhs);
+}
+
+#else 
+
 /*-----------------------------------------------------------
  * xarc(...)
  *-----------------------------------------------------------*/
@@ -1878,27 +1952,10 @@ BCG *nsp_check_graphic_context(void)
 static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*f)(BCG *Xgc,double arc[]))
 {
   BCG *Xgc;
-  double arc[6],*val;
+  double *val=NULL;
   NspMatrix *M1;
   int i;
-  switch ( rhs -opt ) 
-    {
-    case 1 :
-      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-      CheckLength(NspFname(stack),1,M1,6);
-      val = M1->R;
-      break;
-    case 6 :
-      for ( i = 1 ; i <= 6 ; i++) 
-	{
-	  if (GetScalarDouble(stack,i,arc+i-1) == FAIL) return RET_BUG;
-	}
-      val = arc;
-      break;
-    default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\n",NspFname(stack),rhs);
-      return RET_BUG;
-    }
+  if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
   f(Xgc,val);
   return 0;
@@ -1916,14 +1973,94 @@ int int_xfarc(Stack stack, int rhs, int opt, int lhs)
   return int_xarc_G(stack,rhs,opt,lhs,"xfarc",Xgc->graphic_engine->scale->fillarc);
 }
 
-
+#endif 
 
 /*-----------------------------------------------------------
  * xarcs(arcs,[style])
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
 typedef  void (*f_xarcs)(BCG *Xgc,double vects[],int fillvect[], int n);
 
+int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
+{
+  NspGraphic *gobj;
+  NspAxes *axe; 
+  BCG *Xgc;
+  NspMatrix *arcs=NULL;
+  NspMatrix *color=NULL;
+  NspMatrix *background=NULL;
+  NspMatrix *thickness=NULL;
+  int i;
+  nsp_option opts[] ={{ "background", realmat,NULLOBJ,-1},
+		      { "color",realmat,NULLOBJ,-1},
+		      { "thickness", realmat,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,1);
+  if ((arcs = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  CheckRows(NspFname(stack),1,arcs, nrow) ;
+  if ( get_optional_args(stack,rhs,opt,opts,&background,&color,&thickness) == FAIL) return RET_BUG;
+  if ( background != NULL) 
+    {
+      CheckLength(NspFname(stack),opts[0].position, background, arcs->n);
+    }
+  if ( color != NULL) 
+    {
+      CheckLength(NspFname(stack),opts[1].position, color, arcs->n);
+    }
+  if ( thickness != NULL) 
+    {
+      CheckLength(NspFname(stack),opts[2].position, thickness, arcs->n);
+    }
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+
+  for ( i = 0 ; i < arcs->n ; i++)
+    {
+      double *val = arcs->R + i*(arcs->m);
+      int icolor=-1,iback=-1,ithickness=-1;
+      if ( color != NULL) icolor = color->R[i];
+      if ( background != NULL) iback = background->R[i];
+      if ( thickness != NULL)  ithickness = thickness->R[i];
+      if ( nrow == 6 ) 
+	{
+	  if ((gobj =(NspGraphic *) nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],
+						     iback,ithickness,NULL)) == NULL)
+	    return RET_BUG;
+	}
+      else 
+	{
+	  if ((gobj =(NspGraphic *) nsp_grrect_create("pl",val[0],val[1],val[2],val[3],
+						      iback,ithickness,NULL))== NULL)
+	    return RET_BUG;
+	}
+      gobj->obj->color= icolor;
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL)
+	return RET_BUG;
+    }
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+int int_xarcs(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_xarcs_G(stack,rhs,opt,lhs,6);
+}
+
+int int_xrects(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_xarcs_G(stack,rhs,opt,lhs,4);
+}
+
+int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_xarcs_G(stack,rhs,opt,lhs,6);
+}
+
+
+#else 
 
 int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *name,f_xarcs f)
 {
@@ -1970,19 +2107,11 @@ int int_xarcs(Stack stack, int rhs, int opt, int lhs)
   return int_xarcs_G(stack,rhs,opt,lhs,6,0,"xarcs",Xgc->graphic_engine->scale->drawarcs);
 }
 
-/*-----------------------------------------------------------
- * xrects(rects,[style])
- *-----------------------------------------------------------*/
-
 int int_xrects(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc=nsp_check_graphic_context();
   return int_xarcs_G(stack,rhs,opt,lhs,4,0,"xrects",Xgc->graphic_engine->scale->drawrectangles);
 }
-
-/*-----------------------------------------------------------
- *  xfarcs(arcs,[style])
- *-----------------------------------------------------------*/
 
 int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1990,9 +2119,62 @@ int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
   return int_xarcs_G(stack,rhs,opt,lhs,6,1,"xfarcs",Xgc->graphic_engine->scale->fillarcs);
 }
 
+
+#endif 
+
 /*-----------------------------------------------------------
  *   xarrows(nx,ny,[arsize=,style=])
  *-----------------------------------------------------------*/
+
+#ifdef NEW_GRAPHICS 
+
+int int_xarrows(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAxes *axe; 
+  NspArrows *pl;
+  BCG *Xgc;
+  double arsize=-1.0 ;
+  NspMatrix *x,*y,*Mstyle=NULL,*color;
+  
+  int_types T[] = {realmat,realmat,new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "arsize",s_double,NULLOBJ,-1},
+		      { "style",mat_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&arsize,&Mstyle) == FAIL) return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  if ( Mstyle != NULL) 
+    {
+      if ( Mstyle->mn != x->mn/2 ) {
+	Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+	return RET_BUG;
+      }
+    }
+    
+  Xgc=nsp_check_graphic_context();
+  
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+
+  if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
+  if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
+  if ( color != NULL)
+    {
+      if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL) 
+	return RET_BUG;
+    }
+  /* passer color en entiers ? */
+  if ((pl = nsp_arrows_create("ar",x,y,color,arsize,NULL))== NULL)
+    return RET_BUG;
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+}
+
+#else 
 
 int int_xarrows(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2038,6 +2220,58 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
+
+#endif 
+
+
+#ifdef NEW_GRAPHICS 
+
+int int_xsegs(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAxes *axe; 
+  NspArrows *pl;
+  BCG *Xgc;
+  NspMatrix *x,*y,*Mstyle=NULL,*color;
+  
+  int_types T[] = {realmat,realmat,new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "style",mat_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&Mstyle) == FAIL) return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  if ( Mstyle != NULL) 
+    {
+      if ( Mstyle->mn != x->mn/2 ) {
+	Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+	return RET_BUG;
+      }
+    }
+    
+  Xgc=nsp_check_graphic_context();
+  
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+
+  if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
+  if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
+  if ( color != NULL)
+    {
+      if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL) 
+	return RET_BUG;
+    }
+  /* passer color en entiers ? */
+  if ((pl = nsp_segments_create("ar",x,y,color,NULL))== NULL)
+    return RET_BUG;
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+}
+
+#else 
+
  
 /*-----------------------------------------------------------
  *   xsegs(xv,yv,style=)
@@ -2081,6 +2315,8 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 } 
+
+#endif 
 
 /*-----------------------------------------------------------
  * old version : kept for backward compatibility 
@@ -2235,12 +2471,50 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = l;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\n",NspFname(stack),rhs);
+      Scierror("%s: wrong number of rhs arguments (%d), rhs must be 1 or 4\n",NspFname(stack),rhs);
       return FAIL;
     }
   return OK;
 }
 
+
+#ifdef NEW_GRAPHICS 
+
+/*-----------------------------------------------------------
+ *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
+ *   opts: color =       ( line color )
+ *         thickness =       ( line width )
+ *         background=   ( also fill the rectangle)
+ *-----------------------------------------------------------*/
+
+int int_xrect(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGrRect *rect;
+  NspAxes *axe; 
+  BCG *Xgc;
+  double *val=NULL;
+  int back=-1,color=-1,width=-1;
+  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,4);
+  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,NULL))== NULL)
+    return RET_BUG;
+  ((NspGraphic *) rect)->obj->color=color;
+  /* insert the object */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+#else 
 
 /*-----------------------------------------------------------
  *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
@@ -2292,6 +2566,8 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 } 
+
+#endif 
 
 /*-----------------------------------------------------------
  *   xfrect(x,y,w,h,opts) etendu a xfrect([x,y,w,h],opts)
@@ -3047,7 +3323,6 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 
 extern void nsp_pause(int sec_time,int events);
 
-
 int int_xpause(Stack stack, int rhs, int opt, int lhs)
 {
   /* BCG *Xgc; */
@@ -3123,7 +3398,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
-  return OK;
+  return 0;
 }
 
 #else 
@@ -3154,8 +3429,6 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   if ( l1->mn == 0 ) return 0;
 
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
-
-
 
   Xgc=nsp_check_graphic_context();
 
@@ -3277,7 +3550,6 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
  *   xpolys(xpols,ypols,[draw])
  *-----------------------------------------------------------*/
 
-
 #ifdef NEW_GRAPHICS 
 
 int int_xpolys(Stack stack, int rhs, int opt, int lhs)
@@ -3396,8 +3668,6 @@ int int_xselect(Stack stack, int rhs, int opt, int lhs)
       Xgc->graphic_engine->xselgraphic(Xgc);
     }
   return 0;
-
-
 }
 
 /*-----------------------------------------------------------
@@ -5397,8 +5667,10 @@ int Graphics_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(Graphics_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/*
+ * used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void Graphics_Interf_Info(int i, char **fname, function (**f))
 {
