@@ -1,0 +1,213 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/segments.h"
+#include <nsp/figure.h> 
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_segments(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_segments(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_segments(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *o,double *bounds);
+
+extern void nsp_figure_force_redraw( NspFigure *F);
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type Segments
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_segments;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_segments ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_segments  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
+  /* next method are defined in NspGraphic and need not be chnaged here for Segments */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override segments_attach kwargs
+int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override-attr Pts 
+
+/* overriden to check dimensions when changing values.
+ */
+
+static NspObject *_wrap_segments_get_obj_Pts(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = TRUE; 
+  ret = ((NspMatrix*) ((NspSegments *) self)->obj->Pts);
+  return (NspObject *) ret;
+}
+
+static int _wrap_segments_set_obj_Pts(void *self,NspObject *val)
+{
+  NspMatrix *M= (NspMatrix *) val ; 
+  NspSegments *poly = self ;
+  if ( M->rc_type != 'r' || M->n != 2 )
+    {
+      Scierror("Error: segments field Pts should be real an mx2 sized\n");
+      return FAIL;
+    }
+  /* before replacing the field we check that dimensions are correct */
+  if ( poly->obj->Pts != NULL )
+    nsp_matrix_destroy(poly->obj->Pts);
+  poly->obj->Pts = (NspMatrix *) val ;
+  return OK;
+}
+
+%%
+override nsp_extractelts_segments kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_segments kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj)
+{
+  int ccolor=-1;
+  NspSegments *P = (NspSegments *) Obj;
+  NspMatrix *nx = P->obj->x;
+  NspMatrix *ny = P->obj->y;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( P->obj->x->mn == 0 )  return;
+  if ( P->obj->color != NULLMAT) 
+    {
+      if ( P->obj->color->mn == 1) 
+	{
+	  ccolor = P->obj->color->I[0];
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+	}
+      else 
+	{
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,P->obj->color->I,1);
+	}
+    }
+  else 
+    {
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+    }
+}
+
+static void nsp_translate_segments(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  int i; 
+  NspSegments *P = (NspSegments *) Obj;
+  double *x=P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
+    {
+      *(x++) += tr[0];
+      *(y++) += tr[1];
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
+}
+
+static void nsp_rotate_segments(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  int i;
+  NspSegments *P = (NspSegments *) Obj;
+  double *x= P->obj->x->R,*y= P->obj->y->R,x1,y1;
+  for ( i=0; i < P->obj->x->mn ; i++) 
+    {
+      x1 = R[0]*(*x) -R[1]*(*y);
+      y1 = R[1]*(*x) +R[0]*(*y);
+      *(x++) =x1;
+      *(y++) =y1;
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_segments(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  int i;
+  NspSegments *P = (NspSegments *) Obj;
+  double *x= P->obj->x->R,*y= P->obj->y->R;
+  for ( i=0; i < P->obj->x->mn ; i++) 
+    {
+      *(x++) *= alpha[0];
+      *(y++) *= alpha[1];
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of segments 
+ *
+ */
+
+static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  int i;
+  NspSegments *P = (NspSegments *) Obj;
+  double *x= P->obj->x->R,*y= P->obj->y->R,dval;
+  if ( P->obj->x->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+      return;
+    }
+  bounds[0]=*x;/* xmin */
+  bounds[1]=*y;/* ymin */
+  bounds[2]=*x;/* xmax */
+  bounds[3]=*y;/* ymax */
+  for (i = 1; i < P->obj->x->mn; i++)
+    {
+      dval = x[i];
+      if ( dval > bounds[2] )
+	bounds[2] = dval;
+      else if ( dval < bounds[0] )
+	bounds[0] = dval;
+      dval = y[i];
+      if ( dval > bounds[3] )
+	bounds[3] = dval;
+      else if ( dval < bounds[1] )
+	bounds[1] = dval;
+    }
+}
+

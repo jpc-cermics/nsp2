@@ -1,0 +1,18 @@
+;; -*- scheme -*-
+
+(define-objectref Arrows
+  (in-module "Arrows")
+  (parent "Graphic")
+  (c-name "Arrows")
+  (fields
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "color")
+    '("double" "arsize")
+    )
+  (gtype-id "Arrows")
+)
+
+
+
+

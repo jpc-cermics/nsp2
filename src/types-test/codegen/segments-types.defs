@@ -1,0 +1,17 @@
+;; -*- scheme -*-
+
+(define-objectref Segments
+  (in-module "Segments")
+  (parent "Graphic")
+  (c-name "Segments")
+  (fields
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "color")
+    )
+  (gtype-id "Segments")
+)
+
+
+
+

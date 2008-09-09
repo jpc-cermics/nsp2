@@ -1,0 +1,20 @@
+;; -*- scheme -*-
+
+(define-objectref GrRect
+  (in-module "GrRect")
+  (parent "Graphic")
+  (c-name "GrRect")
+  (fields
+    '("double" "x")
+    '("double" "y")
+    '("double" "w")
+    '("double" "h")
+    '("int" "fill_color" "std" "-1")
+    '("int" "thickness")
+    )
+  (gtype-id "GrRect")
+)
+
+
+
+

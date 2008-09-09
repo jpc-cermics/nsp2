@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -315,6 +315,7 @@ int IsGObjectObj(Stack stack, int i)
   return nsp_object_type(NthObj(i) , nsp_type_gobject_id);
 }
 
+
 int IsGObject(NspObject *O)
 {
   return nsp_object_type(O,nsp_type_gobject_id);
@@ -370,6 +371,20 @@ NspGObject *gobject_copy(NspGObject *self)
  * wrappers for the NspGObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
+
+/**
+ * int_gobj_create:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface that can be used to create a NspGObject given
+ * its type and its properties.
+ * gobject_create(a-type,hash-table).
+ * 
+ * Returns: 
+ **/
 
 int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 {

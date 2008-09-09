@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "arrows-types.defs")
+
+;; overriden 
+
+(define-function arrows_attach
+  (c-name "arrows_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Arrows")
+  (c-name "nsp_arrows_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Arrows")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_arrows
+  (c-name "nsp_extractelts_arrows")
+  (return-type "none")
+)
+(define-function setrowscols_arrows
+  (c-name "nsp_setrowscols_arrows")
+  (return-type "none")
+)
+

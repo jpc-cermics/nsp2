@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "segments-types.defs")
+
+;; overriden 
+
+(define-function segments_attach
+  (c-name "segments_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Segments")
+  (c-name "nsp_segments_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Segments")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_segments
+  (c-name "nsp_extractelts_segments")
+  (return-type "none")
+)
+(define-function setrowscols_segments
+  (c-name "nsp_setrowscols_segments")
+  (return-type "none")
+)
+

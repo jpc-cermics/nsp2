@@ -114,7 +114,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj)
 {
   NspGrstring *P = (NspGrstring *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-  
+  Xgc->graphic_engine->scale->displaystring(Xgc,P->obj->text,P->obj->x,P->pbj->y,0,P->obj->angle);
 }
 
 static void nsp_translate_grstring(BCG *Xgc,NspGraphic *Obj,double *tr)

@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "grrect-types.defs")
+
+;; overriden 
+
+(define-function grrect_attach
+  (c-name "grrect_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "GrRect")
+  (c-name "nsp_grrect_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "GrRect")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_grrect
+  (c-name "nsp_extractelts_grrect")
+  (return-type "none")
+)
+(define-function setrowscols_grrect
+  (c-name "nsp_setrowscols_grrect")
+  (return-type "none")
+)
+

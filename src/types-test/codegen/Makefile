@@ -17,8 +17,8 @@ FFLAGS = $(FC_OPTIONS)
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
-	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c
-
+	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
+	../grrect.c ../grarc.c ../arrows.c ../segments.c 
 
 all:: $(ALL)
 
@@ -117,5 +117,29 @@ clean ::
 	    --override grstring.override \
 	    --prefix Grstring grstring.defs) > $*.c \
 	&& cp grstring.h ../../include/nsp 
+
+../grrect.c : grrect.defs grrect.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override grrect.override \
+	    --prefix GrRect grrect.defs) > $*.c \
+	&& cp grrect.h ../../include/nsp 
+
+../grarc.c : grarc.defs grarc.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override grarc.override \
+	    --prefix GrArc grarc.defs) > $*.c \
+	&& cp grarc.h ../../include/nsp 
+
+../arrows.c : arrows.defs arrows.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override arrows.override \
+	    --prefix Arrows arrows.defs) > $*.c \
+	&& cp arrows.h ../../include/nsp 
+
+../segments.c : segments.defs segments.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override segments.override \
+	    --prefix Segments segments.defs) > $*.c \
+	&& cp segments.h ../../include/nsp 
 
 

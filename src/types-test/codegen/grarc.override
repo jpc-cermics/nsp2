@@ -1,0 +1,195 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/grarc.h"
+#include <nsp/figure.h> 
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_grarc(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_grarc(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_grarc(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *o,double *bounds);
+
+extern void nsp_figure_force_redraw( NspFigure *F);
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type GrArc
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grarc;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grarc ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grarc  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grarc  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grarc_full_copy ;
+  /* next method are defined in NspGraphic and need not be chnaged here for GrArc */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override grarc_attach kwargs
+int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override-attr Pts 
+
+/* overriden to check dimensions when changing values.
+ */
+
+static NspObject *_wrap_grarc_get_obj_Pts(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = TRUE; 
+  ret = ((NspMatrix*) ((NspGrArc *) self)->obj->Pts);
+  return (NspObject *) ret;
+}
+
+static int _wrap_grarc_set_obj_Pts(void *self,NspObject *val)
+{
+  NspMatrix *M= (NspMatrix *) val ; 
+  NspGrArc *poly = self ;
+  if ( M->rc_type != 'r' || M->n != 2 )
+    {
+      Scierror("Error: grarc field Pts should be real an mx2 sized\n");
+      return FAIL;
+    }
+  /* before replacing the field we check that dimensions are correct */
+  if ( poly->obj->Pts != NULL )
+    nsp_matrix_destroy(poly->obj->Pts);
+  poly->obj->Pts = (NspMatrix *) val ;
+  return OK;
+}
+
+%%
+override nsp_extractelts_grarc kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_grarc kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj)
+{
+  double val[6];
+  int ccolor=-1,cthick=-1;
+  NspGrArc *P = (NspGrArc *) Obj;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  val[0]= P->obj->x;
+  val[1]= P->obj->y;
+  val[2]= P->obj->w;
+  val[3]= P->obj->h;
+  val[4]= P->obj->a1;
+  val[5]= P->obj->a2;
+  if ( P->obj->fill_color != -1 ) 
+    {
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
+      Xgc->graphic_engine->scale->fillarc(Xgc,val);
+    }
+  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+    {
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+    }
+  if ( P->obj->thickness != -1 ) 
+    {
+      cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+      Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+    }
+  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+    {
+      Xgc->graphic_engine->scale->drawarc(Xgc,val);
+    }
+  /* reset to default values */
+  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+    {
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+    }
+  if ( P->obj->thickness != -1 ) 
+    {
+      Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+    }
+}
+
+static void nsp_translate_grarc(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  NspGrArc *P = (NspGrArc *) Obj;
+  P->obj->x += tr[0];
+  P->obj->y += tr[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
+}
+
+static void nsp_rotate_grarc(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  NspGrArc *P = (NspGrArc *) Obj;
+  double x1;
+  x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
+  P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
+  P->obj->x = x1;
+  /* Il faut aussi changer l'angle */
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_grarc(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  NspGrArc *P = (NspGrArc *) Obj;
+  P->obj->x *= alpha[0];
+  P->obj->y *= alpha[1];
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of grarc 
+ *
+ */
+
+static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspGrArc *P = (NspGrArc *) Obj;
+  bounds[0]=P->obj->x;/* xmin */
+  bounds[1]=P->obj->y-P->obj->w;/* ymin */
+  bounds[2]=P->obj->x+P->obj->w;/* xmax */
+  bounds[3]=P->obj->y;/* ymax */
+}
+
