@@ -62,7 +62,10 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
+  /* cairo_t *cr =  Xgc->private->cairo_cr; */
   DRAW_CHECK;
+  /* test */
+  /* cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE); */
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
 
