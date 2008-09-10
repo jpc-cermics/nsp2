@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "surf-types.defs")
+
+;; overriden 
+
+(define-function surf_attach
+  (c-name "surf_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Surf")
+  (c-name "nsp_surf_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Surf")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_surf
+  (c-name "nsp_extractelts_surf")
+  (return-type "none")
+)
+(define-function setrowscols_surf
+  (c-name "nsp_setrowscols_surf")
+  (return-type "none")
+)
+

@@ -18,7 +18,7 @@ PYTHON=python
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
 	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
-	../grrect.c ../grarc.c ../arrows.c ../segments.c 
+	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c 
 
 all:: $(ALL)
 
@@ -141,5 +141,11 @@ clean ::
 	    --override segments.override \
 	    --prefix Segments segments.defs) > $*.c \
 	&& cp segments.h ../../include/nsp 
+
+../surf.c : surf.defs surf.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override surf.override \
+	    --prefix Surf surf.defs) > $*.c \
+	&& cp surf.h ../../include/nsp 
 
 
