@@ -241,6 +241,7 @@ InterfTab Interfaces[]={
   {GRoot_Interf, GRoot_Interf_Info},
   {Polyline_Interf, Polyline_Interf_Info},
   {VField_Interf, VField_Interf_Info},
+  {Contour_Interf, Contour_Interf_Info},
   {Surf_Interf, Surf_Interf_Info},
 #endif 
   {NULL,NULL}
