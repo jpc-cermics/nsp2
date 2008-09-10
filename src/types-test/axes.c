@@ -1413,7 +1413,7 @@ static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
 
 static NspList *nsp_axes_children(NspGraphic *Obj)
 {
-  return  ((NspFigure *) Obj)->obj->children;
+  return  ((NspAxes *) Obj)->obj->children;
 }
 
 #line 1420 "axes.c"
