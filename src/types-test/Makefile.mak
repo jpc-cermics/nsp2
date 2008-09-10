@@ -9,7 +9,7 @@ LIBRARY = nsp.lib
 
 OBJSC = classa.obj classb.obj classc.obj classaref.obj classbref.obj \
 	figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj gmatrix.obj \
-	vfield.obj contour.obj grarc.obj grrect.obj arrows.obj segments.obj 
+	vfield.obj contour.obj grarc.obj grrect.obj arrows.obj segments.obj surf.obj
 
 OBJSF=
 

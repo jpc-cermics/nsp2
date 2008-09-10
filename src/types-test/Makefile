@@ -6,7 +6,7 @@ LIBRARY = nsp.a
 
 OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
 	figure.o axes.o polyline.o curve.o graphic.o groot.o gmatrix.o \
-	vfield.o contour.o grarc.o grrect.o arrows.o segments.o 
+	vfield.o contour.o grarc.o grrect.o arrows.o segments.o surf.o
 
 OBJSF=
 
