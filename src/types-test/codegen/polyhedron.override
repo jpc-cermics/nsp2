@@ -5,6 +5,9 @@ headers
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
+extern  int nsp_obj3d_orientation(int x[], int y[], int n);
+
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
@@ -112,10 +115,6 @@ last
 
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj)
 {
-  int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
-  NspPolyhedron *P =(NspPolyhedron*) Obj ;
   if ( Obj->obj->hidden == TRUE ) return ;
   /* be sure that object are in canonical form */
 }
@@ -146,4 +145,170 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
   return;
 }
 
+
+
+static int chek_polyhedron(NspPolyhedron *P)
+{
+  nsp_polyhedron *Q = P->obj;
+  int Q_nb_faces = Q->Mface->n;
+  int Q_nb_coords = Q->Mcoord->n;
+  /* only to facilitate the job 
+  int Q_nb_coords = Q->Mcoord->n;
+  double * Q_coord = Q->Mcoord->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int * Q_face = Q->Mface->I;
+  int Q_nb_colors = Q->Mcolor->mn;
+  int * Q_color =  Q->Mcolor->I;
+  int Q_nb_back_colors = Q->Mback_color->mn ;
+  int * Q_back_color =  Q->Mback_color->I;
+  */
+  int i;
+
+  if ( Q->Mcoord->m != 3 ) 
+    {
+      /* Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack)); */
+      return FAIL;
+    }
+  if ( Q->Mface->m < 3 ) 
+    {
+      /* Scierror("%s : bad face, first dimension should be < 3 %d\n",NspFnameH(stack)); */
+      return FAIL;
+    }
+  /* switch to int XXX */
+  Q->Mface = Mat2int(Q->Mface);
+  for ( i = 0 ; i < Q->Mface->mn ; i++) Q->Mface->I[i]--;  
+  if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 ) 
+    {
+      /* Scierror("%s : bad color size, expecting 1 or %d\n", Q->nb_faces); */
+      return FAIL;
+    }
+  /* switch to int XXX */
+  Q->Mcolor = Mat2int(Q->Mcolor);
+  
+  if ( Q->Mback_color->mn  !=  Q_nb_faces  && Q->Mback_color->mn != 1 ) 
+    {
+      /*       Scierror("%s : bad back_color size, expecting 1 or %d\n", Q->nb_faces);*/
+      return FAIL;
+    }
+  
+  /* switch to int XXX */
+  Q->Mback_color = Mat2int(Q->Mback_color);
+  
+  /* create a matrix FIXME */
+  if ( Q-> pos == NULL) 
+    Q->pos = malloc( Q_nb_coords * sizeof(int));
+  Q->pos_length = Q_nb_coords;
+
+  return OK;
+}
+
+
+/* draw one face of a polyhedron 
+ * from Pincon 
+ */
+
+static void draw_polyhedron_face(BCG *Xgc,NspObject *Ob, int j)
+{
+  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
+  int i, np=1, m;
+  int x[6], y[6];   /* a changer */
+  int numpt, *current_vertex, color;
+
+  /* int Q_nb_coords = Q->Mcoord->n; */
+  double * Q_coord = Q->Mcoord->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  /* int Q_nb_faces = Q->Mface->n; */
+  int * Q_face = Q->Mface->I;
+  int Q_nb_colors = Q->Mcolor->mn;
+  int * Q_color =  Q->Mcolor->I;
+  int Q_nb_back_colors = Q->Mback_color->mn ;
+  int * Q_back_color =  Q->Mback_color->I;
+  
+  int foreground_color = 1; /* should be shared */
+
+  m = Q_nb_vertices_per_face;
+  current_vertex = &(Q_face[m*j]);
+  for (i = 0 ; i < m ; i++)
+    {
+      numpt = current_vertex[i];
+      x[i] = XScale(Q_coord[3*numpt]);
+      y[i] = YScale(Q_coord[3*numpt+1]);
+    }
+  
+  if ( nsp_obj3d_orientation(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
+    if ( Q_nb_colors == 1 )
+      color = Q_color[0];
+    else
+      color = Q_color[j];
+  else       /* orientation < 0 =>  back color is used */
+    if ( Q_nb_back_colors == 1 )
+      color = Q_back_color[0];
+    else
+      color = Q_back_color[j];
+	    
+  if ( ! Q->mesh )  /* le contour du polygone ne doit pas apparaitre */
+    color = -color; 
+
+  /* color = 0;  permet de voir uniquement le maillage */
+  /* 
+   *  x, y : polygone(s) coordinates, nr : number of sides
+   *  np : number of polygone(s) =1 here
+   */
+  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+}
+
+static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
+{
+#ifdef  WITH_GTKGLEXT 
+  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
+
+  int i,j, np=1, m;
+  double x[6], y[6], z[6];   /* a changer */
+  int numpt, *current_vertex, color;
+
+  /* int Q_nb_coords = Q->Mcoord->n;  */
+  double * Q_coord = Q->Mcoord->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int * Q_face = Q->Mface->I;
+  int Q_nb_colors = Q->Mcolor->mn;
+  int * Q_color =  Q->Mcolor->I;
+  /*   int Q_nb_back_colors = Q->Mback_color->mn ; */
+  /* int * Q_back_color =  Q->Mback_color->I;*/
+  
+  int foreground_color = 1; /* should be shared */
+  
+  m = Q_nb_vertices_per_face;
+
+  for ( j = 0 ; j < Q_nb_faces ; j++ )
+    {
+      current_vertex = &(Q_face[m*j]);
+      for (i = 0 ; i < m ; i++)
+	{
+	  numpt = current_vertex[i];
+	  x[i] = Q_coord[3*numpt];
+	  y[i] = Q_coord[3*numpt+1];
+	  z[i] = Q_coord[3*numpt+2];
+	}
+      
+      if ( Q_nb_colors == 1 )
+	color = Q_color[0];
+      else
+	color = Q_color[j];
+      
+      if ( ! Q->mesh )  /* le contour du polygone ne doit pas apparaitre */
+	color = -color; 
+
+      /* color = 0;  permet de voir uniquement le maillage */
+      /* 
+       *  x, y : polygone(s) coordinates, nr : number of sides
+       *  np : number of polygone(s) =1 here
+       */
+      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+      fillpolylines3D(Xgc, x, y, z, &color, np, m);
+    }
+#endif
+}
 

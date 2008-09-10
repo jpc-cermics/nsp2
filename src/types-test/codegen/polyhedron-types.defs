@@ -10,7 +10,7 @@
     '("NspMatrix*" "Mcolor")
     '("NspMatrix*" "Mback_color")
     '("gboolean" "mesh" "std" "TRUE")
-    '("int*" "poo" "hidden" )
+    '("int*" "pos" "hidden" )
     )
   (gtype-id "Polyhedron")
 )

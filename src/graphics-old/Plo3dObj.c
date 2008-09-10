@@ -45,6 +45,7 @@ extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, doubl
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
+extern  int nsp_obj3d_orientation(int x[], int y[], int n);
 
 static void dsortc(double x[], int *n, int p[]);
 
@@ -74,7 +75,7 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 			      int inda, int indb, int *xint, int *yint);
 static int zone(double val, double valmin, double valmax, int nv);
 static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
-static int orientation(int x[], int y[], int n);
+
 static void init_Obj3d(Obj3d Obj[], int nbObj);
 static void free_Obj3d(Obj3d Obj[], int nbObj);
 void free_box(Plot3dBox *B);
@@ -1126,7 +1127,7 @@ static void draw_spolyhedron_face(BCG *Xgc,void *Ob, int j)
     }
   val_mean = val_mean / m;
 
-  orient = orientation(x, y, m);
+  orient = nsp_obj3d_orientation(x, y, m);
 
   /*   if ( orient == 1 ) */
   /*     return; */
@@ -1218,7 +1219,7 @@ static void draw_polyhedron_face(BCG *Xgc,void *Ob, int j)
       y[i] = YScale(Q->coord[3*numpt+1]);
     }
 
-  if ( orientation(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
+  if ( nsp_obj3d_orientation(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
     if ( Q->nb_colors == 1 )
       color = Q->color[0];
     else
@@ -1486,7 +1487,8 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
   Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle);
 }
 
-static int orientation(int x[], int y[], int n)
+
+int nsp_obj3d_orientation(int x[], int y[], int n)
 {
   /* calcule l'orientation avec les 3 premiers points du polygone ... */
   int a, b, c, d ;

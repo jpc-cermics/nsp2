@@ -35,7 +35,7 @@ struct _nsp_polyhedron {
   NspMatrix* Mcolor;
   NspMatrix* Mback_color;
   gboolean mesh;
-  int* poo;  int poo_length;
+  int* pos;  int pos_length;
   int ref_count;
 };
 
@@ -65,7 +65,7 @@ NspPolyhedron *new_polyhedron();
 
 #define NULLPOLYHEDRON (NspPolyhedron*) 0
 
-extern NspPolyhedron *nsp_polyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* poo, int poo_length,NspTypeBase *type);
+extern NspPolyhedron *nsp_polyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type);
 
 /* from PolyhedronObj.c */
 
