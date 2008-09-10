@@ -1,0 +1,20 @@
+;; -*- scheme -*-
+
+(define-objectref Points3d
+  (in-module "Points3d")
+  (parent "Graphic")
+  (c-name "Points3d")
+  (fields
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "z")
+    '("gboolean" "mesh" "std" "TRUE")
+    '("int" "mesh_color" "std" "-1")
+    '("int" "face_color" "std" "-1")
+    )
+  (gtype-id "Points3d")
+)
+
+
+
+

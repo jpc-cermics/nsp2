@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "spolyhedron-types.defs")
+
+;; overriden 
+
+(define-function spolyhedron_attach
+  (c-name "spolyhedron_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "SPolyhedron")
+  (c-name "nsp_spolyhedron_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "SPolyhedron")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_spolyhedron
+  (c-name "nsp_extractelts_spolyhedron")
+  (return-type "none")
+)
+(define-function setrowscols_spolyhedron
+  (c-name "nsp_setrowscols_spolyhedron")
+  (return-type "none")
+)
+

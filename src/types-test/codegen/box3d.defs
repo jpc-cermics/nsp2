@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "box3d-types.defs")
+
+;; overriden 
+
+(define-function box3d_attach
+  (c-name "box3d_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Box3d")
+  (c-name "nsp_box3d_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Box3d")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_box3d
+  (c-name "nsp_extractelts_box3d")
+  (return-type "none")
+)
+(define-function setrowscols_box3d
+  (c-name "nsp_setrowscols_box3d")
+  (return-type "none")
+)
+

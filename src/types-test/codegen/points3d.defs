@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "points3d-types.defs")
+
+;; overriden 
+
+(define-function points3d_attach
+  (c-name "points3d_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Points3d")
+  (c-name "nsp_points3d_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Points3d")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_points3d
+  (c-name "nsp_extractelts_points3d")
+  (return-type "none")
+)
+(define-function setrowscols_points3d
+  (c-name "nsp_setrowscols_points3d")
+  (return-type "none")
+)
+

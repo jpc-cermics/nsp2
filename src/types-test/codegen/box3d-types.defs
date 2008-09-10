@@ -1,0 +1,20 @@
+;; -*- scheme -*-
+
+(define-objectref Box3d
+  (in-module "Box3d")
+  (parent "Graphic")
+  (c-name "Box3d")
+  (fields
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "z")
+    '("gboolean" "mesh" "std" "TRUE")
+    '("int" "mesh_color" "std" "-1")
+    '("int" "face_color" "std" "-1")
+    )
+  (gtype-id "Box3d")
+)
+
+
+
+

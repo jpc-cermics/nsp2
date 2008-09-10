@@ -1,0 +1,28 @@
+;; -*- scheme -*-
+
+(include "objs3d-types.defs")
+
+;; overriden 
+
+(define-function objs3d_attach
+  (c-name "objs3d_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_objs3d
+  (c-name "nsp_extractelts_objs3d")
+  (return-type "none")
+)
+(define-function setrowscols_objs3d
+  (c-name "nsp_setrowscols_objs3d")
+  (return-type "none")
+)
+
+
+

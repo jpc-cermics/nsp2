@@ -1,0 +1,153 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include "nsp/spolyhedron.h"
+#include <nsp/figure.h> 
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+
+extern void nsp_figure_force_redraw( NspFigure *F);
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type SPolyhedron
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_spolyhedron;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_spolyhedron ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
+  /* next method are defined in NspGraphic and need not be chnaged here for SPolyhedron */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override spolyhedron_attach kwargs
+int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override-attr Pts 
+
+/* overriden to check dimensions when changing values.
+ */
+
+static NspObject *_wrap_spolyhedron_get_obj_Pts(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = TRUE; 
+  ret = ((NspMatrix*) ((NspSPolyhedron *) self)->obj->Pts);
+  return (NspObject *) ret;
+}
+
+static int _wrap_spolyhedron_set_obj_Pts(void *self,NspObject *val)
+{
+  NspMatrix *M= (NspMatrix *) val ; 
+  NspSPolyhedron *poly = self ;
+  if ( M->rc_type != 'r' || M->n != 2 )
+    {
+      Scierror("Error: spolyhedron field Pts should be real an mx2 sized\n");
+      return FAIL;
+    }
+  /* before replacing the field we check that dimensions are correct */
+  if ( poly->obj->Pts != NULL )
+    nsp_matrix_destroy(poly->obj->Pts);
+  poly->obj->Pts = (NspMatrix *) val ;
+  return OK;
+}
+
+%%
+override nsp_extractelts_spolyhedron kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_spolyhedron kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj)
+{
+  int flag[]={1,2,4};
+  double bbox[]={0,1,0,1,0,1};
+  double teta = 35, alpha=45;
+  NspSPolyhedron *P =(NspSPolyhedron*) Obj ;
+  if ( Obj->obj->hidden == TRUE ) return ;
+  /* be sure that object are in canonical form */
+  Mat2double(P->obj->x);
+  Mat2double(P->obj->y);
+  Mat2double(P->obj->z);
+  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+	       &teta,&alpha,"X@Y@Z",flag,bbox);
+}
+
+static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
+}
+
+static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of spolyhedron 
+ *
+ */
+
+static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+  return;
+}
+

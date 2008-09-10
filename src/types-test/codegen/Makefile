@@ -18,7 +18,9 @@ PYTHON=python
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
 	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
-	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c 
+	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
+	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c ../spolyhedron.c \
+	../string3d.c 
 
 all:: $(ALL)
 
@@ -147,5 +149,47 @@ clean ::
 	    --override surf.override \
 	    --prefix Surf surf.defs) > $*.c \
 	&& cp surf.h ../../include/nsp 
+
+../string3d.c : string3d.defs string3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override string3d.override \
+	    --prefix String3d string3d.defs) > $*.c \
+	&& cp string3d.h ../../include/nsp 
+
+../spolyhedron.c : spolyhedron.defs spolyhedron.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override spolyhedron.override \
+	    --prefix SPolyhedron spolyhedron.defs) > $*.c \
+	&& cp spolyhedron.h ../../include/nsp 
+
+../polyhedron.c : polyhedron.defs polyhedron.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override polyhedron.override \
+	    --prefix Polyhedron polyhedron.defs) > $*.c \
+	&& cp polyhedron.h ../../include/nsp 
+
+../points3d.c : points3d.defs points3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override points3d.override \
+	    --prefix Points3d points3d.defs) > $*.c \
+	&& cp points3d.h ../../include/nsp 
+
+../objs3d.c : objs3d.defs objs3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override objs3d.override \
+	    --prefix Objs3d objs3d.defs) > $*.c \
+	&& cp objs3d.h ../../include/nsp 
+
+../box3d.c : box3d.defs box3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override box3d.override \
+	    --prefix Box3d box3d.defs) > $*.c \
+	&& cp box3d.h ../../include/nsp 
+
+../polyline3d.c : polyline3d.defs polyline3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override polyline3d.override \
+	    --prefix Polyline3d polyline3d.defs) > $*.c \
+	&& cp polyline3d.h ../../include/nsp 
 
 

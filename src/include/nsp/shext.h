@@ -1,0 +1,15 @@
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_SHREXT 
+#define  NSP_INC_SHREXT 
+
+/*
+ * shext.h is generated from shext.h.in
+ */	
+
+#ifdef WIN32 
+#define SHREXT_NAME ".dll"
+#else 
+#define SHREXT_NAME ".so"
+#endif
+#endif
+

@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "polyhedron-types.defs")
+
+;; overriden 
+
+(define-function polyhedron_attach
+  (c-name "polyhedron_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "Polyhedron")
+  (c-name "nsp_polyhedron_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "Polyhedron")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_polyhedron
+  (c-name "nsp_extractelts_polyhedron")
+  (return-type "none")
+)
+(define-function setrowscols_polyhedron
+  (c-name "nsp_setrowscols_polyhedron")
+  (return-type "none")
+)
+

@@ -1,0 +1,33 @@
+;; -*- scheme -*-
+
+(include "string3d-types.defs")
+
+;; overriden 
+
+(define-function string3d_attach
+  (c-name "string3d_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+(define-method full_copy 
+  (of-object "String3d")
+  (c-name "nsp_string3d_full_copy")
+  ;; (return-type "NspObject*")
+  (return-type "String3d")
+)
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_string3d
+  (c-name "nsp_extractelts_string3d")
+  (return-type "none")
+)
+(define-function setrowscols_string3d
+  (c-name "nsp_setrowscols_string3d")
+  (return-type "none")
+)
+
