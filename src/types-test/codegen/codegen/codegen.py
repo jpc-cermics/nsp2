@@ -642,9 +642,13 @@ class Wrapper:
         substdict['fields_copy_self'] = self.build_copy_fields('H','self')
         # fields_copy: used in full copy function 
         substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self')
+        # give the sequence of parameters to be inserted in _create function
         substdict['fields_list'] = self.build_list_fields('')
+        # unused 
         substdict['fields_call'] = self.build_list_fields('call')
+        # for the save function 
         substdict['fields_save'] = self.build_save_fields('M')
+        # for the load function 
         substdict['fields_load'] = self.build_load_fields('M')
         substdict['fields_info'] = self.build_info_fields('M')
         substdict['fields_print'] = self.build_print_fields('M','print')
@@ -658,6 +662,7 @@ class Wrapper:
         substdict['create_partial'] = self.build_create_partial('H')
         substdict['copy_partial'] = self.build_copy_partial('H')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
+        # fields for declaration 
         substdict['fields'] = self.build_fields()
         # methods to be inserted in the class declaration 
         substdict['internal_methods'] = self.build_internal_methods()
@@ -731,11 +736,9 @@ class Wrapper:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
         for ftype, fname, opt, pdef, psize, pcheck in self.objinfo.fields:
-            if ftype == 'double[]':
-                str = str + '  double %s[%s];\n' % ( fname, psize ) 
-            else:
-                str = str + '  %s %s;\n' % (ftype,fname)
-        return str
+            handler = argtypes.matcher.get(ftype)
+            str = str + handler.attr_write_field_declaration(ftype,fname,opt,pdef,psize,pcheck) 
+        return str 
 
     def build_internal_methods(self):
         return  self.overrides.override_internal_methods
@@ -752,10 +755,8 @@ class Wrapper:
         if not self.objinfo.fields:
             return str + '};\n' 
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
-            if ftype == 'double[]':
-                str = str + '  double %s[%s];\n' % ( fname, psize ) 
-            else:
-                str = str + '  %s %s;\n' % (ftype,fname)
+            handler = argtypes.matcher.get(ftype)
+            str = str + handler.attr_write_field_declaration(ftype,fname,opt,pdef,psize,pcheck) 
         str = str + '  int ref_count;\n};\n\n' 
         return str
 
@@ -768,16 +769,9 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            if flag:
-                fftype=''
-            else:
-                fftype=ftype
-            if fftype == 'double[]':
-                fftype = 'double*' 
             if str:
-                str = str + ',%s %s' % (fftype,fname)
-            else:
-                str = str + '%s %s' % (fftype,fname)
+                str = str + ',' 
+            str = str + handler.attr_write_create_call(ftype,fname,opt,pdef,psize,pcheck,flag) 
         return str
 
     def build_copy_fields(self,left_varname,right_varname):
