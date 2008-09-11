@@ -129,16 +129,29 @@ extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info
 
 #define WITH_GRAPHIC_OBJECTS 
 #ifdef  WITH_GRAPHIC_OBJECTS 
-extern  sci_interface  Axes_Interf;extern  interface_info  Axes_Interf_Info;
-extern  sci_interface  Curve_Interf;extern  interface_info  Curve_Interf_Info;
-extern  sci_interface  Figure_Interf;extern  interface_info  Figure_Interf_Info;
-extern  sci_interface  GMatrix_Interf;extern  interface_info  GMatrix_Interf_Info;
-extern  sci_interface  Graphic_Interf;extern  interface_info  Graphic_Interf_Info;
-extern  sci_interface  GRoot_Interf;extern  interface_info  GRoot_Interf_Info;
-extern  sci_interface  Polyline_Interf;extern  interface_info  Polyline_Interf_Info;
-extern  sci_interface  VField_Interf;extern  interface_info  VField_Interf_Info;
-extern  sci_interface  Contour_Interf;extern  interface_info  Contour_Interf_Info;
-extern  sci_interface  Surf_Interf;extern  interface_info  Surf_Interf_Info;
+extern sci_interface Arrows_Interf;extern interface_info Arrows_Interf_Info;
+extern sci_interface Axes_Interf;extern interface_info Axes_Interf_Info;
+extern sci_interface Box3d_Interf;extern interface_info Box3d_Interf_Info;
+extern sci_interface Contour_Interf;extern interface_info Contour_Interf_Info;
+extern sci_interface Curve_Interf;extern interface_info Curve_Interf_Info;
+extern sci_interface Figure_Interf;extern interface_info Figure_Interf_Info;
+extern sci_interface GMatrix_Interf;extern interface_info GMatrix_Interf_Info;
+extern sci_interface GRoot_Interf;extern interface_info GRoot_Interf_Info;
+extern sci_interface GrArc_Interf;extern interface_info GrArc_Interf_Info;
+extern sci_interface GrRect_Interf;extern interface_info GrRect_Interf_Info;
+extern sci_interface Graphic_Interf;extern interface_info Graphic_Interf_Info;
+extern sci_interface Grstring_Interf;extern interface_info Grstring_Interf_Info;
+extern sci_interface Objs3d_Interf;extern interface_info Objs3d_Interf_Info;
+extern sci_interface Points3d_Interf;extern interface_info Points3d_Interf_Info;
+extern sci_interface Polyhedron_Interf;extern interface_info Polyhedron_Interf_Info;
+extern sci_interface Polyline3d_Interf;extern interface_info Polyline3d_Interf_Info;
+extern sci_interface Polyline_Interf;extern interface_info Polyline_Interf_Info;
+extern sci_interface SPolyhedron_Interf;extern interface_info SPolyhedron_Interf_Info;
+extern sci_interface Segments_Interf;extern interface_info Segments_Interf_Info;
+extern sci_interface String3d_Interf;extern interface_info String3d_Interf_Info;
+extern sci_interface Surf_Interf;extern interface_info Surf_Interf_Info;
+extern sci_interface VField_Interf;extern interface_info VField_Interf_Info;
+
 #endif 
 
 InterfTab Interfaces[]={
@@ -233,16 +246,28 @@ InterfTab Interfaces[]={
   {AmosCephes_Interf, AmosCephes_Info},
 #endif 
 #ifdef  WITH_GRAPHIC_OBJECTS 
-  {Axes_Interf, Axes_Interf_Info},
-  {Curve_Interf, Curve_Interf_Info},
-  {Figure_Interf, Figure_Interf_Info},
-  {GMatrix_Interf, GMatrix_Interf_Info},
-  {Graphic_Interf, Graphic_Interf_Info},
-  {GRoot_Interf, GRoot_Interf_Info},
-  {Polyline_Interf, Polyline_Interf_Info},
-  {VField_Interf, VField_Interf_Info},
-  {Contour_Interf, Contour_Interf_Info},
-  {Surf_Interf, Surf_Interf_Info},
+  {Arrows_Interf,Arrows_Interf_Info},
+  {Axes_Interf,Axes_Interf_Info},
+  {Box3d_Interf,Box3d_Interf_Info},
+  {Contour_Interf,Contour_Interf_Info},
+  {Curve_Interf,Curve_Interf_Info},
+  {Figure_Interf,Figure_Interf_Info},
+  {GMatrix_Interf,GMatrix_Interf_Info},
+  {GRoot_Interf,GRoot_Interf_Info},
+  {GrArc_Interf,GrArc_Interf_Info},
+  {GrRect_Interf,GrRect_Interf_Info},
+  {Graphic_Interf,Graphic_Interf_Info},
+  {Grstring_Interf,Grstring_Interf_Info},
+  {Objs3d_Interf,Objs3d_Interf_Info},
+  {Points3d_Interf,Points3d_Interf_Info},
+  {Polyhedron_Interf,Polyhedron_Interf_Info},
+  {Polyline3d_Interf,Polyline3d_Interf_Info},
+  {Polyline_Interf,Polyline_Interf_Info},
+  {SPolyhedron_Interf,SPolyhedron_Interf_Info},
+  {Segments_Interf,Segments_Interf_Info},
+  {String3d_Interf,String3d_Interf_Info},
+  {Surf_Interf,Surf_Interf_Info},
+  {VField_Interf,VField_Interf_Info},
 #endif 
   {NULL,NULL}
 }; 

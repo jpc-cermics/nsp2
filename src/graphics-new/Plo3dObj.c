@@ -46,16 +46,19 @@ extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vec
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern  int nsp_obj3d_orientation(int x[], int y[], int n);
+extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_free_box(Plot3dBox *B);
 
-static void dsortc(double x[], int *n, int p[]);
 
-static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+
 static int select_box_vertex(const double coord[]);
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color);
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color);
 static void draw_justified_string(BCG *Xgc,char *str, double xx, double yy, int xj, int yj);
-static void draw_box(BCG *Xgc,Plot3dBox *B);
-static void draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
 static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B);
 static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j);
 static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[]);
@@ -78,8 +81,6 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
 
 static void init_Obj3d(Obj3d Obj[], int nbObj);
 static void free_Obj3d(Obj3d Obj[], int nbObj);
-void free_box(Plot3dBox *B);
-
 static int get_polyhedron(Stack *stack,int k,NspHash *H,Polyhedron *Q,int *nf);
 static obj3d_free  free_polyhedron;
 static obj3d_draw_partial draw_polyhedron_face;
@@ -121,9 +122,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 #endif 
 
 static void draw_justified_string3d_ogl(BCG *Xgc,String3d *S, int xj, int yj);
-
 static void draw_justified_string3d(BCG *Xgc,String3d *S, int xj, int yj);
-static void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 /* des  variables globales... */
 GBoolean with_mesh;  /*  actuellement soit on dessine tous les polyedres
@@ -330,10 +329,10 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
     }
  
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
-  dsortc(z, &n, p);
+  nsp_obj3d_dsortc(z, &n, p);
 
   /* step 4 : drawing of each faces */
-  if ( with_box == TRUE  ) draw_box(Xgc,B);
+  if ( with_box == TRUE  ) nsp_obj3d_draw_box(Xgc,B);
 
   for (i = n -1 ; i >= 0 ; i--)
     {
@@ -342,8 +341,8 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
       /* dessin partiel de l'objet en utilisant la face j */
       OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j);
     }
-  if ( with_box == TRUE  &&  B->box_style == SCILAB )  draw_near_box_segments(Xgc,B);
-  if ( with_box == TRUE ) free_box(B);
+  if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
+  if ( with_box == TRUE ) nsp_obj3d_free_box(B);
   free_Obj3d(Obj,nbObj);
   free(HF);
   free(z);
@@ -398,9 +397,9 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   if ( with_box == TRUE  )
     {
       B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim);
-      draw_box(Xgc,B);
-      if (B->box_style == SCILAB ) draw_near_box_segments(Xgc,B);
-      free_box(B);
+      nsp_obj3d_draw_box(Xgc,B);
+      if (B->box_style == SCILAB ) nsp_obj3d_draw_near_box_segments(Xgc,B);
+      nsp_obj3d_free_box(B);
     }
 
   for (k=0; k < nbObj; k++)  OBJ3D(Obj[k].obj)->draw_ogl(Xgc,Obj[k].obj);
@@ -409,7 +408,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 #endif 
 
 
-static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
+Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
 {
 #ifdef WITH_GTKGLEXT 
   double coord[24];
@@ -718,7 +717,7 @@ static int select_box_vertex(const double coord[])
   return ( imax );
 }
 
-static void draw_box(BCG *Xgc,Plot3dBox *B)
+extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B)
 {
   int k, j, b0;
   GBoolean GOK;
@@ -824,7 +823,7 @@ static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B)
     };
 }
 
-static void draw_near_box_segments(BCG *Xgc,Plot3dBox *B)
+void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B)
 {
   /* dessine les segments ayant le point inear comme sommet */
   int k, ia, ib;
@@ -1517,7 +1516,7 @@ static void free_Obj3d(Obj3d Obj[], int nbObj)
   free(Obj);
 }
 
-void free_box(Plot3dBox *B)
+void nsp_obj3d_free_box(Plot3dBox *B)
 {
   if ( B->with_ticks )
     {
@@ -1546,7 +1545,7 @@ void free_box(Plot3dBox *B)
 
 /* XXXX */
 
-static void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
 {
   int i, k=0;
   double v[3], facteur;
@@ -1960,7 +1959,7 @@ static void zmean_for_string3d(void *Ob, double z[], HFstruct HF[], int *n, int 
 #define PUSH_segment(ia,ib) ileft[la] = (ia); iright[la] = (ib); la++
 
 
-static void dsortc(double x[], int *n, int p[])
+void nsp_obj3d_dsortc(double x[], int *n, int p[])
 {
   /*
    *     PURPOSE
