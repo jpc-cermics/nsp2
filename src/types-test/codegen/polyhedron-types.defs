@@ -5,7 +5,7 @@
   (parent "Graphic")
   (c-name "Polyhedron")
   (fields
-    '("NspMatrix*" "Mcoord")
+    '("NspMatrix*" "Mcoord" ) 
     '("void*"      "Mcoord_l"  "hidden" "NULL" )
     '("NspMatrix*" "Mface")
     '("NspMatrix*" "Mcolor")

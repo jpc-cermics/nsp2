@@ -49,7 +49,8 @@ function test3()
   //mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
-  A=objs3d_create(top=%t,title="Main title",x="x",y="y")// ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
+  A=objs3d_create(top=%t,title="Main title",x="x",y="y",colormap=hotcolormap(64));
+  // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
   x = linspace(0,2*%pi,40);
   z = cos(x')*cos(x);

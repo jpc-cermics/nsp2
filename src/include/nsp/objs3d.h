@@ -39,6 +39,7 @@ struct _nsp_objs3d {
   char* title;
   char* x;
   char* y;
+  NspMatrix* colormap;
   NspList* children;
   int ref_count;
 };
@@ -69,7 +70,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspMatrix* colormap,NspList* children,NspTypeBase *type);
 
 /* from Objs3dObj.c */
 

@@ -253,7 +253,10 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
     double ebox[]={0,6,0,6,-1,1};
     double theta = 35, alpha=45;
     char legend[]="X@Y@Z";
-    nsp_draw_objs3d_s2(Xgc,(NspObjs3d *)Obj,theta,alpha,legend,flag,ebox,TRUE,TRUE,3,1);
+    if ( P->obj->colormap->n == 3 )
+      Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
+						P->obj->colormap->R);
+    nsp_draw_objs3d_s2(Xgc,P,theta,alpha,legend,flag,ebox,TRUE,TRUE,3,1);
   }
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -437,17 +440,11 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* we have to loop here to collect the number of faces */
   cloc = Children->first ;
   nf = 0;
+
   while ( cloc != NULLCELL ) 
     {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  /* we assume here that we only have polyhedron inside */
-	  if ( IsPolyhedron(cloc->O)) 
-	    {
-	      NspPolyhedron *P= (NspPolyhedron *) cloc->O;
-	      nf += P->obj->Mface->n;
-	    }
-	}
+      NspGraphic *G = (NspGraphic *) cloc->O;
+      nf += G->type->n_faces(Xgc,G);
       cloc = cloc->next;
     }
 
@@ -479,14 +476,12 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
   /* just to accelerate next step */
   objs_array = malloc( nbObj*sizeof(NspObject *));
+
   cloc = Children->first ;
   n=0;
   while ( cloc != NULLCELL ) 
     {
-      if ( cloc->O != NULLOBJ && IsPolyhedron(cloc->O))
-	{
-	  objs_array[n++]= cloc->O; 
-	}
+      objs_array[n++]= cloc->O; 
       cloc = cloc->next;
     }
   
@@ -503,20 +498,9 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   nf = 0;
   while ( cloc != NULLCELL ) 
     {
-#if 1 
       NspGraphic *G = (NspGraphic *) cloc->O;
       G->type->zmean(Xgc,G,z,HF,&n,k,lim);
       k++;
-#else 
-      if ( cloc->O != NULLOBJ && IsPolyhedron(cloc->O))
-	{
-	  nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
-	  nsp_check_polyhedron((NspPolyhedron *) cloc->O);
-	  apply_transforms(Xgc,((NspMatrix *)Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
-	  zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
-	  k++;
-	}
-#endif 
       cloc = cloc->next;
     }
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
