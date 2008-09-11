@@ -6,6 +6,7 @@
   (c-name "Polyhedron")
   (fields
     '("NspMatrix*" "Mcoord")
+    '("void*"      "Mcoord_l"  "hidden" "NULL" )
     '("NspMatrix*" "Mface")
     '("NspMatrix*" "Mcolor")
     '("NspMatrix*" "Mback_color")

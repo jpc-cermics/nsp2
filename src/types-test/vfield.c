@@ -13,7 +13,7 @@
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
@@ -802,7 +802,7 @@ Init portion
 
 #line 68 "codegen/vfield.override"
 
-static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   double arfact = 1.0;
   NspVField *P = (NspVField *) Obj;

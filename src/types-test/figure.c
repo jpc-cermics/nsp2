@@ -14,7 +14,7 @@
 #include "nsp/axes.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
@@ -968,7 +968,7 @@ Init portion
  *
  */
 
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   Cell *cloc;
   NspList *L;
@@ -981,7 +981,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G);
+	  G->type->draw(Xgc,G,NULL);
 	}
       cloc = cloc->next;
     }

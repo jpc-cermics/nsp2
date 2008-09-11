@@ -13,7 +13,7 @@
 #include <nsp/figure.h>
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_curve(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_curve(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_curve(BCG *Xgc,NspGraphic *o,double *alpha);
@@ -805,7 +805,7 @@ Init portion
 
 typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ; 
 
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   int cmark=-1;
   int xmark[2];

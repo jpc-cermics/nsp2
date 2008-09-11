@@ -13,7 +13,7 @@
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_grarc(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_grarc(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_grarc(BCG *Xgc,NspGraphic *o,double *alpha);
@@ -811,7 +811,7 @@ Init portion
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   double val[6];
   int ccolor=-1,cthick=-1;

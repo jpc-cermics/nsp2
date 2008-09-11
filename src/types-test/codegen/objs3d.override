@@ -9,7 +9,7 @@ headers
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj);
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *o,double *alpha);
@@ -192,7 +192,7 @@ extern void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
 				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
 
-static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj)
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   char xf[]="onn";
   char strflag[]="151";
@@ -394,6 +394,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
 				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
+  NspObject **objs_array= NULL;
   Cell *cloc;
   NspList *Children;
   nsp_box_3d box;
@@ -476,6 +477,19 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   z = malloc( nf * sizeof(double) );
   p = malloc( nf * sizeof(int) );
 
+  /* just to accelerate next step */
+  objs_array = malloc( nbObj*sizeof(NspObject *));
+  cloc = Children->first ;
+  n=0;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ && IsPolyhedron(cloc->O))
+	{
+	  objs_array[n++]= cloc->O; 
+	}
+      cloc = cloc->next;
+    }
+  
   /* step 1 : for each object :
    *            a/ get the coordinates in the local repair
    *               and determines the pos of each point within the pyramidal
@@ -484,34 +498,21 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
    *               and HF arrays for the hidden face algorithm (only partial visible 
    *               parts without any OUT_Z point are included)
    */
-  n = 0;
-
+  n = 0;k=0;
   cloc = Children->first ;
   nf = 0;
   while ( cloc != NULLCELL ) 
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ && IsPolyhedron(cloc->O))
 	{
-	  /* we assume here that we only have polyhedron inside */
-	  if ( IsPolyhedron(cloc->O)) 
-	    {
-	      nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
-	      nsp_check_polyhedron((NspPolyhedron *) cloc->O);
-	      apply_transforms(Xgc,Q->Mcoord->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
-	      zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
-	    }
+	  nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
+	  nsp_check_polyhedron((NspPolyhedron *) cloc->O);
+	  apply_transforms(Xgc,((NspMatrix *)Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+	  zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
+	  k++;
 	}
       cloc = cloc->next;
     }
-  /* 
-  for ( k = 0 ; k < nbObj ; k++ )
-    {
-      func_3dobj *Q = OBJ3D(Obj[k].obj);
-      apply_transforms(Xgc,Q->coord,Q->coord, Q->pos, lim, Q->nb_coords);
-      Q->zmean(Q, z, HF, &n, k);
-    }
-  */
-
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
   nsp_obj3d_dsortc(z, &n, p);
 
@@ -524,6 +525,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       j = HF[p[i]].num_in_obj; /* son numéro de face dans l'objet en question */
       /* dessin partiel de l'objet en utilisant la face j */
       /* XXX OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j); */
+      ((NspGraphic *) objs_array[k])->type->draw(Xgc,(NspGraphic *) objs_array[k],&j);
     }
   if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
@@ -543,7 +545,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
-  int k, flagx, nf=0,err=0,nbObj, two=2;
+  int flagx, nf=0, two=2;
   double lim[3];
   Plot3dBox *B;
   /* should be shared */
@@ -588,13 +590,8 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
     {
       if ( cloc->O != NULLOBJ ) 
 	{
-	  /* we assume here that we only have polyhedron inside */
-	  if ( IsPolyhedron(cloc->O)) 
-	    {
-	      extern void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
-	      nsp_check_polyhedron(cloc->O);
-	      draw_polyhedron_ogl(Xgc,cloc->O);
-	    }
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->draw(Xgc,G,NULL);
 	}
       cloc = cloc->next;
     }
