@@ -914,7 +914,10 @@ int nsp_check_polyhedron(NspPolyhedron *P)
     }
   /* switch to int XXX */
   Q->Mface = Mat2int(Q->Mface);
-  for ( i = 0 ; i < Q->Mface->mn ; i++) Q->Mface->I[i]--;  
+  /* 
+     for ( i = 0 ; i < Q->Mface->mn ; i++) Q->Mface->I[i]--;  
+  */
+
   if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 ) 
     {
       /* Scierror("%s : bad color size, expecting 1 or %d\n", Q->nb_faces); */
@@ -968,7 +971,7 @@ static void draw_polyhedron_face(BCG *Xgc,NspObject *Ob, int j)
   current_vertex = &(Q_face[m*j]);
   for (i = 0 ; i < m ; i++)
     {
-      numpt = current_vertex[i];
+      numpt = current_vertex[i]-1;
       x[i] = XScale(Q_coord[3*numpt]);
       y[i] = YScale(Q_coord[3*numpt+1]);
     }
@@ -1019,13 +1022,15 @@ void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
   
   m = Q_nb_vertices_per_face;
 
+  /* XXX should not be there */
+  nsp_check_polyhedron((NspPolyhedron *) Ob);
 
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
       current_vertex = &(Q_face[m*j]);
       for (i = 0 ; i < m ; i++)
 	{
-	  numpt = current_vertex[i];
+	  numpt = current_vertex[i]-1;
 	  x[i] = Q_coord[3*numpt];
 	  y[i] = Q_coord[3*numpt+1];
 	  z[i] = Q_coord[3*numpt+2];
@@ -1080,8 +1085,8 @@ void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int
        */
       for ( i = 0 ; i < m ; i++ )
 	{
-	  zmean += Q_coord[3*(*current_vertex)+2];
-	  pos_vertex = Q->pos[*current_vertex];
+	  zmean += Q_coord[3*(*current_vertex-1)+2];
+	  pos_vertex = Q->pos[*current_vertex-1];
 	  if (pos_vertex == OUT_Z)
 	    pos_face = OUT_Z;
 	  else if (pos_vertex == VIN && pos_face != OUT_Z)
@@ -1098,4 +1103,4 @@ void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int
     }
 }
 
-#line 1102 "polyhedron.c"
+#line 1107 "polyhedron.c"

@@ -1353,6 +1353,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 	  if ( IsPolyhedron(cloc->O)) 
 	    {
 	      nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
+	      nsp_check_polyhedron((NspPolyhedron *) cloc->O);
 	      apply_transforms(Xgc,Q->Mcoord->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
 	      zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
 	    }
@@ -1448,6 +1449,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 	  if ( IsPolyhedron(cloc->O)) 
 	    {
 	      extern void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+	      nsp_check_polyhedron(cloc->O);
 	      draw_polyhedron_ogl(Xgc,cloc->O);
 	    }
 	}
@@ -1457,4 +1459,4 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 #endif 
 
 
-#line 1461 "objs3d.c"
+#line 1463 "objs3d.c"
