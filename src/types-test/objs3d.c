@@ -11,6 +11,9 @@
 #line 4 "codegen/objs3d.override"
 #include <nsp/figure.h>
 #include <nsp/curve.h>
+#include <nsp/polyhedron.h>
+#include "../graphics/Plo3dObj.h"
+
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -37,7 +40,7 @@ extern void nsp_figure_force_redraw( NspFigure *F);
 extern Gengine GL_gengine;
 #endif 
 
-#line 41 "objs3d.c"
+#line 44 "objs3d.c"
 
 /* ----------- Objs3d ----------- */
 
@@ -108,7 +111,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
       
   type->init = (init_func *) init_objs3d;
 
-#line 39 "codegen/objs3d.override"
+#line 42 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -119,7 +122,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
-#line 123 "objs3d.c"
+#line 126 "objs3d.c"
   /* 
    * Objs3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -314,7 +317,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
 void nsp_objs3d_destroy(NspObjs3d *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 318 "objs3d.c"
+#line 321 "objs3d.c"
   nsp_objs3d_destroy_partial(H);
   FREE(H);
 }
@@ -701,7 +704,7 @@ static int _wrap_objs3d_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 85 "codegen/objs3d.override"
+#line 88 "codegen/objs3d.override"
 /* override set alpha */
 static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
 {
@@ -716,7 +719,7 @@ static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 720 "objs3d.c"
+#line 723 "objs3d.c"
 static NspObject *_wrap_objs3d_get_alpha(void *self,char *attr)
 {
   double ret;
@@ -867,7 +870,7 @@ static int _wrap_objs3d_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 101 "codegen/objs3d.override"
+#line 104 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -924,7 +927,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 928 "objs3d.c"
+#line 931 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -950,7 +953,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 59 "codegen/objs3d.override"
+#line 62 "codegen/objs3d.override"
 int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -962,10 +965,10 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 966 "objs3d.c"
+#line 969 "objs3d.c"
 
 
-#line 159 "codegen/objs3d.override"
+#line 162 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -974,10 +977,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 978 "objs3d.c"
+#line 981 "objs3d.c"
 
 
-#line 169 "codegen/objs3d.override"
+#line 172 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -986,8 +989,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
-#line 991 "objs3d.c"
+#line 993 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1023,22 +1025,29 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 Objs3d_register_classes(NspObject *d)
 {
 
-#line 34 "codegen/objs3d.override"
+#line 37 "codegen/objs3d.override"
 
 Init portion 
 
 
-#line 1032 "objs3d.c"
+#line 1034 "objs3d.c"
   nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 180 "codegen/objs3d.override"
+#line 182 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
-static void nsp_objs3d_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-					 int *aaint,int isomode, int auto_objs3d, char *xf);
-static int nsp_objs3d_legends(BCG *Xgc,NspObjs3d *axe);
+extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+					 int *aaint,int isomode, int auto_axes, char *xf);
+extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_free_box(Plot3dBox *B);
+static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
+				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj)
 {
@@ -1087,7 +1096,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj)
    */
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
-  nsp_objs3d_update_frame_bounds(Xgc,wrect1,
+  nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       TRUE ? inside_bounds : P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
@@ -1096,16 +1105,13 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj)
 			       xf);
   axis_draw(Xgc,strflag);
   frame_clip_on(Xgc);
-  while ( cloc != NULLCELL ) 
-    {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G);
-	}
-      cloc = cloc->next;
-    }
-  nsp_objs3d_legends(Xgc,P);
+  {
+    int flag[]={1,2,4};
+    double ebox[]={0,6,0,6,-1,1};
+    double theta = 35, alpha=45;
+    char legend[]="X@Y@Z";
+    nsp_draw_objs3d_s2(Xgc,(NspObjs3d *)Obj,theta,alpha,legend,flag,ebox,TRUE,TRUE,3,1);
+  }
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
@@ -1127,49 +1133,11 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj)
     }
 }
 
-/* draw legends from information contained in axe 
- */
-
-static int nsp_objs3d_legends(BCG *Xgc,NspObjs3d *axe)
-{
-  int style[56],count=0,legend_pos=1;
-  NspSMatrix *legends=NULL,*legend=NULL;
-  /* get and collect the legends */
-  NspList *L = axe->obj->children;
-  Cell *cloc = L->first ;
-  legends = nsp_smatrix_create_with_length(NVOID,0,0,-1);
-  while ( cloc != NULLCELL ) 
-    {
-      if ( cloc->O != NULLOBJ && IsCurve(cloc->O) ) 
-	{
-	  NspCurve *cv = (NspCurve *) cloc->O;
-	  if (cv->obj->legend[0] != '\0' ) 
-	    {
-	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
-	      style[count++]= ((NspGraphic *) cv)->obj->color;
-	      if (count >= 56 ) break; 
-	    }
-	}
-      cloc = cloc->next;
-    }
-  if ( count != 0) 
-    {
-      legend = nsp_smatrix_row_concat(legends,"@",1);
-      if (legend != NULL) 
-	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@"); 
-    }
-  if ( legend != NULL) nsp_smatrix_destroy(legend);
-  if ( legends != NULL) nsp_smatrix_destroy(legends);
-  return OK;
-}
 
 
 /* compute the bounds of the set of objects countained in the 
  * objs3d 
  */
-
-
-
 
 static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
@@ -1208,146 +1176,6 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
       cloc = cloc->next;
     }
 }
-
-
-void nsp_objs3d_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-				  int *aaint,int isomode,int auto_objs3d, char *xf)
-{
-  double FRect1[4];
-  int Xdec[3],Ydec[3],i;
-  double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;
-  xmin=frect[0];ymin=frect[1];xmax=frect[2];ymax=frect[3];
-  
-  /*
-   * modify computed min,max if isoview requested 
-   */
-  
-  if ( isomode == TRUE ) 
-    {
-      /* code by S. Mottelet 11/7/2000 */
-      double hx=xmax-xmin,hy=ymax-ymin,hx1,hy1, dwdim[2];
-      int wdim[2];
-      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1])));  /* add corrections for margins */
-      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3])));  /* add corrections for margins */
-      if ( hx/dwdim[0] < hy/dwdim[1] ) 
-	{
-	  hx1=dwdim[0]*hy/dwdim[1];
-	  xmin=xmin-(hx1-hx)/2.0;
-	  xmax=xmax+(hx1-hx)/2.0;
-	}
-      else 
-	{
-	  hy1=dwdim[1]*hx/dwdim[0];
-	  ymin=ymin-(hy1-hy)/2.0;
-	  ymax=ymax+(hy1-hy)/2.0;
-	}
-    }
-    
-  /* Changing min,max and aaint if using log scaling X axis */
-  if ((int)strlen(xf) >= 2 && xf[1]=='l' ) 
-    {
-      /* xaxis */
-      if ( xmin >  0)
-	{
-	  xmax=ceil(log10(xmax));  xmin=floor(log10(xmin));
-	}
-      else 
-	{
-	  Scistring("Warning: Can't use Log on X-axis xmin is negative \n");
-	  xmax= 1; xmin= 0;
-	}
-      aaint[0]=1;aaint[1]=inint(xmax-xmin);
-    }
-
-  /* Changing ymin,ymax and aaint if using log scaling Y axis */
-  if ((int)strlen(xf) >=3  && xf[2]=='l' ) 
-    {
-      /* y axis */
-      if ( ymin > 0 ) 
-	{
-	  ymax= ceil(log10(ymax)); ymin= floor(log10(ymin));
-	}
-      else 
-	{
-	  Scistring(" Can't use Log on y-axis ymin is negative \n");
-	  ymax= 1; ymin= 0;
-	}
-      aaint[2]=1;aaint[3]=inint(ymax-ymin);
-    }
-  
-  /* FRect1 gives the plotting boundaries xmin,ymin,xmax,ymax */
-  FRect1[0]=xmin;FRect1[1]=ymin;FRect1[2]=xmax;FRect1[3]=ymax;
-  /* interval too small */
-  
-  if ( Abs(FRect1[0]- FRect1[2]) < 1.e-8 ) 
-    {
-      FRect1[0] -= 1.e-8;
-      FRect1[2] += 1.e-8;
-    }
-  if ( Abs(FRect1[1]- FRect1[3]) < 1.e-8 ) 
-    {
-      FRect1[1] -= 1.e-8;
-      FRect1[3] += 1.e-8;
-    }
-  
-  /* pretty objs3d */
-  if ( auto_objs3d == TRUE ) 
-    {
-      double FRect2[4];
-      int i;
-      for (i=0; i< 4 ;i++) FRect2[i]=FRect1[i];
-      /* change graduation */
-      Gr_Rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
-    }
-  
-  /* Update the current scale */
-  
-  set_scale(Xgc,"tTtttt",wrect,FRect1,aaint,xf+1,arect);
-  
-  /* store information about graduation in xtics */
-  
-  if ( auto_objs3d )
-    {
-      for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
-      for (i=0; i < 3 ; i++ ) Xgc->scales->ytics[i] = Ydec[i];
-      Xgc->scales->xtics[3] = aaint[1];
-      Xgc->scales->ytics[3] = aaint[3];
-    }
-  else 
-    {
-      Xgc->scales->xtics[0] = xmin;
-      Xgc->scales->xtics[1] = xmax;
-      Xgc->scales->xtics[2] = 0.0;
-      Xgc->scales->xtics[3] = aaint[1];
-
-      Xgc->scales->ytics[0] = ymin;
-      Xgc->scales->ytics[1] = ymax;
-      Xgc->scales->ytics[2] = 0.0;
-      Xgc->scales->ytics[3] = aaint[3];
-    }
-  
-  /* Changing back min,max and aaint if using log scaling X axis */
-  if ((int)strlen(xf) >= 2 && xf[1]=='l' ) 
-    {
-      FRect1[0]=exp10(xmin);FRect1[2]=exp10(xmax);
-    }
-  /* Changing ymin,ymax and aaint if using log scaling Y axis */
-  if ((int)strlen(xf) >=3  && xf[2]=='l' )
-    {
-      FRect1[1]= exp10(ymin);FRect1[3]= exp10(ymax);
-    }
-
-#ifdef WITH_GTKGLEXT 
-  /* transmit info to opengl */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
-    {
-      nsp_ogl_set_2dview(Xgc);
-    }
-#endif
-  
-}
-
 
 static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -1416,4 +1244,217 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
   return  ((NspObjs3d *) Obj)->obj->children;
 }
 
-#line 1420 "objs3d.c"
+
+static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
+				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+
+static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
+				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+{
+  Cell *cloc;
+  NspList *Children;
+  nsp_box_3d box;
+  double x[2],y[2],zz[2],zzmin,zzmax;
+  int two=2;
+  double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
+  int nf=0,nbObj;
+  int i, j, k, n, *p;
+  HFstruct *HF;
+  double lim[3], *z;
+  Plot3dBox *B=NULL;
+  int flagx;
+  /* should be shared */
+  int foreground_color;
+  int background_color;
+  int with_mesh;
+
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_ogl_set_2dview(Xgc);
+      return; 
+    }
+#endif
+    
+  flagx = Xgc->graphic_engine->xget_last(Xgc);
+  /* XXX */
+  foreground_color = flagx+1;
+  background_color = flagx+2;
+  with_mesh = with_mesh1; 
+
+  /* allocate a structure for drawing purpose 
+   * The unchanged values are kept in Lobj
+   */
+
+  /* Obj = (Obj3d *)obj3d_from_list(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ; */
+  Children = nsp_objs3d_children((NspGraphic *) Obj);
+  nbObj = nsp_list_length(Children);
+  /* we have to loop here to collect the number of faces */
+  cloc = Children->first ;
+  nf = 0;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  /* we assume here that we only have polyhedron inside */
+	  if ( IsPolyhedron(cloc->O)) 
+	    {
+	      NspPolyhedron *P= (NspPolyhedron *) cloc->O;
+	      nf += P->obj->Mface->n;
+	    }
+	}
+      cloc = cloc->next;
+    }
+
+  x[0]= Box[0];y[0]= Box[1];zz[0]= Box[2];
+  x[1]= Box[3];y[1]= Box[4];zz[1]= Box[5];
+  
+  nsp_plot3d_update_bounds(Xgc,"box",x,y,zz,&two,&two,&theta,&alpha,legend,&flag[1],
+			   ebox,&zzmin,&zzmax,param3d_t);
+  SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
+
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl pretending we are doing 2d !!! */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_2dview(Xgc);
+    }
+#endif
+  
+  lim[0] = 1.e+10;
+  lim[1] = 1.e+10;
+  lim[2] = - 1.e+10;
+
+  /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
+  if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
+  
+  HF= malloc( nf * sizeof(HFstruct) );
+  z = malloc( nf * sizeof(double) );
+  p = malloc( nf * sizeof(int) );
+
+  /* step 1 : for each object :
+   *            a/ get the coordinates in the local repair
+   *               and determines the pos of each point within the pyramidal
+   *               visible region (IN, OUT_XY, OUT_Z)
+   *            b/ then add the visible parts (faces, segments, points) in the z 
+   *               and HF arrays for the hidden face algorithm (only partial visible 
+   *               parts without any OUT_Z point are included)
+   */
+  n = 0;
+
+  cloc = Children->first ;
+  nf = 0;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  /* we assume here that we only have polyhedron inside */
+	  if ( IsPolyhedron(cloc->O)) 
+	    {
+	      nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
+	      apply_transforms(Xgc,Q->Mcoord->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+	      zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
+	    }
+	}
+      cloc = cloc->next;
+    }
+  /* 
+  for ( k = 0 ; k < nbObj ; k++ )
+    {
+      func_3dobj *Q = OBJ3D(Obj[k].obj);
+      apply_transforms(Xgc,Q->coord,Q->coord, Q->pos, lim, Q->nb_coords);
+      Q->zmean(Q, z, HF, &n, k);
+    }
+  */
+
+  /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
+  nsp_obj3d_dsortc(z, &n, p);
+
+  /* step 4 : drawing of each faces */
+  if ( with_box == TRUE  ) nsp_obj3d_draw_box(Xgc,B);
+
+  for (i = n -1 ; i >= 0 ; i--)
+    {
+      k = HF[p[i]].num_obj;  /* numero de l'objet correspondant a cette "face" */
+      j = HF[p[i]].num_in_obj; /* son numéro de face dans l'objet en question */
+      /* dessin partiel de l'objet en utilisant la face j */
+      /* XXX OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j); */
+    }
+  if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
+  if ( with_box == TRUE ) nsp_obj3d_free_box(B);
+  free(HF);
+  free(z);
+  free(p);
+}
+
+#ifdef  WITH_GTKGLEXT 
+
+static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
+				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+{
+  Cell *cloc;
+  NspList *Children;
+  /* Stack stack;*/ /* just used for messages i.e NspFname(stack) */
+  nsp_box_3d box;
+  double x[2],y[2],zz[2],zzmin,zzmax;
+  double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
+  int k, flagx, nf=0,err=0,nbObj, two=2;
+  double lim[3];
+  Plot3dBox *B;
+  /* should be shared */
+  int foreground_color;
+  int background_color;
+  int with_mesh;
+
+  /* NspFname(stack) ="drawobj"; */
+  flagx = Xgc->graphic_engine->xget_last(Xgc);
+  foreground_color = flagx+1;
+  background_color = flagx+2;
+  with_mesh = with_mesh1; 
+
+  /* allocate a structure for drawing purpose 
+   * The unchanged values are kept in Lobj
+   */
+  
+  x[0]= Box[0];y[0]= Box[1];zz[0]= Box[2];
+  x[1]= Box[3];y[1]= Box[4];zz[1]= Box[5];
+
+  nsp_plot3d_update_bounds(Xgc,"box",x,y,zz,&two,&two,&theta,&alpha,legend,&flag[1],
+			   ebox,&zzmin,&zzmax,param3d_t);
+  SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
+  
+  lim[0] = 1.e+10;
+  lim[1] = 1.e+10;
+  lim[2] = - 1.e+10;
+
+  /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
+  if ( with_box == TRUE  )
+    {
+      B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim);
+      nsp_obj3d_draw_box(Xgc,B);
+      if (B->box_style == SCILAB ) nsp_obj3d_draw_near_box_segments(Xgc,B);
+      nsp_obj3d_free_box(B);
+    }
+
+  Children = nsp_objs3d_children((NspGraphic *) Obj);
+  cloc = Children->first ;
+  nf = 0;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  /* we assume here that we only have polyhedron inside */
+	  if ( IsPolyhedron(cloc->O)) 
+	    {
+	      extern void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+	      draw_polyhedron_ogl(Xgc,cloc->O);
+	    }
+	}
+      cloc = cloc->next;
+    }
+}
+#endif 
+
+
+#line 1461 "objs3d.c"

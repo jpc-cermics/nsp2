@@ -1036,8 +1036,8 @@ Init portion
 #line 180 "codegen/axes.override"
 
 /* inserted verbatim at the end */
-static void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-					 int *aaint,int isomode, int auto_axes, char *xf);
+void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+				  int *aaint,int isomode, int auto_axes, char *xf);
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj)

@@ -11,7 +11,8 @@ OBJSC = classa.obj classb.obj classc.obj classaref.obj classbref.obj \
 	figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj gmatrix.obj \
 	vfield.obj contour.obj grarc.obj grrect.obj arrows.obj segments.obj surf.obj \
 	box3d.obj objs3d.obj points3d.obj polyhedron.obj polyline3d.obj spolyhedron.obj \
-	string3d.obj 
+	string3d.obj grstring.obj
+
 
 
 OBJSF=

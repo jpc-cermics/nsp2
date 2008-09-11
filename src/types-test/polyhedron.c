@@ -11,6 +11,7 @@
 #line 4 "codegen/polyhedron.override"
 #include "nsp/polyhedron.h"
 #include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
@@ -24,7 +25,7 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
 
 extern void nsp_figure_force_redraw( NspFigure *F);
 
-#line 28 "polyhedron.c"
+#line 29 "polyhedron.c"
 
 /* ----------- Polyhedron ----------- */
 
@@ -95,7 +96,7 @@ NspTypePolyhedron *new_type_polyhedron(type_mode mode)
       
   type->init = (init_func *) init_polyhedron;
 
-#line 26 "codegen/polyhedron.override"
+#line 27 "codegen/polyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -109,7 +110,7 @@ NspTypePolyhedron *new_type_polyhedron(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 113 "polyhedron.c"
+#line 114 "polyhedron.c"
   /* 
    * Polyhedron interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -292,7 +293,7 @@ void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
 void nsp_polyhedron_destroy(NspPolyhedron *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 296 "polyhedron.c"
+#line 297 "polyhedron.c"
   nsp_polyhedron_destroy_partial(H);
   FREE(H);
 }
@@ -762,7 +763,7 @@ static AttrTab polyhedron_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 49 "codegen/polyhedron.override"
+#line 50 "codegen/polyhedron.override"
 int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -774,10 +775,10 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 778 "polyhedron.c"
+#line 779 "polyhedron.c"
 
 
-#line 92 "codegen/polyhedron.override"
+#line 93 "codegen/polyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -786,10 +787,10 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 790 "polyhedron.c"
+#line 791 "polyhedron.c"
 
 
-#line 102 "codegen/polyhedron.override"
+#line 103 "codegen/polyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -799,7 +800,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 803 "polyhedron.c"
+#line 804 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -835,17 +836,17 @@ void Polyhedron_Interf_Info(int i, char **fname, function (**f))
 Polyhedron_register_classes(NspObject *d)
 {
 
-#line 21 "codegen/polyhedron.override"
+#line 22 "codegen/polyhedron.override"
 
 Init portion 
 
 
-#line 844 "polyhedron.c"
+#line 845 "polyhedron.c"
   nspgobject_register_class(d, "Polyhedron", Polyhedron, &NspPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 113 "codegen/polyhedron.override"
+#line 114 "codegen/polyhedron.override"
 
 /* inserted verbatim at the end */
 
@@ -883,7 +884,7 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 
 
-static int chek_polyhedron(NspPolyhedron *P)
+int nsp_check_polyhedron(NspPolyhedron *P)
 {
   nsp_polyhedron *Q = P->obj;
   int Q_nb_faces = Q->Mface->n;
@@ -995,7 +996,7 @@ static void draw_polyhedron_face(BCG *Xgc,NspObject *Ob, int j)
   Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 }
 
-static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
+void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
@@ -1017,6 +1018,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
   int foreground_color = 1; /* should be shared */
   
   m = Q_nb_vertices_per_face;
+
 
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
@@ -1049,4 +1051,51 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 }
 
 
-#line 1053 "polyhedron.c"
+void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int k)
+{
+  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
+  int m, i, j, *current_vertex;
+  VisionPos pos_face, pos_vertex;
+  double coef, zmean;
+
+  /* int Q_nb_coords = Q->Mcoord->n;  */
+  double * Q_coord = Q->Mcoord->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int * Q_face = Q->Mface->I;
+  
+  m = Q_nb_vertices_per_face; 
+  coef = 1.0/m;
+  current_vertex = Q_face;
+  for ( j = 0 ; j < Q_nb_faces ; j++ )
+    {
+      zmean = 0.0; pos_face = OUT_XY;
+      /* Une face rentre dans le calcul des faces cachées si :
+       *     1/ aucun point n'est en position OUT_Z
+       *     2/ au moins un point est IN (les autres étant alors soit
+       *        IN soit OUT_XY)
+       * On pourra par la suite détailler un peu plus car si tous les
+       * sommets de la face sont IN aucun clippling n'est à effectuer.
+       * Faire ce clipping moi-même ?
+       */
+      for ( i = 0 ; i < m ; i++ )
+	{
+	  zmean += Q_coord[3*(*current_vertex)+2];
+	  pos_vertex = Q->pos[*current_vertex];
+	  if (pos_vertex == OUT_Z)
+	    pos_face = OUT_Z;
+	  else if (pos_vertex == VIN && pos_face != OUT_Z)
+	    pos_face = VIN;
+	  current_vertex++;
+	}
+      if (pos_face == VIN) 
+	{
+	  z[*n] = coef*zmean;
+	  HF[*n].num_obj = k;
+	  HF[*n].num_in_obj = j;
+	  (*n)++; 
+	}
+    }
+}
+
+#line 1102 "polyhedron.c"
