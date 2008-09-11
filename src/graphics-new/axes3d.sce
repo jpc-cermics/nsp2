@@ -46,12 +46,12 @@ function test3()
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";
-  mode = "OpenGl";
+  //mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
   A=objs3d_create(top=%t,title="Main title",x="x",y="y")// ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
-  x = linspace(0,2*%pi,4);
+  x = linspace(0,2*%pi,40);
   z = cos(x')*cos(x);
   exec('tests/tobedone/3dbruno/libbruno.sce');
   P = zsurf_to_polyhedron(x, x, z, 1,64);

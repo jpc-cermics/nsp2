@@ -32,6 +32,8 @@ override_internal_methods
   link_figure_func *link_figure;
   unlink_figure_func *unlink_figure;
   children_func *children;
+  zmean_func *zmean; 
+n_faces_func *n_faces;
 
 %%
 override_internal_methods_protos
@@ -45,6 +47,8 @@ typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
+typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
 %%
 override_type Graphic
@@ -62,6 +66,9 @@ override_type Graphic
   type->link_figure = nsp_graphic_link_figure;
   type->unlink_figure = nsp_graphic_unlink_figure;
   type->children = NULL;
+  type->zmean = NULL; 
+  type->n_faces = NULL;
+
 %%
 override graphic_translate kwargs
 /* take care that the name to give for override is the c-name of 

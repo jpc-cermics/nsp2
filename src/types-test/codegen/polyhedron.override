@@ -8,14 +8,16 @@ extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
 extern  int nsp_obj3d_orientation(int x[], int y[], int n);
+extern void nsp_figure_force_redraw( NspFigure *F);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
-
-extern void nsp_figure_force_redraw( NspFigure *F);
+static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 
 %%
 init 
@@ -36,6 +38,8 @@ override_type Polyhedron
   /* next method are defined in NspGraphic and need not be chnaged here for Polyhedron */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_polyhedron_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_polyhedron_n_faces;
 
 %%
 modulename atk
@@ -217,9 +221,6 @@ int nsp_check_polyhedron(NspPolyhedron *P)
     }
   /* switch to int XXX */
   Q->Mface = Mat2int(Q->Mface);
-  /* 
-     for ( i = 0 ; i < Q->Mface->mn ; i++) Q->Mface->I[i]--;  
-  */
 
   if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 ) 
     {
@@ -410,4 +411,18 @@ void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int
 	  (*n)++; 
 	}
     }
+}
+
+
+static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
+{
+  nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
+  nsp_check_polyhedron((NspPolyhedron *) Obj);
+  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  zmean_faces_for_Polyhedron(Obj, z,  HF, n, k);
+}
+
+static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
+{
+  return ((NspPolyhedron *) Obj)->obj->Mface->n;
 }

@@ -1360,6 +1360,11 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   nf = 0;
   while ( cloc != NULLCELL ) 
     {
+#if 1 
+      NspGraphic *G = (NspGraphic *) cloc->O;
+      G->type->zmean(Xgc,G,z,HF,&n,k,lim);
+      k++;
+#else 
       if ( cloc->O != NULLOBJ && IsPolyhedron(cloc->O))
 	{
 	  nsp_polyhedron *Q= ((NspPolyhedron *) cloc->O)->obj;
@@ -1368,6 +1373,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 	  zmean_faces_for_Polyhedron(cloc->O, z, HF, &n, k);
 	  k++;
 	}
+#endif 
       cloc = cloc->next;
     }
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
@@ -1456,4 +1462,4 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 #endif 
 
 
-#line 1460 "objs3d.c"
+#line 1466 "objs3d.c"

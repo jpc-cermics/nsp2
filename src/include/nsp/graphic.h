@@ -19,7 +19,7 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 38 "codegen/graphic.override"
+#line 40 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
 typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
@@ -30,8 +30,10 @@ typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
+typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
-#line 35 "./graphic.h"
+#line 37 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
@@ -49,9 +51,11 @@ struct _NspTypeGraphic {
   link_figure_func *link_figure;
   unlink_figure_func *unlink_figure;
   children_func *children;
+  zmean_func *zmean; 
+n_faces_func *n_faces;
 
 
-#line 55 "./graphic.h"
+#line 59 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
