@@ -276,6 +276,7 @@ void nsp_surf_destroy_partial(NspSurf *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 280 "surf.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -286,7 +287,6 @@ void nsp_surf_destroy_partial(NspSurf *H)
 void nsp_surf_destroy(NspSurf *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 290 "surf.c"
   nsp_surf_destroy_partial(H);
   FREE(H);
 }
@@ -568,6 +568,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
+#line 572 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -758,7 +759,7 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 762 "surf.c"
+#line 763 "surf.c"
 
 
 #line 89 "codegen/surf.override"
@@ -770,7 +771,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "surf.c"
+#line 775 "surf.c"
 
 
 #line 99 "codegen/surf.override"
@@ -783,7 +784,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 787 "surf.c"
+#line 788 "surf.c"
 
 
 /*----------------------------------------------------
@@ -824,7 +825,7 @@ Surf_register_classes(NspObject *d)
 Init portion 
 
 
-#line 828 "surf.c"
+#line 829 "surf.c"
   nspgobject_register_class(d, "Surf", Surf, &NspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -875,4 +876,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 879 "surf.c"
+#line 880 "surf.c"

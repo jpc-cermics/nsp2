@@ -269,13 +269,14 @@ class Wrapper:
               '\n' \
               'void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H)\n' \
               '{\n' \
-              '%(fields_free)s' \
+              '%(fields_free1)s' 
+
+    type_tmpl_1_1_1_1 = \
+              '%(fields_free2)s' \
               '}\n\n' \
               'void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H)\n' \
               '{\n' \
-              '  nsp_object_destroy_name(NSP_OBJECT(H));\n' 
-
-    type_tmpl_1_1_1_1 = \
+              '  nsp_object_destroy_name(NSP_OBJECT(H));\n' \
               '  nsp_%(typename_dc)s_destroy_partial(H);\n' \
               '  FREE(H);\n' \
               '}\n' \
@@ -654,14 +655,19 @@ class Wrapper:
         substdict['fields_print'] = self.build_print_fields('M','print')
         substdict['fields_latex'] = self.build_print_fields('M','latex')
         substdict['fields_init'] = self.build_init_fields('Obj')
-        substdict['fields_check'] = self.build_check_fields('H')
+        # used in int_xxx_create interface 
+        substdict['fields_from_attributes'] = self.build_fields_from_attributes('H')
         substdict['fields_defval'] = self.build_defval_fields('H')
-        substdict['fields_free'] = self.build_free_fields('H')
+        substdict['fields_free1'] = self.build_fields_free1('H')
+        substdict['fields_free2'] = self.build_fields_free2('H')
         substdict['destroy_prelim'] = self.build_destroy_premil('H')
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
         substdict['copy_partial'] = self.build_copy_partial('H')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
+        # used to insert verbatim code in int_xxx_create
+        # just before returning object 
+        substdict['int_create_final'] = self.build_int_create_final('H')
         # fields for declaration 
         substdict['fields'] = self.build_fields()
         # methods to be inserted in the class declaration 
@@ -686,8 +692,10 @@ class Wrapper:
         # i.e a set of functions used for writing interfaces 
         self.fp.write(self.type_tmpl_interface_util % substdict)
         # object copy and interface for creation
-        # override of this should be enabled ?
         self.fp.write(self.type_tmpl_copy % substdict)
+        self.fp.write('%(int_create_final)s' %substdict)
+        self.fp.resetline()
+        self.fp.write(self.type_tmpl_copy_last % substdict)
 
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.c_name) + '.h'
@@ -922,19 +930,15 @@ class Wrapper:
                 %  (string.lower(father),father)
         return str
 
-    def build_check_fields(self,varname):
+    def build_fields_from_attributes(self,varname):
         lower_name = self.get_lower_name()
-        
-        # no overrides for the whole function.  If no fields, don't write a func
+        # called in create interface 
         str = ''
         if self.byref == 't' :
             varname = varname + '->obj'
             str = '  if ( nsp_%s_create_partial(H) == FAIL) return RET_BUG;\n' % (lower_name) 
-            
         str = str + '  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;\n'
-            
         if not self.objinfo.fields:
-            lower_name1 = string.lower(self.objinfo.c_name)
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
@@ -958,11 +962,10 @@ class Wrapper:
         if father != 'Object':
             str = str + '  nsp_%s_check_values((Nsp%s *) H);\n'  % (string.lower(father),father)
         return str
-
     
-    def build_free_fields(self,varname):
+    def build_fields_free1(self,varname):
         lower_name = self.get_lower_name()
-        # no overrides for the whole function.  If no fields, don't write a func
+        # build the code used to free attribute of an object 
         str = '' 
         father = self.objinfo.parent
         if self.byref == 't':
@@ -974,6 +977,15 @@ class Wrapper:
         else:
             if father != 'Object':
                 str = str + '  nsp_%s_destroy_partial((Nsp%s *) H);\n'  % (string.lower(father),father)
+        return str
+
+    def build_fields_free2(self,varname):
+        lower_name = self.get_lower_name()
+        # build the code used to free attribute of an object 
+        str = '' 
+        father = self.objinfo.parent
+        if self.byref == 't':
+            varname = varname +'->obj'
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
@@ -991,6 +1003,12 @@ class Wrapper:
         # empty but can be filled in override code 
         return  self.overrides.override_destroy_prelim
 
+    def build_int_create_final(self,varname):
+        # code to be called before returning in the _create 
+        # interface By defaut this code is 
+        # empty but can be filled in override code 
+        return self.overrides.override_int_create_final
+        
     def build_create_partial(self,varname):
         # used when creating a new instance 
         # only useful for by ref objects 
@@ -1530,14 +1548,17 @@ class NspObjectWrapper(Wrapper):
         '  CheckStdRhs(0,0);\n'  \
         '  /* want to be sure that type %(typename_dc)s is initialized */\n'  \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
-        '  if(( H = nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s)) == NULL%(typename_uc)s) return RET_BUG;\n'  \
+        '  if(( H = nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s)) == NULL%(typename_uc)s) return RET_BUG;\n' \
         '  /* then we use optional arguments to fill attributes */\n' \
-        '%(fields_check)s' \
-        ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return RET_BUG;\n' \
+        '%(fields_from_attributes)s' \
+        ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return RET_BUG;\n' 
+
+    type_tmpl_copy_last = \
         '  MoveObj(stack,1,(NspObject  *) H);\n'  \
         '  return 1;\n'  \
         '} \n'  \
         '\n'
+
 
     def __init__(self, parser, objinfo, overrides, fp=FileOutput(sys.stdout),byref=None):
         Wrapper.__init__(self, parser, objinfo, overrides, fp,byref)

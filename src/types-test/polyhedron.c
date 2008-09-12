@@ -286,6 +286,7 @@ void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 290 "polyhedron.c"
     nsp_matrix_destroy(H->obj->Mcoord);
     nsp_matrix_destroy(H->obj->Mface);
     nsp_matrix_destroy(H->obj->Mcolor);
@@ -298,7 +299,6 @@ void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
 void nsp_polyhedron_destroy(NspPolyhedron *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 302 "polyhedron.c"
   nsp_polyhedron_destroy_partial(H);
   FREE(H);
 }
@@ -601,6 +601,7 @@ int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyhedron_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyhedron_check_values(H) == FAIL) return RET_BUG;
+#line 605 "polyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -785,7 +786,7 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 789 "polyhedron.c"
+#line 790 "polyhedron.c"
 
 
 #line 97 "codegen/polyhedron.override"
@@ -797,7 +798,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 801 "polyhedron.c"
+#line 802 "polyhedron.c"
 
 
 #line 107 "codegen/polyhedron.override"
@@ -810,7 +811,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 814 "polyhedron.c"
+#line 815 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -851,7 +852,7 @@ Polyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 855 "polyhedron.c"
+#line 856 "polyhedron.c"
   nspgobject_register_class(d, "Polyhedron", Polyhedron, &NspPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1221,4 +1222,4 @@ static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
   return ((NspPolyhedron *) Obj)->obj->Mface->n;
 }
 
-#line 1225 "polyhedron.c"
+#line 1226 "polyhedron.c"

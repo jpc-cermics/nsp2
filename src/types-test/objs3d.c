@@ -305,6 +305,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 309 "objs3d.c"
     nsp_matrix_destroy(H->obj->wrect);
     nsp_matrix_destroy(H->obj->bounds);
     nsp_matrix_destroy(H->obj->arect);
@@ -319,7 +320,6 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
 void nsp_objs3d_destroy(NspObjs3d *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 323 "objs3d.c"
   nsp_objs3d_destroy_partial(H);
   FREE(H);
 }
@@ -678,6 +678,7 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
+#line 682 "objs3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -731,7 +732,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 735 "objs3d.c"
+#line 736 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
 {
   double ret;
@@ -897,7 +898,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 901 "objs3d.c"
+#line 902 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -1003,7 +1004,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1007 "objs3d.c"
+#line 1008 "objs3d.c"
 
 
 #line 162 "codegen/objs3d.override"
@@ -1015,7 +1016,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1019 "objs3d.c"
+#line 1020 "objs3d.c"
 
 
 #line 172 "codegen/objs3d.override"
@@ -1027,7 +1028,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1031 "objs3d.c"
+#line 1032 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1068,7 +1069,7 @@ Objs3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1072 "objs3d.c"
+#line 1073 "objs3d.c"
   nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1498,4 +1499,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1502 "objs3d.c"
+#line 1503 "objs3d.c"

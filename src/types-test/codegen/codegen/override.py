@@ -26,6 +26,7 @@ class Overrides:
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
         self.override_destroy_prelim = '' # inserted verbatim before standard destroy
+        self.override_int_create_final = '' # inserted verbatim in int_xx_create 
         self.init = ''
         self.last = ''
         self.imports = []
@@ -103,6 +104,9 @@ class Overrides:
         elif words[0] == 'override_destroy_prelim':
             self.override_destroy_prelim = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_destroy_prelim, startline + 1, filename, rest)
+        elif words[0] == 'override_int_create_final':
+            self.override_int_create_final = '%s\n#line %d "codegen/%s"\n%s' % \
+                           (self.override_int_create_final, startline + 1, filename, rest)
         elif words[0] == 'init':
             self.init = '%s\n#line %d "codegen/%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)

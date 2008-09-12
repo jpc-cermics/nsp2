@@ -276,6 +276,7 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 280 "polyline3d.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -286,7 +287,6 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
 void nsp_polyline3d_destroy(NspPolyline3d *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 290 "polyline3d.c"
   nsp_polyline3d_destroy_partial(H);
   FREE(H);
 }
@@ -568,6 +568,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline3d_check_values(H) == FAIL) return RET_BUG;
+#line 572 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -758,7 +759,7 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 762 "polyline3d.c"
+#line 763 "polyline3d.c"
 
 
 #line 89 "codegen/polyline3d.override"
@@ -770,7 +771,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "polyline3d.c"
+#line 775 "polyline3d.c"
 
 
 #line 99 "codegen/polyline3d.override"
@@ -783,7 +784,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 787 "polyline3d.c"
+#line 788 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -824,7 +825,7 @@ Polyline3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 828 "polyline3d.c"
+#line 829 "polyline3d.c"
   nspgobject_register_class(d, "Polyline3d", Polyline3d, &NspPolyline3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -875,4 +876,4 @@ static void nsp_getbounds_polyline3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 879 "polyline3d.c"
+#line 880 "polyline3d.c"

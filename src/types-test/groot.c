@@ -232,6 +232,7 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 236 "groot.c"
     nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
@@ -240,7 +241,6 @@ void nsp_groot_destroy_partial(NspGRoot *H)
 void nsp_groot_destroy(NspGRoot *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 244 "groot.c"
   nsp_groot_destroy_partial(H);
   FREE(H);
 }
@@ -460,6 +460,7 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
+#line 464 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -542,7 +543,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 546 "groot.c"
+#line 547 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -550,4 +551,4 @@ Init portion
 #line 28 "codegen/groot.override"
 
 
-#line 554 "groot.c"
+#line 555 "groot.c"

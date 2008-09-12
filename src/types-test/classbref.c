@@ -241,6 +241,7 @@ void nsp_classbref_destroy_partial(NspClassBRef *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 245 "classbref.c"
     nsp_matrix_destroy(H->obj->clb_val);
     FREE(H->obj);
    }
@@ -249,7 +250,6 @@ void nsp_classbref_destroy_partial(NspClassBRef *H)
 void nsp_classbref_destroy(NspClassBRef *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 253 "classbref.c"
   nsp_classbref_destroy_partial(H);
   FREE(H);
 }
@@ -486,6 +486,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
+#line 490 "classbref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -499,7 +500,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 503 "classbref.c"
+#line 504 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -510,7 +511,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 514 "classbref.c"
+#line 515 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -633,9 +634,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 637 "classbref.c"
+#line 638 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 642 "classbref.c"
+#line 643 "classbref.c"

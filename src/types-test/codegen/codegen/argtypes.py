@@ -157,10 +157,6 @@ class ArgType:
 	"""used when a field is to be reloaded """
         return '  XXXXX attr_write_init not implemented for %s\n' % self.__class__.__name__
 
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return '  XXXXX attr_write_check_null not implemented for %s\n' % self.__class__.__name__
-
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
         return '  XXXXX attr_free_fields not implemented for %s\n' % self.__class__.__name__
@@ -284,10 +280,6 @@ class StringArg(ArgType):
         else: 
             return '  %s->%s = nsp_new_string("%s",-1);\n' % (varname,pname,pdef)
     
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return '  if ( %s->%s == NULLSTRING) {Scierror("Error: field %s is to be set\\n");return RET_BUG;}\n' % (varname,pname,pname);
-
     def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
@@ -451,9 +443,6 @@ class IntArg(ArgType):
         else: 
             return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return ''
 
     def attr_free_fields(self,pname, varname,byref):
         return  ''
@@ -617,10 +606,6 @@ class BoolArg(IntArg):
             return '  %s->%s = TRUE;\n' % (varname,pname)
         else: 
             return '  %s->%s = %s;\n' % (varname,pname,pdef)
-
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return ''
 
     def attr_free_fields(self,pname, varname,byref):
         return  ''
@@ -805,10 +790,6 @@ class DoubleArg(ArgType):
             return '  %s->%s = 0.0;\n' % (varname,pname)
         else: 
             return '  %s->%s = %s;\n' % (varname,pname,pdef)
-
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return ''
 
     def attr_free_fields(self,pname, varname,byref):
         return  ''
@@ -1516,10 +1497,6 @@ class NspGenericArg(ArgType):
 	"""used when a field is to be initialized """
         return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
 
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return '  if ( %s->%s == NULL%s) {Scierror("Error: field %s is to be set\\n");return RET_BUG;}\n' % (varname,pname,self.shortname_uc,pname);
-    
     def attr_free_fields(self,pname, varname,byref):
 	"""used to free allocated fields  """
         if byref == 't':
@@ -1805,10 +1782,6 @@ class VoidPointerArg(ArgType):
     def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
         return  '  %s->%s = NULL;\n' % (varname,pname)
-
-    def attr_check_null(self,pname, varname,byref):
-	"""used to check if  a field is set """
-        return ''
 
     def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """

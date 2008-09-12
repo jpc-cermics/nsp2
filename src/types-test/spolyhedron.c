@@ -276,6 +276,7 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 280 "spolyhedron.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -286,7 +287,6 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
 void nsp_spolyhedron_destroy(NspSPolyhedron *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 290 "spolyhedron.c"
   nsp_spolyhedron_destroy_partial(H);
   FREE(H);
 }
@@ -568,6 +568,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_spolyhedron_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_spolyhedron_check_values(H) == FAIL) return RET_BUG;
+#line 572 "spolyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -758,7 +759,7 @@ int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 762 "spolyhedron.c"
+#line 763 "spolyhedron.c"
 
 
 #line 89 "codegen/spolyhedron.override"
@@ -770,7 +771,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "spolyhedron.c"
+#line 775 "spolyhedron.c"
 
 
 #line 99 "codegen/spolyhedron.override"
@@ -783,7 +784,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 787 "spolyhedron.c"
+#line 788 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -824,7 +825,7 @@ SPolyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 828 "spolyhedron.c"
+#line 829 "spolyhedron.c"
   nspgobject_register_class(d, "SPolyhedron", SPolyhedron, &NspSPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -875,4 +876,4 @@ static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 879 "spolyhedron.c"
+#line 880 "spolyhedron.c"

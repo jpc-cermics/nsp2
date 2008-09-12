@@ -282,6 +282,7 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 286 "grarc.c"
     FREE(H->obj);
    }
 }
@@ -289,7 +290,6 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
 void nsp_grarc_destroy(NspGrArc *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 293 "grarc.c"
   nsp_grarc_destroy_partial(H);
   FREE(H);
 }
@@ -536,6 +536,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
+#line 540 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -736,7 +737,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 740 "grarc.c"
+#line 741 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -748,7 +749,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 752 "grarc.c"
+#line 753 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -761,7 +762,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 765 "grarc.c"
+#line 766 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -802,7 +803,7 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 806 "grarc.c"
+#line 807 "grarc.c"
   nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -895,4 +896,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 899 "grarc.c"
+#line 900 "grarc.c"

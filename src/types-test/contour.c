@@ -274,6 +274,7 @@ void nsp_contour_destroy_partial(NspContour *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 278 "contour.c"
     nsp_matrix_destroy(H->obj->z);
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
@@ -285,7 +286,6 @@ void nsp_contour_destroy_partial(NspContour *H)
 void nsp_contour_destroy(NspContour *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 289 "contour.c"
   nsp_contour_destroy_partial(H);
   FREE(H);
 }
@@ -577,6 +577,7 @@ int int_contour_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour_check_values(H) == FAIL) return RET_BUG;
+#line 581 "contour.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -741,7 +742,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 745 "contour.c"
+#line 746 "contour.c"
 
 
 #line 58 "codegen/contour.override"
@@ -753,7 +754,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 757 "contour.c"
+#line 758 "contour.c"
 
 
 /*----------------------------------------------------
@@ -793,7 +794,7 @@ Contour_register_classes(NspObject *d)
 Init portion 
 
 
-#line 797 "contour.c"
+#line 798 "contour.c"
   nspgobject_register_class(d, "Contour", Contour, &NspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -942,4 +943,4 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 946 "contour.c"
+#line 947 "contour.c"

@@ -274,6 +274,7 @@ void nsp_vfield_destroy_partial(NspVField *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 278 "vfield.c"
     nsp_matrix_destroy(H->obj->fx);
     nsp_matrix_destroy(H->obj->fy);
     nsp_matrix_destroy(H->obj->x);
@@ -285,7 +286,6 @@ void nsp_vfield_destroy_partial(NspVField *H)
 void nsp_vfield_destroy(NspVField *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 289 "vfield.c"
   nsp_vfield_destroy_partial(H);
   FREE(H);
 }
@@ -577,6 +577,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
+#line 581 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -743,7 +744,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 747 "vfield.c"
+#line 748 "vfield.c"
 
 
 #line 58 "codegen/vfield.override"
@@ -755,7 +756,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 759 "vfield.c"
+#line 760 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -795,7 +796,7 @@ VField_register_classes(NspObject *d)
 Init portion 
 
 
-#line 799 "vfield.c"
+#line 800 "vfield.c"
   nspgobject_register_class(d, "VField", VField, &NspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -868,4 +869,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 872 "vfield.c"
+#line 873 "vfield.c"

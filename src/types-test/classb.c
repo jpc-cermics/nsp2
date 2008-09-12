@@ -238,13 +238,13 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 void nsp_classb_destroy_partial(NspClassB *H)
 {
   nsp_classa_destroy_partial((NspClassA *) H);
+#line 242 "classb.c"
   nsp_matrix_destroy(H->clb_val);
 }
 
 void nsp_classb_destroy(NspClassB *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 248 "classb.c"
   nsp_classb_destroy_partial(H);
   FREE(H);
 }
@@ -461,6 +461,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
+#line 465 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -474,7 +475,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 478 "classb.c"
+#line 479 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -485,7 +486,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 489 "classb.c"
+#line 490 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -608,9 +609,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 612 "classb.c"
+#line 613 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 617 "classb.c"
+#line 618 "classb.c"

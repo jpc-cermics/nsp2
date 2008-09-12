@@ -299,6 +299,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+#line 303 "axes.c"
     nsp_matrix_destroy(H->obj->wrect);
     nsp_matrix_destroy(H->obj->bounds);
     nsp_matrix_destroy(H->obj->arect);
@@ -314,7 +315,6 @@ void nsp_axes_destroy_partial(NspAxes *H)
 void nsp_axes_destroy(NspAxes *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 318 "axes.c"
   nsp_axes_destroy_partial(H);
   FREE(H);
 }
@@ -663,6 +663,7 @@ int int_axes_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_axes_check_values(H) == FAIL) return RET_BUG;
+#line 667 "axes.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -716,7 +717,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 720 "axes.c"
+#line 721 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,char *attr)
 {
   double ret;
@@ -924,7 +925,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 928 "axes.c"
+#line 929 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -962,7 +963,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 966 "axes.c"
+#line 967 "axes.c"
 
 
 #line 159 "codegen/axes.override"
@@ -974,7 +975,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 978 "axes.c"
+#line 979 "axes.c"
 
 
 #line 169 "codegen/axes.override"
@@ -987,7 +988,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 991 "axes.c"
+#line 992 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1028,7 +1029,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1032 "axes.c"
+#line 1033 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1416,4 +1417,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspAxes *) Obj)->obj->children;
 }
 
-#line 1420 "axes.c"
+#line 1421 "axes.c"

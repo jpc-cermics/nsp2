@@ -16,6 +16,12 @@ ignore-glob
   *_get_type
 
 %%
+override_int_create_final 
+  /* verbatim in create interface  */
+%%
+override_destroy_prelim
+  /* verbatim in destroy */
+%%
 override classa_color_change kwargs
 static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
