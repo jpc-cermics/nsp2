@@ -49,7 +49,7 @@ function test3()
   //mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
-  A=objs3d_create(top=%t,title="Main title",x="x",y="y",colormap=hotcolormap(64));
+  A=objs3d_create(top=%t,title="Main title",colormap=hotcolormap(64));
   // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
   x = linspace(0,2*%pi,40);
@@ -58,7 +58,7 @@ function test3()
   P = zsurf_to_polyhedron(x, x, z, 1,64);
   Pl=polyhedron_create(Mcoord=P.coord,Mface=P.face,Mcolor=P.color,Mback_color=P.back_color);
   A.children(1)=Pl;
-  F.connect[]
+  F.connect[];
 endfunction
 
 

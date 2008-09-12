@@ -214,7 +214,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( check_cast(B,nsp_type_axes_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
-  if ( A->obj->alpha != loc->obj->alpha) return FALSE;
+  if ( A->obj->rho != loc->obj->rho) return FALSE;
   if ( A->obj->top != loc->obj->top) return FALSE;
   if ( NSP_OBJECT(A->obj->bounds)->type->eq(A->obj->bounds,loc->obj->bounds) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->arect)->type->eq(A->obj->arect,loc->obj->arect) == FALSE ) return FALSE;
@@ -244,7 +244,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->rho) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->arect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
@@ -266,7 +266,7 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_axes))) == NULL) return NULL;
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->rho) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
   if ((M->obj->arect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -365,7 +365,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
@@ -401,7 +401,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
@@ -489,7 +489,7 @@ int nsp_axes_create_partial(NspAxes *H)
   if((H->obj = calloc(1,sizeof(nsp_axes)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->wrect = NULLMAT;
-  H->obj->alpha = 0.0;
+  H->obj->rho = 0.0;
   H->obj->top = TRUE;
   H->obj->bounds = NULLMAT;
   H->obj->arect = NULLMAT;
@@ -554,13 +554,13 @@ int nsp_axes_check_values(NspAxes *H)
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,NspTypeBase *type)
 {
  NspAxes *H  = nsp_axes_create_void(name,type);
  if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
   H->obj->wrect= wrect;
-  H->obj->alpha=alpha;
+  H->obj->rho=rho;
   H->obj->top=top;
   H->obj->bounds= bounds;
   H->obj->arect= arect;
@@ -606,7 +606,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     {
       if ((H->obj->wrect = (NspMatrix *) nsp_object_copy_and_name("wrect",NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
     }
-  H->obj->alpha=self->obj->alpha;
+  H->obj->rho=self->obj->rho;
   H->obj->top=self->obj->top;
   if ( self->obj->bounds == NULL )
     { H->obj->bounds = NULL;}
@@ -702,27 +702,27 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
 }
 
 #line 85 "codegen/axes.override"
-/* override set alpha */
-static int _wrap_axes_set_alpha(void *self, char *attr, NspObject *O)
+/* override set rho */
+static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
-  double alpha;
-  if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
+  double rho;
+  if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
 
-  if ( ((NspAxes *) self)->obj->alpha != alpha) 
+  if ( ((NspAxes *) self)->obj->rho != rho) 
     {
-      ((NspAxes *) self)->obj->alpha = alpha;
+      ((NspAxes *) self)->obj->rho = rho;
       nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
     }
   return OK;
 }
 
 #line 720 "axes.c"
-static NspObject *_wrap_axes_get_alpha(void *self,char *attr)
+static NspObject *_wrap_axes_get_rho(void *self,char *attr)
 {
   double ret;
   NspObject *nsp_ret;
 
-  ret = ((NspAxes *) self)->obj->alpha;
+  ret = ((NspAxes *) self)->obj->rho;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
 }
@@ -935,7 +935,7 @@ static NspObject *_wrap_axes_get_children(void *self,char *attr)
 
 static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
-  { "alpha", (attr_get_function *)_wrap_axes_get_alpha, (attr_set_function *)_wrap_axes_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "rho", (attr_get_function *)_wrap_axes_get_rho, (attr_set_function *)_wrap_axes_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "arect", (attr_get_function *)_wrap_axes_get_arect, (attr_set_function *)_wrap_axes_set_arect,(attr_get_object_function *)_wrap_axes_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
   { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
@@ -1078,8 +1078,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
       WRect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
       WRect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
       wrect1 = WRect1;
-      Xgc->scales->cosa= cos( P->obj->alpha);
-      Xgc->scales->sina= sin( P->obj->alpha);
+      Xgc->scales->cosa= cos( P->obj->rho);
+      Xgc->scales->sina= sin( P->obj->rho);
     }
   /* we directly change the default scale because we do not want 
    * to register all the scales that will be generated by set_scale 
@@ -1363,7 +1363,7 @@ static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
-  Sciprintf("we should get a double here for alpha\n");
+  Sciprintf("we should get a double here for rho\n");
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 

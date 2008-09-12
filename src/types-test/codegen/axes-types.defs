@@ -7,7 +7,7 @@
   (fields
    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this axes in a figure 
                             ;; or the position of this axes in an other axe
-    '("double" "alpha")     ;; rotation of the rectangle which contains the axe
+    '("double" "rho")       ;; rotation of the rectangle which contains the axe
     '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
     '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the axe. 
     '("NspMatrix*" "arect" "std" "{0.08,0.08,0.08,0.08}" "4") ;; 

@@ -28,7 +28,7 @@ if %t then
 		      nlevels=5);
   A.children($+1)= cf;
   // insert a new axes 
-  C=axes_create(top=%f,alpha=%pi/6,arect=[1,1,1,1]*0.1);
+  C=axes_create(top=%f, rho=%pi/6,arect=[1,1,1,1]*0.1);
   C.title="Main title";
   C.y = "vertical";
   // the position of the axes in its parent 

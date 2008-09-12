@@ -1600,7 +1600,7 @@ void I3dRotation(BCG *Xgc)
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
-      return;
+      /* XXX continue for new graphics  */
     }
   if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
     {

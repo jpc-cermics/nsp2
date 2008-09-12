@@ -2377,8 +2377,7 @@ static void new_angles_Param3D(void *plot, double *theta, double *alpha, int *if
 static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
   int i;
-  struct rec_param3d1 *theplot;
-  theplot=(struct rec_param3d1 *) plot;
+  struct rec_param3d1 *theplot = plot;
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
@@ -2386,6 +2385,16 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
       theplot->bbox[i] = bbox[i];
+}
+
+
+extern void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha);
+
+static void new_angles_graphic_object(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+{
+  struct rec_object *lplot= plot ;
+  NspGraphic *G = (NspGraphic *) lplot->obj;
+  nsp_figure_change3d_orientation(G,*theta,*alpha);
 }
 
 
@@ -3337,7 +3346,7 @@ static void replay_graphic_object(BCG *Xgc,void  *theplot)
 {
   struct rec_object *lplot= theplot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  G->type->draw(Xgc,G);
+  G->type->draw(Xgc,G,NULL);
   Scistring("replay graphic_object \n");
   /* nsp_graphic_object_replay(Xgc,obj); */
 }

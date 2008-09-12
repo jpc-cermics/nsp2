@@ -1543,15 +1543,18 @@ void nsp_obj3d_free_box(Plot3dBox *B)
  *                               | loc_z | >= lim[2] 
  */
 
-/* XXXX */
 
 void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
 {
   int i, k=0;
-  double v[3], facteur;
+  double facteur;
   for (i = 0; i < 3*ncoord ; i += 3)
     {
-      v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2];
+      /* take care that Coord and M can point to the same location 
+       * thus we have to copy
+       */
+      double v[3];
+      v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2]; 
       Coord[i]   = TRX(v[0],v[1],v[2]);
       Coord[i+1] = TRY(v[0],v[1],v[2]);
       Coord[i+2] = TRZ(v[0],v[1],v[2]);

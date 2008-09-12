@@ -7,17 +7,17 @@
   (fields
    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this objs3d in a figure 
                             ;; or the position of this objs3d in an other Obj3d
-   '("double" "alpha")     ;; rotation of the rectangle which contains the Obj3d
+   '("double" "rho")     ;; rotation of the rectangle which contains the Obj3d
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
    '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the Obj3d. 
    '("NspMatrix*" "arect" "std" "{0.08,0.08,0.08,0.08}" "4") ;; 
    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this objs3d defines if []
                             ;; frect is deduced from data. 
    '("char*"  "title") 
-   '("char*"  "x") 
-   '("char*"  "y") 
-   '("NspMatrix*" "colormap" )
    '("NspList*" "children") ;; list of graphic object in the Obj3d 
+   '("NspMatrix*" "colormap" )
+   '("double" "alpha" "std" "35")  ;; 3d orientation 
+   '("double" "theta" "std" "45")  ;; 3d orientation 
    )
   (gtype-id "Objs3d")
 )

@@ -217,16 +217,16 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( check_cast(B,nsp_type_objs3d_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
-  if ( A->obj->alpha != loc->obj->alpha) return FALSE;
+  if ( A->obj->rho != loc->obj->rho) return FALSE;
   if ( A->obj->top != loc->obj->top) return FALSE;
   if ( NSP_OBJECT(A->obj->bounds)->type->eq(A->obj->bounds,loc->obj->bounds) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->arect)->type->eq(A->obj->arect,loc->obj->arect) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->frect)->type->eq(A->obj->frect,loc->obj->frect) == FALSE ) return FALSE;
   if ( strcmp(A->obj->title,loc->obj->title) != 0) return FALSE;
-  if ( strcmp(A->obj->x,loc->obj->x) != 0) return FALSE;
-  if ( strcmp(A->obj->y,loc->obj->y) != 0) return FALSE;
-  if ( NSP_OBJECT(A->obj->colormap)->type->eq(A->obj->colormap,loc->obj->colormap) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->colormap)->type->eq(A->obj->colormap,loc->obj->colormap) == FALSE ) return FALSE;
+  if ( A->obj->alpha != loc->obj->alpha) return FALSE;
+  if ( A->obj->theta != loc->obj->theta) return FALSE;
   return TRUE;
 }
 
@@ -248,15 +248,15 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->rho) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->arect)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->frect)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->title) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,M->obj->x) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,M->obj->y) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colormap)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colormap)) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->theta) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -271,15 +271,15 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_objs3d))) == NULL) return NULL;
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->rho) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->top) == FAIL) return NULL;
   if ((M->obj->arect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->frect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->title)) == FAIL) return NULL;
-  if (nsp_xdr_load_new_string(xdrs,&(M->obj->x)) == FAIL) return NULL;
-  if (nsp_xdr_load_new_string(xdrs,&(M->obj->y)) == FAIL) return NULL;
-  if ((M->obj->colormap =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
+  if ((M->obj->colormap =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->theta) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -310,10 +310,8 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
     nsp_matrix_destroy(H->obj->arect);
     nsp_matrix_destroy(H->obj->frect);
   nsp_string_destroy(&(H->obj->title));
-  nsp_string_destroy(&(H->obj->x));
-  nsp_string_destroy(&(H->obj->y));
-    nsp_matrix_destroy(H->obj->colormap);
     nsp_list_destroy(H->obj->children);
+    nsp_matrix_destroy(H->obj->colormap);
     FREE(H->obj);
    }
 }
@@ -321,7 +319,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
 void nsp_objs3d_destroy(NspObjs3d *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-#line 325 "objs3d.c"
+#line 323 "objs3d.c"
   nsp_objs3d_destroy_partial(H);
   FREE(H);
 }
@@ -372,7 +370,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
@@ -384,14 +382,14 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
-  Sciprintf1(indent+2,"x=%s\n",M->obj->x);
-  Sciprintf1(indent+2,"y=%s\n",M->obj->y);
-  if ( M->obj->colormap != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
-    }
   if ( M->obj->children != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->colormap != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    }
+  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -411,7 +409,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
@@ -423,14 +421,14 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
-  Sciprintf1(indent+2,"x=%s\n",M->obj->x);
-  Sciprintf1(indent+2,"y=%s\n",M->obj->y);
-  if ( M->obj->colormap != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
-    }
   if ( M->obj->children != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->colormap != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    }
+  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
+  Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -502,16 +500,16 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   if((H->obj = calloc(1,sizeof(nsp_objs3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->wrect = NULLMAT;
-  H->obj->alpha = 0.0;
+  H->obj->rho = 0.0;
   H->obj->top = TRUE;
   H->obj->bounds = NULLMAT;
   H->obj->arect = NULLMAT;
   H->obj->frect = NULLMAT;
   H->obj->title = NULL;
-  H->obj->x = NULL;
-  H->obj->y = NULL;
-  H->obj->colormap = NULLMAT;
   H->obj->children = NULLLIST;
+  H->obj->colormap = NULLMAT;
+  H->obj->alpha = 35;
+  H->obj->theta = 45;
   return OK;
 }
 
@@ -549,14 +547,9 @@ int nsp_objs3d_check_values(NspObjs3d *H)
      if (( H->obj->title = nsp_string_copy("")) == NULL)
        return FAIL;
     }
-  if ( H->obj->x == NULL) 
+  if ( H->obj->children == NULLLIST) 
     {
-     if (( H->obj->x = nsp_string_copy("")) == NULL)
-       return FAIL;
-    }
-  if ( H->obj->y == NULL) 
-    {
-     if (( H->obj->y = nsp_string_copy("")) == NULL)
+     if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
   if ( H->obj->colormap == NULLMAT) 
@@ -565,31 +558,26 @@ int nsp_objs3d_check_values(NspObjs3d *H)
        return FAIL;
 
     }
-  if ( H->obj->children == NULLLIST) 
-    {
-     if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
-       return FAIL;
-    }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspMatrix* colormap,NspList* children,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,NspTypeBase *type)
 {
  NspObjs3d *H  = nsp_objs3d_create_void(name,type);
  if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
   H->obj->wrect= wrect;
-  H->obj->alpha=alpha;
+  H->obj->rho=rho;
   H->obj->top=top;
   H->obj->bounds= bounds;
   H->obj->arect= arect;
   H->obj->frect= frect;
   H->obj->title = title;
-  H->obj->x = x;
-  H->obj->y = y;
-  H->obj->colormap= colormap;
   H->obj->children= children;
+  H->obj->colormap= colormap;
+  H->obj->alpha=alpha;
+  H->obj->theta=theta;
  if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
  return H;
 }
@@ -627,7 +615,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     {
       if ((H->obj->wrect = (NspMatrix *) nsp_object_copy_and_name("wrect",NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
     }
-  H->obj->alpha=self->obj->alpha;
+  H->obj->rho=self->obj->rho;
   H->obj->top=self->obj->top;
   if ( self->obj->bounds == NULL )
     { H->obj->bounds = NULL;}
@@ -648,20 +636,20 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
       if ((H->obj->frect = (NspMatrix *) nsp_object_copy_and_name("frect",NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
     }
   if ((H->obj->title = nsp_string_copy(self->obj->title)) == NULL) return NULL;
-  if ((H->obj->x = nsp_string_copy(self->obj->x)) == NULL) return NULL;
-  if ((H->obj->y = nsp_string_copy(self->obj->y)) == NULL) return NULL;
-  if ( self->obj->colormap == NULL )
-    { H->obj->colormap = NULL;}
-  else
-    {
-      if ((H->obj->colormap = (NspMatrix *) nsp_object_copy_and_name("colormap",NSP_OBJECT(self->obj->colormap))) == NULLMAT) return NULL;
-    }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
       if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
+  if ( self->obj->colormap == NULL )
+    { H->obj->colormap = NULL;}
+  else
+    {
+      if ((H->obj->colormap = (NspMatrix *) nsp_object_copy_and_name("colormap",NSP_OBJECT(self->obj->colormap))) == NULLMAT) return NULL;
+    }
+  H->obj->alpha=self->obj->alpha;
+  H->obj->theta=self->obj->theta;
   return H;
 }
 
@@ -729,27 +717,27 @@ static int _wrap_objs3d_set_wrect(void *self, char *attr, NspObject *O)
 }
 
 #line 88 "codegen/objs3d.override"
-/* override set alpha */
-static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
+/* override set rho */
+static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
-  double alpha;
-  if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
+  double rho;
+  if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
 
-  if ( ((NspObjs3d *) self)->obj->alpha != alpha) 
+  if ( ((NspObjs3d *) self)->obj->rho != rho) 
     {
-      ((NspObjs3d *) self)->obj->alpha = alpha;
+      ((NspObjs3d *) self)->obj->rho = rho;
       nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
     }
   return OK;
 }
 
-#line 747 "objs3d.c"
-static NspObject *_wrap_objs3d_get_alpha(void *self,char *attr)
+#line 735 "objs3d.c"
+static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
 {
   double ret;
   NspObject *nsp_ret;
 
-  ret = ((NspObjs3d *) self)->obj->alpha;
+  ret = ((NspObjs3d *) self)->obj->rho;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
 }
@@ -852,46 +840,70 @@ static int _wrap_objs3d_set_title(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_x(void *self,char *attr)
-{
-  const gchar *ret;
-  NspObject *nsp_ret;
+#line 104 "codegen/objs3d.override"
 
-  ret = ((NspObjs3d *) self)->obj->x;
-  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
-  return nsp_ret;
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_objs3d_get_obj_children(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspObjs3d *) self)->obj->children);
+  return (NspObject *) ret;
 }
 
-static int _wrap_objs3d_set_x(void *self, char *attr, NspObject *O)
-{
-  char *x;
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
 
-  if ((x = nsp_string_object(O))==NULL) return FAIL;
-  if ((x = nsp_string_copy(x)) ==NULL) return FAIL;
-  nsp_string_destroy(&((NspObjs3d *) self)->obj->x);
-  ((NspObjs3d *) self)->obj->x= x;
+static int _wrap_objs3d_set_obj_children(void *self,NspObject *val)
+{
+  double inside_bounds[6];
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
+  if (((NspObjs3d *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspObjs3d *) self)->obj->children);
+    }
+  ((NspObjs3d *) self)->obj->children =  (NspList *) val;
+  nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_y(void *self,char *attr)
+static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 {
-  const gchar *ret;
-  NspObject *nsp_ret;
-
-  ret = ((NspObjs3d *) self)->obj->y;
-  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
-  return nsp_ret;
+  double inside_bounds[6];
+  NspList *children;
+  if ( ! IsList(O) ) return FAIL;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspObjs3d *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspObjs3d *) self)->obj->children);
+    }
+  ((NspObjs3d *) self)->obj->children= children;
+  nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+  return OK;
 }
 
-static int _wrap_objs3d_set_y(void *self, char *attr, NspObject *O)
-{
-  char *y;
 
-  if ((y = nsp_string_object(O))==NULL) return FAIL;
-  if ((y = nsp_string_copy(y)) ==NULL) return FAIL;
-  nsp_string_destroy(&((NspObjs3d *) self)->obj->y);
-  ((NspObjs3d *) self)->obj->y= y;
-  return OK;
+#line 901 "objs3d.c"
+static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
+{
+  NspList *ret;
+
+  ret = ((NspObjs3d *) self)->obj->children;
+  return (NspObject *) ret;
 }
 
 static NspObject *_wrap_objs3d_get_colormap(void *self,char *attr)
@@ -923,83 +935,55 @@ static int _wrap_objs3d_set_colormap(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 104 "codegen/objs3d.override"
-
-/* here we override get_obj  and set_obj 
- * we want get to be followed by a set to check that 
- * inserted value is correct thus we use copy = TRUE.
- */
-
-static NspObject *_wrap_objs3d_get_obj_children(void *self,char *attr, int *copy)
+static NspObject *_wrap_objs3d_get_alpha(void *self,char *attr)
 {
-  NspList *ret;
-  *copy = TRUE; 
-  ret = ((NspList*) ((NspObjs3d *) self)->obj->children);
-  return (NspObject *) ret;
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspObjs3d *) self)->obj->alpha;
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
 }
 
-/* in this function we can check that val is correct before 
- * setting the field with val. return FAIL if val is incorrect.
- */
-
-static int _wrap_objs3d_set_obj_children(void *self,NspObject *val)
+static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
 {
-  double inside_bounds[4];
-  if ( ! IsList(val) ) return FAIL;
-  if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
-  if (((NspObjs3d *) self)->obj->children != NULL ) 
-    {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
-      nsp_list_destroy(((NspObjs3d *) self)->obj->children);
-    }
-  ((NspObjs3d *) self)->obj->children =  (NspList *) val;
-  nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+  double alpha;
+
+  if ( DoubleScalar(O,&alpha) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->alpha= alpha;
   return OK;
 }
 
-static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
+static NspObject *_wrap_objs3d_get_theta(void *self,char *attr)
 {
-  double inside_bounds[4];
-  NspList *children;
-  if ( ! IsList(O) ) return FAIL;
-  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspObjs3d *) self)->obj->children != NULL ) 
-    {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
-      nsp_list_destroy(((NspObjs3d *) self)->obj->children);
-    }
-  ((NspObjs3d *) self)->obj->children= children;
-  nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
-  return OK;
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspObjs3d *) self)->obj->theta;
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
 }
 
-
-#line 984 "objs3d.c"
-static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
+static int _wrap_objs3d_set_theta(void *self, char *attr, NspObject *O)
 {
-  NspList *ret;
+  double theta;
 
-  ret = ((NspObjs3d *) self)->obj->children;
-  return (NspObject *) ret;
+  if ( DoubleScalar(O,&theta) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->theta= theta;
+  return OK;
 }
 
 static AttrTab objs3d_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_objs3d_get_wrect, (attr_set_function *)_wrap_objs3d_set_wrect,(attr_get_object_function *)_wrap_objs3d_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
-  { "alpha", (attr_get_function *)_wrap_objs3d_get_alpha, (attr_set_function *)_wrap_objs3d_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "rho", (attr_get_function *)_wrap_objs3d_get_rho, (attr_set_function *)_wrap_objs3d_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "top", (attr_get_function *)_wrap_objs3d_get_top, (attr_set_function *)_wrap_objs3d_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "arect", (attr_get_function *)_wrap_objs3d_get_arect, (attr_set_function *)_wrap_objs3d_set_arect,(attr_get_object_function *)_wrap_objs3d_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
   { "frect", (attr_get_function *)_wrap_objs3d_get_frect, (attr_set_function *)_wrap_objs3d_set_frect,(attr_get_object_function *)_wrap_objs3d_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
   { "title", (attr_get_function *)_wrap_objs3d_get_title, (attr_set_function *)_wrap_objs3d_set_title,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "x", (attr_get_function *)_wrap_objs3d_get_x, (attr_set_function *)_wrap_objs3d_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_objs3d_get_y, (attr_set_function *)_wrap_objs3d_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "colormap", (attr_get_function *)_wrap_objs3d_get_colormap, (attr_set_function *)_wrap_objs3d_set_colormap,(attr_get_object_function *)_wrap_objs3d_get_obj_colormap, (attr_set_object_function *)int_set_object_failed },
   { "children", (attr_get_function *)_wrap_objs3d_get_children, (attr_set_function *)_wrap_objs3d_set_children,(attr_get_object_function *)_wrap_objs3d_get_obj_children, (attr_set_object_function *)_wrap_objs3d_set_obj_children },
+  { "colormap", (attr_get_function *)_wrap_objs3d_get_colormap, (attr_set_function *)_wrap_objs3d_set_colormap,(attr_get_object_function *)_wrap_objs3d_get_obj_colormap, (attr_set_object_function *)int_set_object_failed },
+  { "alpha", (attr_get_function *)_wrap_objs3d_get_alpha, (attr_set_function *)_wrap_objs3d_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "theta", (attr_get_function *)_wrap_objs3d_get_theta, (attr_set_function *)_wrap_objs3d_set_theta,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1019,7 +1003,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1023 "objs3d.c"
+#line 1007 "objs3d.c"
 
 
 #line 162 "codegen/objs3d.override"
@@ -1031,7 +1015,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1035 "objs3d.c"
+#line 1019 "objs3d.c"
 
 
 #line 172 "codegen/objs3d.override"
@@ -1043,7 +1027,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1047 "objs3d.c"
+#line 1031 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1084,7 +1068,7 @@ Objs3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1088 "objs3d.c"
+#line 1072 "objs3d.c"
   nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1107,7 +1091,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   char xf[]="onn";
   char strflag[]="151";
-  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
+  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], frect[4]={0,0,10,10}, inside_bounds[6];
   char logscale[2];
   int aaint[4]={10,2,10,2};
   Cell *cloc;
@@ -1141,33 +1125,31 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
       WRect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
       WRect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
       wrect1 = WRect1;
-      Xgc->scales->cosa= cos( P->obj->alpha);
-      Xgc->scales->sina= sin( P->obj->alpha);
+      Xgc->scales->cosa= cos( P->obj->rho);
+      Xgc->scales->sina= sin( P->obj->rho);
     }
   /* we directly change the default scale because we do not want 
    * to register all the scales that will be generated by set_scale 
    * thus we use T in flag[1].
    */
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
-  nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   nsp_axes_update_frame_bounds(Xgc,wrect1,
-			       TRUE ? inside_bounds : P->obj->frect->R,
+			       TRUE ? frect : P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
 			       TRUE,
 			       TRUE,
 			       xf);
+  nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   axis_draw(Xgc,strflag);
   frame_clip_on(Xgc);
   {
     int flag[]={1,2,4};
-    double ebox[]={0,6,0,6,-1,1};
-    double theta = 35, alpha=45;
     char legend[]="X@Y@Z";
     if ( P->obj->colormap->n == 3 )
       Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
 						P->obj->colormap->R);
-    nsp_draw_objs3d_s2(Xgc,P,theta,alpha,legend,flag,ebox,TRUE,TRUE,3,1);
+    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,TRUE,TRUE,3,1);
   }
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -1176,11 +1158,6 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
   /* title if present */
   if ( P->obj->title[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
-  if ( P->obj->x[0] != '\0') 
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
-  if ( P->obj->y[0] != '\0') 
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
-  
   /* scale back */
   set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect);
   if (  P->obj->top != TRUE )
@@ -1198,7 +1175,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  double l_bounds[4];
+  int i;
+  double l_bounds[6];
   Cell *cloc;
   NspList *L;
   NspObjs3d *P = (NspObjs3d *) Obj;
@@ -1207,13 +1185,12 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
   
   if ( cloc == NULLCELL) 
     {
-      bounds[0]=bounds[1]=0;
-      bounds[2]=bounds[3]=0;
+      bounds[0]=bounds[1]=bounds[2]=bounds[3]=bounds[4]=bounds[5]=0;
       return;
     }
   
-  bounds[0]=bounds[1]=LARGEST_REAL;
-  bounds[2]=bounds[3]=-LARGEST_REAL;
+  bounds[0]=bounds[2]=bounds[4]=LARGEST_REAL;
+  bounds[1]=bounds[3]=bounds[5]=-LARGEST_REAL;
 
   while ( cloc != NULLCELL ) 
     {
@@ -1221,14 +1198,11 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  G->type->bounds(Xgc,G,l_bounds);
-	  if ( l_bounds[0] < bounds[0] ) 
-	    bounds[0]= l_bounds[0];
-	  if (  l_bounds[2] > bounds[2])
-	    bounds[2]= l_bounds[2];
-	  if ( l_bounds[1] < bounds[1] ) 
-	    bounds[1]= l_bounds[1];
-	  if (  l_bounds[3] > bounds[3])
-	    bounds[3]= l_bounds[3];
+	  for ( i = 0 ; i < 3 ; i++) 
+	    {
+	      if ( l_bounds[2*i] < bounds[2*i] )   bounds[2*i]= l_bounds[2*i];
+	      if ( l_bounds[2*i+1] > bounds[2*i+1])   bounds[2*i+1]= l_bounds[2*i+1];
+	    }
 	}
       cloc = cloc->next;
     }
@@ -1248,7 +1222,7 @@ static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *Obj,double *R)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return ;
-  Sciprintf("we should get a double here for alpha\n");
+  Sciprintf("we should get a double here for rho\n");
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
@@ -1276,9 +1250,6 @@ static void nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[3]=P->obj->wrect->R[1];/* ymax */
 }
 
-
-
-
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
@@ -1304,6 +1275,11 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+
+
+
+
+/* Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr> */
 
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
 				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
@@ -1499,5 +1475,27 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 }
 #endif 
 
+/* Obj is a Figure 
+ *
+ */
 
-#line 1504 "objs3d.c"
+void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
+{
+  NspFigure *F = (NspFigure *) Obj;
+  NspList *L = F->obj->children;
+  Cell *cloc = (L != NULL) ? L->first : NULLCELL;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ &&  IsObjs3d(cloc->O)) 
+	{
+	  NspObjs3d *Obj = (NspObjs3d *) cloc->O;
+	  Obj->obj->alpha = alpha;
+	  Obj->obj->theta = theta;
+	}
+      cloc = cloc->next;
+    }
+}
+
+
+
+#line 1502 "objs3d.c"

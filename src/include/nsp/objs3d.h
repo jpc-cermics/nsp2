@@ -31,16 +31,16 @@ struct _NspTypeObjs3d {
 typedef struct _nsp_objs3d nsp_objs3d;
 struct _nsp_objs3d {
   NspMatrix* wrect;
-  double alpha;
+  double rho;
   gboolean top;
   NspMatrix* bounds;
   NspMatrix* arect;
   NspMatrix* frect;
   char* title;
-  char* x;
-  char* y;
-  NspMatrix* colormap;
   NspList* children;
+  NspMatrix* colormap;
+  double alpha;
+  double theta;
   int ref_count;
 };
 
@@ -70,7 +70,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double alpha,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspMatrix* colormap,NspList* children,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,NspTypeBase *type);
 
 /* from Objs3dObj.c */
 

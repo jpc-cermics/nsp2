@@ -920,15 +920,58 @@ static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-/* compute in bounds the enclosing rectangle of polyhedron 
- *
+/* compute the bounds of the polyhedron: 
+ * note that for 3dobjets this is of length 6 
  */
+
+static void bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
 static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+  int i;
+  /* this should be stored in a cache and recomputed when necessary 
+   *
+   */
+  nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
+  
+  if ( Q->Mcoord->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
+      return;
+    }
+  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
+    bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
+
+static void bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) 
+{
+  int i,i1;
+  double amin= A[0], amax=A[0];
+  /* look for the first non Nan component */
+  i = 0; i1 = 1;
+  while ( i1 <= n && ISNAN(A[i]) ) { i += incr; i1++; }
+  if ( i1 <= n )
+    {
+      /* init with the first non Nan component then do the usual loop */
+      amin = amax = A[i];
+      i1++; i+=incr;
+      for (  ; i1 <= n ; i += incr, i1++ )
+	{
+	  if ( A[i] < amin )
+	    {
+	      amin = A[i];
+	    }
+	  else if ( A[i] > amax )
+	    {
+	      amax = A[i];
+	    }
+	}
+    }
+  *Amax = amax; *Amin = amin;
+  return;
+}
+
 
 /* checks that polyhedron is OK 
  * and converts matrices data to int if not already done 
@@ -996,7 +1039,7 @@ int nsp_check_polyhedron(NspPolyhedron *P)
 
 
 /* draw one face of a polyhedron 
- * from Pincon 
+ * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
 
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
@@ -1103,12 +1146,13 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 #endif
 }
 
-/* XXX must be called after a transformation which have filled 
+/* 
+ * this function is to be called after a transformation which have filled 
  * Q->Mcoord_l->R
- * 
+ * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
 
-void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int k)
+static void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int k)
 {
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
   int m, i, j, *current_vertex;
@@ -1156,6 +1200,10 @@ void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int
 }
 
 
+/*
+ * requested method for 3d objects.
+ */
+
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
@@ -1164,9 +1212,13 @@ static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, 
   zmean_faces_for_Polyhedron(Obj, z,  HF, n, k);
 }
 
+/* requested method for 3d objects.
+ *
+ */
+
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
   return ((NspPolyhedron *) Obj)->obj->Mface->n;
 }
 
-#line 1173 "polyhedron.c"
+#line 1225 "polyhedron.c"
