@@ -244,25 +244,30 @@ class Wrapper:
               '%(fields_save)s' \
               '  return OK;\n' \
               '}\n' \
-              '\n' \
-              '/*\n' \
-              ' * load \n' \
-              ' */\n' \
-              '\n' \
-              'Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M)\n' \
-              '{\n' \
-              '%(fields_load)s' \
-              ' return M;\n' \
-              '}\n\n' \
-              'static Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load(XDR *xdrs)\n' \
-              '{\n' \
-              '  Nsp%(typename)s *M = NULL;\n' \
-              '  static char name[NAME_MAXL];\n' \
-              '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
-              '  if ((M  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return M;\n' \
-              '  return nsp_%(typename_dc)s_xdr_load_partial(xdrs,M);\n' \
-              '}\n' \
-              '\n' \
+              '\n' 
+
+    type_tmpl_load_1 = \
+        '/*\n' \
+        ' * load \n' \
+        ' */\n' \
+        '\n' \
+        'Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M)\n' \
+        '{\n' \
+        '%(fields_load)s' \
+        ' return M;\n' \
+        '}\n\n' \
+        'static Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load(XDR *xdrs)\n' \
+        '{\n' \
+        '  Nsp%(typename)s *H = NULL;\n' \
+        '  char name[NAME_MAXL];\n' \
+        '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
+        '  if ((H  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return H;\n' \
+        '  if ((H  = nsp_%(typename_dc)s_xdr_load_partial(xdrs,H))== NULL%(typename_uc)s) return H;\n'
+
+    type_tmpl_load_2 = \
+        '  return H;\n}\n\n' 
+
+    type_tmpl_delete = \
               '/*\n' \
               ' * delete \n' \
               ' */\n' \
@@ -685,6 +690,14 @@ class Wrapper:
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
         self.fp.write(self.type_tmpl_1_1_1 % substdict)
+        # insert the code for load 
+        self.fp.write(self.type_tmpl_load_1 % substdict)
+        substdict['ret']= 'NULL'
+        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+        self.fp.resetline()
+        self.fp.write(self.type_tmpl_load_2 % substdict)
+        # 
+        self.fp.write(self.type_tmpl_delete % substdict)
         self.fp.write('%(destroy_prelim)s' %substdict)
         self.fp.resetline()
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
@@ -692,11 +705,15 @@ class Wrapper:
         # i.e a set of functions used for writing interfaces 
         self.fp.write(self.type_tmpl_interface_util % substdict)
         # object copy and interface for creation
-        self.fp.write(self.type_tmpl_copy % substdict)
-        self.fp.write('%(int_create_final)s' %substdict)
+        self.fp.write(self.type_tmpl_copy_1 % substdict)
+        substdict['ret']= 'NULL'
+        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+        self.fp.resetline()
+        self.fp.write(self.type_tmpl_copy_2 % substdict)
+        substdict['ret']= 'RET_BUG'
+        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
         self.fp.resetline()
         self.fp.write(self.type_tmpl_copy_last % substdict)
-
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.c_name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
@@ -1041,14 +1058,14 @@ class Wrapper:
 
 
     def build_full_copy_code(self,substdict,varname):
-        # no overrides for the whole function.  If no fields, don't write a func
         # This function generates the code for full_copy of an object 
+        # at the end we insert a part which can be inserted from override 
+        # override_int_create_final 
         if self.byref != 't' :
             # here full_copy is just a copy 
             str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
                 '{\n'  \
-                '  return nsp_%(typename_dc)s_copy(self);\n' \
-                '}\n' % substdict 
+                '  Nsp%(typename)s *H = nsp_%(typename_dc)s_copy(self);\n' % substdict 
             return str 
         str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
             '{\n'  \
@@ -1061,8 +1078,7 @@ class Wrapper:
                 % (string.lower(father),father,father,string.upper(lower_name))
         str = str + '  if ( nsp_%s_full_copy_partial(H,self)== NULL) return NULL%s;\n' \
             % (lower_name,string.upper(lower_name)) 
-        str = str + '  return H;\n' + '}\n' 
-        return str
+        return str 
 
     def build_equal_fields(self,varname):
         lower_name = self.get_lower_name()
@@ -1475,7 +1491,7 @@ class NspObjectWrapper(Wrapper):
         '%(codeafter)s\n' \
         '}\n\n'
 
-    type_tmpl_copy = \
+    type_tmpl_copy_1 = \
         '/*-----------------------------------------------------\n ' \
         ' * constructor \n' \
         ' * if type is non NULL it is a subtype which can be used to \n' \
@@ -1535,7 +1551,10 @@ class NspObjectWrapper(Wrapper):
         ' */\n'  \
         '\n'  \
         '%(fields_full_copy_partial_code)s' \
-        '%(full_copy_code)s'\
+        '%(full_copy_code)s' 
+
+    type_tmpl_copy_2 = \
+        '  return H;\n' + '}\n' \
         '\n'  \
         '/*-------------------------------------------------------------------\n'  \
         ' * wrappers for the %(typename)s\n'  \

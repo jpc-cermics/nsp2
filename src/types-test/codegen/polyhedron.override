@@ -10,7 +10,12 @@ extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vec
 extern  int nsp_obj3d_orientation(int x[], int y[], int n);
 extern void nsp_figure_force_redraw( NspFigure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
 
+static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
@@ -18,6 +23,7 @@ static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_polyhedron(NspPolyhedron *P);
 
 %%
 init 
@@ -49,6 +55,16 @@ modulename atk
 ignore-glob
   *_get_type
 
+%%
+override_int_create_final 
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_polyhedron(H)== FAIL) return %(ret)s; 
+
+%%
+override_destroy_prelim
+  /* verbatim in destroy */
+  nsp_matrix_destroy(H->obj->Mcoord_l);
+  if ( H->obj->pos != NULL) FREE(H->obj->pos);
 %%
 override polyhedron_attach kwargs
 int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
@@ -116,14 +132,6 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
 %%
 last
 
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
-
-static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
-static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
-extern int nsp_check_polyhedron(NspPolyhedron *P);
-
 /* function called when draw is needed 
  * data can be NULL and when non null 
  * it gives the face to draw for the polyhedron 
@@ -133,7 +141,7 @@ static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
-  nsp_check_polyhedron((NspPolyhedron *) Obj); /* should be elsewhere XXXX */
+  nsp_check_polyhedron((NspPolyhedron *) Obj);
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -191,7 +199,7 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
    *
    */
   nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
-  
+  nsp_check_polyhedron((NspPolyhedron *) Obj);
   if ( Q->Mcoord->mn == 0) 
     {
       bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
@@ -230,68 +238,54 @@ static void bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax)
   return;
 }
 
-
-/* checks that polyhedron is OK 
- * and converts matrices data to int if not already done 
+/* checks that polyhedron is OK:
+ * converts matrices data to int 
+ * allocated extra matrices 
  */
 
-int nsp_check_polyhedron(NspPolyhedron *P)
+int nsp_check_polyhedron( NspPolyhedron *P)
 {
   nsp_polyhedron *Q = P->obj;
   int Q_nb_faces = Q->Mface->n;
   int Q_nb_coords = Q->Mcoord->n;
-  /* only to facilitate the job 
-  int Q_nb_coords = Q->Mcoord->n;
-  double * Q_coord = Q->Mcoord->R;
-  int Q_nb_vertices_per_face = Q->Mface->m;
-  int Q_nb_faces = Q->Mface->n;
-  int * Q_face = Q->Mface->I;
-  int Q_nb_colors = Q->Mcolor->mn;
-  int * Q_color =  Q->Mcolor->I;
-  int Q_nb_back_colors = Q->Mback_color->mn ;
-  int * Q_back_color =  Q->Mback_color->I;
-  */
 
   if ( Q->Mcoord->m != 3 ) 
     {
-      /* Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack)); */
+      Scierror("Error: bad coord for polyhedron, first dimension should be 3\n");
       return FAIL;
     }
   if ( Q->Mface->m < 3 ) 
     {
-      /* Scierror("%s : bad face, first dimension should be < 3 %d\n",NspFnameH(stack)); */
+      Scierror("Error: bad face for polyhedron, first dimension should be >= 3\n");
       return FAIL;
     }
-  /* switch to int XXX */
-  Q->Mface = Mat2int(Q->Mface);
-
   if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 ) 
     {
-      /* Scierror("%s : bad color size, expecting 1 or %d\n", Q->nb_faces); */
+      Scierror("Error: bad color size for polyhedron, expecting 1 or %d\n", Q_nb_faces);
       return FAIL;
     }
-  /* switch to int XXX */
-  Q->Mcolor = Mat2int(Q->Mcolor);
   
   if ( Q->Mback_color->mn  !=  Q_nb_faces  && Q->Mback_color->mn != 1 ) 
     {
-      /*       Scierror("%s : bad back_color size, expecting 1 or %d\n", Q->nb_faces);*/
+      Scierror("Error: bad back_color size for polyhedron, expecting 1 or %d\n", Q_nb_faces);
       return FAIL;
     }
-  
-  /* switch to int XXX */
+
+  Q->Mface = Mat2int(Q->Mface);
   Q->Mback_color = Mat2int(Q->Mback_color);
-  
-  /* create a matrix FIXME */
-  if ( Q-> pos == NULL) 
-    Q->pos = malloc( Q_nb_coords * sizeof(int));
+  Q->Mcolor = Mat2int(Q->Mcolor);
+
+  /* create extra data for qpos declared int* 
+   * Q->pos id only usefull for non opengl driver 
+   */
+  if ( Q->pos == NULL) Q->pos = malloc( Q_nb_coords * sizeof(int));
   Q->pos_length = Q_nb_coords;
 
+  /* create extra data for Mcoord_l declared void* */
   if ( Q->Mcoord_l == NULL) 
     {
       Q->Mcoord_l = nsp_matrix_create("local",'r',Q->Mcoord->m, Q->Mcoord->n);
     }
-  
   return OK;
 }
 
@@ -355,8 +349,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
-
-  int i,j, np=1, m;
+  int i,j, m;
   double x[6], y[6], z[6];   /* a changer */
   int numpt, *current_vertex, color;
 
@@ -385,21 +378,13 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 	  z[i] = Q_coord[3*numpt+2];
 	}
       
-      if ( Q_nb_colors == 1 )
-	color = Q_color[0];
-      else
-	color = Q_color[j];
-      
-      if ( ! Q->mesh )  /* le contour du polygone ne doit pas apparaitre */
-	color = -color; 
-
+      color = ( Q_nb_colors == 1 ) ? Q_color[0]: Q_color[j];
+      /* le contour du polygone ne doit pas apparaitre */
+      if ( ! Q->mesh ) 	color = -color; 
       /* color = 0;  permet de voir uniquement le maillage */
-      /* 
-       *  x, y : polygone(s) coordinates, nr : number of sides
-       *  np : number of polygone(s) =1 here
-       */
+      /* draw one face */
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
-      fillpolylines3D(Xgc, x, y, z, &color, np, m);
+      fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
     }
 #endif
 }
@@ -410,9 +395,9 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
  * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
 
-static void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int *n, int k)
+static void zmean_faces_for_Polyhedron(void *Obj, double z[], HFstruct HF[], int *n, int k)
 {
-  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
+  nsp_polyhedron *Q = ((NspPolyhedron *) Obj)->obj;
   int m, i, j, *current_vertex;
   VisionPos pos_face, pos_vertex;
   double coef, zmean;
@@ -422,6 +407,8 @@ static void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int 
   int Q_nb_vertices_per_face = Q->Mface->m;
   int Q_nb_faces = Q->Mface->n;
   int * Q_face = Q->Mface->I;
+
+  nsp_check_polyhedron((NspPolyhedron *) Obj);
   
   m = Q_nb_vertices_per_face; 
   coef = 1.0/m;
@@ -465,7 +452,6 @@ static void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int 
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
-  nsp_check_polyhedron((NspPolyhedron *) Obj);
   apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
   zmean_faces_for_Polyhedron(Obj, z,  HF, n, k);
 }
