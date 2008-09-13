@@ -224,11 +224,13 @@ NspClassB  *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M)
 
 static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 {
-  NspClassB *M = NULL;
-  static char name[NAME_MAXL];
+  NspClassB *H = NULL;
+  char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
-  if ((M  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return M;
-  return nsp_classb_xdr_load_partial(xdrs,M);
+  if ((H  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return H;
+  if ((H  = nsp_classb_xdr_load_partial(xdrs,H))== NULLCLASSB) return H;
+#line 233 "classb.c"
+  return H;
 }
 
 /*
@@ -238,7 +240,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 void nsp_classb_destroy_partial(NspClassB *H)
 {
   nsp_classa_destroy_partial((NspClassA *) H);
-#line 242 "classb.c"
+#line 244 "classb.c"
   nsp_matrix_destroy(H->clb_val);
 }
 
@@ -443,7 +445,9 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 
 NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
-  return nsp_classb_copy(self);
+  NspClassB *H = nsp_classb_copy(self);
+#line 450 "classb.c"
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -461,7 +465,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-#line 465 "classb.c"
+#line 469 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -475,7 +479,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 479 "classb.c"
+#line 483 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -486,7 +490,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 490 "classb.c"
+#line 494 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -609,9 +613,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 613 "classb.c"
+#line 617 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 618 "classb.c"
+#line 622 "classb.c"

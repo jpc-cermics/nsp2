@@ -1,4 +1,3 @@
-
 function test1()
   fmode = %t; 
   mode = "Cairo";
@@ -49,17 +48,58 @@ function test3()
   //mode = "OpenGl";
   F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
   // a top level axes 
-  A=objs3d_create(top=%t,title="Main title",colormap=hotcolormap(64));
+  ncol= 32
+  A=objs3d_create(top=%t,title="Main title", colormap=hotcolormap(ncol));
   // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
-  x = linspace(0,2*%pi,40);
+  x = linspace(0,2*%pi,20);
   z = cos(x')*cos(x);
-  exec('tests/tobedone/3dbruno/libbruno.sce');
-  P = zsurf_to_polyhedron(x, x, z, 1,64);
+  P = zsurf_to_polyhedron(x, x, z, 1,ncol);
   Pl=polyhedron_create(Mcoord=P.coord,Mface=P.face,Mcolor=P.color,Mback_color=P.back_color);
   A.children(1)=Pl;
   F.connect[];
 endfunction
+
+function test4()
+  fmode = %t; 
+  mode = "Cairo";
+  mode = "Gtk";
+  //mode = "OpenGl";
+  F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
+  // a top level axes 
+  ncol= 32;
+  cm=[jetcolormap(128);[0.9 0.9 0.9]];
+  A=objs3d_create(top=%t,title="Main title", colormap=cm);
+  // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
+  F.children(1)= A;
+  
+  function [z] = rozen(x,y)
+  // pour plot3d
+    C = 1
+    x = x(:)
+    y = (y(:))'
+    z = C*(ones(size(x))*y - x.^2*ones(size(y))).^2 + (1 - x).^2*ones(size(y))
+  endfunction
+
+  n = 20;
+  x = linspace(-1.5,2,n);
+  y = linspace(-2,3,n);
+  z = rozen(x,y);
+  // on limite l'amplitude en z
+  z = 3*z/max(z);
+  P = zsurf_to_spolyhedron(x, x, z, 1, 128); 
+  //  draw3d_objs(listObj,ebox=ebox,box_color=129,box_style="matlab");
+
+  Pl=spolyhedron_create(Mcoord=P.coord,Mface=P.face,coloutmin=P.colout(1),...
+			coloutmax=P.colout(2),Mval = P.val,colmin =P.colminmax(1),...
+			colmax= P.colminmax(2), back_color=P.back_color, vmin=P.valminmax(1),...
+			vmax=P.valminmax(2));
+  A.children(1)=Pl;
+  F.connect[];
+endfunction
+
+exec('SCI/tests/tobedone/3dbruno/libbruno.sce');
+  
 
 
 

@@ -257,11 +257,13 @@ NspGMatrix  *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M)
 
 static NspGMatrix  *nsp_gmatrix_xdr_load(XDR *xdrs)
 {
-  NspGMatrix *M = NULL;
-  static char name[NAME_MAXL];
+  NspGMatrix *H = NULL;
+  char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGMATRIX;
-  if ((M  = nsp_gmatrix_create_void(name,(NspTypeBase *) nsp_type_gmatrix))== NULLGMATRIX) return M;
-  return nsp_gmatrix_xdr_load_partial(xdrs,M);
+  if ((H  = nsp_gmatrix_create_void(name,(NspTypeBase *) nsp_type_gmatrix))== NULLGMATRIX) return H;
+  if ((H  = nsp_gmatrix_xdr_load_partial(xdrs,H))== NULLGMATRIX) return H;
+#line 266 "gmatrix.c"
+  return H;
 }
 
 /*
@@ -274,7 +276,7 @@ void nsp_gmatrix_destroy_partial(NspGMatrix *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 278 "gmatrix.c"
+#line 280 "gmatrix.c"
     nsp_matrix_destroy(H->obj->data);
     nsp_matrix_destroy(H->obj->rect);
     nsp_matrix_destroy(H->obj->colminmax);
@@ -558,6 +560,7 @@ NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
+#line 564 "gmatrix.c"
   return H;
 }
 
@@ -577,7 +580,7 @@ int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix_check_values(H) == FAIL) return RET_BUG;
-#line 581 "gmatrix.c"
+#line 584 "gmatrix.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -744,7 +747,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 748 "gmatrix.c"
+#line 751 "gmatrix.c"
 
 
 #line 58 "codegen/gmatrix.override"
@@ -756,7 +759,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 760 "gmatrix.c"
+#line 763 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -796,7 +799,7 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 800 "gmatrix.c"
+#line 803 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -926,4 +929,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 930 "gmatrix.c"
+#line 933 "gmatrix.c"

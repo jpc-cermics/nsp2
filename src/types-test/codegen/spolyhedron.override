@@ -3,16 +3,35 @@
 headers
 #include "nsp/spolyhedron.h"
 #include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
+extern  int nsp_obj3d_orientation(int x[], int y[], int n);
+extern void nsp_figure_force_redraw( NspFigure *F);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void nsp_figure_force_redraw( NspFigure *F);
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_spolyhedron(NspSPolyhedron *P);
 
-extern void nsp_figure_force_redraw( NspFigure *F);
-
+static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
+static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
+static int zone(double val, double valmin, double valmax, int nv);
+static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
+static void permut_of_sort(int *tab, int *perm);
+static void find_intersection(int *sx, int *sy, double *fxy, double z, 
+			      int inda, int indb, int *xint, int *yint);
 %%
 init 
 
@@ -32,6 +51,8 @@ override_type SPolyhedron
   /* next method are defined in NspGraphic and need not be chnaged here for SPolyhedron */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
 
 %%
 modulename atk
@@ -40,6 +61,15 @@ modulename atk
 %%
 ignore-glob
   *_get_type
+%%
+override_int_create_final 
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_spolyhedron(H)== FAIL) return %(ret)s; 
+
+%%
+override_destroy_prelim
+  /* verbatim in destroy */
+  nsp_matrix_destroy(H->obj->Mcoord_l);
 
 %%
 override spolyhedron_attach kwargs
@@ -104,7 +134,6 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
 %%
 last
 
@@ -112,18 +141,36 @@ last
 
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
-  NspSPolyhedron *P =(NspSPolyhedron*) Obj ;
+  int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
-  /* be sure that object are in canonical form */
-  Mat2double(P->obj->x);
-  Mat2double(P->obj->y);
-  Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_check_spolyhedron((NspSPolyhedron *) Obj);
+#ifdef  WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      /* if we are using OpenGl we make a full draw of 
+       * object and return 
+       */
+      draw_spolyhedron_ogl(Xgc,Obj);
+      nsp_ogl_set_2dview(Xgc); 
+      return; 
+    }
+#endif 
+  if ( data != NULL) 
+    {
+      face = *((int *) data);
+      draw_spolyhedron_face(Xgc,Obj,face);
+    }
+  else 
+    {
+      int i;
+      /* draw all the faces: this is not really used  
+       * since the face order is computed and sequenced in upper object.
+       */
+      for ( i= 0 ; i < ((NspSPolyhedron*) Obj)->obj->Mface->n ; i++) 
+	draw_spolyhedron_face(Xgc,Obj,i);
+    }
 }
+
 
 static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -145,9 +192,456 @@ static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
+
 static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+  int i;
+  /* this should be stored in a cache and recomputed when necessary 
+   *
+   */
+  nsp_spolyhedron *Q= ((NspSPolyhedron *) Obj)->obj;
+  nsp_check_spolyhedron((NspSPolyhedron *) Obj);
+  if ( Q->Mcoord->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
+      return;
+    }
+  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
+
+
+int nsp_check_spolyhedron( NspSPolyhedron *P)
+{
+  nsp_spolyhedron *Q = P->obj;
+  /* aliases */
+  int Q_nb_coords = Q->Mcoord->n;
+  /* 
+     double *Q_coord = Q->Mcoord->R; 
+     int Q_nb_vertices_per_face = Q->Mface->m;
+     int Q_nb_faces = Q->Mface->n;
+     int *Q_face = Q->Mface->I; 
+     double *Q_val = Q->Mval->R;
+  */
+  int Q_nb_levels = Q->colmax - Q->colmin + 1;
+  double dv;
+  int i;
+
+  if ( Q->Mcoord->m != 3 ) 
+    {
+      Scierror("Error: bad coord for spolyhedron, first dimension should be 3\n");
+      return FAIL;
+    }
+  
+  if ( Q->Mface->m < 3 ) 
+    {
+      Scierror("Error: bad face for spolyhedron, first dimension should be >= 3 %d\n");
+      return FAIL;
+    }
+
+  Q->Mface = Mat2int(Q->Mface);
+
+  if ( Q->Mval->mn != Q_nb_coords ) 
+    {
+
+      Scierror("Error: bad dimensions for val, mxn should be equal to %d\n",Q_nb_coords);
+      return FAIL;
+    }
+  
+  if ( Q_nb_levels < 1 )
+    {
+      Scierror("Error: bad colmin and colmax fields for polyhedron\n");
+      return FAIL;
+    }
+
+  /* a faire si changements */
+  if ( Q->vlevel == NULL) 
+    {
+      Q->vlevel = malloc( (1 + Q_nb_levels) * sizeof(double));
+      if ( Q->vlevel == NULL)  return FAIL;
+      Q->vlevel_length = (1 + Q_nb_levels);
+    }
+  if ( Q->fill == NULL) 
+    {
+      Q->fill = malloc( (2 + Q_nb_levels) * sizeof(int));
+      if ( Q->fill == NULL)  return FAIL;
+      Q->fill_length = (2 + Q_nb_levels);
+    }
+  
+  dv = (Q->vmax - Q->vmin)/Q_nb_levels;
+  Q->vlevel[0] = Q->vmin;
+  for ( i = 1 ; i < Q_nb_levels ; i++ ) Q->vlevel[i] = Q->vmin + i*dv;
+  Q->vlevel[Q_nb_levels] = Q->vmax;
+
+  Q->fill[0] = Q->coloutmin;
+  Q->fill[1] = Q->colmin;
+  for ( i = 2 ; i <= Q_nb_levels ; i++ )  Q->fill[i] = Q->fill[i-1] + 1;
+  Q->fill[Q_nb_levels+1] = Q->coloutmax;
+
+  if ( Q->pos == NULL) 
+    {
+      Q->pos = malloc( Q_nb_coords * sizeof(VisionPos));
+      if ( Q->pos == NULL) return FAIL;
+      Q->pos_length = Q_nb_coords;
+    }
+
+  /* create extra data for Mcoord_l declared void* */
+  if ( Q->Mcoord_l == NULL) 
+    {
+      Q->Mcoord_l = nsp_matrix_create("local",'r',Q->Mcoord->m, Q->Mcoord->n);
+    }
+  return OK;
+}
+
+
+static int display_mode = INTERP;
+
+static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
+{
+  nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
+  int i, k, np=1, m, zero=0;
+  int x[4], y[4];
+  int nbtri, triangle[2][3] = {{0,1,2},{0,2,3}};
+  int zxy[3], sx[3], sy[3];
+  int numpt, *current_vertex, color, orient;
+  double v[3], val_mean=0.0;
+
+  int foreground_color = 1; /* XX should be shared */
+  double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int *Q_face = Q->Mface->I; 
+  double *Q_val = Q->Mval->R;
+  int Q_nb_levels = Q->colmax - Q->colmin + 1;
+
+  m = Q_nb_vertices_per_face;
+  current_vertex = &(Q_face[m*j]);
+  for (i = 0 ; i < m ; i++)
+    {
+      numpt = current_vertex[i]-1;
+      x[i] = XScale(Q_coord[3*numpt]);
+      y[i] = YScale(Q_coord[3*numpt+1]);
+      val_mean += Q_val[numpt];
+    }
+  val_mean = val_mean / m;
+
+  orient = nsp_obj3d_orientation(x, y, m);
+
+  /*   if ( orient == 1 ) */
+  /*     return; */
+
+  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  if ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ) 
+    {
+      if ( orient == 1  && Q->back_color >= 0 )
+	color = -Q->back_color;
+      else
+	color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+      if ( Q->mesh ) color= Abs(color);
+      Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+    }
+  else
+    {
+      nbtri = m - 2;
+      for ( k = 0 ; k < nbtri ; k++ )
+	{
+	  for ( j = 0 ; j < 3 ; j++ )
+	    {
+	      i = triangle[k][j];
+	      v[j] = Q_val[current_vertex[i]-1];
+	      zxy[j] = zone(v[j], Q->vmin, Q->vmax, Q_nb_levels);
+	      sx[j] = x[i]; sy[j] = y[i];
+	    }
+	  interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);
+	}
+      if ( Q->mesh  ) 
+	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
+    }
+}
+
+static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
+{
+#ifdef  WITH_GTKGLEXT 
+  int foreground_color = 1; /* XX should be shared */
+  nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
+  int i,j, np=1, m, zero=0,colors[4];
+  int numpt, *current_vertex, color;
+  double val_mean=0.0;
+  double x[4], y[4], z[4], v[4];
+  
+  double *Q_coord = Q->Mcoord->R; 
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int *Q_face = Q->Mface->I; 
+  double *Q_val = Q->Mval->R;
+  int Q_nb_levels = Q->colmax - Q->colmin + 1;
+
+  for ( j = 0 ; j < Q_nb_faces ; j++) 
+    {
+      m = Q_nb_vertices_per_face;
+      current_vertex = &(Q_face[m*j]);
+      for (i = 0 ; i < m ; i++)
+	{
+	  numpt = current_vertex[i]-1;
+	  x[i] = Q_coord[3*numpt];
+	  y[i] = Q_coord[3*numpt+1];
+	  z[i] = Q_coord[3*numpt+2];
+	  val_mean += (v[i]=Q_val[numpt]);
+	}
+      val_mean = val_mean / m;
+      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+      if ( display_mode == FLAT  )
+	{
+	  color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
+	  if ( Q->mesh )
+	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
+	}
+      else
+	{
+	  for (i = 0 ; i < m ; i++) 
+	    colors[i] = -Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	  /* colors are given by cvect of size (*p) times (*q) */
+	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
+	  if ( Q->mesh )
+	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
+	}
+    }
+#endif
+}
+
+
+static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], int *n, int k)
+{
+  nsp_spolyhedron *Q = ((NspSPolyhedron *) Obj)->obj;
+  int m, i, j, *current_vertex;
+  VisionPos pos_face, pos_vertex;
+  double coef, zmean;
+
+  double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int *Q_face = Q->Mface->I; 
+
+  m = Q_nb_vertices_per_face; 
+  coef = 1.0/m;
+  current_vertex = Q_face;
+  for ( j = 0 ; j < Q_nb_faces ; j++ )
+    {
+      zmean = 0.0; pos_face = OUT_XY;
+      /* Une face rentre dans le calcul des faces cachées si :
+       *     1/ aucun point n'est en position OUT_Z
+       *     2/ au moins un point est IN (les autres étant alors soit
+       *        IN soit OUT_XY)
+       * On pourra par la suite détailler un peu plus car si tous les
+       * sommets de la face sont IN aucun clippling n'est à effectuer.
+       * Faire ce clipping moi-même ?
+       */
+      for ( i = 0 ; i < m ; i++ )
+	{
+	  zmean += Q_coord[3*(*current_vertex-1)+2];
+	  pos_vertex = Q->pos[*current_vertex-1];
+	  if (pos_vertex == OUT_Z)
+	    pos_face = OUT_Z;
+	  else if (pos_vertex == VIN && pos_face != OUT_Z)
+	    pos_face = VIN;
+	  current_vertex++;
+	}
+      if (pos_face == VIN) 
+	{
+	  z[*n] = coef*zmean;
+	  HF[*n].num_obj = k;
+	  HF[*n].num_in_obj = j;
+	  (*n)++; 
+	}
+    }
+}
+
+/*
+ * requested method for 3d objects.
+ */
+
+static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
+{
+  nsp_spolyhedron *Q= ((NspSPolyhedron *) Obj)->obj;
+  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  zmean_faces_for_SPolyhedron(Obj, z,  HF, n, k);
+}
+
+/* requested method for 3d objects.
+ *
+ */
+
+static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
+{
+  return ((NspSPolyhedron *) Obj)->obj->Mface->n;
+}
+
+
+/* utility 
+ *
+ */
+
+static int zone(double val, double valmin, double valmax, int nv)
+{
+  int z;
+  if ( val > valmax )
+    return (nv+1);
+  else if ( val < valmin )
+    return (0);
+  else
+    {
+      z = 1 + (int) floor( nv*((val - valmin)/(valmax-valmin)) );
+      if ( z > nv ) z = nv;
+      return (z);
+    }
+}
+
+static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill)
+{
+  int sx[3], sy[3], zxy[3], perm[3];
+  double fxy[3];
+
+  int i, nb0, edge, izone, color;
+  int nr, resx[5],resy[5];
+  int xEdge2, yEdge2, xEdge, yEdge; 
+
+  permut_of_sort(z, perm);
+  for ( i = 0 ; i < 3 ; i++)
+    {
+      sx[i] = x[perm[i]];
+      sy[i] = y[perm[i]];
+      zxy[i] = z[perm[i]];
+      fxy[i] = v[perm[i]];
+    }
+
+  if ( zxy[0] == zxy[2] )   /*  case of only one color for the triangle : */
+    {
+      resx[0] = sx[0]; resx[1] = sx[1]; resx[2] = sx[2];
+      resy[0] = sy[0]; resy[1] = sy[1]; resy[2] = sy[2];
+      color = - Abs(fill[zxy[0]]); nr = 3;
+      if ( color != 0 )
+	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr); 
+      return; 
+    }
+
+  /* 
+     at least 2 colors for painting the triangle : it is divided in elementary
+     polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
+
+     P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+     Notations/Hints :       /\              zxy[0] <  zxy[1] <= zxy[2]
+     edge2  /  \ edge1    from a previus sort. All the polygons
+     /    \         have 2 points on edge2, the others points
+     /______\        are on edge0 and/or edge1. I name the 2 ends
+     P0        P1      points on each poly PEdge2 and Pedge, they are 
+     edge0         the 2 first points of the next poly. I start
+     from P0 to form the first poly (a triangle or
+     a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
+     and finally the last one which comprise the P2 vertex.  In some special cases
+     we can have a degenerate poly but it doesn't matter ! 				  
+  */
+  
+  nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
+
+  /*----------------------------+
+    |   compute the first poly    |
+    +----------------------------*/
+  
+  resx[0] = sx[0]; resy[0] = sy[0]; nr = 1; edge = 0;
+  if ( nb0 == 0 )  /* the intersection point is on Edge1 but */
+    {              /* the next point of the poly is P1 */  
+      resx[1] = sx[1]; resy[1] = sy[1]; nr++;
+      edge = 1;    /* the next intersection points will be on edge1 */
+    } 
+  else 
+    nb0--;
+  /* the intersection point on edge (0 or 1) : */
+  find_intersection(sx, sy, fxy, zlevel[zxy[0]], edge, edge+1, &xEdge, &yEdge);
+  resx[nr] = xEdge; resy[nr] = yEdge; nr++;
+  /* the last point of the first poly (edge 2) : */
+  find_intersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
+  resx[nr] = xEdge2; resy[nr] = yEdge2; nr++;
+  color = - Abs(fill[zxy[0]]);
+  if ( color != 0 )
+    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+
+  /*------------------------------------+ 
+    | compute the intermediary polygon(s) |
+    +------------------------------------*/
+
+  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
+    {
+      resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
+      resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
+      if ( edge == 0 )   /* the intersection point is perhaps on edge 0 */
+	{
+	  if (nb0 == 0 )  /* no it is on edge 1 but the next point of the poly is P1 */
+	    {
+	      resx[2] = sx[1]; resy[2] = sy[1]; nr++;
+	      edge = 1;          /* the next intersection points will be on edge1 */
+	    } 
+	  else 
+	    nb0--;
+	};
+      /* the intersection point on edge (0 or 1) : */
+      find_intersection(sx, sy, fxy, zlevel[izone], edge, edge+1, &xEdge, &yEdge);
+      resx[nr] = xEdge; resy[nr] = yEdge; nr++;
+      /* the last point of the first poly (edge 2) : */
+      find_intersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
+      resx[nr] = xEdge2; resy[nr] = yEdge2; nr++;
+      color = - Abs(fill[izone]);
+      if ( color != 0 )
+	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    };
+
+  /*-----------------------+ 
+    | compute the last poly  |
+    +-----------------------*/
+  resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
+  resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
+  if ( edge == 0 )  /* the next point of the poly is P1 */
+    {                         
+      resx[2] = sx[1]; resy[2] = sy[1]; nr++;
+    };
+  /* the last point is P2 */
+  resx[nr] = sx[2]; resy[nr] = sy[2]; nr++;
+  color = - Abs(fill[zxy[2]]);
+  if ( color != 0 )
+    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+}
+
+
+static void permut_of_sort(int *tab, int *perm)
+{
+  /* 
+   *   get the permutation perm(0:2) which sort the array tab(0:2) in increasing order 
+   */
+  perm[0]=0; perm[1] = 1; perm[2] = 2;
+  if ( tab[1] < tab[0] ) 
+    {
+      perm[1]=0 ; perm[0] = 1;
+    }
+  if ( tab[2] < tab[perm[1]] ) 
+    {   /* sort not finish */
+      if ( tab[2] < tab[perm[0]] ) 
+	{
+	  perm[2] = perm[1]; perm[1] = perm[0]; perm[0] = 2; 
+	}
+      else 
+	{
+	  perm[2] = perm[1] ; perm[1] = 2;
+	}
+    }
+}
+
+static void find_intersection(int *sx, int *sy, double *fxy, double z, 
+			      int inda, int indb, int *xint, int *yint)
+{ 
+  double alpha;
+  alpha = (z - fxy[inda])/(fxy[indb] - fxy[inda]);
+  *xint = (int) ((1.0 - alpha)*sx[inda] + alpha*sx[indb]);
+  *yint = (int) ((1.0 - alpha)*sy[inda] + alpha*sy[indb]);
+} 

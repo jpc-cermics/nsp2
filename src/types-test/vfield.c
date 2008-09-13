@@ -257,11 +257,13 @@ NspVField  *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M)
 
 static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
 {
-  NspVField *M = NULL;
-  static char name[NAME_MAXL];
+  NspVField *H = NULL;
+  char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLVFIELD;
-  if ((M  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return M;
-  return nsp_vfield_xdr_load_partial(xdrs,M);
+  if ((H  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return H;
+  if ((H  = nsp_vfield_xdr_load_partial(xdrs,H))== NULLVFIELD) return H;
+#line 266 "vfield.c"
+  return H;
 }
 
 /*
@@ -274,7 +276,7 @@ void nsp_vfield_destroy_partial(NspVField *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 278 "vfield.c"
+#line 280 "vfield.c"
     nsp_matrix_destroy(H->obj->fx);
     nsp_matrix_destroy(H->obj->fy);
     nsp_matrix_destroy(H->obj->x);
@@ -558,6 +560,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
+#line 564 "vfield.c"
   return H;
 }
 
@@ -577,7 +580,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 581 "vfield.c"
+#line 584 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -744,7 +747,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 748 "vfield.c"
+#line 751 "vfield.c"
 
 
 #line 58 "codegen/vfield.override"
@@ -756,7 +759,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 760 "vfield.c"
+#line 763 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -796,7 +799,7 @@ VField_register_classes(NspObject *d)
 Init portion 
 
 
-#line 800 "vfield.c"
+#line 803 "vfield.c"
   nspgobject_register_class(d, "VField", VField, &NspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -869,4 +872,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 873 "vfield.c"
+#line 876 "vfield.c"

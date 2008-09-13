@@ -265,11 +265,13 @@ NspGrArc  *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M)
 
 static NspGrArc  *nsp_grarc_xdr_load(XDR *xdrs)
 {
-  NspGrArc *M = NULL;
-  static char name[NAME_MAXL];
+  NspGrArc *H = NULL;
+  char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRARC;
-  if ((M  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return M;
-  return nsp_grarc_xdr_load_partial(xdrs,M);
+  if ((H  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return H;
+  if ((H  = nsp_grarc_xdr_load_partial(xdrs,H))== NULLGRARC) return H;
+#line 274 "grarc.c"
+  return H;
 }
 
 /*
@@ -282,7 +284,7 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 286 "grarc.c"
+#line 288 "grarc.c"
     FREE(H->obj);
    }
 }
@@ -517,6 +519,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
   if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRARC;
   if ( nsp_grarc_full_copy_partial(H,self)== NULL) return NULLGRARC;
+#line 523 "grarc.c"
   return H;
 }
 
@@ -536,7 +539,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
-#line 540 "grarc.c"
+#line 543 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -737,7 +740,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 741 "grarc.c"
+#line 744 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -749,7 +752,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 753 "grarc.c"
+#line 756 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -762,7 +765,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 766 "grarc.c"
+#line 769 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -803,7 +806,7 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 807 "grarc.c"
+#line 810 "grarc.c"
   nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -896,4 +899,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 900 "grarc.c"
+#line 903 "grarc.c"

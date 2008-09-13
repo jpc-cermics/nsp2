@@ -14,8 +14,6 @@ extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 extern Gengine GL_gengine;
 #endif 
 
-static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
-static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
@@ -24,6 +22,9 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);
+
+static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 init 
@@ -64,7 +65,7 @@ override_int_create_final
 override_destroy_prelim
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
-  if ( H->obj->pos != NULL) FREE(H->obj->pos);
+
 %%
 override polyhedron_attach kwargs
 int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
@@ -190,7 +191,7 @@ static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
  * note that for 3dobjets this is of length 6 
  */
 
-static void bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
 static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
@@ -206,11 +207,11 @@ static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
       return;
     }
   for ( i = 0 ; i < Q->Mcoord->m ; i++) 
-    bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
+    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
-static void bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) 
+void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) 
 {
   int i,i1;
   double amin= A[0], amax=A[0];
@@ -311,7 +312,7 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int Q_nb_back_colors = Q->Mback_color->mn ;
   int * Q_back_color =  Q->Mback_color->I;
   
-  int foreground_color = 1; /* should be shared */
+  int foreground_color = 1; /* XX should be shared */
 
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);

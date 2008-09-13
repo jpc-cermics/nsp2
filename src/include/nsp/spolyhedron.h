@@ -30,12 +30,21 @@ struct _NspTypeSPolyhedron {
 
 typedef struct _nsp_spolyhedron nsp_spolyhedron;
 struct _nsp_spolyhedron {
-  NspMatrix* x;
-  NspMatrix* y;
-  NspMatrix* z;
+  NspMatrix* Mcoord;
+  NspMatrix* Mface;
+  NspMatrix* Mval;
+  double vmin;
+  double vmax;
+  double colmin;
+  double colmax;
+  double coloutmin;
+  double coloutmax;
   gboolean mesh;
-  int mesh_color;
-  int face_color;
+  int back_color;
+  void* Mcoord_l;
+  int* pos;  int pos_length;
+  int* fill;  int fill_length;
+  double* vlevel;  int vlevel_length;
   int ref_count;
 };
 
@@ -65,7 +74,7 @@ NspSPolyhedron *new_spolyhedron();
 
 #define NULLSPOLYHEDRON (NspSPolyhedron*) 0
 
-extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,double colmin,double colmax,double coloutmin,double coloutmax,gboolean mesh,int back_color,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,NspTypeBase *type);
 
 /* from SPolyhedronObj.c */
 
