@@ -11,17 +11,30 @@
 #line 4 "codegen/points3d.override"
 #include "nsp/points3d.h"
 #include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void nsp_figure_force_redraw( NspFigure *F);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_points3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_points3d(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_points3d(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw( NspFigure *F);
+static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_points3d(NspPoints3d *P);
 
-#line 25 "points3d.c"
+static void draw_points3d_ogl(BCG *Xgc,void *Ob);
+static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+
+#line 38 "points3d.c"
 
 /* ----------- Points3d ----------- */
 
@@ -92,7 +105,7 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
       
   type->init = (init_func *) init_points3d;
 
-#line 23 "codegen/points3d.override"
+#line 36 "codegen/points3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -105,8 +118,10 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
   /* next method are defined in NspGraphic and need not be chnaged here for Points3d */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
 
-#line 110 "points3d.c"
+#line 125 "points3d.c"
   /* 
    * Points3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -200,12 +215,14 @@ static int nsp_points3d_eq(NspPoints3d *A, NspObject *B)
   NspPoints3d *loc = (NspPoints3d *) B;
   if ( check_cast(B,nsp_type_points3d_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->obj->z)->type->eq(A->obj->z,loc->obj->z) == FALSE ) return FALSE;
-  if ( A->obj->mesh != loc->obj->mesh) return FALSE;
-  if ( A->obj->mesh_color != loc->obj->mesh_color) return FALSE;
-  if ( A->obj->face_color != loc->obj->face_color) return FALSE;
+  if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
+  if ( A->obj->Mcoord_l != loc->obj->Mcoord_l) return FALSE;
+  if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->mark_type != loc->obj->mark_type) return FALSE;
+  {int i;
+    for ( i = 0 ; i < A->obj->pos_length ; i++)
+      if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
+  }
   return TRUE;
 }
 
@@ -226,12 +243,9 @@ int nsp_points3d_xdr_save(XDR *xdrs, NspPoints3d *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->z)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->mesh_color) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->face_color) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_type) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -245,12 +259,9 @@ NspPoints3d  *nsp_points3d_xdr_load_partial(XDR *xdrs, NspPoints3d *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_points3d))) == NULL) return NULL;
-  if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if ((M->obj->z =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->mesh_color) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->face_color) == FAIL) return NULL;
+  if ((M->obj->Mcoord =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_type) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -264,7 +275,12 @@ static NspPoints3d  *nsp_points3d_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLPOINTS3D;
   if ((H  = nsp_points3d_create_void(name,(NspTypeBase *) nsp_type_points3d))== NULLPOINTS3D) return H;
   if ((H  = nsp_points3d_xdr_load_partial(xdrs,H))== NULLPOINTS3D) return H;
-#line 268 "points3d.c"
+
+#line 61 "codegen/points3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+
+#line 284 "points3d.c"
   return H;
 }
 
@@ -278,10 +294,14 @@ void nsp_points3d_destroy_partial(NspPoints3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 282 "points3d.c"
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
-    nsp_matrix_destroy(H->obj->z);
+
+#line 66 "codegen/points3d.override"
+  /* verbatim in destroy */
+  nsp_matrix_destroy(H->obj->Mcoord_l);
+
+#line 303 "points3d.c"
+    nsp_matrix_destroy(H->obj->Mcoord);
+    FREE(H->obj->pos);
     FREE(H->obj);
    }
 }
@@ -336,18 +356,12 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->Mcoord != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->z != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
-    }
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
-  Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
+  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -364,18 +378,12 @@ int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_leve
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->Mcoord != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->z != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
-    }
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
-  Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
+  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -446,32 +454,19 @@ int nsp_points3d_create_partial(NspPoints3d *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_points3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->x = NULLMAT;
-  H->obj->y = NULLMAT;
-  H->obj->z = NULLMAT;
-  H->obj->mesh = TRUE;
-  H->obj->mesh_color = -1;
-  H->obj->face_color = -1;
+  H->obj->Mcoord = NULLMAT;
+  H->obj->Mcoord_l = NULL;
+  H->obj->color = 0;
+  H->obj->mark_type = 0;
+  H->obj->pos = NULL; H->obj->pos_length = 0; 
   return OK;
 }
 
 int nsp_points3d_check_values(NspPoints3d *H)
 {
-  if ( H->obj->x == NULLMAT) 
+  if ( H->obj->Mcoord == NULLMAT) 
     {
-       if (( H->obj->x = nsp_matrix_create("x",'r',0,0)) == NULLMAT)
-       return FAIL;
-
-    }
-  if ( H->obj->y == NULLMAT) 
-    {
-       if (( H->obj->y = nsp_matrix_create("y",'r',0,0)) == NULLMAT)
-       return FAIL;
-
-    }
-  if ( H->obj->z == NULLMAT) 
-    {
-       if (( H->obj->z = nsp_matrix_create("z",'r',0,0)) == NULLMAT)
+       if (( H->obj->Mcoord = nsp_matrix_create("Mcoord",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
@@ -479,17 +474,17 @@ int nsp_points3d_check_values(NspPoints3d *H)
   return OK;
 }
 
-NspPoints3d *nsp_points3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
+NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int* pos, int pos_length,NspTypeBase *type)
 {
  NspPoints3d *H  = nsp_points3d_create_void(name,type);
  if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
   if ( nsp_points3d_create_partial(H) == FAIL) return NULLPOINTS3D;
-  H->obj->x= x;
-  H->obj->y= y;
-  H->obj->z= z;
-  H->obj->mesh=mesh;
-  H->obj->mesh_color=mesh_color;
-  H->obj->face_color=face_color;
+  H->obj->Mcoord= Mcoord;
+  H->obj->Mcoord_l = Mcoord_l;
+  H->obj->color=color;
+  H->obj->mark_type=mark_type;
+  H->obj->pos = pos;
+  H->obj->pos_length = pos_length;
  if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
  return H;
 }
@@ -521,27 +516,18 @@ NspPoints3d *nsp_points3d_full_copy_partial(NspPoints3d *H,NspPoints3d *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_points3d))) == NULL) return NULLPOINTS3D;
   H->obj->ref_count=1;
-  if ( self->obj->x == NULL )
-    { H->obj->x = NULL;}
+  if ( self->obj->Mcoord == NULL )
+    { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
-  if ( self->obj->y == NULL )
-    { H->obj->y = NULL;}
-  else
-    {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
-    }
-  if ( self->obj->z == NULL )
-    { H->obj->z = NULL;}
-  else
-    {
-      if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
-    }
-  H->obj->mesh=self->obj->mesh;
-  H->obj->mesh_color=self->obj->mesh_color;
-  H->obj->face_color=self->obj->face_color;
+  H->obj->Mcoord_l = self->obj->Mcoord_l;
+  H->obj->color=self->obj->color;
+  H->obj->mark_type=self->obj->mark_type;
+  if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
+  H->obj->pos_length = self->obj->pos_length;
+  memcpy(H->obj->pos,self->obj->pos,self->obj->pos_length*sizeof(int));
   return H;
 }
 
@@ -551,7 +537,12 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_full_copy_partial(H,self)== NULL) return NULLPOINTS3D;
-#line 555 "points3d.c"
+
+#line 61 "codegen/points3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+
+#line 546 "points3d.c"
   return H;
 }
 
@@ -571,7 +562,12 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_points3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_points3d_check_values(H) == FAIL) return RET_BUG;
-#line 575 "points3d.c"
+
+#line 61 "codegen/points3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
+
+#line 571 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -596,153 +592,73 @@ static NspMethods *points3d_get_methods(void) { return points3d_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_points3d_get_x(void *self,char *attr)
+static NspObject *_wrap_points3d_get_Mcoord(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspPoints3d *) self)->obj->x;
+  ret = ((NspPoints3d *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_points3d_get_obj_x(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspPoints3d *) self)->obj->x);
-  return (NspObject *) ret;
-}
-
-static int _wrap_points3d_set_x(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *x;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspPoints3d *) self)->obj->x != NULL ) 
-    nsp_matrix_destroy(((NspPoints3d *) self)->obj->x);
-  ((NspPoints3d *) self)->obj->x= x;
-  return OK;
-}
-
-static NspObject *_wrap_points3d_get_y(void *self,char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspPoints3d *) self)->obj->y;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_points3d_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
   *copy = FALSE;
-  ret = ((NspMatrix*) ((NspPoints3d *) self)->obj->y);
+  ret = ((NspMatrix*) ((NspPoints3d *) self)->obj->Mcoord);
   return (NspObject *) ret;
 }
 
-static int _wrap_points3d_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_Mcoord(void *self, char *attr, NspObject *O)
 {
-  NspMatrix *y;
+  NspMatrix *Mcoord;
 
   if ( ! IsMat(O) ) return FAIL;
-  if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspPoints3d *) self)->obj->y != NULL ) 
-    nsp_matrix_destroy(((NspPoints3d *) self)->obj->y);
-  ((NspPoints3d *) self)->obj->y= y;
+  if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspPoints3d *) self)->obj->Mcoord != NULL ) 
+    nsp_matrix_destroy(((NspPoints3d *) self)->obj->Mcoord);
+  ((NspPoints3d *) self)->obj->Mcoord= Mcoord;
   return OK;
 }
 
-static NspObject *_wrap_points3d_get_z(void *self,char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspPoints3d *) self)->obj->z;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_points3d_get_obj_z(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspPoints3d *) self)->obj->z);
-  return (NspObject *) ret;
-}
-
-static int _wrap_points3d_set_z(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *z;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((z = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspPoints3d *) self)->obj->z != NULL ) 
-    nsp_matrix_destroy(((NspPoints3d *) self)->obj->z);
-  ((NspPoints3d *) self)->obj->z= z;
-  return OK;
-}
-
-static NspObject *_wrap_points3d_get_mesh(void *self,char *attr)
-{
-  int ret;
-  NspObject *nsp_ret;
-
-  ret = ((NspPoints3d *) self)->obj->mesh;
-  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
-}
-
-static int _wrap_points3d_set_mesh(void *self, char *attr, NspObject *O)
-{
-  int mesh;
-
-  if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
-  ((NspPoints3d *) self)->obj->mesh= mesh;
-  return OK;
-}
-
-static NspObject *_wrap_points3d_get_mesh_color(void *self,char *attr)
+static NspObject *_wrap_points3d_get_color(void *self,char *attr)
 {
   int ret;
 
-  ret = ((NspPoints3d *) self)->obj->mesh_color;
+  ret = ((NspPoints3d *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_points3d_set_mesh_color(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_color(void *self, char *attr, NspObject *O)
 {
-  int mesh_color;
+  int color;
 
-  if ( IntScalar(O,&mesh_color) == FAIL) return FAIL;
-  ((NspPoints3d *) self)->obj->mesh_color= mesh_color;
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspPoints3d *) self)->obj->color= color;
   return OK;
 }
 
-static NspObject *_wrap_points3d_get_face_color(void *self,char *attr)
+static NspObject *_wrap_points3d_get_mark_type(void *self,char *attr)
 {
   int ret;
 
-  ret = ((NspPoints3d *) self)->obj->face_color;
+  ret = ((NspPoints3d *) self)->obj->mark_type;
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_points3d_set_face_color(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_mark_type(void *self, char *attr, NspObject *O)
 {
-  int face_color;
+  int mark_type;
 
-  if ( IntScalar(O,&face_color) == FAIL) return FAIL;
-  ((NspPoints3d *) self)->obj->face_color= face_color;
+  if ( IntScalar(O,&mark_type) == FAIL) return FAIL;
+  ((NspPoints3d *) self)->obj->mark_type= mark_type;
   return OK;
 }
 
 static AttrTab points3d_attrs[] = {
-  { "x", (attr_get_function *)_wrap_points3d_get_x, (attr_set_function *)_wrap_points3d_set_x,(attr_get_object_function *)_wrap_points3d_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_points3d_get_y, (attr_set_function *)_wrap_points3d_set_y,(attr_get_object_function *)_wrap_points3d_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "z", (attr_get_function *)_wrap_points3d_get_z, (attr_set_function *)_wrap_points3d_set_z,(attr_get_object_function *)_wrap_points3d_get_obj_z, (attr_set_object_function *)int_set_object_failed },
-  { "mesh", (attr_get_function *)_wrap_points3d_get_mesh, (attr_set_function *)_wrap_points3d_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mesh_color", (attr_get_function *)_wrap_points3d_get_mesh_color, (attr_set_function *)_wrap_points3d_set_mesh_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "face_color", (attr_get_function *)_wrap_points3d_get_face_color, (attr_set_function *)_wrap_points3d_set_face_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function *)_wrap_points3d_get_Mcoord, (attr_set_function *)_wrap_points3d_set_Mcoord,(attr_get_object_function *)_wrap_points3d_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function *)_wrap_points3d_get_color, (attr_set_function *)_wrap_points3d_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_type", (attr_get_function *)_wrap_points3d_get_mark_type, (attr_set_function *)_wrap_points3d_set_mark_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -750,7 +666,7 @@ static AttrTab points3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/points3d.override"
+#line 71 "codegen/points3d.override"
 int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -762,10 +678,10 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 766 "points3d.c"
+#line 682 "points3d.c"
 
 
-#line 89 "codegen/points3d.override"
+#line 114 "codegen/points3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -774,10 +690,10 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 778 "points3d.c"
+#line 694 "points3d.c"
 
 
-#line 99 "codegen/points3d.override"
+#line 124 "codegen/points3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -787,7 +703,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 791 "points3d.c"
+#line 707 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -823,33 +739,50 @@ void Points3d_Interf_Info(int i, char **fname, function (**f))
 Points3d_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/points3d.override"
+#line 31 "codegen/points3d.override"
 
 Init portion 
 
 
-#line 832 "points3d.c"
+#line 748 "points3d.c"
   nspgobject_register_class(d, "Points3d", Points3d, &NspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/points3d.override"
+#line 135 "codegen/points3d.override"
 
 /* inserted verbatim at the end */
 
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
-  NspPoints3d *P =(NspPoints3d*) Obj ;
+  int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
-  /* be sure that object are in canonical form */
-  Mat2double(P->obj->x);
-  Mat2double(P->obj->y);
-  Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_check_points3d((NspPoints3d *) Obj);
+#ifdef  WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      /* if we are using OpenGl we make a full draw of 
+       * object and return 
+       */
+      draw_points3d_ogl(Xgc,Obj);
+      nsp_ogl_set_2dview(Xgc); 
+      return; 
+    }
+#endif 
+  if ( data != NULL) 
+    {
+      face = *((int *) data);
+      draw_points3d_face(Xgc,Obj,face);
+    }
+  else 
+    {
+      int i;
+      /* draw all the faces: this is not really used  
+       * since the face order is computed and sequenced in upper object.
+       */
+      for ( i= 0 ; i < ((NspPoints3d *) Obj)->obj->Mcoord->n; i++) 
+	draw_points3d_face(Xgc,Obj,i);
+    }
 }
 
 static void nsp_translate_points3d(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -872,11 +805,132 @@ static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
+
 static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+  int i;
+  /* this should be stored in a cache and recomputed when necessary 
+   *
+   */
+  nsp_points3d *Q= ((NspPoints3d *) Obj)->obj;
+  nsp_check_points3d((NspPoints3d *) Obj);
+  if ( Q->Mcoord->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
+      return;
+    }
+  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
+int nsp_check_points3d( NspPoints3d *Pt)
+{
+  nsp_points3d *P = Pt->obj;
+  int P_nb_coords = P->Mcoord->n;
 
-#line 883 "points3d.c"
+  if ( P->Mcoord->m != 3 ) 
+    {
+      Scierror("Error: bad coord for points3d, first dimension should be 3\n");
+      return FAIL;
+    }
+
+  /* create extra data for qpos declared int* 
+   * Q->pos id only usefull for non opengl driver 
+   */
+  if ( P->pos == NULL) P->pos = malloc( P_nb_coords * sizeof(VisionPos));
+  P->pos_length = P_nb_coords;
+  
+  /* create extra data for Mcoord_l declared void* */
+  if ( P->Mcoord_l == NULL) 
+    {
+      P->Mcoord_l = nsp_matrix_create("local",'r',P->Mcoord->m, P->Mcoord->n);
+    }
+  return OK;
+
+  
+
+}
+
+
+static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
+{
+  nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
+  int x, y, n=1;
+  double * V_coord = ((NspMatrix *) V->Mcoord)->R;
+  x = XScale(V_coord[3*j]);
+  y = YScale(V_coord[3*j+1]);
+  /* il faudrait sauvegarder le pattern et la marque actuels */
+  Xgc->graphic_engine->xset_pattern(Xgc,  V->color ); 
+  /* ici &n doit concerner la taille du symbole (a voir) */
+  Xgc->graphic_engine->xset_mark(Xgc,V->mark_type ,n);
+  Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,n);
+}
+
+
+static void draw_points3d_ogl(BCG *Xgc,void *Ob)
+{
+#ifdef  WITH_GTKGLEXT 
+  nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
+  double x, y,z;
+  int color, mark, n=1,j;
+  int V_nb_coords = V->Mcoord->n;
+  double * V_coord = ((NspMatrix *) V->Mcoord_l)->R;
+  
+  for ( j = 0 ; j < V_nb_coords ; j++) 
+    {
+      x = V_coord[3*j];
+      y = V_coord[3*j+1];
+      z = V_coord[3*j+2];
+      color = V->color;
+      mark = V->mark_type;
+      /* il faudrait sauvegarder le pattern et la marque actuels */
+      Xgc->graphic_engine->xset_pattern(Xgc,V->color );
+      /* ici &n doit concerner la taille du symbole (a voir) */
+      Xgc->graphic_engine->xset_mark(Xgc, V->mark_type,n);
+      /* XXX  Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,&z,n); */
+    }
+#endif 
+
+}
+
+static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
+{
+  nsp_points3d *V = ((NspPoints3d *) Obj)->obj;
+  int j;
+  int V_nb_coords = V->Mcoord->n;
+  double *V_coord = ((NspMatrix *) V->Mcoord_l)->R;
+  for ( j = 0 ; j < V_nb_coords ; j++)
+    if (V->pos[j] == VIN)
+      {
+	z[*n] = V_coord[3*j+2]; 
+	HF[*n].num_obj = k; 
+	HF[*n].num_in_obj = j;
+	(*n)++; 
+      }
+}
+
+/*
+ * requested method for 3d objects.
+ */
+
+static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
+{
+  nsp_points3d *Q= ((NspPoints3d *) Obj)->obj;
+  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  zmean_faces_for_Points3d(Obj, z,  HF, n, k);
+}
+
+/* requested method for 3d objects.
+ *
+ */
+
+static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
+{
+  return ((NspPoints3d *) Obj)->obj->Mcoord->n;
+}
+
+
+
+#line 937 "points3d.c"

@@ -227,6 +227,9 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->colormap)->type->eq(A->obj->colormap,loc->obj->colormap) == FALSE ) return FALSE;
   if ( A->obj->alpha != loc->obj->alpha) return FALSE;
   if ( A->obj->theta != loc->obj->theta) return FALSE;
+  if ( A->obj->with_box != loc->obj->with_box) return FALSE;
+  if ( A->obj->box_color != loc->obj->box_color) return FALSE;
+  if ( A->obj->box_style != loc->obj->box_style) return FALSE;
   return TRUE;
 }
 
@@ -257,6 +260,9 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colormap)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->theta) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->with_box) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->box_color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->box_style) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -280,6 +286,9 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
   if ((M->obj->colormap =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->theta) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->with_box) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->box_color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->box_style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -293,7 +302,7 @@ static NspObjs3d  *nsp_objs3d_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLOBJS3D;
   if ((H  = nsp_objs3d_create_void(name,(NspTypeBase *) nsp_type_objs3d))== NULLOBJS3D) return H;
   if ((H  = nsp_objs3d_xdr_load_partial(xdrs,H))== NULLOBJS3D) return H;
-#line 297 "objs3d.c"
+#line 306 "objs3d.c"
   return H;
 }
 
@@ -307,7 +316,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 311 "objs3d.c"
+#line 320 "objs3d.c"
     nsp_matrix_destroy(H->obj->wrect);
     nsp_matrix_destroy(H->obj->bounds);
     nsp_matrix_destroy(H->obj->arect);
@@ -392,6 +401,9 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
   Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
+  Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
+  Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -431,6 +443,9 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
     }
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
   Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
+  Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
+  Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -512,6 +527,9 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->colormap = NULLMAT;
   H->obj->alpha = 35;
   H->obj->theta = 45;
+  H->obj->with_box = TRUE;
+  H->obj->box_color = 1;
+  H->obj->box_style = 0;
   return OK;
 }
 
@@ -564,7 +582,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
 {
  NspObjs3d *H  = nsp_objs3d_create_void(name,type);
  if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -580,6 +598,9 @@ NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top
   H->obj->colormap= colormap;
   H->obj->alpha=alpha;
   H->obj->theta=theta;
+  H->obj->with_box=with_box;
+  H->obj->box_color=box_color;
+  H->obj->box_style=box_style;
  if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
  return H;
 }
@@ -652,6 +673,9 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     }
   H->obj->alpha=self->obj->alpha;
   H->obj->theta=self->obj->theta;
+  H->obj->with_box=self->obj->with_box;
+  H->obj->box_color=self->obj->box_color;
+  H->obj->box_style=self->obj->box_style;
   return H;
 }
 
@@ -661,7 +685,7 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_full_copy_partial(H,self)== NULL) return NULLOBJS3D;
-#line 665 "objs3d.c"
+#line 689 "objs3d.c"
   return H;
 }
 
@@ -681,7 +705,7 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
-#line 685 "objs3d.c"
+#line 709 "objs3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -735,7 +759,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 739 "objs3d.c"
+#line 763 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
 {
   double ret;
@@ -901,7 +925,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 905 "objs3d.c"
+#line 929 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -977,6 +1001,59 @@ static int _wrap_objs3d_set_theta(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_objs3d_get_with_box(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspObjs3d *) self)->obj->with_box;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_objs3d_set_with_box(void *self, char *attr, NspObject *O)
+{
+  int with_box;
+
+  if ( BoolScalar(O,&with_box) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->with_box= with_box;
+  return OK;
+}
+
+static NspObject *_wrap_objs3d_get_box_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspObjs3d *) self)->obj->box_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_objs3d_set_box_color(void *self, char *attr, NspObject *O)
+{
+  int box_color;
+
+  if ( IntScalar(O,&box_color) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->box_color= box_color;
+  return OK;
+}
+
+static NspObject *_wrap_objs3d_get_box_style(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspObjs3d *) self)->obj->box_style;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_objs3d_set_box_style(void *self, char *attr, NspObject *O)
+{
+  int box_style;
+
+  if ( IntScalar(O,&box_style) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->box_style= box_style;
+  return OK;
+}
+
 static AttrTab objs3d_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_objs3d_get_wrect, (attr_set_function *)_wrap_objs3d_set_wrect,(attr_get_object_function *)_wrap_objs3d_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "rho", (attr_get_function *)_wrap_objs3d_get_rho, (attr_set_function *)_wrap_objs3d_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -988,6 +1065,9 @@ static AttrTab objs3d_attrs[] = {
   { "colormap", (attr_get_function *)_wrap_objs3d_get_colormap, (attr_set_function *)_wrap_objs3d_set_colormap,(attr_get_object_function *)_wrap_objs3d_get_obj_colormap, (attr_set_object_function *)int_set_object_failed },
   { "alpha", (attr_get_function *)_wrap_objs3d_get_alpha, (attr_set_function *)_wrap_objs3d_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "theta", (attr_get_function *)_wrap_objs3d_get_theta, (attr_set_function *)_wrap_objs3d_set_theta,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "with_box", (attr_get_function *)_wrap_objs3d_get_with_box, (attr_set_function *)_wrap_objs3d_set_with_box,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "box_color", (attr_get_function *)_wrap_objs3d_get_box_color, (attr_set_function *)_wrap_objs3d_set_box_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "box_style", (attr_get_function *)_wrap_objs3d_get_box_style, (attr_set_function *)_wrap_objs3d_set_box_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1007,7 +1087,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1011 "objs3d.c"
+#line 1091 "objs3d.c"
 
 
 #line 162 "codegen/objs3d.override"
@@ -1019,7 +1099,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1023 "objs3d.c"
+#line 1103 "objs3d.c"
 
 
 #line 172 "codegen/objs3d.override"
@@ -1031,7 +1111,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1035 "objs3d.c"
+#line 1115 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1072,7 +1152,7 @@ Objs3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1076 "objs3d.c"
+#line 1156 "objs3d.c"
   nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1089,7 +1169,7 @@ extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
 extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
 extern void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+				int *flag,double *ebox,int with_box,int box_color,int box_style);
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
@@ -1153,7 +1233,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
     if ( P->obj->colormap->n == 3 )
       Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
 						P->obj->colormap->R);
-    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,TRUE,TRUE,3,1);
+    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
+		       P->obj->with_box,P->obj->box_color,P->obj->box_style);
   }
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -1278,7 +1359,7 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
 
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
-				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+				 int *flag,double *ebox,int with_box,int box_color,int box_style);
 
 
 
@@ -1286,7 +1367,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,
 /* Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr> */
 
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+				int *flag,double *ebox,int with_box,int box_color,int box_style)
 {
   NspObject **objs_array= NULL;
   Cell *cloc;
@@ -1304,12 +1385,11 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* should be shared */
   int foreground_color;
   int background_color;
-  int with_mesh;
 
 #ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
-      nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_box,box_color,box_style);
       nsp_ogl_set_2dview(Xgc);
       return; 
     }
@@ -1319,7 +1399,6 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* XXX */
   foreground_color = flagx+1;
   background_color = flagx+2;
-  with_mesh = with_mesh1; 
 
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj
@@ -1418,7 +1497,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 #ifdef  WITH_GTKGLEXT 
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+				 int *flag,double *ebox,int with_box,int box_color,int box_style)
 {
   Cell *cloc;
   NspList *Children;
@@ -1432,13 +1511,11 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   /* should be shared */
   int foreground_color;
   int background_color;
-  int with_mesh;
 
   /* NspFname(stack) ="drawobj"; */
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;
-  with_mesh = with_mesh1; 
 
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj
@@ -1502,4 +1579,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1506 "objs3d.c"
+#line 1583 "objs3d.c"

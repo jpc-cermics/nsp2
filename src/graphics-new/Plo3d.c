@@ -1090,7 +1090,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
           ymmax=ymmax+(hy1-hy)/2.0;
         }
     }
-  if (flag !=0 )
+  if (flag !=0 && Xgc->scales->scale_3drot_flag  == 0 )
     {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
       set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
@@ -1586,6 +1586,8 @@ static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbo
  * stopped when the mouse is released 
  *--------------------------------------*/
 
+/* #define ROTATION_NORESCALE */
+
 void I3dRotation(BCG *Xgc)
 {
   int box_only = FALSE;
@@ -1622,6 +1624,9 @@ void I3dRotation(BCG *Xgc)
       alpha= alpha0 - (y-y0)/2.0;
       theta= theta0 - theta_dir*(x-x0)/2.0;
       x0=x;y0=y;alpha0=alpha;theta0=theta;
+#ifdef ROTATION_NORESCALE
+      Xgc->scales->scale_3drot_flag = 1;
+#endif 
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
       if ( box_only == TRUE) 
 	{
@@ -1642,6 +1647,7 @@ void I3dRotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
+  Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
   Xgc->graphic_engine->force_redraw(Xgc);

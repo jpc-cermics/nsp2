@@ -30,12 +30,13 @@ struct _NspTypeString3d {
 
 typedef struct _nsp_string3d nsp_string3d;
 struct _nsp_string3d {
-  NspMatrix* x;
-  NspMatrix* y;
-  NspMatrix* z;
-  gboolean mesh;
-  int mesh_color;
-  int face_color;
+  NspMatrix* Mcoord;
+  void* Mcoord_l;
+  char* str;
+  int font_type;
+  int font_size;
+  int mark_type;
+  int* pos;  int pos_length;
   int ref_count;
 };
 
@@ -65,7 +66,7 @@ NspString3d *new_string3d();
 
 #define NULLSTRING3D (NspString3d*) 0
 
-extern NspString3d *nsp_string3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int mark_type,int* pos, int pos_length,NspTypeBase *type);
 
 /* from String3dObj.c */
 

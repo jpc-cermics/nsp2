@@ -366,6 +366,7 @@ static window_scale_list  default_scale =
   { 
     0,
     0,
+    0,
     {600,400},
     {0.0,0.0,1.0,1.0},
     {0.0,0.0,1.0,1.0},
@@ -680,6 +681,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   int i,j;
   s1->scale_flag=s2->scale_flag;
   s1->scale_flag3d=s2->scale_flag3d;
+  s1->scale_3drot_flag=s2->scale_3drot_flag;
   s1->wdim[0]=  s2->wdim[0];
   s1->wdim[1]=  s2->wdim[1];
   for (i=0; i< 4; i++) 

@@ -1378,7 +1378,6 @@ static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], in
     }
 }
 
-
 /*
  * requested method for 3d objects.
  */
@@ -1566,4 +1565,4 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
   *yint = (int) ((1.0 - alpha)*sy[inda] + alpha*sy[indb]);
 } 
 
-#line 1570 "spolyhedron.c"
+#line 1569 "spolyhedron.c"

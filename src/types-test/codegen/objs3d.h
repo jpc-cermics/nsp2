@@ -41,6 +41,9 @@ struct _nsp_objs3d {
   NspMatrix* colormap;
   double alpha;
   double theta;
+  gboolean with_box;
+  int box_color;
+  int box_style;
   int ref_count;
 };
 
@@ -70,7 +73,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
 
 /* from Objs3dObj.c */
 

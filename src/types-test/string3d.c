@@ -11,17 +11,31 @@
 #line 4 "codegen/string3d.override"
 #include "nsp/string3d.h"
 #include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
+
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void nsp_figure_force_redraw( NspFigure *F);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
+
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_string3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_string3d(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_string3d(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_string3d(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw( NspFigure *F);
+static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_string3d(NspString3d *P);
 
-#line 25 "string3d.c"
+static void draw_string3d_ogl(BCG *Xgc,void *Ob);
+static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+#line 39 "string3d.c"
 
 /* ----------- String3d ----------- */
 
@@ -92,7 +106,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
       
   type->init = (init_func *) init_string3d;
 
-#line 23 "codegen/string3d.override"
+#line 37 "codegen/string3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -105,8 +119,9 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   /* next method are defined in NspGraphic and need not be chnaged here for String3d */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-
-#line 110 "string3d.c"
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
+#line 125 "string3d.c"
   /* 
    * String3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -200,12 +215,16 @@ static int nsp_string3d_eq(NspString3d *A, NspObject *B)
   NspString3d *loc = (NspString3d *) B;
   if ( check_cast(B,nsp_type_string3d_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->obj->z)->type->eq(A->obj->z,loc->obj->z) == FALSE ) return FALSE;
-  if ( A->obj->mesh != loc->obj->mesh) return FALSE;
-  if ( A->obj->mesh_color != loc->obj->mesh_color) return FALSE;
-  if ( A->obj->face_color != loc->obj->face_color) return FALSE;
+  if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
+  if ( A->obj->Mcoord_l != loc->obj->Mcoord_l) return FALSE;
+  if ( strcmp(A->obj->str,loc->obj->str) != 0) return FALSE;
+  if ( A->obj->font_type != loc->obj->font_type) return FALSE;
+  if ( A->obj->font_size != loc->obj->font_size) return FALSE;
+  if ( A->obj->mark_type != loc->obj->mark_type) return FALSE;
+  {int i;
+    for ( i = 0 ; i < A->obj->pos_length ; i++)
+      if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
+  }
   return TRUE;
 }
 
@@ -226,12 +245,11 @@ int nsp_string3d_xdr_save(XDR *xdrs, NspString3d *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->z)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->mesh_color) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->face_color) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,M->obj->str) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->font_type) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_type) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -245,12 +263,11 @@ NspString3d  *nsp_string3d_xdr_load_partial(XDR *xdrs, NspString3d *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_string3d))) == NULL) return NULL;
-  if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if ((M->obj->z =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->mesh_color) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->face_color) == FAIL) return NULL;
+  if ((M->obj->Mcoord =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_new_string(xdrs,&(M->obj->str)) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->font_type) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->font_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_type) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -264,7 +281,12 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSTRING3D;
   if ((H  = nsp_string3d_create_void(name,(NspTypeBase *) nsp_type_string3d))== NULLSTRING3D) return H;
   if ((H  = nsp_string3d_xdr_load_partial(xdrs,H))== NULLSTRING3D) return H;
-#line 268 "string3d.c"
+
+#line 61 "codegen/string3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+
+#line 290 "string3d.c"
   return H;
 }
 
@@ -278,10 +300,15 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 282 "string3d.c"
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
-    nsp_matrix_destroy(H->obj->z);
+
+#line 66 "codegen/string3d.override"
+  /* verbatim in destroy */
+  nsp_matrix_destroy(H->obj->Mcoord_l);
+
+#line 309 "string3d.c"
+    nsp_matrix_destroy(H->obj->Mcoord);
+  nsp_string_destroy(&(H->obj->str));
+    FREE(H->obj->pos);
     FREE(H->obj);
    }
 }
@@ -336,18 +363,14 @@ int nsp_string3d_print(NspString3d *M, int indent,const char *name, int rec_leve
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_string3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->Mcoord != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->z != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
-    }
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
-  Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
+  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"str=%s\n",M->obj->str);
+  Sciprintf1(indent+2,"font_type=%d\n",M->obj->font_type);
+  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
+  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -364,18 +387,14 @@ int nsp_string3d_latex(NspString3d *M, int indent,const char *name, int rec_leve
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_string3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+  if ( M->obj->Mcoord != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
-    }
-  if ( M->obj->z != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
-    }
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
-  Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
+  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"str=%s\n",M->obj->str);
+  Sciprintf1(indent+2,"font_type=%d\n",M->obj->font_type);
+  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
+  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -446,50 +465,46 @@ int nsp_string3d_create_partial(NspString3d *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_string3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->x = NULLMAT;
-  H->obj->y = NULLMAT;
-  H->obj->z = NULLMAT;
-  H->obj->mesh = TRUE;
-  H->obj->mesh_color = -1;
-  H->obj->face_color = -1;
+  H->obj->Mcoord = NULLMAT;
+  H->obj->Mcoord_l = NULL;
+  H->obj->str = NULL;
+  H->obj->font_type = 0;
+  H->obj->font_size = 0;
+  H->obj->mark_type = 0;
+  H->obj->pos = NULL; H->obj->pos_length = 0; 
   return OK;
 }
 
 int nsp_string3d_check_values(NspString3d *H)
 {
-  if ( H->obj->x == NULLMAT) 
+  if ( H->obj->Mcoord == NULLMAT) 
     {
-       if (( H->obj->x = nsp_matrix_create("x",'r',0,0)) == NULLMAT)
+       if (( H->obj->Mcoord = nsp_matrix_create("Mcoord",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
-  if ( H->obj->y == NULLMAT) 
+  if ( H->obj->str == NULL) 
     {
-       if (( H->obj->y = nsp_matrix_create("y",'r',0,0)) == NULLMAT)
+     if (( H->obj->str = nsp_string_copy("")) == NULL)
        return FAIL;
-
-    }
-  if ( H->obj->z == NULLMAT) 
-    {
-       if (( H->obj->z = nsp_matrix_create("z",'r',0,0)) == NULLMAT)
-       return FAIL;
-
     }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspString3d *nsp_string3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
+NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int mark_type,int* pos, int pos_length,NspTypeBase *type)
 {
  NspString3d *H  = nsp_string3d_create_void(name,type);
  if ( H ==  NULLSTRING3D) return NULLSTRING3D;
   if ( nsp_string3d_create_partial(H) == FAIL) return NULLSTRING3D;
-  H->obj->x= x;
-  H->obj->y= y;
-  H->obj->z= z;
-  H->obj->mesh=mesh;
-  H->obj->mesh_color=mesh_color;
-  H->obj->face_color=face_color;
+  H->obj->Mcoord= Mcoord;
+  H->obj->Mcoord_l = Mcoord_l;
+  H->obj->str = str;
+  H->obj->font_type=font_type;
+  H->obj->font_size=font_size;
+  H->obj->mark_type=mark_type;
+  H->obj->pos = pos;
+  H->obj->pos_length = pos_length;
  if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
  return H;
 }
@@ -521,27 +536,20 @@ NspString3d *nsp_string3d_full_copy_partial(NspString3d *H,NspString3d *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_string3d))) == NULL) return NULLSTRING3D;
   H->obj->ref_count=1;
-  if ( self->obj->x == NULL )
-    { H->obj->x = NULL;}
+  if ( self->obj->Mcoord == NULL )
+    { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
-  if ( self->obj->y == NULL )
-    { H->obj->y = NULL;}
-  else
-    {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
-    }
-  if ( self->obj->z == NULL )
-    { H->obj->z = NULL;}
-  else
-    {
-      if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
-    }
-  H->obj->mesh=self->obj->mesh;
-  H->obj->mesh_color=self->obj->mesh_color;
-  H->obj->face_color=self->obj->face_color;
+  H->obj->Mcoord_l = self->obj->Mcoord_l;
+  if ((H->obj->str = nsp_string_copy(self->obj->str)) == NULL) return NULL;
+  H->obj->font_type=self->obj->font_type;
+  H->obj->font_size=self->obj->font_size;
+  H->obj->mark_type=self->obj->mark_type;
+  if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
+  H->obj->pos_length = self->obj->pos_length;
+  memcpy(H->obj->pos,self->obj->pos,self->obj->pos_length*sizeof(int));
   return H;
 }
 
@@ -551,7 +559,12 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
-#line 555 "string3d.c"
+
+#line 61 "codegen/string3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+
+#line 568 "string3d.c"
   return H;
 }
 
@@ -571,7 +584,12 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_string3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_string3d_check_values(H) == FAIL) return RET_BUG;
-#line 575 "string3d.c"
+
+#line 61 "codegen/string3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
+
+#line 593 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -596,153 +614,113 @@ static NspMethods *string3d_get_methods(void) { return string3d_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_string3d_get_x(void *self,char *attr)
+static NspObject *_wrap_string3d_get_Mcoord(void *self,char *attr)
 {
   NspMatrix *ret;
 
-  ret = ((NspString3d *) self)->obj->x;
+  ret = ((NspString3d *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_string3d_get_obj_x(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspString3d *) self)->obj->x);
-  return (NspObject *) ret;
-}
-
-static int _wrap_string3d_set_x(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *x;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspString3d *) self)->obj->x != NULL ) 
-    nsp_matrix_destroy(((NspString3d *) self)->obj->x);
-  ((NspString3d *) self)->obj->x= x;
-  return OK;
-}
-
-static NspObject *_wrap_string3d_get_y(void *self,char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspString3d *) self)->obj->y;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_string3d_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_string3d_get_obj_Mcoord(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
 
   *copy = FALSE;
-  ret = ((NspMatrix*) ((NspString3d *) self)->obj->y);
+  ret = ((NspMatrix*) ((NspString3d *) self)->obj->Mcoord);
   return (NspObject *) ret;
 }
 
-static int _wrap_string3d_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_string3d_set_Mcoord(void *self, char *attr, NspObject *O)
 {
-  NspMatrix *y;
+  NspMatrix *Mcoord;
 
   if ( ! IsMat(O) ) return FAIL;
-  if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspString3d *) self)->obj->y != NULL ) 
-    nsp_matrix_destroy(((NspString3d *) self)->obj->y);
-  ((NspString3d *) self)->obj->y= y;
+  if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspString3d *) self)->obj->Mcoord != NULL ) 
+    nsp_matrix_destroy(((NspString3d *) self)->obj->Mcoord);
+  ((NspString3d *) self)->obj->Mcoord= Mcoord;
   return OK;
 }
 
-static NspObject *_wrap_string3d_get_z(void *self,char *attr)
+static NspObject *_wrap_string3d_get_str(void *self,char *attr)
 {
-  NspMatrix *ret;
-
-  ret = ((NspString3d *) self)->obj->z;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_string3d_get_obj_z(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspString3d *) self)->obj->z);
-  return (NspObject *) ret;
-}
-
-static int _wrap_string3d_set_z(void *self, char *attr, NspObject *O)
-{
-  NspMatrix *z;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((z = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspString3d *) self)->obj->z != NULL ) 
-    nsp_matrix_destroy(((NspString3d *) self)->obj->z);
-  ((NspString3d *) self)->obj->z= z;
-  return OK;
-}
-
-static NspObject *_wrap_string3d_get_mesh(void *self,char *attr)
-{
-  int ret;
+  const gchar *ret;
   NspObject *nsp_ret;
 
-  ret = ((NspString3d *) self)->obj->mesh;
-  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  ret = ((NspString3d *) self)->obj->str;
+  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
 }
 
-static int _wrap_string3d_set_mesh(void *self, char *attr, NspObject *O)
+static int _wrap_string3d_set_str(void *self, char *attr, NspObject *O)
 {
-  int mesh;
+  char *str;
 
-  if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
-  ((NspString3d *) self)->obj->mesh= mesh;
+  if ((str = nsp_string_object(O))==NULL) return FAIL;
+  if ((str = nsp_string_copy(str)) ==NULL) return FAIL;
+  nsp_string_destroy(&((NspString3d *) self)->obj->str);
+  ((NspString3d *) self)->obj->str= str;
   return OK;
 }
 
-static NspObject *_wrap_string3d_get_mesh_color(void *self,char *attr)
+static NspObject *_wrap_string3d_get_font_type(void *self,char *attr)
 {
   int ret;
 
-  ret = ((NspString3d *) self)->obj->mesh_color;
+  ret = ((NspString3d *) self)->obj->font_type;
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_string3d_set_mesh_color(void *self, char *attr, NspObject *O)
+static int _wrap_string3d_set_font_type(void *self, char *attr, NspObject *O)
 {
-  int mesh_color;
+  int font_type;
 
-  if ( IntScalar(O,&mesh_color) == FAIL) return FAIL;
-  ((NspString3d *) self)->obj->mesh_color= mesh_color;
+  if ( IntScalar(O,&font_type) == FAIL) return FAIL;
+  ((NspString3d *) self)->obj->font_type= font_type;
   return OK;
 }
 
-static NspObject *_wrap_string3d_get_face_color(void *self,char *attr)
+static NspObject *_wrap_string3d_get_font_size(void *self,char *attr)
 {
   int ret;
 
-  ret = ((NspString3d *) self)->obj->face_color;
+  ret = ((NspString3d *) self)->obj->font_size;
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_string3d_set_face_color(void *self, char *attr, NspObject *O)
+static int _wrap_string3d_set_font_size(void *self, char *attr, NspObject *O)
 {
-  int face_color;
+  int font_size;
 
-  if ( IntScalar(O,&face_color) == FAIL) return FAIL;
-  ((NspString3d *) self)->obj->face_color= face_color;
+  if ( IntScalar(O,&font_size) == FAIL) return FAIL;
+  ((NspString3d *) self)->obj->font_size= font_size;
+  return OK;
+}
+
+static NspObject *_wrap_string3d_get_mark_type(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspString3d *) self)->obj->mark_type;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_string3d_set_mark_type(void *self, char *attr, NspObject *O)
+{
+  int mark_type;
+
+  if ( IntScalar(O,&mark_type) == FAIL) return FAIL;
+  ((NspString3d *) self)->obj->mark_type= mark_type;
   return OK;
 }
 
 static AttrTab string3d_attrs[] = {
-  { "x", (attr_get_function *)_wrap_string3d_get_x, (attr_set_function *)_wrap_string3d_set_x,(attr_get_object_function *)_wrap_string3d_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_string3d_get_y, (attr_set_function *)_wrap_string3d_set_y,(attr_get_object_function *)_wrap_string3d_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "z", (attr_get_function *)_wrap_string3d_get_z, (attr_set_function *)_wrap_string3d_set_z,(attr_get_object_function *)_wrap_string3d_get_obj_z, (attr_set_object_function *)int_set_object_failed },
-  { "mesh", (attr_get_function *)_wrap_string3d_get_mesh, (attr_set_function *)_wrap_string3d_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mesh_color", (attr_get_function *)_wrap_string3d_get_mesh_color, (attr_set_function *)_wrap_string3d_set_mesh_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "face_color", (attr_get_function *)_wrap_string3d_get_face_color, (attr_set_function *)_wrap_string3d_set_face_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function *)_wrap_string3d_get_Mcoord, (attr_set_function *)_wrap_string3d_set_Mcoord,(attr_get_object_function *)_wrap_string3d_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
+  { "str", (attr_get_function *)_wrap_string3d_get_str, (attr_set_function *)_wrap_string3d_set_str,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "font_type", (attr_get_function *)_wrap_string3d_get_font_type, (attr_set_function *)_wrap_string3d_set_font_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "font_size", (attr_get_function *)_wrap_string3d_get_font_size, (attr_set_function *)_wrap_string3d_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_type", (attr_get_function *)_wrap_string3d_get_mark_type, (attr_set_function *)_wrap_string3d_set_mark_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -750,7 +728,7 @@ static AttrTab string3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/string3d.override"
+#line 71 "codegen/string3d.override"
 int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -762,10 +740,10 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 766 "string3d.c"
+#line 744 "string3d.c"
 
 
-#line 89 "codegen/string3d.override"
+#line 114 "codegen/string3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -774,10 +752,10 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 778 "string3d.c"
+#line 756 "string3d.c"
 
 
-#line 99 "codegen/string3d.override"
+#line 124 "codegen/string3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -787,7 +765,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 791 "string3d.c"
+#line 769 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -823,33 +801,50 @@ void String3d_Interf_Info(int i, char **fname, function (**f))
 String3d_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/string3d.override"
+#line 32 "codegen/string3d.override"
 
 Init portion 
 
 
-#line 832 "string3d.c"
+#line 810 "string3d.c"
   nspgobject_register_class(d, "String3d", String3d, &NspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/string3d.override"
+#line 135 "codegen/string3d.override"
 
 /* inserted verbatim at the end */
 
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
-  NspString3d *P =(NspString3d*) Obj ;
+  int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
-  /* be sure that object are in canonical form */
-  Mat2double(P->obj->x);
-  Mat2double(P->obj->y);
-  Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_check_string3d((NspString3d *) Obj);
+#ifdef  WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      /* if we are using OpenGl we make a full draw of 
+       * object and return 
+       */
+      draw_string3d_ogl(Xgc,Obj);
+      nsp_ogl_set_2dview(Xgc); 
+      return; 
+    }
+#endif 
+  if ( data != NULL) 
+    {
+      face = *((int *) data);
+      draw_string3d_face(Xgc,Obj,face);
+    }
+  else 
+    {
+      int i;
+      /* draw all the faces: this is not really used  
+       * since the face order is computed and sequenced in upper object.
+       */
+      for ( i= 0 ; i < ((NspString3d *) Obj)->obj->Mcoord->n; i++) 
+	draw_string3d_face(Xgc,Obj,i);
+    }
 }
 
 static void nsp_translate_string3d(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -871,12 +866,154 @@ static void nsp_scale_string3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
 /* compute in bounds the enclosing rectangle of string3d 
  *
  */
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
 static void nsp_getbounds_string3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
+  int i;
+  /* this should be stored in a cache and recomputed when necessary 
+   *
+   */
+  nsp_string3d *Q= ((NspString3d *) Obj)->obj;
+  nsp_check_string3d((NspString3d *) Obj);
+  if ( Q->Mcoord->mn == 0) 
+    {
+      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
+      return;
+    }
+  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
+int nsp_check_string3d( NspString3d *P)
+{
+  nsp_string3d *S = P->obj;
+  int S_nb_coords = S->Mcoord->n;
 
-#line 883 "string3d.c"
+  if ( S->Mcoord->m != 3 || S->Mcoord->n != 1 ) 
+    {
+      Scierror("Error: bad coord for string3d\n");
+      return FAIL;
+    }
+
+  /* create extra data for qpos declared int* 
+   * Q->pos id only usefull for non opengl driver 
+   */
+  if ( S->pos == NULL) S->pos = malloc( S_nb_coords * sizeof(VisionPos));
+  S->pos_length = S_nb_coords;
+  
+  /* create extra data for Mcoord_l declared void* */
+  if ( S->Mcoord_l == NULL) 
+    {
+      S->Mcoord_l = nsp_matrix_create("local",'r',S->Mcoord->m, S->Mcoord->n);
+    }
+  return OK;
+}
+
+
+static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+static void draw_justified_string3d(BCG *Xgc,NspGraphic *V, int xj, int yj);
+static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj);
+static void draw_string3d_ogl(BCG *Xgc,void *Ob);
+static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj);
+
+static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j)
+{
+  draw_justified_string3d(Xgc,Ob,CENTER,CENTER);
+}
+
+static void draw_justified_string3d(BCG *Xgc,NspGraphic *Obj, int xj, int yj)
+{
+  double x,y;
+  nsp_string3d *V = ((NspString3d *) Obj)->obj;
+  double *V_coord = ((NspMatrix *)V->Mcoord_l)->R;
+  Xgc->graphic_engine->xset_font(Xgc,V->font_type,V->font_size);
+  x = XScale(V_coord[0]);
+  y = YScale(V_coord[1]);
+  draw_justified_string(Xgc,V->str,x,y, xj, yj);
+}
+
+static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
+{
+  int flag=0, rect[4], w, h;
+  double angle=0.0; 
+  Xgc->graphic_engine->boundingbox(Xgc,str,x,y, rect);
+  w = rect[2]; h = rect[3];
+  if ( xj == CENTER ) 
+    x -= w/2;
+  else if ( xj == RIGHT )
+    x -= w;
+  if ( yj == CENTER )
+    y += h/2;
+  else if ( yj == DOWN )
+    y += h;
+  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle);
+}
+
+static void draw_string3d_ogl(BCG *Xgc,void *Ob)
+{
+  draw_justified_string3d_ogl(Xgc,Ob,CENTER,CENTER);
+}
+
+static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
+{
+#ifdef  WITH_GTKGLEXT 
+  nsp_string3d *S = ((NspString3d *) Obj)->obj;
+  const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
+  /* we move to 2d scale */
+  double Tcoord[3];
+  double *S_coord = S->Mcoord->R;
+
+  apply_transforms(Xgc,Tcoord,S_coord,S->pos,lim,1); 
+  Tcoord[0] = XScale(Tcoord[0]);
+  Tcoord[1] = YScale(Tcoord[1]);
+  nsp_ogl_set_2dview(Xgc);
+  Xgc->graphic_engine->xset_font(Xgc,S->font_type,S->font_size);
+  draw_justified_string(Xgc,S->str,Tcoord[0],Tcoord[1], xj, yj);
+  nsp_ogl_set_3dview(Xgc);
+#endif 
+}
+
+
+static void zmean_faces_for_String3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
+{
+  int j;
+  nsp_string3d *S = ((NspString3d *) Obj)->obj;
+  int S_nb_coords = S->Mcoord->n;
+  double *S_coord = ((NspMatrix *)S->Mcoord_l)->R;
+
+  for ( j = 0 ; j < S_nb_coords ; j++)
+    if (S->pos[j] == VIN)
+      {
+	z[*n] = S_coord[3*j+2]; 
+	HF[*n].num_obj = k; 
+	HF[*n].num_in_obj = j;
+	(*n)++; 
+      }
+}
+
+
+/*
+ * requested method for 3d objects.
+ */
+
+static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
+{
+  nsp_string3d *Q= ((NspString3d *) Obj)->obj;
+  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  zmean_faces_for_String3d(Obj, z,  HF, n, k);
+}
+
+/* requested method for 3d objects.
+ *
+ */
+
+static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
+{
+  return ((NspString3d *) Obj)->obj->Mcoord->n;
+}
+
+
+
+#line 1020 "string3d.c"

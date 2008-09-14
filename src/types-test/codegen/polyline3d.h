@@ -30,12 +30,10 @@ struct _NspTypePolyline3d {
 
 typedef struct _nsp_polyline3d nsp_polyline3d;
 struct _nsp_polyline3d {
-  NspMatrix* x;
-  NspMatrix* y;
-  NspMatrix* z;
-  gboolean mesh;
-  int mesh_color;
-  int face_color;
+  NspMatrix* Mcoord;
+  void* Mcoord_l;
+  NspMatrix* Mcolor;
+  int* pos;  int pos_length;
   int ref_count;
 };
 
@@ -65,7 +63,7 @@ NspPolyline3d *new_polyline3d();
 
 #define NULLPOLYLINE3D (NspPolyline3d*) 0
 
-extern NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
 
 /* from Polyline3dObj.c */
 

@@ -190,7 +190,7 @@ extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
 extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
 extern void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+				int *flag,double *ebox,int with_box,int box_color,int box_style);
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
@@ -254,7 +254,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
     if ( P->obj->colormap->n == 3 )
       Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
 						P->obj->colormap->R);
-    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,TRUE,TRUE,3,1);
+    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
+		       P->obj->with_box,P->obj->box_color,P->obj->box_style);
   }
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -379,7 +380,7 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
 
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
-				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+				 int *flag,double *ebox,int with_box,int box_color,int box_style);
 
 
 
@@ -387,7 +388,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,
 /* Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr> */
 
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+				int *flag,double *ebox,int with_box,int box_color,int box_style)
 {
   NspObject **objs_array= NULL;
   Cell *cloc;
@@ -405,12 +406,11 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* should be shared */
   int foreground_color;
   int background_color;
-  int with_mesh;
 
 #ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
-      nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_box,box_color,box_style);
       nsp_ogl_set_2dview(Xgc);
       return; 
     }
@@ -420,7 +420,6 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* XXX */
   foreground_color = flagx+1;
   background_color = flagx+2;
-  with_mesh = with_mesh1; 
 
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj
@@ -519,7 +518,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 #ifdef  WITH_GTKGLEXT 
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
-				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
+				 int *flag,double *ebox,int with_box,int box_color,int box_style)
 {
   Cell *cloc;
   NspList *Children;
@@ -533,13 +532,11 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   /* should be shared */
   int foreground_color;
   int background_color;
-  int with_mesh;
 
   /* NspFname(stack) ="drawobj"; */
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;
-  with_mesh = with_mesh1; 
 
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj

@@ -30,12 +30,11 @@ struct _NspTypePoints3d {
 
 typedef struct _nsp_points3d nsp_points3d;
 struct _nsp_points3d {
-  NspMatrix* x;
-  NspMatrix* y;
-  NspMatrix* z;
-  gboolean mesh;
-  int mesh_color;
-  int face_color;
+  NspMatrix* Mcoord;
+  void* Mcoord_l;
+  int color;
+  int mark_type;
+  int* pos;  int pos_length;
   int ref_count;
 };
 
@@ -65,7 +64,7 @@ NspPoints3d *new_points3d();
 
 #define NULLPOINTS3D (NspPoints3d*) 0
 
-extern NspPoints3d *nsp_points3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int* pos, int pos_length,NspTypeBase *type);
 
 /* from Points3dObj.c */
 

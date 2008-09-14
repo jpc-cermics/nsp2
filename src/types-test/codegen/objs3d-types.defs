@@ -18,6 +18,9 @@
    '("NspMatrix*" "colormap" )
    '("double" "alpha" "std" "35")  ;; 3d orientation 
    '("double" "theta" "std" "45")  ;; 3d orientation 
+   '("gboolean" "with_box" "std" "TRUE")  ;; draw a 3d box container 
+   '("int" "box_color" "std" "1")  ;; box color 
+   '("int" "box_style" "std" "0")  ;; box style 
    )
   (gtype-id "Objs3d")
 )
