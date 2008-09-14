@@ -1549,6 +1549,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  nsp_ogl_set_3dview(Xgc);
 	  G->type->draw(Xgc,G,NULL);
 	}
       cloc = cloc->next;
@@ -1579,4 +1580,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1583 "objs3d.c"
+#line 1584 "objs3d.c"

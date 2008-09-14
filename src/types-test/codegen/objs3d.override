@@ -570,6 +570,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  nsp_ogl_set_3dview(Xgc);
 	  G->type->draw(Xgc,G,NULL);
 	}
       cloc = cloc->next;
