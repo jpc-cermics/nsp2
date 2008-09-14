@@ -9,6 +9,7 @@
    '("int" "mark") ; mark to be used 
    '("double" "width"); line width 
    '("int" "style"); line style 
+   '("int" "color"); line style 
    '("int" "mode"); mode: std, step, stem, arrow.
    '("NspMatrix*" "Pts")
    '("char*" "legend")

@@ -119,10 +119,10 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
   NspMatrix *y = P->obj->y;
   if ( P->obj->x->mn != 0 && ((NspGraphic *) P)->obj->hidden == FALSE )
     {
-      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+      if ( P->obj->color != -1 ) 
 	{
 	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
 	}
       if ( P->obj->mark != -1 ) 
 	{
@@ -135,12 +135,12 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
 	  Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
 	}
-      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+      if ( P->obj->color != -1 ) 
 	Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
       if ( P->obj->mark != -1 ) 
 	Xgc->graphic_engine->scale->drawpolymark(Xgc,x->R,y->R,P->obj->x->mn);
       /* reset to default values */
-      if ( ((NspGraphic *) P)->obj->color != -1 ) 
+      if ( P->obj->color != -1 ) 
 	{
 	  Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
 	}

@@ -33,6 +33,7 @@ struct _nsp_polyline {
   NspMatrix* x;
   NspMatrix* y;
   gboolean close;
+  int color;
   int mark;
   int mark_size;
   int fill_color;
@@ -66,7 +67,7 @@ NspPolyline *new_polyline();
 
 #define NULLPOLYLINE (NspPolyline*) 0
 
-extern NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
+extern NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
 
 /* from PolylineObj.c */
 

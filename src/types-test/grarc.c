@@ -208,6 +208,7 @@ static int nsp_grarc_eq(NspGrArc *A, NspObject *B)
   if ( A->obj->a2 != loc->obj->a2) return FALSE;
   if ( A->obj->fill_color != loc->obj->fill_color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
+  if ( A->obj->color != loc->obj->color) return FALSE;
   return TRUE;
 }
 
@@ -236,6 +237,7 @@ int nsp_grarc_xdr_save(XDR *xdrs, NspGrArc *M)
   if (nsp_xdr_save_d(xdrs, M->obj->a2) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fill_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -257,6 +259,7 @@ NspGrArc  *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M)
   if (nsp_xdr_load_d(xdrs, &M->obj->a2) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fill_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -270,7 +273,7 @@ static NspGrArc  *nsp_grarc_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRARC;
   if ((H  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return H;
   if ((H  = nsp_grarc_xdr_load_partial(xdrs,H))== NULLGRARC) return H;
-#line 274 "grarc.c"
+#line 277 "grarc.c"
   return H;
 }
 
@@ -284,7 +287,7 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 288 "grarc.c"
+#line 291 "grarc.c"
     FREE(H->obj);
    }
 }
@@ -347,6 +350,7 @@ int nsp_grarc_print(NspGrArc *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"a2=%f\n",M->obj->a2);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -371,6 +375,7 @@ int nsp_grarc_latex(NspGrArc *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"a2=%f\n",M->obj->a2);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -449,6 +454,7 @@ int nsp_grarc_create_partial(NspGrArc *H)
   H->obj->a2 = 0.0;
   H->obj->fill_color = -1;
   H->obj->thickness = 0;
+  H->obj->color = 0;
   return OK;
 }
 
@@ -458,7 +464,7 @@ int nsp_grarc_check_values(NspGrArc *H)
   return OK;
 }
 
-NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,NspTypeBase *type)
+NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type)
 {
  NspGrArc *H  = nsp_grarc_create_void(name,type);
  if ( H ==  NULLGRARC) return NULLGRARC;
@@ -471,6 +477,7 @@ NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double
   H->obj->a2=a2;
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
+  H->obj->color=color;
  if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
  return H;
 }
@@ -510,6 +517,7 @@ NspGrArc *nsp_grarc_full_copy_partial(NspGrArc *H,NspGrArc *self)
   H->obj->a2=self->obj->a2;
   H->obj->fill_color=self->obj->fill_color;
   H->obj->thickness=self->obj->thickness;
+  H->obj->color=self->obj->color;
   return H;
 }
 
@@ -519,7 +527,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
   if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRARC;
   if ( nsp_grarc_full_copy_partial(H,self)== NULL) return NULLGRARC;
-#line 523 "grarc.c"
+#line 531 "grarc.c"
   return H;
 }
 
@@ -539,7 +547,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
-#line 543 "grarc.c"
+#line 551 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -712,6 +720,23 @@ static int _wrap_grarc_set_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grarc_get_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspGrArc *) self)->obj->color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_grarc_set_color(void *self, char *attr, NspObject *O)
+{
+  int color;
+
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspGrArc *) self)->obj->color= color;
+  return OK;
+}
+
 static AttrTab grarc_attrs[] = {
   { "x", (attr_get_function *)_wrap_grarc_get_x, (attr_set_function *)_wrap_grarc_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_grarc_get_y, (attr_set_function *)_wrap_grarc_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -721,6 +746,7 @@ static AttrTab grarc_attrs[] = {
   { "a2", (attr_get_function *)_wrap_grarc_get_a2, (attr_set_function *)_wrap_grarc_set_a2,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "fill_color", (attr_get_function *)_wrap_grarc_get_fill_color, (attr_set_function *)_wrap_grarc_set_fill_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "thickness", (attr_get_function *)_wrap_grarc_get_thickness, (attr_set_function *)_wrap_grarc_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function *)_wrap_grarc_get_color, (attr_set_function *)_wrap_grarc_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -740,7 +766,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 744 "grarc.c"
+#line 770 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -752,7 +778,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 756 "grarc.c"
+#line 782 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -765,7 +791,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 769 "grarc.c"
+#line 795 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -806,7 +832,7 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 810 "grarc.c"
+#line 836 "grarc.c"
   nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -833,21 +859,21 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
       Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillarc(Xgc,val);
     }
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
     }
   if ( P->obj->thickness != -1 ) 
     {
       cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
       Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
     }
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
       Xgc->graphic_engine->scale->drawarc(Xgc,val);
     }
   /* reset to default values */
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
       Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
     }
@@ -899,4 +925,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 903 "grarc.c"
+#line 929 "grarc.c"

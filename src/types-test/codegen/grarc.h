@@ -38,6 +38,7 @@ struct _nsp_grarc {
   double a2;
   int fill_color;
   int thickness;
+  int color;
   int ref_count;
 };
 
@@ -67,7 +68,7 @@ NspGrArc *new_grarc();
 
 #define NULLGRARC (NspGrArc*) 0
 
-extern NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,NspTypeBase *type);
+extern NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type);
 
 /* from GrArcObj.c */
 

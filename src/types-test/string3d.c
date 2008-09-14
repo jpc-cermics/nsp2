@@ -220,7 +220,6 @@ static int nsp_string3d_eq(NspString3d *A, NspObject *B)
   if ( strcmp(A->obj->str,loc->obj->str) != 0) return FALSE;
   if ( A->obj->font_type != loc->obj->font_type) return FALSE;
   if ( A->obj->font_size != loc->obj->font_size) return FALSE;
-  if ( A->obj->mark_type != loc->obj->mark_type) return FALSE;
   {int i;
     for ( i = 0 ; i < A->obj->pos_length ; i++)
       if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
@@ -249,7 +248,6 @@ int nsp_string3d_xdr_save(XDR *xdrs, NspString3d *M)
   if (nsp_xdr_save_string(xdrs,M->obj->str) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->font_type) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->mark_type) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -267,7 +265,6 @@ NspString3d  *nsp_string3d_xdr_load_partial(XDR *xdrs, NspString3d *M)
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->str)) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->font_type) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->font_size) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->mark_type) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -286,7 +283,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 290 "string3d.c"
+#line 287 "string3d.c"
   return H;
 }
 
@@ -305,7 +302,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 309 "string3d.c"
+#line 306 "string3d.c"
     nsp_matrix_destroy(H->obj->Mcoord);
   nsp_string_destroy(&(H->obj->str));
     FREE(H->obj->pos);
@@ -370,7 +367,6 @@ int nsp_string3d_print(NspString3d *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"str=%s\n",M->obj->str);
   Sciprintf1(indent+2,"font_type=%d\n",M->obj->font_type);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
-  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -394,7 +390,6 @@ int nsp_string3d_latex(NspString3d *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"str=%s\n",M->obj->str);
   Sciprintf1(indent+2,"font_type=%d\n",M->obj->font_type);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
-  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -468,9 +463,8 @@ int nsp_string3d_create_partial(NspString3d *H)
   H->obj->Mcoord = NULLMAT;
   H->obj->Mcoord_l = NULL;
   H->obj->str = NULL;
-  H->obj->font_type = 0;
-  H->obj->font_size = 0;
-  H->obj->mark_type = 0;
+  H->obj->font_type = -1;
+  H->obj->font_size = -1;
   H->obj->pos = NULL; H->obj->pos_length = 0; 
   return OK;
 }
@@ -492,7 +486,7 @@ int nsp_string3d_check_values(NspString3d *H)
   return OK;
 }
 
-NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int mark_type,int* pos, int pos_length,NspTypeBase *type)
+NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type)
 {
  NspString3d *H  = nsp_string3d_create_void(name,type);
  if ( H ==  NULLSTRING3D) return NULLSTRING3D;
@@ -502,7 +496,6 @@ NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,cha
   H->obj->str = str;
   H->obj->font_type=font_type;
   H->obj->font_size=font_size;
-  H->obj->mark_type=mark_type;
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
  if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
@@ -546,7 +539,6 @@ NspString3d *nsp_string3d_full_copy_partial(NspString3d *H,NspString3d *self)
   if ((H->obj->str = nsp_string_copy(self->obj->str)) == NULL) return NULL;
   H->obj->font_type=self->obj->font_type;
   H->obj->font_size=self->obj->font_size;
-  H->obj->mark_type=self->obj->mark_type;
   if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
   H->obj->pos_length = self->obj->pos_length;
   memcpy(H->obj->pos,self->obj->pos,self->obj->pos_length*sizeof(int));
@@ -564,7 +556,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 568 "string3d.c"
+#line 560 "string3d.c"
   return H;
 }
 
@@ -589,7 +581,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 593 "string3d.c"
+#line 585 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -698,29 +690,11 @@ static int _wrap_string3d_set_font_size(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_string3d_get_mark_type(void *self,char *attr)
-{
-  int ret;
-
-  ret = ((NspString3d *) self)->obj->mark_type;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_string3d_set_mark_type(void *self, char *attr, NspObject *O)
-{
-  int mark_type;
-
-  if ( IntScalar(O,&mark_type) == FAIL) return FAIL;
-  ((NspString3d *) self)->obj->mark_type= mark_type;
-  return OK;
-}
-
 static AttrTab string3d_attrs[] = {
   { "Mcoord", (attr_get_function *)_wrap_string3d_get_Mcoord, (attr_set_function *)_wrap_string3d_set_Mcoord,(attr_get_object_function *)_wrap_string3d_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
   { "str", (attr_get_function *)_wrap_string3d_get_str, (attr_set_function *)_wrap_string3d_set_str,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "font_type", (attr_get_function *)_wrap_string3d_get_font_type, (attr_set_function *)_wrap_string3d_set_font_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "font_size", (attr_get_function *)_wrap_string3d_get_font_size, (attr_set_function *)_wrap_string3d_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mark_type", (attr_get_function *)_wrap_string3d_get_mark_type, (attr_set_function *)_wrap_string3d_set_mark_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -740,7 +714,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 744 "string3d.c"
+#line 718 "string3d.c"
 
 
 #line 114 "codegen/string3d.override"
@@ -752,7 +726,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 756 "string3d.c"
+#line 730 "string3d.c"
 
 
 #line 124 "codegen/string3d.override"
@@ -765,7 +739,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 769 "string3d.c"
+#line 743 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -806,7 +780,7 @@ String3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 810 "string3d.c"
+#line 784 "string3d.c"
   nspgobject_register_class(d, "String3d", String3d, &NspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -925,13 +899,19 @@ static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 
 static void draw_justified_string3d(BCG *Xgc,NspGraphic *Obj, int xj, int yj)
 {
+  int fontid[2],current_fontid[2];
   double x,y;
   nsp_string3d *V = ((NspString3d *) Obj)->obj;
   double *V_coord = ((NspMatrix *)V->Mcoord_l)->R;
-  Xgc->graphic_engine->xset_font(Xgc,V->font_type,V->font_size);
+
+  Xgc->graphic_engine->xget_font(Xgc,current_fontid);
+  fontid[0]= ( V->font_type < 0 ) ? current_fontid[0] : V->font_type;
+  fontid[1]= ( V->font_size < 0 ) ? current_fontid[1] : V->font_size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   x = XScale(V_coord[0]);
   y = YScale(V_coord[1]);
   draw_justified_string(Xgc,V->str,x,y, xj, yj);
+  Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1]);
 }
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
@@ -959,6 +939,7 @@ static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
 {
 #ifdef  WITH_GTKGLEXT 
+  int fontid[2],current_fontid[2];
   nsp_string3d *S = ((NspString3d *) Obj)->obj;
   const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
   /* we move to 2d scale */
@@ -969,8 +950,12 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   Tcoord[0] = XScale(Tcoord[0]);
   Tcoord[1] = YScale(Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
-  Xgc->graphic_engine->xset_font(Xgc,S->font_type,S->font_size);
+  Xgc->graphic_engine->xget_font(Xgc,current_fontid);
+  fontid[0]= ( S->font_type < 0 ) ? current_fontid[0] : S->font_type;
+  fontid[1]= ( S->font_size < 0 ) ? current_fontid[1] : S->font_size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   draw_justified_string(Xgc,S->str,Tcoord[0],Tcoord[1], xj, yj);
+  Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1]);
   nsp_ogl_set_3dview(Xgc);
 #endif 
 }
@@ -1016,4 +1001,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1020 "string3d.c"
+#line 1005 "string3d.c"

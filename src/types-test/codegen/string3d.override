@@ -245,13 +245,19 @@ static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 
 static void draw_justified_string3d(BCG *Xgc,NspGraphic *Obj, int xj, int yj)
 {
+  int fontid[2],current_fontid[2];
   double x,y;
   nsp_string3d *V = ((NspString3d *) Obj)->obj;
   double *V_coord = ((NspMatrix *)V->Mcoord_l)->R;
-  Xgc->graphic_engine->xset_font(Xgc,V->font_type,V->font_size);
+
+  Xgc->graphic_engine->xget_font(Xgc,current_fontid);
+  fontid[0]= ( V->font_type < 0 ) ? current_fontid[0] : V->font_type;
+  fontid[1]= ( V->font_size < 0 ) ? current_fontid[1] : V->font_size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   x = XScale(V_coord[0]);
   y = YScale(V_coord[1]);
   draw_justified_string(Xgc,V->str,x,y, xj, yj);
+  Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1]);
 }
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
@@ -279,6 +285,7 @@ static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
 {
 #ifdef  WITH_GTKGLEXT 
+  int fontid[2],current_fontid[2];
   nsp_string3d *S = ((NspString3d *) Obj)->obj;
   const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
   /* we move to 2d scale */
@@ -289,8 +296,12 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   Tcoord[0] = XScale(Tcoord[0]);
   Tcoord[1] = YScale(Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
-  Xgc->graphic_engine->xset_font(Xgc,S->font_type,S->font_size);
+  Xgc->graphic_engine->xget_font(Xgc,current_fontid);
+  fontid[0]= ( S->font_type < 0 ) ? current_fontid[0] : S->font_type;
+  fontid[1]= ( S->font_size < 0 ) ? current_fontid[1] : S->font_size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   draw_justified_string(Xgc,S->str,Tcoord[0],Tcoord[1], xj, yj);
+  Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1]);
   nsp_ogl_set_3dview(Xgc);
 #endif 
 }

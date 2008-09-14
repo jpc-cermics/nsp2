@@ -8,11 +8,9 @@
     '("NspMatrix*" "Mcoord")
     '("void*"      "Mcoord_l"  "hidden" "NULL" )
     '("char*"  "str") 
-    '("int"  "font_type")
-    '("int"  "font_size")
-    '("int" "mark_type")
+    '("int"  "font_type" "std" "-1")
+    '("int"  "font_size" "std" "-1")
     '("int*" "pos" "hidden" )
-
     )
   (gtype-id "String3d")
 )

@@ -206,6 +206,7 @@ static int nsp_grrect_eq(NspGrRect *A, NspObject *B)
   if ( A->obj->h != loc->obj->h) return FALSE;
   if ( A->obj->fill_color != loc->obj->fill_color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
+  if ( A->obj->color != loc->obj->color) return FALSE;
   return TRUE;
 }
 
@@ -232,6 +233,7 @@ int nsp_grrect_xdr_save(XDR *xdrs, NspGrRect *M)
   if (nsp_xdr_save_d(xdrs, M->obj->h) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fill_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -251,6 +253,7 @@ NspGrRect  *nsp_grrect_xdr_load_partial(XDR *xdrs, NspGrRect *M)
   if (nsp_xdr_load_d(xdrs, &M->obj->h) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fill_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
@@ -264,7 +267,7 @@ static NspGrRect  *nsp_grrect_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRRECT;
   if ((H  = nsp_grrect_create_void(name,(NspTypeBase *) nsp_type_grrect))== NULLGRRECT) return H;
   if ((H  = nsp_grrect_xdr_load_partial(xdrs,H))== NULLGRRECT) return H;
-#line 268 "grrect.c"
+#line 271 "grrect.c"
   return H;
 }
 
@@ -278,7 +281,7 @@ void nsp_grrect_destroy_partial(NspGrRect *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 282 "grrect.c"
+#line 285 "grrect.c"
     FREE(H->obj);
    }
 }
@@ -339,6 +342,7 @@ int nsp_grrect_print(NspGrRect *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"h=%f\n",M->obj->h);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -361,6 +365,7 @@ int nsp_grrect_latex(NspGrRect *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"h=%f\n",M->obj->h);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -437,6 +442,7 @@ int nsp_grrect_create_partial(NspGrRect *H)
   H->obj->h = 0.0;
   H->obj->fill_color = -1;
   H->obj->thickness = 0;
+  H->obj->color = -1;
   return OK;
 }
 
@@ -446,7 +452,7 @@ int nsp_grrect_check_values(NspGrRect *H)
   return OK;
 }
 
-NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,NspTypeBase *type)
+NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type)
 {
  NspGrRect *H  = nsp_grrect_create_void(name,type);
  if ( H ==  NULLGRRECT) return NULLGRRECT;
@@ -457,6 +463,7 @@ NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int 
   H->obj->h=h;
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
+  H->obj->color=color;
  if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
  return H;
 }
@@ -494,6 +501,7 @@ NspGrRect *nsp_grrect_full_copy_partial(NspGrRect *H,NspGrRect *self)
   H->obj->h=self->obj->h;
   H->obj->fill_color=self->obj->fill_color;
   H->obj->thickness=self->obj->thickness;
+  H->obj->color=self->obj->color;
   return H;
 }
 
@@ -503,7 +511,7 @@ NspGrRect *nsp_grrect_full_copy(NspGrRect *self)
   if ( H ==  NULLGRRECT) return NULLGRRECT;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRRECT;
   if ( nsp_grrect_full_copy_partial(H,self)== NULL) return NULLGRRECT;
-#line 507 "grrect.c"
+#line 515 "grrect.c"
   return H;
 }
 
@@ -523,7 +531,7 @@ int int_grrect_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grrect_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grrect_check_values(H) == FAIL) return RET_BUG;
-#line 527 "grrect.c"
+#line 535 "grrect.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -658,6 +666,23 @@ static int _wrap_grrect_set_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grrect_get_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspGrRect *) self)->obj->color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_grrect_set_color(void *self, char *attr, NspObject *O)
+{
+  int color;
+
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspGrRect *) self)->obj->color= color;
+  return OK;
+}
+
 static AttrTab grrect_attrs[] = {
   { "x", (attr_get_function *)_wrap_grrect_get_x, (attr_set_function *)_wrap_grrect_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_grrect_get_y, (attr_set_function *)_wrap_grrect_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -665,6 +690,7 @@ static AttrTab grrect_attrs[] = {
   { "h", (attr_get_function *)_wrap_grrect_get_h, (attr_set_function *)_wrap_grrect_set_h,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "fill_color", (attr_get_function *)_wrap_grrect_get_fill_color, (attr_set_function *)_wrap_grrect_set_fill_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "thickness", (attr_get_function *)_wrap_grrect_get_thickness, (attr_set_function *)_wrap_grrect_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function *)_wrap_grrect_get_color, (attr_set_function *)_wrap_grrect_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -684,7 +710,7 @@ int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 688 "grrect.c"
+#line 714 "grrect.c"
 
 
 #line 89 "codegen/grrect.override"
@@ -696,7 +722,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 700 "grrect.c"
+#line 726 "grrect.c"
 
 
 #line 99 "codegen/grrect.override"
@@ -709,7 +735,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 713 "grrect.c"
+#line 739 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -750,7 +776,7 @@ GrRect_register_classes(NspObject *d)
 Init portion 
 
 
-#line 754 "grrect.c"
+#line 780 "grrect.c"
   nspgobject_register_class(d, "GrRect", GrRect, &NspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -775,21 +801,21 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
       Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
     }
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,((NspGraphic *) P)->obj->color);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
     }
   if ( P->obj->thickness != -1 ) 
     {
       cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
       Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
     }
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
       Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
     }
   /* reset to default values */
-  if ( ((NspGraphic *) P)->obj->color != -1 ) 
+  if ( P->obj->color != -1 ) 
     {
       Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
     }
@@ -841,4 +867,4 @@ static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 845 "grrect.c"
+#line 871 "grrect.c"

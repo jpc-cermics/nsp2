@@ -8,6 +8,7 @@
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")
     '("gboolean" "close" "std" "FALSE")
+    '("int" "color" "std" "-1")
     '("int" "mark" "std" "-1")
     '("int" "mark_size" "std" "-1")
     '("int" "fill_color" "std" "-1")

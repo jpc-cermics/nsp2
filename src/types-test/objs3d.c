@@ -528,8 +528,8 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->alpha = 35;
   H->obj->theta = 45;
   H->obj->with_box = TRUE;
-  H->obj->box_color = 1;
-  H->obj->box_style = 0;
+  H->obj->box_color = 0;
+  H->obj->box_style = 1;
   return OK;
 }
 

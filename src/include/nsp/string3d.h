@@ -35,7 +35,6 @@ struct _nsp_string3d {
   char* str;
   int font_type;
   int font_size;
-  int mark_type;
   int* pos;  int pos_length;
   int ref_count;
 };
@@ -66,7 +65,7 @@ NspString3d *new_string3d();
 
 #define NULLSTRING3D (NspString3d*) 0
 
-extern NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int mark_type,int* pos, int pos_length,NspTypeBase *type);
+extern NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type);
 
 /* from String3dObj.c */
 

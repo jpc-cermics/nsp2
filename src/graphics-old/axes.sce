@@ -48,6 +48,11 @@ if %t then
   // matrix 
   ma = gmatrix_create(data=32*rand(6,8),remap=%f,rect=[-1,1,0.5,2.5]);
   C.children($+1)= ma;
+  if %f then 
+    t=linspace(-%pi,%pi,30)
+    P=surf_create(x=t,y=t,z=sin(t)'*cos(t));
+    C.children($+1)= P;
+  end
   A.children($+1) = C;
   F.connect[]
 end

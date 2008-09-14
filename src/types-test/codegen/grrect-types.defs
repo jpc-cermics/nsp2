@@ -11,6 +11,7 @@
     '("double" "h")
     '("int" "fill_color" "std" "-1")
     '("int" "thickness")
+    '("int" "color" "std" "-1")
     )
   (gtype-id "GrRect")
 )

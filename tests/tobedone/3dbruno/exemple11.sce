@@ -14,6 +14,7 @@ for i=1:5
 end
 
 xset("default")
+
 cm = xget("colormap");
 
 xset("colormap",[cm;[0.92 0.92 0.92]]);

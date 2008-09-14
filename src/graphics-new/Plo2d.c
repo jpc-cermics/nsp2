@@ -835,9 +835,9 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
       memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
       if ( style[i] >= 0 ) mark = style[i];
-      curve= nsp_curve_create("curve",mark,0,0,mode,Pts,NULL,NULL);
-      if ( style[i] < 0 ) 
-	((NspGraphic *) curve)->obj->color = - style[i];
+      curve= nsp_curve_create("curve",mark,0,0,
+			      ( style[i] < 0 ) ? - style[i] : -1, 
+			      mode,Pts,NULL,NULL);
       /* insert the new curve */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return FAIL;

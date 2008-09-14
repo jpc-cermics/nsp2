@@ -34,6 +34,7 @@ struct _nsp_points3d {
   void* Mcoord_l;
   int color;
   int mark_type;
+  int mark_size;
   int* pos;  int pos_length;
   int ref_count;
 };
@@ -64,7 +65,7 @@ NspPoints3d *new_points3d();
 
 #define NULLPOINTS3D (NspPoints3d*) 0
 
-extern NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int* pos, int pos_length,NspTypeBase *type);
+extern NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type);
 
 /* from Points3dObj.c */
 

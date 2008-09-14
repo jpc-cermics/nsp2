@@ -45,6 +45,7 @@
 #include <nsp/grarc.h> 
 #include <nsp/grrect.h> 
 #include <nsp/arrows.h> 
+#include <nsp/segments.h> 
 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
@@ -1928,9 +1929,8 @@ int int_xarc(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
-  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,NULL))== NULL)
+  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
     return RET_BUG;
-  ((NspGraphic *) arc)->obj->color=color;
   /* insert the object */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) arc )== FAIL)
     return FAIL;
@@ -2023,16 +2023,15 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
       if ( nrow == 6 ) 
 	{
 	  if ((gobj =(NspGraphic *) nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],
-						     iback,ithickness,NULL)) == NULL)
+						     iback,ithickness,icolor,NULL)) == NULL)
 	    return RET_BUG;
 	}
       else 
 	{
 	  if ((gobj =(NspGraphic *) nsp_grrect_create("pl",val[0],val[1],val[2],val[3],
-						      iback,ithickness,NULL))== NULL)
+						      iback,ithickness,icolor,NULL))== NULL)
 	    return RET_BUG;
 	}
-      gobj->obj->color= icolor;
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL)
 	return RET_BUG;
     }
@@ -2228,7 +2227,7 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
 int int_xsegs(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe; 
-  NspArrows *pl;
+  NspSegments *pl;
   BCG *Xgc;
   NspMatrix *x,*y,*Mstyle=NULL,*color;
   
@@ -2503,9 +2502,8 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
-  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,NULL))== NULL)
+  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
     return RET_BUG;
-  ((NspGraphic *) rect)->obj->color=color;
   /* insert the object */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
     return FAIL;
@@ -3390,9 +3388,8 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
 
-  if ((pl = nsp_polyline_create("pl",x,y,close,mark,mark_size,fill_color,thickness,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
-  ((NspGraphic *) pl)->obj->color=color;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
@@ -3586,9 +3583,8 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 	  else
 	    color = style->I[i];
 	}
-      if ((pl = nsp_polyline_create("pl",xp,yp,close,mark,mark_size,fill_color,thickness,NULL))== NULL)
+      if ((pl = nsp_polyline_create("pl",xp,yp,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
-      ((NspGraphic *) pl)->obj->color=color;
       mark = color=-1;
       /* insert the polyline */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)

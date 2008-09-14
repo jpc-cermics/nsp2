@@ -112,6 +112,7 @@ function [C, L, LL, Q] = obj1()
    LL = tlist(["polyline" "coord" "color" "mark"], P, color);
    
    // Les points
+   xset('mark size',10)
    P = [-0.1  0.5  1.1  0.5  0.5;...
 	 0.5 ,-0.1  0.5  1.1  0.5;...
 	 0.5  0.5  0.5  0.5  0.5];

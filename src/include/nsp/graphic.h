@@ -60,7 +60,6 @@ n_faces_func *n_faces;
 
 typedef struct _nsp_graphic nsp_graphic;
 struct _nsp_graphic {
-  int color;
   int id;
   Boolean hidden;
   void* Fig;
@@ -93,7 +92,7 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,int color,int id,Boolean hidden,void* Fig,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create(char *name,int id,Boolean hidden,void* Fig,NspTypeBase *type);
 
 /* from GraphicObj.c */
 

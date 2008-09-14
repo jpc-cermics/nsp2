@@ -289,7 +289,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 	  if (cv->obj->legend[0] != '\0' ) 
 	    {
 	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
-	      style[count++]= ((NspGraphic *) cv)->obj->color;
+	      style[count++]= cv->obj->color;
 	      if (count >= 56 ) break; 
 	    }
 	}

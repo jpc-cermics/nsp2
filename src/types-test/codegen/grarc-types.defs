@@ -13,6 +13,7 @@
     '("double" "a2")
     '("int" "fill_color" "std" "-1")
     '("int" "thickness")
+    '("int" "color")
     )
   (gtype-id "GrArc")
 )
