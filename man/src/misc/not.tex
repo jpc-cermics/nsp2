@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{not}
+\begin{mandesc}
+  \short{not}{logical NOT function or operator}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  B = ~A  (equivalently B = not(A))
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: boolean matrices. 
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  Returns a boolean matrix (says \verb+B+) of same dimensions than \verb+A+ by applying
+  the logical NOT to each element (B(i,j) = not(A(i,j)).
+\end{mandescription}
+
+%--example 
+\begin{examples}
+  \begin{program}\HCode{A = [\%t, \%f, \%t; \%t,\%t, \%f; \%t,\%t, \%t]\Hnewline
+   }\verb+~+\HCode{A}
+  \end{program}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{and}{and}, \manlink{or}{or},\manlink{any}{any}, \manlink{all}{all}  
+\end{manseealso}
+

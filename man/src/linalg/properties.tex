@@ -30,21 +30,24 @@ b = istriangular(A,str)
 
 \begin{itemize}
 \item \itemdesc{issymmetric} this function returns \verb+%t+ if it 
-is square and if:
+is square and if it is symmetric (real case) or hermitian (complex case),
+that is if:
 $$
 \begin{array}{l}
    A_{i,j} = A_{j,i}, \forall 1 \le i,j \le n, \mbox{ in the real case.}\\
    A_{i,j} = \bar{A}_{j,i}, \forall 1 \le i,j \le n, \mbox{ in the complex case.}\\
 \end{array}
 $$
-If your matrix should be symmetrix but lose the exact property due to
+If your matrix should be symmetric/hermitian but lose the exact property due to
 roundoff errors then you re can resymmetrize it using \verb-A = 0.5*(A + A')-
 
-\item \itemdesc{istriangular} \verb+istriangular(A,'l')+ returns \verb+%t+ if:
+\item \itemdesc{istriangular} \verb+istriangular(A,'l')+ returns \verb+%t+ if
+the matrix $A$ is lower triangular that is if:
 $$
    A_{i,j} = 0, \forall i < j
 $$ 
-and  \verb+istriangular(A,'u')+ returns \verb+%t+ if:
+and  \verb+istriangular(A,'u')+ returns \verb+%t+ if the matrix $A$ is upper
+triangular that is if:
 $$
    A_{i,j} = 0, \forall i > j
 $$

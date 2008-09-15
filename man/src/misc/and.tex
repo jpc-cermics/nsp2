@@ -1,15 +1,21 @@
 % -*- mode: latex -*-
-\mansection{and}
+\mansection{and, or}
 \begin{mandesc}
-  \short{and}{logical and operator}
+  \short{and}{logical AND function or operator}\\
+  \short{or}{logical OR function or operator}
 \end{mandesc}
-%\index{} 
+
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  C= and(A [,dim=dimarg]);
-  C= and(A,B);
-  A  B 
+  C = and(A)
+  C = and(A,dim=dimarg) (equivalently C = and(A,dimarg))
+  C = A & B (equivalently C = and(A,B))
+  C = A && B 
+  C = or(A)
+  C = or(A,dim=dimarg) (equivalently or(A,dimarg))
+  C = A | B (equivalently C = or(A,B))
+  C = A || B 
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -17,26 +23,83 @@
   \begin{varlist}
     \vname{A,B,C}: boolean matrices. 
     \vname{dimarg}: a string (\verb!'*'!,or \verb!'r'!,or \verb!'c'!) or an integer which defines 
-    a dimension along which the and operation is performed. 
+    a dimension along which the boolean AND or OR operation is performed. 
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
   \begin{itemize} 
+  \item \itemdesc{and}
+  \begin{itemize} 
   \item \verb!and(A)! is the logical AND of the elements of the boolean matrix \verb!A!. 
-    \verb!and(A)! returns \verb!%t! iff all entries of \verb!A! are \verb!%T!. 
-  \item \verb!y=and(A,'r')! (or, equivalently, \verb!y=and(A,1)!) returns in \verb!y! a row vector 
-    such that \verb!y(j)= and(A(i,j),i=1,m)!). 
-    \verb!y=and(A,'c')! (or, equivalently, \verb!y=and(A,2)!) returns in \verb!y! a colum vector 
+    \verb!and(A)! returns \verb!%t! iff all entries of \verb!A! are \verb!%t!. 
+  \item \verb!y=and(A,dim='r')! (equivalently, \verb!y=and(A,'r')!,\verb!y=and(A,dim=1)! or \verb!y=and(A,1)!) 
+    returns in \verb!y! a row vector such that \verb!y(j)= and(A(i,j),i=1,m)!). 
+    \verb!y=and(A,dim='c')! (or, equivalently, \verb!y=and(A,dim=2)!) returns in \verb!y! a colum vector 
     such that \verb!y(i)= and(A(i,j),j=1,n)!)).
-  \item \verb!A & B! or \verb!and(A,B)! gives the element-wise logical \verb!and!
+  \item \verb!A & B! or \verb!and(A,B)! gives the element-wise logical AND
     of the booleans matrices \verb!A! and  \verb!B!. The two matrices must have the same size 
     with the usual promotion of single booleans (\verb!1x1! matrices). 
-  \item \verb!A && B! performs a sequential and. 
+  \item \verb!A && B! performs a sequential AND ; this is the same than 
+    the element-wise logical AND but when $A(i,j)$ is false, the result $C(i,j)$
+    is directly set to false, $B(i,j)$ being not evaluated.
+  \end{itemize}
+  \item \itemdesc{or}
+  \begin{itemize} 
+  \item \verb!or(A)! is the logical OR of the elements of the boolean matrix \verb!A!. 
+    \verb!or(A)! returns \verb!%t! iff at least one entry of \verb!A! is \verb!%t!. 
+  \item \verb!y=or(A,dim='r')! (equivalently, \verb!y=or(A,'r')!,\verb!y=or(A,dim=1)! or \verb!y=or(A,1)!) 
+    returns in \verb!y! a row vector such that \verb!y(j)= or(A(i,j),i=1,m)!). 
+    \verb!y=or(A,dim='c')! (equivalently, \verb!y=or(A,dim=2)!) returns in \verb!y! a colum vector 
+    such that \verb!y(i)= or(A(i,j),j=1,n)!)).
+  \item \verb!A | B! (equivalently \verb!or(A,B)!) gives the element-wise logical  OR
+    of the booleans matrices \verb!A! and  \verb!B!. The two matrices must have the same size 
+    with the usual promotion of single booleans (\verb!1x1! matrices). 
+  \item \verb!A || B! performs a sequential OR ; this is the same than 
+    the element-wise logical OR but when $A(i,j)$ is true, the result $C(i,j)$
+    is directly set to true, $B(i,j)$ being not evaluated.
   \end{itemize} 
+\end{itemize}
+
 \end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{AND basic examples}
+  \begin{program}\HCode{A = [\%t, \%f, \%t; \%t,\%t, \%f; \%t,\%t, \%t]\Hnewline
+    and(A)\Hnewline
+    and(A,dim=1)\Hnewline
+    and(A,dim=2)\Hnewline
+    B = rand(3,3) < 0.5\Hnewline
+    A & B\Hnewline
+    A }\verb+&&+\HCode{ B\Hnewline
+    // difference between & and }\verb+&&+\HCode{\Hnewline
+    i = 0;\Hnewline
+    x = rand(1,3)\Hnewline
+    bool = i > 0 }\verb+&&+\HCode{ x(i) < 0.5 // the 2d expression is not evaluated\Hnewline
+    bool = i > 0 & x(i) < 0.5 // the 2d expression is evaluated and so raise an error}
+  \end{program}
+
+\paragraph{OR basic examples}
+  \begin{program}\HCode{A = [\%t, \%f, \%f; \%t,\%t, \%f; \%f,\%f, \%f]\Hnewline
+    or(A)\Hnewline
+    or(A,dim=1)\Hnewline
+    or(A,dim=2)\Hnewline
+    B = rand(3,3) < 0.5\Hnewline
+    A | B\Hnewline
+    A || B\Hnewline
+    // difference between | and || \Hnewline
+    i = 0;\Hnewline
+    x = rand(1,3)\Hnewline
+    bool = i == 0 || x(i) < 0.5 // the 2d expression is not evaluated\Hnewline
+    bool = i == 0 || x(i) < 0.5 // the 2d expression is evaluated and so raise an error}
+  \end{program}
+
+\end{examples}
+
 %-- see also
 \begin{manseealso}
-  \manlink{not}{not} \manlink{or}{or}  
+  \manlink{not}{not},\manlink{any}{any}, \manlink{all}{all}  
+
 \end{manseealso}
 
