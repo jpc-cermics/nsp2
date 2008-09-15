@@ -26,7 +26,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/spmf.h"
 
-/* #define NEW 1 */
+#define NEW 1
 
 /*
  * a set of C functions which can be used if res =x 
@@ -723,6 +723,124 @@ double nsp_finite_c(const doubleC *x)
   return (double) (! (int)nsp_isinf_c(x));
 }
 
+#ifdef NEW
+/**
+ * nsp_acos_c:
+ * @z: 
+ * @res:
+ * 
+ * computes in @res the  arccos of a complex number @z.
+ *
+ * 
+ * Author: Bruno Pincon
+ * Thanks to Tom Fairgrieve
+ **/
+void nsp_acos_c(const doubleC *z, doubleC *res)
+{
+  /*
+   *  This is a C translation of an algorithm by 
+   *  T.E. Hull, T. F. Fairgrieve and P.T.P. Tang which 
+   *  appears in their paper:
+   *  "Implementing the Complex Arcsine and Arccosine 
+   *   Functions Using Exception Handling", ACM, TOMS, 
+   *   Vol 23, No. 3, Sept 1997, p. 299-335
+   *
+   *  with some modifications so as don't rely on ieee handle
+   *  trap functions (initial version was coded in fortran77
+   *  for scilab).
+   */
+  double const LN2 = 0.6931471805599453094172321,
+    HALFPI = 1.5707963267948966192313216,
+    PI = 3.1415926535897932384626433,
+    Across = 1.5,
+    Bcross = 0.6417,
+    LSUP = 1.675975991242824544390291997e153,   /* sqrt(DBL_MAX)/8.0 */
+    LINF = 5.966672584960165394645868037e-154,  /* 4sqrt(dlamch('u'))*/
+    EPSM = 1.053671212772350794674224201e-8;    /* sqrt(epsm)        */
+  double x = fabs(z->r), y = fabs(z->i), R, S, A, B, xp1, xm1, szr, szi;
+
+  szr = z->r >= 0.0 ? 1.0 : -1.0;
+  szi = z->i >= 0.0 ? 1.0 : -1.0;
+  xp1 = x + 1.0; xm1 = x - 1.0; 
+
+  if ( LINF <= Min(x,y)  &&  Max(x,y) <= LSUP )  /* we are in the safe region */
+    {
+      R = sqrt(xp1*xp1 + y*y);
+      S = sqrt(xm1*xm1 + y*y);
+      A = 0.5*(R + S);
+      B = x/A;
+
+      /* compute real part */
+      if ( B <= Bcross )
+	res->r = acos(B);
+      else if ( x <= 1.0 )
+	res->r = atan( sqrt(0.5*(A+x)*((y*y)/(R+xp1)+(S-xm1))) / x );
+      else
+	res->r = atan( (y*sqrt(0.5*((A+x)/(R+xp1)+(A+x)/(S+xm1)))) / x );
+
+      /* compute imaginary part */
+      if ( A <= Across )
+	{
+	  double Am1;
+	  if ( x < 1.0 )
+	    Am1 = 0.5*((y*y)/(R+xp1)+(y*y)/(S-xm1));
+	  else
+	    Am1 = 0.5*((y*y)/(R+xp1)+(S+xm1));
+	  res->i = nsp_log1p(Am1 + sqrt(Am1*(A+1.0)));
+	}
+      else
+	res->i = log(A + sqrt(A*A - 1.0));
+    }
+
+  else  /* HANDLE BLOC : evaluation in the special regions  */
+    {
+      if ( y <= EPSM*fabs(xm1) )
+	{
+	  if ( x < 1.0 )
+	    {
+	      res->r = acos(x);
+	      res->i = y/sqrt(-xm1*xp1);
+	    }
+	  else
+	    {
+	      res->r = 0.0;
+	      if ( x <= LSUP )
+		res->i = nsp_log1p(xm1 + sqrt(xm1*xp1));
+	      else
+		res->i = LN2 + log(x);
+	    }
+	}
+      else if ( y < LINF )
+	{
+	  res->r = sqrt(y);
+	  res->i = res->r;
+	}
+      else if ( EPSM*y - 1.0 >= x )
+	{
+	  res->r = HALFPI;
+	  res->i = LN2 + log(y);
+	}
+      else if ( x > 1.0 )
+	{
+	  res->r = atan(y/x);
+	  res->i = LN2 + log(y) + 0.5*nsp_log1p((x/y)*(x/y));
+	}
+      else
+	{
+	  res->r = HALFPI;
+	  A = sqrt(1.0 + y*y);
+	  res->i = 0.5*nsp_log1p(2.0*y*(y+A));
+	}
+    }
+
+  /* recover the signs */
+  if ( szr < 0.0 )
+    res->r = PI - res->r;
+
+  if ( y != 0.0  ||  szr < 0.0 )
+    res->i = - szi * res->i;
+}
+#else
 /**
  * nsp_acos_c:
  * @x: 
@@ -743,7 +861,40 @@ void nsp_acos_c(const doubleC *x, doubleC *res)
   res->r = zloc.i;
   res->i = - zloc.r;
 }
+#endif
 
+#ifdef NEW
+/**
+ * nsp_acosh_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ * computes the acosh of the complex number x
+ * uses the formula
+ * 
+ *   acosh(x) = sign(-imag(acos(x)) i acos(x)
+ *
+ *   (with sign(0) = 1) 
+ **/
+void nsp_acosh_c(const doubleC *x, doubleC *res)
+{
+  doubleC xloc;
+  int sign;
+
+  /* xloc = x */
+  xloc.r = x->r; xloc.i = x->i;
+  /* xloc <- acos(xloc) */
+  nsp_acos_c(&xloc, &xloc);
+  /* compute sign(-imag(xloc)) */
+  sign = -xloc.i >= 0.0 ? 1 : -1;
+  /* res = i * xloc */
+  res->r = -xloc.i; res->i = xloc.r;
+  if ( sign < 0 )
+    {
+      res->r = - res->r; res->i = - res->i;
+    } 
+}
+#else
 /**
  * nsp_acosh_c:
  * @x: 
@@ -762,8 +913,123 @@ void nsp_acosh_c(const doubleC *x, doubleC *res)
   zloc.i += x->i;
   nsp_log_c(&zloc,res);
 }
+#endif
 
+#ifdef NEW
+/**
+ * nsp_asin_c:
+ * @z: 
+ * @res:
+ * 
+ * computes in @res the  arcsin of a complex number @z.
+ *
+ *       res = -i * log (i*z + sqrt (1.0 - z*z));
+ * 
+ * Author: Bruno Pincon
+ * Thanks to Tom Fairgrieve
+ **/
+void nsp_asin_c(const doubleC *z, doubleC *res)
+{
+  /*
+   *  This is a C translation of an algorithm by 
+   *  T.E. Hull, T. F. Fairgrieve and P.T.P. Tang which 
+   *  appears in their paper:
+   *  "Implementing the Complex Arcsine and Arccosine 
+   *   Functions Using Exception Handling", ACM, TOMS, 
+   *   Vol 23, No. 3, Sept 1997, p. 299-335
+   *
+   *  with some modifications so as don't rely on ieee handle
+   *  trap functions (initial version was coded in fortran77
+   *  for scilab).
+   */
+  double const LN2 = 0.6931471805599453094172321,
+    HALFPI = 1.5707963267948966192313216,
+    Across = 1.5,
+    Bcross = 0.6417,
+    LSUP = 1.675975991242824544390291997e153,   /* sqrt(DBL_MAX)/8.0 */
+    LINF = 5.966672584960165394645868037e-154,  /* 4sqrt(dlamch('u'))*/
+    EPSM = 1.053671212772350794674224201e-8;    /* sqrt(epsm)        */
+  double x = fabs(z->r), y = fabs(z->i), R, S, A, B, xp1, xm1, szr, szi;
 
+  szr = z->r >= 0.0 ? 1.0 : -1.0;
+  szi = z->i >= 0.0 ? 1.0 : -1.0;
+  xp1 = x + 1.0; xm1 = x - 1.0; 
+
+  if ( LINF <= Min(x,y)  &&  Max(x,y) <= LSUP )  /* we are in the safe region */
+    {
+      R = sqrt(xp1*xp1 + y*y);
+      S = sqrt(xm1*xm1 + y*y);
+      A = 0.5*(R + S);
+      B = x/A;
+
+      /* compute real part */
+      if ( B <= Bcross )
+	res->r = asin(B);
+      else if ( x <= 1.0 )
+	res->r = atan( x / sqrt(0.5*(A+x)*((y*y)/(R+xp1)+(S-xm1))) );
+      else
+	res->r = atan( x / (y*sqrt(0.5*((A+x)/(R+xp1)+(A+x)/(S+xm1)))) );
+
+      /* compute imaginary part */
+      if ( A <= Across )
+	{
+	  double Am1;
+	  if ( x < 1.0 )
+	    Am1 = 0.5*((y*y)/(R+xp1)+(y*y)/(S-xm1));
+	  else
+	    Am1 = 0.5*((y*y)/(R+xp1)+(S+xm1));
+	  res->i = nsp_log1p(Am1 + sqrt(Am1*(A+1.0)));
+	}
+      else
+	res->i = log(A + sqrt(A*A - 1.0));
+    }
+
+  else  /* HANDLE BLOC : evaluation in the special regions  */
+    {
+      if ( y <= EPSM*fabs(xm1) )
+	{
+	  if ( x < 1.0 )
+	    {
+	      res->r = asin(x);
+	      res->i = y/sqrt(-xm1*xp1);
+	    }
+	  else
+	    {
+	      res->r = HALFPI;
+	      if ( x <= LSUP )
+		res->i = nsp_log1p(xm1 + sqrt(xm1*xp1));
+	      else
+		res->i = LN2 + log(x);
+	    }
+	}
+      else if ( y < LINF )
+	{
+	  res->r = HALFPI - sqrt(y);
+	  res->i = sqrt(y);
+	}
+      else if ( EPSM*y - 1.0 >= x )
+	{
+	  res->r = x/y;
+	  res->i = LN2 + log(y);
+	}
+      else if ( x > 1.0 )
+	{
+	  res->r = atan(x/y);
+	  res->i = LN2 + log(y) + 0.5*nsp_log1p((x/y)*(x/y));
+	}
+      else
+	{
+	  A = sqrt(1.0 + y*y);
+	  res->r = x/A;
+	  res->i = 0.5*nsp_log1p(2.0*y*(y+A));
+	}
+    }
+
+  /* recover the signs */
+  res->r = szr * res->r;
+  res->i = szi * res->i;
+}
+#else
 /**
  * nsp_asin_c:
  * @x: 
@@ -772,7 +1038,6 @@ void nsp_acosh_c(const doubleC *x, doubleC *res)
  * 
  * -i * log (i*x + sqrt (1.0 - x*x)); 
  **/
-
 void nsp_asin_c(const doubleC *x, doubleC *res)
 {
   doubleC zloc;
@@ -788,7 +1053,30 @@ void nsp_asin_c(const doubleC *x, doubleC *res)
   res->r = zloc.i;
   res->i = - zloc.r;
 }
+#endif
 
+#ifdef NEW
+/**
+ * nsp_asinh_c:
+ * @x: a  double complex  
+ * @res: a pointer to a double complex  
+ * 
+ * computes the arcsin of the complex number x
+ * uses the formula  asinh(z) = -i asin(i z)
+ * 
+ **/
+void nsp_asinh_c(const doubleC *x, doubleC *res)
+{
+  doubleC xloc;
+
+  /* xloc = i x */
+  xloc.r = -x->i; xloc.i = x->r;
+  /* xloc <- asin(xloc) */
+  nsp_asin_c(&xloc, &xloc);
+  /* res = -i * xloc */
+  res->r = xloc.i; res->i = -xloc.r;
+}
+#else
 /**
  * nsp_asinh_c:
  * @x: a  double complex  
@@ -808,7 +1096,7 @@ void nsp_asinh_c(const doubleC *x, doubleC *res)
   zloc.i += x->i;
   nsp_log_c(&zloc,res);
 }
-
+#endif
 
 #ifdef NEW
 
