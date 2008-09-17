@@ -132,8 +132,10 @@ void nsp_graphic_link_figure(NspGraphic *G,void *F)
   NspFigure *Fi = F;
   if ( G->obj->Fig == NULL ) 
     {
+      /* 
       Fi->obj->ref_count++;
       ((NspGraphic *) Fi)->obj->ref_count++;
+      */
       G->obj->Fig = Fi;
     }
 }
@@ -143,8 +145,10 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
   NspFigure *Fi = F;
   if ( G->obj->Fig == F ) 
     {
+      /* 
       Fi->obj->ref_count--;
       ((NspGraphic *) Fi)->obj->ref_count--;
+      */
       G->obj->Fig = NULL ;
     }
 }

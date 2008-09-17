@@ -636,8 +636,10 @@ void nsp_graphic_link_figure(NspGraphic *G,void *F)
   NspFigure *Fi = F;
   if ( G->obj->Fig == NULL ) 
     {
+      /* 
       Fi->obj->ref_count++;
       ((NspGraphic *) Fi)->obj->ref_count++;
+      */
       G->obj->Fig = Fi;
     }
 }
@@ -647,8 +649,10 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
   NspFigure *Fi = F;
   if ( G->obj->Fig == F ) 
     {
+      /* 
       Fi->obj->ref_count--;
       ((NspGraphic *) Fi)->obj->ref_count--;
+      */
       G->obj->Fig = NULL ;
     }
 }
@@ -803,4 +807,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 807 "graphic.c"
+#line 811 "graphic.c"

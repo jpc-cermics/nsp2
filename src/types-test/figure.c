@@ -1087,6 +1087,10 @@ static int nsp_figure_connect(NspFigure *F)
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
   store_graphic_object(Xgc,NSP_OBJECT(F));
+  /* 
+     F->obj->ref_count++;
+     ((NspGraphic *) F)->obj->ref_count++;
+  */
   return OK;
 }
 
@@ -1292,4 +1296,4 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
 
 
 
-#line 1296 "figure.c"
+#line 1300 "figure.c"
