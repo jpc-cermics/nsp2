@@ -296,15 +296,15 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
   return OK;
 }
 
-
 static int display_mode = INTERP;
 
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
   int i, k, np=1, m, zero=0;
-  int x[4], y[4];
-  int nbtri, triangle[2][3] = {{0,1,2},{0,2,3}};
+  int x_def[12], y_def[12];
+  int *x=x_def, *y=y_def;
+  int nbtri; 
   int zxy[3], sx[3], sy[3];
   int numpt, *current_vertex, color, orient;
   double v[3], val_mean=0.0;
@@ -318,6 +318,13 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
+
+  if ( m > 12 ) 
+    {
+      x = graphic_alloc(0,m,sizeof(int));
+      y = graphic_alloc(1,m,sizeof(int));
+    }
+
   for (i = 0 ; i < m ; i++)
     {
       numpt = current_vertex[i]-1;
@@ -329,11 +336,9 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   orient = nsp_obj3d_orientation(x, y, m);
 
-  /*   if ( orient == 1 ) */
-  /*     return; */
-
   Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
-  if ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ) 
+  
+  if ( m > 12 || ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ))
     {
       if ( orient == 1  && Q->back_color >= 0 )
 	color = -Q->back_color;
@@ -347,9 +352,10 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       nbtri = m - 2;
       for ( k = 0 ; k < nbtri ; k++ )
 	{
+	  int triangle[]= { 0, k+1,k+2};
 	  for ( j = 0 ; j < 3 ; j++ )
 	    {
-	      i = triangle[k][j];
+	      i = triangle[j];
 	      v[j] = Q_val[current_vertex[i]-1];
 	      zxy[j] = zone(v[j], Q->vmin, Q->vmax, Q_nb_levels);
 	      sx[j] = x[i]; sy[j] = y[i];
@@ -374,7 +380,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int i,j, np=1, m, zero=0,colors[4];
   int numpt, *current_vertex, color;
   double val_mean=0.0;
-  double x[4], y[4], z[4], v[4];
+  double x[12], y[12], z[12], v[12];
   
   double *Q_coord = Q->Mcoord->R; 
   int Q_nb_vertices_per_face = Q->Mface->m;
@@ -651,3 +657,5 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
   *xint = (int) ((1.0 - alpha)*sx[inda] + alpha*sx[indb]);
   *yint = (int) ((1.0 - alpha)*sy[inda] + alpha*sy[indb]);
 } 
+
+

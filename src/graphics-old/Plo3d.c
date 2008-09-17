@@ -978,6 +978,11 @@ int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
 
 /*-------------------------------------------------------------------
  * functions for 3D scales 
+ * flag = 0: use current scale 
+ * flag = 1: standard scale (the graphic is expanded).
+ * flag = 2: iso mode but scale is such that it can contain the 
+ *           sphere circumscribing the box
+ * flag = 3: iso mode (the graphic is expanded).
  *-------------------------------------------------------------------*/
 
 void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)

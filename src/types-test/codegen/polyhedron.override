@@ -26,6 +26,9 @@ static int nsp_check_polyhedron(NspPolyhedron *P);
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
+static NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *x,NspMatrix *y)  ;
+static NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *x,NspMatrix *y, NspMatrix *z);
+
 %%
 init 
 
@@ -129,6 +132,35 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
+%%
+override nsp_surf_to_coords
+
+int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_coord */
+{
+  int_types T[] = {realmat,realmat,realmat,t_end};
+  NspMatrix *x, *y, *z, *ret;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &z) == FAIL) return RET_BUG;
+  CheckDimProp(NspFname(stack),1,3, x->mn != z->m);
+  CheckDimProp(NspFname(stack),2,3, y->mn != z->n);
+  ret = nsp_surf_to_coords(NVOID,x, y, z);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+%%
+override nsp_surf_to_faces 
+
+int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_face */
+{
+  int_types T[] = {realmat,realmat,t_end};
+  NspMatrix *x, *y, *ret;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
+  ret = nsp_surf_to_faces(NVOID,x, y);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
 
 %%
 last
@@ -465,3 +497,47 @@ static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
   return ((NspPolyhedron *) Obj)->obj->Mface->n;
 }
+
+
+/* Utilities 
+ * 
+ */
+
+static NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *x,NspMatrix *y, NspMatrix *z)
+{
+  int i,j;
+  NspMatrix *coord;
+  if ((coord = nsp_matrix_create(name,'r',3,z->mn))==NULL) return NULL;
+  for (i= 0 ; i < z->mn;  i++)
+    {
+      coord->R[3*i+2]= z->R[i];
+    }
+  for (j = 0 ; j < y->mn ; j++) 
+    for (i= 0 ; i < x->mn;  i++)
+      coord->R[3*(i+j*(x->mn))]= x->R[i];
+  for (j = 0 ; j < y->mn ; j++) 
+    for (i= 0 ; i < x->mn;  i++)
+      coord->R[3*(i+j*(x->mn))+1]= y->R[j];
+  return coord;
+}
+
+static NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *x,NspMatrix *y)  
+{
+  NspMatrix *face;
+  int j,i,nface;
+  if ((face = nsp_matrix_create(NVOID,'r',4,(x->mn-1)*(y->mn-1)))==NULL) return NULL;
+  nface = 0;
+  for (j = 0 ; j < y->mn -1 ; j++) 
+    {
+      for ( i = 0 ; i < x->mn-1 ; i++)
+	{
+	  face->R[ nface*4]   = i+j*(x->mn)+1 ; 
+	  face->R[ nface*4+1] = i+1+j*(x->mn)+1 ; 
+	  face->R[ nface*4+2] = (i+1)+(j+1)*(x->mn)+1 ; 
+	  face->R[ nface*4+3] = (i)+(j+1)*(x->mn)+1 ; 
+	  nface++;
+	}
+    }
+  return face;
+}
+

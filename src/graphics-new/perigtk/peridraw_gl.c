@@ -1427,6 +1427,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
   gint i;
   if ( n <= 1) return;
   DRAW_CHECK;
+#if 1
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) 
     {
@@ -1434,6 +1435,22 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
       glVertex3d( vx[i], vy[i], vz[i]);
     }
   glEnd();
+#else 
+  for ( i=0 ;  i < n-2 ; i++) 
+    {
+      int triangle[]= { 0, i+1,i+2};
+      int j;
+      glBegin(GL_POLYGON);
+      for ( j = 0 ; j < 3 ; j++ )
+	{
+	  int k = triangle[j];
+	  xset_pattern(Xgc,Abs(colors[k]));
+	  glVertex3d( vx[k], vy[k], vz[k]);
+	}
+      glEnd();
+    }
+#endif 
+
 }
 
 

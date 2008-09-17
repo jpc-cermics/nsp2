@@ -31,3 +31,23 @@
   (return-type "none")
 )
 
+;; utilities for surface conversion 
+
+(define-function surf_to_coords 
+  (c-name "nsp_surf_to_coords") 
+  (return-type "NspMatrix*")
+  (parameters
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "z")
+    )
+)
+
+(define-function surf_to_faces
+  (c-name "nsp_surf_to_faces") 
+  (return-type "NspMatrix*")
+  (parameters
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    )
+)
