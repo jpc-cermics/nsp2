@@ -1,4 +1,4 @@
-function test1()
+function test1(i)
   fmode = %t; 
   mode = "Cairo";
   mode = "Gtk";
@@ -7,12 +7,32 @@ function test1()
   // a top level axes 
   A=axes_create(top=%t,title="Main title",x="x",y="y",wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/5);
   F.children(1)= A;
-  t=linspace(-%pi,%pi,30)
-  P=surf_create(x=t,y=t,z=sin(t)'*cos(t));
+  x=linspace(-%pi,%pi,10);
+  y=linspace(-%pi,%pi,10);
+  z=sin(x)'*cos(y);
+  select i 
+   case 1 
+    P=surf_create(x=x,y=y,z=z);
+   case 2
+    P=surf_create(x=x,y=y,z=z,zcolor=%f);
+   case 3
+    [xx,yy,zz]=genfac3d(x,y,z);
+    P=surf_create(x=xx,y=yy,z=zz)
+   case 4
+    [xx,yy,zz]=genfac3d(x,y,z);
+    P=surf_create(x=xx,y=yy,z=zz,zcolor=%f)
+   case 5
+    [xx,yy,zz]=genfac3d(x,y,z);
+    P=surf_create(x=xx,y=yy,z=zz,colors=int(20*rand(1,size(zz,'c'))))
+   case 6
+    [xx,yy,zz]=genfac3d(x,y,z);
+    [m,n]=size(zz);
+    P=surf_create(x=xx,y=yy,z=zz,colors=int(20*rand(m,n)));
+  end
   A.children(1)=P;
   F.connect[]
 endfunction
-  
+
 function test2()
   fmode = %t; 
   mode = "Cairo";

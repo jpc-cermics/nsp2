@@ -142,7 +142,7 @@ void nsp_graphic_link_figure(NspGraphic *G,void *F)
 
 void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
 {
-  NspFigure *Fi = F;
+  /* NspFigure *Fi = F;*/
   if ( G->obj->Fig == F ) 
     {
       /* 

@@ -203,7 +203,9 @@ static int nsp_surf_eq(NspSurf *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->z)->type->eq(A->obj->z,loc->obj->z) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->colors)->type->eq(A->obj->colors,loc->obj->colors) == FALSE ) return FALSE;
   if ( A->obj->mesh != loc->obj->mesh) return FALSE;
+  if ( A->obj->zcolor != loc->obj->zcolor) return FALSE;
   if ( A->obj->mesh_color != loc->obj->mesh_color) return FALSE;
   if ( A->obj->face_color != loc->obj->face_color) return FALSE;
   return TRUE;
@@ -229,7 +231,9 @@ int nsp_surf_xdr_save(XDR *xdrs, NspSurf *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->z)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colors)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->zcolor) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mesh_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->face_color) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
@@ -248,7 +252,9 @@ NspSurf  *nsp_surf_xdr_load_partial(XDR *xdrs, NspSurf *M)
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->z =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->colors =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->zcolor) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->face_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -264,7 +270,7 @@ static NspSurf  *nsp_surf_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSURF;
   if ((H  = nsp_surf_create_void(name,(NspTypeBase *) nsp_type_surf))== NULLSURF) return H;
   if ((H  = nsp_surf_xdr_load_partial(xdrs,H))== NULLSURF) return H;
-#line 268 "surf.c"
+#line 274 "surf.c"
   return H;
 }
 
@@ -278,10 +284,11 @@ void nsp_surf_destroy_partial(NspSurf *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 282 "surf.c"
+#line 288 "surf.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
+    nsp_matrix_destroy(H->obj->colors);
     FREE(H->obj);
    }
 }
@@ -345,7 +352,11 @@ int nsp_surf_print(NspSurf *M, int indent,const char *name, int rec_level)
   if ( M->obj->z != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->colors != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colors),indent+2,"colors",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"zcolor	= %s\n", ( M->obj->zcolor == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
   Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -373,7 +384,11 @@ int nsp_surf_latex(NspSurf *M, int indent,const char *name, int rec_level)
   if ( M->obj->z != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->colors != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colors),indent+2,"colors",rec_level+1)== FALSE ) return FALSE ;
+    }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"zcolor	= %s\n", ( M->obj->zcolor == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"mesh_color=%d\n",M->obj->mesh_color);
   Sciprintf1(indent+2,"face_color=%d\n",M->obj->face_color);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -449,7 +464,9 @@ int nsp_surf_create_partial(NspSurf *H)
   H->obj->x = NULLMAT;
   H->obj->y = NULLMAT;
   H->obj->z = NULLMAT;
+  H->obj->colors = NULLMAT;
   H->obj->mesh = TRUE;
+  H->obj->zcolor = TRUE;
   H->obj->mesh_color = -1;
   H->obj->face_color = -1;
   return OK;
@@ -475,11 +492,17 @@ int nsp_surf_check_values(NspSurf *H)
        return FAIL;
 
     }
+  if ( H->obj->colors == NULLMAT) 
+    {
+       if (( H->obj->colors = nsp_matrix_create("colors",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
+NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type)
 {
  NspSurf *H  = nsp_surf_create_void(name,type);
  if ( H ==  NULLSURF) return NULLSURF;
@@ -487,7 +510,9 @@ NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gbool
   H->obj->x= x;
   H->obj->y= y;
   H->obj->z= z;
+  H->obj->colors= colors;
   H->obj->mesh=mesh;
+  H->obj->zcolor=zcolor;
   H->obj->mesh_color=mesh_color;
   H->obj->face_color=face_color;
  if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
@@ -539,7 +564,14 @@ NspSurf *nsp_surf_full_copy_partial(NspSurf *H,NspSurf *self)
     {
       if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
     }
+  if ( self->obj->colors == NULL )
+    { H->obj->colors = NULL;}
+  else
+    {
+      if ((H->obj->colors = (NspMatrix *) nsp_object_copy_and_name("colors",NSP_OBJECT(self->obj->colors))) == NULLMAT) return NULL;
+    }
   H->obj->mesh=self->obj->mesh;
+  H->obj->zcolor=self->obj->zcolor;
   H->obj->mesh_color=self->obj->mesh_color;
   H->obj->face_color=self->obj->face_color;
   return H;
@@ -551,7 +583,7 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
   if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
-#line 555 "surf.c"
+#line 587 "surf.c"
   return H;
 }
 
@@ -571,7 +603,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
-#line 575 "surf.c"
+#line 607 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -683,6 +715,35 @@ static int _wrap_surf_set_z(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_surf_get_colors(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspSurf *) self)->obj->colors;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_surf_get_obj_colors(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspSurf *) self)->obj->colors);
+  return (NspObject *) ret;
+}
+
+static int _wrap_surf_set_colors(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *colors;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((colors = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspSurf *) self)->obj->colors != NULL ) 
+    nsp_matrix_destroy(((NspSurf *) self)->obj->colors);
+  ((NspSurf *) self)->obj->colors= colors;
+  return OK;
+}
+
 static NspObject *_wrap_surf_get_mesh(void *self,char *attr)
 {
   int ret;
@@ -699,6 +760,25 @@ static int _wrap_surf_set_mesh(void *self, char *attr, NspObject *O)
 
   if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
   ((NspSurf *) self)->obj->mesh= mesh;
+  return OK;
+}
+
+static NspObject *_wrap_surf_get_zcolor(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspSurf *) self)->obj->zcolor;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_surf_set_zcolor(void *self, char *attr, NspObject *O)
+{
+  int zcolor;
+
+  if ( BoolScalar(O,&zcolor) == FAIL) return FAIL;
+  ((NspSurf *) self)->obj->zcolor= zcolor;
   return OK;
 }
 
@@ -740,7 +820,9 @@ static AttrTab surf_attrs[] = {
   { "x", (attr_get_function *)_wrap_surf_get_x, (attr_set_function *)_wrap_surf_set_x,(attr_get_object_function *)_wrap_surf_get_obj_x, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_surf_get_y, (attr_set_function *)_wrap_surf_set_y,(attr_get_object_function *)_wrap_surf_get_obj_y, (attr_set_object_function *)int_set_object_failed },
   { "z", (attr_get_function *)_wrap_surf_get_z, (attr_set_function *)_wrap_surf_set_z,(attr_get_object_function *)_wrap_surf_get_obj_z, (attr_set_object_function *)int_set_object_failed },
+  { "colors", (attr_get_function *)_wrap_surf_get_colors, (attr_set_function *)_wrap_surf_set_colors,(attr_get_object_function *)_wrap_surf_get_obj_colors, (attr_set_object_function *)int_set_object_failed },
   { "mesh", (attr_get_function *)_wrap_surf_get_mesh, (attr_set_function *)_wrap_surf_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "zcolor", (attr_get_function *)_wrap_surf_get_zcolor, (attr_set_function *)_wrap_surf_set_zcolor,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mesh_color", (attr_get_function *)_wrap_surf_get_mesh_color, (attr_set_function *)_wrap_surf_set_mesh_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "face_color", (attr_get_function *)_wrap_surf_get_face_color, (attr_set_function *)_wrap_surf_set_face_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
@@ -762,7 +844,7 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 766 "surf.c"
+#line 848 "surf.c"
 
 
 #line 89 "codegen/surf.override"
@@ -774,7 +856,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 778 "surf.c"
+#line 860 "surf.c"
 
 
 #line 99 "codegen/surf.override"
@@ -787,7 +869,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 791 "surf.c"
+#line 873 "surf.c"
 
 
 /*----------------------------------------------------
@@ -828,7 +910,7 @@ Surf_register_classes(NspObject *d)
 Init portion 
 
 
-#line 832 "surf.c"
+#line 914 "surf.c"
   nspgobject_register_class(d, "Surf", Surf, &NspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -839,17 +921,48 @@ Init portion
 
 static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  char leg[]="X@Y@Z";
   int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
+  double ebox[]={0,1,0,1,0,1};
+  double theta = 35, alpha=45;
   NspSurf *P =(NspSurf*) Obj ;
+  NspMatrix *x = P->obj->x;
+  NspMatrix *y = P->obj->y;
+  NspMatrix *z = P->obj->z;
   if ( Obj->obj->hidden == TRUE ) return ;
   /* be sure that object are in canonical form */
-  Mat2double(P->obj->x);
-  Mat2double(P->obj->y);
-  Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  Mat2double(x);
+  Mat2double(y);
+  Mat2double(z);
+  Mat2int(P->obj->colors);
+  
+  if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
+    { 
+      if ( P->obj->colors->mn == P->obj->z->n ) 
+	{
+	  nsp_plot_fac3d_2(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+      else if ( P->obj->colors->m == P->obj->z->m &&  P->obj->colors->n == P->obj->z->n ) 
+	{
+	  nsp_plot_fac3d_3(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+      else 
+	{
+	  if ( P->obj->zcolor == TRUE ) 
+	    nsp_plot_fac3d_1(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	  else 
+	    nsp_plot_fac3d(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+    } 
+  else 
+    {
+      if ( P->obj->zcolor == TRUE ) 
+	nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+		     &theta,&alpha,leg,flag,ebox);
+      else
+	nsp_plot3d  (Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+		     &theta,&alpha,leg,flag,ebox);
+    }
 }
 
 static void nsp_translate_surf(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -879,4 +992,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 883 "surf.c"
+#line 996 "surf.c"

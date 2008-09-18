@@ -112,17 +112,49 @@ last
 
 static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  char leg[]="X@Y@Z";
   int flag[]={1,2,4};
-  double bbox[]={0,1,0,1,0,1};
-  double teta = 35, alpha=45;
+  double ebox[]={0,1,0,1,0,1};
+  double theta = 35, alpha=45;
   NspSurf *P =(NspSurf*) Obj ;
+  NspMatrix *x = P->obj->x;
+  NspMatrix *y = P->obj->y;
+  NspMatrix *z = P->obj->z;
   if ( Obj->obj->hidden == TRUE ) return ;
   /* be sure that object are in canonical form */
-  Mat2double(P->obj->x);
-  Mat2double(P->obj->y);
-  Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  Mat2double(x);
+  Mat2double(y);
+  Mat2double(z);
+  Mat2int(P->obj->colors);
+  
+  if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
+    { 
+      if ( P->obj->colors->mn == P->obj->z->n ) 
+	{
+	  nsp_plot_fac3d_2(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+      else if ( P->obj->colors->m == P->obj->z->m &&  P->obj->colors->n == P->obj->z->n ) 
+	{
+	  nsp_plot_fac3d_3(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+      else 
+	{
+	  /* here colors is unused */
+	  if ( P->obj->zcolor == TRUE ) 
+	    nsp_plot_fac3d_1(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	  else 
+	    nsp_plot_fac3d(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
+	}
+    } 
+  else 
+    {
+      if ( P->obj->zcolor == TRUE ) 
+	nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+		     &theta,&alpha,leg,flag,ebox);
+      else
+	nsp_plot3d  (Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+		     &theta,&alpha,leg,flag,ebox);
+    }
 }
 
 static void nsp_translate_surf(BCG *Xgc,NspGraphic *Obj,double *tr)

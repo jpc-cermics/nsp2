@@ -266,7 +266,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   int mark[2],current_mark[2],color;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   double x, y,z;
-  int n=1,j;
+  int j;
   int V_nb_coords = V->Mcoord->n;
   double * V_coord = ((NspMatrix *) V->Mcoord)->R;
 

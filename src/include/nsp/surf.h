@@ -33,7 +33,9 @@ struct _nsp_surf {
   NspMatrix* x;
   NspMatrix* y;
   NspMatrix* z;
+  NspMatrix* colors;
   gboolean mesh;
+  gboolean zcolor;
   int mesh_color;
   int face_color;
   int ref_count;
@@ -65,7 +67,7 @@ NspSurf *new_surf();
 
 #define NULLSURF (NspSurf*) 0
 
-extern NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type);
 
 /* from SurfObj.c */
 
