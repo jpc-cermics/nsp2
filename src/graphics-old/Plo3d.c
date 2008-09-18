@@ -143,7 +143,9 @@ static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
  *  <-- The arguments are not modified 
  *-------------------------------------------------------------------------*/
 
-
+/* standard plot3d 
+ * 
+ */
 
 int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
@@ -159,6 +161,10 @@ int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double 
   return(0);
 }
 
+/* standard plot3d1 
+ *
+ */
+
 int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
@@ -173,6 +179,9 @@ int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, doubl
   return(0);
 }
 
+/* facets with unique color
+ * plot3d(xx,yy,zz);
+ */
 
 int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
@@ -188,6 +197,10 @@ int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p,
   return(0);
 }
 
+/* facets with z-colors each facet is a column in xx,yy,zz
+ * plot3d1(xx,yy,zz);
+ */
+
 int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
@@ -202,6 +215,10 @@ int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   return(0);
 }
 
+/* facets with specified colors each facet is a column in xx,yy,zz
+ * plot3d(xx,yy,zz,colors=10*rand(1,n))
+ */
+
 int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
@@ -215,6 +232,10 @@ int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
+
+/* facets with vertex xolors each facet is a column in xx,yy,zz 
+ * plot3d(xx,yy,zz,colors=10*rand(p,n))
+ */
 
 int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
