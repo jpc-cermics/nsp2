@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+
+\mansection{angle, arg}
+\begin{mandesc}
+   \short{angle, arg}{compute argument of a complex (or real) scalar, vector or matrix}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ a = angle(z)  (or a = arg(z))
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{z}: complex (or real) scalar, vector or matrix
+   \vname{a}: real scalar or vector or matrix of same size than z
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+Computes the argument of complex (or real) scalar, vector or matrix \verb+z+.
+The results should be in $(-\pi,\pi]$ (that is \verb+angle(-1)+ should be equal
+to $\pi$ and not $-\pi$).
+\end{mandescription}
+
+%--example
+\begin{examples}
+\begin{program}\HCode{theta = grand(1,9,'unf',-\%pi,\%pi)\Hnewline
+z=rand(1,9).*exp(\%i*theta);\Hnewline
+a = angle(z)\Hnewline
+// without any floating point error a should be equal to theta\Hnewline
+abs(theta - a)\Hnewline
+angle(2)  // should be 0\Hnewline
+a = angle(-2)  // should be pi\Hnewline
+a - \%pi\Hnewline
+a = angle(complex(-2,-1e-15)) // should be near -pi\Hnewline
+a + \%pi}
+\end{program}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{complex}{complex}, \manlink{isreal}{isreal}, \manlink{real}{real}, \manlink{imag}{imag}
+\end{manseealso}
+
