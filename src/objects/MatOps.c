@@ -4056,33 +4056,6 @@ int nsp_mat_lgamma(NspMatrix *A)
 
 
 /**
- * nsp_mat_arg:
- * @A: a #NspMatrix 
- * 
- *  A=Arg(A). Argument or Phase 
- * 
- * Return value: %OK or %FAIL.
- **/
-
-int nsp_mat_arg(NspMatrix *A)
-{
-  int i ;
-  if ( A->rc_type == 'r') 
-    {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i] = 0.00;
-    }
-  else
-    {
-      for ( i = 0 ; i < A->mn ; i++) A->C[i].r =nsp_arg_c(&A->C[i]);
-      if (nsp_mat_get_real(A)==FAIL) return(FAIL);
-    }
-  return(OK);
-}
-
-
-
-
-/**
  * nsp_mat_polar:
  * @A: a #NspMatrix 
  * @B: a #NspMatrix

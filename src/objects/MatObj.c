@@ -3110,16 +3110,6 @@ int_mxgammaln (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A=Arg(A),  * A is changed 
- */
-
-int
-int_mxarg (Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_arg);
-}
-
-/*
  *nsp_mat_cos: A=Cos(A)
  * A is changed  
  * return 0 if error 
@@ -5209,7 +5199,7 @@ static OpTab Matrix_func[] = {
   {"erfc_m", int_mxerfc},
   {"gamma_m",int_mxgamma},
   {"gammaln_m",int_mxgammaln},
-  {"arg_m", int_mxarg},
+  {"arg_m", int_mxangle},
   {"cos_m", int_mxcos},
   {"cosh_m", int_mxcosh},
   {"exp_m", int_mxexpel},

@@ -19,7 +19,7 @@ extern function int_mxacos;
 extern function int_mxacosh;
 extern function int_mxaddcols;
 extern function int_mxaddrows;
-extern function int_mxarg;
+extern function int_mxangle;
 extern function int_mxasin;
 extern function int_mxasinh;
 extern function int_mxatan2;
