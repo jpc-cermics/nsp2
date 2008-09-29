@@ -218,6 +218,10 @@ void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
 
+
+static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
+			  int ticscolor, char logflag, int seg_flag, int Nx,int Ny);
+
 void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
 	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
@@ -281,7 +285,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
    * have x[3] or y[3] equal to zero which means that we 
    * cannot distinguish the min and the max on the given interval
    */ 
-
+  
   switch (pos ) 
     {
     case 'u' : 
@@ -534,8 +538,85 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
     {
       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
-
+  /* nsp_axis_grid(Xgc,pos,xy_type, x,nx, y, ny, ticscolor, logflag,seg_flag,Nx,Ny); */
 }
+
+/* draw a grid which follows the main ticks. 
+ */
+
+static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
+			  int ticscolor, char logflag, int seg_flag, int Nx,int Ny)
+{
+
+  double vxx,xd,yd,d_barlength;
+  int vx[2],vy[2],i, ns=2,style=0,iflag=0, color_kp=0;
+
+  if (*nx==3) if (x[2]==0.0) return;
+  if (*ny==3) if (y[2]==0.0) return;
+  
+  if ( ticscolor != -1 ) 
+    {
+      color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
+    }
+  
+  /* Note that in that case xy_type = 'i' we can possibly 
+   * have x[3] or y[3] equal to zero which means that we 
+   * cannot distinguish the min and the max on the given interval
+   */ 
+  
+  switch (pos ) 
+    {
+    case 'u' : 
+    case 'd' :
+      /* Used for an horizontal axis: 
+       * if the sign of d_barlength is changed ticks will
+       * go in the direction of the strings 
+       */
+      d_barlength = Xgc->scales->WIRect1[3]/Xgc->scales->Wscy1;
+      
+      /* loop on the ticks */
+      for (i=0 ; i < Nx ; i++)
+	{ 
+	  vxx = x_convert(xy_type,x,i);
+	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
+	  vx[0] =  inint(XScaleR_d(vxx,y[0]));
+	  vy[0] =  inint(YScaleR_d(vxx,y[0]));
+	  xd = vxx; 
+	  yd = y[0] + d_barlength;
+	  vx[1]= inint(XScaleR_d(xd,yd));
+	  vy[1]= inint(YScaleR_d(xd,yd));
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+	}
+      break;
+    case 'r' : 
+    case 'l' :
+      /* Vertical axes */
+      d_barlength = Xgc->scales->WIRect1[2]/Xgc->scales->Wscx1;
+      /* loop on the ticks */
+      for (i=0 ; i < Ny ; i++)
+	{ 
+	  vxx = y_convert(xy_type,y,i);
+	  vx[0] = inint(XScaleR_d(x[0],vxx));
+	  vy[0] = inint(YScaleR_d(x[0],vxx));
+	  xd = x[0] + d_barlength;
+	  vx[1] = inint(XScaleR_d(xd,vxx));
+	  vy[1] = inint(YScaleR_d(xd,vxx));
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+	}
+      break;
+    }
+  /* reset to current color */
+  if ( ticscolor != -1 ) 
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+    }
+}
+
+
 
 /* from double to pixel */ 
 

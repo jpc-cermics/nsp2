@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS  */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -1463,7 +1463,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
     }
 
 #ifdef NEW_GRAPHICS 
-  nsp_plot2d_obj(Xgc,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
+  nsp_plot2d_obj(Xgc,x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
 #else 
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {

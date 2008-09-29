@@ -110,7 +110,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
 	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
     }
-
+  
   /* my_gl_main (0,NULL); */
 
   return(0);
@@ -819,7 +819,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
 
-int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
 		   const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int i;
@@ -828,15 +828,29 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++) 
     {
-      int mark=-1,mode=0;
+      int mark=-1,mode=0,k;
       NspCurve *curve;
       NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
       if ( Pts == NULL) return FAIL;
-      memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
+      /* XXX: we should have to keep the log flags */
+      /* get x-values */
+      switch ( logflag[0] )
+	{
+	case 'e' : /* No X-value given by the user */
+	  for ( k=0 ; k < (*n2) ; k++)  Pts->R[k] = k+1.0;
+	  break ;
+	case 'o' : /* same X for all_curves */
+	  memcpy(Pts->R, x, (*n2)*sizeof(double));
+	  break;
+	case 'g' :
+	default: /* x are given for each curves */
+	  memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
+	  break;
+	}
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      if ( style[i] >= 0 ) mark = style[i];
+      if ( style[i] <= 0 ) mark = -style[i];
       curve= nsp_curve_create("curve",mark,0,0,
-			      ( style[i] < 0 ) ? - style[i] : -1, 
+			      ( style[i] > 0 ) ?  style[i] : -1, 
 			      mode,Pts,NULL,NULL);
       /* insert the new curve */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
@@ -845,5 +859,6 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],ch
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
   return OK;
 }
+
 
 
