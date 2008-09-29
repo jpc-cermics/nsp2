@@ -1,0 +1,58 @@
+% -*- mode: latex -*-
+
+\mansection{pmult}
+\begin{mandesc}
+  \short{pmult}{special matrix multiplication}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ y = pmult(A,x) 
+ y = pmult(A,x,flag)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  sparse or full numerical matrix.
+    \vname{x}: full numerical vector or matrix
+    \vname{flag} : optional argument (only in case when both A and x are full), integer among 0,1,2 or 3 (default 1).
+    \vname{y} : full numerical numerical vector or matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function provides the operation $A'*x$ without computing first the transposition of $A$
+(this brings some gain in speed and memory). $A$ could be sparse or full. When $A$ is a full
+matrix the optional argument flag provides the additional features:
+\begin{description}
+\item[flag=0] then $y = A*x$ (the usual matrix product)
+\item[flag=1] then $y = A'*x$ (the default case)
+\item[flag=2] then $y = A*x'$
+\item[flag=3] then $y = A'*x'$
+\end{description} 
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{// show speed improvments in the sparse case\Hnewline
+A=sprand(20000,20000,1/2000,'nor');\Hnewline
+x=randn(20000,1); \Hnewline
+tic(); y1 = A'*x; toc()  \Hnewline
+tic(); y2 = pmult(A,x); toc() \Hnewline
+norm(y1-y2)/norm(y1)\Hnewline
+// compute normal equations of a linear least square pb\Hnewline
+A=randn(700,200); b = randn(700,1);\Hnewline
+tic(); At=A'; AA=At*A; bb=At*b; toc()\Hnewline
+tic(); AA=pmult(A,A); bb=pmult(A,b); toc()}  
+\end{program}
+\end{examples}
+
+%\begin{manseealso}
+%  \manlink{qr}{qr} ,  \manlink{kernel}{kernel} 
+%\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   Bruno Pincon
+\end{authors}
