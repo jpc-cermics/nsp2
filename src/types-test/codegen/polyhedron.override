@@ -3,6 +3,8 @@
 headers
 #include "nsp/polyhedron.h"
 #include <nsp/figure.h> 
+#include <nsp/gsort-p.h>
+
 #include "../graphics/Plo3dObj.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -28,6 +30,9 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 static NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *x,NspMatrix *y)  ;
 static NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *x,NspMatrix *y, NspMatrix *z);
+
+static int nsp_facets_to_faces(NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *colors,
+			       NspMatrix **Cr,NspMatrix **Fr);
 
 %%
 init 
@@ -160,6 +165,28 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
+}
+
+%%
+override nsp_facets_to_faces
+
+int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {mat, mat, mat, mat,t_end};
+  NspMatrix *x, *y, *z, *colors, *retc,*retf;
+  CheckLhs(0,2);
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &z, &colors) == FAIL) return RET_BUG;
+  if ( nsp_facets_to_faces(x, y, z, colors,&retc,&retf)== FAIL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(retc));
+  if ( lhs >= 2 ) 
+    {
+      MoveObj(stack,2,NSP_OBJECT(retf));
+    }
+  else
+    {
+      nsp_matrix_destroy(retf);
+    }
+  return Max(lhs,0);
 }
 
 %%
@@ -540,4 +567,88 @@ static NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *x,NspMatrix *y)
     }
   return face;
 }
+
+/* 
+ *
+ *
+ */
+
+static int nsp_facets_to_faces(NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *colors,
+			       NspMatrix **Cr,NspMatrix **Fr)
+{
+  index_vector index={0};
+  int i,k;
+  NspMatrix *C,*Fs,*Fc,*Fsc,*Index;
+  NspBMatrix *B;
+  if ((C = nsp_matrix_create(NVOID,'r',x->mn,3))==NULL) return FAIL;
+  for ( i=0 ; i < C->m; i++)
+    {
+      C->R[i]= x->R[i];
+      C->R[i+C->m]= y->R[i];
+      C->R[i+2*C->m]= z->R[i];
+    }
+  /* sort the matrix 
+   * [Cs,ks]= sort(C,'ldr','i');
+   */
+  nsp_matrix_lexical_row_sort(C,&Index,TRUE,'i','d');
+  /* create the facets 
+   * kp(ks)=1:m*n;
+   * Fs = matrix(kp,m,n); // les faces au sens polyhedron 
+   */
+  if ((Fs = nsp_matrix_create(NVOID,'r',x->m,x->n))==NULL) return FAIL;
+  Fs->convert = 'i';
+  for ( i=0 ; i < Fs->mn; i++)
+    {
+      Fs->I[Index->I[i]-1]= i+1;
+    }
+  
+  // on enleve les redondances 
+  // mise a jour de Fs 
+  if ((Fc = nsp_matrix_create(NVOID,'r',x->mn,1))==NULL) return FAIL;
+  Fc->convert = 'i';
+  for ( i=0 ; i < Fc->mn; i++)
+    {
+      Fc->I[i]= 1;
+    }
+  k=1;
+  for ( i = 1 ; i < x->mn ; i++)
+    {
+      if ( C->R[i] == C->R[i-1] && C->R[i+C->m] == C->R[i-1+C->m] && C->R[i+2*C->m] == C->R[i-1+2*C->m]) 
+	{
+	  Fc->I[i]=k;
+	}
+      else
+	{
+	  k++; Fc->I[i]=k;
+	}
+    }
+  if ((Fsc = nsp_matrix_create(NVOID,'r',x->m,x->n))==NULL) return FAIL;
+  Fsc->convert = 'i';
+  for ( i=0 ; i < Fsc->mn; i++)
+    Fsc->I[i]= Fc->I[Fs->I[i]-1];
+  /* remove duplicates in C */
+  if (( B = nsp_bmatrix_create(NVOID,Fc->mn,1)) ==NULL) return FAIL;
+  B->B[0]= FALSE;
+  for ( i=1 ; i < B->mn; i++)
+    B->B[i] =  Fc->I[i] == Fc->I[i-1]; 
+  
+  index.iwork = matint_iwork1;
+  if ( nsp_get_index_vector_from_object(NSP_OBJECT(B),&index) == FAIL) return FAIL;
+  if ( nsp_matint_delete_rows(NSP_OBJECT(C),&index)==FAIL) return FAIL;
+
+  nsp_matrix_destroy(Fc);
+  nsp_matrix_destroy(Fs); 
+  nsp_matrix_destroy(Index); 
+  nsp_bmatrix_destroy(B); 
+  *Cr=C;
+  *Fr=Fsc;
+  return OK;
+
+}
+
+
+
+
+
+
 

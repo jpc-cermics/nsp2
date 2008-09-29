@@ -51,3 +51,15 @@
     '("NspMatrix*" "y")
     )
 )
+
+(define-function facets_to_faces
+  (c-name "nsp_facets_to_faces") 
+  (return-type "NspMatrix*")
+  (parameters
+    '("NspMatrix*" "x")
+    '("NspMatrix*" "y")
+    '("NspMatrix*" "z")
+    '("NspMatrix*" "colors")
+    )
+)
+

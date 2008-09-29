@@ -948,6 +948,7 @@ static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 	}
       else 
 	{
+	  /* here colors is unused */
 	  if ( P->obj->zcolor == TRUE ) 
 	    nsp_plot_fac3d_1(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
 	  else 
@@ -992,4 +993,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 996 "surf.c"
+#line 997 "surf.c"
