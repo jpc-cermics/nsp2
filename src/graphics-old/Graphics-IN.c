@@ -33,7 +33,8 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS  */
+/* #define NEW_GRAPHICS */
+
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -1448,7 +1449,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-
+  
   /* FIXME: make a function with all this and propagate to other primitives */
 
   if ( Mrect == NULL ) 
@@ -2229,7 +2230,7 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe; 
   NspSegments *pl;
   BCG *Xgc;
-  NspMatrix *x,*y,*Mstyle=NULL,*color;
+  NspMatrix *x,*y,*Mstyle=NULL,*color=NULL;
   
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
 
@@ -2254,7 +2255,7 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
 
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
-  if ( color != NULL)
+  if ( Mstyle != NULL)
     {
       if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL) 
 	return RET_BUG;

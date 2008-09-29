@@ -278,7 +278,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       FRect[0]=xmin;FRect[1]=ymin;FRect[2]=xmax;FRect[3]=ymax;
       break;
     }
-
+  
   if (strflag[1] == '7' || strflag[1] == '8' )
     {
       /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  
@@ -325,7 +325,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 
   /* switch strflag so as to use now FRect   */
   plot2d_strf_change('d',strflag);
-
+  
   /* we also need to redraw if other graphics are not in the same  mode */
   if ( redraw == 0 &&  Xgc->scales->scale_flag ) 
     {
@@ -822,9 +822,52 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
 int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
 		   const char *legend,int legend_pos,double brect[],int aaint[])
 {
+  char c;
+  double frect[4],xmin,xmax,ymin,ymax;
   int i;
   NspAxes *axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return FAIL;
+
+  /* compute brect if not given */
+  switch (strflag[1])
+    {
+    case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
+      frect[0]=brect[0];frect[1]=brect[1];frect[2]=brect[2];frect[3]=brect[3];
+      break;
+    case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
+      if ( strlen(logflag) < 1) c='g' ; else c=logflag[0];
+      switch ( c )
+	{
+	case 'e' : xmin= 1.0 ; xmax = (*n2);break;
+	case 'o' : xmax= Maxi(x,(*n2)); xmin= Mini(x,(*n2)); break;
+	case 'g' :
+	default: xmax= Maxi(x, (*n1)*(*n2)); xmin= Mini(x, (*n1)*(*n2)); break;
+	}
+      ymin=  Mini(y, (*n1)*(*n2)); ymax=  Maxi(y, (*n1)*(*n2));
+      /* back to default values for  x=[] and y = [] */
+      if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;} 
+      if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;} 
+      frect[0]=xmin;frect[1]=ymin;frect[2]=xmax;frect[3]=ymax;
+      break;
+    }
+  
+  if (strflag[1] == '7' || strflag[1] == '8' )
+    {
+      frect[0] = Min(frect[0], axe->obj->frect->R[0]);
+      frect[2] = Max(frect[2], axe->obj->frect->R[2]);
+      frect[1] = Min(frect[1], axe->obj->frect->R[1]);
+      frect[3] = Max(frect[3], axe->obj->frect->R[3]);
+    }
+
+  /* set the axes frect */
+  
+  switch (strflag[1])
+    {
+    case '0': break;
+    default: memcpy(axe->obj->frect->R,frect,4*sizeof(double)); break;
+    }
+  
+
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++) 
     {
