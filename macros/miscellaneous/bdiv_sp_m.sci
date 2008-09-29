@@ -58,7 +58,7 @@ function x = bdiv_sp_m(A,b)
 	 if ( rc1 < n*%eps )
 	    printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
 	 end
-	 x = C.solve[A'*b];
+	 x = C.solve[pmult(A,b)];
       else
 	 // printf(" Warning: solving underdetermined sparse linear system using x = A''*(A*A'')^-1 b ...\n")
 	 [C,p] = cholmod_create(A*A')
@@ -69,7 +69,7 @@ function x = bdiv_sp_m(A,b)
 	 if ( rc1 < m*%eps )
 	    printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
 	 end
-	 x = A'*C.solve[b];
+	 x = pmult(A,C.solve[b]);
       end
    end
 endfunction
