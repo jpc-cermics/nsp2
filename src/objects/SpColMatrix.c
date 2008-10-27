@@ -6705,17 +6705,15 @@ int nsp_spcolmatrix_arg(NspSpColMatrix *A)
   int i,k ;
   if ( A->rc_type == 'r') 
     {
-      /* change a to  [] sparse **/
-      for ( i=0 ; i < A->n ; i++ ) 
-	{
-	  if ( A->D[i]->size != 0 ) 
-	    {
-	      FREE( A->D[i]->J);
-	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->C);
-	    }
-	  A->D[i]->size =0;
-	}
+      for ( i = 0 ; i < A->n ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  {
+	    if(  A->D[i]->R[k] >= 0.0 ) 
+	      A->D[i]->R[k] = 0.0;
+	    else if(  A->D[i]->R[k] < 0.0 ) 
+	      A->D[i]->R[k] = M_PI;
+	  }
+      /* XXX  we should remove the zeroes */
     }
   else
     {
