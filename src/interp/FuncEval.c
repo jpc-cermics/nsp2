@@ -657,27 +657,35 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
       Sciprintf("Body\n");
       nsp_plist_print_internal(Body) ;
     }
-  /*Exploring Feval to insert arguments in the new frame **/
+  /* Exploring Feval to insert arguments in the new frame */
   Loc = Feval;
   nargs = Loc->arity - 1 ;
   Loc = Feval->next;
-  /*Requested arguments **/
+  /* nargs give the number of arguments given in the 
+   * macro definition
+   */
   for ( j = 0 ; j < nargs ; j++)
     {
       Loc = Loc->next ;
       if ( Loc->type  != NAME ) 
 	{
+	  /* js is the arg list position at which we are positioned 
+	   */
 	  js = j;
 	  option_case = 1;
 	  break;
 	}
       if ( strcmp(Loc->O,"varargin")==0) 
 	{
+	  js = j;
 	  varargin_case = 1;
 	  break;
 	}
       else if ( strcmp(Loc->O,"varargopt")==0) 
 	{
+	  /* js is the stack position at which we have to start 
+	   * searching options 
+	   */
 	  js = j;
 	  option_case = 2;
 	  break;
@@ -693,96 +701,97 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	   * return RET_BUG;
 	   */
 	}
-      if ( stack.val->S[first+j]->basetype == NSP_TYPE_BASE(nsp_type_plist))
+      
+      /* here we have to insert stack.val->S[first+j] in the 
+       * local frame but note that this could be accelerated 
+       * since we know that variables are in the function var table.
+       */
+      
+      if( IsHobj(stack.val->S[first+j]) )
 	{
-	  /* FIXME: this seams too complex : why a special case for nsp_type_plist ? 
-	   * the next if case seams enough : here we just have to check for Hobj or Hopt 
-	   */
-	  
-	  if( IsHobj(stack.val->S[first+j]) )
+	  /* pointer cases */
+
+	  if ( IsHopt(stack.val->S[first+j]))
 	    {
-	      if ( IsHopt(stack.val->S[first+j]))
-		{
-		  /* argument is given as name=expr while expecting an expr */
-		  Sciprintf("Error: argument %d of function %s given as an optional named argument %s=.. \n",
-			    j+1,Feval->next->O,nsp_object_get_name(stack.val->S[first+j]));
-		  return RET_BUG;
-		}
-	      else 
-		{
-		  /*  Argument is a pointer : create a new local pointer 
-		   *  which points to the same object 
-		   **/
-		  NspHobj *H = (NspHobj *) stack.val->S[first+j];
-		  NspObject *H1= ((NspObject *) H);
-		  HOBJ_GET_OBJECT(H1,RET_BUG);
-		  if ((H = HobjCreate(Loc->O,H1)) == NULLHOBJ) return RET_BUG;
-		  if ( nsp_frame_replace_object((NspObject *)H,Loc->arity )==FAIL)
-		    {
-		      nsp_hobj_destroy(H);
-		      return RET_BUG;
-		    }
-		}
+	      /* argument is given as name=expr while expecting an expr */
+	      Sciprintf("Error: argument %d of function %s given as an optional named argument %s=.. \n",
+			j+1,Feval->next->O,nsp_object_get_name(stack.val->S[first+j]));
+	      return RET_BUG;
 	    }
 	  else 
 	    {
-	      /* argument is a function : create a hobj which points to the function */
-	      NspHobj *H; 
-	      if ((H = HobjCreate(Loc->O, stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
-	      if ( nsp_frame_replace_object((NspObject *)H,Loc->arity )== FAIL) 
+	      /*  Argument is a pointer : create a new local pointer 
+	       *  which points to the same object 
+	       */
+	      NspHobj *H = (NspHobj *) stack.val->S[first+j];
+	      NspObject *H1= ((NspObject *) H);
+	      HOBJ_GET_OBJECT(H1,RET_BUG);
+	      if ((H = HobjCreate(Loc->O,H1)) == NULLHOBJ) return RET_BUG;
+	      if ( nsp_frame_replace_object((NspObject *)H,Loc->arity )==FAIL)
 		{
 		  nsp_hobj_destroy(H);
 		  return RET_BUG;
 		}
 	    }
 	}
-      else if ( ! Ocheckname(stack.val->S[first+j],NVOID)) 
-	{
-	  /*  Object given on the calling sequence is given by its name
-	   *  we create a pointer to this object 
-	   */
-	  NspHobj *H;
-	  if ((H = HobjCreate(Loc->O,stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
-	  if ( nsp_frame_replace_object((NspObject *)H,Loc->arity)== FAIL) 
-	    {
-	      nsp_hobj_destroy(H);
-	      return RET_BUG;
-	    }
-	}
       else 
 	{
-	  /* we can use the transmited value directly */
-	  if (nsp_object_set_name(stack.val->S[first+j],(char *) Loc->O)== FAIL) return RET_BUG;
-	  if ( nsp_frame_replace_object(stack.val->S[first+j],Loc->arity)== FAIL) 
+	  if ( ! Ocheckname(stack.val->S[first+j],NVOID)) 
 	    {
-	      return RET_BUG;
+	      /*  Object given on the calling sequence is given by its name
+	       *  we create a pointer to this object inserted in local frame
+	       */
+	      NspHobj *H;
+	      if ((H = HobjCreate(Loc->O,stack.val->S[first+j])) == NULLHOBJ) return RET_BUG;
+	      if ( nsp_frame_replace_object((NspObject *)H,Loc->arity)== FAIL) 
+		{
+		  nsp_hobj_destroy(H);
+		  return RET_BUG;
+		}
+	    }
+	  else 
+	    {
+	      /* we can use the transmited value directly */
+	      if (nsp_object_set_name(stack.val->S[first+j],(char *) Loc->O)== FAIL) return RET_BUG;
+	      if ( nsp_frame_replace_object(stack.val->S[first+j],Loc->arity)== FAIL) 
+		{
+		  return RET_BUG;
+		}
 	    }
 	}
     }
 
-  /* less arguments than expected */ 
 
   if ( less_args_case == 1 ) 
     {
-      /* check if optional arguments exists */ 
+      /* less arguments than expected. 
+       * we have to check if optional arguments or varargin exist
+       * in the argument list 
+       */ 
       for ( i = j+1 ; i < nargs ; i++)
 	{
 	  Loc = Loc->next ;
 	  if ( Loc->type  != NAME ) 
 	    {
+	      js=i;
 	      option_case = 1;
 	      break;
 	    }
 	  else if ( strcmp(Loc->O,"varargopt")==0) 
 	    {
+	      js=i;
 	      option_case = 2;
 	      break;
 	    }
+	  else if ( strcmp(Loc->O,"varargin")==0) 
+	    {
+	      js=i;
+	      varargin_case = 1;
+	      break;
+	    }
 	}
-      /* first optional argument is at position j*/
-      j=i;
     }
-
+  
   /* the varargin case 
    * we collect all the remaining variables up to the 
    * named optional arguments in a list called varargin.
@@ -813,7 +822,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	  return RET_BUG;
 	}
       /* varargin can be followed by optional args */
-      if ( j+1 < nargs  ) 
+      if ( js+1 < nargs  ) 
 	{
 	  Loc = Loc->next ;
 	  if ( Loc->type  != NAME ) 
@@ -824,12 +833,8 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	    {
 	      option_case = 2;
 	    }
-	  /* js: position of first named optional in given args 
-	   * j : position of first named optional in function def 
-	   * j <> js because of varargin
-	   */
-	  js = rhs-opt;
-	  j  = j+1; /* position in argument list */
+	  j = rhs-opt; /* position of first named optional in the call  */
+	  js++; /* position of first named optional in function def */
 	}
     }
   
@@ -837,14 +842,14 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 
   if ( option_case == 1 ) 
     {
-      /* search optional arguments in stack from first +j */
+      /* search optional arguments in stack from first+j to end of stack  */
       int wrong_pos=js+1; 
-      if (debug) Sciprintf("%d named optional arguments:",nargs -j);
-      for ( i= j ; i < nargs ; i++ ) 
+      if (debug) Sciprintf("%d named optional arguments:",nargs -js);
+      for ( i= js ; i < nargs ; i++ ) 
 	{
 	  Loc1 = ((PList) Loc->O)->next;
 	  if ( debug ) Sciprintf("<%s> ",(char *) Loc1->O);
-	  posi=SearchInOPt((char *) Loc1->O,stack,first+js,rhs-js,&wrong_pos);
+	  posi=SearchInOPt((char *) Loc1->O,stack,first+j,rhs-j,&wrong_pos);
 	  if ( posi == -2 ) 
 	    {
 	      Scierror("Error:%s optional argument expected and expression found at position %d\n",
@@ -877,8 +882,10 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	    }
 	  else
 	    {
-	      /*Not found in the optional list : we use default value **/
-	      /*XXX: why rhs is not set to zero in this call ? **/
+	      /* an optional named argument with name (char *) Loc1->O 
+	       * was not found in the calling sequence. We have to evaluate the 
+	       * default value and use it in the stack.
+	       */
 	      n =nsp_eval_arg(Loc1->next,&stack,first+rhs,1,1,0);
 	      if ( n > 1 ) 
 		{
@@ -906,14 +913,20 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   
   else if ( option_case == 2 ) 
     {
-      /* Objects from js+1 to rhs-js are optional arguments 
+      /* Objects from j+1 to rhs are optional arguments 
        * which are to be inserted in hash table varargopt 
        */
       NspHash *H;
       NspObject *O;
       /* Only optional arguments are given */ 
+      if ( js+1 < nargs) 
+	{
+	  Scierror("Error: in function %s, varargopt should be the last argument\n",
+		   NspFname(stack));
+	  return RET_BUG;
+	}
       if(( H = nsp_hash_create("varargopt",rhs-js)) == NULLHASH) return RET_BUG;
-      for ( i = js+1 ; i <= rhs ; i++) 
+      for ( i = j+1 ; i <= rhs ; i++) 
 	{
 	  if ( IsHopt(NthObj(i))== FALSE )
 	    {
@@ -1131,10 +1144,12 @@ int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt,
  * @nargs: 
  * @wrong_pos: 
  * 
- * optional arguments in macro call: 
- * Arguments in the range stack.val->S[first+i] 
- * for i=0 to nargs must be optional values 
- * we search an optional value with name str 
+ * Used to collect named optional arguments in macro calls.
+ * Arguments in the stack at position stack.val->S[first+i] 
+ * for i=0 to nargs are searched for a named argument with name @str.
+ * If such an argument is found the its position i.e @firts+i is returned. 
+ * If no such argument is found then -1 is returned. -2 is returned if 
+ * a non optional argument is found on the stack.
  * 
  * Return value: a positive integer in case of sucess and -1 or -2 in case of error.
  **/
