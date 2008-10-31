@@ -165,6 +165,9 @@ dnl will set the FLIBS variable.
 
 AC_F77_LIBRARY_LDFLAGS
 
+# this is added for the cross-compilation 
+FLIBS_SH="${FLIBS}"
+
 dnl echo CC=$CC
 dnl echo F77=$F77
 dnl echo CPP=$CPP
@@ -471,6 +474,7 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.mingw32
     # resource file 
     RC_FILE=nsp_ico.o    
+    FLIBS_SH='-module -no-undefined  -L$(SCIDIR)/bin -lnsp'
     ;;
 # FreeBSD  systems 
   *-*-freebsd*)
@@ -1471,6 +1475,7 @@ AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(FLIBS)
+AC_SUBST(FLIBS_SH)
 #AC_SUBST(CC)
 AC_SUBST(CFLAGS)
 AC_SUBST(FC_USE_CDEC)
