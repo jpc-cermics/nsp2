@@ -75,9 +75,9 @@ PVMINCLUDE = @PVMINCLUDE@
 #
 # TCL/TK
 #
-TK_INC_PATH = @TK_INC_PATH@
-TCL_INC_PATH = @TCL_INC_PATH@
-TCLTK_LIBS = @TCLTK_LIBS@
+#TK_INC_PATH = @TK_INC_PATH@
+#TCL_INC_PATH = @TCL_INC_PATH@
+#TCLTK_LIBS = @TCLTK_LIBS@
 #
 # libraries needed for linking 
 # 1- inside nsp 
