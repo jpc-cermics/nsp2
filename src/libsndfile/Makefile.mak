@@ -9,12 +9,17 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib
 
-CFLAGS = $(CC_OPTIONS) -DWITH_PLAY 
+# -DWITH_PLAY : this is to be added to CFLAGS if 
+# sndfile-play.c is added too. But it has only 
+# be checked on Linux with alsa 
+
+CFLAGS = $(CC_OPTIONS) 
 FFLAGS = $(FC_OPTIONS)
 
 #sndfile-play.obj
 
-OBJSC = sndfileobj.obj sndfile-play.obj
+OBJSC = sndfileobj.obj 
+
 OBJSF = 
 
 include ../Make.lib.mak
