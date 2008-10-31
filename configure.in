@@ -246,6 +246,9 @@ if test "$enable_pg" = yes; then
    enable_optimize=no;
 fi			 
 
+# extra resource file used for win32 
+RC_FILE= 
+
 
 #echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
 #echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
@@ -465,8 +468,9 @@ case "$host" in
     LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
     WINXFLAGS='-I../xdr'
     # targer linux 
-    #MAKEFILE_TARGET=Makefile.gcwin32
     MAKEFILE_TARGET=Makefile.mingw32
+    # resource file 
+    RC_FILE=nsp_ico.o    
     ;;
 # FreeBSD  systems 
   *-*-freebsd*)
@@ -1496,6 +1500,7 @@ AC_SUBST(LAPACK_LOCAL)
 AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
+AC_SUBST(RC_FILE)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl )
 
