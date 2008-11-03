@@ -12095,6 +12095,7 @@
   (return-type "gint")
   )
 
+;; 2.10 
 (define-method set_current_value
   (of-object "GtkRadioAction")
   (c-name "gtk_radio_action_set_current_value")

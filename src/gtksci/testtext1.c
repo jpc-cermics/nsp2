@@ -681,7 +681,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
                                     text_view->dnd_mark);
-
+#if GTK_CHECK_VERSION(2,10,0)
   if (info == GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS)
     {
       GtkTextBuffer *src_buffer = NULL;
@@ -763,7 +763,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	     }
 	  */
 	}
-      else 
+      else
 	{
 	  /* this case should be the GTK_TEXT_BUFFER_TARGET_INFO_TEXT case */
 	  guchar *str;
@@ -796,7 +796,31 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	    }
 	}
     }
-  
+
+#else
+	  /* this case should be the GTK_TEXT_BUFFER_TARGET_INFO_TEXT case */
+	  guchar *str;
+	  gint n_atoms=0;
+	  GdkAtom *targets;
+	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms)) 
+	    {
+	      if ( gtk_selection_data_targets_include_text (selection_data))
+			{
+			  fprintf(stderr, "Selection contains text \n");
+			}
+	      if ( gtk_selection_data_targets_include_image (selection_data,TRUE))
+			{
+			  fprintf(stderr, "Selection contains image \n");
+			}
+	    }
+	  str = gtk_selection_data_get_text (selection_data);
+	  if (str)
+	    {
+	      nsp_eval_pasted_from_clipboard((gchar *) str);
+	      g_free (str);
+	    }
+#endif
+	    
   gtk_drag_finish (context, success,
 		   success && context->action == GDK_ACTION_MOVE,
 		   time);

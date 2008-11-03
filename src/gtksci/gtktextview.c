@@ -795,6 +795,7 @@ static void do_search (GtkAction *action)
   gtk_widget_show_all (dialog);
 }
 
+#if GTK_CHECK_VERSION(2,10,0)
 static void do_select_all (GtkAction *action)
 {
   View *view = view_from_action (action);
@@ -806,6 +807,7 @@ static void do_select_all (GtkAction *action)
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_select_range (buffer, &start, &end);
 }
+#endif
 
 
 static GtkActionEntry menu_actions[] = {
@@ -821,7 +823,9 @@ static GtkActionEntry menu_actions[] = {
   {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
 #endif 
   {"Find",GTK_STOCK_FIND, "Find...", NULL,NULL, G_CALLBACK (do_search)},
+#if GTK_CHECK_VERSION(2,10,0)
   {"SelectAll",GTK_STOCK_SELECT_ALL, "Select All", NULL ,NULL, G_CALLBACK (do_select_all)}
+#endif
 };
 
 static guint n_menu_actions = G_N_ELEMENTS (menu_actions);
