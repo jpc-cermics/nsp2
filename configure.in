@@ -1518,6 +1518,18 @@ echo "*******************"
 echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
+echo "Sndfile support........:" $HAVE_SNDFILE
+echo "Asound support.........:" $HAVE_ASOUND
+if test "xx$cholmod_libs" != "xx" ; then
+   echo "Cholmod support........:" yes
+else
+   echo "Cholmod support........:" no
+fi 
+if test "xx$umfpack_libs" != "xx" ; then
+   echo "Umfpack support........:" yes
+else 
+   echo "Umfpack support........:" no
+fi
 echo 
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
