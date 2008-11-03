@@ -13,7 +13,7 @@ all	:: Makelib job
 
 Makelib : builder.sce
 	@echo running builder 
-	@$(SCIDIR)/bin/scilab -nw -e "nsptest('builder.sce');quit" 
+	@$(SCIDIR)/bin/nsp -nw -e "nsptest('builder.sce');quit" 
 
 job	: 
 	make -f Makelib

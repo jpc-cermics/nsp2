@@ -62,6 +62,7 @@
 -nsp->[z,w]=f(4,5,foo=100);
 -nsp->if z<>4 | ~w.equal[hash_create(A=1,B=2,C=3)] then pause;end 
 -nsp->
+-nsp->
 -nsp->  
 -nsp->
 -nsp->  
