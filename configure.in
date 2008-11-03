@@ -280,8 +280,9 @@ case "$host" in
        # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for
        # Athlon64 presumably 
        # Opteron could benefit too but these are not optimized for the Opteron
-       CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
+       #CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
        CC_OPTIONS="${CC_OPTIONS} ${CC_PLAT_OPTIONS}"
+	   CC_OPTIONS=`echo $CC_OPTIONS | sed -e 's/-ansi//g'`
        CC_PICFLAGS=-fPIC
        FC_PICFLAGS=-fPIC
        FC_OPTIONS="${FC_OPTIONS} $CC_PLAT_OPTIONS"
