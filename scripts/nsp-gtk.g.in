@@ -29,14 +29,14 @@ export PATH
 
 do_help()
 {
-echo "Usage:"
-echo     "	nsp [-ns -nw -display display -f file  -l lang -args arguments]"
-echo     "	nsp [-ns -nw -display display -e expression]"
-echo     "	nsp -link <objects>"
-exit
+    echo "Usage:"
+    echo     "	nsp [-ns -nw -display display -f file  -l lang -args arguments]"
+    echo     "	nsp [-ns -nw -display display -e expression]"
+    echo     "	nsp -link <objects>"
+    exit
 }
 
-# calling Scilab with no argument or special cases of calling Scilab
+# calling nsp with no argument or special cases of calling nsp
 rest="no"
 case $# in
     0)
@@ -98,7 +98,7 @@ case $# in
         ;;
 esac
 
-# really calling Scilab with arguments
+# really calling nsp with arguments
 
 sci_args=
 
@@ -177,7 +177,8 @@ if test "$rest" = "yes"; then
            prevarg="arguments"
           ;;
       *)
-          do_help
+	  sci_args="$sci_args $sciarg"
+          # do_help
           ;;
     esac
   done
