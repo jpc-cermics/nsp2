@@ -229,6 +229,7 @@ extern int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix
 extern int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b);
 extern int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x);
 extern int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x);
+extern int nsp_spcolmatrix_locate(SpCol *Col,int j);
 
 
 extern int GenericMatSeRo(void *A, int Am, int An, int Amn,   index_vector *index,

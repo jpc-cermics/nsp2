@@ -7723,7 +7723,7 @@ Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
 
 
 /* added by Bruno */
-static int nsp_spcolmatrix_locate(SpCol *Col,int j)
+int nsp_spcolmatrix_locate(SpCol *Col,int j)
 {
   int k, n = Col->size, LIM = 16;
 
@@ -7808,7 +7808,7 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
 	      if ( i != j  &&  (val_ij.r != 0.0 || val_ij.i != 0.0) )
 		{
 		  kp = nsp_spcolmatrix_locate(A->D[i],j);
-		  if ( k < 0 )
+		  if ( kp < 0 )
 		    return FALSE;
 		  val_ji = A->D[i]->C[kp];
 		  if ( val_ij.r != val_ji.r  ||  val_ij.i != -val_ji.i ) 
