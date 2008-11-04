@@ -772,7 +772,8 @@ static int Scopy1(int n, nsp_string *s1, nsp_string *s2)
 int nsp_smatrix_add_rows(NspSMatrix *A, int m)
 {
   int Am;
-  int j;
+  int i, j, k, kb;
+  nsp_string temp;
   if ( m == 0) return OK;
   else if ( m < 0) 
     {      
@@ -780,18 +781,20 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
       return FAIL;
     }
   Am= A->m;
-  if ( nsp_smatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
-  for ( j = A->n-1  ; j >= 1 ; j-- ) 
+  if ( nsp_smatrix_resize(A,A->m+m,A->n)== FAIL) return FAIL;
+
+  for ( j = A->n ; j > 1 ; j-- )
     {
-      if (  Scopy(Am,A->S+j*Am,A->S+j*(A->m)) == FAIL) 
-	return(FAIL);
+      k = j*A->m - m - 1;
+      kb = j*Am - 1;
+      for ( i = 0 ; i < Am ; i++ )
+	{
+	  temp = A->S[k]; A->S[k] = A->S[kb]; A->S[kb] = temp;
+	  k--; kb--;
+	}
     }
-  for ( j = A->n-2  ; j >= 0 ; j-- ) 
-    {
-      if (  Sset (m,".",A->S+j*(A->m)+Am) == FAIL)
-	return(FAIL);
-    }
-  return(OK);
+
+  return OK;
 }
 
 /**
