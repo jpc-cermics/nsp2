@@ -1493,7 +1493,7 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
  **/
 int nsp_print_array_double(int indent, char *name, double *val, int size, int rec_level)
 {
-  int rep;
+  int rep= TRUE;
   /* int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level) */
   if ( user_pref.pr_depth  <= rec_level -1 ) 
     {
