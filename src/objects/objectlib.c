@@ -307,6 +307,29 @@ int nsp_object_xdr_save(XDR *xdrs, NspObject *O)
 }
 
 /**
+ *nsp_xdr_save_id:
+ * @F: a #NspFile Object 
+ * @O: an object 
+ * 
+ * Saves object id in the stream given by @F with an xdr format.
+ * The id is now saved as a fixed tag id  #nsp_dynamic_id followed by 
+ * the type name of the object. This function should be the first 
+ * function called in each save function of new classes. 
+ * Saving a specific id should be only used for classes with static 
+ * id's and even in those classes this function could replace the old 
+ * way.
+ * 
+ * Return value: %OK or %FALSE 
+ **/
+
+int nsp_xdr_save_id(XDR *xdrs, NspObject *O)
+{
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(O->basetype)) == FAIL) return FAIL;
+  return OK;
+}
+
+/**
  *nsp_object_xdr_load:
  * @F: a #NspFile Object 
  * 
@@ -322,12 +345,34 @@ NspObject *nsp_object_xdr_load(XDR *xdrs)
   NspTypeObject *type;
   nsp_xdr_load_i(xdrs,&id);
   if ( id == nsp_no_type_id ) return NULLOBJ; /* end of saved objects  */
-  type = nsp_get_type_from_id(id);
-  if ( type == NULL) 
+  if ( id == nsp_dynamic_id ) 
     {
-      Scierror("xdrLoad not implemented for type %d\n",id);
-      return NULLOBJ;
+      /* new way of dealing with save: id not registered in 
+       * primitive_types_register aresave with  nsp_dynamic_id followed 
+       * by their name.
+       */
+      char name[NAME_MAXL];
+      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLOBJ;
+      type = nsp_get_type_from_name(name);
+      if ( type == NULL) 
+	{
+	  Scierror("xdrLoad not implemented for type %s\n",name);
+	  return NULLOBJ;
+	}
     }
+  else 
+    {
+      /* for backward compatibility we accept that types for id's >
+       *  > nsp_last_static_id() are recovered from id. 
+       */
+      type = nsp_get_type_from_id(id);
+      if ( type == NULL) 
+	{
+	  Scierror("xdrLoad not implemented for type %d\n",id);
+	  return NULLOBJ;
+	}
+    }
+
   while ( type->surtype != NULL ) type= NSP_TYPE_OBJECT(type->surtype);
   return type->load(xdrs);
 }

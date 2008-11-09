@@ -479,12 +479,18 @@ void Type_Interf_Info(int i, char **fname, function (**f))
  * set of function for dealing with types 
  *--------------------------------------------------*/
 
+NspHash *nsp_types_hash_table = NULL; 
+const int nsp_no_type_id = 0;  /* an id never used by a type */ 
+const int nsp_dynamic_id = SHRT_MAX ;   /* id given by a name */
+static int nsp_last_static_id_ = 0;    /* static id's are <=  nsp_last_static_id  */
+
 /**
  * primitive_types_register:
  * @void: 
  * 
  * register basic types in the type system by assigning an id to each 
- * predefined classes.
+ * predefined classes. It is important not to break this order since 
+ * the load of saved objects is based on the id given here.
  *
  **/
 
@@ -529,14 +535,17 @@ void primitive_types_register(void)
   nsp_init_gtk_types_added(); 
   new_type_classaref(T_BASE);
   new_type_classbref(T_BASE);
+  /* take care here that the last declared class id 
+   * must be copied in nsp_last_static_id_
+   */
+  nsp_last_static_id_ = nsp_type_classbref_id;
 }
 
 /*
  * registering types in an Nsp Hash Table 
  */
 
-NspHash *nsp_types_hash_table = NULL; 
-const int nsp_no_type_id = 0;  /* an id never used by a type */ 
+int nsp_last_static_id(void) {return nsp_last_static_id_;}
 
 /**
  * nsp_new_type_id:
@@ -554,7 +563,7 @@ NspTypeId  nsp_new_type_id(void) { static int i=1; return i++; }
  * nsp_register_type:
  * @type: id of a type. 
  * 
- * This function is called to register new types (objects of type #NspTye) in the global 
+ * This function is called to register new types (objects of type #NspType) in the global 
  * variable nsp_types_hash_table. 
  * 
  * Return value: %TRUE or %FALSE.

@@ -384,6 +384,7 @@ void nsp_void_object_destroy(NspObject **O);
 #define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
 
 extern int nsp_object_xdr_save(XDR *F, NspObject *O);
+extern int nsp_xdr_save_id(XDR *xdrs, NspObject *O);
 extern NspObject *nsp_object_xdr_load(XDR *F); 
 extern void nsp_object_destroy(NspObject **O); 
 extern void nsp_void_object_destroy(NspObject **O); 

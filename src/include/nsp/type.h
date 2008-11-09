@@ -85,5 +85,8 @@ extern NspHash *nsp_pango_hash_table;
 extern void *nsp_get_type_from_name(const char *name); 
 extern char *type_get_name(void *type);
 
+
+extern const int nsp_dynamic_id ; 
+
 #endif 
 
