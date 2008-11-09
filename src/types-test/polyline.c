@@ -226,8 +226,9 @@ static int nsp_polyline_neq(NspPolyline *A, NspObject *B)
 
 int nsp_polyline_xdr_save(XDR *xdrs, NspPolyline *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->close) == FAIL) return FAIL;
@@ -270,7 +271,7 @@ static NspPolyline  *nsp_polyline_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLPOLYLINE;
   if ((H  = nsp_polyline_create_void(name,(NspTypeBase *) nsp_type_polyline))== NULLPOLYLINE) return H;
   if ((H  = nsp_polyline_xdr_load_partial(xdrs,H))== NULLPOLYLINE) return H;
-#line 274 "polyline.c"
+#line 275 "polyline.c"
   return H;
 }
 
@@ -284,7 +285,7 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 288 "polyline.c"
+#line 289 "polyline.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
@@ -551,7 +552,7 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
-#line 555 "polyline.c"
+#line 556 "polyline.c"
   return H;
 }
 
@@ -571,7 +572,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline_check_values(H) == FAIL) return RET_BUG;
-#line 575 "polyline.c"
+#line 576 "polyline.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -786,7 +787,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 790 "polyline.c"
+#line 791 "polyline.c"
 
 
 #line 89 "codegen/polyline.override"
@@ -798,7 +799,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 802 "polyline.c"
+#line 803 "polyline.c"
 
 
 #line 99 "codegen/polyline.override"
@@ -811,7 +812,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 815 "polyline.c"
+#line 816 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -852,7 +853,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 856 "polyline.c"
+#line 857 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -982,4 +983,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 986 "polyline.c"
+#line 987 "polyline.c"

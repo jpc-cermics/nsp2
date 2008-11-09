@@ -221,8 +221,9 @@ static int nsp_segments_neq(NspSegments *A, NspObject *B)
 
 int nsp_segments_xdr_save(XDR *xdrs, NspSegments *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->color)) == FAIL) return FAIL;
@@ -255,7 +256,7 @@ static NspSegments  *nsp_segments_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSEGMENTS;
   if ((H  = nsp_segments_create_void(name,(NspTypeBase *) nsp_type_segments))== NULLSEGMENTS) return H;
   if ((H  = nsp_segments_xdr_load_partial(xdrs,H))== NULLSEGMENTS) return H;
-#line 259 "segments.c"
+#line 260 "segments.c"
   return H;
 }
 
@@ -269,7 +270,7 @@ void nsp_segments_destroy_partial(NspSegments *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 273 "segments.c"
+#line 274 "segments.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->color);
@@ -527,7 +528,7 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_full_copy_partial(H,self)== NULL) return NULLSEGMENTS;
-#line 531 "segments.c"
+#line 532 "segments.c"
   return H;
 }
 
@@ -547,7 +548,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_segments_check_values(H) == FAIL) return RET_BUG;
-#line 551 "segments.c"
+#line 552 "segments.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -682,7 +683,7 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 686 "segments.c"
+#line 687 "segments.c"
 
 
 #line 89 "codegen/segments.override"
@@ -694,7 +695,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 698 "segments.c"
+#line 699 "segments.c"
 
 
 #line 99 "codegen/segments.override"
@@ -707,7 +708,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 711 "segments.c"
+#line 712 "segments.c"
 
 
 /*----------------------------------------------------
@@ -748,7 +749,7 @@ Segments_register_classes(NspObject *d)
 Init portion 
 
 
-#line 752 "segments.c"
+#line 753 "segments.c"
   nspgobject_register_class(d, "Segments", Segments, &NspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -859,4 +860,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 863 "segments.c"
+#line 864 "segments.c"

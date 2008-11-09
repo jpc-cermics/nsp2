@@ -239,7 +239,8 @@ class Wrapper:
               '\n' \
               'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, Nsp%(typename)s *M)\n' \
               '{\n' \
-              '  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;\n' \
+              '  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;\n' \
+              '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */\n ' \
               '  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;\n' \
               '%(fields_save)s' \
               '  return OK;\n' \

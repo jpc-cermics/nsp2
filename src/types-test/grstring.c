@@ -224,8 +224,9 @@ static int nsp_grstring_neq(NspGrstring *A, NspObject *B)
 
 int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->x) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->y) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->font) == FAIL) return FAIL;
@@ -264,7 +265,7 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRSTRING;
   if ((H  = nsp_grstring_create_void(name,(NspTypeBase *) nsp_type_grstring))== NULLGRSTRING) return H;
   if ((H  = nsp_grstring_xdr_load_partial(xdrs,H))== NULLGRSTRING) return H;
-#line 268 "grstring.c"
+#line 269 "grstring.c"
   return H;
 }
 
@@ -278,7 +279,7 @@ void nsp_grstring_destroy_partial(NspGrstring *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 282 "grstring.c"
+#line 283 "grstring.c"
   nsp_string_destroy(&(H->obj->font));
   nsp_string_destroy(&(H->obj->text));
     FREE(H->obj);
@@ -515,7 +516,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_full_copy_partial(H,self)== NULL) return NULLGRSTRING;
-#line 519 "grstring.c"
+#line 520 "grstring.c"
   return H;
 }
 
@@ -535,7 +536,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
-#line 539 "grstring.c"
+#line 540 "grstring.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -698,7 +699,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 702 "grstring.c"
+#line 703 "grstring.c"
 
 
 #line 89 "codegen/grstring.override"
@@ -710,7 +711,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 714 "grstring.c"
+#line 715 "grstring.c"
 
 
 #line 99 "codegen/grstring.override"
@@ -723,7 +724,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 727 "grstring.c"
+#line 728 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -764,7 +765,7 @@ Grstring_register_classes(NspObject *d)
 Init portion 
 
 
-#line 768 "grstring.c"
+#line 769 "grstring.c"
   nspgobject_register_class(d, "Grstring", Grstring, &NspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -823,4 +824,4 @@ static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 827 "grstring.c"
+#line 828 "grstring.c"

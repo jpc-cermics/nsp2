@@ -195,8 +195,9 @@ static int nsp_classbref_neq(NspClassBRef *A, NspObject *B)
 
 int nsp_classbref_xdr_save(XDR *xdrs, NspClassBRef *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_thickness) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->clb_val)) == FAIL) return FAIL;
@@ -229,7 +230,7 @@ static NspClassBRef  *nsp_classbref_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSBREF;
   if ((H  = nsp_classbref_create_void(name,(NspTypeBase *) nsp_type_classbref))== NULLCLASSBREF) return H;
   if ((H  = nsp_classbref_xdr_load_partial(xdrs,H))== NULLCLASSBREF) return H;
-#line 233 "classbref.c"
+#line 234 "classbref.c"
   return H;
 }
 
@@ -243,7 +244,7 @@ void nsp_classbref_destroy_partial(NspClassBRef *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 247 "classbref.c"
+#line 248 "classbref.c"
     nsp_matrix_destroy(H->obj->clb_val);
     FREE(H->obj);
    }
@@ -469,7 +470,7 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
-#line 473 "classbref.c"
+#line 474 "classbref.c"
   return H;
 }
 
@@ -489,7 +490,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
-#line 493 "classbref.c"
+#line 494 "classbref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -503,7 +504,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 507 "classbref.c"
+#line 508 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -514,7 +515,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 518 "classbref.c"
+#line 519 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -637,9 +638,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 641 "classbref.c"
+#line 642 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 646 "classbref.c"
+#line 647 "classbref.c"
