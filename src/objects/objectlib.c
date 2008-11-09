@@ -309,11 +309,11 @@ int nsp_object_xdr_save(XDR *xdrs, NspObject *O)
 /**
  *nsp_xdr_save_id:
  * @F: a #NspFile Object 
- * @O: an object 
+ * @type: atype
  * 
  * Saves object id in the stream given by @F with an xdr format.
  * The id is now saved as a fixed tag id  #nsp_dynamic_id followed by 
- * the type name of the object. This function should be the first 
+ * the type name. This function should be the first 
  * function called in each save function of new classes. 
  * Saving a specific id should be only used for classes with static 
  * id's and even in those classes this function could replace the old 
@@ -322,10 +322,10 @@ int nsp_object_xdr_save(XDR *xdrs, NspObject *O)
  * Return value: %OK or %FALSE 
  **/
 
-int nsp_xdr_save_id(XDR *xdrs, NspObject *O)
+int nsp_xdr_save_id(XDR *xdrs, NspTypeBase *type)
 {
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(O->basetype)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(type)) == FAIL) return FAIL;
   return OK;
 }
 
