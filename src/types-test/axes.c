@@ -241,9 +241,11 @@ static int nsp_axes_neq(NspAxes *A, NspObject *B)
 
 int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
 {
-  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
-   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_axes)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->rho) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->top) == FAIL) return FAIL;
@@ -276,6 +278,10 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->y)) == FAIL) return NULL;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if ( fid == nsp_dynamic_id)
+    {
+     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+    }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
  return M;
@@ -288,7 +294,7 @@ static NspAxes  *nsp_axes_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLAXES;
   if ((H  = nsp_axes_create_void(name,(NspTypeBase *) nsp_type_axes))== NULLAXES) return H;
   if ((H  = nsp_axes_xdr_load_partial(xdrs,H))== NULLAXES) return H;
-#line 292 "axes.c"
+#line 298 "axes.c"
   return H;
 }
 
@@ -302,7 +308,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 306 "axes.c"
+#line 312 "axes.c"
     nsp_matrix_destroy(H->obj->wrect);
     nsp_matrix_destroy(H->obj->bounds);
     nsp_matrix_destroy(H->obj->arect);
@@ -647,7 +653,7 @@ NspAxes *nsp_axes_full_copy(NspAxes *self)
   if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
   if ( nsp_axes_full_copy_partial(H,self)== NULL) return NULLAXES;
-#line 651 "axes.c"
+#line 657 "axes.c"
   return H;
 }
 
@@ -667,7 +673,7 @@ int int_axes_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_axes_check_values(H) == FAIL) return RET_BUG;
-#line 671 "axes.c"
+#line 677 "axes.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -721,7 +727,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 725 "axes.c"
+#line 731 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,char *attr)
 {
   double ret;
@@ -929,7 +935,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 933 "axes.c"
+#line 939 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -967,7 +973,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 971 "axes.c"
+#line 977 "axes.c"
 
 
 #line 159 "codegen/axes.override"
@@ -979,7 +985,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 983 "axes.c"
+#line 989 "axes.c"
 
 
 #line 169 "codegen/axes.override"
@@ -992,7 +998,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 996 "axes.c"
+#line 1002 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1033,7 +1039,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1037 "axes.c"
+#line 1043 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1421,4 +1427,4 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspAxes *) Obj)->obj->children;
 }
 
-#line 1425 "axes.c"
+#line 1431 "axes.c"

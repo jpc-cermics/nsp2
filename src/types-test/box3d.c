@@ -224,9 +224,11 @@ static int nsp_box3d_neq(NspBox3d *A, NspObject *B)
 
 int nsp_box3d_xdr_save(XDR *xdrs, NspBox3d *M)
 {
-  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
-   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_box3d)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->z)) == FAIL) return FAIL;
@@ -253,6 +255,10 @@ NspBox3d  *nsp_box3d_xdr_load_partial(XDR *xdrs, NspBox3d *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->face_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if ( fid == nsp_dynamic_id)
+    {
+     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+    }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
  return M;
@@ -265,7 +271,7 @@ static NspBox3d  *nsp_box3d_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBOX3D;
   if ((H  = nsp_box3d_create_void(name,(NspTypeBase *) nsp_type_box3d))== NULLBOX3D) return H;
   if ((H  = nsp_box3d_xdr_load_partial(xdrs,H))== NULLBOX3D) return H;
-#line 269 "box3d.c"
+#line 275 "box3d.c"
   return H;
 }
 
@@ -279,7 +285,7 @@ void nsp_box3d_destroy_partial(NspBox3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 283 "box3d.c"
+#line 289 "box3d.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -552,7 +558,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
   if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
-#line 556 "box3d.c"
+#line 562 "box3d.c"
   return H;
 }
 
@@ -572,7 +578,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_box3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_box3d_check_values(H) == FAIL) return RET_BUG;
-#line 576 "box3d.c"
+#line 582 "box3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -763,7 +769,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 767 "box3d.c"
+#line 773 "box3d.c"
 
 
 #line 89 "codegen/box3d.override"
@@ -775,7 +781,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 779 "box3d.c"
+#line 785 "box3d.c"
 
 
 #line 99 "codegen/box3d.override"
@@ -788,7 +794,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 792 "box3d.c"
+#line 798 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -829,7 +835,7 @@ Box3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 833 "box3d.c"
+#line 839 "box3d.c"
   nspgobject_register_class(d, "Box3d", Box3d, &NspBox3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -880,4 +886,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 884 "box3d.c"
+#line 890 "box3d.c"

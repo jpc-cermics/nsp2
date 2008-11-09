@@ -251,9 +251,11 @@ static int nsp_polyhedron_neq(NspPolyhedron *A, NspObject *B)
 
 int nsp_polyhedron_xdr_save(XDR *xdrs, NspPolyhedron *M)
 {
-  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
-   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_polyhedron)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mface)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcolor)) == FAIL) return FAIL;
@@ -278,6 +280,10 @@ NspPolyhedron  *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M)
   if ((M->obj->Mback_color =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if ( fid == nsp_dynamic_id)
+    {
+     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+    }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
  return M;
@@ -295,7 +301,7 @@ static NspPolyhedron  *nsp_polyhedron_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return NULL; 
 
-#line 299 "polyhedron.c"
+#line 305 "polyhedron.c"
   return H;
 }
 
@@ -314,7 +320,7 @@ void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 318 "polyhedron.c"
+#line 324 "polyhedron.c"
     nsp_matrix_destroy(H->obj->Mcoord);
     nsp_matrix_destroy(H->obj->Mface);
     nsp_matrix_destroy(H->obj->Mcolor);
@@ -615,7 +621,7 @@ NspPolyhedron *nsp_polyhedron_full_copy(NspPolyhedron *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return NULL; 
 
-#line 619 "polyhedron.c"
+#line 625 "polyhedron.c"
   return H;
 }
 
@@ -640,7 +646,7 @@ int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return RET_BUG; 
 
-#line 644 "polyhedron.c"
+#line 650 "polyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -825,7 +831,7 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 829 "polyhedron.c"
+#line 835 "polyhedron.c"
 
 
 #line 122 "codegen/polyhedron.override"
@@ -837,7 +843,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 841 "polyhedron.c"
+#line 847 "polyhedron.c"
 
 
 #line 132 "codegen/polyhedron.override"
@@ -849,7 +855,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 853 "polyhedron.c"
+#line 859 "polyhedron.c"
 
 
 #line 142 "codegen/polyhedron.override"
@@ -867,7 +873,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   return 1;
 }
 
-#line 871 "polyhedron.c"
+#line 877 "polyhedron.c"
 
 
 #line 158 "codegen/polyhedron.override"
@@ -883,7 +889,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   return 1;
 }
 
-#line 887 "polyhedron.c"
+#line 893 "polyhedron.c"
 
 
 #line 172 "codegen/polyhedron.override"
@@ -907,7 +913,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 }
 
-#line 911 "polyhedron.c"
+#line 917 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -951,7 +957,7 @@ Polyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 955 "polyhedron.c"
+#line 961 "polyhedron.c"
   nspgobject_register_class(d, "Polyhedron", Polyhedron, &NspPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1419,4 +1425,4 @@ static int nsp_facets_to_faces(NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix 
 
 
 
-#line 1423 "polyhedron.c"
+#line 1429 "polyhedron.c"

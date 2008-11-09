@@ -239,8 +239,10 @@ class Wrapper:
               '\n' \
               'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, Nsp%(typename)s *M)\n' \
               '{\n' \
-              '  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;\n' \
-              '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */\n ' \
+              '  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/\n' \
+              '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ \n ' \
+              '  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;\n' \
+              '  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_%(typename_dc)s)) == FAIL) return FAIL; \n' \
               '  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;\n' \
               '%(fields_save)s' \
               '  return OK;\n' \
@@ -943,6 +945,10 @@ class Wrapper:
 
         if father != 'Object':
             str = str + '  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;\n'
+            str = str + '  if ( fid == nsp_dynamic_id)\n'
+            str = str + '    {\n'
+            str = str + '     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;\n'
+            str = str + '    }\n'
             str = str + '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;\n'
             str = str + '  if ( nsp_%s_xdr_load_partial(xdrs,(Nsp%s *)M) == NULL) return NULL;\n' \
                 %  (string.lower(father),father)

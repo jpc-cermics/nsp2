@@ -227,9 +227,11 @@ static int nsp_grarc_neq(NspGrArc *A, NspObject *B)
 
 int nsp_grarc_xdr_save(XDR *xdrs, NspGrArc *M)
 {
-  if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
-   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grarc)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->x) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->y) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->w) == FAIL) return FAIL;
@@ -262,6 +264,10 @@ NspGrArc  *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if ( fid == nsp_dynamic_id)
+    {
+     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+    }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
  return M;
@@ -274,7 +280,7 @@ static NspGrArc  *nsp_grarc_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRARC;
   if ((H  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return H;
   if ((H  = nsp_grarc_xdr_load_partial(xdrs,H))== NULLGRARC) return H;
-#line 278 "grarc.c"
+#line 284 "grarc.c"
   return H;
 }
 
@@ -288,7 +294,7 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 292 "grarc.c"
+#line 298 "grarc.c"
     FREE(H->obj);
    }
 }
@@ -528,7 +534,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
   if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRARC;
   if ( nsp_grarc_full_copy_partial(H,self)== NULL) return NULLGRARC;
-#line 532 "grarc.c"
+#line 538 "grarc.c"
   return H;
 }
 
@@ -548,7 +554,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
-#line 552 "grarc.c"
+#line 558 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -767,7 +773,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 771 "grarc.c"
+#line 777 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -779,7 +785,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 783 "grarc.c"
+#line 789 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -792,7 +798,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 796 "grarc.c"
+#line 802 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -833,7 +839,7 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 837 "grarc.c"
+#line 843 "grarc.c"
   nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -926,4 +932,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 930 "grarc.c"
+#line 936 "grarc.c"
