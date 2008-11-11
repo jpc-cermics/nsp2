@@ -31,42 +31,41 @@ ilib_build(lib_name,table,files,libs [,makename,ldflags,cflags,fflags])
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}
-    //Here with give a complete example on adding new primitive to Scilab
-    //create the procedure files
-    f1=['extern double fun2();'
-      'void fun1(x,y)'
-      'double *x, *y;'
-      '{*y=fun2(*x)/(*x);}'];
-    mputl(f1,'fun1.c')
-    f2=['#include $<$math.h$>$'
-      'double fun2(x)'
-      'double x;'
-      '{ return( sin(x+1.));}'];
-    mputl(f2,'fun2.c');
-    //creating the interface file
-    i=['#include ""stack-c.h""'
-      'extern int fun1 _PARAMS(( double *x, double *y));'
-      'int intfun1(fname)' 
-      'char * fname;'
-      '{'
-        '  int m1,n1,l1;'
-        '  CheckRhs(1,1);'
-        '  CheckLhs(1,1);'
-        '  GetRhsVar(1, ""d"", \&amp;m1, \&amp;n1, \&amp;l1);'
-        '  fun1(stk(l1),stk(l1));'
-        '  LhsVar(1) = 1;'
-        '  return 0;'
-        '}'];
-    mputl(i,'intfun1.c')
-    //creating the shared library (a gateway, a Makefile and a loader are 
-    //generated. 
-    files=['fun1.o','fun2.o','intfun1.o'];
-    ilib_build('foo',['scifun1','intfun1'],files,[]);
-    // load the shared library 
-    exec loader.sce 
-    //using the new primitive
-    scifun1(33)
+  \begin{program}\HCode{ //Here with give a complete example on adding new primitive to Scilab\Hnewline
+    //create the procedure files\Hnewline
+    f1=['extern double fun2();'\Hnewline
+      'void fun1(x,y)'\Hnewline
+      'double *x, *y;'\Hnewline
+      '{*y=fun2(*x)/(*x);}'];\Hnewline
+    mputl(f1,'fun1.c')\Hnewline
+    f2=['#include $<$math.h$>$'\Hnewline
+      'double fun2(x)'\Hnewline
+      'double x;'\Hnewline
+      '{ return( sin(x+1.));}'];\Hnewline
+    mputl(f2,'fun2.c');\Hnewline
+    //creating the interface file\Hnewline
+    i=['#include ""stack-c.h""'\Hnewline
+      'extern int fun1 _PARAMS(( double *x, double *y));'\Hnewline
+      'int intfun1(fname)' \Hnewline
+      'char * fname;'\Hnewline
+      '{'\Hnewline
+        '  int m1,n1,l1;'\Hnewline
+        '  CheckRhs(1,1);'\Hnewline
+        '  CheckLhs(1,1);'\Hnewline
+        '  GetRhsVar(1, ""d"", \&amp;m1, \&amp;n1, \&amp;l1);'\Hnewline
+        '  fun1(stk(l1),stk(l1));'\Hnewline
+        '  LhsVar(1) = 1;'\Hnewline
+        '  return 0;'\Hnewline
+        '}'];\Hnewline
+    mputl(i,'intfun1.c')\Hnewline
+    //creating the shared library: a gateway, a Makefile and a loader are \Hnewline
+    //generated. \Hnewline
+    files=['fun1.o','fun2.o','intfun1.o'];\Hnewline
+    ilib_build('foo',['scifun1','intfun1'],files,[]);\Hnewline
+    // load the shared library \Hnewline
+    exec loader.sce \Hnewline
+    //using the new primitive\Hnewline
+    scifun1(33)}
   \end{program}
 \end{examples}
 %-- see also
