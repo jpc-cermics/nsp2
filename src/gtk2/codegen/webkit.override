@@ -1,0 +1,28 @@
+%%
+headers
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <webkit/webkit.h>
+
+#include "nsp/object.h"
+#include "nsp/interf.h"
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/gobject-util.h>
+
+%%
+modulename webkit
+
+%%
+ignore-glob
+  *_get_type
+  _*
+%%
+ignore
+  webkit_web_settings_get_type
+  webkit_web_back_forward_list_get_type
+  webkit_web_frame_get_type
+  webkit_web_history_item_get_type
+  webkit_web_view_get_type
+  webkit_network_request_get_type
+

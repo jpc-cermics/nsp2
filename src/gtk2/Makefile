@@ -36,6 +36,7 @@ gtk.o : gtk.c  codegen/gtk.c
 gdk.o : gdk.c  codegen/gdk.c 
 pango.o : pango.c codegen/pango.c
 gtk.o : gtk.c codegen/gtk.c
+webkit.o : webkit.c codegen/webkit.c 
 
 
 
