@@ -918,9 +918,7 @@ PERICAIRO=
 #---------------------
 
 PKG_CHECK_MODULES(WEBKIT, webkit-1.0, have_webkit=yes, have_webkit=no)
-if test "x${have_webkit}" = "xno" ; then
-    AC_MSG_WARN([WARNING WebKit package information not found])
-else
+if test "x${have_webkit}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS webkit-1.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS webkit-1.0"
      GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
@@ -941,8 +939,8 @@ if test "x${have_webkit}" = "xno" ; then
    HELP_OBJS=
    AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
    if test "$GTKHTML" = no; then
-      AC_MSG_WARN([Could not find the libgtkhtml-2.0 package.],)
-      AC_MSG_WARN([WARNING interactive html  help will not be build .],)
+      AC_MSG_WARN([Could not find webkit or the libgtkhtml-2.0 package.],)
+      AC_MSG_WARN([WARNING interactive help will not be build.],)
    else 
      	GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgtkhtml-2.0"
      	GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgtkhtml-2.0"

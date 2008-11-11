@@ -25,7 +25,7 @@ GTKFLAGS= -DG_DISABLE_DEPRECATED  \
 	-DGTK_DISABLE_DEPRECATED \
 	-DPANGO_DISABLE_DEPRECATED
 
-CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ `pkg-config webkit-1.0 --cflags` 
+CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ 
 
 include ../Make.lib
 
