@@ -5,16 +5,13 @@ SCIDIR=../..
 
 LIBRARY = nsp.a
 
-OBJSHELP=helpbrowser.o uri.o
-
-
 # gtkmenu.c, gtkmarshalers.h and gtkintl.h
 # are only usefull for gtk version < 2.3.5
 # to correct a gtk bug (see configure.in)
 
 OBJSC =	click.o command.o  io.o \
 	menus.o  x_main.o \
-	about.o queue.o @GTKHTMLOBJS@ @GTKPLUGBUG@ \
+	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
 	testtext1.o testtext.o @RC_FILE@
 
 OBJSF  = 

@@ -10,7 +10,7 @@ LIBRARY = nsp.a
 OBJSC = gboxed.o gobject.o  gdkatom.o gtk.o atk.o \
 	pango.o gdk.o pangoattribute.o to_be_done.o \
 	to_be_done1.o gpointer.o strings.o graphics.o \
-	gmarkup.o gdate.o prop-editor.o
+	gmarkup.o gdate.o prop-editor.o webkit.o
 
 OBJSF = 
 
@@ -25,8 +25,7 @@ GTKFLAGS= -DG_DISABLE_DEPRECATED  \
 	-DGTK_DISABLE_DEPRECATED \
 	-DPANGO_DISABLE_DEPRECATED
 
-CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ 
-
+CFLAGS = $(CC_OPTIONS) -I/usr/include/libglade-2.0/ `pkg-config webkit-1.0 --cflags` 
 
 include ../Make.lib
 

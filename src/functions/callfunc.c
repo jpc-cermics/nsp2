@@ -151,7 +151,10 @@ extern sci_interface Segments_Interf;extern interface_info Segments_Interf_Info;
 extern sci_interface String3d_Interf;extern interface_info String3d_Interf_Info;
 extern sci_interface Surf_Interf;extern interface_info Surf_Interf_Info;
 extern sci_interface VField_Interf;extern interface_info VField_Interf_Info;
+#endif 
 
+#ifdef HAVE_WEBKIT
+extern sci_interface webkit_Interf;extern interface_info webkit_Interf_Info;
 #endif 
 
 InterfTab Interfaces[]={
@@ -268,6 +271,9 @@ InterfTab Interfaces[]={
   {String3d_Interf,String3d_Interf_Info},
   {Surf_Interf,Surf_Interf_Info},
   {VField_Interf,VField_Interf_Info},
+#endif 
+#ifdef HAVE_WEBKIT
+  {webkit_Interf,webkit_Interf_Info},
 #endif 
   {NULL,NULL}
 }; 

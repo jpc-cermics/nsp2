@@ -124,6 +124,9 @@
 /* Define to 1 if you have the <values.h> header file. */
 #undef HAVE_VALUES_H
 
+/* Whether WebKit is available */
+#undef HAVE_WEBKIT
+
 /* cairo image supported */
 #undef HAVE_cairo_image_surface
 
@@ -219,3 +222,5 @@
 #ifndef __cplusplus
 #undef inline
 #endif
+
+#include "nsp/package_undef.h"

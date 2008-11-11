@@ -6,6 +6,7 @@ AC_INIT([nsp],[1.0])
 SCIDIR=`pwd`
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER(src/include/nsp/config.h)
+AH_BOTTOM([#include "nsp/package_undef.h"])
 AM_INIT_AUTOMAKE
 
 dnl Get system type
@@ -911,24 +912,47 @@ GZVT='gzvt2'
 NSP_SCRIPT=nsp-gtk.g
 MENUSOBJS=GOBJS
 PERICAIRO=
-# check for libgtkhtml-2.0
-ac_save_LIBS="$LIBS"
-LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
-GTKHTML=no
-GTKHTMLOBJS=
-AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
-if test "$GTKHTML" = no; then
-   AC_MSG_WARN([Could not find the libgtkhtml-2.0 package.],)
-   AC_MSG_WARN([WARNING interactive html  help will not be build .],)
-else 
-     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgtkhtml-2.0"
-     GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgtkhtml-2.0"
+
+#--------------------
+# check for WebKit 
+#---------------------
+
+PKG_CHECK_MODULES(WEBKIT, webkit-1.0, have_webkit=yes, have_webkit=no)
+if test "x${have_webkit}" = "xno" ; then
+    AC_MSG_WARN([WARNING WebKit package information not found])
+else
+     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS webkit-1.0"
+     GTK_PKGS_LIBS="$GTK_PKGS_LIBS webkit-1.0"
      GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
      GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
-     GTKHTMLOBJS='$(OBJSHELP)'
-     AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
+     HELP_OBJS="helpwebkit.o"
+     AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
 fi
-LIBS=$ac_save_LIBS
+
+#--------------------------
+# check for libgtkhtml-2.0
+# if WebKit not found 
+#--------------------------
+GTKHTML=no
+
+if test "x${have_webkit}" = "xno" ; then
+   ac_save_LIBS="$LIBS"
+   LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
+   HELP_OBJS=
+   AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
+   if test "$GTKHTML" = no; then
+      AC_MSG_WARN([Could not find the libgtkhtml-2.0 package.],)
+      AC_MSG_WARN([WARNING interactive html  help will not be build .],)
+   else 
+     	GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgtkhtml-2.0"
+     	GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgtkhtml-2.0"
+     	GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+     	GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     	HELP_OBJS="helpbrowser.o uri.o"
+     	AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
+   fi	
+   LIBS=$ac_save_LIBS
+fi
 
 # terminal library 
 # check first for vte then for zvt 
@@ -1492,7 +1516,7 @@ AC_SUBST(STRIP)
 AC_SUBST(PERIGLEXT)
 AC_SUBST(TERM_NAME)
 AC_SUBST(TERM_LDFLAGS)
-AC_SUBST(GTKHTMLOBJS)
+AC_SUBST(HELP_OBJS)
 AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
@@ -1520,16 +1544,14 @@ echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
 echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Asound support.........:" $HAVE_ASOUND
-if test "xx$cholmod_libs" != "xx" ; then
-   echo "Cholmod support........:" yes
-else
-   echo "Cholmod support........:" no
-fi 
-if test "xx$umfpack_libs" != "xx" ; then
-   echo "Umfpack support........:" yes
-else 
-   echo "Umfpack support........:" no
-fi
+echo -n "Cholmod support........:" 
+if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi
+echo -n "Umfpack support........:" 
+if test "xx$umfpack_libs" != "xx" ; then echo " yes"; else echo " no"; fi
+echo "WebKit support.........:" $have_webkit
+echo "gtkhtml2 support.......:" $GTKHTML
+# --------
+
 echo 
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
@@ -1557,6 +1579,17 @@ if test X"$enable_cairo_ps" == Xyes; then
 fi
 if test X"$enable_cairo_svg" == Xyes; then 
    echo -n " svg"
+fi
+echo
+echo -n "man browser............: " 
+if test "x${have_webkit}" = "xyes" ; then
+   echo "webkit" 
+else 
+if test "$GTKHTML" = yes; then
+   echo "gtkhtml2" 
+else 
+   echo "no browser !"
+fi
 fi
 echo 
 echo 

@@ -32,7 +32,8 @@ Makefile.mak	: Makefile
 # on peut rajouter --prefix py$* 
 
 PYTHON=python 
-ALL=  gdk.c gtk.c pango.c atk.c
+ALL=  gdk.c gtk.c pango.c atk.c webkit.c
+
 
 all:: $(ALL)
 
@@ -68,4 +69,6 @@ gtkgl.c : gtkgl.defs  gtkgl.objverride
 libglade.c : libglade.defs  libglade.objverride 
 atk.c : atk.defs  atk.objverride atk-types.defs 
 pango.c : pango.defs  pango.objverride pango-types.defs 
+webkit.c : webkit.defs webkit.objverride
+
 

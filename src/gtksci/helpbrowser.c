@@ -42,9 +42,8 @@
 
 extern gchar *html_selection_get_text (HtmlView *view);
 
-
-
 /* XXXX */
+#include "nsp/config.h"
 #include "nsp/math.h"
 #include "nsp/sciio.h"
 #include "nsp/gtksci.h"
@@ -587,7 +586,6 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
 }
 
 
-
 static void
 open_browser_dialog (const gchar *help_path,
 		     const gchar *locale,
@@ -605,6 +603,12 @@ open_browser_dialog (const gchar *help_path,
   GdkColor color;
   
   start_sci_gtk(); /* in case gtk was not initialized */
+
+  if ( window != NULL) 
+    {
+      load_page (help_file, TRUE); 
+      return;
+    }
 
   gdk_color_parse("white", &color);
 
@@ -749,6 +753,7 @@ open_browser_dialog (const gchar *help_path,
 
 
 
+
 /*------------------------------------------------------
  * mandir = man path or null (SCI+'man')
  * locale = "eng" or "fr" 
@@ -792,27 +797,18 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
       strcpy(buf,mandir);
 #endif 
       strcat(buf,"/generated/manual.html");
-      if ( window == NULL) 
-	open_browser_dialog (mandir,l,buf);
-      else 
-	load_page (buf, TRUE); 
+      open_browser_dialog (mandir,l,buf);
     }
   else if ( strncmp(help_file,"file:",5)==0 || strncmp(help_file,"http:",5)==0) 
     {
       strcpy(buf,help_file);
-      if ( window == NULL) 
-	open_browser_dialog (mandir,l,buf);
-      else 
-	load_page (buf, TRUE); 
+      open_browser_dialog (mandir,l,buf);
     }
   else  
     {
       if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL; 
       if ( buf[0]== '\0') return OK; 
-      if ( window == NULL) 
-	open_browser_dialog (mandir,l,buf);
-      else 
-	load_page (buf, TRUE); 
+      open_browser_dialog (mandir,l,buf);
     }
   return 0; 
 }
