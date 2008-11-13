@@ -39,33 +39,62 @@ $$
 $$
 using the Livermore solvers odepack. Currently only lsoda is interfaced and this solver begin with the Adams
 method (for nonstiff systems) but switches  automatically to bdf method if the differential equation is detected
-as stiff. The function $f$ takes on entry a scalar $t$, then a vector $x$ of length $d$ and output a vector of 
-length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
-the nsp function should have this parameter as first argument. In fact \verb+f+ should have the
+as stiff. 
+
+\itemdesc{form of the function {\tt f}}
+
+The function $f$ takes as first argument a scalar $t$, then a vector $x$ of length $d$ as 2d argument and 
+must output a vector of length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
+it should nevertheless have this parameter as first argument. In brief \verb+f+ should have the
 form:
 \begin{quote}
 {\tt function y = f(t,x) \\
       ....}
   \end{quote}
 
+\itemdesc{optional argument {\tt args}}
+
 Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
-if it is provided by he user) could be passed using \verb+args=obj+ where obj could be any nsp 
-object (see examples). In this case \verb+f+ should have the form:
+if it is provided by the user) could be passed using \verb+args=obj+ where obj could be any nsp 
+object (see examples). In this case \verb+f+ has the form:
 \begin{quote}
 {\tt function y = f(t,x,obj) \\
       ....}
 \end{quote}
 
+\itemdesc{the vector of time instants  {\tt t}}
+
 The (approximate) solution is got at the time instants defined by the argument \verb+t+.
 If \verb+t+ as $n$ components says  \verb+t = [t1, t2, ..., tn]+ then the output is a
-$d \times n$ array and the k th column is an approximation of $x(tk)$.
+$d \times n$ array and the k th column is an approximation of $x(tk)$. This output
+time instants don't correspond to time step taken by the solver (see details here
+after).
 
-At each time step the estimated local error in $x_i$ is controlled so as to be less than:
-\begin{quote}
-   $ewt_i = rtol | x_i | + atol$ ~ if atol is a scalar \\
-   $ewt_i = rtol | x_i | + atol_i$ ~ if atol is a vector
-\end{quote}
- 
+
+\itemdesc{optional atol and rtol parameters: solver accuracy control}
+
+At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
+the estimated local error in the i th component $x_i(\tau_k)$ (that is the error in 
+$x_i(\tau_k)$ assuming that $x(\tau_{k-1})$ is exact) is controlled so as to be less 
+than $ewt_i$ where:
+$$
+ewt_i =
+\left\{
+\begin{array}{l}
+ rtol | x_i | + atol  \mbox{ if } atol \mbox { is a scalar} \\
+ rtol | x_i | + atol_i  \mbox{ if } atol \mbox { is a vector}
+\end{array}
+\right.
+$$
+ Btw note that the output time instants don't correspond to the time steps of 
+the vector \verb+t+ and that the solver choose the  time steps $(\Delta t)_k$
+(and also the order of the current formula) such that to be both efficient and
+respect the required local tolerance. Note also that the global error could
+be more larger than the local error. The solution at the wanted output time 
+instants is got from an interpolary formula (wich is in fact natural to the
+multistep method used by lsoda).
+
+\itemdesc{optional jac parameter}
 
 The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ so you could provide it with the optional named argument 
 jac. When jac is not given the solver uses finite differences. Note that, like for \verb+f+, the formal argument
@@ -80,7 +109,7 @@ or:\\
 \end{quote}
 when {\tt obj} is provided with {\tt args=obj}.
 
-
+\itemdesc{odeoptions: fine solver tuning}
 
 odeoptions will be described in a future version of this help page.
 
