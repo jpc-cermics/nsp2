@@ -22,7 +22,8 @@ x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htab
     \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
                      (default is atol=1e-9, rtol=0). atol could be a vector of same size than x0.
     \vname{jac=Df}: optional named argument. Df should be a nsp function (the Jacobian of f)
-    \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters needed by the function f.
+    \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters needed by
+    the function f (and by the function Df if it is provided).
     \vname{type=str}: optional named argument (scalar string) could be "default" (which is the default) or "discrete"
     \vname{odeoptions}: an hash table of parameters for fine tuning of the solver.
   \end{varlist}
@@ -76,13 +77,13 @@ after).
 At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
 the estimated local error in the i th component $x_i(\tau_k)$ (that is the error in 
 $x_i(\tau_k)$ assuming that $x(\tau_{k-1})$ is exact) is controlled so as to be less 
-than $ewt_i$ where:
+than $ewt_k$ where:
 $$
 ewt_i =
 \left\{
 \begin{array}{l}
- rtol | x_i | + atol  \mbox{ if } atol \mbox { is a scalar} \\
- rtol | x_i | + atol_i  \mbox{ if } atol \mbox { is a vector}
+ rtol | x_k | + atol  \mbox{ if } atol \mbox { is a scalar} \\
+ rtol | x_k | + atol_k  \mbox{ if } atol \mbox { is a vector}
 \end{array}
 \right.
 $$
@@ -96,8 +97,8 @@ formula (wich is in fact natural to the multistep method used by lsoda).
 
 \itemdesc{optional jac parameter}
 
-The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ so you could provide it with the optional named argument 
-jac. When jac is not given the solver uses finite differences. Note that, like for \verb+f+, the formal argument
+The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ and this function could be provided by the user with the optional named argument 
+jac. When jac is not given the solver computes an approximation using finite differences. Note that, like for \verb+f+, the formal argument
 \verb+t+ should be present even if the Jacobian don't depends explicitly of the time. So the header of the nsp 
 function defining the Jacobian of $f$ should be of the form:
 \begin{quote}
