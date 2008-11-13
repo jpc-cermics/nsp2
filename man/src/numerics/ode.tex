@@ -93,11 +93,13 @@ $$
   \dot{x}(t) = - x, \; x(0) = 1, 
 $$ 
 the solution is known ($x(t) = exp(-t)$);
-\begin{program}\HCode{function y=f(x);y=-x;endfunction\Hnewline
-t = linspace(0,4,10)
+\begin{program}\HCode{function y=f1(t,x);y=-x;endfunction\Hnewline
+t = linspace(0,4,10);\Hnewline
 x = ode(1,0,t,f1)\Hnewline
 exp(-t)}
 \end{program}
+  
+
  
 \end{examples}
 
