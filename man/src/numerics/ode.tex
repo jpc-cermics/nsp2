@@ -1,0 +1,111 @@
+% -*- mode: latex -*-
+
+\mansection{ode}
+\begin{mandesc}
+  \short{ode}{ordinary differential equations solver}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+x = ode(x0,t0,t,f)
+x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htable)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x0}:real column vector, the initial condition
+    \vname{t0}:real scalar, the initial time
+    \vname{t}: real vector with increasing time instants at which the solution must be recorded
+    \vname{f}: nsp function defining the second member of the differential equation
+    \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
+                     (default is atol=1e-9, rtol=0). atol could be a vector of same size than x0.
+    \vname{jac=Df}: optional named argument. Df should be a nsp function (the Jacobian of f)
+    \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters needed by the function f.
+    \vname{type=str}: optional named argument (scalar string) could be "default" (which is the default) or "discrete"
+    \vname{odeoptions}: an hash table of parameters for fine tuning of the solver.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+When type is not "discrete", this function computes an approximate solution of the ordinary differential equation:
+$$
+\begin{array}{l}
+   \dot{x}(t) = f(t, x(t)), \; f: R \times R^d \rightarrow  R^d \\
+   x(t_0) = x_0  \in  R^d
+\end{array}
+$$
+using the Livermore solvers odepack. Currently only lsoda is interfaced and this solver begin with the Adams
+method (for nonstiff systems) but switches  automatically to bdf method if the differential equation is detected
+as stiff. The function $f$ takes on entry a scalar $t$, then a vector $x$ of length $d$ and output a vector of 
+length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
+the nsp function should have this parameter as first argument. In fact \verb+f+ should have the
+form:
+\begin{quote}
+{\tt function y = f(t,x) \\
+      ....}
+  \end{quote}
+
+Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
+if it is provided by he user) could be passed using \verb+args=obj+ where obj could be any nsp 
+object (see examples). In this case \verb+f+ should have the form:
+\begin{quote}
+{\tt function y = f(t,x,obj) \\
+      ....}
+\end{quote}
+
+The (approximate) solution is got at the time instants defined by the argument \verb+t+.
+If \verb+t+ as $n$ components says  \verb+t = [t1, t2, ..., tn]+ then the output is a
+$d \times n$ array and the k th column is an approximation of $x(tk)$.
+
+At each time step the estimated local error in $x_i$ is controlled so as to be less than:
+\begin{quote}
+   $ewt_i = rtol | x_i | + atol$ ~ if atol is a scalar \\
+   $ewt_i = rtol | x_i | + atol_i$ ~ if atol is a vector
+\end{quote}
+ 
+
+The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ so you could provide it with the optional named argument 
+jac. When jac is not given the solver uses finite differences. Note that, like for \verb+f+, the formal argument
+\verb+t+ should be present even if the Jacobian don't depends explicitly of the time. So the header of the nsp 
+function defining the Jacobian of $f$ should be of the form:
+\begin{quote}
+{\tt function J = Df(t,x) \\
+      ....}\\
+or:\\
+{\tt function J = Df(t,x,obj) \\
+     ....}
+\end{quote}
+when {\tt obj} is provided with {\tt args=obj}.
+
+
+
+odeoptions will be described in a future version of this help page.
+
+\end{mandescription} 
+
+\begin{examples}
+  
+\paragraph{example 1} the most simple example: we want to integrate:
+$$
+  \dot{x}(t) = - x, \; x(0) = 1, 
+$$ 
+the solution is known ($x(t) = exp(-t)$);
+\begin{program}\HCode{function y=f(x);y=-x;endfunction\Hnewline
+t = linspace(0,4,10)
+x = ode(1,0,t,f1)\Hnewline
+exp(-t)}
+\end{program}
+ 
+\end{examples}
+
+\begin{manseealso}
+  \manlink{intg}{intg}, \manlink{int2d}{int2d}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  uses the routine lsoda of the odepack package. Nsp interface: Jean-Philippe Chancelier
+\end{authors}
