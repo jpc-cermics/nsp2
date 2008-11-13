@@ -99,6 +99,32 @@ x = ode(1,0,t,f1)\Hnewline
 exp(-t)}
 \end{program}
   
+  
+\paragraph{example 2} The Brusselator. We want to solve:
+$$
+\left\{
+\begin{array}{l}
+\frac{du_1}{dt} = 2 - (6 + \epsilon) u_1 + u_1^2 x_2 \\
+\frac{du_2}{dt} = (5 + \epsilon) u_1 - u_1^2 u_2
+\end{array}
+\right.
+$$
+for some initial condition $u(0) = u0$ and some parameter $\epsilon$.
+\begin{program}\HCode{function [f] = Brusselator(t,u,eps)\Hnewline
+   f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
+         (5+eps)*u(1) - u(1)^2*u(2)]\Hnewline
+endfunction\Hnewline
+eps = 0.1 // parameter value\Hnewline
+T = 200 ;  // final integration time\Hnewline
+t = linspace(0,T,8000); // time instants to record to solution\Hnewline
+u0 = [0;0];  // initial condition (starting point)\Hnewline
+// solve the ode\Hnewline
+u = ode(u0, 0, t, Brusselator, rtol = 1e-9, atol = 1e-10, args=eps);\Hnewline
+// plot solution in the phase space\Hnewline
+plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])\Hnewline
+plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')}
+\end{program}
+  
 
  
 \end{examples}
