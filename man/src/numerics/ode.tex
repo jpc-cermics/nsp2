@@ -86,13 +86,13 @@ ewt_i =
 \end{array}
 \right.
 $$
- Btw note that the output time instants don't correspond to the time steps of 
-the vector \verb+t+ and that the solver choose the  time steps $(\Delta t)_k$
-(and also the order of the current formula) such that to be both efficient and
-respect the required local tolerance. Note also that the global error could
-be more larger than the local error. The solution at the wanted output time 
-instants is got from an interpolary formula (wich is in fact natural to the
-multistep method used by lsoda).
+ Btw note that the output time instants  of the vector \verb+t+ don't correspond 
+to the time steps taken by the solver. The  time steps $(\Delta t)_k$
+(and also the order of the current formula) are choosen by the solver such 
+that to be both efficient and to respect the required local tolerance. Note 
+also that the global error could be more larger than the local error. The 
+solution at the wanted output time instants is got from an interpolary 
+formula (wich is in fact natural to the multistep method used by lsoda).
 
 \itemdesc{optional jac parameter}
 
