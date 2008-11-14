@@ -1017,7 +1017,11 @@ static void nsp_menu_help(void)
 #ifdef WITH_GTKHTML
   Sci_Help(NULL,NULL,NULL);
 #else 
+#ifdef HAVE_WEBKIT
+  Sci_Help(NULL,NULL,NULL);
+#else 
   Sciprintf("help is not available\n");
+#endif 
 #endif 
 }
 

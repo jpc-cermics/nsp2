@@ -947,7 +947,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 #ifdef WITH_GTKHTML
 	  Sci_Help(NULL,NULL,(char *) L1->O);
 #else 
+#ifdef HAVE_WEBKIT
+	  Sci_Help(NULL,NULL,(char *) L1->O);
+#else 
 	  Sciprintf("no man support in this version\n");
+#endif
 #endif
 	  return 0;
 	  break;

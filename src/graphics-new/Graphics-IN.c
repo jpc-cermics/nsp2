@@ -4975,7 +4975,7 @@ extern void Sci_Help(char *,char *,char *);
 
 int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 {
-#ifdef WITH_GTKHTML
+#if defined(WITH_GTKHTML) || defined(HAVE_WEBKIT) 
   int i;
   char *str[3]={NULL,NULL,NULL};
   CheckRhs(0,1);
@@ -4986,6 +4986,7 @@ int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 #endif 
   return 0;
 }
+
 
 /*-----------------------------------------------------------
  * utilities 
