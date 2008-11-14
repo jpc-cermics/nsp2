@@ -43,7 +43,6 @@ method (for nonstiff systems) but switches  automatically to bdf method if the d
 as stiff. 
 
 \itemdesc{form of the function {\tt f}}
-
 The function $f$ takes as first argument a scalar $t$, then a vector $x$ of length $d$ as 2d argument and 
 must output a vector of length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
 it should nevertheless have this parameter as first argument. In brief \verb+f+ should have the
@@ -54,7 +53,6 @@ form:
   \end{quote}
 
 \itemdesc{optional argument {\tt args}}
-
 Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
 if it is provided by the user) could be passed using \verb+args=obj+ where obj could be any nsp 
 object (see examples). In this case \verb+f+ has the form:
@@ -64,7 +62,6 @@ object (see examples). In this case \verb+f+ has the form:
 \end{quote}
 
 \itemdesc{the vector of time instants  {\tt t}}
-
 The (approximate) solution is got at the time instants defined by the argument \verb+t+.
 If \verb+t+ as $n$ components says  \verb+t = [t1, t2, ..., tn]+ then the output is a
 $d \times n$ array and the k th column is an approximation of $x(tk)$. This output
@@ -73,13 +70,12 @@ after).
 
 
 \itemdesc{optional atol and rtol parameters: solver accuracy control}
-
 At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
 the estimated local error in the i th component $x_i(\tau_k)$ (that is the error in 
 $x_i(\tau_k)$ assuming that $x(\tau_{k-1})$ is exact) is controlled so as to be less 
-than $ewt_k$ where:
+than $etol_k$ where:
 $$
-ewt_i =
+etol_k =
 \left\{
 \begin{array}{l}
  rtol | x_k | + atol  \mbox{ if } atol \mbox { is a scalar} \\
@@ -96,7 +92,6 @@ solution at the wanted output time instants is got from an interpolary
 formula (wich is in fact natural to the multistep method used by lsoda).
 
 \itemdesc{optional jac parameter}
-
 The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ and this function could be provided by the user with the optional named argument 
 jac. When jac is not given the solver computes an approximation using finite differences. Note that, like for \verb+f+, the formal argument
 \verb+t+ should be present even if the Jacobian don't depends explicitly of the time. So the header of the nsp 
@@ -111,7 +106,6 @@ or:\\
 when {\tt obj} is provided with {\tt args=obj}.
 
 \itemdesc{odeoptions: fine solver tuning}
-
 odeoptions will be described in a future version of this help page.
 
 \end{mandescription} 
@@ -155,6 +149,54 @@ plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])\Hnewline
 plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')}
 \end{program}
   
+  
+\paragraph{example 3} pure, damped or amplified oscillators. The second order differential
+equation:
+$$
+  \ddot{x}(t) + 2 \alpha \dot{x}(t) + k x(t) = 0, \; x(0)=x_0, \dot{x}(0) = v_0 
+$$ 
+corresponds for $k > 0$ and $\alpha^2 < k$ (damping or amplification factor not too high) to 
+a pure oscillator when $\alpha=0$, a damped oscillator when $\alpha>0$ and to an amplified 
+oscillator for $\alpha<0$. Its is easily solved analytically:
+$$
+  x(t) = e^{-\alpha t}( A \cos(\omega t) + B \sin(\omega t) ) \; \mbox{with: }
+\left\{ \begin{array}{l}
+\omega = \sqrt{k - \alpha^2} \\
+A = x_0, \; B = (v_0 + \alpha x_0)/\omega
+\end{array} \right.
+$$
+To use {\tt ode}, one should put this equation in a system of two first order differential 
+equations:
+$$
+u(t) =  \left[ \begin{array}{c} u_1(t) \\  u_2(t)\end{array} \right]  \equiv  \left[ \begin{array}{c} x(t) \\
+    \dot{x}(t)\end{array} \right], \mbox{ and }
+\dot{u}(t) =  \left[ \begin{array}{c} \dot{u}_1(t) \\ \dot{u}_2(t) \end{array} \right] =
+    \left( \begin{array}{c} u_2(t) \\  -k u_1(t) - 2 \alpha u_2(t) \end{array} \right) = f(u)
+$$
+So the code (we choose to pass the 2 parameters with an  \manlink{hash table}{hash}):
+\begin{program}\HCode{function [f] = oscillator(t,u,p)\Hnewline
+   f = [ u(2); -p.k*u(1) -2*p.alpha*u(2)];\Hnewline
+endfunction\Hnewline
+T = 16 ;  // final integration time\Hnewline
+t = linspace(0,T,1000); // time instants to record to solution\Hnewline
+u0 = [1;0];  // initial condition (x(0)=1, dx/dt(0)=0)\Hnewline
+// solve the ode\Hnewline
+up = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0));\Hnewline
+ud = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0.02));\Hnewline
+ua = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=-0.02));\Hnewline
+// plot the 3 solutions\Hnewline
+xbasc()\Hnewline
+subplot(1,2,1)\Hnewline
+plot2d([up(1,:)',ud(1,:)',ua(1,:)'],[up(2,:)',ud(2,:)',ua(2,:)'], style=[2,3,5], leg="pure@damped@amplified")\Hnewline
+xtitle("trajectories in phase space","x(t)","dx/dt(t)")\Hnewline
+subplot(2,2,2)\Hnewline
+plot2d(t',[up(1,:)',ud(1,:)',ua(1,:)'],style=[2,3,5], leg="pure@damped@amplified")\Hnewline
+xtitle("position fct of time","t","x(t)")\Hnewline
+subplot(2,2,4)\Hnewline
+plot2d(t',[up(2,:)',ud(2,:)',ua(2,:)'],style=[2,3,5], leg="pure@damped@amplified")\Hnewline
+xtitle("velocity fct of time","t","dx/dt(t)")}
+\end{program}
+  
 
  
 \end{examples}
@@ -165,5 +207,5 @@ plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')}
 
 % -- Authors
 \begin{authors}
-  uses the routine lsoda of the odepack package. Nsp interface: Jean-Philippe Chancelier
+ Linda r. Petzold, Alan C. Hindmarsh. Nsp interface: Jean-Philippe Chancelier
 \end{authors}
