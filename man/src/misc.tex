@@ -30,14 +30,21 @@ Logical operator (Matlab compatibility)
 \end{quote}
 
 \HCode{<hr>}
-Basic function operating on numerical arrays
+Basic functions concerning numerical arrays
 \begin{quote}
 \noindent
+\hyperlink{zeros}{zeros},\hyperlink{ones}{ones} - build matrices of zeros or ones \\
+\hyperlink{eye}{eye} - identity matrix or matrix of canonical application between 2 vector spaces \\
 \hyperlink{sum}{sum},\hyperlink{prod}{prod} - sum and product of matrix elements \\
 \hyperlink{cumsum}{cumsum},\hyperlink{cumprod}{cumprod} - cumulative sum and product of matrix elements \\
 \hyperlink{diff}{diff} - difference of a vector or a matrix \\
+\hyperlink{min}{min} - minimum of matrix elements or minimum of 2 or more matrices \\
+\hyperlink{max}{max} - maximum of matrix elements or maximum of 2 or more matrices \\
+\hyperlink{minmax}{minmax} - both minimum and maximum of matrix elements\\
 \hyperlink{dot}{dot} - scalar product of 2 vectors (or matrices) \\
 \hyperlink{cross}{cross} - cross product of 2 vectors \\
+\hyperlink{scale_rows}{scale\_rows} - multiply each row of a matrix by a different scalar \\
+\hyperlink{scale_cols}{scale\_cols} - multiply each column of a matrix by a different scalar \\
 \end{quote}
  
 
@@ -101,12 +108,16 @@ Special mathematical functions
 \input misc/grand.tex 
 \input misc/pdf.tex 
 \input misc/legendre.tex 
-\input misc/perms.tex 
+\input misc/perms.tex
+\input misc/zerosones.tex 
+\input misc/eye.tex  
 \input misc/sum.tex 
 \input misc/cumsum.tex 
 \input misc/diff.tex 
+\input misc/minmax.tex 
 \input misc/dot.tex 
 \input misc/cross.tex 
+\input misc/scalerowscols.tex 
 \input misc/any.tex 
 \input misc/all.tex 
 

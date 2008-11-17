@@ -1,0 +1,60 @@
+\mansection{eye}
+\begin{mandesc}
+  \short{eye}{identity matrix or matrix of canonical application between 2 vector spaces} 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+I = eye(n)
+I = eye(m,n)
+I = eye(dims)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m,n}: integers
+    \vname{dims}: vector of integers of length 1 or 2.
+    \vname{A}: resulting matrix.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\verb+eye(n)+ is the same than \verb+eye(n,n)+ and output the identity matrix of the $n$ dimensional
+vector space. More generally \verb+eye(m,n)+ output the matrix of the canonical application $J$ from
+the $n$ dimensional vector space to the  $m$ dimensional vector space: 
+$$
+x = \left[ x_1 ; x_2 ; \dots ; x_n \right]  \longmapsto  J x = 
+\left\{ 
+\begin{array}{l} 
+     \left[ x_1 ; x_2 ; \dots ; x_m \right] \mbox{ if } m \le n \\ \left[ x_1 ; x_2 ; \dots ; x_n ; 0 ; \dots ; 0 \right] \mbox{ otherwise }
+\end{array} 
+\right.
+$$
+With $m=3$ and $n=4$ we get:
+$$
+    I = \left( \begin{array}{cccc} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0
+      \end{array} \right)
+$$
+\verb+eye(dims)+ with $dims_1 = m$ and $dims_2 = n$ is the same than  \verb+eye(m,n)+. If you want
+such a matrix of same size than another matrix $M$ use: 
+\begin{verbatim}
+   I = eye(size(M))
+\end{verbatim}
+
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+\begin{program}\HCode{I = eye(2,3) \Hnewline
+I = eye(0,3)}
+\end{program} 
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{zeros}{zeros}, \manlink{ones}{ones}
+\end{manseealso}
+

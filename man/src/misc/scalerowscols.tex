@@ -1,0 +1,44 @@
+\mansection{scale\_rows, scale\_cols}
+\begin{mandesc}
+  \shortunder{scale\_rows}{scale_rows}{multiply each row of a matrix by a different scalar}\\ 
+  \shortunder{scale\_cols}{scale_cols}{multiply each column of a matrix by a different scalar}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A.scale_rows[scale_factors]
+A.scale_cols[scale_factors]
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: numerical matrices (full or sparse).
+    \vname{scale_factors}: numerical vector (full).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+These methods lets to modify in place a matrix A (says of size $m \times n$) by scaling 
+(e.g. multiplying by a scalar) either its rows or its columns. When scaling the rows 
+\verb+scale_factors+ should be a vector with $m$ elements and when scaling the columns
+ \verb+scale_factors+ should be a vector with $n$ elements.
+
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+\begin{program}\HCode{A=rand(2,3) \Hnewline
+A.scale_rows[[0.5,2]]; A\Hnewline
+A.scale_cols[[0.5,2,4]]; A}
+\end{program} 
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+% \manlink{find}{find}
+\end{manseealso}
+
