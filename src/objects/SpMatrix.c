@@ -2120,34 +2120,31 @@ int nsp_sprowmatrix_isreal(const NspSpRowMatrix *A, int strict)
 /**
  * nsp_sprowmatrix_sum:
  * @A: 
- * @flag: 
+ * @dim: 
  * 
- * Sum =nsp_mat_sum(A ,B])
+ * Sum =nsp_mat_sum(A ,dim)
  *     A is unchanged 
- * if B= 'c' the sum for the column indices is computed 
+ * if dim= 2 the sum for the column indices is computed 
  *       and a column vector is returned. 
- * if B= 'r' the sum for the row indices is computed 
+ * if dim= 1 the sum for the row indices is computed 
  *       and a Row vector is returned.
- * if B= 'f' the full sum is computed 
+ * if dim=0 the full sum is computed 
  * 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag)
+NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, int dim)
 {
   NspSpColMatrix *loc=NULL;
-  switch ( flag[0]) 
+  switch ( dim ) 
     {
-    case 'f':
-    case 'F':
-      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,flag); break;
-    case 'r':
-    case 'R':
-      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,"c"); break;
-    case 'c':
-    case 'C':
-      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,"r"); break;
+    case 0:
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,0); break;
+    case 1:
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,2); break;
+    case 2:
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,1); break;
     }
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
@@ -2175,32 +2172,31 @@ NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag)
 /**
  * nsp_sprowmatrix_maxi:
  * @A: 
- * @flag: 
+ * @dim: 
  * @Imax: 
  * @lhs: 
  * 
- * [max,imax]=max(A,'c'|'r'|'g')
- * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ * [max,imax]=max(A,dim=0|1|2)
+ * Max =nsp_mat_maxi(A,dim,Imax,lhs)
  *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
+ * if dim=2 the max for the column indices is computed 
  *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
+ * if dim=1 the max for the row indices is computed 
  *       and a Row vector is returned.
- * if B= 'f' the maximum 
+ * if dim=0 the maximum 
  * Imax is created if lhs == 2 
  * Note that Imax is a full matrix XXX not a good idea ? 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, int dim, NspMatrix **Imax, int lhs)
 {
   NspSpColMatrix *loc=NULL;
-  switch (flag[0]) 
+  switch (dim) 
     {
-    case 'f':
-    case 'F':
-      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,flag,Imax,lhs);
+    case 0:
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,0,Imax,lhs);
       /* Imax is for the transpose */
       if ( lhs == 2)
 	{
@@ -2210,12 +2206,10 @@ NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **
 	  (*Imax)->R[0]= rb +1 + cb*A->m;
 	}
       break;
-    case 'r':
-    case 'R':
-      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,"c",Imax,lhs);break;
-    case 'c':
-    case 'C': 
-      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,"r",Imax,lhs);break;
+    case 1:
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,2,Imax,lhs);break;
+    case 2:
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,1,Imax,lhs);break;
     }
   if ( lhs == 2 )
     {
@@ -2229,32 +2223,31 @@ NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **
 /**
  * nsp_sprowmatrix_mini:
  * @A: 
- * @flag: 
+ * @dim: 
  * @Imax: 
  * @lhs: 
  * 
- * [max,imax]=max(A,'c'|'r'|'g')
+ * [max,imax]=max(A,dim=0|1|2 or 'c'|'r'|'g')
  * Max =nsp_mat_mini(A,B,Imax,lhs)
  *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
+ * if dim= 2 or 'c' the max for the column indices is computed 
  *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
+ * if dim= 1 or 'r' the max for the row indices is computed 
  *       and a Row vector is returned.
- * if B= 'f' the minimum 
+ * if dim= 0 or 'f' the minimum 
  * Imax is created if lhs == 2 
  * Note that Imax is a full matrix XXX not a good idea ? 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, int dim, NspMatrix **Imax, int lhs)
 {
   NspSpColMatrix *loc=NULL;
-  switch (flag[0]) 
+  switch (dim) 
     {
-    case 'f':
-    case 'F':
-      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,flag,Imax,lhs);
+    case 0:
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,0,Imax,lhs);
       /* Imax is for the transpose */
       if ( lhs == 2)
 	{
@@ -2264,12 +2257,10 @@ NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, char *flag, NspMatrix **
 	  (*Imax)->R[0]= rb +1 + cb*A->m;
 	}
       break;
-    case 'r':
-    case 'R':
-      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,"c",Imax,lhs);break;
-    case 'c':
-    case 'C': 
-      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,"r",Imax,lhs);break;
+    case 1:
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,2,Imax,lhs);break;
+    case 2:
+      loc = nsp_spcolmatrix_mini((NspSpColMatrix *)A,1,Imax,lhs);break;
     }
   if ( lhs == 2 )
     {
