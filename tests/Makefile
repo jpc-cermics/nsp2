@@ -10,6 +10,7 @@ TESTS= \
 	env.dia \
 	extract.dia \
 	fft.dia \
+	fftnew.dia \
 	function.dia \
 	grand.dia \
 	gsort-nsp.dia \

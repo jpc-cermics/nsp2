@@ -1740,14 +1740,16 @@ static int int_nsp_rot(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Fft_func[]={
-    {"fft_m_m", int_nsp_fft_deprecated},
+    {"fft_m", int_nsp_fftnew},
     {"fft_deprecated_m_m", int_nsp_fft_deprecated},
     {"fftnew_m", int_nsp_fftnew},
     {"ifftnew_m", int_nsp_ifftnew},
-    {"fft2_m_m", int_nsp_fft2_deprecated},
+    {"ifft_m", int_nsp_ifftnew},
+    {"fft2_m", int_nsp_fft2new},
     {"fft2_deprecated_m_m", int_nsp_fft2_deprecated},
     {"fft2new_m", int_nsp_fft2new},
     {"ifft2new_m", int_nsp_ifft2new},
+    {"ifft2_m", int_nsp_ifft2new},
     {"fftshift_m", int_nsp_fftshift},
     {"ifftshift_m", int_nsp_ifftshift},
     {"fliplr_m", int_nsp_fliplr},
