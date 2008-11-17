@@ -103,439 +103,6 @@ static int nsp_rand_discrete(double *p, double *q, double *Res, int *key, int n,
 }
 
 
-static int int_binold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int iA, i;
-  double B;
-  if ( rhs != suite + 1) 
-    { Scierror("Error: Missing N and P for Binomial law\n");return RET_BUG;}
-  if (GetScalarInt(stack,suite,&iA) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( B < 0.0 || B > 1.0 ) 
-    {
-      Scierror("Error: P is not in [0,1] \n");
-      return RET_BUG;
-    }
-  if ( iA < 0 ) 
-    {
-      Scierror("Error: N < 0 \n");  return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignbin(&iA,&B);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}  
-
-
-static int int_betold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B,minlog=1.e-37;
-  if ( rhs != suite + 1) 
-    { Scierror("Error: Missing A and B for beta law\n");return RET_BUG;}
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( A < minlog || B < minlog)
-    {
-      Scierror("Error:  grand(...,'bet',..): A or B < %f \n",minlog);
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)  M->R[i]= rand_genbet(&A,&B);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}  
-
-static int int_fold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B;
-  if ( rhs != suite + 1) 
-    { Scierror("Error: Missing Dfn and Dfd for F law\n");return RET_BUG;}
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  
-  if ( A <= 0.0 || B <= 0.0)
-    {
-      Scierror("Error: non positive freedom degrees !\n");
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genf(A,B);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_gamold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B;
-  if ( rhs != suite + 1) 
-    /*  ETRE PLUS CONSISTANT ICI : choisir entre shape , scale ou
-     * bien A et R (idem pour le man)
-     */
-    { Scierror("Error: Missing shape and scale for Gamma law\n");return RET_BUG;}
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( (A) <= 0.0 ||  (B) <= 0.0 )
-    {
-      Scierror("Error: grand(..'gam',A,R) : A (=%g) <= 0.0 or R (=%g) <= 0.0 \n",A,B); return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++) 
-    {
-      /** WARNING : order is changed in parameters for 
-       *    compatibility between Rand(...'gam',..) and cdfgam 
-       **/
-      M->R[i]= rand_gengam(B,A);
-    }
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_norold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B;
-  if ( rhs != suite + 1) 
-    { Scierror("Error: Missing Av and Sd for Normal law\n");return RET_BUG;}
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( B < 0 ) 
-    {  Scierror("Error: SD < 0.0 \n");return RET_BUG;}
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(A,B); }
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_nbnold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i, iA;
-  double B;
-  if ( rhs != suite + 1) 
-    { Scierror("Error: Missing N and P for Negative Binomial law\n");return RET_BUG;}
-  if (GetScalarInt(stack,suite,&iA) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( B < 0.0 || B > 1.0 ) 
-    {
-      Scierror("Error: P is not in [0,1] \n");
-      return RET_BUG;
-    }
-  if ( iA < 0 ) 
-    {
-      Scierror("Error: N < 0 \n");
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)   M->R[i]= (double) rand_ignnbn(iA,B);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_nchold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B;
-  if ( rhs != suite + 1) 
-    {  Scierror("Error: Missing Df and Xnonc for non-central chi-square law\n");return RET_BUG;}
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if ( A < 1.0 || B < 0.0 )
-    {
-      Scierror("Error: DF < 1 or XNONC < 0 \n");
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_gennch(&A,&B);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_nfold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A,B,C;
-  if ( rhs != suite + 2) 
-    { 
-      Scierror("Error: Missing Dfn, Dfd and Xnonc for non-central F law\n");
-      return RET_BUG;
-    }
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
-  if (GetScalarDouble(stack,suite+2,&C) == FAIL) return RET_BUG;      
-  if ( A < 1.0 || B < 0.0 || C < 0.0 ) 
-    {
-      Scierror("Error: DF < 1.0 or DF <= 0.0 or Xnonc < 0.0 \n");
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_gennf(&A,&B,&C);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_chiold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A;
-  if ( rhs != suite ) 
-    { Scierror("Error: Missing Df for chi-square law\n");
-    return RET_BUG;
-    }
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if  ( A <= 0.0)
-    {
-      Scierror("Error: Rand: DF <= 0 \n");return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_genchi(A);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_poiold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A;
-  if ( rhs != suite ) 
-    { 
-      Scierror("Error: Missing Av for Poisson law\n"); return RET_BUG; 
-    }
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if ( A < 0.0 )
-    {
-      Scierror("Error: Av < 0 \n"); return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(A);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_expold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *M;
-  int i;
-  double A;
-  if ( rhs != suite ) 
-    { 
-      Scierror("Error: Missing Av for exponential law\n");
-      return RET_BUG;
-    }
-  if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
-  if ( A < 0.0 ) 
-    {
-      Scierror("Error: option 'exp' Av  < 0.0 !\n");
-      return RET_BUG;
-    }
-  if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
-  for ( i=0 ; i < M->mn ; i++)  M->R[i] = rand_genexp(A);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
-
-static int int_mulold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *P,*B=NULL;
-  int N, *I=NULL, i,nn,ncat;
-  double ptot;
-
-  if ( suite != 3 || rhs != 4 ) 
-    { 
-      Scierror("Error: bad call for MULtinomial distribution \n");
-      return RET_BUG;
-    }
-
-  if ( ResL != 1 || ResC != 1 )
-    { 
-      Scierror("Error: First argument for 'mul' option must be the number of random deviate \n"); 
-      return RET_BUG; 
-    }
-
-  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
-
-  if ( GetScalarInt(stack,3,&N) == FAIL ) return RET_BUG;      
-  if ((P = GetMat(stack,4)) == NULLMAT) return RET_BUG;
-  ncat = P->mn+1;
-  if ((B = nsp_matrix_create(NVOID,'r',ncat,nn))== NULLMAT) return RET_BUG;
-  if ( N < 0 ) 
-    {
-      Scierror("Error: N < 0 \n"); return RET_BUG;
-    }
-  if ( ncat <= 1) 
-    {
-      Scierror("Error: Ncat <= 1 \n"); return RET_BUG;
-    }
-  ptot = 0.0;
-  for ( i= 0 ; i < ncat -1 ; i++ )
-    {
-      if ( P->R[i] < 0 ||  P->R[i]  > 1 ) 
-	{
-	  Scierror("Error: P(%d)=%f is not a in [0,1] \n",P->R[i],i+1);
-	  return RET_BUG;
-	}
-      ptot +=  P->R[i];
-    }
-  if ( ptot > 0.9999) 
-    {
-      Scierror("Error: Sum of P(i) > 1 \n");
-      return RET_BUG;
-    }
-  I = (int *)  B->R;
-  for ( i=0 ; i < nn ; i++)  rand_genmul(&N,P->R,&ncat,I + ncat*i);
-  B->convert = 'i';
-  Mat2double(B);
-  MoveObj(stack,1,(NspObject *) B);
-  return 1;
-}
-
-static int int_mnold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *Mean,*Cov,*Work,*Parm,*Res;
-  int i, nn,ierr,mp;
-
-  if ( suite != 3 || rhs != 4 ) 
-    { 
-      Scierror("Error: bad call for multinormal distribution \n");
-      return RET_BUG;
-    }
-
-  if ( ResL != 1 || ResC != 1 )
-    { 
-      Scierror("Error: First argument for 'mn' option must be the number of random deviate \n"); 
-      return RET_BUG; 
-    }
-
-  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
-
-  if ((Mean = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  if ( Mean->n != 1) { Scierror("Error: Mean must be column vector\n");return RET_BUG;}
-  if ((Cov = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
-  if ( Cov->m != Cov->n ) { Scierror("Error: Cov must be a square matrix\n");return RET_BUG;}
-  if ( Cov->m != Mean->m ) { Scierror("Error: Mean and Cov have incompatible dimensions\n");return RET_BUG;}
-  
-  if ( Cov->m <= 0 ) 
-    {
-      Scierror("Error: Mean and Cov are of null size\n");
-      return RET_BUG;
-    }
-  
-  if ((Res = nsp_matrix_create(NVOID,'r',Cov->m,nn))== NULLMAT) return RET_BUG;
-  if ((Work = nsp_matrix_create(NVOID,'r',Cov->m,1))== NULLMAT) return RET_BUG;
-  mp=Cov->m*(Cov->m+3)/2 + 1;
-  if ((Parm = nsp_matrix_create(NVOID,'r',mp,1))== NULLMAT) return RET_BUG;
-
-  rand_setgmn(Mean->R,Cov->R,&Cov->m,&Cov->n,Parm->R,&ierr);
-  if ( ierr == 1) return RET_BUG;
-  for ( i=0 ; i < nn ; i++) 
-    {
-      rand_genmn(Parm->R,Res->R + Res->m*i,Work->R);
-    }
-  /* Destroy */
-  nsp_matrix_destroy(Work);
-  nsp_matrix_destroy(Parm);
-  MoveObj(stack,1,(NspObject *) Res);
-  return 1;
-}
-
-static int int_markovold_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
-{
-  NspMatrix *P,*X0,*Res,*CumP;
-  int i, nn,j,icur,jj;
-
-  if ( suite != 3 || rhs != 4 ) 
-    { 
-      Scierror("Error: bad call for 'markov' option \n");
-      return RET_BUG;
-    }
-
-  if ( ResL != 1 || ResC != 1 )
-    { 
-      Scierror("Error: First argument for 'markov' option must be the number of random deviates \n"); 
-      return RET_BUG; 
-    }
-
-  if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
-
-  if ((P = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  if ( P->m != P->n  && P->m != 1 ) 
-    { 
-      Scierror("Error: P must be a square matrix or a row vector\n");return RET_BUG;
-    }
-  /* Check that P is a Markov Matrix */
-  for ( i= 0 ; i < P->m ; i++ )
-    {
-      double ptot = 0.0;
-      for ( j = 0 ; j < P->n ; j++ )
-	{
-	  if ( P->R[i+P->m*j] < 0 || P->R[i+P->m*j] > 1 )
-	    {
-	      Scierror("Error: P(%d,%d)=%f is not in the range [0,1]\n",P->R[i+P->m*j],i+1,j+1);
-	      return RET_BUG;
-	    }
-	  ptot += P->R[i+P->m*j];
-	}
-      if ( ptot -1.0 > 1.e-6 ) 
-	{
-	  Scierror("Error: Sum of P(%d,1:%d)=%f > 1 \n",i+1,P->n,ptot);
-	  return RET_BUG;
-	}
-    }
-
-  if ((X0 = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
-  for ( i = 0 ; i < X0->mn ; i++)
-    if ( X0->R[i] -1 < 0 ||X0->R[i] -1 >= P->n ) 
-      {
-	Scierror("Error: X0(%d) must be in the range [1,%d]\n",i,P->n);
-	return RET_BUG;
-      }
-
-  if ((Res = nsp_matrix_create(NVOID,'r',X0->mn,nn))== NULLMAT) return RET_BUG;
-  
-  if ((CumP = nsp_matrix_create(NVOID,'r',P->m,P->n+1))== NULLMAT) return RET_BUG;
-  
-  /** Computing the cumulative sum of the P matrix **/
-  for ( i = 0 ; i < CumP->m ; i++) 
-    {
-      double cumsum=0.0;
-      CumP->R[i] = cumsum;
-      for ( j= 1; j < CumP->n ; j++ ) 
-	{
-	  cumsum += P->R[i + P->m*(j-1)];
-	  CumP->R[i +CumP->m*j] = cumsum;
-	}
-    }
-  /* Now the simulation */
-  for ( jj = 0 ; jj < X0->mn ; jj++) 
-    {
-      icur = X0->R[jj]-1;
-      for ( i=0 ; i < Res->n ; i++) 
-	{
-	  int niv=0;
-	  double rr = rand_ranf();
-	  if ( P->m == 1 ) icur =0;
-	  while ( rr >= CumP->R[icur +CumP->m*niv] && niv < CumP->n ) niv++;
-	  /** projection to avoid boundaries **/
-	  niv = Max(Min(niv,P->n),1); 
-	  Res->R[jj+Res->m*i]= niv ; 
-	  icur=niv-1;
-	}
-    }
-  nsp_matrix_destroy(CumP);
-  MoveObj(stack,1,(NspObject *) Res);
-  return 1;
-}
 
 static int int_markov_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
@@ -2139,32 +1706,17 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
       suite=3;
     }
   
-  if ( strcmp(rand_dist,"bet_old")==0 ) 
-    return int_betold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"bet")==0 ) 
+  if ( strcmp(rand_dist,"bet")==0 ) 
     return int_bet_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"f_old")==0) 
-    return int_fold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"f")==0) 
     return int_f_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"mul_old")==0) 
-    return int_mulold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"mul")==0) 
     return int_mul_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"gam_old")==0) 
-    return int_gamold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"gam")==0) 
     return int_gam_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"nor_old")==0) 
-    return int_norold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"nor")==0) 
     return int_nor_part(stack, rhs, opt, lhs, suite, ResL, ResC);
@@ -2190,26 +1742,14 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
   else if ( strcmp(rand_dist,"smpl")==0)
     return int_smpl_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"nbn_old")==0) 
-    return int_nbnold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"nbn")==0) 
     return int_nbn_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"bin_old")==0) 
-    return int_binold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"bin")==0) 
     return int_bin_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"mn_old")==0) 
-    return int_mnold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"mn")==0) 
     return int_mn_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"markov_old")==0) 
-    return int_markovold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"markov")==0) 
     return int_markov_part(stack, rhs, opt, lhs, suite, ResL, ResC);
@@ -2217,35 +1757,20 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
   else if ( strcmp(rand_dist,"def")==0) 
     return int_def_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"nch_old")==0) 
-    return int_nchold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"nch")==0) 
     return int_nch_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"nf_old")==0) 
-    return int_nfold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"nf")==0) 
     return int_nf_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
-  else if ( strcmp(rand_dist,"chi_old")==0)
-    return int_chiold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
   else if ( strcmp(rand_dist,"chi")==0)
     return int_chi_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"poi_old")==0 )
-    return int_poiold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"poi")==0) 
     return int_poi_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"geom")==0)
     return int_geom_part(stack, rhs, opt, lhs, suite, ResL, ResC);
-
-  else if ( strcmp(rand_dist,"exp_old")==0)
-    return int_expold_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else if ( strcmp(rand_dist,"exp")==0)
     return int_exp_part(stack, rhs, opt, lhs, suite, ResL, ResC);
