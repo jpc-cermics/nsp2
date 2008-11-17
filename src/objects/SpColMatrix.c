@@ -5092,6 +5092,15 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 		    }
 		  
 		}
+	      else
+		{
+		  if ( flag == 1) 
+		    {
+		      ILoc->D[0]->J[icount] = Ai->J[k];
+		      ILoc->D[0]->R[icount] = 2;
+		      icount++;
+		    }
+		}
 	    }
 	  /* Keep inserting remaining arguments for B **/
 	  for ( k = k2 ; k < Bi->size ; k++) 
@@ -5108,6 +5117,15 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 		      icount++;
 		    }
 		}
+	      else
+		{
+		  if ( flag == 1) 
+		    {
+		      ILoc->D[0]->J[icount] = Bi->J[k];
+		      ILoc->D[0]->R[icount] = 1;
+		      icount++;
+		    }
+		}
 	    }
 	  /* count is not set to the proper ith row dimension  */
 	  /* we resize A(i,:) and store Loc  **/
@@ -5120,7 +5138,7 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 	      A->D[i]->R[k] = Loc->D[0]->R[k];
 	    }
 	  /* idem for max */
-	  if ( flag == 1) 
+	  if ( flag == 1)
 	    {
 	      if (nsp_spcolmatrix_resize_col(Indi,i,icount)  == FAIL) goto err;
 	      /* use icopy and dcopy XXXX */
