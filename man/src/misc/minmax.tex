@@ -74,8 +74,8 @@ as described. It is practical since very often one needs both the min and max of
 
 \item \itemdesc{Remarks}
 \begin{itemize} 
-\item Nan values are not taking into account in these functions except
-when the min or max is to be taken among only Nan values. 
+\item Nan values are not taking into account in these functions except when the min or max is to 
+be taken among only Nan values. 
 \item For the first form you can use the syntax \verb+min(A,mode)+ (in place of \verb+min(A,dim=mode)+)
 if you use a string ('row', 'col',..) as dim descriptor (if you use an integer the interpretor will 
 recognize a call of the second form). This could be useful for scilab compatibility.
@@ -84,6 +84,9 @@ recognize a call of the second form). This could be useful for scilab compatibil
 \item \verb+minmax+ is not defined
 \item the second form is (currently) limited to two matrices. Use \verb+max(A1,max(A2,A3))+ to
 simulate \verb+max(A1,A2,A3)+. 
+\item for the second form \verb+[m,km]=min(A1,A2)+, \verb+[M,kM]=max(A1,A2)+ the matrices 
+      of indices $km$ or $kM$ are sparse matrices as  no index (1 or 2) is provided when 
+      both $A1_{i,j}$ and  $A2_{i,j}$ are null.
 \end{itemize}
 \end{itemize}
 
