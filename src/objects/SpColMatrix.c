@@ -7067,43 +7067,44 @@ int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 
 NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
 {
-  double moy=0.0,std=1.0, mcol=m*sparsity;
-  int mres;
-  NspMatrix *icol=NULL;
-  NspSpColMatrix *A=NULL;
-  int k,i;
+  double moy=0, std=1.0, mcol=m*sparsity;
+  int mres, k, i, *icol=NULL;
+  NspSpColMatrix *A=NULLSPCOL;
+
   if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n))== NULLSPCOL ) 
     return NULLSPCOL;
-  if ((icol=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT)
-    {
-      nsp_spcolmatrix_destroy(A);
-      return NULLSPCOL;
-    }
-  for (i=0; i < icol->m ; i++) icol->R[i]=i;
+
+  if ( (icol=nsp_alloc_work_int(m)) == NULL )
+    goto err;
+
   for ( i=0 ; i < A->n ; i++) 
     {
       double u=rand_ranf();
-      mres =(int) ( (u >=0.5) ? ceil(mcol) : floor(mcol));
-      /* XXX should use integers here */
-      /* permute the icol vector */
-      rand_genprm(icol->R,icol->m);
+      mres = (int) ( (u >=0.5) ? ceil(mcol) : floor(mcol));
+      /* make a permutation of (0,1,..,m-1) */
+      nsp_rand_prm(icol, m, 0);
       /* sort the mres first elements */
-      nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
+      nsp_qsort_int(icol,NULL,FALSE,mres,'i');
       /* resize column i */
-      nsp_spcolmatrix_resize_col(A,i,mres);
+      if ( nsp_spcolmatrix_resize_col(A,i,mres) == FAIL )
+	goto err;
+
       for ( k = 0 ; k < A->D[i]->size ; k++) 
-	{
-	  A->D[i]->J[k] = icol->R[k];
-	}
+	A->D[i]->J[k] = icol[k];
       if ( crand == 'n' ) 
 	for (k = 0 ; k < A->D[i]->size ; k++)
-	  A->D[i]->R[k]= rand_gennor(moy,std);
+	  A->D[i]->R[k]= nsp_rand_nor(moy,std);
       else 
 	for (k = 0 ; k < A->D[i]->size ; k++)
 	  A->D[i]->R[k]= rand_ranf();
     }
-  nsp_matrix_destroy(icol);
+  FREE(icol);
   return A;
+
+ err:
+  FREE(icol);
+  nsp_spcolmatrix_destroy(A);
+  return NULLSPCOL;
 }
 
 
@@ -7192,7 +7193,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
 	A->D[j]->J[k] = icol[k];
       if ( crand == 'n' )
 	for ( k = 0 ; k < nnzj ; k++ )
-	  A->D[j]->R[k] = rand_gennor(moy,std);
+	  A->D[j]->R[k] = nsp_rand_nor(moy,std);
       else
 	for ( k = 0 ; k < nnzj ; k++ )
 	  A->D[j]->R[k] = rand_ranf();
