@@ -172,9 +172,9 @@ extern int nsp_spcolmatrix_realpart(NspSpColMatrix *A);
 extern int nsp_spcolmatrix_imagpart(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_isreal(const NspSpColMatrix *A, int strict);
 
-extern NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag); 
-extern NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
-extern NspSpColMatrix *nsp_spcolmatrix_mini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs);
+extern NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, int dim); 
+extern NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, int dim, NspMatrix **Imax, int lhs); 
+extern NspSpColMatrix *nsp_spcolmatrix_mini(NspSpColMatrix *A, int dim, NspMatrix **Imax, int lhs);
 
 extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n); 
 extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n); 

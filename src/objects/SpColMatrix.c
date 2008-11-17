@@ -5390,60 +5390,67 @@ int nsp_spcolmatrix_isreal(const NspSpColMatrix *A, int strict)
 /**
  * nsp_spcolmatrix_sum:
  * @A: a #NspSpColMatrix
- * @flag: 
+ * @dim: 
  * 
- * Sum =nsp_mat_sum(A ,B])
+ * Sum = nsp_spcolmatrix_sum(A ,dim)
  *     A is unchanged 
- * if B= 'c' the sum for the column indices is computed 
+ * if dim= 2 the sum for the column indices is computed 
  *       and a column vector is returned. 
- * if B= 'r' the sum for the row indices is computed 
+ * if dim= 1 the sum for the row indices is computed 
  *       and a Row vector is returned.
- * if B= 'f' the full sum is computed 
+ * if dim= 0 the full sum is computed 
  * 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
+NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, int dim)
 {
   double S;
   doubleC SC,C;
   NspSpColMatrix *Sum=NULL;
   int i,k,count;
   int inc=1;
+
   if ( A->m ==0 || A->n == 0) 
     {
-      if ( flag[0] == 'F' || flag[0]=='f' )
+      if ( dim == 0 )
 	{
-	  if ((Sum =nsp_spcolmatrix_create(NVOID,'r',1,1)) == NULLSPCOL) return NULLSPCOL;
+	  if ((Sum = nsp_spcolmatrix_create(NVOID,'r',1,1)) == NULLSPCOL) 
+	    return NULLSPCOL;
 	  if (nsp_spcolmatrix_resize_col(Sum,0,1)== FAIL) return NULLSPCOL;
-	  Sum->D[0]->J[0] =0;
-	  Sum->D[0]->R[0] =0.00;
+	  Sum->D[0]->J[0] = 0;
+	  Sum->D[0]->R[0] = 0.0;
 	  return Sum;
 	}
       else 
 	return nsp_spcolmatrix_create(NVOID,'r',0,0);
     }
-  switch (flag[0]) 
+
+  switch (dim)
     {
-    case 'f': 
-    case 'F':
-  
-      if ((Sum =nsp_spcolmatrix_create(NVOID,A->rc_type,1,1)) == NULLSPCOL) return(NULLSPCOL);
-      switch ( A->rc_type) 
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+
+    case 0:   /* sum of all elements */
+
+      if ((Sum =nsp_spcolmatrix_create(NVOID,A->rc_type,1,1)) == NULLSPCOL) 
+	return NULLSPCOL;
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
 	  S=0;
 	  for ( i= 0 ; i < A->n ; i++ ) 
 	    S +=nsp_dsum(&A->D[i]->size,A->D[i]->R,&inc);
 	  if ( S != 0) 
 	    {
-	      if (nsp_spcolmatrix_resize_col(Sum,0,1)== FAIL) return NULLSPCOL;
+	      if (nsp_spcolmatrix_resize_col(Sum,0,1) == FAIL) return NULLSPCOL;
 	      Sum->D[0]->R[0] = S;
 	      Sum->D[0]->J[0] = 0;
 	    }
-	  break;
-	case 'c' :  
+	}
+      else
+	{
 	  SC.r = SC.i = 0.0;
 	  for ( i= 0 ; i < A->n ; i++ ) 
 	    { 
@@ -5452,26 +5459,24 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
 	    }
 	  if ( SC.r  != 0.0 ||  SC.i != 0.0) 
 	    {
-	      if (nsp_spcolmatrix_resize_col(Sum,0,1)== FAIL) return NULLSPCOL;
+	      if (nsp_spcolmatrix_resize_col(Sum,0,1) == FAIL) return NULLSPCOL;
 	      Sum->D[0]->C[0] = SC;
 	      Sum->D[0]->J[0] = 0;
 	    }
-	  break;
 	}
       break;
-    case 'c':
-    case 'C':
-      
+
+    case 2:   /* sum of the rows */
+
       if ((Sum =nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,1)) == NULLSPCOL) return NULLSPCOL;
       if (nsp_spcolmatrix_resize_col(Sum,0,A->m)== FAIL) return NULLSPCOL;
       for ( k=0 ; k < Sum->D[0]->size ; k++) 
 	{
 	  Sum->D[0]->J[k]=k;
-	  switch ( A->rc_type ) 
-	    {
-	    case 'r' :  Sum->D[0]->R[k]=0.0;break;
-	    case 'c' :  Sum->D[0]->C[k].r = Sum->D[0]->C[k].i =0.0;break;
-	    }
+	  if ( A->rc_type == 'r' ) 
+	    Sum->D[0]->R[k]=0.0;
+	  else
+	    Sum->D[0]->C[k].r = Sum->D[0]->C[k].i = 0.0;
 	}
       for ( i = 0 ; i < A->n ; i++) 
 	{
@@ -5508,8 +5513,9 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
 	  if (nsp_spcolmatrix_resize_col(Sum,0,A->m-ndel ) == FAIL) return NULLSPCOL;
 	}
       break;
-    case 'r':
-    case 'R':
+
+
+    case 1:    /* sum of the cols */
   
       if ((Sum =nsp_spcolmatrix_create(NVOID,A->rc_type,1,A->n)) == NULLSPCOL) return NULLSPCOL;
       switch ( A->rc_type) 
@@ -5572,7 +5578,7 @@ typedef int (*SpMaMi3) (NspSpColMatrix *A,int j,NspSpColMatrix *M,int *count);
  * utility 
  **/
 
-static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
+static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, int dim, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
 {
   NspSpColMatrix *M=NULL;
   int j;
@@ -5582,10 +5588,10 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
       return nsp_spcolmatrix_create(NVOID,'r',0,0);
     }
-  switch (flag[0]) 
+  switch (dim) 
     {
-    case 'f': 
-    case 'F':
+
+    case 0: 
       if ((M =nsp_spcolmatrix_create(NVOID,A->rc_type,1,1)) == NULLSPCOL) return(NULLSPCOL);
       imax = (*F1)(A,M);
       /* Check if M was properly resized **/
@@ -5598,8 +5604,8 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
 	  (*Imax)->R[0] = imax;
 	}
       break;
-    case 'r':
-    case 'R':
+
+    case 1:
       if ((M =nsp_spcolmatrix_create(NVOID,A->rc_type,1,A->n)) == NULLSPCOL)
 	return NULLSPCOL;
       if ( lhs == 2) 
@@ -5617,8 +5623,8 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
 	    (*F2)(A,j,M);
 	  }
       break ;
-    case 'c':
-    case 'C':
+
+    case 2:
       if ((M =nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,1)) == NULLSPCOL) 
 	return NULLSPCOL;
       if (nsp_spcolmatrix_resize_col(M,0,A->m) == FAIL) return NULLSPCOL;
@@ -5642,6 +5648,7 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
       if (nsp_spcolmatrix_resize_col(M,0,count) == FAIL) return NULLSPCOL;
       break;
     }
+
   return M;
 }
 
@@ -5837,27 +5844,27 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 /**
  * nsp_spcolmatrix_maxi:
  * @A: a #NspSpColMatrix
- * @flag: a string among  "c", "r" and "g"
+ * @dim: an integer among  0, 1 or 2
  * @Imax: a #NspMatrix 
  * @lhs: an integer 
  * 
- * [max,imax]=max(A,'c'|'r'|'g')
- * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ * [max,imax]=max(A,dim=dim)
+ * Max =nsp_spcolmatrix_maxi(A,dim,Imax,lhs)
  *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
+ * if dim=2 the max along the 2 dimension is computed 
  *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
+ * if dim=1 the max along the first dimension is computed 
  *       and a Row vector is returned.
- * if B= 'f' the maximum 
+ * if dim=0 the maximum 
  * Imax is created if lhs == 2 
  * Note that Imax is a full matrix. 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, int dim, NspMatrix **Imax, int lhs)
 {
-  return SpColMaxiMini(A,flag,Imax,lhs,SpColMaxi1,SpColMaxi2,SpColMaxi3);
+  return SpColMaxiMini(A,dim,Imax,lhs,SpColMaxi1,SpColMaxi2,SpColMaxi3);
 }
 
 
@@ -6053,27 +6060,28 @@ static int SpColMini2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 /**
  * nsp_spcolmatrix_mini:
  * @A: a #NspSpColMatrix
- * @flag: a string among  "c", "r" and "g"
+ * @dim: an integer among  0, 1 or 2
  * @Imax: a #NspMatrix 
  * @lhs: an integer 
  * 
- * [max,imax]=max(A,'c'|'r'|'g')
- * Min =nsp_mat_mini(A,B,Imax,lhs)
+ * [min,imin]=min(A,dim=dim)
+ * Min =nsp_spcolmatrix_maxi(A,dim,Imin,lhs)
  *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
+ * if dim=2 the min along the 2 dimension is computed 
  *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
+ * if dim=1 the min along the first dimension is computed 
  *       and a Row vector is returned.
- * if B= 'f' the minimum 
- * Imax is created if lhs == 2 
- * Note that Imax is a full matrix. 
+ * if dim=0 the minimum
+ *
+ * Imin is created if lhs == 2 
+ * Note that Imin is a full matrix. 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_mini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspSpColMatrix *nsp_spcolmatrix_mini(NspSpColMatrix *A, int dim, NspMatrix **Imin, int lhs)
 {
-  return SpColMaxiMini(A,flag,Imax,lhs,SpColMini1,SpColMini2,SpColMini3);
+  return SpColMaxiMini(A,dim,Imin,lhs,SpColMini1,SpColMini2,SpColMini3);
 }
 
 

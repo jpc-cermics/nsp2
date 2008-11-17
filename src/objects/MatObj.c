@@ -2015,6 +2015,13 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
       /* Maxi(A1,A2,....,An)   */
       NspMatrix *Ind=NULL;
       int flag = 0, i;
+
+      if ( opt > 0 ) 
+	{
+	  Scierror ("Error:\t named optional argument not supported in this form of %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+
       if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
 	return RET_BUG;
       NSP_OBJECT (A)->ret_pos = 1;

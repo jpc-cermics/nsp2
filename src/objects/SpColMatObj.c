@@ -1842,22 +1842,45 @@ static int int_spcolmatrix_div_el_sp_m(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-typedef NspSpColMatrix *(*SuPro) (NspSpColMatrix *A,char *);
+typedef NspSpColMatrix *(*SuPro) (NspSpColMatrix *A, int dim);
 
 static int int_spcolmatrix__sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
-  char *str;
+  int dim=0;
   NspSpColMatrix *Res,*HMat; 
   CheckRhs(1,2);
+  CheckOptRhs(0, 1)
   CheckLhs(1,1);
+
   if ((HMat = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-  if ( rhs == 2) 
+
+  if (rhs == 2)
     {
-      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
     }
-  else 
-    { str = "F"; }
-  if ((Res= (*F)(HMat,str)) == NULLSPCOL) return RET_BUG;
+
+  if ((Res= (*F)(HMat,dim)) == NULLSPCOL) 
+    return RET_BUG;
+
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -1944,33 +1967,53 @@ static int int_spcolmatrix_sum(Stack stack, int rhs, int opt, int lhs)
  * XXXXXX : pas fini 
  */
 
-typedef NspSpColMatrix *(*SpMiMax) (NspSpColMatrix *A,char *,NspMatrix **Imax,int lhs);
+typedef NspSpColMatrix *(*SpMiMax) (NspSpColMatrix *A,int dim,NspMatrix **Imax,int lhs);
 
 static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F,int minmax)
 {
-  char *str;
+  int dim=0;
   NspSpColMatrix *A,*M;
   NspMatrix *Imax;
-  if ( rhs < 1) 
-    { 
-      Scierror("Error:\t Rhs must be >= 1 for function %s\n",NspFname(stack));
-      return RET_BUG;
-    }
+  CheckRhs(1,2);  /* the form max(A1,A2,..) is currently limited to 2 matrices */
   CheckLhs(1,2);
-  if ( rhs == 1 || ( rhs == 2 && IsSMatObj(stack,2)  ))
+
+  if ( rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)  ))
     {
-      /* maxi(A) or maxi(A,'c' or 'r' or 'F') where A is a matrix 
-       * idem for mini 
-       * XXXXXX : Attention pas fini ici il faut un getrealsp 
-       */
+      /* max(A), or max(A,str) or max(A,dim=options) idem for min */
+      /* XXXXXX : Attention pas fini ici il faut un getrealsp         */ 
+      /* en attendant je mets un test */
       if ((A = GetSpCol(stack,1)) == NULLSPCOL) return RET_BUG;
-      if ( rhs == 2) 
-	{
-	  if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ( A->rc_type != 'r' )
+	{ 
+	  Scierror("Error:\t sparse matrix should real for function %s\n",NspFname(stack));
+	  return RET_BUG;
 	}
-      else 
-	{ str = "F"; }
-      if (( M= (*F)(A,str,&Imax,lhs)) == NULLSPCOL) return RET_BUG;
+ 
+      if (rhs == 2 )
+	{
+	  if ( opt == 0 )
+	    {
+	      if ( GetDimArg(stack, 2, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  else /* opt == 1 */
+	    {
+	      nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+				  { NULL,t_end,NULLOBJ,-1}};
+	      if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  if ( dim == -1 )
+	    {
+	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	      return RET_BUG;
+	    }
+	  if ( dim == -2 )  /* matlab compatibility flag */
+	    dim = GiveMatlabDimFlag(A);
+	}
+
+      if (( M= (*F)(A,dim,&Imax,lhs)) == NULLSPCOL) return RET_BUG;
+
       MoveObj(stack,1,NSP_OBJECT(M));
       if ( lhs == 2)
 	{
@@ -1979,10 +2022,11 @@ static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax
     }
   else
     {
+      /* max(A1,A2)   */
       int index= (lhs == 2 ) ? 1 : 0, err;
       NspSpColMatrix *Index=NULL;
       if ((A = GetSpColCopy(stack,1))  == NULLSPCOL) return RET_BUG;
-      if ((M = GetSpColCopy(stack,2))  == NULLSPCOL) return RET_BUG;
+      if ((M = GetSpCol(stack,2))  == NULLSPCOL) return RET_BUG;
       Index = nsp_spcolmatrix_maximinitt_g(A,M,index,minmax,&err);
       if (err == TRUE ) return RET_BUG;
       NSP_OBJECT(A)->ret_pos = 1;
