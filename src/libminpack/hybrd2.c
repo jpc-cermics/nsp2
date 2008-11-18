@@ -69,7 +69,7 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec,
   int  i__1, iter, msum, iflag, jeval, ncsuc, nslow1, nslow2,  ncfail;
   double fnorm;
   
-  *info = 0;
+  *info = 1;
   iflag = 0;
   *nfev = 0;
 
@@ -77,6 +77,7 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec,
 
   if (*n <= 0 || *maxfev <= 0 || *ml < 0 || *mu < 0 || *ldfjac < *n )
     {
+      *info=0;
       goto L300;
     }
 
