@@ -27,22 +27,33 @@
   number $k$. The matrix element $A_{i,j}$ is located on the diagonal number $j-i$. So main 
   diagonal is numbered $0$, the diagonal number $1$ and $-1$ are respectively located just 
   upper and under the main diagonal, etc...
-$$
-\includegraphics[width=8cm]{diagonal} 
-$$
+  $$
+  \includegraphics[width=8cm]{diagonal} 
+  $$
+  More precisely, if $A$ is a $m \times n$ then   $B = tril(A,k)$ and $C=triu(A,k)$ are both $m \times n$ matrices and:
 
- More precisely, if $A$ is a $m \times n$ then 
-  $B = tril(A,k)$ and $C=triu(A,k)$ are both $m \times n$ matrices and:
-  $$
-   \begin{array}{l}
-      B_{i,j} = \left\{ \begin{array}{l} A_{i,j} \mbox{ if } j-i \le k \\
-                                           0    \mbox{ otherwise}
-                       \end{array} \right.   \\
-      C_{i,j} = \left\{ \begin{array}{l} A_{i,j} \mbox{ if } j-i \ge k \\
-                                           0    \mbox{ otherwise}
-                       \end{array} \right. 
-   \end{array}
-  $$
+%%   $$
+%%   \begin{array}{l}
+%%     B_{i,j} = \left\{ \begin{array}{l} A_{i,j} \mbox{ if } j-i \le k \\
+%%       0    \mbox{ otherwise}
+%%     \end{array} \right.   \\
+%%     C_{i,j} = \left\{ \begin{array}{l} A_{i,j} \mbox{ if } j-i \ge k \\
+%%       0    \mbox{ otherwise}
+%%     \end{array} \right. 
+%%   \end{array}
+%%   $$
+
+  \begin{align*}
+  B_{i,j} &= 
+  \begin{cases}
+    A_{i,j} & \text{ if $j-i \le k$}, \\
+    0  &  \text{ otherwise.}
+  \end{cases} \\
+  C_{i,j} &= 
+  \begin{cases}  A_{i,j} &\text{ if $j-i \ge k$}, \\
+      0   & \text{ otherwise}.
+  \end{cases}
+  \end{align*}
 
 \end{mandescription}
 %--example 
