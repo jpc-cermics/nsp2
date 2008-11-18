@@ -1,0 +1,82 @@
+\mansection{diag}
+\begin{mandesc}
+  \short{diag}{extract a diagonal of a matrix or build a diagonal matrix from a vector}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  // form 1
+  A = diag(v)
+  A = diag(v,k)
+
+  // form 2
+  v = diag(A)
+  v = diag(A,k)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} : matrix (full or sparse)
+    \vname{v} : vector (full or sparse)
+    \vname{k} : optional argument, must be an integer (default is $0$)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+  This function has two different behaviors depending if the first argument is a vector
+  (call it form 1) or a matrix which is not a vector (called form 2).
+  For both forms of this function, the optional argument $k$ have the same meaning and
+ corresponds to the choosen diagonal number (see definition and a figure on the 
+ \manlink{tril, triu}{tril} help page).
+
+\begin{itemize}
+\item \itemdesc{form 1}
+   We get this behavior when the first argument, says \verb+v+ is detected as a vector, that is,
+ it is a $m \times n$ matrix (full or sparse) with $m$ or $n$ equal to $1$. In this case the
+ output  \verb+A+ is a matrix (full or sparse) with the $k$ th diagonal filled with the vector
+ \verb+v+. If  \verb+v+ has $mn$ elements, we get a $p \times p$ (square) matrix (full or sparse)
+ with $p=mn + | k |$.
+   
+\item \itemdesc{form 2}
+  To have this behavior, the first argument, says \verb+A+ should have been detected as 
+a  $m \times n$ matrix (full or sparse) with both $m$ and $n$ differents of $1$. In this 
+case the function extract the $k$ th diagonal of the matrix $A$ as a column vector (full or sparse).
+\end{itemize}
+
+\itemdesc{Remark:} When $v$ is a sparse vector, we get a sparse matrix $A$ and conversely.
+
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{first form examples}
+  \begin{program}\HCode{v=rand(4,1) \Hnewline
+diag(v) \Hnewline
+diag(v,-1) \Hnewline
+diag(v,1)\Hnewline
+// build the 1d discrete laplacien matrix (as a full matrix)\Hnewline
+n = 5;\Hnewline
+v = ones(n-1,1);\Hnewline
+A = 2*eye(n) - diag(v,1) + diag(v,-1)\Hnewline
+// build the 1d discrete laplacien matrix (as a sparse matrix)\Hnewline
+n = 5;\Hnewline
+v = sparse(ones(n-1,1));\Hnewline
+A = 2*speye(n,n) - diag(v,1) + diag(v,-1)}
+\end{program}
+
+\paragraph{second form examples}
+  \begin{program}\HCode{A=rand(4,5) \Hnewline
+      diag(A) \Hnewline
+      diag(A,-1) \Hnewline
+      diag(A,1)}
+  \end{program}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{eye}{eye}, \manlink{tril}{tril}, \manlink{triu}{triu}
+\end{manseealso}
+
