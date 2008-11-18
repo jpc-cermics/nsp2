@@ -157,6 +157,8 @@ extern sci_interface VField_Interf;extern interface_info VField_Interf_Info;
 extern sci_interface webkit_Interf;extern interface_info webkit_Interf_Info;
 #endif 
 
+extern sci_interface libminpack_Interf;extern interface_info libminpack_Interf_Info;
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -275,6 +277,7 @@ InterfTab Interfaces[]={
 #ifdef HAVE_WEBKIT
   {webkit_Interf,webkit_Interf_Info},
 #endif 
+  {libminpack_Interf,libminpack_Interf_Info},
   {NULL,NULL}
 }; 
 
