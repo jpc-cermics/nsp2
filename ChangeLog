@@ -1,3 +1,7 @@
+2008-11-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/libminpack added 
+	
 2008-09-04  Pincon Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/objects/MatOps.c (nsp_mat_complex): add complex

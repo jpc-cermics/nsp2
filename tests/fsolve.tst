@@ -20,8 +20,8 @@ testf=['rosenbrock';
        'fsol1'];
 
 if ~c_link('minpack_rosenbrock') 
-  link('nsp','minpack_'+testf);
-  link('nsp','minpack_jac_'+testf);
+  link('nsp',['minpack_'+testf; 
+	      'minpack_jac_'+testf]);
 end 
 
 // rosenbrock function.
