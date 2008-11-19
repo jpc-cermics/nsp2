@@ -56,6 +56,7 @@ static int hybr_lfcn(const int *m,const int *n, double *x, double *fvec, int *if
 static int hybr_ljac(const int *m,const int *n,double *x,double *fjac,int *ldfjac,int *iflag,void *data);
 
 static NspObject *get_function(Stack stack, int pos,HYBR_ftype type,hybr_data *data);
+static NspObject *get_function_obj(Stack stack, int pos,NspObject *obj,HYBR_ftype type,hybr_data *data);
 
 /*  find a zero of a system of n nonlinear functions 
  *  in n variables. 
@@ -67,6 +68,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   NspMatrix *scale=NULLMAT;
   NspObject *fcn,*jac=NULLOBJ,*args=NULLOBJ;
   nsp_option opts[] ={{"args",obj,NULLOBJ,-1},
+		      {"jac", obj,NULLOBJ,-1},
 		      {"maxfev",s_int,NULLOBJ,-1},
 		      {"tol",s_double,NULLOBJ,-1},
 		      {"scale",realmat,NULLOBJ,-1},
@@ -77,24 +79,24 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   double tol;
   hybr_data Hybr_data;
   
-  CheckStdRhs(2,3);
+  CheckStdRhs(2,2);
   CheckLhs(1,3);
-
+    
   tol = sqrt (minpack_dpmpar (&un));
-  /* RhsVar: fsolve(x0,f,jac,tol=,args=) */
-
+  
   if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
   
   if ((fcn = get_function(stack,2,HYBR_fcn,&Hybr_data))==NULL) 
     return RET_BUG;
-  if ( rhs -opt >= 3) 
+  
+  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&maxfev,&tol,&scale,&warn) == FAIL)
+    return RET_BUG;
+
+  if ( jac != NULL )
     {
-      if ((jac = get_function(stack,3,HYBR_jac,&Hybr_data))==NULL) 
+      if ((jac = get_function_obj(stack,opts[1].position,jac,HYBR_jac,&Hybr_data))==NULL) 
 	return RET_BUG;
     }
-  
-  if ( get_optional_args(stack,rhs,opt,opts,&args,&maxfev,&tol,&scale,&warn) == FAIL)
-    return RET_BUG;
 
   if ( X->mn == 0 )  
     {
@@ -324,7 +326,7 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
   int warn = TRUE;
   NspObject *fcn,*jac=NULLOBJ,*args=NULLOBJ;
   nsp_option opts[] ={{ "args",obj,NULLOBJ,-1},
-		      { "m",s_int,NULLOBJ,-1},
+		      { "jac", obj,NULLOBJ,-1},
 		      { "tol",s_double,NULLOBJ,-1},
 		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -333,9 +335,9 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
   double tol;
   hybr_data Hybr_data;
   
-  CheckStdRhs(2,3);
+  CheckStdRhs(3,3);
   CheckLhs(1,3);
-
+  
   tol = sqrt (minpack_dpmpar (&un));
   /* RhsVar: fsolve(x0,f,jac,tol=,args=) */
 
@@ -343,21 +345,25 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
   
   if ((fcn = get_function(stack,2,HYBR_fcn,&Hybr_data))==NULL) 
     return RET_BUG;
-  if ( rhs -opt >= 3) 
+  
+  if (GetScalarInt(stack,3,&m) == FAIL) return RET_BUG;
+  
+  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&tol,&warn) == FAIL) return RET_BUG;
+
+  if ( jac != NULL )
     {
-      if ((jac = get_function(stack,3,HYBR_jac,&Hybr_data))==NULL) 
+      if ((jac = get_function_obj(stack,opts[1].position,jac,HYBR_jac,&Hybr_data))==NULL) 
 	return RET_BUG;
     }
-  
-  if ( get_optional_args(stack,rhs,opt,opts,&args,&m,&tol,&warn) == FAIL) return RET_BUG;
-  if ( hybr_prepare(m,X->mn,fcn,jac,args,&Hybr_data)==FAIL) return RET_BUG;
 
-  if ( m == -1 ) 
+  if ( hybr_prepare(m,X->mn,fcn,jac,args,&Hybr_data)==FAIL) return RET_BUG;
+  
+  if ( m < 0  ) 
     {
-      Scierror("Error: you must give the number of equations for least square\n");
+      Scierror("Error: the number of equations must be positive in %s\n", NspFname(stack));
       goto bug;
     }
-
+  
   /* m is given try least square
    * i.e we want to minimize the sum of square of the m functions 
    * XXX utiliser directement lmder et lmdif 
@@ -739,10 +745,8 @@ static int lmder_fcn(const int *m,const int *n,double *x,double *fvec,double *fj
 
 extern int SearchInDynLinks (char *op, int (**realop)());
 
-static NspObject *get_function(Stack stack, int pos,HYBR_ftype type,hybr_data *data)
+static NspObject *get_function_obj(Stack stack, int pos,NspObject *obj,HYBR_ftype type,hybr_data *data)
 {
-  NspObject *obj;
-  if ( (obj=nsp_get_object(stack,pos)) == NULLOBJ ) return NULLOBJ;
   if ( IsNspPList(obj) )
     {
       /* soft coded function */
@@ -783,6 +787,14 @@ static NspObject *get_function(Stack stack, int pos,HYBR_ftype type,hybr_data *d
     }
   return NULL;
 }
+
+static NspObject *get_function(Stack stack, int pos,HYBR_ftype type,hybr_data *data)
+{
+  NspObject *obj;
+  if ( (obj=nsp_get_object(stack,pos)) == NULLOBJ ) return NULLOBJ;
+  return get_function_obj(stack,pos,obj,type,data);
+}
+
 
 
 /* interface used to call predefined examples
