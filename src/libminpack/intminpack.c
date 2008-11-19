@@ -200,11 +200,11 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 	  break;
 	case 4: 
 	   if (warn)Sciprintf("Stop: iteration is not making good progress, as measured by the improvement from the last" 
-		   "five jacobian evaluations\n");
+		   " five jacobian evaluations\n");
 	  break;
 	case 5 :
 	   if (warn)Sciprintf("Stop: iteration is not making good progress, as measured by the improvement from the last" 
-		   "ten jacobian evaluations\n");
+		   " ten jacobian evaluations\n");
 	  break;
 	default : 
 	  if ( info < 0) 
