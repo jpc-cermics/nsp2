@@ -32,7 +32,7 @@ x =[ -1.2; 1];
 if norm(f) > 1.e-8 then pause;end 
 
 x =[ -1.2; 1];
-[x,f,info]=fsolve(x,'minpack_rosenbrock','minpack_jac_rosenbrock');
+[x,f,info]=fsolve(x,'minpack_rosenbrock',jac='minpack_jac_rosenbrock');
 if norm(f) > 1.e-8 then pause;end 
 
 // It is possible to use 
@@ -64,15 +64,15 @@ x =[ -1.2; 1];
 if norm(f) > 1.e-8 then pause;end 
 
 x =[ -1.2; 1];
-[x,f,info]=fsolve(x,rosenbrock,'minpack_jac_rosenbrock');
+[x,f,info]=fsolve(x,rosenbrock,jac='minpack_jac_rosenbrock');
 if norm(f) > 1.e-8 then pause;end 
 
 x =[ -1.2; 1];
-[x,f,info]=fsolve(x,'minpack_rosenbrock',jac_rosenbrock);
+[x,f,info]=fsolve(x,'minpack_rosenbrock',jac=jac_rosenbrock);
 if norm(f) > 1.e-8 then pause;end 
 
 x =[ -1.2; 1];
-[x,f,info]=fsolve(x,rosenbrock,jac_rosenbrock);
+[x,f,info]=fsolve(x,rosenbrock,jac=jac_rosenbrock);
 if norm(f) > 1.e-8 then pause;end 
 
 //  powell singular function. 
@@ -82,7 +82,7 @@ x =[ 3;-1;0.0; 1];
 if norm(f) > 1.e-8 then pause;end 
 
 x =[ 3;-1;0.0; 1];
-[x,f,info]=fsolve(x,'minpack_powell_singular','minpack_jac_powell_singular');
+[x,f,info]=fsolve(x,'minpack_powell_singular',jac='minpack_jac_powell_singular');
 if norm(f) > 1.e-8 then pause;end 
 
 //     powell badly scaled function. 
@@ -93,7 +93,7 @@ if norm(f) > 1.e-8 then pause;end
 
 
 x= [0.0;1];
-[x,f,info]=fsolve(x,'minpack_powell_badly_scaled','minpack_jac_powell_badly_scaled');
+[x,f,info]=fsolve(x,'minpack_powell_badly_scaled',jac='minpack_jac_powell_badly_scaled');
 if norm(f) > 1.e-8 then pause;end 
 
 
@@ -105,7 +105,7 @@ if norm(f) > 1.e-8 then pause;end
 
 
 x=[ -3;-1;-3;-1];
-[x,f,info]=fsolve(x,'minpack_wood','minpack_jac_wood');
+[x,f,info]=fsolve(x,'minpack_wood',jac='minpack_jac_wood');
 if norm(f) > 1.e-8 then pause;end 
 
 //     helical valley function. */
@@ -115,7 +115,7 @@ x = [-1;0;0];
 if norm(f) > 1.e-8 then pause;end 
 
 x = [-1;0;0];
-[x,f,info]=fsolve(x,'minpack_helical_valley','minpack_jac_helical_valley');
+[x,f,info]=fsolve(x,'minpack_helical_valley',jac='minpack_jac_helical_valley');
 if norm(f) > 1.e-8 then pause;end 
 
 //     watson function.
@@ -127,7 +127,7 @@ if norm(f) > 1.e-8 then pause;end
 
 n=10;
 x=zeros(n,1);
-[x,f,info]=fsolve(x,'minpack_watson','minpack_jac_watson');
+[x,f,info]=fsolve(x,'minpack_watson',jac='minpack_jac_watson');
 if norm(f) > 1.e-8 then pause;end 
   
 //     chebyquad function.
@@ -139,7 +139,7 @@ if norm(f) > 1.e-8 then pause;end
   
 n=5;
 x=(1:n)/(n+1);
-[x,f,info]=fsolve(x,'minpack_chebyquad','minpack_jac_chebyquad');
+[x,f,info]=fsolve(x,'minpack_chebyquad',jac='minpack_jac_chebyquad');
 if norm(f) > 1.e-8 then pause;end 
     
 //     brown almost-linear function.
@@ -151,7 +151,7 @@ if norm(f) > 1.e-8 then pause;end
 
 n=10;
 x=0.5*ones(n,1);
-[x,f,info]=fsolve(x,'minpack_brown','minpack_jac_brown');
+[x,f,info]=fsolve(x,'minpack_brown',jac='minpack_jac_brown');
 if norm(f) > 1.e-8 then pause;end 
 
 //     discrete boundary value and integral equation functions.
@@ -167,9 +167,9 @@ if norm(f) > 1.e-8 then pause;end
 n=10;
 x=(1:n)/(n+1);
 x=(x).*(x-1);
-[x,f,info]=fsolve(x,'minpack_discrete_boundary','minpack_jac_discrete_boundary');
+[x,f,info]=fsolve(x,'minpack_discrete_boundary',jac='minpack_jac_discrete_boundary');
 if norm(f) > 1.e-8 then pause;end 
-[x,f,info]=fsolve(x,'minpack_discrete_integral','minpack_jac_discrete_integral');
+[x,f,info]=fsolve(x,'minpack_discrete_integral',jac='minpack_jac_discrete_integral');
 if norm(f) > 1.e-8 then pause;end 
   
 //     trigonometric function. 
@@ -181,7 +181,7 @@ if norm(f) > 1.e-2 then pause;end
 
 n=10;
 x=ones(n,1)/n;
-[x,f,info]=fsolve(x,'minpack_trigonometric','minpack_jac_trigonometric');
+[x,f,info]=fsolve(x,'minpack_trigonometric',jac='minpack_jac_trigonometric');
 if norm(f) > 1.e-2 then pause;end 
   
 //     variably dimensioned function. 
@@ -193,7 +193,7 @@ if norm(f) > 1.e-8 then pause;end
   
 n=10;
 x= 1 - (1:n)/n;
-[x,f,info]=fsolve(x,'minpack_variably_dimensioned','minpack_jac_variably_dimensioned');
+[x,f,info]=fsolve(x,'minpack_variably_dimensioned',jac='minpack_jac_variably_dimensioned');
 if norm(f) > 1.e-8 then pause;end 
   
 //     broyden tridiagonal and banded functions. */
@@ -208,9 +208,9 @@ if norm(f) > 1.e-7 then pause;end
 
 n=10;
 x= -ones(n,1);
-[x,f,info]=fsolve(x,'minpack_broyden_tridiagonal','minpack_jac_broyden_tridiagonal');
+[x,f,info]=fsolve(x,'minpack_broyden_tridiagonal',jac='minpack_jac_broyden_tridiagonal');
 if norm(f) > 1.e-7 then pause;end 
-[x,f,info]=fsolve(x,'minpack_broyden_banded','minpack_jac_broyden_banded');
+[x,f,info]=fsolve(x,'minpack_broyden_banded',jac='minpack_jac_broyden_banded');
 if norm(f) > 1.e-7 then pause;end 
   
 

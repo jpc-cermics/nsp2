@@ -9,7 +9,7 @@ A=rand(m,3);
 b=rand(m,1);
 
 function y=f(x);  y=A*x-b; endfunction;
-[xf,ff,info]=fsolve_lsq(ones(3,1),f,m=m);
+[xf,ff,info]=fsolve_lsq(ones(3,1),f,m);
 if norm(A*xf-b) > 10*%eps then;pause;end
 
 // 2-
@@ -19,7 +19,7 @@ A=rand(m,3);
 b=rand(m,1);
 
 function y=f(x);  y=A*x-b; endfunction;
-[xf,ff,info]=fsolve_lsq(ones(3,1),f,m=m);
+[xf,ff,info]=fsolve_lsq(ones(3,1),f,m);
 if norm(xf - A\b) > 1.e-7 then pause;end 
 
 // 3- 
@@ -38,7 +38,7 @@ if norm(A -j) > 1.e-7 then;pause;end
 function y=f(x);  y=A*x-b; endfunction;
 function y=jac(x);  y=A; endfunction;
 
-[xf,ff,info]=fsolve_lsq(ones(3,1),f,jac,m=m);
+[xf,ff,info]=fsolve_lsq(ones(3,1),f,m,jac=jac);
 if norm(xf - A\b) > 1.e-7 then pause;end 
  
 
@@ -64,13 +64,13 @@ function z=jac(x)
 endfunction
 
 x0= ones(3,1);
-[x,ff,info]=fsolve_lsq(x0,f,m=m);
+[x,ff,info]=fsolve_lsq(x0,f,m);
 
 if norm(x-[0.8241057D-01;0.1133037D+01;0.2343695D+01]) > 1.e-6 then pause;end
 
 // with jac 
 
-[x1,ff1,info1]=fsolve_lsq(x0,f,jac,m=m);
+[x1,ff1,info1]=fsolve_lsq(x0,f,m,jac=jac);
 
 if norm(x-[0.8241057D-01;0.1133037D+01;0.2343695D+01]) > 1.e-6 then pause;end
 
