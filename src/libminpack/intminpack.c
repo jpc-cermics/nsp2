@@ -222,6 +222,10 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
     {
       MoveObj(stack,2,NSP_OBJECT(work1));
     }
+  else
+    {
+      if ( work1 != NULL) nsp_matrix_destroy(work1);
+    }
   if ( lhs >= 3) 
     {
       if ( nsp_move_double(stack,3,info)== RET_BUG ) goto bug;
