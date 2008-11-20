@@ -193,7 +193,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: improper input parameters in %s\n",NspFname(stack));
 	  goto bug;
 	case 2 : 
-	  if (warn) Sciprintf("Stop: number of calls to fcn has reached or exceeded maxfev=%s\n", maxfev);
+	  if (warn) Sciprintf("Stop: number of calls to fcn has reached or exceeded maxfev=%d\n", maxfev);
 	  break;
 	case 3: 
 	   if (warn)Sciprintf("Stop: tol is too small. no further improvement in the approximate solution x is possible. \n");
