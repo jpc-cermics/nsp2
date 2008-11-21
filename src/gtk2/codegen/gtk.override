@@ -3996,11 +3996,11 @@ static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lh
   NspGObject *pixmap, *mask;
   NspObject *nsp_ret;
   GtkWidget *ret;
-
+  
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_pixmap(GDK_PIXMAP(pixmap->obj), GDK_PIXMAP(mask->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4016,7 +4016,7 @@ static int _wrap_gtk_image_new_from_image(Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkimage, &image, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_image(GDK_IMAGE(image->obj), GDK_PIXMAP(mask->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4032,7 +4032,7 @@ static int _wrap_gtk_image_new_from_file(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&str,&filename) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_file(filename);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4054,7 +4054,7 @@ static int _wrap_gtk_image_new_from_pixbuf(Stack stack, int rhs, int opt, int lh
       ret = gtk_image_new_from_pixbuf(GDK_PIXBUF(pixbuf->obj));
     }
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4073,7 +4073,7 @@ static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs
       return RET_BUG;
     ret = gtk_image_new_from_stock(stock_id, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4098,7 +4098,7 @@ static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int 
       return RET_BUG;
     ret = gtk_image_new_from_icon_set(icon_set, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4114,7 +4114,7 @@ static int _wrap_gtk_image_new_from_animation(Stack stack, int rhs, int opt, int
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixbufanimation, &animation) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_animation(GDK_PIXBUF_ANIMATION(animation->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }

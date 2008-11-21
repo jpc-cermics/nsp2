@@ -28203,11 +28203,11 @@ static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lh
   NspGObject *pixmap, *mask;
   NspObject *nsp_ret;
   GtkWidget *ret;
-
+  
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_pixmap(GDK_PIXMAP(pixmap->obj), GDK_PIXMAP(mask->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28223,7 +28223,7 @@ static int _wrap_gtk_image_new_from_image(Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkimage, &image, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_image(GDK_IMAGE(image->obj), GDK_PIXMAP(mask->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28239,7 +28239,7 @@ static int _wrap_gtk_image_new_from_file(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&str,&filename) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_file(filename);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28261,7 +28261,7 @@ static int _wrap_gtk_image_new_from_pixbuf(Stack stack, int rhs, int opt, int lh
       ret = gtk_image_new_from_pixbuf(GDK_PIXBUF(pixbuf->obj));
     }
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28280,7 +28280,7 @@ static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs
       return RET_BUG;
     ret = gtk_image_new_from_stock(stock_id, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28305,7 +28305,7 @@ static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int 
       return RET_BUG;
     ret = gtk_image_new_from_icon_set(icon_set, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28321,7 +28321,7 @@ static int _wrap_gtk_image_new_from_animation(Stack stack, int rhs, int opt, int
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixbufanimation, &animation) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_animation(GDK_PIXBUF_ANIMATION(animation->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30805,7 +30805,7 @@ static int _wrap_gtk_item_factory_popup(NspGtkItemFactory *self,Stack stack,int 
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   int x, y, mouse_button;
-  time_t time = GDK_CURRENT_TIME;
+  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &mouse_button, opts, &time) == FAIL) return RET_BUG;
   gtk_item_factory_popup(GTK_ITEM_FACTORY(self->obj), x, y, mouse_button, time);
@@ -35937,7 +35937,7 @@ static int _wrap_gtk_old_editable_claim_selection(NspGtkOldEditable *self,Stack 
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   int claim;
-  time_t time = GDK_CURRENT_TIME;
+  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&claim, opts, &time) == FAIL) return RET_BUG;
   gtk_old_editable_claim_selection(GTK_OLD_EDITABLE(self->obj), claim, time);
@@ -58018,10 +58018,10 @@ static int _wrap_gtk_drag_get_data(NspGtkWidget *self,Stack stack,int rhs,int op
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
-  time_t time = GDK_CURRENT_TIME;
   NspGObject *context;
   NspObject *nsp_target = NULL;
   GdkAtom target;
+  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdragcontext, &context, &nsp_target, opts, &time) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_target,&target)==FAIL) return RET_BUG;
@@ -58399,8 +58399,8 @@ static int _wrap_gtk_selection_owner_set(NspGtkWidget *self,Stack stack,int rhs,
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
-  time_t time = GDK_CURRENT_TIME;
   int ret;
+  gulong time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL;
   GdkAtom selection;
 
@@ -58465,8 +58465,8 @@ static int _wrap_gtk_selection_convert(NspGtkWidget *self,Stack stack,int rhs,in
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
-  time_t time = GDK_CURRENT_TIME;
   int ret;
+  gulong time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL, *nsp_target = NULL;
   GdkAtom selection, target;
 
@@ -60851,7 +60851,7 @@ static int _wrap_gtk_window_present(NspGtkWindow *self,Stack stack,int rhs,int o
 static int _wrap_gtk_window_present_with_time(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
-  time_t timestamp;
+  gulong timestamp;
 
   if ( GetArgs(stack,rhs,opt,T,&timestamp) == FAIL) return RET_BUG;
   gtk_window_present_with_time(GTK_WINDOW(self->obj), timestamp);
@@ -60910,8 +60910,8 @@ static int _wrap_gtk_window_begin_resize_drag(NspGtkWindow *self,Stack stack,int
 {
   int_types T[] = {obj, s_int, s_int, s_int, s_int,t_end};
   int button, root_x, root_y;
-  time_t timestamp;
   NspObject *nsp_edge = NULL;
+  gulong timestamp;
   GdkWindowEdge edge;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_edge, &button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
@@ -60925,7 +60925,7 @@ static int _wrap_gtk_window_begin_move_drag(NspGtkWindow *self,Stack stack,int r
 {
   int_types T[] = {s_int, s_int, s_int, s_int,t_end};
   int button, root_x, root_y;
-  time_t timestamp;
+  gulong timestamp;
 
   if ( GetArgs(stack,rhs,opt,T,&button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
   gtk_window_begin_move_drag(GTK_WINDOW(self->obj), button, root_x, root_y, timestamp);
@@ -62169,7 +62169,7 @@ int _wrap_gtk_drag_finish(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj_check, s_bool, s_bool, s_int,t_end};
   int success, del;
   NspGObject *context;
-  time_t time_;
+  gulong time_;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdragcontext, &context, &success, &del, &time_) == FAIL) return RET_BUG;
 gtk_drag_finish(GDK_DRAG_CONTEXT(context->obj), success, del, time_);
@@ -62838,10 +62838,10 @@ gtk_idle_remove(idle_handler_id);
 
 int _wrap_gtk_get_current_event_time(Stack stack, int rhs, int opt, int lhs)
 {
-  time_t ret;
+  gulong ret;
 
 ret = gtk_get_current_event_time();
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+ if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
   return 1;
 }
 
@@ -63123,12 +63123,12 @@ int _wrap_gtk_selection_owner_set_for_display(Stack stack, int rhs, int opt, int
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
-  time_t time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL;
   int ret;
   NspGObject *display, *nsp_widget;
   GdkAtom selection;
   GtkWidget *widget = NULL;
+  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_widget, &nsp_selection, opts, &time) == FAIL) return RET_BUG;
   if ( IsGtkWidget((NspObject *)nsp_widget))
