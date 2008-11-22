@@ -20,11 +20,11 @@
    \vname{xp, yp}: real vectors or matrices of same size
    \vname{x,y,C}: real vectors defining a bicubic spline or sub-spline function 
                 (called $s$ in the following)
-   \vname{out\_mode} : (optional) string defining the evaluation of $s$ outside 
+   \vname{out\_mode}: (optional) string defining the evaluation of $s$ outside 
                 the grid boundary.
-   \vname{zp} : vector or matrix of same format than \verb!xp! and \verb!yp!, elementwise 
+   \vname{zp}: vector or matrix of same format than \verb!xp! and \verb!yp!, elementwise 
                 evaluation of $s$ on these points.
-   \vname{dzpdx, dzpdy} : vectors (or matrices) of same format than \verb!xp! and \verb!yp!, elementwise
+   \vname{dzpdx, dzpdy}: vectors (or matrices) of same format than \verb!xp! and \verb!yp!, elementwise
                 evaluation of the first derivatives of \verb!s! on these points.
   \end{varlist}
 \end{parameters}
@@ -45,11 +45,11 @@
   The \verb!out_mode! parameter defines the evaluation rule for extrapolation,
   i.e. for {\em (xp(i),yp(i)) not in [x(1),x(nx)]x[y(1),y(ny)]}: 
   \begin{itemize}
-       \item \itemdesc{"by\_zero"} : an extrapolation by zero is done
-       \item \itemdesc{"by\_nan"} : extrapolation by Nan
-       \item \itemdesc{"C0"} :  use $s(proj(P))$ where $proj(P)$ the nearest point from P located on the grid boundary.
-        \item \itemdesc{"natural"} : the extrapolation is done by using the nearest bicubic-patch from (x,y).
-       \item \itemdesc{"periodic"} : \verb!s! is extended by periodicity. 
+       \item \itemdesc{"by\_zero"}: an extrapolation by zero is done
+       \item \itemdesc{"by\_nan"}: extrapolation by Nan
+       \item \itemdesc{"C0"}:  use $s(proj(P))$ where $proj(P)$ the nearest point from P located on the grid boundary.
+        \item \itemdesc{"natural"}: the extrapolation is done by using the nearest bicubic-patch from (x,y).
+       \item \itemdesc{"periodic"}: \verb!s! is extended by periodicity. 
   \end{itemize}
 
 \end{mandescription}

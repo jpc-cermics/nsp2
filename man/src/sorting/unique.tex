@@ -16,13 +16,13 @@ y = unique(x)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x} : vector of numbers or strings or cells, or a list.
-    \vname{y} : vector (or list when x is a list) containing unique components of x
-    \vname{ind} : vector of same length than y, ind(i) is an index
+    \vname{x}: vector of numbers or strings or cells, or a list.
+    \vname{y}: vector (or list when x is a list) containing unique components of x
+    \vname{ind}: vector of same length than y, ind(i) is an index
                   such that y(i)=x(ind(i)).
-    \vname{occ} : vector of same length than y, occ(i) is the number
+    \vname{occ}: vector of same length than y, occ(i) is the number
                   of occurrences of y(i) in the x.
-    \vname{first\_ind} : optional boolean scalar, useful only when x is a vector
+    \vname{first\_ind}: optional boolean scalar, useful only when x is a vector
     of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
     the smaller index such that y(i) = x(ind(i)).
   \end{varlist}

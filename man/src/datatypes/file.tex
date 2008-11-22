@@ -55,7 +55,7 @@ The \emph{File} data type is used for file I/O operations.
 \begin{itemize}
   \vname{F.close[]}: close the file stream.
   \vname{F.putstr[str]}: outputs a string. 
-  \vname{F.put[M,type='string']} outputs the contents of real matrix \verb+M+ using 
+  \vname{F.put[M,type='string']}: outputs the contents of real matrix \verb+M+ using 
   the \verb!type! parameter as a conversion specifier. The \verb+type+ argument can be chosen 
   among \verb+"l"+, \verb+"i"+, \verb+"s"+, \verb+"ul"+, \verb+"ui"+, \verb+"us"+, \verb+"d"+, \verb+"f"+, 
   \verb+"c"+,\verb+"uc"+ for writing respectively a long, an int, a short, an unsigned long, 
@@ -106,8 +106,8 @@ The \emph{File} data type is used for file I/O operations.
 
 \itemdesc{functions}
 \begin{itemize}
-  \vname{fopen} open a file for I/O operations returning a \verb+File+ object.
-  \vname{is_little_endian} checks the little-endian machine specification.
+  \vname{fopen}: opens a file for I/O operations returning a \verb+File+ object.
+  \vname{is_little_endian}: checks the little-endian machine specification.
   \vname{getfile(fname)}: gets the contents of ascii file given by \verb+fname+ 
   in a string column vector.
   \vname{putfile(fname,S)}: put the contents of a string matrix in file named 

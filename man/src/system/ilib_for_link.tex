@@ -15,14 +15,14 @@
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{names} : a string matrix giving the entry names which are to be linked.
-    \vname{files} : a string matrix giving objects files needed for shared library creation. 
+    \vname{names}: a string matrix giving the entry names which are to be linked.
+    \vname{files}: a string matrix giving objects files needed for shared library creation. 
     Note that the suffix to use for object files is \verb+.o+ on all operating systems. 
-    \vname{libs} : a string matrix giving extra libraries needed for shared library creation
-    \vname{flag} : a string flag ("c" or "f") for C or Fortran entry points.
-    \vname{makename} : a string giving the name of the Makefile to be generated  (default value \verb!Makelib!).
-    \vname{loadername} : a string giving the name of the loader file to be generated (default value  \verb!loader.sce!).
-    \vname{libname} : a string giving the name of the dynamic library to be generated (default value is build from the first 
+    \vname{libs}: a string matrix giving extra libraries needed for shared library creation
+    \vname{flag}: a string flag ("c" or "f") for C or Fortran entry points.
+    \vname{makename}: a string giving the name of the Makefile to be generated  (default value \verb!Makelib!).
+    \vname{loadername}: a string giving the name of the loader file to be generated (default value  \verb!loader.sce!).
+    \vname{libname}: a string giving the name of the dynamic library to be generated (default value is build from the first 
     given file name in \verb!files!).
     \vname{ldflags}: optional string to be given to the linker.
     \vname{cflags}: optional string to be given to the C/C++ compiler.

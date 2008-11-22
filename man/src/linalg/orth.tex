@@ -1,10 +1,8 @@
 % -*- mode: latex -*-
-
 \mansection{orth}
 \begin{mandesc}
   \short{orth}{computes an orthonormal basis of the range of a matrix}
 \end{mandesc}
-
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
@@ -15,22 +13,21 @@
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A} :  numerical matrix (says of size $m \times n$).
-    \vname{tol=rscal} : optional named argument, \verb+rscal+ must be  a real scalar in (0,1) (default \verb+max(m,n)*%eps+).
-    \vname{meth=str} : optional named argument, a string among "svd" (default) or "qr"
-    \vname{ImA} : numerical matrix.
+    \vname{A}:  numerical matrix (says of size $m \times n$).
+    \vname{tol=rscal}: optional named argument, \verb+rscal+ must be  a real scalar in (0,1) (default \verb+max(m,n)*%eps+).
+    \vname{meth=str}: optional named argument, a string among "svd" (default) or "qr"
+    \vname{ImA}: numerical matrix.
   \end{varlist}
 \end{parameters}
-
 \begin{mandescription}
 This function computes an orthonormal basis of the range of the
-matrix $A$ (aka as the column space of $A$) :
+matrix $A$ (aka as the column space of $A$):
 $$
-    Range(A) = = Span(A^1,...,A^n) = \{ y : \exists x \mbox{ with } y = Ax \}  
+\mathop{\mathrm{Range}}(A) = \mathop{\mathrm{Span}}(A^1,...,A^n) \equiv \{ y : \exists x \text{ such that } y = Ax \}  
 $$
- If $A$ has size $m \times n$ then $ImA$ should have 
-size $m \times r$ where $r = dim(Range(A)) = rank(A)$
-and the basis is formed by the column vectors of $ImA$. 
+ If $A$ has size $m \times n$ then \verb+ImA+ should have 
+size $m \times r$ where $r = \mathop{\mathrm{dim}}(\mathop{\mathrm{Range}}(A)) = \mathop{\mathrm{rank}}(A)$
+and the basis is formed by the column vectors of \verb+ImA+.
  If $p$ is the dimension of the null space of $A$ (see \manlink{kernel}{kernel})
 then we must have $n = p + r$.
 \begin{itemize}
@@ -38,7 +35,7 @@ then we must have $n = p + r$.
 is computed from the singular value factorization of $A$ and by 
 neglecting the singular values less than $tol \times \sigma_1$
 ($\sigma_1$ being the larger singular value). 
-\item When  meth="qr", $ImA$ is computed from a \manlink{qr}{qr} 
+\item When  meth="qr", \verb+ImA+ is computed from a \manlink{qr}{qr} 
 factorization of $A$. This is faster than using the svd but 
 the cut level is computed from an estimation only of the min 
 and max singular values.

@@ -16,12 +16,12 @@ C = splin2d(x, y, z, [,spline_type])
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-   \vname{x,y} : strictly increasing vectors (with at least 2 components)
+   \vname{x,y}: strictly increasing vectors (with at least 2 components)
                defining the interpolation grid
-   \vname{z} : nx x ny matrix (nx being the length of \verb!x! and 
+   \vname{z}: nx x ny matrix (nx being the length of \verb!x! and 
                ny the length of \verb!y!)
-   \vname{spline\_type } : (optionnal) a string selecting the kind of bicubic spline to compute
-   \vname{C} : a big vector with the coefficients of the bicubic patches
+   \vname{spline\_type}: (optionnal) a string selecting the kind of bicubic spline to compute
+   \vname{C}: a big vector with the coefficients of the bicubic patches
   \end{varlist}
 \end{parameters}
 
@@ -51,9 +51,9 @@ C = splin2d(x, y, z, [,spline_type])
     
   \begin{itemize}
 
-       \item \itemdesc{"not\_a\_knot"} : this is the default case.
+       \item \itemdesc{"not\_a\_knot"}: this is the default case.
        \item \itemdesc{"natural"} 
-       \item \itemdesc{"periodic"} : to use if the underlying function is periodic : you must have {\em z(1,j) = z(nx,j) for
+       \item \itemdesc{"periodic"}: to use if the underlying function is periodic : you must have {\em z(1,j) = z(nx,j) for
               all j in [1,ny] and  z(i,1) = z(i,ny) for i in [1,nx]} but this is not verified
               by the interface.
        \item \itemdesc{"monotone"} 

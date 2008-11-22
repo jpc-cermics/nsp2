@@ -15,27 +15,27 @@
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{X} :  matrix or vector of real numbers or strings.
-    \vname{v} : vector of real numbers or strings in strict
+    \vname{X}:  matrix or vector of real numbers or strings.
+    \vname{v}: vector of real numbers or strings in strict
     increasing order  $v_1 <  v_2 < ... v_n$ with $n \ge 2$ 
     when  \verb+match="i"+
-    \vname{match=str1} : optional named argument, \verb+match="i"+
+    \vname{match=str1}: optional named argument, \verb+match="i"+
                          (default) for interval matching and
                          \verb+match="v"+ for exact value matching.
-    \vname{interval=str2} : optional named argument useful only
+    \vname{interval=str2}: optional named argument useful only
                            when  \verb+match="i"+, \verb+interval="[--)"+
                          (default) or  \verb+interval="(--]"+
-    \vname{assume_sorted=b} : boolean optional named argument (default
+    \vname{assume_sorted=b}: boolean optional named argument (default
                               is \verb+%f+). Using \verb+assume_sorted=%t+ disable the test
                               on the strictly ordering of
                               \verb+v+. This can be useful if you know
                               that \verb+v+ is strictly ordered or to
                               use bsearch with a \verb+v+ which is
                               only sorted (that is with redundant elements).  
-    \vname{ind} : matrix or vector of indices with same dimensions than X.
-    \vname{occ} : vector of same length than v (but with $n-1$ components 
+    \vname{ind}: matrix or vector of indices with same dimensions than X.
+    \vname{occ}: vector of same length than v (but with $n-1$ components 
                   when  \verb+match="i"+)
-    \vname{info} : integer scalar
+    \vname{info}: integer scalar
   \end{varlist}
 \end{parameters}
 

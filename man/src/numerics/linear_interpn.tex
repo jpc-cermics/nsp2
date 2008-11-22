@@ -17,13 +17,13 @@
 
 \begin{parameters}
   \begin{varlist}
-   \vname{xp1, xp2, .., xpn} : real vectors (or matrices) of same size
-   \vname{x1 ,x2, ..., xn} :  strictly increasing row vectors (with at least 2 components)
+   \vname{xp1, xp2, ;.., xpn}: real vectors (or matrices) of same size
+   \vname{x1 ,x2, ..., xn}:  strictly increasing row vectors (with at least 2 components)
                defining the n dimensional interpolation grid
-   \vname{v} : vector (case n=1), matrix (case n=2,3,...) with the
+   \vname{v}: vector (case n=1), matrix (case n=2,3,...) with the
                values of the underlying interpolated function at the grid points.
-   \vname{out\_mode} : (optional) string defining the evaluation outside the grid (extrapolation)
-   \vname{vp} :  vector or matrix of same size than \verb!xp1, ..., xpn!
+   \vname{out\_mode}: (optional) string defining the evaluation outside the grid (extrapolation)
+   \vname{vp}:  vector or matrix of same size than \verb!xp1, ..., xpn!
   \end{varlist}
 \end{parameters}
 
@@ -40,12 +40,12 @@
   extrapolation that is when \verb+(xp1(i),xp2(i),...,xpn(i))+ is 
   outside the grid boundary. The different choices are:
   \begin{itemize}
-       \item \itemdesc{"by\_zero"} : an extrapolation by zero is done
-       \item \itemdesc{"by\_nan"} : extrapolation by Nan
-       \item \itemdesc{"C0"} : the extrapolation is the linear
+       \item \itemdesc{"by\_zero"}: an extrapolation by zero is done
+       \item \itemdesc{"by\_nan"}: extrapolation by Nan
+       \item \itemdesc{"C0"}: the extrapolation is the linear
          interpolation of $proj(P)$ the nearest point from P located on the grid boundary.
-       \item \itemdesc{"natural"} : the extrapolation is done by using the nearest n-linear patch from the point.
-       \item \itemdesc{"periodic"} : the n-linear interpolant is extended by periodicity. 
+       \item \itemdesc{"natural"}: the extrapolation is done by using the nearest n-linear patch from the point.
+       \item \itemdesc{"periodic"}: the n-linear interpolant is extended by periodicity. 
   \end{itemize}
 
 \end{mandescription}

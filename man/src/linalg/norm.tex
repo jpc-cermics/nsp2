@@ -1,10 +1,8 @@
 % -*- mode: latex -*-
-
 \mansection{norm}
 \begin{mandesc}
   \short{norm}{vector and matrix norm}
 \end{mandesc}
-
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
@@ -17,19 +15,21 @@ nA = norm(A,type_norm)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x} :  numerical vector
-    \vname{A} :  numerical matrix
-    \vname{type_norm} : optional scalar or string (1,2,\%inf, '1','2','inf',
-    ...), default is 2.
-    \vname{nx,nA} : real positive scalar
+    \vname{x}:  numerical vector.
+    \vname{A}:  numerical matrix.
+    \vname{type_norm}: optional scalar or string chosen among
+    \verb+1+, \verb+2+, \verb+%inf+ (in fact any real $p \ge 1$ for vectors),
+    \verb+'1'+, \verb+'2'+, \verb+'inf'+. The default value is 2.
+    \vname{nx,nA}: real positive scalar.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-This function computes a vector or matrix norm depending of the size $m
-\times n$ of the  first argument. When $m$ or $n$ is equal to 1 a vector
-norm will be computed else a matrix norm. The second argument could
-be a scalar and any real $p \ge 1$ could be used in case of a vector
+This function computes vector or matrix norm according to the size, $m
+\times n$, of the given first argument. When $m$ or $n$ is equal to 1 a vector
+norm is computed and returned otherwise a matrix norm is computed and returned. 
+The second argument could be a scalar and any real $p \ge 1$ could be used in case of a vector
+$x$ to compute its $p-norm$ :
 $x$ to compute its $p-norm$ :
 $$
     ||x||_p = \left( \sum_{i=1}^n |x_i|^p \right)^{1/p}
@@ -38,13 +38,13 @@ with the limit case of the inf-norm got using \verb+p=%inf+ :
 $$
     ||x||_{\infty} = \max_i |x_i|
 $$
-For matrix, the 1, 2 and inf ``induced matrix'' norms and the
-Frobenius could be computed:
+For matrices, the \verb+1+, \verb+2+ and \verb+%inf+ ``induced matrix'' norms 
+and the Frobenius norm are defined as follows:
 $$
     ||A||_1 = \max_{||x||_1 = 1} ||Ax||_1 = \max_j \sum_i |A_{i,j}|  
 $$
 $$
-    ||A||_2 = \max_{||x||_2 = 1} ||Ax||_2 = \sqrt{\max spec(A^* A)}
+    ||A||_2 = \max_{||x||_2 = 1} ||Ax||_2 = \sqrt{\max \mathop{\mathrm{spec}}(A^* A)}
 $$
 $$
     ||A||_{\infty} = \max_{||x||{\infty} = 1} ||Ax||_{\infty} = \max_i \sum_j |A_{i,j}|  
@@ -55,14 +55,10 @@ $$
 The Frobenius norm is computed by using  \verb+type_norm='fro' or 'Fro'+. 
 Finally note that with \verb+type_norm='m' or 'M'+ the max 
 of $|A_{i,j}|$ is computed but it is not a matrix norm.
-
 \itemdesc{remark}
 The matrix 2-norm is not available for sparse matrix.
-
 \end{mandescription}
-
 \begin{examples}
-
 \paragraph{example 1} a simple example
   \begin{program}\HCode{x=[1,1];\Hnewline
     // 1-norm\Hnewline
@@ -72,7 +68,6 @@ The matrix 2-norm is not available for sparse matrix.
     // Inf-norm\Hnewline
     norm(x,\%inf)  // or norm(x,'Inf')\Hnewline}
   \end{program}
-
 \paragraph{example 2} invariance of a 2-norm by an orthonormal tranformation
   \begin{program}\HCode{// make an orthonormal matrix\Hnewline
     Q=qr(rand(5,5));\Hnewline

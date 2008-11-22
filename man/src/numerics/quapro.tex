@@ -16,18 +16,18 @@
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{Q} : real symmetric matrix (dimension \verb!n x n!).
-    \vname{p} : real (column) vector (dimension \verb! n!)
-    \vname{C} : real matrix (dimension \verb! (me + md) x n!) (If no constraints are given, you can set \verb!C = []!)
-   \vname{b} : RHS column vector (dimension \verb! (me + md)!) (If no constraints are given, you can set \verb!b = []!)
-   \vname{ci} : column vector of lower-bounds (dimension \verb!n!). If there are no lower bound constraints, put \verb!ci = []!. If some components of \verb!x! are bounded from below, set the other (unconstrained) values of \verb!ci! to a very  large negative  number (e.g. \verb!ci(j) = -number_properties('huge')!.
-   \vname{cs} : column vector of upper-bounds. (Same remarks as above).
-   \vname{me} : number of equality constraints (i.e. \verb!C(1:me,:)*x = b(1:me)!)
-   \vname{x0} : either an initial guess for \verb!x!    or one of the character strings \verb!'v'! or \verb!'g'!. If \verb!x0='v'! the calculated initial feasible point is a vertex. If \verb!x0='g'! the calculated initial feasible point is arbitrary.
-   \vname{imp} : verbose option (optional parameter)   (Try \verb!imp=7,8,...!). warning the message are output in the window where scilab has been started.
-   \vname{x} : optimal solution found.
-   \vname{f} : optimal value of the cost function (i.e. \verb!f=0.5*x'*Q*x+p'!).
-   \vname{lagr} : vector of Lagrange multipliers.  If lower and upper-bounds \verb!ci,cs! are provided, \verb!lagr! has  \verb!n + me + md! components and \verb!lagr(1:n)! is the Lagrange  vector associated with the bound constraints and  \verb!lagr (n+1 : n + me + md)! is the Lagrange vector associated  with the linear constraints. (If an upper-bound (resp. lower-bound) constraint \verb!i! is active  \verb!lagr(i)! is $>$ 0 (resp. $<$0). If no bounds are provided, \verb!lagr! has only \verb!me + md! components.
+    \vname{Q}: real symmetric matrix (dimension \verb!n x n!).
+    \vname{p}: real (column) vector (dimension \verb! n!)
+    \vname{C}: real matrix (dimension \verb! (me + md) x n!) (If no constraints are given, you can set \verb!C = []!)
+   \vname{b}: RHS column vector (dimension \verb! (me + md)!) (If no constraints are given, you can set \verb!b = []!)
+   \vname{ci}: column vector of lower-bounds (dimension \verb!n!). If there are no lower bound constraints, put \verb!ci = []!. If some components of \verb!x! are bounded from below, set the other (unconstrained) values of \verb!ci! to a very  large negative  number (e.g. \verb!ci(j) = -number_properties('huge')!.
+   \vname{cs}: column vector of upper-bounds. (Same remarks as above).
+   \vname{me}: number of equality constraints (i.e. \verb!C(1:me,:)*x = b(1:me)!)
+   \vname{x0}: either an initial guess for \verb!x!    or one of the character strings \verb!'v'! or \verb!'g'!. If \verb!x0='v'! the calculated initial feasible point is a vertex. If \verb!x0='g'! the calculated initial feasible point is arbitrary.
+   \vname{imp}: verbose option (optional parameter)   (Try \verb!imp=7,8,...!). warning the message are output in the window where scilab has been started.
+   \vname{x}: optimal solution found.
+   \vname{f}: optimal value of the cost function (i.e. \verb!f=0.5*x'*Q*x+p'!).
+   \vname{lagr}: vector of Lagrange multipliers.  If lower and upper-bounds \verb!ci,cs! are provided, \verb!lagr! has  \verb!n + me + md! components and \verb!lagr(1:n)! is the Lagrange  vector associated with the bound constraints and  \verb!lagr (n+1 : n + me + md)! is the Lagrange vector associated  with the linear constraints. (If an upper-bound (resp. lower-bound) constraint \verb!i! is active  \verb!lagr(i)! is $>$ 0 (resp. $<$0). If no bounds are provided, \verb!lagr! has only \verb!me + md! components.
   \end{varlist}
 
 \end{parameters}

@@ -15,21 +15,20 @@ L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{mode}: The argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
+    \vname{mode}: the argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
     \begin{itemize}
-      \item[r]: open text file for reading. The stream is positioned at the beginning of the
-        file.
-      \item[w] truncate  file  to  zero  length  or create text file for writing.  The stream is
+      \item[r]: opens text file for reading. The stream is positioned at the beginning of the  file.
+      \item[w]: truncates  file  to  zero  length  or create text file for writing.  The stream is
         positioned at the beginning of the file.
-      \item[a] open for appending (writing at end of file).  The file is created if it does not 
+      \item[a]: opens for appending (writing at end of file).  The file is created if it does not 
 	exist.  The stream is positioned at the end of the file.
     \end{itemize}
     The mode string can also include the letter b as a last character. 
     Adding the b is used if you do I/O to a binary file 
     (but note that The b is ignored on all POSIX conforming systems, including Linux).
-    \vname{swap} If true then byte swaping is forced when using the \verb+mget+ and 
+    \vname{swap}: if true then byte swaping is forced when using the \verb+mget+ and 
     \verb+mput+ functions. 
-    \vname{xdr} If true then reading and writing is used using \verb+xdr+.
+    \vname{xdr}: if true then reading and writing is used using \verb+xdr+.
   \end{varlist}
 \end{parameters}
 
@@ -49,27 +48,27 @@ The \emph{SndFile} data type is used for file I/O operations.
 \end{itemize}
 \itemdesc{methods}
 \begin{itemize}
-  \vname{F.close[]} closes sound file. 
-  \vname{F.error[]} gets error code of last error raised. 
-  \vname{F.strerror[]} gets error message of last error raised
-  \vname{F.error_number[err]} get error message associated to error number.
-  \vname{A=F.read[n]}  reads \verb+n+ frames from sound file and returns the 
+  \vname{F.close[]}: closes sound file. 
+  \vname{F.error[]}: gets error code of last error raised. 
+  \vname{F.strerror[]}: gets error message of last error raised
+  \vname{F.error_number[err]}: get error message associated to error number.
+  \vname{A=F.read[n]}:  reads \verb+n+ frames from sound file and returns the 
   result in a numeric matrix of size \verb+mxn+ where \verb+m+ is the 
   number of channels of file
-  \vname{F.seek[n,tag]} sets the file position indicator for the stream pointed
+  \vname{F.seek[n,tag]}: sets the file position indicator for the stream pointed
        to by stream.  The new position, measured in bytes, is obtained  by  adding
        offset  bytes \verb+n+  to  the  position  specified by \verb+tag+. 
         \verb+tag+ can be set to \verb+"set"+, or \verb+"cur"+, or \verb+"end"+, 
 	the offset is relative to the start of the
        file, the current position indicator, or end-of-file, respectively.
-  \vname{F.write[A]} write data in sound file from numerical matrix \verb+A+. 
+  \vname{F.write[A]}: write data in sound file from numerical matrix \verb+A+. 
   the number of rows of \verb+A+ must be equal to number of channels of file.
 \end{itemize}
 
 \itemdesc{functions}
 \begin{itemize}
-  \vname{sndfile} opens a sound file. 
-    \vname{play(A,job} plays a matrix assuming that the samplerate is 22050.
+  \vname{sndfile}; opens a sound file. 
+  \vname{play(A,job)}: plays a matrix assuming that the samplerate is 22050.
     The function must be called with job equal to 1 to initialize, to 2 to play 
     and to 3 to close the sound channel.
 \end{itemize}
