@@ -15,17 +15,18 @@ x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htab
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x0}:real column vector, the initial condition
-    \vname{t0}:real scalar, the initial time
-    \vname{t}: real vector with increasing time instants at which the solution must be recorded
-    \vname{f}: nsp function defining the second member of the differential equation
+    \vname{x0}: real column vector, the initial condition.
+    \vname{t0}: real scalar, the initial time.
+    \vname{t}: real vector with increasing time instants at which the solution must be computed and recorded.
+    \vname{f}: nsp function defining the vector field of the differential equation.
     \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
-                     (default is atol=1e-9, rtol=0). atol could be a vector of same size than x0.
-    \vname{jac=Df}: optional named argument. Df should be a nsp function (the Jacobian of f)
-    \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters needed by
-    the function f (and by the function Df if it is provided).
+    (default is \verb+atol=1e-9+ and \verb+rtol=0+). \verb+atol+ can be a vector of same size as 
+    the vector \verb+x0+.
+    \vname{jac=Df}: optional named argument. \verb+Df+ should be a nsp function giving the Jacobian of function \verb+f+.
+    \vname{args=obj}: optional named argument used to pass additional parameters to the function \verb+f+ 
+    (and to the function \verb+Df+ if it is provided). It can be any nsp object.
     \vname{type=str}: optional named argument (scalar string) could be "default" (which is the default) or "discrete"
-    \vname{odeoptions}: an hash table of parameters for fine tuning of the solver.
+    \vname{odeoptions}: a hash table of parameters for fine manual tuning of the ode solver.
   \end{varlist}
 \end{parameters}
 
@@ -40,9 +41,9 @@ $$
 $$
 using the Livermore solvers odepack. Currently only lsoda is interfaced and this solver begin with the Adams
 method (for nonstiff systems) but switches  automatically to bdf method if the differential equation is detected
-as stiff. 
+as being stiff. 
 
-\itemdesc{form of the function {\tt f}}
+\itemdesc{header of the function {\tt f}}
 The function $f$ takes as first argument a scalar $t$, then a vector $x$ of length $d$ as 2d argument and 
 must output a vector of length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
 it should nevertheless have this parameter as first argument. In brief \verb+f+ should have the
@@ -54,7 +55,7 @@ form:
 
 \itemdesc{optional argument {\tt args}}
 Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
-if it is provided by the user) could be passed using \verb+args=obj+ where obj could be any nsp 
+if it is provided by the user) could be passed using \verb+args=obj+ where \verb+obj+ can be any nsp 
 object (see examples). In this case \verb+f+ has the form:
 \begin{quote}
 {\tt function y = f(t,x,obj) \\
@@ -69,7 +70,7 @@ time instants don't correspond to time step taken by the solver (see details her
 after).
 
 
-\itemdesc{optional atol and rtol parameters: solver accuracy control}
+\itemdesc{optional {\tt atol} and {\tt rtol} parameters: solver accuracy control}
 At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
 the estimated local error in the i th component $x_i(\tau_k)$ (that is the error in 
 $x_i(\tau_k)$ assuming that $x(\tau_{k-1})$ is exact) is controlled so as to be less 
@@ -91,11 +92,13 @@ also that the global error could be more larger than the local error. The
 solution at the wanted output time instants is got from an interpolary 
 formula (wich is in fact natural to the multistep method used by lsoda).
 
-\itemdesc{optional jac parameter}
-The solver needs $Df$ the jacobian of $x \mapsto f(t,x)$ and this function could be provided by the user with the optional named argument 
-jac. When jac is not given the solver computes an approximation using finite differences. Note that, like for \verb+f+, the formal argument
-\verb+t+ should be present even if the Jacobian don't depends explicitly of the time. So the header of the nsp 
-function defining the Jacobian of $f$ should be of the form:
+\itemdesc{optional jac parameter} The solver needs \verb+Df+, the jacobian
+of $x \mapsto f(t,x)$.  This function can be provided by the user
+with the optional named argument \verb+jac+. When \verb+jac+ is not given,
+the solver computes an approximation using finite differences. Note that, like
+for function \verb+f+, the formal argument \verb+t+ should be present even if
+the Jacobian does not explicitly depend on time. So the header of
+the nsp function defining \verb+jac+, the Jacobian of \verb+f+ should be as follows:
 \begin{quote}
 {\tt function J = Df(t,x) \\
       ....}\\
@@ -112,11 +115,11 @@ odeoptions will be described in a future version of this help page.
 
 \begin{examples}
   
-\paragraph{example 1} the most simple example: we want to integrate:
+\paragraph{example 1} A very simple example. we want to solve the system:
 $$
-  \dot{x}(t) = - x, \; x(0) = 1, 
+  \dot{x}(t) = - x, \; x(0) = 1\,.
 $$ 
-the solution is known ($x(t) = exp(-t)$);
+The solution is known to be ($x(t) = exp(-t)$);
 \begin{program}\HCode{function y=f1(t,x);y=-x;endfunction\Hnewline
 t = linspace(0,4,10);\Hnewline
 x = ode(1,0,t,f1)\Hnewline
@@ -135,7 +138,7 @@ $$
 $$
 for some initial condition $u(0) = u0$ and some parameter $\epsilon$.
 \begin{program}\HCode{function [f] = Brusselator(t,u,eps)\Hnewline
-   f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
+    f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
          (5+eps)*u(1) - u(1)^2*u(2)]\Hnewline
 endfunction\Hnewline
 eps = 0.1 // parameter value\Hnewline
