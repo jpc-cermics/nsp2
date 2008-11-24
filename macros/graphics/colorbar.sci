@@ -42,7 +42,10 @@ function colorbar(umin, umax, colminmax)
   wrect_pl = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
   xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1])
 
-  nb_grad = 5
+  nb_grad = 4
+  uval = getticks(umin,umax,anum=nb_grad)'
+  nb_grad = length(uval)
+  
   // go on... 
   vec_ones = ones_new(1,nb_colors)
 
@@ -53,10 +56,9 @@ function colorbar(umin, umax, colminmax)
   y_polys = [y(1:$-1) ; y(1:$-1) ; y(2:$) ; y(2:$)] 
  
   xtics = x2*ones_new(1,nb_grad) ; dx_tics = 0.05 ; 
-  ytics = linspace(y1, y2, nb_grad) ; dy_tics = 0
-
-  valeurs = linspace(umin,umax,nb_grad);
-  rect = xstringl(0, 0, string(umin))
+  ytics = y1 + ((uval-umin)/(umax - umin))*(y2-y1); dy_tics = 0
+  
+  rect = xstringl(0, 0, string(uval(1)))
   dy_cor = -rect(4)*0.5
   xmarks = xtics + 3*dx_tics ; ymarks = ytics + dy_cor; 
   
@@ -64,7 +66,7 @@ function colorbar(umin, umax, colminmax)
   xset("color", fg_color) ;
   xpoly([x1 x2 x2 x1],[y1 y1 y2 y2],close=%t,color=fg_color)
   for i = 1:nb_grad
-     xstring(xmarks(i), ymarks(i), sprintf("%g",valeurs(i)))
+     xstring(xmarks(i), ymarks(i), sprintf("%g",uval(i)))
   end
   xsegs([xtics ; xtics+dx_tics ],[ytics ; ytics+dy_tics],style=fg_color)
   

@@ -5098,6 +5098,83 @@ static int int_test_convert(Stack stack, int rhs, int opt, int lhs)
   Sciprintf("Matrix is %c and with convert=%c\n",A->rc_type, A->convert);
   return 0;
 }
+
+
+/*
+ *    xticks = getticks(xmin, xmax, anum=4, inside=%t)
+ */
+extern int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads);
+
+static int int_getticks(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *xticks=NULLMAT;
+  double xmin, xmax, grads[20];
+  int i, k, inc, n=4, rep, ngrads, n1, n2, nbticks;
+  Boolean inside=TRUE;
+
+  int_types T[] = {s_double, s_double, new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "anum",s_int,  NULLOBJ,-1},
+    { "inside",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0,2);
+  CheckLhs(1, 1);
+
+  if ( GetArgs(stack,rhs,opt, T, &xmin, &xmax, &opts, &n, &inside) == FAIL ) 
+    return RET_BUG;
+
+  if ( !finite(xmin) || !finite(xmax) || xmin >= xmax )
+    {
+      Scierror ("Error: bad arg 1 and 2 in %s\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( n <= 1 || n > 20 ) n = 4;
+      
+  rep = gr_compute_ticks(&xmin, &xmax, grads, &ngrads);
+
+  n1 = 0; n2 = ngrads-1; 
+  if ( inside )  /* remove xticks outside [xmin, xmax] */
+    {
+      if ( grads[n1] < xmin ) n1++;  /* mettre une tolerance ? */
+      if ( grads[n2] > xmax ) n2--;
+    }
+  ngrads = n2 - n1 + 1;
+
+  if ( ngrads < 2 )  /* return xmin, xmax */
+    {
+      if ( (xticks = nsp_matrix_create(NVOID, 'r', 2, 1)) == NULLMAT )
+	return RET_BUG;
+      xticks->R[0] = xmin;
+      xticks->R[1] = xmax;
+    }
+  else
+    {
+      if ( ngrads < n )
+	{
+	  if ( (xticks = nsp_matrix_create(NVOID, 'r', ngrads, 1)) == NULLMAT )
+	    return RET_BUG;
+	  for ( i = 0, k=n1 ; i < ngrads; i++, k++ ) xticks->R[i] = grads[k];
+	}
+      else
+	{
+	  inc = ngrads / n; 
+	  i = n1; nbticks = 1;
+	  while ( i + inc <= n2 ) { i+=inc; nbticks++; }
+	  if ( (xticks = nsp_matrix_create(NVOID, 'r', nbticks, 1)) == NULLMAT )
+	    return RET_BUG;
+	  for ( i = 0, k=n1 ; i < nbticks ; i++, k+=inc ) xticks->R[i] = grads[k];
+	}
+    }
+
+  MoveObj (stack, 1, (NspObject *) xticks);
+  return 1;
+}
+
  
 /*
  * The Interface for basic matrices operation 
@@ -5276,6 +5353,7 @@ static OpTab Matrix_func[] = {
   {"istriangular_m", int_mat_istriangular},
   {"lower_upper_bandwidths_m", int_mat_lower_upper_bandwidth},
   {"test_convert", int_test_convert},
+  {"getticks", int_getticks},
   {(char *) 0, NULL}
 };
 
