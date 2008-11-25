@@ -64,7 +64,7 @@
  *
  *     the subroutine statement is 
  *
- *       subroutine hybrj(fcn,n,x,fvec,fjac,ldfjac,xtol,maxfev,diag, 
+ *       subroutine hybrj(fcn,n,x,fvec,fjac,ldfjac,xtol,ftol,maxfev,diag, 
  *                        mode,factor,nprint,info,nfev,njev,r,lr,qtf, 
  *                        wa1,wa2,wa3,wa4) 
  *
@@ -111,6 +111,9 @@
  *       xtol is a nonnegative input variable. termination 
  *         occurs when the relative error between two consecutive 
  *         iterates is at most xtol. 
+ *
+ *       ftol is a nonnegative input variable. termination 
+ *         occurs also if Max_i |f_i(x)| <= ftol (added by Bruno).
  *
  *       maxfev is a positive int input variable. termination 
  *         occurs when the number of calls to fcn with iflag = 1 
@@ -198,7 +201,7 @@
 
 
 int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fjac,
-		   int *ldfjac, double *xtol, int *maxfev, double *diag,
+		   int *ldfjac, double *xtol, double *ftol, int *maxfev, double *diag,
 		   int *mode,const double *factor, int *nprint, int *info, int *nfev,
 		   int *njev, double *r__, int *lr, double *qtf, double *wa1,
 		   double *wa2, double *wa3, double *wa4,void *data)
@@ -223,7 +226,7 @@ int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fj
   int jeval;
   int ncsuc;
   double ratio;
-  double fnorm;
+  double fnorm, fninf;   
   double pnorm, xnorm, fnorm1;
   int nslow1, nslow2;
   int ncfail;
@@ -257,7 +260,7 @@ int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fj
 
   /*     check the input parameters for errors. */
 
-  if (*n <= 0 || *ldfjac < *n || *xtol < zero || *maxfev <= 0
+  if (*n <= 0 || *ldfjac < *n || *xtol < zero || *ftol < zero || *maxfev <= 0
       || *factor <= zero || *lr < *n * (*n + 1) / 2)
     {
       goto L300;
@@ -575,11 +578,13 @@ int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fj
   /*           successful iteration. update x, fvec, and their norms. */
 
   i__1 = *n;
+  fninf = 0.0;   /* added by Bruno */
   for (j = 1; j <= i__1; ++j)
     {
       x[j] = wa2[j];
       wa2[j] = diag[j] * x[j];
       fvec[j] = wa4[j];
+      if ( fabs(fvec[j]) > fninf ) fninf = fabs(fvec[j]);  /* added by Bruno */
       /* L250: */
     }
   xnorm = minpack_enorm (n, &wa2[1]);
@@ -605,7 +610,8 @@ int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fj
 
   /*           test for convergence. */
 
-  if (delta <= *xtol * xnorm || fnorm == zero)
+  /* if (delta <= *xtol * xnorm || fnorm == zero) old test  */
+  if (delta <= *xtol * xnorm || fninf <= *ftol)
     {
       *info = 1;
     }

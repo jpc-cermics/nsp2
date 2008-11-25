@@ -70,26 +70,29 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{"args",obj,NULLOBJ,-1},
 		      {"jac", obj,NULLOBJ,-1},
 		      {"maxfev",s_int,NULLOBJ,-1},
-		      {"tol",s_double,NULLOBJ,-1},
+		      {"xtol",s_double,NULLOBJ,-1},
+		      {"ftol",s_double,NULLOBJ,-1},
 		      {"scale",realmat,NULLOBJ,-1},
 		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *X, *work1=NULLMAT,*work2=NULLMAT;
-  int nn,info=0,un=1,m=-1;
-  double tol;
+  int nn,info=0,un=1,m=-1, nfev, njev=0;
+  double xtol, ftol, epsm;
   hybr_data Hybr_data;
   
   CheckStdRhs(2,2);
-  CheckLhs(1,3);
+  CheckLhs(1,5);
     
-  tol = sqrt (minpack_dpmpar (&un));
+  epsm = minpack_dpmpar (&un);
+  xtol = sqrt (epsm); 
+  ftol = pow(epsm,2./3.);
   
   if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
   
   if ((fcn = get_function(stack,2,HYBR_fcn,&Hybr_data))==NULL) 
     return RET_BUG;
   
-  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&maxfev,&tol,&scale,&warn) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&maxfev,&xtol,&ftol,&scale,&warn) == FAIL)
     return RET_BUG;
 
   if ( jac != NULL )
@@ -103,9 +106,9 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: x should not be null\n");
       goto bug;
     }
-  if ( tol < 0.0) 
+  if ( xtol < 0.0 || ftol < 0.0 ) 
     {
-      Scierror("Error: tol should be positive\n");
+      Scierror("Error: xtol and ftol should be non negative\n");
       goto bug;
     }
 
@@ -115,7 +118,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   if ( jac )
     {
       double *wa;
-      int mode, nfev, njev, j, lr = X->mn*(X->mn+1)/2, nprint;
+      int mode, j, lr = X->mn*(X->mn+1)/2, nprint;
       const double factor = 100.;
       nn=(X->mn*(X->mn+13))/2+X->mn*X->mn;
       if ((work2 =nsp_matrix_create(NVOID,'r',nn,1)) == NULLMAT) goto bug;
@@ -145,7 +148,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 	}
       nprint = 0;
       /* here jacobian and f are both given */
-      minpack_hybrj (hybrj_fcn,&X->mn,X->R,work1->R,work2->R,&X->mn,&tol,
+      minpack_hybrj (hybrj_fcn,&X->mn,X->R,work1->R,work2->R,&X->mn,&xtol,&ftol,
 		     &maxfev, wa, &mode, &factor, &nprint, &info, &nfev,
 		     &njev, &wa[X->mn * 6], &lr, &wa[X->mn], &wa[X->mn*2],
 		     &wa[X->mn * 3], &wa[X->mn*4], &wa[X->mn * 5],&Hybr_data);
@@ -155,7 +158,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
     {
       double *wa;
       const double factor = 100.;
-      int nprint, mode, nfev, j, ml=X->mn-1,mu=X->mn-1, lr= X->mn*(X->mn+1)/2 ;
+      int nprint, mode, j, ml=X->mn-1,mu=X->mn-1, lr= X->mn*(X->mn+1)/2 ;
       double epsfcn = 0.0;
 
       nn=(X->mn*(3*X->mn+13))/2;
@@ -178,7 +181,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 	}
       
       nprint = 0;
-      minpack_hybrd ( Hybr_data.f_fcn,&X->mn, X->R, work1->R, &tol, &maxfev, &ml, &mu,
+      minpack_hybrd ( Hybr_data.f_fcn,&X->mn, X->R, work1->R, &xtol, &ftol, &maxfev, &ml, &mu,
 		      &epsfcn, wa, &mode, &factor, &nprint, &info, &nfev,
 		      &wa[X->mn * 6 + lr], &X->mn, &wa[X->mn * 6], &lr, &wa[X->mn],
 		      &wa[X->mn*2], &wa[X->mn * 3], &wa[X->mn *4],
@@ -196,7 +199,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 	  if (warn) Sciprintf("Stop: number of calls to fcn has reached or exceeded maxfev=%d\n", maxfev);
 	  break;
 	case 3: 
-	   if (warn)Sciprintf("Stop: tol is too small. no further improvement in the approximate solution x is possible. \n");
+	   if (warn)Sciprintf("Stop: xtol and ftol are too small. no further improvement in the approximate solution x is possible. \n");
 	  break;
 	case 4: 
 	   if (warn)Sciprintf("Stop: iteration is not making good progress, as measured by the improvement from the last" 
@@ -229,6 +232,12 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 3) 
     {
       if ( nsp_move_double(stack,3,info)== RET_BUG ) goto bug;
+      if ( lhs >= 4 )
+	{
+	  if ( nsp_move_double(stack,4,nfev)== RET_BUG ) goto bug;
+	  if ( lhs >= 5 )
+	    if ( nsp_move_double(stack,5,njev)== RET_BUG ) goto bug;
+	}
     }
   if ( work2 != NULL) nsp_matrix_destroy(work2);
   return Max(lhs,1);

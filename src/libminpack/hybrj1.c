@@ -66,7 +66,7 @@
  *
  *     the subroutine statement is 
  *
- *       subroutine hybrj1(fcn,n,x,fvec,fjac,ldfjac,tol,info,wa,lwa) 
+ *       subroutine hybrj1(fcn,n,x,fvec,fjac,ldfjac,tol,tolf,info,wa,lwa) 
  *
  *     where 
  *
@@ -111,6 +111,9 @@
  *       tol is a nonnegative input variable. termination occurs 
  *         when the algorithm estimates that the relative error 
  *         between x and the solution is at most tol. 
+*
+ *       tolf is a nonnegative input variable. termination 
+ *         occurs also if Max_i |f_i(x)| <= ftol (added by Bruno).
  *
  *       info is an int output variable. if the user has 
  *         terminated execution, info is set to the (negative) 
@@ -145,7 +148,7 @@
 
 
 int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *fjac,
-		    int *ldfjac, double *tol, int *info, double *wa, int *lwa,void *data)
+		    int *ldfjac, double *tol, double *tolf, int *info, double *wa, int *lwa,void *data)
 {
   const double factor = 100.;
   const double one = 1.;
@@ -153,7 +156,7 @@ int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *f
 
   int fjac_dim1, fjac_offset, i__1;
   int mode, nfev, njev;
-  double xtol;
+  double xtol, ftol;
   int j;
   int lr, maxfev, nprint;
 
@@ -169,7 +172,7 @@ int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *f
 
   /*     check the input parameters for errors. */
 
-  if (*n <= 0 || *ldfjac < *n || *tol < zero || *lwa < *n * (*n + 13) / 2)
+  if (*n <= 0 || *ldfjac < *n || *tol < zero || *tolf < zero || *lwa < *n * (*n + 13) / 2)
     {
       goto L20;
     }
@@ -177,7 +180,7 @@ int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *f
   /*     call hybrj. */
 
   maxfev = (*n + 1) * 100;
-  xtol = *tol;
+  xtol = *tol; ftol = *tolf;
   mode = 2;
   i__1 = *n;
   for (j = 1; j <= i__1; ++j)
@@ -187,7 +190,7 @@ int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec, double *f
   nprint = 0;
   lr = *n * (*n + 1) / 2;
   minpack_hybrj ( fcn, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac,
-		 &xtol, &maxfev, &wa[1], &mode, &factor, &nprint, info, &nfev,
+		  &xtol, &ftol, &maxfev, &wa[1], &mode, &factor, &nprint, info, &nfev,
 		 &njev, &wa[*n * 6 + 1], &lr, &wa[*n + 1], &wa[(*n << 1) + 1],
 		  &wa[*n * 3 + 1], &wa[(*n << 2) + 1], &wa[*n * 5 + 1],data);
   if (*info == 5)

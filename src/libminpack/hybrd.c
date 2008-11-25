@@ -64,7 +64,7 @@
  *
  *     the subroutine statement is 
  *
- *       subroutine hybrd(fcn,n,x,fvec,xtol,maxfev,ml,mu,epsfcn, 
+ *       subroutine hybrd(fcn,n,x,fvec,xtol,ftol,maxfev,ml,mu,epsfcn, 
  *                        diag,mode,factor,nprint,info,nfev,fjac, 
  *                        ldfjac,r,lr,qtf,wa1,wa2,wa3,wa4) 
  *
@@ -102,6 +102,9 @@
  *       xtol is a nonnegative input variable. termination 
  *         occurs when the relative error between two consecutive 
  *         iterates is at most xtol. 
+ *
+ *       ftol is a nonnegative input variable. termination 
+ *         occurs also if Max_i |f_i(x)| <= ftol (added by Bruno).
  *
  *       maxfev is a positive int input variable. termination 
  *         occurs when the number of calls to fcn is at least maxfev 
@@ -201,8 +204,8 @@
 
 #include "minpack.h"
 
-int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xtol,
-		   int *maxfev, int *ml, int *mu, double *epsfcn, double *diag,
+int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xtol, 
+		   double *ftol, int *maxfev, int *ml, int *mu, double *epsfcn, double *diag,
 		   int *mode,const double *factor, int *nprint, int *info, int *nfev,
 		   double *fjac, int *ldfjac, double *r__, int *lr, double *qtf,
 		   double *wa1, double *wa2, double *wa3, double *wa4, void *data)
@@ -230,7 +233,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
   int jeval;
   int ncsuc;
   double ratio;
-  double fnorm;
+  double fnorm, fninf;
   double pnorm, xnorm, fnorm1;
   int nslow1, nslow2;
   int ncfail;
@@ -266,7 +269,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 
   /*     check the input parameters for errors. */
 
-  if (*n <= 0 || *xtol < zero || *maxfev <= 0 || *ml < 0 || *mu < 0
+  if (*n <= 0 || *xtol < zero || *ftol < zero || *maxfev <= 0 || *ml < 0 || *mu < 0
       || *factor <= zero || *ldfjac < *n || *lr < *n * (*n + 1) / 2)
     {
       goto L300;
@@ -592,11 +595,13 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
   /*           successful iteration. update x, fvec, and their norms. */
 
   i__1 = *n;
+  fninf = 0.0;   /* added by Bruno */
   for (j = 1; j <= i__1; ++j)
     {
       x[j] = wa2[j];
       wa2[j] = diag[j] * x[j];
       fvec[j] = wa4[j];
+      if ( fabs(fvec[j]) > fninf ) fninf = fabs(fvec[j]);  /* added by Bruno */
       /* L250: */
     }
   xnorm = minpack_enorm (n, &wa2[1]);
@@ -622,7 +627,8 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 
   /*           test for convergence. */
 
-  if (delta <= *xtol * xnorm || fnorm == zero)
+  /* if (delta <= *xtol * xnorm || fnorm == zero) old test  */
+  if (delta <= *xtol * xnorm || fninf <= *ftol)
     {
       *info = 1;
     }

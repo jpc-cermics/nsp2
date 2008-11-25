@@ -67,7 +67,7 @@
  *
  *     the subroutine statement is 
  *
- *       subroutine hybrd1(fcn,n,x,fvec,tol,info,wa,lwa) 
+ *       subroutine hybrd1(fcn,n,x,fvec,tol,tolf,info,wa,lwa) 
  *
  *     where 
  *
@@ -103,6 +103,9 @@
  *       tol is a nonnegative input variable. termination occurs 
  *         when the algorithm estimates that the relative error 
  *         between x and the solution is at most tol. 
+ *
+ *       tolf is a nonnegative input variable. termination 
+ *         occurs also if Max_i |f_i(x)| <= ftol (added by Bruno).
  *
  *       info is an int output variable. if the user has 
  *         terminated execution, info is set to the (negative) 
@@ -140,8 +143,8 @@
 
 #include "minpack.h"
 
-int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *tol,
-		    int *info, double *wa, int *lwa,void *data)
+int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *tol, 
+		    double *tolf, int *info, double *wa, int *lwa,void *data)
 {
   const double factor = 100.;
   const double one = 1.;
@@ -152,7 +155,7 @@ int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *t
 
   /* Local variables */
   int mode, nfev;
-  double xtol;
+  double xtol, ftol;
   int j, index;
   int ml, lr, mu;
   double epsfcn;
@@ -167,7 +170,7 @@ int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *t
 
   /*     check the input parameters for errors. */
 
-  if (*n <= 0 || *tol < zero || *lwa < *n * (*n * 3 + 13) / 2)
+  if (*n <= 0 || *tol < zero || *tolf < zero || *lwa < *n * (*n * 3 + 13) / 2)
     {
       goto L20;
     }
@@ -175,7 +178,7 @@ int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *t
   /*     call hybrd. */
 
   maxfev = (*n + 1) * 200;
-  xtol = *tol;
+  xtol = *tol; ftol = *tolf;
   ml = *n - 1;
   mu = *n - 1;
   epsfcn = zero;
@@ -189,7 +192,7 @@ int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *t
   nprint = 0;
   lr = *n * (*n + 1) / 2;
   index = *n * 6 + lr;
-  minpack_hybrd ( fcn, n, &x[1], &fvec[1], &xtol, &maxfev, &ml, &mu,
+  minpack_hybrd ( fcn, n, &x[1], &fvec[1], &xtol, &ftol, &maxfev, &ml, &mu,
 		  &epsfcn, &wa[1], &mode, &factor, &nprint, info, &nfev,
 		  &wa[index + 1], n, &wa[*n * 6 + 1], &lr, &wa[*n + 1],
 		  &wa[(*n << 1) + 1], &wa[*n * 3 + 1], &wa[(*n << 2) + 1],

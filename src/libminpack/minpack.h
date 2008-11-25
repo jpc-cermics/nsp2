@@ -33,13 +33,13 @@ extern int minpack_fdjac2 (minpack_fcn2 fcn, int *m, int *n, double *x, double *
 			   double *epsfcn, double *wa,void *data);
 
 extern int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec,
-			   double *tol, int *info, double *wa, int *lwa,void *);
+			   double *tol, double *tolf, int *info, double *wa, int *lwa,void *);
 
 extern int minpack_hybrj1 (minpack_fcn3 fcn, int *n, double *x, double *fvec,
-			   double *fjac, int *ldfjac, double *tol, int *info,
+			   double *fjac, int *ldfjac, double *tol, double *tolf, int *info,
 			   double *wa, int *lwa,void *data);
 extern int minpack_hybrj (minpack_fcn3 fcn, int *n, double *x, double *fvec,
-			  double *fjac, int *ldfjac, double *xtol,
+			  double *fjac, int *ldfjac, double *xtol, double *ftol,
 			  int *maxfev, double *diag, int *mode,
 			  const double *factor, int *nprint, int *info, int *nfev,
 			  int *njev, double *r__, int *lr, double *qtf,
@@ -88,7 +88,7 @@ extern int minpack_rwupdt (int *n, double *r__, int *ldr, double *w,
 			   double *b, double *alpha, double *cos__,
 			   double *sin__);
 
-extern int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xtol,
+extern int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xtol, double *ftol,
 			  int *maxfev, int *ml, int *mu, double *epsfcn, double *diag,
 			  int *mode,const double *factor, int *nprint, int *info, int *nfev,
 			  double *fjac, int *ldfjac, double *r__, int *lr, double *qtf,
