@@ -262,7 +262,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
   int i__, j, l, iflag;
   double delta;
   double ratio;
-  double fnorm, gnorm, pnorm, xnorm, fnorm1, actred, dirder, epsmch, prered;
+  double fnorm, gnorm, pnorm, xnorm=0.0, fnorm1, actred, dirder, epsmch, prered;
   double par, sum;
 
 

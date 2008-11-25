@@ -233,8 +233,8 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
   int jeval;
   int ncsuc;
   double ratio;
-  double fnorm, fninf;
-  double pnorm, xnorm, fnorm1;
+  double fnorm, fninf= DBL_MAX;
+  double pnorm, xnorm=0.0, fnorm1;
   int nslow1, nslow2;
   int ncfail;
   double actred, epsmch, prered;

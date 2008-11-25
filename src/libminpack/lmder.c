@@ -249,11 +249,11 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
 
   /* Local variables */
   int iter;
-  double temp, temp1, temp2;
+  double temp=0.0, temp1, temp2;
   int i__, j, l, iflag;
   double delta;
   double ratio;
-  double fnorm, gnorm, pnorm, xnorm, fnorm1, actred, dirder, epsmch, prered;
+  double fnorm, gnorm, pnorm, xnorm=0.0, fnorm1, actred, dirder, epsmch, prered;
   double par, sum;
 
   --wa4;
