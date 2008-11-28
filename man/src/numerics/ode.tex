@@ -15,8 +15,8 @@ x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htab
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x0}: real column vector, the initial condition.
-    \vname{t0}: real scalar, the initial time.
+    \vname{x0}: real vector, initial condition.
+    \vname{t0}: real scalar, initial time.
     \vname{t}: real vector with increasing time instants at which the solution must be computed and recorded.
     \vname{f}: nsp function defining the vector field of the differential equation.
     \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
