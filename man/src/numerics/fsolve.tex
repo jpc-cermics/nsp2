@@ -1,0 +1,139 @@
+% -*- mode: latex -*-
+
+\mansection{fsolve}
+\begin{mandesc}
+  \short{fsolve}{non linear equations solver}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+r = fsolve(x0, f)
+[r, fr, info] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Df, maxfev=n, scale=vect) 
+[r, fr, info, nfev, njev] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Df, maxfev=n, scale=vect) 
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x0}:real vector, initial estimate of the solution vector
+    \vname{f}:nsp function (or string for an C or fortran external)
+    \vname{xtol=erx, ftol=eaf}: optional named arguments relative to the stopping test (defaults:
+    \verb+xtol=sqrt(2*%eps), ftol=(2*%eps)^(2/3)+)
+    \vname{jac=Df}: optional named argument. Df should be a nsp function (the Jacobian of f)
+    \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for f (and
+    Df if provided).
+    \vname{maxfev=n}: optional named argument, maximum number of function evaluations (default is $100(n+1)$)
+    \vname{r}: vector of length $n$, should be an estimated root/zero of \verb+f+ 
+    \vname{fr}: vector of length $n$, the value of \verb+f+  at \verb+r+ (ideally a vector of zeros).
+    \vname{info}: integer scalar, should be 1 in case of success.
+    \vname{nfev, njev}: integer scalar, respectively the number of calls to f and Df (njev=0 when jac is not provided)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function tries to find a zero of a mathematical function $f$:
+$$
+    f: R^n \rightarrow  R^n, \; x \longmapsto f(x)
+$$
+that is a point $r_e$ such that $f(r_e)=0$, starting from an initial guess \verb+x0+.
+\verb+fsolve+ uses the Powell hybrid method from the minpack package (hybrj, hybrd). 
+In fact in most cases one got only an approximation $r$ of an exact root $r_e$,  
+which satisfies the following test:  
+$$
+|| r_e - r || \le xtol || r_e || \mbox{ or } \max_i | f_i(r) | \le ftol
+$$
+in which case the output variable \verb+info+ is set to $1$ (as the exact root  $r_e$
+is unknown the test of the left is done from an estimation...). Other possible values
+for \verb+info+ are:
+\begin{itemize}
+\item $info<0$: execution aborted (often a problem due to an error in the coding of f or you forget
+               to pass the additional parameter for f)
+\item $info=0$: improper input parameters.
+\item $info=2$: number of calls to f has reached or exceeded maxfev.
+\item $info=3$: xtol and ftol are too small. No further improvement in the approximate solution is possible
+\item $info=4$ or $5$: the method is not making good progress. Often this arises when the method
+             is trapped near of minimum of $||f(x)||^2$ which is not a zero.
+\end{itemize}
+Note that when \verb+fsolve+ is called with only 1 or 2 outputs arguments, an error is set 
+when $info <= 0$, and a warning is displayed in the nsp console when $info >= 2$. 
+
+\itemdesc{form of the function {\tt f}}
+The function $f$ takes one argument, a vector $x$ of length $n$ and possibly an additional
+argument which will be passed using the \verb+args=obj+ named optional argument. The function
+should return a vector of length $n$. It is possible to use a C or fortran function in place
+of an nsp function, this will be described in a future version of this page.
+
+\itemdesc{optional argument {\tt args}}
+Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
+if it is provided by the user) could be passed using \verb+args=obj+ where obj could be any nsp 
+object (see examples). In this case \verb+f+ has the form:
+\begin{quote}
+{\tt function y = f(x,obj) \\
+      ....}
+\end{quote}
+
+\itemdesc{optional jac parameter}
+The solver needs $Df$ the jacobian of $x \mapsto f(x)$ and this function could be given using 
+\verb+jac=Df+. When jac is not provided the solver computes an approximation using finite differences. 
+The header of the nsp function which defines the Jacobian of $f$ should be of the form:
+\begin{quote}
+{\tt function J = Df(x) \\
+      ....}\\
+or:\\
+{\tt function J = Df(x,obj) \\
+     ....}
+\end{quote}
+when {\tt obj} is provided with {\tt args=obj}. It is possible to verify if your Jacobien $Df$ 
+with the \manlink{derivative}{derivative} function. 
+
+\itemdesc{scale optional parameter}
+To be done...
+
+
+\end{mandescription} 
+
+\begin{examples}
+  
+\paragraph{example 1} An example with one equation, one unknown. The function:
+$$
+  f(x) = x - e^{-(1+x)}, \; f'(x) = 1 + e^{-(1+x)}
+$$ 
+has exactly one root located in $(0,1)$.
+\begin{program}\HCode{function y=f(x);y = x - exp(-1-x);endfunction\Hnewline
+// simple call to fsolve\Hnewline
+[r,fr,info] = fsolve(0,f)\Hnewline
+// using fsolve with providing the Jacobian\Hnewline
+function y=df(x);y = 1 + exp(-1-x);endfunction\Hnewline
+[r,fr,info] = fsolve(0,f,jac=df)\Hnewline
+// playing with xtol, ftol\Hnewline
+[r,fr,info] = fsolve(0,f,jac=df,ftol=\%eps,xtol=0)}
+\end{program}
+ 
+\paragraph{example 2} two equations, two unknowns. In the second example
+of the \manlink{ode}{ode} help page (The Brusselator) one can looks for
+the stationnary point(s) of the ode. In fact it is straitforward to see
+that there is one unique such point $(2;(5+eps)/2)$ but lets use fsolve
+anyway.
+\begin{program}\HCode{function [f] = brusselator(u,eps)\Hnewline
+ f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
+       (5+eps)*u(1) - u(1)^2*u(2)]\Hnewline
+endfunction\Hnewline
+eps = 2;\Hnewline
+[z,fz,info] = fsolve([1;1],brusselator,args=eps)\Hnewline
+// compute the relative error\Hnewline
+ze = [2 ; (5+eps)/2];\Hnewline
+norm(z-ze)/norm(ze)}
+\end{program}
+
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{derivative}{derivative}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+ hybrj, hybrd: Jorge More, Burt Garbow, and Ken Hillstrom. Nsp interface: Jean-Philippe Chancelier
+\end{authors}
