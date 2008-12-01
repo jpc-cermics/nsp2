@@ -49,8 +49,8 @@ matrices and \verb+zpotrf+ for the complex case.
       norm(R'*R-A)\Hnewline
       A=rand(5,5)+\%i*rand(5,5);\Hnewline
       A=A*A';\Hnewline
-      R=chol(X);\Hnewline
-      norm(R'*R-X)}
+      R=chol(A);\Hnewline
+      norm(R'*R-A)}
   \end{program}
   \paragraph{example 2} Example with a not positive definite matrix
   \begin{program}\HCode{A=rand(5,3);A=A*A';\Hnewline
