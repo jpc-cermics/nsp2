@@ -25,7 +25,7 @@ r = fsolve(x0, f)
     \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for \verb+f+ (and
     Df if provided).
     \vname{maxfev=n}: optional named argument, maximum number of function evaluations (default is $100(n+1)$)
-    \vname{r}: vector of length $n$, should be an estimated root/zero of \verb+f+ 
+    \vname{r}: vector of length $n$, should be an approximated root/zero of \verb+f+ 
     \vname{fr}: vector of length $n$, the value of \verb+f+  at \verb+r+ (ideally a vector of zeros).
     \vname{info}: integer scalar, should be 1 in case of success.
     \vname{warn}: boolean. When the function is called with \verb+lhs <= 2+, then a message describing the 
