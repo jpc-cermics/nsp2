@@ -29,8 +29,12 @@ controled by the optional mode parameter~:
     \verb+dpotrf+ and \verb+dpotrs+ (\verb+zpotrf+ and \verb+zpotrs+ for hermitian positive definite) are used. 
   \item \verb+"lo"+: A is assumed lower triangular (i.e only \verb+tril(A)+ is used) and the 
     system is solved using lapack routines \verb+dtrtrs+ (resp. \verb+ztrtrs+).
+  \item \verb+"loT"+: like for \verb+"lo"+, A is assumed lower triangular but solve $A^T x=b$.
+  \item \verb+"loH"+: like for \verb+"lo"+, A is assumed lower triangular but solve $A^H x=b$.
   \item \verb+"up"+: A is assumed upper triangular (i.e only \verb+triu(A)+ is used) and the system is 
     solved using lapack routines \verb+dtrtrs+ (resp. \verb+ztrtrs+).
+  \item \verb+"upT"+: like for \verb+"up"+, A is assumed upper triangular but solve $A^T x=b$.
+  \item \verb+"upH"+: like for \verb+"up"+, A is assumed upper triangular but solve $A^H x=b$.
   \item \verb+"lsq"+: The system is solved in the least-square sense using 
     lapack routines using lapack routines \verb+dgelsy+ (resp. \verb+zgelsy+).
   \item \verb+"\\"+ A previous routine is selected by checking properties of \verb+A+.
@@ -40,6 +44,7 @@ controled by the optional mode parameter~:
 \end{mandescription}
 
 \begin{examples}
+\paragraph{example 1} simple examples
   \begin{program}\HCode{n=10;b=rand(n,2);A=rand(n,n);\Hnewline
     x=solve(A,b,mode="std"); \Hnewline
     if norm(A*x-b) > 1.e-12 then pause;end \Hnewline
@@ -67,6 +72,31 @@ controled by the optional mode parameter~:
     x=solve(A*A',b,mode="sympos"); \Hnewline
     if norm(A*A'*x-b) > 1.e-12 then pause;end}
   \end{program}
+
+\paragraph{example 2} Using solve with factorisations. When you factorize a square 
+matrix with \manlink{lu}{lu} or \manlink{chol}{chol} (or \manlink{qr}{qr}) you can
+use the backslash operator \verb+\+ to solve the triangular systems with efficiency
+(backslash detects the triangular matrix structure and call the good routine) but 
+using directly \verb+solve+ (with the good option) is faster.
+  \begin{program}\HCode{n=800;b=rand(n,2);A=randn(n,n);\Hnewline
+    [L,U,p] = lu(A); \Hnewline
+    // solving the 2 triangular system with backslash\Hnewline
+    tic(); x = U}\verb+\+\HCode{(L}\verb+\+\HCode{b(p,:)); toc()\Hnewline
+    norm(A*x-b,1)/norm(b) \Hnewline
+    // solving the 2 triangular system with solve\Hnewline
+    tic(); x = solve(U, solve(L,b(p,:),mode="lo"), mode="up"); toc()\Hnewline
+    norm(A*x-b,1)/norm(b) \Hnewline
+    // form a symetric positive definite matrix\Hnewline
+    A = A'*A; // you can use pmult(A,A)\Hnewline
+    C = chol(A); // C'C=A with C upper triangular  \Hnewline
+    // solving the 2 triangular system with backslash\Hnewline
+    tic(); x = C}\verb+\+\HCode{(C'}\verb+\+\HCode{b); toc()\Hnewline
+    norm(A*x-b,1)/norm(b) \Hnewline
+    // solving the 2 triangular system with solve\Hnewline
+    tic(); x = solve(C, solve(C,b,mode="upT"), mode="up"); toc()\Hnewline
+    norm(A*x-b,1)/norm(b)}
+  \end{program}
+
 \end{examples}
 
 % -- Authors

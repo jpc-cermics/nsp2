@@ -3651,9 +3651,9 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
       if (  kl == 0  ||  ku == 0 )  /* triangular or diagonal cases */
 	{
 	  if ( kl > 0 )
-	    stat = nsp_mat_bdiv_triangular(A, C, 'l', &info);
+	    stat = nsp_mat_bdiv_triangular(A, C, 'l', 'n', &info);
 	  else if ( ku > 0 )
-	    stat = nsp_mat_bdiv_triangular(A, C, 'u', &info);
+	    stat = nsp_mat_bdiv_triangular(A, C, 'u', 'n', &info);
 	  else
 	    stat = nsp_mat_bdiv_diagonal(A, C, &info);
 	  
@@ -3847,6 +3847,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rc
  * @A: a #NspMatrix (not modified)
  * @B: a #NspMatrix (modified)
  * @tri_type: a char 'u' for upper triangular, 'l' for lower triangular
+ * @trans: a char 'n', (solve Tx=B) 't' (solve T^t x=B), or 'c' (solve T^*x=B)
  * @info: an int 0 if all is OK else a zero pivot have been met.
  * 
  * solve a linear triangular system A X = B, B is overwritten by the solution X
@@ -3854,7 +3855,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rc
  * Return value: OK or FAIL (due to  malloc failure)
  **/
 
-int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info)
+int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, char trans, int *info)
 {  
   int m = A->m, mn, i;
   double *temp;
@@ -3862,16 +3863,16 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
   if ( A->rc_type == 'r' )
     {
       if ( B->rc_type == 'r' )
-	C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, B->R, &m, info, 1,1,1);
+	C2F(dtrtrs) (&tri_type, &trans, "N", &m, &(B->n), A->R, &m, B->R, &m, info, 1,1,1);
       else  /* B is complex */
 	{
 	  mn = m * B->n;
 	  if ( (temp = nsp_alloc_work_doubles(mn)) == NULL ) return FAIL;
 	  for ( i = 0 ; i < mn ; i++ ) temp[i] = B->C[i].r;
-	  C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
+	  C2F(dtrtrs) (&tri_type, &trans, "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
 	  if ( *info != 0 ) { FREE(temp); return FAIL;}
 	  for ( i = 0 ; i < mn ; i++ )  { B->C[i].r = temp[i]; temp[i] = B->C[i].i;}
-	  C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
+	  C2F(dtrtrs) (&tri_type, &trans, "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
 	  for ( i = 0 ; i < mn ; i++ )  B->C[i].i = temp[i];
 	  FREE(temp);
 	}
@@ -3880,7 +3881,7 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
     {
       if ( B->rc_type == 'r' ) 
 	if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
-      C2F(ztrtrs) (&tri_type, "N", "N", &m, &(B->n), A->C, &m, B->C, &m, info, 1,1,1);
+      C2F(ztrtrs) (&tri_type, &trans, "N", &m, &(B->n), A->C, &m, B->C, &m, info, 1,1,1);
     }
   return OK;
 }

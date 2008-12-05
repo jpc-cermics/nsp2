@@ -991,7 +991,7 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
 static int int_solve( Stack stack, int rhs, int opt, int lhs)
 {
   char *mode=NULL;
-  char *types[]={ "std","sym", "lo", "up", "lsq", "\\", "sympos", NULL};
+  char *types[]={ "std","sym", "lo", "up", "lsq", "\\", "sympos", "loT", "loH", "upT", "upH", NULL};
   NspMatrix *A,*B,*C=NULLMAT,*Ac=NULLMAT;
   double  tol_rcond,rcond;
   int rep=5,stat,info;
@@ -1077,7 +1077,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 2 :/* lo */
-    if ( nsp_mat_bdiv_triangular(A, C, 'l' , &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'l', 'n', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1086,7 +1086,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 3: /* up */
-    if ( nsp_mat_bdiv_triangular(A, C, 'u' , &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'u', 'n', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1118,6 +1118,42 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     else if ( rcond <= tol_rcond )
       {
 	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	goto err;
+      }
+    break;
+
+  case 7: /* loT */
+    if ( nsp_mat_bdiv_triangular(A, C, 'l', 't', &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
+	goto err;
+      }
+    break;
+
+  case 8: /* loH */
+    if ( nsp_mat_bdiv_triangular(A, C, 'l', 'c', &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
+	goto err;
+      }
+    break;
+
+  case 9: /* upT */
+    if ( nsp_mat_bdiv_triangular(A, C, 'u', 't', &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
+	goto err;
+      }
+    break;
+
+  case 10: /* upH */
+    if ( nsp_mat_bdiv_triangular(A, C, 'u', 'c', &info) == FAIL ) goto err;
+    if ( info != 0 )   
+      {
+	Scierror("Error: matrix is singular\n");
 	goto err;
       }
     break;
