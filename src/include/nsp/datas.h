@@ -27,6 +27,7 @@ extern int nsp_frame_search_and_move_up_object(nsp_const_string str);
 extern int nsp_frame_move_up_object(NspObject *O);
 extern int nsp_declare_global(char *name,int id) ;
 extern int nsp_frame_insert_hash_contents(NspHash *H);
+extern int nsp_frame_save(NspFile *F);
 
 
 #endif
