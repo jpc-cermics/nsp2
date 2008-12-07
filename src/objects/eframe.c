@@ -655,6 +655,56 @@ NspSMatrix *nsp_eframe_to_smat(NspFrame *F)
     }
   return Obj;
 } 
+/**
+ * nsp_eframe_to_save:
+ * @file: a #NspFile
+ * @F: a #NspFrame 
+ * 
+ * returns the names contained in frame @F 
+ * in a #NspSMatrix object. 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_eframe_to_save( NspFile *file,NspFrame *F)
+{
+  int i;
+  NspObject *Elt;
+  /* first insert the names in the list part of Frame */
+#ifdef FRAME_AS_LIST
+  if (F->vars != NULLLIST ) 
+    {
+      Cell *C = F->vars->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ ) 
+	    {
+	      const char *str = nsp_object_get_name(NSP_OBJECT(C->O));
+	      if ( strcmp(str,NVOID) != 0) 
+		{
+		  if (nsp_object_xdr_save(file->obj->xdrs,NSP_OBJECT(C->O)) == FAIL) return FAIL;
+		}
+	    }
+	  C = C->next ;
+	}
+    }
+#else
+  Scierror("nsp_eframe_to_save unfinished \n");
+  return FAIL;
+#endif
+  /* if we only have local variables this is wrong ? XXXXX */
+  /* then insert the names from local variables */
+  if ( F->table == NULL) return OK;
+  for ( i = 1 ; i < F->table->mn ; i++) 
+    {
+      Elt= F->table->objs[i];
+      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	{
+	  if (nsp_object_xdr_save(file->obj->xdrs,Elt) == FAIL) return FAIL;
+	}
+    }
+  return OK;
+} 
 
 /**
  * nsp_eframe_remove_object:

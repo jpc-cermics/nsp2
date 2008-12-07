@@ -331,6 +331,21 @@ int nsp_frame_replace_object( NspObject *A,int local_id)
   return(OK);
 } 
 
+/**
+ *nsp_frame_save:
+ * @file: a #NspFile
+ * 
+ * save the objects of the current evaluation frame. 
+ *
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_frame_save(NspFile *F)
+{
+  if (  Datas == NULLLIST )  return(FAIL);
+  return nsp_eframe_to_save(F,(NspFrame *) Datas->first->O);
+} 
+
 
 /**
  *nsp_global_frame_replace_object:

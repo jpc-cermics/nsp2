@@ -2075,22 +2075,30 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
   char buf[FSIZE+1];
   NspFile *F;
   int i,rep=0;
-  if ( rhs < 2 ) 
-    { Scierror("Error:\tRhs must be > 1\n",rhs);return RET_BUG;}
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
   /* expand keys in path name result in buf */
   nsp_expand_file_with_exec_dir(&stack,fname,buf);
   /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_w(buf)) == NULLSCIFILE) return RET_BUG;
-  for ( i = 2 ; i <= rhs ; i++ )
+  if ( rhs == 1) 
     {
-      if (nsp_object_xdr_save(F->obj->xdrs,NthObj(i))== FAIL) 
-	{
-	  rep = RET_BUG;
-	  break;
-	}
+      if (nsp_frame_save(F)== FAIL) rep = RET_BUG;
     }
+  else 
+    {
+      for ( i = 2 ; i <= rhs ; i++ )
+	{
+	  if (nsp_object_xdr_save(F->obj->xdrs,NthObj(i))== FAIL) 
+	    {
+	      rep = RET_BUG;
+	      break;
+	    }
+	}
+
+    }
+
   nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
   if (nsp_file_close_xdr_w(F) == FAIL) 
     {

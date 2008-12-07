@@ -101,6 +101,7 @@ extern void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str);
 extern void nsp_eframe_remove_all_objects(NspFrame *F);
 extern NspHash *nsp_eframe_to_hash(NspFrame *F);
 extern NspSMatrix *nsp_eframe_to_smat(NspFrame *F);
+extern int nsp_eframe_to_save( NspFile *file,NspFrame *F);
 
 #endif 
 
