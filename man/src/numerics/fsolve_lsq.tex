@@ -10,7 +10,7 @@
 \begin{verbatim}
 xopt = fsolve_lsq(x0, f, m)
 [xopt, fopt ] = fsolve_lsq(x0, f, m, xtol=er, ftol=er, gtol=ea, args=obj, jac=Jf, maxfev=n, scale=vect, warn= bool) 
-[fx,Jfx]= fsolve_lsq_jac(x, f, m);
+[fx,Jfx]= fsolve_lsq_jac(x, f, m, args=obj);
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -152,7 +152,7 @@ or:\\
 \end{quote}
 when {\tt obj} is provided with {\tt args=obj}. 
 Note that when the Jacobian is not given it is approximated by finite differences and it is 
-possible to get the result of the evaluated Jacobian using the function \verb+J=fsolve_lsq_jac(x,f)+.
+possible to get the result of the evaluated Jacobian using the function \verb+J=fsolve_lsq_jac(x,f,m)+.
 This gives a feature to test your own Jacobian if provided by comparing its evaluation with the 
 \verb+fsolve_lsq_jac+ evaluation. Note that the same possibility is also available using the 
 \manlink{derivative}{derivative} function. 
@@ -215,7 +215,7 @@ endfunction\Hnewline
 \Hnewline
 // verifying the Jacobian with fsolve_lsq_jac\Hnewline
 x = [0.5; 2]; \Hnewline
-[fx, Jfx] = fsolve_lsq_jac(x,fun, m=m, args=obs);\Hnewline
+[fx, Jfx] = fsolve_lsq_jac(x, fun, m, args=obs);\Hnewline
 Jfxe =  Jfun(x, obs);\Hnewline
 norm(Jfx-Jfxe,1)/norm(Jfxe)\Hnewline
 // verifying the Jacobian with derivative\Hnewline

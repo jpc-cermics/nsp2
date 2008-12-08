@@ -528,47 +528,43 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
 
 static int int_minpack_lsq_eval_jac (Stack stack, int rhs, int opt, int lhs)
 { 
-  int warn = TRUE;
   NspObject *fcn,*jac=NULLOBJ,*args=NULLOBJ;
   nsp_option opts[] ={{ "args",obj,NULLOBJ,-1},
-		      { "m",s_int,NULLOBJ,-1},
-		      { "tol",s_double,NULLOBJ,-1},
-		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *X, *work1=NULLMAT,*work2=NULLMAT,*work2bis=NULLMAT,*work3=NULLMAT;
-  int nn,nnbis,info=0,un=1,m=-1;
+  int n,nn,nnbis,info=0,un=1,m=-1;
   double tol;
   hybr_data Hybr_data;
   
-  CheckStdRhs(2,3);
+  CheckStdRhs(3,3);
   CheckLhs(1,2);
 
   tol = sqrt (minpack_dpmpar (&un));
 
   if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
-  
+  n = X->mn;
+  if ( n <= 0  ) 
+    {
+      Scierror("Error: x is empty\n");
+      return RET_BUG;
+    }
+
   if ((fcn = get_function(stack,2,HYBR_fcn,&Hybr_data))==NULL) 
     return RET_BUG;
-  if ( rhs -opt >= 3) 
+
+  if (GetScalarInt(stack,3,&m) == FAIL) return RET_BUG;
+  if ( m < n  ) 
     {
-      if ((jac = get_function(stack,3,HYBR_jac,&Hybr_data))==NULL) 
-	return RET_BUG;
+      Scierror("Error: m (=%d) is inferior to the number of unknows n (=%d)", m, n);
+      return RET_BUG; 
     }
   
-  if ( get_optional_args(stack,rhs,opt,opts,&args,&m,&tol,&warn) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&args) == FAIL) return RET_BUG;
+
   if ( hybr_prepare(m,X->mn,fcn,jac,args,&Hybr_data)==FAIL) return RET_BUG;
 
-  if ( m == -1 ) 
-    {
-      Scierror("Error: you must give the number of equations for least square\n");
-      goto bug;
-    }
-
-  /* m is given try least square
-   */
 
   if ((work1 =nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT) goto bug;
-  
   nn=5*X->mn+m;
   if ((work2 =nsp_matrix_create(NVOID,'r',nn,1)) == NULLMAT) goto bug;
   nnbis=m*X->mn;
