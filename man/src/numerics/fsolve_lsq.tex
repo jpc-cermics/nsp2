@@ -26,7 +26,7 @@ xopt = fsolve_lsq(x0, f, m)
     \vname{scale}: vector of length $n$, scaling factors.
     \vname{xopt}: vector of length $n$, should be the solution of the optimisation problem 
     \vname{fopt}: vector of length $n$, the value of \verb+f+  at \verb+xopt+
-    \vname{info}: integer scalar, should be 1 in case of success.
+    \vname{info}: integer scalar, give information about the stopping test.
     \vname{warn}: boolean. When the function is called with \verb+lhs <= 2+, then a message describing the 
     stopping condition is displayed except if \verb+warn=%f+.
     \vname{nfev, njev}: integer scalar, respectively the number of calls to \verb+f+and Df (njev=0 when jac is not provided)
