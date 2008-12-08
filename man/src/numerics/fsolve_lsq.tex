@@ -10,6 +10,7 @@
 \begin{verbatim}
 xopt = fsolve_lsq(x0, f, m)
 [xopt, fopt ] = fsolve_lsq(x0, f, m, xtol=er, ftol=er, gtol=ea, args=obj, jac=Jf, maxfev=n, scale=vect, warn= bool) 
+[fx,Jfx]= fsolve_lsq_jac(x, f, m);
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -184,11 +185,12 @@ m=10;    // nb of measures...\Hnewline
 tm=[0.25; 0.5; 0.75; 1.0; 1.25; 1.5; 1.75; 2.0; 2.25; 2.5];\Hnewline
 ym=[0.79; 0.59; 0.47; 0.36; 0.29; 0.23; 0.17; 0.15; 0.12; 0.08];\Hnewline
 wm=ones(m,1); // measure weights (here all equal to 1)\Hnewline
+obs = hash(3,t=tm,y=ym,w=wm);\Hnewline
 \Hnewline
 // initial parameters guess\Hnewline
 x0 = [1.5 ; 0.8];\Hnewline
 // call to fsolve_lsq\Hnewline
-xopt = fsolve_lsq(x0,fun, m, args=hash(3,t=tm,y=ym,w=wm))\Hnewline
+xopt = fsolve_lsq(x0,fun, m, args=obs)\Hnewline
 \Hnewline
 // display results\Hnewline
 tt = linspace(0,1.1*max(tm),100)';\Hnewline
@@ -196,7 +198,33 @@ yy = expdecay(tt, xopt(1),xopt(2));\Hnewline
 xbasc()\Hnewline
 plot2d(tm, ym, style=-2,leg="measure points")\Hnewline
 plot2d(tt, yy, style = 2,leg="fitted curve", leg_pos="dl")\Hnewline
-xtitle("a simple fit with fsolve_lsq")}
+xtitle("a simple fit with fsolve_lsq")\Hnewline
+\Hnewline
+// same example providing the Jacobian\Hnewline
+// the gradient of the model versus its parameters A and tau\Hnewline
+function dy = Dexpdecay(t, A, tau)\Hnewline
+   dy = [exp(-t/tau), (A/tau^2)*(t.*exp(-t/tau))]\Hnewline
+endfunction\Hnewline
+// build the Jacobian of f\Hnewline
+function J = Jfun(x, obs)\Hnewline
+   // obs is a hash table with the observations\Hnewline
+   A = x(1); tau = x(2);\Hnewline
+   J = Dexpdecay(obs.t, A, tau)\Hnewline
+   J.scale_rows[obs.w]\Hnewline
+endfunction\Hnewline
+\Hnewline
+// verifying the Jacobian with fsolve_lsq_jac\Hnewline
+x = [0.5; 2]; \Hnewline
+[fx, Jfx] = fsolve_lsq_jac(x,fun, m=m, args=obs);\Hnewline
+Jfxe =  Jfun(x, obs);\Hnewline
+norm(Jfx-Jfxe,1)/norm(Jfxe)\Hnewline
+// verifying the Jacobian with derivative\Hnewline
+Jfx = derivative(fun,x, args=obs);\Hnewline
+Jfxe =  Jfun(x, obs);\Hnewline
+norm(Jfx-Jfxe,1)/norm(Jfxe)\Hnewline
+\Hnewline
+// call fsolve using jac=\Hnewline
+xopt = fsolve_lsq(x0,fun, m, jac=Jfun, args=hash(3,t=tm,y=ym,w=wm))}
 \end{program}
 
 \end{examples}
