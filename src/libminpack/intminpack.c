@@ -103,7 +103,7 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 
   if ( X->mn == 0 )  
     {
-      Scierror("Error: x should not be null\n");
+      Scierror("Error: x should not be empty\n");
       goto bug;
     }
   if ( xtol < 0.0 || ftol < 0.0 ) 
@@ -332,36 +332,56 @@ static int int_minpack_eval_jac (Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-/* solve in the least-square sense */
 
+/* 
+ *  solve in the least-square sense 
+ *  Modified (5 dec 2008) by Bruno 
+ *  (use lmder and lmdif in place of lmder1 and lmdif1) 
+ */
 static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
 { 
   int warn = TRUE;
   NspObject *fcn,*jac=NULLOBJ,*args=NULLOBJ;
+  NspMatrix *X, *scale=NULLMAT, *fvec=NULLMAT;
   nsp_option opts[] ={{ "args",obj,NULLOBJ,-1},
 		      { "jac", obj,NULLOBJ,-1},
-		      { "tol",s_double,NULLOBJ,-1},
+		      {"maxfev",s_int,NULLOBJ,-1},
+		      { "xtol",s_double,NULLOBJ,-1},
+		      { "ftol",s_double,NULLOBJ,-1},
+		      { "gtol",s_double,NULLOBJ,-1},
+		      {"scale",realmat,NULLOBJ,-1},
 		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  NspMatrix *X, *work1=NULLMAT,*work2=NULLMAT,*work3=NULLMAT;
-  int nn,info=0,un=1,m=-1;
-  double tol;
+  int j, *ipvt=NULL,n, nwork, info=0, un=1, m=-1, maxfev=-1, nfev, njev=0, nprint=0, mode=1;
+  double *work=NULL, xtol, ftol, gtol, factor=100, epsfcn=0.0;
+  double *fjac, *diag, *qtf, *wa1, *wa2, *wa3, *wa4;
   hybr_data Hybr_data;
   
   CheckStdRhs(3,3);
-  CheckLhs(1,3);
+  CheckLhs(1,5);
   
-  tol = sqrt (minpack_dpmpar (&un));
-  /* RhsVar: fsolve(x0,f,jac,tol=,args=) */
+  xtol = ftol = sqrt(minpack_dpmpar(&un));
+  gtol = 0.0;
 
-  if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
-  
+  if ( (X = GetRealMatCopy(stack,1)) == NULLMAT ) return RET_BUG;
+  n = X->mn;
+  if ( n <= 0  ) 
+    {
+      Scierror("Error: x0 is empty (the number of unknows must be positive)\n");
+      return RET_BUG;
+    }
+
   if ((fcn = get_function(stack,2,HYBR_fcn,&Hybr_data))==NULL) 
     return RET_BUG;
   
   if (GetScalarInt(stack,3,&m) == FAIL) return RET_BUG;
+  if ( m < n  ) 
+    {
+      Scierror("Error: the number of equations (=%d) is inferior to the number of unknows (%d)", m, n);
+      return RET_BUG; 
+    }
   
-  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&tol,&warn) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&args,&jac,&maxfev,&xtol,&ftol,&gtol,&scale,&warn) == FAIL) return RET_BUG;
 
   if ( jac != NULL )
     {
@@ -369,67 +389,100 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
-  if ( hybr_prepare(m,X->mn,fcn,jac,args,&Hybr_data)==FAIL) return RET_BUG;
+  if ( hybr_prepare(m, n, fcn, jac, args, &Hybr_data) == FAIL ) return RET_BUG;
   
-  if ( m < 0  ) 
-    {
-      Scierror("Error: the number of equations must be positive in %s\n", NspFname(stack));
-      goto bug;
-    }
-  
-  /* m is given try least square
-   * i.e we want to minimize the sum of square of the m functions 
-   * XXX utiliser directement lmder et lmdif 
+  if ((fvec =nsp_matrix_create(NVOID,'r', m, 1)) == NULLMAT) goto bug;
+
+
+  /* needed double work arrays (either for lmder or for lmdif): 
+   *    fjac(m * n) + diag(n) + qtf(n) + wa1(n), wa2(n), wa3(n), wa4(m) 
    */
-  if ((work1 =nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT) goto bug;
+  nwork = m*n + 5*n + m;
+  if ( (work=nsp_alloc_work_doubles(nwork)) == NULL ) goto bug;
+  fjac = work; diag = fjac+m*n; qtf = diag+n; wa1 = qtf+n; wa2 = wa1+n; wa3 = wa2+n; wa4 = wa3+n;  
+
+  /* int work array ipvt (n) */
+  if ( (ipvt=nsp_alloc_work_int(n)) == NULL ) goto bug;
+
+  if ( scale != NULLMAT ) 
+    {
+      if ( scale->mn != n ) 
+	{
+	  Scierror("Error: optional argument scale should be of size %d\n",n);
+	  goto bug;
+	}
+      mode = 2; /* use given scaling */
+      for (j = 0; j < X->mn ; ++j) 
+	{
+	  diag[j] = scale->R[j];
+	  if ( diag[i] <= 0.0 )
+	    {
+	      Scierror("Error: components of the optional argument scale should be positive\n");
+	      goto bug;
+	    }
+	}
+    }
+
   if ( jac ) 
     {
-      nn=m*X->mn+5*X->mn+m;
-      if ((work2 =nsp_matrix_create(NVOID,'r',nn,1)) == NULLMAT) goto bug;
-      if ((work3 =nsp_matrix_create(NVOID,'r',X->mn,1)) == NULLMAT) goto bug;
-      minpack_lmder1(lmder_fcn,&m,&X->mn,X->R,work1->R,work2->R,&m,&tol,&info,
-		     work3->I,work2->R+m*X->mn,&nn,&Hybr_data);
+      if ( maxfev <= 0 ) maxfev = 100*(n+1);
+      minpack_lmder(lmder_fcn, &m, &n, X->R, fvec->R, fjac, &m, &ftol, &xtol, &gtol,
+		    &maxfev, diag, &mode, &factor, &nprint, &info, &nfev, &njev, ipvt,
+		    qtf, wa1, wa2, wa3, wa4, &Hybr_data);
+
     }
   else 
     {
-      nn=m*X->mn+5*X->mn+m;
-      if ((work2 =nsp_matrix_create(NVOID,'r',nn,1)) == NULLMAT) goto bug;
-      if ((work3 =nsp_matrix_create(NVOID,'r',X->mn,1)) == NULLMAT) goto bug;
-      minpack_lmdif1(Hybr_data.f_lfcn,&m,&X->mn,X->R,work1->R,&tol,&info,work3->I,work2->R,&nn,&Hybr_data);
+      if ( maxfev <= 0 ) maxfev = 200*(n+1);
+      minpack_lmdif(Hybr_data.f_lfcn, &m, &n, X->R, fvec->R, &ftol, &xtol, &gtol,
+		    &maxfev, &epsfcn, diag, &mode, &factor, &nprint, &info, &nfev, 
+		    fjac, &m, ipvt, qtf, wa1, wa2, wa3, wa4, &Hybr_data);
     }
 
   if (lhs < 3 ) 
     {
       switch (info )
 	{
-	case 0 :
+	case 0 :   /* this case should not arise: all tests in lmder or lmdif leading to info=0 are
+                      (normally) trapped in this interface before the call to lmder or lmdif */
 	  Scierror("Error: improper input parameters in %s\n",NspFname(stack));
 	  goto bug;
 	case 1 :
-	   if (warn)Sciprintf("Stop: the relative error in the sum of squares\n"
-		   "\tis at most tol in function%s\n",NspFname(stack));
+	  if (warn)Sciprintf("%s: successful exit:\n",NspFname(stack));
+	  if (warn)Sciprintf("            the relative (estimated) error in the sum of squares is at most ftol\n");
+			     
 	  break;
 	case 2 : 
-	   if (warn)Sciprintf("Stop: the relative error between x and the\n"
-		   "\tsolution is at most tol in function %s\n",NspFname(stack));
+	  if (warn)Sciprintf("%s: successful exit:\n",NspFname(stack));
+          if (warn)Sciprintf("            the relative (estimated) error between x and the solution is at most xtol\n");
+			     
 	  break;
 	case 3: 
-	   if (warn)Sciprintf("Stop: the relative error in the sum of squares is at most tol\n");
-	   if (warn)Sciprintf("       and the relative error between x and the solution is \n"
-		   "       at most tol in function %s\n",NspFname(stack));
+	  if (warn)Sciprintf("%s: successful exit:\n",NspFname(stack));
+          if (warn)Sciprintf("            the relative (estimated) error in the sum of squares is at most ftol\n");
+          if (warn)Sciprintf("            and the relative (estimated) error between x and the solution is at most xtol\n");
+
 	  break;
-	case 4: 
-	   if (warn)Sciprintf("Stop: fvec is orthogonal to the columns of the jacobian to machine precision\n");
+	case 4:
+	  if (warn)Sciprintf("%s: successful exit:\n",NspFname(stack));
+          if (warn)Sciprintf("            fvec is orthogonal to the columns of the jacobian up to gtol\n");
 	  break;
 	case 5 :
-	   if (warn)Sciprintf("Stop: number of calls to fcn with iflag = 1 has reached 100*(%d+1)\n",X->mn);
+	  if (warn)Sciprintf("%s: unsuccessful exit: number of calls to fcn has reached or exceeded maxfev\n", NspFname(stack));
 	  break;
 	case 6:
-	   if (warn)Sciprintf("Stop: tol is too small. no further reduction in the sum of squares is possible.\n");
+	  if (warn)Sciprintf("%s: successful exit: ftol is too small but\n",NspFname(stack));
+	  if (warn)Sciprintf("            the relative (estimated) error in the sum of squares is at most epsm\n");
+          if (warn)Sciprintf("            (No further reduction in the sum of squares is possible.)\n");
 	  break;
 	case 7:
-	   if (warn)Sciprintf("Stop: tol is too small. no further improvement in \n"
-		   "       the approximate solution x is possible.\n");
+	  if (warn)Sciprintf("%s: successful exit: xtol is too small but\n",NspFname(stack));
+          if (warn)Sciprintf("            the relative (estimated) error between x and the solution is at most xtol\n");
+          if (warn)Sciprintf("            (No further improvement in the approximate solution x is possible).\n");
+	  break;
+	case 8:
+	  if (warn)Sciprintf("%s: successful exit: gtol too small but\n",NspFname(stack));
+          if (warn)Sciprintf("            fvec is orthogonal to the columns of the jacobian up to machine precision\n");
 	  break;
 	default : 
 	  if ( info < 0) 
@@ -441,23 +494,33 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
     }
 
   hybr_clean(&Hybr_data);
+  FREE(work); FREE(ipvt);
 
   NSP_OBJECT(X)->ret_pos=1;
-  if ( lhs >= 2) 
+
+  if ( lhs < 2 )
+    nsp_matrix_destroy(fvec);
+  else
     {
-      MoveObj(stack,2,NSP_OBJECT(work1));
+      MoveObj(stack,2,NSP_OBJECT(fvec));
+      if ( lhs >= 3) 
+	{
+	  if ( nsp_move_double(stack,3, (double) info)== RET_BUG ) goto bug;
+	  if ( lhs >= 4 )
+	    {
+	      if ( nsp_move_double(stack,4, (double) nfev)== RET_BUG ) goto bug;
+	      if ( lhs >= 5 )
+		if ( nsp_move_double(stack,5, (double) njev)== RET_BUG ) goto bug;
+	    }
+	}
     }
-  if ( lhs >= 3) 
-    {
-      if ( nsp_move_double(stack,3,info)== RET_BUG ) goto bug;
-    }
-  if ( work2 != NULL) nsp_matrix_destroy(work2);
-  if ( work3 != NULL) nsp_matrix_destroy(work3);
+
   return Max(lhs,1);
+
  bug:
-  if ( work1 != NULL) nsp_matrix_destroy(work1);
-  if ( work2 != NULL) nsp_matrix_destroy(work2);
-  if ( work3 != NULL) nsp_matrix_destroy(work3);
+  hybr_clean(&Hybr_data);
+  nsp_matrix_destroy(fvec);
+  FREE(work); FREE(ipvt);
   return RET_BUG;
 }
 
