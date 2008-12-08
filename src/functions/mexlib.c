@@ -535,17 +535,20 @@ void mexErrMsgTxt(const char *error_msg)
 
 mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
 {
+  int i;
   NspMatrix *A;
   if ( it == mxREAL ) 
     {
       if ((A = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT) nsp_mex_errjump();
-      memset(A->R,0,A->mn*sizeof(double));
+      /* memset(A->R,0,A->mn*sizeof(double)); */
+      for (i=0; i < A->mn ; i++) A->R[i]=0.0;
     }
   else
     {
       if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
       A->convert = 'c'; /* matab complex style */
-      memset(A->R,0,2*A->mn*sizeof(double));
+      /* memset(A->R,0,2*A->mn*sizeof(double)); */
+      for (i=0; i < 2*A->mn ; i++) A->R[i] = 0.0;
     }
   return NSP_OBJECT(A);
 }
