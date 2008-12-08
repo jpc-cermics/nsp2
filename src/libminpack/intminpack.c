@@ -415,7 +415,7 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
       for (j = 0; j < X->mn ; ++j) 
 	{
 	  diag[j] = scale->R[j];
-	  if ( diag[i] <= 0.0 )
+	  if ( diag[j] <= 0.0 )
 	    {
 	      Scierror("Error: components of the optional argument scale should be positive\n");
 	      goto bug;
