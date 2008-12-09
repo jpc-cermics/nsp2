@@ -74,13 +74,13 @@ after).
 At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
 the estimated local error in the i th component $x_i(\tau_k)$ (that is the error in 
 $x_i(\tau_k)$ assuming that $x(\tau_{k-1})$ is exact) is controlled so as to be less 
-than $etol_k$ where:
+than $etol_i$ where:
 $$
-etol_k =
+etol_i =
 \left\{
 \begin{array}{l}
- rtol | x_k | + atol  \mbox{ if } atol \mbox { is a scalar} \\
- rtol | x_k | + atol_k  \mbox{ if } atol \mbox { is a vector}
+ rtol | x_i | + atol  \mbox{ if } atol \mbox { is a scalar} \\
+ rtol | x_i | + atol_i  \mbox{ if } atol \mbox { is a vector}
 \end{array}
 \right.
 $$
