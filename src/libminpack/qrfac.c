@@ -128,34 +128,14 @@
  *     burton s. Garbow, kenneth e. Hillstrom, jorge j. More 
  */
 
-
-
 #include "minpack.h"
-
-/* Table of constant values */
-
 
 int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 		   int *lipvt, double *rdiag, double *acnorm, double *wa)
 {
-  /* Initialized data */
-  int c__1 = 1;
-  const double one = 1.;
-  const double p05 = .05;
-  const double zero = 0.;
-
-  /* System generated locals */
-  int a_dim1, a_offset, i__1, i__2, i__3;
-  double d__1, d__2, d__3;
-
-  /* Local variables */
-  int kmax;
-  double temp;
-  int i__, j, k, minmn;
-  double epsmch;
-  double ajnorm;
-  int jp1;
-  double sum;
+  const double one = 1.0,  p05 = .05, zero = 0.;
+  int c__1 = 1, a_dim1, a_offset, i2, i3, kmax, jp1, i1 , j, k, minmn;
+  double epsmch, ajnorm, temp, sum, d__1, d__2, d__3;
 
   /* Parameter adjustments */
   --wa;
@@ -166,32 +146,23 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
   a -= a_offset;
   --ipvt;
 
-  /* Function Body */
-
   /*     epsmch is the machine precision. */
-
   epsmch = minpack_dpmpar (&c__1);
 
   /*     compute the initial column norms and initialize several arrays. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  for (j = 1; j <= *n; ++j)
     {
       acnorm[j] = minpack_enorm (m, &a[j * a_dim1 + 1]);
       rdiag[j] = acnorm[j];
       wa[j] = rdiag[j];
-      if (*pivot)
-	{
-	  ipvt[j] = j;
-	}
-      /* L10: */
+      if (*pivot)   ipvt[j] = j;
     }
 
   /*     reduce a to r with householder transformations. */
 
   minmn = Min (*m, *n);
-  i__1 = minmn;
-  for (j = 1; j <= i__1; ++j)
+  for (j = 1; j <= minmn ; ++j)
     {
       if (!(*pivot))
 	{
@@ -201,26 +172,23 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
       /*        bring the column of largest norm into the pivot position. */
 
       kmax = j;
-      i__2 = *n;
-      for (k = j; k <= i__2; ++k)
+      for (k = j; k <= *n ; ++k)
 	{
 	  if (rdiag[k] > rdiag[kmax])
 	    {
 	      kmax = k;
 	    }
-	  /* L20: */
 	}
       if (kmax == j)
 	{
 	  goto L40;
 	}
-      i__2 = *m;
-      for (i__ = 1; i__ <= i__2; ++i__)
+
+      for (i1 = 1; i1 <= *m; ++i1)
 	{
-	  temp = a[i__ + j * a_dim1];
-	  a[i__ + j * a_dim1] = a[i__ + kmax * a_dim1];
-	  a[i__ + kmax * a_dim1] = temp;
-	  /* L30: */
+	  temp = a[i1 + j * a_dim1];
+	  a[i1 + j * a_dim1] = a[i1 + kmax * a_dim1];
+	  a[i1 + kmax * a_dim1] = temp;
 	}
       rdiag[kmax] = rdiag[j];
       wa[kmax] = wa[j];
@@ -232,8 +200,8 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
       /*        compute the householder transformation to reduce the */
       /*        j-th column of a to a multiple of the j-th unit vector. */
 
-      i__2 = *m - j + 1;
-      ajnorm = minpack_enorm (&i__2, &a[j + j * a_dim1]);
+      i2 = *m - j + 1;
+      ajnorm = minpack_enorm (&i2, &a[j + j * a_dim1]);
       if (ajnorm == zero)
 	{
 	  goto L100;
@@ -242,11 +210,10 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 	{
 	  ajnorm = -ajnorm;
 	}
-      i__2 = *m;
-      for (i__ = j; i__ <= i__2; ++i__)
+
+      for (i1 = j; i1 <= *m; ++i1)
 	{
-	  a[i__ + j * a_dim1] /= ajnorm;
-	  /* L50: */
+	  a[i1 + j * a_dim1] /= ajnorm;
 	}
       a[j + j * a_dim1] += one;
 
@@ -258,22 +225,21 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 	{
 	  goto L100;
 	}
-      i__2 = *n;
-      for (k = jp1; k <= i__2; ++k)
+
+      for (k = jp1; k <= *n; ++k)
 	{
 	  sum = zero;
-	  i__3 = *m;
-	  for (i__ = j; i__ <= i__3; ++i__)
+
+	  for (i1 = j; i1 <= *m; ++i1)
 	    {
-	      sum += a[i__ + j * a_dim1] * a[i__ + k * a_dim1];
+	      sum += a[i1 + j * a_dim1] * a[i1 + k * a_dim1];
 	      /* L60: */
 	    }
 	  temp = sum / a[j + j * a_dim1];
-	  i__3 = *m;
-	  for (i__ = j; i__ <= i__3; ++i__)
+
+	  for (i1 = j; i1 <= *m; ++i1)
 	    {
-	      a[i__ + k * a_dim1] -= temp * a[i__ + j * a_dim1];
-	      /* L70: */
+	      a[i1 + k * a_dim1] -= temp * a[i1 + j * a_dim1];
 	    }
 	  if (!(*pivot) || rdiag[k] == zero)
 	    {
@@ -291,16 +257,14 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 	    {
 	      goto L80;
 	    }
-	  i__3 = *m - j;
-	  rdiag[k] = minpack_enorm (&i__3, &a[jp1 + k * a_dim1]);
+	  i3 = *m - j;
+	  rdiag[k] = minpack_enorm (&i3, &a[jp1 + k * a_dim1]);
 	  wa[k] = rdiag[k];
 	L80:
-	  /* L90: */
 	  ;
 	}
     L100:
       rdiag[j] = -ajnorm;
-      /* L110: */
     }
   return 0;
 }

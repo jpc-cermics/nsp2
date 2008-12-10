@@ -140,13 +140,9 @@ int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *f
 		    double *wa1, double *wa2, void *data)
 {
   const double zero = 0.;
-  int c__1 = 1, fjac_dim1, fjac_offset, i__1, i__2, i__3, i__4,i__, j, k, msum;
+  int c__1 = 1, fjac_dim1, fjac_offset, i1,  j, k, msum;
   double d__1, temp, h__,epsmch, eps;
 
-  --wa2;
-  --wa1;
-  --fvec;
-  --x;
   fjac_dim1 = *ldfjac;
   fjac_offset = fjac_dim1 + 1;
   fjac -= fjac_offset;
@@ -157,85 +153,64 @@ int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *f
 
   eps = sqrt ((Max (*epsfcn, epsmch)));
   msum = *ml + *mu + 1;
-  if (msum < *n)
+  if (msum >= *n)
     {
-      goto L40;
-    }
-
-  /*        computation of dense approximate jacobian. */
-
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
-    {
-      temp = x[j];
-      h__ = eps * Abs (temp);
-      if (h__ == zero)
+      /*        computation of dense approximate jacobian. */
+      for (j = 1; j <= *n ; ++j)
 	{
-	  h__ = eps;
-	}
-      x[j] = temp + h__;
-      (*fcn) (n, &x[1], &wa1[1], iflag,data);
-      if (*iflag < 0)
-	{
-	  goto L30;
-	}
-      x[j] = temp;
-      i__2 = *n;
-      for (i__ = 1; i__ <= i__2; ++i__)
-	{
-	  fjac[i__ + j * fjac_dim1] = (wa1[i__] - fvec[i__]) / h__;
-	}
-    }
- L30:
-  goto L110;
- L40:
-
-  /*        computation of banded approximate jacobian. */
-
-  i__1 = msum;
-  for (k = 1; k <= i__1; ++k)
-    {
-      i__2 = *n;
-      i__3 = msum;
-      for (j = k; i__3 < 0 ? j >= i__2 : j <= i__2; j += i__3)
-	{
-	  wa2[j] = x[j];
-	  h__ = eps * (d__1 = wa2[j], Abs (d__1));
+	  temp = x[j-1];
+	  h__ = eps * Abs (temp);
 	  if (h__ == zero)
 	    {
 	      h__ = eps;
 	    }
-	  x[j] = wa2[j] + h__;
-	  /* L60: */
-	}
-      (*fcn) (n, &x[1], &wa1[1], iflag,data);
-      if (*iflag < 0)
-	{
-	  goto L100;
-	}
-      i__3 = *n;
-      i__2 = msum;
-      for (j = k; i__2 < 0 ? j >= i__3 : j <= i__3; j += i__2)
-	{
-	  x[j] = wa2[j];
-	  h__ = eps * (d__1 = wa2[j], Abs (d__1));
-	  if (h__ == zero)
+	  x[j-1] = temp + h__;
+	  (*fcn) (n, x, wa1, iflag,data);
+	  if (*iflag < 0) return 0;
+	  x[j-1] = temp;
+	  for (i1 = 1; i1 <= *n; ++i1)
 	    {
-	      h__ = eps;
+	      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h__;
 	    }
-	  i__4 = *n;
-	  for (i__ = 1; i__ <= i__4; ++i__)
+	}
+    }
+  else
+    {
+      /*        computation of banded approximate jacobian. */
+
+      for (k = 1; k <= msum ; ++k)
+	{
+	  for (j = k; msum < 0 ? j >= *n : j <= *n; j += msum )
 	    {
-	      fjac[i__ + j * fjac_dim1] = zero;
-	      if (i__ >= j - *mu && i__ <= j + *ml)
+	      wa2[j-1] = x[j-1];
+	      h__ = eps * (d__1 = wa2[j-1], Abs (d__1));
+	      if (h__ == zero)
 		{
-		  fjac[i__ + j * fjac_dim1] = (wa1[i__] - fvec[i__]) / h__;
+		  h__ = eps;
+		}
+	      x[j-1] = wa2[j-1] + h__;
+	    }
+	  (*fcn) (n, x, wa1, iflag,data);
+	  if (*iflag < 0) return 0;
+	  for (j = k; msum < 0 ? j >= *n : j <= *n; j += msum )
+	    {
+	      x[j-1] = wa2[j-1];
+	      h__ = eps * (d__1 = wa2[j-1], Abs (d__1));
+	      if (h__ == zero)
+		{
+		  h__ = eps;
+		}
+	      for (i1 = 1; i1 <= *n ; ++i1)
+		{
+		  fjac[i1 + j * fjac_dim1] = zero;
+		  if (i1 >= j - *mu && i1 <= j + *ml)
+		    {
+		      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h__;
+		    }
 		}
 	    }
 	}
     }
- L100:
- L110:
   return 0;
 }
 
