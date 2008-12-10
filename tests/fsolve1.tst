@@ -26,7 +26,7 @@ if norm(xf - A\b) > 1.e-7 then pause;end
 // test the jacobian 
 
 x0=ones(3,1);
-[f1,j]=fsolve_lsq_jac(x0,f,m=m);
+[f1,j]=fsolve_lsq_jac(x0,f,m);
 
 if norm(f1 - f(x0)) > 10*%eps then;pause;end
 if norm(A -j) > 1.e-7 then;pause;end
