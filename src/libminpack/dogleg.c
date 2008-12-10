@@ -100,7 +100,6 @@
 int minpack_dogleg (int *n, double *r__, int *lr, double *diag, double *qtb,
 		    double *delta, double *x, double *wa1, double *wa2)
 {
-  int c__1 = 1;
   const double one = 1.;
   const double zero = 0.;
   /* System generated locals */
@@ -130,7 +129,7 @@ int minpack_dogleg (int *n, double *r__, int *lr, double *diag, double *qtb,
 
   /*     epsmch is the machine precision. */
 
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   /*     first, calculate the gauss-newton direction. */
 

@@ -76,14 +76,14 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
 		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *X, *work1=NULLMAT,*work2=NULLMAT;
-  int nn,info=0,un=1,m=-1, nfev, njev=0;
+  int nn,info=0,m=-1, nfev, njev=0;
   double xtol, ftol, epsm;
   hybr_data Hybr_data;
   
   CheckStdRhs(2,2);
   CheckLhs(1,5);
     
-  epsm = minpack_dpmpar (&un);
+  epsm = minpack_dpmpar (1);
   xtol = sqrt (epsm); 
   ftol = pow(epsm,2./3.);
   
@@ -258,14 +258,14 @@ static int int_minpack_eval_jac (Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "args",obj,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *X,*J=NULLMAT, *work1=NULLMAT,*work2=NULLMAT;
-  int info=0,un=1,m=-1;
+  int info=0,m=-1;
   double tol;
   hybr_data Hybr_data;
   
   CheckStdRhs(2,3);
   CheckLhs(1,2);
 
-  tol = sqrt (minpack_dpmpar (&un));
+  tol = sqrt (minpack_dpmpar (1));
 
   if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
   
@@ -352,7 +352,7 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
 		      {"scale",realmat,NULLOBJ,-1},
 		      {"warn",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  int j, *ipvt=NULL,n, nwork, info=0, un=1, m=-1, maxfev=-1, nfev, njev=0, nprint=0, mode=1;
+  int j, *ipvt=NULL,n, nwork, info=0, m=-1, maxfev=-1, nfev, njev=0, nprint=0, mode=1;
   double *work=NULL, xtol, ftol, gtol, factor=100, epsfcn=0.0;
   double *fjac, *diag, *qtf, *wa1, *wa2, *wa3, *wa4;
   hybr_data Hybr_data;
@@ -360,7 +360,7 @@ static int int_minpack_lsq (Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(3,3);
   CheckLhs(1,5);
   
-  xtol = ftol = sqrt(minpack_dpmpar(&un));
+  xtol = ftol = sqrt(minpack_dpmpar(1));
   gtol = 0.0;
 
   if ( (X = GetRealMatCopy(stack,1)) == NULLMAT ) return RET_BUG;
@@ -532,14 +532,14 @@ static int int_minpack_lsq_eval_jac (Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "args",obj,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *X, *work1=NULLMAT,*work2=NULLMAT,*work2bis=NULLMAT,*work3=NULLMAT;
-  int n,nn,nnbis,info=0,un=1,m=-1;
+  int n,nn,nnbis,info=0,m=-1;
   double tol;
   hybr_data Hybr_data;
   
   CheckStdRhs(3,3);
   CheckLhs(1,2);
 
-  tol = sqrt (minpack_dpmpar (&un));
+  tol = sqrt (minpack_dpmpar (1));
 
   if ((X = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
   n = X->mn;

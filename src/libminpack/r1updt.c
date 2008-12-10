@@ -124,7 +124,6 @@ int minpack_r1updt (int *m, int *n, double *s, int *ls, double *u, double *v,
 		    double *w, int *sing)
 {
   /* Initialized data */
-  int c__3 = 3;
   const double one = 1.;
   const double p5 = .5;
   const double p25 = .25;
@@ -156,7 +155,7 @@ int minpack_r1updt (int *m, int *n, double *s, int *ls, double *u, double *v,
 
   /*     giant is the largest magnitude. */
 
-  giant = minpack_dpmpar (&c__3);
+  giant = minpack_dpmpar (3);
 
   /*     initialize the diagonal element pointer. */
 

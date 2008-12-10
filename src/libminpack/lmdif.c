@@ -235,8 +235,6 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 		   int *ipvt, double *qtf, double *wa1, double *wa2, double *wa3,
 		   double *wa4,void *data)
 {
-  /* Initialized data */
-  int c__1 = 1;
   int c_true = TRUE;
   const double one = 1.;
   const double p1 = .1;
@@ -280,7 +278,7 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 
   /*     epsmch is the machine precision. */
 
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   *info = 0;
   iflag = 0;

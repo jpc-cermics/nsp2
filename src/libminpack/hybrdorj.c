@@ -102,7 +102,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
   --r__;
 
   /*     epsmch is the machine precision. */
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   *info = 0;
   iflag = 0;

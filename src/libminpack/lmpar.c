@@ -148,8 +148,6 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
 		   double *qtb, double *delta, double *par, double *x,
 		   double *sdiag, double *wa1, double *wa2)
 {
-  /* Initialized data */
-  int c__2 = 2;
   const double p1 = .1;
   const double p001 = .001;
   const double zero = 0.;
@@ -185,7 +183,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
 
   /*     dwarf is the smallest positive magnitude. */
 
-  dwarf = minpack_dpmpar (&c__2);
+  dwarf = minpack_dpmpar (2);
 
   /*     compute and store in x the gauss-newton direction. if the */
   /*     jacobian is rank-deficient, obtain a least squares solution. */

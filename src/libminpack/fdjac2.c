@@ -54,7 +54,6 @@ int minpack_fdjac2 (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 		    double *fjac, int *ldfjac, int *iflag, double *epsfcn,
 		    double *wa,void *data)
 {
-  int c__1 = 1;
   const double zero = 0.;
   int fjac_dim1, fjac_offset, i__1, i__2;
   double temp, h__;
@@ -70,7 +69,7 @@ int minpack_fdjac2 (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   fjac -= fjac_offset;
 
   /*     epsmch is the machine precision. */
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   eps = sqrt ((Max (*epsfcn, epsmch)));
   i__1 = *n;

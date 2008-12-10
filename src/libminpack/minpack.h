@@ -21,7 +21,7 @@ extern int minpack_dogleg (int *n, double *r__, int *lr, double *diag,
 			   double *qtb, double *delta, double *x, double *wa1,
 			   double *wa2);
 
-extern double minpack_dpmpar (int *i__);
+extern double minpack_dpmpar (int i);
 extern double minpack_enorm (int *n, double *x);
 
 extern int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec,

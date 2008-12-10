@@ -29,9 +29,9 @@
  *     Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More' 
  */
 
-double minpack_dpmpar (int *i)
+double minpack_dpmpar (int i)
 {
-  switch (*i)
+  switch (i)
     {
     case 1 :  return nsp_dlamch ("p");  break;
     case 2 :  return nsp_dlamch ("u");  break;

@@ -136,7 +136,6 @@ int minpack_chkder (int *m, int *n, double *x, double *fvec, double *fjac,
 		    int *ldfjac, double *xp, double *fvecp, int *mode,
 		    double *err)
 {
-  int c__1 = 1;
   const double factor = 100.;
   const double one = 1.;
   const double zero = 0.;
@@ -164,7 +163,7 @@ int minpack_chkder (int *m, int *n, double *x, double *fvec, double *fjac,
 
   /*     epsmch is the machine precision. */
 
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   eps = sqrt (epsmch);
 

@@ -134,7 +134,7 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 		   int *lipvt, double *rdiag, double *acnorm, double *wa)
 {
   const double one = 1.0,  p05 = .05, zero = 0.;
-  int c__1 = 1, a_dim1, a_offset, i2, i3, kmax, jp1, i1 , j, k, minmn;
+  int a_dim1, a_offset, i2, i3, kmax, jp1, i1 , j, k, minmn;
   double epsmch, ajnorm, temp, sum, d__1, d__2, d__3;
 
   /* Parameter adjustments */
@@ -147,7 +147,7 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
   --ipvt;
 
   /*     epsmch is the machine precision. */
-  epsmch = minpack_dpmpar (&c__1);
+  epsmch = minpack_dpmpar (1);
 
   /*     compute the initial column norms and initialize several arrays. */
 
