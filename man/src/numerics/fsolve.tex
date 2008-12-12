@@ -9,37 +9,38 @@
 \begin{calling_sequence}
 \begin{verbatim}
 r = fsolve(x0, f)
-[r, fr ] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Df, maxfev=n, scale=vect, warn= bool) 
-[r, fr, info, nfev, njev ] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Df, maxfev=n, scale=vect, warn= bool) 
+[r, fr ] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Jf, maxfev=n, scale=vect, warn= bool) 
+[r, fr, info, nfev, njev ] = fsolve(x0, f, xtol=erx, ftol=ea, args=obj, jac=Jf, maxfev=p, scale=vect, warn= bool) 
 [fr,Jr]= fsolve_jac(x0,f);
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x0}:real vector, initial estimate of the solution vector
+    \vname{x0}:real vector (says of length $n$), initial estimate of the solution vector
     \vname{f}:nsp function (or string for an C or fortran external)
     \vname{xtol=erx, ftol=eaf}: optional named arguments relative to the stopping test (defaults:
     \verb+xtol=sqrt(2*%eps), ftol=(2*%eps)^(2/3)+)
-    \vname{jac=Df}: optional named argument. Df should be a nsp function (the Jacobian of \verb+f+)
+    \vname{jac=Jf}: optional named argument. Jf should be a nsp function (the Jacobian of \verb+f+)
     \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for \verb+f+ (and
-    Df if provided).
-    \vname{maxfev=n}: optional named argument, maximum number of function evaluations (default is $100(n+1)$)
+    Jf if provided).
+    \vname{maxfev=p}: optional named argument, maximum number of function evaluations (default is $100(n+1)$ if Jf is
+    provided and $200(n+1)$ otherwise)
     \vname{scale}: vector of length $n$, scaling factors.
     \vname{r}: vector of length $n$, should be an approximated root/zero of \verb+f+ 
     \vname{fr}: vector of length $n$, the value of \verb+f+  at \verb+r+ (ideally a vector of zeros).
     \vname{info}: integer scalar, should be 1 in case of success.
     \vname{warn}: boolean. When the function is called with \verb+lhs <= 2+, then a message describing the 
     stopping condition is displayed except if \verb+warn=%f+.
-    \vname{nfev, njev}: integer scalar, respectively the number of calls to \verb+f+and Df (njev=0 when jac is not provided)
+    \vname{nfev, njev}: integer scalar, respectively the number of calls to \verb+f+and Jf (njev=0 when jac is not provided)
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
 This function tries to find a zero of a mathematical function $f: {\R}^n \rightarrow  {\R}^n$.
 That is, find a point $r_e \in {\R}^n$ such that $f(r_e)=0$, by an iterative algorithm starting from an initial guess \verb+x0+.
-The function \verb+fsolve+ uses the Powell hybrid method from the minpack package (\verb+hybrj+, \verb+hybrd+). 
-In most cases it returns an approximation $r$ of an exact root $r_e$ satisfying the following test condition:  
+The function \verb+fsolve+ uses the Powell hybrid method from the Minpack package (\verb+hybrj+, \verb+hybrd+). 
+In most cases it returns an approximation $r$ of an exact root $r_e$ satisfying the following condition:  
 $$
 || r_e - r || \le xtol || r_e || \mbox{ or } \max_i | f_i(r) | \le ftol\,.
 $$
@@ -52,7 +53,7 @@ for \verb+info+ are:
 \item \verb+info=0+: improper input parameters.
 \item \verb+info=2+: number of calls to \verb+f+ has reached or exceeded \verb+maxfev+.
 \item \verb+info=3+: \verb+xtol+ and \verb+ftol+ are too small. No further improvement in the approximate solution is possible
-\item \verb+info=4+ or +5+: the method is not making good progress. This error often arises when the method
+\item \verb+info=4+ or \verb++5+: the method is not making good progress. This error often arises when the method
   is trapped near a minimum of $||f(x)||^2$ which is not a zero.
 \end{itemize}
 Note that, when \verb+fsolve+ is called with only 1 or 2 outputs arguments, an error is set 
@@ -75,14 +76,14 @@ object (see examples). In this case \verb+f+ has the form:
 \end{quote}
 
 \itemdesc{optional {\tt jac} parameter}
-The solver needs $Df$ the jacobian of $x \mapsto f(x)$ and this function can be given using 
-\verb+jac=Df+. When jac is not provided the solver computes an approximation using finite differences. 
+The solver needs $Jf$ the jacobian of $x \mapsto f(x)$ and this function can be given using 
+\verb+jac=Jf+. When jac is not provided the solver computes an approximation using finite differences. 
 The header of the nsp function which defines the Jacobian of \verb+f+ should be of the form:
 \begin{quote}
-{\tt function J = Df(x) \\
+{\tt function J = Jf(x) \\
       ....}\\
 or:\\
-{\tt function J = Df(x,obj) \\
+{\tt function J = Jf(x,obj) \\
      ....}
 \end{quote}
 when {\tt obj} is provided with {\tt args=obj}. 

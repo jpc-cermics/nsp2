@@ -9,21 +9,22 @@
 \begin{calling_sequence}
 \begin{verbatim}
 xopt = fsolve_lsq(x0, f, m)
-[xopt, fopt ] = fsolve_lsq(x0, f, m, xtol=er, ftol=er, gtol=ea, args=obj, jac=Jf, maxfev=n, scale=vect, warn= bool) 
+[xopt, fopt ] = fsolve_lsq(x0, f, m, xtol=er, ftol=er, gtol=ea, args=obj, jac=Jf, maxfev=p, scale=vect, warn= bool) 
 [fx,Jfx]= fsolve_lsq_jac(x, f, m, args=obj);
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x0}: real vector, initial estimate of the optimal vector
+    \vname{x0}: real vector (says of length $n$), initial estimate of the optimal vector
     \vname{f}: nsp function (or string for an C or fortran external)
     \vname{m}: integer, number of equations
     \vname{xtol=er, ftol=er, gtol=ea}: optional named arguments relative to the stopping test.
     \vname{jac=Jf}: optional named argument. Jf should be a nsp function (the Jacobian of \verb+f+)
     \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for \verb+f+ (and
     Jf if provided).
-    \vname{maxfev=n}: optional named argument, maximum number of function evaluations (default is $100(n+1)$)
+    \vname{maxfev=p}: optional named argument, maximum number of function evaluations (default is $100(n+1)$ if Jf is
+    provided and $200(n+1)$ otherwise).
     \vname{scale}: vector of length $n$, scaling factors.
     \vname{xopt}: vector of length $n$, should be the solution of the optimisation problem 
     \vname{fopt}: vector of length $n$, the value of \verb+f+  at \verb+xopt+
@@ -101,7 +102,7 @@ $$
 \max_i \frac{1}{s_i} | [J_f(x)]^i \cdot f(x) | \le gtol
 $$
 In this case the \verb+info+ variable is set to 4. Remark that the i th component of the (non scaled) 
-gradient is equal to the dot product between the i th column of the Jacobien and the function.
+gradient is equal to the dot product between the i th column of the Jacobian and the function.
 So this stopping test corresponds to the near orthogonality of $f$ with the columns of its
 Jacobian.
 \item if the first condition is not met then the code tests:
@@ -121,7 +122,7 @@ Jacobian.
       \end{itemize}
 \end{enumerate}
 Note that, when \verb+fsolve_lsq+ is called with only 1 or 2 outputs arguments, an error is set 
-when \verb+info <= 0+, and a warning is displayed in the nsp console when \verb+info >= 2+ except 
+when \verb+info <= 0+, and a warning is displayed in the nsp console when \verb+info >= 1+ except 
 if \verb+warn+ is set to \verb+%f+. 
 
 \itemdesc{form of the function {\tt f}}
