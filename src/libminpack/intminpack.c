@@ -297,8 +297,8 @@ static int int_minpack_eval_jac (Stack stack, int rhs, int opt, int lhs)
       
     J->R[0]=1;
     J->R[1]=2;
-    minpack_hybrd_eval ( Hybr_data.f_fcn,&X->mn, X->R, work1->R, &maxfev, &ml, &mu,
-			 &epsfcn, &info, &nfev, J->R, &X->mn, &wa[X->mn],
+    minpack_hybrd_eval ( Hybr_data.f_fcn,X->mn, X->R, work1->R, &maxfev, ml, mu,
+			 epsfcn, &info, &nfev, J->R, &X->mn, &wa[X->mn],
 			 &wa[X->mn*2],&Hybr_data);
   }
   

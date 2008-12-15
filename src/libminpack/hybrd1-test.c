@@ -189,18 +189,18 @@ int minpack_wood (const int *n, double *x, double *fvec, int *iflag, void *data)
   const double c5 = 19.8;
   const double c6 = 180.;
 
-  double d__1, temp1,temp2;
+  double d1, temp1,temp2;
   if ( *iflag == 0) return 0 ;
 
   --fvec;
   --x;
 
   /* computing 2nd power */
-  d__1 = x[1];
-  temp1 = x[2] - d__1 * d__1;
+  d1 = x[1];
+  temp1 = x[2] - d1 * d1;
   /* computing 2nd power */
-  d__1 = x[3];
-  temp2 = x[4] - d__1 * d__1;
+  d1 = x[3];
+  temp2 = x[4] - d1 * d1;
   fvec[1] = -c3 * x[1] * temp1 - (one - x[1]);
   fvec[2] = c3 * temp1 + c4 * (x[2] - one) + c5 * (x[4] - one);
   fvec[3] = -c6 * x[3] * temp2 - (one - x[3]);
@@ -214,7 +214,7 @@ int minpack_jac_wood (const int *n, double *x, double *fjac, int *ldfjac, int *i
   const double c3 = 200.,c4 = 20.2,c5 = 19.8,c6 = 180.;
 
   int fjac_dim1,k,j;
-  double d__1,temp1, temp2;
+  double d1,temp1, temp2;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
@@ -229,11 +229,11 @@ int minpack_jac_wood (const int *n, double *x, double *fjac, int *ldfjac, int *i
 	}
     }
   /* computing 2nd power */
-  d__1 = x[1];
-  temp1 = x[2] - three * (d__1 * d__1);
+  d1 = x[1];
+  temp1 = x[2] - three * (d1 * d1);
   /* computing 2nd power */
-  d__1 = x[3];
-  temp2 = x[4] - three * (d__1 * d__1);
+  d1 = x[3];
+  temp2 = x[4] - three * (d1 * d1);
   fjac[fjac_dim1 + 1] = -c3 * temp1 + one;
   fjac[(fjac_dim1 << 1) + 1] = -c3 * x[1];
   fjac[fjac_dim1 + 2] = -two * c3 * x[1];
@@ -267,7 +267,7 @@ int minpack_helical_valley (const int *n, double *x, double *fvec, int *iflag, v
   const double c8 = .5;
   const double eight = 8.;
 
-  double d__1,d__2, temp1, temp2,tpi;
+  double d1,d2, temp1, temp2,tpi;
   if ( *iflag == 0) return 0 ;
   --fvec;
   --x;
@@ -283,10 +283,10 @@ int minpack_helical_valley (const int *n, double *x, double *fvec, int *iflag, v
       temp1 = atan (x[2] / x[1]) / tpi + c8;
     }
   /* computing 2nd power */
-  d__1 = x[1];
+  d1 = x[1];
   /* computing 2nd power */
-  d__2 = x[2];
-  temp2 = sqrt (d__1 * d__1 + d__2 * d__2);
+  d2 = x[2];
+  temp2 = sqrt (d1 * d1 + d2 * d2);
   fvec[1] = ten * (x[3] - ten * temp1);
   fvec[2] = ten * (temp2 - one);
   fvec[3] = x[3];
@@ -302,7 +302,7 @@ int minpack_jac_helical_valley (const int *n, double *x, double *fjac, int *ldfj
   const double hundrd = 100.;
 
   int fjac_dim1;
-  double d__1, d__2, temp, temp1, temp2, tpi;
+  double d1, d2, temp, temp1, temp2, tpi;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
@@ -311,10 +311,10 @@ int minpack_jac_helical_valley (const int *n, double *x, double *fjac, int *ldfj
 
   tpi = eight * atan (one);
   /* computing 2nd power */
-  d__1 = x[1];
+  d1 = x[1];
   /* computing 2nd power */
-  d__2 = x[2];
-  temp = d__1 * d__1 + d__2 * d__2;
+  d2 = x[2];
+  temp = d1 * d1 + d2 * d2;
   temp1 = tpi * temp;
   temp2 = sqrt (temp);
   fjac[fjac_dim1 + 1] = hundrd * x[2] / temp1;
@@ -338,62 +338,62 @@ int minpack_watson (const int *n, double *x, double *fvec, int *iflag, void *dat
   const double one = 1.;
   const double two = 2.;
   const double c9 = 29.;
-  int i__1, i__2;
-  double d__1;
+  int i1, i2;
+  double d1;
   double  temp, temp1, temp2;
-  int i__, j, k;
+  int i, j, k;
   double ti;
   double  sum1, sum2;
   if ( *iflag == 0) return 0 ;
   --fvec;
   --x;
 
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       fvec[k] = zero;
       /* l70: */
     }
-  for (i__ = 1; i__ <= 29; ++i__)
+  for (i = 1; i <= 29; ++i)
     {
-      ti = (double) i__ / c9;
+      ti = (double) i / c9;
       sum1 = zero;
       temp = one;
-      i__1 = *n;
-      for (j = 2; j <= i__1; ++j)
+      i1 = *n;
+      for (j = 2; j <= i1; ++j)
 	{
-	  i__2 = j - 1;
-	  sum1 += (double) i__2 *temp * x[j];
+	  i2 = j - 1;
+	  sum1 += (double) i2 *temp * x[j];
 	  temp = ti * temp;
 	  /* l80: */
 	}
       sum2 = zero;
       temp = one;
-      i__1 = *n;
-      for (j = 1; j <= i__1; ++j)
+      i1 = *n;
+      for (j = 1; j <= i1; ++j)
 	{
 	  sum2 += temp * x[j];
 	  temp = ti * temp;
 	  /* l90: */
 	}
       /* computing 2nd power */
-      d__1 = sum2;
-      temp1 = sum1 - d__1 * d__1 - one;
+      d1 = sum2;
+      temp1 = sum1 - d1 * d1 - one;
       temp2 = two * ti * sum2;
       temp = one / ti;
-      i__1 = *n;
-      for (k = 1; k <= i__1; ++k)
+      i1 = *n;
+      for (k = 1; k <= i1; ++k)
 	{
-	  i__2 = k - 1;
-	  fvec[k] += temp * ((double) i__2 - temp2) * temp1;
+	  i2 = k - 1;
+	  fvec[k] += temp * ((double) i2 - temp2) * temp1;
 	  temp = ti * temp;
 	  /* l100: */
 	}
       /* l110: */
     }
   /* computing 2nd power */
-  d__1 = x[1];
-  temp = x[2] - d__1 * d__1 - one;
+  d1 = x[1];
+  temp = x[2] - d1 * d1 - one;
   fvec[1] += x[1] * (one - two * temp);
   fvec[2] += temp;
   return 0;
@@ -405,66 +405,66 @@ int minpack_jac_watson (const int *n, double *x, double *fjac, int *ldfjac, int 
   const double zero = 0.,one = 1.,two = 2.,three = 3.,six = 6.;
   const double c9 = 29.;
 
-  int fjac_dim1, i__1, i__2, i__3, i__4, i__, j, k;
-  double d__1, temp, temp1, temp2, ti, tj, tk, sum1, sum2;
+  int fjac_dim1, i1, i2, i3, i4, i, j, k;
+  double d1, temp, temp1, temp2, ti, tj, tk, sum1, sum2;
   fjac_dim1 = *ldfjac;
   if ( *iflag == 0) return 0 ;
   --x;
   fjac -= fjac_dim1 + 1;
 
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n;
-      for (j = k; j <= i__2; ++j)
+      i2 = *n;
+      for (j = k; j <= i2; ++j)
 	{
 	  fjac[k + j * fjac_dim1] = zero;
 	  /* l110: */
 	}
       /* l120: */
     }
-  for (i__ = 1; i__ <= 29; ++i__)
+  for (i = 1; i <= 29; ++i)
     {
-      ti = (double) i__ / c9;
+      ti = (double) i / c9;
       sum1 = zero;
       temp = one;
-      i__1 = *n;
-      for (j = 2; j <= i__1; ++j)
+      i1 = *n;
+      for (j = 2; j <= i1; ++j)
 	{
-	  i__2 = j - 1;
-	  sum1 += (double) i__2 *temp * x[j];
+	  i2 = j - 1;
+	  sum1 += (double) i2 *temp * x[j];
 	  temp = ti * temp;
 	  /* l130: */
 	}
       sum2 = zero;
       temp = one;
-      i__1 = *n;
-      for (j = 1; j <= i__1; ++j)
+      i1 = *n;
+      for (j = 1; j <= i1; ++j)
 	{
 	  sum2 += temp * x[j];
 	  temp = ti * temp;
 	  /* l140: */
 	}
       /* computing 2nd power */
-      d__1 = sum2;
-      temp1 = two * (sum1 - d__1 * d__1 - one);
+      d1 = sum2;
+      temp1 = two * (sum1 - d1 * d1 - one);
       temp2 = two * sum2;
       /* computing 2nd power */
-      d__1 = ti;
-      temp = d__1 * d__1;
+      d1 = ti;
+      temp = d1 * d1;
       tk = one;
-      i__1 = *n;
-      for (k = 1; k <= i__1; ++k)
+      i1 = *n;
+      for (k = 1; k <= i1; ++k)
 	{
 	  tj = tk;
-	  i__2 = *n;
-	  for (j = k; j <= i__2; ++j)
+	  i2 = *n;
+	  for (j = k; j <= i2; ++j)
 	    {
-	      i__3 = k - 1;
-	      i__4 = j - 1;
+	      i3 = k - 1;
+	      i4 = j - 1;
 	      fjac[k + j * fjac_dim1] +=
-		tj * (((double) i__3 / ti - temp2) *
-		      ((double) i__4 / ti - temp2) - temp1);
+		tj * (((double) i3 / ti - temp2) *
+		      ((double) i4 / ti - temp2) - temp1);
 	      tj = ti * tj;
 	      /* l150: */
 	    }
@@ -474,16 +474,16 @@ int minpack_jac_watson (const int *n, double *x, double *fjac, int *ldfjac, int 
       /* l170: */
     }
   /* computing 2nd power */
-  d__1 = x[1];
+  d1 = x[1];
   fjac[fjac_dim1 + 1] =
-    fjac[fjac_dim1 + 1] + six * (d__1 * d__1) - two * x[2] + three;
+    fjac[fjac_dim1 + 1] + six * (d1 * d1) - two * x[2] + three;
   fjac[(fjac_dim1 << 1) + 1] -= two * x[1];
   fjac[(fjac_dim1 << 1) + 2] += one;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n;
-      for (j = k; j <= i__2; ++j)
+      i2 = *n;
+      for (j = k; j <= i2; ++j)
 	{
 	  fjac[j + k * fjac_dim1] = fjac[k + j * fjac_dim1];
 	  /* l180: */
@@ -503,31 +503,31 @@ int minpack_chebyquad (const int *n, double *x, double *fvec, int *iflag, void *
   const double zero = 0.;
   const double one = 1.;
   const double two = 2.;
-  int i__1, i__2;
-  double d__1 ;
+  int i1, i2;
+  double d1 ;
   double temp, temp1, temp2;
-  int i__, j, k;
+  int i, j, k;
   double ti, tk;
   int  iev;
   if ( *iflag == 0) return 0 ;
   --fvec;
   --x;
 
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       fvec[k] = zero;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       temp1 = one;
       temp2 = two * x[j] - one;
       temp = two * temp2;
-      i__2 = *n;
-      for (i__ = 1; i__ <= i__2; ++i__)
+      i2 = *n;
+      for (i = 1; i <= i2; ++i)
 	{
-	  fvec[i__] += temp2;
+	  fvec[i] += temp2;
 	  ti = temp * temp2 - temp1;
 	  temp1 = temp2;
 	  temp2 = ti;
@@ -535,15 +535,15 @@ int minpack_chebyquad (const int *n, double *x, double *fvec, int *iflag, void *
     }
   tk = one / (double) (*n);
   iev = -1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       fvec[k] = tk * fvec[k];
       if (iev > 0)
 	{
 	  /* computing 2nd power */
-	  d__1 = (double) k;
-	  fvec[k] += one / (d__1 * d__1 - one);
+	  d1 = (double) k;
+	  fvec[k] += one / (d1 * d1 - one);
 	}
       iev = -iev;
     }
@@ -554,7 +554,7 @@ int minpack_jac_chebyquad (const int *n, double *x, double *fjac, int *ldfjac, i
 {
   const double zero = 0.,one = 1.,two = 2.,four = 4.;
 
-  int fjac_dim1, i__1, i__2, j, k;
+  int fjac_dim1, i1, i2, j, k;
   double temp, temp1, temp2, temp3, temp4, ti, tk;
   fjac_dim1 = *ldfjac;
   if ( *iflag == 0) return 0 ;
@@ -562,16 +562,16 @@ int minpack_jac_chebyquad (const int *n, double *x, double *fjac, int *ldfjac, i
   fjac -= fjac_dim1 + 1;
 
   tk = one / (double) (*n);
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       temp1 = one;
       temp2 = two * x[j] - one;
       temp = two * temp2;
       temp3 = zero;
       temp4 = two;
-      i__2 = *n;
-      for (k = 1; k <= i__2; ++k)
+      i2 = *n;
+      for (k = 1; k <= i2; ++k)
 	{
 	  fjac[k + j * fjac_dim1] = tk * temp4;
 	  ti = four * temp2 + temp * temp4 - temp3;
@@ -595,7 +595,7 @@ int minpack_jac_chebyquad (const int *n, double *x, double *fjac, int *ldfjac, i
 int minpack_brown (const int *n, double *x, double *fvec, int *iflag, void *data)
 {
   const double one = 1.;
-  int i__1;
+  int i1;
   double prod;
   int j, k;
   double  sum;
@@ -604,18 +604,18 @@ int minpack_brown (const int *n, double *x, double *fvec, int *iflag, void *data
   --fvec;
   --x;
 
-  i__1 = *n + 1;
-  sum = -((double) i__1);
+  i1 = *n + 1;
+  sum = -((double) i1);
   prod = one;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       sum += x[j];
       prod = x[j] * prod;
       /* l180: */
     }
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       fvec[k] = x[k] + sum;
       /* l190: */
@@ -630,7 +630,7 @@ int minpack_jac_brown (const int *n, double *x, double *fjac, int *ldfjac, int *
 {
   const double zero = 0.,one = 1.,two = 2.;
 
-  int fjac_dim1, i__1, i__2, j, k;
+  int fjac_dim1, i1, i2, j, k;
   double prod, temp;
   fjac_dim1 = *ldfjac;
 
@@ -639,12 +639,12 @@ int minpack_jac_brown (const int *n, double *x, double *fjac, int *ldfjac, int *
   fjac -= fjac_dim1 + 1;
 
   prod = one;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       prod = x[j] * prod;
-      i__2 = *n;
-      for (k = 1; k <= i__2; ++k)
+      i2 = *n;
+      for (k = 1; k <= i2; ++k)
 	{
 	  fjac[k + j * fjac_dim1] = one;
 	  /* l240: */
@@ -652,8 +652,8 @@ int minpack_jac_brown (const int *n, double *x, double *fjac, int *ldfjac, int *
       fjac[j + j * fjac_dim1] = two;
       /* l250: */
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       temp = x[j];
       if (temp != zero)
@@ -662,8 +662,8 @@ int minpack_jac_brown (const int *n, double *x, double *fjac, int *ldfjac, int *
 	}
       temp = one;
       prod = one;
-      i__2 = *n;
-      for (k = 1; k <= i__2; ++k)
+      i2 = *n;
+      for (k = 1; k <= i2; ++k)
 	{
 	  if (k != j)
 	    {
@@ -687,23 +687,23 @@ int minpack_discrete_boundary (const int *n, double *x, double *fvec, int *iflag
   const double one = 1.;
   const double two = 2.;
 
-  int i__1;
-  double d__1, d__2;
-  double temp, temp1, temp2, h__;
+  int i1;
+  double d1, d2;
+  double temp, temp1, temp2, h;
   int  k;
 
   if ( *iflag == 0) return 0 ;
   --fvec;
   --x;
 
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       /* computing 3rd power */
-      d__1 = x[k] + (double) k *h__ + one, d__2 = d__1;
-      temp = d__2 * (d__1 * d__1);
+      d1 = x[k] + (double) k *h + one, d2 = d1;
+      temp = d2 * (d1 * d1);
       temp1 = zero;
       if (k != 1)
 	{
@@ -715,8 +715,8 @@ int minpack_discrete_boundary (const int *n, double *x, double *fvec, int *iflag
 	  temp2 = x[k + 1];
 	}
       /* computing 2nd power */
-      d__1 = h__;
-      fvec[k] = two * x[k] - temp1 - temp2 + temp * (d__1 * d__1) / two;
+      d1 = h;
+      fvec[k] = two * x[k] - temp1 - temp2 + temp * (d1 * d1) / two;
     }
   return 0;
 }
@@ -726,8 +726,8 @@ int minpack_jac_discrete_boundary (const int *n, double *x, double *fjac, int *l
 {
   const double zero = 0.,one = 1.,two = 2.,three = 3.;
   
-  int fjac_dim1, i__1, i__2,  j, k;
-  double d__1, temp, h__;
+  int fjac_dim1, i1, i2,  j, k;
+  double d1, temp, h;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
@@ -735,23 +735,23 @@ int minpack_jac_discrete_boundary (const int *n, double *x, double *fjac, int *l
   --x;
   fjac -= fjac_dim1 + 1;
 
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       /* computing 2nd power */
-      d__1 = x[k] + (double) k *h__ + one;
-      temp = three * (d__1 * d__1);
-      i__2 = *n;
-      for (j = 1; j <= i__2; ++j)
+      d1 = x[k] + (double) k *h + one;
+      temp = three * (d1 * d1);
+      i2 = *n;
+      for (j = 1; j <= i2; ++j)
 	{
 	  fjac[k + j * fjac_dim1] = zero;
 	  /* l300: */
 	}
       /* computing 2nd power */
-      d__1 = h__;
-      fjac[k + k * fjac_dim1] = two + temp * (d__1 * d__1) / two;
+      d1 = h;
+      fjac[k + k * fjac_dim1] = two + temp * (d1 * d1) / two;
       if (k != 1)
 	{
 	  fjac[k + (k - 1) * fjac_dim1] = -one;
@@ -774,9 +774,9 @@ int minpack_discrete_integral (const int *n, double *x, double *fvec, int *iflag
   const double zero = 0.;
   const double one = 1.;
   const double two = 2.;
-  int i__1, i__2;
-  double d__1, d__2;
-  double  temp, h__;
+  int i1, i2;
+  double d1, d2;
+  double  temp, h;
   int j, k;
   double tj, tk;
   int kp1;
@@ -786,20 +786,20 @@ int minpack_discrete_integral (const int *n, double *x, double *fvec, int *iflag
   --fvec;
   --x;
 
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      tk = (double) k *h__;
+      tk = (double) k *h;
       sum1 = zero;
-      i__2 = k;
-      for (j = 1; j <= i__2; ++j)
+      i2 = k;
+      for (j = 1; j <= i2; ++j)
 	{
-	  tj = (double) j *h__;
+	  tj = (double) j *h;
 	  /* computing 3rd power */
-	  d__1 = x[j] + tj + one, d__2 = d__1;
-	  temp = d__2 * (d__1 * d__1);
+	  d1 = x[j] + tj + one, d2 = d1;
+	  temp = d2 * (d1 * d1);
 	  sum1 += tj * temp;
 	  /* l230: */
 	}
@@ -809,18 +809,18 @@ int minpack_discrete_integral (const int *n, double *x, double *fvec, int *iflag
 	{
 	  goto l250;
 	}
-      i__2 = *n;
-      for (j = kp1; j <= i__2; ++j)
+      i2 = *n;
+      for (j = kp1; j <= i2; ++j)
 	{
-	  tj = (double) j *h__;
+	  tj = (double) j *h;
 	  /* computing 3rd power */
-	  d__1 = x[j] + tj + one, d__2 = d__1;
-	  temp = d__2 * (d__1 * d__1);
+	  d1 = x[j] + tj + one, d2 = d1;
+	  temp = d2 * (d1 * d1);
 	  sum2 += (one - tj) * temp;
 	  /* l240: */
 	}
     l250:
-      fvec[k] = x[k] + h__ * ((one - tk) * sum1 + tk * sum2) / two;
+      fvec[k] = x[k] + h * ((one - tk) * sum1 + tk * sum2) / two;
       /* l260: */
     }
   return 0;
@@ -830,29 +830,29 @@ int minpack_jac_discrete_integral (const int *n, double *x, double *fjac, int *l
 {
   const double one = 1.,two = 2.,three = 3.;
 
-  int fjac_dim1, i__1, i__2, j, k;
-  double d__1, d__2, temp, h__, tj, tk;
+  int fjac_dim1, i1, i2, j, k;
+  double d1, d2, temp, h, tj, tk;
   fjac_dim1 = *ldfjac;
   if ( *iflag == 0) return 0 ;
   --x;
   fjac -= fjac_dim1 + 1;
 
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      tk = (double) k *h__;
-      i__2 = *n;
-      for (j = 1; j <= i__2; ++j)
+      tk = (double) k *h;
+      i2 = *n;
+      for (j = 1; j <= i2; ++j)
 	{
-	  tj = (double) j *h__;
+	  tj = (double) j *h;
 	  /* computing 2nd power */
-	  d__1 = x[j] + tj + one;
-	  temp = three * (d__1 * d__1);
+	  d1 = x[j] + tj + one;
+	  temp = three * (d1 * d1);
 	  /* computing min */
-	  d__1 = tj * (one - tk), d__2 = tk * (one - tj);
-	  fjac[k + j * fjac_dim1] = h__ * Min (d__1, d__2) * temp / two;
+	  d1 = tj * (one - tk), d2 = tk * (one - tj);
+	  fjac[k + j * fjac_dim1] = h * Min (d1, d2) * temp / two;
 	  /* l330: */
 	}
       fjac[k + k * fjac_dim1] += one;
@@ -868,7 +868,7 @@ int minpack_jac_discrete_integral (const int *n, double *x, double *fjac, int *l
 int minpack_trigonometric (const int *n, double *x, double *fvec, int *iflag, void *data)
 {
   const double zero = 0.;
-  int i__1, i__2;
+  int i1, i2;
   int  j, k;
   double sum;
 
@@ -877,24 +877,24 @@ int minpack_trigonometric (const int *n, double *x, double *fvec, int *iflag, vo
   --x;
 
   sum = zero;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       fvec[j] = cos (x[j]);
       sum += fvec[j];
     }
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n + k;
-      fvec[k] = (double) i__2 - sin (x[k]) - sum - (double) k *fvec[k];
+      i2 = *n + k;
+      fvec[k] = (double) i2 - sin (x[k]) - sum - (double) k *fvec[k];
     }
   return 0;
 }
 
 int minpack_jac_trigonometric (const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *data)
 {
-  int fjac_dim1, i__1, i__2, j, k;
+  int fjac_dim1, i1, i2, j, k;
   double  temp;
   fjac_dim1 = *ldfjac;
 
@@ -902,18 +902,18 @@ int minpack_jac_trigonometric (const int *n, double *x, double *fjac, int *ldfja
   --x;
   fjac -= fjac_dim1 + 1;
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       temp = sin (x[j]);
-      i__2 = *n;
-      for (k = 1; k <= i__2; ++k)
+      i2 = *n;
+      for (k = 1; k <= i2; ++k)
 	{
 	  fjac[k + j * fjac_dim1] = temp;
 	  /* l360: */
 	}
-      i__2 = j + 1;
-      fjac[j + j * fjac_dim1] = (double) i__2 *temp - cos (x[j]);
+      i2 = j + 1;
+      fjac[j + j * fjac_dim1] = (double) i2 *temp - cos (x[j]);
       /* l370: */
     }
   return 0;
@@ -927,8 +927,8 @@ int minpack_variably_dimensioned(const int *n, double *x, double *fvec, int *ifl
   const double zero = 0.;
   const double one = 1.;
   const double two = 2.;
-  int i__1;
-  double d__1;
+  int i1;
+  double d1;
   double temp;
   int  j, k;
   double sum;
@@ -938,16 +938,16 @@ int minpack_variably_dimensioned(const int *n, double *x, double *fvec, int *ifl
   --x;
 
   sum = zero;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       sum += (double) j *(x[j] - one);
     }
   /* computing 2nd power */
-  d__1 = sum;
-  temp = sum * (one + two * (d__1 * d__1));
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  d1 = sum;
+  temp = sum * (one + two * (d1 * d1));
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       fvec[k] = x[k] - one + (double) k *temp;
     }
@@ -958,8 +958,8 @@ int minpack_variably_dimensioned(const int *n, double *x, double *fvec, int *ifl
 int minpack_jac_variably_dimensioned (const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *data)
 {
   const double zero = 0.,one = 1.,six = 6.;
-  int fjac_dim1, i__1, i__2, i__3, j, k;
-  double d__1, temp, sum;
+  int fjac_dim1, i1, i2, i3, j, k;
+  double d1, temp, sum;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
@@ -968,23 +968,23 @@ int minpack_jac_variably_dimensioned (const int *n, double *x, double *fjac, int
   fjac -= fjac_dim1 + 1;
 
   sum = zero;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       sum += (double) j *(x[j] - one);
       /* l390: */
     }
   /* computing 2nd power */
-  d__1 = sum;
-  temp = one + six * (d__1 * d__1);
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  d1 = sum;
+  temp = one + six * (d1 * d1);
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n;
-      for (j = k; j <= i__2; ++j)
+      i2 = *n;
+      for (j = k; j <= i2; ++j)
 	{
-	  i__3 = k * j;
-	  fjac[k + j * fjac_dim1] = (double) i__3 *temp;
+	  i3 = k * j;
+	  fjac[k + j * fjac_dim1] = (double) i3 *temp;
 	  fjac[j + k * fjac_dim1] = fjac[k + j * fjac_dim1];
 	  /* l400: */
 	}
@@ -1004,7 +1004,7 @@ int minpack_broyden_tridiagonal (const int *n, double *x, double *fvec, int *ifl
   const double one = 1.;
   const double two = 2.;
   const double three = 3.;
-  int i__1;
+  int i1;
   double temp, temp1, temp2;
   int k;
 
@@ -1012,8 +1012,8 @@ int minpack_broyden_tridiagonal (const int *n, double *x, double *fvec, int *ifl
   --fvec;
   --x;
 
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       temp = (three - two * x[k]) * x[k];
       temp1 = zero;
@@ -1034,18 +1034,18 @@ int minpack_broyden_tridiagonal (const int *n, double *x, double *fvec, int *ifl
 int minpack_jac_broyden_tridiagonal (const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *data)
 {
   const double zero = 0.,one = 1.,two = 2.,three = 3.,four = 4.;
-  int fjac_dim1, i__1, i__2, j, k;
+  int fjac_dim1, i1, i2, j, k;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
   --x;
   fjac -= fjac_dim1 + 1;
 
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n;
-      for (j = 1; j <= i__2; ++j)
+      i2 = *n;
+      for (j = 1; j <= i2; ++j)
 	{
 	  fjac[k + j * fjac_dim1] = zero;
 	  /* l430: */
@@ -1074,8 +1074,8 @@ int minpack_broyden_banded (const int *n, double *x, double *fvec, int *iflag, v
   const double two = 2.;
   const double five = 5.;
 
-  int i__1, i__2, i__3;
-  double d__1;
+  int i1, i2, i3;
+  double d1;
   double  temp;
   int  j, k, k1, k2, ml, mu;
 
@@ -1085,18 +1085,18 @@ int minpack_broyden_banded (const int *n, double *x, double *fvec, int *iflag, v
 
   ml = 5;
   mu = 1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
       /* computing max */
-      i__2 = 1, i__3 = k - ml;
-      k1 = Max (i__2, i__3);
+      i2 = 1, i3 = k - ml;
+      k1 = Max (i2, i3);
       /* computing min */
-      i__2 = k + mu;
-      k2 = Min (i__2, *n);
+      i2 = k + mu;
+      k2 = Min (i2, *n);
       temp = zero;
-      i__2 = k2;
-      for (j = k1; j <= i__2; ++j)
+      i2 = k2;
+      for (j = k1; j <= i2; ++j)
 	{
 	  if (j != k)
 	    {
@@ -1104,8 +1104,8 @@ int minpack_broyden_banded (const int *n, double *x, double *fvec, int *iflag, v
 	    }
 	}
       /* computing 2nd power */
-      d__1 = x[k];
-      fvec[k] = x[k] * (two + five * (d__1 * d__1)) + one - temp;
+      d1 = x[k];
+      fvec[k] = x[k] * (two + five * (d1 * d1)) + one - temp;
     }
   return 0;
 }	
@@ -1114,8 +1114,8 @@ int minpack_broyden_banded (const int *n, double *x, double *fvec, int *iflag, v
 int minpack_jac_broyden_banded (const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *data)
 {
   const double zero = 0.,one = 1.,two = 2., fiftn=15.0;
-  int fjac_dim1,  i__1, i__2, i__3, j, k, k1, k2, ml, mu;
-  double d__1;
+  int fjac_dim1,  i1, i2, i3, j, k, k1, k2, ml, mu;
+  double d1;
   fjac_dim1 = *ldfjac;
 
   if ( *iflag == 0) return 0 ;
@@ -1124,23 +1124,23 @@ int minpack_jac_broyden_banded (const int *n, double *x, double *fjac, int *ldfj
 
   ml = 5;
   mu = 1;
-  i__1 = *n;
-  for (k = 1; k <= i__1; ++k)
+  i1 = *n;
+  for (k = 1; k <= i1; ++k)
     {
-      i__2 = *n;
-      for (j = 1; j <= i__2; ++j)
+      i2 = *n;
+      for (j = 1; j <= i2; ++j)
 	{
 	  fjac[k + j * fjac_dim1] = zero;
 	  /* l460: */
 	}
       /* computing max */
-      i__2 = 1, i__3 = k - ml;
-      k1 = Max (i__2, i__3);
+      i2 = 1, i3 = k - ml;
+      k1 = Max (i2, i3);
       /* computing min */
-      i__2 = k + mu;
-      k2 = Min (i__2, *n);
-      i__2 = k2;
-      for (j = k1; j <= i__2; ++j)
+      i2 = k + mu;
+      k2 = Min (i2, *n);
+      i2 = k2;
+      for (j = k1; j <= i2; ++j)
 	{
 	  if (j != k)
 	    {
@@ -1149,8 +1149,8 @@ int minpack_jac_broyden_banded (const int *n, double *x, double *fjac, int *ldfj
 	  /* l470: */
 	}
       /* computing 2nd power */
-      d__1 = x[k];
-      fjac[k + k * fjac_dim1] = two + fiftn * (d__1 * d__1);
+      d1 = x[k];
+      fjac[k + k * fjac_dim1] = two + fiftn * (d1 * d1);
       /* l480: */
     }
   return 0;
@@ -1195,8 +1195,8 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   const double one = 1.;
   const double three = 3.;
   const double c1 = 1.2;
-  int i__1;
-  double h__;
+  int i1;
+  double h;
   int j;
   double tj;
 
@@ -1278,8 +1278,8 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     watson function. */
 
  l60:
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       x[j] = zero;
       /* l70: */
@@ -1289,12 +1289,12 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     chebyquad function. */
 
  l80:
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
-      x[j] = (double) j *h__;
+      x[j] = (double) j *h;
       /* l90: */
     }
   goto l200;
@@ -1302,8 +1302,8 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     brown almost-linear function. */
 
  l100:
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       x[j] = half;
       /* l110: */
@@ -1313,12 +1313,12 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     discrete boundary value and integral equation functions. */
 
  l120:
-  i__1 = *n + 1;
-  h__ = one / (double) i__1;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n + 1;
+  h = one / (double) i1;
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
-      tj = (double) j *h__;
+      tj = (double) j *h;
       x[j] = tj * (tj - one);
       /* l130: */
     }
@@ -1327,11 +1327,11 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     trigonometric function. */
 
  l140:
-  h__ = one / (double) (*n);
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  h = one / (double) (*n);
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
-      x[j] = h__;
+      x[j] = h;
       /* l150: */
     }
   goto l200;
@@ -1339,11 +1339,11 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     variably dimensioned function. */
 
  l160:
-  h__ = one / (double) (*n);
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  h = one / (double) (*n);
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
-      x[j] = one - (double) j *h__;
+      x[j] = one - (double) j *h;
       /* l170: */
     }
   goto l200;
@@ -1351,8 +1351,8 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
   /*     broyden tridiagonal and banded functions. */
 
  l180:
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       x[j] = -one;
       /* l190: */
@@ -1369,16 +1369,16 @@ int minpack_initpt (const int *n, double *x, int *nprob, double *factor)
     {
       goto l220;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       x[j] = *factor * x[j];
       /* l210: */
     }
   goto l240;
  l220:
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *n;
+  for (j = 1; j <= i1; ++j)
     {
       x[j] = *factor;
       /* l230: */

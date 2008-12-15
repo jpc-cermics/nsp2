@@ -306,7 +306,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 	{
 	  goto L340;
 	}
-      /* L10: */
     }
  L20:
 
@@ -361,9 +360,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       for (i__ = 1; i__ <= i__2; ++i__)
 	{
 	  fjac[i__ + j * fjac_dim1] = zero;
-	  /* L50: */
 	}
-      /* L60: */
     }
   iflag = 2;
   i__1 = *m;
@@ -378,7 +375,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       minpack_rwupdt (n, &fjac[fjac_offset], ldfjac, &wa3[1], &qtf[1], &temp,
 		      &wa1[1], &wa2[1]);
       ++iflag;
-      /* L70: */
     }
   ++(*njev);
 
@@ -395,7 +391,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 	}
       ipvt[j] = j;
       wa2[j] = minpack_enorm (j, &fjac[j * fjac_dim1 + 1]);
-      /* L80: */
     }
   if (!sing)
     {
@@ -415,18 +410,15 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       for (i__ = j; i__ <= i__2; ++i__)
 	{
 	  sum += fjac[i__ + j * fjac_dim1] * qtf[i__];
-	  /* L90: */
 	}
       temp = -sum / fjac[j + j * fjac_dim1];
       i__2 = *n;
       for (i__ = j; i__ <= i__2; ++i__)
 	{
 	  qtf[i__] += fjac[i__ + j * fjac_dim1] * temp;
-	  /* L100: */
 	}
     L110:
       fjac[j + j * fjac_dim1] = wa1[j];
-      /* L120: */
     }
  L130:
 
@@ -449,7 +441,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 	{
 	  diag[j] = one;
 	}
-      /* L140: */
     }
  L150:
 
@@ -460,7 +451,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
   for (j = 1; j <= i__1; ++j)
     {
       wa3[j] = diag[j] * x[j];
-      /* L160: */
     }
   xnorm = minpack_enorm (*n, &wa3[1]);
   delta = *factor * xnorm;
@@ -490,13 +480,11 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       for (i__ = 1; i__ <= i__2; ++i__)
 	{
 	  sum += fjac[i__ + j * fjac_dim1] * (qtf[i__] / fnorm);
-	  /* L180: */
 	}
       /* Computing MAX */
       d__2 = gnorm, d__3 = (d__1 = sum / wa2[l], Abs (d__1));
       gnorm = Max (d__2, d__3);
     L190:
-      /* L200: */
       ;
     }
  L210:
@@ -524,7 +512,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       /* Computing MAX */
       d__1 = diag[j], d__2 = wa2[j];
       diag[j] = Max (d__1, d__2);
-      /* L220: */
     }
  L230:
 
@@ -545,7 +532,6 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       wa1[j] = -wa1[j];
       wa2[j] = x[j] + wa1[j];
       wa3[j] = diag[j] * wa1[j];
-      /* L250: */
     }
   pnorm = minpack_enorm (*n, &wa3[1]);
 
@@ -590,9 +576,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       for (i__ = 1; i__ <= i__2; ++i__)
 	{
 	  wa3[i__] += fjac[i__ + j * fjac_dim1] * temp;
-	  /* L260: */
 	}
-      /* L270: */
     }
   temp1 = minpack_enorm (*n, &wa3[1]) / fnorm;
   temp2 = sqrt (par) * pnorm / fnorm;
@@ -663,13 +647,11 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
     {
       x[j] = wa2[j];
       wa2[j] = diag[j] * x[j];
-      /* L310: */
     }
   i__1 = *m;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
       fvec[i__] = wa4[i__];
-      /* L320: */
     }
   xnorm = minpack_enorm (*n, &wa2[1]);
   fnorm = fnorm1;

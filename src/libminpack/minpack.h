@@ -93,10 +93,10 @@ extern int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, dou
 			  double *fjac, int *ldfjac, double *r__, int *lr, double *qtf,
 			  double *wa1, double *wa2, double *wa3, double *wa4,void *data);
 
-int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec, 
-			int *maxfev, int *ml, int *mu, double *epsfcn, 
-			int *info, int *nfev,
-			double *fjac, int *ldfjac, double *wa1, double *wa2, void *data);
+extern int minpack_hybrd_eval (minpack_fcn1 fcn, int n, double *x, double *fvec, 
+			       int *maxfev, int ml, int mu, double epsfcn, 
+			       int *info, int *nfev,
+			       double *fjac, int *ldfjac, double *wa1, double *wa2, void *data);
 
 extern int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 			  double *fjac, int *ldfjac, double *ftol, double *xtol,

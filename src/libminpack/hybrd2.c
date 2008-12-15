@@ -61,12 +61,12 @@
 
 #include "minpack.h"
 
-int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec, 
-			int *maxfev, int *ml, int *mu, double *epsfcn, 
+int minpack_hybrd_eval (minpack_fcn1 fcn, int n, double *x, double *fvec, 
+			int *maxfev, int ml, int mu, double epsfcn, 
 			int *info, int *nfev,
 			double *fjac, int *ldfjac, double *wa1, double *wa2, void *data)
 {
-  int  i__1, iter, msum, iflag, jeval, ncsuc, nslow1, nslow2,  ncfail;
+  int iter, msum, iflag, jeval, ncsuc, nslow1, nslow2,  ncfail;
   double fnorm;
   
   *info = 1;
@@ -75,30 +75,30 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec,
 
   /*     check the input parameters for errors. */
 
-  if (*n <= 0 || *maxfev <= 0 || *ml < 0 || *mu < 0 || *ldfjac < *n )
+  if (n <= 0 || *maxfev <= 0 || ml < 0 || mu < 0 || *ldfjac < n )
     {
       *info=0;
       goto L300;
     }
 
-  /*     evaluate the function at the starting point */
-  /*     and calculate its norm. */
+  /*     evaluate the function at the starting point 
+   *     and calculate its norm. 
+   */
 
   iflag = 1;
-  (*fcn) (n, x, fvec, &iflag,data);
+  (*fcn) (&n, x, fvec, &iflag,data);
   *nfev = 1;
   if (iflag < 0)
     {
       goto L300;
     }
-  fnorm = minpack_enorm (*n, fvec);
+  fnorm = minpack_enorm (n, fvec);
 
-  /*     determine the number of calls to fcn needed to compute */
-  /*     the jacobian matrix. */
+  /*     determine the number of calls to fcn needed to compute 
+   *     the jacobian matrix. 
+   */
 
-  /* Computing MIN */
-  i__1 = *ml + *mu + 1;
-  msum = Min (i__1, *n);
+  msum = Min(ml + mu + 1, n);
 
   /*     initialize iteration counter and monitors. */
 
@@ -113,18 +113,14 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int *n, double *x, double *fvec,
   /*        calculate the jacobian matrix. */
 
   iflag = 2;
-  minpack_fdjac1 ( fcn, n, x, fvec, fjac, ldfjac,
-		   &iflag, ml, mu, *epsfcn, wa1, wa2,data);
+  minpack_fdjac1 ( fcn, &n, x, fvec, fjac, ldfjac,
+		   &iflag, &ml, &mu, epsfcn, wa1, wa2,data);
   *nfev += msum;
   
   /*     termination, either normal or user imposed. */
+
  L300:
 
-  if (iflag < 0)
-    {
-      *info = iflag;
-    }
-  iflag = 0;
-
+  if (iflag < 0)      *info = iflag;
   return 0;
 }
