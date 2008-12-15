@@ -310,7 +310,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L300;
     }
-  fnorm = minpack_enorm (m, &fvec[1]);
+  fnorm = minpack_enorm (*m, &fvec[1]);
 
   /*     initialize levenberg-marquardt parameter and iteration counter. */
 
@@ -385,7 +385,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
       wa3[j] = diag[j] * x[j];
       /* L70: */
     }
-  xnorm = minpack_enorm (n, &wa3[1]);
+  xnorm = minpack_enorm (*n, &wa3[1]);
   delta = *factor * xnorm;
   if (delta == zero)
     {
@@ -506,7 +506,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
       wa3[j] = diag[j] * wa1[j];
       /* L210: */
     }
-  pnorm = minpack_enorm (n, &wa3[1]);
+  pnorm = minpack_enorm (*n, &wa3[1]);
 
   /*           on the first iteration, adjust the initial step bound. */
 
@@ -524,7 +524,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L300;
     }
-  fnorm1 = minpack_enorm (m, &wa4[1]);
+  fnorm1 = minpack_enorm (*m, &wa4[1]);
 
   /*           compute the scaled actual reduction. */
 
@@ -553,7 +553,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
 	}
       /* L230: */
     }
-  temp1 = minpack_enorm (n, &wa3[1]) / fnorm;
+  temp1 = minpack_enorm (*n, &wa3[1]) / fnorm;
   temp2 = sqrt (par) * pnorm / fnorm;
   /* Computing 2nd power */
   d__1 = temp1;
@@ -630,7 +630,7 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
       fvec[i__] = wa4[i__];
       /* L280: */
     }
-  xnorm = minpack_enorm (n, &wa2[1]);
+  xnorm = minpack_enorm (*n, &wa2[1]);
   fnorm = fnorm1;
   ++iter;
  L290:

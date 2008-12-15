@@ -248,7 +248,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
       wa2[j] = diag[j] * x[j];
       /* L70: */
     }
-  dxnorm = minpack_enorm (n, &wa2[1]);
+  dxnorm = minpack_enorm (*n, &wa2[1]);
   fp = dxnorm - *delta;
   if (fp <= p1 * *delta)
     {
@@ -290,7 +290,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
       wa1[j] = (wa1[j] - sum) / r__[j + j * r_dim1];
       /* L110: */
     }
-  temp = minpack_enorm (n, &wa1[1]);
+  temp = minpack_enorm (*n, &wa1[1]);
   parl = fp / *delta / temp / temp;
  L120:
 
@@ -310,7 +310,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
       wa1[j] = sum / diag[l];
       /* L140: */
     }
-  gnorm = minpack_enorm (n, &wa1[1]);
+  gnorm = minpack_enorm (*n, &wa1[1]);
   paru = gnorm / *delta;
   if (paru == zero)
     {
@@ -355,7 +355,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
       wa2[j] = diag[j] * x[j];
       /* L170: */
     }
-  dxnorm = minpack_enorm (n, &wa2[1]);
+  dxnorm = minpack_enorm (*n, &wa2[1]);
   temp = fp;
   fp = dxnorm - *delta;
 
@@ -399,7 +399,7 @@ int minpack_lmpar (int *n, double *r__, int *ldr, int *ipvt, double *diag,
       /* L210: */
       ;
     }
-  temp = minpack_enorm (n, &wa1[1]);
+  temp = minpack_enorm (*n, &wa1[1]);
   parc = fp / *delta / temp / temp;
 
   /*        depending on the sign of the function, update parl or paru. */

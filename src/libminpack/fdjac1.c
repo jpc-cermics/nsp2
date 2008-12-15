@@ -135,23 +135,21 @@
  *     burton s. Garbow, kenneth e. Hillstrom, jorge j. More 
  */
 
-int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *fjac,
-		    int *ldfjac, int *iflag, int *ml, int *mu, double *epsfcn,
+int minpack_fdjac1 (minpack_fcn1 fcn, int *n,double *x,const double *fvec, double *fjac,
+		    const int *ldfjac, int *iflag,const int *ml,const int *mu,double epsfcn,
 		    double *wa1, double *wa2, void *data)
 {
   const double zero = 0.;
   int fjac_dim1, fjac_offset, i1,  j, k, msum;
-  double d__1, temp, h__,epsmch, eps;
+  double temp, h,epsmch, eps;
 
   fjac_dim1 = *ldfjac;
   fjac_offset = fjac_dim1 + 1;
   fjac -= fjac_offset;
 
   /*     epsmch is the machine precision. */
-
   epsmch = minpack_dpmpar (1);
-
-  eps = sqrt ((Max (*epsfcn, epsmch)));
+  eps = sqrt ((Max (epsfcn, epsmch)));
   msum = *ml + *mu + 1;
   if (msum >= *n)
     {
@@ -159,18 +157,18 @@ int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *f
       for (j = 1; j <= *n ; ++j)
 	{
 	  temp = x[j-1];
-	  h__ = eps * Abs (temp);
-	  if (h__ == zero)
+	  h = eps * Abs (temp);
+	  if (h == zero)
 	    {
-	      h__ = eps;
+	      h = eps;
 	    }
-	  x[j-1] = temp + h__;
+	  x[j-1] = temp + h;
 	  (*fcn) (n, x, wa1, iflag,data);
 	  if (*iflag < 0) return 0;
 	  x[j-1] = temp;
 	  for (i1 = 1; i1 <= *n; ++i1)
 	    {
-	      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h__;
+	      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h;
 	    }
 	}
     }
@@ -183,29 +181,29 @@ int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *f
 	  for (j = k; msum < 0 ? j >= *n : j <= *n; j += msum )
 	    {
 	      wa2[j-1] = x[j-1];
-	      h__ = eps * (d__1 = wa2[j-1], Abs (d__1));
-	      if (h__ == zero)
+	      h = eps * Abs( wa2[j-1]);
+	      if (h == zero)
 		{
-		  h__ = eps;
+		  h = eps;
 		}
-	      x[j-1] = wa2[j-1] + h__;
+	      x[j-1] = wa2[j-1] + h;
 	    }
 	  (*fcn) (n, x, wa1, iflag,data);
 	  if (*iflag < 0) return 0;
 	  for (j = k; msum < 0 ? j >= *n : j <= *n; j += msum )
 	    {
 	      x[j-1] = wa2[j-1];
-	      h__ = eps * (d__1 = wa2[j-1], Abs (d__1));
-	      if (h__ == zero)
+	      h = eps * Abs(wa2[j-1]);
+	      if (h == zero)
 		{
-		  h__ = eps;
+		  h = eps;
 		}
 	      for (i1 = 1; i1 <= *n ; ++i1)
 		{
 		  fjac[i1 + j * fjac_dim1] = zero;
 		  if (i1 >= j - *mu && i1 <= j + *ml)
 		    {
-		      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h__;
+		      fjac[i1 + j * fjac_dim1] = (wa1[i1-1] - fvec[i1-1]) / h;
 		    }
 		}
 	    }

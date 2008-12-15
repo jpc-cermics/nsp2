@@ -17,20 +17,19 @@ extern int minpack_chkder (int *m, int *n, double *x, double *fvec,
 			   double *fjac, int *ldfjac, double *xp,
 			   double *fvecp, int *mode, double *err);
 
-extern int minpack_dogleg (int *n, double *r__, int *lr, double *diag,
-			   double *qtb, double *delta, double *x, double *wa1,
-			   double *wa2);
+int minpack_dogleg (int n,const double *r, int lr, const double *diag,const  double *qtb,
+		    double delta, double *x, double *wa1, double *wa2);
 
 extern double minpack_dpmpar (int i);
-extern double minpack_enorm (int *n, double *x);
+extern double minpack_enorm (int n,const double *x);
 
-extern int minpack_fdjac1 (minpack_fcn1 fcn, int *n, double *x, double *fvec,
-			   double *fjac, int *ldfjac, int *iflag, int *ml,
-			   int *mu, double *epsfcn, double *wa1, double *wa2,void *data);
+extern int minpack_fdjac1 (minpack_fcn1 fcn, int *n,double *x,const double *fvec, double *fjac,
+			   const int *ldfjac, int *iflag,const int *ml,const int *mu, double epsfcn,
+			   double *wa1, double *wa2, void *data);
 
-extern int minpack_fdjac2 (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
-			   double *fjac, int *ldfjac, int *iflag,
-			   double *epsfcn, double *wa,void *data);
+extern int minpack_fdjac2 (minpack_fcn2 fcn,const int *m,const int *n, double *x,const double *fvec,
+			   double *fjac,const int *ldfjac, int *iflag, double epsfcn,
+			   double *wa,void *data);
 
 extern int minpack_hybrd1 (minpack_fcn1 fcn, int *n, double *x, double *fvec,
 			   double *tol, double *tolf, int *info, double *wa, int *lwa,void *);

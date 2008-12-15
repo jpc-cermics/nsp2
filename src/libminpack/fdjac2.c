@@ -50,48 +50,39 @@
  *     burton s. Garbow, kenneth e. Hillstrom, jorge j. More 
  */
 
-int minpack_fdjac2 (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
-		    double *fjac, int *ldfjac, int *iflag, double *epsfcn,
+int minpack_fdjac2 (minpack_fcn2 fcn,const int *m,const int *n, double *x,const double *fvec,
+		    double *fjac,const int *ldfjac, int *iflag, double epsfcn,
 		    double *wa,void *data)
 {
   const double zero = 0.;
-  int fjac_dim1, fjac_offset, i__1, i__2;
-  double temp, h__;
-  int i__, j;
-  double epsmch;
-  double eps;
+  int fjac_dim1, fjac_offset, i, j;
+  double temp, h,  epsmch, eps;
 
-  --wa;
-  --fvec;
-  --x;
   fjac_dim1 = *ldfjac;
   fjac_offset = fjac_dim1 + 1;
   fjac -= fjac_offset;
 
   /*     epsmch is the machine precision. */
   epsmch = minpack_dpmpar (1);
-
-  eps = sqrt ((Max (*epsfcn, epsmch)));
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  eps = sqrt ((Max (epsfcn, epsmch)));
+  for (j = 1; j <= *n ; ++j)
     {
-      temp = x[j];
-      h__ = eps * Abs (temp);
-      if (h__ == zero)
+      temp = x[j-1];
+      h = eps * Abs (temp);
+      if (h == zero)
 	{
-	  h__ = eps;
+	  h = eps;
 	}
-      x[j] = temp + h__;
-      (*fcn) (m, n, &x[1], &wa[1], iflag,data);
+      x[j-1] = temp + h;
+      (*fcn) (m, n, x, wa, iflag,data);
       if (*iflag < 0)
 	{
 	  goto L30;
 	}
-      x[j] = temp;
-      i__2 = *m;
-      for (i__ = 1; i__ <= i__2; ++i__)
+      x[j-1] = temp;
+      for (i = 1; i <= *m ; ++i)
 	{
-	  fjac[i__ + j * fjac_dim1] = (wa[i__] - fvec[i__]) / h__;
+	  fjac[i + j * fjac_dim1] = (wa[i-1] - fvec[i-1]) / h;
 	}
     }
  L30:

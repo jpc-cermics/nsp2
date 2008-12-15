@@ -82,16 +82,16 @@
 
 #include "minpack.h"
 
-double minpack_enorm (int *n, double *xx)
+double minpack_enorm (int n,const  double *xx)
 {
   const double one = 1.0, zero = 0.0;
   const double rdwarf = 3.834e-20;
   const double rgiant = 1.304e19;
-  double d1, s1=zero, s2=zero, s3=zero, agiant, floatn=(double) (*n), xabs, x1max=zero, x3max=zero;
+  double d1, s1=zero, s2=zero, s3=zero, agiant, floatn=(double) (n), xabs, x1max=zero, x3max=zero;
   int  i;
   agiant = rgiant / floatn;
 
-  for (i = 0 ; i < *n; ++i)
+  for (i = 0 ; i < n; ++i)
     {
       xabs = Abs(xx[i]);
       if (xabs > rdwarf && xabs < agiant)

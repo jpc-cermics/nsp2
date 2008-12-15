@@ -148,7 +148,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
     {
       goto L300;
     }
-  fnorm = minpack_enorm (n, &fvec[1]);
+  fnorm = minpack_enorm (*n, &fvec[1]);
 
 #ifndef WITH_JAC
   /*     determine the number of calls to fcn needed to compute 
@@ -179,7 +179,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
   ++(*njev);
 #else 
   minpack_fdjac1 ( fcn, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac,
-		   &iflag, ml, mu, epsfcn, &wa1[1], &wa2[1],data);
+		   &iflag, ml, mu, *epsfcn, &wa1[1], &wa2[1],data);
   *nfev += msum;
 #endif 
   if (iflag < 0)
@@ -212,7 +212,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 	{
 	  wa3[j] = diag[j] * x[j];
 	}
-      xnorm = minpack_enorm (n, &wa3[1]);
+      xnorm = minpack_enorm (*n, &wa3[1]);
       delta = *factor * xnorm;
       if (delta == zero)
 	{
@@ -306,7 +306,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 
   /*           determine the direction p. */
 
-  minpack_dogleg (n, &r__[1], lr, &diag[1], &qtf[1], &delta, &wa1[1], &wa2[1],
+  minpack_dogleg (*n, &r__[1], *lr, &diag[1], &qtf[1], delta, &wa1[1], &wa2[1],
 		  &wa3[1]);
 
   /*           store the direction p and x + p. calculate the norm of p. */
@@ -317,7 +317,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
       wa2[j] = x[j] + wa1[j];
       wa3[j] = diag[j] * wa1[j];
     }
-  pnorm = minpack_enorm (n, &wa3[1]);
+  pnorm = minpack_enorm (*n, &wa3[1]);
 
   /*           on the first iteration, adjust the initial step bound. */
 
@@ -341,7 +341,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
     {
       goto L300;
     }
-  fnorm1 = minpack_enorm (n, &wa4[1]);
+  fnorm1 = minpack_enorm (*n, &wa4[1]);
 
   /*           compute the scaled actual reduction. */
 
@@ -367,7 +367,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 	}
       wa3[i1] = qtf[i1] + sum;
     }
-  temp = minpack_enorm (n, &wa3[1]);
+  temp = minpack_enorm (*n, &wa3[1]);
   prered = zero;
   if (temp < fnorm)
     {
@@ -423,7 +423,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 	  fvec[j] = wa4[j];
 	  if ( fabs(fvec[j]) > fninf ) fninf = fabs(fvec[j]);  /* added by Bruno */
 	}
-      xnorm = minpack_enorm (n, &wa2[1]);
+      xnorm = minpack_enorm (*n, &wa2[1]);
       fnorm = fnorm1;
       ++iter;
     }

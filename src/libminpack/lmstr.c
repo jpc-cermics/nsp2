@@ -320,7 +320,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L340;
     }
-  fnorm = minpack_enorm (m, &fvec[1]);
+  fnorm = minpack_enorm (*m, &fvec[1]);
 
   /*     initialize levenberg-marquardt parameter and iteration counter. */
 
@@ -394,7 +394,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 	  sing = TRUE;
 	}
       ipvt[j] = j;
-      wa2[j] = minpack_enorm (&j, &fjac[j * fjac_dim1 + 1]);
+      wa2[j] = minpack_enorm (j, &fjac[j * fjac_dim1 + 1]);
       /* L80: */
     }
   if (!sing)
@@ -462,7 +462,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       wa3[j] = diag[j] * x[j];
       /* L160: */
     }
-  xnorm = minpack_enorm (n, &wa3[1]);
+  xnorm = minpack_enorm (*n, &wa3[1]);
   delta = *factor * xnorm;
   if (delta == zero)
     {
@@ -547,7 +547,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       wa3[j] = diag[j] * wa1[j];
       /* L250: */
     }
-  pnorm = minpack_enorm (n, &wa3[1]);
+  pnorm = minpack_enorm (*n, &wa3[1]);
 
   /*           on the first iteration, adjust the initial step bound. */
 
@@ -565,7 +565,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L340;
     }
-  fnorm1 = minpack_enorm (m, &wa4[1]);
+  fnorm1 = minpack_enorm (*m, &wa4[1]);
 
   /*           compute the scaled actual reduction. */
 
@@ -594,7 +594,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
 	}
       /* L270: */
     }
-  temp1 = minpack_enorm (n, &wa3[1]) / fnorm;
+  temp1 = minpack_enorm (*n, &wa3[1]) / fnorm;
   temp2 = sqrt (par) * pnorm / fnorm;
   /* Computing 2nd power */
   d__1 = temp1;
@@ -671,7 +671,7 @@ int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
       fvec[i__] = wa4[i__];
       /* L320: */
     }
-  xnorm = minpack_enorm (n, &wa2[1]);
+  xnorm = minpack_enorm (*n, &wa2[1]);
   fnorm = fnorm1;
   ++iter;
  L330:

@@ -153,12 +153,12 @@ static int minpack_lmdif3 (minpack_fcn2 fcn, int *m, int *n, double *x, double *
     {
       goto L300;
     }
-  fnorm = minpack_enorm (m, &fvec[1]);
+  fnorm = minpack_enorm (*m, &fvec[1]);
   /*     initialize levenberg-marquardt parameter and iteration counter. */
   /*        calculate the jacobian matrix. */
   iflag = 2;
   minpack_fdjac2 ( fcn, m, n, &x[1], &fvec[1], &fjac[fjac_offset],
-		   ldfjac, &iflag, epsfcn, &wa4[1],data);
+		   ldfjac, &iflag, *epsfcn, &wa4[1],data);
  L300:
   if (iflag < 0)
     {

@@ -153,7 +153,7 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 
   for (j = 1; j <= *n; ++j)
     {
-      acnorm[j] = minpack_enorm (m, &a[j * a_dim1 + 1]);
+      acnorm[j] = minpack_enorm (*m, &a[j * a_dim1 + 1]);
       rdiag[j] = acnorm[j];
       wa[j] = rdiag[j];
       if (*pivot)   ipvt[j] = j;
@@ -201,7 +201,7 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
       /*        j-th column of a to a multiple of the j-th unit vector. */
 
       i2 = *m - j + 1;
-      ajnorm = minpack_enorm (&i2, &a[j + j * a_dim1]);
+      ajnorm = minpack_enorm (i2, &a[j + j * a_dim1]);
       if (ajnorm == zero)
 	{
 	  goto L100;
@@ -258,7 +258,7 @@ int minpack_qrfac (int *m, int *n, double *a, int *lda, int *pivot, int *ipvt,
 	      goto L80;
 	    }
 	  i3 = *m - j;
-	  rdiag[k] = minpack_enorm (&i3, &a[jp1 + k * a_dim1]);
+	  rdiag[k] = minpack_enorm (i3, &a[jp1 + k * a_dim1]);
 	  wa[k] = rdiag[k];
 	L80:
 	  ;
