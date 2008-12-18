@@ -56,6 +56,9 @@ AC_ARG_WITH(gmp,
 AC_ARG_WITH(pvm,
     [  --without-cairo         do not compile with gtk/cairo as default driver ])
 
+AC_ARG_WITH(fink,
+    [  --with-fink            use /sw for searching packages instead of /opt/local (default=no) ])
+
 ###############################
 ## creating Path.incl if needed
 ###############################
@@ -90,6 +93,21 @@ NSP_VERSION=${PACKAGE_NAME}-${PACKAGE_VERSION}
 
 RM='rm -f'
 FILES_TO_CLEAN='*.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS make.log MakeOut .*~ *.trace so_locations *.orig *.cos *.obj' 
+
+
+#####################################################
+## macports or fink ? 
+#####################################################
+
+if test xx"$with_fink" = xx; then	
+   with_fink=no 
+fi 
+
+if test $with_fink = yes; then	
+     LIBPATH_PREFIX=/sw
+else
+     LIBPATH_PREFIX=/opt/local 
+fi 
 
 #############################################
 ## Compilers and options according to machine
@@ -525,11 +543,14 @@ case "$host" in
   *-*-darwin*)
      STRIP=echo
      # -L/sw/lib is needed during configure but seams not best place
-     CC_OPTIONS="${CC_OPTIONS}  -I/sw/include -L/sw/lib"
+     #   CC_OPTIONS="${CC_OPTIONS}  -I/sw/include -L/sw/lib"
+     CC_OPTIONS="${CC_OPTIONS}  -I${LIBPATH_PREFIX}/include -L${LIBPATH_PREFIX}/lib"
      CC_PICFLAGS='-fPIC'
-     LIBS="$LIBS -L/sw/lib"
+     #     LIBS="$LIBS -L/sw/lib"
+     LIBS="$LIBS -L${LIBPATH_PREFIX}/lib"
      # script shell f77 have bugs, get ours
-     FC_LDFLAGS="${FC_LDFLAGS} -L/sw/lib -ldl"
+     # FC_LDFLAGS="${FC_LDFLAGS} -L/sw/lib -ldl"
+     FC_LDFLAGS="${FC_LDFLAGS} -L${LIBPATH_PREFIX}/lib -ldl"
      FC_PICFLAGS='-fPIC'
      # just *-so tests 
      EXAMPLES_TESTS='$(SUBDIRS1)'
@@ -1154,11 +1175,16 @@ if test X"$use_tk" != Xno; then
     ;;
   esac
   GETLIBTK=libtk$TK_MAJOR_VERSION.$TK_MINOR_VERSION.$SONAME
-  case "$host" in
-   *-*-darwin*)
-     GETLIBTK=/sw/lib/libtk$TK_MAJOR_VERSION.$TK_MINOR_VERSION.dylib
-   ;;
-  esac 
+
+	case "$host" in
+		*-*-darwin*)
+		GETLIBTK=${LIBPATH_PREFIX}/lib/libtk$TK_MAJOR_VERSION.$TK_MINOR_VERSION.dylib
+		;;
+		*-*-cygwin* |   *-*-mingw32*)
+		GETLIBTK=tk$TK_MAJOR_VERSION$TK_MINOR_VERSION.dll
+		;;
+	esac 
+
  TK_INC_PATH=$TCL_INCLUDE_SPEC
  TCL_INC_PATH=$TK_INCLUDE_SPEC
  TCLTK_LIBS="$TK_LIB_SPEC $TCL_LIB_SPEC" 
