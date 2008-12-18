@@ -68,12 +68,21 @@ int minpack_lmder (minpack_fcn4 fcn, int *m, int *n, double *x, double *fvec,
 		   int *ipvt, double *qtf, double *wa1, double *wa2, double *wa3,
 		   double *wa4,void *data)
 #else
+#ifdef WITH_JAC_MIN
+int minpack_lmstr (minpack_fcn5 fcn, int *m, int *n, double *x, double *fvec,
+		   double *fjac, int *ldfjac, double *ftol, double *xtol,
+		   double *gtol, int *maxfev, double *diag, int *mode,
+		   const double *factor, int *nprint, int *info, int *nfev, int *njev,
+		   int *ipvt, double *qtf, double *wa1, double *wa2, double *wa3,
+		   double *wa4,void *data)
+#else 
 int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 		   double *ftol, double *xtol, double *gtol, int *maxfev,
 		   double *epsfcn, double *diag, int *mode, const double *factor,
 		   int *nprint, int *info, int *nfev, double *fjac, int *ldfjac,
 		   int *ipvt, double *qtf, double *wa1, double *wa2, double *wa3,
 		   double *wa4,void *data)
+#endif 
 #endif 
 {
   int c_true = TRUE;
@@ -87,6 +96,10 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   double ratio;
   double fnorm, gnorm, pnorm, xnorm=0.0, fnorm1, actred, dirder, epsmch, prered;
   double par, sum;
+
+#ifdef WITH_JAC_MIN
+  int sing;
+#endif 
 
   --wa4;
   --fvec;
@@ -102,7 +115,6 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   fjac_offset = fjac_dim1 + 1;
   fjac -= fjac_offset;
 
-
   /*     epsmch is the machine precision. */
   epsmch = minpack_dpmpar (1);
 
@@ -114,9 +126,13 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 #endif 
 
   /*     check the input parameters for errors. */
-
+#ifdef WITH_JAC_MIN
+  if (*n <= 0 || *m < *n || *ldfjac < *n || *ftol < zero || *xtol < zero
+      || *gtol < zero || *maxfev <= 0 || *factor <= zero)
+#else 
   if (*n <= 0 || *m < *n || *ldfjac < *m || *ftol < zero || *xtol < zero
       || *gtol < zero || *maxfev <= 0 || *factor <= zero)
+#endif 
     {
       goto L300;
     }
@@ -141,9 +157,12 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 #ifdef WITH_JAC 
   (*fcn) (m, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac, &iflag,data);
 #else 
+#ifdef WITH_JAC_MIN
+  (*fcn) (m, n, &x[1], &fvec[1], &wa3[1], &iflag,data);
+#else 
   (*fcn) (m, n, &x[1], &fvec[1], &iflag,data);
 #endif
-
+#endif 
   *nfev = 1;
   if (iflag < 0)
     {
@@ -162,6 +181,7 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 
   /*        calculate the jacobian matrix. */
 
+#ifndef WITH_JAC_MIN 
   iflag = 2;
 #ifdef WITH_JAC 
   (*fcn) (m, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac, &iflag,data);
@@ -175,6 +195,7 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L300;
     }
+#endif 
 
   /*        if requested, call fcn to enable printing of iterates. */
 
@@ -188,9 +209,12 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 #ifdef WITH_JAC 
       (*fcn) (m, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac, &iflag,data);
 #else 
+#ifdef WITH_JAC_MIN
+      (*fcn) (m, n, &x[1], &fvec[1], &wa3[1], &iflag, data);
+#else 
       (*fcn) (m, n, &x[1], &fvec[1], &iflag,data);
 #endif  
-
+#endif
     }
   if (iflag < 0)
     {
@@ -198,10 +222,90 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     }
  L40:
 
+
+#ifndef WITH_JAC_MIN 
+
   /*        compute the qr factorization of the jacobian. */
 
   minpack_qrfac (m, n, &fjac[fjac_offset], ldfjac, &c_true, &ipvt[1], n,
 		 &wa1[1], &wa2[1], &wa3[1]);
+
+#else 
+  /*        compute the qr factorization of the jacobian matrix */
+  /*        calculated one row at a time, while simultaneously */
+  /*        forming (q transpose)*fvec and storing the first */
+  /*        n components in qtf. */
+
+  i__1 = *n;
+  for (j = 1; j <= i__1; ++j)
+    {
+      qtf[j] = zero;
+      i__2 = *n;
+      for (i__ = 1; i__ <= i__2; ++i__)
+	{
+	  fjac[i__ + j * fjac_dim1] = zero;
+	}
+    }
+  iflag = 2;
+  i__1 = *m;
+  for (i__ = 1; i__ <= i__1; ++i__)
+    {
+      (*fcn) (m, n, &x[1], &fvec[1], &wa3[1], &iflag, data);
+      if (iflag < 0)
+	{
+	  goto L300;
+	}
+      temp = fvec[i__];
+      minpack_rwupdt (n, &fjac[fjac_offset], ldfjac, &wa3[1], &qtf[1], &temp,
+		      &wa1[1], &wa2[1]);
+      ++iflag;
+    }
+  ++(*njev);
+
+  /*        if the jacobian is rank deficient, call qrfac to */
+  /*        reorder its columns and update the components of qtf. */
+
+  sing = FALSE;
+  i__1 = *n;
+  for (j = 1; j <= i__1; ++j)
+    {
+      if (fjac[j + j * fjac_dim1] == zero)
+	{
+	  sing = TRUE;
+	}
+      ipvt[j] = j;
+      wa2[j] = minpack_enorm (j, &fjac[j * fjac_dim1 + 1]);
+    }
+  if (!sing)
+    {
+      goto L130;
+    }
+  minpack_qrfac (n, n, &fjac[fjac_offset], ldfjac, &c_true, &ipvt[1], n,
+		 &wa1[1], &wa2[1], &wa3[1]);
+  i__1 = *n;
+  for (j = 1; j <= i__1; ++j)
+    {
+      if (fjac[j + j * fjac_dim1] == zero)
+	{
+	  goto L110;
+	}
+      sum = zero;
+      i__2 = *n;
+      for (i__ = j; i__ <= i__2; ++i__)
+	{
+	  sum += fjac[i__ + j * fjac_dim1] * qtf[i__];
+	}
+      temp = -sum / fjac[j + j * fjac_dim1];
+      i__2 = *n;
+      for (i__ = j; i__ <= i__2; ++i__)
+	{
+	  qtf[i__] += fjac[i__ + j * fjac_dim1] * temp;
+	}
+    L110:
+      fjac[j + j * fjac_dim1] = wa1[j];
+    }
+ L130:
+#endif 
 
   /*        on the first iteration and if mode is 1, scale according */
   /*        to the norms of the columns of the initial jacobian. */
@@ -241,6 +345,7 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     }
  L80:
 
+#ifndef WITH_JAC_MIN 
   /*        form (q transpose)*fvec and store the first n components in */
   /*        qtf. */
 
@@ -272,6 +377,7 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
       fjac[j + j * fjac_dim1] = wa1[j];
       qtf[j] = wa4[j];
     }
+#endif 
 
   /*        compute the norm of the scaled gradient. */
 
@@ -361,7 +467,11 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 #ifdef WITH_JAC 
   (*fcn) (m, n, &wa2[1], &wa4[1], &fjac[fjac_offset], ldfjac, &iflag,data);
 #else 
+#ifdef WITH_JAC_MIN
+  (*fcn) (m, n, &wa2[1], &wa4[1], &wa3[1], &iflag, data);
+#else 
   (*fcn) (m, n, &wa2[1], &wa4[1], &iflag,data);
+#endif
 #endif
   ++(*nfev);
   if (iflag < 0)
@@ -542,9 +652,12 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 #ifdef WITH_JAC 
       (*fcn) (m, n, &x[1], &fvec[1], &fjac[fjac_offset], ldfjac, &iflag,data);
 #else 
+#ifdef WITH_JAC_MIN 
+      (*fcn) (m, n, &x[1], &fvec[1], &wa3[1], &iflag, data);
+#else 
       (*fcn) (m, n, &x[1], &fvec[1], &iflag,data);
 #endif
-
+#endif
     }
   return 0;
 }
