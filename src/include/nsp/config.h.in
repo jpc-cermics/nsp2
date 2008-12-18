@@ -127,6 +127,9 @@
 /* Whether WebKit is available */
 #undef HAVE_WEBKIT
 
+/* Whether WebKit has zoom API */
+#undef HAVE_WEBKIT_ZOOM
+
 /* cairo image supported */
 #undef HAVE_cairo_image_surface
 

@@ -121,7 +121,7 @@ go_forward_cb (GtkWidget* widget, gpointer data)
   webkit_web_view_go_forward (web_view);
 }
 
-#ifdef WEBKIT_ZOOM
+#ifdef HAVE_WEBKIT_ZOOM
 static void
 go_zoom_in_cb (GtkWidget* widget, gpointer data)
 {
@@ -190,7 +190,7 @@ create_toolbar ()
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
 
-#ifdef WEBKIT_ZOOM
+#ifdef HAVE_WEBKIT_ZOOM
   /* The zooms buttons */
   item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN);
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_in_cb), NULL);
