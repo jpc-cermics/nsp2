@@ -20,7 +20,7 @@ C = splin2d(x, y, z, [,spline_type])
                defining the interpolation grid
    \vname{z}: nx x ny matrix (nx being the length of \verb!x! and 
                ny the length of \verb!y!)
-   \vname{spline\_type}: (optionnal) a string selecting the kind of bicubic spline to compute
+   \vname{spline\_type}: (optional) a string selecting the kind of bicubic spline to compute
    \vname{C}: a big vector with the coefficients of the bicubic patches
   \end{varlist}
 \end{parameters}
@@ -41,12 +41,12 @@ C = splin2d(x, y, z, [,spline_type])
     The evaluation of  $s$ at some points must be done by the \manlink{interp2d}{interp2d}  
     function. Several kind of splines may be computed by selecting the appropriate 
     \verb!spline_type! parameter. The method used to compute the bicubic spline
-    (or sub-spline) is the old fashionned one 's, i.e. to compute on each grid point
+    (or sub-spline) is the old fashionned one 's: calculate on each grid point
     $(x_i,y_j)$ an approximation of the first derivatives $ds/dx(x_i,y_j)$
     and $ds/dy(x_i,y_j)$ and of the cross derivative $d2s/dxdy(x_i,y_j)$.
-    Those derivatives are computed by the mean of 1d spline schemes leading to a C2
+    Those derivatives are approximated by the mean of 1d spline scheme leading to a C2
     function ($s$ is twice continuously differentiable) or by the mean of a
-    local approximation scheme leading to a C1 function only. This scheme is selected
+    local approximation scheme leading to a C1 function only. The scheme is selected
     with the \verb!spline_type! parameter (see \manlink{splin}{splin}  for details) :  
     
   \begin{itemize}
