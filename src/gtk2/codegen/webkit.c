@@ -12,7 +12,19 @@
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 
-#line 16 "webkit.c"
+#ifndef HAVE_WEBKIT_ZOOM
+gfloat webkit_web_view_get_zoom_level(WebKitWebView        *web_view) {return 1.0;}
+void webkit_web_view_set_zoom_level (WebKitWebView        *web_view,
+				     gfloat                zoom_level) {}
+void webkit_web_view_zoom_in(WebKitWebView        *web_view) {};
+void webkit_web_view_zoom_out(WebKitWebView        *web_view) {};
+gboolean webkit_web_view_get_full_content_zoom(WebKitWebView *web_view) {return TRUE;}
+void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
+					   gboolean full_content_zoom) {};
+#endif 
+
+
+#line 28 "webkit.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -2118,7 +2130,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2122 "webkit.c"
+#line 2134 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));
