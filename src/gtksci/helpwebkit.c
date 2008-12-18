@@ -121,6 +121,7 @@ go_forward_cb (GtkWidget* widget, gpointer data)
   webkit_web_view_go_forward (web_view);
 }
 
+#ifdef WEBKIT_ZOOM
 static void
 go_zoom_in_cb (GtkWidget* widget, gpointer data)
 {
@@ -140,7 +141,7 @@ go_zoom_100_cb (GtkWidget* widget, gpointer data)
   if ( zl != 1.0) 
     webkit_web_view_set_zoom_level(web_view,1.0);
 }
-
+#endif
 
 static GtkWidget*
 create_browser ()
@@ -188,6 +189,8 @@ create_toolbar ()
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_forward_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
+
+#ifdef WEBKIT_ZOOM
   /* The zooms buttons */
   item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN);
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_in_cb), NULL);
@@ -200,6 +203,7 @@ create_toolbar ()
   item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_100);
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_100_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
+#endif 
 
   /* The URL entry */
   item = gtk_tool_item_new ();
