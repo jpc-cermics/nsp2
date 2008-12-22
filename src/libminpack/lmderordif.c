@@ -52,9 +52,7 @@
  * POSSIBILITY OF SUCH LOSS OR DAMAGES.
  */
 
-	
-
-/* This file is included in lmder.c or lmdif.c 
+/* This file is included in lmder.c, or lmdif.c, or lmstr.c
  * in order to share common code. 
  */
 
@@ -87,11 +85,11 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 {
   int c_true = TRUE;
   const double one = 1., p1 = .1, p5 = .5, p25 = .25, p75 = .75, p0001 = 1e-4, zero = 0.;
-  int fjac_dim1, fjac_offset, i__1, i__2;
-  double d__1, d__2, d__3;
+  int fjac_dim1, fjac_offset;
+  double d1, d2, d3;
   int iter;
   double temp=0.0, temp1, temp2;
-  int i__, j, l, iflag;
+  int i, j, l, iflag;
   double delta;
   double ratio;
   double fnorm, gnorm, pnorm, xnorm=0.0, fnorm1, actred, dirder, epsmch, prered;
@@ -140,8 +138,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L20;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       if (diag[j] <= zero)
 	{
@@ -236,26 +234,26 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   /*        forming (q transpose)*fvec and storing the first */
   /*        n components in qtf. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n; ++j)
     {
       qtf[j] = zero;
-      i__2 = *n;
-      for (i__ = 1; i__ <= i__2; ++i__)
+
+      for (i = 1; i <= *n ; ++i)
 	{
-	  fjac[i__ + j * fjac_dim1] = zero;
+	  fjac[i + j * fjac_dim1] = zero;
 	}
     }
   iflag = 2;
-  i__1 = *m;
-  for (i__ = 1; i__ <= i__1; ++i__)
+
+  for (i = 1; i <= *m; ++i)
     {
       (*fcn) (m, n, &x[1], &fvec[1], &wa3[1], &iflag, data);
       if (iflag < 0)
 	{
 	  goto L300;
 	}
-      temp = fvec[i__];
+      temp = fvec[i];
       minpack_rwupdt (n, &fjac[fjac_offset], ldfjac, &wa3[1], &qtf[1], &temp,
 		      &wa1[1], &wa2[1]);
       ++iflag;
@@ -266,8 +264,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   /*        reorder its columns and update the components of qtf. */
 
   sing = FALSE;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       if (fjac[j + j * fjac_dim1] == zero)
 	{
@@ -282,24 +280,24 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     }
   minpack_qrfac (n, n, &fjac[fjac_offset], ldfjac, &c_true, &ipvt[1], n,
 		 &wa1[1], &wa2[1], &wa3[1]);
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       if (fjac[j + j * fjac_dim1] == zero)
 	{
 	  goto L110;
 	}
       sum = zero;
-      i__2 = *n;
-      for (i__ = j; i__ <= i__2; ++i__)
+
+      for (i = j; i <= *n ; ++i)
 	{
-	  sum += fjac[i__ + j * fjac_dim1] * qtf[i__];
+	  sum += fjac[i + j * fjac_dim1] * qtf[i];
 	}
       temp = -sum / fjac[j + j * fjac_dim1];
-      i__2 = *n;
-      for (i__ = j; i__ <= i__2; ++i__)
+
+      for (i = j; i <= *n ; ++i)
 	{
-	  qtf[i__] += fjac[i__ + j * fjac_dim1] * temp;
+	  qtf[i] += fjac[i + j * fjac_dim1] * temp;
 	}
     L110:
       fjac[j + j * fjac_dim1] = wa1[j];
@@ -318,8 +316,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L60;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       diag[j] = wa2[j];
       if (wa2[j] == zero)
@@ -332,8 +330,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   /*        on the first iteration, calculate the norm of the scaled x */
   /*        and initialize the step bound delta. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       wa3[j] = diag[j] * x[j];
     }
@@ -349,29 +347,29 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   /*        form (q transpose)*fvec and store the first n components in */
   /*        qtf. */
 
-  i__1 = *m;
-  for (i__ = 1; i__ <= i__1; ++i__)
+
+  for (i = 1; i <= *m ; ++i)
     {
-      wa4[i__] = fvec[i__];
+      wa4[i] = fvec[i];
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
       if (fjac[j + j * fjac_dim1] == zero)
 	{
 	  goto L120;
 	}
       sum = zero;
-      i__2 = *m;
-      for (i__ = j; i__ <= i__2; ++i__)
+
+      for (i = j; i <= *m; ++i)
 	{
-	  sum += fjac[i__ + j * fjac_dim1] * wa4[i__];
+	  sum += fjac[i + j * fjac_dim1] * wa4[i];
 	}
       temp = -sum / fjac[j + j * fjac_dim1];
-      i__2 = *m;
-      for (i__ = j; i__ <= i__2; ++i__)
+
+      for (i = j; i <= *m; ++i)
 	{
-	  wa4[i__] += fjac[i__ + j * fjac_dim1] * temp;
+	  wa4[i] += fjac[i + j * fjac_dim1] * temp;
 	}
     L120:
       fjac[j + j * fjac_dim1] = wa1[j];
@@ -386,8 +384,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L170;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n; ++j)
     {
       l = ipvt[j];
       if (wa2[l] == zero)
@@ -395,14 +393,14 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 	  goto L150;
 	}
       sum = zero;
-      i__2 = j;
-      for (i__ = 1; i__ <= i__2; ++i__)
+
+      for (i = 1; i <= j; ++i)
 	{
-	  sum += fjac[i__ + j * fjac_dim1] * (qtf[i__] / fnorm);
+	  sum += fjac[i + j * fjac_dim1] * (qtf[i] / fnorm);
 	}
       /* Computing MAX */
-      d__2 = gnorm, d__3 = (d__1 = sum / wa2[l], Abs (d__1));
-      gnorm = Max (d__2, d__3);
+      d2 = gnorm, d3 = (d1 = sum / wa2[l], Abs (d1));
+      gnorm = Max (d2, d3);
     L150:
       ;
     }
@@ -425,12 +423,11 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
     {
       goto L190;
     }
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n ; ++j)
     {
-      /* Computing MAX */
-      d__1 = diag[j], d__2 = wa2[j];
-      diag[j] = Max (d__1, d__2);
+      d1 = diag[j], d2 = wa2[j];
+      diag[j] = Max (d1, d2);
     }
  L190:
 
@@ -445,8 +442,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 
   /*           store the direction p and x + p. calculate the norm of p. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+
+  for (j = 1; j <= *n; ++j)
     {
       wa1[j] = -wa1[j];
       wa2[j] = x[j] + wa1[j];
@@ -486,37 +483,32 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
   if (p1 * fnorm1 < fnorm)
     {
       /* Computing 2nd power */
-      d__1 = fnorm1 / fnorm;
-      actred = one - d__1 * d__1;
+      d1 = fnorm1 / fnorm;
+      actred = one - d1 * d1;
     }
 
   /*           compute the scaled predicted reduction and */
   /*           the scaled directional derivative. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  for (j = 1; j <= *n; ++j)
     {
       wa3[j] = zero;
       l = ipvt[j];
       temp = wa1[l];
-      i__2 = j;
-      for (i__ = 1; i__ <= i__2; ++i__)
+
+      for (i = 1; i <= j; ++i)
 	{
-	  wa3[i__] += fjac[i__ + j * fjac_dim1] * temp;
+	  wa3[i] += fjac[i + j * fjac_dim1] * temp;
 	}
     }
   temp1 = minpack_enorm (*n, &wa3[1]) / fnorm;
   temp2 = sqrt (par) * pnorm / fnorm;
-  /* Computing 2nd power */
-  d__1 = temp1;
-  /* Computing 2nd power */
-  d__2 = temp2;
-  prered = d__1 * d__1 + d__2 * d__2 / p5;
-  /* Computing 2nd power */
-  d__1 = temp1;
-  /* Computing 2nd power */
-  d__2 = temp2;
-  dirder = -(d__1 * d__1 + d__2 * d__2);
+  d1 = temp1;
+  d2 = temp2;
+  prered = d1 * d1 + d2 * d2 / p5;
+  d1 = temp1;
+  d2 = temp2;
+  dirder = -(d1 * d1 + d2 * d2);
 
   /*           compute the ratio of the actual to the predicted */
   /*           reduction. */
@@ -546,8 +538,8 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
       temp = p1;
     }
   /* Computing MIN */
-  d__1 = delta, d__2 = pnorm / p1;
-  delta = temp * Min (d__1, d__2);
+  d1 = delta, d2 = pnorm / p1;
+  delta = temp * Min (d1, d2);
   par /= temp;
   goto L260;
  L240:
@@ -569,16 +561,15 @@ int minpack_lmdif (minpack_fcn2 fcn, int *m, int *n, double *x, double *fvec,
 
   /*           successful iteration. update x, fvec, and their norms. */
 
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j)
+  for (j = 1; j <= *n; ++j)
     {
       x[j] = wa2[j];
       wa2[j] = diag[j] * x[j];
     }
-  i__1 = *m;
-  for (i__ = 1; i__ <= i__1; ++i__)
+
+  for (i = 1; i <= *m; ++i)
     {
-      fvec[i__] = wa4[i__];
+      fvec[i] = wa4[i];
     }
   xnorm = minpack_enorm (*n, &wa2[1]);
   fnorm = fnorm1;
