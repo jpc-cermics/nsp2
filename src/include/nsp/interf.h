@@ -94,6 +94,17 @@ extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T);
   { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.fname);return RET_BUG;} 
 
 /**
+ *CheckStdRhsMin:
+ * @x: an integer 
+ * 
+ * macro used in interfaces to check that the number of given arguments (standards and named optionals) 
+ * is at least @x
+ */
+
+#define CheckStdRhsMin(x) if ( rhs -opt < x )				\
+    { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
+
+/**
  *CheckOptRhs:
  * @x: an integer 
  * @y: an integer

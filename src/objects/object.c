@@ -2075,7 +2075,7 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
   char buf[FSIZE+1];
   NspFile *F;
   int i,rep=0;
-  CheckStdRhs(1,1);
+  CheckStdRhsMin(1);
   CheckLhs(1,1);
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
   /* expand keys in path name result in buf */
