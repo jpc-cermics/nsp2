@@ -20,7 +20,7 @@ r = fsolve(x0, f)
     \vname{x0}:real vector (says of length $n$), initial estimate of the solution vector
     \vname{f}:nsp function (or string for an C or fortran external)
     \vname{xtol=erx, ftol=eaf}: optional named arguments relative to the stopping test (defaults:
-    \verb+xtol=sqrt(2*%eps), ftol=(2*%eps)^(2/3)+)
+    \verb+xtol=sqrt(2*%eps)+, \verb+ftol=(2*%eps)^(2/3)+)
     \vname{jac=Jf}: optional named argument. Jf should be a nsp function (the Jacobian of \verb+f+)
     \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for \verb+f+ (and
     Jf if provided).
@@ -40,11 +40,11 @@ r = fsolve(x0, f)
 This function tries to find a zero of a mathematical function $f: {\R}^n \rightarrow  {\R}^n$.
 That is, find a point $r_e \in {\R}^n$ such that $f(r_e)=0$, by an iterative algorithm starting from an initial guess \verb+x0+.
 The function \verb+fsolve+ uses the Powell hybrid method from the Minpack package (\verb+hybrj+, \verb+hybrd+). 
-In most cases it returns an approximation $r$ of an exact root $r_e$ satisfying the following condition:  
+In case of success the function returns an approximation $r$ of an exact root $r_e$ satisfying the following condition:  
 $$
 || r_e - r || \le xtol || r_e || \mbox{ or } \max_i | f_i(r) | \le ftol\,.
 $$
-When the condition is satisfied, the output variable \verb+info+ is set to $1$ (note that, as the exact root  $r_e$
+In this case, the output variable \verb+info+ is set to $1$ (note that, as the exact root  $r_e$
 is not known, the first test condition is obtained via an estimation \ldots). Other possible values
 for \verb+info+ are:
 \begin{itemize}
@@ -53,7 +53,7 @@ for \verb+info+ are:
 \item \verb+info=0+: improper input parameters.
 \item \verb+info=2+: number of calls to \verb+f+ has reached or exceeded \verb+maxfev+.
 \item \verb+info=3+: \verb+xtol+ and \verb+ftol+ are too small. No further improvement in the approximate solution is possible
-\item \verb+info=4+ or \verb++5+: the method is not making good progress. This error often arises when the method
+\item \verb+info=4+ or \verb+5+: the method is not making good progress. This error often arises when the method
   is trapped near a minimum of $||f(x)||^2$ which is not a zero.
 \end{itemize}
 Note that, when \verb+fsolve+ is called with only 1 or 2 outputs arguments, an error is set 
@@ -94,7 +94,17 @@ This gives a feature to test your own Jacobian if provided by comparing its eval
 \manlink{derivative}{derivative} function. 
 
 \itemdesc{scale optional parameter}
-To be done...
+With \verb+scale=vect+ you can provide to the function a vector of $n$ scale factors.
+Scale factors are positive numbers such that the scaled variables $s_i r_i$ are of same order
+(says they are roughly between $-1$ and $1$. If you know the approximate magnitude of the components
+of the solution vector, for instance you know that $r_1$ is between $-10^{-7}$ and $10^{-6}$, 
+$r_2$ is between $-50$ and $80$ and $r_3$ is around  $10^{5}$ then you can choose $s_1 = 10^6$, 
+$s_2 = 0.02$ and $s_3 = 10^{-5}$. When the scale factors are not provided by the user, the code 
+computes them automatically (using the euclidian norm of the columns of the Jacobian). Scaling is 
+important when the magnitude of the variables are really different (as in the example before). In 
+this case if you known (even very approximatively) the scale of each parameter it is better
+to provide them.  
+
 \end{mandescription} 
 
 \begin{examples}
