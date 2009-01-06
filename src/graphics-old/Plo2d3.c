@@ -106,8 +106,8 @@ static void Plo2d3RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, i
       for ( i=0 ; i < (*n2) ; i++)
 	for (j=0 ; j< (*n1) ; j++)
 	  {
-	    ym[2*i+1+2*(*n2)*j]= YScale(0);
-	    ym[2*i+2*(*n2)*j]= YLogScale(y[i+(*n2)*j]);
+	    ym[2*i+1+2*(*n2)*j]= Min(int16max, YScale(0));
+	    ym[2*i+2*(*n2)*j]= Min(int16max,YLogScale(y[i+(*n2)*j]));
 	  }
     }
   else 
@@ -115,8 +115,8 @@ static void Plo2d3RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, i
       for ( i=0 ; i < (*n2) ; i++)
 	for (j=0 ; j< (*n1) ; j++)
 	  {
-	    ym[2*i+1+2*(*n2)*j]= YScale(0);
-	    ym[2*i+2*(*n2)*j]= YScale(y[i+(*n2)*j]);
+	    ym[2*i+1+2*(*n2)*j]= Min(int16max, YScale(0));
+	    ym[2*i+2*(*n2)*j]= Min(int16max, YScale(y[i+(*n2)*j]));
 	  }
     }
 
