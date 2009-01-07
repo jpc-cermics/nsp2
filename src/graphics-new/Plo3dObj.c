@@ -48,6 +48,8 @@ extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ng
 extern  int nsp_obj3d_orientation(int x[], int y[], int n);
 extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+
 extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
 extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
 extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
@@ -1571,6 +1573,45 @@ void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],c
 	  Coord[i+1] = facteur*Coord[i+1];
 	  /* le point est-il dans le rectangle de visu ? */
 	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+1]) > lim[1] ) 
+	    pos[k] = OUT_XY;
+	  else
+	    pos[k] = VIN;
+	}
+      k++;
+    }
+}
+
+/* similar but with a transposed Coord
+ *
+ */
+
+void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+{
+  int i, k=0;
+  double facteur;
+  for (i = 0; i < ncoord ; i++ )
+    {
+      /* take care that Coord and M can point to the same location 
+       * thus we have to copy
+       */
+      double v[3];
+      v[0] = M[i];v[1] = M[i+ncoord]; v[2] = M[i+2*ncoord]; 
+      Coord[i]   = TRX(v[0],v[1],v[2]);
+      Coord[i+ncoord] = TRY(v[0],v[1],v[2]);
+      Coord[i+2*ncoord] = TRZ(v[0],v[1],v[2]);
+      if ( Coord[i+2*ncoord] < lim[2] )  
+	{
+	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
+	}
+      else
+	{
+	  /* on applique la perspective */
+	  facteur = 1.0/Coord[i+2*ncoord];
+	  facteur = 1.0;
+	  Coord[i]   = facteur*Coord[i];
+	  Coord[i+ncoord] = facteur*Coord[i+ncoord];
+	  /* le point est-il dans le rectangle de visu ? */
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+ncoord]) > lim[1] ) 
 	    pos[k] = OUT_XY;
 	  else
 	    pos[k] = VIN;

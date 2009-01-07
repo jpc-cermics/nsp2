@@ -4,6 +4,7 @@ headers
 
 #include "nsp/figure.h"
 #include "nsp/axes.h"
+#include "nsp/objs3d.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
@@ -409,7 +410,8 @@ NspFigure *nsp_create_default_figure(void)
 
 NspAxes * nsp_check_for_axes(BCG *Xgc) 
 {
-  NspObject *Obj;
+  int i,l;
+  NspObject *Obj=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
@@ -422,10 +424,19 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   L= F->obj->children;
-  /* return the first axes found  */
-  if ( nsp_list_length(L) <1 ||  (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
+  /* return the first axes found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
     {
-      NspAxes *axe= nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ && IsAxes(Obj) ) break;
+    }
+  if ( Obj == NULLOBJ) 
+    {
+      /* create a new axes */
+      NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
       if ( axe == NULL) return NULL;
       /* store in Figure */
       if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 
@@ -440,7 +451,55 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
   return (NspAxes *) Obj;
 }
 
+/* checks for a figure and a 3dobj-axes in Xgc 
+ * create one if not present. 
+ * Xgc should not be null here. 
+ * this is not a definitive function just a hack.
+ * since graphic should be driven by Figure Not by Xgc 
+ */
 
+NspObjs3d * nsp_check_for_objs3d(BCG *Xgc) 
+{
+  int i,l;
+  NspObject *Obj=NULLOBJ;
+  NspList *L;
+  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,NULL);
+      if ( F == NULL) return NULL;
+      /* insert in Xgc */
+      store_graphic_object(Xgc,NSP_OBJECT(F));
+    }
+  if ( ! IsFigure((NspObject *) F)) return NULL;
+  L= F->obj->children;
+  /* return the first axes found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
+    {
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ &&  IsObjs3d(Obj)) break;
+    }
+  if ( Obj == NULLOBJ) 
+    {
+      /* create a new obj3d */
+      NspObjs3d *obj3d = nsp_objs3d_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,35,45,TRUE,32,0,NULL);
+      if ( obj3d == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) obj3d)== FAIL) 
+	{
+	  nsp_objs3d_destroy(obj3d);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      Obj =(NspObject *) obj3d;
+    }
+  return (NspObjs3d *) Obj;
+}
 
 
 
