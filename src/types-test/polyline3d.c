@@ -789,7 +789,7 @@ static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data)
       /* draw all the faces: this is not really used  
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspPolyline3d *) Obj)->obj->Mcoord->n -1; i++) 
+      for ( i= 0 ; i < ((NspPolyline3d *) Obj)->obj->Mcoord->m -1; i++) 
 	draw_polyline3d_face(Xgc,Obj,i);
     }
 }
@@ -828,8 +828,8 @@ static void nsp_getbounds_polyline3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
       return;
     }
-  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
+  for ( i = 0 ; i < Q->Mcoord->n ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
@@ -837,15 +837,15 @@ static void nsp_getbounds_polyline3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 int nsp_check_polyline3d( NspPolyline3d *P)
 {
   nsp_polyline3d *L = P->obj;
-  int L_nb_coords = L->Mcoord->n;
+  int L_nb_coords = L->Mcoord->m;
 
-  if ( L->Mcoord->m != 3 ) 
+  if ( L->Mcoord->n != 3 ) 
     {
-      Scierror("Error: bad coord for polyline3d, first dimension should be 3\n");
+      Scierror("Error: bad coord for polyline3d, second dimension should be 3\n");
       return FAIL;
     }
 
-  if ( L->Mcolor->mn != L->Mcoord->n -1 && L->Mcolor->mn != 1 ) 
+  if ( L->Mcolor->mn != L->Mcoord->m -1 && L->Mcolor->mn != 1 ) 
     {
       Scierror("Erro: bad color for polyline3d object\n");
     }
@@ -872,11 +872,12 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
   int L_nb_colors = L->Mcolor->mn ;
   int *L_color = L->Mcolor->I;
+  int L_nb_coords = L->Mcoord->m;
   int x[2], y[2], color, n=2, flag=0;
-  x[0] = XScale(L_coord[3*j]);
-  y[0] = YScale(L_coord[3*j+1]);
-  x[1] = XScale(L_coord[3*j+3]);
-  y[1] = YScale(L_coord[3*j+4]);
+  x[0] = XScale(L_coord[j]);
+  y[0] = YScale(L_coord[j+L_nb_coords]);
+  x[1] = XScale(L_coord[j+1]);
+  y[1] = YScale(L_coord[j+1+L_nb_coords]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }
@@ -889,18 +890,18 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
   double x[2], y[2],z[2];
   int  n=2, flag=0;
   double * L_coord = ((NspMatrix *) L->Mcoord)->R;
-  int L_nb_coords = L->Mcoord->n;
+  int L_nb_coords = L->Mcoord->m;
   int *L_color = L->Mcolor->I;
   int L_nb_colors = L->Mcolor->mn ;
   for ( j = 0 ; j < L_nb_coords-1 ; j++ )
     {
       color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
-      x[0] = L_coord[3*j];
-      y[0] = L_coord[3*j+1];
-      z[0] = L_coord[3*j+2];
-      x[1] = L_coord[3*j+3];
-      y[1] = L_coord[3*j+4];
-      z[1] = L_coord[3*j+5];
+      x[0] = L_coord[j];
+      y[0] = L_coord[j+L_nb_coords];
+      z[0] = L_coord[3*j+2*L_nb_coords];
+      x[1] = L_coord[j+1];
+      y[1] = L_coord[j+1+L_nb_coords];
+      z[1] = L_coord[j+1+2*L_nb_coords];
       drawsegments3D(Xgc, x, y ,z, n, &color, flag);
     }
 #endif
@@ -912,10 +913,10 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
   int j;
   double zmean;
   double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
-  int L_nb_coords = L->Mcoord->n;
+  int L_nb_coords = L->Mcoord->m;
   for ( j = 0 ; j < L_nb_coords-1 ; j++ )
     {
-      zmean = 0.5 * (L_coord[3*j+2] + L_coord[3*j+5]);
+      zmean = 0.5 * (L_coord[j+2*L_nb_coords] + L_coord[j+1+2*L_nb_coords]);
       if (L->pos[j] != OUT_Z && L->pos[j+1] != OUT_Z)
 	if (L->pos[j] == VIN || L->pos[j+1] == VIN)
 	  { 
@@ -935,7 +936,7 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
 static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_polyline3d *Q= ((NspPolyline3d *) Obj)->obj;
-  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
   zmean_faces_for_Polyline3d(Obj, z,  HF, n, k);
 }
 
@@ -945,8 +946,8 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, 
 
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
-  return ((NspPolyline3d *) Obj)->obj->Mcoord->n -1;
+  return ((NspPolyline3d *) Obj)->obj->Mcoord->m -1;
 }
 
 
-#line 953 "polyline3d.c"
+#line 954 "polyline3d.c"

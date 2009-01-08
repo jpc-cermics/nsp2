@@ -1133,8 +1133,8 @@ static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
       return;
     }
-  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
+  for ( i = 0 ; i < Q->Mcoord->n ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
@@ -1144,7 +1144,7 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
 {
   nsp_spolyhedron *Q = P->obj;
   /* aliases */
-  int Q_nb_coords = Q->Mcoord->n;
+  int Q_nb_coords = Q->Mcoord->m;
   /* 
      double *Q_coord = Q->Mcoord->R; 
      int Q_nb_vertices_per_face = Q->Mface->m;
@@ -1156,9 +1156,9 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
   double dv;
   int i;
 
-  if ( Q->Mcoord->m != 3 ) 
+  if ( Q->Mcoord->n != 3 ) 
     {
-      Scierror("Error: bad coord for spolyhedron, first dimension should be 3\n");
+      Scierror("Error: bad coord for spolyhedron, second dimension should be 3\n");
       return FAIL;
     }
   
@@ -1235,6 +1235,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int numpt, *current_vertex, color, orient;
   double v[3], val_mean=0.0;
 
+  int Q_nb_coords = Q->Mcoord->m;
   int foreground_color = 1; /* XX should be shared */
   double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
   int Q_nb_vertices_per_face = Q->Mface->m;
@@ -1254,8 +1255,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   for (i = 0 ; i < m ; i++)
     {
       numpt = current_vertex[i]-1;
-      x[i] = XScale(Q_coord[3*numpt]);
-      y[i] = YScale(Q_coord[3*numpt+1]);
+      x[i] = XScale(Q_coord[numpt]);
+      y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
       val_mean += Q_val[numpt];
     }
   val_mean = val_mean / m;
@@ -1307,7 +1308,8 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int numpt, *current_vertex, color;
   double val_mean=0.0;
   double x[12], y[12], z[12], v[12];
-  
+
+  int Q_nb_coords = Q->Mcoord->m;  
   double *Q_coord = Q->Mcoord->R; 
   int Q_nb_vertices_per_face = Q->Mface->m;
   int Q_nb_faces = Q->Mface->n;
@@ -1322,9 +1324,9 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       for (i = 0 ; i < m ; i++)
 	{
 	  numpt = current_vertex[i]-1;
-	  x[i] = Q_coord[3*numpt];
-	  y[i] = Q_coord[3*numpt+1];
-	  z[i] = Q_coord[3*numpt+2];
+	  x[i] = Q_coord[numpt];
+	  y[i] = Q_coord[numpt+Q_nb_coords];
+	  z[i] = Q_coord[numpt+2*Q_nb_coords];
 	  val_mean += (v[i]=Q_val[numpt]);
 	}
       val_mean = val_mean / m;
@@ -1357,6 +1359,7 @@ static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], in
   VisionPos pos_face, pos_vertex;
   double coef, zmean;
 
+  int Q_nb_coords = Q->Mcoord->m;
   double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
   int Q_nb_vertices_per_face = Q->Mface->m;
   int Q_nb_faces = Q->Mface->n;
@@ -1378,7 +1381,7 @@ static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], in
        */
       for ( i = 0 ; i < m ; i++ )
 	{
-	  zmean += Q_coord[3*(*current_vertex-1)+2];
+	  zmean += Q_coord[(*current_vertex-1)+2*Q_nb_coords];
 	  pos_vertex = Q->pos[*current_vertex-1];
 	  if (pos_vertex == OUT_Z)
 	    pos_face = OUT_Z;
@@ -1403,7 +1406,7 @@ static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], in
 static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_spolyhedron *Q= ((NspSPolyhedron *) Obj)->obj;
-  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
   zmean_faces_for_SPolyhedron(Obj, z,  HF, n, k);
 }
 
@@ -1586,4 +1589,4 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 
 
 
-#line 1590 "spolyhedron.c"
+#line 1593 "spolyhedron.c"

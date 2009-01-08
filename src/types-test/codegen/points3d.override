@@ -162,7 +162,7 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
       /* draw all the faces: this is not really used  
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspPoints3d *) Obj)->obj->Mcoord->n; i++) 
+      for ( i= 0 ; i < ((NspPoints3d *) Obj)->obj->Mcoord->m; i++) 
 	draw_points3d_face(Xgc,Obj,i);
     }
 }
@@ -202,19 +202,19 @@ static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
       return;
     }
-  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
+  for ( i = 0 ; i < Q->Mcoord->n ; i++) 
+    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return;
 }
 
 int nsp_check_points3d( NspPoints3d *Pt)
 {
   nsp_points3d *P = Pt->obj;
-  int P_nb_coords = P->Mcoord->n;
+  int P_nb_coords = P->Mcoord->m;
 
-  if ( P->Mcoord->m != 3 ) 
+  if ( P->Mcoord->n != 3 ) 
     {
-      Scierror("Error: bad coord for points3d, first dimension should be 3\n");
+      Scierror("Error: bad coord for points3d, second dimension should be 3\n");
       return FAIL;
     }
 
@@ -238,9 +238,10 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   int mark[2],current_mark[2],color;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   double * V_coord = ((NspMatrix *) V->Mcoord_l)->R;
+  int V_nb_coords = V->Mcoord->m;
   int x, y; 
-  x = XScale(V_coord[3*j]);
-  y = YScale(V_coord[3*j+1]);
+  x = XScale(V_coord[j]);
+  y = YScale(V_coord[j+V_nb_coords]);
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
   mark[0]= ( V->mark_type < 0 ) ? current_mark[0] : V->mark_type;
   mark[1]= ( V->mark_size < 0 ) ? current_mark[1] : V->mark_size;
@@ -267,7 +268,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   double x, y,z;
   int j;
-  int V_nb_coords = V->Mcoord->n;
+  int V_nb_coords = V->Mcoord->m;
   double * V_coord = ((NspMatrix *) V->Mcoord)->R;
 
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
@@ -281,9 +282,9 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
   for ( j = 0 ; j < V_nb_coords ; j++) 
     {
-      x = V_coord[3*j];
-      y = V_coord[3*j+1];
-      z = V_coord[3*j+2];
+      x = V_coord[j];
+      y = V_coord[j+V_nb_coords];
+      z = V_coord[j+2*V_nb_coords];
       /* XXX  Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,&z,n); */
     }
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
@@ -298,12 +299,12 @@ static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *
 {
   nsp_points3d *V = ((NspPoints3d *) Obj)->obj;
   int j;
-  int V_nb_coords = V->Mcoord->n;
+  int V_nb_coords = V->Mcoord->m;
   double *V_coord = ((NspMatrix *) V->Mcoord_l)->R;
   for ( j = 0 ; j < V_nb_coords ; j++)
     if (V->pos[j] == VIN)
       {
-	z[*n] = V_coord[3*j+2]; 
+	z[*n] = V_coord[j+2*V_nb_coords]; 
 	HF[*n].num_obj = k; 
 	HF[*n].num_in_obj = j;
 	(*n)++; 
@@ -317,7 +318,7 @@ static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *
 static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_points3d *Q= ((NspPoints3d *) Obj)->obj;
-  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
   zmean_faces_for_Points3d(Obj, z,  HF, n, k);
 }
 
@@ -327,7 +328,7 @@ static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, in
 
 static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
-  return ((NspPoints3d *) Obj)->obj->Mcoord->n;
+  return ((NspPoints3d *) Obj)->obj->Mcoord->m;
 }
 
 
