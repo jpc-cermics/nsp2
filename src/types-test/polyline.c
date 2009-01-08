@@ -895,8 +895,10 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	}
       if ( P->obj->color != -1 ) 
 	Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
-      if ( P->obj->mark != -1 ) 
+      else if ( P->obj->mark != -1 ) 
 	Xgc->graphic_engine->scale->drawpolymark(Xgc,x->R,y->R,P->obj->x->mn);
+      else
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
       /* reset to default values */
       if ( P->obj->color != -1 ) 
 	{
@@ -989,4 +991,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 993 "polyline.c"
+#line 995 "polyline.c"

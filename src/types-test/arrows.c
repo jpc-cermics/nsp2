@@ -801,7 +801,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
   NspMatrix *ny = P->obj->y;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->x->mn == 0 )  return;
-  if ( P->obj->color != NULLMAT) 
+  if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
       if ( P->obj->color->mn == 1) 
 	{

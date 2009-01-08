@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+#define NEW_GRAPHICS
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -47,10 +47,16 @@
 #include <nsp/arrows.h> 
 #include <nsp/segments.h> 
 #include <nsp/polyhedron.h> 
+#include <nsp/polyline3d.h> 
+#include <nsp/points3d.h> 
 #include <nsp/objs3d.h> 
 
+extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
+extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
+extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
+
 #endif 
 
 /* XXX */
@@ -203,7 +209,6 @@ static double * check_ebox(Stack stack,const char *fname,char *varname,NspMatrix
     }
   return ebox_loc;
 }
-
 
 
 /*-----------------------------------------------------------
@@ -807,6 +812,54 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   return 2;
 }
 
+#ifdef  NEW_GRAPHICS
+
+int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *style,
+		 double teta,double alpha,const char *legend, int flag, double *bbox)
+{
+  int i,color,nb_poly,psize;
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  if ( objs3d == NULL) return FAIL;
+  /* XXXX we should encapuslate all this in a compound */
+  /* Loop on the number of polylines */
+  nb_poly = (x->m == 1) ? 1 : x->n;
+  psize= (x->m==1) ? x->n : x->m;
+  for ( i = 0 ; i < nb_poly ; i++)
+    {
+      NspObject *gobj;
+      NspMatrix *M1;
+      if ((M1 = nsp_matrix_create(NVOID,'r',psize,3))== NULLMAT) return FAIL;
+      memcpy(M1->R,x->R + i*(psize),psize*sizeof(double));
+      memcpy(M1->R+psize,y->R + i*(psize),psize*sizeof(double));
+      memcpy(M1->R+2*psize,z->R + i*(psize),psize*sizeof(double));
+      /* check the color */
+      if ( style == NULL) 
+	color=-1; 
+      else if ( style->mn == 1) 
+	color= style->R[0];
+      else 
+	color= style->R[i];
+      if ( style == NULL || color >= 0) 
+	{
+	  NspMatrix *Mcol;
+	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return FAIL;
+	  Mcol->R[0]=color;
+	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,NULL);
+	  if ( gobj == NULL)  return FAIL;
+	}
+      else
+	{
+	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,NULL);
+	  if ( gobj == NULL)  return FAIL;
+	}
+      if ( nsp_list_end_insert(objs3d->obj->children,(NspObject *) gobj )== FAIL)
+	return RET_BUG;
+    }
+  nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig);
+  return 0;
+} 
+#endif
+
 
 /*-----------------------------------------------------------
  *  param3d(x,y,z,[theta,alpha,leg,flag,ebox,style])
@@ -852,7 +905,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
     { 
       if ( Mstyle->mn != z->n) 
 	{
-	  Scierror("%s: style argument is too small (%d), %d values expected \n",NspFname(stack),Mstyle->mn, z->n);
+	  Scierror("%s: style argument has wrong size (%d), %d values expected \n",NspFname(stack),Mstyle->mn, z->n);
 	  return RET_BUG;
 	}
     }
@@ -865,6 +918,10 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 
+#ifdef NEW_GRAPHICS
+  nsp_param3d_new(Xgc,x,y,z,Mstyle,theta,alpha,leg1,*iflag,ebox);
+  
+#else 
   if ( Mstyle != NULLMAT ) 
     {
       int izcol=1;
@@ -875,7 +932,9 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
     {
       nsp_param3d(Xgc,x->R,y->R,z->R,&z->mn,&theta,&alpha,leg1,iflag,ebox);
     }
+#endif 
   return 0;
+
 } 
 
 /*-----------------------------------------------------------
@@ -1173,9 +1232,6 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 
 #ifdef NEW_GRAPHICS 
 
-extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
-extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
-extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 
 int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
@@ -2034,6 +2090,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
   BCG *Xgc;
   NspMatrix *arcs=NULL;
   NspMatrix *color=NULL;
+  NspMatrix *color_std=NULL;
   NspMatrix *background=NULL;
   NspMatrix *thickness=NULL;
   int i;
@@ -2041,9 +2098,17 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
 		      { "color",realmat,NULLOBJ,-1},
 		      { "thickness", realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  CheckStdRhs(1,1);
+  CheckStdRhs(1,2);
   if ((arcs = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
   CheckRows(NspFname(stack),1,arcs, nrow) ;
+
+  if (rhs == 2) 
+    {
+      /* for backward compatibility */
+      if ((color_std= GetRealMatInt(stack,2))  == NULLMAT) return RET_BUG;
+      CheckLength(NspFname(stack),2, color_std, arcs->n);
+    }
+  
   if ( get_optional_args(stack,rhs,opt,opts,&background,&color,&thickness) == FAIL) return RET_BUG;
   if ( background != NULL) 
     {
@@ -2057,6 +2122,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
     {
       CheckLength(NspFname(stack),opts[2].position, thickness, arcs->n);
     }
+  if ( color_std != NULL) color = color_std;
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
@@ -2180,7 +2246,7 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   NspArrows *pl;
   BCG *Xgc;
   double arsize=-1.0 ;
-  NspMatrix *x,*y,*Mstyle=NULL,*color;
+  NspMatrix *x,*y,*Mstyle=NULL,*color=NULL;
   
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
 
@@ -2193,8 +2259,8 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(NspFname(stack),1,2,x,y);
   if ( Mstyle != NULL) 
     {
-      if ( Mstyle->mn != x->mn/2 ) {
-	Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+      if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
+	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",NspFname(stack),Mstyle->mn,x->mn/2);
 	return RET_BUG;
       }
     }
@@ -2206,7 +2272,8 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
 
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
-  if ( color != NULL)
+
+  if ( Mstyle != NULL)
     {
       if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL) 
 	return RET_BUG;
@@ -2289,8 +2356,8 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(NspFname(stack),1,2,x,y);
   if ( Mstyle != NULL) 
     {
-      if ( Mstyle->mn != x->mn/2 ) {
-	Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+      if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
+	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",NspFname(stack),Mstyle->mn,x->mn/2);
 	return RET_BUG;
       }
     }
@@ -4394,7 +4461,6 @@ int int_xinfo(Stack stack, int rhs, int opt, int lhs)
 
 int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
-
   BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
   static char logflag_def[]="nn";
@@ -4458,7 +4524,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 	} 
       }
     }
-
+  
   Nsetscale2d(Xgc,wrect,arect,frect,logflag);
   return 0;
 }
