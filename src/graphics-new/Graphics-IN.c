@@ -2606,7 +2606,7 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe; 
   BCG *Xgc;
   double *val=NULL;
-  int back=-1,color=-1,width=-1;
+  int back=-2,color=-1,width=-1;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
@@ -2686,6 +2686,38 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
  *   opts: color =       ( fill color )
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+int int_xfrect(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGrRect *rect;
+  NspAxes *axe; 
+  BCG *Xgc;
+  double *val=NULL;
+  int color=-1,stroke_color=-2,width=-1;
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,4);
+  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  
+  if ( color== -1) color = Xgc->graphic_engine->xget_pattern(Xgc); 
+
+  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],color,width,
+				stroke_color,NULL))== NULL)
+    return RET_BUG;
+  /* insert the object */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+#else 
+
 int int_xfrect(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -2695,7 +2727,7 @@ int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  CheckRhs(1,5);
+  CheckStdRhs(1,5);
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
@@ -2719,6 +2751,8 @@ int int_xfrect(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 } 
+
+#endif 
 
 
 /*-----------------------------------------------------------
@@ -4636,6 +4670,22 @@ int int_xinfo(Stack stack, int rhs, int opt, int lhs)
  * xsetech()
  *------------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
+		    const double *FRect,const char *logscale)
+{
+  NspAxes *axe; 
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  if ( WRect != NULL)   memcpy(axe->obj->wrect->R,WRect,4*sizeof(double));
+  if ( ARect != NULL)   memcpy(axe->obj->arect->R,ARect,4*sizeof(double));
+  if ( FRect != NULL)   memcpy(axe->obj->frect->R,FRect,4*sizeof(double));
+  return OK;
+}
+
+#endif 
+
+
 int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -4701,8 +4751,12 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 	} 
       }
     }
-  
+#ifdef NEW_GRAPHICS 
+  Nsetscale2d_new(Xgc,wrect,arect,frect,logflag);
   Nsetscale2d(Xgc,wrect,arect,frect,logflag);
+#else 
+  Nsetscale2d(Xgc,wrect,arect,frect,logflag);
+#endif 
   return 0;
 }
 

@@ -803,32 +803,32 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
   val[1]= P->obj->y;
   val[2]= P->obj->w;
   val[3]= P->obj->h;
-  if ( P->obj->fill_color != -1 ) 
+
+  if ( P->obj->fill_color != -2 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
     }
-  if ( P->obj->color != -1 ) 
+
+  if ( P->obj->color != -2 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
-    }
-  if ( P->obj->thickness != -1 ) 
-    {
-      cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
-      Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
-    }
-  if ( P->obj->color != -1 ) 
-    {
+      /* draw the rectangle */ 
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
+      if ( P->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+	}
       Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
-    }
-  /* reset to default values */
-  if ( P->obj->color != -1 ) 
-    {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
-    }
-  if ( P->obj->thickness != -1 ) 
-    {
-      Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+      /* reset to default values */
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+      if ( P->obj->thickness != -1 ) 
+	Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
     }
 }
 
