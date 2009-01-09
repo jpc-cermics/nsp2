@@ -1174,6 +1174,38 @@ static int load_Champ(BCG *Xgc)
   return(1);
 }
 
+/*---------------------------------------------------------------------
+ * object 
+ * ---------------------------------------------------------------------------*/
+
+static int load_object(BCG *Xgc)
+{
+  struct rec_object *lplot;
+  lplot= ((struct rec_object *) MALLOC(sizeof(struct rec_object)));
+  if (lplot != NULL)
+    {
+      NspObject *obj = nsp_object_xdr_load(Xgc->xdrs);
+      if ( obj == NULL) return 0;
+      lplot->obj = obj ;
+      if (store_record(Xgc,CODEobject,(char *) lplot) == 0) return(0);
+    }
+  else 
+    {
+      Scistring("\nload_ Plot (champ): No more place \n");
+      return(0);
+    }
+  return(1);
+}
+
+/* for object which cannot be saved
+ *
+ */
+
+static int load_void(BCG *Xgc)
+{
+  return 1;
+}
+
 
 /*---------------------------------------------------------------------
  *  code for reload operations 
@@ -1269,9 +1301,12 @@ static Load_Table load_table [] ={
   {CODEinitialize_gc         ,"init",             load_init},
   {CODEColormap		     ,"Colormap",	  load_colormap },
   {CODEdefault_colormap	     ,"default_colormap", load_default_colormap },
-  {CODEtest	             ,"test",             load_test }
+  {CODE3dobj	             ,"default_colormap", load_void },
+  {CODEpixbuf		     ,"pixbuf",           load_void },
+  {CODEpixbuf_file	     ,"pixbuf_file",      load_void },
+  {CODEtest	             ,"test",             load_void },
+  {CODEobject       	     ,"object",           load_object }
 };     	
-
 
 #ifdef __MSC__
 #ifndef __STDC__

@@ -910,8 +910,13 @@ static int save_pixbuf_from_file(BCG *Xgc,void *the_plot)
   return 1;
 }
 
-
-
+static int save_object(BCG *Xgc,void * theplot )
+{
+  struct rec_object *lplot= theplot ;
+  NspObject *obj = (NspObject *) lplot->obj;
+  if ( obj->type->save(Xgc->xdrs,obj) == FAIL) return 0;
+  return 1;
+}
 
 /*---------------------------------------------------------------------
  * Saving  
@@ -1002,7 +1007,8 @@ static Save_Table save_table [] ={
   {CODE3dobj	             ,"default_colormap", save_3dobj },
   {CODEpixbuf		     ,"pixbuf",           save_pixbuf },
   {CODEpixbuf_file	     ,"pixbuf_file",      save_pixbuf_from_file },
-  {CODEtest	             ,"test",             save_test }
+  {CODEtest	             ,"test",             save_test },
+  {CODEobject       	     ,"object",           save_object }
 };     	
 
 

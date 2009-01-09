@@ -2907,6 +2907,43 @@ int int_xgrid(Stack stack, int rhs, int opt, int lhs)
  *   xfpoly(xv,yv,[close])
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPolyline *pl;
+  NspAxes *axe; 
+  BCG *Xgc;
+  int close=TRUE,color=-1,mark=-1,mark_size=-1,fill_color=0,thickness=-1;
+  NspMatrix *x,*y;
+
+  nsp_option opts[] ={
+    { "color",s_int,NULLOBJ,-1},
+    { "fill_color",s_int,NULLOBJ,-1},
+    { "thickness",s_int,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}};
+  
+  CheckStdRhs(2,3);
+  if ((x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  if ( get_optional_args(stack,rhs,opt,opts,&color,&fill_color,&thickness) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
+  if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
+  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+    return RET_BUG;
+  /* insert the polyline */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+}
+
+#else 
+
 int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -2928,10 +2965,85 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+#endif 
+
+
 /*-----------------------------------------------------------
  *  xfpolys(xpols,ypols,[fill])
  *  interpolated shading added by polpoth 7/7/2000
  *-----------------------------------------------------------*/
+
+#ifdef NEW_GRAPHICS 
+
+int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspPolyline *pl;
+  NspAxes *axe; 
+  BCG *Xgc;
+  int color=-1,mark=-1,mark_size=-1,fill_color=0,thickness=-1;
+  NspMatrix *x,*y;
+  NspMatrix *l1,*l2,*l3;
+  int v1 = 0;
+
+  CheckRhs(2,3);
+
+  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
+
+  if (rhs == 3) 
+    {
+      if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
+      if ( l3->mn == l1->mn ) 
+	{ 
+	  CheckSameDims(NspFname(stack),1,3,l1,l3);
+	  v1=2; /* interpolated shading */
+	  if ( l3->m != 3 && l3->m != 4 ) 
+	    {
+	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\n",NspFname(stack));
+	      return RET_BUG;
+	    }
+	} 
+      else
+	{
+	  CheckVector(NspFname(stack),3,l3);
+	  CheckDimProp(NspFname(stack),2,3, l3->mn != l2->n);
+	  v1=1; /* flat shading */
+	}
+    }
+  Xgc=nsp_check_graphic_context();    
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  /* loop on the polylines */
+  for ( i = 0 ; i < l1->n ; i++)
+    {
+      if ((x= nsp_matrix_create("x",'r',l1->m,1))== NULLMAT) return RET_BUG;
+      if ((y= nsp_matrix_create("y",'r',l1->m,1))== NULLMAT) return RET_BUG;
+      memcpy(x->R,l1->R+i*l1->m,l1->m*sizeof(double));
+      memcpy(y->R,l2->R+i*l1->m,l1->m*sizeof(double));
+      switch (v1 ){
+      case 1:
+	/* flat shadind */ 
+	fill_color= l3->R[i];
+	break;
+      case 2:
+	/* interpolated shading: to be done */
+	fill_color= l3->R[i*l1->m];
+	break;
+      default: break;
+      }
+      if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+	return RET_BUG;
+      /* insert the polyline */
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+	return FAIL;
+    }
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+#else 
 
 int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2973,12 +3085,11 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
     }
 
   Xgc=nsp_check_graphic_context();    
-  
   Xgc->graphic_engine->scale->fillpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m,v1);
-  
-  /* end of Code modified by polpoth 7/7/2000 */
   return 0;
 } 
+
+#endif 
 
 /*-----------------------------------------------------------
  * 
@@ -4092,6 +4203,69 @@ static int int_xtest(Stack stack, int rhs, int opt, int lhs)
  * xstring(x,y,str,[angle,box])
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+int int_xstring(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAxes *axe;
+  BCG *Xgc;
+  int remove=0;
+  NspSMatrix *S;
+  double rect[4],wc,x,y,yi,angle=0.0;
+  int i,flagx=0;
+
+  CheckRhs(3,5);
+  
+  if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
+  if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
+  yi=y;
+
+  if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
+
+  if ( S->mn == 0 ) {  return 0;} 
+
+  if (rhs >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
+  if (rhs >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
+
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+
+  /*     to keep the size of the largest line */
+  wc = 0.;
+  if ( S->n != 1 ) 
+    {
+      remove=1;
+      if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
+    }
+  if ( S->m == 1 )
+    {
+      /* one rotated string */
+      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,flagx,angle);
+    }
+  else 
+    {
+      for (i = S->m -1 ; i >= 0; --i) 
+	{
+	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
+	  Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+	  wc = Max(wc,rect[2]);
+	  if (i != 0 ) 
+	    y += rect[3] * 1.2;
+	  else 
+	    y += rect[3];
+	}
+      if (flagx == 1) {
+	double rect[]={x,y,wc, y - yi};
+	Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+      }
+    }
+  if ( remove == 1) nsp_smatrix_destroy(S);
+  return 0;
+} 
+
+#else 
+
 int int_xstring(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -4149,6 +4323,9 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
   if ( remove == 1) nsp_smatrix_destroy(S);
   return 0;
 } 
+
+#endif 
+
 
 /*-----------------------------------------------------------
  * xtitle(tit,x,y)
@@ -5483,8 +5660,14 @@ typedef  enum { SLD_NORTH=0, SLD_SOUTH=1, SLD_EAST=2, SLD_WEST=3, SLD_ANY=4 }
 typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 } 
   slock_type;
 
-static void lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
+static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
 {
+#ifdef NEW_GRAPHICS 
+  NspPolyline *pl;
+  NspAxes *axe; 
+  int color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1;
+  NspMatrix *Mx,*My;
+#endif 
   /* angle according to dir */
   /*  LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 */
   const double alpha[]= {180,0,90,-90,0};
@@ -5525,10 +5708,30 @@ static void lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir 
       x[i] = cosa*lx[i] -sina*ly[i]+pt[0];
       y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
     }
+
+#ifdef NEW_GRAPHICS 
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if ((Mx= nsp_matrix_create("x",'r',npt,1))== NULLMAT) return FAIL;
+  if ((My= nsp_matrix_create("y",'r',npt,1))== NULLMAT) return FAIL;
+  memcpy(Mx->R,x,npt*sizeof(double));
+  memcpy(My->R,y,npt*sizeof(double));
+  if ( typ != SL_SQP ) fill_color=0;
+  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+    return FAIL;
+  /* insert the polyline */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return OK;
+#else 
   if ( typ == SL_SQP ) 
     Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
   else 
     Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  return OK;
+#endif 
+
 }
 
 
