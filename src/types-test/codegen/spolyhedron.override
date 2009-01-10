@@ -1,20 +1,11 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/spolyhedron.h"
+#include <nsp/spolyhedron.h>
+#include <nsp/polyhedron.h>
 #include <nsp/figure.h> 
 #include "../graphics/Plo3dObj.h"
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
-extern  int nsp_obj3d_orientation(int x[], int y[], int n);
-extern void nsp_figure_force_redraw( NspFigure *F);
-extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-extern void nsp_figure_force_redraw( NspFigure *F);
-
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
+#include <nsp/grcommon.h>
 
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
@@ -23,7 +14,7 @@ static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
-static int nsp_check_spolyhedron(NspSPolyhedron *P);
+static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
 
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -64,7 +55,7 @@ ignore-glob
 %%
 override_int_create_final 
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_spolyhedron(H)== FAIL) return %(ret)s; 
+  if ( nsp_check_spolyhedron(NULL,H)== FAIL) return %(ret)s; 
 
 %%
 override_destroy_prelim
@@ -143,7 +134,7 @@ static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
-  nsp_check_spolyhedron((NspSPolyhedron *) Obj);
+  nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -201,7 +192,7 @@ static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
    *
    */
   nsp_spolyhedron *Q= ((NspSPolyhedron *) Obj)->obj;
-  nsp_check_spolyhedron((NspSPolyhedron *) Obj);
+  nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
   if ( Q->Mcoord->mn == 0) 
     {
       bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
@@ -214,7 +205,7 @@ static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 
 
-int nsp_check_spolyhedron( NspSPolyhedron *P)
+int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
 {
   nsp_spolyhedron *Q = P->obj;
   /* aliases */
@@ -226,9 +217,23 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
      int *Q_face = Q->Mface->I; 
      double *Q_val = Q->Mval->R;
   */
-  int Q_nb_levels = Q->colmax - Q->colmin + 1;
+  int Q_nb_levels;
   double dv;
   int i;
+
+  if (  Q->colmax == -1 &&  Q->colmin == -1) Q->coldef=1;
+
+  /* give default values to */
+  if ( Xgc != NULL && Q->coldef==1)
+    {
+      /* adapt colmin and colmax to min max colors */
+      Q->colmin = 1;
+      Q->colmax = Xgc->Numcolors-1;
+      if ( Q->coloutmin == -1) Q->coloutmin=1;
+      if ( Q->coloutmax == -1) Q->coloutmax=Q->colmax;
+    }
+  
+  Q_nb_levels = Q->colmax - Q->colmin + 1;
 
   if ( Q->Mcoord->n != 3 ) 
     {
@@ -246,7 +251,6 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
 
   if ( Q->Mval->mn != Q_nb_coords ) 
     {
-
       Scierror("Error: bad dimensions for val, mxn should be equal to %d\n",Q_nb_coords);
       return FAIL;
     }
@@ -258,15 +262,29 @@ int nsp_check_spolyhedron( NspSPolyhedron *P)
     }
 
   /* a faire si changements */
+
   if ( Q->vlevel == NULL) 
     {
       Q->vlevel = malloc( (1 + Q_nb_levels) * sizeof(double));
       if ( Q->vlevel == NULL)  return FAIL;
       Q->vlevel_length = (1 + Q_nb_levels);
     }
+  else if ( Q->vlevel_length != (1 + Q_nb_levels))
+    {
+      Q->vlevel = realloc(Q->vlevel, (1 + Q_nb_levels) * sizeof(double));
+      if ( Q->vlevel == NULL)  return FAIL;
+      Q->vlevel_length = (1 + Q_nb_levels);
+    }
+
   if ( Q->fill == NULL) 
     {
       Q->fill = malloc( (2 + Q_nb_levels) * sizeof(int));
+      if ( Q->fill == NULL)  return FAIL;
+      Q->fill_length = (2 + Q_nb_levels);
+    }
+  else if ( Q->fill_length != (2 + Q_nb_levels))
+    {
+      Q->fill = realloc(Q->fill, (2 + Q_nb_levels) * sizeof(int));
       if ( Q->fill == NULL)  return FAIL;
       Q->fill_length = (2 + Q_nb_levels);
     }
@@ -662,3 +680,56 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 } 
 
 
+/* Utilities 
+ * 
+ */
+
+/**
+ * nsp_spolyhedron_create_from_triplet:
+ * @name: name to give to new object 
+ * @x: array of size @m
+ * @y: array of size @n
+ * @z: array of size @mx@n
+ * @m: size of @x array  
+ * @n: size of @y array
+ * 
+ * creates a #NspPolyhedron from a triplet describing a 
+ * surface. 
+ * 
+ * Returns: a new #NspPolyhedron or %NULL 
+ **/
+
+NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n)
+{
+  double vmin=0.0,vmax=0.0;
+  NspSPolyhedron *pol;
+  NspMatrix *C=NULL,*F=NULL,*Val = NULL;
+  if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
+  if ((F=nsp_surf_to_faces("c",x,m,y,n) )==NULL) goto bug;
+  if ((Val = nsp_matrix_create("v",'r',C->m,1)) == NULLMAT) goto bug; 
+  memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
+
+  /* use VMiniMaxi but change it to extern */
+  if ( Val->mn != 0) 
+    {
+      int i=0,j;
+      while ( ISNAN(Val->R[i])) i++;
+      vmin = vmax = Val->R[i];
+      for ( j = i+1 ; j < Val->mn ; j++) 
+	{
+	  if ( ISNAN(Val->R[j])) continue;
+	  if ( Val->R[j] < vmin) vmin = Val->R[j];
+	  if ( Val->R[j] > vmax) vmax = Val->R[j];
+	}
+    }
+  if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
+				    TRUE,-1,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+    goto bug;
+  if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
+  return pol;
+ bug:
+  if ( C != NULL) nsp_matrix_destroy(C);
+  if ( F != NULL) nsp_matrix_destroy(F);
+if ( Val != NULL) nsp_matrix_destroy(Val);
+  return NULL;
+}

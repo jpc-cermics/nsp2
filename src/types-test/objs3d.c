@@ -1231,6 +1231,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 			       TRUE,
 			       TRUE,
 			       xf);
+
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   axis_draw(Xgc,strflag);
   frame_clip_on(Xgc);
@@ -1587,4 +1588,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1591 "objs3d.c"
+#line 1592 "objs3d.c"

@@ -1,23 +1,11 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/polyhedron.h"
 #include <nsp/figure.h> 
+#include <nsp/polyhedron.h>
 #include <nsp/gsort-p.h>
-
 #include "../graphics/Plo3dObj.h"
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
-extern  int nsp_obj3d_orientation(int x[], int y[], int n);
-extern void nsp_figure_force_redraw( NspFigure *F);
-extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
-
-extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
+#include <nsp/grcommon.h>
 
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
@@ -30,11 +18,6 @@ static int nsp_check_polyhedron(NspPolyhedron *P);
 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
-
-static NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  ;
-static NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n);
-static int nsp_facets_to_faces(double *x,double *y,double *z,double *colors,int m,int n,
-			       NspMatrix **Cr,NspMatrix **Fr);
 
 %%
 init 
@@ -592,7 +575,7 @@ NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *y
 }
 
 
-static NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n)
+NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n)
 {
   int i,j;
   NspMatrix *coord;
@@ -610,7 +593,7 @@ static NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double
   return coord;
 }
 
-static NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  
+NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  
 {
   NspMatrix *face;
   int j,i,nface;
@@ -635,7 +618,7 @@ static NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y
  *
  */
 
-static int nsp_facets_to_faces(double *x,double *y,double *z,double *colors,int m,int n,
+int nsp_facets_to_faces(double *x,double *y,double *z,double *colors,int m,int n,
 			       NspMatrix **Cr,NspMatrix **Fr)
 {
   index_vector index={0};
