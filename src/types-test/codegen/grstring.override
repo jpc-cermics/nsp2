@@ -112,9 +112,60 @@ last
 
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  int i,flagx=0;
+  double rect[4],wc,x,y,yi;
   NspGrstring *P = (NspGrstring *) Obj;
+  NspSMatrix *S = P->obj->text;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-  Xgc->graphic_engine->scale->displaystring(Xgc,P->obj->text,P->obj->x,P->obj->y,0,P->obj->angle);
+  /*     to keep the size of the largest line */
+  wc = 0.;
+  x= P->obj->x;
+  y= P->obj->y;
+  /* S->n should be equal to 1 here 
+   * This is to be done at creation
+   */
+  if ( S->n == 0 ) return;
+
+  if ( P->obj->position == 10) /* !!*/ 
+    {
+      double w=P->obj->w, h = P->obj->h;
+      nsp_string str;
+      if ( S->mn != 1) 
+	{
+	  if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return ;
+	}
+      else
+	{
+	  str = S->S[0];
+	}
+      Xgc->graphic_engine->scale->xstringb(Xgc,str,&P->obj->fill,&x,&y,&w,&h);
+      if ( S->mn != 1 ) FREE(str);
+    }
+  else
+    {
+      if ( S->m == 1 )
+	{
+	  /* one rotated string */
+	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,0,P->obj->angle);
+	}
+      else 
+	{
+	  for (i = S->m -1 ; i >= 0; --i) 
+	    {
+	      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,P->obj->angle);
+	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+	      wc = Max(wc,rect[2]);
+	      if (i != 0 ) 
+		y += rect[3] * 1.2;
+	      else 
+		y += rect[3];
+	    }
+	  if (flagx == 1) {
+	    double rect[]={x,y,wc, y - yi};
+	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+	  }
+	}
+    }
 }
 
 static void nsp_translate_grstring(BCG *Xgc,NspGraphic *Obj,double *tr)

@@ -5,12 +5,15 @@
   (parent "Graphic")
   (c-name "Grstring")
   (fields
-   '("int" "x" ) 
-   '("int" "y" ) 
+   '("double" "x" ) 
+   '("double" "y" ) 
    '("char*" "font" ) 
-   '("char*" "text" ) 
+   '("NspSMatrix*" "text" ) 
    '("int" "position" ) 
    '("double" "angle" ) 
+   '("double" "w") ;;
+   '("double" "h") ;; 
+   '("int" "fill" "std" "0")
     )
   (gtype-id "Grstring")
 )

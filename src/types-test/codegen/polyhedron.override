@@ -3,6 +3,7 @@
 headers
 #include <nsp/figure.h> 
 #include <nsp/polyhedron.h>
+#include <nsp/spolyhedron.h>
 #include <nsp/gsort-p.h>
 #include "../graphics/Plo3dObj.h"
 #include <nsp/grcommon.h>

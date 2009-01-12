@@ -3,7 +3,7 @@
 #define NSP_INC_Grstring
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2007) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -30,12 +30,15 @@ struct _NspTypeGrstring {
 
 typedef struct _nsp_grstring nsp_grstring;
 struct _nsp_grstring {
-  int x;
-  int y;
+  double x;
+  double y;
   char* font;
-  char* text;
+  NspSMatrix* text;
   int position;
   double angle;
+  double w;
+  double h;
+  int fill;
   int ref_count;
 };
 
@@ -65,7 +68,7 @@ NspGrstring *new_grstring();
 
 #define NULLGRSTRING (NspGrstring*) 0
 
-extern NspGrstring *nsp_grstring_create(char *name,int x,int y,char* font,char* text,int position,double angle,NspTypeBase *type);
+extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type);
 
 /* from GrstringObj.c */
 

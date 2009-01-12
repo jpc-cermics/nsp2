@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -44,12 +44,15 @@
 #include <nsp/vfield.h> 
 #include <nsp/grarc.h> 
 #include <nsp/grrect.h> 
+#include <nsp/grstring.h> 
 #include <nsp/arrows.h> 
 #include <nsp/segments.h> 
 #include <nsp/polyhedron.h> 
+#include <nsp/spolyhedron.h> 
 #include <nsp/polyline3d.h> 
 #include <nsp/points3d.h> 
 #include <nsp/objs3d.h> 
+#include <nsp/grcommon.h> 
 
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
@@ -61,6 +64,7 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
 
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
+extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos); 
 extern char *nsp_get_extension(char *name);
 extern BCG *nsp_check_graphic_context(void);
 
@@ -1285,7 +1289,7 @@ int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 
 int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  NspPolyhedron *pol;
+  NspSPolyhedron *pol;
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
   if ( objs3d == NULL) return FAIL;
   /* create a polyhedron and insert it in objs3d */
@@ -1300,7 +1304,7 @@ int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, do
 
 int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
+  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t))",1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d1_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new);
 }
 
@@ -4271,12 +4275,12 @@ static int int_xtest(Stack stack, int rhs, int opt, int lhs)
 
 int int_xstring(Stack stack, int rhs, int opt, int lhs)
 {
+  NspGrstring *grs;
   NspAxes *axe;
   BCG *Xgc;
-  int remove=0;
-  NspSMatrix *S;
-  double rect[4],wc,x,y,yi,angle=0.0;
-  int i,flagx=0;
+  NspSMatrix *S,*Sk;
+  double x,y,yi,angle=0.0;
+  int flagx=0;
 
   CheckRhs(3,5);
   
@@ -4285,46 +4289,31 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
   yi=y;
 
   if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
-
   if ( S->mn == 0 ) {  return 0;} 
 
   if (rhs >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
   if (rhs >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc);
-  if ( axe == NULL) return FAIL;
-
-  /*     to keep the size of the largest line */
-  wc = 0.;
   if ( S->n != 1 ) 
     {
-      remove=1;
-      if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
+      if (( Sk =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
+      if ( nsp_object_set_name(NSP_OBJECT(Sk),"text") == FAIL ) return RET_BUG;
     }
-  if ( S->m == 1 )
+  else
     {
-      /* one rotated string */
-      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,flagx,angle);
+      if (( Sk = (NspSMatrix *) nsp_object_copy_and_name("text",NSP_OBJECT(S))) == NULL)
+	return RET_BUG;
     }
-  else 
-    {
-      for (i = S->m -1 ; i >= 0; --i) 
-	{
-	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
-	  Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
-	  wc = Max(wc,rect[2]);
-	  if (i != 0 ) 
-	    y += rect[3] * 1.2;
-	  else 
-	    y += rect[3];
-	}
-      if (flagx == 1) {
-	double rect[]={x,y,wc, y - yi};
-	Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-      }
-    }
-  if ( remove == 1) nsp_smatrix_destroy(S);
+
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,0,angle,0.0,0.0,0,NULL))== NULL) 
+    return RET_BUG;
+  /* insert the new string */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
+    return RET_BUG;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
   return 0;
 } 
 
@@ -4422,6 +4411,65 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
  * xstringb 
  *-----------------------------------------------------------*/
 
+#ifdef NEW_GRAPHICS 
+
+
+int int_xstringb(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGrstring *grs;
+  NspAxes *axe;
+  BCG *Xgc;
+  char * info;
+  int fill =0;
+  double x,y,w,h,angle=0.0;
+  NspSMatrix *S,*Sk;
+
+  CheckRhs(5,6);
+  if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
+  if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
+  if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
+  if ( S->mn == 0 ) return 0; 
+  if (GetScalarDouble(stack,4,&w) == FAIL) return RET_BUG;
+  if (GetScalarDouble(stack,5,&h) == FAIL) return RET_BUG;
+
+  if (rhs == 6) {
+    if ((info = GetString(stack,6)) == (char*)0) return RET_BUG;
+    if ( strncmp(info,"fill",4) == 0) 
+      fill =1;
+    else 
+      {
+	Scierror("%s: optional argument has a wrong value 'fill' expected\n",NspFname(stack));
+	return RET_BUG;
+      }
+  }
+
+  if ( S->n != 1 ) 
+    {
+      if (( Sk =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
+      if ( nsp_object_set_name(NSP_OBJECT(Sk),"text") == FAIL ) return RET_BUG;
+    }
+  else
+    {
+      if (( Sk = (NspSMatrix *) nsp_object_copy_and_name("text",NSP_OBJECT(S))) == NULL)
+	return RET_BUG;
+    }
+
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  /* 10 for xstringb: to be simplified latter */
+  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,10,angle,w,h,fill,NULL))== NULL) 
+    return RET_BUG;
+  /* insert the new string */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
+    return RET_BUG;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return 0;
+} 
+
+
+
+#else 
 
 int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4457,6 +4505,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
+#endif 
 
 /*-----------------------------------------------------------
  * xstringc 
@@ -5705,7 +5754,38 @@ int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static void scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
+#ifdef NEW_GRAPHICS 
+
+static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
+{
+  NspPolyline *pl;
+  NspMatrix *Mx,*My;
+  NspObject *gobj;
+  int npt=6;
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
+  double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
+  if ( axe == NULL) return FAIL;
+  if ((Mx = nsp_matrix_create("x",'r',6,1))== NULLMAT) return FAIL;
+  if ((My = nsp_matrix_create("y",'r',6,1))== NULLMAT) return FAIL;
+  memcpy(Mx->R,x,npt*sizeof(double));
+  memcpy(My->R,y,npt*sizeof(double));
+  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,-1,-1,color,1,NULL))== NULL)
+    return FAIL;
+  /* insert the polyline */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL) return FAIL;
+  if ((gobj =(NspObject *) nsp_grrect_create("pl",r[0],r[1],r[2],r[3],
+					      -1,2,color,NULL))== NULL)
+    return FAIL;
+  /* insert the polyline */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL) return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  return OK;
+}
+
+#else 
+
+static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
 {
   int cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   int npt=6;
@@ -5718,7 +5798,11 @@ static void scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
   Xgc->graphic_engine->scale->drawrectangle(Xgc,r);
   if ( color != -1 && color != cpat ) 
     Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
+  return OK;
 }
+
+#endif 
+
 
 
 static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
@@ -5734,7 +5818,7 @@ static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
   CheckLength(NspFname(stack),2,size,2);
   Xgc=nsp_check_graphic_context();
   rect[0]=orig->R[0]+e;rect[1]=orig->R[1]+size->R[1];rect[2]=size->R[0]-e;rect[3]=size->R[1]-e;
-  scicos_draw_3d(Xgc,rect,color,e);
+  if ( scicos_draw_3d(Xgc,rect,color,e) == FAIL) return RET_BUG;
   return 0;
 } 
 

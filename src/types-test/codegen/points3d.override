@@ -4,6 +4,10 @@ headers
 #include "nsp/points3d.h"
 #include <nsp/figure.h> 
 #include "../graphics/Plo3dObj.h"
+#include <nsp/polyhedron.h>
+#include <nsp/spolyhedron.h>
+#include <nsp/grcommon.h>
+
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw( NspFigure *F);

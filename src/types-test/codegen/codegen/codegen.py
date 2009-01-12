@@ -420,7 +420,7 @@ class Wrapper:
         '#define NSP_INC_%(typename)s\n' \
         '\n' \
         '/*\n' \
-        ' * This Software is GPL (Copyright ENPC 1998-2007) \n' \
+        ' * This Software is GPL (Copyright ENPC 1998-2009) \n' \
         ' * Jean-Philippe Chancelier Enpc/Cermics         \n' \
         ' */\n\n' \
         '/* %(typename)s */\n' \

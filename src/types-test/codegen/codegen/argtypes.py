@@ -1656,6 +1656,14 @@ class NspGenericArgBMat(NspGenericArg):
             % (varname,pname,pname,self.shortname_uc)
         return str
 
+class NspGenericArgSMat(NspGenericArg):
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
+        str = str + '     if (( %s->%s = nsp_smatrix_create("%s",0,0,"v",0)) == NULL%s)\n       return FAIL;\n    }\n' \
+            % (varname,pname,pname,self.shortname_uc)
+        return str
+
 class NspGenericArgList(NspGenericArg):
     def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
@@ -2012,6 +2020,9 @@ matcher.register('NspMatrix*', arg)
 
 arg = NspGenericArgBMat('BMatrix','BMat','bmat')
 matcher.register('NspBMatrix*', arg)
+
+arg = NspGenericArgSMat('SMatrix','SMat','smat')
+matcher.register('NspSMatrix*', arg)
 
 arg = NspGenericArgList('List','List','list')
 matcher.register('NspList*', arg)

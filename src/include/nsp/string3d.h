@@ -3,7 +3,7 @@
 #define NSP_INC_String3d
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2007) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

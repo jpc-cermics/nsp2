@@ -3,7 +3,7 @@
 #define NSP_INC_SPolyhedron
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2007) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
