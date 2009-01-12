@@ -1381,8 +1381,8 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
 int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix *S)
 {
   int i,j;
-  char *fmt = "%f"; 
-  char *separator = " ";
+  const char *fmt = "%f"; 
+  const char *separator = " ";
   if ( format != NULL) fmt= format; 
   if ( sep != NULL) separator = sep;
   if ( !IS_OPENED(F->obj->flag)) 
@@ -1397,7 +1397,7 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
       for ( j = 0 ; j < M->n ; j++) 
 	{
 	  fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
-	  fprintf(F->obj->file,separator);
+	  fprintf(F->obj->file,"%s",separator);
 	}
       fprintf(F->obj->file,"\n");
     }
