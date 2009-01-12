@@ -1232,7 +1232,6 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 
 #ifdef NEW_GRAPHICS 
 
-
 int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   NspPolyhedron *pol;
@@ -1263,6 +1262,7 @@ int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int
   return OK;
 }
 
+
 int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 {
   if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
@@ -1279,11 +1279,41 @@ int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 
 #endif 
 
+
+#ifdef NEW_GRAPHICS 
+
+
+int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+{
+  NspPolyhedron *pol;
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  if ( objs3d == NULL) return FAIL;
+  /* create a polyhedron and insert it in objs3d */
+  pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q);
+  if ( pol == NULL) return FAIL;
+  /* insert the new vfield */
+  if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig);
+  return OK;
+}
+
+int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
+{
+  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
+  return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d1_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new);
+}
+
+#else 
+
 int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 {
   if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));",1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_1,nsp_plot_fac3d_1,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
 }
+
+#endif 
+
 
 /* [] = draw_3d_obj(list(Objs),...)
  */
