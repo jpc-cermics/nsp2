@@ -1099,7 +1099,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
   nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
   nsp_axes_update_frame_bounds(Xgc,wrect1,
-			       TRUE ? inside_bounds : P->obj->frect->R,
+			       FALSE ? inside_bounds : P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
 			       TRUE,
