@@ -14,6 +14,7 @@
    '("gboolean" "wresize")
    '("NspMatrix*" "position")
    '("NspList*" "children")
+   '("gboolean" "draw_now" "hidden" "TRUE");;
    )
   (gtype-id "Figure")
 )

@@ -346,6 +346,7 @@ void nsp_figure_force_redraw( NspFigure *F)
   /* XX should be stored in figure to avoid a search */
   BCG *Xgc;
   if ( F == NULL) return ;
+  if ( F->obj->draw_now== FALSE) return;
   Xgc = window_list_search(F->obj->id);
   if ( Xgc == NULL) return;
   Xgc->graphic_engine->force_redraw(Xgc);
@@ -396,7 +397,7 @@ static NspAxes *nsp_get_current_axes(void)
 NspFigure *nsp_create_default_figure(void)
 {
   NspFigure *fig ;
-  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,NULL);
+  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
   return fig;
 }
 
@@ -411,13 +412,13 @@ NspFigure *nsp_create_default_figure(void)
 NspAxes * nsp_check_for_axes(BCG *Xgc) 
 {
   int i,l;
-  NspObject *Obj=NULLOBJ;
+  NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -431,9 +432,13 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
   for ( i= 1; i <= l ; i++) 
     {
       Obj = nsp_list_get_element(L,i);
-      if ( Obj != NULLOBJ && IsAxes(Obj) ) break;
+      if ( Obj != NULLOBJ && IsAxes(Obj) )
+	{
+	  Axes= Obj;
+	  break;
+	}
     }
-  if ( Obj == NULLOBJ) 
+  if ( Axes == NULLOBJ) 
     {
       /* create a new axes */
       NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
@@ -446,9 +451,9 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
 	}
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
-      Obj =(NspObject *) axe;
+      Axes =(NspObject *) axe;
     }
-  return (NspAxes *) Obj;
+  return (NspAxes *) Axes;
 }
 
 /* checks for a figure and a 3dobj-axes in Xgc 
@@ -461,13 +466,13 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
 NspObjs3d * nsp_check_for_objs3d(BCG *Xgc) 
 {
   int i,l;
-  NspObject *Obj=NULLOBJ;
+  NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -481,9 +486,13 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc)
   for ( i= 1; i <= l ; i++) 
     {
       Obj = nsp_list_get_element(L,i);
-      if ( Obj != NULLOBJ &&  IsObjs3d(Obj)) break;
+      if ( Obj != NULLOBJ &&  IsObjs3d(Obj))
+	{
+	  Objs3d=Obj;
+	  break;
+	}
     }
-  if ( Obj == NULLOBJ) 
+  if ( Objs3d == NULLOBJ) 
     {
       /* create a new obj3d */
       NspObjs3d *obj3d = nsp_objs3d_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,35,45,TRUE,32,0,NULL);
@@ -496,9 +505,9 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc)
 	}
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
-      Obj =(NspObject *) obj3d;
+      Objs3d =(NspObject *) obj3d;
     }
-  return (NspObjs3d *) Obj;
+  return (NspObjs3d *) Objs3d;
 }
 
 
