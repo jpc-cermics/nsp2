@@ -22,3 +22,7 @@ manual.ind
 manual*.png
 *.aux
 texput.log
+index.html
+index.sgml
+cmsy*.png
+msbm*.png
