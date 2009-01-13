@@ -9,9 +9,10 @@ all::
 	ps2pdf manual.ps
 
 all-debug:
-	latex manual 
+	export TEXINPUTS=::`pwd`/../src// ; latex manual 
 	makeindex -s index.isty manual.idx
-	latex -interaction=batchmode manual
+	export TEXINPUTS=::`pwd`/../src// ; \
+		latex -interaction=batchmode manual
 	dvips -Ppdf manual
 	ps2pdf manual.ps
 

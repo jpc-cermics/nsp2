@@ -98,3 +98,47 @@ a first example with $\int_0^\infty f(u)du$.
   The method is from P. L'Ecuyer but the C code is provided at the Luc  Devroye home page 
   (http://cgm.cs.mcgill.ca/~luc/rng.html).
 \end{authors}
+
+
+\paragraph{Using VerbatimInput}
+
+%\begin{program}
+\VerbatimInput{model/model-verb.txt}
+%\end{program}
+
+\paragraph{Using Verbatim}
+
+%\begin{program}
+\begin{Verbatim}
+//	Verbatim code 
+//	to be inserted 
+//	in html
+[a,b]=regexp("pipopopopa","p(i[po]+)(pa)")
+regsub("pipopopopa","p(i[po]+)(pa)","poo\\1")
+a < b 
+a \ b  
+a / b 
+z.*x
+
+%inf + %nan 
+@poo # foo 
+a & b 
+a | b 
+x = 'poo' // wrong conversion
+
+function y=f(x)
+  for i=1:10
+    c=567
+  end
+endfunction
+\end{Verbatim}
+%\end{program}
+
+\paragraph{Using t4ht special}
+
+\special{t4ht*<model/model-verb.txt}
+
+\paragraph{Using lgrind}
+
+%\input{model/intepsilon_c.tex}
+
