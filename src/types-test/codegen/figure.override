@@ -18,6 +18,10 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static NspAxes *nsp_get_current_axes(void);
+static NspFigure *nsp_get_figure(BCG *Xgc);
+
+extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+
 
 %%
 init 
@@ -526,37 +530,53 @@ static int nsp_figure_draw_now(NspFigure *F)
   return OK ;
 }
 
-/* get the axes which contains a point 
+/* get the axes which contains a point (px,py) 
+ * and use the axes scale to convert point to double dp[2].
  */
 
-NspGraphic *nsp_get_axes(BCG *Xgc,NspFigure *F,int px,int py)
+NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
 {
   NspGraphic *gr=NULL;
+  NspFigure *F=nsp_get_figure(Xgc);
   int ww= Xgc->CWindowWidth, wh = Xgc->CWindowHeight;
-  NspList *L= F->obj->children;
-  Cell *cloc = L->first ;
+  NspList *L;
+  Cell *cloc;
+  if ( F == NULL) return NULL;
+  L= F->obj->children;
+  cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  if ( IsAxes(NSP_OBJECT(G)))
-	    {	      
-	      int w = ww*((NspAxes *) G)->obj->wrect->R[2];
-	      int h = wh*((NspAxes *) G)->obj->wrect->R[3];
-	      int x = ww*((NspAxes *) G)->obj->wrect->R[0];
-	      int y = ww*((NspAxes *) G)->obj->wrect->R[1];
+	    { 
+	      NspAxes *A = (NspAxes *) G;
+	      int w = ww*A->obj->wrect->R[2];
+	      int h = wh*A->obj->wrect->R[3];
+	      int x = ww*A->obj->wrect->R[0];
+	      int y = ww*A->obj->wrect->R[1];
 	      if ( px >= x && px <= x+w && py >= y && py <= y +h)
-		gr = G;
+		{
+		  gr = G;
+		  set_scale(Xgc,"fTtfft",A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);
+		  nsp_axes_i2f(Xgc,G,px,py,dp);
+		}
 	    }
 	  else if ( IsObjs3d(NSP_OBJECT(G)))
 	    {
-	      int w = ww*((NspObjs3d *) G)->obj->wrect->R[2];
-	      int h = wh*((NspObjs3d *) G)->obj->wrect->R[3];
-	      int x = ww*((NspObjs3d *) G)->obj->wrect->R[0];
-	      int y = ww*((NspObjs3d *) G)->obj->wrect->R[1];
+	      NspObjs3d *A = (NspObjs3d *) G;
+	      int w = ww*A->obj->wrect->R[2];
+	      int h = wh*A->obj->wrect->R[3];
+	      int x = ww*A->obj->wrect->R[0];
+	      int y = ww*A->obj->wrect->R[1];
 	      if ( px >= x && px <= x+w && py >= y && py <= y +h)
-		gr = G;
+		{
+		  gr = G;
+		  /* a revoir XXXXX */
+		  set_scale(Xgc,"fTtfft",A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);
+		  scale_i2f(Xgc,dp,dp+1,&px,&py,1);
+		}
 	    }
 	}
       cloc = cloc->next;
@@ -564,6 +584,15 @@ NspGraphic *nsp_get_axes(BCG *Xgc,NspFigure *F,int px,int py)
   return gr;
 }
 
+static NspFigure *nsp_get_figure(BCG *Xgc)
+{
+  NspObject  *F = NULL;
+  if ( Xgc == NULL) return NULL;
+  F = tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) return NULL;
+  if ( ! IsFigure(F)) return NULL;
+  return (NspFigure *) F;
+}
 
 
 

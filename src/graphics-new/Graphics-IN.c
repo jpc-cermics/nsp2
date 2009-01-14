@@ -33,7 +33,8 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS  */
+
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -59,6 +60,7 @@ extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,do
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
+extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
 
 #endif 
 
@@ -2911,12 +2913,32 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   if ( winall ) 
     {
+#ifdef NEW_GRAPHICS 
+      int ixrep,iyrep;
       iw=-1;
+      Xgc->graphic_engine->xclick_any(Xgc,buf,&button,&imask,&ixrep,&iyrep,&iw,iflag,motion,release,key,istr);
+      if (button>=0)
+	{
+	  NspGraphic *G; 
+	  BCG *Xgc_win =window_list_search(iw);
+	  G= nsp_get_point_axes(Xgc_win,ixrep,iyrep,drep+1);
+	}
+#else 
+      iw=-1;     
       Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&imask,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
+#endif 
     }
   else 
     {
+#ifdef NEW_GRAPHICS 
+      NspGraphic *G; 
+      int ixrep,iyrep;
+      Xgc->graphic_engine->xclick(Xgc,buf,&button,&imask,&ixrep,&iyrep,iflag,motion,release,key,istr);
+      G= nsp_get_point_axes(Xgc,ixrep,iyrep,drep+1);
+#else 
       Xgc->graphic_engine->scale->xclick(Xgc,buf,&button,&imask,&drep[1],&drep[2],iflag,motion,release,key,istr);
+#endif 
+
       iw=win;
     }
 
@@ -4991,7 +5013,11 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   int clearq=FALSE,motion=TRUE,release=FALSE,key=FALSE, iflag;
   int button,mask;
-  double x,y;
+  double drep[2];
+#ifdef NEW_GRAPHICS
+  NspGraphic *G; 
+  int ix,iy;
+#endif 
 
   nsp_option opts[] ={
     { "clearq",s_bool,NULLOBJ,-1},
@@ -5005,9 +5031,14 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&key,&motion,&release) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
   iflag = (clearq == TRUE) ? FALSE : TRUE;
-  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&mask,&x,&y,iflag,motion,release,key);
+#ifdef NEW_GRAPHICS 
+  Xgc->graphic_engine->xgetmouse(Xgc,"xv",&button,&mask,&ix,&iy,iflag,motion,release,key);
+  G= nsp_get_point_axes(Xgc,ix,iy,drep);
+#else 
+  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&mask,drep,drep+1,iflag,motion,release,key);
+#endif 
   if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
-  M->R[0] = x;  M->R[1] = y;  M->R[2] = (double) button;
+  M->R[0] = drep[0];  M->R[1] =drep[1];  M->R[2] = (double) button;
   NSP_OBJECT(M)->ret_pos=1;
   StackStore(stack,(NspObject *) M,rhs+1);
   return 1;
