@@ -1,0 +1,27 @@
+;; -*- scheme -*-
+
+(include "compound-types.defs")
+
+;; overriden 
+
+(define-function compound_attach
+  (c-name "compound_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_compound
+  (c-name "nsp_extractelts_compound")
+  (return-type "none")
+)
+(define-function setrowscols_compound
+  (c-name "nsp_setrowscols_compound")
+  (return-type "none")
+)
+
+
+

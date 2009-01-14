@@ -1,0 +1,330 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <nsp/figure.h>
+#include <nsp/curve.h>
+
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_compound(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_compound(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_compound(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
+static void nsp_compound_link_figure(NspGraphic *G, void *F);
+static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_compound_children(NspGraphic *Obj);
+
+/* should be inserted in figure.h */
+
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, NspFigure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw( NspFigure *F);
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
+%%
+init 
+
+Init portion 
+
+%%
+override_type Compound
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_compound ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override compound_attach kwargs
+int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override umfpack_action_do_action
+
+static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override-attr rho 
+/* override set rho */
+static int _wrap_compound_set_rho(void *self, char *attr, NspObject *O)
+{
+  double rho;
+  if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
+
+  if ( ((NspCompound *) self)->obj->rho != rho) 
+    {
+      ((NspCompound *) self)->obj->rho = rho;
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+    }
+  return OK;
+}
+
+%%
+override-attr children
+
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_compound_get_obj_children(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspCompound *) self)->obj->children);
+  return (NspObject *) ret;
+}
+
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
+
+static int _wrap_compound_set_obj_children(void *self,NspObject *val)
+{
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
+  if (((NspCompound *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspCompound *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspCompound *) self)->obj->children);
+    }
+  ((NspCompound *) self)->obj->children =  (NspList *) val;
+  nsp_compound_compute_inside_bounds(NULL,self);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+  return OK;
+}
+
+static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
+{
+  NspList *children;
+  if ( ! IsList(O) ) return FAIL;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspCompound *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspCompound *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspCompound *) self)->obj->children);
+    }
+  ((NspCompound *) self)->obj->children= children;
+  nsp_compound_compute_inside_bounds(NULL,self);
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+  return OK;
+}
+
+
+%%
+override nsp_extractelts_compound kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_compound kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  NspList *L = P->obj->children;
+  Cell *cloc = L->first;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  /* draw elements */
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->draw(Xgc,G,NULL);
+	}
+      cloc = cloc->next;
+    }
+}
+
+/* compute the bounds of the set of objects countained in the 
+ * compound. This function is to be called when contained 
+ * objects are changed.
+ */
+
+static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
+{
+  double l_bounds[4],bounds[4];
+  Cell *cloc;
+  NspList *L;
+  NspCompound *P = (NspCompound *) Obj;
+  L = P->obj->children;
+  cloc = L->first ;
+  if ( cloc == NULLCELL) 
+    {
+      bounds[0]=bounds[1]=0;
+      bounds[2]=bounds[3]=0;
+      return;
+    }
+  
+  bounds[0]=bounds[1]=LARGEST_REAL;
+  bounds[2]=bounds[3]=-LARGEST_REAL;
+
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->bounds(Xgc,G,l_bounds);
+	  if ( l_bounds[0] < bounds[0] ) 
+	    bounds[0]= l_bounds[0];
+	  if (  l_bounds[2] > bounds[2])
+	    bounds[2]= l_bounds[2];
+	  if ( l_bounds[1] < bounds[1] ) 
+	    bounds[1]= l_bounds[1];
+	  if (  l_bounds[3] > bounds[3])
+	    bounds[3]= l_bounds[3];
+	}
+      cloc = cloc->next;
+    }
+  memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+}
+
+/* Note that the bounds should be changed here
+ */
+
+static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->translate(Xgc,G,tr);
+	}
+      cloc = cloc->next;
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->rotate(Xgc,G,R);
+	}
+      cloc = cloc->next;
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->scale(Xgc,G,alpha);
+	}
+      cloc = cloc->next;
+    }
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of compound 
+ *
+ */
+
+static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  /* should not be always computed */
+  nsp_compound_compute_inside_bounds(Xgc,Obj);
+  memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+}
+
+static void nsp_compound_link_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_link_figure(G,F);
+  /* link children */
+  nsp_list_link_figure(((NspCompound *) G)->obj->children,F);
+}
+
+
+static void nsp_compound_unlink_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_unlink_figure(G,F);
+  /* link children */
+  nsp_list_unlink_figure(((NspCompound *) G)->obj->children,F);
+}
+
+static NspList *nsp_compound_children(NspGraphic *Obj)
+{
+  return  ((NspCompound *) Obj)->obj->children;
+}
+
+

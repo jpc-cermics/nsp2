@@ -19,8 +19,8 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
 	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
-	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c ../spolyhedron.c \
-	../string3d.c 
+	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
+	../spolyhedron.c ../string3d.c  ../compound.c 
 
 all:: $(ALL)
 
@@ -191,5 +191,11 @@ clean ::
 	    --override polyline3d.override \
 	    --prefix Polyline3d polyline3d.defs) > $*.c \
 	&& cp polyline3d.h ../../include/nsp 
+
+../compound.c : compound.defs compound.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override compound.override \
+	    --prefix Compound compound.defs) > $*.c \
+	&& cp compound.h ../../include/nsp 
 
 
