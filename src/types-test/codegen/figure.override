@@ -10,6 +10,8 @@ extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
+static int nsp_figure_draw_latter(NspFigure *);
+static int nsp_figure_draw_now(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
@@ -511,8 +513,18 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc)
 }
 
 
+static int nsp_figure_draw_latter(NspFigure *F)
+{
+  F->obj->draw_now=FALSE; 
+  return OK ;
+}
 
-
+static int nsp_figure_draw_now(NspFigure *F)
+{
+  F->obj->draw_now=TRUE; 
+  nsp_figure_force_redraw(F);
+  return OK ;
+}
 
 
 

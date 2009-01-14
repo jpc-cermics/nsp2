@@ -4168,8 +4168,10 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
     case xset_recording: 
       CheckRhs(2,2);
       Xgc=nsp_check_graphic_context();
+#ifndef NEW_GRAPHICS 
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc->graphic_engine->xset_recording(Xgc,(val != 0 ) ? 1 : 0);
+#endif 
       break;
     case xset_thickness:
       CheckRhs(2,2);
@@ -4849,7 +4851,6 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
     }
 #ifdef NEW_GRAPHICS 
   Nsetscale2d_new(Xgc,wrect,arect,frect,logflag);
-  Nsetscale2d(Xgc,wrect,arect,frect,logflag);
 #else 
   Nsetscale2d(Xgc,wrect,arect,frect,logflag);
 #endif 
@@ -4859,6 +4860,26 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 /*-----------------------------------------------------------
  * [wrect,frect,logflag,arect]=xgetech()
  *-----------------------------------------------------------*/
+
+#ifdef NEW_GRAPHICS 
+
+int int_xgetech(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAxes *axe;
+  BCG *Xgc;
+  CheckRhs(0,0);
+  CheckLhs(1,4);
+  Xgc=nsp_check_graphic_context();
+  axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return RET_BUG;
+  if ( lhs >= 1) MoveObj(stack,1,NSP_OBJECT(axe->obj->wrect));
+  if ( lhs >= 2) MoveObj(stack,2,NSP_OBJECT(axe->obj->frect));
+  if ( lhs >= 3) if ( nsp_move_string(stack,3,"tobedone",-1) ==FAIL) return RET_BUG;
+  if ( lhs >= 4) MoveObj(stack,4,NSP_OBJECT(axe->obj->arect));
+  return Max(lhs,0);
+} 
+
+#else 
 
 int int_xgetech(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4891,6 +4912,8 @@ int int_xgetech(Stack stack, int rhs, int opt, int lhs)
     }
   return Max(lhs,0);
 } 
+
+#endif 
 
 /*-----------------------------------------------------------
  * fec(x,y,triangles,func,...)

@@ -19,7 +19,7 @@
   (gtype-id "Figure")
 )
 
-;; overriden 
+;; 
 
 (define-method connect
   (of-object "Figure")
@@ -30,6 +30,18 @@
 (define-method unconnect
   (of-object "Figure")
   (c-name "nsp_figure_unconnect")
+  (return-type "none")
+  )
+
+(define-method draw_latter
+  (of-object "Figure")
+  (c-name "nsp_figure_draw_latter")
+  (return-type "none")
+  )
+
+(define-method draw_now
+  (of-object "Figure")
+  (c-name "nsp_figure_draw_now")
   (return-type "none")
   )
 
@@ -54,7 +66,7 @@
   (return-type "none")
 )
 
-;; Il sera bien de récuperer les widgets associés si besoin etc....
+
 
 
 

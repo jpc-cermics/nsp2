@@ -1,5 +1,7 @@
 .SUFFIXES: .dia .tst .vl
 
+SHELL=/bin/csh
+
 TESTS= \
 	addinter.dia \
 	cells.dia \

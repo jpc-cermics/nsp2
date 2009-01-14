@@ -3207,8 +3207,11 @@ int store_record(BCG *Xgc,int code ,void *plot)
       Scistring("Error: code is not a plot code\n");
       return 0;
     }
+  /* XXX: 
+   * always store new graphics objects 
+   */
 
-  if ( Xgc->record_flag == FALSE ) return 1 ;
+  if ( Xgc->record_flag == FALSE && code != CODEobject ) return 1 ;
   if ( list == NULL)
     {
       list  = MALLOC(sizeof(list_plot));
