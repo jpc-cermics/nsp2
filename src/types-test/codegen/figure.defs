@@ -45,6 +45,7 @@
   (return-type "none")
   )
 
+
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")
   (return-type "Figure*")

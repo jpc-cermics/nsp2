@@ -1400,7 +1400,46 @@ static int nsp_figure_draw_now(NspFigure *F)
   return OK ;
 }
 
+/* get the axes which contains a point 
+ */
+
+NspGraphic *nsp_get_axes(BCG *Xgc,NspFigure *F,int px,int py)
+{
+  NspGraphic *gr=NULL;
+  int ww= Xgc->CWindowWidth, wh = Xgc->CWindowHeight;
+  NspList *L= F->obj->children;
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( IsAxes(NSP_OBJECT(G)))
+	    {	      
+	      int w = ww*((NspAxes *) G)->obj->wrect->R[2];
+	      int h = wh*((NspAxes *) G)->obj->wrect->R[3];
+	      int x = ww*((NspAxes *) G)->obj->wrect->R[0];
+	      int y = ww*((NspAxes *) G)->obj->wrect->R[1];
+	      if ( px >= x && px <= x+w && py >= y && py <= y +h)
+		gr = G;
+	    }
+	  else if ( IsObjs3d(NSP_OBJECT(G)))
+	    {
+	      int w = ww*((NspObjs3d *) G)->obj->wrect->R[2];
+	      int h = wh*((NspObjs3d *) G)->obj->wrect->R[3];
+	      int x = ww*((NspObjs3d *) G)->obj->wrect->R[0];
+	      int y = ww*((NspObjs3d *) G)->obj->wrect->R[1];
+	      if ( px >= x && px <= x+w && py >= y && py <= y +h)
+		gr = G;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return gr;
+}
 
 
 
-#line 1407 "figure.c"
+
+
+#line 1446 "figure.c"
