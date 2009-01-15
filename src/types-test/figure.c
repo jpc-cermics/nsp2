@@ -13,6 +13,7 @@
 #include "nsp/figure.h"
 #include "nsp/axes.h"
 #include "nsp/objs3d.h"
+#include "nsp/compound.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
@@ -29,9 +30,10 @@ static NspAxes *nsp_get_current_axes(void);
 static NspFigure *nsp_get_figure(BCG *Xgc);
 
 extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
 
-#line 35 "figure.c"
+#line 37 "figure.c"
 
 /* ----------- Figure ----------- */
 
@@ -102,13 +104,13 @@ NspTypeFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 33 "codegen/figure.override"
+#line 35 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
-#line 112 "figure.c"
+#line 114 "figure.c"
   /* 
    * Figure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -280,7 +282,7 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFIGURE;
   if ((H  = nsp_figure_create_void(name,(NspTypeBase *) nsp_type_figure))== NULLFIGURE) return H;
   if ((H  = nsp_figure_xdr_load_partial(xdrs,H))== NULLFIGURE) return H;
-#line 284 "figure.c"
+#line 286 "figure.c"
   return H;
 }
 
@@ -295,11 +297,11 @@ void nsp_figure_destroy_partial(NspFigure *H)
   if ( H->obj->ref_count == 0 )
    {
 
-#line 44 "codegen/figure.override"
+#line 46 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 303 "figure.c"
+#line 305 "figure.c"
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
     nsp_matrix_destroy(H->obj->dims);
@@ -614,7 +616,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
-#line 618 "figure.c"
+#line 620 "figure.c"
   return H;
 }
 
@@ -634,7 +636,7 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
-#line 638 "figure.c"
+#line 640 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -663,11 +665,26 @@ static int _wrap_nsp_figure_draw_now(NspFigure *self,Stack stack,int rhs,int opt
   return 0;
 }
 
+#line 129 "codegen/figure.override"
+
+static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspCompound *C=nsp_figure_get_axe_elts_as_compound(NVOID,self);
+  if ( C == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(C));
+  return 1;
+}
+
+
+#line 680 "figure.c"
+
+
 static NspMethods figure_methods[] = {
   {"connect",(nsp_method *) _wrap_nsp_figure_connect},
   {"unconnect",(nsp_method *) _wrap_nsp_figure_unconnect},
   {"draw_latter",(nsp_method *) _wrap_nsp_figure_draw_latter},
   {"draw_now",(nsp_method *) _wrap_nsp_figure_draw_now},
+  {"extract",(nsp_method *) _wrap_nsp_figure_extract},
   { NULL, NULL}
 };
 
@@ -841,8 +858,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 63 "codegen/figure.override"
-
+#line 65 "codegen/figure.override"
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -885,7 +901,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 889 "figure.c"
+#line 905 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -930,7 +946,7 @@ int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_cu
   return 1;
 }
 
-#line 108 "codegen/figure.override"
+#line 109 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -939,10 +955,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 943 "figure.c"
+#line 959 "figure.c"
 
 
-#line 118 "codegen/figure.override"
+#line 119 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -951,8 +967,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
-#line 956 "figure.c"
+#line 971 "figure.c"
 
 
 /*----------------------------------------------------
@@ -989,17 +1004,17 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 28 "codegen/figure.override"
+#line 30 "codegen/figure.override"
 
 Init portion 
 
 
-#line 998 "figure.c"
+#line 1013 "figure.c"
   nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 129 "codegen/figure.override"
+#line 141 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1468,7 +1483,28 @@ static NspFigure *nsp_get_figure(BCG *Xgc)
   return (NspFigure *) F;
 }
 
+/* get the elements of the first axe as a compound 
+ *
+ */
 
 
+NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
+{
+  NspAxes *A; 
+  NspList *L;
+  NspCompound *C;
+  if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
+  /* unlink the children from the figure */
+  /* return the first axes XXX  */
+  if ( (A =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
+    return NULL;
+  if ( IsAxes(NSP_OBJECT(A)) == FALSE) return NULL;
+  nsp_list_unlink_figure(A->obj->children,F);
+  /* swap respective children */
+  L = C->obj->children;
+  C->obj->children = A->obj->children;
+  A->obj->children = L;
+  return C;
+}
 
-#line 1475 "figure.c"
+#line 1511 "figure.c"

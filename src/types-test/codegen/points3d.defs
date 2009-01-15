@@ -20,7 +20,7 @@
 )
 
 
-;; just for the name, the code is overriten 
+;; just for the name, the code is overriden
 
 (define-function extractelts_points3d
   (c-name "nsp_extractelts_points3d")

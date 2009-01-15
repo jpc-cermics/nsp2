@@ -5,6 +5,7 @@ headers
 #include "nsp/figure.h"
 #include "nsp/axes.h"
 #include "nsp/objs3d.h"
+#include "nsp/compound.h"
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
@@ -21,6 +22,7 @@ static NspAxes *nsp_get_current_axes(void);
 static NspFigure *nsp_get_figure(BCG *Xgc);
 
 extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
 
 %%
@@ -60,7 +62,6 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
 
 %%
 override-attr children
-
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -121,6 +122,17 @@ extern function int_graphic_set_attribute;
 int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs) 
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_figure_extract kwargs
+
+static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspCompound *C=nsp_figure_get_axe_elts_as_compound(NVOID,self);
+  if ( C == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(C));
+  return 1;
 }
 
 
@@ -594,5 +606,26 @@ static NspFigure *nsp_get_figure(BCG *Xgc)
   return (NspFigure *) F;
 }
 
+/* get the elements of the first axe as a compound 
+ *
+ */
 
 
+NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
+{
+  NspAxes *A; 
+  NspList *L;
+  NspCompound *C;
+  if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
+  /* unlink the children from the figure */
+  /* return the first axes XXX  */
+  if ( (A =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
+    return NULL;
+  if ( IsAxes(NSP_OBJECT(A)) == FALSE) return NULL;
+  nsp_list_unlink_figure(A->obj->children,F);
+  /* swap respective children */
+  L = C->obj->children;
+  C->obj->children = A->obj->children;
+  A->obj->children = L;
+  return C;
+}

@@ -45,6 +45,14 @@
   (return-type "none")
   )
 
+;; overwriten 
+
+(define-method extract
+  (of-object "Figure")
+  (c-name "nsp_figure_extract")
+  (return-type "none")
+  )
+
 
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")
