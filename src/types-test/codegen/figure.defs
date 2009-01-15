@@ -53,6 +53,17 @@
   (return-type "none")
   )
 
+(define-method start_compound
+  (of-object "Figure")
+  (c-name "nsp_figure_start_compound")
+  (return-type "none")
+  )
+
+(define-method end_compound
+  (of-object "Figure")
+  (c-name "nsp_figure_end_compound")
+  (return-type "none")
+  )
 
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")

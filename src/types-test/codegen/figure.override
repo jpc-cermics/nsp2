@@ -20,9 +20,12 @@ static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static NspAxes *nsp_get_current_axes(void);
 static NspFigure *nsp_get_figure(BCG *Xgc);
+static int nsp_figure_start_compound(NspFigure *F);
+static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 
 extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 
 
 %%
@@ -135,6 +138,26 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
+%%
+override nsp_figure_start_compound kwargs
+
+static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  if (  nsp_figure_start_compound(self) == FAIL) return RET_BUG;
+  return 0;
+}
+
+
+%%
+override nsp_figure_end_compound kwargs
+
+static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspCompound *C;
+  if ((C = nsp_figure_end_compound("compound",self))==NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(C));
+  return 1;
+}
 
 %%
 last
@@ -607,9 +630,8 @@ static NspFigure *nsp_get_figure(BCG *Xgc)
 }
 
 /* get the elements of the first axe as a compound 
- *
+ * and remove the elements. 
  */
-
 
 NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
 {
@@ -628,4 +650,68 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
   C->obj->children = A->obj->children;
   A->obj->children = L;
   return C;
+}
+
+/* get the elements in the first axe 
+ * put them in a compound. 
+ * Then: 
+ *  if the axe is unique store the compound in the axe
+ *  if an other axe exists store the compound on the next 
+ *  axe and remove the first one. 
+ *
+ *
+ *
+ */
+
+static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
+{
+  NspAxes *A1,*A2;
+  NspList *L;
+  NspCompound *C;
+  if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
+  /* unlink the children from the figure */
+  /* return the first axes XXX  */
+  if ( (A1 =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
+    return NULL;
+  if ( IsAxes(NSP_OBJECT(A1)) == FALSE) return NULL;
+  /* swap respective children */
+  L = C->obj->children;
+  C->obj->children = A1->obj->children;
+  A1->obj->children = L;
+  nsp_graphic_link_figure((NspGraphic *) C,F);
+  if ( (A2 =(NspAxes *) nsp_list_get_element(F->obj->children,2)) ==  NULL )
+    {
+      /* insert the compound in A1 */
+      if ( nsp_list_begin_insert(L,(NspObject *) C)== FAIL)
+	return NULL;
+    }
+  else
+    {
+      /* insert the compound in A2 */
+      if ( nsp_list_begin_insert(A2->obj->children,(NspObject *) C)== FAIL)
+	return NULL;
+      /* remove A1 */
+      nsp_list_remove_first(F->obj->children);
+    }
+  return C;
+}
+
+
+/*
+ *
+ */
+
+static int nsp_figure_start_compound(NspFigure *F)
+{
+  NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+  if ( axe == NULL) return FAIL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(F->obj->children,(NspObject *) axe)== FAIL) 
+    {
+      nsp_axes_destroy(axe);
+      return FAIL;
+    }
+  /* set figure informations in axe */
+  ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F);
+  return OK;
 }
