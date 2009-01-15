@@ -642,12 +642,12 @@ static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A;
   NspMatrix *Jc=NULL,*Ir=NULL,*Pr=NULL,*Mn=NULL;
-  int i, imin,imax, prev;
+  int i, imin,imax, prev,Irmn,Irmn1;
   CheckRhs(4,4);
-  if ((Jc = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((Ir = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Pr = GetMat(stack,3)) == NULLMAT) return RET_BUG;
-  if ((Mn = GetMat(stack,4)) == NULLMAT) return RET_BUG;
+  if ((Jc = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((Ir = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Pr = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((Mn = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
   if ( ((int)Mn->R[0]) < 0 || ((int) Mn->R[1] < 0))
     {
       Scierror("Error: fourth argument of %s should be [m,n] with non negative values\n",NspFname(stack));
@@ -655,21 +655,28 @@ static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
     }
   if ( ((int) Mn->R[1] ) != Jc->mn -1 )
     {
-      Scierror("Error: first argument of %s should be of length %d+1\n", NspFname(stack),Mn->R[1]);
+      Scierror("Error: first argument of %s should be of length %d+1\n", NspFname(stack),(int) Mn->R[1]);
       return RET_BUG;
     }
 
   if ( Pr->mn != Jc->R[Jc->mn-1] )
     {
-      Scierror("Error: third argument of %s should be of length %d\n", NspFname(stack), Jc->R[Jc->mn-1]);
+      Scierror("Error: third argument of %s should be of length %d\n", NspFname(stack),(int) Jc->R[Jc->mn-1]);
       return RET_BUG;
     }
-  if ( Ir->mn != Jc->R[Jc->mn-1] )
+  /* Ir->mn can be bigger Than expected size Jc->R[Jc->mn-1] 
+   * we ignore last entries which should be zero.
+   */
+  if ( Ir->mn < Jc->R[Jc->mn-1] )
     {
-      Scierror("Error: second argument of %s should be of length %d\n", NspFname(stack), Jc->R[Jc->mn-1]);
+      Scierror("Error: second argument of %s should be of length %d\n", NspFname(stack),(int) Jc->R[Jc->mn-1]);
       return RET_BUG;
     }
+  Irmn = Min(Ir->mn,Jc->R[Jc->mn-1]);
+  Irmn1 =Ir->mn;
+  Ir->mn = Irmn;
   Bounds (Ir,&imin,&imax);
+  Ir->mn = Irmn1;
   if ( imin < 0 || imax > ((int) Mn->R[0]) -1) 
     {
       Scierror("Error: second argument of %s should have values in [%d,%d]\n", NspFname(stack),0,((int) Mn->R[0]) -1);
@@ -689,7 +696,7 @@ static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
   /* XXX : check mn [m,n] */
   if ((A =nsp_spcolmatrix_create(NVOID,Pr->rc_type,Mn->R[0],Mn->R[1]) ) == NULLSPCOL) return RET_BUG;
   if ( nsp_spcol_alloc_col_triplet(A,Jc->R[Jc->mn-1])== FAIL) return RET_BUG;
-  for ( i= 0 ; i < Ir->mn ; i++)  A->triplet.Ir[i] = Ir->R[i];
+  for ( i= 0 ; i < Irmn ; i++)  A->triplet.Ir[i] = Ir->R[i];
   for ( i= 0 ; i < Jc->mn ; i++)  A->triplet.Jc[i] = Jc->R[i];
   if ( Pr->rc_type == 'r' ) 
     {
