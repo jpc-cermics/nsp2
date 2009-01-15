@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS  */
+/* #define NEW_GRAPHICS */
 
 
 #ifdef NEW_GRAPHICS 
@@ -2638,12 +2638,16 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 #ifdef NEW_GRAPHICS 
 
-/*-----------------------------------------------------------
- *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
- *   opts: color =       ( line color )
- *         thickness =       ( line width )
- *         background=   ( also fill the rectangle)
- *-----------------------------------------------------------*/
+/* interface to xrect which mixes xrect and xfrect
+ * 
+ * The values of the optional parameters are used in the following manner 
+ * color: If color is not given it will be set to the <<current color>> 
+ *        If color is given a value of -1 the color will be set at run time using 
+ *                 the figure default color. 
+ *        If color is given a value of -2 draw is not performed.
+ * back: the same except that the default value is -2 
+ * 
+ */
 
 int int_xrect(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2651,7 +2655,7 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe; 
   BCG *Xgc;
   double *val=NULL;
-  int back=-2,color=-1,width=-1;
+  int back=-2,color=-3,width=-3;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
@@ -2659,9 +2663,14 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
+
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
+
+  if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( opts[2].obj == NULLOBJ) width = Xgc->graphic_engine->xget_thickness(Xgc);
+
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
