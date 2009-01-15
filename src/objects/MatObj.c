@@ -911,8 +911,8 @@ void
 Bounds (const NspMatrix * A, int * imin, int * imax)
 {
   int i;
-  *imax = 1;
-  *imin = 1;
+  *imax = 0;
+  *imin = 0;
   for (i = 0; i < A->mn; i++)
     {
       int ival = (int) A->R[i];
@@ -928,7 +928,6 @@ void
 nsp_matrix_boundster(const NspMatrix *A, int *ind, int *imin, int *imax)
 {
   int i, ival;
-
   *imax = 1;
   *imin = 1;
   for (i = 0; i < A->mn; i++)
