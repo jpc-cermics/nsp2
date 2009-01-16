@@ -33,7 +33,8 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS*/
+
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -2748,7 +2749,7 @@ int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe; 
   BCG *Xgc;
   double *val=NULL;
-  int color=-1,stroke_color=-2,width=-1;
+  int color=-3,stroke_color=-2,width=-1;
   nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,4);
@@ -2758,8 +2759,7 @@ int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
   
-  if ( color== -1) color = Xgc->graphic_engine->xget_pattern(Xgc); 
-
+  if ( opts[0].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],color,width,
 				stroke_color,NULL))== NULL)
     return RET_BUG;
@@ -3023,7 +3023,7 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
   NspPolyline *pl;
   NspAxes *axe; 
   BCG *Xgc;
-  int close=TRUE,color=-1,mark=-1,mark_size=-1,fill_color=0,thickness=-1;
+  int close=TRUE,color=-2,mark=-2,mark_size=-1,fill_color=-3,thickness=-1;
   NspMatrix *x,*y;
 
   nsp_option opts[] ={
@@ -3040,6 +3040,10 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
+
+  if ( opts[1].obj == NULLOBJ) fill_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( opts[2].obj == NULLOBJ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
@@ -3701,8 +3705,8 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   NspPolyline *pl;
   NspAxes *axe; 
   BCG *Xgc;
-  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1;
-  char *type;
+  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-2,thickness=-1;
+  char *type= "lines"; 
   NspMatrix *x,*y;
 
   nsp_option opts[] ={
@@ -3722,6 +3726,15 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
 
+  if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( opts[3].obj == NULLOBJ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+    
+  if (strncmp(type,"marks",5) == 0)
+    {
+      /* remove line, we need a way to fix the mark color */
+      color=-2;
+    }
+  
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
 
@@ -5913,7 +5926,7 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
 #ifdef NEW_GRAPHICS 
   NspPolyline *pl;
   NspAxes *axe; 
-  int color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1;
+  int color=-1,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
   NspMatrix *Mx,*My;
 #endif 
   /* angle according to dir */
@@ -5964,7 +5977,13 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
   if ((My= nsp_matrix_create("y",'r',npt,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
   memcpy(My->R,y,npt*sizeof(double));
-  if ( typ != SL_SQP ) fill_color=0;
+  fill_color= color= Xgc->graphic_engine->xget_pattern(Xgc);
+  thickness= Xgc->graphic_engine->xget_thickness(Xgc);
+  if ( typ == SL_SQP )
+    {
+      /* draw only */
+      fill_color=-2;
+    }
   if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
