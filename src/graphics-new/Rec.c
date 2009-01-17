@@ -3350,14 +3350,13 @@ static void replay_graphic_object(BCG *Xgc,void  *theplot)
   struct rec_object *lplot= theplot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
   G->type->draw(Xgc,G,NULL);
-  Scistring("replay graphic_object \n");
-  /* nsp_graphic_object_replay(Xgc,obj); */
+  /* Scistring("replay graphic_object \n"); */
 }
 
 static void clean_graphic_object(void *plot) 
 {
   NspObject *obj = ((struct rec_object *) plot)->obj;
-  Scistring("clean graphic_object \n");
+  /* Scistring("clean graphic_object \n"); */
   nsp_object_destroy(&obj);
 };
 

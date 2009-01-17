@@ -33,8 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS*/
-
+/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -6136,6 +6135,20 @@ static int int_gtk_loop(Stack stack, int rhs, int opt, int lhs)
 } 
 #endif 
 
+static int int_new_graphics(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+#ifdef NEW_GRAPHICS
+  int ret =TRUE ;
+#else
+  int ret = FALSE;
+#endif
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+
+
 
 /*************************************************************
  * The Interface for graphic functions 
@@ -6237,6 +6250,7 @@ static OpTab Graphics_func[]={
   {"scicos_draw3D",int_scicos_draw3D},
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
+  {"new_graphics",int_new_graphics},
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop",int_gtk_loop},
 #endif 
