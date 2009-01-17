@@ -625,12 +625,11 @@ GLURP
 #line 125 "codegen/graphic.override"
 
 /* verbatim at the end */
-
 /* default methods in graphic */
 
 void nsp_graphic_link_figure(NspGraphic *G,void *F)
 {
-  NspFigure *Fi = F;
+  nsp_figure *Fi = F;
   if ( G->obj->Fig == NULL ) 
     {
       /* 
@@ -804,4 +803,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 808 "graphic.c"
+#line 807 "graphic.c"

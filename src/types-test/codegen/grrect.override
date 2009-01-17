@@ -11,7 +11,7 @@ static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_grrect(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw( NspFigure *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
 
 %%
 init 
@@ -29,7 +29,7 @@ override_type GrRect
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
   ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
-  /* next method are defined in NspGraphic and need not be chnaged here for GrRect */
+  /* next method are defined in NspGraphic and need not be changed here for GrRect */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 

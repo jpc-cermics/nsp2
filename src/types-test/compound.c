@@ -31,7 +31,7 @@ extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
 extern int nsp_list_check_figure(NspList *L, NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_figure_force_redraw( NspFigure *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -776,9 +776,15 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
 
 static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
+  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -788,14 +794,21 @@ static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
 	}
       cloc = cloc->next;
     }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
 {
+  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -805,14 +818,21 @@ static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
 	}
       cloc = cloc->next;
     }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
 static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
 {
+  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -822,6 +842,7 @@ static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
 	}
       cloc = cloc->next;
     }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
@@ -840,7 +861,7 @@ static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 static void nsp_compound_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G,F);
+  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
   /* link children */
   nsp_list_link_figure(((NspCompound *) G)->obj->children,F);
 }
@@ -849,7 +870,7 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F)
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,F);
+  nsp_graphic_unlink_figure(G,   ((NspFigure *) F)->obj);
   /* link children */
   nsp_list_unlink_figure(((NspCompound *) G)->obj->children,F);
 }
@@ -861,4 +882,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 865 "compound.c"
+#line 886 "compound.c"

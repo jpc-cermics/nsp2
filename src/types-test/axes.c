@@ -31,7 +31,7 @@ extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
 extern int nsp_list_check_figure(NspList *L, NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_figure_force_redraw( NspFigure *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -1473,7 +1473,7 @@ static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 static void nsp_axes_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G,F);
+  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
   /* link children */
   nsp_list_link_figure(((NspAxes *) G)->obj->children,F);
 }
@@ -1482,7 +1482,7 @@ static void nsp_axes_link_figure(NspGraphic *G, void *F)
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,F);
+  nsp_graphic_unlink_figure(G,  ((NspFigure *) F)->obj);
   /* link children */
   nsp_list_unlink_figure(((NspAxes *) G)->obj->children,F);
 }

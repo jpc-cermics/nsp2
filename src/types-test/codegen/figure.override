@@ -382,13 +382,13 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
  * can be activated.
  */
 
-void nsp_figure_force_redraw( NspFigure *F) 
+void nsp_figure_force_redraw(nsp_figure *F) 
 {
   /* XX should be stored in figure to avoid a search */
   BCG *Xgc;
   if ( F == NULL) return ;
-  if ( F->obj->draw_now== FALSE) return;
-  Xgc = window_list_search(F->obj->id);
+  if ( F->draw_now== FALSE) return;
+  Xgc = window_list_search(F->id);
   if ( Xgc == NULL) return;
   Xgc->graphic_engine->force_redraw(Xgc);
 }
@@ -561,7 +561,7 @@ static int nsp_figure_draw_latter(NspFigure *F)
 static int nsp_figure_draw_now(NspFigure *F)
 {
   F->obj->draw_now=TRUE; 
-  nsp_figure_force_redraw(F);
+  nsp_figure_force_redraw(F->obj);
   return OK ;
 }
 
@@ -678,7 +678,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
   L = C->obj->children;
   C->obj->children = A1->obj->children;
   A1->obj->children = L;
-  nsp_graphic_link_figure((NspGraphic *) C,F);
+  nsp_graphic_link_figure((NspGraphic *) C, ((NspFigure *) F)->obj);
   if ( (A2 =(NspAxes *) nsp_list_get_element(F->obj->children,2)) ==  NULL )
     {
       /* insert the compound in A1 */

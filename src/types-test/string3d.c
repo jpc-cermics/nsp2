@@ -15,7 +15,7 @@
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw( NspFigure *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
