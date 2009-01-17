@@ -65,6 +65,15 @@
   (return-type "none")
   )
 
+(define-method remove 
+  (of-object "Figure")
+  (c-name "nsp_figure_remove_element")
+  (return-type "none")
+  (parameters
+   '("Graphic*" "g")
+   )
+  )
+
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")
   (return-type "Figure*")

@@ -1068,13 +1068,13 @@ class ObjectArg(ArgType):
 	if pnull:
 	    if pdflt:
 		info.varlist.add(self.objname, '*' + pname + ' = ' + pdflt)
-		info.varlist.add('NspGObject', '*nsp_' + pname + ' = NULL')
+		info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
 		info.codebefore.append(self.nulldflt % {'name':pname,
                                                         'cast':self.cast,
                                                         'type':self.objname}) 
 	    else:
 		info.varlist.add(self.objname, '*' + pname + ' = NULL')
-		info.varlist.add('NspGObject', '*nsp_' + pname)
+		info.varlist.add('NspObject', '*nsp_' + pname)
 		info.codebefore.append(self.null % {'name':pname,
                                                     'cast':self.cast,
                                                     'type':self.objname}) 
@@ -1083,15 +1083,15 @@ class ObjectArg(ArgType):
 	else:
 	    if pdflt:
 		info.varlist.add(self.objname, '*' + pname + ' = ' + pdflt)
-		info.varlist.add('NspGObject', '*nsp_' + pname + ' = NULL')
+		info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
 		info.codebefore.append(self.dflt % {'name':pname,
                                                     'cast':self.cast}) 
 		info.arglist.append(pname)
                 info.add_parselist('obj_check', ['&nsp_type_%s' % string.lower(self.objname),
                                          '&nsp_' + pname], [pname])
 	    else:
-		info.varlist.add('NspGObject', '*' + pname)
-		info.arglist.append('%s(%s->obj)' % (self.cast, pname))
+		info.varlist.add('NspObject', '*' + pname)
+		info.arglist.append('((Nsp%s *) %s)' % (self.cast, pname))
                 info.add_parselist('obj_check', ['&nsp_type_%s' % string.lower(self.objname),
                                           '&' + pname], [pname])
 

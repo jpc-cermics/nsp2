@@ -107,6 +107,8 @@ extern int nsp_list_compact(NspList *L1, char flag );
 extern Cell *nsp_list_get_cell_pointer(NspList *L, int n);
 extern NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ);
 extern Boolean nsp_list_has(NspList *L, NspObject *Obj, int *ind);
+extern void nsp_remove_cell_from_list(NspList *L, Cell *Loc);
+
 #endif
 
 /* private definitions */

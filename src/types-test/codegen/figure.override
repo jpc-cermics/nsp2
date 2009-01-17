@@ -22,6 +22,7 @@ static NspAxes *nsp_get_current_axes(void);
 static NspFigure *nsp_get_figure(BCG *Xgc);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
+static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 
 extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
@@ -659,8 +660,6 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
  *  if an other axe exists store the compound on the next 
  *  axe and remove the first one. 
  *
- *
- *
  */
 
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
@@ -697,8 +696,10 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
 }
 
 
-/*
- *
+/* start a new axe in a Figure 
+ * which can be used to collect elements 
+ * in a compound.
+ * with nsp_figure_end_compound(char *name,NspFigure *F)
  */
 
 static int nsp_figure_start_compound(NspFigure *F)
@@ -715,3 +716,61 @@ static int nsp_figure_start_compound(NspFigure *F)
   ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F);
   return OK;
 }
+
+
+/* Remove a graphic object in a Figure 
+ * by exploring the axes
+ *
+ */
+
+static int nsp_list_delete_graphic_obj(NspFigure *F,NspList *L, NspGraphic *Obj)
+{
+  Cell *Loc = L->first;
+  while ( Loc != NULLCELL ) 
+    {
+      if ( Loc->O != NULLOBJ )
+	{
+	  NspGraphic *G1= (NspGraphic *) Loc->O;
+	  if ( G1->obj == Obj->obj ) 
+	    {
+	      G1->type->unlink_figure(G1,F);
+	      nsp_remove_cell_from_list(L, Loc);
+	      L->icurrent = 0;
+	      L->current = NULLCELL;
+	      nsp_cell_destroy(&Loc);
+	      return OK;
+	    }
+	}
+      Loc = Loc->next;
+    }
+  return FAIL;
+}
+
+static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
+{
+  NspList *L= F->obj->children;
+  Cell *cloc  = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( IsAxes(NSP_OBJECT(G)))
+	    { 
+	      NspAxes *A = (NspAxes *) G;
+	      NspList *L1=  A->obj->children;
+	      if (nsp_list_delete_graphic_obj(F,L1, Obj)==OK) return OK;
+	    }
+	  else if ( IsObjs3d(NSP_OBJECT(G)))
+	    {
+	      NspObjs3d *A = (NspObjs3d *) G;
+	      NspList *L1=  A->obj->children;
+	      if ( nsp_list_delete_graphic_obj(F,L1, Obj)==OK) return OK;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return FAIL;
+}
+
+

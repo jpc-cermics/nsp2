@@ -609,7 +609,7 @@ int nsp_list_store(NspList *L, NspObject *A, int n)
 
 
 /**
- * remove_cell_from_list
+ * nsp_remove_cell_from_list
  * @L: a #NspList 
  * @Loc: a #Cell 
  * 
@@ -620,7 +620,7 @@ int nsp_list_store(NspList *L, NspObject *A, int n)
  * 
  **/
 
-static void remove_cell_from_list(NspList *L, Cell *Loc)
+void nsp_remove_cell_from_list(NspList *L, Cell *Loc)
 {
   if ( L->nel == 1 )   /* list with one cell => become an empty list */
     {
@@ -663,7 +663,7 @@ void nsp_list_delete_elt_by_name(NspList *L, char *str)
     {
       if ( Loc->O != NULLOBJ  &&  Ocheckname(Loc->O,str) ) 
 	{ 
-	  remove_cell_from_list(L, Loc);
+	  nsp_remove_cell_from_list(L, Loc);
 	  L->icurrent = 0;
 	  L->current = NULLCELL;
 	  nsp_cell_destroy(&Loc);
@@ -686,7 +686,7 @@ static int DeleteNth_g(NspList *L, int n, destr F)
       return FAIL;
     }
   Loc = nsp_list_get_cell_pointer(L, n);
-  remove_cell_from_list(L, Loc);
+  nsp_remove_cell_from_list(L, Loc);
   L->icurrent = n-1;
   L->current = Loc->prev;
   F(&Loc);
@@ -1138,7 +1138,7 @@ NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
   if ( (Loc = nsp_get_cell_in_sorted_list(L, str, &prev)) != NULLCELL )
     {
       Ret = Loc->O;
-      remove_cell_from_list(L, Loc);
+      nsp_remove_cell_from_list(L, Loc);
       L->current = Loc->prev;
       nsp_cell_only_destroy(&Loc);
       return Ret;
