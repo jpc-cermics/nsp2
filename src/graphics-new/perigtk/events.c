@@ -210,24 +210,21 @@ static gint timeout_tk (void *v)
 void xclick_any(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1, int *iwin, 
 		int iflag,int getmotion,int getrelease,int getkey,int lstr)
 {
-  int change_cursor = TRUE;
-  SciClick(Xgc,ibutton,imask,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr);
 }
 
 void xclick(BCG * Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1,int iflag,int motion,
 	    int release,int key, int istr)
 {
-  int change_cursor = TRUE;
   int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,imask,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1, yy1,&win,iflag,motion,release,key,str,istr);
 }
 
 void xgetmouse(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int usequeue,
 	       int motion,int release,int key)
 {
-  int change_cursor = TRUE;
   int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,imask,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
+  SciClick(Xgc,ibutton,imask,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0);
 }
 
 
@@ -273,13 +270,13 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
  */
 
 static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
-		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
+		     int getrelease,int getkey, char *str, int lstr)
 {
 #ifdef WITH_TK
   guint timer_tk;
 #endif 
   GTK_locator_info rec_info ; 
-  int win=*iwin,wincount=0,win1;
+  int win=*iwin,wincount=0,win1, change_cursor;
   if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
     *ibutton = -100; *imask=0;     return;
   }
@@ -295,6 +292,11 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
       win = Xgc->CurWindow;
     }
   win1= win; /* CheckClickQueue change its first argument if -1 */
+
+  /* decode iflag */
+  change_cursor = iflag & (1<<2); 
+  iflag = iflag & 1; 
+
   /* check for already stored event */
   if ( iflag == TRUE )
     { 

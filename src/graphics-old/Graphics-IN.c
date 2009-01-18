@@ -2869,10 +2869,11 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   NspMatrix *rep[5];
   double drep[4];
-
+  int cursor = TRUE;
   nsp_option opts[] ={
-    { "clearq",s_bool,NULLOBJ,-1},
-    { "getmotion",s_bool,NULLOBJ,-1},
+    { "clearq",s_bool,NULLOBJ,-1}, /* clear mouse queue before waiting for event */
+    { "cursor",s_bool,NULLOBJ,-1}, /* change the cursor pixmap */
+    { "getmotion",s_bool,NULLOBJ,-1}, 
     { "getrelease",s_bool,NULLOBJ,-1},
     { "getkey",s_bool,NULLOBJ,-1},
     { "win",s_int,NULLOBJ,-1},
@@ -2884,9 +2885,10 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(0,5);
   CheckLhs(1,5);
   
-  if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&motion,&release,&key,&win,&winall) == FAIL) return RET_BUG;
-
-  if ( winall != TRUE &&  opts[4].obj != NULLOBJ) 
+  if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&cursor,&motion,&release,&key,&win,&winall) == FAIL)
+    return RET_BUG;
+  
+  if ( winall != TRUE &&  opts[5].obj != NULLOBJ) 
     {
       /* win=window_id was given */
       win = Max(win,0);
@@ -2908,12 +2910,21 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
       win = Xgc->CurWindow;
     }
 
+  /* flags coded in iflag 
+   */
+
   iflag = (clearq == TRUE) ? FALSE : TRUE;
+  if ( cursor == TRUE ) iflag = iflag | (1 <<2);
+
+  /*
+   *  printf("cursor = %s",(iflag & (1<<2)) ? "true" : "false");
+   *  printf("iflag = %s",(iflag & 1) ? "true" : "false");
+   */
 
   switch (lhs) {
   case 4 : winall=TRUE;  break; 
   case 5 : 
-    if ( opts[4].obj == NULLOBJ) winall=TRUE;
+    if ( opts[5].obj == NULLOBJ) winall=TRUE;
     istr=buf_len;  /* also get menu */
     break;
   }
@@ -5033,6 +5044,7 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   int clearq=FALSE,motion=TRUE,release=FALSE,key=FALSE, iflag;
   int button,mask;
+  int cursor = TRUE;
   double drep[2];
 #ifdef NEW_GRAPHICS
   NspGraphic *G; 
@@ -5041,6 +5053,7 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
 
   nsp_option opts[] ={
     { "clearq",s_bool,NULLOBJ,-1},
+    { "cursor",s_bool,NULLOBJ,-1}, /* change the cursor pixmap */
     { "getkey",s_bool,NULLOBJ,-1},
     { "getmotion",s_bool,NULLOBJ,-1},
     { "getrelease",s_bool,NULLOBJ,-1},
@@ -5048,9 +5061,12 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   
   int_types T[] = {new_opts, t_end} ;
   
-  if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&key,&motion,&release) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&cursor,&key,&motion,&release) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
+
   iflag = (clearq == TRUE) ? FALSE : TRUE;
+  if ( cursor == TRUE ) iflag = iflag | (1 <<2);
+
 #ifdef NEW_GRAPHICS 
   Xgc->graphic_engine->xgetmouse(Xgc,"xv",&button,&mask,&ix,&iy,iflag,motion,release,key);
   G= nsp_get_point_axes(Xgc,ix,iy,drep);
@@ -6147,6 +6163,23 @@ static int int_new_graphics(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern void nsp_set_cursor(  BCG *Xgc,int id);
+
+static int int_xcursor(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  int id=-1;
+  CheckStdRhs(0,1);
+  if ( rhs == 1 ) 
+    {
+      if (GetScalarInt(stack,1,&id) == FAIL) return RET_BUG;
+    }
+  Xgc=nsp_check_graphic_context();
+  nsp_set_cursor(Xgc,id);
+  return 0;
+}
+
+
 
 
 
@@ -6251,6 +6284,7 @@ static OpTab Graphics_func[]={
   {"scicos_lock_draw",int_lock_draw},
   {"xtest_graphic", int_xtest},
   {"new_graphics",int_new_graphics},
+  {"xcursor", int_xcursor},
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop",int_gtk_loop},
 #endif 

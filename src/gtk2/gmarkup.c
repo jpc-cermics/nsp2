@@ -436,17 +436,9 @@ static NspMethods *gmarkup_node_get_methods(void) { return gmarkup_node_methods;
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_gmarkup_node_get_op(void *self,const char *attr)
+static NspObject *_wrap_gmarkup_node_get_name(void *self,const char *attr)
 {
-  int ret = 0;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_gmarkup_node_set_op(void *self, char *attr, NspObject *O)
-{
-  int op;
-  if ( IntScalar(O,&op) == FAIL) return FAIL;
-  return OK;
+  return nsp_new_string_obj(NVOID,((NspGMarkupNode *) self)->name,-1);
 }
 
 static NspObject *_wrap_gmarkup_node_get_arity(void *self,const char *attr)
@@ -504,7 +496,7 @@ static int _wrap_gmarkup_node_set_children(void *Hv,const char *attr, NspObject 
 
 
 static AttrTab gmarkup_node_attrs[] = {
-  { "op", (attr_get_function *)_wrap_gmarkup_node_get_op, (attr_set_function *)_wrap_gmarkup_node_set_op,
+  { "name", (attr_get_function *)_wrap_gmarkup_node_get_name, (attr_set_function *) NULL,
     (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
   { "arity", (attr_get_function *)_wrap_gmarkup_node_get_arity, (attr_set_function *)_wrap_gmarkup_node_set_arity,
     (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
@@ -598,6 +590,7 @@ static void xml_text (GMarkupParseContext *context, const gchar *text,
       Sciprintf("Warning text_len != strlen(text)_n");
     }
   if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
+  printf("Entering a xml_text %s\n",text);
   if ( dom_context->current_root != NULL)
     {
       if (  nsp_list_end_insert(dom_context->current_root->children,Obj) == FAIL) 
@@ -610,6 +603,7 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
 {
   NspObject *Obj;
   GMarkupDomContext *dom_context = user_data;
+  printf("Entering a passthrough %s\n",text);
   if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
   if ( dom_context->current_root != NULL)
     {

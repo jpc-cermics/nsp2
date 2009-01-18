@@ -2075,3 +2075,25 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #include "perigtk/peridraw_gl.c"
 #endif /* PERIGL */
 
+
+
+#ifdef PERIGTK
+/* for all drivers */
+
+void nsp_set_cursor(BCG *Xgc,int id)
+{
+  GdkCursor *cursor;
+  if ( id == -1 ) 
+    {
+      gdk_window_set_cursor (Xgc->private->drawing->window,
+			     Xgc->private->ccursor);
+    }
+  else 
+    {
+      cursor = gdk_cursor_new(id);
+      if ( cursor != NULL) 
+	gdk_window_set_cursor (Xgc->private->drawing->window,
+			       cursor);
+    }
+}
+#endif 
