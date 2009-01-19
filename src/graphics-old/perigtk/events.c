@@ -548,6 +548,7 @@ static void delete_window(BCG *dd,int intnum)
   menu_entry_delete(winxgc->private->menu_entries);
   if (winxgc->private->gcursor != NULL) gdk_cursor_unref (winxgc->private->gcursor);
   if (winxgc->private->ccursor != NULL)gdk_cursor_unref (winxgc->private->ccursor);
+  if (winxgc->private->extra_cursor != NULL)gdk_cursor_unref (winxgc->private->extra_cursor);
   if (winxgc->private->stdgc != NULL)g_object_unref(winxgc->private->stdgc);
   if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
   nsp_fonts_finalize(winxgc);

@@ -97,6 +97,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   private->stdgc=NULL;
   private->gcursor=NULL;      
   private->ccursor=NULL;      
+  private->extra_cursor=NULL;
   private->font=NULL;
   private->resize = 0; /* do not remove !! */
   private->in_expose= FALSE;

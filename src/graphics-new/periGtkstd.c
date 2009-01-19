@@ -1528,6 +1528,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
+  dd->private->extra_cursor = NULL;
   gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
   /* set window bg */
   /* note that dd->private->gcol_bg does not exists at that point */
@@ -2085,6 +2086,9 @@ void nsp_set_cursor(BCG *Xgc,int id)
   GdkCursor *cursor;
   if ( id == -1 ) 
     {
+      if (Xgc->private->extra_cursor != NULL)
+	gdk_cursor_unref (Xgc->private->extra_cursor);
+      Xgc->private->extra_cursor = NULL;
       gdk_window_set_cursor (Xgc->private->drawing->window,
 			     Xgc->private->ccursor);
     }
@@ -2092,8 +2096,13 @@ void nsp_set_cursor(BCG *Xgc,int id)
     {
       cursor = gdk_cursor_new(id);
       if ( cursor != NULL) 
-	gdk_window_set_cursor (Xgc->private->drawing->window,
-			       cursor);
+	{
+	  if (Xgc->private->extra_cursor != NULL)
+	    gdk_cursor_unref (Xgc->private->extra_cursor);
+	  Xgc->private->extra_cursor = cursor;
+	  gdk_window_set_cursor (Xgc->private->drawing->window,
+				 cursor);
+	}
     }
 }
 #endif 
