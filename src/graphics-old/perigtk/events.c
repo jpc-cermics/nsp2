@@ -386,7 +386,15 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 #ifdef PERIGTK
 void nsp_pause(int sec_time,int events)
 {
-  xpause(sec_time,events);
+  if ( sec_time == 0 )
+    {
+      /* flush events only */
+      while ( gtk_events_pending()) gtk_main_iteration(); 
+    }
+  else
+    {
+      xpause(sec_time,events);
+    }
 }
 #endif 
 

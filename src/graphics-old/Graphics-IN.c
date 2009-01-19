@@ -6180,9 +6180,6 @@ static int int_xcursor(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-
-
 /*************************************************************
  * The Interface for graphic functions 
  *************************************************************/
