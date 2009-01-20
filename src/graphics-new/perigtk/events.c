@@ -112,10 +112,10 @@ static gboolean locator_button_motion(GtkWidget *widget,
 				      BCG *gc)
 {
   gint x,y; 
-  GdkModifierType state;
   if (event->is_hint)
     { 
-      gdk_window_get_pointer (event->window, &x, &y, &state);
+      x= event->x;y=event->y;
+      gdk_event_request_motions(event);
     }
   else 
     {
@@ -137,7 +137,9 @@ static gboolean locator_button_motion(GtkWidget *widget,
     }
   else 
     {
-      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = x;  nsp_event_info.y = y;
+      nsp_event_info.ok =1 ;  
+      nsp_event_info.win=  gc->CurWindow; 
+      nsp_event_info.x = x;  nsp_event_info.y = y;
       nsp_event_info.button = -1;
       nsp_event_info.mask = event->state;
       gtk_main_quit();
@@ -615,4 +617,28 @@ static void nsp_event_pause(int number)
 	  break;
 	}
     }
+}
+
+
+
+
+static void  
+target_drag_data_received  (GtkWidget          *widget,
+			    GdkDragContext     *context,
+			    gint                x,
+			    gint                y,
+			    GtkSelectionData   *data,
+			    guint               info,
+			    guint               time)
+{
+  Sciprintf("drop received\n");
+  /*
+  if ((data->length >= 0) && (data->format == 8))
+    {
+      g_print ("Received \"%s\" in trashcan\n", (gchar *)data->data);
+      gtk_drag_finish (context, TRUE, FALSE, time);
+      return;
+    }
+  gtk_drag_finish (context, FALSE, FALSE, time);
+  */
 }

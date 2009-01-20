@@ -2106,3 +2106,5 @@ void nsp_set_cursor(BCG *Xgc,int id)
     }
 }
 #endif 
+
+

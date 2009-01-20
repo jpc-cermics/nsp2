@@ -58103,7 +58103,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
         return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
-
+  
   if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG; 
   gtk_drag_dest_set(GTK_WIDGET(self->obj), flags, targets, n_targets,  actions);
   g_free(targets);

@@ -259,6 +259,14 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
  *        because I do not use the paint method.
  */
 
+
+static GtkTargetEntry target_table[] = {
+  { "STRING",     1, 0  },
+  { "text/plain", 1, 0  }
+};
+
+static guint n_targets = sizeof(target_table) / sizeof(target_table[0]);
+
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -406,6 +414,12 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
 
+  g_signal_connect (GTK_OBJECT(dd->private->window), "drag_data_received",
+		    G_CALLBACK (target_drag_data_received), NULL);
+
+  gtk_drag_dest_set (dd->private->window,GTK_DEST_DEFAULT_ALL,
+		     target_table, n_targets ,GDK_ACTION_COPY);
+
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		   G_CALLBACK(locator_button_press), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
@@ -418,10 +432,10 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
 			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_MASK
 			| GDK_POINTER_MOTION_HINT_MASK
+			| GDK_POINTER_MOTION_MASK
 			| GDK_LEAVE_NOTIFY_MASK );
-
+  
   /* private->drawingarea properties */
   /* min size of the graphic window */
   gtk_widget_set_size_request(GTK_WIDGET (dd->private->drawing), iw, ih);
