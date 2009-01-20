@@ -35,6 +35,7 @@
 
 /* #define NEW_GRAPHICS */
 
+
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
 #include <nsp/figure.h> 

@@ -1486,7 +1486,7 @@ NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
 	      int h = wh*A->obj->wrect->R[3];
 	      int x = ww*A->obj->wrect->R[0];
 	      int y = ww*A->obj->wrect->R[1];
-	      if ( px >= x && px <= x+w && py >= y && py <= y +h)
+	      if (cloc->next==NULL || ( px >= x && px <= x+w && py >= y && py <= y +h))
 		{
 		  gr = G;
 		  set_scale(Xgc,"fTtfft",A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);

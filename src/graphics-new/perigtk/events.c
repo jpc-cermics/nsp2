@@ -357,7 +357,8 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   *ibutton = nsp_event_info.button;
   *imask = nsp_event_info.mask;
   *iwin = nsp_event_info.win;
-  
+
+  /* Sciprintf("xfound %d %d %d\n",nsp_event_info.x,nsp_event_info.y,nsp_event_info.button);   */
   /* remove timer if it was set by us */ 
   if ( nsp_event_info.getmen == TRUE )  g_source_remove (nsp_event_info.timer);
 
@@ -365,6 +366,9 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   nsp_event_info = rec_info ; 
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
+  
+
+
 }
 
 
