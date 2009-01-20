@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2001-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -125,8 +125,13 @@ int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
    *      this is left for a futur release 
    *      gives a pb in scicos to be solved 
    */
-  if ( ev->motion == 1 || ev->release == 1 ) return 0; 
 
+  /* Sciprintf("Put event in the queue [%d,%d,%d]\n",ev->x,ev->y,ev->ibutton); */
+  if ( ev->motion == 1 || ev->release == 1 ) 
+    {
+      /* Sciprintf("\tignored\n");*/
+      return 0; 
+    }
   if ( q->in == q->out -1 )  
     {
       /* the queue is full */
