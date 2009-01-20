@@ -40,7 +40,7 @@ function dnd_drag_data_received(w, context, x, y, data, info, time)
 endfunction 
 
 function demo_dnd() 
-  targets = list(list('text/plain', 0, -1))
+  targets = list(list('text/plain',GTK.TARGET_SAME_APP, 0))
   win = gtkwindow_new() 
   win.connect["delete_event", demo_delete];
   win.set_title["Drag -N- Drop"];
