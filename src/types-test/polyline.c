@@ -868,15 +868,19 @@ Init portion
 
 /* inserted verbatim at the end */
 
+
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   int xmark[2];
   int ccolor=-1,cmark=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
-  NspMatrix *x = P->obj->x;
-  NspMatrix *y = P->obj->y;
   if ( P->obj->x->mn != 0 && ((NspGraphic *) P)->obj->hidden == FALSE )
     {
+      int *xm=NULL,*ym=NULL;
+      xm= graphic_alloc(6,P->obj->x->mn,sizeof(int));
+      ym= graphic_alloc(7,P->obj->x->mn,sizeof(int));
+      if ( xm  ==  0 || ym  ==  0 ) return;
+      scale_f2i(Xgc,P->obj->x->R,P->obj->y->R,xm,ym,P->obj->x->mn);
       /* fill polyline */
       if ( P->obj->fill_color != -2 )
 	{
@@ -887,7 +891,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
 	    }
 	  /* fill */
-	  Xgc->graphic_engine->scale->fillpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
+	  Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
 	  /* reset color */
 	  if ( P->obj->fill_color != -1 ) 
 	    Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
@@ -906,7 +910,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	      ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
 	      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
 	    }
-	  Xgc->graphic_engine->scale->drawpolyline(Xgc,x->R,y->R,P->obj->x->mn,P->obj->close);
+	  Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
 	  if ( P->obj->thickness != -1 ) 
 	    Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
 	  if ( P->obj->color != -1 )
@@ -922,7 +926,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	      cmark=xmark[0];
 	      Xgc->graphic_engine->scale->xset_mark(Xgc, P->obj->mark,xmark[1]);
 	    }
-	  Xgc->graphic_engine->scale->drawpolymark(Xgc,x->R,y->R,P->obj->x->mn);
+	  Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
 	  if ( P->obj->mark != -1 ) 
 	    Xgc->graphic_engine->scale->xset_mark(Xgc,cmark,xmark[1]);
 	}
@@ -1005,4 +1009,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1009 "polyline.c"
+#line 1013 "polyline.c"
