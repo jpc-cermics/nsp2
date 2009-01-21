@@ -113,9 +113,15 @@ static gboolean locator_button_motion(GtkWidget *widget,
 {
   gint x,y; 
   if (event->is_hint)
-    { 
+    {
+#ifdef XXX
+	  /* should check the gdk version to use this */
       x= event->x;y=event->y;
       gdk_event_request_motions(event);
+#else
+	  GdkModifierType state;
+      gdk_window_get_pointer (event->window, &x, &y, &state);
+#endif
     }
   else 
     {
