@@ -24,6 +24,7 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
+#include <gdk/gdk.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
@@ -394,6 +395,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  nsp_set_cursor(Xgc,GDK_TOP_LEFT_CORNER );
   Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
   x=x0;y=y0;
   ibutton=-1;
@@ -403,9 +405,11 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
       Xgc->graphic_engine->clearwindow(Xgc);    
       rect2d_f2i(Xgc,rect,Xgc->zrect,1);
       Xgc->graphic_engine->force_redraw(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,TRUE,FALSE);
       x=xl;y=yl;
     }
+  nsp_set_cursor(Xgc,-1);
   /* Back to the default driver which must be Rec and redraw the recorded
    * graphics with the new scales 
    */

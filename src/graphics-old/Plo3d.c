@@ -25,6 +25,7 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <math.h>
 #include <stdio.h>
+#include <gdk/gdk.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
@@ -1637,6 +1638,7 @@ void I3dRotation(BCG *Xgc)
     }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  nsp_set_cursor(Xgc,GDK_EXCHANGE);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   theta0 = theta = Xgc->scales->theta ;
   alpha0 = alpha = Xgc->scales->alpha ;
@@ -1673,6 +1675,7 @@ void I3dRotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
+  nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
