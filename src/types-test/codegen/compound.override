@@ -20,7 +20,7 @@ static NspList *nsp_compound_children(NspGraphic *Obj);
 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
-extern int nsp_list_check_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
@@ -127,9 +127,9 @@ static int _wrap_compound_set_obj_children(void *self,NspObject *val)
       nsp_list_destroy(((NspCompound *) self)->obj->children);
     }
   ((NspCompound *) self)->obj->children =  (NspList *) val;
-  nsp_compound_compute_inside_bounds(NULL,self);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+  nsp_compound_compute_inside_bounds(NULL,self);
   return OK;
 }
 
@@ -145,9 +145,9 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
       nsp_list_destroy(((NspCompound *) self)->obj->children);
     }
   ((NspCompound *) self)->obj->children= children;
-  nsp_compound_compute_inside_bounds(NULL,self);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+  nsp_compound_compute_inside_bounds(NULL,self);
   return OK;
 }
 

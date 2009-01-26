@@ -4,13 +4,14 @@
 // Copyright Enpc 
 
 path=getenv('SCI')+'/demos/graphics/fec/';
-exec('SCI/demos/graphics/fec/macros.sci')
+exec(path+'macros.sci')
 amdbaR(path+'MESH')
 meshvisu()
 xclear()
 xset("use color",1)
 emc2C(1,6,path+'MESH.VAL')
-halt()
+//halt()
+xclick()
 xclear()
 xset("use color",1)
 emc2C(1,6,path+'MESH.VAL',[-2,-2,2,2])

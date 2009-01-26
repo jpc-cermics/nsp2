@@ -5,7 +5,7 @@
   (parent "Graphic")
   (c-name "Compound")
   (fields
-   '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the axe. 
+   '("NspMatrix*" "bounds" "hidden" "{0}" "4");; bounds of objects contained in the axe. 
    '("NspList*" "children") ;; list of graphic object in the axe 
    )
   (gtype-id "Compound")

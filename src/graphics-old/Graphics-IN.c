@@ -33,7 +33,8 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS  */
+
 
 
 #ifdef NEW_GRAPHICS 
@@ -447,7 +448,7 @@ static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength(NspFname(stack),1,M1,6);
+      CheckLength_(NspFname(stack),1,M1,6,FAIL);
       *val = M1->R;
       break;
     case 6 :
@@ -1245,6 +1246,8 @@ int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, dou
   NspPolyhedron *pol;
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
   if ( objs3d == NULL) return FAIL;
+  objs3d->obj->alpha=*alpha;
+  objs3d->obj->theta=*teta;
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_polyhedron_create_from_triplet("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -1261,6 +1264,8 @@ int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int
   NspPolyhedron *pol;
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
   if ( objs3d == NULL) return FAIL;
+  objs3d->obj->alpha=*alpha;
+  objs3d->obj->theta=*teta;
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_polyhedron_create_from_facets("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -1298,6 +1303,8 @@ int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, do
   NspSPolyhedron *pol;
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
   if ( objs3d == NULL) return FAIL;
+  objs3d->obj->alpha=*alpha;
+  objs3d->obj->theta=*teta;
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -1868,14 +1875,16 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
 
   if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
-
+  
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
+#ifdef NEW_GRAPHICS 
+#else 
   nsp_draw_matrix_1(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
 		    (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
 		    (Mzminmax == NULL) ? NULL : Mzminmax->R);
+#endif 
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
-
   return 0;
 } 
 
@@ -1922,7 +1931,7 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
       Scierror("%s: second argument should be of length 4\n",NspFname(stack));
       return RET_BUG;
     }
-
+  
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
@@ -2618,7 +2627,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength(NspFname(stack),1,M1,4);
+      CheckLength_(NspFname(stack),1,M1,4,FAIL);
       *val = M1->R;
       break;
     case 4 :
@@ -3736,7 +3745,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return RET_BUG;
-
+  
   if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( opts[3].obj == NULLOBJ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
     
@@ -3745,7 +3754,11 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
       /* remove line, we need a way to fix the mark color */
       color=-2;
     }
-  
+  else
+    {
+      /* remove mark */
+      mark=-2;
+    }
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
 

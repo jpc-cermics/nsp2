@@ -1367,21 +1367,18 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	}
       val_mean = val_mean / m;
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+
       if ( display_mode == FLAT  )
 	{
-	  color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+	  color = Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
-	  if ( Q->mesh )
-	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
 	}
       else
 	{
 	  for (i = 0 ; i < m ; i++) 
-	    colors[i] = -Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	    colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
 	  /* colors are given by cvect of size (*p) times (*q) */
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
-	  if ( Q->mesh )
-	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
 	}
     }
 #endif
@@ -1678,4 +1675,4 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-#line 1682 "spolyhedron.c"
+#line 1679 "spolyhedron.c"

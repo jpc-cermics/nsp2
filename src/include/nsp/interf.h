@@ -384,6 +384,12 @@ extern int DimArg(NspObject *O, int *dim);
    { Scierror("%s: arguments %d should be of length %d\n",fname,pos1,value); \
      return RET_BUG;} 
 
+#define CheckLength_(fname,pos1,o1,value,ret) if ( o1->mn != value )	\
+   { Scierror("%s: arguments %d should be of length %d\n",fname,pos1,value); \
+     return ret;} 
+
+
+
 /**
  * CheckScalar:
  * @fname: name of the interfaced function (can use NspFname(stack))

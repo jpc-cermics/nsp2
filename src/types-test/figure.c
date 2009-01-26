@@ -1225,7 +1225,7 @@ void nsp_list_unlink_figure(NspList *L, NspFigure *F)
     }
 }
 
-int nsp_list_check_figure(NspList *L, NspFigure *F)
+int nsp_list_check_figure(NspList *L, nsp_figure *F)
 {
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -1237,7 +1237,7 @@ int nsp_list_check_figure(NspList *L, NspFigure *F)
 	      Scierror("Error: List should only contain graphic objects\n");
 	      return FAIL;
 	    }
-	  if ( ((NspGraphic *) cloc->O)->obj->Fig != NULL && ((NspGraphic *) cloc->O)->obj->Fig != F) 
+	  if ( ((NspGraphic *) cloc->O)->obj->Fig != NULL && ((NspGraphic *) cloc->O)->obj->Fig != F ) 
 	    {
 	      Scierror("Error: A graphic object already belongs to an other figure\n");
 	      return FAIL;
@@ -1267,7 +1267,7 @@ static void nsp_figure_children_unlink_figure(NspFigure *F)
 
 static int nsp_figure_check_children(NspFigure *F,NspList *L)
 {
-  return  nsp_list_check_figure(F->obj->children,F);
+  return  nsp_list_check_figure(F->obj->children,F->obj);
 }
 
 
