@@ -33,9 +33,8 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS  */
 
-
+/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -5879,6 +5878,7 @@ int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
 
 static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
 {
+  int mark=-2,mark_size=-2,thickness=1,fill_color=color;
   NspPolyline *pl;
   NspMatrix *Mx,*My;
   NspObject *gobj;
@@ -5891,7 +5891,7 @@ static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
   if ((My = nsp_matrix_create("y",'r',6,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
   memcpy(My->R,y,npt*sizeof(double));
-  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,-1,-1,color,1,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL) return FAIL;
