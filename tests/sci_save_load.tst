@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 name = file('join',[getenv('NSP_TMPDIR'),'test.bin']);
 
 // matrix 
@@ -44,9 +45,7 @@ end
 
 //------------------------------
 // sparse matrices 
-
 // test the conversion back and forward to matlab triplet.
-
 
 for i=1:10
   m=50;n=70;
