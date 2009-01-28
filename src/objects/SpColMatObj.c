@@ -646,7 +646,7 @@ static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(4,4);
   if ((Jc = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
   if ((Ir = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Pr = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((Pr = GetMat(stack,3)) == NULLMAT) return RET_BUG;
   if ((Mn = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
   if ( ((int)Mn->R[0]) < 0 || ((int) Mn->R[1] < 0))
     {
