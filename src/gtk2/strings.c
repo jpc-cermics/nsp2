@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -15,6 +15,9 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * utilities for string matrices using the glib 
+ *
  */
 
 #include <math.h>
@@ -23,6 +26,7 @@
 #include <string.h>
 
 #include <gtk/gtk.h> 
+#include <gdk/gdk.h> 
 #include "nsp/object.h"
 
 /*
@@ -189,7 +193,67 @@ NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A)
   return(Loc);
 }
 
+
+/**
+ * nsp_mat_to_base64string:
+ * @A: a #NspMatrix
+ * 
+ * allocate a #nsp_string filled with the base64 code 
+ * of the data contained in A;
+ * 
+ * Returns: a new #nsp_string
+ **/
+
+nsp_string nsp_mat_to_base64string(NspMatrix *A, int little_endian ) 
+{
+  /* */
+  nsp_string out;
+  const guchar *data = (const guchar *) A->R;
+  gint state = 0, save = 0;
+  int len, outlen;
+  len = A->mn*((A->rc_type == 'c') + 1)*sizeof(double);
+  out = new_nsp_string_n(len * 4 / 3 + 4);
+  if ( out == NULL ) return NULL;
+  outlen = g_base64_encode_step (data, len, FALSE, out, &state, &save);
+  outlen += g_base64_encode_close (FALSE, out + outlen, &state, &save);
+  out[outlen] = '\0';
+  return out;
+}
+
+/**
+ * nsp_base64string_to_doubles:
+ * @text: a #nsp_string 
+ * @out_len: an int pointer 
+ * 
+ * Decode the base 64 string into an array of doubles.
+ * The array of double is allocated.
+ * 
+ * Returns: an allocated and filled array of doubles.
+ **/
+
+double *nsp_base64string_to_doubles(nsp_string text, int *out_len) 
+{
+  guchar *ret;
+  gint input_length, state = 0;
+  guint save = 0;
+  input_length = strlen (text);
   
+  ret = malloc((input_length * 3 / 4)*sizeof(char));
+  *out_len = g_base64_decode_step (text, input_length, ret, &state, &save);
+  if ( (*out_len % 4 ) != 0 ) 
+    {
+      Scierror("The base64 string cannot be decoded to an array of double\n");
+      return NULL;
+    }
+  return (double *) ret; 
+}
 
 
-
+void nsp_test_base64(NspMatrix *A)
+{
+  nsp_string str;
+  int outlen;
+  double *d;
+  str = nsp_mat_to_base64string(A,TRUE);
+  d = nsp_base64string_to_doubles(str,&outlen);
+}
