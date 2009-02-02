@@ -2069,12 +2069,13 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	    {
 	      if (*q == 0)
 		{
-		  fflush (fp);
+		  fflush ((FILE *) target);
 		  return (retval);
 		}
 	      else
 		{
-		  putc (*q, fp);
+		  (*printer) (target, "%c",*q);
+		  /* putc (*q, fp);*/
 		  q++;
 		  retval++;
 		}
@@ -2114,7 +2115,8 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	{
 	  if (fp)
 	    {
-	      putc (*q, fp);
+	      (*printer) (target, "%c",*q);
+	      /* putc (*q, fp);*/
 	      retval++;
 	    }
 	  else

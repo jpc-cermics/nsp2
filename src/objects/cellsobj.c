@@ -585,12 +585,50 @@ static NspMethods *cells_get_methods(void) { return cells_methods;};
 
 int int_cells_create(Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *A;
   NspCells *C;
   int  m1,n1,i;
-  CheckRhs(2,1000);
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
-  if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
-  if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
+  if ( IsMatObj(stack,1) ) 
+    {
+      if ( rhs <= 1 ) 
+	{
+	  if ((A = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+	  if ( A->mn == 1) 
+	    {
+	      m1 = n1 =  A->R[0];
+	    }
+	  else if ( A->mn == 2) 
+	    {
+	      m1 = A->R[0];
+	      n1 = A->R[1];
+	    }
+	  else 
+	    {
+	      Scierror("Error: first argument of %s should be of length 1 or 2\n",
+		       NspFname(stack));
+	      return RET_BUG;
+	    }
+	}
+      else
+	{
+	  if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
+	  if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
+	}
+    }
+  else if ( IsCellsObj(stack,1))
+    {
+      NspCells *C1;
+      if ( (C1= GetCells(stack,1))== NULLCELLS ) return RET_BUG;
+      m1= C1->m;
+      n1= C1->n;
+    }
+  else
+    {
+      Scierror("Error: argument for cell creation should be a real or a cell\n");
+      return RET_BUG;
+    }
   if ( (C =nsp_cells_create(NVOID,m1,n1)) == NULLCELLS ) return RET_BUG;
   if ( rhs - 2 > m1*n1 ) 
     {

@@ -114,7 +114,7 @@ int do_printf_stdout(FILE *ignore,const char *fmt, ...)
   int n;
   va_list ap;
   va_start(ap,fmt);
-  n= DefScivprintf(fmt, ap );
+  n= Scivprintf(fmt, ap );
   va_end(ap);
   return n;
 }
