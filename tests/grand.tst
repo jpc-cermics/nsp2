@@ -235,6 +235,8 @@ M=cdfnor("Mean",1*ones(size(v)),P,Q,v);
 if max(abs(M)) > 1.e-14 then pause,end
 St=cdfnor("Std",P,Q,v,0*ones(size(v)));
 // result can be false near P=0.5
+I=find( abs(v) <= 0.1);
+St(I)=[];
 if max(abs(St-1)) > 0.3 then pause,end
 
 // test de cdfgam

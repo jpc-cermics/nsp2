@@ -144,17 +144,17 @@ A=testmat1(3,50);Ac=testmat1(3+%i,50);
 //Real
 [U,S]=schur(A);
 if Err(triu(S,-1)-S)>%eps then pause,end
-if Err(U*S*U'-A)>1000*%eps then pause,end
+if Err(U*S*U'-A)>2000*%eps then pause,end
 if Err(schur(A)-S) >%eps then pause,end
 
 [U,S]=schur(A,complex=%f);
 if Err(triu(S,-1)-S)>%eps then pause,end
-if Err(U*S*U'-A)>1000*%eps then pause,end
+if Err(U*S*U'-A)>2000*%eps then pause,end
 if Err(schur(A)-S) >%eps then pause,end
 
 [U,S]=schur(A,complex=%t);
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-A)>1000*%eps then pause,end
+if Err(U*S*U'-A)>2000*%eps then pause,end
 //BUGXXXXX if Err(schur(A,complex=%t)-S) >%eps then pause,end
 
 
@@ -168,7 +168,7 @@ if n<>25 then pause,end
 if or(real(spec(S(1:n,1:n)))>=0) then pause,end
 if or(real(spec(S(n+1:$,n+1:$)))<0) then pause,end
 if Err(triu(S,-1)-S)>%eps then pause,end
-if Err(U*S*U'-A)>1000*%eps then pause,end
+if Err(U*S*U'-A)>2000*%eps then pause,end
 
 [U,n]=schur(A,sort='d');S=U'*A*U;
 if n<>0 then pause,end
@@ -182,13 +182,13 @@ if or(real(spec(S(n+1:$,n+1:$)))<0) then pause,end
 //Complex 
 [U,S]=schur(Ac);
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-Ac)>1000*%eps then pause,end
+if Err(U*S*U'-Ac)>2000*%eps then pause,end
 // succesive calls of schur do not give the same ordering !
 // if Err(schur(Ac)-S) >%eps then pause,end
 
 [U,S]=schur(Ac,complex=%t);
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-Ac)>1000*%eps then pause,end
+if Err(U*S*U'-Ac)>2000*%eps then pause,end
 //if Err(schur(Ac)-S) >%eps then pause,end
 
 [U,n]=schur(Ac,sort='c');S=U'*Ac*U;
@@ -201,7 +201,7 @@ if n<>25 then pause,end
 if or(real(spec(S(1:n,1:n)))>=0) then pause,end
 if or(real(spec(S(n+1:$,n+1:$)))<0) then pause,end
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-Ac)>1000*%eps then pause,end
+if Err(U*S*U'-Ac)>2000*%eps then pause,end
 
 [U,n]=schur(Ac,sort='d');S=U'*Ac*U;
 if n<>0 then pause,end
@@ -211,7 +211,7 @@ if or(abs(spec(S(n+1:$,n+1:$)))<1) then pause,end
 if n<>0 then pause,end
 if or(abs(spec(S(n+1:$,n+1:$)))<1) then pause,end
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-Ac)>1000*%eps then pause,end
+if Err(U*S*U'-Ac)>2000*%eps then pause,end
 
 [U,n]=schur(Ac,sort=sel);S=U'*Ac*U;
 if n<>25 then pause,end
@@ -223,4 +223,4 @@ if n<>25 then pause,end
 if or(real(spec(S(1:n,1:n)))>=0) then pause,end
 if or(real(spec(S(n+1:$,n+1:$)))<0) then pause,end
 if Err(triu(S)-S)>%eps then pause,end
-if Err(U*S*U'-Ac)>1000*%eps then pause,end
+if Err(U*S*U'-Ac)>2000*%eps then pause,end

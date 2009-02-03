@@ -23,24 +23,24 @@ if execstr('spec([%i %i;%nan 3])',errcatch=%t)==%t then pause,end
 //---------------
 //Real Case
 //Unsymetric
-if Checktestmat1(3,5)>200*%eps then pause,end
+if Checktestmat1(3,5)>300*%eps then pause,end
 [S,U]=spec(testmat1(3,5));
-if Err(U*diag(S)*U'-testmat1(3,5))>200*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat1(3,5))>300*%eps then pause,end 
 //Symmetric
-if Checktestmat2(3,5)>200*%eps then pause,end
+if Checktestmat2(3,5)>300*%eps then pause,end
 [S,U]=spec(testmat2(3,5));
-if Err(U*diag(S)*U'-testmat2(3,5))>200*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat2(3,5))>300*%eps then pause,end 
 
 //Complex Case
 //Unsymetric
-if Checktestmat1(3+2*%i,5)>200*%eps then pause,end
+if Checktestmat1(3+2*%i,5)>300*%eps then pause,end
 [S,U]=spec(testmat1(3+2*%i,5));
-if Err(U*diag(S)*U'-testmat1(3+2*%i,5))>200*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat1(3+2*%i,5))>300*%eps then pause,end 
 
 //Symmetric
-if Checktestmat2(3+2*%i,5)>200*%eps then pause,end
+if Checktestmat2(3+2*%i,5)>300*%eps then pause,end
 [S,U]=spec(testmat2(3+2*%i,5));
-if Err(U*diag(S)*U'-testmat2(3+2*%i,5))>200*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat2(3+2*%i,5))>300*%eps then pause,end 
 
 //Large dimension
 //---------------
@@ -48,12 +48,12 @@ if Err(U*diag(S)*U'-testmat2(3+2*%i,5))>200*%eps then pause,end
 //Unsymetric
 if Checktestmat1(3,50)>1000*%eps then pause,end
 [S,U]=spec(testmat1(3,50));
-if Err(U*diag(S)*U'-testmat1(3,50))>3000*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat1(3,50))>4000*%eps then pause,end 
 
 //Symmetric
 if Checktestmat2(3,50)>1000*%eps then pause,end
 [S,U]=spec(testmat2(3,50));
-if Err(U*diag(S)*U'-testmat2(3,50))>10000*%eps then pause,end 
+if Err(U*diag(S)*U'-testmat2(3,50))>20000*%eps then pause,end 
 
 //Complex Case
 //Unsymetric
