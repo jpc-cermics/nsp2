@@ -1434,7 +1434,7 @@ static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double 
     case 'k': 
     case 'd': 
       nsp_ps_header(file,bbox);
-      FPRINTF((file,geom));
+      FPRINTF((file,"%s",geom));
       break;
     default: 
       /* this is just for the no header case */
