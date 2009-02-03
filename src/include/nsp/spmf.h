@@ -7,7 +7,10 @@ typedef double NTYPE;
 #define PIx2 6.283185307179586476925286        /* 2*pi */
 #define HF_LG_PIx2  0.918938533204672741780329736406    /* 0.5*log(2*pi) */
 
-#define LOG_ZERO -1e1000   /* to get -inf in double (was -1e-100 in the original code) */
+/* #define LOG_ZERO -1e1000 */  /* to get -inf in double (was -1e-100 in the original code) */
+#define DECLARE_D_0 double _d0=0;
+#define LOG_ZERO (-(1/_d0))   /* to get -inf in double (was -1e-100 in the original code) */
+
 #define D_0 ((give_log) ? LOG_ZERO : 0.0)
 #define D_1 ((give_log) ? 0.0 : 1.0)
 #define DEXP(x)   ((give_log) ? (x) : exp(x))
