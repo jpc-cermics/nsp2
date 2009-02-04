@@ -60,7 +60,7 @@ menu_answer nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons)
  * modeless message with just a close button 
  */  
 
-menu_answer nsp_message_modeless_(char *message)
+menu_answer nsp_message_modeless_(const char *message)
 {
   GtkWidget *dialog, *window=NULL;
 
@@ -69,13 +69,13 @@ menu_answer nsp_message_modeless_(char *message)
 				   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 				   GTK_MESSAGE_INFO,
 				   GTK_BUTTONS_CLOSE,
-				   message);
+				   "%s",message);
   g_signal_connect (dialog, "response",  G_CALLBACK (gtk_widget_destroy),  NULL);
   gtk_widget_show (dialog);
   return menu_ok;
 }
 
-menu_answer nsp_message_(char *message,char **buttons,int n_buttons,int *rep)
+menu_answer nsp_message_(const char *message,char **buttons,int n_buttons,int *rep)
 {
   int i;
   GtkWidget *dialog;

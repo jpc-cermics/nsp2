@@ -32,8 +32,8 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
 
 extern menu_answer nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep);
 extern menu_answer nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons);
-extern menu_answer nsp_message_(char *message,char **buttons,int n_buttons,int *rep);
-extern menu_answer nsp_message_modeless_(char *message);
+extern menu_answer nsp_message_(const char *message,char **buttons,int n_buttons,int *rep);
+extern menu_answer nsp_message_modeless_(const char *message);
 
 
 /* choices */
