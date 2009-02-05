@@ -216,6 +216,7 @@ extern void *mxRealloc(void *ptr, size_t size);
 extern void mxSetPi(mxArray *array_ptr, double *pi);
 
 typedef int mwSize; 
+typedef int mwIndex; 
 
 extern void mxSetN(mxArray *ptr, mwSize n);
 extern void mxSetM(mxArray *ptr, mwSize m);
