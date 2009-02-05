@@ -830,7 +830,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
   int transpose= FALSE;
   int minor;
   int ordering=-1; /* use default ordering */
-  int ll = FALSE ; /* LDL' used by default */		  
+  int ll = TRUE ; /* LL' used by default */		  
   double beta[2]={0,0} ;
   NspSpColMatrix *A,*Res;
   NspCholmod *H=NULL;
