@@ -1659,9 +1659,11 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
   int i=0,rows;
   NspFile *F;
   char *Format;
-  if ( rhs < 2 ) 
-    { Scierror("Error:\tRhs must be >= 2\n",rhs);return RET_BUG;}
   CheckLhs(0,1);
+  if ( rhs>= 1 &&  IsSMatObj(stack,1) )
+    return int_object_printf(stack,rhs,opt,lhs);
+  if ( rhs < 2 ) 
+    { Scierror("Error:\tRhs must be >= 2 when first argument is not a string\n",rhs);return RET_BUG;}
   if ((F = GetSciFile(stack,1)) == NULLSCIFILE) return RET_BUG;
   if ( !IS_OPENED(F->obj->flag))
     {
