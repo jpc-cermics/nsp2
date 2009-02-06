@@ -80,17 +80,59 @@ Sp1=[Sp,Sp];
 A1=sp2m(Sp1);
 if or(A1<>[A,A]) then pause;end
 
+Sp1=[Sp,A];
+A1=sp2m(Sp1);
+if or(A1<>[A,A]) then pause;end
+
+Sp1=[A,Sp];
+A1=sp2m(Sp1);
+if or(A1<>[A,A]) then pause;end
+
+Sp1=[Sp,[]];
+A1=sp2m(Sp1);
+if or(A1<>[A]) then pause;end
+
+Sp1=[[],Sp];
+A1=sp2m(Sp1);
+if or(A1<>[A]) then pause;end
+
 // nsp_spcolmatrix_concatd 
 
 Sp1=[Sp;Sp];
 A1=sp2m(Sp1);
 if or(A1<>[A;A]) then pause;end
 
+Sp1=[Sp;A];
+A1=sp2m(Sp1);
+if or(A1<>[A;A]) then pause;end
+
+Sp1=[A;Sp];
+A1=sp2m(Sp1);
+if or(A1<>[A;A]) then pause;end
+
+Sp1=[Sp;[]];
+A1=sp2m(Sp1);
+if or(A1<>[A]) then pause;end
+
+Sp1=[[];Sp];
+A1=sp2m(Sp1);
+if or(A1<>[A]) then pause;end
+
 // nsp_spcolmatrix_concatdiag 
 
 Sp1=[Sp # Sp];
 A1=sp2m(Sp1);
 if or(A1<>[A # A]) then pause;end
+
+Sp1=[Sp # A];
+A1=sp2m(Sp1);
+if or(A1<>[A # A]) then pause;end
+
+Sp1=[A # Sp];
+A1=sp2m(Sp1);
+if or(A1<>[A # A]) then pause;end
+
+
 
 // nsp_spcolmatrix_insert_elt(A,i,j,B,rb,cb)
 // nsp_spcolmatrix_delete_elt(A,row,col,amin,amax)
