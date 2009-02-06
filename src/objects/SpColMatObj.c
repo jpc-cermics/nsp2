@@ -801,6 +801,142 @@ static int int_spcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
   return int_spcolmatrix_concat_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatdiag);
 }
 
+/* [Sp op Full]
+ *
+ */
+
+static int int_spcolmatrix_concat_sp_m_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
+{
+  NspSpColMatrix *HMat1,*B;
+  NspMatrix *HMat2;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((HMat1 = GetSpCol(stack,1))  == NULLSPCOL) return RET_BUG;
+  if ( HMat1->m ==0 && HMat1->n == 0) 
+    {
+      /* return 2 */
+      if ((B=nsp_spcolmatrix_from_mat(HMat2)) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(B));
+      return 1;
+    }
+  if ((HMat2 = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( HMat2->m == 0 && HMat2->n == 0) 
+    {
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+      return 1;
+    }
+  else
+    {
+      if ((HMat1 = GetSpColCopy(stack,1))  == NULLSPCOL) return RET_BUG;
+      if ((B=nsp_spcolmatrix_from_mat(HMat2)) == NULLSPCOL) return RET_BUG;
+      if ( (*F)(HMat1,B)!= OK) 
+	{
+	  nsp_spcolmatrix_destroy(B);
+	  return RET_BUG;
+	}
+      nsp_spcolmatrix_destroy(B);
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+    }
+  return 1;
+}
+
+static int int_spcolmatrix_concatr_sp_m(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_sp_m_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatr);
+}
+
+/*
+ * Down Concatenation 
+ * Res = [A;B] 
+ * return NULLSPCOLon failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int int_spcolmatrix_concatd_sp_m(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_sp_m_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatd);
+}
+
+/*
+ * Down Concatenation 
+ * Res = [A;B] 
+ * return NULLSPCOLon failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int int_spcolmatrix_concatdiag_sp_m(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_sp_m_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatdiag);
+}
+
+
+/* [Sp op Full]
+ *
+ */
+
+static int int_spcolmatrix_concat_m_sp_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
+{
+  NspSpColMatrix *HMat2,*B;
+  NspMatrix *HMat1;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((HMat1 = GetMat(stack,1))  == NULLMAT ) return RET_BUG;
+  if ( HMat1->m ==0 && HMat1->n == 0) 
+    {
+      /* return 2 */
+      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      return 1;
+    }
+
+  if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
+  if ( HMat2->m == 0 && HMat2->n == 0) 
+    {
+      if ((B=nsp_spcolmatrix_from_mat(HMat1)) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(B));
+      return 1;
+    }
+  else
+    {
+      if ((B=nsp_spcolmatrix_from_mat(HMat1)) == NULLSPCOL) return RET_BUG;
+      if ( (*F)(B,HMat2)!= OK) 
+	{
+	  return RET_BUG;
+	}
+      MoveObj(stack,1,NSP_OBJECT(B));
+    }
+  return 1;
+}
+
+static int int_spcolmatrix_concatr_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_m_sp_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatr);
+}
+
+/*
+ * Down Concatenation 
+ * Res = [A;B] 
+ * return NULLSPCOLon failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int int_spcolmatrix_concatd_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_m_sp_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatd);
+}
+
+/*
+ * Down Concatenation 
+ * Res = [A;B] 
+ * return NULLSPCOLon failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int int_spcolmatrix_concatdiag_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_concat_m_sp_gen(stack,rhs,opt,lhs,nsp_spcolmatrix_concatdiag);
+}
+
+
 
 /*
  *  A(Rows,Cols) = B 
@@ -2936,6 +3072,12 @@ static OpTab SpColMatrix_func[]={
   {"concatd_sp_sp" ,  int_spcolmatrix_concatd },
   {"concatr_sp_sp" ,  int_spcolmatrix_concatr },
   {"concatdiag_sp_sp" ,  int_spcolmatrix_concatdiag },
+  {"concatd_sp_m" ,  int_spcolmatrix_concatd_sp_m },
+  {"concatr_sp_m" ,  int_spcolmatrix_concatr_sp_m },
+  {"concatdiag_sp_m" ,  int_spcolmatrix_concatdiag_sp_m },
+  {"concatd_m_sp" ,  int_spcolmatrix_concatd_m_sp },
+  {"concatr_m_sp" ,  int_spcolmatrix_concatr_m_sp },
+  {"concatdiag_m_sp" ,  int_spcolmatrix_concatdiag_m_sp },
   {"deletecols_sp", int_spcolmatrix_deletecols},
   {"deleterows_sp", int_spcolmatrix_deleterows},
   {"extract_sp",int_spcolmatrix_extract},
