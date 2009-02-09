@@ -470,8 +470,20 @@ int  reorder_stack(Stack stack, int ret)
        */
       if ( IsHobj(O) && strcmp(NspFname(stack),"handler") != 0 && strcmp(NspFname(stack),"resize2vect_h") != 0)
 	{
-	  /* O is of type pointer */
-	  O2= ((NspHobj *) O)->O;
+	  /* O is of type pointer, we take care here that 
+	   * O can points to a global value and the pointer must be updated 
+	   * This could be changed if the get functions took care of that 
+	   */
+	  if (((NspHobj *)O)->htype != 'g') 
+	    O2 = ((NspHobj *) O)->O; 
+	  else 
+	    {								
+	      if ((O2= nsp_global_frame_search_object(NSP_OBJECT(O)->name)) 
+		  == NULLOBJ)
+		return RET_BUG;
+	      ((NspHobj *) O)->O= O2;
+	    }
+	  
 	  if ( IsHopt(O) )
 	    {
 	      if ( O->ret_pos != -1 )
