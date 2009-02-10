@@ -1,6 +1,7 @@
 .SUFFIXES: .dia .tst .vl
 
-SHELL=/bin/csh
+SHELL=/bin/sh
+
 
 TESTS= \
 	addinter.dia \
