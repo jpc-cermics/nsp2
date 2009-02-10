@@ -924,10 +924,12 @@ void MoveObj(Stack stack, int j, NspObject *O)
       if ( IsHopt(obj) )
 	{
 	  /* O is of type pointer */
-	  NspObject *obj1= ((NspHobj *) obj)->O;
+	  if ( ((NspHobj *) obj)->htype != 'g')
+	    {
+	      /* if Hopt was pointing to a non named object */
+	      nsp_void_object_destroy(&((NspHobj *) obj)->O);
+	    }
 	  nsp_object_destroy(&obj);
-	  /* if Hopt was pointing to a non named object */
-	  nsp_void_object_destroy(&obj1);
 	}
     }
   else 

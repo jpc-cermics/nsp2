@@ -822,6 +822,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	       * Scierror("Error: case {...} is to be done to match matlab\n");
 	       * SHOWBUG(stack,RET_BUG,L1);
 	       */
+	      /* XX: do we have here to take care of global variable ? */
 	      if ( C->basetype == NSP_TYPE_BASE(nsp_type_hobj)) C = ((NspHobj *) C)->O;
 	      /* the test is to be done looping on elements of the cell */
 	      for ( ic = 0 ; ic < ((NspCells *) C)->mn; ic++)
@@ -1916,7 +1917,12 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	      /* we use a pointer to a global value the pointed Object 
 	       * is stored on the stack
 	       */
-	      stack.val->S[*ipos] = ((NspHobj *) O)->O;
+	      /* be sure that pointer is not corrupted ((NspHobj *) O)->O;*/
+	      if ((O = nsp_global_frame_search_object(NSP_OBJECT(O)->name)) == NULLOBJ)
+		{
+		  Scierror("Pointer to a global non existant variablen");
+		}
+       	      stack.val->S[*ipos] = O;
 	    }
 	}
     }

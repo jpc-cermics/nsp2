@@ -2230,8 +2230,24 @@ mxArray *mexGetVariable(const char *workspace, const char *var_name)
        */
       return NULL;
     }
+
+  if ( Obj != NULL && check_cast (Obj, nsp_type_hobj_id) == TRUE)			
+    {									
+      if (((NspHobj *)Obj)->htype != 'g') Obj = ((NspHobj *) Obj)->O;
+      else 
+	{
+	  if ((Obj= nsp_global_frame_search_object(NSP_OBJECT(Obj)->name)) == NULLOBJ)
+	    {
+	      Scierror("Pointer to a global non existant variablen");
+	      nsp_mex_errjump();
+	    }
+	}
+    }
+  /* 
   if ( Obj != NULL && Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
     Obj = ((NspHobj *) Obj)->O;
+  */
+
   if ( Obj != NULL ) Obj=nsp_object_copy(Obj);
   return Obj;
 }
@@ -2270,8 +2286,23 @@ mxArray *mexGetVariablePtr(const char *workspace, const char *var_name)
        * nsp_mex_errjump();
        */
     }
+
+  if (Obj != NULL && check_cast (Obj, nsp_type_hobj_id) == TRUE)			
+    {									
+      if (((NspHobj *)Obj)->htype != 'g') Obj = ((NspHobj *) Obj)->O;
+      else 
+	{
+	  if ((Obj= nsp_global_frame_search_object(NSP_OBJECT(Obj)->name)) == NULLOBJ)
+	    {
+	      Scierror("Pointer to a global non existant variablen");
+	      nsp_mex_errjump();
+	    }
+	}
+    }
+  /* 
   if ( Obj != NULL &&  Obj->basetype == NSP_TYPE_BASE(nsp_type_hobj))
     Obj = ((NspHobj *) Obj)->O;
+  */
   return Obj;
 }
 

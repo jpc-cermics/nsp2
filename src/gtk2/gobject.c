@@ -2211,7 +2211,18 @@ GType gtype_from_nsp_object(NspObject *obj)
     return 0;
   }
   /* Hobj case */
-  if ( IsHobj(obj)) obj = ((NspHobj *) obj)->O;
+  if ( IsHobj(obj))
+    {
+      if (((NspHobj *) obj)->htype != 'g') obj = ((NspHobj *) obj)->O;
+      else 
+	{
+	  if ((obj= nsp_global_frame_search_object(NSP_OBJECT(obj)->name)) == NULLOBJ)
+	    {
+	      return G_TYPE_INVALID;
+	    }
+	}
+    }
+
   /* map some standard types to primitive GTypes ... */
   if (IsNone(obj))
     return G_TYPE_NONE;
