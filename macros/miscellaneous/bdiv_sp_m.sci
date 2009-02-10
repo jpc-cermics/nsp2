@@ -26,50 +26,50 @@ function x = bdiv_sp_m(A,b)
 //     - use a sparse qr or the lsqr iterative method in the case n!=m
 //       when the conditionning of A'A (m>n) or AA' (m<n) is bad.
 //
-   [m,n] = size(A)
-   if m == n then
-      [kl,ku] = lower_upper_bandwidths(A)
-      if ku == 0 then
-	 x = solve_tri(A,b,"l")
-      elseif kl == 0 then
-	 x = solve_tri(A,b,"u")
-      else
-	 if ~%umfpack then
-	    error("feature not enable (needs umfpack)")
-	 end
-	 LU = umfpack_create(A);
-	 rc1 = LU.rcond[];
-	 if ( rc1 < m*%eps )
-	    printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
-	 end
-	 x = LU.solve[b];
+  [m,n] = size(A)
+  if m == n then
+    [kl,ku] = lower_upper_bandwidths(A)
+    if ku == 0 then
+      x = solve_tri(A,b,"l")
+    elseif kl == 0 then
+      x = solve_tri(A,b,"u")
+    else
+      if ~%umfpack then
+	error("Error: this feature is not enabled (needs umfpack)")
       end
-   else
-      if ~%cholmod then
-	 error("feature not enable (needs cholmod)")
+      LU = umfpack_create(A);
+      rc1 = LU.rcond[];
+      if ( rc1 < m*%eps )
+	printf("Warning: matrix is badly conditionned, solution is dubious (rcond = %e)\n", rc1)
       end
-      if m > n then
-	 // printf(" Warning: solving overdetermined sparse linear system using normal equations...\n")
-	 [C,p] = cholmod_create(A'*A)
-	 // we could use also [C,p] = cholmod_create(A,type="col")
-         // but this seems slower on different examples tested
-	 if ( p ~= 0 ) then, error("matrix is not full rank"), end 
-	 rc1 = C.get_rcond[];
-	 if ( rc1 < n*%eps )
-	    printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
-	 end
-	 x = C.solve[pmult(A,b)];
-      else
-	 // printf(" Warning: solving underdetermined sparse linear system using x = A''*(A*A'')^-1 b ...\n")
-	 [C,p] = cholmod_create(A*A')
-	 // we could use also [C,p] = cholmod_create(A,type="row")
-         // but this seems slower on different examples tested
-	 if ( p ~= 0 ) then, error("matrix is not full rank"), end 
-	 rc1 = C.get_rcond[];
-	 if ( rc1 < m*%eps )
-	    printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
-	 end
-	 x = pmult(A,C.solve[b]);
+      x = LU.solve[b];
+    end
+  else
+    if ~%cholmod then
+      error("Error: this feature is not enabled (needs cholmod)")
+    end
+    if m > n then
+      // printf(" Warning: solving overdetermined sparse linear system using normal equations...\n")
+      [C,p] = cholmod_create(A'*A)
+      // we could use also [C,p] = cholmod_create(A,type="col")
+      // but this seems slower on different examples tested
+      if ( p ~= 0 ) then, error("matrix is not full rank"), end 
+      rc1 = C.get_rcond[];
+      if ( rc1 < n*%eps )
+	printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
       end
-   end
+      x = C.solve[pmult(A,b)];
+    else
+      // printf(" Warning: solving underdetermined sparse linear system using x = A''*(A*A'')^-1 b ...\n")
+      [C,p] = cholmod_create(A*A')
+      // we could use also [C,p] = cholmod_create(A,type="row")
+      // but this seems slower on different examples tested
+      if ( p ~= 0 ) then, error("matrix is not full rank"), end 
+      rc1 = C.get_rcond[];
+      if ( rc1 < m*%eps )
+	printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
+      end
+      x = pmult(A,C.solve[b]);
+    end
+  end
 endfunction
