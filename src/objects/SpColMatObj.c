@@ -812,6 +812,7 @@ static int int_spcolmatrix_concat_sp_m_gen(Stack stack, int rhs, int opt, int lh
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpCol(stack,1))  == NULLSPCOL) return RET_BUG;
+  if ((HMat2 = GetMat(stack,2)) == NULLMAT) return RET_BUG;
   if ( HMat1->m ==0 && HMat1->n == 0) 
     {
       /* return 2 */
@@ -819,7 +820,6 @@ static int int_spcolmatrix_concat_sp_m_gen(Stack stack, int rhs, int opt, int lh
       MoveObj(stack,1,NSP_OBJECT(B));
       return 1;
     }
-  if ((HMat2 = GetMat(stack,2)) == NULLMAT) return RET_BUG;
   if ( HMat2->m == 0 && HMat2->n == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
