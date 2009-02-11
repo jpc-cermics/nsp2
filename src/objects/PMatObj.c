@@ -97,7 +97,7 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
   mati->free_elt = (matint_free_elt *) nsp_polynom_destroy;
   mati->elt_size = (matint_elt_size *) nsp_pmatrix_elt_size ;
   mati->clone = (matint_clone *) nsp_pmatrix_clone;
-  mati->copy_elt = (matint_copy_elt *) nsp_polynom_copy; 
+  mati->copy_elt = (matint_copy_elt *) nsp_polynom_copy_with_name; 
   mati->enlarge = (matint_enlarge *) nsp_pmatrix_enlarge;
   mati->canonic =  nsp_matint_canonic;
   mati->copy_ind = nsp_matint_basic_copy_pointer;

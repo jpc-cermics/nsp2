@@ -89,6 +89,7 @@ extern int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Ns
 extern int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2); 
 extern nsp_polynom nsp_basic_to_polynom(doubleC *d, char type); 
 extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
+extern nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P); 
 extern unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M);
 extern void nsp_pmatrix_destroy(NspPMatrix *A); 
 extern int nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name, int rec_level); 

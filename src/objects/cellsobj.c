@@ -119,7 +119,7 @@ NspTypeCells *new_type_cells(type_mode mode)
   mati->free_elt = (matint_free_elt *) nsp_object_destroy;
   mati->elt_size = (matint_elt_size *) nsp_cells_elt_size ;
   mati->clone = (matint_clone *) nsp_cells_clone;
-  mati->copy_elt = (matint_copy_elt *) nsp_object_copy; 
+  mati->copy_elt = (matint_copy_elt *) nsp_object_copy_with_name; 
   mati->enlarge = (matint_enlarge *) nsp_cells_enlarge;
   mati->canonic =  nsp_matint_canonic;
   mati->copy_ind = nsp_matint_basic_copy_pointer;

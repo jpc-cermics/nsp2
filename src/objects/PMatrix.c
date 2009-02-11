@@ -38,6 +38,12 @@ nsp_polynom nsp_polynom_copy(nsp_polynom P)
   return((nsp_polynom ) nsp_matrix_copy((NspMatrix *) P));
 }
 
+nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P)
+{
+  NspObject *Obj = (NspObject *) P;
+  return (nsp_polynom ) nsp_object_copy(Obj);
+}
+
 /*
  * doubleC --> poly 
  */
