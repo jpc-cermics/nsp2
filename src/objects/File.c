@@ -1154,7 +1154,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
   if ( Info_size > INFOSIZE ) 
     {
       Info_size = INFOSIZE;
-      Info = realloc(Info,Info_size*sizeof(char));
+      Info = realloc(Info,(Info_size+1)*sizeof(char));
     }
   return OK;
 }  
@@ -1296,7 +1296,7 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
   if ( Info_size > INFOSIZE ) 
     {
       Info_size = INFOSIZE;
-      Info = realloc(Info,Info_size*sizeof(char));
+      Info = realloc(Info,(Info_size+1)*sizeof(char));
     }
   return OK;
 }
@@ -1358,7 +1358,7 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
   if ( Info_size > INFOSIZE ) 
     {
       Info_size = INFOSIZE;
-      Info = realloc(Info,Info_size*sizeof(char));
+      Info = realloc(Info,(Info_size+1)*sizeof(char));
     }
   return OK;
 }  

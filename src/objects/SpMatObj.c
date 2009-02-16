@@ -177,25 +177,44 @@ int nsp_sprowmatrix_fullcomp(NspSpRowMatrix * A,NspSpRowMatrix * B,char *op,int 
   return FALSE;
 }
 
-
-int nsp_sprowmatrix_eq(NspObject *A, NspObject *B)
+int nsp_sprowmatrix_eq(NspObject *a, NspObject *b)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_sprowmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_sprowmatrix_fullcomp((NspSpRowMatrix *) A,(NspSpRowMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  int j, k;
+  NspSpRowMatrix *A, *B;
+  if ( check_cast(b,nsp_type_spcolmatrix_id) == FALSE) return FALSE ;
+  /* quick code by Bruno (I want to test sparse(ij,val,..) function */
+  A = (NspSpRowMatrix *) a; B = (NspSpRowMatrix *) b; 
+  if ( A->m != B->m) return FALSE;
+  if ( A->n != B->n) return FALSE;
+  if ( A->rc_type != B->rc_type ) return FALSE;
+  
+  for ( j = 0 ; j < B->n ; j++ )
+    {
+      if ( A->D[j]->size !=  B->D[j]->size ) return FALSE;
+      for ( k = 0 ; k < A->D[j]->size ; k++ )
+	if ( A->D[j]->J[k] !=  B->D[j]->J[k] ) 
+	  return FALSE;
+      if ( A->rc_type == 'r' )
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ )
+	    if ( A->D[j]->R[k] !=  B->D[j]->R[k] ) 
+	      return FALSE;
+	}
+      else
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ )
+	    if ( A->D[j]->C[k].r !=  B->D[j]->C[k].r  ||  A->D[j]->C[k].i !=  B->D[j]->C[k].i ) 
+	      return FALSE;
+	}
+    }
+  return TRUE;
 }
+
 
 int nsp_sprowmatrix_neq(NspObject *A, NspObject *B)
 {
-  int err=0,rep;
-  if ( check_cast(B,nsp_type_sprowmatrix_id) == FALSE) return TRUE;
-  rep =nsp_sprowmatrix_fullcomp((NspSpRowMatrix *) A,(NspSpRowMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return ( nsp_sprowmatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
-
 
 
 /*

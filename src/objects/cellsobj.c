@@ -1231,9 +1231,15 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
 	  nsp_object_set_name(C->objs[i-1],NVOID);
 	  NthObj(count+1) = C->objs[i-1];
 	  NthObj(count+1)->ret_pos = i;
-
-
 	  C->objs[i-1]= NULLOBJ;
+	  count++;
+	}
+      else
+	{
+	  NspMatrix *M;
+	  if ((M = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+	  NthObj(count+1) = NSP_OBJECT(M);
+	  NthObj(count+1)->ret_pos = i;
 	  count++;
 	}
     }
@@ -1247,6 +1253,8 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
       NthObj(1)=NULLOBJ;
     }
   return count;
+ err:
+  return RET_BUG;
 }
 
 /*

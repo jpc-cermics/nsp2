@@ -209,13 +209,8 @@ int nsp_spcolmatrix_eq(NspObject *a, NspObject *b)
 
 int nsp_spcolmatrix_neq(NspObject *A, NspObject *B)
 {
-  int err=0,rep;
-  if ( check_cast(B,nsp_type_spcolmatrix_id) == FALSE) return TRUE;
-  rep =nsp_spcolmatrix_fullcomp((NspSpColMatrix *) A,(NspSpColMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return ( nsp_spcolmatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
-
 
 
 /*

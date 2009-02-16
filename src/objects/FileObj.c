@@ -834,8 +834,10 @@ static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_fscanf_matrix(F,format,&M,(lhs==2),&S) == FAIL) 
     {
       nsp_file_close(F);
+      nsp_file_destroy(F);
       return RET_BUG; 
     }
+  nsp_file_destroy(F);
   MoveObj(stack,1,(NspObject *) M);
   if ( lhs == 2 ) MoveObj(stack,2,(NspObject *) S);
   return Max(lhs,1);
