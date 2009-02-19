@@ -22,42 +22,50 @@
 
 
 function demo_combobox()
-  
-  function [pixbufs,names]=icon_collect(n)
+
+    function [pixbufs,names]=icon_collect(n)
   //collect the first n icons of GTK_STOCK
-  //here we could only use a gtk_cell_view
-  //returned in a list for pixbufs and string matrice for names
     window = gtkwindow_new ();
     ids = gtk_stock_list_ids ();
     pixbufs= list();
     names=[];
-    for i=1:min(length(ids),n)
+    for i=1:min(size(ids,1),n)
       [ok,l]=gtk_stock_lookup(ids(i));
-      // l = stock_id, label,modifier,keyval,translation_domain);
-      if ok then 
+      
+      if ok then
 	icon_set = gtk_icon_factory_lookup_default(l(1));
+	sz=-1;
 	if ~is(icon_set,%types.None) 
 	  sz=icon_set.get_sizes[]
 	  I=find(sz== GTK.ICON_SIZE_MENU)
-	  if ~isempty(I) then 
-	    sz=I(1) 
+	  if ~isempty(I) then
+	    sz=I(1)
 	  else
-	    sz=sz(1);
+	    sz=sz(1)
 	  end
 	end
-	small_icon = window.render_icon[l(1),sz]	
-	if sz <> GTK.ICON_SIZE_MENU 
-	  // Make the result the proper size for our thumbnail */
-	  [wh]= gtk_icon_size_lookup(GTK.ICON_SIZE_MENU);
-	  small_icon =  small_icon.scale_simple[ wh(1),wh(2), GDK.INTERP_BILINEAR];
+	// if an icon set is not found then
+	// window.render_icon can crash !
+	if sz<>-1 then 
+	  small_icon = window.render_icon[l(1),sz]	
+	  if sz <> GTK.ICON_SIZE_MENU 
+	    // Make the result the proper size for our thumbnail */
+	    [wh]= gtk_icon_size_lookup(GTK.ICON_SIZE_MENU);
+	    small_icon =  small_icon.scale_simple[ wh(1),wh(2), GDK.INTERP_BILINEAR];
+	  end
+	  if l(4)<>0 then 
+	    accel_str = gtk_accelerator_name (l(4),l(3));
+	  else
+	    accel_str = "";
+	  end
+	  pixbufs($+1)= small_icon;
+	  names=[names;ids(i)];
 	end
-	pixbufs($+1)= small_icon;
-	names=[names;ids(i)];
       end
     end
-    window.destroy[];
-  endfunction 
+  endfunction
 
+  
   function model=create_tree_store_model_for_combo(n)
   // create a tree model 
   // to be improved we only have one level 
