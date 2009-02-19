@@ -19,7 +19,7 @@ function demo_gtk2_plus()
   B('treestore1')=demo_treestore1,
   B('treestore')=demo_treestore,
   B('treeview editable')=demo_treeview_editable,
-  
+  B('combobox')=demo_combobox,
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]	
