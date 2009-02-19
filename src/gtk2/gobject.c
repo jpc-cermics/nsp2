@@ -2605,7 +2605,7 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
     Scierror("can not set cells in this tree model\n");
     return FAIL;
   }
-  /* items are given in a matrix  */
+  /* items are given in a list */
   
   n_columns = gtk_tree_model_get_n_columns(model);
   if ( column > n_columns ) 
@@ -2614,7 +2614,15 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
       return FAIL;
     }
 
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return FAIL;
+  if ( iter1 == NULL) 
+    {
+      /* start from the begining */
+      if (!gtk_tree_model_get_iter_first(model, &iter)) return FAIL;
+    }
+  else 
+    {
+      iter = *iter1; 
+    }
 
   g_value_init(&value, model_type);  
   while ( cloc != NULLCELL) 

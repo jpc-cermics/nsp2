@@ -53159,7 +53159,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
 	{
 	  /* append a row at top level  */
 	  gtk_tree_store_append(GTK_TREE_STORE(self->obj), &iter, parent);
-	  if (( row = GetList(stack,1)) == NULL) return RET_BUG;
+	  if (( row = GetListCopy(stack,1)) == NULL) return RET_BUG;
 	  /* fill the row (or the rows if more than one row data is given) */
 	  if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj), &iter,parent, row) ==FAIL) 
 	    return RET_BUG;
@@ -58103,7 +58103,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
         return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
-  
+
   if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG; 
   gtk_drag_dest_set(GTK_WIDGET(self->obj), flags, targets, n_targets,  actions);
   g_free(targets);
