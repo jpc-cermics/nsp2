@@ -1553,6 +1553,7 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
     zz[9] = ymax;
     Xgc->graphic_engine->scale->drawpolylines(Xgc, zz, &zz[5], &c__1, c__1, c__5);
     Xgc->graphic_engine->xset_show(Xgc);
+    Xgc->graphic_engine->xset_recording(Xgc,TRUE);
   } else if (flag == 4) {
     wid = ipar[1];
     n = nu;
@@ -1598,7 +1599,6 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
       Xgc->graphic_engine->setpopupname(Xgc,str);
     /* XXXXXXXXX C2F(sxevents)(); */
   }
-  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
 } 
 
 
