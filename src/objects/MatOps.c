@@ -4594,7 +4594,7 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 		  if ( B->rc_type == 'c' ) 
 		    {
 		      /* C2F(zcopy)(&B->m, &B->C[k2], &c__1,DI, &c__1); **/
-		      memcpy(DI, &B->C[k2],B->m*sizeof(double));
+		      memcpy(DI, &B->C[k2],B->m*sizeof(doubleC));
 		    }
 		  else 
 		    {
