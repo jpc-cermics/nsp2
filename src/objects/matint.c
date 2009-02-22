@@ -1629,12 +1629,19 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
       Scierror("Error:\tA(ind)=B, B must be row when A is a row\n");
       return FAIL;
     } 
-
+  
   if ( A->n == 1 &&  A->m > 1  &&  B->n != 1 )
     {
       Scierror("Error:\tA(ind)=B, B must be column when A is a column\n");
       return FAIL;
     }
+
+  if ( index->nval == 0 && B->mn <= 1)
+    {
+      /* ignore the set elts */
+      return OK;
+    }
+
 
   if ( B->mn != 1)
     {
