@@ -5378,6 +5378,7 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
     }
   else 
     {
+      int k;
       *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
       *Res2 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
@@ -5385,21 +5386,19 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
       count=0;
       if ( A->rc_type == 'r' ) 
 	{
-	  for ( i = 0 ; i < A->m ; i++ )
-	    for ( j = 0 ; j < A->n ; j++ )
-	      {
-		if (  A->R[i+(A->m)*j] != 0.0 ) 
-		  {
-		    (*Res1)->R[count] = i+1;
-		    (*Res2)->R[count++] = j+1;
-		  }
-	      }
+	  for ( j = 0, k = 0 ; j < A->n ; j++ )
+	    for ( i = 0 ; i < A->m ; i++, k++ )
+	      if (  A->R[k] != 0.0 )
+		{
+		  (*Res1)->R[count] = i+1;
+		  (*Res2)->R[count++] = j+1;
+		}
 	}
       else 
 	{
-	  for ( i = 0 ; i < A->m ; i++ )
-	    for ( j = 0 ; j < A->n ; j++ )
-	      if ( (A->C[i+(A->m)*j].r != 0.0 || A->C[i+(A->m)*j].i != 0.0))
+	  for ( j = 0, k = 0 ; j < A->n ; j++ )
+	    for ( i = 0 ; i < A->m ; i++, k++ )
+	      if (  A->C[k].r != 0.0 || A->C[k].i != 0.0 )
 		{
 		  (*Res1)->R[count] = i+1;
 		  (*Res2)->R[count++] = j+1;

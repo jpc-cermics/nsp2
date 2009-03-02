@@ -58,9 +58,8 @@ TESTS= \
 	legendre.dia \
 	scalexp.dia \
 	fsolve1.dia \
-	fsolve.dia 
-
-
+	fsolve.dia \
+	find.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \

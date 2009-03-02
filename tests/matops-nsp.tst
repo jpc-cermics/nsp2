@@ -807,3 +807,6 @@ if norm(sqrt(a+0).^2-a)>100*%eps then pause,end
 
 if sqrt([])<>[] then pause,end
 a=[];if sqrt(a)<>[] then pause,end
+
+
+

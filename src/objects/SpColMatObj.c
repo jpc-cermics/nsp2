@@ -2725,19 +2725,23 @@ static int int_spcolmatrix_conj(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_find(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A;
-  NspMatrix *Rc,*Rr;
+  NspMatrix *Rc,*Rr,*V;
   CheckRhs(1,1);
-  CheckLhs(1,2);
+  CheckLhs(1,3);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL)  return RET_BUG;
-  if (nsp_spcolmatrix_find(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
+  if (nsp_spcolmatrix_find(A,Max(lhs,1),&Rr,&Rc,&V) == FAIL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Rr));
-  if ( lhs == 2 )
+  if ( lhs >= 2 )
     {
       NthObj(2) = (NspObject *) Rc;
       NthObj(2)->ret_pos = 2;
-      return 2;
     }
-  return 1;
+  if ( lhs >= 3)
+    {
+      NthObj(3) = (NspObject *) V;
+      NthObj(3)->ret_pos = 3;
+    }
+  return Max(lhs,1);
 }
 
 static int int_spcolmatrix_real(Stack stack, int rhs, int opt, int lhs)

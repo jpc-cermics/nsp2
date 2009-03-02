@@ -4187,19 +4187,33 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *Rc, *Rr;
   CheckRhs (1, 1);
-  CheckLhs (1, 2);
+  CheckLhs (1, 3);
   if ((A = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (nsp_mat_find (A, Max (lhs, 1), &Rr, &Rc) == FAIL)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Rr);
-  if (lhs == 2)
+  if ( lhs >= 2 )
     {
       NthObj (2) = (NspObject *) Rc;
       NSP_OBJECT (NthObj (2))->ret_pos = 2;
-      return 2;
     }
-  return 1;
+  if ( lhs >= 3 )
+    {
+      int i;
+      NspMatrix *val;
+      if ((val = nsp_matrix_create(NVOID,A->rc_type,Rc->m,Rc->n))== NULLMAT)
+	return RET_BUG;
+      if ( val->rc_type == 'r') 
+	for ( i = 0 ; i < Rr->mn; i++)
+	  val->R[i]= A->R[(((int) Rr->R[i]-1))+A->m*(((int)Rc->R[i])-1)];
+      else
+	for ( i = 0 ; i < Rr->mn; i++)
+	  val->C[i]= A->C[(((int) Rr->R[i]-1))+A->m*(((int)Rc->R[i])-1)];
+      NthObj (3) = (NspObject *) val;
+      NSP_OBJECT(NthObj (3))->ret_pos = 3;
+    }
+  return Max(lhs, 1) ;
 }
 
 /*

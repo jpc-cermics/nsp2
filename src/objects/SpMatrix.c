@@ -3023,20 +3023,22 @@ int nsp_sprowmatrix_minus(NspSpRowMatrix *A)
 
 /**
  * nsp_sprowmatrix_find:
- * @A: 
- * @lhs: 
- * @Res1: 
- * @Res2: 
+ * @A: a #NspSpRowMatrix
+ * @lhs: an integer 
+ * @Res1: a #NspMatrix pointer 
+ * @Res2: a #NspMatrix pointer 
+ * @V: a #NspMatrix pointer 
  * 
- * returns in a Matrix the indices for which the 
- * Matrix A has non zero entries 
- * A is left unchanged
- * according to lhs one or two arguments are returned 
+ * returns in one or two Matrices the indices for which the 
+ * Matrix @A has non zero entries and eventually return the entries.
+ * @A is left unchanged and according to lhs one or two or three 
+ * values are returned 
  * 
  * Return value:  %OK or %FAIL
  **/
 
-int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2,
+			 NspMatrix **V)
 {
   int k,i,count=0;
   /* first pass for counting **/
@@ -3061,14 +3063,45 @@ int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       if ( *Res1 == NULLMAT) return FAIL;
       *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res2 == NULLMAT) return FAIL;
-      count=0;
-      for ( i = 0 ; i < A->m ; i++ )
+      if ( lhs == 3 ) 
 	{
-	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	  *V= nsp_matrix_create(NVOID,A->rc_type,(int) 1,(int) count);
+	  if ( *V == NULLMAT) return FAIL;
+	}
+      count=0;
+      if ( lhs == 2 )
+	{
+	  for ( i = 0 ; i < A->m ; i++ )
 	    {
-	      (*Res1)->R[count]   = i + 1;
-	      (*Res2)->R[count++] = A->D[i]->J[k] + 1;
+	      for ( k = 0 ; k < A->D[i]->size ; k++) 
+		{
+		  (*Res1)->R[count]   = i + 1;
+		  (*Res2)->R[count++] = A->D[i]->J[k] + 1;
+		}
 	    }
+	}
+      else
+	{
+	  if ( A->rc_type == 'r' ) 
+	    for ( i = 0 ; i < A->m ; i++ )
+	      {
+		for ( k = 0 ; k < A->D[i]->size ; k++) 
+		  {
+		    (*V)->R[count]   = A->D[i]->R[k];
+		    (*Res2)->R[count]   = i + 1;
+		    (*Res1)->R[count++] = A->D[i]->J[k] + 1;
+		  }
+	      }
+	  else
+	    for ( i = 0 ; i < A->m ; i++ )
+	      {
+		for ( k = 0 ; k < A->D[i]->size ; k++) 
+		  {
+		    (*V)->C[count]   = A->D[i]->C[k];
+		    (*Res2)->R[count]   = i + 1;
+		    (*Res1)->R[count++] = A->D[i]->J[k] + 1;
+		  }
+	      }
 	}
     }
   return OK;

@@ -195,7 +195,7 @@ extern void nsp_sprowmatrix_sin(NspSpRowMatrix *A);
 extern void nsp_sprowmatrix_sinh(NspSpRowMatrix *A); 
 extern int nsp_sprowmatrix_sqrtel(NspSpRowMatrix *A); 
 extern int nsp_sprowmatrix_minus(NspSpRowMatrix *A); 
-extern int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2, NspMatrix **V); 
 extern NspSpRowMatrix *nsp_sprowmatrix_rand(int m,int n,double sparsity,char crand);
 
 extern int nsp_sprow_update_from_triplet(NspSpRowMatrix *M);

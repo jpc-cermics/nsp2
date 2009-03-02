@@ -204,7 +204,7 @@ extern void nsp_spcolmatrix_sin(NspSpColMatrix *A);
 extern void nsp_spcolmatrix_sinh(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_minus(NspSpColMatrix *A); 
-extern int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2,NspMatrix **V); 
 extern NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand);
 extern int nsp_spcol_update_from_triplet(NspSpColMatrix *M);
 extern int nsp_spcol_set_triplet_from_m(NspSpColMatrix *M,int flag);
