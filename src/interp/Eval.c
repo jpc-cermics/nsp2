@@ -740,15 +740,18 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      L1 = L1->next; 
 	    }
 	  /* clean select statement and the select==case value  */
-	  if (stack.val->S[first]!= NULLOBJ &&  Ocheckname(stack.val->S[first],"#"))
+	  if (stack.val->S[first]!= NULLOBJ )
 	    {
-	      nsp_object_destroy(&stack.val->S[first]);
-	      stack.val->S[first]=NULLOBJ;
-	    }
-	  else 
-	    {
-	      nsp_void_object_destroy(&stack.val->S[first]);
-	      stack.val->S[first]=NULLOBJ;
+	      if (Ocheckname(stack.val->S[first],"#"))
+		{
+		  nsp_object_destroy(&stack.val->S[first]);
+		  stack.val->S[first]=NULLOBJ;
+		}
+	      else 
+		{
+		  nsp_void_object_destroy(&stack.val->S[first]);
+		  stack.val->S[first]=NULLOBJ;
+		}
 	    }
 	  if ( nargs < 0 ) return nargs ; 
 	  nargs = 0;
