@@ -203,24 +203,19 @@ static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, 
 
 
 
-int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror)
+int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2,
+	   double *x, int *id, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   int i__1;
-
-  /* Local variables */
   int i__, l;
   double sx;
   double pi2;
   double dnu2;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
-  
   dxset(dxblk2,0, 0, 0.0, 0, ierror);
 
   if (*ierror != 0) {
@@ -439,11 +434,9 @@ static  int dxpmu(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, d
   double p0, x1, x2;
   int mu, ip0;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
   dxpqnu_(dxblk2,nu1, nu2, mu2, x, sx, id, &pqa[1], &ipqa[1], ierror);
   if (*ierror != 0) {
@@ -519,22 +512,18 @@ static  int dxpmu(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, d
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static  int dxpmup_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
+static  int dxpmup_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1,
+		    int *mu2, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   int i__1;
-
-  /* Local variables */
   double prod;
   int i__, j, k, l, n;
   int iprod, mu;
   double nu, dmu;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
   nu = *nu1;
   mu = *mu1;
@@ -643,7 +632,8 @@ static  int dxpmup_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2,
  *  920127  Revised PURPOSE section of prologue.  (DWL) 
  */
 
-static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *pqa, int *ipqa, int *ierror)
+static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, 
+		   int *mu2, double *pqa, int *ipqa, int *ierror)
 {
   int i__1;
   double prod;
@@ -653,11 +643,9 @@ static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, 
   int mu;
   double nu, dmu;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
   l = (int) (*mu2 - *mu1 + (*nu2 - *nu1 + 1.5));
   mu = *mu1;
@@ -788,12 +776,8 @@ static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, 
 static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, double *sx,
 		   int *id, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   int i__1;
   double d__1;
-
-
-  /* Local variables */
   double flok, a;
   int i__, j, k;
   double r__;
@@ -809,11 +793,9 @@ static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, 
   double dmu;
   int ipq, ixs, ipq1, ipq2;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
   j0 =    dxblk2->nbitsf;
   ipsik = dxblk2->nbitsf / 10 + 1;
@@ -1082,19 +1064,14 @@ static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, 
  * 
  */
 
-double dxpsi_(double *a, int *ipsik, int *ipsix)
+static double dxpsi_(double *a, int *ipsik, int *ipsix)
 {
-  /* Initialized data */
-
   static double cnum[12] = { 1.,-1.,1.,-1.,1.,-691.,1.,-3617.,43867.,-174611.,77683.,-236364091. };
   static double cdenom[12] = { 12.,120.,252.,240.,132.,32760.,12.,8160.,14364.,6600.,276.,65520. };
 
-  /* System generated locals */
   int i__1, i__2;
   double ret_val, d__1;
 
-
-  /* Local variables */
   double b, c__;
   int i__, k, m, n, k1;
 
@@ -1136,7 +1113,8 @@ double dxpsi_(double *a, int *ipsik, int *ipsix)
   ret_val -= b;
  L20:
   return ret_val;
-} /* dxpsi_ */
+}
+
 
 
 /*
@@ -1158,10 +1136,7 @@ double dxpsi_(double *a, int *ipsik, int *ipsix)
 static int dxqmu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, double *x, double *sx,
 		  int *id, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   double d__1;
-
-  /* Local variables */
   int k;
   double x1, x2, pq;
   int mu;
@@ -1169,7 +1144,6 @@ static int dxqmu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, d
   double pq1, pq2, dmu;
   int ipq, ipq1, ipq2;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
@@ -1276,10 +1250,7 @@ static int dxqmu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, int *mu2, d
 
 static int dxqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, double *x, double *sx, int *id, double *pqa, int *ipqa, int *ierror)
 {
-  /* System generated locals */
   double d__1;
-
-  /* Local variables */
   int ipql1, ipql2, k;
   double x1, x2, pq;
   int mu;
@@ -1288,11 +1259,9 @@ static int dxqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1, double *x, 
   int ipq, ipq1, ipq2;
   double pql1, pql2;
 
-  /* Parameter adjustments */
   --ipqa;
   --pqa;
 
-  /* Function Body */
   *ierror = 0;
   k = 0;
   pq2 = 0.;
@@ -1643,7 +1612,6 @@ static int dxred(Dxblk2 *dxblk2, double *x, int *ix, int *ierror)
 
 static int dxset(Dxblk2 *dxblk2,int irad, int nradpl,double dzero,int nbits, int *ierror)
 {
-  /* Initialized data */
   static const int log102[20] = { 301,29,995,663,981,195,213,738,894,724,493,26,768,189,881,462,108,541,310,428 };
   static int iflag = 0;
 
@@ -1894,11 +1862,8 @@ static int dxset(Dxblk2 *dxblk2,int irad, int nradpl,double dzero,int nbits, int
 
 static int dxadd(Dxblk2 *dxblk2,double *x, int *ix, double *y, int *iy, double *z__, int *iz, int *ierror)
 {
-  /* System generated locals */
   int i__1;
 
-
-  /* Local variables */
   int i__, j;
   double s, t;
   int i1, i2, is;
