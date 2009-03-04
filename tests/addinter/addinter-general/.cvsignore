@@ -4,3 +4,5 @@ Makelib
 *.lo
 *.la
 libmex.c
+*.dia
+.nsp_history

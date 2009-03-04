@@ -3,3 +3,5 @@
 Makelib
 *.lo
 *.la
+*.dia
+.nsp_history
