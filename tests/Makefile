@@ -59,7 +59,9 @@ TESTS= \
 	scalexp.dia \
 	fsolve1.dia \
 	fsolve.dia \
-	find.dia 
+	find.dia \
+	global.dia
+
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
