@@ -186,7 +186,7 @@ typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function} 
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *O;
+  NspObject *O=NULLOBJ;
   int rep=0, irep=0;
   char *Name=0;
   CheckRhs(1,2);
@@ -197,24 +197,34 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
   }
   switch (rep) {
   case in_all: 
-    if (nsp_frames_search_object(Name) != NULLOBJ) irep=1;
+    if ((O=nsp_frames_search_object(Name)) != NULLOBJ) irep=1;
     break;
   case in_local:
-    if (nsp_frame_search_object(Name) != NULLOBJ) irep=1;
+    if ((O=nsp_frame_search_object(Name)) != NULLOBJ)  irep = 1;
     break;
   case in_global:    
-    if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
+    if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=1;
     break;
   case in_function:  /* XXX */
-    if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
+    if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=1;
     break;
   case in_callers: 
-    if ( nsp_frames_search_local_in_calling(Name,FALSE) != NULLOBJ) irep=1;
+    if ((O= nsp_frames_search_local_in_calling(Name,FALSE)) != NULLOBJ) irep=1;
     break;
   case in_caller:
-    if ( nsp_frames_search_local_in_calling(Name,TRUE) != NULLOBJ) irep=1;
+    if ((O= nsp_frames_search_local_in_calling(Name,TRUE)) != NULLOBJ) irep=1;
     break;
   } 
+  if ( irep == 1 )
+    {
+      /* take care that we can have in a local frame a pointer 
+       * to a non existant global variable 
+       */
+      if ( IsHobj(O) && ((NspHobj *) O)->htype == 'g' )
+	{
+	  if ((nsp_global_frame_search_object(Name)) == NULLOBJ)  irep=0;
+	}
+    }
   if ((O = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
   /* if (( O =nsp_create_object_from_double(NVOID,irep))== NULLOBJ ) return RET_BUG;*/
   MoveObj(stack,1,O);
