@@ -2158,8 +2158,10 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
   NspTypeBase *type; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
 
-  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
-                                                         (so we don't check) */
+  /* ObjA and ObjB must have the same type to send here 
+   * (so we don't check) 
+   */
+  type = check_implements(ObjA, nsp_type_matint_id);  
 
   if ( ObjA == ObjB ) 
     {
@@ -2168,19 +2170,21 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 	return FAIL;
       B = (NspSMatrix *) ObjB;
     }
-
+  
   MAT_INT(type)->canonic(ObjA);
   MAT_INT(type)->canonic(ObjB);
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
-
+  
   if ( A->n == B->n  || (A->n == 0 && A->m == 0) ) 
     {
       A->n = B->n;  /* to cover the case when A = [] */
-      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )     /* Matrices of numbers or booleans */
+      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )     
 	{
+	  /* Matrices of numbers or booleans */
 	  if ( elt_size_A == elt_size_B )
 	    {
+	      /* same type .. in size  */
 	      int Am=A->m;
 	      if ( MAT_INT(type)->resize(ObjA,A->m+B->m,A->n) == OK )
 		{
@@ -2196,10 +2200,12 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 		    }
 		}
 	    }
-	  else    /* one matrix is real and the other is complex */
+	  else    
 	    {
+	      /* one matrix is real and the other is complex */
 	      if ( elt_size_A > elt_size_B )  
 		{
+		  /* A is complex, B is real we enlarge it and store the result */
 		  int Am=A->m;
 		  if ( MAT_INT(type)->resize(ObjA,A->m+B->m,A->n) == OK )
 		    {
@@ -2224,10 +2230,7 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 		}
 	      else 
 		{ 
-		  /* we need here a resize which can change the elt_size too */
-		  /* the solution adopted in concatr is to use complexify which is not generic */
-		  /* A is real, B complex */
-		  /* see the trick below */
+		  /* A is real, B complex, A must be enlarged and complexified */
 		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n, FALSE);
 		  if ( ObjC != NULLOBJ )
 		    {
@@ -2248,11 +2251,16 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 			  memcpy(to+j*(C->m)*stepB + A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
 			}
 		    }
-		  /* a little trick waiting for XXXX above  */
+		  else 
+		    {
+		      return FAIL;
+		    }
+		  /* store the data in A and clean ObjC */
 		  A->m = C->m;
 		  A->n = C->n;
 		  ((NspMatrix *) A)->rc_type = 'c';
 		  A->mn = C->mn;
+		  FREE(A->S);
 		  A->S = C->S;
 		  C->S = NULL;
 		  C->m = C->n = C->mn = 0;
