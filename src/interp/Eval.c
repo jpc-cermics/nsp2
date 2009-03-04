@@ -106,7 +106,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   int j,rep;
   stack.first = first;
   
-  /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
+  nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL);
   L = L1; /* operator */
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
@@ -712,7 +712,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		{
 		  SHOWBUG(stack,RET_BUG,L1);
 		}
-	      stack.val->S[first]=O;    
+	      stack.val->S[first] = O;    
 	    }
 	  L1 = L1->next;
 	  /* now we evaluate all the cases the test is kept at position first */
@@ -783,122 +783,99 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /*On pourrait ici controler l'adequation entre lhs et nargs ? XXXX */
 	  return nargs;
 	  break;
-	case CASE :
-	  /* the select expression */ 
-	  stack.val->S[first]= stack.val->S[first-1]; 
-	  /* first evaluate the case expression */ 
-	  nargs=nsp_eval_arg(L1,&stack,first+1,1,1,display);
-	  if ( nargs != 1 ) 
-	    {
-	      stack.val->S[first]=NULLOBJ;
-	      if ( nargs > 1 ) 
-		{
-		  /* to many argument returned */
-		  nsp_void_seq_object_destroy(stack,first+1,first+1+nargs);
-		  Scierror("Error: too many values (%d) returned as a case condition evaluation\n",nargs);
-		  SHOWBUG(stack,RET_BUG,L1);
-		}
-	      
-	      else if ( nargs == 0 ) 
-		{
-		  Scierror("Error: case expression which evaluation returns no value\n");
-		  SHOWBUG(stack,RET_BUG,L1);
-		}
-	      else
-		SHOWBUG(stack,nargs,L1);
-	    }
-	  /* now the value to be compared to case is at position first and 
-	   * the case expression is at position first+1 
-	   * note that the value at position first is preserved at first-1 
-	   * and cannot be destroyed since it has a name 
-	   * 
-	   */
-	  if (IsCells(stack.val->S[first+1])) 
-	    {
-	      /* when case expression is a cell  {val1,....,valn} */
-	      int ic,ok =FALSE;
-	      NspObject *C = stack.val->S[first+1];
-	      /* 
-	       * Scierror("Error: case {...} is to be done to match matlab\n");
-	       * SHOWBUG(stack,RET_BUG,L1);
-	       */
-	      /* XX: do we have here to take care of global variable ? */
-	      if ( C->basetype == NSP_TYPE_BASE(nsp_type_hobj)) C = ((NspHobj *) C)->O;
-	      /* the test is to be done looping on elements of the cell */
-	      for ( ic = 0 ; ic < ((NspCells *) C)->mn; ic++)
-		{
-		  /* clean from previous iteration */
-		  if ( stack.val->S[first] != stack.val->S[first-1])
-		    {
-		      nsp_void_object_destroy(&stack.val->S[first]);
-		      stack.val->S[first]= stack.val->S[first-1];
-		    }
-		  stack.val->S[first+1]= ((NspCells *) C)->objs[ic];
-		  if ( stack.val->S[first+1] == NULL) continue; 
-		  /* test for element ic */
-		  nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
-		  if ( nargs != 1 ) 
-		    {
-		      /* destroy the case value if needed */
-		      nsp_void_object_destroy(&C);
-		      if ( nargs > 1 ) 
-			{
-			  /* to many argument returned we ignore the last ones */
-			  nsp_void_seq_object_destroy(stack,first+1,first+1+n);
-			  nargs=1;
-			}
-		      else if ( nargs == 0 ) 
-			{
-			  Scierror("The comparison between select value and case value has no value\n");
-			  SHOWBUG(stack,RET_BUG,L1);
-			}
-		      else 
-			{
-			  SHOWBUG(stack,nargs,L1);
-			}
-		    }
-		  /* */ 
-		  /* Now check if comparison is true */ 
-		  rep =nsp_object_is_true(stack.val->S[first]); 
-		  if ( rep == TRUE) 
-		    {
-		      /* Ok we have to clean and switch to then part */
-		      nsp_void_object_destroy(&C);
-		      ok = TRUE;
-		      break;
-		    }
-		}
-	      /* all the comparisons have led to false : we return */
-	      if ( ok == FALSE ) 
-		{
-		  nsp_void_object_destroy(&C);
-		  return 1; 
-		}
-	    }
-	  else 
-	    {
-	      /* when case expression is not a cell */
-	      nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
-	      if ( nargs != 1 ) 
-		{
-		  if ( nargs > 1 ) 
-		    {
-		      /* to many argument returned we ignore the last ones */
-		      nsp_void_seq_object_destroy(stack,first+1+2,first+1+n+1);
-		      nargs=1;
-		    }
-		  else if ( nargs == 0 ) 
-		    {
-		      Scierror("The comparison between select value and case value has no value\n");
-		      SHOWBUG(stack,RET_BUG,L1);
-		    }
-		  else 
-		    SHOWBUG(stack,nargs,L1);
-		}
-	      /* Now check if comparison is true */ 
-	      rep =nsp_object_is_true(stack.val->S[first]); 
-	      if ( rep == FALSE) return 1; 
-	    }
+	case CASE :       /* adapted to compare objects of different types (bruno, march,2,2009) */
+	  {
+	    /* the select expression */ 
+	    NspObject *C = NULLOBJ, *SelectObj = stack.val->S[first-1];
+	    HOBJ_GET_OBJECT(SelectObj,RET_BUG);
+
+	    /* first evaluate the case expression */ 
+	    nargs=nsp_eval_arg(L1,&stack,first,1,1,display);
+	    if ( nargs != 1 ) 
+	      {
+		if ( nargs > 1 ) 
+		  {
+		    /* to many argument returned */
+		    nsp_void_seq_object_destroy(stack,first,first+nargs);
+		    Scierror("Error: too many values (%d) returned as a case condition evaluation\n",nargs);
+		    SHOWBUG(stack,RET_BUG,L1);
+		  }
+		else if ( nargs == 0 ) 
+		  {
+		    Scierror("Error: case expression which evaluation returns no value\n");
+		    SHOWBUG(stack,RET_BUG,L1);
+		  }
+		else
+		  SHOWBUG(stack,nargs,L1);
+	      }
+	    C = stack.val->S[first];
+	    HOBJ_GET_OBJECT(C,RET_BUG);
+
+	    /* now the value to be compared to case is at position first-1 (and pointed by SelectObj) and 
+	     * the case expression is at position first (and pointed by C)
+	     */
+
+	    if (IsCells(C))
+	      {
+		/* when case expression is an array of cells  {val1,....,valn} */
+		int ic,ok =FALSE;
+		/* the test is to be done looping on elements of the array of cells */
+		for ( ic = 0 ; ic < ((NspCells *) C)->mn; ic++)
+		  {
+		    NspObject *Current = ((NspCells *) C)->objs[ic];
+
+		    if ( Current != NULLOBJ  &&  SelectObj->type->eq(SelectObj, Current) )
+		      {
+			/* destroy the case value if needed */
+			nsp_void_object_destroy(&stack.val->S[first]);
+			/* create a true object and places at first pos in stack */
+			if ( (stack.val->S[first] = nsp_create_true_object(NVOID)) == NULLOBJ )
+			  {
+			    SHOWBUG(stack,nargs,L1);   /* a voir... */
+			  }
+			ok = TRUE;
+			break;
+		      }
+		  }
+		/* all the comparisons have led to false : we return */
+		if ( ok == FALSE ) 
+		  {
+		    /* destroy the case value if needed */
+		    nsp_void_object_destroy(&stack.val->S[first]);
+		    /* create a false object and places at first pos in stack */
+		    if ( (stack.val->S[first] = nsp_create_false_object(NVOID)) == NULLOBJ )
+		      {
+			SHOWBUG(stack,nargs,L1);   /* a voir... */
+		      }
+		    return 1; 
+		  }
+	      }
+	    else 
+	      {
+		/* when case expression is not an array of cells */
+		if ( SelectObj->type->eq(SelectObj, C) )
+		  {
+		    /* destroy the case value if needed */
+		    nsp_void_object_destroy(&stack.val->S[first]);
+		    /* create a true object and places at first pos in stack */
+		    if ( (stack.val->S[first] = nsp_create_true_object(NVOID)) == NULLOBJ )
+		      {
+			SHOWBUG(stack,nargs,L1);   /* a voir... */
+		      }
+		  }
+		else
+		  {
+		    /* destroy the case value if needed */
+		    nsp_void_object_destroy(&stack.val->S[first]);
+		    /* create a false object and places at first pos in stack */
+		    if ( (stack.val->S[first] = nsp_create_false_object(NVOID)) == NULLOBJ )
+		      {
+			SHOWBUG(stack,nargs,L1);   /* a voir... */
+		      }
+		    return 1; 
+		  }
+	      }
+	  }
 	  /* evaluate the then part if OK  */
 	  nargs=nsp_eval_arg(L1->next,&stack,first+1,1,1,display);
 	  if ( nargs >= 0 ) nargs +=1;
@@ -989,7 +966,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return RET_BUG;
 	}
     }
-/*   nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL); */
+  nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL);
   return nargs ;
 }
 
