@@ -266,11 +266,17 @@ matrix_loop_extract (char *str, NspObject * O, NspObject * O1, int i,
 int
 matrix_eq (NspObject * A, NspObject * B)
 {
+#if 1 
+  char *op = "=="; 
+#else
+  char *op = "=nan="; 
+#endif 
+
   int err, rep;
   if (check_cast (B, nsp_type_matrix_id) == FALSE)     return FALSE;
   if ( ! ( ((NspMatrix *) A)->m == ((NspMatrix *) B)->m 
 	   && ((NspMatrix *) A)->n == ((NspMatrix *) B)->n)) return FALSE;
-  rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "==", &err);
+  rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B,op, &err);
   if (err == TRUE)
     return FALSE;
   return rep;

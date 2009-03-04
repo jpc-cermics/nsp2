@@ -4711,12 +4711,18 @@ static int NEq(double a, double b) {  return(a!=b);}
 static int Gt(double a, double b) {  return(a>b);}
 static int Ge(double a, double b) {  return(a>=b);}
 
+static int Eq_nan(double a, double b) { if (isnan(a) && isnan(b)) return TRUE; return(a==b);}
+static int NEq_nan(double a, double b){ if (isnan(a) && isnan(b)) return FALSE;  return(a!=b);}
+
 static int C_Lt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)< nsp_abs_c(b));}
 static int C_Le(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)<=nsp_abs_c(b));}
-static int C_Eq(const doubleC *a,const  doubleC *b) {  return(a->r ==b->r && a->i == b->i );}
+static int C_Eq(const doubleC *a,const  doubleC *b) {  return(a->r == b->r && a->i == b->i );}
 static int C_NEq(const doubleC *a,const  doubleC *b) {  return(a->r != b->r || a->i != b->i );}
 static int C_Gt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)> nsp_abs_c(b));}
 static int C_Ge(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)>=nsp_abs_c(b));}
+
+static int C_Eq_nan(const doubleC *a,const  doubleC *b) {  return Eq_nan(a->r,b->r) && Eq_nan(a->i,b->i );};
+static int C_NEq_nan(const doubleC *a,const  doubleC *b) { return NEq_nan(a->r,b->r) || NEq_nan(a->i,b->i );};
 
 typedef int (CompOp) (double,double);
 typedef int (C_CompOp) (const doubleC *,const  doubleC *);
@@ -4734,6 +4740,7 @@ static CompTab comptab[] = {
   {"<=",Le  ,Gt,C_Le  ,C_Gt},
   {"<>",NEq ,Eq,C_NEq ,C_Eq},
   {"==",Eq  ,NEq,C_Eq  ,C_NEq},
+  {"=nan=",Eq_nan ,NEq_nan , C_Eq_nan  ,C_NEq_nan },
   {">",Gt  , Le,C_Gt  , C_Le},
   {">=",Ge  , Lt,C_Ge  , C_Lt},
   {(char *) NULL, 0,0,0,0}
@@ -5103,7 +5110,7 @@ NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B,const char *op)
     }
 
   if ( (Loc =nsp_bmatrix_create(NVOID,m,n)) == NULLBMAT ) return NULLBMAT;
-
+  
   if ( strcmp(op,"==") == 0 )
     MAKE_REAL_COMP(==);
   else if ( strcmp(op,"<>") == 0 )
