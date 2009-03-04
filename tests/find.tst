@@ -31,7 +31,7 @@ if ~J1.equal[J] then pause;end
 IJ1=find(As);
 if ~IJ1.equal[IJ] then pause;end 
 
-[I1,J1,V1]=find(As)
+[I1,J1,V1]=find(As);
 if norm(A-full(sparse([I1;J1]',V1,size(A)))) > 10*%eps then pause;end 
 
 

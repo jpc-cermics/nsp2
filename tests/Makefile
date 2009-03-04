@@ -1,6 +1,6 @@
 .SUFFIXES: .dia .tst .vl
 
-SHELL=/bin/sh
+SHELL=/bin/csh
 
 
 TESTS= \
