@@ -21,4 +21,5 @@ distclean::
 	@$(RM) manual.ilg manual.out manual.ind
 	@$(RM) manual.idx  manual.log manual.toc *.aux
 
+clean::
 

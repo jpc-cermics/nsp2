@@ -1,0 +1,65 @@
+% -*- mode: latex -*-
+
+\mansection{cholmod}
+\begin{mandesc}
+  \short{Cholmod}{datatype for cholmod factorization of sparse matrices}
+  \short{cholmod_create}{creates a Cholmod object from a sparse matrix} 
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Au=cholmod_create(As, type=, mode=, beta=, ordering=,perm=)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{As}: a real or complex sparse matrix
+    \vname{Au}: a Cholmod nsp object.
+    \vname{type,mode,beta,ordering, perm}: optional named argument. 
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{Cholmod} data type (\verb+type(Au,'short')== 'cholmod'+) is used to 
+encapsulate Cholmod sparse Cholesky factorization (provided by Tim Davis' Cholmod library). 
+\end{mandescription}. It is possible to check using the boolean variable \verb+%cholmod+ 
+if your current nsp version has been compiled with cholmod support. The \verb+solve+ method 
+can then be used to solve linear systems. Objects of \emph{Cholmod} type are usefull if 
+repeated use of the \verb+solve+ method for the same matrix is to be used, 
+since the factorization is kept in the \emph{Cholmod} object. 
+\paragraph{Operations on cholmod}
+The following methods are available for Cholmod objects~:
+\begin{varlist}
+  \vname{A.solve[B]}
+  \vname{isreal}
+  \vname{get_ld}
+  \vname{get_minor}        
+  \vname{get_perm}         
+  \vname{update}          
+  \vname{downdate}           
+  \vname{resymbol}           
+  \vname{get_rcond}          
+  \vname{get_ordering}       
+  \vname{get_lnz}            
+  \vname{get_fl}            
+  \vname{get_memory}         
+\end{varlist}
+
+\begin{examples}
+  \begin{program}\HCode{Af = sprand(10,10,0.8);\Hnewline
+      A= cholmod_create(Af);\Hnewline
+      A.isreal[]\Hnewline
+      A.det[] \Hnewline
+      b=rand(10,2);\Hnewline 
+      xu= A.solve[b];\Hnewline 
+      norm(Af*xu- b)\Hnewline 
+      xu1 = cholmod_solve(Af,b);} 
+  \end{program}
+ \end{examples}
+
+% -- Authors
+\begin{authors}
+  Jean-Philippe Chancelier
+\end{authors}

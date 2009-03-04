@@ -1,0 +1,24 @@
+//	Verbatim code 
+//	to be inserted 
+//	in html
+[a,b]=regexp("pipopopopa","p(i[po]+)(pa)")
+regsub("pipopopopa","p(i[po]+)(pa)","poo\\1")
+a < b 
+a \ b  
+a / b 
+z.*x
+
+%inf + %nan 
+@poo # foo 
+a & b 
+a | b 
+x = 'poo' // wrong conversion
+
+function y=f(x)
+  for i=1:10
+    c=567
+  end
+endfunction
+
+	
+	
