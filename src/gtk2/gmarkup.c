@@ -228,7 +228,7 @@ void nsp_gmarkup_node_info(NspGMarkupNode *M, int indent,const char *name, int r
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)),M->name);
+  Sciprintf("%s\t= <%s>\t%s\n", pname, M->name, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)));
 }
 
 /*
@@ -253,8 +253,13 @@ int nsp_gmarkup_node_print(NspGMarkupNode *M, int indent,const char *name, int r
     {
       int i;
       for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-      Sciprintf("%s\t= \t\t%s <%s>\n", pname, nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)),M->name);
-      nsp_object_print((NspObject *)M->children,indent+1,"",rec_level+1);
+      Sciprintf("%s\t= <%s>\t%s\n", pname,M->name,
+		nsp_gmarkup_node_type_short_string(NSP_OBJECT(M)));
+      if ( M->attributes != NULL)
+	{
+	  nsp_object_print((NspObject *)M->attributes,indent+1,NULL,rec_level+1);
+	}
+      nsp_object_print((NspObject *)M->children,indent+1,NULL,rec_level+1);
     }
   return TRUE;
 }
@@ -370,7 +375,6 @@ int int_gmarkup_node_create(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-
 static int int_gmarkup_node_meth_get_name(NspGMarkupNode *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Ret;
@@ -380,51 +384,6 @@ static int int_gmarkup_node_meth_get_name(NspGMarkupNode *self, Stack stack, int
   MoveObj(stack,1,Ret);
   return 1;
 }
-
-/* 
-static int int_gmarkup_node_meth_get_op(NspGMarkupNode *self, Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject *Ret;
-  int ret ;
-  CheckRhs(0,0);
-  CheckLhs(1,1); 
-  ret = ((int) self->obj->op);
-  if ((Ret=nsp_new_double_obj((double) ret))== NULLOBJ) return RET_BUG;
-  MoveObj(stack,1,Ret);
-  return Max(lhs,1);
-}
-
-static int int_gmarkup_node_meth_get_opname(NspGMarkupNode *self, Stack stack, int rhs, int opt, int lhs)
-{
-  const char *str;
-  NspObject *Ret;
-  CheckRhs(0,0);
-  CheckLhs(1,1); 
-  switch ( ((int) self->obj->op)) 
-    {
-    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
-    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
-    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
-    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
-    default:
-      str=nsp_astcode_to_name(self->obj->op);
-      if ( str != (char *) 0 )
-	{
-	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
-	}
-      else 
-	{
-	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
-	    return RET_BUG;
-	}
-    }
-  MoveObj(stack,1,Ret);
-  return Max(lhs,1);
-}
-
-*/
 
 static NspMethods gmarkup_node_methods[] = {
   {"get_node_name",(nsp_method *) int_gmarkup_node_meth_get_name},
@@ -441,16 +400,15 @@ static NspObject *_wrap_gmarkup_node_get_name(void *self,const char *attr)
   return nsp_new_string_obj(NVOID,((NspGMarkupNode *) self)->name,-1);
 }
 
-static NspObject *_wrap_gmarkup_node_get_arity(void *self,const char *attr)
+static int _wrap_gmarkup_node_set_name(void *self,const char *attr, NspObject *Obj)
 {
-  int ret=0;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_gmarkup_node_set_arity(void *self, char *attr, NspObject *O)
-{
-  int arity;
-  if ( IntScalar(O,&arity) == FAIL) return FAIL;
+  NspSMatrix *S= (NspSMatrix *) Obj;
+  char *str;
+  if ( ! IsSMat(Obj) ) return FAIL;
+  if ( S->mn != 1  ) return FAIL;
+  if ((str = nsp_string_copy(S->S[0])) == (nsp_string) 0) return FAIL;
+  nsp_string_destroy(&((NspGMarkupNode *) self)->name);
+  ((NspGMarkupNode *) self)->name=str;
   return OK;
 }
 
@@ -496,9 +454,8 @@ static int _wrap_gmarkup_node_set_children(void *Hv,const char *attr, NspObject 
 
 
 static AttrTab gmarkup_node_attrs[] = {
-  { "name", (attr_get_function *)_wrap_gmarkup_node_get_name, (attr_set_function *) NULL,
-    (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
-  { "arity", (attr_get_function *)_wrap_gmarkup_node_get_arity, (attr_set_function *)_wrap_gmarkup_node_set_arity,
+  { "name", (attr_get_function *)_wrap_gmarkup_node_get_name, (attr_set_function *) 
+    _wrap_gmarkup_node_set_name,
     (attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
   { "attributes", _wrap_gmarkup_node_get_attrs,  _wrap_gmarkup_node_set_attrs,
     _wrap_gmarkup_node_get_object_attrs, (attr_set_object_function *)int_set_object_failed},
@@ -528,6 +485,7 @@ struct _GMarkupDomContext
   NspGMarkupNode *root;
   NspGMarkupNode *current_root;
   NspGMarkupNode *current;
+  int ignore_white;
 };
 
 static void xml_start_element (GMarkupParseContext *context, const gchar *element_name,
@@ -544,7 +502,7 @@ static void xml_start_element (GMarkupParseContext *context, const gchar *elemen
   if ((node = gmarkup_node_create(name,NULL)) == NULL) return ; 
   if ((node->name =nsp_string_copy(element_name)) == (nsp_string) 0) return ;
   node->gm_father = dom_context->current_root;
-  node->children= nsp_list_create("ch");
+  node->children= nsp_list_create("children");
   dom_context->current = node;
 
   if ( dom_context->root == NULL) dom_context->root = node;
@@ -579,6 +537,29 @@ static void xml_end_element (GMarkupParseContext *context,
   dom_context->current_root =dom_context->current= dom_context->current->gm_father;
 }
 
+static int xml_text_is_spaces(const char *str)
+{
+  while (1)
+    {
+      switch (*str) 
+	{
+	case '\n':
+	case '\t':
+	case ' ':
+	  str++;
+	  break;
+	case '\0': 
+	  return TRUE;
+	  break;
+	default:
+	  return FALSE;
+	  break;
+	}
+    }
+  return TRUE;
+}
+
+
 static void xml_text (GMarkupParseContext *context, const gchar *text,
                       gsize text_len, gpointer user_data, GError **error)
 {
@@ -589,8 +570,11 @@ static void xml_text (GMarkupParseContext *context, const gchar *text,
     {
       Sciprintf("Warning text_len != strlen(text)_n");
     }
+  if (dom_context->ignore_white == TRUE 
+      && xml_text_is_spaces(text) == TRUE ) 
+    return;
   if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
-  printf("Entering a xml_text %s\n",text);
+  /* printf("Entering a xml_text {%s}\n",text);  */
   if ( dom_context->current_root != NULL)
     {
       if (  nsp_list_end_insert(dom_context->current_root->children,Obj) == FAIL) 
@@ -599,7 +583,7 @@ static void xml_text (GMarkupParseContext *context, const gchar *text,
 }
 
 static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
-                      gsize text_len, gpointer user_data, GError **error)
+			     gsize text_len, gpointer user_data, GError **error)
 {
   NspObject *Obj;
   GMarkupDomContext *dom_context = user_data;
@@ -628,7 +612,7 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
 NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, GError **error)
 {
   GMarkupParseContext *markup_parse_context = NULL;
-  GMarkupDomContext context = {node_name,NULL, NULL, NULL};
+  GMarkupDomContext context = {node_name,NULL, NULL, NULL, FALSE};
   
   g_return_val_if_fail (filename != NULL, context.root);
 
@@ -648,8 +632,8 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, 
     {
       NspGMarkupNode *node = NULL;
       if ((node = gmarkup_node_create(NVOID,NULL)) == NULL) return NULL; 
-      if ((node->name =nsp_string_copy("request")) == (nsp_string) 0) return NULL ;
-      node->children= nsp_list_create("ch");
+      if ((node->name =nsp_string_copy(node_name)) == (nsp_string) 0) return NULL ;
+      node->children= nsp_list_create("children");
       context.root = node;
     }
   
@@ -692,8 +676,7 @@ int int_gmarkup_escape_text(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-gchar*      g_markup_escape_text            (const gchar *text,
-                                             gssize length);
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
