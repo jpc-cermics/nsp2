@@ -106,7 +106,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   int j,rep;
   stack.first = first;
   
-  nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL);
+  /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
   L = L1; /* operator */
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
@@ -788,7 +788,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    /* the select expression */ 
 	    NspObject *C = NULLOBJ, *SelectObj = stack.val->S[first-1];
 	    HOBJ_GET_OBJECT(SelectObj,RET_BUG);
-
+	    
 	    /* first evaluate the case expression */ 
 	    nargs=nsp_eval_arg(L1,&stack,first,1,1,display);
 	    if ( nargs != 1 ) 
@@ -966,7 +966,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return RET_BUG;
 	}
     }
-  nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL);
+  /* nsp_check_stack(stack,nargs,0,-1,"Something wrong end of Eval",NULL); */
   return nargs ;
 }
 
