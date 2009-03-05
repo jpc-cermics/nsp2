@@ -397,19 +397,23 @@ NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A)
     {
       stat = umfpack_di_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				 &Symbolic, Control, Info);
-      if ( stat  != UMFPACK_OK ) goto symb_fact_error;
+      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
       stat = umfpack_di_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				Symbolic, &Numeric, Control, Info);
-      if ( stat  != UMFPACK_OK ) goto num_fact_error;
+      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto num_fact_error;
     }
   else 
     {
       stat = umfpack_zi_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
 				 A->triplet.Pi, &Symbolic, Control, Info);
-      if ( stat  != UMFPACK_OK ) goto symb_fact_error;
+      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
       stat = umfpack_zi_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
 				A->triplet.Pi,Symbolic, &Numeric, Control, Info);
-      if ( stat  != UMFPACK_OK ) goto num_fact_error;
+      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto num_fact_error;
+    }
+  if (stat ==  UMFPACK_WARNING_singular_matrix) 
+    {
+      Sciprintf("Warning: Matrix is singular\n");
     }
   umfpack_di_free_symbolic(&Symbolic);
   /* now we can store the Numeric part */
@@ -519,7 +523,7 @@ static int int_umfpack_meth_luget(NspUmfpack *self, Stack stack, int rhs, int op
     { 
       error_flag = 2; goto the_end; 
     };
-
+  
   /* If do_recip is TRUE (one), then the scale factors Rs [i] are to be used
    * by multiplying row i by Rs [i].  Otherwise, the entries in row i are to
    * be divided by Rs [i].
