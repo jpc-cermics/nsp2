@@ -386,34 +386,39 @@ static const char *nsp_umfpack_error(int num_error)
  * Returns: a new #NspUmfpack or %NULLUMFPACK
  **/
 
-NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A)
+static NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A,int flag,int *singular)
 {
   double *Control = NULL, *Info = NULL;
   void *Symbolic=NULL, *Numeric=NULL;
-  int stat;
+  int stat1,stat;
   NspUmfpack *H=NULL;
+  *singular =FALSE;
   if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) goto err;
   if ( A->rc_type == 'r' ) 
     {
-      stat = umfpack_di_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
+      stat1 = umfpack_di_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				 &Symbolic, Control, Info);
-      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
+      if ( stat1  != UMFPACK_OK && stat1 != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
       stat = umfpack_di_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				Symbolic, &Numeric, Control, Info);
       if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto num_fact_error;
     }
   else 
     {
-      stat = umfpack_zi_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
+      stat1 = umfpack_zi_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
 				 A->triplet.Pi, &Symbolic, Control, Info);
-      if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
+      if ( stat1  != UMFPACK_OK && stat1 != UMFPACK_WARNING_singular_matrix ) goto symb_fact_error;
       stat = umfpack_zi_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
 				A->triplet.Pi,Symbolic, &Numeric, Control, Info);
       if ( stat  != UMFPACK_OK && stat != UMFPACK_WARNING_singular_matrix ) goto num_fact_error;
     }
-  if (stat ==  UMFPACK_WARNING_singular_matrix) 
+
+  if ( stat ==  UMFPACK_WARNING_singular_matrix ||  stat1 ==  UMFPACK_WARNING_singular_matrix) 
     {
-      Sciprintf("Warning: Matrix is singular\n");
+      if ( flag == TRUE ) 
+	*singular =TRUE;
+      else 
+	Sciprintf("Warning: Matrix is singular\n");
     }
   umfpack_di_free_symbolic(&Symbolic);
   /* now we can store the Numeric part */
@@ -437,7 +442,7 @@ NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A)
   return H;
  symb_fact_error: 
   Scierror("Error: symbolic factorization failed in umfpack (%s)\n",
-	   nsp_umfpack_error(stat));
+	   nsp_umfpack_error(stat1));
   return NULLUMFPACK;
  num_fact_error:
   Scierror("Error: numeric factorization failed in umfpack (%s)\n",
@@ -452,16 +457,25 @@ NspUmfpack *nsp_umfpack_create(NspSpColMatrix *A)
 
 static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
 {
+  int singular=FALSE;
   NspSpColMatrix *A;
   NspUmfpack *H=NULL;
   /* Get a sparse matrix */
   CheckStdRhs(1,1);
+  CheckLhs(1,2);
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) 
     return RET_BUG;
-  if ((H = nsp_umfpack_create(A)) == NULLUMFPACK)
+  if ((H = nsp_umfpack_create(A,(lhs==2),&singular)) == NULLUMFPACK)
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(H));
-  return 1;
+  if ( lhs == 2)
+    {
+      NspObject *bool;
+      if ((bool = nsp_create_boolean_object(NVOID, singular==TRUE))== NULLOBJ) 
+	return RET_BUG;
+      MoveObj(stack,2,NSP_OBJECT(bool));
+    }
+  return Max(1,lhs);
 } 
 
 
@@ -1170,6 +1184,7 @@ static AttrTab umfpack_attrs[] = {
 
 static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
 {
+  int singular=FALSE;
   int rep = RET_BUG;
   NspSpColMatrix *A;
   NspMatrix *B ,*X=NULL;
@@ -1188,7 +1203,7 @@ static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((B = GetMat(stack,2)) == NULLMAT) 
     return RET_BUG;
-  if ((H = nsp_umfpack_create(A)) == NULLUMFPACK)
+  if ((H = nsp_umfpack_create(A,FALSE,&singular)) == NULLUMFPACK)
     return RET_BUG;
   if ( H->obj == NULL || H->obj->data  == NULL) 
     {
