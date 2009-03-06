@@ -111,6 +111,12 @@ table.boxedverbatim {text-align:center;}
   border: solid 1px #aaaaff;
   padding: 0.5em;
 }
+.fancyvrb
+{
+  background: #eeeeff;
+  border: solid 1px #aaaaff;
+  padding: 0.5em;
+}
 .manref
 {
   background: #eeeeee;
