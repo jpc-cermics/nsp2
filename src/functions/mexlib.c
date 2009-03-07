@@ -603,15 +603,18 @@ mxArray *mxCreateDoubleScalar(double value)
 
 mxArray *mxCreateFull(int m, int n, int it)
 {
+  int i;
   NspMatrix *A;
   if ( it == 0) 
     {
       if ((A = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT) nsp_mex_errjump();
+      for (i=0; i < A->mn ; i++) A->R[i]=0.0;
     }
   else
     {
       if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
       A->convert = 'c'; /* matab complex style */
+      for (i=0; i < 2*A->mn ; i++) A->R[i] = 0.0;
     }
   return NSP_OBJECT(A);
 }
@@ -764,8 +767,21 @@ mxArray *mxCreateSparse(int m, int n, int nzmax,
     }
   /* just allocate triplet */
   if ( nsp_spcol_alloc_col_triplet(A,nzmax) == FAIL)  nsp_mex_errjump();
+  /* set the triplet to zero */
+#if 1 
+  if ( A->convert == 't' ) 
+    {
+      int i;
+      for ( i=0; i < A->n; i++) A->triplet.Jc[i]=0;
+      for ( i=0; i < nzmax; i++) A->triplet.Ir[i]=0;
+      for ( i=0; i < nzmax; i++) A->triplet.Pr[i]=0;
+      if ( A->rc_type=='c' )
+	for ( i=0; i < nzmax; i++) A->triplet.Pi[i]=0;
+    }
+#endif 
   return NSP_OBJECT(A);
 }
+
 
 /**
  * mxCreateString:
