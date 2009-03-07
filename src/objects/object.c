@@ -2238,6 +2238,18 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
 	       NSP_OBJECT(O1)->type->s_type(),NSP_OBJECT(O1)->type->s_type());
       return RET_BUG;
     }
+  else 
+    {
+#if 0 
+      Scierror("Warning: mixed unimplemented comparison %s %s %s\n","<>",
+	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
+      return RET_BUG;
+#else 
+      Sciprintf("Warning: mixed unimplemented comparison %s %s %s returning TRUE\n","<>",
+		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
+#endif
+      
+    }
   nsp_move_boolean(stack,1,TRUE); 
   return 1; 
 } 
