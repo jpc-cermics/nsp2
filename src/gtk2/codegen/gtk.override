@@ -1859,32 +1859,41 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   gint column;
   GValue value = { 0 }; NspObject *nsp_value;
   NspList *list;
-  CheckRhs(2,3);  
-  if (( nsp_iter = (NspObject *) GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
-  p_iter = nspg_boxed_get(nsp_iter,GtkTreeIter);
-  if ( rhs == 2 ) 
+  CheckRhs(1,3);  
+  if ( rhs == 1 )
     {
-      if ((list = GetList(stack,2))== NULL) return RET_BUG; 
-      if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),p_iter,NULL,list)== FAIL)
+      if ((list = GetList(stack,1))== NULL) return RET_BUG; 
+      if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),NULL,NULL,list)== FAIL)
 	return RET_BUG;
-    }
+     }
   else 
     {
-      int n_cols = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(self->obj));
-      if (GetScalarInt(stack,2,&column) == FAIL) return RET_BUG;
-      if ((nsp_value =nsp_get_object(stack,3))== NULLOBJ) return RET_BUG;
-      if (column < 0 || column >= n_cols) 
+      if (( nsp_iter = (NspObject *) GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
+      p_iter = nspg_boxed_get(nsp_iter,GtkTreeIter);
+      if ( rhs == 2 ) 
 	{
-	  Scierror("column number is out of range [0,%d]",n_cols);
-	  return RET_BUG; 
+	  if ((list = GetList(stack,2))== NULL) return RET_BUG; 
+	  if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),p_iter,NULL,list)== FAIL)
+	    return RET_BUG;
 	}
-      g_value_init(&value,gtk_tree_model_get_column_type(GTK_TREE_MODEL(self->obj),column));
-      if (nspg_value_from_nspobject(&value, nsp_value)) {
-	Scierror("value (%s) is of the wrong type for column %d\n",nsp_value->type->s_type(),column);
-	return RET_BUG;
-      }
-      gtk_list_store_set_value(GTK_LIST_STORE(self->obj),p_iter,column, &value);
-      g_value_unset(&value);
+      else 
+	{
+	  int n_cols = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(self->obj));
+	  if (GetScalarInt(stack,2,&column) == FAIL) return RET_BUG;
+	  if ((nsp_value =nsp_get_object(stack,3))== NULLOBJ) return RET_BUG;
+	  if (column < 0 || column >= n_cols) 
+	    {
+	      Scierror("column number is out of range [0,%d]",n_cols);
+	      return RET_BUG; 
+	    }
+	  g_value_init(&value,gtk_tree_model_get_column_type(GTK_TREE_MODEL(self->obj),column));
+	  if (nspg_value_from_nspobject(&value, nsp_value)) {
+	    Scierror("value (%s) is of the wrong type for column %d\n",nsp_value->type->s_type(),column);
+	    return RET_BUG;
+	  }
+	  gtk_list_store_set_value(GTK_LIST_STORE(self->obj),p_iter,column, &value);
+	  g_value_unset(&value);
+	}
     }
   return 0;
 }
@@ -2098,32 +2107,41 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   gint column;
   GValue value = { 0 }; NspObject *nsp_value;
   NspList *list;
-  CheckRhs(2,3);  
-  if (( nsp_iter = GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
-  p_iter = nspg_boxed_get(nsp_iter,GtkTreeIter);
-  if ( rhs == 2 ) 
+  CheckRhs(1,3);  
+  if ( rhs == 1 )
     {
-      if ((list = GetList(stack,2))== NULL) return RET_BUG; 
-      if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),p_iter,NULL,list)== FAIL)
+      if ((list = GetList(stack,1))== NULL) return RET_BUG; 
+      if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),NULL,NULL,list)== FAIL)
 	return RET_BUG;
-    }
-  else 
+     }
+  else
     {
-      int n_cols = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(self->obj));
-      if (GetScalarInt(stack,2,&column) == FAIL) return RET_BUG;
-      if ((nsp_value =nsp_get_object(stack,3))== NULLOBJ) return RET_BUG;
-      if (column < 0 || column >= n_cols) 
+      if (( nsp_iter = GetGtkTreeIter(stack,1))== NULL) return RET_BUG; 
+      p_iter = nspg_boxed_get(nsp_iter,GtkTreeIter);
+      if ( rhs == 2 ) 
 	{
-	  Scierror("column number is out of range [0,%d]",n_cols);
-	  return RET_BUG; 
+	  if ((list = GetList(stack,2))== NULL) return RET_BUG; 
+	  if ( nsp_gtk_tree_model_set_row(GTK_TREE_MODEL(self->obj),p_iter,NULL,list)== FAIL)
+	    return RET_BUG;
 	}
-      g_value_init(&value,gtk_tree_model_get_column_type(GTK_TREE_MODEL(self->obj),column));
-      if (nspg_value_from_nspobject(&value, nsp_value)) {
-	Scierror("value (%s) is of the wrong type for column %d\n",nsp_value->type->s_type(),column);
-	return RET_BUG;
-      }
-      gtk_tree_store_set_value(GTK_TREE_STORE(self->obj),p_iter,column, &value);
-      g_value_unset(&value);
+      else 
+	{
+	  int n_cols = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(self->obj));
+	  if (GetScalarInt(stack,2,&column) == FAIL) return RET_BUG;
+	  if ((nsp_value =nsp_get_object(stack,3))== NULLOBJ) return RET_BUG;
+	  if (column < 0 || column >= n_cols) 
+	    {
+	      Scierror("column number is out of range [0,%d]",n_cols);
+	      return RET_BUG; 
+	    }
+	  g_value_init(&value,gtk_tree_model_get_column_type(GTK_TREE_MODEL(self->obj),column));
+	  if (nspg_value_from_nspobject(&value, nsp_value)) {
+	    Scierror("value (%s) is of the wrong type for column %d\n",nsp_value->type->s_type(),column);
+	    return RET_BUG;
+	  }
+	  gtk_tree_store_set_value(GTK_TREE_STORE(self->obj),p_iter,column, &value);
+	  g_value_unset(&value);
+	}
     }
   return 0;
 }

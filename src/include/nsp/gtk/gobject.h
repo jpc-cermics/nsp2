@@ -176,6 +176,9 @@ extern int nsp_gtk_tree_model_set_col_from_bmat(GtkTreeModel *model,GtkTreeIter 
 
 extern NspObject *nsp_get_matrix_from_list_store(GtkListStore *model);
 extern NspObject *nsp_get_matrix_from_tree_store(GtkTreeStore *model);
+extern NspObject *nsp_get_list_from_list_store(GtkListStore *model);
+extern NspObject *nsp_get_list_from_tree_store(GtkTreeStore *model);
+
 
 extern int nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle);
 extern GType  nspg_type_from_object(NspObject *obj) ;

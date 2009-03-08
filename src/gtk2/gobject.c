@@ -1947,47 +1947,14 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
       return FAIL;
     break;
   case G_TYPE_POINTER:
-    /* XXX A FAIRE 
-    if (obj == Py_None)
-    g_value_set_pointer(value, NULL);
-    else 
-    if ( ISGPointer(obj) && G_VALUE_HOLDS(value, ((NspGPointer *)obj)->gtype))
-      g_value_set_pointer(value, NSP_GPOINTER_GET(obj, gpointer));
-    else if ( IsCObject(obj))
-      g_value_set_pointer(value, NspCObject_AsVoidPtr(obj));
-    else
-      return FAIL;
+    return FAIL;
     break;
-    */
-  case G_TYPE_BOXED: {
-    /* XXXX  PyGBoxedMarshal *bm;
-       if (obj == Py_None)
-       g_value_set_boxed(value, NULL);
-    if (G_VALUE_HOLDS(value, PY_TYPE_OBJECT))
-      g_value_set_boxed(value, obj);
-    else if ( IsGboxed(obj) &&  G_VALUE_HOLDS(value, ((PyGBoxed *)obj)->gtype))
-      g_value_set_boxed(value, NSP_GBOXED_GET(obj, gpointer));
-    else if ((bm = nspg_boxed_lookup(G_VALUE_TYPE(value))) != NULL)
-      return bm->tovalue(value, obj);
-    else if ( IsCObject(obj))
-      g_value_set_boxed(value, NspCObject_AsVoidPtr(obj));
-    else
-      return FAIL;
+  case G_TYPE_BOXED: 
+    return FAIL;
     break;
-    */
-  }
   case G_TYPE_PARAM:
-    /* XXXX
-    if ( IsGParamSpec(obj))
-      g_value_set_param(value, NspCObject_AsVoidPtr(obj));
-    else
-      return FAIL;
-    break;
-    */
+    return FAIL;
   case G_TYPE_OBJECT:
-    /* if (obj == Py_None) {
-      g_value_set_object(value, NULL);
-      } else  */
     if ( IsGObject(obj) && G_TYPE_CHECK_INSTANCE_TYPE( NSP_GOBJECT_GET(obj),
 						       G_VALUE_TYPE(value))) 
       {
@@ -2256,16 +2223,24 @@ GType gtype_from_nsp_object(NspObject *obj)
  * -----------------------------------------------------------------
  */ 
 
-/* 
- * Utility function: returns an array of GType from a Nsp List 
+/**
+ * nsp_gtk_gtypes_from_list:
+ * @L: a #NspList 
+ * @len: an int pointer 
+ * 
+ * returns an array of GType from a #NspList object. 
  * if a list element is a mxn matrix then n Gtypes are added 
- * if a list element is a list(x1,....) then the Gtype associated to 
- * x1 is added 
+ * if a list element is itself a list(x1,....) then the Gtype associated to 
+ * the first element is added.
+ * As an example if @L is equal to 
  * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....)) 
- *  -> [double,double,double,string,string,boolean,double,pixbuf]
- * the caller will have to take care of freeing the returned value 
- * the size of the returned array is returned in len 
- */ 
+ * then the gtype array will contail
+ * [double,double,double,string,string,boolean,double,pixbuf].
+ * The caller will have to take care of freeing the returned value 
+ * and the size of the returned array is returned in len 
+ * 
+ * Returns: an array of #GType
+ **/
 
 GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
 {
@@ -2336,9 +2311,15 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
   return NULL;
 }
 
-/* 
- * Utility function: create a list_store from a list 
- */ 
+
+/**
+ * nsp_gtk_list_store_new_from_list:
+ * @L: a #NspList.
+ * 
+ * creates a GtkListStore from a list description.
+ * 
+ * Returns: a new #GtkListStore.
+ **/
 
 GtkListStore *nsp_gtk_list_store_new_from_list(NspList *L)
 {
@@ -2357,10 +2338,14 @@ GtkListStore *nsp_gtk_list_store_new_from_list(NspList *L)
   return ls; 
 }
 
-
-/* 
- * Utility function: create a tree_store from a list 
- */ 
+/**
+ * nsp_gtk_tree_store_new_from_list:
+ * @L:  a #NspList.
+ * 
+ * creates a GtkTreeStore from a list description.
+ * 
+ * Returns: a new #GtkTreeStore.
+ **/
 
 GtkTreeStore *nsp_gtk_tree_store_new_from_list(NspList *L)
 {
@@ -2379,10 +2364,18 @@ GtkTreeStore *nsp_gtk_tree_store_new_from_list(NspList *L)
   return ts; 
 }
 
-/* 
- * counts the number of  rows described in L 
- * and check that all the list elements have the same number of rows 
- */
+/**
+ * nsp_list_count_rows:
+ * @L: a #NspList.
+ * @n_rows: int pointer 
+ * 
+ * counts the number of  rows described in @L 
+ * and check that all the list elements have the same number of rows.
+ * This numbre is returned in @n_rows.
+ * 
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_list_count_rows(NspList *L,int *n_rows)
 {
@@ -2441,14 +2434,24 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
   return OK;
 }
 
-/*
- * fills a GtkListStore or a GtkTreeStore with data given in list 
+/**
+ * nsp_gtk_list_or_tree_store_fill_from_list:
+ * @model: a #GtkTreeModel
+ * @iter: a #GtkTreeIter
+ * @parent: a #GtkTreeIter
+ * @L: a #NspList.
+ * 
+ * 
+ * fills @model (a #GtkTreeModel) with data given in list @L.
  * if iterator is given data is inserted at iterator position 
- * if iterator is null data is inserted at the end and enough 
- * lines are created. 
- */
+ * if iterator is null data is inserted at the end and rows are 
+ * created accordingly.
+ * 
+ * Returns: %OK or %FAIL.
+ **/
 
-int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *iter,GtkTreeIter *parent, NspList *L)
+int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *iter,
+					      GtkTreeIter *parent, NspList *L)
 {
   int count,n_rows=-1;
   Cell *cloc = L->first ; 
@@ -2564,12 +2567,17 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
   return OK;
 }
 
-/* 
- * Utility function : creates a list_store from a NspList 
- *   using NspList to set column types 
- *   if flag is TRUE then the list is also used to fill the list store 
+
+/**
+ * nsp_gtk_list_store_from_list:
+ * @L: a #NspList.
+ * @flag: an integer
+ * 
+ * creates a #GtkListStore using #NspList @L to set the column types.
+ * If @flag is %TRUE then the list is also used to fill the #GtkListStore
  *   
- */
+ * Returns: a new #GtkListStore
+ **/
 
 GtkListStore *nsp_gtk_list_store_from_list(NspList *L,int flag)
 {
@@ -2580,6 +2588,17 @@ GtkListStore *nsp_gtk_list_store_from_list(NspList *L,int flag)
   return ls;
 }
 
+/**
+ * nsp_gtk_tree_store_from_list:
+ * @L: 
+ * @flag: 
+ * 
+ * creates a #GtkTreeStore using #NspList @L to set the column types.
+ * If @flag is %TRUE then the list is also used to fill the #GtkTreeStore
+ *   
+ * Returns: a new #GtkTreeStore
+ **/
+
 GtkTreeStore *nsp_gtk_tree_store_from_list(NspList *L,int flag )
 {
   GtkTreeStore *ls;
@@ -2589,9 +2608,17 @@ GtkTreeStore *nsp_gtk_tree_store_from_list(NspList *L,int flag )
   return ls;
 }
 
-/* 
- * Utility function fill a column in a GtkListStore or GtkTreeStore from a list 
- */ 
+/**
+ * nsp_gtk_tree_model_set_col_from_list:
+ * @model: a #GtkTreeModel
+ * @iter1: a #GtkTreeIter
+ * @L: a #NspList 
+ * @column: an integer 
+ * 
+ * fills a column in a GtkTreeModel from a #NspList.
+ * 
+ * Returns: %OK or %FAIL.
+ **/
 
 int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,NspList *L,int column)
 {
@@ -2651,6 +2678,19 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
  * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore 
  * given an iterator 
  */ 
+
+/**
+ * nsp_gtk_tree_model_set_row:
+ * @model: a #GtkTreeModel
+ * @iter1: a #GtkTreeIter
+ * @parent: a #GtkTreeIter
+ * @items: a #NspList
+ *
+ * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore 
+ * given an iterator 
+ * 
+ * Returns: %OK or %FAIL.
+ **/
 
 int nsp_gtk_tree_model_set_row(GtkTreeModel *model, GtkTreeIter *iter,GtkTreeIter *parent,NspList *items)
 {
@@ -2793,7 +2833,7 @@ static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,Gt
       model_type =  gtk_tree_model_get_column_type(model,column);
       if ( model_type != type) 
 	{
-	  Scierror("column %d in TreeModel cannot accept values of type %s \n", M->type->s_type());
+	  Scierror("column %d in TreeModel cannot accept values of type %s \n",column, M->type->s_type());
 	  return FAIL;
 	}
       g_value_init(&value, model_type);
@@ -3254,6 +3294,115 @@ NspObject *nsp_get_matrix_from_list_store(GtkListStore *model)
 NspObject *nsp_get_matrix_from_tree_store(GtkTreeStore *model)
 {
   return nsp_get_matrix_from_list_or_tree_store(GTK_TREE_MODEL(model));
+}
+
+/**
+ * nsp_get_list_from_list_or_tree_store:
+ * @model: a #GtkTreeModel
+ * 
+ * extract data from a model as a list with one list element for each column. 
+ * 
+ * Returns: a new #NspObject 
+ **/
+
+static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
+{
+  GType mtype;
+  GValue value = { 0, };
+  int ncols,count=0,col,i;
+  GtkTreeIter iter; 
+  NspList *L= NULLLIST;
+
+  if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
+    Scierror("Error: expecting a list or tree store model\n");
+    return NULLOBJ;
+  }
+
+  /* get first element to detect the type to give to the matrix 
+   */
+  /* count the rows and columns */
+  ncols= gtk_tree_model_get_n_columns(GTK_TREE_MODEL(model));
+  if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+  count++;
+  while ( gtk_tree_model_iter_next(model,&iter) ) count++;
+  /* count gives the number of rows */
+  if ( (L=nsp_list_create(NVOID)) == NULLLIST ) return NULLOBJ;
+  
+  for (col = ncols-1 ; col >=0  ; col-- )
+    {
+      NspObject *Col=NULLOBJ;
+      if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+      gtk_tree_model_get_value(model,&iter ,col, &value);
+      mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+      if ( mtype != G_TYPE_STRING 
+	   && mtype != G_TYPE_BOOLEAN 
+	   && mtype != G_TYPE_DOUBLE )
+	{
+	  Scierror("Do not know how to build an object from a gvalue of type %s\n",
+		   g_type_name(G_VALUE_TYPE(&value)));
+	  return NULL;
+	}
+      g_value_unset(&value);
+      /* initialize proper object for the column  */
+      switch ( mtype ) 
+	{
+	case G_TYPE_STRING:  
+	  if ((Col = (NspObject *) nsp_smatrix_create_with_length("le",count,1,-1))== NULLOBJ)
+	    return NULL;     
+	  break;
+	case G_TYPE_BOOLEAN: 
+	  if ((Col = (NspObject *) nsp_bmatrix_create("le",count,1))== NULLOBJ) 
+	    return NULL;     
+	  break;
+	  break;
+	case G_TYPE_DOUBLE :
+	  if ((Col = (NspObject *) nsp_matrix_create("le",'r',count,1))== NULLOBJ) 
+	    return NULL;     
+	  break;
+	}
+      if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
+      for ( i = 0 ; i < count ; i++) 
+	{
+	  const gchar *str;
+	  gtk_tree_model_get_value(model,&iter ,col, &value);
+	  switch ( mtype ) 
+	    {
+	    case G_TYPE_STRING:  
+	      str = g_value_get_string(&value);
+	      ((NspSMatrix *) Col)->S[i]=nsp_string_copy(str);
+	      if ( ((NspSMatrix *) Col)->S[i] == NULL) 
+		return NULL;
+	      break;
+	    case G_TYPE_BOOLEAN: 
+	      ((NspBMatrix *) Col)->B[i]= g_value_get_boolean(&value);
+	      break;
+	    case G_TYPE_DOUBLE: 
+	      ((NspMatrix *) Col)->R[i]= g_value_get_double(&value);
+	      break;
+	    }
+	  g_value_unset(&value);
+	  gtk_tree_model_iter_next(model,&iter);
+	}
+      /* now store the column in the returned list */
+      if ( nsp_list_begin_insert(L,Col) == FAIL) return NULLOBJ;
+    }
+  if (L == NULLLIST ) 
+    {
+      Scierror("Error: get_value method return a NULL Object \n");
+      return NULL;
+    }
+  return NSP_OBJECT(L);
+}
+
+
+NspObject *nsp_get_list_from_list_store(GtkListStore *model)
+{
+  return nsp_get_list_from_list_or_tree_store(GTK_TREE_MODEL(model));
+}
+
+NspObject *nsp_get_list_from_tree_store(GtkTreeStore *model)
+{
+  return nsp_get_list_from_list_or_tree_store(GTK_TREE_MODEL(model));
 }
 
 /*--------------------------------------------------------------------------
