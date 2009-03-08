@@ -5448,17 +5448,23 @@ static int _wrap_gdk_window_set_background(NspGdkWindow *self,Stack stack,int rh
 
 static int _wrap_gdk_window_set_back_pixmap(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_bool,t_end};
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"pixmap",obj,NULLOBJ,-1}, 
+	{"parent_relative",s_bool,NULLOBJ,-1}, 
+	{NULL,t_end,NULLOBJ,-1} };
   int parent_relative;
-  NspGObject *nsp_pixmap;
+  NspGObject *nsp_pixmap = NULL;
   GdkPixmap *pixmap = NULL;
 
-  if ( GetArgs(stack,rhs,opt,T,&nsp_pixmap, &parent_relative) == FAIL) return RET_BUG;
-  if ( IsGdkPixmap((NspObject *)nsp_pixmap))
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_pixmap, &parent_relative) == FAIL) return RET_BUG;
+  if ( nsp_pixmap != NULL ) {
+    if ( IsGdkPixmap((NspObject *)nsp_pixmap))
       pixmap = GDK_PIXMAP(nsp_pixmap->obj);
-  else if ( ! IsNone((NspObject *) nsp_pixmap))  {
-      Scierror( "pixmap should be a GdkPixmap or None");
-      return RET_BUG;
+    else if (! IsNone((NspObject *)nsp_pixmap)) {
+         Scierror( "pixmap should be a GdkPixmap or None");
+         return RET_BUG;
+    }
   }
   gdk_window_set_back_pixmap(GDK_WINDOW(self->obj), pixmap, parent_relative);
   return 0;
@@ -5466,11 +5472,14 @@ static int _wrap_gdk_window_set_back_pixmap(NspGdkWindow *self,Stack stack,int r
 
 static int _wrap_gdk_window_set_cursor(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"cursor",obj,NULLOBJ,-1}, 
+	{NULL,t_end,NULLOBJ,-1} };
   NspObject *nsp_cursor = NULL;
   GdkCursor *cursor = NULL;
 
-  if ( GetArgs(stack,rhs,opt,T,&nsp_cursor) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cursor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cursor, GDK_TYPE_CURSOR))
       cursor = nspg_boxed_get(nsp_cursor, GdkCursor);
   else if (! IsNone(nsp_cursor)) {
@@ -5492,7 +5501,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height,(double) depth) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5496 "gdk.c"
+#line 5505 "gdk.c"
 
 
 #line 1808 "gdk.override"
@@ -5505,7 +5514,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5509 "gdk.c"
+#line 5518 "gdk.c"
 
 
 #line 1819 "gdk.override"
@@ -5518,7 +5527,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5522 "gdk.c"
+#line 5531 "gdk.c"
 
 
 #line 1830 "gdk.override"
@@ -5531,7 +5540,7 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5535 "gdk.c"
+#line 5544 "gdk.c"
 
 
 #line 1841 "gdk.override"
@@ -5544,7 +5553,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5548 "gdk.c"
+#line 5557 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5571,7 +5580,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5575 "gdk.c"
+#line 5584 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5623,7 +5632,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5627 "gdk.c"
+#line 5636 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5797,12 +5806,16 @@ static int _wrap_gdk_window_begin_move_drag(NspGdkWindow *self,Stack stack,int r
 
 static int _wrap_gdk_window_invalidate_rect(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_bool,t_end};
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"rect",obj,NULLOBJ,-1}, 
+	{"invalidate_children",s_bool,NULLOBJ,-1}, 
+	{NULL,t_end,NULLOBJ,-1} };
   int invalidate_children;
   GdkRectangle rect_rect = { 0, 0, 0, 0 }, *rect;
   NspObject *nsp_rect = NULL;
 
-  if ( GetArgs(stack,rhs,opt,T,&nsp_rect, &invalidate_children) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_rect, &invalidate_children) == FAIL) return RET_BUG;
   if (nsp_rect == NULL)
       rect = NULL;
   else if (nsp_gdk_rectangle_from_object(nsp_rect, &rect_rect))
@@ -6116,21 +6129,26 @@ NspGdkPixmap *gdkpixmap_copy(NspGdkPixmap *self)
 static int
 _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj, s_int, s_int,new_opts,t_end};
+  int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
+	{"drawable",obj,NULLOBJ,-1}, 
+	{"width",s_int,NULLOBJ,-1}, 
+	{"height",s_int,NULLOBJ,-1}, 
 	{"depth",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   int width, height, depth = -1;
   GdkDrawable *drawable = NULL;
-  NspGObject *nsp_drawable;
+  NspGObject *nsp_drawable = NULL;
 
   GObject *ret; NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_drawable, &width, &height, opts, &depth) == FAIL) return RET_BUG;
-  if ( IsGdkDrawable((NspObject *)nsp_drawable))
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_drawable, &width, &height, &depth) == FAIL) return RET_BUG;
+  if ( nsp_drawable != NULL ) {
+    if ( IsGdkDrawable((NspObject *)nsp_drawable))
       drawable = GDK_DRAWABLE(nsp_drawable->obj);
-  else if ( ! IsNone((NspObject *) nsp_drawable))  {
-      Scierror( "drawable should be a GdkDrawable or None");
-      return RET_BUG;
+    else if (! IsNone((NspObject *)nsp_drawable)) {
+         Scierror( "drawable should be a GdkDrawable or None");
+         return RET_BUG;
+    }
   }
   if ((ret = (GObject *)gdk_pixmap_new(drawable, width, height, depth))== NULL) return RET_BUG;
 
@@ -6685,7 +6703,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 6689 "gdk.c"
+#line 6707 "gdk.c"
 
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6895,7 +6913,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(dash_list);
   return 0;
 }
-#line 6899 "gdk.c"
+#line 6917 "gdk.c"
 
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -7064,7 +7082,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   }
   return NULL;
 }
-#line 7068 "gdk.c"
+#line 7086 "gdk.c"
 
 
 #line 1471 "gdk.override"
@@ -7164,7 +7182,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
     }
   return 0;
 }
-#line 7168 "gdk.c"
+#line 7186 "gdk.c"
 
 
 
@@ -7936,7 +7954,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       return 1;
     }
 }
-#line 7940 "gdk.c"
+#line 7958 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8020,7 +8038,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 8024 "gdk.c"
+#line 8042 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8181,7 +8199,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8185 "gdk.c"
+#line 8203 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8363,7 +8381,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8367 "gdk.c"
+#line 8385 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
@@ -9895,7 +9913,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 9899 "gdk.c"
+#line 9917 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -10239,7 +10257,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXX ");
   return RET_BUG;
 }
-#line 10243 "gdk.c"
+#line 10261 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
@@ -10328,7 +10346,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10332 "gdk.c"
+#line 10350 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs)
@@ -10460,7 +10478,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10464 "gdk.c"
+#line 10482 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
@@ -10574,7 +10592,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10578 "gdk.c"
+#line 10596 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
@@ -10853,25 +10871,33 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10857 "gdk.c"
+#line 10875 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj, string, s_int, s_int,t_end};
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"drawable",obj,NULLOBJ,-1}, 
+	{"data",string,NULLOBJ,-1}, 
+	{"width",s_int,NULLOBJ,-1}, 
+	{"height",s_int,NULLOBJ,-1}, 
+	{NULL,t_end,NULLOBJ,-1} };
   GdkBitmap *ret;
   NspObject *nsp_ret;
   int width, height;
-  NspGObject *nsp_drawable;
+  NspGObject *nsp_drawable = NULL;
   char *data;
   GdkDrawable *drawable = NULL;
 
-  if ( GetArgs(stack,rhs,opt,T,&nsp_drawable, &data, &width, &height) == FAIL) return RET_BUG;
-  if ( IsGdkDrawable((NspObject *)nsp_drawable))
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_drawable, &data, &width, &height) == FAIL) return RET_BUG;
+  if ( nsp_drawable != NULL ) {
+    if ( IsGdkDrawable((NspObject *)nsp_drawable))
       drawable = GDK_DRAWABLE(nsp_drawable->obj);
-  else if ( ! IsNone((NspObject *) nsp_drawable))  {
-      Scierror( "drawable should be a GdkDrawable or None");
-      return RET_BUG;
+    else if (! IsNone((NspObject *)nsp_drawable)) {
+         Scierror( "drawable should be a GdkDrawable or None");
+         return RET_BUG;
+    }
   }
 ret = gdk_bitmap_create_from_data(drawable, data, width, height);
   nsp_type_gdkbitmap = new_type_gdkbitmap(T_BASE);
@@ -11202,7 +11228,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 11206 "gdk.c"
+#line 11232 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
@@ -11274,7 +11300,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 11278 "gdk.c"
+#line 11304 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)
@@ -11530,7 +11556,7 @@ gdk_register_classes(NspObject *d)
   #endif
 * /
 
-#line 11534 "gdk.c"
+#line 11560 "gdk.c"
   nspg_register_boxed(d, "Event", GDK_TYPE_EVENT, &PyGdkEvent_Type);
   nspg_register_boxed(d, "Font", GDK_TYPE_FONT, &PyGdkFont_Type);
   nspg_register_boxed(d, "Color", GDK_TYPE_COLOR, &PyGdkColor_Type);

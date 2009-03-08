@@ -19477,7 +19477,7 @@
 (define-method filter_new
   (of-object "GtkTreeModel")
   (c-name "gtk_tree_model_filter_new")
-  (return-type "GtkTreeModel*")
+  (return-type "GtkTreeModelFilter*")
   (parameters
    '("GtkTreePath*" "root" (null-ok) (default "NULL"))
    )

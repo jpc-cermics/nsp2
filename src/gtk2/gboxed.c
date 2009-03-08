@@ -466,6 +466,7 @@ void GBoxed_Interf_Info(int i, char **fname, function (**f))
 
 int nspg_boxed_check(NspObject *self,GType boxed_type) 
 {
+  if ( self == NULL) return FALSE;
   return ((NspGBoxed *) self)->gtype ==  boxed_type;
 }
   

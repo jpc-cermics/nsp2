@@ -265,6 +265,8 @@ class MethodDef(Definition):
                             pnull = 1
                         elif farg[0] == 'size':
                             psize = farg[1]
+                    if pnull == 1 and pdflt == None:
+                        pdflt = 'NULL'
                     self.params.append((ptype, pname, pdflt, pnull, psize))
             elif arg[0] == 'varargs':
                 self.varargs = arg[1] in ('t', '#t')

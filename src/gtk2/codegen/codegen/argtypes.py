@@ -633,11 +633,15 @@ class BoxedArg(ArgType):
              '      Scierror( "%(name)s should be a %(typename)s");\n'
              '      return RET_BUG;\n'
              '  }\n')
-    null = ('  if (nspg_boxed_check(nsp_%(name)s, %(typecode)s))\n'
+    # this one is used when null argument is accepted
+
+    null = ('  if ( nsp_%(name)s != NULL ) {\n'
+            '    if (nspg_boxed_check(nsp_%(name)s, %(typecode)s))\n'
             '      %(name)s = nspg_boxed_get(nsp_%(name)s, %(typename)s);\n'
-            '  else if (! IsNone(nsp_%(name)s)) {\n'
+            '    else if (! IsNone(nsp_%(name)s)) {\n'
             '      Scierror("%(name)s should be a %(typename)s or None");\n'
             '      return RET_BUG;\n'
+            '    }\n'
             '  }\n')
     def __init__(self, ptype, typecode):
 	self.typename = ptype
@@ -833,6 +837,7 @@ class GErrorArg(ArgType):
         info.codeafter.append(self.handleerror % { 'name': pname })
 
 class GtkTreePathArg(ArgType):
+    
     # haven't done support for default args.  Is it needed?
     normal = ('  %(name)s = nsp_gtk_tree_path_from_nspobject(nsp_%(name)s);\n'
               '  if (!%(name)s) {\n'
@@ -849,7 +854,7 @@ class GtkTreePathArg(ArgType):
     null = ('  if (PyTuple_Check(nsp_%(name)s))\n'
             '      %(name)s = nsp_gtk_tree_path_from_nspobject(nsp_%(name)s);\n'
             '  else if ( !IsNone(nsp_%(name)s)) {\n'
-            '      Scierror( "%(name)s should be a GtkTreePath or None");\n'
+            '      Scierror( "%(name)s should be a zzzGtkTreePath or None");\n'
             '      return RET_BUG;\n'
             '  }\n')
     freepath = ('  if (%(name)s)\n'
@@ -1186,7 +1191,8 @@ matcher.register('GdkAtom', AtomArg())
 matcher.register('GType', GTypeArg())
 matcher.register('GtkType', GTypeArg())
 matcher.register('GError**', GErrorArg())
-matcher.register('GtkTreePath*', GtkTreePathArg())
+#unused 
+#matcher.register('GtkTreePath*', GtkTreePathArg())
 matcher.register('GdkRectangle*', GdkRectanglePtrArg())
 matcher.register('GtkAllocation*', GdkRectanglePtrArg())
 matcher.register('GdkRectangle', GdkRectangleArg())
