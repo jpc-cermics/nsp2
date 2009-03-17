@@ -73,7 +73,7 @@ examples). \verb+ea_estim+ is an estimation of $| I - I_a |$. The
 \item ier = 2: the occurrence of roundoff error is detected
       which prevents the requested tolerance from being
       achieved ; the error may be under-estimated.
-\item ier = 3: means terminaison with relative error less than 5* machine epsilon.
+\item ier = 3: program ended with relative error less than five times the machine epsilon.
       (this can be obtained when the input tolerance is too stringent).
 \item ier = 4: max number of function calls have been reached ;
       in the actual interface implementation this other limit is set
@@ -96,7 +96,7 @@ I = -cos(2)+2*cos(1)-1 // exact result \Hnewline
 abs(Ia-I) //near exact absolute error}
 \end{program}
 
-\paragraph{example 1bis} the same exemple using triangles
+\paragraph{example 1bis} the same example using triangles
 \begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
 // the unit square is divided in 2 triangles:\Hnewline
 X = [0,1;1,1;0,0];\Hnewline
@@ -136,7 +136,7 @@ abs(Ia-1)\Hnewline
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
 \end{program}
-Rmk: a singularity at the origine could be removed using polar
+Rmk: a singularity at the origin could be removed using polar
 coordinates but in case of the unit triangle it may be better
 to use $x = u(1-v), y = uv$, $dxdy = u dudv$ because $u$ and $v$
 belong in the unit square and so you can use directly int2d
@@ -150,6 +150,6 @@ on the unit square).
 
 % -- Authors
 \begin{authors}
-  uses the routine twodq (D.K. Kahaner, O.W. Rechard, R. Barnhill)
+  uses the routine \verb!twodq! (D.K. Kahaner, O.W. Rechard, R. Barnhill)
   Nsp interface: Bruno Pincon.
 \end{authors}
