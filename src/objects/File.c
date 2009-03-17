@@ -120,7 +120,7 @@ int nsp_file_close(NspFile  *F)
 {
   if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->obj->fname);
+      Sciprintf("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
   if ( F->obj->file != stdin && F->obj->file != stdout && F->obj->file != stderr)
@@ -225,7 +225,7 @@ int nsp_file_close_xdr_r(NspFile  *F)
     }
   if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->obj->fname);
+      Sciprintf("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
   nsp_xdr_load_string(F->obj->xdrs,type,TYPE_S) ;
@@ -301,7 +301,7 @@ int nsp_file_close_xdr_w(NspFile  *F)
     }
   if ( !IS_OPENED(F->obj->flag))
     {
-      Scierror("Warning: file %s is already closed\n",F->obj->fname);
+      Sciprintf("Warning: file %s is already closed\n",F->obj->fname);
       return OK;
     }
   nsp_xdr_save_string(F->obj->xdrs,"endsave");
