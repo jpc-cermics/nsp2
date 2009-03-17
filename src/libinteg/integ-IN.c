@@ -937,7 +937,7 @@ static int make_triangles(double a, double b, double c, double d, NspMatrix **XX
       x0 = a;
       for ( j = 0 ; j < nbtris ; j+=2 )
 	{
-	  x1 = j < nbtris-1 ? a+(j+1)*dx : b; 
+	  x1 = j < nbtris-1 ? x0+dx : b; 
 	  xx->R[3*j] = x0; xx->R[3*j+1] = x1; xx->R[3*j+2] = x0;
 	  yy->R[3*j] = c;  yy->R[3*j+1] = c;  yy->R[3*j+2] = d;
 	  xx->R[3*j+3] = x1; xx->R[3*j+4] = x1; xx->R[3*j+5] = x0;
@@ -951,7 +951,7 @@ static int make_triangles(double a, double b, double c, double d, NspMatrix **XX
       y0 = c;
       for ( j = 0 ; j < nbtris ; j+=2 )
 	{
-	  y1 = j < nbtris-1 ? c+(j+1)*dx : d; 
+	  y1 = j < nbtris-1 ? y0+dy : d; 
 	  xx->R[3*j] = a;  xx->R[3*j+1] = b;  xx->R[3*j+2] = a;
 	  yy->R[3*j] = y0; yy->R[3*j+1] = y0; yy->R[3*j+2] = y1;
 	  xx->R[3*j+3] = b; xx->R[3*j+4] = b; xx->R[3*j+5] = a;
