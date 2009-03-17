@@ -5634,7 +5634,12 @@ static void feval_clean(int dim,feval_data *feval)
   if ( dim == 2 ) nsp_matrix_destroy(feval->y);
 }
 
-static int feval_system(int dim,double x,double y,double * val,feval_data *feval)
+/*
+ * There is no way to determine if a function returns a real or a complex
+ * number before all the iterations are completed. So we assume it is a
+ * complex number.
+ */
+static int feval_system(int dim,double x,double y,doubleC * val,feval_data *feval)
 {
   NspObject *targs[4];/* arguments to be transmited to feval->func */
   NspObject *nsp_ret;
@@ -5659,7 +5664,14 @@ static int feval_system(int dim,double x,double y,double * val,feval_data *feval
       && ((NspMatrix *) nsp_ret)->mn==1 ) 
     {
       Mat2double((NspMatrix *) nsp_ret);
-      *val= ((NspMatrix *) nsp_ret)->R[0];
+      val->r = ((NspMatrix *) nsp_ret)->R[0];
+      val->i = 0.;
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'c' 
+           && ((NspMatrix *) nsp_ret)->mn==1 ) 
+    {
+      *val = ((NspMatrix *) nsp_ret)->C[0];
       nsp_object_destroy((NspObject **) &nsp_ret);
     }
   else 
@@ -5674,7 +5686,8 @@ static int feval_system(int dim,double x,double y,double * val,feval_data *feval
 int int_feval( Stack stack, int rhs, int opt, int lhs)
 {
   int i,j,dim=1;
-  NspMatrix *M;
+  char ret_type;
+  NspMatrix *M, *Mreal;
   feval_data feval;
   NspObject *f= NULL;
   NspList *args=NULL;
@@ -5716,23 +5729,46 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( dim == 1 )
     {
-      if ((M = nsp_matrix_create(NVOID,'r',x->m,x->n))== NULLMAT) return RET_BUG;
+      if ((M = nsp_matrix_create(NVOID,'c',x->m,x->n))== NULLMAT) return RET_BUG;
       for ( i = 0 ; i < x->mn ; i++) 
 	{
-	  if ( feval_system(dim,x->R[i],0,&M->R[i],&feval)==FAIL) 
+	  if ( feval_system(dim,x->R[i],0,&M->C[i],&feval)==FAIL) 
 	    return RET_BUG;
 	}
     }
   else 
     {
-      if ((M = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULLMAT) return RET_BUG;
+      if ((M = nsp_matrix_create(NVOID,'c',x->mn,y->mn))== NULLMAT) return RET_BUG;
       for ( i = 0 ; i < x->mn ; i++) 
 	for ( j = 0 ; j < y->mn ; j++) 
 	  {
-	    if ( feval_system(dim,x->R[i],y->R[j],&M->R[i+M->m*j],&feval)==FAIL) 
+	    if ( feval_system(dim,x->R[i],y->R[j],&M->C[i+M->m*j],&feval)==FAIL) 
 	      return RET_BUG;
 	  }
     }
+  /*
+   * Because there is no way to determine whether a function returns a real or
+   * complex number, we have done all the iterations assuming the return
+   * values are complex. Looping over all of them to check if they weren't
+   * actually real
+   */
+  ret_type = 'r';
+  for (i = 0; i<M->mn; i++)
+    {
+      if (M->C[0].i != 0.)
+        {
+          ret_type = 'c';
+          break;
+        }
+    }
+  if (ret_type == 'r')
+    {
+      if ((Mreal = nsp_matrix_create(NVOID,'r',M->m, M->n))== NULLMAT) return RET_BUG;
+      for (i=0; i<M->mn; i++) Mreal->R[i] = M->C[i].r;
+      nsp_matrix_destroy(M);
+      M = Mreal;
+    }
+  
   feval_clean(1,&feval);
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
