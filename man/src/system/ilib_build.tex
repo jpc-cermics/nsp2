@@ -2,74 +2,84 @@
 
 \mansection{ilib\_build}
 \begin{mandesc}
-  \texttt{ilib\_build} --  utility for shared library management\\ % @mandesc@
+  \shortunder{ilib\_build}{ilib_build}{utility for toolboxes interfaces}
 \end{mandesc}
-\index{ilib\_build}\label{ilib-build}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-ilib_build(lib_name,table,files,libs [,makename,ldflags,cflags,fflags])  
+  ilib_build(libname,table,files,libs [,makename,ldflags,cflags,fflags])  
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{lib\_name}: a character string, the generic name of the library without path and extension.
-    \vname{table}: 2 column string matrix giving the table of pairs 'scilab-name', 'interface name'
-    \vname{files}: string matrix giving objects files needed for shared library creation
-    \vname{libs}: string matrix giving extra libraries needed for shred library creation
-    \vname{makename}: character string. The path of the Makefile file without extension.
-    \vname{ldflags,cflags,fflags}: character strings to provide options for the loader, the C compiler and the Fortran compiler.
+    \vname{libname}: a string giving the name of the library to be build. This name 
+    should start with \verb!lib!.
+    \vname{table}: a string matrix which can have two or three column. 
+    The first column gives nsp function name, the second column gives the name of 
+    the interface which is used to implement the function given in column one, and the 
+    third column which is optional gives the type of interface used.  
+    Values for the third column entries are to be chosen among 
+    \begin{itemize}
+      \item 'cmex', 'fmex', 'Fmex': when the interface is implemented 
+        using mex files (C or Fortran)
+      \item 'cnsp', 'csci', 'fsci', 'fnsp': when the interface is a Nsp standard interface.
+      \item 'direct': for direct interface. 
+    \end{itemize}
+    \vname{files}: a string matrix giving objects files needed for the shared library creation.
+    \vname{libs}:  a string matrix giving extra shared libraries needed to solve references 
+    for the shared library to be build.
+    \vname{makename}: a string giving the name of the Makefile file to be generated.
+    \vname{ldflags,cflags,fflags}: strings giving options for the linker, and the C or 
+    Fortran compilers.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  This tool is used to create shared libraries and to generate a 
-  loader file which can be used to dynamically load the shared library 
-  into Scilab with \verb!addinter!
-  Many examples are provided in \verb!examples/interface-tour-so!
+  \verb!ilib_build! is used to facilitate the creation of a shared libraries 
+  which contains a set of interface for Nsp new functions. It generates 
+  a loader file which can be used to dynamically load the shared library 
+  into Nsp. Many examples are provided in the \verb!tests/addinter! 
   directory.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}\HCode{ //Here with give a complete example on adding new primitive to Scilab\Hnewline
-    //create the procedure files\Hnewline
-    f1=['extern double fun2();'\Hnewline
-      'void fun1(x,y)'\Hnewline
-      'double *x, *y;'\Hnewline
-      '{*y=fun2(*x)/(*x);}'];\Hnewline
-    mputl(f1,'fun1.c')\Hnewline
-    f2=['#include $<$math.h$>$'\Hnewline
-      'double fun2(x)'\Hnewline
-      'double x;'\Hnewline
-      '{ return( sin(x+1.));}'];\Hnewline
-    mputl(f2,'fun2.c');\Hnewline
-    //creating the interface file\Hnewline
-    i=['#include ""stack-c.h""'\Hnewline
-      'extern int fun1 _PARAMS(( double *x, double *y));'\Hnewline
-      'int intfun1(fname)' \Hnewline
-      'char * fname;'\Hnewline
-      '{'\Hnewline
-        '  int m1,n1,l1;'\Hnewline
-        '  CheckRhs(1,1);'\Hnewline
-        '  CheckLhs(1,1);'\Hnewline
-        '  GetRhsVar(1, ""d"", \&amp;m1, \&amp;n1, \&amp;l1);'\Hnewline
-        '  fun1(stk(l1),stk(l1));'\Hnewline
-        '  LhsVar(1) = 1;'\Hnewline
-        '  return 0;'\Hnewline
-        '}'];\Hnewline
-    mputl(i,'intfun1.c')\Hnewline
-    //creating the shared library: a gateway, a Makefile and a loader are \Hnewline
-    //generated. \Hnewline
-    files=['fun1.o','fun2.o','intfun1.o'];\Hnewline
-    ilib_build('foo',['scifun1','intfun1'],files,[]);\Hnewline
-    // load the shared library \Hnewline
-    exec loader.sce \Hnewline
-    //using the new primitive\Hnewline
-    scifun1(33)}
-  \end{program}
+  A small example with just one function added. The function 
+  is named \verb!fun1! and its interface is \verb!int_fun1!.
+  \begin{Verbatim}
+    code = ['#include <math.h>'
+            '#include <stdlib.h>'
+            '#include <string.h>'
+            '#include <nsp/interf.h>'
+            ''
+            'int int_fun1(Stack stack, int rhs, int opt, int lhs)'
+            '{'
+              'NspMatrix *B,*C;'
+              'CheckRhs(1,1);'
+              'CheckLhs(1,1);'
+              'if ((B=GetMatCopy(stack,1))== NULLMAT ) return RET_BUG;'
+              'if ((C=nsp_matrix_copy(B))== NULLMAT ) return RET_BUG;'
+              'nsp_mat_sin(B); /* B <-- sin(B) **/'
+              'nsp_mat_cos(C);'
+              'if (nsp_mat_dadd(B,C) == FAIL) return RET_BUG;'
+              'nsp_matrix_destroy(C);'
+              'NSP_OBJECT(B)->ret_pos = 1;'
+              'return 1;'
+            '}'];
+    fd = fopen('fun1.c',mode="w");
+    fd.put_smatrix[code];
+    fd.close[];
+    files=['fun1.o'];
+    ilib_build('libfoo',['fun1','int_fun1'],files,[]);
+    // load the shared library 
+    exec loader.sce 
+    //using the new primitive 
+    x=67;
+    fun1(x)<>sin(x)+cos(x)
+  \end{Verbatim}
 \end{examples}
 %-- see also
 \begin{manseealso}
-  \manlink{addinter}{addinter} \manlink{link}{link} \manlink{ilib\_compile}{ilib-compile} \manlink{ilib\_gen\_Make}{ilib-gen-Make} \manlink{ilib\_gen\_gateway}{ilib-gen-gateway} \manlink{ilib\_gen\_loader}{ilib-gen-loader} \manlink{ilib\_for\_link}{ilib-for-link}  
-  \end{manseealso}
+  \manlink{addinter}{addinter}
+  \manlink{link}{link} 
+\end{manseealso}
 
