@@ -231,33 +231,35 @@ int nsp_check_simple_mlhs(PList L)
  * checks that @L is a MLHS in which each name is 
  * unique. If a name is repeated then it is returned 
  * an %NULL is returned in case of non repetition.
+ * Note that repeated names are forbiden just if one 
+ * of the repetition appears just as name. For example 
+ * [a,a(1)] is forbiden but [a(1),a(2)] is ok.
  * 
  * Returns: a string or %NULL.
  **/
 
 char * nsp_check_unique_name_in_mlhs(PList L)
 {
-  PList L1=L,L2;
+  char *name1,*name2;
+  PList L1,L2;
   if ( L->type != MLHS ) return NULL;
-  L=L->next;
+  L1=L=L->next;
   while ( L  != NULLPLIST ) 
     {
-      if (  L->type == NAME  )
+      name1 = (  L->type == NAME  ) ? (char *) L->O :
+	(char *) ((PList) L->O)->next->O;
+      L2=L1;
+      while ( L2 != NULLPLIST && L2 != L )
 	{
-	  /* Sciprintf("Detected a name %s\n",(char *) L->O);*/
-	  /* Check that this name is not a repetition */
-	  L2=L1;
-	  while ( L2 != NULLPLIST && L2 != L )
-	    {
-	      if (  L2->type == NAME  )
-		{
-		  /* 
-		     Sciprintf("Compare name %s with %s\n",(char *) L->O, (char *) L2->O);*/
-		  if ( strcmp((char *) L->O, (char *) L2->O)==0)
-		    return (char *) L->O;
-		}
-	      L2 = L2->next;
-	    }
+	  name2 =(  L2->type == NAME  ) ?  (char *) L2->O: 
+	    (char *) ((PList) L2->O)->next->O;
+	  /* 
+	   * Sciprintf("Compare name %s with %s\n",(char *) L->O,name);
+	   */
+	  if ( ( L->type == NAME || L2->type == NAME) 
+	       && strcmp(name1,name2)==0)
+	    return name1;
+	  L2 = L2->next;
 	}
       L = L->next ;
     }
