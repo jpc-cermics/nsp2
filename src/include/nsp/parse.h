@@ -19,7 +19,8 @@ extern int nsp_check_simple_mlhs(PList L);
 extern int nsp_check_simple_listeval(PList plist);
 extern int nsp_check_simple_listeval(PList plist);
 extern int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount);
-
+extern int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount);
+extern char * nsp_check_unique_name_in_mlhs(PList L);
 
 extern const char *nsp_astcode_to_nickname(int code);
 extern const char *nsp_astcode_to_name(int code);

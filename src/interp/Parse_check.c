@@ -26,6 +26,7 @@
 
 #include "nsp/object.h"
 #include "nsp/plistc.h"
+#include "nsp/parse.h"
 #include "Functions.h" 
 
 static int IsColConc (PList plist, PList *plist1, int *kount);
@@ -38,27 +39,23 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
 
 /**
  * nsp_check_is_mlhs:
- * @plist: 
- * @plist1: 
- * @kount: 
- * 
- * Returns: 
- */
-/*
- * checks for  [<x>,<x>,.....,<x>] 
- * where x can be a <name> or <feval>:= f(...) 
- * ( scilab multiple left hand side )
- * inside plist a mlhs is coded as a set of colconcat 
+ * @plist: a #PList 
+ * @plist1: a #PList 
+ * @kount: int pointer 
+ *
+ * checks that an expression can be a multiple left hand side
+ * expression i.e  [<x1>,<x2>,.....,<xn>] 
+ * where xi can be a <name> or <feval>:= f(...).
+ * Inside plist a mlhs is coded as a set of colconcat 
  * as (((<name><name><COLCONCAT>) <name> COLCONCAT) MATRIX)
  * If a mlhs is recognised IsMlhs returns true 
  * and plist1 is set to 
- * ( <name> <name> .... MLHS) 
- * 
- * XXXXX Attention IsMlhs peut renvoyer False et plist1 peut-etre 
- * non vide : il faut alors le netoyer .
+ * (<name> <name> .... MLHS) 
  * 
  * 
- **/
+ * Returns: %OK or %FAIL
+ */
+
 int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
 {
   PList loc;
@@ -84,21 +81,18 @@ int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
 
 /**
  * IsColConc:
- * @plist: 
- * @plist1: 
- * @kount: 
+ * @plist: a #PList 
+ * @plist1: a #PList 
+ * @kount: int pointer 
  *
- *  Returns: 
- */
-/* 
  * if plist = ( <x> <y> COLCONCAT )
  * <y> := <name> or <feval> 
  * <x> := <name> or <feval> or (<x> <y> COLCONCAT) 
  * returns true and all the 
  *     <name> and <feval> are added at end of list plist1
  * 
- * Returns: 
- **/
+ *  Returns: %OK or %FAIL
+ */
 
 static int IsColConc(PList plist, PList *plist1, int *kount)
 {
@@ -121,17 +115,16 @@ static int IsColConc(PList plist, PList *plist1, int *kount)
 
 /**
  * Isname:
- * @plist: 
- * @plist1: 
- * @kount: 
+ * @plist: a #PList 
+ * @plist1: a #PList 
+ * @kount: int pointer 
  *
- * Returns: 
- */
-/*
  * if plist = ( <name> ..... )
  * returns true and <name> is added at end of list plist1
- * 
- **/
+ *
+ * Returns: %OK or %FAIL
+ */
+
 static int Isname(PList plist, PList *plist1, int *kount)
 {
   if ( plist != NULLPLIST && plist->type == NAME )
@@ -144,13 +137,11 @@ static int Isname(PList plist, PList *plist1, int *kount)
     return(FAIL);
 }
 
-
 /**
  * IsFeval:
- * @plist: 
- * @plist1: 
- * @kount: 
- * 
+ * @plist: a #PList 
+ * @plist1: a #PList 
+ * @kount: int pointer 
  * 
  * if plist = ((.... FEVAL) ...... )
  * returns true and a copy of 
@@ -158,8 +149,9 @@ static int Isname(PList plist, PList *plist1, int *kount)
  * 
  * also valid for LISTEVAL 
  * 
- * Returns: 
+ * Returns:  %OK or %FAIL
  **/
+
 static int IsFeval(PList plist, PList *plist1, int *kount)
 {
   if ( plist != NULLPLIST && plist->type == PLIST)
@@ -192,6 +184,8 @@ static int IsFeval(PList plist, PList *plist1, int *kount)
  * Returns: %TRUE or %FALSE
  **/
 
+
+
 int nsp_check_simple_listeval(PList plist)
 {
   if ( plist->type == LISTEVAL
@@ -217,6 +211,7 @@ int nsp_check_simple_listeval(PList plist)
  * Returns: %TRUE or %FALSE
  **/
 
+
 int nsp_check_simple_mlhs(PList L)
 {
   if ( L->type != MLHS ) return FAIL;
@@ -227,6 +222,46 @@ int nsp_check_simple_mlhs(PList L)
       L = L->next ;
     }
   return OK;
+}
+
+/**
+ * nsp_check_unique_name_in_mlhs:
+ * @L: a #PList 
+ * 
+ * checks that @L is a MLHS in which each name is 
+ * unique. If a name is repeated then it is returned 
+ * an %NULL is returned in case of non repetition.
+ * 
+ * Returns: a string or %NULL.
+ **/
+
+char * nsp_check_unique_name_in_mlhs(PList L)
+{
+  PList L1=L,L2;
+  if ( L->type != MLHS ) return NULL;
+  L=L->next;
+  while ( L  != NULLPLIST ) 
+    {
+      if (  L->type == NAME  )
+	{
+	  /* Sciprintf("Detected a name %s\n",(char *) L->O);*/
+	  /* Check that this name is not a repetition */
+	  L2=L1;
+	  while ( L2 != NULLPLIST && L2 != L )
+	    {
+	      if (  L2->type == NAME  )
+		{
+		  /* 
+		     Sciprintf("Compare name %s with %s\n",(char *) L->O, (char *) L2->O);*/
+		  if ( strcmp((char *) L->O, (char *) L2->O)==0)
+		    return (char *) L->O;
+		}
+	      L2 = L2->next;
+	    }
+	}
+      L = L->next ;
+    }
+  return NULL;
 }
 
 

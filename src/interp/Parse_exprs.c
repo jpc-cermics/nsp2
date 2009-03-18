@@ -1263,7 +1263,7 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
       if ( !(plist1->type == NAME || plist1->type == OPNAME) || plist1->next != NULLPLIST)
 	{
 	  nsp_plist_print(plist1,0);
-	  T->ParseError(T,": is not a correct expression for naming optional argument\n");
+	  T->ParseError(T,"Parse Error: is not a correct expression for naming optional argument\n");
 	  return FAIL;
 	}
     }
@@ -1271,12 +1271,19 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
     {
       if (nsp_check_is_mlhs(plist1,&plist3,&kount)== OK) 
 	{
+	  char *name;
 	  /* we change expr1 into a mlhs **/
 	  if (nsp_parse_add(&plist3,MLHS,kount,T->tokenv.Line) == FAIL) return(FAIL);
 	  if ( nsp_parse_add_to_symbol_table(symb_table,plist3) == FAIL) return FAIL;
 	  if ( nsp_check_simple_mlhs(plist3) == OK) 
 	    {
 	      /* Sciprintf("A simple mlhs \n"); */
+	    }
+	  if ((name=nsp_check_unique_name_in_mlhs(plist3)) != NULL)
+	    {
+	      T->ParseError(T,"Parse Error: %s is wrong, names cannot appear duplicated in mlhs.\n",
+			    name);
+	      return FAIL;
 	    }
 	  nsp_plist_destroy(&plist1);
 	  plist1=NULLPLIST;
