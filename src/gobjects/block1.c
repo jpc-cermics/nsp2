@@ -407,12 +407,12 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
     NspBlock *B;
     B=block_create("fe",rect,color,thickness,background,NULL);
     if ( B == NULLBLOCK) return NULLGRIDBLOCK;
-    B->obj->frame = Gf->obj;
-    nsp_list_end_insert(Gf->obj->objs,(NspObject  *) B);
+    B->obj->frame = H->obj;
+    nsp_list_end_insert(H->obj->objs,(NspObject  *) B);
     B=block_create("fe",rect1,color,thickness,background,NULL);
     if ( B == NULLBLOCK) return NULLGRIDBLOCK;
-    B->obj->frame = Gf->obj;
-    nsp_list_end_insert(Gf->obj->objs,(NspObject  *) B);
+    B->obj->frame = H->obj;
+    nsp_list_end_insert(H->obj->objs,(NspObject  *) B);
   }
   return H;
 }
@@ -441,7 +441,7 @@ NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color
   Gf->obj->ref_count++;
   /* XXXXX  delete unused Gf */
   /* gframe_destroy(Gf);*/
-  for ( i=0; i < 4 ; i++) Gf->obj->r[i]=gf_rect[i];
+  for ( i=0; i < 4 ; i++) H->obj->r[i]=gf_rect[i];
   for ( i=0; i < 4 ; i++) H->obj->scale[i]=gf_scale[i];
   return H;
 }
