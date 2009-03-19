@@ -261,7 +261,7 @@ static int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *B,*C;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  /* first object is replaced by a copy of A if necessary **/
+  /* first object is replaced by a copy of A if necessary */
   if ((B=GetMatCopy(stack,1))== NULLMAT ) return RET_BUG;
   if ((C=nsp_matrix_copy(B))== NULLMAT ) return RET_BUG;
   nsp_mat_sin(B); /* B <-- sin(B) **/
@@ -269,7 +269,7 @@ static int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
   /* B <- B +C **/
   if (nsp_mat_dadd(B,C) == FAIL) return RET_BUG;
   nsp_matrix_destroy(C);
-  /* since B is the correct object on the stack we have nothing to do **/
+  NSP_OBJECT(B)->ret_pos = 1;
   return 1;
 }
 
