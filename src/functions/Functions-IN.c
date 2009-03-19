@@ -185,7 +185,7 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
   if ( IsMatObj(stack,1)) 
     {
       /* trying to find an interface in a preloaded 
-       * shared library given by its name 
+       * shared library given by its id
        */
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
