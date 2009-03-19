@@ -108,18 +108,18 @@ function demoaction_build_actions(action_group,merge)
   action_group.add_action[action];
   action = gtkaction_new( "cut","C_ut","Cut the selected text to the clipboard", "gtk-cut");
   action.connect["activate",demoaction_activate_action];
-  action_group.add_action_with_accel[action,"<control>X"];
+  action_group.add_action_with_accel[action,accelerator="<control>X"];
   action = gtkaction_new( "copy","_Copy","Copy the selected text to the clipboard", "gtk-copy");
   action.connect["activate",demoaction_activate_action];
-  action_group.add_action_with_accel[action,"<control>C"];
+  action_group.add_action_with_accel[action,accelerator="<control>C"];
   action = gtkaction_new( "paste", "_Paste","Paste the text from the clipboard", "gtk-paste");
   action.connect["activate",demoaction_activate_action];
-  action_group.add_action_with_accel[action,"<control>V"];
+  action_group.add_action_with_accel[action,accelerator="<control>V"];
   action = gtkaction_new( "quit", "Quit", "Quit the application", "gtk-quit");
   action_group.add_action[action];
   action = gtkaction_new( "customise-accels","Customise _Accels","Customise keyboard shortcuts","");
   action.connect["activate",demoaction_show_accel_dialog];
-  action_group.add_action_with_accel[action,"<control>Q"];
+  action_group.add_action_with_accel[action,accelerator="<control>Q"];
   action = gtkaction_new( "toolbar-small-icons","Small Icons", "Small Icons", "");
   action.connect["activate",demoaction_toolbar_size_small,list(merge)];
   action_group.add_action[action];
@@ -130,7 +130,7 @@ function demoaction_build_actions(action_group,merge)
   // -----------------------
   action = gtktoggleaction_new("bold","_Bold","Change to bold face", "gtk-bold");
   action.connect["activate",demoaction_toggle_action];
-  action_group.add_action_with_accel[action,"<control>B"];
+  action_group.add_action_with_accel[action,accelerator="<control>B"];
   action = gtktoggleaction_new("toggle-cnp","Enable Cut/Copy/Paste",...
 			       "Change the sensitivity of the cut, copy"+...
 			       " and paste actions",""); 
@@ -141,18 +141,18 @@ function demoaction_build_actions(action_group,merge)
   // justify actions 
   // ---------------
   action1 = gtkradioaction_new("justify-left","_Left","Left justify the text", "gtk-justify-left",1);
-  action_group.add_action_with_accel[action1,"<control>L"];
+  action_group.add_action_with_accel[action1,accelerator="<control>L"];
   action = gtkradioaction_new("justify-center","C_enter","Center justify t"+...
 			      " he text","gtk-justify-center",2);
   // action and action1 are in the same group 
   action.set_group[action1];
-  action_group.add_action_with_accel[action,"<control>E"];
+  action_group.add_action_with_accel[action,accelerator="<control>E"];
   action = gtkradioaction_new("justify-right","_Right","Right justify the text","gtk-justify-right",3);
   action.set_group[action1];
-  action_group.add_action_with_accel[action, "<control>R"];
+  action_group.add_action_with_accel[action,accelerator= "<control>R"];
   action = gtkradioaction_new("justify-fill", "_Fill","Fill justify the text", "gtk-justify-fill",4);
   action.set_group[action1];
-  action_group.add_action_with_accel[action,"<control>J"];
+  action_group.add_action_with_accel[action,accelerator="<control>J"];
   // set the active one 
   action1.set_current_value[1];
   // we need to use
@@ -221,8 +221,8 @@ function demoaction_add_cb (button,args)
     label = sprintf ("Dynamic Item %d", i);
     action = gtkaction_new(name,label,"","");
     dag.add_action[action];
-    manager.add_ui[ ui_id, "/menubar/DynamicMenu", name, name, ...
-		    GTK.UI_MANAGER_MENUITEM,%f];
+    manager.add_ui[ ui_id, "/menubar/DynamicMenu", name,
+		    action=name,type=GTK.UI_MANAGER_MENUITEM,top=%f];
     manager.ensure_update[];
   end
 endfunction 
