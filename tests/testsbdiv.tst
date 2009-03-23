@@ -103,7 +103,7 @@ num_test = num_test + 1;
 if err > eps_bdiv then pause;end
 
 // A real, b complex
-b= b + rand(n,2);
+b= b + %i*rand(n,2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
