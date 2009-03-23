@@ -1440,6 +1440,12 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
 	  return FAIL;
 	}
     }
+  else if ( index_r->nval == 0 || index_c->nval == 0 )
+    {
+      /* case: A(indr,indc) = scalar , with an empty range for indr x indc  */
+      /* do nothing (this is the matlab behavior)                           */
+      return OK;
+    }
 
   if ( index_r->min < 1 || index_c->min < 1 ) 
     {
@@ -1612,15 +1618,21 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
       return FAIL;
     }
 
-  if ( index->min < 1 )
-    {
-      Scierror("Error:\tNon Positive indices are not allowed\n");
-      return FAIL;
-    }
-
   if ( B->m != 1 && B->n != 1 ) 
     {
       Scierror("Error:\tA(ind)=B, B must be a vector");
+      return FAIL;
+    }
+
+  if ( index->nval == 0 && B->mn <= 1)
+    {
+      /* ignore the set elts */
+      return OK;
+    }
+
+  if ( index->min < 1 )
+    {
+      Scierror("Error:\tNon Positive indices are not allowed\n");
       return FAIL;
     }
 
@@ -1635,13 +1647,6 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
       Scierror("Error:\tA(ind)=B, B must be column when A is a column\n");
       return FAIL;
     }
-
-  if ( index->nval == 0 && B->mn <= 1)
-    {
-      /* ignore the set elts */
-      return OK;
-    }
-
 
   if ( B->mn != 1)
     {
