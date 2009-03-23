@@ -3614,8 +3614,8 @@ int nsp_expm(NspMatrix *A)
  * Returns: %OK or %FAIL
  **/
 
-static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku);
-
+static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku, Boolean enlarge);
+ 
 NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
 {
   int info, stat;
@@ -3670,7 +3670,7 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
 	  if ( 5*(kl + ku) <= A->m )  /* band case (the factor (5) must be ajusted...) */
 	    {
 	      NspMatrix *AB;
-	      if ( (AB = nsp_make_bandmat_from_mat(A, kl, ku)) == NULLMAT ) goto err;
+	      if ( (AB = nsp_make_bandmat_from_mat(A, kl, ku, TRUE)) == NULLMAT ) goto err;
 	      stat = nsp_mat_bdiv_banded(AB, kl, ku, C, &rcond, tol_rcond, &info);
 	      nsp_matrix_destroy(AB);
 	    }
@@ -3688,7 +3688,7 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
 	    {
 	      Sciprintf("Warning: matrix is singular or badly conditionned (rcond = %g)\n",rcond);
 	      Sciprintf("\t=> computing a least square solution\n",rcond);
-	      /* note that here C hash not been modified, we can switch to bdiv_lsq */
+	      /* note that here C has not been modified, we can switch to bdiv_lsq */
 	    }
 	  else
 	    return C;
@@ -4024,9 +4024,11 @@ static void nsp_zgbcon(char *s_rien, int *n, int *kl, int *ku, doubleC *AAb, int
 
 /**
  * nsp_mat_bdiv_banded:
- * @A: (input) a real or complex banded matrix (the lapack storage is used). @A is not modified.  
- * @kl: (input) the lower bandwidth of @A
- * @ku: (input) the upper bandwidth of @A
+ * @Ab: (input/output) a real or complex banded matrix (the lapack storage is used 
+ *     but it is assumed that kl additionnal rows have been put on the top of the
+ *     matrix for storage purpose). The matrix is overwritten with its factorization.
+ * @kl: (input) the lower bandwidth of @Ab
+ * @ku: (input) the upper bandwidth of @Ab
  * @B: (input/output) a real or complex vector or matrix. @B is the rhs and is
  *                    overwritten by the solution X
  * @rcond: (output) a real number the estimated reciprocal condition number
@@ -4034,24 +4036,21 @@ static void nsp_zgbcon(char *s_rien, int *n, int *kl, int *ku, doubleC *AAb, int
  *             the 2 triangular system are not solved
  * @info: (output)
  *
- * Solves a linear system A X = B, with @A a banded matrix.
+ * Solves a linear system Ab X = B, with @Ab a banded matrix.
  * 
  * Return value: %OK or %FAIL;
  **/
 
-static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, int kl, char flag);
-
-int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcond, 
-		    double tol_rcond, int *info)
+int nsp_mat_bdiv_banded(NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, 
+			double tol_rcond, int *info)
 {
-  NspMatrix *AA=NULLMAT;
-  int n = A->n, *ipiv=NULL, *iwork=NULL, ier;
-  double *work=NULL, normA1;
+  int n = Ab->n, *ipiv=NULL, *iwork=NULL, ier;
+  double *work=NULL, normA1=0.0;
   doubleC *cwork=NULL;
 
-  if (A->m != ku+1+kl ) 
+  if (Ab->m != ku+1+kl+kl ) 
     { 
-      Scierror("Error: number of rows should equal to kl+1+ku=%d and it is %d\n",ku+1+kl,A->m);
+      Scierror("Error: number of rows should equal to kl+kl+1+ku=%d and it is %d\n",ku+1+kl+kl,Ab->m);
       return FAIL;
     }
 
@@ -4061,13 +4060,22 @@ int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcon
       return FAIL;
     }
 
+  /* step 0 compute matrix norm (before the matrix is overwritten by its factorization...) */
+  if ( rcond != NULL )
+    {
+      if ( Ab->rc_type == 'r' )
+	normA1 = C2F(dlangb)("1", &n, &kl, &ku, &(Ab->R[kl]), &(Ab->m), NULL, 1);
+      else
+	normA1 = C2F(zlangb)("1", &n, &kl, &ku, &(Ab->C[kl]), &(Ab->m), NULL, 1);
+    }
+
+
   /* step 1 factorize */
-  if ( (AA =nsp_increase_banded_mat(A, kl, A->rc_type)) == NULLMAT ) return FAIL;
   if ( (ipiv =nsp_alloc_work_int(n)) == NULL ) goto err;
-  if ( AA->rc_type == 'r' ) 
-    C2F(dgbtrf)(&n, &n, &kl, &ku, AA->R, &(AA->m), ipiv, info);
+  if ( Ab->rc_type == 'r' ) 
+    C2F(dgbtrf)(&n, &n, &kl, &ku, Ab->R, &(Ab->m), ipiv, info);
   else 
-    C2F(zgbtrf)(&n, &n, &kl, &ku, AA->C, &(AA->m), ipiv, info);
+    C2F(zgbtrf)(&n, &n, &kl, &ku, Ab->C, &(Ab->m), ipiv, info);
 
   if ( *info != 0 )
     {
@@ -4078,22 +4086,20 @@ int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcon
   /* step 2 compute rcond */
   if ( rcond != NULL )
     {
-      if ( AA->rc_type == 'r' )
+      if ( Ab->rc_type == 'r' )
 	{
-	  normA1 = C2F(dlangb)("1", &n, &kl, &ku, A->R, &(A->m), NULL, 1);
 	  if ( (iwork =nsp_alloc_work_int(n)) == NULL ) goto err;
 	  if ( (work =nsp_alloc_work_doubles(3*n)) == NULL ) goto err;
-/* 	  C2F(dgbcon)("1", &n, &kl, &ku, AA->R, &(AA->m), ipiv, &normA1, rcond, work, iwork, &ier,1); */
-	  nsp_dgbcon("1", &n, &kl, &ku, AA->R, &(AA->m), ipiv, &normA1, rcond, work, iwork, &ier,1);
+/* 	  C2F(dgbcon)("1", &n, &kl, &ku, Ab->R, &(Ab->m), ipiv, &normA1, rcond, work, iwork, &ier,1); */
+	  nsp_dgbcon("1", &n, &kl, &ku, Ab->R, &(Ab->m), ipiv, &normA1, rcond, work, iwork, &ier,1);
 	  FREE(iwork); FREE(work);
 	}
       else
 	{
-	  normA1 = C2F(zlangb)("1", &n, &kl, &ku, A->C, &(A->m), NULL, 1);
 	  if ( (cwork =nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
 /* 	  if ( (work =nsp_alloc_work_doubles(n)) == NULL ) goto err; */
-/* 	  C2F(zgbcon)("1", &n, &kl, &ku, AA->C, &(AA->m), ipiv, &normA1, rcond, cwork, work, &ier,1); */
-	  nsp_zgbcon("1", &n, &kl, &ku, AA->C, &(AA->m), ipiv, &normA1, rcond, cwork, NULL, &ier,1);
+/* 	  C2F(zgbcon)("1", &n, &kl, &ku, Ab->C, &(Ab->m), ipiv, &normA1, rcond, cwork, work, &ier,1); */
+	  nsp_zgbcon("1", &n, &kl, &ku, Ab->C, &(Ab->m), ipiv, &normA1, rcond, cwork, NULL, &ier,1);
 	  FREE(cwork); FREE(work);
 	}
 
@@ -4105,19 +4111,19 @@ int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcon
     }
 
   /* step 3 compute solution solving the 2 triangular systems */
-  if ( A->rc_type == 'r' )
+  if ( Ab->rc_type == 'r' )
     {
       if ( B->rc_type == 'r' )
-	C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, AA->R, &AA->m, ipiv, B->R, &B->m, &ier, 1);
+	C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, Ab->R, &Ab->m, ipiv, B->R, &B->m, &ier, 1);
       else  
 	{
 	  double *xwork;
 	  int k;
 	  if ( (xwork = nsp_alloc_work_doubles(B->mn)) == NULL ) goto err;
 	  for ( k = 0 ; k < B->mn ; k++ ) xwork[k] = B->C[k].r;
-	  C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, AA->R, &AA->m, ipiv, xwork, &B->m, &ier, 1);
+	  C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, Ab->R, &Ab->m, ipiv, xwork, &B->m, &ier, 1);
 	  for ( k = 0 ; k < B->mn ; k++ ) { B->C[k].r = xwork[k];  xwork[k] =  B->C[k].i; }
-	  C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, AA->R, &AA->m, ipiv, xwork, &B->m, &ier, 1);
+	  C2F(dgbtrs) ("N", &n, &kl, &ku, &B->n, Ab->R, &Ab->m, ipiv, xwork, &B->m, &ier, 1);
 	  for ( k = 0 ; k < B->mn ; k++ ) B->C[k].i = xwork[k];
 	  FREE(xwork);
 	}
@@ -4126,37 +4132,40 @@ int nsp_mat_bdiv_banded(NspMatrix *A, int kl, int ku, NspMatrix *B, double *rcon
     {
       if ( B->rc_type == 'r' )
 	if (nsp_mat_set_ival(B,0.00) == FAIL ) goto err;
-      C2F(zgbtrs) ("N", &n, &kl, &ku, &B->n, AA->C, &AA->m, ipiv, B->C, &B->m, &ier, 1);
+      C2F(zgbtrs) ("N", &n, &kl, &ku, &B->n, Ab->C, &Ab->m, ipiv, B->C, &B->m, &ier, 1);
     }
 
   FREE(ipiv);
-  nsp_matrix_destroy(AA);
   return OK;
 
  err:
   FREE(iwork); FREE(work); FREE(cwork); FREE(ipiv);
-  nsp_matrix_destroy(AA);
   return FAIL;
 
  err_bis:
   FREE(iwork); FREE(work); FREE(cwork); FREE(ipiv);
-  nsp_matrix_destroy(AA);
   return OK;
 }
 	      
-static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku)
+/*  if enlarge is true, prepare the band matrix directly for linear solving 
+ *  (that is add kl rows at the beginning for storage purpose and so avoid
+ *   the additionnal call to nsp_increase_banded_mat) 
+ */
+static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku, Boolean enlarge)
 {
   NspMatrix *AA;
-  int j, imin, imax, idest, size;
+  int j, imin, imax, idest, size, stride;
 
-  if ( (AA = nsp_matrix_create(NVOID, A->rc_type, kl+1+ku, A->n)) == NULLMAT )
+  stride = enlarge ? kl : 0;
+  
+  if ( (AA = nsp_matrix_create(NVOID, A->rc_type, kl+1+ku+stride, A->n)) == NULLMAT )
     return NULLMAT;
 
   if (  A->rc_type == 'r' )
     for ( j = 0; j < A->n; j++ )
       {
 	imin = Max(0, j-ku);
-	idest = Max(0, ku + imin - j);
+	idest = stride + Max(0, ku + imin - j);
 	imax = Min(A->m, j+kl);
 	size = imax - imin + 1;
 	memcpy(&(AA->R[j*AA->m+idest]),&(A->R[j*A->m+imin]),size*sizeof(double));
@@ -4165,7 +4174,7 @@ static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku)
     for ( j = 0; j < A->n; j++ )
       {
 	imin = Max(0, j-ku);
-	idest = Max(0, ku + imin - j);
+	idest = stride + Max(0, ku + imin - j);
 	imax = Min(A->m, j+kl);
 	size = imax - imin + 1;
 	memcpy(&(AA->C[j*AA->m+idest]),&(A->C[j*A->m+imin]),size*sizeof(doubleC));
@@ -4173,7 +4182,7 @@ static NspMatrix *nsp_make_bandmat_from_mat(NspMatrix *A, int kl, int ku)
   return AA;
 }
 
-static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, int kl, char flag)
+NspMatrix *nsp_increase_banded_mat(NspMatrix *A, int kl, char flag)
 {
   NspMatrix *AA;
   int i, j, kA, kAA;

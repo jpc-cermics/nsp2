@@ -628,7 +628,7 @@ static int int_expm( Stack stack, int rhs, int opt, int lhs)
  */
 static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A, *B, *kb=NULLMAT;
+  NspMatrix *A, *B, *AA, *kb=NULLMAT;
   double rcond;
 
   nsp_option opts[] ={{ "bandwidths",realmat,NULLOBJ,-1},
@@ -657,17 +657,26 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
     {
       kl = ku = A->m/2;
     }
-	
+
+  if ( (AA = nsp_increase_banded_mat(A, kl, A->rc_type)) == NULLMAT )
+    {
+      Scierror("%s: not enough memory\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  
   if ( lhs == 1 )
     {
-      if ( nsp_mat_bdiv_banded(A, kl, ku, B, NULL, 0.0, &info) == FAIL ) 
+      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, NULL, 0.0, &info) == FAIL ) 
 	return RET_BUG;
     }
   else   
     {
-      if ( nsp_mat_bdiv_banded(A, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
+      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
 	return RET_BUG;
     }
+
+  nsp_matrix_destroy(AA);
 
   if ( info > 0 )
     {
