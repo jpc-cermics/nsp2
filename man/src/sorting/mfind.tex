@@ -46,22 +46,24 @@ f(x) = \left\{ \begin{array}{ll}
   x-\pi/2 & \mbox{ if } x \ge  \pi/2 
 \end{array}\right.
 $$
-\begin{program}\HCode{function y=f(x)\Hnewline
-y = zeros(size(x));\Hnewline
-[ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",\%pi/2,"<=",\%inf);\Hnewline
-y(ind1) = 1;\Hnewline
-y(ind2) = cos(x(ind2));\Hnewline
-y(ind3) = x(ind3) - \%pi/2;\Hnewline
-y(indNan) = \%nan\Hnewline
-endfunction\Hnewline
-x = linspace(-1,\%pi,400)';\Hnewline
-y = f(x);\Hnewline
-plot2d(x,y);\Hnewline
-f(\%nan)\Hnewline
-f(\%inf)\Hnewline
-f(-\%inf)}
-\end{program}
-  
+\begin{Verbatim}
+function y=f(x) 
+y = zeros(size(x)); 
+[ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf); 
+y(ind1) = 1; 
+y(ind2) = cos(x(ind2)); 
+y(ind3) = x(ind3) - %pi/2; 
+y(indNan) = %nan 
+endfunction 
+x = linspace(-1,%pi,400)'; 
+y = f(x); 
+plot2d(x,y); 
+f(%nan) 
+f(%inf) 
+f(-%inf) 
+\end{Verbatim}
+
+ 
 \end{examples}
 
 \begin{manseealso}
