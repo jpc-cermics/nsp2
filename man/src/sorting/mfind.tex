@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+
+\mansection{mfind}
+\begin{mandesc}
+  \short{mfind}{find indices of elements of a numerical matrix satisfying some inequalities}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[ind1, ind2, ..., indn, indnp1] = mfind(x, op1, s1, op2, s2, .., opn, sn)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}:  real numerical vector or matrix
+    \vname{op1, op2, ...}: strings specifying a comparizon operator (to choose among \verb+"<=", "<", ">", ">=", "==","~="+)
+    \vname{s1, s2, ...}:  real scalars
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+For each element of \verb+x+, this function do the tests:
+\begin{verbatim}
+     x(k) opj  sj,    j = 1, 2, ...., n
+\end{verbatim}
+until one is true, in which case the element index (here k) is added in the
+corresponding output index vector (indj if tests 1,...,j-1 are false and test j is true).
+If all the n tests fail, the element index is added in the last index vector \verb+indnp1+.
+
+This function could be useful to evaluate a real function which has a piecewise definition
+(see examples). In this case it could be faster to use \verb+mfind+ in place of several \verb+find+.
+
+Note: mfind is currently limited to a maximum of 6 tests.
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example}
+using mfind to evaluate a function with a piecewise definition: 
+$$
+f(x) = \left\{ \begin{array}{ll}
+    1     & \mbox{ if } x \le 0 \\
+  \cos(x) & \mbox{ if } 0 \le x \le \pi/2 \\
+  x-\pi/2 & \mbox{ if } x \ge  \pi/2 
+\end{array}\right.
+$$
+\begin{program}\HCode{function y=f(x)\Hnewline
+y = zeros(size(x));\Hnewline
+[ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",\%pi/2,"<=",\%inf);\Hnewline
+y(ind1) = 1;\Hnewline
+y(ind2) = cos(x(ind2));\Hnewline
+y(ind3) = x(ind3) - \%pi/2;\Hnewline
+y(indNan) = \%nan\Hnewline
+endfunction\Hnewline
+x = linspace(-1,\%pi,400)';\Hnewline
+y = f(x);\Hnewline
+plot2d(x,y);\Hnewline
+f(\%nan)\Hnewline
+f(\%inf)\Hnewline
+f(-\%inf)}
+\end{program}
+  
+\end{examples}
+
+\begin{manseealso}
+   \manlink{find}{find}, \manlink{has}{has}, \manlink{bsearch}{bsearch}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}
