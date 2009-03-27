@@ -1555,7 +1555,6 @@ int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
  * interface for operator logspace 
  */
 
-
 int
 int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
 {
@@ -1565,14 +1564,15 @@ int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((first = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
+  CheckCols(NspFname(stack),1,first,1);
   if ((last = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
   CheckSameDims (NspFname(stack), 1, 2, first, last);
   if (GetScalarInt (stack, 3, &n) == FAIL)
     return RET_BUG;
-  if ((M =
-       nsp_matrix_create_logspace (first->R, last->R, first->mn,
-				   n)) == NULLMAT)
+  CheckNonNegative(NspFname(stack), n, 3);
+
+  if ((M = nsp_matrix_create_logspace (first->R, last->R, first->mn, n)) == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) M);
   return 1;

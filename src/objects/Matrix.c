@@ -259,28 +259,23 @@ NspMatrix *nsp_matrix_create_linspace(const double first[],const double last[],i
 
 NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],int r,int n)
 {
-  int i,j;
+  int i, j, k;
   NspMatrix *Loc;
-  if ( r == 0 || n == 0) 
-    {
-      Loc = nsp_matrix_create(NVOID,'r',(int) 0,(int) 0);
-      return(Loc);
-    }
-  if ((Loc = nsp_matrix_create(NVOID,'r',r,n))== NULLMAT) return NULLMAT;
-  for ( i=0 ; i < r ; i++) 
-    {
-      for ( j=0 ; j < n ; j++) 
-	{
-	  if ( n == 0 ) 
-	    Loc->R[i+j*Loc->m]=  pow(10.0,last[i]); /* just as in Scilab ! */
-	  else
-	    Loc->R[i+j*Loc->m]= pow(10.0,(last[i]-first[i])*((double)j)/(n-1) + first[i]);
-	}
-    }
-  return(Loc);
+
+  if ((Loc = nsp_matrix_create(NVOID,'r', r, n))== NULLMAT) return NULLMAT;
+
+  if ( n == 1 )
+    for ( i = 0 ; i < r ; i++)
+      Loc->R[i] = pow(10.0,last[i]);  /* just as in Scilab ! */
+  else
+    for ( j=0, k=0 ; j < n ; j++)
+      {
+	double inc = (double) j/ (double) (n-1);
+	for ( i = 0 ; i < r ; i++, k++)
+	  Loc->R[k]= pow(10.0,(last[i]-first[i])*inc + first[i]);
+      }
+  return Loc;
 }
-
-
 
 /**
  * nsp_matrix_create_from_doubles:
