@@ -48,12 +48,12 @@ f(x) = \left\{ \begin{array}{ll}
 $$
 \begin{Verbatim}
 function y=f(x) 
-y = zeros(size(x)); 
-[ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf); 
-y(ind1) = 1; 
-y(ind2) = cos(x(ind2)); 
-y(ind3) = x(ind3) - %pi/2; 
-y(indNan) = %nan 
+   y = zeros(size(x)); 
+   [ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf); 
+   y(ind1) = 1; 
+   y(ind2) = cos(x(ind2)); 
+   y(ind3) = x(ind3) - %pi/2; 
+   y(indNan) = %nan 
 endfunction 
 x = linspace(-1,%pi,400)'; 
 y = f(x); 
