@@ -35,6 +35,7 @@ extern  sci_interface  Matrix_Interf ;extern  interface_info  Matrix_Interf_Info
 extern  sci_interface  SMatrix_Interf  ;extern  interface_info  SMatrix_Interf_Info  ;
 extern  sci_interface  PMatrix_Interf  ;extern  interface_info  PMatrix_Interf_Info  ;
 extern  sci_interface  BMatrix_Interf  ;extern  interface_info  BMatrix_Interf_Info  ;
+extern  sci_interface  IMatrix_Interf  ;extern  interface_info  IMatrix_Interf_Info  ;
 extern  sci_interface  B2mMatrix_Interf  ;extern  interface_info  B2mMatrix_Interf_Info  ;
 extern  sci_interface  Hash_Interf  ;extern  interface_info  Hash_Interf_Info  ;
 extern  sci_interface  NspPList_Interf  ;extern  interface_info  NspPList_Interf_Info  ;
@@ -278,6 +279,7 @@ InterfTab Interfaces[]={
   {webkit_Interf,webkit_Interf_Info},
 #endif 
   {libminpack_Interf,libminpack_Interf_Info},
+  {IMatrix_Interf,IMatrix_Interf_Info},
   {NULL,NULL}
 }; 
 
