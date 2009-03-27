@@ -3688,9 +3688,9 @@ int int_xpause(Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 1){ if (GetScalarInt(stack,1,&sec) == FAIL) return RET_BUG;}
   if (rhs >= 2){ if (GetScalarBool(stack,2,&flag) == FAIL) return RET_BUG;}
   /* 
-     Xgc=nsp_check_graphic_context();
-     Xgc->graphic_engine->xpause(sec,flag);
-  */
+   *  Xgc=nsp_check_graphic_context();
+   *  Xgc->graphic_engine->xpause(sec,flag);
+   */
   nsp_pause(sec,flag);
   return 0;
 } 

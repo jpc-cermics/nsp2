@@ -33,8 +33,8 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	pr-output.o bhash.o \
 	serial.o \
 	SpColMatrix.o SpColMatObj.o \
-	eframe.o mtlb.o
-
+	eframe.o mtlb.o \
+	IMatrix.o IMatObj.o
 
 
 OLD=	gsort.o qsort.o	
