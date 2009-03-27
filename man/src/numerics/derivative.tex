@@ -90,77 +90,96 @@ example 3 (see also \manlink{intg}{intg} example section).
 \begin{examples}
   
 \paragraph{example 1} a simple example with $f(x)=cos(x)exp(-x)$
-\begin{program}\HCode{function y=f(x);y=cos(x)*exp(-x);endfunction\Hnewline
-function y=df(x);y=-(sin(x)+cos(x))*exp(-x);endfunction\Hnewline
-function y=d2f(x);y=2*sin(x)*exp(-x);endfunction\Hnewline
-x = 0.5\Hnewline 
-// compute approximation of f'(x) and f''(x)\Hnewline 
-[ypa, yppa] = derivative(f,x)\Hnewline 
-// compute exact values\Hnewline 
-yp = df(x)\Hnewline 
-ypp = d2f(x)\Hnewline 
-// compute errors\Hnewline 
-abs((ypa-yp)/yp)\Hnewline 
-abs((yppa-ypp)/ypp)\Hnewline 
-// the same using formula of order 1\Hnewline 
-[ypa, yppa] = derivative(f,x,order=1)\Hnewline 
-// compute errors\Hnewline 
-abs((ypa-yp)/yp)\Hnewline 
-abs((yppa-ypp)/ypp)\Hnewline 
-// the same using formula of order 4\Hnewline 
-[ypa, yppa] = derivative(f,x,order=4)\Hnewline 
-// compute errors\Hnewline 
-abs((ypa-yp)/yp)\Hnewline 
-abs((yppa-ypp)/ypp)}
-\end{program}
+\begin{Verbatim}
+function y=f(x);y=cos(x)*exp(-x);endfunction
+
+function y=df(x);y=-(sin(x)+cos(x))*exp(-x);endfunction
+
+function y=d2f(x);y=2*sin(x)*exp(-x);endfunction
+
+x = 0.5 
+
+// compute approximation of f'(x) and f''(x) 
+[ypa, yppa] = derivative(f,x) 
+
+// compute exact values 
+yp = df(x) 
+ypp = d2f(x) 
+
+// compute errors 
+abs((ypa-yp)/yp) 
+abs((yppa-ypp)/ypp) 
+
+// the same using formula of order 1 
+[ypa, yppa] = derivative(f,x,order=1) 
+
+// compute errors 
+abs((ypa-yp)/yp) 
+abs((yppa-ypp)/ypp) 
+
+// the same using formula of order 4 
+[ypa, yppa] = derivative(f,x,order=4) 
+
+// compute errors 
+abs((ypa-yp)/yp) 
+abs((yppa-ypp)/ypp)
+\end{Verbatim}
 
 \paragraph{example 2} a more complicated function:
 $$f(x,y,z) = \frac{\cos(x) z}{1+y^2} + e^{-x^2} y^3 (2z^2-1)$$.
 In the following we note $X = [x,y,z]^{\top}$:
-\begin{program}\HCode{function v = f(X)\Hnewline
-v = cos(X(1))/(1+X(2)^2)*X(3) + exp(-X(1)^2)*X(2)^3*(2*X(3)^2-1)\Hnewline
-endfunction\Hnewline
-// a function providing the exact gradient and hessian:\Hnewline 
-function [J,H] = df(X)\Hnewline
-x = X(1); y = X(2); z = X(3)\Hnewline
-tx = exp(-x^2); ty = 1+y^2; tz = 2*z^2-1\Hnewline
-J = [ -2*x*tx*y^3*tz - sin(x)*z/ty,...\Hnewline
-       3*tx*y^2*tz - 2*cos(x)*y*z/ty^2,...\Hnewline
-       4*tx*y^3*z + cos(x)/ty ]\Hnewline
-dfxx = 2*tx*y^3*tz*(2*x^2-1)-cos(x)*z/ty\Hnewline
-dfxy = 2*sin(x)*y*z/ty^2 - 6*x*tx*y^2*tz\Hnewline
-dfxz = -8*x*tx*y^3*z - sin(x)/ty\Hnewline
-dfyy = 6*tx*y*tz -2*cos(x)*z/ty^2*(1-4*y^2/ty)\Hnewline
-dfyz = 12*tx*y^2*z - 2*cos(x)*y/ty^2\Hnewline
-dfzz = 4*tx*y^3\Hnewline
-H = [ dfxx ,dfxy, dfxz;...\Hnewline
-      dfxy, dfyy, dfyz;...\Hnewline
-      dfxz, dfyz, dfzz ]\Hnewline
-endfunction\Hnewline
-// try an a random point\Hnewline
-X = rand(3,1)\Hnewline
-//  exact gradient and Jacobian at X\Hnewline
-[J,H] = df(X)\Hnewline
-[Ja,Ha] = derivative(f,X)\Hnewline
-norm(J-Ja)/norm(J)\Hnewline
-norm(H-Ha)/norm(Ha)\Hnewline
-// using formula of order 4\Hnewline
-[Ja,Ha] = derivative(f,X,order=4)\Hnewline
-norm(J-Ja)/norm(J)\Hnewline
-norm(H-Ha)/norm(Ha)}
-\end{program}
+\begin{Verbatim}
+function v = f(X)
+   v = cos(X(1))/(1+X(2)^2)*X(3) + exp(-X(1)^2)*X(2)^3*(2*X(3)^2-1)
+endfunction
+
+// a function providing the exact gradient and hessian: 
+function [J,H] = df(X)
+   x = X(1); y = X(2); z = X(3)
+   tx = exp(-x^2); ty = 1+y^2; tz = 2*z^2-1
+   J = [ -2*x*tx*y^3*tz - sin(x)*z/ty,...
+          3*tx*y^2*tz - 2*cos(x)*y*z/ty^2,...
+          4*tx*y^3*z + cos(x)/ty ]
+   dfxx = 2*tx*y^3*tz*(2*x^2-1)-cos(x)*z/ty
+   dfxy = 2*sin(x)*y*z/ty^2 - 6*x*tx*y^2*tz
+   dfxz = -8*x*tx*y^3*z - sin(x)/ty
+   dfyy = 6*tx*y*tz -2*cos(x)*z/ty^2*(1-4*y^2/ty)
+   dfyz = 12*tx*y^2*z - 2*cos(x)*y/ty^2
+   dfzz = 4*tx*y^3
+   H = [ dfxx ,dfxy, dfxz;...
+         dfxy, dfyy, dfyz;...
+         dfxz, dfyz, dfzz ]
+endfunction
+
+// try an a random point
+X = rand(3,1)
+
+//  exact gradient and Jacobian at X
+[J,H] = df(X)
+[Ja,Ha] = derivative(f,X)
+norm(J-Ja)/norm(J)
+norm(H-Ha)/norm(Ha)
+
+// using formula of order 4
+[Ja,Ha] = derivative(f,X,order=4)
+norm(J-Ja)/norm(J)
+norm(H-Ha)/norm(Ha)
+\end{Verbatim}
   
 \paragraph{example 3} an easy example which shows how to pass
 supplementary arguments:
-\begin{program}\HCode{function y=f(x,p);A=p{1};b=p{2};y=0.5*x'*A*x-b'*x;endfunction\Hnewline
-A = [1,2;2,-0.5]; b=[1;-1];\Hnewline 
-x = randn(2,1);\Hnewline 
-[J,H] = derivative(f,x,args={A,b})\Hnewline 
-// as the function is quadratic errors should be null with formula of\Hnewline 
-// order 2 and 4  but are not due to numerical noise by cancellation\Hnewline 
-J - (A*x-b)'\Hnewline 
-H - A}
-\end{program}
+\begin{Verbatim}
+function y=f(x,p);A=p{1};b=p{2};y=0.5*x'*A*x-b'*x;endfunction
+
+A = [1,2;2,-0.5]; b=[1;-1]; 
+x = randn(2,1); 
+[J,H] = derivative(f,x,args={A,b}) 
+
+// as the function is quadratic errors should be null with formula of 
+// order 2 and 4  but are not due to numerical noise by cancellation 
+J - (A*x-b)' 
+H - A
+\end{Verbatim}
 
 \end{examples}
 

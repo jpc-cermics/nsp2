@@ -86,17 +86,19 @@ examples). \verb+ea_estim+ is a computed estimation of $| I - I_a |$. The
 \begin{examples}
   
 \paragraph{example 1} a simple example 
-\begin{program}\HCode{function y=f1(x);y=exp(x);endfunction\Hnewline
-[I,ea] = intg(0,1,f1)\Hnewline
-abs(I-(\%e-1)) //near exact absolute error}
-\end{program}
+\begin{Verbatim}
+function y=f1(x);y=exp(x);endfunction
+[I,ea] = intg(0,1,f1)
+abs(I-(%e-1)) // exact absolute error
+\end{Verbatim}
   
 \paragraph{example 2} comparizon with the error function
-\begin{program}\HCode{function y=f2(x);y=2*exp(-x^2)/sqrt(\%pi);endfunction\Hnewline
-[Ia,ea] = intg(0,0.5,f2)\Hnewline
-I = erf(0.5)\Hnewline
-abs(I - Ia)}
-\end{program}
+\begin{Verbatim}
+function y=f2(x);y=2*exp(-x^2)/sqrt(%pi);endfunction
+[Ia,ea] = intg(0,0.5,f2)
+I = erf(0.5)
+abs(I - Ia)
+\end{Verbatim}
   
 \paragraph{example 3} passing extra parameters. If your function needs
 only one additional parameter \verb+p+, says a scalar, or a vector or matrice, 
@@ -105,24 +107,25 @@ stacked in a vector but you can use in fact any kind of nsp object,
 for instance a list, a cells array or a hash table. Here is different
 possibilities on a same example. In this exemple the parameters of
 the function will be called a and w:
-\begin{program}\HCode{// 3-1 put parameters in a vector\Hnewline
-function y=g(x,p);a=p(1);w=p(2);y=a*x + sin(w*x);endfunction\Hnewline
-[Ia,ea] = intg(0,2*\%pi,g,args=[1,1])\Hnewline
-// here the exact result should be 2*pi^2\Hnewline
-abs(Ia - 2*\%pi^2)\Hnewline
-//\Hnewline
-// 3-2 put parameters in a list\Hnewline
-// in this case the function f have the same definition\Hnewline
-[Ia,ea] = intg(0,2*\%pi,g,args=list(1,1))\Hnewline
-//\Hnewline
-// 3-3 put parameters in a cells array\Hnewline
-function y=g(x,p);a=p{1};b=p{2};y=b*x + sin(b*x);endfunction\Hnewline
-[Ia,ea] = intg(0,2*\%pi,g,args={1,1})\Hnewline
-//\Hnewline
-// 3-4 put parameters in a hash table\Hnewline
-function y=g(x,p);y=p.a*x + sin(p.w*x);endfunction\Hnewline
-[Ia,ea] = intg(0,2*\%pi,g,args=hash(2,a=1,w=1))}
-\end{program}
+\begin{Verbatim}
+// 3-1 put parameters in a vector
+function y=g(x,p);a=p(1);w=p(2);y=a*x + sin(w*x);endfunction
+[Ia,ea] = intg(0,2*%pi,g,args=[1,1])
+// here the exact result should be 2*pi^2
+abs(Ia - 2*%pi^2)
+
+// 3-2 put parameters in a list
+// in this case the function f have the same definition
+[Ia,ea] = intg(0,2*%pi,g,args=list(1,1))
+
+// 3-3 put parameters in a cells array
+function y=g(x,p);a=p{1};b=p{2};y=b*x + sin(b*x);endfunction
+[Ia,ea] = intg(0,2*%pi,g,args={1,1})
+
+// 3-4 put parameters in a hash table
+function y=g(x,p);y=p.a*x + sin(p.w*x);endfunction
+[Ia,ea] = intg(0,2*%pi,g,args=hash(2,a=1,w=1))
+\end{Verbatim}
 
 \paragraph{example 4} a difficult problem. Here we try to integrate:
 $$
@@ -136,36 +139,48 @@ $$
 $$
 so we know the exact result ($I=\cos(1)$). We write the function in a vectorial
 manner so as to experiment also with the \verb+vecteval+ option. 
-\begin{program}\HCode{function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction\Hnewline
-// 1/ reduce the tolerance\Hnewline
-[Ia,ea,ier] = intg(0,1,f, rtol=1e-6)\Hnewline
-// 2/ increase the limit parameter (trying to reach the requested precision)\Hnewline
-[Ia,ea,ier] = intg(0,1,f, rtol=1e-6, limit=10000)\Hnewline
-// 3/ compare ea the estimated error with the (near) exact error:\Hnewline
-ea_exact = abs(Ia-cos(1))\Hnewline
-// 4/ increase rtol and measure the computing time\Hnewline
-tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()\Hnewline
-// 5/ the same using vecteval=\%t (it must be faster)\Hnewline
-tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=\%t); toc()}
-\end{program}
+\begin{Verbatim}
+function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction
+
+// 1/ reduce the tolerance
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6)
+
+// 2/ increase the limit parameter (trying to reach the requested precision)
+[Ia,ea,ier] = intg(0,1,f, rtol=1e-6, limit=10000)
+
+// 3/ compare ea the estimated error with the (near) exact error:
+ea_exact = abs(Ia-cos(1))
+
+// 4/ increase rtol and measure the computing time
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()
+
+// 5/ the same using vecteval=%t (it must be faster)
+tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=%t); toc()
+\end{Verbatim}
 
   
 \paragraph{example 5} In this example we try to integrate probability 
 density functions, theorical results must be all equal to 1 (see the
 \manlink{pdf}{pdf} help page). 
-\begin{program}\HCode{// a function to handle all pdf functions with intg\Hnewline
-function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction\Hnewline
-// integrating the N(0,1) density\Hnewline
-[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"nor",0,1})\Hnewline
-// integrating the gamma (3,1) density\Hnewline
-[Ia, ea, ier] = intg(0, \%inf, f, args={"gam",3,1})\Hnewline
-// integrate the Cauchy (100) density\Hnewline
-[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"cau",100})\Hnewline
-// integrate the Laplace (1000) density\Hnewline
-[Ia, ea, ier] = intg(-\%inf, \%inf, f, args={"lap",1000})\Hnewline
-// integrate the beta (2,6) density\Hnewline
-[Ia, ea, ier] = intg(0, 1, f, args={"bet",2,6})}
-\end{program}
+\begin{Verbatim}
+// a function to handle all pdf functions with intg
+function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
+
+// integrating the N(0,1) density
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={"nor",0,1})
+
+// integrating the gamma (3,1) density
+[Ia, ea, ier] = intg(0, %inf, f, args={"gam",3,1})
+
+// integrate the Cauchy (100) density
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={"cau",100})
+
+// integrate the Laplace (1000) density
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={"lap",1000})
+
+// integrate the beta (2,6) density
+[Ia, ea, ier] = intg(0, 1, f, args={"bet",2,6})
+\end{Verbatim}
 
 \end{examples}
 

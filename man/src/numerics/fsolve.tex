@@ -114,31 +114,37 @@ $$
   f(x) = x - e^{-(1+x)}, \; f'(x) = 1 + e^{-(1+x)}
 $$ 
 has exactly one root located in $(0,1)$.
-\begin{program}\HCode{function y=f(x);y = x - exp(-1-x);endfunction\Hnewline
-// simple call to fsolve\Hnewline
-[r,fr,info] = fsolve(0,f)\Hnewline
-// using fsolve with providing the Jacobian\Hnewline
-function y=df(x);y = 1 + exp(-1-x);endfunction\Hnewline
-[r,fr,info] = fsolve(0,f,jac=df)\Hnewline
-// playing with xtol, ftol\Hnewline
-[r,fr,info] = fsolve(0,f,jac=df,ftol=\%eps,xtol=0)}
-\end{program}
+\begin{Verbatim}
+function y=f(x);y = x - exp(-1-x);endfunction
+
+// simple call to fsolve
+[r,fr,info] = fsolve(0,f)
+
+// using fsolve with providing the Jacobian
+function y=df(x);y = 1 + exp(-1-x);endfunction
+[r,fr,info] = fsolve(0,f,jac=df)
+
+// playing with xtol, ftol
+[r,fr,info] = fsolve(0,f,jac=df,ftol=%eps,xtol=0)
+\end{Verbatim}
  
 \paragraph{example 2} two equations, two unknowns. In the second example
 of the \manlink{ode}{ode} help page (The Brusselator) one can looks for
 the stationnary point(s) of the ode. In fact it is straitforward to see
 that there is one unique such point $(2;(5+eps)/2)$ but lets use fsolve
 anyway.
-\begin{program}\HCode{function [f] = brusselator(u,eps)\Hnewline
- f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
-       (5+eps)*u(1) - u(1)^2*u(2)]\Hnewline
-endfunction\Hnewline
-eps = 2;\Hnewline
-[z,fz,info] = fsolve([1;1],brusselator,args=eps)\Hnewline
-// compute the relative error\Hnewline
-ze = [2 ; (5+eps)/2];\Hnewline
-norm(z-ze)/norm(ze)}
-\end{program}
+\begin{Verbatim}
+function [f] = brusselator(u,eps)
+   f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...
+        (5+eps)*u(1) - u(1)^2*u(2)]
+endfunction
+eps = 2;
+[z,fz,info] = fsolve([1;1],brusselator,args=eps)
+
+// compute the relative error
+ze = [2 ; (5+eps)/2];
+norm(z-ze)/norm(ze)
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

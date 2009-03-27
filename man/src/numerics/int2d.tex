@@ -90,37 +90,44 @@ the rectangle.
 \begin{examples}
   
 \paragraph{example 1} a simple example, integrating on the unit square: 
-\begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
-[Ia,ea,ier] = int2d([0,1],[0,1],f)\Hnewline 
-I = -cos(2)+2*cos(1)-1 // exact result \Hnewline 
-abs(Ia-I) //near exact absolute error}
-\end{program}
+\begin{Verbatim}
+function z=f(x,y);z=cos(x+y);endfunction
+[Ia,ea,ier] = int2d([0,1],[0,1],f) 
+I = -cos(2)+2*cos(1)-1 // exact result  
+abs(Ia-I) //near exact absolute error
+\end{Verbatim}
 
 \paragraph{example 1bis} the same example using triangles
-\begin{program}\HCode{function z=f(x,y);z=cos(x+y);endfunction\Hnewline
-// the unit square is divided in 2 triangles:\Hnewline
-X = [0,1;1,1;0,0];\Hnewline
-Y = [0,0;0,1;1,1];\Hnewline
-[Ia,ea,ier] = int2d(X,Y,f)\Hnewline
-I = -cos(2)+2*cos(1)-1 // exact result \Hnewline 
-abs(Ia-I) //near exact absolute error}
-\end{program}
+\begin{Verbatim}
+function z=f(x,y);z=cos(x+y);endfunction
+// the unit square is divided in 2 triangles:
+X = [0,1;1,1;0,0];
+Y = [0,0;0,1;1,1];
+[Ia,ea,ier] = int2d(X,Y,f)
+I = -cos(2)+2*cos(1)-1 // exact result  
+abs(Ia-I) //near exact absolute error
+\end{Verbatim}
   
 \paragraph{example 2} a more difficult one's, always on the unit square:
-\begin{program}\HCode{function z=f(x,y);z=cos(10*x+20*y);endfunction\Hnewline
-I = (-cos(30)+cos(10)+cos(20)-1)/200 // exact result \Hnewline 
-// first call \Hnewline
-[Ia,ea,ier] = int2d([0,1],[0,1],f)\Hnewline
-abs(Ia-I)\Hnewline
-// increase limit\Hnewline
-[Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000)\Hnewline
-abs(Ia-I)\Hnewline
-// the function could be evaluated on vector x and y\Hnewline
-// timing with scalar evaluation\Hnewline
-tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()\Hnewline
-// timing with vectorial evaluation (this should be faster)\Hnewline
-tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=\%t); toc()}
-\end{program}
+\begin{Verbatim}
+function z=f(x,y);z=cos(10*x+20*y);endfunction
+
+I = (-cos(30)+cos(10)+cos(20)-1)/200 // exact result  
+
+// first call 
+[Ia,ea,ier] = int2d([0,1],[0,1],f)
+abs(Ia-I)
+
+// increase limit
+[Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000)
+abs(Ia-I)
+
+// the function could be evaluated on vector x and y
+// timing with scalar evaluation
+tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()
+// timing with vectorial evaluation (this should be faster)
+tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t); toc()}
+\end{Verbatim}
 
 \paragraph{example 3} integrating a singularity. Here we try to compute:
 $$
@@ -128,14 +135,16 @@ $$
 $$ 
 In this case we could always use \verb+iclose=%t+ because the singularity is
 located only at one vertex $(0,0)$:
-\begin{program}\HCode{function z=f(x,y);z = 1./(x+y); endfunction\Hnewline
-X = [0;1;0]; Y = [0;0;1];\Hnewline
-[Ia,ea,ier] = int2d(X,Y,f,limit=1000)\Hnewline
-abs(Ia-1)\Hnewline
-// show one again the speed-up using vector evaluation of f\Hnewline
-tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()\Hnewline
-tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=\%t); toc()}
-\end{program}
+\begin{Verbatim}
+function z=f(x,y);z = 1./(x+y); endfunction
+X = [0;1;0]; Y = [0;0;1];
+[Ia,ea,ier] = int2d(X,Y,f,limit=1000)
+abs(Ia-1)
+
+// show one again the speed-up using vector evaluation of f
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()
+tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=%t); toc()
+\end{Verbatim}
 Rmk: a singularity at the origin could be removed using polar
 coordinates but in case of the unit triangle it may be better
 to use $x = u(1-v), y = uv$, $dxdy = u dudv$ because $u$ and $v$
