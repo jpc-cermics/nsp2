@@ -714,75 +714,6 @@ static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
-/* static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs) */
-/* { */
-/*   int dim=0,i,j; */
-/*   NspBMatrix *HMat1,*HMat=NULLBMAT; */
-/*   NspObject *Obj=NULLOBJ; */
-/*   nsp_option opts[] ={{"dim",obj,NULLOBJ,-1}, */
-/* 		      { NULL,t_end,NULLOBJ,-1}}; */
-/*   CheckStdRhs(1,2); */
-/*   CheckLhs(1,1); */
-/*   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG; */
-/*   if (rhs - opt == 2) */
-/*     { */
-/*       /\* or(A,B); *\/ */
-/*       return int_bmatrix__and_or(stack,rhs,opt,lhs,nsp_bmatrix_scalar_or,nsp_bmatrix_or); */
-/*     } */
-/*   /\* or(A,dim=) *\/ */
-/*   if ( get_optional_args(stack, rhs, opt, opts, &Obj) == FAIL ) */
-/*     return RET_BUG; */
-/*   if ( Obj != NULL)  */
-/*     { */
-/*       if ( GetDimArg(stack, opts[0].position, &dim) == FAIL ) return RET_BUG; */
-/*       if ( dim == -1 ) */
-/* 	{ */
-/* 	  Scierror ("Error:\t dim flag -1 or '.' not supported for function %s\n", NspFname(stack)); */
-/* 	  return RET_BUG; */
-/* 	} */
-/*       if ( dim == -2 )  /\* matlab compatibility flag *\/ */
-/* 	dim = GiveMatlabDimFlag(HMat1); */
-/*     } */
-
-/*   switch (dim)  */
-/*     { */
-/*     default :  */
-/*       Sciprintf("Invalid dim flag '%d' assuming 0\n", dim); */
-/*     case 0 :  */
-/*       if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG; */
-/*       HMat->B[0] = FALSE; */
-/*       for ( i=0; i < HMat1->mn ; i++ )  */
-/* 	{ */
-/* 	  if ( HMat1->B[i] != FALSE ) {  HMat->B[0] = TRUE;   break;  } */
-/* 	} */
-/*       break; */
-      
-/*     case 1:   /\* row *\/ */
-/*       if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG; */
-/*       for ( j= 0 ; j < HMat1->n ; j++) */
-/* 	{ */
-/* 	  HMat->B[j] = FALSE;  */
-/* 	  for ( i = 0 ; i < HMat1->m ; i++)  */
-/* 	    if ( HMat1->B[i+HMat1->m*j]!= FALSE ) {HMat->B[j] = TRUE; break;} */
-/* 	} */
-/*       break; */
-
-/*     case 2:  /\* column *\/ */
-/*       if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG; */
-/*       for ( i= 0 ; i < HMat1->m ; i++) */
-/* 	{ */
-/* 	  HMat->B[i] = FALSE;  */
-/* 	  for ( j = 0 ; j < HMat1->n ; j++)  */
-/* 	    if ( HMat1->B[i+HMat1->m*j] != FALSE ){ HMat->B[i] = TRUE; break;} */
-/* 	} */
-/*       break; */
-/*     } */
-/*   MoveObj(stack,1, (NspObject *)HMat);   */
-/*   return 1; */
-/* } */
-
-
 /*
  * A(i;j) = "not A(i;j)" : A is changed
  */
@@ -1117,7 +1048,7 @@ static OpTab BMatrix_func[]={
   {"concatdiag_b_b" , int_matint_concat_diag},/* int_bmatrix_concatdiag },*/
   {"isvector_b", int_matint_isvector},
   {"copy_b",int_bmatrix_copy},
-  {"bmat_create_m",int_bmatrix_create},
+  {"bmat_create",int_bmatrix_create},
   {"diagcre_b",int_bmatrix_diagcre},
   {"diage_b",int_bmatrix_diage},
   {"find_b",int_bmatrix_find},
