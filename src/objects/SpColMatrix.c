@@ -5954,6 +5954,7 @@ static int SpColMini1(NspSpColMatrix *A, NspSpColMatrix *M)
 }
 
 
+
 /**
  * SpColMini3:
  * @A: a #NspSpColMatrix
@@ -7914,6 +7915,58 @@ int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *K
 }
 
 /**
+ * nsp_spcolmatrix_to_lapack_band_format:
+ * @A: a real or complex sparse matrix (a priori with small bandwith kl and ku)
+ * @kl: the lower bandwidth of @A
+ * @ku: the upper bandwidth of @A
+ * @enlarge: true if the banded lapack format is enlarged at top with kl rows (useful
+ *           for lapack band solvers)
+ *
+ * Return value: a #NspMatrix: the lapack banded storage of @A (kl and ku should have 
+ *               been computed by #nsp_spcolmatrix_lower_and_upper_bandwidth)
+ **/
+/* added by Bruno */
+NspMatrix *nsp_spcolmatrix_to_lapack_band_format(NspSpColMatrix *A, int kl, int ku, Boolean enlarge)
+{
+  int i, j, k, stride = enlarge ? kl : 0;
+  NspMatrix *Af;
+
+  if ( (Af = nsp_matrix_create(NVOID,A->rc_type, stride+kl+1+ku, A->n)) == NULLMAT ) 
+    return NULLMAT;
+
+  if ( Af->rc_type == 'r' )
+    {
+      /* fill Af with zeros */
+      for ( k = 0 ; k < Af->mn ; k++ )
+	Af->R[k] = 0.0;
+      /* fill Af with non zeros values of A */
+      for ( j = 0 ; j < A->n ; j++ ) 
+	for ( k = 0; k < A->D[j]->size ; k++ )
+	  {
+	    i = stride + A->D[j]->J[k]; 
+	    Af->R[i + Af->m*j] = A->D[j]->R[k];
+	  }
+    }
+  else
+    {
+      /* fill Af with zeros */
+      for ( k = 0 ; k < Af->mn ; k++ )
+	{
+	  Af->C[k].r = 0.0; Af->C[k].i = 0.0;
+	}
+      /* fill Af with non zeros values of A */
+      for ( j = 0 ; j < A->n ; j++ ) 
+	for ( k = 0; k < A->D[j]->size ; k++ )
+	  {
+	    i = stride + A->D[j]->J[k]; 
+	    Af->C[i + Af->m*j] = A->D[j]->C[k];
+	  }
+    }
+
+  return Af;
+}
+
+/**
  * nsp_spcolmatrix_solve_utri
  * @U: a #NspSpColMatrix
  * @b: a #NspMatrix
@@ -8151,6 +8204,7 @@ int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
  * 
  * Return value: %FAIL or %OK
  **/
+/* added by Bruno */
 
 int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 {
@@ -8211,6 +8265,7 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
  * 
  * Return value: %FAIL or %OK
  **/
+/* added by Bruno */
 
 int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 {

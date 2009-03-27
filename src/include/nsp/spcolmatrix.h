@@ -220,11 +220,12 @@ extern NspSpColMatrix * nsp_spcolmatrix_div_zero_tt(NspSpColMatrix *A);
 extern NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMatrix *B);
 extern NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag);
 extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
+
 extern Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A);
 extern int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *Ku);
-
+extern NspMatrix *nsp_spcolmatrix_to_lapack_band_format(NspSpColMatrix *A, int kl, int ku, Boolean enlarge);
 extern int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b);
 extern int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b);
 extern int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x);
