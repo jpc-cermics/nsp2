@@ -763,9 +763,19 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
       if (nsp_imatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
     }
   j=0;
+
+  if ( Diag->eltsize > A->eltsize) 
+    {
+      if ( nsp_imatrix_change_itype(A,Diag->itype) == FAIL) 
+	return FAIL;
+    }
+
+  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
+
+  /* 
   for ( i = imin ; i < imax ; i++ ) 
     A->Gint[i+(i+k)*A->m] = Diag->Gint[j++] ;
-
+  */
   return(OK);
 }
 
@@ -1284,23 +1294,22 @@ static void nsp_int_print(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
   switch (M->itype ) {							
-  case nsp_gint:  Sciprintf("%d",M->Gint[i+(M->m)*j]);break;
-  case nsp_guint:  Sciprintf("%d",M->Guint[i+(M->m)*j]);break;
-  case nsp_gshort: Sciprintf("%d",M->Gshort[i+(M->m)*j]);break;
-  case nsp_gushort: Sciprintf("%d",M->Gushort[i+(M->m)*j]);break;
-  case nsp_glong :  Sciprintf("%d",M->Glong[i+(M->m)*j]);break;
-  case nsp_gulong:  Sciprintf("%d",M->Gulong[i+(M->m)*j]);break;
-  case nsp_gint8: Sciprintf("%d",M->Gint8[i+(M->m)*j]);break;
-  case nsp_guint8:  Sciprintf("%d",M->Guint8[i+(M->m)*j]);break;
-  case nsp_gint16:  Sciprintf("%d",M->Gint16[i+(M->m)*j]);break;
-  case nsp_guint16: Sciprintf("%d",M->Guint16[i+(M->m)*j]);break;
-  case nsp_gint32: Sciprintf("%d",M->Gint32[i+(M->m)*j]);break;
-  case nsp_guint32: Sciprintf("%d",M->Guint32[i+(M->m)*j]);break;
-  case nsp_gint64: Sciprintf("%d",M->Gint64[i+(M->m)*j]);break;
-  case nsp_guint64: Sciprintf("%d",M->Guint64[i+(M->m)*j]);break;
+  case nsp_gint:  Sciprintf("%5d",M->Gint[i+(M->m)*j]);break;
+  case nsp_guint:  Sciprintf("%5u",M->Guint[i+(M->m)*j]);break;
+  case nsp_gshort: Sciprintf("%5d",M->Gshort[i+(M->m)*j]);break;
+  case nsp_gushort: Sciprintf("%5u",M->Gushort[i+(M->m)*j]);break;
+  case nsp_glong :  Sciprintf("%5d",M->Glong[i+(M->m)*j]);break;
+  case nsp_gulong:  Sciprintf("%5u",M->Gulong[i+(M->m)*j]);break;
+  case nsp_gint8: Sciprintf("%5d",M->Gint8[i+(M->m)*j]);break;
+  case nsp_guint8:  Sciprintf("%5u",M->Guint8[i+(M->m)*j]);break;
+  case nsp_gint16:  Sciprintf("%5d",M->Gint16[i+(M->m)*j]);break;
+  case nsp_guint16: Sciprintf("%5u",M->Guint16[i+(M->m)*j]);break;
+  case nsp_gint32: Sciprintf("%5d",M->Gint32[i+(M->m)*j]);break;
+  case nsp_guint32: Sciprintf("%5u",M->Guint32[i+(M->m)*j]);break;
+  case nsp_gint64: Sciprintf("%5d",M->Gint64[i+(M->m)*j]);break;
+  case nsp_guint64: Sciprintf("%5u",M->Guint64[i+(M->m)*j]);break;
   }
 }
-
 
 static void BMij_plus_format(const void *m, int i, int j)
 {
