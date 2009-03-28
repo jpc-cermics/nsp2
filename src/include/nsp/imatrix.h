@@ -162,6 +162,49 @@ struct _NspIMatrix {
 
 #define NSP_ITYPE_NAME(names,itype) (names)[itype] 
 
+/*  example : 
+ *  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
+ *  performs 
+ *  for ( i = imin ; i < imax ; i++ ) A->Gint[i+(i+k)*A->m] = Diag->Gint[j++] ;
+ *  for all mixed cases.
+ */
+
+#define __NSP_COPY_ITYPES(iter,name,tag,expl,cast,rhs,itype_rhs,expr)	\
+  switch (itype_rhs) {							  \
+  case nsp_gint:   iter (name)->tag[expl] = (cast) ((gint *) rhs)[expr];break; \
+  case nsp_guint:  iter (name)->tag[expl] = (cast) ((guint *) rhs)[expr];break; \
+  case nsp_gshort: iter (name)->tag[expl] = (cast) ((gshort *) rhs)[expr];break; \
+  case nsp_gushort:iter (name)->tag[expl] = (cast) ((gushort *) rhs)[expr];break; \
+  case nsp_glong : iter (name)->tag[expl] = (cast) ((glong *) rhs)[expr];break; \
+  case nsp_gulong: iter (name)->tag[expl] = (cast) ((gulong *) rhs)[expr];break; \
+  case nsp_gint8:  iter (name)->tag[expl] = (cast) ((gint8 *) rhs)[expr];break; \
+  case nsp_guint8: iter (name)->tag[expl] = (cast) ((guint8 *) rhs)[expr];break; \
+  case nsp_gint16: iter (name)->tag[expl] = (cast) ((gint16 *) rhs)[expr];break; \
+  case nsp_guint16:iter (name)->tag[expl] = (cast) ((guint16 *) rhs)[expr];break; \
+  case nsp_gint32: iter (name)->tag[expl] = (cast) ((gint32 *) rhs)[expr];break; \
+  case nsp_guint32:iter (name)->tag[expl] = (cast) ((guint32 *) rhs)[expr];break; \
+  case nsp_gint64: iter (name)->tag[expl] = (cast) ((gint64 *) rhs)[expr];break; \
+  case nsp_guint64:iter (name)->tag[expl] = (cast) ((guint64 *) rhs)[expr];break; \
+  } 
+
+#define NSP_COPY_ITYPES(iter,name,expl,rhs,itype_rhs,expr)			\
+  switch ( (name)->itype ) {						\
+  case nsp_gint: __NSP_COPY_ITYPES(iter,name,Gint,expl,gint,rhs,itype_rhs,expr) ; break; \
+  case nsp_guint: __NSP_COPY_ITYPES(iter,name, Guint,expl,guint,rhs,itype_rhs,expr) ; break; \
+  case nsp_gshort: __NSP_COPY_ITYPES(iter,name,Gshort,expl,gshort,rhs,itype_rhs,expr) ; break; \
+  case nsp_gushort:__NSP_COPY_ITYPES(iter,name,Gushort,expl,gushort,rhs,itype_rhs,expr) ; break; \
+  case nsp_glong : __NSP_COPY_ITYPES(iter,name,Glong,expl,glong,rhs,itype_rhs,expr) ; break; \
+  case nsp_gulong: __NSP_COPY_ITYPES(iter,name,Gulong,expl,gulong,rhs,itype_rhs,expr) ; break; \
+  case nsp_gint8: __NSP_COPY_ITYPES(iter,name,Gint8,expl,gint8,rhs,itype_rhs,expr) ; break; \
+  case nsp_guint8:__NSP_COPY_ITYPES(iter,name,Guint8,expl,guint8,rhs,itype_rhs,expr) ; break; \
+  case nsp_gint16:__NSP_COPY_ITYPES(iter,name,Gint16,expl,gint16,rhs,itype_rhs,expr) ; break; \
+  case nsp_guint16:__NSP_COPY_ITYPES(iter,name,Guint16,expl,guint16,rhs,itype_rhs,expr) ; break; \
+  case nsp_gint32: __NSP_COPY_ITYPES(iter,name,Gint32,expl,gint32,rhs,itype_rhs,expr) ; break; \
+  case nsp_guint32:__NSP_COPY_ITYPES(iter,name,Guint32,expl,guint32,rhs,itype_rhs,expr) ; break; \
+  case nsp_gint64:__NSP_COPY_ITYPES(iter,name,Gint64,expl,gint64,rhs,itype_rhs,expr) ; break; \
+  case nsp_guint64:__NSP_COPY_ITYPES(iter,name,Guint64,expl,guint64,rhs,itype_rhs,expr) ; break; \
+  }
+
 
 /**
  * nsp_type_imatrix_id:
