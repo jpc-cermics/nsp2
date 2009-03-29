@@ -20,6 +20,7 @@ struct  _index_vector {
   index_vector_error error;/* error index */
 };
 
+int *nsp_get_index_vector_work(int work);
 
 #endif 
 

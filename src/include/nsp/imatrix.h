@@ -9,8 +9,6 @@
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include <glib.h> 
-#include "nsp/matrix.h" 
-#include "nsp/smatrix.h" 
 
 /*
  * NspIMatrix inherits from NspObject 
@@ -90,6 +88,9 @@ struct _NspIMatrix {
   case nsp_gint64 : s= sizeof(gint64 );break;		\
   case nsp_guint64 : s= sizeof(gint64 );break;	}
 
+/* fill itype from a fixed type 
+ */
+
 #define NSP_COPY_TO_ITYPE(name,itype,i,min,step,max,orig)	\
   switch (itype ) {							\
  case nsp_gint: for (i=min; i <  max; i+=step) (name)->Gint[i] = (gint) (orig);break; \
@@ -107,6 +108,10 @@ struct _NspIMatrix {
  case nsp_gint64:for (i=min; i <  max; i+=step) (name)->Gint64[i] = (gint64) (orig);break; \
  case nsp_guint64:for (i=min; i <  max; i+=step) (name)->Guint64[i] = (guint64) (orig);break;} 
 
+/* fill fixed type from itype
+ *
+ */
+
 #define NSP_COPY_FROM_ITYPE(dest,cast,name,itype,i,min,step,max)	\
   switch (itype ) {							\
   case nsp_gint:   for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint[i];break; \
@@ -123,6 +128,10 @@ struct _NspIMatrix {
   case nsp_guint32:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint32[i];break; \
   case nsp_gint64: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint64[i];break; \
   case nsp_guint64:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint64[i];break;} 
+
+/* COPY between two different itype objects.
+ */
+
 
 #define __NSP_COPY_ITYPE_TO_ITYPE(name,offset,tag,cast,i,min,step,max,old,itype_old) \
   switch (itype_old) {							  \
@@ -204,6 +213,30 @@ struct _NspIMatrix {
   case nsp_gint64:__NSP_COPY_ITYPES(iter,name,Gint64,expl,gint64,rhs,itype_rhs,expr) ; break; \
   case nsp_guint64:__NSP_COPY_ITYPES(iter,name,Guint64,expl,guint64,rhs,itype_rhs,expr) ; break; \
   }
+
+/* expand X expression in a swith 
+ * #define X(name) for ( i=0 ; i < A->mn ; i++) {if ( A->name[i] ) count++;}break;
+ * NSP_ITYPE_SWITCH(s,itype,X);
+ */
+
+#define NSP_ITYPE_SWITCH(itype,X)		\
+  switch (itype ) {				\
+  case nsp_gint: X(Gint);			\
+  case nsp_guint: X(Guint);			\
+  case nsp_gshort: X(Gshort);			\
+  case nsp_gushort: X(Gushort);			\
+  case nsp_glong : X(Glong );			\
+  case nsp_gulong: X(Gulong);			\
+  case nsp_gint8: X(Gint8);			\
+  case nsp_guint8: X(Guint8);			\
+  case nsp_gint16: X(Gint16);			\
+  case nsp_guint16: X(Guint16);			\
+  case nsp_gint32: X(Gint32);			\
+  case nsp_guint32: X(Guint32);			\
+  case nsp_gint64 : X(Gint64 );			\
+  case nsp_guint64 : X(Gint64 );	}
+
+
 
 
 /**
@@ -292,6 +325,9 @@ extern int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, Ns
 extern NspBMatrix *nsp_imatrix_compare(const NspIMatrix *A, const NspIMatrix *B, char *op); 
 extern int nsp_imatrix_full_compare(const NspIMatrix *A,const  NspIMatrix *B, char *op, int *err); 
 extern int nsp_imatrix_change_itype(NspIMatrix *A,nsp_itype itype);
+
+extern int nsp_xdr_save_array_ixx(XDR *xdrs, void *nx,nsp_itype itye, int l);
+extern int nsp_xdr_load_array_ixx(XDR *xdrs, void *nx,nsp_itype itype, int l);
 
 #endif 
 
