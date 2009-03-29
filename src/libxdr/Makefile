@@ -5,7 +5,7 @@ SCIDIR1=..\..
 LIBRARY = xdr.a
 
 OBJSC =	xdr.o xdr_array.o xdr_float.o xdr_mem.o \
-	xdr_rec.o xdr_reference.o xdr_stdio.o
+	xdr_rec.o xdr_reference.o xdr_stdio.o xdr_intXX_t.o
 
 OBJSF = 
 

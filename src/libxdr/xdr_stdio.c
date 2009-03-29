@@ -39,27 +39,31 @@
 #include <stdio.h>
 #include <rpc/xdr_inc.h>
 
-static bool_t	xdrstdio_getlong(XDR *xdrs, register long int *lp);
-static bool_t	xdrstdio_putlong(XDR *xdrs, long int *lp);
-static bool_t	xdrstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len);
-static bool_t	xdrstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len);
-static u_int	xdrstdio_getpos(XDR *xdrs);
-static bool_t	xdrstdio_setpos(XDR *xdrs, u_int pos);
-static long *	xdrstdio_inline(XDR *xdrs, u_int len);
-static void	xdrstdio_destroy(register XDR *xdrs);
+static bool_t xdrstdio_getlong (XDR *, long *);
+static bool_t xdrstdio_putlong (XDR *, const long *);
+static bool_t xdrstdio_getbytes (XDR *, caddr_t, u_int);
+static bool_t xdrstdio_putbytes (XDR *, const char *, u_int);
+static u_int xdrstdio_getpos (const XDR *);
+static bool_t xdrstdio_setpos (XDR *, u_int);
+static int32_t *xdrstdio_inline (XDR *, u_int);
+static void xdrstdio_destroy (XDR *);
+static bool_t xdrstdio_getint32 (XDR *, int32_t *);
+static bool_t xdrstdio_putint32 (XDR *, const int32_t *);
 
 /*
  * Ops vector for stdio type XDR
  */
 static struct xdr_ops	xdrstdio_ops = {
-  xdrstdio_getlong,	/* deseraialize a long int */
-  xdrstdio_putlong,	/* seraialize a long int */
-  xdrstdio_getbytes,	/* deserialize counted bytes */
-  xdrstdio_putbytes,	/* serialize counted bytes */
-  xdrstdio_getpos,	/* get offset in the stream */
-  xdrstdio_setpos,	/* set offset in the stream */
-  xdrstdio_inline,	/* prime stream for inline macros */
-  xdrstdio_destroy	/* destroy stream */
+  xdrstdio_getlong,		/* deserialize a long int */
+  xdrstdio_putlong,		/* serialize a long int */
+  xdrstdio_getbytes,		/* deserialize counted bytes */
+  xdrstdio_putbytes,		/* serialize counted bytes */
+  xdrstdio_getpos,		/* get offset in the stream */
+  xdrstdio_setpos,		/* set offset in the stream */
+  xdrstdio_inline,		/* prime stream for inline macros */
+  xdrstdio_destroy,		/* destroy stream */
+  xdrstdio_getint32,		/* deserialize a int */
+  xdrstdio_putint32		/* serialize a int */
 };
 
 /*
@@ -102,7 +106,7 @@ xdrstdio_getlong(XDR *xdrs, register long int *lp)
 }
 
 static bool_t
-xdrstdio_putlong(XDR *xdrs, long int *lp)
+xdrstdio_putlong(XDR *xdrs, const long int *lp)
 {
 
 #ifndef mc68000
@@ -124,7 +128,7 @@ xdrstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static bool_t
-xdrstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrstdio_putbytes(XDR *xdrs, const char * addr, u_int len)
 {
 
   if ((len != 0) && (fwrite(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1))
@@ -133,7 +137,7 @@ xdrstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static u_int
-xdrstdio_getpos(XDR *xdrs)
+xdrstdio_getpos(const XDR *xdrs)
 {
 
   return ((u_int) ftell((FILE *)xdrs->x_private));
@@ -147,7 +151,7 @@ xdrstdio_setpos(XDR *xdrs, u_int pos)
 	  FALSE : TRUE);
 }
 
-static long *
+static int32_t *
 xdrstdio_inline(XDR *xdrs, u_int len)
 {
 
@@ -161,4 +165,27 @@ xdrstdio_inline(XDR *xdrs, u_int len)
    * management on this buffer, so we don't do this.
    */
   return (NULL);
+}
+
+
+static bool_t
+xdrstdio_getint32 (XDR *xdrs, int32_t *ip)
+{
+  int32_t mycopy;
+
+  if (fread ((caddr_t) &mycopy, 4, 1, (FILE *) xdrs->x_private) != 1)
+    return FALSE;
+  *ip = ntohl (mycopy);
+  return TRUE;
+}
+
+static bool_t
+xdrstdio_putint32 (XDR *xdrs, const int32_t *ip)
+{
+  int32_t mycopy = htonl (*ip);
+
+  ip = &mycopy;
+  if (fwrite ((caddr_t) ip, 4, 1, (FILE *) xdrs->x_private) != 1)
+    return FALSE;
+  return TRUE;
 }

@@ -165,29 +165,30 @@ bool_t xdr_short(register XDR *xdrs, short int *sp)
  * XDR unsigned short integers
  */
 
-bool_t xdr_u_short(register XDR *xdrs, u_short *usp)
+bool_t
+xdr_u_short (XDR *xdrs, u_short *usp)
 {
-  u_long l;
+  long l;
 
-  switch (xdrs->x_op) {
+  switch (xdrs->x_op)
+    {
+    case XDR_ENCODE:
+      l = (u_long) * usp;
+      return XDR_PUTLONG (xdrs, &l);
 
-  case XDR_ENCODE:
-    l = (u_long) *usp;
-    return (XDR_PUTLONG(xdrs, &l));
+    case XDR_DECODE:
+      if (!XDR_GETLONG (xdrs, &l))
+	{
+	  return FALSE;
+	}
+      *usp = (u_short) (u_long) l;
+      return TRUE;
 
-  case XDR_DECODE:
-    if (!XDR_GETLONG(xdrs, &l)) {
-      return (FALSE);
+    case XDR_FREE:
+      return TRUE;
     }
-    *usp = (u_short) l;
-    return (TRUE);
-
-  case XDR_FREE:
-    return (TRUE);
-  }
-  return (FALSE);
+  return FALSE;
 }
-
 
 /*
  * XDR a char
@@ -268,16 +269,17 @@ bool_t xdr_enum(XDR *xdrs, int *ep)
  * cp points to the opaque object and cnt gives the byte length.
  */
 
-bool_t xdr_opaque(register XDR *xdrs, caddr_t cp, register u_int cnt)
+bool_t
+xdr_opaque (XDR *xdrs, caddr_t cp, u_int cnt)
 {
-  register u_int rndup;
-  static int crud[BYTES_PER_XDR_UNIT];
+  u_int rndup;
+  static char crud[BYTES_PER_XDR_UNIT];
 
   /*
    * if no data we are done
    */
   if (cnt == 0)
-    return (TRUE);
+    return TRUE;
 
   /*
    * round byte count to full xdr units
@@ -286,29 +288,30 @@ bool_t xdr_opaque(register XDR *xdrs, caddr_t cp, register u_int cnt)
   if (rndup > 0)
     rndup = BYTES_PER_XDR_UNIT - rndup;
 
-  if (xdrs->x_op == XDR_DECODE) {
-    if (!XDR_GETBYTES(xdrs, cp, cnt)) {
-      return (FALSE);
+  switch (xdrs->x_op)
+    {
+    case XDR_DECODE:
+      if (!XDR_GETBYTES (xdrs, cp, cnt))
+	{
+	  return FALSE;
+	}
+      if (rndup == 0)
+	return TRUE;
+      return XDR_GETBYTES (xdrs, (caddr_t)crud, rndup);
+
+    case XDR_ENCODE:
+      if (!XDR_PUTBYTES (xdrs, cp, cnt))
+	{
+	  return FALSE;
+	}
+      if (rndup == 0)
+	return TRUE;
+      return XDR_PUTBYTES (xdrs, xdr_zero, rndup);
+
+    case XDR_FREE:
+      return TRUE;
     }
-    if (rndup == 0)
-      return (TRUE);
-    return (XDR_GETBYTES(xdrs, crud, rndup));
-  }
-
-  if (xdrs->x_op == XDR_ENCODE) {
-    if (!XDR_PUTBYTES(xdrs, cp, cnt)) {
-      return (FALSE);
-    }
-    if (rndup == 0)
-      return (TRUE);
-    return (XDR_PUTBYTES(xdrs, xdr_zero, rndup));
-  }
-
-  if (xdrs->x_op == XDR_FREE) {
-    return (TRUE);
-  }
-
-  return (FALSE);
+  return FALSE;
 }
 
 /*

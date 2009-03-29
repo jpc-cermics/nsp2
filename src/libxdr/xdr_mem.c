@@ -54,16 +54,20 @@
 #include "rpc/xdr.h"
 #endif
 
-static bool_t	xdrmem_getlong(register XDR *xdrs, long int *lp);
-static bool_t	xdrmem_putlong(register XDR *xdrs, long int *lp);
-static bool_t	xdrmem_getbytes(register XDR *xdrs, caddr_t addr, register u_int len);
-static bool_t	xdrmem_putbytes(register XDR *xdrs, caddr_t addr, register u_int len);
-static u_int	xdrmem_getpos(register XDR *xdrs);
-static bool_t	xdrmem_setpos(register XDR *xdrs, u_int pos);
-static long *	xdrmem_inline(register XDR *xdrs, int len);
-static void	xdrmem_destroy(void);
 
-static struct	xdr_ops xdrmem_ops = {
+static bool_t xdrmem_getlong (XDR *, long *);
+static bool_t xdrmem_putlong (XDR *, const long *);
+static bool_t xdrmem_getbytes (XDR *, caddr_t, u_int);
+static bool_t xdrmem_putbytes (XDR *, const char *, u_int);
+static u_int xdrmem_getpos (const XDR *);
+static bool_t xdrmem_setpos (XDR *, u_int);
+static int32_t *xdrmem_inline (XDR *, u_int);
+static void xdrmem_destroy (XDR *);
+static bool_t xdrmem_getint32 (XDR *, int32_t *);
+static bool_t xdrmem_putint32 (XDR *, const int32_t *);
+
+static const struct xdr_ops xdrmem_ops =
+{
   xdrmem_getlong,
   xdrmem_putlong,
   xdrmem_getbytes,
@@ -71,7 +75,9 @@ static struct	xdr_ops xdrmem_ops = {
   xdrmem_getpos,
   xdrmem_setpos,
   xdrmem_inline,
-  xdrmem_destroy
+  xdrmem_destroy,
+  xdrmem_getint32,
+  xdrmem_putint32
 };
 
 /*
@@ -83,14 +89,13 @@ xdrmem_create(register XDR *xdrs, caddr_t addr, u_int size, enum xdr_op op)
 {
 
   xdrs->x_op = op;
-  xdrs->x_ops = &xdrmem_ops;
+  xdrs->x_ops = (struct xdr_ops *) &xdrmem_ops;
   xdrs->x_private = xdrs->x_base = addr;
   xdrs->x_handy = size;
 }
 
 static void
-xdrmem_destroy(void)
-/*XDR *xdrs;*/
+xdrmem_destroy(XDR *xdrs)
 {
 }
 
@@ -106,7 +111,7 @@ xdrmem_getlong(register XDR *xdrs, long int *lp)
 }
 
 static bool_t
-xdrmem_putlong(register XDR *xdrs, long int *lp)
+xdrmem_putlong(register XDR *xdrs,const long int *lp)
 {
 
   if ((xdrs->x_handy -= sizeof(long)) < 0)
@@ -127,19 +132,21 @@ xdrmem_getbytes(register XDR *xdrs, caddr_t addr, register u_int len)
   return (TRUE);
 }
 
-static bool_t
-xdrmem_putbytes(register XDR *xdrs, caddr_t addr, register u_int len)
-{
 
-  if ((xdrs->x_handy -= len) < 0)
-    return (FALSE);
-  bcopy(addr, xdrs->x_private, len);
+static bool_t
+xdrmem_putbytes (XDR *xdrs, const char *addr, u_int len)
+{
+  if (xdrs->x_handy < len)
+    return FALSE;
+  xdrs->x_handy -= len;
+  memcpy (xdrs->x_private, addr, len);
   xdrs->x_private += len;
-  return (TRUE);
+  return TRUE;
 }
 
+
 static u_int
-xdrmem_getpos(register XDR *xdrs)
+xdrmem_getpos(const XDR *xdrs)
 {
 
   return ((u_int)xdrs->x_private - (u_int)xdrs->x_base);
@@ -158,15 +165,48 @@ xdrmem_setpos(register XDR *xdrs, u_int pos)
   return (TRUE);
 }
 
-static long *
-xdrmem_inline(register XDR *xdrs, int len)
-{
-  long *buf = 0;
 
-  if (xdrs->x_handy >= len) {
-    xdrs->x_handy -= len;
-    buf = (long *) xdrs->x_private;
-    xdrs->x_private += len;
-  }
-  return (buf);
+static int32_t *
+xdrmem_inline (XDR *xdrs, u_int len)
+{
+  int32_t *buf = 0;
+
+  if (xdrs->x_handy >= len)
+    {
+      xdrs->x_handy -= len;
+      buf = (int32_t *) xdrs->x_private;
+      xdrs->x_private += len;
+    }
+  return buf;
+}
+/*
+ * Gets the next word from the memory referenced by xdrs and places it
+ * in the int pointed to by ip.  It then increments the private word to
+ * point at the next element.  Neither object pointed to is const
+ */
+static bool_t
+xdrmem_getint32 (XDR *xdrs, int32_t *ip)
+{
+  if (xdrs->x_handy < 4)
+    return FALSE;
+  xdrs->x_handy -= 4;
+  *ip = ntohl ((*((int32_t *) (xdrs->x_private))));
+  xdrs->x_private += 4;
+  return TRUE;
+}
+
+/*
+ * Puts the long pointed to by lp in the memory referenced by xdrs.  It
+ * then increments the private word to point at the next element.  The
+ * long pointed at is const
+ */
+static bool_t
+xdrmem_putint32 (XDR *xdrs, const int32_t *ip)
+{
+  if (xdrs->x_handy < 4)
+    return FALSE;
+  xdrs->x_handy -= 4;
+  *(int32_t *) xdrs->x_private = htonl (*ip);
+  xdrs->x_private += 4;
+  return TRUE;
 }

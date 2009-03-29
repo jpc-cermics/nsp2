@@ -8,7 +8,7 @@ SCIDIR1=..\..
 LIBRARY = xdr.lib
 
 OBJSC =	xdr.obj xdr_array.obj xdr_float.obj xdr_mem.obj \
-	xdr_rec.obj xdr_reference.obj xdr_stdio.obj
+	xdr_rec.obj xdr_reference.obj xdr_stdio.obj xdr_intXX_t.obj
 
 OBJSF = 
 

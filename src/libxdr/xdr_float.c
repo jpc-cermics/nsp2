@@ -172,6 +172,7 @@ struct  vax_double {
 #define IEEE_DBL_BIAS	0x3ff
 #define MASK(nbits)	((1 << nbits) - 1)
 
+#ifdef vax
 static struct dbl_limits {
   struct	vax_double d;
   struct	ieee_double ieee;
@@ -181,6 +182,7 @@ static struct dbl_limits {
   {{ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},		/* Min Vax */
    { 0x0, 0x0, 0x0, 0x0 }}				/* Min IEEE */
 };
+#endif 
 
 
 bool_t

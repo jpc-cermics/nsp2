@@ -62,16 +62,18 @@
 #include "rpc/xdr.h"
 #endif
 
-static bool_t	xdrrec_getlong(XDR *xdrs, long int *lp);
-static bool_t	xdrrec_putlong(XDR *xdrs, long int *lp);
-static bool_t	xdrrec_getbytes(XDR *xdrs, register caddr_t addr, register u_int len);
-static bool_t	xdrrec_putbytes(XDR *xdrs, register caddr_t addr, register u_int len);
-static u_int	xdrrec_getpos(register XDR *xdrs);
-static bool_t	xdrrec_setpos(register XDR *xdrs, u_int pos);
-static long *	xdrrec_inline(register XDR *xdrs, int len);
-static void	xdrrec_destroy(register XDR *xdrs);
+static bool_t xdrrec_getlong (XDR *, long *);
+static bool_t xdrrec_putlong (XDR *, const long *);
+static bool_t xdrrec_getbytes (XDR *, caddr_t, u_int);
+static bool_t xdrrec_putbytes (XDR *, const char *, u_int);
+static u_int xdrrec_getpos (const XDR *);
+static bool_t xdrrec_setpos (XDR *, u_int);
+static int32_t *xdrrec_inline (XDR *, u_int);
+static void xdrrec_destroy (XDR *);
+static bool_t xdrrec_getint32 (XDR *, int32_t *);
+static bool_t xdrrec_putint32 (XDR *, const int32_t *);
 
-static struct  xdr_ops xdrrec_ops = {
+static const struct xdr_ops xdrrec_ops = {
   xdrrec_getlong,
   xdrrec_putlong,
   xdrrec_getbytes,
@@ -79,7 +81,9 @@ static struct  xdr_ops xdrrec_ops = {
   xdrrec_getpos,
   xdrrec_setpos,
   xdrrec_inline,
-  xdrrec_destroy
+  xdrrec_destroy,
+  xdrrec_getint32,
+  xdrrec_putint32
 };
 
 /*
@@ -172,7 +176,7 @@ xdrrec_create(register XDR *xdrs, register u_int sendsize, register u_int recvsi
   /*
    * now the rest ...
    */
-  xdrs->x_ops = &xdrrec_ops;
+  xdrs->x_ops =  (struct xdr_ops *) &xdrrec_ops;
   xdrs->x_private = (caddr_t)rstrm;
   rstrm->tcp_handle = tcp_handle;
   rstrm->readit = readit;
@@ -217,7 +221,7 @@ xdrrec_getlong(XDR *xdrs, long int *lp)
 }
 
 static bool_t
-xdrrec_putlong(XDR *xdrs, long int *lp)
+xdrrec_putlong(XDR *xdrs,const long int *lp)
 {
   register RECSTREAM *rstrm = (RECSTREAM *)(xdrs->x_private);
   register long *dest_lp = ((long *)(rstrm->out_finger));
@@ -264,29 +268,31 @@ xdrrec_getbytes(XDR *xdrs, register caddr_t addr, register u_int len)
 }
 
 static bool_t
-xdrrec_putbytes(XDR *xdrs, register caddr_t addr, register u_int len)
+xdrrec_putbytes (XDR *xdrs, const char *addr, u_int len)
 {
-  register RECSTREAM *rstrm = (RECSTREAM *)(xdrs->x_private);
-  register int current;
+  RECSTREAM *rstrm = (RECSTREAM *) xdrs->x_private;
+  u_int current;
 
-  while (len > 0) {
-    current = (u_int)rstrm->out_boundry - (u_int)rstrm->out_finger;
-    current = ((int)len < current) ? len : current;
-    bcopy(addr, rstrm->out_finger, current);
-    rstrm->out_finger += current;
-    addr += current;
-    len -= current;
-    if (rstrm->out_finger == rstrm->out_boundry) {
-      rstrm->frag_sent = TRUE;
-      if (! flush_out(rstrm, FALSE))
-	return (FALSE);
+  while (len > 0)
+    {
+      current = rstrm->out_boundry - rstrm->out_finger;
+      current = (len < current) ? len : current;
+      memcpy (rstrm->out_finger, addr, current);
+      rstrm->out_finger += current;
+      addr += current;
+      len -= current;
+      if (rstrm->out_finger == rstrm->out_boundry && len > 0)
+	{
+	  rstrm->frag_sent = TRUE;
+	  if (!flush_out (rstrm, FALSE))
+	    return FALSE;
+	}
     }
-  }
-  return (TRUE);
+  return TRUE;
 }
 
 static u_int
-xdrrec_getpos(register XDR *xdrs)
+xdrrec_getpos(const XDR *xdrs)
 {
   register RECSTREAM *rstrm = (RECSTREAM *)xdrs->x_private;
   register long pos;
@@ -353,35 +359,40 @@ xdrrec_setpos(register XDR *xdrs, u_int pos)
   return (FALSE);
 }
 
-static long *
-xdrrec_inline(register XDR *xdrs, int len)
+
+static int32_t *
+xdrrec_inline (XDR *xdrs, u_int len)
 {
-  register RECSTREAM *rstrm = (RECSTREAM *)xdrs->x_private;
-  long * buf = NULL;
+  RECSTREAM *rstrm = (RECSTREAM *) xdrs->x_private;
+  int32_t *buf = NULL;
 
-  switch (xdrs->x_op) {
+  switch (xdrs->x_op)
+    {
 
-  case XDR_ENCODE:
-    if ((rstrm->out_finger + len) <= rstrm->out_boundry) {
-      buf = (long *) rstrm->out_finger;
-      rstrm->out_finger += len;
+    case XDR_ENCODE:
+      if ((rstrm->out_finger + len) <= rstrm->out_boundry)
+	{
+	  buf = (int32_t *) rstrm->out_finger;
+	  rstrm->out_finger += len;
+	}
+      break;
+
+    case XDR_DECODE:
+      if ((len <= rstrm->fbtbc) &&
+	  ((rstrm->in_finger + len) <= rstrm->in_boundry))
+	{
+	  buf = (int32_t *) rstrm->in_finger;
+	  rstrm->fbtbc -= len;
+	  rstrm->in_finger += len;
+	}
+      break;
+
+    default:
+      break;
     }
-    break;
-
-  case XDR_DECODE:
-    if ((len <= rstrm->fbtbc) &&
-	((rstrm->in_finger + len) <= rstrm->in_boundry)) {
-      buf = (long *) rstrm->in_finger;
-      rstrm->fbtbc -= len;
-      rstrm->in_finger += len;
-    }
-    break;
-  case XDR_FREE:
-    /** we should never get there **/
-    break;
-  }
-  return (buf);
+  return buf;
 }
+
 
 static void
 xdrrec_destroy(register XDR *xdrs)
@@ -391,6 +402,54 @@ xdrrec_destroy(register XDR *xdrs)
   mem_free(rstrm->the_buffer,
 	   rstrm->sendsize + rstrm->recvsize + BYTES_PER_XDR_UNIT);
   mem_free((caddr_t)rstrm, sizeof(RECSTREAM));
+}
+
+static bool_t
+xdrrec_getint32 (XDR *xdrs, int32_t *ip)
+{
+  RECSTREAM *rstrm = (RECSTREAM *) xdrs->x_private;
+  int32_t *bufip = (int32_t *) rstrm->in_finger;
+  int32_t mylong;
+
+  /* first try the inline, fast case */
+  if (rstrm->fbtbc >= BYTES_PER_XDR_UNIT &&
+      rstrm->in_boundry - (char *) bufip >= BYTES_PER_XDR_UNIT)
+    {
+      *ip = ntohl (*bufip);
+      rstrm->fbtbc -= BYTES_PER_XDR_UNIT;
+      rstrm->in_finger += BYTES_PER_XDR_UNIT;
+    }
+  else
+    {
+      if (!xdrrec_getbytes (xdrs, (caddr_t) &mylong,
+			    BYTES_PER_XDR_UNIT))
+	return FALSE;
+      *ip = ntohl (mylong);
+    }
+  return TRUE;
+}
+
+static bool_t
+xdrrec_putint32 (XDR *xdrs, const int32_t *ip)
+{
+  RECSTREAM *rstrm = (RECSTREAM *) xdrs->x_private;
+  int32_t *dest_ip = (int32_t *) rstrm->out_finger;
+
+  if ((rstrm->out_finger += BYTES_PER_XDR_UNIT) > rstrm->out_boundry)
+    {
+      /*
+       * this case should almost never happen so the code is
+       * inefficient
+       */
+      rstrm->out_finger -= BYTES_PER_XDR_UNIT;
+      rstrm->frag_sent = TRUE;
+      if (!flush_out (rstrm, FALSE))
+	return FALSE;
+      dest_ip = (int32_t *) rstrm->out_finger;
+      rstrm->out_finger += BYTES_PER_XDR_UNIT;
+    }
+  *dest_ip = htonl (*ip);
+  return TRUE;
 }
 
 
