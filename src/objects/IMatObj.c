@@ -235,6 +235,7 @@ static int imatrix_eq(NspIMatrix *A, NspObject *B)
   if ( check_cast(B,nsp_type_imatrix_id) == FALSE) return FALSE ;
   if ( ! ( ((NspIMatrix *) A)->m == ((NspIMatrix *) B)->m 
 	   && ((NspIMatrix *) A)->n == ((NspIMatrix *) B)->n)) return FALSE;
+  if ( ((NspIMatrix *) A)->itype != ((NspIMatrix *) B)->itype) return FALSE;
   rep = nsp_imatrix_full_compare (A, (NspIMatrix *) B, "==", &err);
   if (err == TRUE)
     return FALSE;
@@ -249,16 +250,29 @@ static int imatrix_neq(NspIMatrix *A, NspObject *B)
 
 /*
  * Mat == TRUE ? 
- *  if Mat != [] and all the elements of Mat are TRUE
+ *  if Mat != [] and all the elements of Mat are non null
  */
 
 static int imatrix_is_true(NspIMatrix *A)
 {
   int i;
   if ( A->mn == 0) return FALSE;
-  for ( i=0; i < A->mn ; i++ ) 
-    {
-      if ( A->Gint[i] == FALSE ) return FALSE ;
+  switch (A->itype )
+    {						
+    case nsp_gint: for (i=0; i <  A->mn; i++) if ( A->Gint[i] == (gint) 0) return FALSE; 
+    case nsp_guint: for (i=0; i <  A->mn; i++) if ( A->Guint[i] == (guint) 0) return FALSE; 
+    case nsp_gshort:for (i=0; i <  A->mn; i++) if ( A->Gshort[i] == (gshort) 0) return FALSE; 
+    case nsp_gushort:for (i=0; i <  A->mn; i++) if ( A->Gushort[i] == (gushort) 0) return FALSE; 
+    case nsp_glong : for (i=0; i <  A->mn; i++) if ( A->Glong[i] == (glong) 0) return FALSE; 
+    case nsp_gulong: for (i=0; i <  A->mn; i++) if ( A->Gulong[i] == (gulong) 0) return FALSE; 
+    case nsp_gint8:for (i=0; i <  A->mn; i++) if ( A->Gint8[i] == (gint8) 0) return FALSE; 
+    case nsp_guint8: for (i=0; i <  A->mn; i++) if ( A->Guint8[i] == (guint8) 0) return FALSE; 
+    case nsp_gint16: for (i=0; i <  A->mn; i++) if ( A->Gint16[i] == (gint16) 0) return FALSE; 
+    case nsp_guint16:for (i=0; i <  A->mn; i++) if ( A->Guint16[i] == (guint16) 0) return FALSE; 
+    case nsp_gint32: for (i=0; i <  A->mn; i++) if ( A->Gint32[i] == (gint32) 0) return FALSE; 
+    case nsp_guint32:for (i=0; i <  A->mn; i++) if ( A->Guint32[i] == (guint32) 0) return FALSE; 
+    case nsp_gint64:for (i=0; i <  A->mn; i++) if ( A->Gint64[i] == (gint64) 0) return FALSE; 
+    case nsp_guint64:for (i=0; i <  A->mn; i++) if ( A->Guint64[i] == (guint64) 0) return FALSE;
     }
   return(TRUE);
 }
@@ -274,7 +288,7 @@ static int imatrix_xdr_save(XDR *xdrs, NspIMatrix *M)
   if (nsp_xdr_save_i(xdrs,M->m) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->itype) == FAIL) return FAIL;
-  if (nsp_xdr_save_array_i(xdrs,M->Gint,M->mn) == FAIL) return FAIL;
+  if (nsp_xdr_save_array_ixx(xdrs,M->Iv,M->itype,M->mn) == FAIL) return FAIL;
   return OK;
 }
 
@@ -292,10 +306,46 @@ static NspIMatrix  *imatrix_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs,&n) == FAIL) return NULLIMAT;
   if (nsp_xdr_load_i(xdrs,&itype) == FAIL) return NULLIMAT;
   if (( M=nsp_imatrix_create(name,m,n,itype)) == NULLIMAT ) return NULLIMAT;
-  if (nsp_xdr_load_array_i(xdrs,M->Gint,M->mn) == FAIL) return NULLIMAT;
+  if (nsp_xdr_load_array_ixx(xdrs,M->Iv,M->itype,M->mn) == FAIL) return NULLIMAT;
   return M;
 }
 
+/**
+ * nsp_imatrix_bounds:
+ * @A:  a #NspIMatrix supposed to be a vector of indices
+ * @index: an #index_vector
+ *
+ * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
+ * and computes the min and max of A (here staying "1-based")   
+ */
+
+static int nsp_imatrix_bounds(const NspIMatrix *A,index_vector *index)
+{
+  NSP_ITYPE_NAMES(names);
+  int i, ival, *ind = index->val;
+  index->max = 1;
+  index->min = 1;
+  index->flag = FALSE;
+  switch (  A->itype ) 
+    {
+    default:
+      Scierror("Error:\tindices cannot be given by imatrix of %s type\n",names[A->itype]);
+      index->error = index_wrong_value;
+      return FAIL;
+    case nsp_gint :
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = A->Gint[i];
+	  if (ival > index->max)
+	    index->max = ival;
+	  else if (ival < index->min)
+	    index->min = ival;
+	  ind[i] = ival-1;
+	}
+      break;
+    }
+  return OK;
+}
 
 /**
  * nsp_imatrix_as_index:
@@ -309,18 +359,20 @@ static NspIMatrix  *imatrix_xdr_load(XDR *xdrs)
 
 static int nsp_imatrix_as_index(NspIMatrix *M, index_vector *index)
 {
-  int i,j=0;
-  index->nval=0;
-  for ( i = 0 ; i < M->mn ; i++ ) 
-    if ( M->Gint[i] ) index->nval++;
+  index->nval = M->mn;
   if ( nsp_get_index_vector_cache(index) == FALSE) return FAIL;
-  for ( i = 0 ; i < M->mn ; i++ ) 
-    if ( M->Gint[i] ) index->val[j++] = i;
-  index->min = index->val[0]+1; 
-  index->max = index->val[index->nval-1]+1;
-  index->flag = FALSE;
+  if ( nsp_imatrix_bounds(M, index) == FAIL ) 
+    {
+      /* we assume that index->error is set by nsp_matint_bounds
+       * free allocated memory and return 
+       */
+      if (  index->val  != nsp_get_index_vector_work(index->iwork) ) 
+	FREE(index->val);
+      return FAIL;
+    }
   return OK;
 }
+
 
 
 /*-----------------------------------------------------
@@ -490,31 +542,9 @@ static int int_imatrix_copy(Stack stack, int rhs, int opt, int lhs)
   return 1;  
 }
 
-/*
- * A(i;j) = "A(i;j) and B(i;j)" : A is changed  B unchanged 
- *    A and B must have the same size except if A or B is scalar 
- *    or A and B are []
- */
-
-typedef int (*MPM) (NspIMatrix *,const NspIMatrix*);
 
 /*
- * A(i;j) = "not A(i;j)" : A is changed
- */
-
-static int int_imatrix_not(Stack stack, int rhs, int opt, int lhs)
-{
-  NspIMatrix *HMat1;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat1 = GetIMatCopy(stack,1)) == NULLIMAT) return RET_BUG;
-  if (nsp_imatrix_not(HMat1) == FAIL ) return RET_BUG;
-  NSP_OBJECT(HMat1)->ret_pos = 1;
-  return 1;
-}
-
-/*
- * returns in a Matrix the indices for which the Boolean Matrix B is true
+ * returns in a Matrix the indices for which the IMatrix is true
  */
 
 static int int_imatrix_find(Stack stack, int rhs, int opt, int lhs)
@@ -843,7 +873,6 @@ static OpTab IMatrix_func[]={
   {"diage_i",int_imatrix_diage},
   {"find_i",int_imatrix_find},
   {"m2i",int_imatrix_m2i},
-  {"not_i",int_imatrix_not},
   {"redim_i",int_matint_redim}, 
   {"matrix_i", int_matint_redim},
   {"resize_i",int_imatrix_resize},

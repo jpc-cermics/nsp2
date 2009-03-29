@@ -503,6 +503,23 @@ int nsp_get_index_vector_cache(index_vector *index)
   return TRUE;
 }
 
+
+
+/**
+ * nsp_get_index_vector_work:
+ * @work: integer 0 or 1 
+ * 
+ * get the index work array of index @work.
+ * 
+ * Returns: an int pointer 
+ **/
+
+int *nsp_get_index_vector_work(int work)
+{
+  return (work >=0 && work < 2 ) ? matint_work[work]:NULL;
+}
+
+
 /**
  * nsp_free_index_vector_cache:
  * @index: an #index_vector  

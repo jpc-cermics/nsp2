@@ -625,6 +625,140 @@ int nsp_xdr_load_new_string(XDR *xdrs, char **str)
   return OK;
 }
 
+/**
+ *nsp_xdr_save_array_ixx:
+ * @xdrs: a  #XDR structure
+ * @nx: pointer to an array of integers
+ * @itype: integer describing the type of integer
+ * @l: size of array 
+ * 
+ * Saves an int array @nx of size @l in a xdr stream with xdr coding. 
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_xdr_save_array_ixx(XDR *xdrs,void *nx,nsp_itype itype, int l)
+{ 
+  count = (int) l;
+  assertW( xdr_vector(xdrs,(char *) &count,(u_int)1,
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  switch (itype ) 
+    {
+    case nsp_gint: 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gint),(xdrproc_t) xdr_int)) ;
+      break;
+    case nsp_guint: 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(guint),(xdrproc_t) xdr_u_int)) ;
+      break;
+    case nsp_gshort:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gshort),(xdrproc_t) xdr_short)) ;
+      break;
+    case nsp_gushort:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gushort),(xdrproc_t) xdr_u_short)) ;
+      break;
+    case nsp_glong : 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(glong ),(xdrproc_t) xdr_long)) ;
+      break;
+    case nsp_gulong: 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gulong),(xdrproc_t) xdr_u_long)) ;
+      break;
+    case nsp_gint8: 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gint8),(xdrproc_t) xdr_int8_t)) ;
+      break;
+    case nsp_guint8:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(guint8),(xdrproc_t) xdr_uint8_t)) ;
+      break;
+    case nsp_gint16:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gint16),(xdrproc_t) xdr_int16_t)) ;
+      break;
+    case nsp_guint16:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(guint16),(xdrproc_t) xdr_uint16_t)) ;
+      break;
+    case nsp_gint32: 
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gint32),(xdrproc_t) xdr_int32_t)) ;
+      break;
+    case nsp_guint32:
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(guint32),(xdrproc_t) xdr_uint32_t)) ;
+      break;
+    case nsp_gint64 :
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(gint64 ),(xdrproc_t) xdr_int64_t)) ;
+      break;
+    case nsp_guint64 :
+      assertW( xdr_vector(xdrs, (char *)nx, count, sizeof(guint64 ),(xdrproc_t) xdr_uint64_t)) ;
+      break;
+    }
+  return OK;
+}
+
+/**
+ *nsp_xdr_load_array_ixx:
+ * @xdrs: a  #XDR structure
+ * @nx: pointer to an array of integers
+ * @itype: integer describing the type of integer
+ * @l: an integer
+ *
+ * fills the array pointed by @nx whith @l integers 
+ * which are read from the xdr stream @xdr.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_xdr_load_array_ixx(XDR *xdrs, void *nx,nsp_itype itype, int l)
+{ 
+  assertR( xdr_vector(xdrs,(char *) &count,(u_int)1,
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  if ( count != (u_int) l ) return(FAIL);
+  switch (itype ) 
+    {
+    case nsp_gint: 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gint),(xdrproc_t) xdr_int)) ;
+      break;
+    case nsp_guint: 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(guint),(xdrproc_t) xdr_u_int)) ;
+      break;
+    case nsp_gshort:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gshort),(xdrproc_t) xdr_short)) ;
+      break;
+    case nsp_gushort:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gushort),(xdrproc_t) xdr_u_short)) ;
+      break;
+    case nsp_glong : 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(glong ),(xdrproc_t) xdr_long)) ;
+      break;
+    case nsp_gulong: 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gulong),(xdrproc_t) xdr_u_long)) ;
+      break;
+    case nsp_gint8: 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gint8),(xdrproc_t) xdr_int8_t)) ;
+      break;
+    case nsp_guint8:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(guint8),(xdrproc_t) xdr_uint8_t)) ;
+      break;
+    case nsp_gint16:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gint16),(xdrproc_t) xdr_int16_t)) ;
+      break;
+    case nsp_guint16:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(guint16),(xdrproc_t) xdr_uint16_t)) ;
+      break;
+    case nsp_gint32: 
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gint32),(xdrproc_t) xdr_int32_t)) ;
+      break;
+    case nsp_guint32:
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(guint32),(xdrproc_t) xdr_uint32_t)) ;
+      break;
+    case nsp_gint64 :
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(gint64 ),(xdrproc_t) xdr_int64_t)) ;
+      break;
+    case nsp_guint64 :
+      assertR( xdr_vector(xdrs, (char *)nx, count, sizeof(guint64 ),(xdrproc_t) xdr_uint64_t)) ;
+      break;
+    }
+
+
+  return OK;
+}
+
+
 
 
 /*-------------------------------------------------------

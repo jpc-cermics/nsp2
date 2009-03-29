@@ -1008,7 +1008,7 @@ NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A)
  * @A: a #NspIMatrix. 
  * 
  * returns in a #NspMatrix the indices for which the 
- * #NspIMatrix @A is true considering @A as o one dimensional array.
+ * #NspIMatrix @A is non null considering @A as o one dimensional array.
  * 
  * Return value:  a new #NspMatrix or %NULLMAT
  */
@@ -1018,17 +1018,16 @@ NspMatrix *nsp_imatrix_find(const NspIMatrix *A)
   NspMatrix *Res;
   int i,count=0, nrow = ( A->mn == 0) ? 0: 1;
   /* first pass for counting **/
-  for ( i=0 ; i < A->mn ; i++)
-    {
-      if ( A->Gint[i] ) count++;
-    }
+  
+#define IMAT_FIND1(name) for ( i=0 ; i < A->mn ; i++) \
+    {if ( A->name[i] ) count++;}break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND1);
   Res = nsp_matrix_create(NVOID,'r', nrow, count);
   if ( Res == NULLMAT) return NULLMAT;
   count=0;
-  for ( i = 0 ; i < A->mn ; i++ )
-    {
-      if ( A->Gint[i] ) Res->R[count++] = i+1;
-    }
+#define IMAT_FIND2(name) for ( i=0 ; i < A->mn ; i++) \
+    if ( A->name[i] ) Res->R[count++] = i+1; break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND2);
   return Res;
 }
 
