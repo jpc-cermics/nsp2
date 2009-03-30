@@ -19,15 +19,15 @@ mn = size(A,0) // or m = size(A,"*")
 \begin{parameters}
   \begin{varlist}
     \vname{A}: matrix
-    \vname{dims}: \verb+1 x 2+ vector of integers
+    \vname{dims}:  row vector (\verb+1x2+) of integers
     \vname{m, n, mn}: integers
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\verb+size+ gives the dimensions of an array which the following possibilities:
+\verb+size+ gives the dimensions of an array with the following features:
 \begin{itemize}
-  \item \verb!dims = size(A)! (that is a call with one output argument) returns the two matrix dimensions in a row vector 
+  \item \verb!dims = size(A)! (that is a call with one output argument) returns the matrix dimensions in a row vector 
         (the first element is the number of rows $m$, the second the number of columns $n$) ;
   \item \verb![m,n] = size(A)! (a call with 2 output arguments) returns the number of rows $m$ in the first output arg
         and the number of columns $n$ in the second output arg.
@@ -38,7 +38,7 @@ mn = size(A,0) // or m = size(A,"*")
 \end{itemize}
 
 Note also that like \manlink{numel}{numel} and \manlink{length}{length}, if \verb+L+ is a list, 
-\verb+size(L)+ returs the number of its elements, and if \verb+H+ is an hash table \verb+size(H)+ 
+\verb+size(L)+ returns the number of its elements, and if \verb+H+ is an hash table \verb+size(H)+ 
 returns the number of its entries.
 \end{mandescription}
 
