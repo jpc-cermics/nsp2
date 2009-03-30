@@ -478,13 +478,22 @@ NspIMatrix  *GetIMat(Stack stack, int i)
 
 static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep;
+  NSP_ITYPE_NAMES(names);
   NspIMatrix *HMat;
   int m1,n1;
-  CheckRhs(2,2);
+  nsp_itype itype;
+  CheckRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if ( (HMat =nsp_imatrix_create(NVOID,m1,n1,nsp_gint)) == NULLIMAT) return RET_BUG;
+  if ( rhs == 3 ) 
+    {
+      if ((rep = GetStringInArray(stack, 3, names, 0)) == -1 ) return RET_BUG;
+      itype = (nsp_itype) rep;
+    }
+
+  if ( (HMat =nsp_imatrix_create(NVOID,m1,n1,itype)) == NULLIMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat);
   return 1;
 }
