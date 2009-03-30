@@ -25,6 +25,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdarg.h>
+#include <signal.h>
 #include <gtk/gtk.h>
 
 #define PERI_PRIVATE 1
