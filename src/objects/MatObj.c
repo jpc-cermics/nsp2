@@ -5122,6 +5122,64 @@ static int int_mat_lower_upper_bandwidth(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/* 
+ *  B = scale_rows(A,x)  (exists as a method but useful as a function too)
+ *
+ */
+static int int_mat_scale_rows(Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A, *x;
+  CheckLhs(1,1);
+  CheckRhs(2,2);
+
+
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: incompatible dimensions between first and second arguments \n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_mat_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+
+  return 1;
+}
+
+/* 
+ *  B = scale_cols(A,x)  (exists as a method but useful as a function too)
+ *
+ */
+static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A, *x;
+  CheckLhs(1,1);
+  CheckRhs(2,2);
+
+
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: incompatible dimensions between first and second arguments \n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_mat_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+
+  return 1;
+}
+
 
 static int int_test_convert(Stack stack, int rhs, int opt, int lhs)
 {
@@ -5389,6 +5447,8 @@ static OpTab Matrix_func[] = {
   {"issymmetric_m", int_mat_issymmetric},
   {"istriangular_m", int_mat_istriangular},
   {"lower_upper_bandwidths_m", int_mat_lower_upper_bandwidth},
+  {"scale_rows_m_m", int_mat_scale_rows},
+  {"scale_cols_m_m", int_mat_scale_cols},
   {"test_convert", int_test_convert},
   {"getticks", int_getticks},
   {(char *) 0, NULL}
