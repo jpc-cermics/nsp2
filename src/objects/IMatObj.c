@@ -482,7 +482,7 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
   NSP_ITYPE_NAMES(names);
   NspIMatrix *HMat;
   int m1,n1;
-  nsp_itype itype;
+  nsp_itype itype = nsp_gint;
   CheckRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
