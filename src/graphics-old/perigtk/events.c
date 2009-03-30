@@ -607,6 +607,8 @@ static void scig_deconnect_handlers(BCG *winxgc)
  *
  **/
 
+static  int stop = FALSE;
+
 static gint timeout_pause (int *stop)
 {
   *stop = TRUE;
@@ -614,10 +616,18 @@ static gint timeout_pause (int *stop)
   return TRUE;
 }
 
+extern void controlC_handler (int sig);
+static void controlC_handler_pause(int sig)
+{
+  timeout_pause (&stop);
+}
+
 static void nsp_event_pause(int number) 
 {
-  int stop = FALSE;
-  guint tid= g_timeout_add(number,(GSourceFunc) timeout_pause, &stop);
+  guint tid;
+  signal(SIGINT,controlC_handler_pause);
+
+  tid=g_timeout_add(number,(GSourceFunc) timeout_pause, &stop);
   while (1) 
     {
       gtk_main();
@@ -627,6 +637,7 @@ static void nsp_event_pause(int number)
 	  break;
 	}
     }
+  signal(SIGINT,controlC_handler);
 }
 
 

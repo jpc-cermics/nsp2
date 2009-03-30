@@ -54,8 +54,8 @@ if %t then
     C.children($+1)= P;
   end
   A.children($+1) = C;
-  str = grstring_create(text=['Nsp';'psN'],x=1,y=1);
-  A.children($+1) = str;
+  //str = grstring_create(text=['Nsp';'psN'],x=1,y=1);
+  //A.children($+1) = str;
   F.connect[]
 end
 
