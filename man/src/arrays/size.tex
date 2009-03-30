@@ -1,0 +1,71 @@
+% -*- mode: latex -*-
+
+\mansection{size}
+\begin{mandesc}
+  \short{size}{dimensions of an array, size of some objects}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+dims = size(A)
+[m,n] = size(A)
+m = size(A,1)  // or m = size(A,"r")
+n = size(A,2)  // or m = size(A,"c")
+mn = size(A,0) // or m = size(A,"*")   
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: matrix
+    \vname{dims}: \verb+1 x 2+ vector of integers
+    \vname{m, n, mn}: integers
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\verb+size+ gives the dimensions of an array which the following possibilities:
+\begin{itemize}
+  \item \verb!dims = size(A)! (that is a call with one output argument) returns the two matrix dimensions in a row vector 
+        (the first element is the number of rows $m$, the second the number of columns $n$) ;
+  \item \verb![m,n] = size(A)! (a call with 2 output arguments) returns the number of rows $m$ in the first output arg
+        and the number of columns $n$ in the second output arg.
+  \item \verb!m = size(A,1)! (or equivalently \verb!m = size(A,"r")! returns the number of rows
+  \item \verb!n = size(A,2)! (or equivalently \verb!n = size(A,"c")! returns the number of columns
+  \item \verb!n = size(A,0)! (or equivalently \verb!n = size(A,"*")! returns the product of the dimensions (this is
+        also equivalent to \manlink{numel}{numel}).
+\end{itemize}
+
+Note also that like \manlink{numel}{numel} and \manlink{length}{length}, if \verb+L+ is a list, 
+\verb+size(L)+ returs the number of its elements, and if \verb+H+ is an hash table \verb+size(H)+ 
+returns the number of its entries.
+\end{mandescription}
+
+\begin{examples}
+\begin{Verbatim}
+A = rand(3,4))
+dims = size(A)
+[m,n] = size(A)
+size(A,1)
+size(A,2)
+size(A,"*")
+
+// for list and hash tables, size behaves like length and numel
+L = list(1,2); L(5)=78; 
+size(L)
+length(L)
+numel(L)
+
+H = hcreate(A=9,B=%t);
+size(H)
+length(H)
+numel(H)
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{numel}{numel}, \manlink{length}{length} 
+\end{manseealso}
+

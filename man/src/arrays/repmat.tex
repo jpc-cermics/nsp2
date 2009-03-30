@@ -1,0 +1,80 @@
+% -*- mode: latex -*-
+
+\mansection{repmat}
+\begin{mandesc}
+   \short{repmat}{replicate a matrix}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ B = repmat(A,m,n)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{A}: matrix (of numbers, strings, cells,...)
+   \vname{m,n}: non negative integers
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  Build the matrix $B$ by replicating the matrix $A$ in $m$ row blocs and $n$ column blocs :
+$$
+ B=
+     \begin{array}{cc}
+             \begin{array}{ccccc} 1 & \hdots & \hdots & \hdots & n \end{array}  &          \\
+      \left[ \begin{array}{ccccc} A     & A       & \hdots & \hdots & A     \\
+                                     A     & A       & \hdots & \hdots & A     \\
+                                    \vdots & \vdots  &   .    &    .    & \vdots\\
+                                     A     & A       & \hdots & \hdots  & A 
+                \end{array} \right] &
+      \begin{array}{c} 1 \\ \vdots \\ \vdots \\ m \end{array}
+     \end{array}
+$$ 
+
+If the matrix $A$ is $m_A \times n_A$ the matrix $B$ is  $ m m_A \times n n_A$.
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+
+\paragraph{simple examples}
+\begin{Verbatim}
+A = [1,2,3;4,5,6]
+repmat(A,4,3)
+
+A = ["a", "ab", "abc"]
+repmat(A,3,2)
+\end{Verbatim}
+
+\paragraph{computing distance between a set of points in 3d space}
+
+In the following an array $dist$ is build where $dist(i,j)$ is the 
+euclidian distance between points $i$ and $j$.
+\begin{Verbatim}
+n = 6;
+P = randn(3,n);
+Xp = P(1,:); Yp = P(2,:); Zp = P(3,:);
+Dx = repmat(Xp,n,1) - repmat(Xp',1,n);
+Dy = repmat(Yp,n,1) - repmat(Yp',1,n);
+Dz = repmat(Zp,n,1) - repmat(Zp',1,n);
+dist = sqrt( Dx.^2 + Dy.^2 + Dz.^2)
+\end{Verbatim}
+
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{ones}{ones}
+\end{manseealso}
+
+%-- Author
+%% \begin{authors}
+%% B. Pincon
+%% \end{authors}
+

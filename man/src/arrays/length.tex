@@ -1,0 +1,65 @@
+% -*- mode: latex -*-
+
+\mansection{length, numel}
+\begin{mandesc}
+  \short{length}{length of object} \\
+  \short{numel}{length of object, number of elements of object}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+n = length(M)   
+nel = numel(M)   
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}: an object.
+    \vname{n}: integer or integer matrix
+    \vname{nel}: integer
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{itemize}
+  \item \verb!length(M)! is equal to \verb!size(M,'*')!, the number of entries of \verb!M! for all matrices 
+    or for cells except string matrices.
+  \item If \verb+M+ is a string matrix \verb+n=length(M)+ returns in a  numerical matrix of same size 
+    as \verb+M+ the length (\verb+strlen+) of each entries of \verb+M+. i.e, if \verb+L=length(M)+, 
+    \verb+n(i,j)+ is the length of string \verb+M(i,j)+.
+  \item If \verb+M+ is a list, \verb+length+ returns as \verb+size+ the length of list \verb+M+.
+  \item If \verb+M+ is a hash table \verb+length+ returns the number of entries in the hash table.
+  \item \verb!numel(M)! is the same than \verb!length(M)! without the exception of string matrices, that
+        is \verb!numel(M)! {\bf always} gives the number of elements of any array, list or hash table.
+\end{itemize}
+\end{mandescription}
+
+\begin{examples}
+\begin{Verbatim}
+// for matrices of strings length and numel are different: 
+S = string(rand(3,4))
+length(S)
+numel(S)
+
+// for other objects, length and numel behave identically:
+L = list(1,2); L(5)=78; 
+length(L)
+numel(L)
+
+A = rand(5,7);
+length(A)
+numel(A)
+    
+H = hcreate(A=9,B=%t);
+length(H)
+numel(H)
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{size}{size}  
+\end{manseealso}
+
