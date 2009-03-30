@@ -790,6 +790,33 @@ static int int_bmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *  diag function 
+ */
+
+static int int_bmatrix_diag (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspBMatrix *A, *Res;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetBMat (stack, 1)) == NULLBMAT)
+    return RET_BUG;
+  if (A->m == 1 || A->n == 1)
+    Res = nsp_bmatrix_create_diag (A, k1);
+  else
+    Res = nsp_bmatrix_extract_diag (A, k1);
+      
+  if (Res == NULLBMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
 
 /*
  * Returns the kthe diag of a NspBMatrix 
@@ -1049,6 +1076,8 @@ static OpTab BMatrix_func[]={
   {"isvector_b", int_matint_isvector},
   {"copy_b",int_bmatrix_copy},
   {"bmat_create",int_bmatrix_create},
+  {"diag_b", int_bmatrix_diag},
+  {"diag_b_m", int_bmatrix_diag},
   {"diagcre_b",int_bmatrix_diagcre},
   {"diage_b",int_bmatrix_diage},
   {"find_b",int_bmatrix_find},

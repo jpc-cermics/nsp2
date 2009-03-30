@@ -600,6 +600,35 @@ static int int_imatrix_addrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *  diag function 
+ */
+
+static int int_imatrix_diag (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspIMatrix *A, *Res;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (A->m == 1 || A->n == 1)
+    Res = nsp_imatrix_create_diag (A, k1);
+  else
+    Res = nsp_imatrix_extract_diag (A, k1);
+      
+  if (Res == NULLIMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
 
 /*
  * Returns the kthe diag of a NspIMatrix 
@@ -865,6 +894,8 @@ static OpTab IMatrix_func[]={
   {"isvector_i", int_matint_isvector},
   {"copy_i",int_imatrix_copy},
   {"imat_create",int_imatrix_create},
+  {"diag_i", int_imatrix_diag},
+  {"diag_i_m", int_imatrix_diag},
   {"diagcre_i",int_imatrix_diagcre},
   {"diage_i",int_imatrix_diage},
   {"find_i",int_imatrix_find},

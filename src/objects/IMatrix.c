@@ -460,7 +460,7 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
   if (nsp_imatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /*  nsp_iset(&ns,&d,A->Gint+Asize,&inc);
    */
-#define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;
+#define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
   return(OK);
 }
@@ -688,8 +688,13 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
   if (( Loc =nsp_imatrix_create(NVOID,imax-imin,(int)1,A->itype)) == NULLIMAT)
     return(NULLIMAT);
   j=0;
-  for ( i = imin ; i < imax ; i++ ) 
-    Loc->Gint[j++] = A->Gint[i+(i+k)*A->m];
+#define IMAT_ED(name)for ( i = imin ; i < imax ; i++ ) Loc->name[j++] = A->name[i+(i+k)*A->m];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_ED);
+#undef IMAT_ED
+  /*
+   * for ( i = imin ; i < imax ; i++ ) 
+   * Loc->Gint[j++] = A->Gint[i+(i+k)*A->m];
+   */
   return(Loc);
 }
 
