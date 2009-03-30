@@ -433,18 +433,9 @@ int nsp_imatrix_enlarge(NspIMatrix *A, int m, int n)
 
 int nsp_imatrix_concat_right(NspIMatrix *A, NspIMatrix *B)
 {
-  int inc = 1;
-  int Asize;
-  Asize=A->mn;
-  if ( A->m != B->m ) 
-    {
-      Scierror("Error:\tIncompatible dimensions\n");
-      return(FAIL);
-    }
-  if (nsp_imatrix_resize(A,A->m,A->n+B->n) == FAIL) return(FAIL);
-  nsp_icopy(&B->mn,B->Gint,&inc,A->Gint+Asize,&inc);
-  return(OK);
+  return nsp_matint_concat_right_bis( NSP_OBJECT(A),NSP_OBJECT(B));
 }
+
 
 /**
  * nsp_imatrix_add_columns:
@@ -459,19 +450,18 @@ int nsp_imatrix_concat_right(NspIMatrix *A, NspIMatrix *B)
 
 int nsp_imatrix_add_columns(NspIMatrix *A, int n)
 {
-  int d=FALSE; /* TRUE; */
-  int inc = 1,ns;
-  int Asize;
+  int i = 1,ns= (A->m)*n, Asize=A->mn;
   if (n == 0) return OK;
   else if ( n < 0) 
     {      
       Scierror("Error: Negative indice (%d) in IMatAddCols\n",n);
       return FAIL;
     }
-  Asize=A->mn;
-  ns= (A->m)*n;
   if (nsp_imatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
-  nsp_iset(&ns,&d,A->Gint+Asize,&inc);
+  /*  nsp_iset(&ns,&d,A->Gint+Asize,&inc);
+   */
+#define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
   return(OK);
 }
 
@@ -487,22 +477,7 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
 
 NspIMatrix *nsp_imatrix_concat_down(NspIMatrix *A, NspIMatrix *B)
 {
-  NspIMatrix *Loc;
-  int inc = 1;
-  int j;
-  if ( A->n != B->n ) 
-    {
-      Scierror("Error:\tIncompatible dimensions\n");
-      return(NULLIMAT);
-    }
-  if ( ( Loc =nsp_imatrix_create(NVOID,A->m+B->m,A->n,A->itype)) == NULLIMAT) 
-    return(NULLIMAT);
-  for ( j = 0 ; j < A->n ; j++ ) 
-    {
-      nsp_icopy(&A->m,A->Gint+j*A->m,&inc,Loc->Gint+j*(Loc->m),&inc);
-      nsp_icopy(&B->m,B->Gint+j*B->m,&inc,Loc->Gint+j*(Loc->m)+A->m,&inc);
-    }
-  return(Loc) ;
+  return (NspIMatrix *) nsp_matint_concat_down(NSP_OBJECT(A),NSP_OBJECT(B));
 }
 
 /**
@@ -518,24 +493,8 @@ NspIMatrix *nsp_imatrix_concat_down(NspIMatrix *A, NspIMatrix *B)
 
 NspIMatrix *nsp_imatrix_concat_diag(NspIMatrix *A, NspIMatrix *B)
 {
-  NspIMatrix *Loc;
-  int d=FALSE; /* TRUE; */
-  int inc = 1;
-  int j;
-  if ( ( Loc =nsp_imatrix_create(NVOID,A->m+B->m,A->n+B->n,A->itype)) == NULLIMAT) 
-    return(NULLIMAT);
-  for ( j = 0 ; j < A->n ; j++ ) 
-    {
-      nsp_icopy(&A->m,A->Gint+j*A->m,&inc,Loc->Gint+j*(Loc->m),&inc);
-      nsp_iset(&B->m,&d,Loc->Gint+j*(Loc->m)+A->m,&inc);
-    }
-  for ( j = 0 ; j < B->n ; j++ ) 
-    {
-      nsp_icopy(&B->m,B->Gint+j*A->m,&inc,Loc->Gint+(j+A->n)*(Loc->m)+A->m,&inc);
-      nsp_iset(&A->m,&d,Loc->Gint+(j+A->n)*(Loc->m),&inc);
-    }
+  return (NspIMatrix *) nsp_matint_concat_diag(NSP_OBJECT(A),NSP_OBJECT(B));
 
-  return(Loc) ;
 }
 
 /**
@@ -800,8 +759,10 @@ NspIMatrix  *nsp_imatrix_create_diag(NspIMatrix *Diag, int k)
   if (( Loc =nsp_imatrix_create(NVOID,imax,imax+k,Diag->itype)) == NULLIMAT) 
     return(NULLIMAT);
   j=0;
-  for ( i = imin ; i < imax ; i++ ) 
-    Loc->Gint[i+(i+k)*Loc->m] = Diag->Gint[j++] ;
+  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),Loc,i+(i+k)*Loc->m,Diag->Iv,Diag->itype,j++);
+  /* for ( i = imin ; i < imax ; i++ ) 
+     Loc->Gint[i+(i+k)*Loc->m] = Diag->Gint[j++] ;
+  */
   return(Loc);
 }
 
@@ -819,9 +780,13 @@ NspIMatrix  *nsp_imatrix_transpose(NspIMatrix *A)
   int i,j;
   NspIMatrix *Loc;
   if (( Loc =nsp_imatrix_create(NVOID,A->n,A->m,A->itype)) == NULLIMAT) return(NULLIMAT);
-  for ( i = 0  ; i < A->m ; i++) 
-    for ( j = 0 ; j < A->n ; j++) 
-      Loc->Gint[j+Loc->m*i ] = A->Gint[i+A->m*j];
+  /* 
+   * for ( i = 0  ; i < A->m ; i++) 
+   * for ( j = 0 ; j < A->n ; j++) 
+   *  Loc->Gint[j+Loc->m*i ] = A->Gint[i+A->m*j];
+   */
+  NSP_COPY_ITYPES(for ( i = 0  ; i < A->m ; i++)for ( j = 0 ; j < A->n ; j++) ,
+		  Loc,j+Loc->m*i ,A->Iv,A->itype,i+A->m*j);
   return Loc;
 }
 

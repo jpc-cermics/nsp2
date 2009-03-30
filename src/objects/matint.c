@@ -2049,7 +2049,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 		  NspIMatrix *AA = (NspIMatrix *) ObjA, *BB = (NspIMatrix *) ObjB;
 		  if ( elt_size_A < elt_size_B )  
 		    {
-		      /* this coul dbe removed */
+		      /* this could be removed */
 		      if ( nsp_imatrix_change_itype(AA,BB->itype)== FAIL) return FAIL;
 		    }
 		  if ( nsp_imatrix_resize(AA, Am, nA + nB) == FAIL ) return FAIL;

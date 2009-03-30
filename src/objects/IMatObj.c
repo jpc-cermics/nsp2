@@ -257,23 +257,9 @@ static int imatrix_is_true(NspIMatrix *A)
 {
   int i;
   if ( A->mn == 0) return FALSE;
-  switch (A->itype )
-    {						
-    case nsp_gint: for (i=0; i <  A->mn; i++) if ( A->Gint[i] == (gint) 0) return FALSE; 
-    case nsp_guint: for (i=0; i <  A->mn; i++) if ( A->Guint[i] == (guint) 0) return FALSE; 
-    case nsp_gshort:for (i=0; i <  A->mn; i++) if ( A->Gshort[i] == (gshort) 0) return FALSE; 
-    case nsp_gushort:for (i=0; i <  A->mn; i++) if ( A->Gushort[i] == (gushort) 0) return FALSE; 
-    case nsp_glong : for (i=0; i <  A->mn; i++) if ( A->Glong[i] == (glong) 0) return FALSE; 
-    case nsp_gulong: for (i=0; i <  A->mn; i++) if ( A->Gulong[i] == (gulong) 0) return FALSE; 
-    case nsp_gint8:for (i=0; i <  A->mn; i++) if ( A->Gint8[i] == (gint8) 0) return FALSE; 
-    case nsp_guint8: for (i=0; i <  A->mn; i++) if ( A->Guint8[i] == (guint8) 0) return FALSE; 
-    case nsp_gint16: for (i=0; i <  A->mn; i++) if ( A->Gint16[i] == (gint16) 0) return FALSE; 
-    case nsp_guint16:for (i=0; i <  A->mn; i++) if ( A->Guint16[i] == (guint16) 0) return FALSE; 
-    case nsp_gint32: for (i=0; i <  A->mn; i++) if ( A->Gint32[i] == (gint32) 0) return FALSE; 
-    case nsp_guint32:for (i=0; i <  A->mn; i++) if ( A->Guint32[i] == (guint32) 0) return FALSE; 
-    case nsp_gint64:for (i=0; i <  A->mn; i++) if ( A->Gint64[i] == (gint64) 0) return FALSE; 
-    case nsp_guint64:for (i=0; i <  A->mn; i++) if ( A->Guint64[i] == (guint64) 0) return FALSE;
-    }
+#define IMAT_ISTRUE(name) for ( i=0 ; i < A->mn ; i++)	\
+    {if ( A->name[i] == 0) return FALSE;}break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE);
   return(TRUE);
 }
 
@@ -333,6 +319,7 @@ static int nsp_imatrix_bounds(const NspIMatrix *A,index_vector *index)
       index->error = index_wrong_value;
       return FAIL;
     case nsp_gint :
+    case nsp_gint32:
       for (i = 0; i < A->mn; i++)
 	{
 	  ival = A->Gint[i];
