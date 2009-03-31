@@ -44,7 +44,7 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
 NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n,nsp_itype itype)
 {
   int i;
-  gssize s;
+  gssize s =  sizeof(gint);
   NspIMatrix *Loc= new_imatrix();
 
   if ( Loc == NULLIMAT) 
@@ -125,7 +125,7 @@ int nsp_imatrix_change_itype(NspIMatrix *A,nsp_itype itype)
 {
   int i,itype_old=A->itype;
   void *old=A->Iv,*res;
-  gssize s;
+  gssize s =  sizeof(gint);
   if ( A->itype == itype ) return OK;
   NSP_ITYPE_SIZE(s,itype);
   if (( res = MALLOC( A->mn*s)) == NULL )
