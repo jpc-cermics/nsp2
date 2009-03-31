@@ -458,7 +458,8 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
       return FAIL;
     }
   if (nsp_imatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
-  /*  nsp_iset(&ns,&d,A->Gint+Asize,&inc);
+  /*
+   * nsp_iset(&ns,&d,A->xx +Asize,&inc);
    */
 #define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
@@ -688,13 +689,13 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
   if (( Loc =nsp_imatrix_create(NVOID,imax-imin,(int)1,A->itype)) == NULLIMAT)
     return(NULLIMAT);
   j=0;
+  /*
+   * for ( i = imin ; i < imax ; i++ ) 
+   *   Loc->gint[j++] = A->gint[i+(i+k)*A->m];
+   */
 #define IMAT_ED(name)for ( i = imin ; i < imax ; i++ ) Loc->name[j++] = A->name[i+(i+k)*A->m];break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_ED);
 #undef IMAT_ED
-  /*
-   * for ( i = imin ; i < imax ; i++ ) 
-   * Loc->Gint[j++] = A->Gint[i+(i+k)*A->m];
-   */
   return(Loc);
 }
 
@@ -733,13 +734,11 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
       if ( nsp_imatrix_change_itype(A,Diag->itype) == FAIL) 
 	return FAIL;
     }
-
-  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
-
   /* 
-  for ( i = imin ; i < imax ; i++ ) 
-    A->Gint[i+(i+k)*A->m] = Diag->Gint[j++] ;
-  */
+   *   for ( i = imin ; i < imax ; i++ ) 
+   *     A->gint[i+(i+k)*A->m] = Diag->gint[j++] ;
+   */
+  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
   return(OK);
 }
 
@@ -764,10 +763,10 @@ NspIMatrix  *nsp_imatrix_create_diag(NspIMatrix *Diag, int k)
   if (( Loc =nsp_imatrix_create(NVOID,imax,imax+k,Diag->itype)) == NULLIMAT) 
     return(NULLIMAT);
   j=0;
-  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),Loc,i+(i+k)*Loc->m,Diag->Iv,Diag->itype,j++);
   /* for ( i = imin ; i < imax ; i++ ) 
-     Loc->Gint[i+(i+k)*Loc->m] = Diag->Gint[j++] ;
-  */
+   *   Loc->gint[i+(i+k)*Loc->m] = Diag->gint[j++] ;
+   */
+  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),Loc,i+(i+k)*Loc->m,Diag->Iv,Diag->itype,j++);
   return(Loc);
 }
 
@@ -788,7 +787,7 @@ NspIMatrix  *nsp_imatrix_transpose(NspIMatrix *A)
   /* 
    * for ( i = 0  ; i < A->m ; i++) 
    * for ( j = 0 ; j < A->n ; j++) 
-   *  Loc->Gint[j+Loc->m*i ] = A->Gint[i+A->m*j];
+   *  Loc->gint[j+Loc->m*i ] = A->gint[i+A->m*j];
    */
   NSP_COPY_ITYPES(for ( i = 0  ; i < A->m ; i++)for ( j = 0 ; j < A->n ; j++) ,
 		  Loc,j+Loc->m*i ,A->Iv,A->itype,i+A->m*j);
@@ -854,13 +853,17 @@ int nsp_imatrix_and(NspIMatrix *A,const  NspIMatrix *B)
   int i;
   if ( A->mn != B->mn ) 
     {
-      Scierror("BUG Not Same Size ");
+      Scierror("Error: arguments must have the same size\n");
       return(FAIL);
     }
-  for ( i = 0 ; i < A->mn ; i++) 
+  if ( A->itype != B->itype) 
     {
-      A->Gint[i]   &= B->Gint[i];
+      Scierror("Error: arguments must have the same integre type\n");
+      return(FAIL);
     }
+#define IMAT_AND(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[i];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AND);
+#undef IMAT_AND
   return(OK);
 }
 
@@ -869,7 +872,7 @@ int nsp_imatrix_and(NspIMatrix *A,const  NspIMatrix *B)
  * @A: a #NspIMatrix. 
  * @B: a #NspIMatrix of size 1x1
  *  
- * Logical and operator between a boolean matrix @A and a boolean scalar @B. The result 
+ * Logical and operator between an integer matrix @A and a integer scalar @B. The result 
  * is stored in @A.
  * Return value: %OK.
  */
@@ -877,10 +880,14 @@ int nsp_imatrix_and(NspIMatrix *A,const  NspIMatrix *B)
 int nsp_imatrix_scalar_and(NspIMatrix *A,const  NspIMatrix *B)
 {
   int i;
-  for ( i = 0 ; i < A->mn ; i++) 
+  if ( A->itype != B->itype) 
     {
-      A->Gint[i]   &= B->Gint[0];
+      Scierror("Error: arguments must have the same integre type\n");
+      return(FAIL);
     }
+#define IMAT_AND(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AND);
+#undef IMAT_AND
   return(OK);
 }
 
@@ -899,14 +906,18 @@ int nsp_imatrix_or(NspIMatrix *A,const  NspIMatrix *B)
   int i;
   if ( A->mn != B->mn ) 
     {
-      Scierror("BUG Not Same Size ");
+      Scierror("Error: arguments must have the same size\n");
       return(FAIL);
     }
-  for ( i = 0 ; i < A->mn ; i++) 
+
+  if ( A->itype != B->itype) 
     {
-      A->Gint[i]   |= B->Gint[i];
-      
+      Scierror("Error: arguments must have the same integre type\n");
+      return(FAIL);
     }
+#define IMAT_OR(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[i];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_OR);
+#undef IMAT_OR
   return(OK);
 }
 
@@ -924,32 +935,18 @@ int nsp_imatrix_or(NspIMatrix *A,const  NspIMatrix *B)
 int nsp_imatrix_scalar_or(NspIMatrix *A,const  NspIMatrix *B)
 {
   int i;
-  for ( i = 0 ; i < A->mn ; i++) 
+  if ( A->itype != B->itype) 
     {
-      A->Gint[i]   |= B->Gint[0];
+      Scierror("Error: arguments must have the same integre type\n");
+      return(FAIL);
     }
+#define IMAT_OR(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_OR);
+#undef IMAT_OR
   return(OK);
 }
 
 
-/**
- * nsp_imatrix_not
- * @A: a #NspIMatrix. 
- *  
- * Logical not operator applied on  a boolean matrix @A. 
- * Return value: %OK.
- */
-
-
-int nsp_imatrix_not(NspIMatrix *A)
-{
-  int i;
-  for ( i = 0 ; i < A->mn ; i++) 
-    {
-      A->Gint[i]   = (A->Gint[i] == 1) ? 0 : 1;
-    }
-  return(OK);
-}
 
 /**
  * nsp_imatrix_count_true:
@@ -965,13 +962,11 @@ NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A)
   NspMatrix *Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 1);
   if ( Loc == NULLMAT) return(NULLMAT);
   Loc->R[0] = 0;
-  for ( i=0; i < A->mn ; i++ ) 
-    {
-      if ( A->Gint[i]) Loc->R[0]++;
-    }
-  return(Loc);
+#define IMAT_COUNT_TRUE(name)for ( i = 0 ; i < A->mn ; i++ ) if (A->name[i]) Loc->R[0]++;break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_COUNT_TRUE);
+#undef IMAT_COUNT_TRUE
+  return Loc;
 }
-
 
 /**
  * nsp_imatrix_find:
@@ -1262,43 +1257,18 @@ int nsp_imatrix_full_compare(const NspIMatrix *A,const NspIMatrix *B, char *op,i
 static void nsp_int_print(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
-  switch (M->itype ) {							
-  case nsp_gint:  Sciprintf("%5d",M->Gint[i+(M->m)*j]);break;
-  case nsp_guint:  Sciprintf("%5u",M->Guint[i+(M->m)*j]);break;
-  case nsp_gshort: Sciprintf("%5d",M->Gshort[i+(M->m)*j]);break;
-  case nsp_gushort: Sciprintf("%5u",M->Gushort[i+(M->m)*j]);break;
-  case nsp_glong :  Sciprintf("%5d",M->Glong[i+(M->m)*j]);break;
-  case nsp_gulong:  Sciprintf("%5u",M->Gulong[i+(M->m)*j]);break;
-  case nsp_gint8: Sciprintf("%5d",M->Gint8[i+(M->m)*j]);break;
-  case nsp_guint8:  Sciprintf("%5u",M->Guint8[i+(M->m)*j]);break;
-  case nsp_gint16:  Sciprintf("%5d",M->Gint16[i+(M->m)*j]);break;
-  case nsp_guint16: Sciprintf("%5u",M->Guint16[i+(M->m)*j]);break;
-  case nsp_gint32: Sciprintf("%5d",M->Gint32[i+(M->m)*j]);break;
-  case nsp_guint32: Sciprintf("%5u",M->Guint32[i+(M->m)*j]);break;
-  case nsp_gint64: Sciprintf("%5d",M->Gint64[i+(M->m)*j]);break;
-  case nsp_guint64: Sciprintf("%5u",M->Guint64[i+(M->m)*j]);break;
-  }
+#define IMAT_PRINT(name) Sciprintf("%5d",M->name[i+(M->m)*j]);break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
+#undef IMAT_PRINT
 }
 
 static void BMij_plus_format(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
-  switch (M->itype ) {							
-  case nsp_gint:  if ( M->Gint[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+");break;
-  case nsp_guint:  if (M->Guint[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gshort: if (M->Gshort[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gushort: if (M->Gushort[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_glong :  if (M->Glong[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gulong:  if (M->Gulong[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gint8: if (M->Gint8[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_guint8:  if (M->Guint8[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gint16:  if (M->Gint16[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_guint16: if (M->Guint16[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gint32: if (M->Gint32[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_guint32: if (M->Guint32[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_gint64: if (M->Gint64[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  case nsp_guint64: if (M->Guint64[i+(M->m)*j] == 0) Sciprintf(" "); else Sciprintf("+"); break;
-  }
+#define IMAT_PRINT(name) if ( M->name[i+(M->m)*j] == 0) Sciprintf(" ");\
+  else Sciprintf("+");break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
+#undef IMAT_PRINT
 }
 
 static void BMij_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
@@ -1312,8 +1282,6 @@ static void BMij(const nsp_num_formats *fmt,const void *m, int i, int j)
   Sciprintf(" ");
   nsp_int_print(m,i,j);
 }
-
-
 
 static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int indent)
 {
