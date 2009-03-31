@@ -199,6 +199,20 @@ Uc=umfpack_create(SpAc);
 A1 = diag( 1 ./ r) *Ac;
 if norm(full(L1*U1) - A1(p,q)) > 1.e-8 then pause;end 
 
+// detect singular 
+
+if %f then 
+  A=rand(4,3); A=sparse(A*A');
+  [U,sing]=umfpack_create(A);
+  if ~sing  then pause;end 
+
+  A=rand(4,4);
+  [U,sing]=umfpack_create(A);
+  if sing  then pause;end 
+end
+
+
+
 
 
 

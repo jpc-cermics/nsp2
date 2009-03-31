@@ -2,21 +2,10 @@
 
 // fonction temporaires 
 // -------------------------------------------------------
-function [z]=plus_sp_m(a,b) z=full(a)+b; endfunction 
-function [z]=plus_m_sp(a,b) z=a+full(b); endfunction 
-function [z]=minus_sp_m(a,b) z=full(a)-b; endfunction 
-function [z]=minus_m_sp(a,b) z=a-full(b); endfunction 
-function [z]=concatr_sp_m(a,b) z=[a,sparse(b)]; endfunction 
-function [z]=concatd_sp_m(a,b) z=[a;sparse(b)]; endfunction 
-function [z]=mult_m_sp(a,b)  z=sparse(a)* b ; endfunction
-function [z]=mult_sp_m(a,b)  z=a * sparse(b); endfunction
-function [z]=dst_m_sp(a,b)   z=sparse(a)* b; endfunction
-function [z]=dst_sp_m(a,b)   z=a * sparse(b) ;endfunction
-function [z]=mult_m_sp(a,b)  z=sparse(a)* b; endfunction
 function y=kron(a,b) ; y = a.*.b ; endfunction 
 
 //-------------------------------------------------------
-%eps=1.e-8
+eps=1.e-8
 
 //test of elementary functions
 
@@ -160,39 +149,37 @@ a=[1 2;3 4]>1;
 rand('seed',1);if rand('seed')<>1 then pause,end
 a=2;rand('seed',a);if rand('seed')<>a then pause,end
 
-//diagcre
-//TOBEDONE : faire une fonction diag 
-//Attention dans NSP on a en plus diagset 
-if or(diagcre([1 2 3])<>[1 0 0;0 2 0;0 0 3]) then pause,end
+//diag
+if or(diag([1 2 3])<>[1 0 0;0 2 0;0 0 3]) then pause,end
 a=[1 2 3];
-if or(diagcre(a)<>[1 0 0;0 2 0;0 0 3]) then pause,end
-if or(diagcre([1 %i 2])<>[1 0 0;0 %i 0;0 0 2]) then pause,end
+if or(diag(a)<>[1 0 0;0 2 0;0 0 3]) then pause,end
+if or(diag([1 %i 2])<>[1 0 0;0 %i 0;0 0 2]) then pause,end
 a=[1 %i 2 ];
-if or(diagcre(a)<>[1 0 0;0 %i 0;0 0 2]) then pause,end
+if or(diag(a)<>[1 0 0;0 %i 0;0 0 2]) then pause,end
 a=[1 2 3 4;5 6 7 8];
-if or(diage(a)<>[1;6]) then pause,end
-if or(diage(a+0)<>[1;6]) then pause,end
-if or(diage(a,1)<>[2;7]) then pause,end
-if or(diage(a+0,1)<>[2;7]) then pause,end
-if or(diage(a,-1)<>[5]) then pause,end
-if or(diage(a+0,-1)<>[5]) then pause,end
-if diage(a,4)<>[] then pause,end
+if or(diag(a)<>[1;6]) then pause,end
+if or(diag(a+0)<>[1;6]) then pause,end
+if or(diag(a,1)<>[2;7]) then pause,end
+if or(diag(a+0,1)<>[2;7]) then pause,end
+if or(diag(a,-1)<>[5]) then pause,end
+if or(diag(a+0,-1)<>[5]) then pause,end
+if diag(a,4)<>[] then pause,end
 a(1,1)=%i
-if or(diage(a)<>[%i;6]) then pause,end
-if or(diage(a+0)<>[%i;6]) then pause,end
-if or(diage(a,1)<>[2;7]) then pause,end
-if or(diage(a+0,1)<>[2;7]) then pause,end
-if or(diage(a,-1)<>[5]) then pause,end
-if or(diage(a+0,-1)<>[5]) then pause,end
-if diage(a,4)<>[] then pause,end
+if or(diag(a)<>[%i;6]) then pause,end
+if or(diag(a+0)<>[%i;6]) then pause,end
+if or(diag(a,1)<>[2;7]) then pause,end
+if or(diag(a+0,1)<>[2;7]) then pause,end
+if or(diag(a,-1)<>[5]) then pause,end
+if or(diag(a+0,-1)<>[5]) then pause,end
+if diag(a,4)<>[] then pause,end
 
-if diage([])<>[] then pause,end
-if diage([],1)<>[] then pause,end
-if diage([],-1)<>[] then pause,end
+if diag([])<>[] then pause,end
+if diag([],1)<>[] then pause,end
+if diag([],-1)<>[] then pause,end
 a=[];
-if diage(a)<>[] then pause,end
-if diage(a,1)<>[] then pause,end
-if diage(a,-1)<>[] then pause,end
+if diag(a)<>[] then pause,end
+if diag(a,1)<>[] then pause,end
+if diag(a,-1)<>[] then pause,end
 
 // triu
 a=[1 2 3 4;5 6 7 8];
@@ -263,13 +250,6 @@ if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 //TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
 //TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
 
-// a=sparse([1 2;-3 4;5 ,-6]);
-// if or(full(abs(a))<>[1 2;3 4;5 6]) then pause,end
-// if or(full(abs(a+a))<>2*[1 2;3 4;5 6]) then pause,end
-// a=sparse([1+%i 2;-3 4;5, -6]);
-// if or(full(abs(a))<>[sqrt(2) 2;3 4;5 6]) then pause,end
-// if or(full(abs(a+a))<>2*[sqrt(2) 2;3 4;5 6]) then pause,end
-
 //real
 a=[1 2;-3 4;5, -6];
 if or(real(a)<>a) then pause,end
@@ -286,13 +266,6 @@ if or(real(a+0)<>[1 2;-3 4;5, -6]) then pause,end
 //TOBEDONE a=[1+%i 2;-3 4;5 ,-6]+%s;
 //TOBEDONE if or(real(a)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
 //TOBEDONE if or(real(a+0)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
-
-//TOBEDONEa=sparse([1 2;-3 4;5, -6]);
-//TOBEDONEif or(real(a)<>a) then pause,end
-//TOBEDONEif or(real(a+a)<>2*a) then pause,end
-//TOBEDONEa=sparse([1+%i 2;-3 4;5 ,-6]);
-//TOBEDONEif or(full(real(a))<>[1 2;-3 4;5, -6]) then pause,end
-//TOBEDONEif or(full(real(a+a))<>2*[1 2;-3 4;5, -6]) then pause,end
 
 //imag
 a=[1 2;-3 4;5 ,-6];
@@ -311,14 +284,6 @@ if or(imag(a+0)<>[1 0;0 0;0 0]) then pause,end
 //TOBEDONE if or(imag(a)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
 //TOBEDONE if or(imag(a+0)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
 
-//TOBEDONEa=sparse([1 2;-3 4;5, -6]);
-//TOBEDONEif or(imag(a)<>0*a) then pause,end
-//TOBEDONEif or(imag(a+a)<>0*a) then pause,end
-//TOBEDONEa=sparse([1+%i 2;-3 4;5 ,-6]);
-//TOBEDONEif or(full(imag(a))<>[1 0;0 0;0 0]) then pause,end
-//TOBEDONEif or(full(imag(a+a))<>2*[1 0;0 0;0 0]) then pause,end
-
-
 //conj
 a=[1 2;-3 4;5,-6];
 if or(conj(a)<>a) then pause,end
@@ -335,16 +300,6 @@ if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]) then pause,end
 //TOBEDONE a=[1+%i 2;-3 4;5,-6]+%s;
 //TOBEDONE if or(conj(a)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
 //TOBEDONE if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
-
-//a=sparse([1 2;-3 4;5,-6]);
-//TOBEDONEif or(conj(a)<>a) then pause,end
-//TOBEDONEif or(conj(a+a)<>2*a) then pause,end
-//TOBEDONEa=sparse([1+%i 2;-3 4;5,-6]);
-//TOBEDONEif or(full(conj(a))<>[1-%i 2;-3 4;5,-6]) then pause,end
-//TOBEDONEif or(full(conj(a+a))<>2*[1-%i 2;-3 4;5,-6]) then pause,end
-
-
-
 
 //int
 a=[1.2 2.5;-3.4 4.5;5.8,-6.2];
@@ -364,9 +319,7 @@ if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]) then pause,end
 if int([])<>[] then pause,end
 a=[];if int(a)<>[] then pause,end
 
-
 //round
-
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
 if or(round(a)<>[1 3;-3 5;6,-6]) then pause,end
 if or(round(a+0)<>[1 3;-3 5;6,-6]) then pause,end
@@ -410,7 +363,6 @@ if or(floor(a+0)<>[1 2;-4 4;5, -7]) then pause,end
 a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
 if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
-
 //TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
 //TOBEDONE if or(floor(a)<>[1 2;-4 4;5, -7]+%s) then pause,end
 //TOBEDONE if or(floor(a+0)<>[1 2;-4 4;5 ,-7]+%s) then pause,end
@@ -420,27 +372,25 @@ if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
 
 if floor([])<>[] then pause,end
 a=[];if floor(a)<>[] then pause,end
-
 //sign
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
 if or(sign(a)<>[1 1;-1 1;1, -1]) then pause,end
 //TOBEDONEa=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-//TOBEDONE if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*%eps then pause,end
+//TOBEDONE if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*eps then pause,end
 if sign([])<>[] then pause,end
 a=[];if sign(a)<>[] then pause,end
 
 //clean
 //XXXXX
-
 //log and exp
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
-if norm(exp(log(a))-a)>10*%eps then pause,end
-if norm(exp(log(a+0))-a)>10*%eps then pause,end
-b=log(a);if norm(exp(b)-a)>10*%eps then pause,end
+if norm(exp(log(a))-a)>10*eps then pause,end
+if norm(exp(log(a+0))-a)>10*eps then pause,end
+b=log(a);if norm(exp(b)-a)>10*eps then pause,end
 a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-if norm(exp(log(a))-a)>10*%eps then pause,end
-if norm(exp(log(a+0))-a)>10*%eps then pause,end
-b=log(a);if norm(exp(b)-a)>10*%eps then pause,end
+if norm(exp(log(a))-a)>10*eps then pause,end
+if norm(exp(log(a+0))-a)>10*eps then pause,end
+b=log(a);if norm(exp(b)-a)>10*eps then pause,end
 
 if exp([])<>[] then pause,end
 a=[];if exp(a)<>[] then pause,end
@@ -449,11 +399,11 @@ a=[];if log(a)<>[] then pause,end
 
 //sin and cos
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
-if norm(sin(a).^2+cos(a).^2-1)>10*%eps then pause,end
-if norm(sin(a+0).^2+cos(a+0).^2-1)>10*%eps then pause,end
+if norm(sin(a).^2+cos(a).^2-1)>10*eps then pause,end
+if norm(sin(a+0).^2+cos(a+0).^2-1)>10*eps then pause,end
 a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-if norm(sin(a).^2+cos(a).^2-1)>10*%eps then pause,end
-if norm(sin(a+0).^2+cos(a+0).^2-1)>10*%eps then pause,end
+if norm(sin(a).^2+cos(a).^2-1)>10*eps then pause,end
+if norm(sin(a+0).^2+cos(a+0).^2-1)>10*eps then pause,end
 
 if cos([])<>[] then pause,end
 a=[];if cos(a)<>[] then pause,end
@@ -462,36 +412,36 @@ a=[];if sin(a)<>[] then pause,end
 
 //tan et atan
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
-if norm(tan(atan(a))-a)>100*%eps then pause,end
-if norm(tan(atan(a+0))-a)>100*%eps then pause,end
-b=log(a);if norm(exp(b)-a)>100*%eps then pause,end
+if norm(tan(atan(a))-a)>100*eps then pause,end
+if norm(tan(atan(a+0))-a)>100*eps then pause,end
+b=log(a);if norm(exp(b)-a)>100*eps then pause,end
 a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-if norm(tan(atan(a))-a)>100*%eps then pause,end
-if norm(tan(atan(a+0))-a)>100*%eps then pause,end
+if norm(tan(atan(a))-a)>100*eps then pause,end
+if norm(tan(atan(a+0))-a)>100*eps then pause,end
 
 if atan([])<>[] then pause,end
 a=[];if atan(a)<>[] then pause,end
 
-//TOBEDONE if atan([],[])<>[] then pause,end
-//TOBEDONE a=[];if atan(a,[])<>[] then pause,end
-//TOBEDONE a=[];if atan(a,a)<>[] then pause,end
-//TOBEDONE a=[];if atan([],a)<>[] then pause,end
+if atan([],[])<>[] then pause,end
+a=[];if atan(a,[])<>[] then pause,end
+a=[];if atan(a,a)<>[] then pause,end
+a=[];if atan([],a)<>[] then pause,end
 
 //expm
-//TOBEDONE a=[0 2;0 0];
-//TOBEDONE if norm(expm(a)-[1 2;0 1])>10*%eps then pause,end
-//TOBEDONE a=[0 2*%i;0 0];
-//TOBEDONE if norm(expm(a)-[1 2*%i;0 1])>10*%eps then pause,end
-//TOBEDONE if expm([])<>[] then pause,end
-//TOBEDONE a=[];if expm(a)<>[] then pause,end
+ a=[0 2;0 0];
+ if norm(expm(a)-[1 2;0 1])>10*eps then pause,end
+ a=[0 2*%i;0 0];
+ if norm(expm(a)-[1 2*%i;0 1])>10*eps then pause,end
+ if expm([])<>[] then pause,end
+ a=[];if expm(a)<>[] then pause,end
 
 //sqrt
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
-if norm(sqrt(a).^2-a)>100*%eps then pause,end
-if norm(sqrt(a+0).^2-a)>100*%eps then pause,end
+if norm(sqrt(a).^2-a)>100*eps then pause,end
+if norm(sqrt(a+0).^2-a)>100*eps then pause,end
 a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-if norm(sqrt(a).^2-a)>100*%eps then pause,end
-if norm(sqrt(a+0).^2-a)>100*%eps then pause,end
+if norm(sqrt(a).^2-a)>100*eps then pause,end
+if norm(sqrt(a+0).^2-a)>100*eps then pause,end
 
 if sqrt([])<>[] then pause,end
 a=[];if sqrt(a)<>[] then pause,end
@@ -1109,24 +1059,24 @@ if or(matrix(a+0,3,m)<>b) then pause,end
 if or(matrix(a+0,n,m)<>b) then pause,end
 
 a=string([1 2 3 4 5 6]);n=1;m=6;
-//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a+a,1,6)<>a+a) then pause,end
-//TOBEDONE if or(matrix(a+a,n,6)<>a+a) then pause,end
-//TOBEDONE if or(matrix(a+a,1,m)<>a+a) then pause,end
-//TOBEDONE if or(matrix(a+a,n,m)<>a+a) then pause,end
+if or(matrix(a,1,6)<>a) then pause,end
+if or(matrix(a,n,6)<>a) then pause,end
+if or(matrix(a,1,m)<>a) then pause,end
+if or(matrix(a,n,m)<>a) then pause,end
+if or(matrix(a+a,1,6)<>a+a) then pause,end
+if or(matrix(a+a,n,6)<>a+a) then pause,end
+if or(matrix(a+a,1,m)<>a+a) then pause,end
+if or(matrix(a+a,n,m)<>a+a) then pause,end
 
 n=3;m=2; b=string([1 4;2 5;3 6]);
-//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a+a,3,2)<>b+b) then pause,end
-//TOBEDONE if or(matrix(a+a,n,2)<>b+b) then pause,end
-//TOBEDONE if or(matrix(a+a,3,m)<>b+b) then pause,end
-//TOBEDONE if or(matrix(a+a,n,m)<>b+b) then pause,end
+if or(matrix(a,3,2)<>b) then pause,end
+if or(matrix(a,n,2)<>b) then pause,end
+if or(matrix(a,3,m)<>b) then pause,end
+if or(matrix(a,n,m)<>b) then pause,end
+if or(matrix(a+a,3,2)<>b+b) then pause,end
+if or(matrix(a+a,n,2)<>b+b) then pause,end
+if or(matrix(a+a,3,m)<>b+b) then pause,end
+if or(matrix(a+a,n,m)<>b+b) then pause,end
 
 //TOBEDONE a=[1 2 3 4 5 6]+%s;
 //TOBEDONE n=1;m=6;

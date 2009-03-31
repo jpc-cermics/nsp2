@@ -10,15 +10,6 @@ function [y]=testN(x1,x2,z)
   y=norm(x1-x2)>z
 endfunction 
 
-function [y]=norm(x)
-  if x==[] 
-    y =0;
-  else 
-    y = max(abs(x));
-  end
-endfunction
-
-
 nr=10
 nc=20;
 M=[nr,nc,0,1,1 ,nr];
@@ -29,7 +20,6 @@ N=[nc,nr,0,1,nc,1 ];
 for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   if test(size(a),[m,n]) then pause,end
-  if test(size(a+[]),[m,n]) then pause,end
   if test(size(a,'*'),m*n) then pause,end
   if test(size(a,'r'),m) then pause,end
   if test(size(a,'c'),n) then pause,end
@@ -44,7 +34,6 @@ for i=1:6, m=M(i);n=N(i);
   b=0*a;for j=1:min(m,n), b(j,j)=1;end
   if test(eye_new(m,n),b) then pause,end
   if test(eye(size(a)),b) then pause,end
-  if test(eye(size(a+[])),b) then pause,end
 end 
 
 //----- test of ones 
@@ -57,7 +46,6 @@ endfunction
 for i=1:6, m=M(i);n=N(i);a=rand(m,n,'uniform');
   if test(ones_new(m,n),Mones(m,n)) then pause,end
   if test(ones(size(a)),Mones(m,n)) then pause,end
-  if test(ones(size(a+[])),Mones(m,n)) then pause,end
 end 
 
 //------- cross test eye-ones-diag 
@@ -71,7 +59,6 @@ for i=1:6, m=M(i);n=N(i);
   a=rand(m,n,'uniform');
   if test(eye_new(m,n),Meye(m,n)) then pause,end
   if test(eye(size(a)),Meye(m,n)) then pause,end
-  if test(eye(size(a+[])),Meye(m,n)) then pause,end
 end 
 
 //------- test of diag (creation) 
@@ -84,14 +71,17 @@ for i=1:6, m=M(i);
   d=1:m
   b=0*ones_new(m,m);for j=1:m, b(j,j)=d(j);end
   if test(diag(d),b) then pause,end
-  if test(diag(d+[]),b) then pause,end
 end 
 
 function [a]=MFdiag(d,j)
-  a=Mdiag(d);m=size(a,'r');
-  if a<>[] then 
-    if j>=0; a=[0*ones_new(m+j,j),[a;0*ones_new(j,m)]];
-    else a=[0*ones_new(-j,m-j);[a,0*ones_new(m,-j)]];end
+  if isempty(d) then 
+    a=zeros(max(abs(j)-1,0),max(abs(j)-1,0));
+  else 
+    a=Mdiag(d);m=size(a,'r');
+    if ~isempty(a) then 
+      if j>=0; a=[0*ones_new(m+j,j),[a;0*ones_new(j,m)]];
+      else a=[0*ones_new(-j,m-j);[a,0*ones_new(m,-j)]];end
+    end
   end
 endfunction
 
@@ -99,9 +89,7 @@ for i=1:6, m=M(i);
   for j=-2:2
     d=1:m;
     if test(diag(d,j),MFdiag(d,j)) then pause,end
-    if test(diag(d+[],j),MFdiag(d,j)) then pause,end
     if test(diag(d',j),MFdiag(d,j)) then pause,end
-    if test(diag(d'+[],j),MFdiag(d,j)) then pause,end
   end 
 end 
 
@@ -112,9 +100,9 @@ Mde=[nr,nc,0];
 Nde=[nc,nr,0];
 for i=1:3, m=Mde(i);n=Nde(i);
   d=rand(m,n,'uniform');
-  b=0*ones_new(min(m,n),1);for j=1:min(m,n), b(j)=d(j,j);end
+  mm=min(m,n);
+  b=0*ones_new(mm,min(1,mm));for j=1:min(m,n), b(j)=d(j,j);end
   if test(diag(d),b) then pause,end
-  if test(diag(d+[]),b) then pause,end
 end 
 // diag(a,j) 
 
@@ -127,9 +115,9 @@ endfunction
 for i=1:3, m=Mde(i);n=Nde(i);
   for j=-(m+1):m+1;
     d=rand(m,n,'uniform');
-    b=0*ones_new(min(m,n),1);for k=1:min(m,n), b(k)=d(k,k);end
+    mm=min(m,n);
+    b=0*ones_new(mm,min(1,mm));for k=1:min(m,n), b(k)=d(k,k);end
     if test(diag(d),b) then pause,end
-    if test(diag(d+[]),b) then pause,end
   end 
 end 
 
@@ -145,7 +133,6 @@ for i=1:6, m=M(i);n=N(i);
   for j=-(m+1):m+1;
     A=int(10*rand(m,n,'uniform'));
     if test(triu(A,j),Triu(A,j)) then pause,end
-    if test(triu(A+[],j),Triu(A,j)) then pause,end
   end 
 end 
 
@@ -161,20 +148,18 @@ for i=1:6, m=M(i);n=N(i);
   for j=-(m+1):m+1;
     A=int(10*rand(m,n,'uniform'));
     if test(tril(A,j),Tril(A,j)) then pause,end
-    if test(tril(A+[],j),Tril(A,j)) then pause,end
   end 
 end 
 
 //--------- test of abs  
 
 function [b]=Abs(a)
-  if a==[] then b=[];else b=max(a,0)+max(-a,0);end;
+  if isempty(a) then b=a;else b=max(a,0)+max(-a,0);end;
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
   A=rand(m,n,'normal');
   if test(abs(A),Abs(A)) then pause,end
-  if test(abs(A+[]),Abs(A)) then pause,end
 end 
 
 //--------- test of real 
@@ -182,7 +167,6 @@ end
 for i=1:6, m=M(i);n=N(i);
   A=rand(m,n,'normal');
   if test(real(A),A) then pause,end
-  if test(real(A+[]),A) then pause,end
 end 
 
 //--------- test of imag
@@ -190,7 +174,6 @@ end
 for i=1:6, m=M(i);n=N(i);
   A=rand(m,n,'normal');
   if test(imag(A),0*A) then pause,end
-  if test(imag(A+[]),0*A) then pause,end
 end 
 
 //--------- test of conj 
@@ -198,7 +181,6 @@ end
 for i=1:6, m=M(i);n=N(i);
   A=rand(m,n,'normal');
   if test(conj(A),A) then pause,end
-  if test(conj(A+[]),A) then pause,end
 end 
 
 
@@ -210,10 +192,8 @@ for i=1:6, m=M(i);n=N(i);
   U=rand(m,n,'uniform');
   B=A+U;
   if test(int(B),A) then pause,end
-  if test(int(B+[]),A) then pause,end
   B=-A-U;
   if test(int(B),-A) then pause,end
-  if test(int(B+[]),-A) then pause,end
 end 
 
 //----------test of round
@@ -231,36 +211,32 @@ for i=1:6, m=M(i);n=N(i);
   U=rand(m,n,'uniform')*0.5;
   B=A+U;
   if test(round(B),A) then pause,end
-  if test(round(B+[]),A) then pause,end
   if A<>[] then 
     B=A+U+0.5;
     if test(round(B),A+1) then pause,end
-    if test(round(B+[]),A+1) then pause,end
   end
 end 
 
 //----------test of ceil 
 
 function [y]=Mceil(x)
-  if x==[] then y=[];else y=int(x)+1;y(x<0)=y(x<0)-1;end
+  if isempty(x) then y=x;else y=int(x)+1;y(x<0)=y(x<0)-1;end
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
   A=10*rand(m,n,'normal');
   if test(ceil(A),Mceil(A)) then pause,end
-  if test(ceil(A+[]),Mceil(A)) then pause,end
 end 
 
 //----------test of floor
 
 function [y]=Mfloor(x)
-  if x==[] then y=[];else y=int(x);y(x<0)=y(x<0)-1;end
+  if isempty(x) then y=x;else y=int(x);y(x<0)=y(x<0)-1;end
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
   A=10*rand(m,n,'normal');
   if test(floor(A),Mfloor(A)) then pause,end
-  if test(floor(A+[]),Mfloor(A)) then pause,end
 end 
 
 //----------test of sign
@@ -274,42 +250,36 @@ if sign(0)<>0 then pause,end
 for i=1:6, m=M(i);n=N(i);
   A=rand(m,n,'normal');
   if test(sign(A),Msign(A)) then pause,end
-  if test(sign(A+[]),Msign(A)) then pause,end
 end 
 
 //----------test of sum 
 
 function [y]=Msum(x,j)
   [m,n]=size(x);
-  if j==2, y= x*ones_new(n,1);
-  elseif j==1,y=ones_new(1,m)*x;
+  if j==2, y= x*ones_new(n,min(1,n));
+  elseif j==1,y=ones_new(min(1,m),m)*x;
   else y= ones_new(1,m)*x*ones_new(n,1);end;
-endfunction
+endfunction;
 
 function [y]=MsumG(x,j)
-  if and([x==[],j==0]) then y=0;else y=Msum(x,j);end
-endfunction
+  if and([isempty(x),j==0]) then y=0;else y=Msum(x,j);end
+endfunction;
 
 for i=1:6, m=M(i);n=N(i);
   A=int(10*rand(m,n,'normal'));
   if testN(sum(A),MsumG(A,0),0.1) then pause,end
-  if testN(sum(A+[]),MsumG(A,0),0.1) then pause,end
   if testN(sum(A,'c'),MsumG(A,2),0.1) then pause,end
   //AFAIRE if testN(sum(A,2),MsumG(A,2),0.1) then pause,end
-  if testN(sum(A+[],'c'),MsumG(A,2),0.1) then pause,end     
   if testN(sum(A,'r'),MsumG(A,1),0.1) then pause,end
   //AFAIRE if testN(sum(A,1),MsumG(A,1),0.1) then pause,end
-  if testN(sum(A+[],'r'),MsumG(A,1),0.1) then pause,end
 end 
-
-exit
 
 //----------test of prod
 
 function [p]=Mprod(x,j)
   [m,n]=size(x);
-  if j==2 then ;p=0*ones_new(m,1);for i=1:m,p(i)=Vprod(x(i,:));end;
-  elseif j==1 then p=0*ones_new(1,n);for i=1:n,p(i)=Vprod(x(:,i));end;
+  if j==2 then ;p=0*ones_new(m,min(1,m));for i=1:m,p(i)=Vprod(x(i,:));end;
+  elseif j==1 then p=0*ones_new(min(1,n),n);for i=1:n,p(i)=Vprod(x(:,i));end;
   else p= Mprod(Mprod(x,1),2);end;
 endfunction
 
@@ -319,7 +289,7 @@ function [vp]=Vprod(x)
 endfunction
 
 function [y]=MprodG(x,j)
-  if and([x==[],j==0]) then y=1;else y=Mprod(x,j);end
+  if and([isempty(x),j==0]) then y=1;else y=Mprod(x,j);end
 endfunction
 
 nr=3;
@@ -330,38 +300,32 @@ Np=[nc,nr,0,1,nc,1 ];
 for i=1:6, m=Mp(i);n=Np(i);
   A=int(10*rand(m,n,'uniform'));
   if testN(prod(A),MprodG(A,0),0.1) then pause,end
-  if testN(prod(A+[]),MprodG(A,0),0.1) then pause,end
   if testN(prod(A,'c'),MprodG(A,2),0.1) then pause,end
   if testN(prod(A,2),MprodG(A,2),0.1) then pause,end
-  if testN(prod(A+[],'c'),MprodG(A,2),0.1) then pause,end     
   if testN(prod(A,'r'),MprodG(A,1),0.1) then pause,end
   if testN(prod(A,1),MprodG(A,1),0.1) then pause,end
-  if testN(prod(A+[],'r'),MprodG(A,1),0.1) then pause,end
 end 
 
 //----------test of cumsum
 
 function [y]=Mcumsum(x,j)
   [m,n]=size(x);
-  if j==2, y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones_new(i,1);end;
+  if j==2, y=0*x; for i=1:n; y(:,i)= x(:,1:i)*ones_new(i,min(1,i));end;
   elseif j==1,y=Mcumsum(x',2)';
   else y=x(:);y=Mcumsum(y,1);y=matrix(y,m,n);end
 endfunction
 
 function [y]=McumsumG(x,j)
-  if x==[] then y=[];else y=Mcumsum(x,j);end
+  if isempty(x) then y=x; else y=Mcumsum(x,j);end
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
   A=10*rand(m,n,'normal');
   if test(cumsum(A),McumsumG(A,0)) then pause,end
-  if test(cumsum(A+[]),McumsumG(A,0)) then pause,end
   if test(cumsum(A,'c'),McumsumG(A,2)) then pause,end
   if test(cumsum(A,2),McumsumG(A,2)) then pause,end
-  if test(cumsum(A+[],'c'),McumsumG(A,2)) then pause,end     
   if test(cumsum(A,'r'),McumsumG(A,1)) then pause,end
   if test(cumsum(A,1),McumsumG(A,1)) then pause,end
-  if test(cumsum(A+[],'r'),McumsumG(A,1)) then pause,end
 end 
 
 //----------test of cumprof AFINIR 
