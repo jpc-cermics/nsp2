@@ -463,6 +463,7 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
    */
 #define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
   return(OK);
 }
 
@@ -511,9 +512,7 @@ NspIMatrix *nsp_imatrix_concat_diag(NspIMatrix *A, NspIMatrix *B)
 
 int nsp_imatrix_add_rows(NspIMatrix *A, int m)
 {
-  int d=FALSE; /* TRUE; */
-  int inc = -1,Am;
-  int j;
+  int i,Am, j;
   if ( m == 0) return OK;
   else if ( m < 0) 
     {      
@@ -524,8 +523,14 @@ int nsp_imatrix_add_rows(NspIMatrix *A, int m)
   if (nsp_imatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
   for ( j = A->n-1  ; j >= 0 ; j-- ) 
     {
-      if ( j != 0) nsp_icopy(&Am,A->Gint+j*Am,&inc,A->Gint+j*(A->m),&inc);
-      nsp_iset(&m,&d,A->Gint+j*(A->m)+Am,&inc);
+#define IMAT_AROWS(name) for ( i= Am-1 ; i >=0 ; i--) A->name[i+j*(A->m)]=A->name[i+j*(Am)];break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS);
+#undef IMAT_AROWS
+#define IMAT_AROWS(name) for ( i=0 ; i < m ; i++) A->name[i+j*(A->m)+Am]=0;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS);
+#undef IMAT_AROWS
+      /* if ( j != 0) nsp_icopy(&Am,A->Gint+j*Am,&inc,A->Gint+j*(A->m),&inc); */
+      /*nsp_iset(&m,&d,A->Gint+j*(A->m)+Am,&inc); */
     }
   return(OK);
 }

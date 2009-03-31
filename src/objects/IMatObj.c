@@ -494,6 +494,124 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
  * methods 
  *------------------------------------------------------*/
 
+#if 0 
+static int int_meth_imatrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *B;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((B = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
+  if ( nsp_imatrix_add(a,B) == FAIL )  return RET_BUG;
+  return 0;
+}
+
+static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *A = self, *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
+      return RET_BUG;
+    }
+
+  if ( nsp_imatrix_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ *  scale_cols[x]
+ *
+ *    A <- A*diag(x)
+ *
+ *    A.scale_cols[x]
+ */
+
+static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *A =  self, *x;
+  CheckLhs(0,0);
+  CheckRhs(1,1);
+
+  if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
+      return RET_BUG;
+    }
+
+  if ( nsp_imatrix_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  return 0;
+}
+
+/* 
+ * get_nnz 
+ */
+
+static int int_meth_imatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,0);
+  CheckRhs(0,0);
+  if ( nsp_move_double(stack,1,nsp_imatrix_nnz((NspMatrix *) self)) == FAIL) return RET_BUG;
+  return 1;
+}
+#endif 
+
+/* this method is also implemented in matint for matrix 
+ * this one is a short cut.
+ */
+
+static int int_meth_imatrix_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NspIMatrix *Diag;
+  int k=0;
+  CheckRhs (1,2);
+  CheckLhs (0,0); 
+  if ((Diag = GetIMat (stack, 1)) == NULLIMAT)   return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
+    }
+  if (nsp_imatrix_set_diag ((NspIMatrix *) self, Diag, k) != OK)
+    return RET_BUG;
+  return 0;
+}
+
+#if 0
+static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A = self, *x;
+  NspBMatrix *B;
+  NspMatrix *Ind,*Ind2;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,3);
+
+  if ((x = GetIMat (stack, 1)) == NULLMAT) return RET_BUG;
+
+  if ( (B = nsp_imatrix_has(A, x, lhs, &Ind, &Ind2)) == NULLBMAT )
+    return RET_BUG;
+
+  MoveObj(stack,1,NSP_OBJECT(B));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(Ind));
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(Ind2));
+    }
+
+  return Max(lhs,1);
+}
+#endif 
 
 static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
@@ -511,6 +629,14 @@ static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int op
 
 
 static NspMethods nsp_imatrix_methods[] = {
+#if 0
+  { "add", int_meth_imatrix_add},
+  { "scale_rows",int_meth_imatrix_scale_rows}, 
+  { "scale_cols",int_meth_imatrix_scale_cols}, 
+  { "get_nnz", int_meth_imatrix_get_nnz},
+  { "has", int_meth_imatrix_has},
+#endif 
+  { "set_diag",(nsp_method *) int_meth_imatrix_set_diag}, /* preferred to generic matint method */
   {"retype",(nsp_method *) int_imatrix_meth_retype},
   { NULL, NULL}
 };

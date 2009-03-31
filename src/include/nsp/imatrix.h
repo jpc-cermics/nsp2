@@ -44,6 +44,23 @@ typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong ,
                    "uint16", "int32", "uint32", "int64",        \
                    "uint64",NULL};
 
+typedef union { 
+    gint     Gint;
+    guint     Guint;
+    gshort     Gshort;
+    gushort     Gushort;
+    glong     Glong;
+    gulong     Gulong;
+    gint8     Gint8;
+    guint8     Guint8;
+    gint16     Gint16;
+    guint16     Guint16;
+    gint32     Gint32;
+    guint32     Guint32;
+    gint64     Gint64;
+    guint64     Guint64;
+} nsp_int_union ;
+
 struct _NspIMatrix {
   /*< private >*/
   NspObject father; 
@@ -286,7 +303,9 @@ extern NspIMatrix *nsp_imatrix_create(const char *name, int m, int n, nsp_itype 
 extern NspIMatrix *nsp_imatrix_clone(const char *name, NspIMatrix *A, int m, int n, int init);
 extern NspIMatrix *nsp_imatrix_copy(NspIMatrix *A); 
 extern unsigned int  nsp_imatrix_elt_size(NspMatrix *M);
+extern int nsp_imatrix_fill_with (NspIMatrix *A, const NspIMatrix *B); 
 extern int nsp_imatrix_resize(NspIMatrix *A, int m, int n); 
+extern int nsp_imatrix_scalar_to_mn (NspIMatrix *A, int m, int n); 
 extern void nsp_imatrix_destroy(NspIMatrix *IMat); 
 extern int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_level); 
 extern int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_level); 
@@ -328,6 +347,90 @@ extern int nsp_imatrix_change_itype(NspIMatrix *A,nsp_itype itype);
 
 extern int nsp_xdr_save_array_ixx(XDR *xdrs, void *nx,nsp_itype itye, int l);
 extern int nsp_xdr_load_array_ixx(XDR *xdrs, void *nx,nsp_itype itype, int l);
+
+/* from IMatOps */
+
+extern int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x);
+extern int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x);
+extern NspIMatrix *nsp_imatrix_diff(NspIMatrix *A, int order, int dim);
+extern int nsp_imatrix_mult_scalar_bis(NspIMatrix *A, NspIMatrix *B);
+extern int nsp_imatrix_add_scalar_bis(NspIMatrix *A, NspIMatrix *B);
+extern int nsp_imatrix_add_mat(NspIMatrix *A, NspIMatrix *B);
+extern int nsp_imatrix_sub_scalar_bis(NspIMatrix *A, NspIMatrix *B);
+extern int nsp_scalar_sub_imatrix_bis(NspIMatrix *A, NspIMatrix *B);
+extern int nsp_imatrix_sub_mat(NspIMatrix *A, NspIMatrix *B);
+extern void nsp_imatrix_set_rval(NspIMatrix *A, double dval); 
+extern int nsp_imatrix_set_ival(NspIMatrix *A, double dval); 
+extern NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag);
+extern int nsp_imatrix_add(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_dadd(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_dadd_maxplus(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_add_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_sub(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_dsub(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_sub_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
+extern int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
+extern int nsp_imatrix_minmax(NspIMatrix *A, int dim, NspIMatrix **Amin, NspIMatrix **Imin,
+			      NspIMatrix **Amax, NspIMatrix **Imax, int lhs);
+extern NspIMatrix **nsp_imatrix_slec(char *file, int *Count); 
+extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
+extern int nsp_imatrix_inv_el(NspIMatrix *A); 
+extern NspIMatrix *nsp_imatrix_kron(NspIMatrix *A, NspIMatrix *B); 
+extern NspIMatrix *nsp_imatrix_sort(NspIMatrix *A, int flag, char *str1, char *str2); 
+extern NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim); 
+extern NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim); 
+extern NspIMatrix *nsp_imatrix_cum_prod(NspIMatrix *A,  int dim); 
+extern NspIMatrix *nsp_imatrix_cum_sum(NspIMatrix *A,  int dim); 
+extern NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs); 
+extern NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs); 
+extern NspIMatrix *nsp_imatrix_createinit(char *name, char type, int m, int n, double (*func) ()); 
+extern void nsp_imatrix_triu(NspIMatrix *A, int k); 
+extern void nsp_imatrix_tril(NspIMatrix *A, int k); 
+extern NspIMatrix *nsp_imatrix_eye(int m, int n); 
+extern NspIMatrix *nsp_imatrix_ones(int m, int n); 
+extern NspIMatrix *nsp_imatrix_zeros(int m, int n); 
+extern NspIMatrix *nsp_imatrix_rand(int m, int n); 
+extern int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_matmat(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_scalarmat(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_tt(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_el(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_scalar(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_pow_scalarm(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_div_tt(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_div_scalar(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_bdiv_tt(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_bdiv_el(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_bdiv_scalar(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_mult_tt(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_mult_el(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_mult_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
+extern void nsp_imatrix_modulo(NspIMatrix *A, int n); 
+extern void nsp_imatrix_idiv(NspIMatrix *A, int n); 
+extern void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y);
+extern void nsp_imatrix_int(NspIMatrix *A); 
+extern int nsp_imatrix_sign(NspIMatrix *A); 
+extern int nsp_imatrix_abs(NspIMatrix *A); 
+extern int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_iandu(NspIMatrix *A, unsigned int *res); 
+extern int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B); 
+extern int nsp_imatrix_ioru(NspIMatrix *A, unsigned int *res); 
+extern int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir);
+extern int nsp_imatrix_minus(NspIMatrix *A); 
+extern int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op, int *err); 
+/* extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2);  */
+extern int nsp_imatrix_mfind(const NspIMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind);
+extern int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **Ind);
+extern int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIMatrix **Ind);
+extern int nsp_imatrix_nnz(NspIMatrix *A);
+extern int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolean first_ind);
+extern NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag);
+extern NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim);
+extern NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order);
+extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspIMatrix **ind, NspIMatrix **ind2);
 
 #endif 
 
