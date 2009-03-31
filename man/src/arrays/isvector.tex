@@ -1,0 +1,78 @@
+% -*- mode: latex -*-
+
+\mansection{basic array or object structure tests}
+\begin{mandesc}
+  \short{isvector}{vector test} \\
+  \short{isscalar}{scalar test} \\
+  \short{isempty}{empty matrix or object test}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+b = isvector(A)
+b = isscalar(O)
+b = isempty(O)
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: matrix of any kind
+    \vname{O}: any nsp object (matrix of any kind, list, hash table,...)
+    \vname{b}:  boolean scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{itemize}
+\item \verb+isvector+ tests if a matrix is a vector that is if one of its 2 dimensions is equal to 1. 
+      Note that empty matrices of size $0 \times 1$ and $1 \times 0$ are detected as vectors.
+\item \verb+isscalar+ tests if a matrix is a scalar that is if it is of size $1 \times 1$.
+      \verb+isscalar+ also applies on lists and hash tables and returns true if they contains only
+      one element or one entry.
+\item \verb+isempty+ tests if an object is empty, that is if it is a matrix of size $0 \times n$ or $m \times 0$ or
+      if it is an empty list, or an hash table with no entries.
+\end{itemize}
+
+If you want to test if a matrix of some kind/type is a vector or scalar you should combine
+several tests for instance:
+\begin{verbatim}
+   is(A,%types.Mat") && isvector(A)               // test if a numerical (full) matrix is a vector
+   type(A,"string") == "Mat" && isvector(A)       // same test but using the type function
+
+   is(A,%types.Mat") & isvector(A) && isreal(A)   // test if a numerical (full) matrix is a real vector
+
+   is(A,%types.Mat") & isscalar(A) && isreal(A)   // test if A is a real scalar
+
+   is(A,%types.SMat") & isscalar(A)               // test if A is a (scalar) string
+\end{verbatim}
+
+If you want to test the row or column form of a vector, use \manlink{size}{size} instead of \verb+isvector+:
+\begin{verbatim}
+   is(A,%types.Mat") && size(A,1)==1 && isreal(A)       // test if a numerical (full) matrix is a real row vector
+
+   is(A,%types.Mat") && size(A,2)==1 && isreal(A)       // test if a numerical (full) matrix is a real column vector
+
+   is(A,%types.SpColMat") && size(A,2)==1 && isreal(A)  // test if a sparse matrix is a real (sparse) column vector
+\end{verbatim}
+
+\end{mandescription}
+
+\begin{examples}
+\begin{Verbatim}
+A = randn(3,1)
+isvector(A)
+iscalar(A)
+
+B = zeros(1,0)
+isempty(B)     // should return true
+isvector(B)    // should return true
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+   \manlink{size}{size}, \manlink{numel}{numel}, \manlink{length}{length}, \manlink{is}{is}, \manlink{type}{type} 
+\end{manseealso}
+
