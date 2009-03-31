@@ -24,7 +24,7 @@
 
 \begin{mandescription}
 This function computes a $P A = L U$ factorization of the matrix $A$, 
-(says $m \times n$) with (noting $p = min(m,n)$) :
+(say $m \times n$) with (noting $p = min(m,n)$) :
 \begin{itemize}
 \item $L$ a lower  ($m \times p$) triangular matrix
 \item $U$ an upper  ($p \times n$) triangular matrix
@@ -69,6 +69,15 @@ Strictly speaking \verb+p+ is the inverse permutation associated
 to the permutation matrix $P$ (\verb+p+ is such that $PA$ is equal 
 to \verb+A(p,:)+).
 
+\itemdesc{matrix factorization} 
+Let \verb!A! be a $m \times n$ matrix with rank $r$ and let \verb![L,U,p]] = lu(A)! its LU factorization. 
+Define \verb!P!, the row permutaion matrix by \verb!I=eye(size(A,1));P=I(p,:)!.Then \verb!L*U = P*A! and rows
+$r+1$ to $m$ of the $m \times m$ matrix \verb!U! are zeroed by the LU algorithm. It follows that 
+\verb!P'*L(:,1:r)*U(1:r,:)! is a full rank factorization of $A$ as the product of an $m \times r$ full
+rank matrix by a $m \times r$ full rank matrix. The rank can be seen by examining the diagonal
+entries of the \verb!U! matrix. However, from a numerical viewpoint a more reliable rank determination
+can be obtained by the \verb!qr! or \verb!svd! decomposition.
+\verb!L1=P'*L(:,1:r)! (resp. \verb!U(1:r,:)!) has the same range (resp. nullspace) as \verb!A!.
 \end{mandescription}
 
 \begin{examples}
