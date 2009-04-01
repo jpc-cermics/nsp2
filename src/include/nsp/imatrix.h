@@ -254,21 +254,38 @@ struct _NspIMatrix {
  * NSP_ITYPE_SWITCH(s,itype,X);
  */
 
-#define NSP_ITYPE_SWITCH(itype,X)		\
-  switch (itype ) {				\
-  case nsp_gint: X(Gint);			\
-  case nsp_guint: X(Guint);			\
-  case nsp_gshort: X(Gshort);			\
-  case nsp_gushort: X(Gushort);			\
-  case nsp_glong : X(Glong );			\
-  case nsp_gulong: X(Gulong);			\
-  case nsp_gint8: X(Gint8);			\
-  case nsp_guint8: X(Guint8);			\
-  case nsp_gint16: X(Gint16);			\
-  case nsp_guint16: X(Guint16);			\
-  case nsp_gint32: X(Gint32);			\
-  case nsp_guint32: X(Guint32);			\
-  case nsp_gint64 : X(Gint64 );			\
+#define NSP_ITYPE_SWITCH2(itype,X,arg)			\
+  switch (itype ) {					\
+  case nsp_gint: X(Gint,arg);				\
+  case nsp_guint: X(Guint,arg);				\
+  case nsp_gshort: X(Gshort,arg);			\
+  case nsp_gushort: X(Gushort,arg);			\
+  case nsp_glong : X(Glong,arg );			\
+  case nsp_gulong: X(Gulong,arg);			\
+  case nsp_gint8: X(Gint8,arg);				\
+  case nsp_guint8: X(Guint8,arg);			\
+  case nsp_gint16: X(Gint16,arg);			\
+  case nsp_guint16: X(Guint16,arg);			\
+  case nsp_gint32: X(Gint32,arg);			\
+  case nsp_guint32: X(Guint32,arg);			\
+  case nsp_gint64 : X(Gint64,arg );			\
+  case nsp_guint64 : X(Gint64,arg );	}
+
+#define NSP_ITYPE_SWITCH(itype,X)			\
+  switch (itype ) {					\
+  case nsp_gint: X(Gint);				\
+  case nsp_guint: X(Guint);				\
+  case nsp_gshort: X(Gshort);				\
+  case nsp_gushort: X(Gushort);				\
+  case nsp_glong : X(Glong );				\
+  case nsp_gulong: X(Gulong);				\
+  case nsp_gint8: X(Gint8);				\
+  case nsp_guint8: X(Guint8);				\
+  case nsp_gint16: X(Gint16);				\
+  case nsp_guint16: X(Guint16);				\
+  case nsp_gint32: X(Gint32);				\
+  case nsp_guint32: X(Guint32);				\
+  case nsp_gint64 : X(Gint64 );				\
   case nsp_guint64 : X(Gint64 );	}
 
 
@@ -357,10 +374,10 @@ extern int nsp_imatrix_scalar_or(NspIMatrix *A,const NspIMatrix *B);
 extern int nsp_imatrix_not(NspIMatrix *A); 
 extern int IMatIsTrue (NspIMatrix *A); 
 extern NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A); 
-extern NspMatrix *nsp_imatrix_find(const NspIMatrix *A); 
+extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2);
 extern int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
-extern NspBMatrix *nsp_imatrix_compare(const NspIMatrix *A, const NspIMatrix *B, char *op); 
-extern int nsp_imatrix_full_compare(const NspIMatrix *A,const  NspIMatrix *B, char *op, int *err); 
+extern NspBMatrix *nsp_imatrix_comp(const NspIMatrix *A, const NspIMatrix *B, char *op); 
+extern int nsp_imatrix_fullcomp(const NspIMatrix *A,const  NspIMatrix *B, char *op, int *err); 
 extern int nsp_imatrix_change_itype(NspIMatrix *A,nsp_itype itype);
 
 extern int nsp_xdr_save_array_ixx(XDR *xdrs, void *nx,nsp_itype itye, int l);
@@ -438,7 +455,6 @@ extern int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B);
 extern int nsp_imatrix_ioru(NspIMatrix *A, unsigned int *res); 
 extern int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir);
 extern int nsp_imatrix_minus(NspIMatrix *A); 
-extern int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op, int *err); 
 /* extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2);  */
 extern int nsp_imatrix_mfind(const NspIMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind);
 extern int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **Ind);
@@ -448,7 +464,7 @@ extern int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ,
 extern NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag);
 extern NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim);
 extern NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order);
-extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspIMatrix **ind, NspIMatrix **ind2);
+extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2);
 
 #endif 
 

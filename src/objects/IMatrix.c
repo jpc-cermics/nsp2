@@ -156,6 +156,7 @@ unsigned int  nsp_imatrix_elt_size(NspMatrix *M)
 }
 
 
+
 /**
  * nsp_imatrix_resize:
  * @A: a #NspIMatrix 
@@ -193,6 +194,30 @@ int nsp_imatrix_resize(NspIMatrix *A, int m, int n)
   if ( A->Iv == NULL) return(FAIL);
   return(OK);
 }
+
+/**
+ * nsp_imatrix_scalar_to_mn:
+ * @A: a #NspIMatrix 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * The #NspIMatrix @A of dimension 1x1 is changed to a matrix of size @m x @n 
+ * filled with the @A scalar value i.e A= A(1,1)*ones(m;n). 
+ * Note that the size of @A is not checked on entry it sould be 1x1.
+ *
+ * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ */
+
+int nsp_imatrix_scalar_to_mn(NspIMatrix *A, int m, int n)
+{
+  int i;
+  if ( nsp_imatrix_resize(A,m,n) == FAIL) return FAIL; 
+#define IMAT_AC(name) for ( i=1 ; i < A->mn ; i++) A->name[i]= A->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
+  return OK;
+}
+
 
 /**
  * nsp_imatrix_destroy:
@@ -974,35 +999,6 @@ NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A)
 }
 
 /**
- * nsp_imatrix_find:
- * @A: a #NspIMatrix. 
- * 
- * returns in a #NspMatrix the indices for which the 
- * #NspIMatrix @A is non null considering @A as o one dimensional array.
- * 
- * Return value:  a new #NspMatrix or %NULLMAT
- */
-
-NspMatrix *nsp_imatrix_find(const NspIMatrix *A)
-{
-  NspMatrix *Res;
-  int i,count=0, nrow = ( A->mn == 0) ? 0: 1;
-  /* first pass for counting **/
-  
-#define IMAT_FIND1(name) for ( i=0 ; i < A->mn ; i++) \
-    {if ( A->name[i] ) count++;}break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND1);
-  Res = nsp_matrix_create(NVOID,'r', nrow, count);
-  if ( Res == NULLMAT) return NULLMAT;
-  count=0;
-#define IMAT_FIND2(name) for ( i=0 ; i < A->mn ; i++) \
-    if ( A->name[i] ) Res->R[count++] = i+1; break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND2);
-  return Res;
-}
-
-
-/**
  * nsp_imatrix_find_2:
  * @A: a #NspIMatrix. 
  * @lhs: a flag 
@@ -1061,209 +1057,19 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 }
 
 /*
- * Comparison operators
- */
-
-/* Operations **/
-
-static int Eq(int a, int b) {  return(a==b);}
-static int NEq(int a, int b) {  return(a!=b);}
-
-typedef int (CompOp) (int,int);
-
-typedef struct cpt {
-  char *name;
-  CompOp *fonc,*foncop;
-} CompTab;
-
-/* Warning : sorted tab **/ 
-
-static CompTab comptab[] = {
-  {"<>",NEq ,Eq},
-  {"==",Eq  ,NEq},
-  {(char *) NULL,0,0}
-};
-
-static int SearchBComp(char *op, CompOp (**realop))
-{
-  int i=0;
-  while ( comptab[i].name != (char *) NULL)
-    {
-      int j;
-      j = strcmp(op,comptab[i].name);
-      if ( j == 0 )
-	{
-	  *realop = comptab[i].foncop;
-	  return(OK);
-	}
-      else
-	{ 
-	  if ( j <= 0)
-	    {
-	      Sciprintf("\nUnknow comp operator <%s>\n",op);
-	      return(FAIL);
-	    }
-	  else i++;
-	}
-    }
-  Sciprintf("\n Unknow comp operator <%s>\n",op);
-  return(FAIL);
-}
-
-/**
- * nsp_imatrix_compare:
- * @A: a #NspIMatrix 
- * @B: a #NspIMatrix 
- * @op: can be "<>" or "==" 
- *
- * term to term comparison between the two matrices @A and @B. 
- * Performs A(i,j) == B(i,j) or A(i,j) <> B(i,j) according to @op value.
- * Note that, if @A or @B is a 1x1 matrix its size is promoted to the size of the 
- * other argument when applying @op operator.
- *
- * returns a #NspIMatrix. 
- */
-
-NspBMatrix  *nsp_imatrix_compare(const NspIMatrix *A,const  NspIMatrix *B, char *op)
-{
-  CompOp *realop;
-  int i;
-  NspBMatrix *Loc ;
-  if ( SearchBComp(op,&realop) == FAIL) return(NULLBMAT);
-  if ( A->mn != B->mn)
-    {
-      if ( B->mn == 1 && A->mn != 0  ) 
-	{
-	  /* Special case B is a constant, Loc created with true */
-	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
-	  if ( Loc == NULLBMAT) { return(NULLBMAT);   }
-	  for ( i = 0 ; i < A->mn ; i++ )  
-	    if ( (*realop)(A->Gint[i],B->Gint[0]) ) Loc->B[i] = FALSE;
-	  return(Loc);
-	}
-      if ( A->mn == 1 && B->mn != 0 ) 
-	{
-	  /* Special case A is a constant */
-	  Loc =nsp_bmatrix_create(NVOID,B->m,B->n);
-	  if ( Loc == NULLBMAT)     { return(NULLBMAT);  }
-	  for ( i = 0 ; i < B->mn ; i++ )  
-	    if ( (*realop)(A->Gint[0],B->Gint[i]) ) Loc->B[i] = FALSE;
-	  return(Loc);
-	}
-      /* Incompatible dimensions **/
-      if ( strcmp(op,"==") == 0) 
-	{
-	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
-	  Loc->B[0] = FALSE;
-	  return Loc;
-	}
-      else if ( strcmp(op,"<>") == 0) 
-	{
-	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
-	  Loc->B[0] = TRUE ;
-	  return Loc;
-	}
-      else 
-	{
-	  Scierror("Error:\tIncompatible dimensions\n");
-	  return( NULLBMAT);
-	}
-    }
-  else 
-    {
-      /* A and B are of same dimensions */
-      if ( A->mn == 0) 
-	{
-	  Loc =nsp_bmatrix_create(NVOID,1,1);
-	  if ( Loc == NULLBMAT) return(NULLBMAT);
-	  if ( (*realop)(1,1)) Loc->B[0] = FALSE;
-	}
-      else
-	{
-	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
-	  if ( Loc == NULLBMAT) return(NULLBMAT);
-	  for ( i = 0 ; i < A->mn ; i++ )  
-	    if ( (*realop)(A->Gint[i],B->Gint[i])) Loc->B[i] = FALSE;
-	}
-    }
-  return(Loc);
-}
-
-/**
- * nsp_imatrix_full_compare
- * @A: a #NspIMatrix 
- * @B: a #NspIMatrix 
- * @op: can be "<>" or "==" 
- * @err: pointer to an integer
- * 
- * %TRUE is returned if @A(i,j) op @B(i,j) is %TRUE for all indices. 
- * Note that, if @A or @B is a 1x1 matrix its size is promoted to the size of the 
- * other argument when applying @op operator. In all the other cases %FALSE is returned. 
- * 
- * Return value: %TRUE or %FALSE.
- */ 
-
-int nsp_imatrix_full_compare(const NspIMatrix *A,const NspIMatrix *B, char *op,int *err)
-{
-  CompOp *realop;
-  int i,rep=TRUE;
-  *err=0;
-  if ( SearchBComp(op,&realop) == FAIL) return FALSE;
-  /* Loc = true */ 
-  if ( A->mn != B->mn)
-    {
-      if ( B->mn == 1 ) 
-	{
-	  for ( i = 0 ; i < A->mn ; i++ )  
-	    {
-	      if ( (*realop)(A->Gint[i],B->Gint[0]) ) 
-		{ 
-		  rep =  FALSE;
-		  break;
-		}
-	    }
-	  return rep ;
-	}
-      if ( A->mn == 1) 
-	{
-	  for ( i = 0 ; i < B->mn ; i++ )  
-	    {
-	      if ( (*realop)(A->Gint[i],B->Gint[0]) ) 
-		{ 
-		  rep  = FALSE;
-		  break;
-		}
-	    }
-	  return rep  ;
-	}
-      /*       Scierror("Error:\tIncompatible dimensions\n"); */
-      *err=1;
-      return FALSE; 
-    }
-  else 
-    {
-      for ( i = 0 ; i < A->mn ; i++ )  
-	{
-	  if ( (*realop)(A->Gint[i],B->Gint[i]) ) 
-	    {
-	      rep =  FALSE;
-	      break ;
-	    }
-	}
-    }
-  return rep;
-}
-
-
-/*
  * routines for output of boolean matrices 
  */
 
 static void nsp_int_print(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
-#define IMAT_PRINT(name) Sciprintf("%5d",M->name[i+(M->m)*j]);break;
+  char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",	
+		 "%*u", "%*d", "%*u", "%*d",        
+		 "%*d", "%*d", "%*u", "%*d",
+		 "%*u",NULL};
+#define IMAT_PRINT(name) Sciprintf(fmt[M->itype],5,M->name[i+(M->m)*j]);break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
+  Sciprintf("int64=%d\n",sizeof(gint64));
 #undef IMAT_PRINT
 }
 

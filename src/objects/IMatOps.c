@@ -39,10 +39,6 @@ static int nsp_iarray_mini(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMat
 static void IKronecker (NspIMatrix *A,NspIMatrix *B,NspIMatrix *PK);
 typedef int (*AdSu) (const int,const void *,void *);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
-static int MatOpScalar (NspIMatrix *Mat1,NspIMatrix *Mat2,AdSu F1);
-static int nsp_imatrix_readline(FILE *fd, char *Info);
-static int nsp_numtokens(char *string);
-static void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc);
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
@@ -65,30 +61,42 @@ static int MatNoOp(NspIMatrix *A)
 
 static int MatOp(NspIMatrix *A, NspIMatrix *B, MPM F1, PM F2, MPM F3, int flag)
 {
-  /* A = [] */ 
+
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
+    }
   if ( A->mn == 0) 
     {
+      /* A = [] */ 
       if ( flag == 1) return OK ; 
       else
 	{
+	  int i;
 	  /* flag != 1 ==> [] op A  returns F4(A) **/
 	  /* resize A to B */ 
-	  if ( nsp_imatrix_fill_with(A,B) == FAIL) return FAIL;
+	  if ( nsp_imatrix_resize(A, B->m, B->n) == FAIL) return FAIL;
+#define IMAT_AC(name) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[i];break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
 	  return (*F2)(A); 
 	}
     }
-  /* B = [] */ 
   if ( B->mn == 0) 
     {
+      /* B = [] */ 
       if ( flag == 1) 
 	/* flag == 1 ==> A op [] returns [] **/
 	return  nsp_imatrix_resize(A,0,0); 
       else
 	return OK; 
     }
-  /* B is scalar */ 
   if ( B->mn == 1) 
-    return (*F1)(A,B);
+    {
+      /* B is scalar */ 
+      return (*F1)(A,B);
+    }
   else if ( A->mn == 1 ) 
     {
       if ( nsp_imatrix_scalar_to_mn(A,B->m,B->n) == FAIL) return FAIL; 
@@ -97,23 +105,6 @@ static int MatOp(NspIMatrix *A, NspIMatrix *B, MPM F1, PM F2, MPM F3, int flag)
   return (*F3)(A,B); 
 }
 
-
-/* a generic function for Mat op scalar 
- *   Mat1 is a Matrix Mat2 is a scalar 
- *   F1 is used if both argument are real
- *   F2 is used if both are complex 
- **/
-
-static int MatOpScalar(NspIMatrix *Mat1, NspIMatrix *Mat2, AdSu F1)
-{
-  if ( Mat1->itype != Mat2->itype ) 
-    {
-      Scierror("Error: arguments must have the same integre type\n");
-      return FAIL;
-    }
-  (*F1)((Mat1->mn),Mat2->Iv,Mat1->Iv);
-  return OK;
-}
 
 
 /**
@@ -141,7 +132,7 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
 
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return NULL;
     }
   switch ( flag ) 
@@ -174,25 +165,13 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
   if ( left == 0 )
     {
       if ( (Loc = nsp_imatrix_create(NVOID,m,n,A->itype)) == NULLIMAT ) goto err;
-      nsp_imatrix_set_rval(Loc, 0.0); 
       return Loc;
     }
 
   if ( (Loc =nsp_imatrix_create(NVOID,m,n,A->itype)) == NULLIMAT ) goto err;
 
-  if ( Loc->m != 0 && Loc->n != 0) 
-    {
-      /* we have checked empty case to avoid a Scierror raised by zgemm or dgemm */
-      /*
-	if ( Loc->rc_type == 'c' ) 
-	C2F(zgemm)(flagA,flagB,&m,&n,&left,&zalpha,A->C,&A->m,B->C,&B->m,
-	&zbeta,Loc->C,&Loc->m,1,1);
-	else 
-	C2F(dgemm)(flagA,flagB,&m,&n,&left,&alpha,A->R,&A->m,B->R,&B->m,
-	&beta,Loc->R,&Loc->m,1,1); 
-      */
-    }
   return Loc;
+
  err:
   return NULLIMAT;
 }
@@ -234,7 +213,7 @@ int nsp_imatrix_dadd(NspIMatrix *Mat1, NspIMatrix *Mat2)
   int i;
   if ( Mat1->itype != Mat2->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 
@@ -344,7 +323,7 @@ int nsp_imatrix_dsub(NspIMatrix *Mat1, NspIMatrix *Mat2)
   int i;
   if ( Mat1->itype != Mat2->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 
@@ -450,7 +429,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
 
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
   if (  SameDim(A,B) )
@@ -489,7 +468,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
       if ( flag == 1)
 	{
 	  if ( nsp_imatrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
-	  nsp_imatrix_set_rval(Ind,indval);
+	  /* nsp_imatrix_set_rval(Ind,indval); */
 	}
 #define IMAT_MAX(name)				\
       for ( i = 0; i < A->mn ; i++ )		\
@@ -538,7 +517,7 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
   int i,indval;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
   if (  SameDim(A,B) )
@@ -577,7 +556,7 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
       if ( flag == 1)
 	{
 	  if ( nsp_imatrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
-	  nsp_imatrix_set_rval(Ind,indval);
+	  /* nsp_imatrix_set_rval(Ind,indval); */
 	}
 #define IMAT_MAX(name)				\
       for ( i = 0; i < A->mn ; i++ )		\
@@ -617,7 +596,7 @@ NspIMatrix *nsp_imatrix_kron(NspIMatrix *A, NspIMatrix *B)
   NspIMatrix *Loc;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return NULLIMAT;
     }
   if ((Loc = nsp_imatrix_create(NVOID,B->m*A->m,B->n*A->n,A->itype)) == NULLIMAT) 
@@ -1538,56 +1517,6 @@ NspIMatrix *nsp_imatrix_rand(int m, int n)
   return(Loc);
 }
 
-/**
- * nsp_set_urandseed:
- * @m: integer 
- * 
- * sets the seed of the default random generator.
- **/
-
-void nsp_set_urandseed(int m)
-{
-  rand_data[0] = Max(m,0);
-}
-
-/**
- * nsp_get_urandseed:
- * 
- * gets the seed of the default random generator.
- * 
- * Return value: the seed value as an integer.
- **/
-
-int nsp_get_urandseed(void)
-{
-  return rand_data[0];
-}
-
-/**
- * nsp_set_urandtype:
- * @m: integer
- * 
- * sets the default random generator to normal (@m=1) or uniform (@m=0).
- **/
-
-void nsp_set_urandtype(int m)
-{
-  rand_data[1]=m;
-}
-
-/**
- * nsp_get_urandtype:
- * 
- * gets the default genetor law (1 for normal law and 0 for uniform law)
- * 
- * Return value: 1 or 0.
- **/
-
-int nsp_get_urandtype(void)
-{
-  return rand_data[1];
-}
-
 
 /**
  * nsp_imatrix_pow_matscalar:
@@ -1823,8 +1752,8 @@ int nsp_imatrix_pow_el(NspIMatrix *A, NspIMatrix *B)
 {
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
-      return NULL;
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
     }
 
   if (SameDim(A,B))
@@ -1985,7 +1914,7 @@ int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B)
 {
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 
@@ -2059,7 +1988,7 @@ int nsp_imatrix_bdiv_el(NspIMatrix *A, NspIMatrix *B)
 {
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 
@@ -2139,7 +2068,7 @@ int nsp_imatrix_mult_el(NspIMatrix *A, NspIMatrix *B)
 {
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 
@@ -2203,7 +2132,18 @@ int nsp_imatrix_mult_el(NspIMatrix *A, NspIMatrix *B)
  
 int nsp_imatrix_mult_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2)
 {
-  return MatOpScalar(Mat1,Mat2,nsp_dvmul);
+  int i;
+  if ( Mat1->itype != Mat2->itype ) 
+    {
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
+    }
+#define IMAT_MULTEL(name)						\
+  for ( i = 0 ; i < Mat1->mn ; i++ ) Mat1->name[i] *= Mat2->name[0];	\
+  break;
+  NSP_ITYPE_SWITCH(Mat1->itype,IMAT_MULTEL);
+#undef IMAT_MULTEL
+  return OK;
 }
 
 /**
@@ -2224,7 +2164,7 @@ int nsp_imatrix_mult_scalar_bis(NspIMatrix *A, NspIMatrix *B)
   if ( A->mn == 0 )    return OK;
 #define IMAT_MULTEL(name)						\
   for ( i = 0 ; i < A->mn ; i++ )					\
-    A->name[i] *= B->name[0];							\
+    A->name[i] *= B->name[0];						\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_MULTEL);
 #undef IMAT_MULTEL
@@ -2292,7 +2232,7 @@ void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y)
   int i;
   if ( x->itype != y->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return ;
     }
 #define IMAT_IDIV(name)						\
@@ -2377,7 +2317,7 @@ int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B)
   int i ;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 #define IMAT_IAND(name)						\
@@ -2429,7 +2369,7 @@ int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B)
   int i ;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 #define IMAT_IOR(name)						\
@@ -2566,49 +2506,74 @@ static void IKronecker(NspIMatrix *A, NspIMatrix *B, NspIMatrix *PK)
 
 /* Operations **/
 
-static int Lt(double a, double b) {  return(a<b);}
-static int Le(double a, double b) {  return(a<=b);}
-static int Eq(double a, double b) {  return(a==b);}
-static int NEq(double a, double b) {  return(a!=b);}
-static int Gt(double a, double b) {  return(a>b);}
-static int Ge(double a, double b) {  return(a>=b);}
+static int Lt(nsp_itype itype,nsp_int_union a,nsp_int_union b) 
+{
+#define IMAT_COP(name) return a.name < b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
 
-static int Eq_nan(double a, double b) { if (isnan(a) && isnan(b)) return TRUE; return(a==b);}
-static int NEq_nan(double a, double b){ if (isnan(a) && isnan(b)) return FALSE;  return(a!=b);}
+static int Le(nsp_itype itype,nsp_int_union a, nsp_int_union b) 
+{
+#define IMAT_COP(name) return a.name <= b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
 
-static int C_Lt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)< nsp_abs_c(b));}
-static int C_Le(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)<=nsp_abs_c(b));}
-static int C_Eq(const doubleC *a,const  doubleC *b) {  return(a->r == b->r && a->i == b->i );}
-static int C_NEq(const doubleC *a,const  doubleC *b) {  return(a->r != b->r || a->i != b->i );}
-static int C_Gt(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)> nsp_abs_c(b));}
-static int C_Ge(const doubleC *a,const  doubleC *b) {  return(nsp_abs_c(a)>=nsp_abs_c(b));}
+static int Eq(nsp_itype itype,nsp_int_union a, nsp_int_union b)
+{
+#define IMAT_COP(name) return a.name == b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
 
-static int C_Eq_nan(const doubleC *a,const  doubleC *b) {  return Eq_nan(a->r,b->r) && Eq_nan(a->i,b->i );};
-static int C_NEq_nan(const doubleC *a,const  doubleC *b) { return NEq_nan(a->r,b->r) || NEq_nan(a->i,b->i );};
+static int NEq(nsp_itype itype,nsp_int_union a, nsp_int_union b)
+{
+#define IMAT_COP(name) return a.name != b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
 
-typedef int (CompOp) (double,double);
-typedef int (C_CompOp) (const doubleC *,const  doubleC *);
+static int Gt(nsp_itype itype,nsp_int_union a, nsp_int_union b) 
+{
+#define IMAT_COP(name) return a.name > b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
+
+static int Ge(nsp_itype itype,nsp_int_union a, nsp_int_union b) 
+{
+#define IMAT_COP(name) return a.name >= b.name 
+  NSP_ITYPE_SWITCH(itype,IMAT_COP);
+#undef IMAT_COP
+  return 0;
+}
+
+typedef int (CompOp) (nsp_itype itype,nsp_int_union a, nsp_int_union b);
 
 typedef struct cpt {
   char *name;
   CompOp *fonc,*foncop;
-  C_CompOp *C_fonc,*C_foncop;
 } CompTab;
 
 /* Warning : sorted tab **/ 
 
 static CompTab comptab[] = {
-  {"<",Lt  , Ge,C_Lt  , C_Ge},
-  {"<=",Le  ,Gt,C_Le  ,C_Gt},
-  {"<>",NEq ,Eq,C_NEq ,C_Eq},
-  {"==",Eq  ,NEq,C_Eq  ,C_NEq},
-  {"=nan=",Eq_nan ,NEq_nan , C_Eq_nan  ,C_NEq_nan },
-  {">",Gt  , Le,C_Gt  , C_Le},
-  {">=",Ge  , Lt,C_Ge  , C_Lt},
-  {(char *) NULL, 0,0,0,0}
+  {"<",Lt  , Ge},
+  {"<=",Le  ,Gt},
+  {"<>",NEq ,Eq},
+  {"==",Eq  ,NEq},
+  {">",Gt  , Le},
+  {">=",Ge  , Lt},
+  {(char *) NULL, 0,0}
 };
 
-static int SearchComp(const char *op, CompOp (**realop), C_CompOp (**C_realop))
+static int SearchComp(const char *op, CompOp (**realop))
 {
   int i=0;
   while ( comptab[i].name != (char *) NULL)
@@ -2618,7 +2583,6 @@ static int SearchComp(const char *op, CompOp (**realop), C_CompOp (**C_realop))
       if ( j == 0 )
 	{
 	  *realop = comptab[i].fonc;
-	  *C_realop = comptab[i].C_fonc;
 	  return(OK);
 	}
       else
@@ -2635,10 +2599,6 @@ static int SearchComp(const char *op, CompOp (**realop), C_CompOp (**C_realop))
   return(FAIL);
 }
 
-
-#define MAKE_REAL_COMP(op)						\
-  for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B )	\
-    Loc->B[i] = A->R[iA] op B->R[iB] 
 
 /**
  * nsp_imatrix_comp:
@@ -2660,8 +2620,8 @@ NspBMatrix  *nsp_imatrix_comp(NspIMatrix *A, NspIMatrix *B,const char *op)
   NspBMatrix *Loc ;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
-      return FAIL;
+      Scierror("Error: arguments must have the same integer type\n");
+      return NULL;
     }
 
   if ( !( A->m == B->m  &&  A->n == B->n ) )
@@ -2700,20 +2660,26 @@ NspBMatrix  *nsp_imatrix_comp(NspIMatrix *A, NspIMatrix *B,const char *op)
     }
 
   if ( (Loc =nsp_bmatrix_create(NVOID,m,n)) == NULLBMAT ) return NULLBMAT;
-  
+
+#define MAKE_COMP(name,op)						\
+  for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B )	\
+    Loc->B[i] = A->name[iA] op B->name[iB];				\
+  break;
+
   if ( strcmp(op,"==") == 0 )
-    MAKE_REAL_COMP(==);
+    { NSP_ITYPE_SWITCH2(A->itype, MAKE_COMP,==); }
   else if ( strcmp(op,"<>") == 0 )
-    MAKE_REAL_COMP(!=);
+    { NSP_ITYPE_SWITCH2(A->itype,MAKE_COMP, !=); }
   else if ( strcmp(op,"<=") == 0 )
-    MAKE_REAL_COMP(<=);
+    { NSP_ITYPE_SWITCH2(A->itype,MAKE_COMP, <=); }
   else if ( strcmp(op,">=") == 0 )
-    MAKE_REAL_COMP(>=);
+    { NSP_ITYPE_SWITCH2(A->itype, MAKE_COMP, >=); }
   else if ( strcmp(op,"<") == 0 )
-    MAKE_REAL_COMP(<);
+    { NSP_ITYPE_SWITCH2(A->itype,MAKE_COMP, <); }
   else if ( strcmp(op,">") == 0 )
-    MAKE_REAL_COMP(>);
+    { NSP_ITYPE_SWITCH2(A->itype,MAKE_COMP, >); }
   return Loc;
+#undef MAKE_COMP
 }
 
 
@@ -2738,26 +2704,40 @@ NspBMatrix  *nsp_imatrix_comp(NspIMatrix *A, NspIMatrix *B,const char *op)
 
 int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op,int *err)
 {
+  nsp_int_union a, b;
   CompOp *realop;
-  C_CompOp *C_realop;
-  int i;
-  int Loc=TRUE ;
+  int i, Loc=TRUE ;
   *err=FALSE;
-  if ( SearchComp(op,&realop,&C_realop) == FAIL) { *err=TRUE; return FALSE;}
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: arguments must have the same integer type\n");
+      *err=TRUE;
+      return FALSE;
+    }
+
+  if ( SearchComp(op,&realop) == FAIL) { *err=TRUE; return FALSE;}
   if ( !( A->m == B->m && A->n == B->n ) )
     {
       if ( B->mn == 1 && A->mn != 0 ) 
 	{
-	  /* Special case B is a constant, Loc created with true */
-	  for ( i = 0 ; i < A->mn ; i++ )  
-	    if ( (*realop)(A->R[i],B->R[0])==FALSE ) return FALSE;
+	  /* Special case B is a constant, Loc created  */
+#define MAKE_COMP(name)							\
+	  for ( i = 0 ; i < A->mn ; i++ )				\
+	    if ( (*realop)(A->itype,(a.name= A->name[i],a),(b.name=B->name[0],b))==FALSE ) return FALSE; \
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype, MAKE_COMP);
+#undef MAKE_COMP
 	  return Loc;
 	}
       if ( A->mn == 1 && B->mn != 0 ) 
 	{
 	  /* Special case A is a constant */
-	  for ( i = 0 ; i < B->mn ; i++ )  
-	    if ( (*realop)(A->R[0],B->R[i]) ==FALSE ) return FALSE;
+#define MAKE_COMP(name)							\
+	  for ( i = 0 ; i < A->mn ; i++ )				\
+	    if ( (*realop)(A->itype,(a.name= A->name[0],a),(b.name=B->name[i],b))==FALSE ) return FALSE; \
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype, MAKE_COMP);
+#undef MAKE_COMP
 	  return(Loc);
 	}
       /* Incompatible dimensions */
@@ -2779,12 +2759,16 @@ int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op,int *err)
       /* A and B are of same dimensions */
       if ( A->mn == 0) 
 	{
-	  if ( (*realop)(1.0,1.0) ==FALSE ) return  FALSE;
+	  if ( (*realop)(nsp_gint,(a.Gint=1,a),(b.Gint=1,b)) ==FALSE ) return  FALSE;
 	}
       else
 	{
-	  for ( i = 0 ; i < A->mn ; i++ )  
-	    if ( (*realop)(A->R[i],B->R[i]) ==FALSE ) return FALSE;
+#define MAKE_COMP(name)							\
+	  for ( i = 0 ; i < A->mn ; i++ )				\
+	    if ( (*realop)(A->itype,(a.name= A->name[i],a),(b.name=B->name[i],b))==FALSE ) return FALSE; \
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype, MAKE_COMP);
+#undef MAKE_COMP
 	}
     }
   return TRUE;
@@ -2816,73 +2800,62 @@ int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op,int *err)
  * Return value: %OK or %FAIL  
  **/
 
-int nsp_imatrix_find(NspIMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2)
+
+/**
+ * nsp_imatrix_find:
+ * @A: a #NspIMatrix. 
+ * 
+ * returns in a #NspMatrix the indices for which the 
+ * #NspIMatrix @A is non null considering @A as o one dimensional array.
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT
+ */
+
+int nsp_imatrix_find(NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
   int j,i,count=0; 
   int nrow = ( A->mn == 0) ? 0: 1;
   /* first pass for counting */
-  if ( A->rc_type == 'r' ) 
-    {
-      for ( i=0 ; i < A->mn ; i++) 
-	if ( A->R[i] != 0.0 ) count++;
-    }
-  else 
-    {
-      for ( i=0 ; i < A->mn ; i++) 
-	if (A->C[i].r != 0.0 || A->C[i].i != 0.0) count++;
-    }
+#define IMAT_FIND1(name) for ( i=0 ; i < A->mn ; i++) \
+    {if ( A->name[i] ) count++;}break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND1);
+#undef FIND1
   /* special rule for scalars */
   if ( A-> m == 1 && count ==0) nrow =0;
   if ( lhs == 1) 
     {
-      *Res1 = nsp_imatrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res1 == NULLIMAT) return FAIL;
+      *Res1 = nsp_matrix_create(NVOID,'r',nrow, count);
+      if ( *Res1 == NULLMAT) return FAIL;
       count=0;
-      if ( A->rc_type == 'r' ) 
-	{
-	  for ( i = 0 ; i < A->mn ; i++ )
-	    if ( A->R[i] != 0.0 ) (*Res1)->R[count++] = i+1;
-	}
-      else 
-	{
-	  for ( i = 0 ; i < A->mn ; i++ )
-	    if ((A->C[i].r != 0.0 || A->C[i].i != 0.0))
-	      (*Res1)->R[count++] = i+1;
-	}
+#define IMAT_FIND2(name) for ( i=0 ; i < A->mn ; i++) \
+	if ( A->name[i] ) (*Res1)->R[count++] = i+1; break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_FIND2);
+#undef FIND2
     }
   else 
     {
       int k;
-      *Res1 = nsp_imatrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res1 == NULLIMAT) return FAIL;
-      *Res2 = nsp_imatrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res2 == NULLIMAT) return FAIL;
+      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
+      if ( *Res1 == NULLMAT) return FAIL;
+      *Res2 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
+      if ( *Res2 == NULLMAT) return FAIL;
       count=0;
-      if ( A->rc_type == 'r' ) 
-	{
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )
-	    for ( i = 0 ; i < A->m ; i++, k++ )
-	      if (  A->R[k] != 0.0 )
-		{
-		  (*Res1)->R[count] = i+1;
-		  (*Res2)->R[count++] = j+1;
-		}
-	}
-      else 
-	{
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )
-	    for ( i = 0 ; i < A->m ; i++, k++ )
-	      if (  A->C[k].r != 0.0 || A->C[k].i != 0.0 )
-		{
-		  (*Res1)->R[count] = i+1;
-		  (*Res2)->R[count++] = j+1;
-		}
-	}
+#define IMAT_FIND3(name)			\
+      for ( j = 0, k = 0 ; j < A->n ; j++ )	\
+	for ( i = 0 ; i < A->m ; i++, k++ )	\
+	  if (  A->name[k] != 0.0 )		\
+	    {					\
+	      (*Res1)->R[count] = i+1;		\
+	      (*Res2)->R[count++] = j+1;	\
+	    }					\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_FIND3);
+#undef FIND2
     }
   return OK;
 }
 
-
+#if 0
 static CompOp *SearchCompBis(const char *op)
 {
   int i = 0;
@@ -2894,6 +2867,7 @@ static CompOp *SearchCompBis(const char *op)
     }
   return NULL;
 }
+#endif 
 
 /**
  * nsp_imatrix_mfind:
@@ -2918,8 +2892,8 @@ static CompOp *SearchCompBis(const char *op)
  * indm+1 is the vector of indices which don't satisfy any of the m tests 
  *
  **/
-
-int nsp_imatrix_mfind(const NspIMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind)
+#if 0
+int nsp_imatrix_mfind(const NspIMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind)
 {
   CompOp **func = NULL;
   int *length = NULL;
@@ -2973,7 +2947,8 @@ err:
     nsp_imatrix_destroy(Ind[i]);
   return FAIL;
 }
-  
+#endif
+
 /**
  * nsp_imatrix_ndind2ind:
  * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensional matrix)
@@ -2997,7 +2972,7 @@ err:
  * Return value: %OK or %FAIL
  *
  **/
-
+#if 0
 int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **Ind)
 {
   NspIMatrix *ind;
@@ -3052,7 +3027,7 @@ int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **In
   nsp_imatrix_destroy(ind);
   return FAIL;
 }
-
+#endif 
   
 /**
  * nsp_imatrix_sub2ind:
@@ -3077,7 +3052,7 @@ int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **In
  * Return value: %OK or %FAIL
  *
  **/
-
+#if 0
 int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIMatrix **Ind)
 {
   NspIMatrix *ind;
@@ -3123,6 +3098,7 @@ int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIM
   nsp_imatrix_destroy(ind);
   return FAIL;
 }
+#endif 
 
 
 
@@ -3141,10 +3117,15 @@ int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIM
 int nsp_scalar_sub_imatrix_bis(NspIMatrix *A, NspIMatrix *B) 
 {
   int i;
-  if ( A->mn == 0 )
-    return OK;
-  for ( i = 0 ; i < A->mn ; i++ ) 
-    A->R[i] =  B->R[0] - A->R[i];
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
+    }
+  if ( A->mn == 0 )  return OK;
+#define IMAT_AC(name) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[0] - A->name[i];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
   return OK;
 }
 
@@ -3164,14 +3145,15 @@ int nsp_imatrix_sub_mat(NspIMatrix *A, NspIMatrix *B)
   int i;
   if ( A->itype != B->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
-      return NULL;
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
     }
 
   if (SameDim(A,B))
     {
-      for ( i = 0 ; i < A->mn ; i++ ) 
-	A->R[i] -= B->R[i];
+#define IMAT_AC(name) for ( i=0 ; i < A->mn ; i++) A->name[i] -= B->name[i];break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
       return OK;
     }
   else 
@@ -3196,10 +3178,19 @@ int nsp_imatrix_sub_mat(NspIMatrix *A, NspIMatrix *B)
 int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
 {
   int i,j, k;
-  
-  for ( j = 0, k=0 ; j < A->n ; j++)
-    for ( i = 0 ; i < A->m ; i++, k++ ) 
-      A->R[k] *= x->R[i];
+
+  if ( A->itype != x->itype ) 
+    {
+      Scierror("Error: arguments must have the same integre type\n");
+      return FAIL;
+    }
+#define IMAT_AC(name)				\
+  for ( j = 0, k=0 ; j < A->n ; j++)		\
+    for ( i = 0 ; i < A->m ; i++, k++ )		\
+      A->name[k] *= x->name[i];			\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
   return OK;
 }
 
@@ -3216,11 +3207,20 @@ int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
 
 int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x)
 {
+
   int i,j, k;
-  
-  for ( j = 0, k=0 ; j < A->n ; j++)
-    for ( i = 0 ; i < A->m ; i++, k++ ) 
-      A->R[k] *= x->R[j];
+  if ( A->itype != x->itype ) 
+    {
+      Scierror("Error: arguments must have the same integre type\n");
+      return FAIL;
+    }
+#define IMAT_AC(name)				\
+  for ( j = 0, k=0 ; j < A->n ; j++)		\
+    for ( i = 0 ; i < A->m ; i++, k++ )		\
+      A->name[k] *= x->name[j];			\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
   return OK;
 }
 
@@ -3236,8 +3236,12 @@ int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x)
 int nsp_imatrix_nnz(NspIMatrix *A)
 {
   int i, count =0;
-  for ( i = 0 ; i < A->mn ; i++ ) 
-    if ( A->R[i] != 0.0) count++;
+#define IMAT_AC(name)				\
+  for ( i = 0;  i < A->mn ; i++ )		\
+    if ( A->name[i] ) count++;			\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#undef IMAT_AC
   return count;
 }
 
@@ -3262,6 +3266,7 @@ int nsp_imatrix_nnz(NspIMatrix *A)
  * Return value: %OK or %FAIL
  **/
 
+#if 0
 int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolean first_ind)
 {
   int i0, i, i_old, *index;
@@ -3339,7 +3344,7 @@ int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolea
       return OK;
     }
 }
-
+#endif 
 
 /**
  * nsp_imatrix_dot:
@@ -3359,7 +3364,7 @@ int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolea
  *
  * Return value: an #NspIMatrix storing the result
  **/
-
+#if 0
 NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag)
 {
   NspIMatrix *C;
@@ -3398,7 +3403,7 @@ NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag)
     }
   return C;
 }
-
+#endif 
 
 /**
  * nsp_imatrix_cross:
@@ -3413,12 +3418,17 @@ NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag)
  *
  * Return value: an #NspIMatrix storing the result
  **/
-
+#if 0
 NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim)
 {
   NspIMatrix *Z;
-  char type;
   int p;
+
+  if ( X->itype != Y->itype ) 
+    {
+      Scierror("Error: arguments must have the same integre type\n");
+      return FAIL;
+    }
 
   /* these checks are also done by the nsp interface but this is useful in case of internal use */
   if ( (X->m != Y->m) || (X->n != Y->n) ) return NULLIMAT;
@@ -3434,46 +3444,15 @@ NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim)
   else
     return NULLIMAT;
 
-
-  /* type (real or complexe) of the resulting matrix */
-  type =  (X->rc_type == 'r' && Y->rc_type == 'r') ? 'r' : 'c'; 
-  if ( (Z = nsp_imatrix_create(NVOID, type, X->m, X->n)) == NULLIMAT )
+  if ( (Z = nsp_imatrix_create(NVOID, X->m, X->n,X->itype)) == NULLIMAT )
     return NULLIMAT;
 
   /* number of vectors pairs */
   p = dim == 1 ? X->n : X->m;
-
-  if ( X->rc_type == 'r' )
-    {
-      if ( Y->rc_type == 'r' )
-	nsp_dcross(X->R, Y->R, Z->R, p, dim);
-      else
-	{
-	  int k;
-	  doubleC *Xc;
-	  if ( (Xc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return NULLIMAT;
-	  for ( k = 0 ; k < 3*p ; k++ ) { Xc[k].r = X->R[k]; Xc[k].i = 0.0; }
-	  nsp_zcross(Xc, Y->C, Z->C, p, dim);
-	  FREE(Xc);
-	}
-    }
-  else
-    {
-      if ( Y->rc_type == 'r' )
-	{
-	  int k;
-	  doubleC *Yc;
-	  if ( (Yc = nsp_alloc_work_doubleC(3*p) ) == NULL ) return NULLIMAT;
-	  for ( k = 0 ; k < 3*p ; k++ ) { Yc[k].r = Y->R[k]; Yc[k].i = 0.0; }
-	  nsp_zcross(X->C, Yc, Z->C, p, dim);
-	  FREE(Yc);
-	}
-      else
-	nsp_zcross(X->C, Y->C, Z->C, p, dim);
-    }
-
+  nsp_dcross(X->R, Y->R, Z->R, p, dim);
   return Z;
 }
+#endif 
 
 /**
  * nsp_imatrix_issorted:
@@ -3504,46 +3483,62 @@ NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_ord
     case 0: 
       if ( strict_order )
 	{
-	  for ( i = 1 ; i < A->mn && bool ; i++ )
-	    bool = A->R[i-1] < A->R[i];
+#define IMAT_AC(name)					\
+	  for ( i = 1 ; i < A->mn && bool ; i++ )	\
+	    bool = A->name[i-1] < A->name[i];		\
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);	
+#undef IMAT_AC
 	}
       else
 	{
-	  for ( i = 1 ; i < A->mn && bool ; i++ )
-	    bool = (A->R[i-1] <= A->R[i]);
+#define IMAT_AC(name)					\
+	  for ( i = 1 ; i < A->mn && bool ; i++ )	\
+	    bool = (A->name[i-1] <= A->name[i]);	\
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);	
+#undef IMAT_AC
 	}
       C->B[0] = bool;
       break;
 
     case 1:  /* are rows sorted ? (in the lexicographic meaning) */
-      for ( i = 1 ; i < A->m && bool ; i++ )
-	for ( j = 0, k = i ; j < A->n ; j++, k+=A->m )
-	  {
-	    if ( A->R[k-1] < A->R[k] )
-	      { bool = TRUE; break; }
-	    else if ( A->R[k-1] == A->R[k] )
-	      bool = TRUE;
-	    else if ( A->R[k-1] > A->R[k] )
-	      { bool = FALSE; break; }
-	  }
-      C->B[0] = bool;
-      break;
-
+#define IMAT_AC(name)					\
+      for ( i = 1 ; i < A->m && bool ; i++ )		\
+	for ( j = 0, k = i ; j < A->n ; j++, k+=A->m )	\
+	  {						\
+	    if ( A->name[k-1] < A->name[k] )		\
+	      { bool = TRUE; break; }		\
+	    else if ( A->name[k-1] == A->name[k] )	\
+	      bool = TRUE;				\
+	    else if ( A->name[k-1] > A->name[k] )	\
+	      { bool = FALSE; break; }			\
+	  }						\
+      C->B[0] = bool;					\
+      break;						
+    {       NSP_ITYPE_SWITCH(A->itype,IMAT_AC);}
+#undef IMAT_AC
+    break;
     case 2: /* are columns sorted ? (in the lexicographic meaning) */
-      for ( j = 1, c0 = 0, c1 = A->m ; j < A->n && bool ; j++, c0+=A->m, c1+=A->m )
-	for ( i = 0  ; i < A->m ; i++)
-	  {
-	    if ( A->R[i+c0] < A->R[i+c1] )
-	      { bool = TRUE; break; }
-	    else if ( A->R[i+c0] == A->R[i+c1] )
-	      bool = TRUE;
-	    else if ( A->R[i+c0] > A->R[i+c1] )
-	      { bool = FALSE; break; }
-	  }
-      C->B[0] = bool;
+#define IMAT_AC(name)							\
+      for ( j = 1, c0 = 0, c1 = A->m ; j < A->n && bool ; j++, c0+=A->m, c1+=A->m ) \
+	for ( i = 0  ; i < A->m ; i++)					\
+	  {								\
+	    if ( A->name[i+c0] < A->name[i+c1] )			\
+	      { bool = TRUE; break; }					\
+	    else if ( A->name[i+c0] == A->name[i+c1] )			\
+	      bool = TRUE;						\
+	    else if ( A->name[i+c0] > A->name[i+c1] )			\
+	      { bool = FALSE; break; }					\
+	  }								\
+      C->B[0] = bool;							\
       break;
+    {
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
     }
-  
+#undef IMAT_AC
+    break;
+    }
   return C;
 }
 
@@ -3567,7 +3562,7 @@ NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspMatrix **i
   int i, k;
   if ( A->itype != x->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return NULL;
     }
 
