@@ -3035,6 +3035,64 @@ static int int_spcolmatrix_solve_tri(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* 
+ *  B = scale_rows(A,x)  (exists as a method but useful as a function too)
+ *
+ */
+static int int_spcolmatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A;
+  NspMatrix *x;
+  CheckLhs(1,1);
+  CheckRhs(2,2);
+
+  if ((A = GetSpColCopy (stack, 1)) == NULLSPCOL) return RET_BUG;
+
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: incompatible dimensions between first and second arguments \n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+
+  return 1;
+}
+
+/* 
+ *  B = scale_cols(A,x)  (exists as a method but useful as a function too)
+ *
+ */
+static int int_spcolmatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A;
+  NspMatrix *x;
+  CheckLhs(1,1);
+  CheckRhs(2,2);
+
+  if ((A = GetSpColCopy (stack, 1)) == NULLSPCOL) return RET_BUG;
+
+  if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+  CheckVector(NspFname(stack),1,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: incompatible dimensions between first and second arguments \n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+
+  return 1;
+}
+
 
 /*
  * The Interface for basic numerical sparse matrices operation 
@@ -3154,6 +3212,8 @@ static OpTab SpColMatrix_func[]={
   {"solve_tri_sp",int_spcolmatrix_solve_tri},
   {"length_sp",int_spcolmatrix_numel},
   {"numel_sp",int_spcolmatrix_numel},
+  {"scale_rows_sp_m",int_spcolmatrix_scale_rows},
+  {"scale_cols_sp_m",int_spcolmatrix_scale_cols},
   {(char *) 0, NULL}
 };
 
