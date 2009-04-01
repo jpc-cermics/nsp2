@@ -61,6 +61,24 @@ typedef union {
     guint64     Guint64;
 } nsp_int_union ;
 
+typedef union { 
+    void *    Iv;
+    gint     *Gint;
+    guint     *Guint;
+    gshort     *Gshort;
+    gushort     *Gushort;
+    glong     *Glong;
+    gulong     *Gulong;
+    gint8     *Gint8;
+    guint8     *Guint8;
+    gint16     *Gint16;
+    guint16     *Guint16;
+    gint32     *Gint32;
+    guint32     *Guint32;
+    gint64     *Gint64;
+    guint64     *Guint64;
+} nsp_int_union_ptr ;
+
 struct _NspIMatrix {
   /*< private >*/
   NspObject father; 
@@ -372,8 +390,8 @@ extern int nsp_imatrix_sub_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2);
 extern int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2); 
 extern int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
 extern int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
-extern int nsp_imatrix_minmax(NspIMatrix *A, int dim, NspIMatrix **Amin, NspIMatrix **Imin,
-			      NspIMatrix **Amax, NspIMatrix **Imax, int lhs);
+extern int nsp_imatrix_minmax(NspIMatrix *A, int dim, NspIMatrix **Amin, NspMatrix **Imin,
+			      NspIMatrix **Amax, NspMatrix **Imax, int lhs);
 extern NspIMatrix **nsp_imatrix_slec(char *file, int *Count); 
 extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
 extern int nsp_imatrix_inv_el(NspIMatrix *A); 
@@ -383,9 +401,9 @@ extern NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim);
 extern NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim); 
 extern NspIMatrix *nsp_imatrix_cum_prod(NspIMatrix *A,  int dim); 
 extern NspIMatrix *nsp_imatrix_cum_sum(NspIMatrix *A,  int dim); 
-extern NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs); 
-extern NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs); 
-extern NspIMatrix *nsp_imatrix_createinit(char *name, char type, int m, int n, double (*func) ()); 
+extern NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int lhs); 
+extern NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int lhs); 
+extern NspIMatrix *nsp_imatrix_createinit(char *name, nsp_itype type, int m, int n, int (*func)(int,int)); 
 extern void nsp_imatrix_triu(NspIMatrix *A, int k); 
 extern void nsp_imatrix_tril(NspIMatrix *A, int k); 
 extern NspIMatrix *nsp_imatrix_eye(int m, int n); 
