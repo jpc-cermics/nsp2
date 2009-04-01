@@ -41,11 +41,11 @@ several tests for instance:
    is(A,%types.Mat") && isvector(A)               // test if a numerical (full) matrix is a vector
    type(A,"string") == "Mat" && isvector(A)       // same test but using the type function
 
-   is(A,%types.Mat") & isvector(A) && isreal(A)   // test if a numerical (full) matrix is a real vector
+   is(A,%types.Mat") && isvector(A) && isreal(A)   // test if a numerical (full) matrix is a real vector
 
-   is(A,%types.Mat") & isscalar(A) && isreal(A)   // test if A is a real scalar
+   is(A,%types.Mat") && isscalar(A) && isreal(A)   // test if A is a real scalar
 
-   is(A,%types.SMat") & isscalar(A)               // test if A is a (scalar) string
+   is(A,%types.SMat") && isscalar(A)               // test if A is a (scalar) string
 \end{verbatim}
 
 If you want to test the row or column form of a vector, use \manlink{size}{size} instead of \verb+isvector+:
