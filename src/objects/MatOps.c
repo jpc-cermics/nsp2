@@ -3135,11 +3135,6 @@ int nsp_mat_mult_tt(NspMatrix *A, NspMatrix *B)
  * @B: 
  * 
  *  @A = @A .* @B, when the matrices have the same dimensions.
- *  plus the special following cases which add the possibility 
- *  to compute efficiently with a diagonal matrix stored as a vector 
- *  (Bruno, sept 8 2005) by adding 2 new rules for the .* operator :
- *      1/ In place of diag(A)*B we do A.*B (if B is m x n, A must be m x 1)
- *      2/ In place of A*diag(B) we do A.*B (if A is m x n, B must be 1 x n)
  * 
  * Return value: %OK or %FAIL.
  **/
@@ -3173,89 +3168,6 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 	      }
 	  else 
 	    for ( i = 0 ; i < A->mn ; i++ )nsp_prod_c(&A->C[i],&B->C[i]);
-	}
-      return OK;
-    }
-  else if ( A->m == B->m  &&  A->n == 1 )    /* diag(A)*B */
-    {
-      /* result must be in A so copy A first in coef then resize A to the sizes of B */
-      NspMatrix *coef;
-      int i,j, k=0;
-      if ( (coef=nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
-      if ( nsp_matrix_resize(A,B->m,B->n) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
-
-      if(A->rc_type == 'r' ) 
-	{
-	  if ( B->rc_type == 'r') 
-	    {
-	      for ( j = 0 ; j < A->n ; j++)
-		for ( i = 0 ; i < A->m ; i++, k++ ) A->R[k] = B->R[k]*coef->R[i];
-	    }
-	  else 
-	    {
-	      if (nsp_mat_complexify(A,0.00) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
-	      for ( j = 0 ; j < A->n ; j++)
-		for ( i = 0 ; i < A->m ; i++, k++ ) 
-		  {
-		    A->C[k].r = B->C[k].r * coef->R[i];
-		    A->C[k].i = B->C[k].i * coef->R[i];
-		  }
-	    }
-	}
-      else
-	{
-	  if ( B->rc_type == 'r') 
-	    for ( j = 0 ; j < A->n ; j++)
-	      for ( i = 0 ; i < A->m ; i++, k++ ) 
-		{
-		  A->C[k].r = B->R[k] * coef->C[i].r;
-		  A->C[k].i = B->R[k] * coef->C[i].i;;
-		}
-	  else 
-	    for ( j = 0 ; j < A->n ; j++)
-	      for ( i = 0 ; i < A->m ; i++, k++ ) 
-		{
-		  A->C[k].r = B->C[k].r * coef->C[i].r -  B->C[k].i * coef->C[i].i;
-		  A->C[k].i = B->C[k].r * coef->C[i].i +  B->C[k].i * coef->C[i].r;
-		}
-	}
-      nsp_matrix_destroy(coef);
-      return OK;
-    }
-  else if ( A->n == B->n  &&  B->m == 1 )    /* A*diag(B) */
-    {
-      int i,j, k=0;
-      if(A->rc_type == 'r' ) 
-	{
-	  if ( B->rc_type == 'r') 
-	    {
-	      for ( j = 0 ; j < A->n ; j++)
-		for ( i = 0 ; i < A->m ; i++, k++ ) A->R[k] *= B->R[j];
-	    }
-	  else 
-	    {
-	      if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
-	      for ( j = 0 ; j < A->n ; j++)
-		for ( i = 0 ; i < A->m ; i++, k++ ) 
-		  {
-		    A->C[k].i = A->C[k].r * B->C[j].i;
-		    A->C[k].r = A->C[k].r * B->C[j].r;
-		  }
-	    }
-	}
-      else
-	{
-	  if ( B->rc_type == 'r') 
-	    for ( j = 0 ; j < A->n ; j++)
-	      for ( i = 0 ; i < A->m ; i++, k++ ) 
-		{
-		  A->C[k].r *= B->R[j];
-		  A->C[k].i *= B->R[j];
-		}
-	  else 
-	    for ( j = 0 ; j < A->n ; j++)
-	      for ( i = 0 ; i < A->m ; i++, k++ ) 
-		nsp_prod_c(&A->C[k],&B->C[j]);
 	}
       return OK;
     }
