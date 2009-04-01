@@ -1,4 +1,4 @@
-function [B] = pinv(A,tol=[])
+function [B] = pinv_m(A,tol=[])
 
 // Copyright (C) 2005 Bruno Pinçon
 //
@@ -24,26 +24,23 @@ function [B] = pinv(A,tol=[])
 //    singular values under tol * max(singular values) are
 //    not taken into account.
 //   
-//    rmk: uses at the end the new .* feature
-  
-  if type(A,"short")~="m" then
-    error("first arg must be a matrix of numbers"), 
-  end
-  
   if isempty(tol) then, tol = max(size(A))*%eps, end
   
   [m,n] = size(A)
   
   [U,s,V] = svd(A,mode="e")
+
   if s(1) == 0 then
-    B = zeros_new(n,m)
+    B = zeros(n,m)
   else
     k = max(find(s >= s(1)*tol))
     si = 1 ./s(1:k)
     if k < min(m,n) then
-      B = V(:,1:k).*si'*U(:,1:k)'
+      // compute B = V(:,1:k)*diag(si)*U(:,1:k)'
+      B = pmult(scale_cols(V(:,1:k),si) , U(:,1:k), 2)      
     else
-      B = V.*si'*U'
+      // compute B = V*diag(si)*U'
+      B = pmult(scale_cols(V,si), U, 2)
     end
   end
   
