@@ -1063,13 +1063,17 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 static void nsp_int_print(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
+  /*  nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
+		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
+		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
+		 nsp_guint64 } nsp_itype;
+  */
   char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",	
 		 "%*u", "%*d", "%*u", "%*d",        
-		 "%*d", "%*d", "%*u", "%*d",
-		 "%*u",NULL};
+		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,
+		 "%*"G_GUINT64_FORMAT,NULL};
 #define IMAT_PRINT(name) Sciprintf(fmt[M->itype],5,M->name[i+(M->m)*j]);break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
-  Sciprintf("int64=%d\n",sizeof(gint64));
 #undef IMAT_PRINT
 }
 
