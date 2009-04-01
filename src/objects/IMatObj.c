@@ -1028,6 +1028,7 @@ static OpTab IMatrix_func[]={
   {"m2i",int_imatrix_m2i},
   {"redim_i",int_matint_redim}, 
   {"matrix_i", int_matint_redim},
+  {"reshape_i", int_matint_redim},
   {"resize_i",int_imatrix_resize},
   {"eq_i_i" ,  int_imatrix_eq },
   {"ne_i_i" ,  int_imatrix_neq },

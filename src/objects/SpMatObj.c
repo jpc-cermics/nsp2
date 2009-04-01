@@ -1991,6 +1991,7 @@ static OpTab SpRowMatrix_func[]={
   {"multt_sprow_sprow",int_sprowmatrix_multt}, 
   {"redim_sprow",int_sprowmatrix_redim},
   {"matrix_sprow",int_sprowmatrix_redim},
+  {"reshape_sprow",int_sprowmatrix_redim},
   {"concatd_sprow_sprow" ,  int_sprowmatrix_concatd },
   {"concatr_sprow_sprow" ,  int_sprowmatrix_concatr },
   {"concatdiag_sprow_sprow" ,  int_sprowmatrix_concatdiag },

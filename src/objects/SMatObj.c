@@ -1943,6 +1943,7 @@ static OpTab SMatrix_func[]={
   {"smat_create_m",int_smxcreate},
   {"redim_s",int_matint_redim},
   {"matrix_s", int_matint_redim},
+  {"reshape_s", int_matint_redim},
   {"concatr_s_s",int_matint_concatr},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"concatr_s_m",int_smxconcatr_s_m},

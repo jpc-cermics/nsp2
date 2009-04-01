@@ -1089,6 +1089,7 @@ static OpTab BMatrix_func[]={
   {"seq_or_b_b",int_bmatrix_or},
   {"redim_b",int_matint_redim}, 
   {"matrix_b", int_matint_redim},
+  {"reshape_b", int_matint_redim},
   {"resize_b",int_bmatrix_resize},
   {"eq_b_b" ,  int_bmatrix_eq },
   {"ne_b_b" ,  int_bmatrix_neq },

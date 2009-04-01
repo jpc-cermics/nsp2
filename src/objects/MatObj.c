@@ -5371,6 +5371,7 @@ static OpTab Matrix_func[] = {
   {"testm", int_mxtestmatrix},
   {"testmatrix", int_mxtestmatrix},
   {"matrix_m", int_matint_redim},
+  {"reshape_m", int_matint_redim},
   {"quote_m", int_mxquote},
   {"dprim_m", int_mxdquote},
   {"abs_m", int_mxabs},
