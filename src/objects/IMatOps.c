@@ -33,8 +33,10 @@
 #include <nsp/blas.h>
 #include <nsp/matutil.h>
 
+static int nsp_iarray_maxi(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amax,int off2,int incr);
+static int nsp_iarray_mini(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr);
 
-static void Kronecker (NspIMatrix *A,NspIMatrix *B,NspIMatrix *PK);
+static void IKronecker (NspIMatrix *A,NspIMatrix *B,NspIMatrix *PK);
 typedef int (*AdSu) (const int,const void *,void *);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspIMatrix *Mat1,NspIMatrix *Mat2,AdSu F1);
@@ -480,7 +482,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->name[0]; break\
+      if ( flag == 1) indval = (int) Ind->name[0]; break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX);
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
@@ -568,7 +570,7 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->name[0]; break\
+      if ( flag == 1) indval = (int) Ind->name[0]; break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX);
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
@@ -1097,7 +1099,7 @@ NspIMatrix *nsp_imatrix_diff(NspIMatrix *A, int order, int dim)
 }
 
 
-typedef int (*MaMi) (int,const double *,int,double *);
+typedef int (*MaMi) (int,nsp_itype,NspIMatrix *,int ,NspIMatrix *,int ,int );
 
 /*
  *  MatMaxiMini(A, dim_flag, Imax, lhs, func)
@@ -1123,7 +1125,7 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
       if ((M = nsp_imatrix_create(NVOID,Min(A->m,1),Min(A->n,1),A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
       if (M->mn == 1) 
-	imax = (*F)(A->mn,A->Iv,1,M->Iv);
+	imax = (*F)(A->mn,A->itype,A->Iv,0,M->Iv,0,1);
       if ( lhs == 2 ) 
 	{
 	  if ((*Imax = nsp_matrix_create(NVOID,'r',Min(A->m,1),Min(A->n,1))) == NULLMAT)
@@ -1142,14 +1144,14 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
 	  if ( M->mn > 0 )
 	    for ( j= 0 ; j < A->n ; j++) 
 	      {
-		(*Imax)->R[j]=(*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
+		(*Imax)->R[j]=(*F)(A->m,A->itype,A->Iv,(A->m)*j,M->Iv,j,1); 
 	      }
 	}
       else
 	if ( M->mn > 0 )
 	  for ( j= 0 ; j < A->n ; j++) 
 	    {
-	      (*F)(A->m,A->R+(A->m)*j,1,&M->R[j]); 
+	      (*F)(A->m,A->itype,A->Iv,(A->m)*j,M->Iv,j,1); 
 	    }
       break ;
 
@@ -1163,43 +1165,32 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
 	    return NULLIMAT; 
 	  if ( M->mn > 0 )
 	    for ( j= 0 ; j < A->m ; j++) 
-	      (*Imax)->R[j] = (*F)(A->mn,A->R+j,inc,&M->R[j]);
+	      (*Imax)->R[j] = (*F)(A->mn,A->itype,A->Iv,j,M->Iv,j,1);
 	}
       else
 	if ( M->mn > 0 )
-	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A->R+j,inc,&M->R[j]);
+	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A->itype,A->Iv,j,M->Iv,j,inc);
       break;
     }
   return M;
 }
 
-int nsp_array_maxi(int n,const double *A, int incr, double *amax)
+
+int nsp_iarray_maxi(int n,nsp_itype itype,NspIMatrix *A, int off1, NspIMatrix  *amax,int off2,int incr)
 {
-  int imax=1,i,i1=1;
-  if ( n <= 0 ) return 0;
-
-  *amax = A[0];
-  /* look for the first non Nan component */
-  i = 0; i1 = 0;
-  while ( i < n && ISNAN(A[i]) )
-    {
-      i += incr; i1++;
-    }
-
-  if ( i < n )  /* this vector is not only with Nan... */
-    {
-      /* So init with the first non Nan component then do the usual loop */
-      *amax = A[i]; imax = i1+1;
-      for (  ; i < n ; i += incr )
-	{
-	  if ( A[i] > *amax ) 
-	    {
-	      *amax = A[i];
-	      imax = i1+1;
-	    }
-	  i1++;
-	}
-    }
+  nsp_int_union xx; 
+  int imax=0,i;
+#define IMAT_MAX(name) xx.name = A->name[off1];	\
+  for ( i= 0 ; i < n ; i+= incr)		\
+    if ( A->name[i+off1] > xx.name )		\
+      {						\
+	xx.name =A->name[i+off1] ;		\
+	imax = i+1;				\
+      }						\
+  amax->name[off2]=xx.name;			\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_MAX);
+#undef IMAT_MAX
   return imax;
 }
 
@@ -1216,9 +1207,9 @@ int nsp_array_maxi(int n,const double *A, int incr, double *amax)
  * Return value: 
  **/
 
-NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs)
+NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_array_maxi);
+  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_iarray_maxi);
 }
 
 
@@ -1229,36 +1220,23 @@ NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int
  */
 
 
-int nsp_array_mini(int n, const double *A, int incr, double *amin)
+int nsp_iarray_mini(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr)
 {
-  int imin=1,i,i1=0;
-  if ( n <= 0 ) return 0;
-
-  *amin= A[0];
-  /* look for the first non Nan component */
-  i = 0; i1 = 0;
-  while ( i < n && ISNAN(A[i]) )
-    {
-      i += incr; i1++;
-    }
-
-  if ( i < n )  /* this vector is not only with Nan... */
-    {
-      /* So init with the first non Nan component then do the usual loop */
-      *amin = A[i]; imin = i1+1;
-      for ( ; i < n ; i += incr )
-	{
-	  if ( A[i] < *amin ) 
-	    {
-	      *amin = A[i];
-	      imin = i1+1;
-	    }
-	  i1++;
-	}
-    }
-  return imin;
+  nsp_int_union xx; 
+  int imax=0,i;
+#define IMAT_MAX(name) xx.name = A->name[off1];	\
+  for ( i= 0 ; i < n ; i+= incr)		\
+    if ( A->name[i+off1] < xx.name )		\
+      {						\
+	xx.name =A->name[i+off1] ;		\
+	imax = i+1;				\
+      }						\
+  amin->name[off2]=xx.name;			\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_MAX);
+#undef IMAT_MAX
+  return imax;
 }
-
 
 
 /**
@@ -1272,9 +1250,9 @@ int nsp_array_mini(int n, const double *A, int incr, double *amin)
  * 
  * Return value: 
  **/
-NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int lhs)
+NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 {
-  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_array_mini);
+  return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_iarray_mini);
 }
 
 
@@ -1285,39 +1263,32 @@ NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspIMatrix **Imax, int
  *  one to the current minimum and the other to the current 
  *  maximum) because it mail fails if there are Nan components.
  */
-static void VMiniMaxi(int n, double *A, int incr, double *Amin, double *Amax,
-		      int *Imin, int *Imax)
+
+static void VIMiniMaxi(int n,NspIMatrix *A, int incr, nsp_int_union *Amin,nsp_int_union *Amax,
+		       int *Imin, int *Imax)
 {
-  int i,i1, imin, imax;
-  double amin, amax;
-  imin = imax = 1; amin = amax = A[0];
+  int i, imin, imax;
+  imin = imax = 1; 
+#define IMAT_MAX(name)				\
+  Amin->name =Amax->name = A->name[0];		\
+  for ( i=0  ; i < n ; i += incr)		\
+    {						\
+      if ( A->name[i] < Amin->name )		\
+	{					\
+	  Amin->name = A->name[i];		\
+	  imin = i;				\
+	}					\
+      else if ( A->name[i] > Amax->name )	\
+	{					\
+	  Amax->name = A->name[i];		\
+	  imax = i;				\
+	}					\
+    }						\
+  break;					
+  NSP_ITYPE_SWITCH(A->itype,IMAT_MAX);
 
-  /* look for the first non Nan component */
-  i = 0; i1 = 1;
-  while ( i1 <= n && ISNAN(A[i]) ) { i += incr; i1++; }
+#undef IMAT_MAX
 
-  if ( i1 <= n )
-    {
-      /* init with the first non Nan component then do the usual loop */
-      amin = amax = A[i]; imin = imax = i1;
-
-      i1++; i+=incr;
-      for (  ; i1 <= n ; i += incr, i1++ )
-	{
-	  if ( A[i] < amin )
-	    {
-	      amin = A[i]; imin = i1;
-	    }
-	  else if ( A[i] > amax )
-	    {
-	      amax = A[i];
-	      imax = i1;
-	    }
-	}
-    }
-
-  *Amax = amax; *Amin = amin; *Imax = imax; *Imin = imin;
-  return;
 }
 
 /**
@@ -1367,19 +1338,19 @@ int nsp_imatrix_minmax(NspIMatrix *A, int dim, NspIMatrix **Amin, NspIMatrix **I
 
   if ( dim == 0 )
     {
-      VMiniMaxi(A->mn, A->R, 1, amin->R, amax->R, &indmin, &indmax);
+      VIMiniMaxi(A->mn, A, 1, amin, amax, &indmin, &indmax);
       if (lhs > 2) {imin->R[0] = (double) indmin; imax->R[0] = (double) indmax;}
     }
   else if ( dim == 1 )
     for ( k = 0 ; k < A->n ; k++ )
       {
-	VMiniMaxi(A->m, &(A->R[k*A->m]), 1, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
+	VIMiniMaxi(A->m, &(A->R[k*A->m]), 1, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
 	if (lhs > 2) {imin->R[k] = (double) indmin; imax->R[k] = (double) indmax;}
       }
   else
     for ( k = 0 ; k < A->m ; k++ )
       {
-	VMiniMaxi(A->n, &(A->R[k]), A->m, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
+	VIMiniMaxi(A->n, &(A->R[k]), A->m, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
 	if (lhs > 2) {imin->R[k] = (double) indmin; imax->R[k] = (double) indmax;}
       }
 
@@ -2552,7 +2523,7 @@ int nsp_imatrix_minus(NspIMatrix *A)
 
 
 /**
- * Kronecker:
+ * IKronecker:
  * @A: a #NspIMatrix 
  * @B: a #NspIMatrix 
  * @PK: a #NspIMatrix 
@@ -2566,7 +2537,7 @@ int nsp_imatrix_minus(NspIMatrix *A)
  * 
  **/
 
-static void Kronecker(NspIMatrix *A, NspIMatrix *B, NspIMatrix *PK)
+static void IKronecker(NspIMatrix *A, NspIMatrix *B, NspIMatrix *PK)
 {
   static int c__1 = 1;
   double d0 = 0.00;
