@@ -298,7 +298,7 @@ function demo_combobox()
   
   tmp = gtkcellview_new ();
   tmp.show[];
-  tmp.set_model[model];
+  tmp.set_model[model=model];
   renderer = gtkcellrenderertext_new ();
   tmp.pack_start[ cell_renderer, expand= %f];
   tmp.add_attribute[cell_renderer,"text",1];
