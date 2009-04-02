@@ -2614,7 +2614,7 @@ static int SearchComp(const char *op, CompOp (**realop))
  * Return value: a new #NspBMatrix or %NULLBMAT
  **/
 
-NspBMatrix  *nsp_imatrix_comp(NspIMatrix *A, NspIMatrix *B,const char *op)
+NspBMatrix  *nsp_imatrix_comp(const NspIMatrix *A,const NspIMatrix *B,const char *op)
 {
   int i, iA, iB, inc_A, inc_B, m, n;
   NspBMatrix *Loc ;
@@ -2702,7 +2702,7 @@ NspBMatrix  *nsp_imatrix_comp(NspIMatrix *A, NspIMatrix *B,const char *op)
  * Return value: 
  **/
 
-int nsp_imatrix_fullcomp(NspIMatrix *A, NspIMatrix *B, char *op,int *err)
+int nsp_imatrix_fullcomp(const NspIMatrix *A,const NspIMatrix *B,const char *op,int *err)
 {
   nsp_int_union a, b;
   CompOp *realop;
