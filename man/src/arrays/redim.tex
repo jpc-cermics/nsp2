@@ -1,17 +1,24 @@
 % -*- mode: latex -*-
 
-\mansection{redim, matrix}
+\mansection{redim, reshape, matrix}
 \begin{mandesc}
-  \short{redim}{reshape a matrix in place (method)} \\
+  \short{redim}{reshape a matrix} \\
+  \short{reshape}{reshape a matrix} \\
   \short{matrix}{reshape a matrix}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-A.redim[mm, nn]
-A.redim[newdims]
+A.redim[mm, nn]   // method form
+A.redim[newdims]  // method form
 
-B = matrix(A,mm, nn)
+B = redim(A, mm, nn)  // function form
+B = redim(A, newdims) // function form
+
+B = reshape(A,mm, nn) // matlab synonym of redim
+B = reshape(A,ndims)
+
+B = matrix(A,mm, nn)  // scilab synonym of redim
 B = matrix(A,ndims)
 \end{verbatim}
 \end{calling_sequence}
@@ -19,22 +26,23 @@ B = matrix(A,ndims)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A}: matrix
+    \vname{A, B}: matrices
     \vname{ndims}:  vector made of 2 integers
     \vname{mm, nn}: integers
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\verb+redim+ and \verb+matrix+ lets to reshape of matrix $A$ with dimensions
+\verb+redim+  (or \verb+reshape+ or \verb+matrix+) lets to reshape of matrix $A$ with dimensions
 $m \times n$ as a matrix of sizes $mm \times nn$ such that 
-$mm \times nn = m \times n$ (that is they have the same number of elements).
-The internal ``one dimensionnal'' order of the elements matrix are not changed
-(column major order). 
+$mm \times nn = m \times n$ (that is, they have the same number of elements).
+The internal ``one dimensionnal'' order of the elements matrix (column major order) are 
+not changed. 
 
-\verb+redim+ is a method and work in place.
+\verb+redim+ could be use as a ``method'' (but not \verb+reshape+ and \verb+matrix+). In this case it 
+modifies the matrix in place.
 
-For both:
+Remark:
 \begin{itemize}
   \item the new dimensions could be provided either as 2 scalar integer arguments or as a vector with 2 integers.
   \item if you want to reshape the matrix as a row vector you can use \verb+-1+ as second dimension number (this
@@ -42,9 +50,7 @@ For both:
         first dimension to reshape the matrix as a column vector, so:
         \begin{verbatim}
         A.redim[1,-1]  // reshape A in place as a row vector
-        B = matrix(A,1,-1) // the same with matrix
         A.redim[-1,1]  // reshape A in place as a column vector
-        B = matrix(A,-1,1) // the same with matrix
         \end{verbatim}
 \end{itemize}
 
@@ -54,10 +60,12 @@ For both:
 \begin{Verbatim}
 A = rand(3,4)
 A.redim[2,6]; A
-A.redim[-1,1]; A
+B = redim(A,2,6)    // or reshape(A,2,6) or matrix(A,2,6)
 
-B = matrix(A,1,-1)
-B = matrix(A,6,2)
+A.redim[-1,1]; A    
+
+B = redim(A,-1,1)   // or reshape(A,-1,1) or matrix(A,-1,1)
+B = redim(A,2,6)    // or reshape(A,2,6) or matrix(A,2,6)
 \end{Verbatim}
 \end{examples}
 
