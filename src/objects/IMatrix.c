@@ -68,7 +68,9 @@ NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n,nsp_itype itype)
       return(NULLIMAT);
     }
   /* initialiaze to zero */
-  NSP_COPY_TO_ITYPE(Loc,itype,i,0,1,Loc->mn,0);
+#define IMAT_SETZERO(name,type,arg) for (i= 0 ; i < Loc->mn; i++) Loc->name[i]=0;break;
+  NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
+#undef IMAT_SETZERO
   return(Loc);
 }
 
@@ -212,8 +214,8 @@ int nsp_imatrix_scalar_to_mn(NspIMatrix *A, int m, int n)
 {
   int i;
   if ( nsp_imatrix_resize(A,m,n) == FAIL) return FAIL; 
-#define IMAT_AC(name) for ( i=1 ; i < A->mn ; i++) A->name[i]= A->name[0];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#define IMAT_AC(name,type,arg) for ( i=1 ; i < A->mn ; i++) A->name[i]= A->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,void);
 #undef IMAT_AC
   return OK;
 }
@@ -434,7 +436,9 @@ int nsp_imatrix_enlarge(NspIMatrix *A, int m, int n)
     {
       int i;
       if (nsp_imatrix_resize(A,m,n) == FAIL) return FAIL;
-      NSP_COPY_TO_ITYPE(A,A->itype,i,0,1,A->mn,0);
+#define IMAT_SETZERO(name,type,arg) for (i= 0 ; i < A->mn; i++) A->name[i]=0;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_SETZERO,void);
+#undef IMAT_SETZERO
     }
   if ( n > A->n  )
     if (nsp_imatrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
@@ -486,8 +490,8 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
   /*
    * nsp_iset(&ns,&d,A->xx +Asize,&inc);
    */
-#define IMAT_AC(name) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AC);
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < ns ; i++) A->name[i+Asize]= 0;break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
   return(OK);
 }
@@ -548,11 +552,11 @@ int nsp_imatrix_add_rows(NspIMatrix *A, int m)
   if (nsp_imatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
   for ( j = A->n-1  ; j >= 0 ; j-- ) 
     {
-#define IMAT_AROWS(name) for ( i= Am-1 ; i >=0 ; i--) A->name[i+j*(A->m)]=A->name[i+j*(Am)];break;
-      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS);
+#define IMAT_AROWS(name,type,arg) for ( i= Am-1 ; i >=0 ; i--) A->name[i+j*(A->m)]=A->name[i+j*(Am)];break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS,"");
 #undef IMAT_AROWS
-#define IMAT_AROWS(name) for ( i=0 ; i < m ; i++) A->name[i+j*(A->m)+Am]=0;break;
-      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS);
+#define IMAT_AROWS(name,type,arg) for ( i=0 ; i < m ; i++) A->name[i+j*(A->m)+Am]=0;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AROWS,"");
 #undef IMAT_AROWS
       /* if ( j != 0) nsp_icopy(&Am,A->Gint+j*Am,&inc,A->Gint+j*(A->m),&inc); */
       /*nsp_iset(&m,&d,A->Gint+j*(A->m)+Am,&inc); */
@@ -723,8 +727,8 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
    * for ( i = imin ; i < imax ; i++ ) 
    *   Loc->gint[j++] = A->gint[i+(i+k)*A->m];
    */
-#define IMAT_ED(name)for ( i = imin ; i < imax ; i++ ) Loc->name[j++] = A->name[i+(i+k)*A->m];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_ED);
+#define IMAT_ED(name,type,arg)for ( i = imin ; i < imax ; i++ ) Loc->name[j++] = A->name[i+(i+k)*A->m];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_ED,"");
 #undef IMAT_ED
   return(Loc);
 }
@@ -841,11 +845,18 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
     return(NULLIMAT);
   if ( M->rc_type == 'r') 
     {
-      NSP_COPY_TO_ITYPE(Loc,itype,i,0,1,M->mn,M->R[i]);
+#define IMAT_SETZERO(name,type,arg)					\
+      for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->R[i] ;	\
+      break;
+      NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
+#undef IMAT_SETZERO
     }
   else
     {
-      NSP_COPY_TO_ITYPE(Loc,itype,i,0,1,M->mn,M->C[i].r);
+#define IMAT_SETZERO(name,type,arg)					\
+      for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->C[i].r;break;
+      NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
+#undef IMAT_SETZERO
     }
   return(Loc);
 }
@@ -865,7 +876,11 @@ NspMatrix *nsp_imatrix_to_matrix(NspIMatrix *M)
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT) 
     return(NULLMAT);
-  NSP_COPY_FROM_ITYPE(Loc->R[i],double,M,M->itype,i,0,1,M->mn);
+#define IMAT_ITOM(name,type,arg)						\
+  for (i= 0 ; i < Loc->mn; i++) Loc->R[i]= (double) M->name[i] ;	\
+  break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_ITOM,void);
+#undef IMAT_ITOM
   return(Loc);
 }
 
@@ -891,8 +906,8 @@ int nsp_imatrix_and(NspIMatrix *A,const  NspIMatrix *B)
       Scierror("Error: arguments must have the same integre type\n");
       return(FAIL);
     }
-#define IMAT_AND(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[i];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AND);
+#define IMAT_AND(name,type,arg)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[i];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AND,"");
 #undef IMAT_AND
   return(OK);
 }
@@ -915,8 +930,8 @@ int nsp_imatrix_scalar_and(NspIMatrix *A,const  NspIMatrix *B)
       Scierror("Error: arguments must have the same integre type\n");
       return(FAIL);
     }
-#define IMAT_AND(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[0];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AND);
+#define IMAT_AND(name,type,arg)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] &= B->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AND,"");
 #undef IMAT_AND
   return(OK);
 }
@@ -945,8 +960,8 @@ int nsp_imatrix_or(NspIMatrix *A,const  NspIMatrix *B)
       Scierror("Error: arguments must have the same integre type\n");
       return(FAIL);
     }
-#define IMAT_OR(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[i];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_OR);
+#define IMAT_OR(name,type,arg)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[i];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_OR,"");
 #undef IMAT_OR
   return(OK);
 }
@@ -970,8 +985,8 @@ int nsp_imatrix_scalar_or(NspIMatrix *A,const  NspIMatrix *B)
       Scierror("Error: arguments must have the same integre type\n");
       return(FAIL);
     }
-#define IMAT_OR(name)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[0];break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_OR);
+#define IMAT_OR(name,type,arg)for ( i = 0 ; i < A->mn ; i++ ) A->name[i] |= B->name[0];break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_OR,"");
 #undef IMAT_OR
   return(OK);
 }
@@ -992,8 +1007,8 @@ NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A)
   NspMatrix *Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) 1);
   if ( Loc == NULLMAT) return(NULLMAT);
   Loc->R[0] = 0;
-#define IMAT_COUNT_TRUE(name)for ( i = 0 ; i < A->mn ; i++ ) if (A->name[i]) Loc->R[0]++;break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_COUNT_TRUE);
+#define IMAT_COUNT_TRUE(name,type,arg)for ( i = 0 ; i < A->mn ; i++ ) if (A->name[i]) Loc->R[0]++;break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_COUNT_TRUE,"");
 #undef IMAT_COUNT_TRUE
   return Loc;
 }
@@ -1072,17 +1087,17 @@ static void nsp_int_print(const void *m, int i, int j)
 		 "%*u", "%*d", "%*u", "%*d",        
 		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,
 		 "%*"G_GUINT64_FORMAT,NULL};
-#define IMAT_PRINT(name) Sciprintf(fmt[M->itype],5,M->name[i+(M->m)*j]);break;
-  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
+#define IMAT_PRINT(name,type,arg) Sciprintf(fmt[M->itype],5,M->name[i+(M->m)*j]);break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT,"");
 #undef IMAT_PRINT
 }
 
 static void BMij_plus_format(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
-#define IMAT_PRINT(name) if ( M->name[i+(M->m)*j] == 0) Sciprintf(" ");\
+#define IMAT_PRINT(name,type,arg) if ( M->name[i+(M->m)*j] == 0) Sciprintf(" ");\
   else Sciprintf("+");break;
-  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT);
+  NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT,"");
 #undef IMAT_PRINT
 }
 

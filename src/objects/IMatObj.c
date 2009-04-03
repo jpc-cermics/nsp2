@@ -29,7 +29,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
-#include <nsp/imatrix.h>
+#include "nsp/gsort-p.h"
 
 /**
  * SECTION:imatrix
@@ -257,9 +257,9 @@ static int imatrix_is_true(NspIMatrix *A)
 {
   int i;
   if ( A->mn == 0) return FALSE;
-#define IMAT_ISTRUE(name) for ( i=0 ; i < A->mn ; i++)	\
+#define IMAT_ISTRUE(name,type,arg) for ( i=0 ; i < A->mn ; i++)	\
     {if ( A->name[i] == 0) return FALSE;}break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE);
+  NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
   return(TRUE);
 }
 
@@ -1074,6 +1074,78 @@ static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ * MatSort 
+ * [A_sorted,Index]=sort(A, type,dir ) 
+ *  type = "g"| "gs"| "gm"| "c"| "r"| "lr" | "lc" | "ldc"| "ldr"|"gb"|"gd"
+ *  dir =  "i"| "d";
+ */
+
+static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *M=NULL;
+  NspMatrix *Index=NULL;
+  char *type_sort[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
+  char *dir_sort[]={ "i", "d",  NULL };
+  int iflag = FALSE;
+  char direction = 'd';
+  int rep_type= sort_g,rep_dir;
+
+  CheckRhs(1,3);
+  CheckLhs(0,2);
+  if ((M=GetIMatCopy(stack,1)) == NULLIMAT ) return RET_BUG;
+
+  if ( rhs >= 2) 
+    {
+      if ((rep_type= GetStringInArray(stack,2,type_sort,1)) == -1) return RET_BUG; 
+    }
+
+  if (rhs >= 3) 
+    {
+      if ((rep_dir= GetStringInArray(stack,3,dir_sort,1)) == -1) return RET_BUG; 
+      direction = dir_sort[rep_dir][0];
+    }
+
+  if ( lhs  == 2 || rep_type == sort_gs )  /* force index allocation for stable quick sort */
+    {
+      iflag = TRUE;
+    }
+
+  switch ( rep_type  )
+    {
+    case sort_g : 
+    case sort_gs: 
+    case sort_gm: 
+    case sort_gb: 
+    case sort_gd: 
+      nsp_imatrix_sort(M,&Index,iflag,direction,rep_type);
+      break;
+    case sort_c:
+      /* take care that c -> row */
+      nsp_imatrix_row_sort(M,&Index,iflag,direction);break;
+    case sort_r:
+      nsp_imatrix_column_sort(M,&Index,iflag,direction);break;
+    case sort_lr:
+      nsp_imatrix_lexical_row_sort(M,&Index,iflag,direction,'i');break;
+    case sort_lc:
+      nsp_imatrix_lexical_column_sort(M,&Index,iflag,direction,'i');break;
+    case sort_ldr:
+      nsp_imatrix_lexical_row_sort(M,&Index,iflag,direction,'d');
+      break;
+    case sort_ldc:
+      nsp_imatrix_lexical_column_sort(M,&Index,iflag,direction,'d');  break;
+    }
+  if ( iflag == TRUE && Index == NULL) return RET_BUG;
+  NSP_OBJECT(M)->ret_pos = 1;
+  if ( lhs == 2 ) {
+    /* back convert */
+    Index = Mat2double(Index);
+    MoveObj(stack,2, NSP_OBJECT(Index));
+  }
+  return Max(lhs,1);
+} 
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1118,7 +1190,6 @@ static OpTab IMatrix_func[]={
   {"fneq_i_i" ,  int_imatrix_fneq },
   {"feq_i_i" ,  int_imatrix_feq },
   {"quote_i", int_imatrix_quote},
-
   {"fge_i_i", int_imatrix_fge},
   {"fgt_i_i", int_imatrix_fgt},
   {"fle_i_i", int_imatrix_fle},
@@ -1129,6 +1200,8 @@ static OpTab IMatrix_func[]={
   {"le_i_i", int_imatrix_le},
   {"lt_i_i", int_imatrix_lt},
   {"find_i", int_imatrix_find},
+  {"sort_i", int_imatrix_sort},
+  {"gsort_i", int_imatrix_sort},
 
   /* XXX */
 #if 0
