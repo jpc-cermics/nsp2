@@ -34,7 +34,6 @@
 #include "nsp/matint.h"
 #include "nsp/gsort-p.h"
 #include "nsp/nsp_lapack.h"
-#include "nsp/gsort-p.h"
 #include <nsp/blas.h>
 
 /**
