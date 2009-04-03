@@ -117,7 +117,7 @@ function demo_combobox()
     row = combo.get_active[];
     // path = gtk_tree_path_new_from_indices (row, -1);
     path = gtktreepath_new(row);
-    cell(1).set_displayed_row[path];
+    cell(1).set_displayed_row[path=path];
   endfunction
 
   // mainfunction 
