@@ -777,6 +777,7 @@ static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
   int rep_type= sort_g,rep_dir;
 
   CheckRhs(1,3);
+  CheckLhs(0,2);
   if ((M=GetMpMatCopy(stack,1)) == NULLMAXPMAT ) return RET_BUG;
 
   if ( rhs >= 2) 

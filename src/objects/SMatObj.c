@@ -1508,6 +1508,7 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
   int rep_type= sort_g,rep_dir;
 
   CheckRhs(1,3);
+  CheckLhs(0,2);
   if ((M=GetSMatCopy(stack,1)) == NULLSMAT ) return RET_BUG;
 
   if ( rhs >= 2) 

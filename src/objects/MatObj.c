@@ -1766,6 +1766,7 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
   int rep_type= sort_g,rep_dir;
 
   CheckRhs(1,3);
+  CheckLhs(0,2);
   if ((M=GetRealMatCopy(stack,1)) == NULLMAT ) return RET_BUG;
 
   if ( rhs >= 2) 
