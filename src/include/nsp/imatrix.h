@@ -343,8 +343,8 @@ extern int nsp_imatrix_sub(NspIMatrix *A, NspIMatrix *B);
 extern int nsp_imatrix_dsub(NspIMatrix *Mat1, NspIMatrix *Mat2); 
 extern int nsp_imatrix_sub_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
 extern int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2); 
-extern int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
-extern int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag); 
+extern int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind, int j, int flag); 
+extern int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind, int j, int flag); 
 extern int nsp_imatrix_minmax(NspIMatrix *A, int dim, NspIMatrix **Amin, NspMatrix **Imin,
 			      NspIMatrix **Amax, NspMatrix **Imax, int lhs);
 extern NspIMatrix **nsp_imatrix_slec(char *file, int *Count); 
@@ -387,9 +387,9 @@ extern void nsp_imatrix_int(NspIMatrix *A);
 extern int nsp_imatrix_sign(NspIMatrix *A); 
 extern int nsp_imatrix_abs(NspIMatrix *A); 
 extern int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B); 
-extern int nsp_imatrix_iandu(NspIMatrix *A, unsigned int *res); 
+extern int nsp_imatrix_iandu(NspIMatrix *A,  nsp_int_union *res);
 extern int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B); 
-extern int nsp_imatrix_ioru(NspIMatrix *A, unsigned int *res); 
+extern int nsp_imatrix_ioru(NspIMatrix *A, nsp_int_union *res);
 extern int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir);
 extern int nsp_imatrix_minus(NspIMatrix *A); 
 /* extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2);  */

@@ -260,6 +260,7 @@ static int imatrix_is_true(NspIMatrix *A)
 #define IMAT_ISTRUE(name,type,arg) for ( i=0 ; i < A->mn ; i++)	\
     {if ( A->name[i] == 0) return FALSE;}break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
+#undef  IMAT_ISTRUE
   return(TRUE);
 }
 
@@ -662,28 +663,6 @@ static int int_imatrix_copy(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*
- * returns in a Matrix the indices for which the IMatrix is true
- */
-
-static int int_imatrix_find(Stack stack, int rhs, int opt, int lhs)
-{
-  NspIMatrix *A;
-  NspMatrix *Rc,*Rr;
-  CheckRhs(1,1);
-  CheckLhs(1,2);
-  if ((A = GetIMat(stack,1)) == NULLIMAT)  return RET_BUG;
-  if (nsp_imatrix_find_2(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)Rr);
-  if ( lhs == 2 )
-    {
-      NthObj(2) = (NspObject *) Rc ;
-      NSP_OBJECT(NthObj(2))->ret_pos = 2;
-      return 2;
-    }
-  return 1;
-}
-
 
 /*
  * Operation leading to Boolean result 
@@ -1074,6 +1053,29 @@ static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
+
+/*
+ * Returns a kroeneker product A.*.B 
+ */
+
+int
+int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *HMat1, *HMat2, *HMat3;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((HMat1 = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if ((HMat2 = GetIMat (stack, 2)) == NULLIMAT)
+    return RET_BUG;
+  if ((HMat3 = nsp_imatrix_kron (HMat1, HMat2)) == NULLIMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) HMat3);
+  return 1;
+}
+
+
 /*
  * MatSort 
  * [A_sorted,Index]=sort(A, type,dir ) 
@@ -1145,6 +1147,1485 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 } 
 
+/*
+ * nsp_mat_sum: s=sum(a[,dim_flag])  or s = sum(a, dim=dim_flag)  
+ * a is unchanged 
+ */
+
+typedef NspIMatrix *(*SuPro) (NspIMatrix * A, int dim);
+
+static int
+int_imatrix_sum_gen (Stack stack, int rhs, int opt, int lhs, SuPro F)
+{
+  int dim=0;
+  NspIMatrix *Res, *HMat;
+  CheckRhs(1, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 1);
+
+  if ((HMat = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+
+  if (rhs == 2)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
+    }
+
+  if ((Res = (*F) (HMat, dim)) == NULLIMAT)
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+int
+int_imatrix_sum (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_sum));
+}
+
+/*
+ * matprod : product of all elements of a
+ * a is unchanged 
+ */
+
+int
+int_imatrix_prod (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_prod));
+}
+
+/*
+ * matcusum : cumulative sum of all elements of a
+ * a is unchanged 
+ */
+
+int
+int_imatrix_cusum (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_cum_sum));
+}
+
+/*
+ * matcuprod : cumulative prod of all elements of a
+ * a is unchanged 
+ */
+
+int
+int_imatrix_cuprod (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_cum_prod));
+}
+
+
+/*
+ * diff
+ *
+ */
+static int
+int_imatrix_diff (Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=0;
+  int order=1;
+  NspIMatrix *Res, *HMat;
+  CheckRhs (1,3);
+  CheckOptRhs(0,2)
+  CheckLhs (1, 1);
+
+  if ((HMat = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+
+  if ( rhs > 1 )
+    {
+      if ( rhs == 3 && opt == 1 )
+	{
+	  Scierror ("Error:\t don't use both usual and named optional arguments (in function %s)\n", NspFname(stack));
+	  return RET_BUG;
+	}
+
+      if ( opt == 0 )
+	{
+	  if ( GetScalarInt(stack, 2, &order) == FAIL )
+	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),order,2);
+
+	  if ( rhs == 3 )
+	    {
+	      if ( GetDimArg(stack, 3, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	}
+      else
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      {"order",s_int,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim, &order) == FAIL )
+	    return RET_BUG;
+	}
+    }
+
+  if ( order < 0 )
+    {
+      Scierror ("Error:\t order should be non negative (in function %s)\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( dim == -1 )
+    {
+      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+      return RET_BUG;
+    }
+  if ( dim == -2 )  /* matlab compatibility flag */
+    dim = GiveMatlabDimFlag(HMat);
+  
+  
+  if ((Res = nsp_imatrix_diff(HMat, order, dim)) == NULLIMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+/*
+ *nsp_imatrix_maxi: Maxi(*HMat);
+ * A is unchanged 
+ */
+
+typedef NspIMatrix *(*MiMax) (NspIMatrix * A, int dim, NspMatrix ** Imax,
+			     int lhs);
+typedef int (*MiMax1) (NspIMatrix * A, NspIMatrix * B, NspMatrix * Ind,
+		       int j, int flag);
+
+static int
+int_imatrix_maxi_gen (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
+{
+  int dim = 0;
+  NspIMatrix *A, *M, *B;
+  NspMatrix *Imax;
+  if (rhs < 1)
+    {
+      Scierror ("Error:\t Rhs must be >= 1 for function %s\n", NspFname(stack));
+      return RET_BUG;
+    }
+  CheckLhs (1, 2);
+  if (rhs == 1 || (rhs - opt ) == 1 || ( rhs == 2 && IsSMatObj(stack,2)) )
+    {
+      /* maxi(A), or maxi(A,str) or maxi(A,dim=options) idem for mini */
+      if ((A = GetIMat (stack, 1)) == NULLIMAT)
+	return RET_BUG;
+      if (rhs == 2 )
+	{
+	  if ( opt == 0 )
+	    {
+	      if ( GetDimArg(stack, 2, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  else /* opt == 1 */
+	    {
+	      nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+				  { NULL,t_end,NULLOBJ,-1}};
+	      if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  if ( dim == -1 )
+	    {
+	      Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	      return RET_BUG;
+	    }
+	  if ( dim == -2 )  /* matlab compatibility flag */
+	    dim = GiveMatlabDimFlag(A);
+	}
+
+      if ((M = (*F) (A, dim, &Imax, lhs)) == NULLIMAT)
+	return RET_BUG;
+      if (lhs == 2)
+	{
+	  MoveObj (stack, 2, (NspObject *) Imax);
+	}
+      MoveObj (stack, 1, (NspObject *) M);
+    }
+  else        
+    {
+      /* Maxi(A1,A2,....,An)   */
+      NspMatrix *Ind=NULL;
+      int flag = 0, i;
+
+      if ( opt > 0 ) 
+	{
+	  Scierror ("Error:\t named optional argument not supported in this form of %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+
+      if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+	return RET_BUG;
+      NSP_OBJECT (A)->ret_pos = 1;
+      if (lhs == 2)
+	{
+	  /* intialize Ind matrix * */
+	  flag = 1;
+	  if ((Ind = nsp_matrix_create (NVOID, 'r', A->m, A->n)) == NULLMAT)
+	    return RET_BUG;
+	  nsp_mat_set_rval (Ind, 1.0);
+	}
+      for (i = 2; i <= rhs; i++)
+	{
+	  if ((B = GetIMat (stack, i)) == NULLIMAT)
+	    return RET_BUG;
+	  if ((*F1) (A, B, Ind, i, flag) == FAIL)
+	    return RET_BUG;
+	}
+      if (lhs == 2)
+	{
+	  MoveObj (stack, 2, (NspObject *) Ind);
+	}
+    }
+  return Max (lhs, 1);
+}
+
+
+int
+int_imatrix_maxi (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_maxi_gen (stack, rhs, opt, lhs, nsp_imatrix_maxi, nsp_imatrix_maxitt1));
+}
+
+
+/*
+ * nsp_imatrix_mini: Mini(A)
+ * A is unchanged 
+ * rs and ri are set to the result 
+ */
+
+int
+int_imatrix_mini (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_imatrix_maxi_gen (stack, rhs, opt, lhs, nsp_imatrix_mini, nsp_imatrix_minitt1));
+}
+
+
+/* 
+ *  [amin, amax, imin, imax] = minmax(A) or minmax(A,dir) or minmax(A,dim=dir)
+ *  with dir = 'c','r','F','*' or 0, 1, 2
+ *  to compute min and max at same time
+ */
+
+static int
+int_imatrix_minmax(Stack stack, int rhs, int opt, int lhs)
+{
+  int dim = 0;
+  NspIMatrix *A, *Amin, *Amax;
+  NspMatrix *Imin, *Imax;
+  CheckRhs(1,2);
+  CheckOptRhs(0,1);
+  CheckLhs (2, 4);
+
+  if ((A = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (rhs == 2)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+      if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n",
+		    NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(A);
+    }
+
+  if ( nsp_imatrix_minmax(A, dim, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
+    return RET_BUG;
+  
+  MoveObj (stack, 1, (NspObject *) Amin);
+  MoveObj (stack, 2, (NspObject *) Amax);
+  if ( lhs >= 3 ) 
+    {
+      MoveObj (stack, 3, (NspObject *) Imin);
+      if ( lhs == 4 )
+	MoveObj (stack, 4, (NspObject *) Imax);
+      else
+	nsp_matrix_destroy(Imax);   /* if lhs >= 3 both Imin and Imax are allocated */
+    }
+
+  return Max (lhs, 1);
+}
+
+/*
+ *nsp_imatrix_triu: A=Triu(a)
+ * A is changed  
+ */
+
+int
+int_imatrix_triu (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspIMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  nsp_imatrix_triu (HMat, k1);
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+/*
+ *nsp_imatrix_tril: A=Tril(A)
+ * A is changed  
+ */
+
+int
+int_imatrix_tril (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspIMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  nsp_imatrix_tril (HMat, k1);
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+/*
+ *nsp_imatrix_ones: A=ones(m,n)
+ * A is created , m,n no
+ */
+
+typedef NspIMatrix *(*Mfunc) (int m, int n);
+
+/* generic function for ones,rand,eyes **/
+
+static int
+int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
+{
+  NspType *type = NULL;
+  char *type_str = NULL;
+  int m1, n1, last=rhs;
+  NspIMatrix *HMat;
+  CheckRhsMin(1);
+  CheckLhs (1, 1);
+  /* is last element a classname */
+  if ( IsTypeObj(stack,rhs) ) 
+   { 
+      if ((type = GetType(stack,rhs))== NULLTYPE) 
+	return RET_BUG; 
+      last = rhs-1;
+    }
+  else if ( IsSMatObj(stack,rhs) )
+    {
+      if ((type_str = GetString(stack,rhs)) == (char*)0) return RET_BUG;
+      last = rhs-1;
+    }
+
+  if (last == 1)
+    {
+      NspMatrix *M;
+      if ((M = GetRealMat (stack, 1)) == NULLMAT)
+	return RET_BUG; 
+      switch ( M->mn ) 
+	{
+	case 0: 
+	  Scierror("Error: in %s, size vector cannot be an empty matrix\n",NspFname(stack));
+	  return RET_BUG; 
+	case 1: m1 = n1 = (int) M->R[0]; break;
+	case 2: m1 = (int) M->R[0]; n1 = (int) M->R[1]; break;
+	default :
+	  Scierror("Error: in %s, size vector is too long\n",NspFname(stack));
+	  return RET_BUG; 
+	}
+    }
+  else 
+    {
+      if ( last > 2 ) 
+	{
+	  Scierror("Error: in %s, n-arrays are not implemented, max dimensions is two\n",
+		   NspFname(stack));
+	  return RET_BUG; 
+	}
+      if (GetScalarInt (stack, 1, &m1) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack),m1,1);
+      if (last == 2 ) 
+	{
+	  if (GetScalarInt (stack, 2, &n1) == FAIL)
+	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),n1,2);
+	}
+      else 
+	{
+	  n1 = m1;
+	}
+    }
+  if ( last != rhs ) 
+    {
+      Sciprintf("Warning: in %s, type is ignored\n",NspFname(stack));
+    }
+  if ((HMat = (*F) (m1, n1)) == NULLIMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) HMat);
+  return 1;
+}
+
+int
+int_imatrix_ones (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_ones);
+}
+
+/*
+ *nsp_imatrix_eye: A=Eye(m,n)
+ * A is created  m,n no
+ */
+
+
+int
+int_imatrix_eye (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_eye);
+}
+
+/*
+ *nsp_imatrix_zeros: A=zeros(m,n)
+ * A is created  m,n no
+ */
+
+
+int
+int_imatrix_zeros (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_zeros);
+}
+
+
+/*
+ *nsp_imatrix_rand:
+ * A=rand(m,n [,type])
+ */
+
+int
+int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
+{
+  static char *Table_R[] = { "uniform", "normal", NULL };
+  char *str;
+  int m, n, m1, tkp, tk;
+  NspIMatrix *A;
+  NspObject *O;
+  CheckRhs (0, 3);
+  CheckLhs (1, 1);
+  switch (rhs)
+    {
+    case 0:
+
+      if ((A = nsp_imatrix_rand (1, 1)) == NULLIMAT)
+	return RET_BUG;
+      MoveObj (stack, 1, (NspObject *) A);
+      return 1;
+    case 1:
+
+      m = nsp_object_get_size (NthObj (1), 1);
+      n = nsp_object_get_size (NthObj (1), 2);
+      /* XXXX */
+      if (IsSMatObj (stack, 1))
+	{
+	  int ind, type;
+	  double seed;
+	  static char *Table[] =
+	    { "info", "seed", "uniform", "normal", NULL };
+	  if ((ind = GetStringInArray (stack, 1, Table, 0)) == -1)
+	    return RET_BUG;
+	  switch (ind)
+	    {
+	    case 0:		/* rand('info'); * */
+	      type = nsp_get_urandtype ();
+	      if ((O = nsp_create_object_from_str(NVOID, type == 0 ? "uniform" : "normal")) ==
+		  NULLOBJ)
+		return RET_BUG;
+	      MoveObj (stack, 1, O);
+	      return 1;
+	    case 1:		/* rand('seed') * */
+	      seed = nsp_get_urandseed ();
+	      if ((O =
+		   nsp_create_object_from_double (NVOID, seed)) == NULLOBJ)
+		return RET_BUG;
+	      MoveObj (stack, 1, O);
+	      return 1;
+	    case 2:		/* rand('uniform') * */
+	      nsp_set_urandtype (0);
+	      return 0;
+	    case 3:		/* rand('normal') * */
+	      nsp_set_urandtype (1);
+	      return 0;
+	    }
+	}
+      else if (IsMatObj (stack, 1))
+	{
+	  /* rand(a); * */
+	  if ((O = (NspObject *) nsp_imatrix_rand (m, n)) == NULLOBJ)
+	    return RET_BUG;
+	  MoveObj (stack, 1, O);
+	  return 1;
+	}
+      else
+	{
+	  Scierror
+	    ("Error\t: function %s, First argument must be a Matrix or a String\n",
+	     NspFname(stack));
+	  return RET_BUG;
+	}
+      break;
+    case 2:
+
+      if (IsSMatObj (stack, 1))
+	{
+	  /* rand('seed',s) * */
+	  if ((str = GetString (stack, 1)) == (char *) 0)
+	    return RET_BUG;
+	  if (strcmp (str, "seed") != 0)
+	    {
+	      Scierror ("rand:\t wrong first argument %s\n", str);
+	      return RET_BUG;
+	    }
+	  if (GetScalarInt (stack, 2, &m1) == FAIL)
+	    return RET_BUG;
+	  nsp_set_urandseed (m1);
+	  return 0;
+	}
+      else
+	{
+	  /* rand(m,n) * */
+	  if (GetScalarInt (stack, 1, &m) == FAIL)
+	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),m,1);
+	  if (GetScalarInt (stack, 2, &n) == FAIL)
+	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),n,2);
+	  if ((A = nsp_imatrix_rand (m, n)) == NULLIMAT)
+	    return RET_BUG;
+	  MoveObj (stack, 1, (NspObject *) A);
+	  return 1;
+	}
+    default:
+
+      /* rhs == 3 * */
+      /* rand(m,n,type); * */
+      if (GetScalarInt (stack, 1, &m) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack),m,1);
+      if (GetScalarInt (stack, 2, &n) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack),n,2);
+      tkp = nsp_get_urandtype ();
+      /* locally change rand type * */
+      if ((tk = GetStringInArray (stack, 3, Table_R, 0)) == -1)
+	return RET_BUG;
+      nsp_set_urandtype (tk);
+      if ((O = (NspObject *) nsp_imatrix_rand (m, n)) == NULLOBJ)
+	return RET_BUG;
+      MoveObj (stack, 1, O);
+      /* restore rand type * */
+      nsp_set_urandtype (tkp);
+      return 1;
+    }
+  return 0;
+}
+
+
+/*
+ *  A=op(A) 
+ */
+
+typedef int (*M11) (NspIMatrix * A);
+
+/* generic function for ones,rand,eyes */
+
+static int
+int_imatrix_gen11 (Stack stack, int rhs, int opt, int lhs, M11 F)
+{
+  NspIMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (HMat->mn == 0)
+    {
+      NSP_OBJECT (HMat)->ret_pos = 1;
+      return 1;
+    }
+  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (((*F) (HMat)) < 0)
+    return RET_BUG;
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+typedef void (*VM11) (NspIMatrix * A);
+
+#if 0
+static int
+int_imatrix_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F)
+{
+  NspIMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (HMat->mn == 0)
+    {
+      NSP_OBJECT (HMat)->ret_pos = 1;
+      return 1;
+    }
+  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  (*F) (HMat);
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+#endif
+
+/*
+ * A=Abs(A), absolue value or module of each element 
+ */
+
+int
+int_imatrix_abs (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen11 (stack, rhs, opt, lhs, nsp_imatrix_abs);
+}
+
+/*
+ *nsp_mat_sign: A=Sign(A)
+ * A is changed  
+ * return 0 if error 
+ */
+
+int
+int_imatrix_sign (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen11 (stack, rhs, opt, lhs, nsp_imatrix_sign);
+}
+
+/*
+ *nsp_mat_minus: A=-(A)
+ * A is changed  
+ * return 0 if error 
+ */
+
+int
+int_imatrix_minus (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_gen11 (stack, rhs, opt, lhs, nsp_imatrix_minus);
+}
+
+#define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
+
+/*
+ * A=iand(A,B)
+ */
+
+int
+int_imatrix_iand (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A, *B;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  NSP_OBJECT (A)->ret_pos = 1;
+  if (A->mn == 0)
+    {
+      NSP_OBJECT (A)->ret_pos = 1;
+      return 1;
+    }
+  if (rhs == 2)
+    {
+      if ((B = GetIMat (stack, 2)) == NULLIMAT)
+	return RET_BUG;
+      if (SameDim (A, B))
+	{
+	  if (nsp_imatrix_iand (A, B) == FAIL)
+	    return RET_BUG;
+	}
+      else
+	{
+	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
+		    NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      nsp_int_union res;
+      if (nsp_imatrix_iandu (A, &res) == FAIL)
+	return RET_BUG;
+      if (nsp_imatrix_resize (A, 1, 1) == FAIL)
+	return (FAIL);
+#define IMAT_ISTRUE(name,type,arg) A->name[0] = res.name;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
+#undef  IMAT_ISTRUE
+    }
+  return 1;
+}
+
+/*
+ * A= ior(A,B)
+ */
+
+int
+int_imatrix_ior (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A, *B;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  NSP_OBJECT (A)->ret_pos = 1;
+  if (A->mn == 0)
+    {
+      NSP_OBJECT (A)->ret_pos = 1;
+      return 1;
+    }
+  if (rhs == 2)
+    {
+      if ((B = GetIMat (stack, 2)) == NULLIMAT)
+	return RET_BUG;
+      if (SameDim (A, B))
+	{
+	  if (nsp_imatrix_ior (A, B) == FAIL)
+	    return RET_BUG;
+	}
+      else
+	{
+	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
+		    NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      nsp_int_union res;
+      if (nsp_imatrix_ioru (A, &res) == FAIL)
+	return RET_BUG;
+      if (nsp_imatrix_resize (A, 1, 1) == FAIL)
+	return (FAIL);
+#define IMAT_ISTRUE(name,type,arg) A->name[0] = res.name;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
+#undef  IMAT_ISTRUE
+    }
+  return 1;
+}
+
+
+/*
+ * A=ishift(A,n,['r'|'l'])
+ */
+
+int int_imatrix_ishift (Stack stack, int rhs, int opt, int lhs)
+{
+  int shift;
+  char dir='l';
+  NspIMatrix *A;
+  CheckRhs(2,3);
+  CheckLhs(1, 1);
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  NSP_OBJECT (A)->ret_pos = 1;
+ if (A->mn == 0)
+    {
+      NSP_OBJECT (A)->ret_pos = 1;
+      return 1;
+    }
+  if (GetScalarInt (stack, 2, &shift) == FAIL) 
+    return RET_BUG;
+  if (rhs >= 3)
+    {
+      int rep;
+      char *shift_options1[] = { "r", "l", NULL };
+      if ((rep = GetStringInArray (stack, 3, shift_options1, 1)) == -1)
+	return RET_BUG;
+      dir = shift_options1[rep][0];
+    }
+  if ( nsp_imatrix_ishift(A,shift,dir) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
+
+/*
+ * nsp_imatrix_mod: z = mod(x,y) x or y is changed 
+ */
+int
+int_imatrix_mod(Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *x, *y;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((x = GetIMat(stack, 1)) == NULLIMAT)
+    return RET_BUG;
+
+  if ((y = GetIMat(stack, 2)) == NULLIMAT)
+    return RET_BUG;
+
+  if ( x->mn == 1  &&  y->mn > 1 )
+    {
+      if ((y = GetIMatCopy(stack, 2)) == NULLIMAT)
+	return RET_BUG;
+      NSP_OBJECT(y)->ret_pos = 1;
+    }
+  else if ( y->mn != 1 && y->mn != x->mn )
+    {
+      Scierror ("Error: %s arguments have incompatible sizes \n", NspFname(stack));
+      return RET_BUG;
+    }
+  else
+    {
+      if ((x = GetIMatCopy(stack, 1)) == NULLIMAT)
+	return RET_BUG;
+      NSP_OBJECT(x)->ret_pos = 1;
+    }
+
+  nsp_imatrix_mod(x, y);
+  return 1;
+}
+
+/*
+ *nsp_imatrix_modulo: A=Modulo(A) remainder in int division 
+ * A is changed  
+ */
+
+int
+int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
+{
+  int n;
+  NspIMatrix *HMat;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (GetScalarInt (stack, 2, &n) == FAIL)
+    return RET_BUG;
+  nsp_imatrix_modulo (HMat, n);
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+
+/*
+ * A generic function fo  A op B with 
+ * special case for [] and A or B scalar 
+ *  [] op A ---> F4(A)  (only usefull for []-A )
+ *  A op [] ---> A 
+ *  A op scalar --->  F1(A,scalar)
+ *  A op B      --->  F2(A,B) 
+ *  scalar op A --->  F3(A,scalar) 
+ */
+
+typedef int (*MPM) (NspIMatrix *, NspIMatrix *);
+
+int
+IMatNoOp (NspIMatrix * A)
+{
+  return OK;
+}
+
+
+static int
+int_imatrix_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
+		MPM F3, M11 F4, int flag)
+{
+  NspIMatrix *HMat1, *HMat2;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((HMat1 = GetIMatCopy (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (HMat1->mn == 0)
+    {
+      if (flag == 1)
+	{
+	  /* flag == 1 ==> [] op A  returns [] * */
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	  return 1;
+	}
+      else
+	{
+	  /* flag == 1 ==> [] op A  returns F4(A) * */
+	  if (F4 != IMatNoOp)
+	    {
+	      if ((HMat2 = GetIMatCopy (stack, 2)) == NULLIMAT)
+		return RET_BUG;
+	      if ((*F4) (HMat2) == FAIL)
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ((HMat2 = GetIMat (stack, 2)) == NULLIMAT)
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  return 1;
+	}
+    }
+  if ((HMat2 = GetIMat (stack, 2)) == NULLIMAT)
+    return RET_BUG;
+  if (HMat2->mn == 0)
+    {
+      if (flag == 1)
+	{
+	  /* flag == 1 ==> A op [] returns [] * */
+	  NSP_OBJECT (HMat2)->ret_pos = 1;
+	  return 1;
+	}
+      else
+	{
+	  /* flag == 1 ==> A op [] returns A * */
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	  return 1;
+	}
+    }
+  if (HMat2->mn == 1)
+    {
+      if ((*F1) (HMat1, HMat2) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+    }
+  else if (HMat1->mn == 1)
+    {
+      /* since Mat1 is scalar we store the result in Mat2 so we 
+         must copy it * */
+      if ((HMat2 = GetIMatCopy (stack, 2)) == NULLIMAT)
+	return RET_BUG;
+      if ((*F3) (HMat2, HMat1) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat2)->ret_pos = 1;
+    }
+  else
+    {
+      if ((*F2) (HMat1, HMat2) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+    }
+  return 1;
+}
+
+/*
+ *
+ *  A op scalar --->  F1(A,scalar)  result is of same dim than A
+ *  A op B      --->  F2(A,B)       for A and B with same dims
+ *  scalar op A --->  F3(A,scalar)  result is of same dim than A
+ */
+
+static int
+int_imatrix_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
+{
+  NspIMatrix *HMat1, *HMat2, *HMat3;
+  int HMat1_has_no_name, HMat2_has_no_name;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetIMat(stack, 1)) == NULLIMAT )
+    return RET_BUG;
+  HMat1_has_no_name = Ocheckname(HMat1,NVOID);
+  
+  if ( (HMat2 =GetIMat(stack, 2)) == NULLIMAT )
+    return RET_BUG;
+  HMat2_has_no_name = Ocheckname(HMat2,NVOID);
+
+  if ( HMat1->mn == 1 )
+    {
+      if ( HMat2->mn == 1 )
+	{
+	  if ( HMat1_has_no_name )
+	    {
+	      if ( (*F1)(HMat1, HMat2) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat1)->ret_pos = 1;
+	    }
+	  else if ( HMat2_has_no_name )
+	    {
+	      if ( (*F3)(HMat2, HMat1) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ( (HMat3 =nsp_imatrix_copy(HMat1)) == NULLIMAT )
+		return RET_BUG;
+	      if ( (*F1)(HMat3, HMat2) == FAIL )
+		return RET_BUG;
+	      MoveObj(stack, 1, (NspObject *) HMat3);
+	    }
+	}
+      else /* HMat2 is not a scalar */
+	{
+	  if ( HMat2_has_no_name )
+	    {
+	      if ( (*F3)(HMat2, HMat1) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ( (HMat3 =nsp_imatrix_copy(HMat2)) == NULLIMAT )
+		return RET_BUG;
+	      if ( (*F3)(HMat3, HMat1) == FAIL )
+		return RET_BUG;
+	      MoveObj(stack, 1, (NspObject *) HMat3);
+	    }
+	}
+    }
+  else if ( HMat2->mn == 1 )
+    {
+      if ( HMat1_has_no_name )
+	{
+	  if ( (*F1)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else
+	{
+	  if ( (HMat3 =nsp_imatrix_copy(HMat1)) == NULLIMAT )
+	    return RET_BUG;
+	  if ( (*F1)(HMat3, HMat2) == FAIL )
+	    return RET_BUG;
+	  MoveObj(stack, 1, (NspObject *) HMat3);
+	}
+    }
+  else
+    {
+      if ( HMat1_has_no_name )
+	{
+	  if ( (*F2)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else
+	{
+	  if ( (HMat3 =nsp_imatrix_copy(HMat1)) == NULLIMAT )
+	    return RET_BUG;
+	  if ( (*F2)(HMat3, HMat2) == FAIL )
+	    return RET_BUG;
+	  MoveObj(stack, 1, (NspObject *) HMat3);
+	}
+    }
+  return 1;
+}
+
+
+/*
+ * term to term addition 
+ * with special cases Mat + [] and Mat + scalar
+ */
+
+int
+int_imatrix_dadd (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_imatrix_add_scalar_bis, nsp_imatrix_add_mat, 
+			     nsp_imatrix_add_scalar_bis);
+
+}
+
+
+/*
+ * term to term substraction 
+ * with special cases Mat - [] and Mat - scalar
+ *  XXXXX Attention le cas F3 est faux scalar - Mat --> Mat -scalar  
+ */
+
+int
+int_imatrix_dsub (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_imatrix_sub_scalar_bis, nsp_imatrix_sub_mat, 
+			     nsp_scalar_sub_imatrix_bis);
+
+}
+
+
+
+/*
+ * A=nsp_imatrix_pow_el(A,B), A.^ B 
+ */
+#if 0
+int
+int_imatrix_powel (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb (stack, rhs, opt, lhs,
+			      nsp_imatrix_pow_scalar, nsp_imatrix_pow_el,
+			      nsp_imatrix_pow_scalarm);
+}
+#endif 
+
+/*
+ * A=DivEl(A,B),  A ./ B 
+ */
+
+int
+int_imatrix_divel (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb (stack, rhs, opt, lhs,
+			      nsp_imatrix_div_scalar, nsp_imatrix_div_el,
+			      nsp_imatrix_bdiv_scalar);
+}
+
+
+/*
+ * A=BackDivEl(A,B),  A .\ B 
+ */
+
+int
+int_imatrix_backdivel (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb (stack, rhs, opt, lhs,
+			 nsp_imatrix_bdiv_scalar, nsp_imatrix_bdiv_el,
+			 nsp_imatrix_div_scalar);
+}
+
+
+/*
+ * A=MultEl(A,B),  A .* B 
+ */
+
+int
+int_imatrix_multel (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_imatrix_mult_scalar_bis, nsp_imatrix_mult_el, 
+			     nsp_imatrix_mult_scalar_bis);
+}
+
+
+/*
+ * NspMatrix multiplication  Res= A*B  
+ * very similar to mopscal but MatMult returns a new matrix 
+ */
+
+int int_imatrix_mult (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *HMat1, *HMat2, *HMat3;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetIMat(stack, 1)) == NULLIMAT )
+    return RET_BUG;
+  if ( (HMat2 = GetIMat(stack, 2)) == NULLIMAT )
+    return RET_BUG;
+
+  if ( HMat1->mn == 1 )
+    {
+      if ( (HMat2 = GetIMatCopy(stack, 2)) == NULLIMAT )
+	return RET_BUG;
+      if ( nsp_imatrix_mult_scalar_bis(HMat2, HMat1) == FAIL )
+	return RET_BUG;
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+    }
+  else if ( HMat2->mn == 1 )
+    {
+      if ( (HMat1 = GetIMatCopy(stack, 1)) == NULLIMAT )
+	return RET_BUG;
+      if ( nsp_imatrix_mult_scalar_bis(HMat1, HMat2) == FAIL )
+	return RET_BUG;
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+    }
+  else
+    {
+      if ( (HMat3 = nsp_imatrix_mult(HMat1, HMat2, 0)) == NULLIMAT )
+	return RET_BUG;
+      MoveObj(stack, 1, (NspObject *) HMat3);
+    }
+  return 1;
+}
+
+/*
+ * NspMatrix special multiplication  Res= A*B or A'*B or A*B' or A'*B'   
+ *   pmult(A,B [,flag])   flag is optional and should be 0, 1, 2 or 3
+ *   with default 1
+ */
+
+int int_imatrix_pmult (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *HMat1, *HMat2, *HMat3;
+  int flag=1;
+
+  CheckRhs (2, 3);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetIMat(stack, 1)) == NULLIMAT )
+    return RET_BUG;
+  if ( (HMat2 = GetIMat(stack, 2)) == NULLIMAT )
+    return RET_BUG;
+
+  if ( rhs == 3 )
+    if (GetScalarInt (stack, 3, &flag) == FAIL) return RET_BUG;
+
+  if ( flag < 0 || flag > 3 )
+    {
+      Scierror ("%s: third argument should be an integer in [0,3]\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( (HMat3 = nsp_imatrix_mult(HMat1, HMat2, flag)) == NULLIMAT )
+    return RET_BUG;
+
+  MoveObj(stack, 1, (NspObject *) HMat3);
+  return 1;
+}
+
+
+
+/*
+ * A / B 
+ * just implemented for scalars XXXXX 
+ * result stored in A 
+ */
+
+int int_imatrix_div (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *HMat1, *HMat2;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((HMat1 = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if ((HMat2 = GetIMat (stack, 2)) == NULLIMAT)
+    return RET_BUG;
+  if (HMat2->mn <= 1)
+    {
+      return int_imatrix_mopscal (stack, rhs, opt, lhs,
+				       nsp_imatrix_div_scalar, nsp_imatrix_div_el,
+				       nsp_imatrix_bdiv_scalar, IMatNoOp, 1);
+    }
+  else
+    {
+      Scierror ("%s: / not implemented for non 1x1 matrices\n", NspFname(stack));
+      return RET_BUG;
+    }
+  return 1;
+}
+
+
+/*
+ * returns in a Matrix the indices for which the Matrix is true 
+ */
+
+int
+int_imatrix_find (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A;
+  NspMatrix*Rc, *Rr;
+  CheckRhs (1, 1);
+  CheckLhs (1, 3);
+  if ((A = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+  if (nsp_imatrix_find (A, Max (lhs, 1), &Rr, &Rc) == FAIL)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Rr);
+  if ( lhs >= 2 )
+    {
+      NthObj (2) = (NspObject *) Rc;
+      NSP_OBJECT (NthObj (2))->ret_pos = 2;
+    }
+  if ( lhs >= 3 )
+    {
+      int i;
+      NspIMatrix *val;
+      if ((val = nsp_imatrix_create(NVOID,Rc->m,Rc->n,A->itype))== NULLIMAT)
+	return RET_BUG;
+#define IMAT_FIND(name,type,arg)					\
+      for ( i = 0 ; i < Rr->mn; i++)					\
+	val->name[i]= A->name[(((int) Rr->R[i]-1))+A->m*(((int)Rc->R[i])-1)];	\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_FIND,"");
+#undef IMAT_FIND
+      NthObj (3) = (NspObject *) val;
+      NSP_OBJECT(NthObj (3))->ret_pos = 3;
+    }
+  return Max(lhs, 1) ;
+}
+
+/*
+ *  multiple find (mfind)
+ *
+ *  [ind1,...,indk,indk+1] = mfind( x, op1, sc1, ...., opk, sck ) 
+ *
+ *    opj is a string defining a comparizon operator "<", "<=", ">", ">=", "==", "~=" or "<>"
+ *
+ *    x is a real matrix, scj a real scalar
+ */
+#if 0 
+int
+int_imatrix_mfind (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *x;
+  NspMatrix **ind = NULL;
+  int i, j, m;
+  double *scalars = NULL;
+  const char **ops = NULL;
+  CheckRhs (3, 13);   /* limited to 6 tests */
+
+  if ( (rhs - 1) % 2 != 0 )
+    {
+      Scierror ("%s: bad number of input arguments\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  m = (rhs-1)/2;
+  
+  if ( (scalars = malloc(m*sizeof(double))) == NULL )
+    goto err;
+  if ( (ops = malloc(m*sizeof(char *))) == NULL )
+    goto err;
+
+  if ( (x = GetIMat(stack, 1)) == NULLIMAT )
+    goto err;
+
+  for ( i = 2, j = 0 ; i <= rhs ; i+=2, j++ )
+    {
+      if ( (ops[j] = GetString(stack, i)) == NULL )
+	goto err;
+      if ( GetScalarDouble(stack, i+1, &scalars[j]) == FAIL )
+	goto err;
+    } 
+
+  if ( (ind = malloc((m+1)*sizeof(NspMatrix *))) == NULL )
+    goto err;
+  for ( i = 0 ; i <= m ; i++ ) ind[i] = NULLIMAT;
+
+  if ( nsp_imatrix_mfind(x, m, ops, scalars, ind) == FAIL )
+    goto err;
+
+  for ( j = 0 ; j <= m ; j++ )
+    MoveObj (stack, j+1, (NspObject *) ind[j]);
+
+  free(scalars);
+  free(ops);
+  free(ind);
+  return m+1;
+
+ err:
+  free(scalars);
+  free(ops);
+  free(ind);
+  return RET_BUG;
+}
+#endif 
+
+/*
+ *  ndind2ind
+ *
+ *  [ind] = ndind2ind( dims, ind1, ind2, ..., indk)
+ *
+ *  dims must be a vector of length k
+ */
+
+#if 0
+int
+int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Dims, **ndind = NULL, *ind;
+  int nd, *dims=NULL, i;
+  CheckRhsMin (2);
+
+  if ( (Dims = GetIMat(stack, 1)) == NULLIMAT )
+    return RET_BUG;
+
+  nd = Dims->mn; 
+
+  if ( rhs - 1 != nd )
+    {
+      Scierror ("%s: waiting for %d index vectors, got %d\n", NspFname(stack), nd, rhs-1);
+      return RET_BUG;
+    }
+
+  /* parse Dims */
+  if ( (dims = malloc(nd*sizeof(int))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      return RET_BUG;
+    }
+  for ( i = 0 ; i < nd ; i++ )
+    {
+      dims[i] = (int) Dims->R[i];
+      if ( dims[i] < 0 )
+	{
+	  Scierror ("%s: length in the %d th dimension is negative\n", NspFname(stack), i+1);
+	  goto err;
+	}
+    }
+
+  if ( (ndind = malloc((rhs-1)*sizeof(NspMatrix *))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      goto err;
+    }
+
+  for ( i = 2 ; i <= rhs ; i++ )
+    {
+      if ( (ndind[i-2] =  GetIMat(stack, i)) == NULLIMAT )
+	goto err;
+    } 
+
+  if ( nsp_imatrix_ndind2ind(dims, nd, ndind, &ind) == FAIL )
+    goto err;
+
+  MoveObj (stack, 1, (NspObject *) ind);
+
+  free(dims);
+  free(ndind);
+  return 1;
+
+ err:
+  free(dims);
+  free(ndind);
+  return RET_BUG;
+}
+#endif 
+
 
 
 /*
@@ -1183,7 +2664,6 @@ static OpTab IMatrix_func[]={
   {"redim_i",int_matint_redim}, 
   {"reshape_i",int_matint_redim}, 
   {"matrix_i", int_matint_redim},
-  {"reshape_i", int_matint_redim},
   {"resize_i",int_imatrix_resize},
   {"eq_i_i" ,  int_imatrix_eq },
   {"ne_i_i" ,  int_imatrix_neq },
@@ -1202,19 +2682,12 @@ static OpTab IMatrix_func[]={
   {"find_i", int_imatrix_find},
   {"sort_i", int_imatrix_sort},
   {"gsort_i", int_imatrix_sort},
-
-  /* XXX */
-#if 0
   {"diff_i", int_imatrix_diff},
-  {"eye_i", int_imatrix_eye},
-  {"ones_i", int_imatrix_ones},
-  {"zeros_i", int_imatrix_zeros},
-  {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
+  {"minmax_i", int_imatrix_minmax},  
   {"max_i", int_imatrix_maxi},
   {"max_i_i", int_imatrix_maxi},
   {"min_i", int_imatrix_mini},
-  {"minmax_i", int_imatrix_minmax},  
-  {"minmax", int_imatrix_minmax},  
+  {"min_i_i", int_imatrix_mini},
   {"sum_i_s", int_imatrix_sum},
   {"sum_i", int_imatrix_sum},
   {"cumsum_i_s", int_imatrix_cusum},
@@ -1223,11 +2696,17 @@ static OpTab IMatrix_func[]={
   {"prod_i", int_imatrix_prod},
   {"cumprod_i_s", int_imatrix_cuprod},
   {"cumprod_i", int_imatrix_cuprod},
-  {"redim_i", int_matint_redim},
-  {"resize_i_i", int_imatrix_resize},
   {"tril_i", int_imatrix_tril},
   {"triu_i", int_imatrix_triu},
-  {"matrix_i", int_matint_redim},
+  {"mult_i_i", int_imatrix_mult},
+  {"pmult_i_i", int_imatrix_pmult},
+
+  /* XXX */
+#if 0
+  {"eye_i", int_imatrix_eye},
+  {"ones_i", int_imatrix_ones},
+  {"zeros_i", int_imatrix_zeros},
+  {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
   {"quote_i", int_imatrix_quote},
   {"dprim_i", int_imatrix_dquote},
   {"abs_i", int_imatrix_abs},
@@ -1248,17 +2727,15 @@ static OpTab IMatrix_func[]={
   {"plus_i_i", int_imatrix_dadd},
   {"minus_i_i", int_imatrix_dsub},
   {"minus_i", int_imatrix_minus},
-  {"mult_i_i", int_imatrix_mult},
-  {"pmult_i_i", int_imatrix_pmult},
   {"div_i_i", int_imatrix_div},
   {"mfind_i", int_imatrix_mfind},
   {"nnz_i",  int_matrix_nnz},
   {"unique_i", int_unique},
-  {"cross_i_i", int_mat_cross},
-  {"dot_i_i", int_mat_dot},
-  {"issorted_i", int_mat_issorted},
-  {"scale_rows_i_i", int_mat_scale_rows},
-  {"scale_cols_i_i", int_mat_scale_cols},
+  {"cross_i_i", int_imatrix_cross},
+  {"dot_i_i", int_imatrix_dot},
+  {"issorted_i", int_imatrix_issorted},
+  {"scale_rows_i_i", int_imatrix_scale_rows},
+  {"scale_cols_i_i", int_imatrix_scale_cols},
 #endif 
 
   {(char *) 0, NULL}

@@ -169,6 +169,9 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
     }
 
   if ( (Loc =nsp_imatrix_create(NVOID,m,n,A->itype)) == NULLIMAT ) goto err;
+  
+  Scierror("Error:\tunimplemented mult");
+  return NULLIMAT;
 
   return Loc;
 
@@ -423,7 +426,7 @@ int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int flag)
+int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int flag)
 {
   int i,indval;
 
@@ -438,7 +441,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
 	if  (  A->name[i] <  B->name[i] )				\
 	  {								\
 	    A->name[i] = B->name[i] ;					\
-	    if ( flag == 1 ) Ind->name[i] = j;				\
+	    if ( flag == 1 ) Ind->R[i] = j;				\
 	  } break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
@@ -449,7 +452,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
 	if  (  A->name[i] <  B->name[0] )				\
 	  {								\
 	    A->name[i] = B->name[0] ;					\
-	    if ( flag == 1 ) Ind->name[i] = j;				\
+	    if ( flag == 1 ) Ind->R[i] = j;				\
 	  } break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
@@ -461,21 +464,21 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name,type,arg) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->name[0]; break 
+      if ( flag == 1) indval = (int) Ind->R[0]; break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
       if ( flag == 1)
 	{
-	  if ( nsp_imatrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
-	  /* nsp_imatrix_set_rval(Ind,indval); */
+	  if ( nsp_matrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
+	  nsp_mat_set_rval(Ind,indval);
 	}
-#define IMAT_MAX(name,type,arg)				\
+#define IMAT_MAX(name,type,arg)			\
       for ( i = 0; i < A->mn ; i++ )		\
 	if  (  xx.name < B->name[i] )		\
 	  {					\
 	A->name[i] = B->name[i] ;		\
-	if ( flag == 1 ) Ind->name[i] = j;	\
+	if ( flag == 1 ) Ind->R[i] = j;	\
 	  }					\
 	else					\
 	  { A->name[i] = xx.name;}		\
@@ -511,7 +514,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind,int j,int 
  * Return value: %OK or %FAIL
  **/
 
-int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, int flag)
+int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind, int j, int flag)
 {
 
   int i,indval;
@@ -526,7 +529,7 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
 	if  (  A->name[i] >  B->name[i] )				\
 	  {								\
 	    A->name[i] = B->name[i] ;					\
-	    if ( flag == 1 ) Ind->name[i] = j;				\
+	    if ( flag == 1 ) Ind->R[i] = j;				\
 	  } break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
@@ -537,7 +540,7 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
 	if  (  A->name[i] >  B->name[0] )				\
 	  {								\
 	    A->name[i] = B->name[0] ;					\
-	    if ( flag == 1 ) Ind->name[i] = j;				\
+	    if ( flag == 1 ) Ind->R[i] = j;				\
 	  } break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
@@ -549,21 +552,21 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *Ind, int j, in
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name,type,arg) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->name[0]; break 
+      if ( flag == 1) indval = (int) Ind->R[0]; break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
       if ( flag == 1)
 	{
-	  if ( nsp_imatrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
-	  /* nsp_imatrix_set_rval(Ind,indval); */
+	  if ( nsp_matrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
+	  nsp_mat_set_rval(Ind,indval);
 	}
 #define IMAT_MAX(name,type,arg)				\
       for ( i = 0; i < A->mn ; i++ )		\
 	if  (  xx.name > B->name[i] )		\
 	  {					\
 	A->name[i] = B->name[i] ;		\
-	if ( flag == 1 ) Ind->name[i] = j;	\
+	if ( flag == 1 ) Ind->R[i] = j;	\
 	  }					\
 	else					\
 	  { A->name[i] = xx.name;}		\
@@ -668,7 +671,7 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
       for ( i=0 ; i < A->m ; i++)				\
 	{							\
 	  Sum->name[i] =0;					\
-	  for ( j=0 ; j < A->m ; j++)				\
+	  for ( j=0 ; j < A->n ; j++)				\
 	    Sum->name[i] += A->name[i+(A->m)*j];		\
 	}							\
       break;
@@ -693,23 +696,24 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
  * Return value: a  #NspIMatrix (a scalar, row or comumn vector)
  **/
 
-#if 0 
 NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
 {
   NspIMatrix *Prod;
-  int j;
-  int inc=1,zero=0;
+  int i,j;
+  int inc=1;
 
   if ( A->mn == 0) 
     {
       if ( dim == 0 )
 	{
-	  Prod = nsp_imatrix_create(NVOID,'r',1,1);
-	  if ( Prod != NULLIMAT) Prod->R[0]= 1.0;
+	  Prod = nsp_imatrix_create(NVOID,1,1,A->itype);
+#define IMAT_AC(name,type,arg) if ( Prod != NULLIMAT)  Prod->name[0]=1;break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
 	  return Prod;
 	}
       else 
-	return  nsp_imatrix_create(NVOID,'r',0,0);
+	return  nsp_imatrix_create(NVOID,0,0,A->itype);
     }
 
   switch (dim) 
@@ -718,50 +722,47 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
       Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
 
     case 0:
-      if ((Prod = nsp_imatrix_create(NVOID,A->rc_type,1,1)) == NULLIMAT) 
+      if ((Prod = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
-      if ( A->rc_type == 'r' ) 
-	Prod->R[0] = nsp_dprod(A->R, A->mn, 1);
-      else
-	{
-	  Prod->C[0].r =1.00 ; Prod->C[0].i = 0.00;
-	  nsp_zvmul(&A->mn,A->C,&inc,Prod->C,&zero);
-	}
+#define IMAT_AC(name,type,arg)						\
+      Prod->name[0]=1;							\
+      for ( i=0 ; i < A->mn ; i++) Prod->name[0] *=A->name[i] ;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
-
     case 1:
-      if ((Prod = nsp_imatrix_create(NVOID,A->rc_type,1,A->n)) == NULLIMAT) 
+      if ((Prod = nsp_imatrix_create(NVOID,1,A->n,A->itype)) == NULLIMAT) 
 	return NULLIMAT;
-      if ( A->rc_type == 'r' ) 
-	for ( j= 0 ; j < A->n ; j++) 
-	  Prod->R[j] = nsp_dprod(A->R+(A->m)*j, A->m, 1);
-      else
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
-	    nsp_zvmul(&A->m,A->C+(A->m)*j,&inc,Prod->C+j,&zero);
-	  }
+#define IMAT_AC(name,type,arg)					\
+      for ( j=0 ; j < A->n ; j++)				\
+	{							\
+	  Prod->name[j] =1;					\
+	  for ( i=0 ; i < A->m ; i++)				\
+	    Prod->name[j] *= A->name[i+(A->m)*j];		\
+	}							\
       break;
-
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
     case 2:
-      if ((Prod = nsp_imatrix_create(NVOID,A->rc_type,A->m,1)) == NULLIMAT) 
+      if ((Prod = nsp_imatrix_create(NVOID,A->m,1,A->itype)) == NULLIMAT) 
 	return NULLIMAT;
       inc = A->m;
-      if ( A->rc_type == 'r' ) 
-	nsp_dprodrows(A->R, Prod->R, A->m, A->n);
-      else
-	for ( j= 0 ; j < A->m ; j++) 
-	  {
-	    Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
-	    nsp_zvmul(&A->n,A->C+j,&inc,Prod->C+j,&zero);
-	  }
+#define IMAT_AC(name,type,arg)					\
+      for ( i=0 ; i < A->m ; i++)				\
+	{							\
+	  Prod->name[i] =1;					\
+	  for ( j=0 ; j < A->n ; j++)				\
+	    Prod->name[i] *= A->name[i+(A->m)*j];		\
+	}							\
       break;
-
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
     }
-
   return Prod;
 }
-#endif 
+
 
 
 /**
@@ -778,81 +779,56 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
  **/
 
 
-#if 0
 NspIMatrix *nsp_imatrix_cum_prod(NspIMatrix *A, int dim)
 {
-  double cuprod;
-  doubleC C_cuprod;
+  nsp_int_union cuprod; 
   NspIMatrix *Prod;
   int i,j, k, kp;
 
-  if ( A->mn == 0) return nsp_imatrix_create(NVOID,'r',A->m,A->n);
+  if ( A->mn == 0) return nsp_imatrix_create(NVOID,A->m,A->n,A->itype);
 
-  if ((Prod = nsp_imatrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLIMAT) 
+  if ((Prod = nsp_imatrix_create(NVOID,A->m,A->n,A->itype)) == NULLIMAT) 
     return NULLIMAT;
 
   switch (dim) 
     {
     default : 
       Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
-
     case 0: 
-      if ( A->rc_type == 'r' ) 
-	{
-	  cuprod=1.00;
-	  for ( i=0 ; i < A->mn ; i++) 
-	    Prod->R[i] = (cuprod *= A->R[i]);
-	}
-      else
-	{
-	  C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
-	  for ( i=0 ; i < A->mn ; i++) 
-	    { 
-	      nsp_prod_c(&C_cuprod,&A->C[i]);
-	      Prod->C[i] = C_cuprod;
-	    }
-	}
+#define IMAT_AC(name,type,arg)			\
+      cuprod.name=1;				\
+      for ( i=0 ; i < A->mn ; i++)		\
+	Prod->name[i] = (cuprod.name *= A->name[i]);	\
       break;
-
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
+#undef IMAT_AC
+      break;
     case 1:
-      if ( A->rc_type == 'r' ) 
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    cuprod=1.00;
-	    for ( i=0 ; i < A->m ; i++) 
-	      Prod->R[i+(A->m)*j] = (cuprod *= A->R[i+(A->m)*j]);
-	  }
-      else
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
-	    for ( i=0 ; i < A->m ; i++) 
-	      { 
-		nsp_prod_c(&C_cuprod,&A->C[i+j*A->m]);
-		Prod->C[i+j*A->m] = C_cuprod;
-	      }
-	  }
+#define IMAT_AC(name,type,arg)						\
+      for ( j= 0 ; j < A->n ; j++)					\
+	{								\
+	  cuprod.name=1;						\
+	  for ( i=0 ; i < A->m ; i++)					\
+	    Prod->name[i+(A->m)*j] = (cuprod.name *= A->name[i+(A->m)*j]); \
+	}								\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
 
     case 2:
-      if ( A->rc_type == 'r' ) 
-	{
-	  memcpy(Prod->R, A->R, A->mn*sizeof(double));
-	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
-	    Prod->R[k] *= Prod->R[kp];
-	}
-      else
-	{
-	  memcpy(Prod->C, A->C, A->mn*sizeof(doubleC));
-	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
-	    nsp_prod_c(&Prod->C[k], &Prod->C[kp]);
-	}
+#define IMAT_AC(name,type,arg)					\
+      memcpy(Prod->name, A->name, A->mn*sizeof(type));		\
+      for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )		\
+	Prod->name[k] *= Prod->name[kp];			\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
     }
-
   return Prod;
 }
-#endif 
+
 
 /**
  * nsp_imatrix_cum_sum:  cumulative sums of elements of @A
@@ -867,85 +843,58 @@ NspIMatrix *nsp_imatrix_cum_prod(NspIMatrix *A, int dim)
  * Return value: a #NspIMatrix of same dim than @A
  **/
 
-#if 0
 NspIMatrix *nsp_imatrix_cum_sum(NspIMatrix *A, int dim)
 {
-  double cusum;
-  doubleC C_cusum;
+  nsp_int_union cusum;
   NspIMatrix *Sum;
   int i,j, k, kp;
-
+  
   if ( A->mn == 0) 
-    return  nsp_imatrix_create(NVOID,'r',A->m,A->n);
+    return  nsp_imatrix_create(NVOID,A->m,A->n,A->itype);
 
-  if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLIMAT) 
+  if ((Sum = nsp_imatrix_create(NVOID,A->m,A->n,A->itype)) == NULLIMAT) 
     return NULLIMAT;
 
   switch (dim) 
     {
     default : 
       Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
-
     case 0: 
-      if ( A->rc_type == 'r' ) 
-	{
-	  cusum=0.00;
-	  for ( i=0 ; i < A->mn ; i++)
-	    Sum->R[i] = (cusum += A->R[i]);
-	}
-      else
-	{
-	  C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
-	  for ( i=0 ; i < A->mn ; i++) 
-	    { 
-	      Sum->C[i].r = ( C_cusum.r += A->C[i].r);
-	      Sum->C[i].i = ( C_cusum.i += A->C[i].i);
-	    }
-	}
+#define IMAT_AC(name,type,arg)				\
+      cusum.name=0;					\
+      for ( i=0 ; i < A->mn ; i++)			\
+	Sum->name[i] = (cusum.name += A->name[i]);	\
+      break;
+    NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
 
     case 1:
-      if ( A->rc_type == 'r' ) 
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    cusum=0.00;
-	    for ( i=0 ; i < A->m ; i++) 
-	      Sum->R[i+(A->m)*j] = (cusum += A->R[i+(A->m)*j]);
-	  }
-      else
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
-	    for ( i=0 ; i < A->m ; i++) 
-	      { 
-		Sum->C[i+j*A->m].r = ( C_cusum.r +=A->C[i+j*A->m].r);
-		Sum->C[i+j*A->m].i = ( C_cusum.i +=A->C[i+j*A->m].i);
-	      }
-	  }
+#define IMAT_AC(name,type,arg)						\
+      for ( j= 0 ; j < A->n ; j++)					\
+	{								\
+	  cusum.name=0;							\
+	  for ( i=0 ; i < A->m ; i++)					\
+	    Sum->name[i+(A->m)*j] = (cusum.name += A->name[i+(A->m)*j]); \
+	}								\
+      break;
+    NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
 
     case 2:
-      if ( A->rc_type == 'r' ) 
-	{
-	  memcpy(Sum->R, A->R, A->mn*sizeof(double));
-	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
-	    Sum->R[k] += Sum->R[kp];
-	}
-      else
-	{
-	  memcpy(Sum->C, A->C, A->mn*sizeof(doubleC));
-	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
-	    {
-	      Sum->C[k].r += Sum->C[kp].r;
-	      Sum->C[k].i += Sum->C[kp].i;
-	    }
-	}
-      break;
+#define IMAT_AC(name,type,arg)				\
+      memcpy(Sum->name, A->name, A->mn*sizeof(type));	\
+      for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )	\
+	Sum->name[k] += Sum->name[kp];			\
+      break;						
+    NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");		
+#undef IMAT_AC
+    break;
     }
-
   return Sum;
 }
-#endif
+
 
 /**
  * nsp_imatrix_diff:  diff of elements of @A
@@ -2268,7 +2217,7 @@ int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
-#define IMAT_IAND(name,type,arg)						\
+#define IMAT_IAND(name,type,arg)				\
   for ( i = 0 ; i < A->mn ; i++)				\
     A->name[i]&= B->name[i];					\
   break;
@@ -2288,13 +2237,13 @@ int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_imatrix_iandu(NspIMatrix *A, unsigned int *res)
+int nsp_imatrix_iandu(NspIMatrix *A, nsp_int_union *res)
 {
   int i ;
-#define IMAT_IAND(name,type,arg)						\
-  *res = (unsigned int) A->name[0];				\
-  for ( i =1  ; i < A->mn ; i++)				\
-    *res = (*res) & ((unsigned int) A->name[i]);		\
+#define IMAT_IAND(name,type,arg)					\
+  (*res).name = A->name[0];						\
+  for ( i =1  ; i < A->mn ; i++)					\
+    (*res).name &=  A->name[i];						\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_IAND,"");
 #undef IMAT_IAND
@@ -2369,13 +2318,13 @@ int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir)
  * Return value: 
  **/
 
-int nsp_imatrix_ioru(NspIMatrix *A, unsigned int *res)
+int nsp_imatrix_ioru(NspIMatrix *A,       nsp_int_union *res)
 {
   int i ;
-#define IMAT_IORU(name,type,arg)						\
-  *res = (unsigned int) A->name[0];				\
+#define IMAT_IORU(name,type,arg)				\
+  (*res).name = (unsigned int) A->name[0];			\
   for ( i =1  ; i < A->mn ; i++)				\
-    *res = (*res) | ((unsigned int) A->name[i]);		\
+    (*res).name |= A->name[i];					\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_IORU,"");
 #undef IMAT_IORU
