@@ -38,6 +38,12 @@ typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong ,
 		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
 		 nsp_guint64 } nsp_itype;
 
+#define NSP_ITYPE_FORMATS(names)				\
+  char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",		\
+		 "%*u", "%*d", "%*u", "%*d",			\
+		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,	\
+		 "%*"G_GUINT64_FORMAT,NULL};			
+
 #define NSP_ITYPE_NAMES(names)				       \
   char *(names)[]={"int", "uint", "short", "ushort", "long",	\
                    "ulong", "int8", "uint8", "int16",           \
@@ -106,65 +112,38 @@ struct _NspIMatrix {
   int eltsize;
 };
 
-#define NSP_ITYPE_SIZE(s,itype)			\
+
+/* expand X expression in a swith 
+ * #define X(name) for ( i=0 ; i < A->mn ; i++) {if ( A->name[i] ) count++;}break;
+ * NSP_ITYPE_SWITCH(s,itype,X);
+ */
+
+#define NSP_ITYPE_SWITCH(itype,X,arg)		\
   switch (itype ) {				\
-  case nsp_gint: s= sizeof(gint);break;		\
-  case nsp_guint: s= sizeof(guint);break;	\
-  case nsp_gshort: s= sizeof(gshort);break;	\
-  case nsp_gushort: s= sizeof(gushort);break;	\
-  case nsp_glong : s= sizeof(glong );break;		\
-  case nsp_gulong: s= sizeof(gulong);break;		\
-  case nsp_gint8: s= sizeof(gint8);break;		\
-  case nsp_guint8: s= sizeof(guint8);break;		\
-  case nsp_gint16: s= sizeof(gint16);break;		\
-  case nsp_guint16: s= sizeof(guint16);break;		\
-  case nsp_gint32: s= sizeof(gint32);break;		\
-  case nsp_guint32: s= sizeof(guint32);break;		\
-  case nsp_gint64 : s= sizeof(gint64 );break;		\
-  case nsp_guint64 : s= sizeof(gint64 );break;	}
+  case nsp_gint: X(Gint,gint,arg);		\
+  case nsp_guint: X(Guint,guint,arg);		\
+  case nsp_gshort: X(Gshort,gshort,arg);	\
+  case nsp_gushort: X(Gushort,gushort,arg);	\
+  case nsp_glong : X(Glong,glong,arg );		\
+  case nsp_gulong: X(Gulong,gulong,arg);	\
+  case nsp_gint8: X(Gint8,gint8,arg);		\
+  case nsp_guint8: X(Guint8,guint8,arg);	\
+  case nsp_gint16: X(Gint16,gint16,arg);	\
+  case nsp_guint16: X(Guint16,guint16,arg);	\
+  case nsp_gint32: X(Gint32,gint32,arg);	\
+  case nsp_guint32: X(Guint32,guint32,arg);	\
+  case nsp_gint64 : X(Gint64,gint64,arg );	\
+  case nsp_guint64 : X(Gint64,guint64,arg );}
 
-/* fill itype from a fixed type 
+/* NSP_ITYPE_SIZE(s,itype) 
+ * get the size of an int in s 
  */
 
-#define NSP_COPY_TO_ITYPE(name,itype,i,min,step,max,orig)	\
-  switch (itype ) {							\
- case nsp_gint: for (i=min; i <  max; i+=step) (name)->Gint[i] = (gint) (orig);break; \
- case nsp_guint: for (i=min; i <  max; i+=step) (name)->Guint[i] = (guint) (orig);break; \
- case nsp_gshort:for (i=min; i <  max; i+=step) (name)->Gshort[i] = (gshort) (orig);break; \
- case nsp_gushort:for (i=min; i <  max; i+=step) (name)->Gushort[i] = (gushort) (orig);break; \
- case nsp_glong : for (i=min; i <  max; i+=step) (name)->Glong[i] = (glong) (orig);break; \
- case nsp_gulong: for (i=min; i <  max; i+=step) (name)->Gulong[i] = (gulong) (orig);break;	\
- case nsp_gint8:for (i=min; i <  max; i+=step) (name)->Gint8[i] = (gint8) (orig);break; \
- case nsp_guint8: for (i=min; i <  max; i+=step) (name)->Guint8[i] = (guint8) (orig);break;	\
- case nsp_gint16: for (i=min; i <  max; i+=step) (name)->Gint16[i] = (gint16) (orig);break;	\
- case nsp_guint16:for (i=min; i <  max; i+=step) (name)->Guint16[i] = (guint16) (orig);break; \
- case nsp_gint32: for (i=min; i <  max; i+=step) (name)->Gint32[i] = (gint32) (orig);break; \
- case nsp_guint32:for (i=min; i <  max; i+=step) (name)->Guint32[i] = (guint32) (orig);break; \
- case nsp_gint64:for (i=min; i <  max; i+=step) (name)->Gint64[i] = (gint64) (orig);break; \
- case nsp_guint64:for (i=min; i <  max; i+=step) (name)->Guint64[i] = (guint64) (orig);break;} 
+#define __NSP_ITYPE_SIZE(name,type,arg) s= sizeof(type);break;
+#define NSP_ITYPE_SIZE(s,itype)	NSP_ITYPE_SWITCH(itype,__NSP_ITYPE_SIZE,"") 
 
-/* fill fixed type from itype
+/* itype to itype copy 
  *
- */
-
-#define NSP_COPY_FROM_ITYPE(dest,cast,name,itype,i,min,step,max)	\
-  switch (itype ) {							\
-  case nsp_gint:   for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint[i];break; \
-  case nsp_guint:  for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint[i];break; \
-  case nsp_gshort: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gshort[i];break; \
-  case nsp_gushort:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gushort[i];break; \
-  case nsp_glong : for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Glong[i];break; \
-  case nsp_gulong: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gulong[i];break; \
-  case nsp_gint8:  for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint8[i];break; \
-  case nsp_guint8: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint8[i];break; \
-  case nsp_gint16: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint16[i];break; \
-  case nsp_guint16:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint16[i];break; \
-  case nsp_gint32: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint32[i];break; \
-  case nsp_guint32:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint32[i];break; \
-  case nsp_gint64: for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Gint64[i];break; \
-  case nsp_guint64:for (i=min; i <  max; i+=step) (dest) = (cast) (name)->Guint64[i];break;} 
-
-/* COPY between two different itype objects.
  */
 
 
@@ -248,47 +227,6 @@ struct _NspIMatrix {
   case nsp_gint64:__NSP_COPY_ITYPES(iter,name,Gint64,expl,gint64,rhs,itype_rhs,expr) ; break; \
   case nsp_guint64:__NSP_COPY_ITYPES(iter,name,Guint64,expl,guint64,rhs,itype_rhs,expr) ; break; \
   }
-
-/* expand X expression in a swith 
- * #define X(name) for ( i=0 ; i < A->mn ; i++) {if ( A->name[i] ) count++;}break;
- * NSP_ITYPE_SWITCH(s,itype,X);
- */
-
-#define NSP_ITYPE_SWITCH2(itype,X,arg)			\
-  switch (itype ) {					\
-  case nsp_gint: X(Gint,arg);				\
-  case nsp_guint: X(Guint,arg);				\
-  case nsp_gshort: X(Gshort,arg);			\
-  case nsp_gushort: X(Gushort,arg);			\
-  case nsp_glong : X(Glong,arg );			\
-  case nsp_gulong: X(Gulong,arg);			\
-  case nsp_gint8: X(Gint8,arg);				\
-  case nsp_guint8: X(Guint8,arg);			\
-  case nsp_gint16: X(Gint16,arg);			\
-  case nsp_guint16: X(Guint16,arg);			\
-  case nsp_gint32: X(Gint32,arg);			\
-  case nsp_guint32: X(Guint32,arg);			\
-  case nsp_gint64 : X(Gint64,arg );			\
-  case nsp_guint64 : X(Gint64,arg );	}
-
-#define NSP_ITYPE_SWITCH(itype,X)			\
-  switch (itype ) {					\
-  case nsp_gint: X(Gint);				\
-  case nsp_guint: X(Guint);				\
-  case nsp_gshort: X(Gshort);				\
-  case nsp_gushort: X(Gushort);				\
-  case nsp_glong : X(Glong );				\
-  case nsp_gulong: X(Gulong);				\
-  case nsp_gint8: X(Gint8);				\
-  case nsp_guint8: X(Guint8);				\
-  case nsp_gint16: X(Gint16);				\
-  case nsp_guint16: X(Guint16);				\
-  case nsp_gint32: X(Gint32);				\
-  case nsp_guint32: X(Guint32);				\
-  case nsp_gint64 : X(Gint64 );				\
-  case nsp_guint64 : X(Gint64 );	}
-
-
 
 
 /**
@@ -413,7 +351,6 @@ extern NspIMatrix **nsp_imatrix_slec(char *file, int *Count);
 extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
 extern int nsp_imatrix_inv_el(NspIMatrix *A); 
 extern NspIMatrix *nsp_imatrix_kron(NspIMatrix *A, NspIMatrix *B); 
-extern NspIMatrix *nsp_imatrix_sort(NspIMatrix *A, int flag, char *str1, char *str2); 
 extern NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim); 
 extern NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim); 
 extern NspIMatrix *nsp_imatrix_cum_prod(NspIMatrix *A,  int dim); 
