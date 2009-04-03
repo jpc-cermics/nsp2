@@ -620,20 +620,16 @@ NspIMatrix *nsp_imatrix_kron(NspIMatrix *A, NspIMatrix *B)
  * Return value: a  #NspIMatrix (a scalar, row or comumn vector)
  **/
 
-#if 0 
+
 NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
 {
   NspIMatrix *Sum;
-  int j;
-  int inc=1;
-
-
+  int j,i;
   if ( A->mn == 0)
     {
       if ( dim == 0 )
 	{
 	  Sum = nsp_imatrix_create(NVOID,1,1,A->itype);
-	  if ( Sum != NULLIMAT) Sum->R[0]=0;
 	  return Sum;
 	}
       else
@@ -645,26 +641,44 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
     default : 
       Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
     case 0: 
-      if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,1,1)) == NULLIMAT) 
+      if ((Sum = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
-      Sum->R[0] =nsp_dsum(&A->mn,A->R,&inc);
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) Sum->name[0] +=A->name[i] ;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
     case 1:
-      if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,1,A->n)) == NULLIMAT) 
+      if ((Sum = nsp_imatrix_create(NVOID,1,A->n,A->itype)) == NULLIMAT) 
 	return NULLIMAT;
-      for ( j= 0 ; j < A->n ; j++) 
-	Sum->R[j] =nsp_dsum(&A->m,A->R+(A->m)*j,&inc); 
+#define IMAT_AC(name,type,arg)					\
+      for ( j=0 ; j < A->n ; j++)				\
+	{							\
+	  Sum->name[j] =0;					\
+	  for ( i=0 ; i < A->m ; i++)				\
+	    Sum->name[j] += A->name[i+(A->m)*j];		\
+	}							\
       break;
-
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
     case 2:
-      if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,A->m,1)) == NULLIMAT) 
+      if ((Sum = nsp_imatrix_create(NVOID,A->m,1,A->itype)) == NULLIMAT) 
 	return NULLIMAT;
-      nsp_dsumrows(A->R, Sum->R, A->m, A->n);
+#define IMAT_AC(name,type,arg)					\
+      for ( i=0 ; i < A->m ; i++)				\
+	{							\
+	  Sum->name[i] =0;					\
+	  for ( j=0 ; j < A->m ; j++)				\
+	    Sum->name[i] += A->name[i+(A->m)*j];		\
+	}							\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
       break;
     }
   return Sum;
 }
-#endif 
+
 
 /**
  * nsp_imatrix_prod:  computes various products of elements of @A
@@ -678,6 +692,7 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
  * 
  * Return value: a  #NspIMatrix (a scalar, row or comumn vector)
  **/
+
 #if 0 
 NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
 {
