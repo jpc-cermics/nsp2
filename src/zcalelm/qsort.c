@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -27,8 +27,11 @@
  */
 
 #include <stdlib.h>
+#include <glib.h> /* for int64 */
+
 #include "nsp/machine.h" 
 #include "nsp/gsort-p.h"
+
 
 extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1, 
 		      int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ());
@@ -42,6 +45,15 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
 #define ELT_TYPE int
 #include "qsort-gen.c"
 #undef  ELT_TYPE
+
+/*
+ * gint64 arrays or matrices 
+ */
+                                                                                      
+#define ELT_TYPE gint64
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
 
 /*
  * double arrays or matrices 

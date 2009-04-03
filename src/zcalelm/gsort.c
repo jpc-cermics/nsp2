@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -237,6 +237,115 @@ int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,ch
   nsp_qsort_gen_lexirow_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
   return OK;
 }
+
+
+/**
+ * nsp_matrix_sort:
+ * @A: 
+ * @Index: 
+ * @ind_flag: 
+ * @dir: direction 'i' for increasing 'd' for decreasing 
+ * 
+ * global sort of the elements of a matrix. If flag is %TRUE 
+ * Index is computed and returned 
+ * 
+ **/
+
+int nsp_imatrix_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_sort type)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  if (A->itype != nsp_gint64 )
+    {
+      Scierror("Error: only implemented for gint64\n");
+      return FAIL;
+    }
+  switch (type)
+    {
+    case sort_gb: 
+      /* qsort Bruno */
+      nsp_qsort_bp_gint64(A->Iv,A->mn,index,ind_flag,dir);break;
+    case sort_gs:
+      /* stable quick sort: caution index must be allocated */
+      nsp_sqsort_bp_gint64(A->Iv,A->mn,index,dir);break;
+    case sort_gm:
+      /* merge sort */
+      if ( nsp_mergesort_gint64(A->Iv,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;
+      break;
+    case sort_gd :
+      /* non stable qsort */
+      nsp_qsort_gint64(A->Iv,index,ind_flag,A->mn,dir);break;      
+    default: 
+      /* non stable qsort specializd for double (faster than the generic one) */
+      nsp_qsort_gint64(A->Iv,index,ind_flag,A->mn,dir);break;
+      /* for testing the int case 
+       * A = Mat2int(A);
+       * A->convert = 'i';
+       * nsp_qsort_int(A->I,index,ind_flag,A->mn,dir);break;      
+       */
+    }
+  return OK;
+}
+
+int nsp_imatrix_column_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  nsp_qsort_gen_col_sort_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+int nsp_imatrix_row_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  nsp_qsort_gen_row_sort_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+
+int nsp_imatrix_lexical_column_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->n) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  nsp_qsort_gen_lexicol_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+int nsp_imatrix_lexical_row_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,1) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  nsp_qsort_gen_lexirow_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+
 
 /* to be removed FIXME */
 

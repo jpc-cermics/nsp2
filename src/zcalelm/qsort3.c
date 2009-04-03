@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *                         Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,10 @@
 #include "nsp/gsort-p.h"
 
 #define ELT_TYPE int
+#include "qsort3-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint64
 #include "qsort3-gen.c"
 #undef  ELT_TYPE
 
