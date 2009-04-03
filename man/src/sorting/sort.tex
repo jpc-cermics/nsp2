@@ -67,28 +67,57 @@ In this case each column of $x$ is sorted independently of the others.
 $p$ is a matrix of indices and \verb+y(:,j)+ should be equal to
 \verb+x(p(:,j),j)+. 
 
-\itemdesc{{\tt type\_of\_sort = "ldc"}}
+\itemdesc{{\tt type\_of\_sort = "lc"}}
 In this case the columns are sorted using lexical order (increasing 
 order if \verb+order="i"+). $p$ is a vector of indices such that \verb+y+ should be equal to
-\verb+x(:,p)+. 
+\verb+x(:,p)+. {\bf Important note :} for matrix of floating point numbers a cast double 
+to int is done first, so use {\tt type\_of\_sort = "ldc"} to avoid this problem.
 
-\itemdesc{{\tt type\_of\_sort = "lc"}}
-is the same than \verb+"ldc"+ but the matrix is considered as a matrix
-of integers (a cast double to int is done first).
-
-\itemdesc{{\tt type\_of\_sort = "ldr"}}
-In this case the rows are sorted using lexical order (increasing 
-order if \verb+order="i"+). $p$ is a vector of indices such that \verb+y+ should be equal to
-\verb+x(p,:)+. 
+\itemdesc{{\tt type\_of\_sort = "ldc"}}
+Lexical columns sorting for matrix of floating point numbers (see option "lc")  
 
 \itemdesc{{\tt type\_of\_sort = "lr"}}
-is the same than \verb+"ldr"+ but the matrix is considered as a matrix
-of integers (a cast double to int is done first).
+In this case the rows are sorted using lexical order (increasing 
+order if \verb+order="i"+). $p$ is a vector of indices such that \verb+y+ should be equal to
+\verb+x(p,:)+.  {\bf Important note :} for matrix of floating point numbers a cast double 
+to int is done first, so use {\tt type\_of\_sort = "ldr"} to avoid this problem.
 
-\paragraph{Remark}
-For matrix of floating point numbers, Nan values are considered larger
+\itemdesc{{\tt type\_of\_sort = "ldr"}}
+Lexical rows sorting for matrix of floating point numbers (see option "lr").
+
+
+\paragraph{Remarks}
+\begin{itemize}
+\item For matrix of floating point numbers, Nan values are considered larger
 than Inf. So all nans are positionned at the end in case of an
 increasing sort and at the beginning for a decreasing sort. 
+\item stable sorts are not provided for other kind of sort than \verb+"g"+ ; if
+you need such a feature:
+  \begin{itemize}
+  \item for lexical sorting of columns ("lc" or "ldc"), you can add a last
+        row \verb+1:n+ to your matrix:
+        \begin{verbatim}
+        [B,ind] = sort([A;1:size(A,2)],"ldc", "i"); B($,:)=[];
+        \end{verbatim}
+  \item for lexical sorting of rows ("lr" or "ldr"), you can add a last
+        column \verb+1:m+ to your matrix:
+        \begin{verbatim}
+        [B,ind] = sort([A,1:size(A,1)],"ldr", "i"); B(:,$)=[];
+        \end{verbatim}
+  \item for sorting each column independantly ("c"), do a loop with
+        a stable sort ("gm" or "gs") on each column:
+        \begin{verbatim}
+        B = zeros(size(A)); ind = zeros(size(A));
+        for j=1:size(A,2), [B(:,j),ind(:,j)] = sort(A(:,j),"gm", "i"); end
+        \end{verbatim}
+  \item for sorting each row independantly ("c"), do a loop with
+        a stable sort ("gm" or "gs") on each row:
+        \begin{verbatim}
+        B = zeros(size(A)); ind = zeros(size(A));
+        for i=1:size(A,1), [B(i,:),ind(i,:)] = sort(A(i,:),"gm", "i"); end
+        \end{verbatim}
+  \end{itemize}
+\end{itemize}
 
 
 \end{mandescription}
