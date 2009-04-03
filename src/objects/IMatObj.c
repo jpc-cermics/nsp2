@@ -585,7 +585,7 @@ static int int_meth_imatrix_set_diag(NspObject *self, Stack stack, int rhs, int 
   return 0;
 }
 
-#if 0
+
 static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspIMatrix *A = self, *x;
@@ -595,7 +595,7 @@ static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int l
   CheckRhs(1,1); 
   CheckLhs(1,3);
 
-  if ((x = GetIMat (stack, 1)) == NULLMAT) return RET_BUG;
+  if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
 
   if ( (B = nsp_imatrix_has(A, x, lhs, &Ind, &Ind2)) == NULLBMAT )
     return RET_BUG;
@@ -610,7 +610,7 @@ static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int l
 
   return Max(lhs,1);
 }
-#endif 
+
 
 static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
@@ -632,9 +632,7 @@ static NspMethods nsp_imatrix_methods[] = {
   { "scale_rows",int_meth_imatrix_scale_rows}, 
   { "scale_cols",int_meth_imatrix_scale_cols}, 
   { "get_nnz", int_meth_imatrix_get_nnz},
-#if 0
   { "has", int_meth_imatrix_has},
-#endif 
   { "set_diag",(nsp_method *) int_meth_imatrix_set_diag}, /* preferred to generic matint method */
   {"retype",(nsp_method *) int_imatrix_meth_retype},
   { NULL, NULL}
@@ -1128,6 +1126,9 @@ static OpTab IMatrix_func[]={
   {"fne_i_i", int_imatrix_fne},
   {"ge_i_i", int_imatrix_ge},
   {"gt_i_i", int_imatrix_gt},
+  {"le_i_i", int_imatrix_le},
+  {"lt_i_i", int_imatrix_lt},
+  {"find_i", int_imatrix_find},
 
   /* XXX */
 #if 0
@@ -1136,8 +1137,6 @@ static OpTab IMatrix_func[]={
   {"ones_i", int_imatrix_ones},
   {"zeros_i", int_imatrix_zeros},
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
-  {"le_i_i", int_imatrix_le},
-  {"lt_i_i", int_imatrix_lt},
   {"max_i", int_imatrix_maxi},
   {"max_i_i", int_imatrix_maxi},
   {"min_i", int_imatrix_mini},
@@ -1179,7 +1178,6 @@ static OpTab IMatrix_func[]={
   {"mult_i_i", int_imatrix_mult},
   {"pmult_i_i", int_imatrix_pmult},
   {"div_i_i", int_imatrix_div},
-  {"find_i", int_imatrix_find},
   {"mfind_i", int_imatrix_mfind},
   {"nnz_i",  int_matrix_nnz},
   {"unique_i", int_unique},
@@ -1189,7 +1187,6 @@ static OpTab IMatrix_func[]={
   {"scale_rows_i_i", int_mat_scale_rows},
   {"scale_cols_i_i", int_mat_scale_cols},
 #endif 
-
 
   {(char *) 0, NULL}
 };

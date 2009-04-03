@@ -703,30 +703,19 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
     case 0: 
       if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,1,1)) == NULLIMAT) 
 	return(NULLIMAT);
-      if ( A->rc_type == 'r' ) 
-	Sum->R[0] =nsp_dsum(&A->mn,A->R,&inc);
-      else
-	nsp_zsum(&Sum->C[0],&A->mn,A->C,&inc);
+      Sum->R[0] =nsp_dsum(&A->mn,A->R,&inc);
       break;
-
     case 1:
       if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,1,A->n)) == NULLIMAT) 
 	return NULLIMAT;
-      if ( A->rc_type == 'r' ) 
-	for ( j= 0 ; j < A->n ; j++) 
-	  Sum->R[j] =nsp_dsum(&A->m,A->R+(A->m)*j,&inc); 
-      else
-	for ( j= 0 ; j < A->n ; j++) 
-	  nsp_zsum(&Sum->C[j],&A->m,A->C+(A->m)*j,&inc);
+      for ( j= 0 ; j < A->n ; j++) 
+	Sum->R[j] =nsp_dsum(&A->m,A->R+(A->m)*j,&inc); 
       break;
 
     case 2:
       if ((Sum = nsp_imatrix_create(NVOID,A->rc_type,A->m,1)) == NULLIMAT) 
 	return NULLIMAT;
-      if ( A->rc_type == 'r' )
-	nsp_dsumrows(A->R, Sum->R, A->m, A->n);
-      else
-	nsp_zsumrows(A->C, Sum->C, A->m, A->n);
+      nsp_dsumrows(A->R, Sum->R, A->m, A->n);
       break;
     }
   return Sum;
