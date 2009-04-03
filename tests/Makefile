@@ -84,7 +84,6 @@ ALG=algebra-balanc.dia \
 AFINIR= \
 	color-strings.tst \
 	hash-vl.tst \
-	matops-nsp.tst \
 	matops.tst \
 	pvm.tst \
 	sparse-nsp.tst \
