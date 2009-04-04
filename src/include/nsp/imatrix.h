@@ -387,9 +387,9 @@ extern void nsp_imatrix_int(NspIMatrix *A);
 extern int nsp_imatrix_sign(NspIMatrix *A); 
 extern int nsp_imatrix_abs(NspIMatrix *A); 
 extern int nsp_imatrix_iand(NspIMatrix *A, NspIMatrix *B); 
-extern int nsp_imatrix_iandu(NspIMatrix *A,  nsp_int_union *res);
 extern int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B); 
-extern int nsp_imatrix_ioru(NspIMatrix *A, nsp_int_union *res);
+extern NspIMatrix *nsp_imatrix_ior_unary(NspIMatrix *A, int dim);
+extern NspIMatrix *nsp_imatrix_iand_unary(NspIMatrix *A, int dim);
 extern int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir);
 extern int nsp_imatrix_minus(NspIMatrix *A); 
 /* extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2);  */

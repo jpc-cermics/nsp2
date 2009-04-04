@@ -122,14 +122,8 @@ static int MatOp(NspIMatrix *A, NspIMatrix *B, MPM F1, PM F2, MPM F3, int flag)
 
 NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
 { 
-  /* 
-  doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
-  double alpha=1.00,beta=0.00;
-  */
   NspIMatrix *Loc;
-  int m, n, left, right;
-  char *flagA, *flagB;
-
+  int m, n, left, right,i,j,k;
   if ( A->itype != B->itype ) 
     {
       Scierror("Error: arguments must have the same integer type\n");
@@ -141,19 +135,15 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
       Sciprintf("Invalid flag '%d' assuming 0\n", flag);
     case 0: 
       m = A->m; left = A->n; right = B->m; n = B->n; 
-      flagA = "N"; flagB = "N";      
       break;
     case 1: 
       m = A->n; left = A->m; right = B->m; n = B->n; 
-      flagA = "C"; flagB = "N";
       break;
     case 2: 
       m = A->m; left = A->n; right = B->n; n = B->m; 
-      flagA = "N"; flagB = "C"; 
       break;
     case 3: 
       m = A->n; left = A->m; right = B->n; n = B->m;
-      flagA = "C"; flagB = "C"; 
       break;
     }
 		 
@@ -162,6 +152,7 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
       Scierror("Error:\tIncompatible dimensions\n");
       return NULLIMAT;
     }
+
   if ( left == 0 )
     {
       if ( (Loc = nsp_imatrix_create(NVOID,m,n,A->itype)) == NULLIMAT ) goto err;
@@ -169,9 +160,72 @@ NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
     }
 
   if ( (Loc =nsp_imatrix_create(NVOID,m,n,A->itype)) == NULLIMAT ) goto err;
-  
-  Scierror("Error:\tunimplemented mult");
-  return NULLIMAT;
+
+
+  switch ( flag ) 
+    {  
+    default: 
+      Sciprintf("Invalid flag '%d' assuming 0\n", flag);
+    case 0: 
+      /* A*B */
+#define IMAT_AC(name,type,arg)						\
+      for ( i=0 ; i < Loc->m ; i++)					\
+	for ( j=0 ; j < Loc->n ; j++)					\
+	  {								\
+	    Loc->name[i+(Loc->m)*j]=0;					\
+	    for ( k=0 ; k < left ; k++)					\
+	      Loc->name[i+(Loc->m)*j] += A->name[i+k*A->m]*B->name[k+B->m*j]; \
+	  }								\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    case 1: 
+      /* A'*B */
+#define IMAT_AC(name,type,arg)						\
+      for ( i=0 ; i < Loc->m ; i++)					\
+	for ( j=0 ; j < Loc->n ; j++)					\
+	  {								\
+	    Loc->name[i+(Loc->m)*j]=0;					\
+	    for ( k=0 ; k < left ; k++)					\
+	      Loc->name[i+(Loc->m)*j] += A->name[k+i*A->m]*B->name[k+B->m*j]; \
+	  }								\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+
+      break;
+    case 2: 
+      /*  A * B' */
+#define IMAT_AC(name,type,arg)						\
+      for ( i=0 ; i < Loc->m ; i++)					\
+	for ( j=0 ; j < Loc->n ; j++)					\
+	  {								\
+	    Loc->name[i+(Loc->m)*j]=0;					\
+	    for ( k=0 ; k < left ; k++)					\
+	      Loc->name[i+(Loc->m)*j] += A->name[i+k*A->m]*B->name[j+B->m*k]; \
+	  }								\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+
+      break;
+    case 3: 
+      /* A' *B ' */
+#define IMAT_AC(name,type,arg)						\
+      for ( i=0 ; i < Loc->m ; i++)					\
+	for ( j=0 ; j < Loc->n ; j++)					\
+	  {								\
+	    Loc->name[i+(Loc->m)*j]=0;					\
+	    for ( k=0 ; k < left ; k++)					\
+	      Loc->name[i+(Loc->m)*j] += A->name[k+i*A->m]*B->name[j+B->m*k]; \
+	  }								\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+
+      break;
+    }
 
   return Loc;
 
@@ -1536,7 +1590,7 @@ int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B)
 
 int nsp_imatrix_pow_matmat(NspIMatrix *A, NspIMatrix *B) 
 {
-  Scierror("Error:\t for ^ operator at least one operand must be a scalar\n");
+  Scierror("Error: at least one operand of power operator must be a scalar\n");
   return FAIL;
 }
 
@@ -1736,6 +1790,9 @@ int nsp_imatrix_pow_scalar(NspIMatrix *A, NspIMatrix *B)
   return OK;
 }
 
+#endif 
+
+
 /**
  * nsp_imatrix_pow_scalarm:
  * @A: a #NspIMatrix 
@@ -1748,37 +1805,43 @@ int nsp_imatrix_pow_scalar(NspIMatrix *A, NspIMatrix *B)
 
 int nsp_imatrix_pow_scalarm(NspIMatrix *A, NspIMatrix *B)
 {
-  int i;
-  if(A->rc_type == 'r' ) 
+  int i, err=FALSE;
+  if ( A->itype != B->itype ) 
     {
-      if ( B->rc_type == 'r') 
-	{
-	  if ( B->R[0] >= 0.0 )
-	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(B->R[0],A->R[i]);
-	  else
-	    {
-	      Boolean rflag = TRUE;
-	      doubleC B_complexified = {1.0, 0.0};
-	      for ( i = 0 ; i < A->mn ; i++ ) 
-		{
-		  if ( rflag )
-		    if ( floor(A->R[i]) == A->R[i] ) /* exposant is integer => result is still real */
-			A->R[i] = pow(B->R[0],A->R[i]);
-		    else
-		      {
-			if (nsp_imatrix_complexify(A,0.00) == FAIL ) return FAIL;
-			B_complexified.r = B->R[0];
-			nsp_pow_cd(&B_complexified,A->C[i].r,&A->C[i]);
-			rflag = FALSE;
-		      }
-		  else
-		    nsp_pow_cd_or_ci(&B_complexified,A->C[i].r,&A->C[i]);
-		}
-	    }
-	}
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
+    }
+#define IMAT_POWS(name,type,arg)					\
+  {if (  B->name[0] < 0 ) { err=TRUE;}					\
+  else									\
+    for ( i = 0 ; i < A->mn ; i++ )					\
+      {									\
+	nsp_int_union z,p,x;						\
+	z.name = 1;							\
+	p.name = B->name[0];						\
+	x.name = A->name[i];						\
+	while ( p.name > 1 )						\
+	  {								\
+	    if ( p.name % 2 == 1 )					\
+	      z.name *= x.name;						\
+	    x.name *= x.name;						\
+	    p.name = p.name/2;						\
+	  }								\
+	A->name[i]= z.name*x.name;					\
+      }									\
+  break;}
+  NSP_ITYPE_SWITCH(A->itype,IMAT_POWS,"");
+#undef IMAT_POWS
+  if (err == TRUE) 
+    {
+      Scierror("Error: exponent must be positive for int matrices\n");
+      return FAIL;
+    }
   return OK;
 }
-#endif 
+
+
+
 
 /**
  * nsp_imatrix_div_tt:
@@ -2269,15 +2332,16 @@ int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
-#define IMAT_IOR(name,type,arg)						\
+#define IMAT_IOR(name,type,arg)					\
   for ( i = 0 ; i < A->mn ; i++)				\
     A->name[i] |= B->name[i];					\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_IOR,"");
 #undef IMAT_IOR
   return(OK);
-
 }
+
+
 
 
 /**
@@ -2308,28 +2372,150 @@ int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir)
 }
 
 /**
- * nsp_imatrix_ioru:
+ * nsp_imatrix_ior_unary
  * @A: a #NspIMatrix 
- * @res: 
+ * @dim: a direction 
  * 
- * logical or of the entries of @A 
- * casted to int 
+ * logical or of the entries of @A along 
+ * @dim dimension
  * 
- * Return value: 
+ * Return value: a new #NspIMatrix 
  **/
 
-int nsp_imatrix_ioru(NspIMatrix *A,       nsp_int_union *res)
+NspIMatrix *nsp_imatrix_ior_unary(NspIMatrix *A, int dim)
 {
-  int i ;
-#define IMAT_IORU(name,type,arg)				\
-  (*res).name = (unsigned int) A->name[0];			\
-  for ( i =1  ; i < A->mn ; i++)				\
-    (*res).name |= A->name[i];					\
-  break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_IORU,"");
-#undef IMAT_IORU
-  return(OK);
+  NspIMatrix *Ior;
+  int j,i;
+  if ( A->mn == 0)
+    {
+      if ( dim == 0 )
+	{
+	  Ior = nsp_imatrix_create(NVOID,1,1,A->itype);
+	  return Ior;
+	}
+      else
+	{
+	  return  nsp_imatrix_create(NVOID,0,0,A->itype);
+	}
+    }
+  switch (dim) 
+    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+    case 0: 
+      if ((Ior = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
+	return(NULLIMAT);
+#define IMAT_AC(name,type,arg)						\
+      Ior->name[0]= A->name[0];						\
+      for ( i=1 ; i < A->mn ; i++) Ior->name[0] |= A->name[i] ;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    case 1:
+      if ((Ior = nsp_imatrix_create(NVOID,1,A->n,A->itype)) == NULLIMAT) 
+	return NULLIMAT;
+#define IMAT_AC(name,type,arg)					\
+      for ( j=0 ; j < A->n ; j++)				\
+	{							\
+	  Ior->name[j] = 0;					\
+	  for ( i=0 ; i < A->m ; i++)				\
+	    Ior->name[j] |= A->name[i+(A->m)*j];		\
+	}							\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    case 2:
+      if ((Ior = nsp_imatrix_create(NVOID,A->m,1,A->itype)) == NULLIMAT) 
+	return NULLIMAT;
+#define IMAT_AC(name,type,arg)					\
+      for ( i=0 ; i < A->m ; i++)				\
+	{							\
+	  Ior->name[i] =0;					\
+	  for ( j=0 ; j < A->n ; j++)				\
+	    Ior->name[i] |= A->name[i+(A->m)*j];		\
+	}							\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    }
+  return Ior;
 }
+
+/**
+ * nsp_imatrix_ior_unary
+ * @A: a #NspIMatrix 
+ * @dim: a direction 
+ * 
+ * logical or of the entries of @A along 
+ * @dim dimension
+ * 
+ * Return value: a new #NspIMatrix 
+ **/
+
+NspIMatrix *nsp_imatrix_iand_unary(NspIMatrix *A, int dim)
+{
+  NspIMatrix *Iand;
+  int j,i;
+  if ( A->mn == 0)
+    {
+      if ( dim == 0 )
+	{
+	  Iand = nsp_imatrix_create(NVOID,1,1,A->itype);
+	  return Iand;
+	}
+      else
+	{
+	  return  nsp_imatrix_create(NVOID,0,0,A->itype);
+	}
+    }
+  switch (dim) 
+    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+    case 0: 
+      if ((Iand = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
+	return(NULLIMAT);
+#define IMAT_AC(name,type,arg)						\
+      Iand->name[0]= A->name[0];						\
+      for ( i=1 ; i < A->mn ; i++) Iand->name[0] &= A->name[i] ;break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    case 1:
+      if ((Iand = nsp_imatrix_create(NVOID,1,A->n,A->itype)) == NULLIMAT) 
+	return NULLIMAT;
+#define IMAT_AC(name,type,arg)					\
+      for ( j=0 ; j < A->n ; j++)				\
+	{							\
+	  Iand->name[j] =A->name[(A->m)*j] ;			\
+	  for ( i=1 ; i < A->m ; i++)				\
+	    Iand->name[j] &= A->name[i+(A->m)*j];		\
+	}							\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    case 2:
+      if ((Iand = nsp_imatrix_create(NVOID,A->m,1,A->itype)) == NULLIMAT) 
+	return NULLIMAT;
+#define IMAT_AC(name,type,arg)					\
+      for ( i=0 ; i < A->m ; i++)				\
+	{							\
+	  Iand->name[i] =A->name[i];				\
+	  for ( j=1 ; j < A->n ; j++)				\
+	    Iand->name[i] &= A->name[i+(A->m)*j];		\
+	}							\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
+      break;
+    }
+  return Iand;
+}
+
+
 
 
 /**

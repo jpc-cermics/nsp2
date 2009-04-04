@@ -31,6 +31,8 @@
 #include "nsp/matint.h"
 #include "nsp/gsort-p.h"
 
+#define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
+
 /**
  * SECTION:imatrix
  * @title: NspIMatrix
@@ -1238,6 +1240,91 @@ int_imatrix_cuprod (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * A= ior(A,B) or ior(A,dim) or ior(A,dim=)
+ */
+
+int
+int_imatrix_ior (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A, *B;
+  CheckStdRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs - opt == 2)
+    {
+      if ( IsIMatObj(stack,2) )
+	{
+	  /* ior(A,B) */
+	  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+	    return RET_BUG;
+	  NSP_OBJECT (A)->ret_pos = 1;
+	  if ((B = GetIMat (stack, 2)) == NULLIMAT)
+	    return RET_BUG;
+	  if (SameDim (A, B))
+	    {
+	      if (nsp_imatrix_ior (A, B) == FAIL)
+		return RET_BUG;
+	    }
+	  else
+	    {
+	      Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
+			NspFname(stack));
+	      return RET_BUG;
+	    }
+	  return 1;
+	}
+    }
+  else
+    {
+      return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_ior_unary));
+    }
+  return 1;
+}
+
+
+/*
+ * A= iand(A,B) or iand(A,dim) or iand(A,dim=)
+ */
+
+int
+int_imatrix_iand (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A, *B;
+  CheckStdRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs - opt == 2)
+    {
+      if ( IsIMatObj(stack,2) )
+	{
+	  /* iand(A,B) */
+	  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
+	    return RET_BUG;
+	  NSP_OBJECT (A)->ret_pos = 1;
+	  if ((B = GetIMat (stack, 2)) == NULLIMAT)
+	    return RET_BUG;
+	  if (SameDim (A, B))
+	    {
+	      if (nsp_imatrix_iand (A, B) == FAIL)
+		return RET_BUG;
+	    }
+	  else
+	    {
+	      Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
+			NspFname(stack));
+	      return RET_BUG;
+	    }
+	  return 1;
+	}
+    }
+  else
+    {
+      return (int_imatrix_sum_gen (stack, rhs, opt, lhs, nsp_imatrix_iand_unary));
+    }
+  return 1;
+}
+
+
+
+/*
  * diff
  *
  */
@@ -1860,103 +1947,8 @@ int_imatrix_minus (Stack stack, int rhs, int opt, int lhs)
   return int_imatrix_gen11 (stack, rhs, opt, lhs, nsp_imatrix_minus);
 }
 
-#define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-/*
- * A=iand(A,B)
- */
 
-int
-int_imatrix_iand (Stack stack, int rhs, int opt, int lhs)
-{
-  NspIMatrix *A, *B;
-  CheckRhs (1, 2);
-  CheckLhs (1, 1);
-  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
-    return RET_BUG;
-  NSP_OBJECT (A)->ret_pos = 1;
-  if (A->mn == 0)
-    {
-      NSP_OBJECT (A)->ret_pos = 1;
-      return 1;
-    }
-  if (rhs == 2)
-    {
-      if ((B = GetIMat (stack, 2)) == NULLIMAT)
-	return RET_BUG;
-      if (SameDim (A, B))
-	{
-	  if (nsp_imatrix_iand (A, B) == FAIL)
-	    return RET_BUG;
-	}
-      else
-	{
-	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
-		    NspFname(stack));
-	  return RET_BUG;
-	}
-    }
-  else
-    {
-      nsp_int_union res;
-      if (nsp_imatrix_iandu (A, &res) == FAIL)
-	return RET_BUG;
-      if (nsp_imatrix_resize (A, 1, 1) == FAIL)
-	return (FAIL);
-#define IMAT_ISTRUE(name,type,arg) A->name[0] = res.name;break;
-      NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
-#undef  IMAT_ISTRUE
-    }
-  return 1;
-}
-
-/*
- * A= ior(A,B)
- */
-
-int
-int_imatrix_ior (Stack stack, int rhs, int opt, int lhs)
-{
-  NspIMatrix *A, *B;
-  CheckRhs (1, 2);
-  CheckLhs (1, 1);
-  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
-    return RET_BUG;
-  NSP_OBJECT (A)->ret_pos = 1;
-  if (A->mn == 0)
-    {
-      NSP_OBJECT (A)->ret_pos = 1;
-      return 1;
-    }
-  if (rhs == 2)
-    {
-      if ((B = GetIMat (stack, 2)) == NULLIMAT)
-	return RET_BUG;
-      if (SameDim (A, B))
-	{
-	  if (nsp_imatrix_ior (A, B) == FAIL)
-	    return RET_BUG;
-	}
-      else
-	{
-	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
-		    NspFname(stack));
-	  return RET_BUG;
-	}
-    }
-  else
-    {
-      nsp_int_union res;
-      if (nsp_imatrix_ioru (A, &res) == FAIL)
-	return RET_BUG;
-      if (nsp_imatrix_resize (A, 1, 1) == FAIL)
-	return (FAIL);
-#define IMAT_ISTRUE(name,type,arg) A->name[0] = res.name;break;
-      NSP_ITYPE_SWITCH(A->itype,IMAT_ISTRUE,"");
-#undef  IMAT_ISTRUE
-    }
-  return 1;
-}
 
 
 /*
@@ -2700,6 +2692,9 @@ static OpTab IMatrix_func[]={
   {"triu_i", int_imatrix_triu},
   {"mult_i_i", int_imatrix_mult},
   {"pmult_i_i", int_imatrix_pmult},
+  {"iand_i", int_imatrix_iand},
+  {"ior_i", int_imatrix_ior},
+  {"ishift", int_imatrix_ishift},
 
   /* XXX */
 #if 0
@@ -2716,9 +2711,6 @@ static OpTab IMatrix_func[]={
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
   {"sign_i", int_imatrix_sign},
-  {"iand_i", int_imatrix_iand},
-  {"ior_i", int_imatrix_ior},
-  {"ishift", int_imatrix_ishift},
   {"hat_i_i", int_imatrix_pow},
   {"dh_i_i", int_imatrix_powel},
   {"dsl_i_i", int_imatrix_divel},
