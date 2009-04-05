@@ -2,7 +2,7 @@
    for the generated C code.  We use macros for increased speed, less
    function overhead.  */
 
-#define MAX_OUTPUT_SIZE 6000	/* Number of chars on one output line PLUS
+#define MAX_OUTPUT_SIZE 60000	/* Number of chars on one output line PLUS
 				   the length of the longest string
 				   printed using   nice_printf   */
 
