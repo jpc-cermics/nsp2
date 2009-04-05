@@ -91,14 +91,21 @@ static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int 
 static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
 #endif 
 
-/*
+/**
+ * nsp_parse_top:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
  * Top Parsing function 
  * Parses <stmt> op <stmt> op <stmt>  .... lastop
  *     where op = , | ; 
  *           lastop = op \n 
  * <xxxx> we also accept / comments 
- */
-
+ * 
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -171,7 +178,15 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return(OK);
 }
 
-/********************************************
+
+/**
+ * parse_exprs:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @funcflag: 
+ * @F: 
+ * 
  * Parsing sequence of expressions <exprs>
  * <exprs> :=  <stmt> op <stmt> ....<stmt> op <stop>
  *     where opb = , | ; | \n | \n* |  and 
@@ -179,8 +194,9 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
  *     one or more <stmt> 
  * <stop> := symbols which must end a parse_exprs 
  * This symbol is controlled by the function given as argument 
- ******************************************/
-
+ * 
+ * Returns: 
+ **/
 static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F)
 {
   int count = 0,op=0;
@@ -327,14 +343,22 @@ static int parse_endstop(Tokenizer *T,int token)
 }
 
 
-/**********************************************************
+
+/**
+ * parse_stmt:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
  * Parse statement 
  * <stmt> = <equal> | <clause> | <command> | <comment> |
  *    <clause> := <if>|<while>|<for>|<select>|<function>
  *    <command>:= <keyword> | <keyword> <keywordarg> 
  *  <keywordarg> (See T->ParseCommandArg(T))
- *********************************************************/
-
+ * 
+ * Returns: 
+ **/
 static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int id,line;
@@ -430,12 +454,20 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
 
 
 
-/***********************************************
+/**
+ * parse_declaration:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @flag: 
+ * 
  * for keyword <name> op <name>  op1 
  * op = , | ' '
  * op1 = ; | '\n' 
  *
- **********************************************/
+ * 
+ * Returns: 
+ **/
 
 static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int flag)
 {
@@ -470,6 +502,19 @@ static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int 
   return OK;
 }
 
+
+/**
+ * parse_nary_keyword:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @keyword: 
+ * @line: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int keyword, int line)
 {
@@ -511,14 +556,6 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
   return(OK);
 }
 
-/************************************************
- * Parsing <function> 
- * 
- *   <function>:= function <fdec>
- *                    <exprs> 
- *                endfunction
- *
- ************************************************/
 
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
 
@@ -528,10 +565,36 @@ static void nsp_parse_symbols_table_reset_id(NspBHash *symb_table,NspSMatrix *S)
 #endif
 #endif 
 
+/**
+ * parse_funcstop:
+ * @T: 
+ * @token: 
+ * 
+ * detects end of function definition.
+ * 
+ * Returns: %TRUE or %FALSE
+ **/
+
 static int parse_funcstop (Tokenizer *T,int token)
 {
   return ( token == ENDFUNCTION );
 }
+
+/**
+ * parse_function:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * Parsing <function> 
+ * 
+ *   <function>:= function <fdec>
+ *                    <exprs> 
+ *                endfunction
+ *
+ * 
+ * Returns: 
+ **/
 
 static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -670,9 +733,17 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return FAIL;
 }
 
-/* name only 
- *
- */
+
+/**
+ * parse_name:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * parse a name 
+ * 
+ * Returns: 
+ **/
 
 static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -696,20 +767,36 @@ static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return(OK);
 }
 
-/*********************************************************
+
+/**
+ * nsp_function_name:
+ * @plist: a #PList
+ * 
+ * 
  * returns the function name in a function PLIST 
- * WARNING : no check is done this is Ugly
- *********************************************************/
+ * but no check is done we expect that @plist has 
+ * the correct shape.
+ * 
+ * Returns: 
+ **/
 
 char *nsp_function_name(PList plist)
 {
   return ((PList) (((PList) plist->next->O)->next->next->O))->next->O;
 }
 
-/**********************************************************
- * Parses the right  side of [...]=f(...) i.e f(..) or f 
- *********************************************************/
 
+/**
+ * parse_functionright:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * Parses the right  side of [...]=f(...) i.e f(..) or f 
+ * 
+ * Returns: 
+ **/
 static int parse_functionright(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1= NULLPLIST;
@@ -736,9 +823,17 @@ static int parse_functionright(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return(OK);
 }
 
-/**********************************************************
+
+/**
+ * parse_functionleft:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
  * Parses the left side of [...]=f()
- *********************************************************/
+ * 
+ * Returns: 
+ **/
 
 static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -775,18 +870,24 @@ static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
-/**********************************************************
+/*
  * Parse Control structures 
- *********************************************************/
+ */
 
 
-/************************************************
+/**
+ * parse_while:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
  * Parsing while loop 
  * <while>:=  while <expr> <begin-while> <exprs>
  * <begin-while> := <do> | , | ; | '\n' | ,<do>| ;<do> 
  * <do> = do | then 
- ************************************************/
-
+ * 
+ * Returns: 
+ **/
 
 static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -833,9 +934,20 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
     }
 }
 
-/**************************************************
+
+/**
+ * parse_bkey:
+ * @T: a #Tokenize 
+ * @key1: 
+ * @key2: 
+ * @str: 
+ * @plist: 
+ * 
  * Parse the key key1 or key2 followed by one or more '\n'
- **************************************************/
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist)
 {
@@ -880,10 +992,16 @@ static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist)
   return(OK);
 }
 
-/**************************************************
+
+/**
+ * parse_nblines:
+ * @T: a #Tokenize 
+ * 
  * Parses a set of blank lines 
  * and take care of '\0' 
- **************************************************/
+ *
+ * Returns: 
+ **/
 
 static int parse_nblines(Tokenizer *T)
 {
@@ -905,19 +1023,35 @@ static int parse_nblines(Tokenizer *T)
   return 0;
 }
 
-/************************************************
- * Parsing if 
- * <if>:= if <expr> then <exprs> end 
- *        | if <expr> then <exprs> else <exprs> end 
- ************************************************/
 
-
-
+/**
+ * parse_stopif:
+ * @T: a #Tokenize 
+ * @token: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_stopif (Tokenizer *T,int token)
 {
   return ( token == END || token == ELSEIF || token == ELSE );
 }
 
+
+/**
+ * parse_if:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * Parsing if 
+ * <if>:= if <expr> then <exprs> end 
+ *        | if <expr> then <exprs> else <exprs> end 
+ * 
+ * Returns: 
+ **/
 
 static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -991,14 +1125,31 @@ static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return (OK) ;
 }
 
-/************************************************
- * Parsing select 
- ************************************************/
 
+/**
+ * parse_stopselect:
+ * @T: a #Tokenize 
+ * @token: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_stopselect (Tokenizer *T,int token)
 {
   return ( token == END || token == CASE || token == ELSE );
 }
+
+/**
+ * parse_select:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * Parsing select 
+ * 
+ * Returns: 
+ **/
 
 static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -1074,19 +1225,47 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
-/************************************************
- * Parsing try catch finally 
- ************************************************/
+
+/**
+ * parse_stop_catch:
+ * @T: 
+ * @token: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int parse_stop_catch (Tokenizer *T,int token)
 {
   return ( token == END || token == FINALLY  );
 }
 
+/**
+ * parse_stop_try:
+ * @T: 
+ * @token: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
 static int parse_stop_try (Tokenizer *T,int token)
 {
   return ( token == CATCH);
 }
+
+/**
+ * parse_try_catch:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * Parsing try catch finally 
+ * 
+ * Returns: 
+ **/
 
 static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -1138,7 +1317,13 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
   
-/************************************************
+
+/**
+ * parse_for:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
  * Parsing for loop 
  * for x=val <begin-for> <exprs> end 
  * <begin-for> = do | , | ; | '\n'
@@ -1146,8 +1331,9 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
  *        to store the loop var name 
  *        to store the number of ierations 
  * 
- ************************************************/
-
+ * 
+ * Returns: 
+ **/
 static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
@@ -1222,7 +1408,14 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
-/********************************************
+
+/**
+ * parse_equal:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @flag: 
+ * 
  * Parsing  <equal> 
  * <equal> :=  <expr> | <Lexpr> = <Rexpr>
  *         <Lexpr> := <expr> 
@@ -1232,7 +1425,8 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
  * flag is used to detect optional argument in calling 
  *      list i.e f(....,x=10,....) 
  * 
- ******************************************/
+ * Returns: 
+ **/
 
 static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
 {
@@ -1312,7 +1506,14 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
   return(OK);
 }
 
-/********************************************
+
+/**
+ * parse_expr:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
  * Parsing expressions 
  * <expr> :  <lexpr> | : | <lexpr>:<lexpr>:<lexpr> | <lexpr>:<lexpr> 
  *
@@ -1329,8 +1530,9 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
  *           2-ary left associative + or - 
  * <terme1>:= <terme> | +<terme>  | -<terme> | ~<terme>
  *     unary + or - 
- ******************************************/
-
+ *
+ * Returns: 
+ **/
 static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
@@ -1386,12 +1588,17 @@ static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
-/***************************************************************
- * parsing lexpr = <lterm> op <lterm> op <lterm>    in-line lexpr 
- * op = | or || 
- * when no more '|' or '||' are found we return
- ***************************************************************/
 
+/**
+ * parse_lterm:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
 static int nsp_is_or_op(Tokenizer *T,int *op)
@@ -1406,17 +1613,36 @@ static int nsp_is_or_op(Tokenizer *T,int *op)
     }
 }
 
+/**
+ * parse_lexpr:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * parsing lexpr = <lterm> op <lterm> op <lterm>    in-line lexpr 
+ * op = | or || 
+ * when no more '|' or '||' are found we return
+ *
+ * 
+ * 
+ * Returns: 
+ **/
+
 static int parse_lexpr(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lterm,nsp_is_or_op,"lexpr"));
 }
 
-/***************************************************************
- * parsing <lterm> = <lprim> op <lprim> op <lprim>    in-line lexpr 
- *                   one or more lprim 
- * op = & | &&
- ***************************************************************/
 
+/**
+ * IsAndOp:
+ * @T: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsAndOp(Tokenizer *T,int *op)
 {
   if  (T->tokenv.id == AND_OP || T->tokenv.id == SEQAND )
@@ -1429,19 +1655,33 @@ static int IsAndOp(Tokenizer *T,int *op)
     }
 }
 
+/**
+ * parse_lterm:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * parsing <lterm> = <lprim> op <lprim> op <lprim>    in-line lexpr 
+ *                   one or more lprim 
+ * op = & | &&
+ * 
+ * Returns: 
+ **/
 static int parse_lterm(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lprim,IsAndOp,"lterm"));
 }
 
-/***************************************************************
- * logical operators 
- * <lprim> = <lprim1> op <lprim1> op ...  ( one or N <terms>)
- *    op :=  = | <> | ~=  | == 
- * = is accepted or not according to a Flag 
- *   T->tokenv.FlagEqu
- ***************************************************************/
 
+/**
+ * IsLprimOp:
+ * @T: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsLprimOp(Tokenizer *T,int *op)
 {
   int lop = T->tokenv.id;
@@ -1456,17 +1696,35 @@ static int IsLprimOp(Tokenizer *T,int *op)
     }
 }
 
+/**
+ * parse_lprim:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * logical operators 
+ * <lprim> = <lprim1> op <lprim1> op ...  ( one or N <terms>)
+ *    op :=  = | <> | ~=  | == 
+ * = is accepted or not according to a Flag 
+ *   T->tokenv.FlagEqu
+ * 
+ * Returns: 
+ **/
 static int parse_lprim(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_lprim1,IsLprimOp,"lprim"));
 } 
 
-/***************************************************************
- * logical primitive operators 
- * <lprim1> = <terms> op <terms> ( one or N <terms>)
- *    op :=   >= | <= | > | < 
- ***************************************************************/
 
+/**
+ * IsLprim1Op:
+ * @T: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsLprim1Op(Tokenizer *T,int *op)
 {
   int lop = T->tokenv.id;
@@ -1481,18 +1739,35 @@ static int IsLprim1Op(Tokenizer *T,int *op)
     }
 }
 
+/**
+ * parse_lprim1:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * logical primitive operators 
+ * <lprim1> = <terms> op <terms> ( one or N <terms>)
+ *    op :=   >= | <= | > | < 
+ *
+ * 
+ * Returns: 
+ **/
 static int parse_lprim1(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_terms,IsLprim1Op,"lprim1"));
 } 
 
 
-/***************************************************************
- * <terms> = <terme1> op <terme1> op <terme1> .....
- *           op = + | - | ~ | .+
- *           2-ary left associative + or - 
- ***************************************************************/
 
+/**
+ * IstermsOp:
+ * @T: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IstermsOp(Tokenizer *T,int *op)
 {
   switch ( T->tokenv.id ) 
@@ -1508,17 +1783,38 @@ static int IstermsOp(Tokenizer *T,int *op)
     }
 }
 
+/**
+ * parse_terms:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * <terms> = <terme1> op <terme1> op <terme1> .....
+ *           op = + | - | ~ | .+
+ *           2-ary left associative + or - 
+ *
+ * Returns: 
+ **/
 static int parse_terms(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_terme1,IstermsOp,"terms"));
 } 
 
-/***************************************************************
+
+/**
+ * parse_terme1:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
  * parsing  
  * <terme1>:= <terme> | +<terme>  | -<terme> | ~<terme>
  *     unary + or - or ~ with left associativity 
- ***************************************************************/
-
+ *
+ * Returns: 
+ **/
 static int parse_terme1(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
@@ -1542,23 +1838,17 @@ static int parse_terme1(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return(OK);
 }
 
-/**************************************************** 
- *
- * <terme> = <fact> op <fact> op <fact> 
- *       where the number of factors can be 1,2,....
- * op =  .* | ./ | .\ | .*. | ./. | .\. | * | / |  \  | /. | \.
- *
- * and all the op have the same priority 
- * the expresson is evaluated from left to right 
- *   <terme> = <fact> op <fact> op <fact> 
- *        --> (<fact> op <fact>) op <fact> 
- *
- *  searches operator like .* ./ .\ or .*. ./. .\.  * / \ 
- *  we code operators with : 
- *   .* --> op = '*' << 7 + '.' 
- *   .*. --> op = '.' << 14 + '*' << 7 + '.'
- **************************************************/
 
+
+/**
+ * IstermOp:
+ * @T: 
+ * @op1: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IstermOp(Tokenizer *T,int *op1)
 {
   int op =  T->tokenv.id;
@@ -1575,12 +1865,43 @@ static int IstermOp(Tokenizer *T,int *op1)
 }
 
 
+/**
+ * parse_terme:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ *
+ * <terme> = <fact> op <fact> op <fact> 
+ *       where the number of factors can be 1,2,....
+ * op =  .* | ./ | .\ | .*. | ./. | .\. | * | / |  \  | /. | \.
+ *
+ * and all the op have the same priority 
+ * the expresson is evaluated from left to right 
+ *   <terme> = <fact> op <fact> op <fact> 
+ *        --> (<fact> op <fact>) op <fact> 
+ *
+ *  searches operator like .* ./ .\ or .*. ./. .\.  * / \ 
+ *  we code operators with : 
+ *   .* --> op = '*' << 7 + '.' 
+ *   .*. --> op = '.' << 14 + '*' << 7 + '.'
+ * 
+ * Returns: 
+ **/
 static int parse_terme(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_fact,IstermOp,"terme"));
 } 
 
-/****************************************************
+
+
+/**
+ * parse_nary:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @parsef: 
+ * 
  * a generic function for parsing a nary operator 
  *  <xxx> op <xxx> op <xxx> 
  *  - each argument <xxx> is parsed with the given function parsef
@@ -1591,8 +1912,9 @@ static int parse_terme(Tokenizer *T,NspBHash *symb_table,PList *plist)
  *
  * This function add at end of plist 
  * (((arg1 arg2 op) arg3 op) arg4 op)
- **************************************************/
-
+ * 
+ * Returns: 
+ **/
 static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 		      int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist),
 		      int (*opfn)(Tokenizer *T,int *op), char *info)
@@ -1628,10 +1950,20 @@ static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist,
   return(OK);
 } 
 
-/* almost parse_nary but the parse function 
- * transmited has an extra argument 
- */
 
+
+/**
+ * parse_nary_opt:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @parsef: 
+ * 
+ * almost parse_nary but the parse function 
+ * transmited has an extra argument 
+ * 
+ * Returns: 
+ **/
 static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 			  int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
 			  int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt)
@@ -1658,14 +1990,23 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
   return(OK);
 } 
 
-/* like the previous one but the 
+
+/**
+ * parse_nary_flat_opt:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @parsef: 
+ * 
+ * like the previous one but the 
  * returned parsed list is of the form 
  * ( arg1 ...  argn op)
  * can be used when op is unique 
  * Note:  in this case int (*opfn)(Tokenizer *T,int *op,char c) 
  *        must always return the correct expected op
- */
-
+ * 
+ * Returns: 
+ **/
 static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 			       int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
 			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt)
@@ -1699,22 +2040,17 @@ static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
 
 
 
-/********************************************************************
- * Parsing <fact>
- *
- * <fact>  = <fact2> op <fact2> op <fact2> 
- *       op = ^ | **  | .^ | .**
- *       one or more op
- * <fact2> := <fact3> | <fact3>' | <fact3>.' 
- *
- * <fact3> := <matrix> | string | number | <symb> |  <symb>() 
- *          | <symb>(<equal>,<equal>,....) 
- *          | ( <expr> )   -----------------> XXXXXX ou (<expr1>,<expr2>,....)
- * <symb>:= symb | symb.<symb> 
- * 
- * Cooments are accepter in fact3 
- *******************************************************************/
 
+
+/**
+ * IsFact:
+ * @T: 
+ * @op1: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsFact(Tokenizer *T,int *op1)
 {
   int op = T->tokenv.id ;
@@ -1728,11 +2064,46 @@ static int IsFact(Tokenizer *T,int *op1)
   return(FAIL);
 }
 
+/**
+ * parse_fact:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * Parsing <fact>
+ *
+ * <fact>  = <fact2> op <fact2> op <fact2> 
+ *       op = ^ | **  | .^ | .**
+ *       one or more op
+ * <fact2> := <fact3> | <fact3>' | <fact3>.' 
+ *
+ * <fact3> := <matrix> | string | number | <symb> |  <symb>() 
+ *          | <symb>(<equal>,<equal>,....) 
+ *          | ( <expr> )   -----------------> XXXXXX ou (<expr1>,<expr2>,....)
+ *          | <terme1>
+ *
+ * <symb>:= symb | symb.<symb> 
+ * 
+ * Comments are accepter in fact3 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_fact(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   return(parse_nary(T,symb_table,plist,parse_fact2,IsFact,"fact"));
 }
 
+/**
+ * parse_fact2:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int op;
@@ -1752,6 +2123,16 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
+/**
+ * parse_fact3:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1= NULLPLIST;
@@ -1779,6 +2160,10 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	{
 	  return(OK);
 	}
+    case PLUS_OP:
+    case MINUS_OP: 
+    case TILDE_OP: 
+      return parse_terme1(T,symb_table,plist);
     case '[' : 
       /*  *************    get a matrix */
       if (debug) scidebug(debugI++,"[mat>");
@@ -1955,11 +2340,17 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 
 
 
-/***************************************************************
- * parsing lexpr = <expr> , <expr> , <expr>  
- * when no more ',' are found we return
- ***************************************************************/
 
+
+/**
+ * IsComa:
+ * @T: 
+ * @op: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsComa(Tokenizer *T,int *op)
 {
   if  (T->tokenv.id == COMMA_OP ) {
@@ -1970,8 +2361,19 @@ static int IsComa(Tokenizer *T,int *op)
 }
 
 
-/* similar to parse_nary exept  if only one expression is parsed  
-   <expr> **/
+/* similar to parse_nary exept  if only one expression is parsed  <expr> **/ 
+/**
+ * parse_exprset:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * parsing lexpr = <expr> , <expr> , <expr>  
+ * when no more ',' are found we return
+ *
+ *
+ * Returns: 
+ **/
 
 static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
@@ -2004,13 +2406,27 @@ static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist)
   return(OK);
 } 
 
-/********************************************************
- *nsp_parse(arg1,....,argn) <token> 
+
+
+/**
+ * parse_extsymb:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @id: 
+ * @flag: 
+ * @count: 
+ * @end_char: 
+ * 
+ * nsp_parse(arg1,....,argn) <token> 
  * or    .<name>  <token> 
  * 
  * suppose plist=(a b c )
  * returns in plist = ( a b c ( arg1 ... argn ARGS) )
- *********************************************************/
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char)
 {
@@ -2028,21 +2444,18 @@ static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *i
   return OK;
 }
 
-/*******************************************************
- * Parsing a Matrix ( <colmatrix>) 
- *  <matrix> := <colmatrix>
- *  <colmatrix> := [ <rowmatrix> ; <rowmatrix> ; .... ] 
- *         0,1,...  <rowmatrix> 
- *  <rowmatrix> := <expr>,<expr>,.....
- * 
- *  ; or \n 
- *  , or ' ' <--- blanc XXXX pas autorise a v'erifier 
- *
- * 1998 : # add for diag concatenation 
- * <matrix> := <diagmatrix>
- *  <diagmatrix> := [ <colmatrix> # <colmatrix> # .... ] 
- *******************************************************/
 
+
+/**
+ * IsColMatOp:
+ * @T: 
+ * @op: 
+ * @opt: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsColMatOp(Tokenizer *T,int *op,char opt)
 {
   int rowconcat = (opt == ']') ? ROWCONCAT : CELLROWCONCAT;
@@ -2070,6 +2483,17 @@ static int IsColMatOp(Tokenizer *T,int *op,char opt)
  *
  */
 
+/**
+ * IsRowMatOp:
+ * @T: 
+ * @op: 
+ * @opt: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
 static int IsRowMatOp(Tokenizer *T,int *op,char opt)
 {
   int colconcat = (opt == ']') ? COLCONCAT : CELLCOLCONCAT;
@@ -2095,6 +2519,16 @@ static int IsRowMatOp(Tokenizer *T,int *op,char opt)
     }
 }
 
+/**
+ * IsDiagMatOp:
+ * @T: 
+ * @op: 
+ * @opt: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int IsDiagMatOp(Tokenizer *T,int *op,char opt)
 {
   int diagconcat = (opt == ']') ? DIAGCONCAT : CELLDIAGCONCAT;
@@ -2106,18 +2540,50 @@ static int IsDiagMatOp(Tokenizer *T,int *op,char opt)
     }
 }
 
-
-/***************************************************************
- * parse_rowmatrix should be just a 
- * parse_nary(&plist1,parse_expr,IsRowMatOp,"matrix")
- * but it's just a bit more complex since we want to accept ' ' 
- * as a column separator 
- ****************************************************************/
-
+/**
+ * parse_expr_opt:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @opt: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_expr_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,char opt)
 {
   return parse_expr(T,symb_table,plist);
 }
+
+/**
+ * parse_rowmatrix:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
+ * parse_rowmatrix should be just a 
+ * parse_nary(&plist1,parse_expr,IsRowMatOp,"matrix")
+ * but it's just a bit more complex since we want to accept ' ' 
+ * as a column separator 
+ *
+ * Parsing a Matrix ( <colmatrix>) 
+ *  <matrix> := <colmatrix>
+ *  <colmatrix> := [ <rowmatrix> ; <rowmatrix> ; .... ] 
+ *         0,1,...  <rowmatrix> 
+ *  <rowmatrix> := <expr>,<expr>,.....
+ * 
+ *  ; or \n 
+ *  , or ' ' <--- blanc XXXX pas autorise a v'erifier 
+ *
+ * 1998 : # add for diag concatenation 
+ * <matrix> := <diagmatrix>
+ *  <diagmatrix> := [ <colmatrix> # <colmatrix> # .... ] 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
@@ -2154,10 +2620,32 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
   return(OK);
 }
 
+/**
+ * parse_colmatrix:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_colmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   return (parse_nary_opt(T,symb_table,plist,parse_rowmatrix,IsColMatOp,"matrix",stop));
 }
+/**
+ * parse_matrix:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
   
 
 static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
@@ -2193,7 +2681,14 @@ static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop
   return(OK);
 }
 
-/***************************************************************
+
+/**
+ * parse_rowcells:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
  * parses cells {,,,;,,,}
  * this is very similar to parse_matrix except that we use 
  * parse_nary_flat and not parse_nary 
@@ -2203,8 +2698,10 @@ static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop
  *  But note that parse_nary_flat could be used also for matrix 
  *  that's why we keep the code generic in order to remix 
  *  latter.
- ****************************************************************/
-
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
@@ -2273,10 +2770,32 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
 }
 
 
+/**
+ * parse_colcells:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int parse_colcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   return parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop);
 }
+/**
+ * parse_cells:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @stop: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
   
 
 static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
@@ -2312,7 +2831,18 @@ static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
   return(OK);
 }
 
-/**********************************************************
+
+
+/**
+ * func_or_matrix_with_arg:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * @id: 
+ * @excnt: 
+ * @fblank: 
+ * @end_char: 
+ * 
  * Parses (<equal>,<equal>,<equal>) or [<equal>,<equal>,...]
  *       or {<equal>,<equal>,<equal>}
  * zero or more <equal> 
@@ -2320,8 +2850,10 @@ static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
  * (fblank is a flag which is set to one is \n are accepted 
  *    between <equal>,<equal>
  * end_char is the character which finish the parse ')' or ']'
- **********************************************************/
-
+ * 
+ * 
+ * Returns: 
+ **/
 static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char)
 {
   PList plist1 = NULLPLIST ;
@@ -2356,13 +2888,22 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
 }
 
 
-/*******************************************
+
+
+/**
+ * Check_Func_Def:
+ * @T: a #Tokenize 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
+ * 
+ * 
  * Check the result of func_or_matrix_with_arg
  * for function definition 
  * i.e check if plist is f(x1,...,xn,y1=..,y2=,..)
  * and insert symbols in symb_table
- *******************************************/
-
+ * 
+ * Returns: 
+ **/
 static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist)
 {
   char *name;
@@ -2427,13 +2968,22 @@ static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist)
 }
 
 
-/*******************************************
+
+
+/**
+ * Check_Func_Call:
+ * @T: a #Tokenize 
+ * @plist: a #PList
+ * @tag: 
+ * 
  * Check the result of func_or_matrix_with_arg
  * for function call or object extraction 
  * i.e check if plist is f(exp1,....expn,y1=..,y2=,..)
  * Checks that named optional arguments are at the end
- *******************************************/
-
+ * 
+ * 
+ * Returns: 
+ **/
 static int Check_Func_Call(Tokenizer *T,PList plist, int tag)
 {
   int count=0;
@@ -2480,8 +3030,8 @@ static int Check_Func_Call(Tokenizer *T,PList plist, int tag)
 
 /**
  * nsp_parse_add_to_symbol_table:
- * @symb_table: 
- * @plist: 
+ * @symb_table: a #NspBHash 
+ * @plist: a #PList
  *
  * called when PList is a MLHS 
  * symbols in MLHS are to be inserted in symbol_table.
