@@ -2871,6 +2871,11 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
 	case COMMA_OP : ++(*excnt);       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
+	  if ( T->tokenv.id == end_char ) 
+	    {
+	      T->ParseError(T,"Parse Error: extra , or missing expression before %c\n",end_char);
+	      return(FAIL);
+	    }
 	  break;
 	case ']' : 
 	case '}' : 
