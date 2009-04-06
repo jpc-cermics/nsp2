@@ -1808,6 +1808,10 @@ void *mxGetData(const mxArray *array_ptr)
 	}
       return A->triplet.Pr;
     }
+  else if ( IsIMat(array_ptr))
+    {
+      return ((NspIMatrix *)  array_ptr)->Iv;
+    }
   Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
   return NULL;
@@ -2209,6 +2213,147 @@ bool mxIsDouble(const mxArray *array_ptr)
     return true;
   return false;
 }
+
+/**
+ * mxIsInt8:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsInt8(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_gint8)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsInt16:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsInt16(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_gint16)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsInt32:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsInt32(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_gint32)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsInt64:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsInt64(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_gint64)
+    return true; 
+  return false;
+}
+
+
+/**
+ * mxIsUint8:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsUint8(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_guint8)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsUint16:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsUint16(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_guint16)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsUint32:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsUint32(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_guint32)
+    return true; 
+  return false;
+}
+
+/**
+ * mxIsUint64:
+ * @array_ptr:Pointer to an #mxArray. 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+
+bool mxIsUint64(const mxArray *array_ptr)
+{
+  if ( IsIMat(array_ptr) && ((NspIMatrix *)array_ptr)->itype == nsp_guint64)
+    return true; 
+  return false;
+}
+
+
+
+
 
 
 /**

@@ -200,6 +200,16 @@ extern mxArray *mxCreateLogicalMatrix(int m, int n);
 
 extern bool mxIsDouble(const mxArray *array_ptr);
 
+extern bool mxIsInt8(const mxArray *array_ptr);
+extern bool mxIsInt16(const mxArray *array_ptr);
+extern bool mxIsInt32(const mxArray *array_ptr);
+extern bool mxIsInt64(const mxArray *array_ptr);
+extern bool mxIsUint8(const mxArray *array_ptr);
+extern bool mxIsUint16(const mxArray *array_ptr);
+extern bool mxIsUint32(const mxArray *array_ptr);
+extern bool mxIsUint64(const mxArray *array_ptr);
+
+
 extern mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
 				    const char **field_names);
 
