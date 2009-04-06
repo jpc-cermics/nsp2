@@ -88,10 +88,18 @@ static int int_nsp_isfield(Stack stack, int rhs, int opt, int lhs)
   NspObject *ret,*Ob;
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
-  if ((key = GetString(stack,2)) == (char*)0) return RET_BUG;  
-  if ((ret = nsp_create_boolean_object(NVOID,nsp_hash_find(H,key,&Ob) == OK)) == NULLOBJ) 
-    return RET_BUG; 
+  if ( IsHashObj(stack,1)) 
+    {
+      if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
+      if ((key = GetString(stack,2)) == (char*)0) return RET_BUG;  
+      if ((ret = nsp_create_boolean_object(NVOID,nsp_hash_find(H,key,&Ob) == OK)) == NULLOBJ) 
+	return RET_BUG; 
+    }
+  else
+    {
+      if ((ret = nsp_create_boolean_object(NVOID,FALSE)) == NULLOBJ) 
+	return RET_BUG; 
+    }
   MoveObj(stack,1,ret);
   return 1;
 }  
