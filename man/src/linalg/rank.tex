@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+
+\mansection{qr}
+\begin{mandesc}
+  \short{rank}{Numerical rank calculation}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+rk=rank(A)
+rk=rank(A,tol=rscal)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  numerical matrix (say $m \times n$)
+    \vname{tol=rscal}: optional named argument, \verb+rscal+ should be a real scalar. Default value of \ver+tol+ is \verb+max(m,n)*sv(1)*%eps+, where sv(1) is the largest singular value of \verb+A+. (as returned by \verb+sv=svd(A)+).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes the numerical rank of the matrix $A$, i.e. the number
+of singular values larger than a given tolerance parameter. Note that the 
+default value of tol is proportional to norm(A).
+\end{mandescription}
+
+\begin{examples}
+\paragraph{example 1} a generic 10 x 5 matrix of rank 2:
+  \begin{program}\HCode{A=rand(10,2)*rand(2,5);\Hnewline
+   rk=rank(A);
+   sv=svd(A);
+   [m,n]=size(A);rscal=max(m,n)*sv(1)*%eps;
+   rk=rank(A,tol=rscal);
+  \end{program}
+
+\paragraph{example 2} a 2 x 2 diagonal matrix with rank 1
+  \begin{program}\HCode{
+    A=diag([%eps 0;0 0]);\Hnewline
+    rk=rank(A);\Hnewline
+    rk=rank(A*%eps);  \\One cannot just trust relative tolerance \Hnewline
+    \\ if this A is the result of a computation, the rank is probably 0! 
+  \end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{svd}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   interface : Bruno Pincon and Jean-Philippe Chancelier. 
+\end{authors}
