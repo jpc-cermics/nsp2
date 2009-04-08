@@ -920,7 +920,10 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       if (!strcmp(attr, "property"))
 	return (NspObject *) gdkatom_create(NVOID,NULL,event->selection.property,NULL);
       if (!strcmp(attr, "requestor"))
-	return nsp_new_double_obj((double) (event->selection.requestor));
+	/* XXXX return nsp_new_double_obj((double) (event->selection.requestor)); 
+	 * should be a GdkNativeWindow requestor on recent gtk
+	 */
+	return nsp_new_double_obj((double) 0);
       if (!strcmp(attr, "time"))
 	return nsp_new_double_obj((double) (event->selection.time));
       break; 
