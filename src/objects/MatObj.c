@@ -1665,7 +1665,7 @@ int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns real(A) 
+ * Returns: real(A) 
  */
 
 int
@@ -1688,7 +1688,7 @@ int_mxrealpart (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns imag(A), the Imaginary part of Matrix A 
+ * Returns: imag(A), the Imaginary part of Matrix A 
  */
 
 int
@@ -1728,7 +1728,7 @@ static int int_matrix_isreal (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Returns a kroeneker product A.*.B 
+ * Returns: a kroeneker product A.*.B 
  */
 
 int
@@ -2891,7 +2891,7 @@ int_mxdiag (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Returns the kthe diag of a Matrix 
+ * Returns: the kthe diag of a Matrix 
  */
 
 int

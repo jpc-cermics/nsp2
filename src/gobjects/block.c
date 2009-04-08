@@ -736,7 +736,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
  * block_get_hilited:
  * @B: a block 
  *
- * Returns the value of the hilited attribute of object @B.
+ * Returns: the value of the hilited attribute of object @B.
  *
  **/
 
@@ -758,7 +758,7 @@ void block_set_hilited(NspBlock *B,int val) {  B->obj->hilited = val; }
  * @B: a block 
  * @val:  %True or %False. 
  * 
- * Returns the value of the show attribute of object @B.
+ * Returns: the value of the show attribute of object @B.
  *
  **/
 
@@ -1170,7 +1170,7 @@ void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,do
  * block_get_number_of_locks: 
  * @B: a block 
  * 
- * Returns the number of lock points of the block 
+ * Returns: the number of lock points of the block 
  * 
  * Return value: the number of lock points
  **/

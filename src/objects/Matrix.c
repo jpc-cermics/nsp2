@@ -43,7 +43,7 @@ int iwork2[WORK_SIZE];
  * @n: number of columns 
  * 
  * Creates a new matrix with unspecified values, returns %NULLMAT on failure. 
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
@@ -107,7 +107,7 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
  * @n: number of columns 
  * 
  * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n,int init)
 {
@@ -133,7 +133,7 @@ NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n,int ini
  * @last:  last value as a double
  *
  * creates a row matrix with values from @first to @last with step @step. 
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 
@@ -220,7 +220,7 @@ NspMatrix *nsp_matrix_create_int_impl(int first, int step, int last)
  * creates a (@r,@n) matrix with n values in each row from @first[i] to @last[i] 
  * regularly spaced 
  *  
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 
@@ -254,7 +254,7 @@ NspMatrix *nsp_matrix_create_linspace(const double first[],const double last[],i
  * creates a (@r,@n) matrix with n values in each row from @first[i] to @last[i] 
  * logarithmically spaced 
  * 
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],int r,int n)
@@ -285,7 +285,7 @@ NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],i
  * @...: values given as double 
  * 
  * creates a new scalar matrix of size @m x @n filled with given @m x @n values. 
- * returns the matrix or %NULLMAT
+ * returns:  the matrix or %NULLMAT
  */
 
 NspMatrix *nsp_matrix_create_from_doubles(const char *name,int m,int n,...)
@@ -311,7 +311,7 @@ NspMatrix *nsp_matrix_create_from_doubles(const char *name,int m,int n,...)
  * @valc: imaginary values or NULL. 
  * 
  * creates a new scalar matrix of size @m x @n filled with given @m x @n values. 
- * returns the matrix or %NULLMAT
+ * returns:  the matrix or %NULLMAT
  */
 
 NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,const double valr[],const double valc[])
@@ -337,7 +337,7 @@ NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,const doubl
  * @A: a #NspMatrix 
  *
  * copies #NspMatrix @A and returns the copy or %NULLMAT.
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix *nsp_matrix_copy(const NspMatrix *A)
@@ -400,7 +400,7 @@ unsigned int  nsp_matrix_elt_size(NspMatrix *M)
  * to be the same as size and type of @B. Then @A is filled 
  * with @B data. 
  *
- * Returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * Returns: %OK or %FAIL. When %OK is returned @A is changed. 
  **/
 
 int nsp_matrix_fill_with(NspMatrix *A,const NspMatrix *B)
@@ -449,7 +449,7 @@ int nsp_matrix_fill_with(NspMatrix *A,const NspMatrix *B)
  * and empty matrix when calling this routine ( malloc() is used in that 
  * case ). 
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * returns: : %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_matrix_resize(NspMatrix *A, int m, int n)
@@ -497,7 +497,7 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
  * filled with the @A scalar value i.e A= A(1,1)*ones(m;n). 
  * Note that the size of @A is not checked on entry it sould be 1x1.
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * returns:  %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_matrix_scalar_to_mn(NspMatrix *A, int m, int n)
@@ -773,7 +773,7 @@ int nsp_matrix_latex_tab_print(const NspMatrix *Mat)
  * A = [ A ,ones(A->m,Max(n-A->n,0); 
  *      ones(Max(m-A->m,0), Max(A->n,n)) ]
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
@@ -802,7 +802,7 @@ int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
  * 
  * Changes the #NspMatrix @A to [@A , @B ] ; 
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
@@ -849,7 +849,7 @@ int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
  * Adds @n columns to the #NspMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_add_columns(NspMatrix *A, int n)
@@ -883,7 +883,7 @@ int nsp_matrix_add_columns(NspMatrix *A, int n)
  * 
  * returns a new #NspMatrix equals to  [@A ; @B ] ; 
  * 
- * returns a #NspMatrix or %NULLMAT.
+ * returns:  a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
@@ -952,7 +952,7 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
  * 
  * returns a new #NspMatrix equals to  [@A,0 ;0, @B ] ; 
  * 
- * returns a #NspMatrix or %NULLMAT.
+ * returns:  a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
@@ -1031,7 +1031,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
  * Adds @n rows to the #NspMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_add_rows(NspMatrix *A, int m)
@@ -1080,7 +1080,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
@@ -1110,7 +1110,7 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
@@ -1124,7 +1124,7 @@ int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
  * 
  * Checks if the #NspMatrix @A contains values in increasing order. 
  *
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int mat_is_increasing(const NspMatrix *A)
@@ -1153,7 +1153,7 @@ int mat_is_increasing(const NspMatrix *A)
  *
  * Compute A(Rows,Cols) and returns the new #NspMatrix 
  * 
- * returns a #NspMatrix or %NULLMAT 
+ * returns:  a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
@@ -1168,7 +1168,7 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
  *
  * Compute A(Elts) and returns the new #NspMatrix 
  * 
- * returns a #NspMatrix or %NULLMAT 
+ * returns:  a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
@@ -1183,7 +1183,7 @@ NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
  *
  * Compute A(:,Cols) and returns the new #NspMatrix 
  * 
- * returns a #NspMatrix or %NULLMAT 
+ * returns:  a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
@@ -1198,7 +1198,7 @@ NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
  *
  * Compute A(Rows,:) and returns the new #NspMatrix 
  * 
- * returns a #NspMatrix or %NULLMAT 
+ * returns:  a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
@@ -1275,7 +1275,7 @@ NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *re
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns:  a #MspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k)
@@ -1313,7 +1313,7 @@ NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
@@ -1372,7 +1372,7 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
  *
  * Creates a square matrix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns:  a #MspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k)
@@ -1418,7 +1418,7 @@ NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k)
  *
  * return the transpose of A
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns:  a #MspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_transpose(const NspMatrix *A)

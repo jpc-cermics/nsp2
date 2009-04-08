@@ -108,7 +108,7 @@ const double rej_nor_y[128]={
  * The constants (x_k and y_k values) have been calculated with 
  * the pari-gp software.
  *
- * Returns a double
+ * Returns: a double
  */
 double nsp_rand_nor_core()
 {
@@ -170,7 +170,7 @@ double nsp_rand_nor_core()
  *
  * generates a random number from N(mu,sigma).
  *
- * Returns a double
+ * Returns: a double
  */
 double nsp_rand_nor(double mu, double sigma)
 {

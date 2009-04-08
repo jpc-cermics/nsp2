@@ -201,7 +201,7 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
  *  or A'*B' (flag=3)
  * @A and @B are not modified by this function.
  *
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
  
 NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B, int flag)
@@ -1220,7 +1220,7 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
  *
  * %NULLMAT is returned in case of malloc problem or if @A is a complex matrix 
  *
- * Returns a #NspMatrix or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
  */
 
 NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A)
@@ -6056,7 +6056,8 @@ int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first
 
 /**
  * nsp_mat_dot:
- * @A, @B: (input) #NspMatrix with same dimensions
+ * @A: (input) #NspMatrix.
+ * @B: (input) #NspMatrix.
  * @dim_flag: (input) dim parameter (0, 1 or 2)
  *
  * computes scalar products between @A and @B:
@@ -6160,7 +6161,8 @@ NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag)
 
 /**
  * nsp_mat_cross:
- * @X, @Y: (input) #NspMatrix with same dimensions (should be 3 x n or m x 3)
+ * @X: (input) #NspMatrix
+ * @Y: (input) #NspMatrix with same dimensions as @X (should be 3 x n or m x 3)
  * @dim: (input) dim parameter (1 or 2) (if dim = 1 matrices should be 3 x n
  *       and if dim = 2 matrces should be m x 3)
  *

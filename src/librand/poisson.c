@@ -33,7 +33,7 @@ static const double logfact[10] = {1., 1., 2., 6., 24., 120., 720., 5040., 40320
  * initialize the struct @P for random generation
  * with #nsp_rand_poisson
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_poisson_init(double mu, PoissonStruct *P)
@@ -81,7 +81,7 @@ int nsp_rand_poisson_init(double mu, PoissonStruct *P)
  * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
  * to download the preprint paper.
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_poisson(PoissonStruct *P)
 {
@@ -171,7 +171,7 @@ int nsp_rand_poisson(PoissonStruct *P)
  * see http://statmath.wu-wien.ac.at/papers/92-04-13.wh.abs.html 
  * to download the preprint paper.
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_poisson_direct(double mu)
 {

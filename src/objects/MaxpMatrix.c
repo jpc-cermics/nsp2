@@ -67,7 +67,7 @@ NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, int m, int n)
  * @n: number of columns 
  * 
  * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
- * Returns a #NspMaxpMatrix or %NULLMAT.
+ * Returns: a #NspMaxpMatrix or %NULLMAT.
  */
 NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n, int init)
 {
@@ -100,7 +100,7 @@ NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n, 
  * function returning a NspMatrix where a NspMaxpMatrix is 
  * requested. 
  * 
- * Returns a #NspMaxpMatrix or %NULLMAT.
+ * Returns: a #NspMaxpMatrix or %NULLMAT.
  */
 
 NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
@@ -156,7 +156,7 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
  * Changes the type fields of @M in such a way that 
  * @M becomes a #NspMaxpMatrix. 
  * 
- * Returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * Returns: a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M)
@@ -177,7 +177,7 @@ NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M)
  * Changes the type fields of @M in such a way that 
  * @M becomes a #NspMaxpMatrix. 
  * 
- * Returns a #NspMaxpMatrix 
+ * Returns: a #NspMaxpMatrix 
  */
 
 NspMatrix * nsp_mpmatrix_cast_to_matrix(NspMaxpMatrix *M)
@@ -198,7 +198,7 @@ NspMatrix * nsp_mpmatrix_cast_to_matrix(NspMaxpMatrix *M)
  * @last:  last value as a double
  *
  * creates a row matrix with values from @first to @last with step @step. 
- * Returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * Returns: a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 
@@ -215,7 +215,7 @@ NspMaxpMatrix *nsp_mpmatrix_create_impl(double first, double step, double last)
  * @...: values given as double 
  * 
  * creates a new scalar matrix of size @m x @n filled with given @m x @n values. 
- * returns the matrix or %NULLMAXPMAT
+ * returns: the matrix or %NULLMAXPMAT
  */
 
 NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,int m,int n,...)
@@ -236,7 +236,7 @@ NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,int m,int n,...
  * @A: a #NspMaxpMatrix 
  *
  * copies #NspMaxpMatrix @A and returns the copy or %NULLMAXPMAT.
- * Returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * Returns: a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A)
@@ -253,7 +253,7 @@ NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A)
  * to be the same as size and type of @B. Then @A is filled 
  * with @B data. 
  *
- * Returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * Returns: %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
@@ -276,7 +276,7 @@ int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
  * and empty matrix when calling this routine ( malloc() is used in that 
  * case ). 
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * returns: %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_mpmatrix_resize(NspMaxpMatrix *A, int m, int n)
@@ -295,7 +295,7 @@ int nsp_mpmatrix_resize(NspMaxpMatrix *A, int m, int n)
  * filled with the @A scalar value i.e A= A(1,1)*ones(m;n). 
  * Note that the size of @A is not checked on entry it sould be 1x1.
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * returns: %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_mpmatrix_scalar_to_mn(NspMaxpMatrix *A, int m, int n)
@@ -480,7 +480,7 @@ int nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
  * A = [ A ,ones(A->m,Max(n-A->n,0); 
  *      ones(Max(m-A->m,0), Max(A->n,n)) ]
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_enlarge(NspMaxpMatrix *A, int m, int n)
@@ -497,7 +497,7 @@ int nsp_mpmatrix_enlarge(NspMaxpMatrix *A, int m, int n)
  * 
  * Changes the #NspMaxpMatrix @A to [@A , @B ] ; 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_concat_right(NspMaxpMatrix *A,const NspMaxpMatrix *B)
@@ -515,7 +515,7 @@ int nsp_mpmatrix_concat_right(NspMaxpMatrix *A,const NspMaxpMatrix *B)
  * Adds @n columns to the #NspMaxpMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_add_columns(NspMaxpMatrix *A, int n)
@@ -533,7 +533,7 @@ int nsp_mpmatrix_add_columns(NspMaxpMatrix *A, int n)
  * returns a new #NspMaxpMatrix equals to  [@A ; @B ] ; 
  * @A and @B must have compatible dimensions. 
  * 
- * returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * returns: a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatrix *B)
@@ -548,7 +548,7 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
  * 
  * returns a new #NspMaxpMatrix equals to  [@A,0 ;0, @B ] ; 
  * 
- * returns a #NspMaxpMatrix or %NULLMAXPMAT.
+ * returns: a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatrix *B)
@@ -586,7 +586,7 @@ int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, int m)
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B)
@@ -594,7 +594,7 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
   return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
-/** 
+/**
  * nsp_mpmatrix_set_rows:
  * @A: a #NspMaxpMatrix
  * @Rows: a #NspMaxpMatrix
@@ -613,7 +613,7 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL. 
  */
 
 int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
@@ -629,7 +629,7 @@ int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
  * 
  * Checks if the #NspMaxpMatrix @A contains values in increasing order. 
  *
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int mpmat_is_increasing(const NspMaxpMatrix *A)
@@ -645,7 +645,7 @@ int mpmat_is_increasing(const NspMaxpMatrix *A)
  *
  * Compute A(Rows,Cols) and returns the new #MspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
@@ -660,7 +660,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Row
  *
  * Compute A(Elts) and returns the new #MspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMatrix *Elts)
@@ -676,7 +676,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMat
  *
  * Compute A(:,Cols) and returns the new #MspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatrix *Cols)
@@ -692,7 +692,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatr
  *
  * Compute A(Rows,:) and returns the new #MspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix *Rows)
@@ -710,7 +710,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix 
  * @icol: 
  * @rep: 
  * @Returns: 
-
+ *
  * A1=MatLoopCol(A1,M,i,rep)
  * Used in for loops with matrices 
  * If Col is null it is created and filled with icol column of A 
@@ -770,7 +770,7 @@ NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_extract_diag(const NspMaxpMatrix *A, int k)
@@ -786,7 +786,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_diag(const NspMaxpMatrix *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_set_diag(NspMaxpMatrix *A, NspMaxpMatrix *Diag, int k)
@@ -803,7 +803,7 @@ int nsp_mpmatrix_set_diag(NspMaxpMatrix *A, NspMaxpMatrix *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, int k)
@@ -817,7 +817,7 @@ NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, int k)
  *
  * return the transpose of A
  * 
- * returns a #MspMatrix or %NULLMAXPMAT 
+ * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_transpose(const NspMaxpMatrix *A)

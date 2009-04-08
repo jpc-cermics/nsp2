@@ -81,7 +81,7 @@ static double stirling_error(int k)
  * initialize the struct @B for random generation
  * with #nsp_rand_binomial
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_binomial_init(int n, double p, BinomialStruct *B)
@@ -144,7 +144,7 @@ int nsp_rand_binomial_init(int n, double p, BinomialStruct *B)
  * see http://statmath.wu-wien.ac.at/papers/92-04-07.wh.ps
  * to download the preprint paper.
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_binomial(BinomialStruct *B)
 {
@@ -262,7 +262,7 @@ int nsp_rand_binomial(BinomialStruct *B)
  * see http://statmath.wu-wien.ac.at/papers/92-04-07.wh.ps
  * to download the preprint paper.
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_binomial_direct(int n, double p)
 {

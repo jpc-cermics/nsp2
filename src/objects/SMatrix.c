@@ -950,7 +950,7 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #NspSMatrix or %NULLSMAT 
+ * returns: a #NspSMatrix or %NULLSMAT 
  */
 
 NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k)
@@ -982,7 +982,7 @@ NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k)
@@ -1019,7 +1019,7 @@ int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #NspSMatrix or %NULLSMAT 
+ * returns: a #NspSMatrix or %NULLSMAT 
  */
 
 NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k)

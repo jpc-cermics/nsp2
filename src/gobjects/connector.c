@@ -657,7 +657,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  * connector_get_hilited:
  * @B: a connector 
  *
- * Returns the value of the hilited attribute of object @B.
+ * Returns: the value of the hilited attribute of object @B.
  *
  **/
 
@@ -679,7 +679,7 @@ void connector_set_hilited(NspConnector *B,int val) {  B->obj->hilited = val; }
  * @B: a connector 
  * @val:  %True or %False. 
  * 
- * Returns the value of the show attribute of object @B.
+ * Returns: the value of the show attribute of object @B.
  *
  **/
 

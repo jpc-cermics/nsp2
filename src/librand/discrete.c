@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2006-2009 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -48,7 +48,7 @@
  * (available at the Luc Devroye 's home page :
  * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_alias_method(double *p, double *q, int *j, int n)
@@ -128,7 +128,7 @@ int nsp_alias_method(double *p, double *q, int *j, int n)
  *
  * method: see #nsp_alias_method
  *
- * Returns an int
+ * Returns: an int
  *
  **/
 int nsp_rand_discrete_alias(double *q, int *j, int n)
@@ -166,7 +166,7 @@ int nsp_rand_discrete_alias(double *q, int *j, int n)
  * (available at the Luc Devroye 's home page :
  * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
@@ -220,7 +220,7 @@ int nsp_guide_table_method(double *p, int inc, double *q, int *key, int n)
  * probability vector with n-1 components, the last one being supposed 
  * to be 1- sum_k p_k
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
@@ -276,7 +276,7 @@ int nsp_guide_table_method_bis(double *p, double *q, int *key, int n)
  *
  * method: see #nsp_guide_table_method
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_discrete_guide(double *q, int *key, int n)

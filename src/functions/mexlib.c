@@ -1760,7 +1760,7 @@ void mexUnlock(void)
  *
  * returns the MEX-file lock status, 1 (true) if the MEX-file is locked, logical 0 (false) if 
  * the file is unlocked. Since in nsp lock mechanism is not implemented this function always 
- * returns FALSE. 
+ * returns: FALSE. 
  *
  */
 

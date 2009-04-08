@@ -117,7 +117,7 @@ static int MatOp(NspIMatrix *A, NspIMatrix *B, MPM F1, PM F2, MPM F3, int flag)
  *  or A'*B' (flag=3).
  * @A and @B are not modified by this function.
  *
- * Returns a #NspIMatrix or %NULLIMAT.
+ * Returns: a #NspIMatrix or %NULLIMAT.
  */
 
 NspIMatrix *nsp_imatrix_mult(NspIMatrix *A, NspIMatrix *B, int flag)
@@ -3431,7 +3431,8 @@ int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolea
 
 /**
  * nsp_imatrix_dot:
- * @A, @B: (input) #NspIMatrix with same dimensions
+ * @A: a #NspIMatrix.
+ * @B: a #NspIMatrix.
  * @dim_flag: (input) dim parameter (0, 1 or 2)
  *
  * computes scalar products between @A and @B:
@@ -3490,7 +3491,8 @@ NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag)
 
 /**
  * nsp_imatrix_cross:
- * @X, @Y: (input) #NspIMatrix with same dimensions (should be 3 x n or m x 3)
+ * @X: #NspIMatrix  (should be 3 x n or m x 3)
+ * @Y: #NspIMatrix  (should be 3 x n or m x 3) 
  * @dim: (input) dim parameter (1 or 2) (if dim = 1 matrices should be 3 x n
  *       and if dim = 2 matrces should be m x 3)
  *
@@ -3501,6 +3503,7 @@ NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag)
  *
  * Return value: an #NspIMatrix storing the result
  **/
+
 #if 0
 NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim)
 {

@@ -347,7 +347,7 @@ int nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
  * A = [ A ,ones(A->m,Max(n-A->n,0); 
  *      ones(Max(m-A->m,0), Max(A->n,n)) ]
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 
@@ -375,7 +375,7 @@ int nsp_bmatrix_enlarge(NspBMatrix *A, int m, int n)
  * 
  * Changes the #NspBMatrix @A to [@A , @B ] ; 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 
@@ -402,7 +402,7 @@ int nsp_bmatrix_concat_right(NspBMatrix *A, NspBMatrix *B)
  * Adds @n columns to the #NspBMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_bmatrix_add_columns(NspBMatrix *A, int n)
@@ -428,9 +428,9 @@ int nsp_bmatrix_add_columns(NspBMatrix *A, int n)
  * @A: a #NspBMatrix
  * @B: a #NspBMatrix
  * 
- * returns a new #NspBMatrix equals to  [@A ; @B ] ; 
+ * returns: a new #NspBMatrix equals to  [@A ; @B ] ; 
  * 
- * returns a #NspBMatrix or %NULLMAT.
+ * returns: a #NspBMatrix or %NULLMAT.
  */
 
 NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B)
@@ -458,9 +458,9 @@ NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B)
  * @A: a #NspBMatrix
  * @B: a #NspBMatrix
  * 
- * returns a new #NspBMatrix equals to  [@A,0 ;0, @B ] ; 
+ * returns: a new #NspBMatrix equals to  [@A,0 ;0, @B ] ; 
  * 
- * returns a #NspBMatrix or %NULLMAT.
+ * returns: a #NspBMatrix or %NULLMAT.
  */
 
 
@@ -494,7 +494,7 @@ NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B)
  * Adds @n rows to the #NspBMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
@@ -529,7 +529,7 @@ int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
@@ -557,7 +557,7 @@ int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, N
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
@@ -573,7 +573,7 @@ int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
  *
  * Compute A(Rows,Cols) and returns the new #NspBMatrix 
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
@@ -588,7 +588,7 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
  *
  * Compute A(Elts) and returns the new #NspBMatrix 
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
@@ -603,7 +603,7 @@ NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
  *
  * Compute A(:,Cols) and returns the new #NspBMatrix 
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
@@ -618,7 +618,7 @@ NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
  *
  * Compute A(Rows,:) and returns the new #NspBMatrix 
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows)
@@ -663,7 +663,7 @@ NspBMatrix  *BMatLoopCol(char *str, NspBMatrix *Col, NspBMatrix *A, int icol, in
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_extract_diag(NspBMatrix *A, int k)
@@ -694,7 +694,7 @@ NspBMatrix  *nsp_bmatrix_extract_diag(NspBMatrix *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k)
@@ -728,7 +728,7 @@ int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 
@@ -753,7 +753,7 @@ NspBMatrix  *nsp_bmatrix_create_diag(NspBMatrix *Diag, int k)
  *
  * return the transpose of A
  * 
- * returns a #NspBMatrix or %NULLMAT 
+ * returns: a #NspBMatrix or %NULLMAT 
  */
 
 NspBMatrix  *nsp_bmatrix_transpose(NspBMatrix *A)
@@ -927,7 +927,7 @@ int nsp_bmatrix_not(NspBMatrix *A)
  * @A: a #NspBMatrix. 
  * 
  * counts the number of %TRUE in #NspBMatrix @A.
- * returns this number in a #NspMatrix.
+ * returns: this number in a #NspMatrix.
  **/
 
 NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A)
@@ -948,7 +948,7 @@ NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A)
  * nsp_bmatrix_find:
  * @A: a #NspBMatrix. 
  * 
- * returns in a #NspMatrix the indices for which the 
+ * returns: in a #NspMatrix the indices for which the 
  * #NspBMatrix @A is true considering @A as o one dimensional array.
  * 
  * Return value:  a new #NspMatrix or %NULLMAT
@@ -1093,7 +1093,7 @@ static int SearchBComp(char *op, CompOp (**realop))
  * Note that, if @A or @B is a 1x1 matrix its size is promoted to the size of the 
  * other argument when applying @op operator.
  *
- * returns a #NspBMatrix. 
+ * returns: a #NspBMatrix. 
  */
 
 NspBMatrix  *nsp_bmatrix_compare(const NspBMatrix *A,const  NspBMatrix *B, char *op)

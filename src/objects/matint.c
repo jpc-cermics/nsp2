@@ -781,7 +781,7 @@ int nsp_matint_delete_elements2(NspObject *Obj,
  *
  * Compute Obj(ind) and returns the new #Matrix 
  * 
- * returns a #Matrix or %NULLOBJ
+ * returns: a #Matrix or %NULLOBJ
  */
 
 static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts,index_vector *index)
@@ -942,7 +942,7 @@ NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
  * 
  * Obj(:,ind) and returns the new #Matrix 
  * 
- * returns a #Matrix or %NULLOBJ
+ * returns: a #Matrix or %NULLOBJ
  */
 
 static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts,index_vector *index)
@@ -1159,7 +1159,7 @@ static NspObject *nsp_matint_extract_rows_pointer(NspObject *Obj,NspObject *Elts
  *
  * Compute Obj(ind,:) and returns the new #Matrix 
  * 
- * returns a #Matrix or %NULLOBJ
+ * returns: a #Matrix or %NULLOBJ
  */
 
 static NspObject *nsp_matint_extract_rows(NspObject *Obj,NspObject *Elts, index_vector *index)
@@ -1215,7 +1215,7 @@ NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
  *
  * Compute Obj(row,col) and returns the new #Matrix 
  * 
- * returns a #Matrix or %NULLOBJ
+ * returns: a #Matrix or %NULLOBJ
  */
 
 static NspObject *nsp_matint_extract(NspObject *Obj, index_vector *index_r, index_vector *index_c)
@@ -1407,23 +1407,16 @@ static int nsp_matint_special_set_elts(NspObject *ObjA,
 
 /**
  * nsp_matint_set_submatrix:
- * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
- * @row: integer vecteur with the row indices (0-based)
- * @nr: length of @row that is number of row indices
- * @rmin: min index (1-based) in row
- * @rmax: max index (1-based) in row
- * @col: integer vecteur with the column indices (0-based)
- * @nc: length of @col that is number of column indices
- * @cmin: min index (1-based) in col
- * @cmax: max index (1-based) in col
- * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
- *
+ * @ObjA: #NspObject which implements the matint interface
+ * @index_r: an index_vector for row
+ * @index_c: an index_vector for column 
+ * @ObjB: #NspObject which implements the matint interface
+ * 
+ * 
  * Compute ObjA(row,col) = ObjB modifying ObjA in place
  * 
- * returns  %OK or %FAIL.
- */
-
-
+ * Returns:  %OK or %FAIL.
+ **/
 int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vector *index_c, NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
@@ -1604,16 +1597,12 @@ int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, Ns
 /**
  * nsp_matint_set_elts:
  * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
- * @ind: integer vecteur with the indices (0-based). ind must be a vector that is
- *       @nr == 1 or @nc == 1.
- * @nb_elts: nb of elts in @ind
- * @imin: min index (1-based) in ind
- * @imax: max index (1-based) in ind
+ * @index: an #index_vector
  * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
  *
  * Compute ObjA(ind) = ObjB modifying ObjA in place
  * 
- * returns  %OK or %FAIL.
+ * returns:  %OK or %FAIL.
  */
 
 

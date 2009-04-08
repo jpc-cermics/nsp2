@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2007 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2006-2009 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -40,9 +40,10 @@
  * initialize the struct @G for random generation
  * with #nsp_rand_gamma 
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
+
 int nsp_rand_gamma_init(double a, GammaStruct *G)
 {
   if ( ! ( a > 0.0 ) )
@@ -71,7 +72,7 @@ int nsp_rand_gamma_init(double a, GammaStruct *G)
  * Transactions on math. Software, Vol 26, No 3, 
  * Sept 2000, pages 363-372"
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_gamma(GammaStruct *G)
 {
@@ -117,7 +118,7 @@ double nsp_rand_gamma(GammaStruct *G)
  * Transactions on math. Software, Vol 26, No 3, 
  * Sept 2000, pages 363-372"
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_gamma_direct(double a)
 {
@@ -163,7 +164,7 @@ double nsp_rand_gamma_direct(double a)
  * initialize the struct @B for random generation
  * with #nsp_rand_beta 
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_beta_init(double a, double b, BetaStruct *B)
@@ -188,7 +189,7 @@ int nsp_rand_beta_init(double a, double b, BetaStruct *B)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 129
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_beta(BetaStruct *B)
 {
@@ -209,7 +210,7 @@ double nsp_rand_beta(BetaStruct *B)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 129
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_beta_direct(double a, double b)
 {
@@ -227,7 +228,7 @@ double nsp_rand_beta_direct(double a, double b)
  * initialize the struct @C for random generation
  * with #nsp_rand_chi2
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_chi2_init(double nu, Chi2Struct *C)
@@ -248,7 +249,7 @@ int nsp_rand_chi2_init(double nu, Chi2Struct *C)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 130
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_chi2(Chi2Struct *C)
 {
@@ -265,7 +266,7 @@ double nsp_rand_chi2(Chi2Struct *C)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 130
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_chi2_direct(double nu)
 {
@@ -282,7 +283,7 @@ double nsp_rand_chi2_direct(double nu)
  * initialize the struct @C for random generation
  * with #nsp_rand_ncchi2
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_ncchi2_init(double nu, double xnonc, NcChi2Struct *C)
@@ -309,7 +310,7 @@ int nsp_rand_ncchi2_init(double nu, double xnonc, NcChi2Struct *C)
  * fixed parameter are needed. Otherwise uses 
  * #nsp_rand_ncchi2_direct.
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_ncchi2(NcChi2Struct *C)
 {
@@ -330,7 +331,7 @@ double nsp_rand_ncchi2(NcChi2Struct *C)
  * When several non central chi2 deviates with the same
  * fixed parameter are needed, it is faster to use #nsp_rand_ncchi2.
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_ncchi2_direct(double nu, double xnonc)
 {
@@ -352,7 +353,7 @@ double nsp_rand_ncchi2_direct(double nu, double xnonc)
  * initialize the struct @F for random generation
  * with #nsp_rand_F
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_F_init(double nu1, double nu2, FStruct *F)
@@ -378,7 +379,7 @@ int nsp_rand_F_init(double nu1, double nu2, FStruct *F)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 130
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_F(FStruct *F)
 {
@@ -398,7 +399,7 @@ double nsp_rand_F(FStruct *F)
  *
  * method: see Knuth TAOCP vol 2, 2d ed, p. 130
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_F_direct(double nu1, double nu2)
 {
@@ -416,7 +417,7 @@ double nsp_rand_F_direct(double nu1, double nu2)
  * initialize the struct @E for random generation
  * with #nsp_rand_ncF
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_ncF_init(double nu1, double nu2, double xnonc, NcFStruct *E)
@@ -441,7 +442,7 @@ int nsp_rand_ncF_init(double nu1, double nu2, double xnonc, NcFStruct *E)
  * method: uses  (X/nu1)/(Y/nu2) where X is a non central 
  * chi2 variate (nu1 dof and xnonc) and Y a chi2 variate (nu2 dof)
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_ncF(NcFStruct *E)
 {
@@ -462,7 +463,7 @@ double nsp_rand_ncF(NcFStruct *E)
  * method: uses  (X/nu1)/(Y/nu2) where X is a non central 
  * chi2 variate (nu1 dof and xnonc) and Y a chi2 variate (nu2 dof)
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc)
 {
@@ -479,7 +480,7 @@ double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc)
  * initialize the struct @N for random generation
  * with #nsp_rand_nbn
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_nbn_init(double r, double p, NbnStruct *N)
@@ -508,7 +509,7 @@ int nsp_rand_nbn_init(double r, double p, NbnStruct *N)
  * (available at the Luc Devroye 's home page :
  * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_nbn(NbnStruct *N)
 {
@@ -530,7 +531,7 @@ int nsp_rand_nbn(NbnStruct *N)
  * (available at the Luc Devroye 's home page :
  * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
  *
- * Returns an int
+ * Returns: an int
  **/
 int nsp_rand_nbn_direct(double r, double p)
 {
@@ -703,7 +704,7 @@ void nsp_rand_simplex(double *res, int m, int n)
  * initialize the struct @G for random generation
  * with #nsp_rand_geom
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_rand_geom_init(double p, GeomStruct *G)
@@ -737,7 +738,7 @@ int nsp_rand_geom_init(double p, GeomStruct *G)
  *
  *     with e an exponential random variate
  *
- * Returns an unsigned int
+ * Returns: an unsigned int
  **/
 unsigned int nsp_rand_geom(GeomStruct *G)
 {
@@ -757,7 +758,7 @@ unsigned int nsp_rand_geom(GeomStruct *G)
  *
  * method: see #nsp_rand_geom
  *
- * Returns an unsigned int
+ * Returns: an unsigned int
  **/
  
 unsigned int nsp_rand_geom_direct(double p)
@@ -846,7 +847,7 @@ void nsp_rand_multinomial_bis(double *q, int *key, int *ix, int ncat, int n)
  * #nsp_rand_markov. p(i,j) = p(i * n*j) is the transition probability 
  * from state i to state j.
  *
- * Returns %OK or %FAIL
+ * Returns: %OK or %FAIL
  *
  **/
 int nsp_markov_setup(double *p, double *q, int *key, int n)
@@ -1039,7 +1040,7 @@ void nsp_rand_smpl_bis (int *p, int n, int N, int base)
  * Rmk: as Pi is not exact we don't need special treatment if ever
  * rand_ranf() return 0.5
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_cauchy(double sigma)
 {
@@ -1061,7 +1062,7 @@ double nsp_rand_cauchy(double sigma)
  * Rmk: we can't use the simplified form b/U^(1/a) because
  *      rand_ranf can output 0.
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_pareto(double a, double b)
 {
@@ -1080,7 +1081,7 @@ double nsp_rand_pareto(double a, double b)
  * (available at the Luc Devroye 's home page :
  * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_logistic(double a, double b)
 {
@@ -1111,7 +1112,7 @@ double nsp_rand_logistic(double a, double b)
  * with y following the U(0,1) distribution
  * -log(1-y) follows the exponential distribution E(1)
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_rayleigh(double sigma)
 {
@@ -1134,7 +1135,7 @@ double nsp_rand_rayleigh(double sigma)
  * with y following the U(0,1) distribution
  * -log(1-y) follows the exponential distribution E(1)
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_tailrayleigh(double sigma, double a)
 {
@@ -1155,7 +1156,7 @@ double nsp_rand_tailrayleigh(double sigma, double a)
  *
  *        X = a ( E(1)^(1/b) )  where E(1) is an exp(1) rnd variable
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_weibull(double a, double b)
 {
@@ -1175,7 +1176,7 @@ double nsp_rand_weibull(double a, double b)
  * inversion leads to output -a E(1) with probability 1/2
  *                      and   a E(1) with probability 1/2   
  *
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_laplace(double a)
 {
@@ -1192,7 +1193,7 @@ double nsp_rand_laplace(double a)
  * 
  * generates a random number from the lognormal distribution.
  * 
- * Returns a double
+ * Returns: a double
  **/
 double nsp_rand_lognormal(double mu, double sigma)
 {

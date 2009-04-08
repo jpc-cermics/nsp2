@@ -707,7 +707,7 @@ static int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns real(A) 
+ * Returns: real(A) 
  */
 
 static int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
@@ -726,7 +726,7 @@ static int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns imag(A), the Imaginary part of Matrix A 
+ * Returns: imag(A), the Imaginary part of Matrix A 
  */
 
 static int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
@@ -741,7 +741,7 @@ static int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns a kroeneker product A.*.B 
+ * Returns: a kroeneker product A.*.B 
  */
 
 static int int_mpkron(Stack stack, int rhs, int opt, int lhs)
@@ -1508,7 +1508,7 @@ static int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Returns the kthe diag of a Matrix 
+ * Returns: the kthe diag of a Matrix 
  */
 
 static int int_mpdiage(Stack stack, int rhs, int opt, int lhs)

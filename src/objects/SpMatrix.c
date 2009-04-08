@@ -49,7 +49,7 @@ static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int
  * the casted matrix contains the representation of the 
  * transpose of @M.
  * 
- * Returns a #NspSpRowMatrix or %NULLSPROW.
+ * Returns: a #NspSpRowMatrix or %NULLSPROW.
  */
 
 NspSpRowMatrix * nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M)
@@ -70,7 +70,7 @@ NspSpRowMatrix * nsp_spcolmatrix_cast_to_sprow(NspSpColMatrix *M)
  * the casted matrix contains the representation of the 
  * transpose of @M.
  * 
- * Returns a #NspMaxpMatrix 
+ * Returns: a #NspMaxpMatrix 
  */
 
 NspSpColMatrix * nsp_sprowmatrix_cast_to_spcol(NspSpRowMatrix *M)

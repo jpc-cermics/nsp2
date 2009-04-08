@@ -731,7 +731,7 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #NspCells or %NULLCELLS 
+ * Returns: #NspCells or %NULLCELLS 
  */
 
 NspCells  *nsp_cells_extract_diag(NspCells *A, int k)
@@ -771,7 +771,7 @@ NspCells  *nsp_cells_extract_diag(NspCells *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_cells_set_diag(NspCells *A, NspCells *Diag, int k)
@@ -814,7 +814,7 @@ int nsp_cells_set_diag(NspCells *A, NspCells *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #NspCells or %NULLCELLS 
+ * returns: a #NspCells or %NULLCELLS 
  */
 
 NspCells  *nsp_cells_create_diag(NspCells *Diag, int k)

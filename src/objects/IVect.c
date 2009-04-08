@@ -66,7 +66,7 @@ NspIVect *nsp_ivect_create(char *name, int first, int step, int last, int flag)
  * nsp_ivect_copy:
  * @A: 
  * 
- * Returns a copy of A
+ * Returns: a copy of A
  * 
  * Return value: a #NspIVect or %NULL
  **/

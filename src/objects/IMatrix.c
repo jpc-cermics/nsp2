@@ -207,7 +207,7 @@ int nsp_imatrix_resize(NspIMatrix *A, int m, int n)
  * filled with the @A scalar value i.e A= A(1,1)*ones(m;n). 
  * Note that the size of @A is not checked on entry it sould be 1x1.
  *
- * returns %OK or %FAIL. When %OK is returned @A is changed. 
+ * returns: %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_imatrix_scalar_to_mn(NspIMatrix *A, int m, int n)
@@ -426,7 +426,7 @@ int nsp_imatrix_latex_tab_print(NspIMatrix *IMat)
  * A = [ A ,ones(A->m,Max(n-A->n,0); 
  *      ones(Max(m-A->m,0), Max(A->n,n)) ]
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 
@@ -456,7 +456,7 @@ int nsp_imatrix_enlarge(NspIMatrix *A, int m, int n)
  * 
  * Changes the #NspIMatrix @A to [@A , @B ] ; 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 
@@ -474,7 +474,7 @@ int nsp_imatrix_concat_right(NspIMatrix *A, NspIMatrix *B)
  * Adds @n columns to the #NspIMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_imatrix_add_columns(NspIMatrix *A, int n)
@@ -503,7 +503,7 @@ int nsp_imatrix_add_columns(NspIMatrix *A, int n)
  * 
  * returns a new #NspIMatrix equals to  [@A ; @B ] ; 
  * 
- * returns a #NspIMatrix or %NULLMAT.
+ * returns: a #NspIMatrix or %NULLMAT.
  */
 
 NspIMatrix *nsp_imatrix_concat_down(NspIMatrix *A, NspIMatrix *B)
@@ -518,7 +518,7 @@ NspIMatrix *nsp_imatrix_concat_down(NspIMatrix *A, NspIMatrix *B)
  * 
  * returns a new #NspIMatrix equals to  [@A,0 ;0, @B ] ; 
  * 
- * returns a #NspIMatrix or %NULLMAT.
+ * returns: a #NspIMatrix or %NULLMAT.
  */
 
 
@@ -536,7 +536,7 @@ NspIMatrix *nsp_imatrix_concat_diag(NspIMatrix *A, NspIMatrix *B)
  * Adds @n rows to the #NspIMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_imatrix_add_rows(NspIMatrix *A, int m)
@@ -575,7 +575,7 @@ int nsp_imatrix_add_rows(NspIMatrix *A, int m)
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_imatrix_set_submatrix(NspIMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspIMatrix *B)
@@ -584,7 +584,7 @@ int nsp_imatrix_set_submatrix(NspIMatrix *A, NspMatrix *Rows, NspMatrix *Cols, N
 }
 
 
-/** 
+/**
  * nsp_imatrix_set_rows:
  * @A: a #NspIMatrix
  * @Rows: a #NspMatrix
@@ -603,7 +603,7 @@ int nsp_imatrix_set_submatrix(NspIMatrix *A, NspMatrix *Rows, NspMatrix *Cols, N
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_imatrix_set_rows(NspIMatrix *A, NspMatrix *Rows, NspIMatrix *B)
@@ -619,7 +619,7 @@ int nsp_imatrix_set_rows(NspIMatrix *A, NspMatrix *Rows, NspIMatrix *B)
  *
  * Compute A(Rows,Cols) and returns the new #NspIMatrix 
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_extract(NspIMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
@@ -634,7 +634,7 @@ NspIMatrix  *nsp_imatrix_extract(NspIMatrix *A, NspMatrix *Rows, NspMatrix *Cols
  *
  * Compute A(Elts) and returns the new #NspIMatrix 
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_extract_elements(NspIMatrix *A, NspMatrix *Elts)
@@ -647,9 +647,9 @@ NspIMatrix  *nsp_imatrix_extract_elements(NspIMatrix *A, NspMatrix *Elts)
  * @A: a #NspIMatrix
  * @Cols: a #NspMatrix
  *
- * Compute A(:,Cols) and returns the new #NspIMatrix 
+ * Compute A(:,Cols) and returns: the new #NspIMatrix 
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_extract_columns(NspIMatrix *A, NspMatrix *Cols)
@@ -664,7 +664,7 @@ NspIMatrix  *nsp_imatrix_extract_columns(NspIMatrix *A, NspMatrix *Cols)
  *
  * Compute A(Rows,:) and returns the new #NspIMatrix 
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_extract_rows(NspIMatrix *A, NspMatrix *Rows)
@@ -705,7 +705,7 @@ NspIMatrix  *IMatLoopCol(char *str, NspIMatrix *Col, NspIMatrix *A, int icol, in
  * Extract the @k-th diagonal of matrix @A and returns 
  * its value as a column vector. 
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
@@ -741,7 +741,7 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
  *
  * sets the @k-th diagonal of matrix @A with values from @Diag. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
@@ -783,7 +783,7 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
  *
  * Creates a square marix with its @k-th diagonal filled with @Diag.
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 
@@ -810,7 +810,7 @@ NspIMatrix  *nsp_imatrix_create_diag(NspIMatrix *Diag, int k)
  *
  * return the transpose of A
  * 
- * returns a #NspIMatrix or %NULLMAT 
+ * returns: a #NspIMatrix or %NULLMAT 
  */
 
 NspIMatrix  *nsp_imatrix_transpose(NspIMatrix *A)
@@ -998,7 +998,7 @@ int nsp_imatrix_scalar_or(NspIMatrix *A,const  NspIMatrix *B)
  * @A: a #NspIMatrix. 
  * 
  * counts the number of %TRUE in #NspIMatrix @A.
- * returns this number in a #NspMatrix.
+ * returns: this number in a #NspMatrix.
  **/
 
 NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A)

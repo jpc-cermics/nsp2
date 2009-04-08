@@ -108,7 +108,7 @@ const double rej_exp_y[128]={
  * The constants (x_k and y_k values) have been calculated with 
  * the pari-gp software.
  *
- * Returns a double
+ * Returns: a double
  */
 double nsp_rand_exp_core()
 {
@@ -149,7 +149,7 @@ double nsp_rand_exp_core()
  * generates a random number from E(tau), the exponential distribution
  * of parameter tau.
  *
- * Returns a double
+ * Returns: a double
  */
 double nsp_rand_exp(double tau)
 {
