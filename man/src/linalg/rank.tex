@@ -37,7 +37,7 @@ default value of tol is proportional to norm(A).
   \end{Verbatim}
 \paragraph{example 2} a 2 x 2 diagonal matrix with rank 1
   \begin{Verbatim}
-    A=diag([%eps 0;0 0]);
+    A=diag([%eps 0]);
     rk=rank(A);
     rk=rank(A*%eps);  //One cannot just trust relative tolerance
     //if this A is the result of a computation, the rank is probably 0! 
