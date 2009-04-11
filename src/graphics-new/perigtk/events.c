@@ -313,6 +313,8 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 	{
 	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; 
 	  *ibutton= ev.ibutton, *imask= ev.mask;
+	  /* flush pending events */
+	  while ( gtk_events_pending()) gtk_main_iteration(); 
 	  return;
 	}
     }
