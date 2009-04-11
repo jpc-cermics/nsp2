@@ -494,6 +494,8 @@ static int nsp_last_static_id_ = 0;    /* static id's are <=  nsp_last_static_id
  *
  **/
 
+static void graphic_types_register(void);
+
 void primitive_types_register(void) 
 {
   new_type_matrix(T_BASE);
@@ -525,14 +527,14 @@ void primitive_types_register(void)
   new_type_cells(T_BASE); 
   new_type_connector(T_BASE);
   new_type_matint(T_BASE);
-#ifdef MAXPLUS 
-  new_type_mpmatrix(T_BASE);
-#endif 
   new_type_serial(T_BASE);
   new_type_spcolmatrix(T_BASE);
   new_type_bhash(T_BASE);
-  /* new */
-  nsp_init_gtk_types_added(); 
+  new_type_imatrix(T_BASE);
+  /* graphics */
+  graphic_types_register();
+  nsp_init_gtk_types_added();
+  new_type_mpmatrix(T_BASE);
   new_type_classaref(T_BASE);
   new_type_classbref(T_BASE);
   /* take care here that the last declared class id 
@@ -540,6 +542,60 @@ void primitive_types_register(void)
    */
   nsp_last_static_id_ = nsp_type_classbref_id;
 }
+
+
+extern void *  new_type_arrows(type_mode mode);
+extern void *  new_type_axes(type_mode mode);
+extern void *  new_type_box3d(type_mode mode);
+extern void *  new_type_compound(type_mode mode);
+extern void *  new_type_contour(type_mode mode);
+extern void *  new_type_curve(type_mode mode);
+extern void *  new_type_figure(type_mode mode);
+extern void *  new_type_gmatrix(type_mode mode);
+extern void *  new_type_graphic(type_mode mode);
+extern void *  new_type_grarc(type_mode mode);
+extern void *  new_type_groot(type_mode mode);
+extern void *  new_type_grrect(type_mode mode);
+extern void *  new_type_grstring(type_mode mode);
+extern void *  new_type_objs3d(type_mode mode);
+extern void *  new_type_points3d(type_mode mode);
+extern void *  new_type_polyhedron(type_mode mode);
+extern void *  new_type_polyline3d(type_mode mode);
+extern void *  new_type_polyline(type_mode mode);
+extern void *  new_type_segments(type_mode mode);
+extern void *  new_type_spolyhedron(type_mode mode);
+extern void *  new_type_string3d(type_mode mode);
+extern void *  new_type_surf(type_mode mode);
+extern void *  new_type_vfield(type_mode mode);
+
+static void graphic_types_register(void) 
+{
+  new_type_arrows(T_BASE);
+  new_type_axes(T_BASE);
+  new_type_box3d(T_BASE);
+  new_type_compound(T_BASE);
+  new_type_contour(T_BASE);
+  new_type_curve(T_BASE);
+  new_type_figure(T_BASE);
+  new_type_gmatrix(T_BASE);
+  new_type_graphic(T_BASE);
+  new_type_grarc(T_BASE);
+  new_type_groot(T_BASE);
+  new_type_grrect(T_BASE);
+  new_type_grstring(T_BASE);
+  new_type_objs3d(T_BASE);
+  new_type_points3d(T_BASE);
+  new_type_polyhedron(T_BASE);
+  new_type_polyline3d(T_BASE);
+  new_type_polyline(T_BASE);
+  new_type_segments(T_BASE);
+  new_type_spolyhedron(T_BASE);
+  new_type_string3d(T_BASE);
+  new_type_surf(T_BASE);
+  new_type_vfield(T_BASE);
+}
+
+
 
 /*
  * registering types in an Nsp Hash Table 
