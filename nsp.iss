@@ -35,16 +35,17 @@ AppPublisherURL=http://www.gtk.org
 AppSupportURL=http://www.gtk.org
 AppUpdatesURL=http://www.gtk.org
 CreateAppDir=yes
-DefaultDirName={sd}\nsp
+; pf for program files
+DefaultDirName={pf}\nsp
 DefaultGroupName=Nsp
-UninstallDisplayIcon={app}\nsp-uninstall.exe
+; icon for uninstall
+UninstallDisplayIcon={app}\nsp-win.exe
 LicenseFile=COPYING
 ;AdminPrivilegesRequired=yes
 ;DisableDirPage=yes
-DisableProgramGroupPage=yes
-DisableStartupPrompt=yes
+;DisableProgramGroupPage=yes
+;DisableStartupPrompt=yes
 WindowShowCaption=yes
-WindowVisible=no
 ;BackColor=$FF8200
 BackColor=clPurple
 BackColor2=clBlack
@@ -71,6 +72,8 @@ Source: "libs\NperiPos.ps"; DestDir: "{app}\libs\"; Flags: recursesubdirs
 Source: "..\nsp2-jpc\scicos_work\*.*"; DestDir: "{app}\demos\scicos_work"; Flags: recursesubdirs
 
 [Icons]
-Name: "{commonprograms}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
 Name: "{commondesktop}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
-;; Name: "{group}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
+Name: "{commonprograms}\Nsp\Nsp"; Filename: "{app}\bin\nsp-win.exe"
+Name: "{commonprograms}\Nsp\Uninstall Nsp"; Filename: "{uninstallexe}"
+
+
