@@ -159,6 +159,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
   gint x,y; 
   GdkModifierType state;
+  
   if (nsp_event_info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
@@ -181,6 +182,18 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   return FALSE; /* also want other handlers to be activated */
 }
 
+#if 0
+static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
+{
+  static GtkTargetEntry xtarget_table[] = {
+    { "STRING",     1, 0  },
+    { "text/plain", 1, 0  }
+  };
+  static guint xn_targets = sizeof(xtarget_table) / sizeof(xtarget_table[0]);
+  GtkTargetList *tl= gtk_target_list_new(xtarget_table,xn_targets);
+  gtk_drag_begin (widget,tl,GDK_ACTION_COPY, 0 , event);
+}
+#endif 
 
 /*
  * a time out to check for menu activation 
@@ -665,3 +678,25 @@ target_drag_data_received  (GtkWidget          *widget,
   gtk_drag_finish (context, FALSE, FALSE, time);
   */
 }
+
+#if 0
+static void  
+target_drag_data_get  (GtkWidget        *widget,
+		       GdkDragContext   *context,
+		       GtkSelectionData *selection_data,
+		       guint             info,
+		       guint             time,
+		       void              *args)
+{
+  Sciprintf("xx drag_data_get\n");
+  /*
+  if ((data->length >= 0) && (data->format == 8))
+    {
+      g_print ("Received \"%s\" in trashcan\n", (gchar *)data->data);
+      gtk_drag_finish (context, TRUE, FALSE, time);
+      return;
+    }
+  gtk_drag_finish (context, FALSE, FALSE, time);
+  */
+}
+#endif 
