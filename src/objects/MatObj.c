@@ -2203,7 +2203,7 @@ int_mxtril (Stack stack, int rhs, int opt, int lhs)
 
 typedef NspMatrix *(*Mfunc) (int m, int n);
 
-/* generic function for ones,rand,eyes **/
+/* generic function for ones,rand,eyes */
 
 static int
 int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
@@ -2235,18 +2235,17 @@ int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 }
 
 /* 
- ONES   Ones array.
-    ONES(N) is an N-by-N matrix of ones.
-    ONES(M,N) or ONES([M,N]) is an M-by-N matrix of ones.
-    ONES(M,N,P,...) or ONES([M N P ...]) is an M-by-N-by-P-by-... array of   ones.
-    ONES(SIZE(A)) is the same size as A and all ones.
-    ONES with no arguments is the scalar 1.
-    ONES(M,N,...,CLASSNAME) or ONES([M,N,...],CLASSNAME) is an M-by-N-by-...
-    array of ones of class CLASSNAME.
-    Example:
-       x = ones(2,3,'int8');
-     See also EYE, ZEROS.
-  
+ * ones   Ones array.
+ *   ones(N) is an N-by-N matrix of ones.
+ *   ones(M,N) or ones([M,N]) is an M-by-N matrix of ones.
+ *   ones(M,N,P,...) or ones([M N P ...]) is an M-by-N-by-P-by-... array of   ones.
+ *   ones(SIZE(A)) is the same size as A and all ones.
+ *   ones with no arguments is the scalar 1.
+ *   ones(M,N,...,CLASSNAME) or ones([M,N,...],CLASSNAME) is an M-by-N-by-...
+ *   array of ones of class CLASSNAME.
+ *   Example:
+ *      x = ones(2,3,'int8');
+ *    See also EYE, ZEROS.
  */
 
 static int
