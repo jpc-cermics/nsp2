@@ -360,10 +360,10 @@ extern NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspMatrix **Ima
 extern NspIMatrix *nsp_imatrix_createinit(char *name, nsp_itype type, int m, int n, int (*func)(int,int)); 
 extern void nsp_imatrix_triu(NspIMatrix *A, int k); 
 extern void nsp_imatrix_tril(NspIMatrix *A, int k); 
-extern NspIMatrix *nsp_imatrix_eye(int m, int n); 
-extern NspIMatrix *nsp_imatrix_ones(int m, int n); 
-extern NspIMatrix *nsp_imatrix_zeros(int m, int n); 
-extern NspIMatrix *nsp_imatrix_rand(int m, int n); 
+extern NspIMatrix *nsp_imatrix_eye(int m, int n,nsp_itype itype); 
+extern NspIMatrix *nsp_imatrix_ones(int m, int n,nsp_itype itype); 
+extern NspIMatrix *nsp_imatrix_zeros(int m, int n,nsp_itype itype); 
+extern NspIMatrix *nsp_imatrix_rand(int m, int n,nsp_itype itype); 
 extern int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_pow_matmat(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_pow_scalarmat(NspIMatrix *A, NspIMatrix *B); 

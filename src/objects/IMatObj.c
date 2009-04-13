@@ -630,6 +630,16 @@ static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int op
 }
 
 
+static int int_imatrix_meth_itype(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NSP_ITYPE_NAMES(names);
+  char *st= NSP_ITYPE_NAME(names,((NspIMatrix *)self)->itype);
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+  if ( nsp_move_string(stack,1,st,-1) ==FAIL) return RET_BUG;
+  return 1;
+}
+
 static NspMethods nsp_imatrix_methods[] = {
   { "add", int_meth_imatrix_add},
   { "scale_rows",int_meth_imatrix_scale_rows}, 
@@ -637,7 +647,8 @@ static NspMethods nsp_imatrix_methods[] = {
   { "get_nnz", int_meth_imatrix_get_nnz},
   { "has", int_meth_imatrix_has},
   { "set_diag",(nsp_method *) int_meth_imatrix_set_diag}, /* preferred to generic matint method */
-  {"retype",(nsp_method *) int_imatrix_meth_retype},
+  { "retype",(nsp_method *) int_imatrix_meth_retype},
+  { "itype",(nsp_method *) int_imatrix_meth_itype},
   { NULL, NULL}
 };
 
@@ -1621,32 +1632,28 @@ int_imatrix_tril (Stack stack, int rhs, int opt, int lhs)
  * A is created , m,n no
  */
 
-typedef NspIMatrix *(*Mfunc) (int m, int n);
+typedef NspIMatrix *(*Mfunc) (int m, int n, nsp_itype itype);
 
-/* generic function for ones,rand,eyes **/
+/* generic function for ones,rand,eyes */
 
 static int
 int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 {
-  NspType *type = NULL;
-  char *type_str = NULL;
+  nsp_itype itype = nsp_gint;
   int m1, n1, last=rhs;
   NspIMatrix *HMat;
   CheckRhsMin(1);
   CheckLhs (1, 1);
-  /* is last element a classname */
-  if ( IsTypeObj(stack,rhs) ) 
-   { 
-      if ((type = GetType(stack,rhs))== NULLTYPE) 
-	return RET_BUG; 
-      last = rhs-1;
-    }
-  else if ( IsSMatObj(stack,rhs) )
+  if ( IsSMatObj(stack,rhs) )
     {
-      if ((type_str = GetString(stack,rhs)) == (char*)0) return RET_BUG;
+      /* is last element an int type 
+       */
+      int rep;
+      NSP_ITYPE_NAMES(names);
+      if ((rep = GetStringInArray(stack, rhs, names, 0)) == -1 ) return RET_BUG;
+      itype = (nsp_itype) rep;
       last = rhs-1;
     }
-
   if (last == 1)
     {
       NspMatrix *M;
@@ -1686,18 +1693,15 @@ int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 	  n1 = m1;
 	}
     }
-  if ( last != rhs ) 
-    {
-      Sciprintf("Warning: in %s, type is ignored\n",NspFname(stack));
-    }
-  if ((HMat = (*F) (m1, n1)) == NULLIMAT)
+  if ((HMat = (*F) (m1, n1,itype)) == NULLIMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) HMat);
   return 1;
 }
 
+
 int
-int_imatrix_ones (Stack stack, int rhs, int opt, int lhs)
+int_imatrix_iones (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_ones);
 }
@@ -1709,7 +1713,7 @@ int_imatrix_ones (Stack stack, int rhs, int opt, int lhs)
 
 
 int
-int_imatrix_eye (Stack stack, int rhs, int opt, int lhs)
+int_imatrix_ieye (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_eye);
 }
@@ -1721,19 +1725,19 @@ int_imatrix_eye (Stack stack, int rhs, int opt, int lhs)
 
 
 int
-int_imatrix_zeros (Stack stack, int rhs, int opt, int lhs)
+int_imatrix_izeros (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_gen(stack, rhs, opt, lhs, nsp_imatrix_zeros);
 }
 
 
 /*
- *nsp_imatrix_rand:
+ *nsp_imatrix_irand:
  * A=rand(m,n [,type])
  */
 
 int
-int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
+int_imatrix_irand (Stack stack, int rhs, int opt, int lhs)
 {
   static char *Table_R[] = { "uniform", "normal", NULL };
   char *str;
@@ -1746,7 +1750,7 @@ int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
     {
     case 0:
 
-      if ((A = nsp_imatrix_rand (1, 1)) == NULLIMAT)
+      if ((A = nsp_imatrix_rand (1, 1,nsp_gint)) == NULLIMAT)
 	return RET_BUG;
       MoveObj (stack, 1, (NspObject *) A);
       return 1;
@@ -1790,7 +1794,7 @@ int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
       else if (IsMatObj (stack, 1))
 	{
 	  /* rand(a); * */
-	  if ((O = (NspObject *) nsp_imatrix_rand (m, n)) == NULLOBJ)
+	  if ((O = (NspObject *) nsp_imatrix_rand (m, n, nsp_gint)) == NULLOBJ)
 	    return RET_BUG;
 	  MoveObj (stack, 1, O);
 	  return 1;
@@ -1829,7 +1833,7 @@ int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
 	  if (GetScalarInt (stack, 2, &n) == FAIL)
 	    return RET_BUG;
 	  CheckNonNegative(NspFname(stack),n,2);
-	  if ((A = nsp_imatrix_rand (m, n)) == NULLIMAT)
+	  if ((A = nsp_imatrix_rand (m, n,nsp_gint)) == NULLIMAT)
 	    return RET_BUG;
 	  MoveObj (stack, 1, (NspObject *) A);
 	  return 1;
@@ -1849,7 +1853,7 @@ int_imatrix_rand (Stack stack, int rhs, int opt, int lhs)
       if ((tk = GetStringInArray (stack, 3, Table_R, 0)) == -1)
 	return RET_BUG;
       nsp_set_urandtype (tk);
-      if ((O = (NspObject *) nsp_imatrix_rand (m, n)) == NULLOBJ)
+      if ((O = (NspObject *) nsp_imatrix_rand (m, n,nsp_gint)) == NULLOBJ)
 	return RET_BUG;
       MoveObj (stack, 1, O);
       /* restore rand type * */
@@ -2695,12 +2699,14 @@ static OpTab IMatrix_func[]={
   {"iand_i", int_imatrix_iand},
   {"ior_i", int_imatrix_ior},
   {"ishift", int_imatrix_ishift},
-
   /* XXX */
+  {"ieye", int_imatrix_ieye},
+  {"iones", int_imatrix_iones},
+  {"izeros", int_imatrix_izeros},
+
+
+
 #if 0
-  {"eye_i", int_imatrix_eye},
-  {"ones_i", int_imatrix_ones},
-  {"zeros_i", int_imatrix_zeros},
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
   {"quote_i", int_imatrix_quote},
   {"dprim_i", int_imatrix_dquote},
