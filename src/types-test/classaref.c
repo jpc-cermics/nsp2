@@ -217,6 +217,7 @@ int nsp_classaref_xdr_save(XDR *xdrs, NspClassARef *M)
 NspClassARef  *nsp_classaref_xdr_load_partial(XDR *xdrs, NspClassARef *M)
 {
   if ((M->obj = calloc(1,sizeof(nsp_classaref))) == NULL) return NULL;
+  M->obj->ref_count=1;
   if (nsp_xdr_load_i(xdrs, &M->obj->cla_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->cla_thickness) == FAIL) return NULL;
   if ((M->obj->cla_val =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -232,10 +233,11 @@ static NspClassARef  *nsp_classaref_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSAREF;
   if ((H  = nsp_classaref_create_void(name,(NspTypeBase *) nsp_type_classaref))== NULLCLASSAREF) return H;
   if ((H  = nsp_classaref_xdr_load_partial(xdrs,H))== NULLCLASSAREF) return H;
+  if ( nsp_classaref_check_values(H) == FAIL) return NULLCLASSAREF;
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 239 "classaref.c"
+#line 241 "classaref.c"
   return H;
 }
 
@@ -251,7 +253,7 @@ void nsp_classaref_destroy_partial(NspClassARef *H)
 
 #line 23 "codegen/classaref.override"
   /* verbatim in destroy */
-#line 255 "classaref.c"
+#line 257 "classaref.c"
     nsp_matrix_destroy(H->obj->cla_val);
     nsp_bmatrix_destroy(H->obj->cla_bval);
     nsp_list_destroy(H->obj->cla_lval);
@@ -514,7 +516,7 @@ NspClassARef *nsp_classaref_full_copy(NspClassARef *self)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 518 "classaref.c"
+#line 520 "classaref.c"
   return H;
 }
 
@@ -537,7 +539,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 541 "classaref.c"
+#line 543 "classaref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -551,7 +553,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
   self->obj->cla_color = color;
   return 0;
 }
-#line 555 "classaref.c"
+#line 557 "classaref.c"
 
 
 #line 36 "codegen/classaref.override"
@@ -560,7 +562,7 @@ static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int op
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
 }
-#line 564 "classaref.c"
+#line 566 "classaref.c"
 
 
 static NspMethods classaref_methods[] = {
@@ -726,7 +728,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 730 "classaref.c"
+#line 732 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -734,7 +736,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 738 "classaref.c"
+#line 740 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -774,9 +776,9 @@ ClassARef_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 778 "classaref.c"
+#line 780 "classaref.c"
   nspgobject_register_class(d, "ClassARef", ClassARef, &NspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 783 "classaref.c"
+#line 785 "classaref.c"

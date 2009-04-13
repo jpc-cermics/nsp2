@@ -252,6 +252,7 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_compound))) == NULL) return NULL;
+  M->obj->ref_count=1;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
@@ -270,7 +271,8 @@ static NspCompound  *nsp_compound_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCOMPOUND;
   if ((H  = nsp_compound_create_void(name,(NspTypeBase *) nsp_type_compound))== NULLCOMPOUND) return H;
   if ((H  = nsp_compound_xdr_load_partial(xdrs,H))== NULLCOMPOUND) return H;
-#line 274 "compound.c"
+  if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
+#line 276 "compound.c"
   return H;
 }
 
@@ -284,7 +286,7 @@ void nsp_compound_destroy_partial(NspCompound *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 288 "compound.c"
+#line 290 "compound.c"
     nsp_matrix_destroy(H->obj->bounds);
     nsp_list_destroy(H->obj->children);
     FREE(H->obj);
@@ -521,7 +523,7 @@ NspCompound *nsp_compound_full_copy(NspCompound *self)
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_full_copy_partial(H,self)== NULL) return NULLCOMPOUND;
-#line 525 "compound.c"
+#line 527 "compound.c"
   return H;
 }
 
@@ -541,7 +543,7 @@ int int_compound_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_compound_check_values(H) == FAIL) return RET_BUG;
-#line 545 "compound.c"
+#line 547 "compound.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -606,7 +608,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 610 "compound.c"
+#line 612 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -636,7 +638,7 @@ int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 640 "compound.c"
+#line 642 "compound.c"
 
 
 #line 157 "codegen/compound.override"
@@ -648,7 +650,7 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 652 "compound.c"
+#line 654 "compound.c"
 
 
 #line 167 "codegen/compound.override"
@@ -661,7 +663,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 665 "compound.c"
+#line 667 "compound.c"
 
 
 /*----------------------------------------------------
@@ -702,7 +704,7 @@ Compound_register_classes(NspObject *d)
 Init portion 
 
 
-#line 706 "compound.c"
+#line 708 "compound.c"
   nspgobject_register_class(d, "Compound", Compound, &NspCompound_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -883,4 +885,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 887 "compound.c"
+#line 889 "compound.c"

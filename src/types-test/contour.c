@@ -247,6 +247,7 @@ NspContour  *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M)
   int fid;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_contour))) == NULL) return NULL;
+  M->obj->ref_count=1;
   if ((M->obj->z =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -269,7 +270,8 @@ static NspContour  *nsp_contour_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONTOUR;
   if ((H  = nsp_contour_create_void(name,(NspTypeBase *) nsp_type_contour))== NULLCONTOUR) return H;
   if ((H  = nsp_contour_xdr_load_partial(xdrs,H))== NULLCONTOUR) return H;
-#line 273 "contour.c"
+  if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
+#line 275 "contour.c"
   return H;
 }
 
@@ -283,7 +285,7 @@ void nsp_contour_destroy_partial(NspContour *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 287 "contour.c"
+#line 289 "contour.c"
     nsp_matrix_destroy(H->obj->z);
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
@@ -567,7 +569,7 @@ NspContour *nsp_contour_full_copy(NspContour *self)
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_full_copy_partial(H,self)== NULL) return NULLCONTOUR;
-#line 571 "contour.c"
+#line 573 "contour.c"
   return H;
 }
 
@@ -587,7 +589,7 @@ int int_contour_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour_check_values(H) == FAIL) return RET_BUG;
-#line 591 "contour.c"
+#line 593 "contour.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -752,7 +754,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 756 "contour.c"
+#line 758 "contour.c"
 
 
 #line 58 "codegen/contour.override"
@@ -764,7 +766,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 768 "contour.c"
+#line 770 "contour.c"
 
 
 /*----------------------------------------------------
@@ -804,7 +806,7 @@ Contour_register_classes(NspObject *d)
 Init portion 
 
 
-#line 808 "contour.c"
+#line 810 "contour.c"
   nspgobject_register_class(d, "Contour", Contour, &NspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -953,4 +955,4 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 957 "contour.c"
+#line 959 "contour.c"

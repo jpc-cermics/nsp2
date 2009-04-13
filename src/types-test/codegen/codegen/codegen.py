@@ -265,7 +265,8 @@ class Wrapper:
         '  char name[NAME_MAXL];\n' \
         '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
         '  if ((H  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return H;\n' \
-        '  if ((H  = nsp_%(typename_dc)s_xdr_load_partial(xdrs,H))== NULL%(typename_uc)s) return H;\n'
+        '  if ((H  = nsp_%(typename_dc)s_xdr_load_partial(xdrs,H))== NULL%(typename_uc)s) return H;\n' \
+        '  if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n'
 
     type_tmpl_load_2 = \
         '  return H;\n}\n\n' 
@@ -933,8 +934,9 @@ class Wrapper:
             
         if self.byref == 't' :
             str = str + '  if ((%s->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
+            str = str + '  %s->obj->ref_count=1;\n' % (varname)
             varname = varname +'->obj'
-            
+
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
             return str
