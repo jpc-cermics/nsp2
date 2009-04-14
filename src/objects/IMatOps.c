@@ -482,7 +482,7 @@ int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2)
 
 int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int flag)
 {
-  int i,indval;
+  int i,indval=0;
 
   if ( A->itype != B->itype ) 
     {
@@ -571,7 +571,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int f
 int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind, int j, int flag)
 {
 
-  int i,indval;
+  int i,indval=0;
   if ( A->itype != B->itype ) 
     {
       Scierror("Error: arguments must have the same integer type\n");
