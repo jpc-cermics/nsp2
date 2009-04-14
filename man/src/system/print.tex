@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+
+\mansection{print}
+
+\begin{mandesc}
+  \short{print}{print variable value  in the current output stream}\\
+  \short{fprint}{print variable value in a file stream}\\
+  \short{sprint}{print variable value in a string matrix} 
+\end{mandesc}
+\index{print}\label{print}
+  %-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+   print(object [,options])
+   fprint(fd,object [,options]) 
+   S=sprint(fd,object [,options]) 
+   where named options are 
+   as_read=boolean, depth=int,indent=int, latex=boolean,name=string,table=boolean) 
+\end{verbatim}
+\end{calling_sequence}
+
+\begin{parameters}
+  \begin{varlist}
+    \vname{object}: object to be printed.
+    \vname{as_read}: if true, object is to be printed in such a way that the result can be 
+    parsed back by nsp.
+    \vname{depth}: control, for recursive objects, the depth at which printing
+    is done.
+    \vname{indent}: indentation level.
+    \vname{name}: string used to override the variable name.
+    \vname{latex}: if true, prints in a \LaTeX matrix style.
+    \vname{table}: if true, table style instead of matrix style is used in \LaTeX printing.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  prints the given variable in the current output stream (\verb+print+), 
+  or in a file steam (\verb+fprint+), or in a string matric (\verb+sprint+).
+  The file stream \verb+fd+ is an object of type \manlink{File}{File} which 
+  is created with \manlink{fopen}{fopen}.
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    l =list(rand(3,3),%t, 67, "scilab",list(5,6));
+    print(l,depth=0);
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{file}{file}  
+  \manlink{fopen}{fopen}  
+  \manlink{File}{File}  
+\end{manseealso}
+
