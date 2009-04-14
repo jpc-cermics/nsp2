@@ -1377,17 +1377,18 @@ void nsp_imatrix_tril(NspIMatrix *A, int k)
  * nsp_imatrix_eye:
  * @m: number of rows
  * @n: number of columns
+ * @itype: a #nsp_itype
  * 
  * returns the identity matrix of size @m x @n (eyes(m,n))
  * 
  * Return value: a new #NspIMatrix or %NULL.
  **/
 
-NspIMatrix *nsp_imatrix_eye(int m, int n)
+NspIMatrix *nsp_imatrix_eye(int m, int n,nsp_itype itype)
 {
   NspIMatrix *Loc;
   int i;
-  if (( Loc= nsp_imatrix_create(NVOID,m,n,nsp_gint)) == NULLIMAT) return(NULLIMAT);
+  if (( Loc= nsp_imatrix_create(NVOID,m,n,itype)) == NULLIMAT) return(NULLIMAT);
 #define IMAT_EYE(name,type,arg)							\
   for ( i=0 ; i < Min(m,n) ; i++) Loc->name[i+m*i]= 1;			\
   break;
@@ -1401,17 +1402,18 @@ NspIMatrix *nsp_imatrix_eye(int m, int n)
  * nsp_imatrix_ones:
  * @m: number of rows
  * @n: number of columns
+ * @itype: a #nsp_itype
  * 
  * returns a  @m x @n matrix filled with 1.0
  * 
  * Return value: a new #NspIMatrix or %NULL.
  **/
 
-NspIMatrix *nsp_imatrix_ones(int m, int n)
+NspIMatrix *nsp_imatrix_ones(int m, int n,nsp_itype itype)
 {
   int i;
   NspIMatrix *Loc;
-  if ((Loc= nsp_imatrix_create(NVOID,m,n,nsp_gint))  == NULLIMAT) return(NULLIMAT);
+  if ((Loc= nsp_imatrix_create(NVOID,m,n,itype))  == NULLIMAT) return(NULLIMAT);
 #define IMAT_ONES(name,type,arg)							\
   for ( i=0 ; i < Loc->mn ; i++) Loc->name[i]= 1;			\
   break;
@@ -1424,16 +1426,17 @@ NspIMatrix *nsp_imatrix_ones(int m, int n)
  * nsp_imatrix_zeros:
  * @m: number of rows
  * @n: number of columns
+ * @itype: a #nsp_itype
  * 
  * returns a  @m x @n matrix filled with 0.0
  * 
  * Return value: a new #NspIMatrix or %NULL.
  **/
 
-NspIMatrix *nsp_imatrix_zeros(int m, int n)
+NspIMatrix *nsp_imatrix_zeros(int m, int n, nsp_itype itype)
 {
   NspIMatrix *Loc;
-  if ((Loc= nsp_imatrix_create(NVOID,m,n,nsp_gint))  == NULLIMAT) return(NULLIMAT);
+  if ((Loc= nsp_imatrix_create(NVOID,m,n,itype))  == NULLIMAT) return(NULLIMAT);
   return(Loc);
 }
 
@@ -1446,6 +1449,7 @@ NspIMatrix *nsp_imatrix_zeros(int m, int n)
  * nsp_imatrix_rand:
  * @m: number of rows
  * @n: number of columns
+ * @itype: a #nsp_itype
  * 
  * returns a  @m x @n matrix filled with random samples of normal or 
  * uniform law.
@@ -1455,11 +1459,11 @@ NspIMatrix *nsp_imatrix_zeros(int m, int n)
 
 static int rand_data[] = {1,0};
 
-NspIMatrix *nsp_imatrix_rand(int m, int n)
+NspIMatrix *nsp_imatrix_rand(int m, int n, nsp_itype itype)
 {
   NspIMatrix *Loc;
   int i;
-  if (( Loc= nsp_imatrix_create(NVOID,'r',m,n))  == NULLIMAT) return(NULLIMAT);
+  if (( Loc= nsp_imatrix_create(NVOID,m,n,itype))  == NULLIMAT) return(NULLIMAT);
 #define IMAT_RAND(name,type,arg)							\
   for ( i = 0 ; i < Loc->mn ; i++ ) Loc->name[i]= nsp_urand( rand_data);	\
   break;
