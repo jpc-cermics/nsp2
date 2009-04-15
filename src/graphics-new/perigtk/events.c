@@ -89,17 +89,25 @@ static gboolean locator_button_release(GtkWidget *widget,
 				       GdkEventButton *event,
 				       BCG *gc)
 {
-  if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getrelease == 0 ) 
+  if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
+      /* here we are not in an xclick or xgetmouse 
+       * thus we have to store events in queue.
+       */
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,event->state,0,1};
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
-      nsp_event_info.ok =1 ; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
-      nsp_event_info.button = event->button -6;
-      nsp_event_info.mask = event->state;
-      gtk_main_quit();
+      if ( nsp_event_info.getrelease == TRUE ) 
+	{
+	  nsp_event_info.ok =1 ; 
+	  nsp_event_info.win=  gc->CurWindow; 
+	  nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
+	  nsp_event_info.button = event->button -6;
+	  nsp_event_info.mask = event->state;
+	  gtk_main_quit();
+	}
     }
   return TRUE;
 }
@@ -127,8 +135,11 @@ static gboolean locator_button_motion(GtkWidget *widget,
     {
       x= event->x; y = event->y;
     }
-  if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getmotion == 0 ) 
+  if ( nsp_event_info.sci_click_activated == FALSE )
     {
+      /* here we are not in an xclick or xgetmouse 
+       * thus we have to store events in queue.
+       */
       nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,event->state,1,0},evlast;
       if ( nsp_queue_empty(&gc->queue)== FALSE ) 
 	{
@@ -143,12 +154,16 @@ static gboolean locator_button_motion(GtkWidget *widget,
     }
   else 
     {
-      nsp_event_info.ok =1 ;  
-      nsp_event_info.win=  gc->CurWindow; 
-      nsp_event_info.x = x;  nsp_event_info.y = y;
-      nsp_event_info.button = -1;
-      nsp_event_info.mask = event->state;
-      gtk_main_quit();
+      /* here we are inside a xclick or xgetmouse */
+      if ( nsp_event_info.getmotion == TRUE ) 
+	{
+	  nsp_event_info.ok =1 ;  
+	  nsp_event_info.win=  gc->CurWindow; 
+	  nsp_event_info.x = x;  nsp_event_info.y = y;
+	  nsp_event_info.button = -1;
+	  nsp_event_info.mask = event->state;
+	  gtk_main_quit();
+	}
     }
   return TRUE;
 }

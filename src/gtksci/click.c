@@ -119,7 +119,6 @@ int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
 {
   /* first let a click_handler do the job  */
   if ( scig_click_handler(ev->win,ev->x,ev->y,ev->ibutton,ev->mask,ev->motion,ev->release)== 1) return 0;
-  
 
   /* XXX: do not record motion events and release button 
    *      this is left for a futur release 
@@ -127,28 +126,32 @@ int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
    */
 
   /* Sciprintf("Put event in the queue [%d,%d,%d]\n",ev->x,ev->y,ev->ibutton); */
+  
   if ( ev->motion == 1 || ev->release == 1 ) 
     {
       /* Sciprintf("\tignored\n");*/
-      return 0; 
+      /* return 0;  */
     }
+
   if ( q->in == q->out -1 )  
     {
       /* the queue is full */
-      /* Sciprintf("queue is full event will get lost\n"); */
+      /* Sciprintf("queue is full event will get lost\n");  */
       return 0;
     }
-  /* Sciprintf("status in=%d out=%d size=%d\n",q->in,q->out,q->size);*/
+  /* Sciprintf("status in=%d out=%d size=%d\n",q->in,q->out,q->size); */
   q->elems[q->in++] = *ev;
   if (q->in == q->size) 
     {
       if ( q->out == 0) 
 	{
-	  /* Sciprintf("queue is full event will get lost\n");*/
+	  /* Sciprintf("queue is full event will get lost\n"); */
 	  q->in--;
 	}
       else 
-	q->in=0;
+	{
+	  q->in=0;
+	}
     }
   return 0;
 }
