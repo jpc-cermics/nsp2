@@ -2698,13 +2698,11 @@ static OpTab IMatrix_func[]={
   {"pmult_i_i", int_imatrix_pmult},
   {"iand_i", int_imatrix_iand},
   {"ior_i", int_imatrix_ior},
-  {"ishift", int_imatrix_ishift},
+  {"ishift_i", int_imatrix_ishift},
   /* XXX */
   {"ieye", int_imatrix_ieye},
   {"iones", int_imatrix_iones},
   {"izeros", int_imatrix_izeros},
-
-
 
 #if 0
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
