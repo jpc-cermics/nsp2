@@ -54,9 +54,6 @@ extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 
-void nsp_eval_pasted_from_clipboard(gchar *nsp_expr);
-
-
 typedef struct _Buffer Buffer;
 typedef struct _View View;
 
@@ -82,6 +79,10 @@ static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
 static void nsp_insert_prompt(const char *prompt);
+
+static void nsp_eval_pasted_from_clipboard(gchar *nsp_expr,View   *view);
+
+
 
 /* insert the logo in textview at first position.
  *
@@ -340,6 +341,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       goto up; 
       break;
     case GDK_Down:
+      goto down;
       break;
     case 'p': 
       if ( event->state & GDK_CONTROL_MASK ) 
@@ -452,21 +454,26 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 static gint
 gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpointer xdata)
 {
+  GtkTextIter start, end;
+  GtkTextBuffer *buffer;
   View *view= xdata;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   gtk_widget_grab_focus (view->text_view);
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 2 ) 
     {
-      
       GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
 							    GDK_SELECTION_PRIMARY);
       gchar *str = gtk_clipboard_wait_for_text(clipboard);
       /* fprintf(stderr,"A clipboard text: %s\n",str); */
-      g_signal_stop_emission_by_name (text_view, "button_press");
+      g_signal_stop_emission_by_name (text_view, "button_press_event");
+      buffer = view->buffer->buffer;
+      gtk_text_buffer_get_bounds (buffer, &start, &end);
       if ( str ) 
 	{
-	  nsp_eval_pasted_from_clipboard(str);
+	  /* gtk_text_buffer_insert (buffer, &end, str, -1); */
+	  /* nsp_append_history(search_string,data); */
+	  nsp_eval_pasted_from_clipboard(str,view);
 	  g_free(str);
 	}
       return TRUE;
@@ -524,19 +531,39 @@ int Xorgetchar_textview(void)
  * by drag and drop or copy/paste 
  */
 
-void nsp_eval_pasted_from_clipboard(gchar *nsp_expr)
+void nsp_eval_pasted_from_clipboard(gchar *nsp_expr,View *view)
 {
-  gchar *str;
-  int i, pos=0;
-  for ( i= 0; i < strlen(nsp_expr)+1; i++)
+  int rep;
+  GtkTextIter start, end;
+  GtkTextBuffer *buffer= view->buffer->buffer;
+  gchar *str,*str1;
+  str = str1= nsp_expr;
+  while (1) 
     {
-      if ( nsp_expr[i]== '\n' || nsp_expr[i]== '\0' ) 
+      char *expr;
+      while (1) { if (*str1 == '\n' || *str1 == '\0' ) break; str1++;};
+      if ( *str1 == '\0' )
 	{
-	  str = g_strndup(nsp_expr +pos,i-pos);
-	  enqueue_nsp_command(str);
-	  g_free(str);
-	  pos = i +1;
+	  /* last expression: do not evaluate  just paste   */
+	  gtk_text_buffer_get_bounds (buffer, &start, &end);
+	  gtk_text_buffer_insert (buffer, &end, str, -1);
+	  /* nsp_append_history(search_string,data); */
+	  break; 
 	}
+      /* we have more than one expression */
+      *str1 = '\0';
+      expr = g_strdup(str);
+      rep =nsp_parse_eval_from_string(expr,TRUE,FALSE,FALSE,FALSE);
+      g_free(expr);
+      if (  rep < 0 && rep != RET_QUIT ) 
+	return;
+      if ( rep == RET_QUIT) 
+	{
+	  Sciprintf("We want to quit from a pasted quit;");
+	  return;
+	}
+      str = str1+1;
+      str1 = str;
     }
 }
 
@@ -590,7 +617,7 @@ char *readline_textview(const char *prompt)
 
 static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
-  /* gtk_text_view_copy_clipboard (GtkTextView *text_view) */
+  GtkClipboard *clipboard;
   GtkTextIter start,end;
   View *view= user_data;
   /* set the selection to be editable */
@@ -598,6 +625,8 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
   gtk_text_buffer_remove_tag(view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET(text_view),GDK_SELECTION_CLIPBOARD);
+  gtk_text_buffer_copy_clipboard(view->buffer->buffer,clipboard);
 }
 
 /* Note that even if paste_clipboard_callback is called after 
@@ -607,6 +636,7 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 
 static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
+  View *view= user_data;
   GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
 						      GDK_SELECTION_CLIPBOARD);
   gchar *str = gtk_clipboard_wait_for_text(clipboard);
@@ -614,10 +644,11 @@ static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_
   g_signal_stop_emission_by_name (text_view, "paste_clipboard");
   if ( str ) 
     {
-      nsp_eval_pasted_from_clipboard(str);
+      nsp_eval_pasted_from_clipboard(str,view);
       g_free(str);
     }
 }
+
 
 /* change drag and drop behaviour because we want to 
  * be able to drop anywhere in the terminal window 
@@ -739,7 +770,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
         {
 	  gchar *str;
 	  str = gtk_text_iter_get_visible_text (&start, &end);
-	  nsp_eval_pasted_from_clipboard(str);
+	  nsp_eval_pasted_from_clipboard(str,view);
 	  g_free (str);
         }
     }
@@ -791,7 +822,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
-	      nsp_eval_pasted_from_clipboard((gchar *) str);
+	      nsp_eval_pasted_from_clipboard((gchar *) str,view);
 	      g_free (str);
 	    }
 	}
