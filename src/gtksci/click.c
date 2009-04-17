@@ -140,7 +140,7 @@ int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
       return 0;
     }
 
-  Sciprintf("status in=%d out=%d size=%d\n",q->in,q->out,q->size);
+  /* Sciprintf("status in=%d out=%d size=%d\n",q->in,q->out,q->size); */
 
   q->elems[q->in++] = *ev;
   if (q->in == q->size) 
