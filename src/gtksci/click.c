@@ -125,7 +125,7 @@ int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
    *      gives a pb in scicos to be solved 
    */
 
-  Sciprintf("Put event in the queue [%d,%d,%d]\n",ev->x,ev->y,ev->ibutton); 
+  /* Sciprintf("Put event in the queue [%d,%d,%d]\n",ev->x,ev->y,ev->ibutton);  */
   
   if ( ev->motion == 1 || ev->release == 1 ) 
     {
