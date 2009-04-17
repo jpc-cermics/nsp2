@@ -876,8 +876,8 @@ NspMatrix *nsp_imatrix_to_matrix(NspIMatrix *M)
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT) 
     return(NULLMAT);
-#define IMAT_ITOM(name,type,arg)						\
-  for (i= 0 ; i < Loc->mn; i++) Loc->R[i]= (double) M->name[i] ;	\
+#define IMAT_ITOM(name,type,arg)					\
+  for (i= 0 ; i < Loc->mn; i++) Loc->R[i]=  M->name[i] ;		\
   break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_ITOM,void);
 #undef IMAT_ITOM
@@ -1070,6 +1070,41 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
     }
   return OK;
 }
+
+
+
+/**
+ * nsp_imatrix_intmax:
+ * @A: a #NspIMatrix. 
+ * 
+ * The max value that can be stored in @A.
+ *
+ * Return value: a #nsp_int_union
+ **/
+
+nsp_int_union nsp_imatrix_intmax(const NspIMatrix *A)
+{
+  nsp_int_union val;
+  NSP_MAX_ITYPE(val,A->itype);
+  return val;
+}
+
+/**
+ * nsp_imatrix_intmin:
+ * @A: a #NspIMatrix. 
+ * 
+ * The min value that can be stored in @A.
+ *
+ * Return value: a #nsp_int_union
+ **/
+
+nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A)
+{
+  nsp_int_union val;
+  NSP_MAX_ITYPE(val,A->itype);
+  return val;
+}
+
 
 /*
  * routines for output of boolean matrices 

@@ -2623,6 +2623,50 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 #endif 
 
 
+/*
+ */
+
+int
+int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_int_union val;
+  NspIMatrix *A;
+  NspIMatrix *R;
+  CheckRhs (1, 1);
+  CheckLhs (0, 1);
+  if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+    return RET_BUG;
+  if ((R = nsp_imatrix_create(NVOID,1,1,A->itype))== NULLIMAT)
+    return RET_BUG;
+  val = nsp_imatrix_intmax(A);
+#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
+  NSP_ITYPE_SWITCH(A->itype,IMAT_INTM,"");
+#undef IMAT_INTM
+  MoveObj(stack,1,NSP_OBJECT(R));
+  return Max(lhs, 1) ;
+}
+
+int
+int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_int_union val;
+  NspIMatrix *A;
+  NspIMatrix *R;
+  CheckRhs (1, 1);
+  CheckLhs (0, 1);
+  if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+    return RET_BUG;
+  if ((R = nsp_imatrix_create(NVOID,1,1,A->itype))== NULLIMAT)
+    return RET_BUG;
+  val = nsp_imatrix_intmin(A);
+#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
+  NSP_ITYPE_SWITCH(A->itype,IMAT_INTM,"");
+#undef IMAT_INTM
+  MoveObj(stack,1,NSP_OBJECT(R));
+  return Max(lhs, 1) ;
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -2703,6 +2747,9 @@ static OpTab IMatrix_func[]={
   {"ieye", int_imatrix_ieye},
   {"iones", int_imatrix_iones},
   {"izeros", int_imatrix_izeros},
+  {"intmax", int_imatrix_intmax},
+  {"intmin", int_imatrix_intmin},
+
 
 #if 0
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */

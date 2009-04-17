@@ -38,6 +38,7 @@ typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong ,
 		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
 		 nsp_guint64 } nsp_itype;
 
+
 #define NSP_ITYPE_FORMATS(names)				\
   char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",		\
 		 "%*u", "%*d", "%*u", "%*d",			\
@@ -111,6 +112,43 @@ struct _NspIMatrix {
   int itype;
   int eltsize;
 };
+
+
+
+#define NSP_MAX_ITYPE(xx,itype)						\
+  switch(itype) {							\
+  case nsp_gint: xx.Gint= G_MAXINT; break;				\
+  case nsp_guint: xx.Guint= G_MAXUINT; break;				\
+  case  nsp_gshort: xx.Gshort= G_MAXSHORT; break;			\
+  case nsp_gushort: xx.Gushort= G_MAXUSHORT; break;			\
+  case  nsp_glong: xx.Glong= G_MAXLONG ;  break;			\
+  case nsp_gulong: xx.Gulong= G_MAXULONG; break;			\
+  case  nsp_gint8: xx.Gint8= G_MAXINT8; break;				\
+  case nsp_guint8: xx.Guint8= G_MAXUINT8; break;			\
+  case  nsp_gint16: xx.Gint16= G_MAXINT16; break;			\
+  case nsp_guint16: xx.Guint16= G_MAXUINT16; break;			\
+  case  nsp_gint32: xx.Gint32= G_MAXINT32; break;			\
+  case nsp_guint32: xx.Guint32= G_MAXUINT32; break;			\
+  case  nsp_gint64: xx.Gint64= G_MAXINT64; break;			\
+  case  nsp_guint64: xx.Guint64= G_MAXUINT64; break;}
+
+#define NSP_MIN_ITYPE(xx,itype)						\
+  switch(itype) {							\
+  case nsp_gint: xx.Gint= G_MININT; break;				\
+  case nsp_guint: xx.Guint= G_MINUINT; break;				\
+  case  nsp_gshort: xx.Gshort= G_MINSHORT; break;			\
+  case nsp_gushort: xx.Gushort= G_MINUSHORT; break;			\
+  case  nsp_glong: xx.Glong= G_MINLONG ;  break;			\
+  case nsp_gulong: xx.Gulong= G_MINULONG; break;			\
+  case  nsp_gint8: xx.Gint8= G_MININT8; break;				\
+  case nsp_guint8: xx.Guint8= G_MINUINT8; break;			\
+  case  nsp_gint16: xx.Gint16= G_MININT16; break;			\
+  case nsp_guint16: xx.Guint16= G_MINUINT16; break;			\
+  case  nsp_gint32: xx.Gint32= G_MININT32; break;			\
+  case nsp_guint32: xx.Guint32= G_MINUINT32; break;			\
+  case  nsp_gint64: xx.Gint64= G_MININT64; break;			\
+  case  nsp_guint64: xx.Guint64= G_MINUINT64; break;}
+
 
 
 /* expand X expression in a swith 
@@ -402,6 +440,10 @@ extern NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag);
 extern NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim);
 extern NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order);
 extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2);
+
+extern nsp_int_union nsp_imatrix_intmax(const NspIMatrix *A);
+extern nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A);
+
 
 #endif 
 
