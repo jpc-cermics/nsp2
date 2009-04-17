@@ -682,17 +682,47 @@ target_drag_data_received  (GtkWidget          *widget,
 			    guint               info,
 			    guint               time)
 {
-  Sciprintf("drop received\n");
-  /*
-  if ((data->length >= 0) && (data->format == 8))
+  Sciprintf("data received\n");
+
+  if (gtk_drag_get_source_widget (context) == widget)
     {
-      g_print ("Received \"%s\" in trashcan\n", (gchar *)data->data);
-      gtk_drag_finish (context, TRUE, FALSE, time);
+      Sciprintf("stopped\n");
+      g_signal_stop_emission_by_name (widget, "drag-data-received");
       return;
     }
+
+  if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
+    {
+      gboolean rep;
+      GtkTreeModel     *tree_model;
+      GtkTreePath      *path;
+      Sciprintf("A GTK_TREE_MODEL_ROW\n");
+      rep = gtk_tree_get_row_drag_data (data,&tree_model,&path);
+      if ( rep )
+	{
+	  Sciprintf("got the model and the path\n");
+	  gtk_drag_finish (context, TRUE, FALSE, time);	  
+	}
+    }
   gtk_drag_finish (context, FALSE, FALSE, time);
-  */
 }
+
+
+static gboolean
+target_drag_drop(GtkWidget *widget, GdkDragContext *context,
+		      gint x, gint y, guint time)
+{
+  Sciprintf("drop received\n");
+  if (gtk_drag_get_source_widget(context) != NULL) {
+    /* we only accept drops from the same instance of the application,
+     * as the drag data is a pointer in our address space */
+    return TRUE;
+  }
+  gtk_drag_finish (context, FALSE, FALSE, time);
+  return FALSE;
+}
+
+
 
 #if 0
 static void  

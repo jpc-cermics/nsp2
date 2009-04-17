@@ -261,8 +261,9 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 
 
 static GtkTargetEntry target_table[] = {
-  { "STRING",     1, 0  },
-  { "text/plain", 1, 0  }
+  { "GTK_TREE_MODEL_ROW",1,10},
+  { "STRING",    1, 11},
+  { "text/plain", 1,12}
 };
 
 static guint n_targets = sizeof(target_table) / sizeof(target_table[0]);
@@ -420,13 +421,17 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   g_signal_connect (GTK_OBJECT(dd->private->window), "drag_data_get",
 		    G_CALLBACK (target_drag_data_get), NULL);
 #endif
+
+  g_signal_connect (GTK_OBJECT(dd->private->window), "drag_drop",
+		    G_CALLBACK( target_drag_drop), NULL);
+
   g_signal_connect (GTK_OBJECT(dd->private->window), "drag_data_received",
 		    G_CALLBACK (target_drag_data_received), NULL);
 
-
   gtk_drag_dest_set (dd->private->window,GTK_DEST_DEFAULT_ALL,
-		     target_table, n_targets ,GDK_ACTION_COPY);
-
+		     target_table, n_targets ,GDK_ACTION_COPY
+		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
+  
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		   G_CALLBACK(locator_button_press), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
