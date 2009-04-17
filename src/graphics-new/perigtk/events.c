@@ -113,7 +113,9 @@ static gboolean locator_button_release(GtkWidget *widget,
 }
 
 /* event handler for mouse motion 
+ * 
  */
+
 
 static gboolean locator_button_motion(GtkWidget *widget,
 				      GdkEventMotion *event,
@@ -123,7 +125,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
   if (event->is_hint)
     {
 #ifdef XXX
-	  /* should check the gdk version to use this */
+      /* should check the gdk version to use this */
       x= event->x;y=event->y;
       gdk_event_request_motions(event);
 #else
@@ -332,17 +334,33 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   /* decode iflag */
   change_cursor = iflag & (1<<2); 
   iflag = iflag & 1; 
-
-  /* check for already stored event */
+  
   if ( iflag == TRUE )
     { 
-      nsp_gwin_event ev;
-      if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
+      /* check for already stored event */
+      int ok = FALSE;
+      nsp_gwin_event ev ={0};
+      while (1)
 	{
-	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; 
-	  *ibutton= ev.ibutton, *imask= ev.mask;
+	  if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
+	    {
+	      ok = TRUE ;
+	      *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; 
+	      *ibutton= ev.ibutton, *imask= ev.mask;
+	      if ( getmotion == FALSE && ev.motion == TRUE ) ok = FALSE;
+	      if ( getrelease == FALSE && ev.release == TRUE ) ok = FALSE;
+	    }
+	  else
+	    {
+	      break;
+	    }
+	  if ( ok == TRUE ) break;
+	}
+      if ( ok == TRUE ) 
+	{
 	  /* flush pending events */
 	  while ( gtk_events_pending()) gtk_main_iteration(); 
+	  /* quit since we have an event */
 	  return;
 	}
     }

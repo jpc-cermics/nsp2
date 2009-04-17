@@ -431,21 +431,28 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_drag_dest_set (dd->private->window,GTK_DEST_DEFAULT_ALL,
 		     target_table, n_targets ,GDK_ACTION_COPY
 		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
-  
+
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
+		   G_CALLBACK(locator_button_motion), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		   G_CALLBACK(locator_button_press), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
 		   G_CALLBACK(locator_button_release), (gpointer) dd);
-  g_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-		   G_CALLBACK(locator_button_motion), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
 		   G_CALLBACK(realize_event), (gpointer) dd);
+
+  /* GDK_POINTER_MOTION_HINT_MASK is a special mask which is used
+   * to reduce the number of GDK_MOTION_NOTIFY events received.
+   */
 
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
 			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_HINT_MASK
-			| GDK_POINTER_MOTION_MASK
+			| GDK_POINTER_MOTION_HINT_MASK 
+			/* get all motions */
+			| GDK_POINTER_MOTION_MASK 
+			/* get motion when pressed buttons move*/
+			/* | GDK_BUTTON_MOTION_MASK  */
 			| GDK_LEAVE_NOTIFY_MASK );
   
   /* private->drawingarea properties */
