@@ -78,7 +78,6 @@ static gboolean locator_button_press(GtkWidget *widget,
       nsp_event_info.win=  gc->CurWindow; 
       nsp_event_info.x = event->x; 
       nsp_event_info.y = event->y; 
-      Sciprintf("click at position [%d,%d]\n",nsp_event_info.x, nsp_event_info.y);
       nsp_event_info.button = id;
       nsp_event_info.mask = event->state ;
       gtk_main_quit();
