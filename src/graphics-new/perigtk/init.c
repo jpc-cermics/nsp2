@@ -418,17 +418,19 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_drag_source_set(dd->private->window,GDK_BUTTON1_MASK | 
 		      GDK_BUTTON2_MASK | GDK_BUTTON3_MASK,
 		      target_table, n_targets ,GDK_ACTION_COPY);
-  g_signal_connect (GTK_OBJECT(dd->private->window), "drag_data_get",
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_get",
 		    G_CALLBACK (target_drag_data_get), NULL);
 #endif
 
-  g_signal_connect (GTK_OBJECT(dd->private->window), "drag_drop",
+#if 0
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_drop",
 		    G_CALLBACK( target_drag_drop), NULL);
+#endif 
 
-  g_signal_connect (GTK_OBJECT(dd->private->window), "drag_data_received",
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_received",
 		    G_CALLBACK (target_drag_data_received), NULL);
 
-  gtk_drag_dest_set (dd->private->window,GTK_DEST_DEFAULT_ALL,
+  gtk_drag_dest_set (dd->private->drawing,GTK_DEST_DEFAULT_ALL,
 		     target_table, n_targets ,GDK_ACTION_COPY
 		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
 

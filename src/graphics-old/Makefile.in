@@ -195,6 +195,31 @@ periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
 
+periGtk.o: periGtk.c periGtkstd.c \
+  ../include/nsp/math.h ../include/nsp/machine.h \
+  ../include/nsp/config.h ../include/nsp/package_undef.h \
+  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+  ../include/nsp/plisttoken.h \
+  ../include/nsp/graphics/periGtk.h \
+  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/command.h perigtk/events.c perigtk/init.c \
+  perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
+
+periGL.o: periGL.c periGtkstd.c \
+  ../include/nsp/math.h ../include/nsp/machine.h \
+  ../include/nsp/config.h ../include/nsp/package_undef.h \
+  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+  ../include/nsp/plisttoken.h \
+  ../include/nsp/graphics/periGtk.h \
+  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/command.h perigtk/events.c perigtk/init.c \
+  perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
+
+
 periFig.o: periFig.c ../include/nsp/sciio.h \
   ../include/nsp/math.h ../include/nsp/machine.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \

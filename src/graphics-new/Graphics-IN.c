@@ -6213,6 +6213,17 @@ static int int_new_graphics(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int nsp_new_graphics(void)
+{
+#ifdef NEW_GRAPHICS
+  return TRUE ;
+#else
+  return FALSE;
+#endif
+
+}
+
+
 extern void nsp_set_cursor(  BCG *Xgc,int id);
 
 static int int_xcursor(Stack stack, int rhs, int opt, int lhs)

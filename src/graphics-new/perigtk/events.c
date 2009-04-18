@@ -21,31 +21,31 @@
  * 
  *--------------------------------------------------------------------------*/
 
-/*
- * Changes the graphic window popupname 
- */
-
-static void nsp_event_pause(int number) ;
-
 /* FIXME */
 extern char * nsp_string_to_utf8( char *str);
+static void nsp_event_pause(int number) ;
 
-static void Setpopupname(BCG *Xgc,char *string)
+/**
+ * setpopupname:
+ * @Xgc: a #BCG 
+ * @string: name to be given to popup window.
+ * 
+ * sets the graphic window popupname to @string. 
+ * The graphic window is obtained from its @Xgc.
+ * 
+ **/
+
+static void setpopupname(BCG *Xgc,char *string)
 { 
   char *string_utf8=  nsp_string_to_utf8(string);
   gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string_utf8);
   if ( string_utf8 != string ) g_free(string_utf8);
 }
 
-static void setpopupname(BCG *Xgc,char *name)
-{
-  Setpopupname(Xgc,name);
-}
-
 
 extern GTK_locator_info nsp_event_info;
 
-/* event handler for mouse pressed 
+/* event handler for "button-press-event".
  */
 
 static gboolean locator_button_press(GtkWidget *widget,
@@ -74,7 +74,11 @@ static gboolean locator_button_press(GtkWidget *widget,
     }
   else 
     {
-      nsp_event_info.ok = 1; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x; nsp_event_info.y = event->y; 
+      nsp_event_info.ok = 1; 
+      nsp_event_info.win=  gc->CurWindow; 
+      nsp_event_info.x = event->x; 
+      nsp_event_info.y = event->y; 
+      Sciprintf("click at position [%d,%d]\n",nsp_event_info.x, nsp_event_info.y);
       nsp_event_info.button = id;
       nsp_event_info.mask = event->state ;
       gtk_main_quit();
@@ -82,7 +86,7 @@ static gboolean locator_button_press(GtkWidget *widget,
   return TRUE;
 }
 
-/* event handler for mouse released 
+/* event handler for "button-release-event",
  */
 
 static gboolean locator_button_release(GtkWidget *widget,
@@ -112,10 +116,9 @@ static gboolean locator_button_release(GtkWidget *widget,
   return TRUE;
 }
 
-/* event handler for mouse motion 
+/* event handler for "motion-notify-event",
  * 
  */
-
 
 static gboolean locator_button_motion(GtkWidget *widget,
 				      GdkEventMotion *event,
@@ -170,7 +173,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
   return TRUE;
 }
 
-/* event handler for key pressed */
+/* event handler for "key_press_event" */
 
 static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
@@ -200,6 +203,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 }
 
 #if 0
+/* test a drag initiated in graphic window */
 static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
 {
   static GtkTargetEntry xtarget_table[] = {
@@ -356,8 +360,10 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 	    }
 	  if ( ok == TRUE ) break;
 	}
+
       if ( ok == TRUE ) 
 	{
+	  Sciprintf("found and return a %d\n",ev.ibutton);
 	  /* flush pending events */
 	  while ( gtk_events_pending()) gtk_main_iteration(); 
 	  /* quit since we have an event */
@@ -550,6 +556,12 @@ int window_list_check_top(BCG *dd,void *win)
 {
   return dd->private->window == (GtkWidget *) win ;
 }
+
+int window_list_check_drawing(BCG *dd,void *win) 
+{
+  return dd->private->drawing == (GtkWidget *) win ;
+}
+
 #endif 
 
 /* delete the graphic window 
@@ -690,6 +702,8 @@ static void nsp_event_pause(int number)
 
 
 
+extern void *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
+
 
 static void  
 target_drag_data_received  (GtkWidget          *widget,
@@ -700,32 +714,79 @@ target_drag_data_received  (GtkWidget          *widget,
 			    guint               info,
 			    guint               time)
 {
-  Sciprintf("data received\n");
 
   if (gtk_drag_get_source_widget (context) == widget)
     {
-      Sciprintf("stopped\n");
+      /* we stop if the drag was initiated by us */
       g_signal_stop_emission_by_name (widget, "drag-data-received");
       return;
     }
 
   if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
-      gboolean rep;
       GtkTreeModel     *tree_model;
       GtkTreePath      *path;
-      Sciprintf("A GTK_TREE_MODEL_ROW\n");
-      rep = gtk_tree_get_row_drag_data (data,&tree_model,&path);
-      if ( rep )
+      if ( gtk_tree_get_row_drag_data (data,&tree_model,&path))
 	{
-	  Sciprintf("got the model and the path\n");
-	  gtk_drag_finish (context, TRUE, FALSE, time);	  
+	  int ncols;
+	  GtkTreeIter iter;
+	  ncols= gtk_tree_model_get_n_columns(tree_model);
+	  if ( ncols != 4 ) 
+	    {
+	      gtk_drag_finish (context, FALSE, FALSE, time);
+	      return;
+	    }
+	  if (gtk_tree_model_get_iter(tree_model, &iter, path))
+	    {
+	      gint x1,y1; 
+	      GdkModifierType state;
+	      BCG *Xgc;
+	      static char buf[256];
+	      int ids[2],winnum;
+	      double pt[2];
+	      GType mtype;
+	      GValue value = { 0, };
+	      int col=2;
+	      for (col = 2 ; col < 4; col++)
+		{
+		  gtk_tree_model_get_value(tree_model,&iter ,col, &value);
+		  mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+		  if ( mtype != G_TYPE_DOUBLE )
+		    {
+		      gtk_drag_finish (context, FALSE, FALSE, time);
+		      return;
+		    }
+		  ids[col-2] = g_value_get_double(&value);
+		  g_value_unset(&value);
+		}
+	      winnum = window_list_search_from_drawing(widget);
+	      if ( winnum == -1 )
+		{
+		  gtk_drag_finish (context, FALSE, FALSE, time);
+		  return;
+		}
+	      /* Sciprintf("You have draged a block from palette [%d,%d] to window %d\n",
+	       *  ids[0],ids[1],winnum);
+	       */
+	      Xgc = window_list_search(winnum);
+	      gdk_window_get_pointer (Xgc->private->drawing->window, &x1, &y1, &state);
+	      if ( nsp_new_graphics() == TRUE) 
+		nsp_get_point_axes(Xgc,x1,y1,pt);
+	      else
+		scale_i2f(Xgc,pt,pt+1,&x1,&y1,1);
+	      /* Sciprintf("PlaceDropped_info([%5.3f,%5.3f],[%d,%d],[%d,%d],%d,%d,%d)\n",
+	       * pt[0],pt[1],x,y,x1,y1,ids[0],ids[1],winnum);
+	       */
+	      sprintf(buf,"PlaceDropped_info([%5.3f,%5.3f],%d,%d,%d)\n",pt[0],pt[1],ids[0],ids[1],winnum);
+	      enqueue_nsp_command(buf);
+	      gtk_drag_finish (context, TRUE, FALSE, time);	  
+	    }
 	}
     }
   gtk_drag_finish (context, FALSE, FALSE, time);
 }
 
-
+#if 0
 static gboolean
 target_drag_drop(GtkWidget *widget, GdkDragContext *context,
 		      gint x, gint y, guint time)
@@ -739,7 +800,7 @@ target_drag_drop(GtkWidget *widget, GdkDragContext *context,
   gtk_drag_finish (context, FALSE, FALSE, time);
   return FALSE;
 }
-
+#endif 
 
 
 #if 0

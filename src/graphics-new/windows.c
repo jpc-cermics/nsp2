@@ -30,6 +30,8 @@ extern Gengine GL_gengine;
 #endif 
 
 extern int window_list_check_top(BCG *,void *) ;
+extern int window_list_check_drawing(BCG *dd,void *win);
+
 
 /**
  * WindowList: 
@@ -60,6 +62,7 @@ static int window_list_search_topelevel_int(WindowList *,void *,int);
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
+static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 /**
  * check_graphic_window
@@ -250,11 +253,36 @@ static WindowList  *window_list_search_w_int(WindowList *listptr, int i)
 }
 
 /**
+ * window_list_search_from_drawing
+ * @win: address of the drawing widget of a graphic window
+ * 
+ * Search a graphic context for a window described by its 
+ * drawing widget address. The window id is returned or 
+ * -1 in case of failure.
+ * 
+ * 
+ * Return value: an integer 
+ **/
+
+int window_list_search_from_drawing(void *win)
+{ 
+  return window_list_search_from_drawing__(The_List,win);
+}
+
+static int window_list_search_from_drawing__(WindowList *listptr,void *win)
+{
+  if (listptr == (WindowList  *) NULL) return -1;
+  if ( window_list_check_drawing(&listptr->winxgc,win) == TRUE) 
+    return listptr->winxgc.CurWindow;
+  return window_list_search_from_drawing__((WindowList *) listptr->next,win);
+}
+
+/**
  * window_list_search_toplevel:
  * @win: a void pointer  
  * 
  * returns the number of graphic windows which share
- * the same toplevel widget 
+ * the same toplevel widget. 
  * 
  * Return value: an integer 
  **/
@@ -1068,51 +1096,62 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
     }
 }
 
-/*--------------------------------------------------------------------
- * Get the current window dimensions.
- *--------------------------------------------------------------------*/
 
 /**
  * get_cwindow_dims:
- * @: 
+ * @wdims: an integer pointer 
  * 
- * 
+ * get dimensions of the current graphic window.
+ *
  **/
-void get_cwindow_dims( int wdims[2])
+
+void get_cwindow_dims( int *wdims)
 {
   BCG *Xgc = check_graphic_window();
   Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
 }
 
-/*--------------------------------------------------------------------
+/**
+ * frame_clip_on:
+ * @Xgc:  graphic context #BCG
+ * 
  * use current scale to set the clipping rectangle 
- *--------------------------------------------------------------------*/
+ * 
+ **/
 
 void frame_clip_on(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_clip(Xgc,Xgc->scales->WIRect1);
 }
 
+/**
+ * frame_clip_off:
+ * @Xgc:  graphic context #BCG
+ * 
+ * unset clipping.
+ * 
+ **/
+
 void frame_clip_off(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
-/* checks if there's an already stored event in a 
- * graphic window queue.
- * if Xgc is NULL all the windows are searched 
- * else only Xgc is searched 
- */
 
 /**
  * window_list_check_queue:
- * @Xgc: 
- * @ev: 
+ * @Xgc:  graphic context #BCG
+ * @ev: a #nsp_gwin_event
+ * 
+ * checks if there's an already stored event in a 
+ * graphic window queue. If @Xgc is %NULL all the 
+ * windows are searched 
+ * else only Xgc is searched 
  * 
  * 
- * 
- * Returns: 
+ * Returns: %OK or %FAIL.
  **/
+
 int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
 {
   WindowList *L1= The_List ;
@@ -1142,13 +1181,15 @@ int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
 
 /**
  * window_list_clear_queue:
- * @Xgc: 
+ * @Xgc: graphic context #BCG
  * 
+ * clears the event queues of the window 
+ * described by graphic context @Xgc or all
+ * the event queues if @Xgc is %NULL.
  * 
- * 
- * Returns: 
  **/
-int window_list_clear_queue(BCG *Xgc)
+
+void window_list_clear_queue(BCG *Xgc)
 {
   WindowList *L1= The_List ;
   if ( Xgc == NULL )
@@ -1164,5 +1205,4 @@ int window_list_clear_queue(BCG *Xgc)
     {
       nsp_clear_queue(&Xgc->queue);
     }
-  return FAIL;
 }
