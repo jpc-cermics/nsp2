@@ -2738,3 +2738,111 @@ NspBMatrix *nsp_smatrix_has(NspSMatrix *A, NspSMatrix *x, int lhs, NspMatrix **i
   nsp_matrix_destroy(Ind2);
   return NULLBMAT;
 }
+
+/* test if a vector of string is ordered */
+static Boolean array_is_sorted(char **x, int n, int inc, Boolean strict_order)
+{
+  Boolean bool = TRUE;
+  int i, j;
+
+  if ( n < 1 ) return bool;
+
+  if ( strict_order ) 
+    for ( i = 1, j = inc ; i < n && bool ; i++, j+=inc )
+      bool = strcmp(x[j-inc],x[j]) < 0;
+  else
+    for ( i = 1, j = inc ; i < n && bool ; i++, j+=inc )
+      bool = strcmp(x[j-inc],x[j]) <= 0;
+
+  return bool;
+}
+
+/* compare 2 vectors of strings x and y in the lexicographic meaning */
+static Boolean compare_vect(char **x, char **y, int n, int inc, Boolean strict_order)
+{
+  int i, k, c;
+
+  if ( n < 1 ) return TRUE;
+
+  for ( i = 0, k = 0 ; i < n  ; i++, k+=inc )
+    {
+      c = strcmp(x[k],y[k]);
+      if ( c < 0 )
+	return TRUE;
+      else if ( c > 0 )
+	return FALSE;
+    }
+
+  /* we reach this line if x[k] == y[k] for all k so return FALSE if strict_order is TRUE */
+  if ( strict_order )
+    return FALSE;
+  else
+    return TRUE;
+}
+
+
+/**
+ * nsp_smatrix_issorted:
+ * @A: (input) #NspMatrix
+ * @order_type: (input) (test_sort_g, test_sort_c, test_sort_r, test_sort_lc, test_sort_lr)
+ * @strict_order: (input) true for "<" and false for  "<="
+ *
+ * Return value: a NspBMatrix pointer (NULL if alloc FAIL)
+ **/
+NspBMatrix *nsp_smatrix_issorted(NspSMatrix *A, int flag, Boolean strict_order)
+{
+  NspBMatrix *C;
+  Boolean bool = TRUE;
+  int i, j;
+
+  if ( flag == test_sort_c )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,A->m,Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else if ( flag == test_sort_r )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),A->n)) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+
+  if ( C->mn == 0 )
+    return C;
+
+
+  switch ( flag ) 
+    {
+    case test_sort_g:
+      C->B[0] =  array_is_sorted(A->S, A->mn, 1, strict_order);
+      break;
+      
+    case test_sort_r:    /* test if each column is sorted */
+      for ( j = 0 ; j < A->n ; j++ )
+	C->B[j] =  array_is_sorted(&(A->S[j*A->m]), A->m, 1, strict_order);
+      break;
+
+    case test_sort_c:    /* test if each row is sorted */
+      for ( i = 0 ; i < A->m ; i++ )
+	C->B[i] =  array_is_sorted(&(A->S[i]), A->n, A->m, strict_order);
+      break;
+
+    case test_sort_lr:  /* are rows sorted in the lexicographic meaning ? */
+      for ( i = 1 ; i < A->m && bool ; i++ )
+	bool = compare_vect( &(A->S[i-1]),  &(A->S[i]), A->n, A->m, strict_order);
+      C->B[0] = bool;
+      break;
+
+    case test_sort_lc: /* are columns sorted in the lexicographic meaning ? */
+      for ( j = 1 ; j < A->n && bool ; j++ )
+	bool = compare_vect( &(A->S[(j-1)*A->m]),  &(A->S[j*A->m]), A->m, 1, strict_order);
+      C->B[0] = bool;
+      break;
+    }
+  
+  return C;
+}

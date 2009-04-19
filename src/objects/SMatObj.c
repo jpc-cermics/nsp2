@@ -1922,6 +1922,47 @@ static int int_smatrix_unique( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int
+int_smatrix_issorted (Stack stack, int rhs, int opt, int lhs)
+{
+  char *flag=NULL;
+  int rep = test_sort_g;
+  char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
+  Boolean strict_order = FALSE;
+  NspSMatrix *A;
+  NspBMatrix *Res;
+  nsp_option opts[] ={{"flag",string,NULLOBJ,-1},
+		      {"strict_order",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 2)
+  CheckLhs(1, 1);
+
+  if ((A = GetSMat (stack, 1)) == NULLSMAT)
+    return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &flag, &strict_order) == FAIL )
+    return RET_BUG;
+
+  if ( flag != NULL) 
+    {
+      rep = is_string_in_array(flag, flags_list, 1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack, flag, flags_list, "optional argument");
+	  return RET_BUG;
+	}
+    }
+  
+  if ( (Res = nsp_smatrix_issorted(A, rep, strict_order)) == NULLBMAT )
+    return RET_BUG;
+  
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -2006,6 +2047,7 @@ static OpTab SMatrix_func[]={
   {"protect",int_smatrix_protect}, /* test */
   {"sqsort_s", int_bpsqsort},
   {"unique_s",int_smatrix_unique},
+  {"issorted_s",int_smatrix_issorted},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
   {(char *) 0, NULL}

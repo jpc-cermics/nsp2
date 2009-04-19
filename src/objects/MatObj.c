@@ -5020,31 +5020,42 @@ int_mat_dot (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
 static int
 int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
 {
-  int dim=0;
-  Boolean strict_order = FALSE;
+  char *flag=NULL;
+  int rep = test_sort_g;
+  char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
+  Boolean strict_order = FALSE, order_nan = FALSE;
   NspMatrix *A;
   NspBMatrix *Res;
-  nsp_option opts[] ={{"dim",s_int,NULLOBJ,-1},
+  nsp_option opts[] ={{"flag",string,NULLOBJ,-1},
 		      {"strict_order",s_bool,NULLOBJ,-1},
+		      {"order_nan",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   CheckStdRhs(1, 1);
-  CheckOptRhs(0, 2)
+  CheckOptRhs(0, 3)
   CheckLhs(1, 1);
 
   if ((A = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
 
-  if ( get_optional_args(stack, rhs, opt, opts, &dim, &strict_order) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &flag, &strict_order, &order_nan) == FAIL )
     return RET_BUG;
 
-  if ( strict_order && dim != 0 )
-    Sciprintf("\n Warning: strict_order is used only when dim=0\n");
-
-  if ( (Res = nsp_mat_issorted(A, dim, strict_order)) == NULLBMAT )
+  if ( flag != NULL) 
+    {
+      rep = is_string_in_array(flag, flags_list, 1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack, flag, flags_list, "optional argument");
+	  return RET_BUG;
+	}
+    }
+  
+  if ( (Res = nsp_mat_issorted(A, rep, strict_order, order_nan)) == NULLBMAT )
     return RET_BUG;
   
   MoveObj (stack, 1, (NspObject *) Res);

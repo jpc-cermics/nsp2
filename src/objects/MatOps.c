@@ -6234,89 +6234,156 @@ NspMatrix *nsp_mat_cross(NspMatrix *X, NspMatrix *Y, int dim)
   return Z;
 }
 
-/**
- * nsp_mat_issorted:
- * @A: (input) #NspMatrix
- * @dim_flag: (input) (0, 1 or 2)
- * @strict_order: (input) true for "<" and false for  "=<"
- *
- * Return value: TRUE or FALSE
- **/
-NspBMatrix *nsp_mat_issorted(NspMatrix *A, int dim_flag, Boolean strict_order)
+/* test if a vector is ordered */
+static Boolean array_is_sorted(double *x, int n, int inc, Boolean strict_order, Boolean nan_ordered)
 {
-  NspBMatrix *C;
   Boolean bool = TRUE;
-  int i, j, k, c0, c1;
+  int i, j;
 
-  if ((C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT) 
-    return NULLBMAT;
-  
-  if ( C->mn == 0 )
-    return C;
+  if ( n < 1 ) return bool;
 
-  switch (dim_flag) 
+  if ( strict_order )  /* strict_order don't accept Nan whatever nan_ordered 's value */
     {
-    default :
-      Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
-      
-    case 0: 
-      if ( strict_order )
+      bool = ! isnan(x[0]);
+      if ( inc == 1 )
+	for ( i = 1 ; i < n && bool ; i++ )
+	  bool = x[i-1] < x[i];
+      else
+	for ( i = 1, j = inc ; i < n && bool ; i++, j+=inc )
+	  bool = x[j-inc] < x[j];
+    }
+  else                /* Nan are accepted and considered larger than Inf (and equal among them) if nan_ordered is TRUE */
+    {
+      if ( inc == 1 )
 	{
-	  bool = ! isnan(A->R[0]);
-	  for ( i = 1 ; i < A->mn && bool ; i++ )
-	    bool = A->R[i-1] < A->R[i];
+	  if ( nan_ordered )
+	    while ( n > 0 && isnan(x[n-1]) ) n--;
+	  else
+	    bool = ! isnan(x[0]);
+	  
+	  for ( i = 1 ; i < n && bool ; i++ )
+	    bool = x[i-1] <= x[i];
 	}
       else
 	{
-	  for ( i = 1 ; i < A->mn && bool ; i++ )
-	    bool = (A->R[i-1] <= A->R[i]) || isnan(A->R[i]);
+	  if ( nan_ordered )
+	    while ( n > 0 && isnan(x[inc*(n-1)]) ) n--;
+	  else 
+	    bool = ! isnan(x[0]);
+
+	  for ( i = 1, j = inc ; i < n && bool ; i++, j+=inc )
+	    bool = x[j-inc] <= x[j];
 	}
-      C->B[0] = bool;
+    }
+  return bool;
+}
+
+/* compare 2 vectors x and y in the lexicographic meaning */
+static Boolean compare_vect(double *x, double *y, int n, int inc, Boolean strict_order, Boolean nan_ordered)
+{
+  int i, k;
+
+  if ( n < 1 ) return TRUE;
+
+  if ( strict_order )   /* nan_ordered is not taken into account for strict_order */
+    {
+      for ( i = 0, k = 0 ; i < n  ; i++, k+=inc )
+	{
+	  if ( x[k] < y[k] )
+	    return TRUE;
+	  else if ( x[k] > y[k]  || isnan(x[k]) || isnan(y[k]) )
+	    return FALSE;
+	}
+      /* we reach this line if x[k] == y[k] for all k so return FALSE */
+      return FALSE;
+    }
+  else
+    {
+      for ( i = 0, k = 0 ; i < n ; i++, k+=inc )
+	{
+	  if ( x[k] < y[k] )
+	    return TRUE;
+	  else if ( x[k] > y[k] )
+	    return FALSE;
+	  else if ( nan_ordered )
+	    {
+	      if ( isnan(x[k]) )
+		{
+		  if ( !isnan(y[k]) ) return FALSE;
+		}
+	      else
+		{
+		  if ( isnan(y[k]) ) return TRUE;
+		}
+	    }
+	  else if ( isnan(x[k]) || isnan(y[k]) )
+	    return FALSE;
+	}
+      /* we reach this line if x[k] == y[k] for all k so return TRUE */
+      return TRUE;
+    }
+}
+
+
+/**
+ * nsp_mat_issorted:
+ * @A: (input) #NspMatrix
+ * @order_type: (input) (test_sort_g, test_sort_c, test_sort_r, test_sort_lc, test_sort_lr)
+ * @strict_order: (input) true for "<" and false for  "<="
+ *
+ * Return value: TRUE or FALSE
+ **/
+NspBMatrix *nsp_mat_issorted(NspMatrix *A, int flag, Boolean strict_order, Boolean nan_ordered)
+{
+  NspBMatrix *C;
+  Boolean bool = TRUE;
+  int i, j;
+
+  if ( flag == test_sort_c )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,A->m,Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else if ( flag == test_sort_r )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),A->n)) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+
+  if ( C->mn == 0 )
+    return C;
+
+
+  switch ( flag ) 
+    {
+    case test_sort_g:
+      C->B[0] =  array_is_sorted(A->R, A->mn, 1, strict_order, nan_ordered);
+      break;
+      
+    case test_sort_r:    /* test if each column is sorted */
+      for ( j = 0 ; j < A->n ; j++ )
+	C->B[j] =  array_is_sorted(&(A->R[j*A->m]), A->m, 1, strict_order, nan_ordered);
       break;
 
-    case 1:  /* are rows sorted ? (in the lexicographic meaning) */
+    case test_sort_c:    /* test if each row is sorted */
+      for ( i = 0 ; i < A->m ; i++ )
+	C->B[i] =  array_is_sorted(&(A->R[i]), A->n, A->m, strict_order, nan_ordered);
+      break;
+
+    case test_sort_lr:  /* are rows sorted in the lexicographic meaning ? */
       for ( i = 1 ; i < A->m && bool ; i++ )
-	for ( j = 0, k = i ; j < A->n ; j++, k+=A->m )
-	  {
-	    if ( A->R[k-1] < A->R[k] )
-	      { bool = TRUE; break; }
-	    else if ( A->R[k-1] == A->R[k] )
-	      bool = TRUE;
-	    else if ( A->R[k-1] > A->R[k] )
-	      { bool = FALSE; break; }
-	    else if ( isnan(A->R[k-1]) )
-	      {
-		if ( isnan(A->R[k]) )
-		  bool = TRUE;
-		else
-		  { bool = FALSE; break; }
-	      }
-	    else /* A->R[k] is nan */
-	      { bool = TRUE; break; }
-	  }
+	bool = compare_vect( &(A->R[i-1]),  &(A->R[i]), A->n, A->m, strict_order, nan_ordered);
       C->B[0] = bool;
       break;
 
-    case 2: /* are columns sorted ? (in the lexicographic meaning) */
-      for ( j = 1, c0 = 0, c1 = A->m ; j < A->n && bool ; j++, c0+=A->m, c1+=A->m )
-	for ( i = 0  ; i < A->m ; i++)
-	  {
-	    if ( A->R[i+c0] < A->R[i+c1] )
-	      { bool = TRUE; break; }
-	    else if ( A->R[i+c0] == A->R[i+c1] )
-	      bool = TRUE;
-	    else if ( A->R[i+c0] > A->R[i+c1] )
-	      { bool = FALSE; break; }
-	    else if ( isnan(A->R[i+c0]) )
-	      {
-		if ( isnan(A->R[i+c1]) )
-		  bool = TRUE;
-		else
-		  { bool = FALSE; break; }
-	      }
-	    else /* A->R[i+c1] is nan */
-	      { bool = TRUE; break; }
-	  }
+    case test_sort_lc: /* are columns sorted in the lexicographic meaning ? */
+      for ( j = 1 ; j < A->n && bool ; j++ )
+	bool = compare_vect( &(A->R[(j-1)*A->m]),  &(A->R[j*A->m]), A->m, 1, strict_order, nan_ordered);
       C->B[0] = bool;
       break;
     }

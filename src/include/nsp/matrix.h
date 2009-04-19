@@ -310,7 +310,7 @@ extern int nsp_mat_nnz(NspMatrix *A);
 extern int nsp_mat_unique(NspMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
 extern NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag);
 extern NspMatrix *nsp_mat_cross(NspMatrix *X, NspMatrix *Y, int dim);
-extern NspBMatrix *nsp_mat_issorted(NspMatrix *A, int dim_flag, Boolean strict_order);
+extern NspBMatrix *nsp_mat_issorted(NspMatrix *A, int flag, Boolean strict_order, Boolean nan_ordered);
 extern NspBMatrix *nsp_mat_has(NspMatrix *A, NspMatrix *x, int lhs, NspMatrix **ind, NspMatrix **ind2);
 
 /* maxplus operations */
