@@ -13,6 +13,7 @@
 extern int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord);
 
 typedef enum {sort_g,sort_gs,sort_gm,sort_c,sort_r,sort_lr ,sort_lc ,sort_ldc,sort_ldr, sort_gb,sort_gd} nsp_sort;
+typedef enum {test_sort_g, test_sort_c, test_sort_r, test_sort_lc , test_sort_lr} nsp_test_sort;
 
 extern int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_sort type);
 extern int nsp_matrix_column_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir);
