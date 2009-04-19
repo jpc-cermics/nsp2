@@ -362,7 +362,6 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 
       if ( ok == TRUE ) 
 	{
-	  Sciprintf("found and return a %d\n",ev.ibutton);
 	  /* flush pending events */
 	  while ( gtk_events_pending()) gtk_main_iteration(); 
 	  /* quit since we have an event */
