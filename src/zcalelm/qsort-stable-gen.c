@@ -151,7 +151,7 @@ static void XCNAME(nsp_internal_qsort_stable_,DIR,ELT_TYPE)(ELT_TYPE *array,int 
       return;
     }
   /* Determine a good median element. */
-  int mid = count / 2;
+  int mid = from + count / 2;
   int lo = from;
   int hi = from + count - 1;
 
