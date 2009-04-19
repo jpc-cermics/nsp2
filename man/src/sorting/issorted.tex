@@ -1,0 +1,117 @@
+% -*- mode: latex -*-
+
+\mansection{issorted}
+\begin{mandesc}
+  \short{issorted}{test if a vector or matrix is sorted}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+b  = issorted(x)
+b  = issorted(x, flag=str, strict_order=bool)
+b  = issorted(x, flag=str, strict_order=bool, order_nan=bool)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}:  matrix or vector of floating point numbers or strings.
+    \vname{flag=str}: optional named argument, a string among
+    \verb+"g","c","r","lc","lr"+ (default is \verb+"g"+)
+    \vname{strict_order=bool}: optional named argument, a scalar boolean (default is \verb+%f+)
+    \vname{order_nan=bool}: optional named argument (only for matrix of floating point numbers), a scalar boolean (default is \verb+%f+).
+    \vname{b}: output, a boolean scalar or vector.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function tests if a vector or a matrix is sorted in increasing order 
+(in strict increasing order if \verb+strict_order=%t+).Several  kinds of tests are available 
+depending on the input argument \verb+flag+:
+
+\itemdesc{{\tt flag = "g"}} In this case the function tests if  the vector $x$  is sorted. 
+If $x$ is a matrix it is considered as a big vector using the
+ major column order. The output $b$ is a boolean scalar.
+
+\itemdesc{{\tt flag = "c"}} In this case the function tests if each row of $x$ is sorted. The output
+$b$ is a boolean column vector (of length the number of rows of $x$).
+
+\itemdesc{{\tt flag = "r"}} In this case the function tests if each column of $x$ is sorted. The output
+$b$ is a boolean row vector (of length the number of coluns of $x$).
+
+\itemdesc{{\tt flag = "lc"}} In this case the function tests if the columns of $x$ are sorted using lexical order.
+The output $b$ is a boolean scalar.
+
+\itemdesc{{\tt flag = "lr"}} In this case the function tests if the rows of $x$ are sorted using lexical order.
+The output $b$ is a boolean scalar.
+
+
+\paragraph{Remark}
+
+For matrix of floating point numbers, Nan values are considered larger
+than Inf (and equal among them) when \verb+order_nan=%t+. This feature
+is only available when \verb+strict_order=%f+. With this option, 
+\verb+issorted+ should returns \verb+%t+ (or a vector of \verb+%t+) on every
+vector or matrix $x$ which has been previously sorted by the \manlink{sort}{sort}
+using \verb+x = sort(x, flag, "i")+ even if Nan are present (due to the fact
+that sort places Nan value at the end for an increasing order sort).
+
+\end{mandescription}
+
+\begin{examples}
+
+\paragraph{with flag="g"}
+\begin{Verbatim}
+x = [ -1, -1, 2, 3, 6.5 ]
+issorted(x)
+issorted(x,strict_order=%t)
+
+// behavior with Nan
+x = [ x, %nan ]
+issorted(x)  // should be false
+issorted(x,order_nan=%t) // should be true
+
+// with a string vector
+x = ["bar", "foo","foo", "toto"]
+issorted(x)
+issorted(x, strict_order=%t)
+\end{Verbatim}
+
+\paragraph{with flag="c" or  flag="r"}
+\begin{Verbatim}
+x = rand(3,4)
+issorted(x,flag="c")
+x = sort(x,"c","i")
+issorted(x,flag="c")
+
+issorted(x,flag="r")
+x = sort(x,"r","i")
+issorted(x,flag="r")
+\end{Verbatim}
+
+\paragraph{with flag="lc" or  flag="lr"}
+\begin{Verbatim}
+x = [1, 2, 2, %pi;
+     1, 2, 2, 4 ];
+issorted(x,flag="lr",strict_order=%t)
+x(2,4) = %pi
+issorted(x,flag="lr",strict_order=%t)
+issorted(x,flag="lr",strict_order=%f)
+
+x = [1,   1, 1;
+     0.5, 1, 2;
+     0.2,-2, 6]
+issorted(x,flag="lc")
+\end{Verbatim}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{sort}{sort}, \manlink{bsearch}{bsearch}, \manlink{isnan}{isnan}.   
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+Bruno Pincon.
+\end{authors}

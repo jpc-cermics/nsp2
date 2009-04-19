@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+
+\mansection{perm\_elem}
+\begin{mandesc}
+   \shortunder{perm\_elem}{perm_elem}{(method) apply in place an elementary permutation to a vector or matrix}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ M.perm_elem[p,q[,dim]]
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{M}: vector or matrix (of numbers, strings, cells,...)
+   \vname{p, q}: integer scalars.
+   \vname{dim}: optional, an integer scalar among $\{0,1,2\}$, default is 0.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+Depending on the parameter dim, this method permutes in place:  
+\begin{itemize}
+\item when {\bf dim = 0}, the $p$ and $q$ elements (if $M$ is a matrix
+ the element numbering comes from the column  major order).
+\item when {\bf dim = 1}, the $p$ and $q$ rows.
+\item when {\bf dim = 2}, the $p$ and $q$ columns.
+\end{itemize}
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+A = [ "abc", "de",  "fg" ]
+A.perm_elem[1,3]
+A
+
+B = randn(3,4)
+B.perm_elem[2,4,2]  // permute columns 2 and 4
+B
+
+B = randn(3,4)
+B.perm_elem[1,3,1]  // permute rows 1 and 3
+B
+
+B = randn(2,3)
+B.perm_elem[1,4]  // permute elements 1 and 4 (so B(1,1) and B(2,2))
+B
+\end{Verbatim}
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{perms}{perms}
+\end{manseealso}
+
+%-- Author
+\begin{authors}
+B. Pincon
+\end{authors}
+
