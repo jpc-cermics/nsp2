@@ -14,7 +14,7 @@ bin/scilex: bin/nsp-win.exe bin/nsp-nowin.exe
 
 bin/nsp-win.exe : scilex-lib shared-win32
 	@$(RM) $@;
-	@echo "linking bin/scilex-win"; 
+	@echo "linking bin/nsp-win"; 
 	@$(FC) -mwindows  $(FFLAGS) -o $@ src/interp/lsci.o $(RES) \
 		bin/libnsp.dll.a $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 
@@ -26,7 +26,7 @@ bin/nsp-nowin.exe : scilex-lib shared-win32
 
 shared-win32 : 
 	@echo "creation of bin/libnsp.dll"	
-	gcc -mno-cygwin -shared -o bin/libnsp.dll src/interp/lsci.o \
+	@gcc -mno-cygwin -shared -o bin/libnsp.dll src/interp/lsci.o \
 		-Wl,--export-all-symbols -Wl,--allow-multiple-definition \
 		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
 		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
