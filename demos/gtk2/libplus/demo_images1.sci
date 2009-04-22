@@ -36,7 +36,7 @@ function demo_images1()
   // gdkpixmap_new(darea.window,67,67)
   // gdkpixmap_new(None,67,67,depth=78)
   // colormap or drawable , transparent_color or none, file or data 
-  nsp_logo = getenv('NSP')+'/demos/gtk2/libplus/nsp.gif';
+  nsp_logo = getenv('NSP')+'/demos/gtk2/libplus/nsp.png';
   // The depth used in gdk_pixmap_create_from_xpm depends on the 
   // depth given by a drawable or the depth given by the colormap
   // in both cases we have to check that the depth is the same 
