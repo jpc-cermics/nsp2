@@ -556,12 +556,11 @@ static int parse_number(Tokenizer *T)
 	}
       if ( isdigit(c)) 
 	{
-	  int ipow;
-	  ipow=0;
+	  /* int ipow= 0; */
 	  while ( isdigit(c) )
 	    {
 	      T->tokenv.buf[count++]=c;
-	      ipow = 10*ipow + cdigit2num(c) ;
+	      /* ipow = 10*ipow + cdigit2num(c) ; */
 	      c=T->GetChar(T);
 	    }
 	  /* T->tokenv.syv  *= pow(10.00,(double)((sign == '+') ? ipow : -ipow)); */
