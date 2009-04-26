@@ -739,7 +739,7 @@ static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap)
  * @T: an array describing types 
  * @Varargs: list of arguments to return
  * 
- * Returns: arguments on the calling stack 
+ * Returns arguments on the calling stack 
  * If the next example is use to interface a nsp function called <literal>f</literal> then, 
  * calling <literal>f</literal> will return on the stack: 
  * <literal>67,78.9,%t,list(789,"string2"),[1.0,7.8;8.9,45.6],["one","two"]</literal>. 
@@ -1456,7 +1456,7 @@ static char third[]="Third argument";
  * ArgPosition:
  * @i: position of a parameter 
  * 
- * Returns: an argument position as a string which can be used 
+ * Returns an argument position as a string which can be used 
  * in error message.
  * 
  * Return value: a char * describing a position

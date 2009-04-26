@@ -1013,7 +1013,7 @@ int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port 
  * @i: a lock point id. 
  * @pt: point coordinates.
  *
- * Returns in @pt the position of lock point @i. 
+ * @pt is filled with the position of lock point @i. 
  **/
 
 void connector_get_lock_pos(const NspConnector *B,int i,double pt[])

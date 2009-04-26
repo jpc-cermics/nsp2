@@ -428,7 +428,7 @@ int nsp_bmatrix_add_columns(NspBMatrix *A, int n)
  * @A: a #NspBMatrix
  * @B: a #NspBMatrix
  * 
- * returns: a new #NspBMatrix equals to  [@A ; @B ] ; 
+ * returns a new #NspBMatrix equals to  [@A ; @B ] ; 
  * 
  * returns: a #NspBMatrix or %NULLMAT.
  */
@@ -458,7 +458,7 @@ NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B)
  * @A: a #NspBMatrix
  * @B: a #NspBMatrix
  * 
- * returns: a new #NspBMatrix equals to  [@A,0 ;0, @B ] ; 
+ * returns a new #NspBMatrix equals to  [@A,0 ;0, @B ] ; 
  * 
  * returns: a #NspBMatrix or %NULLMAT.
  */
@@ -948,7 +948,7 @@ NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A)
  * nsp_bmatrix_find:
  * @A: a #NspBMatrix. 
  * 
- * returns: in a #NspMatrix the indices for which the 
+ * returns in a #NspMatrix the indices for which the 
  * #NspBMatrix @A is true considering @A as o one dimensional array.
  * 
  * Return value:  a new #NspMatrix or %NULLMAT

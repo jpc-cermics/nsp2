@@ -502,7 +502,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
 }
 
 /**
- * nsp_matrix_set_submatrix:
+ * nsp_pmatrix_set_submatrix:
  * @A: a #NspMatrix
  * @Rows: a #NspMatrix
  * @Cols: a #NspMatrix
@@ -512,7 +512,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 extern int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)

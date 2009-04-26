@@ -19,11 +19,19 @@ typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 typedef NspObject * matint_canonic(NspObject *obj);
 
-typedef enum { nsp_matint_basic_copy_pointer, /* matint object which contain an array of pointers */
-	       nsp_matint_basic_copy_mat,/* matint object which behaves like NspMatrix  */
-	       nsp_matint_basic_copy_int,/* matint object which behaves like NspBMatrix  */
-	       nsp_matint_basic_copy /* matint object which behaves an array of numeric data  */
-} matint_copy_style ;
+
+/* nsp_matint_basic_copy_pointer: contain an array of pointers 
+ * nsp_matint_basic_copy_mat: behaves like NspMatrix 
+ * nsp_matint_basic_copy_int: behaves like NspBMatrix 
+ * nsp_matint_basic_copy: contains an array of numeric data  
+ */
+
+typedef enum {
+  nsp_matint_basic_copy_pointer, 
+  nsp_matint_basic_copy_mat,     
+  nsp_matint_basic_copy_int,     
+  nsp_matint_basic_copy          
+} matint_copy_style;
 
 typedef struct _NspTypeMatint NspTypeMatint ; 
 

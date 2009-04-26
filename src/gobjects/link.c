@@ -1342,7 +1342,7 @@ int link_get_lock_connection(const NspLink *B,int i,int port, gr_port *p )
  * @i: a lock point id. 
  * @pt: point coordinates.
  *
- * Returns in @pt the position of lock point @i. 
+ * @pt is filled with the position of lock point @i. 
  **/
 
 void link_get_lock_pos(const NspLink *B, int i,double pt[])

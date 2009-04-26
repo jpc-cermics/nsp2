@@ -565,7 +565,7 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
  * Adds @n rows to the #NspMaxpMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
  * 
- * returns %OK or %FAIL.
+ * returns: %OK or %FAIL.
  */
 
 int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, int m)

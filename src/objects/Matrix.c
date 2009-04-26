@@ -1076,7 +1076,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
  * @Cols: a #NspMatrix
  * @B: a #NspMatrix
  * 
- * Performe  A(Rows,Cols) = B. A is changed and enlarged if necessary and 
+ * Performs  A(Rows,Cols) = B. A is changed and enlarged if necessary and 
  * size compatibility is checked i.e B must be scalar or  
  * we must have size(B)==[size(Rows),size(Cols)]. 
  * 
@@ -1091,7 +1091,7 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
 
 
 
-/** 
+/**
  * nsp_matrix_set_rows:
  * @A: a #NspMatrix
  * @Rows: a #NspMatrix

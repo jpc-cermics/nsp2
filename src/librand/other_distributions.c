@@ -1050,7 +1050,8 @@ double nsp_rand_cauchy(double sigma)
 
 /**
  * nsp_rand_pareto:
- * @a, @b: parameters of the distribution
+ * @a: parameter of the distribution
+ * @b: parameter of the distribution
  * 
  * generates a random number from the Pareto distribution.
  *
@@ -1072,7 +1073,8 @@ double nsp_rand_pareto(double a, double b)
 
 /**
  * nsp_rand_logistic:
- * @a, @b: parameters of the distribution
+ * @a: parameter of the distribution
+ * @b: parameter of the distribution
  * 
  * generates a random number from the logistic distribution.
  *
@@ -1145,7 +1147,8 @@ double nsp_rand_tailrayleigh(double sigma, double a)
 
 /**
  * nsp_rand_weibull:
- * @a, @b: parameters of the distribution
+ * @a: parameter of the distribution
+ * @b: parameter of the distribution
  * 
  * generates a random number from the Weibull distribution:
  * 

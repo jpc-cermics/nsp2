@@ -1131,6 +1131,7 @@ NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy)
  * @ob: an object 
  * @type: a type 
  * @attr: a string 
+ * @copy: an int pointer
  * 
  * utility function for #object_path_extract or similar functions. 
  * Returns the field @attr for object @ob for modifications by calling 

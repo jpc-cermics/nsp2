@@ -55,8 +55,9 @@
  * @sel_code: 
  * @free_name: 
  *
- * This macro is similar to NSP_LIST_FROM_GLIST() except that this macro 
- * returns the builded #NspList.
+ * This macro is similar to NSP_LIST_FROM_GLIST() except that
+ * it returns the builded #NspList.
+ * 
  */
 
 #define NSP_OBJ_LIST_FROM_GLIST(list, sel_code, free_name)	\

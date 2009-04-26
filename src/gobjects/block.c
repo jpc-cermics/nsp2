@@ -1170,7 +1170,7 @@ void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,do
  * block_get_number_of_locks: 
  * @B: a block 
  * 
- * Returns: the number of lock points of the block 
+ * Returns the number of lock points of the block 
  * 
  * Return value: the number of lock points
  **/
@@ -1223,7 +1223,7 @@ int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
  * @i: a lock point id. 
  * @pt: point coordinates.
  *
- * Returns in @pt the position of lock point @i. 
+ * @pt is filled with  the position of lock point @i. 
  **/
 
 void block_get_lock_pos(const NspBlock *B, int i,double pt[])

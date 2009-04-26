@@ -1986,13 +1986,12 @@ int nsp_array_maxi(int n,const double *A, int incr, double *amax)
 /**
  * nsp_mat_maxi:
  * @A: 
- * @flag: 
+ * @dim_flag: 
  * @Imax: 
  * @lhs: 
  * 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspMatrix
  **/
 
 NspMatrix *nsp_mat_maxi(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
@@ -2043,14 +2042,13 @@ int nsp_array_mini(int n, const double *A, int incr, double *amin)
 /**
  * nsp_mat_mini:
  * @A: 
- * @flag: 
+ * @dim_flag: 
  * @Imax: 
  * @lhs: 
  * 
- * 
- * 
- * Return value: 
+ * Return value: a #NspMatrix
  **/
+
 NspMatrix *nsp_mat_mini(NspMatrix *A, int dim_flag, NspMatrix **Imax, int lhs)
 {
   return MatMaxiMini(A,dim_flag,Imax,lhs,nsp_array_mini);
