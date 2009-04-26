@@ -55,7 +55,6 @@ nsp_rcond
 nsp_spec
 nsp_spec_sym
 nsp_svd
-nsp_solve_banded
 nsp_mat_bdiv_lsq
 nsp_mat_bdiv_square
 nsp_mat_bdiv_triangular
@@ -1090,7 +1089,6 @@ nsp_matint_delete_columns
 nsp_matint_delete_elements
 nsp_matint_delete_elements2
 nsp_matint_delete_rows
-nsp_matint_extract
 nsp_matint_extract1
 nsp_matint_extract_columns1
 nsp_matint_extract_elements1
@@ -2068,7 +2066,6 @@ nsp_mat_erf
 nsp_mat_erfc
 nsp_mat_lgamma
 nsp_mat_tgamma
-nsp_mat_arg
 nsp_mat_polar
 nsp_mat_iand
 nsp_mat_iandu
@@ -2297,7 +2294,6 @@ nsp_sprowmatrix_delete_rows
 nsp_sprowmatrix_destroy
 nsp_sprowmatrix_diag_create
 nsp_sprowmatrix_diag_extract
-nsp_sprowmatrix_diag_set
 nsp_sprowmatrix_enlarge
 nsp_sprowmatrix_enlarge_rows
 nsp_sprowmatrix_erf
@@ -2402,7 +2398,6 @@ nsp_spcolmatrix_delete_rows
 nsp_spcolmatrix_destroy
 nsp_spcolmatrix_diag_create
 nsp_spcolmatrix_diag_extract
-nsp_spcolmatrix_diag_set
 nsp_spcolmatrix_enlarge
 nsp_spcolmatrix_enlarge_cols
 nsp_spcolmatrix_erf
