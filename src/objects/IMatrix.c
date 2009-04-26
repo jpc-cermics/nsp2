@@ -27,6 +27,7 @@
 #include "nsp/interf.h" /* for ret_endfor */
 #include <nsp/matutil.h> /* icopy iset */
 #include <nsp/imatrix.h>
+#include <ctype.h> /* isxxxx */
 
 static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int indent);
 
@@ -1103,6 +1104,62 @@ nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A)
   nsp_int_union val;
   NSP_MAX_ITYPE(val,A->itype);
   return val;
+}
+
+
+typedef union { 
+  guint64     Guint64;
+  double      Double;
+} nsp_double_union ;
+
+int nsp_hex2num(nsp_string str,double *res) 
+{
+  int j;
+  nsp_double_union x;
+  /* should only be used with less than 16 characters */
+  guint64 num = 0;
+  unsigned int nc = strlen(str);
+  for ( j = 0; j < Min(nc,16); j++)
+    {
+      unsigned char ch = str[j];
+      if (isxdigit (ch))
+	{
+	  num <<= 4;
+	  num +=( ch >= 'a') ? (ch - 'a' + 10) :
+	    ((ch >= 'A') ? (ch - 'A' + 10):  (ch - '0'));
+	}
+      else
+	{
+	  Scierror("hex2num: illegal character %d found in string at position %d\n",ch,j+1);
+	  return FAIL;
+	}
+      /* always suppose that str is to 
+       * right completed with 0 
+       */
+    }
+  if (nc < 16)
+    num <<= (16 - nc) * 4;
+  x.Guint64 = num;
+  *res = x.Double;
+  return OK;
+}
+
+nsp_string nsp_num2hex(double x)
+{
+  int j;
+  nsp_double_union xu;
+  nsp_string str = new_nsp_string_n(16);
+  if ( str == NULL ) return NULL;
+  xu.Double = x;
+  for ( j = 0; j < 16; j++)
+    {
+      unsigned char ch = (unsigned char) ( xu.Guint64 >> ((15 - j) * 4) & 0xF);
+      if (ch >= 10)
+	ch += 'a' - 10;
+      else
+	ch += '0';
+    }
+  return str;
 }
 
 
