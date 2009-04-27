@@ -10,38 +10,36 @@
 \paragraph{Two ways of indexing arrays}
 \begin{itemize}
 
-\item  In nsp an array element could be adressed using its row 
- and column numbers. For exemple the element in row 2
- and column 3 of the array $A$ could be got with
- $e = A(2,3)$ (this is called {\bf extraction} operation) 
-and changed using $A(2,3) = f$ (this is called {\bf assignment} operation). 
-The row  index comes first, following by the column index. 
-Note that currently only bi-dimensionnal arrays are available in nsp
+\item  An array element can be adressed using its row 
+ and column numbers. For example, the element in row 2
+ and column 3 of the array $A$ is retrieved by
+ $e = A(2,3)$ (this operation is called {\bf extraction}) 
+and changed using $A(2,3) = f$ ({\bf assignment} operation). 
+The row  index comes first, followed by the column index. 
+Note that currently only two-dimensionnal arrays are available in nsp
 (multidimensionnal array should be simulated).
-The function \manlink{size}{size} lets to retrieve the two dimensions
-of any nsp array.
+The function \manlink{size}{size} is used to obtain the two dimensions
+of any array.
 
-\item When a matrix $x$ has only one row we call it
- is a {\bf row vector} and when it has only one column we
- call it is a {\bf column vector}. Vector elements could be 
- adressed by the preceeding way, but it is more natural
- to use a one way indexing, for instance element 3 of the
- row vector $x$ could be extracted with $e = x(1,3)$ but 
- $e = x(3)$ works. 
+\item A matrix $x$ with only one row is call called a {\bf row vector} 
+and a matrix with only one column is called a {\bf column vector}. 
+Vector elements are adressed by the preceeding way, but it is more natural
+ to use a single indexing, for instance entry 3 in the
+ row vector $x$ can be extracted with $e = x(1,3)$ but $e = x(3)$ works. 
 
-\item Note that in nsp, scalars and vectors are simply bidimensionnal 
+\item Note that scalars and vectors are simply bidimensionnal 
 arrays with special sizes, $1 \times 1$ for scalars, $1 \times n$ for
 row vectors and  $m \times 1$ for columns vectors ; testing if an array
-is a vector or a scalar could be done using the previous size function
-but directly using \manlink{isvector}{isvector} and \manlink{isscalar}{isscalar}
-functions. The total number of elements of an array could be got with
+is a vector or a scalar can be done either by the size function
+or directly using \manlink{isvector}{isvector} or \manlink{isscalar}{isscalar}
+functions. The total number of entries in an array is obtained with
 \manlink{numel}{numel} (or \manlink{length}{length} in most cases but
-this one has a special behavior for arrays of strings).
+note a special behavior for arrays of strings).
 
 
-\item An {\bf important feature} is that any matrix could be adressed with
- a one way indexing working like in the fortran langage 
- and called ``column major order'' as illustrated by the
+\item An {\bf important feature} is that any matrix can be adressed with
+ a single indexing (like in the fortran langage). It is  and called 
+``column major order'' as illustrated by the
  following figure:    
 $$
 \includegraphics[width=6cm]{indexing} 
@@ -55,7 +53,7 @@ A = rand(3,4)
 A(2,2) = -2   // usual assignment (to the value -2) of the matrix element in position (2,2)
 A(5) = 100    // assignment of the same matrix element (to the value 100) using linear indexing
 \end{Verbatim}
-Conversion between usual indexing and linear indexing could be done 
+Conversion between usual indexing and linear indexing can be done 
 using the functions \manlink{sub2ind}{sub2ind}, \manlink{ind2sub}{ind2sub} (see 
 also \manlink{ndind2ind}{ndind2ind}).
 \end{itemize}
@@ -72,7 +70,7 @@ used: if $A$ is a $m \times n$ array then \verb+A($,3)+ stands for
 \verb+A(m,3)+ and  \verb+A(2,$)+  for \verb+A(2,n)+.
 \end{itemize}
 Usual arithmetic operations are available with the dollar, for instance
-\verb+v($-1)+ correspond to the last but one vector element.
+\verb+v($-1)+ corresponds to the last but one vector element.
 
 
 \paragraph{More on extraction and assignment}
@@ -96,7 +94,7 @@ Usual arithmetic operations are available with the dollar, for instance
      of $w$. Some examples:
      \begin{Verbatim}
      v = randn(1,6)
-     w = v([1,3,5]) // extract odd elements
+     w = v([1,3,5]) // extracts odd elements
      w = v(1:2:6)   // same thing (but with the index vector built using the a:inc:b mechanism)
      w = v(1:2:$)   // same then before but using the dollar symbol in place of its explicit value
      w = v([2,4,6]) // extract even elements
