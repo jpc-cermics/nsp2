@@ -846,18 +846,42 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
     return(NULLIMAT);
   if ( M->rc_type == 'r') 
     {
-#define IMAT_SETZERO(name,type,arg)					\
+      /* to properly detect overflows in int64 we have to use long double 
+       */
+      if ( Loc->itype == nsp_gint64) 
+	{
+	  long double dmax = G_MAXINT64;
+	  long double dmin = G_MININT64;
+
+	  for (i= 0 ; i < Loc->mn; i++) 
+	    {
+	      Loc->Gint64[i]= ((long double) M->R[i] >= dmax) ? 
+		dmax : (((long double) M->R[i] ) <= dmin  ? 
+			dmin : ((gint64)  M->R[i]));
+	    }
+	}
+      else if ( Loc->itype == nsp_guint64)
+	{
+	  long double dmax = G_MAXUINT64;
+	  for (i= 0 ; i < Loc->mn; i++) 
+	    {
+	      Loc->Gint64[i]= ((long double) M->R[i] >= dmax) ? 
+		dmax : ( M->R[i] <= 0  ? 0 : ((guint64)  M->R[i]));
+	    }
+	}
+      
+#define IMAT_COPY(name,type,arg)					\
       for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->R[i] ;	\
       break;
-      NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
-#undef IMAT_SETZERO
+      NSP_ITYPE_SWITCH(Loc->itype,IMAT_COPY,void);
+#undef IMAT_COPY
     }
   else
     {
-#define IMAT_SETZERO(name,type,arg)					\
+#define IMAT_COPY(name,type,arg)					\
       for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->C[i].r;break;
-      NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
-#undef IMAT_SETZERO
+      NSP_ITYPE_SWITCH(Loc->itype,IMAT_COPY,void);
+#undef IMAT_COPY
     }
   return(Loc);
 }
