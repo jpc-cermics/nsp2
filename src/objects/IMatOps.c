@@ -33,8 +33,8 @@
 #include <nsp/blas.h>
 #include <nsp/matutil.h>
 
-static int nsp_iarray_maxi(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amax,int off2,int incr);
-static int nsp_iarray_mini(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr);
+static int nsp_iarray_maxi(int n,NspIMatrix *A, int off1,NspIMatrix *amax,int off2,int incr);
+static int nsp_iarray_mini(int n,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr);
 
 static void IKronecker (NspIMatrix *A,NspIMatrix *B,NspIMatrix *PK);
 typedef int (*AdSu) (const int,const void *,void *);
@@ -1029,7 +1029,7 @@ NspIMatrix *nsp_imatrix_diff(NspIMatrix *A, int order, int dim)
 }
 
 
-typedef int (*MaMi) (int,nsp_itype,NspIMatrix *,int ,NspIMatrix *,int ,int );
+typedef int (*MaMi) (int,NspIMatrix *,int ,NspIMatrix *,int ,int );
 
 /*
  *  MatMaxiMini(A, dim_flag, Imax, lhs, func)
@@ -1055,7 +1055,7 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
       if ((M = nsp_imatrix_create(NVOID,Min(A->m,1),Min(A->n,1),A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
       if (M->mn == 1) 
-	imax = (*F)(A->mn,A->itype,A->Iv,0,M->Iv,0,1);
+	imax = (*F)(A->mn,A,0,M,0,1);
       if ( lhs == 2 ) 
 	{
 	  if ((*Imax = nsp_matrix_create(NVOID,'r',Min(A->m,1),Min(A->n,1))) == NULLMAT)
@@ -1074,14 +1074,14 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
 	  if ( M->mn > 0 )
 	    for ( j= 0 ; j < A->n ; j++) 
 	      {
-		(*Imax)->R[j]=(*F)(A->m,A->itype,A->Iv,(A->m)*j,M->Iv,j,1); 
+		(*Imax)->R[j]=(*F)(A->m,A,(A->m)*j,M,j,1); 
 	      }
 	}
       else
 	if ( M->mn > 0 )
 	  for ( j= 0 ; j < A->n ; j++) 
 	    {
-	      (*F)(A->m,A->itype,A->Iv,(A->m)*j,M->Iv,j,1); 
+	      (*F)(A->m,A,(A->m)*j,M,j,1); 
 	    }
       break ;
 
@@ -1095,29 +1095,29 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
 	    return NULLIMAT; 
 	  if ( M->mn > 0 )
 	    for ( j= 0 ; j < A->m ; j++) 
-	      (*Imax)->R[j] = (*F)(A->mn,A->itype,A->Iv,j,M->Iv,j,1);
+	      (*Imax)->R[j] = (*F)(A->mn,A,j,M,j,1);
 	}
       else
 	if ( M->mn > 0 )
-	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A->itype,A->Iv,j,M->Iv,j,inc);
+	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A,j,M,j,inc);
       break;
     }
   return M;
 }
 
 
-int nsp_iarray_maxi(int n,nsp_itype itype,NspIMatrix *A, int off1, NspIMatrix  *amax,int off2,int incr)
+int nsp_iarray_maxi(int n,NspIMatrix *A, int off1, NspIMatrix  *amax,int off2,int incr)
 {
   nsp_int_union xx; 
   int imax=0,i;
 #define IMAT_MAX(name,type,arg) xx.name = A->name[off1];	\
-  for ( i= 0 ; i < n ; i+= incr)		\
-    if ( A->name[i+off1] > xx.name )		\
-      {						\
-	xx.name =A->name[i+off1] ;		\
-	imax = i+1;				\
-      }						\
-  amax->name[off2]=xx.name;			\
+  for ( i= 0 ; i < n ; i+= incr)				\
+    if ( A->name[i+off1] > xx.name )				\
+      {								\
+	xx.name =A->name[i+off1] ;				\
+	imax = i+1;						\
+      }								\
+  amax->name[off2]=xx.name;					\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
@@ -1150,7 +1150,7 @@ NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int 
  */
 
 
-int nsp_iarray_mini(int n,nsp_itype itype,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr)
+int nsp_iarray_mini(int n,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr)
 {
   nsp_int_union xx; 
   int imax=0,i;
