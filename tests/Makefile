@@ -32,7 +32,6 @@ TESTS= \
 	setro.dia \
 	smat_concat_down.dia \
 	smat_concat_right.dia \
-	sorting-lex.dia \
 	sorting.dia \
 	sp.dia \
 	spmult.dia \
