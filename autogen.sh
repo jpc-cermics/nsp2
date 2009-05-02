@@ -70,6 +70,13 @@ DIE=0
   NO_AUTOMAKE=yes
 }
 
+(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+  echo
+  echo "**Error**: You must have \`libtoolize' installed."
+  DIE=1
+  NO_LIBTOOLIZE=yes
+}
+
 
 # if no automake, don't bother testing for aclocal
 test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
@@ -99,6 +106,9 @@ esac
 # recursive search of  configure.in
 # for coin in `find $srcdir -path $srcdir/CVS -prune -o -name configure.in -print`
 
+echo Cleaning files...
+find -type d -name autom4te.cache -print0 | xargs -0 rm -rf \;
+
 
 for coin in  configure.in
 do 
@@ -127,11 +137,9 @@ do
         echo "Running xml-i18n-toolize..."
 	xml-i18n-toolize --copy --force --automake
       fi
-      if grep "^AM_PROG_LIBTOOL" configure.in >/dev/null; then
-	if test -z "$NO_LIBTOOLIZE" ; then 
-	  echo "Running libtoolize..."
+      if grep "^A[CM]_PROG_LIBTOOL" configure.in >/dev/null; then
+	  echo "Running libtoolize --force --copy"
 	  libtoolize --force --copy
-	fi
       fi
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude
