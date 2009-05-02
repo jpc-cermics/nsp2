@@ -441,7 +441,14 @@ static void  parse_operators(Tokenizer *T)
     {
     case '\'': T->tokenv.id =  QUOTE_OP ;break;
     case '*': T->tokenv.id =  STAR_OP ;break;
-    case '+': T->tokenv.id =  PLUS_OP ;break;
+    case '+': 
+      T->tokenv.id =  PLUS_OP ;
+      /* 
+      if ( T->curline.buf[T->curline.lpt1] == ' ' 
+	   &&  T->curline.buf[T->curline.lpt2] != ' ' )
+	Sciprintf("This is a unary PLUS in matrix context\n");
+      */
+      break;
     case '^': T->tokenv.id =  HAT_OP ;break;
     case ':': T->tokenv.id =  COLON_OP ;break;
     case '|': T->tokenv.id =  OR_OP ;break;
