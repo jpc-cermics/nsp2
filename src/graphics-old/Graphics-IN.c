@@ -54,6 +54,9 @@
 #include <nsp/points3d.h> 
 #include <nsp/objs3d.h> 
 #include <nsp/grcommon.h> 
+#include <nsp/gmatrix.h> 
+#include <nsp/gmatrix1.h> 
+#include <nsp/fec.h> 
 
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
@@ -475,7 +478,7 @@ static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
 
 /* champ OK */
 
-int nsp_champ_obj(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *fx,NspMatrix *fy,int colored) 
+static int nsp_champ_obj(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *fx,NspMatrix *fy,int colored) 
 {
   NspAxes *axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return FAIL;
@@ -1808,13 +1811,40 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
+#ifdef NEW_GRAPHICS 
+  /* colout to be added */
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a gmatrix and insert-it in axes */
+  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( Mcolminmax != NULL )
+    {
+      if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mzminmax != NULL) 
+    {
+      if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
+	return FAIL;
+    }
+  NspGMatrix1 *gm= nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,x,y,NULL);
+  if ( gm == NULL) return FAIL;
+  /* insert the new matrix */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+#else 
   nsp_draw_matrix(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
 		  (Mcolminmax == NULL) ? NULL :(int *) Mcolminmax->R,
 		  (Mzminmax == NULL) ? NULL : Mzminmax->R,
 		  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
 		  shade);
+#endif 
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
-
+  
   return 0;
 }
 
@@ -1878,6 +1908,32 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 #ifdef NEW_GRAPHICS 
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a gmatrix and insert-it in axes */
+  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+  if ( Mcolminmax != NULL )
+    {
+      if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mzminmax != NULL) 
+    {
+      if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mrect != NULL) 
+    {
+      if (( Mrect = (NspMatrix *)  nsp_object_copy_and_name("rect",NSP_OBJECT(Mrect)))== NULLMAT)
+	return FAIL;
+    }
+  NspGMatrix *gm = nsp_gmatrix_create("gm",z,Mrect,remap,Mcolminmax,Mzminmax,NULL);
+  if ( gm == NULL) return FAIL;
+  /* insert the new matrix */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
 #else 
   nsp_draw_matrix_1(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
 		    (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
@@ -1939,10 +1995,39 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
+  nsp_gwin_clear(Xgc);
+#ifdef NEW_GRAPHICS 
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a gmatrix and insert-it in axes */
+  if ( ( M = (NspMatrix *)  nsp_object_copy_and_name("M",NSP_OBJECT(M))) == NULLMAT) return FAIL;
+  if ( Mcolminmax != NULL )
+    {
+      if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mzminmax != NULL) 
+    {
+      if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Rect != NULL) 
+    {
+      if (( Rect = (NspMatrix *)  nsp_object_copy_and_name("rect",NSP_OBJECT(Rect)))== NULLMAT)
+	return FAIL;
+    }
+  NspGMatrix *gm = nsp_gmatrix_create("gm",M,Rect,remap,Mcolminmax,Mzminmax,NULL);
+  if ( gm == NULL) return FAIL;
+  /* insert the new matrix */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+#else 
   nsp_draw_matrix_2(Xgc,M->R, M->m,M->n,Rect->R,remap,
 		    (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
 		    (Mzminmax == NULL) ? NULL : Mzminmax->R);
-
+#endif
   if ( Mstyle != Mistyle)  nsp_matrix_destroy(Mistyle);
 		    
   return 0;
@@ -4836,11 +4921,12 @@ int int_xinfo(Stack stack, int rhs, int opt, int lhs)
 
 #ifdef NEW_GRAPHICS 
 int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
-		    const double *FRect,const char *logscale)
+		    const double *FRect,const char *logscale, int fixed)
 {
   NspAxes *axe; 
   axe=  nsp_check_for_axes(Xgc);
   if ( axe == NULL) return FAIL;
+  axe->obj->fixed = fixed;
   if ( WRect != NULL)   memcpy(axe->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(axe->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(axe->obj->frect->R,FRect,4*sizeof(double));
@@ -4852,6 +4938,7 @@ int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
 
 int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
+  int fixed = FALSE;
   BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
   static char logflag_def[]="nn";
@@ -4892,9 +4979,10 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 			 {"frect",realmat,NULLOBJ,-1},
 			 {"logflag",string,NULLOBJ,-1},
 			 {"wrect",realmat,NULLOBJ,-1},
+			 {"fixed",s_bool,NULLOBJ,-1},
 			 {NULL,t_end,NULLOBJ,-1},};
 
-      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect) == FAIL) return RET_BUG;
+      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
 	arect = Marect->R;CheckLength(NspFname(stack),opts[0].position,Marect,4);
@@ -4916,7 +5004,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       }
     }
 #ifdef NEW_GRAPHICS 
-  Nsetscale2d_new(Xgc,wrect,arect,frect,logflag);
+  Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed);
 #else 
   Nsetscale2d(Xgc,wrect,arect,frect,logflag);
 #endif 
@@ -5012,7 +5100,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
-  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/fec/fec.ex1\");",1);}
+  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -5036,12 +5124,45 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
+#ifdef NEW_GRAPHICS 
+  /* colout to be added */
+  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  if ( axe == NULL) return FAIL;
+  /* create a gmatrix and insert-it in axes */
+  if ( ( Tr = (NspMatrix *)  nsp_object_copy_and_name("Tr",NSP_OBJECT(Tr))) == NULLMAT) return FAIL;
+  if ( ( F = (NspMatrix *)  nsp_object_copy_and_name("F",NSP_OBJECT(F))) == NULLMAT) return FAIL;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( Mcolminmax != NULL )
+    {
+      if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mzminmax != NULL) 
+    {
+      if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
+	return FAIL;
+    }
+  if ( Mcolout != NULL) 
+    {
+      if ( (Mcolout  = (NspMatrix *)  nsp_object_copy_and_name("co",NSP_OBJECT(Mcolout))) == NULLMAT)
+	return FAIL;
+    }
+
+  NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,Mcolout,NULL);
+  if ( fec == NULL) return FAIL;
+  /* insert the new matrix */
+  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) fec )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+#else 
+  nsp_fec_old(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
 	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
 	  (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R, 
 	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
 	  mesh);
-
+#endif 
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
 	  
   return 0;

@@ -512,7 +512,7 @@ int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect,
  *  first and last color of the colormap (Bruno.Pincon@iecn.u-nancy.fr)
  */
 
-int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
+int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
 	    char *strflag,const char *legend, double *brect, int *aaint,const double *zminmax,
 	    const int *colminmax, const int *colout,int draw)
 {
@@ -752,21 +752,20 @@ static void PermutOfSort (const int *tab, int *perm)
 /**
  * PaintTriangle:
  * @Xgc: 
- * @sx, @sy : vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
- * @fxy    : fxy[i], (i=0,1,2) value of an affine function on the vertex Pi
- * @zxy    : zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
- * @zlevel : a (0..nz) vector given the boundaries for color filling
- * @fill   : fill[j] is the color pattern associated with zone[j] 
- *           when fill[j]=0 the zone is not painted 
+ * @sx: 
+ * @sy: vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
+ * @fxy: fxy[i], (i=0,1,2) value of an affine function on the vertex Pi
+ * @zxy: zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
+ * @zlevel: a (0..nz) vector given the boundaries for color filling
+ * @fill: fill[j] is the color pattern associated with zone[j] when fill[j]=0 the 
+ * zone is not painted.
  * 
- * decomposes the triangle into its different
- * zones (which gives polygones) and send them to the
- * graphic driver. This is something like the shade function
- * (see Plo3d.c) but a little different as in shade
- * a color is directly associated with each vertex.
+ * decomposes the triangle into its different zones (which gives polygones) and
+ * send them to the graphic driver. This is something like the shade function
+ * (see Plo3d.c) but a little different as in shade a color is directly
+ * associated with each vertex.
  *
  **/
-
 
 static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill)
@@ -791,27 +790,27 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   }
 
   /* 
-     at least 2 colors for painting the triangle : it is divided in elementary
-     polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
-
-     P2           as zxy[0] <= zxy[1] <  zxy[2] or 
-     Notations/Hints :       /\              zxy[0] <  zxy[1] <= zxy[2]
-     edge2  /  \ edge1    from a previus sort. All the polygons
-     /    \         have 2 points on edge2, the others points
-     /______\        are on edge0 and/or edge1. I name the 2 ends
-     P0        P1      points on each poly PEdge2 and Pedge, they are 
-     edge0         the 2 first points of the next poly. I start
-     from P0 to form the first poly (a triangle or
-     a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
-     and finally the last one which comprise the P2 vertex.  In some special cases
-     we can have a degenerate poly but it doesn't matter ! 				  
-  */
+   *  at least 2 colors for painting the triangle : it is divided in elementary
+   **  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
+   *
+   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+   *  Notations/Hints :       /\           zxy[0] <  zxy[1] <= zxy[2]
+   *                  edge2  /  \ edge1    from a previus sort. All the polygons
+   *                        /    \         have 2 points on edge2, the others points
+   *                       /______\        are on edge0 and/or edge1. I name the 2 ends
+   *                     P0        P1      points on each poly PEdge2 and Pedge, they are 
+   *                         edge0         the 2 first points of the next poly. I start
+   *  from P0 to form the first poly (a triangle or
+   *  a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
+   *  and finally the last one which comprise the P2 vertex.  In some special cases
+   *  we can have a degenerate poly but it doesn't matter ! 				  
+   */
   
   nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
 
-  /*----------------------------+
-    |   compute the first poly    |
-    +----------------------------*/
+  /*
+   *    compute the first poly    
+   */
   
   resx[0]=inint(sx[0]); resy[0]=inint(sy[0]); nr = 1; edge = 0;
   if ( nb0 == 0 ) {    /* the intersection point is on Edge1 but the next point
@@ -828,38 +827,51 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   color = fill[zxy[0]];
   if ( color != 0 )   Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
-  /*------------------------------------+ 
-    | compute the intermediary polygon(s) |
-    +------------------------------------*/
+  /*
+   *  compute the intermediary polygon(s) 
+   */
 
-  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) {
-    resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
-    resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
-    if ( edge == 0 ) {  /* the intersection point is perhaps on edge 0 */
-      if (nb0 == 0 ) {  /* no it is on edge 1 but the next point of the poly is P1 */
-	resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
-	edge = 1;          /* the next intersection points will be on edge1 */
-      } else nb0--;
-    };
-    /* the intersection point on edge (0 or 1) : */
-    FindIntersection(sx, sy, fxy, zlevel[izone], edge, edge+1, &xEdge, &yEdge);
-    resx[nr]=xEdge; resy[nr]=yEdge; nr++;
-    /* the last point of the first poly (edge 2) : */
-    FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
-    resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
-    color = fill[izone];
-    if ( color != 0 )    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
-  };
+  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
+    {
+      resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
+      resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
+      if ( edge == 0 )
+	{
+	  /* the intersection point is perhaps on edge 0 */
+	  if (nb0 == 0 ) 
+	    {
+	      /* no it is on edge 1 but the next point of the poly is P1 */
+	      resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
+	      edge = 1;          /* the next intersection points will be on edge1 */
+	    } 
+	  else 
+	    {
+	      nb0--;
+	    }
+	}
+      /* the intersection point on edge (0 or 1) : */
+      FindIntersection(sx, sy, fxy, zlevel[izone], edge, edge+1, &xEdge, &yEdge);
+      resx[nr]=xEdge; resy[nr]=yEdge; nr++;
+      /* the last point of the first poly (edge 2) : */
+      FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
+      resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
+      color = fill[izone];
+      if ( color != 0 ) 
+	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    }
 
-  /*-----------------------+ 
-    | compute the last poly  |
-    +-----------------------*/
+  /*
+   *  compute the last poly  
+   */
 
   resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
   resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
-  if ( edge == 0 ) {                          /* the next point of the poly is P1 */
-    resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
-  };
+  if ( edge == 0 ) 
+    {
+      /* the next point of the poly is P1 */
+      resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
+    }
+
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];

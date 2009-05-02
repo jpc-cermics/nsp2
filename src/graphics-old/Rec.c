@@ -1797,7 +1797,7 @@ void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, 
 static void replay_Fec(BCG *Xgc,void *theplot)
 {
   struct rec_fec *plfec = (struct rec_fec *)theplot;
-  nsp_fec(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
+  nsp_fec_old(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
 	  &plfec->Nnode,&plfec->Ntr,
 	  plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
 	  plfec->zminmax, plfec->colminmax, plfec->colout,plfec->draw );
