@@ -42,7 +42,6 @@ modulename atk
 ignore-glob
   *_get_type
 
-
 %%
 override nsp_extractelts_gmatrix kwargs
 
@@ -85,10 +84,10 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
       colminmax[1] = P->obj->colminmax->R[1];
     }
   if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->colminmax->R;
+    zminmax = P->obj->zminmax->R;
   else
     remap = FALSE;
-
+  
   if  (  Xgc->scales->cosa==1.0 ) 
     {
       /* Boundaries of the matrix rectangle in pixel */

@@ -20,7 +20,9 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
-	../spolyhedron.c ../string3d.c  ../compound.c 
+	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
+	../fec.c 
+
 
 all:: $(ALL)
 
@@ -102,6 +104,18 @@ clean ::
 	    --override gmatrix.override \
 	    --prefix GMatrix gmatrix.defs) > $*.c \
 	&& cp gmatrix.h ../../include/nsp 
+
+../gmatrix1.c : gmatrix1.defs gmatrix1.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override gmatrix1.override \
+	    --prefix GMatrix1 gmatrix1.defs) > $*.c \
+	&& cp gmatrix1.h ../../include/nsp 
+
+../fec.c : fec.defs fec.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override fec.override \
+	    --prefix Fec fec.defs) > $*.c \
+	&& cp fec.h ../../include/nsp 
 
 ../vfield.c : vfield.defs vfield.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \

@@ -17,6 +17,7 @@
     '("char*"  "x") 
     '("char*"  "y") 
     '("NspList*" "children") ;; list of graphic object in the axe 
+    '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
     )
   (gtype-id "Axes")
 )

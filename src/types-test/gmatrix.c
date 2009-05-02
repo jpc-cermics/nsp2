@@ -474,10 +474,11 @@ int nsp_gmatrix_check_values(NspGMatrix *H)
     }
   if ( H->obj->rect == NULLMAT) 
     {
-       if (( H->obj->rect = nsp_matrix_create("rect",'r',0,0)) == NULLMAT)
+     double x_def[4]={0,0,1,1};
+     if (( H->obj->rect = nsp_matrix_create("rect",'r',1,4)) == NULLMAT)
        return FAIL;
-
-    }
+      memcpy(H->obj->rect->R,x_def,4*sizeof(double));
+  }
   if ( H->obj->colminmax == NULLMAT) 
     {
        if (( H->obj->colminmax = nsp_matrix_create("colminmax",'r',0,0)) == NULLMAT)
@@ -569,7 +570,7 @@ NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
-#line 573 "gmatrix.c"
+#line 574 "gmatrix.c"
   return H;
 }
 
@@ -589,7 +590,7 @@ int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix_check_values(H) == FAIL) return RET_BUG;
-#line 593 "gmatrix.c"
+#line 594 "gmatrix.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -747,7 +748,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 48 "codegen/gmatrix.override"
+#line 47 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -756,10 +757,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 760 "gmatrix.c"
+#line 761 "gmatrix.c"
 
 
-#line 58 "codegen/gmatrix.override"
+#line 57 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -768,7 +769,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 772 "gmatrix.c"
+#line 773 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -808,12 +809,12 @@ GMatrix_register_classes(NspObject *d)
 Init portion 
 
 
-#line 812 "gmatrix.c"
+#line 813 "gmatrix.c"
   nspgobject_register_class(d, "GMatrix", GMatrix, &NspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 68 "codegen/gmatrix.override"
+#line 67 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -834,10 +835,10 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
       colminmax[1] = P->obj->colminmax->R[1];
     }
   if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->colminmax->R;
+    zminmax = P->obj->zminmax->R;
   else
     remap = FALSE;
-
+  
   if  (  Xgc->scales->cosa==1.0 ) 
     {
       /* Boundaries of the matrix rectangle in pixel */
@@ -938,4 +939,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 942 "gmatrix.c"
+#line 943 "gmatrix.c"

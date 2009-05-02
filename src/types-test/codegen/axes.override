@@ -229,7 +229,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
    * thus we use T in flag[1].
    */
 
-  if ( FALSE ) 
+
+  if ( P->obj->fixed == FALSE ) 
     {
       nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
