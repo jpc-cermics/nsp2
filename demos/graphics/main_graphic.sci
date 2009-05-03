@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// Copyright (C) 2004 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright (C) 2004-2009 Jean-Philippe Chancelier Cermics/Enpc 
 // jpc@cermics.enpc.fr 
 // NSP 
 // Calling demos of nsp graphics through a gtk widget 
@@ -64,6 +64,19 @@ function selection_cb(selection,args)
   execstr("text=pl2s("+code+");")
   buffer.set_text[""];
   t_iter = buffer.get_start_iter[];
+  // remove the colored stuff since color code is 
+  // not interpreted by textbuffer.
+  
+  text= strsubst(text,"\033[30m","");
+  text= strsubst(text,"\033[31m","");
+  text= strsubst(text,"\033[32m","");
+  text= strsubst(text,"\033[33m","");
+  text= strsubst(text,"\033[34m","");
+  text= strsubst(text,"\033[35m","");
+  text= strsubst(text,"\033[36m","");
+  text= strsubst(text,"\033[37m","");
+  text= strsubst(text,"\033[0m","");
+        
   for i=2:(size(text,'*')-1); 
     buffer.insert[t_iter,text[i]+"\n"];
   end
