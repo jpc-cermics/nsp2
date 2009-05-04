@@ -443,7 +443,7 @@ NspIMatrix  *GetIMatCopy(Stack stack, int i)
  * @i: an integer 
  * 
  * checks if #NspObject at position @i on the stack can be casted to a #IMatObj and
- * if true returns the boolean matrix.
+ * if true returns the matrix.
  * 
  * Return value:  %NULL or a #NspIMatrix
  **/
@@ -455,6 +455,32 @@ NspIMatrix  *GetIMat(Stack stack, int i)
     ArgMessage(stack,i);
   return M;
 }
+
+/**
+ * GetScalarIMat:
+ * @stack: a #Stack
+ * @i: an integer 
+ * 
+ * checks if #NspObject at position @i on the stack can be casted to a #IMatObj 
+ * of size 1x1 if returns the matrix.
+ * 
+ * Return value:  %NULL or a #NspIMatrix
+ **/
+
+NspIMatrix  *GetScalarIMat(Stack stack, int i)
+{
+  NspIMatrix *M;
+  if (( M = IMatObj(NthObj(i))) == NULLIMAT 
+      || (M->mn != 1))
+    {
+      Scierror ("Error:\t%s", ArgPosition (i));
+      ArgName (stack, i);
+      Scierror (" of function %s should be a 1x1 imatrix \n", NspFname(stack));
+      return NULL;
+    }
+  return M;
+}
+
 
 
 /*-------------------------------------------------------------------
@@ -1994,6 +2020,7 @@ int int_imatrix_ishift (Stack stack, int rhs, int opt, int lhs)
 /*
  * nsp_imatrix_mod: z = mod(x,y) x or y is changed 
  */
+
 int
 int_imatrix_mod(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2037,19 +2064,30 @@ int_imatrix_mod(Stack stack, int rhs, int opt, int lhs)
 int
 int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
 {
-  int n;
-  NspIMatrix *HMat;
+  NspIMatrix *A,*B;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
-  if ((HMat = GetIMatCopy (stack, 1)) == NULLIMAT)
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
     return RET_BUG;
-  if (GetScalarInt (stack, 2, &n) == FAIL)
+  if ((B = GetIMat(stack, 2)) == NULLIMAT)
     return RET_BUG;
-  nsp_imatrix_modulo (HMat, n);
-  NSP_OBJECT (HMat)->ret_pos = 1;
+  if ( B->mn != A->mn || B->mn != 1) 
+    {
+      Scierror("Error: second argument of %s should be 1x1 or %dx%d\n",
+	       NspFname(stack),A->m,A->n);
+      return RET_BUG;
+
+    }
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: the two arguments of %s must have the same integer type\n",
+	       NspFname(stack));
+      return RET_BUG;
+    }
+  nsp_imatrix_modulo (A,B);
+  NSP_OBJECT (A)->ret_pos = 1;
   return 1;
 }
-
 
 /*
  * A generic function fo  A op B with 
@@ -2667,6 +2705,43 @@ int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_unique( Stack stack, int rhs, int opt, int lhs)
+{ 
+  Boolean first_ind;
+  NspIMatrix *x;
+  NspMatrix *ind, *occ;
+  NspMatrix **Ind=NULL, **Occ=NULL;
+  int_types T[] = {imatcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind) == FAIL ) return RET_BUG;
+
+  if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
+
+  CheckLhs(1,3);
+
+  if ( lhs >= 2 )
+    {
+      Ind = &ind;
+      if ( lhs == 3 ) Occ = &occ;
+    }
+
+  if ( nsp_imatrix_unique(x, Ind, Occ, first_ind) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(x)->ret_pos = 1; 
+  if ( lhs >= 2 ) 
+    {
+      MoveObj(stack,2,NSP_OBJECT(ind));
+      if ( lhs >= 3 )
+	MoveObj(stack,3,NSP_OBJECT(occ));
+    }
+
+  return Max(lhs,1);
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -2749,31 +2824,29 @@ static OpTab IMatrix_func[]={
   {"izeros", int_imatrix_izeros},
   {"intmax", int_imatrix_intmax},
   {"intmin", int_imatrix_intmin},
-
-
-#if 0
-  {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
-  {"quote_i", int_imatrix_quote},
-  {"dprim_i", int_imatrix_dquote},
   {"abs_i", int_imatrix_abs},
   {"modulo_i_i", int_imatrix_modulo},
   {"mod_i_i", int_imatrix_mod},
+  {"dsl_i_i", int_imatrix_divel},
+  {"dprim_i", int_imatrix_quote},
+  {"unique_i", int_unique}, 
+
+#if 0
+  {"dst_i_i", int_imatrix_iultel},      /* .* */
+  {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
   {"idiv_i_i", int_imatrix_idiv},
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
   {"sign_i", int_imatrix_sign},
   {"hat_i_i", int_imatrix_pow},
   {"dh_i_i", int_imatrix_powel},
-  {"dsl_i_i", int_imatrix_divel},
   {"dbs_i_i", int_imatrix_backdivel},
-  {"dst_i_i", int_imatrix_iultel},
   {"plus_i_i", int_imatrix_dadd},
   {"minus_i_i", int_imatrix_dsub},
   {"minus_i", int_imatrix_minus},
   {"div_i_i", int_imatrix_div},
   {"mfind_i", int_imatrix_mfind},
   {"nnz_i",  int_matrix_nnz},
-  {"unique_i", int_unique},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
   {"issorted_i", int_imatrix_issorted},

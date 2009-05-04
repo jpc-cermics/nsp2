@@ -47,15 +47,6 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
 #undef  ELT_TYPE
 
 /*
- * gint64 arrays or matrices 
- */
-                                                                                      
-#define ELT_TYPE gint64
-#include "qsort-gen.c"
-#undef  ELT_TYPE
-
-
-/*
  * double arrays or matrices 
  */
 
@@ -64,6 +55,68 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
 #include "qsort-gen.c"
 #undef DOUBLE_ONLY
 #undef  ELT_TYPE
+
+
+/*
+ * all the imatrix sub-types 
+ */
+
+#define ELT_TYPE gint
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gshort
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gushort
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE glong
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gulong
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint8
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint8
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint16
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint16
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint32
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint32
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint64
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint64
+#include "qsort-gen.c"
+#undef  ELT_TYPE
+
 
   
 /*

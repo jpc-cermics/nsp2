@@ -30,9 +30,6 @@
 #include "qsort1-gen.c"
 #undef  ELT_TYPE
 
-#define ELT_TYPE gint64
-#include "qsort1-gen.c"
-#undef  ELT_TYPE
 
 /*
  * double arrays or matrices 
@@ -43,6 +40,67 @@
 #include "qsort1-gen.c"
 #undef DOUBLE_ONLY
 #undef  ELT_TYPE
+
+/*
+ * all the imatrix sub-types 
+ */
+
+#define ELT_TYPE gint
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gshort
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gushort
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE glong
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gulong
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint8
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint8
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint16
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint16
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint32
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint32
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint64
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint64
+#include "qsort1-gen.c"
+#undef  ELT_TYPE
+
   
 /*
  * string matrices 

@@ -240,7 +240,7 @@ int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,ch
 
 
 /**
- * nsp_matrix_sort:
+ * nsp_imatrix_sort:
  * @A: 
  * @Index: 
  * @ind_flag: 
@@ -260,34 +260,53 @@ int nsp_imatrix_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  if (A->itype != nsp_gint64 )
-    {
-      Scierror("Error: only implemented for gint64\n");
-      return FAIL;
-    }
   switch (type)
     {
     case sort_gb: 
       /* qsort Bruno */
-      nsp_qsort_bp_gint64(A->Iv,A->mn,index,ind_flag,dir);break;
+      {
+#define IMAT_SORT(name,type,arg)					\
+	nsp_qsort_bp_##type(A->Iv,A->mn,index,ind_flag,dir);break;
+	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
+      }
+      break;
     case sort_gs:
       /* stable quick sort: caution index must be allocated */
-      nsp_sqsort_bp_gint64(A->Iv,A->mn,index,dir);break;
+      {
+#define IMAT_SORT(name,type,arg)				\
+	nsp_sqsort_bp_##type(A->Iv,A->mn,index,dir);break;
+	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
+      }
+      break;
     case sort_gm:
       /* merge sort */
-      if ( nsp_mergesort_gint64(A->Iv,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;
+      {
+#define IMAT_SORT(name,type,arg)					\
+	if ( nsp_mergesort_##type(A->Iv,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;break;
+	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
+      }
       break;
     case sort_gd :
       /* non stable qsort */
-      nsp_qsort_gint64(A->Iv,index,ind_flag,A->mn,dir);break;      
+      {
+#define IMAT_SORT(name,type,arg)				\
+	nsp_qsort_##type(A->Iv,index,ind_flag,A->mn,dir);break;      
+	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
+      }
+      break;
     default: 
       /* non stable qsort specializd for double (faster than the generic one) */
-      nsp_qsort_gint64(A->Iv,index,ind_flag,A->mn,dir);break;
-      /* for testing the int case 
-       * A = Mat2int(A);
-       * A->convert = 'i';
-       * nsp_qsort_int(A->I,index,ind_flag,A->mn,dir);break;      
-       */
+      {
+#define IMAT_SORT(name,type,arg)				\
+	nsp_qsort_##type(A->Iv,index,ind_flag,A->mn,dir);break;
+	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
+      }
+      break;
     }
   return OK;
 }
@@ -301,7 +320,10 @@ int nsp_imatrix_column_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char di
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_gen_col_sort_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+#define IMAT_SORT(name,type,arg)					\
+  nsp_qsort_gen_col_sort_##type(A->Iv,index,ind_flag,A->m,A->n,dir);break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
   return OK;
 }
 
@@ -314,7 +336,11 @@ int nsp_imatrix_row_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,char dir)
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_gen_row_sort_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+
+#define IMAT_SORT(name,type,arg)					\
+  nsp_qsort_gen_row_sort_##type(A->Iv,index,ind_flag,A->m,A->n,dir);break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
   return OK;
 }
 
@@ -328,7 +354,10 @@ int nsp_imatrix_lexical_column_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_gen_lexicol_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+#define IMAT_SORT(name,type,arg)					\
+  nsp_qsort_gen_lexicol_##type(A->Iv,index,ind_flag,A->m,A->n,dir);break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
   return OK;
 }
 
@@ -341,7 +370,10 @@ int nsp_imatrix_lexical_row_sort(NspIMatrix *A,NspMatrix **Index,int ind_flag,ch
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_gen_lexirow_gint64(A->Iv,index,ind_flag,A->m,A->n,dir);
+#define IMAT_SORT(name,type,arg)					\
+  nsp_qsort_gen_lexirow_##type(A->Iv,index,ind_flag,A->m,A->n,dir);break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
+#undef  IMAT_SORT
   return OK;
 }
 

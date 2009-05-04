@@ -2126,7 +2126,7 @@ int nsp_imatrix_mult_scalar_bis(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
   if ( A->mn == 0 )    return OK;
-#define IMAT_MULTEL(name,type,arg)						\
+#define IMAT_MULTEL(name,type,arg)					\
   for ( i = 0 ; i < A->mn ; i++ )					\
     A->name[i] *= B->name[0];						\
   break;
@@ -2140,41 +2140,34 @@ int nsp_imatrix_mult_scalar_bis(NspIMatrix *A, NspIMatrix *B)
 /**
  * nsp_imatrix_modulo:
  * @A: a #NspIMatrix 
- * @n: integer 
+ * @B: a #NspIMatrix 
  * 
- * A= A mod(n) 
+ * A= A mod B
+ * @B can be sacalar or can have the same size as @A;
+ * @B and @A should have the same int type.
  **/
 
-void nsp_imatrix_modulo(NspIMatrix *A, int n)
+void nsp_imatrix_modulo(NspIMatrix *A,NspIMatrix *B)
 {
   int i ;
+  if ( A->mn == B->mn) 
+    {
 #define IMAT_MOD(name,type,arg)						\
-  for ( i=0 ; i < A->mn ; i++)						\
-    A->name[i]= A->name[i] % n ;					\
-  break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_MOD,"");
+      for ( i=0 ; i < A->mn ; i++)					\
+	A->name[i]= A->name[i] % B->name[i] ;				\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_MOD,"");
 #undef IMAT_MOD
-}
-
-
-/**
- * nsp_imatrix_idiv:
- * @A: a #NspIMatrix 
- * @n: an integer 
- * 
- * 
- * A is changed to A / n :  quotient in int division
- **/
-
-void nsp_imatrix_idiv(NspIMatrix *A, int n)
-{
-  int i ;
-#define IMAT_IDIV(name,type,arg)						\
-  for ( i=0 ; i < A->mn ; i++)						\
-    A->name[i] /= n ;					\
-  break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_IDIV,"");
-#undef IMAT_IDIV
+    }
+  else
+    {
+#define IMAT_MOD(name,type,arg)						\
+      for ( i=0 ; i < A->mn ; i++)					\
+	A->name[i]= A->name[i] % B->name[0] ;				\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_MOD,"");
+#undef IMAT_MOD
+    }
 }
 
 /**
@@ -2199,12 +2192,12 @@ void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y)
       Scierror("Error: arguments must have the same integer type\n");
       return ;
     }
-#define IMAT_IDIV(name,type,arg)						\
+#define IMAT_IDIV(name,type,arg)				\
   if ( x->mn == 1 && y->mn > 1 )				\
     for ( i = 0 ; i < y->mn ; i++ )				\
-      y->name[i] = x->name[0] % y->name[i];				\
+      y->name[i] = x->name[0] % y->name[i];			\
   else if ( y->mn == 1 )					\
-    for ( i = 0 ; i < x->mn ; i++ )				\
+    for ( i = 0 ; i < x->mn ; i++ )					\
       x->name[i] = x->name[i] % y->name[0];				\
   else								\
     for ( i = 0 ; i < x->mn ; i++ )				\
@@ -2214,6 +2207,27 @@ void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y)
 #undef IMAT_IDIV
 
 }
+
+/**
+ * nsp_imatrix_idiv:
+ * @A: a #NspIMatrix 
+ * @n: an integer 
+ * 
+ * 
+ * A is changed to A / n :  quotient in int division
+ **/
+
+void nsp_imatrix_idiv(NspIMatrix *A, int n)
+{
+  int i ;
+#define IMAT_IDIV(name,type,arg)					\
+  for ( i=0 ; i < A->mn ; i++)						\
+    A->name[i] /= n ;							\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_IDIV,"");
+#undef IMAT_IDIV
+}
+
 
 /**
  * nsp_imatrix_sign:
@@ -3353,24 +3367,28 @@ int nsp_imatrix_nnz(NspIMatrix *A)
  * Return value: %OK or %FAIL
  **/
 
-#if 0
-int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolean first_ind)
+int nsp_imatrix_unique(NspIMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind)
 {
   int i0, i, i_old, *index;
-  NspIMatrix *ind=NULLIMAT, *occ=NULLIMAT;
-  double val;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  nsp_int_union val;
+
 
   if ( Ind == NULL )
     {
       if ( x->mn <= 1 ) return OK;
-      nsp_qsort_double( x->R, NULL, 0, x->mn, 'i');
-      i0 = 0; val = x->R[0];
-      for ( i = 1 ; i < x->mn ; i++ )
-	if ( x->R[i] != val )
-	  {
-	    i0++;
-	    val = x->R[i0] = x->R[i];
-	  }
+#define IMAT_AC(name,type,arg)				\
+      nsp_qsort_##type( x->Iv, NULL, 0, x->mn, 'i');	\
+      i0 = 0; val.name = x->name[0];			\
+      for ( i = 1 ; i < x->mn ; i++ )			\
+	if ( x->name[i] != val.name )			\
+	  {						\
+	    i0++;					\
+	    val.name = x->name[i0] = x->name[i];	\
+	  }						\
+      break;
+      NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
       if ( x->m == 1 )
 	nsp_imatrix_resize(x, 1, i0+1);
       else
@@ -3380,47 +3398,50 @@ int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolea
 
   else
     {
-      if ( (ind = nsp_imatrix_create(NVOID,'r',x->m,x->n)) == NULLIMAT )
+      if ( (ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
 	return FAIL;
       index = (int *) ind->R;
 
       if ( Occ != NULL )
-	if ( (occ = nsp_imatrix_create(NVOID,'r',x->m,x->n)) == NULLIMAT )
+	if ( (occ = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
 	  {
-	    nsp_imatrix_destroy(ind); return FAIL;
+	    nsp_matrix_destroy(ind); return FAIL;
 	  }
       
       if ( x->mn > 0 )
 	{
-	  if ( first_ind )
-	    nsp_sqsort_bp_double( x->R, x->mn, index, 'i');
-	  else
-	    nsp_qsort_double( x->R, index, 1, x->mn, 'i');
-      
-	  i0 = 0; val = x->R[0]; i_old = 0;
-	  for ( i = 1 ; i < x->mn ; i++ )
-	    {
-	      if ( x->R[i] != val )
-		{
-		  if (Occ != NULL) { occ->R[i0] = i - i_old; i_old = i; }
-		  i0++;
-		  val = x->R[i0] = x->R[i];
-		  index[i0] = index[i];
-		}
-	    }
-	  if (Occ != NULL) occ->R[i0] = x->mn - i_old;
+#define IMAT_AC(name,type,arg)					\
+	  if ( first_ind )					\
+	  nsp_sqsort_bp_##type( x->Iv, x->mn, index, 'i');	\
+	  else							\
+	    nsp_qsort_##type( x->Iv, index, 1, x->mn, 'i');	\
+	  i0 = 0; val.name = x->name[0]; i_old = 0;			\
+	  for ( i = 1 ; i < x->mn ; i++ )			\
+	    {							\
+	    if ( x->name[i] != val.name )				\
+	      {								\
+	      if (Occ != NULL) { occ->R[i0] = i - i_old; i_old = i; }	\
+	      i0++;							\
+	      val.name = x->name[i0] = x->name[i];					\
+	      index[i0] = index[i];					\
+	      }								\
+	    }								\
+	  if (Occ != NULL) occ->R[i0] = x->mn - i_old;			\
+	  break;
+	  NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
 	  
 	  if ( x->m == 1 )
 	    {
 	      nsp_imatrix_resize(x, 1, i0+1);
-	      nsp_imatrix_resize(ind, 1, i0+1);
-	      if ( Occ != NULL ) nsp_imatrix_resize(occ, 1, i0+1);
+	      nsp_matrix_resize(ind, 1, i0+1);
+	      if ( Occ != NULL ) nsp_matrix_resize(occ, 1, i0+1);
 	    }
 	  else
 	    {
 	      nsp_imatrix_resize(x, i0+1, 1);
-	      nsp_imatrix_resize(ind, i0+1, 1);
-	      if ( Occ != NULL ) nsp_imatrix_resize(occ, i0+1, 1);
+	      nsp_matrix_resize(ind, i0+1, 1);
+	      if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
 	    }
 	  ind->convert = 'i';
 	  ind = Mat2double(ind);
@@ -3431,7 +3452,6 @@ int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolea
       return OK;
     }
 }
-#endif 
 
 /**
  * nsp_imatrix_dot:

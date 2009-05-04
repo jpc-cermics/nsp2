@@ -28,10 +28,6 @@
 #include "merge-sort-gen.c"
 #undef  ELT_TYPE
 
-#define ELT_TYPE gint64
-#include "merge-sort-gen.c"
-#undef  ELT_TYPE
-
 /*
  * double arrays or matrices 
  */
@@ -40,4 +36,64 @@
 #define ELT_TYPE double
 #include "merge-sort-gen.c"
 #undef  ELT_TYPE
+
+/*
+ * all the imatrix sub-types 
+ */
   
+#define ELT_TYPE gint
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gshort
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gushort
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE glong
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gulong
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint8
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint8
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint16
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint16
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint32
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint32
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE gint64
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
+#define ELT_TYPE guint64
+#include "merge-sort-gen.c"
+#undef  ELT_TYPE
+
