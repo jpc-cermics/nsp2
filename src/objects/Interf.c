@@ -162,6 +162,12 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       case realmatcopy : Foo = (void **)  va_arg(ap, NspMatrix **) ;
 	if ( ( *((NspMatrix **) Foo)=GetRealMatCopy(stack,count) )== NULLMAT) { va_end(ap);return FAIL;}
 	break;
+      case imat :  Foo = (void **)  va_arg(ap, NspIMatrix **) ;
+	if ( ( *((NspIMatrix **) Foo)=GetIMat(stack,count) )== NULLIMAT) { va_end(ap);return FAIL;}
+	break;
+      case imatcopy : Foo = (void **)  va_arg(ap, NspIMatrix **) ;
+	if ( ( *((NspIMatrix **) Foo)=GetIMatCopy(stack,count) )== NULLIMAT) { va_end(ap);return FAIL;}
+	break;
       case mat_int :  Foo = (void **)  va_arg(ap, NspMatrix **) ;
 	if ( ( *((NspMatrix **) Foo)=GetRealMatInt(stack,count) )== NULLMAT) { va_end(ap);return FAIL;}
 	break;
@@ -419,6 +425,13 @@ static int  extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Ty
     if ( ( *((NspMatrix **) Foo)= MaybeObjCopy((NspObject **)Foo)) == NULLMAT) return FAIL;
     if ( ( *((NspMatrix **) Foo)= Mat2double(*((NspMatrix **) Foo)))== NULLMAT) return FAIL;
     break;
+  case imat :  Foo = (void **)  va_arg(*ap, NspMatrix **) ;
+    if ( ( *((NspIMatrix **) Foo)= IMatObj(Ob))== NULLIMAT) return FAIL;
+    break;
+  case imatcopy : Foo = (void **)  va_arg(*ap, NspMatrix **) ;
+    if ( ( *((NspIMatrix **) Foo)= IMatObj(Ob))== NULLIMAT) return FAIL;
+    if ( ( *((NspIMatrix **) Foo)= MaybeObjCopy((NspObject **)Foo)) == NULLIMAT) return FAIL;
+    break;
   case smat : Foo = (void **)  va_arg(*ap, NspSMatrix **) ;
     if ( ( *((NspSMatrix**) Foo)=nsp_smatrix_object(Ob) )== NULLSMAT)  return FAIL;
     break;
@@ -648,6 +661,19 @@ static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap)
 	  if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
 	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
 	  break;
+	case imat :
+	  O = (NspObject *) va_arg(*ap, NspIMatrix *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
+	    }
+	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
+	  break;
+	case imatcopy:
+	  if ((O = (NspObject *) nsp_imatrix_copy(va_arg(*ap, NspIMatrix *)))== NULLOBJ) return NULLLIST ;
+	  if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
+	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
+	  break;
 	case bmat :  
 	  O = (NspObject *) va_arg(*ap, NspBMatrix *);
 	  if ( Ocheckname(O,NVOID) )
@@ -799,11 +825,20 @@ static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap)
 	  if (( O = (NspObject *) va_arg(*ap, NspMatrix *)) == NULLOBJ) return RET_BUG; 
 	  MoveObj(stack,count++,O);
 	  break;
+	case imat :
+	  if (( O = (NspObject *) va_arg(*ap, NspIMatrix *)) == NULLOBJ) return RET_BUG; 
+	  MoveObj(stack,count++,O);
+	  break;
 	case matcopy_int:
 	case matcopy :
 	case realmatcopy :
 	  if (( O = (NspObject *) va_arg(*ap, NspMatrix *)) == NULLOBJ) return RET_BUG; 
 	  if ((O = (NspObject *) nsp_matrix_copy((NspMatrix *) O))== NULLOBJ) return RET_BUG ;
+	  MoveObj(stack,count++,O);
+	  break;
+	case imatcopy:
+	  if (( O = (NspObject *) va_arg(*ap, NspIMatrix *)) == NULLOBJ) return RET_BUG; 
+	  if ((O = (NspObject *) nsp_imatrix_copy((NspIMatrix *) O))== NULLOBJ) return RET_BUG ;
 	  MoveObj(stack,count++,O);
 	  break;
 	case bmat :  

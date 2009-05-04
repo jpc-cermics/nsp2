@@ -2,7 +2,7 @@
 #define NSP_INC_IMATRIX
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -33,17 +33,22 @@ struct _NspTypeIMatrix {
 };
 
 
+/* all the integer types */
+
 typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
 		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
 		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
 		 nsp_guint64 } nsp_itype;
 
+/* format to use for printing the integer types */
 
 #define NSP_ITYPE_FORMATS(names)				\
   char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",		\
 		 "%*u", "%*d", "%*u", "%*d",			\
 		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,	\
 		 "%*"G_GUINT64_FORMAT,NULL};			
+
+/* names that can be used at nsp level to specify an integer type */
 
 #define NSP_ITYPE_NAMES(names)				       \
   char *(names)[]={"int", "uint", "short", "ushort", "long",	\
@@ -112,7 +117,6 @@ struct _NspIMatrix {
   int itype;
   int eltsize;
 };
-
 
 
 #define NSP_MAX_ITYPE(xx,itype)						\
@@ -305,6 +309,7 @@ extern int IsIMatObj (Stack stack, int i);
 extern int IsIMat(const NspObject *O);
 extern NspIMatrix *GetIMatCopy (Stack stack, int i); 
 extern NspIMatrix *GetIMat (Stack stack, int i); 
+extern NspIMatrix  *GetScalarIMat(Stack stack, int i);
 extern int BoolScalar (NspObject *O, Boolean *val); 
 extern int GetScalarBool (Stack stack, int i, int *val); 
 
@@ -418,7 +423,7 @@ extern int nsp_imatrix_bdiv_scalar(NspIMatrix *A, NspIMatrix *B);
 extern int nsp_imatrix_mult_tt(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_mult_el(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_mult_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
-extern void nsp_imatrix_modulo(NspIMatrix *A, int n); 
+extern void nsp_imatrix_modulo(NspIMatrix *A,NspIMatrix *B); 
 extern void nsp_imatrix_idiv(NspIMatrix *A, int n); 
 extern void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y);
 extern void nsp_imatrix_int(NspIMatrix *A); 
@@ -435,7 +440,7 @@ extern int nsp_imatrix_mfind(const NspIMatrix *x, int m,const char **ops,const d
 extern int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatrix **Ind);
 extern int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIMatrix **Ind);
 extern int nsp_imatrix_nnz(NspIMatrix *A);
-extern int nsp_imatrix_unique(NspIMatrix *x, NspIMatrix **Ind, NspIMatrix **Occ, Boolean first_ind);
+extern int nsp_imatrix_unique(NspIMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind);
 extern NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag);
 extern NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim);
 extern NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order);

@@ -146,6 +146,8 @@ extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T);
  * @opts:          optional arguments follow 
  * @new_opts:      optional arguments follow 
  * @dim_arg:       argument (constrained scalar string or scalar int) to choose a matrix dim
+ * @imat           an imat matrix 
+ * @imatcopy       an imat matrix copy
  * @t_end          end of type table  
  *
  * #int_types are used in #nsp_option to specify the 
@@ -180,6 +182,8 @@ typedef enum _int_types{
   opts,         /* optional arguments follow */ 
   new_opts,     /* optional arguments follow */
   dim_arg,      /* argument (constrained scalar string or scalar int) to choose a matrix dim */ 
+  imat,         /* imatrix */
+  imatcopy,     /* copy of imatrix */
   t_end         /* end of type table  */ 
 } int_types;
 
