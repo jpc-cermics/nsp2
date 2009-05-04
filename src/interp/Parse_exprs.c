@@ -1774,7 +1774,7 @@ static int IstermsOp(Tokenizer *T,int *op,char inmatrix)
     case MINUS_OP: 
       if (inmatrix == 't'
 	  && ( T->curline.buf[T->curline.lpt1] == ' ' 
-	       || T->curline.buf[T->curline.lpt1] == '\t' 
+	       || T->curline.buf[T->curline.lpt1] == '\t' )
 	  &&  T->curline.buf[T->curline.lpt2] != ' ' )
 	{
 	  *op = 0;
