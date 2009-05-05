@@ -26,13 +26,16 @@ The \emph{Mat} data type is the basic matrix numerical object.
 More generally, matrices are two dimensional arrays which contains
 scalar objects (real or complex numbers, boolean numbers, strings,
 polynomials). The \emph{Mat} data type is built from real or complex
-numbers.
+numbers (real and complex numbers being approximated using
+double floating point numbers (see \manlink{number\_properties}{number_properties}).
 
 Column vectors are considered as \verb!m x 1! matrices and row vectors
 as \verb!1 x n! matrices.
 
 Internally numerical matrices \emph{Mat} type are stored by default as 
-arrays of \emph{double}. 
+arrays of \emph{double}.
+
+Display of numerical matrices could be changed using the \manlink{format}{format} function.
 \end{mandescription}
 
 \paragraph{Operations on matrices}
@@ -100,7 +103,7 @@ variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th itera
 
 \itemdesc{Some functions}
 \begin{itemize}
-   \item \verb+length(A)+ returns the number of entries in \verb+A+.
+   \item \verb+numel(A)+ or \verb+length(A)+ returns the number of entries in \verb+A+.
    \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
 of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
 (resp. columns) of \verb+A+.
