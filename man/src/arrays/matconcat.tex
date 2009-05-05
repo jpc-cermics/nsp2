@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+
+\mansection{concatenation of matrices}
+\begin{mandesc}
+   \short{concatenation}{concatenation of matrices}\\
+   \short{concatr}{method, catenate a matrix by another one on the right side}\\   
+   \short{concatd}{method, catenate a matrix by another one on the down side}\\   
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ C = [A , B]  // right concatenation (a new matrix is build)
+ A.concatr[B] // right concatenation, matrix A is modified
+ C = [A ; B]  // down concatenation (a new matrix is build)
+ A.concatd[B] // down concatenation, matrix A is modified
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{A, B, C}: matrices (of numbers, strings, cells,...)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{itemize}
+\item The right concatenation involves two (or more) matrices having the same number of rows
+      and build a new matrix by stacking the second matrix at the right of the first one.
+      With $A$ of size $m \times n_A$ and $B$ of size $m \times n_B$, one gets
+      with \verb+C = [A , B]+ a new matrix of size $m \times (n_A + n_B)$. The method 
+      form \verb+A.concatr[B]+ is a efficient shortcut for  \verb+A = [A , B]+.
+\item The down concatenation involves two (or more) matrices having the same number of columns
+      and build a new matrix by stacking the second matrix at the bottom of the first one, etc...
+      With $A$ of size $m_A \times n$ and $B$ of size $m_B \times n$, one gets
+      with \verb+C = [A ; B]+ a new matrix of size $(m_A + m_B) \times n$. The method form 
+      \verb+A.concatd[B]+ is a efficient shortcut for  \verb+A=[A ; B]+.
+\item Right and dow concatenations may be combined in various natural ways to build a matrix
+      from smaller blocks, see examples.
+\end{itemize}
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+
+\begin{Verbatim}
+// a first matrix build by several right concatenations and one down concatenation 
+A = [1,2,3;4,5,6]
+// another one
+B = [-1, -2; -3, -4]
+// right concatenation of A and B
+C = [A, B]
+// in place right concatenation of A by B
+A.concatr[B]
+A
+
+// a more complicated concatenation
+A11 = eye(2,2)
+A12 = rand(2,3)
+A2 = randn(1,5)
+A3 = ones(3,1)
+A = [ [A11, A12; A2] , A3 ]
+\end{Verbatim}
+
+
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{extraction assignment deletion}{extraction assignment deletion}, \manlink{repmat}{repmat}
+\end{manseealso}
