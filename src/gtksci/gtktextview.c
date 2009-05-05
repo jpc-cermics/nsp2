@@ -106,6 +106,12 @@ static gboolean filechooser_open_run (GtkWindow    *parent,
 				      FileselOKFunc func,
 				      gpointer      data);
 
+static
+gboolean filechooser_save_run (GtkWindow    *parent, 
+			       const char   *title,
+			       const char   *start_file,
+			       FileselOKFunc func,
+			       gpointer      data);
 
 GSList *buffers = NULL;
 GSList *views = NULL;
@@ -199,7 +205,7 @@ static gboolean filesel_run (GtkWindow    *parent,
 }
 #endif 
 
-
+static
 gboolean filechooser_open_run (GtkWindow    *parent, 
 			       const char   *title,
 			       const char   *start_file,
@@ -245,6 +251,7 @@ gboolean filechooser_open_run (GtkWindow    *parent,
   return result;
 }
 
+static
 gboolean filechooser_save_run (GtkWindow    *parent, 
 			       const char   *title,
 			       const char   *start_file,
@@ -328,7 +335,8 @@ msgbox_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
 /* Don't copy this example, it's all crack-smoking - you can just use
  * GtkMessageDialog now
  */
-gint
+
+static gint
 msgbox_run (GtkWindow  *parent,
 	    const char *message,
 	    const char *yes_button,
@@ -464,8 +472,7 @@ blink_timeout (gpointer data)
 }
 #endif
 
-
-gboolean
+static gboolean
 fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
 {
   FILE* f;
@@ -551,7 +558,7 @@ get_empty_view (View *view)
 }
 
 
-gboolean
+static gboolean
 open_ok_func (const char *filename, gpointer data)
 {
   View *view = data;
