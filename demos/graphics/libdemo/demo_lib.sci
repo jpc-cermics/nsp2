@@ -609,11 +609,8 @@ function demo_contour_6()
   contourf(x,y,z,nv=m);
 endfunction
 
-
-
-
-function demo_prim_1_new()
-  xsetech(frect=[-100,-100,500,600]);
+function demo_prim_new_rects()
+  xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
   xset('clipgrf')
   // xrects 
   x=0:40:240;
@@ -628,3 +625,25 @@ function demo_prim_1_new()
   boxes=[x;80*ones(size(x));30*ones(size(x));30*ones(size(x))];
   xrects(boxes,color=1:7,thickness=5*ones(1,7),background=8:8+6);
 endfunction
+
+
+function demo_prim_new_arcs()
+  xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
+  xset('clipgrf')
+  // xrects 
+  x=0:40:200;
+  // xarcs 
+  boxes=[x;90*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
+  pats=[4,9,12,15,xget("white"),0];
+  xfarcs(arcs,pats);
+  // xarcs 
+  boxes=[x;130*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
+  xarcs(arcs);
+  boxes=[x;170*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
+  xarcs(arcs,color=1:6,thickness=4*ones(1,6),background=8:8+5);
+endfunction
+
+

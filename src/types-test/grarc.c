@@ -863,32 +863,34 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
   val[3]= P->obj->h;
   val[4]= P->obj->a1;
   val[5]= P->obj->a2;
-  if ( P->obj->fill_color != -1 ) 
+
+  
+  if ( P->obj->fill_color != -2 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
+      /* fill the arc */ 
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillarc(Xgc,val);
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
     }
-  if ( P->obj->color != -1 ) 
+  
+  if ( P->obj->color != -2 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
-    }
-  if ( P->obj->thickness != -1 ) 
-    {
-      cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
-      Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
-    }
-  if ( P->obj->color != -1 ) 
-    {
+      /* draw the arc */ 
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
+      if ( P->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+	}
       Xgc->graphic_engine->scale->drawarc(Xgc,val);
-    }
-  /* reset to default values */
-  if ( P->obj->color != -1 ) 
-    {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
-    }
-  if ( P->obj->thickness != -1 ) 
-    {
-      Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+      /* reset to default values */
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+      if ( P->obj->thickness != -1 ) 
+	Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
     }
 }
 
@@ -934,4 +936,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 938 "grarc.c"
+#line 940 "grarc.c"

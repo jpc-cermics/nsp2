@@ -34,7 +34,7 @@
 #include "Plo3dObj.h"
 
 
-/* #define NEW_GRAPHICS */
+/*  #define NEW_GRAPHICS  */
 
 
 
@@ -2216,11 +2216,12 @@ int int_xfarc(Stack stack, int rhs, int opt, int lhs)
 
 #ifdef NEW_GRAPHICS 
 
-/* generic function for xrects and xarcs.
+/* generic function for xrects and xarcs and xfarcs 
+ * with backward compatibility. 
  * 
  */
 
-int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
+int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
 {
   NspGraphic *gobj;
   NspAxes *axe; 
@@ -2271,37 +2272,56 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
       int icolor=-1,iback=-1,ithickness=-1;
       if  ( color_std != NULL) 
 	{
-	  /* backward compatibility 
-	   *
-	   */
-	  if ( color_std->I[i] < 0 ) 
-	    {
-	      icolor = - color_std->I[i];
-	      iback  = -2; /* no fill*/
-	    }
-	  else if ( color_std->I[i] > 0 ) 
-	    {
-	      icolor = -2;
-	      iback  =  color_std->I[i];
-	    }
-	  else
-	    {
-	      icolor = Xgc->graphic_engine->xget_pattern(Xgc);
-	      iback  = -2; /* no fill*/
-	    }
+	  switch ( flag ){
+	  case 0: /* backward compatibility for rects */
+	    if ( color_std->I[i] < 0 ) 
+	      {
+		icolor = - color_std->I[i];
+		iback  = -2; /* no fill*/
+	      }
+	    else if ( color_std->I[i] > 0 ) 
+	      {
+		icolor = -2;
+		iback  =  color_std->I[i];
+	      }
+	    else
+	      {
+		icolor = Xgc->graphic_engine->xget_pattern(Xgc);
+		iback  = -2; /* no fill*/
+	      }
+	    break;
+	  case 1: /* backward compatibility for rects xarcs */
+	    iback  = -2;
+	    icolor = (color_std->I[i] > 0 ) ? color_std->I[i] 
+	      : Xgc->graphic_engine->xget_pattern(Xgc);
+	    break;
+	  case 2: /* backward compatibility for rects xfarcs */
+	    icolor = -2;
+	    iback = (color_std->I[i] > 0 ) ? color_std->I[i] 
+	      : Xgc->graphic_engine->xget_pattern(Xgc);
+	    break;
+	  }
 	}
       else if ( opt == 0)
 	{
-	  /* backward compatibility 
-	   *
-	   */
-	  iback=-2;
+	  switch ( flag ){
+	  case 0: /* backward compatibility for rects */
+	    iback=-2; 
+	    break;
+	  case 1: /* backward compatibility for rects xarcs */
+	    iback=-2;
+	    break;
+	  case 2: /* backward compatibility for rects xfarcs */
+	    icolor = -2;
+	    break;
+	  }
 	}
       else
 	{
-	  if ( color != NULL) icolor = color->R[i];
-	  if ( background != NULL) iback = background->R[i];
-	  if ( thickness != NULL)  ithickness = thickness->R[i];
+	  icolor =( color != NULL) ? color->R[i]: -2;
+	  iback  =( background != NULL) ? background->R[i]: -2;
+	  ithickness = ( thickness != NULL) ? thickness->R[i]:-1;
+	  if ( icolor == -2 && ithickness == -2) icolor=-1;
 	}
       if ( nrow == 6 ) 
 	{
@@ -2323,19 +2343,19 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow)
   return 0;
 } 
 
-int int_xarcs(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_xarcs_G(stack,rhs,opt,lhs,6);
-}
-
 int int_xrects(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xarcs_G(stack,rhs,opt,lhs,4);
+  return int_xarcs_G(stack,rhs,opt,lhs,4,0);
+}
+
+int int_xarcs(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_xarcs_G(stack,rhs,opt,lhs,6,1);
 }
 
 int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xarcs_G(stack,rhs,opt,lhs,6);
+  return int_xarcs_G(stack,rhs,opt,lhs,6,2);
 }
 
 
