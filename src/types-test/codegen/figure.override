@@ -7,6 +7,8 @@ headers
 #include "nsp/objs3d.h"
 #include "nsp/compound.h"
 extern BCG *nsp_check_graphic_context(void);
+extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
+
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
@@ -451,7 +453,7 @@ NspFigure *nsp_create_default_figure(void)
  * since graphic should be driven by Figure Not by Xgc 
  */
 
-NspAxes * nsp_check_for_axes(BCG *Xgc) 
+NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 {
   int i,l;
   NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
@@ -477,7 +479,18 @@ NspAxes * nsp_check_for_axes(BCG *Xgc)
       if ( Obj != NULLOBJ && IsAxes(Obj) )
 	{
 	  Axes= Obj;
-	  break;
+	  if ( wrect == NULL) 
+	    {
+	      break;
+	    }
+	  if ( Abs(((NspAxes *)Axes)->obj->wrect->R[0]-wrect[0])< 1.e-4 
+	       && Abs(((NspAxes *)Axes)->obj->wrect->R[1]-wrect[1])< 1.e-4 
+	       && Abs(((NspAxes *)Axes)->obj->wrect->R[2]-wrect[2])< 1.e-4 
+	       && Abs(((NspAxes *)Axes)->obj->wrect->R[3]-wrect[3])< 1.e-4 )
+	    {
+	      break;
+	    }
+	  Axes = NULL;
 	}
     }
   if ( Axes == NULLOBJ) 

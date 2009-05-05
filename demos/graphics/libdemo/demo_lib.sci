@@ -609,3 +609,22 @@ function demo_contour_6()
   contourf(x,y,z,nv=m);
 endfunction
 
+
+
+
+function demo_prim_1_new()
+  xsetech(frect=[-100,-100,500,600]);
+  xset('clipgrf')
+  // xrects 
+  x=0:40:240;
+  boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  // only draw with current color 
+  xrects(boxes);
+  // xrects(rect,colors)
+  boxes=[x;45*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  pats=[0,4,8,12,15,xget("white"),0];
+  xrects(boxes,pats);
+  // 
+  boxes=[x;80*ones(size(x));30*ones(size(x));30*ones(size(x))];
+  xrects(boxes,color=1:7,thickness=5*ones(1,7),background=8:8+6);
+endfunction

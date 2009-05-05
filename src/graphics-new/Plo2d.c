@@ -817,7 +817,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 #include <nsp/curve.h> 
 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern NspAxes * nsp_check_for_axes(BCG *Xgc) ;
+extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 
 int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
 		   const char *legend,int legend_pos,double brect[],int aaint[])
@@ -825,7 +825,7 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
   char c;
   double frect[4],xmin,xmax,ymin,ymax;
   int i;
-  NspAxes *axe=  nsp_check_for_axes(Xgc);
+  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return FAIL;
 
   /* compute brect if not given */
