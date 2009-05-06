@@ -216,10 +216,11 @@ B=rand(n,1);
 X=ch.solve[B];
 if norm(full(B - A*X)) > 100*%eps then pause;end 
 
+// XXXX to be finished 
 // reste le pb de analyze et chol a tester 
 // reste aussi le pb de la permutation a regler 
 // reste le pb de LL' a tester 
-
+// 
 
 
 
