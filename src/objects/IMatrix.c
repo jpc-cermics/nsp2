@@ -713,9 +713,8 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
 {
   NspIMatrix *Loc;
   int j,i;
-  int imin,imax;
-  imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
+  int imin = Max(0,-k);
+  int imax = Min(A->m,A->n -k );
   if ( imin > imax ) 
     {
       Loc =nsp_imatrix_create(NVOID,(int) 0 , (int) 0,A->itype);
@@ -752,6 +751,7 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
   imin = Max(0,-k);
   imax = Min(A->m,A->n -k );
   isize = imax-imin ;
+
   if ( isize > Diag->mn ) 
     {
       Scierror("Error:\tGiven vector is too small\n");
@@ -760,22 +760,21 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
   if ( isize < Diag->mn ) 
     {
       imax = Diag->mn +imin;
-      if (nsp_imatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
+      if ( nsp_imatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
     }
-  j=0;
 
   if ( Diag->eltsize > A->eltsize) 
     {
       if ( nsp_imatrix_change_itype(A,Diag->itype) == FAIL) 
 	return FAIL;
     }
-  /* 
-   *   for ( i = imin ; i < imax ; i++ ) 
-   *     A->gint[i+(i+k)*A->m] = Diag->gint[j++] ;
-   */
+
+  j=0;
   NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
   return(OK);
 }
+
+
 
 /**
  * nsp_imatrix_create_diag:
@@ -791,13 +790,14 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
 NspIMatrix  *nsp_imatrix_create_diag(NspIMatrix *Diag, int k)
 {
   int i,j;
-  int imin,imax;
   NspIMatrix *Loc;
-  imin = Max(0,-k);
-  imax = Diag->mn +imin;
-  if (( Loc =nsp_imatrix_create(NVOID,imax,imax+k,Diag->itype)) == NULLIMAT) 
+  int imin = Max(0,-k);
+  int imax = Diag->mn +imin;
+  int nd = Diag->mn+Abs(k);
+  if (( Loc =nsp_imatrix_create(NVOID,nd,nd,Diag->itype)) == NULLIMAT) 
     return(NULLIMAT);
   j=0;
+
   /* for ( i = imin ; i < imax ; i++ ) 
    *   Loc->gint[i+(i+k)*Loc->m] = Diag->gint[j++] ;
    */

@@ -735,11 +735,11 @@ int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k)
 NspBMatrix  *nsp_bmatrix_create_diag(NspBMatrix *Diag, int k)
 {
   int i,j;
-  int imin,imax;
   NspBMatrix *Loc;
-  imin = Max(0,-k);
-  imax = Diag->mn +imin;
-  if (( Loc =nsp_bmatrix_create(NVOID,imax,imax+k)) == NULLBMAT) 
+  int imin = Max(0,-k);
+  int imax = Diag->mn +imin;
+  int nd = Diag->mn+Abs(k);
+  if (( Loc =nsp_bmatrix_create(NVOID,nd,nd)) == NULLBMAT) 
     return(NULLBMAT);
   j=0;
   for ( i = imin ; i < imax ; i++ ) 
