@@ -55,23 +55,24 @@ function ilib_gen_gateway(name,tables)
        '#include ""nsp/interf.h""';
        mex_include;
        '';
-       'extern ' + declar(:) +' '+  names(:) + ';';
+       'extern ' + declar(:) + ' ' +  names(:) + ';';
        '';
        'static OpWrapTab '+tname+'_func[] = {';
-       '  {""'+table(:,1)+'"",'+ cast(:)+' '+ names(:) +','+ gate(:) +'},';
+       '  {""' + table(:,1) + '"",' + cast(:) + ' ' + names(:) + ',' + ...
+       gate(:) + '},';
        '  {(char *) 0, NULL, NULL},';
        '};';
        'int '+tname+'_Interf (int i, Stack stack, int rhs, int opt, int lhs)';
        '{';
-       '  if ( ' + tname +'_func[i].wrapper == NULL)';
-       '     return (*('+tname+'_func[i].fonc)) (stack, rhs, opt, lhs);';
+       '  if ( ' + tname + '_func[i].wrapper == NULL)';
+       '     return (*(' + tname + '_func[i].fonc)) (stack, rhs, opt, lhs);';
        '  else ';
-       '     return (*('+tname+'_func[i].wrapper)) (stack, rhs, opt, lhs,'+tname+'_func[i].fonc);';
+       '     return (*(' + tname + '_func[i].wrapper)) (stack, rhs, opt, lhs,'+tname+'_func[i].fonc);';
        '}';
-       'void '+tname+'_Interf_Info (int i, char **fname, function (**f))';
+       'void ' + tname + '_Interf_Info (int i, char **fname, function (**f))';
        '{';
-       ' *fname = '+tname+'_func[i].name;';
-       ' *f = '+tname+'_func[i].fonc;';
+       ' *fname = ' + tname + '_func[i].name;';
+       ' *f = ' + tname + '_func[i].fonc;';
        '}'];
     
     fname= file('join',[path,tname+'.c']);
