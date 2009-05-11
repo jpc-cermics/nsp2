@@ -1772,15 +1772,18 @@ static int IstermsOp(Tokenizer *T,int *op,char inmatrix)
     {
     case PLUS_OP:
     case MINUS_OP: 
-      if (inmatrix == 't'
-	  && ( T->curline.buf[T->curline.lpt1] == ' ' 
-	       || T->curline.buf[T->curline.lpt1] == '\t' )
-	  &&  T->curline.buf[T->curline.lpt2] != ' ' )
-	{
-	  *op = 0;
-	  return FAIL;
-	}
-      *op = T->tokenv.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
+      {
+	int before = T->curline.lpt2 -2;
+	if (inmatrix == 't' 
+	    &&  T->curline.buf[T->curline.lpt2] != ' '
+	    && (T->curline.buf[before] == ' ' 
+		|| T->curline.buf[before] == '\t' ))
+	  {
+	    *op = 0;
+	    return FAIL;
+	  }
+	*op = T->tokenv.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
+      }
       break;
     case DOTPLUS: 
       *op = T->tokenv.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
