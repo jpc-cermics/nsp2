@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -28,7 +28,10 @@
 #include "nsp/gtk/gdkpixbuf.h"
 #include "nsp/interf.h"
 
+#if 0
 static void nsp_pixbuf_to_ps(FILE *psout,GdkPixbuf *pixbuf,gint xdest, gint ydest);
+#endif 
+
 static NspCells *GetImageCells(Stack stack,int pos) ;
 
 /**
@@ -42,6 +45,9 @@ static NspCells *GetImageCells(Stack stack,int pos) ;
  * to a GtkPixbuf. The matrices must be of same sizes
  * and contains data in the range [0,255];
  * the cells is used as a RGB or RGBA data for the pixbuf
+ * 
+ * If the cells contains only one matrix or the argument is 
+ * a matrix. Then the matrix is used for R,G,and B
  * 
  * Return value: 
  **/
@@ -58,9 +64,9 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1, 1);
 
   if ((C= GetImageCells(stack,1)) == NULL) return RET_BUG;
-  if ( C->mn != 3 && C->mn != 4) 
+  if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
     {
-      Scierror( "Error: %s cells must contains 3 (RGB) or 4 (RGBA) matrices \n", NspFname(stack));
+      Scierror( "Error: %s cells must contains 1 (R=G=B) or 3 (RGB) or 4 (RGBA) matrices \n", NspFname(stack));
       return RET_BUG;
     }
   width = ((NspMatrix *) C->objs[0])->n;
@@ -73,19 +79,73 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
     }
   rowstride = gdk_pixbuf_get_rowstride (pix);
   pixels = gdk_pixbuf_get_pixels (pix);
-
-  for(ch = 0; ch < C->mn ; ch++) 
+  
+  for(ch = 0; ch < Max(C->mn,3) ; ch++) 
     for(col =0; col < width; col++)
       for(row = 0; row < height; row++)
 	{
-	  p =  pixels + row * rowstride + col * C->mn;
-	  *(p+ch) = (guchar) ((NspMatrix *) C->objs[ch])->R[row+height*col];
+	  p =  pixels + row * rowstride + col * Max(C->mn,3);
+	  *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
 	}
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((ret = (NspObject *) gobject_create(NVOID,(GObject *)pix, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
     return RET_BUG;
   MoveObj(stack,1,ret);
   return 1;
+}  
+
+
+/**
+ * int_pixbuf_set_from_cells:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * Return value: 
+ **/
+
+int int_pixbuf_set_from_cells(Stack stack, int rhs, int opt, int lhs)
+{
+  GdkPixbuf *pix;
+  NspGdkPixbuf *nsp_pix;
+  NspCells *C;
+  int nChannels,width,height,rowstride,ch,col,row;
+  guchar *pixels, *p;
+  CheckRhs(2, 2);
+  CheckLhs(1, 1);
+
+  if ((nsp_pix = GetGdkPixbuf(stack,1)) == NULL) return RET_BUG;
+
+  pix = GDK_PIXBUF(nsp_pix->obj);
+  nChannels = gdk_pixbuf_get_n_channels(pix);
+  width = gdk_pixbuf_get_width(pix);
+  height = gdk_pixbuf_get_height(pix);
+  rowstride = gdk_pixbuf_get_rowstride (pix);
+  pixels = gdk_pixbuf_get_pixels (pix);
+
+  if ((C= GetImageCells(stack,2)) == NULL) return RET_BUG;
+  if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
+    {
+      Scierror( "Error: %s cells must contains 1 (R=G=B) or 3 (RGB) or 4 (RGBA) matrices \n", 
+		NspFname(stack));
+      return RET_BUG;
+    }
+  if ( ((NspMatrix *) C->objs[0])->n != width 
+       || ((NspMatrix *) C->objs[0])->m != height )
+    {
+      Scierror("Error: %s cells must contains %dx%d matrices \n", 
+	       NspFname(stack),width,height);
+      return RET_BUG;
+    }
+  for(ch = 0; ch < Max(C->mn,3) ; ch++) 
+    for(col =0; col < width; col++)
+      for(row = 0; row < height; row++)
+	{
+	  p =  pixels + row * rowstride + col * Max(C->mn,3);
+	  *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
+	}
+  return 0;
 }  
 
 
@@ -138,16 +198,20 @@ int int_pixbuftocells(Stack stack, int rhs, int opt, int lhs)
 	  ((NspMatrix *) C->objs[ch])->R[row+height*col] = (double) *(p+ch);
 	}
   MoveObj(stack,1,NSP_OBJECT(C));
-
+  
+  /* 
   {
     FILE *file;
     file= fopen("poo.ps","w");
     nsp_pixbuf_to_ps(file,pix,0,0);
     fclose(file);
   }
+  */
+
 
   return 1;
 }  
+
 
 
 /**
@@ -192,7 +256,7 @@ static NspCells *GetImageCells(Stack stack,int pos)
   return C;
 }
 
-
+#if 0
 static void nsp_pixbuf_to_ps(FILE *psout,GdkPixbuf *pixbuf,gint xdest, gint ydest)
 {
   int row,col,ch;
@@ -231,3 +295,4 @@ static void nsp_pixbuf_to_ps(FILE *psout,GdkPixbuf *pixbuf,gint xdest, gint ydes
     }
   fprintf(psout, "grestore\n");
 }
+#endif 
