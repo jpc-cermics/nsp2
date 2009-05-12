@@ -29,6 +29,7 @@
 #include <gdk/gdk.h> 
 #include "nsp/object.h"
 
+static void nsp_swap_double_array(double *R,int n);
 /*
  * string matrix conversion
  * FIXME: should be freed with g_free 
@@ -204,19 +205,22 @@ NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A)
  * Returns: a new #nsp_string
  **/
 
-nsp_string nsp_mat_to_base64string(NspMatrix *A, int little_endian ) 
+nsp_string nsp_mat_to_base64string(NspMatrix *A) 
 {
   /* */
   nsp_string out;
   const guchar *data = (const guchar *) A->R;
   gint state = 0, save = 0;
-  int len, outlen;
-  len = A->mn*((A->rc_type == 'c') + 1)*sizeof(double);
+  int dlen =A->mn*((A->rc_type == 'c') + 1);
+  int len = dlen*sizeof(double);
+  int outlen;
   out = new_nsp_string_n(len * 4 / 3 + 4);
   if ( out == NULL ) return NULL;
+  nsp_swap_double_array(A->R,dlen);
   outlen = g_base64_encode_step (data, len, FALSE, out, &state, &save);
   outlen += g_base64_encode_close (FALSE, out + outlen, &state, &save);
   out[outlen] = '\0';
+  nsp_swap_double_array(A->R,dlen);
   return out;
 }
 
@@ -237,23 +241,57 @@ double *nsp_base64string_to_doubles(nsp_string text, int *out_len)
   gint input_length, state = 0;
   guint save = 0;
   input_length = strlen (text);
-  
   ret = malloc((input_length * 3 / 4)*sizeof(char));
   *out_len = g_base64_decode_step (text, input_length, ret, &state, &save);
-  if ( (*out_len % 4 ) != 0 ) 
+  if ( (*out_len % sizeof(double) ) != 0 ) 
     {
       Scierror("The base64 string cannot be decoded to an array of double\n");
       return NULL;
     }
+  nsp_swap_double_array((double *)ret, (*out_len)/sizeof(double) );
   return (double *) ret; 
 }
 
 
 void nsp_test_base64(NspMatrix *A)
 {
+  int i;
   nsp_string str;
   int outlen;
   double *d;
-  str = nsp_mat_to_base64string(A,TRUE);
+  str = nsp_mat_to_base64string(A);
   d = nsp_base64string_to_doubles(str,&outlen);
+  if (outlen/sizeof(double) != A->mn) 
+    {
+      Sciprintf("nsp_test_base64 failed\n");
+      return;
+    }
+  for ( i = 0 ; i < A->mn ; i++)
+    if (A->R[i] != d[i] ) 
+      Sciprintf("nsp_test_base64 failed\n");
 }
+
+/* swap an array of double if the machine 
+ * is little_endian. 
+ */
+
+static void nsp_swap_double_array(double *R,int n)
+{
+  double dest;
+  int len =sizeof(double);
+  int i,j, littlendian = 1;
+  char	*endptr =  (char *) &littlendian;
+  if (*endptr)
+    {
+      /* machine is little endian */
+      for ( i = 0 ; i < n ; i++)
+	{
+	  char *c_orig =(char *) &R[i];
+	  char *c_dest =(char *) &dest ;
+	  for (j= 0; j < len ; j++)	c_dest[j]= c_orig[len-j-1];
+	  R[i]=dest;
+	}
+    }
+}
+
+
