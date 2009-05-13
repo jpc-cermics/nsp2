@@ -9,7 +9,7 @@
 %\begin{calling_sequence}
 \subsection*{Constructor}
 \begin{verbatim}
-L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
+L = sndfile(file-name,mode=,frames=,samplerate=,channels=,format=,sections=,seekable=)
 \end{verbatim}
 %\end{calling_sequence}
 % -- Parameters
@@ -26,9 +26,6 @@ L = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
     The mode string can also include the letter b as a last character. 
     Adding the b is used if you do I/O to a binary file 
     (but note that The b is ignored on all POSIX conforming systems, including Linux).
-    \vname{swap}: if true then byte swaping is forced when using the \verb+mget+ and 
-    \verb+mput+ functions. 
-    \vname{xdr}: if true then reading and writing is used using \verb+xdr+.
   \end{varlist}
 \end{parameters}
 
