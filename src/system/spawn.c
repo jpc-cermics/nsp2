@@ -569,8 +569,8 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
 	  if ( S->obj->prompt_check == NULL) 
 	    {
 	      Sciprintf("%s",buf);
-	      /* XXXXX  here we need to be able for flush nsp stdout */
-	       fflush(stdout);
+	      /* XXXXX  here we need to be able to flush nsp stdout */
+	      fflush(stdout);
 	    }
 	  else 
 	    {
@@ -651,7 +651,75 @@ nsp_string send_maxima_string(NspSpawn *H,const char *str)
   return res;
 }
 
+/* interface to the g_spawn_sync function 
+ *
+ * accept working directory 
+ * command=%t|%f 
+ * 
+ *
+ */
 
+int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
+{
+  GSpawnFlags flags = G_SPAWN_SEARCH_PATH 
+    | G_SPAWN_CHILD_INHERITS_STDIN;
+  char *env[]={"POO=45",NULL};
+  gboolean rep;
+  gchar *working_directory=NULL;
+  gchar *standard_output;
+  gchar *standard_error;
+  int exit_status;
+  GError *error=NULL;
+  NspSMatrix *S;
+  nsp_option opts[] ={{"wd",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  
+  CheckStdRhs(1,2);
+  CheckLhs(1,4);
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( S->mn == 0 ) 
+    {
+      Scierror("Error: first argument of %s should be of size > 0\n",NspFname(stack));
+      return RET_BUG;
+    }
 
+  if ( get_optional_args(stack, rhs, opt, opts, &working_directory) == FAIL )
+    return RET_BUG;
 
+  if ( lhs <= 1) 
+    {
+      flags = flags | G_SPAWN_STDOUT_TO_DEV_NULL 
+	| G_SPAWN_STDERR_TO_DEV_NULL ;
+    }
+  rep = g_spawn_sync(working_directory,S->S,env,flags,
+		     NULL,
+		     NULL,
+		     (lhs <= 1) ? NULL: &standard_output,
+		     (lhs <= 1) ? NULL: &standard_error,
+		     &exit_status,
+		     &error);
+
+  if ( nsp_move_boolean(stack,1,rep)  == FAIL ) return RET_BUG;
+  if ( lhs >= 2)
+    {
+      char *st = (standard_output != NULL) ? standard_output : "";
+      /* return the standard output */
+      if ( nsp_move_string(stack,2, st,-1) ==FAIL) return RET_BUG;
+      if (standard_output != NULL) g_free(standard_output);
+    }
+  if ( lhs >= 3 )
+    {
+      char *st = (standard_error != NULL) ? standard_error : "";
+      /* return the standard error */
+      if ( nsp_move_string(stack,3, st,-1) ==FAIL) return RET_BUG;
+      if (standard_error != NULL) g_free(standard_error);
+    }
+  if ( lhs >= 4)
+    {
+      char *st = (error != NULL) ? error->message : "";
+      if ( nsp_move_string(stack,4, st,-1) ==FAIL) return RET_BUG;
+      if ( error != NULL) g_error_free (error);
+    }
+  return Max(lhs,1);
+} 
 

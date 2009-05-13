@@ -418,7 +418,8 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
 
 
 /* XXX */
-int int_spawn_create(Stack stack,int rhs,int opt,int lhs);
+extern function int_spawn_create;
+extern function int_g_spawn_sync;
 
 /*
  * The Interface for system functions 
@@ -444,7 +445,8 @@ static OpTab System_func[]={
   {"realtime",int_realtime},
   {"realtimeinit",int_realtime_init},
   {"get_current_exec_dir", int_get_current_exec_dir},
-  { "spawn", int_spawn_create},
+  {"spawn", int_spawn_create},
+  {"spawn_sync", int_g_spawn_sync},
   {(char *) 0, NULL}
 };
 

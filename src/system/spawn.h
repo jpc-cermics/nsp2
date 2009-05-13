@@ -32,7 +32,7 @@ struct _nsp_spawn {
   nsp_string prog;
   nsp_string prompt_check;
   void *channel_in;
-
+  
 };
 
 struct _NspSpawn {
