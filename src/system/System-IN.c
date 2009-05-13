@@ -420,7 +420,7 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
 /* XXX */
 extern function int_spawn_create;
 extern function int_g_spawn_sync;
-
+extern function int_g_spawn_async;
 /*
  * The Interface for system functions 
  */ 
@@ -447,6 +447,8 @@ static OpTab System_func[]={
   {"get_current_exec_dir", int_get_current_exec_dir},
   {"spawn", int_spawn_create},
   {"spawn_sync", int_g_spawn_sync},
+  {"spawn_async", int_g_spawn_async},
+
   {(char *) 0, NULL}
 };
 
