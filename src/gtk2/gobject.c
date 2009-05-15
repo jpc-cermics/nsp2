@@ -1081,6 +1081,8 @@ static NspMethods *gobject_get_methods(void) { return gobject_methods;};
 extern function int_cellstopixbuf;
 extern function int_pixbuftocells;
 extern function int_pixbuf_set_from_cells;
+extern function int_pixbuf_get_channel;
+
 
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs);
@@ -1149,6 +1151,7 @@ static OpTab NspGObject_func[]={
   {"pixbuf_set_from_cells",int_pixbuf_set_from_cells},
   {"cellstopixbuf",int_cellstopixbuf},
   {"cellstostr",int_cells_to_str},
+  {"pixbuf_get_channel",int_pixbuf_get_channel},
   {"create_prop_editor",int_create_prop_editor},
   {(char *) 0, NULL}
 };

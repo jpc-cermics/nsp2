@@ -63,33 +63,62 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1, 1);
   CheckLhs(1, 1);
 
-  if ((C= GetImageCells(stack,1)) == NULL) return RET_BUG;
-  if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
+  if ( IsCellsObj(stack,1) )
     {
-      Scierror( "Error: %s cells must contains 1 (R=G=B) or 3 (RGB) or 4 (RGBA) matrices \n", NspFname(stack));
-      return RET_BUG;
-    }
-  width = ((NspMatrix *) C->objs[0])->n;
-  height = ((NspMatrix *) C->objs[0])->m;
-  pixbuf_mode =  GDK_COLORSPACE_RGB;
-  if ((pix = gdk_pixbuf_new(pixbuf_mode,FALSE, 8, width,height)) == NULL) 
-    {
-      Scierror("Error: %f error in pixbuf new\n",NspFname(stack));
-      return RET_BUG;
-    }
-  rowstride = gdk_pixbuf_get_rowstride (pix);
-  pixels = gdk_pixbuf_get_pixels (pix);
-  
-  for(ch = 0; ch < Max(C->mn,3) ; ch++) 
-    for(col =0; col < width; col++)
-      for(row = 0; row < height; row++)
+      if ((C= GetImageCells(stack,1)) == NULL) return RET_BUG;
+      if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
 	{
-	  p =  pixels + row * rowstride + col * Max(C->mn,3);
-	  *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
+	  Scierror( "Error: %s cells must contains 1 (R=G=B) or 3 (RGB) or 4 (RGBA) matrices \n", NspFname(stack));
+	  return RET_BUG;
 	}
-  nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((ret = (NspObject *) gobject_create(NVOID,(GObject *)pix, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
-    return RET_BUG;
+      width = ((NspMatrix *) C->objs[0])->n;
+      height = ((NspMatrix *) C->objs[0])->m;
+      pixbuf_mode =  GDK_COLORSPACE_RGB;
+      if ((pix = gdk_pixbuf_new(pixbuf_mode,FALSE, 8, width,height)) == NULL) 
+	{
+	  Scierror("Error: %f error in pixbuf new\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      rowstride = gdk_pixbuf_get_rowstride (pix);
+      pixels = gdk_pixbuf_get_pixels (pix);
+      
+      for(ch = 0; ch < Max(C->mn,3) ; ch++) 
+	for(col =0; col < width; col++)
+	  for(row = 0; row < height; row++)
+	    {
+	      p =  pixels + row * rowstride + col * Max(C->mn,3);
+	      *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
+	    }
+      nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
+      if ((ret = (NspObject *) gobject_create(NVOID,(GObject *)pix, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
+	return RET_BUG;
+    }
+  else
+    {
+      NspMatrix *M;
+      if ((M=GetRealMat(stack,1))== NULL) return RET_BUG;
+      width = M->n;
+      height = M->m;
+      pixbuf_mode =  GDK_COLORSPACE_RGB;
+      if ((pix = gdk_pixbuf_new(pixbuf_mode,FALSE, 8, width,height)) == NULL) 
+	{
+	  Scierror("Error: %f error in pixbuf new\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      rowstride = gdk_pixbuf_get_rowstride (pix);
+      pixels = gdk_pixbuf_get_pixels (pix);
+      
+      for(ch = 0; ch < 3 ; ch++) 
+	for(col =0; col < width; col++)
+	  for(row = 0; row < height; row++)
+	    {
+	      p =  pixels + row * rowstride + col * Max(C->mn,3);
+	      *(p+ch) = (guchar) M->R[row+height*col];
+	    }
+      nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
+      if ((ret = (NspObject *) gobject_create(NVOID,(GObject *)pix, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
+	return RET_BUG;
+    }
   MoveObj(stack,1,ret);
   return 1;
 }  
@@ -198,20 +227,51 @@ int int_pixbuftocells(Stack stack, int rhs, int opt, int lhs)
 	  ((NspMatrix *) C->objs[ch])->R[row+height*col] = (double) *(p+ch);
 	}
   MoveObj(stack,1,NSP_OBJECT(C));
-  
-  /* 
-  {
-    FILE *file;
-    file= fopen("poo.ps","w");
-    nsp_pixbuf_to_ps(file,pix,0,0);
-    fclose(file);
-  }
-  */
-
-
   return 1;
 }  
 
+int int_pixbuf_get_channel(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  GdkPixbuf *pix;
+  NspGdkPixbuf *nsp_pix;
+  int nChannels,width,height,rowstride,ch,col,row,channel=1;
+  guchar *pixels, *p;
+  CheckStdRhs(1, 2);
+  CheckLhs(1, 1);
+
+  if ((nsp_pix = GetGdkPixbuf(stack,1)) == NULL) return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if (GetScalarInt(stack,2,&channel) == FAIL) return RET_BUG;
+    }
+  
+  pix = GDK_PIXBUF(nsp_pix->obj);
+  nChannels = gdk_pixbuf_get_n_channels(pix);
+  width = gdk_pixbuf_get_width(pix);
+  height = gdk_pixbuf_get_height(pix);
+  rowstride = gdk_pixbuf_get_rowstride (pix);
+  pixels = gdk_pixbuf_get_pixels (pix);
+
+  if ( channel < 1 || channel > nChannels) 
+    {
+      Scierror("Error: %s channel argument should be in the range [1,%d]\n", 
+	       NspFname(stack),nChannels);
+      return RET_BUG;
+    }
+  if ((M = nsp_matrix_create(NVOID,'r',height,width))== NULLMAT) return RET_BUG;
+
+  /* fills the matrix C */
+  ch = channel-1;
+  for(col =0; col < width; col++)
+    for(row = 0; row < height; row++)
+      {
+	p =  pixels + row * rowstride + col * nChannels;
+	M->R[row+height*col] = (double) *(p+ch);
+      }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}  
 
 
 /**
