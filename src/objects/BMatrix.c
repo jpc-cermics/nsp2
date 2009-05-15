@@ -993,24 +993,20 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
 int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
   int j,i,count=0, k;
-  double ii;
   int nrow = ( A->mn == 0) ? 0: 1;
 
   /* first pass for counting */
   for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
   /* special rule for scalars */
-  if ( A-> m == 1 && count ==0) nrow =0;
+  if ( A->mn == 1 && count ==0) nrow =0;
 
   if ( lhs == 1)
     {
       *Res1 = nsp_matrix_create(NVOID,'r', nrow, count);
       if ( *Res1 == NULLMAT) return FAIL;
-      count=0; ii = 0;
+      count=0;
       for ( i = 0 ; i < A->mn ; i++ )
-	{
-	  ii++;
-	  if ( A->B[i] ) (*Res1)->R[count++] = ii;
-	}
+	if ( A->B[i] ) (*Res1)->R[count++] = i+1;
       return OK;
     }
   else
@@ -1031,6 +1027,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
     }
   return OK;
 }
+
 
 /*
  * Comparison operators
