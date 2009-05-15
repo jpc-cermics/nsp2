@@ -3,5 +3,6 @@
 
 #define NSP_VERSION "@NSP_VERSION@"
 #define DEFAULT_MES "@NSP_VERSION@"
+#define HOST_TYPE   "@NSP_HOST_TYPE@"
 
 #endif 

@@ -23,6 +23,7 @@
 #include "nsp/datas.h"
 #include "nsp/shext.h"
 #include "nsp/plistc.h"
+#include "nsp/version.h"
 #include "../functions/FunTab.h"
 #include "../interp/LibsTab.h"
 
@@ -134,11 +135,20 @@ int nsp_init_frames(int argc, char **argv)
   if ((O =nsp_create_false_object("%cholmod"))==NULLOBJ) return FAIL;
 #endif 
   nsp_frame_replace_object(O,-1);
+  /* are we a win32 version */
 #ifdef WIN32 
   if ((O =nsp_create_true_object("%win32"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%win32"))==NULLOBJ) return FAIL;
 #endif
+  nsp_frame_replace_object(O,-1);
+  /* which nsp version */
+  if ((O= nsp_create_object_from_str("%nsp_version",NSP_VERSION))==NULLOBJ) 
+    return FAIL;
+  nsp_frame_replace_object(O,-1);
+  /* which host */
+  if ((O= nsp_create_object_from_str("%host",HOST_TYPE))==NULLOBJ) 
+    return FAIL;
   nsp_frame_replace_object(O,-1);
   /* types */ 
   nsp_frame_replace_object((NspObject *)nsp_types_hash_table,-1); 

@@ -86,6 +86,8 @@ fi
 ###############################
 
 NSP_VERSION=${PACKAGE_NAME}-${PACKAGE_VERSION}
+NSP_HOST_TYPE=$host
+
 
 ########################
 ## removing and cleaning
@@ -1524,6 +1526,7 @@ AC_SUBST(PACKAGE)
 AC_SUBST(RANLIB)
 AC_SUBST(STATIC)
 AC_SUBST(NSP_VERSION)
+AC_SUBST(NSP_HOST_TYPE)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
