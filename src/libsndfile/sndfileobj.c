@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -501,6 +501,9 @@ static int int_sf_write_double(void *self,Stack stack, int rhs, int opt, int lhs
 
 /*
  * f.read[n]
+ * read n*m values in the sound file where 
+ * m is the number of channels. If @n is 
+ * not given then alld the read all the frames.
  */
 
 static int int_sf_read_double(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -665,6 +668,8 @@ static int int_sndfile_fopen(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* replaced by portaudio 
+ */
 
 static int int_nsp_play(Stack stack, int rhs, int opt, int lhs)
 {
@@ -683,7 +688,7 @@ static int int_nsp_play(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab SndFile_func[]={
   {"sndfile", int_sndfile_fopen},
-  {"play", int_nsp_play},
+  {"play_asoud", int_nsp_play},
   {(char *) 0, NULL}
 };
 

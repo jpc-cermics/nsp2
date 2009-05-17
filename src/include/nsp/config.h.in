@@ -73,6 +73,9 @@
 /* Define to 1 if you have the `mkstemp' function. */
 #undef HAVE_MKSTEMP
 
+/* Define to 1 if you have the <portaudio.h> header file. */
+#undef HAVE_PORTAUDIO_H
+
 /* Define to 1 if you have the `sleep' function. */
 #undef HAVE_SLEEP
 
@@ -202,6 +205,9 @@
 
 /* use maxplus library */
 #undef WITH_MAXPLUSLIB
+
+/* portaudio library */
+#undef WITH_PORTAUDIO
 
 /* pvm library */
 #undef WITH_PVM

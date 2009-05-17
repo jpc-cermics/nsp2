@@ -108,6 +108,10 @@ extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
 #endif 
 
+#ifdef WITH_PORTAUDIO
+extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info ;
+#endif 
+
 #ifdef WITH_UMFPACK 
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
 #endif 
@@ -228,9 +232,11 @@ InterfTab Interfaces[]={
 #ifdef WITH_PVM
   {Pvm_Interf , Pvm_Interf_Info},
 #endif 
+
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
 #endif
+
   {BHash_Interf , BHash_Interf_Info},
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},
@@ -280,6 +286,9 @@ InterfTab Interfaces[]={
 #endif 
   {libminpack_Interf,libminpack_Interf_Info},
   {IMatrix_Interf,IMatrix_Interf_Info},
+#ifdef WITH_PORTAUDIO
+  {Paudio_Interf , Paudio_Interf_Info},
+#endif
   {NULL,NULL}
 }; 
 

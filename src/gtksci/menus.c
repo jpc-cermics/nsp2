@@ -34,6 +34,7 @@
 #include "nsp/graphics/periGtk.h" 
 #include "nsp/menus.h" 
 #include "nsp/math.h"
+#include "nsp/config.h"
 #include "../system/files.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h"
@@ -731,6 +732,7 @@ void * graphic_initial_menu(int winid)
 
 static void * nsp_window_create_initial_menu(void)
 {
+  int n_control_entries;
   menu_entry *m = NULL;
   int winid = -1;
   char *file_entries[] = { "File _Operations||$fileops",
@@ -741,7 +743,11 @@ static void * nsp_window_create_initial_menu(void)
   char *control_entries[] = { "Quit||$quit",
 			      "Abort||$abort",
 			      "Restart||$restart",
-			      "Stop||$stop" } ;
+			      "Stop||$stop",
+#ifdef WITH_PORTAUDIO
+			      "Stop audio||$stop_audio",
+#endif
+ } ;
 
   char *graphic_entries[] = { "Create or Select||$gwselect",
 			      "Raise||$gwraise", 
@@ -751,8 +757,14 @@ static void * nsp_window_create_initial_menu(void)
 	
   char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
 			   "About||$about|gtk-about"};
+#ifdef WITH_PORTAUDIO
+  n_control_entries=5;
+#else 
+  n_control_entries=4;
+#endif 
+
   sci_menu_add(&m,winid,"_File",file_entries,4,0,"$file");
-  sci_menu_add(&m,winid,"_Control",control_entries,4,0,"$zoom");
+  sci_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
   sci_menu_add(&m,winid,"_Help",help_entries,2,0,"$help");
@@ -997,6 +1009,19 @@ static void nsp_menu_stop (void)
   /* if (get_is_reading()) nsp_input_feed(""); */
 }
 
+/* stop a portaudio function 
+ *
+ */
+
+static void nsp_menu_stop_audio (void)
+{
+#ifdef WITH_PORTAUDIO
+  nsp_pa_stop();
+#endif 
+}
+
+
+
 /*-----------------------------------------------------------------
  * make a stop for scicos 
  *-----------------------------------------------------------------*/
@@ -1103,6 +1128,7 @@ static int nsp_call_predefined_callbacks(const char *name, int winid)
   else if (strcmp(name,"$rot3d")== 0)  nspg_menu_rot3d(winid);
   else if (strcmp(name,"$help")== 0)   nsp_menu_help();
   else if (strcmp(name,"$stop")== 0)   nsp_menu_stop();
+  else if (strcmp(name,"$stop_audio")== 0) nsp_menu_stop_audio();
   else if (strcmp(name,"$kill")== 0)   nsp_menu_kill();
   else if (strcmp(name,"$demos")== 0)  nsp_menu_demos();
   else if (strcmp(name,"$fileops")== 0) nsp_menu_fileops();
