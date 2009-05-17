@@ -155,8 +155,8 @@ do
   fi
 done
 
-conf_flags="--enable-maintainer-mode"
-conf_flags="--disable-optimize" 
+#conf_flags="--enable-maintainer-mode"
+#conf_flags="--disable-optimize" 
 
 if test x$NOCONFIGURE = x; then
   echo Running $srcdir/configure $conf_flags "$@" ...

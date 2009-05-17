@@ -44,6 +44,12 @@ AC_ARG_WITH(maxpluslib,
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
 
+AC_ARG_WITH(sndfile,
+    [  --without-sndfile       do not compile with sndfile support ])
+
+AC_ARG_WITH(portaudio,
+    [  --without-portaudio     do not compile with portaudio support ])
+
 AC_ARG_WITH(gtkglext,
     [  --without-gtkglext      do not use Gtkglext widget for graphics ])
 
@@ -57,7 +63,7 @@ AC_ARG_WITH(pvm,
     [  --without-cairo         do not compile with gtk/cairo as default driver ])
 
 AC_ARG_WITH(fink,
-    [  --with-fink            use /sw for searching packages instead of /opt/local (default=no) ])
+    [  --with-fink             use /sw for searching packages instead of /opt/local (default=no) ])
 
 ###############################
 ## creating Path.incl if needed
@@ -1435,6 +1441,52 @@ if test "$HAVE_ASOUND" = "yes"; then
   AC_DEFINE(WITH_ASOUND,[],[asound support])
 fi
 
+#################
+## portaudio 
+## only searched if sndfile is already present 
+#################
+
+PORTAUDIO_LIB= 
+HAVE_PORTAUDIO=no
+
+
+if test "$HAVE_SNDFILE" = "yes"; then
+if test "$with_portaudio" != "no"; then                           
+ if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(PORTAUDIO, portaudio-2.0 >= 19, HAVE_PORTAUDIO="yes", HAVE_PORTAUDIO="no")
+      ## In case of success I just want portaudio be added in GTK_PKGS_CFLAGS 
+      if test "$HAVE_PORTAUDIO" = "yes"; then
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS portaudio-2.0"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS portaudio-2.0"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+	 PORTAUDIO_CFLAGS=""
+	 PORTAUDIO_LIBS=""
+      fi 
+ fi
+ if test "$HAVE_PORTAUDIO" = "no"; then # try to find portaudio at usual places
+     AC_CHECK_HEADERS(
+        [portaudio.h],
+        AC_CHECK_LIB(
+           [libportaudio],
+           [Pa_Initialize],
+           PORTAUDIO_CFLAGS=
+           PORTAUDIO_LIBS="-lportaudio"
+           [HAVE_PORTAUDIO="yes"],
+           [HAVE_PORTAUDIO="no"]),
+        [HAVE_PORTAUDIO="no"])
+ fi
+fi 
+fi 
+
+if test "$HAVE_PORTAUDIO" = "yes"; then
+  AC_DEFINE(WITH_PORTAUDIO,[],[portaudio library])
+  PORTAUDIO_LIB=libportaudio 
+fi
+
 
 #########################
 ## substituting variables
@@ -1511,6 +1563,10 @@ AC_SUBST(GMP_LIBS)
 AC_SUBST(SNDFILE_CFLAGS)
 AC_SUBST(SNDFILE_LIBS)
 AC_SUBST(SNDFILE_LIB)
+AC_SUBST(PORTAUDIO_CFLAGS)
+AC_SUBST(PORTAUDIO_LIBS)
+AC_SUBST(PORTAUDIO_LIB)
+
 AC_SUBST(ASOUND_CFLAGS)
 AC_SUBST(ASOUND_LIBS)
 AC_SUBST(SHELL)
@@ -1574,13 +1630,28 @@ echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
 echo "Sndfile support........:" $HAVE_SNDFILE
+echo "Portaudio support......:" $HAVE_PORTAUDIO
 echo "Asound support.........:" $HAVE_ASOUND
 echo -n "Cholmod support........:" 
 if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi
 echo -n "Umfpack support........:" 
 if test "xx$umfpack_libs" != "xx" ; then echo " yes"; else echo " no"; fi
-echo "WebKit support.........:" $have_webkit
-echo "gtkhtml2 support.......:" $GTKHTML
+
+
+echo 
+echo -n "man vizualization......:" 
+if test "x${have_webkit}" = "xyes" ; then 
+   echo " webkit-gtk"
+else 
+   if test "$GTKHTML" = yes; then
+     echo " gtkhtml2"
+   else
+     echo " no support"
+   fi
+fi
+
+#echo "WebKit support.........:" $have_webkit
+#echo "gtkhtml2 support.......:" $GTKHTML
 # --------
 
 echo 
