@@ -1,0 +1,89 @@
+#ifndef NSP_INC_PA 
+#define NSP_INC_PA
+
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
+
+#include <stdio.h>   /* for file declaration **/
+#include "nsp/sciio.h" 
+#include "nsp/object.h"
+#include "nsp/xdr.h"
+
+/*
+ *
+ */
+
+typedef struct _nsppa nsppa;
+
+struct _nsppa {
+  int mode;
+  nsp_string fname;
+  int refcount;
+};
+
+/*
+ * NspPa inherits from NspObject 
+ */
+
+typedef struct _NspPa NspPa;
+
+typedef struct _NspTypePa { 
+  NSP_TYPE_OBJECT__ 
+  /*< public >*/
+} NspTypePa;
+
+struct _NspPa {
+  /*< private >*/
+  NspObject father; 
+  NspTypePa *type; 
+  /*< public >*/
+  nsppa *snd;
+};
+
+extern int nsp_type_pa_id;
+extern NspTypePa *nsp_type_pa;
+
+NspTypePa *new_type_pa(type_mode mode);
+
+NspPa *nsp_new_pa();
+
+/*
+ * Object methods redefined for file 
+ */
+
+#ifdef Pa_Private 
+static int nsp_init_pa(NspPa *ob,NspTypePa *type);
+static int nsp_pa_size(NspPa *Mat, int flag);
+static char *nsp_pa_type_as_string(void);
+static char *nsp_pa_type_short_string(NspObject *v);
+static int nsp_pa_eq(NspObject *A, NspObject *B);
+static int nsp_pa_neq(NspObject *A, NspObject *B);
+static NspMethods *nsp_pa_get_methods(void);
+static AttrTab nsp_pa_attrs[];
+#endif 
+
+extern NspPa *nsp_pa_create(char *name, char *fname);
+extern NspPa *nsp_pa_copy(NspPa *H);
+extern void nsp_pa_destroy(NspPa *H);
+extern void nsp_pa_info(NspPa *H, int indent,char *name, int rec_level);
+extern int nsp_pa_print(NspPa *H, int indent,char *name, int rec_level);
+
+#define NULLPA (NspPa *) 0
+
+/* PaObj.c */
+
+extern NspPa *nsp_pa_object(NspObject *O);
+extern int IsPaObj (Stack stack, int i);
+extern NspPa *GetPaCopy (Stack stack, int i);
+extern NspPa *GetPa (Stack stack, int i);
+
+extern int nsp_play_file(const char *file,int sync,int device);
+extern int nsp_play_data(NspMatrix *M,int sync,int device);
+extern int nsp_play_data_nocb(NspMatrix *M,int flag);
+extern int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device);
+
+
+
+#endif 
