@@ -1,3 +1,7 @@
+2009-05-17  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/libportaudio added. 
+	
 2008-11-18  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/libminpack added 
