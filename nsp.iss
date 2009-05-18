@@ -64,6 +64,8 @@ OutputBaseFilename=nsp2-2009-04-22
 Source: "bin\*.*"; DestDir: "{app}\bin"; Flags: recursesubdirs
 Source: "src\include\*.*"; DestDir: "{app}\include"; Flags: recursesubdirs
 Source: "config\*.*"; DestDir: "{app}\config"; Flags: recursesubdirs
+Source: "lib\*.*"; DestDir: "{app}\lib"; Flags: recursesubdirs
+Source: "etc\*.*"; DestDir: "{app}\etc"; Flags: recursesubdirs
 Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: recursesubdirs
 Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
 Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
