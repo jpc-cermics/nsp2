@@ -139,9 +139,7 @@ nsp_pa_status nsp_pa_thread_get_status()
 
 int nsp_play_file(const char *file,int sync,int device)
 {
-  Sciprintf("finish current thread \n");
   nsp_finish_pa_thread();
-  Sciprintf("current thread finished \n");
   if ( file == NULL ||  file[0]=='\0') return OK;
   /* play in a thread */
   nsp_pa_thread_set_status(NSP_PA_ACTIVE);
