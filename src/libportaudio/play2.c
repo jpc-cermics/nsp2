@@ -51,11 +51,6 @@ static void play_data_nocb( thread_data *srvData);
 static void play_data_nocb_stop(thread_data *data);
 static void play_data_nocb_more(thread_data *data);
 
-static gpointer play_data_thread(gpointer data)
-{
-  play_data_nocb((thread_data *) data);
-  return NULL;
-}
 
 int nsp_play_data_nocb(NspMatrix *M, int flag)
 {

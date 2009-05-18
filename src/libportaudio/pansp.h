@@ -91,7 +91,7 @@ gint timeout_portaudio (void *data);
 extern void controlC_handler(int sig);
 extern void controlC_handler_portaudio(int sig);
 extern void nsp_pa_stop(void);
-extern int nsp_finish_pa_thread();
+extern void nsp_finish_pa_thread();
 extern void nsp_pa_thread_set_status( nsp_pa_status st);
 extern nsp_pa_status nsp_pa_thread_get_status();
 

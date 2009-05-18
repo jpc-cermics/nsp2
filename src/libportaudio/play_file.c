@@ -56,64 +56,7 @@ gpointer play_thread(gpointer data)
   return NULL;
 }
 
-static nsp_pa_status nsp_pa_thread_status = NSP_PA_INACTIVE ;
 
-gint timeout_portaudio (void *data)
-{
-  if ( nsp_pa_thread_status == NSP_PA_INACTIVE ) 
-    {
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-extern void controlC_handler (int sig);
-
-void controlC_handler_portaudio(int sig)
-{
-  /* ask play_file to stop */
-  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
-    nsp_pa_thread_status =  NSP_PA_END;
-}
-
-/* a menu callback 
- */
-
-void nsp_pa_stop()
-{
-  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
-    nsp_pa_thread_status = NSP_PA_END;
-}
-
-/* tell portaudio to finish active thread
- */
-
-int nsp_finish_pa_thread()
-{
-  int x=0;
-  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
-    {
-      /* finish active thread */
-      nsp_pa_thread_set_status(NSP_PA_END);
-      while ( nsp_pa_thread_get_status()== NSP_PA_END)
-	{
-	  /* x is useless but needed to cheat  with -O2 ! */
-	  x++;
-	}
-      /* now the child have fixed active to NSP_PA_INACTIVE  */
-    }
-  return x;
-}
-
-void nsp_pa_thread_set_status( nsp_pa_status st)
-{
-  nsp_pa_thread_status = st;
-}
-
-nsp_pa_status nsp_pa_thread_get_status()
-{
-  return nsp_pa_thread_status;
-}
 
 /**
  * nsp_play_file:
