@@ -2,64 +2,178 @@
 
 \mansection{cholmod}
 \begin{mandesc}
-  \short{Cholmod}{datatype for cholmod factorization of sparse matrices}
-  \short{cholmod_create}{creates a Cholmod object from a sparse matrix} 
+  \short{Cholmod}{datatype for Cholesky factorization of sparse symmetric positive definite (spd) matrices}\\
+  \short{cholmod_create}{creates a Cholmod object from a sparse spd matrix}
 \end{mandesc}
 
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-Au=cholmod_create(As, type=, mode=, beta=, ordering=,perm=)
+C=cholmod_create(A, type=, mode=, beta=, ordering=, perm=)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{As}: a real or complex sparse matrix
-    \vname{Au}: a Cholmod nsp object.
+    \vname{A}: a real or complex sparse s.p.d. matrix
+    \vname{C}: a Cholmod nsp object.
     \vname{type,mode,beta,ordering, perm}: optional named argument. 
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-The \emph{Cholmod} data type (\verb+type(Au,'short')== 'cholmod'+) is used to 
-encapsulate Cholmod sparse Cholesky factorization (provided by Tim Davis' Cholmod library). 
-\end{mandescription}. It is possible to check using the boolean variable \verb+%cholmod+ 
-if your current nsp version has been compiled with cholmod support. The \verb+solve+ method 
-can then be used to solve linear systems. Objects of \emph{Cholmod} type are usefull if 
-repeated use of the \verb+solve+ method for the same matrix is to be used, 
-since the factorization is kept in the \emph{Cholmod} object. 
+
+The \emph{Cholmod} data type (\verb+type(C,'short')== 'cholmod'+) is used to 
+encapsulate Cholesky factorizations of real, symmetric or complex hermitian 
+positive definite sparse matrix (using the Tim Davis' Cholmod library). 
+These factorizations take the form:
+$$
+P' A P = L D L' \mbox{ or } P' A P = L L' \qquad (L' = L^{\top} \mbox{ or } L^*)
+$$
+where $P$ is a permutation matrix, $D$ a diagonal matrix and $L$ a lower
+triangular matrix (with unit diagonal for $LDL'$ factorization). If we consider
+the permutation vector \verb+p+ ($P$ being the associated permutation matrix)
+then these factorizations reads: \verb+ A(p,p) = LDL'+ or  \verb+ A(p,p) = LL'+. 
+
+It is possible to check using the boolean variable \verb+%cholmod+ 
+if your current nsp version has been compiled with cholmod support.
+ 
+One interesting feature of \emph{Cholmod} is that you can update or downdate
+the factorization due to a multiple rank modification of the initial matrix:
+$$
+  A_{mod} = A \pm v v^{\top}
+$$
+where $v$ is a (sparse) column vector (for rank one update) or a (sparse) matrix
+with (generally) a few column vectors (for multiple rank update). This is interesting
+because updating the factorization of $A$ to get the factorization of $A_{mod}$ is faster 
+than computing it from scratch.
+\end{mandescription}. 
+
+\paragraph{cholmod_create}
+This function build a Cholmod nsp object, the optional arguments have the following meaning:
+\begin{varlist}
+  \vname{mode}: a string, should \verb+"ldl'"+ for a $LDL'$ factorization (this is the default)
+                or \verb+"ll'"+ for a $LL'$ factorization.
+  \vname{type}: a string among \verb+"row", "col", "sym", "lo", "up"+ (default is \verb+"up"+).
+     \begin{itemize} 
+        \item \verb+type="up"+ use only the upper part of $A$ to factorize $A$
+        \item  \verb+type="lo"+ use only the lower part of $A$ to factorize $A$.
+        \item  \verb+type="sym"+ use all the matrix (verify symmetry ?) ?
+        \item  \verb+type="col"+ factorize $A'A$.
+        \item  \verb+type="row"+ factorize $AA'$.
+     \end{itemize}
+
+  \vname{beta}: real scalar (default 0), use this option to factorize $\beta I + A$ (or $\beta I + A'*A$ if \verb+type="col"+
+                or $\beta I + A*A'$ if \verb+type="row"+).
+
+  \vname{ordering}: an int, lets to choose the ordering strategy if perm is not given. Ordering
+  corresponds to find a ``good'' permutation $p$ such that the fill-in of the factorization of
+  $P' A P$ is not too high ($P$ being the permutation matrix associated to $p$). Indeed
+  the factorization of a sparse matrix could have many more non-zero elements than the initial matrix 
+  $A$ (this is what is called fill-in) and so use huge memory and time. Hence it is important to look 
+  for permutations that minimize this fill-in. There are several possibilities (some
+  depending if Cholmod have been compiled with the Metis support or not):
+     \begin{itemize} 
+        \item $0$ use natural ordering (no reordering)
+        \item $-1$ (default) use default strategy which consists in trying AMD then METIS (if AMD
+              leads to a too big fill-in)
+        \item $-2$ use default strategy with NESDIS in place of METIS
+        \item $-3$ use AMD ordering only
+        \item $-4$ use METIS ordering only
+        \item $-5$ use NESDIS ordering only
+        \item $-6$ use natural ordering with etree postreordering
+     \end{itemize}
+  In fact if Cholmod have been compiled with the Metis support which will be likely the case, both
+  METIS and NESDIS are unavailable. To be continued... 
+ 
+  \vname{perm}: a permutation vector. In this case the ordering is set to be the one from perm.
+
+\end{varlist}
+
 \paragraph{Operations on cholmod}
 The following methods are available for Cholmod objects~:
 \begin{varlist}
-  \vname{A.solve[B]}
-  \vname{isreal}
-  \vname{get_ld}
-  \vname{get_minor}        
-  \vname{get_perm}         
-  \vname{update}          
-  \vname{downdate}           
-  \vname{resymbol}           
-  \vname{get_rcond}          
-  \vname{get_ordering}       
-  \vname{get_lnz}            
-  \vname{get_fl}            
-  \vname{get_memory}         
+  \vname{C.solve[b,mode=string]}: \verb+C+ being the Cholmod object created from a sparse matrix $A$
+  this method could solve various linear system depending on the optional named arg \verb+mode+:
+     \begin{itemize} 
+        \item when \verb+mode="A"+ (default) it solves $Ax=b$ 
+        \item when \verb+mode="LDLt"+ it solves $LDL' x = b$ (Note: it solves $LL' x = b$ if a $LL'$ factorization 
+        have been computed instead of a  $LDL'$ one).
+        \item when \verb+mode="Lt"+ it solves $L' x = b$  
+        \item when \verb+mode="LD"+ it solves $LD x = b$   (Note: it solves $L x = b$ if a $LL'$ factorization 
+        \item when \verb+mode="D"+ it solves $D x = b$
+        \item when \verb+mode="DLt"+ it solves $DL' x = b$
+        \item when \verb+mode="P"+ it solves $P x = b$
+        \item when \verb+mode="L"+ it solves $L x = b$
+        \item when \verb+mode="Pt"+ it solves $P' x = b$
+     \end{itemize}
+  \vname{isreal}: test if the cholmod object is the factorization of a real (sparse) matrix.
+                  \verb+b = C.isreal[]+ returns true if the factorization comes from a real
+                  sparse matrix and false if it comes from a complex one.
+  \vname{get_ld}: returns the $LD$ part of the factorization. When a $LL'$
+        factorization have been computed  it returns the matrix $L$ and when a $LDL'$
+        factorization have been computed it returns the matrix $L$ (which has a unit diagonal) with
+        the diagonal matrix $D$ stored on its diagonal. In this case if you want to retrieve
+        the exact matrix $L$ and $D$ use:
+        \begin{Verbatim}
+        [L,m,p] = C.get_ld[]
+        D = diag(L);
+        L.set_diag[spones(D)]
+        L*diag(D)*L' - A(p,p)  // should be a zero matrix 
+        \end{Verbatim}
+        As the example shows you can get also the minor and the permutation as second and third
+        output arguments.
+  \vname{get_minor}: to be done       
+  \vname{get_perm}: returns the permutation $p$ of the factorization (as a permutation vector)         
+  \vname{update}: \verb+C.update[v]+ update the factorization due to a multiple rank modification
+        of the matrix of the form $A + vv'$.          
+  \vname{downdate}: \verb+C.downdate[v]+ update the factorization due to a multiple rank modification
+        of the matrix of the form $A - vv'$. Note: this kind of modification could leads to a non
+        positive definite matrix, so the downdate could fail.             
+  \vname{resymbol}: to be done          
+  \vname{get_rcond}: returns a rough estimate of the reciprocal condition number (using 
+        \verb+min(diag(L))/max(diag(L))+ in case an $LL'$ factorization and 
+        \verb+min(diag(abs(D))/max(diag(abs(D)))+ for a $LDL'$ factorization.
+  \vname{get_ordering}: returns the ordering strategy used to factorize.      
+  \vname{get_lnz}: returns the number of non zeros elements of matrix $L$.        
+  \vname{get_fl}: to be done            
+  \vname{get_memory}: to be done         
 \end{varlist}
 
 \begin{examples}
-  \begin{program}\HCode{Af = sprand(10,10,0.8);\Hnewline
-      A= cholmod_create(Af);\Hnewline
-      A.isreal[]\Hnewline
-      A.det[] \Hnewline
-      b=rand(10,2);\Hnewline 
-      xu= A.solve[b];\Hnewline 
-      norm(Af*xu- b)\Hnewline 
-      xu1 = cholmod_solve(Af,b);} 
-  \end{program}
+\paragraph{simple example}
+  \begin{Verbatim}
+n = 5;
+v = sparse(ones(n-1,1));
+A = 2*speye(n,n) - diag(v,1) - diag(v,-1);
+Af = full(A)
+
+// 1/ try an LDL' factorization
+C = cholmod_create(A);
+// some verifications
+[L,m,p] = C.get_ld[];
+D = diag(diag(L));
+L.set_diag[sparse(ones(n,1))]
+L*D*L' - A(p,p)  // should be a zero matrix 
+
+// solving a linear system
+b = randn(n,1);
+x = C.solve[b]
+norm(A*x-b)/norm(b)
+
+// 2/ try an LL' factorization with natural ordering
+C = cholmod_create(A,mode="ll''",ordering=0);
+// some verifications
+[L,m,p] = C.get_ld[];
+// p should be 1:5 and L should correspond to the Cholesky factorization of Af
+chol(Af)' - full(L)   // chol provides the L' so transpose
+
+
+  \end{Verbatim}
  \end{examples}
 
 % -- Authors
 \begin{authors}
-  Jean-Philippe Chancelier
+   cholmod lib: Tim Davis, nsp interface: Jean-Philippe Chancelier (the interface uses also
+   some routines from the cholmod matlab interface of the cholmod lib).
 \end{authors}
