@@ -47,7 +47,6 @@ typedef struct {
 } thread_data;
 
 static thread_data threadData ={0};
-int nsp_pa_thread_active = 0;
 
 static void playfile( thread_data *threadData);
 
@@ -57,9 +56,11 @@ gpointer play_thread(gpointer data)
   return NULL;
 }
 
-static gint timeout_pa (void *data)
+static nsp_pa_status nsp_pa_thread_status = NSP_PA_INACTIVE ;
+
+gint timeout_portaudio (void *data)
 {
-  if ( nsp_pa_thread_active == 2 ) 
+  if ( nsp_pa_thread_status == NSP_PA_INACTIVE ) 
     {
       gtk_main_quit();
     }
@@ -68,10 +69,11 @@ static gint timeout_pa (void *data)
 
 extern void controlC_handler (int sig);
 
-static void controlC_handler_pause(int sig)
+void controlC_handler_portaudio(int sig)
 {
   /* ask play_file to stop */
-  if ( nsp_pa_thread_active == 1 ) nsp_pa_thread_active = 0;
+  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
+    nsp_pa_thread_status =  NSP_PA_END;
 }
 
 /* a menu callback 
@@ -79,9 +81,39 @@ static void controlC_handler_pause(int sig)
 
 void nsp_pa_stop()
 {
-  if ( nsp_pa_thread_active == 1 ) nsp_pa_thread_active = 0;
+  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
+    nsp_pa_thread_status = NSP_PA_END;
 }
 
+/* tell portaudio to finish active thread
+ */
+
+int nsp_finish_pa_thread()
+{
+  int x=0;
+  if ( nsp_pa_thread_status == NSP_PA_ACTIVE ) 
+    {
+      /* finish active thread */
+      nsp_pa_thread_set_status(NSP_PA_END);
+      while ( nsp_pa_thread_get_status()== NSP_PA_END)
+	{
+	  /* x is useless but needed to cheat  with -O2 ! */
+	  x++;
+	}
+      /* now the child have fixed active to NSP_PA_INACTIVE  */
+    }
+  return x;
+}
+
+void nsp_pa_thread_set_status( nsp_pa_status st)
+{
+  nsp_pa_thread_status = st;
+}
+
+nsp_pa_status nsp_pa_thread_get_status()
+{
+  return nsp_pa_thread_status;
+}
 
 /**
  * nsp_play_file:
@@ -107,16 +139,13 @@ void nsp_pa_stop()
 
 int nsp_play_file(const char *file,int sync,int device)
 {
-  if ( nsp_pa_thread_active == 1 ) 
-    {
-      /* finish active thread */
-      nsp_pa_thread_active = 0;
-      while ( nsp_pa_thread_active == 0 ) {};
-      /* now the child have fixed active to 2 */
-    }
+  Sciprintf("finish current thread \n");
+  nsp_finish_pa_thread();
+  Sciprintf("current thread finished \n");
   if ( file == NULL ||  file[0]=='\0') return OK;
   /* play in a thread */
-  nsp_pa_thread_active = 1;
+  nsp_pa_thread_set_status(NSP_PA_ACTIVE);
+
   if ( threadData.file != NULL) g_free( threadData.file);
   /* we need here to copy file */
   threadData.file =  g_strdup(file);
@@ -130,13 +159,13 @@ int nsp_play_file(const char *file,int sync,int device)
       /* just print in case of error */
       threadData.pa_print = Sciprintf;
       /* we need to wait for the end */
-      guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_pa , NULL);
-      signal(SIGINT,controlC_handler_pause);
+      guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_portaudio , NULL);
+      signal(SIGINT,controlC_handler_portaudio);
       while (1) 
 	{
 	  gtk_main();
 	  /* be sure that gtk_main_quit was activated by proper event */
-	  if ( nsp_pa_thread_active == 2 ) break;
+	  if ( nsp_pa_thread_get_status() == NSP_PA_INACTIVE ) break;
 	}
       g_source_remove(timer_pa);
       /* back to default */
@@ -253,7 +282,7 @@ static void playfile(thread_data *data)
     }
 
   while ( Pa_IsStreamActive(ostream) ) {
-    if ( nsp_pa_thread_active == 0 ) 
+    if ( nsp_pa_thread_get_status() == NSP_PA_END ) 
       {
 	/* stopped by the user in the other thread */
 	Pa_AbortStream(ostream);
@@ -271,7 +300,7 @@ static void playfile(thread_data *data)
  end :
   if (cbdata.sndFile != NULL) sf_close(cbdata.sndFile);
   Pa_Terminate();
-  nsp_pa_thread_active = 2;
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
 }
 
 

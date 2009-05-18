@@ -84,6 +84,16 @@ extern int nsp_play_data(NspMatrix *M,int sync,int device);
 extern int nsp_play_data_nocb(NspMatrix *M,int flag);
 extern int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device);
 
+typedef enum { NSP_PA_ACTIVE , NSP_PA_END,  NSP_PA_INACTIVE } nsp_pa_status;
+
+
+gint timeout_portaudio (void *data);
+extern void controlC_handler(int sig);
+extern void controlC_handler_portaudio(int sig);
+extern void nsp_pa_stop(void);
+extern int nsp_finish_pa_thread();
+extern void nsp_pa_thread_set_status( nsp_pa_status st);
+extern nsp_pa_status nsp_pa_thread_get_status();
 
 
 #endif 

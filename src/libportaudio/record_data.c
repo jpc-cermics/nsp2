@@ -51,7 +51,6 @@ typedef struct {
 
 static thread_data threadData ={0};
 
-extern int nsp_pa_thread_active;
 
 static void record_data( thread_data *srvData);
 
@@ -61,38 +60,15 @@ gpointer record_data_thread(gpointer data)
   return NULL;
 }
 
-static gint timeout_pa (void *data)
-{
-  if ( nsp_pa_thread_active == 2 ) 
-    {
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-extern void controlC_handler (int sig);
-
-static void controlC_handler_pause(int sig)
-{
-  /* ask play_file to stop */
-  if ( nsp_pa_thread_active == 1 ) nsp_pa_thread_active = 0;
-}
-
 
 int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device)
 {
   int inc=-1;
   NspMatrix *Loc;
   *M= NULL;
-  if ( nsp_pa_thread_active == 1 ) 
-    {
-      /* finish active thread */
-      nsp_pa_thread_active = 0;
-      while ( nsp_pa_thread_active == 0 ) {};
-      /* now the child have fixed active to 2 */
-    }
+  nsp_finish_pa_thread();
   /* record in a thread */
-  nsp_pa_thread_active = 1;
+  nsp_pa_thread_set_status(NSP_PA_ACTIVE);
   /* create a matrix for storing data */
   if ( (Loc = nsp_matrix_create(NVOID,'r',channels, seconds*sample_rate)) == NULLMAT ) 
     return FAIL;
@@ -104,13 +80,13 @@ int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int 
   if (!g_thread_supported ()) g_thread_init (NULL);
   g_thread_create(record_data_thread,&threadData,FALSE,NULL);
   /* we need to wait for the end */
-  guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_pa , NULL);
-  signal(SIGINT,controlC_handler_pause);
+  guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_portaudio , NULL);
+  signal(SIGINT,controlC_handler_portaudio);
   while (1) 
     {
       gtk_main();
       /* be sure that gtk_main_quit was activated by proper event */
-      if ( nsp_pa_thread_active == 2 ) break;
+      if ( nsp_pa_thread_get_status() == NSP_PA_INACTIVE ) break;
     }
   g_source_remove(timer_pa);
   /* back to default */
@@ -183,12 +159,12 @@ static void record_data(thread_data *data)
   if ((err = Pa_CloseStream( stream )) != paNoError ) goto error;
   
   Pa_Terminate();
-  nsp_pa_thread_active = 2;
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
   return;
 
  error:
   Pa_Terminate();
-  nsp_pa_thread_active = 2;
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
   data->err=FAIL;
   data->pa_print("Error: %s\n", Pa_GetErrorText( err ));
   return  ;

@@ -47,8 +47,6 @@ typedef struct {
 
 static thread_data threadData ={0};
 
-extern int nsp_pa_thread_active;
-
 static void play_data( thread_data *srvData);
 
 gpointer play_data_thread(gpointer data)
@@ -57,38 +55,15 @@ gpointer play_data_thread(gpointer data)
   return NULL;
 }
 
-static gint timeout_pa (void *data)
-{
-  if ( nsp_pa_thread_active == 2 ) 
-    {
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-extern void controlC_handler (int sig);
-
-static void controlC_handler_pause(int sig)
-{
-  /* ask play_file to stop */
-  if ( nsp_pa_thread_active == 1 ) nsp_pa_thread_active = 0;
-}
-
 
 int nsp_play_data(NspMatrix *M,int sync,int device)
 {
   NspMatrix *Mc;
-  if ( nsp_pa_thread_active == 1 ) 
-    {
-      /* finish active thread */
-      nsp_pa_thread_active = 0;
-      while ( nsp_pa_thread_active == 0 ) {};
-      /* now the child have fixed active to 2 */
-    }
+  nsp_finish_pa_thread();
   if ( M->m == 0 || M->n == 0) return OK;
   if ((  Mc=nsp_matrix_copy(M))==NULLMAT) return FAIL;
   /* play in a thread */
-  nsp_pa_thread_active = 1;
+  nsp_pa_thread_set_status(NSP_PA_ACTIVE);
   /* nsp_ignore_thread_log(); */
   if ( threadData.M != NULL) nsp_matrix_destroy(threadData.M);
   /* we need here to copy M*/
@@ -103,13 +78,13 @@ int nsp_play_data(NspMatrix *M,int sync,int device)
       /* just print in case of error */
       threadData.pa_print = Sciprintf;
       /* we need to wait for the end */
-      guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_pa , NULL);
-      signal(SIGINT,controlC_handler_pause);
+      guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_portaudio , NULL);
+      signal(SIGINT,controlC_handler_portaudio);
       while (1) 
 	{
 	  gtk_main();
 	  /* be sure that gtk_main_quit was activated by proper event */
-	  if ( nsp_pa_thread_active == 2 ) break;
+	  if ( nsp_pa_thread_get_status() == NSP_PA_INACTIVE ) break;
 	}
       g_source_remove(timer_pa);
       /* back to default */
@@ -212,9 +187,8 @@ static void play_data(thread_data *data)
     }
 
   while ( Pa_IsStreamActive(ostream) ) {
-    if ( nsp_pa_thread_active == 0 ) 
+    if ( nsp_pa_thread_get_status() == NSP_PA_END ) 
       {
-
 	/* stopped by the user in the other thread */
 	Pa_AbortStream(ostream);
 	break;
@@ -230,6 +204,6 @@ static void play_data(thread_data *data)
 		
  end :
   Pa_Terminate();
-  nsp_pa_thread_active = 2;
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
 }
 
