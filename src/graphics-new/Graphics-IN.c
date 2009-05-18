@@ -34,7 +34,7 @@
 #include "Plo3dObj.h"
 
 
-/*  #define NEW_GRAPHICS  */
+#define NEW_GRAPHICS
 
 
 
@@ -3253,7 +3253,7 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
   NspPolyline *pl;
   NspAxes *axe; 
   BCG *Xgc;
-  int color=-1,mark=-1,mark_size=-1,fill_color=0,thickness=-1;
+  int color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
   NspMatrix *x,*y;
   NspMatrix *l1,*l2,*l3;
   int v1 = 0;
@@ -3290,6 +3290,7 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
   /* loop on the polylines */
   for ( i = 0 ; i < l1->n ; i++)
     {
+      fill_color=-2;
       if ((x= nsp_matrix_create("x",'r',l1->m,1))== NULLMAT) return RET_BUG;
       if ((y= nsp_matrix_create("y",'r',l1->m,1))== NULLMAT) return RET_BUG;
       memcpy(x->R,l1->R+i*l1->m,l1->m*sizeof(double));
@@ -3297,13 +3298,28 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
       switch (v1 ){
       case 1:
 	/* flat shadind */ 
-	fill_color= l3->R[i];
+	if ( l3->R[i] < 0) 
+	  {
+	    color=-2;
+	    fill_color= - l3->R[i];
+	  }
+	else if ( l3->R[i]==0 )
+	  {
+	    color=-1;
+	  }
+	else
+	  {
+	    color=-1;
+	    fill_color = l3->R[i];
+	  }
 	break;
       case 2:
 	/* interpolated shading: to be done */
 	fill_color= l3->R[i*l1->m];
 	break;
-      default: break;
+      default: 
+	color=-1;
+	break;
       }
       if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
@@ -4059,11 +4075,12 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
  *   xpolys(xpols,ypols,[draw])
  *-----------------------------------------------------------*/
 
+
 #ifdef NEW_GRAPHICS 
 
 int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 {
-  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-1,thickness=-1,i;
+  int close=0,color=-1,mark=-2,mark_size=-1,fill_color=-2,thickness=-1,i;
   NspMatrix *x,*y,*style=NULL;
   NspPolyline *pl;
   NspAxes *axe; 
@@ -4091,10 +4108,16 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
       if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
       if ( style != NULL)
 	{
+	  mark=fill_color=-2;color=-1;
 	  if ( style->I[i] <= 0) 
-	    mark = - style->I[i];
+	    {
+	      mark = - style->I[i];
+	      color=-2;
+	    }
 	  else
-	    color = style->I[i];
+	    {
+	      color = style->I[i];
+	    }
 	}
       if ((pl = nsp_polyline_create("pl",xp,yp,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;

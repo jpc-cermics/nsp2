@@ -1459,8 +1459,9 @@ if test "$with_portaudio" != "no"; then
       PKG_CHECK_MODULES(PORTAUDIO, portaudio-2.0 >= 19, HAVE_PORTAUDIO="yes", HAVE_PORTAUDIO="no")
       ## In case of success I just want portaudio be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_PORTAUDIO" = "yes"; then
-	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS portaudio-2.0"
-	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS portaudio-2.0"
+      	 # we also need gthread-2.0 for our portaudio files.
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS portaudio-2.0 gthread-2.0"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS portaudio-2.0 gthread-2.0"
          GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
          GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
 	 PORTAUDIO_CFLAGS=""

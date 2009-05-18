@@ -4,8 +4,7 @@
 #include "spawn.h"
 #include "nsp/interf.h"
 
-/* XXXXXXXX */
-nsp_string send_maxima_string(NspSpawn *H,const char *str);
+static nsp_string send_string_to_child(NspSpawn *H,const char *str);
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H);
 
 /* 
@@ -370,7 +369,7 @@ static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
       return RET_BUG;
     }
   if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
-  if ((str_res = send_maxima_string(self,str))== NULL) return RET_BUG;
+  if ((str_res = send_string_to_child(self,str))== NULL) return RET_BUG;
   if ((Res = nsp_create_object_from_str(NVOID,str_res)) == NULL) 
     {
       nsp_string_destroy(&str_res);
@@ -595,7 +594,7 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
   return FALSE;
 }
 
-/* A finir, XXX 
+/* to be finished 
  *
  */
 
@@ -616,8 +615,7 @@ static gboolean stderr_read( GIOChannel *source, GIOCondition condition, gpointe
   return FALSE;
 }
 
-
-nsp_string send_maxima_string(NspSpawn *H,const char *str)
+static nsp_string send_string_to_child(NspSpawn *H,const char *str)
 {
   gsize bytes_written;
   int status;
@@ -628,15 +626,6 @@ nsp_string send_maxima_string(NspSpawn *H,const char *str)
       fprintf(stderr,"something wrong when sending characters to child\n");
       return NULL;
     }
-  /* 
-     status = g_io_channel_flush( H->obj->channel_in,NULL);
-     if ( status != G_IO_STATUS_NORMAL) 
-     {
-     fprintf(stderr,"something wrong when sending characters to child\n");
-     return NULL;
-     }
-  */
-
   gtk_main();
   if ( H->obj->out_smat == FALSE) return NULL;
   res = nsp_smatrix_elts_concat(H->obj->out,NULL,0,NULL,0);

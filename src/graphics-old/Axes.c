@@ -539,6 +539,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
   /* nsp_axis_grid(Xgc,pos,xy_type, x,nx, y, ny, ticscolor, logflag,seg_flag,Nx,Ny); */
+
 }
 
 /* draw a grid which follows the main ticks. 

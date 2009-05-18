@@ -36,6 +36,9 @@
 #include "nsp/nsp_lapack.h"
 #include <nsp/blas.h>
 
+extern double *nsp_base64string_to_doubles(nsp_string text, int *out_len) ;
+extern nsp_string nsp_mat_to_base64string(NspMatrix *A) ;
+
 /**
  * SECTION:matrix
  * @title: numerical matrices
@@ -1454,6 +1457,11 @@ static int int_meth_matrix_has(void *self, Stack stack, int rhs, int opt, int lh
 
   return Max(lhs,1);
 }
+
+
+
+
+
 
 static NspMethods matrix_methods[] = {
   { "add", int_meth_matrix_add},
@@ -5191,6 +5199,41 @@ static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
 }
 
 
+
+static int int_mat_tobase64(Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *A;
+  NspSMatrix *S;
+  nsp_string str;
+  CheckLhs(1,1);
+  CheckRhs(1,1);
+  if ((A = GetMat(stack, 1)) == NULLMAT) return RET_BUG;
+  if ((str = nsp_mat_to_base64string(A))==NULL) return RET_BUG;
+  if ((S = nsp_smatrix_create_with_length(NVOID,1,1,-1))== NULLSMAT)return RET_BUG;
+  S->S[0]= str;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+static int int_base64_to_mat(Stack stack,int rhs,int opt,int lhs)
+{
+  int outlen;
+  NspMatrix *A;
+  double *d;
+  nsp_string str;
+  CheckLhs(1,1);
+  CheckRhs(1,1);
+  if ((str=GetString(stack,1)) == NULL) return RET_BUG;
+  if ((d = nsp_base64string_to_doubles(str,&outlen))==NULL) return RET_BUG;
+  if ((A = nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) return RET_BUG;
+  A->m= outlen/sizeof(double);
+  A->n= 1;
+  A->mn = A->m;
+  A->R = d;
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return 1;
+}
+
 static int int_test_convert(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
@@ -5462,6 +5505,8 @@ static OpTab Matrix_func[] = {
   {"scale_cols_m_m", int_mat_scale_cols},
   {"test_convert", int_test_convert},
   {"getticks", int_getticks},
+  {"m2base64", int_mat_tobase64},
+  {"base642m", int_base64_to_mat},
   {(char *) 0, NULL}
 };
 

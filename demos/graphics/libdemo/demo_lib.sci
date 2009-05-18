@@ -646,4 +646,25 @@ function demo_prim_new_arcs()
   xarcs(arcs,color=1:6,thickness=4*ones(1,6),background=8:8+5);
 endfunction
 
+function demo_prim_new_xpolys()
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
+  xsetech(frect=[-100,-100,500,600]);
+  // xfpolys
+  x1=[0,10,20,30,20,10,0];
+  y1=[15,30,30,15,0,0,15];y1=160*ones(size(y1))+y1;
 
+  xpols=[x1;transl(x1,40);transl(x1,80);transl(x1,120);
+	 transl(x1,160);transl(x1,200);transl(x1,240)];
+  ypols=[y1;y1;y1;y1;y1;y1;y1];
+  xfpolys(xpols',ypols');
+  // xfpolys 
+  ypols=transl(ypols,60);
+  pats=[0,4,8,12,15,xget("white"),0];
+  xfpolys(xpols',ypols',pats);
+  // 
+  ypols=transl(ypols,120);
+  xpolys(xpols',ypols',1:7);
+  // 
+  ypols=transl(ypols,180);
+  xpolys(xpols',ypols',-(1:7));
+endfunction
