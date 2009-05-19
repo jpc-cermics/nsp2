@@ -34,6 +34,8 @@
 #include <portaudio.h>
 #include "pansp.h" 
 
+#define FRAMES_PER_BUFFER   (1024)
+
 /*
  * NspPa inherits from NspObject 
  */
@@ -197,15 +199,15 @@ static int nsp_pa_neq(NspObject *A, NspObject *B)
 
 void nsp_pa_destroy(NspPa  *F)
 {
-  if ( F->snd->refcount == 0 ) 
+  if ( F->pa->refcount == 0 ) 
     {
       /* we must close file ? before destroying everything */
-      FREE(F->snd->fname);
-      FREE(F->snd);
+      F->pa->ostream;
+      FREE(F->pa);
     }
   else 
     {
-      F->snd->refcount--;
+      F->pa->refcount--;
     }
   nsp_object_destroy_name(NSP_OBJECT(F));
   FREE(F) ;
@@ -225,9 +227,9 @@ void nsp_pa_info(NspPa  *F, int indent,char *name,int rec_level)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if ( strcmp(NSP_OBJECT(F)->name,NVOID) == 0) 
-    Sciprintf("Pa fname=%s\n",F->snd->fname);
+    Sciprintf("Pa fname=%s\n","void");
   else
-    Sciprintf("%s =\tPa fname=%s\n",NSP_OBJECT(F)->name,F->snd->fname);
+    Sciprintf("%s =\tPa fname=%s\n",NSP_OBJECT(F)->name,"void");
 }
 
 /*
@@ -286,7 +288,7 @@ NspPa *GetPa(Stack stack, int i)
  * constructor 
  *-----------------------------------------------------*/
 
-NspPa *nsp_pa_create(char *name, char *fname)
+NspPa *nsp_pa_create(char *name) 
 {
   NspPa *F =nsp_new_pa() ;
   if ( F == NULLPA) 
@@ -294,7 +296,7 @@ NspPa *nsp_pa_create(char *name, char *fname)
       Scierror("Error:\tRunning out of memory\n");
       return NULLPA;
     }
-  if ((F->snd = malloc(sizeof(nsppa))) == NULL) 
+  if ((F->pa = malloc(sizeof(nsppa))) == NULL) 
     {
       FREE(F);
       Scierror("Error:\tRunning out of memory\n");
@@ -303,8 +305,7 @@ NspPa *nsp_pa_create(char *name, char *fname)
   if ( nsp_object_set_initial_name(NSP_OBJECT(F),name) == NULL)
     return NULLPA;
   NSP_OBJECT(F)->ret_pos = -1 ; 
-  if ((F->snd->fname = new_nsp_string(fname)) == NULLSTRING) return NULLPA;
-  F->snd->refcount = 1;
+  F->pa->refcount = 1;
   return(F);
 }
 
@@ -320,8 +321,8 @@ NspPa *nsp_pa_copy(NspPa  *A)
       Scierror("Error:\tRunning out of memory\n");
       return NULLPA;
     }
-  F->snd = A->snd;
-  A->snd->refcount++;
+  F->pa = A->pa;
+  A->pa->refcount++;
   return F;
 }
 
@@ -331,7 +332,7 @@ NspPa *nsp_pa_copy(NspPa  *A)
 
 static NspObject * int_pa_get_frames(void *Hv,const char *attr)
 {
-  /* return nsp_create_object_from_double(NVOID,((NspPa *) Hv)->snd->sfinfo.frames); */
+  /* return nsp_create_object_from_double(NVOID,((NspPa *) Hv)->pa->sfinfo.frames); */
   return NULL;
 }
 
@@ -356,85 +357,81 @@ static AttrTab nsp_pa_attrs[] = {
  * f.close[]
  */
 
-static int int_pa_close(void *self,Stack stack, int rhs, int opt, int lhs)
+
+static int int_pa_play_stream(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(0,0);
-  /* if the file was opened for writing then 
-   * we update the header before closing 
-   */
+  NspPa *P = self;
+  PaError err;   
+  float buffer[FRAMES_PER_BUFFER*2]; /* stereo output buffer */
+  int offset = 0;
+  NspMatrix *M;
+  int sync=FALSE;
+  int_types T[] = {realmat,new_opts, t_end} ;
+  nsp_option opts[] ={{"sync",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&M,&opts,&sync) == FAIL) return RET_BUG;
+
+  if ( M->m != P->pa->channels )
+    {
+      Scierror("Error: expecting a matrice with %d rows\n", P->pa->channels);
+      return RET_BUG;
+    }
+
+  while (1) 
+    {
+      int i,j, n;
+      n = Min( FRAMES_PER_BUFFER, (M->n - offset));
+      for( i=0; i < n ; i++ )
+	{
+	  for ( j = 0 ; j < M->m ; j++) 
+	    buffer[j+M->m*(i)] = M->R[j+ M->m*(i+offset)];
+	}
+      for (  ; i < FRAMES_PER_BUFFER; i++)
+	{
+	  for ( j = 0 ; j < M->m ; j++) 
+	    buffer[j+M->m*(i)] = 0;
+	}
+      offset += n;
+      err = Pa_WriteStream( P->pa->ostream, buffer, FRAMES_PER_BUFFER );
+      if( err != paNoError ) 
+	{
+	  Scierror("Error: %s\n", Pa_GetErrorText(err));
+	  return RET_BUG;
+	}
+      if ( offset >= M->n ) break;
+    }
   return 0;
 }
 
-/*
- * f.error[];
- */
 
-static int int_pa_error(void *self,Stack stack, int rhs, int opt, int lhs)
+static int int_pa_stop_stream(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(0,0);
-  return 1;
-}
-
-/*
- * f.strerror[];
- */
-
-static int int_pa_strerror(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  /* const char* sf_strerror (PA *pa) ;
-   */
+  NspPa *P = self;
+  PaError err;   
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  /* -- Now we stop the stream -- */
+  if (( err = Pa_StopStream( P->pa->ostream )) != paNoError )
+    goto end;
+  
+  if ((err = Pa_CloseStream(P->pa->ostream)) != paNoError)
+    {
+      Scierror("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+      P->pa->err=FAIL;goto end;
+    }
+  
+ end :
+  Pa_Terminate();
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
   return 0;
 }
 
 
-
-/*
- * f.error_number[];
- */
-
-static int int_pa_error_number(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  return 1;
-}
-
-/*
- * f.write[A]
- */
-
-static int int_sf_write_double(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  return 0;
-}
-
-/*
- * f.read[n]
- * read n*m values in the sound file where 
- * m is the number of channels. If @n is 
- * not given then alld the read all the frames.
- */
-
-static int int_sf_read_double(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  return 0;
-}
-
-/* 
- * f.seek[]
- */
-
-static int int_sf_seek(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  return 0;
-}
 
 static NspMethods nsp_pa_methods[] = {
-  {"close", int_pa_close},
-  {"error", int_pa_error },
-  {"strerror", int_pa_strerror },
-  {"error_number", int_pa_error_number},
-  {"read", int_sf_read_double},
-  {"seek", int_sf_seek},
-  {"write", int_sf_write_double },
+  {"write", int_pa_play_stream },
+  {"stop", int_pa_stop_stream },
   { (char *) 0, NULL}
 };
 
@@ -446,73 +443,113 @@ static NspMethods *nsp_pa_get_methods(void) { return nsp_pa_methods;};
  *----------------------------------------------------*/
 
 /*
- * f=fopen(fname [,mode])
+ * f=player_create(...)
  */
 
-static int int_pa_fopen(Stack stack, int rhs, int opt, int lhs)
+
+static void nsp_paobj_open(NspPa *P);
+
+static int int_player_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspPa *F;
-  NspSMatrix *Format=NULL;
-  int sfmode;
-  double frames = 0.0;
-  SF_INFO sfi ={0,44100,1, SF_FORMAT_WAV |SF_FORMAT_PCM_16  ,1,1};
-  int_types T[] = {string,new_opts, t_end} ;
-  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
-		      {"frames",s_double,NULLOBJ,-1},
-		      {"samplerate",s_int,NULLOBJ,-1},
+  int samplerate=44100,device=-1,channels=2;
+  int_types T[] = {new_opts, t_end} ;
+  nsp_option opts[] ={{"samplerate",s_int,NULLOBJ,-1},
 		      {"channels",s_int,NULLOBJ,-1},
-		      {"format",smat,NULLOBJ,-1},
-		      {"sections",s_int,NULLOBJ,-1},
-		      {"seekable",s_bool,NULLOBJ,-1},
+		      {"device", s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-
-  char *Fname, *mode = NULL, *def_mode = "r";
-  if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&mode,&frames,&sfi.samplerate,&sfi.channels,&Format,&sfi.sections,
-	       &sfi.seekable) == FAIL) return RET_BUG;
-  sfi.frames =  (sf_count_t) frames;
-  if ( mode == NULL) mode = def_mode;
-  if ( Format != NULL ) 
-    {
-    }
-  if ( strcmp(mode,"r")==0 ) 
-    {
-      sfi.format = 0;
-      sfmode = SFM_READ;
-    }
-  else if (strcmp(mode,"w")==0) 
-    {
-      if ( sf_format_check(&sfi) == FALSE ) 
-	{
-	  Scierror("Error: the selected format is not valid for writing pa\n");
-	  return RET_BUG;
-	}
-      sfmode = SFM_WRITE;
-    }
-  else if (strcmp(mode,"rw")==0) 
-    {
-      sfmode = SFM_RDWR ;
-    }
-  else 
-    {
-      Scierror("Error:\tpa unrecognized mode %s\n",mode);
-      return RET_BUG;
-    }
+  if ( GetArgs(stack,rhs,opt,T,&opts,&samplerate,&channels,&device) == FAIL)
+    return RET_BUG;
   /* initialize the type for pa */
   new_type_pa(T_BASE);
-  if (( F = nsp_pa_create(NVOID, Fname)) == NULLPA) return RET_BUG;
-  /*
-    F->snd->sfinfo = sfi;
-    F->snd->sf = sf_open (F->snd->fname, sfmode, &F->snd->sfinfo);
-    F->snd->mode = sfmode;
-  if ( F->snd->sf == NULL) 
+  if (( F = nsp_pa_create(NVOID)) == NULLPA) return RET_BUG;
+  F->pa->channels= channels;
+  F->pa->o_device= device;
+  F->pa->sample_rate= samplerate;
+  F->pa->ostream = NULL;
+  nsp_paobj_open(F);
+  if ( F->pa->err == FAIL) 
     {
-      Scierror("Error: while opening file %s mode=%s\n",F->snd->fname,mode);
+      nsp_pa_destroy(F);
       return RET_BUG;
     }
-  */
+  
   MoveObj(stack,1,(NspObject *) F);
   return 1;
 }
+
+
+static void nsp_paobj_open(NspPa *P)
+{
+  int max;
+  PaStreamParameters ostream_p;
+  PaError err;   
+  
+  P->pa->err=OK;
+
+  if ((err = Pa_Initialize()) != paNoError)
+    {
+      Scierror("Error: in portaudio, %s\n",Pa_GetErrorText(err));
+      P->pa->err=FAIL; goto end;
+    }
+  ostream_p.device = P->pa->o_device;
+  if ( ostream_p.device == -1 ) 
+    ostream_p.device = Pa_GetDefaultOutputDevice();
+
+  if ( ostream_p.device == paNoDevice ) 
+    {
+      Scierror("Error: in portaudio, output device %d not found \n",
+	       P->pa->o_device);
+      P->pa->err=FAIL;goto end;
+  }
+  
+  max = Pa_GetDeviceInfo(ostream_p.device)->maxOutputChannels;
+
+  if ( P->pa->channels > 2 )
+    {
+      Scierror("Error: in portaudio here only stereo or mono sounds (%d>2) \n", 
+	       P->pa->channels);
+      P->pa->err=FAIL;goto end;
+    }
+
+  ostream_p.channelCount = P->pa->channels;
+  ostream_p.sampleFormat = paFloat32;
+  ostream_p.suggestedLatency = Pa_GetDeviceInfo(ostream_p.device )->defaultLowOutputLatency;
+  ostream_p.hostApiSpecificStreamInfo = 0;
+
+  if ((err = Pa_IsFormatSupported(NULL, &ostream_p, 44100)) != paNoError)
+    {
+      Scierror("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+      P->pa->err=FAIL;goto end;
+    }
+  
+  err = Pa_OpenStream(&P->pa->ostream,
+		      NULL,
+		      &ostream_p,
+		      44100,
+		      FRAMES_PER_BUFFER, /* frames per buffer */
+		      paNoFlag,
+		      NULL,
+		      NULL);
+  
+  if (err)
+    {
+      Scierror("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+      goto end;
+    }
+
+  if ((err = Pa_StartStream(P->pa->ostream))!= paNoError)
+    {
+      Scierror("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+      P->pa->err=FAIL;goto end;
+    }
+  return;
+		
+ end :
+  Pa_Terminate();
+  nsp_pa_thread_set_status(NSP_PA_INACTIVE);
+}
+
 
 
 
@@ -543,14 +580,15 @@ static int int_nsp_play_file(Stack stack,int rhs,int opt,int lhs)
 static int  int_nsp_play_data(Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *M;
-  int err,sync=FALSE,device=-1; 
+  int err,sync=FALSE,device=-1, sample_rate=44100;
   int_types T[] = {realmat,new_opts, t_end} ;
   nsp_option opts[] ={{"sync",s_bool,NULLOBJ,-1},
 		      {"device",s_int,NULLOBJ,-1},
+		      {"samplerate",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&M,&opts,&sync,&device) == FAIL) return RET_BUG;
-  err= nsp_play_data(M,sync,device);
+  err= nsp_play_data(M,sample_rate,sync,device);
   if ( lhs == 1) 
     {
       if ( nsp_move_double(stack,1,(double) err)==FAIL) return RET_BUG;
@@ -568,7 +606,7 @@ static int  int_nsp_record_data(Stack stack,int rhs,int opt,int lhs)
   nsp_option opts[] ={{"device",s_int,NULLOBJ,-1},
 		      {"channels",s_int,NULLOBJ,-1},
 		      {"seconds",s_double,NULLOBJ,-1},
-		      {"sample-rate",s_int,NULLOBJ,-1},
+		      {"samplerate",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&opts,&device,&channels,&seconds,&sample_rate) == FAIL)
@@ -597,6 +635,7 @@ static OpTab Paudio_func[]={
   {"recordsnd",   int_nsp_record_data},
   /* to be finished */
   {"playM1",   int_nsp_play_data_nocb},
+  {"player_create", int_player_create},
   {(char *) 0, NULL}
 };
 
@@ -614,6 +653,18 @@ void Paudio_Interf_Info(int i, char **fname, function (**f))
   *fname = Paudio_func[i].name;
   *f = Paudio_func[i].fonc;
 }
+
+
+#define FRAMES_PER_BUFFER   (1024)
+
+/* Initialize a portaudio stream 
+ *
+ */
+
+/* play without call back.
+ *
+ */
+
 
 
 

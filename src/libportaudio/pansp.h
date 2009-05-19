@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
+#include <portaudio.h>
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/xdr.h"
@@ -18,8 +19,11 @@
 typedef struct _nsppa nsppa;
 
 struct _nsppa {
-  int mode;
-  nsp_string fname;
+  PaStream *ostream; 
+  int o_device;    /* play on o_device or default device if -1 */
+  int err;         /* an error occured */
+  int sample_rate; /* sample rate */
+  int channels; 
   int refcount;
 };
 
@@ -39,7 +43,7 @@ struct _NspPa {
   NspObject father; 
   NspTypePa *type; 
   /*< public >*/
-  nsppa *snd;
+  nsppa *pa;
 };
 
 extern int nsp_type_pa_id;
@@ -64,7 +68,7 @@ static NspMethods *nsp_pa_get_methods(void);
 static AttrTab nsp_pa_attrs[];
 #endif 
 
-extern NspPa *nsp_pa_create(char *name, char *fname);
+extern NspPa *nsp_pa_create(char *name);
 extern NspPa *nsp_pa_copy(NspPa *H);
 extern void nsp_pa_destroy(NspPa *H);
 extern void nsp_pa_info(NspPa *H, int indent,char *name, int rec_level);
@@ -80,7 +84,7 @@ extern NspPa *GetPaCopy (Stack stack, int i);
 extern NspPa *GetPa (Stack stack, int i);
 
 extern int nsp_play_file(const char *file,int sync,int device);
-extern int nsp_play_data(NspMatrix *M,int sync,int device);
+extern int nsp_play_data(NspMatrix *M,int sample_rate,int sync,int device);
 extern int nsp_play_data_nocb(NspMatrix *M,int flag);
 extern int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device);
 

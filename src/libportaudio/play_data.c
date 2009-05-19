@@ -42,7 +42,8 @@ typedef struct {
   NspMatrix* M;    /* matrix to be played nchannels x samples */
   int o_device;    /* play on o_device or default device if -1 */
   int err;         /* an error occured */
-  IOFun  pa_print;  /* function to be used for error report */
+  int sample_rate; /* sample rate */
+  IOFun  pa_print; /* function to be used for error report */
 } thread_data;
 
 static thread_data threadData ={0};
@@ -56,7 +57,7 @@ gpointer play_data_thread(gpointer data)
 }
 
 
-int nsp_play_data(NspMatrix *M,int sync,int device)
+int nsp_play_data(NspMatrix *M,int sample_rate, int sync,int device)
 {
   NspMatrix *Mc;
   nsp_finish_pa_thread();
@@ -69,6 +70,7 @@ int nsp_play_data(NspMatrix *M,int sync,int device)
   /* we need here to copy M*/
   threadData.M =  Mc;
   threadData.o_device = device;
+  threadData.sample_rate = sample_rate;
   threadData.pa_print = Scierror;
   if (!g_thread_supported ()) g_thread_init (NULL);
   g_thread_create(play_data_thread,&threadData,FALSE,NULL);
@@ -169,7 +171,7 @@ static void play_data(thread_data *data)
   err = Pa_OpenStream(&ostream,
 		      NULL,
 		      &ostream_p,
-		      44100,
+		      data->sample_rate,
 		      FRAMES_PER_BUFFER, /* frames per buffer */
 		      paNoFlag,
 		      cb_play_data,

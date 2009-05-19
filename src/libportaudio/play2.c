@@ -88,8 +88,7 @@ static void play_data_nocb(thread_data *data)
   int max, offset=0;
   PaStreamParameters ostream_p;
   PaError err;   
-  float buffer_stereo[FRAMES_PER_BUFFER][2]; /* stereo output buffer */
-  float buffer_mono[FRAMES_PER_BUFFER][1]; /* mono output buffer */
+  float buffer[FRAMES_PER_BUFFER*2]; /* max_channel is 2 */
   
   data->err=OK;
 
@@ -156,36 +155,18 @@ static void play_data_nocb(thread_data *data)
     {
       int i,j, n;
       n = Min( FRAMES_PER_BUFFER, (data->M->n - offset));
-      if ( data->M->m == 2) 
+      for( i=0; i < n ; i++ )
 	{
-	  for( i=0; i < n ; i++ )
-	    {
-	      for ( j = 0 ; j < data->M->m ; j++) 
-		buffer_stereo[i][j] = data->M->R[j+ data->M->m*(i+offset)];
-	    }
-	  for (  ; i < FRAMES_PER_BUFFER; i++)
-	    {
-	      for ( j = 0 ; j < data->M->m ; j++) 
-		buffer_stereo[i][j] = buffer_stereo[i][j] = 0;
-	    }
-	  offset += n;
-	  err = Pa_WriteStream( ostream, buffer_stereo, FRAMES_PER_BUFFER );
+	  for ( j = 0 ; j < data->M->m ; j++) 
+	    buffer[j+data->M->m*(i)] = data->M->R[j+ data->M->m*(i+offset)];
 	}
-      else 
+      for (  ; i < FRAMES_PER_BUFFER; i++)
 	{
-	  for( i=0; i < n ; i++ )
-	    {
-	      for ( j = 0 ; j < data->M->m ; j++) 
-		buffer_mono[i][j] = data->M->R[j+ data->M->m*(i+offset)];
-	    }
-	  for (  ; i < FRAMES_PER_BUFFER; i++)
-	    {
-	      for ( j = 0 ; j < data->M->m ; j++) 
-		buffer_mono[i][j] = buffer_mono[i][j] = 0;
-	    }
-	  offset += n;
-	  err = Pa_WriteStream( ostream, buffer_mono, FRAMES_PER_BUFFER );
+	  for ( j = 0 ; j < data->M->m ; j++) 
+	    buffer[j+data->M->m*(i)] = 0;
 	}
+      offset += n;
+      err = Pa_WriteStream( ostream, buffer, FRAMES_PER_BUFFER );
       if( err != paNoError ) goto end;
       if ( offset >= data->M->n ) break;
     }
