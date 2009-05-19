@@ -201,8 +201,6 @@ void nsp_pa_destroy(NspPa  *F)
 {
   if ( F->pa->refcount == 0 ) 
     {
-      /* we must close file ? before destroying everything */
-      F->pa->ostream;
       FREE(F->pa);
     }
   else 
@@ -305,6 +303,10 @@ NspPa *nsp_pa_create(char *name)
   if ( nsp_object_set_initial_name(NSP_OBJECT(F),name) == NULL)
     return NULLPA;
   NSP_OBJECT(F)->ret_pos = -1 ; 
+  F->pa->channels= 2;
+  F->pa->o_device= -1;
+  F->pa->sample_rate= 44100;
+  F->pa->ostream = NULL;
   F->pa->refcount = 1;
   return(F);
 }
@@ -354,7 +356,7 @@ static AttrTab nsp_pa_attrs[] = {
 
 
 /*
- * f.close[]
+ * play given data in the audio stream. 
  */
 
 
@@ -372,12 +374,17 @@ static int int_pa_play_stream(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&M,&opts,&sync) == FAIL) return RET_BUG;
 
+  if ( P->pa->ostream == NULL) 
+    {
+      Scierror("Error: audio stream is not opened\n");
+      return RET_BUG;
+     }
+
   if ( M->m != P->pa->channels )
     {
       Scierror("Error: expecting a matrice with %d rows\n", P->pa->channels);
       return RET_BUG;
     }
-
   while (1) 
     {
       int i,j, n;
@@ -422,12 +429,11 @@ static int int_pa_stop_stream(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   
  end :
+  P->pa->ostream = NULL;
   Pa_Terminate();
   nsp_pa_thread_set_status(NSP_PA_INACTIVE);
   return 0;
 }
-
-
 
 static NspMethods nsp_pa_methods[] = {
   {"write", int_pa_play_stream },
@@ -580,15 +586,20 @@ static int int_nsp_play_file(Stack stack,int rhs,int opt,int lhs)
 static int  int_nsp_play_data(Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *M;
-  int err,sync=FALSE,device=-1, sample_rate=44100;
+  int err,sync=FALSE,device=-1, sample_rate=44100, nocb=FALSE;
   int_types T[] = {realmat,new_opts, t_end} ;
   nsp_option opts[] ={{"sync",s_bool,NULLOBJ,-1},
 		      {"device",s_int,NULLOBJ,-1},
 		      {"samplerate",s_int,NULLOBJ,-1},
+		      {"nocb",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
-  if ( GetArgs(stack,rhs,opt,T,&M,&opts,&sync,&device) == FAIL) return RET_BUG;
-  err= nsp_play_data(M,sample_rate,sync,device);
+  if ( GetArgs(stack,rhs,opt,T,&M,&opts,&sync,&device,&sample_rate,&nocb) == FAIL) return RET_BUG;
+  if ( nocb == TRUE ) 
+    err= nsp_play_data_no_cb(M,sample_rate,sync,device);
+  else
+    err= nsp_play_data(M,sample_rate,sync,device);
+  
   if ( lhs == 1) 
     {
       if ( nsp_move_double(stack,1,(double) err)==FAIL) return RET_BUG;
@@ -600,41 +611,29 @@ static int  int_nsp_play_data(Stack stack,int rhs,int opt,int lhs)
 static int  int_nsp_record_data(Stack stack,int rhs,int opt,int lhs)
 {
   double seconds = 1;
-  int sample_rate = 44100, channels = 2, device = -1, err;
+  int sample_rate = 44100, channels = 2, device = -1, err, o_device=-2;
   NspMatrix *M;
   int_types T[] = {new_opts, t_end} ;
   nsp_option opts[] ={{"device",s_int,NULLOBJ,-1},
 		      {"channels",s_int,NULLOBJ,-1},
 		      {"seconds",s_double,NULLOBJ,-1},
 		      {"samplerate",s_int,NULLOBJ,-1},
+		      {"o_device",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
-  if ( GetArgs(stack,rhs,opt,T,&opts,&device,&channels,&seconds,&sample_rate) == FAIL)
+  if ( GetArgs(stack,rhs,opt,T,&opts,&device,&channels,&seconds,&sample_rate,&o_device) == FAIL)
     return RET_BUG;
-  err=  nsp_record_data(&M, seconds, sample_rate, channels, device);
+  err=  nsp_record_data(&M, seconds, sample_rate, channels, device, o_device);
   if ( err == FAIL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
 
-static int  int_nsp_play_data_nocb(Stack stack,int rhs,int opt,int lhs)
-{
-  int err=1,flag = 0;
-  int_types T[] = {realmat,s_int, t_end};
-  NspMatrix *M;
-  CheckLhs(1,1);
-  if ( GetArgs(stack,rhs,opt,T,&M,&flag) == FAIL) return RET_BUG;
-  err= nsp_play_data_nocb(M,flag);
-  if ( nsp_move_double(stack,1,(double) err)==FAIL) return RET_BUG;
-  return 1;
-}
 
 static OpTab Paudio_func[]={
   {"playsndfile", int_nsp_play_file},
   {"playsnd",     int_nsp_play_data},
   {"recordsnd",   int_nsp_record_data},
-  /* to be finished */
-  {"playM1",   int_nsp_play_data_nocb},
   {"player_create", int_player_create},
   {(char *) 0, NULL}
 };

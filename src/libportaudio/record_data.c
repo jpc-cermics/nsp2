@@ -42,11 +42,12 @@ typedef struct {
 
 typedef struct {
   NspMatrix* M;    /* matrix to be played nchannels x samples */
-  int o_device;    /* play on o_device or default device if -1 */
+  int i_device;    /* record on  i_device or default device if -1 */
   int err;         /* an error occured */
   IOFun  pa_print;  /* function to be used for error report */
   int sample_rate;
   int channels;
+  int o_device;       /* play recorded data on play device */
 } thread_data;
 
 static thread_data threadData ={0};
@@ -61,22 +62,26 @@ gpointer record_data_thread(gpointer data)
 }
 
 
-int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device)
+int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device, int o_device)
 {
   int inc=-1;
-  NspMatrix *Loc;
+  NspMatrix *Loc=NULL;
   *M= NULL;
   nsp_finish_pa_thread();
   /* record in a thread */
   nsp_pa_thread_set_status(NSP_PA_ACTIVE);
   /* create a matrix for storing data */
-  if ( (Loc = nsp_matrix_create(NVOID,'r',channels, seconds*sample_rate)) == NULLMAT ) 
-    return FAIL;
+  if ( seconds != -1 ) 
+    {
+      if ( (Loc = nsp_matrix_create(NVOID,'r',channels, seconds*sample_rate)) == NULLMAT ) 
+	return FAIL;
+    }
   threadData.M = Loc;
-  threadData.o_device = device;
+  threadData.i_device = device;
   threadData.sample_rate = sample_rate;
   threadData.channels = channels;
   threadData.pa_print = Scierror;
+  threadData.o_device = o_device;
   if (!g_thread_supported ()) g_thread_init (NULL);
   g_thread_create(record_data_thread,&threadData,FALSE,NULL);
   /* we need to wait for the end */
@@ -91,6 +96,10 @@ int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int 
   g_source_remove(timer_pa);
   /* back to default */
   signal(SIGINT,controlC_handler);
+  if ( seconds == -1 ) 
+    {
+      Loc =  threadData.M;
+    }
   nsp_float2double (&Loc->mn, Loc->F, &inc, Loc->R, &inc);
   *M= threadData.M;
   /* */
@@ -107,42 +116,76 @@ int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int 
 
 static void record_data(thread_data *data)
 {
-  PaStreamParameters inputParameters;
+  PaStreamParameters istream_p;
+  PaStreamParameters ostream_p;
   PaStream *stream;
   PaError err;
-  int i;
-  int totalFrames;
+  int i, offset = 0,  totalFrames, channels=2, dynamic=FALSE;
 
   data->err=OK;
   
-  totalFrames = data->M->n;
-
-  for( i=0; i< data->M->mn; i++ ) data->M->F[i]=0;
-
+  if ( data->M != NULL ) 
+    {
+      totalFrames = data->M->n;
+      for( i=0; i< data->M->mn; i++ ) data->M->F[i]=0;
+      channels = data->M->m;
+    }
+  else
+    {
+      dynamic = TRUE;
+      if ( (data->M = nsp_matrix_create(NVOID,'r',channels, FRAMES_PER_BUFFER)) == NULLMAT ) 
+	{
+	  data->err= FAIL;
+	  return;
+	}
+      for( i=0; i< data->M->mn; i++ ) data->M->F[i]=0;
+    }
 
   if ((err = Pa_Initialize()) != paNoError ) goto error;
 
-
-  if ( data->o_device== -1)
-    inputParameters.device = Pa_GetDefaultInputDevice();
+  if ( data->i_device== -1)
+    istream_p.device = Pa_GetDefaultInputDevice();
   else
-    inputParameters.device = data->o_device;
+    istream_p.device = data->i_device;
     
-  if (inputParameters.device == paNoDevice) 
+  if (istream_p.device == paNoDevice) 
     {
       data->pa_print("Error: No default input device.\n");
       goto error;
     }
 
-  inputParameters.channelCount = data->M->m;
-  inputParameters.sampleFormat = paFloat32;
-  inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
-  inputParameters.hostApiSpecificStreamInfo = NULL;
+  istream_p.channelCount = channels;
+  istream_p.sampleFormat = paFloat32;
+  istream_p.suggestedLatency = Pa_GetDeviceInfo( istream_p.device )->defaultLowInputLatency;
+  istream_p.hostApiSpecificStreamInfo = NULL;
 
-  err = Pa_OpenStream(
-		      &stream,
-		      &inputParameters,
-		      NULL, 
+
+  if ((err = Pa_IsFormatSupported(&istream_p,NULL, data->sample_rate)) != paNoError)
+    {
+      data->pa_print("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+      data->err=FAIL;goto error;
+    }
+
+  if ( data->o_device >= -1 ) 
+    {
+      if ( data->o_device == -1 ) 
+	ostream_p.device = Pa_GetDefaultOutputDevice();
+      else
+	ostream_p.device =  data->o_device;
+      ostream_p.channelCount = channels;
+      ostream_p.sampleFormat = paFloat32;
+      ostream_p.suggestedLatency = Pa_GetDeviceInfo( ostream_p.device )->defaultLowInputLatency;
+      ostream_p.hostApiSpecificStreamInfo = NULL;
+      if ((err = Pa_IsFormatSupported(NULL,&ostream_p,data->sample_rate)) != paNoError)
+	{
+	  data->pa_print("Error: in portaudio, %s\n", Pa_GetErrorText(err));
+	  data->err=FAIL;goto error;
+	}
+    }
+  
+  err = Pa_OpenStream(&stream,
+		      &istream_p,
+		      (data->o_device >= -1) ? &ostream_p: NULL,
 		      data->sample_rate,
 		      FRAMES_PER_BUFFER,
 		      paClipOff, 
@@ -152,10 +195,57 @@ static void record_data(thread_data *data)
   if( err != paNoError ) goto error;
 
   if(( err = Pa_StartStream( stream )) != paNoError ) goto error;
-  
-  err = Pa_ReadStream( stream, data->M->F, totalFrames );
-  if( err != paNoError ) goto error;
-    
+
+  if ( dynamic == TRUE ) 
+    {
+      while (1)
+	{
+	  err = Pa_ReadStream( stream, data->M->F + offset , FRAMES_PER_BUFFER);
+	  if( err != paNoError ) goto error;
+	  offset += FRAMES_PER_BUFFER * channels;
+	  if ( nsp_pa_thread_get_status() == NSP_PA_END ) 
+	    {
+	      Pa_AbortStream(stream);
+	      break;
+	    }
+	  if ( data->o_device >= -1 )
+	    {
+	      err = Pa_WriteStream(stream, data->M->F + offset , FRAMES_PER_BUFFER);
+	      if( err != paNoError ) goto error;
+	    }
+
+	  data->M->n += FRAMES_PER_BUFFER;
+	  data->M->F = realloc(data->M->F, data->M->n*channels*sizeof(double));
+	  if ( data->M->F == NULL) 
+	    {
+	      data->M->m = data->M->n =0;
+	      goto error;
+	    }
+	  data->M->mn =  data->M->m * data->M->n;
+	}
+    }
+  else 
+    {
+      while (1)
+	{
+	  int n = Min( FRAMES_PER_BUFFER, (data->M->n - offset));
+	  err = Pa_ReadStream( stream, data->M->F + offset , n);
+	  if( err != paNoError ) goto error;
+	  if ( data->o_device >= -1)
+	    {
+	      err = Pa_WriteStream(stream, data->M->F + offset ,n);
+	      if( err != paNoError ) goto error;
+	    }
+	  offset += n* channels;
+	  if ( nsp_pa_thread_get_status() == NSP_PA_END ) 
+	    {
+	      Pa_AbortStream(stream);
+	      break;
+	    }
+	  if ( offset >= data->M->n ) break;
+	}
+    }
+
   if ((err = Pa_CloseStream( stream )) != paNoError ) goto error;
   
   Pa_Terminate();

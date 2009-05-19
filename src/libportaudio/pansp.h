@@ -85,8 +85,9 @@ extern NspPa *GetPa (Stack stack, int i);
 
 extern int nsp_play_file(const char *file,int sync,int device);
 extern int nsp_play_data(NspMatrix *M,int sample_rate,int sync,int device);
-extern int nsp_play_data_nocb(NspMatrix *M,int flag);
-extern int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int device);
+extern int nsp_play_data_no_cb(NspMatrix *M,int sample_rate, int sync,int device);
+extern int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, 
+			   int device,int o_device);
 
 typedef enum { NSP_PA_ACTIVE , NSP_PA_END,  NSP_PA_INACTIVE } nsp_pa_status;
 

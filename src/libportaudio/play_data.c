@@ -162,12 +162,12 @@ static void play_data(thread_data *data)
   ostream_p.suggestedLatency = Pa_GetDeviceInfo(ostream_p.device )->defaultLowOutputLatency;
   ostream_p.hostApiSpecificStreamInfo = 0;
 
-  if ((err = Pa_IsFormatSupported(NULL, &ostream_p, 44100)) != paNoError)
+  if ((err = Pa_IsFormatSupported(NULL, &ostream_p, data->sample_rate)) != paNoError)
     {
       data->pa_print("Error: in portaudio, %s\n", Pa_GetErrorText(err));
       data->err=FAIL;goto end;
     }
-  
+
   err = Pa_OpenStream(&ostream,
 		      NULL,
 		      &ostream_p,
