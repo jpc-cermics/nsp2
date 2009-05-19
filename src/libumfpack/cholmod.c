@@ -457,7 +457,10 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( lhs < 2 && H->obj->Common.status != CHOLMOD_OK)
     {
-      Scierror("Error: matrix is not positive definite\n");
+      if ( ll )
+	Scierror("Error: LLt factorization fails (matrix is not positive definite)\n");
+      else
+	Scierror("Error: LDLt factorization fails\n");
       return RET_BUG;
     }
   /* we return the minor and H 
