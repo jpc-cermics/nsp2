@@ -631,9 +631,9 @@ static int  int_nsp_record_data(Stack stack,int rhs,int opt,int lhs)
 
 
 static OpTab Paudio_func[]={
-  {"playsndfile", int_nsp_play_file},
-  {"playsnd",     int_nsp_play_data},
-  {"recordsnd",   int_nsp_record_data},
+  {"playfile", int_nsp_play_file},
+  {"play",     int_nsp_play_data},
+  {"record",   int_nsp_record_data},
   {"player_create", int_player_create},
   {(char *) 0, NULL}
 };
