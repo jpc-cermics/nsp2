@@ -359,7 +359,6 @@ static AttrTab nsp_pa_attrs[] = {
  * play given data in the audio stream. 
  */
 
-
 static int int_pa_play_stream(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspPa *P = self;
@@ -403,7 +402,7 @@ static int int_pa_play_stream(void *self,Stack stack, int rhs, int opt, int lhs)
       err = Pa_WriteStream( P->pa->ostream, buffer, FRAMES_PER_BUFFER );
       if( err != paNoError ) 
 	{
-	  Scierror("Error: %s\n", Pa_GetErrorText(err));
+	  Scierror("Error:  %s\n", Pa_GetErrorText(err));
 	  return RET_BUG;
 	}
       if ( offset >= M->n ) break;
@@ -419,6 +418,8 @@ static int int_pa_stop_stream(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   /* -- Now we stop the stream -- */
+  if (  P->pa->ostream == NULL) return 0;
+
   if (( err = Pa_StopStream( P->pa->ostream )) != paNoError )
     goto end;
   
@@ -511,7 +512,7 @@ static void nsp_paobj_open(NspPa *P)
   
   max = Pa_GetDeviceInfo(ostream_p.device)->maxOutputChannels;
 
-  if ( P->pa->channels > 2 )
+  if ( P->pa->channels > max )
     {
       Scierror("Error: in portaudio here only stereo or mono sounds (%d>2) \n", 
 	       P->pa->channels);
@@ -523,7 +524,7 @@ static void nsp_paobj_open(NspPa *P)
   ostream_p.suggestedLatency = Pa_GetDeviceInfo(ostream_p.device )->defaultLowOutputLatency;
   ostream_p.hostApiSpecificStreamInfo = 0;
 
-  if ((err = Pa_IsFormatSupported(NULL, &ostream_p, 44100)) != paNoError)
+  if ((err = Pa_IsFormatSupported(NULL, &ostream_p, P->pa->sample_rate)) != paNoError)
     {
       Scierror("Error: in portaudio, %s\n", Pa_GetErrorText(err));
       P->pa->err=FAIL;goto end;
@@ -532,7 +533,7 @@ static void nsp_paobj_open(NspPa *P)
   err = Pa_OpenStream(&P->pa->ostream,
 		      NULL,
 		      &ostream_p,
-		      44100,
+		      P->pa->sample_rate,
 		      FRAMES_PER_BUFFER, /* frames per buffer */
 		      paNoFlag,
 		      NULL,
