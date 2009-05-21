@@ -162,6 +162,30 @@ static int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,O);
   return 1;
 }  
+static int int_mxtest6_1(Stack stack, int rhs, int opt, int lhs)
+{
+  int L_1;
+  double L_31;
+  NspMatrix *A,*B;
+  NspSMatrix *L_2,*L_32;
+  NspObject *O1,*O;
+  NspMatrix *O2;
+  int_types T[]={matcopy, mat,list_begin,s_int,smat,list_begin,s_double,smat,list_end,
+		 list_end,obj,obj_check, t_end} ;
+  const char *Names[]={ "A","B","C","D","E",NULL};
+  int_types Ret[]={ s_int,s_double,matcopy,string,list_begin,s_int,s_int,list_end, t_end};
+  if ( GetArgs(stack,rhs,opt, T,&A,&B,&L_1,&L_2,&L_31,&L_32,&O1,&nsp_type_matrix,&O2) == FAIL) 
+    return RET_BUG;
+  nsp_mat_mult_el(A,B);
+  nsp_smatrix_print(L_2,0,NULL,0);
+  nsp_smatrix_print(L_32,0,NULL,0);
+  nsp_object_print(O1,0,NULL,0);
+  /* test the hash builder */
+  if (( O = (NspObject *) BuildHashFromArgs(NVOID,Names,Ret,10,20.67,A,"foo",10,20 ))== NULLOBJ ) 
+    return RET_BUG;
+  MoveObj(stack,1,O);
+  return 1;
+}  
 
 static int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
 {
@@ -382,6 +406,7 @@ static OpTab Interf_func[]={
   {"interf_test5", int_mxtest5},
   {"interf_test5_2", int_mxtest5_2},
   {"interf_test6", int_mxtest6},
+  {"interf_test6_1", int_mxtest6_1},
   {"interf_test7", int_mxtest7},
   {"interf_test8", int_mxtest8},
   {"interf_test9", int_mxtest9},

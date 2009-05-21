@@ -84,7 +84,7 @@ NspHash *new_hash();
 
 #define NULLHASH (NspHash*) 0
 
-extern NspHash *nsp_hash_create(char *name, unsigned int size);
+extern NspHash *nsp_hash_create(const char *name, unsigned int size);
 extern NspHash *nsp_hash_copy(NspHash *H);
 extern void nsp_hash_destroy(NspHash *H);
 extern int nsp_hash_info(NspHash *H, int indent,char *name, int rec_level);
@@ -135,7 +135,7 @@ typedef enum {
 
 extern int nsp_hsearch (NspHash *H,const char *key, NspObject **data,HashOperation action);
 extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
-NspHash *nsp_hcreate(char *name, unsigned int nel);
+NspHash *nsp_hcreate(const char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);
 extern NspHash *nsp_current_frame_to_hash(void);
 extern NspSMatrix * nsp_hash_get_keys(NspHash *H);

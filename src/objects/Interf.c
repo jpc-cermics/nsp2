@@ -757,6 +757,209 @@ static NspList *BuildListFromArgs_1(const char *name,int_types **T,va_list *ap)
     }
 }
 
+/**
+ * BuildHashFromArgs:
+ * @name: name to be given to the #NspHash
+ * @Names: array of names (NULL terminated).
+ * @T: vector of #int_types 
+ * @Varargs: list of arguments
+ * 
+ * Builds a #NspHash from a set of arguments. It is a quick 
+ * way of building a hash table from a given set of #NspObjects.
+ * 
+ * <programlisting>
+ * NspHash *H;
+ * int_types Ret[]={ s_int,s_double,matcopy,string,list_begin,s_int,s_int,list_end, t_end};
+ * /<!-- -->* H= hash(A=10,B=10.67,C=copy of A,D="foo",E=list(10,20)); *<!-- -->/ 
+ * L=  BuildListFromArgs(NVOID,Ret,names,10,20.67,A,10,20 );
+ * </programlisting>
+ * 
+ * Return value: a newly created #NspList or %NULL.
+ **/
+
+static NspHash *BuildHashFromArgs_1(const char *name,const char *names[],int_types **T,va_list *ap);
+
+NspHash*BuildHashFromArgs(const char *name,const char *names[],int_types *T,...) 
+{
+  va_list ap;
+  va_start(ap,T);
+  return BuildHashFromArgs_1(name,names,&T,&ap);
+}
+
+static NspHash *BuildHashFromArgs_1(const char *name,const char *names[],int_types **T,va_list *ap)
+{
+  const char *oname;
+  int bval;
+  NspHash *L;
+  NspList *L1;
+  NspObject *O;
+  int count=0;
+  while ( names[count] != NULL) { count++;};
+  if (( L=nsp_hash_create(name,count)) == NULLHASH ) return NULLHASH;
+  count =0;
+  while ( 1 )
+    {
+      switch ( **T  ) 
+	{
+	case s_int : 
+	  oname = names[count++];
+	  if (( O =nsp_create_object_from_int(oname,va_arg(*ap,int))) == NULLOBJ ) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case s_double : 
+	  oname = names[count++];
+	  if (( O =nsp_create_object_from_double(oname,va_arg(*ap,double))) == NULLOBJ ) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case s_bool : 
+	  bval = va_arg(*ap,int);
+	  if ( bval == TRUE) 
+	    { 
+	      oname = names[count++];
+	      if (( O =nsp_create_true_object(oname)) == NULLOBJ ) return NULLHASH;
+	    }
+	  else 
+	    { 
+	      oname = names[count++];
+	      if (( O =nsp_create_false_object(oname)) == NULLOBJ ) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case dim_arg : Scierror("not supported\n"); return NULLHASH;
+	  break;
+	case string :  
+	case stringcopy:
+	  oname = names[count++];
+	  if ((O =nsp_create_object_from_str(oname,va_arg(*ap, char *))) == NULLOBJ ) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case mat_int :
+	case realmat :
+	case mat :  
+	  O = (NspObject *) va_arg(*ap, NspMatrix *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case matcopy_int:
+	case matcopy :
+	case realmatcopy :
+	  if ((O = (NspObject *) nsp_matrix_copy(va_arg(*ap, NspMatrix *)))== NULLOBJ) return NULLHASH ;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case imat :
+	  O = (NspObject *) va_arg(*ap, NspIMatrix *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case imatcopy:
+	  if ((O = (NspObject *) nsp_imatrix_copy(va_arg(*ap, NspIMatrix *)))== NULLOBJ) return NULLHASH ;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case bmat :  
+	  O = (NspObject *) va_arg(*ap, NspBMatrix *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case bmatcopy :  
+	  if ((O = (NspObject *)nsp_bmatrix_copy(va_arg(*ap, NspBMatrix *)))== NULLOBJ) return NULLHASH ;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,(NspObject *) va_arg(*ap, NspBMatrix *)) == FAIL ) return NULLHASH;
+	  break;
+	case hash :
+	  O = (NspObject *) va_arg(*ap, NspHash *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O ) == FAIL ) return NULLHASH;
+	  break;
+	case hashcopy :
+	  if ((O = (NspObject *) nsp_hash_copy(va_arg(*ap,NspHash *)))== NULLOBJ) return NULLHASH ;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case smat : 
+	  O = (NspObject *) va_arg(*ap, NspSMatrix *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O ) == FAIL ) return NULLHASH;
+	  break;
+	case smatcopy : 
+	  if ((O = (NspObject *)nsp_smatrix_copy(va_arg(*ap, NspSMatrix *)))== NULLOBJ) return NULLHASH ;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case list :
+	  O = (NspObject *) va_arg(*ap, NspList *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case list_begin : 
+	  (*T)++;
+	  oname = names[count++];
+	  if ((L1=BuildListFromArgs_1(oname,T,ap))== NULLLIST) return NULLHASH;
+	  if (nsp_hash_enter( L,(NspObject *)L1) == FAIL ) return NULLHASH;
+	  break;
+	case obj : 
+	  O= va_arg(*ap, NspObject *);
+	  if ( Ocheckname(O,NVOID) )
+	    {
+	      oname = names[count++];
+	      if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	    }
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case objcopy: 
+	  if ((O=nsp_object_copy(va_arg(*ap, NspObject *)))== NULLOBJ ) return NULLHASH;
+	  oname = names[count++];
+	  if (nsp_object_set_name(O,oname) == FAIL) return NULLHASH;
+	  if (nsp_hash_enter( L,O) == FAIL ) return NULLHASH;
+	  break;
+	case opts : 
+	case new_opts : 
+	  Scierror("do not use opts in BuildListFromArgs\n");
+	  return NULLHASH;
+	  break ; 
+	case obj_check:
+	  Scierror("do not use obj_check in BuildListFromArgs\n");
+	  return NULLHASH;
+	  break;
+	case list_end: 
+	case t_end : 
+	  return L;
+	  break;
+	}
+      (*T)++; 
+    }
+}
+
 
 /**
  * RetArgs:

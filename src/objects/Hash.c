@@ -644,7 +644,7 @@ static int isprime(unsigned int number)
  * Return value: a #NspHash object or %NULLHASH
  **/
 
-NspHash *nsp_hcreate(char *name, unsigned int nel)
+NspHash *nsp_hcreate(const char *name, unsigned int nel)
 {
   NspHash *H = new_hash();
   Hash_Entry *htable;

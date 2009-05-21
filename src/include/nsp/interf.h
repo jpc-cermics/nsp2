@@ -217,6 +217,7 @@ extern int  GetArgs (Stack stack,int rhs,int opt,int_types *T,...);
 extern int  GetListArgs (NspList *L,int pos,int_types *T,...); 
 /* List *BuildListFromArgs_1 (int_types *T,va_list *ap); */
 extern NspList *BuildListFromArgs (const char *name,int_types *T,...);
+extern NspHash*BuildHashFromArgs(const char *name,const char *names[],int_types *T,...);
 extern int  GetFromTable (NspObject **Objs,int_types *T,...);
 extern int  get_optional_args(Stack stack,int rhs,int opt,nsp_option opts[],...);
 extern int  get_optional_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...);

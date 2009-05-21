@@ -486,7 +486,7 @@ NspHash  *GetHash(Stack stack, int i)
  * constructor 
  *-----------------------------------------------------*/
 
-NspHash *nsp_hash_create(char *name, unsigned int size)
+NspHash *nsp_hash_create(const char *name, unsigned int size)
 {
   return(nsp_hcreate(name,size));
 } 
