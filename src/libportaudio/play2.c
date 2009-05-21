@@ -183,13 +183,8 @@ static void play_data_nocb(thread_data *data)
 	  for ( j = 0 ; j < data->M->m ; j++) 
 	    buffer[j+data->M->m*(i)] = data->M->R[j+ data->M->m*(i+offset)];
 	}
-      for (  ; i < FRAMES_PER_BUFFER; i++)
-	{
-	  for ( j = 0 ; j < data->M->m ; j++) 
-	    buffer[j+data->M->m*(i)] = 0;
-	}
       offset += n;
-      err = Pa_WriteStream( ostream, buffer, FRAMES_PER_BUFFER );
+      err = Pa_WriteStream( ostream, buffer, n);
       if( err != paNoError ) goto end;
       if ( nsp_pa_thread_get_status() == NSP_PA_END ) 
 	{

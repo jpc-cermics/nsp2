@@ -393,13 +393,8 @@ static int int_pa_play_stream(void *self,Stack stack, int rhs, int opt, int lhs)
 	  for ( j = 0 ; j < M->m ; j++) 
 	    buffer[j+M->m*(i)] = M->R[j+ M->m*(i+offset)];
 	}
-      for (  ; i < FRAMES_PER_BUFFER; i++)
-	{
-	  for ( j = 0 ; j < M->m ; j++) 
-	    buffer[j+M->m*(i)] = 0;
-	}
       offset += n;
-      err = Pa_WriteStream( P->pa->ostream, buffer, FRAMES_PER_BUFFER );
+      err = Pa_WriteStream( P->pa->ostream, buffer,n);
       if( err != paNoError ) 
 	{
 	  Scierror("Error:  %s\n", Pa_GetErrorText(err));
