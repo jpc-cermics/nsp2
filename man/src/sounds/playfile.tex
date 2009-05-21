@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+
+\mansection{playfile}
+\begin{mandesc}
+  \short{playfile}{play a sound file using libsndile and portaudio} 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  playfile(y, sync=bool,device=int)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{file}: a path name to a file containing sample sounds. 
+    \vname{sync}: optional boolean argument (\verb+%f+ by default). 
+    If true the call to \verb+playfile+ 
+    will block until the end of the play. The waiting time is spent
+    in a gtk loop. The audio play may be interupted by 
+    Ctrl-C, or by using the Stop Audio submenu of the Control menu. 
+    If \verb+sync+ is false, the \verb+playfile+ is run in a non-blocking way, the 
+    play may be stopped by the  Stop Audio submenu or by an other call 
+    to \verb+playfile+. 
+   \vname{device}: device to be used for output (default value \verb+-1+). The default output 
+   device is used if \verb+device+ is equal to \verb+-1+.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  play sample sounds contained in a file. The sound file is read with 
+  the help of the \verb+libsndfile+ library and should have a format compatible with 
+  \verb+libsndfile+.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    rate=44100;
+    t = linspace(0,3,3*rate);
+    y = sin(2*%pi*440*t); // mono 
+    F=sndfile('TMPDIR/test.wav',mode='w',samplerate=rate,channels=1);
+    F.write[x];
+    F.close[];
+    // now play the file 
+    playfile('TMPDIR/test.wav')
+  \end{Verbatim}
+\end{examples}
+\begin{manseealso}
+  \manlink{record}{record }
+  \manlink{play}{play}  
+  \manlink{player\_create}{player-create}  
+\end{manseealso}
+

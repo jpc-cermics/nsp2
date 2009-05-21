@@ -1,0 +1,43 @@
+% -*- mode: latex -*-
+\mansection{record}
+\begin{mandesc}
+  \short{record}{record audio samples with portaudio} 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  y = record(device=int,channels=int,seconds=num,samplerate=num,o_device=num)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{device}: device to be used for input (default value \verb+-1+). The default
+   input device is used if \verb+device+ is equal to \verb+-1+.
+   \vname{channels}: number of channels to record.
+   \vname{seconds}: record for \verb+seconds+. If \verb+seconds+ is negative the 
+   record length is unbounded and recording is to be stopped by the user using the 
+   Stop Audio submenu of the Control menu. 
+   \vname{o_device}: if set to a value greater or equal to \verb+-1+ the recorded 
+   samples are also played in the output device given by \verb+o_device+.
+   \vname{samplerate} give the audio sample rate (default value is 44100).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  record sample sounds and return the samples in a matrix (the number of 
+  rows gives the number of channels, the number of columns gives the number of samples).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    y = record(seconds=3,rate=44100);
+    play(y,sync=%t);
+  \end{Verbatim}
+\end{examples}
+\begin{manseealso}
+  \manlink{play}{play}  
+  \manlink{playfile}{playfile}  
+  \manlink{player\_create}{player-create}  
+\end{manseealso}
+

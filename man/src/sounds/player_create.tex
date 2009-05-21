@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+
+\mansection{play}
+\begin{mandesc}
+  \shortunder{player\_create}{player_create}{play audio samples using portaudio} 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  P=player_create(y, device=int,samplerate=num,channels=int)  
+  P.write[y];
+  P.stop[];
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{y}: audio sample given as a real matrix. The number of 
+    rows must be equal to the channels parameter used to create \verb+P+.
+    The number of columns gives the number of samples.
+   \vname{channels}: number of channels to record.
+   \vname{device}: device to be used for output (default value \verb+-1+). The default output 
+   device is used if \verb+device+ is equal to \verb+-1+.
+   \vname{samplerate} give the audio sample rate (default value is 44100).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+player_create+ is used to create a player object which can be used to 
+  write sound samples to an audio device using portaudio. 
+  Sound samples are written to the audio device with the \verb+write+ method 
+  (which is blocking). The audio stream is closed using the \verb+stop+ method. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    rate=44100;
+    t = linspace(0,3,3*rate);
+    y = sin(2*%pi*440*t); // mono 
+    P = player_create(samplerate=rate,channels=1);
+    for freq=440:10:480
+      y = sin(2*%pi*freq*t);
+      P.write[y]; 
+    end
+    P.stop[];
+  \end{Verbatim}
+\end{examples}
+\begin{manseealso}
+  \manlink{record}{record} 
+  \manlink{play}{play}  
+  \manlink{playfile}{playfile}  
+\end{manseealso}
+
