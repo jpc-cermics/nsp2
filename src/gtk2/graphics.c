@@ -54,17 +54,17 @@ static NspCells *GetImageCells(Stack stack,int pos) ;
 
 int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
 {
-  NspCells *C;
   int width,height,pixbuf_mode,rowstride,ch,col,row;
   NspObject *ret;
   guchar *pixels, *p;
   GdkPixbuf* pix;
-
+  int nChannels, nch;
   CheckRhs(1, 1);
   CheckLhs(1, 1);
 
   if ( IsCellsObj(stack,1) )
     {
+      NspCells *C=NULL;
       if ((C= GetImageCells(stack,1)) == NULL) return RET_BUG;
       if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
 	{
@@ -81,12 +81,14 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
 	}
       rowstride = gdk_pixbuf_get_rowstride (pix);
       pixels = gdk_pixbuf_get_pixels (pix);
-      
-      for(ch = 0; ch < Max(C->mn,3) ; ch++) 
+      nChannels = gdk_pixbuf_get_n_channels(pix);
+      nch = (C->mn==1) ? 3 : C->mn;
+      nch = Min(nch,nChannels);
+      for(ch = 0; ch < nch ; ch++) 
 	for(col =0; col < width; col++)
 	  for(row = 0; row < height; row++)
 	    {
-	      p =  pixels + row * rowstride + col * Max(C->mn,3);
+	      p =  pixels + row * rowstride + col * nChannels;
 	      *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
 	    }
       nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
@@ -107,12 +109,13 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
 	}
       rowstride = gdk_pixbuf_get_rowstride (pix);
       pixels = gdk_pixbuf_get_pixels (pix);
-      
+      nChannels = gdk_pixbuf_get_n_channels(pix);
+      nch = Min(3,nChannels);
       for(ch = 0; ch < 3 ; ch++) 
 	for(col =0; col < width; col++)
 	  for(row = 0; row < height; row++)
 	    {
-	      p =  pixels + row * rowstride + col * Max(C->mn,3);
+	      p =  pixels + row * rowstride + col * nChannels;
 	      *(p+ch) = (guchar) M->R[row+height*col];
 	    }
       nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
@@ -136,11 +139,13 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
 
 int int_pixbuf_set_from_cells(Stack stack, int rhs, int opt, int lhs)
 {
+  int nch;
   GdkPixbuf *pix;
   NspGdkPixbuf *nsp_pix;
   NspCells *C;
   int nChannels,width,height,rowstride,ch,col,row;
   guchar *pixels, *p;
+
   CheckRhs(2, 2);
   CheckLhs(1, 1);
 
@@ -152,6 +157,7 @@ int int_pixbuf_set_from_cells(Stack stack, int rhs, int opt, int lhs)
   height = gdk_pixbuf_get_height(pix);
   rowstride = gdk_pixbuf_get_rowstride (pix);
   pixels = gdk_pixbuf_get_pixels (pix);
+  nChannels = gdk_pixbuf_get_n_channels(pix);
 
   if ((C= GetImageCells(stack,2)) == NULL) return RET_BUG;
   if ( C->mn != 3 && C->mn != 4 && C->mn != 1 ) 
@@ -167,11 +173,14 @@ int int_pixbuf_set_from_cells(Stack stack, int rhs, int opt, int lhs)
 	       NspFname(stack),width,height);
       return RET_BUG;
     }
-  for(ch = 0; ch < Max(C->mn,3) ; ch++) 
+  nch = (C->mn==1) ? 3 : C->mn;
+  nch = Min(nch,nChannels);
+
+  for(ch = 0; ch < nch  ; ch++) 
     for(col =0; col < width; col++)
       for(row = 0; row < height; row++)
 	{
-	  p =  pixels + row * rowstride + col * Max(C->mn,3);
+	  p =  pixels + row * rowstride + col * nChannels;
 	  *(p+ch) = (guchar) ((NspMatrix *) C->objs[(C->mn==1) ? 0 : ch])->R[row+height*col];
 	}
   return 0;
