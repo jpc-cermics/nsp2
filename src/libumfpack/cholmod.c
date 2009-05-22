@@ -415,7 +415,8 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
 
   /* optional arguments */
   if ( get_optional_args(stack,rhs,opt,opts,&sstype,&ctype,&beta,&ordering,&Perm) == FAIL) 
-    return RET_BUG;
+    goto err;
+
   /* checks the optional type argument */
   if ( sstype != NULL) 
     {
@@ -424,10 +425,18 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
       if ( rep < 0 ) 
 	{
 	  string_not_in_array(stack,sstype,types,"optional argument");
-	  return RET_BUG;
+	  goto err;
 	}
       if ( rep == 0 || rep == 1 ) stype=0; /* use all of A */
-      if ( rep == 1) transpose=TRUE;
+      if ( rep == 1 ) transpose=TRUE;
+      if ( rep == 2 )  /* use only upper part of the matrix (stype=1) but verify symmetry */
+	{
+	  if ( ! nsp_spcolmatrix_is_symmetric(A) )
+	    {
+	      Scierror("Error: matrix is not symmetric\n");
+	      goto err;
+	    }
+	}
       if ( rep == 3 ) stype = -1; /* use lower part */
     }
   /* checks the optional mode argument */
@@ -438,7 +447,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
       if ( rep < 0 ) 
 	{
 	  string_not_in_array(stack,ctype,types,"optional argument");
-	  return RET_BUG;
+	  goto err;
 	}
       ll = (rep == 0) ? TRUE : FALSE;
     }
@@ -461,7 +470,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
 	Scierror("Error: LLt factorization fails (matrix is not positive definite)\n");
       else
 	Scierror("Error: LDLt factorization fails\n");
-      return RET_BUG;
+      goto err;
     }
   /* we return the minor and H 
    */
@@ -473,7 +482,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
     }
   return Max(lhs,1);
  err: 
-  /* XXXX free */
+  nsp_cholmod_destroy(H);   /* XXXXX: is there other var to free ? */
   return RET_BUG;
 } 
 
@@ -855,7 +864,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
 
   /* optional arguments */
   if ( get_optional_args(stack,rhs,opt,opts,&sstype,&ctype,&beta,&ordering,&Perm) == FAIL) 
-    return RET_BUG;
+    goto err;
   /* checks the optional type argument */
   /* checks the optional type argument */
   if ( sstype != NULL) 
@@ -865,7 +874,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
       if ( rep < 0 ) 
 	{
 	  string_not_in_array(stack,sstype,types,"optional argument");
-	  return RET_BUG;
+	  goto err;
 	}
       if ( rep == 0 || rep == 1 ) stype=0; /* use all of A */
       if ( rep == 1) transpose=TRUE;
@@ -879,7 +888,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
       if ( rep < 0 ) 
 	{
 	  string_not_in_array(stack,ctype,types,"optional argument");
-	  return RET_BUG;
+	  goto err;
 	}
       ll = (rep == 0) ? TRUE : FALSE;
     }
