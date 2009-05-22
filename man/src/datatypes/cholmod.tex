@@ -79,7 +79,7 @@ The optional arguments have the following meaning:
      \begin{itemize} 
         \item \verb+type="up"+ use only the upper part of $A$ to factorize $A$
         \item  \verb+type="lo"+ use only the lower part of $A$ to factorize $A$.
-        \item  \verb+type="sym"+ use all the matrix (verify symmetry ?) ?
+        \item  \verb+type="sym"+ use all the matrix (verify the matrix symmetry)
         \item  \verb+type="col"+ factorize $A'A$.
         \item  \verb+type="row"+ factorize $AA'$.
      \end{itemize}
@@ -190,18 +190,33 @@ C = cholmod_create(A);
 [L,m,p] = C.get_ld[];
 D = diag(diag(L));
 L.set_diag[sparse(ones(n,1))]
-L*D*L' - A(p,p)  // should be a zero matrix 
+L*D*L' - A(p,p)  // should be a zero matrix (up to some precision)
 
 // solving a linear system
 b = randn(n,1);
 x = C.solve[b]
 norm(A*x-b)/norm(b)
 
-// 3/ rank 1 update
-vf = [0;0;0.5;0;1];
+// 3/ multiple rank update
+vf = [0,0.2; 0,-0.6; 0.5,0 ;0,0; 1,0];
 v = sparse(vf);
 Am = A + v*v';
-C.update[v(p)];
+C.update[v(p,:)];
+// verification
+[L,m,p] = C.get_ld[];
+D = diag(diag(L));
+L.set_diag[sparse(ones(n,1))]
+L*D*L' - Am(p,p)  // should be a zero matrix (up to some precision)
+
+// 4/ now downdate (retrieve the factorization of A)
+An = Am - v*v';
+C.downdate[v(p,:)];
+// verification
+[L,m,p] = C.get_ld[];
+D = diag(diag(L));
+L.set_diag[sparse(ones(n,1))]
+L*D*L' - A(p,p)  // should be a zero matrix (up to some precision)
+
 
   \end{Verbatim}
  \end{examples}
