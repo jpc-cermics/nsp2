@@ -411,6 +411,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_cholmod = new_type_cholmod(T_BASE);
   if(( H = cholmod_create(NVOID,(NspTypeBase *) nsp_type_cholmod)) == NULLCHOLMOD) 
     goto err;
+
   if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto err;
 
   /* optional arguments */
@@ -482,7 +483,8 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
     }
   return Max(lhs,1);
  err: 
-  nsp_cholmod_destroy(H);   /* XXXXX: is there other var to free ? */
+  if ( H != NULL) 
+    nsp_cholmod_destroy(H);   /* XXXXX: is there other var to free ? */
   return RET_BUG;
 } 
 
