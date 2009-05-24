@@ -1,0 +1,150 @@
+% -*- mode: latex -*-
+
+\mansection{direct and inverse fast Fourier transform}
+\begin{mandesc}
+  \short{fft}{fast Fourier transform}\\
+  \short{ifft}{inverse fast Fourier transform}\\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y = fft(x, dim=mode)
+y = fft(x, mode)
+y = ifft(x, dim=mode)
+y = ifft(x, mode)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: a real or complex vector or matrix
+    \vname{mode}: an integer or a string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{y}: resulting vector or matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+\verb+fft+ computes the discrete Fourier transform (dft) of a vector $x \in {\mathbb C}^m$:
+$$
+ y = F_m x, \quad  F_m = [ e^{-\frac{i 2 \pi k j}{m}} ]_{0 \le k, j \le m-1}
+$$
+and \verb+ifft+ computes the inverse transform, that is:
+$$
+ y = F_m^{-1} x, \quad  F_m^{-1} = \frac{1}{m} \bar{F}_m 
+$$
+using fast Fourier transform algorithms. In most cases nsp uses the routines from the fftw3 
+library (if you compile nsp and fftw library is not found, fftpack is used instead). Note 
+that fftw3 uses fast algorithms (in $m \log(m)$) for every $m$ even prime (but transforms 
+are faster when $m$ is a power of 2).
+
+The optional named argument \verb+dim+ have the following meaning:
+\begin{itemize}
+\item dim=0, (or "full", "FULL", "*") computes the fft or ifft of a row or column vector. If $x$ is a 
+matrix, it is considered as a big column vector (using the column major order) on which the fft or 
+ifft is computed but the result take the same form than $x$. This is the default.
+\item dim=1, (or "row", "ROW") computes the fft or ifft of each column vectors of the matrix $x$ (column $j$
+of $y$ correspond to the fft or ifft of column $j$ of $x$).
+\item dim=2, (or "col", "COL") computes the fft or ifft of each row vectors of the matrix $x$ (row $i$
+of $y$ correspond to the fft or ifft of row $i$ of $x$).
+\item dim="m" (or "M") for Matlab compatibility: if $x$ is a vector computes its fft or ifft but if
+$x$ is a matrix (with more than one row and one column) computes the fft or ifft of each column vectors 
+of the matrix $x$.
+\end{itemize}
+
+\paragraph{Remarks}
+
+\begin{enumerate}
+\item One interpretation of the dft is ``approximation of some Fourier coefficients'' of
+a $T$-periodic (complex valued) function $g$:
+$$
+      \hat{g}_k = ( g | \phi_k ) = \int_0^T g(t) \bar{\phi}_k(t) dt \mbox{ with } \phi_k(t) = \frac{1}{\sqrt{T}} e^{\frac{i 2\pi k t}{T}}
+$$
+by the rectangular rule using $m$ points uniformly spaced in $[0,T]$, $s_j = \Delta t \; j = (T/m) \; j, \quad j=0,\dots, m-1$:
+$$
+      \hat{g}_k \simeq c_k := \frac{T}{m} \sum_{j=0}^{m-1} g(s_j) \frac{1}{\sqrt{T}} e^{-\frac{i 2\pi  k s_j}{T}} 
+             =  \frac{\sqrt{T}}{m} \sum_{j=0}^{m-1}  g(s_j)  e^{-\frac{2\pi i k j}{m}}
+$$
+This formula could give only $m$ different complex numbers because $c_{k+m} = c_k$ for every $k \in {\mathbb Z}$. So
+it is possible to approximate Fourier coefficients only from $k = -(m-1)/2$ to  $k = (m-1)/2$ (when $m$ is
+odd). Moreover negative modes are transposed as ``positive ones'' using the periodicity  $c_{k+m} = c_k$, and
+$\hat{g}_{-k}$ is approximated by $c_{m-k}$. This could be written:
+$$
+   c = \frac{\sqrt{T}}{m} F_m G, \mbox{  with } G = [ g(s_0), \dots, g(s_m) ]^{\top}
+$$
+This explains that the dft computes (approximated) Fourier coefficients not the usual order. The function 
+\manlink{fftshift}{fftshift} can be used to recover it.
+
+\item The dft corresponds also to (exact) trigonometric polynomial interpolation of a periodic function at regularly spaced 
+points. If $g$ is such a $T$-periodic function, and one tries to interpolate it at the $s_j$ previously defined
+by:
+$$
+   p(t) := \sum_{k=-n}^n c_k \phi_k(t), \quad n = (m-1)/2
+$$
+then the same formula to compute $c$ is obtained but always with the special order for the coefficients
+(first corresponds to $c_0$, second to $c_1$, third is $c_2$, etc, last but one is $c_{-2}$ and 
+last one is $c_{-1}$).    
+
+\end{enumerate}
+
+\end{mandescription}
+ 
+\begin{examples}
+ \paragraph{simple example}
+  \begin{Verbatim}
+// build a pure periodic signal from a trigonometric polynomial
+// and recover its coefficients using fft
+function x = poly_trigo(t, T, coef, num)
+    x = zeros(size(t));
+    for i=1:numel(coef), x = x + coef(i)*exp((2*%pi*%i*num(i)/T)*t)/sqrt(T); end
+endfunction
+// build a signal (real valued)
+T = 2;   // period
+coef = [0.5,   -1,  1, 0.86, 1,  -1, 0.5];  // coef
+num  = [-12  , -4, -1, 0   , 1,   4,  12];  // mode number of the coef
+
+// use a time discretisation and plot the signal
+m = 101;
+t = linspace(0, T, m+1)';
+x = poly_trigo(t, T, coef, num);
+xset("window",0)
+xbasc()
+plot2d(t, real(x), style=2)
+xtitle("my signal")
+
+// recover the coefficients using fft
+c = (sqrt(T)/m)*real(fft(x(1:m)));
+// reorder
+c = fftshift(c);
+
+xset("window",1)
+xbasc()
+// limit between mode -20 to 20 (modes other than -12, -4, -1, 0, 1, 4, 12
+// should be null or numerically negligeable)
+plot2d3((-20:20)',c(31:71),style=2, rect=[-21,-1.2,21,1.2])
+plot2d3(num+0.2, coef, frameflag=0,style=5)
+xtitle("blue: coefs from fft, red: exact coefs")
+
+// in fact the coefs got from fft should be exact and this must be so
+// if m >= 2*12+1 = 25. Try with m = 25
+m = 25;
+t = linspace(0, T, m+1)';
+x = poly_trigo(t, T, coef, num);
+c = (sqrt(T)/m)*real(fft(x(1:m)));
+// reorder
+c = fftshift(c);
+xset("window",2)
+xbasc()
+plot2d3((-12:12)',c,style=2, rect=[-13,-1.2,13,1.2])
+plot2d3(num+0.2, coef, frameflag=0,style=5)
+xtitle("blue: coefs from fft, red: exact coefs")
+  \end{Verbatim}
+ \end{examples}
+
+% -- Authors
+\begin{authors}
+   fftw: M. Frigo,S.G. Johnson;  nsp interface: Bruno Pincon; fftpack: P.N. Swarztrauber
+\end{authors}

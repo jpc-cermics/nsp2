@@ -1,0 +1,64 @@
+% -*- mode: latex -*-
+
+\mansection{utility functions for fast Fourier transforms}
+\begin{mandesc}
+  \short{fftshift}{reorder the Fourier coefficients computed by fft}\\
+  \short{ifftshift}{inverse operation}\\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+d = fftshift(c, dim=mode)
+d = fftshift(c, mode)
+d = ifftshift(c, dim=mode)
+d = ifftshift(c, mode)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{c, d}: real or complex vectors or matrices
+    \vname{mode}: an integer or a string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation. 
+    This argument is optional and if omitted 'full' is assumed.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+\verb+fftshift+ reorder Fourier coefficients computed the \verb+fft+ function (see \manlink{fft}{fft}
+for some explanations).
+
+\verb+ifftshift+ do the inverse operation (usual order \verb+->+ ``fft order'').
+
+The optional named argument \verb+dim+ have the following meaning:
+\begin{itemize}
+\item dim=0, (or "full", "FULL", "*") reorder row or column vectors (if $c$ is a 
+matrix, it is considered as a big column vector (using the column major order) on which 
+the reordering is applied). This is the default.
+\item dim=1, (or "row", "ROW") reorder each column vectors of the matrix $c$.
+\item dim=2, (or "col", "COL") reorder each row vectors of the matrix $c$.
+\item dim="m" (or "M") for Matlab compatibility: if $c$ is a vector reorder it but if
+$c$ is a matrix each column vector is reordered.
+\end{itemize}
+
+\end{mandescription}
+ 
+\begin{examples}
+ \paragraph{simple example}
+  \begin{Verbatim}
+    c = [0, 1, 2, 3, -3, -2, -1]
+    d = fftshift(c)
+    ifftshift(d)
+
+    c = [0, 1, 2, -3, -2, -1]
+    d = fftshift(c)
+    ifftshift(d)
+  \end{Verbatim}
+\end{examples}
+
+% -- Authors
+\begin{authors}
+   Bruno Pincon
+\end{authors}
