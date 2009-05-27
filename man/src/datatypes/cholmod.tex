@@ -104,7 +104,7 @@ The optional arguments have the following meaning:
         \item $-5$ use NESDIS ordering only
         \item $-6$ use natural ordering with etree postreordering
      \end{itemize}
-  In fact if Cholmod have been compiled with the Metis support which will be likely the case, both
+  In fact if Cholmod have not been compiled with the Metis support which will be likely the case, both
   METIS and NESDIS are unavailable (in this case the default strategy is used and so only AMD
   ordering). Once the factorization have been computed the method \verb+get_ordering+ lets to
   known what ordering method have been used.
