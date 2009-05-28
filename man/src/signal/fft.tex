@@ -71,22 +71,22 @@ $$
 This formula could give only $m$ different complex numbers because $c_{k+m} = c_k$ for every $k \in {\mathbb Z}$. So
 it is possible to approximate Fourier coefficients only from $k = -(m-1)/2$ to  $k = (m-1)/2$ (when $m$ is
 odd). Moreover negative modes are transposed as ``positive ones'' using the periodicity  $c_{k+m} = c_k$, and
-$\hat{g}_{-k}$ is approximated by $c_{m-k}$. This could be written:
+$\hat{g}_{-k}$ is approximated by $c_{m-k}$, for $k=1,2, \dots$. This could be written:
 $$
-   c = \frac{\sqrt{T}}{m} F_m G, \mbox{  with } G = [ g(s_0), \dots, g(s_m) ]^{\top}
+   c = \frac{\sqrt{T}}{m} F_m G, \mbox{  with } G = [ g(s_0), \dots, g(s_{m-1}) ]^{\top}
 $$
 This explains that the dft computes (approximated) Fourier coefficients not the usual order. The function 
 \manlink{fftshift}{fftshift} can be used to recover it.
 
 \item The dft corresponds also to (exact) trigonometric polynomial interpolation of a periodic function at regularly spaced 
 points. If $g$ is such a $T$-periodic function, and one tries to interpolate it at the $s_j$ previously defined
-by:
+by the trigonometric polynomial:
 $$
    p(t) := \sum_{k=-n}^n c_k \phi_k(t), \quad n = (m-1)/2
 $$
 then the same formula to compute $c$ is obtained but always with the special order for the coefficients
 (first corresponds to $c_0$, second to $c_1$, third is $c_2$, etc, last but one is $c_{-2}$ and 
-last one is $c_{-1}$).    
+last is $c_{-1}$).    
 
 \end{enumerate}
 
