@@ -43,6 +43,11 @@ nsp-inst: @NSP_SCRIPT@ $(IP)  ../Makefile.incl
 	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)+" $(SED_CYGDRIVE) \
 		@NSP_SCRIPT@ > nsp-inst;
 
+nsp.pc: nsp.pc.g $(IP)  ../Makefile.incl
+	@$(RM) nsp.pc
+	@sed -e "s+NSP_DIRECTORY+$(DESTDIR)+" $(SED_CYGDRIVE) \
+		nsp.pc.g > nsp.pc;
+
 $(SBIN)/nsplibtool: nsplibtool $(IP) 
 	@$(RM) $@
 	@sed 	-e "s+NSP_DIRECTORY+$(SCIDIR)+g"  nsplibtool > $@ 

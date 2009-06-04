@@ -1,0 +1,12 @@
+prefix=/usr/local/lib/nsp
+exec_prefix=${prefix}/bin
+libdir=${prefix}/libs
+includedir=${prefix}/include
+
+nsp_dir=/usr/local/lib/nsp
+
+Name: Nsp
+Description: 
+Version: 1.0
+Libs: -L${libdir} -lnsp
+Cflags: -I${includedir}/nsp
