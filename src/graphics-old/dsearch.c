@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2004-2008 Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
+ * Copyright (C) 2004-2009 Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
  *              Jean-Philippe Chancelier Enpc/Cermics jpc@cermics.enpc.fr 
  *
  * This library is free software; you can redistribute it and/or

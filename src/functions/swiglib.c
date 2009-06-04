@@ -1,5 +1,5 @@
-/*------------------------------------------------------------------------
- * Copyright (C) 2007-2008 Jean-Philippe Chancelier Enpc/Cermics
+/* Nsp 
+ * Copyright (C) 2007-2009 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -21,7 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  * library for SWIG 
- *--------------------------------------------------------------------------*/
+ */
+
 
 #include <string.h>
 #include <math.h>

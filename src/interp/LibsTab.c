@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -672,7 +672,7 @@ static int myhsearch(char *key, Mdata *data, ACTION action)
 
 
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * See also the Copyright below for hash table routines 
  *

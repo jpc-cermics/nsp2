@@ -1,5 +1,5 @@
-/*------------------------------------------------------------------------
- * Copyright (C) 2007-2008 Jean-Philippe Chancelier Enpc/Cermics
+/* Nsp
+ * Copyright (C) 2007-2009 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -24,7 +24,8 @@
  * NspSwigVarLink objects contains a NspHashTable filled with 
  * NspSwigGlobalVars i.e objects for which the get and set functional 
  * attributes are to be used instead of standard set and get 
- *--------------------------------------------------------------------------*/
+ */
+
 
 #include <nsp/object.h>
 #include <gtk/gtk.h>

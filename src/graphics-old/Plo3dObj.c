@@ -1,6 +1,6 @@
 /* plotting a set of 3d objects routine for Nsp 
  *
- * Copyright (C) 2008  Bruno Pincon
+ * Copyright (C) 2008-2009  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

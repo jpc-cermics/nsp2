@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * Some routines at the end are copied from CHOLMOD/MATLAB Module. 
  * They are copyrighted by Timothy A. Davis Version 1.2.  Copyright (C) 2005-2006,

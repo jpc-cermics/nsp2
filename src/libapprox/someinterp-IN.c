@@ -1,6 +1,6 @@
 /* 
  * interface for approximation/interpolation of Nsp 
- * Copyright (C) 2005  Bruno Pincon
+ * Copyright (C) 2005-2009  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

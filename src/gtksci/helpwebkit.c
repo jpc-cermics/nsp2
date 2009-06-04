@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009, 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2008 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
+ * Copyright (C) 2008-2009 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Cermics/Enpc 
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Cermics/Enpc 
  * 
  * This file is part of <NSP> a free cacsd package 
  *

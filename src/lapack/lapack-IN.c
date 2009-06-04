@@ -1,7 +1,7 @@
 /* 
  * interface of lapack for Nsp 
- * Copyright (C) 2005-2006 Jean-Philippe Chancelier
- * Copyright (C) 2005-2006 Bruno Pinçon
+ * Copyright (C) 2005-2009 Jean-Philippe Chancelier
+ * Copyright (C) 2005-2009 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

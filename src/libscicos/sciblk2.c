@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2007 Jean-Philippe Chancelier (Enpc)
+ * Copyright (C) 2006-2009 Jean-Philippe Chancelier (Enpc)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

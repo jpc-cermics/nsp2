@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,10 +19,11 @@
  * PVM functions interfaces
  * rewriten from scilab code for nsp 
  * 
- * Initial copyright: 
+ * Initial copyright in scilab source 
  * Copyright (c) 1997 by Inria Lorraine.  All Rights Reserved 
  *
- *-----------------------------------------------------------------------*/
+ */
+
 
 #include <string.h> 
 #include <sys/time.h>
