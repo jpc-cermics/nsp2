@@ -64,6 +64,7 @@ extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,do
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
+extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 
 #endif 
 
@@ -474,31 +475,6 @@ static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
  * champ1(x,y,fx,fy,[arfact=1.0,rect=[xMin,yMin,xMax,yMax],flag])
  *-------------------------------------------------------------------*/
 
-#ifdef NEW_GRAPHICS 
-
-/* champ OK */
-
-static int nsp_champ_obj(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *fx,NspMatrix *fy,int colored) 
-{
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
-  /* create a vfield and insert-it in axes */
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-  if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
-  if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
-  NspVField *vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
-  if ( vf == NULL) return FAIL;
-  /* insert the new vfield */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
-  return OK;
-}
-
-#endif 
-
 static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
 		       int func(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2,
 				char *strflag, double *brect, double *arfact))
@@ -529,7 +505,26 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 #ifdef NEW_GRAPHICS 
-  nsp_champ_obj(Xgc,x,y,fx,fy,( func == nsp_champ ) ? FALSE: TRUE);
+  {
+    NspAxes *axe;
+    NspVField *vf;
+    int colored = ( func == nsp_champ ) ? FALSE: TRUE;
+    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+    /* create a vfield and insert-it in axes */
+    if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+    if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+    if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
+    if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
+    vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
+    if ( vf == NULL) return FAIL;
+    /* insert the new vfield */
+    if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
+      return FAIL;
+    nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+    /* updates the axes scale information */
+    nsp_strf_axes(Xgc, axe , R, strf[1]);
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  }
 #else 
   (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact);
 #endif 
@@ -1835,6 +1830,9 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  /* updates the axes scale information */
+  nsp_strf_axes(Xgc, axe ,rect, strf[1]);
+  
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
 #else 
   nsp_draw_matrix(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
@@ -1933,6 +1931,8 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  /* updates the axes scale information */
+  nsp_strf_axes(Xgc, axe ,rect, strf[1]);
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
 #else 
   nsp_draw_matrix_1(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
@@ -2022,6 +2022,8 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  /* updates the axes scale information */
+  nsp_strf_axes(Xgc, axe , NULL, '2');
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
 #else 
   nsp_draw_matrix_2(Xgc,M->R, M->m,M->n,Rect->R,remap,

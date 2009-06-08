@@ -67,8 +67,9 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
     }      
 
   /* Draw Axis or only rectangle */
-  axis_draw(Xgc,strflag);
-  /* Drawing the curves */
+  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+		(strlen(strflag) >= 2) ? strflag[1] : '6');
+    /* Drawing the curves */
   frame_clip_on(Xgc);
   for ( j =0 ; j < (nx) ; j++)	 xm[j]= XScale(x[j]);
   for ( j =0 ; j < (ny) ; j++)	 ym[j]= YScale(y[j]); 
@@ -350,7 +351,8 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   frame_clip_off(Xgc);
 
   /* Draw Axis or only rectangle **/
-  axis_draw(Xgc,strflag);
+  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+	    (strlen(strflag) >= 2) ? strflag[1] : '6');
 
   return(0);
 }
@@ -432,7 +434,8 @@ int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double 
     }      
 
   /* Draw Axis or only rectangle **/
-  axis_draw(Xgc,strflag);
+  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+	    (strlen(strflag) >= 2) ? strflag[1] : '6');
   /* Drawing the curves **/
   frame_clip_on(Xgc);
   for ( j =0 ; j < (nc+1) ; j++) xm[j]= XScale(j+0.5);
@@ -706,7 +709,8 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
   frame_clip_off(Xgc);
 
   /* Draw Axis or only rectangle */
-  axis_draw(Xgc,strflag);
+  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+	    (strlen(strflag) >= 2) ? strflag[1] : '6');
 
   /* Drawing the Legends */
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')

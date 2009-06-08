@@ -18,6 +18,8 @@
     '("char*"  "y") 
     '("NspList*" "children") ;; list of graphic object in the axe 
     '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
+    '("gboolean" "iso" "std"  "TRUE") ;; iso mode 
+    '("gboolean" "auto_axis" "std" "FALSE") ;; auto axis 
     )
   (gtype-id "Axes")
 )

@@ -97,7 +97,8 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       scale_f2i(Xgc,x,y,xm,ym,n);
       /* Drawing axes **/
     }
-  axis_draw(Xgc,strflag);
+  axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+		(strlen(strflag) >= 2) ? strflag[1] : '6');
   /* Drawing the curves */
   if ( n != 0 ) 
     {
@@ -859,7 +860,9 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
       frect[3] = Max(frect[3], axe->obj->frect->R[3]);
     }
 
-  /* set the axes frect */
+  /* set the axes frect 
+   * note that this is also performed below 
+   */
   
   switch (strflag[1])
     {
@@ -900,6 +903,9 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
 	return FAIL;
     }
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  /* updates the axes scale information */
+  nsp_strf_axes(Xgc, axe , frect, strflag[1]);
+  
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
   return OK;
 }

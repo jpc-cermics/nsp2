@@ -215,7 +215,7 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
       FRect[0]=x[0];FRect[1]= y[0];FRect[2]=x[*n1-1];FRect[3]= y[*n2-1];
       set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
       /** Drawing axes **/
-      axis_draw(Xgc,"111");
+      axis_draw(Xgc,'1','1');
       frame_clip_on(Xgc);
     }
   else
@@ -332,10 +332,11 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   zmin=(double) Mini(z,*n1*(*n2)); 
   zmax=(double) Maxi(z,*n1*(*n2));
 
-  /** Scales **/
+  /* Scales */
   if (strcmp(name,"contour2")==0 )
     {
-      axis_draw(Xgc,strflag);
+      axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+		(strlen(strflag) >= 2) ? strflag[1] : '6');
       frame_clip_on(Xgc);
     }
   if (*flagnz==0)

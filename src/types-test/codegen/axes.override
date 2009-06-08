@@ -186,7 +186,6 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   char xf[]="onn";
-  char strflag[]="151";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
   int aaint[4]={10,2,10,2};
@@ -232,17 +231,23 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 
   if ( P->obj->fixed == FALSE ) 
     {
+      /* actualize the inside bounds with objects 
+       * this should not be done systématically 
+       */
       nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
     }
+  
   nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
-			       TRUE,
-			       TRUE,
+			       P->obj->iso,
+			       P->obj->auto_axis,
 			       xf);
-  axis_draw(Xgc,strflag);
+
+  axis_draw(Xgc,'1', (P->obj->auto_axis) ? '5': '1');
+  
   frame_clip_on(Xgc);
   while ( cloc != NULLCELL ) 
     {
@@ -322,8 +327,8 @@ void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2])
 			       P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
-			       TRUE,
-			       TRUE,
+			       P->obj->iso,
+			       P->obj->auto_axis,
 			       xf);
   scale_i2f(Xgc,pt,pt+1,&x,&y,1);
   /* scale back */
@@ -625,4 +630,51 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
   return  ((NspAxes *) Obj)->obj->children;
 }
 
+
+/* set up the bounds of axes according to objects 
+ * already inserted and rect. rect can be NULL when unused.
+ * 
+ */
+
+void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
+{
+  NspGraphic *G= (NspGraphic *) A;
+  double inside_bounds[4];
+  A->obj->iso = FALSE;
+  A->obj->auto_axis = FALSE;
+  /* use strf argument to change the axes */
+  switch (scale) 
+    {
+    case '0': /* no computation, the plot use the previus (or default) scale */
+      break;
+    case '1': /* from the rect arg */
+    case '7': /* backward compatibility  */
+      memcpy(A->obj->frect->R,rect,4*sizeof(double));
+      break;
+    case '5': /* enlarged for pretty axes from the rect arg */
+      memcpy(A->obj->frect->R,rect,4*sizeof(double));
+      A->obj->auto_axis = TRUE;
+      break;
+    case '3': /* built for an isometric scale from the rect arg */
+      memcpy(A->obj->frect->R,rect,4*sizeof(double));
+      A->obj->iso = TRUE;
+      break;
+    case '2': /* from the min/max of the x, y datas */
+    case '8': /* backward compatibility  */
+      nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
+      memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      break;
+    case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
+      nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
+      memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->auto_axis = TRUE;
+      break;
+    case '4': /* built for an isometric plot from the min/max of the x, y datas */
+      nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
+      memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->iso = TRUE;
+      break;
+    }
+}
+  
 

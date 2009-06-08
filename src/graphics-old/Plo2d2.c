@@ -66,8 +66,10 @@ int nsp_plot2d_2(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       /** Real to Pixel values **/
       Plo2d2RealToPixel(Xgc,n1,n2,x,y,xm,ym,xf);
     }
-  /** Draw Axis or only rectangle **/
-  axis_draw(Xgc,strflag);
+  /* Draw Axis or only rectangle */
+  axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+		(strlen(strflag) >= 2) ? strflag[1] : '6');
+  
   if ( n != 0 ) 
     {
       /** Drawing the curves **/

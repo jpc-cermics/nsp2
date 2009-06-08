@@ -31,23 +31,31 @@
 static double  x_convert (char xy_type,const double x[] ,int i);
 static double  y_convert (char xy_type,const double x[] ,int i);
 static void NumberFormat (char *str,int k,int a);
-static void aplotv1_new(BCG *Xgc,char *strflag);
-static void aplotv2 (BCG *Xgc,char*);
+static void aplotv1_new(BCG *Xgc,char mode);
+static void aplotv2 (BCG *Xgc,char mode);
 static void nsp_draw_frame_rectangle(BCG *Xgc) ;
 
 /**
  * axis_draw:
- * @Xgc: 
- * @strflag: 
+ * @Xgc: a graphic context 
+ * @mode: axis drawing mode
+ * @scale: axis scale mode
  * 
  * draws axis or only rectangle in a graphic frame.
+ * 
+ *
  **/
 
-void axis_draw(BCG *Xgc,char *strflag)
+/* mode = strflag[2] ou '1' 
+ * scale = strflag[1] 
+ *
+ */
+
+void axis_draw(BCG *Xgc,char mode, char scale)
 {
   /* using foreground to draw axis */
   int old_dash,pat, fg;
-  char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
+  char c = mode ; /* (strlen(strflag) >= 3) ? strflag[2] : '1'; */
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
   pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
@@ -59,13 +67,13 @@ void axis_draw(BCG *Xgc,char *strflag)
       nsp_draw_frame_rectangle(Xgc);
       break;
     default :
-      if ( strflag[1] == '5' || strflag[1] =='6' )
+      if ( scale  == '5' || scale =='6' )
 	{
-	  aplotv1_new(Xgc,strflag);
+	  aplotv1_new(Xgc,mode);
 	}
       else
 	{
-	  aplotv2(Xgc,strflag);
+	  aplotv2(Xgc,mode);
 	}
       break;
     }
@@ -81,14 +89,14 @@ void axis_draw(BCG *Xgc,char *strflag)
  *  each big interval will be divided in 3 small intervals.
  *----------------------------------------------------------------*/
 
-static void aplotv2(BCG *Xgc,char *strflag)
+static void aplotv2(BCG *Xgc,char mode)
 {
   char dir = 'l';
   int nx,ny;
   int fontsize=-1,textcolor=-1,ticscolor=-1 ; /*==> use default values  */
   int seg =0;
   double x[3],y[3],x1,y1;
-  char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
+  char c = mode;
   x[0] = Xgc->scales->frect[0]; x[1] = Xgc->scales->frect[2] ; x[2]=Xgc->scales->Waaint1[1];
   y[0]=  Xgc->scales->frect[1]; y[1] = Xgc->scales->frect[3] ; y[2]=Xgc->scales->Waaint1[3];
   switch ( c ) 
@@ -127,11 +135,11 @@ static void aplotv2(BCG *Xgc,char *strflag)
  *
  */
 
-static void aplotv1_new(BCG *Xgc,char *strflag)
+static void aplotv1_new(BCG *Xgc,char mode)
 {
   /* we use */
   char dir = 'l';
-  char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
+  char c = mode ;
   int nx,ny,seg=0;
   int fontsize = -1 ,textcolor = -1 ,ticscolor = -1; /* default values */
   double  x1,y1;

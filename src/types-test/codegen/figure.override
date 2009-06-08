@@ -496,7 +496,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
   if ( Axes == NULLOBJ) 
     {
       /* create a new axes */
-      NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,FALSE,NULL);
+      NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL);
       if ( axe == NULL) return NULL;
       /* store in Figure */
       if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 
@@ -718,7 +718,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
 static int nsp_figure_start_compound(NspFigure *F)
 {
   NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,
-				 NULL,NULL,NULL,FALSE,NULL);
+				 NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL);
   if ( axe == NULL) return FAIL;
   /* store in Figure */
   if ( nsp_list_begin_insert(F->obj->children,(NspObject *) axe)== FAIL) 
