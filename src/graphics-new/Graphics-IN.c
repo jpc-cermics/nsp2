@@ -34,7 +34,7 @@
 #include "Plo3dObj.h"
 
 
-#define NEW_GRAPHICS
+/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
