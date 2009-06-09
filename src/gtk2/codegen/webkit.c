@@ -7,6 +7,18 @@
 #include <webkit/webkit.h>
 
 #include "nsp/object.h"
+
+/* on windows TRUE and FALSE are undef by 
+ * "nsp/object.h"
+ */
+
+#ifndef TRUE 
+#define TRUE (1)
+#endif 
+#ifndef FALSE 
+#define FALSE (0)
+#endif 
+
 #include "nsp/interf.h"
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
@@ -24,7 +36,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 28 "webkit.c"
+#line 40 "webkit.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -2130,7 +2142,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2134 "webkit.c"
+#line 2146 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));

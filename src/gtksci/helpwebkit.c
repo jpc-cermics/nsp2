@@ -38,6 +38,19 @@
 #include "../system/files.h"
 #include "../system/regexp.h"
 #include "nsp/object.h"
+
+/* on windows TRUE and FALSE are undef by 
+ * "nsp/object.h"
+ */
+
+#ifndef TRUE 
+#define TRUE (1)
+#endif 
+#ifndef FALSE 
+#define FALSE (0)
+#endif 
+
+
 #include "nsp/interf.h"
 #include "nsp/nsptcl.h"
 
