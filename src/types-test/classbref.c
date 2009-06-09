@@ -434,6 +434,16 @@ NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,Ns
  return H;
 }
 
+
+NspClassBRef *nsp_classbref_create_default(char *name)
+{
+ NspClassBRef *H  = nsp_classbref_create_void(name,NULL);
+ if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
+  if ( nsp_classbref_create_partial(H) == FAIL) return NULLCLASSBREF;
+ if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -478,7 +488,7 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
-#line 482 "classbref.c"
+#line 492 "classbref.c"
   return H;
 }
 
@@ -498,7 +508,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
-#line 502 "classbref.c"
+#line 512 "classbref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -512,7 +522,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 516 "classbref.c"
+#line 526 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -523,7 +533,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 527 "classbref.c"
+#line 537 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -646,9 +656,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 650 "classbref.c"
+#line 660 "classbref.c"
   nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 655 "classbref.c"
+#line 665 "classbref.c"

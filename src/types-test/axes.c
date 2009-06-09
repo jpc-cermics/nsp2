@@ -226,6 +226,10 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( A->obj->fixed != loc->obj->fixed) return FALSE;
   if ( A->obj->iso != loc->obj->iso) return FALSE;
   if ( A->obj->auto_axis != loc->obj->auto_axis) return FALSE;
+  if ( A->obj->grid != loc->obj->grid) return FALSE;
+  if ( A->obj->axes != loc->obj->axes) return FALSE;
+  if ( A->obj->xlog != loc->obj->xlog) return FALSE;
+  if ( A->obj->ylog != loc->obj->ylog) return FALSE;
   return TRUE;
 }
 
@@ -261,6 +265,10 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs, M->obj->fixed) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->iso) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->auto_axis) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->grid) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->axes) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->xlog) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->ylog) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -287,6 +295,10 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->fixed) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->iso) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->auto_axis) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->grid) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->axes) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->xlog) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->ylog) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -305,7 +317,7 @@ static NspAxes  *nsp_axes_xdr_load(XDR *xdrs)
   if ((H  = nsp_axes_create_void(name,(NspTypeBase *) nsp_type_axes))== NULLAXES) return H;
   if ((H  = nsp_axes_xdr_load_partial(xdrs,H))== NULLAXES) return H;
   if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
-#line 309 "axes.c"
+#line 321 "axes.c"
   return H;
 }
 
@@ -319,7 +331,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 323 "axes.c"
+#line 335 "axes.c"
     nsp_matrix_destroy(H->obj->wrect);
     nsp_matrix_destroy(H->obj->bounds);
     nsp_matrix_destroy(H->obj->arect);
@@ -405,6 +417,10 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"iso	= %s\n", ( M->obj->iso == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"auto_axis	= %s\n", ( M->obj->auto_axis == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"grid=%d\n",M->obj->grid);
+  Sciprintf1(indent+2,"axes=%d\n",M->obj->axes);
+  Sciprintf1(indent+2,"xlog	= %s\n", ( M->obj->xlog == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"ylog	= %s\n", ( M->obj->ylog == TRUE) ? "T" : "F" );
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -444,6 +460,10 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"iso	= %s\n", ( M->obj->iso == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"auto_axis	= %s\n", ( M->obj->auto_axis == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"grid=%d\n",M->obj->grid);
+  Sciprintf1(indent+2,"axes=%d\n",M->obj->axes);
+  Sciprintf1(indent+2,"xlog	= %s\n", ( M->obj->xlog == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"ylog	= %s\n", ( M->obj->ylog == TRUE) ? "T" : "F" );
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -526,7 +546,11 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->children = NULLLIST;
   H->obj->fixed = FALSE;
   H->obj->iso = TRUE;
-  H->obj->auto_axis = FALSE;
+  H->obj->auto_axis = TRUE;
+  H->obj->grid = -1;
+  H->obj->axes = 1;
+  H->obj->xlog = FALSE;
+  H->obj->ylog = FALSE;
   return OK;
 }
 
@@ -583,7 +607,7 @@ int nsp_axes_check_values(NspAxes *H)
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,NspTypeBase *type)
 {
  NspAxes *H  = nsp_axes_create_void(name,type);
  if ( H ==  NULLAXES) return NULLAXES;
@@ -601,6 +625,20 @@ NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,Nsp
   H->obj->fixed=fixed;
   H->obj->iso=iso;
   H->obj->auto_axis=auto_axis;
+  H->obj->grid=grid;
+  H->obj->axes=axes;
+  H->obj->xlog=xlog;
+  H->obj->ylog=ylog;
+ if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
+ return H;
+}
+
+
+NspAxes *nsp_axes_create_default(char *name)
+{
+ NspAxes *H  = nsp_axes_create_void(name,NULL);
+ if ( H ==  NULLAXES) return NULLAXES;
+  if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
  if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
  return H;
 }
@@ -670,6 +708,10 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
   H->obj->fixed=self->obj->fixed;
   H->obj->iso=self->obj->iso;
   H->obj->auto_axis=self->obj->auto_axis;
+  H->obj->grid=self->obj->grid;
+  H->obj->axes=self->obj->axes;
+  H->obj->xlog=self->obj->xlog;
+  H->obj->ylog=self->obj->ylog;
   return H;
 }
 
@@ -679,7 +721,7 @@ NspAxes *nsp_axes_full_copy(NspAxes *self)
   if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
   if ( nsp_axes_full_copy_partial(H,self)== NULL) return NULLAXES;
-#line 683 "axes.c"
+#line 725 "axes.c"
   return H;
 }
 
@@ -699,7 +741,7 @@ int int_axes_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_axes_check_values(H) == FAIL) return RET_BUG;
-#line 703 "axes.c"
+#line 745 "axes.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -753,7 +795,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 757 "axes.c"
+#line 799 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,char *attr)
 {
   double ret;
@@ -961,7 +1003,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 965 "axes.c"
+#line 1007 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -1027,6 +1069,78 @@ static int _wrap_axes_set_auto_axis(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_axes_get_grid(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspAxes *) self)->obj->grid;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_axes_set_grid(void *self, char *attr, NspObject *O)
+{
+  int grid;
+
+  if ( IntScalar(O,&grid) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->grid= grid;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_axes(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspAxes *) self)->obj->axes;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_axes_set_axes(void *self, char *attr, NspObject *O)
+{
+  int axes;
+
+  if ( IntScalar(O,&axes) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->axes= axes;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_xlog(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspAxes *) self)->obj->xlog;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_axes_set_xlog(void *self, char *attr, NspObject *O)
+{
+  int xlog;
+
+  if ( BoolScalar(O,&xlog) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->xlog= xlog;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_ylog(void *self,char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspAxes *) self)->obj->ylog;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_axes_set_ylog(void *self, char *attr, NspObject *O)
+{
+  int ylog;
+
+  if ( BoolScalar(O,&ylog) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->ylog= ylog;
+  return OK;
+}
+
 static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "rho", (attr_get_function *)_wrap_axes_get_rho, (attr_set_function *)_wrap_axes_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -1040,6 +1154,10 @@ static AttrTab axes_attrs[] = {
   { "fixed", (attr_get_function *)_wrap_axes_get_fixed, (attr_set_function *)_wrap_axes_set_fixed,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "iso", (attr_get_function *)_wrap_axes_get_iso, (attr_set_function *)_wrap_axes_set_iso,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "auto_axis", (attr_get_function *)_wrap_axes_get_auto_axis, (attr_set_function *)_wrap_axes_set_auto_axis,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "grid", (attr_get_function *)_wrap_axes_get_grid, (attr_set_function *)_wrap_axes_set_grid,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "axes", (attr_get_function *)_wrap_axes_get_axes, (attr_set_function *)_wrap_axes_set_axes,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "xlog", (attr_get_function *)_wrap_axes_get_xlog, (attr_set_function *)_wrap_axes_set_xlog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "ylog", (attr_get_function *)_wrap_axes_get_ylog, (attr_set_function *)_wrap_axes_set_ylog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1059,7 +1177,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1063 "axes.c"
+#line 1181 "axes.c"
 
 
 #line 159 "codegen/axes.override"
@@ -1071,7 +1189,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1075 "axes.c"
+#line 1193 "axes.c"
 
 
 #line 169 "codegen/axes.override"
@@ -1084,7 +1202,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1088 "axes.c"
+#line 1206 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1125,7 +1243,7 @@ Axes_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1129 "axes.c"
+#line 1247 "axes.c"
   nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1200,7 +1318,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 			       P->obj->auto_axis,
 			       xf);
 
-  axis_draw(Xgc,'1', (P->obj->auto_axis) ? '5': '1');
+  axis_draw(Xgc,'1', 
+	    (P->obj->auto_axis) ? '5': '1',
+	    P->obj->grid);
   
   frame_clip_on(Xgc);
   while ( cloc != NULLCELL ) 
@@ -1594,43 +1714,58 @@ void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   double inside_bounds[4];
-  A->obj->iso = FALSE;
-  A->obj->auto_axis = FALSE;
   /* use strf argument to change the axes */
   switch (scale) 
     {
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
     case '1': /* from the rect arg */
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      break;
     case '7': /* backward compatibility  */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
       break;
     case '5': /* enlarged for pretty axes from the rect arg */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
       A->obj->auto_axis = TRUE;
+      A->obj->iso = FALSE;
       break;
     case '3': /* built for an isometric scale from the rect arg */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
       A->obj->iso = TRUE;
+      A->obj->auto_axis = TRUE;
       break;
     case '2': /* from the min/max of the x, y datas */
+      nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
+      memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      break;
     case '8': /* backward compatibility  */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->auto_axis = TRUE;
+      A->obj->iso = FALSE;
       break;
     case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
       A->obj->auto_axis = TRUE;
+      A->obj->iso = TRUE;
       break;
     case '4': /* built for an isometric plot from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
       A->obj->iso = TRUE;
+      A->obj->auto_axis = TRUE;
       break;
     }
 }
   
+  
 
 
-#line 1637 "axes.c"
+#line 1772 "axes.c"

@@ -68,7 +68,7 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       /** Draw Axis or only rectangle **/
     }
   axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-		(strlen(strflag) >= 2) ? strflag[1] : '6');
+	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
   
   if ( n != 0 ) 
     {

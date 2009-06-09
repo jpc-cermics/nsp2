@@ -34,7 +34,7 @@
 #include "Plo3dObj.h"
 
 
-/* #define NEW_GRAPHICS */
+#define NEW_GRAPHICS
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -3165,7 +3165,16 @@ int int_xgrid(Stack stack, int rhs, int opt, int lhs)
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;
   }
   Xgc=nsp_check_graphic_context();
+#ifdef NEW_GRAPHICS 
+  {
+    NspAxes *axe;
+    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+    axe->obj->grid = style;
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  }
+#else 
   nsp_plot_grid(Xgc,&style);
+#endif 
   /* FIXME nsp_plot_polar_grid(Xgc,&style); */
   return 0;
 } 
@@ -5004,6 +5013,9 @@ int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
   axe=  nsp_check_for_axes(Xgc,WRect);
   if ( axe == NULL) return FAIL;
   axe->obj->fixed = fixed;
+  axe->obj->xlog = ( strlen(logscale) >= 0) ? ((logscale[0]=='n') ? FALSE:TRUE) : FALSE;
+  axe->obj->ylog=  ( strlen(logscale) >= 1) ? ((logscale[1]=='n') ? FALSE:TRUE) : FALSE;
+
   if ( WRect != NULL)   memcpy(axe->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(axe->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(axe->obj->frect->R,FRect,4*sizeof(double));
@@ -5660,7 +5672,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
       CheckLength(NspFname(stack), opts[8].position, S,ntics);
     }
 
-  sci_axis(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag);
+  sci_axis(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag,-1);
   return 0;
 }
 

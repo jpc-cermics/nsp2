@@ -423,6 +423,16 @@ NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,NspTypeBase *
  return H;
 }
 
+
+NspGraphic *nsp_graphic_create_default(char *name)
+{
+ NspGraphic *H  = nsp_graphic_create_void(name,NULL);
+ if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
+  if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
+ if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -459,7 +469,7 @@ NspGraphic *nsp_graphic_full_copy(NspGraphic *self)
   NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_full_copy_partial(H,self)== NULL) return NULLGRAPHIC;
-#line 463 "graphic.c"
+#line 473 "graphic.c"
   return H;
 }
 
@@ -479,7 +489,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_graphic_check_values(H) == FAIL) return RET_BUG;
-#line 483 "graphic.c"
+#line 493 "graphic.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -498,7 +508,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 502 "graphic.c"
+#line 512 "graphic.c"
 
 
 #line 89 "codegen/graphic.override"
@@ -513,7 +523,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 517 "graphic.c"
+#line 527 "graphic.c"
 
 
 #line 102 "codegen/graphic.override"
@@ -527,7 +537,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 531 "graphic.c"
+#line 541 "graphic.c"
 
 
 #line 114 "codegen/graphic.override"
@@ -540,7 +550,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 544 "graphic.c"
+#line 554 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -619,7 +629,7 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 623 "graphic.c"
+#line 633 "graphic.c"
   nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -805,4 +815,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 809 "graphic.c"
+#line 819 "graphic.c"

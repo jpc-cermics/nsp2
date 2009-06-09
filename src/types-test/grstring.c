@@ -507,6 +507,16 @@ NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMat
  return H;
 }
 
+
+NspGrstring *nsp_grstring_create_default(char *name)
+{
+ NspGrstring *H  = nsp_grstring_create_void(name,NULL);
+ if ( H ==  NULLGRSTRING) return NULLGRSTRING;
+  if ( nsp_grstring_create_partial(H) == FAIL) return NULLGRSTRING;
+ if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -557,7 +567,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_full_copy_partial(H,self)== NULL) return NULLGRSTRING;
-#line 561 "grstring.c"
+#line 571 "grstring.c"
   return H;
 }
 
@@ -577,7 +587,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
-#line 581 "grstring.c"
+#line 591 "grstring.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -810,7 +820,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 814 "grstring.c"
+#line 824 "grstring.c"
 
 
 #line 89 "codegen/grstring.override"
@@ -822,7 +832,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 826 "grstring.c"
+#line 836 "grstring.c"
 
 
 #line 99 "codegen/grstring.override"
@@ -835,7 +845,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 839 "grstring.c"
+#line 849 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -876,7 +886,7 @@ Grstring_register_classes(NspObject *d)
 Init portion 
 
 
-#line 880 "grstring.c"
+#line 890 "grstring.c"
   nspgobject_register_class(d, "Grstring", Grstring, &NspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -986,4 +996,4 @@ static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 990 "grstring.c"
+#line 1000 "grstring.c"

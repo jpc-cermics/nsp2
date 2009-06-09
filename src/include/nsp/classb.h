@@ -57,6 +57,7 @@ NspClassB *new_classb();
 #define NULLCLASSB (NspClassB*) 0
 
 extern NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
+extern NspClassB *nsp_classb_create_default(char *name);
 
 /* from ClassBObj.c */
 

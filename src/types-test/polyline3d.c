@@ -497,6 +497,16 @@ NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l
  return H;
 }
 
+
+NspPolyline3d *nsp_polyline3d_create_default(char *name)
+{
+ NspPolyline3d *H  = nsp_polyline3d_create_void(name,NULL);
+ if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
+  if ( nsp_polyline3d_create_partial(H) == FAIL) return NULLPOLYLINE3D;
+ if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -554,7 +564,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 558 "polyline3d.c"
+#line 568 "polyline3d.c"
   return H;
 }
 
@@ -579,7 +589,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 583 "polyline3d.c"
+#line 593 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -684,7 +694,7 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 688 "polyline3d.c"
+#line 698 "polyline3d.c"
 
 
 #line 109 "codegen/polyline3d.override"
@@ -696,7 +706,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 700 "polyline3d.c"
+#line 710 "polyline3d.c"
 
 
 #line 119 "codegen/polyline3d.override"
@@ -709,7 +719,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 713 "polyline3d.c"
+#line 723 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -750,7 +760,7 @@ Polyline3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 754 "polyline3d.c"
+#line 764 "polyline3d.c"
   nspgobject_register_class(d, "Polyline3d", Polyline3d, &NspPolyline3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -947,4 +957,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 951 "polyline3d.c"
+#line 961 "polyline3d.c"

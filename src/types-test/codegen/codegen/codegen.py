@@ -472,6 +472,7 @@ class Wrapper:
         '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
         '\n' \
         'extern Nsp%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
+        'extern Nsp%(typename)s *nsp_%(typename_dc)s_create_default(char *name);\n' \
         '\n' \
         '/* from %(typename)sObj.c */\n' \
         '\n' \
@@ -648,6 +649,8 @@ class Wrapper:
         # insert fields related code in subst dictionary
         # fields_copy: used in create function 
         substdict['fields_copy'] = self.build_copy_fields('H','')
+        # for create default
+        substdict['fields_copy_default'] = self.build_copy_fields_default('H')
         # fields_copy: used in copy function 
         substdict['fields_copy_self'] = self.build_copy_fields('H','self')
         # fields_copy: used in full copy function 
@@ -803,6 +806,7 @@ class Wrapper:
             str = str + handler.attr_write_create_call(ftype,fname,opt,pdef,psize,pcheck,flag) 
         return str
 
+
     def build_copy_fields(self,left_varname,right_varname):
         # used in copy function and in create function 
         # when right_varname == 'self' we are in copy function and else 
@@ -829,6 +833,23 @@ class Wrapper:
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref, pdef , psize, pcheck)
+        return str
+
+    def build_copy_fields_default(self,left_varname):
+        # used in copy function and in create function 
+        # when right_varname == 'self' we are in copy function and else 
+        # in create function. 
+        # if full is 't' then we make a full copy even if we are in
+        # 'self' mode 
+        lower_name = self.get_lower_name()
+        # no overrides for the whole function.  If no fields, don't write a func
+        str = ''
+        if self.byref == 't':
+            # used in type_create functions
+            left_varname = left_varname + '->obj' 
+            str = '  if ((H->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' \
+                '  H->obj->ref_count=1;\n' % (lower_name)
+            str = '  if ( nsp_%s_create_partial(H) == FAIL) return NULL%s;\n' % (lower_name,string.upper(lower_name)) 
         return str
 
 
@@ -1535,6 +1556,16 @@ class NspObjectWrapper(Wrapper):
         ' Nsp%(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
         ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
         '%(fields_copy)s' \
+        ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
+        ' return H;\n' \
+        '}\n' \
+        '\n' \
+        '\n' \
+        'Nsp%(typename)s *nsp_%(typename_dc)s_create_default(char *name)\n' \
+        '{\n' \
+        ' Nsp%(typename)s *H  = nsp_%(typename_dc)s_create_void(name,NULL);\n' \
+        ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
+        '%(fields_copy_default)s' \
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
         ' return H;\n' \
         '}\n' \

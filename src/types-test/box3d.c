@@ -503,6 +503,16 @@ NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gbo
  return H;
 }
 
+
+NspBox3d *nsp_box3d_create_default(char *name)
+{
+ NspBox3d *H  = nsp_box3d_create_void(name,NULL);
+ if ( H ==  NULLBOX3D) return NULLBOX3D;
+  if ( nsp_box3d_create_partial(H) == FAIL) return NULLBOX3D;
+ if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -560,7 +570,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
   if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
-#line 564 "box3d.c"
+#line 574 "box3d.c"
   return H;
 }
 
@@ -580,7 +590,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_box3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_box3d_check_values(H) == FAIL) return RET_BUG;
-#line 584 "box3d.c"
+#line 594 "box3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -771,7 +781,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 775 "box3d.c"
+#line 785 "box3d.c"
 
 
 #line 89 "codegen/box3d.override"
@@ -783,7 +793,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 787 "box3d.c"
+#line 797 "box3d.c"
 
 
 #line 99 "codegen/box3d.override"
@@ -796,7 +806,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 800 "box3d.c"
+#line 810 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -837,7 +847,7 @@ Box3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 841 "box3d.c"
+#line 851 "box3d.c"
   nspgobject_register_class(d, "Box3d", Box3d, &NspBox3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -888,4 +898,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 892 "box3d.c"
+#line 902 "box3d.c"

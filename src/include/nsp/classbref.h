@@ -63,6 +63,7 @@ NspClassBRef *new_classbref();
 #define NULLCLASSBREF (NspClassBRef*) 0
 
 extern NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
+extern NspClassBRef *nsp_classbref_create_default(char *name);
 
 /* from ClassBRefObj.c */
 

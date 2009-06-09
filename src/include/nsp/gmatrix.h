@@ -65,6 +65,7 @@ NspGMatrix *new_gmatrix();
 #define NULLGMATRIX (NspGMatrix*) 0
 
 extern NspGMatrix *nsp_gmatrix_create(char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type);
+extern NspGMatrix *nsp_gmatrix_create_default(char *name);
 
 /* from GMatrixObj.c */
 

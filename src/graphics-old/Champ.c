@@ -241,7 +241,7 @@ void nsp_draw_vfield_generic(BCG *Xgc,char *name, int colored, double *x, double
     }
   /* Drawing axes */
   if ( ng_flag == FALSE ) axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-				    (strlen(strflag) >= 2) ? strflag[1] : '6');
+				    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
   /* Drawing the arrows */
   frame_clip_on(Xgc);
   if ( colored ==0) 

@@ -63,6 +63,7 @@ NspSegments *new_segments();
 #define NULLSEGMENTS (NspSegments*) 0
 
 extern NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type);
+extern NspSegments *nsp_segments_create_default(char *name);
 
 /* from SegmentsObj.c */
 

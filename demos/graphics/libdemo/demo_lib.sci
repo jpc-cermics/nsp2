@@ -207,12 +207,14 @@ function demo_3d_12()
   //plot3d(Fx',Fy',Fz',colors=colshade);
 endfunction
   
+
 function demo_3d_13() 
 // following a parametric 3d curve 
   T=6;
-  t=0:0.2:T;
+  t=linspace(0,T,40);
   ptc=[sin(t);cos(t);t];
-
+    
+  xpol=[];ypol=[];zpol=[];
   for i=1:(size(ptc,'c')-1)
     pt=ptc(:,i);
     ptn=ptc(:,i+1);
@@ -240,16 +242,17 @@ function demo_3d_13()
       ptg=ptd;
     end
     ptd=pts+ptn*ones(size(alpha));
-    xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
-    ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
-    zpol=[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)];
-    plot3d1(xpol,ypol,zpol);
+    xpol=[xpol,[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)]];
+    ypol=[ypol,[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)]];
+    zpol=[zpol,[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)]];
   end 
+  plot3d1(xpol,ypol,zpol);
 endfunction
 
 function demo_3d_14() 
   t=4*%pi*(0:20)/20;
   ptc=[t.*sin(t);t.*cos(t);0*ones(size(t))];
+  xpol=[];ypol=[];zpol=[];
   for i=1:(size(ptc,'c')-1)
     pt=ptc(:,i);
     ptn=ptc(:,i+1);
@@ -279,11 +282,11 @@ function demo_3d_14()
     end
     ptd=pts+ptn*ones(size(alpha));
 
-    xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
-    ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
-    zpol=[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)];
-    plot3d1(xpol,ypol,zpol);
+    xpol=[xpol,[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)]];
+    ypol=[ypol,[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)]];
+    zpol=[zpol,[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)]];
   end 
+  plot3d1(xpol,ypol,zpol);
 endfunction
 
 function demo_prim_1()

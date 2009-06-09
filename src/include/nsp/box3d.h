@@ -66,6 +66,7 @@ NspBox3d *new_box3d();
 #define NULLBOX3D (NspBox3d*) 0
 
 extern NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspBox3d *nsp_box3d_create_default(char *name);
 
 /* from Box3dObj.c */
 

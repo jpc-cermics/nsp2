@@ -65,6 +65,7 @@ NspClassARef *new_classaref();
 #define NULLCLASSAREF (NspClassARef*) 0
 
 extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
+extern NspClassARef *nsp_classaref_create_default(char *name);
 
 /* from ClassARefObj.c */
 

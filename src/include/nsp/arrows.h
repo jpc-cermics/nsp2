@@ -64,6 +64,7 @@ NspArrows *new_arrows();
 #define NULLARROWS (NspArrows*) 0
 
 extern NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type);
+extern NspArrows *nsp_arrows_create_default(char *name);
 
 /* from ArrowsObj.c */
 

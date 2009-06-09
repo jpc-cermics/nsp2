@@ -64,6 +64,7 @@ NspPolyline3d *new_polyline3d();
 #define NULLPOLYLINE3D (NspPolyline3d*) 0
 
 extern NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
+extern NspPolyline3d *nsp_polyline3d_create_default(char *name);
 
 /* from Polyline3dObj.c */
 

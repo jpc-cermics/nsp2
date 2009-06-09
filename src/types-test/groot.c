@@ -408,6 +408,16 @@ NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type)
  return H;
 }
 
+
+NspGRoot *nsp_groot_create_default(char *name)
+{
+ NspGRoot *H  = nsp_groot_create_void(name,NULL);
+ if ( H ==  NULLGROOT) return NULLGROOT;
+  if ( nsp_groot_create_partial(H) == FAIL) return NULLGROOT;
+ if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -448,7 +458,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 452 "groot.c"
+#line 462 "groot.c"
   return H;
 }
 
@@ -468,7 +478,7 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 472 "groot.c"
+#line 482 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -551,7 +561,7 @@ GRoot_register_classes(NspObject *d)
 Init portion 
 
 
-#line 555 "groot.c"
+#line 565 "groot.c"
   nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
@@ -559,4 +569,4 @@ Init portion
 #line 28 "codegen/groot.override"
 
 
-#line 563 "groot.c"
+#line 573 "groot.c"

@@ -68,6 +68,7 @@ NspPolyline *new_polyline();
 #define NULLPOLYLINE (NspPolyline*) 0
 
 extern NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
+extern NspPolyline *nsp_polyline_create_default(char *name);
 
 /* from PolylineObj.c */
 

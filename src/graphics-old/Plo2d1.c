@@ -77,7 +77,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
     }
   /* Drawing axes */
   axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-		(strlen(strflag) >= 2) ? strflag[1] : '6');
+	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
   /* Drawing the curves */
   if ( n != 0 ) 
     {

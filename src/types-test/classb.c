@@ -421,6 +421,15 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
  return H;
 }
 
+
+NspClassB *nsp_classb_create_default(char *name)
+{
+ NspClassB *H  = nsp_classb_create_void(name,NULL);
+ if ( H ==  NULLCLASSB) return NULLCLASSB;
+ if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -454,7 +463,7 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
   NspClassB *H = nsp_classb_copy(self);
-#line 458 "classb.c"
+#line 467 "classb.c"
   return H;
 }
 
@@ -473,7 +482,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-#line 477 "classb.c"
+#line 486 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -487,7 +496,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 491 "classb.c"
+#line 500 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -498,7 +507,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 502 "classb.c"
+#line 511 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -621,9 +630,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 625 "classb.c"
+#line 634 "classb.c"
   nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 630 "classb.c"
+#line 639 "classb.c"

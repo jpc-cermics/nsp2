@@ -511,6 +511,16 @@ NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,cha
  return H;
 }
 
+
+NspString3d *nsp_string3d_create_default(char *name)
+{
+ NspString3d *H  = nsp_string3d_create_void(name,NULL);
+ if ( H ==  NULLSTRING3D) return NULLSTRING3D;
+  if ( nsp_string3d_create_partial(H) == FAIL) return NULLSTRING3D;
+ if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -565,7 +575,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 569 "string3d.c"
+#line 579 "string3d.c"
   return H;
 }
 
@@ -590,7 +600,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 594 "string3d.c"
+#line 604 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -723,7 +733,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 727 "string3d.c"
+#line 737 "string3d.c"
 
 
 #line 114 "codegen/string3d.override"
@@ -735,7 +745,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 739 "string3d.c"
+#line 749 "string3d.c"
 
 
 #line 124 "codegen/string3d.override"
@@ -748,7 +758,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 752 "string3d.c"
+#line 762 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -789,7 +799,7 @@ String3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 793 "string3d.c"
+#line 803 "string3d.c"
   nspgobject_register_class(d, "String3d", String3d, &NspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1010,4 +1020,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1014 "string3d.c"
+#line 1024 "string3d.c"

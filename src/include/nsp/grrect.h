@@ -67,6 +67,7 @@ NspGrRect *new_grrect();
 #define NULLGRRECT (NspGrRect*) 0
 
 extern NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type);
+extern NspGrRect *nsp_grrect_create_default(char *name);
 
 /* from GrRectObj.c */
 

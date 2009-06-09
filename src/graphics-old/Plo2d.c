@@ -98,7 +98,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       /* Drawing axes **/
     }
   axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-		(strlen(strflag) >= 2) ? strflag[1] : '6');
+	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
   /* Drawing the curves */
   if ( n != 0 ) 
     {
@@ -819,6 +819,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
+extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 
 int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
 		   const char *legend,int legend_pos,double brect[],int aaint[])
@@ -905,6 +906,10 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe , frect, strflag[1]);
+  
+  axe->obj->axes = ( strlen(strflag) >= 2) ? strflag[2] -60 : 1;
+  axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
+  axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
   
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
   return OK;

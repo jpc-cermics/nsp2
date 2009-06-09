@@ -248,7 +248,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
-	    (strlen(strflag) >= 2) ? strflag[1] : '6');
+	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
   frame_clip_on(Xgc);
   {

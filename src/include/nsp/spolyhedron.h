@@ -76,6 +76,7 @@ NspSPolyhedron *new_spolyhedron();
 #define NULLSPOLYHEDRON (NspSPolyhedron*) 0
 
 extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,int back_color,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
+extern NspSPolyhedron *nsp_spolyhedron_create_default(char *name);
 
 /* from SPolyhedronObj.c */
 

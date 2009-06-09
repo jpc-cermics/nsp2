@@ -65,6 +65,7 @@ NspContour *new_contour();
 #define NULLCONTOUR (NspContour*) 0
 
 extern NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspTypeBase *type);
+extern NspContour *nsp_contour_create_default(char *name);
 
 /* from ContourObj.c */
 

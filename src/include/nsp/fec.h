@@ -68,6 +68,7 @@ NspFec *new_fec();
 #define NULLFEC (NspFec*) 0
 
 extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean draw,NspMatrix* colout,NspTypeBase *type);
+extern NspFec *nsp_fec_create_default(char *name);
 
 /* from FecObj.c */
 

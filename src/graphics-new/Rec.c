@@ -1297,7 +1297,7 @@ static void replay_SciAxis(BCG *Xgc,void *theplot)
 {
   struct rec_sciaxis *p = (struct rec_sciaxis *) theplot;
   sci_axis(Xgc,p->pos,p->xy_type,p->x,&p->nx,p->y,&p->ny,p->str,p->subtics,p->format,p->fontsize,p->textcolor,
-	   p->ticscolor,p->logflag,p->seg_flag);
+	   p->ticscolor,p->logflag,p->seg_flag,-1);
 
 }
 

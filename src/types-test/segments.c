@@ -482,6 +482,16 @@ NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix*
  return H;
 }
 
+
+NspSegments *nsp_segments_create_default(char *name)
+{
+ NspSegments *H  = nsp_segments_create_void(name,NULL);
+ if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
+  if ( nsp_segments_create_partial(H) == FAIL) return NULLSEGMENTS;
+ if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -536,7 +546,7 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_full_copy_partial(H,self)== NULL) return NULLSEGMENTS;
-#line 540 "segments.c"
+#line 550 "segments.c"
   return H;
 }
 
@@ -556,7 +566,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_segments_check_values(H) == FAIL) return RET_BUG;
-#line 560 "segments.c"
+#line 570 "segments.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -691,7 +701,7 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 695 "segments.c"
+#line 705 "segments.c"
 
 
 #line 89 "codegen/segments.override"
@@ -703,7 +713,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 707 "segments.c"
+#line 717 "segments.c"
 
 
 #line 99 "codegen/segments.override"
@@ -716,7 +726,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 720 "segments.c"
+#line 730 "segments.c"
 
 
 /*----------------------------------------------------
@@ -757,7 +767,7 @@ Segments_register_classes(NspObject *d)
 Init portion 
 
 
-#line 761 "segments.c"
+#line 771 "segments.c"
   nspgobject_register_class(d, "Segments", Segments, &NspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -868,4 +878,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 872 "segments.c"
+#line 882 "segments.c"

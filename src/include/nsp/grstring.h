@@ -69,6 +69,7 @@ NspGrstring *new_grstring();
 #define NULLGRSTRING (NspGrstring*) 0
 
 extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type);
+extern NspGrstring *nsp_grstring_create_default(char *name);
 
 /* from GrstringObj.c */
 

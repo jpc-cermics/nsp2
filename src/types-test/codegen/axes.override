@@ -246,7 +246,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 			       P->obj->auto_axis,
 			       xf);
 
-  axis_draw(Xgc,'1', (P->obj->auto_axis) ? '5': '1');
+  axis_draw(Xgc,'1', 
+	    (P->obj->auto_axis) ? '5': '1',
+	    P->obj->grid);
   
   frame_clip_on(Xgc);
   while ( cloc != NULLCELL ) 
@@ -640,41 +642,56 @@ void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   double inside_bounds[4];
-  A->obj->iso = FALSE;
-  A->obj->auto_axis = FALSE;
   /* use strf argument to change the axes */
   switch (scale) 
     {
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
     case '1': /* from the rect arg */
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      break;
     case '7': /* backward compatibility  */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
       break;
     case '5': /* enlarged for pretty axes from the rect arg */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
       A->obj->auto_axis = TRUE;
+      A->obj->iso = FALSE;
       break;
     case '3': /* built for an isometric scale from the rect arg */
       memcpy(A->obj->frect->R,rect,4*sizeof(double));
       A->obj->iso = TRUE;
+      A->obj->auto_axis = TRUE;
       break;
     case '2': /* from the min/max of the x, y datas */
+      nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
+      memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      break;
     case '8': /* backward compatibility  */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
+      A->obj->auto_axis = TRUE;
+      A->obj->iso = FALSE;
       break;
     case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
       A->obj->auto_axis = TRUE;
+      A->obj->iso = TRUE;
       break;
     case '4': /* built for an isometric plot from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(Xgc,G,inside_bounds);
       memcpy(A->obj->frect->R,inside_bounds,4*sizeof(double));
       A->obj->iso = TRUE;
+      A->obj->auto_axis = TRUE;
       break;
     }
 }
+  
   
 

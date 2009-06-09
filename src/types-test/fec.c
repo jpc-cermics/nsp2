@@ -570,6 +570,16 @@ NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles
  return H;
 }
 
+
+NspFec *nsp_fec_create_default(char *name)
+{
+ NspFec *H  = nsp_fec_create_void(name,NULL);
+ if ( H ==  NULLFEC) return NULLFEC;
+  if ( nsp_fec_create_partial(H) == FAIL) return NULLFEC;
+ if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -649,7 +659,7 @@ NspFec *nsp_fec_full_copy(NspFec *self)
   if ( H ==  NULLFEC) return NULLFEC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFEC;
   if ( nsp_fec_full_copy_partial(H,self)== NULL) return NULLFEC;
-#line 653 "fec.c"
+#line 663 "fec.c"
   return H;
 }
 
@@ -669,7 +679,7 @@ int int_fec_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_fec_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_fec_check_values(H) == FAIL) return RET_BUG;
-#line 673 "fec.c"
+#line 683 "fec.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -926,7 +936,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 930 "fec.c"
+#line 940 "fec.c"
 
 
 #line 66 "codegen/fec.override"
@@ -938,7 +948,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 942 "fec.c"
+#line 952 "fec.c"
 
 
 /*----------------------------------------------------
@@ -978,7 +988,7 @@ Fec_register_classes(NspObject *d)
 Init portion 
 
 
-#line 982 "fec.c"
+#line 992 "fec.c"
   nspgobject_register_class(d, "Fec", Fec, &NspFec_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1258,4 +1268,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1262 "fec.c"
+#line 1272 "fec.c"

@@ -23,7 +23,6 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c 
 
-
 all:: $(ALL)
 
 clean :: 
@@ -42,13 +41,13 @@ clean ::
 	    --prefix ClassA classa.defs) > $*.c \
 	&& cp classa.h ../../include/nsp 
 
-../classb.c : classb.defs classb.override codegen/*.py
+../classb.c : classb.defs  classb.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override classb.override \
 	    --prefix ClassB classb.defs) > $*.c \
 	&& cp classb.h ../../include/nsp 
 
-../classaref.c : classaref.defs classaref.override codegen/*.py
+../classaref.c : classaref.defs  classaref.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override classaref.override \
 	    --prefix ClassARef classaref.defs) > $*.c \
@@ -61,7 +60,7 @@ clean ::
 	&& cp classbref.h ../../include/nsp 
 
 
-../polyline.c : polyline.defs polyline.override codegen/*.py
+../polyline.c : polyline.defs  polyline.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override polyline.override \
 	    --prefix Polyline polyline.defs) > $*.c \
@@ -73,7 +72,7 @@ clean ::
 	    --prefix Graphic graphic.defs) > $*.c \
 	&& cp graphic.h ../../include/nsp 
 
-../axes.c : axes.defs axes.override codegen/*.py
+../axes.c : axes.defs axes-types.defs axes.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override axes.override \
 	    --prefix Axes axes.defs) > $*.c \
@@ -85,7 +84,7 @@ clean ::
 	    --prefix Curve curve.defs) > $*.c \
 	&& cp curve.h ../../include/nsp 
 
-../figure.c : figure.defs figure.override codegen/*.py
+../figure.c : figure.defs  figure.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 		--register ./axes-types.defs \
 		--register ./graphic-types.defs \
@@ -93,7 +92,7 @@ clean ::
 	    --prefix Figure figure.defs) > $*.c \
 	&& cp figure.h ../../include/nsp 
 
-../groot.c : groot.defs groot.override codegen/*.py
+../groot.c : groot.defs  groot.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override groot.override \
 	    --prefix GRoot groot.defs) > $*.c \
@@ -129,13 +128,13 @@ clean ::
 	    --prefix Contour contour.defs) > $*.c \
 	&& cp contour.h ../../include/nsp 
 
-../grstring.c : grstring.defs grstring.override codegen/*.py
+../grstring.c : grstring.defs  grstring.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override grstring.override \
 	    --prefix Grstring grstring.defs) > $*.c \
 	&& cp grstring.h ../../include/nsp 
 
-../grrect.c : grrect.defs grrect.override codegen/*.py
+../grrect.c : grrect.defs  grrect.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override grrect.override \
 	    --prefix GrRect grrect.defs) > $*.c \
@@ -159,7 +158,7 @@ clean ::
 	    --prefix Segments segments.defs) > $*.c \
 	&& cp segments.h ../../include/nsp 
 
-../surf.c : surf.defs surf.override codegen/*.py
+../surf.c : surf.defs  surf.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override surf.override \
 	    --prefix Surf surf.defs) > $*.c \
@@ -171,7 +170,7 @@ clean ::
 	    --prefix String3d string3d.defs) > $*.c \
 	&& cp string3d.h ../../include/nsp 
 
-../spolyhedron.c : spolyhedron.defs spolyhedron.override codegen/*.py
+../spolyhedron.c : spolyhedron.defs  spolyhedron.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override spolyhedron.override \
 	    --prefix SPolyhedron spolyhedron.defs) > $*.c \
@@ -183,13 +182,13 @@ clean ::
 	    --prefix Polyhedron polyhedron.defs) > $*.c \
 	&& cp polyhedron.h ../../include/nsp 
 
-../points3d.c : points3d.defs points3d.override codegen/*.py
+../points3d.c : points3d.defs  points3d.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override points3d.override \
 	    --prefix Points3d points3d.defs) > $*.c \
 	&& cp points3d.h ../../include/nsp 
 
-../objs3d.c : objs3d.defs objs3d.override codegen/*.py
+../objs3d.c : objs3d.defs  objs3d.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override objs3d.override \
 	    --prefix Objs3d objs3d.defs) > $*.c \
@@ -201,13 +200,13 @@ clean ::
 	    --prefix Box3d box3d.defs) > $*.c \
 	&& cp box3d.h ../../include/nsp 
 
-../polyline3d.c : polyline3d.defs polyline3d.override codegen/*.py
+../polyline3d.c : polyline3d.defs  polyline3d.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override polyline3d.override \
 	    --prefix Polyline3d polyline3d.defs) > $*.c \
 	&& cp polyline3d.h ../../include/nsp 
 
-../compound.c : compound.defs compound.override codegen/*.py
+../compound.c : compound.defs  compound.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override compound.override \
 	    --prefix Compound compound.defs) > $*.c \

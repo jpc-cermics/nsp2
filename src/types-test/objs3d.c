@@ -614,6 +614,16 @@ NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top
  return H;
 }
 
+
+NspObjs3d *nsp_objs3d_create_default(char *name)
+{
+ NspObjs3d *H  = nsp_objs3d_create_void(name,NULL);
+ if ( H ==  NULLOBJS3D) return NULLOBJS3D;
+  if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
+ if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -694,7 +704,7 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_full_copy_partial(H,self)== NULL) return NULLOBJS3D;
-#line 698 "objs3d.c"
+#line 708 "objs3d.c"
   return H;
 }
 
@@ -714,7 +724,7 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
-#line 718 "objs3d.c"
+#line 728 "objs3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -768,7 +778,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 772 "objs3d.c"
+#line 782 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
 {
   double ret;
@@ -934,7 +944,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 938 "objs3d.c"
+#line 948 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -1096,7 +1106,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1100 "objs3d.c"
+#line 1110 "objs3d.c"
 
 
 #line 162 "codegen/objs3d.override"
@@ -1108,7 +1118,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1112 "objs3d.c"
+#line 1122 "objs3d.c"
 
 
 #line 172 "codegen/objs3d.override"
@@ -1120,7 +1130,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1124 "objs3d.c"
+#line 1134 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1161,7 +1171,7 @@ Objs3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1165 "objs3d.c"
+#line 1175 "objs3d.c"
   nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1236,7 +1246,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
-	    (strlen(strflag) >= 2) ? strflag[1] : '6');
+	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
   frame_clip_on(Xgc);
   {
@@ -1592,4 +1602,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1596 "objs3d.c"
+#line 1606 "objs3d.c"

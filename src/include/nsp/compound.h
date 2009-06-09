@@ -62,6 +62,7 @@ NspCompound *new_compound();
 #define NULLCOMPOUND (NspCompound*) 0
 
 extern NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
+extern NspCompound *nsp_compound_create_default(char *name);
 
 /* from CompoundObj.c */
 

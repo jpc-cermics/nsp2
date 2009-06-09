@@ -61,6 +61,7 @@ NspGRoot *new_groot();
 #define NULLGROOT (NspGRoot*) 0
 
 extern NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type);
+extern NspGRoot *nsp_groot_create_default(char *name);
 
 /* from GRootObj.c */
 

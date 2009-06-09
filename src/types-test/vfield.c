@@ -508,6 +508,16 @@ NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x
  return H;
 }
 
+
+NspVField *nsp_vfield_create_default(char *name)
+{
+ NspVField *H  = nsp_vfield_create_void(name,NULL);
+ if ( H ==  NULLVFIELD) return NULLVFIELD;
+  if ( nsp_vfield_create_partial(H) == FAIL) return NULLVFIELD;
+ if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -569,7 +579,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
-#line 573 "vfield.c"
+#line 583 "vfield.c"
   return H;
 }
 
@@ -589,7 +599,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 593 "vfield.c"
+#line 603 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -756,7 +766,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 760 "vfield.c"
+#line 770 "vfield.c"
 
 
 #line 58 "codegen/vfield.override"
@@ -768,7 +778,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 772 "vfield.c"
+#line 782 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -808,7 +818,7 @@ VField_register_classes(NspObject *d)
 Init portion 
 
 
-#line 812 "vfield.c"
+#line 822 "vfield.c"
   nspgobject_register_class(d, "VField", VField, &NspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -881,4 +891,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 885 "vfield.c"
+#line 895 "vfield.c"

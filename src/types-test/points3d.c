@@ -509,6 +509,16 @@ NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int
  return H;
 }
 
+
+NspPoints3d *nsp_points3d_create_default(char *name)
+{
+ NspPoints3d *H  = nsp_points3d_create_void(name,NULL);
+ if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
+  if ( nsp_points3d_create_partial(H) == FAIL) return NULLPOINTS3D;
+ if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -563,7 +573,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
-#line 567 "points3d.c"
+#line 577 "points3d.c"
   return H;
 }
 
@@ -588,7 +598,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
-#line 592 "points3d.c"
+#line 602 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -717,7 +727,7 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 721 "points3d.c"
+#line 731 "points3d.c"
 
 
 #line 118 "codegen/points3d.override"
@@ -729,7 +739,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 733 "points3d.c"
+#line 743 "points3d.c"
 
 
 #line 128 "codegen/points3d.override"
@@ -742,7 +752,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 746 "points3d.c"
+#line 756 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -783,7 +793,7 @@ Points3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 787 "points3d.c"
+#line 797 "points3d.c"
   nspgobject_register_class(d, "Points3d", Points3d, &NspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -990,4 +1000,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 994 "points3d.c"
+#line 1004 "points3d.c"

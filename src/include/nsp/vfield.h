@@ -65,6 +65,7 @@ NspVField *new_vfield();
 #define NULLVFIELD (NspVField*) 0
 
 extern NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type);
+extern NspVField *nsp_vfield_create_default(char *name);
 
 /* from VFieldObj.c */
 

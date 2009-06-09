@@ -506,6 +506,16 @@ NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean c
  return H;
 }
 
+
+NspPolyline *nsp_polyline_create_default(char *name)
+{
+ NspPolyline *H  = nsp_polyline_create_void(name,NULL);
+ if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
+  if ( nsp_polyline_create_partial(H) == FAIL) return NULLPOLYLINE;
+ if ( nsp_polyline_check_values(H) == FAIL) return NULLPOLYLINE;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -560,7 +570,7 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
-#line 564 "polyline.c"
+#line 574 "polyline.c"
   return H;
 }
 
@@ -580,7 +590,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline_check_values(H) == FAIL) return RET_BUG;
-#line 584 "polyline.c"
+#line 594 "polyline.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -795,7 +805,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 799 "polyline.c"
+#line 809 "polyline.c"
 
 
 #line 89 "codegen/polyline.override"
@@ -807,7 +817,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 811 "polyline.c"
+#line 821 "polyline.c"
 
 
 #line 99 "codegen/polyline.override"
@@ -820,7 +830,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 824 "polyline.c"
+#line 834 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -861,7 +871,7 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 865 "polyline.c"
+#line 875 "polyline.c"
   nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1011,4 +1021,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1015 "polyline.c"
+#line 1025 "polyline.c"

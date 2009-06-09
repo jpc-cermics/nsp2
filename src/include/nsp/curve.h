@@ -67,6 +67,7 @@ NspCurve *new_curve();
 #define NULLCURVE (NspCurve*) 0
 
 extern NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
+extern NspCurve *nsp_curve_create_default(char *name);
 
 /* from CurveObj.c */
 

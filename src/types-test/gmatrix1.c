@@ -543,6 +543,16 @@ NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gbool
  return H;
 }
 
+
+NspGMatrix1 *nsp_gmatrix1_create_default(char *name)
+{
+ NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,NULL);
+ if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
+  if ( nsp_gmatrix1_create_partial(H) == FAIL) return NULLGMATRIX1;
+ if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -611,7 +621,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 615 "gmatrix1.c"
+#line 625 "gmatrix1.c"
   return H;
 }
 
@@ -631,7 +641,7 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 635 "gmatrix1.c"
+#line 645 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -848,7 +858,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 852 "gmatrix1.c"
+#line 862 "gmatrix1.c"
 
 
 #line 68 "codegen/gmatrix1.override"
@@ -860,7 +870,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 864 "gmatrix1.c"
+#line 874 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -900,7 +910,7 @@ GMatrix1_register_classes(NspObject *d)
 Init portion 
 
 
-#line 904 "gmatrix1.c"
+#line 914 "gmatrix1.c"
   nspgobject_register_class(d, "GMatrix1", GMatrix1, &NspGMatrix1_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1471,4 +1481,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1475 "gmatrix1.c"
+#line 1485 "gmatrix1.c"

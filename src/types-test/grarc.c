@@ -491,6 +491,16 @@ NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double
  return H;
 }
 
+
+NspGrArc *nsp_grarc_create_default(char *name)
+{
+ NspGrArc *H  = nsp_grarc_create_void(name,NULL);
+ if ( H ==  NULLGRARC) return NULLGRARC;
+  if ( nsp_grarc_create_partial(H) == FAIL) return NULLGRARC;
+ if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
+ return H;
+}
+
 /*
  * copy for gobject derived class  
  */
@@ -536,7 +546,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
   if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRARC;
   if ( nsp_grarc_full_copy_partial(H,self)== NULL) return NULLGRARC;
-#line 540 "grarc.c"
+#line 550 "grarc.c"
   return H;
 }
 
@@ -556,7 +566,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
-#line 560 "grarc.c"
+#line 570 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -775,7 +785,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 779 "grarc.c"
+#line 789 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -787,7 +797,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 791 "grarc.c"
+#line 801 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -800,7 +810,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 804 "grarc.c"
+#line 814 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -841,7 +851,7 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 845 "grarc.c"
+#line 855 "grarc.c"
   nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -936,4 +946,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 940 "grarc.c"
+#line 950 "grarc.c"
