@@ -1420,7 +1420,7 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 
 typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
 
-int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d func)
+static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
 {
   BCG *Xgc;
   /* for 2d optional arguments; */
@@ -1612,7 +1612,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
     }
 
 #ifdef NEW_GRAPHICS 
-  nsp_plot2d_obj(Xgc,x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
+  nsp_plot2d_obj(Xgc,x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,mode,rect,nax);
 #else 
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {
@@ -1694,35 +1694,35 @@ static int int_plot2d( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-  return int_plot2d_G(stack,rhs,opt,lhs,0,nsp_plot2d_1);
+  return int_plot2d_G(stack,rhs,opt,lhs,0,0,nsp_plot2d_1);
 }
 
 static int int_plot2d1_1( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-  return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_1);
+  return int_plot2d_G(stack,rhs,opt,lhs,1,0,nsp_plot2d_1);
 }
 
 static int int_plot2d1_2( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-  return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_2);
+  return int_plot2d_G(stack,rhs,opt,lhs,1,1,nsp_plot2d_2);
 }
 
 static int int_plot2d1_3( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-  return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_3);
+  return int_plot2d_G(stack,rhs,opt,lhs,1,2,nsp_plot2d_3);
 }
 
 static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-  return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_4);
+  return int_plot2d_G(stack,rhs,opt,lhs,1,3,nsp_plot2d_4);
 }
 
 /*-----------------------------------------------------------
@@ -1793,7 +1793,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
     Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
     return RET_BUG;
   }
-
+  
   CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
   CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
 
@@ -1836,9 +1836,9 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
 #else 
   nsp_draw_matrix(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
-		  (Mcolminmax == NULL) ? NULL :(int *) Mcolminmax->R,
+		  (Mcolminmax == NULL) ? NULL : Mcolminmax->I,
 		  (Mzminmax == NULL) ? NULL : Mzminmax->R,
-		  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
+		  (Mcolout == NULL) ? NULL : Mcolout->I,
 		  shade);
 #endif 
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
@@ -4649,7 +4649,27 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 
   CheckRhs(1,3);
   Xgc=nsp_check_graphic_context();
-
+#ifdef NEW_GRAPHICS 
+  {
+    NspAxes *axe;
+    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+    /* create a vfield and insert-it in axes */
+    for ( narg = 1 ; narg <= rhs ; narg++) 
+      {
+	nsp_string str;
+	if (( S = GetSMatUtf8(stack,narg)) == NULLSMAT) return RET_BUG;
+	if ( S->mn == 0 ) continue;
+	if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
+	switch (narg) 
+	  {
+	  case 1: axe->obj->title = str;break;
+	  case 2: axe->obj->x = str;break;
+	  case 3: axe->obj->y = str;break;
+	  }
+      }
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  }
+#else 
   for ( narg = 1 ; narg <= rhs ; narg++) 
     {
       nsp_string str;
@@ -4659,6 +4679,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
       Xgc->graphic_engine->scale->displaystringa(Xgc,str,narg);
       FREE(str);
     }
+#endif 
   return 0;
 }
 

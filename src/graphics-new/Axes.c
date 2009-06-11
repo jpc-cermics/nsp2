@@ -117,17 +117,18 @@ static void aplotv2(BCG *Xgc,char mode, int grid_color)
       x1 = x[0]; y1 = y[0];
       break;
     }
-  if ( c != '4' && c != '5' )  
-    {
-      /* frame rectangle */
-      nsp_draw_frame_rectangle(Xgc);
-    }
   /* x-axis */
   ny=1,nx=3;
   Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg,grid_color);
   /* y-axis */
   ny=3,nx=1;
   Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg,grid_color);
+  if ( c != '4' && c != '5' )  
+    {
+      /* frame rectangle */
+      nsp_draw_frame_rectangle(Xgc);
+    }
+
 }
 
 /* here we use frect to find the axes position 

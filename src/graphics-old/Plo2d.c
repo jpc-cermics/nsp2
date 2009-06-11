@@ -692,6 +692,9 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
 	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
+	default:
+	  Sciprintf("Error: unknow position\n");
+	  break;
 	}
       FREE(loc);
       Xgc->graphic_engine->xset_dash(Xgc,old_dash);
@@ -822,13 +825,17 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 
 int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
-		   const char *legend,int legend_pos,double brect[],int aaint[])
+		   const char *legend,int legend_pos,int mode,double brect[],int aaint[])
 {
+  const char *l_c = legend, *l_n;
+  char *curve_l;
   char c;
   double frect[4],xmin,xmax,ymin,ymax;
   int i;
   NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return FAIL;
+
+  axe->obj->lpos = legend_pos;
 
   /* compute brect if not given */
   switch (strflag[1])
@@ -875,7 +882,7 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++) 
     {
-      int mark=-1,mode=0,k;
+      int mark=-1,k;
       NspCurve *curve;
       NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
       if ( Pts == NULL) return FAIL;
@@ -896,9 +903,26 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
 	}
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
       if ( style[i] <= 0 ) mark = -style[i];
+      /* get legend for curve i*/
+      l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
+      if ( l_n > l_c )
+	{
+	  curve_l = new_nsp_string_n(l_n-l_c +1);
+	  if ( curve_l != NULL) 
+	    {
+	      strncpy(curve_l,l_c,l_n-l_c+1);
+	      curve_l[l_n-l_c]='\0';
+	    }
+	}
+      else
+	{
+	  curve_l = NULL;
+	}
+      l_c = ( *l_n == '@') ? l_n+1: l_n;
+      /* "mark", "width", "style", "color", "mode", "Pts", legend */
       curve= nsp_curve_create("curve",mark,0,0,
 			      ( style[i] > 0 ) ?  style[i] : -1, 
-			      mode,Pts,NULL,NULL);
+			      mode,Pts,curve_l,NULL);
       /* insert the new curve */
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return FAIL;
