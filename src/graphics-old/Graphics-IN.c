@@ -56,6 +56,7 @@
 #include <nsp/gmatrix.h> 
 #include <nsp/gmatrix1.h> 
 #include <nsp/fec.h> 
+#include <nsp/contour.h> 
 
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
@@ -702,7 +703,6 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   int flagx=0,nnz= 10; /* default number of level curves : 10 */
   int frame= -1, axes=-1;
   NspMatrix *x,*y,*z,*nz;
-
   /* for 2d optional arguments; */
   NspMatrix *Mistyle; 
   int *nax;
@@ -735,13 +735,50 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   } else {
     flagx = 1;  nnz = nz->mn ;
   }
-
+  
   if ( int_check2d(stack,Mstyle,&Mistyle,nnz,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
+
+  if ( Mistyle->mn != nnz) 
+    {
+      Scierror("%s: style should be of size %d\n",NspFname(stack),nnz);
+      return RET_BUG;
+    }
   
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,Mistyle->I,strf,leg,rect,nax); /*,strlen(strf),strlen(leg));*/
+
+#ifdef NEW_GRAPHICS 
+  {
+    NspMatrix *s=NULL;
+    NspAxes *axe;
+    NspContour *vf;
+    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+    /* create a vfield and insert-it in axes */
+    if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+    if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+    if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+    if ( Mistyle != NULL) 
+      {
+	if ( ( s = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(Mistyle))) == NULLMAT) return FAIL;
+      }
+    if ( flagx==1) 
+      {
+	if ( (nz = (NspMatrix *) nsp_object_copy_and_name("nz",NSP_OBJECT(nz))) == NULLMAT) return FAIL;
+      }
+    vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
+    if ( vf == NULL) return FAIL;
+    /* insert the new vfield */
+    if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
+      return FAIL;
+    nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+    /* updates the axes scale information */
+    nsp_strf_axes(Xgc, axe , rect, strf[1]);
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  }
+#else 
+  (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,Mistyle->I,strf,leg,rect,nax);
+#endif 
   if ( Mstyle != Mistyle) 
     nsp_matrix_destroy(Mistyle);
   return 0;
@@ -780,7 +817,7 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
 
   CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
   CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
-
+  
   /*     number of level curves */
   if ( rhs == 4 ) 
     {
@@ -799,10 +836,8 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   if  (nz == 1) ((int *) M->R)[1] =1;
   Xgc=nsp_check_graphic_context();
   nsp_contour_if(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,(int *) M->R);
-  nsp_get_level_curves(&hl1, &hl2, &x->m, &x->n);
-  n=x->n;m=x->m;
+  nsp_get_level_curves(&hl1, &hl2, &m, &n);
   if ( n== 0 ) m=0;
-
   if ((M1 = nsp_matrix_create(NVOID,'r',m,n))== NULLMAT) return RET_BUG;
   NSP_OBJECT(M1)->ret_pos = 1;
   StackStore(stack,(NspObject *) M1,rhs+1);

@@ -365,9 +365,8 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
  * for drawing itself.
  */
 
-int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz,  double *zz)
+int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz,  double *zz, int *style)
 {
-  int *style = NULL; /* XXX */
   int err=0,i;
   int N[3]= {n1, n2, nz}; 
   
@@ -446,7 +445,6 @@ int nsp_contour_if(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, i
     }
   return(0);
 }
-
 
 
 

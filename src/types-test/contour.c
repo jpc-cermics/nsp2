@@ -206,6 +206,7 @@ static int nsp_contour_eq(NspContour *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->levels)->type->eq(A->obj->levels,loc->obj->levels) == FALSE ) return FALSE;
   if ( A->obj->nlevels != loc->obj->nlevels) return FALSE;
+  if ( NSP_OBJECT(A->obj->style)->type->eq(A->obj->style,loc->obj->style) == FALSE ) return FALSE;
   return TRUE;
 }
 
@@ -234,6 +235,7 @@ int nsp_contour_xdr_save(XDR *xdrs, NspContour *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->levels)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->nlevels) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->style)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -253,6 +255,7 @@ NspContour  *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M)
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->levels =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->nlevels) == FAIL) return NULL;
+  if ((M->obj->style =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -271,7 +274,7 @@ static NspContour  *nsp_contour_xdr_load(XDR *xdrs)
   if ((H  = nsp_contour_create_void(name,(NspTypeBase *) nsp_type_contour))== NULLCONTOUR) return H;
   if ((H  = nsp_contour_xdr_load_partial(xdrs,H))== NULLCONTOUR) return H;
   if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
-#line 275 "contour.c"
+#line 278 "contour.c"
   return H;
 }
 
@@ -285,11 +288,12 @@ void nsp_contour_destroy_partial(NspContour *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 289 "contour.c"
+#line 292 "contour.c"
     nsp_matrix_destroy(H->obj->z);
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->levels);
+    nsp_matrix_destroy(H->obj->style);
     FREE(H->obj);
    }
 }
@@ -357,6 +361,9 @@ int nsp_contour_print(NspContour *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->levels),indent+2,"levels",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"nlevels=%d\n",M->obj->nlevels);
+  if ( M->obj->style != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->style),indent+2,"style",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -386,6 +393,9 @@ int nsp_contour_latex(NspContour *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->levels),indent+2,"levels",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"nlevels=%d\n",M->obj->nlevels);
+  if ( M->obj->style != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->style),indent+2,"style",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -461,6 +471,7 @@ int nsp_contour_create_partial(NspContour *H)
   H->obj->y = NULLMAT;
   H->obj->levels = NULLMAT;
   H->obj->nlevels = 0;
+  H->obj->style = NULLMAT;
   return OK;
 }
 
@@ -490,11 +501,17 @@ int nsp_contour_check_values(NspContour *H)
        return FAIL;
 
     }
+  if ( H->obj->style == NULLMAT) 
+    {
+       if (( H->obj->style = nsp_matrix_create("style",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspTypeBase *type)
+NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type)
 {
  NspContour *H  = nsp_contour_create_void(name,type);
  if ( H ==  NULLCONTOUR) return NULLCONTOUR;
@@ -504,6 +521,7 @@ NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y
   H->obj->y= y;
   H->obj->levels= levels;
   H->obj->nlevels=nlevels;
+  H->obj->style= style;
  if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
  return H;
 }
@@ -570,6 +588,12 @@ NspContour *nsp_contour_full_copy_partial(NspContour *H,NspContour *self)
       if ((H->obj->levels = (NspMatrix *) nsp_object_copy_and_name("levels",NSP_OBJECT(self->obj->levels))) == NULLMAT) return NULL;
     }
   H->obj->nlevels=self->obj->nlevels;
+  if ( self->obj->style == NULL )
+    { H->obj->style = NULL;}
+  else
+    {
+      if ((H->obj->style = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(self->obj->style))) == NULLMAT) return NULL;
+    }
   return H;
 }
 
@@ -579,7 +603,7 @@ NspContour *nsp_contour_full_copy(NspContour *self)
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_full_copy_partial(H,self)== NULL) return NULLCONTOUR;
-#line 583 "contour.c"
+#line 607 "contour.c"
   return H;
 }
 
@@ -599,7 +623,7 @@ int int_contour_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour_check_values(H) == FAIL) return RET_BUG;
-#line 603 "contour.c"
+#line 627 "contour.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -742,12 +766,42 @@ static int _wrap_contour_set_nlevels(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_contour_get_style(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspContour *) self)->obj->style;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_contour_get_obj_style(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspContour *) self)->obj->style);
+  return (NspObject *) ret;
+}
+
+static int _wrap_contour_set_style(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *style;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((style = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspContour *) self)->obj->style != NULL ) 
+    nsp_matrix_destroy(((NspContour *) self)->obj->style);
+  ((NspContour *) self)->obj->style= style;
+  return OK;
+}
+
 static AttrTab contour_attrs[] = {
   { "z", (attr_get_function *)_wrap_contour_get_z, (attr_set_function *)_wrap_contour_set_z,(attr_get_object_function *)_wrap_contour_get_obj_z, (attr_set_object_function *)int_set_object_failed },
   { "x", (attr_get_function *)_wrap_contour_get_x, (attr_set_function *)_wrap_contour_set_x,(attr_get_object_function *)_wrap_contour_get_obj_x, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_contour_get_y, (attr_set_function *)_wrap_contour_set_y,(attr_get_object_function *)_wrap_contour_get_obj_y, (attr_set_object_function *)int_set_object_failed },
   { "levels", (attr_get_function *)_wrap_contour_get_levels, (attr_set_function *)_wrap_contour_set_levels,(attr_get_object_function *)_wrap_contour_get_obj_levels, (attr_set_object_function *)int_set_object_failed },
   { "nlevels", (attr_get_function *)_wrap_contour_get_nlevels, (attr_set_function *)_wrap_contour_set_nlevels,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "style", (attr_get_function *)_wrap_contour_get_style, (attr_set_function *)_wrap_contour_set_style,(attr_get_object_function *)_wrap_contour_get_obj_style, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -764,7 +818,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 768 "contour.c"
+#line 822 "contour.c"
 
 
 #line 58 "codegen/contour.override"
@@ -776,7 +830,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 780 "contour.c"
+#line 834 "contour.c"
 
 
 /*----------------------------------------------------
@@ -816,90 +870,12 @@ Contour_register_classes(NspObject *d)
 Init portion 
 
 
-#line 820 "contour.c"
+#line 874 "contour.c"
   nspgobject_register_class(d, "Contour", Contour, &NspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
 #line 68 "codegen/contour.override"
-
-/* inserted verbatim at the end */
-
-/* 
-static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj)
-{
-  NspVField *P = (NspVField *) Obj;
-  int *xm,*ym,  j;
-  int colminmax[2];
-  double *zminmax = NULL;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-
-  if ( P->obj->colminmax->mn == 2 ) 
-    {
-      colminmax[0] = P->obj->colminmax->R[0];
-      colminmax[1] = P->obj->colminmax->R[1];
-    }
-  if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->colminmax->R;
-  else
-    remap = FALSE;
-
-  if  (  Xgc->scales->cosa==1.0 ) 
-    {
-      scale_f2i(Xgc,xx,yy,xx1,yy1,2);
-      xm = graphic_alloc(0,P->obj->data->n+1,sizeof(int));
-      ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
-      if ( xm == 0 || ym == 0 )
-	{
-	  Scistring("Xgray: running out of memory\n");
-	  return ; 
-	}
-      for ( j =0 ; j < (P->obj->data->n+1) ; j++)	 
-	xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
-      for ( j =0 ; j < (P->obj->data->m+1) ; j++)	 
-	ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
-      Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
-						 P->obj->data->m, 
-						 P->obj->data->n,
-						 remap,
-						 colminmax,
-						 zminmax);
-    }
-  else
-    {
-      double xp[4],yp[4];
-      const double *z =P->obj->data->R;
-      int nr =P->obj->data->m , nc=P->obj->data->n;
-      int colmin,colmax;
-      double zmin,zmax,coeff;
-      int i,j,fill[1],cpat,xz[2];
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
-      nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
-      
-      for (i = 0 ; i < nc-1 ; i++)
-	for (j = 0 ; j < nr-1 ; j++)
-	  {
-	    int w,h;
-	    fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
-	    if ( fill[0] < colmin || fill[0] > colmax ) continue ;
-	    Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
-	    xp[0]= (( xx[1]*i + xx[0]*(P->obj->data->n-i) )/((double) P->obj->data->n));
-	    yp[0]= (( yy[0]*j + yy[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
-	    xp[1]= xp[0];
-	    yp[1]= (( yy[0]*(j+1) + yy[1]*(P->obj->data->m-(j+1)) )/((double) P->obj->data->m));
-	    xp[2]= (( xx[1]*(i+1) + xx[0]*(P->obj->data->n-(i+1)) )/((double) P->obj->data->n));
-	    yp[2]= yp[1];
-	    xp[3]= xp[2];
-	    yp[3]= yp[0];
-	    Xgc->graphic_engine->scale->fillpolyline(Xgc,xp,yp,4,1);
-	  }
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-    }
-  
-}
-*/
-
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
 {
@@ -912,7 +888,8 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
   
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
-  nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R);
+  Mat2int(P->obj->style);
+  nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,P->obj->style->I);
 }
 
 
@@ -964,5 +941,9 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
     }
 }
 
+extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
+			    int *flagnz, int *nz, double *zz, int *style);
 
-#line 969 "contour.c"
+
+
+#line 950 "contour.c"

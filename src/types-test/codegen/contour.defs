@@ -10,6 +10,7 @@
     '("NspMatrix*" "y")  ;; vector 
     '("NspMatrix*" "levels")  ;; vector 
     '("int" "nlevels") ;; number of level curves when zz is NULL.
+    '("NspMatrix*" "style");; matrix in int style 
     )
   (gtype-id "Contour")
 )
