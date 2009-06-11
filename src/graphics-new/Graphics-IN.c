@@ -34,7 +34,7 @@
 #include "Plo3dObj.h"
 
 
-/* #define NEW_GRAPHICS */
+#define NEW_GRAPHICS
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -1824,7 +1824,12 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
 	return FAIL;
     }
-  NspGMatrix1 *gm= nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,x,y,NULL);
+  if ( Mcolout != NULL) 
+    {
+      if ( (Mcolout = (NspMatrix *) nsp_object_copy_and_name("com",NSP_OBJECT(Mcolout))) == NULLMAT)
+	return FAIL;
+    }
+  NspGMatrix1 *gm= nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)

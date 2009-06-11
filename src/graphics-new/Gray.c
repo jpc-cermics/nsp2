@@ -73,7 +73,7 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
   frame_clip_on(Xgc);
   for ( j =0 ; j < (nx) ; j++)	 xm[j]= XScale(x[j]);
   for ( j =0 ; j < (ny) ; j++)	 ym[j]= YScale(y[j]); 
-  Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,z,nx,ny,remap,colminmax,zminmax);
+  Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,z,nx,ny,remap,colminmax,zminmax,NULL);
   frame_clip_off(Xgc);
   Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   return(0);

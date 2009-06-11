@@ -97,7 +97,8 @@ nsp_gengine_generic nsp_peri_generic = {
  * 
  **/
 
-static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
+static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[], 
+				      int nr, int nc,
 				      int remap,const int *colminmax,const double *zminmax)
 {
   int colmin,colmax;
@@ -113,8 +114,13 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
       {
 	int w,h;
 	fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
-	/* do not draw rectangles which are outside the colormap range */
-	if ( fill[0] < colmin || fill[0] > colmax ) continue ;
+	if ( fill[0] < colmin || fill[0] > colmax )
+	  {
+	    /* do not draw rectangles which are outside the colormap range 
+	     * execpt if colout is non null 
+	     */
+	    continue;
+	  }
 	Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
 	w=Abs(x[j+1]-x[j]);
 	h=Abs(y[i+1]-y[i]);
@@ -153,7 +159,7 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
  **/
 
 static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				     int remap,const int *colminmax,const double *zminmax)
+				     int remap,const int *colminmax,const double *zminmax, const int *colout)
 {
   int colmin,colmax;
   double zmax,zmin,coeff,zmoy;
@@ -168,7 +174,12 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 	int w,h;
 	zmoy=1/4.0*(z[i+nx*j]+z[i+nx*(j+1)]+z[i+1+nx*j]+z[i+1+nx*(j+1)]);
 	color = (remap == FALSE) ? rint(zmoy) : rint((colmax-colmin)*(zmoy - zmin)*coeff + colmin);
-	if (color < colmin || color > colmax ) continue ;
+	if (color < colmin || color > colmax )
+	  {
+	    if ( colout == NULL) continue;
+	    color = ( color < colmin ) ? colout[0] : colout[1];
+	    if ( color <= 0 ) continue;
+	  }
 	Xgc->graphic_engine->xset_pattern(Xgc,color);
         w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
 	/* We don't trace rectangle which are totally out **/

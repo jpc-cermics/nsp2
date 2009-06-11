@@ -10,6 +10,7 @@
     '("gboolean"   "shade")  ;; shade color mode 
     '("NspMatrix*" "colminmax" );; 
     '("NspMatrix*" "zminmax") ;; 
+    '("NspMatrix*" "colout") ;; 
     '("NspMatrix*" "x") ;; 
     '("NspMatrix*" "y") ;; 
     )

@@ -35,6 +35,7 @@ struct _nsp_gmatrix1 {
   gboolean shade;
   NspMatrix* colminmax;
   NspMatrix* zminmax;
+  NspMatrix* colout;
   NspMatrix* x;
   NspMatrix* y;
   int ref_count;
@@ -66,7 +67,7 @@ NspGMatrix1 *new_gmatrix1();
 
 #define NULLGMATRIX1 (NspGMatrix1*) 0
 
-extern NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* x,NspMatrix* y,NspTypeBase *type);
+extern NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type);
 extern NspGMatrix1 *nsp_gmatrix1_create_default(char *name);
 
 /* from GMatrix1Obj.c */

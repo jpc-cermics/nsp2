@@ -216,6 +216,7 @@ static int nsp_gmatrix1_eq(NspGMatrix1 *A, NspObject *B)
   if ( A->obj->shade != loc->obj->shade) return FALSE;
   if ( NSP_OBJECT(A->obj->colminmax)->type->eq(A->obj->colminmax,loc->obj->colminmax) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->zminmax)->type->eq(A->obj->zminmax,loc->obj->zminmax) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->colout)->type->eq(A->obj->colout,loc->obj->colout) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   return TRUE;
@@ -246,6 +247,7 @@ int nsp_gmatrix1_xdr_save(XDR *xdrs, NspGMatrix1 *M)
   if (nsp_xdr_save_i(xdrs, M->obj->shade) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colminmax)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->zminmax)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colout)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
@@ -267,6 +269,7 @@ NspGMatrix1  *nsp_gmatrix1_xdr_load_partial(XDR *xdrs, NspGMatrix1 *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->shade) == FAIL) return NULL;
   if ((M->obj->colminmax =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->zminmax =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->colout =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -287,7 +290,7 @@ static NspGMatrix1  *nsp_gmatrix1_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix1_create_void(name,(NspTypeBase *) nsp_type_gmatrix1))== NULLGMATRIX1) return H;
   if ((H  = nsp_gmatrix1_xdr_load_partial(xdrs,H))== NULLGMATRIX1) return H;
   if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
-#line 291 "gmatrix1.c"
+#line 294 "gmatrix1.c"
   return H;
 }
 
@@ -301,10 +304,11 @@ void nsp_gmatrix1_destroy_partial(NspGMatrix1 *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 305 "gmatrix1.c"
+#line 308 "gmatrix1.c"
     nsp_matrix_destroy(H->obj->data);
     nsp_matrix_destroy(H->obj->colminmax);
     nsp_matrix_destroy(H->obj->zminmax);
+    nsp_matrix_destroy(H->obj->colout);
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
@@ -372,6 +376,9 @@ int nsp_gmatrix1_print(NspGMatrix1 *M, int indent,const char *name, int rec_leve
   if ( M->obj->zminmax != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->colout != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
+    }
   if ( M->obj->x != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -404,6 +411,9 @@ int nsp_gmatrix1_latex(NspGMatrix1 *M, int indent,const char *name, int rec_leve
     }
   if ( M->obj->zminmax != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->colout != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->x != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
@@ -486,6 +496,7 @@ int nsp_gmatrix1_create_partial(NspGMatrix1 *H)
   H->obj->shade = TRUE;
   H->obj->colminmax = NULLMAT;
   H->obj->zminmax = NULLMAT;
+  H->obj->colout = NULLMAT;
   H->obj->x = NULLMAT;
   H->obj->y = NULLMAT;
   return OK;
@@ -511,6 +522,12 @@ int nsp_gmatrix1_check_values(NspGMatrix1 *H)
        return FAIL;
 
     }
+  if ( H->obj->colout == NULLMAT) 
+    {
+       if (( H->obj->colout = nsp_matrix_create("colout",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
   if ( H->obj->x == NULLMAT) 
     {
        if (( H->obj->x = nsp_matrix_create("x",'r',0,0)) == NULLMAT)
@@ -527,7 +544,7 @@ int nsp_gmatrix1_check_values(NspGMatrix1 *H)
   return OK;
 }
 
-NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* x,NspMatrix* y,NspTypeBase *type)
+NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type)
 {
  NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,type);
  if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
@@ -537,6 +554,7 @@ NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gbool
   H->obj->shade=shade;
   H->obj->colminmax= colminmax;
   H->obj->zminmax= zminmax;
+  H->obj->colout= colout;
   H->obj->x= x;
   H->obj->y= y;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
@@ -600,6 +618,12 @@ NspGMatrix1 *nsp_gmatrix1_full_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self)
     {
       if ((H->obj->zminmax = (NspMatrix *) nsp_object_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
     }
+  if ( self->obj->colout == NULL )
+    { H->obj->colout = NULL;}
+  else
+    {
+      if ((H->obj->colout = (NspMatrix *) nsp_object_copy_and_name("colout",NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
+    }
   if ( self->obj->x == NULL )
     { H->obj->x = NULL;}
   else
@@ -621,7 +645,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 625 "gmatrix1.c"
+#line 649 "gmatrix1.c"
   return H;
 }
 
@@ -641,7 +665,7 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 645 "gmatrix1.c"
+#line 669 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -776,6 +800,35 @@ static int _wrap_gmatrix1_set_zminmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_gmatrix1_get_colout(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspGMatrix1 *) self)->obj->colout;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_gmatrix1_get_obj_colout(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->colout);
+  return (NspObject *) ret;
+}
+
+static int _wrap_gmatrix1_set_colout(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *colout;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((colout = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspGMatrix1 *) self)->obj->colout != NULL ) 
+    nsp_matrix_destroy(((NspGMatrix1 *) self)->obj->colout);
+  ((NspGMatrix1 *) self)->obj->colout= colout;
+  return OK;
+}
+
 static NspObject *_wrap_gmatrix1_get_x(void *self,char *attr)
 {
   NspMatrix *ret;
@@ -840,6 +893,7 @@ static AttrTab gmatrix1_attrs[] = {
   { "shade", (attr_get_function *)_wrap_gmatrix1_get_shade, (attr_set_function *)_wrap_gmatrix1_set_shade,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "colminmax", (attr_get_function *)_wrap_gmatrix1_get_colminmax, (attr_set_function *)_wrap_gmatrix1_set_colminmax,(attr_get_object_function *)_wrap_gmatrix1_get_obj_colminmax, (attr_set_object_function *)int_set_object_failed },
   { "zminmax", (attr_get_function *)_wrap_gmatrix1_get_zminmax, (attr_set_function *)_wrap_gmatrix1_set_zminmax,(attr_get_object_function *)_wrap_gmatrix1_get_obj_zminmax, (attr_set_object_function *)int_set_object_failed },
+  { "colout", (attr_get_function *)_wrap_gmatrix1_get_colout, (attr_set_function *)_wrap_gmatrix1_set_colout,(attr_get_object_function *)_wrap_gmatrix1_get_obj_colout, (attr_set_object_function *)int_set_object_failed },
   { "x", (attr_get_function *)_wrap_gmatrix1_get_x, (attr_set_function *)_wrap_gmatrix1_set_x,(attr_get_object_function *)_wrap_gmatrix1_get_obj_x, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_gmatrix1_get_y, (attr_set_function *)_wrap_gmatrix1_set_y,(attr_get_object_function *)_wrap_gmatrix1_get_obj_y, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
@@ -858,7 +912,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 862 "gmatrix1.c"
+#line 916 "gmatrix1.c"
 
 
 #line 68 "codegen/gmatrix1.override"
@@ -870,7 +924,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 874 "gmatrix1.c"
+#line 928 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -910,7 +964,7 @@ GMatrix1_register_classes(NspObject *d)
 Init portion 
 
 
-#line 914 "gmatrix1.c"
+#line 968 "gmatrix1.c"
   nspgobject_register_class(d, "GMatrix1", GMatrix1, &NspGMatrix1_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -1001,7 +1055,7 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   int remap = P->obj->remap; 
   int *xm,*ym,  j;
-  int  *colminmax = NULL;
+  int  *colminmax = NULL, *colout=NULL;
   double zminmax[2];
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->colminmax->mn == 2 ) 
@@ -1009,6 +1063,12 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
       /* colminmax is supposed to be converted to int */
       colminmax =  P->obj->colminmax->I;
     }
+  if ( P->obj->colout->mn == 2 ) 
+    {
+      /* colout is supposed to be converted to int */
+      colout =  P->obj->colout->I;
+    }
+
   if ( P->obj->zminmax->mn == 2 ) 
     {
       zminmax[0]= P->obj->zminmax->R[0];
@@ -1036,11 +1096,12 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(P->obj->y->R[j]); 
 
   Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,P->obj->data->R,
-					     P->obj->data->m, 
-					     P->obj->data->n,
-					     remap,
-					     colminmax,
-					     zminmax);
+					    P->obj->data->m, 
+					    P->obj->data->n,
+					    remap,
+					    colminmax,
+					    zminmax,
+					    colout);
 }
 
 
@@ -1079,16 +1140,15 @@ extern Gengine GL_gengine;
 
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  int *colout = NULL ; /* XXX à rajouter */
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   int remap = P->obj->remap; 
   int nx = P->obj->x->mn;
   int ny = P->obj->y->mn;
   int *xm,*ym,i,  j, k;
-  double *zminmax = NULL;
+  double zminmax[2];
   double *func= P->obj->data->R;
   int Nnode= nx*ny;
-  int *colminmax = NULL;
+  int *colminmax = NULL, *colout = NULL;
 
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
 
@@ -1096,10 +1156,26 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
     {
       colminmax = P->obj->colminmax->I;
     }
+
+  if ( P->obj->colout->mn == 2 ) 
+    {
+      /* colout is supposed to be converted to int */
+      colout =  P->obj->colout->I;
+    }
+
   if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->zminmax->R;
+    {
+      zminmax[0]= P->obj->zminmax->R[0];
+      zminmax[1]= P->obj->zminmax->R[1];
+    }
   else
-    remap = FALSE;
+    {
+      /* it should be better not to compute max/min 
+       * for each redraw.
+       */
+      zminmax[0]= Mini(P->obj->data->R,P->obj->data->mn);
+      zminmax[1]= Maxi(P->obj->data->R,P->obj->data->mn);
+    }
   
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -1196,13 +1272,13 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
       }
     else 
       {
-	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+	fill[0] = - Max(colout[0],0) ; fill[nz+1] = - Max(colout[1],0);
       }
 
 
     /* finaly compute the zone of each point */
-
-    if (remap == FALSE && colminmax == NULL && zminmax == NULL  ) 
+    
+    if (remap == FALSE && colminmax == NULL && P->obj->zminmax->mn != 2 )
       {
 	for (i = 0 ; i <= nz ; i++) zlevel[i] = i;
 	for ( i = 0 ; i < Nnode ; i++ ) zone[i] = Min(Max(func[i],0),nz+1);
@@ -1492,4 +1568,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1496 "gmatrix1.c"
+#line 1572 "gmatrix1.c"

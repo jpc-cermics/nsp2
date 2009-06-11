@@ -134,10 +134,10 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *----------------------------------------------------------------------------------*/
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax)
+				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
   DRAW_CHECK;
-  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
+  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
 /*----------------------------------------------------------------------------------

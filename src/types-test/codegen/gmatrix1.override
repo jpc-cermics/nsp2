@@ -160,7 +160,7 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   int remap = P->obj->remap; 
   int *xm,*ym,  j;
-  int  *colminmax = NULL;
+  int  *colminmax = NULL, *colout=NULL;
   double zminmax[2];
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->colminmax->mn == 2 ) 
@@ -168,6 +168,12 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
       /* colminmax is supposed to be converted to int */
       colminmax =  P->obj->colminmax->I;
     }
+  if ( P->obj->colout->mn == 2 ) 
+    {
+      /* colout is supposed to be converted to int */
+      colout =  P->obj->colout->I;
+    }
+
   if ( P->obj->zminmax->mn == 2 ) 
     {
       zminmax[0]= P->obj->zminmax->R[0];
@@ -195,11 +201,12 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(P->obj->y->R[j]); 
 
   Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,P->obj->data->R,
-					     P->obj->data->m, 
-					     P->obj->data->n,
-					     remap,
-					     colminmax,
-					     zminmax);
+					    P->obj->data->m, 
+					    P->obj->data->n,
+					    remap,
+					    colminmax,
+					    zminmax,
+					    colout);
 }
 
 
@@ -238,16 +245,15 @@ extern Gengine GL_gengine;
 
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  int *colout = NULL ; /* XXX à rajouter */
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   int remap = P->obj->remap; 
   int nx = P->obj->x->mn;
   int ny = P->obj->y->mn;
   int *xm,*ym,i,  j, k;
-  double *zminmax = NULL;
+  double zminmax[2];
   double *func= P->obj->data->R;
   int Nnode= nx*ny;
-  int *colminmax = NULL;
+  int *colminmax = NULL, *colout = NULL;
 
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
 
@@ -255,10 +261,26 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
     {
       colminmax = P->obj->colminmax->I;
     }
+
+  if ( P->obj->colout->mn == 2 ) 
+    {
+      /* colout is supposed to be converted to int */
+      colout =  P->obj->colout->I;
+    }
+
   if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->zminmax->R;
+    {
+      zminmax[0]= P->obj->zminmax->R[0];
+      zminmax[1]= P->obj->zminmax->R[1];
+    }
   else
-    remap = FALSE;
+    {
+      /* it should be better not to compute max/min 
+       * for each redraw.
+       */
+      zminmax[0]= Mini(P->obj->data->R,P->obj->data->mn);
+      zminmax[1]= Maxi(P->obj->data->R,P->obj->data->mn);
+    }
   
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -355,13 +377,13 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
       }
     else 
       {
-	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+	fill[0] = - Max(colout[0],0) ; fill[nz+1] = - Max(colout[1],0);
       }
 
 
     /* finaly compute the zone of each point */
-
-    if (remap == FALSE && colminmax == NULL && zminmax == NULL  ) 
+    
+    if (remap == FALSE && colminmax == NULL && P->obj->zminmax->mn != 2 )
       {
 	for (i = 0 ; i <= nz ; i++) zlevel[i] = i;
 	for ( i = 0 ; i < Nnode ; i++ ) zone[i] = Min(Max(func[i],0),nz+1);

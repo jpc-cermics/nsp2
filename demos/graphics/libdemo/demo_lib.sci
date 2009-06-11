@@ -522,8 +522,8 @@ function demo_anim_7()
 endfunction
 
 function demo_contour_1()
-  xset('colormap',hotcolormap(20)) 
-// xset('colormap',jetcolormap(20)) 
+  // xset('colormap',hotcolormap(20)) 
+  xset('colormap',jetcolormap(20)) 
   t=-%pi:0.1:%pi;m=exp(sin(t))'*exp(cos(t));
   xsetech(wrect=[0,0,0.5,0.5])
   xtitle('grayplot default');
