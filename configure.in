@@ -954,7 +954,7 @@ if test "x${have_webkit}" = "xyes" ; then
      GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
      HELP_OBJS="helpwebkit.o"
      AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
-     PKG_CHECK_MODULES(WEBKIT, webkit-1.0 >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+     PKG_CHECK_MODULES(WEBKIT_ZOOM, webkit-1.0 >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
      if test "x${have_webkit_zoom}" = "xyes" ; then
      	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
      fi
