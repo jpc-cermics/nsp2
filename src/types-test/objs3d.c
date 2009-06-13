@@ -1252,7 +1252,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
   {
     int flag[]={1,2,4};
     char legend[]="X@Y@Z";
-    if ( P->obj->colormap->n == 3 )
+    if (P->obj->colormap != NULL && P->obj->colormap->n == 3 )
       Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
 						P->obj->colormap->R);
     nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,

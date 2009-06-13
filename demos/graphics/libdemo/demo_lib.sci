@@ -78,33 +78,38 @@ function demo_3d_5()
 endfunction
 
 function demo_3d_6() 
-  xsetech(wrect=[0,0,0.5,0.5])
-  xset('colormap',graycolormap(45));
-  plot3d1()
-  xsetech(wrect=[0.5,0,0.5,0.5])
-  xset('colormap',hotcolormap(45));
-  plot3d1()
-  xsetech(wrect=[0,0.5,0.5,0.5])
+  t=linspace(-%pi,%pi,20);
+  xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
+  colormap= graycolormap(45);
+  xset('colormap',colormap);
+  plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
+  xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t)
+  colormap=hotcolormap(45);
+  xset('colormap',colormap);
+  plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
+  xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t)
   xset('default_colormap');
-  plot3d1()
-  xsetech(wrect=[0.5,0.5,0.5,0.5])
-  xset('colormap',greencolormap(34));
-  plot3d1()
+  colormap=xget('colormap');
+  plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
+  xsetech(wrect=[0.5,0.5,0.5,0.5],a3d=%t)
+  colormap=greencolormap(34);
+  xset('colormap',colormap);
+  plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
 endfunction
 
 function demo_3d_7() 
   //xset('colormap',hotcolormap(40));
-  xsetech(wrect=[0,0,0.5,0.5])
+  xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
   // One facet with interpolated shading using colors Id 
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,2,3]',flag=[1,1,3])
-  xsetech(wrect=[0.5,0,0.5,0.5])
+  xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t)
   // The number of sub-polygons depends on the distance in Id
   // between colors
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,6,12]',flag=[1,1,3])
-  xsetech(wrect=[0,0.5,0.5,0.5])
+  xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t)
   // colors are set to zero : only draw polygons 
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=0*[1,2,3]',flag=[1,1,3])
-  xsetech(wrect=[0.5,0.5,0.5,0.5])
+  xsetech(wrect=[0.5,0.5,0.5,0.5],a3d=%t)
   // colors are negative: only painting no contour drawing
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=-[1,6,12]',flag=[1,1,3])
 endfunction
@@ -118,10 +123,10 @@ function demo_3d_8()
   [xx,yy,zz]=genfac3d(t,t,z); 
   col=[1,2,1;2,3,2;1,2,1]
   [xx,yy,zzcol]=genfac3d(t,t,col); 
-  xsetech(wrect=[0,0,0.5,1])
+  xsetech(wrect=[0,0,0.5,1],a3d=%t)
   // with generated facets 
   plot3d(xx,yy,zz,colors=zzcol);
-  xsetech(wrect=[0.5,0,0.5,1])
+  xsetech(wrect=[0.5,0,0.5,1],a3d=%t)
   // without facets 
   plot3d1(t,t,z);
 endfunction
@@ -133,9 +138,9 @@ function demo_3d_9()
   zzc = 39*(z-min(z))/(max(z)- min(z))+1;
   [xx,yy,zzcolors]=genfac3d(t,t,zzc);
   [xx,yy,zz]=genfac3d(t,t,z);
-  xsetech(wrect=[0,0,0.5,1.0])
+  xsetech(wrect=[0,0,0.5,1.0],a3d=%t)
   plot3d1(t,t,z,alpha=45,theta=60);
-  xsetech(wrect=[0.5,0,0.5,1])
+  xsetech(wrect=[0.5,0,0.5,1],a3d=%t)
   plot3d(xx,yy,zz,colors=zzcolors,alpha=45,theta=60);
 endfunction
 

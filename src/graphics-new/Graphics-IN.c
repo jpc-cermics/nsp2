@@ -35,6 +35,7 @@
 
 /* #define NEW_GRAPHICS */
 
+
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
 #include <nsp/figure.h> 
@@ -58,7 +59,7 @@
 #include <nsp/fec.h> 
 #include <nsp/contour.h> 
 
-extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc);
+extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
@@ -857,7 +858,7 @@ int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *s
 		 double teta,double alpha,const char *legend, int flag, double *bbox)
 {
   int i,color,nb_poly,psize;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
   /* XXXX we should encapuslate all this in a compound */
   /* Loop on the number of polylines */
@@ -1051,10 +1052,24 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
  * plot3dXXX(x,y,z,opts)
  *-----------------------------------------------------------*/
 
-typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *); 
-typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *); 
-typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *); 
-typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *);
+#ifdef NEW_GRAPHICS
+typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *,
+		    NspMatrix *); 
+typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *,NspMatrix *); 
+typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *,NspMatrix *); 
+typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *,NspMatrix *);
+#else 
+typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *);
+typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *); 
+typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *); 
+typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+		    double *,const char *,int *,double *);
+#endif 
 
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
@@ -1064,13 +1079,14 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
   const char *leg=NULL, *leg1;
-  NspMatrix *x,*y,*z,*zloc=NULL,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
+  NspMatrix *x,*y,*z,*zloc=NULL,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL, *colormap=NULL;
   int izcol=0, *zcol=NULL,*iflag, ret=0;
   
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "args",list,NULLOBJ,-1},
 		      { "alpha",s_double,NULLOBJ,-1},
+		      { "colormap",realmat,NULLOBJ,-1},
 		      { "colors",mat_int,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
 		      { "flag",realmat,NULLOBJ,-1},
@@ -1078,7 +1094,8 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts,&args,&alpha,&Mcolors,&Mebox,&Mflag,&leg,&theta) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts,&args,&alpha,&colormap,&Mcolors,&Mebox,&Mflag,&leg,&theta) == FAIL)
+    return RET_BUG;
 
   if (x->mn == 0) { return 0;}
 
@@ -1123,6 +1140,23 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ( Mcolors->mn == z->mn ) izcol=2  ;
     }
 
+  if ( colormap != NULL && colormap->n != 3)
+    {
+      Scierror("%s: colormap optional argument should be of size nx3 \n",NspFname(stack));
+      ret = RET_BUG;
+      goto end;
+    }
+
+
+#ifdef NEW_GRAPHICS 
+  if (colormap != NULL &&
+      (colormap = (NspMatrix *) nsp_object_copy_and_name("cmap",NSP_OBJECT(colormap))) == NULLMAT)
+    {
+      ret = RET_BUG;
+      goto end;
+    }
+#endif 
+  
   if (( iflag = check_iflag(stack,NspFname(stack),"flag",Mflag,3))==NULL) 
     {
       ret= RET_BUG; goto end;
@@ -1183,22 +1217,38 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0) 
 	{
+#ifdef NEW_GRAPHICS 
+	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox ,colormap);
+#else 
 	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
+#endif 
 	} 
       else if (izcol == 2) 
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
+#ifdef NEW_GRAPHICS 
+	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
+#else 
 	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
+#endif 
 	}
       else 
 	{
+#ifdef NEW_GRAPHICS 
+	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
+#else 
 	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
+#endif 
 	}
     } 
   else 
     {
       /*  Here we are in the standard case  */
+#ifdef NEW_GRAPHICS 
+      (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
+#else 
       (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
+#endif 
     }
  end:
   nsp_matrix_destroy(zloc);
@@ -1272,13 +1322,19 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 
 #ifdef NEW_GRAPHICS 
 
-int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
 {
   NspPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  if (colormap != NULL && objs3d->obj->colormap != NULL) 
+    {
+      nsp_matrix_destroy(objs3d->obj->colormap);
+      objs3d->obj->colormap=colormap; 
+    }
+
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_polyhedron_create_from_triplet("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -1290,13 +1346,20 @@ int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, dou
   return OK;
 }
 
-int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
 {
   NspPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  if (colormap != NULL && objs3d->obj->colormap != NULL) 
+    {
+      nsp_matrix_destroy(objs3d->obj->colormap);
+      objs3d->obj->colormap=colormap; 
+    }
+
+
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_polyhedron_create_from_facets("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -1329,13 +1392,18 @@ int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 #ifdef NEW_GRAPHICS 
 
 
-int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
 {
   NspSPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc);
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  if (colormap != NULL && objs3d->obj->colormap != NULL) 
+    {
+      nsp_matrix_destroy(objs3d->obj->colormap);
+      objs3d->obj->colormap=colormap; 
+    }
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q);
   if ( pol == NULL) return FAIL;
@@ -5082,12 +5150,23 @@ int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
   return OK;
 }
 
+int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
+		    const double *FRect,const char *logscale, int fixed)
+{
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,WRect);
+  if ( objs3d == NULL) return FAIL;
+  if ( WRect != NULL)   memcpy(objs3d->obj->wrect->R,WRect,4*sizeof(double));
+  if ( ARect != NULL)   memcpy(objs3d->obj->arect->R,ARect,4*sizeof(double));
+  if ( FRect != NULL)   memcpy(objs3d->obj->frect->R,FRect,4*sizeof(double));
+  return OK;
+}
+
 #endif 
 
 
 int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
-  int fixed = FALSE;
+  int fixed = FALSE, axe3d=FALSE;
   BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
   static char logflag_def[]="nn";
@@ -5129,9 +5208,10 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 			 {"logflag",string,NULLOBJ,-1},
 			 {"wrect",realmat,NULLOBJ,-1},
 			 {"fixed",s_bool,NULLOBJ,-1},
+			 {"a3d",s_bool,NULLOBJ,-1},
 			 {NULL,t_end,NULLOBJ,-1},};
 
-      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed) == FAIL) return RET_BUG;
+      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed,&axe3d) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
 	arect = Marect->R;CheckLength(NspFname(stack),opts[0].position,Marect,4);
@@ -5153,7 +5233,10 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       }
     }
 #ifdef NEW_GRAPHICS 
-  Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed);
+  if ( axe3d == TRUE ) 
+    Nsetscale3d_new(Xgc,wrect,arect,frect,logflag,fixed);
+  else
+    Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed);
 #else 
   Nsetscale2d(Xgc,wrect,arect,frect,logflag);
 #endif 

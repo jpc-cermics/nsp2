@@ -496,9 +496,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
   if ( Axes == NULLOBJ) 
     {
       /* create a new axes */
-      /* NspAxes *axe = nsp_axes_create("axe",NULL,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,FALSE,FALSE,TRUE,FALSE,1,FALSE,FALSE,NULL); */
       NspAxes *axe= nsp_axes_create_default("axe");
-
       if ( axe == NULL) return NULL;
       /* store in Figure */
       if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL) 
@@ -520,7 +518,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
  * since graphic should be driven by Figure Not by Xgc 
  */
 
-NspObjs3d * nsp_check_for_objs3d(BCG *Xgc) 
+NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
 {
   int i,l;
   NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
@@ -546,6 +544,18 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc)
       if ( Obj != NULLOBJ &&  IsObjs3d(Obj))
 	{
 	  Objs3d=Obj;
+	  if ( wrect == NULL) 
+	    {
+	      break;
+	    }
+	  if ( Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[0]-wrect[0])< 1.e-4 
+	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[1]-wrect[1])< 1.e-4 
+	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[2]-wrect[2])< 1.e-4 
+	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[3]-wrect[3])< 1.e-4 )
+	    {
+	      break;
+	    }
+	  Objs3d = NULL;
 	  break;
 	}
     }
