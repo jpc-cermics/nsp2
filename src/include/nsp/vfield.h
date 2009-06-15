@@ -9,7 +9,7 @@
 
 /* NspVField */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspVField inherits from Graphic

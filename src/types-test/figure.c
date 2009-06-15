@@ -10,6 +10,7 @@
 
 #line 4 "codegen/figure.override"
 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
@@ -39,15 +40,15 @@ extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 
 
-#line 43 "figure.c"
+#line 44 "figure.c"
 
 /* ----------- NspFigure ----------- */
 
 
 #define  NspFigure_Private 
-#include "nsp/object.h"
-#include "nsp/figure.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/figure.h>
+#include <nsp/interf.h>
 
 /* 
  * NspFigure inherits from Graphic 
@@ -110,13 +111,13 @@ NspTypeNspFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 41 "codegen/figure.override"
+#line 53 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
   ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
-#line 120 "figure.c"
+#line 121 "figure.c"
   /* 
    * NspFigure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -219,6 +220,7 @@ static int nsp_figure_eq(NspFigure *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->position)->type->eq(A->obj->position,loc->obj->position) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
   if ( A->obj->draw_now != loc->obj->draw_now) return FALSE;
+  if ( NSP_OBJECT(A->obj->data)->type->eq(A->obj->data,loc->obj->data) == FALSE ) return FALSE;
   return TRUE;
 }
 
@@ -290,7 +292,7 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
   if ((H  = nsp_figure_create_void(name,(NspTypeBase *) nsp_type_figure))== NULLFIGURE) return H;
   if ((H  = nsp_figure_xdr_load_partial(xdrs,H))== NULLFIGURE) return H;
   if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
-#line 294 "figure.c"
+#line 296 "figure.c"
   return H;
 }
 
@@ -304,18 +306,19 @@ void nsp_figure_destroy_partial(NspFigure *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-
-#line 52 "codegen/figure.override"
+#line 53 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 313 "figure.c"
+#line 314 "figure.c"
+#line 315 "figure.c"
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
     nsp_matrix_destroy(H->obj->dims);
     nsp_matrix_destroy(H->obj->viewport_dims);
     nsp_matrix_destroy(H->obj->position);
     nsp_list_destroy(H->obj->children);
+    nsp_figuredata_destroy(H->obj->data);
     FREE(H->obj);
    }
 }
@@ -387,6 +390,9 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
+  if ( M->obj->data != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->data),indent+2,"data",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -420,6 +426,9 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
+  if ( M->obj->data != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->data),indent+2,"data",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -499,6 +508,7 @@ int nsp_figure_create_partial(NspFigure *H)
   H->obj->position = NULLMAT;
   H->obj->children = NULLLIST;
   H->obj->draw_now = TRUE;
+  H->obj->data = NULL;
   return OK;
 }
 
@@ -537,11 +547,16 @@ int nsp_figure_check_values(NspFigure *H)
      if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
+  if ( H->obj->data == NULL) 
+    {
+     if (( H->obj->data = nsp_figuredata_create_default("data")) == NULL)
+       return FAIL;
+    }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspTypeBase *type)
+NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* data,NspTypeBase *type)
 {
  NspFigure *H  = nsp_figure_create_void(name,type);
  if ( H ==  NULLFIGURE) return NULLFIGURE;
@@ -555,6 +570,7 @@ NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatri
   H->obj->position= position;
   H->obj->children= children;
   H->obj->draw_now=draw_now;
+  H->obj->data= data;
  if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
  return H;
 }
@@ -625,6 +641,12 @@ NspFigure *nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self)
       if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   H->obj->draw_now=self->obj->draw_now;
+  if ( self->obj->data == NULL )
+    { H->obj->data = NULL;}
+  else
+    {
+      if ((H->obj->data = (NspFigureData *) nsp_object_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULL) return NULL;
+    }
   return H;
 }
 
@@ -634,7 +656,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
-#line 638 "figure.c"
+#line 660 "figure.c"
   return H;
 }
 
@@ -654,7 +676,7 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
-#line 658 "figure.c"
+#line 680 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -683,7 +705,7 @@ static int _wrap_nsp_figure_draw_now(NspFigure *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 135 "codegen/figure.override"
+#line 136 "codegen/figure.override"
 
 static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -693,10 +715,10 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 697 "figure.c"
+#line 719 "figure.c"
 
 
-#line 146 "codegen/figure.override"
+#line 147 "codegen/figure.override"
 
 static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -705,10 +727,10 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 709 "figure.c"
+#line 731 "figure.c"
 
 
-#line 156 "codegen/figure.override"
+#line 157 "codegen/figure.override"
 
 static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -718,7 +740,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   return 1;
 }
 
-#line 722 "figure.c"
+#line 744 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -913,7 +935,7 @@ static int _wrap_figure_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 71 "codegen/figure.override"
+#line 72 "codegen/figure.override"
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -956,7 +978,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 960 "figure.c"
+#line 982 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,char *attr)
 {
   NspList *ret;
@@ -974,6 +996,463 @@ static AttrTab figure_attrs[] = {
   { "wresize", (attr_get_function *)_wrap_figure_get_wresize, (attr_set_function *)_wrap_figure_set_wresize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "position", (attr_get_function *)_wrap_figure_get_position, (attr_set_function *)_wrap_figure_set_position,(attr_get_object_function *)_wrap_figure_get_obj_position, (attr_set_object_function *)int_set_object_failed },
   { "children", (attr_get_function *)_wrap_figure_get_children, (attr_set_function *)_wrap_figure_set_children,(attr_get_object_function *)_wrap_figure_get_obj_children, (attr_set_object_function *)_wrap_figure_set_obj_children },
+  { NULL,NULL,NULL,NULL,NULL },
+};
+
+
+
+/* ----------- NspFigureData ----------- */
+
+
+#define  NspFigureData_Private 
+#include <nsp/object.h>
+#include <nsp/figuredata.h>
+#include <nsp/interf.h>
+
+/* 
+ * NspFigureData inherits from Object 
+ */
+
+int nsp_type_figuredata_id=0;
+NspTypeNspFigureData *nsp_type_figuredata=NULL;
+
+/*
+ * Type object for NspFigureData 
+ * all the instance of NspTypeNspFigureData share the same id. 
+ * nsp_type_figuredata: is an instance of NspTypeNspFigureData 
+ *    used for objects of NspFigureData type (i.e built with new_figuredata) 
+ * other instances are used for derived classes 
+ */
+NspTypeNspFigureData *new_type_figuredata(type_mode mode)
+{
+  NspTypeNspFigureData *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_figuredata != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_figuredata;
+    }
+  if ((type =  malloc(sizeof(NspTypeNspFigureData))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = figuredata_attrs ; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = figuredata_get_methods; 
+  type->new = (new_func *) new_figuredata;
+
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for figuredata */ 
+
+  top->pr = (print_func *) nsp_figuredata_print;                  
+  top->dealloc = (dealloc_func *) nsp_figuredata_destroy;
+  top->copy  =  (copy_func *) nsp_figuredata_copy;                 
+  top->size  = (size_func *) nsp_figuredata_size;                
+  top->s_type =  (s_type_func *) nsp_figuredata_type_as_string;  
+  top->sh_type = (sh_type_func *) nsp_figuredata_type_short_string;
+  top->info = (info_func *) nsp_figuredata_info ;                  
+  /* top->is_true = (is_true_func  *) nsp_figuredata_is_true; */
+  /* top->loop =(loop_func *) nsp_figuredata_loop;*/
+  top->path_extract = (path_func *)  object_path_extract; 
+  top->get_from_obj = (get_from_obj_func *) nsp_figuredata_object;
+  top->eq  = (eq_func *) nsp_figuredata_eq;
+  top->neq  = (eq_func *) nsp_figuredata_neq;
+  top->save  = (save_func *) nsp_figuredata_xdr_save;
+  top->load  = (load_func *) nsp_figuredata_xdr_load;
+  top->create = (create_func*) int_figuredata_create;
+  top->latex = (print_func *) nsp_figuredata_latex;
+  
+  /* specific methods for figuredata */
+      
+  type->init = (init_func *) init_figuredata;
+
+  /* 
+   * NspFigureData interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_figuredata_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeNspFigureData called nsp_type_figuredata
+       */
+      type->id =  nsp_type_figuredata_id = nsp_new_type_id();
+      nsp_type_figuredata = type;
+      if ( nsp_register_type(nsp_type_figuredata) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_figuredata(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_figuredata_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspFigureData instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_figuredata(NspFigureData *Obj,NspTypeNspFigureData *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  Obj->color = 0;
+  return OK;
+}
+
+/*
+ * new instance of NspFigureData 
+ */
+
+NspFigureData *new_figuredata() 
+{
+  NspFigureData *loc; 
+  /* type must exists */
+  nsp_type_figuredata = new_type_figuredata(T_BASE);
+  if ( (loc = malloc(sizeof(NspFigureData)))== NULLFIGUREDATA) return loc;
+  /* initialize object */
+  if ( init_figuredata(loc,nsp_type_figuredata) == FAIL) return NULLFIGUREDATA;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspFigureData 
+ *-----------------------------------------------*/
+/*
+ * size 
+ */
+
+static int nsp_figuredata_size(NspFigureData *Mat, int flag)
+{
+  return 0;
+}
+
+/*
+ * type as string 
+ */
+
+static char figuredata_type_name[]="NspFigureData";
+static char figuredata_short_type_name[]="figuredata";
+
+static char *nsp_figuredata_type_as_string(void)
+{
+  return(figuredata_type_name);
+}
+
+static char *nsp_figuredata_type_short_string(NspObject *v)
+{
+  return(figuredata_short_type_name);
+}
+
+/*
+ * A == B 
+ */
+
+static int nsp_figuredata_eq(NspFigureData *A, NspObject *B)
+{
+  NspFigureData *loc = (NspFigureData *) B;
+  if ( check_cast(B,nsp_type_figuredata_id) == FALSE) return FALSE ;
+  if ( A->color != loc->color) return FALSE;
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_figuredata_neq(NspFigureData *A, NspObject *B)
+{
+  return ( nsp_figuredata_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+/*
+ * save 
+ */
+
+int nsp_figuredata_xdr_save(XDR *xdrs, NspFigureData *M)
+{
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figuredata)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->color) == FAIL) return FAIL;
+  return OK;
+}
+
+/*
+ * load 
+ */
+
+NspFigureData  *nsp_figuredata_xdr_load_partial(XDR *xdrs, NspFigureData *M)
+{
+  if (nsp_xdr_load_i(xdrs, &M->color) == FAIL) return NULL;
+ return M;
+}
+
+static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
+{
+  NspFigureData *H = NULL;
+  char name[NAME_MAXL];
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFIGUREDATA;
+  if ((H  = nsp_figuredata_create_void(name,(NspTypeBase *) nsp_type_figuredata))== NULLFIGUREDATA) return H;
+  if ((H  = nsp_figuredata_xdr_load_partial(xdrs,H))== NULLFIGUREDATA) return H;
+  if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
+#line 1212 "figure.c"
+  return H;
+}
+
+/*
+ * delete 
+ */
+
+void nsp_figuredata_destroy_partial(NspFigureData *H)
+{
+#line 1222 "figure.c"
+}
+
+void nsp_figuredata_destroy(NspFigureData *H)
+{
+  nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_figuredata_destroy_partial(H);
+  FREE(H);
+}
+
+/*
+ * info 
+ */
+
+int nsp_figuredata_info(NspFigureData *M,int indent,const char *name,int rec_level)
+{
+  const char *pname;
+  if ( M == NULLFIGUREDATA) 
+    {
+      Sciprintf("Null Pointer NspFigureData \n");
+      return TRUE;
+    }
+  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
+             nsp_figuredata_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
+
+/*
+ * print 
+ */
+
+int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( M == NULLFIGUREDATA) 
+    {
+      Sciprintf("Null Pointer NspFigureData \n");
+      return TRUE;
+    }
+  if (user_pref.pr_as_read_syntax) 
+    { 
+      Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
+    } 
+  else 
+    { 
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+        {
+          nsp_figuredata_info(M,indent,pname,rec_level);
+          return TRUE;
+        }
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"color=%d\n",M->color);
+      Sciprintf1(indent+1,"}\n");
+    }
+  return TRUE;
+}
+
+/*
+ * latex print 
+ */
+
+int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"color=%d\n",M->color);
+  Sciprintf1(indent+1,"}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
+}
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspFigureData objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspFigureData   *nsp_figuredata_object(NspObject *O)
+{
+  /* Follow pointer */
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /* Check type */
+  if ( check_cast (O,nsp_type_figuredata_id) == TRUE ) return ((NspFigureData *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_figuredata));
+  return NULL;
+}
+
+int IsFigureDataObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_figuredata_id);
+}
+
+int IsFigureData(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_figuredata_id);
+}
+
+NspFigureData  *GetFigureDataCopy(Stack stack, int i)
+{
+  if (  GetFigureData(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspFigureData  *GetFigureData(Stack stack, int i)
+{
+  NspFigureData *M;
+  if (( M = nsp_figuredata_object(NthObj(i))) == NULLFIGUREDATA)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*-----------------------------------------------------
+  * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspClassB instance 
+ *-----------------------------------------------------*/
+
+static NspFigureData *nsp_figuredata_create_void(char *name,NspTypeBase *type)
+{
+ NspFigureData *H  = (type == NULL) ? new_figuredata() : type->new();
+ if ( H ==  NULLFIGUREDATA)
+  {
+   Sciprintf("No more memory\n");
+   return NULLFIGUREDATA;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLFIGUREDATA;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_figuredata_create_partial(NspFigureData *H)
+{
+  return OK;
+}
+
+int nsp_figuredata_check_values(NspFigureData *H)
+{
+  return OK;
+}
+
+NspFigureData *nsp_figuredata_create(char *name,int color,NspTypeBase *type)
+{
+ NspFigureData *H  = nsp_figuredata_create_void(name,type);
+ if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
+  H->color=color;
+ if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
+ return H;
+}
+
+
+NspFigureData *nsp_figuredata_create_default(char *name)
+{
+ NspFigureData *H  = nsp_figuredata_create_void(name,NULL);
+ if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
+ if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
+ return H;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspFigureData *nsp_figuredata_copy_partial(NspFigureData *H,NspFigureData *self)
+{
+  H->color=self->color;
+  return H;
+}
+
+NspFigureData *nsp_figuredata_copy(NspFigureData *self)
+{
+  NspFigureData *H  =nsp_figuredata_create_void(NVOID,(NspTypeBase *) nsp_type_figuredata);
+  if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
+  if ( nsp_figuredata_copy_partial(H,self)== NULL) return NULLFIGUREDATA;
+
+  return H;
+}
+/*
+ * full copy for gobject derived class  
+ */
+
+NspFigureData *nsp_figuredata_full_copy(NspFigureData *self)
+{
+  NspFigureData *H = nsp_figuredata_copy(self);
+#line 1409 "figure.c"
+  return H;
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the NspFigureData
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+int int_figuredata_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspFigureData *H;
+  CheckStdRhs(0,0);
+  /* want to be sure that type figuredata is initialized */
+  nsp_type_figuredata = new_type_figuredata(T_BASE);
+  if(( H = nsp_figuredata_create_void(NVOID,(NspTypeBase *) nsp_type_figuredata)) == NULLFIGUREDATA) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+ if ( nsp_figuredata_check_values(H) == FAIL) return RET_BUG;
+#line 1428 "figure.c"
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+static NspMethods *figuredata_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static NspObject *_wrap_figuredata_get_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_color(void *self, char *attr, NspObject *O)
+{
+  int color;
+
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspFigureData *) self)->color= color;
+  return OK;
+}
+
+static AttrTab figuredata_attrs[] = {
+  { "color", (attr_get_function *)_wrap_figuredata_get_color, (attr_set_function *)_wrap_figuredata_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1001,7 +1480,7 @@ int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_cu
   return 1;
 }
 
-#line 115 "codegen/figure.override"
+#line 116 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1010,10 +1489,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1014 "figure.c"
+#line 1493 "figure.c"
 
 
-#line 125 "codegen/figure.override"
+#line 126 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1022,7 +1501,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1026 "figure.c"
+#line 1505 "figure.c"
 
 
 /*----------------------------------------------------
@@ -1059,17 +1538,18 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 Figure_register_classes(NspObject *d)
 {
 
-#line 36 "codegen/figure.override"
+#line 37 "codegen/figure.override"
 
 Init portion 
 
 
-#line 1068 "figure.c"
+#line 1547 "figure.c"
   nspgobject_register_class(d, "NspFigure", Figure, &NspNspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspFigureData", Figure, &NspNspFigureData_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 167 "codegen/figure.override"
+#line 168 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -1347,7 +1827,7 @@ static NspAxes *nsp_get_current_axes(void)
 NspFigure *nsp_create_default_figure(void)
 {
   NspFigure *fig ;
-  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
   return fig;
 }
 
@@ -1368,7 +1848,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -1433,7 +1913,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -1706,4 +2186,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 1710 "figure.c"
+#line 2190 "figure.c"

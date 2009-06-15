@@ -9,7 +9,7 @@
 
 /* NspContour */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspContour inherits from Graphic

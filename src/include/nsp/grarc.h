@@ -9,7 +9,7 @@
 
 /* NspGrArc */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspGrArc inherits from Graphic

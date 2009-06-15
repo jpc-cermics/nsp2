@@ -9,7 +9,7 @@
 
 /* NspSegments */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspSegments inherits from Graphic

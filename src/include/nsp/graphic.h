@@ -9,7 +9,7 @@
 
 /* NspGraphic */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /*
  * NspGraphic inherits from Object

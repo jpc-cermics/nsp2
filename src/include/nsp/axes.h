@@ -9,7 +9,7 @@
 
 /* NspAxes */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspAxes inherits from Graphic

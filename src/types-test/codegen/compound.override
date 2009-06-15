@@ -1,6 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/curve.h>
 

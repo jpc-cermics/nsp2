@@ -9,7 +9,7 @@
 
 /* NspClassB */
 
-#include "nsp/classa.h"
+#include <nsp/classa.h>
 
 /*
  * NspClassB inherits from ClassA

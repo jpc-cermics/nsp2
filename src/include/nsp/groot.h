@@ -9,7 +9,7 @@
 
 /* NspGRoot */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /*
  * NspGRoot inherits from Object

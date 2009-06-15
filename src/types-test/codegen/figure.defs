@@ -15,6 +15,17 @@
    '("NspMatrix*" "position")
    '("NspList*" "children")
    '("gboolean" "draw_now" "hidden" "TRUE");;
+   '("NspFigureData*" "data" "hidden")
+   )
+  (gtype-id "Figure")
+)
+
+(define-object FigureData
+  (in-module "Figure")
+  (parent "Object")
+  (c-name "NspFigureData")
+  (fields
+   '("int" "color")
    )
   (gtype-id "Figure")
 )

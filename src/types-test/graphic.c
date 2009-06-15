@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/graphic.override"
-
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include "../interp/Eval.h"
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
@@ -21,9 +21,9 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
 
 #define  NspGraphic_Private 
-#include "nsp/object.h"
-#include "nsp/graphic.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/graphic.h>
+#include <nsp/interf.h>
 
 /* 
  * NspGraphic inherits from Object 

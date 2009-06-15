@@ -57,9 +57,9 @@ class Wrapper:
     type_tmpl_1_0 = \
               '\n'  \
               '#define  %(typename)s_Private \n'  \
-              '#include "nsp/object.h"\n'  \
-              '#include "nsp/%(typename_dc)s.h"\n'  \
-              '#include "nsp/interf.h"\n'  \
+              '#include <nsp/object.h>\n'  \
+              '#include <nsp/%(typename_dc)s.h>\n'  \
+              '#include <nsp/interf.h>\n'  \
               '\n'  \
               '/* \n' \
               ' * %(typename)s inherits from %(parent)s \n' \
@@ -426,7 +426,7 @@ class Wrapper:
         ' */\n\n' \
         '/* %(typename)s */\n' \
         '\n' \
-        '#include "nsp/%(parent_dc)s.h"\n' \
+        '#include <nsp/%(parent_dc)s.h>\n' \
         '\n' \
         '/*\n' \
         ' * %(typename)s inherits from %(parent)s\n' \
@@ -712,6 +712,13 @@ class Wrapper:
         self.fp.write(self.type_tmpl_load_2 % substdict)
         # 
         self.fp.write(self.type_tmpl_delete % substdict)
+
+        if self.overrides.part_destroy_is_overriden(typename):
+            lineno, filename = self.overrides.getstartline(typename)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_destroy(typename))
+            self.fp.resetline()
+
         self.fp.write('%(destroy_prelim)s' %substdict)
         self.fp.resetline()
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
@@ -1256,6 +1263,7 @@ class Wrapper:
         for meth in self.parser.find_methods(self.objinfo):
             if self.overrides.is_ignored(meth.c_name):
                 continue
+
             try:
                 methflags = 'METH_VARARGS'
                 if self.overrides.is_overriden(meth.c_name):
@@ -1280,6 +1288,7 @@ class Wrapper:
                                { 'name':  fixname(meth.name),
                                  'cname': '_wrap_' + meth.c_name,
                                  'flags': methflags})
+            
             except:
                 sys.stderr.write('Could not write method %s.%s: %s\n'
                                 % (self.objinfo.c_name, meth.name, exc_info()))
@@ -1821,13 +1830,13 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
 
 def register_types(parser):
     for obj in parser.interfaces:
-        argtypes.matcher.register_object(obj.c_name, None, obj.typecode)
+        argtypes.matcher.register_object(obj.c_name,obj.name, None, obj.typecode)
     for boxed in parser.boxes:
         argtypes.matcher.register_boxed(boxed.c_name, boxed.typecode)
     for pointer in parser.pointers:
         argtypes.matcher.register_pointer(pointer.c_name, pointer.typecode)
     for obj in parser.objects:
-        argtypes.matcher.register_object(obj.c_name, obj.parent, obj.typecode)
+        argtypes.matcher.register_object(obj.c_name,obj.name, obj.parent, obj.typecode)
     for enum in parser.enums:
 	if enum.deftype == 'flags':
 	    argtypes.matcher.register_flag(enum.c_name, enum.typecode)

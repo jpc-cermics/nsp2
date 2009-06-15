@@ -10,6 +10,7 @@
 
 #line 4 "codegen/contour.override"
 #include <nsp/axes.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -25,15 +26,15 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 extern Gengine GL_gengine;
 #endif 
 
-#line 29 "contour.c"
+#line 30 "contour.c"
 
 /* ----------- NspContour ----------- */
 
 
 #define  NspContour_Private 
-#include "nsp/object.h"
-#include "nsp/contour.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/contour.h>
+#include <nsp/interf.h>
 
 /* 
  * NspContour inherits from Graphic 
@@ -96,7 +97,7 @@ NspTypeNspContour *new_type_contour(type_mode mode)
       
   type->init = (init_func *) init_contour;
 
-#line 27 "codegen/contour.override"
+#line 28 "codegen/contour.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour ;
@@ -107,7 +108,7 @@ NspTypeNspContour *new_type_contour(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 111 "contour.c"
+#line 112 "contour.c"
   /* 
    * NspContour interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -274,7 +275,7 @@ static NspContour  *nsp_contour_xdr_load(XDR *xdrs)
   if ((H  = nsp_contour_create_void(name,(NspTypeBase *) nsp_type_contour))== NULLCONTOUR) return H;
   if ((H  = nsp_contour_xdr_load_partial(xdrs,H))== NULLCONTOUR) return H;
   if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
-#line 278 "contour.c"
+#line 279 "contour.c"
   return H;
 }
 
@@ -288,7 +289,7 @@ void nsp_contour_destroy_partial(NspContour *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 292 "contour.c"
+#line 293 "contour.c"
     nsp_matrix_destroy(H->obj->z);
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
@@ -603,7 +604,7 @@ NspContour *nsp_contour_full_copy(NspContour *self)
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_full_copy_partial(H,self)== NULL) return NULLCONTOUR;
-#line 607 "contour.c"
+#line 608 "contour.c"
   return H;
 }
 
@@ -623,7 +624,7 @@ int int_contour_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour_check_values(H) == FAIL) return RET_BUG;
-#line 627 "contour.c"
+#line 628 "contour.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -809,7 +810,7 @@ static AttrTab contour_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 48 "codegen/contour.override"
+#line 49 "codegen/contour.override"
 
 extern function int_nspgraphic_extract;
 
@@ -818,10 +819,10 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 822 "contour.c"
+#line 823 "contour.c"
 
 
-#line 58 "codegen/contour.override"
+#line 59 "codegen/contour.override"
 
 extern function int_graphic_set_attribute;
 
@@ -830,7 +831,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 834 "contour.c"
+#line 835 "contour.c"
 
 
 /*----------------------------------------------------
@@ -865,17 +866,17 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
 Contour_register_classes(NspObject *d)
 {
 
-#line 22 "codegen/contour.override"
+#line 23 "codegen/contour.override"
 
 Init portion 
 
 
-#line 874 "contour.c"
+#line 875 "contour.c"
   nspgobject_register_class(d, "NspContour", Contour, &NspNspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 68 "codegen/contour.override"
+#line 69 "codegen/contour.override"
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
 {
@@ -946,4 +947,4 @@ extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, i
 
 
 
-#line 950 "contour.c"
+#line 951 "contour.c"

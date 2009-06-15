@@ -9,7 +9,7 @@
 
 /* NspClassBRef */
 
-#include "nsp/classaref.h"
+#include <nsp/classaref.h>
 
 /*
  * NspClassBRef inherits from ClassARef

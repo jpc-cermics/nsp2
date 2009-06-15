@@ -2,6 +2,7 @@
 %%
 headers
 #include <nsp/polyline3d.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include "../graphics/Plo3dObj.h"
 #include <nsp/polyhedron.h>
@@ -57,7 +58,7 @@ override_int_create_final
   if ( nsp_check_polyline3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim
+override_destroy_prelim   NspPolyline3d
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

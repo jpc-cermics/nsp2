@@ -9,7 +9,7 @@
 
 /* NspGMatrix1 */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspGMatrix1 inherits from Graphic

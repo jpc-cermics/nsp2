@@ -10,6 +10,7 @@
 
 #line 4 "codegen/surf.override"
 #include <nsp/surf.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -21,15 +22,15 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *o,double *bounds);
 
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
-#line 25 "surf.c"
+#line 26 "surf.c"
 
 /* ----------- NspSurf ----------- */
 
 
 #define  NspSurf_Private 
-#include "nsp/object.h"
-#include "nsp/surf.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/surf.h>
+#include <nsp/interf.h>
 
 /* 
  * NspSurf inherits from Graphic 
@@ -92,7 +93,7 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
       
   type->init = (init_func *) init_surf;
 
-#line 23 "codegen/surf.override"
+#line 24 "codegen/surf.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -106,7 +107,7 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 110 "surf.c"
+#line 111 "surf.c"
   /* 
    * NspSurf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -279,7 +280,7 @@ static NspSurf  *nsp_surf_xdr_load(XDR *xdrs)
   if ((H  = nsp_surf_create_void(name,(NspTypeBase *) nsp_type_surf))== NULLSURF) return H;
   if ((H  = nsp_surf_xdr_load_partial(xdrs,H))== NULLSURF) return H;
   if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
-#line 283 "surf.c"
+#line 284 "surf.c"
   return H;
 }
 
@@ -293,7 +294,7 @@ void nsp_surf_destroy_partial(NspSurf *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 297 "surf.c"
+#line 298 "surf.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -602,7 +603,7 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
   if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
-#line 606 "surf.c"
+#line 607 "surf.c"
   return H;
 }
 
@@ -622,7 +623,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
-#line 626 "surf.c"
+#line 627 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -836,7 +837,7 @@ static AttrTab surf_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/surf.override"
+#line 47 "codegen/surf.override"
 int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -848,10 +849,10 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 852 "surf.c"
+#line 853 "surf.c"
 
 
-#line 89 "codegen/surf.override"
+#line 90 "codegen/surf.override"
 
 extern function int_nspgraphic_extract;
 
@@ -860,10 +861,10 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 864 "surf.c"
+#line 865 "surf.c"
 
 
-#line 99 "codegen/surf.override"
+#line 100 "codegen/surf.override"
 
 extern function int_graphic_set_attribute;
 
@@ -873,7 +874,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 877 "surf.c"
+#line 878 "surf.c"
 
 
 /*----------------------------------------------------
@@ -909,17 +910,17 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
 Surf_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/surf.override"
+#line 19 "codegen/surf.override"
 
 Init portion 
 
 
-#line 918 "surf.c"
+#line 919 "surf.c"
   nspgobject_register_class(d, "NspSurf", Surf, &NspNspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/surf.override"
+#line 111 "codegen/surf.override"
 
 /* inserted verbatim at the end */
 
@@ -997,4 +998,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1001 "surf.c"
+#line 1002 "surf.c"

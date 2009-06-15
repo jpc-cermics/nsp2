@@ -9,7 +9,7 @@
 
 /* NspBox3d */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspBox3d inherits from Graphic

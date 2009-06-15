@@ -9,7 +9,7 @@
 
 /* NspGrRect */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspGrRect inherits from Graphic

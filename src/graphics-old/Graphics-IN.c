@@ -35,9 +35,9 @@
 
 /* #define NEW_GRAPHICS */
 
-
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 
 #include <nsp/curve.h> 

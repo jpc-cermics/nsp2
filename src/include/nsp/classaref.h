@@ -9,7 +9,7 @@
 
 /* NspClassARef */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /*
  * NspClassARef inherits from Object

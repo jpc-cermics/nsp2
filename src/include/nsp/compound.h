@@ -9,7 +9,7 @@
 
 /* NspCompound */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspCompound inherits from Graphic

@@ -10,6 +10,7 @@
 
 #line 4 "codegen/grarc.override"
 #include <nsp/grarc.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -21,15 +22,15 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *o,double *bounds);
 
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
-#line 25 "grarc.c"
+#line 26 "grarc.c"
 
 /* ----------- NspGrArc ----------- */
 
 
 #define  NspGrArc_Private 
-#include "nsp/object.h"
-#include "nsp/grarc.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/grarc.h>
+#include <nsp/interf.h>
 
 /* 
  * NspGrArc inherits from Graphic 
@@ -92,7 +93,7 @@ NspTypeNspGrArc *new_type_grarc(type_mode mode)
       
   type->init = (init_func *) init_grarc;
 
-#line 23 "codegen/grarc.override"
+#line 24 "codegen/grarc.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -106,7 +107,7 @@ NspTypeNspGrArc *new_type_grarc(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 110 "grarc.c"
+#line 111 "grarc.c"
   /* 
    * NspGrArc interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -282,7 +283,7 @@ static NspGrArc  *nsp_grarc_xdr_load(XDR *xdrs)
   if ((H  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return H;
   if ((H  = nsp_grarc_xdr_load_partial(xdrs,H))== NULLGRARC) return H;
   if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
-#line 286 "grarc.c"
+#line 287 "grarc.c"
   return H;
 }
 
@@ -296,7 +297,7 @@ void nsp_grarc_destroy_partial(NspGrArc *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 300 "grarc.c"
+#line 301 "grarc.c"
     FREE(H->obj);
    }
 }
@@ -546,7 +547,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
   if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRARC;
   if ( nsp_grarc_full_copy_partial(H,self)== NULL) return NULLGRARC;
-#line 550 "grarc.c"
+#line 551 "grarc.c"
   return H;
 }
 
@@ -566,7 +567,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grarc_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grarc_check_values(H) == FAIL) return RET_BUG;
-#line 570 "grarc.c"
+#line 571 "grarc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -758,7 +759,7 @@ static AttrTab grarc_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/grarc.override"
+#line 47 "codegen/grarc.override"
 int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -770,10 +771,10 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 774 "grarc.c"
+#line 775 "grarc.c"
 
 
-#line 89 "codegen/grarc.override"
+#line 90 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -782,10 +783,10 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 786 "grarc.c"
+#line 787 "grarc.c"
 
 
-#line 99 "codegen/grarc.override"
+#line 100 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -795,7 +796,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 799 "grarc.c"
+#line 800 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -831,17 +832,17 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
 GrArc_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/grarc.override"
+#line 19 "codegen/grarc.override"
 
 Init portion 
 
 
-#line 840 "grarc.c"
+#line 841 "grarc.c"
   nspgobject_register_class(d, "NspGrArc", GrArc, &NspNspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/grarc.override"
+#line 111 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 
@@ -931,4 +932,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 935 "grarc.c"
+#line 936 "grarc.c"

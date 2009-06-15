@@ -9,7 +9,7 @@
 
 /* NspSurf */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspSurf inherits from Graphic

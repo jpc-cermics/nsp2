@@ -16,9 +16,9 @@
 
 
 #define  NspClassB_Private 
-#include "nsp/object.h"
-#include "nsp/classb.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/classb.h>
+#include <nsp/interf.h>
 
 /* 
  * NspClassB inherits from ClassA 

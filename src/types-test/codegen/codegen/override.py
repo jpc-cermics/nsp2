@@ -23,6 +23,7 @@ class Overrides:
         self.override_slots = {}
         self.headers = ''
         self.override_type = {} # inserted verbatim in type definition 
+        self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
         self.override_destroy_prelim = '' # inserted verbatim before standard destroy
@@ -95,13 +96,18 @@ class Overrides:
             slot = words[1]
             self.override_type[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override_destroy_prelim':
+            slot = words[1]
+            self.override_destroy[slot] = rest
+            self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_internal_methods':
             self.override_internal_methods = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods, startline + 1, filename, rest)
         elif words[0] == 'override_internal_methods_protos':
             self.override_internal_methods_protos = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
-        elif words[0] == 'override_destroy_prelim':
+        elif words[0] == 'override_destroy_prelim_xx':
+            # replaced by code above 
             self.override_destroy_prelim = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_destroy_prelim, startline + 1, filename, rest)
         elif words[0] == 'override_int_create_final':
@@ -155,6 +161,10 @@ class Overrides:
         return self.override_type.has_key(slot)
     def get_override_type(self,slot):
         return self.override_type[slot]
+    def part_destroy_is_overriden(self, slot):
+        return self.override_destroy.has_key(slot)
+    def get_override_destroy(self,slot):
+        return self.override_destroy[slot]
     def get_init(self):
         return self.init
     def get_last(self):

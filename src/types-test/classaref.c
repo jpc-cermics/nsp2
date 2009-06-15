@@ -16,9 +16,9 @@
 
 
 #define  NspClassARef_Private 
-#include "nsp/object.h"
-#include "nsp/classaref.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/classaref.h>
+#include <nsp/interf.h>
 
 /* 
  * NspClassARef inherits from Object 
@@ -250,9 +250,9 @@ void nsp_classaref_destroy_partial(NspClassARef *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-
 #line 23 "codegen/classaref.override"
   /* verbatim in destroy */
+#line 256 "classaref.c"
 #line 257 "classaref.c"
     nsp_matrix_destroy(H->obj->cla_val);
     nsp_bmatrix_destroy(H->obj->cla_bval);

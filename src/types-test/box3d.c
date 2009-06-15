@@ -10,6 +10,7 @@
 
 #line 4 "codegen/box3d.override"
 #include <nsp/box3d.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -21,15 +22,15 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *o,double *bounds);
 
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
-#line 25 "box3d.c"
+#line 26 "box3d.c"
 
 /* ----------- NspBox3d ----------- */
 
 
 #define  NspBox3d_Private 
-#include "nsp/object.h"
-#include "nsp/box3d.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/box3d.h>
+#include <nsp/interf.h>
 
 /* 
  * NspBox3d inherits from Graphic 
@@ -92,7 +93,7 @@ NspTypeNspBox3d *new_type_box3d(type_mode mode)
       
   type->init = (init_func *) init_box3d;
 
-#line 23 "codegen/box3d.override"
+#line 24 "codegen/box3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -106,7 +107,7 @@ NspTypeNspBox3d *new_type_box3d(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 110 "box3d.c"
+#line 111 "box3d.c"
   /* 
    * NspBox3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -273,7 +274,7 @@ static NspBox3d  *nsp_box3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_box3d_create_void(name,(NspTypeBase *) nsp_type_box3d))== NULLBOX3D) return H;
   if ((H  = nsp_box3d_xdr_load_partial(xdrs,H))== NULLBOX3D) return H;
   if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
-#line 277 "box3d.c"
+#line 278 "box3d.c"
   return H;
 }
 
@@ -287,7 +288,7 @@ void nsp_box3d_destroy_partial(NspBox3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 291 "box3d.c"
+#line 292 "box3d.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -570,7 +571,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
   if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
-#line 574 "box3d.c"
+#line 575 "box3d.c"
   return H;
 }
 
@@ -590,7 +591,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_box3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_box3d_check_values(H) == FAIL) return RET_BUG;
-#line 594 "box3d.c"
+#line 595 "box3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -754,7 +755,7 @@ static AttrTab box3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/box3d.override"
+#line 47 "codegen/box3d.override"
 int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -766,10 +767,10 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 770 "box3d.c"
+#line 771 "box3d.c"
 
 
-#line 89 "codegen/box3d.override"
+#line 90 "codegen/box3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -778,10 +779,10 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 782 "box3d.c"
+#line 783 "box3d.c"
 
 
-#line 99 "codegen/box3d.override"
+#line 100 "codegen/box3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -791,7 +792,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 795 "box3d.c"
+#line 796 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -827,17 +828,17 @@ void Box3d_Interf_Info(int i, char **fname, function (**f))
 Box3d_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/box3d.override"
+#line 19 "codegen/box3d.override"
 
 Init portion 
 
 
-#line 836 "box3d.c"
+#line 837 "box3d.c"
   nspgobject_register_class(d, "NspBox3d", Box3d, &NspNspBox3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/box3d.override"
+#line 111 "codegen/box3d.override"
 
 /* inserted verbatim at the end */
 
@@ -883,4 +884,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 887 "box3d.c"
+#line 888 "box3d.c"

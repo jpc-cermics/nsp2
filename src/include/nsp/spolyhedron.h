@@ -9,7 +9,7 @@
 
 /* NspSPolyhedron */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspSPolyhedron inherits from Graphic

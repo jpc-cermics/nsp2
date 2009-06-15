@@ -2,6 +2,7 @@
 %%
 headers
 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
@@ -48,7 +49,7 @@ ignore-glob
   *_get_type
 
 %%
-override_destroy_prelim
+override_destroy_prelim NspFigure
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
@@ -441,7 +442,7 @@ static NspAxes *nsp_get_current_axes(void)
 NspFigure *nsp_create_default_figure(void)
 {
   NspFigure *fig ;
-  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
   return fig;
 }
 
@@ -462,7 +463,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
@@ -527,7 +528,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL);
+      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));

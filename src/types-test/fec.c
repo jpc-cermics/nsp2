@@ -10,6 +10,7 @@
 
 #line 4 "codegen/fec.override"
 #include <nsp/axes.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -33,15 +34,15 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 extern Gengine GL_gengine;
 #endif 
 
-#line 37 "fec.c"
+#line 38 "fec.c"
 
 /* ----------- NspFec ----------- */
 
 
 #define  NspFec_Private 
-#include "nsp/object.h"
-#include "nsp/fec.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/fec.h>
+#include <nsp/interf.h>
 
 /* 
  * NspFec inherits from Graphic 
@@ -104,7 +105,7 @@ NspTypeNspFec *new_type_fec(type_mode mode)
       
   type->init = (init_func *) init_fec;
 
-#line 35 "codegen/fec.override"
+#line 36 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -115,7 +116,7 @@ NspTypeNspFec *new_type_fec(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "fec.c"
+#line 120 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -288,7 +289,7 @@ static NspFec  *nsp_fec_xdr_load(XDR *xdrs)
   if ((H  = nsp_fec_create_void(name,(NspTypeBase *) nsp_type_fec))== NULLFEC) return H;
   if ((H  = nsp_fec_xdr_load_partial(xdrs,H))== NULLFEC) return H;
   if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
-#line 292 "fec.c"
+#line 293 "fec.c"
   return H;
 }
 
@@ -302,7 +303,7 @@ void nsp_fec_destroy_partial(NspFec *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 306 "fec.c"
+#line 307 "fec.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->triangles);
@@ -659,7 +660,7 @@ NspFec *nsp_fec_full_copy(NspFec *self)
   if ( H ==  NULLFEC) return NULLFEC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFEC;
   if ( nsp_fec_full_copy_partial(H,self)== NULL) return NULLFEC;
-#line 663 "fec.c"
+#line 664 "fec.c"
   return H;
 }
 
@@ -679,7 +680,7 @@ int int_fec_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_fec_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_fec_check_values(H) == FAIL) return RET_BUG;
-#line 683 "fec.c"
+#line 684 "fec.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -927,7 +928,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 56 "codegen/fec.override"
+#line 57 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -936,10 +937,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 940 "fec.c"
+#line 941 "fec.c"
 
 
-#line 66 "codegen/fec.override"
+#line 67 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -948,7 +949,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 952 "fec.c"
+#line 953 "fec.c"
 
 
 /*----------------------------------------------------
@@ -983,17 +984,17 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
 Fec_register_classes(NspObject *d)
 {
 
-#line 30 "codegen/fec.override"
+#line 31 "codegen/fec.override"
 
 Init portion 
 
 
-#line 992 "fec.c"
+#line 993 "fec.c"
   nspgobject_register_class(d, "NspFec", Fec, &NspNspFec_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 76 "codegen/fec.override"
+#line 77 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1268,4 +1269,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1272 "fec.c"
+#line 1273 "fec.c"

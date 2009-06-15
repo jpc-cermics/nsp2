@@ -9,7 +9,7 @@
 
 /* NspGrstring */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspGrstring inherits from Graphic

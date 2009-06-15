@@ -9,7 +9,7 @@
 
 /* NspString3d */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspString3d inherits from Graphic

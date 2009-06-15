@@ -9,7 +9,7 @@
 
 /* NspObjs3d */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspObjs3d inherits from Graphic

@@ -9,7 +9,7 @@
 
 /* NspClassA */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /*
  * NspClassA inherits from Object

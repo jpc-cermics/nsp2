@@ -9,7 +9,7 @@
 
 /* NspPolyline */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspPolyline inherits from Graphic

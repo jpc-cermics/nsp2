@@ -20,9 +20,9 @@ extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 
 
 #define  NspGRoot_Private 
-#include "nsp/object.h"
-#include "nsp/groot.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/groot.h>
+#include <nsp/interf.h>
 
 /* 
  * NspGRoot inherits from Object 

@@ -9,7 +9,7 @@
 
 /* NspCurve */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspCurve inherits from Graphic

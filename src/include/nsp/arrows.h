@@ -9,7 +9,7 @@
 
 /* NspArrows */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspArrows inherits from Graphic

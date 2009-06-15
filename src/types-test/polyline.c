@@ -10,6 +10,7 @@
 
 #line 4 "codegen/polyline.override"
 #include <nsp/polyline.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -21,15 +22,15 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
 
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
-#line 25 "polyline.c"
+#line 26 "polyline.c"
 
 /* ----------- NspPolyline ----------- */
 
 
 #define  NspPolyline_Private 
-#include "nsp/object.h"
-#include "nsp/polyline.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/polyline.h>
+#include <nsp/interf.h>
 
 /* 
  * NspPolyline inherits from Graphic 
@@ -92,7 +93,7 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
       
   type->init = (init_func *) init_polyline;
 
-#line 23 "codegen/polyline.override"
+#line 24 "codegen/polyline.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -106,7 +107,7 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 110 "polyline.c"
+#line 111 "polyline.c"
   /* 
    * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -279,7 +280,7 @@ static NspPolyline  *nsp_polyline_xdr_load(XDR *xdrs)
   if ((H  = nsp_polyline_create_void(name,(NspTypeBase *) nsp_type_polyline))== NULLPOLYLINE) return H;
   if ((H  = nsp_polyline_xdr_load_partial(xdrs,H))== NULLPOLYLINE) return H;
   if ( nsp_polyline_check_values(H) == FAIL) return NULLPOLYLINE;
-#line 283 "polyline.c"
+#line 284 "polyline.c"
   return H;
 }
 
@@ -293,7 +294,7 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 297 "polyline.c"
+#line 298 "polyline.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
@@ -570,7 +571,7 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
-#line 574 "polyline.c"
+#line 575 "polyline.c"
   return H;
 }
 
@@ -590,7 +591,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline_check_values(H) == FAIL) return RET_BUG;
-#line 594 "polyline.c"
+#line 595 "polyline.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -778,7 +779,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 46 "codegen/polyline.override"
+#line 47 "codegen/polyline.override"
 int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -790,10 +791,10 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 794 "polyline.c"
+#line 795 "polyline.c"
 
 
-#line 89 "codegen/polyline.override"
+#line 90 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -802,10 +803,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 806 "polyline.c"
+#line 807 "polyline.c"
 
 
-#line 99 "codegen/polyline.override"
+#line 100 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -815,7 +816,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 819 "polyline.c"
+#line 820 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -851,17 +852,17 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
 Polyline_register_classes(NspObject *d)
 {
 
-#line 18 "codegen/polyline.override"
+#line 19 "codegen/polyline.override"
 
 Init portion 
 
 
-#line 860 "polyline.c"
+#line 861 "polyline.c"
   nspgobject_register_class(d, "NspPolyline", Polyline, &NspNspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/polyline.override"
+#line 111 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1006,4 +1007,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1010 "polyline.c"
+#line 1011 "polyline.c"

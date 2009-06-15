@@ -10,6 +10,7 @@
 
 #line 4 "codegen/vfield.override"
 #include <nsp/axes.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -25,15 +26,15 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 extern Gengine GL_gengine;
 #endif 
 
-#line 29 "vfield.c"
+#line 30 "vfield.c"
 
 /* ----------- NspVField ----------- */
 
 
 #define  NspVField_Private 
-#include "nsp/object.h"
-#include "nsp/vfield.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/vfield.h>
+#include <nsp/interf.h>
 
 /* 
  * NspVField inherits from Graphic 
@@ -96,7 +97,7 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
       
   type->init = (init_func *) init_vfield;
 
-#line 27 "codegen/vfield.override"
+#line 28 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
@@ -107,7 +108,7 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 111 "vfield.c"
+#line 112 "vfield.c"
   /* 
    * NspVField interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -271,7 +272,7 @@ static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
   if ((H  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return H;
   if ((H  = nsp_vfield_xdr_load_partial(xdrs,H))== NULLVFIELD) return H;
   if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
-#line 275 "vfield.c"
+#line 276 "vfield.c"
   return H;
 }
 
@@ -285,7 +286,7 @@ void nsp_vfield_destroy_partial(NspVField *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 289 "vfield.c"
+#line 290 "vfield.c"
     nsp_matrix_destroy(H->obj->fx);
     nsp_matrix_destroy(H->obj->fy);
     nsp_matrix_destroy(H->obj->x);
@@ -579,7 +580,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
-#line 583 "vfield.c"
+#line 584 "vfield.c"
   return H;
 }
 
@@ -599,7 +600,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 603 "vfield.c"
+#line 604 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -757,7 +758,7 @@ static AttrTab vfield_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 48 "codegen/vfield.override"
+#line 49 "codegen/vfield.override"
 
 extern function int_nspgraphic_extract;
 
@@ -766,10 +767,10 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 770 "vfield.c"
+#line 771 "vfield.c"
 
 
-#line 58 "codegen/vfield.override"
+#line 59 "codegen/vfield.override"
 
 extern function int_graphic_set_attribute;
 
@@ -778,7 +779,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 782 "vfield.c"
+#line 783 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -813,17 +814,17 @@ void VField_Interf_Info(int i, char **fname, function (**f))
 VField_register_classes(NspObject *d)
 {
 
-#line 22 "codegen/vfield.override"
+#line 23 "codegen/vfield.override"
 
 Init portion 
 
 
-#line 822 "vfield.c"
+#line 823 "vfield.c"
   nspgobject_register_class(d, "NspVField", VField, &NspNspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 68 "codegen/vfield.override"
+#line 69 "codegen/vfield.override"
 
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
 {
@@ -891,4 +892,4 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 895 "vfield.c"
+#line 896 "vfield.c"

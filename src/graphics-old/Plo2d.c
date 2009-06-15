@@ -816,6 +816,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
  */
 
 #include <gtk/gtk.h>
+#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 
 #include <nsp/curve.h> 

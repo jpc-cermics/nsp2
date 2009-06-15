@@ -16,9 +16,9 @@
 
 
 #define  NspClassA_Private 
-#include "nsp/object.h"
-#include "nsp/classa.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/classa.h>
+#include <nsp/interf.h>
 
 /* 
  * NspClassA inherits from Object 
@@ -248,9 +248,9 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 
 void nsp_classa_destroy_partial(NspClassA *H)
 {
-
 #line 23 "codegen/classa.override"
   /* verbatim in destroy */
+#line 254 "classa.c"
 #line 255 "classa.c"
   nsp_matrix_destroy(H->cla_val);
   nsp_bmatrix_destroy(H->cla_bval);

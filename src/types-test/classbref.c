@@ -16,9 +16,9 @@
 
 
 #define  NspClassBRef_Private 
-#include "nsp/object.h"
-#include "nsp/classbref.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/classbref.h>
+#include <nsp/interf.h>
 
 /* 
  * NspClassBRef inherits from ClassARef 

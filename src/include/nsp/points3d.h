@@ -9,7 +9,7 @@
 
 /* NspPoints3d */
 
-#include "nsp/graphic.h"
+#include <nsp/graphic.h>
 
 /*
  * NspPoints3d inherits from Graphic
