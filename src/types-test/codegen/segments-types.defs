@@ -3,7 +3,7 @@
 (define-objectref Segments
   (in-module "Segments")
   (parent "Graphic")
-  (c-name "Segments")
+  (c-name "NspSegments")
   (fields
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")

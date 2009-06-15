@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/box3d.override"
-#include "nsp/box3d.h"
+#include <nsp/box3d.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "box3d.c"
 
-/* ----------- Box3d ----------- */
+/* ----------- NspBox3d ----------- */
 
 
-#define  Box3d_Private 
+#define  NspBox3d_Private 
 #include "nsp/object.h"
 #include "nsp/box3d.h"
 #include "nsp/interf.h"
 
 /* 
- * NspBox3d inherits from NspGraphic 
+ * NspBox3d inherits from Graphic 
  */
 
 int nsp_type_box3d_id=0;
-NspTypeBox3d *nsp_type_box3d=NULL;
+NspTypeNspBox3d *nsp_type_box3d=NULL;
 
 /*
- * Type object for Box3d 
- * all the instance of NspTypeBox3d share the same id. 
- * nsp_type_box3d: is an instance of NspTypeBox3d 
+ * Type object for NspBox3d 
+ * all the instance of NspTypeNspBox3d share the same id. 
+ * nsp_type_box3d: is an instance of NspTypeNspBox3d 
  *    used for objects of NspBox3d type (i.e built with new_box3d) 
  * other instances are used for derived classes 
  */
-NspTypeBox3d *new_type_box3d(type_mode mode)
+NspTypeNspBox3d *new_type_box3d(type_mode mode)
 {
-  NspTypeBox3d *type= NULL;
+  NspTypeNspBox3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_box3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_box3d;
     }
-  if ((type =  malloc(sizeof(NspTypeBox3d))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspBox3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_box3d;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_box3d ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_box3d  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_box3d  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_box3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_box3d_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_box3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_box3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_box3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_box3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_box3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_box3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Box3d */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "box3d.c"
   /* 
-   * Box3d interfaces can be added here 
+   * NspBox3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeBox3d called nsp_type_box3d
+       * an instance of NspTypeNspBox3d called nsp_type_box3d
        */
       type->id =  nsp_type_box3d_id = nsp_new_type_id();
       nsp_type_box3d = type;
@@ -132,11 +132,11 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
 }
 
 /*
- * initialize Box3d instances 
+ * initialize NspBox3d instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_box3d(NspBox3d *Obj,NspTypeBox3d *type)
+static int init_box3d(NspBox3d *Obj,NspTypeNspBox3d *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_box3d(NspBox3d *Obj,NspTypeBox3d *type)
 }
 
 /*
- * new instance of Box3d 
+ * new instance of NspBox3d 
  */
 
 NspBox3d *new_box3d() 
@@ -163,7 +163,7 @@ NspBox3d *new_box3d()
 }
 
 /*----------------------------------------------
- * Object method redefined for Box3d 
+ * Object method redefined for NspBox3d 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_box3d_size(NspBox3d *Mat, int flag)
  * type as string 
  */
 
-static char box3d_type_name[]="Box3d";
+static char box3d_type_name[]="NspBox3d";
 static char box3d_short_type_name[]="box3d";
 
 static char *nsp_box3d_type_as_string(void)
@@ -311,7 +311,7 @@ int nsp_box3d_info(NspBox3d *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLBOX3D) 
     {
-      Sciprintf("Null Pointer Box3d \n");
+      Sciprintf("Null Pointer NspBox3d \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -329,7 +329,7 @@ int nsp_box3d_print(NspBox3d *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLBOX3D) 
     {
-      Sciprintf("Null Pointer Box3d \n");
+      Sciprintf("Null Pointer NspBox3d \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -392,7 +392,7 @@ int nsp_box3d_latex(NspBox3d *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Box3d objects 
+ * for NspBox3d objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -575,7 +575,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Box3d
+ * wrappers for the NspBox3d
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -595,22 +595,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_box3d_full_copy(NspBox3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspBox3d *ret;
-
-  ret = nsp_box3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods box3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_box3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *box3d_get_methods(void) { return box3d_methods;};
+static NspMethods *box3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -781,7 +766,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 785 "box3d.c"
+#line 770 "box3d.c"
 
 
 #line 89 "codegen/box3d.override"
@@ -793,7 +778,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 797 "box3d.c"
+#line 782 "box3d.c"
 
 
 #line 99 "codegen/box3d.override"
@@ -806,7 +791,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 810 "box3d.c"
+#line 795 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -847,8 +832,8 @@ Box3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 851 "box3d.c"
-  nspgobject_register_class(d, "Box3d", Box3d, &NspBox3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 836 "box3d.c"
+  nspgobject_register_class(d, "NspBox3d", Box3d, &NspNspBox3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -898,4 +883,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 902 "box3d.c"
+#line 887 "box3d.c"

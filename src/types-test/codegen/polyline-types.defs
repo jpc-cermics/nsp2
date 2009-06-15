@@ -3,7 +3,7 @@
 (define-objectref Polyline
   (in-module "Polyline")
   (parent "Graphic")
-  (c-name "Polyline")
+  (c-name "NspPolyline")
   (fields
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")

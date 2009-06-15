@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/polyline.override"
-#include "nsp/polyline.h"
+#include <nsp/polyline.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "polyline.c"
 
-/* ----------- Polyline ----------- */
+/* ----------- NspPolyline ----------- */
 
 
-#define  Polyline_Private 
+#define  NspPolyline_Private 
 #include "nsp/object.h"
 #include "nsp/polyline.h"
 #include "nsp/interf.h"
 
 /* 
- * NspPolyline inherits from NspGraphic 
+ * NspPolyline inherits from Graphic 
  */
 
 int nsp_type_polyline_id=0;
-NspTypePolyline *nsp_type_polyline=NULL;
+NspTypeNspPolyline *nsp_type_polyline=NULL;
 
 /*
- * Type object for Polyline 
- * all the instance of NspTypePolyline share the same id. 
- * nsp_type_polyline: is an instance of NspTypePolyline 
+ * Type object for NspPolyline 
+ * all the instance of NspTypeNspPolyline share the same id. 
+ * nsp_type_polyline: is an instance of NspTypeNspPolyline 
  *    used for objects of NspPolyline type (i.e built with new_polyline) 
  * other instances are used for derived classes 
  */
-NspTypePolyline *new_type_polyline(type_mode mode)
+NspTypeNspPolyline *new_type_polyline(type_mode mode)
 {
-  NspTypePolyline *type= NULL;
+  NspTypeNspPolyline *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_polyline != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_polyline;
     }
-  if ((type =  malloc(sizeof(NspTypePolyline))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspPolyline))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "polyline.c"
   /* 
-   * Polyline interfaces can be added here 
+   * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypePolyline called nsp_type_polyline
+       * an instance of NspTypeNspPolyline called nsp_type_polyline
        */
       type->id =  nsp_type_polyline_id = nsp_new_type_id();
       nsp_type_polyline = type;
@@ -132,11 +132,11 @@ NspTypePolyline *new_type_polyline(type_mode mode)
 }
 
 /*
- * initialize Polyline instances 
+ * initialize NspPolyline instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_polyline(NspPolyline *Obj,NspTypePolyline *type)
+static int init_polyline(NspPolyline *Obj,NspTypeNspPolyline *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_polyline(NspPolyline *Obj,NspTypePolyline *type)
 }
 
 /*
- * new instance of Polyline 
+ * new instance of NspPolyline 
  */
 
 NspPolyline *new_polyline() 
@@ -163,7 +163,7 @@ NspPolyline *new_polyline()
 }
 
 /*----------------------------------------------
- * Object method redefined for Polyline 
+ * Object method redefined for NspPolyline 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_polyline_size(NspPolyline *Mat, int flag)
  * type as string 
  */
 
-static char polyline_type_name[]="Polyline";
+static char polyline_type_name[]="NspPolyline";
 static char polyline_short_type_name[]="polyline";
 
 static char *nsp_polyline_type_as_string(void)
@@ -316,7 +316,7 @@ int nsp_polyline_info(NspPolyline *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLPOLYLINE) 
     {
-      Sciprintf("Null Pointer Polyline \n");
+      Sciprintf("Null Pointer NspPolyline \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -334,7 +334,7 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLPOLYLINE) 
     {
-      Sciprintf("Null Pointer Polyline \n");
+      Sciprintf("Null Pointer NspPolyline \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -397,7 +397,7 @@ int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Polyline objects 
+ * for NspPolyline objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -575,7 +575,7 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Polyline
+ * wrappers for the NspPolyline
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -595,22 +595,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_polyline_full_copy(NspPolyline *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspPolyline *ret;
-
-  ret = nsp_polyline_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods polyline_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_polyline_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *polyline_get_methods(void) { return polyline_methods;};
+static NspMethods *polyline_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -805,7 +790,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 809 "polyline.c"
+#line 794 "polyline.c"
 
 
 #line 89 "codegen/polyline.override"
@@ -817,7 +802,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 821 "polyline.c"
+#line 806 "polyline.c"
 
 
 #line 99 "codegen/polyline.override"
@@ -830,7 +815,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 834 "polyline.c"
+#line 819 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -871,8 +856,8 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 875 "polyline.c"
-  nspgobject_register_class(d, "Polyline", Polyline, &NspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 860 "polyline.c"
+  nspgobject_register_class(d, "NspPolyline", Polyline, &NspNspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1021,4 +1006,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1025 "polyline.c"
+#line 1010 "polyline.c"

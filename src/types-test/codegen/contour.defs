@@ -3,7 +3,7 @@
 (define-objectref Contour
   (in-module "Contour")
   (parent "Graphic")
-  (c-name "Contour")
+  (c-name "NspContour")
   (fields
     '("NspMatrix*" "z") ;; Matrix 
     '("NspMatrix*" "x")  ;; vector 

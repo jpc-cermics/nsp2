@@ -62,7 +62,7 @@ class Wrapper:
               '#include "nsp/interf.h"\n'  \
               '\n'  \
               '/* \n' \
-              ' * Nsp%(typename)s inherits from Nsp%(parent)s \n' \
+              ' * %(typename)s inherits from %(parent)s \n' \
               ' */\n' \
               '\n' \
               'int nsp_type_%(typename_dc)s_id=0;\n' \
@@ -72,7 +72,7 @@ class Wrapper:
               ' * Type object for %(typename)s \n' \
               ' * all the instance of NspType%(typename)s share the same id. \n' \
               ' * nsp_type_%(typename_dc)s: is an instance of NspType%(typename)s \n' \
-              ' *    used for objects of Nsp%(typename)s type (i.e built with new_%(typename_dc)s) \n' \
+              ' *    used for objects of %(typename)s type (i.e built with new_%(typename_dc)s) \n' \
               ' * other instances are used for derived classes \n' \
               ' */\n' \
               'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
@@ -155,7 +155,7 @@ class Wrapper:
               ' * locally and by calling initializer on parent class \n'  \
               ' */\n'  \
               '\n'  \
-              'static int init_%(typename_dc)s(Nsp%(typename)s *Obj,NspType%(typename)s *type)\n'  \
+              'static int init_%(typename_dc)s(%(typename)s *Obj,NspType%(typename)s *type)\n'  \
               '{\n'  \
               '  /* jump the first surtype */ \n'  \
               '  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;\n'  \
@@ -170,12 +170,12 @@ class Wrapper:
               ' * new instance of %(typename)s \n'  \
               ' */\n'  \
               '\n'  \
-              'Nsp%(typename)s *new_%(typename_dc)s() \n'  \
+              '%(typename)s *new_%(typename_dc)s() \n'  \
               '{\n'  \
-              '  Nsp%(typename)s *loc; \n'  \
+              '  %(typename)s *loc; \n'  \
               '  /* type must exists */\n'  \
               '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
-              '  if ( (loc = malloc(sizeof(Nsp%(typename)s)))== NULL%(typename_uc)s) return loc;\n'  \
+              '  if ( (loc = malloc(sizeof(%(typename)s)))== NULL%(typename_uc)s) return loc;\n'  \
               '  /* initialize object */\n'  \
               '  if ( init_%(typename_dc)s(loc,nsp_type_%(typename_dc)s) == FAIL) return NULL%(typename_uc)s;\n'  \
               '  return loc;\n'  \
@@ -188,7 +188,7 @@ class Wrapper:
               ' * size \n' \
               ' */\n' \
               '\n' \
-              'static int nsp_%(typename_dc)s_size(Nsp%(typename)s *Mat, int flag)\n' \
+              'static int nsp_%(typename_dc)s_size(%(typename)s *Mat, int flag)\n' \
               '{\n' \
               '  return 0;\n' \
               '}\n' \
@@ -216,9 +216,9 @@ class Wrapper:
               ' * A == B \n' \
               ' */\n' \
               '\n' \
-              'static int nsp_%(typename_dc)s_eq(Nsp%(typename)s *A, NspObject *B)\n' \
+              'static int nsp_%(typename_dc)s_eq(%(typename)s *A, NspObject *B)\n' \
               '{\n' \
-              '  Nsp%(typename)s *loc = (Nsp%(typename)s *) B;\n' \
+              '  %(typename)s *loc = (%(typename)s *) B;\n' \
               '  if ( check_cast(B,nsp_type_%(typename_dc)s_id) == FALSE) return FALSE ;\n' \
               '%(fields_equal)s' \
               '  return TRUE;\n' \
@@ -228,7 +228,7 @@ class Wrapper:
               ' * A != B \n' \
               ' */\n' \
               '\n' \
-              'static int nsp_%(typename_dc)s_neq(Nsp%(typename)s *A, NspObject *B)\n' \
+              'static int nsp_%(typename_dc)s_neq(%(typename)s *A, NspObject *B)\n' \
               '{\n' \
               '  return ( nsp_%(typename_dc)s_eq(A,B) == TRUE ) ? FALSE : TRUE;\n' \
               '}\n' \
@@ -237,7 +237,7 @@ class Wrapper:
               ' * save \n' \
               ' */\n' \
               '\n' \
-              'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, Nsp%(typename)s *M)\n' \
+              'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, %(typename)s *M)\n' \
               '{\n' \
               '  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/\n' \
               '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ \n ' \
@@ -254,14 +254,14 @@ class Wrapper:
         ' * load \n' \
         ' */\n' \
         '\n' \
-        'Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M)\n' \
+        '%(typename)s  *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, %(typename)s *M)\n' \
         '{\n' \
         '%(fields_load)s' \
         ' return M;\n' \
         '}\n\n' \
-        'static Nsp%(typename)s  *nsp_%(typename_dc)s_xdr_load(XDR *xdrs)\n' \
+        'static %(typename)s  *nsp_%(typename_dc)s_xdr_load(XDR *xdrs)\n' \
         '{\n' \
-        '  Nsp%(typename)s *H = NULL;\n' \
+        '  %(typename)s *H = NULL;\n' \
         '  char name[NAME_MAXL];\n' \
         '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
         '  if ((H  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return H;\n' \
@@ -276,14 +276,14 @@ class Wrapper:
               ' * delete \n' \
               ' */\n' \
               '\n' \
-              'void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H)\n' \
+              'void nsp_%(typename_dc)s_destroy_partial(%(typename)s *H)\n' \
               '{\n' \
               '%(fields_free1)s' 
 
     type_tmpl_1_1_1_1 = \
               '%(fields_free2)s' \
               '}\n\n' \
-              'void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H)\n' \
+              'void nsp_%(typename_dc)s_destroy(%(typename)s *H)\n' \
               '{\n' \
               '  nsp_object_destroy_name(NSP_OBJECT(H));\n' \
               '  nsp_%(typename_dc)s_destroy_partial(H);\n' \
@@ -294,7 +294,7 @@ class Wrapper:
               ' * info \n' \
               ' */\n' \
               '\n' \
-              'int nsp_%(typename_dc)s_info(Nsp%(typename)s *M,int indent,const char *name,int rec_level)\n' \
+              'int nsp_%(typename_dc)s_info(%(typename)s *M,int indent,const char *name,int rec_level)\n' \
               '{\n' \
               '  const char *pname;\n' \
               '  if ( M == NULL%(typename_uc)s) \n' \
@@ -312,7 +312,7 @@ class Wrapper:
               ' * print \n' \
               ' */\n' \
               '\n' \
-              'int nsp_%(typename_dc)s_print(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+              'int nsp_%(typename_dc)s_print(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
               '{\n' \
               '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
               '  if ( M == NULL%(typename_uc)s) \n' \
@@ -341,7 +341,7 @@ class Wrapper:
               '/*\n' \
               ' * latex print \n' \
               ' */\n\n' \
-              'int nsp_%(typename_dc)s_latex(Nsp%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+              'int nsp_%(typename_dc)s_latex(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
               '{\n' \
               '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
               '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\002latex:\\\\[");\n' \
@@ -361,36 +361,36 @@ class Wrapper:
               ' * Note that some of these functions could become MACROS \n'  \
               ' *-----------------------------------------------------*/\n'  \
               '\n'  \
-              'Nsp%(typename)s   *nsp_%(typename_dc)s_object(NspObject *O)\n'  \
+              '%(typename)s   *nsp_%(typename_dc)s_object(NspObject *O)\n'  \
               '{\n'  \
               '  /* Follow pointer */\n'  \
               '  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;\n'  \
               '  /* Check type */\n'  \
-              '  if ( %(interface_1)s (O,nsp_type_%(typename_dc)s_id) == TRUE ) return ((Nsp%(typename)s *) O);\n'  \
+              '  if ( %(interface_1)s (O,nsp_type_%(typename_dc)s_id) == TRUE ) return ((%(typename)s *) O);\n'  \
               '  else \n'  \
               '    Scierror("Error:\tArgument should be a %%s\\n",type_get_name(nsp_type_%(typename_dc)s));\n'  \
               '  return NULL;\n'  \
               '}\n'  \
               '\n'  \
-              'int Is%(typename)sObj(Stack stack, int i)\n'  \
+              'int Is%(typename_nn)sObj(Stack stack, int i)\n'  \
               '{\n'  \
               '  return %(interface_2)s(NthObj(i) , nsp_type_%(typename_dc)s_id);\n'  \
               '}\n'  \
               '\n'  \
-              'int Is%(typename)s(NspObject *O)\n'  \
+              'int Is%(typename_nn)s(NspObject *O)\n'  \
               '{\n'  \
               '  return %(interface_2)s(O,nsp_type_%(typename_dc)s_id);\n'  \
               '}\n'  \
               '\n'  \
-              'Nsp%(typename)s  *Get%(typename)sCopy(Stack stack, int i)\n'  \
+              '%(typename)s  *Get%(typename_nn)sCopy(Stack stack, int i)\n'  \
               '{\n'  \
-              '  if (  Get%(typename)s(stack,i) == NULL ) return NULL;\n'  \
+              '  if (  Get%(typename_nn)s(stack,i) == NULL ) return NULL;\n'  \
               '  return MaybeObjCopy(&NthObj(i));\n'  \
               '}\n'  \
               '\n'  \
-              'Nsp%(typename)s  *Get%(typename)s(Stack stack, int i)\n'  \
+              '%(typename)s  *Get%(typename_nn)s(Stack stack, int i)\n'  \
               '{\n'  \
-              '  Nsp%(typename)s *M;\n'  \
+              '  %(typename)s *M;\n'  \
               '  if (( M = nsp_%(typename_dc)s_object(NthObj(i))) == NULL%(typename_uc)s)\n'  \
               '     ArgMessage(stack,i);\n'  \
               '  return M;\n'  \
@@ -402,7 +402,7 @@ class Wrapper:
               ' * copy \n'  \
               ' */\n'  \
               '\n'  \
-              'Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *self)\n'  \
+              '%(typename)s *nsp_%(typename_dc)s_copy(%(typename)s *self)\n'  \
               '{\n'  \
               '  return %(parent_dc)s_create(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
               '}\n'  \
@@ -429,10 +429,10 @@ class Wrapper:
         '#include "nsp/%(parent_dc)s.h"\n' \
         '\n' \
         '/*\n' \
-        ' * Nsp%(typename)s inherits from Nsp%(parent)s\n' \
+        ' * %(typename)s inherits from %(parent)s\n' \
         ' */\n' \
         '\n' \
-        'typedef struct _Nsp%(typename)s Nsp%(typename)s ;\n' \
+        'typedef struct _%(typename)s %(typename)s ;\n' \
         'typedef struct _NspType%(typename)s NspType%(typename)s ;\n' \
         '\n' 
     type_header_2 = \
@@ -445,7 +445,7 @@ class Wrapper:
         '};\n' \
         '\n' \
         '%(fields_ref)s' \
-        'struct _Nsp%(typename)s {\n' \
+        'struct _%(typename)s {\n' \
         '  /*< private >*/\n' \
         '  Nsp%(parent)s father;\n' \
         '  NspType%(typename)s*type;\n' \
@@ -462,53 +462,53 @@ class Wrapper:
         '\n' \
         '/* instance for %(typename)s */\n' \
         '\n' \
-        'Nsp%(typename)s *new_%(typename_dc)s();\n' \
+        '%(typename)s *new_%(typename_dc)s();\n' \
         '\n' \
         '/*\n' \
         '* Object methods redefined for %(typename_dc)s \n' \
         '*/\n' \
         '\n' \
         '\n' \
-        '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
+        '#define NULL%(typename_uc)s (%(typename)s*) 0\n' \
         '\n' \
-        'extern Nsp%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
-        'extern Nsp%(typename)s *nsp_%(typename_dc)s_create_default(char *name);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_create_default(char *name);\n' \
         '\n' \
         '/* from %(typename)sObj.c */\n' \
         '\n' \
-        'extern Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *H);\n' \
-        'extern void nsp_%(typename_dc)s_destroy(Nsp%(typename)s *H);\n' \
-        'extern int nsp_%(typename_dc)s_info(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-        'extern int nsp_%(typename_dc)s_print(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-        'extern int nsp_%(typename_dc)s_latex(Nsp%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-        'extern Nsp%(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
-        'extern int Is%(typename)sObj (Stack stack, int i); \n' \
-        'extern int Is%(typename)s(NspObject *O);\n' \
-        'extern Nsp%(typename)s *Get%(typename)sCopy (Stack stack, int i); \n' \
-        'extern Nsp%(typename)s *Get%(typename)s (Stack stack, int i); \n' \
-        'extern int nsp_%(typename_dc)s_create_partial(Nsp%(typename)s *H);\n' \
-        'extern void nsp_%(typename_dc)s_destroy_partial(Nsp%(typename)s *H);\n' \
-        'extern Nsp%(typename)s * nsp_%(typename_dc)s_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
-        'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self);\n' \
-        'extern Nsp%(typename)s * nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self);\n' \
-        'extern int nsp_%(typename_dc)s_check_values(Nsp%(typename)s *H);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_copy(%(typename)s *H);\n' \
+        'extern void nsp_%(typename_dc)s_destroy(%(typename)s *H);\n' \
+        'extern int nsp_%(typename_dc)s_info(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern int nsp_%(typename_dc)s_print(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern int nsp_%(typename_dc)s_latex(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
+        'extern int Is%(typename_nn)sObj (Stack stack, int i); \n' \
+        'extern int Is%(typename_nn)s(NspObject *O);\n' \
+        'extern %(typename)s *Get%(typename_nn)sCopy (Stack stack, int i); \n' \
+        'extern %(typename)s *Get%(typename_nn)s (Stack stack, int i); \n' \
+        'extern int nsp_%(typename_dc)s_create_partial(%(typename)s *H);\n' \
+        'extern void nsp_%(typename_dc)s_destroy_partial(%(typename)s *H);\n' \
+        'extern %(typename)s * nsp_%(typename_dc)s_copy_partial(%(typename)s *H,%(typename)s *self);\n' \
+        'extern %(typename)s * nsp_%(typename_dc)s_full_copy_partial(%(typename)s *H,%(typename)s *self);\n' \
+        'extern %(typename)s * nsp_%(typename_dc)s_full_copy(%(typename)s *self);\n' \
+        'extern int nsp_%(typename_dc)s_check_values(%(typename)s *H);\n' \
         'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
-        'extern Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, Nsp%(typename)s *M);\n' \
-        'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, Nsp%(typename)s *M);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, %(typename)s *M);\n' \
+        'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, %(typename)s *M);\n' \
         '\n' \
         '#endif /* NSP_INC_%(typename)s */ \n\n' \
         '#ifdef %(typename)s_Private \n' \
-        'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
-        'static int nsp_%(typename_dc)s_size(Nsp%(typename)s *Mat, int flag);\n' \
+        'static int init_%(typename_dc)s(%(typename)s *o,NspType%(typename)s *type);\n' \
+        'static int nsp_%(typename_dc)s_size(%(typename)s *Mat, int flag);\n' \
         'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
         'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
-        'static int nsp_%(typename_dc)s_eq(Nsp%(typename)s *A, NspObject *B);\n' \
-        'static int nsp_%(typename_dc)s_neq(Nsp%(typename)s *A, NspObject *B);\n' \
-        'static Nsp%(typename)s *nsp_%(typename_dc)s_xdr_load(XDR *xdrs);\n' \
+        'static int nsp_%(typename_dc)s_eq(%(typename)s *A, NspObject *B);\n' \
+        'static int nsp_%(typename_dc)s_neq(%(typename)s *A, NspObject *B);\n' \
+        'static %(typename)s *nsp_%(typename_dc)s_xdr_load(XDR *xdrs);\n' \
         'static AttrTab %(typename_dc)s_attrs[];\n' \
         'static NspMethods *%(typename_dc)s_get_methods(void);\n' \
         '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/ \n' \
-        'static Nsp%(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' \
+        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' \
         '#endif /* %(typename)s_Private */\n\n'
     
     slots_list = ['tp_getattr', 'tp_setattr' ]
@@ -576,6 +576,10 @@ class Wrapper:
 
     def get_lower_name(self):
         # return string.lower(string.replace(self.objinfo.typecode,'_TYPE_', '_', 1))
+        return string.lower(self.objinfo.name)
+
+    def get_lower_c_name(self):
+        # return string.lower(string.replace(self.objinfo.typecode,'_TYPE_', '_', 1))
         return string.lower(self.objinfo.c_name)
     
     def get_field_accessor(self, fieldname, fieldtype):
@@ -605,10 +609,13 @@ class Wrapper:
 
         substdict['classname'] = classname 
         typename = self.objinfo.c_name
+        typename_nn = self.objinfo.name
         substdict['typecode'] =  self.objinfo.typecode
         substdict['typename'] =  typename
-        substdict['typename_dc'] = string.lower(typename)
-        substdict['typename_uc'] = string.upper(typename)
+        # typename but not the c_name 
+        substdict['typename_nn'] =  typename_nn
+        substdict['typename_dc'] = string.lower(self.objinfo.name)
+        substdict['typename_uc'] = string.upper(self.objinfo.name)
         substdict['parent'] = self.objinfo.parent
         substdict['parent_dc'] = string.lower(self.objinfo.parent)
         substdict['tp_getattr_def'] = 'int_get_attribute';
@@ -620,7 +627,7 @@ class Wrapper:
             if substdict.has_key(slot) and substdict[slot] != '0':
                 continue
             slotname = '%s.%s' % (self.objinfo.c_name, slot)
-            slotfunc = '_wrap_%s_%s' % (self.get_lower_name(), slot)
+            slotfunc = '_wrap_%s_%s' % (self.get_lower_c_name(), slot)
             if slot[:6] == 'tp_as_':
                 slotfunc = '&' + slotfunc
             if self.overrides.slot_is_overriden(slotname):
@@ -722,7 +729,7 @@ class Wrapper:
         self.fp.resetline()
         self.fp.write(self.type_tmpl_copy_last % substdict)
         # write a header file for class object
-        outheadername = './' + string.lower(self.objinfo.c_name) + '.h'
+        outheadername = './' + string.lower(self.objinfo.name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
 
         self.fhp.write(self.type_header_1 %substdict)
@@ -744,7 +751,7 @@ class Wrapper:
             #if substdict.has_key(slot) and substdict[slot] != '0':
             #    continue
             slotname = '%s.%s' % (self.objinfo.c_name, slot)
-            slotfunc = '_wrap_%s_%s' % (self.get_lower_name(), slot)
+            slotfunc = '_wrap_%s_%s' % (self.get_lower_c_name(), slot)
             if slot[:6] == 'tp_as_':
                 slotfunc = '&' + slotfunc
             if self.overrides.slot_is_overriden(slotname):
@@ -759,9 +766,9 @@ class Wrapper:
 
     def build_fields(self):
         if self.byref == 't' :
-            str =  'nsp_%s *obj;\n' % string.lower(self.objinfo.c_name)
+            str =  'nsp_%s *obj;\n' % string.lower(self.objinfo.name)
             return str
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if not self.objinfo.fields:
@@ -793,7 +800,7 @@ class Wrapper:
         return str
 
     def build_list_fields(self,flag):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if not self.objinfo.fields:
@@ -861,7 +868,7 @@ class Wrapper:
             return ''
         right_varname = right_varname + '->obj'
         # no overrides for the whole function.  If no fields, don't write a func
-        str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self)\n' \
+        str = '%(typename)s *nsp_%(typename_dc)s_full_copy_partial(%(typename)s *H,%(typename)s *self)\n' \
             '{\n'  % substdic 
 
         if self.byref == 't':
@@ -879,7 +886,7 @@ class Wrapper:
         return str
 
     def build_save_fields(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if self.byref == 't' :
@@ -893,11 +900,11 @@ class Wrapper:
                 str = str + handler.attr_write_save( fname,varname,self.byref, pdef , psize, pcheck)
         father = self.objinfo.parent
         if father != 'Object':
-            str = str + '  if ( nsp_%s_xdr_save(xdrs, (Nsp%s *) M)== FAIL) return FAIL;\n' % (string.lower(father),father)
+            str = str + '  if ( nsp_%s_xdr_save(xdrs, (%s *) M)== FAIL) return FAIL;\n' % (string.lower(father),'Nsp'+father)
         return str
 
     def build_info_fields(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         if self.byref == 't' :
@@ -912,7 +919,7 @@ class Wrapper:
         return str
 
     def build_print_fields(self,varname,print_mode):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         father = self.objinfo.parent
@@ -927,13 +934,13 @@ class Wrapper:
             handler = argtypes.matcher.get(ftype)
             str = str + handler.attr_write_print( fname,varname,self.byref,print_mode, pdef , psize, pcheck)
         if father != 'Object':
-            str = str + '  nsp_%s_%s((Nsp%s *) M,indent+2,NULL,rec_level);\n'  % (string.lower(father),print_mode,father)
+            str = str + '  nsp_%s_%s((%s *) M,indent+2,NULL,rec_level);\n'  % (string.lower(father),print_mode,'Nsp'+father)
         return str
 
     def build_init_fields(self,varname):
         # initialize the fields to default value but only for 
         # object that are not byref 
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         str = ''
         if self.byref == 't' :
             return '  '+varname+'->obj = NULL;\n'
@@ -973,8 +980,8 @@ class Wrapper:
             str = str + '     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;\n'
             str = str + '    }\n'
             str = str + '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;\n'
-            str = str + '  if ( nsp_%s_xdr_load_partial(xdrs,(Nsp%s *)M) == NULL) return NULL;\n' \
-                %  (string.lower(father),father)
+            str = str + '  if ( nsp_%s_xdr_load_partial(xdrs,(%s *)M) == NULL) return NULL;\n' \
+                %  (string.lower(father),'Nsp'+father)
         return str
 
     def build_fields_from_attributes(self,varname):
@@ -993,7 +1000,7 @@ class Wrapper:
         return str
 
     def build_defval_fields(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
         father = self.objinfo.parent
@@ -1007,27 +1014,27 @@ class Wrapper:
             handler = argtypes.matcher.get(ftype)
             str = str +  handler.attr_write_defval( fname,varname,self.byref, pdef , psize, pcheck)
         if father != 'Object':
-            str = str + '  nsp_%s_check_values((Nsp%s *) H);\n'  % (string.lower(father),father)
+            str = str + '  nsp_%s_check_values((%s *) H);\n'  % (string.lower(father),'Nsp'+father)
         return str
     
     def build_fields_free1(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # build the code used to free attribute of an object 
         str = '' 
         father = self.objinfo.parent
         if self.byref == 't':
             if father != 'Object':
-                str = '  nsp_%s_destroy_partial((Nsp%s *) H);\n'  % (string.lower(father),father)
+                str = '  nsp_%s_destroy_partial((%s *) H);\n'  % (string.lower(father),'Nsp'+father)
             str = str +  '  %s->obj->ref_count--;\n' \
                 '  if ( %s->obj->ref_count == 0 )\n   {\n' % (varname,varname)
             varname = varname +'->obj'
         else:
             if father != 'Object':
-                str = str + '  nsp_%s_destroy_partial((Nsp%s *) H);\n'  % (string.lower(father),father)
+                str = str + '  nsp_%s_destroy_partial((%s *) H);\n'  % (string.lower(father),'Nsp'+father)
         return str
 
     def build_fields_free2(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # build the code used to free attribute of an object 
         str = '' 
         father = self.objinfo.parent
@@ -1064,7 +1071,7 @@ class Wrapper:
         father = self.objinfo.parent
         if self.byref == 't':
             if father != 'Object':
-                str = '  if ( nsp_%s_create_partial((Nsp%s *) H)== FAIL) return FAIL;\n' % (string.lower(father),father)
+                str = '  if ( nsp_%s_create_partial((%s *) H)== FAIL) return FAIL;\n' % (string.lower(father),'Nsp'+father)
             str = str +  '  if((H->obj = calloc(1,sizeof(nsp_%s)))== NULL ) return FAIL;\n' \
                 '  H->obj->ref_count=1;\n' % (lower_name)  
             if not self.objinfo.fields:
@@ -1080,8 +1087,8 @@ class Wrapper:
         str = '' 
         father = self.objinfo.parent
         if father != 'Object':
-            str = '  if ( nsp_%s_copy_partial((Nsp%s *) H,(Nsp%s *) self ) == NULL) return NULL%s;\n' \
-                % (string.lower(father),father,father,string.upper(lower_name))
+            str = '  if ( nsp_%s_copy_partial((%s *) H,(%s *) self ) == NULL) return NULL%s;\n' \
+                % (string.lower(father),'Nsp'+father,'Nsp'+father,string.upper(lower_name))
         str = str + '  if ( nsp_%s_copy_partial(H,self)== NULL) return NULL%s;\n' \
             % (lower_name,string.upper(lower_name)) 
         return str
@@ -1093,25 +1100,25 @@ class Wrapper:
         # override_int_create_final 
         if self.byref != 't' :
             # here full_copy is just a copy 
-            str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
+            str = '%(typename)s *nsp_%(typename_dc)s_full_copy(%(typename)s *self)\n'  \
                 '{\n'  \
-                '  Nsp%(typename)s *H = nsp_%(typename_dc)s_copy(self);\n' % substdict 
+                '  %(typename)s *H = nsp_%(typename_dc)s_copy(self);\n' % substdict 
             return str 
-        str = 'Nsp%(typename)s *nsp_%(typename_dc)s_full_copy(Nsp%(typename)s *self)\n'  \
+        str = '%(typename)s *nsp_%(typename_dc)s_full_copy(%(typename)s *self)\n'  \
             '{\n'  \
-            '  Nsp%(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
+            '  %(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
             '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' % substdict 
         lower_name = self.get_lower_name()
         father = self.objinfo.parent
         if father != 'Object':
-            str = str + '  if ( nsp_%s_full_copy_partial((Nsp%s *) H,(Nsp%s *) self ) == NULL) return NULL%s;\n' \
-                % (string.lower(father),father,father,string.upper(lower_name))
+            str = str + '  if ( nsp_%s_full_copy_partial((%s *) H,(%s *) self ) == NULL) return NULL%s;\n' \
+                % (string.lower(father),'Nsp'+father,'Nsp'+father,string.upper(lower_name))
         str = str + '  if ( nsp_%s_full_copy_partial(H,self)== NULL) return NULL%s;\n' \
             % (lower_name,string.upper(lower_name)) 
         return str 
 
     def build_equal_fields(self,varname):
-        lower_name = self.get_lower_name()
+        lower_name = self.get_lower_c_name()
         # no overrides for the whole function.  If no fields, don't write a func
         if self.byref == 't' :
             str = '  if ( A->obj == loc->obj ) return TRUE;\n'
@@ -1277,7 +1284,7 @@ class Wrapper:
                 sys.stderr.write('Could not write method %s.%s: %s\n'
                                 % (self.objinfo.c_name, meth.name, exc_info()))
 
-        lower_name = string.lower(self.objinfo.c_name)
+        lower_name = string.lower(self.objinfo.name)
         if methods:
             methoddefs = '%s_methods' % lower_name
             # write the PyMethodDef structure
@@ -1307,7 +1314,7 @@ class Wrapper:
 
         # no overrides for the whole function.  If no fields, don't write a func
         if not self.objinfo.fields:
-            lower_name1 = string.lower(self.objinfo.c_name)
+            lower_name1 = string.lower(self.objinfo.name)
             self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
             return '0'
@@ -1317,7 +1324,7 @@ class Wrapper:
             settername = 'int_set_failed'
             getterobjectname = 'int_get_object_failed'
             setterobjectname = 'int_set_object_failed'
-            attrname = self.objinfo.c_name + '.' + fname
+            attrname = self.objinfo.name + '.' + fname
             #self.fp.write('override attribute ? %s)' % attrname)
             if self.overrides.attr_is_overriden(fname):
                 #self.fp.write('yes for %s\n' % attrname)
@@ -1352,7 +1359,7 @@ class Wrapper:
                     gettername = funcname
                 except:
                     sys.stderr.write("Could not write getter for %s.%s: %s\n"
-                                     % (self.objinfo.c_name, fname, exc_info()))
+                                     % (self.objinfo.name, fname, exc_info()))
 
             if opt != 'hidden' and getterobjectname == 'int_get_object_failed':
                 try:
@@ -1367,7 +1374,7 @@ class Wrapper:
                         
                 except:
                     sys.stderr.write("Could not write getterobj for %s.%s: %s\n"
-                                     % (self.objinfo.c_name, fname, exc_info()))
+                                     % (self.objinfo.name, fname, exc_info()))
 
             if   opt != 'hidden' and settername == 'int_set_failed':
                 try:
@@ -1375,7 +1382,7 @@ class Wrapper:
                     info = argtypes.WrapperInfo()
                     handler = argtypes.matcher.get(ftype)
                     # handler.write_param(upinfo,ptype, pname, pdflt, pnull, psize, info, pos)
-                    handler.attr_write_set('Nsp' + self.objinfo.c_name,ftype,fname ,'','',psize,info, 4,self.byref)
+                    handler.attr_write_set(self.objinfo.c_name,ftype,fname ,'','',psize,info, 4,self.byref)
                     # a mettre a la fin '  %(field)s = %(fname)s;\n' 
                     # ftype unused in set operation 
                     self.fp.write(self.setter_tmpl %
@@ -1387,12 +1394,12 @@ class Wrapper:
                     settername = funcname
                 except:
                     sys.stderr.write("Could not write setter for %s.%s: %s\n"
-                                     % (self.objinfo.c_name, fname, exc_info()))
+                                     % (self.objinfo.name, fname, exc_info()))
             if opt != 'hidden' and (gettername != 'int_get_failed' or settername != 'int_set_failed'):
                 getsets.append('  { "%s", (attr_get_function *)%s, (attr_set_function *)%s,(attr_get_object_function *)%s, (attr_set_object_function *)%s },\n' %
                                (fixname(fname), gettername, settername,getterobjectname, setterobjectname))
 
-        lower_name1 = string.lower(self.objinfo.c_name)
+        lower_name1 = string.lower(self.objinfo.name)
         if not getsets:
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
             self.fp.write('static AttrTab %s_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
@@ -1403,7 +1410,7 @@ class Wrapper:
                 self.fp.write(getset)
             self.fp.write('  { NULL,NULL,NULL,NULL,NULL },\n')
             self.fp.write('};\n\n')
-            lower_name1 = string.lower(self.objinfo.c_name)
+            lower_name1 = string.lower(self.objinfo.name)
             #self.fp.write('static AttrTab *%s_get_attrs_table(void) { return %s;};\n' % (lower_name1, getsets_name))
             return getsets_name
         
@@ -1453,7 +1460,7 @@ class Wrapper:
         else:
             substdict['typename'] = prefix
         substdict['typename_dc'] = string.lower(prefix)
-        substdict['typename_uc'] = string.upper(prefix)
+        substdict['typename_uc'] = 'ZZ'+string.upper(prefix)
 
         functions.append('  { "%(typename_dc)s_create", int_%(typename_dc)s_create},\n' % substdict)
         functions.append('  { NULL, NULL}\n')
@@ -1512,7 +1519,7 @@ class NspObjectWrapper(Wrapper):
         '}\n\n'
     
     method_tmpl = \
-        'static int _wrap_%(cname)s(Nsp%(typename)s *self,Stack stack,int rhs,int opt,int lhs)\n'\
+        'static int _wrap_%(cname)s(%(typename)s *self,Stack stack,int rhs,int opt,int lhs)\n'\
         '{\n' \
         '%(varlist)s' \
         '%(parseargs)s' \
@@ -1528,9 +1535,9 @@ class NspObjectWrapper(Wrapper):
         ' * create a NspClassB instance \n' \
         ' *-----------------------------------------------------*/\n' \
         '\n' \
-        'static Nsp%(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \
+        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \
         '{\n' \
-        ' Nsp%(typename)s *H  = (type == NULL) ? new_%(typename_dc)s() : type->new();\n' \
+        ' %(typename)s *H  = (type == NULL) ? new_%(typename_dc)s() : type->new();\n' \
         ' if ( H ==  NULL%(typename_uc)s)\n' \
         '  {\n' \
         '   Sciprintf("No more memory\\n");\n' \
@@ -1540,20 +1547,20 @@ class NspObjectWrapper(Wrapper):
         ' NSP_OBJECT(H)->ret_pos = -1 ;\n' \
         ' return H;\n' \
         '}\n\n' \
-        'int nsp_%(typename_dc)s_create_partial(Nsp%(typename)s *H)\n' \
+        'int nsp_%(typename_dc)s_create_partial(%(typename)s *H)\n' \
         '{\n' \
         '%(create_partial)s' \
         '  return OK;\n' \
         '}\n\n' \
-        'int nsp_%(typename_dc)s_check_values(Nsp%(typename)s *H)\n' \
+        'int nsp_%(typename_dc)s_check_values(%(typename)s *H)\n' \
         '{\n' \
         '%(fields_defval)s' \
         '  return OK;\n' \
         '}\n' \
         '\n' \
-        'Nsp%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type)\n' \
+        '%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type)\n' \
         '{\n' \
-        ' Nsp%(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
+        ' %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
         ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
         '%(fields_copy)s' \
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
@@ -1561,9 +1568,9 @@ class NspObjectWrapper(Wrapper):
         '}\n' \
         '\n' \
         '\n' \
-        'Nsp%(typename)s *nsp_%(typename_dc)s_create_default(char *name)\n' \
+        '%(typename)s *nsp_%(typename_dc)s_create_default(char *name)\n' \
         '{\n' \
-        ' Nsp%(typename)s *H  = nsp_%(typename_dc)s_create_void(name,NULL);\n' \
+        ' %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,NULL);\n' \
         ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
         '%(fields_copy_default)s' \
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
@@ -1574,14 +1581,14 @@ class NspObjectWrapper(Wrapper):
         ' * copy for gobject derived class  \n'  \
         ' */\n'  \
         '\n'  \
-        'Nsp%(typename)s *nsp_%(typename_dc)s_copy_partial(Nsp%(typename)s *H,Nsp%(typename)s *self)\n'  \
+        '%(typename)s *nsp_%(typename_dc)s_copy_partial(%(typename)s *H,%(typename)s *self)\n'  \
         '{\n'  \
         '%(fields_copy_self)s' \
         '  return H;\n' \
         '}\n\n'  \
-        'Nsp%(typename)s *nsp_%(typename_dc)s_copy(Nsp%(typename)s *self)\n'  \
+        '%(typename)s *nsp_%(typename_dc)s_copy(%(typename)s *self)\n'  \
         '{\n'  \
-        '  Nsp%(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
+        '  %(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
         '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
         '%(copy_partial)s\n' \
         '  return H;\n' \
@@ -1603,7 +1610,7 @@ class NspObjectWrapper(Wrapper):
         '\n'  \
         'int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs)\n'  \
         '{\n'  \
-        '  Nsp%(typename)s *H;\n'  \
+        '  %(typename)s *H;\n'  \
         '  CheckStdRhs(0,0);\n'  \
         '  /* want to be sure that type %(typename_dc)s is initialized */\n'  \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
@@ -1639,9 +1646,9 @@ class NspObjectWrapper(Wrapper):
             fieldname =  'obj->' +             fieldname
             
         if fieldtype:
-            return '((%s) ((Nsp%s *) self)->%s)' % (fieldtype, castmacro, fieldname)
+            return '((%s) ((%s *) self)->%s)' % (fieldtype, castmacro, fieldname)
         else:
-            return '((Nsp%s *) self)->%s' % (castmacro, fieldname)
+            return '((%s *) self)->%s' % (castmacro, fieldname)
                 
     def get_initial_constructor_substdict(self):
         substdict = Wrapper.get_initial_constructor_substdict(self)

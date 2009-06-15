@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/contour.override"
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -27,38 +27,38 @@ extern Gengine GL_gengine;
 
 #line 29 "contour.c"
 
-/* ----------- Contour ----------- */
+/* ----------- NspContour ----------- */
 
 
-#define  Contour_Private 
+#define  NspContour_Private 
 #include "nsp/object.h"
 #include "nsp/contour.h"
 #include "nsp/interf.h"
 
 /* 
- * NspContour inherits from NspGraphic 
+ * NspContour inherits from Graphic 
  */
 
 int nsp_type_contour_id=0;
-NspTypeContour *nsp_type_contour=NULL;
+NspTypeNspContour *nsp_type_contour=NULL;
 
 /*
- * Type object for Contour 
- * all the instance of NspTypeContour share the same id. 
- * nsp_type_contour: is an instance of NspTypeContour 
+ * Type object for NspContour 
+ * all the instance of NspTypeNspContour share the same id. 
+ * nsp_type_contour: is an instance of NspTypeNspContour 
  *    used for objects of NspContour type (i.e built with new_contour) 
  * other instances are used for derived classes 
  */
-NspTypeContour *new_type_contour(type_mode mode)
+NspTypeNspContour *new_type_contour(type_mode mode)
 {
-  NspTypeContour *type= NULL;
+  NspTypeNspContour *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_contour != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_contour;
     }
-  if ((type =  malloc(sizeof(NspTypeContour))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspContour))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -98,18 +98,18 @@ NspTypeContour *new_type_contour(type_mode mode)
 
 #line 27 "codegen/contour.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_contour  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
   /* next method are defined in NspGraphic and need not be changed here for Contour */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 111 "contour.c"
   /* 
-   * Contour interfaces can be added here 
+   * NspContour interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -118,7 +118,7 @@ NspTypeContour *new_type_contour(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeContour called nsp_type_contour
+       * an instance of NspTypeNspContour called nsp_type_contour
        */
       type->id =  nsp_type_contour_id = nsp_new_type_id();
       nsp_type_contour = type;
@@ -133,11 +133,11 @@ NspTypeContour *new_type_contour(type_mode mode)
 }
 
 /*
- * initialize Contour instances 
+ * initialize NspContour instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_contour(NspContour *Obj,NspTypeContour *type)
+static int init_contour(NspContour *Obj,NspTypeNspContour *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -149,7 +149,7 @@ static int init_contour(NspContour *Obj,NspTypeContour *type)
 }
 
 /*
- * new instance of Contour 
+ * new instance of NspContour 
  */
 
 NspContour *new_contour() 
@@ -164,7 +164,7 @@ NspContour *new_contour()
 }
 
 /*----------------------------------------------
- * Object method redefined for Contour 
+ * Object method redefined for NspContour 
  *-----------------------------------------------*/
 /*
  * size 
@@ -179,7 +179,7 @@ static int nsp_contour_size(NspContour *Mat, int flag)
  * type as string 
  */
 
-static char contour_type_name[]="Contour";
+static char contour_type_name[]="NspContour";
 static char contour_short_type_name[]="contour";
 
 static char *nsp_contour_type_as_string(void)
@@ -314,7 +314,7 @@ int nsp_contour_info(NspContour *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLCONTOUR) 
     {
-      Sciprintf("Null Pointer Contour \n");
+      Sciprintf("Null Pointer NspContour \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -332,7 +332,7 @@ int nsp_contour_print(NspContour *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCONTOUR) 
     {
-      Sciprintf("Null Pointer Contour \n");
+      Sciprintf("Null Pointer NspContour \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -403,7 +403,7 @@ int nsp_contour_latex(NspContour *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Contour objects 
+ * for NspContour objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -608,7 +608,7 @@ NspContour *nsp_contour_full_copy(NspContour *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Contour
+ * wrappers for the NspContour
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -871,7 +871,7 @@ Init portion
 
 
 #line 874 "contour.c"
-  nspgobject_register_class(d, "Contour", Contour, &NspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspContour", Contour, &NspNspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

@@ -3,7 +3,7 @@
 (define-objectref Points3d
   (in-module "Points3d")
   (parent "Graphic")
-  (c-name "Points3d")
+  (c-name "NspPoints3d")
   (fields
     '("NspMatrix*" "Mcoord")
     '("void*"      "Mcoord_l"  "hidden" "NULL" )

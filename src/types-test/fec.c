@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/fec.override"
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -35,38 +35,38 @@ extern Gengine GL_gengine;
 
 #line 37 "fec.c"
 
-/* ----------- Fec ----------- */
+/* ----------- NspFec ----------- */
 
 
-#define  Fec_Private 
+#define  NspFec_Private 
 #include "nsp/object.h"
 #include "nsp/fec.h"
 #include "nsp/interf.h"
 
 /* 
- * NspFec inherits from NspGraphic 
+ * NspFec inherits from Graphic 
  */
 
 int nsp_type_fec_id=0;
-NspTypeFec *nsp_type_fec=NULL;
+NspTypeNspFec *nsp_type_fec=NULL;
 
 /*
- * Type object for Fec 
- * all the instance of NspTypeFec share the same id. 
- * nsp_type_fec: is an instance of NspTypeFec 
+ * Type object for NspFec 
+ * all the instance of NspTypeNspFec share the same id. 
+ * nsp_type_fec: is an instance of NspTypeNspFec 
  *    used for objects of NspFec type (i.e built with new_fec) 
  * other instances are used for derived classes 
  */
-NspTypeFec *new_type_fec(type_mode mode)
+NspTypeNspFec *new_type_fec(type_mode mode)
 {
-  NspTypeFec *type= NULL;
+  NspTypeNspFec *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_fec != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_fec;
     }
-  if ((type =  malloc(sizeof(NspTypeFec))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspFec))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -106,18 +106,18 @@ NspTypeFec *new_type_fec(type_mode mode)
 
 #line 35 "codegen/fec.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_fec  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_fec;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_fec ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Fec */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 119 "fec.c"
   /* 
-   * Fec interfaces can be added here 
+   * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -126,7 +126,7 @@ NspTypeFec *new_type_fec(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeFec called nsp_type_fec
+       * an instance of NspTypeNspFec called nsp_type_fec
        */
       type->id =  nsp_type_fec_id = nsp_new_type_id();
       nsp_type_fec = type;
@@ -141,11 +141,11 @@ NspTypeFec *new_type_fec(type_mode mode)
 }
 
 /*
- * initialize Fec instances 
+ * initialize NspFec instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_fec(NspFec *Obj,NspTypeFec *type)
+static int init_fec(NspFec *Obj,NspTypeNspFec *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -157,7 +157,7 @@ static int init_fec(NspFec *Obj,NspTypeFec *type)
 }
 
 /*
- * new instance of Fec 
+ * new instance of NspFec 
  */
 
 NspFec *new_fec() 
@@ -172,7 +172,7 @@ NspFec *new_fec()
 }
 
 /*----------------------------------------------
- * Object method redefined for Fec 
+ * Object method redefined for NspFec 
  *-----------------------------------------------*/
 /*
  * size 
@@ -187,7 +187,7 @@ static int nsp_fec_size(NspFec *Mat, int flag)
  * type as string 
  */
 
-static char fec_type_name[]="Fec";
+static char fec_type_name[]="NspFec";
 static char fec_short_type_name[]="fec";
 
 static char *nsp_fec_type_as_string(void)
@@ -330,7 +330,7 @@ int nsp_fec_info(NspFec *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLFEC) 
     {
-      Sciprintf("Null Pointer Fec \n");
+      Sciprintf("Null Pointer NspFec \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -348,7 +348,7 @@ int nsp_fec_print(NspFec *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLFEC) 
     {
-      Sciprintf("Null Pointer Fec \n");
+      Sciprintf("Null Pointer NspFec \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -431,7 +431,7 @@ int nsp_fec_latex(NspFec *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Fec objects 
+ * for NspFec objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -664,7 +664,7 @@ NspFec *nsp_fec_full_copy(NspFec *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Fec
+ * wrappers for the NspFec
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -989,7 +989,7 @@ Init portion
 
 
 #line 992 "fec.c"
-  nspgobject_register_class(d, "Fec", Fec, &NspFec_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspFec", Fec, &NspNspFec_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

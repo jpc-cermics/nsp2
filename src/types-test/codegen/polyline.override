@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/polyline.h"
+#include <nsp/polyline.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -19,19 +19,19 @@ init
 Init portion 
 
 %%
-override_type Polyline
+override_type NspPolyline
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

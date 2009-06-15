@@ -3,7 +3,7 @@
 (define-objectref Curve
   (in-module "Curve")
   (parent "Graphic")
-  (c-name "Curve")
+  (c-name "NspCurve")
   (fields
    ;; '("int" "color"); curve color is defined in parent 
    '("int" "mark") ; mark to be used 

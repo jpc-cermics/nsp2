@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/vfield.override"
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -27,38 +27,38 @@ extern Gengine GL_gengine;
 
 #line 29 "vfield.c"
 
-/* ----------- VField ----------- */
+/* ----------- NspVField ----------- */
 
 
-#define  VField_Private 
+#define  NspVField_Private 
 #include "nsp/object.h"
 #include "nsp/vfield.h"
 #include "nsp/interf.h"
 
 /* 
- * NspVField inherits from NspGraphic 
+ * NspVField inherits from Graphic 
  */
 
 int nsp_type_vfield_id=0;
-NspTypeVField *nsp_type_vfield=NULL;
+NspTypeNspVField *nsp_type_vfield=NULL;
 
 /*
- * Type object for VField 
- * all the instance of NspTypeVField share the same id. 
- * nsp_type_vfield: is an instance of NspTypeVField 
+ * Type object for NspVField 
+ * all the instance of NspTypeNspVField share the same id. 
+ * nsp_type_vfield: is an instance of NspTypeNspVField 
  *    used for objects of NspVField type (i.e built with new_vfield) 
  * other instances are used for derived classes 
  */
-NspTypeVField *new_type_vfield(type_mode mode)
+NspTypeNspVField *new_type_vfield(type_mode mode)
 {
-  NspTypeVField *type= NULL;
+  NspTypeNspVField *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_vfield != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_vfield;
     }
-  if ((type =  malloc(sizeof(NspTypeVField))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspVField))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -98,18 +98,18 @@ NspTypeVField *new_type_vfield(type_mode mode)
 
 #line 27 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 111 "vfield.c"
   /* 
-   * VField interfaces can be added here 
+   * NspVField interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -118,7 +118,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeVField called nsp_type_vfield
+       * an instance of NspTypeNspVField called nsp_type_vfield
        */
       type->id =  nsp_type_vfield_id = nsp_new_type_id();
       nsp_type_vfield = type;
@@ -133,11 +133,11 @@ NspTypeVField *new_type_vfield(type_mode mode)
 }
 
 /*
- * initialize VField instances 
+ * initialize NspVField instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_vfield(NspVField *Obj,NspTypeVField *type)
+static int init_vfield(NspVField *Obj,NspTypeNspVField *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -149,7 +149,7 @@ static int init_vfield(NspVField *Obj,NspTypeVField *type)
 }
 
 /*
- * new instance of VField 
+ * new instance of NspVField 
  */
 
 NspVField *new_vfield() 
@@ -164,7 +164,7 @@ NspVField *new_vfield()
 }
 
 /*----------------------------------------------
- * Object method redefined for VField 
+ * Object method redefined for NspVField 
  *-----------------------------------------------*/
 /*
  * size 
@@ -179,7 +179,7 @@ static int nsp_vfield_size(NspVField *Mat, int flag)
  * type as string 
  */
 
-static char vfield_type_name[]="VField";
+static char vfield_type_name[]="NspVField";
 static char vfield_short_type_name[]="vfield";
 
 static char *nsp_vfield_type_as_string(void)
@@ -310,7 +310,7 @@ int nsp_vfield_info(NspVField *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLVFIELD) 
     {
-      Sciprintf("Null Pointer VField \n");
+      Sciprintf("Null Pointer NspVField \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -328,7 +328,7 @@ int nsp_vfield_print(NspVField *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLVFIELD) 
     {
-      Sciprintf("Null Pointer VField \n");
+      Sciprintf("Null Pointer NspVField \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -393,7 +393,7 @@ int nsp_vfield_latex(NspVField *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for VField objects 
+ * for NspVField objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -584,7 +584,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the VField
+ * wrappers for the NspVField
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -819,7 +819,7 @@ Init portion
 
 
 #line 822 "vfield.c"
-  nspgobject_register_class(d, "VField", VField, &NspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspVField", VField, &NspNspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

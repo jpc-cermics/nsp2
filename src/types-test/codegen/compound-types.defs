@@ -3,7 +3,7 @@
 (define-objectref Compound
   (in-module "Compound")
   (parent "Graphic")
-  (c-name "Compound")
+  (c-name "NspCompound")
   (fields
    '("NspMatrix*" "bounds" "hidden" "{0}" "4");; bounds of objects contained in the axe. 
    '("NspList*" "children") ;; list of graphic object in the axe 

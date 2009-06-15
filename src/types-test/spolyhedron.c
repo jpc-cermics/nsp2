@@ -33,38 +33,38 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 			      int inda, int indb, int *xint, int *yint);
 #line 35 "spolyhedron.c"
 
-/* ----------- SPolyhedron ----------- */
+/* ----------- NspSPolyhedron ----------- */
 
 
-#define  SPolyhedron_Private 
+#define  NspSPolyhedron_Private 
 #include "nsp/object.h"
 #include "nsp/spolyhedron.h"
 #include "nsp/interf.h"
 
 /* 
- * NspSPolyhedron inherits from NspGraphic 
+ * NspSPolyhedron inherits from Graphic 
  */
 
 int nsp_type_spolyhedron_id=0;
-NspTypeSPolyhedron *nsp_type_spolyhedron=NULL;
+NspTypeNspSPolyhedron *nsp_type_spolyhedron=NULL;
 
 /*
- * Type object for SPolyhedron 
- * all the instance of NspTypeSPolyhedron share the same id. 
- * nsp_type_spolyhedron: is an instance of NspTypeSPolyhedron 
+ * Type object for NspSPolyhedron 
+ * all the instance of NspTypeNspSPolyhedron share the same id. 
+ * nsp_type_spolyhedron: is an instance of NspTypeNspSPolyhedron 
  *    used for objects of NspSPolyhedron type (i.e built with new_spolyhedron) 
  * other instances are used for derived classes 
  */
-NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
+NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
 {
-  NspTypeSPolyhedron *type= NULL;
+  NspTypeNspSPolyhedron *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_spolyhedron != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_spolyhedron;
     }
-  if ((type =  malloc(sizeof(NspTypeSPolyhedron))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspSPolyhedron))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -106,21 +106,21 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_spolyhedron;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_spolyhedron ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_spolyhedron;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_spolyhedron ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for SPolyhedron */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
-  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
+  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
 
 #line 122 "spolyhedron.c"
   /* 
-   * SPolyhedron interfaces can be added here 
+   * NspSPolyhedron interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -129,7 +129,7 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeSPolyhedron called nsp_type_spolyhedron
+       * an instance of NspTypeNspSPolyhedron called nsp_type_spolyhedron
        */
       type->id =  nsp_type_spolyhedron_id = nsp_new_type_id();
       nsp_type_spolyhedron = type;
@@ -144,11 +144,11 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
 }
 
 /*
- * initialize SPolyhedron instances 
+ * initialize NspSPolyhedron instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeSPolyhedron *type)
+static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeNspSPolyhedron *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -160,7 +160,7 @@ static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeSPolyhedron *type)
 }
 
 /*
- * new instance of SPolyhedron 
+ * new instance of NspSPolyhedron 
  */
 
 NspSPolyhedron *new_spolyhedron() 
@@ -175,7 +175,7 @@ NspSPolyhedron *new_spolyhedron()
 }
 
 /*----------------------------------------------
- * Object method redefined for SPolyhedron 
+ * Object method redefined for NspSPolyhedron 
  *-----------------------------------------------*/
 /*
  * size 
@@ -190,7 +190,7 @@ static int nsp_spolyhedron_size(NspSPolyhedron *Mat, int flag)
  * type as string 
  */
 
-static char spolyhedron_type_name[]="SPolyhedron";
+static char spolyhedron_type_name[]="NspSPolyhedron";
 static char spolyhedron_short_type_name[]="spolyhedron";
 
 static char *nsp_spolyhedron_type_as_string(void)
@@ -367,7 +367,7 @@ int nsp_spolyhedron_info(NspSPolyhedron *M,int indent,const char *name,int rec_l
   const char *pname;
   if ( M == NULLSPOLYHEDRON) 
     {
-      Sciprintf("Null Pointer SPolyhedron \n");
+      Sciprintf("Null Pointer NspSPolyhedron \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -385,7 +385,7 @@ int nsp_spolyhedron_print(NspSPolyhedron *M, int indent,const char *name, int re
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSPOLYHEDRON) 
     {
-      Sciprintf("Null Pointer SPolyhedron \n");
+      Sciprintf("Null Pointer NspSPolyhedron \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -462,7 +462,7 @@ int nsp_spolyhedron_latex(NspSPolyhedron *M, int indent,const char *name, int re
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for SPolyhedron objects 
+ * for NspSPolyhedron objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -689,7 +689,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the SPolyhedron
+ * wrappers for the NspSPolyhedron
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -714,22 +714,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_spolyhedron_full_copy(NspSPolyhedron *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspSPolyhedron *ret;
-
-  ret = nsp_spolyhedron_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods spolyhedron_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_spolyhedron_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *spolyhedron_get_methods(void) { return spolyhedron_methods;};
+static NspMethods *spolyhedron_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -1012,7 +997,7 @@ int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1016 "spolyhedron.c"
+#line 1001 "spolyhedron.c"
 
 
 #line 110 "codegen/spolyhedron.override"
@@ -1024,7 +1009,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1028 "spolyhedron.c"
+#line 1013 "spolyhedron.c"
 
 
 #line 120 "codegen/spolyhedron.override"
@@ -1036,7 +1021,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1040 "spolyhedron.c"
+#line 1025 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1077,8 +1062,8 @@ SPolyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1081 "spolyhedron.c"
-  nspgobject_register_class(d, "SPolyhedron", SPolyhedron, &NspSPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 1066 "spolyhedron.c"
+  nspgobject_register_class(d, "NspSPolyhedron", SPolyhedron, &NspNspSPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1687,4 +1672,4 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-#line 1691 "spolyhedron.c"
+#line 1676 "spolyhedron.c"

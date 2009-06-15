@@ -1,22 +1,22 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Graphic
-#define NSP_INC_Graphic
+#ifndef NSP_INC_NspGraphic
+#define NSP_INC_NspGraphic
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Graphic */
+/* NspGraphic */
 
 #include "nsp/object.h"
 
 /*
- * NspGraphic inherits from NspObject
+ * NspGraphic inherits from Object
  */
 
 typedef struct _NspGraphic NspGraphic ;
-typedef struct _NspTypeGraphic NspTypeGraphic ;
+typedef struct _NspTypeNspGraphic NspTypeNspGraphic ;
 
 
 #line 40 "codegen/graphic.override"
@@ -35,7 +35,7 @@ typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
 #line 37 "./graphic.h"
 
-struct _NspTypeGraphic {
+struct _NspTypeNspGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -68,19 +68,19 @@ struct _nsp_graphic {
 struct _NspGraphic {
   /*< private >*/
   NspObject father;
-  NspTypeGraphic*type;
+  NspTypeNspGraphic*type;
   /*< public >*/
   nsp_graphic *obj;
 };
 
 extern int nsp_type_graphic_id;
-extern NspTypeGraphic *nsp_type_graphic;
+extern NspTypeNspGraphic *nsp_type_graphic;
 
 /* type instances for object */
 
-NspTypeGraphic *new_type_graphic(type_mode mode);
+NspTypeNspGraphic *new_type_graphic(type_mode mode);
 
-/* instance for Graphic */
+/* instance for NspGraphic */
 
 NspGraphic *new_graphic();
 
@@ -94,7 +94,7 @@ NspGraphic *new_graphic();
 extern NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,NspTypeBase *type);
 extern NspGraphic *nsp_graphic_create_default(char *name);
 
-/* from GraphicObj.c */
+/* from NspGraphicObj.c */
 
 extern NspGraphic *nsp_graphic_copy(NspGraphic *H);
 extern void nsp_graphic_destroy(NspGraphic *H);
@@ -116,10 +116,10 @@ extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
 extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
-#endif /* NSP_INC_Graphic */ 
+#endif /* NSP_INC_NspGraphic */ 
 
-#ifdef Graphic_Private 
-static int init_graphic(NspGraphic *o,NspTypeGraphic *type);
+#ifdef NspGraphic_Private 
+static int init_graphic(NspGraphic *o,NspTypeNspGraphic *type);
 static int nsp_graphic_size(NspGraphic *Mat, int flag);
 static char *nsp_graphic_type_as_string(void);
 static char *nsp_graphic_type_short_string(NspObject *v);
@@ -130,5 +130,5 @@ static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 /* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
-#endif /* Graphic_Private */
+#endif /* NspGraphic_Private */
 

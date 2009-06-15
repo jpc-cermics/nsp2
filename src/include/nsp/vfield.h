@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_VField
-#define NSP_INC_VField
+#ifndef NSP_INC_NspVField
+#define NSP_INC_NspVField
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* VField */
+/* NspVField */
 
 #include "nsp/graphic.h"
 
 /*
- * NspVField inherits from NspGraphic
+ * NspVField inherits from Graphic
  */
 
 typedef struct _NspVField NspVField ;
-typedef struct _NspTypeVField NspTypeVField ;
+typedef struct _NspTypeNspVField NspTypeNspVField ;
 
 #line 22 "./vfield.h"
 
-struct _NspTypeVField {
+struct _NspTypeNspVField {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -41,19 +41,19 @@ struct _nsp_vfield {
 struct _NspVField {
   /*< private >*/
   NspGraphic father;
-  NspTypeVField*type;
+  NspTypeNspVField*type;
   /*< public >*/
   nsp_vfield *obj;
 };
 
 extern int nsp_type_vfield_id;
-extern NspTypeVField *nsp_type_vfield;
+extern NspTypeNspVField *nsp_type_vfield;
 
 /* type instances for graphic */
 
-NspTypeVField *new_type_vfield(type_mode mode);
+NspTypeNspVField *new_type_vfield(type_mode mode);
 
-/* instance for VField */
+/* instance for NspVField */
 
 NspVField *new_vfield();
 
@@ -67,7 +67,7 @@ NspVField *new_vfield();
 extern NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type);
 extern NspVField *nsp_vfield_create_default(char *name);
 
-/* from VFieldObj.c */
+/* from NspVFieldObj.c */
 
 extern NspVField *nsp_vfield_copy(NspVField *H);
 extern void nsp_vfield_destroy(NspVField *H);
@@ -89,10 +89,10 @@ extern int int_vfield_create(Stack stack, int rhs, int opt, int lhs);
 extern NspVField *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M);
 extern int nsp_vfield_xdr_save(XDR  *xdrs, NspVField *M);
 
-#endif /* NSP_INC_VField */ 
+#endif /* NSP_INC_NspVField */ 
 
-#ifdef VField_Private 
-static int init_vfield(NspVField *o,NspTypeVField *type);
+#ifdef NspVField_Private 
+static int init_vfield(NspVField *o,NspTypeNspVField *type);
 static int nsp_vfield_size(NspVField *Mat, int flag);
 static char *nsp_vfield_type_as_string(void);
 static char *nsp_vfield_type_short_string(NspObject *v);
@@ -103,5 +103,5 @@ static AttrTab vfield_attrs[];
 static NspMethods *vfield_get_methods(void);
 /* static int int_vfield_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type);
-#endif /* VField_Private */
+#endif /* NspVField_Private */
 

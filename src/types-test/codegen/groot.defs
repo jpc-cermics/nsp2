@@ -6,7 +6,7 @@
 (define-objectref GRoot 
   (in-module "GRoot")
   (parent "Object")
-  (c-name "GRoot")
+  (c-name "NspGRoot")
   (fields
    '("NspList*" "figures")
    )

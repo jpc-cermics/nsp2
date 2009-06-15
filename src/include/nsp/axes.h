@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Axes
-#define NSP_INC_Axes
+#ifndef NSP_INC_NspAxes
+#define NSP_INC_NspAxes
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Axes */
+/* NspAxes */
 
 #include "nsp/graphic.h"
 
 /*
- * NspAxes inherits from NspGraphic
+ * NspAxes inherits from Graphic
  */
 
 typedef struct _NspAxes NspAxes ;
-typedef struct _NspTypeAxes NspTypeAxes ;
+typedef struct _NspTypeNspAxes NspTypeNspAxes ;
 
 #line 22 "./axes.h"
 
-struct _NspTypeAxes {
+struct _NspTypeNspAxes {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -54,19 +54,19 @@ struct _nsp_axes {
 struct _NspAxes {
   /*< private >*/
   NspGraphic father;
-  NspTypeAxes*type;
+  NspTypeNspAxes*type;
   /*< public >*/
   nsp_axes *obj;
 };
 
 extern int nsp_type_axes_id;
-extern NspTypeAxes *nsp_type_axes;
+extern NspTypeNspAxes *nsp_type_axes;
 
 /* type instances for graphic */
 
-NspTypeAxes *new_type_axes(type_mode mode);
+NspTypeNspAxes *new_type_axes(type_mode mode);
 
-/* instance for Axes */
+/* instance for NspAxes */
 
 NspAxes *new_axes();
 
@@ -80,7 +80,7 @@ NspAxes *new_axes();
 extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspTypeBase *type);
 extern NspAxes *nsp_axes_create_default(char *name);
 
-/* from AxesObj.c */
+/* from NspAxesObj.c */
 
 extern NspAxes *nsp_axes_copy(NspAxes *H);
 extern void nsp_axes_destroy(NspAxes *H);
@@ -102,10 +102,10 @@ extern int int_axes_create(Stack stack, int rhs, int opt, int lhs);
 extern NspAxes *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M);
 extern int nsp_axes_xdr_save(XDR  *xdrs, NspAxes *M);
 
-#endif /* NSP_INC_Axes */ 
+#endif /* NSP_INC_NspAxes */ 
 
-#ifdef Axes_Private 
-static int init_axes(NspAxes *o,NspTypeAxes *type);
+#ifdef NspAxes_Private 
+static int init_axes(NspAxes *o,NspTypeNspAxes *type);
 static int nsp_axes_size(NspAxes *Mat, int flag);
 static char *nsp_axes_type_as_string(void);
 static char *nsp_axes_type_short_string(NspObject *v);
@@ -116,5 +116,5 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#endif /* Axes_Private */
+#endif /* NspAxes_Private */
 

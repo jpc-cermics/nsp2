@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_GMatrix1
-#define NSP_INC_GMatrix1
+#ifndef NSP_INC_NspGMatrix1
+#define NSP_INC_NspGMatrix1
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* GMatrix1 */
+/* NspGMatrix1 */
 
 #include "nsp/graphic.h"
 
 /*
- * NspGMatrix1 inherits from NspGraphic
+ * NspGMatrix1 inherits from Graphic
  */
 
 typedef struct _NspGMatrix1 NspGMatrix1 ;
-typedef struct _NspTypeGMatrix1 NspTypeGMatrix1 ;
+typedef struct _NspTypeNspGMatrix1 NspTypeNspGMatrix1 ;
 
 #line 22 "./gmatrix1.h"
 
-struct _NspTypeGMatrix1 {
+struct _NspTypeNspGMatrix1 {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,19 +44,19 @@ struct _nsp_gmatrix1 {
 struct _NspGMatrix1 {
   /*< private >*/
   NspGraphic father;
-  NspTypeGMatrix1*type;
+  NspTypeNspGMatrix1*type;
   /*< public >*/
   nsp_gmatrix1 *obj;
 };
 
 extern int nsp_type_gmatrix1_id;
-extern NspTypeGMatrix1 *nsp_type_gmatrix1;
+extern NspTypeNspGMatrix1 *nsp_type_gmatrix1;
 
 /* type instances for graphic */
 
-NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode);
+NspTypeNspGMatrix1 *new_type_gmatrix1(type_mode mode);
 
-/* instance for GMatrix1 */
+/* instance for NspGMatrix1 */
 
 NspGMatrix1 *new_gmatrix1();
 
@@ -70,7 +70,7 @@ NspGMatrix1 *new_gmatrix1();
 extern NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type);
 extern NspGMatrix1 *nsp_gmatrix1_create_default(char *name);
 
-/* from GMatrix1Obj.c */
+/* from NspGMatrix1Obj.c */
 
 extern NspGMatrix1 *nsp_gmatrix1_copy(NspGMatrix1 *H);
 extern void nsp_gmatrix1_destroy(NspGMatrix1 *H);
@@ -92,10 +92,10 @@ extern int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix1 *nsp_gmatrix1_xdr_load_partial(XDR *xdrs, NspGMatrix1 *M);
 extern int nsp_gmatrix1_xdr_save(XDR  *xdrs, NspGMatrix1 *M);
 
-#endif /* NSP_INC_GMatrix1 */ 
+#endif /* NSP_INC_NspGMatrix1 */ 
 
-#ifdef GMatrix1_Private 
-static int init_gmatrix1(NspGMatrix1 *o,NspTypeGMatrix1 *type);
+#ifdef NspGMatrix1_Private 
+static int init_gmatrix1(NspGMatrix1 *o,NspTypeNspGMatrix1 *type);
 static int nsp_gmatrix1_size(NspGMatrix1 *Mat, int flag);
 static char *nsp_gmatrix1_type_as_string(void);
 static char *nsp_gmatrix1_type_short_string(NspObject *v);
@@ -106,5 +106,5 @@ static AttrTab gmatrix1_attrs[];
 static NspMethods *gmatrix1_get_methods(void);
 /* static int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix1 *nsp_gmatrix1_create_void(char *name,NspTypeBase *type);
-#endif /* GMatrix1_Private */
+#endif /* NspGMatrix1_Private */
 

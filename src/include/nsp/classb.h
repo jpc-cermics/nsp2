@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_ClassB
-#define NSP_INC_ClassB
+#ifndef NSP_INC_NspClassB
+#define NSP_INC_NspClassB
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* ClassB */
+/* NspClassB */
 
 #include "nsp/classa.h"
 
 /*
- * NspClassB inherits from NspClassA
+ * NspClassB inherits from ClassA
  */
 
 typedef struct _NspClassB NspClassB ;
-typedef struct _NspTypeClassB NspTypeClassB ;
+typedef struct _NspTypeNspClassB NspTypeNspClassB ;
 
 #line 22 "./classb.h"
 
-struct _NspTypeClassB {
+struct _NspTypeNspClassB {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -31,7 +31,7 @@ struct _NspTypeClassB {
 struct _NspClassB {
   /*< private >*/
   NspClassA father;
-  NspTypeClassB*type;
+  NspTypeNspClassB*type;
   /*< public >*/
     int clb_color;
   int clb_thickness;
@@ -39,13 +39,13 @@ struct _NspClassB {
 };
 
 extern int nsp_type_classb_id;
-extern NspTypeClassB *nsp_type_classb;
+extern NspTypeNspClassB *nsp_type_classb;
 
 /* type instances for classa */
 
-NspTypeClassB *new_type_classb(type_mode mode);
+NspTypeNspClassB *new_type_classb(type_mode mode);
 
-/* instance for ClassB */
+/* instance for NspClassB */
 
 NspClassB *new_classb();
 
@@ -59,7 +59,7 @@ NspClassB *new_classb();
 extern NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
 extern NspClassB *nsp_classb_create_default(char *name);
 
-/* from ClassBObj.c */
+/* from NspClassBObj.c */
 
 extern NspClassB *nsp_classb_copy(NspClassB *H);
 extern void nsp_classb_destroy(NspClassB *H);
@@ -81,10 +81,10 @@ extern int int_classb_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassB *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M);
 extern int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M);
 
-#endif /* NSP_INC_ClassB */ 
+#endif /* NSP_INC_NspClassB */ 
 
-#ifdef ClassB_Private 
-static int init_classb(NspClassB *o,NspTypeClassB *type);
+#ifdef NspClassB_Private 
+static int init_classb(NspClassB *o,NspTypeNspClassB *type);
 static int nsp_classb_size(NspClassB *Mat, int flag);
 static char *nsp_classb_type_as_string(void);
 static char *nsp_classb_type_short_string(NspObject *v);
@@ -95,5 +95,5 @@ static AttrTab classb_attrs[];
 static NspMethods *classb_get_methods(void);
 /* static int int_classb_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassB *nsp_classb_create_void(char *name,NspTypeBase *type);
-#endif /* ClassB_Private */
+#endif /* NspClassB_Private */
 

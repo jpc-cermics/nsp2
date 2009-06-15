@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Compound
-#define NSP_INC_Compound
+#ifndef NSP_INC_NspCompound
+#define NSP_INC_NspCompound
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Compound */
+/* NspCompound */
 
 #include "nsp/graphic.h"
 
 /*
- * NspCompound inherits from NspGraphic
+ * NspCompound inherits from Graphic
  */
 
 typedef struct _NspCompound NspCompound ;
-typedef struct _NspTypeCompound NspTypeCompound ;
+typedef struct _NspTypeNspCompound NspTypeNspCompound ;
 
 #line 22 "./compound.h"
 
-struct _NspTypeCompound {
+struct _NspTypeNspCompound {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -38,19 +38,19 @@ struct _nsp_compound {
 struct _NspCompound {
   /*< private >*/
   NspGraphic father;
-  NspTypeCompound*type;
+  NspTypeNspCompound*type;
   /*< public >*/
   nsp_compound *obj;
 };
 
 extern int nsp_type_compound_id;
-extern NspTypeCompound *nsp_type_compound;
+extern NspTypeNspCompound *nsp_type_compound;
 
 /* type instances for graphic */
 
-NspTypeCompound *new_type_compound(type_mode mode);
+NspTypeNspCompound *new_type_compound(type_mode mode);
 
-/* instance for Compound */
+/* instance for NspCompound */
 
 NspCompound *new_compound();
 
@@ -64,7 +64,7 @@ NspCompound *new_compound();
 extern NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
 extern NspCompound *nsp_compound_create_default(char *name);
 
-/* from CompoundObj.c */
+/* from NspCompoundObj.c */
 
 extern NspCompound *nsp_compound_copy(NspCompound *H);
 extern void nsp_compound_destroy(NspCompound *H);
@@ -86,10 +86,10 @@ extern int int_compound_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCompound *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M);
 extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 
-#endif /* NSP_INC_Compound */ 
+#endif /* NSP_INC_NspCompound */ 
 
-#ifdef Compound_Private 
-static int init_compound(NspCompound *o,NspTypeCompound *type);
+#ifdef NspCompound_Private 
+static int init_compound(NspCompound *o,NspTypeNspCompound *type);
 static int nsp_compound_size(NspCompound *Mat, int flag);
 static char *nsp_compound_type_as_string(void);
 static char *nsp_compound_type_short_string(NspObject *v);
@@ -100,5 +100,5 @@ static AttrTab compound_attrs[];
 static NspMethods *compound_get_methods(void);
 /* static int int_compound_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type);
-#endif /* Compound_Private */
+#endif /* NspCompound_Private */
 

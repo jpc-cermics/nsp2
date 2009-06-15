@@ -3,7 +3,7 @@
 (define-objectref VField
   (in-module "VField")
   (parent "Graphic")
-  (c-name "VField")
+  (c-name "NspVField")
   (fields
     '("NspMatrix*" "fx") ;; Matrix 
     '("NspMatrix*" "fy") ;; Matrix 

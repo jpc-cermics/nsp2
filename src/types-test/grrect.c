@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/grrect.override"
-#include "nsp/grrect.h"
+#include <nsp/grrect.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "grrect.c"
 
-/* ----------- GrRect ----------- */
+/* ----------- NspGrRect ----------- */
 
 
-#define  GrRect_Private 
+#define  NspGrRect_Private 
 #include "nsp/object.h"
 #include "nsp/grrect.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGrRect inherits from NspGraphic 
+ * NspGrRect inherits from Graphic 
  */
 
 int nsp_type_grrect_id=0;
-NspTypeGrRect *nsp_type_grrect=NULL;
+NspTypeNspGrRect *nsp_type_grrect=NULL;
 
 /*
- * Type object for GrRect 
- * all the instance of NspTypeGrRect share the same id. 
- * nsp_type_grrect: is an instance of NspTypeGrRect 
+ * Type object for NspGrRect 
+ * all the instance of NspTypeNspGrRect share the same id. 
+ * nsp_type_grrect: is an instance of NspTypeNspGrRect 
  *    used for objects of NspGrRect type (i.e built with new_grrect) 
  * other instances are used for derived classes 
  */
-NspTypeGrRect *new_type_grrect(type_mode mode)
+NspTypeNspGrRect *new_type_grrect(type_mode mode)
 {
-  NspTypeGrRect *type= NULL;
+  NspTypeNspGrRect *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_grrect != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_grrect;
     }
-  if ((type =  malloc(sizeof(NspTypeGrRect))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGrRect))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grrect;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grrect ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grrect;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grrect ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
   /* next method are defined in NspGraphic and need not be changed here for GrRect */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "grrect.c"
   /* 
-   * GrRect interfaces can be added here 
+   * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGrRect called nsp_type_grrect
+       * an instance of NspTypeNspGrRect called nsp_type_grrect
        */
       type->id =  nsp_type_grrect_id = nsp_new_type_id();
       nsp_type_grrect = type;
@@ -132,11 +132,11 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 }
 
 /*
- * initialize GrRect instances 
+ * initialize NspGrRect instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_grrect(NspGrRect *Obj,NspTypeGrRect *type)
+static int init_grrect(NspGrRect *Obj,NspTypeNspGrRect *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_grrect(NspGrRect *Obj,NspTypeGrRect *type)
 }
 
 /*
- * new instance of GrRect 
+ * new instance of NspGrRect 
  */
 
 NspGrRect *new_grrect() 
@@ -163,7 +163,7 @@ NspGrRect *new_grrect()
 }
 
 /*----------------------------------------------
- * Object method redefined for GrRect 
+ * Object method redefined for NspGrRect 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_grrect_size(NspGrRect *Mat, int flag)
  * type as string 
  */
 
-static char grrect_type_name[]="GrRect";
+static char grrect_type_name[]="NspGrRect";
 static char grrect_short_type_name[]="grrect";
 
 static char *nsp_grrect_type_as_string(void)
@@ -311,7 +311,7 @@ int nsp_grrect_info(NspGrRect *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGRRECT) 
     {
-      Sciprintf("Null Pointer GrRect \n");
+      Sciprintf("Null Pointer NspGrRect \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -329,7 +329,7 @@ int nsp_grrect_print(NspGrRect *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGRRECT) 
     {
-      Sciprintf("Null Pointer GrRect \n");
+      Sciprintf("Null Pointer NspGrRect \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -382,7 +382,7 @@ int nsp_grrect_latex(NspGrRect *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GrRect objects 
+ * for NspGrRect objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -535,7 +535,7 @@ NspGrRect *nsp_grrect_full_copy(NspGrRect *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the GrRect
+ * wrappers for the NspGrRect
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -555,22 +555,7 @@ int int_grrect_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_grrect_full_copy(NspGrRect *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspGrRect *ret;
-
-  ret = nsp_grrect_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods grrect_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_grrect_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *grrect_get_methods(void) { return grrect_methods;};
+static NspMethods *grrect_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -729,7 +714,7 @@ int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 733 "grrect.c"
+#line 718 "grrect.c"
 
 
 #line 89 "codegen/grrect.override"
@@ -741,7 +726,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 745 "grrect.c"
+#line 730 "grrect.c"
 
 
 #line 99 "codegen/grrect.override"
@@ -754,7 +739,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 758 "grrect.c"
+#line 743 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -795,8 +780,8 @@ GrRect_register_classes(NspObject *d)
 Init portion 
 
 
-#line 799 "grrect.c"
-  nspgobject_register_class(d, "GrRect", GrRect, &NspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 784 "grrect.c"
+  nspgobject_register_class(d, "NspGrRect", GrRect, &NspNspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -886,4 +871,4 @@ static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 890 "grrect.c"
+#line 875 "grrect.c"

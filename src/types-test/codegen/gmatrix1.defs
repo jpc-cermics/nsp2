@@ -3,7 +3,7 @@
 (define-objectref GMatrix1
   (in-module "GMatrix1")
   (parent "Graphic")
-  (c-name "GMatrix1")
+  (c-name "NspGMatrix1")
   (fields
     '("NspMatrix*" "data") ;; Matrix 
     '("gboolean"   "remap")  ;; remap color mode 

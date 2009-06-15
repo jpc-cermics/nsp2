@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/grstring.override"
-#include "nsp/grstring.h"
+#include <nsp/grstring.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "grstring.c"
 
-/* ----------- Grstring ----------- */
+/* ----------- NspGrstring ----------- */
 
 
-#define  Grstring_Private 
+#define  NspGrstring_Private 
 #include "nsp/object.h"
 #include "nsp/grstring.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGrstring inherits from NspGraphic 
+ * NspGrstring inherits from Graphic 
  */
 
 int nsp_type_grstring_id=0;
-NspTypeGrstring *nsp_type_grstring=NULL;
+NspTypeNspGrstring *nsp_type_grstring=NULL;
 
 /*
- * Type object for Grstring 
- * all the instance of NspTypeGrstring share the same id. 
- * nsp_type_grstring: is an instance of NspTypeGrstring 
+ * Type object for NspGrstring 
+ * all the instance of NspTypeNspGrstring share the same id. 
+ * nsp_type_grstring: is an instance of NspTypeNspGrstring 
  *    used for objects of NspGrstring type (i.e built with new_grstring) 
  * other instances are used for derived classes 
  */
-NspTypeGrstring *new_type_grstring(type_mode mode)
+NspTypeNspGrstring *new_type_grstring(type_mode mode)
 {
-  NspTypeGrstring *type= NULL;
+  NspTypeNspGrstring *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_grstring != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_grstring;
     }
-  if ((type =  malloc(sizeof(NspTypeGrstring))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGrstring))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grstring;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grstring ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grstring;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grstring ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "grstring.c"
   /* 
-   * Grstring interfaces can be added here 
+   * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGrstring called nsp_type_grstring
+       * an instance of NspTypeNspGrstring called nsp_type_grstring
        */
       type->id =  nsp_type_grstring_id = nsp_new_type_id();
       nsp_type_grstring = type;
@@ -132,11 +132,11 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 }
 
 /*
- * initialize Grstring instances 
+ * initialize NspGrstring instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
+static int init_grstring(NspGrstring *Obj,NspTypeNspGrstring *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 }
 
 /*
- * new instance of Grstring 
+ * new instance of NspGrstring 
  */
 
 NspGrstring *new_grstring() 
@@ -163,7 +163,7 @@ NspGrstring *new_grstring()
 }
 
 /*----------------------------------------------
- * Object method redefined for Grstring 
+ * Object method redefined for NspGrstring 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_grstring_size(NspGrstring *Mat, int flag)
  * type as string 
  */
 
-static char grstring_type_name[]="Grstring";
+static char grstring_type_name[]="NspGrstring";
 static char grstring_short_type_name[]="grstring";
 
 static char *nsp_grstring_type_as_string(void)
@@ -319,7 +319,7 @@ int nsp_grstring_info(NspGrstring *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGRSTRING) 
     {
-      Sciprintf("Null Pointer Grstring \n");
+      Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -337,7 +337,7 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGRSTRING) 
     {
-      Sciprintf("Null Pointer Grstring \n");
+      Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -398,7 +398,7 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Grstring objects 
+ * for NspGrstring objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -572,7 +572,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Grstring
+ * wrappers for the NspGrstring
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -592,22 +592,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_grstring_full_copy(NspGrstring *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspGrstring *ret;
-
-  ret = nsp_grstring_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods grstring_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_grstring_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *grstring_get_methods(void) { return grstring_methods;};
+static NspMethods *grstring_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -820,7 +805,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 824 "grstring.c"
+#line 809 "grstring.c"
 
 
 #line 89 "codegen/grstring.override"
@@ -832,7 +817,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 836 "grstring.c"
+#line 821 "grstring.c"
 
 
 #line 99 "codegen/grstring.override"
@@ -845,7 +830,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 849 "grstring.c"
+#line 834 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -886,8 +871,8 @@ Grstring_register_classes(NspObject *d)
 Init portion 
 
 
-#line 890 "grstring.c"
-  nspgobject_register_class(d, "Grstring", Grstring, &NspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 875 "grstring.c"
+  nspgobject_register_class(d, "NspGrstring", Grstring, &NspNspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -996,4 +981,4 @@ static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1000 "grstring.c"
+#line 985 "grstring.c"

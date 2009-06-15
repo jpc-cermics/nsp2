@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Contour
-#define NSP_INC_Contour
+#ifndef NSP_INC_NspContour
+#define NSP_INC_NspContour
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Contour */
+/* NspContour */
 
 #include "nsp/graphic.h"
 
 /*
- * NspContour inherits from NspGraphic
+ * NspContour inherits from Graphic
  */
 
 typedef struct _NspContour NspContour ;
-typedef struct _NspTypeContour NspTypeContour ;
+typedef struct _NspTypeNspContour NspTypeNspContour ;
 
 #line 22 "./contour.h"
 
-struct _NspTypeContour {
+struct _NspTypeNspContour {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,19 +42,19 @@ struct _nsp_contour {
 struct _NspContour {
   /*< private >*/
   NspGraphic father;
-  NspTypeContour*type;
+  NspTypeNspContour*type;
   /*< public >*/
   nsp_contour *obj;
 };
 
 extern int nsp_type_contour_id;
-extern NspTypeContour *nsp_type_contour;
+extern NspTypeNspContour *nsp_type_contour;
 
 /* type instances for graphic */
 
-NspTypeContour *new_type_contour(type_mode mode);
+NspTypeNspContour *new_type_contour(type_mode mode);
 
-/* instance for Contour */
+/* instance for NspContour */
 
 NspContour *new_contour();
 
@@ -68,7 +68,7 @@ NspContour *new_contour();
 extern NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type);
 extern NspContour *nsp_contour_create_default(char *name);
 
-/* from ContourObj.c */
+/* from NspContourObj.c */
 
 extern NspContour *nsp_contour_copy(NspContour *H);
 extern void nsp_contour_destroy(NspContour *H);
@@ -90,10 +90,10 @@ extern int int_contour_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M);
 extern int nsp_contour_xdr_save(XDR  *xdrs, NspContour *M);
 
-#endif /* NSP_INC_Contour */ 
+#endif /* NSP_INC_NspContour */ 
 
-#ifdef Contour_Private 
-static int init_contour(NspContour *o,NspTypeContour *type);
+#ifdef NspContour_Private 
+static int init_contour(NspContour *o,NspTypeNspContour *type);
 static int nsp_contour_size(NspContour *Mat, int flag);
 static char *nsp_contour_type_as_string(void);
 static char *nsp_contour_type_short_string(NspObject *v);
@@ -104,5 +104,5 @@ static AttrTab contour_attrs[];
 static NspMethods *contour_get_methods(void);
 /* static int int_contour_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type);
-#endif /* Contour_Private */
+#endif /* NspContour_Private */
 

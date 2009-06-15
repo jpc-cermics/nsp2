@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_ClassA
-#define NSP_INC_ClassA
+#ifndef NSP_INC_NspClassA
+#define NSP_INC_NspClassA
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* ClassA */
+/* NspClassA */
 
 #include "nsp/object.h"
 
 /*
- * NspClassA inherits from NspObject
+ * NspClassA inherits from Object
  */
 
 typedef struct _NspClassA NspClassA ;
-typedef struct _NspTypeClassA NspTypeClassA ;
+typedef struct _NspTypeNspClassA NspTypeNspClassA ;
 
 #line 22 "./classa.h"
 
-struct _NspTypeClassA {
+struct _NspTypeNspClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -31,7 +31,7 @@ struct _NspTypeClassA {
 struct _NspClassA {
   /*< private >*/
   NspObject father;
-  NspTypeClassA*type;
+  NspTypeNspClassA*type;
   /*< public >*/
     int cla_color;
   int cla_thickness;
@@ -41,13 +41,13 @@ struct _NspClassA {
 };
 
 extern int nsp_type_classa_id;
-extern NspTypeClassA *nsp_type_classa;
+extern NspTypeNspClassA *nsp_type_classa;
 
 /* type instances for object */
 
-NspTypeClassA *new_type_classa(type_mode mode);
+NspTypeNspClassA *new_type_classa(type_mode mode);
 
-/* instance for ClassA */
+/* instance for NspClassA */
 
 NspClassA *new_classa();
 
@@ -61,7 +61,7 @@ NspClassA *new_classa();
 extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
 extern NspClassA *nsp_classa_create_default(char *name);
 
-/* from ClassAObj.c */
+/* from NspClassAObj.c */
 
 extern NspClassA *nsp_classa_copy(NspClassA *H);
 extern void nsp_classa_destroy(NspClassA *H);
@@ -83,10 +83,10 @@ extern int int_classa_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassA *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M);
 extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
-#endif /* NSP_INC_ClassA */ 
+#endif /* NSP_INC_NspClassA */ 
 
-#ifdef ClassA_Private 
-static int init_classa(NspClassA *o,NspTypeClassA *type);
+#ifdef NspClassA_Private 
+static int init_classa(NspClassA *o,NspTypeNspClassA *type);
 static int nsp_classa_size(NspClassA *Mat, int flag);
 static char *nsp_classa_type_as_string(void);
 static char *nsp_classa_type_short_string(NspObject *v);
@@ -97,5 +97,5 @@ static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void);
 /* static int int_classa_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type);
-#endif /* ClassA_Private */
+#endif /* NspClassA_Private */
 

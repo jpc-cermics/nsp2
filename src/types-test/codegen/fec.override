@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -31,16 +31,16 @@ init
 Init portion 
 
 %%
-override_type Fec
+override_type NspFec
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_fec  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_fec;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_fec ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_fec  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Fec */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,16 +23,16 @@ init
 Init portion 
 
 %%
-override_type Contour
+override_type NspContour
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_contour  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_contour  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
   /* next method are defined in NspGraphic and need not be changed here for Contour */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

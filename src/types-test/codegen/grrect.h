@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_GrRect
-#define NSP_INC_GrRect
+#ifndef NSP_INC_NspGrRect
+#define NSP_INC_NspGrRect
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* GrRect */
+/* NspGrRect */
 
 #include "nsp/graphic.h"
 
 /*
- * NspGrRect inherits from NspGraphic
+ * NspGrRect inherits from Graphic
  */
 
 typedef struct _NspGrRect NspGrRect ;
-typedef struct _NspTypeGrRect NspTypeGrRect ;
+typedef struct _NspTypeNspGrRect NspTypeNspGrRect ;
 
 #line 22 "./grrect.h"
 
-struct _NspTypeGrRect {
+struct _NspTypeNspGrRect {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,19 +43,19 @@ struct _nsp_grrect {
 struct _NspGrRect {
   /*< private >*/
   NspGraphic father;
-  NspTypeGrRect*type;
+  NspTypeNspGrRect*type;
   /*< public >*/
   nsp_grrect *obj;
 };
 
 extern int nsp_type_grrect_id;
-extern NspTypeGrRect *nsp_type_grrect;
+extern NspTypeNspGrRect *nsp_type_grrect;
 
 /* type instances for graphic */
 
-NspTypeGrRect *new_type_grrect(type_mode mode);
+NspTypeNspGrRect *new_type_grrect(type_mode mode);
 
-/* instance for GrRect */
+/* instance for NspGrRect */
 
 NspGrRect *new_grrect();
 
@@ -69,7 +69,7 @@ NspGrRect *new_grrect();
 extern NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type);
 extern NspGrRect *nsp_grrect_create_default(char *name);
 
-/* from GrRectObj.c */
+/* from NspGrRectObj.c */
 
 extern NspGrRect *nsp_grrect_copy(NspGrRect *H);
 extern void nsp_grrect_destroy(NspGrRect *H);
@@ -91,10 +91,10 @@ extern int int_grrect_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrRect *nsp_grrect_xdr_load_partial(XDR *xdrs, NspGrRect *M);
 extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
-#endif /* NSP_INC_GrRect */ 
+#endif /* NSP_INC_NspGrRect */ 
 
-#ifdef GrRect_Private 
-static int init_grrect(NspGrRect *o,NspTypeGrRect *type);
+#ifdef NspGrRect_Private 
+static int init_grrect(NspGrRect *o,NspTypeNspGrRect *type);
 static int nsp_grrect_size(NspGrRect *Mat, int flag);
 static char *nsp_grrect_type_as_string(void);
 static char *nsp_grrect_type_short_string(NspObject *v);
@@ -105,5 +105,5 @@ static AttrTab grrect_attrs[];
 static NspMethods *grrect_get_methods(void);
 /* static int int_grrect_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrRect *nsp_grrect_create_void(char *name,NspTypeBase *type);
-#endif /* GrRect_Private */
+#endif /* NspGrRect_Private */
 

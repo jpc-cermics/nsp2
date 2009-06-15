@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/surf.override"
-#include "nsp/surf.h"
+#include <nsp/surf.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "surf.c"
 
-/* ----------- Surf ----------- */
+/* ----------- NspSurf ----------- */
 
 
-#define  Surf_Private 
+#define  NspSurf_Private 
 #include "nsp/object.h"
 #include "nsp/surf.h"
 #include "nsp/interf.h"
 
 /* 
- * NspSurf inherits from NspGraphic 
+ * NspSurf inherits from Graphic 
  */
 
 int nsp_type_surf_id=0;
-NspTypeSurf *nsp_type_surf=NULL;
+NspTypeNspSurf *nsp_type_surf=NULL;
 
 /*
- * Type object for Surf 
- * all the instance of NspTypeSurf share the same id. 
- * nsp_type_surf: is an instance of NspTypeSurf 
+ * Type object for NspSurf 
+ * all the instance of NspTypeNspSurf share the same id. 
+ * nsp_type_surf: is an instance of NspTypeNspSurf 
  *    used for objects of NspSurf type (i.e built with new_surf) 
  * other instances are used for derived classes 
  */
-NspTypeSurf *new_type_surf(type_mode mode)
+NspTypeNspSurf *new_type_surf(type_mode mode)
 {
-  NspTypeSurf *type= NULL;
+  NspTypeNspSurf *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_surf != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_surf;
     }
-  if ((type =  malloc(sizeof(NspTypeSurf))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspSurf))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeSurf *new_type_surf(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_surf;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_surf ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_surf  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_surf;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_surf ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_surf  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Surf */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "surf.c"
   /* 
-   * Surf interfaces can be added here 
+   * NspSurf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeSurf called nsp_type_surf
+       * an instance of NspTypeNspSurf called nsp_type_surf
        */
       type->id =  nsp_type_surf_id = nsp_new_type_id();
       nsp_type_surf = type;
@@ -132,11 +132,11 @@ NspTypeSurf *new_type_surf(type_mode mode)
 }
 
 /*
- * initialize Surf instances 
+ * initialize NspSurf instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_surf(NspSurf *Obj,NspTypeSurf *type)
+static int init_surf(NspSurf *Obj,NspTypeNspSurf *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_surf(NspSurf *Obj,NspTypeSurf *type)
 }
 
 /*
- * new instance of Surf 
+ * new instance of NspSurf 
  */
 
 NspSurf *new_surf() 
@@ -163,7 +163,7 @@ NspSurf *new_surf()
 }
 
 /*----------------------------------------------
- * Object method redefined for Surf 
+ * Object method redefined for NspSurf 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_surf_size(NspSurf *Mat, int flag)
  * type as string 
  */
 
-static char surf_type_name[]="Surf";
+static char surf_type_name[]="NspSurf";
 static char surf_short_type_name[]="surf";
 
 static char *nsp_surf_type_as_string(void)
@@ -318,7 +318,7 @@ int nsp_surf_info(NspSurf *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLSURF) 
     {
-      Sciprintf("Null Pointer Surf \n");
+      Sciprintf("Null Pointer NspSurf \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -336,7 +336,7 @@ int nsp_surf_print(NspSurf *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSURF) 
     {
-      Sciprintf("Null Pointer Surf \n");
+      Sciprintf("Null Pointer NspSurf \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -407,7 +407,7 @@ int nsp_surf_latex(NspSurf *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Surf objects 
+ * for NspSurf objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -607,7 +607,7 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Surf
+ * wrappers for the NspSurf
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -627,22 +627,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_surf_full_copy(NspSurf *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspSurf *ret;
-
-  ret = nsp_surf_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods surf_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_surf_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *surf_get_methods(void) { return surf_methods;};
+static NspMethods *surf_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -863,7 +848,7 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 867 "surf.c"
+#line 852 "surf.c"
 
 
 #line 89 "codegen/surf.override"
@@ -875,7 +860,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 879 "surf.c"
+#line 864 "surf.c"
 
 
 #line 99 "codegen/surf.override"
@@ -888,7 +873,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 892 "surf.c"
+#line 877 "surf.c"
 
 
 /*----------------------------------------------------
@@ -929,8 +914,8 @@ Surf_register_classes(NspObject *d)
 Init portion 
 
 
-#line 933 "surf.c"
-  nspgobject_register_class(d, "Surf", Surf, &NspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 918 "surf.c"
+  nspgobject_register_class(d, "NspSurf", Surf, &NspNspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1012,4 +997,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1016 "surf.c"
+#line 1001 "surf.c"

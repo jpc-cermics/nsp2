@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/grstring.h"
+#include <nsp/grstring.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -19,19 +19,19 @@ init
 Init portion 
 
 %%
-override_type Grstring
+override_type NspGrstring
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grstring;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grstring ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grstring;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grstring ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

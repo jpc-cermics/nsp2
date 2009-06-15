@@ -3,7 +3,7 @@
 (define-objectref GrArc
   (in-module "GrArc")
   (parent "Graphic")
-  (c-name "GrArc")
+  (c-name "NspGrArc")
   (fields
     '("double" "x")
     '("double" "y")

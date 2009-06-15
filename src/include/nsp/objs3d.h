@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Objs3d
-#define NSP_INC_Objs3d
+#ifndef NSP_INC_NspObjs3d
+#define NSP_INC_NspObjs3d
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Objs3d */
+/* NspObjs3d */
 
 #include "nsp/graphic.h"
 
 /*
- * NspObjs3d inherits from NspGraphic
+ * NspObjs3d inherits from Graphic
  */
 
 typedef struct _NspObjs3d NspObjs3d ;
-typedef struct _NspTypeObjs3d NspTypeObjs3d ;
+typedef struct _NspTypeNspObjs3d NspTypeNspObjs3d ;
 
 #line 22 "./objs3d.h"
 
-struct _NspTypeObjs3d {
+struct _NspTypeNspObjs3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -50,19 +50,19 @@ struct _nsp_objs3d {
 struct _NspObjs3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeObjs3d*type;
+  NspTypeNspObjs3d*type;
   /*< public >*/
   nsp_objs3d *obj;
 };
 
 extern int nsp_type_objs3d_id;
-extern NspTypeObjs3d *nsp_type_objs3d;
+extern NspTypeNspObjs3d *nsp_type_objs3d;
 
 /* type instances for graphic */
 
-NspTypeObjs3d *new_type_objs3d(type_mode mode);
+NspTypeNspObjs3d *new_type_objs3d(type_mode mode);
 
-/* instance for Objs3d */
+/* instance for NspObjs3d */
 
 NspObjs3d *new_objs3d();
 
@@ -76,7 +76,7 @@ NspObjs3d *new_objs3d();
 extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
 extern NspObjs3d *nsp_objs3d_create_default(char *name);
 
-/* from Objs3dObj.c */
+/* from NspObjs3dObj.c */
 
 extern NspObjs3d *nsp_objs3d_copy(NspObjs3d *H);
 extern void nsp_objs3d_destroy(NspObjs3d *H);
@@ -98,10 +98,10 @@ extern int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspObjs3d *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M);
 extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 
-#endif /* NSP_INC_Objs3d */ 
+#endif /* NSP_INC_NspObjs3d */ 
 
-#ifdef Objs3d_Private 
-static int init_objs3d(NspObjs3d *o,NspTypeObjs3d *type);
+#ifdef NspObjs3d_Private 
+static int init_objs3d(NspObjs3d *o,NspTypeNspObjs3d *type);
 static int nsp_objs3d_size(NspObjs3d *Mat, int flag);
 static char *nsp_objs3d_type_as_string(void);
 static char *nsp_objs3d_type_short_string(NspObject *v);
@@ -112,5 +112,5 @@ static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
-#endif /* Objs3d_Private */
+#endif /* NspObjs3d_Private */
 

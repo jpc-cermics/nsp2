@@ -10,10 +10,10 @@
 
 #line 4 "codegen/figure.override"
 
-#include "nsp/figure.h"
-#include "nsp/axes.h"
-#include "nsp/objs3d.h"
-#include "nsp/compound.h"
+#include <nsp/figure.h>
+#include <nsp/axes.h>
+#include <nsp/objs3d.h>
+#include <nsp/compound.h>
 extern BCG *nsp_check_graphic_context(void);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 
@@ -41,38 +41,38 @@ extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 
 #line 43 "figure.c"
 
-/* ----------- Figure ----------- */
+/* ----------- NspFigure ----------- */
 
 
-#define  Figure_Private 
+#define  NspFigure_Private 
 #include "nsp/object.h"
 #include "nsp/figure.h"
 #include "nsp/interf.h"
 
 /* 
- * NspFigure inherits from NspGraphic 
+ * NspFigure inherits from Graphic 
  */
 
 int nsp_type_figure_id=0;
-NspTypeFigure *nsp_type_figure=NULL;
+NspTypeNspFigure *nsp_type_figure=NULL;
 
 /*
- * Type object for Figure 
- * all the instance of NspTypeFigure share the same id. 
- * nsp_type_figure: is an instance of NspTypeFigure 
+ * Type object for NspFigure 
+ * all the instance of NspTypeNspFigure share the same id. 
+ * nsp_type_figure: is an instance of NspTypeNspFigure 
  *    used for objects of NspFigure type (i.e built with new_figure) 
  * other instances are used for derived classes 
  */
-NspTypeFigure *new_type_figure(type_mode mode)
+NspTypeNspFigure *new_type_figure(type_mode mode)
 {
-  NspTypeFigure *type= NULL;
+  NspTypeNspFigure *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_figure != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_figure;
     }
-  if ((type =  malloc(sizeof(NspTypeFigure))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspFigure))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -112,13 +112,13 @@ NspTypeFigure *new_type_figure(type_mode mode)
 
 #line 41 "codegen/figure.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
 #line 120 "figure.c"
   /* 
-   * Figure interfaces can be added here 
+   * NspFigure interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -127,7 +127,7 @@ NspTypeFigure *new_type_figure(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeFigure called nsp_type_figure
+       * an instance of NspTypeNspFigure called nsp_type_figure
        */
       type->id =  nsp_type_figure_id = nsp_new_type_id();
       nsp_type_figure = type;
@@ -142,11 +142,11 @@ NspTypeFigure *new_type_figure(type_mode mode)
 }
 
 /*
- * initialize Figure instances 
+ * initialize NspFigure instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_figure(NspFigure *Obj,NspTypeFigure *type)
+static int init_figure(NspFigure *Obj,NspTypeNspFigure *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -158,7 +158,7 @@ static int init_figure(NspFigure *Obj,NspTypeFigure *type)
 }
 
 /*
- * new instance of Figure 
+ * new instance of NspFigure 
  */
 
 NspFigure *new_figure() 
@@ -173,7 +173,7 @@ NspFigure *new_figure()
 }
 
 /*----------------------------------------------
- * Object method redefined for Figure 
+ * Object method redefined for NspFigure 
  *-----------------------------------------------*/
 /*
  * size 
@@ -188,7 +188,7 @@ static int nsp_figure_size(NspFigure *Mat, int flag)
  * type as string 
  */
 
-static char figure_type_name[]="Figure";
+static char figure_type_name[]="NspFigure";
 static char figure_short_type_name[]="figure";
 
 static char *nsp_figure_type_as_string(void)
@@ -336,7 +336,7 @@ int nsp_figure_info(NspFigure *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLFIGURE) 
     {
-      Sciprintf("Null Pointer Figure \n");
+      Sciprintf("Null Pointer NspFigure \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -354,7 +354,7 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLFIGURE) 
     {
-      Sciprintf("Null Pointer Figure \n");
+      Sciprintf("Null Pointer NspFigure \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -427,7 +427,7 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Figure objects 
+ * for NspFigure objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -639,7 +639,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Figure
+ * wrappers for the NspFigure
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -1065,7 +1065,7 @@ Init portion
 
 
 #line 1068 "figure.c"
-  nspgobject_register_class(d, "Figure", Figure, &NspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspFigure", Figure, &NspNspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

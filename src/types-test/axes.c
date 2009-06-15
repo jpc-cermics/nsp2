@@ -39,38 +39,38 @@ extern Gengine GL_gengine;
 
 #line 41 "axes.c"
 
-/* ----------- Axes ----------- */
+/* ----------- NspAxes ----------- */
 
 
-#define  Axes_Private 
+#define  NspAxes_Private 
 #include "nsp/object.h"
 #include "nsp/axes.h"
 #include "nsp/interf.h"
 
 /* 
- * NspAxes inherits from NspGraphic 
+ * NspAxes inherits from Graphic 
  */
 
 int nsp_type_axes_id=0;
-NspTypeAxes *nsp_type_axes=NULL;
+NspTypeNspAxes *nsp_type_axes=NULL;
 
 /*
- * Type object for Axes 
- * all the instance of NspTypeAxes share the same id. 
- * nsp_type_axes: is an instance of NspTypeAxes 
+ * Type object for NspAxes 
+ * all the instance of NspTypeNspAxes share the same id. 
+ * nsp_type_axes: is an instance of NspTypeNspAxes 
  *    used for objects of NspAxes type (i.e built with new_axes) 
  * other instances are used for derived classes 
  */
-NspTypeAxes *new_type_axes(type_mode mode)
+NspTypeNspAxes *new_type_axes(type_mode mode)
 {
-  NspTypeAxes *type= NULL;
+  NspTypeNspAxes *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_axes != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_axes;
     }
-  if ((type =  malloc(sizeof(NspTypeAxes))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspAxes))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -110,18 +110,18 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
 #line 39 "codegen/axes.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_axes  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
 #line 123 "axes.c"
   /* 
-   * Axes interfaces can be added here 
+   * NspAxes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -130,7 +130,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeAxes called nsp_type_axes
+       * an instance of NspTypeNspAxes called nsp_type_axes
        */
       type->id =  nsp_type_axes_id = nsp_new_type_id();
       nsp_type_axes = type;
@@ -145,11 +145,11 @@ NspTypeAxes *new_type_axes(type_mode mode)
 }
 
 /*
- * initialize Axes instances 
+ * initialize NspAxes instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_axes(NspAxes *Obj,NspTypeAxes *type)
+static int init_axes(NspAxes *Obj,NspTypeNspAxes *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -161,7 +161,7 @@ static int init_axes(NspAxes *Obj,NspTypeAxes *type)
 }
 
 /*
- * new instance of Axes 
+ * new instance of NspAxes 
  */
 
 NspAxes *new_axes() 
@@ -176,7 +176,7 @@ NspAxes *new_axes()
 }
 
 /*----------------------------------------------
- * Object method redefined for Axes 
+ * Object method redefined for NspAxes 
  *-----------------------------------------------*/
 /*
  * size 
@@ -191,7 +191,7 @@ static int nsp_axes_size(NspAxes *Mat, int flag)
  * type as string 
  */
 
-static char axes_type_name[]="Axes";
+static char axes_type_name[]="NspAxes";
 static char axes_short_type_name[]="axes";
 
 static char *nsp_axes_type_as_string(void)
@@ -363,7 +363,7 @@ int nsp_axes_info(NspAxes *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLAXES) 
     {
-      Sciprintf("Null Pointer Axes \n");
+      Sciprintf("Null Pointer NspAxes \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -381,7 +381,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLAXES) 
     {
-      Sciprintf("Null Pointer Axes \n");
+      Sciprintf("Null Pointer NspAxes \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -476,7 +476,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Axes objects 
+ * for NspAxes objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -734,7 +734,7 @@ NspAxes *nsp_axes_full_copy(NspAxes *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Axes
+ * wrappers for the NspAxes
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -1270,7 +1270,7 @@ Init portion
 
 
 #line 1273 "axes.c"
-  nspgobject_register_class(d, "Axes", Axes, &NspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspAxes", Axes, &NspNspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

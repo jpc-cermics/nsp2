@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Curve
-#define NSP_INC_Curve
+#ifndef NSP_INC_NspCurve
+#define NSP_INC_NspCurve
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Curve */
+/* NspCurve */
 
 #include "nsp/graphic.h"
 
 /*
- * NspCurve inherits from NspGraphic
+ * NspCurve inherits from Graphic
  */
 
 typedef struct _NspCurve NspCurve ;
-typedef struct _NspTypeCurve NspTypeCurve ;
+typedef struct _NspTypeNspCurve NspTypeNspCurve ;
 
 #line 22 "./curve.h"
 
-struct _NspTypeCurve {
+struct _NspTypeNspCurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,19 +43,19 @@ struct _nsp_curve {
 struct _NspCurve {
   /*< private >*/
   NspGraphic father;
-  NspTypeCurve*type;
+  NspTypeNspCurve*type;
   /*< public >*/
   nsp_curve *obj;
 };
 
 extern int nsp_type_curve_id;
-extern NspTypeCurve *nsp_type_curve;
+extern NspTypeNspCurve *nsp_type_curve;
 
 /* type instances for graphic */
 
-NspTypeCurve *new_type_curve(type_mode mode);
+NspTypeNspCurve *new_type_curve(type_mode mode);
 
-/* instance for Curve */
+/* instance for NspCurve */
 
 NspCurve *new_curve();
 
@@ -69,7 +69,7 @@ NspCurve *new_curve();
 extern NspCurve *nsp_curve_create(char *name,int mark,double width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
 extern NspCurve *nsp_curve_create_default(char *name);
 
-/* from CurveObj.c */
+/* from NspCurveObj.c */
 
 extern NspCurve *nsp_curve_copy(NspCurve *H);
 extern void nsp_curve_destroy(NspCurve *H);
@@ -91,10 +91,10 @@ extern int int_curve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCurve *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M);
 extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 
-#endif /* NSP_INC_Curve */ 
+#endif /* NSP_INC_NspCurve */ 
 
-#ifdef Curve_Private 
-static int init_curve(NspCurve *o,NspTypeCurve *type);
+#ifdef NspCurve_Private 
+static int init_curve(NspCurve *o,NspTypeNspCurve *type);
 static int nsp_curve_size(NspCurve *Mat, int flag);
 static char *nsp_curve_type_as_string(void);
 static char *nsp_curve_type_short_string(NspObject *v);
@@ -105,5 +105,5 @@ static AttrTab curve_attrs[];
 static NspMethods *curve_get_methods(void);
 /* static int int_curve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type);
-#endif /* Curve_Private */
+#endif /* NspCurve_Private */
 

@@ -12,38 +12,38 @@
 
 #line 14 "classaref.c"
 
-/* ----------- ClassARef ----------- */
+/* ----------- NspClassARef ----------- */
 
 
-#define  ClassARef_Private 
+#define  NspClassARef_Private 
 #include "nsp/object.h"
 #include "nsp/classaref.h"
 #include "nsp/interf.h"
 
 /* 
- * NspClassARef inherits from NspObject 
+ * NspClassARef inherits from Object 
  */
 
 int nsp_type_classaref_id=0;
-NspTypeClassARef *nsp_type_classaref=NULL;
+NspTypeNspClassARef *nsp_type_classaref=NULL;
 
 /*
- * Type object for ClassARef 
- * all the instance of NspTypeClassARef share the same id. 
- * nsp_type_classaref: is an instance of NspTypeClassARef 
+ * Type object for NspClassARef 
+ * all the instance of NspTypeNspClassARef share the same id. 
+ * nsp_type_classaref: is an instance of NspTypeNspClassARef 
  *    used for objects of NspClassARef type (i.e built with new_classaref) 
  * other instances are used for derived classes 
  */
-NspTypeClassARef *new_type_classaref(type_mode mode)
+NspTypeNspClassARef *new_type_classaref(type_mode mode)
 {
-  NspTypeClassARef *type= NULL;
+  NspTypeNspClassARef *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classaref != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classaref;
     }
-  if ((type =  malloc(sizeof(NspTypeClassARef))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspClassARef))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -82,7 +82,7 @@ NspTypeClassARef *new_type_classaref(type_mode mode)
   type->init = (init_func *) init_classaref;
 
   /* 
-   * ClassARef interfaces can be added here 
+   * NspClassARef interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -91,7 +91,7 @@ NspTypeClassARef *new_type_classaref(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeClassARef called nsp_type_classaref
+       * an instance of NspTypeNspClassARef called nsp_type_classaref
        */
       type->id =  nsp_type_classaref_id = nsp_new_type_id();
       nsp_type_classaref = type;
@@ -106,11 +106,11 @@ NspTypeClassARef *new_type_classaref(type_mode mode)
 }
 
 /*
- * initialize ClassARef instances 
+ * initialize NspClassARef instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_classaref(NspClassARef *Obj,NspTypeClassARef *type)
+static int init_classaref(NspClassARef *Obj,NspTypeNspClassARef *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -122,7 +122,7 @@ static int init_classaref(NspClassARef *Obj,NspTypeClassARef *type)
 }
 
 /*
- * new instance of ClassARef 
+ * new instance of NspClassARef 
  */
 
 NspClassARef *new_classaref() 
@@ -137,7 +137,7 @@ NspClassARef *new_classaref()
 }
 
 /*----------------------------------------------
- * Object method redefined for ClassARef 
+ * Object method redefined for NspClassARef 
  *-----------------------------------------------*/
 /*
  * size 
@@ -152,7 +152,7 @@ static int nsp_classaref_size(NspClassARef *Mat, int flag)
  * type as string 
  */
 
-static char classaref_type_name[]="ClassARef";
+static char classaref_type_name[]="NspClassARef";
 static char classaref_short_type_name[]="classaref";
 
 static char *nsp_classaref_type_as_string(void)
@@ -277,7 +277,7 @@ int nsp_classaref_info(NspClassARef *M,int indent,const char *name,int rec_level
   const char *pname;
   if ( M == NULLCLASSAREF) 
     {
-      Sciprintf("Null Pointer ClassARef \n");
+      Sciprintf("Null Pointer NspClassARef \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -295,7 +295,7 @@ int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_le
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSAREF) 
     {
-      Sciprintf("Null Pointer ClassARef \n");
+      Sciprintf("Null Pointer NspClassARef \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -354,7 +354,7 @@ int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_le
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for ClassARef objects 
+ * for NspClassARef objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -531,7 +531,7 @@ NspClassARef *nsp_classaref_full_copy(NspClassARef *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the ClassARef
+ * wrappers for the NspClassARef
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -554,34 +554,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 26 "codegen/classaref.override"
-static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->obj->cla_color = color;
-  return 0;
-}
-#line 567 "classaref.c"
-
-
-#line 36 "codegen/classaref.override"
-static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Sciprintf("color: %d\n",self->obj->cla_color);
-  return 0;
-}
-#line 576 "classaref.c"
-
-
-static NspMethods classaref_methods[] = {
-  {"classa_color_change",(nsp_method *) _wrap_classa_color_change},
-  {"classa_color_show",(nsp_method *) _wrap_classa_color_show},
-  { NULL, NULL}
-};
-
-static NspMethods *classaref_get_methods(void) { return classaref_methods;};
+static NspMethods *classaref_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -738,7 +711,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 742 "classaref.c"
+#line 715 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -746,7 +719,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 750 "classaref.c"
+#line 723 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -786,9 +759,9 @@ ClassARef_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 790 "classaref.c"
-  nspgobject_register_class(d, "ClassARef", ClassARef, &NspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
+#line 763 "classaref.c"
+  nspgobject_register_class(d, "NspClassARef", ClassARef, &NspNspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 795 "classaref.c"
+#line 768 "classaref.c"

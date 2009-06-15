@@ -3,7 +3,7 @@
 (define-objectref Surf
   (in-module "Surf")
   (parent "Graphic")
-  (c-name "Surf")
+  (c-name "NspSurf")
   (fields
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")

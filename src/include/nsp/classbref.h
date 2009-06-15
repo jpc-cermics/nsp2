@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_ClassBRef
-#define NSP_INC_ClassBRef
+#ifndef NSP_INC_NspClassBRef
+#define NSP_INC_NspClassBRef
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* ClassBRef */
+/* NspClassBRef */
 
 #include "nsp/classaref.h"
 
 /*
- * NspClassBRef inherits from NspClassARef
+ * NspClassBRef inherits from ClassARef
  */
 
 typedef struct _NspClassBRef NspClassBRef ;
-typedef struct _NspTypeClassBRef NspTypeClassBRef ;
+typedef struct _NspTypeNspClassBRef NspTypeNspClassBRef ;
 
 #line 22 "./classbref.h"
 
-struct _NspTypeClassBRef {
+struct _NspTypeNspClassBRef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -39,19 +39,19 @@ struct _nsp_classbref {
 struct _NspClassBRef {
   /*< private >*/
   NspClassARef father;
-  NspTypeClassBRef*type;
+  NspTypeNspClassBRef*type;
   /*< public >*/
   nsp_classbref *obj;
 };
 
 extern int nsp_type_classbref_id;
-extern NspTypeClassBRef *nsp_type_classbref;
+extern NspTypeNspClassBRef *nsp_type_classbref;
 
 /* type instances for classaref */
 
-NspTypeClassBRef *new_type_classbref(type_mode mode);
+NspTypeNspClassBRef *new_type_classbref(type_mode mode);
 
-/* instance for ClassBRef */
+/* instance for NspClassBRef */
 
 NspClassBRef *new_classbref();
 
@@ -65,7 +65,7 @@ NspClassBRef *new_classbref();
 extern NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
 extern NspClassBRef *nsp_classbref_create_default(char *name);
 
-/* from ClassBRefObj.c */
+/* from NspClassBRefObj.c */
 
 extern NspClassBRef *nsp_classbref_copy(NspClassBRef *H);
 extern void nsp_classbref_destroy(NspClassBRef *H);
@@ -87,10 +87,10 @@ extern int int_classbref_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassBRef *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M);
 extern int nsp_classbref_xdr_save(XDR  *xdrs, NspClassBRef *M);
 
-#endif /* NSP_INC_ClassBRef */ 
+#endif /* NSP_INC_NspClassBRef */ 
 
-#ifdef ClassBRef_Private 
-static int init_classbref(NspClassBRef *o,NspTypeClassBRef *type);
+#ifdef NspClassBRef_Private 
+static int init_classbref(NspClassBRef *o,NspTypeNspClassBRef *type);
 static int nsp_classbref_size(NspClassBRef *Mat, int flag);
 static char *nsp_classbref_type_as_string(void);
 static char *nsp_classbref_type_short_string(NspObject *v);
@@ -101,5 +101,5 @@ static AttrTab classbref_attrs[];
 static NspMethods *classbref_get_methods(void);
 /* static int int_classbref_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassBRef *nsp_classbref_create_void(char *name,NspTypeBase *type);
-#endif /* ClassBRef_Private */
+#endif /* NspClassBRef_Private */
 

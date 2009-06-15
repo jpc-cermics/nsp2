@@ -3,7 +3,7 @@
 (define-objectref Arrows
   (in-module "Arrows")
   (parent "Graphic")
-  (c-name "Arrows")
+  (c-name "NspArrows")
   (fields
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")

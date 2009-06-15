@@ -3,7 +3,7 @@
 (define-objectref GrRect
   (in-module "GrRect")
   (parent "Graphic")
-  (c-name "GrRect")
+  (c-name "NspGrRect")
   (fields
     '("double" "x")
     '("double" "y")

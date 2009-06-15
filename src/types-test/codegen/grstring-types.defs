@@ -3,7 +3,7 @@
 (define-objectref Grstring
   (in-module "Grstring")
   (parent "Graphic")
-  (c-name "Grstring")
+  (c-name "NspGrstring")
   (fields
    '("double" "x" ) 
    '("double" "y" ) 

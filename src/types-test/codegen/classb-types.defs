@@ -3,7 +3,7 @@
 (define-object ClassB
   (in-module "ClassB")
   (parent "ClassA")
-  (c-name "ClassB")
+  (c-name "NspClassB")
   (fields
    '("int" "clb_color")
    '("int" "clb_thickness")

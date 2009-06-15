@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Polyline
-#define NSP_INC_Polyline
+#ifndef NSP_INC_NspPolyline
+#define NSP_INC_NspPolyline
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Polyline */
+/* NspPolyline */
 
 #include "nsp/graphic.h"
 
 /*
- * NspPolyline inherits from NspGraphic
+ * NspPolyline inherits from Graphic
  */
 
 typedef struct _NspPolyline NspPolyline ;
-typedef struct _NspTypePolyline NspTypePolyline ;
+typedef struct _NspTypeNspPolyline NspTypeNspPolyline ;
 
 #line 22 "./polyline.h"
 
-struct _NspTypePolyline {
+struct _NspTypeNspPolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,19 +44,19 @@ struct _nsp_polyline {
 struct _NspPolyline {
   /*< private >*/
   NspGraphic father;
-  NspTypePolyline*type;
+  NspTypeNspPolyline*type;
   /*< public >*/
   nsp_polyline *obj;
 };
 
 extern int nsp_type_polyline_id;
-extern NspTypePolyline *nsp_type_polyline;
+extern NspTypeNspPolyline *nsp_type_polyline;
 
 /* type instances for graphic */
 
-NspTypePolyline *new_type_polyline(type_mode mode);
+NspTypeNspPolyline *new_type_polyline(type_mode mode);
 
-/* instance for Polyline */
+/* instance for NspPolyline */
 
 NspPolyline *new_polyline();
 
@@ -70,7 +70,7 @@ NspPolyline *new_polyline();
 extern NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
 extern NspPolyline *nsp_polyline_create_default(char *name);
 
-/* from PolylineObj.c */
+/* from NspPolylineObj.c */
 
 extern NspPolyline *nsp_polyline_copy(NspPolyline *H);
 extern void nsp_polyline_destroy(NspPolyline *H);
@@ -92,10 +92,10 @@ extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M);
 extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 
-#endif /* NSP_INC_Polyline */ 
+#endif /* NSP_INC_NspPolyline */ 
 
-#ifdef Polyline_Private 
-static int init_polyline(NspPolyline *o,NspTypePolyline *type);
+#ifdef NspPolyline_Private 
+static int init_polyline(NspPolyline *o,NspTypeNspPolyline *type);
 static int nsp_polyline_size(NspPolyline *Mat, int flag);
 static char *nsp_polyline_type_as_string(void);
 static char *nsp_polyline_type_short_string(NspObject *v);
@@ -106,5 +106,5 @@ static AttrTab polyline_attrs[];
 static NspMethods *polyline_get_methods(void);
 /* static int int_polyline_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type);
-#endif /* Polyline_Private */
+#endif /* NspPolyline_Private */
 

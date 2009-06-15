@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/gmatrix1.override"
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -37,38 +37,38 @@ extern Gengine GL_gengine;
 
 #line 39 "gmatrix1.c"
 
-/* ----------- GMatrix1 ----------- */
+/* ----------- NspGMatrix1 ----------- */
 
 
-#define  GMatrix1_Private 
+#define  NspGMatrix1_Private 
 #include "nsp/object.h"
 #include "nsp/gmatrix1.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGMatrix1 inherits from NspGraphic 
+ * NspGMatrix1 inherits from Graphic 
  */
 
 int nsp_type_gmatrix1_id=0;
-NspTypeGMatrix1 *nsp_type_gmatrix1=NULL;
+NspTypeNspGMatrix1 *nsp_type_gmatrix1=NULL;
 
 /*
- * Type object for GMatrix1 
- * all the instance of NspTypeGMatrix1 share the same id. 
- * nsp_type_gmatrix1: is an instance of NspTypeGMatrix1 
+ * Type object for NspGMatrix1 
+ * all the instance of NspTypeNspGMatrix1 share the same id. 
+ * nsp_type_gmatrix1: is an instance of NspTypeNspGMatrix1 
  *    used for objects of NspGMatrix1 type (i.e built with new_gmatrix1) 
  * other instances are used for derived classes 
  */
-NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
+NspTypeNspGMatrix1 *new_type_gmatrix1(type_mode mode)
 {
-  NspTypeGMatrix1 *type= NULL;
+  NspTypeNspGMatrix1 *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gmatrix1 != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gmatrix1;
     }
-  if ((type =  malloc(sizeof(NspTypeGMatrix1))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGMatrix1))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -108,18 +108,18 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 
 #line 37 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix1  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix1  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_gmatrix1  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix1  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_gmatrix1  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_gmatrix1  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix1 */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 121 "gmatrix1.c"
   /* 
-   * GMatrix1 interfaces can be added here 
+   * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -128,7 +128,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGMatrix1 called nsp_type_gmatrix1
+       * an instance of NspTypeNspGMatrix1 called nsp_type_gmatrix1
        */
       type->id =  nsp_type_gmatrix1_id = nsp_new_type_id();
       nsp_type_gmatrix1 = type;
@@ -143,11 +143,11 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 }
 
 /*
- * initialize GMatrix1 instances 
+ * initialize NspGMatrix1 instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_gmatrix1(NspGMatrix1 *Obj,NspTypeGMatrix1 *type)
+static int init_gmatrix1(NspGMatrix1 *Obj,NspTypeNspGMatrix1 *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -159,7 +159,7 @@ static int init_gmatrix1(NspGMatrix1 *Obj,NspTypeGMatrix1 *type)
 }
 
 /*
- * new instance of GMatrix1 
+ * new instance of NspGMatrix1 
  */
 
 NspGMatrix1 *new_gmatrix1() 
@@ -174,7 +174,7 @@ NspGMatrix1 *new_gmatrix1()
 }
 
 /*----------------------------------------------
- * Object method redefined for GMatrix1 
+ * Object method redefined for NspGMatrix1 
  *-----------------------------------------------*/
 /*
  * size 
@@ -189,7 +189,7 @@ static int nsp_gmatrix1_size(NspGMatrix1 *Mat, int flag)
  * type as string 
  */
 
-static char gmatrix1_type_name[]="GMatrix1";
+static char gmatrix1_type_name[]="NspGMatrix1";
 static char gmatrix1_short_type_name[]="gmatrix1";
 
 static char *nsp_gmatrix1_type_as_string(void)
@@ -331,7 +331,7 @@ int nsp_gmatrix1_info(NspGMatrix1 *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGMATRIX1) 
     {
-      Sciprintf("Null Pointer GMatrix1 \n");
+      Sciprintf("Null Pointer NspGMatrix1 \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -349,7 +349,7 @@ int nsp_gmatrix1_print(NspGMatrix1 *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGMATRIX1) 
     {
-      Sciprintf("Null Pointer GMatrix1 \n");
+      Sciprintf("Null Pointer NspGMatrix1 \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -428,7 +428,7 @@ int nsp_gmatrix1_latex(NspGMatrix1 *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GMatrix1 objects 
+ * for NspGMatrix1 objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -650,7 +650,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the GMatrix1
+ * wrappers for the NspGMatrix1
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -965,7 +965,7 @@ Init portion
 
 
 #line 968 "gmatrix1.c"
-  nspgobject_register_class(d, "GMatrix1", GMatrix1, &NspGMatrix1_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspGMatrix1", GMatrix1, &NspNspGMatrix1_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

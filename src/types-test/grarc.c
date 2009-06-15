@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/grarc.override"
-#include "nsp/grarc.h"
+#include <nsp/grarc.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "grarc.c"
 
-/* ----------- GrArc ----------- */
+/* ----------- NspGrArc ----------- */
 
 
-#define  GrArc_Private 
+#define  NspGrArc_Private 
 #include "nsp/object.h"
 #include "nsp/grarc.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGrArc inherits from NspGraphic 
+ * NspGrArc inherits from Graphic 
  */
 
 int nsp_type_grarc_id=0;
-NspTypeGrArc *nsp_type_grarc=NULL;
+NspTypeNspGrArc *nsp_type_grarc=NULL;
 
 /*
- * Type object for GrArc 
- * all the instance of NspTypeGrArc share the same id. 
- * nsp_type_grarc: is an instance of NspTypeGrArc 
+ * Type object for NspGrArc 
+ * all the instance of NspTypeNspGrArc share the same id. 
+ * nsp_type_grarc: is an instance of NspTypeNspGrArc 
  *    used for objects of NspGrArc type (i.e built with new_grarc) 
  * other instances are used for derived classes 
  */
-NspTypeGrArc *new_type_grarc(type_mode mode)
+NspTypeNspGrArc *new_type_grarc(type_mode mode)
 {
-  NspTypeGrArc *type= NULL;
+  NspTypeNspGrArc *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_grarc != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_grarc;
     }
-  if ((type =  malloc(sizeof(NspTypeGrArc))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGrArc))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grarc;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grarc ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grarc_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grarc;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grarc ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grarc_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for GrArc */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "grarc.c"
   /* 
-   * GrArc interfaces can be added here 
+   * NspGrArc interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGrArc called nsp_type_grarc
+       * an instance of NspTypeNspGrArc called nsp_type_grarc
        */
       type->id =  nsp_type_grarc_id = nsp_new_type_id();
       nsp_type_grarc = type;
@@ -132,11 +132,11 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
 }
 
 /*
- * initialize GrArc instances 
+ * initialize NspGrArc instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_grarc(NspGrArc *Obj,NspTypeGrArc *type)
+static int init_grarc(NspGrArc *Obj,NspTypeNspGrArc *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_grarc(NspGrArc *Obj,NspTypeGrArc *type)
 }
 
 /*
- * new instance of GrArc 
+ * new instance of NspGrArc 
  */
 
 NspGrArc *new_grarc() 
@@ -163,7 +163,7 @@ NspGrArc *new_grarc()
 }
 
 /*----------------------------------------------
- * Object method redefined for GrArc 
+ * Object method redefined for NspGrArc 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_grarc_size(NspGrArc *Mat, int flag)
  * type as string 
  */
 
-static char grarc_type_name[]="GrArc";
+static char grarc_type_name[]="NspGrArc";
 static char grarc_short_type_name[]="grarc";
 
 static char *nsp_grarc_type_as_string(void)
@@ -317,7 +317,7 @@ int nsp_grarc_info(NspGrArc *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGRARC) 
     {
-      Sciprintf("Null Pointer GrArc \n");
+      Sciprintf("Null Pointer NspGrArc \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -335,7 +335,7 @@ int nsp_grarc_print(NspGrArc *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGRARC) 
     {
-      Sciprintf("Null Pointer GrArc \n");
+      Sciprintf("Null Pointer NspGrArc \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -392,7 +392,7 @@ int nsp_grarc_latex(NspGrArc *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GrArc objects 
+ * for NspGrArc objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -551,7 +551,7 @@ NspGrArc *nsp_grarc_full_copy(NspGrArc *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the GrArc
+ * wrappers for the NspGrArc
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -571,22 +571,7 @@ int int_grarc_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_grarc_full_copy(NspGrArc *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspGrArc *ret;
-
-  ret = nsp_grarc_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods grarc_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_grarc_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *grarc_get_methods(void) { return grarc_methods;};
+static NspMethods *grarc_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -785,7 +770,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 789 "grarc.c"
+#line 774 "grarc.c"
 
 
 #line 89 "codegen/grarc.override"
@@ -797,7 +782,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 801 "grarc.c"
+#line 786 "grarc.c"
 
 
 #line 99 "codegen/grarc.override"
@@ -810,7 +795,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 814 "grarc.c"
+#line 799 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -851,8 +836,8 @@ GrArc_register_classes(NspObject *d)
 Init portion 
 
 
-#line 855 "grarc.c"
-  nspgobject_register_class(d, "GrArc", GrArc, &NspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 840 "grarc.c"
+  nspgobject_register_class(d, "NspGrArc", GrArc, &NspNspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -946,4 +931,4 @@ static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 950 "grarc.c"
+#line 935 "grarc.c"

@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/axes.h"
+#include <nsp/axes.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,16 +23,16 @@ init
 Init portion 
 
 %%
-override_type VField
+override_type NspVField
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

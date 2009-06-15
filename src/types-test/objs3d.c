@@ -42,38 +42,38 @@ extern Gengine GL_gengine;
 
 #line 44 "objs3d.c"
 
-/* ----------- Objs3d ----------- */
+/* ----------- NspObjs3d ----------- */
 
 
-#define  Objs3d_Private 
+#define  NspObjs3d_Private 
 #include "nsp/object.h"
 #include "nsp/objs3d.h"
 #include "nsp/interf.h"
 
 /* 
- * NspObjs3d inherits from NspGraphic 
+ * NspObjs3d inherits from Graphic 
  */
 
 int nsp_type_objs3d_id=0;
-NspTypeObjs3d *nsp_type_objs3d=NULL;
+NspTypeNspObjs3d *nsp_type_objs3d=NULL;
 
 /*
- * Type object for Objs3d 
- * all the instance of NspTypeObjs3d share the same id. 
- * nsp_type_objs3d: is an instance of NspTypeObjs3d 
+ * Type object for NspObjs3d 
+ * all the instance of NspTypeNspObjs3d share the same id. 
+ * nsp_type_objs3d: is an instance of NspTypeNspObjs3d 
  *    used for objects of NspObjs3d type (i.e built with new_objs3d) 
  * other instances are used for derived classes 
  */
-NspTypeObjs3d *new_type_objs3d(type_mode mode)
+NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
 {
-  NspTypeObjs3d *type= NULL;
+  NspTypeNspObjs3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_objs3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_objs3d;
     }
-  if ((type =  malloc(sizeof(NspTypeObjs3d))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspObjs3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -113,18 +113,18 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
 #line 42 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_objs3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
 #line 126 "objs3d.c"
   /* 
-   * Objs3d interfaces can be added here 
+   * NspObjs3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -133,7 +133,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeObjs3d called nsp_type_objs3d
+       * an instance of NspTypeNspObjs3d called nsp_type_objs3d
        */
       type->id =  nsp_type_objs3d_id = nsp_new_type_id();
       nsp_type_objs3d = type;
@@ -148,11 +148,11 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 }
 
 /*
- * initialize Objs3d instances 
+ * initialize NspObjs3d instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
+static int init_objs3d(NspObjs3d *Obj,NspTypeNspObjs3d *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -164,7 +164,7 @@ static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
 }
 
 /*
- * new instance of Objs3d 
+ * new instance of NspObjs3d 
  */
 
 NspObjs3d *new_objs3d() 
@@ -179,7 +179,7 @@ NspObjs3d *new_objs3d()
 }
 
 /*----------------------------------------------
- * Object method redefined for Objs3d 
+ * Object method redefined for NspObjs3d 
  *-----------------------------------------------*/
 /*
  * size 
@@ -194,7 +194,7 @@ static int nsp_objs3d_size(NspObjs3d *Mat, int flag)
  * type as string 
  */
 
-static char objs3d_type_name[]="Objs3d";
+static char objs3d_type_name[]="NspObjs3d";
 static char objs3d_short_type_name[]="objs3d";
 
 static char *nsp_objs3d_type_as_string(void)
@@ -353,7 +353,7 @@ int nsp_objs3d_info(NspObjs3d *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLOBJS3D) 
     {
-      Sciprintf("Null Pointer Objs3d \n");
+      Sciprintf("Null Pointer NspObjs3d \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -371,7 +371,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLOBJS3D) 
     {
-      Sciprintf("Null Pointer Objs3d \n");
+      Sciprintf("Null Pointer NspObjs3d \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -462,7 +462,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Objs3d objects 
+ * for NspObjs3d objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -709,7 +709,7 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Objs3d
+ * wrappers for the NspObjs3d
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -1172,7 +1172,7 @@ Init portion
 
 
 #line 1175 "objs3d.c"
-  nspgobject_register_class(d, "Objs3d", Objs3d, &NspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspObjs3d", Objs3d, &NspNspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1252,7 +1252,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
   {
     int flag[]={1,2,4};
     char legend[]="X@Y@Z";
-    if (P->obj->colormap != NULL && P->obj->colormap->n == 3 )
+    if ( P->obj->colormap != NULL &&  P->obj->colormap->n == 3 )
       Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
 						P->obj->colormap->R);
     nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,

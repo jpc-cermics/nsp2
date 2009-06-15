@@ -12,38 +12,38 @@
 
 #line 14 "classb.c"
 
-/* ----------- ClassB ----------- */
+/* ----------- NspClassB ----------- */
 
 
-#define  ClassB_Private 
+#define  NspClassB_Private 
 #include "nsp/object.h"
 #include "nsp/classb.h"
 #include "nsp/interf.h"
 
 /* 
- * NspClassB inherits from NspClassA 
+ * NspClassB inherits from ClassA 
  */
 
 int nsp_type_classb_id=0;
-NspTypeClassB *nsp_type_classb=NULL;
+NspTypeNspClassB *nsp_type_classb=NULL;
 
 /*
- * Type object for ClassB 
- * all the instance of NspTypeClassB share the same id. 
- * nsp_type_classb: is an instance of NspTypeClassB 
+ * Type object for NspClassB 
+ * all the instance of NspTypeNspClassB share the same id. 
+ * nsp_type_classb: is an instance of NspTypeNspClassB 
  *    used for objects of NspClassB type (i.e built with new_classb) 
  * other instances are used for derived classes 
  */
-NspTypeClassB *new_type_classb(type_mode mode)
+NspTypeNspClassB *new_type_classb(type_mode mode)
 {
-  NspTypeClassB *type= NULL;
+  NspTypeNspClassB *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classb != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classb;
     }
-  if ((type =  malloc(sizeof(NspTypeClassB))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspClassB))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_classa(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -82,7 +82,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
   type->init = (init_func *) init_classb;
 
   /* 
-   * ClassB interfaces can be added here 
+   * NspClassB interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -91,7 +91,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeClassB called nsp_type_classb
+       * an instance of NspTypeNspClassB called nsp_type_classb
        */
       type->id =  nsp_type_classb_id = nsp_new_type_id();
       nsp_type_classb = type;
@@ -106,11 +106,11 @@ NspTypeClassB *new_type_classb(type_mode mode)
 }
 
 /*
- * initialize ClassB instances 
+ * initialize NspClassB instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_classb(NspClassB *Obj,NspTypeClassB *type)
+static int init_classb(NspClassB *Obj,NspTypeNspClassB *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -124,7 +124,7 @@ static int init_classb(NspClassB *Obj,NspTypeClassB *type)
 }
 
 /*
- * new instance of ClassB 
+ * new instance of NspClassB 
  */
 
 NspClassB *new_classb() 
@@ -139,7 +139,7 @@ NspClassB *new_classb()
 }
 
 /*----------------------------------------------
- * Object method redefined for ClassB 
+ * Object method redefined for NspClassB 
  *-----------------------------------------------*/
 /*
  * size 
@@ -154,7 +154,7 @@ static int nsp_classb_size(NspClassB *Mat, int flag)
  * type as string 
  */
 
-static char classb_type_name[]="ClassB";
+static char classb_type_name[]="NspClassB";
 static char classb_short_type_name[]="classb";
 
 static char *nsp_classb_type_as_string(void)
@@ -268,7 +268,7 @@ int nsp_classb_info(NspClassB *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLCLASSB) 
     {
-      Sciprintf("Null Pointer ClassB \n");
+      Sciprintf("Null Pointer NspClassB \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -286,7 +286,7 @@ int nsp_classb_print(NspClassB *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSB) 
     {
-      Sciprintf("Null Pointer ClassB \n");
+      Sciprintf("Null Pointer NspClassB \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -335,7 +335,7 @@ int nsp_classb_latex(NspClassB *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for ClassB objects 
+ * for NspClassB objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -468,7 +468,7 @@ NspClassB *nsp_classb_full_copy(NspClassB *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the ClassB
+ * wrappers for the NspClassB
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -487,36 +487,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 19 "codegen/classb.override"
-static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->clb_color = color;
-  return 0;
-}
-#line 500 "classb.c"
-
-
-#line 29 "codegen/classb.override"
-static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Sciprintf("color: %d\n",self->clb_color);
-  return 0;
-}
-
-
-#line 511 "classb.c"
-
-
-static NspMethods classb_methods[] = {
-  {"classb_color_change",(nsp_method *) _wrap_classb_color_change},
-  {"classb_color_show",(nsp_method *) _wrap_classb_color_show},
-  { NULL, NULL}
-};
-
-static NspMethods *classb_get_methods(void) { return classb_methods;};
+static NspMethods *classb_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -630,9 +601,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 634 "classb.c"
-  nspgobject_register_class(d, "ClassB", ClassB, &NspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
+#line 605 "classb.c"
+  nspgobject_register_class(d, "NspClassB", ClassB, &NspNspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 639 "classb.c"
+#line 610 "classb.c"

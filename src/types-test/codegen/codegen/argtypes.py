@@ -1062,7 +1062,8 @@ class ObjectArg(ArgType):
            '      %(name)s = %(cast)s(nsp_%(name)s->obj);\n'
     def __init__(self, objname, parent, typecode):
 	self.objname = objname
-	self.cast = string.replace(typecode, '_TYPE_', '_', 1)
+        # string.replace(typecode, '_TYPE_', '_', 1)
+	self.cast = objname 
         self.parent = parent
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pnull:
@@ -1081,19 +1082,21 @@ class ObjectArg(ArgType):
             info.arglist.append(pname)
             info.add_parselist('obj', ['&nsp_' + pname], [pname])
 	else:
+            # remove nsp prefix in self.objname
+            tn = string.lower(self.objname)
+            if tn[0:3] == 'nsp' :
+                tn = tn[3:]
 	    if pdflt:
 		info.varlist.add(self.objname, '*' + pname + ' = ' + pdflt)
 		info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
 		info.codebefore.append(self.dflt % {'name':pname,
                                                     'cast':self.cast}) 
 		info.arglist.append(pname)
-                info.add_parselist('obj_check', ['&nsp_type_%s' % string.lower(self.objname),
-                                         '&nsp_' + pname], [pname])
+                info.add_parselist('obj_check', ['&nsp_type_%s' % tn,'&nsp_' + pname], [pname])
 	    else:
 		info.varlist.add('NspObject', '*' + pname)
-		info.arglist.append('((Nsp%s *) %s)' % (self.cast, pname))
-                info.add_parselist('obj_check', ['&nsp_type_%s' % string.lower(self.objname),
-                                          '&' + pname], [pname])
+		info.arglist.append('((%s *) %s)' % (self.cast, pname))
+                info.add_parselist('obj_check', ['&nsp_type_%s' % tn, '&' + pname], [pname])
 
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
@@ -1104,13 +1107,13 @@ class ObjectArg(ArgType):
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*': ptype = ptype[:-1]
-        info.varlist.add('Nsp'+ ptype, '*ret')
+        info.varlist.add( ptype, '*ret')
         info.codeafter.append('  if (ret == NULL ) return RET_BUG;\n  MoveObj(stack,1,NSP_OBJECT(ret));\n  return 1;' )
         
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add(ptype, '*ret')
-        info.varlist.add('Nsp'+ ptype, '*ret')
+        info.varlist.add( ptype, '*ret')
         info.codeafter.append('  return NSP_OBJECT(ret);' )
 
 
@@ -1526,27 +1529,28 @@ class NspObjectArg(ArgType):
 # -------------------------
     
 class NspGenericArg(ArgType):
-    def __init__(self,fullname,shortname,nsp_arg_type):
+    def __init__(self,fullname,name,shortname,nsp_arg_type):
+        self.name = name
 	self.fullname = fullname
 	self.shortname = shortname
         self.shortname_uc = string.upper(shortname)
         self.nsp_arg_type = nsp_arg_type
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
-	    info.varlist.add('Nsp'+self.fullname, '*' + pname + ' = ' + pdflt)
+	    info.varlist.add(self.fullname, '*' + pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('Nsp'+self.fullname, '*' + pname)
+	    info.varlist.add(self.fullname, '*' + pname)
         info.setobj = 't' 
 	info.arglist.append(pname)
         info.add_parselist(self.nsp_arg_type, ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ! Is%s(O) ) return FAIL;\n' % self.shortname )
-        info.attrcodebefore.append('  if ((%s = (Nsp%s *) nsp_object_copy_and_name(attr,O)) == NULL%s) return FAIL;\n' % (pname,self.fullname,self.shortname_uc))
+        info.attrcodebefore.append('  if ((%s = (%s *) nsp_object_copy_and_name(attr,O)) == NULL%s) return FAIL;\n' % (pname,self.fullname,self.shortname_uc))
         if byref == 't' :
             info.attrcodebefore.append('  if (((%s *) self)->obj->%s != NULL ) \n' % (upinfo,pname))
-            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->obj->%s);\n' % ( string.lower(self.fullname),upinfo,pname))
+            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->obj->%s);\n' % ( string.lower(self.name),upinfo,pname))
         else:
             info.attrcodebefore.append('  if (((%s *) self)->%s != NULL ) \n' % (upinfo,pname))
-            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->%s);\n' % ( string.lower(self.fullname),upinfo,pname))
+            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->%s);\n' % ( string.lower(self.name),upinfo,pname))
         #pos gives the position of the argument
         if psize:
             info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
@@ -1561,12 +1565,12 @@ class NspGenericArg(ArgType):
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
 
     def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('Nsp'+self.fullname, '*ret')
+        info.varlist.add(self.fullname, '*ret')
         info.codeafter.append('  if ( ret == NULL'+self.shortname_uc+') return RET_BUG;\n'
                               '  MoveObj(stack,1,NSP_OBJECT(ret));\n'
                               '  return 1;')
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        info.varlist.add('Nsp'+self.fullname, '*ret')
+        info.varlist.add(self.fullname, '*ret')
         info.attrcodeafter.append('  return (NspObject *) ret;')
         info.setobj = 't' 
 
@@ -1575,19 +1579,19 @@ class NspGenericArg(ArgType):
 
     def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
-        return '  if ((%s->%s =(Nsp%s *) nsp_object_xdr_load(xdrs))== NULL%s) return NULL;\n' % (varname,pname,self.fullname,self.shortname_uc)
+        return '  if ((%s->%s =(%s *) nsp_object_xdr_load(xdrs))== NULL%s) return NULL;\n' % (varname,pname,self.fullname,self.shortname_uc)
 
     def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
             str =  '  if ( %s->%s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (right_varname,pname,left_varname,pname)
-            str = str + '      if ((%s->%s = (Nsp%s *) nsp_object_copy_and_name("%s",NSP_OBJECT(%s->%s))) == NULL%s) return NULL;\n    }\n' \
+            str = str + '      if ((%s->%s = (%s *) nsp_object_copy_and_name("%s",NSP_OBJECT(%s->%s))) == NULL%s) return NULL;\n    }\n' \
                 % (left_varname,pname,self.fullname,pname,right_varname,pname,self.shortname_uc)
         else:
             # this part is only used on create and we do not want to copy objects. 
             str =  '  if ( %s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (pname,left_varname,pname)
-            str = str + '      if ((%s->%s = (Nsp%s *)  zzznsp_object_copy_and_name("%s",NSP_OBJECT(%s))) == NULL%s) return NULL;\n    }\n' \
+            str = str + '      if ((%s->%s = (%s *)  zzznsp_object_copy_and_name("%s",NSP_OBJECT(%s))) == NULL%s) return NULL;\n    }\n' \
                 % (left_varname,pname,self.fullname,pname,pname,self.shortname_uc)
             str = '  %s->%s= %s;\n' % (left_varname,pname,pname)
         return str
@@ -1611,7 +1615,7 @@ class NspGenericArg(ArgType):
             str = '  ' 
         else:
             str = ''
-        return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.fullname),varname,pname)
+        return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
 
     def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
@@ -2015,16 +2019,16 @@ matcher.register('GDateDay', arg)
 # nsp
 #
 
-arg = NspGenericArgMat('Matrix','Mat','mat')
+arg = NspGenericArgMat('NspMatrix','Matrix','Mat','mat')
 matcher.register('NspMatrix*', arg)
 
-arg = NspGenericArgBMat('BMatrix','BMat','bmat')
+arg = NspGenericArgBMat('NspBMatrix','BMatrix','BMat','bmat')
 matcher.register('NspBMatrix*', arg)
 
-arg = NspGenericArgSMat('SMatrix','SMat','smat')
+arg = NspGenericArgSMat('NspSMatrix','SMatrix','SMat','smat')
 matcher.register('NspSMatrix*', arg)
 
-arg = NspGenericArgList('List','List','list')
+arg = NspGenericArgList('NspList','List','List','list')
 matcher.register('NspList*', arg)
 
 arg= NspMatArg()

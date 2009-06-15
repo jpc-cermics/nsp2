@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Fec
-#define NSP_INC_Fec
+#ifndef NSP_INC_NspFec
+#define NSP_INC_NspFec
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Fec */
+/* NspFec */
 
 #include "nsp/graphic.h"
 
 /*
- * NspFec inherits from NspGraphic
+ * NspFec inherits from Graphic
  */
 
 typedef struct _NspFec NspFec ;
-typedef struct _NspTypeFec NspTypeFec ;
+typedef struct _NspTypeNspFec NspTypeNspFec ;
 
 #line 22 "./fec.h"
 
-struct _NspTypeFec {
+struct _NspTypeNspFec {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,19 +44,19 @@ struct _nsp_fec {
 struct _NspFec {
   /*< private >*/
   NspGraphic father;
-  NspTypeFec*type;
+  NspTypeNspFec*type;
   /*< public >*/
   nsp_fec *obj;
 };
 
 extern int nsp_type_fec_id;
-extern NspTypeFec *nsp_type_fec;
+extern NspTypeNspFec *nsp_type_fec;
 
 /* type instances for graphic */
 
-NspTypeFec *new_type_fec(type_mode mode);
+NspTypeNspFec *new_type_fec(type_mode mode);
 
-/* instance for Fec */
+/* instance for NspFec */
 
 NspFec *new_fec();
 
@@ -70,7 +70,7 @@ NspFec *new_fec();
 extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean draw,NspMatrix* colout,NspTypeBase *type);
 extern NspFec *nsp_fec_create_default(char *name);
 
-/* from FecObj.c */
+/* from NspFecObj.c */
 
 extern NspFec *nsp_fec_copy(NspFec *H);
 extern void nsp_fec_destroy(NspFec *H);
@@ -92,10 +92,10 @@ extern int int_fec_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFec *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M);
 extern int nsp_fec_xdr_save(XDR  *xdrs, NspFec *M);
 
-#endif /* NSP_INC_Fec */ 
+#endif /* NSP_INC_NspFec */ 
 
-#ifdef Fec_Private 
-static int init_fec(NspFec *o,NspTypeFec *type);
+#ifdef NspFec_Private 
+static int init_fec(NspFec *o,NspTypeNspFec *type);
 static int nsp_fec_size(NspFec *Mat, int flag);
 static char *nsp_fec_type_as_string(void);
 static char *nsp_fec_type_short_string(NspObject *v);
@@ -106,5 +106,5 @@ static AttrTab fec_attrs[];
 static NspMethods *fec_get_methods(void);
 /* static int int_fec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
-#endif /* Fec_Private */
+#endif /* NspFec_Private */
 

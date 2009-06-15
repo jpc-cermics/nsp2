@@ -3,7 +3,7 @@
 (define-objectref Objs3d
   (in-module "Objs3d")
   (parent "Graphic")
-  (c-name "Objs3d")
+  (c-name "NspObjs3d")
   (fields
    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this objs3d in a figure 
                             ;; or the position of this objs3d in an other Obj3d

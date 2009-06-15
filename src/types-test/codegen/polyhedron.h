@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Polyhedron
-#define NSP_INC_Polyhedron
+#ifndef NSP_INC_NspPolyhedron
+#define NSP_INC_NspPolyhedron
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Polyhedron */
+/* NspPolyhedron */
 
 #include "nsp/graphic.h"
 
 /*
- * NspPolyhedron inherits from NspGraphic
+ * NspPolyhedron inherits from Graphic
  */
 
 typedef struct _NspPolyhedron NspPolyhedron ;
-typedef struct _NspTypePolyhedron NspTypePolyhedron ;
+typedef struct _NspTypeNspPolyhedron NspTypeNspPolyhedron ;
 
 #line 22 "./polyhedron.h"
 
-struct _NspTypePolyhedron {
+struct _NspTypeNspPolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,19 +43,19 @@ struct _nsp_polyhedron {
 struct _NspPolyhedron {
   /*< private >*/
   NspGraphic father;
-  NspTypePolyhedron*type;
+  NspTypeNspPolyhedron*type;
   /*< public >*/
   nsp_polyhedron *obj;
 };
 
 extern int nsp_type_polyhedron_id;
-extern NspTypePolyhedron *nsp_type_polyhedron;
+extern NspTypeNspPolyhedron *nsp_type_polyhedron;
 
 /* type instances for graphic */
 
-NspTypePolyhedron *new_type_polyhedron(type_mode mode);
+NspTypeNspPolyhedron *new_type_polyhedron(type_mode mode);
 
-/* instance for Polyhedron */
+/* instance for NspPolyhedron */
 
 NspPolyhedron *new_polyhedron();
 
@@ -69,7 +69,7 @@ NspPolyhedron *new_polyhedron();
 extern NspPolyhedron *nsp_polyhedron_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type);
 extern NspPolyhedron *nsp_polyhedron_create_default(char *name);
 
-/* from PolyhedronObj.c */
+/* from NspPolyhedronObj.c */
 
 extern NspPolyhedron *nsp_polyhedron_copy(NspPolyhedron *H);
 extern void nsp_polyhedron_destroy(NspPolyhedron *H);
@@ -91,10 +91,10 @@ extern int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyhedron *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M);
 extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 
-#endif /* NSP_INC_Polyhedron */ 
+#endif /* NSP_INC_NspPolyhedron */ 
 
-#ifdef Polyhedron_Private 
-static int init_polyhedron(NspPolyhedron *o,NspTypePolyhedron *type);
+#ifdef NspPolyhedron_Private 
+static int init_polyhedron(NspPolyhedron *o,NspTypeNspPolyhedron *type);
 static int nsp_polyhedron_size(NspPolyhedron *Mat, int flag);
 static char *nsp_polyhedron_type_as_string(void);
 static char *nsp_polyhedron_type_short_string(NspObject *v);
@@ -105,5 +105,5 @@ static AttrTab polyhedron_attrs[];
 static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
-#endif /* Polyhedron_Private */
+#endif /* NspPolyhedron_Private */
 

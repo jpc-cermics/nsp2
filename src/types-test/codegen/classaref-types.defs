@@ -3,7 +3,7 @@
 (define-objectref ClassARef
   (in-module "ClassARef")
   (parent "Object")
-  (c-name "ClassARef")
+  (c-name "NspClassARef")
   (fields
    '("int" "cla_color")
    '("int" "cla_thickness")

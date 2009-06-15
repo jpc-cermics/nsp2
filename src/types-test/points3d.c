@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/points3d.override"
-#include "nsp/points3d.h"
+#include <nsp/points3d.h>
 #include <nsp/figure.h> 
 #include "../graphics/Plo3dObj.h"
 #include <nsp/polyhedron.h>
@@ -40,38 +40,38 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 #line 42 "points3d.c"
 
-/* ----------- Points3d ----------- */
+/* ----------- NspPoints3d ----------- */
 
 
-#define  Points3d_Private 
+#define  NspPoints3d_Private 
 #include "nsp/object.h"
 #include "nsp/points3d.h"
 #include "nsp/interf.h"
 
 /* 
- * NspPoints3d inherits from NspGraphic 
+ * NspPoints3d inherits from Graphic 
  */
 
 int nsp_type_points3d_id=0;
-NspTypePoints3d *nsp_type_points3d=NULL;
+NspTypeNspPoints3d *nsp_type_points3d=NULL;
 
 /*
- * Type object for Points3d 
- * all the instance of NspTypePoints3d share the same id. 
- * nsp_type_points3d: is an instance of NspTypePoints3d 
+ * Type object for NspPoints3d 
+ * all the instance of NspTypeNspPoints3d share the same id. 
+ * nsp_type_points3d: is an instance of NspTypeNspPoints3d 
  *    used for objects of NspPoints3d type (i.e built with new_points3d) 
  * other instances are used for derived classes 
  */
-NspTypePoints3d *new_type_points3d(type_mode mode)
+NspTypeNspPoints3d *new_type_points3d(type_mode mode)
 {
-  NspTypePoints3d *type= NULL;
+  NspTypeNspPoints3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_points3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_points3d;
     }
-  if ((type =  malloc(sizeof(NspTypePoints3d))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspPoints3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -113,21 +113,21 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_points3d;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_points3d ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_points3d  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_points3d_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_points3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_points3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_points3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_points3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Points3d */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
-  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
+  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
 
 #line 129 "points3d.c"
   /* 
-   * Points3d interfaces can be added here 
+   * NspPoints3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -136,7 +136,7 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypePoints3d called nsp_type_points3d
+       * an instance of NspTypeNspPoints3d called nsp_type_points3d
        */
       type->id =  nsp_type_points3d_id = nsp_new_type_id();
       nsp_type_points3d = type;
@@ -151,11 +151,11 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
 }
 
 /*
- * initialize Points3d instances 
+ * initialize NspPoints3d instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_points3d(NspPoints3d *Obj,NspTypePoints3d *type)
+static int init_points3d(NspPoints3d *Obj,NspTypeNspPoints3d *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -167,7 +167,7 @@ static int init_points3d(NspPoints3d *Obj,NspTypePoints3d *type)
 }
 
 /*
- * new instance of Points3d 
+ * new instance of NspPoints3d 
  */
 
 NspPoints3d *new_points3d() 
@@ -182,7 +182,7 @@ NspPoints3d *new_points3d()
 }
 
 /*----------------------------------------------
- * Object method redefined for Points3d 
+ * Object method redefined for NspPoints3d 
  *-----------------------------------------------*/
 /*
  * size 
@@ -197,7 +197,7 @@ static int nsp_points3d_size(NspPoints3d *Mat, int flag)
  * type as string 
  */
 
-static char points3d_type_name[]="Points3d";
+static char points3d_type_name[]="NspPoints3d";
 static char points3d_short_type_name[]="points3d";
 
 static char *nsp_points3d_type_as_string(void)
@@ -338,7 +338,7 @@ int nsp_points3d_info(NspPoints3d *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLPOINTS3D) 
     {
-      Sciprintf("Null Pointer Points3d \n");
+      Sciprintf("Null Pointer NspPoints3d \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -356,7 +356,7 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLPOINTS3D) 
     {
-      Sciprintf("Null Pointer Points3d \n");
+      Sciprintf("Null Pointer NspPoints3d \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -409,7 +409,7 @@ int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Points3d objects 
+ * for NspPoints3d objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -578,7 +578,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Points3d
+ * wrappers for the NspPoints3d
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -603,22 +603,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_points3d_full_copy(NspPoints3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspPoints3d *ret;
-
-  ret = nsp_points3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods points3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_points3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *points3d_get_methods(void) { return points3d_methods;};
+static NspMethods *points3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -727,7 +712,7 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 731 "points3d.c"
+#line 716 "points3d.c"
 
 
 #line 118 "codegen/points3d.override"
@@ -739,7 +724,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 743 "points3d.c"
+#line 728 "points3d.c"
 
 
 #line 128 "codegen/points3d.override"
@@ -752,7 +737,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 756 "points3d.c"
+#line 741 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -793,8 +778,8 @@ Points3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 797 "points3d.c"
-  nspgobject_register_class(d, "Points3d", Points3d, &NspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 782 "points3d.c"
+  nspgobject_register_class(d, "NspPoints3d", Points3d, &NspNspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1000,4 +985,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1004 "points3d.c"
+#line 989 "points3d.c"

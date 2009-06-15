@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Segments
-#define NSP_INC_Segments
+#ifndef NSP_INC_NspSegments
+#define NSP_INC_NspSegments
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Segments */
+/* NspSegments */
 
 #include "nsp/graphic.h"
 
 /*
- * NspSegments inherits from NspGraphic
+ * NspSegments inherits from Graphic
  */
 
 typedef struct _NspSegments NspSegments ;
-typedef struct _NspTypeSegments NspTypeSegments ;
+typedef struct _NspTypeNspSegments NspTypeNspSegments ;
 
 #line 22 "./segments.h"
 
-struct _NspTypeSegments {
+struct _NspTypeNspSegments {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -39,19 +39,19 @@ struct _nsp_segments {
 struct _NspSegments {
   /*< private >*/
   NspGraphic father;
-  NspTypeSegments*type;
+  NspTypeNspSegments*type;
   /*< public >*/
   nsp_segments *obj;
 };
 
 extern int nsp_type_segments_id;
-extern NspTypeSegments *nsp_type_segments;
+extern NspTypeNspSegments *nsp_type_segments;
 
 /* type instances for graphic */
 
-NspTypeSegments *new_type_segments(type_mode mode);
+NspTypeNspSegments *new_type_segments(type_mode mode);
 
-/* instance for Segments */
+/* instance for NspSegments */
 
 NspSegments *new_segments();
 
@@ -65,7 +65,7 @@ NspSegments *new_segments();
 extern NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type);
 extern NspSegments *nsp_segments_create_default(char *name);
 
-/* from SegmentsObj.c */
+/* from NspSegmentsObj.c */
 
 extern NspSegments *nsp_segments_copy(NspSegments *H);
 extern void nsp_segments_destroy(NspSegments *H);
@@ -87,10 +87,10 @@ extern int int_segments_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSegments *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M);
 extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
-#endif /* NSP_INC_Segments */ 
+#endif /* NSP_INC_NspSegments */ 
 
-#ifdef Segments_Private 
-static int init_segments(NspSegments *o,NspTypeSegments *type);
+#ifdef NspSegments_Private 
+static int init_segments(NspSegments *o,NspTypeNspSegments *type);
 static int nsp_segments_size(NspSegments *Mat, int flag);
 static char *nsp_segments_type_as_string(void);
 static char *nsp_segments_type_short_string(NspObject *v);
@@ -101,5 +101,5 @@ static AttrTab segments_attrs[];
 static NspMethods *segments_get_methods(void);
 /* static int int_segments_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type);
-#endif /* Segments_Private */
+#endif /* NspSegments_Private */
 

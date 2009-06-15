@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_GMatrix
-#define NSP_INC_GMatrix
+#ifndef NSP_INC_NspGMatrix
+#define NSP_INC_NspGMatrix
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* GMatrix */
+/* NspGMatrix */
 
 #include "nsp/graphic.h"
 
 /*
- * NspGMatrix inherits from NspGraphic
+ * NspGMatrix inherits from Graphic
  */
 
 typedef struct _NspGMatrix NspGMatrix ;
-typedef struct _NspTypeGMatrix NspTypeGMatrix ;
+typedef struct _NspTypeNspGMatrix NspTypeNspGMatrix ;
 
 #line 22 "./gmatrix.h"
 
-struct _NspTypeGMatrix {
+struct _NspTypeNspGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -41,19 +41,19 @@ struct _nsp_gmatrix {
 struct _NspGMatrix {
   /*< private >*/
   NspGraphic father;
-  NspTypeGMatrix*type;
+  NspTypeNspGMatrix*type;
   /*< public >*/
   nsp_gmatrix *obj;
 };
 
 extern int nsp_type_gmatrix_id;
-extern NspTypeGMatrix *nsp_type_gmatrix;
+extern NspTypeNspGMatrix *nsp_type_gmatrix;
 
 /* type instances for graphic */
 
-NspTypeGMatrix *new_type_gmatrix(type_mode mode);
+NspTypeNspGMatrix *new_type_gmatrix(type_mode mode);
 
-/* instance for GMatrix */
+/* instance for NspGMatrix */
 
 NspGMatrix *new_gmatrix();
 
@@ -67,7 +67,7 @@ NspGMatrix *new_gmatrix();
 extern NspGMatrix *nsp_gmatrix_create(char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type);
 extern NspGMatrix *nsp_gmatrix_create_default(char *name);
 
-/* from GMatrixObj.c */
+/* from NspGMatrixObj.c */
 
 extern NspGMatrix *nsp_gmatrix_copy(NspGMatrix *H);
 extern void nsp_gmatrix_destroy(NspGMatrix *H);
@@ -89,10 +89,10 @@ extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M);
 extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
-#endif /* NSP_INC_GMatrix */ 
+#endif /* NSP_INC_NspGMatrix */ 
 
-#ifdef GMatrix_Private 
-static int init_gmatrix(NspGMatrix *o,NspTypeGMatrix *type);
+#ifdef NspGMatrix_Private 
+static int init_gmatrix(NspGMatrix *o,NspTypeNspGMatrix *type);
 static int nsp_gmatrix_size(NspGMatrix *Mat, int flag);
 static char *nsp_gmatrix_type_as_string(void);
 static char *nsp_gmatrix_type_short_string(NspObject *v);
@@ -103,5 +103,5 @@ static AttrTab gmatrix_attrs[];
 static NspMethods *gmatrix_get_methods(void);
 /* static int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
-#endif /* GMatrix_Private */
+#endif /* NspGMatrix_Private */
 

@@ -4,7 +4,7 @@
 (define-objectref Figure
   (in-module "Figure")
   (parent "Graphic")
-  (c-name "Figure")
+  (c-name "NspFigure")
   (fields
    '("char*" "fname")
    '("char*" "driver")
@@ -22,25 +22,25 @@
 ;; 
 
 (define-method connect
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_connect")
   (return-type "none")
   )
 
 (define-method unconnect
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_unconnect")
   (return-type "none")
   )
 
 (define-method draw_latter
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_draw_latter")
   (return-type "none")
   )
 
 (define-method draw_now
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_draw_now")
   (return-type "none")
   )
@@ -48,40 +48,40 @@
 ;; overwriten 
 
 (define-method extract
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_extract")
   (return-type "none")
   )
 
 (define-method start_compound
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_start_compound")
   (return-type "none")
   )
 
 (define-method end_compound
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_end_compound")
   (return-type "none")
   )
 
 (define-method remove 
-  (of-object "Figure")
+  (of-object "NspFigure")
   (c-name "nsp_figure_remove_element")
   (return-type "none")
   (parameters
-   '("Graphic*" "g")
+   '("NspGraphic*" "g")
    )
   )
 
 (define-function get_current_figure 
   (c-name "nsp_get_current_figure")
-  (return-type "Figure*")
+  (return-type "NspFigure*")
 )
 
 (define-function get_current_axes
   (c-name "nsp_get_current_axes")
-  (return-type "Axes*")
+  (return-type "NspAxes*")
 )
 
 ;; just for the name, the code is overriten 

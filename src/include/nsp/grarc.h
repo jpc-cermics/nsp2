@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_GrArc
-#define NSP_INC_GrArc
+#ifndef NSP_INC_NspGrArc
+#define NSP_INC_NspGrArc
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* GrArc */
+/* NspGrArc */
 
 #include "nsp/graphic.h"
 
 /*
- * NspGrArc inherits from NspGraphic
+ * NspGrArc inherits from Graphic
  */
 
 typedef struct _NspGrArc NspGrArc ;
-typedef struct _NspTypeGrArc NspTypeGrArc ;
+typedef struct _NspTypeNspGrArc NspTypeNspGrArc ;
 
 #line 22 "./grarc.h"
 
-struct _NspTypeGrArc {
+struct _NspTypeNspGrArc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,19 +45,19 @@ struct _nsp_grarc {
 struct _NspGrArc {
   /*< private >*/
   NspGraphic father;
-  NspTypeGrArc*type;
+  NspTypeNspGrArc*type;
   /*< public >*/
   nsp_grarc *obj;
 };
 
 extern int nsp_type_grarc_id;
-extern NspTypeGrArc *nsp_type_grarc;
+extern NspTypeNspGrArc *nsp_type_grarc;
 
 /* type instances for graphic */
 
-NspTypeGrArc *new_type_grarc(type_mode mode);
+NspTypeNspGrArc *new_type_grarc(type_mode mode);
 
-/* instance for GrArc */
+/* instance for NspGrArc */
 
 NspGrArc *new_grarc();
 
@@ -71,7 +71,7 @@ NspGrArc *new_grarc();
 extern NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type);
 extern NspGrArc *nsp_grarc_create_default(char *name);
 
-/* from GrArcObj.c */
+/* from NspGrArcObj.c */
 
 extern NspGrArc *nsp_grarc_copy(NspGrArc *H);
 extern void nsp_grarc_destroy(NspGrArc *H);
@@ -93,10 +93,10 @@ extern int int_grarc_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrArc *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M);
 extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
-#endif /* NSP_INC_GrArc */ 
+#endif /* NSP_INC_NspGrArc */ 
 
-#ifdef GrArc_Private 
-static int init_grarc(NspGrArc *o,NspTypeGrArc *type);
+#ifdef NspGrArc_Private 
+static int init_grarc(NspGrArc *o,NspTypeNspGrArc *type);
 static int nsp_grarc_size(NspGrArc *Mat, int flag);
 static char *nsp_grarc_type_as_string(void);
 static char *nsp_grarc_type_short_string(NspObject *v);
@@ -107,5 +107,5 @@ static AttrTab grarc_attrs[];
 static NspMethods *grarc_get_methods(void);
 /* static int int_grarc_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrArc *nsp_grarc_create_void(char *name,NspTypeBase *type);
-#endif /* GrArc_Private */
+#endif /* NspGrArc_Private */
 

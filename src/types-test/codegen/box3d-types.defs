@@ -3,7 +3,7 @@
 (define-objectref Box3d
   (in-module "Box3d")
   (parent "Graphic")
-  (c-name "Box3d")
+  (c-name "NspBox3d")
   (fields
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")

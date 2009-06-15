@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Polyline3d
-#define NSP_INC_Polyline3d
+#ifndef NSP_INC_NspPolyline3d
+#define NSP_INC_NspPolyline3d
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Polyline3d */
+/* NspPolyline3d */
 
 #include "nsp/graphic.h"
 
 /*
- * NspPolyline3d inherits from NspGraphic
+ * NspPolyline3d inherits from Graphic
  */
 
 typedef struct _NspPolyline3d NspPolyline3d ;
-typedef struct _NspTypePolyline3d NspTypePolyline3d ;
+typedef struct _NspTypeNspPolyline3d NspTypeNspPolyline3d ;
 
 #line 22 "./polyline3d.h"
 
-struct _NspTypePolyline3d {
+struct _NspTypeNspPolyline3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -40,19 +40,19 @@ struct _nsp_polyline3d {
 struct _NspPolyline3d {
   /*< private >*/
   NspGraphic father;
-  NspTypePolyline3d*type;
+  NspTypeNspPolyline3d*type;
   /*< public >*/
   nsp_polyline3d *obj;
 };
 
 extern int nsp_type_polyline3d_id;
-extern NspTypePolyline3d *nsp_type_polyline3d;
+extern NspTypeNspPolyline3d *nsp_type_polyline3d;
 
 /* type instances for graphic */
 
-NspTypePolyline3d *new_type_polyline3d(type_mode mode);
+NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode);
 
-/* instance for Polyline3d */
+/* instance for NspPolyline3d */
 
 NspPolyline3d *new_polyline3d();
 
@@ -66,7 +66,7 @@ NspPolyline3d *new_polyline3d();
 extern NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
 extern NspPolyline3d *nsp_polyline3d_create_default(char *name);
 
-/* from Polyline3dObj.c */
+/* from NspPolyline3dObj.c */
 
 extern NspPolyline3d *nsp_polyline3d_copy(NspPolyline3d *H);
 extern void nsp_polyline3d_destroy(NspPolyline3d *H);
@@ -88,10 +88,10 @@ extern int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline3d *nsp_polyline3d_xdr_load_partial(XDR *xdrs, NspPolyline3d *M);
 extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 
-#endif /* NSP_INC_Polyline3d */ 
+#endif /* NSP_INC_NspPolyline3d */ 
 
-#ifdef Polyline3d_Private 
-static int init_polyline3d(NspPolyline3d *o,NspTypePolyline3d *type);
+#ifdef NspPolyline3d_Private 
+static int init_polyline3d(NspPolyline3d *o,NspTypeNspPolyline3d *type);
 static int nsp_polyline3d_size(NspPolyline3d *Mat, int flag);
 static char *nsp_polyline3d_type_as_string(void);
 static char *nsp_polyline3d_type_short_string(NspObject *v);
@@ -102,5 +102,5 @@ static AttrTab polyline3d_attrs[];
 static NspMethods *polyline3d_get_methods(void);
 /* static int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type);
-#endif /* Polyline3d_Private */
+#endif /* NspPolyline3d_Private */
 

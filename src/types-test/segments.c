@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/segments.override"
-#include "nsp/segments.h"
+#include <nsp/segments.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "segments.c"
 
-/* ----------- Segments ----------- */
+/* ----------- NspSegments ----------- */
 
 
-#define  Segments_Private 
+#define  NspSegments_Private 
 #include "nsp/object.h"
 #include "nsp/segments.h"
 #include "nsp/interf.h"
 
 /* 
- * NspSegments inherits from NspGraphic 
+ * NspSegments inherits from Graphic 
  */
 
 int nsp_type_segments_id=0;
-NspTypeSegments *nsp_type_segments=NULL;
+NspTypeNspSegments *nsp_type_segments=NULL;
 
 /*
- * Type object for Segments 
- * all the instance of NspTypeSegments share the same id. 
- * nsp_type_segments: is an instance of NspTypeSegments 
+ * Type object for NspSegments 
+ * all the instance of NspTypeNspSegments share the same id. 
+ * nsp_type_segments: is an instance of NspTypeNspSegments 
  *    used for objects of NspSegments type (i.e built with new_segments) 
  * other instances are used for derived classes 
  */
-NspTypeSegments *new_type_segments(type_mode mode)
+NspTypeNspSegments *new_type_segments(type_mode mode)
 {
-  NspTypeSegments *type= NULL;
+  NspTypeNspSegments *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_segments != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_segments;
     }
-  if ((type =  malloc(sizeof(NspTypeSegments))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspSegments))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeSegments *new_type_segments(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_segments;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_segments ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_segments  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_segments;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_segments ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_segments  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Segments */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "segments.c"
   /* 
-   * Segments interfaces can be added here 
+   * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeSegments called nsp_type_segments
+       * an instance of NspTypeNspSegments called nsp_type_segments
        */
       type->id =  nsp_type_segments_id = nsp_new_type_id();
       nsp_type_segments = type;
@@ -132,11 +132,11 @@ NspTypeSegments *new_type_segments(type_mode mode)
 }
 
 /*
- * initialize Segments instances 
+ * initialize NspSegments instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_segments(NspSegments *Obj,NspTypeSegments *type)
+static int init_segments(NspSegments *Obj,NspTypeNspSegments *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_segments(NspSegments *Obj,NspTypeSegments *type)
 }
 
 /*
- * new instance of Segments 
+ * new instance of NspSegments 
  */
 
 NspSegments *new_segments() 
@@ -163,7 +163,7 @@ NspSegments *new_segments()
 }
 
 /*----------------------------------------------
- * Object method redefined for Segments 
+ * Object method redefined for NspSegments 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_segments_size(NspSegments *Mat, int flag)
  * type as string 
  */
 
-static char segments_type_name[]="Segments";
+static char segments_type_name[]="NspSegments";
 static char segments_short_type_name[]="segments";
 
 static char *nsp_segments_type_as_string(void)
@@ -302,7 +302,7 @@ int nsp_segments_info(NspSegments *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLSEGMENTS) 
     {
-      Sciprintf("Null Pointer Segments \n");
+      Sciprintf("Null Pointer NspSegments \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -320,7 +320,7 @@ int nsp_segments_print(NspSegments *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSEGMENTS) 
     {
-      Sciprintf("Null Pointer Segments \n");
+      Sciprintf("Null Pointer NspSegments \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -377,7 +377,7 @@ int nsp_segments_latex(NspSegments *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Segments objects 
+ * for NspSegments objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -551,7 +551,7 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Segments
+ * wrappers for the NspSegments
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -571,22 +571,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_segments_full_copy(NspSegments *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspSegments *ret;
-
-  ret = nsp_segments_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods segments_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_segments_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *segments_get_methods(void) { return segments_methods;};
+static NspMethods *segments_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -701,7 +686,7 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 705 "segments.c"
+#line 690 "segments.c"
 
 
 #line 89 "codegen/segments.override"
@@ -713,7 +698,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 717 "segments.c"
+#line 702 "segments.c"
 
 
 #line 99 "codegen/segments.override"
@@ -726,7 +711,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 730 "segments.c"
+#line 715 "segments.c"
 
 
 /*----------------------------------------------------
@@ -767,8 +752,8 @@ Segments_register_classes(NspObject *d)
 Init portion 
 
 
-#line 771 "segments.c"
-  nspgobject_register_class(d, "Segments", Segments, &NspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 756 "segments.c"
+  nspgobject_register_class(d, "NspSegments", Segments, &NspNspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -878,4 +863,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 882 "segments.c"
+#line 867 "segments.c"

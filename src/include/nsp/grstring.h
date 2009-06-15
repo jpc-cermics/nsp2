@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Grstring
-#define NSP_INC_Grstring
+#ifndef NSP_INC_NspGrstring
+#define NSP_INC_NspGrstring
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Grstring */
+/* NspGrstring */
 
 #include "nsp/graphic.h"
 
 /*
- * NspGrstring inherits from NspGraphic
+ * NspGrstring inherits from Graphic
  */
 
 typedef struct _NspGrstring NspGrstring ;
-typedef struct _NspTypeGrstring NspTypeGrstring ;
+typedef struct _NspTypeNspGrstring NspTypeNspGrstring ;
 
 #line 22 "./grstring.h"
 
-struct _NspTypeGrstring {
+struct _NspTypeNspGrstring {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,19 +45,19 @@ struct _nsp_grstring {
 struct _NspGrstring {
   /*< private >*/
   NspGraphic father;
-  NspTypeGrstring*type;
+  NspTypeNspGrstring*type;
   /*< public >*/
   nsp_grstring *obj;
 };
 
 extern int nsp_type_grstring_id;
-extern NspTypeGrstring *nsp_type_grstring;
+extern NspTypeNspGrstring *nsp_type_grstring;
 
 /* type instances for graphic */
 
-NspTypeGrstring *new_type_grstring(type_mode mode);
+NspTypeNspGrstring *new_type_grstring(type_mode mode);
 
-/* instance for Grstring */
+/* instance for NspGrstring */
 
 NspGrstring *new_grstring();
 
@@ -71,7 +71,7 @@ NspGrstring *new_grstring();
 extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type);
 extern NspGrstring *nsp_grstring_create_default(char *name);
 
-/* from GrstringObj.c */
+/* from NspGrstringObj.c */
 
 extern NspGrstring *nsp_grstring_copy(NspGrstring *H);
 extern void nsp_grstring_destroy(NspGrstring *H);
@@ -93,10 +93,10 @@ extern int int_grstring_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrstring *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M);
 extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
-#endif /* NSP_INC_Grstring */ 
+#endif /* NSP_INC_NspGrstring */ 
 
-#ifdef Grstring_Private 
-static int init_grstring(NspGrstring *o,NspTypeGrstring *type);
+#ifdef NspGrstring_Private 
+static int init_grstring(NspGrstring *o,NspTypeNspGrstring *type);
 static int nsp_grstring_size(NspGrstring *Mat, int flag);
 static char *nsp_grstring_type_as_string(void);
 static char *nsp_grstring_type_short_string(NspObject *v);
@@ -107,5 +107,5 @@ static AttrTab grstring_attrs[];
 static NspMethods *grstring_get_methods(void);
 /* static int int_grstring_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type);
-#endif /* Grstring_Private */
+#endif /* NspGrstring_Private */
 

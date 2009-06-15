@@ -1,7 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 headers
-#include "nsp/grarc.h"
+#include <nsp/grarc.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -19,19 +19,19 @@ init
 Init portion 
 
 %%
-override_type GrArc
+override_type NspGrArc
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grarc;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grarc ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grarc  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grarc_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grarc;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grarc ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grarc  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grarc_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for GrArc */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

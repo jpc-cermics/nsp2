@@ -3,7 +3,7 @@
 (define-objectref GMatrix
   (in-module "GMatrix")
   (parent "Graphic")
-  (c-name "GMatrix")
+  (c-name "NspGMatrix")
   (fields
     '("NspMatrix*" "data") ;; Matrix 
     '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" )     ;; Matrix is to be drawn inside rect 

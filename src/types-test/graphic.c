@@ -17,38 +17,38 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
 #line 19 "graphic.c"
 
-/* ----------- Graphic ----------- */
+/* ----------- NspGraphic ----------- */
 
 
-#define  Graphic_Private 
+#define  NspGraphic_Private 
 #include "nsp/object.h"
 #include "nsp/graphic.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGraphic inherits from NspObject 
+ * NspGraphic inherits from Object 
  */
 
 int nsp_type_graphic_id=0;
-NspTypeGraphic *nsp_type_graphic=NULL;
+NspTypeNspGraphic *nsp_type_graphic=NULL;
 
 /*
- * Type object for Graphic 
- * all the instance of NspTypeGraphic share the same id. 
- * nsp_type_graphic: is an instance of NspTypeGraphic 
+ * Type object for NspGraphic 
+ * all the instance of NspTypeNspGraphic share the same id. 
+ * nsp_type_graphic: is an instance of NspTypeNspGraphic 
  *    used for objects of NspGraphic type (i.e built with new_graphic) 
  * other instances are used for derived classes 
  */
-NspTypeGraphic *new_type_graphic(type_mode mode)
+NspTypeNspGraphic *new_type_graphic(type_mode mode)
 {
-  NspTypeGraphic *type= NULL;
+  NspTypeNspGraphic *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_graphic != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_graphic;
     }
-  if ((type =  malloc(sizeof(NspTypeGraphic))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGraphic))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -106,7 +106,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
 #line 108 "graphic.c"
   /* 
-   * Graphic interfaces can be added here 
+   * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -115,7 +115,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGraphic called nsp_type_graphic
+       * an instance of NspTypeNspGraphic called nsp_type_graphic
        */
       type->id =  nsp_type_graphic_id = nsp_new_type_id();
       nsp_type_graphic = type;
@@ -130,11 +130,11 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 }
 
 /*
- * initialize Graphic instances 
+ * initialize NspGraphic instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_graphic(NspGraphic *Obj,NspTypeGraphic *type)
+static int init_graphic(NspGraphic *Obj,NspTypeNspGraphic *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -146,7 +146,7 @@ static int init_graphic(NspGraphic *Obj,NspTypeGraphic *type)
 }
 
 /*
- * new instance of Graphic 
+ * new instance of NspGraphic 
  */
 
 NspGraphic *new_graphic() 
@@ -161,7 +161,7 @@ NspGraphic *new_graphic()
 }
 
 /*----------------------------------------------
- * Object method redefined for Graphic 
+ * Object method redefined for NspGraphic 
  *-----------------------------------------------*/
 /*
  * size 
@@ -176,7 +176,7 @@ static int nsp_graphic_size(NspGraphic *Mat, int flag)
  * type as string 
  */
 
-static char graphic_type_name[]="Graphic";
+static char graphic_type_name[]="NspGraphic";
 static char graphic_short_type_name[]="graphic";
 
 static char *nsp_graphic_type_as_string(void)
@@ -281,7 +281,7 @@ int nsp_graphic_info(NspGraphic *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGRAPHIC) 
     {
-      Sciprintf("Null Pointer Graphic \n");
+      Sciprintf("Null Pointer NspGraphic \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -299,7 +299,7 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGRAPHIC) 
     {
-      Sciprintf("Null Pointer Graphic \n");
+      Sciprintf("Null Pointer NspGraphic \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -340,7 +340,7 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Graphic objects 
+ * for NspGraphic objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -474,7 +474,7 @@ NspGraphic *nsp_graphic_full_copy(NspGraphic *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Graphic
+ * wrappers for the NspGraphic
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -494,74 +494,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 74 "codegen/graphic.override"
-/* take care that the name to give for override is the c-name of 
- * the method 
- */
-static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {realmat,t_end};
-  NspMatrix *tr;
-  if ( GetArgs(stack,rhs,opt,T,&tr) == FAIL) return RET_BUG;
-  CheckLength(NspFname(stack),1,tr,2);
-  self->type->translate(NULL,self, tr->R);
-  return 0;
-}
-
-#line 512 "graphic.c"
-
-
-#line 89 "codegen/graphic.override"
-static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {realmat,t_end};
-  NspMatrix *sc;
-
-  if ( GetArgs(stack,rhs,opt,T,&sc) == FAIL) return RET_BUG;
-  CheckLength(NspFname(stack),1,sc,2);
-  self->type->scale(NULL,self, sc->R);
-  return 0;
-}
-
-#line 527 "graphic.c"
-
-
-#line 102 "codegen/graphic.override"
-static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {realmat,t_end};
-  NspMatrix *R;
-  if ( GetArgs(stack,rhs,opt,T,&R) == FAIL) return RET_BUG;
-  CheckLength(NspFname(stack),1,R,2);
-  self->type->rotate(NULL,self, R->R);
-  return 0;
-}
-
-#line 541 "graphic.c"
-
-
-#line 114 "codegen/graphic.override"
-static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspGraphic *ret;
-  CheckRhs(0,0);
-  ret = self->type->full_copy(self);
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-#line 554 "graphic.c"
-
-
-static NspMethods graphic_methods[] = {
-  {"translate",(nsp_method *) _wrap_graphic_translate},
-  {"scale",(nsp_method *) _wrap_graphic_scale},
-  {"rotate",(nsp_method *) _wrap_graphic_rotate},
-  {"full_copy",(nsp_method *) _wrap_graphic_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *graphic_get_methods(void) { return graphic_methods;};
+static NspMethods *graphic_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -629,8 +562,8 @@ Graphic_register_classes(NspObject *d)
 GLURP 
 
 
-#line 633 "graphic.c"
-  nspgobject_register_class(d, "Graphic", Graphic, &NspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
+#line 566 "graphic.c"
+  nspgobject_register_class(d, "NspGraphic", Graphic, &NspNspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
@@ -815,4 +748,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 819 "graphic.c"
+#line 752 "graphic.c"

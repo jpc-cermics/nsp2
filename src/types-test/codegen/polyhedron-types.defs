@@ -3,7 +3,7 @@
 (define-objectref Polyhedron
   (in-module "Polyhedron")
   (parent "Graphic")
-  (c-name "Polyhedron")
+  (c-name "NspPolyhedron")
   (fields
     '("NspMatrix*" "Mcoord" ) 
     '("void*"      "Mcoord_l"  "hidden" "NULL" )

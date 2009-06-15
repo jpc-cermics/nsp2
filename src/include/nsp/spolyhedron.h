@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_SPolyhedron
-#define NSP_INC_SPolyhedron
+#ifndef NSP_INC_NspSPolyhedron
+#define NSP_INC_NspSPolyhedron
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* SPolyhedron */
+/* NspSPolyhedron */
 
 #include "nsp/graphic.h"
 
 /*
- * NspSPolyhedron inherits from NspGraphic
+ * NspSPolyhedron inherits from Graphic
  */
 
 typedef struct _NspSPolyhedron NspSPolyhedron ;
-typedef struct _NspTypeSPolyhedron NspTypeSPolyhedron ;
+typedef struct _NspTypeNspSPolyhedron NspTypeNspSPolyhedron ;
 
 #line 22 "./spolyhedron.h"
 
-struct _NspTypeSPolyhedron {
+struct _NspTypeNspSPolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -52,19 +52,19 @@ struct _nsp_spolyhedron {
 struct _NspSPolyhedron {
   /*< private >*/
   NspGraphic father;
-  NspTypeSPolyhedron*type;
+  NspTypeNspSPolyhedron*type;
   /*< public >*/
   nsp_spolyhedron *obj;
 };
 
 extern int nsp_type_spolyhedron_id;
-extern NspTypeSPolyhedron *nsp_type_spolyhedron;
+extern NspTypeNspSPolyhedron *nsp_type_spolyhedron;
 
 /* type instances for graphic */
 
-NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode);
+NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode);
 
-/* instance for SPolyhedron */
+/* instance for NspSPolyhedron */
 
 NspSPolyhedron *new_spolyhedron();
 
@@ -78,7 +78,7 @@ NspSPolyhedron *new_spolyhedron();
 extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,int back_color,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
 extern NspSPolyhedron *nsp_spolyhedron_create_default(char *name);
 
-/* from SPolyhedronObj.c */
+/* from NspSPolyhedronObj.c */
 
 extern NspSPolyhedron *nsp_spolyhedron_copy(NspSPolyhedron *H);
 extern void nsp_spolyhedron_destroy(NspSPolyhedron *H);
@@ -100,10 +100,10 @@ extern int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSPolyhedron *nsp_spolyhedron_xdr_load_partial(XDR *xdrs, NspSPolyhedron *M);
 extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 
-#endif /* NSP_INC_SPolyhedron */ 
+#endif /* NSP_INC_NspSPolyhedron */ 
 
-#ifdef SPolyhedron_Private 
-static int init_spolyhedron(NspSPolyhedron *o,NspTypeSPolyhedron *type);
+#ifdef NspSPolyhedron_Private 
+static int init_spolyhedron(NspSPolyhedron *o,NspTypeNspSPolyhedron *type);
 static int nsp_spolyhedron_size(NspSPolyhedron *Mat, int flag);
 static char *nsp_spolyhedron_type_as_string(void);
 static char *nsp_spolyhedron_type_short_string(NspObject *v);
@@ -114,5 +114,5 @@ static AttrTab spolyhedron_attrs[];
 static NspMethods *spolyhedron_get_methods(void);
 /* static int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type);
-#endif /* SPolyhedron_Private */
+#endif /* NspSPolyhedron_Private */
 

@@ -3,7 +3,7 @@
 (define-objectref Polyline3d
   (in-module "Polyline3d")
   (parent "Graphic")
-  (c-name "Polyline3d")
+  (c-name "NspPolyline3d")
   (fields
     '("NspMatrix*" "Mcoord")
     '("void*"      "Mcoord_l"  "hidden" "NULL" )

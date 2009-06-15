@@ -12,38 +12,38 @@
 
 #line 14 "classbref.c"
 
-/* ----------- ClassBRef ----------- */
+/* ----------- NspClassBRef ----------- */
 
 
-#define  ClassBRef_Private 
+#define  NspClassBRef_Private 
 #include "nsp/object.h"
 #include "nsp/classbref.h"
 #include "nsp/interf.h"
 
 /* 
- * NspClassBRef inherits from NspClassARef 
+ * NspClassBRef inherits from ClassARef 
  */
 
 int nsp_type_classbref_id=0;
-NspTypeClassBRef *nsp_type_classbref=NULL;
+NspTypeNspClassBRef *nsp_type_classbref=NULL;
 
 /*
- * Type object for ClassBRef 
- * all the instance of NspTypeClassBRef share the same id. 
- * nsp_type_classbref: is an instance of NspTypeClassBRef 
+ * Type object for NspClassBRef 
+ * all the instance of NspTypeNspClassBRef share the same id. 
+ * nsp_type_classbref: is an instance of NspTypeNspClassBRef 
  *    used for objects of NspClassBRef type (i.e built with new_classbref) 
  * other instances are used for derived classes 
  */
-NspTypeClassBRef *new_type_classbref(type_mode mode)
+NspTypeNspClassBRef *new_type_classbref(type_mode mode)
 {
-  NspTypeClassBRef *type= NULL;
+  NspTypeNspClassBRef *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classbref != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classbref;
     }
-  if ((type =  malloc(sizeof(NspTypeClassBRef))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspClassBRef))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_classaref(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -82,7 +82,7 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
   type->init = (init_func *) init_classbref;
 
   /* 
-   * ClassBRef interfaces can be added here 
+   * NspClassBRef interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -91,7 +91,7 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeClassBRef called nsp_type_classbref
+       * an instance of NspTypeNspClassBRef called nsp_type_classbref
        */
       type->id =  nsp_type_classbref_id = nsp_new_type_id();
       nsp_type_classbref = type;
@@ -106,11 +106,11 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
 }
 
 /*
- * initialize ClassBRef instances 
+ * initialize NspClassBRef instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_classbref(NspClassBRef *Obj,NspTypeClassBRef *type)
+static int init_classbref(NspClassBRef *Obj,NspTypeNspClassBRef *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -122,7 +122,7 @@ static int init_classbref(NspClassBRef *Obj,NspTypeClassBRef *type)
 }
 
 /*
- * new instance of ClassBRef 
+ * new instance of NspClassBRef 
  */
 
 NspClassBRef *new_classbref() 
@@ -137,7 +137,7 @@ NspClassBRef *new_classbref()
 }
 
 /*----------------------------------------------
- * Object method redefined for ClassBRef 
+ * Object method redefined for NspClassBRef 
  *-----------------------------------------------*/
 /*
  * size 
@@ -152,7 +152,7 @@ static int nsp_classbref_size(NspClassBRef *Mat, int flag)
  * type as string 
  */
 
-static char classbref_type_name[]="ClassBRef";
+static char classbref_type_name[]="NspClassBRef";
 static char classbref_short_type_name[]="classbref";
 
 static char *nsp_classbref_type_as_string(void)
@@ -274,7 +274,7 @@ int nsp_classbref_info(NspClassBRef *M,int indent,const char *name,int rec_level
   const char *pname;
   if ( M == NULLCLASSBREF) 
     {
-      Sciprintf("Null Pointer ClassBRef \n");
+      Sciprintf("Null Pointer NspClassBRef \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -292,7 +292,7 @@ int nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_le
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSBREF) 
     {
-      Sciprintf("Null Pointer ClassBRef \n");
+      Sciprintf("Null Pointer NspClassBRef \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -341,7 +341,7 @@ int nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_le
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for ClassBRef objects 
+ * for NspClassBRef objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -493,7 +493,7 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the ClassBRef
+ * wrappers for the NspClassBRef
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -513,36 +513,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 19 "codegen/classbref.override"
-static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->obj->clb_color = color;
-  return 0;
-}
-#line 526 "classbref.c"
-
-
-#line 29 "codegen/classbref.override"
-static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Sciprintf("color: %d\n",self->obj->clb_color);
-  return 0;
-}
-
-
-#line 537 "classbref.c"
-
-
-static NspMethods classbref_methods[] = {
-  {"classb_color_change",(nsp_method *) _wrap_classb_color_change},
-  {"classb_color_show",(nsp_method *) _wrap_classb_color_show},
-  { NULL, NULL}
-};
-
-static NspMethods *classbref_get_methods(void) { return classbref_methods;};
+static NspMethods *classbref_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -656,9 +627,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 660 "classbref.c"
-  nspgobject_register_class(d, "ClassBRef", ClassBRef, &NspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
+#line 631 "classbref.c"
+  nspgobject_register_class(d, "NspClassBRef", ClassBRef, &NspNspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 665 "classbref.c"
+#line 636 "classbref.c"

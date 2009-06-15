@@ -51,7 +51,7 @@ typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, i
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
 %%
-override_type Graphic
+override_type NspGraphic
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic

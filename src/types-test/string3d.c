@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/string3d.override"
-#include "nsp/string3d.h"
+#include <nsp/string3d.h>
 #include <nsp/figure.h> 
 #include "../graphics/Plo3dObj.h"
 
@@ -37,38 +37,38 @@ static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 #line 39 "string3d.c"
 
-/* ----------- String3d ----------- */
+/* ----------- NspString3d ----------- */
 
 
-#define  String3d_Private 
+#define  NspString3d_Private 
 #include "nsp/object.h"
 #include "nsp/string3d.h"
 #include "nsp/interf.h"
 
 /* 
- * NspString3d inherits from NspGraphic 
+ * NspString3d inherits from Graphic 
  */
 
 int nsp_type_string3d_id=0;
-NspTypeString3d *nsp_type_string3d=NULL;
+NspTypeNspString3d *nsp_type_string3d=NULL;
 
 /*
- * Type object for String3d 
- * all the instance of NspTypeString3d share the same id. 
- * nsp_type_string3d: is an instance of NspTypeString3d 
+ * Type object for NspString3d 
+ * all the instance of NspTypeNspString3d share the same id. 
+ * nsp_type_string3d: is an instance of NspTypeNspString3d 
  *    used for objects of NspString3d type (i.e built with new_string3d) 
  * other instances are used for derived classes 
  */
-NspTypeString3d *new_type_string3d(type_mode mode)
+NspTypeNspString3d *new_type_string3d(type_mode mode)
 {
-  NspTypeString3d *type= NULL;
+  NspTypeNspString3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_string3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_string3d;
     }
-  if ((type =  malloc(sizeof(NspTypeString3d))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspString3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -110,20 +110,20 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_string3d;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_string3d ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_string3d_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_string3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_string3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_string3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for String3d */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
-  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
+  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
 #line 125 "string3d.c"
   /* 
-   * String3d interfaces can be added here 
+   * NspString3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -132,7 +132,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeString3d called nsp_type_string3d
+       * an instance of NspTypeNspString3d called nsp_type_string3d
        */
       type->id =  nsp_type_string3d_id = nsp_new_type_id();
       nsp_type_string3d = type;
@@ -147,11 +147,11 @@ NspTypeString3d *new_type_string3d(type_mode mode)
 }
 
 /*
- * initialize String3d instances 
+ * initialize NspString3d instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_string3d(NspString3d *Obj,NspTypeString3d *type)
+static int init_string3d(NspString3d *Obj,NspTypeNspString3d *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -163,7 +163,7 @@ static int init_string3d(NspString3d *Obj,NspTypeString3d *type)
 }
 
 /*
- * new instance of String3d 
+ * new instance of NspString3d 
  */
 
 NspString3d *new_string3d() 
@@ -178,7 +178,7 @@ NspString3d *new_string3d()
 }
 
 /*----------------------------------------------
- * Object method redefined for String3d 
+ * Object method redefined for NspString3d 
  *-----------------------------------------------*/
 /*
  * size 
@@ -193,7 +193,7 @@ static int nsp_string3d_size(NspString3d *Mat, int flag)
  * type as string 
  */
 
-static char string3d_type_name[]="String3d";
+static char string3d_type_name[]="NspString3d";
 static char string3d_short_type_name[]="string3d";
 
 static char *nsp_string3d_type_as_string(void)
@@ -335,7 +335,7 @@ int nsp_string3d_info(NspString3d *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLSTRING3D) 
     {
-      Sciprintf("Null Pointer String3d \n");
+      Sciprintf("Null Pointer NspString3d \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -353,7 +353,7 @@ int nsp_string3d_print(NspString3d *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLSTRING3D) 
     {
-      Sciprintf("Null Pointer String3d \n");
+      Sciprintf("Null Pointer NspString3d \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -406,7 +406,7 @@ int nsp_string3d_latex(NspString3d *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for String3d objects 
+ * for NspString3d objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -580,7 +580,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the String3d
+ * wrappers for the NspString3d
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -605,22 +605,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_string3d_full_copy(NspString3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspString3d *ret;
-
-  ret = nsp_string3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods string3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_string3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *string3d_get_methods(void) { return string3d_methods;};
+static NspMethods *string3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -733,7 +718,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 737 "string3d.c"
+#line 722 "string3d.c"
 
 
 #line 114 "codegen/string3d.override"
@@ -745,7 +730,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 749 "string3d.c"
+#line 734 "string3d.c"
 
 
 #line 124 "codegen/string3d.override"
@@ -758,7 +743,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 762 "string3d.c"
+#line 747 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -799,8 +784,8 @@ String3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 803 "string3d.c"
-  nspgobject_register_class(d, "String3d", String3d, &NspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 788 "string3d.c"
+  nspgobject_register_class(d, "NspString3d", String3d, &NspNspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -1020,4 +1005,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1024 "string3d.c"
+#line 1009 "string3d.c"

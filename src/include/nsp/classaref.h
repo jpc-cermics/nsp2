@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_ClassARef
-#define NSP_INC_ClassARef
+#ifndef NSP_INC_NspClassARef
+#define NSP_INC_NspClassARef
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* ClassARef */
+/* NspClassARef */
 
 #include "nsp/object.h"
 
 /*
- * NspClassARef inherits from NspObject
+ * NspClassARef inherits from Object
  */
 
 typedef struct _NspClassARef NspClassARef ;
-typedef struct _NspTypeClassARef NspTypeClassARef ;
+typedef struct _NspTypeNspClassARef NspTypeNspClassARef ;
 
 #line 22 "./classaref.h"
 
-struct _NspTypeClassARef {
+struct _NspTypeNspClassARef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -41,19 +41,19 @@ struct _nsp_classaref {
 struct _NspClassARef {
   /*< private >*/
   NspObject father;
-  NspTypeClassARef*type;
+  NspTypeNspClassARef*type;
   /*< public >*/
   nsp_classaref *obj;
 };
 
 extern int nsp_type_classaref_id;
-extern NspTypeClassARef *nsp_type_classaref;
+extern NspTypeNspClassARef *nsp_type_classaref;
 
 /* type instances for object */
 
-NspTypeClassARef *new_type_classaref(type_mode mode);
+NspTypeNspClassARef *new_type_classaref(type_mode mode);
 
-/* instance for ClassARef */
+/* instance for NspClassARef */
 
 NspClassARef *new_classaref();
 
@@ -67,7 +67,7 @@ NspClassARef *new_classaref();
 extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
 extern NspClassARef *nsp_classaref_create_default(char *name);
 
-/* from ClassARefObj.c */
+/* from NspClassARefObj.c */
 
 extern NspClassARef *nsp_classaref_copy(NspClassARef *H);
 extern void nsp_classaref_destroy(NspClassARef *H);
@@ -89,10 +89,10 @@ extern int int_classaref_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassARef *nsp_classaref_xdr_load_partial(XDR *xdrs, NspClassARef *M);
 extern int nsp_classaref_xdr_save(XDR  *xdrs, NspClassARef *M);
 
-#endif /* NSP_INC_ClassARef */ 
+#endif /* NSP_INC_NspClassARef */ 
 
-#ifdef ClassARef_Private 
-static int init_classaref(NspClassARef *o,NspTypeClassARef *type);
+#ifdef NspClassARef_Private 
+static int init_classaref(NspClassARef *o,NspTypeNspClassARef *type);
 static int nsp_classaref_size(NspClassARef *Mat, int flag);
 static char *nsp_classaref_type_as_string(void);
 static char *nsp_classaref_type_short_string(NspObject *v);
@@ -103,5 +103,5 @@ static AttrTab classaref_attrs[];
 static NspMethods *classaref_get_methods(void);
 /* static int int_classaref_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassARef *nsp_classaref_create_void(char *name,NspTypeBase *type);
-#endif /* ClassARef_Private */
+#endif /* NspClassARef_Private */
 

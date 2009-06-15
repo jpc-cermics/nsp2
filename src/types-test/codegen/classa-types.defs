@@ -3,7 +3,7 @@
 (define-object ClassA
   (in-module "ClassA")
   (parent "Object")
-  (c-name "ClassA")
+  (c-name "NspClassA")
   (fields
    ;; "hidden" can be used if the field is to be excluded 
    ;; from the get/set table 

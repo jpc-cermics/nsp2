@@ -39,38 +39,38 @@ extern Gengine GL_gengine;
 
 #line 41 "compound.c"
 
-/* ----------- Compound ----------- */
+/* ----------- NspCompound ----------- */
 
 
-#define  Compound_Private 
+#define  NspCompound_Private 
 #include "nsp/object.h"
 #include "nsp/compound.h"
 #include "nsp/interf.h"
 
 /* 
- * NspCompound inherits from NspGraphic 
+ * NspCompound inherits from Graphic 
  */
 
 int nsp_type_compound_id=0;
-NspTypeCompound *nsp_type_compound=NULL;
+NspTypeNspCompound *nsp_type_compound=NULL;
 
 /*
- * Type object for Compound 
- * all the instance of NspTypeCompound share the same id. 
- * nsp_type_compound: is an instance of NspTypeCompound 
+ * Type object for NspCompound 
+ * all the instance of NspTypeNspCompound share the same id. 
+ * nsp_type_compound: is an instance of NspTypeNspCompound 
  *    used for objects of NspCompound type (i.e built with new_compound) 
  * other instances are used for derived classes 
  */
-NspTypeCompound *new_type_compound(type_mode mode)
+NspTypeNspCompound *new_type_compound(type_mode mode)
 {
-  NspTypeCompound *type= NULL;
+  NspTypeNspCompound *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_compound != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_compound;
     }
-  if ((type =  malloc(sizeof(NspTypeCompound))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspCompound))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -110,18 +110,18 @@ NspTypeCompound *new_type_compound(type_mode mode)
 
 #line 39 "codegen/compound.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_compound ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_compound;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_compound ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_compound  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
 #line 123 "compound.c"
   /* 
-   * Compound interfaces can be added here 
+   * NspCompound interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -130,7 +130,7 @@ NspTypeCompound *new_type_compound(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeCompound called nsp_type_compound
+       * an instance of NspTypeNspCompound called nsp_type_compound
        */
       type->id =  nsp_type_compound_id = nsp_new_type_id();
       nsp_type_compound = type;
@@ -145,11 +145,11 @@ NspTypeCompound *new_type_compound(type_mode mode)
 }
 
 /*
- * initialize Compound instances 
+ * initialize NspCompound instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_compound(NspCompound *Obj,NspTypeCompound *type)
+static int init_compound(NspCompound *Obj,NspTypeNspCompound *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -161,7 +161,7 @@ static int init_compound(NspCompound *Obj,NspTypeCompound *type)
 }
 
 /*
- * new instance of Compound 
+ * new instance of NspCompound 
  */
 
 NspCompound *new_compound() 
@@ -176,7 +176,7 @@ NspCompound *new_compound()
 }
 
 /*----------------------------------------------
- * Object method redefined for Compound 
+ * Object method redefined for NspCompound 
  *-----------------------------------------------*/
 /*
  * size 
@@ -191,7 +191,7 @@ static int nsp_compound_size(NspCompound *Mat, int flag)
  * type as string 
  */
 
-static char compound_type_name[]="Compound";
+static char compound_type_name[]="NspCompound";
 static char compound_short_type_name[]="compound";
 
 static char *nsp_compound_type_as_string(void)
@@ -309,7 +309,7 @@ int nsp_compound_info(NspCompound *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLCOMPOUND) 
     {
-      Sciprintf("Null Pointer Compound \n");
+      Sciprintf("Null Pointer NspCompound \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -327,7 +327,7 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCOMPOUND) 
     {
-      Sciprintf("Null Pointer Compound \n");
+      Sciprintf("Null Pointer NspCompound \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -378,7 +378,7 @@ int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_leve
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Compound objects 
+ * for NspCompound objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -538,7 +538,7 @@ NspCompound *nsp_compound_full_copy(NspCompound *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Compound
+ * wrappers for the NspCompound
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -715,7 +715,7 @@ Init portion
 
 
 #line 718 "compound.c"
-  nspgobject_register_class(d, "Compound", Compound, &NspCompound_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspCompound", Compound, &NspNspCompound_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

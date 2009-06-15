@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Figure
-#define NSP_INC_Figure
+#ifndef NSP_INC_NspFigure
+#define NSP_INC_NspFigure
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Figure */
+/* NspFigure */
 
 #include "nsp/graphic.h"
 
 /*
- * NspFigure inherits from NspGraphic
+ * NspFigure inherits from Graphic
  */
 
 typedef struct _NspFigure NspFigure ;
-typedef struct _NspTypeFigure NspTypeFigure ;
+typedef struct _NspTypeNspFigure NspTypeNspFigure ;
 
 #line 22 "./figure.h"
 
-struct _NspTypeFigure {
+struct _NspTypeNspFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,19 +45,19 @@ struct _nsp_figure {
 struct _NspFigure {
   /*< private >*/
   NspGraphic father;
-  NspTypeFigure*type;
+  NspTypeNspFigure*type;
   /*< public >*/
   nsp_figure *obj;
 };
 
 extern int nsp_type_figure_id;
-extern NspTypeFigure *nsp_type_figure;
+extern NspTypeNspFigure *nsp_type_figure;
 
 /* type instances for graphic */
 
-NspTypeFigure *new_type_figure(type_mode mode);
+NspTypeNspFigure *new_type_figure(type_mode mode);
 
-/* instance for Figure */
+/* instance for NspFigure */
 
 NspFigure *new_figure();
 
@@ -71,7 +71,7 @@ NspFigure *new_figure();
 extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspTypeBase *type);
 extern NspFigure *nsp_figure_create_default(char *name);
 
-/* from FigureObj.c */
+/* from NspFigureObj.c */
 
 extern NspFigure *nsp_figure_copy(NspFigure *H);
 extern void nsp_figure_destroy(NspFigure *H);
@@ -93,10 +93,10 @@ extern int int_figure_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFigure *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M);
 extern int nsp_figure_xdr_save(XDR  *xdrs, NspFigure *M);
 
-#endif /* NSP_INC_Figure */ 
+#endif /* NSP_INC_NspFigure */ 
 
-#ifdef Figure_Private 
-static int init_figure(NspFigure *o,NspTypeFigure *type);
+#ifdef NspFigure_Private 
+static int init_figure(NspFigure *o,NspTypeNspFigure *type);
 static int nsp_figure_size(NspFigure *Mat, int flag);
 static char *nsp_figure_type_as_string(void);
 static char *nsp_figure_type_short_string(NspObject *v);
@@ -107,5 +107,5 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
-#endif /* Figure_Private */
+#endif /* NspFigure_Private */
 

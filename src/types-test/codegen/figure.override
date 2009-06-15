@@ -2,10 +2,10 @@
 %%
 headers
 
-#include "nsp/figure.h"
-#include "nsp/axes.h"
-#include "nsp/objs3d.h"
-#include "nsp/compound.h"
+#include <nsp/figure.h>
+#include <nsp/axes.h>
+#include <nsp/objs3d.h>
+#include <nsp/compound.h>
 extern BCG *nsp_check_graphic_context(void);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 
@@ -37,11 +37,11 @@ init
 Init portion 
 
 %%
-override_type Figure
+override_type NspFigure
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
 %%
 ignore-glob

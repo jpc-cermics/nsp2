@@ -38,17 +38,17 @@ init
 Init portion 
 
 %%
-override_type Objs3d
+override_type NspObjs3d
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
-  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_objs3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
+  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */

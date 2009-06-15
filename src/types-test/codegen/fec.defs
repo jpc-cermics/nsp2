@@ -3,7 +3,7 @@
 (define-objectref Fec
   (in-module "Fec")
   (parent "Graphic")
-  (c-name "Fec")
+  (c-name "NspFec")
   (fields
     '("NspMatrix*" "x") ;; 
     '("NspMatrix*" "y") ;; 

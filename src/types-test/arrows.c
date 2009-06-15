@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/arrows.override"
-#include "nsp/arrows.h"
+#include <nsp/arrows.h>
 #include <nsp/figure.h> 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -23,38 +23,38 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 
 #line 25 "arrows.c"
 
-/* ----------- Arrows ----------- */
+/* ----------- NspArrows ----------- */
 
 
-#define  Arrows_Private 
+#define  NspArrows_Private 
 #include "nsp/object.h"
 #include "nsp/arrows.h"
 #include "nsp/interf.h"
 
 /* 
- * NspArrows inherits from NspGraphic 
+ * NspArrows inherits from Graphic 
  */
 
 int nsp_type_arrows_id=0;
-NspTypeArrows *nsp_type_arrows=NULL;
+NspTypeNspArrows *nsp_type_arrows=NULL;
 
 /*
- * Type object for Arrows 
- * all the instance of NspTypeArrows share the same id. 
- * nsp_type_arrows: is an instance of NspTypeArrows 
+ * Type object for NspArrows 
+ * all the instance of NspTypeNspArrows share the same id. 
+ * nsp_type_arrows: is an instance of NspTypeNspArrows 
  *    used for objects of NspArrows type (i.e built with new_arrows) 
  * other instances are used for derived classes 
  */
-NspTypeArrows *new_type_arrows(type_mode mode)
+NspTypeNspArrows *new_type_arrows(type_mode mode)
 {
-  NspTypeArrows *type= NULL;
+  NspTypeNspArrows *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_arrows != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_arrows;
     }
-  if ((type =  malloc(sizeof(NspTypeArrows))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspArrows))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -96,19 +96,19 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_arrows;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_arrows ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_arrows;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_arrows ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Arrows */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 110 "arrows.c"
   /* 
-   * Arrows interfaces can be added here 
+   * NspArrows interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -117,7 +117,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeArrows called nsp_type_arrows
+       * an instance of NspTypeNspArrows called nsp_type_arrows
        */
       type->id =  nsp_type_arrows_id = nsp_new_type_id();
       nsp_type_arrows = type;
@@ -132,11 +132,11 @@ NspTypeArrows *new_type_arrows(type_mode mode)
 }
 
 /*
- * initialize Arrows instances 
+ * initialize NspArrows instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_arrows(NspArrows *Obj,NspTypeArrows *type)
+static int init_arrows(NspArrows *Obj,NspTypeNspArrows *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -148,7 +148,7 @@ static int init_arrows(NspArrows *Obj,NspTypeArrows *type)
 }
 
 /*
- * new instance of Arrows 
+ * new instance of NspArrows 
  */
 
 NspArrows *new_arrows() 
@@ -163,7 +163,7 @@ NspArrows *new_arrows()
 }
 
 /*----------------------------------------------
- * Object method redefined for Arrows 
+ * Object method redefined for NspArrows 
  *-----------------------------------------------*/
 /*
  * size 
@@ -178,7 +178,7 @@ static int nsp_arrows_size(NspArrows *Mat, int flag)
  * type as string 
  */
 
-static char arrows_type_name[]="Arrows";
+static char arrows_type_name[]="NspArrows";
 static char arrows_short_type_name[]="arrows";
 
 static char *nsp_arrows_type_as_string(void)
@@ -305,7 +305,7 @@ int nsp_arrows_info(NspArrows *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLARROWS) 
     {
-      Sciprintf("Null Pointer Arrows \n");
+      Sciprintf("Null Pointer NspArrows \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -323,7 +323,7 @@ int nsp_arrows_print(NspArrows *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLARROWS) 
     {
-      Sciprintf("Null Pointer Arrows \n");
+      Sciprintf("Null Pointer NspArrows \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -382,7 +382,7 @@ int nsp_arrows_latex(NspArrows *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Arrows objects 
+ * for NspArrows objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -559,7 +559,7 @@ NspArrows *nsp_arrows_full_copy(NspArrows *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Arrows
+ * wrappers for the NspArrows
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -579,22 +579,7 @@ int int_arrows_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static int _wrap_nsp_arrows_full_copy(NspArrows *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspArrows *ret;
-
-  ret = nsp_arrows_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods arrows_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_arrows_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *arrows_get_methods(void) { return arrows_methods;};
+static NspMethods *arrows_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -729,7 +714,7 @@ int _wrap_arrows_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 733 "arrows.c"
+#line 718 "arrows.c"
 
 
 #line 89 "codegen/arrows.override"
@@ -741,7 +726,7 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 745 "arrows.c"
+#line 730 "arrows.c"
 
 
 #line 99 "codegen/arrows.override"
@@ -754,7 +739,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 758 "arrows.c"
+#line 743 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -795,8 +780,8 @@ Arrows_register_classes(NspObject *d)
 Init portion 
 
 
-#line 799 "arrows.c"
-  nspgobject_register_class(d, "Arrows", Arrows, &NspArrows_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+#line 784 "arrows.c"
+  nspgobject_register_class(d, "NspArrows", Arrows, &NspNspArrows_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
@@ -907,4 +892,4 @@ static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 911 "arrows.c"
+#line 896 "arrows.c"

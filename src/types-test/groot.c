@@ -10,44 +10,44 @@
 
 #line 4 "codegen/groot.override"
 
-#include "nsp/groot.h"
+#include <nsp/groot.h>
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 
 #line 18 "groot.c"
 
-/* ----------- GRoot ----------- */
+/* ----------- NspGRoot ----------- */
 
 
-#define  GRoot_Private 
+#define  NspGRoot_Private 
 #include "nsp/object.h"
 #include "nsp/groot.h"
 #include "nsp/interf.h"
 
 /* 
- * NspGRoot inherits from NspObject 
+ * NspGRoot inherits from Object 
  */
 
 int nsp_type_groot_id=0;
-NspTypeGRoot *nsp_type_groot=NULL;
+NspTypeNspGRoot *nsp_type_groot=NULL;
 
 /*
- * Type object for GRoot 
- * all the instance of NspTypeGRoot share the same id. 
- * nsp_type_groot: is an instance of NspTypeGRoot 
+ * Type object for NspGRoot 
+ * all the instance of NspTypeNspGRoot share the same id. 
+ * nsp_type_groot: is an instance of NspTypeNspGRoot 
  *    used for objects of NspGRoot type (i.e built with new_groot) 
  * other instances are used for derived classes 
  */
-NspTypeGRoot *new_type_groot(type_mode mode)
+NspTypeNspGRoot *new_type_groot(type_mode mode)
 {
-  NspTypeGRoot *type= NULL;
+  NspTypeNspGRoot *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_groot != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_groot;
     }
-  if ((type =  malloc(sizeof(NspTypeGRoot))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspGRoot))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -86,7 +86,7 @@ NspTypeGRoot *new_type_groot(type_mode mode)
   type->init = (init_func *) init_groot;
 
   /* 
-   * GRoot interfaces can be added here 
+   * NspGRoot interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -95,7 +95,7 @@ NspTypeGRoot *new_type_groot(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeGRoot called nsp_type_groot
+       * an instance of NspTypeNspGRoot called nsp_type_groot
        */
       type->id =  nsp_type_groot_id = nsp_new_type_id();
       nsp_type_groot = type;
@@ -110,11 +110,11 @@ NspTypeGRoot *new_type_groot(type_mode mode)
 }
 
 /*
- * initialize GRoot instances 
+ * initialize NspGRoot instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_groot(NspGRoot *Obj,NspTypeGRoot *type)
+static int init_groot(NspGRoot *Obj,NspTypeNspGRoot *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -126,7 +126,7 @@ static int init_groot(NspGRoot *Obj,NspTypeGRoot *type)
 }
 
 /*
- * new instance of GRoot 
+ * new instance of NspGRoot 
  */
 
 NspGRoot *new_groot() 
@@ -141,7 +141,7 @@ NspGRoot *new_groot()
 }
 
 /*----------------------------------------------
- * Object method redefined for GRoot 
+ * Object method redefined for NspGRoot 
  *-----------------------------------------------*/
 /*
  * size 
@@ -156,7 +156,7 @@ static int nsp_groot_size(NspGRoot *Mat, int flag)
  * type as string 
  */
 
-static char groot_type_name[]="GRoot";
+static char groot_type_name[]="NspGRoot";
 static char groot_short_type_name[]="groot";
 
 static char *nsp_groot_type_as_string(void)
@@ -261,7 +261,7 @@ int nsp_groot_info(NspGRoot *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLGROOT) 
     {
-      Sciprintf("Null Pointer GRoot \n");
+      Sciprintf("Null Pointer NspGRoot \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -279,7 +279,7 @@ int nsp_groot_print(NspGRoot *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLGROOT) 
     {
-      Sciprintf("Null Pointer GRoot \n");
+      Sciprintf("Null Pointer NspGRoot \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -322,7 +322,7 @@ int nsp_groot_latex(NspGRoot *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GRoot objects 
+ * for NspGRoot objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -463,7 +463,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the GRoot
+ * wrappers for the NspGRoot
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -562,7 +562,7 @@ Init portion
 
 
 #line 565 "groot.c"
-  nspgobject_register_class(d, "GRoot", GRoot, &NspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
+  nspgobject_register_class(d, "NspGRoot", GRoot, &NspNspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 

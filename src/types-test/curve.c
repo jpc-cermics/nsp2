@@ -9,7 +9,7 @@
 
 
 #line 4 "codegen/curve.override"
-#include "nsp/curve.h"
+#include <nsp/curve.h>
 #include <nsp/figure.h>
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -22,38 +22,38 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
 extern void nsp_figure_force_redraw( nsp_figure *F);
 #line 24 "curve.c"
 
-/* ----------- Curve ----------- */
+/* ----------- NspCurve ----------- */
 
 
-#define  Curve_Private 
+#define  NspCurve_Private 
 #include "nsp/object.h"
 #include "nsp/curve.h"
 #include "nsp/interf.h"
 
 /* 
- * NspCurve inherits from NspGraphic 
+ * NspCurve inherits from Graphic 
  */
 
 int nsp_type_curve_id=0;
-NspTypeCurve *nsp_type_curve=NULL;
+NspTypeNspCurve *nsp_type_curve=NULL;
 
 /*
- * Type object for Curve 
- * all the instance of NspTypeCurve share the same id. 
- * nsp_type_curve: is an instance of NspTypeCurve 
+ * Type object for NspCurve 
+ * all the instance of NspTypeNspCurve share the same id. 
+ * nsp_type_curve: is an instance of NspTypeNspCurve 
  *    used for objects of NspCurve type (i.e built with new_curve) 
  * other instances are used for derived classes 
  */
-NspTypeCurve *new_type_curve(type_mode mode)
+NspTypeNspCurve *new_type_curve(type_mode mode)
 {
-  NspTypeCurve *type= NULL;
+  NspTypeNspCurve *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_curve != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_curve;
     }
-  if ((type =  malloc(sizeof(NspTypeCurve))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspCurve))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -93,18 +93,18 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
 #line 22 "codegen/curve.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
-  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
-  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
-  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
-  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_curve;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_curve ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_curve  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Curve */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 106 "curve.c"
   /* 
-   * Curve interfaces can be added here 
+   * NspCurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -113,7 +113,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeCurve called nsp_type_curve
+       * an instance of NspTypeNspCurve called nsp_type_curve
        */
       type->id =  nsp_type_curve_id = nsp_new_type_id();
       nsp_type_curve = type;
@@ -128,11 +128,11 @@ NspTypeCurve *new_type_curve(type_mode mode)
 }
 
 /*
- * initialize Curve instances 
+ * initialize NspCurve instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_curve(NspCurve *Obj,NspTypeCurve *type)
+static int init_curve(NspCurve *Obj,NspTypeNspCurve *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -144,7 +144,7 @@ static int init_curve(NspCurve *Obj,NspTypeCurve *type)
 }
 
 /*
- * new instance of Curve 
+ * new instance of NspCurve 
  */
 
 NspCurve *new_curve() 
@@ -159,7 +159,7 @@ NspCurve *new_curve()
 }
 
 /*----------------------------------------------
- * Object method redefined for Curve 
+ * Object method redefined for NspCurve 
  *-----------------------------------------------*/
 /*
  * size 
@@ -174,7 +174,7 @@ static int nsp_curve_size(NspCurve *Mat, int flag)
  * type as string 
  */
 
-static char curve_type_name[]="Curve";
+static char curve_type_name[]="NspCurve";
 static char curve_short_type_name[]="curve";
 
 static char *nsp_curve_type_as_string(void)
@@ -309,7 +309,7 @@ int nsp_curve_info(NspCurve *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLCURVE) 
     {
-      Sciprintf("Null Pointer Curve \n");
+      Sciprintf("Null Pointer NspCurve \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -327,7 +327,7 @@ int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCURVE) 
     {
-      Sciprintf("Null Pointer Curve \n");
+      Sciprintf("Null Pointer NspCurve \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -384,7 +384,7 @@ int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for Curve objects 
+ * for NspCurve objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -553,7 +553,7 @@ NspCurve *nsp_curve_full_copy(NspCurve *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the Curve
+ * wrappers for the NspCurve
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -836,7 +836,7 @@ Init portion
 
 
 #line 839 "curve.c"
-  nspgobject_register_class(d, "Curve", Curve, &NspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
+  nspgobject_register_class(d, "NspCurve", Curve, &NspNspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 

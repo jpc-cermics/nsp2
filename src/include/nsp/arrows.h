@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_Arrows
-#define NSP_INC_Arrows
+#ifndef NSP_INC_NspArrows
+#define NSP_INC_NspArrows
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* Arrows */
+/* NspArrows */
 
 #include "nsp/graphic.h"
 
 /*
- * NspArrows inherits from NspGraphic
+ * NspArrows inherits from Graphic
  */
 
 typedef struct _NspArrows NspArrows ;
-typedef struct _NspTypeArrows NspTypeArrows ;
+typedef struct _NspTypeNspArrows NspTypeNspArrows ;
 
 #line 22 "./arrows.h"
 
-struct _NspTypeArrows {
+struct _NspTypeNspArrows {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -40,19 +40,19 @@ struct _nsp_arrows {
 struct _NspArrows {
   /*< private >*/
   NspGraphic father;
-  NspTypeArrows*type;
+  NspTypeNspArrows*type;
   /*< public >*/
   nsp_arrows *obj;
 };
 
 extern int nsp_type_arrows_id;
-extern NspTypeArrows *nsp_type_arrows;
+extern NspTypeNspArrows *nsp_type_arrows;
 
 /* type instances for graphic */
 
-NspTypeArrows *new_type_arrows(type_mode mode);
+NspTypeNspArrows *new_type_arrows(type_mode mode);
 
-/* instance for Arrows */
+/* instance for NspArrows */
 
 NspArrows *new_arrows();
 
@@ -66,7 +66,7 @@ NspArrows *new_arrows();
 extern NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type);
 extern NspArrows *nsp_arrows_create_default(char *name);
 
-/* from ArrowsObj.c */
+/* from NspArrowsObj.c */
 
 extern NspArrows *nsp_arrows_copy(NspArrows *H);
 extern void nsp_arrows_destroy(NspArrows *H);
@@ -88,10 +88,10 @@ extern int int_arrows_create(Stack stack, int rhs, int opt, int lhs);
 extern NspArrows *nsp_arrows_xdr_load_partial(XDR *xdrs, NspArrows *M);
 extern int nsp_arrows_xdr_save(XDR  *xdrs, NspArrows *M);
 
-#endif /* NSP_INC_Arrows */ 
+#endif /* NSP_INC_NspArrows */ 
 
-#ifdef Arrows_Private 
-static int init_arrows(NspArrows *o,NspTypeArrows *type);
+#ifdef NspArrows_Private 
+static int init_arrows(NspArrows *o,NspTypeNspArrows *type);
 static int nsp_arrows_size(NspArrows *Mat, int flag);
 static char *nsp_arrows_type_as_string(void);
 static char *nsp_arrows_type_short_string(NspObject *v);
@@ -102,5 +102,5 @@ static AttrTab arrows_attrs[];
 static NspMethods *arrows_get_methods(void);
 /* static int int_arrows_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspArrows *nsp_arrows_create_void(char *name,NspTypeBase *type);
-#endif /* Arrows_Private */
+#endif /* NspArrows_Private */
 

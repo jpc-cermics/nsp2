@@ -12,38 +12,38 @@
 
 #line 14 "classa.c"
 
-/* ----------- ClassA ----------- */
+/* ----------- NspClassA ----------- */
 
 
-#define  ClassA_Private 
+#define  NspClassA_Private 
 #include "nsp/object.h"
 #include "nsp/classa.h"
 #include "nsp/interf.h"
 
 /* 
- * NspClassA inherits from NspObject 
+ * NspClassA inherits from Object 
  */
 
 int nsp_type_classa_id=0;
-NspTypeClassA *nsp_type_classa=NULL;
+NspTypeNspClassA *nsp_type_classa=NULL;
 
 /*
- * Type object for ClassA 
- * all the instance of NspTypeClassA share the same id. 
- * nsp_type_classa: is an instance of NspTypeClassA 
+ * Type object for NspClassA 
+ * all the instance of NspTypeNspClassA share the same id. 
+ * nsp_type_classa: is an instance of NspTypeNspClassA 
  *    used for objects of NspClassA type (i.e built with new_classa) 
  * other instances are used for derived classes 
  */
-NspTypeClassA *new_type_classa(type_mode mode)
+NspTypeNspClassA *new_type_classa(type_mode mode)
 {
-  NspTypeClassA *type= NULL;
+  NspTypeNspClassA *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classa != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classa;
     }
-  if ((type =  malloc(sizeof(NspTypeClassA))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeNspClassA))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -82,7 +82,7 @@ NspTypeClassA *new_type_classa(type_mode mode)
   type->init = (init_func *) init_classa;
 
   /* 
-   * ClassA interfaces can be added here 
+   * NspClassA interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -91,7 +91,7 @@ NspTypeClassA *new_type_classa(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeClassA called nsp_type_classa
+       * an instance of NspTypeNspClassA called nsp_type_classa
        */
       type->id =  nsp_type_classa_id = nsp_new_type_id();
       nsp_type_classa = type;
@@ -106,11 +106,11 @@ NspTypeClassA *new_type_classa(type_mode mode)
 }
 
 /*
- * initialize ClassA instances 
+ * initialize NspClassA instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_classa(NspClassA *Obj,NspTypeClassA *type)
+static int init_classa(NspClassA *Obj,NspTypeNspClassA *type)
 {
   /* jump the first surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -126,7 +126,7 @@ static int init_classa(NspClassA *Obj,NspTypeClassA *type)
 }
 
 /*
- * new instance of ClassA 
+ * new instance of NspClassA 
  */
 
 NspClassA *new_classa() 
@@ -141,7 +141,7 @@ NspClassA *new_classa()
 }
 
 /*----------------------------------------------
- * Object method redefined for ClassA 
+ * Object method redefined for NspClassA 
  *-----------------------------------------------*/
 /*
  * size 
@@ -156,7 +156,7 @@ static int nsp_classa_size(NspClassA *Mat, int flag)
  * type as string 
  */
 
-static char classa_type_name[]="ClassA";
+static char classa_type_name[]="NspClassA";
 static char classa_short_type_name[]="classa";
 
 static char *nsp_classa_type_as_string(void)
@@ -273,7 +273,7 @@ int nsp_classa_info(NspClassA *M,int indent,const char *name,int rec_level)
   const char *pname;
   if ( M == NULLCLASSA) 
     {
-      Sciprintf("Null Pointer ClassA \n");
+      Sciprintf("Null Pointer NspClassA \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -291,7 +291,7 @@ int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSA) 
     {
-      Sciprintf("Null Pointer ClassA \n");
+      Sciprintf("Null Pointer NspClassA \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -350,7 +350,7 @@ int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for ClassA objects 
+ * for NspClassA objects 
  * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
@@ -508,7 +508,7 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the ClassA
+ * wrappers for the NspClassA
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
@@ -530,34 +530,7 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 26 "codegen/classa.override"
-static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->cla_color = color;
-  return 0;
-}
-#line 543 "classa.c"
-
-
-#line 36 "codegen/classa.override"
-static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Sciprintf("color: %d\n",self->cla_color);
-  return 0;
-}
-#line 552 "classa.c"
-
-
-static NspMethods classa_methods[] = {
-  {"classa_color_change",(nsp_method *) _wrap_classa_color_change},
-  {"classa_color_show",(nsp_method *) _wrap_classa_color_show},
-  { NULL, NULL}
-};
-
-static NspMethods *classa_get_methods(void) { return classa_methods;};
+static NspMethods *classa_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -682,7 +655,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 686 "classa.c"
+#line 659 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -734,7 +707,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 738 "classa.c"
+#line 711 "classa.c"
 
 
 #line 43 "codegen/classa.override"
@@ -742,7 +715,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 746 "classa.c"
+#line 719 "classa.c"
 
 
 /*----------------------------------------------------
@@ -782,9 +755,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 786 "classa.c"
-  nspgobject_register_class(d, "ClassA", ClassA, &NspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
+#line 759 "classa.c"
+  nspgobject_register_class(d, "NspClassA", ClassA, &NspNspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 791 "classa.c"
+#line 764 "classa.c"

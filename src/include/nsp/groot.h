@@ -1,26 +1,26 @@
 /* -*- Mode: C -*- */
-#ifndef NSP_INC_GRoot
-#define NSP_INC_GRoot
+#ifndef NSP_INC_NspGRoot
+#define NSP_INC_NspGRoot
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/* GRoot */
+/* NspGRoot */
 
 #include "nsp/object.h"
 
 /*
- * NspGRoot inherits from NspObject
+ * NspGRoot inherits from Object
  */
 
 typedef struct _NspGRoot NspGRoot ;
-typedef struct _NspTypeGRoot NspTypeGRoot ;
+typedef struct _NspTypeNspGRoot NspTypeNspGRoot ;
 
 #line 22 "./groot.h"
 
-struct _NspTypeGRoot {
+struct _NspTypeNspGRoot {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -37,19 +37,19 @@ struct _nsp_groot {
 struct _NspGRoot {
   /*< private >*/
   NspObject father;
-  NspTypeGRoot*type;
+  NspTypeNspGRoot*type;
   /*< public >*/
   nsp_groot *obj;
 };
 
 extern int nsp_type_groot_id;
-extern NspTypeGRoot *nsp_type_groot;
+extern NspTypeNspGRoot *nsp_type_groot;
 
 /* type instances for object */
 
-NspTypeGRoot *new_type_groot(type_mode mode);
+NspTypeNspGRoot *new_type_groot(type_mode mode);
 
-/* instance for GRoot */
+/* instance for NspGRoot */
 
 NspGRoot *new_groot();
 
@@ -63,7 +63,7 @@ NspGRoot *new_groot();
 extern NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type);
 extern NspGRoot *nsp_groot_create_default(char *name);
 
-/* from GRootObj.c */
+/* from NspGRootObj.c */
 
 extern NspGRoot *nsp_groot_copy(NspGRoot *H);
 extern void nsp_groot_destroy(NspGRoot *H);
@@ -85,10 +85,10 @@ extern int int_groot_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGRoot *nsp_groot_xdr_load_partial(XDR *xdrs, NspGRoot *M);
 extern int nsp_groot_xdr_save(XDR  *xdrs, NspGRoot *M);
 
-#endif /* NSP_INC_GRoot */ 
+#endif /* NSP_INC_NspGRoot */ 
 
-#ifdef GRoot_Private 
-static int init_groot(NspGRoot *o,NspTypeGRoot *type);
+#ifdef NspGRoot_Private 
+static int init_groot(NspGRoot *o,NspTypeNspGRoot *type);
 static int nsp_groot_size(NspGRoot *Mat, int flag);
 static char *nsp_groot_type_as_string(void);
 static char *nsp_groot_type_short_string(NspObject *v);
@@ -99,5 +99,5 @@ static AttrTab groot_attrs[];
 static NspMethods *groot_get_methods(void);
 /* static int int_groot_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGRoot *nsp_groot_create_void(char *name,NspTypeBase *type);
-#endif /* GRoot_Private */
+#endif /* NspGRoot_Private */
 
