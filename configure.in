@@ -1472,7 +1472,7 @@ if test "$with_portaudio" != "no"; then
      AC_CHECK_HEADERS(
         [portaudio.h],
         AC_CHECK_LIB(
-           [libportaudio],
+           [portaudio],
            [Pa_Initialize],
            PORTAUDIO_CFLAGS=
            PORTAUDIO_LIBS="-lportaudio"
