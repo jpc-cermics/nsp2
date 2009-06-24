@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <sndfile.h>
 #include <portaudio.h>
+#include <signal.h> 
 #include <nsp/interf.h>
 #include <nsp/matutil.h>
 
