@@ -92,7 +92,7 @@ class Overrides:
         elif words[0] == 'headers':
             self.headers = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.headers, startline + 1, filename, rest)
-        elif words[0] == 'override_type':
+        elif words[0] == 'override-type':
             slot = words[1]
             self.override_type[slot] = rest
             self.startlines[slot] = (startline + 1, filename)

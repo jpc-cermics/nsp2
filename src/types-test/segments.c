@@ -687,10 +687,12 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 691 "segments.c"
 
 
-#line 90 "codegen/segments.override"
+#line 693 "segments.c"
+
+
+#line 62 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -699,10 +701,10 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 703 "segments.c"
+#line 705 "segments.c"
 
 
-#line 100 "codegen/segments.override"
+#line 72 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -712,7 +714,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 716 "segments.c"
+#line 718 "segments.c"
 
 
 /*----------------------------------------------------
@@ -753,12 +755,12 @@ Segments_register_classes(NspObject *d)
 Init portion 
 
 
-#line 757 "segments.c"
+#line 759 "segments.c"
   nspgobject_register_class(d, "NspSegments", Segments, &NspNspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 111 "codegen/segments.override"
+#line 83 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 
@@ -864,4 +866,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 868 "segments.c"
+#line 870 "segments.c"

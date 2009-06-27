@@ -642,10 +642,10 @@ class Wrapper:
                     substdict[slot] = '0'
         # insert the type defintion 
         self.fp.write(self.type_tmpl_1_0 % substdict)
-        if self.overrides.part_type_is_overriden(typename):
-            lineno, filename = self.overrides.getstartline(typename)
+        if self.overrides.part_type_is_overriden(typename_nn):
+            lineno, filename = self.overrides.getstartline(typename_nn)
             self.fp.setline(lineno,'codegen/'+ filename)
-            self.fp.write(self.overrides.get_override_type(typename))
+            self.fp.write(self.overrides.get_override_type(typename_nn))
             self.fp.resetline()
 
         self.fp.write(self.type_tmpl_1_0_1 % substdict)
@@ -1336,11 +1336,11 @@ class Wrapper:
             getterobjectname = 'int_get_object_failed'
             setterobjectname = 'int_set_object_failed'
             attrname = self.objinfo.name + '.' + fname
-            #self.fp.write('override attribute ? %s)' % attrname)
-            if self.overrides.attr_is_overriden(fname):
+            #self.fp.write('override attribute ? %s\n' % attrname)
+            if self.overrides.attr_is_overriden(attrname):
                 #self.fp.write('yes for %s\n' % attrname)
-                lineno, filename = self.overrides.getstartline(fname)
-                code = self.overrides.attr_override(fname)
+                lineno, filename = self.overrides.getstartline(attrname)
+                code = self.overrides.attr_override(attrname)
                 self.fp.setline(lineno, 'codegen/'+ filename)
                 self.fp.write(code)
                 self.fp.resetline()

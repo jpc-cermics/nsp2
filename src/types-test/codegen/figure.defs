@@ -15,7 +15,7 @@
    '("NspMatrix*" "position")
    '("NspList*" "children")
    '("gboolean" "draw_now" "hidden" "TRUE");;
-   '("NspFigureData*" "data" "hidden")
+   '("NspFigureData*" "gc" )
    )
   (gtype-id "Figure")
 )

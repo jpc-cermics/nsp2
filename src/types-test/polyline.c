@@ -791,10 +791,11 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 795 "polyline.c"
+
+#line 796 "polyline.c"
 
 
-#line 90 "codegen/polyline.override"
+#line 61 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -803,10 +804,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 807 "polyline.c"
+#line 808 "polyline.c"
 
 
-#line 100 "codegen/polyline.override"
+#line 71 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -816,7 +817,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 820 "polyline.c"
+#line 821 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -857,12 +858,12 @@ Polyline_register_classes(NspObject *d)
 Init portion 
 
 
-#line 861 "polyline.c"
+#line 862 "polyline.c"
   nspgobject_register_class(d, "NspPolyline", Polyline, &NspNspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 111 "codegen/polyline.override"
+#line 82 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1007,4 +1008,4 @@ static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1011 "polyline.c"
+#line 1012 "polyline.c"

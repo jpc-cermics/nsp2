@@ -27,7 +27,7 @@ init
 Init portion 
 
 %%
-override_type NspPolyhedron
+override-type Polyhedron
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -72,36 +72,6 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   store_graphic_object(Xgc, pl);
   return 0;
-}
-
-%%
-override-attr Pts 
-
-/* overriden to check dimensions when changing values.
- */
-
-static NspObject *_wrap_polyhedron_get_obj_Pts(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-  *copy = TRUE; 
-  ret = ((NspMatrix*) ((NspPolyhedron *) self)->obj->Pts);
-  return (NspObject *) ret;
-}
-
-static int _wrap_polyhedron_set_obj_Pts(void *self,NspObject *val)
-{
-  NspMatrix *M= (NspMatrix *) val ; 
-  NspPolyhedron *poly = self ;
-  if ( M->rc_type != 'r' || M->n != 2 )
-    {
-      Scierror("Error: polyhedron field Pts should be real an mx2 sized\n");
-      return FAIL;
-    }
-  /* before replacing the field we check that dimensions are correct */
-  if ( poly->obj->Pts != NULL )
-    nsp_matrix_destroy(poly->obj->Pts);
-  poly->obj->Pts = (NspMatrix *) val ;
-  return OK;
 }
 
 %%

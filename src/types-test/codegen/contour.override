@@ -24,7 +24,7 @@ init
 Init portion 
 
 %%
-override_type NspContour
+override-type Contour
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour ;

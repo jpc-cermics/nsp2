@@ -19,7 +19,7 @@ init
 Init portion 
 
 %%
-override_type NspCurve
+override-type Curve
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_curve;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_curve ;
@@ -52,7 +52,7 @@ int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 %%
-override-attr mode 
+override-attr Curve.mode 
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -67,7 +67,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 }
 
 %%
-override-attr Pts 
+override-attr Curve.Pts 
 
 /* overriden to check dimensions when changing values.
  */

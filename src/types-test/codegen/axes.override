@@ -36,7 +36,7 @@ init
 Init portion 
 
 %%
-override_type NspAxes
+override-type  Axes
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -82,7 +82,7 @@ static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt
 }
 
 %%
-override-attr rho 
+override-attr Axes.rho 
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -98,7 +98,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 }
 
 %%
-override-attr children
+override-attr Axes.children
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 

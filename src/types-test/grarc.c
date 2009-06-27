@@ -774,7 +774,7 @@ int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
 #line 775 "grarc.c"
 
 
-#line 90 "codegen/grarc.override"
+#line 60 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -786,7 +786,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
 #line 787 "grarc.c"
 
 
-#line 100 "codegen/grarc.override"
+#line 70 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -842,7 +842,7 @@ Init portion
 }
 */
 
-#line 111 "codegen/grarc.override"
+#line 81 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 

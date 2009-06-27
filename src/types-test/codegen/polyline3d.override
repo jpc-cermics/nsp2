@@ -28,7 +28,7 @@ init
 Init portion 
 
 %%
-override_type NspPolyline3d
+override-type Polyline3d
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -75,35 +75,6 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-%%
-override-attr Pts 
-
-/* overriden to check dimensions when changing values.
- */
-
-static NspObject *_wrap_polyline3d_get_obj_Pts(void *self,char *attr, int *copy)
-{
-  NspMatrix *ret;
-  *copy = TRUE; 
-  ret = ((NspMatrix*) ((NspPolyline3d *) self)->obj->Pts);
-  return (NspObject *) ret;
-}
-
-static int _wrap_polyline3d_set_obj_Pts(void *self,NspObject *val)
-{
-  NspMatrix *M= (NspMatrix *) val ; 
-  NspPolyline3d *poly = self ;
-  if ( M->rc_type != 'r' || M->n != 2 )
-    {
-      Scierror("Error: polyline3d field Pts should be real an mx2 sized\n");
-      return FAIL;
-    }
-  /* before replacing the field we check that dimensions are correct */
-  if ( poly->obj->Pts != NULL )
-    nsp_matrix_destroy(poly->obj->Pts);
-  poly->obj->Pts = (NspMatrix *) val ;
-  return OK;
-}
 
 %%
 override nsp_extractelts_polyline3d kwargs

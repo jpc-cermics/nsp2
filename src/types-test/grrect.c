@@ -715,10 +715,11 @@ int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 719 "grrect.c"
+
+#line 720 "grrect.c"
 
 
-#line 90 "codegen/grrect.override"
+#line 61 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -727,10 +728,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 731 "grrect.c"
+#line 732 "grrect.c"
 
 
-#line 100 "codegen/grrect.override"
+#line 71 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -740,7 +741,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 744 "grrect.c"
+#line 745 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -781,12 +782,12 @@ GrRect_register_classes(NspObject *d)
 Init portion 
 
 
-#line 785 "grrect.c"
+#line 786 "grrect.c"
   nspgobject_register_class(d, "NspGrRect", GrRect, &NspNspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 111 "codegen/grrect.override"
+#line 82 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -872,4 +873,4 @@ static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 876 "grrect.c"
+#line 877 "grrect.c"

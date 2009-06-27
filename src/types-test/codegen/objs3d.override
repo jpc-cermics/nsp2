@@ -39,7 +39,7 @@ init
 Init portion 
 
 %%
-override_type NspObjs3d
+override-type Objs3d
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -85,7 +85,7 @@ static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt
 }
 
 %%
-override-attr rho 
+override-attr Objs3d.rho 
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -101,7 +101,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 }
 
 %%
-override-attr children
+override-attr Objs3d.children
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 

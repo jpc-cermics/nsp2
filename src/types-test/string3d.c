@@ -107,7 +107,7 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
       
   type->init = (init_func *) init_string3d;
 
-#line 67 "codegen/string3d.override"
+#line 38 "codegen/string3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -719,10 +719,11 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 723 "string3d.c"
+
+#line 724 "string3d.c"
 
 
-#line 115 "codegen/string3d.override"
+#line 86 "codegen/string3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -731,10 +732,10 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 735 "string3d.c"
+#line 736 "string3d.c"
 
 
-#line 125 "codegen/string3d.override"
+#line 96 "codegen/string3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -744,7 +745,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 748 "string3d.c"
+#line 749 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -785,12 +786,12 @@ String3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 789 "string3d.c"
+#line 790 "string3d.c"
   nspgobject_register_class(d, "NspString3d", String3d, &NspNspString3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 136 "codegen/string3d.override"
+#line 107 "codegen/string3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1006,4 +1007,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1010 "string3d.c"
+#line 1011 "string3d.c"

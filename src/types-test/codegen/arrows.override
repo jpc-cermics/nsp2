@@ -20,7 +20,7 @@ init
 Init portion 
 
 %%
-override_type NspArrows
+override-type Arrows
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */

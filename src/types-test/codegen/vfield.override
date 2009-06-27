@@ -24,7 +24,7 @@ init
 Init portion 
 
 %%
-override_type NspVField
+override-type  VField
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;

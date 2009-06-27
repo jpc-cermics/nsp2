@@ -34,7 +34,7 @@ init
 Init portion 
 
 %%
-override_type NspGMatrix1
+override-type GMatrix1
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;

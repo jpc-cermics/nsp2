@@ -32,7 +32,7 @@ init
 Init portion 
 
 %%
-override_type NspFec
+override-type Fec
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_fec ;

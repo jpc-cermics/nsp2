@@ -809,7 +809,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
 #line 810 "grstring.c"
 
 
-#line 90 "codegen/grstring.override"
+#line 60 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -821,7 +821,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
 #line 822 "grstring.c"
 
 
-#line 100 "codegen/grstring.override"
+#line 70 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -877,7 +877,7 @@ Init portion
 }
 */
 
-#line 111 "codegen/grstring.override"
+#line 81 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 

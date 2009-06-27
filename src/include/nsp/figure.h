@@ -39,7 +39,7 @@ struct _nsp_figure {
   NspMatrix* position;
   NspList* children;
   gboolean draw_now;
-  NspFigureData* data;
+  NspFigureData* gc;
   int ref_count;
 };
 
@@ -69,7 +69,7 @@ NspFigure *new_figure();
 
 #define NULLFIGURE (NspFigure*) 0
 
-extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* data,NspTypeBase *type);
+extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,NspTypeBase *type);
 extern NspFigure *nsp_figure_create_default(char *name);
 
 /* from NspFigureObj.c */

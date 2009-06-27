@@ -770,7 +770,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
 #line 771 "box3d.c"
 
 
-#line 90 "codegen/box3d.override"
+#line 60 "codegen/box3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -782,7 +782,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
 #line 783 "box3d.c"
 
 
-#line 100 "codegen/box3d.override"
+#line 70 "codegen/box3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -838,7 +838,7 @@ Init portion
 }
 */
 
-#line 111 "codegen/box3d.override"
+#line 81 "codegen/box3d.override"
 
 /* inserted verbatim at the end */
 

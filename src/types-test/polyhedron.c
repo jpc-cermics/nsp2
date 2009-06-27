@@ -100,7 +100,7 @@ NspTypeNspPolyhedron *new_type_polyhedron(type_mode mode)
       
   type->init = (init_func *) init_polyhedron;
 
-#line 61 "codegen/polyhedron.override"
+#line 31 "codegen/polyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -820,7 +820,7 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
 #line 821 "polyhedron.c"
 
 
-#line 109 "codegen/polyhedron.override"
+#line 79 "codegen/polyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -832,7 +832,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
 #line 833 "polyhedron.c"
 
 
-#line 119 "codegen/polyhedron.override"
+#line 89 "codegen/polyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -844,7 +844,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
 #line 845 "polyhedron.c"
 
 
-#line 129 "codegen/polyhedron.override"
+#line 99 "codegen/polyhedron.override"
 
 int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_coord */
 {
@@ -862,7 +862,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
 #line 863 "polyhedron.c"
 
 
-#line 145 "codegen/polyhedron.override"
+#line 115 "codegen/polyhedron.override"
 
 int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_face */
 {
@@ -878,7 +878,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
 #line 879 "polyhedron.c"
 
 
-#line 159 "codegen/polyhedron.override"
+#line 129 "codegen/polyhedron.override"
 
 int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
 {
@@ -950,7 +950,7 @@ Init portion
 }
 */
 
-#line 183 "codegen/polyhedron.override"
+#line 153 "codegen/polyhedron.override"
 
 /* function called when draw is needed 
  * data can be NULL and when non null 

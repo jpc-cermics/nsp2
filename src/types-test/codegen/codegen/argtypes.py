@@ -1041,9 +1041,12 @@ class FlagsArg(ArgType):
 	"""used to give a default value  """
         return ''
 
+# when a NspObject is used as attribute or argument.
+
 class ObjectArg(ArgType):
     # should change these checks to more typesafe versions that check
     # a little further down in the class heirachy.
+
     nulldflt = ('  if ( nsp_%(name)s != NULL ) {\n'
                 '    if ( Is%(type)s((NspObject *)nsp_%(name)s))\n'
                 '      %(name)s = %(cast)s(nsp_%(name)s->obj);\n' 
@@ -1060,6 +1063,7 @@ class ObjectArg(ArgType):
             '  }\n')
     dflt = '  if (nsp_%(name)s)\n' \
            '      %(name)s = %(cast)s(nsp_%(name)s->obj);\n'
+
     def __init__(self, objname,name, parent, typecode):
         # the c-name 
 	self.objname = objname
@@ -1068,6 +1072,10 @@ class ObjectArg(ArgType):
         # string.replace(typecode, '_TYPE_', '_', 1)
 	self.cast = objname 
         self.parent = parent
+        self.nsp_arg_type = 'arg_typeZXZX'
+        self.shortname = name 
+        self.shortname_uc = string.upper(name)
+
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pnull:
 	    if pdflt:
@@ -1101,13 +1109,34 @@ class ObjectArg(ArgType):
 		info.arglist.append('((%s *) %s)' % (self.cast, pname))
                 info.add_parselist('obj_check', ['&nsp_type_%s' % tn, '&' + pname], [pname])
 
+
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
             pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
         else:
             pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
-        self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+
+	if pdflt:
+	    info.varlist.add(self.objname, '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add(self.objname, '*' + pname)
+        info.setobj = 't' 
+	info.arglist.append(pname)
+        info.add_parselist(self.nsp_arg_type, ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( ! Is%s(O) ) return FAIL;\n' % self.shortname )
+        info.attrcodebefore.append('  if ((%s = (%s *) nsp_object_copy_and_name(attr,O)) == NULL%s) return FAIL;\n' % (pname,self.objname,self.shortname_uc))
+        if byref == 't' :
+            info.attrcodebefore.append('  if (((%s *) self)->obj->%s != NULL ) \n' % (upinfo,pname))
+            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->obj->%s);\n' % ( string.lower(self.name),upinfo,pname))
+        else:
+            info.attrcodebefore.append('  if (((%s *) self)->%s != NULL ) \n' % (upinfo,pname))
+            info.attrcodebefore.append('    nsp_%s_destroy(((%s *) self)->%s);\n' % ( string.lower(self.name),upinfo,pname))
+        #pos gives the position of the argument
+        if psize:
+            info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
+        info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
     def write_return(self, ptype, ownsreturn, info):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add( ptype, '*ret')
@@ -1116,14 +1145,13 @@ class ObjectArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
         if ptype[-1] == '*': ptype = ptype[:-1]
         info.varlist.add(ptype, '*ret')
-        info.varlist.add( ptype, '*ret')
-        info.codeafter.append('  return NSP_OBJECT(ret);' )
+        info.attrcodeafter.append('  return NSP_OBJECT(ret);' )
 
     def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
         if byref == 't' :
             pname = 'obj->'+pname
-        return '  if ( NSP_OBJECT(A->%s)->type->eq(A->%s,loc->%s) == FALSE ) return FALSE;\n'\
+        return 'if ( NSP_OBJECT(A->%s)->type->eq(A->%s,loc->%s) == FALSE ) return FALSE;\n'\
             % (pname,pname,pname)
 
     def attr_free_fields(self,pname, varname,byref):
@@ -1132,7 +1160,7 @@ class ObjectArg(ArgType):
             str = '  ' 
         else:
             str = ''
-        return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
+        return  str + ' nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
 
     def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be printed """
@@ -1164,7 +1192,16 @@ class ObjectArg(ArgType):
             str = str + '      if ((%s->%s = (%s *)  zzznsp_object_copy_and_name("%s",NSP_OBJECT(%s))) == NULL) return NULL;\n    }\n' \
                 % (left_varname,pname,self.objname,pname,pname)
             str = '  %s->%s= %s;\n' % (left_varname,pname,pname)
-        return str
+        return  str
+
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
+        return '  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(%s->%s)) == FAIL) return FAIL;\n' % (varname,pname)
+
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return '  if ((%s->%s= (%s *) nsp_object_xdr_load(xdrs))== NULL) return NULL;\n' % (varname,pname,self.objname)
+
+
 
 
 class BoxedArg(ArgType):
@@ -1543,6 +1580,7 @@ class GdkRectangleArg(ArgType):
         info.attrcodeafter.append('  return (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle);')
 
 class NspObjectArg(ArgType):
+
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         info.varlist.add('NspObject', '*' + pname)
         info.add_parselist('obj', ['&' + pname], [pname])

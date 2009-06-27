@@ -110,7 +110,7 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
       
   type->init = (init_func *) init_points3d;
 
-#line 71 "codegen/points3d.override"
+#line 41 "codegen/points3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -716,7 +716,7 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
 #line 717 "points3d.c"
 
 
-#line 119 "codegen/points3d.override"
+#line 89 "codegen/points3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -728,7 +728,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
 #line 729 "points3d.c"
 
 
-#line 129 "codegen/points3d.override"
+#line 99 "codegen/points3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -784,7 +784,7 @@ Init portion
 }
 */
 
-#line 140 "codegen/points3d.override"
+#line 110 "codegen/points3d.override"
 
 /* inserted verbatim at the end */
 

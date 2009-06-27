@@ -38,7 +38,7 @@ init
 Init portion 
 
 %%
-override_type NspFigure
+override-type Figure
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
@@ -68,7 +68,7 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 %%
-override-attr children
+override-attr Figure.children
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {

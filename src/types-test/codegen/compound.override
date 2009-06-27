@@ -36,7 +36,7 @@ init
 Init portion 
 
 %%
-override_type NspCompound
+override-type Compound
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_compound;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_compound ;
@@ -82,7 +82,7 @@ static int _wrap_kiko_action_do_action(NspKiko *self,Stack stack,int rhs,int opt
 }
 
 %%
-override-attr rho 
+override-attr Compound.rho 
 /* override set rho */
 static int _wrap_compound_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -98,7 +98,7 @@ static int _wrap_compound_set_rho(void *self, char *attr, NspObject *O)
 }
 
 %%
-override-attr children
+override-attr Compound.children
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 

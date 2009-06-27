@@ -101,7 +101,7 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
       
   type->init = (init_func *) init_polyline3d;
 
-#line 62 "codegen/polyline3d.override"
+#line 32 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -680,10 +680,11 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 684 "polyline3d.c"
+
+#line 685 "polyline3d.c"
 
 
-#line 110 "codegen/polyline3d.override"
+#line 81 "codegen/polyline3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -692,10 +693,10 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 696 "polyline3d.c"
+#line 697 "polyline3d.c"
 
 
-#line 120 "codegen/polyline3d.override"
+#line 91 "codegen/polyline3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -705,7 +706,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 709 "polyline3d.c"
+#line 710 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -746,12 +747,12 @@ Polyline3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 750 "polyline3d.c"
+#line 751 "polyline3d.c"
   nspgobject_register_class(d, "NspPolyline3d", Polyline3d, &NspNspPolyline3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 131 "codegen/polyline3d.override"
+#line 102 "codegen/polyline3d.override"
 
 /* inserted verbatim at the end */
 
@@ -943,4 +944,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 947 "polyline3d.c"
+#line 948 "polyline3d.c"

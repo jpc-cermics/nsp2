@@ -103,7 +103,7 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
       
   type->init = (init_func *) init_spolyhedron;
 
-#line 63 "codegen/spolyhedron.override"
+#line 34 "codegen/spolyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -998,10 +998,12 @@ int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 1002 "spolyhedron.c"
 
 
-#line 111 "codegen/spolyhedron.override"
+#line 1004 "spolyhedron.c"
+
+
+#line 83 "codegen/spolyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1010,10 +1012,10 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1014 "spolyhedron.c"
+#line 1016 "spolyhedron.c"
 
 
-#line 121 "codegen/spolyhedron.override"
+#line 93 "codegen/spolyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1022,7 +1024,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1026 "spolyhedron.c"
+#line 1028 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1063,12 +1065,12 @@ SPolyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1067 "spolyhedron.c"
+#line 1069 "spolyhedron.c"
   nspgobject_register_class(d, "NspSPolyhedron", SPolyhedron, &NspNspSPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 131 "codegen/spolyhedron.override"
+#line 103 "codegen/spolyhedron.override"
 
 /* inserted verbatim at the end */
 
@@ -1689,4 +1691,4 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-#line 1693 "spolyhedron.c"
+#line 1695 "spolyhedron.c"
