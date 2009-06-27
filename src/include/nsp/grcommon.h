@@ -22,7 +22,7 @@ extern Gengine GL_gengine;
 #endif 
 
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
-extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
+extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n,double *col, int ncol);
 extern NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  ;
 extern NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n);
 extern int nsp_facets_to_faces(double *x,double *y,double *z,double *colors,int m,int n,

@@ -718,7 +718,7 @@ int _wrap_arrows_attach(Stack stack, int rhs, int opt, int lhs)
 #line 719 "arrows.c"
 
 
-#line 90 "codegen/arrows.override"
+#line 60 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -730,7 +730,7 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
 #line 731 "arrows.c"
 
 
-#line 100 "codegen/arrows.override"
+#line 70 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -786,7 +786,7 @@ Init portion
 }
 */
 
-#line 111 "codegen/arrows.override"
+#line 81 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 

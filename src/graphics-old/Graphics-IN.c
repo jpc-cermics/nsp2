@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS */
+/* #define NEW_GRAPHICS  */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -1087,7 +1087,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   nsp_option opts[] ={{ "args",list,NULLOBJ,-1},
 		      { "alpha",s_double,NULLOBJ,-1},
 		      { "colormap",realmat,NULLOBJ,-1},
-		      { "colors",mat_int,NULLOBJ,-1},
+		      { "colors",matcopy_int,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
 		      { "flag",realmat,NULLOBJ,-1},
 		      { "leg", string,NULLOBJ,-1},
@@ -1128,7 +1128,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   else 
     {
       izcol = 1;
-      zcol  = (int *) Mcolors->R;
+      zcol  = Mcolors->I;
       CheckDimProp(NspFname(stack),3,opts[2].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
       /* 
        *   Added by E Segre 4/5/4000. In the case where zcol is a 
@@ -1405,7 +1405,7 @@ int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, do
       objs3d->obj->colormap=colormap; 
     }
   /* create a polyhedron and insert it in objs3d */
-  pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q);
+  pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q,NULL,0);
   if ( pol == NULL) return FAIL;
   /* insert the new vfield */
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)

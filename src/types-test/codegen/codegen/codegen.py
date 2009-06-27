@@ -623,6 +623,8 @@ class Wrapper:
 
         # check if some slots are overriden and add them in substdict
         # tp_setattr and tp_getattr 
+        # this can be used to change the tp_setattr and tp_getattr functions.
+
         for slot in self.slots_list:
             if substdict.has_key(slot) and substdict[slot] != '0':
                 continue

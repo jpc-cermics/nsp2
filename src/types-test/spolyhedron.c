@@ -1338,7 +1338,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 #ifdef  WITH_GTKGLEXT 
   int foreground_color = 1; /* XX should be shared */
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
-  int i,j, np=1, m, zero=0,colors[4];
+  int i,j, np=1, m,colors[4];
   int numpt, *current_vertex, color;
   double val_mean=0.0;
   double x[12], y[12], z[12], v[12];
@@ -1638,7 +1638,7 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
  * Returns: a new #NspPolyhedron or %NULL 
  **/
 
-NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n)
+NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol)
 {
   double vmin=0.0,vmax=0.0;
   NspSPolyhedron *pol;
@@ -1646,8 +1646,24 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
   if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
   if ((F=nsp_surf_to_faces("c",x,m,y,n) )==NULL) goto bug;
   if ((Val = nsp_matrix_create("v",'r',C->m,1)) == NULLMAT) goto bug; 
-  memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
 
+  if ( col == NULL) 
+    {
+      /* colors are selected according to z values */
+      memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
+    }
+  else if ( ncol == C->m ) 
+    {
+      /* colors are selected accordind to col array */
+      memcpy(col,C->R+2*C->m,C->m*sizeof(double));
+    }
+  else if ( ncol == m ) 
+    {
+      /* one color by face XXXXX */
+      memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
+    }
+  
+  
   /* use VMiniMaxi but change it to extern */
   if ( Val->mn != 0) 
     {
@@ -1673,4 +1689,4 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-#line 1677 "spolyhedron.c"
+#line 1693 "spolyhedron.c"
