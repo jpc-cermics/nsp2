@@ -1258,7 +1258,7 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
   return OK;
 }
 
-static int display_mode = INTERP;
+static int display_mode =  INTERP; 
 
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
@@ -1661,7 +1661,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
     }
   else if ( ncol == m ) 
     {
-      /* one color by face XXXXX */
+      /* one color by face from col array XXXXX */
       memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
     }
   
@@ -1691,4 +1691,29 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-#line 1695 "spolyhedron.c"
+NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol )
+{
+  double vmin=0.0,vmax=0.0;
+  NspSPolyhedron *pol;
+  NspMatrix *C=NULL,*F=NULL, *Val=NULL;
+  
+  if ( nsp_facets_to_faces(xx,yy,zz,colors,ncol,m,n,&C,&F,&Val)== FAIL) goto bug;
+  
+  vmin = 0;
+  vmax = 32;
+  
+  if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
+				    TRUE,-1,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+    goto bug;
+  if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
+  return pol;
+
+ bug:
+  if ( C != NULL) nsp_matrix_destroy(C);
+  if ( F != NULL) nsp_matrix_destroy(F);
+  if ( Val != NULL) nsp_matrix_destroy(Val);
+  return NULL;
+}
+
+
+#line 1720 "spolyhedron.c"

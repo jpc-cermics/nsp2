@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-/* #define NEW_GRAPHICS  */
+/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 #include <gtk/gtk.h>
@@ -62,6 +62,8 @@
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
+extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n, int *colors, int ncol );
+
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
@@ -1055,11 +1057,11 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
 #ifdef NEW_GRAPHICS
 typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *,
 		    NspMatrix *); 
-typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 		    double *,const char *,int *,double *,NspMatrix *); 
-typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 		    double *,const char *,int *,double *,NspMatrix *); 
-typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
+typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 		    double *,const char *,int *,double *,NspMatrix *);
 #else 
 typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *);
@@ -1218,7 +1220,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if (izcol == 0) 
 	{
 #ifdef NEW_GRAPHICS 
-	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox ,colormap);
+	  (*func1)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox ,colormap);
 #else 
 	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 #endif 
@@ -1227,7 +1229,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
 #ifdef NEW_GRAPHICS 
-	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
+	  (*func3)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
 #else 
 	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 #endif 
@@ -1235,7 +1237,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       else 
 	{
 #ifdef NEW_GRAPHICS 
-	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
+	  (*func2)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
 #else 
 	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 #endif 
@@ -1346,9 +1348,9 @@ int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, dou
   return OK;
 }
 
-int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
+int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
 {
-  NspPolyhedron *pol;
+  NspSPolyhedron *pol;
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
   objs3d->obj->alpha=*alpha;
@@ -1359,9 +1361,8 @@ int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z, int *cvect, int
       objs3d->obj->colormap=colormap; 
     }
 
-
   /* create a polyhedron and insert it in objs3d */
-  pol = nsp_polyhedron_create_from_facets("pol",x,y,z,*p,*q);
+  pol = nsp_spolyhedron_create_from_facets("pol",x,y,z,*p,*q,cvect,(izcol==1) ? *q : (izcol==2) ? *p*(*q) : 0);
   if ( pol == NULL) return FAIL;
   /* insert the new vfield */
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
