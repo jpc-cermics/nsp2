@@ -12,7 +12,7 @@ xx = r*cos(t)+0.5;
 yy = r*sin(t)+0.5;
 zz = zeros(size(xx));
 color = 1;
-L1 = polyline3d_create(Mcoord= [xx;yy;zz], Mcolor=color);
+L1 = polyline3d_create(Mcoord= [xx;yy;zz]', Mcolor=color);
 
 cmap= [jetcolormap(64);[0.9 0.9 0.9]];
 

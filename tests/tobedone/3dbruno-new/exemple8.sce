@@ -7,7 +7,7 @@ xx = abs(t/(16*%pi)).*cos(t);
 yy = abs(t/(16*%pi)).*sin(t);
 zz = t/(16*%pi);
 colors = bsearch(0.5*(xx(1:$-1)+xx(2:$)),linspace(-1,1,129));
-L = polyline3d_create(Mcoord=[xx;yy;zz], Mcolor=colors);
+L = polyline3d_create(Mcoord=[xx;yy;zz]', Mcolor=colors);
 
 nu = 60;
 nv = 30;

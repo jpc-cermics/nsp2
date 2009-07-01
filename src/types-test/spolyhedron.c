@@ -536,7 +536,7 @@ int nsp_spolyhedron_create_partial(NspSPolyhedron *H)
   H->obj->coloutmin = -1;
   H->obj->coloutmax = -1;
   H->obj->mesh = TRUE;
-  H->obj->back_color = 0;
+  H->obj->back_color = 4;
   H->obj->Mcoord_l = NULL;
   H->obj->pos = NULL; H->obj->pos_length = 0; 
   H->obj->fill = NULL; H->obj->fill_length = 0; 
@@ -1167,7 +1167,9 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
 
   if (  Q->colmax == -1 &&  Q->colmin == -1) Q->coldef=1;
 
-  /* give default values to */
+  /* give default values to 
+   * colmin and colmax using the registered colormap
+   */
   if ( Xgc != NULL && Q->coldef==1)
     {
       /* adapt colmin and colmax to min max colors */
@@ -1232,12 +1234,22 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
       if ( Q->fill == NULL)  return FAIL;
       Q->fill_length = (2 + Q_nb_levels);
     }
+
+  if ( Xgc != NULL && Q->vmax == Q->vmin && Q->vmax == 0.0)
+    {
+      /* we assume here that the Q_val values 
+       * are graduated as colors 
+       *
+       */
+      Q->vmin = 1;
+      Q->vmax =  Xgc->Numcolors-1;
+    }
   
   dv = (Q->vmax - Q->vmin)/Q_nb_levels;
   Q->vlevel[0] = Q->vmin;
   for ( i = 1 ; i < Q_nb_levels ; i++ ) Q->vlevel[i] = Q->vmin + i*dv;
   Q->vlevel[Q_nb_levels] = Q->vmax;
-
+  
   Q->fill[0] = Q->coloutmin;
   Q->fill[1] = Q->colmin;
   for ( i = 2 ; i <= Q_nb_levels ; i++ )  Q->fill[i] = Q->fill[i-1] + 1;
@@ -1298,17 +1310,23 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   val_mean = val_mean / m;
 
   orient = nsp_obj3d_orientation(x, y, m);
-
+  
   Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   
   if ( m > 12 || ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ))
     {
       if ( orient == 1  && Q->back_color >= 0 )
-	color = -Q->back_color;
+	{
+	  color = - Q->back_color;
+	  if ( Q->mesh ) color= Abs(color);
+	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+	}
       else
-	color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
-      if ( Q->mesh ) color= Abs(color);
-      Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+	{
+	  color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+	  if ( Q->mesh ) color= Abs(color);
+	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+	}
     }
   else
     {
@@ -1680,7 +1698,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
 	}
     }
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,-1,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,4,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
@@ -1691,20 +1709,39 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
-NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol )
+NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol )
 {
-  double vmin=0.0,vmax=0.0;
+  int bc;
+  double vmin=1,vmax=cmap_ncol -1 ;
   NspSPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL, *Val=NULL;
   
   if ( nsp_facets_to_faces(xx,yy,zz,colors,ncol,m,n,&C,&F,&Val)== FAIL) goto bug;
+
+  if ( colors == NULL ) 
+    {
+      /* when colors is not given zz is used and mapped to colors we have 
+       * to compute vmin and vmax in that case to 
+       * properly remap zz to the range of the colormap 
+       */
+      int i=0,j;
+      while ( ISNAN(Val->R[i])) i++;
+      vmin = vmax = Val->R[i];
+      for ( j = i+1 ; j < Val->mn ; j++) 
+	{
+	  if ( ISNAN(Val->R[j])) continue;
+	  if ( Val->R[j] < vmin) vmin = Val->R[j];
+	  if ( Val->R[j] > vmax) vmax = Val->R[j];
+	}
+    }
   
-  vmin = 0;
-  vmax = 32;
-  
+  bc = -1; /* XXX the color for hidden faces but the orientation is wrong in 
+	    * this function 
+	    */
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,-1,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,bc,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
+
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
 
@@ -1716,4 +1753,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1720 "spolyhedron.c"
+#line 1757 "spolyhedron.c"

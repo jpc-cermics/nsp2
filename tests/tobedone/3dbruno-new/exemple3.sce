@@ -10,19 +10,19 @@ t = linspace(0,2*%pi,200);
 xx = 0.7*cos(t)+%pi;
 yy = 0.7*sin(t)+%pi;
 zz = 1.5*cos(xx).*cos(yy) + 0.02;
-L1 = polyline3d_create(Mcoord= [xx;yy;zz] ,Mcolor=1);
+L1 = polyline3d_create(Mcoord= [xx;yy;zz]' ,Mcolor=1);
 
 // une autre courbe (légèrement) au dessus de la surface
 xx = 2.5*cos(t)+%pi;
 yy = 2.5*sin(t)+%pi;
 zz = 1.5*cos(xx).*cos(yy) + 0.02;
-L2 = polyline3d_create(Mcoord= [xx;yy;zz] ,Mcolor=52);
+L2 = polyline3d_create(Mcoord= [xx;yy;zz]' ,Mcolor=52);
 
 // quelques points
 nb_points = 20;
 coord = [grand(2, nb_points, "unf", 0, 2*%pi); ...
 	 grand(1, nb_points, "unf",-1, 1)];
-Q = points3d_create(Mcoord=coord,color=1,mark_type=9);
+Q = points3d_create(Mcoord=coord',color=1,mark_type=9);
 
 xset("colormap", [hotcolormap(64);[0.8 0.9 1]]);
 

@@ -15,7 +15,7 @@
    '("int" "coloutmin" "std" "-1" )
    '("int" "coloutmax"  "std" "-1")
    '("gboolean" "mesh" "std" "TRUE")
-   '("int" "back_color" )
+   '("int" "back_color" "std" "4") 
    ;;  extra hidden fields 
    '("void*" "Mcoord_l"  "hidden" "NULL" )
    '("int*" "pos" "hidden" )

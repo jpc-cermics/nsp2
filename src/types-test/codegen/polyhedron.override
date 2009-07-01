@@ -683,7 +683,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
     {
       if ( nsp_matint_delete_rows(NSP_OBJECT(Col),&index)==FAIL) return FAIL;
     }
-
+    
   nsp_matrix_destroy(Fc);
   nsp_matrix_destroy(Fs); 
   nsp_matrix_destroy(Index); 

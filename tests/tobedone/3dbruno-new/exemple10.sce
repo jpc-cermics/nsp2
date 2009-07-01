@@ -6,7 +6,7 @@ xx = abs(t/(16*%pi)).*cos(t);
 yy = abs(t/(16*%pi)).*sin(t);
 zz = t/(16*%pi);
 colors = bsearch(0.5*(xx(1:$-1)+xx(2:$)),linspace(-1,1,129));
-L = polyline3d_create(Mcoord= [xx;yy;zz], Mcolor=colors);
+L = polyline3d_create(Mcoord= [xx;yy;zz]', Mcolor=colors);
 
 Q = sphere_bis([0;0;0],0.6,3);
 z = matrix(Q.Mcoord(Q.Mface,3),3,-1);

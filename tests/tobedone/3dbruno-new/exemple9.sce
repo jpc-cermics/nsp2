@@ -30,9 +30,9 @@ A.children($+1) = string3d_create(Mcoord=[-1;1;-1],str="5");
 A.children($+1) = string3d_create(Mcoord=[1;-1;-1],str="6");
 A.children($+1) = string3d_create(Mcoord=[-1;1;1],str="7");
 
-A.children($+1) = polyline3d_create(Mcoord=[-1 , 1;-1 ,-1;-1 ,-1], Mcolor=2);
-A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 , 1;-1 ,-1], Mcolor=2);
-A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 ,-1;-1  ,1], Mcolor=2);
+A.children($+1) = polyline3d_create(Mcoord=[-1 , 1;-1 ,-1;-1 ,-1]', Mcolor=2);
+A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 , 1;-1 ,-1]', Mcolor=2);
+A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 ,-1;-1  ,1]', Mcolor=2);
 C = cube();
 C.Mcoord = C.Mcoord/2;
 A.children($+1) = C;
