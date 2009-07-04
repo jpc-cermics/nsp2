@@ -1397,16 +1397,38 @@ NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ym
 int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
 			NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr)
 {
+  int switch_orient= FALSE;
   index_vector index={0};
   int i,j,k;
   NspMatrix *C,*Fs,*Fc,*Fsc,*Index,*Col=NULL;
   NspBMatrix *B;
   if ((C = nsp_matrix_create("C",'r',m*n,3))==NULL) return FAIL;
-  for ( i=0 ; i < C->m; i++)
+  /* 
+   * we switch the orientation of facets to conform to 
+   * spolyhedron 
+   */
+  if ( switch_orient ) 
     {
-      C->R[i]= x[i];
-      C->R[i+C->m]= y[i];
-      C->R[i+2*C->m]= z[i];
+      for ( j=0 ; j < n; j++)
+	{
+	  int of2=m*j;
+	  int of1=(m-1)+of2;
+	  for ( i=0 ; i < m; i++)
+	    {
+	      C->R[i+of2]= x[of1-i];
+	      C->R[i+of2+C->m]= y[of1-i];
+	      C->R[i+of2+2*C->m]= z[of1-i];
+	    }
+	}
+    }
+  else
+    {
+      for ( i=0 ; i < C->m; i++)
+	{
+	  C->R[i]= x[i];
+	  C->R[i+C->m]= y[i];
+	  C->R[i+2*C->m]= z[i];
+	}
     }
   /* sort the matrix 
    * [Cs,ks]= sort(C,'ldr','i');
@@ -1419,8 +1441,27 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
       if ( ncol == m*n ) 
 	{
 	  /* colors given by colors */
-	  for ( i = 0 ; i < m*n ; i++)
-	    Col->R[i]=colors[Index->I[i]-1];
+	  if ( switch_orient ) 
+	    {
+	      NspMatrix *col1;
+	      if ((col1 = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
+	      for ( j=0 ; j < n; j++)
+		{
+		  int of2=m*j, of1=(m-1)+of2;
+		  for ( i=0 ; i < m; i++)
+		    {
+		      col1->I[i+of2]= colors[of1-i];
+		    }
+		}
+	      for ( i = 0 ; i < m*n ; i++)
+		Col->R[i]=colors[Index->I[i]-1];
+	      nsp_matrix_destroy(col1);
+	    }
+	  else
+	    {
+	      for ( i = 0 ; i < m*n ; i++)
+		Col->R[i]=colors[Index->I[i]-1];
+	    }
 	}
       else if ( ncol == n ) 
 	{
@@ -1438,8 +1479,9 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
     }
   
   /* create the facets 
+   * Fs = matrix(kp,m,n); 
+   * Fs stocke la permutation inverse a celle de Index
    * kp(ks)=1:m*n;
-   * Fs = matrix(kp,m,n); // les faces au sens polyhedron 
    */
   if ((Fs = nsp_matrix_create(NVOID,'r',m,n))==NULL) return FAIL;
   Fs->convert = 'i';
@@ -1505,4 +1547,4 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 
 
 
-#line 1509 "polyhedron.c"
+#line 1551 "polyhedron.c"
