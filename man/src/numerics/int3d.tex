@@ -1,0 +1,145 @@
+% -*- mode: latex -*-
+
+\mansection{int3d}
+\begin{mandesc}
+  \short{int3d}{three dimensional integration over a parallelepiped  or a set of tetrahedra}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Ia  = int3d(X, Y, Z, f)
+[Ia, [,ea_estim, [,ier [,neval]]]] = int3d(X, Y, Z, f, atol=ea, rtol=er, args=obj, limit=maxtet, vecteval=b)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X,Y,Z}: vectors with 2 components $X=[a,b]$, $Y=[c,d]$ and $Z = [e,f]$ for
+    the parallelepiped case or  $4 \times n$ arrays given the coordinates of the $n$ tetrahedra.
+    \vname{f}: nsp function
+    \vname{atol=ea}: optional named argument, requested absolute error
+                      on the result (default is 1e-12)
+    \vname{rtol=er}: optional named argument, requested relative error
+                      on the result (default is 1e-7).
+    \vname{args=obj}: optional named argument, useful to pass
+    additional parameters needed by the function f.
+    \vname{limit=maxtet}: optional named argument, max number of
+    tetrahedra allowed in the subdivision process of the initial set of
+    tetrahedra (default is 10000).
+    \vname{vecteval=b}: optional named argument, boolean scalar
+    (default \verb+%f+), use \verb+%t+ if you write the function
+    \verb+f+ such that it could be evaluated on vectors arguments 
+    (this speed up the computation).
+    \vname{Ia}: computed approximate result
+    \vname{ea_estim}: estimated absolute error
+    \vname{ier}: scalar given some information about the computation.
+    \vname{neval}: number of function evaluations used for the computation.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes an approximation $I_a$ of:
+$$
+   I = \int_a^b \int_c^d \int_e^f f(x,y,z) dxdydz
+$$
+or
+$$
+   I = \sum_k \int_{T_k} f(x,y,z) dxdydz
+$$
+such that:
+$$
+   | I - I_a | \le  \max \{ atol ,  rtol*|I_a| \}
+$$
+Additional parameter(s) for the function $f$ could be passed using the
+optional argument \verb+args+ which can be any nsp object (see
+examples and also the examples from \manlink{intg}{intg}). 
+\verb+ea_estim+ is an estimation of $| I - I_a |$. The
+\verb+ier+ variable could take the following values: 
+\begin{itemize}
+\item ier = 0,  normal and reliable termination of the routine. It is assumed that the
+      requested  accuracy has been achieved.
+\item ier = 1: maximum number of tetrahedra (the limit
+      parameter) allowed has been achieved. You can try to
+      increase limit.
+\end{itemize}
+ 
+The code uses the method described in ``Algorithm 720, TOMS ACM,
+An Algorithm for Adaptive Cubature Over a Collection of 3-Dimensional Simplices
+Jarle Berntsen, Ronald Cools, Terje O. Espelid''.
+
+{\bf Rmk:} the computation should be much faster if you code the integrand function
+such that it can be evaluated on vectors x, y and z (in this case you should add \verb+vecteval=%t+
+to benefit of the speed up).
+
+\end{mandescription}
+
+\begin{examples}
+  
+\paragraph{example 1} integrating on the unit cube 
+\begin{Verbatim}
+function v=f(x,y,z);v=cos(x+y+z);endfunction
+[Ia,ea] = int3d([0,1],[0,1],[0,1],f)
+I = -sin(3) + 3*(sin(2)-sin(1)) // exact result  
+abs(Ia-I)
+\end{Verbatim}
+  
+\paragraph{example 2} integrating on the unit simplex
+\begin{Verbatim}
+X = [0;1;0;0];
+Y = [0;0;1;0];
+Z = [0;0;0;1];
+function v=f(x,y,z);v=1-x-y-z;endfunction
+[Ia,ea] = int3d(X,Y,Z,f)
+I = 1/24 // exact result  
+abs(Ia-I)
+\end{Verbatim}
+  
+\paragraph{example 3} passing additionnal parameters to the integrand function.
+A test function from the J. Berntsen, R. Cools, T. O. Espelid paper is the
+following:
+$$
+ f(x,y,z) = \frac{1}{(1 + \alpha_1 x +  \alpha_2 y +  \alpha_3 z)^4 } 
+$$
+This function is integrated on the 3d unit simplex and exact result is (for $\alpha_i > -1$):
+$$
+I = \int_0^1 \int_0^{1-x} \int_0^{1-x-y} f(x,y,z) dz dy dx = \frac{1}{6 (1+\alpha_1)(1+\alpha_2)(1+\alpha_3)}
+$$
+\begin{Verbatim}
+function v=foo(x,y,z,alpha);
+   v = 1./(1 + alpha(1)*x+alpha(2)*y+alpha(3)*z).^4;
+endfunction
+// the 3d unit simplex
+X = [0;1;0;0];
+Y = [0;0;1;0];
+Z = [0;0;0;1];
+
+// test 1
+alpha = [3,13,9];
+I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
+[Ia,ea] = int3d(X,Y,Z,foo,args=alpha)
+abs(I - Ia)
+
+// test2
+alpha = [30,13,91];
+I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
+tic(); [Ia,ea] = int3d(X,Y,Z,foo,args=alpha); toc()
+abs(I - Ia)
+
+// test2 using vector evaluation (it should be must faster)
+I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
+tic(); [Ia,ea] = int3d(X,Y,Z,foo,args=alpha,vecteval=%t); toc()
+abs(I - Ia)
+
+\end{Verbatim}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{intg}{intg} ,  \manlink{int2d}{int2d}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}
