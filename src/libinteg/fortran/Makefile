@@ -4,7 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = integ.a
 
-OBJSC =
+OBJSC = int3dnsp.o
 
 OBJSF = ainvg.o bnorm.o cfode.o  ewset.o fnorm.o intdy.o lsoda.o lsode.o \
 	lsodi.o prepj.o prepji.o prja.o rscma1.o rscom1.o solsy.o stoda.o \

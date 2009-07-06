@@ -741,8 +741,8 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error:  intg: tolerance too stringent\n");
       goto err;
     }
-  else if ( ier != 0 )  /* display a warning */
-    Sciprintf("\n Warning: abnormal return from intg (requested precision not reached), ier = %d\n",ier);
+  else if ( ier != 0 && lhs < 3 )  /* display a warning */
+    Sciprintf("\n Warning => intg: requested precision not reached (ier = %d)\n",ier);
 
   intg_clean(&intg_d);
   FREE(rwork); FREE(iwork);
@@ -1054,10 +1054,9 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
                               /* the function to integrate  */
 
-  if ( iflag != 0 )  /* display a warning */
+  if ( iflag != 0 && lhs < 3 )  /* display a warning */
     {
-      Sciprintf("\n Warning: requested precision not reached, ier = %d\n", iflag);
-/*       Sciprintf("\n          maxtri= %d, nu+nd = %d, nevals = %d, meval = %d\n",limit, nu+nd, neval, meval); */
+      Sciprintf("\n Warning => int2d: requested precision not reached (ier = %d)\n", iflag);
     }
 
   int2d_clean(&int2d_d);
@@ -1085,6 +1084,305 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   int2d_clean(&int2d_d);
   nsp_matrix_destroy(res);
   nsp_matrix_destroy(xx); nsp_matrix_destroy(yy);
+  return RET_BUG;
+}
+
+
+
+/*
+ * int3d interface: [I,er_estim,info] = int2d(x, y, z, f, rtol=, atol=, limit=, vect_flag=, args=List)
+ * Author: Bruno Pincon. 
+ * Modelled from the int2d interface
+ * We use a global variable (int3d_data) to transmit information 
+ * to int3d_func. int3d_func is the C func passed to the 
+ * integrant and which evaluates f(x, y, z [,arg]) from a nsp function.
+ */ 
+
+typedef int (*int3d_f)(const double *x, const double *y, const double *z, double *values, int *n, void *params);
+
+extern int nsp_int3d(double *X, double *Y, double *Z, int nt, 
+		     int3d_f func, void *params, double *I, double *e, 
+		     int ntmax, double atol, double rtol, int vecteval,
+		     int *ntused, int *nbcalls);
+
+typedef struct _int3d_data int3d_data;
+ 
+struct _int3d_data
+{
+  NspObject *args; /* extra argument of the integrant */
+  NspMatrix *x;    /* current evaluation point abscissae, x is a 1x1 or npx1 */
+  NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or npx1 */
+  NspMatrix *z;    /* current evaluation point elevation, z is a 1x1 or npx1 */
+  NspObject *func; /* function to integrate */
+};
+
+static int3d_data int3d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLMAT, NULLOBJ}; 
+
+
+static int int3d_prepare(NspObject *f, NspObject *args, int3d_data *obj, Boolean vect_flag)
+{
+  if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
+  if (( nsp_object_set_name(obj->func,"int3d_f")== FAIL)) return FAIL;
+  if ( args != NULL ) 
+    {
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
+      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+    }
+  else 
+    {
+      obj->args = NULL;
+    }
+
+  if ( vect_flag )
+    {
+      if ((obj->x = nsp_matrix_create("x",'r',344,1))== NULL) return FAIL;
+      if ((obj->y = nsp_matrix_create("y",'r',344,1))== NULL) return FAIL;
+      if ((obj->z = nsp_matrix_create("z",'r',344,1))== NULL) return FAIL;
+    }
+  else              /* scalar evaluation */
+    {
+      if ((obj->x = nsp_matrix_create("x",'r',1,1))== NULL) return FAIL;
+      if ((obj->y = nsp_matrix_create("y",'r',1,1))== NULL) return FAIL;
+      if ((obj->z = nsp_matrix_create("z",'r',1,1))== NULL) return FAIL;
+    }
+  return OK;
+}
+
+
+/**
+ * int3d_clean:
+ * @obj:  int3d_data struct
+ * 
+ * clean after integration 
+ **/
+static void int3d_clean(int3d_data *obj)
+{
+  if ( obj->args != NULL) nsp_object_destroy(&(obj->args));
+  nsp_object_destroy( (NspObject **) &(obj->func));
+  nsp_matrix_destroy(obj->x);
+  nsp_matrix_destroy(obj->y);
+  nsp_matrix_destroy(obj->z);
+
+  /* ici */
+}
+
+/**
+ * int3d_func:
+ * @x: 
+ * @y: 
+ * @z: 
+ * 
+ * this function is passed to nsp_int3d as a function description 
+ * 
+ * Return value: 1 (eval is successuf) or 0 (fail has failed)
+ * 
+ **/
+static int int3d_func(const double *x, const double *y, const double *z, double *val, int *n, void *param)
+{
+  int3d_data *int3d = &int3d_d;
+  NspObject *targs[4];/* arguments to be transmited to intg->func */
+  NspObject *nsp_ret;
+  int k, nret = 1,nargs = 3;
+  int mn_saved = int3d->x->mn, m_saved = int3d->x->m;   /* to be explained... */
+
+  targs[0]= NSP_OBJECT(int3d->x);
+  for ( k = 0 ; k < *n ; k++ )
+    int3d->x->R[k] = x[k];
+  int3d->x->mn = *n; int3d->x->m = *n;
+  targs[1]= NSP_OBJECT(int3d->y);
+  for ( k = 0 ; k < *n ; k++ )
+    int3d->y->R[k] = y[k];
+  int3d->y->mn = *n; int3d->y->m = *n;
+  targs[2]= NSP_OBJECT(int3d->z);
+  for ( k = 0 ; k < *n ; k++ )
+    int3d->z->R[k] = z[k];
+  int3d->z->mn = *n; int3d->z->m = *n;
+
+  if (int3d->args != NULL ) 
+    {
+      targs[3]= int3d->args;
+      nargs = 4;
+    }
+
+  /* FIXME : a changer pour mettre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)int3d->func,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      Scierror("Error: int3d: failure in function evaluation\n");
+      return 0;
+    }
+
+  int3d->x->mn = mn_saved; int3d->x->m = m_saved;  /* to be explained... */
+  int3d->y->mn = mn_saved; int3d->y->m = m_saved;
+  int3d->z->mn = mn_saved; int3d->z->m = m_saved;
+
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
+    {
+      for ( k = 0 ; k < *n ; k++ )
+	val[k] = ((NspMatrix *) (nsp_ret))->R[k];
+      nsp_object_destroy( ((NspObject **) &nsp_ret));
+      return 1;
+    }
+  else 
+    {
+      Scierror("Error:  int3d: a problem occured in function evaluation:\n");
+      if ( nret != 1 )
+	Scierror("        function don't return one argument\n");
+      else if ( !IsMat(nsp_ret) )
+	Scierror("        function don't return the good type (must be a Mat)\n");
+      else if ( ! (((NspMatrix *) nsp_ret)->rc_type == 'r') )
+	Scierror("        function return a complex instead of a real\n");
+      else if ( ((NspMatrix *) nsp_ret)->mn != *n )
+	Scierror("        function don't return a vector of good length\n");
+
+      nsp_object_destroy((NspObject **) &nsp_ret);
+      return 0;
+    }
+}
+
+void para2tetrahedra(double a, double b, double c, double d, double e, double f,
+		     double *Xt, double *Yt, double *Zt);
+
+static int make_tetrahedra(double a, double b, double c, double d, double e, double f, 
+			   NspMatrix **XX, NspMatrix **YY, NspMatrix **ZZ)
+{
+  NspMatrix *xx=NULLMAT, *yy=NULLMAT, *zz=NULLMAT;
+  double dx = b-a, dy = d-c, dz = f-e;
+
+  if ( ! (finite(a) && finite(b) && finite(c) && finite(d) && finite(e) && finite(f)
+          && a < b && c < d  && e < f && finite(dx) && finite(dy) && finite(dz)) )
+    return FAIL;
+
+  if ( (xx=nsp_matrix_create(NVOID,'r',4,5)) == NULLMAT )
+    return FAIL;
+  if ( (yy=nsp_matrix_create(NVOID,'r',4,5)) == NULLMAT )
+    { nsp_matrix_destroy(xx); return FAIL;}
+  if ( (zz=nsp_matrix_create(NVOID,'r',4,5)) == NULLMAT )
+    { nsp_matrix_destroy(xx); nsp_matrix_destroy(yy); return FAIL;}
+
+  para2tetrahedra(a, b, c, d, e, f, xx->R, yy->R, zz->R);
+  *XX = xx; *YY = yy; *ZZ = zz;
+  return OK;
+}
+	  
+/**
+ * int_int2d:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface for int3d
+ * 
+ * Return value: number of returned arguments.
+ **/
+int int_int3d(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT, *z=NULLMAT, *xx=NULLMAT, *yy=NULLMAT, *zz=NULLMAT;
+  NspObject *f=NULLOBJ, *args=NULLOBJ;
+  double atol=1e-12, rtol=1e-7, Ia, ea;
+  int limit = 10000, neval, ntused, stat, ier=0;
+  Boolean vecteval=FALSE, on_tetrahedra=TRUE;
+
+  int_types T[] = {realmat, realmat, realmat, obj, new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "args",obj,  NULLOBJ,-1},
+    { "atol",s_double,NULLOBJ,-1},
+    { "rtol",s_double,NULLOBJ,-1},
+    { "limit",s_int,NULLOBJ,-1},
+    { "vecteval",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+
+  CheckLhs(1,4);
+
+  if ( GetArgs(stack,rhs,opt, T, &x, &y, &z, &f, &opts, &args, &atol, &rtol, &limit, &vecteval) == FAIL ) 
+    return RET_BUG;
+  
+  CheckSameDims (NspFname(stack), 1, 2, x, y);
+  CheckSameDims (NspFname(stack), 1, 3, x, z);
+  if ( x->mn == 2 )
+    {
+      on_tetrahedra = FALSE;
+      if ( make_tetrahedra(x->R[0],x->R[1], y->R[0], y->R[1], z->R[0], z->R[1], &xx, &yy, &zz) == FAIL )
+	{
+	  Scierror("%s: three first arguments don't define a parallelepiped (or a memory problem occured)\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      x = xx; y = yy, z = zz;
+    }
+  else if ( x->m != 4 || x->n < 1 )
+    {
+      Scierror("%s:  three first arguments should be of length 2 or of size 4 x n (n>=1)\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( IsNspPList(f) == FALSE  )
+    {
+      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  /* set up int3d_d global var */
+  if ( int3d_prepare(f, args, &int3d_d, vecteval) == FAIL ) 
+    goto err;
+
+  /* allocate output var */
+  if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
+
+  /* call the integrator  */
+  limit = Max ( limit, x->n );
+  stat = nsp_int3d(x->R, y->R, z->R, x->n, int3d_func, NULL, &Ia, &ea, limit, 
+		   atol, rtol, vecteval, &ntused, &neval);
+
+  if ( stat <= 1 ) 
+    {
+      /* a problem occurs when the interpretor has evaluated the */
+      /* function to integrate (stat is 0 or 1) or a malloc fails */
+      /* (stat is 1) likely due to to large limit parameter. */
+      /* In case stat= 0 or 1 the interpretor should have */
+      /* already displayed an error message. */
+      if ( stat == -1 )
+	Scierror("%s: running out of memory (limit parameter is likely to be too large)\n",NspFname(stack));
+      goto err;
+    } 
+  else if ( stat == 2 )
+    {
+      ier = 1;
+      if ( lhs < 3 )
+	Sciprintf("\n Warning => int3d: requested precision not reached\n");
+    }
+  else  /* stat == 3 */
+    ier = 0;
+
+  int3d_clean(&int3d_d);
+  if ( ! on_tetrahedra )  /* destroy the tetrahedra associated to the parallelepiped */ 
+    { nsp_matrix_destroy(xx);nsp_matrix_destroy(yy);nsp_matrix_destroy(zz); }
+
+  if ( nsp_move_double(stack,1, Ia) == FAIL )
+    goto err;
+
+  if ( lhs > 1 )
+    {
+      if ( nsp_move_double(stack,2, ea) == FAIL )
+	goto err;
+      if ( lhs > 2 )
+	{
+	  if ( nsp_move_double(stack,3, (double) ier) == FAIL )
+	    goto err;
+	  if ( lhs > 3 )
+	    if ( nsp_move_double(stack,4, (double) neval) == FAIL )
+	      goto err;
+	}
+    }
+  return Max(1,lhs);
+
+ err:
+
+  int3d_clean(&int3d_d);
+  nsp_matrix_destroy(xx); 
+  nsp_matrix_destroy(yy);
+  nsp_matrix_destroy(zz);
   return RET_BUG;
 }
 
