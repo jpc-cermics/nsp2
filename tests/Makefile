@@ -52,6 +52,7 @@ TESTS= \
 	bool.dia  \
 	dollar.dia \
 	intg.dia \
+	int3d.dia \
 	sparse_ij_val.dia \
 	solve.dia \
 	legendre.dia \
