@@ -126,7 +126,7 @@ I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
 tic(); [Ia,ea] = int3d(X,Y,Z,foo,args=alpha); toc()
 abs(I - Ia)
 
-// test2 using vector evaluation (it should be must faster)
+// test2 using vector evaluation (it should be much faster)
 I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
 tic(); [Ia,ea] = int3d(X,Y,Z,foo,args=alpha,vecteval=%t); toc()
 abs(I - Ia)
