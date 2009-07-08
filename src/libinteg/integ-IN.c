@@ -1265,7 +1265,7 @@ static int make_tetrahedra(double a, double b, double c, double d, double e, dou
 }
 	  
 /**
- * int_int2d:
+ * int_int3d:
  * @stack: 
  * @rhs: 
  * @opt: 
