@@ -141,7 +141,7 @@ X = [0;1;0]; Y = [0;0;1];
 [Ia,ea,ier] = int2d(X,Y,f,limit=1000)
 abs(Ia-1)
 
-// show one again the speed-up using vector evaluation of f
+// show once again the speed-up using vector evaluation of f
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=%t); toc()
 \end{Verbatim}
