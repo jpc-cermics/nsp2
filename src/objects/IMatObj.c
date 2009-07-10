@@ -2830,9 +2830,12 @@ static OpTab IMatrix_func[]={
   {"dsl_i_i", int_imatrix_divel},
   {"dprim_i", int_imatrix_quote},
   {"unique_i", int_unique}, 
+  {"plus_i_i", int_imatrix_dadd},
+  {"minus_i_i", int_imatrix_dsub},
+  {"minus_i", int_imatrix_minus},
 
 #if 0
-  {"dst_i_i", int_imatrix_iultel},      /* .* */
+  {"dst_i_i", int_imatrix_iultel}, 
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
   {"idiv_i_i", int_imatrix_idiv},
   {"bdiv_i_i", int_imatrix_bdiv},
@@ -2841,9 +2844,6 @@ static OpTab IMatrix_func[]={
   {"hat_i_i", int_imatrix_pow},
   {"dh_i_i", int_imatrix_powel},
   {"dbs_i_i", int_imatrix_backdivel},
-  {"plus_i_i", int_imatrix_dadd},
-  {"minus_i_i", int_imatrix_dsub},
-  {"minus_i", int_imatrix_minus},
   {"div_i_i", int_imatrix_div},
   {"mfind_i", int_imatrix_mfind},
   {"nnz_i",  int_matrix_nnz},
