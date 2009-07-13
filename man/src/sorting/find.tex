@@ -10,6 +10,7 @@
 \begin{verbatim}
 i = find(M)
 [i,j]  = find(M)
+[i,j,val] = find(M) // for numerical matrices M only
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -17,6 +18,7 @@ i = find(M)
   \begin{varlist}
     \vname{M}:  boolean or  numerical vector or matrix
     \vname{i, j}: vectors of indices
+    \vname{val}: vector with the non zeros values of M
   \end{varlist}
 \end{parameters}
 
@@ -31,7 +33,12 @@ the columns (aka as fortran major order or column major order).
 
 With 2 output arguments \verb+[i,j]=find(M)+,
 you get the  row and column indices of the true or non zeros components.
+
+The form with 3 output arguments \verb+[i,j,val]=find(M)+, is available
+for numerical matrix M and the last argument \verb+val+ is filled with
+the non zeros values of M.
  
+
 This function is very important to vectorize tests and even in the 
 case of a matrix the form which returns only one 
 index vector is generally more powerfull.
