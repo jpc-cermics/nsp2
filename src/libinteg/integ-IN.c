@@ -528,7 +528,8 @@ static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean v
     {
       if ( use_dqagse )  /* integration on [a,b] */
 	{
-	  if ((obj->x = nsp_matrix_create("x",'r',21,1))== NULL) return FAIL;
+/* 	  if ((obj->x = nsp_matrix_create("x",'r',21,1))== NULL) return FAIL; */
+	  if ((obj->x = nsp_matrix_create("x",'r',42,1))== NULL) return FAIL;
 	}
       else               /* integration on (-oo,a], [a,+oo) or (-oo,+oo) */
 	{
@@ -578,6 +579,10 @@ static int intg_func(const double *x, double *y, int *n)
   NspObject *targs[2];/* arguments to be transmited to intg->func */
   NspObject *nsp_ret;
   int k, nret = 1,nargs = 1;
+  int mn_save = intg->x->mn, m_save = intg->x->m;
+
+  intg->x->mn = *n;   intg->x->m = *n; 
+
   targs[0]= NSP_OBJECT(intg->x);
  
   for ( k = 0 ; k < *n ; k++ )
@@ -595,6 +600,7 @@ static int intg_func(const double *x, double *y, int *n)
       Scierror("Error: intg: failure in function evaluation\n");
       return -1;
     }
+  intg->x->mn = mn_save;   intg->x->m = m_save; 
 
   if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
     {

@@ -15,7 +15,7 @@
 *  All names are prefixed by nsp to avoid possible future 
 *  name clash.
 *  
-*
+*  
 
       subroutine nspdqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval
      *   ,ier,alist,blist,rlist,elist,iord,last,vectflag,stat)
@@ -318,10 +318,22 @@ c
          a2 = b1
          b2 = blist(maxerr)
          erlast = errmax
-         call nspdqk21(f,a1,b1,area1,error1,resabs,defab1,vectflag,stat)
+
+************************************************************************
+*
+*   use new nspdqk21b to integrate on the 2 subintervals improving the
+*   (possible) vectorization for nsp function. (bruno on 12 july 2009)
+*
+         call nspdqk21b(f, a1, b2, area1, error1, defab1, 
+     *                  area2, error2, defab2, vectflag, stat)
          if ( stat .ne. 0 ) return
-         call nspdqk21(f,a2,b2,area2,error2,resabs,defab2,vectflag,stat)
-         if ( stat .ne. 0 ) return
+
+c$$$         call nspdqk21(f,a1,b1,area1,error1,resabs,defab1,vectflag,stat)
+c$$$         if ( stat .ne. 0 ) return
+c$$$         call nspdqk21(f,a2,b2,area2,error2,resabs,defab2,vectflag,stat)
+c$$$         if ( stat .ne. 0 ) return
+*
+************************************************************************
 c
 c           improve previous approximations to integral
 c           and error and test for accuracy.
@@ -1514,6 +1526,172 @@ c
       if(resabs.gt.uflow/(50.d0*epmach)) then
          abserr = max((50.d0*epmach)*resabs, abserr)
       endif
+      return
+      end
+
+
+      subroutine nspdqk21b(fvect, a, c, result1, abserr1, resasc1, 
+     *                     result2, abserr2, resasc2, vectflag, stat)
+*  same than nspdqk21 but operate on the 2 intervals:
+*      [a,(a+b)/2] and [(a+b)/2,c] 
+*  thus improving the vectorization in case it is used with a
+*  (vectorized) nsp function (the nsp function could be called with 42 
+*  points instead of 21 with nspdqk21)
+*
+*  added by Bruno Pincon
+*
+      implicit none
+      double precision a, c, result1,abserr1, resasc1,result2, abserr2,
+     *   resasc2,b,centr1,centr2, dhlgth, epmach,hlgth,resabs1,resg1,
+     *   resk1,reskh1,resabs2,resg2,resk2,reskh2, uflow
+      double precision wg(5),wgk(11),xgk(11), dx, allx(42), allf(42)
+      integer j,jg, stat
+      logical vectflag
+      external fvect
+      integer fvect
+      integer n1, n42
+      double precision dlamch
+c
+c           the abscissae and weights are given for the interval (-1,1).
+c           because of symmetry only the positive abscissae and their
+c           corresponding weights are given.
+c
+c           xgk    - abscissae of the 21-point kronrod rule
+c                    xgk(2), xgk(4), ...  abscissae of the 10-point
+c                    gauss rule
+c                    xgk(1), xgk(3), ...  abscissae which are optimally
+c                    added to the 10-point gauss rule
+c
+c           wgk    - weights of the 21-point kronrod rule
+c
+c           wg     - weights of the 10-point gauss rule
+c
+c
+c gauss quadrature weights and kronrod quadrature abscissae and weights
+c as evaluated with 80 decimal digit arithmetic by l. w. fullerton,
+c bell labs, nov. 1981.
+c
+      data wg  (  1) / 0.0666713443 0868813759 3568809893 332 d0 /
+      data wg  (  2) / 0.1494513491 5058059314 5776339657 697 d0 /
+      data wg  (  3) / 0.2190863625 1598204399 5534934228 163 d0 /
+      data wg  (  4) / 0.2692667193 0999635509 1226921569 469 d0 /
+      data wg  (  5) / 0.2955242247 1475287017 3892994651 338 d0 /
+c
+      data xgk (  1) / 0.9956571630 2580808073 5527280689 003 d0 /
+      data xgk (  2) / 0.9739065285 1717172007 7964012084 452 d0 /
+      data xgk (  3) / 0.9301574913 5570822600 1207180059 508 d0 /
+      data xgk (  4) / 0.8650633666 8898451073 2096688423 493 d0 /
+      data xgk (  5) / 0.7808177265 8641689706 3717578345 042 d0 /
+      data xgk (  6) / 0.6794095682 9902440623 4327365114 874 d0 /
+      data xgk (  7) / 0.5627571346 6860468333 9000099272 694 d0 /
+      data xgk (  8) / 0.4333953941 2924719079 9265943165 784 d0 /
+      data xgk (  9) / 0.2943928627 0146019813 1126603103 866 d0 /
+      data xgk ( 10) / 0.1488743389 8163121088 4826001129 720 d0 /
+      data xgk ( 11) / 0.0000000000 0000000000 0000000000 000 d0 /
+c
+      data wgk (  1) / 0.0116946388 6737187427 8064396062 192 d0 /
+      data wgk (  2) / 0.0325581623 0796472747 8818972459 390 d0 /
+      data wgk (  3) / 0.0547558965 7435199603 1381300244 580 d0 /
+      data wgk (  4) / 0.0750396748 1091995276 7043140916 190 d0 /
+      data wgk (  5) / 0.0931254545 8369760553 5065465083 366 d0 /
+      data wgk (  6) / 0.1093871588 0229764189 9210590325 805 d0 /
+      data wgk (  7) / 0.1234919762 6206585107 7958109831 074 d0 /
+      data wgk (  8) / 0.1347092173 1147332592 8054001771 707 d0 /
+      data wgk (  9) / 0.1427759385 7706008079 7094273138 717 d0 /
+      data wgk ( 10) / 0.1477391049 0133849137 4841515972 068 d0 /
+      data wgk ( 11) / 0.1494455540 0291690566 4936468389 821 d0 /
+c
+      epmach = dlamch('p')
+      uflow = dlamch('u')
+      n1 = 1
+      n42 = 42
+c
+      b = 0.5d0*(a+c);
+      centr1 = 0.5d0*(a+b)
+      hlgth = 0.5d0*(b-a)
+      dhlgth = abs(hlgth)
+      centr2 = 0.5d0*(b+c)
+c
+c           compute the 21-point kronrod approximation to
+c           the integral, and estimate the absolute error.
+c
+      do j = 1,10
+         dx = dhlgth*xgk(j)
+         allx(j)    = centr1 - dx
+         allx(22-j) = centr1 + dx
+         allx(j+21) = centr2 + dx
+         allx(43-j) = centr2 - dx
+      enddo
+      allx(11) = centr1
+      allx(32) = centr2
+
+      if ( vectflag ) then  ! vector evaluation
+         stat = fvect(allx, allf, n42)
+         if(stat.ne.0) return
+      else                  ! scalar evaluation
+         do j = 1,42
+            stat = fvect(allx(j), allf(j), n1)
+            if(stat.ne.0) return
+         enddo
+      endif
+            
+      resg1 = 0.0d+00
+      resg2 = 0.0d+00
+      resk1 = wgk(11)*allf(11)
+      resk2 = wgk(11)*allf(32)
+      resabs1 = abs(resk1)
+      resabs2 = abs(resk2)
+
+      jg = 1
+      do j = 1,9,2
+         resk1 = resk1 + wgk(j)*(allf(j) + allf(22-j))
+         resabs1 = resabs1 + wgk(j)*(abs(allf(j)) + abs(allf(22-j)))
+         resk1 = resk1 + wgk(j+1)*(allf(j+1) + allf(21-j))
+         resabs1 = resabs1 + wgk(j+1)*(abs(allf(j+1)) + abs(allf(21-j)))
+         resg1 = resg1 + wg(jg)*(allf(j+1) + allf(21-j))
+
+         resk2 = resk2 + wgk(j)*(allf(j+21) + allf(43-j))
+         resabs2 = resabs2 + wgk(j)*(abs(allf(j+21)) + abs(allf(43-j)))
+         resk2 = resk2 + wgk(j+1)*(allf(j+22) + allf(42-j))
+         resabs2 = resabs2 +wgk(j+1)*(abs(allf(j+22)) + abs(allf(42-j)))
+         resg2 = resg2 + wg(jg)*(allf(j+22) + allf(42-j))
+
+         jg = jg + 1
+      enddo
+
+      reskh1 = resk1*0.5d0
+      reskh2 = resk2*0.5d0
+      resasc1 = wgk(11)*abs(allf(11)-reskh1)
+      resasc2 = wgk(11)*abs(allf(32)-reskh2)
+      do j=1,10
+        resasc1 = resasc1 + wgk(j)*(  abs(allf(j)-reskh1) 
+     *                              + abs(allf(22-j)-reskh1))
+        resasc2 = resasc2 + wgk(j)*(  abs(allf(j+21)-reskh2) 
+     *                              + abs(allf(43-j)-reskh2))
+      enddo
+
+      result1 = resk1*hlgth
+      resabs1 = resabs1*dhlgth
+      resasc1 = resasc1*dhlgth
+      abserr1 = abs((resk1-resg1)*hlgth)
+      if (resasc1.ne.0.d0.and.abserr1.ne.0.d0) then
+         abserr1 = resasc1*min(1.d0,(200.d0*abserr1/resasc1)**1.5d0)
+      endif
+      if(resabs1.gt.uflow/(50.d0*epmach)) then
+         abserr1 = max((50.d0*epmach)*resabs1, abserr1)
+      endif
+
+      result2 = resk2*hlgth
+      resabs2 = resabs2*dhlgth
+      resasc2 = resasc2*dhlgth
+      abserr2 = abs((resk2-resg2)*hlgth)
+      if (resasc2.ne.0.d0.and.abserr2.ne.0.d0) then
+         abserr2 = resasc2*min(1.d0,(200.d0*abserr2/resasc2)**1.5d0)
+      endif
+      if(resabs2.gt.uflow/(50.d0*epmach)) then
+         abserr2 = max((50.d0*epmach)*resabs2, abserr2)
+      endif
+
       return
       end
 
