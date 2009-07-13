@@ -789,7 +789,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 86 "codegen/axes.override"
+#line 73 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -955,7 +955,7 @@ static int _wrap_axes_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 102 "codegen/axes.override"
+#line 89 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1207,7 +1207,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 #line 1208 "axes.c"
 
 
-#line 160 "codegen/axes.override"
+#line 147 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1219,7 +1219,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 #line 1220 "axes.c"
 
 
-#line 170 "codegen/axes.override"
+#line 157 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1275,7 +1275,7 @@ Init portion
 }
 */
 
-#line 181 "codegen/axes.override"
+#line 168 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,

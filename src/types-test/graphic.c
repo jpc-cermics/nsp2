@@ -605,7 +605,7 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
  * the returned object is not copied.
  */
 
-int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
+static int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Elts;
   int i, nret, L_name;
@@ -648,7 +648,7 @@ int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
+static int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Gr;
   NspObject *Ret;
@@ -676,7 +676,7 @@ int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
 
 /* extraction part when argument is a list  */ 
 
-int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
+static int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
 {
   char name[NAME_MAXL];
   int rep,n ;

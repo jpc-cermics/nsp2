@@ -499,20 +499,49 @@ function demo_anim_5()
   plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
   alpha=35 + (0:2:60)
   theta=45 + (0:2:60)
-  w=xget('window')
-  for i=1:size(alpha,'*')
-    xclear(w,%f);// clear but keep recorded graphics 
+  if new_graphics() then
+    F=get_current_figure();
+    for i=1:size(alpha,'*')
+      F.children(1).alpha = alpha(i);
+      F.children(1).theta = theta(i);
+      F.draw_now[];
+    end
+  else
+    w=xget('window')
+    for i=1:size(alpha,'*')
+      xclear(w,%f);// clear but keep recorded graphics 
     xtape('replayna',w,theta(i),alpha(i));
     xset("wshow");
+    end
   end
 endfunction
 
 function demo_anim_6()
   a=ones_new(60,60);
-  for i=-60:60;
-    b=3*tril(a,i)+2*triu(a,i+1);
-    xclear();plot2d([0,10],[0,10],style=0);
-    Matplot1(b,[4,4,9,9]);xset('wshow');
+  if new_graphics() then
+    // new graphics version 
+    xclear();
+    plot2d([0,10],[0,10],style = 0);
+    F=get_current_figure();
+    F.draw_latter[];
+    Matplot1(a,[4,4,9,9]);
+    Mg = F.children(1).children(2);
+    F.draw_now[];
+    for i=-60:60 do
+      F.draw_latter[];
+      // update object data directly 
+      Mg.data =3*tril(a,i)+2*triu(a,i+1) ;
+      F.draw_now[];
+      //xpause(0,events=%t);
+    end
+  else
+    for i=-60:60 do
+      b=3*tril(a,i)+2*triu(a,i+1);
+      xclear();
+      plot2d([0,10],[0,10],style = 0);
+      Matplot1(b,[4,4,9,9]);
+      xset("wshow");
+    end
   end
 endfunction
 

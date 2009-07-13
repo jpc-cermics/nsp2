@@ -1189,7 +1189,7 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
   
   if ( Q->Mface->m < 3 ) 
     {
-      Scierror("Error: bad face for spolyhedron, first dimension should be >= 3 %d\n");
+      Scierror("Error: bad face for spolyhedron, first dimension should be >= 3 %d\n",Q->Mface->m);
       return FAIL;
     }
 
@@ -1308,6 +1308,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       val_mean += Q_val[numpt];
     }
   val_mean = val_mean / m;
+  
+  if ( ISNAN(val_mean) || isinf(val_mean)) return;
 
   orient = nsp_obj3d_orientation(x, y, m);
   
@@ -1346,7 +1348,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	   * (Q->vlevel,Q->fill): donne une couleur en fonction de z. 
 	   * Q->vlevel[i]: donne le z quantifié qui porte la couleur i 
 	   */
-	  interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);
+	  interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);  
 	}
       if ( Q->mesh  ) 
 	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
@@ -1517,7 +1519,7 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
 	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr); 
       return; 
     }
-
+  
   /* 
    *  at least 2 colors for painting the triangle : it is divided in elementary
    *  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
@@ -1558,7 +1560,6 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
   color = - Abs(fill[zxy[0]]);
   if ( color != 0 )
     Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
-
   /*
    * compute the intermediary polygon(s) 
    */
@@ -1586,12 +1587,14 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
       color = - Abs(fill[izone]);
       if ( color != 0 )
 	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+      
+      
     };
 
   /*
    * compute the last poly  
    */
-
+  
   resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
   resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
   if ( edge == 0 )  /* the next point of the poly is P1 */
@@ -1601,8 +1604,11 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
   /* the last point is P2 */
   resx[nr] = sx[2]; resy[nr] = sy[2]; nr++;
   color = - Abs(fill[zxy[2]]);
+  
   if ( color != 0 )
-    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+     Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr); 
+  
+  
 }
 
 
@@ -1753,4 +1759,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1757 "spolyhedron.c"
+#line 1763 "spolyhedron.c"

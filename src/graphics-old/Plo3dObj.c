@@ -441,7 +441,7 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
   B->segment = box_segments;
   B->face = box_faces;
   B->color = box_color;
- 
+  
   B->coord[0]  = xmin; B->coord[1]  = ymin; B->coord[2]  = zmin; //1
   B->coord[3]  = xmax; B->coord[4]  = ymax; B->coord[5]  = zmax; //2
   B->coord[6]  = xmin; B->coord[7]  = ymin; B->coord[8]  = zmax; //3
@@ -494,7 +494,7 @@ static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
 
   d = (xmax-xmin + ymax-ymin + zmax-zmin)/100; /* a voir */
   e = d/sqrt(2.0);
-
+  
   B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
   if ( B->ticks_coord == NULL) return FAIL;
   switch(B->inear)
@@ -730,7 +730,10 @@ extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B)
       {
 	GOK = BTRUE;
 	for ( j = 0; j < 4 && GOK ; j++ )
-	  GOK = B->face[4*k+j] != B->inear  &&  B->pos[4*k+j] != OUT_Z;
+	  {
+	    int face =  B->face[4*k+j];
+	    GOK = face != B->inear  &&  B->pos[face] != OUT_Z;
+	  }
 	if ( GOK )
 	  draw_box_face(Xgc,B, k);
       }

@@ -22,6 +22,14 @@ function x=edit_object_gmatrix(x,varargopt)
   x=edit_grobject(x,varargopt(:));
 endfunction
 
+function x=edit_object_spolyhedron(x,varargopt)
+  x=edit_grobject(x,varargopt(:));
+endfunction
+
+function x=edit_object_objs3d(x,varargopt)
+  x=edit_grobject(x,varargopt(:));
+endfunction
+
 function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
   
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
@@ -117,20 +125,32 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
     L = get_nsp_list_path_from_tree_path(tree_view,path);
     L1=L;L1.remove_last[];
     name = L.last[];
-    if length(L1)<> 0 then 
-      stype = type(treeview.user_data(L1),'short');
-      M = tree_view.user_data(L1).get[name];
+    if type(name,'short')=='m' then 
+      // we have clicked on a children element 
+      stype = type(treeview.user_data(L),'short');
+      M = tree_view.user_data(L);
     else
-      stype = type(treeview.user_data,'short');
-      M = tree_view.user_data.get[name];
-    end 
+      // we have to follow a path then get 
+      // and attribute 
+      if length(L1)<> 0 then 
+	stype = type(treeview.user_data(L1),'short');
+	M = tree_view.user_data(L1).get[name];
+      else
+	stype = type(treeview.user_data,'short');
+	M = tree_view.user_data.get[name];
+      end 
+    end
     // here we need a generic edit 
     M1=edit_object(M,parent=tree_view);
     if ~M1.equal[M] then 
-      if length(L1)<> 0 then 
-	execstr('tree_view.user_data(L1).set['+name+'=M1]');
+      if type(name,'short')=='m' then 
+	tree_view.user_data(L)=M1;
       else
-	execstr('tree_view.user_data.set['+name+'=M1]');
+	if length(L1)<> 0 then 
+	  execstr('tree_view.user_data(L1).set['+name+'=M1]');
+	else
+	  execstr('tree_view.user_data.set['+name+'=M1]');
+	end
       end
       xs = cellstostr({M1});
       octype = type(M,'short');

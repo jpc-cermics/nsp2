@@ -1135,9 +1135,12 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   current_vertex = &(Q_face[m*j]);
   for (i = 0 ; i < m ; i++)
     {
+      double z;
       numpt = current_vertex[i]-1;
       x[i] = XScale(Q_coord[numpt]);
       y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
+      z = Q_coord[numpt+2*Q_nb_coords];
+      if ( ISNAN(z) || isinf(z)) return;
     }
   
   if ( nsp_obj3d_orientation(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
@@ -1187,6 +1190,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
+      int stop = FALSE;
       current_vertex = &(Q_face[m*j]);
       for (i = 0 ; i < m ; i++)
 	{
@@ -1194,8 +1198,12 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 	  x[i] = Q_coord[numpt];
 	  y[i] = Q_coord[numpt+Q_nb_coords];
 	  z[i] = Q_coord[numpt+2*Q_nb_coords];
+	  if ( ISNAN(z[i]) || isinf(z[i]))
+	    {
+	      stop= TRUE;
+	    }
 	}
-      
+      if ( stop == TRUE ) continue;
       color = ( Q_nb_colors == 1 ) ? Q_color[0]: Q_color[j];
       /* le contour du polygone ne doit pas apparaitre */
       if ( ! Q->mesh ) 	color = -color; 
@@ -1547,4 +1555,4 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 
 
 
-#line 1551 "polyhedron.c"
+#line 1559 "polyhedron.c"
