@@ -44,6 +44,7 @@ struct _NspBMatrix {
 };
 
 #include "nsp/matrix.h" 
+#include "nsp/imatrix.h" 
 #include "nsp/smatrix.h" 
 
 /**
@@ -129,6 +130,7 @@ extern int BMatIsTrue (NspBMatrix *A);
 extern NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A); 
 extern NspMatrix *nsp_bmatrix_find(const NspBMatrix *A); 
 extern int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern int nsp_bmatrix_ifind_2(const NspBMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype);
 extern NspBMatrix *nsp_bmatrix_compare(const NspBMatrix *A, const NspBMatrix *B, char *op); 
 extern int nsp_bmatrix_full_compare(const NspBMatrix *A,const  NspBMatrix *B, char *op, int *err); 
 

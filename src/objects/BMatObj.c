@@ -736,19 +736,72 @@ static int int_bmatrix_not(Stack stack, int rhs, int opt, int lhs)
 static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *A;
-  NspMatrix *Rc,*Rr;
-  CheckRhs(1,1);
-  CheckLhs(1,2);
+  char *type=NULLSTRING;
+  Boolean realtype=TRUE;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int rep;
+  NSP_ITYPE_NAMES(intnames);
+  nsp_itype itype;
+
+  CheckRhs(1, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 2);
+
   if ((A = GetBMat(stack,1)) == NULLBMAT)  return RET_BUG;
-  if (nsp_bmatrix_find_2(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)Rr);
-  if ( lhs == 2 )
+
+  if ( rhs == 2 )
     {
-      NthObj(2) = (NspObject *) Rc ;
-      NSP_OBJECT(NthObj(2))->ret_pos = 2;
-      return 2;
+      if ( opt == 0 )
+	{
+	  if ( (type = GetString(stack, 2)) == NULLSTRING )
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( get_optional_args(stack, rhs, opt, opts, &type) == FAIL )
+	    return RET_BUG;
+	}
+      if ( strcmp(type,"double") != 0 )
+	{
+	  realtype = FALSE;
+	  rep = is_string_in_array(type, intnames, 1);
+	  if ( rep < 0 )
+	    {
+	      Scierror ("Error:\t output type %s, not supported for function %s\n", type, NspFname(stack));
+	      return RET_BUG;
+	    }
+	  else
+	    itype = rep;
+	}
     }
-  return 1;
+
+  if ( realtype )
+    {
+      NspMatrix *Rc,*Rr;
+      if (nsp_bmatrix_find_2(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *)Rr);
+      if ( lhs == 2 )
+	{
+	  NthObj(2) = (NspObject *) Rc ;
+	  NSP_OBJECT(NthObj(2))->ret_pos = 2;
+	  return 2;
+	}
+      return 1;
+    }      
+  else
+    {
+      NspIMatrix *Rc,*Rr;
+      if (nsp_bmatrix_ifind_2(A,Max(lhs,1),&Rr,&Rc, itype) == FAIL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *)Rr);
+      if ( lhs == 2 )
+	{
+	  NthObj(2) = (NspObject *) Rc ;
+	  NSP_OBJECT(NthObj(2))->ret_pos = 2;
+	  return 2;
+	}
+      return 1;
+    }
 }
 
 

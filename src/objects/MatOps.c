@@ -5416,6 +5416,89 @@ err:
     nsp_matrix_destroy(Ind[i]);
   return FAIL;
 }
+
+/**
+ * nsp_mat_imfind:
+ * @x: a #NspMatrix 
+ * @m: number of tests
+ * @ops: string array given the operator of each of the m tests 
+ * @scalars: scalars associated with the tests 
+ * @Ind: the result (a matrix of (m+1) indices vectors)
+ * 
+ * Return value: %OK or %FAIL
+ * Same than nsp_mat_mfind but used for mfind when an integer output is choosen:
+ * multiple find  [ind1,...,indm, indm+1] = mfind( x, ops1, sc1, ..., opsm, scm, type="int" )
+ * 
+ * opsk is the operator for the k th test (<,<=, >, ...) and sck is the scalar
+ * for the k th test. 
+ *
+ * ind1 is the vector of indices i1 corresponding to components
+ *      of x satisfying: x(i1) ops1 sc1  (x(i1) < 0.0 if ops1 is < and sc1 is 0.0) 
+ * ind2 is the vector of indices i2 corresponding to components 
+ *      of x which don't satisfy test 1 but satisfy test 2:  x(i2) ops2 sc2
+ * .....
+ * indm+1 is the vector of indices which don't satisfy any of the m tests 
+ *
+ **/
+
+int nsp_mat_imfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind, nsp_itype itype)
+{
+  CompOp **func = NULL;
+  int *length = NULL;
+  Boolean found;
+  int i, j;
+
+  if ( (length = malloc((m+1)*sizeof(int))) == NULL )
+    goto err;
+  for ( i = 0 ; i <= m ; i++ ) length[i] = 0;
+
+  if ( (func = malloc(m*sizeof(CompOp *))) == NULL )
+    goto err;
+  for ( i = 0 ; i < m ; i++ )
+    if ( (func[i] = SearchCompBis(ops[i])) == NULL )
+      {
+	Sciprintf("\nUnknow comp operator <%s>\n",ops[i]);
+	goto err;
+      }
+
+  for ( i = 0 ; i <= m ; i++ )
+    {
+      if ( (Ind[i] = nsp_imatrix_create(NVOID, 1, x->mn, itype)) == NULLIMAT ) 
+	goto err;
+    }
+
+#define mfindassign(name,cast,x)                       \
+  for ( j = 0 ; j < x->mn ; j++ )                      \
+    {                                                  \
+      found = FALSE;                                   \
+      for ( i = 0 ; i < m ; i++ )                      \
+	if ( func[i](x->R[j], scalars[i]) )            \
+	  {                                            \
+	    Ind[i]->name[length[i]++] = (cast) (j+1);  \
+	    found = TRUE;                              \
+	    break;                                     \
+	  }                                            \
+      if ( ! found )                                   \
+	Ind[m]->name[length[m]++] = (cast) (j+1);      \
+    }                                                  \
+  break;
+
+  NSP_ITYPE_SWITCH(itype,mfindassign, x);
+
+  for ( i = 0 ; i <= m ; i++ )
+    nsp_imatrix_resize(Ind[i], 1, length[i]);
+
+  free(length);
+  free(func);
+  return OK;
+
+err:
+  free(length);
+  free(func);
+  for ( i = 0 ; i <= m ; i++ )
+    nsp_imatrix_destroy(Ind[i]);
+  return FAIL;
+}
   
 /**
  * nsp_mat_ndind2ind:
@@ -5565,7 +5648,7 @@ int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix 
   return FAIL;
 }
 
-
+  
 /*
  * Res=nsp_mpmat_mult(A,B) matrix product in max plus algebra 
  * 

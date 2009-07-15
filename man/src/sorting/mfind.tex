@@ -9,6 +9,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [ind1, ind2, ..., indn, indnp1] = mfind(x, op1, s1, op2, s2, .., opn, sn)
+[ind1, ind2, ..., indn, indnp1] = mfind(x, op1, s1, op2, s2, .., opn, sn, ind_type=str)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -17,6 +18,8 @@
     \vname{x}:  real numerical vector or matrix
     \vname{op1, op2, ...}: strings specifying a comparizon operator (to choose among \verb+"<=", "<", ">", ">=", "==","~="+)
     \vname{s1, s2, ...}:  real scalars
+    \vname{ind_type=str}:  named optional argument, a string given the type for the index vectors (default is \verb+"double"+)
+    \vname{ind1, ind2, ...}: index vectors
   \end{varlist}
 \end{parameters}
 
@@ -31,6 +34,12 @@ If all the n tests fail, the element index is added in the last index vector \ve
 
 This function could be useful to evaluate a real function which has a piecewise definition
 (see examples). In this case it could be faster to use \verb+mfind+ in place of several \verb+find+.
+
+The type for the index vectors is \verb+"double"+ by default but you
+can obtain them as vectors of a given integer type by choosing the optional named argument
+\verb+ind_type+ among \verb+"int"+,  \verb+"uint"+, \verb+"int64"+, \verb+"uint64"+,
+\verb+"int32"+, \verb+"uint32"+,\verb+"int16"+, \verb+"uint16"+, \verb+"int8"+, or \verb+"uint8"+.
+
 
 Note: mfind is currently limited to a maximum of 6 tests.
 \end{mandescription}
@@ -49,7 +58,7 @@ $$
 \begin{Verbatim}
 function y=f(x) 
    y = zeros(size(x)); 
-   [ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf); 
+   [ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf, ind_type="int"); 
    y(ind1) = 1; 
    y(ind2) = cos(x(ind2)); 
    y(ind3) = x(ind3) - %pi/2; 
@@ -57,6 +66,7 @@ function y=f(x)
 endfunction 
 x = linspace(-1,%pi,400)'; 
 y = f(x); 
+xbasc()
 plot2d(x,y); 
 f(%nan) 
 f(%inf) 
@@ -67,7 +77,7 @@ f(-%inf)
 \end{examples}
 
 \begin{manseealso}
-   \manlink{find}{find}, \manlink{has}{has}, \manlink{bsearch}{bsearch}  
+   \manlink{find}{find}, \manlink{has}{has}, \manlink{bsearch}{bsearch}, \manlink{indexing arrays}{indexing arrays}
 \end{manseealso}
 
 % -- Authors

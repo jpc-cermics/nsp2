@@ -4260,19 +4260,29 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxmfind (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *x, **ind = NULL;
+  NspMatrix *x;
+  NspObject **ind = NULL;
   int i, j, m;
   double *scalars = NULL;
   const char **ops = NULL;
-  CheckRhs (3, 13);   /* limited to 6 tests */
+  char *type=NULLSTRING;
+  Boolean realtype=TRUE;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int rep;
+  NSP_ITYPE_NAMES(intnames);
+  nsp_itype itype = nsp_gint;
 
-  if ( (rhs - 1) % 2 != 0 )
+  CheckStdRhs (3, 13);   /* limited to 6 tests */
+  CheckOptRhs(0, 1);
+
+  if ( (rhs -opt - 1) % 2 != 0 )
     {
       Scierror ("%s: bad number of input arguments\n", NspFname(stack));
       return RET_BUG;
     }
 
-  m = (rhs-1)/2;
+  m = (rhs-opt-1)/2;
   
   if ( (scalars = malloc(m*sizeof(double))) == NULL )
     goto err;
@@ -4282,7 +4292,7 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
   if ( (x = GetRealMat(stack, 1)) == NULLMAT )
     goto err;
 
-  for ( i = 2, j = 0 ; i <= rhs ; i+=2, j++ )
+  for ( i = 2, j = 0 ; i <= rhs-opt ; i+=2, j++ )
     {
       if ( (ops[j] = GetString(stack, i)) == NULL )
 	goto err;
@@ -4290,15 +4300,42 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
 	goto err;
     } 
 
-  if ( (ind = malloc((m+1)*sizeof(NspMatrix *))) == NULL )
-    goto err;
-  for ( i = 0 ; i <= m ; i++ ) ind[i] = NULLMAT;
+  if ( opt > 0 )
+    {
+      if ( get_optional_args(stack, rhs, opt, opts, &type) == FAIL )
+	return RET_BUG;
+      if ( strcmp(type,"double") != 0 )
+	{
+	  realtype = FALSE;
+	  rep = is_string_in_array(type, intnames, 1);
+	  if ( rep < 0 )
+	    {
+	      Scierror ("Error:\t output type %s, not supported for function %s\n", type, NspFname(stack));
+	      return RET_BUG;
+	    }
+	  else
+	    itype = rep;
+	}
+    }
 
-  if ( nsp_mat_mfind(x, m, ops, scalars, ind) == FAIL )
+  if ( (ind = malloc((m+1)*sizeof(NspObject *))) == NULL )
     goto err;
+  for ( i = 0 ; i <= m ; i++ ) ind[i] = NULLOBJ;
+
+  if ( realtype )
+    {
+      if ( nsp_mat_mfind(x, m, ops, scalars, (NspMatrix **)ind) == FAIL )
+	goto err;
+    }
+  else
+    {
+      if ( nsp_mat_imfind(x, m, ops, scalars, (NspIMatrix **) ind, itype) == FAIL )
+	goto err;
+    }
+
 
   for ( j = 0 ; j <= m ; j++ )
-    MoveObj (stack, j+1, (NspObject *) ind[j]);
+    MoveObj (stack, j+1, ind[j]);
 
   free(scalars);
   free(ops);
