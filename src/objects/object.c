@@ -2145,6 +2145,66 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/*
+ * the function xdr_opaque, always writes block of size BYTES_PER_XDR_UNIT. So
+ * if cnt is not a multiple of BYTES_PER_XDR_UNIT, the block size is increased
+ */
+
+static u_int get_xdr_len (u_int cnt)
+{
+  u_int rndup;
+  rndup = cnt % BYTES_PER_XDR_UNIT;
+  if (rndup > 0)
+    rndup = BYTES_PER_XDR_UNIT - rndup;
+  return rndup + cnt;
+}
+
+/* load one object from a file but returns its serialized 
+ * version instead of the object itself.
+ * Author: Jérôme Lelong.
+ */
+
+int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
+{
+  FILE *FIC;
+  int len, offset, c;
+  NspSerial *S;
+  char *name, *str, scis[]={"NspXdr_1.0"};
+  
+  CheckStdRhs(1,1);
+  CheckLhs(1,1);
+  
+  name  = GetString(stack, 1);
+  if ((FIC=fopen(name, "rb")) == NULL) return RET_BUG;
+  len= 0;
+  while ((c = fgetc(FIC)) != EOF) { len++; }
+  if ((str=malloc(sizeof(int)*len)) == NULL) return RET_BUG;
+  rewind (FIC);
+  fread (str, sizeof(char), len,  FIC);
+  fclose (FIC);
+  offset = sizeof(u_int);
+  if (strncmp (str + offset, scis, strlen(scis)) != 0)
+    {
+      Scierror ("Error: %s is not an xdr file\n",name);
+      return RET_BUG;
+    }
+  offset += get_xdr_len (strlen (scis));
+  
+  /*
+   *  a binary file containing an object always ends by the
+   * an integer + an integer + the string "endsave"
+   * the last but one integer should be 0 indicating that there is nothing left
+   * to be read. The last integer is the length of the string "endsave"
+   */
+    
+  if ((S = nsp_serial_create(NVOID, str+offset,
+			     len - (offset+2*sizeof(u_int) +get_xdr_len(strlen("endsave")))))
+      == NULLSERIAL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *)S);
+  return 1;
+}
+
+
 /* generic interface for logical operations on objets.
  *
  */
@@ -2395,6 +2455,7 @@ static OpTab Obj_func[]={
   {"zeros_deprecated", int_object_zeros},
   {"save", int_object_xdr_save},
   {"load", int_object_xdr_load},
+  {"sload", int_load_as_serialized},
   {"printf",int_object_printf},
   {"sprintf",int_object_sprintf},
   {"fprintf",int_object_fprintf},
