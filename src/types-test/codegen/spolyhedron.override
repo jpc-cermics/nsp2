@@ -699,7 +699,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
   NspSPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL,*Val = NULL;
   if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
-  if ((F=nsp_surf_to_faces("c",x,m,y,n) )==NULL) goto bug;
+  if ((F=nsp_surf_to_faces("f",x,m,y,n) )==NULL) goto bug;
   if ((Val = nsp_matrix_create("v",'r',C->m,1)) == NULLMAT) goto bug; 
 
   if ( col == NULL) 

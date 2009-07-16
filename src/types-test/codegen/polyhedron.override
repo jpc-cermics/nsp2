@@ -515,7 +515,7 @@ NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y
   NspPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL ;
   if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
-  if ((F=nsp_surf_to_faces("c",x,m,y,n) )==NULL) goto bug;
+  if ((F=nsp_surf_to_faces("f",x,m,y,n) )==NULL) goto bug;
   if ((pol = nsp_polyhedron_create(name,C,NULL,F,NULL,NULL,TRUE,NULL,0,NULL))==NULL)  goto bug;
   if ( nsp_check_polyhedron(pol)== FAIL) goto bug;
   return pol;
@@ -580,7 +580,7 @@ NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ym
 {
   NspMatrix *face;
   int j,i,nface;
-  if ((face = nsp_matrix_create(NVOID,'r',4,(xmn-1)*(ymn-1)))==NULL) return NULL;
+  if ((face = nsp_matrix_create(name,'r',4,(xmn-1)*(ymn-1)))==NULL) return NULL;
   nface = 0;
   for (j = 0 ; j < ymn -1 ; j++) 
     {
