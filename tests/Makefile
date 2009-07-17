@@ -60,8 +60,8 @@ TESTS= \
 	fsolve1.dia \
 	fsolve.dia \
 	find.dia \
-	global.dia
-
+	global.dia \
+	matops.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
