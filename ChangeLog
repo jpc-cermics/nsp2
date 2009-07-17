@@ -1,3 +1,7 @@
+2009-07-17  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/liboptim: optim library added. 
+	
 2009-07-06  Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* src/libinteg/int3dnsp.c: add int3d function (together with its
