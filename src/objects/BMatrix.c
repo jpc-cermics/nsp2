@@ -1064,13 +1064,12 @@ int nsp_bmatrix_ifind_2(const NspBMatrix *A, int lhs, NspIMatrix **Res1, NspIMat
       if ( *Res1 == NULLIMAT) return FAIL;
       count=0;
 
-#define ifind1assign(name,cast,A)                              \
+#define ifind1assign(name,type,arg)			       \
        for ( i = 0 ; i < A->mn ; i++ )                         \
-	 if ( A->B[i] ) (*Res1)->name[count++] = (cast) (i+1); \
+	 if ( A->B[i] ) (*Res1)->name[count++] = (type) (i+1); \
        break;
-
       NSP_ITYPE_SWITCH(itype,ifind1assign, A);
- 
+#undef ifind1assign
     }
   else
     {
@@ -1079,19 +1078,17 @@ int nsp_bmatrix_ifind_2(const NspBMatrix *A, int lhs, NspIMatrix **Res1, NspIMat
       *Res2 = nsp_imatrix_create(NVOID, nrow , count, itype);
       if ( *Res2 == NULLIMAT) { nsp_imatrix_destroy(*Res1); return FAIL; }
       count=0;
-
-#define ifind2assign(name,cast,A)                      \
+#define ifind2assign(name,type,arg)		       \
       for ( j = 0, k = 0 ; j < A->n ; j++ )            \
          for ( i = 0 ; i < A->m ; i++, k++ )           \
 	    if ( A->B[k] )                             \
 	    {                                          \
-	      (*Res1)->name[count] = (cast) (i+1);     \
-	      (*Res2)->name[count++] = (cast) (j+1);   \
+	      (*Res1)->name[count] = (type) (i+1);     \
+	      (*Res2)->name[count++] = (type) (j+1);   \
 	    }                                          \
-       break;
-
+      break;
       NSP_ITYPE_SWITCH(itype,ifind2assign, A);
-
+#undef ifind2assign
     }
   return OK;
 }

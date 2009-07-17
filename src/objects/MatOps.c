@@ -5326,6 +5326,115 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 }
 
 
+
+/**
+ * nsp_mat_ifind:
+ * @A: a #NspMatrix 
+ * @lhs: 1 or 2 
+ * @Res1: a pointer to a #NspIMatrix
+ * @Res2: a pointer to a #NspIMatrix
+ * 
+ * returns in one or two #NspIMatrix the indices for which the 
+ * Matrix @A has non zero entries. @A is left unchanged
+ * according to the value of @lhs one or two arguments are returned 
+ * When @A is a non null matrix and @lhs is one, the return value is a 1xn row vector. 
+ * But when n is equal to zero and @A is scalar then a 0x0 is returned. 
+ *
+ * In Matlab the rules are different: 
+ * when lhs == 1 
+ *   A 1x1 => result 1x1 or 0x0 (like us) 
+ *   A mx1 => result px1        (diff)
+ *   A 1xn => result 1xp        (like us)
+ *   A mxn => result px min(1,max(m,n)) 
+ *     (this rule is valid for all m,n cases except the ones covered above)
+ * 
+ *
+ * Return value: %OK or %FAIL  
+ **/
+
+int nsp_mat_ifind(NspMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype)
+{
+  int j,i,count=0; 
+  int nrow = ( A->mn == 0) ? 0: 1;
+  /* first pass for counting */
+  if ( A->rc_type == 'r' ) 
+    {
+      for ( i=0 ; i < A->mn ; i++) 
+	if ( A->R[i] != 0.0 ) count++;
+    }
+  else 
+    {
+      for ( i=0 ; i < A->mn ; i++) 
+	if (A->C[i].r != 0.0 || A->C[i].i != 0.0) count++;
+    }
+  /* special rule for scalars */
+  if ( A-> m == 1 && count ==0) nrow =0;
+  if ( lhs == 1) 
+    {
+      *Res1 = nsp_imatrix_create(NVOID, nrow, count,itype);
+      if ( *Res1 == NULLIMAT) return FAIL;
+      count=0;
+      if ( A->rc_type == 'r' ) 
+	{
+#define IMAT_IFIND(name,type,arg)					\
+	  for ( i = 0 ; i < A->mn ; i++ )				\
+	    if ( A->R[i] != 0.0 ) (*Res1)->name[count++] = (type) i+1;	\
+	  break;
+	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
+#undef IMAT_IFIND
+	}
+      else 
+	{
+#define IMAT_IFIND(name,type,arg)					\
+	  for ( i = 0 ; i < A->mn ; i++ )				\
+	    if ((A->C[i].r != 0.0 || A->C[i].i != 0.0))			\
+	      (*Res1)->name[count++] = (type) i+1;			\
+	  break;
+	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
+#undef IMAT_IFIND
+	}
+    }
+  else 
+    {
+      int k;
+      *Res1 = nsp_imatrix_create(NVOID,nrow, count,itype);
+      if ( *Res1 == NULLIMAT) return FAIL;
+      *Res2 = nsp_imatrix_create(NVOID,nrow, count,itype);
+      if ( *Res2 == NULLIMAT) return FAIL;
+      count=0;
+      if ( A->rc_type == 'r' ) 
+	{
+#define IMAT_IFIND(name,type,arg)					\
+	  for ( j = 0, k = 0 ; j < A->n ; j++ )				\
+	    for ( i = 0 ; i < A->m ; i++, k++ )				\
+	      if (  A->R[k] != 0.0 )					\
+		{							\
+		  (*Res1)->name[count] = (type) i+1;			\
+		  (*Res2)->name[count++] = (type) j+1;			\
+		}							\
+	  break;
+	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
+#undef IMAT_IFIND
+	}
+      else 
+	{
+#define IMAT_IFIND(name,type,arg)					\
+	  for ( j = 0, k = 0 ; j < A->n ; j++ )				\
+	    for ( i = 0 ; i < A->m ; i++, k++ )				\
+	      if (  A->C[k].r != 0.0 || A->C[k].i != 0.0 )		\
+		{							\
+		  (*Res1)->name[count] = (type) i+1;			\
+		  (*Res2)->name[count++] = (type) j+1;			\
+		}							\
+	  break;
+	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
+#undef IMAT_IFIND
+	}
+    }
+  return OK;
+}
+
+
 static CompOp *SearchCompBis(const char *op)
 {
   int i = 0;
