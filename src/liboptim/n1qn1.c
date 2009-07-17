@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2008 Claude Lemarechal, INRIA. (PB)
+ * Copyright (C) 1998-2009 Claude Lemarechal, INRIA. (PB)
  * 
  * n1qn1: derived from a free version of va13a harwell (Powell).
  */

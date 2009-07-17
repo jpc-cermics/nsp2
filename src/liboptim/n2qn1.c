@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2008 Jean Charles Gilbert, Claude Lemarechal, E Panier (PB)
+ * Copyright (C) 1998-2009 Jean Charles Gilbert, Claude Lemarechal, E Panier (PB)
  * 
  * n2qn1 derived from n1qn1 
  * This program is not used 

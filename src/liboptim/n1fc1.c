@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2008 Claude Lemarechal, INRIA.
+ * Copyright (C) 1998-2009 Claude Lemarechal, INRIA.
  * minimisation d'une fonction hemiderivable par une methode de faisceau.
  *
  *
