@@ -1347,40 +1347,6 @@ int int_object_implements(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-/*
- * info(obj) 
- * info on object. 
- * 
- */
-
-int int_object_info_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  int dp=user_pref.pr_depth;
-  int at=user_pref.list_as_tree;
-  int depth=INT_MAX,indent=0,tree=FALSE;
-  char *name = NULL;
-  nsp_option opts[] ={{ "depth", s_int,NULLOBJ,-1},
-		      { "indent",s_int,NULLOBJ,-1},
-		      { "name",string,NULLOBJ,-1},
-		      { "tree",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  NspObject *object;
-  CheckStdRhs(1,1);
-  CheckLhs(0,1);
-  if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ( get_optional_args(stack, rhs, opt, opts,&depth,
-			 &indent,&name,&tree) == FAIL) 
-    return RET_BUG;
-  user_pref.pr_depth= depth;
-  user_pref.list_as_tree= tree;
-  object->type->info(object,indent,name,0);
-  user_pref.pr_depth= dp;
-  user_pref.list_as_tree= at;
-  return 0;
-}
-
-
 /* generic function for printing objects and 
  * redirection of output to string, file or stdout
  */
@@ -1398,9 +1364,11 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   print_func *pr;
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE;
+  int cr=user_pref.color;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE;
   char *name = NULL;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+			    { "color",s_bool,NULLOBJ,-1},
 			    { "depth", s_int,NULLOBJ,-1},
 			    { "indent",s_int,NULLOBJ,-1},
 			    { "latex",s_bool,NULLOBJ,-1},
@@ -1436,7 +1404,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
     }
   else 
     {
-      if ( get_optional_args(stack, rhs, opt, print_opts,&as_read,&depth,
+      if ( get_optional_args(stack, rhs, opt, print_opts,&as_read,&color,&depth,
 			     &indent,&latex,&name,&table) == FAIL) 
 	return RET_BUG;
     }
@@ -1465,6 +1433,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   /* print object */
   user_pref.pr_depth= depth;
   user_pref.list_as_tree=tree;
+  user_pref.color=color;
   pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
   if (info_only == TRUE ) pr = object->type->info;
 
@@ -1480,6 +1449,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
       user_pref.pr_as_read_syntax= kp;
       user_pref.pr_depth= dp;
       user_pref.list_as_tree=at;
+      user_pref.color=cr;
     }
   else 
     {
@@ -1487,6 +1457,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
     }
   user_pref.pr_depth= dp;
   user_pref.list_as_tree=at;
+  user_pref.list_as_tree=cr;
   /* restore to default values */
   switch ( mode ) 
     {

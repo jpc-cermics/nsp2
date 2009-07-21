@@ -41,7 +41,8 @@ user_preferences user_pref= {
   INT_MAX ,/* stop printing at given depth for recursive objects */
   FALSE ,/* flag for list display */
   print_std  ,/* std, latex or latex tables */
-  TRUE /* only print if active is true */
+  TRUE, /* only print if active is true */
+  TRUE, /* use color by default in print */
 };
 
 

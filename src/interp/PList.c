@@ -762,8 +762,13 @@ typedef enum { p_black =30,
                p_cyan=36,
                p_white=37} nsp_term_colors;
 
-#define NSP_PRINTF_COLOR(col,str) Sciprintf("\033[%dm%s\033[0m",col,str);
-#define NSP_PRINTF1_COLOR(posret,col,str) Sciprintf1(posret,"\033[%dm%s\033[0m",col,str);
+#define NSP_PRINTF_COLOR(col,str)					\
+  ((user_pref.color == TRUE ) ? Sciprintf("\033[%dm%s\033[0m",col,str)	\
+   :Sciprintf("%s",str));
+
+#define NSP_PRINTF1_COLOR(posret,col,str) \
+  ((user_pref.color == TRUE ) ? Sciprintf1(posret,"\033[%dm%s\033[0m",col,str) \
+   : Sciprintf1(posret,"%s",str))
 
 #define CMAX 50
 

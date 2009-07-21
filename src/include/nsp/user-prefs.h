@@ -20,6 +20,7 @@ struct _user_preferences
   int list_as_tree;     /* flag for list display */
   nsp_print_mode mode;  /* std, latex or latex tables */
   int active ;          /* only print if active is true */
+  int color;            /* use terminal coded colors */
 };
 
 extern user_preferences user_pref;
