@@ -100,9 +100,13 @@ char *get_nsp_tmpdir(void)
   return tmp_dir;
 }
 
-/*----------------------------------------------
- * clean tmp_dir 
- *----------------------------------------------*/
+
+/**
+ * clean_tmpdir:
+ * @void: 
+ * 
+ * clean nsp tmp directory.
+ **/
 
 #if (defined(hppa))
 extern void hppa_sci_unlink_shared();
@@ -148,18 +152,14 @@ int nsp_change_curdir(char *path)
       /** XXX : a remettre , sys_errlist[errno]); **/
       return FAIL;
     } 
-  /** a rajouter en XWindow ? pour transmettre l'info au menu 
-      if (get_directory()==0) 
-      *err=1; **/
+  /* a rajouter en XWindow ? pour transmettre l'info au menu 
+   * if (get_directory()==0) 
+   * *err=1; 
+   */
   /* scilab_status_show(path); XXXX en attente */ 
   return OK;
 }
 
-/*------------------------------
- * Get nsp current directory 
- * FIXME: when getcwd returns a NULL 
- *        pointer ERANGE should be checked
- *------------------------------*/
 
 /**
  * nsp_get_curdir:
@@ -188,10 +188,6 @@ char * nsp_get_curdir(void)
 #endif
 }
 
-
-/*---------------------------------------------
- * expand in_name to produce out_name 
- *---------------------------------------------*/
 
 static char *SCI_a[] = {  "SCI/", "sci/", "$SCI", "SCI\\", "sci\\",
 			  "NSP/", "nsp/", "$NSP", "NSP\\", "nsp\\", (char *) 0 };

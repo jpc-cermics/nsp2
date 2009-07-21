@@ -30,7 +30,7 @@ function x=edit_object_objs3d(x,varargopt)
   x=edit_grobject(x,varargopt(:));
 endfunction
 
-function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
+function L=edit_grobject(L,with_scroll=%t,title="Edit Graphic object",size_request=[],headers=%t,top=[])
   
   function Il =get_nsp_list_path_from_tree_path(tree_view,path)
   // here we must build a list which permits to 
@@ -69,42 +69,43 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit List",size_request=[],head
   // A recursive function which walks through the given graphic 
   // object and build a tree model.
   // The call is recursive.
-  h_names = h.get_attribute_names[];
-  h_names = sort(h_names,'g','i');
-  // just keep the children names 
-  if %f then 
-    if  h_names.has['children'] then 
-      h_names='children';
-    else
-      h_names=m2s([]);
-    end
-  end
-  for i=1:size(h_names,'*');
-    name = h_names(i);
-    objname = h.get[name];
-    t = type(objname,'short');
-    // we need an-other-function here XXXX 
-    value = cellstostr({objname});
-    if t== 'h' || t == 'l' then 
-      osize = sprintf("%d",size(objname,1));
-    else
-      osize= sprintf("%dx%d",size(objname,1),size(objname,2))
-    end
-    // On first call to this recursive function iter is not a GtkTreeIter
-    if is(iter,%types.GtkTreeIter) then 
-      iter1=model.append[iter,list(name,t,osize,value)];
-    else 
-      iter1=model.append[list(name,t,osize,value)];
-    end
-    // recursive call we use the current iter1 to enter the given hashtable 
-    if t == 'h' || t == 'l' then 
-      for j=1:length(objname);
-	name = sprintf("(%d)",j);
-	iter2=model.append[iter1,list(name,type(objname(j),'short'),"","*")];
-	tree_model_append(model,objname(j),iter2);
+
+    h_names = h.get_attribute_names[];
+    h_names = sort(h_names,'g','i');
+    // just keep the children names 
+    if %f then 
+      if  h_names.has['children'] then 
+	h_names='children';
+      else
+	h_names=m2s([]);
       end
     end
-  end
+    for i=1:size(h_names,'*');
+      name = h_names(i);
+      objname = h.get[name];
+      t = type(objname,'short');
+      // we need an-other-function here XXXX 
+      value = cellstostr({objname});
+      if t== 'h' || t == 'l' then 
+	osize = sprintf("%d",size(objname,1));
+      else
+	osize= sprintf("%dx%d",size(objname,1),size(objname,2))
+      end
+      // On first call to this recursive function iter is not a GtkTreeIter
+      if is(iter,%types.GtkTreeIter) then 
+	iter1=model.append[iter,list(name,t,osize,value)];
+      else 
+	iter1=model.append[list(name,t,osize,value)];
+      end
+      // recursive call we use the current iter1 to enter the given hashtable 
+      if t == 'h' || t == 'l' then 
+	for j=1:length(objname);
+	  name = sprintf("(%d)",j);
+	  iter2=model.append[iter1,list(name,type(objname(j),'short'),"","*")];
+	  tree_model_append(model,objname(j),iter2);
+	end
+      end
+    end
   endfunction
   
   function message(t,mess) 

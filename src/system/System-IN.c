@@ -32,6 +32,13 @@
 #include "nsp/system.h"
 #include "nsp/nsptcl.h"
 #include "regexp.h"
+#include "files.h" /* FSIZE */
+
+/* define in spawn  */
+
+extern function int_spawn_create;
+extern function int_g_spawn_sync;
+extern function int_g_spawn_async;
 
 /* defined in the tcl subdir 
  */
@@ -410,17 +417,47 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
   return Max(lhs,1);
 }
 
+/* edit the contents of a file 
+ *
+ */
+
+extern void nsp_edit(char *filename,int read_only);
+
+static int int_editfile(Stack stack, int rhs, int opt, int lhs)
+{
+  char Fname_expanded[FSIZE+1];
+  int_types T[] = {string,new_opts, t_end} ;
+  nsp_option opts[] ={{ "read_only",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *Fname;
+  int read_only = FALSE;
+  if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&read_only) == FAIL) return RET_BUG;
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  nsp_edit(Fname_expanded,read_only);
+  return 0;
+}
+
+#if 0 
+static int int_mktemp(Stack stack, int rhs, int opt, int lhs)
+{
+  char *name, Fname_expanded[FSIZE+1];
+  int_types T[] = {string, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,name,Fname_expanded);
+  name= mktemp(Fname_expanded);
+  if ( name == NULL || name[0]=='\0')
+    {
+      Scierror("Error: in %s, could not generate a unique name\n",NspFname(stack));
+    }
+  if ( nsp_move_string(stack,1,name,-1) == FAIL) return RET_BUG; 
+  return 1;
+},
+#endif 
 
 
 
-
-
-
-
-/* XXX */
-extern function int_spawn_create;
-extern function int_g_spawn_sync;
-extern function int_g_spawn_async;
 /*
  * The Interface for system functions 
  */ 
@@ -448,6 +485,10 @@ static OpTab System_func[]={
   {"spawn", int_spawn_create},
   {"spawn_sync", int_g_spawn_sync},
   {"spawn_async", int_g_spawn_async},
+  {"editfile", int_editfile},
+#if 0 
+  {"mktemp", int_mktemp},
+#endif 
 
   {(char *) 0, NULL}
 };
