@@ -1061,7 +1061,13 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
   int nrow = ( A->mn == 0) ? 0: 1;
 
   /* first pass for counting */
-  for ( i=0 ; i < A->mn ; i++) if ( A->Gint[i] ) count++;
+#define IMAT_FIND(name,type,arg)		\
+  for ( i=0 ; i < A->mn ; i++)			\
+    {if ( A->name[i] ) count++;}		\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_FIND,"");
+#undef IMAT_FIND
+  /* for ( i=0 ; i < A->mn ; i++) if ( A->Gint[i] ) count++; */
   /* special rule for scalars */
   if ( A-> m == 1 && count ==0) nrow =0;
 
@@ -1070,11 +1076,14 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       *Res1 = nsp_matrix_create(NVOID,'r', nrow, count);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0; ii = 0;
-      for ( i = 0 ; i < A->mn ; i++ )
-	{
-	  ii++;
-	  if ( A->Gint[i] ) (*Res1)->R[count++] = ii;
-	}
+#define IMAT_FIND(name,type,arg)			\
+      for ( i = 0 ; i < A->mn ; i++ )			\
+	{						\
+	  ii++;						\
+	  if ( A->name[i] ) (*Res1)->R[count++] = ii;	\
+	} break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_FIND,"");
+#undef IMAT_FIND
       return OK;
     }
   else
@@ -1085,14 +1094,18 @@ int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       if ( *Res2 == NULLMAT) { nsp_matrix_destroy(*Res1); return FAIL; }
       count=0;
       /* change loop order for speed (bruno) */
-      for ( j = 0, k = 0 ; j < A->n ; j++ )
-	for ( i = 0 ; i < A->m ; i++, k++ )
-	  if ( A->Gint[k] )
-	    {
-	      (*Res1)->R[count] = i+1;
-	      (*Res2)->R[count++] = j+1;
-	    }
-    }
+#define IMAT_FIND(name,type,arg)			\
+      for ( j = 0, k = 0 ; j < A->n ; j++ )		\
+	for ( i = 0 ; i < A->m ; i++, k++ )		\
+	  if ( A->Gint[k] )				\
+	    {						\
+	      (*Res1)->R[count] = i+1;			\
+	      (*Res2)->R[count++] = j+1;		\
+	    }						\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_FIND,"");
+#undef IMAT_FIND
+    }							
   return OK;
 }
 
