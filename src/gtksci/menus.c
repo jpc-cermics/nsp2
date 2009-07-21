@@ -1056,12 +1056,12 @@ static void nsp_menu_help(void)
 
 #define USE_TEXT_VIEW_EDITOR
 
-extern void nsp_edit(void);
+extern void nsp_edit(char *filename,int read_only);
 
 static void nsp_menu_start_editor(void)
 {
 #ifdef USE_TEXT_VIEW_EDITOR
-  nsp_edit();
+  nsp_edit(NULL,FALSE);
 #else 
   /* we could start emacs here */
   Sciprintf("no editor\n");

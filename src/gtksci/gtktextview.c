@@ -36,7 +36,7 @@
 #include <nsp/parse.h>
 #include "../system/files.h" /* FSIZE */
 
-extern int nsp_edit(void);
+extern int nsp_edit(char *filename, int read_only);
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
@@ -93,10 +93,10 @@ static void     buffer_cycle_colors    (Buffer  *buffer);
 
 static View *view_from_action (GtkAction *action);
 
-static View *create_view      (Buffer *buffer);
+static View *create_view      (Buffer *buffer, int read_only);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
-static void  view_set_title   (View   *view);
+static void  view_set_title   (View   *view, int read_only);
 static void execute_tag_error(View *view,int line);
 typedef gboolean (*FileselOKFunc) (const char *filename, gpointer data);
 
@@ -554,7 +554,7 @@ get_empty_view (View *view)
       !gtk_text_buffer_get_modified (view->buffer->buffer))
     return view;
   else
-    return create_view (create_buffer ());
+    return create_view (create_buffer (), FALSE);
 }
 
 
@@ -641,7 +641,7 @@ static void do_close(GtkAction *action)
 
 static void do_new (GtkAction *action)
 {
-  nsp_edit();
+  nsp_edit(NULL,FALSE);
 }
 
 #ifdef EXIT_USED 
@@ -672,7 +672,7 @@ static void do_execute (GtkAction *action)
   View *view = view_from_action (action);
   /* save first */
   push_active_window (GTK_WINDOW (view->window));
-
+  
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
                               &start, &end );
@@ -836,6 +836,24 @@ static GtkActionEntry menu_actions[] = {
 };
 
 static guint n_menu_actions = G_N_ELEMENTS (menu_actions);
+
+static GtkActionEntry menu_actions_read[] = {
+  {"FileAction", NULL, "_File" },
+  {"EditAction", NULL, "_Edit" },
+  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)}, 
+  {"Open", GTK_STOCK_OPEN,"_Open","<control>O",NULL, G_CALLBACK (do_open)},
+  {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
+  {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
+#ifdef EXIT_USED 
+  {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
+#endif 
+  {"Find",GTK_STOCK_FIND, "Find...", NULL,NULL, G_CALLBACK (do_search)},
+#if GTK_CHECK_VERSION(2,10,0)
+  {"SelectAll",GTK_STOCK_SELECT_ALL, "Select All", NULL ,NULL, G_CALLBACK (do_select_all)}
+#endif
+};
+
+static guint n_menu_actions_read = G_N_ELEMENTS (menu_actions_read);
 
 /* XML description of the menus for the test app.  The parser understands
  * a subset of the Bonobo UI XML format, and uses GMarkup for parsing */
@@ -1105,7 +1123,7 @@ buffer_filename_set (Buffer *buffer)
       View *view = tmp_list->data;
 
       if (view->buffer == buffer)
-	view_set_title (view);
+	view_set_title (view,FALSE);
 
       tmp_list = tmp_list->next;
     }
@@ -1404,10 +1422,14 @@ check_close_view (View *view)
 }
 
 static void
-view_set_title (View *view)
+view_set_title (View *view, int read_only)
 {
   char *pretty_name = buffer_pretty_name (view->buffer);
-  char *title = g_strconcat ("nsp edit - ", pretty_name, NULL);
+  char *title;
+  if (read_only == TRUE ) 
+    title = g_strconcat ("nsp view - ", pretty_name, NULL);
+  else 
+    title = g_strconcat ("nsp edit - ", pretty_name, NULL);
 
   gtk_window_set_title (GTK_WINDOW (view->window), title);
 
@@ -1620,7 +1642,7 @@ add_widget (GtkUIManager *merge,
 }
 
 static View *
-create_view (Buffer *buffer)
+create_view (Buffer *buffer,int read_only)
 {
   GError *error = NULL;
 
@@ -1650,7 +1672,10 @@ create_view (Buffer *buffer)
   action_group = gtk_action_group_new ("TestActions");
   g_object_set_data (G_OBJECT (action_group), "view", view);
 
-  gtk_action_group_add_actions (action_group,  menu_actions,  n_menu_actions, NULL);
+  if ( read_only == TRUE ) 
+    gtk_action_group_add_actions (action_group,  menu_actions_read,  n_menu_actions_read, NULL);
+  else 
+    gtk_action_group_add_actions (action_group,  menu_actions,  n_menu_actions, NULL);
   gtk_ui_manager_insert_action_group (merge, action_group, 0);
   g_signal_connect (merge, "add_widget", G_CALLBACK (add_widget), vbox);
   view->accel_group = gtk_ui_manager_get_accel_group (merge);
@@ -1692,11 +1717,15 @@ create_view (Buffer *buffer)
                     "expose_event",
                     G_CALLBACK (line_numbers_expose),
                     NULL);
+
+  if ( read_only == TRUE ) 
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (view->text_view),FALSE);
+
   gtk_box_pack_end (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);
   gtk_window_set_default_size (GTK_WINDOW (view->window), 500, 500);
   gtk_widget_grab_focus (view->text_view);
-  view_set_title (view);
+  view_set_title (view,read_only);
   gtk_widget_show_all (view->window);
   return view;
 }
@@ -1724,14 +1753,16 @@ main (int argc, char** argv)
 
 #else 
 
-int nsp_edit(void)
+int nsp_edit(char *filename, int read_only)
 {
   Buffer *buffer;
   View *view;
   /* gtk_init (&argc, &argv); */
   buffer = create_buffer ();
-  view = create_view (buffer);
+  view = create_view (buffer, read_only);
   buffer_unref (buffer);
+  if ( filename != NULL)
+    open_ok_func (filename, view);
   push_active_window (GTK_WINDOW (view->window));
   pop_active_window ();
   /* gtk_main (); */
