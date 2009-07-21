@@ -1036,7 +1036,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
  * @Res1:  a #NspIMatrix. 
  * @Res2: a #NspIMatrix. 
  * 
- * the same than nsp_bmatrix_ifind_2 but returns the indices in one or 2
+ * the same than nsp_bmatrix_find_2() but returns the indices in one or 2
  * #NspIMatrix (added by Bruno)
  * returns in one or two #NspIMatrix objects the indices for which the 
  * #NspBMatrix @A is true. if @lhs is equal to one, the @Res1 will 
