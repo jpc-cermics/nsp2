@@ -170,8 +170,8 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
       else 
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;
+      nsp_plist_pretty_print(P_L->D,indent+2);
     }
-  nsp_plist_pretty_print(P_L->D,indent+2);
   Sciprintf("\n");
 }
 
