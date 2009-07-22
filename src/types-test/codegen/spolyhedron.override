@@ -299,7 +299,7 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
   return OK;
 }
 
-static int display_mode =  INTERP; 
+
 
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
@@ -319,6 +319,9 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int *Q_face = Q->Mface->I; 
   double *Q_val = Q->Mval->R;
   int Q_nb_levels = Q->colmax - Q->colmin + 1;
+
+  int display_mode = (Q->shade == TRUE) ? INTERP : FLAT;
+
 
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
@@ -401,6 +404,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int *Q_face = Q->Mface->I; 
   double *Q_val = Q->Mval->R;
   int Q_nb_levels = Q->colmax - Q->colmin + 1;
+  int display_mode = (Q->shade == TRUE) ? INTERP : FLAT;
 
   for ( j = 0 ; j < Q_nb_faces ; j++) 
     {
@@ -733,7 +737,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
 	}
     }
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,4,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,4,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
@@ -774,7 +778,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 	    * this function 
 	    */
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,bc,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
 
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;

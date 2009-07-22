@@ -231,7 +231,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #endif 
 
   nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
-
+  
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
    * on l'enleve donc de initialize_gc
@@ -400,17 +400,19 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 #else 
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
-#ifdef PERIGL
-  /* Set OpenGL-capability to the widget */
+#if defined(PERIGL) && !defined(PERIGLGTK) 
+  /* Set OpenGL-capability to the widget 
+   * opengl rendering in the window 
+   */
   gtk_widget_set_gl_capability (dd->private->drawing,
 				glconfig,
 				NULL,
 				TRUE,
 				GDK_GL_RGBA_TYPE);
-#else
+#else 
   /* we use our own double buffer */
   gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
-#endif /* PERIGL */
+#endif /* defined(PERIGL) && !defined(PERIGLGTK)  */
 #endif /* PERICAIRO */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */

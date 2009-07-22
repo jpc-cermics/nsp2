@@ -90,7 +90,8 @@ clean ::
 		--register ./graphic-types.defs \
 	    --override figure.override \
 	    --prefix Figure figure.defs) > $*.c \
-	&& cp figure.h ../../include/nsp 
+	&& cp figure.h ../../include/nsp \
+	&& cp figuredata.h ../../include/nsp
 
 ../groot.c : groot.defs  groot.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \

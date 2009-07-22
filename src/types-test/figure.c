@@ -17,8 +17,13 @@
 #include <nsp/compound.h>
 extern BCG *nsp_check_graphic_context(void);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
-
+extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern NspFigure *nsp_check_for_figure(BCG *Xgc);
+extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
@@ -30,14 +35,9 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static NspAxes *nsp_get_current_axes(void);
-static NspFigure *nsp_get_figure(BCG *Xgc);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
-
-extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
-extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 
 
 #line 44 "figure.c"
@@ -1130,6 +1130,22 @@ static int init_figuredata(NspFigureData *Obj,NspTypeNspFigureData *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->color = 0;
+  Obj->background = 0;
+  Obj->colormap = NULLMAT;
+  Obj->dashes = 0;
+  Obj->font = 0;
+  Obj->font_size = 0;
+  Obj->foreground = 0;
+  Obj->hidden3d = 0;
+  Obj->line_mode = 0;
+  Obj->line_style = 0;
+  Obj->mark = 0;
+  Obj->mark_size = 0;
+  Obj->pattern = 0;
+  Obj->pixmap = 0;
+  Obj->thickness = 0;
+  Obj->use_color = 0;
+  Obj->auto_clear = 0;
   return OK;
 }
 
@@ -1186,6 +1202,22 @@ static int nsp_figuredata_eq(NspFigureData *A, NspObject *B)
   NspFigureData *loc = (NspFigureData *) B;
   if ( check_cast(B,nsp_type_figuredata_id) == FALSE) return FALSE ;
   if ( A->color != loc->color) return FALSE;
+  if ( A->background != loc->background) return FALSE;
+  if ( NSP_OBJECT(A->colormap)->type->eq(A->colormap,loc->colormap) == FALSE ) return FALSE;
+  if ( A->dashes != loc->dashes) return FALSE;
+  if ( A->font != loc->font) return FALSE;
+  if ( A->font_size != loc->font_size) return FALSE;
+  if ( A->foreground != loc->foreground) return FALSE;
+  if ( A->hidden3d != loc->hidden3d) return FALSE;
+  if ( A->line_mode != loc->line_mode) return FALSE;
+  if ( A->line_style != loc->line_style) return FALSE;
+  if ( A->mark != loc->mark) return FALSE;
+  if ( A->mark_size != loc->mark_size) return FALSE;
+  if ( A->pattern != loc->pattern) return FALSE;
+  if ( A->pixmap != loc->pixmap) return FALSE;
+  if ( A->thickness != loc->thickness) return FALSE;
+  if ( A->use_color != loc->use_color) return FALSE;
+  if ( A->auto_clear != loc->auto_clear) return FALSE;
   return TRUE;
 }
 
@@ -1210,6 +1242,22 @@ int nsp_figuredata_xdr_save(XDR *xdrs, NspFigureData *M)
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figuredata)) == FAIL) return FAIL; 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->background) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->colormap)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->dashes) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->font) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->font_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->foreground) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->hidden3d) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->line_mode) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->line_style) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->mark) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->mark_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->pattern) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->pixmap) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->use_color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->auto_clear) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1220,6 +1268,22 @@ int nsp_figuredata_xdr_save(XDR *xdrs, NspFigureData *M)
 NspFigureData  *nsp_figuredata_xdr_load_partial(XDR *xdrs, NspFigureData *M)
 {
   if (nsp_xdr_load_i(xdrs, &M->color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->background) == FAIL) return NULL;
+  if ((M->colormap =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->dashes) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->font) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->font_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->foreground) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->hidden3d) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->line_mode) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->line_style) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->mark) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->mark_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->pattern) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->pixmap) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->thickness) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->use_color) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->auto_clear) == FAIL) return NULL;
  return M;
 }
 
@@ -1231,7 +1295,7 @@ static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
   if ((H  = nsp_figuredata_create_void(name,(NspTypeBase *) nsp_type_figuredata))== NULLFIGUREDATA) return H;
   if ((H  = nsp_figuredata_xdr_load_partial(xdrs,H))== NULLFIGUREDATA) return H;
   if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
-#line 1235 "figure.c"
+#line 1299 "figure.c"
   return H;
 }
 
@@ -1241,7 +1305,8 @@ static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
 
 void nsp_figuredata_destroy_partial(NspFigureData *H)
 {
-#line 1245 "figure.c"
+#line 1309 "figure.c"
+  nsp_matrix_destroy(H->colormap);
 }
 
 void nsp_figuredata_destroy(NspFigureData *H)
@@ -1295,6 +1360,24 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
       Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)) );
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"color=%d\n",M->color);
+  Sciprintf1(indent+2,"background=%d\n",M->background);
+  if ( M->colormap != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    }
+  Sciprintf1(indent+2,"dashes=%d\n",M->dashes);
+  Sciprintf1(indent+2,"font=%d\n",M->font);
+  Sciprintf1(indent+2,"font_size=%d\n",M->font_size);
+  Sciprintf1(indent+2,"foreground=%d\n",M->foreground);
+  Sciprintf1(indent+2,"hidden3d=%d\n",M->hidden3d);
+  Sciprintf1(indent+2,"line_mode=%d\n",M->line_mode);
+  Sciprintf1(indent+2,"line_style=%d\n",M->line_style);
+  Sciprintf1(indent+2,"mark=%d\n",M->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n",M->mark_size);
+  Sciprintf1(indent+2,"pattern=%d\n",M->pattern);
+  Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
+  Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
+  Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
+  Sciprintf1(indent+2,"auto_clear=%d\n",M->auto_clear);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1311,6 +1394,24 @@ int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"color=%d\n",M->color);
+  Sciprintf1(indent+2,"background=%d\n",M->background);
+  if ( M->colormap != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    }
+  Sciprintf1(indent+2,"dashes=%d\n",M->dashes);
+  Sciprintf1(indent+2,"font=%d\n",M->font);
+  Sciprintf1(indent+2,"font_size=%d\n",M->font_size);
+  Sciprintf1(indent+2,"foreground=%d\n",M->foreground);
+  Sciprintf1(indent+2,"hidden3d=%d\n",M->hidden3d);
+  Sciprintf1(indent+2,"line_mode=%d\n",M->line_mode);
+  Sciprintf1(indent+2,"line_style=%d\n",M->line_style);
+  Sciprintf1(indent+2,"mark=%d\n",M->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n",M->mark_size);
+  Sciprintf1(indent+2,"pattern=%d\n",M->pattern);
+  Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
+  Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
+  Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
+  Sciprintf1(indent+2,"auto_clear=%d\n",M->auto_clear);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1382,14 +1483,36 @@ int nsp_figuredata_create_partial(NspFigureData *H)
 
 int nsp_figuredata_check_values(NspFigureData *H)
 {
+  if ( H->colormap == NULLMAT) 
+    {
+       if (( H->colormap = nsp_matrix_create("colormap",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
   return OK;
 }
 
-NspFigureData *nsp_figuredata_create(char *name,int color,NspTypeBase *type)
+NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,int auto_clear,NspTypeBase *type)
 {
  NspFigureData *H  = nsp_figuredata_create_void(name,type);
  if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
   H->color=color;
+  H->background=background;
+  H->colormap= colormap;
+  H->dashes=dashes;
+  H->font=font;
+  H->font_size=font_size;
+  H->foreground=foreground;
+  H->hidden3d=hidden3d;
+  H->line_mode=line_mode;
+  H->line_style=line_style;
+  H->mark=mark;
+  H->mark_size=mark_size;
+  H->pattern=pattern;
+  H->pixmap=pixmap;
+  H->thickness=thickness;
+  H->use_color=use_color;
+  H->auto_clear=auto_clear;
  if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
  return H;
 }
@@ -1410,6 +1533,27 @@ NspFigureData *nsp_figuredata_create_default(char *name)
 NspFigureData *nsp_figuredata_copy_partial(NspFigureData *H,NspFigureData *self)
 {
   H->color=self->color;
+  H->background=self->background;
+  if ( self->colormap == NULL )
+    { H->colormap = NULL;}
+  else
+    {
+      if ((H->colormap = (NspMatrix *) nsp_object_copy_and_name("colormap",NSP_OBJECT(self->colormap))) == NULLMAT) return NULL;
+    }
+  H->dashes=self->dashes;
+  H->font=self->font;
+  H->font_size=self->font_size;
+  H->foreground=self->foreground;
+  H->hidden3d=self->hidden3d;
+  H->line_mode=self->line_mode;
+  H->line_style=self->line_style;
+  H->mark=self->mark;
+  H->mark_size=self->mark_size;
+  H->pattern=self->pattern;
+  H->pixmap=self->pixmap;
+  H->thickness=self->thickness;
+  H->use_color=self->use_color;
+  H->auto_clear=self->auto_clear;
   return H;
 }
 
@@ -1428,7 +1572,7 @@ NspFigureData *nsp_figuredata_copy(NspFigureData *self)
 NspFigureData *nsp_figuredata_full_copy(NspFigureData *self)
 {
   NspFigureData *H = nsp_figuredata_copy(self);
-#line 1432 "figure.c"
+#line 1576 "figure.c"
   return H;
 }
 
@@ -1447,7 +1591,7 @@ int int_figuredata_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figuredata_check_values(H) == FAIL) return RET_BUG;
-#line 1451 "figure.c"
+#line 1595 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -1474,8 +1618,308 @@ static int _wrap_figuredata_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_figuredata_get_background(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->background;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_background(void *self, char *attr, NspObject *O)
+{
+  int background;
+
+  if ( IntScalar(O,&background) == FAIL) return FAIL;
+  ((NspFigureData *) self)->background= background;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_colormap(void *self,char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspFigureData *) self)->colormap;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_figuredata_get_obj_colormap(void *self,char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspFigureData *) self)->colormap);
+  return (NspObject *) ret;
+}
+
+static int _wrap_figuredata_set_colormap(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *colormap;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((colormap = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspFigureData *) self)->colormap != NULL ) 
+    nsp_matrix_destroy(((NspFigureData *) self)->colormap);
+  ((NspFigureData *) self)->colormap= colormap;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_dashes(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->dashes;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_dashes(void *self, char *attr, NspObject *O)
+{
+  int dashes;
+
+  if ( IntScalar(O,&dashes) == FAIL) return FAIL;
+  ((NspFigureData *) self)->dashes= dashes;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_font(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->font;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_font(void *self, char *attr, NspObject *O)
+{
+  int font;
+
+  if ( IntScalar(O,&font) == FAIL) return FAIL;
+  ((NspFigureData *) self)->font= font;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_font_size(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->font_size;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_font_size(void *self, char *attr, NspObject *O)
+{
+  int font_size;
+
+  if ( IntScalar(O,&font_size) == FAIL) return FAIL;
+  ((NspFigureData *) self)->font_size= font_size;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_foreground(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->foreground;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_foreground(void *self, char *attr, NspObject *O)
+{
+  int foreground;
+
+  if ( IntScalar(O,&foreground) == FAIL) return FAIL;
+  ((NspFigureData *) self)->foreground= foreground;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_hidden3d(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->hidden3d;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_hidden3d(void *self, char *attr, NspObject *O)
+{
+  int hidden3d;
+
+  if ( IntScalar(O,&hidden3d) == FAIL) return FAIL;
+  ((NspFigureData *) self)->hidden3d= hidden3d;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_line_mode(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->line_mode;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_line_mode(void *self, char *attr, NspObject *O)
+{
+  int line_mode;
+
+  if ( IntScalar(O,&line_mode) == FAIL) return FAIL;
+  ((NspFigureData *) self)->line_mode= line_mode;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_line_style(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->line_style;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_line_style(void *self, char *attr, NspObject *O)
+{
+  int line_style;
+
+  if ( IntScalar(O,&line_style) == FAIL) return FAIL;
+  ((NspFigureData *) self)->line_style= line_style;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_mark(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->mark;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_mark(void *self, char *attr, NspObject *O)
+{
+  int mark;
+
+  if ( IntScalar(O,&mark) == FAIL) return FAIL;
+  ((NspFigureData *) self)->mark= mark;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_mark_size(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->mark_size;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_mark_size(void *self, char *attr, NspObject *O)
+{
+  int mark_size;
+
+  if ( IntScalar(O,&mark_size) == FAIL) return FAIL;
+  ((NspFigureData *) self)->mark_size= mark_size;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_pattern(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->pattern;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_pattern(void *self, char *attr, NspObject *O)
+{
+  int pattern;
+
+  if ( IntScalar(O,&pattern) == FAIL) return FAIL;
+  ((NspFigureData *) self)->pattern= pattern;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_pixmap(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->pixmap;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_pixmap(void *self, char *attr, NspObject *O)
+{
+  int pixmap;
+
+  if ( IntScalar(O,&pixmap) == FAIL) return FAIL;
+  ((NspFigureData *) self)->pixmap= pixmap;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_thickness(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->thickness;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_thickness(void *self, char *attr, NspObject *O)
+{
+  int thickness;
+
+  if ( IntScalar(O,&thickness) == FAIL) return FAIL;
+  ((NspFigureData *) self)->thickness= thickness;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_use_color(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->use_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_use_color(void *self, char *attr, NspObject *O)
+{
+  int use_color;
+
+  if ( IntScalar(O,&use_color) == FAIL) return FAIL;
+  ((NspFigureData *) self)->use_color= use_color;
+  return OK;
+}
+
+static NspObject *_wrap_figuredata_get_auto_clear(void *self,char *attr)
+{
+  int ret;
+
+  ret = ((NspFigureData *) self)->auto_clear;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_auto_clear(void *self, char *attr, NspObject *O)
+{
+  int auto_clear;
+
+  if ( IntScalar(O,&auto_clear) == FAIL) return FAIL;
+  ((NspFigureData *) self)->auto_clear= auto_clear;
+  return OK;
+}
+
 static AttrTab figuredata_attrs[] = {
   { "color", (attr_get_function *)_wrap_figuredata_get_color, (attr_set_function *)_wrap_figuredata_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "background", (attr_get_function *)_wrap_figuredata_get_background, (attr_set_function *)_wrap_figuredata_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "colormap", (attr_get_function *)_wrap_figuredata_get_colormap, (attr_set_function *)_wrap_figuredata_set_colormap,(attr_get_object_function *)_wrap_figuredata_get_obj_colormap, (attr_set_object_function *)int_set_object_failed },
+  { "dashes", (attr_get_function *)_wrap_figuredata_get_dashes, (attr_set_function *)_wrap_figuredata_set_dashes,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "font", (attr_get_function *)_wrap_figuredata_get_font, (attr_set_function *)_wrap_figuredata_set_font,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "font_size", (attr_get_function *)_wrap_figuredata_get_font_size, (attr_set_function *)_wrap_figuredata_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "foreground", (attr_get_function *)_wrap_figuredata_get_foreground, (attr_set_function *)_wrap_figuredata_set_foreground,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hidden3d", (attr_get_function *)_wrap_figuredata_get_hidden3d, (attr_set_function *)_wrap_figuredata_set_hidden3d,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "line_mode", (attr_get_function *)_wrap_figuredata_get_line_mode, (attr_set_function *)_wrap_figuredata_set_line_mode,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "line_style", (attr_get_function *)_wrap_figuredata_get_line_style, (attr_set_function *)_wrap_figuredata_set_line_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark", (attr_get_function *)_wrap_figuredata_get_mark, (attr_set_function *)_wrap_figuredata_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_size", (attr_get_function *)_wrap_figuredata_get_mark_size, (attr_set_function *)_wrap_figuredata_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "pattern", (attr_get_function *)_wrap_figuredata_get_pattern, (attr_set_function *)_wrap_figuredata_set_pattern,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "pixmap", (attr_get_function *)_wrap_figuredata_get_pixmap, (attr_set_function *)_wrap_figuredata_set_pixmap,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "thickness", (attr_get_function *)_wrap_figuredata_get_thickness, (attr_set_function *)_wrap_figuredata_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "use_color", (attr_get_function *)_wrap_figuredata_get_use_color, (attr_set_function *)_wrap_figuredata_set_use_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "auto_clear", (attr_get_function *)_wrap_figuredata_get_auto_clear, (attr_set_function *)_wrap_figuredata_set_auto_clear,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1512,7 +1956,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1516 "figure.c"
+#line 1960 "figure.c"
 
 
 #line 126 "codegen/figure.override"
@@ -1524,7 +1968,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1528 "figure.c"
+#line 1972 "figure.c"
 
 
 /*----------------------------------------------------
@@ -1566,9 +2010,9 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 1570 "figure.c"
+#line 2014 "figure.c"
   nspgobject_register_class(d, "NspFigure", Figure, &NspNspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-  nspgobject_register_class(d, "NspFigureData", Figure, &NspNspFigureData_Type, Nsp_BuildValue("(O)", &NspObject_Type));
+  nspgobject_register_class(d, "NspFigureData", FigureData, &NspNspFigureData_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
@@ -1847,11 +2291,36 @@ static NspAxes *nsp_get_current_axes(void)
   return nsp_current_axes;
 }
 
-NspFigure *nsp_create_default_figure(void)
+NspFigure *nsp_create_default_figure(int n)
 {
-  NspFigure *fig ;
-  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+  NspFigure *fig;
+
+  char *name,*driver;
+  /* take care that nsp_figure_create won't allocate its fields 
+   * we have to make the copies here 
+   */
+  if (( name =new_nsp_string("Graphic window")) == NULLSTRING)
+    return NULL;
+  if (( driver =new_nsp_string("Gtk")) == NULLSTRING)
+    return NULL;
+  fig = nsp_figure_create("fig",name,driver,n,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
   return fig;
+}
+
+
+NspFigure *nsp_check_for_figure(BCG *Xgc)
+{
+  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      F = nsp_create_default_figure(Xgc->CurWindow);
+      if ( F == NULL) return NULL;
+      /* insert in Xgc */
+      store_graphic_object(Xgc,NSP_OBJECT(F));
+    }
+  if ( ! IsFigure((NspObject *) F)) return NULL;
+  return F;
 }
 
 
@@ -1864,17 +2333,18 @@ NspFigure *nsp_create_default_figure(void)
 
 NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 {
-  int i,l;
+  int i,l, created=FALSE;
   NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+      F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
+      created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   L= F->obj->children;
@@ -1917,8 +2387,11 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Axes =(NspObject *) axe;
     }
+  if ( created==TRUE) nsp_figure_destroy(F);
+    
   return (NspAxes *) Axes;
 }
+
 
 /* checks for a figure and a 3dobj-axes in Xgc 
  * create one if not present. 
@@ -1929,17 +2402,18 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 
 NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
 {
-  int i,l;
+  int i,l , created=FALSE;
   NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+      F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
+      created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   L= F->obj->children;
@@ -1983,6 +2457,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Objs3d =(NspObject *) obj3d;
     }
+  if ( created==TRUE) nsp_figure_destroy(F);
   return (NspObjs3d *) Objs3d;
 }
 
@@ -2054,7 +2529,7 @@ NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
   return gr;
 }
 
-static NspFigure *nsp_get_figure(BCG *Xgc)
+NspFigure *nsp_get_figure(BCG *Xgc)
 {
   NspObject  *F = NULL;
   if ( Xgc == NULL) return NULL;
@@ -2209,4 +2684,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2213 "figure.c"
+#line 2688 "figure.c"

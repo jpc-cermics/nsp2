@@ -40,6 +40,7 @@
 #include "nsp/object.h"
 #include "nsp/gtk/gobject.h"
 #include "nsp/graphics/Graphics.h" 
+#include "new_graphics.h"
 
 extern Gengine *nsp_gengine ; /* XXXXX */
 
@@ -176,6 +177,8 @@ Gengine1 nsp_gengine1={
   draw_pixbuf_1,
   draw_pixbuf_from_file_1
 };
+
+
 
 
 /*------------------------------------------------
@@ -1038,7 +1041,6 @@ static void Myalloc1(int **xm, int n, int *err)
 	}
     }
 }
-
 
 
 

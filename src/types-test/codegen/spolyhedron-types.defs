@@ -16,6 +16,7 @@
    '("int" "coloutmax"  "std" "-1")
    '("gboolean" "mesh" "std" "TRUE")
    '("int" "back_color" "std" "4") 
+   '("gboolean" "shade" "std" "FALSE")
    ;;  extra hidden fields 
    '("void*" "Mcoord_l"  "hidden" "NULL" )
    '("int*" "pos" "hidden" )

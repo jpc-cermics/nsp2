@@ -892,7 +892,7 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
       color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
       x[0] = L_coord[j];
       y[0] = L_coord[j+L_nb_coords];
-      z[0] = L_coord[3*j+2*L_nb_coords];
+      z[0] = L_coord[j+2*L_nb_coords];
       x[1] = L_coord[j+1];
       y[1] = L_coord[j+1+L_nb_coords];
       z[1] = L_coord[j+1+2*L_nb_coords];

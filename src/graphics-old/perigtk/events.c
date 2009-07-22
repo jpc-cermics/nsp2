@@ -600,7 +600,12 @@ static void delete_window(BCG *dd,int intnum)
   if ( top_count <= 1) 
     {
       if ( winxgc->private->window != NULL) 
-	gtk_widget_destroy(winxgc->private->window);
+	{
+#if defined(PERIGL) && !defined(PERIGLGTK) 
+	  gdk_window_unset_gl_capability(winxgc->private->drawing->window);
+#endif 
+	  gtk_widget_destroy(winxgc->private->window);
+	}
     }
   else 
     {
@@ -638,10 +643,11 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  G_CALLBACK( expose_event), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
-					  G_CALLBACK(  sci_destroy_window), (gpointer) winxgc);
+					  G_CALLBACK(  sci_destroy_window ), (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window), 
+					  G_CALLBACK(sci_delete_window), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
 					   G_CALLBACK( key_press_event), (gpointer) winxgc);
-
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  G_CALLBACK( locator_button_press), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
@@ -651,7 +657,6 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  G_CALLBACK( realize_event), (gpointer) winxgc);
 }
-
 
 
 

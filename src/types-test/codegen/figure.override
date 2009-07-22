@@ -9,8 +9,13 @@ headers
 #include <nsp/compound.h>
 extern BCG *nsp_check_graphic_context(void);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
-
+extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern NspFigure *nsp_check_for_figure(BCG *Xgc);
+extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
@@ -22,14 +27,9 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static NspAxes *nsp_get_current_axes(void);
-static NspFigure *nsp_get_figure(BCG *Xgc);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
-
-extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
-extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 
 
 %%
@@ -439,11 +439,36 @@ static NspAxes *nsp_get_current_axes(void)
   return nsp_current_axes;
 }
 
-NspFigure *nsp_create_default_figure(void)
+NspFigure *nsp_create_default_figure(int n)
 {
-  NspFigure *fig ;
-  fig = nsp_figure_create("fig","Graphic window","Gtk",0,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+  NspFigure *fig;
+
+  char *name,*driver;
+  /* take care that nsp_figure_create won't allocate its fields 
+   * we have to make the copies here 
+   */
+  if (( name =new_nsp_string("Graphic window")) == NULLSTRING)
+    return NULL;
+  if (( driver =new_nsp_string("Gtk")) == NULLSTRING)
+    return NULL;
+  fig = nsp_figure_create("fig",name,driver,n,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
   return fig;
+}
+
+
+NspFigure *nsp_check_for_figure(BCG *Xgc)
+{
+  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      F = nsp_create_default_figure(Xgc->CurWindow);
+      if ( F == NULL) return NULL;
+      /* insert in Xgc */
+      store_graphic_object(Xgc,NSP_OBJECT(F));
+    }
+  if ( ! IsFigure((NspObject *) F)) return NULL;
+  return F;
 }
 
 
@@ -456,17 +481,18 @@ NspFigure *nsp_create_default_figure(void)
 
 NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 {
-  int i,l;
+  int i,l, created=FALSE;
   NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+      F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
+      created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   L= F->obj->children;
@@ -509,8 +535,11 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Axes =(NspObject *) axe;
     }
+  if ( created==TRUE) nsp_figure_destroy(F);
+    
   return (NspAxes *) Axes;
 }
+
 
 /* checks for a figure and a 3dobj-axes in Xgc 
  * create one if not present. 
@@ -521,17 +550,18 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 
 NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
 {
-  int i,l;
+  int i,l , created=FALSE;
   NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_figure_create("figure","Graphic","Gtk",Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
+      F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
       store_graphic_object(Xgc,NSP_OBJECT(F));
+      created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   L= F->obj->children;
@@ -575,6 +605,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Objs3d =(NspObject *) obj3d;
     }
+  if ( created==TRUE) nsp_figure_destroy(F);
   return (NspObjs3d *) Objs3d;
 }
 
@@ -646,7 +677,7 @@ NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
   return gr;
 }
 
-static NspFigure *nsp_get_figure(BCG *Xgc)
+NspFigure *nsp_get_figure(BCG *Xgc)
 {
   NspObject  *F = NULL;
   if ( Xgc == NULL) return NULL;

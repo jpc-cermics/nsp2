@@ -40,7 +40,9 @@ static void nsp_fonts_finalize(BCG *Xgc)
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
       pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
       pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
-      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
+      /* seams to crash randomly 
+       * g_object_unref (G_OBJECT (Xgc->private->ft2_context)); 
+       */
     }
 }
 
