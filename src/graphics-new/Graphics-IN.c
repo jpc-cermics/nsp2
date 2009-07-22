@@ -4893,8 +4893,6 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 
   if ((rep= GetStringInArray(stack,1,xset_Table,1)) == -1) return RET_BUG; 
 
-  ZZZ
-
   switch (rep) 
     {
     case xset_alufunction:
@@ -5297,21 +5295,38 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 #ifdef NEW_GRAPHICS 
   {
     NspAxes *axe;
-    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+    NspObjs3d *objs3d;
+    NspObject *Obj= nsp_check_for_axes_or_objs3d(Xgc,NULL);
+    if ( Obj == NULL) return FAIL;
     /* create a vfield and insert-it in axes */
-    for ( narg = 1 ; narg <= rhs ; narg++) 
-      {
-	nsp_string str;
-	if (( S = GetSMatUtf8(stack,narg)) == NULLSMAT) return RET_BUG;
-	if ( S->mn == 0 ) continue;
-	if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
-	switch (narg) 
-	  {
-	  case 1: axe->obj->title = str;break;
-	  case 2: axe->obj->x = str;break;
-	  case 3: axe->obj->y = str;break;
-	  }
-      }
+    if ( IsAxes(Obj))
+      for ( narg = 1 ; narg <= rhs ; narg++) 
+	{
+	  nsp_string str;
+	  if (( S = GetSMatUtf8(stack,narg)) == NULLSMAT) return RET_BUG;
+	  if ( S->mn == 0 ) continue;
+	  if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
+	  switch (narg) 
+	    {
+	    case 1: ((NspAxes *) Obj)->obj->title = str;break;
+	    case 2: ((NspAxes *) Obj)->obj->x = str;break;
+	    case 3: ((NspAxes *) Obj)->obj->y = str;break;
+	    }
+	}
+    else if ( IsObjs3d(Obj)) 
+      for ( narg = 1 ; narg <= rhs ; narg++) 
+	{
+	  nsp_string str;
+	  if (( S = GetSMatUtf8(stack,narg)) == NULLSMAT) return RET_BUG;
+	  if ( S->mn == 0 ) continue;
+	  if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
+	  switch (narg) 
+	    {
+	    case 1: ((NspObjs3d *) Obj)->obj->title = str;break;
+	    case 2: ((NspObjs3d *) Obj)->obj->x = str;break;
+	    case 3: ((NspObjs3d *) Obj)->obj->y = str;break;
+	    }
+	}
     nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
   }
 #else 
