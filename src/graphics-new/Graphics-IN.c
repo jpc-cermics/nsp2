@@ -69,6 +69,8 @@ extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
+extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
+
 
 #endif 
 
@@ -5294,8 +5296,6 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
 #ifdef NEW_GRAPHICS 
   {
-    NspAxes *axe;
-    NspObjs3d *objs3d;
     NspObject *Obj= nsp_check_for_axes_or_objs3d(Xgc,NULL);
     if ( Obj == NULL) return FAIL;
     /* create a vfield and insert-it in axes */
@@ -5323,11 +5323,9 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 	  switch (narg) 
 	    {
 	    case 1: ((NspObjs3d *) Obj)->obj->title = str;break;
-	    case 2: ((NspObjs3d *) Obj)->obj->x = str;break;
-	    case 3: ((NspObjs3d *) Obj)->obj->y = str;break;
 	    }
 	}
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+    nsp_figure_force_redraw(((NspGraphic *) Obj)->obj->Fig);
   }
 #else 
   for ( narg = 1 ; narg <= rhs ; narg++) 
