@@ -302,30 +302,36 @@ int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_leve
 
 int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_level)
 {
+  NSP_ITYPE_NAMES(names);
+  char *st=NULL;
   int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(IMat)->name;
+  st = NSP_ITYPE_NAME(names,IMat->itype);					
 
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(pname,NVOID) != 0) 
+      if (IMat->mn==0 )
 	{
-	  Sciprintf1(indent,"%s=%s",pname,(IMat->mn==0 ) ? " xxx([])\n" : "" );
+	  if ( strcmp(pname,NVOID) != 0) 
+	    Sciprintf1(indent,"%s= imat_create(%d,%d,\"%s\");",pname,IMat->m,IMat->n,st);
+	  else 
+	    Sciprintf1(indent,"imat_create(%d,%d,\"%s\");",IMat->m,IMat->n, st);
 	}
       else 
 	{
-	  Sciprintf1(indent,"%s",(IMat->mn==0 ) ? " xxx([])\n" : "" );
+	  if ( strcmp(pname,NVOID) != 0) 
+	    Sciprintf1(indent,"%s=m2i(",pname);
+	  else 
+	    Sciprintf1(indent,"m2i(");
 	}
     }
   else 
     {
-      NSP_ITYPE_NAMES(names);
-      char *st=NULL;
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
 	  nsp_imatrix_info(IMat,indent,pname,rec_level);
 	  return rep;
 	}
-      st = NSP_ITYPE_NAME(names,IMat->itype);					
       Sciprintf1(indent,"%s\t=%s\t\t i (%dx%d,%s)\n",pname,
 		 (IMat->mn==0 ) ? " []" : "",IMat->m,IMat->n,st);
     }
@@ -334,6 +340,10 @@ int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_lev
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
       rep =nsp_imatrix_print_internal (&fmt,IMat,indent);
+    }
+  if (user_pref.pr_as_read_syntax)
+    {
+      Sciprintf1(indent,",\"%s\");\n",st);
     }
   return rep;
 }
