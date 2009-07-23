@@ -1595,6 +1595,9 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   init_gl_lights(light0_pos); 
 #endif
   realize_event_ogl(dd);
+
+  gdk_gl_drawable_gl_end (dd->private->gldrawable);
+
   return FALSE;
 }
 
@@ -1645,6 +1648,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext))
     return FALSE;
   realize_event_ogl(dd);
+  gdk_gl_drawable_gl_end (dd->private->gldrawable);
   return FALSE;
 }
 #endif /* PERIGLGTK */
@@ -1671,7 +1675,7 @@ static void realize_event_ogl(BCG *dd )
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   glShadeModel(GL_SMOOTH);
-  /* gdk_gl_drawable_gl_end (dd->private->gldrawable); */
+
 }
 #endif 
 
@@ -1850,7 +1854,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       /* redraw after resize 
        */
       dd->private->resize = 0;
-      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) 
+	return FALSE;
       /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
       glClear(GL_DEPTH_BUFFER_BIT);
       nsp_ogl_set_view(dd);
@@ -1903,7 +1908,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 
 #else 
 
-/* periGL version */
+/* periGL version in the  PERIGLGTK case */
+
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -1946,35 +1952,34 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
        * Note that the gldrawable will be changed in scig_resize if we are 
        * using the extra_pixmap.
        */
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
       scig_resize(dd->CurWindow);
       dd->private->in_expose= FALSE;
-      gdk_gl_drawable_gl_end (dd->private->gldrawable);
-      glFlush ();
       gdk_gl_drawable_wait_gl (dd->private->gldrawable);
+      glFlush ();
+      gdk_gl_drawable_gl_end (dd->private->gldrawable);
       /* synchronize pixmap */
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
   else 
     {
       if ( dd->private->draw == TRUE ) 
 	{
-	  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
 	  gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
+	  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  dd->private->gl_only = TRUE;
 	  scig_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
+	  gdk_gl_drawable_wait_gl(dd->private->gldrawable);
+	  glFlush ();	  
 	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
 	}
-      glFlush ();
-      gdk_gl_drawable_wait_gl(dd->private->gldrawable);
       if (event  != NULL) 
 	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
@@ -1986,7 +1991,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			   dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
   gdk_flush();
   return FALSE;
