@@ -588,13 +588,22 @@ static void delete_window(BCG *dd,int intnum)
     }
   if ( winxgc->private->extra_pixmap != NULL) 
     {
+#if defined(PERIGL) && defined(PERIGLGTK) 
+      gdk_pixmap_unset_gl_capability (winxgc->private->extra_pixmap);
+#endif 
       /* we can have a non null extra_pixmap */
       g_object_unref(G_OBJECT(winxgc->private->extra_pixmap));
     }
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
-  if (winxgc->private->pixmap != NULL) g_object_unref(G_OBJECT(winxgc->private->pixmap));
+  if (winxgc->private->pixmap != NULL) 
+    {
+#if defined(PERIGL) && defined(PERIGLGTK) 
+      gdk_pixmap_unset_gl_capability (winxgc->private->pixmap);
+#endif 
+      g_object_unref(G_OBJECT(winxgc->private->pixmap));
+    }
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 

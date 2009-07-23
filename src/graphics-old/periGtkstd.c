@@ -1491,18 +1491,7 @@ static void xset_default(BCG *Xgc)
  *
  */
 
-/**
- * realize_event:
- * @widget: 
- * @data: 
- * 
- * 
- * 
- * Returns: 
- **/
-
-#if defined(PERIGTK) || defined(PERICAIRO)
-static gint realize_event(GtkWidget *widget, gpointer data)
+static gint realize_event_common(GtkWidget *widget, gpointer data)
 {
   GdkColor white={0,0,0,0};
   GdkColor black={0,65535,65535,65535};
@@ -1527,14 +1516,27 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
   dd->private->extra_cursor = NULL;
   gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
-  /* set window bg */
-  /* note that dd->private->gcol_bg does not exists at that point */
-  /* 
-   * dd->private->gcol_bg = white;
-   * gdk_draw_rectangle(dd->private->drawing->window, dd->private->stdgc, TRUE, 0, 0, 
-   * dd->CWindowWidth, dd->CWindowHeight);
-   */
-  /* gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg); */
+  return TRUE;
+}
+
+
+
+
+/**
+ * realize_event:
+ * @widget: 
+ * @data: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+#if defined(PERIGTK) || defined(PERICAIRO)
+static gint realize_event(GtkWidget *widget, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  if ( realize_event_common(widget,data) == FALSE ) return FALSE;
 
   if ( dd->private->pixmap == NULL)
     {
@@ -1564,13 +1566,8 @@ static void realize_event_ogl(BCG *dd );
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
   BCG *Xgc = (BCG *) data;
-
-  g_return_val_if_fail(Xgc != NULL, FALSE);
-  g_return_val_if_fail(Xgc->private->drawing != NULL, FALSE);
-  g_return_val_if_fail(GTK_IS_DRAWING_AREA(Xgc->private->drawing), FALSE);
-  /* we need a gc in xset_wshow */
-  Xgc->private->stdgc = gdk_gc_new(Xgc->private->drawing->window);
-
+  if ( realize_event_common(widget,data) == FALSE ) return FALSE;
+  
   Xgc->private->glcontext = gtk_widget_get_gl_context (widget);
   Xgc->private->gldrawable = gtk_widget_get_gl_drawable (widget);
   
@@ -1595,36 +1592,16 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   init_gl_lights(light0_pos); 
 #endif
   realize_event_ogl(Xgc);
+
   return FALSE;
 }
 
 #else /* PERIGLGTK */
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
-  GdkColor white={0,0,0,0};
-  GdkColor black={0,65535,65535,65535};
   BCG *dd = (BCG *) data;
 
-  g_return_val_if_fail(dd != NULL, FALSE);
-  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  
-  /* create gc */
-  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
-  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
-  /* standard gc : for private->pixmap copies */
-  /* this gc could be shared by all windows */
-  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
-  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
-
-  /* set the cursor */
-  dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
-  dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
-  gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
-  /* set window bg */
-  gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg);
+  if ( realize_event_common(widget,data) == FALSE ) return FALSE;
 
   if ( dd->private->pixmap == NULL)
     {
@@ -1632,7 +1609,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
     }
-
+  
   /* default value is to use the background pixmap */
   dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
   nsp_set_gldrawable(dd,dd->private->pixmap);
@@ -1674,7 +1651,6 @@ static void realize_event_ogl(BCG *dd )
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   glShadeModel(GL_SMOOTH);
-  /* gdk_gl_drawable_gl_end (dd->private->gldrawable); */
 }
 #endif 
 
