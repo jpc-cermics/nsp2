@@ -226,7 +226,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
    */
   /* Default value is without Pixmap */
   NewXgc->CurPixmapStatus = 0; 
-#ifdef PERIGL 
+#if defined(PERIGL) && !defined(PERIGLGTK) 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
 
@@ -273,14 +273,12 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 {
   static char gwin_name[100];
   gint iw, ih;
-#ifdef PERIGL
-  guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
-  GdkGLConfig *glconfig;
-#endif 
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
+#if defined(PERIGL) && !defined(PERIGLGTK) 
+  guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
+  GdkGLConfig *glconfig;
 
-#ifdef PERIGL
   glconfig = gdk_gl_config_new_by_mode (mode  | GDK_GL_MODE_DOUBLE) ;
   if (glconfig == NULL)
     {

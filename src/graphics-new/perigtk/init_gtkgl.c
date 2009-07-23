@@ -30,6 +30,12 @@
  * available window number 
  */
 
+#ifdef PERICAIRO 
+#include <cairo-pdf.h>
+#include <cairo-ps.h>
+#include <cairo-svg.h>
+#endif 
+
 static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data);
 
@@ -44,22 +50,20 @@ static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *
  */
 
 #ifdef PERIGL 
-int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
-  return  nsp_get_win_counter()-1;
-}
-#else 
+#define nsp_graphic_new nsp_graphic_new_gl
+#endif 
+#ifdef PERICAIRO 
+#define nsp_graphic_new nsp_graphic_new_cairo
+#endif 
+
 int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
   return  nsp_get_win_counter()-1;
 }
-#endif 
 
-#ifndef PERIGL
-/* this should be  moved in windows 
- * keep track of window ids
+#ifdef PERIGTK 
+/* this should be  moved in windows: keep track of window ids
  */
 static int EntryCounter = 0;
 int nsp_get_win_counter() { return EntryCounter;};
@@ -71,6 +75,8 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 {
   int i;
   static int first = 0;
+  GdkColor white={0,0,0,0};
+  GdkColor black={0,65535,65535,65535};
   BCG *NewXgc ;
   /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX */
   int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
@@ -78,7 +84,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
     {
       Sciprintf("initgraphics: running out of memory \n");
-      return;
+      return -1;
     }
   /* default values  */
   private->colors=NULL;
@@ -108,6 +114,8 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   private->context = NULL;
   private->desc = NULL;
   private->mark_desc = NULL;
+  private->gcol_bg = white;
+  private->gcol_fg = black;
 #ifdef PERIGL 
   private->ft2_context = NULL;
   private->gdk_only= FALSE;
@@ -122,7 +130,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
-      return;
+      return -1;
     }
 
   NewXgc->CurWindow = WinNum;
@@ -134,7 +142,11 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #ifdef PERIGL 
   NewXgc->graphic_engine = &GL_gengine ;
 #else 
+#ifdef PERICAIRO 
+  NewXgc->graphic_engine = &Cairo_gengine;
+#else   
   NewXgc->graphic_engine = &Gtk_gengine;
+#endif 
 #endif 
   start_sci_gtk(); /* be sure that gtk is started */
 
@@ -142,15 +154,6 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
     {
       maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
       first++;
-    }
-
-  if ( win != NULL )
-    {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
-    }
-  else 
-    {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
     }
 
   /* recheck with valgrind 
@@ -177,6 +180,45 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->NumForeground=0;
   NewXgc->NumHidden3d=0; 
   NewXgc->Autoclear=0;
+  /* default colormap not instaled */
+  NewXgc->CmapFlag = -1; 
+  /* default resize not yet defined */
+  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
+  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+  for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
+
+  /* cairo graphics without window */
+#ifdef PERICAIRO
+  if ( string == NULL || string[0]=='\0' ) 
+    {
+#endif 
+      if ( win != NULL )
+	{
+	  gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
+	}
+      else 
+	{
+	  gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
+	}
+#ifdef PERICAIRO
+    }
+  else
+    {
+      /* when string is non null then surface can be a transmited surface */
+      cairo_t *cairo_cr = data;
+      if ( cairo_cr == NULL) 
+	{
+	  cairo_surface_t *surface;
+	  surface = cairo_pdf_surface_create (string,400,600 );
+	  if ( surface != NULL)
+	    {
+	      cairo_cr = cairo_create (surface); 
+	      cairo_surface_destroy (surface); 
+	    }
+	}
+      NewXgc->private->cairo_cr = cairo_cr;
+    }
+#endif
 
   /* next values are to be set since initialize_gc 
    * action depend on the current state defined by these 
@@ -185,16 +227,9 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
    */
   /* Default value is without Pixmap */
   NewXgc->CurPixmapStatus = 0; 
-#ifdef PERIGL 
+#if defined(PERIGL) && !defined(PERIGLGTK) 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
-  /* default colormap not instaled */
-  NewXgc->CmapFlag = -1; 
-  /* default resize not yet defined */
-  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
-  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
-
-  for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
 
   nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
 
@@ -208,6 +243,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
   nsp_set_win_counter(WinNum);
   gdk_flush();
+  return WinNum;
 }
 
 /*
@@ -224,6 +260,14 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
  *        because I do not use the paint method.
  */
 
+static GtkTargetEntry target_table[] = {
+  { "GTK_TREE_MODEL_ROW",1,10},
+  { "STRING",    1, 11},
+  { "text/plain", 1,12}
+};
+
+static guint n_targets = sizeof(target_table) / sizeof(target_table[0]);
+
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -231,12 +275,30 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gint iw, ih;
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
+
+#if defined(PERIGL) && !defined(PERIGLGTK) 
+  guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
+  GdkGLConfig *glconfig;
+  glconfig = gdk_gl_config_new_by_mode (mode  | GDK_GL_MODE_DOUBLE) ;
+  if (glconfig == NULL)
+    {
+      glconfig = gdk_gl_config_new_by_mode (mode);
+      if (glconfig == NULL)
+	{
+	  /* FIXME XXX */
+	  g_print ("*** No appropriate OpenGL-capable visual found.\n");
+	  return;
+	}
+    }
+  /* examine_gl_config_attrib(glconfig); */
+#endif 
+
   /* initialise pointers */
   dd->private->drawing = NULL;
   dd->private->wgc = NULL;
   dd->private->gcursor = NULL;
   dd->private->ccursor = NULL;
-  gdk_rgb_init();
+  /* gdk_rgb_init(); */
   /* gtk_widget_push_visual(gdk_rgb_get_visual()); */
   /* gtk_widget_push_colormap(gdk_rgb_get_cmap()); */
 
@@ -323,28 +385,77 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				(gfloat) viewport_pos[1]);      
     }
 
-  /* create private->drawingarea */
 
+/* new pericairo mode for 2.8 */
+#ifdef PERICAIROXX
+  /* drawing is here a cairo_drawing */
+  dd->private->cairo_drawing = gtk_cairo_new (); 
+  /* XXX removing default Double buffering 
+   * since during expose we draw on our own surface 
+   * which is attached to the graphic window. 
+   */
+  gtk_widget_set_double_buffered (dd->private->cairo_drawing ,FALSE);
+  dd->private->drawing =   dd->private->cairo_drawing ;
+#else 
+  /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
+#if defined(PERIGL) && !defined(PERIGLGTK) 
+  /* Set OpenGL-capability to the widget 
+   * opengl rendering in the window 
+   */
+  gtk_widget_set_gl_capability (dd->private->drawing,
+				glconfig,
+				NULL,
+				TRUE,
+				GDK_GL_RGBA_TYPE);
+#else 
   /* we use our own double buffer */
   gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
+#endif /* defined(PERIGL) && !defined(PERIGLGTK)  */
+#endif /* PERICAIRO */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
+#if 0
+  gtk_drag_source_set(dd->private->window,GDK_BUTTON1_MASK | 
+		      GDK_BUTTON2_MASK | GDK_BUTTON3_MASK,
+		      target_table, n_targets ,GDK_ACTION_COPY);
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_get",
+		    G_CALLBACK (target_drag_data_get), NULL);
+#endif
 
-  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
-		   G_CALLBACK( locator_button_press), (gpointer) dd);
-  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
-		   G_CALLBACK( locator_button_release), (gpointer) dd);
+#if 0
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_drop",
+		    G_CALLBACK( target_drag_drop), NULL);
+#endif 
+
+  g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_received",
+		    G_CALLBACK (target_drag_data_received), NULL);
+
+  gtk_drag_dest_set (dd->private->drawing,GTK_DEST_DEFAULT_ALL,
+		     target_table, n_targets ,GDK_ACTION_COPY
+		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
+
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-		   G_CALLBACK( locator_button_motion), (gpointer) dd);
+		   G_CALLBACK(locator_button_motion), (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
+		   G_CALLBACK(locator_button_press), (gpointer) dd);
+  g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
+		   G_CALLBACK(locator_button_release), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-		   G_CALLBACK( realize_event), (gpointer) dd);
+		   G_CALLBACK(realize_event), (gpointer) dd);
+
+  /* GDK_POINTER_MOTION_HINT_MASK is a special mask which is used
+   * to reduce the number of GDK_MOTION_NOTIFY events received.
+   */
 
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
 			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_MASK
-			| GDK_POINTER_MOTION_HINT_MASK
+			| GDK_POINTER_MOTION_HINT_MASK 
+			/* get all motions */
+			| GDK_POINTER_MOTION_MASK 
+			/* get motion when pressed buttons move*/
+			/* | GDK_BUTTON_MOTION_MASK  */
 			| GDK_LEAVE_NOTIFY_MASK );
 
   /* private->drawingarea properties */
@@ -362,10 +473,10 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* connect to signal handlers, etc */
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
-		   G_CALLBACK( configure_event), (gpointer) dd);
+		   G_CALLBACK(configure_event), (gpointer) dd);
 
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		   G_CALLBACK( expose_event), (gpointer) dd);
+		   G_CALLBACK(expose_event), (gpointer) dd);
 
   /* 
    *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
@@ -373,14 +484,14 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
    */
   
   g_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
-		   G_CALLBACK( sci_destroy_window), (gpointer) dd);
+		   G_CALLBACK(sci_destroy_window), (gpointer) dd);
 
   
   g_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
-		   G_CALLBACK( sci_delete_window), (gpointer) dd);
+		   G_CALLBACK(sci_delete_window), (gpointer) dd);
 
-  g_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-		    G_CALLBACK( key_press_event), (gpointer) dd);
+  g_signal_connect (GTK_OBJECT(dd->private->window), "key_press_event",
+		    G_CALLBACK(key_press_event), (gpointer) dd);
 
   /* show everything */
 
