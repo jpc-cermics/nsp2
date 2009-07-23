@@ -1606,7 +1606,7 @@ c
       n1 = 1
       n42 = 42
 c
-      b = 0.5d0*(a+c);
+      b = 0.5d0*(a+c)
       centr1 = 0.5d0*(a+b)
       hlgth = 0.5d0*(b-a)
       dhlgth = abs(hlgth)
