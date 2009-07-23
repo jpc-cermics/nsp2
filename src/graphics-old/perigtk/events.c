@@ -734,7 +734,8 @@ target_drag_data_received  (GtkWidget          *widget,
       return;
     }
 
-  if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
+  /* if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW")) */
+  if (data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW",FALSE ))
     {
       GtkTreeModel     *tree_model;
       GtkTreePath      *path;

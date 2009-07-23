@@ -57,9 +57,13 @@ static void nsp_fonts_initialize(BCG *Xgc)
       pango_fm = (PangoFT2FontMap *) pango_ft2_font_map_new();
       pango_ft2_font_map_set_resolution (pango_fm,72,72);
 
-#if  PANGO_VERSION_CHECK(1,22,0)
-      Xgc->private->ft2_context= pango_font_map_create_context((PangoFontMap *)pango_fm);      
+#ifdef PANGO_VERSION_CHECK
+#if   PANGO_VERSION_CHECK(1,42,0) 
+      Xgc->private->ft2_context= pango_font_map_create_context((PangoFontMap *)pango_fm);            
 #else
+      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);      
+#endif 
+#else 
       Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);      
 #endif 
       g_object_unref(pango_fm);
