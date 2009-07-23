@@ -1573,7 +1573,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   Xgc->private->glcontext = gtk_widget_get_gl_context (widget);
   Xgc->private->gldrawable = gtk_widget_get_gl_drawable (widget);
-
+  
   if (!gdk_gl_drawable_gl_begin (Xgc->private->gldrawable, Xgc->private->glcontext))
     return FALSE;
  
@@ -1700,7 +1700,12 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   /* check for resize */
   if(GTK_WIDGET_REALIZED(dd->private->drawing))
     {
-      if ( dd->CurResizeStatus == 1) 
+      if ( dd->CurResizeStatus == -1)
+	{
+	  /* before initialization */
+	  return FALSE ;
+	}
+      else if ( dd->CurResizeStatus == 1) 
 	{
 	  if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
 	    {

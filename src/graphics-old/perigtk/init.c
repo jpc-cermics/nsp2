@@ -39,8 +39,8 @@
 static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data);
 
-
-static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data)
+static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,
+		       int *wpos,char mode, void *data)
 { 
   return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data);
 }
