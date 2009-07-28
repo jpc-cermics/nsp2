@@ -1130,23 +1130,23 @@ static int init_figuredata(NspFigureData *Obj,NspTypeNspFigureData *type)
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  Obj->color = 0;
-  Obj->background = 0;
+  Obj->color = 1;
+  Obj->background = -1;
   Obj->colormap = NULLMAT;
-  Obj->dashes = 0;
-  Obj->font = 0;
-  Obj->font_size = 0;
+  Obj->dashes = 1;
+  Obj->font = 2;
+  Obj->font_size = 1;
   Obj->foreground = 0;
-  Obj->hidden3d = 0;
+  Obj->hidden3d = 4;
   Obj->line_mode = 0;
-  Obj->line_style = 0;
+  Obj->line_style = 1;
   Obj->mark = 0;
   Obj->mark_size = 0;
-  Obj->pattern = 0;
+  Obj->pattern = 1;
   Obj->pixmap = 0;
-  Obj->thickness = 0;
-  Obj->use_color = 0;
-  Obj->auto_clear = 0;
+  Obj->thickness = 1;
+  Obj->use_color = 1;
+  Obj->auto_clear = FALSE;
   return OK;
 }
 
@@ -1378,7 +1378,7 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
   Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
   Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
-  Sciprintf1(indent+2,"auto_clear=%d\n",M->auto_clear);
+  Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1412,7 +1412,7 @@ int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
   Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
   Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
-  Sciprintf1(indent+2,"auto_clear=%d\n",M->auto_clear);
+  Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1493,7 +1493,7 @@ int nsp_figuredata_check_values(NspFigureData *H)
   return OK;
 }
 
-NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,int auto_clear,NspTypeBase *type)
+NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type)
 {
  NspFigureData *H  = nsp_figuredata_create_void(name,type);
  if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
@@ -1889,16 +1889,18 @@ static int _wrap_figuredata_set_use_color(void *self, char *attr, NspObject *O)
 static NspObject *_wrap_figuredata_get_auto_clear(void *self,char *attr)
 {
   int ret;
+  NspObject *nsp_ret;
 
   ret = ((NspFigureData *) self)->auto_clear;
-  return nsp_new_double_obj((double) ret);
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
 }
 
 static int _wrap_figuredata_set_auto_clear(void *self, char *attr, NspObject *O)
 {
   int auto_clear;
 
-  if ( IntScalar(O,&auto_clear) == FAIL) return FAIL;
+  if ( BoolScalar(O,&auto_clear) == FAIL) return FAIL;
   ((NspFigureData *) self)->auto_clear= auto_clear;
   return OK;
 }
@@ -1957,7 +1959,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1961 "figure.c"
+#line 1963 "figure.c"
 
 
 #line 127 "codegen/figure.override"
@@ -1969,7 +1971,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1973 "figure.c"
+#line 1975 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2011,7 +2013,7 @@ Figure_register_classes(NspObject *d)
 Init portion 
 
 
-#line 2015 "figure.c"
+#line 2017 "figure.c"
   nspgobject_register_class(d, "NspFigure", Figure, &NspNspFigure_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
   nspgobject_register_class(d, "NspFigureData", FigureData, &NspNspFigureData_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
@@ -2765,4 +2767,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2769 "figure.c"
+#line 2771 "figure.c"
