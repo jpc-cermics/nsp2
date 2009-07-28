@@ -32,6 +32,8 @@
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
+#define PERIGL
+#include "nsp/graphics/periGtk.h"
 #endif 
 
 /* like GEOX or GEOY in PloEch.h but we keep values in xx1 and yy1 for finite check */ 
@@ -1971,7 +1973,6 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
     }
 }
 
-#include "nsp/graphics/periGL.h"
 
 /* 
  * OpenGL version of plot3d 

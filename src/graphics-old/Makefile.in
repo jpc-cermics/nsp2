@@ -242,7 +242,7 @@ periFig.o: periFig.c ../include/nsp/sciio.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGL.h \
+  ../include/nsp/graphics/periGtk.h \
   ../include/nsp/graphics/Graphics.h \
   ../include/nsp/graphics/perigen.h \
   ../include/nsp/version.h ../include/nsp/graphics/color.h \
@@ -370,7 +370,7 @@ Plo2d.o: Plo2d.c ../include/nsp/math.h \
   ../include/nsp/classb.h ../include/nsp/classaref.h \
   ../include/nsp/classbref.h ../include/nsp/cells.h \
   ../include/nsp/matint.h ../include/nsp/serial.h \
-  ../include/nsp/bhash.h ../include/nsp/graphics/periGL.h \
+  ../include/nsp/bhash.h ../include/nsp/graphics/periGtk.h \
   ../include/nsp/graphics/Graphics.h
 
 Plo3dObj.o: Plo3dObj.c ../include/nsp/math.h \

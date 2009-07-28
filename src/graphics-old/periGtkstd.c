@@ -31,14 +31,7 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h" 
 #include "nsp/math.h"
-#ifdef PERIGL 
-#include "nsp/graphics/periGL.h"
-#ifdef PERIGLGTK 
-static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
-#endif 
-#else 
 #include "nsp/graphics/periGtk.h"
-#endif 
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
