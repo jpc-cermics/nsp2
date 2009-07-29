@@ -1799,9 +1799,10 @@ void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
       A->obj->auto_axis = TRUE;
       break;
     }
+  A->obj->fixed = TRUE;
 }
   
   
 
 
-#line 1808 "axes.c"
+#line 1809 "axes.c"
