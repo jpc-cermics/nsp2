@@ -44,46 +44,38 @@
  *  Xgc->private->draw = TRUE we have something to draw 
  */
 
-#ifdef PERIGL 
-#ifdef PERIGLGTK 
-
-/* version for pixmap case */ 
-
-#define DRAW_CHECK							\
+#define DRAW_CHECK_PERIGTK						\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
     nsp_gtk_invalidate(Xgc);
 
-#else /* PERIGLGTK */
-
-#define DRAW_CHECK							\
+#define DRAW_CHECK_PERIGLGTK						\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
     {  nsp_gtk_invalidate(Xgc);						\
       if (Xgc->record_flag == TRUE) {Xgc->private->draw = TRUE;return;} \
     }
-#endif /* PERIGLGTK */
 
-#else /* PERIGL */
-/* PERICAIRO and PERIGTK 
- * we always draw in a drawable which is a pixmap but the expose event is asynchronous
- */
-
-#ifdef PERICAIRO
-#define DRAW_CHECK							\
+#define DRAW_CHECK_PERICAIRO						\
   if ( Xgc->private->cairo_cr == NULL) return;				\
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0	\
        && Xgc->private->drawing != NULL) nsp_gtk_invalidate(Xgc); 
+
+#ifdef PERIGL
+#ifdef PERIGLGTK 
+#define DRAW_CHECK DRAW_CHECK_PERIGLGTK
 #else 
-#define DRAW_CHECK							\
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
-#endif /* PERICAIRO */
+#define DRAW_CHECK DRAW_CHECK_PERIGTK
+#endif 
+#endif 
 
-#endif /* PERIGL */
+#ifdef PERICAIRO 
+#define DRAW_CHECK DRAW_CHECK_PERICAIRO
+#endif 
 
-/* Global variables to store graphic drivers 
- */
+#ifdef PERIGTK
+#define DRAW_CHECK DRAW_CHECK_PERIGTK
+#endif 
 
-#if defined(PERIGTK) 
-Gengine * nsp_gengine = &Gtk_gengine ;
+#ifdef PERIGTK
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif 
 

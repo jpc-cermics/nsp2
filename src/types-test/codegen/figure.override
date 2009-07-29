@@ -16,6 +16,7 @@ extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
+extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
@@ -686,6 +687,63 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
       Res =(NspObject *) axe;
     }
   if ( created==TRUE) nsp_figure_destroy(F);
+  return Res;
+}
+
+/* check if a point is inside an axes or objs3d 
+ */
+
+NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
+{
+  int i,l, wdim[2], Irect[4];
+  NspObject *Obj=NULLOBJ,*Res=NULLOBJ;
+  NspList *L;
+  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  if ( ! IsFigure((NspObject *) F)) return NULL;
+  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+  L= F->obj->children;
+  /* return the first axes or objs3d found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
+    {
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ && IsAxes(Obj))
+	{
+	  Res =Obj;
+	  /* the figure rectangle in int values */
+	  Irect[0]=((NspAxes *) Res)->obj->wrect->R[0]*wdim[0];
+	  Irect[1]=((NspAxes *) Res)->obj->wrect->R[1]*wdim[1];
+	  Irect[2]=((NspAxes *) Res)->obj->wrect->R[2]*wdim[0];
+	  Irect[3]=((NspAxes *) Res)->obj->wrect->R[3]*wdim[1];
+	  
+	  if ( Irect[0] <= pt[0] && pt[0] <= Irect[0]+Irect[2] 
+	       && Irect[1] <= pt[1] && pt[0] <= Irect[1]+Irect[3] )
+	    {
+	      break;
+	    }
+	  Res = NULL;
+	}
+      else if ( Obj != NULLOBJ &&  IsObjs3d(Obj))
+	{
+	  Res=Obj;
+	  /* the figure rectangle in int values */
+	  Irect[0]=((NspObjs3d *) Res)->obj->wrect->R[0]*wdim[0];
+	  Irect[1]=((NspObjs3d *) Res)->obj->wrect->R[1]*wdim[1];
+	  Irect[2]=((NspObjs3d *) Res)->obj->wrect->R[2]*wdim[0];
+	  Irect[3]=((NspObjs3d *) Res)->obj->wrect->R[3]*wdim[1];
+	  
+	  if ( Irect[0] <= pt[0] && pt[0] <= Irect[0]+Irect[2] 
+	       && Irect[1] <= pt[1] && pt[0] <= Irect[1]+Irect[3] )
+	    {
+	      break;
+	    }
+	  Res = NULL;
+	  break;
+	}
+	       
+    }
   return Res;
 }
 

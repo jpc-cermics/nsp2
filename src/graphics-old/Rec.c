@@ -44,6 +44,11 @@
 #include "nsp/graphics/Rec_private.h"
 #include "nsp/graphic.h" 
 
+extern void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha);
+extern void nsp_figure_unzoom(NspGraphic *Obj);
+extern void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj, int *bbox1);
+
+
 static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l); 
 static int CopyVectLI  (int **,const int *,int ); 
 static int CopyVectF  (double **,const double *,int ); 
@@ -2387,7 +2392,6 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
 }
 
 
-extern void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha);
 
 static void new_angles_graphic_object(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
@@ -2424,7 +2428,7 @@ void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aa
     }
 }
 
-/** change the plot flag in order to use bbox **/ 
+/* change the plot flag in order to use bbox */ 
 
 static void scale_2D_change_flag(int undo, int flag, char *str,char *str_kp, char *str_new)
 {
@@ -2671,7 +2675,7 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
       }
 }
 
-/*** code added by ES 21/5/2002 ****/
+/* code added by ES 21/5/2002 */
 
 static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag,
 				 int undo, int *bbox1, double *subwin, int win_num)
@@ -2883,8 +2887,15 @@ static void scale_change_3dobj(BCG *Xgc,void *plot, int *flag, double *b1, int *
 {
   struct rec_3dobj *theplot;
   theplot =   (struct rec_3dobj *) plot;
-  /* XXXX */
+  /* XXX */
+}
 
+static void scale_change_graphic_object(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
+					int undo, int *bbox1, double *subwin, int win_num)
+{
+  struct rec_object *lplot= plot ;
+  NspGraphic *G = (NspGraphic *) lplot->obj;
+  nsp_figure_zoom(Xgc,G,bbox1);
 }
 
 
@@ -3037,6 +3048,13 @@ static void unscale_Plot3D(void *plot)
 static void unscale_3dobj(void *plot)
 {
   /* struct rec_3dobj *theplot = plot; */
+}
+
+static void unscale_graphic_object(void *plot)
+{
+  struct rec_object *lplot= plot ;
+  NspGraphic *G = (NspGraphic *) lplot->obj;
+  nsp_figure_unzoom(G);
 }
 
 /*-------------------------------------------------------

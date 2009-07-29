@@ -9,7 +9,7 @@
                             ;; or the position of this axes in an other axe
     '("double" "rho")       ;; rotation of the rectangle which contains the axe
     '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-    '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the axe. 
+    '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the axe. 
     '("NspMatrix*" "arect" "std" "{1/8.0,1/8.0,1/8.0,1/8.0}" "4") ;; 
     '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this axes defines if []
                             ;; frect is deduced from data. 
@@ -22,9 +22,12 @@
     '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis 
     '("int"      "grid" "std" "-1") ;; color of grid if >= 0
     '("int"      "axes" "std" "1" );; where axes are drawn
-    '("gboolean" "xlog" "std" "FALSE");
-    '("gboolean" "ylog" "std" "FALSE");
+    '("gboolean" "xlog" "std" "FALSE");; log scale on x 
+    '("gboolean" "ylog" "std" "FALSE");; log scale on y
     '("int"      "lpos" "std" "1" );; where legends are drawn
+    '("NspMatrix*" "rect" "hidden" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
+    '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
+    '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
     )
   (gtype-id "Axes")
 )

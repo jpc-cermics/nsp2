@@ -42,7 +42,7 @@
 #include "nsp/graphics/Graphics.h" 
 #include "new_graphics.h"
 
-extern Gengine *nsp_gengine ; /* XXXXX */
+/* extern Gengine *nsp_gengine ;*/ /* XXXXX */
 
 static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
