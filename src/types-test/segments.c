@@ -572,7 +572,22 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *segments_get_methods(void) { return NULL;};
+static int _wrap_nsp_segments_full_copy(NspSegments *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSegments *ret;
+
+  ret = nsp_segments_full_copy(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods segments_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_segments_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *segments_get_methods(void) { return segments_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -689,7 +704,7 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 693 "segments.c"
+#line 708 "segments.c"
 
 
 #line 62 "codegen/segments.override"
@@ -701,7 +716,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 705 "segments.c"
+#line 720 "segments.c"
 
 
 #line 72 "codegen/segments.override"
@@ -714,7 +729,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 718 "segments.c"
+#line 733 "segments.c"
 
 
 /*----------------------------------------------------
@@ -755,7 +770,7 @@ Segments_register_classes(NspObject *d)
 Init portion 
 
 
-#line 759 "segments.c"
+#line 774 "segments.c"
   nspgobject_register_class(d, "NspSegments", Segments, &NspNspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -866,4 +881,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 870 "segments.c"
+#line 885 "segments.c"

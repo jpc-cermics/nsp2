@@ -16,7 +16,7 @@
   (of-object "Grstring")
   (c-name "nsp_grstring_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Grstring")
+  (return-type "NspGrstring")
 )
 
 

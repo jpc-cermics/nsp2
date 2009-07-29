@@ -16,7 +16,7 @@
   (of-object "Box3d")
   (c-name "nsp_box3d_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Box3d")
+  (return-type "NspBox3d")
 )
 
 

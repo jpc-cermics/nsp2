@@ -16,7 +16,7 @@
   (of-object "Surf")
   (c-name "nsp_surf_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Surf")
+  (return-type "NspSurf")
 )
 
 

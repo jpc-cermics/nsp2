@@ -487,7 +487,36 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *classb_get_methods(void) { return NULL;};
+#line 19 "codegen/classb.override"
+static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->clb_color = color;
+  return 0;
+}
+#line 500 "classb.c"
+
+
+#line 29 "codegen/classb.override"
+static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->clb_color);
+  return 0;
+}
+
+
+#line 511 "classb.c"
+
+
+static NspMethods classb_methods[] = {
+  {"classb_color_change",(nsp_method *) _wrap_classb_color_change},
+  {"classb_color_show",(nsp_method *) _wrap_classb_color_show},
+  { NULL, NULL}
+};
+
+static NspMethods *classb_get_methods(void) { return classb_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -601,9 +630,9 @@ ClassB_register_classes(NspObject *d)
 / * init * /
 
 
-#line 605 "classb.c"
+#line 634 "classb.c"
   nspgobject_register_class(d, "NspClassB", ClassB, &NspNspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
 }
 */
 
-#line 610 "classb.c"
+#line 639 "classb.c"

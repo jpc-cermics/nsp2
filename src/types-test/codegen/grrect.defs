@@ -16,7 +16,7 @@
   (of-object "GrRect")
   (c-name "nsp_grrect_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "GrRect")
+  (return-type "NspGrRect")
 )
 
 

@@ -32,6 +32,6 @@
 (define-method full_copy
   (of-object "Graphic")
   (c-name "graphic_full_copy")
-  (return-type "Graphic")
+  (return-type "NspGraphic")
   )
 

@@ -593,7 +593,22 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *grstring_get_methods(void) { return NULL;};
+static int _wrap_nsp_grstring_full_copy(NspGrstring *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGrstring *ret;
+
+  ret = nsp_grstring_full_copy(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods grstring_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_grstring_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *grstring_get_methods(void) { return grstring_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -806,7 +821,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 810 "grstring.c"
+#line 825 "grstring.c"
 
 
 #line 60 "codegen/grstring.override"
@@ -818,7 +833,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 822 "grstring.c"
+#line 837 "grstring.c"
 
 
 #line 70 "codegen/grstring.override"
@@ -831,7 +846,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 835 "grstring.c"
+#line 850 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -872,7 +887,7 @@ Grstring_register_classes(NspObject *d)
 Init portion 
 
 
-#line 876 "grstring.c"
+#line 891 "grstring.c"
   nspgobject_register_class(d, "NspGrstring", Grstring, &NspNspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -982,4 +997,4 @@ static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 986 "grstring.c"
+#line 1001 "grstring.c"

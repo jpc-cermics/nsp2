@@ -604,7 +604,22 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *points3d_get_methods(void) { return NULL;};
+static int _wrap_nsp_points3d_full_copy(NspPoints3d *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspPoints3d *ret;
+
+  ret = nsp_points3d_full_copy(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods points3d_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_points3d_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *points3d_get_methods(void) { return points3d_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -713,7 +728,7 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 717 "points3d.c"
+#line 732 "points3d.c"
 
 
 #line 89 "codegen/points3d.override"
@@ -725,7 +740,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 729 "points3d.c"
+#line 744 "points3d.c"
 
 
 #line 99 "codegen/points3d.override"
@@ -738,7 +753,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 742 "points3d.c"
+#line 757 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -779,7 +794,7 @@ Points3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 783 "points3d.c"
+#line 798 "points3d.c"
   nspgobject_register_class(d, "NspPoints3d", Points3d, &NspNspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -986,4 +1001,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 990 "points3d.c"
+#line 1005 "points3d.c"

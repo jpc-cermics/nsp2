@@ -16,7 +16,7 @@
   (of-object "Polyline3d")
   (c-name "nsp_polyline3d_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Polyline3d")
+  (return-type "NspPolyline3d")
 )
 
 

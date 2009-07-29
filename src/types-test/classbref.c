@@ -513,7 +513,36 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *classbref_get_methods(void) { return NULL;};
+#line 19 "codegen/classbref.override"
+static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->obj->clb_color = color;
+  return 0;
+}
+#line 526 "classbref.c"
+
+
+#line 29 "codegen/classbref.override"
+static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->obj->clb_color);
+  return 0;
+}
+
+
+#line 537 "classbref.c"
+
+
+static NspMethods classbref_methods[] = {
+  {"classb_color_change",(nsp_method *) _wrap_classb_color_change},
+  {"classb_color_show",(nsp_method *) _wrap_classb_color_show},
+  { NULL, NULL}
+};
+
+static NspMethods *classbref_get_methods(void) { return classbref_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -627,9 +656,9 @@ ClassBRef_register_classes(NspObject *d)
 / * init * /
 
 
-#line 631 "classbref.c"
+#line 660 "classbref.c"
   nspgobject_register_class(d, "NspClassBRef", ClassBRef, &NspNspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
 }
 */
 
-#line 636 "classbref.c"
+#line 665 "classbref.c"

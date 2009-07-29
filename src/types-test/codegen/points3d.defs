@@ -16,7 +16,7 @@
   (of-object "Points3d")
   (c-name "nsp_points3d_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Points3d")
+  (return-type "NspPoints3d")
 )
 
 

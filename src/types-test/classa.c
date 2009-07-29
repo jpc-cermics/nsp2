@@ -530,7 +530,37 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *classa_get_methods(void) { return NULL;};
+#line 26 "codegen/classa.override"
+static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->cla_color = color;
+  return 0;
+}
+#line 543 "classa.c"
+
+
+#line 36 "codegen/classa.override"
+/* a method can be overriden by giving its name or 
+ * class.name 
+ */
+static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->cla_color);
+  return 0;
+}
+#line 555 "classa.c"
+
+
+static NspMethods classa_methods[] = {
+  {"classa_color_change",(nsp_method *) _wrap_classa_color_change},
+  {"classa_color_show",(nsp_method *) _wrap_classa_color_show},
+  { NULL, NULL}
+};
+
+static NspMethods *classa_get_methods(void) { return classa_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -627,7 +657,7 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 68 "codegen/classa.override"
+#line 71 "codegen/classa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -655,7 +685,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 659 "classa.c"
+#line 689 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
 {
   NspList *ret;
@@ -689,7 +719,7 @@ static AttrTab classa_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 49 "codegen/classa.override"
+#line 52 "codegen/classa.override"
 /* XXXX : the generated code should be corrected */
 static int clatest(NspClassA *A)
 {
@@ -707,15 +737,15 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 711 "classa.c"
+#line 741 "classa.c"
 
 
-#line 43 "codegen/classa.override"
+#line 46 "codegen/classa.override"
 static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 719 "classa.c"
+#line 749 "classa.c"
 
 
 /*----------------------------------------------------
@@ -755,9 +785,9 @@ ClassA_register_classes(NspObject *d)
 / * init code  * /
 
 
-#line 759 "classa.c"
+#line 789 "classa.c"
   nspgobject_register_class(d, "NspClassA", ClassA, &NspNspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 764 "classa.c"
+#line 794 "classa.c"

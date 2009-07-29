@@ -556,7 +556,22 @@ int int_grrect_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *grrect_get_methods(void) { return NULL;};
+static int _wrap_nsp_grrect_full_copy(NspGrRect *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGrRect *ret;
+
+  ret = nsp_grrect_full_copy(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods grrect_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_grrect_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *grrect_get_methods(void) { return grrect_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -716,7 +731,7 @@ int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 720 "grrect.c"
+#line 735 "grrect.c"
 
 
 #line 61 "codegen/grrect.override"
@@ -728,7 +743,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 732 "grrect.c"
+#line 747 "grrect.c"
 
 
 #line 71 "codegen/grrect.override"
@@ -741,7 +756,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 745 "grrect.c"
+#line 760 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -782,7 +797,7 @@ GrRect_register_classes(NspObject *d)
 Init portion 
 
 
-#line 786 "grrect.c"
+#line 801 "grrect.c"
   nspgobject_register_class(d, "NspGrRect", GrRect, &NspNspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -873,4 +888,4 @@ static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 877 "grrect.c"
+#line 892 "grrect.c"

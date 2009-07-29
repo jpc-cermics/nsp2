@@ -595,7 +595,22 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-static NspMethods *polyline3d_get_methods(void) { return NULL;};
+static int _wrap_nsp_polyline3d_full_copy(NspPolyline3d *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspPolyline3d *ret;
+
+  ret = nsp_polyline3d_full_copy(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods polyline3d_methods[] = {
+  {"full_copy",(nsp_method *) _wrap_nsp_polyline3d_full_copy},
+  { NULL, NULL}
+};
+
+static NspMethods *polyline3d_get_methods(void) { return polyline3d_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -681,7 +696,7 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 685 "polyline3d.c"
+#line 700 "polyline3d.c"
 
 
 #line 81 "codegen/polyline3d.override"
@@ -693,7 +708,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 697 "polyline3d.c"
+#line 712 "polyline3d.c"
 
 
 #line 91 "codegen/polyline3d.override"
@@ -706,7 +721,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 710 "polyline3d.c"
+#line 725 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -747,7 +762,7 @@ Polyline3d_register_classes(NspObject *d)
 Init portion 
 
 
-#line 751 "polyline3d.c"
+#line 766 "polyline3d.c"
   nspgobject_register_class(d, "NspPolyline3d", Polyline3d, &NspNspPolyline3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
@@ -944,4 +959,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 948 "polyline3d.c"
+#line 963 "polyline3d.c"

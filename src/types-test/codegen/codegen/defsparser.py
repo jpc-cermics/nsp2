@@ -106,7 +106,7 @@ class DefsParser(IncludeParser):
                 return func
 
     def find_methods(self, obj):
-        objname = obj.c_name
+        objname = obj.name
         return filter(lambda func, on=objname: isinstance(func, MethodDef) and
                       func.of_object == on, self.functions)
 

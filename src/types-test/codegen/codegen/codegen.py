@@ -1263,12 +1263,16 @@ class Wrapper:
     def write_methods(self):
         methods = []
         for meth in self.parser.find_methods(self.objinfo):
+
             if self.overrides.is_ignored(meth.c_name):
                 continue
+
+            meth_name1 = self.objinfo.name + '.' + meth.c_name
 
             try:
                 methflags = 'METH_VARARGS'
                 if self.overrides.is_overriden(meth.c_name):
+                    # overriden by its name 
                     if not self.overrides.is_already_included(meth.c_name):
                         lineno, filename = self.overrides.getstartline(meth.c_name)
                         self.fp.setline(lineno,'codegen/'+ filename)
@@ -1278,6 +1282,18 @@ class Wrapper:
                     if self.overrides.wants_kwargs(meth.c_name):
                         methflags = methflags + '|METH_KEYWORDS'
                     elif self.overrides.wants_noargs(meth.c_name):
+                        methflags = 'METH_NOARGS'
+                elif self.overrides.is_overriden(meth_name1):
+                    # overriden by its name given as class.name
+                    if not self.overrides.is_already_included(meth_name1):
+                        lineno, filename = self.overrides.getstartline(meth_name1)
+                        self.fp.setline(lineno,'codegen/'+ filename)
+                        self.fp.write(self.overrides.override(meth_name1))
+                        self.fp.resetline()
+                        self.fp.write('\n\n')
+                    if self.overrides.wants_kwargs(meth_name1):
+                        methflags = methflags + '|METH_KEYWORDS'
+                    elif self.overrides.wants_noargs(meth_name1):
                         methflags = 'METH_NOARGS'
                 else:
                     # write constructor from template ...

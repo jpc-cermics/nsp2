@@ -16,7 +16,7 @@
   (of-object "SPolyhedron")
   (c-name "nsp_spolyhedron_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "SPolyhedron")
+  (return-type "NspSPolyhedron")
 )
 
 

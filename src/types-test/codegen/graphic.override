@@ -70,7 +70,7 @@ override-type Graphic
   type->n_faces = NULL;
 
 %%
-override Graphic.graphic_translate kwargs
+override graphic_translate kwargs
 /* take care that the name to give for override is the c-name of 
  * the method 
  */

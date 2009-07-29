@@ -32,7 +32,10 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   return 0;
 }
 %%
-override classa_color_show kwargs
+override ClassA.classa_color_show kwargs
+/* a method can be overriden by giving its name or 
+ * class.name 
+ */
 static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->cla_color);

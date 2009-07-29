@@ -16,7 +16,7 @@
   (of-object "Arrows")
   (c-name "nsp_arrows_full_copy")
   ;; (return-type "NspObject*")
-  (return-type "Arrows")
+  (return-type "NspArrows")
 )
 
 
