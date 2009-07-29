@@ -718,21 +718,53 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
 {
 
   NspObject *Obj1;
-  int pt[2]={ box[0]+box[2]/2, box[1]+box[3]/2};
+  int pt[2]={ (box[0]+box[2])/2, (box[1]+box[3])/2};
   Obj1=nsp_check_pt_axes_or_objs3d(Xgc,pt);
-  if ( Obj == NULL) return ;
+  if ( Obj1 == NULL) return ;
   if ( IsAxes(Obj1) )
     {
-      Sciprintf("Found an axes to be zoomed\n");
+      NspAxes *A = (NspAxes *) Obj1;
+      double pt1[2],pt2[2];
+      /* Sciprintf("Found an axes to be zoomed\n"); */
+      nsp_axes_i2f(Xgc,Obj1,box[0],box[1], pt1);
+      nsp_axes_i2f(Xgc,Obj1,box[2],box[3], pt2);
+      A->obj->zoom=TRUE;
+      A->obj->zrect->R[0]=pt1[0]; /* xmin */
+      A->obj->zrect->R[1]=pt2[1]; /* ymin */
+      A->obj->zrect->R[2]=pt2[0]; /* xmax */
+      A->obj->zrect->R[3]=pt1[1]; /* ymax */
     }
   else if ( IsObjs3d(Obj1))
     {
-      Sciprintf("Found a 3dobj to be zoomed\n");
+      /* Sciprintf("Found a 3dobj to be zoomed\n"); */
     }
 }
 
 
-void nsp_figure_unzoom(BCG *Xgc,NspGraphic *Obj)
+void nsp_figure_unzoom(NspGraphic *Obj)
 {
-  
+  NspList *L;
+  Cell *cloc;
+  NspFigure *F= (NspFigure *) Obj;
+  if ( Obj == NULL ||  !IsFigure((NspObject *) Obj)) 
+    return NULL;
+  L= F->obj->children;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  if ( IsAxes(NSP_OBJECT(G)))
+	    { 
+	      NspAxes *A = (NspAxes *) G;
+	      A->obj->zoom= FALSE;
+	    }
+	  else if ( IsObjs3d(NSP_OBJECT(G)))
+	    {
+	      NspObjs3d *A = (NspObjs3d *) G;
+	    }
+	}
+      cloc = cloc->next;
+    }
 }

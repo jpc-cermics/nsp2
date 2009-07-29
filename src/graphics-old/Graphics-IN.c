@@ -5626,7 +5626,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
 	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
 	}
-      Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect);
+      Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect,NULL);
       break;
     case 4: /* replayna */
       CheckRhs(2,5);

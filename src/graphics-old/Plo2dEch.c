@@ -28,8 +28,9 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-
+#if 0 
 static void zoom_rect (BCG *Xgc,double,double,double,double);
+#endif 
 
 /*--------------------------------------------------------------------
  * converts a rectangle into a wrect specification 
@@ -318,13 +319,14 @@ extern int EchCheckSCPlots();
  * we could also try to keep the graphiv in a backing store 
  * pixmap. 
  */
-
-void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
+#if 0
+static void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox, int *ibbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,pixmode,alumode,color,style,fg;
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,xl,yl;
+  int    ix0,iy0,ix,iy,ixl,iyl;
   if ( Xgc == NULL ) return; 
   if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
     {
@@ -342,8 +344,10 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
+  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
   x=x0;y=y0;
+  ix=ix0;iy=iy0;
   ibutton=-1;
   while ( ibutton == -1 ) 
     {
@@ -353,8 +357,10 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
       zoom_rect(Xgc,x0,y0,x,y);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       Xgc->graphic_engine->force_redraw(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,FALSE,FALSE);
+      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
       x=xl;y=yl;
+      ix=ixl;iy=iyl;
     }
   /* Back to the default driver which must be Rec and redraw the recorded
    * graphics with the new scales 
@@ -363,6 +369,11 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
   bbox[1]=Min(y0,y);
   bbox[2]=Max(x0,x);
   bbox[3]=Max(y0,y);
+  ibbox[0]=Min(ix0,ix);
+  ibbox[1]=Min(iy0,iy);
+  ibbox[2]=Max(ix0,ix);
+  ibbox[3]=Max(iy0,iy);
+
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
@@ -371,6 +382,7 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_recording(Xgc,TRUE);
   Xgc->graphic_engine->force_redraw(Xgc);
 }
+#endif 
 
 /* A version for drivers who do not have Xor mode 
  * we have to redraw while acquiring the zoom rectangle 
@@ -378,12 +390,13 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
  * pixmap. 
  */
 
-void zoom_get_rectangle(BCG *Xgc,double *bbox)
+static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,pixmode,alumode,color,style,fg;
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,xl,yl;
+  int    ix0,iy0,ix,iy,ixl,iyl;
   if ( Xgc == NULL ) return; 
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
@@ -396,8 +409,10 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
   nsp_set_cursor(Xgc,GDK_TOP_LEFT_CORNER );
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
+  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
   x=x0;y=y0;
+  ix=ix0;iy=iy0;
   ibutton=-1;
   while ( ibutton == -1 ) 
     {
@@ -406,8 +421,10 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
       rect2d_f2i(Xgc,rect,Xgc->zrect,1);
       Xgc->graphic_engine->force_redraw(Xgc);
       nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,TRUE,FALSE);
+      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
       x=xl;y=yl;
+      ix=ixl;iy=iyl;
     }
   nsp_set_cursor(Xgc,-1);
   /* Back to the default driver which must be Rec and redraw the recorded
@@ -417,6 +434,11 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   bbox[1]=Min(y0,y);
   bbox[2]=Max(x0,x);
   bbox[3]=Max(y0,y);
+  ibbox[0]=Min(ix0,ix);
+  ibbox[1]=Min(iy0,iy);
+  ibbox[2]=Max(ix0,ix);
+  ibbox[3]=Max(iy0,iy);
+
   /* disable zrect */
   Xgc->zrect[2]=   Xgc->zrect[3]=0;
   Xgc->graphic_engine->xset_thickness(Xgc,th);
@@ -428,13 +450,14 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
 }
 
 /* using the Xor mode facility */
-
-void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
+#if 0
+static void zoom_get_rectangle_std(BCG *Xgc,double *bbox, int *ibbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,th1=1, pixmode,alumode,color,style,fg;
   int ibutton,imask,iwait=FALSE,istr=0,rf;
-  double x0,yy0,x,y,xl,yl;
+  double x0,y0,x,y,xl,yl;
+  int    ix0,iy0,ix,iy,ixl,iyl;
   if ( Xgc == NULL ) return; 
   rf = Xgc->record_flag ;
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
@@ -451,19 +474,23 @@ void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
  
   /** XXXXXX : a regler pour Win32 in = 6 **/
   Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&imask,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-  x=x0;y=yy0;
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
+  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
+  x=x0;y=y0;
+  ix=ix0;iy=iy0;
   ibutton=-1;
   while ( ibutton == -1 ) 
     {
       /* dessin d'un rectangle */
-      zoom_rect(Xgc,x0,yy0,x,y);
+      zoom_rect(Xgc,x0,y0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,FALSE,FALSE);
+      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
       /* effacement du rectangle */
-      zoom_rect(Xgc,x0,yy0,x,y);
+      zoom_rect(Xgc,x0,y0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
       x=xl;y=yl;
+      ix=ixl;iy=iyl;
     }
 #ifndef WIN32
   /** XXXX */
@@ -473,9 +500,14 @@ void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
    * graphics with the new scales 
    */
   bbox[0]=Min(x0,x);
-  bbox[1]=Min(yy0,y);
+  bbox[1]=Min(y0,y);
   bbox[2]=Max(x0,x);
-  bbox[3]=Max(yy0,y);
+  bbox[3]=Max(y0,y);
+  ibbox[0]=Min(ix0,ix);
+  ibbox[1]=Min(iy0,iy);
+  ibbox[2]=Max(ix0,ix);
+  ibbox[3]=Max(iy0,iy);
+
   Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
@@ -484,6 +516,7 @@ void zoom_get_rectangle_std(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xinfo(Xgc," ");
   Xgc->record_flag = rf;
 }
+#endif 
 
 void zoom(BCG *Xgc)
 {
@@ -497,9 +530,10 @@ void zoom(BCG *Xgc)
   else 
     {
       double bbox[4];
-      zoom_get_rectangle(Xgc,bbox);
+      int ibbox[4];
+      zoom_get_rectangle(Xgc,bbox,ibbox);
       Xgc->graphic_engine->clearwindow(Xgc);    
-      tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox);
+      tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
     }
 }
 
@@ -518,7 +552,7 @@ void unzoom(BCG *Xgc)
     }
 }
 
-
+#if 0 
 static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
 {
   double rect[4]= {Min(x0,x),Max(yy0,y),Abs(x0-x),Abs(yy0-y)};
@@ -537,6 +571,8 @@ static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
   Xgc->graphic_engine->xset_pattern(Xgc,pat);
 #endif
 }
+#endif 
+
 
 /* 
  * here we compute new axis graduation 
