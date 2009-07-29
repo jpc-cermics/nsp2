@@ -942,6 +942,7 @@ Init portion
 
 static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  /* 
   char leg[]="X@Y@Z";
   int flag[]={1,2,4};
   double ebox[]={0,1,0,1,0,1};
@@ -951,7 +952,7 @@ static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
   NspMatrix *y = P->obj->y;
   NspMatrix *z = P->obj->z;
   if ( Obj->obj->hidden == TRUE ) return ;
-  /* be sure that object are in canonical form */
+  / * be sure that object are in canonical form * /
   Mat2double(x);
   Mat2double(y);
   Mat2double(z);
@@ -969,7 +970,7 @@ static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 	}
       else 
 	{
-	  /* here colors is unused */
+	  / * here colors is unused * /
 	  if ( P->obj->zcolor == TRUE ) 
 	    nsp_plot_fac3d_1(Xgc,x->R,y->R,z->R,P->obj->colors->I,&z->m,&z->n,&theta,&alpha,leg,flag,ebox);
 	  else 
@@ -985,6 +986,7 @@ static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
 	nsp_plot3d  (Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
 		     &theta,&alpha,leg,flag,ebox);
     }
+  */
 }
 
 static void nsp_translate_surf(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -1014,4 +1016,4 @@ static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1018 "surf.c"
+#line 1020 "surf.c"

@@ -4660,6 +4660,8 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
       CheckCols(NspFname(stack),2,M,3);
+      if ( (M = (NspMatrix *) nsp_object_copy_and_name("cmap",NSP_OBJECT(M))) == NULLMAT) 
+	return RET_BUG;
       Gc->colormap = M;
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_colormap(Xgc,M->m,M->R);

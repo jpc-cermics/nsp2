@@ -868,8 +868,10 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
   Mat2double(P->obj->x);
   Mat2double(P->obj->y);
   Mat2double(P->obj->z);
-  nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
-	       &teta,&alpha,"X@Y@Z",flag,bbox);
+  /* 
+     nsp_plot3d_1(Xgc,P->obj->x->R,P->obj->y->R,P->obj->z->R,&P->obj->z->m,&P->obj->z->n,
+     &teta,&alpha,"X@Y@Z",flag,bbox);
+  */
 }
 
 static void nsp_translate_box3d(BCG *Xgc,NspGraphic *Obj,double *tr)
@@ -899,4 +901,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 903 "box3d.c"
+#line 905 "box3d.c"

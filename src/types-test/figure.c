@@ -2549,11 +2549,13 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
 
 NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
 {
-  int i,l, wdim[2], Irect[4];
+  int wdim[]= {Xgc->CWindowWidth,  Xgc->CWindowHeight};
+  int i,l,  Irect[4];
   NspObject *Obj=NULLOBJ,*Res=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
   if ( ! IsFigure((NspObject *) F)) return NULL;
+
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
   L= F->obj->children;
   /* return the first axes or objs3d found 
@@ -2825,4 +2827,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2829 "figure.c"
+#line 2831 "figure.c"
