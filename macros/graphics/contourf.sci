@@ -40,7 +40,7 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   ncurves = 0;
   I = [];
   Area=[];
-
+  
   while (ii < size(CS,2)),
     nl=CS(2,ii);
     ncurves = ncurves + 1;
@@ -53,13 +53,19 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   end
 
   lp=xget('lastpattern');
+
   if nv > lp ; write(%io(2),'Colormap too small');return ;end 
 	
   min_nv=min(nv);
   max_nv=max(nv);
 
   plot2d([min(xx);max(xx)],[min(yy);max(yy)],style=0,strf=strf,leg=leg,rect=rect,nax=nax);
-  
+
+  if new_graphics() then 
+    F=get_current_figure[]
+    F.draw_latter[];
+  end
+    
   // Plot patches in order of decreasing size. This makes sure that
   // all the lev1es get drawn, not matter if we are going up a hill or
   // down into a hole. When going down we shift levels though, you can
@@ -88,4 +94,10 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   if style(1)<>-1 then 
     contour2d(xx,yy,zz,nv,style=style,strf="000",leg=leg,rect=rect,nax=nax);
   end
+
+  if new_graphics() then 
+    F.draw_now[];
+  end
+
+
 endfunction
