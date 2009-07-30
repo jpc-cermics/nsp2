@@ -1,5 +1,19 @@
 /* -*- Mode: C -*- */
 %%
+include NspClassA
+
+/* inserted at the start of include file
+ * of classa.h
+ */
+
+%%
+include_private NspClassA
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
 headers
 
 %%

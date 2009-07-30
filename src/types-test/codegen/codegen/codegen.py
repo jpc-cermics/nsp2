@@ -415,7 +415,7 @@ class Wrapper:
 
     # This is the part used for the generation of the header associated to the class
     # 
-    type_header_1 = \
+    type_header_01 = \
         '/* -*- Mode: C -*- */\n' \
         '#ifndef NSP_INC_%(typename)s\n' \
         '#define NSP_INC_%(typename)s\n' \
@@ -423,7 +423,8 @@ class Wrapper:
         '/*\n' \
         ' * This Software is GPL (Copyright ENPC 1998-2009) \n' \
         ' * Jean-Philippe Chancelier Enpc/Cermics         \n' \
-        ' */\n\n' \
+        ' */\n\n' 
+    type_header_1 = \
         '/* %(typename)s */\n' \
         '\n' \
         '#include <nsp/%(parent_dc)s.h>\n' \
@@ -508,9 +509,11 @@ class Wrapper:
         'static AttrTab %(typename_dc)s_attrs[];\n' \
         'static NspMethods *%(typename_dc)s_get_methods(void);\n' \
         '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/ \n' \
-        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' \
-        '#endif /* %(typename)s_Private */\n\n'
+        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' 
     
+    type_header_4 = \
+        '#endif /* %(typename)s_Private */\n\n'
+
     slots_list = ['tp_getattr', 'tp_setattr' ]
 
     getter_tmpl = \
@@ -740,7 +743,14 @@ class Wrapper:
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
-
+        # insert part from .override 
+        hname = self.objinfo.c_name+'.include'
+        self.fhp.write(self.type_header_01 %substdict)
+        if self.overrides.include_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_override(hname))
+            self.fhp.resetline()
         self.fhp.write(self.type_header_1 %substdict)
         self.fhp.write('%(internal_methods_proto)s' %substdict)
         self.fhp.resetline()
@@ -748,6 +758,13 @@ class Wrapper:
         self.fhp.write(' %(internal_methods)s\n' %substdict)
         self.fhp.resetline()
         self.fhp.write(self.type_header_3 %substdict)
+        hname = self.objinfo.c_name+'.include_private'
+        if self.overrides.include_private_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_private_override(hname))
+            self.fhp.resetline()
+        self.fhp.write(self.type_header_4 %substdict)
 
         self.fhp.close() 
         

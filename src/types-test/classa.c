@@ -8,7 +8,7 @@
 
 
 
-#line 4 "codegen/classa.override"
+#line 18 "codegen/classa.override"
 
 #line 14 "classa.c"
 
@@ -236,7 +236,7 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
   if ((H  = nsp_classa_xdr_load_partial(xdrs,H))== NULLCLASSA) return H;
   if ( nsp_classa_check_values(H) == FAIL) return NULLCLASSA;
 
-#line 20 "codegen/classa.override"
+#line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 242 "classa.c"
   return H;
@@ -248,7 +248,7 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 
 void nsp_classa_destroy_partial(NspClassA *H)
 {
-#line 23 "codegen/classa.override"
+#line 37 "codegen/classa.override"
   /* verbatim in destroy */
 #line 254 "classa.c"
 #line 255 "classa.c"
@@ -501,7 +501,7 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
 {
   NspClassA *H = nsp_classa_copy(self);
 
-#line 20 "codegen/classa.override"
+#line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 507 "classa.c"
   return H;
@@ -523,14 +523,14 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classa_check_values(H) == FAIL) return RET_BUG;
 
-#line 20 "codegen/classa.override"
+#line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 529 "classa.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
-#line 26 "codegen/classa.override"
+#line 40 "codegen/classa.override"
 static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -542,7 +542,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
 #line 543 "classa.c"
 
 
-#line 36 "codegen/classa.override"
+#line 50 "codegen/classa.override"
 /* a method can be overriden by giving its name or 
  * class.name 
  */
@@ -657,7 +657,7 @@ static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 71 "codegen/classa.override"
+#line 85 "codegen/classa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -719,7 +719,7 @@ static AttrTab classa_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/classa.override"
+#line 66 "codegen/classa.override"
 /* XXXX : the generated code should be corrected */
 static int clatest(NspClassA *A)
 {
@@ -740,7 +740,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
 #line 741 "classa.c"
 
 
-#line 46 "codegen/classa.override"
+#line 60 "codegen/classa.override"
 static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
@@ -780,7 +780,7 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
 ClassA_register_classes(NspObject *d)
 {
 
-#line 7 "codegen/classa.override"
+#line 21 "codegen/classa.override"
 
 / * init code  * /
 

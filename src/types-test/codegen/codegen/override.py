@@ -22,6 +22,8 @@ class Overrides:
         self.override_attrs = {}
         self.override_slots = {}
         self.headers = ''
+        self.override_include = {}
+        self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
@@ -100,16 +102,22 @@ class Overrides:
             slot = words[1]
             self.override_destroy[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'include':
+            # we add '.include' to the slot for unicity
+            slot = words[1]+'.include' # 
+            self.override_include[slot] = rest
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'include_private':
+            # we add '.include' to the slot for unicity
+            slot = words[1]+'.include_private' # 
+            self.override_include_private[slot] = rest
+            self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_internal_methods':
             self.override_internal_methods = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods, startline + 1, filename, rest)
         elif words[0] == 'override_internal_methods_protos':
             self.override_internal_methods_protos = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
-        elif words[0] == 'override_destroy_prelim_xx':
-            # replaced by code above 
-            self.override_destroy_prelim = '%s\n#line %d "codegen/%s"\n%s' % \
-                           (self.override_destroy_prelim, startline + 1, filename, rest)
         elif words[0] == 'override_int_create_final':
             self.override_int_create_final = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_int_create_final, startline + 1, filename, rest)
@@ -155,8 +163,18 @@ class Overrides:
         return self.override_slots.has_key(slot)
     def slot_override(self, slot):
         return self.override_slots[slot]
+    def include_is_overriden(self, slot):
+        return self.override_include.has_key(slot)
+    def include_override(self, slot):
+        return self.override_include[slot]
+    def include_private_is_overriden(self, slot):
+        return self.override_include_private.has_key(slot)
+    def include_private_override(self, slot):
+        return self.override_include_private[slot]
     def get_headers(self):
         return self.headers
+    def get_include(self):
+        return self.include
     def part_type_is_overriden(self, slot):
         return self.override_type.has_key(slot)
     def get_override_type(self,slot):
