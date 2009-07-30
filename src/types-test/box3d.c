@@ -859,9 +859,11 @@ Init portion
 
 static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  /* 
   int flag[]={1,2,4};
   double bbox[]={0,1,0,1,0,1};
   double teta = 35, alpha=45;
+  */
   NspBox3d *P =(NspBox3d*) Obj ;
   if ( Obj->obj->hidden == TRUE ) return ;
   /* be sure that object are in canonical form */
@@ -901,4 +903,4 @@ static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 905 "box3d.c"
+#line 907 "box3d.c"

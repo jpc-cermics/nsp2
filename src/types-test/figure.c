@@ -20,7 +20,7 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
-extern void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2]);
+extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
@@ -2646,7 +2646,7 @@ NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
 		{
 		  gr = G;
 		  set_scale(Xgc,"fTtfft",A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);
-		  nsp_axes_i2f(Xgc,G,px,py,dp);
+		  nsp_axes_i2f(Xgc,A,px,py,dp);
 		}
 	    }
 	  else if ( IsObjs3d(NSP_OBJECT(G)))

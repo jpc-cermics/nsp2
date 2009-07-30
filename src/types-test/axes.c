@@ -1478,13 +1478,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
  *
  */
 
-void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2])
+void nsp_axes_i2f(BCG *Xgc,NspAxes *P,int x,int y,double pt[2])
 {
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
   int aaint[4]={10,2,10,2};
-  NspAxes *P = (NspAxes *) Obj;
   /* we change the scale according to the axes */
   getscale2d(Xgc,WRect,FRect,logscale,ARect);
   if ( P->obj->top == TRUE ) 
@@ -1514,7 +1513,7 @@ void nsp_axes_i2f(BCG *Xgc,NspGraphic *Obj,int x,int y,double pt[2])
    */
   if ( FALSE ) 
     {
-      nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
+      nsp_axes_compute_inside_bounds(Xgc,(NspGraphic *) P,inside_bounds);
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
     }
 
@@ -1912,8 +1911,8 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
       NspAxes *A = (NspAxes *) Obj1;
       double pt1[2],pt2[2];
       /* Sciprintf("Found an axes to be zoomed\n"); */
-      nsp_axes_i2f(Xgc,Obj1,box[0],box[1], pt1);
-      nsp_axes_i2f(Xgc,Obj1,box[2],box[3], pt2);
+      nsp_axes_i2f(Xgc,A,box[0],box[1], pt1);
+      nsp_axes_i2f(Xgc,A,box[2],box[3], pt2);
       A->obj->zoom=TRUE;
       A->obj->zrect->R[0]=pt1[0]; /* xmin */
       A->obj->zrect->R[1]=pt2[1]; /* ymin */
@@ -1932,8 +1931,8 @@ void nsp_figure_unzoom(NspGraphic *Obj)
   NspList *L;
   Cell *cloc;
   NspFigure *F= (NspFigure *) Obj;
-  if ( Obj == NULL ||  !IsFigure((NspObject *) Obj)) 
-    return NULL;
+  if ( Obj == NULL ||  !IsFigure((NspObject *) Obj))  return ;
+
   L= F->obj->children;
   cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -1948,7 +1947,8 @@ void nsp_figure_unzoom(NspGraphic *Obj)
 	    }
 	  else if ( IsObjs3d(NSP_OBJECT(G)))
 	    {
-	      NspObjs3d *A = (NspObjs3d *) G;
+	      /* NspObjs3d *A = (NspObjs3d *) G; */
+	      
 	    }
 	}
       cloc = cloc->next;
