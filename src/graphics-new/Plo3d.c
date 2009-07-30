@@ -1621,7 +1621,7 @@ void I3dRotation(BCG *Xgc)
 {
   int box_only = FALSE;
   double theta,alpha, theta_dir;
-  int flag[3],pixmode;
+  int flag[3],pixmode,pt[2];
   int iflag[]={0,0,0,0};
   int xc,yc;
   double theta0,alpha0;
@@ -1644,8 +1644,8 @@ void I3dRotation(BCG *Xgc)
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   theta0 = theta = Xgc->scales->theta ;
   alpha0 = alpha = Xgc->scales->alpha ;
-  x0 = x = xc;
-  y0 = y = yc;
+  pt[0]=x0 = x = xc;
+  pt[1]=y0 = y = yc;
   ibutton=-1;
   while ( ibutton == -1 ) 
     {
@@ -1669,7 +1669,7 @@ void I3dRotation(BCG *Xgc)
       else 
 	{
 	  /* just changes the angles in recorded plots */
-	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
 	  /* immediate redraw */
 	  Xgc->graphic_engine->force_redraw(Xgc);
 	}
@@ -1680,7 +1680,7 @@ void I3dRotation(BCG *Xgc)
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
-  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 

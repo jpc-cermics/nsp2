@@ -12,21 +12,22 @@
 #include <nsp/axes.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
+
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void nsp_figure_force_redraw(nsp_figure *F);
+
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
+			     double *fx, double *fy, int n1, int n2,char *strflag, 
+			     double *brect, double *arfact);
+static double min_of_doubles (const double *x,int n);
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
-
-#line 30 "vfield.c"
+#line 31 "vfield.c"
 
 /* ----------- NspVField ----------- */
 
@@ -97,7 +98,7 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
       
   type->init = (init_func *) init_vfield;
 
-#line 28 "codegen/vfield.override"
+#line 29 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
@@ -108,7 +109,7 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 112 "vfield.c"
+#line 113 "vfield.c"
   /* 
    * NspVField interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -272,7 +273,7 @@ static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
   if ((H  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return H;
   if ((H  = nsp_vfield_xdr_load_partial(xdrs,H))== NULLVFIELD) return H;
   if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
-#line 276 "vfield.c"
+#line 277 "vfield.c"
   return H;
 }
 
@@ -286,7 +287,7 @@ void nsp_vfield_destroy_partial(NspVField *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 290 "vfield.c"
+#line 291 "vfield.c"
     nsp_matrix_destroy(H->obj->fx);
     nsp_matrix_destroy(H->obj->fy);
     nsp_matrix_destroy(H->obj->x);
@@ -580,7 +581,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
-#line 584 "vfield.c"
+#line 585 "vfield.c"
   return H;
 }
 
@@ -600,7 +601,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 604 "vfield.c"
+#line 605 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -758,7 +759,7 @@ static AttrTab vfield_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 49 "codegen/vfield.override"
+#line 50 "codegen/vfield.override"
 
 extern function int_nspgraphic_extract;
 
@@ -767,10 +768,10 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 771 "vfield.c"
+#line 772 "vfield.c"
 
 
-#line 59 "codegen/vfield.override"
+#line 60 "codegen/vfield.override"
 
 extern function int_graphic_set_attribute;
 
@@ -779,7 +780,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 783 "vfield.c"
+#line 784 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -814,21 +815,21 @@ void VField_Interf_Info(int i, char **fname, function (**f))
 VField_register_classes(NspObject *d)
 {
 
-#line 23 "codegen/vfield.override"
+#line 24 "codegen/vfield.override"
 
 Init portion 
 
 
-#line 823 "vfield.c"
+#line 824 "vfield.c"
   nspgobject_register_class(d, "NspVField", VField, &NspNspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 69 "codegen/vfield.override"
+#line 70 "codegen/vfield.override"
 
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  double arfact = 1.0;
+  double arfact = 2.0;
   NspVField *P = (NspVField *) Obj;
   double *x= P->obj->x->R; 
   double *y= P->obj->y->R; 
@@ -838,7 +839,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
   int n2 = P->obj->y->mn;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
-  nsp_draw_vfield_generic(Xgc,"champ",P->obj->colored,x,y,fx,fy,n1,n2,TRUE,NULL,NULL,&arfact);
+  nsp_draw_vfield_(Xgc,"champ",P->obj->colored,x,y,fx,fy,n1,n2,NULL,NULL,&arfact);
 }
 
 
@@ -892,4 +893,165 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 896 "vfield.c"
+static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
+			     double *fx, double *fy, int n1, int n2, char *strflag, 
+			     double *brect, double *arfact)
+{
+  int clip_box[4],  *xm,*ym,*zm=NULL,i,j,n,na,im;
+  int arsize, cpat,uc;
+  double  xx[2],yy[2], maxx,  nx,ny,sc,sfx,sfy,sfx2,sfy2;
+  double  arsize1=0.5,arsize2=0.5;
+
+  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
+  if (uc)
+    cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  else
+    cpat = Xgc->graphic_engine->xget_dash(Xgc);
+  
+  /* The arrowsize acording to the windowsize **/
+  n=2*(n1)*(n2);
+  xx[0]=x[0];xx[1]=x[n1-1];
+  yy[0]=y[0];yy[1]=y[n2-1];
+  
+  /* Allocation */
+  xm = graphic_alloc(0,n,sizeof(int));
+  ym = graphic_alloc(1,n,sizeof(int));
+  if ( xm == 0 || ym == 0) 
+    {
+      sciprint("Running out of memory \n");
+      return ;
+    }      
+  if ( colored != 0) 
+    {
+      zm = graphic_alloc(2,n/2,sizeof(int));
+      if (  zm == 0 ) 
+	{
+	  sciprint("Running out of memory \n");
+	  return ;
+	}      
+    }
+  /* From double to pixels */
+  for ( i = 0 ; i < n1 ; i++)
+    for ( j =0 ; j < n2 ; j++)
+      {
+	xm[2*(i +(n1)*j)]= XScale(x[i]);
+	ym[2*(i +(n1)*j)]= YScale(y[j]);
+      }
+  /* Scaling */
+  nx=min_of_doubles(x,n1)*Xgc->scales->Wscx1;
+  ny=min_of_doubles(y,n2)*Xgc->scales->Wscy1;
+  sfx= Xgc->scales->Wscx1;
+  sfy= Xgc->scales->Wscy1;
+  sfx2= sfx*sfx;
+  sfy2= sfy*sfy;
+
+  im=0;
+  maxx = sfx2*fx[0]*fx[0]+sfy2*fy[0]*fy[0];
+  while ( isnan(maxx) && im < (n1)*(n2) ) 
+    {
+      maxx = sfx2*fx[im]*fx[im]+sfy2*fy[im]*fy[im];
+      im++;
+    }
+
+  for (i = im;  i < (n1)*(n2) ; i++)
+    {
+      double maxx1 = sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i];
+      if ( ~isnan(maxx1) && maxx1 > maxx) maxx=maxx1;
+    }
+  maxx = ( maxx < SMDOUBLE) ? SMDOUBLE : sqrt(maxx);
+  sc= sqrt(nx*nx+ny*ny)/maxx;
+  /* size of arrow */
+  arsize1= ((double) Xgc->scales->WIRect1[2])/(5*(n1));
+  arsize2= ((double) Xgc->scales->WIRect1[3])/(5*(n2));
+  arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
+  arsize = (int)(arsize*(*arfact));
+  
+  clip_box[0]=Xgc->scales->WIRect1[0];
+  clip_box[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
+  clip_box[2]=Xgc->scales->WIRect1[1];
+  clip_box[3]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
+
+  if ( colored == 0 ) 
+    {
+      int j=0;
+      double scx= sfx*sc/2.0;
+      double scy= sfy*sc/2.0;
+      for ( i = 0 ; i < (n1)*(n2) ; i++)
+	{
+	  int x1n,y1n,x2n,y2n,flag1=0;
+	  xm[1+2*j]= (int)(scx*fx[i]+xm[2*i]);
+	  xm[2*j]  = (int)(-scx*fx[i]+xm[2*i]);
+	  ym[1+2*j]= (int)(-scy*fy[i]+ym[2*i]);
+	  ym[2*j]  = (int)(scy*fy[i]+ym[2*i]);
+	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1,
+		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
+	  if (flag1 !=0)
+	    {
+	      /* do not want to clip since if clipped the arrow haed will
+		 be badly placed. just eliminate the totally out segments  
+		 if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
+		 if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
+	      */
+	      j++;
+	    } 
+	}
+      na=2*j;
+    }
+  else 
+    {
+      double scx= sfx*sc*maxx/3.0;
+      double scy= sfy*sc*maxx/3.0;
+      int x1n,y1n,x2n,y2n,flag1=0, whiteid, j=0;
+      whiteid=  Xgc->graphic_engine->xget_last(Xgc);
+      for ( i = 0 ; i < (n1)*(n2) ; i++)
+	{
+	  double nor= sqrt(sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i]);
+	  zm[j] = inint( ((double) whiteid)*(1.0 - nor/maxx));
+	  xm[1+2*j]= (int)(scx*fx[i]/nor+xm[2*i]);
+	  xm[2*j]  = (int)(-scx*fx[i]/nor+xm[2*i]);
+	  ym[1+2*j]= (int)(-scy*fy[i]/nor+ym[2*i]);
+	  ym[2*j]  = (int)(scy*fy[i]/nor+ym[2*i]);
+	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1,
+		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
+	  if (flag1 !=0)
+	    {
+	      /* do not want to clip since if clipped the arrow head will
+		 be badly placed. just eliminate the totally out segments 
+		 if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
+		 if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
+	      */
+	      j++;
+	    }
+	}
+      na=2*j;
+    }
+
+  if ( colored ==0) 
+    Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
+  else
+    Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
+}
+
+/*
+ * Returns min( abs(x)) excluding null x(i)  values 
+ * if x==0 then 1 is returned 
+ */
+
+static double min_of_doubles(const double *x, int n)
+{
+  int i;
+  double dx=1,mindx=1;
+  if ( n < 2 ) return(mindx);
+  mindx= Abs(x[1]-x[0]);
+  mindx = ( ~isnan(mindx) &&  mindx != 0 ) ? mindx : 1;
+  for ( i = 2 ; i < n ; i++) 
+    {
+      dx = Abs(x[i]-x[i-1]);
+      if ( ~isnan(dx) && dx < mindx && dx != 0 ) mindx=dx;
+    }
+  return(mindx);
+}
+
+
+
+#line 1058 "vfield.c"

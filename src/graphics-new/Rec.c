@@ -44,7 +44,7 @@
 #include "nsp/graphics/Rec_private.h"
 #include "nsp/graphic.h" 
 
-extern void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha);
+extern void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, double alpha,int *pt);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
 extern void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj, int *bbox1);
 
@@ -2292,7 +2292,8 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
  * iflag[3] sert a dire s'il faut ou pas changer bbox 
  *---------------------------------------------------------------------------*/
 
-void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, 
+		      int *iflag, int *flag, double *bbox, int *pt)
 {
   list_plot *list = Xgc->plots ;
   if ( Xgc->record_flag == FALSE ) return ;
@@ -2302,13 +2303,14 @@ void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].new_angles !=  NULL) 
-	    record_table[code].new_angles(list->theplot,theta,alpha,iflag,flag,bbox);
+	    record_table[code].new_angles(Xgc,list->theplot,theta,alpha,iflag,flag,bbox,pt);
 	}
       list =list->next;
     }
 }
 
-static void new_angles_Plot3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_Plot3D(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag,
+			      int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_plot3d *theplot;
@@ -2322,7 +2324,8 @@ static void new_angles_Plot3D(void *plot, double *theta, double *alpha, int *ifl
       theplot->bbox[i] = bbox[i];
 }
 
-static void new_angles_3dobj(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_3dobj(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, 
+			     int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_3dobj *theplot;
@@ -2336,7 +2339,7 @@ static void new_angles_3dobj(void *plot, double *theta, double *alpha, int *ifla
       theplot->bbox[i] = bbox[i];
 }
 
-static void new_angles_Fac3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_Fac3D(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_fac3d *theplot;
@@ -2350,7 +2353,7 @@ static void new_angles_Fac3D(void *plot, double *theta, double *alpha, int *ifla
       theplot->bbox[i] = bbox[i];
 }
 
-static void new_angles_Contour(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_Contour(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_contour *theplot;
@@ -2364,7 +2367,7 @@ static void new_angles_Contour(void *plot, double *theta, double *alpha, int *if
       theplot->bbox[i] = bbox[i];
 }
 
-static void new_angles_Param3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_Param3D(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_param3d *theplot;
@@ -2378,7 +2381,7 @@ static void new_angles_Param3D(void *plot, double *theta, double *alpha, int *if
       theplot->bbox[i] = bbox[i];
 }
 
-static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_Param3D1(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
   int i;
   struct rec_param3d1 *theplot = plot;
@@ -2393,11 +2396,11 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
 
 
 
-static void new_angles_graphic_object(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_graphic_object(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
   struct rec_object *lplot= plot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  nsp_figure_change3d_orientation(G,*theta,*alpha);
+  nsp_figure_change3d_orientation(Xgc,G,*theta,*alpha,pt);
 }
 
 
@@ -3150,7 +3153,7 @@ void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, doub
 
 void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
 { 
-  new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox);
+  new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
   tape_replay(Xgc,winnumber);
 }
 

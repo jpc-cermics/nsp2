@@ -7,9 +7,20 @@ headers
 #include <nsp/polyhedron.h>
 #include "../graphics/Plo3dObj.h"
 
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
+
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *o,double *R);
@@ -20,18 +31,6 @@ static void nsp_objs3d_link_figure(NspGraphic *G, void *F);
 static void nsp_objs3d_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_objs3d_children(NspGraphic *Obj);
 
-/* should be inserted in figure.h */
-
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
-extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
 
 %%
 init 
@@ -587,21 +586,12 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
  *
  */
 
-void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
+void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, double alpha,int *pt)
 {
-  NspFigure *F = (NspFigure *) Obj;
-  NspList *L = F->obj->children;
-  Cell *cloc = (L != NULL) ? L->first : NULLCELL;
-  while ( cloc != NULLCELL ) 
-    {
-      if ( cloc->O != NULLOBJ &&  IsObjs3d(cloc->O)) 
-	{
-	  NspObjs3d *Obj = (NspObjs3d *) cloc->O;
-	  Obj->obj->alpha = alpha;
-	  Obj->obj->theta = theta;
-	}
-      cloc = cloc->next;
-    }
+  NspObjs3d *Obj3d;
+  Obj3d = (NspObjs3d *) nsp_check_pt_axes_or_objs3d(Xgc,pt);
+  if ( Obj3d == NULL) return;
+  if ( !IsObjs3d(NSP_OBJECT(Obj3d))) return;
+  Obj3d->obj->alpha = alpha;
+  Obj3d->obj->theta = theta;
 }
-
-
