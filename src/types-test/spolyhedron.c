@@ -103,7 +103,7 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
       
   type->init = (init_func *) init_spolyhedron;
 
-#line 34 "codegen/spolyhedron.override"
+#line 63 "codegen/spolyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */

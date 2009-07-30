@@ -19,7 +19,7 @@ ignore-glob
 override_int_create_final 
   /* verbatim in create interface  */
 %%
-override_destroy_prelim NspClassARef 
+override_destroy_prelim ClassARef 
   /* verbatim in destroy */
 %%
 override classa_color_change kwargs

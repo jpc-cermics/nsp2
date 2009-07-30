@@ -1,11 +1,13 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/objs3d.h>
-#include <nsp/curve.h>
+include Axes
 
+/* inserted at the end of public part of include file
+ * of figure.h
+ */
+
+extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
+extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -16,6 +18,13 @@ extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
+%%
+include_private Axes
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_axes(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
@@ -25,6 +34,13 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
 static void nsp_axes_link_figure(NspGraphic *G, void *F);
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_axes_children(NspGraphic *Obj);
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h>
+#include <nsp/objs3d.h>
+#include <nsp/curve.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;

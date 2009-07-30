@@ -496,7 +496,9 @@ class Wrapper:
         'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
         'extern %(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, %(typename)s *M);\n' \
         'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, %(typename)s *M);\n' \
-        '\n' \
+        '\n' 
+
+    type_header_31 = \
         '#endif /* NSP_INC_%(typename)s */ \n\n' \
         '#ifdef %(typename)s_Private \n' \
         'static int init_%(typename_dc)s(%(typename)s *o,NspType%(typename)s *type);\n' \
@@ -718,10 +720,10 @@ class Wrapper:
         # 
         self.fp.write(self.type_tmpl_delete % substdict)
 
-        if self.overrides.part_destroy_is_overriden(typename):
-            lineno, filename = self.overrides.getstartline(typename)
+        if self.overrides.part_destroy_is_overriden(typename_nn):
+            lineno, filename = self.overrides.getstartline(typename_nn)
             self.fp.setline(lineno,'codegen/'+ filename)
-            self.fp.write(self.overrides.get_override_destroy(typename))
+            self.fp.write(self.overrides.get_override_destroy(typename_nn))
             self.fp.resetline()
 
         self.fp.write('%(destroy_prelim)s' %substdict)
@@ -743,14 +745,7 @@ class Wrapper:
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
-        # insert part from .override 
-        hname = self.objinfo.c_name+'.include'
         self.fhp.write(self.type_header_01 %substdict)
-        if self.overrides.include_is_overriden(hname):
-            lineno, filename = self.overrides.getstartline(hname)
-            self.fhp.setline(lineno,'codegen/'+ filename)
-            self.fhp.write(self.overrides.include_override(hname))
-            self.fhp.resetline()
         self.fhp.write(self.type_header_1 %substdict)
         self.fhp.write('%(internal_methods_proto)s' %substdict)
         self.fhp.resetline()
@@ -758,7 +753,15 @@ class Wrapper:
         self.fhp.write(' %(internal_methods)s\n' %substdict)
         self.fhp.resetline()
         self.fhp.write(self.type_header_3 %substdict)
-        hname = self.objinfo.c_name+'.include_private'
+        # insert part from .override 
+        hname = self.objinfo.name+'.include'
+        if self.overrides.include_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_override(hname))
+            self.fhp.resetline()
+        self.fhp.write(self.type_header_31 %substdict)
+        hname = self.objinfo.name+'.include_private'
         if self.overrides.include_private_is_overriden(hname):
             lineno, filename = self.overrides.getstartline(hname)
             self.fhp.setline(lineno,'codegen/'+ filename)

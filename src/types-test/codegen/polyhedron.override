@@ -57,7 +57,7 @@ override_int_create_final
   if ( nsp_check_polyhedron(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim NspPolyhedron
+override_destroy_prelim Polyhedron
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

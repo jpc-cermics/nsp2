@@ -105,6 +105,25 @@ extern int int_axes_create(Stack stack, int rhs, int opt, int lhs);
 extern NspAxes *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M);
 extern int nsp_axes_xdr_save(XDR  *xdrs, NspAxes *M);
 
+#line 4 "codegen/axes.override"
+
+/* inserted at the end of public part of include file
+ * of figure.h
+ */
+
+extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
+extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
+extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
+extern BCG *nsp_check_graphic_context(void);
+extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
+
+#line 127 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -119,5 +138,22 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
+#line 23 "codegen/axes.override"
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_axes(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_axes(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_axes(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
+static void nsp_axes_link_figure(NspGraphic *G, void *F);
+static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_axes_children(NspGraphic *Obj);
+
+#line 158 "./axes.h"
 #endif /* NspAxes_Private */
 

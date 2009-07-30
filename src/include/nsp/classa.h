@@ -7,13 +7,6 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#line 4 "codegen/classa.override"
-
-/* inserted at the start of include file
- * of classa.h
- */
-
-#line 17 "./classa.h"
 /* NspClassA */
 
 #include <nsp/object.h>
@@ -25,14 +18,14 @@
 typedef struct _NspClassA NspClassA ;
 typedef struct _NspTypeNspClassA NspTypeNspClassA ;
 
-#line 29 "./classa.h"
+#line 22 "./classa.h"
 
 struct _NspTypeNspClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 36 "./classa.h"
+#line 29 "./classa.h"
 };
 
 struct _NspClassA {
@@ -90,6 +83,13 @@ extern int int_classa_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassA *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M);
 extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
+#line 4 "codegen/classa.override"
+
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+
+#line 93 "./classa.h"
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 

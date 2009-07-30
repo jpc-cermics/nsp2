@@ -110,7 +110,7 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
       
   type->init = (init_func *) init_points3d;
 
-#line 41 "codegen/points3d.override"
+#line 71 "codegen/points3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */

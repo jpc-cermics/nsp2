@@ -107,7 +107,7 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
       
   type->init = (init_func *) init_string3d;
 
-#line 38 "codegen/string3d.override"
+#line 67 "codegen/string3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */

@@ -67,7 +67,7 @@ override_int_create_final
   if ( nsp_check_points3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim NspPoints3d
+override_destroy_prelim Points3d
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

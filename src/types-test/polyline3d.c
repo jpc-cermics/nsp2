@@ -101,7 +101,7 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
       
   type->init = (init_func *) init_polyline3d;
 
-#line 32 "codegen/polyline3d.override"
+#line 62 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */

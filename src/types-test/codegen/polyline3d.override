@@ -58,7 +58,7 @@ override_int_create_final
   if ( nsp_check_polyline3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim   NspPolyline3d
+override_destroy_prelim  Polyline3d
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

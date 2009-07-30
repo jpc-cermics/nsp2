@@ -1,23 +1,25 @@
 /* -*- Mode: C -*- */
 %%
-headers
+include Figure
 
-#include <nsp/figuredata.h>
-#include <nsp/figure.h>
-#include <nsp/axes.h>
-#include <nsp/objs3d.h>
-#include <nsp/compound.h>
+/* inserted at the end of public part of include file
+ * of figure.h
+ */
+
 extern BCG *nsp_check_graphic_context(void);
-extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
-extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
-extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 
+%%
+include_private Figure
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
@@ -33,6 +35,16 @@ static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 
+%%
+headers
+
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
+#include <nsp/axes.h>
+#include <nsp/objs3d.h>
+#include <nsp/compound.h>
+
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
 %%
 init 
@@ -51,7 +63,7 @@ ignore-glob
   *_get_type
 
 %%
-override_destroy_prelim NspFigure
+override_destroy_prelim Figure
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
