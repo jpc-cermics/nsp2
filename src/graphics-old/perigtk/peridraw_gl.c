@@ -1541,7 +1541,7 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
 {
   DRAW_CHECK;
-  printf("To be done \n");
+  printf("To be done drawpolymark3D \n");
 }
 
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)

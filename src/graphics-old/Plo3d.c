@@ -110,7 +110,7 @@ extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, doubl
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 #ifdef  WITH_GTKGLEXT 
-static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
+extern void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 #endif
 
 
@@ -2146,7 +2146,7 @@ int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, i
  * constituent le triedre dans les tableaux xbox et ybox 
  */
 
-static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style)
+void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style)
 {
   const int *Indices = ( flag == 'U' ) ? box->InsideU : box->InsideD;
   double x[6],y[6],z[6],nsegs=6,lstyle;

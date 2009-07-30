@@ -625,8 +625,46 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
+#ifdef NEW_GRAPHICS 
+  if ( iflag[0] >= 2 )
+    {
+      NspMatrix *Mistyle=NULL; 
+      /* This is in fact a 2D contour */
+      NspMatrix *s=NULL;
+      NspAxes *axe;
+      NspContour *vf;
+      if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+      /* create a vfield and insert-it in axes */
+      if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+      if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+      if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+      if ( Mistyle != NULL) 
+	{
+	  if ( ( s = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(Mistyle))) == NULLMAT) return FAIL;
+	}
+      if ( flagx==1) 
+	{
+	  if ( (nz = (NspMatrix *) nsp_object_copy_and_name("nz",NSP_OBJECT(nz))) == NULLMAT) return FAIL;
+	}
+      vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
+      if ( vf == NULL) return FAIL;
+      /* insert the new vfield */
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
+	return FAIL;
+      nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+      /* updates the axes scale information */
+      nsp_strf_axes(Xgc, axe , NULL, '2');
+      nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+    }
+  else 
+    {
+      Scierror("%s: Not implemented for 3D \n",  NspFname(stack));
+    }
+  return RET_BUG;
+#else 
   nsp_gcontour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
 	      leg, iflag, ebox, &zlev,strlen(leg));
+#endif 
   return 0;
 }
 
@@ -793,8 +831,17 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
 
 int int_contour2d( Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NEW_GRAPHICS 
+  return int_contour2d_G(stack,rhs,opt,lhs, NULL);
+#else  
   return int_contour2d_G(stack,rhs,opt,lhs, nsp_contour2);
+#endif 
+
 }
+
+/* Interface to contour2di 
+ * which is used to get the values of the contours.
+ */
 
 int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
 {
@@ -1441,6 +1488,7 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 /* [] = draw_3d_obj(list(Objs),...)
  */
 
+#ifndef NEW_GRAPHICS 
 int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
 {
   int err,*iflag,nf=0,nbObj=0, box_color=-1,box_style=SCILAB,with_mesh=FALSE,with_box=TRUE;
@@ -1517,6 +1565,7 @@ int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
   nsp_draw_3d_obj(Xgc,L,&theta,&alpha,leg1,iflag,ebox,with_mesh,with_box,box_color,box_style);
   return 0;
 }
+#endif 
 
 /*-----------------------------------------------------------
  *   plot2d(x,y,[style,strf,leg,rect,nax]) 
@@ -1802,35 +1851,55 @@ static int int_plot2d( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+#ifdef NEW_GRAPHICS 
+  return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
+#else
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,nsp_plot2d_1);
+#endif 
 }
 
 static int int_plot2d1_1( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+#ifdef NEW_GRAPHICS 
+  return int_plot2d_G(stack,rhs,opt,lhs,1,0,NULL);
+#else
   return int_plot2d_G(stack,rhs,opt,lhs,1,0,nsp_plot2d_1);
+#endif 
 }
 
 static int int_plot2d1_2( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+#ifdef NEW_GRAPHICS 
+  return int_plot2d_G(stack,rhs,opt,lhs,1,1,NULL);
+#else
   return int_plot2d_G(stack,rhs,opt,lhs,1,1,nsp_plot2d_2);
+#endif 
 }
 
 static int int_plot2d1_3( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+#ifdef NEW_GRAPHICS 
+  return int_plot2d_G(stack,rhs,opt,lhs,1,2,NULL);
+#else
   return int_plot2d_G(stack,rhs,opt,lhs,1,2,nsp_plot2d_3);
+#endif 
 }
 
 static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+#ifdef NEW_GRAPHICS 
+  return int_plot2d_G(stack,rhs,opt,lhs,1,3,NULL);
+#else
   return int_plot2d_G(stack,rhs,opt,lhs,1,3,nsp_plot2d_4);
+#endif 
 }
 
 /*-----------------------------------------------------------
@@ -5693,13 +5762,18 @@ int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
   NspAxes *axe; 
   axe=  nsp_check_for_axes(Xgc,WRect);
   if ( axe == NULL) return FAIL;
-  axe->obj->fixed = fixed;
   axe->obj->xlog = ( strlen(logscale) >= 0) ? ((logscale[0]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logscale) >= 1) ? ((logscale[1]=='n') ? FALSE:TRUE) : FALSE;
 
   if ( WRect != NULL)   memcpy(axe->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(axe->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(axe->obj->frect->R,FRect,4*sizeof(double));
+
+  if ( FRect != NULL)   
+    {
+      axe->obj->fixed = fixed;
+      memcpy(axe->obj->rect->R,FRect,4*sizeof(double));
+    }
   return OK;
 }
 
@@ -5719,7 +5793,7 @@ int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
 
 int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
-  int fixed = FALSE, axe3d=FALSE;
+  int fixed = TRUE, axe3d=FALSE;
   BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
   static char logflag_def[]="nn";
@@ -5729,7 +5803,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 
   if ( opt == 0) 
     {
-      /** compatibility with old version **/
+      /* compatibility with old version */
       CheckRhs(-1,3);
       CheckLhs(0,1);
       if ( rhs <= 0) { show_scales(Xgc); return 0;	}
@@ -5746,7 +5820,8 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       if (rhs >= 3) { 
 	if ((logflag = GetString(stack,3)) == (char*)0) return RET_BUG;
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: third argument has a wrong length %d expecting (%d)\n",NspFname(stack),strlen(logflag),2 );
+	  Scierror("%s: third argument has a wrong length %d expecting (%d)\n",
+		   NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	}
       }
@@ -6364,11 +6439,15 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 
   if ( val != 0) 
     {
-      /** sciprint("nombre de tics %d\n",ntics); **/
+      /* sciprint("nombre de tics %d\n",ntics); */
       CheckLength(NspFname(stack), opts[8].position, S,ntics);
     }
-
+#ifdef NEW_GRAPHICS 
+  Scierror("%s: Nor implemented \n",  NspFname(stack));
+  return RET_BUG;
+#else 
   sci_axis(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag,-1);
+#endif 
   return 0;
 }
 
@@ -7239,7 +7318,9 @@ static OpTab Graphics_func[]={
   {"xs2svg",int_xs2svg},
   {"xexport",int_xexport},
   {"bsearch", int_bsearch},
+#ifndef NEW_GRAPHICS 
   {"draw3d_objs", int_draw3dobj},
+#endif 
   {"xget_image",int_get_image},
   {"xget_pixbuf",int_get_pixbuf},
   {"xdraw_pixbuf",int_draw_pixbuf},
