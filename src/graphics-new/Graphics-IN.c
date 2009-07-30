@@ -3749,7 +3749,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       break;
     case xget_white:
       val = Xgc->graphic_engine->xget_last(Xgc);
-      if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,1,(double) val+2) == FAIL) return RET_BUG;
       return 1;
       break;
     case xget_window:
@@ -3985,7 +3985,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       break;
     case xget_white:
       val = Xgc->graphic_engine->xget_last(Xgc);
-      if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,1,(double) val+2) == FAIL) return RET_BUG;
       return 1;
       break;
     case xget_window:

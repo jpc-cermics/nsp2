@@ -1398,7 +1398,7 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
    * GdkColor temp = {0,0,0,0};
    */
   /* colors from 1 to Xgc->Numcolors */
-  Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 1));
+  Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 2));
   if (Xgc->private->colors  == NULL) return;
 
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);

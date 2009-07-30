@@ -1077,9 +1077,9 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
   int i ;
   GdkColor *colors_old;
-  /* 2 colors reserved for black and white */
-  if ( n != 3 || m  < 0 || m > maxcol - 2) {
-    Scierror("Colormap must be a m x 3 array with m <= %ld\n", maxcol-2);
+  /* 3 colors reserved for black and white and gray */
+  if ( n != 3 || m  < 0 || m > maxcol - 3) {
+    Scierror("Colormap must be a m x 3 array with m <= %ld\n", maxcol-3);
     return;
   }
 
@@ -1124,8 +1124,8 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 
 static int XgcAllocColors( BCG *xgc, int m)
 {
-  /* don't forget black and white */
-  int mm = m + 2;
+  /* don't forget black, white, gray */
+  int mm = m + 3;
   if ( ! ( xgc->private->colors = MALLOC(mm*sizeof(GdkColor))))
     {
       Sciprintf("memory exhausted: unable to alloc an array of GdkColors\n");
@@ -1158,6 +1158,13 @@ static void set_colormap_constants(BCG *Xgc,int m)
   Xgc->private->colors[m+1].blue = 65535; 
   if (  Xgc->private->colormap != NULL ) 
     gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
+  /* Gray */
+  Xgc->private->colors[m+2].red = 50000; 
+  Xgc->private->colors[m+2].green = 50000; 
+  Xgc->private->colors[m+2].blue = 50000; 
+  if (  Xgc->private->colormap != NULL ) 
+    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+2]);      
+
   /* constants */
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;

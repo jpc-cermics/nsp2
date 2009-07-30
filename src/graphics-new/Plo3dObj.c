@@ -440,6 +440,13 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
   B->box_style = box_style;
   B->segment = box_segments;
   B->face = box_faces;
+
+  if ( box_color == -1 )
+    {
+      /* last +3 is a light gray */
+      box_color = Xgc->graphic_engine->xget_last(Xgc)+3;
+    }
+
   B->color = box_color;
   
   B->coord[0]  = xmin; B->coord[1]  = ymin; B->coord[2]  = zmin; //1

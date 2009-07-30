@@ -1056,7 +1056,7 @@ static void  nsp_gtk_set_color(BCG *Xgc,int col)
   /* int value = AluStruc_[Xgc->CurDrawFunction].id; */
   GdkColor c; 
   /* colors from 1 to Xgc->Numcolors */
-  col = Max(0,Min(col,Xgc->Numcolors + 1));
+  col = Max(0,Min(col,Xgc->Numcolors + 2));
   if (col == Xgc->CurColor) return;
   Xgc->CurColor=col;
   if (Xgc->private->colors  == NULL) return;

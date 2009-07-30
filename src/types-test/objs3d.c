@@ -538,8 +538,8 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->alpha = 35;
   H->obj->theta = 45;
   H->obj->with_box = TRUE;
-  H->obj->box_color = 33;
-  H->obj->box_style = 1;
+  H->obj->box_color = -1;
+  H->obj->box_style = 0;
   return OK;
 }
 
@@ -1464,9 +1464,19 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
   
+#if ALLOC_OBJ
   HF= malloc( nf * sizeof(HFstruct) );
   z = malloc( nf * sizeof(double) );
   p = malloc( nf * sizeof(int) );
+  /* just to accelerate next step */
+  objs_array = malloc( nbObj*sizeof(NspObject *));
+#else 
+  HF= graphic_alloc(2, nf,  sizeof(HFstruct) );
+  z = graphic_alloc(3, nf,  sizeof(double) );
+  p = graphic_alloc(4, nf,  sizeof(int) );
+  objs_array = graphic_alloc(5, nbObj,sizeof(NspObject *));
+#endif 
+
 
   /* just to accelerate next step */
   objs_array = malloc( nbObj*sizeof(NspObject *));
@@ -1513,9 +1523,12 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
     }
   if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
+
+#if ALLOC_OBJ
   free(HF);
   free(z);
   free(p);
+#endif 
 }
 
 #ifdef  WITH_GTKGLEXT 
@@ -1604,4 +1617,4 @@ void nsp_figure_change3d_orientation(NspGraphic *Obj,double theta, double alpha)
 
 
 
-#line 1608 "objs3d.c"
+#line 1621 "objs3d.c"

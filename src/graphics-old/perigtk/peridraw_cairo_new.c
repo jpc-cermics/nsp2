@@ -1005,7 +1005,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 static void nsp_gtk_set_color(BCG *Xgc,int col)
 {
   cairo_t *cr =  Xgc->private->cairo_cr; 
-  col = Max(0,Min(col,Xgc->Numcolors + 1));
+  col = Max(0,Min(col,Xgc->Numcolors + 2));
   if ( Xgc->CurColor == col ) return; 
   Xgc->CurColor = col;
   if (Xgc->private->colors  == NULL) return;
