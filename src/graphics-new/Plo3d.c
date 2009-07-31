@@ -1615,7 +1615,7 @@ static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbo
  * stopped when the mouse is released 
  *--------------------------------------*/
 
-/* #define ROTATION_NORESCALE */
+/* #define ROTATION_NORESCALE  */
 
 void I3dRotation(BCG *Xgc)
 {

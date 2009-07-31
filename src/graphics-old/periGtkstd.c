@@ -1159,9 +1159,9 @@ static void set_colormap_constants(BCG *Xgc,int m)
   if (  Xgc->private->colormap != NULL ) 
     gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
   /* Gray */
-  Xgc->private->colors[m+2].red = 50000; 
-  Xgc->private->colors[m+2].green = 50000; 
-  Xgc->private->colors[m+2].blue = 50000; 
+  Xgc->private->colors[m+2].red = 60000; 
+  Xgc->private->colors[m+2].green = 60000; 
+  Xgc->private->colors[m+2].blue = 60000; 
   if (  Xgc->private->colormap != NULL ) 
     gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+2]);      
 

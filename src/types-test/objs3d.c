@@ -537,7 +537,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
     }
   if ( H->obj->arect == NULLMAT) 
     {
-     double x_def[4]={0.08,0.08,0.08,0.08};
+     double x_def[4]={1./8.,1./8.,1./8.,1./8.};
      if (( H->obj->arect = nsp_matrix_create("arect",'r',1,4)) == NULLMAT)
        return FAIL;
       memcpy(H->obj->arect->R,x_def,4*sizeof(double));
@@ -1163,7 +1163,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   char xf[]="onn";
   char strflag[]="151";
-  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], frect[4]={0,0,10,10}, inside_bounds[6];
+  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[6];
   char logscale[2];
   int aaint[4]={10,2,10,2};
   Cell *cloc;
@@ -1205,8 +1205,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
    * thus we use T in flag[1].
    */
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
-  nsp_axes_update_frame_bounds(Xgc,wrect1,
-			       TRUE ? frect : P->obj->frect->R,
+
+  nsp_axes_update_frame_bounds(Xgc,wrect1,P->obj->frect->R,
 			       P->obj->arect->R,
 			       aaint,
 			       TRUE,

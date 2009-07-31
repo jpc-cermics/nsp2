@@ -659,8 +659,9 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   else 
     {
       Scierror("%s: Not implemented for 3D \n",  NspFname(stack));
+      return RET_BUG;
     }
-  return RET_BUG;
+  return 0;
 #else 
   nsp_gcontour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
 	      leg, iflag, ebox, &zlev,strlen(leg));
@@ -3341,7 +3342,7 @@ int int_xend(Stack stack, int rhs, int opt, int lhs)
 int int_xgrid(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int style = 1;
+  int style = 0;
   CheckRhs(-1,1);
   if ( rhs == 1) {
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;

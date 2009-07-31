@@ -571,6 +571,12 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
       color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
     }
   
+  if ( grid_color == 0)
+    {
+      /* last +3 is a light gray */
+      grid_color = Xgc->graphic_engine->xget_last(Xgc)+3;
+    }
+
   /* Note that in that case xy_type = 'i' we can possibly 
    * have x[3] or y[3] equal to zero which means that we 
    * cannot distinguish the min and the max on the given interval

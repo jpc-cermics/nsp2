@@ -443,6 +443,7 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
 
   if ( box_color == -1 )
     {
+
       /* last +3 is a light gray */
       box_color = Xgc->graphic_engine->xget_last(Xgc)+3;
     }
