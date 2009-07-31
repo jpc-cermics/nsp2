@@ -90,6 +90,14 @@ extern int int_contour_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M);
 extern int nsp_contour_xdr_save(XDR  *xdrs, NspContour *M);
 
+#line 4 "codegen/contour.override"
+
+extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
+			    int *flagnz, int *nz, double *zz, int *style);
+
+/* inserted at the end of public part of include file */
+
+#line 101 "./contour.h"
 #endif /* NSP_INC_NspContour */ 
 
 #ifdef NspContour_Private 
@@ -104,5 +112,16 @@ static AttrTab contour_attrs[];
 static NspMethods *contour_get_methods(void);
 /* static int int_contour_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type);
+#line 12 "codegen/contour.override"
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_contour(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_contour(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_contour(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_contour(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 126 "./contour.h"
 #endif /* NspContour_Private */
 

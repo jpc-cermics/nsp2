@@ -1,18 +1,23 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/grrect.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+include GrRect
+
+/* inserted at the end of public part of include file */
+
+%%
+include_private GrRect
+
+/* inserted in the private part of include file */
 static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_grrect(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_grrect(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
 
 %%
 init 

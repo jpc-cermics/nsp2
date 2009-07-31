@@ -1,13 +1,13 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/spolyhedron.h>
-#include <nsp/polyhedron.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
-#include <nsp/grcommon.h>
+include  SPolyhedron
 
+/* inserted at the end of public part of include file */
+
+%%
+include_private  SPolyhedron
+
+/* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
@@ -24,6 +24,16 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
 static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint);
+
+%%
+headers
+#include <nsp/spolyhedron.h>
+#include <nsp/polyhedron.h>
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
+#include <nsp/grcommon.h>
+
 %%
 init 
 

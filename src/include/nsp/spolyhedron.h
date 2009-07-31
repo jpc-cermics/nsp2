@@ -101,6 +101,11 @@ extern int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSPolyhedron *nsp_spolyhedron_xdr_load_partial(XDR *xdrs, NspSPolyhedron *M);
 extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 
+#line 4 "codegen/spolyhedron.override"
+
+/* inserted at the end of public part of include file */
+
+#line 109 "./spolyhedron.h"
 #endif /* NSP_INC_NspSPolyhedron */ 
 
 #ifdef NspSPolyhedron_Private 
@@ -115,5 +120,26 @@ static AttrTab spolyhedron_attrs[];
 static NspMethods *spolyhedron_get_methods(void);
 /* static int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/spolyhedron.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
+
+static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
+static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
+static int zone(double val, double valmin, double valmax, int nv);
+static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
+static void permut_of_sort(int *tab, int *perm);
+static void find_intersection(int *sx, int *sy, double *fxy, double z, 
+			      int inda, int indb, int *xint, int *yint);
+
+#line 144 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 

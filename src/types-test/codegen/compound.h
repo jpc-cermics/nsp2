@@ -86,6 +86,12 @@ extern int int_compound_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCompound *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M);
 extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 
+#line 4 "codegen/compound.override"
+
+/* inserted at the end of public part of include file */
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
+
+#line 95 "./compound.h"
 #endif /* NSP_INC_NspCompound */ 
 
 #ifdef NspCompound_Private 
@@ -100,5 +106,20 @@ static AttrTab compound_attrs[];
 static NspMethods *compound_get_methods(void);
 /* static int int_compound_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type);
+#line 10 "codegen/compound.override"
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_compound(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_compound(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_compound(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
+static void nsp_compound_link_figure(NspGraphic *G, void *F);
+static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_compound_children(NspGraphic *Obj);
+
+#line 124 "./compound.h"
 #endif /* NspCompound_Private */
 

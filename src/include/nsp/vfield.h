@@ -89,6 +89,11 @@ extern int int_vfield_create(Stack stack, int rhs, int opt, int lhs);
 extern NspVField *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M);
 extern int nsp_vfield_xdr_save(XDR  *xdrs, NspVField *M);
 
+#line 4 "codegen/vfield.override"
+
+/* inserted at the end of public part of include file */
+
+#line 97 "./vfield.h"
 #endif /* NSP_INC_NspVField */ 
 
 #ifdef NspVField_Private 
@@ -103,5 +108,19 @@ static AttrTab vfield_attrs[];
 static NspMethods *vfield_get_methods(void);
 /* static int int_vfield_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/vfield.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
+			     double *fx, double *fy, int n1, int n2,char *strflag, 
+			     double *brect, double *arfact);
+static double min_of_doubles (const double *x,int n);
+
+#line 125 "./vfield.h"
 #endif /* NspVField_Private */
 

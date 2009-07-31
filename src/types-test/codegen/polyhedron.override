@@ -1,14 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/polyhedron.h>
-#include <nsp/spolyhedron.h>
-#include <nsp/gsort-p.h>
-#include "../graphics/Plo3dObj.h"
-#include <nsp/grcommon.h>
+include  Polyhedron
 
+/* inserted at the end of public part of include file */
+
+%%
+include_private  Polyhedron
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
@@ -20,6 +17,18 @@ static int nsp_check_polyhedron(NspPolyhedron *P);
 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+/* inserted in the private part of include file */
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include <nsp/polyhedron.h>
+#include <nsp/spolyhedron.h>
+#include <nsp/gsort-p.h>
+#include "../graphics/Plo3dObj.h"
+#include <nsp/grcommon.h>
 
 %%
 init 

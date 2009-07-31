@@ -19,7 +19,7 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeNspGraphic NspTypeNspGraphic ;
 
 
-#line 40 "codegen/graphic.override"
+#line 48 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
 typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
@@ -40,7 +40,7 @@ struct _NspTypeNspGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 25 "codegen/graphic.override"
+#line 33 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -116,6 +116,11 @@ extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
 extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
+#line 4 "codegen/graphic.override"
+
+/* inserted at the end of public part of include file */
+
+#line 124 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -130,5 +135,10 @@ static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 /* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/graphic.override"
+
+/* inserted in the private part of include file */
+
+#line 143 "./graphic.h"
 #endif /* NspGraphic_Private */
 

@@ -8,7 +8,7 @@
 
 
 
-#line 4 "codegen/polyline3d.override"
+#line 28 "codegen/polyline3d.override"
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -17,20 +17,7 @@
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_polyline3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_polyline3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_polyline3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_polyline3d(BCG *Xgc,NspGraphic *o,double *bounds);
-
-static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
-static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj);
-static int nsp_check_polyline3d(NspPolyline3d *P);
-
-static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
-static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
-
-#line 34 "polyline3d.c"
+#line 21 "polyline3d.c"
 
 /* ----------- NspPolyline3d ----------- */
 
@@ -101,7 +88,7 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
       
   type->init = (init_func *) init_polyline3d;
 
-#line 62 "codegen/polyline3d.override"
+#line 73 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -117,7 +104,7 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
   ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_polyline3d_zmean;
   ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_polyline3d_n_faces;
 
-#line 121 "polyline3d.c"
+#line 108 "polyline3d.c"
   /* 
    * NspPolyline3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -278,11 +265,11 @@ static NspPolyline3d  *nsp_polyline3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_polyline3d_xdr_load_partial(xdrs,H))== NULLPOLYLINE3D) return H;
   if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
 
-#line 57 "codegen/polyline3d.override"
+#line 68 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 286 "polyline3d.c"
+#line 273 "polyline3d.c"
   return H;
 }
 
@@ -296,12 +283,12 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 62 "codegen/polyline3d.override"
+#line 73 "codegen/polyline3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 304 "polyline3d.c"
-#line 305 "polyline3d.c"
+#line 291 "polyline3d.c"
+#line 292 "polyline3d.c"
     nsp_matrix_destroy(H->obj->Mcoord);
     nsp_matrix_destroy(H->obj->Mcolor);
     FREE(H->obj->pos);
@@ -561,11 +548,11 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_full_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
 
-#line 57 "codegen/polyline3d.override"
+#line 68 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 569 "polyline3d.c"
+#line 556 "polyline3d.c"
   return H;
 }
 
@@ -586,11 +573,11 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline3d_check_values(H) == FAIL) return RET_BUG;
 
-#line 57 "codegen/polyline3d.override"
+#line 68 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 594 "polyline3d.c"
+#line 581 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -683,7 +670,7 @@ static AttrTab polyline3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 67 "codegen/polyline3d.override"
+#line 78 "codegen/polyline3d.override"
 int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -696,10 +683,10 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 700 "polyline3d.c"
+#line 687 "polyline3d.c"
 
 
-#line 81 "codegen/polyline3d.override"
+#line 92 "codegen/polyline3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -708,10 +695,10 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 712 "polyline3d.c"
+#line 699 "polyline3d.c"
 
 
-#line 91 "codegen/polyline3d.override"
+#line 102 "codegen/polyline3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -721,7 +708,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 725 "polyline3d.c"
+#line 712 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -757,17 +744,17 @@ void Polyline3d_Interf_Info(int i, char **fname, function (**f))
 Polyline3d_register_classes(NspObject *d)
 {
 
-#line 27 "codegen/polyline3d.override"
+#line 38 "codegen/polyline3d.override"
 
 Init portion 
 
 
-#line 766 "polyline3d.c"
+#line 753 "polyline3d.c"
   nspgobject_register_class(d, "NspPolyline3d", Polyline3d, &NspNspPolyline3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 102 "codegen/polyline3d.override"
+#line 113 "codegen/polyline3d.override"
 
 /* inserted verbatim at the end */
 
@@ -959,4 +946,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 963 "polyline3d.c"
+#line 950 "polyline3d.c"

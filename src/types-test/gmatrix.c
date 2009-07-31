@@ -8,27 +8,17 @@
 
 
 
-#line 4 "codegen/gmatrix.override"
+#line 19 "codegen/gmatrix.override"
 
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_gmatrix(BCG *Xgc,NspGraphic *o,double *bounds);
-
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-#line 32 "gmatrix.c"
+#line 22 "gmatrix.c"
 
 /* ----------- NspGMatrix ----------- */
 
@@ -99,7 +89,7 @@ NspTypeNspGMatrix *new_type_gmatrix(type_mode mode)
       
   type->init = (init_func *) init_gmatrix;
 
-#line 30 "codegen/gmatrix.override"
+#line 35 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;
@@ -110,7 +100,7 @@ NspTypeNspGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 114 "gmatrix.c"
+#line 104 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -274,7 +264,7 @@ static NspGMatrix  *nsp_gmatrix_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix_create_void(name,(NspTypeBase *) nsp_type_gmatrix))== NULLGMATRIX) return H;
   if ((H  = nsp_gmatrix_xdr_load_partial(xdrs,H))== NULLGMATRIX) return H;
   if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
-#line 278 "gmatrix.c"
+#line 268 "gmatrix.c"
   return H;
 }
 
@@ -288,7 +278,7 @@ void nsp_gmatrix_destroy_partial(NspGMatrix *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 292 "gmatrix.c"
+#line 282 "gmatrix.c"
     nsp_matrix_destroy(H->obj->data);
     nsp_matrix_destroy(H->obj->rect);
     nsp_matrix_destroy(H->obj->colminmax);
@@ -583,7 +573,7 @@ NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
-#line 587 "gmatrix.c"
+#line 577 "gmatrix.c"
   return H;
 }
 
@@ -603,7 +593,7 @@ int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix_check_values(H) == FAIL) return RET_BUG;
-#line 607 "gmatrix.c"
+#line 597 "gmatrix.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -761,7 +751,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 50 "codegen/gmatrix.override"
+#line 55 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -770,10 +760,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "gmatrix.c"
+#line 764 "gmatrix.c"
 
 
-#line 60 "codegen/gmatrix.override"
+#line 65 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -782,7 +772,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 786 "gmatrix.c"
+#line 776 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -817,17 +807,17 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
 GMatrix_register_classes(NspObject *d)
 {
 
-#line 25 "codegen/gmatrix.override"
+#line 30 "codegen/gmatrix.override"
 
 Init portion 
 
 
-#line 826 "gmatrix.c"
+#line 816 "gmatrix.c"
   nspgobject_register_class(d, "NspGMatrix", GMatrix, &NspNspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 70 "codegen/gmatrix.override"
+#line 75 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -952,4 +942,4 @@ static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 956 "gmatrix.c"
+#line 946 "gmatrix.c"

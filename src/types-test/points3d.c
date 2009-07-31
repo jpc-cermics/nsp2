@@ -8,38 +8,19 @@
 
 
 
-#line 4 "codegen/points3d.override"
-#include <nsp/points3d.h>
+#line 32 "codegen/points3d.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw( nsp_figure *F);
-extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_points3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_points3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_points3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *o,double *bounds);
 
-static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
-static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj);
-static int nsp_check_points3d(NspPoints3d *P);
-
-static void draw_points3d_ogl(BCG *Xgc,void *Ob);
-static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
-
-
-#line 43 "points3d.c"
+#line 24 "points3d.c"
 
 /* ----------- NspPoints3d ----------- */
 
@@ -110,7 +91,7 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
       
   type->init = (init_func *) init_points3d;
 
-#line 71 "codegen/points3d.override"
+#line 80 "codegen/points3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -126,7 +107,7 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
   ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
   ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
 
-#line 130 "points3d.c"
+#line 111 "points3d.c"
   /* 
    * NspPoints3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -293,11 +274,11 @@ static NspPoints3d  *nsp_points3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_points3d_xdr_load_partial(xdrs,H))== NULLPOINTS3D) return H;
   if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
 
-#line 66 "codegen/points3d.override"
+#line 75 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
-#line 301 "points3d.c"
+#line 282 "points3d.c"
   return H;
 }
 
@@ -311,12 +292,12 @@ void nsp_points3d_destroy_partial(NspPoints3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 71 "codegen/points3d.override"
+#line 80 "codegen/points3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 319 "points3d.c"
-#line 320 "points3d.c"
+#line 300 "points3d.c"
+#line 301 "points3d.c"
     nsp_matrix_destroy(H->obj->Mcoord);
     FREE(H->obj->pos);
     FREE(H->obj);
@@ -570,11 +551,11 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_full_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 
-#line 66 "codegen/points3d.override"
+#line 75 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
-#line 578 "points3d.c"
+#line 559 "points3d.c"
   return H;
 }
 
@@ -595,11 +576,11 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_points3d_check_values(H) == FAIL) return RET_BUG;
 
-#line 66 "codegen/points3d.override"
+#line 75 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
-#line 603 "points3d.c"
+#line 584 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -716,7 +697,7 @@ static AttrTab points3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 76 "codegen/points3d.override"
+#line 85 "codegen/points3d.override"
 int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -728,10 +709,10 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 732 "points3d.c"
+#line 713 "points3d.c"
 
 
-#line 89 "codegen/points3d.override"
+#line 98 "codegen/points3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -740,10 +721,10 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 744 "points3d.c"
+#line 725 "points3d.c"
 
 
-#line 99 "codegen/points3d.override"
+#line 108 "codegen/points3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -753,7 +734,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 757 "points3d.c"
+#line 738 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -789,17 +770,17 @@ void Points3d_Interf_Info(int i, char **fname, function (**f))
 Points3d_register_classes(NspObject *d)
 {
 
-#line 36 "codegen/points3d.override"
+#line 45 "codegen/points3d.override"
 
 Init portion 
 
 
-#line 798 "points3d.c"
+#line 779 "points3d.c"
   nspgobject_register_class(d, "NspPoints3d", Points3d, &NspNspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 110 "codegen/points3d.override"
+#line 119 "codegen/points3d.override"
 
 /* inserted verbatim at the end */
 
@@ -855,7 +836,6 @@ static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
 static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
@@ -1001,4 +981,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1005 "points3d.c"
+#line 985 "points3d.c"

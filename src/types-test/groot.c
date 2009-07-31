@@ -10,11 +10,10 @@
 
 #line 4 "codegen/groot.override"
 
-#include <nsp/groot.h>
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 
-#line 18 "groot.c"
+#line 17 "groot.c"
 
 /* ----------- NspGRoot ----------- */
 
@@ -226,7 +225,7 @@ static NspGRoot  *nsp_groot_xdr_load(XDR *xdrs)
   if ((H  = nsp_groot_create_void(name,(NspTypeBase *) nsp_type_groot))== NULLGROOT) return H;
   if ((H  = nsp_groot_xdr_load_partial(xdrs,H))== NULLGROOT) return H;
   if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
-#line 230 "groot.c"
+#line 229 "groot.c"
   return H;
 }
 
@@ -239,7 +238,7 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 243 "groot.c"
+#line 242 "groot.c"
     nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
@@ -458,7 +457,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 462 "groot.c"
+#line 461 "groot.c"
   return H;
 }
 
@@ -478,7 +477,7 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 482 "groot.c"
+#line 481 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -556,17 +555,17 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 GRoot_register_classes(NspObject *d)
 {
 
-#line 11 "codegen/groot.override"
+#line 10 "codegen/groot.override"
 
 Init portion 
 
 
-#line 565 "groot.c"
+#line 564 "groot.c"
   nspgobject_register_class(d, "NspGRoot", GRoot, &NspNspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 28 "codegen/groot.override"
+#line 27 "codegen/groot.override"
 
 
-#line 573 "groot.c"
+#line 572 "groot.c"

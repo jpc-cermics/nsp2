@@ -1,27 +1,38 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h>
+include Fec
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw(nsp_figure *F);
+
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
+
+/* inserted at the end of public part of include file */
+
+%%
+include_private Fec
+
+/* inserted in the private part of include file */
+
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_fec(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_fec(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_fec(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
-
-
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include <nsp/axes.h>
+
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;

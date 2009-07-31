@@ -8,21 +8,11 @@
 
 
 
-#line 4 "codegen/segments.override"
-#include <nsp/segments.h>
+#line 20 "codegen/segments.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_segments(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_segments(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_segments(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
-#line 26 "segments.c"
+#line 16 "segments.c"
 
 /* ----------- NspSegments ----------- */
 
@@ -93,7 +83,7 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
       
   type->init = (init_func *) init_segments;
 
-#line 24 "codegen/segments.override"
+#line 30 "codegen/segments.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -107,7 +97,7 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 111 "segments.c"
+#line 101 "segments.c"
   /* 
    * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -265,7 +255,7 @@ static NspSegments  *nsp_segments_xdr_load(XDR *xdrs)
   if ((H  = nsp_segments_create_void(name,(NspTypeBase *) nsp_type_segments))== NULLSEGMENTS) return H;
   if ((H  = nsp_segments_xdr_load_partial(xdrs,H))== NULLSEGMENTS) return H;
   if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
-#line 269 "segments.c"
+#line 259 "segments.c"
   return H;
 }
 
@@ -279,7 +269,7 @@ void nsp_segments_destroy_partial(NspSegments *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 283 "segments.c"
+#line 273 "segments.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->color);
@@ -547,7 +537,7 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_full_copy_partial(H,self)== NULL) return NULLSEGMENTS;
-#line 551 "segments.c"
+#line 541 "segments.c"
   return H;
 }
 
@@ -567,7 +557,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_segments_check_values(H) == FAIL) return RET_BUG;
-#line 571 "segments.c"
+#line 561 "segments.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -690,7 +680,7 @@ static AttrTab segments_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 47 "codegen/segments.override"
+#line 53 "codegen/segments.override"
 int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -704,10 +694,10 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 708 "segments.c"
+#line 698 "segments.c"
 
 
-#line 62 "codegen/segments.override"
+#line 68 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -716,10 +706,10 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 720 "segments.c"
+#line 710 "segments.c"
 
 
-#line 72 "codegen/segments.override"
+#line 78 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -729,7 +719,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 733 "segments.c"
+#line 723 "segments.c"
 
 
 /*----------------------------------------------------
@@ -765,17 +755,17 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
 Segments_register_classes(NspObject *d)
 {
 
-#line 19 "codegen/segments.override"
+#line 25 "codegen/segments.override"
 
 Init portion 
 
 
-#line 774 "segments.c"
+#line 764 "segments.c"
   nspgobject_register_class(d, "NspSegments", Segments, &NspNspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 83 "codegen/segments.override"
+#line 89 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 
@@ -881,4 +871,4 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 885 "segments.c"
+#line 875 "segments.c"

@@ -91,6 +91,11 @@ extern int int_curve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCurve *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M);
 extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 
+#line 4 "codegen/curve.override"
+
+/* inserted at the end of public part of include file */
+
+#line 99 "./curve.h"
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
@@ -105,5 +110,15 @@ static AttrTab curve_attrs[];
 static NspMethods *curve_get_methods(void);
 /* static int int_curve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/curve.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_curve(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_curve(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_curve(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 123 "./curve.h"
 #endif /* NspCurve_Private */
 

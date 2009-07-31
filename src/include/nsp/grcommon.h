@@ -9,6 +9,7 @@
  */
 
 /* Figure */
+#include "../graphics/Plo3dObj.h"
 
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);

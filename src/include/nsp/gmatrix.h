@@ -89,6 +89,11 @@ extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M);
 extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
+#line 4 "codegen/gmatrix.override"
+
+/* inserted at the end of public part of include file */
+
+#line 97 "./gmatrix.h"
 #endif /* NSP_INC_NspGMatrix */ 
 
 #ifdef NspGMatrix_Private 
@@ -103,5 +108,15 @@ static AttrTab gmatrix_attrs[];
 static NspMethods *gmatrix_get_methods(void);
 /* static int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/gmatrix.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_gmatrix(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 121 "./gmatrix.h"
 #endif /* NspGMatrix_Private */
 

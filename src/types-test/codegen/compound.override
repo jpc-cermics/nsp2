@@ -1,12 +1,15 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/curve.h>
+include Compound
 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+/* inserted at the end of public part of include file */
+extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
+
+%%
+include_private Compound
+
+/* inserted in the private part of include file */
+
 static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_compound(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_compound(BCG *Xgc,NspGraphic *o,double *R);
@@ -17,14 +20,11 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);
 
-/* should be inserted in figure.h */
-
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
-extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_figure_force_redraw(nsp_figure *F);
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h>
+#include <nsp/curve.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;

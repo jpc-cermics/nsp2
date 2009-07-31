@@ -8,14 +8,12 @@
 
 
 
-#line 4 "codegen/graphic.override"
+#line 14 "codegen/graphic.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include "../interp/Eval.h"
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
-#line 19 "graphic.c"
+#line 17 "graphic.c"
 
 /* ----------- NspGraphic ----------- */
 
@@ -86,7 +84,7 @@ NspTypeNspGraphic *new_type_graphic(type_mode mode)
       
   type->init = (init_func *) init_graphic;
 
-#line 55 "codegen/graphic.override"
+#line 63 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -104,7 +102,7 @@ NspTypeNspGraphic *new_type_graphic(type_mode mode)
   type->zmean = NULL; 
   type->n_faces = NULL;
 
-#line 108 "graphic.c"
+#line 106 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -247,7 +245,7 @@ static NspGraphic  *nsp_graphic_xdr_load(XDR *xdrs)
   if ((H  = nsp_graphic_create_void(name,(NspTypeBase *) nsp_type_graphic))== NULLGRAPHIC) return H;
   if ((H  = nsp_graphic_xdr_load_partial(xdrs,H))== NULLGRAPHIC) return H;
   if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
-#line 251 "graphic.c"
+#line 249 "graphic.c"
   return H;
 }
 
@@ -260,7 +258,7 @@ void nsp_graphic_destroy_partial(NspGraphic *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 264 "graphic.c"
+#line 262 "graphic.c"
     FREE(H->obj);
    }
 }
@@ -469,7 +467,7 @@ NspGraphic *nsp_graphic_full_copy(NspGraphic *self)
   NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_full_copy_partial(H,self)== NULL) return NULLGRAPHIC;
-#line 473 "graphic.c"
+#line 471 "graphic.c"
   return H;
 }
 
@@ -489,12 +487,12 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_graphic_check_values(H) == FAIL) return RET_BUG;
-#line 493 "graphic.c"
+#line 491 "graphic.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
-#line 74 "codegen/graphic.override"
+#line 82 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -508,10 +506,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 512 "graphic.c"
+#line 510 "graphic.c"
 
 
-#line 89 "codegen/graphic.override"
+#line 97 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -523,10 +521,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 527 "graphic.c"
+#line 525 "graphic.c"
 
 
-#line 102 "codegen/graphic.override"
+#line 110 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -537,10 +535,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 541 "graphic.c"
+#line 539 "graphic.c"
 
 
-#line 114 "codegen/graphic.override"
+#line 122 "codegen/graphic.override"
 static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspGraphic *ret;
@@ -550,7 +548,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 554 "graphic.c"
+#line 552 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -624,17 +622,17 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
 Graphic_register_classes(NspObject *d)
 {
 
-#line 12 "codegen/graphic.override"
+#line 20 "codegen/graphic.override"
 
 GLURP 
 
 
-#line 633 "graphic.c"
+#line 631 "graphic.c"
   nspgobject_register_class(d, "NspGraphic", Graphic, &NspNspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
 }
 */
 
-#line 125 "codegen/graphic.override"
+#line 133 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -815,4 +813,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 819 "graphic.c"
+#line 817 "graphic.c"

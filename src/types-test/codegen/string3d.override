@@ -1,32 +1,38 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/string3d.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
+include  String3d
 
+#include "../graphics/Plo3dObj.h"
+/* inserted at the end of public part of include file */
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
 
 
+%%
+include_private  String3d
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_string3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_string3d(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_string3d(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_string3d(BCG *Xgc,NspGraphic *o,double *bounds);
-
 static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_string3d(NspString3d *P);
-
 static void draw_string3d_ogl(BCG *Xgc,void *Ob);
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+/* inserted in the private part of include file */
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
 
 %%
 init 

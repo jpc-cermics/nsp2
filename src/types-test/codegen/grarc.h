@@ -93,6 +93,11 @@ extern int int_grarc_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrArc *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M);
 extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
+#line 4 "codegen/grarc.override"
+
+/* inserted at the end of public part of include file */
+
+#line 101 "./grarc.h"
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
@@ -107,5 +112,16 @@ static AttrTab grarc_attrs[];
 static NspMethods *grarc_get_methods(void);
 /* static int int_grarc_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrArc *nsp_grarc_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/grarc.override"
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_grarc(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_grarc(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_grarc(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 126 "./grarc.h"
 #endif /* NspGrArc_Private */
 

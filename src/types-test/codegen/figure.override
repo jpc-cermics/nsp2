@@ -13,6 +13,13 @@ extern NspFigure *nsp_check_for_figure(BCG *Xgc);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
+extern void nsp_figure_force_redraw(nsp_figure *F);
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_force_redraw(nsp_figure *F);
 
 %%
 include_private Figure
@@ -43,8 +50,6 @@ headers
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/compound.h>
-
-extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
 %%
 init 

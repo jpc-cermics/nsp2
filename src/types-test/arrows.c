@@ -8,21 +8,12 @@
 
 
 
-#line 4 "codegen/arrows.override"
-#include <nsp/arrows.h>
+#line 20 "codegen/arrows.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_arrows(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_arrows(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_arrows(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *o,double *bounds);
+#include <nsp/arrows.h>
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
-#line 26 "arrows.c"
+#line 17 "arrows.c"
 
 /* ----------- NspArrows ----------- */
 
@@ -93,7 +84,7 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
       
   type->init = (init_func *) init_arrows;
 
-#line 24 "codegen/arrows.override"
+#line 31 "codegen/arrows.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -107,7 +98,7 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 111 "arrows.c"
+#line 102 "arrows.c"
   /* 
    * NspArrows interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -268,7 +259,7 @@ static NspArrows  *nsp_arrows_xdr_load(XDR *xdrs)
   if ((H  = nsp_arrows_create_void(name,(NspTypeBase *) nsp_type_arrows))== NULLARROWS) return H;
   if ((H  = nsp_arrows_xdr_load_partial(xdrs,H))== NULLARROWS) return H;
   if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
-#line 272 "arrows.c"
+#line 263 "arrows.c"
   return H;
 }
 
@@ -282,7 +273,7 @@ void nsp_arrows_destroy_partial(NspArrows *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 286 "arrows.c"
+#line 277 "arrows.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->color);
@@ -555,7 +546,7 @@ NspArrows *nsp_arrows_full_copy(NspArrows *self)
   if ( H ==  NULLARROWS) return NULLARROWS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLARROWS;
   if ( nsp_arrows_full_copy_partial(H,self)== NULL) return NULLARROWS;
-#line 559 "arrows.c"
+#line 550 "arrows.c"
   return H;
 }
 
@@ -575,7 +566,7 @@ int int_arrows_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_arrows_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_arrows_check_values(H) == FAIL) return RET_BUG;
-#line 579 "arrows.c"
+#line 570 "arrows.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -718,7 +709,7 @@ static AttrTab arrows_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 47 "codegen/arrows.override"
+#line 54 "codegen/arrows.override"
 int _wrap_arrows_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -730,10 +721,10 @@ int _wrap_arrows_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 734 "arrows.c"
+#line 725 "arrows.c"
 
 
-#line 60 "codegen/arrows.override"
+#line 67 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -742,10 +733,10 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 746 "arrows.c"
+#line 737 "arrows.c"
 
 
-#line 70 "codegen/arrows.override"
+#line 77 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -755,7 +746,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 759 "arrows.c"
+#line 750 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -791,17 +782,17 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
 Arrows_register_classes(NspObject *d)
 {
 
-#line 19 "codegen/arrows.override"
+#line 26 "codegen/arrows.override"
 
 Init portion 
 
 
-#line 800 "arrows.c"
+#line 791 "arrows.c"
   nspgobject_register_class(d, "NspArrows", Arrows, &NspNspArrows_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 81 "codegen/arrows.override"
+#line 88 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 
@@ -908,4 +899,4 @@ static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 912 "arrows.c"
+#line 903 "arrows.c"

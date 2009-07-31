@@ -93,6 +93,11 @@ extern int int_grstring_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrstring *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M);
 extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
+#line 4 "codegen/grstring.override"
+
+/* inserted at the end of public part of include file */
+
+#line 101 "./grstring.h"
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
@@ -107,5 +112,15 @@ static AttrTab grstring_attrs[];
 static NspMethods *grstring_get_methods(void);
 /* static int int_grstring_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/grstring.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_grstring(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_grstring(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_grstring(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 125 "./grstring.h"
 #endif /* NspGrstring_Private */
 

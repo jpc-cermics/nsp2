@@ -88,6 +88,12 @@ extern int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline3d *nsp_polyline3d_xdr_load_partial(XDR *xdrs, NspPolyline3d *M);
 extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 
+#line 4 "codegen/polyline3d.override"
+
+/* inserted at the end of public part of include file */
+extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+
+#line 97 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -102,5 +108,23 @@ static AttrTab polyline3d_attrs[];
 static NspMethods *polyline3d_get_methods(void);
 /* static int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type);
+#line 10 "codegen/polyline3d.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_polyline3d(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_polyline3d(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_polyline3d(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_polyline3d(BCG *Xgc,NspGraphic *o,double *bounds);
+
+static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
+				 int *n, int k, double *lim);
+static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_polyline3d(NspPolyline3d *P);
+
+static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
+static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+#line 129 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

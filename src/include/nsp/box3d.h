@@ -90,6 +90,11 @@ extern int int_box3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBox3d *nsp_box3d_xdr_load_partial(XDR *xdrs, NspBox3d *M);
 extern int nsp_box3d_xdr_save(XDR  *xdrs, NspBox3d *M);
 
+#line 4 "codegen/box3d.override"
+
+/* inserted at the end of public part of include file */
+
+#line 98 "./box3d.h"
 #endif /* NSP_INC_NspBox3d */ 
 
 #ifdef NspBox3d_Private 
@@ -104,5 +109,16 @@ static AttrTab box3d_attrs[];
 static NspMethods *box3d_get_methods(void);
 /* static int int_box3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/box3d.override"
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_box3d(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_box3d(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_box3d(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 123 "./box3d.h"
 #endif /* NspBox3d_Private */
 

@@ -87,6 +87,11 @@ extern int int_segments_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSegments *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M);
 extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
+#line 4 "codegen/segments.override"
+
+/* inserted at the end of public part of include file */
+
+#line 95 "./segments.h"
 #endif /* NSP_INC_NspSegments */ 
 
 #ifdef NspSegments_Private 
@@ -101,5 +106,16 @@ static AttrTab segments_attrs[];
 static NspMethods *segments_get_methods(void);
 /* static int int_segments_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/segments.override"
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_segments(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_segments(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_segments(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 120 "./segments.h"
 #endif /* NspSegments_Private */
 

@@ -92,6 +92,11 @@ extern int int_surf_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSurf *nsp_surf_xdr_load_partial(XDR *xdrs, NspSurf *M);
 extern int nsp_surf_xdr_save(XDR  *xdrs, NspSurf *M);
 
+#line 4 "codegen/surf.override"
+
+/* inserted at the end of public part of include file */
+
+#line 100 "./surf.h"
 #endif /* NSP_INC_NspSurf */ 
 
 #ifdef NspSurf_Private 
@@ -106,5 +111,15 @@ static AttrTab surf_attrs[];
 static NspMethods *surf_get_methods(void);
 /* static int int_surf_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSurf *nsp_surf_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/surf.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_surf(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_surf(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_surf(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 124 "./surf.h"
 #endif /* NspSurf_Private */
 

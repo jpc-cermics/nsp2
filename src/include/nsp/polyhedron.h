@@ -91,6 +91,11 @@ extern int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyhedron *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M);
 extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 
+#line 4 "codegen/polyhedron.override"
+
+/* inserted at the end of public part of include file */
+
+#line 99 "./polyhedron.h"
 #endif /* NSP_INC_NspPolyhedron */ 
 
 #ifdef NspPolyhedron_Private 
@@ -105,5 +110,21 @@ static AttrTab polyhedron_attrs[];
 static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/polyhedron.override"
+static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_polyhedron(NspPolyhedron *P);
+
+static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+/* inserted in the private part of include file */
+
+#line 129 "./polyhedron.h"
 #endif /* NspPolyhedron_Private */
 

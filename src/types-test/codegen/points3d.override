@@ -1,22 +1,17 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/points3d.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
-#include <nsp/polyhedron.h>
-#include <nsp/spolyhedron.h>
-#include <nsp/grcommon.h>
+include  Points3d
 
+#include "../graphics/Plo3dObj.h"
+/* inserted at the end of public part of include file */
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw( nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
 
+%%
+include_private  Points3d
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_points3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_points3d(BCG *Xgc,NspGraphic *o,double *R);
@@ -29,6 +24,20 @@ static int nsp_check_points3d(NspPoints3d *P);
 
 static void draw_points3d_ogl(BCG *Xgc,void *Ob);
 static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+/* inserted in the private part of include file */
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include <nsp/polyhedron.h>
+#include <nsp/spolyhedron.h>
+#include <nsp/grcommon.h>
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
 
 
 %%
@@ -162,7 +171,6 @@ static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
 static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {

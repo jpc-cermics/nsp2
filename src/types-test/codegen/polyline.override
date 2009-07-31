@@ -1,18 +1,23 @@
 /* -*- Mode: C -*- */
 %%
-headers
-#include <nsp/polyline.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+include  Polyline
+
+/* inserted at the end of public part of include file */
+
+%%
+include_private  Polyline
+
+/* inserted in the private part of include file */
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
 
 %%
 init 

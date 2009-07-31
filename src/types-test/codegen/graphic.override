@@ -1,11 +1,19 @@
 /* -*- Mode: C -*- */
 %%
+include Graphic
+
+/* inserted at the end of public part of include file */
+
+%%
+include_private Graphic
+
+/* inserted in the private part of include file */
+
+%%
 headers
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include "../interp/Eval.h"
-extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 
 %%
 init 

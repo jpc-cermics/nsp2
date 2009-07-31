@@ -98,6 +98,27 @@ extern int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspObjs3d *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M);
 extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 
+#line 4 "codegen/objs3d.override"
+
+/* inserted at the end of public part of include file */
+#include "../graphics/Plo3dObj.h"
+
+extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
+extern void nsp_list_link_figure(NspList *L, NspFigure *F);
+extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
+extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
+extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+					 int *aaint,int isomode, int auto_axes, char *xf);
+extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
+extern void nsp_obj3d_free_box(Plot3dBox *B);
+
+#line 122 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -112,5 +133,22 @@ static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
+#line 25 "codegen/objs3d.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
+static void nsp_objs3d_link_figure(NspGraphic *G, void *F);
+static void nsp_objs3d_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_objs3d_children(NspGraphic *Obj);
+static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,
+				const char *legend,
+				int *flag,double *ebox,int with_box,int box_color,int box_style);
+
+#line 153 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

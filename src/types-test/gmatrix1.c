@@ -8,37 +8,17 @@
 
 
 
-#line 4 "codegen/gmatrix1.override"
+#line 28 "codegen/gmatrix1.override"
 
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw(nsp_figure *F);
-extern void PermutOfSort (const int *tab, int *perm);
-extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
-			   const int *zxy, const double *zlevel,const int *fill);
-extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
-			     double z,int inda, int indb,  int *xint, int *yint);
-
-
-static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_gmatrix1(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_gmatrix1(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_gmatrix1(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_gmatrix1(BCG *Xgc,NspGraphic *o,double *bounds);
-static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
-
-
-
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-#line 42 "gmatrix1.c"
+#line 22 "gmatrix1.c"
 
 /* ----------- NspGMatrix1 ----------- */
 
@@ -109,7 +89,7 @@ NspTypeNspGMatrix1 *new_type_gmatrix1(type_mode mode)
       
   type->init = (init_func *) init_gmatrix1;
 
-#line 40 "codegen/gmatrix1.override"
+#line 44 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;
@@ -120,7 +100,7 @@ NspTypeNspGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 124 "gmatrix1.c"
+#line 104 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -293,7 +273,7 @@ static NspGMatrix1  *nsp_gmatrix1_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix1_create_void(name,(NspTypeBase *) nsp_type_gmatrix1))== NULLGMATRIX1) return H;
   if ((H  = nsp_gmatrix1_xdr_load_partial(xdrs,H))== NULLGMATRIX1) return H;
   if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
-#line 297 "gmatrix1.c"
+#line 277 "gmatrix1.c"
   return H;
 }
 
@@ -307,7 +287,7 @@ void nsp_gmatrix1_destroy_partial(NspGMatrix1 *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 311 "gmatrix1.c"
+#line 291 "gmatrix1.c"
     nsp_matrix_destroy(H->obj->data);
     nsp_matrix_destroy(H->obj->colminmax);
     nsp_matrix_destroy(H->obj->zminmax);
@@ -648,7 +628,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 652 "gmatrix1.c"
+#line 632 "gmatrix1.c"
   return H;
 }
 
@@ -668,7 +648,7 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 672 "gmatrix1.c"
+#line 652 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -906,7 +886,7 @@ static AttrTab gmatrix1_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 61 "codegen/gmatrix1.override"
+#line 65 "codegen/gmatrix1.override"
 
 extern function int_nspgraphic_extract;
 
@@ -915,10 +895,10 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 919 "gmatrix1.c"
+#line 899 "gmatrix1.c"
 
 
-#line 71 "codegen/gmatrix1.override"
+#line 75 "codegen/gmatrix1.override"
 
 extern function int_graphic_set_attribute;
 
@@ -927,7 +907,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 931 "gmatrix1.c"
+#line 911 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -962,17 +942,17 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
 GMatrix1_register_classes(NspObject *d)
 {
 
-#line 35 "codegen/gmatrix1.override"
+#line 39 "codegen/gmatrix1.override"
 
 Init portion 
 
 
-#line 971 "gmatrix1.c"
+#line 951 "gmatrix1.c"
   nspgobject_register_class(d, "NspGMatrix1", GMatrix1, &NspNspGMatrix1_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 81 "codegen/gmatrix1.override"
+#line 85 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
@@ -1571,4 +1551,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1575 "gmatrix1.c"
+#line 1555 "gmatrix1.c"

@@ -1,20 +1,30 @@
 /* -*- Mode: C -*- */
 %%
-headers
+include Contour
 
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h>
+extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
+			    int *flagnz, int *nz, double *zz, int *style);
 
-extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+/* inserted at the end of public part of include file */
+
+%%
+include_private Contour
+
+/* inserted in the private part of include file */
+
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_contour(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_contour(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_contour(BCG *Xgc,NspGraphic *o,double *alpha);
 static void nsp_getbounds_contour(BCG *Xgc,NspGraphic *o,double *bounds);
 
-extern void nsp_figure_force_redraw(nsp_figure *F);
+%%
+headers
+
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include <nsp/axes.h>
+#include <nsp/contour.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -132,8 +142,5 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
     }
 }
-
-extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
-			    int *flagnz, int *nz, double *zz, int *style);
 
 

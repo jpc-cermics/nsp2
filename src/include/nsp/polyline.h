@@ -92,6 +92,11 @@ extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M);
 extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 
+#line 4 "codegen/polyline.override"
+
+/* inserted at the end of public part of include file */
+
+#line 100 "./polyline.h"
 #endif /* NSP_INC_NspPolyline */ 
 
 #ifdef NspPolyline_Private 
@@ -106,5 +111,15 @@ static AttrTab polyline_attrs[];
 static NspMethods *polyline_get_methods(void);
 /* static int int_polyline_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type);
+#line 9 "codegen/polyline.override"
+
+/* inserted in the private part of include file */
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_polyline(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_polyline(BCG *Xgc,NspGraphic *o,double *alpha);
+static void nsp_getbounds_polyline(BCG *Xgc,NspGraphic *o,double *bounds);
+
+#line 124 "./polyline.h"
 #endif /* NspPolyline_Private */
 
