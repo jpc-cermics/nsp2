@@ -2548,7 +2548,7 @@ NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
 	  Irect[3]=((NspAxes *) Res)->obj->wrect->R[3]*wdim[1];
 	  
 	  if ( Irect[0] <= pt[0] && pt[0] <= Irect[0]+Irect[2] 
-	       && Irect[1] <= pt[1] && pt[0] <= Irect[1]+Irect[3] )
+	       && Irect[1] <= pt[1] && pt[1] <= Irect[1]+Irect[3] )
 	    {
 	      break;
 	    }

@@ -297,7 +297,13 @@ endfunction
 function demo_prim_1()
   function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
   xsetech(frect=[-100,-100,500,600]);
-  xset('clipgrf')
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F=get_current_figure();
+    F.draw_latter[];
+  else
+    xset('clipgrf')
+  end
   // xrects 
   x=0:40:240;
   boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
@@ -346,13 +352,24 @@ function demo_prim_1()
   xnumb(x,500*ones(size(x)),[10,20,35],1);
   xnumb(x,550*ones(size(x)),[10,20,35],0);
   xinfo(["[[II.3] xnumb()"]);
-  xset('clipoff')
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F.draw_now[];
+  else
+    xset('clipoff')
+  end
 endfunction
 
 function demo_prim_2()
   function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
   xsetech(frect=[-100,-100,500,600]);
-  xset('clipgrf')
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F=get_current_figure();
+    F.draw_latter[];
+  else
+    xset('clipgrf')
+  end
   xrect(20,120,60,60)
   xfrect(100,120,60,60)
   xarc(20,200,50,70,0,64*(225))
@@ -379,14 +396,18 @@ function demo_prim_2()
   rect=xstringl(20,400,"Character string");
   xrect(rect(1),rect(2),rect(3),rect(4));
   xrect(150,460,100,150);
-  xset('clipping',150,460,100,150);
-  x=0:0.2:2*%pi;
-  x1=[sin(x);10*sin(x)];
-  y1=[cos(x);10*cos(x)];
-  y1=transl(y1,20);
-  xsegs(10*x1+200*ones(size(x1)),10*y1+200*ones(size(y1)));
-  xset("clipgrf");
-  
+
+  // to be done with new graphics 
+  if new_graphics() 
+  else
+    xset('clipping',150,460,100,150);
+    x=0:0.2:2*%pi;
+    x1=[sin(x);10*sin(x)];
+    y1=[cos(x);10*cos(x)];
+    y1=transl(y1,20);
+    xsegs(10*x1+200*ones(size(x1)),10*y1+200*ones(size(y1)));
+    xset("clipgrf");
+  end
   xset("font",2,0);
   xstring(0,130,"Scilab");
   xset("font",2,1);
@@ -404,6 +425,12 @@ function demo_prim_2()
   xset("font",4,5);
   xstring(0,350,"Scilab");
   xinfo(["[IV.5] Setting font style and size"]);
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F.draw_now[];
+  else
+    xset('clipoff')
+  end
 endfunction
 
 
@@ -648,7 +675,13 @@ endfunction
 
 function demo_prim_new_rects()
   xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
-  xset('clipgrf')
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F=get_current_figure();
+    F.draw_latter[];
+  else
+    xset('clipgrf')
+  end
   // xrects 
   x=0:40:240;
   boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
@@ -661,12 +694,22 @@ function demo_prim_new_rects()
   // 
   boxes=[x;80*ones(size(x));30*ones(size(x));30*ones(size(x))];
   xrects(boxes,color=1:7,thickness=5*ones(1,7),background=8:8+6);
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F.draw_now[];
+  end
 endfunction
 
 
 function demo_prim_new_arcs()
   xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
-  xset('clipgrf')
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F=get_current_figure();
+    F.draw_latter[];
+  else
+    xset('clipgrf')
+  end
   // xrects 
   x=0:40:200;
   // xarcs 
@@ -681,11 +724,22 @@ function demo_prim_new_arcs()
   boxes=[x;170*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
   xarcs(arcs,color=1:6,thickness=4*ones(1,6),background=8:8+5);
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F.draw_now[];
+  end
 endfunction
 
 function demo_prim_new_xpolys()
   function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
   xsetech(frect=[-100,-100,500,600]);
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F=get_current_figure();
+    F.draw_latter[];
+  else
+    xset('clipgrf')
+  end
   // xfpolys
   x1=[0,10,20,30,20,10,0];
   y1=[15,30,30,15,0,0,15];y1=160*ones(size(y1))+y1;
@@ -704,4 +758,8 @@ function demo_prim_new_xpolys()
   // 
   ypols=transl(ypols,180);
   xpolys(xpols',ypols',-(1:7));
+  if new_graphics() then 
+    // clipgrf is activated by default on Figures 
+    F.draw_now[];
+  end
 endfunction
