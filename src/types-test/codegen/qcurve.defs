@@ -1,0 +1,45 @@
+;; -*- scheme -*-
+
+(include "qcurve-types.defs")
+
+;; overriden 
+
+(define-function qcurve_attach
+  (c-name "qcurve_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_qcurve
+  (c-name "nsp_extractelts_qcurve")
+  (return-type "none")
+)
+(define-function setrowscols_qcurve
+  (c-name "nsp_setrowscols_qcurve")
+  (return-type "none")
+)
+
+(define-method add_points 
+  (of-object "Qcurve")
+  (c-name "nsp_qcurve_addPts")
+  (parameters
+    '("NspMatrix*" "pts")
+    )
+  (return-type "none")
+)
+
+(define-method clear  
+  (of-object "Qcurve")
+  (c-name "nsp_qcurve_clear")
+  (return-type "none")
+)
+
+
+(define-function oscillo
+  (c-name "oscillo_test")
+  (return-type "none")
+)

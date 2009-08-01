@@ -122,8 +122,12 @@ extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
+extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 
-#line 127 "./axes.h"
+
+
+
+#line 131 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -138,7 +142,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#line 23 "codegen/axes.override"
+#line 27 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -154,6 +158,6 @@ static void nsp_axes_link_figure(NspGraphic *G, void *F);
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_axes_children(NspGraphic *Obj);
 
-#line 158 "./axes.h"
+#line 162 "./axes.h"
 #endif /* NspAxes_Private */
 

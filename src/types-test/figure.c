@@ -2046,7 +2046,10 @@ static int nsp_figure_connect(NspFigure *F)
   Xgc = window_list_search(F->obj->id);
   if ( Xgc != NULL) 
     {
-      Sciprintf("Warning: Figure is already connected\n");
+      NspFigure *F1=nsp_get_figure(Xgc);
+      if ( F1 != NULL && nsp_figure_eq(F1,NSP_OBJECT(F))) return OK;
+      /* delete window F->obj->id and reconnect */
+      Sciprintf("\tFigure %d already connected\n",F->obj->id);
       Sciprintf("\tdeleting window %d\n",F->obj->id);
       scig_delete(F->obj->id);
      }
@@ -2799,4 +2802,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2803 "figure.c"
+#line 2806 "figure.c"

@@ -142,6 +142,7 @@ extern sci_interface Axes_Interf;extern interface_info Axes_Interf_Info;
 extern sci_interface Box3d_Interf;extern interface_info Box3d_Interf_Info;
 extern sci_interface Contour_Interf;extern interface_info Contour_Interf_Info;
 extern sci_interface Curve_Interf;extern interface_info Curve_Interf_Info;
+extern sci_interface Qcurve_Interf;extern interface_info Qcurve_Interf_Info;
 extern sci_interface Figure_Interf;extern interface_info Figure_Interf_Info;
 extern sci_interface GMatrix_Interf;extern interface_info GMatrix_Interf_Info;
 extern sci_interface GRoot_Interf;extern interface_info GRoot_Interf_Info;
@@ -266,6 +267,7 @@ InterfTab Interfaces[]={
   {Box3d_Interf,Box3d_Interf_Info},
   {Contour_Interf,Contour_Interf_Info},
   {Curve_Interf,Curve_Interf_Info},
+  {Qcurve_Interf,Qcurve_Interf_Info},
   {Figure_Interf,Figure_Interf_Info},
   {GMatrix_Interf,GMatrix_Interf_Info},
   {GRoot_Interf,GRoot_Interf_Info},

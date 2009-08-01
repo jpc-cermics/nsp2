@@ -17,6 +17,7 @@ FFLAGS = $(FC_OPTIONS)
 PYTHON=python 
 ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
+	../qcurve.c \
 	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
@@ -24,6 +25,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../fec.c 
 
 all:: $(ALL)
+	cd ../; make all
 
 clean :: 
 	$(RM) $(ALL)
@@ -82,6 +84,12 @@ clean ::
 	    --override curve.override \
 	    --prefix Curve curve.defs) > $*.c \
 	&& cp curve.h ../../include/nsp 
+
+../qcurve.c : qcurve-types.defs qcurve.defs qcurve.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override qcurve.override \
+	    --prefix Qcurve qcurve.defs) > $*.c \
+	&& cp qcurve.h ../../include/nsp 
 
 ../figure.c :  figure.defs  figure.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \

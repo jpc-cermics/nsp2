@@ -8,7 +8,7 @@
 
 
 
-#line 40 "codegen/axes.override"
+#line 44 "codegen/axes.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -89,7 +89,7 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 56 "codegen/axes.override"
+#line 60 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -824,7 +824,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 89 "codegen/axes.override"
+#line 93 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -990,7 +990,7 @@ static int _wrap_axes_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 105 "codegen/axes.override"
+#line 109 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1247,7 +1247,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 76 "codegen/axes.override"
+#line 80 "codegen/axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -1262,7 +1262,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 #line 1263 "axes.c"
 
 
-#line 163 "codegen/axes.override"
+#line 167 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1274,7 +1274,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 #line 1275 "axes.c"
 
 
-#line 173 "codegen/axes.override"
+#line 177 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1320,7 +1320,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
 Axes_register_classes(NspObject *d)
 {
 
-#line 51 "codegen/axes.override"
+#line 55 "codegen/axes.override"
 
 Init portion 
 
@@ -1330,7 +1330,7 @@ Init portion
 }
 */
 
-#line 184 "codegen/axes.override"
+#line 188 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,

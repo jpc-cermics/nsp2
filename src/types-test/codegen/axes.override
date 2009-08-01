@@ -17,6 +17,10 @@ extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
+extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
+
+
+
 
 %%
 include_private Axes

@@ -1,9 +1,9 @@
 ;; -*- scheme -*-
 
-(define-objectref Curve
-  (in-module "Curve")
+(define-objectref Qcurve
+  (in-module "Qcurve")
   (parent "Graphic")
-  (c-name "NspCurve")
+  (c-name "NspQcurve")
   (fields
    ;; '("int" "color"); curve color is defined in parent 
    '("int" "mark" "std" "-1") ; mark to be used (-1 no mark)
@@ -13,8 +13,10 @@
    '("int" "mode"); mode: std, step, stem, arrow.
    '("NspMatrix*" "Pts")
    '("char*" "legend")
+   '("int" "start" "hidden" "-1"); start indice Pts
+   '("int" "last" "hidden" "-1"); end indice in Pts
     )
-  (gtype-id "Curve")
+  (gtype-id "Qcurve")
 )
 
 
