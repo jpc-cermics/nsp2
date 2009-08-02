@@ -928,7 +928,7 @@ static void nsp_scale_grarc(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGrArc *P = (NspGrArc *) Obj;
   bounds[0]=P->obj->x;/* xmin */

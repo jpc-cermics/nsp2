@@ -837,7 +837,7 @@ static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  */
 
 
-static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   /* this should be stored in a cache and recomputed when necessary 
@@ -845,14 +845,11 @@ static void nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
    */
   nsp_points3d *Q= ((NspPoints3d *) Obj)->obj;
   nsp_check_points3d((NspPoints3d *) Obj);
-  if ( Q->Mcoord->mn == 0) 
-    {
-      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
-      return;
-    }
+  if ( Q->Mcoord->mn == 0) return FALSE;
   for ( i = 0 ; i < Q->Mcoord->n ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
-  return;
+    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,
+			  &bounds[2*i],&bounds[2*i+1]);
+  return TRUE;
 }
 
 int nsp_check_points3d( NspPoints3d *Pt)
@@ -981,4 +978,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 985 "points3d.c"
+#line 982 "points3d.c"

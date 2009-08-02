@@ -976,8 +976,9 @@ static void nsp_scale_grstring(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
+  return FALSE;
   /* NspGrstring *P = (NspGrstring *) Obj; */
   bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
   /*   bounds[0]=*x;/\* xmin *\/ */
@@ -987,4 +988,4 @@ static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 991 "grstring.c"
+#line 992 "grstring.c"

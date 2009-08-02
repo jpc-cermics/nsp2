@@ -864,9 +864,10 @@ static void nsp_scale_vfield(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspVField *P = (NspVField *) Obj;
+  if (  P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   if ( P->obj->x->mn != 0 ) 
     {
@@ -878,6 +879,7 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[1]=P->obj->y->R[0] ; /* ymin */
       bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
     }
+  return TRUE;
 }
 
 
@@ -1056,4 +1058,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1060 "vfield.c"
+#line 1062 "vfield.c"

@@ -1021,14 +1021,16 @@ static void nsp_scale_gmatrix1(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_gmatrix1 (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_gmatrix1 (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
+  if ( P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;
   bounds[0]=P->obj->x->R[0]; /* xmin */
   bounds[1]=P->obj->y->R[0]; /* ymin */
   bounds[2]=P->obj->x->R[P->obj->x->mn-1] ;/* xmax */
   bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
+  return TRUE;
 }
 
 
@@ -1551,4 +1553,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1555 "gmatrix1.c"
+#line 1557 "gmatrix1.c"

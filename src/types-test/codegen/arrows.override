@@ -13,7 +13,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_arrows(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_arrows(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_arrows(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *o,double *bounds);
 
 %%
 headers
@@ -161,16 +161,12 @@ static void nsp_scale_arrows(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   NspArrows *P = (NspArrows *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R,dval;
-  if ( P->obj->x->mn == 0) 
-    {
-      bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
-      return;
-    }
+  if ( P->obj->x->mn == 0) return FALSE;
   bounds[0]=*x;/* xmin */
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
@@ -188,5 +184,6 @@ static void nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
       else if ( dval < bounds[1] )
 	bounds[1] = dval;
     }
+  return TRUE;
 }
 

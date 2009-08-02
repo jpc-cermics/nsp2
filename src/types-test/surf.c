@@ -999,10 +999,10 @@ static void nsp_scale_surf(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
-  return;
+  return FALSE;
 }
 
 

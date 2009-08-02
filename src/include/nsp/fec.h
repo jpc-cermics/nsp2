@@ -130,7 +130,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_fec(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_fec(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_fec(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
 #line 137 "./fec.h"

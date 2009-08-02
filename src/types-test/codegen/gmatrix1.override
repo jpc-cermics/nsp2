@@ -19,7 +19,7 @@ static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_gmatrix1(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_gmatrix1(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_gmatrix1(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_gmatrix1(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_gmatrix1(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
 
@@ -150,14 +150,16 @@ static void nsp_scale_gmatrix1(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_gmatrix1 (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_gmatrix1 (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
+  if ( P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;
   bounds[0]=P->obj->x->R[0]; /* xmin */
   bounds[1]=P->obj->y->R[0]; /* ymin */
   bounds[2]=P->obj->x->R[P->obj->x->mn-1] ;/* xmax */
   bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
+  return TRUE;
 }
 
 

@@ -1614,6 +1614,102 @@ typedef struct _cscope_rpar cscope_rpar ;
 struct _cscope_rpar {
   double dt,ymin,ymax,per;};
 
+/* #define NEW_GRAPHICS */
+
+#ifdef NEW_GRAPHICS 
+
+#include <nsp/object.h>
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h>
+#include <nsp/axes.h> 
+#include <nsp/qcurve.h>
+
+typedef struct _cscope_data cscope_data;
+
+struct _cscope_data {
+  int count ; 
+  double tlast;
+  NspFigure *Fig;
+  NspList *L;
+};
+
+void scicos_cscope_block(scicos_block *block,int flag)
+{
+  char *str;
+  BCG *Xgc;
+  /* used to decode parameters by name */
+  cscope_ipar *csi = (cscope_ipar*) block->ipar;
+  cscope_rpar *csr = (cscope_rpar*) block->rpar;
+  double t;
+  int nu, cur = 0,k, wid;
+
+  nu=Min(block->insz[0],8);
+  t=get_scicos_time();
+
+  wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
+  
+  if (flag == 2) 
+    {
+      cscope_data *D = (cscope_data *) (*block->work);
+      k = D->count; 
+      if (k > 0) {
+	if (csr->dt > 0.) {
+	  t = D->tlast + csr->dt;
+	}
+      }
+      D->count++;
+      D->tlast = t;
+      /* nu here should be equal to csi->n */
+      nsp_oscillo_add_point(D->L,t,block->inptr[0],nu);
+      nsp_figure_force_redraw(D->Fig->obj);
+    }
+  else if (flag == 4) 
+    {
+      cscope_data *D;
+      NspList *L;
+      /* XXX :
+       * buffer size for scope 
+       * this should be set to the numebr of points to keep 
+       * in order to cover a csr->per horizon 
+       */
+      int scopebs=1000;
+      NspFigure *Fig =  nsp_oscillo_obj(wid,csi->n,csi->type,scopebs,TRUE,0,0,&L);
+      if ( Fig == NULL ) 
+	{
+	  set_block_error(-16);
+	  return;
+	}
+      if ((*block->work =  scicos_malloc(sizeof(cscope_data))) == NULL ) 
+	{
+	  set_block_error(-16);
+	  return;
+	}
+      D = (cscope_data *) (*block->work);
+      D->Fig = Fig;
+      D->L = L;
+      D->count = 0;
+      D->tlast = t;
+      Xgc = scicos_set_win(wid,&cur);
+      if (csi->wpos[0] >= 0) {
+	Xgc->graphic_engine->xset_windowpos(Xgc,csi->wpos[0],csi->wpos[1]);
+      }
+      if (csi->wdim[0] >= 0) {
+	Xgc->graphic_engine->xset_windowdim(Xgc,csi->wdim[0],csi->wdim[1]);
+      }
+      str = block->label ;
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
+	Xgc->graphic_engine->setpopupname(Xgc,str);
+    } 
+  else if (flag == 5) 
+    {
+      cscope_data *D = (cscope_data *) (*block->work);
+      scicos_free(D);
+      /* Xgc = scicos_set_win(wid,&cur); */
+    }
+}
+
+#else 
+
 void scicos_cscope_block(scicos_block *block,int flag)
 {
   char *str;
@@ -1760,6 +1856,8 @@ void scicos_cscope_block(scicos_block *block,int flag)
       scicos_free(*block->work);
     }
 }
+
+#endif 
 
 
 /* multiscope 

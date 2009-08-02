@@ -119,7 +119,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_grstring(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_grstring(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_grstring(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_grstring(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *o,double *bounds);
 
 #line 125 "./grstring.h"
 #endif /* NspGrstring_Private */

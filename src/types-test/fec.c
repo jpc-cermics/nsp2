@@ -1023,7 +1023,7 @@ static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspFec *P = (NspFec *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
@@ -1031,7 +1031,7 @@ static void nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[2]=Maxi(P->obj->x->R,P->obj->x->mn);/* xmax */
   bounds[1]=Mini(P->obj->y->R,P->obj->y->mn);/* ymin */
   bounds[3]=Maxi(P->obj->y->R,P->obj->y->mn);/* ymin */
-  
+  return TRUE;
 }
 
 

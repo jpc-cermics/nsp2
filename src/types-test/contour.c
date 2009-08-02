@@ -919,10 +919,11 @@ static void nsp_scale_contour(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspContour *P = (NspContour *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
+  if ( P->obj->x->mn == 0 || P->obj->y->mn ==  0) return FALSE;
   if ( P->obj->x->mn != 0 ) 
     {
       bounds[0]=P->obj->x->R[0]; /* xmin */
@@ -933,8 +934,9 @@ static void nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[1]=P->obj->y->R[0] ; /* ymin */
       bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
     }
+  return TRUE;
 }
 
 
 
-#line 941 "contour.c"
+#line 943 "contour.c"

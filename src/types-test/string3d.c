@@ -843,7 +843,7 @@ static void nsp_scale_string3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  */
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
-static void nsp_getbounds_string3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_string3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   /* this should be stored in a cache and recomputed when necessary 
@@ -851,14 +851,10 @@ static void nsp_getbounds_string3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
    */
   nsp_string3d *Q= ((NspString3d *) Obj)->obj;
   nsp_check_string3d((NspString3d *) Obj);
-  if ( Q->Mcoord->mn == 0) 
-    {
-      bounds[0]= bounds[1] = bounds[2]= bounds[3]= bounds[4]=bounds[5]= 0;
-      return;
-    }
+  if ( Q->Mcoord->mn == 0) return FALSE;
   for ( i = 0 ; i < Q->Mcoord->m ; i++) 
     nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
-  return;
+  return TRUE;
 }
 
 int nsp_check_string3d( NspString3d *P)
@@ -1002,4 +998,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1006 "string3d.c"
+#line 1002 "string3d.c"

@@ -127,7 +127,7 @@ static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);

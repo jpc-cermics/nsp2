@@ -984,12 +984,13 @@ static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m, dval;
+  if ( M->mn == 0) return FALSE;
   bounds[0]=*x;/* xmin */
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
@@ -1007,7 +1008,8 @@ static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
       else if ( dval < bounds[1] )
 	bounds[1] = dval;
     }
+  return TRUE;
 }
 
 
-#line 1014 "curve.c"
+#line 1016 "curve.c"

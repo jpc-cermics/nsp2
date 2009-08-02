@@ -1587,15 +1587,17 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->bounds(Xgc,G,l_bounds);
-	  if ( l_bounds[0] < bounds[0] ) 
-	    bounds[0]= l_bounds[0];
-	  if (  l_bounds[2] > bounds[2])
-	    bounds[2]= l_bounds[2];
-	  if ( l_bounds[1] < bounds[1] ) 
-	    bounds[1]= l_bounds[1];
-	  if (  l_bounds[3] > bounds[3])
-	    bounds[3]= l_bounds[3];
+	  if ( G->type->bounds(Xgc,G,l_bounds) == TRUE ) 
+	    {
+	      if ( l_bounds[0] < bounds[0] ) 
+		bounds[0]= l_bounds[0];
+	      if (  l_bounds[2] > bounds[2])
+		bounds[2]= l_bounds[2];
+	      if ( l_bounds[1] < bounds[1] ) 
+		bounds[1]= l_bounds[1];
+	      if (  l_bounds[3] > bounds[3])
+		bounds[3]= l_bounds[3];
+	    }
 	}
       cloc = cloc->next;
     }
@@ -1772,15 +1774,16 @@ static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspAxes *P = (NspAxes *) Obj;
-  if ( P->obj->top == TRUE) return ;
+  if ( P->obj->top == TRUE) return FALSE;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   bounds[0]=P->obj->wrect->R[0]; /* xmin */
   bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
   bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
   bounds[3]=P->obj->wrect->R[1];/* ymax */
+  return TRUE;
 }
 
 
@@ -1935,4 +1938,4 @@ void nsp_figure_unzoom(NspGraphic *Obj)
     }
 }
 
-#line 1939 "axes.c"
+#line 1942 "axes.c"

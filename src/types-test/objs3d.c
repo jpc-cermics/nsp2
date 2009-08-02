@@ -1273,12 +1273,12 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->bounds(Xgc,G,l_bounds);
-	  for ( i = 0 ; i < 3 ; i++) 
-	    {
-	      if ( l_bounds[2*i] < bounds[2*i] )   bounds[2*i]= l_bounds[2*i];
-	      if ( l_bounds[2*i+1] > bounds[2*i+1])   bounds[2*i+1]= l_bounds[2*i+1];
-	    }
+	  if ( G->type->bounds(Xgc,G,l_bounds) == TRUE )
+	    for ( i = 0 ; i < 3 ; i++) 
+	      {
+		if ( l_bounds[2*i] < bounds[2*i] )   bounds[2*i]= l_bounds[2*i];
+		if ( l_bounds[2*i+1] > bounds[2*i+1])   bounds[2*i+1]= l_bounds[2*i+1];
+	      }
 	}
       cloc = cloc->next;
     }
@@ -1315,15 +1315,16 @@ static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
-  if ( P->obj->top == TRUE) return ;
+  if ( P->obj->top == TRUE) return FALSE;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   bounds[0]=P->obj->wrect->R[0]; /* xmin */
   bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
   bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
   bounds[3]=P->obj->wrect->R[1];/* ymax */
+  return FALSE;
 }
 
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F)
@@ -1575,4 +1576,4 @@ void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, doub
   Obj3d->obj->theta = theta;
 }
 
-#line 1579 "objs3d.c"
+#line 1580 "objs3d.c"

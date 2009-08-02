@@ -117,7 +117,7 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_box3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_box3d(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_box3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *o,double *bounds);
 
 #line 123 "./box3d.h"
 #endif /* NspBox3d_Private */

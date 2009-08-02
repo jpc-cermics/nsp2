@@ -115,7 +115,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
 			     double *fx, double *fy, int n1, int n2,char *strflag, 
 			     double *brect, double *arfact);

@@ -117,7 +117,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_curve(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_curve(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_curve(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_curve(BCG *Xgc,NspGraphic *o,double *bounds);
 
 #line 123 "./curve.h"
 #endif /* NspCurve_Private */

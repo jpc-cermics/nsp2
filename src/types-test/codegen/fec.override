@@ -24,7 +24,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_fec(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_fec(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_fec(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
 %%
@@ -130,7 +130,7 @@ static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspFec *P = (NspFec *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
@@ -138,7 +138,7 @@ static void nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[2]=Maxi(P->obj->x->R,P->obj->x->mn);/* xmax */
   bounds[1]=Mini(P->obj->y->R,P->obj->y->mn);/* ymin */
   bounds[3]=Maxi(P->obj->y->R,P->obj->y->mn);/* ymin */
-  
+  return TRUE;
 }
 
 

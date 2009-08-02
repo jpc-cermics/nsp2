@@ -931,15 +931,16 @@ static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   bounds[0]=P->obj->rect->R[0]; /* xmin */
-  bounds[1]=P->obj->rect->R[1] ; /* ymin */
-  bounds[2]=P->obj->rect->R[2];/* xmax */
-  bounds[3]=P->obj->rect->R[3];/* ymax */
+  bounds[1]=P->obj->rect->R[1]; /* ymin */
+  bounds[2]=P->obj->rect->R[2]; /* xmax */
+  bounds[3]=P->obj->rect->R[3]; /* ymax */
+  return TRUE;
 }
 
 
-#line 946 "gmatrix.c"
+#line 947 "gmatrix.c"

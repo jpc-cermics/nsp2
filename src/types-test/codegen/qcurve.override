@@ -4,6 +4,11 @@ include Qcurve
 
 /* inserted at the end of public part of include file */
 
+extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
+				  double ymin,double ymax,NspList **Lc);
+extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
+
+
 %%
 include_private Qcurve
 
@@ -12,7 +17,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_qcurve(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_qcurve(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_qcurve(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts);
 static void nsp_qcurve_addpt(NspQcurve *C,double *x,double *y,int n);
 static void nsp_qcurve_clear(NspQcurve *C);
@@ -249,16 +254,15 @@ static void nsp_scale_qcurve(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int pos,max;
   NspQcurve *C = (NspQcurve *) Obj;
   NspMatrix *M = C->obj->Pts;
   double *x=M->R,*y= M->R+M->m, dval;
 
-  bounds[0]= bounds[1]= bounds[2]=bounds[3]=0;
-  if ( M->mn == 0) return ;
-  if ( C->obj->start == -1) return;
+  if ( M->mn == 0) return FALSE;
+  if ( C->obj->start == -1) return FALSE;
   
   pos = C->obj->start;
   
@@ -303,6 +307,7 @@ static void nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 	  pos++;
 	}
     }
+  return TRUE;
 }
 
 static void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts)
@@ -391,7 +396,7 @@ static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
  * 
  */
 
-NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,double ymin,double ymax)
+NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,double ymin,double ymax,NspList **Lc)
 {
   NspAxes *axe;
   BCG *Xgc;
@@ -439,13 +444,33 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree
   axe->obj->iso = FALSE;
   axe->obj->fixed = FALSE;
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  if ( Lc != NULL) *Lc = axe->obj->children;
   return ((NspGraphic *) axe)->obj->Fig;
+}
+
+void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n)
+{
+  int count =0;
+  Cell *Loc = L->first;
+  while ( Loc != NULLCELL ) 
+    {
+      if ( Loc->O != NULLOBJ )
+	{ 
+	  NspQcurve *curve =(NspQcurve *) Loc->O;
+	  if ( count >= n ) return;
+	  nsp_qcurve_addpt(curve,&t,&y[count],1);
+	  count++;
+	  return;
+	}
+      Loc = Loc->next;
+    }
 }
 
 static void oscillo_test()
 {
   int style[]={-1,2,3};
-  nsp_oscillo_obj(123,3,style,100,TRUE,0,0);
+  nsp_oscillo_obj(123,3,style,100,TRUE,0,0,NULL);
 }
 
 
+     

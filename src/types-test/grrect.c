@@ -868,14 +868,15 @@ static void nsp_scale_grrect(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   bounds[0]=P->obj->x;/* xmin */
   bounds[1]=P->obj->y-P->obj->w;/* ymin */
   bounds[2]=P->obj->x+P->obj->w;/* xmax */
   bounds[3]=P->obj->y;/* ymax */
+  return TRUE;
 }
 
 
-#line 882 "grrect.c"
+#line 883 "grrect.c"

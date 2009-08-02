@@ -841,16 +841,13 @@ static void nsp_scale_segments(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   int i;
   NspSegments *P = (NspSegments *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R,dval;
-  if ( P->obj->x->mn == 0) 
-    {
-      bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
-      return;
-    }
+  if ( P->obj->x->mn == 0) return FALSE;
+
   bounds[0]=*x;/* xmin */
   bounds[1]=*y;/* ymin */
   bounds[2]=*x;/* xmax */
@@ -868,7 +865,8 @@ static void nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
       else if ( dval < bounds[1] )
 	bounds[1] = dval;
     }
+  return TRUE;
 }
 
 
-#line 875 "segments.c"
+#line 873 "segments.c"

@@ -12,7 +12,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_grrect(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_grrect(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *o,double *bounds);
 
 %%
 headers
@@ -159,12 +159,13 @@ static void nsp_scale_grrect(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   bounds[0]=P->obj->x;/* xmin */
   bounds[1]=P->obj->y-P->obj->w;/* ymin */
   bounds[2]=P->obj->x+P->obj->w;/* xmax */
   bounds[3]=P->obj->y;/* ymax */
+  return TRUE;
 }
 

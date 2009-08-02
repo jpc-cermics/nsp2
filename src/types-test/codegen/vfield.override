@@ -12,7 +12,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
 			     double *fx, double *fy, int n1, int n2,char *strflag, 
 			     double *brect, double *arfact);
@@ -124,9 +124,10 @@ static void nsp_scale_vfield(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspVField *P = (NspVField *) Obj;
+  if (  P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
   if ( P->obj->x->mn != 0 ) 
     {
@@ -138,6 +139,7 @@ static void nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
       bounds[1]=P->obj->y->R[0] ; /* ymin */
       bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
     }
+  return TRUE;
 }
 
 

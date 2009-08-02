@@ -843,12 +843,13 @@ static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspCompound *P = (NspCompound *) Obj;
-  /* should not be always computed */
+  /* XXX should not be always computed */
   nsp_compound_compute_inside_bounds(Xgc,Obj);
   memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+  return TRUE;
 }
 
 static void nsp_compound_link_figure(NspGraphic *G, void *F)
@@ -875,4 +876,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 879 "compound.c"
+#line 880 "compound.c"

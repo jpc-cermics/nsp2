@@ -14,7 +14,7 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_compound(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_compound(BCG *Xgc,NspGraphic *o,double *R);
 static void nsp_scale_compound(BCG *Xgc,NspGraphic *o,double *alpha);
-static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *o,double *bounds);
+static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *o,double *bounds);
 static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
 static void nsp_compound_link_figure(NspGraphic *G, void *F);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
@@ -319,12 +319,13 @@ static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspCompound *P = (NspCompound *) Obj;
-  /* should not be always computed */
+  /* XXX should not be always computed */
   nsp_compound_compute_inside_bounds(Xgc,Obj);
   memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+  return TRUE;
 }
 
 static void nsp_compound_link_figure(NspGraphic *G, void *F)

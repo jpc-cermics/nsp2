@@ -25,7 +25,7 @@ typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
 typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
 typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
-typedef void bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
+typedef int bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
 typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);

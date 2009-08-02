@@ -887,11 +887,10 @@ static void nsp_scale_box3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static void nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
-  return;
+  return FALSE;
 }
 
 
-#line 898 "box3d.c"
+#line 897 "box3d.c"
