@@ -299,15 +299,15 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
     case ode_default: 
       return int_ode_default(stack,f,jt,jac,args,y0,t0,time,rtol,Matol,odeoptions);
     case adams: 
-      
     case stiff:
     case rk:
     case rkf:
     case fix:
+      Scierror("%s: method %d is to be implemented \n",NspFname(stack),methode);
     case discrete:
       return int_ode_discrete(stack,f,args,y0,t0,time);
     case roots:
-      Scierror("%s: methode is to be implemented \n",NspFname(stack));
+      Scierror("%s: method %d is to be implemented \n",NspFname(stack),methode);
       return RET_BUG;
     }
   return 0;
