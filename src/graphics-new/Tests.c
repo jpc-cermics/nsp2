@@ -443,7 +443,7 @@ static void testCh(BCG *Xgc)
 
   vrect[0]=vrect[1]= -1 ,vrect[2]=vrect[3]=1;
   arfact=1.0;
-  nsp_champ(Xgc,x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact);
+  nsp_champ_old(Xgc,x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact);
 }
 
 
@@ -464,7 +464,7 @@ static void testG(BCG *Xgc)
       z[i+XNG*j]= (i-VXG)*(i-VXG)-(j-VXG)*(j-VXG);
   p= XNG ; q= YNG;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  nsp_draw_matrix(Xgc,x,y,z,p,q,"021",brect,aaint,FALSE,NULL,NULL,NULL,FALSE);
+  nsp_draw_matrix_old(Xgc,x,y,z,p,q,"021",brect,aaint,FALSE,NULL,NULL,NULL,FALSE);
 }
 
 

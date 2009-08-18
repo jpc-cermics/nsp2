@@ -935,7 +935,8 @@ static int nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
   bounds[1]=P->obj->y-P->obj->w;/* ymin */
   bounds[2]=P->obj->x+P->obj->w;/* xmax */
   bounds[3]=P->obj->y;/* ymax */
+  return TRUE;
 }
 
 
-#line 942 "grarc.c"
+#line 943 "grarc.c"

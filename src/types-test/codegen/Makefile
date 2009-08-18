@@ -22,7 +22,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
-	../fec.c 
+	../fec.c  ../contour3d.c 
 
 all:: $(ALL)
 	cd ../; make all
@@ -183,6 +183,12 @@ clean ::
 	    --override spolyhedron.override \
 	    --prefix SPolyhedron spolyhedron.defs) > $*.c \
 	&& cp spolyhedron.h ../../include/nsp 
+
+../contour3d.c : contour3d-types.defs contour3d.defs  contour3d.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override contour3d.override \
+	    --prefix Contour3d contour3d.defs) > $*.c \
+	&& cp contour3d.h ../../include/nsp 
 
 ../polyhedron.c : polyhedron-types.defs polyhedron.defs polyhedron.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \

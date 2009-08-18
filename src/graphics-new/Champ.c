@@ -26,8 +26,10 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-static double min_of_doubles (const double *x,int n);
-
+static double min_of_doubles_old (const double *x,int n);
+static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double *x, double *y, 
+					double *fx, double *fy, int n1, int n2,int ng_flag, char *strflag, 
+					double *brect, double *arfact);
 /**
  * nsp_champ:
  * @Xgc: 
@@ -54,10 +56,10 @@ static double min_of_doubles (const double *x,int n);
  * Return value: unsued 
  **/
 
-int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
+int nsp_champ_old(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
 	      int *n2, char *strflag, double *brect, double *arfact)
 {
-  nsp_draw_vfield_generic(Xgc,"champ",0,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
+  nsp_draw_vfield_generic_old(Xgc,"champ",0,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
   return(0); 
 }
 
@@ -89,14 +91,14 @@ int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1,
  * Return value: unsued 
  **/
 
-int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
+int nsp_champ1_old(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
 	       int *n2, char *strflag, double *brect, double *arfact)
 {
-  nsp_draw_vfield_generic(Xgc,"champ1",1,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
+  nsp_draw_vfield_generic_old(Xgc,"champ1",1,x,y,fx,fy,*n1,*n2,FALSE,strflag,brect,arfact);
   return(0);
 }
 
-void nsp_draw_vfield_generic(BCG *Xgc,char *name, int colored, double *x, double *y, 
+static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double *x, double *y, 
 			     double *fx, double *fy, int n1, int n2,int ng_flag, char *strflag, 
 			     double *brect, double *arfact)
 {
@@ -158,8 +160,8 @@ void nsp_draw_vfield_generic(BCG *Xgc,char *name, int colored, double *x, double
 	ym[2*(i +(n1)*j)]= YScale(y[j]);
       }
   /* Scaling */
-  nx=min_of_doubles(x,n1)*Xgc->scales->Wscx1;
-  ny=min_of_doubles(y,n2)*Xgc->scales->Wscy1;
+  nx=min_of_doubles_old(x,n1)*Xgc->scales->Wscx1;
+  ny=min_of_doubles_old(y,n2)*Xgc->scales->Wscy1;
   sfx= Xgc->scales->Wscx1;
   sfy= Xgc->scales->Wscy1;
   sfx2= sfx*sfx;
@@ -256,7 +258,7 @@ void nsp_draw_vfield_generic(BCG *Xgc,char *name, int colored, double *x, double
  * if x==0 then 1 is returned 
  *----------------------------------*/
 
-static double min_of_doubles(const double *x, int n)
+static double min_of_doubles_old(const double *x, int n)
 {
   int i;
   double dx=1,mindx=1;

@@ -2044,26 +2044,26 @@ static void replay_Gray(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->n1,pl3d->n2,
-		  pl3d->strflag,pl3d->brect,pl3d->aaint,
-		  pl3d->remap,pl3d->colminmax,pl3d->zminmax,pl3d->colout,pl3d->shade);
+  nsp_draw_matrix_old(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->n1,pl3d->n2,
+		      pl3d->strflag,pl3d->brect,pl3d->aaint,
+		      pl3d->remap,pl3d->colminmax,pl3d->zminmax,pl3d->colout,pl3d->shade);
 }
 
 static void replay_Gray1(BCG *Xgc,void *theplot)
 {
   struct rec_gray1 *pl3d;
   pl3d= (struct rec_gray1 *)theplot;
-  nsp_draw_matrix_1(Xgc,pl3d->z,pl3d->n1,pl3d->n2,
-		    pl3d->strflag,pl3d->brect,pl3d->aaint,
-		    pl3d->remap,pl3d->colminmax,pl3d->zminmax);
+  nsp_draw_matrix_1_old(Xgc,pl3d->z,pl3d->n1,pl3d->n2,
+			pl3d->strflag,pl3d->brect,pl3d->aaint,
+			pl3d->remap,pl3d->colminmax,pl3d->zminmax);
 }
 
 static void replay_Gray2(BCG *Xgc,void *theplot)
 {
   struct rec_gray_2 *pl3d;
   pl3d= (struct rec_gray_2 *)theplot;
-  nsp_draw_matrix_2(Xgc,pl3d->z,pl3d->n1,pl3d->n2, pl3d->xrect,
-		    pl3d->remap,pl3d->colminmax,pl3d->zminmax);
+  nsp_draw_matrix_2_old(Xgc,pl3d->z,pl3d->n1,pl3d->n2, pl3d->xrect,
+			pl3d->remap,pl3d->colminmax,pl3d->zminmax);
 }
 
 /* same for Gray1 and Gray2 */
@@ -2155,14 +2155,14 @@ void store_Champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1
 static void replay_Champ(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch = (struct rec_champ *)theplot;
-  nsp_champ(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
+  nsp_champ_old(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
 	    plch->strflag,plch->vrect,&(plch->arfact));
 }
 
 static void replay_Champ1(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch= (struct rec_champ *)theplot;
-  nsp_champ1(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
+  nsp_champ1_old(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
 	     plch->strflag,plch->vrect,&(plch->arfact));
 }
 

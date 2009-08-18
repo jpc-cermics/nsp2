@@ -1051,7 +1051,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
   Xgc->scales->c[0]=( box->bbox[0]+box->bbox[1])/2.0;
   Xgc->scales->c[1]=( box->bbox[2]+box->bbox[3])/2.0; 
   Xgc->scales->c[2]=( box->bbox[4]+box->bbox[5])/2.0;
-
+  
   box->x_r[0]=box->bbox[0]; box->y_r[0]=box->bbox[2];  box->z_r[0]=box->bbox[4];
   box->x_r[1]=box->bbox[0]; box->y_r[1]=box->bbox[3];  box->z_r[1]=box->bbox[4];
   box->x_r[2]=box->bbox[1]; box->y_r[2]=box->bbox[3];  box->z_r[2]=box->bbox[4];
@@ -1128,6 +1128,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
       Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
     }
+  
   /* end of code added by es */
 #ifdef WITH_GTKGLEXT 
   /* transmit info to opengl */
@@ -1615,7 +1616,7 @@ static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbo
  * stopped when the mouse is released 
  *--------------------------------------*/
 
-/* #define ROTATION_NORESCALE  */
+/* #define ROTATION_NORESCALE */
 
 void I3dRotation(BCG *Xgc)
 {

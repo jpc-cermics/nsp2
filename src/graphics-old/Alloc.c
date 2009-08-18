@@ -48,9 +48,10 @@ typedef struct s_alloc {
   void *storage;     /* pointer to allocated space */
 } S_alloc;
 
-#define S_alloc_max 9 
+#define S_alloc_max 12
 
 static S_alloc Storage[S_alloc_max] = { {0,0,NULL},{0,0,NULL},{0,0,NULL},
+					{0,0,NULL},{0,0,NULL},{0,0,NULL},
 					{0,0,NULL},{0,0,NULL},{0,0,NULL},
 					{0,0,NULL},{0,0,NULL},{0,0,NULL}};
 

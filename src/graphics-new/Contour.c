@@ -324,6 +324,70 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
   return(0);
 }
 
+
+int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz, double *zz, 
+		       int flag, double zlev)
+{
+  double *zconst;
+  int err=0, N[3],i;
+  void (*func) (BCG *Xgc,int, double,double,double);
+  void (*draw_axis) (BCG *Xgc, const nsp_box_3d *box, char flag, int style);
+
+  
+  draw_axis = DrawAxis;
+  ZC=zlev;
+
+  switch ( flag)
+    {
+    default:
+    case 0: 
+      /* 3D geometry with projection on the surface */
+#ifdef WITH_GTKGLEXT 
+      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      break;
+#else 
+      func=Contstore_; break;  
+#endif 
+    case 1: 
+      /* 3D geometry with projection on a fixed z level  */
+#ifdef WITH_GTKGLEXT 
+      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      break;
+#else 
+      func=Contstore_1; break;  
+#endif 
+    }
+
+
+  if ( zz == NULL )
+    {
+      /* nz levels */
+      nz = Max(nz,1);
+      double zmin,zmax;
+      zmin=(double) Mini(z,n1*(n2)); 
+      zmax=(double) Maxi(z,n1*(n2));
+      if ((zconst = graphic_alloc(6,nz,sizeof(double)))== 0) 
+	{
+	  sciprint("Running out of memory\r\n");
+	  return 0;
+	}
+      for ( i =0 ; i < nz ; i++) 
+	zconst[i]=zmin + (i+1)*(zmax-zmin)/(nz+1);
+      N[0]= n1;N[1]= n2;N[2]= nz;
+      contourI(Xgc,func,x,y,z,zconst,N,(int *) 0,&err);
+    }
+  else
+    {
+      /* levels are given by zz of size nz */
+      N[0]= n1;N[1]= n2;N[2]= nz;
+      contourI(Xgc,func,x,y,z,zz,N,(int *) 0,&err);
+    }
+  return(0);
+}
+
+
 /**
  * nsp_contour2:
  * @Xgc: 
@@ -407,8 +471,9 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   return(0);
 }
 
-/* function used by the contour object 
- * for drawing itself.
+
+/* NEW: function used by the contour object 
+ *      for drawing itself.
  */
 
 int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz,  double *zz, int *style)
@@ -416,7 +481,7 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
   int err=0,i;
   int N[3]= {n1, n2, nz}; 
   
-  frame_clip_on(Xgc);
+  frame_clip_on(Xgc);/* XXX sans doute inutile car fait par l'axe */
   
   if ( zz == NULL )
     {

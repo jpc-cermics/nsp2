@@ -36,7 +36,7 @@ Format.o: Format.c
 
 #--- dependencies generated with gcc ----
 
-
+Xcall1.o: new_graphics.h ../include/nsp/graphics/Graphics.h \
 
 Actions.o: Actions.c ../include/nsp/math.h \
   ../include/nsp/config.h \
@@ -133,7 +133,7 @@ Format.o: Format.c ../include/nsp/math.h \
   ../include/nsp/plisttoken.h \
   ../include/nsp/graphics/perigen.h
 
-Graphics-IN.o: Graphics-IN.c ../include/nsp/matrix-in.h \
+Graphics-IN.o: new_graphics.h Graphics-IN.c ../include/nsp/matrix-in.h \
   ../include/nsp/interf.h ../include/nsp/object.h \
   ../include/nsp/math.h ../include/nsp/machine.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \

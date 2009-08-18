@@ -207,7 +207,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
       /* This is a top level objs3d, wrect gives the objs3d position in the 
        * enclosing graphic window. 
        */
-      set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
+      if ( Xgc->scales->scale_3drot_flag != 1) 
+	set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       wrect1= P->obj->wrect->R;
     }
   else 
@@ -232,14 +233,15 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
    * thus we use T in flag[1].
    */
   /* set_scale(Xgc,"fTtfff",WRect1,P->obj->frect->R,NULL,NULL,NULL); */
-
-  nsp_axes_update_frame_bounds(Xgc,wrect1,P->obj->frect->R,
-			       P->obj->arect->R,
-			       aaint,
-			       TRUE,
-			       TRUE,
-			       xf);
-
+  
+  if ( Xgc->scales->scale_3drot_flag != 1) 
+    nsp_axes_update_frame_bounds(Xgc,wrect1,P->obj->frect->R,
+				 P->obj->arect->R,
+				 aaint,
+				 TRUE,
+				 TRUE,
+				 xf);
+  
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
   axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
@@ -262,7 +264,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
   if ( P->obj->title[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
   /* scale back */
-  set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect);
+  /* set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect); */
   if (  P->obj->top != TRUE )
     {
       Xgc->scales->cosa=1.0;
@@ -458,18 +460,18 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
-  
-#if ALLOC_OBJ
+ 
+#ifdef ALLOC_OBJ
   HF= malloc( nf * sizeof(HFstruct) );
   z = malloc( nf * sizeof(double) );
   p = malloc( nf * sizeof(int) );
   /* just to accelerate next step */
   objs_array = malloc( nbObj*sizeof(NspObject *));
 #else 
-  HF= graphic_alloc(2, nf,  sizeof(HFstruct) );
-  z = graphic_alloc(3, nf,  sizeof(double) );
-  p = graphic_alloc(4, nf,  sizeof(int) );
-  objs_array = graphic_alloc(5, nbObj,sizeof(NspObject *));
+  HF= graphic_alloc(7, nf,  sizeof(HFstruct) );
+  z = graphic_alloc(8, nf,  sizeof(double) );
+  p = graphic_alloc(9, nf,  sizeof(int) );
+  objs_array = graphic_alloc(10, nbObj,sizeof(NspObject *));
 #endif 
 
 
@@ -519,7 +521,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
 
-#if ALLOC_OBJ
+#ifdef ALLOC_OBJ
   free(HF);
   free(z);
   free(p);

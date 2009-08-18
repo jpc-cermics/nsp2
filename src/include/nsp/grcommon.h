@@ -21,7 +21,6 @@ extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, Vision
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
-
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n,double *col, int ncol);
 extern NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  ;

@@ -1,0 +1,255 @@
+/* -*- Mode: C -*- */
+%%
+include  Contour3d
+
+/* inserted at the end of public part of include file */
+
+%%
+include_private  Contour3d
+
+/* inserted in the private part of include file */
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_contour3d(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_contour3d(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *o,double *alpha);
+static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
+static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
+static int nsp_check_contour3d(BCG *Xgc,NspContour3d *P);
+
+static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
+static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
+
+%%
+headers
+#include <nsp/contour3d.h>
+#include <nsp/polyhedron.h>
+#include <nsp/spolyhedron.h>
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
+#include "../graphics/Plo3dObj.h"
+#include <nsp/grcommon.h>
+
+
+%%
+init 
+
+Init portion 
+
+%%
+override-type Contour3d
+  /* inserted verbatim in the type definition 
+   * here we override the method og its father class i.e Graphic
+   */
+  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour3d;
+  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour3d ;
+  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_contour3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_contour3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_contour3d  ;
+  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_contour3d_full_copy ;
+  /* next method are defined in NspGraphic and need not be chnaged here for Contour3d */
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_contour3d_zmean;
+  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_contour3d_n_faces;
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+%%
+override_int_create_final 
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_contour3d(NULL,H)== FAIL) return %(ret)s; 
+
+%%
+override_destroy_prelim Contour3d 
+  /* verbatim in destroy */
+  
+%%
+override contour3d_attach kwargs
+int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+
+
+%%
+override nsp_extractelts_contour3d kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_contour3d kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  if ( Obj->obj->hidden == TRUE ) return ;
+  nsp_check_contour3d(Xgc,(NspContour3d *) Obj);
+#ifdef  WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      /* if we are using OpenGl we make a full draw of 
+       * object and return 
+       */
+      draw_contour3d_ogl(Xgc,Obj);
+      nsp_ogl_set_2dview(Xgc); 
+      return; 
+    }
+#endif 
+  {
+    /* for contour3d we only have up to now one face
+     * i.e we are only able to draw all the contours in 
+     * one pass which is not good for mixing contour3d 
+     * with other 3d graphics.
+     for ( i= 0 ; i < ((NspContour3d*) Obj)->obj->Mface->n ; i++) 
+     draw_contour3d_face(Xgc,Obj,i);
+    */
+    draw_contour3d_face(Xgc,Obj,0);
+  }
+}
+
+
+static void nsp_translate_contour3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+
+}
+
+static void nsp_rotate_contour3d(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of contour3d 
+ *
+ */
+
+extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
+
+static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  /* this should be stored in a cache and recomputed when necessary 
+   *
+   */
+  nsp_contour3d *Q= ((NspContour3d *) Obj)->obj;
+  nsp_check_contour3d(Xgc,(NspContour3d *) Obj);
+  nsp_gr_bounds_min_max(Q->x->mn,Q->x->R,1,&bounds[0],&bounds[1]);
+  nsp_gr_bounds_min_max(Q->y->mn,Q->y->R,1,&bounds[2],&bounds[3]);
+  nsp_gr_bounds_min_max(Q->z->mn,Q->z->R,1,&bounds[4],&bounds[5]);
+  bounds[4]= Min(  Q->zlev,bounds[4]);
+  bounds[5]= Max(  Q->zlev,bounds[5]);
+  return TRUE;
+}
+
+int nsp_check_contour3d(BCG *Xgc, NspContour3d *P)
+{
+  nsp_contour3d *Q = P->obj;
+
+  if ( Q->z->m != Q->x->mn ) 
+    {
+      Scierror("Error: bad coord for contour3d, z first dimension should be %d\n", Q->x->mn);
+      return FAIL;
+    }
+  if ( Q->z->n != Q->y->mn ) 
+    {
+      Scierror("Error: bad coord for contour3d, z second dimension should be %d\n", Q->y->mn);
+      return FAIL;
+    }
+  
+  return OK;
+}
+
+extern int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, 
+			      int n1, int n2, int nz, double *zz, 
+			      int flag, double zlev);
+
+
+static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j)
+{
+  /* draw all the faces */
+  double *zz = NULL;
+  nsp_contour3d *Q = ((NspContour3d *) Ob)->obj;
+  int nz;
+  if ( Q->zz->mn == 1) 
+    {
+      zz = NULL;
+      nz = Q->zz->R[0];
+    }
+  else
+    {
+      zz = Q->zz->R;
+      nz = Q->zz->mn;
+    }
+
+  nsp_contour3d_draw(Xgc,Q->x->R,Q->y->R,Q->z->R,Q->x->mn,Q->y->mn,nz, zz,Q->flag,Q->zlev);
+}
+
+static void draw_contour3d_ogl(BCG *Xgc,void *Ob)
+{
+  draw_contour3d_face(Xgc,Ob,0);
+}
+
+
+
+static void zmean_faces_for_Contour3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
+{
+  /* nsp_contour3d *Q = ((NspContour3d *) Obj)->obj; */
+  z[*n] = 0.0;
+  HF[*n].num_obj = k;
+  HF[*n].num_in_obj = 0;
+  (*n)++; 
+}
+
+/*
+ * requested method for 3d objects.
+ */
+
+static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
+{
+  /* nsp_contour3d *Q= ((NspContour3d *) Obj)->obj; */
+  /* apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m); */
+  zmean_faces_for_Contour3d(Obj, z,  HF, n, k);
+}
+
+/* requested method for 3d objects.
+ *
+ */
+
+static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
+{
+  return 1;
+}
+

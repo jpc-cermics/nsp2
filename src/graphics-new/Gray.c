@@ -379,9 +379,9 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
  * Return value: 
  */
 
-int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
-		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
-		    const int *colout,int shade)
+int nsp_draw_matrix_old(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
+			double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+			const int *colout,int shade)
 {
   if (shade==TRUE) 
     return nsp_draw_matrix_shade(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout);
@@ -409,8 +409,8 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, ch
  * Return value: 
  **/
 
-int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint, 
-		      int remap,const int *colminmax,const double *zminmax)
+int nsp_draw_matrix_1_old(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint, 
+			  int remap,const int *colminmax,const double *zminmax)
 {
   double xx[]={0.5, nc+0.5} ;
   double yy[]={0.5, nr+0.5} ;
@@ -461,8 +461,8 @@ int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double 
  * Return value: 
  **/
 
-int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect, 
-		      int remap,const int *colminmax,const double *zminmax)
+int nsp_draw_matrix_2_old(BCG *Xgc,double *z,int nr, int nc, double *xrect, 
+			  int remap,const int *colminmax,const double *zminmax)
 {
   double xx[]={ xrect[0],xrect[2]};
   double yy[]={ xrect[1],xrect[3]};
@@ -516,8 +516,8 @@ int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect,
  */
 
 int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
-	    char *strflag,const char *legend, double *brect, int *aaint,const double *zminmax,
-	    const int *colminmax, const int *colout,int draw)
+		char *strflag,const char *legend, double *brect, int *aaint,const double *zminmax,
+		const int *colminmax, const int *colout,int draw)
 {
   int i,*xm,*ym,j,k, n1=1;
 

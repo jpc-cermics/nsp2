@@ -53,14 +53,14 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   int *xm=NULL,*ym=NULL, nn2=(*n2);
   if ( CheckxfParam(xf)== 1) return(0);
 
-  /** Boundaries of the frame **/
+  /* Boundaries of the frame **/
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Plot1(Xgc,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
 
-  /** Allocation **/
+  /* Allocation **/
 
   n = (*n1)*nn2 ; 
   if ( n != 0 ) 
@@ -72,7 +72,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	  sciprint("Running out of memory \n");
 	  return 0;
 	}      
-      /** Real to Pixel values **/
+      /* Real to Pixel values **/
       Plo2d1RealToPixel(Xgc,n1,n2,x,y,xm,ym,xf);
     }
   /* Drawing axes */
@@ -84,7 +84,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       frame_clip_on(Xgc);
       Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,nn2);
       frame_clip_off(Xgc);
-      /** Drawing the Legends **/
+      /* Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
 	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
@@ -97,7 +97,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 static void Plo2d1RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf)
 {
   int i,j;
-  /** Computing y-values **/
+  /* Computing y-values **/
   if ((int)strlen(xf) >= 3 && xf[2]=='l')	  
     {
       for ( i=0 ; i < (*n2) ; i++)
@@ -111,11 +111,11 @@ static void Plo2d1RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, i
 	  ym[i+(*n2)*j]= YScale(y[i+(*n2)*j]);
     }
   
-  /** Computing x-values **/
+  /* Computing x-values **/
   switch (xf[0])
     {
     case 'e' :
-      /** No X-value given by the user **/
+      /* No X-value given by the user **/
       if ((int)strlen(xf) >= 2 && xf[1]=='l')
 	for ( i=0 ; i < (*n2) ; i++)
 	  for (j=0 ; j< (*n1) ; j++)

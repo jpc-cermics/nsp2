@@ -1,0 +1,25 @@
+;; -*- scheme -*-
+
+extern int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, 
+			      int n1, int n2, int nz, double *zz, 
+			      int flag, double zlev);
+
+
+(define-objectref Contour3d
+  (in-module "Contour3d")
+  (parent "Graphic")
+  (c-name "NspContour3d")
+  (fields
+   '("NspMatrix*" "x")
+   '("NspMatrix*" "y")
+   '("NspMatrix*" "z")
+   '("NspMatrix*" "zz")
+   '("int" "flag")
+   '("double" "zlev")
+   )
+  (gtype-id "Contour3d")
+)
+
+
+
+
