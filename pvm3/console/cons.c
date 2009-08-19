@@ -464,7 +464,7 @@ main(argc, argv)
 			(CPPFunction *) command_completion;
 	rl_callback_handler_install( prompt, rl_got_line );
 #else
-	printf(prompt);
+	printf("%s",prompt);
 	fflush(stdout);
 #endif
 
@@ -532,7 +532,7 @@ main(argc, argv)
 			}
 			cmd[n] = 0;
 			docmd(cmd);
-			printf(prompt);
+			printf("%s",prompt);
 			fflush(stdout);
 #endif
 

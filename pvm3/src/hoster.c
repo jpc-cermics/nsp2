@@ -963,14 +963,15 @@ phase1(sp)
 	/* send vmid, if set */
 	if (sp->s_hst->h_vmid && sp->s_wfd >= 0) {
 #ifdef WIN32
-		win32_write_socket(sp->s_wfd, "PVM_VMID=", 9);
-		win32_write_socket(sp->s_wfd,
-				sp->s_hst->h_vmid, strlen(sp->s_hst->h_vmid));
-		win32_write_socket(sp->s_wfd, "\n", 1);
+	  win32_write_socket(sp->s_wfd, "PVM_VMID=", 9);
+	  win32_write_socket(sp->s_wfd,
+			     sp->s_hst->h_vmid, strlen(sp->s_hst->h_vmid));
+	  win32_write_socket(sp->s_wfd, "\n", 1);
 #else
-		write(sp->s_wfd, "PVM_VMID=", 9);
-		write(sp->s_wfd, sp->s_hst->h_vmid, strlen(sp->s_hst->h_vmid));
-		write(sp->s_wfd, "\n", 1);
+	  int nw;
+	  nw=write(sp->s_wfd, "PVM_VMID=", 9);
+	  nw=write(sp->s_wfd, sp->s_hst->h_vmid, strlen(sp->s_hst->h_vmid));
+	  nw=write(sp->s_wfd, "\n", 1);
 #endif
 	}
 

@@ -2010,8 +2010,9 @@ char *str;
 
 	trc_store_event_header( ID, TRC_OUTPUT_TEVDESC, tid );
 
-	fprintf( ID->trace_out, "%d, %ld, %d",
-		TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, tid );
+	fprintf( ID->trace_out, "%ld, %ld, %d",
+		 (long int) 
+		 TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, tid );
 
 	trc_dump_trace_str( ID, str, TRC_TRUE );
 
@@ -2094,8 +2095,8 @@ TRC_HOST H;
 
 	trc_store_event_header( ID, TRC_HOST_ADD_TEVDESC, H->pvmd_tid );
 
-	fprintf( ID->trace_out, "%d, %ld, %d",
-		TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, H->pvmd_tid );
+	fprintf( ID->trace_out, "%ld, %ld, %d",
+		 (long int) TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, H->pvmd_tid );
 
 	trc_dump_trace_str( ID, H->refname, TRC_TRUE );
 
@@ -2141,8 +2142,8 @@ int tid;
 
 	trc_store_event_header( ID, TRC_HOST_DEL_TEVDESC, tid );
 
-	fprintf( ID->trace_out, "%d, %ld, %d",
-		TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, tid );
+	fprintf( ID->trace_out, "%ld, %ld, %d",
+		 (long int) TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, tid );
 
 	if ( strcmp( H->refname, "" ) )
 	{
@@ -2192,9 +2193,9 @@ TRC_HOST H;
 
 	/* matching { */
 
-	fprintf( ID->trace_out, "%d, %ld, %d, %d, %ld };;\n",
-		TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, H->pvmd_tid,
-		H->delta.tv_sec, H->delta.tv_usec );
+	fprintf( ID->trace_out, "%ld, %ld, %d, %ld, %ld };;\n",
+		 (long int) TRC_TRACE_TIME.tv_sec, TRC_TRACE_TIME.tv_usec, H->pvmd_tid,
+		  (long int) H->delta.tv_sec, H->delta.tv_usec );
 
 #endif
 

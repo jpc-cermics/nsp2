@@ -104,13 +104,10 @@ char **argv;
 void
 work()
 {
-	struct timeval more_events;
-
-	struct timeval *timeout;
-
-	char cmd[1024];
-
-	char *prompt;
+  struct timeval more_events;
+  struct timeval *timeout;
+  char cmd[1024];
+  char *prompt ;
 
 #ifdef FDSETNOTSTRUCT
 	fd_set rfds;
@@ -168,7 +165,7 @@ work()
 
 	prompt = "tracer> ";
 
-	printf( prompt );
+	printf("%s", prompt );
 	fflush( stdout );
 
 	/* Process Events Messages and User Input */
@@ -224,7 +221,7 @@ work()
 
 				handle_cmd( cmd );
 
-				printf( prompt );
+				printf("%s", prompt );
 				fflush( stdout );
 			}
 		}

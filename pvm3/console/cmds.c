@@ -552,7 +552,7 @@ docmd(cmd)
 			*nextcmd++ = '\0';
 
 			if ( !first )
-				printf( prompt );
+			  printf("%s", prompt );
 			
 			else
 				first = 0;
