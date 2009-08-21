@@ -1218,9 +1218,10 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
 
   Q->Mface = Mat2int(Q->Mface);
 
-  if ( Q->Mval->mn != Q_nb_coords ) 
+  if ( Q->Mval->mn != Q_nb_coords && Q->Mval->mn != Q->Mface->n  ) 
     {
-      Scierror("Error: bad dimensions for val, mxn should be equal to %d\n",Q_nb_coords);
+      Scierror("Error: bad dimensions for val, mxn should be equal to %d or %d\n",
+	       Q_nb_coords, Q->Mface->n );
       return FAIL;
     }
   
@@ -1331,7 +1332,10 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       numpt = current_vertex[i]-1;
       x[i] = XScale(Q_coord[numpt]);
       y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
-      val_mean += Q_val[numpt];
+      if ( Q->Mval->mn == Q->Mface->n) 
+	val_mean += Q_val[j];
+      else
+	val_mean += Q_val[numpt];
     }
   val_mean = val_mean / m;
   
@@ -1361,13 +1365,17 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       nbtri = m - 2;
       for ( k = 0 ; k < nbtri ; k++ )
 	{
+	  int l;
 	  int triangle[]= { 0, k+1,k+2};
-	  for ( j = 0 ; j < 3 ; j++ )
+	  for ( l = 0 ; l < 3 ; l++ )
 	    {
-	      i = triangle[j];
-	      v[j] = Q_val[current_vertex[i]-1];
-	      zxy[j] = zone(v[j], Q->vmin, Q->vmax, Q_nb_levels);
-	      sx[j] = x[i]; sy[j] = y[i];
+	      i = triangle[l];
+	      if ( Q->Mval->mn == Q->Mface->n) 
+		v[l] = Q_val[j]; /* one color for each facet */
+	      else	
+		v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
+	      zxy[l] = zone(v[l], Q->vmin, Q->vmax, Q_nb_levels);
+	      sx[l] = x[i]; sy[l] = y[i];
 	    }
 	  /* (sx,sy,v) : triangle et valeur en chaque sommet
 	   * zxy : vecteur indiquant que la couleur du sommet i vaut - Q->fill[zxy[i]]
@@ -1786,4 +1794,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1790 "spolyhedron.c"
+#line 1798 "spolyhedron.c"

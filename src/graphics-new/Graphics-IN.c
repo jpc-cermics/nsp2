@@ -3533,7 +3533,7 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 	  }
 	break;
       case 2:
-	/* interpolated shading: to be done */
+	/* XX interpolated shading: to be done */
 	fill_color= l3->R[i*l1->m];
 	break;
       default: 
@@ -4949,9 +4949,12 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       return 0;
       break;
     case xset_clipgrf:
+      /* In new graphics this should be inserted 
+       * in a compound 
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
+      */
       break;
     }
   return 0;

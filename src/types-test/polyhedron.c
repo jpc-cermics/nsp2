@@ -886,12 +886,23 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
 int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {mat, mat, mat, matcopy_int ,t_end};
-  NspMatrix *x, *y, *z, *colors, *retc,*retf;
-  CheckLhs(0,2);
+  NspMatrix *x, *y, *z, *colors, *retc,*retf,*retcol, **hcol=NULL;
+  CheckLhs(0,3);
+
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &z, &colors) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,2, x->mn != y->mn);
   CheckDimProp(NspFname(stack),1,3, x->mn != z->mn);
-  if ( nsp_facets_to_faces(x->R, y->R, z->R,colors->I,colors->mn,x->m,x->n,&retc,&retf,NULL)== FAIL) return RET_BUG;
+
+  if (!( colors->mn == z->mn || colors->mn == z->n ))
+    {
+      Scierror("Error: fourth argument should be of length %d  or  %d\n",
+	       z->mn,z->n);
+      return RET_BUG;
+    }
+
+  if ( lhs == 3 ) hcol= &retcol;
+  if ( nsp_facets_to_faces(x->R, y->R, z->R,colors->I,colors->mn,x->m,x->n,&retc,&retf,hcol)== FAIL)
+    return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(retc));
   if ( lhs >= 2 ) 
     {
@@ -901,10 +912,14 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
     {
       nsp_matrix_destroy(retf);
     }
+  if ( lhs >= 3) 
+    {
+      MoveObj(stack,3,NSP_OBJECT(retcol));
+    }
   return Max(lhs,0);
 }
 
-#line 908 "polyhedron.c"
+#line 923 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -948,12 +963,12 @@ Polyhedron_register_classes(NspObject *d)
 Init portion 
 
 
-#line 952 "polyhedron.c"
+#line 967 "polyhedron.c"
   nspgobject_register_class(d, "NspPolyhedron", Polyhedron, &NspNspPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
 }
 */
 
-#line 162 "codegen/polyhedron.override"
+#line 177 "codegen/polyhedron.override"
 
 /* function called when draw is needed 
  * data can be NULL and when non null 
@@ -1441,13 +1456,17 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
    * [Cs,ks]= sort(C,'ldr','i');
    */
   nsp_matrix_lexical_row_sort(C,&Index,TRUE,'i','d');
-  /* create a color matrix if requested */
+
   if ( Colr != NULL)
     {
-      if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
+      /* create a color matrix if requested 
+       * The size of Col is the same as the size of 
+       * Coordinates i.e m*n 
+       */
       if ( ncol == m*n ) 
 	{
-	  /* colors given by colors */
+	  if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
+	  /* colors given by colors of size mxn */
 	  if ( switch_orient ) 
 	    {
 	      NspMatrix *col1;
@@ -1472,13 +1491,15 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 	}
       else if ( ncol == n ) 
 	{
-	  /* colors given by colors: one for each facet */
-	  for ( i = 0 ; i < m ; i++)
-	    for ( j = 0 ; j < n ; j++)
-	      Col->R[i+m*j] = colors[Index->I[j]-1];
+	  /* colors given by colors: one for each facet 
+	   */
+	  if ((Col = nsp_matrix_create("Col",'r',n,1))==NULL) return FAIL;
+	  for ( i = 0 ; i < n ; i++)
+	    Col->R[i] = colors[i];
 	}
       else
 	{
+	  if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
 	  /* z is used for colors */
 	  for ( i = 0 ; i < m*n ; i++)
 	    Col->R[i]=C->R[i+2*C->m];
@@ -1490,6 +1511,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
    * Fs stocke la permutation inverse a celle de Index
    * kp(ks)=1:m*n;
    */
+
   if ((Fs = nsp_matrix_create(NVOID,'r',m,n))==NULL) return FAIL;
   Fs->convert = 'i';
   for ( i=0 ; i < Fs->mn; i++)
@@ -1529,7 +1551,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   index.iwork = matint_iwork1;
   if ( nsp_get_index_vector_from_object(NSP_OBJECT(B),&index) == FAIL) return FAIL;
   if ( nsp_matint_delete_rows(NSP_OBJECT(C),&index)==FAIL) return FAIL;
-  if ( Colr != NULL)
+  if ( Colr != NULL && ncol != n )
     {
       if ( nsp_matint_delete_rows(NSP_OBJECT(Col),&index)==FAIL) return FAIL;
     }
@@ -1554,4 +1576,4 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 
 
 
-#line 1558 "polyhedron.c"
+#line 1580 "polyhedron.c"
