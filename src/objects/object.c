@@ -2197,7 +2197,7 @@ static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes)
     }
   else
     {
-#if 0 
+#if 1 
       Scierror("Warning: mixed unimplemented comparison %s %s %s\n",mes,
 		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
       return RET_BUG;
@@ -2273,7 +2273,7 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-#if 0 
+#if 1
       Scierror("Warning: mixed unimplemented comparison %s %s %s\n","<>",
 	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
       return RET_BUG;

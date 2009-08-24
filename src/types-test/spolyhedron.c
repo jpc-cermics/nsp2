@@ -1306,7 +1306,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int zxy[3], sx[3], sy[3];
   int numpt, *current_vertex, color, orient;
   double v[3], val_mean=0.0;
-
+  int one_face_color = FALSE;
   int Q_nb_coords = Q->Mcoord->m;
   int foreground_color = 1; /* XX should be shared */
   double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
@@ -1317,6 +1317,12 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   int display_mode = (Q->shade == TRUE) ? INTERP : FLAT;
 
+  if ( Q->Mval->mn != Q->Mcoord->m && Q->Mval->mn == Q->Mface->n) 
+    {
+      /* when we just have on color per face INTERP is useless */
+      display_mode = FLAT;
+      one_face_color = TRUE;
+    }
 
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
@@ -1332,11 +1338,9 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       numpt = current_vertex[i]-1;
       x[i] = XScale(Q_coord[numpt]);
       y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
-      if ( Q->Mval->mn == Q->Mface->n) 
-	val_mean += Q_val[j];
-      else
-	val_mean += Q_val[numpt];
+      val_mean = (one_face_color) ? Q_val[j] : Q_val[numpt];
     }
+
   val_mean = val_mean / m;
   
   if ( ISNAN(val_mean) || isinf(val_mean)) return;
@@ -1392,12 +1396,13 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
+  int one_face_color = FALSE;
   int foreground_color = 1; /* XX should be shared */
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
-  int i,j, np=1, m,colors[4];
+  int i,j, np=1, m,colors[128];
   int numpt, *current_vertex, color;
   double val_mean=0.0;
-  double x[12], y[12], z[12], v[12];
+  double x[128], y[128], z[128], v[128];
 
   int Q_nb_coords = Q->Mcoord->m;  
   double *Q_coord = Q->Mcoord->R; 
@@ -1408,9 +1413,17 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int Q_nb_levels = Q->colmax - Q->colmin + 1;
   int display_mode = (Q->shade == TRUE) ? INTERP : FLAT;
 
+  if ( Q->Mval->mn != Q->Mcoord->m && Q->Mval->mn == Q->Mface->n) 
+    {
+      /* when we just have on color per face INTERP is useless */
+      display_mode = FLAT;
+      one_face_color = TRUE;
+    }
+  
   for ( j = 0 ; j < Q_nb_faces ; j++) 
     {
-      m = Q_nb_vertices_per_face;
+      val_mean = 0;
+      m = Min(Q_nb_vertices_per_face,128) ; /* 128 à gerer XXX */
       current_vertex = &(Q_face[m*j]);
       for (i = 0 ; i < m ; i++)
 	{
@@ -1418,7 +1431,8 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  x[i] = Q_coord[numpt];
 	  y[i] = Q_coord[numpt+Q_nb_coords];
 	  z[i] = Q_coord[numpt+2*Q_nb_coords];
-	  val_mean += (v[i]=Q_val[numpt]);
+	  v[i] = (one_face_color) ? Q_val[j] : Q_val[numpt];
+	  val_mean += v[i];
 	}
       val_mean = val_mean / m;
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
@@ -1794,4 +1808,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1798 "spolyhedron.c"
+#line 1812 "spolyhedron.c"

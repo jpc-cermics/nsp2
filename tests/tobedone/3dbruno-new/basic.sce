@@ -13,15 +13,15 @@ A=objs3d_create(top=%t,title="Main title", colormap=cmap,box_style=0,box_color=3
 
 F.children(1)= A;
 P = dodecahedron();
-// P = tetrahedron();
 
 val = P.Mcoord(:,3)';
+
 color_low=1,color_high= ncol;
 Ps=spolyhedron_create(Mcoord=P.Mcoord,Mface=P.Mface,Mval = val,...
 		      vmin = min(val), vmax=max(val),...
 		      coloutmin= color_low, coloutmax= color_high,...
 		      colmin = color_low, colmax = color_high,...
-		      back_color=1, mesh=%t);
+		      back_color=1, mesh=%t, shade=%f);
 
 A.children($+1) = Ps;
 F.connect[];
