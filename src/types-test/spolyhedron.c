@@ -1319,7 +1319,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   if ( Q->Mval->mn != Q->Mcoord->m && Q->Mval->mn == Q->Mface->n) 
     {
-      /* when we just have on color per face INTERP is useless */
+      /* when we just have one color per face INTERP is useless */
       display_mode = FLAT;
       one_face_color = TRUE;
     }
@@ -1338,10 +1338,10 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       numpt = current_vertex[i]-1;
       x[i] = XScale(Q_coord[numpt]);
       y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
-      val_mean = (one_face_color) ? Q_val[j] : Q_val[numpt];
+      val_mean += (one_face_color) ? Q_val[j] : Q_val[numpt];
     }
 
-  val_mean = val_mean / m;
+  val_mean /=  m;
   
   if ( ISNAN(val_mean) || isinf(val_mean)) return;
 
@@ -1374,7 +1374,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	  for ( l = 0 ; l < 3 ; l++ )
 	    {
 	      i = triangle[l];
-	      if ( Q->Mval->mn == Q->Mface->n) 
+	      if ( one_face_color ) 
 		v[l] = Q_val[j]; /* one color for each facet */
 	      else	
 		v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
@@ -1434,7 +1434,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  v[i] = (one_face_color) ? Q_val[j] : Q_val[numpt];
 	  val_mean += v[i];
 	}
-      val_mean = val_mean / m;
+      val_mean /=  m;
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
 
       if ( display_mode == FLAT  )
@@ -1790,16 +1790,15 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 	}
     }
   
-  bc = -1; /* XXX the color for hidden faces but the orientation is wrong in 
-	    * this function 
-	    */
+  bc = 4; /* XXX the color for hidden faces
+	   */
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
 				    TRUE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
 
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
-
+  
  bug:
   if ( C != NULL) nsp_matrix_destroy(C);
   if ( F != NULL) nsp_matrix_destroy(F);
@@ -1808,4 +1807,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1812 "spolyhedron.c"
+#line 1811 "spolyhedron.c"

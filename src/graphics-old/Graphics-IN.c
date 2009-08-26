@@ -1460,11 +1460,37 @@ int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *
   return OK;
 }
 
+int nsp_plot_fac3d1_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
+{
+  int ncols;
+  NspSPolyhedron *pol;
+  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
+  if ( objs3d == NULL) return FAIL;
+  objs3d->obj->alpha=*alpha;
+  objs3d->obj->theta=*teta;
+  if (colormap != NULL && objs3d->obj->colormap != NULL) 
+    {
+      nsp_matrix_destroy(objs3d->obj->colormap);
+      objs3d->obj->colormap=colormap; 
+    }
+
+  /* create a polyhedron and insert it in objs3d */
+  ncols = Xgc->Numcolors;
+  pol = nsp_spolyhedron_create_from_facets("pol",x,y,z,*p,*q,cvect,(izcol==1) ? *q : (izcol==2) ? *p*(*q) : 0,ncols);
+  if ( pol == NULL) return FAIL;
+  /* insert the new vfield */
+  if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
+    return FAIL;
+  nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  return OK;
+}
+
 
 int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 {
   if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
-  return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d_new);
+  return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
 
 #else 
@@ -1511,31 +1537,6 @@ int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, do
   return OK;
 }
 
-int nsp_plot_fac3d1_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
-{
-  int ncols;
-  NspSPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return FAIL;
-  objs3d->obj->alpha=*alpha;
-  objs3d->obj->theta=*teta;
-  if (colormap != NULL && objs3d->obj->colormap != NULL) 
-    {
-      nsp_matrix_destroy(objs3d->obj->colormap);
-      objs3d->obj->colormap=colormap; 
-    }
-
-  /* create a polyhedron and insert it in objs3d */
-  ncols = Xgc->Numcolors;
-  pol = nsp_spolyhedron_create_from_facets("pol",x,y,z,*p,*q,cvect,(izcol==1) ? *q : (izcol==2) ? *p*(*q) : 0,ncols);
-  if ( pol == NULL) return FAIL;
-  /* insert the new vfield */
-  if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
-  return OK;
-}
 
 int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 {
