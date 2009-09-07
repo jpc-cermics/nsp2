@@ -12,7 +12,7 @@ L=tril(ld,-1)+sparse(diag(ones_new(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - A)) > 100*%eps then pause;end 
 
-// first mode just ise triu(A) 
+// first mode just use triu(A) 
 
 ch=cholmod_create(triu(A));
 ld=ch.get_ld[];
@@ -20,7 +20,7 @@ L=tril(ld,-1)+sparse(diag(ones_new(1,n)));
 D=diag(diag(ld));
 if norm(full(L*D*L' - A)) > 100*%eps then pause;end 
 
-ch=cholmod_create(triu(A),type='sym');
+ch=cholmod_create(A,type='sym');
 ld=ch.get_ld[];
 L=tril(ld,-1)+sparse(diag(ones_new(1,n)));
 D=diag(diag(ld));
@@ -29,7 +29,7 @@ if norm(full(L*D*L' - A)) > 100*%eps then pause;end
 // add a beta*I 
 
 beta=2
-ch=cholmod_create(triu(A),type='sym',beta=beta);
+ch=cholmod_create(A,type='sym',beta=beta);
 ld=ch.get_ld[];
 L=tril(ld,-1)+sparse(diag(ones_new(1,n)));
 D=diag(diag(ld));
