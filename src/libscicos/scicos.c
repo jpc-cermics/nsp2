@@ -70,9 +70,9 @@ static void reinitdoit(double *,int *);
 static void cossimdaskr(double *);
 static void cossim(double *);
 static void callf(double *, double *, double *, double *,double *,int *);
-static int simblk(int *, double *, double *, double *);
+static int simblk(int *, double *, double *, double *, void *);
 static int simblkdaskr(double *, double *, double *, int *, double *, int *, double *, int *);
-static int grblk(int *, double *, double *, int *, double *);
+static int grblk(int *, double *, double *, int *, double *, double *, void *);
 static int grblkdaskr(int *, double *, double *, double *, int *, double *, double *, int *);
 static void addevs(double ,int *,int *);
 static int putevs(double ,int );
@@ -217,7 +217,7 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
 	return 0;
       }
     
-      simblk(&Scicos->sim.nx, t0, Scicos->state.x, W);
+      simblk(&Scicos->sim.nx, t0, Scicos->state.x, W, NULL);
       for (i = 0; i < Scicos->sim.nx; ++i) {
 	Scicos->state.x[i] = W[i];
       }
@@ -561,7 +561,7 @@ static void cossim(double *told)
 	C2F(lsodar2)(simblk, Scicos->params.neq, Scicos->state.x, told, &t, &c__1, &Scicos->params.rtol, 
 		     &Scicos->params.Atol, &itask, &istate, &iopt, &rhot[1], &
 		     nrwp, &ihot[1], &niwp, &jdum, &jt, 
-		     grblk, &Scicos->sim.ng, jroot);
+		     grblk, &Scicos->sim.ng, jroot, NULL);
 	phase=1;
 	if (*ierr > 5) {
 	  /*     !           singularity in block */
@@ -2304,7 +2304,7 @@ void *scicos_get_function(char * fname)
    of the state 
 */
 
-static int simblk(int *neq1,double * t,double * xc,double * xcdot)
+static int simblk(int *neq1,double * t,double * xc,double * xcdot, void *param)
 { 
   double c_b14 = 0.0;
   int c__1=1;
@@ -2354,7 +2354,7 @@ static int grblkdaskr(int *neq1,double * t,double * xc,double * xtd,int *ng1,dou
  * g     : computed zero crossing surface (see lsodar) 
  */
 
-static int grblk(int *neq1,double * t,double * xc,int * ng1,double * g)
+static int grblk(int *neq1,double * t,double * xc,int * ng1,double * g, void *param)
 { 
  C2F(ierode).iero = 0;
  *ierr= 0;
