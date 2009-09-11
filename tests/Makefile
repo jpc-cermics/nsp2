@@ -59,6 +59,7 @@ TESTS= \
 	scalexp.dia \
 	fsolve1.dia \
 	fsolve.dia \
+	ode.dia \
 	find.dia \
 	global.dia \
 	matops.dia
