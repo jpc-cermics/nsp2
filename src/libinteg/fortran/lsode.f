@@ -1,9 +1,10 @@
       subroutine lsode (f, neq, y, t, tout, itol, rtol, atol, itask,
-     1            istate, iopt, rwork, lrw, iwork, liw, jac, mf)
+     1            istate, iopt, rwork, lrw, iwork, liw, jac, mf, param)
       external f, jac
       integer neq, itol, itask, istate, iopt, lrw, iwork, liw, mf
       double precision y, t, tout, rtol, atol, rwork
       dimension neq(*), y(*), rtol(*), atol(*), rwork(lrw), iwork(liw)
+      double precision param   ! use as a pointer to datas for external written in C
 c
 c!purpose
 c livermore solver for ordinary differential equations.
@@ -27,8 +28,9 @@ c and instructions for special situations.  see also the example
 c problem (with program and output) following this summary.
 c
 c a. first provide a subroutine of the form..
-c               subroutine f (neq, t, y, ydot)
+c               subroutine f (neq, t, y, ydot,param)
 c               dimension y(neq), ydot(neq)
+*               double precision param   ! use as a pointer to datas for external written in C
 c which supplies the vector function f by loading ydot(i) with f(i).
 c
 c b. next determine (or guess) whether or not the problem is stiff.
@@ -121,6 +123,9 @@ c          -5 means repeated convergence failures (perhaps bad jacobian
 c             supplied or wrong choice of mf or tolerances).
 c          -6 means error weight became zero during problem. (solution
 c             component i vanished, and atol or atol(i) = 0.)
+*          -8 means time step becomes too small (t+h=t) new error
+*             message (previously the solver take enough such step
+*             until mxstep was reached) 
 c
 c f. to continue the integration after a successful return, simply
 c reset tout and call lsode again.  no other parameters need be reset.
@@ -436,7 +441,7 @@ c          -1  means an excessive amount of work (more than mxstep
 c              steps) was done on this call, before completing the
 c              requested task, but the integration was otherwise
 c              successful as far as t.  (mxstep is an optional input
-c              and is normally 500.)  to continue, the user may
+c              and is normally 500.(now 10000 (bruno))  to continue, the user may
 c              simply reset istate to a value .gt. 1 and call again
 c              (the excess work step counter will be reset to 0).
 c              in addition, the user may increase mxstep to avoid
@@ -643,7 +648,7 @@ c                   cause the current order to be reduced.
 c
 c mxstep  iwork(6)  maximum number of (internally defined) steps
 c                   allowed during one call to the solver.
-c                   the default value is 500.
+c                   the default value is 500 (now 10000).
 c
 c mxhnil  iwork(7)  maximum number of messages printed (per problem)
 c                   warning that t + h = t on a step (h = step size).
@@ -983,7 +988,7 @@ c-----------------------------------------------------------------------
      5   maxord, maxcor, msbp, mxncf, n, nq, nst, nfe, nje, nqu
       save/ls0001/
 c
-      data  mord(1),mord(2)/12,5/, mxstp0/500/, mxhnl0/10/
+      data  mord(1),mord(2)/12,5/, mxstp0/10000/, mxhnl0/10/
 c-----------------------------------------------------------------------
 c block a.
 c this code block is executed on every call.
@@ -1133,7 +1138,7 @@ c-----------------------------------------------------------------------
       mxncf = 10
 c initial call to f.  (lf0 points to yh(*,2).) -------------------------
       lf0 = lyh + nyh
-      call f (neq, t, y, rwork(lf0))
+      call f (neq, t, y, rwork(lf0),param)
       if(iero.gt.0) return
       nfe = 1
 c load the initial value vector in yh. ---------------------------------
@@ -1248,27 +1253,33 @@ c-----------------------------------------------------------------------
       if (nst .eq. 0) go to 626
       go to 520
  280  if ((tn + h) .ne. tn) go to 290
-      nhnil = nhnil + 1
-      if (nhnil .gt. mxhnil) go to 290
-      call xerrwv('lsode--  caution... t (=r1) and h (=r2) are',
-     1   50, 101, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv(
-     1 '     such that t + h = t at next step',
-     1   60, 101, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('      (h = step).  integration continues',
-     1   50, 101, 1, 0, 0, 0, 2, tn, h)
-      if (nhnil .lt. mxhnil) go to 290
-      call xerrwv('lsode--  preceding message given i1 times',
-     1   50, 102, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('     wiil not be repeated',
-     1   50, 102, 1, 1, mxhnil, 0, 0, 0.0d+0, 0.0d+0)
+*     (change by bp): new behavior: we return istate = -8 t=t+h occurs
+      call xerrwvb('lsode:', 6, 1101, 1, 0, 0, 0, 2, tn, h)
+      istate = -8
+      goto 580  ! ou return
+*      nhnil = nhnil + 1
+*      if (nhnil .gt. mxhnil) go to 290
+C$$$      call xerrwv('lsode--  caution... t (=r1) and h (=r2) are',
+C$$$     1   50, 101, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv(
+C$$$     1 '         such that t + h = t at next step',
+C$$$     1   60, 101, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         integration continues',
+C$$$     1   50, 101, 1, 0, 0, 0, 2, tn, h)
+*      call xerrwvb('lsode:', 6, 101, 1, 0, 0, 0, 2, tn, h)
+*      if (nhnil .lt. mxhnil) go to 290
+C$$$      call xerrwv('lsode--  preceding message given i1 times',
+C$$$     1   50, 102, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         will not be repeated',
+C$$$     1   50, 102, 1, 1, mxhnil, 0, 0, 0.0d+0, 0.0d+0)
+*      call xerrwvb('lsode:', 6, 102, 1, 1, mxhnil, 0, 0, 0.0, 0.0)
  290  continue
 c-----------------------------------------------------------------------
-c     call stode(neq,y,yh,nyh,yh,ewt,savf,acor,wm,iwm,f,jac,prepj,solsy)
+c     call stode(neq,y,yh,nyh,yh,ewt,savf,acor,wm,iwm,f,jac,prepj,solsy,param)
 c-----------------------------------------------------------------------
       call stode (neq, y, rwork(lyh), nyh, rwork(lyh), rwork(lewt),
      1   rwork(lsavf), rwork(lacor), rwork(lwm), iwork(liwm),
-     2   f, jac, prepj, solsy)
+     2   f, jac, prepj, solsy, param)
       if(iero.gt.0) return
       kgo = 1 - kflag
       go to (300, 530, 540), kgo
@@ -1345,40 +1356,44 @@ c counter illin is set to 0.  the optional outputs are loaded into
 c the work arrays before returning.
 c-----------------------------------------------------------------------
 c the maximum number of steps was taken before reaching tout. ----------
- 500  call xerrwv('lsode--  at t (=r1), mxstep (=i1) steps   ',
-     1   50, 201, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('necessary before reaching tout',
-     1   50, 201, 1, 1, mxstep, 0, 1, tn, 0.0d+0)
+C$$$ 500     call xerrwv('lsode--  at t (=r1), mxstep (=i1) steps   ',
+C$$$     1   50, 201, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         necessary before reaching tout',
+C$$$     1   50, 201, 1, 1, mxstep, 0, 1, tn, 0.0d+0)
+ 500  call xerrwvb('lsode:',6, 201, 1, 1, mxstep, 0, 1, tn, 0)
       istate = -1
       go to 580
 c ewt(i) .le. 0.0 for some i (not at start of problem). ----------------
  510  ewti = rwork(lewt+i-1)
-      call xerrwv('lsode--  at t (=r1),ewt(i1) (=r2) is .le.0',
-     1   50, 202, 1, 1, i, 0, 2, tn, ewti)
+C$$$      call xerrwv('lsode--  at t (=r1),ewt(i1) (=r2) is .le.0',
+C$$$     1   50, 202, 1, 1, i, 0, 2, tn, ewti)
+      call xerrwvb('lsode:',6, 202, 1, 1, i, 0, 2, tn, ewti) 
       istate = -6
       go to 580
 c too much accuracy requested for machine precision. -------------------
- 520  call xerrwv('lsode--  a t (=r1),  too much precision required',
-     1   50, 203, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv(' w.r.t. machine precision tolsf (=r2) ',
-     1   50, 203, 1, 0, 0, 0, 2, tn, tolsf)
+C$$$ 520  call xerrwv('lsode--  a t (=r1),  too much precision required',
+C$$$     1   50, 203, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         w.r.t. machine precision tolsf (=r2) ',
+C$$$     1   50, 203, 1, 0, 0, 0, 2, tn, tolsf)
+ 520  call xerrwvb('lsode:', 6, 203, 1, 0, 0, 0, 2, tn, tolsf)
       rwork(14) = tolsf
       istate = -2
       go to 580
 c kflag = -1.  error test failed repeatedly or with abs(h) = hmin. -----
  530  call xerrwv('lsode--  at t(=r1) for step h(=r2), error test',
      1   50, 204, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('    failed with abs(h) = hmin',
+      call xerrwv('         failed with abs(h) = hmin',
      1   50, 204, 1, 0, 0, 0, 2, tn, h)
       istate = -4
       go to 560
 c kflag = -2.  convergence failed repeatedly or with abs(h) = hmin. ----
- 540  call xerrwv('lsode--  at t (=r1) with step h (=r2), '    ,
-     1   50, 205, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('     corrector does not converge ',
-     1   50, 205, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
-      call xerrwv('      with abs(h) = hmin   ',
-     1   30, 205, 1, 0, 0, 0, 2, tn, h)
+C$$$ 540  call xerrwv('lsode--  at t (=r1) with step h (=r2), '    ,
+C$$$     1   50, 205, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         corrector does not converge ',
+C$$$     1   50, 205, 1, 0, 0, 0, 0, 0.0d+0, 0.0d+0)
+C$$$      call xerrwv('         with abs(h) = hmin   ',
+C$$$     1   30, 205, 1, 0, 0, 0, 2, tn, h)
+ 540  call xerrwvb('lsode:', 6, 205, 1, 0, 0, 0, 2, tn, h)
       istate = -5
 c compute imxer if relevant. -------------------------------------------
  560  big = 0.0d+0

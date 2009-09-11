@@ -1,8 +1,9 @@
 C/MEMBR ADD NAME=STODE,SSI=0
       subroutine stode (neq, y, yh, nyh, yh1, ewt, savf, acor,
-     1   wm, iwm, f, jac, pjac, slvs)
+     1   wm, iwm, f, jac, pjac, slvs, param)
 clll. optimize
       external f, jac, pjac, slvs
+      double precision param ! use as a pointer to datas for external written in C
       integer neq, nyh, iwm
       integer iownd, ialth, ipup, lmax, meo, nqnyh, nslp,
      1   icf, ierpj, iersl, jcur, jstart, kflag, l, meth, miter,
@@ -235,7 +236,7 @@ c-----------------------------------------------------------------------
  220  m = 0
       do 230 i = 1,n
  230    y(i) = yh(i,1)
-      call f (neq, tn, y, savf)
+      call f (neq, tn, y, savf, param)
       if(iero.gt.0) return
       nfe = nfe + 1
       if (ipup .le. 0) go to 250
@@ -248,7 +249,7 @@ c-----------------------------------------------------------------------
       rc = 1.0d+0
       nslp = nst
       crate = 0.70d+0
-      call pjac (neq, y, yh, nyh, ewt, acor, savf, wm, iwm, f, jac)
+      call pjac (neq, y, yh, nyh, ewt, acor, savf, wm, iwm, f,jac,param)
       if(iero.gt.0) return
       if (ierpj .ne. 0) go to 430
  250  do 260 i = 1,n
@@ -291,7 +292,7 @@ c-----------------------------------------------------------------------
       if (m .eq. maxcor) go to 410
       if (m .ge. 2 .and. del .gt. 2.0d+0*delp) go to 410
       delp = del
-      call f (neq, tn, y, savf)
+      call f (neq, tn, y, savf, param)
       if(iero.gt.0) return
       nfe = nfe + 1
       go to 270
@@ -449,7 +450,7 @@ c-----------------------------------------------------------------------
       h = h*rh
       do 645 i = 1,n
  645    y(i) = yh(i,1)
-      call f (neq, tn, y, savf)
+      call f (neq, tn, y, savf, param)
       if(iero.gt.0) return
       nfe = nfe + 1
       do 650 i = 1,n

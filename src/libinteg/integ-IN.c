@@ -22,8 +22,12 @@
 #include <string.h> 
 #include "nsp/interf.h"
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
+#include "nsp/ode_solvers.h"
 
 /*-----------------------------------------------------------
+ * ode interface
+ * Authors:  Jean-Philippe Chancelier, Bruno Pincon. 
+ *
  * ode en préparation 
  * we use a global variable to transmit information to 
  * ode_system. 
@@ -32,13 +36,6 @@
  * this is not really a priority ! 
  *-----------------------------------------------------------*/
 
-typedef int (*ode_f)(int *neq,const double *t,const double y[],double ydot[]);
-typedef int (*ode_jac)(int *neq,const double *t,const double y[],int *ml,
-		       int *mu,double pd[],int *nrpd);
-
-extern int F2C(lsoda)(ode_f f,int *neq, double *y, double *t, double *tout, int *itol, 
-		      double *rtol, const double *atol, int *itask, int *istate, int *iopt, 
-		      double *rwork, int *lrw, int *iwork, int *liw, ode_jac jac, int *jt);
 
 typedef struct _ode_data ode_data;
  
@@ -49,11 +46,13 @@ struct _ode_data
 		  * extra informations to f
 		  */
   NspMatrix *y,*t; /* state of ode y->mn >= neq , t : 1x1 matrix the time */
-  NspObject *func; /* equation to integrate */
-  NspObject *jac;  /* jacobian */
+  NspObject *func; /* (pointer to nsp code of the ode function (if provided as nsp function) */
+  NspObject *jac;  /* (pointer to nsp code of its jacobian (if provided as nsp function) */
+  ode_f c_func;    /* pointer onto the C (or fortran) code (ode function to integrate)  */ 
+  ode_jac c_jac;   /* pointer onto the C (or fortran) code (jacobian of the ode function) */ 
 };
 
-static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL}; 
+static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL}; 
 
 extern struct {
   int mesflg, lunit;
@@ -63,32 +62,6 @@ extern struct {
   int iero;
 } C2F(ierode);
 
-int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspObject *args,ode_data *obj)
-{
-  if (( obj->func =nsp_object_copy(f)) == NULL) return RET_BUG;
-  if (( nsp_object_set_name(obj->func,"ode_f")== FAIL)) return RET_BUG;
-  if ( jac != NULL ) 
-    {
-      if (( obj->jac =nsp_object_copy(jac)) == NULL) return RET_BUG;
-      if (( nsp_object_set_name(obj->func,"ode_jac")== FAIL)) return RET_BUG;
-    }
-  else 
-    {
-      obj->jac = NULL;
-    }
-  if ( args != NULL ) 
-    {
-      if (( obj->args = nsp_object_copy(args)) == NULL ) return RET_BUG;
-      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return RET_BUG;
-    }
-  else 
-    {
-      obj->args = NULL;
-    }
-  if ((obj->y = nsp_matrix_create("y",'r',m,n))== NULL) return RET_BUG;
-  if ((obj->t = nsp_matrix_create("t",'r',1,1))== NULL) return RET_BUG;
-  return OK;
-}
 
 
 /**
@@ -102,8 +75,11 @@ static void ode_clean(ode_data *obj)
   if ( obj->args != NULL) nsp_object_destroy(&obj->args);
   nsp_object_destroy(&obj->func);
   if ( obj->jac != NULL)   nsp_object_destroy(&obj->jac);
-  nsp_matrix_destroy(obj->y);
-  nsp_matrix_destroy(obj->t);
+  nsp_matrix_destroy(obj->y); obj->y = NULLMAT;
+  nsp_matrix_destroy(obj->t); obj->t = NULLMAT;
+  obj->c_func = NULL;
+  obj->c_jac = NULL;
+  obj->neq = 0;
 }
 
 /**
@@ -121,7 +97,7 @@ static void ode_clean(ode_data *obj)
  **/
 
 
-static int ode_system(int *neq,const double *t,const double y[],double ydot[])
+static int ode_system(int *neq,const double *t,const double y[],double ydot[], void *param)
 {
   ode_data *ode = &ode_d;
   NspObject *targs[4];/* arguments to be transmited to ode->func */
@@ -149,7 +125,7 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[])
     }
   else 
     {
-      Scierror("Error: ode system returned argument is wrong t=%5.3f\n",*t);
+      Scierror("Error: ode: function returned argument is wrong (at t=%g)\n",*t);
       C2F(ierode).iero = 1;
       return FAIL;
     }
@@ -170,53 +146,137 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[])
  * Return value: 
  **/
 
-
 static int ode_jac_system(int *neq,const double *t,const double y[],
-			  int *ml,int *mu,double jac[],int *nrowj)
+			  int *ml,int *mu,double jac[],int *nrowj, void *param)
 {
   ode_data *ode = &ode_d;
   NspObject *targs[4];/* arguments to be transmited to ode->func */
   NspObject *nsp_ret;
-  int nret = 1,nargs = 2, i;
+  int nret = 1,nargs = 2, i, j, k, dim = ode->y->mn;
   targs[0]= NSP_OBJECT(ode->t); 
   ode->t->R[0] = *t;
   targs[1]= NSP_OBJECT(ode->y); 
-  for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
+  for ( i= 0 ; i < dim ; i++) ode->y->R[i]= y[i];
   if (ode->args != NULL ) 
     {
       targs[2]= ode->args;
       nargs= 3;
     }
+
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret)== FAIL) 
     {
       C2F(ierode).iero = 1;
       return FAIL;
     }
+
   if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' ) 
     {
-      if ( *ml == 0 && *mu == 0 )
+      if ( (*ml == -1 && *mu == -1) )  /* full case */
 	{
-	  for ( i= 0 ; i < ode->y->mn*ode->y->mn ; i++) 
-	    jac[i]= ((NspMatrix *) nsp_ret)->R[i];
+	  if ( ((NspMatrix *) nsp_ret)->m == dim  && ((NspMatrix *) nsp_ret)->n == dim )
+	    {
+	      for ( i= 0 ; i < dim*dim ; i++) 
+		jac[i]= ((NspMatrix *) nsp_ret)->R[i];
+	    }
+	  else
+	    {
+	      Scierror("Error: ode: something wrong with the jacobian dims (should be %d x %d got %d x %d)\n",
+		       dim,dim, ((NspMatrix *) nsp_ret)->m,((NspMatrix *) nsp_ret)->n);
+	      
+	      C2F(ierode).iero = 1;
+	      return FAIL;
+	    }
 	}
-      else 
+      else   /* this is the banded case: output matrix should be of size (ml+1+mu) x dim */ 
 	{
-	  Scierror("Error: ode banded jacobian not already implemented \n");
-	  C2F(ierode).iero = 1;
-	  return FAIL;
-	  
+	  if ( ((NspMatrix *) nsp_ret)->m == *ml+1+*mu  && ((NspMatrix *) nsp_ret)->n == dim )
+	    {
+	      /* take care of the fortran leading dimension of array jac (nrowj which is different from ml+1+mu) ....  */
+	      for ( j = 0, k = 0 ; j < dim ; j++)
+		for ( i = 0 ; i < *ml+1+*mu ; i++, k++ )
+		  jac[i+j*(*nrowj)] = ((NspMatrix *) nsp_ret)->R[k];
+	    }
+	  else
+	    {
+	      Scierror("Error: ode: something wrong with the (banded) jacobian dims (should be %d x %d got %d x %d)\n",
+		       *ml+1+*mu,dim, ((NspMatrix *) nsp_ret)->m,((NspMatrix *) nsp_ret)->n);
+	      C2F(ierode).iero = 1;
+	      return FAIL;
+	    }
 	}
       nsp_object_destroy((NspObject **) &nsp_ret);
     }
   else 
     {
-      Scierror("Error: ode system returned argument is wrong t=%5.3f\n",*t);
+      Scierror("Error: ode: jacobian returned argument is wrong (at t=%g)\n",*t);
       C2F(ierode).iero = 1;
       return FAIL;
     }
   return OK;
 }
+
+
+/* FIXME: should be in a .h */
+extern int SearchInDynLinks (char *op, int (**realop)());
+
+int ode_prepare(int m, int n, NspObject *f, NspObject *jac, NspObject *args, ode_data *obj)
+{
+  if (( obj->func =nsp_object_copy(f)) == NULLOBJ) return FAIL;
+  if (( nsp_object_set_name(obj->func,"ode_f")== FAIL)) return FAIL;
+  if ( IsNspPList(f) )
+    obj->c_func = (ode_f) ode_system;
+  else
+    {
+      char *str = ((NspSMatrix *)f)->S[0];
+      int (*func) (void);
+      /* search string in the dynamically linked functions */
+      if ( SearchInDynLinks(str, &func) == -1 )
+	{
+	  Scierror("Error: function %s is not dynamically linked in nsp\n",str);
+	  return FAIL;
+	}
+      obj->c_func = (ode_f) func;
+    }
+
+  if ( jac != NULL ) 
+    {
+      if (( obj->jac =nsp_object_copy(jac)) == NULLOBJ) return FAIL;
+      if (( nsp_object_set_name(obj->func,"ode_jac")== FAIL)) return FAIL;
+      if ( IsNspPList(jac) )
+	obj->c_jac = (ode_jac) (ode_jac) ode_jac_system;
+      else
+	{
+	  char *str = ((NspSMatrix *)jac)->S[0];
+	  int (*func) (void);
+	  /* search string in the dynamically linked functions */
+	  if ( SearchInDynLinks(str, &func) == -1 )
+	    {
+	      Scierror("Error: function %s is not dynamically linked in nsp\n",str);
+	      return FAIL;
+	    }
+	  obj->c_jac = (ode_jac) func;
+	}
+    }
+  else 
+    {
+      obj->jac = NULL;
+    }
+
+  if ( args != NULL ) 
+    {
+      if (( obj->args = nsp_object_copy(args)) == NULLOBJ ) return FAIL;   /* FIXME: is copy necessary ? */
+      if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+    }
+  else 
+    {
+      obj->args = NULL;
+    }
+  if ((obj->y = nsp_matrix_create("y",'r',m,n))== NULLMAT) return FAIL;
+  if ((obj->t = nsp_matrix_create("t",'r',1,1))== NULLMAT) return FAIL;
+  return OK;
+}
+
 
 /**
  * int_ode:
@@ -232,32 +292,71 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
  * Return value: number of returned arguments.
  **/
 
-typedef enum {ode_default,adams,stiff,rk,rkf,fix,discrete,roots} ode_method;
+typedef enum {ode_default,adams,stiff,rk,rkd5,fix,discrete,roots} ode_method;
 
-static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObject *args,NspMatrix *y0,
-			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol,
-			 NspHash *odeoptions) ;
+static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *args,NspMatrix *y0,
+			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol, int task,
+			 Boolean warn, int lhs, NspHash *odeoptions, ode_method method) ;
+
+static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix *y0, 
+			  double t0, NspMatrix *time, double rtol, NspMatrix *Matol, 
+			  int task, Boolean warn, int lhs, NspHash *odeoptions); 
 
 static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *y0,
 			    double t0,NspMatrix *time);
 
-int int_ode( Stack stack, int rhs, int opt, int lhs)
+static Boolean vector_is_monotone(double *t, int n)
+{
+  /* verify that t is (strictly) monotone and not Nan or +-Inf */
+  int i;
+  double dir;
+
+  if ( n >= 1 )
+    {
+      if ( ! finite(t[0]) ) return FALSE;
+      if ( n == 1 ) return TRUE;
+      if ( ! finite(t[1]) ) return FALSE;
+      dir = t[1] - t[0];
+
+      if ( dir > 0.0 )
+	{
+	  for ( i = 2 ; i < n ; i++ ) 
+	    if ( ! (t[i-1] < t[i]) )   /* form of this test for detecting nan ... */ 
+	      return FALSE;
+	}
+      else if ( dir < 0.0 )
+	{
+	  for ( i = 2 ; i < n ; i++ ) 
+	    if ( ! (t[i-1] > t[i]) )   /* form of this test for detecting nan ... */ 
+	      return FALSE;
+	}
+      else /* t[0]==t[1] */
+	return FALSE;
+
+      if ( ! finite(t[n-1]) ) return FALSE;
+    }
+  return TRUE;
+}
+
+int int_ode(Stack stack, int rhs, int opt, int lhs)
 {
   ode_method methode= ode_default;
-  int jt=2;
   NspObject *f= NULL, *jac=NULL,*g=NULL, *args=NULL;
   NspHash *odeoptions = NULL;
   NspList *gargs=NULL;
-  double rtol=1.e-7,t0;
-  int ng=-1;
+  double t0, rtol=1.e-7;  /* FIXME: may be it is better to intialize to 0.0 because the default tolerance depends on the solver used */
+  Boolean warn = TRUE;
+  int ng=-1, task=1;
   char *type=NULL;
   NspMatrix *y0,*time,*w=NULL,*iw=NULL, *Matol=NULL;
   
-  static char *Table[] = {"default","adams","stiff","rk","rkf","fix","discrete","roots", NULL};
+  static char *Table[] = {"default","adams","stiff","rk","rkd5","fix","discrete","roots", NULL};
 
   int_types T[] = {realmatcopy,s_double,realmat,obj,new_opts, t_end} ;
 
   nsp_option opts[] ={
+    { "task",s_int,  NULLOBJ,-1},
+    { "warn",s_bool,NULLOBJ,-1},
     { "args",obj,  NULLOBJ,-1},
     { "atol",realmat,NULLOBJ,-1},
     { "g", obj, NULLOBJ,-1},
@@ -272,11 +371,10 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
     { NULL,t_end,NULLOBJ,-1}
   };
 
-  if ( GetArgs(stack,rhs,opt,T,&y0,&t0,&time,&f,&opts,&args,&Matol,&g,
+  if ( GetArgs(stack,rhs,opt,T,&y0,&t0,&time,&f,&opts,&task,&warn,&args,&Matol,&g,
 	       &gargs,&iw,&jac,&ng,&odeoptions,&rtol,&type,&w) == FAIL) return RET_BUG;
 
   /* search for given integration method */
-
   if ( type != NULL) 
     {
       methode = is_string_in_array(type,Table,1);
@@ -287,44 +385,61 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( IsNspPList(f) == FALSE  )
+  if ( IsNspPList(f) == FALSE  &&  IsString(f) == FALSE )
     {
-      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
+      Scierror("%s: argument #3 should be a nsp function or a string\n",NspFname(stack));
       return RET_BUG;
     }
 
+  if ( jac != NULLOBJ  &&  (IsNspPList(jac) == FALSE  &&  IsString(jac) == FALSE ) )
+    {
+      Scierror("%s: optional named argument jac should be a nsp function or a string\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( time->mn < 1 )
+    {
+      Scierror("%s: argument #3 (t) should not be empty\n",NspFname(stack));
+      return RET_BUG;
+    }
+  else if ( ! vector_is_monotone(time->R, time->mn) )
+    {
+      Scierror("%s: argument #3 (t) is not strictly monotone (or +- Inf detected)\n",NspFname(stack));
+      return RET_BUG;
+    }
 
   switch ( methode ) 
     {
     case ode_default: 
-      return int_ode_default(stack,f,jt,jac,args,y0,t0,time,rtol,Matol,odeoptions);
     case adams: 
     case stiff:
-    case rk:
-    case rkf:
-    case fix:
-      Scierror("%s: method %d is to be implemented \n",NspFname(stack),methode);
+      return int_ode_lsode(stack, f, jac, args, y0, t0, time, rtol, Matol, task, warn, lhs, odeoptions, methode);
     case discrete:
       return int_ode_discrete(stack,f,args,y0,t0,time);
+    case rkd5:
+      return int_ode_dopri5(stack, f, args, y0, t0, time, rtol, Matol, task, warn, lhs, odeoptions);
+    case fix:
+    case rk:
     case roots:
-      Scierror("%s: method %d is to be implemented \n",NspFname(stack),methode);
+      Scierror("%s: method %s is to be implemented \n",methode, NspFname(stack));
       return RET_BUG;
     }
   return 0;
 }
 
 
-static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObject *args,
-			   NspMatrix *y0, double t0,NspMatrix *time, double rtol, 
-			   NspMatrix *Matol, NspHash *odeoptions) 
+static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *args,
+			 NspMatrix *y0, double t0,NspMatrix *time, double rtol, 
+			 NspMatrix *Matol, int task, Boolean warn, int lhs, 
+                         NspHash *odeoptions, ode_method method) 
 {
-  int op_itask=0,op_jactyp=0,op_mxstep=0,op_mxordn=0,op_mxords=0,op_ixpr=0,op_ml=0,op_mu=0;
-  double op_tcrit=0.0,op_h0=0.0,op_hmax=0.0,op_hmin=0.0;
+  int op_jactyp=0,op_mxstep=0,op_mxordn=0,op_mxords=0,op_ixpr=0,op_ml=-1,op_mu=-1;
+  double op_tcrit=2*DBL_MAX, op_h0=0.0, op_hmax=0.0, op_hmin=0.0;
   nsp_option opts[] ={
     { "h0",s_double , NULLOBJ,-1},
     { "hmax",s_double,  NULLOBJ,-1},
     { "hmin",s_double,  NULLOBJ,-1},
-    { "itask",s_int,  NULLOBJ,-1},
+    /*    { "itask",s_int,  NULLOBJ,-1},  itask is an optional parameter now (named task) */
     { "ixpr",s_int,NULLOBJ,-1},
     { "jactyp",s_int,NULLOBJ,-1},
     { "ml",s_int,NULLOBJ,-1},
@@ -336,14 +451,17 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObj
     { NULL,t_end,NULLOBJ,-1}
   };
   
-  int rwork_size,iwork_size, ml=0,mu=0;
+  int jt=0, mf=0, neq = y0->mn, rwork_size,iwork_size, ier;
+  Boolean jac_is_banded=FALSE, tcrit_given=FALSE;
   /* atol */
   int itol=1;
   const double defatol=1.e-9;
   const double *atol=&defatol;
-  int itask = 1,istate=1,iopt=0,i;
-  NspMatrix *rwork,*iwork;
-  NspMatrix *res;
+  int istate=1,iopt=0,i, outsize;
+  double *rwork = NULL;
+  int *iwork = NULL;
+  NspMatrix *res = NULLMAT, *tt = NULLMAT;
+
   if ( Matol != NULL) 
     {
       /* itol   = 1 or 2 according as atol (below) is a scalar or array. */
@@ -351,7 +469,7 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObj
 	{
 	  itol = 1; atol = Matol->R;
 	}
-      else if ( Matol->mn == y0->mn )
+      else if ( Matol->mn == neq )
 	{
 	  itol = 2; atol = Matol->R;
 	}
@@ -362,71 +480,452 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspObj
 	}
     }
 
-  /* get options from options */
-  
+  /* get options from hashtable */
   if ( odeoptions != NULL) 
     {
       if ( get_optional_args_from_hash(stack,odeoptions,opts,&op_h0,&op_hmax,&op_hmin,
-				       &op_itask,&op_ixpr,&op_jactyp,&op_ml,&op_mu,&op_mxordn,
+				       &op_ixpr,&op_jactyp,&op_ml,&op_mu,&op_mxordn,
 				       &op_mxords,&op_mxstep,&op_tcrit) == FAIL) 
 	return RET_BUG;
+      iopt = 1;
     }
 
-  /* working arrays */
-
-  if ( jt == 1 || jt == 2 ) 
-    rwork_size = Max(20 + 16*y0->mn,22 + 9*y0->mn + y0->mn*y0->mn);
-  else 
-    rwork_size = Max(20 + 16*y0->mn,22 + 10*y0->mn + (2*ml+mu)*y0->mn);
-  iwork_size = 20 + y0->mn;
-  if (( rwork = nsp_matrix_create(NVOID,'r',1,rwork_size))== NULLMAT) return RET_BUG;
-  if (( iwork = nsp_matrix_create(NVOID,'r',1,iwork_size))== NULLMAT) return RET_BUG;
-
-  if ( ode_prepare(y0->m,y0->n,f,jac,args,&ode_d) == FAIL ) 
-    return RET_BUG;
-
-  /* output */
-
-  if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) return RET_BUG;
-
-  C2F(ierode).iero = 0;
-  C2F(eh0001).mesflg = 1 ;
-
-  if ( jac != NULL ) jt = 1; /* user supplied full jacobian */
-
-  /* loop on time */
-
-  for ( i= 0 ; i < time->mn ; i++ )
+  if ( op_ml != -1  && op_mu != -1 )  /* bandwith have been provided */
     {
-      double tout = time->R[i];
-      C2F(lsoda)(ode_system,&y0->mn,y0->R,&t0,&tout,&itol,&rtol,atol,
-		 &itask,&istate,&iopt,rwork->R,&rwork->mn,
-		 (int *)iwork->R,&iwork->mn,ode_jac_system,&jt);
-      t0 = tout;
-      if ( istate < 0 ) 
+      if ( op_ml < 0 || op_ml >= neq ||  op_mu < 0 || op_mu >= neq )
 	{
-	  Scierror("Error: istate=%d in %s\n",istate,NspFname(stack));
+	  Scierror("%s: lower and upper bandwith ml and mu badly specified\n",NspFname(stack));
 	  return RET_BUG;
 	}
-      if ( C2F(ierode).iero == 1 ) 
-	{
-	  break;
-	}
-      /* FIXME : put a memcpy here */
-      memcpy(res->R+res->m*i,y0->R,res->m*sizeof(double));
+      jac_is_banded = TRUE;
     }
 
-  if ( C2F(ierode).iero == 1 ) 
+
+  /*   for the parameters jt (lsoda) and mf (lsode) 
+   *
+   *   if method == ode_default then lsoda is used (lsoda is able to switch between adams and stiff (bdf) methods)
+   *      jt = 1 full jacobian provided by user (should be detected with jac != NULL  and op_ml < 0 and op_mu < 0)
+   *      jt = 2 full jacobian computed by FD (should be detected with jac == NULL and op_ml < 0 and op_mu < 0)      
+   *      jt = 4 banded jacobian provided by the user (should be detected with jac != NULL  and op_ml >= 0 and op_mu >= 0)
+   *      jt = 5 banded jacobian computed by FD (should be detected with jac != NULL  and op_ml >= 0 and op_mu >= 0)
+   *
+   *   if method == adams
+   *      mf = 10  no jacobian used (simple fonctionnal "fixed point" iteration to solve the non linearity)
+   *      mf = 11  full jacobian provided by the user
+   *      mf = 12  full jacobian computed by FD (FIXME: should be implemented or not)
+   *      mf = 14  banded jacobian provided by the user 
+   *      mf = 15  banded jacobian computed by FD
+   *
+   *   if method == stiff (bdf)
+   *      mf = 20 + jt  with jt just as before
+   *
+   *   size of rwork array:
+   *      lsoda max(lrn, lrs)   
+   *          lrn = 20 + 16*neq,
+   *          lrs = 22 + 9*neq + neq^2           if jt = 1 or 2,
+   *          lrs = 22 + 10*neq + (2*ml+mu)*neq  if jt = 4 or 5.
+   *
+   *      lsode
+   *             20 + 16*neq                    for mf = 10,
+   *             20 + 16*neq + neq^2            for mf = 11 (or 12) 
+   *             22 + 17*neq + (2*ml+mu)*neq    for mf = 14 (or 15)
+   *             22 +  9*neq + neq^2            for mf = 21 or 22,
+   *             22 + 10*neq + (2*ml + mu)*neq  for mf = 24 or 25.
+   *       
+   *   size of iwork array: lsoda: 20 + neq
+   *                        lsode: 20 if mf = 10
+   *                               20 + neq for other values of mf
+   *      for mf = 14, 24 or 25 or jt = 4 or 5  iwork[0] = ml and iwork[1] = mu
+   *          
+   */ 
+
+  if ( method == adams )
     {
-      /* resize matrix : just returning relevant values */
-      if (nsp_matrix_resize (res,res->m,i-1) != OK) return RET_BUG;
+      if ( jac != NULL )
+	mf = jac_is_banded ? 14 : 11;
+      else
+	mf = jac_is_banded ? 15 : 10;
+      
+      switch (mf)
+	{
+	case 10:
+	  rwork_size = 20 + 16*neq; iwork_size = 20; break;
+	case 11:
+	  rwork_size = 22 + 16*neq + neq*neq; iwork_size = 20 + neq; break;
+	case 14:
+	case 15:
+	  rwork_size = 22 + 17*neq + (2*op_ml+op_mu)*neq; iwork_size = 20 + neq; break;
+	}
+    }
+  else  /* method == ode_default (lsoda) or stiff (bdf) */
+    {
+      if ( jac != NULL )
+	jt = jac_is_banded ? 4 : 1;
+      else
+	jt = jac_is_banded ? 5 : 2;
+      mf = 20 + jt;
+      
+      if ( jt == 1 || jt == 2 )  /* full jacobian */
+	rwork_size = Max(20 + 16*neq,22 + 9*neq + neq*neq);
+      else                       /* banded jacobian */
+	rwork_size = Max(20 + 16*neq,22 + 10*neq + (2*op_ml+op_mu)*neq);
+      iwork_size = 20 + neq;
     }
 
+
+  if ( (rwork = nsp_alloc_work_doubles(rwork_size)) == NULL ) return RET_BUG;
+  if ( (iwork = nsp_alloc_work_int(iwork_size)) == NULL ) 
+    {
+      FREE(rwork); return RET_BUG;
+    }
+
+  if ( iopt == 1 )
+    {
+      rwork[0] = op_tcrit;
+      if ( finite(op_tcrit) ) 
+	tcrit_given = TRUE;
+      rwork[4] = op_h0; rwork[5] = op_hmax; rwork[6] = op_hmin; 
+      rwork[7] = 0.0; rwork[8] = 0.0; rwork[9] = 0.0;  /* these ones are not described in the lsode/lsoda doc but the doc says to set them to 0.0 */ 
+      iwork[5] = op_mxstep;  iwork[6] = 0; /* mxhnil parameter which is not currently set using odeoptions */
+      iwork[7] = 0; iwork[8] = 0; iwork[9] = 0;  
+      if ( method == ode_default )  /* lsoda */
+	{
+	  iwork[4] = 0; iwork[7] = op_mxordn; iwork[8] = op_mxords;
+	}
+      else if ( method == stiff )
+	iwork[4] = op_mxords;
+      else /* method == adams */
+	iwork[4] = op_mxordn;
+    }
+
+  if ( jac_is_banded )
+    {
+      iwork[0] = op_ml; iwork[1] = op_mu;
+    }
+
+  if ( ode_prepare(y0->m, y0->n, f, jac, args, &ode_d) == FAIL ) 
+    goto err;
+
+  /* memory for output variable(s) */
+  if ( task == 1 )
+    {
+      if (( res = nsp_matrix_create(NVOID,'r',neq,time->mn))== NULLMAT) 
+	goto err;
+    }
+  else if ( task == 2 || task == 3 )
+    {
+      outsize = 1000;
+      if (( res = nsp_matrix_create(NVOID,'r',neq,outsize))== NULLMAT) 
+	goto err;
+      if (( tt = nsp_matrix_create(NVOID,'r',1,outsize))== NULLMAT) 
+	goto err;
+    }
+  else
+    {
+      Scierror("%s: task optional parameter should be 1, 2 or 3 (got %d)\n",NspFname(stack), task);
+      goto err;
+    }
+
+  C2F(ierode).iero = 0;
+  C2F(eh0001).mesflg = warn ;
+
+  /* loop on time */
+  if ( task == 1 )     /* in this case the solver should output the solution at specified times */
+    {
+      int itask = tcrit_given ? 4 : 1; 
+      for ( i= 0 ; i < time->mn ; i++ )
+	{
+	  double tout = time->R[i];
+	  
+	  if ( method == ode_default )
+	    C2F(lsoda)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &jt, (void *) ode_d.args);
+	  else
+	    C2F(lsode)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &mf, (void *) ode_d.args);
+	  
+	  t0 = tout;
+	  
+	  if ( C2F(ierode).iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
+                                         /* and an error has already been "sent" */
+	    goto err;                    /* may be something better could be done like the following */
+
+	  if ( istate < 0  )
+	    {
+	      if ( lhs < 2 ) /* no ier variable at output => generate an error */
+		{
+		  if ( warn ) /* error messages have been already displayed */
+		    {
+		      Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
+		      goto err;
+		    }
+		  else
+		    {
+		      Scierror("Error: %s: integration fails (ier = %d)\n",NspFname(stack), istate);
+		      goto err;
+		    }
+		}
+	      else           /* ier is present => return what have been computed */
+		{
+/* 		  if ( ! warn ) */
+/* 		    Sciprintf("Warning: %s: integration fails to reach t=%g\n",NspFname(stack),tout); */
+		  nsp_matrix_resize (res, res->m, i-1);  
+		  break;
+		}
+	    }
+	  memcpy(res->R+neq*i, y0->R, neq*sizeof(double));
+	}
+    }
+  else  /* task == 2 or 3: the solution is output at each time step taken */
+        /* by the solver with a slight difference for the last step */
+    {
+      double tout = time->R[time->mn-1];
+      double dir = tout-t0 > 0 ? 1.0 : -1.0;
+      int itask = tcrit_given ? 5 : 2; 
+
+      /* copy first initial condition and initial time */
+      memcpy(res->R, y0->R, neq*sizeof(double));
+      tt->R[0] = t0;
+      i = 1;
+      while ( dir*(t0 - tout) < 0 )
+	{
+	  if ( method == ode_default )
+	    C2F(lsoda)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &jt, (void *) ode_d.args);
+	  else
+	    C2F(lsode)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &mf, (void *) ode_d.args);
+	  
+	  if ( C2F(ierode).iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
+                                         /* and an error has already been "sent" */
+	    goto err;                    /* may be something better could be done like for istate < 0  */
+
+	  if ( istate < 0  )
+	    {
+	      if ( lhs < 3 )  /* no ier variable at output => generate an error */
+		{
+		  if ( warn ) /* error messages have been already displayed */
+		    {
+		      Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
+		      goto err;
+		    }
+		  else
+		    {
+		      Scierror("Error: %s: integration fails (ier = %d)\n",NspFname(stack), istate);
+		      goto err;
+		    }
+		}
+	      else           /* ier is present => return what have been computed */
+		{
+/* 		  if ( ! warn ) */
+/* 		    Sciprintf("Warning: %s: integration fails after t=%g\n",NspFname(stack),tt->R[i-1]); */
+		  break;
+		}
+	    }
+
+	  if ( i >= outsize)  /* needs to enlarge the arrays tt and res */
+	    {
+	      outsize *=2;
+	      if ( nsp_matrix_resize(res, neq, outsize) == FAIL ) goto err;
+	      if ( nsp_matrix_resize(tt, 1, outsize) == FAIL ) goto err;
+	    }
+
+	  memcpy(res->R+neq*i, y0->R, neq*sizeof(double));
+	  tt->R[i] = t0;
+	  i++;
+	}
+
+      nsp_matrix_resize(res, neq, i); 
+      nsp_matrix_resize(tt, 1, i); 
+
+      if ( task == 3  &&  istate >= 0 ) /* if itask==3 and if integration is completed (istate >= 0) do an interpolation */ 
+                                        /*  between tlast-h and tlast to obtain the final output exactly at tout */
+	{
+	  itask = tcrit_given ? 4 : 1; 
+	  if ( method == ode_default )
+	    C2F(lsoda)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &jt, (void *) ode_d.args);
+	  else
+	    C2F(lsode)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
+		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
+		       ode_d.c_jac, &mf, (void *) ode_d.args);
+
+	  if ( istate < 0 )   /* this should not occur (?) only an interpolation is needed...  */
+	    {
+	      Scierror("Error: istate=%d in %s\n",istate,NspFname(stack));
+	      goto err;
+	    }
+	  memcpy(res->R+neq*(res->n-1), y0->R, neq*sizeof(double));
+	  tt->R[tt->n-1] = tout;
+	}
+    }
+
+  FREE(rwork); FREE(iwork);
   ode_clean(&ode_d);
-  nsp_matrix_destroy(rwork);
-  nsp_matrix_destroy(iwork);
-  MoveObj(stack,1,(NspObject *) res);
-  return 1;
+
+
+  /* FIXME: better control of lhs */
+  if ( task == 1 )
+    {
+      MoveObj(stack,1,(NspObject *) res);
+      if ( lhs >= 2 )
+	{
+	  ier = istate == 2 ? 0 : abs(istate);
+	  if ( nsp_move_double(stack,2, (double)ier) == FAIL )	  
+	    return RET_BUG;
+	}
+    }
+  else  /* for task =2|3, at least 2 output arguments should be returned... */
+    {
+      MoveObj(stack,1,(NspObject *) res);
+      MoveObj(stack,2,(NspObject *) tt);
+      if ( lhs >= 3 )
+	{
+	  if ( nsp_move_double(stack,3, (double) istate) == FAIL )	  
+	    return RET_BUG;
+	}
+    }
+  return Max(1,lhs);
+
+ err:
+  FREE(rwork); FREE(iwork);
+  ode_clean(&ode_d);
+  nsp_matrix_destroy(res);
+  nsp_matrix_destroy(tt);
+  return RET_BUG;
+}
+
+
+static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix *y0, 
+			  double t0, NspMatrix *time, double rtol, NspMatrix *Matol, 
+			  int task, Boolean warn, int lhs, NspHash *odeoptions) 
+{
+  int op_mxstep=20000, op_nstiff=500, neq = y0->mn, status, noutrel;
+  double op_h0=0.0, op_hmax=0.0, tend = time->R[time->mn-1], safe=0.8, beta = 0.04, fac1=0.2, fac2=10.0;
+  nsp_option opts[] ={
+    { "h0",s_double , NULLOBJ,-1},
+    { "hmax",s_double,  NULLOBJ,-1},
+    { "mxstep", s_int, NULLOBJ,-1},
+    { "nstiff", s_int, NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+  
+  /* atol */
+  int itol=0;
+  const double defatol=1.e-9;
+  const double *atol=&defatol;
+  NspMatrix *res = NULLMAT, *tt = NULLMAT;
+
+  if ( Matol != NULL) 
+    {
+      /* itol   = 1 or 2 according as atol (below) is a scalar or array. */
+      if ( Matol->mn == 1 ) 
+	{
+	  itol = 0; atol = Matol->R;
+	}
+      else if ( Matol->mn == neq )
+	{
+	  itol = 1; atol = Matol->R;
+	}
+      else 
+	{
+	  Scierror("%s: size of atol should be equal to state size %d\n",NspFname(stack), neq);
+	  return RET_BUG;
+	}
+    }
+
+  /* get options from hashtable */
+  if ( odeoptions != NULL) 
+    {
+      if ( get_optional_args_from_hash(stack,odeoptions,opts,&op_h0,&op_hmax,&op_mxstep,&op_nstiff) == FAIL) 
+	return RET_BUG;
+    }
+  if ( op_hmax == 0.0 )
+    op_hmax = tend - t0;
+
+
+  if ( ode_prepare(y0->m, y0->n, f, NULL, args, &ode_d) == FAIL ) 
+    goto err;
+
+  /* memory for output variable(s) */
+  if ( task == 1 )
+    {
+      if (( res = nsp_matrix_create(NVOID,'r',neq,time->mn))== NULLMAT) 
+	goto err;
+    }
+  else if ( task == 2 || task == 3 )
+    {
+      if (( res = nsp_matrix_create(NVOID,'r',neq,op_mxstep+1))== NULLMAT) 
+	goto err;
+      if (( tt = nsp_matrix_create(NVOID,'r',1,op_mxstep+1))== NULLMAT) 
+	goto err;
+    }
+  else
+    {
+      Scierror("%s: task optional parameter should be 1, 2 or 3 (got %d)\n",NspFname(stack), task);
+      goto err;
+    }
+
+  if ( task == 1 )
+    status = nsp_dopri5(neq, ode_d.c_func, args, t0, y0->R, tend, op_hmax,
+			&op_h0, rtol, atol, itol, op_mxstep, op_nstiff, safe, beta, fac1, fac2,  
+			task, warn, res->R, time->R, time->mn, &noutrel);
+  else
+    status = nsp_dopri5(neq, ode_d.c_func, args, t0, y0->R, tend, op_hmax,
+			&op_h0, rtol, atol, itol, op_mxstep, op_nstiff, safe, beta, fac1, fac2,  
+			task, warn, res->R, tt->R, op_mxstep+1, &noutrel);
+
+  if ( status != COMPLETED  && ((task == 1  &&  lhs < 2) || (task != 1  &&  lhs < 3 )) )  /* no ier variable at output => generate an error */
+    {
+      if ( warn ) /* error messages have been already displayed */
+	Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
+      else
+	Scierror("Error: %s: integration fails (ier = %d)\n",NspFname(stack), status);
+      goto err;
+    }
+
+  if ( task == 1  &&  status != COMPLETED )
+    nsp_matrix_resize(res, neq, noutrel);
+  else if ( task != 1 )
+    {
+      nsp_matrix_resize(res, neq, noutrel);
+      nsp_matrix_resize(tt, 1, noutrel); 
+    }
+ 
+  ode_clean(&ode_d);
+
+  /* FIXME: better control of lhs */
+  if ( task == 1 )
+    {
+      MoveObj(stack,1,(NspObject *) res);
+      if ( lhs >= 2 )
+	{
+	  if ( nsp_move_double(stack,2, (double) status) == FAIL )	  
+	    return RET_BUG;
+	}
+    }
+  else  /* for task =2|3, at least 2 output arguments should be returned... */
+    {
+      MoveObj(stack,1,(NspObject *) res);
+      MoveObj(stack,2,(NspObject *) tt);
+      if ( lhs >= 3 )
+	{
+	  if ( nsp_move_double(stack,3, (double) status) == FAIL )	  
+	    return RET_BUG;
+	}
+    }
+  return Max(1,lhs);
+
+ err:
+  ode_clean(&ode_d);
+  nsp_matrix_destroy(res);
+  nsp_matrix_destroy(tt);
+  return RET_BUG;
 }
 
 
@@ -434,14 +933,14 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
 			    double t0,NspMatrix *time)
 {
   int job=OK, i , j , tk = (int) t0;
-  NspMatrix *res;
+  NspMatrix *res = NULLMAT;
 
-  if ( ode_prepare(y0->m,y0->n,f,NULL,args,&ode_d) == FAIL ) 
-    return RET_BUG;
+  if ( ode_prepare(y0->m,y0->n,f,NULL,args, &ode_d) == FAIL ) 
+    goto err;
 
   /* output */
-
-  if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) return RET_BUG;
+  if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) 
+    goto err;
 
   C2F(ierode).iero = 0;
 
@@ -452,16 +951,17 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
       if ( tk > tkp1 )
 	{
 	  Scierror("Error: given times are not increasing, %d followed by t(%d)=%d\n",tk,i+1,tkp1);
-	  nsp_matrix_destroy(res);
-	  return RET_BUG;
+	  goto err;
 	}
+
       for ( j = tk  ; j < tkp1 ; j++) 
 	{
 	  double t=(double) j;
 	  /* input output can be the same in ode_system */
-	  job= ode_system(&y0->mn,&t,y0->R,y0->R);
+	  job = ode_d.c_func(&y0->mn, &t, y0->R, y0->R, (void *)ode_d.args);
 	  if ( job == FAIL)  break;
 	}
+
       if ( job == FAIL) break;
       /* now y0 contains y(tkp1) we need to store it */
       memcpy(res->R+res->m*i,y0->R,res->m*sizeof(double));
@@ -471,11 +971,17 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
   if ( job == FAIL ) 
     {
       /* resize matrix : just returning relevant values */
-      if (nsp_matrix_resize(res,res->m,i-1) != OK) return RET_BUG;
+      if (nsp_matrix_resize(res,res->m,i-1) != OK) goto err;
     }
+
   ode_clean(&ode_d);
   MoveObj(stack,1,(NspObject *) res);
   return 1;
+
+ err:
+  ode_clean(&ode_d);
+  nsp_matrix_destroy(res);
+  return RET_BUG;
 }
 
 
@@ -756,14 +1262,14 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
   if ( lhs > 1 )
     {
       if ( nsp_move_double(stack,2, er_estim) == FAIL )
-	goto err;
+	return RET_BUG;
       if ( lhs > 2 )
 	{
 	  if ( nsp_move_double(stack,3, (double) ier) == FAIL )
-	    goto err;
+	    return RET_BUG;
 	  if ( lhs > 3 )
 	    if ( nsp_move_double(stack,4, (double) neval) == FAIL )
-	      goto err;
+	    return RET_BUG;
 	}
     }
   return Max(1,lhs);

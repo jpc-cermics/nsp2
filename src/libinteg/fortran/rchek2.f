@@ -1,10 +1,11 @@
       subroutine rchek2(job, g, neq, y, yh, nyh, g0, g1, gx, jroot, irt
-     $     ,IWORK)
+     $     ,IWORK, param)
 clll. optimize
       external g
       integer job, neq, nyh, jroot, irt
       double precision y, yh, g0, g1, gx
       dimension neq(*), y(*), yh(nyh,*), g0(*), g1(*), gx(*), jroot(*)
+      double precision param   ! use as a pointer to datas for external written in C
       integer iownd, iowns,
      1   icf, ierpj, iersl, jcur, jstart, kflag, l, meth, miter,
      2   maxord, maxcor, msbp, mxncf, n, nq, nst, nfe, nje, nqu
@@ -90,7 +91,7 @@ c     -------------- masking: disabling masks in cold-major-time-step------
  103     iwork(lmask+i)=0
 
       t0=tn
-      call g (neq, t0, y, ngc, g0)
+      call g (neq, t0, y, ngc, g0, param)
       nge = nge + 1
 
       do 110 i = 1,ngc
@@ -110,7 +111,7 @@ c      if (iwork(lirfnd) .eq. 0) go to 260
  203      iwork(lmask+i)=0
 c     if a root was found on the previous step, evaluate r0 = r(t0). -------
        call intdy (t0, 0, yh, nyh, y, iflag)
-       call g (neq, t0, y, ngc, g0)
+       call g (neq, t0, y, ngc, g0, param)
        nge = nge + 1
        do 210 i = 1,ngc
           if (dabs(g0(i)) .eq. zero) then
@@ -134,7 +135,7 @@ c set t1 to tn or toutc, whichever comes first, and get g at t1. -------
  310  t1 = tn
       do 320 i = 1,n
  320    y(i) = yh(i,1)
- 330  call g (neq, t1, y, ngc, g1)
+ 330  call g (neq, t1, y, ngc, g1, param)
       if(iero.gt.0) return
       nge = nge + 1
 
@@ -149,7 +150,7 @@ c     call droots to search for root in interval from t0 to t1. -----------
       call roots2(ngc,hming, jflag, t0, t1, g0, g1, gx, x, jroot)
       if (jflag .gt. 1) go to 360
       call intdy (x, 0, yh, nyh, y, iflag)
-      call g (neq, x, y, ngc, gx)
+      call g (neq, x, y, ngc, gx, param)
       if(iero.gt.0) return
       nge = nge + 1
       go to 350

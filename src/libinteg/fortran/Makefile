@@ -4,7 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = integ.a
 
-OBJSC = int3dnsp.o
+OBJSC = int3dnsp.o dopri5nsp.o integ-IN.o
 
 OBJSF = ainvg.o bnorm.o cfode.o  ewset.o fnorm.o intdy.o lsoda.o lsode.o \
 	lsodi.o prepj.o prepji.o prja.o rscma1.o rscom1.o solsy.o stoda.o \
@@ -12,7 +12,7 @@ OBJSF = ainvg.o bnorm.o cfode.o  ewset.o fnorm.o intdy.o lsoda.o lsode.o \
 	fromquadpack.o \
 	rgk4.o lsodar.o rscar1.o svcar1.o rchek.o roots.o \
 	colnew.o  rkf45.o rksimp.o twodq.o  ddaskr.o \
-	lsodar2.o rchek2.o roots2.o integ-IN.o xerrwv.o \
+	lsodar2.o rchek2.o roots2.o xerrwv.o \
 	dgesl.o dgefa.o	dgbsl.o dgbfa.o daux.o
 
 # from linpack:	dgesl.o dgefa.o	dgbsl.o dgbfa.o

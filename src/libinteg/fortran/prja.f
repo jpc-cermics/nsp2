@@ -1,8 +1,9 @@
 C/MEMBR ADD NAME=PRJA,SSI=0
       subroutine prja (neq, y, yh, nyh, ewt, ftem, savf, wm, iwm,
-     1   f, jac)
+     1   f, jac, param)
 clll. optimize
       external f, jac
+      double precision param ! use as a pointer to datas for external written in C
       integer neq, nyh, iwm
       integer iownd, iowns,
      1   icf, ierpj, iersl, jcur, jstart, kflag, l, meth, miter,
@@ -73,7 +74,7 @@ c if miter = 1, call jac and multiply by scalar. -----------------------
  100  lenp = n*n
       do 110 i = 1,lenp
  110    wm(i+2) = 0.0d+0
-      call jac (neq, tn, y, 0, 0, wm(3), n)
+      call jac (neq, tn, y, -1, -1, wm(3), n, param)
       if(iero.gt.0) return
       con = -hl0
       do 120 i = 1,lenp
@@ -90,7 +91,7 @@ c if miter = 2, make n calls to f to approximate j. --------------------
         r = max(srur*abs(yj),r0/ewt(j))
         y(j) = y(j) + r
         fac = -hl0/r
-        call f (neq, tn, y, ftem)
+        call f (neq, tn, y, ftem, param)
       if(iero.gt.0) return
         do 220 i = 1,n
  220      wm(i+j1) = (ftem(i) - savf(i))*fac
@@ -121,7 +122,7 @@ c if miter = 4, call jac and multiply by scalar. -----------------------
       lenp = meband*n
       do 410 i = 1,lenp
  410    wm(i+2) = 0.0d+0
-      call jac (neq, tn, y, ml, mu, wm(ml3), meband)
+      call jac (neq, tn, y, ml, mu, wm(ml3), meband, param)
       if(iero.gt.0) return
       con = -hl0
       do 420 i = 1,lenp
@@ -143,7 +144,7 @@ c if miter = 5, make mband calls to f to approximate j. ----------------
           yi = y(i)
           r = max(srur*abs(yi),r0/ewt(i))
  530      y(i) = y(i) + r
-        call f (neq, tn, y, ftem)
+        call f (neq, tn, y, ftem, param)
       if(iero.gt.0) return
         do 550 jj = j,n,mband
           y(jj) = yh(jj,1)

@@ -1,12 +1,13 @@
       subroutine lsodar2(f, neq, y, t, tout, itol, rtol, atol, itask,
      1            istate, iopt, rwork, lrw, iwork, liw, jac, jt,
-     2            g, ng, jroot)
+     2            g, ng, jroot, param)
       external f, jac, g
       integer neq, itol, itask, istate, iopt, lrw, iwork, liw, jt,
      1   ng, jroot
       double precision y, t, tout, rtol, atol, rwork
       dimension neq(*), y(*), rtol(*), atol(*), rwork(lrw), iwork(liw),
      1   jroot(ng)
+      double precision param   ! use as a pointer to datas for external written in C
 c-----------------------------------------------------------------------
 c this is the may 7, 1982 version of
 c lsodar.. livermore solver for ordinary differential equations, with
@@ -1365,7 +1366,7 @@ c-----------------------------------------------------------------------
       mxncf = 10
 c initial call to f.  (lf0 points to yh(*,2).) -------------------------
       lf0 = lyh + nyh
-      call f (neq, t, y, rwork(lf0))
+      call f (neq, t, y, rwork(lf0),param)
       if(iero.gt.0) return
       nfe = 1
 c load the initial value vector in yh. ---------------------------------
@@ -1433,7 +1434,7 @@ c check for a zero of g at t. ------------------------------------------
       if (ngc .eq. 0) go to 270
 c     --------------------- masking -----------------------
       call rchek2 (1, g, neq, y, rwork(lyh), nyh,
-     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork)
+     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork,param)
       if (iero.gt.0) return
 c      if (irt .lt. 0) go to 632
       go to 270
@@ -1453,7 +1454,7 @@ c
       if (itask .eq. 1 .or. itask .eq. 4) toutc = tout
 c     --------------------- masking -----------------------
       call rchek2 (2, g, neq, y, rwork(lyh), nyh,
-     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork)
+     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork, param)
 c     --------------------- masking -----------------------
       if(iero.gt.0) return
       if (irt .lt. 0) go to 632
@@ -1547,7 +1548,7 @@ c     call stoda(neq,y,yh,nyh,yh,ewt,savf,acor,wm,iwm,f,jac,prja,solsy)
 c-----------------------------------------------------------------------
       call stoda (neq, y, rwork(lyh), nyh, rwork(lyh), rwork(lewt),
      1   rwork(lsavf), rwork(lacor), rwork(lwm), iwork(liwm),
-     2   f, jac, prja, solsy)
+     2   f, jac, prja, solsy, param)
       if(iero.gt.0) return
       kgo = 1 - kflag
       go to (300, 530, 540), kgo
@@ -1585,7 +1586,7 @@ c
       if (ngc .eq. 0) go to 315
 c     --------------------- masking -----------------------
       call rchek2 (3, g, neq, y, rwork(lyh), nyh,
-     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork)
+     1   rwork(lg0), rwork(lg1), rwork(lgx), jroot, irt,iwork,param)
 c     --------------------- masking -----------------------
       if(iero.gt.0) return
       if(irt .eq. 2) then

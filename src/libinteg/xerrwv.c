@@ -81,7 +81,7 @@ int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, in
   if (C2F(eh0001).mesflg !=  0) 
     {
       int i;
-      for (i=0; i < *nmes ; i++) Scierror("%c",msg[i]);
+      for (i=0; i < msg_len ; i++) Scierror("%c",msg[i]);
       Scierror("\n");
       if ( *ni == 1) 
 	{
@@ -93,11 +93,11 @@ int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, in
 	}
       if ( *nr == 1 ) 
 	{
-	  Scierror("\twhere r1 is :%13.21f\n",*r1);
+	  Scierror("\twhere r1 is :%g\n",*r1);
 	}
       else if ( *nr ==  2) 
 	{
-	  Scierror("\twhere i1 is :%13.21f  and i2 :%13.21f \n",*r1,*r2);
+	  Scierror("\twhere r1 is :%g  and r2 :%g \n",*r1,*r2);
 	}
     }
   /* abort the run if iert = 2.*/
@@ -105,13 +105,61 @@ int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, in
   return 0;
 }
 
+
+/* 
+ *  in this version msg is only the routine name and the message is created from
+ *  the message number (which is cumbersome but allows a better presentation) 
+ */
+int C2F(xerrwvb)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, int *i2, 
+		int *nr, double *r1, double *r2, unsigned int  msg_len)
+{
+  if (C2F(eh0001).mesflg !=  0) 
+    {
+      int i;
+      for (i=0; i < msg_len ; i++) Sciprintf("%c",msg[i]);
+
+      switch ( *nerr )
+	{
+	case 1101:
+	  Sciprintf("\t t (=%g) and h (=%g) are such that t + h = t\n", *r1, *r2);
+	  Sciprintf("\t at next step ; integration stops\n");
+	  break;
+	case 101:
+	  Sciprintf("\t caution t (=%g) and h (=%g) are such that t + h = t\n", *r1, *r2);
+	  Sciprintf("\t at next step ; integration continues\n");
+	  break;
+	case 102:
+	  Sciprintf("\t previous message precedent given %d time will no more be repeated\n", *i1);
+	  break;
+	case 201:
+	  Sciprintf("\t at t (=%g), mxstep (=%d) steps needed before reaching tout\n", *r1, *i1);
+	  break;
+	case 202:
+	  Sciprintf("\t at t (=%g), ewt(%d) = %g is <= 0\n", *r1, *i1, *r2);
+	  break;
+	case 203:
+	  Sciprintf("\t at t (=%g), too much precision required w.r.t. machine precision tolsf (=%g)\n", *r1, *r2);
+	  break;
+	case 205:
+	  Sciprintf("\t at t (=%g) for step h (=%g) corrector does not", *r1, *r2);
+	  Sciprintf("\t converge with |h| = hmin\n");
+	  break;
+	}
+    }
+  
+  /* abort the run if iert = 2.*/
+  if ( *iert == 2 ) C2F(ierode).iero = 1;
+  return 0;
+}
+
+
 int C2F(xsetun)(int *lun)
 {
   /* unused */
   return 0;
 }
 
-int C2F(xset)(int *mflag)
+int C2F(xsetf)(int *mflag)
 {
   /* this routine resets the print control flag mflag */
   if ( *mflag == 0 || *mflag == 1) C2F(eh0001).mesflg = *mflag;
