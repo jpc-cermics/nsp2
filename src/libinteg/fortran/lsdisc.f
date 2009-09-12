@@ -30,11 +30,10 @@ c-----------------------------------------------------------------------
       double precision tt
       integer         iero
       common /ierode/ iero
-      include '../stack.h'
 c
       it=int(t)
       itout=int(tout)
-      iero=0	
+      iero=0
       if ( itout.lt.it) then 
          istate=-3
          return
