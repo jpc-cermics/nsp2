@@ -2,6 +2,7 @@
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
 #include "nsp/blas.h"
+#include "integ.h"
 
 /* Table of constant values */
 

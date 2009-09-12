@@ -16,7 +16,7 @@ OBJSF = ainvg.obj bnorm.obj cfode.obj  ewset.obj fnorm.obj intdy.obj lsoda.obj l
 	rgk4.obj lsodar.obj rscar1.obj svcar1.obj rchek.obj roots.obj \
 	colnew.obj  rkf45.obj rksimp.obj twodq.obj  ddaskr.obj \
 	lsodar2.obj rchek2.obj roots2.obj xerrwv.obj \
-	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj daux.obj
+	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj daux.obj util.obj
 
 # from linpack:	dgesl.obj dgefa.obj	dgbsl.obj dgbfa.obj
 

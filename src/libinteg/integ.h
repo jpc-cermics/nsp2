@@ -1,5 +1,5 @@
-#ifndef COLNEW_H
-#define COLNEW_H
+#ifndef INTEG_H
+#define INTEG_H
 
 #include "nsp/math.h"
 #include "nsp/sciio.h"
@@ -10,6 +10,7 @@
 #define FORTRAN_NAMES
 
 #ifdef FORTRAN_NAMES 
+#define nsp_twodq C2F(twodq)
 #define nsp_ode_ainvg C2F(ainvg)
 #define nsp_ode_bnorm C2F(bnorm)
 #define nsp_ode_cfode C2F(cfode)
@@ -87,7 +88,6 @@
 #define nsp_ode_svcar1 C2F(svcar1)
 #define nsp_ode_svcma1 C2F(svcma1)
 #define nsp_ode_svcom1 C2F(svcom1)
-#define nsp_ode_twodq C2F(twodq)
 #define nsp_ode_vmnorm C2F(vmnorm)
 #define nsp_ode_vnorm C2F(vnorm)
 #define nsp_ode_xermsg C2F(xermsg)

@@ -13,8 +13,9 @@ OBJSF = ainvg.o bnorm.o cfode.o  ewset.o fnorm.o intdy.o lsoda.o lsode.o \
 	rgk4.o lsodar.o rscar1.o svcar1.o rchek.o roots.o \
 	colnew.o  rkf45.o rksimp.o twodq.o  ddaskr.o \
 	lsodar2.o rchek2.o roots2.o \
-	dgesl.o dgefa.o	dgbsl.o dgbfa.o daux.o \
-	lsdisc.o ddasrt.o ddassl.o ddaskr.o
+	dgesl.o dgefa.o	dgbsl.o dgbfa.o daux.o 
+
+XX=	ddasrt.o ddassl.o lsdisc.o 
 
 # from linpack:	dgesl.o dgefa.o	dgbsl.o dgbfa.o
 

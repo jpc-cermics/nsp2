@@ -23,6 +23,9 @@
 #include "nsp/interf.h"
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "nsp/ode_solvers.h"
+#include "integ.h"
+
+
 
 /*-----------------------------------------------------------
  * ode interface
@@ -57,10 +60,6 @@ static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL};
 extern struct {
   int mesflg, lunit;
 } C2F(eh0001);
-
-extern struct {
-  int iero;
-} C2F(ierode);
 
 
 
@@ -115,7 +114,7 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[], v
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
     {
-      C2F(ierode).iero = 1;
+      ierode_1.iero = 1;
       return FAIL;
     }
   if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' ) 
@@ -126,7 +125,7 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[], v
   else 
     {
       Scierror("Error: ode: function returned argument is wrong (at t=%g)\n",*t);
-      C2F(ierode).iero = 1;
+      ierode_1.iero = 1;
       return FAIL;
     }
   return OK;
@@ -166,7 +165,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret)== FAIL) 
     {
-      C2F(ierode).iero = 1;
+      ierode_1.iero = 1;
       return FAIL;
     }
 
@@ -184,7 +183,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
 	      Scierror("Error: ode: something wrong with the jacobian dims (should be %d x %d got %d x %d)\n",
 		       dim,dim, ((NspMatrix *) nsp_ret)->m,((NspMatrix *) nsp_ret)->n);
 	      
-	      C2F(ierode).iero = 1;
+	      ierode_1.iero = 1;
 	      return FAIL;
 	    }
 	}
@@ -201,7 +200,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
 	    {
 	      Scierror("Error: ode: something wrong with the (banded) jacobian dims (should be %d x %d got %d x %d)\n",
 		       *ml+1+*mu,dim, ((NspMatrix *) nsp_ret)->m,((NspMatrix *) nsp_ret)->n);
-	      C2F(ierode).iero = 1;
+	      ierode_1.iero = 1;
 	      return FAIL;
 	    }
 	}
@@ -210,7 +209,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
   else 
     {
       Scierror("Error: ode: jacobian returned argument is wrong (at t=%g)\n",*t);
-      C2F(ierode).iero = 1;
+      ierode_1.iero = 1;
       return FAIL;
     }
   return OK;
@@ -504,6 +503,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
   /*   for the parameters jt (lsoda) and mf (lsode) 
    *
    *   if method == ode_default then lsoda is used (lsoda is able to switch between adams and stiff (bdf) methods)
+   *
    *      jt = 1 full jacobian provided by user (should be detected with jac != NULL  and op_ml < 0 and op_mu < 0)
    *      jt = 2 full jacobian computed by FD (should be detected with jac == NULL and op_ml < 0 and op_mu < 0)      
    *      jt = 4 banded jacobian provided by the user (should be detected with jac != NULL  and op_ml >= 0 and op_mu >= 0)
@@ -626,7 +626,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
       goto err;
     }
 
-  C2F(ierode).iero = 0;
+  ierode_1.iero = 0;
   C2F(eh0001).mesflg = warn ;
 
   /* loop on time */
@@ -648,7 +648,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 	  
 	  t0 = tout;
 	  
-	  if ( C2F(ierode).iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
+	  if ( ierode_1.iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
                                          /* and an error has already been "sent" */
 	    goto err;                    /* may be something better could be done like the following */
 
@@ -669,8 +669,8 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		}
 	      else           /* ier is present => return what have been computed */
 		{
-/* 		  if ( ! warn ) */
-/* 		    Sciprintf("Warning: %s: integration fails to reach t=%g\n",NspFname(stack),tout); */
+		  /* 		  if ( ! warn ) */
+		  /* 		    Sciprintf("Warning: %s: integration fails to reach t=%g\n",NspFname(stack),tout); */
 		  nsp_matrix_resize (res, res->m, i-1);  
 		  break;
 		}
@@ -700,7 +700,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
 		       ode_d.c_jac, &mf, (void *) ode_d.args);
 	  
-	  if ( C2F(ierode).iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
+	  if ( ierode_1.iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
                                          /* and an error has already been "sent" */
 	    goto err;                    /* may be something better could be done like for istate < 0  */
 
@@ -721,8 +721,8 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		}
 	      else           /* ier is present => return what have been computed */
 		{
-/* 		  if ( ! warn ) */
-/* 		    Sciprintf("Warning: %s: integration fails after t=%g\n",NspFname(stack),tt->R[i-1]); */
+		  /* 		  if ( ! warn ) */
+		  /* 		    Sciprintf("Warning: %s: integration fails after t=%g\n",NspFname(stack),tt->R[i-1]); */
 		  break;
 		}
 	    }
@@ -942,7 +942,7 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
   if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) 
     goto err;
 
-  C2F(ierode).iero = 0;
+  ierode_1.iero = 0;
 
   for ( i= 0 ; i < time->mn ; i++ )
     {
@@ -1034,7 +1034,7 @@ static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean v
     {
       if ( use_dqagse )  /* integration on [a,b] */
 	{
-/* 	  if ((obj->x = nsp_matrix_create("x",'r',21,1))== NULL) return FAIL; */
+	  /* 	  if ((obj->x = nsp_matrix_create("x",'r',21,1))== NULL) return FAIL; */
 	  if ((obj->x = nsp_matrix_create("x",'r',42,1))== NULL) return FAIL;
 	}
       else               /* integration on (-oo,a], [a,+oo) or (-oo,+oo) */
@@ -1294,7 +1294,7 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
 
 typedef int (*int2d_f)(const double *x, const double *y, double *z, int *n);
 
-extern int C2F(twodq)(int2d_f f, int *n, double *x, double *y, double *tol, int *iclose, 
+extern int nsp_twodq(int2d_f f, int *n, double *x, double *y, double *tol, int *iclose, 
 		      int *maxtri, int *mevals, double *result, double *error, 
 		      int *nu, int *nd, int *nevals, int *iflag, double *data, 
 		      int *iwork, int *vectflag, int *stat);
@@ -1560,7 +1560,7 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
 
   /* call the integrator  */
-  C2F(twodq)(int2d_func, &(x->n), x->R, y->R, &tol, &iclose, &limit, &meval, 
+  nsp_twodq(int2d_func, &(x->n), x->R, y->R, &tol, &iclose, &limit, &meval, 
 	     res->R, &er_estim, &nu, &nd, &neval, &iflag, rwork, iwork, &vect_flag, &stat);
 
   if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
