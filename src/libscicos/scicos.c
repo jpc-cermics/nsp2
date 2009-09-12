@@ -72,7 +72,7 @@ static void cossim(double *);
 static void callf(double *, double *, double *, double *,double *,int *);
 static int simblk(int *, double *, double *, double *, void *);
 static int simblkdaskr(double *, double *, double *, int *, double *, int *, double *, int *);
-static int grblk(int *, double *, double *, int *, double *, double *, void *);
+static int grblk(int *neq1,double * t,double * xc,int * ng1,double * g, void *param);
 static int grblkdaskr(int *, double *, double *, double *, int *, double *, double *, int *);
 static void addevs(double ,int *,int *);
 static int putevs(double ,int );
@@ -2356,11 +2356,11 @@ static int grblkdaskr(int *neq1,double * t,double * xc,double * xtd,int *ng1,dou
 
 static int grblk(int *neq1,double * t,double * xc,int * ng1,double * g, void *param)
 { 
- C2F(ierode).iero = 0;
- *ierr= 0;
- zdoit(g,xc, xc,t);
- C2F(ierode).iero = *ierr;
- return 0;
+  C2F(ierode).iero = 0;
+  *ierr= 0;
+  zdoit(g,xc, xc,t);
+  C2F(ierode).iero = *ierr;
+  return 0;
 }
 
 
