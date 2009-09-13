@@ -1,12 +1,11 @@
+// -*- Mode: scilab -*-
 // ode tests (bruno 10/9/2009)
 
-
 function print_info(num, algo, task, dir, rtol, atol, err, errtol)
-   printf("\n example #%d with algo=%s, task=%d, dir=%s",num, algo, task, dir);
-   printf("\n            rtol=%g, atol=%g FAILS", rtol,atol);
-   printf("\n            got err = %g while errtol = %g\n",err,errtol)
+  printf("\n example #%d with algo=%s, task=%d, dir=%s",num, algo, task, dir);
+  printf("\n            rtol=%g, atol=%g FAILS", rtol,atol);
+  printf("\n            got err = %g while errtol = %g\n",err,errtol)
 endfunction
-
 
 ////////////////////////////////////////////////////////////////////////
 // example #1: this is a non stiff example due to Felhberg, found in
@@ -14,13 +13,13 @@ endfunction
 ////////////////////////////////////////////////////////////////////////
 
 function [f] = exfehlberg(t,y)
-   f = [ 2*t*y(1)*log(max(y(2),1e-3));
+  f = [ 2*t*y(1)*log(max(y(2),1e-3));
 	-2*t*y(2)*log(max(y(1),1e-3))]
 endfunction
 
 function y = ex1_solution(t)
-   y = [ exp(sin(t.^2));
-	 exp(cos(t.^2))];
+  y = [ exp(sin(t.^2));
+	exp(cos(t.^2))];
 endfunction
 
 y0 = [1;%e];
@@ -114,7 +113,7 @@ function b=isfunc(obj)
   end
 endfunction
 
-if isfunc(scipy_ellpj) then
+if exists('scipy_ellpj') && isfunc(scipy_ellpj) then
 
 m = 0.51;
 
@@ -216,25 +215,26 @@ end // if isfunc(scipy_ellpj)
 
 function [f] = vanderpol2(t,u,alpha)
    // usual vanderpol but with the time scaling t -> t' = t/eps (alpha = 1/eps^2) 
-   f = [ u(2);...
+   f = [ u(2);
 	 ((1-u(1)^2)*u(2) - u(1))/alpha ];
 endfunction
 
 function [J] = vanderpol2jac(t,u,alpha)
-   J = [  0                   , 1;...
+  J = [  0                   , 1;
 	 -(2*u(1)*u(2)+1)/alpha , (1-u(1)^2)/alpha ];
 endfunction
 
 // exact solution for alpha = 1e-6, u0 = [2;0], and at time 1, 2, ..., 11
 // provided at Ernst Hairer 's home page
 // (http://www.unige.ch/~hairer/testset/stiff/vdpol/res_exact_pic)
+
 uex = [      
-  -0.1863646254808130e+01, ...
-   0.7535430865435460e+00, ...
-   0.1706167732170456e+01, ...
-  -0.8928097010248257e+00, ...
-  -0.1510606936744095e+01, ...
-   0.1178380000730945e+01, ...
+    -0.1863646254808130e+01, ...
+    0.7535430865435460e+00, ...
+    0.1706167732170456e+01, ...
+    -0.8928097010248257e+00, ...
+    -0.1510606936744095e+01, ...
+    0.1178380000730945e+01, ...
    0.1194414677695905e+01, ...
   -0.2799585996540082e+01, ...
    0.1890428596416747e+01, ...
@@ -268,14 +268,14 @@ for algo = ["default", "stiff"]
 	       rtol=rtol(j), atol=atol(j));
       err = max(abs(un - uex));
       if err >= errtol(j) then
-	 print_info(3, algo, 1, "forward with jac", rtol(j), atol(j), err, errtol(j));
-	 pause
+	print_info(3, algo, 1, "forward with jac", rtol(j), atol(j), err, errtol(j));
+	pause
       end
       un = ode(u0, 0, t, vanderpol2, type=algo, args=alpha, rtol=rtol(j), atol=atol(j));
       err = max(abs(un - uex));
       if err >= errtol(j) then
-	 print_info(3, algo, 1, "forward without jac", rtol(j), atol(j), err, errtol(j));
-	 pause
+	print_info(3, algo, 1, "forward without jac", rtol(j), atol(j), err, errtol(j));
+	pause
       end
    end
 end
