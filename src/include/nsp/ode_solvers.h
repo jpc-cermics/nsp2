@@ -1,6 +1,8 @@
 #ifndef SCI_ODE_SOLVERS
 #define SCI_ODE_SOLVERS
 
+#include "nsp/object.h"   /* for Boolean Type */
+
 /* return flag values */
 #define COMPLETED 0
 #define MORE_THAN_MAXSTEP_NEEDED 1
@@ -14,27 +16,28 @@
 #define FCT_EVAL_FAIL 9
 #define MALLOC_FAIL 10
 
-
-#include "nsp/object.h"   /* for Boolean Type */
-
 /* ode rhs and jacobian definition types */
-typedef int (*ode_f)(int *neq,const double *t,const double y[],double ydot[], void *param);
-typedef int (*ode_jac)(int *neq,const double *t,const double y[],int *ml,
-		       int *mu,double pd[],int *nrpd, void *param);
+
+typedef int (*ode_f) (const int *neq,const double *t ,const double *y,double *yd, void *param);
+typedef int (*ode_jac)(const int *neq,const double * t,const double * y,const int* ml,
+		       const int *mu, double *pd, const int *nrpd, void *param);
 
 /* prototypes for ode solvers routines */
+
 extern int nsp_dopri5(int n, ode_f fcn, void *param, double x, double *y, double xend, double hmax,
 		      double *h0, double rtol, const double *atol, int itol, int maxstep, 
 		      int nstiff, double safe, double beta, double fac1, double fac2,  
 		      int task, Boolean warning, double *yout, double *xout, int nout, int *noutrel);
 
-
 extern int C2F(lsoda)(ode_f f,int *neq, double *y, double *t, double *tout, int *itol, 
 		      double *rtol, const double *atol, int *itask, int *istate, int *iopt, 
-		      double *rwork, int *lrw, int *iwork, int *liw, ode_jac jac, int *jt, void *param);
+		      double *rwork, int *lrw, int *iwork, int *liw, ode_jac jac, int *jt, 
+		      void *param);
+
 
 extern int C2F(lsode)(ode_f f,int *neq, double *y, double *t, double *tout, int *itol, 
 		      double *rtol, const double *atol, int *itask, int *istate, int *iopt, 
 		      double *rwork, int *lrw, int *iwork, int *liw, ode_jac jac, int *mf, void *param);
+
 
 #endif
