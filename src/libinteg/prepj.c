@@ -1,22 +1,51 @@
 #include "integ.h"
 
-/* Common Block Declarations */
-
 #define ls0001_1 ls0001_._1
 
-/* Table of constant values */
-
-static int c_n1 = -1;
+/*
+ *  prepj is called by stode to compute and process the matrix 
+ *  p = i - h*  el(1)*  j , where j is an approximation to the jacobian. 
+ *  here j is computed by the user-supplied routine jac if 
+ *  miter = 1 or 4, or by finite differencing if miter = 2, 3, or 5. 
+ *  if miter = 3, a diagonal approximation to j is used. 
+ *  j is stored in wm and replaced by p.  if miter .ne. 3, p is then 
+ *  subjected to lu decomposition in preparation for later solution 
+ *  of linear systems with p as coefficient matrix. this is done 
+ *  by dgefa if miter = 1 or 2, and by dgbfa if miter = 4 or 5. 
+ *   
+ *  %additonal parameters 
+ *  in addition to variables described previously, communication 
+ *  with prepj uses the following.. 
+ *  y     = array containing predicted values on entry. 
+ *  ftem  = work array of length n (acor in stode). 
+ *  savf  = array containing f evaluated at predicted y. 
+ *  wm    = real work space for matrices.  on output it contains the 
+ *          inverse diagonal matrix if miter = 3 and the lu decomposition 
+ *          of p if miter is 1, 2 , 4, or 5. 
+ *          storage of matrix elements starts at wm(3). 
+ *          wm also contains the following matrix-related data.. 
+ *          wm(1) = sqrt(uround), used in numerical jacobian increments. 
+ *          wm(2) = h*el0, saved for later use if miter = 3. 
+ *  iwm   = int work space containing pivot information, starting at 
+ *          iwm(21), if miter is 1, 2, 4, or 5.  iwm also contains band 
+ *          parameters ml = iwm(1) and mu = iwm(2) if miter is 4 or 5. 
+ *  el0   = el(1) (input). 
+ *  ierpj = output error flag,  = 0 if no trouble, .gt. 0 if 
+ *          p matrix found to be singular. 
+ *  jcur  = output flag = 1 to indicate that the jacobian matrix 
+ *          (or approximation) is now current. 
+ *  this routine also uses the common variables el0, h, tn, uround, 
+ *  miter, n, nfe, and nje. 
+ */
 
 int
 nsp_ode_prepj (int *neq, double *y, double *yh, int *nyh, double *ewt,
 		  double *ftem, double *savf, double *wm, int *iwm, ode_f f,
 		  ode_jac jac, void *param)
 {
-  /* System generated locals */
+  int c_n1 = -1;
   int yh_dim1, yh_offset, i__1, i__2, i__3, i__4;
   double d__1, d__2;
-
   /* Local variables */
   int lenp;
   double srur;
@@ -32,45 +61,6 @@ nsp_ode_prepj (int *neq, double *y, double *yh, int *nyh, double *ewt,
   double con, yjj;
   int meb1;
 
-  /*lll. optimize 
-   *----------------------------------------------------------------------- 
-   *%purpose 
-   *prepj is called by stode to compute and process the matrix 
-   *p = i - h*el(1)*j , where j is an approximation to the jacobian. 
-   *here j is computed by the user-supplied routine jac if 
-   *miter = 1 or 4, or by finite differencing if miter = 2, 3, or 5. 
-   *if miter = 3, a diagonal approximation to j is used. 
-   *j is stored in wm and replaced by p.  if miter .ne. 3, p is then 
-   *subjected to lu decomposition in preparation for later solution 
-   *of linear systems with p as coefficient matrix. this is done 
-   *by dgefa if miter = 1 or 2, and by dgbfa if miter = 4 or 5. 
-   * 
-   *%additonal parameters 
-   *in addition to variables described previously, communication 
-   *with prepj uses the following.. 
-   *y     = array containing predicted values on entry. 
-   *ftem  = work array of length n (acor in stode). 
-   *savf  = array containing f evaluated at predicted y. 
-   *wm    = real work space for matrices.  on output it contains the 
-   *        inverse diagonal matrix if miter = 3 and the lu decomposition 
-   *        of p if miter is 1, 2 , 4, or 5. 
-   *        storage of matrix elements starts at wm(3). 
-   *        wm also contains the following matrix-related data.. 
-   *        wm(1) = sqrt(uround), used in numerical jacobian increments. 
-   *        wm(2) = h*el0, saved for later use if miter = 3. 
-   *iwm   = int work space containing pivot information, starting at 
-   *        iwm(21), if miter is 1, 2, 4, or 5.  iwm also contains band 
-   *        parameters ml = iwm(1) and mu = iwm(2) if miter is 4 or 5. 
-   *el0   = el(1) (input). 
-   *ierpj = output error flag,  = 0 if no trouble, .gt. 0 if 
-   *        p matrix found to be singular. 
-   *jcur  = output flag = 1 to indicate that the jacobian matrix 
-   *        (or approximation) is now current. 
-   *this routine also uses the common variables el0, h, tn, uround, 
-   *miter, n, nfe, and nje. 
-   *! 
-   *----------------------------------------------------------------------- 
-   */
   /* Parameter adjustments */
   --neq;
   --y;
@@ -339,6 +329,5 @@ nsp_ode_prepj (int *neq, double *y, double *yh, int *nyh, double *ewt,
       ls0001_1.ierpj = 1;
     }
   return 0;
-  /*----------------------- end of subroutine prepj ----------------------- 
-   */
-}				/* nsp_ode_prepj */
+}
+
