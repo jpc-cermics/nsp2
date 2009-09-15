@@ -27,6 +27,7 @@
 #include <glib-object.h>
 #include <vte/vte.h>
 
+#include "tumbi48.xpm"
 
 static void
 window_title_changed(GtkWidget *widget, gpointer win)
@@ -446,6 +447,7 @@ take_xconsole_ownership(GtkWidget *widget, gpointer data)
 int
 main(int argc, char **argv)
 {
+  GdkPixbuf *pixbuf;
   char **command_argv;
   int cmdindex =0;
   GtkWidget *window, *hbox, *scrollbar, *widget, *vbox, *socket_button;
@@ -598,6 +600,10 @@ main(int argc, char **argv)
     gtk_window_set_title (GTK_WINDOW (window), name);
   else 
     gtk_window_set_title (GTK_WINDOW (window), "Nsp");
+
+  pixbuf = gdk_pixbuf_new_from_xpm_data (tumbi48_xpm);
+  gtk_window_set_icon(GTK_WINDOW(window),pixbuf);
+
   gtk_window_set_wmclass (GTK_WINDOW (window), "nsp", "Nsp");
 
   /* create vbox */
@@ -694,7 +700,10 @@ main(int argc, char **argv)
   /* Set some defaults. */
   vte_terminal_set_audible_bell(VTE_TERMINAL(widget), audible);
   vte_terminal_set_visible_bell(VTE_TERMINAL(widget), !audible);
-  vte_terminal_set_cursor_blinks(VTE_TERMINAL(widget), blink);
+  /* this one is deprecated */
+  /*vte_terminal_set_cursor_blinks(VTE_TERMINAL(widget), blink); */
+  /* replaced by */
+  vte_terminal_set_cursor_blink_mode (VTE_TERMINAL(widget),VTE_CURSOR_BLINK_SYSTEM);
   vte_terminal_set_scroll_background(VTE_TERMINAL(widget), scroll);
   vte_terminal_set_scroll_on_output(VTE_TERMINAL(widget), FALSE);
   vte_terminal_set_scroll_on_keystroke(VTE_TERMINAL(widget), TRUE);
