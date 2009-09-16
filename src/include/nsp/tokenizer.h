@@ -77,13 +77,13 @@ struct _smat_tokenizer {
   char **S;
   int ind;
   int pos;
-  char *line;
+  const char *line;
 } ;
 
 typedef struct _string_tokenizer string_tokenizer ;
 
 struct _string_tokenizer { 
-  char *str;
+  const char *str;
   int pos;
 } ;
 
@@ -162,6 +162,7 @@ static token_ParseComment parse_comment;
 static token_ParseError parse_error ;
 static token_code2name code2name;
 static int cdigit2num(char c);
-static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof, 
-					 char **nsp_input_string,  int *nsp_input_pos );
+static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_size,
+					 int *len_line, int *eof, 
+					 nsp_const_string *nsp_input_string,  int *nsp_input_pos );
 #endif 

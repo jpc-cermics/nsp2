@@ -1205,7 +1205,7 @@ static void SciSMatReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_si
 
 
 /*
- * Used when Scilab input is from a string
+ * Used when nsp input is from a string
  */
 
 static void SciStringReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
@@ -1215,9 +1215,9 @@ static void SciStringReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_
 
 
 static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof, 
-					 char **nsp_input_string,  int *nsp_input_pos )
+					 nsp_const_string *nsp_input_string,  int *nsp_input_pos )
 {
-  char *s,*s1;
+  const char *s,*s1;
   *eof=0;
   if ( *nsp_input_string == NULL) 
     {
@@ -1244,10 +1244,10 @@ static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_si
     }
   else 
     {
-      *s1='\0';
-      *nsp_input_pos += s1-s;
-      strncpy(buffer,s,*buf_size);
-      *len_line = strlen(buffer);
+      *len_line = s1-s;
+      *nsp_input_pos += s1-s +1 ;
+      strncpy(buffer,s,Min(*buf_size,*len_line));
+      buffer[*len_line]='\0';
     }
   return ;
 }
