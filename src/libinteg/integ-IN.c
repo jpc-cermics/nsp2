@@ -343,7 +343,7 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
   NspObject *f= NULL, *jac=NULL,*g=NULL, *args=NULL;
   NspHash *odeoptions = NULL;
   NspList *gargs=NULL;
-  double t0, rtol=1.e-7;  /* FIXME: may be it is better to intialize to 0.0 because the default tolerance depends on the solver used */
+  double t0, rtol=0.0;
   Boolean warn = TRUE;
   int ng=-1, task=1;
   char *type=NULL;
@@ -406,6 +406,16 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
       Scierror("%s: argument #3 (t) is not strictly monotone (or +- Inf detected)\n",NspFname(stack));
       return RET_BUG;
     }
+  else  /* verify compatibility between t0 and t */
+    {
+      if ( (time->R[time->mn-1] > t0 && time->R[0] < t0) || (time->R[time->mn-1] < t0 && time->R[0] > t0) ) 
+	{
+	  Scierror("%s: argument #3 (t) is not compatible with argument #2 (t0)\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( warn && (task == 2 || task == 3) && time->mn > 1 )
+	Sciprintf("%s: Warning for task=2 or 3, t should be a scalar (use the last component)\n",NspFname(stack));
+    }
 
   switch ( methode ) 
     {
@@ -438,7 +448,6 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
     { "h0",s_double , NULLOBJ,-1},
     { "hmax",s_double,  NULLOBJ,-1},
     { "hmin",s_double,  NULLOBJ,-1},
-    /*    { "itask",s_int,  NULLOBJ,-1},  itask is an optional parameter now (named task) */
     { "ixpr",s_int,NULLOBJ,-1},
     { "jactyp",s_int,NULLOBJ,-1},
     { "ml",s_int,NULLOBJ,-1},
@@ -454,12 +463,15 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
   Boolean jac_is_banded=FALSE, tcrit_given=FALSE;
   /* atol */
   int itol=1;
+  const double defrtol=1e-7;
   const double defatol=1.e-9;
   const double *atol=&defatol;
   int istate=1,iopt=0,i, outsize;
   double *rwork = NULL;
   int *iwork = NULL;
   NspMatrix *res = NULLMAT, *tt = NULLMAT;
+
+  if ( rtol <= 0.0 ) rtol = defrtol;
 
   if ( Matol != NULL) 
     {
@@ -817,9 +829,12 @@ static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix 
   
   /* atol */
   int itol=0;
-  const double defatol=1.e-9;
+  const double defrtol=1.e-4;
+  const double defatol=1.e-6;
   const double *atol=&defatol;
   NspMatrix *res = NULLMAT, *tt = NULLMAT;
+
+  if ( rtol <= 0.0 ) rtol = defrtol;
 
   if ( Matol != NULL) 
     {
