@@ -8,8 +8,10 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-x = ode(x0,t0,t,f)
-x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htable)
+x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
+[x,tt] = ode(x0, t0, t, f, task=2|3)
+[x, ier] = ode(x0,t0,t,f, task=1, type=method, atol=ea, rtol=er, jac=Df, args=obj, odeoptions=htable, warn=b)
+[x, tt, ier] = ode(x0,t0,t,f, task=2|3, type=method, atol=ea, rtol=er, jac=Df, args=obj, odeoptions=htable, warn=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -17,37 +19,54 @@ x = ode(x0,t0,t,f, atol=ea, rtol=er, jac=Df, args=obj, type=str, odeoptions=htab
   \begin{varlist}
     \vname{x0}: real vector, initial condition.
     \vname{t0}: real scalar, initial time.
-    \vname{t}: real vector with increasing time instants at which the solution must be computed and recorded.
-    \vname{f}: nsp function defining the vector field of the differential equation.
+    \vname{t}: when task=1, \verb+t+ should a real vector with time instants at which the solution must
+    be computed and recorded (final integration time is \verb+t($)+); when task=2 or 3, \verb+t+ is a 
+    scalar given the final integration time.
+    \vname{f}: nsp function or string (name of a C or fortran function dynamicaly linked to nsp) 
+               defining the vector field of the differential equation.
+    \vname{task=num}: output mode, num could be equal to 1 (the default), 2 or 3. See explanations hereafter.
+    \vname{type=str}: ode solver to use, str is a string among  "default", "adams", "stiff" or "rkd5".
     \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
-    (default is \verb+atol=1e-9+ and \verb+rtol=0+). \verb+atol+ can be a vector of same size as 
+    (default values depends on the solver used). \verb+atol+ can be a vector of same size as 
     the vector \verb+x0+.
-    \vname{jac=Df}: optional named argument. \verb+Df+ should be a nsp function giving the Jacobian of function \verb+f+.
+    \vname{jac=Df}: \verb+Df+ should be a nsp function or a string (name of a C or fortran function dynamicaly linked 
+                    to nsp) defining the Jacobian of function \verb+f+.
     \vname{args=obj}: optional named argument used to pass additional parameters to the function \verb+f+ 
     (and to the function \verb+Df+ if it is provided). It can be any nsp object.
-    \vname{type=str}: optional named argument (scalar string) could be "default" (which is the default) or "discrete"
-    \vname{odeoptions}: a hash table of parameters for fine manual tuning of the ode solver.
+
+    \vname{odeoptions}: a hash table of parameters for fine manual tuning of the choosen ode solver.
+    \vname{warn=b}: boolean scalar, default is true. Use \verb+warn=%f+ to remove the display of warning 
+                    informations from the ode solvers in the nsp console.
+    \vname{x}: solution at time instants \verb+t+ choosen by the user (task=1) or at each time step (task=2 or 3)
+    \vname{tt}: time instants choosen by the solver (task=2 or 3).
+    \vname{ier}: error/warning indicator 
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
 
-When type is not "discrete", this function computes an approximate solution of the ordinary differential equation:
+This function computes an approximate solution of the ordinary differential equation:
 $$
 \begin{array}{l}
    \dot{x}(t) = f(t, x(t)), \; f: R \times R^d \rightarrow  R^d \\
    x(t_0) = x_0  \in  R^d
 \end{array}
 $$
-using the Livermore solvers odepack. Currently only lsoda is interfaced and this solver begin with the Adams
-method (for nonstiff systems) but switches  automatically to bdf method if the differential equation is detected
-as being stiff. 
+using various solvers (choosen by named optional \verb+type+ argument) 
+\begin{itemize}
+\item "default": lsoda solver (from the Livermore solvers odepack collection). Default tolerances: atol=1e-9,
+  rtol=1e-7.  
+\item "adams": lsode solver (from the Livermore solvers odepack collection) using adams method. Default tolerances: atol=1e-9, rtol=1e-7.
+\item "stiff": lsode solver (from the Livermore solvers odepack collection) using bdf method. Default tolerances: atol=1e-9, rtol=1e-7.
+\item "rkd5": dopri5 (Runge-Kutta) solver. Default tolerances: atol=1e-6, rtol=1e-4.
+\end{itemize}
+
 
 \itemdesc{header of the function {\tt f}}
 The function $f$ takes as first argument a scalar $t$, then a vector $x$ of length $d$ as 2d argument and 
-must output a vector of length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of an autonomous differential equation)
-it should nevertheless have this parameter as first argument. In brief \verb+f+ should have the
-form:
+must output a vector of length $d$. Note that even if $f$ doesn't depend explicitly of the time $t$ (case of 
+an autonomous differential equation) it should nevertheless have this parameter as first argument. 
+In brief \verb+f+ should have the form:
 \begin{quote}
 {\tt function y = f(t,x) \\
       ....}
@@ -61,13 +80,6 @@ object (see examples). In this case \verb+f+ has the form:
 {\tt function y = f(t,x,obj) \\
       ....}
 \end{quote}
-
-\itemdesc{the vector of time instants  {\tt t}}
-The (approximate) solution is got at the time instants defined by the argument \verb+t+.
-If \verb+t+ as $n$ components says  \verb+t = [t1, t2, ..., tn]+ then the output is a
-$d \times n$ array and the k th column is an approximation of $x(tk)$. This output
-time instants don't correspond to time step taken by the solver (see details here
-after).
 
 
 \itemdesc{optional {\tt atol} and {\tt rtol} parameters: solver accuracy control}
@@ -84,19 +96,36 @@ etol_i =
 \end{array}
 \right.
 $$
- Btw note that the output time instants  of the vector \verb+t+ don't correspond 
-to the time steps taken by the solver. The  time steps $(\Delta t)_k$
-(and also the order of the current formula) are choosen by the solver such 
-that to be both efficient and to respect the required local tolerance. Note 
-also that the global error could be more larger than the local error. The 
-solution at the wanted output time instants is got from an interpolary 
-formula (wich is in fact natural to the multistep method used by lsoda).
 
-\itemdesc{optional jac parameter} The solver needs \verb+Df+, the jacobian
-of $x \mapsto f(t,x)$.  This function can be provided by the user
-with the optional named argument \verb+jac+. When \verb+jac+ is not given,
-the solver computes an approximation using finite differences. Note that, like
-for function \verb+f+, the formal argument \verb+t+ should be present even if
+\itemdesc{output mode {\tt task} and arguments {\tt t} and {\tt tt}}
+Each solver integrates the differential equation from \verb+t0+ in
+direction of $T$ ($T$ the last or unique component of \verb+t+) taking 
+time steps $(\Delta t)_k$ (such as the local error tolerance is respected) 
+until it overshoots $T$ (note that integration is forward in time if 
+$T>t0$ and backward in time if $T<t0$). The solution can be recorded
+differently depending on the parameter task:
+\begin{description}
+\item[task=1] In this case the approximate solution is output
+at the time instants specified in the vector {\tt t}, so \verb+x+ is
+a $d \times length(t)$ array (the values are obtained by an interpolation
+formula specific to each solver).
+
+\item[task=2 or 3] In this case the approximate solution is given at each
+time instants taken by the solver. The slight difference is that the last
+value for \verb+task=2+ is the first time the solver overshoots \verb+t+
+while for \verb+task=3+ the last value is computed exactly at  \verb+t+
+(by interpolation as for task=1) and so \verb+tt($)+$=T$. Notes that the 
+initial time \verb+t0+ is the first component of the output times \verb+tt+
+and the intial solution \verb+x0+ are the first column of the output
+solution \verb+x+.    
+\end{description}
+
+\itemdesc{optional jac parameter} Depending on the solver used, the jacobian 
+\verb+Df+, of $x \mapsto f(t,x)$ could be required and this function can be 
+provided by the user with the optional named argument \verb+jac+. When 
+\verb+jac+ is not given (and the jacobian is needed) the solver computes an 
+approximation using finite differences. Note that, like for function \verb+f+, 
+the formal argument \verb+t+ should be present even if
 the Jacobian does not explicitly depend on time. So the header of
 the nsp function defining \verb+jac+, the Jacobian of \verb+f+ should be as follows:
 \begin{quote}
@@ -120,11 +149,23 @@ $$
   \dot{x}(t) = - x, \; x(0) = 1\,.
 $$ 
 The solution is known to be ($x(t) = exp(-t)$);
-\begin{program}\HCode{function y=f1(t,x);y=-x;endfunction\Hnewline
-t = linspace(0,4,10);\Hnewline
-x = ode(1,0,t,f1)\Hnewline
-exp(-t)}
-\end{program}
+\begin{Verbatim}
+function y=f1(t,x);y=-x;endfunction
+
+// output solution at specific time (task=1 (default))
+t = linspace(0,4,10);
+x = ode(1,0,t,f1);
+// error
+x - exp(-t)
+
+// output solution at time choosen by the solver (task=2)
+[x,tt] = ode(1,0,4,f1,task=2);
+x - exp(-tt)
+
+// same thing using the dopri5 solver
+[x,tt] = ode(1,0,4,f1,task=2,type="rkd5")
+x - exp(-tt)
+\end{Verbatim}
   
   
 \paragraph{example 2} The Brusselator. We want to solve:
@@ -199,16 +240,15 @@ subplot(2,2,4)\Hnewline
 plot2d(t',[up(2,:)',ud(2,:)',ua(2,:)'],style=[2,3,5], leg="pure@damped@amplified")\Hnewline
 xtitle("velocity fct of time","t","dx/dt(t)")}
 \end{program}
-  
-
  
 \end{examples}
 
 \begin{manseealso}
-  \manlink{intg}{intg}, \manlink{int2d}{int2d}  
+  \manlink{intg}{intg}
 \end{manseealso}
 
 % -- Authors
 \begin{authors}
- Linda r. Petzold, Alan C. Hindmarsh. Nsp interface: Jean-Philippe Chancelier
+ odepack: Linda r. Petzold, Alan C. Hindmarsh. dopri5: H. Hairer (translated in C and adapted/modified
+for nsp by B. Pincon).  Nsp interface: Jean-Philippe Chancelier and Bruno Pincon
 \end{authors}
