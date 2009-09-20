@@ -106,12 +106,10 @@ nsp_ode_roots2 (int *ng, double *hmin, int *jflag, double *x0, double *x1,
 
 
   /* Local variables */
-  double tmax;
-  int iunstuck, i__;
-  double t2;
-  int xroot, zroot, sgnchg;
+  double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
-  double fracsub, fracint;
+  int iunstuck, i__;
+  int xroot, zroot, sgnchg;
 
   --jroot;
   --gx;

@@ -257,16 +257,13 @@ nsp_twodq (Twodqf f, int *n, double *x, double *y, double *tol,
   double d__1;
 
   /* Local variables */
-  double node[9];
+  double emach, epsabs, newerr, newres;
+  double fadd=0, node1[9], node2[9], a, e, node[9], r__, u[3], v[3];
   int full;
-  static double atot;
-  double node1[9], node2[9], a, e;
   int i__, j;
-  double emach;
-  double r__, u[3], v[3];
-  double epsabs;
   int rndcnt;
-  double newerr, newres, fadd;
+
+  static double atot;
 
   /* Parameter adjustments */
   y -= 4;
@@ -996,9 +993,9 @@ tdq_tridv (double *node, double *node1, double *node2, double *coef,
   double d__1, d__2;
 
   /* Local variables */
+  double s[3];
   double temp, coef1;
   int i__, j;
-  double s[3];
   int t[3];
 
   /* Parameter adjustments */
@@ -1176,12 +1173,10 @@ tdq_lqm0vect (Twodqf f, double *u, double *v, double *res8,
 
 
   /* Local variables */
+  double emach, x[28], y[28], dresc, fvect[28], uflow, t_area__, res6, u1, u2, r6, u3, v1, v2, v3, z1, z2, z3, resab6;
   int j, k;
-  double emach, x[28], y[28], dresc, fvect[28], uflow;
   int n1;
-  double u1, u2, r6, u3, v1, v2, v3, z1, z2, z3, resab6;
   int n28;
-  double t_area__, res6;
 
   /* Parameter adjustments */
   --v;
@@ -1423,12 +1418,10 @@ tdq_lqm1vect (Twodqf f, double *u, double *v, double *res11,
 
 
   /* Local variables */
+  double emach, x[46], y[46], dresc, fvect[46], f0, uflow, t_area__, res9, u1, u2, u3, v1, v2, r9, v3, z1, z2, z3, resab9;
   int j, k;
-  double emach, x[46], y[46], dresc, fvect[46], f0, uflow;
   int n1;
-  double u1, u2, u3, v1, v2, r9, v3, z1, z2, z3, resab9;
   int n46;
-  double t_area__, res9;
 
   /* Parameter adjustments */
   --v;

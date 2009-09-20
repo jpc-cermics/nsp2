@@ -91,27 +91,19 @@ nsp_ode_ddasrt (dassl_res res, int *neq, double *t, double *y, double *yprime,
   double d__1, d__2;
   
   /* Local variables */
-  int done;
-  double hmax;
-  int lphi;
-  double hmin, h__;
-  int i__, mband;
-  double r__;
-  int lenpd;
-  double atoli;
-  int msave, leniw, itemp, nzflg;
-  int ntemp, lenrw;
-  double tdist;
-  int mxord;
-  double rtoli, tnext, tstop;
-  int le;
-  double ho, rh;
-  double tn;
-  int lg0, lg1;
-  double uround, ypnorm;
-  int lpd;
   char msg[80];
+  double atoli, hmax, hmin, h__, ho, rh, r__, rtoli, tnext, tstop, tdist, tn, uround, ypnorm;
+  int done;
+  int i__, mband;
+  int le;
+  int lenpd;
+  int lg0, lg1;
   int lgx, lwm, irt, lwt;
+  int lpd;
+  int lphi;
+  int msave, leniw, itemp, nzflg;
+  int mxord;
+  int ntemp, lenrw;
 
   /****MODIF 
    *  WHEN A ROOT IS FOUND YPRIME WAS NOT UPDATED. see c*SS* modifications 
@@ -2241,10 +2233,8 @@ nsp_ode_drchek (int *job, dassl_g g, int *ng, int *neq, double *tn,
   double d__1;
 
   /* Local variables */
-  double temp1, temp2, h__;
+  double t1, temp1, temp2, h__, x, hming;
   int i__, jflag;
-  double x, hming;
-  double t1;
   int zroot;
 
   /* 
@@ -2603,11 +2593,10 @@ nsp_ode_droots (int *ng, double *hmin, int *jflag, double *x0, double *x1,
 
 
   /* Local variables */
-  double tmax;
+  double t2, tmax;
   int i__;
-  double t2;
-  int xroot, zroot, sgnchg;
   int imxold, nxlast;
+  int xroot, zroot, sgnchg;
 
   /*     subroutine roots (ng, hmin, jflag, x0, x1, g0, g1, gx, x, jroot) 
    * 

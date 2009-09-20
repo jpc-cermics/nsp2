@@ -64,8 +64,7 @@ static int rk_odeint (double *ystart, int *nvar, double *x1, double *x2, double 
 		      rk_rkqc_f rkqc, void *param)
 {
   int i__1;
-  double d__1, d__2;
-  double hdid, dydx[10], xsav;
+  double d__1, d__2, hdid, dydx[10], xsav;
   int nstp;
   double h__;
   int i__;
@@ -258,9 +257,9 @@ static int rk_rkqc (double *y, double *dydx, int *n, double *x, double *htry,
   double d__1, d__2, d__3;
 
   /* Local variables */
+  double dysav[10], pgrow, ytemp[10], hh, errmax, pshrnk;
   double xsav, ysav[10], h__;
   int i__;
-  double dysav[10], pgrow, ytemp[10], hh, errmax, pshrnk;
 
   /*     implicit undefined (a-z) 
    */

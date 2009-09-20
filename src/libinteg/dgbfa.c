@@ -90,9 +90,9 @@ nsp_ode_dgbfa (double *abd, int *lda, int *n, int *ml, int *mu, int *ipvt,
   int abd_dim1, abd_offset, i__1, i__2, i__3, i__4;
 
   /* Local variables */
-  int i__, j, k, l, m;
   double t;
   int i0, j0, j1, lm, mm, ju;
+  int i__, j, k, l, m;
   int jz, kp1, nm1;
 
   /* Parameter adjustments */

@@ -80,27 +80,18 @@ nsp_ode_lsodar (ode_f f, int *neq, double *y, double *t, double *tout,
   double d__1, d__2;
 
   /* Local variables */
-  double hmax;
+  double atoli,  ayi, hmx,  big,  ewti, size,  h0, rtoli, tdist, tnext, tolsf, w0,  hmax,  rh,  tcrit,  tol, sum,  tp;
+  int ihit=0;
   int irfp;
-  int ihit;
-  double ewti, size;
-  int len1c, len1n, len1s, i__, iflag;
-  double atoli;
-  int leniw, lenwm, lenyh, imxer;
-  double tcrit;
-  int lenrw, i1, i2;
-  double h0, rtoli, tdist, tnext, tolsf, w0;
-  int ml;
-  double rh;
-  int mu;
-  double tp;
-  int leniwc, lenrwc, lf0, lenrwn, lenrws, lyhnew;
-  double big;
-  int kgo;
-  double ayi, hmx;
   int irt;
-  double tol, sum;
+  int kgo;
   int len1, len2;
+  int len1c, len1n, len1s, i__, iflag;
+  int leniw, lenwm=0, lenyh, imxer;
+  int leniwc, lenrwc, lf0, lenrwn, lenrws, lyhnew;
+  int lenrw, i1, i2;
+  int ml;
+  int mu;
 
   /*----------------------------------------------------------------------- 
    *this is the may 7, 1982 version of 

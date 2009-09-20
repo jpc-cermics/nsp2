@@ -652,16 +652,13 @@ int colnew_nsp_colnew_0 (int n__, int *ncomp, int *m, double *aleft,
   double d__1, d__2;
 
   /* Local variables */
-  int nrec, lscl, ldmz, idmz, ldqz, lrhs, i__, iread, ndimf, ndimi, ldscl,
-    nmaxf, nfixf, ldelz, nfixi, nmaxi;
-  double dummy[1];
+  double dummy[1], precp1;
+  int ib, ic, lg, ip, lw, lv, lz, laccum, ldeldz, linteg, lxiold, ldqdmz, nsizef, lslope, nsizei;
   int lpvtg, k2, lpvtw;
-  double precp1;
-  int ib, ic, lg, ip, lw, lv, lz, laccum, ldeldz, linteg, lxiold, ldqdmz,
-    nsizef, lslope, nsizei;
   int lvalst;
   int nfxpnt;
   int np1, lxi;
+  int nrec, lscl, ldmz, idmz, ldqz, lrhs, i__, iread, ndimf, ndimi, ldscl,  nmaxf, nfixf, ldelz, nfixi, nmaxi;
 
   /* Fortran I/O blocks */
   /* Parameter adjustments */
@@ -1254,25 +1251,16 @@ nsp_colnew_contrl (double *xi, double *xiold, double *z__, double *dmz,
 
 
   /* Local variables */
-  double fact;
-  int ifin, icor, ifrz, i__, j;
-  double check, andif;
-  double anscl;
-  int imesh, ipred;
-  double anfix, relax;
+  double anfix, relax, anscl, arg, check, andif, fact, factor, relmin, rlxold, rnold, anorm, dummy[1], rnorm, rstart;
   int iconv, msing;
-  double rnold, anorm, dummy[1], rnorm;
-  int lj, it, iz;
-  double factor;
+  int ifin, icor, ifrz, i__, j;
   int ifreez;
-  double relmin;
-  int noconv;
-  double rlxold;
-  int lmtfrz;
-  double rstart;
-  int np1;
-  double arg;
+  int imesh, ipred;
   int inz;
+  int lj, it, iz;
+  int lmtfrz;
+  int noconv;
+  int np1;
 
   /* Parameter adjustments */
   --fixpnt;
@@ -2138,9 +2126,8 @@ static int nsp_colnew_skale (int *n, int *mstar, int *kd, double *z__, double *x
   double d__1, d__2;
 
   /* Local variables */
-  double basm[5], scal;
+  double basm[5], scal, h__;
   int idmz;
-  double h__;
   int j, l, icomp, mj, iz, np1;
   /* Parameter adjustments */
   scale_dim1 = *mstar;
@@ -2227,27 +2214,18 @@ static int nsp_colnew_newmsh (int *mode, double *xi, double *xiold, double *z__,
   double d__1, d__2, d__3, d__4, d__5;
 
   /* Local variables */
-  double accl, accr;
-  int lold;
-  double avrg;
-  int nmin;
-  double temp;
-  int lnew;
-  double tsum;
-  int nmax2, nfxp1, i__, j, l;
-  double x, hiold;
+  double accl, accr,  avrg,  degequ,  dx,  oneovh, hd6, xright,  slphmx,  temp,  tsum,  x, hiold,  xleft, d1[40], d2[40], dummy[1];
   int ileft, iflip, nregn;
-  double xleft, d1[40], d2[40], dummy[1];
-  int n2, noldp1, jj, in;
-  double dx;
+  int iright, lcarry=0;
   int jz, naccum;
-  double degequ;
-  int iright, lcarry;
-  double oneovh, hd6, xright;
   int kstore;
-  int np1;
-  double slphmx;
+  int lnew=0;
+  int lold;
+  int n2, noldp1, jj, in;
+  int nmax2, nfxp1, i__, j, l;
+  int nmin;
   int nmx;
+  int np1;
 
 
 
@@ -2883,8 +2861,9 @@ static int nsp_colnew_consts (int *k, double *rho, double *coef)
   /* Local variables */
   int koff, mtot, i__, j, l;
   int jcomp, ltoli;
-  double dummy[1];
   int mj, iz;
+  double dummy[1];
+
 
   /* 
 *********************************************************************** 
@@ -3094,14 +3073,11 @@ nsp_colnew_errchk (double *xi, double *z__, double *dmz, double *valstr,
   double d__1, d__2;
 
   /* Local variables */
+  double dummy[1], err[40], errest[40], x;
   int knew, ltjz, iback, j, i__, l;
-  double x;
-  int ltolj;
-  double dummy[1];
-  int lj, mj;
-  double errest[40];
   int kstore;
-  double err[40];
+  int lj, mj;
+  int ltolj;
 
   /* Fortran I/O blocks */
 
@@ -3288,24 +3264,17 @@ nsp_colnew_lsyslv (int *msing, double *xi, double *xiold, double *z__,
 
 
   /* Local variables */
-  int iold;
-  double gval;
-  int ncol, idmz, irhs;
-  double hrho, xcol, zval[40];
-  int izet, nrow;
-  double f[40], h__;
+  double at[28], df[800], dgz[40], xii, dmval[20], value, dummy[1], f[40], h__, gval, hrho, xcol, zval[40];
   int i__, j, l, lside;
-  double dmval[20], value;
   int idmzo;
-  double dummy[1];
-  int m1;
-  double df[800];
   int ig, jj;
-  double at[28];
+  int iold;
   int iv, iw;
-  int lw;
   int iz;
-  double dgz[40], xii;
+  int izet, nrow;
+  int lw;
+  int m1;
+  int ncol, idmz, irhs;
 
   /********************************************************************** 
    * 
@@ -4117,15 +4086,13 @@ nsp_colnew_vwblok (double *xcol, double *hrho, int *jj, double *wi,
     i__3, i__4;
 
   /* Local variables */
-  double fact, basm[5];
-  int jcol;
-  int j, l;
-  int jcomp, i0, i1, i2;
-  double ha[28] /* was [7][4] */ ;
-  int id;
-  double bl;
-  int mj, jn, ll, ir, jv, jw, iw, lp1, jdf;
   double ajl;
+  double bl, fact, basm[5], ha[28] /* was [7][4] */ ;
+  int id;
+  int j, l;
+  int jcol;
+  int jcomp, i0, i1, i2;
+  int mj, jn, ll, ir, jv, jw, iw, lp1, jdf;
 
   /* Parameter adjustments */
   --ipvtw;
@@ -4346,12 +4313,11 @@ nsp_colnew_gblock (double *h__, double *gi, int *nrow, int *irow, double *wi,
 
   /* Local variables */
   double fact, basm[5];
-  int jcol;
-  double rsum;
-  int j, l;
+  double hb[28] /* was [7][4] */ , rsum;
   int icomp, jcomp;
-  double hb[28] /* was [7][4] */ ;
   int id, jd, mj, ll, ir, ind;
+  int j, l;
+  int jcol;
 
   /* Parameter adjustments */
   gi_dim1 = *nrow;
@@ -4541,13 +4507,11 @@ nsp_colnew_approx (int *i__, double *x, double *zval, double *a, double *coef,
   int i__1, i__2, i__3;
 
   /* Local variables */
-  double fact;
-  int idmz;
-  double zsum;
-  int j, l;
-  double s;
-  int ileft, jcomp, lb;
   double bm[4], dm[7];
+  double fact, s, zsum;
+  int idmz;
+  int ileft, jcomp, lb;
+  int j, l;
   int mj, ll, ir, iz, iright, ind;
 
 
@@ -4770,8 +4734,8 @@ nsp_colnew_rkbas (double *s, double *coef, int *k, int *m, double *rkb,
   int coef_dim1, coef_offset, i__1, i__2, i__3;
 
   /* Local variables */
-  int i__, j, l;
   double p, t[10];
+  int i__, j, l;
   int lb, kpm1;
 
   /* 
@@ -4945,9 +4909,9 @@ static int nsp_colnew_horder (int *i__, double *uhigh, double *hi, double *dmz,
 
 
   /* Local variables */
+  double dn;
   double fact;
   int idmz, j, id;
-  double dn;
   int kin;
 
   /* Parameter adjustments */

@@ -74,26 +74,17 @@ nsp_ode_lsodi (lsodi_res res, ode_jac adda, Dgbydy jac, int *neq, double *y,
 
 
   /* Local variables */
-  double hmax;
-  int ihit;
-  int ires;
-  double ewti, size;
-  int i__, iflag;
-  double atoli;
-  int leniw, lenwm;
-  int imxer;
-  double tcrit;
+  double atoli,  ayi, hmx, tol, sum,  big,  ewti, size,  h0, rtoli, tdist, tnext, tolsf,  hmax,  rh,  tcrit,  tp,  w0;
   int i1, i2, lenrw;
-  double h0, rtoli, tdist, tnext, tolsf;
-  double w0;
-  int ml;
-  double rh;
-  int lp, mu;
-  double tp;
-  double big;
+  int i__, iflag;
   int ier, kgo;
-  double ayi, hmx, tol, sum;
+  int ihit=0;
+  int imxer;
+  int ires;
+  int leniw, lenwm=0;
+  int lp, mu;
   int lyd0;
+  int ml;
 
   /* 
    *!purpose 

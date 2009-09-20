@@ -39,10 +39,9 @@ int nsp_ode_intdy (double *t, int *k, double *yh, int *nyh, double *dky,
   int yh_dim1, yh_offset, i__1, i__2;
   /* Local variables */
   double c__;
+  double r__, s, tp;
   int i__, j;
-  double r__, s;
   int ic, jb, jj;
-  double tp;
   int jb2, jj1, jp1;
 
   /* Parameter adjustments */

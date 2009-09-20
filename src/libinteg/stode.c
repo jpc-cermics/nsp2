@@ -14,20 +14,14 @@ nsp_ode_stode (int *neq, double *y, double *yh, int *nyh, double *yh1,
   int yh_dim1, yh_offset, i__1, i__2;
   double d__1, d__2, d__3;
 
-
   /* Local variables */
-  double dcon, delp, rhdn, exdn;
-  int iret;
-  double told, rhsm;
-  int newq;
-  double exsm, rhup, exup;
+  double dcon, delp=0, rhdn, exdn,  dsm=0, dup,  exsm, rhup, exup,  r__,  rh=0, del, ddn,  told, rhsm;
   int i__, j, m;
-  double r__;
-  int iredo, i1;
+  int iredo=0, i1;
+  int iret;
   int jb;
-  double rh, del, ddn;
   int ncf;
-  double dsm, dup;
+  int newq;
 
   /*lll. optimize 
    *----------------------------------------------------------------------- 

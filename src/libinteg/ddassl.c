@@ -26,16 +26,11 @@ nsp_ode_ddaini (double *x, double *y, double *yprime, int *neq, dassl_res res,
 
 
   /* Local variables */
-  double rate;
-  int ires;
-  double xold;
-  int i__, jcalc, m;
-  double r__, s, ynorm;
-  double cj;
+  double cj, delnrm, oldnrm, err, r__, s, ynorm, rate, xold;
   int convgd;
-  double delnrm, oldnrm;
+  int i__, jcalc, m;
+  int ires;
   int ncf, nef, ier, nsf;
-  double err;
 
   /****BEGIN PROLOGUE  DDAINI 
    ****SUBSIDIARY 
@@ -452,18 +447,14 @@ nsp_ode_ddajac (int *neq, double *x, double *y, double *yprime,
 
 
   /* Local variables */
-  int nrow;
-  double squr;
-  int npdm1;
-  int i__, j, k, l, n, mband, lenpd, isave, msave;
-  double ysave;
+  double del, delinv, squr, ypsave, ysave;
   int i1, i2, mtype, ii, meband;
-  double delinv;
+  int i__, j, k, l, n, mband, lenpd, isave, msave;
   int ipsave;
-  double ypsave;
   int mba;
-  double del;
   int meb1;
+  int npdm1;
+  int nrow;
 
   /****BEGIN PROLOGUE  DDAJAC 
    ****SUBSIDIARY 
@@ -755,9 +746,8 @@ nsp_ode_ddanrm (int *neq, double *v, double *wt, double *rpar, int *ipar)
   double sqrt (double);
 
   /* Local variables */
-  double vmax;
+  double sum, vmax;
   int i__;
-  double sum;
 
   /****BEGIN PROLOGUE  DDANRM 
    ****SUBSIDIARY 
@@ -914,22 +904,15 @@ nsp_ode_ddassl (dassl_res res, int *neq, double *t, double *y, double *yprime,
   int i__1;
   double d__1, d__2;
   /* Local variables */
+  double atoli, h__, hmax, hmin, ho, rh, tn, r__, rtoli, tnext, tstop, tdist, uround, ypnorm;
   int done;
-  int lphi;
-  double hmax, hmin;
-  double h__;
   int i__, mband;
-  double r__;
-  int lenpd;
-  double atoli;
-  int msave, itemp, leniw, nzflg, ntemp, lenrw;
-  double tdist;
-  int mxord;
-  double rtoli, tnext, tstop;
   int le;
-  double ho, rh, tn;
-  double uround, ypnorm;
+  int lenpd;
   int lpd, lwm, lwt;
+  int lphi;
+  int msave, itemp, leniw, nzflg, ntemp, lenrw;
+  int mxord;
 
   /****BEGIN PROLOGUE  DDASSL 
    ****PURPOSE  This code solves a system of differential/algebraic 
@@ -3098,22 +3081,13 @@ nsp_ode_ddastp (double *x, double *y, double *yprime, int *neq, dassl_res res,
 
 
   /* Local variables */
-  double rate, hnew;
-  int ires, knew;
-  double terk, xold, erkm1, erkm2, erkp1, temp1, temp2;
-  int i__, j, m, kdiff;
-  double r__, enorm;
-  int j1;
-  double pnorm, alpha0, terkm1, terkm2;
-  double terkp1, ck;
-  double alphas;
-  double cjlast, delnrm;
+  double erk, err, est, oldnrm, pnorm, alpha0, terkm1, terkm2,  terkp1, ck,  alphas,  cjlast, delnrm, r__, enorm, rate, hnew, terk, xold, erkm1, erkm2, erkp1, temp1, temp2;
   int convgd;
-  double oldnrm;
+  int i__, j, m, kdiff;
+  int ires, knew;
+  int j1;
   int km1, kp1, kp2, ncf, nef, ier;
-  double erk;
   int nsf;
-  double err, est;
   int nsp1;
 
   /****BEGIN PROLOGUE  DDASTP 
@@ -3983,9 +3957,8 @@ nsp_ode_ddatrp (double *x, double *xout, double *yout, double *ypout,
   int phi_dim1, phi_offset, i__1, i__2;
 
   /* Local variables */
-  double temp1, c__, d__;
+  double gamma, temp1, c__, d__;
   int i__, j;
-  double gamma;
   int koldp1;
 
   /****BEGIN PROLOGUE  DDATRP 

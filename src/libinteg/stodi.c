@@ -14,18 +14,13 @@ nsp_ode_stodi (int *neq, double *y, double *yh, int *nyh, double *yh1,
 
 
   /* Local variables */
-  double dcon, delp, eljh, rhdn, exdn;
-  int ires, iret;
-  double told, rhsm;
-  int newq;
-  double exsm, rhup, exup;
+  double dcon, delp, eljh, rhdn, exdn,  dsm, dup, el1h,  exsm, rhup, exup,  r__,  rh, del, ddn,  told, rhsm;
   int i__, j, m;
-  double r__;
   int iredo, i1;
+  int ires, iret;
   int jb;
-  double rh, del, ddn;
   int ncf, kgo;
-  double dsm, dup, el1h;
+  int newq;
 
   /*lll. optimize 
    *----------------------------------------------------------------------- 

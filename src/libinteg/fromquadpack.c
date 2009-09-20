@@ -60,30 +60,22 @@ nsp_quadpack_dqagse (intg_f f, double *a, double *b, double *epsabs,
   double d__1, d__2;
 
   /* Local variables */
-  double area, dres;
-  int ksgn, nres;
-  double area1, area2;
-  double area12;
-  int k;
-  double small, erro12;
-  int ierro;
   double a1, a2, b1, b2, defab1, defab2, oflow;
-  int ktmin, nrmax;
-  double uflow;
-  int noext;
-  int iroff1, iroff2, iroff3;
-  double res3la[3], error1, error2;
-  int id;
-  double rlist2[52];
-  int numrl2;
-  double defabs;
-  double epmach, erlarg, abseps, correc, errbnd, resabs;
-  int jupbnd;
-  double erlast, errmax;
-  int maxerr;
-  double reseps;
+  double area, dres, area1, area2, area12, defabs;
+  double epmach, erlarg=0, abseps, correc=0, errbnd, resabs;
+  double erlast, errmax, ertest=0, errsum, res3la[3], error1, error2;
+  double reseps, rlist2[52], small=0, erro12, uflow;
   int extrap;
-  double ertest, errsum;
+  int id;
+  int ierro;
+  int iroff1, iroff2, iroff3;
+  int jupbnd;
+  int k;
+  int ksgn, nres;
+  int ktmin, nrmax;
+  int maxerr;
+  int noext;
+  int numrl2;
 
   /****begin prologue  dqagse 
    ****date written   800101   (yymmdd) 
@@ -747,32 +739,19 @@ nsp_quadpack_dqagie (intg_f f, double *bound, int *inf, double *epsabs,
   double d__1, d__2;
 
   /* Local variables */
-  double area, dres;
-  int ksgn;
-  double boun;
-  int nres;
-  double area1, area2;
-  double area12;
-  int k;
-  double small, erro12;
-  int ierro;
-  double a1, a2, b1, b2, defab1, defab2, oflow;
-  int ktmin, nrmax;
-  double uflow;
-  int noext;
-  int iroff1, iroff2, iroff3;
-  double res3la[3], error1, error2;
-  int id;
-  double rlist2[52];
-  int numrl2;
-  double defabs;
-  double epmach, erlarg, abseps, correc, errbnd, resabs;
-  int jupbnd;
-  double erlast, errmax;
-  int maxerr;
-  double reseps;
+  double a1, a2, b1, b2, defab1, defab2, oflow,  area, dres,  area1, area2,  area12,  boun,  defabs,  epmach, erlarg=0, abseps, correc=0, errbnd, resabs,  erlast, errmax,  ertest=0, errsum,  res3la[3], error1, error2,  reseps,  rlist2[52],  small=0, erro12,  uflow;
   int extrap;
-  double ertest, errsum;
+  int id;
+  int ierro;
+  int iroff1, iroff2, iroff3;
+  int jupbnd;
+  int k;
+  int ksgn;
+  int ktmin, nrmax;
+  int maxerr;
+  int noext;
+  int nres;
+  int numrl2;
 
   /* 
 ****begin prologue  dqagie 
@@ -1353,18 +1332,15 @@ nsp_quadpack_dqelg (int *n, double *epstab, double *result, double *abserr,
   double d__1, d__2, d__3;
 
   /* Local variables */
-  int indx;
-  double e1abs;
-  int i__;
-  double e0, e1, e2, e3, error, oflow;
-  int k1, k2, k3;
-  double delta1, delta2, delta3;
-  int ib, ie;
-  double epmach, ss, epsinf;
-  int newelm, ib2, limexp;
+  double delta1, delta2, delta3, e0, e1, e2, e3, error, oflow;
+  double e1abs, epmach, ss, epsinf, err1, err2, err3, tol1, tol2, tol3;
   double res;
+  int i__;
+  int ib, ie;
+  int indx;
+  int k1, k2, k3;
+  int newelm, ib2, limexp;
   int num;
-  double err1, err2, err3, tol1, tol2, tol3;
 
   /****begin prologue  dqelg 
    ****refer to  dqagie,dqagoe,dqagpe,dqagse 
@@ -1619,8 +1595,8 @@ nsp_quadpack_dqpsrt (int *limit, int *last, int *maxerr, double *ermax,
   int i__1;
 
   /* Local variables */
-  int ibeg, jbnd, i__, j, k, isucc, jupbn;
   double errmin, errmax;
+  int ibeg, jbnd, i__, j, k, isucc, jupbn;
   int ido;
 
   /****begin prologue  dqpsrt 
@@ -1826,10 +1802,9 @@ nsp_quadpack_dqk21 (intg_f fvect, double *a, double *b, double *result,
 
   /* Local variables */
   double allf[21], resg, allx[21], resk, fsum, fval1, fval2;
+  double dx, epmach, dhlgth, hlgth, centr, reskh, uflow;
   int j;
-  double hlgth, centr, reskh, uflow;
   int n1, jg, n21;
-  double dx, epmach, dhlgth;
 
   /****begin prologue  dqk21 
    ****date written   800101   (yymmdd) 
@@ -2073,12 +2048,11 @@ nsp_quadpack_dqk21b (intg_f fvect, double *a, double *c__, double *result1,
   double d__1, d__2, d__3;
   /* Local variables */
   double allf[42], allx[42], resg1, resg2, resk1, resk2, b;
-  int j;
-  double hlgth, uflow;
-  int n1;
   double centr1, centr2, reskh1, reskh2;
+  double dx, epmach, dhlgth, resabs1, resabs2, hlgth, uflow;
+  int j;
   int jg, n42;
-  double dx, epmach, dhlgth, resabs1, resabs2;
+  int n1;
 
   /* same than nspdqk21 but operate on the 2 intervals: 
    *     [a,(a+b)/2] and [(a+b)/2,c] 
@@ -2278,10 +2252,9 @@ nsp_quadpack_dqk15i (intg_f fvect, double *boun, int *inf, double *a,
 
   /* Local variables */
   double absc, allf[30], dinf, resg, allx[30], resk, fsum, absc1[7], absc2[7];
+  double epmach, hlgth, centr, reskh, uflow;
   int j;
-  double hlgth, centr, reskh, uflow;
   int n1, nb;
-  double epmach;
 
   /****begin prologue  dqk15i 
    ****date written   800101   (yymmdd) 

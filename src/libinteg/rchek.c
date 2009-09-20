@@ -19,10 +19,8 @@ nsp_ode_rchek (int *job, lsodar_g g, int *neq, double *y, double *yh, int *nyh,
 
 
   /* Local variables */
-  double temp1, temp2;
+  double t1, temp1, temp2, x, hming;
   int i__, iflag, jflag;
-  double x, hming;
-  double t1;
   int zroot;
 
   /*lll. optimize 

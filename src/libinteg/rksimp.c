@@ -17,8 +17,7 @@ int rk_rksimp (ode_f fydot2, int *neqn, double *y, double *t, double *tout,
 	       double *bjac, int *mf, void *param)
 {
   int k, k1, k2, k3, k4, k5, k6,  i1;
-  double d2, h, scale, eeoet;
-  double ae, ee, et, esttol;
+  double d2, h, scale, eeoet, ae, ee, et, esttol;
 
   /* Parameter adjustments */
   --iwork;

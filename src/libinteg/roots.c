@@ -22,11 +22,11 @@ nsp_ode_roots (int *ng, double *hmin, int *jflag, double *x0, double *x1,
 
 
   /* Local variables */
+  double t2;
   double tmax;
   int i__;
-  double t2;
-  int xroot, zroot, sgnchg;
   int imxold, nxlast;
+  int xroot, zroot, sgnchg;
 
   /*lll. optimize 
    *!purpose 

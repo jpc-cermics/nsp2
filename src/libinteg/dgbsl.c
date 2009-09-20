@@ -62,8 +62,8 @@ nsp_ode_dgbsl (double *abd, int *lda, const int *n, const int *ml,
   int abd_dim1, abd_offset, i1, i2, i3;
 
   /* Local variables */
-  int k, l, m;
   double t;
+  int k, l, m;
   int kb, la, lb, lm, nm1;
   /* Parameter adjustments */
   abd_dim1 = *lda;

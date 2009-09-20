@@ -75,29 +75,18 @@ int C2F(lsoda) (ode_f f, int *neq, double *y, double *t, double *tout,
   double d__1, d__2;
 
   /* Local variables */
-  double hmax;
-  int ihit;
-  double ewti, size;
-  int len1c, len1n, len1s, i__, iflag;
-  double atoli;
-  int leniw, lenwm;
-  int imxer;
-  double tcrit;
-  int lenrw;
-  double h0;
+  double atoli,  ayi, hmx, tol, sum,  big,  ewti, size,  h0,  hmax,  rh,  rtoli, tdist, tolsf,  tcrit,  tnext,  tp,  w0;
   int i1, i2;
-  double rtoli, tdist, tolsf;
-  double tnext;
-  double w0;
-  int ml;
-  double rh;
-  int mu;
-  double tp;
-  int leniwc, lenrwc, lf0, lenrwn, lenrws;
-  double big;
+  int ihit=0;
+  int imxer;
   int kgo;
-  double ayi, hmx, tol, sum;
   int len1, len2;
+  int len1c, len1n, len1s, i__, iflag;
+  int leniw, lenwm=0;
+  int leniwc, lenrwc, lf0, lenrwn, lenrws;
+  int lenrw;
+  int ml;
+  int mu;
 
   /*!purpose 
    * 

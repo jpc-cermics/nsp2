@@ -39,13 +39,10 @@ int nsp_ode_cfode (const int *meth, double *elco, double *tesco)
   int i__1;
 
   /* Local variables */
-  double ragq, pint, xpin, fnqm1;
+  double agamq, rqfac, tsign, rq1fac, fnq, pc[12], ragq, pint, xpin, fnqm1;
   int i__;
-  double agamq, rqfac, tsign, rq1fac;
   int ib;
-  double pc[12];
   int nq;
-  double fnq;
   int nqm1, nqp1;
 
   /* Parameter adjustments */

@@ -68,38 +68,20 @@ C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
 	      int *iwork, int *liw, ode_jac jac, int *jt, lsodar_g g, int *ng,
 	      int *jroot, void *param)
 {
-  /* Initialized data */
-
-  static int mord[2] = { 12, 5 };
-  static int mxstp0 = 500;
-  static int mxhnl0 = 10;
+  const int mord[2] = { 12, 5 };
+  const int mxstp0 = 500;
+  const int mxhnl0 = 10;
 
   /* System generated locals */
   int i__1;
   double d__1, d__2;
 
   /* Local variables */
-  double hmax;
-  int irfp;
-  int ihit;
-  double ewti, size;
-  int len1c, len1n, len1s, i__, iflag;
-  double atoli;
-  int leniw, lenwm, lenyh, imxer;
-  double tcrit;
-  int lenrw, i1, i2;
-  double h0, rtoli, tdist, tnext, tolsf, w0;
-  int ml;
-  double rh;
-  int mu;
-  double tp;
-  int lirfnd, leniwc, lenrwc, lf0, lenrwn, lenrws, lyhnew;
-  double big;
-  int kgo;
-  double ayi, hmx;
-  int irt;
-  double tol, sum;
-  int len1, len2;
+  double atoli, ayi, hmx, big, ewti, size, h0, rtoli, 
+    tdist, tnext, tolsf, w0, hmax, rh, tcrit, tol, sum, tp;
+  int ihit=0, irfp, irt, kgo, len1, len2, len1c, len1n, len1s, i__, 
+    iflag, leniw, lenwm=0, lenyh, imxer, lenrw, i1, i2, lirfnd, 
+    leniwc, lenrwc, lf0, lenrwn, lenrws, lyhnew, ml, mu;
 
   /*----------------------------------------------------------------------- 
    *this is the may 7, 1982 version of 

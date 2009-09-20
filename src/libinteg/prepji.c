@@ -20,17 +20,13 @@ nsp_ode_prepji (int *neq, double *y, double *yh, int *nyh,
   double d__1, d__2;
 
   /* Local variables */
-  int lenp, ires;
-  double srur;
-  int i__, j, mband;
-  double r__;
+  double con, yjj, fac, r__, srur, yi, yj, hl0;
   int i1, i2, j1, ii, jj, meband, ml, mu;
-  double yi, yj, hl0;
-  int ml3;
-  double fac;
+  int i__, j, mband;
+  int lenp, ires;
   int mba, ier;
-  double con, yjj;
   int meb1;
+  int ml3;
 
   /*lll. optimize 
    *----------------------------------------------------------------------- 

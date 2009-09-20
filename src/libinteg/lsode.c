@@ -71,29 +71,18 @@ C2F(lsode) (ode_f f, int *neq, double *y, double *t, double *tout,
   double d__1, d__2;
 
   /* Local variables */
-  double hmax;
-  int ihit;
-  double ewti, size;
-  int i__, iflag;
-  double atoli;
-  int leniw;
-  int lenwm;
-  int imxer;
-  double tcrit;
-  int lenrw;
-  double h0;
+  double atoli, ayi, hmx, tol, sum,  big,  ewti, size,  h0,  hmax,  rh,  rtoli, tdist, tolsf,  tcrit,  tnext,  tp,  w0;
   int i1, i2;
-  double rtoli, tdist, tolsf;
-  double tnext;
-  double w0;
-  int ml;
-  double rh;
-  int mu;
-  double tp;
-  int lf0;
-  double big;
+  int i__, iflag;
+  int ihit=0;
+  int imxer;
   int kgo;
-  double ayi, hmx, tol, sum;
+  int leniw;
+  int lenrw;
+  int lenwm;
+  int lf0;
+  int ml;
+  int mu;
 
   /* 
    *!purpose 

@@ -47,20 +47,15 @@ nsp_ode_prepj (int *neq, double *y, double *yh, int *nyh, double *ewt,
   int yh_dim1, yh_offset, i__1, i__2, i__3, i__4;
   double d__1, d__2;
   /* Local variables */
-  int lenp;
-  double srur;
-  int i__, j, mband;
-  double r__;
-  int i1, i2, j1;
-  double r0, di;
-  int ii, jj, meband, ml, mu;
-  double yi, yj, hl0;
-  int ml3;
-  double fac;
-  int mba, ier;
-  double con, yjj;
-  int meb1;
 
+  double con, yjj, fac, r0, di, r__, srur, yi, yj, hl0;
+  int i1, i2, j1;
+  int i__, j, mband;
+  int ii, jj, meband, ml, mu;
+  int lenp;
+  int mba, ier;
+  int meb1;
+  int ml3;
   /* Parameter adjustments */
   --neq;
   --y;

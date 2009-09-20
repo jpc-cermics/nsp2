@@ -30,23 +30,15 @@ nsp_ode_stoda (int *neq, double *y, double *yh, int *nyh, double *yh1,
 
 
   /* Local variables */
-  double dcon, delp;
-  int lm1p1, lm2p1;
-  double exdn, rhdn;
-  int iret;
-  double told, rate, rhsm;
-  int newq;
-  double exsm, rhup, exup, rh1it;
+  double dcon, delp=0,  exdn, rhdn,  exsm, rhup, exup, rh1it,  pdh=0, dsm=0, dup, exm1, exm2,  pnorm,  r__, alpha,  rh=0, rm, dm1, dm2,  rh1, rh2, del, ddn,  told, rate, rhsm;
   int i__, j, m;
-  double r__, alpha;
-  int iredo, i1;
-  double pnorm;
+  int iredo=0, i1;
+  int iret;
   int jb;
-  double rh, rm, dm1, dm2;
   int lm1, lm2;
-  double rh1, rh2, del, ddn;
+  int lm1p1, lm2p1;
   int ncf;
-  double pdh, dsm, dup, exm1, exm2;
+  int newq;
   int nqm1, nqm2;
 
   /*lll. optimize 

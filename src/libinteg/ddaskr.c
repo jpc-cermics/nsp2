@@ -1719,45 +1719,33 @@ C2F(ddaskr) (Dres res, int *neq, double *t, double *y, double *yprime,
 
 
   /* Local variables */
-  int lcfl, lcfn, done;
-  double rcfl;
-  int nnid;
-  int lavl;
-  int maxl, iret;
-  double hmax;
-  int lphi;
-  double hmin;
-  int lyic, lpwk, nstd;
-  double rcfn;
-  int ncfl0, ncfn0;
-  double h__;
-  int i__;
-  int mband;
-  double r__;
-  int lenic;
-  static int lenid, ncphi;
-  int lenpd, lsoff, msave, index, itemp, leniw, nzflg;
-  double atoli;
-  int lypic;
-  int lwarn;
-  int lenwp, lenrw, mxord, nwarn;
-  double rtoli;
-  int lsavr;
-  double tdist, h0, tnext, avlin, fmaxl, tstop;
-  int le;
-  double rh;
-  int icnflg;
-  double tn, tscale, epconi, floatn;
-  static int nonneg;
-  int leniwp;
-  int lr0, lr1;
-  double uround;
-  double ypnorm;
-  int ici, idi;
-  static int lid;
-  int ier;
   char msg[80];
+  double atoli, h__, hmax, hmin, r__, rcfl, rcfn, rh, rtoli, tdist, h0, tnext, avlin, fmaxl, tstop, tn, tscale, epconi, floatn, uround, ypnorm;
+  int i__;
+  int ici, idi;
+  int icnflg;
+  int ier;
+  int lavl;
+  int lcfl, lcfn, done;
+  int le;
+  int lenic;
+  int leniwp;
+  int lenpd=0, lsoff, msave, index=0, itemp, leniw, nzflg;
+  int lenwp=0, lenrw, mxord, nwarn;
+  int lphi;
+  int lr0, lr1;
+  int lsavr;
+  int lwarn;
   int lwm, irt, lvt, lwt, lrx, nwt, nli0, nni0;
+  int lyic, lpwk, nstd;
+  int lypic;
+  int maxl, iret;
+  int mband;
+  int ncfl0, ncfn0;
+  int nnid;
+  static int lenid, ncphi;
+  static int lid;
+  static int nonneg;
 
   /* Parameter adjustments */
   --y;
@@ -3655,13 +3643,10 @@ nsp_ode_drchek2 (int *job, Rt rt, int *nrt, int *neq, double *tn,
   double d__1;
 
   /* Local variables */
-  double h__;
+  double h__, hminr, t1, x;
   int i__, jflag;
-  double x;
   int lmask;
-  double hminr;
   int mroot;
-  double t1;
   int zroot;
 
   /* 
@@ -3946,15 +3931,14 @@ nsp_ode_droots2 (int *nrt, double *hmin, int *jflag, double *x0,
 
 
   /* Local variables */
-  static int imax, last;
-  double tmax;
-  int iunstuck, i__;
-  static double alpha;
-  double t2;
-  static double x2;
-  int xroot, zroot, sgnchg;
+
+  double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
-  double fracsub, fracint;
+  int iunstuck, i__;
+  int xroot, zroot, sgnchg;
+  static double alpha;
+  static double x2;
+  static int imax, last;
 
   /* 
 ****BEGIN PROLOGUE  DROOTS 
@@ -4316,12 +4300,9 @@ nsp_ode_drchek1 (int *job, Rt rt, int *nrt, int *neq, double *tn,
 
 
   /* Local variables */
-  double temp1, temp2, h__;
+  double hminr, t1, temp1, temp2, h__, x;
   int i__, jflag;
-  double x;
   int lmask;
-  double hminr;
-  double t1;
   int zroot;
 
   /* 
@@ -4692,15 +4673,13 @@ nsp_ode_droots1 (int *nrt, double *hmin, int *jflag, double *x0,
 
 
   /* Local variables */
-  static int imax, last;
-  double tmax;
-  int iunstuck, i__;
-  static double alpha;
-  double t2;
-  static double x2;
-  int xroot, zroot, sgnchg;
+  double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
-  double fracsub, fracint;
+  int iunstuck, i__;
+  int xroot, zroot, sgnchg;
+  static double alpha;
+  static double x2;
+  static int imax, last;
 
   /* 
 ****BEGIN PROLOGUE  DROOTS 
@@ -5107,10 +5086,8 @@ nsp_ode_drchek0 (int *job, Rt rt, int *nrt, int *neq, double *tn,
   double d__1;
 
   /* Local variables */
-  double temp1, temp2, h__;
+  double t1, temp1, temp2, h__, x, hminr;
   int i__, jflag;
-  double x, hminr;
-  double t1;
   int zroot;
 
   /* 
@@ -5418,14 +5395,14 @@ nsp_ode_droots0 (int *nrt, double *hmin, int *jflag, double *x0,
 
 
   /* Local variables */
-  static int imax, last;
+  double t2;
   double tmax;
   int i__;
-  static double alpha;
-  double t2;
-  static double x2;
-  int xroot, zroot, sgnchg;
   int imxold, nxlast;
+  int xroot, zroot, sgnchg;
+  static double alpha;
+  static double x2;
+  static int imax, last;
 
   /* 
 ****BEGIN PROLOGUE  DROOTS 
@@ -5771,9 +5748,9 @@ nsp_ode_ddasic (double *x, double *y, double *yprime, int *neq, int *icopt,
   int phi_dim1, phi_offset;
 
   /* Local variables */
-  int mxnh;
-  int jskip;
   double cj;
+  int jskip;
+  int mxnh;
   int nh, iernls;
 
   /* 
@@ -6108,16 +6085,13 @@ nsp_ode_ddstp (double *x, double *y, double *yprime, int *neq, Dres res,
   double d__1, d__2;
 
   /* Local variables */
-  double hnew, terk, xold;
-  int knew;
-  double erkm1, erkm2, erkp1, temp1, temp2;
+  double alpha0, terkm1=0, terkm2, terkp1, ck, alphas, cjlast;
+  double erk, err, est=0,  erkm1=0, erkm2, erkp1, temp1, temp2,  hnew, terk, xold,  r__, enorm;
   int i__, j, kdiff;
-  double r__, enorm;
-  int j1;
-  double alpha0, terkm1, terkm2, terkp1, ck, alphas, cjlast;
   int iernls, km1, kp1, kp2;
+  int j1;
+  int knew=0;
   int ncf, nef;
-  double erk, err, est;
   int nsp1;
 
   /* 
@@ -7225,9 +7199,9 @@ nsp_ode_ddatrp1 (double *x, double *xout, double *yout, double *ypout,
   int phi_dim1, phi_offset, i__1, i__2;
 
   /* Local variables */
+  double gamma;
   double temp1, c__, d__;
   int i__, j;
-  double gamma;
   int koldp1;
 
   /* 
@@ -7314,9 +7288,9 @@ nsp_ode_ddwnrm (int *neq, double *v, double *rwt, double *rpar, int *ipar)
   double sqrt (double);
 
   /* Local variables */
+  double sum;
   double vmax;
   int i__;
-  double sum;
 
   /* 
 ****BEGIN PROLOGUE  DDWNRM 
@@ -7603,8 +7577,7 @@ nsp_ode_dnsid (double *x, double *y, double *yprime, int *neq, int *icopt,
 {
   double rate, fnrm;
   int iret, ires, m, lsoff;
-  double oldfnm, delnrm;
-  double rlx;
+  double oldfnm, delnrm,  rlx;
 
   /* 
 ****BEGIN PROLOGUE  DNSID 
@@ -7832,15 +7805,11 @@ nsp_ode_dlinsd (int *neq, double *y, double *t, double *yprime, double *cj,
 
 
   /* Local variables */
-  int ivar;
-  double slpi, f1nrm;
-  int i__;
-  double ratio;
-  double rlmin, fnrmp;
-  int kprin;
-  double ratio1, f1nrmp, rl;
   char msg[80];
-  double tau;
+  double ratio1, f1nrmp, rl, ratio, rlmin, fnrmp, slpi, f1nrm, tau;
+  int i__;
+  int ivar;
+  int kprin;
 
   /* 
 ****BEGIN PROLOGUE  DLINSD 
@@ -8169,13 +8138,12 @@ nsp_ode_dnedd (double *x, double *y, double *yprime, int *neq, Dres res,
   double d__1;
 
   /* Local variables */
-  int ierj;
-  int idum, ires;
-  double temp1, temp2;
-  int i__, j;
   double pnorm, delnrm;
+  double temp1, temp2, tolnew;
+  int i__, j;
+  int idum, ires;
+  int ierj;
   int iernew;
-  double tolnew;
   int iertyp;
 
   /* 
@@ -8460,10 +8428,8 @@ nsp_ode_dnsd (double *x, double *y, double *yprime, int *neq, Dres res,
   double d__1, d__2;
 
   /* Local variables */
-  double rate;
+  double delnrm, oldnrm, rate;
   int i__, m;
-  double delnrm;
-  double oldnrm;
 
   /* 
 ****BEGIN PROLOGUE  DNSD 
@@ -8755,17 +8721,13 @@ nsp_ode_dmatd (int *neq, double *x, double *y, double *yprime,
   double d__1, d__2, d__3, d__4, d__5;
 
   /* Local variables */
-  int nrow;
-  double squr;
-  int i__, j, k, l, n, mband, lenpd, isave, msave;
-  double ysave;
+  double del, delinv, squr, ypsave, ysave;
   int i1, i2, lipvt, mtype, ii, meband;
-  double delinv;
+  int i__, j, k, l, n, mband, lenpd, isave, msave;
   int ipsave;
-  double ypsave;
   int mba;
-  double del;
   int meb1;
+  int nrow;
 
   /* Parameter adjustments */
   --ipar;
@@ -9598,16 +9560,12 @@ nsp_ode_dlinsk (int *neq, double *y, double *t, double *yprime,
 
 
   /* Local variables */
-  int ivar;
-  double slpi, f1nrm;
-  int i__;
-  double ratio;
-  double rlmin, fnrmp;
-  int kprin;
-  double ratio1, f1nrmp, rl;
-  int ier;
   char msg[80];
-  double tau;
+  double ratio1, f1nrmp, rl, ratio, rlmin, fnrmp, slpi, f1nrm, tau;
+  int i__;
+  int ier;
+  int ivar;
+  int kprin;
 
   /* 
 ****BEGIN PROLOGUE  DLINSK 
@@ -9978,15 +9936,12 @@ nsp_ode_dnedk (double *x, double *y, double *yprime, int *neq, Dres res,
   double d__1;
 
   /* Local variables */
-  int ires, liwp;
-  double temp1, temp2;
+  double delnrm,  eplin,  temp1=0, temp2,  tolnew;
   int i__, j;
-  double eplin;
-  int ierpj, iersl;
-  double delnrm;
   int iernew;
-  double tolnew;
+  int ierpj, iersl;
   int iertyp, lwp;
+  int ires, liwp;
 
 
   /* Parameter adjustments */
@@ -10321,10 +10276,8 @@ nsp_ode_dnsk (double *x, double *y, double *yprime, int *neq, Dres res,
 
 
   /* Local variables */
-  double rate, rhok;
+  double delnrm, oldnrm, rate, rhok;
   int i__, m;
-  double delnrm;
-  double oldnrm;
 
   /* Parameter adjustments */
   --iwm;
@@ -10659,16 +10612,12 @@ nsp_ode_dspigm (int *neq, double *tn, double *y, double *yprime,
   double d__1;
 
   /* Local variables */
-  int info;
-  double prod, rnrm;
   double c__;
-  int i__, j, k;
-  double s;
-  double dlnrm;
+  double dlnrm, prod, rnrm, s, snormw, tem, rho;
   int i2, maxlm1, ll, ip1;
-  double snormw;
+  int i__, j, k;
   int ier;
-  double tem, rho;
+  int info;
   int llp1;
 
   /* Parameter adjustments */
@@ -11204,10 +11153,9 @@ nsp_ode_dorth (double *vnew, double *v, double *hes, int *n, int *ll,
   double sqrt (double);
 
   /* Local variables */
-  double vnrm;
-  int i__;
+  double sumdsq, arg, tem, vnrm;
   int i0;
-  double sumdsq, arg, tem;
+  int i__;
 
   /* Parameter adjustments */
   --vnew;
@@ -11348,9 +11296,8 @@ nsp_ode_dheqr (double *a, int *lda, int *n, double *q, int *info,
   double sqrt (double);
 
   /* Local variables */
-  double c__;
+  double c__, s, t, t1, t2;
   int i__, j, k;
-  double s, t, t1, t2;
   int iq, km1, kp1, nm1;
 
   /* Parameter adjustments */
@@ -11539,10 +11486,8 @@ int nsp_ode_dhels (double *a, int *lda, int *n, double *q, double *b)
   int a_dim1, a_offset, i__1, i__2;
 
   /* Local variables */
-  double c__;
+  double c__, s, t, t1, t2;
   int k;
-  double s, t;
-  double t1, t2;
   int kb, iq, kp1;
 
   /* Parameter adjustments */
