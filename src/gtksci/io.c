@@ -52,7 +52,6 @@
 /* WITH_TK is eventually defined in nsp/machine.h 
  * include by nsp/Math.h 
  */ 
-#define WITH_TK
 
 #ifdef WITH_TK
 #include "../nsp-tcltk/nsptcl.h"
