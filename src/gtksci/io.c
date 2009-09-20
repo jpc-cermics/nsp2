@@ -52,9 +52,10 @@
 /* WITH_TK is eventually defined in nsp/machine.h 
  * include by nsp/Math.h 
  */ 
+#define WITH_TK
 
 #ifdef WITH_TK
-#include "../tksci/tksci.h"
+#include "../nsp-tcltk/nsptcl.h"
 #endif
 
 /* FIXME */
@@ -77,15 +78,14 @@ static int nsp_with_events = FALSE ;
  * nsp_in_gtk_window:
  * @void: 
  * 
- * nsp is a gtk application 
+ * This function is called when 
+ * nsp is a gtk application and needs 
+ * to deal with gtk-events.
  * 
  **/
 
 void nsp_in_gtk_window(void)
 {
-#ifdef WITH_TK
-  inittk();
-#endif
   nsp_in_widget = TRUE ;
   nsp_with_events = TRUE ;
 }
@@ -171,7 +171,7 @@ int Xorgetchar_select(void)
     /* always flush writes before waiting */
     gdk_flush();
 #ifdef WITH_TK 
-    flushTKEvents();
+    nsp_flush_tkevents();
 #endif
     fflush(stdout); 
     fflush(stderr);
@@ -211,7 +211,7 @@ int Xorgetchar_select(void)
     while ( gtk_events_pending()) 
       {
 	SELECT_DEBUG(fprintf(stderr,"une iteration %d\n",counter++);)
-	gtk_main_iteration(); 
+	  gtk_main_iteration(); 
       }
 #endif
     /* maybe a new string to execute */
@@ -256,8 +256,8 @@ int Xorgetchar_select(void)
       break;
     } 
 #ifdef WITH_TK 
-    if ( FD_ISSET(XTKsocket,&select_mask )) { 
-      flushTKEvents();
+    if ( FD_ISSET(XTKsocket,&select_mask )) {
+      nsp_flush_tkevents();
     }
 #endif 
     if ( FD_ISSET(GtkXsocket,&select_mask)) { 
@@ -268,7 +268,7 @@ int Xorgetchar_select(void)
       while ( gtk_events_pending()) 
 	{ 
 	  SELECT_DEBUG(fprintf(stderr,"une iteration after select %d\n",counter++);)
-	  gtk_main_iteration(); 
+	    gtk_main_iteration(); 
 	} 
 #endif 
     }
@@ -289,7 +289,7 @@ void  nsp_check_gtk_events(void)
   /* check the TK case */ 
   if ( nsp_check_events_activated()== FALSE) return ;
 #ifdef WITH_TK
-  flushTKEvents();
+  nsp_flush_tkevents();
 #endif
   while ( gtk_events_pending())  gtk_main_iteration(); 
 }
