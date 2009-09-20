@@ -88,7 +88,7 @@ void nsp_tokeniser_file(Tokenizer *T,FILE *f)
   T->token_readline = SciFileReadLine;
 }
 
-void nsp_tokeniser_string(Tokenizer *T,char *str)
+void nsp_tokeniser_string(Tokenizer *T,const char *str)
 {
   T->string.str = str;
   T->string.pos = 0;

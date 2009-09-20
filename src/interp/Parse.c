@@ -158,7 +158,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
  * Return value: an integer which gives the status of the execution.
  **/
 
-int nsp_parse_eval_from_string(char *Str,int display,int echo, int errcatch,int pause)
+int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatch,int pause)
 {
   char *file_name;
   Tokenizer T;
