@@ -490,6 +490,10 @@ extern int call_interf(function *f, Stack stack, int rhs, int opt, int lhs);
 extern int AllInterf(int i, int num, Stack stack, int rhs, int opt, int lhs);
 
 
+extern void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,char *filename_exec);
+extern void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *filename_exec);
+
+
 
 
 #endif 
