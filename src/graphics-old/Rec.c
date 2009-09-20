@@ -3252,11 +3252,14 @@ void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double 
 
 void tape_replay(BCG *Xgc,int winnumber)
 { 
+  double WRect[]={0,0,1,1};
   list_plot *list;
   if ( Xgc == NULL ) return ;
   if ( Xgc->record_flag == FALSE ) return ;
   Xgc->record_flag = FALSE; /* be sure not to record during replay */
   list = Xgc->plots ;
+  /* be sure that scales are back to default ? */
+  move_subwindow_scale_to_front(Xgc,WRect);
   while (list)
     {
       if ( list->theplot != NULL) 
