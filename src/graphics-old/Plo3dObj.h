@@ -220,7 +220,7 @@ struct _hfstruct
   int num_in_obj;
 };
 
-extern void **obj3d_from_list(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,int *nbObj) ;
+extern void **obj3d_from_list_old(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,int *nbObj) ;
 
 
 #endif

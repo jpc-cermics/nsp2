@@ -130,9 +130,9 @@ static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double
       if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
 	{
 	  if (strcmp(name,"champ")==0)
-	    store_Champ(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
+	    nsp_gengine_record_old.store_Champ(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
 	  else 
-	    store_Champ1(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
+	    nsp_gengine_record_old.store_Champ1(Xgc,x,y,fx,fy,&n1,&n2,strflag,brect,arfact);
 	}
     }
 

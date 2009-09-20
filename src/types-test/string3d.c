@@ -943,7 +943,7 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   double Tcoord[3];
   double *S_coord = S->Mcoord->R;
 
-  apply_transforms(Xgc,Tcoord,S_coord,S->pos,lim,1); 
+  apply_transforms_new(Xgc,Tcoord,S_coord,S->pos,lim,1); 
   Tcoord[0] = XScale(Tcoord[0]);
   Tcoord[1] = YScale(Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
@@ -983,7 +983,7 @@ static void zmean_faces_for_String3d(void *Obj, double z[], HFstruct HF[], int *
 static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_string3d *Q= ((NspString3d *) Obj)->obj;
-  apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n);
   zmean_faces_for_String3d(Obj, z,  HF, n, k);
 }
 

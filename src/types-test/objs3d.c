@@ -8,7 +8,7 @@
 
 
 
-#line 42 "codegen/objs3d.override"
+#line 47 "codegen/objs3d.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/curve.h>
@@ -89,7 +89,7 @@ NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
       
   type->init = (init_func *) init_objs3d;
 
-#line 58 "codegen/objs3d.override"
+#line 63 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -741,7 +741,7 @@ static int _wrap_objs3d_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 92 "codegen/objs3d.override"
+#line 97 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -865,7 +865,7 @@ static int _wrap_objs3d_set_title(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 108 "codegen/objs3d.override"
+#line 113 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1072,7 +1072,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 78 "codegen/objs3d.override"
+#line 83 "codegen/objs3d.override"
 int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -1088,7 +1088,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 #line 1089 "objs3d.c"
 
 
-#line 166 "codegen/objs3d.override"
+#line 171 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1100,7 +1100,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1101 "objs3d.c"
 
 
-#line 176 "codegen/objs3d.override"
+#line 181 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1145,7 +1145,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 Objs3d_register_classes(NspObject *d)
 {
 
-#line 53 "codegen/objs3d.override"
+#line 58 "codegen/objs3d.override"
 
 Init portion 
 
@@ -1155,7 +1155,7 @@ Init portion
 }
 */
 
-#line 186 "codegen/objs3d.override"
+#line 191 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1578,4 +1578,768 @@ void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, doub
   Obj3d->obj->theta = theta;
 }
 
-#line 1582 "objs3d.c"
+
+
+
+/* 
+ *  Compute for each point the local coordinate (in the visualisation repair)
+ *  then applies the perpective transform and test if the point is inside the
+ *  troncated vision pyramide :  | loc_x | <= lim[0]
+ *                               | loc_y | <= lim[1]
+ *                               | loc_z | >= lim[2] 
+ */
+
+void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+{
+  int i, k=0;
+  double facteur;
+  for (i = 0; i < 3*ncoord ; i += 3)
+    {
+      /* take care that Coord and M can point to the same location 
+       * thus we have to copy
+       */
+      double v[3];
+      v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2]; 
+      Coord[i]   = TRX(v[0],v[1],v[2]);
+      Coord[i+1] = TRY(v[0],v[1],v[2]);
+      Coord[i+2] = TRZ(v[0],v[1],v[2]);
+      if ( Coord[i+2] < lim[2] )  
+	{
+	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
+	}
+      else
+	{
+	  /* on applique la perspective */
+	  facteur = 1.0/Coord[i+2];
+	  facteur = 1.0;
+	  Coord[i]   = facteur*Coord[i];
+	  Coord[i+1] = facteur*Coord[i+1];
+	  /* le point est-il dans le rectangle de visu ? */
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+1]) > lim[1] ) 
+	    pos[k] = OUT_XY;
+	  else
+	    pos[k] = VIN;
+	}
+      k++;
+    }
+}
+
+/* similar but with a transposed Coord
+ *
+ */
+
+void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+{
+  int i, k=0;
+  double facteur;
+  for (i = 0; i < ncoord ; i++ )
+    {
+      /* take care that Coord and M can point to the same location 
+       * thus we have to copy
+       */
+      double v[3];
+      v[0] = M[i];v[1] = M[i+ncoord]; v[2] = M[i+2*ncoord]; 
+      Coord[i]   = TRX(v[0],v[1],v[2]);
+      Coord[i+ncoord] = TRY(v[0],v[1],v[2]);
+      Coord[i+2*ncoord] = TRZ(v[0],v[1],v[2]);
+      if ( Coord[i+2*ncoord] < lim[2] )  
+	{
+	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
+	}
+      else
+	{
+	  /* on applique la perspective */
+	  facteur = 1.0/Coord[i+2*ncoord];
+	  facteur = 1.0;
+	  Coord[i]   = facteur*Coord[i];
+	  Coord[i+ncoord] = facteur*Coord[i+ncoord];
+	  /* le point est-il dans le rectangle de visu ? */
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+ncoord]) > lim[1] ) 
+	    pos[k] = OUT_XY;
+	  else
+	    pos[k] = VIN;
+	}
+      k++;
+    }
+}
+
+
+/* A set of functions for 3D box which could be moved 
+ *
+ */
+
+
+static int select_box_vertex(const double coord[]);
+static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks);
+static int build_ticks_segment(Plot3dBox *B, double xmin, double xmax, 
+			       double ymin, double ymax, double zmin, double zmax);
+static void build_xtick_seg(double *coord, int *num_sg, double x, double axe[], double sens[]);
+static void build_ytick_seg(double *coord, int *num_sg, double y, double axe[], double sens[]);
+static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], double sens[]);
+static int  build_box_others_segment(Plot3dBox *B, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
+static void build_x_seg(double *coord, int *num_sg, double xmin, double xmax, double y, double z);
+static void build_y_seg(double *coord, int *num_sg, double x, double ymin, double ymax, double z);
+static void build_z_seg(double *coord, int *num_sg, double x, double y, double zmin, double zmax);
+
+static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B);
+static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[]);
+static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color);
+static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color);
+static void draw_justified_string(BCG *Xgc,char *str, double xx, double yy, int xj, int yj);
+static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j);
+
+static int ticks_font_type = 2;
+static int ticks_font_size = 1;
+static int foreground_color = 1;
+
+
+static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
+{
+  /*                      s0    s1    s2    s3    s4    s5    s6    s7    s8    s9    s10   s11  */
+  int box_segments[24] = {0,2,  0,5,  0,6,  1,3,  1,4,  1,7,  2,4,  2,7,  3,5,  3,6,  4,6,  5,7};
+  int box_faces[24] = {0,5,3,6,  0,6,4,2,  0,2,7,5,  1,7,2,4,  1,3,5,7,  1,4,6,3};
+
+#ifdef WITH_GTKGLEXT 
+  double coord[24];
+#endif
+  Plot3dBox *B;
+  double xmin, ymin, zmin, xmax, ymax, zmax;
+
+  B = malloc(sizeof(Plot3dBox));
+
+  xmin = Box[0]; ymin = Box[1]; zmin = Box[2];
+  xmax = Box[3]; ymax = Box[4]; zmax = Box[5];
+  
+  if ( with_ticks )
+    {
+      B->with_ticks = BTRUE;
+      compute_ticks(&xmin, &xmax, &(B->xticks), &(B->nb_xticks));
+      compute_ticks(&ymin, &ymax, &(B->yticks), &(B->nb_yticks));
+      if ( 1) /* -0.95 <= P[8]  &&  P[8] <= 0.95 ) */
+	compute_ticks(&zmin, &zmax, &(B->zticks), &(B->nb_zticks));
+      else
+	{ B->nb_zticks = 0; B->zticks = NULL; }
+      B->nb_xyz_ticks = B->nb_xticks + B->nb_yticks + B->nb_zticks;
+    }
+  else
+    B->with_ticks = BFALSE;
+    
+  B->box_style = box_style;
+  B->segment = box_segments;
+  B->face = box_faces;
+
+  if ( box_color == -1 )
+    {
+
+      /* last +3 is a light gray */
+      box_color = Xgc->graphic_engine->xget_last(Xgc)+3;
+    }
+
+  B->color = box_color;
+  
+  B->coord[0]  = xmin; B->coord[1]  = ymin; B->coord[2]  = zmin; //1
+  B->coord[3]  = xmax; B->coord[4]  = ymax; B->coord[5]  = zmax; //2
+  B->coord[6]  = xmin; B->coord[7]  = ymin; B->coord[8]  = zmax; //3
+  B->coord[9]  = xmax; B->coord[10] = ymax; B->coord[11] = zmin; //4
+  B->coord[12] = xmax; B->coord[13] = ymin; B->coord[14] = zmax; //5
+  B->coord[15] = xmin; B->coord[16] = ymax; B->coord[17] = zmin; //6
+  B->coord[18] = xmax; B->coord[19] = ymin; B->coord[20] = zmin; //7
+  B->coord[21] = xmin; B->coord[22] = ymax; B->coord[23] = zmax; //8
+
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      /* in open_gl we do not want to change coordinates */
+      apply_transforms_new1(Xgc,coord,B->coord, B->pos, lim, 8);
+      B->inear = select_box_vertex(coord);       
+    }
+  else 
+#endif
+    {
+      apply_transforms_new1(Xgc,B->coord,B->coord, B->pos, lim, 8);
+      B->inear = select_box_vertex(B->coord);      
+    }
+  
+  if ( B->with_ticks )
+    {
+      build_ticks_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
+      B->ticks_pos = malloc(2*(B->nb_xyz_ticks)*sizeof(VisionPos));
+#ifdef WITH_GTKGLEXT 
+      if ( Xgc->graphic_engine != &GL_gengine ) 
+#endif	
+	apply_transforms_new1(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks)); 
+    }
+  if ( B->with_ticks  &&  B->box_style == MATLAB )
+    {
+      build_box_others_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
+      B->others_pos = malloc(4*(B->nb_xyz_ticks)*sizeof(VisionPos));
+#ifdef WITH_GTKGLEXT 
+      if ( Xgc->graphic_engine != &GL_gengine ) 
+#endif	
+	apply_transforms_new1(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
+    }      
+  return ( B );
+}
+
+static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax, 
+				double ymin, double ymax, double zmin, double zmax)
+{
+  int i, sg=0;
+  double d, e, axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
+
+  d = (xmax-xmin + ymax-ymin + zmax-zmin)/100; /* a voir */
+  e = d/sqrt(2.0);
+  
+  B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
+  if ( B->ticks_coord == NULL) return FAIL;
+  switch(B->inear)
+    {
+    default:
+    case(0):
+      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-d; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-d; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = d; sens_z[1] = 0;
+      sens_z[0] = e; sens_z[1] =-e;
+      break;
+    case(1):
+      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = d; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = d; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] =-d;
+      sens_z[0] = e; sens_z[1] =-e;
+      break;
+    case(2):
+      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-d; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-d; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = d;
+      sens_z[0] =-e; sens_z[1] = e;
+      break;
+    case(3):
+      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = d; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = d; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] =-d; sens_z[1] = 0;
+      sens_z[0] =-e; sens_z[1] = e;
+      break;
+    case(4):
+      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-d; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = d; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] =-d; sens_z[1] = 0;
+      sens_z[0] =-e; sens_z[1] =-e;
+      break;
+    case(5):
+      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = d; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-d; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] =-d;
+      sens_z[0] =-e; sens_z[1] =-e;
+      break;
+    case(6):
+      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-d; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = d; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = d;
+      sens_z[0] = e; sens_z[1] = e;
+      break;
+    case(7):
+      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = d; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-d; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = d; sens_z[1] = 0;
+      sens_z[0] = e; sens_z[1] = e;
+      break;
+    }
+
+  for ( i = 0 ; i < B->nb_xticks ; i++)
+    build_xtick_seg(B->ticks_coord, &sg, B->xticks[i], axe_x, sens_x);
+  for ( i = 0 ; i < B->nb_yticks ; i++)
+    build_ytick_seg(B->ticks_coord, &sg, B->yticks[i], axe_y, sens_y);
+  for ( i = 0 ; i < B->nb_zticks ; i++)
+    build_ztick_seg(B->ticks_coord, &sg, B->zticks[i], axe_z, sens_z);
+  return OK;
+}
+
+static void build_xtick_seg(double *coord, int *num_sg, double x, double axe[], double sens[])
+{
+  int sg = *num_sg;
+  coord[6*sg]   = x; coord[6*sg+1] = axe[0];         coord[6*sg+2] = axe[1];
+  coord[6*sg+3] = x; coord[6*sg+4] = axe[0]+sens[0]; coord[6*sg+5] = axe[1]+sens[1];
+  (*num_sg)++;
+}
+
+static void build_ytick_seg(double *coord, int *num_sg, double y, double axe[], double sens[])
+{
+  int sg = *num_sg;
+  coord[6*sg]   = axe[0];         coord[6*sg+1] = y; coord[6*sg+2] = axe[1];
+  coord[6*sg+3] = axe[0]+sens[0]; coord[6*sg+4] = y; coord[6*sg+5] = axe[1]+sens[1];
+  (*num_sg)++;
+}
+
+static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], double sens[])
+{
+  int sg = *num_sg;
+  coord[6*sg]   = axe[0];         coord[6*sg+1] = axe[1];         coord[6*sg+2] = z;
+  coord[6*sg+3] = axe[0]+sens[0]; coord[6*sg+4] = axe[1]+sens[1]; coord[6*sg+5] = z;
+  (*num_sg)++;
+}
+
+static int build_box_others_segment(Plot3dBox *B, double xmin, double xmax, 
+				    double ymin, double ymax, double zmin, double zmax)
+{
+  /* compute the 3 faces where these segments are drawn */
+  int f[3], i, j, k, nf=0, sg=0;
+  double x, y, z;
+  GBoolean GOK;
+
+  for ( k = 0 ; k < 6 ; k++ )
+    {
+      GOK = BTRUE;
+      for ( j = 0; j < 4 && GOK ; j++ )
+	GOK = B->face[4*k+j] != B->inear;
+      if ( GOK ) { f[nf] = k; nf++; };
+    }
+
+  /* face:   0 <-> z=zmin, 1 <-> y=ymin, 2 <-> x=xmin
+   *	     3 <-> z=zmax, 4 <-> y=ymax, 3 <-> x=xmax
+   */
+  B->others_coord = malloc( 12*(B->nb_xyz_ticks)*sizeof(double) );
+  if ( B->others_coord == NULL) return FAIL;
+  for ( nf = 0 ; nf < 3 ; nf++ )
+    {
+      if ( f[nf] == 0 || f[nf] == 3 )     /* z = cte */
+	{
+	  if ( f[nf] == 0 ) z = zmin; else z = zmax;
+	  for ( i = 0 ; i < B->nb_xticks ; i++)
+	    build_y_seg(B->others_coord, &sg, B->xticks[i], ymin, ymax, z);
+ 	  for ( i = 0 ; i < B->nb_yticks ; i++)
+	    build_x_seg(B->others_coord, &sg, xmin, xmax, B->yticks[i], z);
+	}
+      else if ( f[nf] == 1 || f[nf] == 4 )  /* y = cte */
+	{
+	  if ( f[nf] == 1 ) y = ymin; else y = ymax;
+	  for ( i = 0 ; i < B->nb_xticks ; i++)
+	    build_z_seg(B->others_coord, &sg, B->xticks[i], y, zmin, zmax);
+	  for ( i = 0 ; i < B->nb_zticks ; i++)
+	    build_x_seg(B->others_coord, &sg, xmin, xmax, y, B->zticks[i]);
+	}
+      else if ( f[nf] == 2 || f[nf] == 5 ) /* x = cte */
+	{
+	  if ( f[nf] == 2 ) x = xmin; else x = xmax;
+	  for ( i = 0 ; i < B->nb_yticks ; i++)
+	    build_z_seg(B->others_coord, &sg, x, B->yticks[i], zmin, zmax);
+	  for ( i = 0 ; i < B->nb_zticks ; i++)
+	    build_y_seg(B->others_coord, &sg, x, ymin, ymax, B->zticks[i]);
+	}
+    }
+  return OK;
+}
+
+static void build_x_seg(double *coord, int *num_sg, double xmin, double xmax, double y, double z)
+{
+  int sg = *num_sg;
+  coord[6*sg]   = xmin; coord[6*sg+1] = y; coord[6*sg+2] = z;
+  coord[6*sg+3] = xmax; coord[6*sg+4] = y; coord[6*sg+5] = z;
+  (*num_sg)++;
+}
+
+static void build_y_seg(double *coord, int *num_sg, double x, double ymin, double ymax, double z)
+{
+  int sg = *num_sg;
+  coord[6*sg]   = x; coord[6*sg+1] = ymin; coord[6*sg+2] = z;
+  coord[6*sg+3] = x; coord[6*sg+4] = ymax; coord[6*sg+5] = z;
+  (*num_sg)++;
+}
+
+static void build_z_seg(double *coord, int *num_sg, double x, double y, double zmin, double zmax)
+{
+  int sg = *num_sg;
+  coord[6*sg]   = x; coord[6*sg+1] = y; coord[6*sg+2] = zmin;
+  coord[6*sg+3] = x; coord[6*sg+4] = y; coord[6*sg+5] = zmax;
+  (*num_sg)++;
+}
+
+
+static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks)
+{ 
+  int i, j, first, last, inc=1, nb_grad, nb_ticks;
+  double work[20], *ticks;
+  
+  gr_compute_ticks(vmin, vmax, work, &nb_grad);
+  if ( nb_grad <= 2 )
+    {
+      nb_ticks = 2; work[0] = *vmin; work[1] = *vmax;
+      first = 0;
+    }
+  else
+    {
+      if ( work[0] < *vmin ) 
+	first = 1; 
+      else 
+	first = 0;
+      if ( work[nb_grad-1] > *vmax ) 
+	last = nb_grad-2; 
+      else 
+	last = nb_grad-1;
+      
+      nb_ticks = last - first + 1;
+      
+      if ( nb_ticks < 2 )
+	{
+	  nb_ticks = 2; work[0] = *vmin; work[1] = *vmax;
+	  first = 0;
+	}
+      else if ( nb_ticks > 8 ) 
+	{
+	  nb_ticks = (nb_ticks+1)/2; inc = 2; 
+	}
+    }
+  
+  ticks = malloc(nb_ticks*sizeof(double));
+  for ( i = 0, j = first ; i < nb_ticks ; i++, j+= inc )
+    ticks[i] = work[j];
+
+  *Nb_ticks = nb_ticks;
+  *Ticks = ticks;
+
+  return;
+}
+
+static int select_box_vertex(const double coord[])
+{
+  /* selectionne le sommet le plus proche de la camera */
+  int k, imax = 0 ;
+  double zmax = coord[2];
+
+  for ( k = 1 ; k < 8 ; k++ )
+    if ( coord[3*k+2] > zmax )
+      {
+	imax = k;
+	zmax = coord[3*k+2];
+      };
+  return ( imax );
+}
+
+
+
+static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B)
+{
+  int k, j, b0;
+  GBoolean GOK;
+  if ( B->box_style == SCILAB )
+    draw_far_box_segments(Xgc,B);
+  else
+    for ( k = 0 ; k < 6 ; k++ )
+      {
+	GOK = BTRUE;
+	for ( j = 0; j < 4 && GOK ; j++ )
+	  {
+	    int face =  B->face[4*k+j];
+	    GOK = face != B->inear  &&  B->pos[face] != OUT_Z;
+	  }
+	if ( GOK )
+	  draw_box_face(Xgc,B, k);
+      }
+
+  if ( B->with_ticks )
+    {
+      for ( j = 0 ; j < B->nb_xyz_ticks ; j++)
+	draw_segment_bis(Xgc,B->ticks_coord, j, foreground_color);
+
+      Xgc->graphic_engine->xset_font(Xgc,(ticks_font_type),(ticks_font_size));
+      for ( j = 0 ; j < B->nb_xticks ; j++)
+	draw_tick(Xgc,B,B->xticks[j], &(B->ticks_coord[6*j]));
+      b0 = 6*B->nb_xticks;
+      for ( j = 0 ; j < B->nb_yticks ; j++)
+	draw_tick(Xgc,B,B->yticks[j], &(B->ticks_coord[6*j+b0]));
+      b0 += 6*B->nb_yticks;
+      for ( j = 0 ; j < B->nb_zticks ; j++)
+	draw_tick(Xgc,B,B->zticks[j], &(B->ticks_coord[6*j+b0]));
+
+      if ( B->box_style == MATLAB )
+	{
+	  Xgc->graphic_engine->xset_line_style(Xgc,2);
+	  for ( j = 0 ; j < 2*(B->nb_xyz_ticks) ; j++)
+	    draw_segment_bis(Xgc,B->others_coord, j, foreground_color);
+	  Xgc->graphic_engine->xset_line_style(Xgc,1);
+	}
+    }
+}
+
+static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
+{
+  double xt, yt, vxt, vyt, normv, lim = 0.7071068;
+  int xj, yj;
+  char buf[60];
+
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
+      /* we move to 2d scale */
+      double Tcoord[6];
+      apply_transforms_new1(Xgc,Tcoord,coord, B->pos,lim,2); 
+      vxt = Tcoord[3] - Tcoord[0];
+      vyt = Tcoord[4] - Tcoord[1];
+      xt = Tcoord[3] + 0.6*vxt;
+      yt = Tcoord[4] + 0.6*vyt;
+    } 
+  else 
+#endif 
+    {
+      vxt = coord[3] - coord[0];
+      vyt = coord[4] - coord[1];
+      xt = coord[3] + 0.6*vxt;
+      yt = coord[4] + 0.6*vyt;
+    }
+  normv = sqrt( vxt*vxt + vyt*vyt );
+  vxt = vxt/normv;
+  vyt = vyt/normv;
+  if ( vxt >= lim )
+    { xj = LEFT; yj = CENTER; }
+  else if ( vxt <= -lim )
+    { xj = RIGHT; yj = CENTER; }
+  else if ( vyt >= lim )
+    { xj = CENTER; yj = UP; }
+  else
+    { xj = CENTER; yj = DOWN; }
+  sprintf(buf, "%g", val);
+  xt = XScale(xt);
+  yt = YScale(yt);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_2dview(Xgc);
+      draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+      nsp_ogl_set_3dview(Xgc);
+      return ;
+    }
+#endif 
+  draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+}
+
+static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B)
+{
+  /* dessine les segments n'ayant pas le point inear comme sommet */
+  int k, ia, ib;
+
+  for ( k = 0 ; k < 12 ; k++ )
+    {
+      ia = B->segment[2*k]; ib = B->segment[2*k+1];
+      if ( ia != B->inear  &&  ib != B->inear )
+	draw_segment(Xgc,B->coord, ia, ib, foreground_color);
+    };
+}
+
+static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B)
+{
+  /* dessine les segments ayant le point inear comme sommet */
+  int k, ia, ib;
+  if (B->pos[B->inear] == OUT_Z )
+    return;
+  Xgc->graphic_engine->xset_line_style(Xgc,2); 
+  for ( k = 0 ; k < 12 ; k++ )
+    {
+      ia = B->segment[2*k]; ib = B->segment[2*k+1];
+      if ( ia == B->inear ||  ib == B->inear )
+	draw_segment(Xgc,B->coord, ia, ib, foreground_color);
+    };
+  Xgc->graphic_engine->xset_line_style(Xgc,1); 
+}
+
+static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
+{
+  int x[2], y[2], n=2, flag=0;
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      double xd[2], yd[2],zd[2];
+      int n=2, flag=0;
+      xd[0] = coord[3*ia];
+      yd[0] = coord[3*ia+1];
+      zd[0] = coord[3*ia+2];
+      xd[1] = coord[3*ib];
+      yd[1] = coord[3*ib+1];
+      zd[1] = coord[3*ib+2];
+      drawsegments3D(Xgc, xd, yd ,zd, n, &color, flag);
+      return; 
+    }
+#endif
+  x[0] = XScale(coord[3*ia]);
+  y[0] = YScale(coord[3*ia+1]);
+  x[1] = XScale(coord[3*ib]);
+  y[1] = YScale(coord[3*ib+1]);
+  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
+}
+
+static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
+{
+  int x[2], y[2], n=2, flag=0;
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      double x[2], y[2], z[2]; 
+      int n=2, flag=0;
+      x[0] = coord[6*ns];
+      y[0] = coord[6*ns+1];
+      z[0] = coord[6*ns+2];
+      x[1] = coord[6*ns+3];
+      y[1] = coord[6*ns+4];
+      z[1] = coord[6*ns+5];
+      drawsegments3D(Xgc, x, y ,z, n, &color, flag);
+      return;
+    }
+#endif
+  x[0] = XScale(coord[6*ns]);
+  y[0] = YScale(coord[6*ns+1]);
+  x[1] = XScale(coord[6*ns+3]);
+  y[1] = YScale(coord[6*ns+4]);
+  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
+}
+
+static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
+{
+  int flag=0, rect[4], w, h;
+  double angle=0.0; 
+  Xgc->graphic_engine->boundingbox(Xgc,str,x,y, rect);
+  w = rect[2]; h = rect[3];
+  if ( xj == CENTER ) 
+    x -= w/2;
+  else if ( xj == RIGHT )
+    x -= w;
+  if ( yj == CENTER )
+    y += h/2;
+  else if ( yj == DOWN )
+    y += h;
+  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle);
+}
+
+static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j)
+{
+  int x[4], y[4], i, numpt, *current_vertex,np=1, m=4;
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      double xd[4],yd[4],zd[4];
+      current_vertex = &(B->face[4*j]);
+      for (i = 0 ; i < 4 ; i++)
+	{
+	  numpt = current_vertex[i];
+	  xd[i] = B->coord[3*numpt];
+	  yd[i] = B->coord[3*numpt+1];
+	  zd[i] = B->coord[3*numpt+2];
+	}
+      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+      fillpolylines3D(Xgc, xd, yd,zd, &B->color, np, m);
+      return;
+    }
+#endif
+  current_vertex = &(B->face[4*j]);
+  for (i = 0 ; i < 4 ; i++)
+    {
+      numpt = current_vertex[i];
+      x[i] = XScale(B->coord[3*numpt]);
+      y[i] = YScale(B->coord[3*numpt+1]);
+    }
+  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  Xgc->graphic_engine->fillpolylines(Xgc, x, y,&B->color, np, m);
+}
+
+static void nsp_obj3d_free_box(Plot3dBox *B)
+{
+  if ( B->with_ticks )
+    {
+      free(B->xticks);
+      free(B->yticks);
+      free(B->zticks);
+      free(B->ticks_coord);
+      free(B->ticks_pos);
+      if ( B->box_style == MATLAB )
+	{
+	  free(B->others_coord);
+	  free(B->others_pos);
+	}
+    }
+  free(B);
+}
+
+
+
+#define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp; \
+                   itemp = p[i]; p[i] = p[j]; p[j] = itemp
+
+#define SWITCH_VALUE 20
+
+#define POP_segment(ia,ib) la--; if ( la >= 0 ) { ia = ileft[la]; ib = iright[la]; }
+#define PUSH_segment(ia,ib) ileft[la] = (ia); iright[la] = (ib); la++
+
+
+static void nsp_obj3d_dsortc(double x[], int *n, int p[])
+{
+  /*
+   *     PURPOSE
+   *        sort the double precision array x(1..n) in decreasing order
+   *        and computes (if perm == 1) the permutation p of the sort :
+   *
+   *               x_sorted(i) = x(p(i))  1<=i<=n
+   *
+   *     AUTHOR
+   *        B. Pincon (trying to accelerate the initial scilab dsort.f)
+   *
+   *     NOTES
+   *        (i) n must be less than 2**(25) ! due to lengh of work space (ileft, iright)
+   *        (ii) quicksort is used with Sedgewick tricks
+   */
+
+  int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
+  int i, ia, ib, im, la, j, itemp;
+  double temp, pivot;
+
+  for ( i = 0; i < *n ; i++) p[i] = i;
+
+  if ( *n == 1 ) return;
+
+  ia = 0; ib = *n-1;  /* ia..ib is the current part (segment) of the array to sort */
+  la = 0;
+
+  while (la >= 0)   /* la >= 0  <=> stay one or some segments to sort */
+    {
+      if ( ib-ia < SWITCH_VALUE ) /* segment is short enough => insertion sort */
+	{
+	  for ( i = ia+1 ; i <= ib ; i++ )
+	    {
+	      j = i;
+	      while ( j > ia  &&  x[j] > x[j-1] )
+		{
+		  SWAP(j,j-1);
+		  j--;
+		}
+	    };
+	  POP_segment(ia,ib);  /* get the next segment to sort if any */
+	}
+      else    /* quicksort */
+	{
+	  im = (ia+ib)/2;
+	  SWAP(ia, im);
+	  i = ia+1; j = ib;
+	  if (x[i] < x[j])  { SWAP(i, j); }
+	  if (x[ia] < x[j]) { SWAP(ia, j); }
+	  else if (x[i] < x[ia]) { SWAP(ia, i); }
+	  pivot = x[ia];
+          /* at this point we have  x[i=ia+1] >= pivot (=x[ia]) >= x[j=ib]  */
+	  while (1)
+	    {
+	      do i++;  while ( x[i] > pivot );
+	      do j--;  while ( x[j] < pivot );
+	      if (i >= j) break;
+	      SWAP(i, j);
+	    }
+	  SWAP(ia, j);
+
+	  /*  store the longer subdivision in workspace and    */
+          /*  update the current segment to be sorted [ia..ib] */
+	  if ( j-ia > ib-j )
+	    { PUSH_segment(ia,j-1); ia = j+1; }
+	  else
+	    { PUSH_segment(j+1,ib); ib = j-1; }
+	  if ( ib-ia <= 0)
+	    { POP_segment(ia,ib); }
+	}
+    }
+}
+
+#line 2346 "objs3d.c"

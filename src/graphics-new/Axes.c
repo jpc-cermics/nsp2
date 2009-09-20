@@ -34,6 +34,8 @@ static void NumberFormat (char *str,int k,int a);
 static void aplotv1_new(BCG *Xgc,char mode, int grid_color);
 static void aplotv2 (BCG *Xgc,char mode, int grid_color);
 static void nsp_draw_frame_rectangle(BCG *Xgc) ;
+static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
+		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color);
 
 /**
  * axis_draw:
@@ -224,7 +226,7 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
 void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
 {
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
+    nsp_gengine_record_old.store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag,grid_color);
 }
 
@@ -232,8 +234,8 @@ void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
 			  int grid_color, char logflag, int seg_flag, int Nx,int Ny);
 
-void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
-	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
+static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
+		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
 {
   int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;

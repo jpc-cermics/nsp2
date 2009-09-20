@@ -80,7 +80,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
   update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
+    nsp_gengine_record_old.store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
 
   /* Allocation */
   n = (*n1)*(*n2) ; 
@@ -131,7 +131,7 @@ int nsp_plot_grid(BCG *Xgc, int *style)
   double vxd[2],vyd[2],step;
   int pat;
   /* Recording command */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
   /*  x-axis grid (i.e vertical lines ) */
@@ -196,7 +196,7 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
   double Rmax;
   int i,pat,Narc=5,un=1;
   /* Recording command */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
   frame_clip_on(Xgc);

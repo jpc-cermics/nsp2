@@ -1542,11 +1542,16 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   return OK;
 }
 
+int nsp_obj3d_orientation(int x[], int y[], int n)
+{
+  /* calcule l'orientation avec les 3 premiers points du polygone ... */
+  int a, b, c, d ;
+  a = x[1] - x[0]; c = x[2] - x[0]; 
+  b = y[1] - y[0]; d = y[2] - y[0];
+  if ( a*d - b*c >= 0)
+    return ( 1 );
+  else
+    return ( -1 );
+}
 
-
-
-
-
-
-
-#line 1553 "polyhedron.c"
+#line 1558 "polyhedron.c"

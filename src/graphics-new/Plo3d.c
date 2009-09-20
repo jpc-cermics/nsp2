@@ -287,9 +287,9 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
       if (strcmp(name,"plot3d")==0) 
-	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	nsp_gengine_record_old.store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
       else 
-	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	nsp_gengine_record_old.store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
@@ -496,13 +496,13 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
     if (strcmp(name,"fac3d")==0) 	
-      store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else if (strcmp(name,"fac3d1")==0) 	
-      store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else if (strcmp(name,"fac3d2")==0) 	
-      store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else 
-      store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
@@ -787,7 +787,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+    nsp_gengine_record_old.store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
   
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
@@ -880,7 +880,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
+    nsp_gengine_record_old.store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */
@@ -1670,7 +1670,7 @@ void I3dRotation(BCG *Xgc)
       else 
 	{
 	  /* just changes the angles in recorded plots */
-	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
 	  /* immediate redraw */
 	  Xgc->graphic_engine->force_redraw(Xgc);
 	}
@@ -1681,7 +1681,7 @@ void I3dRotation(BCG *Xgc)
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
-  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
@@ -1888,13 +1888,13 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
     if (strcmp(name,"fac3d")==0) 	
-      store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else if (strcmp(name,"fac3d1")==0) 	
-      store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else if (strcmp(name,"fac3d2")==0) 	
-      store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
     else 
-      store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_gengine_record_old.store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
@@ -2003,9 +2003,9 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
       if (strcmp(name,"plot3d")==0) 
-	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	nsp_gengine_record_old.store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
       else 
-	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	nsp_gengine_record_old.store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -2181,7 +2181,7 @@ static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, dou
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+    nsp_gengine_record_old.store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
   
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
@@ -2249,7 +2249,7 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
+    nsp_gengine_record_old.store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */

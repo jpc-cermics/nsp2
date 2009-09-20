@@ -1598,7 +1598,7 @@ int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
 	box_style = OTHER;
     }
 
-  obj3d_from_list(stack,L,FALSE,&err,&nf,&nbObj);
+  obj3d_from_list_old(stack,L,FALSE,&err,&nf,&nbObj);
 
   if (err == TRUE) 
     {
@@ -1632,7 +1632,7 @@ int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 
-  nsp_draw_3d_obj(Xgc,L,&theta,&alpha,leg1,iflag,ebox,with_mesh,with_box,box_color,box_style);
+  nsp_draw_3d_obj_old(Xgc,L,&theta,&alpha,leg1,iflag,ebox,with_mesh,with_box,box_color,box_style);
   return 0;
 }
 #endif 
@@ -7307,8 +7307,42 @@ extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_intg(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_int2d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_int3d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
+extern int int_tcl_existvar(Stack stack, int rhs, int opt, int lhs); /* XXX*/
+
+extern function int_tcl_DoOneEvent; 
+extern function   int_tcl_EvalFile;
+extern function   int_tcl_EvalStr;
+extern function   int_tcl_GetVar;
+extern function   int_tcl_InfoVar;
+extern function   int_tcl_SetVar;
+extern function   int_tcl_OpenTk;
+extern function   int_tcl_Close;
+extern function   int_tcl_FindObj;
+extern function   int_tcl_Set;
+extern function   int_tcl_Get;
+extern function   int_tcl_Gcf;
+extern function   int_tcl_Scf;
+extern function   int_tcl_GetVersion;
+extern function   int_tcl_UnsetVar;
+extern function   int_tcl_ExistVar;
+extern function   int_tcl_UpVar;
+extern function   int_tcl_DeleteInterp;
+extern function   int_tcl_CreateSlave;
+extern function   int_tcl_ExistInterp;
+
 
 static OpTab Graphics_func[]={
+  {"TCL_DoOneEvent",   int_tcl_DoOneEvent},
+  {"TCL_EvalFile",   int_tcl_EvalFile},
+  {"TCL_EvalStr",   int_tcl_EvalStr},
+  {"TCL_GetVar",   int_tcl_GetVar},
+  {"TCL_InfoVar",   int_tcl_InfoVar},
+  {"TCL_SetVar",   int_tcl_SetVar},
+  {"TCL_UnsetVar",   int_tcl_UnsetVar},
+  {"TCL_ExistVar",   int_tcl_ExistVar},
+  {"TCL_DeleteInterp",   int_tcl_DeleteInterp},
+  {"TCL_CreateSlave", 	int_tcl_CreateSlave},
+  {"TCL_ExistInterp", 	int_tcl_ExistInterp},
   {"ode",int_ode}, /* FIXME: en construction */
   {"intg",int_intg}, /* FIXME: en construction */
   {"int2d",int_int2d}, /* FIXME: en construction */

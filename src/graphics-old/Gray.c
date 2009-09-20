@@ -56,7 +56,7 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
   /* Allocation **/
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout,FALSE);
+    nsp_gengine_record_old.store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout,FALSE);
 
   xm = graphic_alloc(0,N,sizeof(int));
   ym = graphic_alloc(1,N,sizeof(int));
@@ -126,7 +126,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   /* Storing values if using the Record driver */
   /* FIXME: need one more flag */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout,TRUE);
+    nsp_gengine_record_old.store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout,TRUE);
 
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -422,7 +422,7 @@ int nsp_draw_matrix_1_old(BCG *Xgc,double *z, int nr, int nc, char *strflag, dou
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray1(Xgc,z,nr,nc,strflag,brect,aaint,remap,colminmax,zminmax);
+    nsp_gengine_record_old.store_Gray1(Xgc,z,nr,nc,strflag,brect,aaint,remap,colminmax,zminmax);
 
   /* Allocation **/
   xm = graphic_alloc(0,nc+1,sizeof(int));
@@ -470,7 +470,7 @@ int nsp_draw_matrix_2_old(BCG *Xgc,double *z,int nr, int nc, double *xrect,
   int *xm,*ym,  j;
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray2(Xgc,z,nr,nc,xrect,remap,colminmax,zminmax);
+    nsp_gengine_record_old.store_Gray2(Xgc,z,nr,nc,xrect,remap,colminmax,zminmax);
 
   /* Boundaries of the frame **/
   scale_f2i(Xgc,xx,yy,xx1,yy1,2);
@@ -527,7 +527,7 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     /* added zminmax and colminmax (bruno) */
-    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout,draw);
+    nsp_gengine_record_old.store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout,draw);
 
 
   /* Allocation */

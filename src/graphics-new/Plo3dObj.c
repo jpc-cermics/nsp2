@@ -40,23 +40,21 @@ extern Gengine GL_gengine;
 /* This is to be fixed 3D primitives are to be added 
  * in the graphic_engines.
  */
+extern void nsp_obj3d_draw_near_box_segments_old(BCG *Xgc,Plot3dBox *B);
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
 extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
-extern  int nsp_obj3d_orientation(int x[], int y[], int n);
-extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
-extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
-extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
-extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
-extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
-extern void nsp_obj3d_free_box(Plot3dBox *B);
-
-
-
+static  int nsp_obj3d_orientation_old(int x[], int y[], int n);
+static Plot3dBox* make_box_old(BCG *Xgc,double Box[], GBoolean with_ticks,
+			       BoxStyle box_style,int box_color, double lim[]);
+static void apply_transforms_old(BCG *Xgc,double Coord[],const double *M,
+				 VisionPos pos[],const double lim[],int ncoord);
+static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
+static void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+static  void nsp_obj3d_free_box(Plot3dBox *B);
 static int select_box_vertex(const double coord[]);
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color);
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color);
@@ -142,8 +140,8 @@ int foreground_color = 1;
 int background_color = 1;
 
 /*                      s0    s1    s2    s3    s4    s5    s6    s7    s8    s9    s10   s11  */
-int box_segments[24] = {0,2,  0,5,  0,6,  1,3,  1,4,  1,7,  2,4,  2,7,  3,5,  3,6,  4,6,  5,7};
-int box_faces[24] = {0,5,3,6,  0,6,4,2,  0,2,7,5,  1,7,2,4,  1,3,5,7,  1,4,6,3};
+static int box_segments[24] = {0,2,  0,5,  0,6,  1,3,  1,4,  1,7,  2,4,  2,7,  3,5,  3,6,  4,6,  5,7};
+static int box_faces[24] = {0,5,3,6,  0,6,4,2,  0,2,7,5,  1,7,2,4,  1,3,5,7,  1,4,6,3};
 
 
 /* Walk through L and store elements in an array 
@@ -151,7 +149,7 @@ int box_faces[24] = {0,5,3,6,  0,6,4,2,  0,2,7,5,  1,7,2,4,  1,3,5,7,  1,4,6,3};
  *
  */
 
-void **obj3d_from_list(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,int *nbObj) 
+void **obj3d_from_list_old(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,int *nbObj) 
 {
   Obj3d *Obj= NULL;
   int num=0;
@@ -240,10 +238,10 @@ void **obj3d_from_list(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,in
 } 
 
 
-/*   nsp_draw_3d_obj(Xgc,L,&theta,&alpha,leg1,iflag,ebox);*/
+/*   nsp_draw_3d_obj_old(Xgc,L,&theta,&alpha,leg1,iflag,ebox);*/
 
 
-extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
+extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
 			     int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
   NspList *Lobj = Lo;
@@ -279,7 +277,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list_old(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 
@@ -300,7 +298,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
-      store_3dobj(Xgc,Lobj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_gengine_record_old.store_3dobj(Xgc,Lobj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
     }
   
   lim[0] = 1.e+10;
@@ -308,7 +306,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
   lim[2] = - 1.e+10;
 
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
-  if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
+  if ( with_box == TRUE ) B = make_box_old(Xgc,Box, BTRUE, box_style,box_color, lim);
 
   HF= malloc( nf * sizeof(HFstruct) );
   z = malloc( nf * sizeof(double) );
@@ -326,7 +324,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
   for ( k = 0 ; k < nbObj ; k++ )
     {
       func_3dobj *Q = OBJ3D(Obj[k].obj);
-      apply_transforms(Xgc,Q->coord,Q->coord, Q->pos, lim, Q->nb_coords);
+      apply_transforms_old(Xgc,Q->coord,Q->coord, Q->pos, lim, Q->nb_coords);
       Q->zmean(Q, z, HF, &n, k);
     }
  
@@ -343,7 +341,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
       /* dessin partiel de l'objet en utilisant la face j */
       OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j);
     }
-  if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
+  if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments_old(Xgc,B);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
   free_Obj3d(Obj,nbObj);
   free(HF);
@@ -375,7 +373,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list_old(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 
@@ -388,7 +386,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
-      store_3dobj(Xgc,Lobj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_gengine_record_old.store_3dobj(Xgc,Lobj,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
     }
   
   lim[0] = 1.e+10;
@@ -398,9 +396,9 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE  )
     {
-      B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim);
+      B = make_box_old(Xgc,Box, BTRUE, box_style,box_color,lim);
       nsp_obj3d_draw_box(Xgc,B);
-      if (B->box_style == SCILAB ) nsp_obj3d_draw_near_box_segments(Xgc,B);
+      if (B->box_style == SCILAB ) nsp_obj3d_draw_near_box_segments_old(Xgc,B);
       nsp_obj3d_free_box(B);
     }
 
@@ -410,7 +408,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 #endif 
 
 
-Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
+static Plot3dBox* make_box_old(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
 {
 #ifdef WITH_GTKGLEXT 
   double coord[24];
@@ -463,13 +461,13 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       /* in open_gl we do not want to change coordinates */
-      apply_transforms(Xgc,coord,B->coord, B->pos, lim, 8);
+      apply_transforms_old(Xgc,coord,B->coord, B->pos, lim, 8);
       B->inear = select_box_vertex(coord);       
     }
   else 
 #endif
     {
-      apply_transforms(Xgc,B->coord,B->coord, B->pos, lim, 8);
+      apply_transforms_old(Xgc,B->coord,B->coord, B->pos, lim, 8);
       B->inear = select_box_vertex(B->coord);      
     }
   
@@ -480,7 +478,7 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
 #ifdef WITH_GTKGLEXT 
       if ( Xgc->graphic_engine != &GL_gengine ) 
 #endif	
-	apply_transforms(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks)); 
+	apply_transforms_old(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks)); 
     }
   if ( B->with_ticks  &&  B->box_style == MATLAB )
     {
@@ -489,7 +487,7 @@ Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_sty
 #ifdef WITH_GTKGLEXT 
       if ( Xgc->graphic_engine != &GL_gengine ) 
 #endif	
-	apply_transforms(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
+	apply_transforms_old(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
     }      
   return ( B );
 }
@@ -727,7 +725,7 @@ static int select_box_vertex(const double coord[])
   return ( imax );
 }
 
-extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B)
+static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B)
 {
   int k, j, b0;
   GBoolean GOK;
@@ -783,7 +781,7 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
       const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
       /* we move to 2d scale */
       double Tcoord[6];
-      apply_transforms(Xgc,Tcoord,coord, B->pos,lim,2); 
+      apply_transforms_old(Xgc,Tcoord,coord, B->pos,lim,2); 
       vxt = Tcoord[3] - Tcoord[0];
       vyt = Tcoord[4] - Tcoord[1];
       xt = Tcoord[3] + 0.6*vxt;
@@ -836,7 +834,7 @@ static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B)
     };
 }
 
-void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B)
+void nsp_obj3d_draw_near_box_segments_old(BCG *Xgc,Plot3dBox *B)
 {
   /* dessine les segments ayant le point inear comme sommet */
   int k, ia, ib;
@@ -1139,7 +1137,7 @@ static void draw_spolyhedron_face(BCG *Xgc,void *Ob, int j)
     }
   val_mean = val_mean / m;
 
-  orient = nsp_obj3d_orientation(x, y, m);
+  orient = nsp_obj3d_orientation_old(x, y, m);
 
   /*   if ( orient == 1 ) */
   /*     return; */
@@ -1231,7 +1229,7 @@ static void draw_polyhedron_face(BCG *Xgc,void *Ob, int j)
       y[i] = YScale(Q->coord[3*numpt+1]);
     }
 
-  if ( nsp_obj3d_orientation(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
+  if ( nsp_obj3d_orientation_old(x, y, m) == -1 )  /* le repère de la caméra est indirect ! */
     if ( Q->nb_colors == 1 )
       color = Q->color[0];
     else
@@ -1471,7 +1469,7 @@ static void draw_justified_string3d_ogl(BCG *Xgc,String3d *V, int xj, int yj)
   const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
   /* we move to 2d scale */
   double Tcoord[3];
-  apply_transforms(Xgc,Tcoord,V->coord,V->pos,lim,1); 
+  apply_transforms_old(Xgc,Tcoord,V->coord,V->pos,lim,1); 
   Tcoord[0] = XScale(Tcoord[0]);
   Tcoord[1] = YScale(Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
@@ -1500,7 +1498,7 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
 }
 
 
-int nsp_obj3d_orientation(int x[], int y[], int n)
+static int nsp_obj3d_orientation_old(int x[], int y[], int n)
 {
   /* calcule l'orientation avec les 3 premiers points du polygone ... */
   int a, b, c, d ;
@@ -1557,7 +1555,7 @@ void nsp_obj3d_free_box(Plot3dBox *B)
  */
 
 
-void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+static void apply_transforms_old(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
 {
   int i, k=0;
   double facteur;
@@ -1592,44 +1590,7 @@ void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],c
     }
 }
 
-/* similar but with a transposed Coord
- *
- */
 
-void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
-{
-  int i, k=0;
-  double facteur;
-  for (i = 0; i < ncoord ; i++ )
-    {
-      /* take care that Coord and M can point to the same location 
-       * thus we have to copy
-       */
-      double v[3];
-      v[0] = M[i];v[1] = M[i+ncoord]; v[2] = M[i+2*ncoord]; 
-      Coord[i]   = TRX(v[0],v[1],v[2]);
-      Coord[i+ncoord] = TRY(v[0],v[1],v[2]);
-      Coord[i+2*ncoord] = TRZ(v[0],v[1],v[2]);
-      if ( Coord[i+2*ncoord] < lim[2] )  
-	{
-	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
-	}
-      else
-	{
-	  /* on applique la perspective */
-	  facteur = 1.0/Coord[i+2*ncoord];
-	  facteur = 1.0;
-	  Coord[i]   = facteur*Coord[i];
-	  Coord[i+ncoord] = facteur*Coord[i+ncoord];
-	  /* le point est-il dans le rectangle de visu ? */
-	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+ncoord]) > lim[1] ) 
-	    pos[k] = OUT_XY;
-	  else
-	    pos[k] = VIN;
-	}
-      k++;
-    }
-}
 
 /* 
  * polyhedron 

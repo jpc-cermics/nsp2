@@ -111,7 +111,7 @@ static int load_clipping_p(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_LIS(Xgc->xdrs,lplot->vals,4) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -120,7 +120,7 @@ static int load_clipgrf(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -130,7 +130,7 @@ static int load_int(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->val) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -143,7 +143,7 @@ static int load_unclip(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -152,7 +152,7 @@ static int load_test(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -162,7 +162,7 @@ static int load_clip(BCG *Xgc)
   struct rec_int4 *lplot  = MALLOC(sizeof(struct rec_int4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LIS(Xgc->xdrs,lplot->vals,4) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -178,7 +178,7 @@ static int load_font(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->val) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->val1) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -199,7 +199,7 @@ static int load_mark(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->val) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->val1) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -212,7 +212,7 @@ static int load_show(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -221,7 +221,7 @@ static int load_pixmapclear(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -230,7 +230,7 @@ static int load_fpf_def(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -239,7 +239,7 @@ static int load_fpf(BCG *Xgc)
   struct rec_str *lplot  = MALLOC(sizeof(struct rec_str));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_C(Xgc->xdrs,lplot->str) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -248,7 +248,7 @@ static int load_init(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -260,7 +260,7 @@ static int load_colormap(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->m)==0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->n)==0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->colors) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -269,7 +269,7 @@ static int load_default_colormap(BCG *Xgc)
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&((struct rec_void *) lplot)->code)==0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -288,7 +288,7 @@ static int load_drawarc_1(BCG *Xgc)
     {
       if ( load_D(Xgc->xdrs,lplot->arc+i) == 0) return(0);
     }
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -304,7 +304,7 @@ static int load_fillarcs_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->n) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vects) == 0) return(0);
   if ( load_VectLI(Xgc->xdrs,&lplot->fillvect) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -320,7 +320,7 @@ static int load_drawarcs_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->n) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vects) == 0) return(0);
   if ( load_VectLI(Xgc->xdrs,&lplot->fillvect) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -337,7 +337,7 @@ static int load_fillpolyline_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->closeflag) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vx) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vy) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -363,7 +363,7 @@ static int load_drawarrows_1(BCG *Xgc)
     {
       if ( load_LI(Xgc->xdrs,&lplot->def_style)==0) return(0);
     }
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -380,7 +380,7 @@ static int load_drawaxis_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->nsteps) == 0) return(0);
   if ( load_DS(Xgc->xdrs,lplot->initpoint,2) == 0) return(0);
   if ( load_DS(Xgc->xdrs,lplot->size,3) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -394,7 +394,7 @@ static int load_cleararea_1(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_DS(Xgc->xdrs,lplot->vals,4) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -412,7 +412,7 @@ static int load_fillarc_1(BCG *Xgc)
     {
       if ( load_D(Xgc->xdrs,lplot->arc+i) == 0) return(0);
     }
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -426,7 +426,7 @@ static int load_fillrectangle_1(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_DS(Xgc->xdrs,lplot->vals,4) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -443,7 +443,7 @@ static int load_drawpolyline_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->closeflag) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vx) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vy) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -469,7 +469,7 @@ static int load_fillpolylines_1(BCG *Xgc)
     {
       if ( load_VectLI(Xgc->xdrs,&lplot->fillvect) == 0) return(0);
     }
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -486,7 +486,7 @@ static int load_drawpolymark_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->closeflag) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vx) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vy) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -505,7 +505,7 @@ static int load_displaynumbers_1(BCG *Xgc)
   if ( load_VectF(Xgc->xdrs,&lplot->y) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->z) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->alpha) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -523,7 +523,7 @@ static int load_drawpolylines_1(BCG *Xgc)
   if ( load_VectF(Xgc->xdrs,&lplot->vx) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vy) == 0) return(0);
   if ( load_VectLI(Xgc->xdrs,&lplot->drawvect) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -538,7 +538,7 @@ static int load_drawrectangle_1(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_DS(Xgc->xdrs,lplot->vals,4) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -554,7 +554,7 @@ static int load_drawrectangles_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->n) == 0) return(0);
   if ( load_VectF(Xgc->xdrs,&lplot->vects) == 0) return(0);
   if ( load_VectLI(Xgc->xdrs,&lplot->fillvect) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -572,7 +572,7 @@ static int load_drawsegments_1(BCG *Xgc)
   if ( load_VectF(Xgc->xdrs,&lplot->vy) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->iflag) == 0) return(0);
   if ( load_VectLI(Xgc->xdrs,&lplot->style) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -590,7 +590,7 @@ static int load_displaystring_1(BCG *Xgc)
   if ( load_D(Xgc->xdrs,&lplot->y) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->flag) == 0) return(0);
   if ( load_D(Xgc->xdrs,&lplot->angle) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -605,7 +605,7 @@ static int load_displaystringa_1(BCG *Xgc)
   if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
   if ( load_VectC(Xgc->xdrs,&lplot->string) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->ipos) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -625,7 +625,7 @@ static int load_xstringb_1(BCG *Xgc)
   if ( load_D(Xgc->xdrs,&lplot->wd) == 0) return(0);
   if ( load_D(Xgc->xdrs,&lplot->hd) == 0) return(0);
   if ( load_LI(Xgc->xdrs,&lplot->flag) == 0) return(0);
-  store_record(Xgc,lplot->code,lplot);
+  nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -643,7 +643,7 @@ static int load_Ech(BCG *Xgc)
       if ( load_VectF(Xgc->xdrs,&(lplot->Wrect)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->Frect)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->Frect_kp))   == 0) return(0);
-      if (store_record(Xgc,CODEEch,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEEch,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -666,7 +666,7 @@ static int load_NEch(BCG *Xgc)
       if ( load_VectF(Xgc->xdrs,&(lplot->Frect)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->Arect)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->Frect_kp))   == 0) return(0);
-      if (store_record(Xgc,CODENEch,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODENEch,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -712,7 +712,7 @@ static int load_Plot(BCG *Xgc)
       if ( load_VectF(Xgc->xdrs,&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->aint)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->aint_kp)) == 0) return(0);
-      if (store_record(Xgc,CODEPlot,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEPlot,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -759,7 +759,7 @@ static int load_SciAxis(BCG *Xgc)
   lplot->pos =  type[0] ;
   lplot->xy_type =  type[1];
   lplot->logflag  = type[2];
-  if (store_record(Xgc,CODESciAxis,(char *) lplot) == 0) return(0);
+  if (nsp_gengine_record_old.store_record(Xgc,CODESciAxis,(char *) lplot) == 0) return(0);
   return(1);
 }
 
@@ -775,7 +775,7 @@ static int load_Grid(BCG *Xgc)
     {
       if ( load_LI(Xgc->xdrs,&lplot->style) == 0) return(0);
       if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
-      if (store_record(Xgc,CODEGrid,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEGrid,(char *) lplot) == 0) return(0);
       
     }
   else 
@@ -807,7 +807,7 @@ static int load_Param3D(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->flag)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->bbox))== 0) return(0);
-      if (store_record(Xgc,CODEParam3D,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEParam3D,(char *) lplot) == 0) return(0);
     }
   else
     {
@@ -836,7 +836,7 @@ static int load_Param3D1(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->flag)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->bbox))== 0) return(0);
-      if (store_record(Xgc,CODEParam3D1,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEParam3D1,(char *) lplot) == 0) return(0);
     }
   else
     {
@@ -867,7 +867,7 @@ static int load_Plot3D(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->flag)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->bbox))== 0) return(0);
-      if (store_record(Xgc,lplot->code,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,lplot->code,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -902,7 +902,7 @@ static int load_Fac3D(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->flag)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->bbox))== 0) return(0);
-      if (store_record(Xgc,CODEFac3D,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEFac3D,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -940,7 +940,7 @@ static int load_Fec(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->strflag)) == 0) return(0);
       if ( load_VectC(Xgc->xdrs,&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectC(Xgc->xdrs,&(lplot->legend))  == 0) return(0);
-      if (store_record(Xgc,CODEFecN,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEFecN,(char *) lplot) == 0) return(0);
       if ( load_LI(Xgc->xdrs,&lplot->draw)==0) return(0);
     }
   else 
@@ -980,7 +980,7 @@ static int load_Contour(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->flag)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->bbox)) == 0) return(0);
-      if (store_record(Xgc,CODEContour,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEContour,(char *) lplot) == 0) return(0);
       
     }
   else 
@@ -1018,7 +1018,7 @@ static int load_Contour2D(BCG *Xgc)
       if ( load_VectF(Xgc->xdrs,&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->aint)) == 0) return(0);
       if ( load_VectLI(Xgc->xdrs,&(lplot->aint_kp)) == 0) return(0);
-      if (store_record(Xgc,CODEContour2D,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEContour2D,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1063,7 +1063,7 @@ static int load_Gray(BCG *Xgc)
 	{ if ( load_VectF(Xgc->xdrs,&(lplot->zminmax)) == 0) return(0);}
       if ( (flag & 0xf000 ) != 0 )
 	{ if ( load_VectLI(Xgc->xdrs,&(lplot->colout)) == 0) return(0);}
-      if (store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
       if ( load_LI(Xgc->xdrs,&lplot->shade)==0) return(0);
     }
   else 
@@ -1100,7 +1100,7 @@ static int load_Gray1(BCG *Xgc)
 	{ if ( load_VectLI(Xgc->xdrs,&(lplot->colminmax)) == 0) return(0);}
       if ( (flag & 0xf00 ) != 0 )
 	{ if ( load_VectF(Xgc->xdrs,&(lplot->zminmax)) == 0) return(0);}
-      if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1130,7 +1130,7 @@ static int load_Gray2(BCG *Xgc)
 	{ if ( load_VectLI(Xgc->xdrs,&(lplot->colminmax)) == 0) return(0);}
       if ( (flag & 0xf00 ) != 0 )
 	{ if ( load_VectF(Xgc->xdrs,&(lplot->zminmax)) == 0) return(0);}
-      if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1164,7 +1164,7 @@ static int load_Champ(BCG *Xgc)
       if ( load_VectC(Xgc->xdrs,&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->vrect)) == 0) return(0);
       if ( load_VectF(Xgc->xdrs,&(lplot->vrect_kp))== 0) return(0);
-      if (store_record(Xgc,CODEChamp,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEChamp,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1187,7 +1187,7 @@ static int load_object(BCG *Xgc)
       NspObject *obj = nsp_object_xdr_load(Xgc->xdrs);
       if ( obj == NULL) return 0;
       lplot->obj = obj ;
-      if (store_record(Xgc,CODEobject,(char *) lplot) == 0) return(0);
+      if (nsp_gengine_record_old.store_record(Xgc,CODEobject,(char *) lplot) == 0) return(0);
     }
   else 
     {

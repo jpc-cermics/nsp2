@@ -212,7 +212,7 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
   draw_axis = DrawAxis;
   ZC=*zlev;
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
+    nsp_gengine_record_old.store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
 
   switch (flag[0])
     {
@@ -437,7 +437,7 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
 
   /* If Record is on */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE && strcmp(name,"contour2")==0 ) 
-    store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
+    nsp_gengine_record_old.store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
 
   zmin=(double) Mini(z,*n1*(*n2)); 
   zmax=(double) Maxi(z,*n1*(*n2));

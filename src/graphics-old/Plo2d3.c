@@ -54,7 +54,7 @@ int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Plot3(Xgc,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
+    nsp_gengine_record_old.store_Plot3(Xgc,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
 
   /* Allocation */
   n = (*n1)*nn2 ; 

@@ -101,7 +101,10 @@ extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 #line 4 "codegen/objs3d.override"
 
 /* inserted at the end of public part of include file */
+#include <nsp/spolyhedron.h>
+#include <nsp/polyhedron.h>
 #include "../graphics/Plo3dObj.h"
+#include <nsp/grcommon.h>
 
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
@@ -111,12 +114,9 @@ extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
-extern Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
-extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-extern void nsp_obj3d_dsortc(double x[], int *n, int p[]);
-extern void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
-extern void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
-extern void nsp_obj3d_free_box(Plot3dBox *B);
+extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
+extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+
 
 #line 122 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
@@ -148,7 +148,12 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,
 				const char *legend,
 				int *flag,double *ebox,int with_box,int box_color,int box_style);
+static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
+static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
+static void nsp_obj3d_free_box(Plot3dBox *B);
+static void nsp_obj3d_dsortc(double x[], int *n, int p[]);
 
-#line 153 "./objs3d.h"
+#line 158 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

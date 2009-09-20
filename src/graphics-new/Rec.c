@@ -44,9 +44,94 @@
 #include "nsp/graphics/Rec_private.h"
 #include "nsp/graphic.h" 
 
+#define RECORD_PRIVATE 
+#include "nsp/graphics/record_old.h"
+
 extern void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, double alpha,int *pt);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
 extern void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj, int *bbox1);
+
+/* exported structure 
+ */
+
+Nsp_gengine_store nsp_gengine_record_old = {
+  ostore_initialize_gc,
+  ostore_clipping_p,
+  ostore_clipgrf ,
+  ostore_alufunction1,
+  ostore_background,
+  ostore_unclip,
+  ostore_test,
+  ostore_clip,
+  ostore_pattern,
+  ostore_font_size,
+  ostore_font,
+  ostore_foreground,
+  ostore_hidden3d,
+  ostore_absourel,
+  ostore_dash,
+  ostore_mark_size,
+  ostore_mark,
+  ostore_pixmapOn,
+  ostore_thickness,
+  ostore_usecolor,
+  ostore_show,
+  ostore_pixmapclear,
+  ostore_fpf_def,
+  ostore_fpf,
+  ostore_fillarcs_1,
+  ostore_drawarcs_1,
+  ostore_fillpolyline_1,
+  ostore_drawarrows_1,
+  ostore_drawaxis_1,
+  ostore_cleararea_1,
+  ostore_fillarc_1,
+  ostore_fillrectangle_1,
+  ostore_drawpolyline_1,
+  ostore_fillpolylines_1,
+  ostore_drawpolymark_1,
+  ostore_displaynumbers_1,
+  ostore_drawpolylines_1,
+  ostore_drawrectangle_1,
+  ostore_drawrectangles_1,
+  ostore_drawsegments_1,
+  ostore_displaystring_1,
+  ostore_displaystringa_1,
+  ostore_xstringb_1,
+  ostore_Ech,
+  ostore_NEch,
+  ostore_Plot,
+  ostore_Plot1,
+  ostore_Plot2,
+  ostore_Plot3,
+  ostore_Plot4,
+  ostore_SciAxis,
+  ostore_Grid,
+  ostore_Param3D,
+  ostore_Param3D1,
+  ostore_Plot3D,
+  ostore_Plot3D1,
+  ostore_3dobj,
+  ostore_pixbuf,
+  ostore_pixbuf_from_file,
+  ostore_Fac3D,
+  ostore_Fac3D1,
+  ostore_Fac3D2,
+  ostore_Fac3D3,
+  ostore_Fec,
+  ostore_Contour, 
+  ostore_Contour2D,
+  ostore_Gray,
+  ostore_Gray2,
+  ostore_Gray1,
+  ostore_Champ,
+  ostore_Champ1,
+  ostore_graphic_object,
+  ostore_colormap,
+  ostore_default_colormap,
+  ostore_drawarc_1,
+  ostore_record
+};
 
 
 static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l); 
@@ -55,26 +140,26 @@ static int CopyVectF  (double **,const double *,int );
 static int CopyVectC  (char **,const char *,int ); 
 static int CopyVectS  (char ***,char **); 
 
-static void store_void(BCG *Xgc,int code);
-static void store_int(BCG *Xgc,int code,int val);
-static void store_int2(BCG *Xgc,int code,int val, int val1);
-static void store_int4(BCG *Xgc,int code,int vals[]);
-static void store_double4(BCG *Xgc,int code,double vals[]);
+static void ostore_void(BCG *Xgc,int code);
+static void ostore_int(BCG *Xgc,int code,int val);
+static void ostore_int2(BCG *Xgc,int code,int val, int val1);
+static void ostore_int4(BCG *Xgc,int code,int vals[]);
+static void ostore_double4(BCG *Xgc,int code,double vals[]);
 
 /*---------------------------------------------------------------------
  * basic primitives 
  *---------------------------------------------------------------------------*/
 
-void store_initialize_gc(BCG *Xgc) {  store_void(Xgc,CODEinitialize_gc); }
+static void ostore_initialize_gc(BCG *Xgc) {  ostore_void(Xgc,CODEinitialize_gc); }
 
 static void replay_initialize_gc(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->initialize_gc(Xgc);}
 
 
-void store_clipping_p(BCG *Xgc,int x,int y,int w,int h)
+static void ostore_clipping_p(BCG *Xgc,int x,int y,int w,int h)
 {
   int vals[4];
   vals[0]= x; vals[1]= y; vals[2] = w ; vals[3] = h;
-  store_int4(Xgc,CODEclipping_p,vals);
+  ostore_int4(Xgc,CODEclipping_p,vals);
 }
 
 static void replay_clipping_p(BCG *Xgc,void *theplot)
@@ -83,13 +168,13 @@ static void replay_clipping_p(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_clipping_p(Xgc, lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
 }
 
-void store_clipgrf(BCG *Xgc) {  store_void(Xgc,CODEclipgrf); }
+static void ostore_clipgrf(BCG *Xgc) {  ostore_void(Xgc,CODEclipgrf); }
 
 static void replay_clipgrf(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_clipgrf(Xgc);}
 
-void store_alufunction1(BCG *Xgc,int val)
+static void ostore_alufunction1(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEalufunction1,val);
+  ostore_int(Xgc,CODEalufunction1,val);
 }
 
 static void replay_alufunction1(BCG *Xgc,void *theplot)
@@ -99,9 +184,9 @@ static void replay_alufunction1(BCG *Xgc,void *theplot)
 }
 
 
-void store_background(BCG *Xgc,int val)
+static void ostore_background(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEbackground,val);
+  ostore_int(Xgc,CODEbackground,val);
 }
 
 static void replay_background(BCG *Xgc,void *theplot)
@@ -112,17 +197,17 @@ static void replay_background(BCG *Xgc,void *theplot)
 
 
 
-void store_unclip(BCG *Xgc)
+static void ostore_unclip(BCG *Xgc)
 {
-  store_void(Xgc,CODEunclip);
+  ostore_void(Xgc,CODEunclip);
 }
 
 static void replay_unclip(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_unclip(Xgc);}
 
 
-void store_test(BCG *Xgc)
+static void ostore_test(BCG *Xgc)
 {
-  store_void(Xgc,CODEtest);
+  ostore_void(Xgc,CODEtest);
 }
 
 static void replay_test(BCG *Xgc,void * theplot ) 
@@ -131,9 +216,9 @@ static void replay_test(BCG *Xgc,void * theplot )
 }
 
 
-void store_clip(BCG *Xgc,double x[])
+static void ostore_clip(BCG *Xgc,double x[])
 {
-  store_double4(Xgc,CODEclip,x);
+  ostore_double4(Xgc,CODEclip,x);
 }
 
 static void replay_clip(BCG *Xgc,void *theplot)
@@ -142,9 +227,9 @@ static void replay_clip(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_clip(Xgc,lplot->vals);
 }
 
-void store_pattern(BCG *Xgc,int val)
+static void ostore_pattern(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEpattern,val);
+  ostore_int(Xgc,CODEpattern,val);
 }
 
 static void replay_pattern(BCG *Xgc,void *theplot)
@@ -153,9 +238,9 @@ static void replay_pattern(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
 }
 
-void store_font_size(BCG *Xgc,int val)
+static void ostore_font_size(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEfont_size,val);
+  ostore_int(Xgc,CODEfont_size,val);
 }
 
 static void replay_font_size(BCG *Xgc,void *theplot)
@@ -163,9 +248,9 @@ static void replay_font_size(BCG *Xgc,void *theplot)
   int val = ((struct rec_int *) theplot)->val;
   Xgc->graphic_engine->scale->xset_font_size(Xgc,val);
 }
-void store_font(BCG *Xgc,int val,int val1)
+static void ostore_font(BCG *Xgc,int val,int val1)
 {
-  store_int2(Xgc,CODEfont,val,val1);
+  ostore_int2(Xgc,CODEfont,val,val1);
 }
 
 static void replay_font(BCG *Xgc,void *theplot)
@@ -174,9 +259,9 @@ static void replay_font(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_font(Xgc,lplot->val,lplot->val1);
 }
 
-void store_foreground(BCG *Xgc,int val)
+static void ostore_foreground(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEforeground,val);
+  ostore_int(Xgc,CODEforeground,val);
 }
 
 static void replay_foreground(BCG *Xgc,void *theplot)
@@ -185,9 +270,9 @@ static void replay_foreground(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_foreground(Xgc,val);
 }
 
-void store_hidden3d(BCG *Xgc,int val)
+static void ostore_hidden3d(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEhidden3d,val);
+  ostore_int(Xgc,CODEhidden3d,val);
 }
 
 static void replay_hidden3d(BCG *Xgc,void *theplot)
@@ -196,9 +281,9 @@ static void replay_hidden3d(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_hidden3d(Xgc,val);
 }
 
-void store_absourel(BCG *Xgc,int val)
+static void ostore_absourel(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEabsourel,val);
+  ostore_int(Xgc,CODEabsourel,val);
 }
 
 static void replay_absourel(BCG *Xgc,void *theplot)
@@ -207,9 +292,9 @@ static void replay_absourel(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_absourel(Xgc,val);
 }
 
-void store_dash(BCG *Xgc,int val)
+static void ostore_dash(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEdash,val);
+  ostore_int(Xgc,CODEdash,val);
 }
 
 static void replay_dash(BCG *Xgc,void *theplot)
@@ -218,9 +303,9 @@ static void replay_dash(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_dash(Xgc,val);
 }
 
-void store_mark_size(BCG *Xgc,int val)
+static void ostore_mark_size(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEmark_size,val);
+  ostore_int(Xgc,CODEmark_size,val);
 }
 
 static void replay_mark_size(BCG *Xgc,void *theplot)
@@ -229,9 +314,9 @@ static void replay_mark_size(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_mark_size(Xgc,val);
 }
 
-void store_mark(BCG *Xgc,int val,int val1)
+static void ostore_mark(BCG *Xgc,int val,int val1)
 {
-  store_int2(Xgc,CODEmark,val,val1);
+  ostore_int2(Xgc,CODEmark,val,val1);
 }
 
 static void replay_mark(BCG *Xgc,void *theplot)
@@ -240,9 +325,9 @@ static void replay_mark(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_mark(Xgc,lplot->val,lplot->val1);
 }
 
-void store_pixmapOn(BCG *Xgc,int val)
+static void ostore_pixmapOn(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEpixmapOn,val);
+  ostore_int(Xgc,CODEpixmapOn,val);
 }
 
 static void replay_pixmapOn(BCG *Xgc,void *theplot)
@@ -251,9 +336,9 @@ static void replay_pixmapOn(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,val);
 }
 
-void store_thickness(BCG *Xgc,int val)
+static void ostore_thickness(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEthickness,val);
+  ostore_int(Xgc,CODEthickness,val);
 }
 
 static void replay_thickness(BCG *Xgc,void *theplot)
@@ -262,18 +347,21 @@ static void replay_thickness(BCG *Xgc,void *theplot)
   Xgc->graphic_engine->scale->xset_thickness(Xgc,val);
 }
 
-void store_usecolor(BCG *Xgc,int val)
+static void ostore_usecolor(BCG *Xgc,int val)
 {
-  store_int(Xgc,CODEusecolor,val);
+  ostore_int(Xgc,CODEusecolor,val);
 }
 
 
 static int special_color=0;
 
+#if 0 
 void UseColorFlag(int flag)
 {
   special_color=flag;
 }
+#endif 
+
 
 static void replay_usecolor(BCG *Xgc,void *theplot)
 {
@@ -282,29 +370,29 @@ static void replay_usecolor(BCG *Xgc,void *theplot)
     Xgc->graphic_engine->scale->xset_usecolor(Xgc,val);
 }
 
-void store_show(BCG *Xgc) { store_void(Xgc,CODEshow); }
+static void ostore_show(BCG *Xgc) { ostore_void(Xgc,CODEshow); }
 
 static void replay_show(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_show(Xgc);}
 
-void store_pixmapclear(BCG *Xgc) {  store_void(Xgc,CODEpixmapclear);}
+static void ostore_pixmapclear(BCG *Xgc) {  ostore_void(Xgc,CODEpixmapclear);}
 
 static void replay_pixmapclear(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);}
 
-void store_fpf_def(BCG *Xgc) { store_void(Xgc,CODEfpf_def); }
+static void ostore_fpf_def(BCG *Xgc) { ostore_void(Xgc,CODEfpf_def); }
 
 static void replay_fpf_def(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_fpf_def(Xgc);}
 
-void store_fpf(BCG *Xgc,char *fpf) { 
+static void ostore_fpf(BCG *Xgc,char *fpf) { 
   struct rec_str *lplot= MALLOC(sizeof(struct rec_str));
   if (lplot != NULL)
     {
       if ( CopyVectC(&(lplot->str),fpf,strlen(fpf)+1) )
 	{
-	  store_record(Xgc,CODEfpf, lplot);
+	  ostore_record(Xgc,CODEfpf, lplot);
 	  return;
 	}
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
 static void replay_fpf(BCG *Xgc,void * theplot ) { 
@@ -324,7 +412,7 @@ static void clean_fpf(void *plot) {
  * colormap
  *-----------------------------------------------------------------------------*/
 
-void store_colormap(BCG *Xgc,int m, int n,double colors[])
+static void ostore_colormap(BCG *Xgc,int m, int n,double colors[])
 {
   struct rec_colormap *lplot = MALLOC(sizeof(struct rec_colormap));
   if (lplot != NULL)
@@ -335,10 +423,10 @@ void store_colormap(BCG *Xgc,int m, int n,double colors[])
       lplot->colors= NULL;
       if ( CopyVectF(&(lplot->colors),colors,m*n) )
 	{
-	  store_record(Xgc,CODEColormap, lplot);
+	  ostore_record(Xgc,CODEColormap, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 static void replay_colormap(BCG *Xgc,void  *theplot)
@@ -352,7 +440,7 @@ static void clean_colormap(void *theplot) {
   FREE(lplot->colors);
 };
 
-void store_default_colormap(BCG *Xgc) { store_void(Xgc,CODEdefault_colormap); }
+static void ostore_default_colormap(BCG *Xgc) { ostore_void(Xgc,CODEdefault_colormap); }
 
 static void replay_default_colormap(BCG *Xgc,void * theplot ) 
 { 
@@ -365,17 +453,17 @@ static void replay_default_colormap(BCG *Xgc,void * theplot )
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-void store_drawarc_1(BCG *Xgc,double arc[])
+static void ostore_drawarc_1(BCG *Xgc,double arc[])
 { 
   int i;
   struct rec_drawarc *lplot= ((struct rec_drawarc *) MALLOC(sizeof(struct rec_drawarc)));
   if (lplot != NULL)
     {
       for ( i = 0 ; i < 6 ; i++) lplot->arc[i]=arc[i];
-      store_record(Xgc,CODEdrawarc_1,lplot);
+      ostore_record(Xgc,CODEdrawarc_1,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
 static void replay_drawarc_1(BCG *Xgc,void  *theplot)
@@ -391,7 +479,7 @@ static void clean_drawarc_1(void *plot) {};
  * fillarcs 
  *-----------------------------------------------------------------------------*/
 
-static void store_fillarcs_G(BCG *Xgc,int code,double vects[],int fillvect[], int n,int size)
+static void ostore_fillarcs_G(BCG *Xgc,int code,double vects[],int fillvect[], int n,int size)
 {
   struct rec_fillarcs *lplot = MALLOC(sizeof(struct rec_fillarcs));
   if (lplot != NULL)
@@ -405,15 +493,15 @@ static void store_fillarcs_G(BCG *Xgc,int code,double vects[],int fillvect[], in
 	  CopyVectLI(&(lplot->fillvect),fillvect,n)
 	  )
 	{
-	  store_record(Xgc,code, lplot);
+	  ostore_record(Xgc,code, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
-void store_fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
+static void ostore_fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  store_fillarcs_G(Xgc,CODEfillarcs_1,vects,fillvect,n,6);
+  ostore_fillarcs_G(Xgc,CODEfillarcs_1,vects,fillvect,n,6);
 }
 
 static void replay_fillarcs_1(BCG *Xgc,void  *theplot)
@@ -432,9 +520,9 @@ static void clean_fillarcs_1(void *theplot) {
  *  
  *-----------------------------------------------------------------------------*/
 
-void store_drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
+static void ostore_drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 {
-  store_fillarcs_G(Xgc,CODEdrawarcs_1,vects,style,n,6);
+  ostore_fillarcs_G(Xgc,CODEdrawarcs_1,vects,style,n,6);
 }
 
 
@@ -457,7 +545,7 @@ static void clean_drawarcs_1(void *plot) {
  *  
  *-----------------------------------------------------------------------------*/
 
-static void store_fillpolyline_G(BCG *Xgc,int code,double vx[],double vy[], int n,int closeflag)
+static void ostore_fillpolyline_G(BCG *Xgc,int code,double vx[],double vy[], int n,int closeflag)
 {
   struct rec_fillpolyline *lplot = MALLOC(sizeof(struct rec_fillpolyline));
   if (lplot != NULL)
@@ -472,16 +560,16 @@ static void store_fillpolyline_G(BCG *Xgc,int code,double vx[],double vy[], int 
 	  CopyVectF(&(lplot->vy),vy,n)
 	  )
 	{
-	  store_record(Xgc,code, lplot); return;
+	  ostore_record(Xgc,code, lplot); return;
 	}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
-void store_fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
+static void ostore_fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 {
-  store_fillpolyline_G(Xgc,CODEfillpolyline_1,vx,vy,n,closeflag);
+  ostore_fillpolyline_G(Xgc,CODEfillpolyline_1,vx,vy,n,closeflag);
 }
 
 
@@ -503,7 +591,7 @@ static void clean_fillpolyline_1(void *plot) {
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-void store_drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
+static void ostore_drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
 { 
   struct rec_arrows *lplot = MALLOC(sizeof(struct rec_arrows));
   int rep = TRUE ;
@@ -521,11 +609,11 @@ void store_drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int st
 	lplot->def_style = *style;
       if ( rep &&  CopyVectF(&(lplot->vx),vx,n) &&  CopyVectF(&(lplot->vy),vy,n) )
 	{
-	  store_record(Xgc,CODEdrawarrows_1, lplot);
+	  ostore_record(Xgc,CODEdrawarrows_1, lplot);
 	  return;
 	}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 static void replay_drawarrows_1(BCG *Xgc,void  *theplot)
@@ -550,7 +638,7 @@ static void clean_drawarrows_1(void *plot) {
  * axis 
  *-----------------------------------------------------------------------------*/
 
-void store_drawaxis_1(BCG *Xgc,double *alpha, int *nsteps,double *initpoint, double *size)
+static void ostore_drawaxis_1(BCG *Xgc,double *alpha, int *nsteps,double *initpoint, double *size)
 {
   /* 
      int initpoint1[2],alpha1;
@@ -567,10 +655,10 @@ void store_drawaxis_1(BCG *Xgc,double *alpha, int *nsteps,double *initpoint, dou
       lplot->size[0] = size[0] ; 
       lplot->size[1] = size[1] ; 
       lplot->size[2] = size[2] ; 
-      store_record(Xgc,CODEdrawaxis_1, lplot);
+      ostore_record(Xgc,CODEdrawaxis_1, lplot);
       return;
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -587,10 +675,10 @@ static void clean_drawaxis_1(void  *theplot) {}
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-void store_cleararea_1(BCG *Xgc,double x, double y, double w, double h)
+static void ostore_cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
   double vals[4]={x,y,w,h};
-  store_double4(Xgc,CODEcleararea_1,vals);
+  ostore_double4(Xgc,CODEcleararea_1,vals);
 }
 
 
@@ -606,17 +694,17 @@ static void clean_cleararea_1(void  *theplot) {}
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-void store_fillarc_1(BCG *Xgc,double arc[])
+static void ostore_fillarc_1(BCG *Xgc,double arc[])
 { 
   struct rec_drawarc *lplot= ((struct rec_drawarc *) MALLOC(sizeof(struct rec_drawarc)));
   if (lplot != NULL)
     {
       int i;
       for ( i = 0 ; i < 6 ; i++) lplot->arc[i]=arc[i];
-      store_record(Xgc,CODEfillarc_1,lplot);
+      ostore_record(Xgc,CODEfillarc_1,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
 
@@ -632,9 +720,9 @@ static void clean_fillarc_1(void  *theplot) {}
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-void store_fillrectangle_1(BCG *Xgc,double rect[])
+static void ostore_fillrectangle_1(BCG *Xgc,double rect[])
 { 
-  store_double4(Xgc,CODEfillrectangle_1,rect);
+  ostore_double4(Xgc,CODEfillrectangle_1,rect);
 }
 
 
@@ -650,9 +738,9 @@ static void clean_fillrectangle_1(void  *theplot) {}
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
+static void ostore_drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
 {
-  store_fillpolyline_G(Xgc,CODEdrawpolyline_1,vx,vy,n,closeflag);
+  ostore_fillpolyline_G(Xgc,CODEdrawpolyline_1,vx,vy,n,closeflag);
 }
 
 
@@ -676,7 +764,7 @@ static void clean_drawpolyline_1(void *plot) {
  *  fillpolylines
  *-----------------------------------------------------------------------------*/
 
-void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
+static void ostore_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
   struct rec_fillpolylines *lplot = MALLOC(sizeof(struct rec_fillpolylines));
   int rep= TRUE;
@@ -699,10 +787,10 @@ void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int 
 	  CopyVectF(&(lplot->vy),vy,n*p) 
 	  )
 	{
-	  store_record(Xgc,CODEfillpolylines_1, lplot);
+	  ostore_record(Xgc,CODEfillpolylines_1, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -728,9 +816,9 @@ static void clean_fillpolylines_1(void *plot) {
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
+static void ostore_drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 {
-  store_fillpolyline_G(Xgc,CODEdrawpolymark_1,vx,vy,n,0);
+  ostore_fillpolyline_G(Xgc,CODEdrawpolymark_1,vx,vy,n,0);
 }
 
 
@@ -752,7 +840,7 @@ static void clean_drawpolymark_1(void *plot) {
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-void store_displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
+static void ostore_displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
 {
   struct rec_displaynumbers *lplot = MALLOC(sizeof(struct rec_displaynumbers));
   if (lplot != NULL)
@@ -771,10 +859,10 @@ void store_displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double
 	  CopyVectF(&(lplot->alpha),alpha,n) 
 	  )
 	{
-	  store_record(Xgc,CODEdisplaynumbers_1, lplot);
+	  ostore_record(Xgc,CODEdisplaynumbers_1, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -797,7 +885,7 @@ static void clean_displaynumbers_1(void *plot) {
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
+static void ostore_drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
   struct rec_drawpolylines *lplot = MALLOC(sizeof(struct rec_drawpolylines));
   if (lplot != NULL)
@@ -814,11 +902,11 @@ void store_drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n,
 	  CopyVectLI(&(lplot->drawvect),drawvect,n)
 	  )
 	{
-	  store_record(Xgc,CODEdrawpolylines_1, lplot);
+	  ostore_record(Xgc,CODEdrawpolylines_1, lplot);
 	  return;
 	}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -843,9 +931,9 @@ static void clean_drawpolylines_1(void *plot) {
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-void store_drawrectangle_1(BCG *Xgc,double rect[])
+static void ostore_drawrectangle_1(BCG *Xgc,double rect[])
 {
-  store_double4(Xgc,CODEdrawrectangle_1,rect);
+  ostore_double4(Xgc,CODEdrawrectangle_1,rect);
 }
 
 
@@ -862,9 +950,9 @@ static void clean_drawrectangle_1(void *plot) {}
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-void store_drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
+static void ostore_drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  store_fillarcs_G(Xgc,CODEdrawrectangles_1,vects,fillvect,n,4);
+  ostore_fillarcs_G(Xgc,CODEdrawrectangles_1,vects,fillvect,n,4);
 }
 
 
@@ -885,7 +973,7 @@ static void clean_drawrectangles_1(void *plot) {
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-void store_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
+static void ostore_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
 {
   int rep=TRUE;
   struct rec_segment *lplot = MALLOC(sizeof(struct rec_segment));
@@ -902,11 +990,11 @@ void store_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int
 	rep= CopyVectLI(&(lplot->style),style,1);
       if ( rep &&  CopyVectF(&(lplot->vx),vx,n) && CopyVectF(&(lplot->vy),vy,n)) 
 	{
-	  store_record(Xgc,CODEdrawsegments_1, lplot);
+	  ostore_record(Xgc,CODEdrawsegments_1, lplot);
 	  return;
 	}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -930,7 +1018,7 @@ static void clean_drawsegments_1(void *plot) {
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-void store_displaystring_1(BCG *Xgc,char *string,double x, double y,int flag,double angle)
+static void ostore_displaystring_1(BCG *Xgc,char *string,double x, double y,int flag,double angle)
 {
   struct rec_displaystring *lplot = MALLOC(sizeof(struct rec_displaystring));
   if (lplot != NULL)
@@ -945,10 +1033,10 @@ void store_displaystring_1(BCG *Xgc,char *string,double x, double y,int flag,dou
 	  CopyVectC(&(lplot->string),string,((int)strlen(string))+1) 
 	  )
 	{
-	  store_record(Xgc,CODEdisplaystring_1, lplot);
+	  ostore_record(Xgc,CODEdisplaystring_1, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 static void replay_displaystring_1(BCG *Xgc,void  *theplot)
@@ -970,7 +1058,7 @@ static void clean_displaystring_1(void *plot) {
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-void store_displaystringa_1(BCG *Xgc,char *string, int ipos)
+static void ostore_displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
   struct rec_displaystringa *lplot = MALLOC(sizeof(struct rec_displaystringa));
   if (lplot != NULL)
@@ -981,10 +1069,10 @@ void store_displaystringa_1(BCG *Xgc,char *string, int ipos)
 	  CopyVectC(&(lplot->string),string,((int)strlen(string))+1) 
 	  )
 	{
-	  store_record(Xgc,CODEdisplaystringa_1, lplot);
+	  ostore_record(Xgc,CODEdisplaystringa_1, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -1008,7 +1096,7 @@ static void clean_displaystringa_1(void *plot) {
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
-void store_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+static void ostore_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
 {
   struct rec_xstringb *lplot = MALLOC(sizeof(struct rec_xstringb));
   if (lplot != NULL)
@@ -1023,10 +1111,10 @@ void store_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, dou
       if (
 	  CopyVectC(&(lplot->string),str,((int)strlen(str))+1) )
 	{
-	  store_record(Xgc,CODExstringb_1, lplot);
+	  ostore_record(Xgc,CODExstringb_1, lplot);
 	  return;}
     }
-  Scistring("\nstore_ Plot (XXXX): No more place \n");
+  Scistring("\nostore_ Plot (XXXX): No more place \n");
 }
 
 
@@ -1049,7 +1137,7 @@ static void clean_xstringb_1(void *plot) {
  * xsetech 
  *---------------------------------------------------------------------------*/
 
-void store_Ech(BCG *Xgc,double *WRect, double *FRect, char *logflag)
+static void ostore_Ech(BCG *Xgc,double *WRect, double *FRect, char *logflag)
 {
   struct rec_scale *lplot;
   lplot= ((struct rec_scale *) MALLOC(sizeof(struct rec_scale)));
@@ -1063,10 +1151,10 @@ void store_Ech(BCG *Xgc,double *WRect, double *FRect, char *logflag)
 	  CopyVectF(&(lplot->Frect_kp),FRect,4L) 
 	  ) 
 	{
-	  store_record(Xgc,CODEEch, lplot);
+	  ostore_record(Xgc,CODEEch, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeEch): No more place \n");
+  Scistring("\n ostore_ Plot (storeEch): No more place \n");
 }
 
 
@@ -1090,7 +1178,7 @@ static void clean_Ech(void *plot)
  * xsetech (new)
  *---------------------------------------------------------------------------*/
 
-void store_NEch(BCG *Xgc,char *flag, double *WRect, double *ARect, double *FRect, char *logflag)
+static void ostore_NEch(BCG *Xgc,char *flag, double *WRect, double *ARect, double *FRect, char *logflag)
 {
   struct rec_nscale *lplot;
   lplot= ((struct rec_nscale *) MALLOC(sizeof(struct rec_nscale)));
@@ -1106,10 +1194,10 @@ void store_NEch(BCG *Xgc,char *flag, double *WRect, double *ARect, double *FRect
 	  CopyVectF(&(lplot->Frect_kp),FRect,4L) 
 	  ) 
 	{
-	  store_record(Xgc,CODENEch, lplot);
+	  ostore_record(Xgc,CODENEch, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeEch): No more place \n");
+  Scistring("\n ostore_ Plot (storeEch): No more place \n");
 }
 
 
@@ -1135,7 +1223,7 @@ static void clean_NEch(void *plot)
  * 2D plots 
  *---------------------------------------------------------------------------*/
 
-static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style,
+static void ostore_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style,
 			 char *strflag,const  char *legend,int legend_pos, double *brect, int *aint)
 {
   int nstyle,n1n2;
@@ -1171,43 +1259,43 @@ static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int 
 	  CopyVectLI(&(lplot->aint_kp),aint,4) 
 	  ) 
 	{
-	  store_record(Xgc,code, lplot);
+	  ostore_record(Xgc,code, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeplot): No more place \n");
+  Scistring("\n ostore_ Plot (storeplot): No more place \n");
 }
 
-void store_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+static void ostore_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
 		const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
+  ostore_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
-void store_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+static void ostore_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
 		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
+  ostore_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
-void store_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+static void ostore_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
 		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
+  ostore_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
-void store_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+static void ostore_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
 		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
+  ostore_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
-void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+static void ostore_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
 		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
+  ostore_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
@@ -1265,14 +1353,14 @@ static void clean_Plot(void *plot)
  * axis  
  *---------------------------------------------------------------------------*/
 
-void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
+static void ostore_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
 		   char **str, int subtics, char *format, int fontsize, int textcolor, 
 		   int ticscolor, char logflag, int seg_flag)
 {
   struct rec_sciaxis *lplot = ((struct rec_sciaxis *) MALLOC(sizeof(struct rec_sciaxis)));
   if (lplot == NULL)
     {
-      Scistring("\nRunning out of memory in store_ plots\n");
+      Scistring("\nRunning out of memory in ostore_ plots\n");
       return ;
     }
   lplot->pos= pos;
@@ -1293,7 +1381,7 @@ void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *
       CopyVectF(&(lplot->y),y,*ny) &&
       CopyVectS(&(lplot->str),str))
     {
-      store_record(Xgc,CODESciAxis, lplot);
+      ostore_record(Xgc,CODESciAxis, lplot);
     }
 }
   
@@ -1326,17 +1414,17 @@ static void clean_SciAxis(void *plot)
  * xgrid 
  *---------------------------------------------------------------------------*/
 
-void store_Grid(BCG *Xgc,int *style)
+static void ostore_Grid(BCG *Xgc,int *style)
 {
   struct rec_xgrid *lplot;
   lplot= ((struct rec_xgrid *) MALLOC(sizeof(struct rec_xgrid)));
   if (lplot != NULL)
     {
       lplot->style = *style;
-      store_record(Xgc,CODEGrid, lplot);
+      ostore_record(Xgc,CODEGrid, lplot);
       return;
     }
-  Scistring("\n store_ (storegrid): No more place \n");
+  Scistring("\n ostore_ (storegrid): No more place \n");
 }
 
 
@@ -1359,7 +1447,7 @@ static void clean_Grid(void *plot)
  * param3d 
  *---------------------------------------------------------------------------*/
 
-void store_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_param3d *lplot;
   lplot= ((struct rec_param3d *) MALLOC(sizeof(struct rec_param3d)));
@@ -1377,10 +1465,10 @@ void store_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *tet
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(Xgc,CODEParam3D, lplot);
+	  ostore_record(Xgc,CODEParam3D, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeparam3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeparam3d): No more place \n");
 }
 
 
@@ -1393,7 +1481,7 @@ static void replay_Param3D(BCG *Xgc,void *theplot)
 }
 
 
-void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_param3d1 *lplot;
   lplot= ((struct rec_param3d1 *) MALLOC(sizeof(struct rec_param3d1)));
@@ -1414,11 +1502,11 @@ void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, i
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(Xgc,CODEParam3D1, lplot);
+	  ostore_record(Xgc,CODEParam3D1, lplot);
 	  return;
 	}
     }
-  Scistring("\n store_ Plot (storeparam3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeparam3d): No more place \n");
 }
 
 
@@ -1458,7 +1546,7 @@ static void clean_Param3D1(void *plot)
  * plot3d 
  *---------------------------------------------------------------------------*/
 
-static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_plot3d *lplot;
   lplot= ((struct rec_plot3d *) MALLOC(sizeof(struct rec_plot3d)));
@@ -1477,15 +1565,15 @@ static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, i
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(Xgc,code, lplot);
+	  ostore_record(Xgc,code, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeplot3d): No more place \n");
 }
 
-void store_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  store_Plot3D_G(Xgc,CODEPlot3D,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Plot3D_G(Xgc,CODEPlot3D,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 
 }
 
@@ -1505,9 +1593,9 @@ static void clean_3D(void *plot)
   FREE(theplot->bbox);
 }
 
-void store_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  store_Plot3D_G(Xgc,CODEPlot3D1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Plot3D_G(Xgc,CODEPlot3D1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
@@ -1529,7 +1617,7 @@ static void clean_3D1(void *plot)
  * 3dobjs 
  *---------------------------------------------------------------------------*/
 
-void store_3dobj(BCG *Xgc,void *Obj,double *teta, double *alpha,const char *legend, int *flag, double *bbox,
+static void ostore_3dobj(BCG *Xgc,void *Obj,double *teta, double *alpha,const char *legend, int *flag, double *bbox,
 		 int with_mesh,int with_box,int box_color,int box_style)
 {
   NspList *L=Obj;
@@ -1551,17 +1639,17 @@ void store_3dobj(BCG *Xgc,void *Obj,double *teta, double *alpha,const char *lege
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(Xgc,CODE3dobj, lplot);
+	  ostore_record(Xgc,CODE3dobj, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeplot3d): No more place \n");
 }
 
 
 static void replay_3dobj(BCG *Xgc,void *theplot)
 {
   struct rec_3dobj *pl3d = (struct rec_3dobj *)theplot;
-  nsp_draw_3d_obj(Xgc,pl3d->L,&pl3d->teta, &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,
+  nsp_draw_3d_obj_old(Xgc,pl3d->L,&pl3d->teta, &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,
 		  pl3d->with_mesh,pl3d->with_box,pl3d->box_color,pl3d->box_style);
 }
 
@@ -1578,7 +1666,7 @@ static void clean_3dobj(void *plot)
  * pixbuf 
  *---------------------------------------------------------------------------*/
 
-void store_pixbuf(BCG *Xgc,void *pix,double x, double y,double w,double h,int src_x,int src_y)
+static void ostore_pixbuf(BCG *Xgc,void *pix,double x, double y,double w,double h,int src_x,int src_y)
 {
   NspObject *nsp_pix=pix;
   struct rec_pixbuf *lplot;
@@ -1594,11 +1682,11 @@ void store_pixbuf(BCG *Xgc,void *pix,double x, double y,double w,double h,int sr
       lplot->nsp_pixbuf = nsp_object_copy(nsp_pix);
       if ( lplot->nsp_pixbuf  != NULL)
 	{
-	  store_record(Xgc,CODEpixbuf, lplot);
+	  ostore_record(Xgc,CODEpixbuf, lplot);
 	  return;
 	}
     }
-  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeplot3d): No more place \n");
 }
 
 static void replay_pixbuf(BCG *Xgc,void *theplot)
@@ -1617,7 +1705,7 @@ static void clean_pixbuf(void *plot)
 }
 
 
-void store_pixbuf_from_file(BCG *Xgc,const char *fname,double x, double y,double w,double h,int src_x,int src_y)
+static void ostore_pixbuf_from_file(BCG *Xgc,const char *fname,double x, double y,double w,double h,int src_x,int src_y)
 {
   struct rec_pixbuf_file *lplot;
   lplot= ((struct rec_pixbuf_file *) MALLOC(sizeof(struct rec_pixbuf_file)));
@@ -1633,11 +1721,11 @@ void store_pixbuf_from_file(BCG *Xgc,const char *fname,double x, double y,double
 	  CopyVectC(&(lplot->pixbuf_file), fname, ((int)strlen(fname))+1)
 	  )
 	{
-	  store_record(Xgc,CODEpixbuf_file, lplot);
+	  ostore_record(Xgc,CODEpixbuf_file, lplot);
 	  return;
 	}
     }
-  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+  Scistring("\n ostore_ Plot (storeplot3d): No more place \n");
 }
 
 static void replay_pixbuf_from_file(BCG *Xgc,void *theplot)
@@ -1661,7 +1749,7 @@ static void clean_pixbuf_from_file(void *plot)
  * added code by polpoth 4/5/2000 
  *---------------------------------------------------------------------------*/
 
-static void store_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *cvect, int *p, int *q, 
+static void ostore_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *cvect, int *p, int *q, 
 			  double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   int rep ; 
@@ -1684,35 +1772,35 @@ static void store_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, in
       else lplot->cvect = NULL;
       if (rep )
 	{
-	  store_record(Xgc,code, lplot);
+	  ostore_record(Xgc,code, lplot);
 	  return;
 	}
     }
-  Scistring("\n store_ Plot (storefac3d): No more place \n");
+  Scistring("\n ostore_ Plot (storefac3d): No more place \n");
 }
 
-void store_Fac3D(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Fac3D(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(Xgc,CODEFac3D,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Fac3D_G(Xgc,CODEFac3D,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Fac3D1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(Xgc,CODEFac3D1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Fac3D_G(Xgc,CODEFac3D1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
+static void ostore_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(Xgc,CODEFac3D2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Fac3D_G(Xgc,CODEFac3D2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const
+static void ostore_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const
 		  char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(Xgc,CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  ostore_Fac3D_G(Xgc,CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 static void replay_Fac3D(BCG *Xgc,void *theplot)
@@ -1762,7 +1850,7 @@ static void clean_Fac3D(void *plot)
  *fec 
  *---------------------------------------------------------------------------*/
 
-void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag,
+static void ostore_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag,
 	       const char *legend, double *brect, int *aaint,const double *zminmax,const int *colminmax, 
 	       const int *colout,int draw)
 {
@@ -1793,10 +1881,10 @@ void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, 
 	  CopyVectC(&(lplot->legend),legend,((int)strlen(legend))+1)  
 	  ) 
 	{
-	  store_record(Xgc,CODEFecN, lplot);
+	  ostore_record(Xgc,CODEFecN, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storefec): No more place \n");
+  Scistring("\n ostore_ Plot (storefec): No more place \n");
 }
 
 static void replay_Fec(BCG *Xgc,void *theplot)
@@ -1827,7 +1915,7 @@ static void clean_Fec(void *plot)
  * contour 
  *---------------------------------------------------------------------------*/
 
-void store_Contour(BCG *Xgc, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev)
+static void ostore_Contour(BCG *Xgc, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev)
 {
   struct rec_contour *lplot;
   lplot= ((struct rec_contour *) MALLOC(sizeof(struct rec_contour)));
@@ -1854,10 +1942,10 @@ void store_Contour(BCG *Xgc, double *x, double *y, double *z, int *n1, int *n2, 
 	CopyVectF(&(lplot->bbox), bbox,6L)
 	) 
       {
-	store_record(Xgc,CODEContour, lplot);
+	ostore_record(Xgc,CODEContour, lplot);
 	return;}
     }
-  Scistring("\n store_ Plot (storecontour): No more place \n");
+  Scistring("\n ostore_ Plot (storecontour): No more place \n");
 }
 
 static void replay_Contour(BCG *Xgc,void *theplot)
@@ -1879,7 +1967,7 @@ static void clean_Contour(void *plot)
 }
 
 
-void store_Contour2D(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aint)
+static void ostore_Contour2D(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
   struct rec_contour2d *lplot;
   int nstyle;
@@ -1910,10 +1998,10 @@ void store_Contour2D(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2,
 	CopyVectLI(&(lplot->aint_kp),aint,4) 
 	) 
       {
-	store_record(Xgc,CODEContour2D, lplot);
+	ostore_record(Xgc,CODEContour2D, lplot);
 	return;}
     }
-  Scistring("\n store_ Plot (storecontour): No more place \n");
+  Scistring("\n ostore_ Plot (storecontour): No more place \n");
 }
 
 static void replay_Contour2D(BCG *Xgc,void *theplot)
@@ -1941,7 +2029,7 @@ static void clean_Contour2D(void *plot)
  * grayplots Matplot 
  *---------------------------------------------------------------------------*/
 
-void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
+static void ostore_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
 		double *brect, int *aaint,int remap,const int *colminmax,const double *zminmax,
 		const int *colout,int shade)
 {
@@ -1971,15 +2059,15 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *
 	  ((colout != NULL) ? CopyVectLI(&(lplot->colout),colout,2L) : TRUE)
 	  ) 
 	{
-	  store_record(Xgc,CODEGray, lplot);
+	  ostore_record(Xgc,CODEGray, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storegray): No more place \n");
+  Scistring("\n ostore_ Plot (storegray): No more place \n");
 }
 
 /** For matrices  z(i,j) **/
 
-void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint,
+static void ostore_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint,
 		 int remap,const int *colminmax,const double *zminmax)
 {
   struct rec_gray1 *lplot;
@@ -2005,15 +2093,15 @@ void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brec
 	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
-	  store_record(Xgc,CODEGray1, lplot);
+	  ostore_record(Xgc,CODEGray1, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storegray): No more place \n");
+  Scistring("\n ostore_ Plot (storegray): No more place \n");
 }
 
 
 
-void store_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
+static void ostore_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
 		 int remap,const int *colminmax,const double *zminmax)
 {
   struct rec_gray_2 *lplot;
@@ -2032,10 +2120,10 @@ void store_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
 	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
-	  store_record(Xgc,CODEGray2, lplot);
+	  ostore_record(Xgc,CODEGray2, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storegray): No more place \n");
+  Scistring("\n ostore_ Plot (storegray): No more place \n");
 }
 
 
@@ -2114,7 +2202,7 @@ static void clean_Gray2(void *plot)
  * champ champ1 
  *---------------------------------------------------------------------------*/
 
-static void store_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, double *fy, 
+static void ostore_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, double *fy, 
 			  int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
   struct rec_champ *lplot;
@@ -2135,20 +2223,20 @@ static void store_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, d
 	  CopyVectF(&(lplot->vrect_kp),vrect,4L)
 	  ) 
 	{
-	  store_record(Xgc,code, lplot);
+	  ostore_record(Xgc,code, lplot);
 	  return;}
     }
-  Scistring("\n store_ Plot (storechamp): No more place \n");
+  Scistring("\n ostore_ Plot (storechamp): No more place \n");
 }
 
-void store_Champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+static void ostore_Champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
-  store_Champ_G(Xgc,CODEChamp, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
+  ostore_Champ_G(Xgc,CODEChamp, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
 }
 
-void store_Champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+static void ostore_Champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
-  store_Champ_G(Xgc,CODEChamp1, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
+  ostore_Champ_G(Xgc,CODEChamp1, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
 }
 
 
@@ -2292,7 +2380,7 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
  * iflag[3] sert a dire s'il faut ou pas changer bbox 
  *---------------------------------------------------------------------------*/
 
-void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, 
+void tape_new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, 
 		      int *iflag, int *flag, double *bbox, int *pt)
 {
   list_plot *list = Xgc->plots ;
@@ -2415,7 +2503,7 @@ static void new_angles_graphic_object(BCG *Xgc,void *plot, double *theta, double
  *       => we must find the subwin asscoiated to bbox1
  *--------------------------------------------------*/
 
-void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin)
+static void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin)
 {
   list_plot *list = Xgc->plots ;
   if ( Xgc->record_flag == FALSE ) return ;
@@ -3153,7 +3241,7 @@ void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, doub
 
 void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
 { 
-  new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
+  tape_new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
   tape_replay(Xgc,winnumber);
 }
 
@@ -3227,13 +3315,13 @@ NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber)
  * Add a new graphics record in the graphic recorder list
  *---------------------------------------------------------------------------*/
 
-int store_record(BCG *Xgc,int code ,void *plot)
+static int ostore_record(BCG *Xgc,int code ,void *plot)
 {
   list_plot *list = Xgc->plots ;
   if ( code < 0 ||  code >= CODEendplots )
     {
       Scistring("Error: code is not a plot code\n");
-      return 0;
+      return FAIL;
     }
   /* XXX: 
    * always store new graphics objects 
@@ -3254,8 +3342,8 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	}
       else
 	{
-	  Scistring("store_ (store-1): malloc No more Place");
-	  return(0);
+	  Scistring("ostore_ (store-1): malloc No more Place");
+	  return FAIL;
 	}
     }
   else 
@@ -3273,11 +3361,11 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	}
       else 
 	{
-	  Scistring("store_ (store-3):No more Place\n");
-	  return(0);
+	  Scistring("ostore_ (store-3):No more Place\n");
+	  return FAIL;
 	}
     }
-  return(1);
+  return OK;
 }
 
 
@@ -3287,32 +3375,32 @@ int store_record(BCG *Xgc,int code ,void *plot)
  * utilities 
  *---------------------------------------------------------------------------*/
 
-static void store_void(BCG *Xgc,int code)
+static void ostore_void(BCG *Xgc,int code)
 {
   struct rec_void *lplot= ((struct rec_void *) MALLOC(sizeof(struct rec_void)));
   if (lplot != NULL)
     {
       lplot->code = code;
-      store_record(Xgc,code,lplot);
+      ostore_record(Xgc,code,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int(BCG *Xgc,int code,int val)
+static void ostore_int(BCG *Xgc,int code,int val)
 {
   struct rec_int *lplot= ((struct rec_int *) MALLOC(sizeof(struct rec_int)));
   if (lplot != NULL)
     {
       lplot->code = code;
       lplot->val = val;
-      store_record(Xgc,code,lplot);
+      ostore_record(Xgc,code,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int2(BCG *Xgc,int code,int val, int val1)
+static void ostore_int2(BCG *Xgc,int code,int val, int val1)
 {
   struct rec_int2 *lplot= ((struct rec_int2 *) MALLOC(sizeof(struct rec_int2)));
   if (lplot != NULL)
@@ -3320,13 +3408,13 @@ static void store_int2(BCG *Xgc,int code,int val, int val1)
       lplot->code = code;
       lplot->val = val;
       lplot->val1 = val1;
-      store_record(Xgc,code,lplot);
+      ostore_record(Xgc,code,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int4(BCG *Xgc,int code,int vals[])
+static void ostore_int4(BCG *Xgc,int code,int vals[])
 {
   struct rec_int4 *lplot= ((struct rec_int4 *) MALLOC(sizeof(struct rec_int4)));
   if (lplot != NULL)
@@ -3334,13 +3422,13 @@ static void store_int4(BCG *Xgc,int code,int vals[])
       int i;
       lplot->code = code;
       for ( i=0; i< 4 ; i++ ) lplot->vals[i] = vals[i];
-      store_record(Xgc,code,lplot);
+      ostore_record(Xgc,code,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
-static void store_double4(BCG *Xgc,int code,double vals[])
+static void ostore_double4(BCG *Xgc,int code,double vals[])
 {
   struct rec_double4 *lplot= ((struct rec_double4 *) MALLOC(sizeof(struct rec_double4)));
   if (lplot != NULL)
@@ -3348,28 +3436,49 @@ static void store_double4(BCG *Xgc,int code,double vals[])
       int i;
       lplot->code = code;
       for ( i=0; i< 4 ; i++ ) lplot->vals[i] = vals[i];
-      store_record(Xgc,code,lplot);
+      ostore_record(Xgc,code,lplot);
       return; 
     }
-  Scistring("\nstore_ Plot (xcall1): No more place \n");
+  Scistring("\nostore_ Plot (xcall1): No more place \n");
 }
 
 /* Store a Graphic object  */
 
-void store_graphic_object(BCG *Xgc,NspObject *obj)
+static void ostore_graphic_object(BCG *Xgc,void *vobj)
 {
   NspObject *obj_cp;
   struct rec_object *lplot= MALLOC(sizeof(struct rec_object));
   if (lplot != NULL)
     {
-      if ((obj_cp = nsp_object_copy_and_name("Obj",obj)) != NULLOBJ )
+      if ((obj_cp = nsp_object_copy_and_name("Obj",vobj)) != NULLOBJ )
 	{
 	  lplot->obj = obj_cp ;
-	  store_record(Xgc,CODEobject, lplot);
+	  ostore_record(Xgc,CODEobject, lplot);
 	  return;
 	}
     }
-  Scistring("Out of memory in store_graphic_object \n");
+  Scistring("Out of memory in ostore_graphic_object \n");
+  return; 
+}
+
+/* still used in new graphics 
+ * 
+ */
+
+void store_graphic_object(BCG *Xgc,void *vobj)
+{
+  NspObject *obj_cp;
+  struct rec_object *lplot= MALLOC(sizeof(struct rec_object));
+  if (lplot != NULL)
+    {
+      if ((obj_cp = nsp_object_copy_and_name("Obj",vobj)) != NULLOBJ )
+	{
+	  lplot->obj = obj_cp ;
+	  ostore_record(Xgc,CODEobject, lplot);
+	  return;
+	}
+    }
+  Scistring("Out of memory in ostore_graphic_object \n");
   return; 
 }
 

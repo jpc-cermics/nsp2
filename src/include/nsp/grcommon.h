@@ -14,7 +14,7 @@
 extern BCG *nsp_check_graphic_context(void);
 extern void store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
-extern  int nsp_obj3d_orientation(int x[], int y[], int n);
+/* extern  int nsp_obj3d_orientation(int x[], int y[], int n); */
 extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
@@ -29,6 +29,13 @@ extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int nco
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr );
 
 
+
+extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+
 extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+
+extern int nsp_obj3d_orientation(int x[], int y[], int n);
+
 
 #endif 
