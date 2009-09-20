@@ -1,5 +1,8 @@
 polyedres = ["tetrahedron","cube","octahedron","dodecahedron","icosahedron"];
 
+xclear();
+xset('default');
+
 cm = xget("colormap");
 cmap= [cm;[0.92 0.92 0.92]];
 
