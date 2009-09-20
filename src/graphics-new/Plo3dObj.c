@@ -1295,7 +1295,8 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 
 static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j)
 {
-  int x[4], y[4], i, numpt, *current_vertex,np=1, m=4;
+  int x[4], y[4], i, numpt,np=1, m=4;
+  const int *current_vertex;
 #ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {

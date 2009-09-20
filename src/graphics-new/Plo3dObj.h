@@ -186,8 +186,8 @@ typedef struct
   obj3d_draw_ogl  *draw_ogl;
   obj3d_free *free;
   double coord[24];
-  int *face;
-  int *segment;
+  const int *face;
+  const int *segment;
   VisionPos pos[8];
   int color;
   int inear;
