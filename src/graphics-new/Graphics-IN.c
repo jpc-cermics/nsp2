@@ -7309,6 +7309,7 @@ extern int int_int2d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_int3d(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 extern int int_tcl_existvar(Stack stack, int rhs, int opt, int lhs); /* XXX*/
 
+#ifdef WITH_TK 
 extern function int_tcl_DoOneEvent; 
 extern function   int_tcl_EvalFile;
 extern function   int_tcl_EvalStr;
@@ -7329,9 +7330,10 @@ extern function   int_tcl_UpVar;
 extern function   int_tcl_DeleteInterp;
 extern function   int_tcl_CreateSlave;
 extern function   int_tcl_ExistInterp;
-
+#endif 
 
 static OpTab Graphics_func[]={
+#ifdef WITH_TK 
   {"TCL_DoOneEvent",   int_tcl_DoOneEvent},
   {"TCL_EvalFile",   int_tcl_EvalFile},
   {"TCL_EvalStr",   int_tcl_EvalStr},
@@ -7343,6 +7345,8 @@ static OpTab Graphics_func[]={
   {"TCL_DeleteInterp",   int_tcl_DeleteInterp},
   {"TCL_CreateSlave", 	int_tcl_CreateSlave},
   {"TCL_ExistInterp", 	int_tcl_ExistInterp},
+#endif 
+
   {"ode",int_ode}, /* FIXME: en construction */
   {"intg",int_intg}, /* FIXME: en construction */
   {"int2d",int_int2d}, /* FIXME: en construction */
