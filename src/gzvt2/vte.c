@@ -703,7 +703,9 @@ main(int argc, char **argv)
   /* this one is deprecated */
   /*vte_terminal_set_cursor_blinks(VTE_TERMINAL(widget), blink); */
   /* replaced by */
-  vte_terminal_set_cursor_blink_mode (VTE_TERMINAL(widget),VTE_CURSOR_BLINK_SYSTEM);
+  /*
+    vte_terminal_set_cursor_blink_mode (VTE_TERMINAL(widget),VTE_CURSOR_BLINK_SYSTEM);
+  */
   vte_terminal_set_scroll_background(VTE_TERMINAL(widget), scroll);
   vte_terminal_set_scroll_on_output(VTE_TERMINAL(widget), FALSE);
   vte_terminal_set_scroll_on_keystroke(VTE_TERMINAL(widget), TRUE);
@@ -726,7 +728,12 @@ main(int argc, char **argv)
   /* Set the default font. */
   if (font != NULL) 
     {
-      vte_terminal_set_font_from_string(VTE_TERMINAL(widget), font);
+      char *f_name = g_strdup(font);
+      int i ;
+      for ( i = 0 ; i < strlen(f_name); i++) 
+	if ( f_name[i] == '-') f_name[i]= ' ';
+      vte_terminal_set_font_from_string(VTE_TERMINAL(widget), f_name);
+      g_free(f_name);
     }
   else 
     {
