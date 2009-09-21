@@ -2,7 +2,7 @@
 
 \mansection{ode}
 \begin{mandesc}
-  \short{ode}{ordinary differential equations solver}
+  \short{ode}{ordinary differential equations solvers}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -25,7 +25,7 @@ x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
     \vname{f}: nsp function or string (name of a C or fortran function dynamicaly linked to nsp) 
                defining the vector field of the differential equation.
     \vname{task=num}: output mode, num could be equal to 1 (the default), 2 or 3. See explanations hereafter.
-    \vname{type=str}: ode solver to use, str is a string among  "default", "adams", "stiff" or "rkd5".
+    \vname{type=method}: ode solver to use, method is a string among  "default", "adams", "stiff" or "rkd5".
     \vname{atol=ea, rtol=er}: optional named argument, relative to the requested maximum error on a time step 
     (default values depends on the solver used). \verb+atol+ can be a vector of same size as 
     the vector \verb+x0+.
@@ -55,10 +55,13 @@ $$
 using various solvers (choosen by named optional \verb+type+ argument) 
 \begin{itemize}
 \item "default": lsoda solver (from the Livermore solvers odepack collection). Default tolerances: atol=1e-9,
-  rtol=1e-7.  
-\item "adams": lsode solver (from the Livermore solvers odepack collection) using adams method. Default tolerances: atol=1e-9, rtol=1e-7.
-\item "stiff": lsode solver (from the Livermore solvers odepack collection) using bdf method. Default tolerances: atol=1e-9, rtol=1e-7.
-\item "rkd5": dopri5 (Runge-Kutta) solver. Default tolerances: atol=1e-6, rtol=1e-4.
+  rtol=1e-7. This one could handle both stiff and non stiff ode.
+\item "adams": lsode solver (from the Livermore solvers odepack collection) using adams method. Default tolerances:
+  atol=1e-9, rtol=1e-7. To use with non stiff equations (can be used on middle stiff ode if the jacobian is provided).
+\item "stiff": lsode solver (from the Livermore solvers odepack collection) using bdf method. Default tolerances:
+  atol=1e-9, rtol=1e-7. To use with stiff ode.
+\item "rkd5": dopri5 (Runge-Kutta) solver. Default tolerances: atol=1e-6, rtol=1e-4. To use with non stiff ode (this
+solver has a stiff test and so you could be warned in case your ode is stiff then switch to \verb+type="stiff"+).
 \end{itemize}
 
 
@@ -138,7 +141,43 @@ or:\\
 when {\tt obj} is provided with {\tt args=obj}.
 
 \itemdesc{odeoptions: fine solver tuning}
-odeoptions will be described in a future version of this help page.
+odeoptions will be fully described in a future version of this help page. It is
+an hash table which lets to give values to some solvers parameter. Common
+parameters among the solvers are:
+\begin{description}
+\item[mxstep=value] this sets the maximal number of time steps a solver can take ; default
+values are 10000 for lsode,lsoda and 20000 for dopri5. If you encounter such a limitation
+you can use \verb+odeoptions=hash(mxstep=50000)+ for instance.
+\item[h0=value] this sets the first step size ; don't use this option if you have not a precise
+idea, by default each solver have some algorithm to determine some good initial step size.
+\end{description}
+
+
+\itemdesc{error indicator {\tt ier}}
+The output variable {\tt ier} can give (together with the warning messages from
+the solvers) some information about possible failures of the solver. Note that
+if a failure occurs during the integration process while {\tt ier} is required
+as output argument, then {\tt ode} returns what have been computed (solution
+is output for time instants before the failure). Otherwise ({\tt ier} not in
+output arguments) an error is set. 
+\begin{description}
+\item[ier=0] no error
+\item[ier=1] more than mxstep are needed to perform integration (you can increase
+             mxstep using odeoptions)
+\item[ier=2] excess accuracy requested (the tolerance atol and rtol are too stringent)
+\item[ier=3] illegal input detected (see the warning message)
+\item[ier=4] repeated error test failure
+\item[ier=5] repeated convergence failure
+\item[ier=6] an error weight became zero (occurs when atol/atol(i) is zero while
+             the component i of the solution is zero).
+\item[ier=7] the problem is stiff, or become stiff (this can arise when using dopri5 ;
+             in this case use stiff or default).
+\item[ier=8] time step become too small
+\item[ier=9] evaluation of the rhs function $f$ (or its jacobian) has failed
+\end{description}
+
+
+  
 
 \end{mandescription} 
 
