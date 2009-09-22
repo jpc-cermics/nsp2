@@ -459,10 +459,47 @@ static int int_mktemp(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * Interface for localtime
+ * returns a Hash whose keys are given by TM_NAME. 
+ * using C localtime function
+ * Jérôme Lelong. 
+ */
+
+static int int_localtime(Stack stack,int rhs,int opt,int lhs)
+{
+  int i;
+  int *Timeptr;
+  time_t now;
+  NspHash *H;
+  const char *TM_NAME[] = {"sec", "min", "hour", "mday", "mon", "year", "wday", "yday", "isdst"};
+  now = time (NULL);
+
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+
+  Timeptr = (int *) localtime (&now);
+  if(( H = nsp_hash_create(NVOID,4)) == NULLHASH) return RET_BUG;
+  for ( i = 0 ; i < 9 ; i++ )
+    {
+      NspObject *obj;
+      if ((obj= nsp_create_object_from_double(TM_NAME[i],Timeptr[i])) == NULL) goto err;
+      if (nsp_hash_enter(H,obj ) == FAIL) goto err;
+    }
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+ err:
+  nsp_hash_destroy(H);
+  return RET_BUG;
+}
+
+
+
+/*
  * The Interface for system functions 
  */ 
 
 static OpTab System_func[]={
+  {"localtime", int_localtime},
   {"chdir", int_syscd},
   {"getcwd", int_pwd},
   {"file", int_sysfile},
