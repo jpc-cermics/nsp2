@@ -29,6 +29,21 @@
 
 #include "tumbi48.xpm"
 
+static void increase_font_size(GtkWidget *widget, gpointer data);
+static void decrease_font_size(GtkWidget *widget, gpointer data);
+static void menu_increase_font_size(GtkWidget *widget, gpointer data);
+static void menu_decrease_font_size(GtkWidget *widget, gpointer data);
+static void menu_normal_font_size(GtkWidget *widget, gpointer data);
+
+static gint font_def_size=0;
+
+typedef struct _fsize_data fsize_data;
+struct _fsize_data 
+{
+  GtkWidget *widget;
+  gpointer data;
+};
+
 static void
 window_title_changed(GtkWidget *widget, gpointer win)
 {
@@ -172,30 +187,53 @@ paste_cb (GtkWidget *widget)
 
 static GtkWidget *popup_menu = NULL ; 
 
-static GtkWidget *create_menu (GtkWidget *wterminal)
+static GtkWidget *create_menu (GtkWidget *wterminal,  gpointer data) 
 {
   GtkWidget *menu;
   GtkWidget *menuitem;
   VteTerminal *terminal =  VTE_TERMINAL(wterminal);
+  static fsize_data data1={NULL,NULL};
+  
+  g_return_if_fail(GTK_IS_WINDOW(data));
   
   if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
-
+  
   popup_menu = menu = gtk_menu_new ();
   
+  /* copy */
   menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
   g_signal_connect_swapped (menuitem, "activate",
 			    G_CALLBACK (copy_cb),wterminal);
-
   gtk_widget_set_sensitive (menuitem,vte_terminal_get_has_selection (terminal) ? TRUE: FALSE);
-  
+
+  /* paste */
   menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_PASTE, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
   g_signal_connect_swapped (menuitem, "activate",
 			    G_CALLBACK (paste_cb),wterminal);
   
+  /* zoom data */
+  data1.data = data;
+  data1.widget = wterminal;
+
+  /* zoom in */
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_IN, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect(menuitem, "activate", G_CALLBACK(menu_increase_font_size),&data1);
+  /* zoom in */
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_OUT, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect(menuitem, "activate", G_CALLBACK(menu_decrease_font_size),&data1);
+  /* zoom def */
+  menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_100, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect(menuitem, "activate", G_CALLBACK(menu_normal_font_size),&data1);
   return menu;
 }
 
@@ -211,7 +249,7 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
   switch (event->button) {
   case 3:
     terminal = VTE_TERMINAL(widget);
-    menu =   create_menu (widget);
+    menu =   create_menu (widget,data);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
 		    NULL, NULL,0,gtk_get_current_event_time());
     return TRUE;
@@ -347,18 +385,25 @@ adjust_font_size(GtkWidget *widget, gpointer data, gint howmuch)
 
   /* Calculate the new font size. */
   desired = pango_font_description_copy(vte_terminal_get_font(terminal));
-  newsize = pango_font_description_get_size(desired) / PANGO_SCALE;
-  newsize += howmuch;
+  if ( howmuch == 0 )
+    {
+      newsize = ( font_def_size == 0 ) ? 10 : font_def_size;
+    }
+  else 
+    {
+      newsize = pango_font_description_get_size(desired) / PANGO_SCALE;
+      newsize += howmuch;
+    }
   pango_font_description_set_size(desired,
 				  CLAMP(newsize, 4, 144) * PANGO_SCALE);
-
   /* Change the font, then resize the window so that we have the same
-   * number of rows and columns. */
+   * number of rows and columns. 
+   */
   vte_terminal_set_font(terminal, desired);
   gtk_window_resize(GTK_WINDOW(data),
 		    columns * terminal->char_width + owidth,
 		    rows * terminal->char_height + oheight);
-
+  
   pango_font_description_free(desired);
 }
 
@@ -373,6 +418,29 @@ decrease_font_size(GtkWidget *widget, gpointer data)
 {
   adjust_font_size(widget, data, -1);
 }
+
+static void
+menu_increase_font_size(GtkWidget *widget, gpointer data)
+{
+  fsize_data *data1 = data;
+  adjust_font_size(data1->widget,data1->data, 1);
+}
+
+static void
+menu_decrease_font_size(GtkWidget *widget, gpointer data)
+{
+  fsize_data *data1 = data;
+  adjust_font_size(data1->widget,data1->data, -1);
+}
+
+static void
+menu_normal_font_size(GtkWidget *widget, gpointer data)
+{
+  fsize_data *data1 = data;
+  adjust_font_size(data1->widget,data1->data, 0);
+}
+
+
 
 static gboolean
 read_and_feedXXX(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -447,6 +515,7 @@ take_xconsole_ownership(GtkWidget *widget, gpointer data)
 int
 main(int argc, char **argv)
 {
+  const PangoFontDescription *desired;
   GdkPixbuf *pixbuf;
   char **command_argv;
   int cmdindex =0;
@@ -665,7 +734,7 @@ main(int argc, char **argv)
 
   /* Connect to the "button-press" event. */
   g_signal_connect(G_OBJECT(widget), "button-press-event",
-		   G_CALLBACK(button_pressed), widget);
+		   G_CALLBACK(button_pressed), window);
 
   /* Connect to application request signals. */
   g_signal_connect(G_OBJECT(widget), "iconify-window",
@@ -761,6 +830,10 @@ main(int argc, char **argv)
     vte_terminal_feed_child(VTE_TERMINAL(widget),
 			    "pwd\n", -1);
   }
+
+  desired = vte_terminal_get_font(VTE_TERMINAL(widget));
+  font_def_size = pango_font_description_get_size(desired) / PANGO_SCALE;
+  
   
   gtk_main();
   g_assert(widget == NULL);
