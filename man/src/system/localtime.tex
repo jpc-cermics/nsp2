@@ -1,0 +1,34 @@
+% -*- mode: latex -*-
+\mansection{localtime}
+\begin{mandesc}
+  \short{localtime}{get the current time}
+\end{mandesc}
+
+\begin{calling_sequence}
+\begin{verbatim}
+  localtime()
+  x=localtime()  
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: a hash table.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!localtime! returns a hash table filled with the
+  current time. The available keys are
+  \begin{description}
+  \item['sec'] : seconds ($0 \dots 59$)
+  \item['min'] : minutes ($0 \dots 59$)
+  \item['hour'] :hours ($0 \dots 24$)
+  \item['mday'] : the day of the month ($1 \dots 31$)
+  \item['day'] : the month of the year ($0 \dots 11$)
+  \item['year'] : the number of years elapsed since $1900$
+  \item['wday'] : the day of the week ($0$ for sunday)
+  \item['yday'] : the day of the year ($0 \dots 365$)
+  \item['isdst'] : is summer time in effect. It can $0$ or $1$.
+  \end{description}
+\end{mandescription} 
+
+
