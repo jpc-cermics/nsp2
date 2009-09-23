@@ -5,6 +5,7 @@ AC_REVISION($Revision$)dnl
 AC_INIT([nsp],[1.0])
 SCIDIR=`pwd`
 AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_HEADER(src/include/nsp/config.h)
 AH_BOTTOM([#include "nsp/package_undef.h"])
 AM_INIT_AUTOMAKE
