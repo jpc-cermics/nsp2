@@ -44,7 +44,7 @@ DIE=0
   }
 }
 
-(grep "^AM_PROG_LIBTOOL" $srcdir/configure.in >/dev/null) && {
+(grep "^A[CM]_PROG_LIBTOOL" $srcdir/configure.in >/dev/null) && {
   (libtool --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed."

@@ -1,6 +1,6 @@
 #===============================pointer size =============================
 
-AC_DEFUN( AC_CHECK_POINTER_SIZE, [
+AC_DEFUN([AC_CHECK_POINTER_SIZE], [
 dnl INPUTS :
 dnl OUTPUTS
 dnl  1 if sizeof(int*) == sizeof(int)  0 otherwise

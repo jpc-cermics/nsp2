@@ -618,6 +618,7 @@ static void sci_menubar_add_last_menu_entry(GtkWidget *menubar,menu_entry *m)
  *-------------------------------------------------------------------*/
 
 static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data);
+static void nsp_menu_default_callback_item (GtkWidget *widget, gpointer   func_data);
 
 static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m)
 {
@@ -669,7 +670,10 @@ static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m)
     }
   else 
     {
-      g_signal_connect(menuitem,  "activate",G_CALLBACK ( nsp_menu_default_callback),m);
+      g_signal_connect(menuitem,  "activate",G_CALLBACK ( nsp_menu_default_callback),m); 
+      /*
+	g_signal_connect(menuitem,  "activate-item",G_CALLBACK ( nsp_menu_default_callback_item),m);
+      */
     }
   gtk_menu_shell_append (GTK_MENU_SHELL (menubar), menuitem);
   gtk_widget_show_all(menuitem);
@@ -677,6 +681,43 @@ static void sci_menubar_add_menu_entry(GtkWidget *menubar,menu_entry *m)
 
 
 static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data)
+{
+  static char buf[256];
+  menu_entry *m = (menu_entry *) func_data;
+  if ( m== NULL) return ;
+  if ( nsp_call_predefined_callbacks(m->fname, m->winid)==1) return ;
+  if (m->action_type == 0) 
+    { 
+      /* Interpreted mode : we store the action on a queue */
+      if ( m->winid < 0 ) 
+	sprintf(buf,"execstr(%s(%d))",m->fname,m->nsub);
+      else 
+	sprintf(buf,"execstr(%s_%d(%d))",m->fname,m->winid,m->nsub);
+      enqueue_nsp_command(buf);
+    }
+  else if (m->action_type == 2) 
+    { 
+      /* Interpreted mode : we store the action on a queue */
+      if ( m->winid < 0 ) 
+	sprintf(buf,"%s(%d)",m->fname,m->nsub);
+      else 
+	sprintf(buf,"%s(%d,%d)",m->fname,m->nsub,m->winid);
+      enqueue_nsp_command(buf);
+    }
+  else 
+    { 
+      /* hard coded mode XXXX */
+      Sciprintf("Hardcoded button: to be done \n");
+      /*
+	int rep ;
+	C2F(setfbutn)(m->fname,&rep);
+	if ( rep == 0) 
+	F2C(fbutn)((m->fname),&(m->winid),&(m->nsub));
+      */
+    }
+}
+
+static void nsp_menu_default_callback_item (GtkWidget *widget, gpointer   func_data)
 {
   static char buf[256];
   menu_entry *m = (menu_entry *) func_data;
