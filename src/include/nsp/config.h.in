@@ -218,7 +218,7 @@
 /* soundfile library */
 #undef WITH_SNDFILE
 
-/* tk support */
+/* Defined if tcl/tk is interfaced */
 #undef WITH_TK
 
 /* umfpack library */

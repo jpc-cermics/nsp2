@@ -234,11 +234,11 @@ static gint timeout_test (BCG *gc)
   
 #ifdef WITH_TK
 
-extern int flushTKEvents();
+extern void nsp_flush_tkevents(void);
 
 static gint timeout_tk (void *v)
 {
-  flushTKEvents();
+  nsp_flush_tkevents();
   return TRUE;
 }
 
