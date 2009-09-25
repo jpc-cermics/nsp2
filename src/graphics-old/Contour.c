@@ -578,7 +578,7 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
   n1=N[0];n2=N[1];ncont=N[2];
   F= Xgc->graphic_engine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
-    ChoixFormatE1(ContNumFormat,zCont,N[2]);
+    nsp_grformat_e1(ContNumFormat,zCont,N[2]);
   InitValues(x,y,z,n1,n2);
   n5 =  2*(n1)+2*(n2)-3;
   /* Allocation */

@@ -1518,7 +1518,7 @@ void TDAxis(BCG *Xgc,int flag, double FPval, double LPval, int *nax, int *FPoint
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   size = xz[0]>=xz[1] ? xz[1]/50.0 : xz[0]/50.0;
   C2F(TDdrawaxis)(Xgc,size,FPval,LPval,nax,FPoint,LPoint,Ticsdir) ;
-  ChoixFormatE(fornum,Min(FPval,LPval),Max(LPval,FPval),
+  nsp_grformat_e(fornum,Min(FPval,LPval),Max(LPval,FPval),
 	       Abs((LPval-FPval))/nax[1]);
   xp= FPval;
   barlength=inint(1.2*size);

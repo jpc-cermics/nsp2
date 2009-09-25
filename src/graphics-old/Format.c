@@ -23,8 +23,8 @@
 /*------------------------------------------------------------------------
  * Axis drawing for 2d plots (format selection) 
  * 
- * void  ChoixFormatE(fmt, desres, xmin, xmax, xpas) : find a format 
- * void  ChoixFormatE1(fmt, desres, xx, nx)          : find a format 
+ * void  nsp_grformat_e(fmt, desres, xmin, xmax, xpas) : find a format 
+ * void  nsp_grformat_e1(fmt, desres, xx, nx)          : find a format 
  * int   graduate(xmi,xma,xi,xa,np1,np2,kminr,kmaxr,ar) 
  *                : change [xmi,xmax] for pretty graduation 
  *--------------------------------------------------------------------------*/
@@ -51,19 +51,19 @@ static void decompSup (double x,int * xk,int *  xa,int   b);
 static void decompInf (double x,int * xk,int *  xa,int   b);
 
 /*----------------------------------------------------
- * ChoixFormatE returns a format ("%.*f" or "%.*e")
+ * nsp_grformat_e returns a format ("%.*f" or "%.*e")
  * in fmt given xmin,xmax,pas. 
  *   fmt : character string 
  * fmt gives a format which can be used to display
  * number in range xmin:step:xmax  
- * Exemple : ChoixFormatE(format,min,max,step);
+ * Exemple : nsp_grformat_e(format,min,max,step);
  *           fprintf(format,min+k*step);
  * The format is searched so as to give distinct values 
  * for the numeric values xmin + k*xpas in [xmin,xmax] 
  * and give enough precision. 
  *------------------------------------------------*/
 
-void ChoixFormatE(char *fmt, double xmin, double xmax, double xpas)
+void nsp_grformat_e(char *fmt, double xmin, double xmax, double xpas)
 {
   char c;
   int des,len;
@@ -140,11 +140,11 @@ static int Fsepare(char *fmt, int dec, int *l, double xmin, double xmax, double 
 }
 
 /*--------------------------------------------
- * same as ChoixFormatE when numbers are given through an 
+ * same as nsp_grformat_e when numbers are given through an 
  * array xx[0:nx-1];
  *------------------------------------------------*/
 
-void ChoixFormatE1(char *fmt, double *xx, int nx)
+void nsp_grformat_e1(char *fmt, double *xx, int nx)
 {
   char c;
   int des,len;

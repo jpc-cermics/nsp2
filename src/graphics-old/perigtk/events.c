@@ -575,7 +575,7 @@ static void delete_window(BCG *dd,int intnum)
       if ((winxgc = window_list_search(intnum)) == NULL) return;
     }
   /* be sure to clear the recorded graphics */
-  scig_erase(intnum);
+  nsp_gr_erase(intnum);
 
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 

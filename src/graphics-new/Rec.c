@@ -1389,7 +1389,7 @@ static void ostore_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, 
 static void replay_SciAxis(BCG *Xgc,void *theplot)
 {
   struct rec_sciaxis *p = (struct rec_sciaxis *) theplot;
-  sci_axis(Xgc,p->pos,p->xy_type,p->x,&p->nx,p->y,&p->ny,p->str,p->subtics,p->format,p->fontsize,p->textcolor,
+  nsp_axis_old(Xgc,p->pos,p->xy_type,p->x,&p->nx,p->y,&p->ny,p->str,p->subtics,p->format,p->fontsize,p->textcolor,
 	   p->ticscolor,p->logflag,p->seg_flag,-1);
 
 }
@@ -3267,7 +3267,7 @@ void tape_replay(BCG *Xgc,int winnumber)
       list =list->next;
     }
   /* Is there a replay handler */
-  scig_handler(Xgc,winnumber);
+  nsp_gr_handler(Xgc,winnumber);
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
@@ -3289,7 +3289,7 @@ void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
       list =list->next;
     }
   /* Is there a replay handler */
-  scig_handler(Xgc,winnumber);
+  nsp_gr_handler(Xgc,winnumber);
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 

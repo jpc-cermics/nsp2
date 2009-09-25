@@ -1738,7 +1738,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   if(dd->private->resize != 0) 
     { 
       /* here we execute an expose and it works also when CurPixmapStatus == 1.
-       * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
+       * when CurPixmapStatus == 1 the extra pixmap is resized in nsp_gr_resize
        * and the drawing are redirected to the extra_pixmap. If a wshow is 
        * recorded then it will copy the extra_pixmap to both window and pixmap.
        * the last gdk_draw_drawable found here is not usefull in that case. 
@@ -1759,12 +1759,12 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
       dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-      scig_resize(dd->CurWindow);
+      nsp_gr_resize(dd->CurWindow);
       /* cairo_destroy (dd->private->cairo_cr);
 	 dd->private->cairo_cr = NULL;
       */
 #else 
-      scig_resize(dd->CurWindow);
+      nsp_gr_resize(dd->CurWindow);
 #endif 
       dd->private->in_expose= FALSE;
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
@@ -1778,7 +1778,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
-	  scig_replay(dd->CurWindow);
+	  nsp_gr_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
 	}
       else 
@@ -1832,7 +1832,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       glClear(GL_DEPTH_BUFFER_BIT);
       nsp_ogl_set_view(dd);
       dd->private->in_expose= TRUE;
-      scig_resize(dd->CurWindow);
+      nsp_gr_resize(dd->CurWindow);
       dd->private->in_expose= FALSE;
       /* Swap buffers or flush */
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
@@ -1856,7 +1856,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->draw = FALSE;
 	  /* need to redraw */
 	  dd->private->in_expose= TRUE;
-	  scig_replay(dd->CurWindow);
+	  nsp_gr_replay(dd->CurWindow);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;
@@ -1891,7 +1891,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   if(dd->private->resize != 0) 
     { 
       /* here we execute an expose and it works also when CurPixmapStatus == 1.
-       * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
+       * when CurPixmapStatus == 1 the extra pixmap is resized in nsp_gr_resize
        * and the drawing are redirected to the extra_pixmap. If a wshow is 
        * recorded then it will copy the extra_pixmap to both window and pixmap.
        * the last gdk_draw_drawable found here is not usefull in that case. 
@@ -1920,14 +1920,14 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			 dd->CWindowWidth, dd->CWindowHeight);
       */
       /* we resize and draw  
-       * Note that the gldrawable will be changed in scig_resize if we are 
+       * Note that the gldrawable will be changed in nsp_gr_resize if we are 
        * using the extra_pixmap.
        */
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
       dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
-      scig_resize(dd->CurWindow);
+      nsp_gr_resize(dd->CurWindow);
       dd->private->in_expose= FALSE;
       gdk_gl_drawable_gl_end (dd->private->gldrawable);
       glFlush ();
@@ -1946,7 +1946,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  dd->private->gl_only = TRUE;
-	  scig_replay(dd->CurWindow);
+	  nsp_gr_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
 	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
 	}

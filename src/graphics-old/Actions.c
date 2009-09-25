@@ -25,7 +25,7 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/command.h"
 
-static int scig_buzy = 0;
+static int nsp_gr_buzy = 0;
 
 /*
  * the functions in this file are called from 
@@ -38,20 +38,20 @@ static int scig_buzy = 0;
  * which is called by tape_replay. 
  */ 
 
-int scig_handler_none(BCG *Xgc,int win_num) {return win_num;}
+int nsp_gr_handler_none(BCG *Xgc,int win_num) {return win_num;}
 
-Scig_handler scig_handler = scig_handler_none;
+Scig_handler nsp_gr_handler = nsp_gr_handler_none;
 
-Scig_handler set_scig_handler(Scig_handler f)
+Scig_handler nsp_gr_set_handler(Scig_handler f)
 {
-  Scig_handler old = scig_handler;
-  scig_handler = f;
+  Scig_handler old = nsp_gr_handler;
+  nsp_gr_handler = f;
   return old;
 }
 
-void reset_scig_handler(void)
+void nsp_gr_reset_handler(void)
 {
-  scig_handler = scig_handler_none;
+  nsp_gr_handler = nsp_gr_handler_none;
 }
 
 /*
@@ -61,9 +61,9 @@ void reset_scig_handler(void)
 
 /* add handlers for delete action */
 
-void scig_deletegwin_handler_none (win)int win; {};
+void nsp_gr_deletegwin_handler_none (win)int win; {};
 
-void scig_deletegwin_handler_sci (int win)
+void nsp_gr_deletegwin_handler_sci (int win)
 {
   static char buf[256];
   BCG *bcg= window_list_search(win);
@@ -73,58 +73,58 @@ void scig_deletegwin_handler_sci (int win)
   }
 }
 
-static Scig_deletegwin_handler scig_deletegwin_handler = scig_deletegwin_handler_none;
+static Scig_deletegwin_handler nsp_gr_deletegwin_handler = nsp_gr_deletegwin_handler_none;
 
-Scig_deletegwin_handler set_scig_deletegwin_handler(Scig_deletegwin_handler f)
+Scig_deletegwin_handler nsp_gr_set_deletegwin_handler(Scig_deletegwin_handler f)
 {
-  Scig_deletegwin_handler old = scig_deletegwin_handler;
-  scig_deletegwin_handler = f;
+  Scig_deletegwin_handler old = nsp_gr_deletegwin_handler;
+  nsp_gr_deletegwin_handler = f;
   return old;
 }
 
-void reset_scig_deletegwin_handler(void) 
+void nsp_gr_reset_deletegwin_handler(void) 
 {
-  scig_deletegwin_handler = scig_deletegwin_handler_none;
+  nsp_gr_deletegwin_handler = nsp_gr_deletegwin_handler_none;
 }
 
 
 /**
- * scig_delete:
+ * nsp_gr_delete:
  * @winid: graphic window number.
  * 
  * Delete graphic window @win_num. and associated data.
  * 
  **/
 
-void scig_delete(int winid) 
+void nsp_gr_delete(int winid) 
 {
   BCG *Xgc;
   if ( (Xgc= window_list_search(winid)) == NULL) return;
-  scig_deletegwin_handler(winid);
+  nsp_gr_deletegwin_handler(winid);
   Xgc->graphic_engine->delete_window(Xgc,winid);
 }
 
 /**
- * scig_replay: 
+ * nsp_gr_replay: 
  * @win_num: graphic window number.
  * 
  * redraws the recorded graphics associated to graphic window @win_num.
  */
 
-void scig_replay(int win_num)
+void nsp_gr_replay(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc= window_list_search(win_num)) == NULL) return;
   if ( Xgc->record_flag != TRUE ) return ;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   Xgc->graphic_engine->clearwindow(Xgc);
   Xgc->graphic_engine->tape_replay(Xgc,win_num);
-  scig_buzy=0;
+  nsp_gr_buzy=0;
 }
 
 /**
- * scig_expose: 
+ * nsp_gr_expose: 
  * @win_num: graphic window number.
  * 
  * Used to deal with an expose event. If the graphic window 
@@ -132,13 +132,13 @@ void scig_replay(int win_num)
  * else we perform a sgig_replay. 
  */
 
-void scig_expose(int win_num)
+void nsp_gr_expose(int win_num)
 {
   BCG *Xgc;
   int pix;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   pix = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   if ( pix == 0) 
     {
@@ -149,69 +149,69 @@ void scig_expose(int win_num)
     {
       Xgc->graphic_engine->xset_show(Xgc);    
     }
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 /**
- * scig_resize:
+ * nsp_gr_resize:
  * @win_num: graphic window number.
  * 
  * Redraws graphic window @win_num  after resizing. 
  */ 
 
 
-void scig_resize(int win_num)
+void nsp_gr_resize(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   Xgc->graphic_engine->pixmap_resize(Xgc);
   Xgc->graphic_engine->clearwindow(Xgc);    
   Xgc->graphic_engine->tape_replay(Xgc,win_num);
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 
 /**
- * scig_resize_pixmap:
+ * nsp_gr_resize_pixmap:
  * @win_num: graphic window number.
  * 
  * resize the pixmap associated to graphic window @win_num.
  */ 
 
-void scig_resize_pixmap(int win_num)
+void nsp_gr_resize_pixmap(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   Xgc->graphic_engine->pixmap_resize(Xgc);
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 /**
- * scig_erase:
+ * nsp_gr_erase:
  * @win_num: graphic window number.
  * 
  * clears the graphic window @win_num and the associated 
  * recorded data. 
  */ 
 
-void  scig_erase(int win_num)
+void  nsp_gr_erase(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc=window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   Xgc->graphic_engine->clearwindow(Xgc);
   Xgc->graphic_engine->tape_clean_plots(Xgc,win_num);
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 
 /**
- * scig_tops:
+ * nsp_gr_tops:
  * @win_num: graphic window number.
  * @colored: b&w (0) or colour export (1),
  * @bufname: file name;
@@ -228,15 +228,15 @@ extern Gengine Pos_gengine, XFig_gengine ;
 
 extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option);
 
-void scig_tops(int win_num, int colored, char *bufname, char *driver,char option)
+void nsp_gr_tops(int win_num, int colored, char *bufname, char *driver,char option)
 {
   int wdim[2],*wdim_p=NULL;
   BCG *Xgc,*Ggc;
   int zero=0,un=1;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
 
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   
   if ( strcmp(driver,"Pos")==0 ) 
     {
@@ -255,7 +255,7 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
       int rep = nsp_cairo_export(Xgc,win_num,colored,bufname,driver,option);
       if ( rep == OK ) 
 	{
-	  scig_buzy = 0;
+	  nsp_gr_buzy = 0;
 	  return ; 
 	}
       Sciprintf("Unknow driver %s using Pos\n",driver);
@@ -279,35 +279,35 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
   Ggc->plots = NULL ; 
   Ggc->record_flag = FALSE ;
   Ggc->graphic_engine->xend(Xgc);
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
-void scig_export(char *fname, int iwin, int color, char *driver,char option)
+void nsp_gr_export(char *fname, int iwin, int color, char *driver,char option)
 {
   int sc;
   if ( color == -1 ) 
     getcolordef(&sc);
   else 
     sc= color;
-  scig_tops(iwin,sc,fname,driver,option);
+  nsp_gr_tops(iwin,sc,fname,driver,option);
 }
 
 
 /**
- * scig_2dzoom: 
+ * nsp_gr_2dzoom: 
  * @win_num: graphic window number.
  * 
  * zoom the graphics of graphic window @win_num.
  */ 
 
-static int scig_buzy_zoom = 0;
+static int nsp_gr_buzy_zoom = 0;
 
-void scig_2dzoom(int win_num)
+void nsp_gr_2dzoom(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy_zoom == 1 ) return ;
+  if ( nsp_gr_buzy_zoom == 1 ) return ;
   if ( (Xgc=window_list_search(win_num)) == NULL) return;
-  scig_buzy_zoom =1;
+  nsp_gr_buzy_zoom =1;
   if ( Xgc->record_flag != TRUE ) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
@@ -316,22 +316,22 @@ void scig_2dzoom(int win_num)
     {
       zoom(Xgc);
     }
-  scig_buzy_zoom = 0;
+  nsp_gr_buzy_zoom = 0;
 }
 
 /**
- * scig_unzoom: 
+ * nsp_gr_unzoom: 
  * @win_num: graphic window number.
  * 
  * Unzoom the graphics of graphic window @win_num.
  */ 
 
-void  scig_unzoom(int win_num)
+void  nsp_gr_unzoom(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  nsp_gr_buzy =1;
   if ( Xgc->record_flag != TRUE ) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"UnZoom works only with the Rec driver ");
@@ -340,19 +340,19 @@ void  scig_unzoom(int win_num)
     {
       unzoom(Xgc);
     }
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 
 /**
- * scig_3drot: 
+ * nsp_gr_3drot: 
  * @win_num: graphic window number.
  * 
  * Rotation of 3d plots of graphic window @win_num.
  */ 
 
 
-void scig_3drot(int win_num)
+void nsp_gr_3drot(int win_num)
 {
   BCG *Xgc;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
@@ -368,26 +368,26 @@ void scig_3drot(int win_num)
 
 
 /**
- * scig_sel: 
+ * nsp_gr_sel: 
  * @win_num: graphic window number.
  * 
  * selects window @win_num as the current graphic window.
  */ 
 
 
-void scig_sel(int win_num)
+void nsp_gr_sel(int win_num)
 {
   set_graphic_window(Max(win_num,0)) ;
 }
 
 /**
- * scig_raise: 
+ * nsp_gr_raise: 
  * @win_num: graphic window number.
  * 
  * raises window @win_num.
  */ 
 
-void scig_raise(int win_num)
+void nsp_gr_raise(int win_num)
 {
   BCG *Xgc;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
@@ -395,7 +395,7 @@ void scig_raise(int win_num)
 }
 
 /**
- * scig_change: 
+ * nsp_gr_change: 
  * @win_num: graphic window number.
  * 
  * set window @win_num as the current graphic window. 
@@ -403,7 +403,7 @@ void scig_raise(int win_num)
  * return value: the former current graphic window.
  */ 
 
-int scig_change(int win_num)
+int nsp_gr_change(int win_num)
 {
   BCG *Xgc = check_graphic_window();
   if ( Xgc != NULL ) 
@@ -418,7 +418,7 @@ int scig_change(int win_num)
 
 
 /**
- * scig_loadsg: 
+ * nsp_gr_loadsg: 
  * @win_num: graphic window number.
  * @filename: a filename 
  * 
@@ -426,28 +426,28 @@ int scig_change(int win_num)
  * @win_num.
  */ 
 
-void scig_loadsg(int win_num, char *filename)
+void nsp_gr_loadsg(int win_num, char *filename)
 {
   BCG *Xgc;
   int cur;
-  if ( scig_buzy  == 1 ) return ;
-  scig_buzy =1;
+  if ( nsp_gr_buzy  == 1 ) return ;
+  nsp_gr_buzy =1;
   Xgc=check_graphic_window();
   cur = Xgc->graphic_engine->xset_curwin(win_num,FALSE);
   tape_load(Xgc,filename);
   Xgc->graphic_engine->xset_curwin(cur,FALSE);
-  scig_buzy = 0;
+  nsp_gr_buzy = 0;
 }
 
 /**
- * scig_savesg: 
+ * nsp_gr_savesg: 
  * @filename: a filename 
  * @win_num: graphic window number.
  * 
  * save graphic data from graphic window @win_num to file @filename.
  */ 
 
-void scig_savesg(char *filename, int win_num)
+void nsp_gr_savesg(char *filename, int win_num)
 {
   BCG *Xgc;
   if ( (Xgc = window_list_search(win_num)) == NULL) return;
@@ -460,7 +460,7 @@ void scig_savesg(char *filename, int win_num)
 }
 
 /**
- * nsp_set_graphic_eventhandler:
+ * nsp_gr_set_graphic_eventhandler:
  * @win_num: 
  * @name: 
  * @ierr: 
@@ -469,7 +469,7 @@ void scig_savesg(char *filename, int win_num)
  * this is to be changed one day. 
  **/
 
-void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
+void nsp_gr_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
 {  
   BCG *SciGc;
   /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */

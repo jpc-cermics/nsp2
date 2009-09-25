@@ -223,7 +223,7 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
  *-------------------------------------------------------------*/
 
 
-void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
+void nsp_axis_old(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
 {
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     nsp_gengine_record_old.store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
@@ -314,8 +314,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
        */
       if (str == NULL && format == NULL )  
 	switch (xy_type ) {
-	case 'v' : ChoixFormatE1(c_format,x,Nx);break;
-	case 'r' : ChoixFormatE (c_format,x[0],x[1],(x[1]-x[0])/x[2]);break;
+	case 'v' : nsp_grformat_e1(c_format,x,Nx);break;
+	case 'r' : nsp_grformat_e (c_format,x[0],x[1],(x[1]-x[0])/x[2]);break;
 	}
       if ( seg_flag == 1) 
 	{
@@ -432,8 +432,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
       str_offset = Xgc->scales->WIRect1[2]/60.0/Xgc->scales->Wscx1;
       if (str == NULL &&  format == NULL )  
 	switch (xy_type ) {
-	case 'v' : ChoixFormatE1(c_format,y,Ny);break;
-	case 'r' : ChoixFormatE(c_format,y[0],y[1],(y[1]-y[0])/y[2]);break;
+	case 'v' : nsp_grformat_e1(c_format,y,Ny);break;
+	case 'r' : nsp_grformat_e(c_format,y[0],y[1],(y[1]-y[0])/y[2]);break;
 	}
       if ( seg_flag == 1)
 	{

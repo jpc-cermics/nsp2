@@ -1118,7 +1118,7 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
        * delete the window is erased 
        */
       Xgc1->private->cairo_cr = NULL;
-      scig_delete(win);
+      nsp_gr_delete(win);
     }
   return OK;
 }
@@ -1185,7 +1185,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> */
-      scig_delete(win);
+      nsp_gr_delete(win);
     }
   return OK;
 }
