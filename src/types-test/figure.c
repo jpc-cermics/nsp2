@@ -2051,7 +2051,7 @@ static int nsp_figure_connect(NspFigure *F)
       /* delete window F->obj->id and reconnect */
       Sciprintf("\tFigure %d already connected\n",F->obj->id);
       Sciprintf("\tdeleting window %d\n",F->obj->id);
-      scig_delete(F->obj->id);
+      nsp_gr_delete(F->obj->id);
      }
   
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
@@ -2133,7 +2133,7 @@ static int nsp_figure_connect(NspFigure *F)
 
 static int nsp_figure_unconnect(NspFigure *F)
 {
-  scig_delete(F->obj->id); 
+  nsp_gr_delete(F->obj->id); 
   return OK ;
 }
 

@@ -823,7 +823,7 @@ static void * nsp_window_create_initial_menu(void)
 
 static void nspg_menu_erase(int winid) 
 {
-  scig_erase(winid);
+  nsp_gr_erase(winid);
 }
 
 /*----------------------------------------------
@@ -832,7 +832,7 @@ static void nspg_menu_erase(int winid)
 
 static void nspg_menu_select(int winid)
 {
-  scig_sel(winid);
+  nsp_gr_sel(winid);
 }
 
 /*----------------------------------------------
@@ -841,7 +841,7 @@ static void nspg_menu_select(int winid)
 
 static void nspg_menu_delete(int winid) 
 {
-  scig_delete(winid);
+  nsp_gr_delete(winid);
 }
 
 /*-----------------------------------------------------------------*
@@ -899,34 +899,34 @@ static void nspg_menu_export(int winid)
     case 3 : /* "Postscript LaTeX" */
       switch ( orientation ) 
 	{
-	case 0: scig_tops(winid,colored,fname,"Pos",'l');break;
-	case 1: scig_tops(winid,colored,fname,"Pos",'p');break;
-	case 2: scig_tops(winid,colored,fname,"Pos",'k');break;
+	case 0: nsp_gr_tops(winid,colored,fname,"Pos",'l');break;
+	case 1: nsp_gr_tops(winid,colored,fname,"Pos",'p');break;
+	case 2: nsp_gr_tops(winid,colored,fname,"Pos",'k');break;
 	}    
       break;
     case 2 : /* "Postscript No Preamble" */
-      scig_tops(winid,colored,fname,"Pos",'n');
+      nsp_gr_tops(winid,colored,fname,"Pos",'n');
       break;
     case 4 : /* Xfig */
-      scig_tops(winid,colored,fname,"Fig",'n');
+      nsp_gr_tops(winid,colored,fname,"Fig",'n');
       break;
     case 5 : /* Gif */
-      scig_tops(winid,colored,fname,"GIF",'n');
+      nsp_gr_tops(winid,colored,fname,"GIF",'n');
       break;
     case 6 : /* PPM */
-      scig_tops(winid,colored,fname,"PPM",'n');
+      nsp_gr_tops(winid,colored,fname,"PPM",'n');
       break;
     case 7 : /* cairo-pdf */
-      scig_tops(winid,colored,fname,"cairo-pdf",'n');
+      nsp_gr_tops(winid,colored,fname,"cairo-pdf",'n');
       break;
     case 8: /* cairo-svg */
-      scig_tops(winid,colored,fname,"cairo-svg",'n');
+      nsp_gr_tops(winid,colored,fname,"cairo-svg",'n');
       break;
     case 9: /* cairo-ps */
-      scig_tops(winid,colored,fname,"cairo-ps",'n');
+      nsp_gr_tops(winid,colored,fname,"cairo-ps",'n');
       break;
     case 10: /* cairo-png */
-      scig_tops(winid,colored,fname,"cairo-png",'n');
+      nsp_gr_tops(winid,colored,fname,"cairo-png",'n');
       break;
     }
   nsp_string_destroy(&fname);
@@ -941,8 +941,8 @@ static void nspg_menu_save(int winid)
   char *filename;
   if ((filename = nsp_get_filename_save("Save Graphic File",NULL)) != NULL) 
     {
-      /* faie un scig_save XXXXX */
-      scig_savesg(filename,winid);
+      /* faie un nsp_gr_save XXXXX */
+      nsp_gr_savesg(filename,winid);
     }
 }
 
@@ -956,7 +956,7 @@ static void nspg_menu_load(int winid)
   static char *filters[] ={"Nsp binary graphics","*.scg",NULL};
   if ((filename = nsp_get_filename_open("Load Graphic File",NULL,filters)) != NULL) 
     {
-      scig_loadsg(winid, filename);
+      nsp_gr_loadsg(winid, filename);
     }
 }
 
@@ -989,7 +989,7 @@ static void nspg_menu_zoom(int winid)
   nsp_menus_set_unset(winid,"3D Rot.",ne,FALSE);
   nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
   nsp_menus_set_unset(winid,"File",ne,FALSE);
-  scig_2dzoom(winid);
+  nsp_gr_2dzoom(winid);
   nsp_menus_set_unset(winid,"Zoom",ne,TRUE);
   nsp_menus_set_unset(winid,"3D Rot.",ne,TRUE);
   nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
@@ -1005,7 +1005,7 @@ static void nspg_menu_unzoom(int winid)
 {
   integer ne=0;
   nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
-  scig_unzoom(winid);
+  nsp_gr_unzoom(winid);
   nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
 }
 
@@ -1021,7 +1021,7 @@ static void nspg_menu_rot3d(int winid)
   nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
   nsp_menus_set_unset(winid,"Zoom",ne,FALSE);
   nsp_menus_set_unset(winid,"File",ne,FALSE);
-  scig_3drot(winid);
+  nsp_gr_3drot(winid);
   nsp_menus_set_unset(winid,"3D Rot.",ne,TRUE);
   nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
   nsp_menus_set_unset(winid,"Zoom",ne,TRUE);
@@ -1134,12 +1134,12 @@ static void nsp_menu_gwminus(void)
 
 static void nsp_menu_gwcreate_or_select(void)
 {
-  scig_sel(lab_count);
+  nsp_gr_sel(lab_count);
 }
 
 static void nsp_menu_gwraise(void)
 {
-  scig_raise(lab_count);
+  nsp_gr_raise(lab_count);
 }
 
 static void nsp_menu_gwdelete(void)

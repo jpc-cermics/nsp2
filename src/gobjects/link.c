@@ -679,6 +679,15 @@ void link_draw(NspLink *L)
   if ( L->obj->show == FALSE ) return ;
 
   Xgc=L->obj->frame->Xgc;
+
+
+  if (Xgc->record_flag == TRUE)  
+    Sciprintf("recod true \n");
+  else
+    Sciprintf("recod false  \n");
+
+
+
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw polyline */

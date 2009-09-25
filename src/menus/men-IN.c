@@ -837,7 +837,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
   
   if ( gwin != -1 ) 
     {
-      win = scig_change(gwin);
+      win = nsp_gr_change(gwin);
     } 
 
   if ( mname == NULL) mname = button;
@@ -849,7 +849,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 
   if ( gwin != -1 ) 
     {
-      win = scig_change(gwin);
+      win = nsp_gr_change(gwin);
     } 
 
   if (ierr == FAIL ) 

@@ -22,6 +22,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "graphics/new_graphics.h"
 #include "nsp/graphics/Graphics.h"
 #include "gridblock.h" 
 
@@ -1099,13 +1100,19 @@ static int pixmap = FALSE ; /* XXXXX */
 
 void nspgframe_draw(nspgframe *gf)
 {
+  int record;
   BCG *Xgc = gf->Xgc;
   Cell *C = gf->objs->first;
   if ( Xgc == NULL) return;
   /* using current values */
   Nsetscale2d(Xgc,NULL,NULL,gf->scale,"nn");
   if ( gf->top ) Xgc->graphic_engine->clearwindow(Xgc);
-  /* XXX xtape('replay',win); */
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+#ifdef NEW_GRAPHICS 
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+#endif 
+
   /* 
    * XXX A GFrame could be casted info a Rect 
    * for drawing its boundaries 
@@ -1120,6 +1127,7 @@ void nspgframe_draw(nspgframe *gf)
       C = C->next ;
     }
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
 }  
 
 /**
