@@ -22,7 +22,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "graphics/new_graphics.h"
+#include "../graphics/new_graphics.h"
 #include "nsp/graphics/Graphics.h"
 #include "gridblock.h" 
 
