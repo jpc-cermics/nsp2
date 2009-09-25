@@ -171,6 +171,75 @@ void length_scale_i2f(BCG *Xgc,double *x, double *y, const int *x1, const int *y
     }
 }
 
+/* Utilities
+ * scale conversions 
+ */
+
+void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
+{
+  int i;
+  /** double to int (pixel) direction **/
+  for ( i=0 ; i < n ; i= i+4)
+    {
+      if ( Xgc->scales->logflag[0] == 'n' ) 
+	{
+	  x1[i]=  XScale(x[i]);
+	  /* x1[i+2]=inint( Xgc->scales->Wscx1*( x[i+2])); */
+	  x1[i+2]= XScale(x[i]+x[i+2]) -x1[i];
+	}
+      else 
+	{
+	  x1[i]= XLogScale(x[i]);
+	  x1[i+2]=inint( Xgc->scales->Wscx1*(log10((x[i]+x[i+2])/x[i])));
+	} 
+      if ( Xgc->scales->logflag[1] == 'n' ) 
+	{
+	  x1[i+1]= YScale(x[i+1]);
+	  /* x1[i+3]=inint( Xgc->scales->Wscy1*( x[i+3]));*/
+	  x1[i+3]= YScale(x[i+1]-x[i+3]) - x1[i+1];
+	}
+      else 
+	{
+	  x1[i+1]= YLogScale(x[i+1]);
+	  x1[i+3]=inint( Xgc->scales->Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3]))));
+	}
+    }
+} 
+  
+ void rect2d_i2f(BCG *Xgc,double x[],const  int x1[], int n)
+{
+  int i;
+  for ( i=0 ; i < n ; i=i+4)
+    {
+      if ( Xgc->scales->logflag[0] == 'n' ) 
+	{
+	  x[i]= XPi2R(x1[i] );
+	  x[i+2]=x1[i+2]/Xgc->scales->Wscx1;
+	}
+      else
+	{
+	  x[i]=exp10( XPi2R(x1[i]));
+	  x[i+2]=exp10(XPi2R( x1[i]+x1[i+2] ));
+	  x[i+2] -= x[i];
+	}
+      if ( Xgc->scales->logflag[1] == 'n' ) 
+	{
+	  x[i+1]= YPi2R( x1[i+1]);
+	  x[i+3]=x1[i+3]/Xgc->scales->Wscy1;
+	}
+      else
+	{
+	  x[i+1]=exp10( YPi2R( x1[i+1]));
+	  x[i+3]=exp10( YPi2R( x1[i+3]+x1[i+1])); 
+	  x[i+2] -= x[i+1];
+	}
+    }
+}
+
+
+
+
+
 
 
 /** meme chose mais pour transformer des ellipses **/
@@ -208,68 +277,6 @@ void ellipse2d(BCG *Xgc,double *x, int *x1, int *n, char *dir)
 }
 
 /** meme chose mais pour transformer des rectangles **/
-
-void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
-{
-  int i;
-  /** double to int (pixel) direction **/
-  for ( i=0 ; i < n ; i= i+4)
-    {
-      if ( Xgc->scales->logflag[0] == 'n' ) 
-	{
-	  x1[i]=  XScale(x[i]);
-	  /* x1[i+2]=inint( Xgc->scales->Wscx1*( x[i+2])); */
-	  x1[i+2]= XScale(x[i]+x[i+2]) -x1[i];
-	}
-      else 
-	{
-	  x1[i]= XLogScale(x[i]);
-	  x1[i+2]=inint( Xgc->scales->Wscx1*(log10((x[i]+x[i+2])/x[i])));
-	} 
-      if ( Xgc->scales->logflag[1] == 'n' ) 
-	{
-	  x1[i+1]= YScale(x[i+1]);
-	  /* x1[i+3]=inint( Xgc->scales->Wscy1*( x[i+3]));*/
-	  x1[i+3]= YScale(x[i+1]-x[i+3]) - x1[i+1];
-	}
-      else 
-	{
-	  x1[i+1]= YLogScale(x[i+1]);
-	  x1[i+3]=inint( Xgc->scales->Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3]))));
-	}
-    }
-} 
-  
-void rect2d_i2f(BCG *Xgc,double x[],const  int x1[], int n)
-{
-  int i;
-  for ( i=0 ; i < n ; i=i+4)
-    {
-      if ( Xgc->scales->logflag[0] == 'n' ) 
-	{
-	  x[i]= XPi2R(x1[i] );
-	  x[i+2]=x1[i+2]/Xgc->scales->Wscx1;
-	}
-      else
-	{
-	  x[i]=exp10( XPi2R(x1[i]));
-	  x[i+2]=exp10(XPi2R( x1[i]+x1[i+2] ));
-	  x[i+2] -= x[i];
-	}
-      if ( Xgc->scales->logflag[1] == 'n' ) 
-	{
-	  x[i+1]= YPi2R( x1[i+1]);
-	  x[i+3]=x1[i+3]/Xgc->scales->Wscy1;
-	}
-      else
-	{
-	  x[i+1]=exp10( YPi2R( x1[i+1]));
-	  x[i+3]=exp10( YPi2R( x1[i+3]+x1[i+1])); 
-	  x[i+2] -= x[i+1];
-	}
-    }
-}
-
 
  
 /* meme chose mais pour axis */
@@ -386,7 +393,7 @@ static void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox, int *ibbox)
 
 /* A version for drivers who do not have Xor mode 
  * we have to redraw while acquiring the zoom rectangle 
- * we could also try to keep the graphiv in a backing store 
+ * we could also try to keep the graphic in a backing store 
  * pixmap. 
  */
 
@@ -581,6 +588,8 @@ static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
  * This function is obsolete 
  */
 
+#if 0 
+
 void Gr_Rescale(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax)
 {
   double FRectO[4];
@@ -606,104 +615,4 @@ void Gr_Rescale(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int
     }
 }
 
-/*
- * here we compute new axis graduation 
- * but without changing FRect. The computed graduation does not 
- * necessary start at FRect boundaries but inside. 
- */
-
-
-void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax)
-{
-  int i;
-  double FRectO[4];
-  double xtest;
-  if (logf[0] == 'n') 
-    {
-      if ( FRectI[0]*FRectI[2] < 0 ) 
-	{
-	  double xmin,xmax;
-	  /* if zero is inside frect we try to find a graduation with zero inside */
-	  xmin = Min(FRectI[0],-FRectI[2]);
-	  xmax = Max(FRectI[2],-FRectI[0]);
-	  graduate(&xmin,&xmax,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
-	}
-      else
-	{
-	  graduate(FRectI,FRectI+2,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
-	}
-      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
-       * The problem is that proceding that way we can obtain just one point.
-       */
-      i=0;
-      while (1) { 
-	xtest= exp10((double)Xdec[2])*(Xdec[0] + i*(Xdec[1]-Xdec[0])/xnax[1]); 
-	if ( xtest >= FRectI[0] ) break;
-	i++;
-      }
-      Xdec[0] += i*(Xdec[1]-Xdec[0])/xnax[1];
-      xnax[1] -= i;
-      /* eliminate extra values at the end  */
-      i=0;
-      while (1) 
-	{
-	  xtest = exp10((double)Xdec[2])*(Xdec[0]+(xnax[1]-i)*(Xdec[1]-Xdec[0])/xnax[1]);
-	  if ( xtest <=  FRectI[2] ) break;
-	  i++;
-	}
-      Xdec[1] -= i*(Xdec[1]-Xdec[0])/xnax[1];
-      xnax[1] -= i;
-    }
-  else
-    {
-      /* logscale */
-      Xdec[0]=inint(FRectI[0]);
-      Xdec[1]=inint(FRectI[2]);
-      Xdec[2]=0;
-    }
-  if (logf[1] == 'n') 
-    {
-      if ( FRectI[1]*FRectI[3] < 0 ) 
-	{
-	  double ymin,ymax;
-	  /* if zero is inside frect we try to find a graduation with zero inside */
-	  ymin = Min(FRectI[1],-FRectI[3]);
-	  ymax = Max(FRectI[3],-FRectI[1]);
-	  graduate(&ymin,&ymax,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
-	}
-      else
-	{
-	  graduate(FRectI+1,FRectI+3,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
-	}
-
-      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
-       * The problem is that proceding that way we can obtain just one point.
-       */
-      i=0;
-      while (1)
-	{
-	  xtest = exp10(Ydec[2])*(Ydec[0] + i*(Ydec[1]-Ydec[0])/ynax[1]);
-	  if ( xtest >= FRectI[1] ) break;
-	  i++;
-	}
-      Ydec[0] += i*(Ydec[1]-Ydec[0])/ynax[1];
-      ynax[1] -= i;
-      /* eliminate extra values at the end  */
-      i=0;
-      while (1)
-	{
-	  xtest = exp10(Ydec[2])*(Ydec[0]+(ynax[1]-i)*(Ydec[1]-Ydec[0])/ynax[1]);
-	  if ( xtest <=  FRectI[3] ) break;
-	  i++;
-	}
-      Ydec[1] -= i*(Ydec[1]-Ydec[0])/ynax[1];
-      ynax[1] -= i;
-    }
-  else
-    {
-      /* logscale */
-      Ydec[0]=inint(FRectI[1]);Ydec[1]=inint(FRectI[3]);Ydec[2]=0;
-    }
-}
-
-    
+#endif 

@@ -8,7 +8,7 @@
 
 
 
-#line 44 "codegen/axes.override"
+#line 45 "codegen/axes.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -89,7 +89,7 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
       
   type->init = (init_func *) init_axes;
 
-#line 60 "codegen/axes.override"
+#line 61 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -824,7 +824,7 @@ static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 93 "codegen/axes.override"
+#line 94 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -990,7 +990,7 @@ static int _wrap_axes_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 109 "codegen/axes.override"
+#line 110 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1247,7 +1247,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 80 "codegen/axes.override"
+#line 81 "codegen/axes.override"
 int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -1262,7 +1262,7 @@ int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
 #line 1263 "axes.c"
 
 
-#line 167 "codegen/axes.override"
+#line 168 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1274,7 +1274,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 #line 1275 "axes.c"
 
 
-#line 177 "codegen/axes.override"
+#line 178 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1320,7 +1320,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
 Axes_register_classes(NspObject *d)
 {
 
-#line 55 "codegen/axes.override"
+#line 56 "codegen/axes.override"
 
 Init portion 
 
@@ -1330,7 +1330,7 @@ Init portion
 }
 */
 
-#line 188 "codegen/axes.override"
+#line 189 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1692,7 +1692,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       int i;
       for (i=0; i< 4 ;i++) FRect2[i]=FRect1[i];
       /* change graduation */
-      Gr_Rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
+      gr_rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
     }
   
   /* Update the current scale */
@@ -1938,4 +1938,108 @@ void nsp_figure_unzoom(NspGraphic *Obj)
     }
 }
 
-#line 1942 "axes.c"
+
+/*
+ * here we compute new axis graduation 
+ * but without changing FRect. The computed graduation does not 
+ * necessary start at FRect boundaries but inside. 
+ */
+
+
+static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax)
+{
+  int i;
+  double FRectO[4];
+  double xtest;
+  if (logf[0] == 'n') 
+    {
+      if ( FRectI[0]*FRectI[2] < 0 ) 
+	{
+	  double xmin,xmax;
+	  /* if zero is inside frect we try to find a graduation with zero inside */
+	  xmin = Min(FRectI[0],-FRectI[2]);
+	  xmax = Max(FRectI[2],-FRectI[0]);
+	  graduate(&xmin,&xmax,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
+	}
+      else
+	{
+	  graduate(FRectI,FRectI+2,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
+	}
+      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       * The problem is that proceding that way we can obtain just one point.
+       */
+      i=0;
+      while (1) { 
+	xtest= exp10((double)Xdec[2])*(Xdec[0] + i*(Xdec[1]-Xdec[0])/xnax[1]); 
+	if ( xtest >= FRectI[0] ) break;
+	i++;
+      }
+      Xdec[0] += i*(Xdec[1]-Xdec[0])/xnax[1];
+      xnax[1] -= i;
+      /* eliminate extra values at the end  */
+      i=0;
+      while (1) 
+	{
+	  xtest = exp10((double)Xdec[2])*(Xdec[0]+(xnax[1]-i)*(Xdec[1]-Xdec[0])/xnax[1]);
+	  if ( xtest <=  FRectI[2] ) break;
+	  i++;
+	}
+      Xdec[1] -= i*(Xdec[1]-Xdec[0])/xnax[1];
+      xnax[1] -= i;
+    }
+  else
+    {
+      /* logscale */
+      Xdec[0]=inint(FRectI[0]);
+      Xdec[1]=inint(FRectI[2]);
+      Xdec[2]=0;
+    }
+  if (logf[1] == 'n') 
+    {
+      if ( FRectI[1]*FRectI[3] < 0 ) 
+	{
+	  double ymin,ymax;
+	  /* if zero is inside frect we try to find a graduation with zero inside */
+	  ymin = Min(FRectI[1],-FRectI[3]);
+	  ymax = Max(FRectI[3],-FRectI[1]);
+	  graduate(&ymin,&ymax,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+	}
+      else
+	{
+	  graduate(FRectI+1,FRectI+3,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+	}
+
+      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       * The problem is that proceding that way we can obtain just one point.
+       */
+      i=0;
+      while (1)
+	{
+	  xtest = exp10(Ydec[2])*(Ydec[0] + i*(Ydec[1]-Ydec[0])/ynax[1]);
+	  if ( xtest >= FRectI[1] ) break;
+	  i++;
+	}
+      Ydec[0] += i*(Ydec[1]-Ydec[0])/ynax[1];
+      ynax[1] -= i;
+      /* eliminate extra values at the end  */
+      i=0;
+      while (1)
+	{
+	  xtest = exp10(Ydec[2])*(Ydec[0]+(ynax[1]-i)*(Ydec[1]-Ydec[0])/ynax[1]);
+	  if ( xtest <=  FRectI[3] ) break;
+	  i++;
+	}
+      Ydec[1] -= i*(Ydec[1]-Ydec[0])/ynax[1];
+      ynax[1] -= i;
+    }
+  else
+    {
+      /* logscale */
+      Ydec[0]=inint(FRectI[1]);Ydec[1]=inint(FRectI[3]);Ydec[2]=0;
+    }
+}
+
+    
+
+
+#line 2046 "axes.c"

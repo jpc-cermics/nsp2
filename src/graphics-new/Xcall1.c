@@ -19,11 +19,6 @@
  * Graphic library
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------
- *   Graphic library for 2D and 3D plotting 
- *   Copyright (C) 1998-2001 Chancelier Jean-Philippe 
- *   jpc@cereve.enpc.fr 
- *--------------------------------------------------------------------------*/
 
 /*------------------------------------------------------------------------
  * the functions in this file are stored in the global struct Gengine nsp_gengine1
@@ -1012,9 +1007,9 @@ static void draw_pixbuf_from_file_1(BCG *Xgc,const char *fname,int src_x,int src
 }
 
 
-/*-----------------------------------------------------------------------------
+/*
  * Utilities : Allocation 
- *-----------------------------------------------------------------------------*/
+ */
 
 static void Myalloc(int **xm, int **ym, int n, int *err)
 {
@@ -1041,8 +1036,5 @@ static void Myalloc1(int **xm, int n, int *err)
 	}
     }
 }
-
-
-
 
 

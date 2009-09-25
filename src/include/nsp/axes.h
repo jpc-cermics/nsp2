@@ -157,7 +157,8 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
 static void nsp_axes_link_figure(NspGraphic *G, void *F);
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_axes_children(NspGraphic *Obj);
+static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax);
 
-#line 162 "./axes.h"
+#line 163 "./axes.h"
 #endif /* NspAxes_Private */
 
