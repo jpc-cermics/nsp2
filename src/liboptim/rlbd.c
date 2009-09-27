@@ -146,20 +146,19 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   double d__1, d__2;
 
   /* Local variables */
-  int icoi, icop, icos, imax;
-  double hptd, hptg;
-  double epst, text, topt, hpta1, a, b, e;
-  int i__, k;
-  double p, r__;
-  int indic;
-  double difhp, a1, extra;
-  int iproj;
-  double f0, tmaxp, h1, ttmin;
-  double extrp, t1, t2, ttsup, fa, f11, di, fn, ta, td, tg, cofder, fa1, ta1,
-    hpa, hpd, ftd, hpg, ftg, div, hpn, eps, tmi, xni;
-  int ico1;
-  double eps1;
   char var2[3];
+  double difhp, a1, extra, eps1;
+  double epst, text, topt, hpta1, a, b, e;
+  double extrp, t1=0, t2, ttsup, fa, f11, di;
+  double fn, ta, td, tg, cofder, fa1, ta1, hpa;
+  double hpd=0, ftd=0, hpg, ftg, div, hpn=0, eps, tmi, xni;
+  double f0, tmaxp, h1=0, ttmin, hptd=0, hptg, p, r__;
+  int i__, k=0;
+  int ico_1;
+  int icoi;
+  int icop, icos;
+  int imax; 
+  int indic, iproj;
 
   /* Parameter adjustments */
   --xn;
@@ -353,7 +352,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
    *     calcul du pas saturant toutes les bornes:tmaxp 
    */
   tmaxp = 0.;
-  ico1 = 0;
+  ico_1 = 0;
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -388,7 +387,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
 	  goto L350;
 	}
       tmaxp = t2;
-      ico1 = i__;
+      ico_1 = i__;
     L350:
       ;
     }
@@ -402,11 +401,11 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
       strncpy (var2, "d  ",  3);
       goto L800;
     }
-  icos = ico1;
+  icos = ico_1;
   icoi = 0;
-  if (d__[ico1] < 0.)
+  if (d__[ico_1] < 0.)
     {
-      icoi = ico1;
+      icoi = ico_1;
       icos = 0;
     }
   /* 
@@ -424,7 +423,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
       *indrl = 8;
       goto L1010;
     }
-  hpg = d__[ico1] * gn[ico1];
+  hpg = d__[ico_1] * gn[ico_1 ];
   if (fn < *f && hpg < 0.)
     {
       *indrl = 8;
