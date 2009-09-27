@@ -339,7 +339,7 @@ int optim_icse (int *ind, int *nu, double *u, double *co, double *g, int *itv,
     ldif1, ldif2, ldif3;
   int lipv1, lipv2, mdtv1, mdtv2, mitv1, mitv2, i__, ludep, litob, loldp,
     lyold, lytob, ldtvt, lyerr, lyint, litvt, lytot, lb, ld, lf, lp, ly,
-    lsmold, loldmu, lp0, ly0, lob, ldm, lfu, lui, nui, lfy, lgt, lc2y, ly0u;
+    lsmold, loldmu, lp0, ly0, lob, ldm, lfu, lui=0, nui, lfy, lgt, lc2y, ly0u;
 
   /* Parameter adjustments */
   --g;
@@ -663,7 +663,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
   double dt2new, dt;
   int kt;
   double dt2;
-  int lui, nui, luv;
+  int lui=0, nui, luv=0;
 
   /* 
    *    sous programme de icse.fortran:calcul du gradient par 

@@ -213,10 +213,10 @@ int optim_gcbd (int *indgc, opt_simul simul, char *nomf, int *n, double *x, doub
   double d__1, d__2;
 
   /* Local variables */
-  int ialg[15], nfin, ndir, i__, ndiag;
   double aa;
-  int ii, nd, ng, ns, nt, nindic, ny, nz, nindex, nx2;
   double alg[15];
+  int ialg[15], nfin, ndir, i__, ndiag;
+  int ii, nd, ng, ns, nt, nindic, ny, nz, nindex, nx2;
   int nys, nzs;
 
   /* Parameter adjustments */
@@ -352,38 +352,26 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
   double d__1, d__2;
 
   /* Local variables */
-  double diff, difg, scal;
-  int ired;
-  double diri;
-  int nred, izag;
-  int napm;
-  double teta;
-  int iter, irit;
-  double tmax, ceps0;
-  int izag1, napm1;
-  double teta1, znog0;
-  int i__;
-  double t, condm, param;
-  int icycl, napav, indrl;
-  double tetaq;
-  double epsxi, tproj;
-  int indgc1;
+  double bss, zng, zrl;
+  double dfp;
   double dfred1, param1, dfrit1, aa;
-  int lb, nb;
+  double diff, difg, scal;
+  double diri;
+  double eps0, bss2;
+  double epsxi, tproj;
   double fn, difred;
-  int np;
+  double t, condm, param;
+  double teta1, znog0;
+  double teta;
+  double tetaq;
+  double tmax, ceps0;
   double xi, sy, epsgcp;
-  int indsim;
   double znglib, difrit;
   double zngred;
-  int iresul;
   double zngrit, ys1, amd, amf;
-  int ind;
-  double dfp;
-  int nap, ifp, irl, inp;
-  double bss, zng, zrl;
-  int imp1;
-  double eps0, bss2;
+  int i__,icycl, napav, indrl,imp1,ind,indgc1,indsim,ired;
+  int iresul,iter=0, irit,izag1, napm1,lb, nb,nap, ifp, irl, inp;
+  int napm,np,nred, izag;
 
   /* Parameter adjustments */
   --wk2;
@@ -1170,8 +1158,7 @@ static int optim_gcp (int *n, int *index, int *indic, int *np, int *nt, double *
 
   /* Local variables */
   double beta;
-  int iter, i__;
-  int itmax;
+  int iter, i__,itmax;
   double s0, s1, s2, dg, ro, d2a, eps0, eps1;
 
   /* Parameter adjustments */

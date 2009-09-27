@@ -24,43 +24,43 @@
 
 #include "optim.h"
 
-static int optim_fprf2 (int *, int *, int *, int *, double *, double *, double *,    
-			double *, int *, double *, double *, int *, int *, int *,    double *, double *, 
-			double *, double *, double *, double *,    double *, double *); 
+static int optim_fprf2 (int *,int *,int *,int *,double *,double *,double *,   
+			double *,int *,double *,double *,int *,int *,int *,   double *,double *,
+			double *,double *,double *,double *,   double *,double *); 
 
-static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4,
-			 int *i5, double *d1, double *d2, double *d3, double *d4);
-
-
-static int optim_frdf1 (opt_prosca prosca, int *n, int *ntot, int *ninf, int *kgrad,
-			double *al, double *q, double *s, double *poids, double *aps,
-			double *anc, int *mm1, double *r__, double *e, int *ic, opt_simul_data *optim_data);
-
-static int optim_fremf2 (opt_prosca prosca, int *iflag, int *n, int *ntot, int *nta, int *mm1,
-			 double *p, double *alfa, double *e, double *a, double *r__,opt_simul_data *optim_data);
+static int optim_n1fc1o (int *unit,int *job,int *i1,int *i2,int *i3,int *i4,
+			 int *i5,double *d1,double *d2,double *d3,double *d4);
 
 
-static int optim_nlis2 (opt_simul simul, opt_prosca prosca, int *n, double *xn, double *fn,
-			double *fpn, double *t, double *tmin, double *tmax, double *d__,
-			double *d2, double *g, double *gd, double *amd, double *amf,
-			int *imp, int *io, int *logic, int *nap, int *napmax, double *x,
-			double *tol, double *a, double *tps, double *tnc, double *gg,
+static int optim_frdf1 (opt_prosca prosca,int *n,int *ntot,int *ninf,int *kgrad,
+			double *al,double *q,double *s,double *poids,double *aps,
+			double *anc,int *mm1,double *r__,double *e,int *ic,opt_simul_data *optim_data);
+
+static int optim_fremf2 (opt_prosca prosca,int *iflag,int *n,int *ntot,int *nta,int *mm1,
+			 double *p,double *alfa,double *e,double *a,double *r__,opt_simul_data *optim_data);
+
+
+static int optim_nlis2 (opt_simul simul,opt_prosca prosca,int *n,double *xn,double *fn,
+			double *fpn,double *t,double *tmin,double *tmax,double *d__,
+			double *d2,double *g,double *gd,double *amd,double *amf,
+			int *imp,int *io,int *logic,int *nap,int *napmax,double *x,
+			double *tol,double *a,double *tps,double *tnc,double *gg,
 			opt_simul_data *optim_data);
 /*
-  static int optim_fremf1 (opt_prosca prosca, int *iflag, int *n, int *ntot, int *nta, int *mm1,
-  double *p, double *alfa, double *e, double *a, double *r__,
+  static int optim_fremf1 (opt_prosca prosca,int *iflag,int *n,int *ntot,int *nta,int *mm1,
+  double *p,double *alfa,double *e,double *a,double *r__,
   opt_simul_data *optim_data);
 */
-static int optim_n1fc1a (opt_simul simul, opt_prosca prosca, int *n, int *mode, double *xn,
-			 double *fn, double *g, double *df0, double *eps0, double *dx,
-			 int *imp, double *zero, int *io, int *ntot, int *iter,
-			 int *nsim, int *memax, double *s, double *gd, double *x,
-			 double *sa, double *gg, double *al, double *aps, double *anc,
-			 double *poids, double *q, int *jc, int *ic, double *r__,
-			 double *a, double *e, double *rr, double *xga, double *y,
-			 double *w1, double *w2, opt_simul_data *optim_data);
+static int optim_n1fc1a (opt_simul simul,opt_prosca prosca,int *n,int *mode,double *xn,
+			 double *fn,double *g,double *df0,double *eps0,double *dx,
+			 int *imp,double *zero,int *io,int *ntot,int *iter,
+			 int *nsim,int *memax,double *s,double *gd,double *x,
+			 double *sa,double *gg,double *al,double *aps,double *anc,
+			 double *poids,double *q,int *jc,int *ic,double *r__,
+			 double *a,double *e,double *rr,double *xga,double *y,
+			 double *w1,double *w2,opt_simul_data *optim_data);
 
-static int optim_ffinf1 (int *n, int *nv, int *jc, double *xpr, double *p, double *s);
+static int optim_ffinf1 (int *n,int *nv,int *jc,double *xpr,double *p,double *s);
 
 
 typedef struct fprf2c_ fprf2c;
@@ -257,7 +257,7 @@ static int optim_n1fc1a (opt_simul simul, opt_prosca prosca, int *n, int *mode, 
   int nta;
   double fpn, tnc, eps;
   int nki;
-  double tol, tps, eta2;
+  double tol=0.0, tps, eta2;
 
   /* Parameter adjustments */
   --gg;
@@ -2456,7 +2456,6 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   int mm1, nt1;
   double yk0, ps1, ps2, ffn;
   int mej;
-  int nap;
   double tnc, fpn, eps;
   int ndz, niz;
   double tps;
@@ -2820,6 +2819,7 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   Sciprintf("(s,s)=,%12.4f,  u1=,%12.3f,  variable 1 coming in.\n",  s2,  u1  );
   goto L100;
  L40:
+  j0 = *i1;
   Sciprintf("duplicate variable %d\n",j0);
   goto L100;
  L41:
@@ -2938,7 +2938,7 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   goto L100;
  L47:
   Sciprintf( " ");
-  Sciprintf("nlis2, %d, simulations atteintes\n",  nap);
+  Sciprintf("nlis2, %d, simulations atteintes\n",  *i1);
   goto L100;
  L48:
   Sciprintf( "Stop required by user\n");
@@ -2955,6 +2955,9 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   Sciprintf("nlis2,i,%10.3f,%11.3f,%11.3f\n",  t,  ffn,  fp  );
   goto L100;
  L51:
+  t = *d1;
+  ffn = *d2;
+  fp = d3[1];
   Sciprintf("nlis2,%13.3f,%11.3f,%11.3f,i\n",  t,  ffn,  fp  );
   goto L100;
  L52:

@@ -55,11 +55,11 @@ int optim_nlis0 (int *n, opt_simul simul, opt_prosca prosca, double *xn, double 
   /* Local variables */
   double tesd, tesf, test, f;
   int i__, indic;
-  double z__, d2, z1, fa, fd, fg, ta, fp;
+  double z__, d2, z1, fa, fd=0, fg, ta, fp;
   int indica;
   double td;
-  int indicd;
-  double tg, fpa, ffn, fpd, fpg;
+  int indicd=0;
+  double tg, fpa, ffn, fpd=0, fpg;
 
   /* Parameter adjustments */
   --x;
