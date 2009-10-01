@@ -1,0 +1,56 @@
+% -*- mode: latex -*-
+
+\mansection{utility functions for signal processing}
+\begin{mandesc}
+  \short{rot90}{rotate a matrix by increment of 90 degrees}\\
+  \short{fliplr}{reverse the columns of a matrix}\\
+  \short{flipud}{reverse the rows of a matrix}\\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+B = rot90(A)
+B = rot90(A,n)
+B = fliplr(A)
+B = flipud(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real or complex matrix
+    \vname{n}: number of increments of 90 degrees to apply for the matrix rotation (default 1)
+    \vname{B}: resulting matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+\verb+rot90(A,n)+ returns a matrix obtained by a rotation of $n \times 90$ degrees of the
+matrix $A$ (in the counterclockwise direction for positive $n$).
+
+\verb+fliplr(A)+ returns a matrix obtained by reversing the columns of the matrix $A$.
+
+\verb+flipud(A)+ returns a matrix obtained by reversing the rows of the matrix $A$.
+
+\end{mandescription}
+ 
+\begin{examples}
+  \begin{Verbatim}
+    A = [0, 1, 2, 3; 4, 5, 6, 7; 8, 9, 10, 11]
+    rot90(A)
+    rot90(A,-1)
+    rot90(A,2)
+    fliplr(A) 
+    A(:,$:-1:1)
+    flipud(A) 
+    A($:-1:1,:)
+  \end{Verbatim}
+\end{examples}
+
+
+\begin{manseealso}
+  \manlink{fftshift}{fftshift}, \manlink{ifftshift}{ifftshift}
+\end{manseealso}
+
