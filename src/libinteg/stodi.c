@@ -4,9 +4,9 @@
 
 int
 nsp_ode_stodi (int *neq, double *y, double *yh, int *nyh, double *yh1,
-		  double *ewt, double *savf, double *savr, double *acor,
-		  double *wm, int *iwm, lsodi_res res, ode_jac adda, Dgbydy jac,
-		  Pjac pjac, Slvs slvs, void *param)
+	       double *ewt, double *savf, double *savr, double *acor,
+	       double *wm, int *iwm, lsodi_res res, ode_jac adda, Dgbydy jac,
+	       Pjac pjac, Slvs slvs, void *param)
 {
   /* System generated locals */
   int yh_dim1, yh_offset, i__1, i__2;
@@ -14,13 +14,10 @@ nsp_ode_stodi (int *neq, double *y, double *yh, int *nyh, double *yh1,
 
 
   /* Local variables */
-  double dcon, delp, eljh, rhdn, exdn,  dsm, dup, el1h,  exsm, rhup, exup,  r__,  rh, del, ddn,  told, rhsm;
-  int i__, j, m;
-  int iredo, i1;
-  int ires, iret;
-  int jb;
-  int ncf, kgo;
-  int newq;
+  double dcon, delp, eljh, rhdn, exdn,  dsm=0, dup, el1h,  exsm,
+    rhup, exup,  r__,  rh=0, del, ddn,  told, rhsm;
+  int i__, j, m,  iredo=0, i1, ires, iret;
+  int jb , ncf, kgo,  newq;
 
   /*lll. optimize 
    *----------------------------------------------------------------------- 
@@ -799,6 +796,5 @@ nsp_ode_stodi (int *neq, double *y, double *yh, int *nyh, double *yh1,
   ls0001_1.hold = ls0001_1.h__;
   ls0001_1.jstart = 1;
   return 0;
-  /*----------------------- end of subroutine stodi ----------------------- 
-   */
-}				/* stodi_ */
+}
+
