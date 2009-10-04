@@ -32,6 +32,15 @@ struct _OpWrapTab  {
   function_wrapper *wrapper;
 };
 
+typedef struct _OpGrTab OpGrTab;
+
+struct _OpGrTab  {
+  char *name1;
+  char *name2;
+  function *fonc;
+};
+
+
 /* a metre ailleurs XXXXX */
 
 extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T); 

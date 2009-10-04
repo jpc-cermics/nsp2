@@ -53,6 +53,7 @@ extern  sci_interface  mex_Interf  ;extern  interface_info  mex_Interf_Info  ;
 extern  sci_interface  Interf_Interf  ;extern  interface_info  Interf_Interf_Info  ;
 extern  sci_interface  Datas_Interf ;extern  interface_info  Datas_Interf_Info ;
 extern  sci_interface  Graphics_Interf ;extern  interface_info  Graphics_Interf_Info ;
+extern  sci_interface  GraphicsUtil_Interf ;extern  interface_info  GraphicsUtil_Interf_Info ;
 extern  sci_interface  GraphicsOld_Interf ;extern  interface_info  GraphicsOld_Interf_Info ;
 extern  sci_interface  None_Interf ;extern  interface_info  None_Interf_Info ;
 extern  sci_interface  Menus_Interf ;extern  interface_info  Menus_Interf_Info ;
@@ -190,6 +191,7 @@ InterfTab Interfaces[]={
   {Interf_Interf,Interf_Interf_Info},
   {Datas_Interf,Datas_Interf_Info},
   {Graphics_Interf,Graphics_Interf_Info},  
+  {GraphicsUtil_Interf,GraphicsUtil_Interf_Info},  
   {GraphicsOld_Interf,GraphicsOld_Interf_Info},
   {Menus_Interf,Menus_Interf_Info},
   {Hobj_Interf,Hobj_Interf_Info},

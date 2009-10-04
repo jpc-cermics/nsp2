@@ -7263,28 +7263,14 @@ static int int_gtk_loop(Stack stack, int rhs, int opt, int lhs)
 } 
 #endif 
 
+
 static int int_new_graphics(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
-#ifdef NEW_GRAPHICS
-  int ret =TRUE ;
-#else
-  int ret = FALSE;
-#endif
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,nsp_new_graphics())==FAIL)
+    return RET_BUG;
   return 1;
 }
-
-int nsp_new_graphics(void)
-{
-#ifdef NEW_GRAPHICS
-  return TRUE ;
-#else
-  return FALSE;
-#endif
-
-}
-
 
 extern void nsp_set_cursor(  BCG *Xgc,int id);
 
@@ -7299,6 +7285,16 @@ static int int_xcursor(Stack stack, int rhs, int opt, int lhs)
     }
   Xgc=nsp_check_graphic_context();
   nsp_set_cursor(Xgc,id);
+  return 0;
+}
+
+
+extern void nsp_switch_graphics(void);
+
+static int int_switch_graphics(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs(0,0);
+  nsp_switch_graphics();
   return 0;
 }
 
@@ -7336,9 +7332,7 @@ extern function   int_tcl_CreateSlave;
 extern function   int_tcl_ExistInterp;
 #endif 
 
-#define SUFFIX "_new" 
-
-static OpTab Graphics_func[]={
+static OpTab GraphicsUtil_func[]={
 #ifdef WITH_TK 
   {"TCL_DoOneEvent",   int_tcl_DoOneEvent},
   {"TCL_EvalFile",   int_tcl_EvalFile},
@@ -7362,96 +7356,116 @@ static OpTab Graphics_func[]={
   {"help" ,int_gtkhelp},
   {"scicos_draw3D", int_scicos_draw3D},
   {"scicos_lock_draw", int_lock_draw},
-
-  {"Matplot" SUFFIX,int_matplot},
-  {"Matplot1" SUFFIX,int_matplot1}, 
-  {"c2dex" SUFFIX,int_c2dex},
-  {"champ" SUFFIX,int_champ},
-  {"champ1" SUFFIX,int_champ1},
-  {"contour" SUFFIX,int_contour},
-  {"contour2d" SUFFIX,int_contour2d},
-  {"contour2di" SUFFIX,int_contour2d1},
-  {"drawaxis" SUFFIX,int_nxaxis},
-  {"driver" SUFFIX,int_driver},
-  {"fec" SUFFIX,int_fec},
-  {"geom3d" SUFFIX,int_geom3d},
-  {"grayplot" SUFFIX,int_grayplot},
-  {"new_graphics" SUFFIX,int_new_graphics},
-  {"param3d" SUFFIX,int_param3d},
-  {"param3d1" SUFFIX,int_param3d},
-  {"plot2d" SUFFIX,int_plot2d},
-  {"plot2d1" SUFFIX,int_plot2d1_1},
-  {"plot2d2" SUFFIX,int_plot2d1_2},
-  {"plot2d3" SUFFIX,int_plot2d1_3},
-  {"plot2d4" SUFFIX,int_plot2d1_4},
-  {"plot3d" SUFFIX,int_plot3d},
-  {"plot3d1" SUFFIX,int_plot3d1},
-  {"seteventhandler" SUFFIX,int_seteventhandler},
-  {"show_pixbuf" SUFFIX,int_show_pixbuf}, 
-  {"winsid" SUFFIX,int_winsid},
-  {"xarc" SUFFIX,int_xarc},
-  {"xarcs" SUFFIX,int_xarcs},
-  {"xarrows" SUFFIX,int_xarrows},
-  {"xaxis" SUFFIX,int_xaxis},
-  {"xchange" SUFFIX,int_xchange},
-  {"xclea" SUFFIX,int_xclea},
-  {"xclear" SUFFIX,int_xclear},
-  {"xclick" SUFFIX,int_xclick},
-  {"xcursor" SUFFIX, int_xcursor},
-  {"xdel" SUFFIX,int_xdel},
-  {"xdraw_pixbuf" SUFFIX,int_draw_pixbuf},
-  {"xdraw_pixbuf_from_file" SUFFIX,int_draw_pixbuf_from_file},
-  {"xend" SUFFIX,int_xend},
-  {"xexport" SUFFIX,int_xexport},
-  {"xfarc" SUFFIX,int_xfarc},
-  {"xfarcs" SUFFIX,int_xfarcs},
-  {"xflush" SUFFIX,int_xflush},
-  {"xfpoly" SUFFIX,int_xfpoly},
-  {"xfpolys" SUFFIX,int_xfpolys},
-  {"xfrect" SUFFIX,int_xfrect},
-  {"xget" SUFFIX,int_xget},
-  {"xget_image" SUFFIX,int_get_image},
-  {"xget_pixbuf" SUFFIX,int_get_pixbuf},
-  {"xgetech" SUFFIX,int_xgetech},
-  {"xgetmouse" SUFFIX,int_xgetmouse},
-  {"xgraduate" SUFFIX,int_xgraduate},
-  {"xgrid" SUFFIX,int_xgrid},
-  {"xinfo" SUFFIX,int_xinfo},
-  {"xinit" SUFFIX,int_xinit},
-  {"xlfont" SUFFIX,int_xlfont},
-  {"xload" SUFFIX,int_xload},
-  {"xname" SUFFIX,int_xname},
-  {"xnumb" SUFFIX,int_xnumb},
-  {"xpause" SUFFIX,int_xpause},
-  {"xpoly" SUFFIX,int_xpoly},
-  {"xpoly_clip" SUFFIX,int_xpoly_clip},
-  {"xpolys" SUFFIX,int_xpolys},
-  {"xrect" SUFFIX,int_xrect},
-  {"xrects" SUFFIX,int_xrects},
-  {"xs2fig" SUFFIX,int_xs2fig},
-  {"xs2pdf" SUFFIX,int_xs2pdf},
-  {"xs2png" SUFFIX,int_xs2png},
-  {"xs2ps" SUFFIX,int_xs2ps},
-  {"xs2ps" SUFFIX,int_xs2ps},
-  {"xs2ps_old" SUFFIX,int_xs2ps_old},
-  {"xs2svg" SUFFIX,int_xs2svg},
-  {"xsave" SUFFIX,int_xsave},
-  {"xsegs" SUFFIX,int_xsegs},
-  {"xselect" SUFFIX,int_xselect},
-  {"xset" SUFFIX,int_xset},
-  {"xsetech" SUFFIX,int_xsetech},
-  {"xstring" SUFFIX,int_xstring},
-  {"xstringb" SUFFIX,int_xstringb},
-  {"xstringc" SUFFIX,int_xstringc},
-  {"xstringl" SUFFIX,int_xstringl},
-  {"xtape" SUFFIX,int_xtape},
-  {"xtest_graphic" SUFFIX, int_xtest},
-  {"xtitle" SUFFIX,int_xtitle},
-
+  {"switch_graphics",int_switch_graphics},
+  {"new_graphics",int_new_graphics},
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop" int_gtk_loop},
 #endif 
-  {(char *) 0, NULL}
+};
+
+int GraphicsUtil_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(GraphicsUtil_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/*
+ * used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
+
+void GraphicsUtil_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = GraphicsUtil_func[i].name;
+  *f = GraphicsUtil_func[i].fonc;
+}
+
+#define NAMES(a) a "_new", a 
+
+OpGrTab Graphics_func[]={
+  {NAMES("Matplot"), int_matplot},
+  {NAMES("Matplot1"),int_matplot1}, 
+  {NAMES("c2dex"),int_c2dex},
+  {NAMES("champ"),int_champ},
+  {NAMES("champ1"),int_champ1},
+  {NAMES("contour"),int_contour},
+  {NAMES("contour2d"),int_contour2d},
+  {NAMES("contour2di"),int_contour2d1},
+  {NAMES("drawaxis"),int_nxaxis},
+  {NAMES("driver"),int_driver},
+  {NAMES("fec"),int_fec},
+  {NAMES("geom3d"),int_geom3d},
+  {NAMES("grayplot"),int_grayplot},
+  {NAMES("param3d"),int_param3d},
+  {NAMES("param3d1"),int_param3d},
+  {NAMES("plot2d"),int_plot2d},
+  {NAMES("plot2d1"),int_plot2d1_1},
+  {NAMES("plot2d2"),int_plot2d1_2},
+  {NAMES("plot2d3"),int_plot2d1_3},
+  {NAMES("plot2d4"),int_plot2d1_4},
+  {NAMES("plot3d"),int_plot3d},
+  {NAMES("plot3d1"),int_plot3d1},
+  {NAMES("seteventhandler"),int_seteventhandler},
+  {NAMES("show_pixbuf"),int_show_pixbuf}, 
+  {NAMES("winsid"),int_winsid},
+  {NAMES("xarc"),int_xarc},
+  {NAMES("xarcs"),int_xarcs},
+  {NAMES("xarrows"),int_xarrows},
+  {NAMES("xaxis"),int_xaxis},
+  {NAMES("xchange"),int_xchange},
+  {NAMES("xclea"),int_xclea},
+  {NAMES("xclear"),int_xclear},
+  {NAMES("xclick"),int_xclick},
+  {NAMES("xcursor"), int_xcursor},
+  {NAMES("xdel"),int_xdel},
+  {NAMES("xdraw_pixbuf"),int_draw_pixbuf},
+  {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
+  {NAMES("xend"),int_xend},
+  {NAMES("xexport"),int_xexport},
+  {NAMES("xfarc"),int_xfarc},
+  {NAMES("xfarcs"),int_xfarcs},
+  {NAMES("xflush"),int_xflush},
+  {NAMES("xfpoly"),int_xfpoly},
+  {NAMES("xfpolys"),int_xfpolys},
+  {NAMES("xfrect"),int_xfrect},
+  {NAMES("xget"),int_xget},
+  {NAMES("xget_image"),int_get_image},
+  {NAMES("xget_pixbuf"),int_get_pixbuf},
+  {NAMES("xgetech"),int_xgetech},
+  {NAMES("xgetmouse"),int_xgetmouse},
+  {NAMES("xgraduate"),int_xgraduate},
+  {NAMES("xgrid"),int_xgrid},
+  {NAMES("xinfo"),int_xinfo},
+  {NAMES("xinit"),int_xinit},
+  {NAMES("xlfont"),int_xlfont},
+  {NAMES("xload"),int_xload},
+  {NAMES("xname"),int_xname},
+  {NAMES("xnumb"),int_xnumb},
+  {NAMES("xpause"),int_xpause},
+  {NAMES("xpoly"),int_xpoly},
+  {NAMES("xpoly_clip"),int_xpoly_clip},
+  {NAMES("xpolys"),int_xpolys},
+  {NAMES("xrect"),int_xrect},
+  {NAMES("xrects"),int_xrects},
+  {NAMES("xs2fig"),int_xs2fig},
+  {NAMES("xs2pdf"),int_xs2pdf},
+  {NAMES("xs2png"),int_xs2png},
+  {NAMES("xs2ps"),int_xs2ps},
+  {NAMES("xs2ps"),int_xs2ps},
+  {NAMES("xs2ps_old"),int_xs2ps_old},
+  {NAMES("xs2svg"),int_xs2svg},
+  {NAMES("xsave"),int_xsave},
+  {NAMES("xsegs"),int_xsegs},
+  {NAMES("xselect"),int_xselect},
+  {NAMES("xset"),int_xset},
+  {NAMES("xsetech"),int_xsetech},
+  {NAMES("xstring"),int_xstring},
+  {NAMES("xstringb"),int_xstringb},
+  {NAMES("xstringc"),int_xstringc},
+  {NAMES("xstringl"),int_xstringl},
+  {NAMES("xtape"),int_xtape},
+  {NAMES("xtest_graphic"), int_xtest},
+  {NAMES("xtitle"),int_xtitle},
+  {(char *) 0,(char *) 0, NULL}
 };
 
 int Graphics_Interf(int i, Stack stack, int rhs, int opt, int lhs)
@@ -7466,7 +7480,7 @@ int Graphics_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 void Graphics_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = Graphics_func[i].name;
+  *fname = Graphics_func[i].name1;
   *f = Graphics_func[i].fonc;
 }
 

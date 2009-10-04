@@ -29,7 +29,7 @@
 
 #include "nsp/machine.h"
 #include "nsp/math.h" 
-#include "nsp/plisttoken.h" /** for name_maxl **/
+#include "nsp/plisttoken.h" /* for name_maxl */
 #include "nsp/object.h" 
 #include "nsp/interf.h"
 #include "nsp/datas.h"
@@ -796,7 +796,7 @@ void nsp_init_function_table(void)
   static int firstentry = 0;
   int i=0,k=0;
   if ( firstentry == 1 ) return ;
-  /** first call **/
+  /* first call */
   if ( nsp_hash_func_hcreate(FMAXTAB) == 0 ) 
     {
       printf("Fatal Error: Can't create table for scilab functions (not enough memory)\n");
@@ -810,7 +810,7 @@ void nsp_init_function_table(void)
       k=0;
       while (1) 
 	{
-	  /** function in the interface **/
+	  /* function in the interface */
 	  char *fname;
 	  function *f;
 	  (*info)(k,&fname,&f);
@@ -826,6 +826,7 @@ void nsp_init_function_table(void)
     }
   firstentry = 1;
 }
+
 
 /*
  * Hashtable code : 
@@ -992,7 +993,7 @@ nsp_hash_func_hdestroy()
 }
 **/
 
-/** from data to key : find function given (Int and Num ) **/
+/* from data to key : find function given (Int and Num ) */
 
 int FindFunctionB(char *key, int Int, int Num)
 {

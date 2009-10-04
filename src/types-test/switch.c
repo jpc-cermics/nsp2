@@ -27,6 +27,8 @@
 #include "nsp/graphics-old/Graphics.h" 
 #include "nsp/graphics-new/switch.h" 
 
+void nsp_switch_graphic_functions(void);
+
 BCG *window_list_search_new(int winnum);
 BCG *window_list_search_old(int winnum);
 BCG *check_graphic_window_new(void);
@@ -121,3 +123,65 @@ int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *w
 }
 
 
+/*
+ *
+ *
+ */ 
+
+#include "../functions/callfunc.h" 
+#include "../functions/FunTab.h"
+
+extern void Graphics_Interf_Info(int i, char **fname, function (**f));
+extern void GraphicsOld_Interf_Info(int i, char **fname, function (**f));
+extern OpGrTab GraphicsOld_func[];
+extern OpGrTab Graphics_func[];
+
+void nsp_switch_graphics(void)
+{
+  int i=0, gr_new,gr_old,k;
+  while (1) 
+    {
+      /* interfaces */
+      interface_info *info = Interfaces[i].info;
+      if ( info == NULL) break;
+      if ( info == Graphics_Interf_Info)
+	{
+	  gr_new = i;
+	}
+      else if ( info == GraphicsOld_Interf_Info)
+	{
+	  gr_old = i;
+
+	}
+      i++;
+    }
+  use_new_graphics = ! (use_new_graphics);
+
+
+  k=0;
+  while (1) 
+    {
+      if ( Graphics_func[k].name1 == NULL ) break;
+      if ( use_new_graphics ) 
+	nsp_enter_function(Graphics_func[k].name2,gr_new,k);
+      else 
+	nsp_enter_function(Graphics_func[k].name1,gr_new,k);
+      k++;
+    }
+  k=0;
+  while (1) 
+    {
+      if ( GraphicsOld_func[k].name1 == NULL ) break;
+      if ( use_new_graphics )
+	nsp_enter_function(GraphicsOld_func[k].name2,gr_old,k);
+      else
+	nsp_enter_function(GraphicsOld_func[k].name1,gr_old,k);
+      k++;
+    }
+}
+
+
+int nsp_new_graphics(void)
+{
+  return use_new_graphics;
+}

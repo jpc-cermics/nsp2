@@ -6423,7 +6423,7 @@ static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int
  * when scilab is compiled with gtk 
  * not the perfect place to insert this interface XXX ...
  *---------------------------------------------------*/
-
+#if 0
 extern void Sci_Help(char *,char *,char *);
 
 static int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
@@ -6439,6 +6439,7 @@ static int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 #endif 
   return 0;
 }
+#endif
 
 
 /*-----------------------------------------------------------
@@ -6924,17 +6925,7 @@ static int int_gtk_loop(Stack stack, int rhs, int opt, int lhs)
 } 
 #endif 
 
-static int int_new_graphics(Stack stack, int rhs, int opt, int lhs)
-{
-  CheckRhs(0,0);
-#ifdef NEW_GRAPHICS
-  int ret =TRUE ;
-#else
-  int ret = FALSE;
-#endif
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
-}
+
 
 extern void nsp_set_cursor_old(  BCG *Xgc,int id);
 
@@ -6957,105 +6948,96 @@ static int int_xcursor(Stack stack, int rhs, int opt, int lhs)
  * The Interface for graphic functions 
  *************************************************************/
 
-#if 0 
-#define SUFFIX "_old"  
-#else 
-#define SUFFIX "" 
-#endif 
+#define NAMES(a) a , a "_old" 
 
-static OpTab GraphicsOld_func[]={
-  {"champ" SUFFIX,int_champ},
-  {"contour" SUFFIX,int_contour},
-  {"param3d" SUFFIX,int_param3d},
-  {"plot3d" SUFFIX,int_plot3d},
-  {"plot3d1" SUFFIX,int_plot3d1},
-  {"plot2d" SUFFIX,int_plot2d},
-  {"plot2d1" SUFFIX,int_plot2d1_1},
-  {"plot2d2" SUFFIX,int_plot2d1_2},
-  {"plot2d3" SUFFIX,int_plot2d1_3},
-  {"plot2d4" SUFFIX,int_plot2d1_4},
-  {"grayplot" SUFFIX,int_grayplot},
-  {"driver" SUFFIX,int_driver},
-  {"xfarc" SUFFIX,int_xfarc},
-  {"xarc" SUFFIX,int_xarc},
-  {"xarcs" SUFFIX,int_xarcs},
-  {"xrects" SUFFIX,int_xrects},
-  {"xarrows" SUFFIX,int_xarrows},
-  {"xsegs" SUFFIX,int_xsegs},
-  {"drawaxis" SUFFIX,int_nxaxis},
-  {"xchange" SUFFIX,int_xchange},
-  {"xclea" SUFFIX,int_xclea},
-  {"xrect" SUFFIX,int_xrect},
-  {"xfrect" SUFFIX,int_xfrect},
-  {"xclear" SUFFIX,int_xclear},
-  {"xclick" SUFFIX,int_xclick},
-  {"xend" SUFFIX,int_xend},
-  {"xfpoly" SUFFIX,int_xfpoly},
-  {"xfpolys" SUFFIX,int_xfpolys},
-  {"xget" SUFFIX,int_xget},
-  {"xinit" SUFFIX,int_xinit},
-  {"xlfont" SUFFIX,int_xlfont},
-  {"xnumb" SUFFIX,int_xnumb},
-  {"xpause" SUFFIX,int_xpause},
-  {"xpoly" SUFFIX,int_xpoly},
-  {"xpoly_clip" SUFFIX,int_xpoly_clip},
-  {"xpolys" SUFFIX,int_xpolys},
-  {"xselect" SUFFIX,int_xselect},
-  {"xset" SUFFIX,int_xset},
-  {"xstring" SUFFIX,int_xstring},
-  {"xstringl" SUFFIX,int_xstringl},
-  {"xtape" SUFFIX,int_xtape},
-  {"xsetech" SUFFIX,int_xsetech},
-  {"xgetech" SUFFIX,int_xgetech},
-  {"geom3d" SUFFIX,int_geom3d},
-  {"fec" SUFFIX,int_fec},
-  {"xgetmouse" SUFFIX,int_xgetmouse},
-  {"xinfo" SUFFIX,int_xinfo},
-  {"xtitle" SUFFIX,int_xtitle},
-  {"xgrid" SUFFIX,int_xgrid},
-  {"xfarcs" SUFFIX,int_xfarcs},
-  {"xsave" SUFFIX,int_xsave},
-  {"xload" SUFFIX,int_xload},
-  {"champ1" SUFFIX,int_champ1},
-  {"xdel" SUFFIX,int_xdel},
-  {"contour2d" SUFFIX,int_contour2d},
-  {"winsid" SUFFIX,int_winsid},
-  {"param3d1" SUFFIX,int_param3d},
-  {"xstringb" SUFFIX,int_xstringb},
-  {"xstringc" SUFFIX,int_xstringc},
-  {"Matplot" SUFFIX,int_matplot},
-  {"contour2di" SUFFIX,int_contour2d1},
-  {"c2dex" SUFFIX,int_c2dex},
-  {"Matplot1" SUFFIX,int_matplot1}, 
-  {"xgraduate" SUFFIX,int_xgraduate},
-  {"xname" SUFFIX,int_xname},
-  {"xaxis" SUFFIX,int_xaxis},
-  {"seteventhandler" SUFFIX,int_seteventhandler},
-  {"help" SUFFIX,int_gtkhelp},
-  {"xs2ps" SUFFIX,int_xs2ps},
-  {"xs2fig" SUFFIX,int_xs2fig},
-  {"xs2ps_old" SUFFIX,int_xs2ps_old},
-  {"xs2pdf" SUFFIX,int_xs2pdf},
-  {"xs2png" SUFFIX,int_xs2png},
-  {"xs2ps" SUFFIX,int_xs2ps},
-  {"xs2svg" SUFFIX,int_xs2svg},
-  {"xexport" SUFFIX,int_xexport},
-  {"bsearch" SUFFIX, int_bsearch},
-  {"xget_image" SUFFIX,int_get_image},
-  {"xget_pixbuf" SUFFIX,int_get_pixbuf},
-  {"xdraw_pixbuf" SUFFIX,int_draw_pixbuf},
-  {"xdraw_pixbuf_from_file" SUFFIX,int_draw_pixbuf_from_file},
-  {"xflush" SUFFIX,int_xflush},
-  {"show_pixbuf" SUFFIX,int_show_pixbuf}, 
-  {"scicos_draw3D" SUFFIX,int_scicos_draw3D},
-  {"scicos_lock_draw" SUFFIX,int_lock_draw},
-  {"xtest_graphic" SUFFIX, int_xtest},
-  {"new_graphics" SUFFIX,int_new_graphics},
-  {"xcursor" SUFFIX, int_xcursor},
-#ifdef TEST_EVENT_BOX_THREAD
-  {"gtk_test_loop" SUFFIX,int_gtk_loop},
-#endif 
-  {(char *) 0, NULL}
+OpGrTab GraphicsOld_func[]={
+  {NAMES("champ" ),int_champ},
+  {NAMES("contour" ),int_contour},
+  {NAMES("param3d" ),int_param3d},
+  {NAMES("plot3d" ),int_plot3d},
+  {NAMES("plot3d1" ),int_plot3d1},
+  {NAMES("plot2d" ),int_plot2d},
+  {NAMES("plot2d1" ),int_plot2d1_1},
+  {NAMES("plot2d2" ),int_plot2d1_2},
+  {NAMES("plot2d3" ),int_plot2d1_3},
+  {NAMES("plot2d4" ),int_plot2d1_4},
+  {NAMES("grayplot" ),int_grayplot},
+  {NAMES("driver" ),int_driver},
+  {NAMES("xfarc" ),int_xfarc},
+  {NAMES("xarc" ),int_xarc},
+  {NAMES("xarcs" ),int_xarcs},
+  {NAMES("xrects" ),int_xrects},
+  {NAMES("xarrows" ),int_xarrows},
+  {NAMES("xsegs" ),int_xsegs},
+  {NAMES("drawaxis" ),int_nxaxis},
+  {NAMES("xchange" ),int_xchange},
+  {NAMES("xclea" ),int_xclea},
+  {NAMES("xrect" ),int_xrect},
+  {NAMES("xfrect" ),int_xfrect},
+  {NAMES("xclear" ),int_xclear},
+  {NAMES("xclick" ),int_xclick},
+  {NAMES("xend" ),int_xend},
+  {NAMES("xfpoly" ),int_xfpoly},
+  {NAMES("xfpolys" ),int_xfpolys},
+  {NAMES("xget" ),int_xget},
+  {NAMES("xinit" ),int_xinit},
+  {NAMES("xlfont" ),int_xlfont},
+  {NAMES("xnumb" ),int_xnumb},
+  {NAMES("xpause" ),int_xpause},
+  {NAMES("xpoly" ),int_xpoly},
+  {NAMES("xpoly_clip" ),int_xpoly_clip},
+  {NAMES("xpolys" ),int_xpolys},
+  {NAMES("xselect" ),int_xselect},
+  {NAMES("xset" ),int_xset},
+  {NAMES("xstring" ),int_xstring},
+  {NAMES("xstringl" ),int_xstringl},
+  {NAMES("xtape" ),int_xtape},
+  {NAMES("xsetech" ),int_xsetech},
+  {NAMES("xgetech" ),int_xgetech},
+  {NAMES("geom3d" ),int_geom3d},
+  {NAMES("fec" ),int_fec},
+  {NAMES("xgetmouse" ),int_xgetmouse},
+  {NAMES("xinfo" ),int_xinfo},
+  {NAMES("xtitle" ),int_xtitle},
+  {NAMES("xgrid" ),int_xgrid},
+  {NAMES("xfarcs" ),int_xfarcs},
+  {NAMES("xsave" ),int_xsave},
+  {NAMES("xload" ),int_xload},
+  {NAMES("champ1" ),int_champ1},
+  {NAMES("xdel" ),int_xdel},
+  {NAMES("contour2d" ),int_contour2d},
+  {NAMES("winsid" ),int_winsid},
+  {NAMES("param3d1" ),int_param3d},
+  {NAMES("xstringb" ),int_xstringb},
+  {NAMES("xstringc" ),int_xstringc},
+  {NAMES("Matplot" ),int_matplot},
+  {NAMES("contour2di" ),int_contour2d1},
+  {NAMES("c2dex" ),int_c2dex},
+  {NAMES("Matplot1" ),int_matplot1}, 
+  {NAMES("xgraduate" ),int_xgraduate},
+  {NAMES("xname" ),int_xname},
+  {NAMES("xaxis" ),int_xaxis},
+  {NAMES("seteventhandler" ),int_seteventhandler},
+  {NAMES("xs2ps" ),int_xs2ps},
+  {NAMES("xs2fig" ),int_xs2fig},
+  {NAMES("xs2ps_old" ),int_xs2ps_old},
+  {NAMES("xs2pdf" ),int_xs2pdf},
+  {NAMES("xs2png" ),int_xs2png},
+  {NAMES("xs2ps" ),int_xs2ps},
+  {NAMES("xs2svg" ),int_xs2svg},
+  {NAMES("xexport" ),int_xexport},
+  {NAMES("bsearch" ), int_bsearch},
+  {NAMES("xget_image" ),int_get_image},
+  {NAMES("xget_pixbuf" ),int_get_pixbuf},
+  {NAMES("xdraw_pixbuf" ),int_draw_pixbuf},
+  {NAMES("xdraw_pixbuf_from_file" ),int_draw_pixbuf_from_file},
+  {NAMES("xflush" ),int_xflush},
+  {NAMES("show_pixbuf" ),int_show_pixbuf}, 
+  {NAMES("scicos_draw3D" ),int_scicos_draw3D},
+  {NAMES("scicos_lock_draw" ),int_lock_draw},
+  {NAMES("xtest_graphic" ), int_xtest},
+  {NAMES("xcursor" ), int_xcursor},
+  {(char *) 0,(char *) 0, NULL}
 };
 
 int GraphicsOld_Interf(int i, Stack stack, int rhs, int opt, int lhs)
@@ -7070,9 +7052,8 @@ int GraphicsOld_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 void GraphicsOld_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = GraphicsOld_func[i].name;
+  *fname = GraphicsOld_func[i].name1;
   *f = GraphicsOld_func[i].fonc;
 }
-
 
 
